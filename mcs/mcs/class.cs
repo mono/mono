@@ -1565,7 +1565,7 @@ namespace Mono.CSharp {
 					requires_delayed_unmanagedtype_check = false;
 					foreach (FieldBase f in fields) {
 						if (f.MemberType != null && f.MemberType.IsPointer)
-							TypeManager.VerifyUnmanaged (Compiler, f.MemberType, f.Location);
+							TypeManager.VerifyUnmanaged (Module, f.MemberType, f.Location);
 					}
 				}
 			}

@@ -70,7 +70,8 @@ namespace MonoTests.System.ServiceModel.Discovery
 			// could be either IPv4 or IPv6
 			Assert.AreEqual (new UdpDiscoveryEndpoint ().MulticastAddress, die.ListenUri, "#7");
 			Assert.AreEqual (ListenUriMode.Explicit, die.ListenUriMode, "#8");
-			Assert.AreEqual (5, die.Behaviors.Count, "#9");
+			// FIXME: enable (but the number should not matter; the functionality should rather matter. Those behaviors are internal in .NET)
+			// Assert.AreEqual (5, die.Behaviors.Count, "#9");
 
 			// default constructor
 			be = new DiscoveryClientBindingElement ();
@@ -144,7 +145,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress, ch.RemoteAddress, "#1");
 		}
 
-		// This test takes a while, so I in face don't want to enable it ...
+		// This test takes a while, so I in fact don't want to enable it ...
 		[Test]
 		[ExpectedException (typeof (EndpointNotFoundException))]
 		public void RequestChannelOpenFails ()
@@ -156,9 +157,10 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNull (cf.GetProperty<DiscoveryEndpoint> (), "#1");
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
 			Assert.IsNull (ch.GetProperty<DiscoveryEndpoint> (), "#2");
-			ch.Open ();
+			ch.Open (TimeSpan.FromSeconds (80));
 		}
 
+		// This test takes a while, so I in fact don't want to enable it ...
 		[Test]
 		[ExpectedException (typeof (EndpointNotFoundException))]
 		public void RequestChannelOpenFails2 ()
@@ -168,7 +170,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 			var cf = be.BuildChannelFactory<IDuplexSessionChannel> (bc);
 			cf.Open ();
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
-			ch.Open ();
+			ch.Open (TimeSpan.FromSeconds (80));
 		}
 
 		[Test]

@@ -349,8 +349,6 @@ namespace Mono.CSharp.Linq
 
 		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
 		{
-			Expression expr = null;
-
 			// 
 			// We know the variable name is somewhere in the scope. This generates
 			// an access expression from current block
@@ -363,6 +361,7 @@ namespace Mono.CSharp.Linq
 						if (p.Name == Name)
 							return pb.GetParameterReference (i, loc);
 
+						Expression expr = null;
 						var tp = p as QueryBlock.TransparentParameter;
 						while (tp != null) {
 							if (expr == null)
@@ -379,8 +378,6 @@ namespace Mono.CSharp.Linq
 							tp = tp.Parent as QueryBlock.TransparentParameter;
 						}
 					}
-
-					expr = null;
 				}
 
 				if (pb == block)
@@ -626,7 +623,7 @@ namespace Mono.CSharp.Linq
 			} else {
 				result_selector_expr = CreateRangeVariableType (ec, parameter, target, new SimpleName (target.Name, target.Location));
 
-				result_block = new QueryBlock (ec.Compiler, block.Parent, block.StartLocation);
+				result_block = new QueryBlock (block.Parent, block.StartLocation);
 				result_block.SetParameters (parameter, target_param);
 			}
 
@@ -732,7 +729,7 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		public QueryBlock (CompilerContext ctx, Block parent, Location start)
+		public QueryBlock (Block parent, Location start)
 			: base (parent, ParametersCompiled.EmptyReadOnlyParameters, start)
 		{
 			flags |= Flags.CompilerGenerated;

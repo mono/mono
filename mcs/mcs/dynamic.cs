@@ -370,7 +370,7 @@ namespace Mono.CSharp
 		TypeExpr CreateSiteType (EmitContext ec, Arguments arguments, int dyn_args_count, bool is_statement)
 		{
 			int default_args = is_statement ? 1 : 2;
-			var module = ec.MemberContext.Module;
+			var module = ec.Module;
 
 			bool has_ref_out_argument = false;
 			var targs = new TypeExpression[dyn_args_count + default_args];
@@ -396,7 +396,7 @@ namespace Mono.CSharp
 				TypeExpr te = null;
 				Namespace type_ns = module.GlobalRootNamespace.GetNamespace ("System", true);
 				if (type_ns != null) {
-					te = type_ns.LookupType (module.Compiler, d_name, dyn_args_count + default_args, true, Location.Null);
+					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, true, Location.Null);
 				}
 			
 				if (te != null) {

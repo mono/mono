@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0/tmp</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Configuration</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="System.Configuration.Internal\DelegatingConfigHost.cs" />
+   <Compile Include="System.Configuration.Internal\IConfigErrorInfo.cs" />
+   <Compile Include="System.Configuration.Internal\IConfigSystem.cs" />
+   <Compile Include="System.Configuration.Internal\IConfigurationManagerHelper.cs" />
+   <Compile Include="System.Configuration.Internal\IConfigurationManagerInternal.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigClientHost.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigConfigurationFactory.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigHost.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigRecord.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigRoot.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigSettingsFactory.cs" />
+   <Compile Include="System.Configuration.Internal\IInternalConfigSystem.cs" />
+   <Compile Include="System.Configuration.Internal\InternalConfigEventArgs.cs" />
+   <Compile Include="System.Configuration.Internal\InternalConfigEventHandler.cs" />
+   <Compile Include="System.Configuration.Internal\StreamChangeCallback.cs" />
+   <Compile Include="System.Configuration.Provider\ProviderBase.cs" />
+   <Compile Include="System.Configuration.Provider\ProviderException.cs" />
+   <Compile Include="System.Configuration.Provider\ProviderCollection.cs" />
+   <Compile Include="System.Configuration\AppSettingsSection.cs" />
+   <Compile Include="System.Configuration\CallbackValidator.cs" />
+   <Compile Include="System.Configuration\CallbackValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\ClientConfigurationSystem.cs" />
+   <Compile Include="System.Configuration\CommaDelimitedStringCollection.cs" />
+   <Compile Include="System.Configuration\CommaDelimitedStringCollectionConverter.cs" />
+   <Compile Include="System.Configuration\ConfigHelper.cs" />
+   <Compile Include="System.Configuration\ConfigInfo.cs" />
+   <Compile Include="System.Configuration\Configuration.cs" />
+   <Compile Include="System.Configuration\ConfigurationAllowDefinition.cs" />
+   <Compile Include="System.Configuration\ConfigurationAllowExeDefinition.cs" />
+   <Compile Include="System.Configuration\ConfigurationCollectionAttribute.cs" />
+   <Compile Include="System.Configuration\ConfigurationConverterBase.cs" />
+   <Compile Include="System.Configuration\ConfigurationElement.cs" />
+   <Compile Include="System.Configuration\ConfigurationElementCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationElementCollectionType.cs" />
+   <Compile Include="System.Configuration\ConfigurationElementProperty.cs" />
+   <Compile Include="System.Configuration\ConfigurationErrorsException.cs" />
+   <Compile Include="System.Configuration\ConfigurationFileMap.cs" />
+   <Compile Include="System.Configuration\ConfigurationLocation.cs" />
+   <Compile Include="System.Configuration\ConfigurationLocationCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationLockCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationManager.cs" />
+   <Compile Include="System.Configuration\ConfigurationPermission.cs" />
+   <Compile Include="System.Configuration\ConfigurationPermissionAttribute.cs" />
+   <Compile Include="System.Configuration\ConfigurationProperty.cs" />
+   <Compile Include="System.Configuration\ConfigurationPropertyAttribute.cs" />
+   <Compile Include="System.Configuration\ConfigurationPropertyCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationPropertyOptions.cs" />
+   <Compile Include="System.Configuration\ConfigurationRemoveElement.cs" />
+   <Compile Include="System.Configuration\ConfigurationSaveMode.cs" />
+   <Compile Include="System.Configuration\ConfigurationSaveEventArgs.cs" />
+   <Compile Include="System.Configuration\ConfigurationSaveEventHandler.cs" />
+   <Compile Include="System.Configuration\ConfigurationSection.cs" />
+   <Compile Include="System.Configuration\ConfigurationSectionCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationSectionGroup.cs" />
+   <Compile Include="System.Configuration\ConfigurationSectionGroupCollection.cs" />
+   <Compile Include="System.Configuration\ConfigurationUserLevel.cs" />
+   <Compile Include="System.Configuration\ConfigurationValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\ConfigurationValidatorBase.cs" />
+   <Compile Include="System.Configuration\ConfigXmlTextReader.cs" />
+   <Compile Include="System.Configuration\ConnectionStringsSection.cs" />
+   <Compile Include="System.Configuration\ConnectionStringSettingsCollection.cs" />
+   <Compile Include="System.Configuration\ConnectionStringSettings.cs" />
+   <Compile Include="System.Configuration\ContextInformation.cs" />
+   <Compile Include="System.Configuration\DefaultSection.cs" />
+   <Compile Include="System.Configuration\DefaultValidator.cs" />
+   <Compile Include="System.Configuration\DpapiProtectedConfigurationProvider.cs" />
+   <Compile Include="System.Configuration\ElementInformation.cs" />
+   <Compile Include="System.Configuration\ExeConfigurationFileMap.cs" />
+   <Compile Include="System.Configuration\ExeContext.cs" />
+   <Compile Include="System.Configuration\GenericEnumConverter.cs" />
+   <Compile Include="System.Configuration\IConfigXmlNode.cs" />
+   <Compile Include="System.Configuration\IgnoreSection.cs" />
+   <Compile Include="System.Configuration\InfiniteIntConverter.cs" />
+   <Compile Include="System.Configuration\InfiniteTimeSpanConverter.cs" />
+   <Compile Include="System.Configuration\IntegerValidator.cs" />
+   <Compile Include="System.Configuration\IntegerValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\InternalConfigurationFactory.cs" />
+   <Compile Include="System.Configuration\InternalConfigurationHost.cs" />
+   <Compile Include="System.Configuration\InternalConfigurationRoot.cs" />
+   <Compile Include="System.Configuration\KeyValueConfigurationCollection.cs" />
+   <Compile Include="System.Configuration\KeyValueInternalCollection.cs" />
+   <Compile Include="System.Configuration\KeyValueConfigurationElement.cs" />
+   <Compile Include="System.Configuration\LongValidator.cs" />
+   <Compile Include="System.Configuration\LongValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\NameValueConfigurationCollection.cs" />
+   <Compile Include="System.Configuration\NameValueConfigurationElement.cs" />
+   <Compile Include="System.Configuration\PositiveTimeSpanValidator.cs" />
+   <Compile Include="System.Configuration\PositiveTimeSpanValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\PropertyInformation.cs" />
+   <Compile Include="System.Configuration\PropertyInformationCollection.cs" />
+   <Compile Include="System.Configuration\PropertyValueOrigin.cs" />
+   <Compile Include="System.Configuration\ProtectedConfiguration.cs" />
+   <Compile Include="System.Configuration\ProtectedConfigurationProvider.cs" />
+   <Compile Include="System.Configuration\ProtectedConfigurationProviderCollection.cs" />
+   <Compile Include="System.Configuration\ProtectedConfigurationSection.cs" />
+   <Compile Include="System.Configuration\ProtectedProviderSettings.cs" />
+   <Compile Include="System.Configuration\ProviderSettings.cs" />
+   <Compile Include="System.Configuration\ProviderSettingsCollection.cs" />
+   <Compile Include="System.Configuration\RegexStringValidator.cs" />
+   <Compile Include="System.Configuration\RegexStringValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\RsaProtectedConfigurationProvider.cs" />
+   <Compile Include="System.Configuration\SectionInfo.cs" />
+   <Compile Include="System.Configuration\SectionGroupInfo.cs" />
+   <Compile Include="System.Configuration\SectionInformation.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="System.Configuration\StringValidator.cs" />
+   <Compile Include="System.Configuration\StringValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\SubclassTypeValidator.cs" />
+   <Compile Include="System.Configuration\SubclassTypeValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\TimeSpanMinutesConverter.cs" />
+   <Compile Include="System.Configuration\TimeSpanMinutesOrInfiniteConverter.cs" />
+   <Compile Include="System.Configuration\TimeSpanSecondsConverter.cs" />
+   <Compile Include="System.Configuration\TimeSpanSecondsOrInfiniteConverter.cs" />
+   <Compile Include="System.Configuration\TimeSpanValidator.cs" />
+   <Compile Include="System.Configuration\TimeSpanValidatorAttribute.cs" />
+   <Compile Include="System.Configuration\TypeNameConverter.cs" />
+   <Compile Include="System.Configuration\ValidatorCallback.cs" />
+   <Compile Include="System.Configuration\WhiteSpaceTrimStringConverter.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Security.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

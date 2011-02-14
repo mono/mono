@@ -125,7 +125,7 @@ net_2_0_only_dirs := \
 	WindowsBase			\
 	System.Data.Services.Client
 
-moonlight_dirs := \
+moonlight_raw_dirs := \
 	corlib			\
 	System			\
 	Mono.CompilerServices.SymbolWriter \
@@ -184,7 +184,7 @@ net_4_0_dirs := \
 	WebMatrix.Data
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
-moonlight_raw_SUBDIRS := $(moonlight_dirs)
+moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
 monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
@@ -192,7 +192,7 @@ net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_dirs) $(mobile_dirs) $(net_4_0_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_raw_dirs) $(mobile_dirs) $(net_4_0_dirs)
 
 DIST_ONLY_SUBDIRS = dlr IKVM.Reflection aot-compiler
 

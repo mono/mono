@@ -811,7 +811,7 @@ namespace System.Net
 				asyncWrite = (WebAsyncResult) asyncResult;
 			}
 
-			if (!asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
+			if (!asyncResult.IsCompleted && !asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
 				Abort ();
 				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
 			}
@@ -907,6 +907,11 @@ namespace System.Net
 		public override WebResponse GetResponse()
 		{
 			WebAsyncResult result = (WebAsyncResult) BeginGetResponse (null, null);
+			if (!result.IsCompleted && !result.AsyncWaitHandle.WaitOne (timeout, false)) {
+				Abort ();
+				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
+			}
+
 			return EndGetResponse (result);
 		}
 		
@@ -1298,7 +1303,11 @@ namespace System.Net
 				// The request has not been completely sent and we got here!
 				// We should probably just close and cause an error in any case,
 				saved_exc = new WebException (data.StatusDescription, null, WebExceptionStatus.ProtocolError, webResponse); 
-				webResponse.ReadAll ();
+				if (allowBuffering || sendChunked || writeStream.totalWritten >= contentLength) {
+					webResponse.ReadAll ();
+				} else {
+					writeStream.IgnoreIOErrors = true;
+				}
 			}
 		}
 
@@ -1341,11 +1350,9 @@ namespace System.Net
 			}
 
 			if (wexc == null && (method == "POST" || method == "PUT")) {
-				lock (locker) {
-					CheckSendError (data);
-					if (saved_exc != null)
-						wexc = (WebException) saved_exc;
-				}
+				CheckSendError (data);
+				if (saved_exc != null)
+					wexc = (WebException) saved_exc;
 			}
 
 			WebAsyncResult r = asyncRead;
@@ -1361,7 +1368,8 @@ namespace System.Net
 			if (r != null) {
 				if (wexc != null) {
 					haveResponse = true;
-					r.SetCompleted (false, wexc);
+					if (!r.IsCompleted)
+						r.SetCompleted (false, wexc);
 					r.DoCallback ();
 					return;
 				}

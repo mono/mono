@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,618,612</NoWarn>
+    <OutputPath>./../../class/lib/build</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>Mono.Posix</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,618,612</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/build</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,618,612</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/build</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include=".\Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include=".\Mono.Unix\AbstractUnixEndPoint.cs" />
+   <Compile Include=".\Mono.Unix\Catalog.cs" />
+   <Compile Include=".\Mono.Unix\FileAccessPermissions.cs" />
+   <Compile Include=".\Mono.Unix\FileAccessPattern.cs" />
+   <Compile Include=".\Mono.Unix\FileHandleOperations.cs" />
+   <Compile Include=".\Mono.Unix\FileSpecialAttributes.cs" />
+   <Compile Include=".\Mono.Unix\FileTypes.cs" />
+   <Compile Include=".\Mono.Unix\PeerCred.cs" />
+   <Compile Include=".\Mono.Unix\StdioFileStream.cs" />
+   <Compile Include=".\Mono.Unix\UnixClient.cs" />
+   <Compile Include=".\Mono.Unix\UnixDirectoryInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixDriveInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixEncoding.cs" />
+   <Compile Include=".\Mono.Unix\UnixEnvironment.cs" />
+   <Compile Include=".\Mono.Unix\UnixEndPoint.cs" />
+   <Compile Include=".\Mono.Unix\UnixFileInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixFileSystemInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixGroupInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixIOException.cs" />
+   <Compile Include=".\Mono.Unix\UnixListener.cs" />
+   <Compile Include=".\Mono.Unix\UnixMarshal.cs" />
+   <Compile Include=".\Mono.Unix\UnixPath.cs" />
+   <Compile Include=".\Mono.Unix\UnixPipes.cs" />
+   <Compile Include=".\Mono.Unix\UnixProcess.cs" />
+   <Compile Include=".\Mono.Unix\UnixSignal.cs" />
+   <Compile Include=".\Mono.Unix\UnixStream.cs" />
+   <Compile Include=".\Mono.Unix\UnixSymbolicLinkInfo.cs" />
+   <Compile Include=".\Mono.Unix\UnixUserInfo.cs" />
+   <Compile Include=".\Mono.Unix.Native\CdeclFunction.cs" />
+   <Compile Include=".\Mono.Unix.Native\FileNameMarshaler.cs" />
+   <Compile Include=".\Mono.Unix.Native\MapAttribute.cs" />
+   <Compile Include=".\Mono.Unix.Native\NativeConvert.cs" />
+   <Compile Include=".\Mono.Unix.Native\NativeConvert.generated.cs" />
+   <Compile Include=".\Mono.Unix.Native\RealTimeSignum.cs" />
+   <Compile Include=".\Mono.Unix.Native\Stdlib.cs" />
+   <Compile Include=".\Mono.Unix.Native\Syscall.cs" />
+   <Compile Include=".\Mono.Unix.Native\TypeAttributes.cs" />
+   <Compile Include=".\Mono.Posix\Catalog.cs" />
+   <Compile Include=".\Mono.Posix\PeerCred.cs" />
+   <Compile Include=".\Mono.Posix\Syscall.cs" />
+   <Compile Include=".\Mono.Posix\UnixEndPoint.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixBinaryClientFormatterSink.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixBinaryClientFormatterSinkProvider.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixBinaryCore.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixBinaryServerFormatterSink.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixBinaryServerFormatterSinkProvider.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixChannel.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixClientChannel.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixClientTransportSink.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixClientTransportSinkProvider.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixMessageIO.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixServerChannel.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixServerTransportSink.cs" />
+   <Compile Include=".\Mono.Remoting.Channels.Unix\UnixConnectionPool.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\basic\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\basic\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\basic\System.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

@@ -328,6 +328,45 @@ namespace MonoTests.System.Xml
 			document.Schemas.Add (schema);
 			document.Validate (null);
 		}
+
+		[Test]
+		public void FacetsOnBaseSimpleContentRestriction ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.Schemas.Add (null, "Test/XmlFiles/595947.xsd");
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas.Compile ();
+
+			Validate ("TEST 1.1", 1, "0123456789", "0123456789", settings, false);
+			Validate ("TEST 1.2", 1, "0123456789***", "0123456789", settings, true);
+			Validate ("TEST 1.3", 1, "0123456789", "0123456789***", settings, true);
+
+			Validate ("TEST 2.1", 2, "0123456789", "0123456789", settings, false);
+			Validate ("TEST 2.2", 2, "0123456789***", "0123456789", settings, true);
+			Validate ("TEST 2.3", 2, "0123456789", "0123456789***", settings, true);
+
+			Validate ("TEST 3.1", 3, "0123456789", "0123456789", settings, false);
+			Validate ("TEST 3.2", 3, "0123456789***", "0123456789", settings, true);
+			Validate ("TEST 3.3", 3, "0123456789", "0123456789***", settings, true);
+		}
+
+		void Validate (string testName, int testNumber, string idValue, string elementValue, XmlReaderSettings settings, bool shouldFail)
+		{
+			string content = string.Format ("<MyTest{0} Id=\"{1}\">{2}</MyTest{0}>", testNumber, idValue, elementValue);
+			try
+			{
+				XmlReader reader = XmlReader.Create (new StringReader (content), settings);
+				XmlDocument document = new XmlDocument ();
+				document.Load (reader);
+				document.Validate (null);
+			} catch (Exception e) {
+				if (!shouldFail)
+					throw;
+				return;
+			}
+			if (shouldFail)
+				Assert.Fail (testName + " should fail");
+		}
 	}
 }
 

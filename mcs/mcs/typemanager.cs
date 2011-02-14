@@ -367,7 +367,7 @@ namespace Mono.CSharp
 				return true;
 
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
-			var te = type_ns.LookupType (module.Compiler, name, arity, true, Location.Null);
+			var te = type_ns.LookupType (module, name, arity, true, Location.Null);
 			if (te == null)
 				return false;
 
@@ -391,7 +391,7 @@ namespace Mono.CSharp
 		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity, Location loc)
 		{
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
-			var te = type_ns.LookupType (module.Compiler, name, arity, false, Location.Null);
+			var te = type_ns.LookupType (module, name, arity, false, Location.Null);
 			if (te == null) {
 				module.Compiler.Report.Error (518, loc, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
 				return null;
@@ -876,7 +876,7 @@ namespace Mono.CSharp
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  
 	/// </summary>
-	public static bool VerifyUnmanaged (CompilerContext ctx, TypeSpec t, Location loc)
+	public static bool VerifyUnmanaged (ModuleContainer rc, TypeSpec t, Location loc)
 	{
 		while (t.IsPointer)
 			t = GetElementType (t);
@@ -884,8 +884,8 @@ namespace Mono.CSharp
 		if (IsUnmanagedType (t))
 			return true;
 
-		ctx.Report.SymbolRelatedToPreviousError (t);
-		ctx.Report.Error (208, loc,
+		rc.Compiler.Report.SymbolRelatedToPreviousError (t);
+		rc.Compiler.Report.Error (208, loc,
 			"Cannot take the address of, get the size of, or declare a pointer to a managed type `{0}'",
 			CSharpName (t));
 

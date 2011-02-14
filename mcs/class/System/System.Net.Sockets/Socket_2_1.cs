@@ -201,7 +201,8 @@ namespace System.Net.Sockets {
 
 				WaitCallback cb;
 				for (int i = 0; i < pending.Length; i++) {
-					SocketAsyncResult ares = (SocketAsyncResult) pending [i];
+					Worker worker = (Worker) pending [i];
+					SocketAsyncResult ares = worker.result;
 					cb = new WaitCallback (ares.CompleteDisposed);
 					ThreadPool.QueueUserWorkItem (cb, null);
 				}

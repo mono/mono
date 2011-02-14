@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;NET_3_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.ServiceModel.Routing</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;NET_3_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;NET_3_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="System.ServiceModel.Dispatcher\EndpointNameMessageFilter.cs" />
+   <Compile Include="System.ServiceModel.Dispatcher\StrictAndMessageFilter.cs" />
+   <Compile Include="System.ServiceModel.Routing\IDuplexSessionRouter.cs" />
+   <Compile Include="System.ServiceModel.Routing\IRequestReplyRouter.cs" />
+   <Compile Include="System.ServiceModel.Routing\ISimplexDatagramRouter.cs" />
+   <Compile Include="System.ServiceModel.Routing\ISimplexSessionRouter.cs" />
+   <Compile Include="System.ServiceModel.Routing\RoutingBehavior.cs" />
+   <Compile Include="System.ServiceModel.Routing\RoutingConfiguration.cs" />
+   <Compile Include="System.ServiceModel.Routing\RoutingExtension.cs" />
+   <Compile Include="System.ServiceModel.Routing\RoutingService.cs" />
+   <Compile Include="System.ServiceModel.Routing\SoapProcessingBehavior.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\BackupEndpointCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\BackupEndpointElement.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\BackupListCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterElement.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterElementCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterTableCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterTableEntryElement.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterTableEntryCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\FilterType.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\NamespaceElement.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\NamespaceElementCollection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\RoutingExtensionElement.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\RoutingSection.cs" />
+   <Compile Include="System.ServiceModel.Routing.Configuration\SoapProcessingExtensionElement.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

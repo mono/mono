@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>WindowsBase</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="System.Collections.ObjectModel\ObservableCollection.cs" />
+   <Compile Include="System.Collections.ObjectModel\ReadOnlyObservableCollection.cs" />
+   <Compile Include="System.Collections.Specialized\CollectionChangedEventManager.cs" />
+   <Compile Include="System.Collections.Specialized\INotifyCollectionChanged.cs" />
+   <Compile Include="System.Collections.Specialized\NotifyCollectionChangedAction.cs" />
+   <Compile Include="System.Collections.Specialized\NotifyCollectionChangedEventArgs.cs" />
+   <Compile Include="System.Collections.Specialized\NotifyCollectionChangedEventHandler.cs" />
+   <Compile Include="System.ComponentModel\CurrentChangedEventManager.cs" />
+   <Compile Include="System.ComponentModel\CurrentChangingEventArgs.cs" />
+   <Compile Include="System.ComponentModel\CurrentChangingEventManager.cs" />
+   <Compile Include="System.ComponentModel\CurrentChangingEventHandler.cs" />
+   <Compile Include="System.ComponentModel\DependencyPropertyDescriptor.cs" />
+   <Compile Include="System.ComponentModel\GroupDescription.cs" />
+   <Compile Include="System.ComponentModel\ICollectionView.cs" />
+   <Compile Include="System.ComponentModel\ICollectionViewFactory.cs" />
+   <Compile Include="System.ComponentModel\IEditableCollectionView.cs" />
+   <Compile Include="System.ComponentModel\IItemProperties.cs" />
+   <Compile Include="System.ComponentModel\ItemPropertyInfo.cs" />
+   <Compile Include="System.ComponentModel\NewItemPlaceholderPosition.cs" />
+   <Compile Include="System.ComponentModel\PropertyChangedEventManager.cs" />
+   <Compile Include="System.ComponentModel\PropertyFilterAttribute.cs" />
+   <Compile Include="System.ComponentModel\PropertyFilterOptions.cs" />
+   <Compile Include="System.ComponentModel\SortDescription.cs" />
+   <Compile Include="System.ComponentModel\SortDescriptionCollection.cs" />
+   <Compile Include="System.Diagnostics\PresentationTraceLevel.cs" />
+   <Compile Include="System.Diagnostics\PresentationTraceSources.cs" />
+   <Compile Include="System.IO\FileFormatException.cs" />
+   <Compile Include="System.IO.Packaging\CertificateEmbeddingOption.cs" />
+   <Compile Include="System.IO.Packaging\CompressionOption.cs" />
+   <Compile Include="System.IO.Packaging\Check.cs" />
+   <Compile Include="System.IO.Packaging\EncryptedPackageEnvelope.cs" />
+   <Compile Include="System.IO.Packaging\EncryptionOption.cs" />
+   <Compile Include="System.IO.Packaging\InvalidSignatureEventHandler.cs" />
+   <Compile Include="System.IO.Packaging\PackUriHelper.cs" />
+   <Compile Include="System.IO.Packaging\Package.cs" />
+   <Compile Include="System.IO.Packaging\PackageDigitalSignature.cs" />
+   <Compile Include="System.IO.Packaging\PackageDigitalSignatureManager.cs" />
+   <Compile Include="System.IO.Packaging\PackagePart.cs" />
+   <Compile Include="System.IO.Packaging\PackagePartCollection.cs" />
+   <Compile Include="System.IO.Packaging\PackageProperties.cs" />
+   <Compile Include="System.IO.Packaging\PackagePropertiesPart.cs" />
+   <Compile Include="System.IO.Packaging\PackageRelationship.cs" />
+   <Compile Include="System.IO.Packaging\PackageRelationshipCollection.cs" />
+   <Compile Include="System.IO.Packaging\PackageRelationshipSelector.cs" />
+   <Compile Include="System.IO.Packaging\PackageRelationshipSelectorType.cs" />
+   <Compile Include="System.IO.Packaging\PackUriParser.cs" />
+   <Compile Include="System.IO.Packaging\RightsManagementInformation.cs" />
+   <Compile Include="System.IO.Packaging\SignatureVerificationEventArgs.cs" />
+   <Compile Include="System.IO.Packaging\StorageInfo.cs" />
+   <Compile Include="System.IO.Packaging\StreamInfo.cs" />
+   <Compile Include="System.IO.Packaging\TargetMode.cs" />
+   <Compile Include="System.IO.Packaging\VerifyResult.cs" />
+   <Compile Include="System.IO.Packaging\ZipPackage.cs" />
+   <Compile Include="System.IO.Packaging\ZipPackagePart.cs" />
+   <Compile Include="System.IO.Packaging\ZipPartStream.cs" />
+   <Compile Include="System.Security.Permissions\MediaPermission.cs" />
+   <Compile Include="System.Security.Permissions\MediaPermissionAttribute.cs" />
+   <Compile Include="System.Security.Permissions\MediaPermissionAudio.cs" />
+   <Compile Include="System.Security.Permissions\MediaPermissionImage.cs" />
+   <Compile Include="System.Security.Permissions\MediaPermissionVideo.cs" />
+   <Compile Include="System.Security.Permissions\WebBrowserPermission.cs" />
+   <Compile Include="System.Security.Permissions\WebBrowserPermissionAttribute.cs" />
+   <Compile Include="System.Security.Permissions\WebBrowserPermissionLevel.cs" />
+   <Compile Include="System.Security.RightsManagement\AuthenticationType.cs" />
+   <Compile Include="System.Security.RightsManagement\ContentGrant.cs" />
+   <Compile Include="System.Security.RightsManagement\ContentRight.cs" />
+   <Compile Include="System.Security.RightsManagement\ContentUser.cs" />
+   <Compile Include="System.Security.RightsManagement\CryptoProvider.cs" />
+   <Compile Include="System.Security.RightsManagement\LocalizedNameDescriptionPair.cs" />
+   <Compile Include="System.Security.RightsManagement\PublishLicense.cs" />
+   <Compile Include="System.Security.RightsManagement\RightsManagementException.cs" />
+   <Compile Include="System.Security.RightsManagement\RightsManagementFailureCode.cs" />
+   <Compile Include="System.Security.RightsManagement\SecureEnvironment.cs" />
+   <Compile Include="System.Security.RightsManagement\UnsignedPublishLicense.cs" />
+   <Compile Include="System.Security.RightsManagement\UseLicense.cs" />
+   <Compile Include="System.Security.RightsManagement\UserActivationMode.cs" />
+   <Compile Include="System.Windows\AttachedPropertyBrowsableAttribute.cs" />
+   <Compile Include="System.Windows\AttachedPropertyBrowsableForTypeAttribute.cs" />
+   <Compile Include="System.Windows\AttachedPropertyBrowsableWhenAttributePresentAttribute.cs" />
+   <Compile Include="System.Windows\CoerceValueCallback.cs" />
+   <Compile Include="System.Windows\DependencyObject.cs" />
+   <Compile Include="System.Windows\DependencyObjectType.cs" />
+   <Compile Include="System.Windows\DependencyProperty.cs" />
+   <Compile Include="System.Windows\DependencyPropertyChangedEventArgs.cs" />
+   <Compile Include="System.Windows\DependencyPropertyChangedEventHandler.cs" />
+   <Compile Include="System.Windows\DependencyPropertyKey.cs" />
+   <Compile Include="System.Windows\Expression.cs" />
+   <Compile Include="System.Windows\ExpressionConverter.cs" />
+   <Compile Include="System.Windows\Freezable.cs" />
+   <Compile Include="System.Windows\Int32Rect.cs" />
+   <Compile Include="System.Windows\Int32RectConverter.cs" />
+   <Compile Include="System.Windows\IWeakEventListener.cs" />
+   <Compile Include="System.Windows\LocalValueEntry.cs" />
+   <Compile Include="System.Windows\LocalValueEnumerator.cs" />
+   <Compile Include="System.Windows\Point.cs" />
+   <Compile Include="System.Windows\PointConverter.cs" />
+   <Compile Include="System.Windows\PropertyChangedCallback.cs" />
+   <Compile Include="System.Windows\PropertyMetadata.cs" />
+   <Compile Include="System.Windows\Rect.cs" />
+   <Compile Include="System.Windows\RectConverter.cs" />
+   <Compile Include="System.Windows\Size.cs" />
+   <Compile Include="System.Windows\SizeConverter.cs" />
+   <Compile Include="System.Windows\SplashScreen.cs" />
+   <Compile Include="System.Windows\ValidateValueCallback.cs" />
+   <Compile Include="System.Windows\Vector.cs" />
+   <Compile Include="System.Windows\VectorConverter.cs" />
+   <Compile Include="System.Windows\WeakEventManager.cs" />
+   <Compile Include="System.Windows.Converters\Int32RectValueSerializer.cs" />
+   <Compile Include="System.Windows.Converters\PointValueSerializer.cs" />
+   <Compile Include="System.Windows.Converters\RectValueSerializer.cs" />
+   <Compile Include="System.Windows.Converters\SizeValueSerializer.cs" />
+   <Compile Include="System.Windows.Converters\VectorValueSerializer.cs" />
+   <Compile Include="System.Windows.Data\DataSourceProvider.cs" />
+   <Compile Include="System.Windows.Input\Key.cs" />
+   <Compile Include="System.Windows.Input\KeyConverter.cs" />
+   <Compile Include="System.Windows.Input\KeyValueSerializer.cs" />
+   <Compile Include="System.Windows.Input\KeyInterop.cs" />
+   <Compile Include="System.Windows.Input\FocusNavigationDirection.cs" />
+   <Compile Include="System.Windows.Input\ModifierKeys.cs" />
+   <Compile Include="System.Windows.Input\ModifierKeysConverter.cs" />
+   <Compile Include="System.Windows.Input\ModifierKeysValueSerializer.cs" />
+   <Compile Include="System.Windows.Input\TraversalRequest.cs" />
+   <Compile Include="System.Windows.Interop\ComponentDispatcher.cs" />
+   <Compile Include="System.Windows.Interop\IKeyboardInputSink.cs" />
+   <Compile Include="System.Windows.Interop\IKeyboardInputSite.cs" />
+   <Compile Include="System.Windows.Interop\MSG.cs" />
+   <Compile Include="System.Windows.Interop\ThreadMessageEventHandler.cs" />
+   <Compile Include="System.Windows.Markup\AmbientAttribute.cs" />
+   <Compile Include="System.Windows.Markup\ContentPropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\ContentWrapperAttribute.cs" />
+   <Compile Include="System.Windows.Markup\ConstructorArgumentAttribute.cs" />
+   <Compile Include="System.Windows.Markup\DateTimeValueSerializer.cs" />
+   <Compile Include="System.Windows.Markup\DependsOnAttribute.cs" />
+   <Compile Include="System.Windows.Markup\DesignerSerializationOptions.cs" />
+   <Compile Include="System.Windows.Markup\DesignerSerializationOptionsAttribute.cs" />
+   <Compile Include="System.Windows.Markup\DictionaryKeyPropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\IComponentConnector.cs" />
+   <Compile Include="System.Windows.Markup\INameScope.cs" />
+   <Compile Include="System.Windows.Markup\IReceiveMarkupExtension.cs" />
+   <Compile Include="System.Windows.Markup\IValueSerializerContext.cs" />
+   <Compile Include="System.Windows.Markup\IXamlTypeResolver.cs" />
+   <Compile Include="System.Windows.Markup\InternalTypeHelper.cs" />
+   <Compile Include="System.Windows.Markup\MarkupExtension.cs" />
+   <Compile Include="System.Windows.Markup\MarkupExtensionReturnTypeAttribute.cs" />
+   <Compile Include="System.Windows.Markup\NameScopePropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\RootNamespaceAttribute.cs" />
+   <Compile Include="System.Windows.Markup\RuntimeNamePropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\ServiceProviders.cs" />
+   <Compile Include="System.Windows.Markup\TrimSurroundingWhitespaceAttribute.cs" />
+   <Compile Include="System.Windows.Markup\UidPropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\UsableDuringInitializationAttribute.cs" />
+   <Compile Include="System.Windows.Markup\ValueSerializer.cs" />
+   <Compile Include="System.Windows.Markup\ValueSerializerAttribute.cs" />
+   <Compile Include="System.Windows.Markup\WhitespaceSignificantCollectionAttribute.cs" />
+   <Compile Include="System.Windows.Markup\XmlLangPropertyAttribute.cs" />
+   <Compile Include="System.Windows.Markup\XmlnsCompatibleWithAttribute.cs" />
+   <Compile Include="System.Windows.Markup\XmlnsDefinitionAttribute.cs" />
+   <Compile Include="System.Windows.Markup\XmlnsPrefixAttribute.cs" />
+   <Compile Include="System.Windows.Markup.Primitives\MarkupObject.cs" />
+   <Compile Include="System.Windows.Markup.Primitives\MarkupProperty.cs" />
+   <Compile Include="System.Windows.Media\DisableDpiAwarenessAttribute.cs" />
+   <Compile Include="System.Windows.Media\Matrix.cs" />
+   <Compile Include="System.Windows.Media\MatrixConverter.cs" />
+   <Compile Include="System.Windows.Media.Converters\MatrixValueSerializer.cs" />
+   <Compile Include="System.Windows.Threading\Dispatcher.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherEventArgs.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherFrame.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherHookEventArgs.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherHookEventHandler.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherHooks.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherObject.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherOperation.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherOperationCallback.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherOperationStatus.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherPriority.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherProcessingDisabled.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherSynchronizationContext.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherTimer.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherUnhandledExceptionEventArgs.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherUnhandledExceptionEventHandler.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherUnhandledExceptionFilterEventArgs.cs" />
+   <Compile Include="System.Windows.Threading\DispatcherUnhandledExceptionFilterEventHandler.cs" />
+   <Compile Include="ZipSharp\IOFunctions.cs" />
+   <Compile Include="ZipSharp\ZipArchive.cs" />
+   <Compile Include="ZipSharp\UnzipArchive.cs" />
+   <Compile Include="ZipSharp\NativeUnzip.cs" />
+   <Compile Include="ZipSharp\UnzipFileInfo.cs" />
+   <Compile Include="ZipSharp\UnzipReadStream.cs" />
+   <Compile Include="ZipSharp\ZipHandle.cs" />
+   <Compile Include="ZipSharp\UnzipHandle.cs" />
+   <Compile Include="ZipSharp\ZipStream.cs" />
+   <Compile Include="ZipSharp\ZipFileInfo.cs" />
+   <Compile Include="ZipSharp\NativeZip.cs" />
+   <Compile Include="ZipSharp\ZipTime.cs" />
+   <Compile Include="ZipSharp\ZipWriteStream.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xaml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

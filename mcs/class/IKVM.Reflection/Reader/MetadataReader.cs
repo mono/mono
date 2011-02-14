@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -31,76 +31,105 @@ namespace IKVM.Reflection.Reader
 {
 	sealed class MetadataReader : MetadataRW
 	{
-		private readonly BinaryReader br;
+		private readonly Stream stream;
+		private const int bufferLength = 2048;
+		private readonly byte[] buffer = new byte[bufferLength];
+		private int pos = bufferLength;
 
-		internal MetadataReader(ModuleReader module, BinaryReader br, byte heapSizes)
+		internal MetadataReader(ModuleReader module, Stream stream, byte heapSizes)
 			: base(module, (heapSizes & 0x01) != 0, (heapSizes & 0x02) != 0, (heapSizes & 0x04) != 0)
 		{
-			this.br = br;
+			this.stream = stream;
 		}
 
-		internal short ReadInt16()
+		private void FillBuffer(int needed)
 		{
-			return br.ReadInt16();
+			int count = bufferLength - pos;
+			if (count != 0)
+			{
+				// move remaining bytes to the front of the buffer
+				Buffer.BlockCopy(buffer, pos, buffer, 0, count);
+			}
+			pos = 0;
+
+			while (count < needed)
+			{
+				int len = stream.Read(buffer, count, bufferLength - count);
+				if (len == 0)
+				{
+					throw new BadImageFormatException();
+				}
+				count += len;
+			}
+
+			if (count != bufferLength)
+			{
+				// we didn't fill the buffer completely, so have to restore the invariant
+				// that all data from pos up until the end of the buffer is valid
+				Buffer.BlockCopy(buffer, 0, buffer, bufferLength - count, count);
+				pos = bufferLength - count;
+			}
 		}
 
 		internal ushort ReadUInt16()
 		{
-			return br.ReadUInt16();
+			return (ushort)ReadInt16();
+		}
+
+		internal short ReadInt16()
+		{
+			if (pos > bufferLength - 2)
+			{
+				FillBuffer(2);
+			}
+			byte b1 = buffer[pos++];
+			byte b2 = buffer[pos++];
+			return (short)(b1 | (b2 << 8));
 		}
 
 		internal int ReadInt32()
 		{
-			return br.ReadInt32();
+			if (pos > bufferLength - 4)
+			{
+				FillBuffer(4);
+			}
+			byte b1 = buffer[pos++];
+			byte b2 = buffer[pos++];
+			byte b3 = buffer[pos++];
+			byte b4 = buffer[pos++];
+			return b1 | (b2 << 8) | (b3 << 16) | (b4 << 24);
+		}
+
+		private int ReadIndex(bool big)
+		{
+			if (big)
+			{
+				return ReadInt32();
+			}
+			else
+			{
+				return ReadUInt16();
+			}
 		}
 
 		internal int ReadStringIndex()
 		{
-			if (bigStrings)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigStrings);
 		}
 
 		internal int ReadGuidIndex()
 		{
-			if (bigGuids)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigGuids);
 		}
 
 		internal int ReadBlobIndex()
 		{
-			if (bigBlobs)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigBlobs);
 		}
 
 		internal int ReadResolutionScope()
 		{
-			int codedIndex;
-			if (bigResolutionScope)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigResolutionScope);
 			switch (codedIndex & 3)
 			{
 				case 0:
@@ -118,15 +147,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadTypeDefOrRef()
 		{
-			int codedIndex;
-			if (bigTypeDefOrRef)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigTypeDefOrRef);
 			switch (codedIndex & 3)
 			{
 				case 0:
@@ -142,15 +163,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadMemberRefParent()
 		{
-			int codedIndex;
-			if (bigMemberRefParent)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigMemberRefParent);
 			switch (codedIndex & 7)
 			{
 				case 0:
@@ -170,15 +183,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadHasCustomAttribute()
 		{
-			int codedIndex;
-			if (bigHasCustomAttribute)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigHasCustomAttribute);
 			switch (codedIndex & 31)
 			{
 				case 0:
@@ -228,15 +233,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadCustomAttributeType()
 		{
-			int codedIndex;
-			if (bigCustomAttributeType)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigCustomAttributeType);
 			switch (codedIndex & 7)
 			{
 				case 2:
@@ -250,15 +247,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadMethodDefOrRef()
 		{
-			int codedIndex;
-			if (bigMethodDefOrRef)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigMethodDefOrRef);
 			switch (codedIndex & 1)
 			{
 				case 0:
@@ -272,15 +261,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadHasConstant()
 		{
-			int codedIndex;
-			if (bigHasConstant)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigHasConstant);
 			switch (codedIndex & 3)
 			{
 				case 0:
@@ -296,15 +277,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadHasSemantics()
 		{
-			int codedIndex;
-			if (bigHasSemantics)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigHasSemantics);
 			switch (codedIndex & 1)
 			{
 				case 0:
@@ -318,15 +291,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadHasFieldMarshal()
 		{
-			int codedIndex;
-			if (bigHasFieldMarshal)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigHasFieldMarshal);
 			switch (codedIndex & 1)
 			{
 				case 0:
@@ -340,15 +305,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadHasDeclSecurity()
 		{
-			int codedIndex;
-			if (bigHasDeclSecurity)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigHasDeclSecurity);
 			switch (codedIndex & 3)
 			{
 				case 0:
@@ -364,15 +321,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadTypeOrMethodDef()
 		{
-			int codedIndex;
-			if (bigTypeOrMethodDef)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigTypeOrMethodDef);
 			switch (codedIndex & 1)
 			{
 				case 0:
@@ -386,15 +335,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadMemberForwarded()
 		{
-			int codedIndex;
-			if (bigMemberForwarded)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigMemberForwarded);
 			switch (codedIndex & 1)
 			{
 				case 0:
@@ -408,15 +349,7 @@ namespace IKVM.Reflection.Reader
 
 		internal int ReadImplementation()
 		{
-			int codedIndex;
-			if (bigImplementation)
-			{
-				codedIndex = br.ReadInt32();
-			}
-			else
-			{
-				codedIndex = br.ReadUInt16();
-			}
+			int codedIndex = ReadIndex(bigImplementation);
 			switch (codedIndex & 3)
 			{
 				case 0:
@@ -430,93 +363,44 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
-		private int ReadToken(int table, bool big)
-		{
-			int rid;
-			if (big)
-			{
-				rid = br.ReadInt32();
-			}
-			else
-			{
-				rid = br.ReadUInt16();
-			}
-			return rid | (table << 24);
-		}
-
 		internal int ReadField()
 		{
-			if (bigField)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigField);
 		}
 
 		internal int ReadMethodDef()
 		{
-			if (bigMethodDef)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigMethodDef);
 		}
 
 		internal int ReadParam()
 		{
-			if (bigParam)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigParam);
 		}
 
 		internal int ReadProperty()
 		{
-			if (bigProperty)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigProperty);
 		}
 
 		internal int ReadEvent()
 		{
-			if (bigEvent)
-			{
-				return br.ReadInt32();
-			}
-			else
-			{
-				return br.ReadUInt16();
-			}
+			return ReadIndex(bigEvent);
 		}
 
 		internal int ReadTypeDef()
 		{
-			return ReadToken(TypeDefTable.Index, bigTypeDef);
+			return ReadIndex(bigTypeDef) | (TypeDefTable.Index << 24);
 		}
 
 		internal int ReadGenericParam()
 		{
-			return ReadToken(GenericParamTable.Index, bigGenericParam);
+			return ReadIndex(bigGenericParam) | (GenericParamTable.Index << 24);
 		}
 
 		internal int ReadModuleRef()
 		{
-			return ReadToken(ModuleRefTable.Index, bigModuleRef);
+			return ReadIndex(bigModuleRef) | (ModuleRefTable.Index << 24);
 		}
 	}
 }

@@ -1,12 +1,12 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.CSharp", "Mono.CSharp.csproj", "{817CE046-07E8-409D-84BF-A6EA4F2879DE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2008", "..\..\jay\jay2008.vcproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2010", "..\..\jay\jay2010.vcxproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -360,7 +360,7 @@ namespace MonoTests.System.Resources
 			rw.AddResource ("Name", (object)stream);
 			rw.Close ();
 
-			ResourceReader rr = new ResourceReader ("TestResources.resources");
+			ResourceReader rr = new ResourceReader ("Test/resources/AddResource_Stream.resources");
 			IDictionaryEnumerator enumerator = rr.GetEnumerator ();
 
 			// Get the first element

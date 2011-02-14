@@ -857,11 +857,12 @@ namespace System.Xml.Schema
 			}
 			// complexType/simpleContent/restriction
 			if (scr != null) {
-				// Attributes
-				baseAnyAttribute = baseComplexType != null ? baseComplexType.AttributeWildcard : null;
-
+				// attributes
 				localAnyAttribute = scr.AnyAttribute;
-				if (localAnyAttribute != null && baseAnyAttribute != null)
+				this.attributeWildcard = localAnyAttribute;
+				if (baseComplexType != null)
+					baseAnyAttribute = baseComplexType.AttributeWildcard;
+				if (baseAnyAttribute != null && localAnyAttribute != null)
 					// 1.3 attribute wildcard subset. (=> 3.10.6)
 					localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
 				// 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
@@ -872,6 +873,11 @@ namespace System.Xml.Schema
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, scr.Attributes, 
 					scr.AnyAttribute, ref attributeWildcard, null, false);
+				foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
+					if (attributeUses [attr.QualifiedName] == null)
+						XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
+				}
 			}
 
 			// Common process of AttributeWildcard.

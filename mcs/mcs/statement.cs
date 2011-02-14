@@ -87,13 +87,6 @@ namespace Mono.CSharp {
 			ec.Report.Error (834, loc, "A lambda expression with statement body cannot be converted to an expresion tree");
 			return null;
 		}
-
-		public Statement PerformClone ()
-		{
-			CloneContext clonectx = new CloneContext ();
-
-			return Clone (clonectx);
-		}
 	}
 
 	public sealed class EmptyStatement : Statement
@@ -2111,6 +2104,8 @@ namespace Mono.CSharp {
 #endif
 
 			clonectx.AddBlockMap (this, target);
+			if (original != this)
+				clonectx.AddBlockMap (original, target);
 
 			target.ParametersBlock = (ParametersBlock) (ParametersBlock == this ? target : clonectx.RemapBlockCopy (ParametersBlock));
 			target.Explicit = (ExplicitBlock) (Explicit == this ? target : clonectx.LookupBlock (Explicit));
@@ -2510,6 +2505,12 @@ namespace Mono.CSharp {
 		public Expression GetParameterReference (int index, Location loc)
 		{
 			return new ParameterReference (parameter_info[index], loc);
+		}
+
+		public Statement PerformClone ()
+		{
+			CloneContext clonectx = new CloneContext ();
+			return Clone (clonectx);
 		}
 
 		protected void ProcessParameters ()
@@ -4486,7 +4487,7 @@ namespace Mono.CSharp {
 					//
 					// Provided that array_type is unmanaged,
 					//
-					if (!TypeManager.VerifyUnmanaged (bc.Compiler, array_type, loc))
+					if (!TypeManager.VerifyUnmanaged (bc.Module, array_type, loc))
 						return null;
 
 					//

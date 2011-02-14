@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 		public static bool CheckConflictingInheritedConstraint (TypeParameterSpec spec, TypeSpec bb, IMemberContext context, Location loc)
 		{
 			if (spec.HasSpecialClass && bb.IsStruct) {
-				context.Compiler.Report.Error (455, loc,
+				context.Module.Compiler.Report.Error (455, loc,
 					"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 					spec.Name, "class", bb.GetSignatureForError ());
 
@@ -116,7 +116,7 @@ namespace Mono.CSharp {
 			if (TypeSpec.IsBaseClass (ba, bb, false) || TypeSpec.IsBaseClass (bb, ba, false))
 				return true;
 
-			context.Compiler.Report.Error (455, loc,
+			context.Module.Compiler.Report.Error (455, loc,
 				"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 				spec.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
 			return false;
@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 
 				var gexpr = type_expr as GenericTypeExpr;
 				if (gexpr != null && gexpr.HasDynamicArguments ()) {
-					context.Compiler.Report.Error (1968, constraint.Location,
+					context.Module.Compiler.Report.Error (1968, constraint.Location,
 						"A constraint cannot be the dynamic type `{0}'", gexpr.GetSignatureForError ());
 					continue;
 				}
@@ -177,15 +177,15 @@ namespace Mono.CSharp {
 				var type = type_expr.Type;
 
 				if (!context.CurrentMemberDefinition.IsAccessibleAs (type)) {
-					context.Compiler.Report.SymbolRelatedToPreviousError (type);
-					context.Compiler.Report.Error (703, loc,
+					context.Module.Compiler.Report.SymbolRelatedToPreviousError (type);
+					context.Module.Compiler.Report.Error (703, loc,
 						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
 						type.GetSignatureForError (), context.GetSignatureForError ());
 				}
 
 				if (type.IsInterface) {
 					if (!spec.AddInterface (type)) {
-						context.Compiler.Report.Error (405, constraint.Location,
+						context.Module.Compiler.Report.Error (405, constraint.Location,
 							"Duplicate constraint `{0}' for type parameter `{1}'", type.GetSignatureForError (), tparam.Value);
 					}
 
@@ -199,7 +199,7 @@ namespace Mono.CSharp {
 					if (tparam_types == null) {
 						tparam_types = new List<TypeParameterSpec> (2);
 					} else if (tparam_types.Contains (constraint_tp)) {
-						context.Compiler.Report.Error (405, constraint.Location,
+						context.Module.Compiler.Report.Error (405, constraint.Location,
 							"Duplicate constraint `{0}' for type parameter `{1}'", type.GetSignatureForError (), tparam.Value);
 						continue;
 					}
@@ -214,7 +214,7 @@ namespace Mono.CSharp {
 
 					var tp_def = constraint_tp.MemberDefinition as TypeParameter;
 					if (tp_def != null && !tp_def.ResolveConstraints (context)) {
-						context.Compiler.Report.Error (454, constraint.Location,
+						context.Module.Compiler.Report.Error (454, constraint.Location,
 							"Circular constraint dependency involving `{0}' and `{1}'",
 							constraint_tp.GetSignatureForError (), tp.GetSignatureForError ());
 						continue;
@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 					}
 
 					if (constraint_tp.HasSpecialStruct) {
-						context.Compiler.Report.Error (456, constraint.Location,
+						context.Module.Compiler.Report.Error (456, constraint.Location,
 							"Type parameter `{0}' has the `struct' constraint, so it cannot be used as a constraint for `{1}'",
 							constraint_tp.GetSignatureForError (), tp.GetSignatureForError ());
 						continue;
@@ -256,37 +256,37 @@ namespace Mono.CSharp {
 				}
 
 				if (iface_found || spec.HasTypeConstraint) {
-					context.Compiler.Report.Error (406, constraint.Location,
+					context.Module.Compiler.Report.Error (406, constraint.Location,
 						"The class type constraint `{0}' must be listed before any other constraints. Consider moving type constraint to the beginning of the constraint list",
 						type.GetSignatureForError ());
 				}
 
 				if (spec.HasSpecialStruct || spec.HasSpecialClass) {
-					context.Compiler.Report.Error (450, type_expr.Location,
+					context.Module.Compiler.Report.Error (450, type_expr.Location,
 						"`{0}': cannot specify both a constraint class and the `class' or `struct' constraint",
 						type.GetSignatureForError ());
 				}
 
 				if (type == InternalType.Dynamic) {
-					context.Compiler.Report.Error (1967, constraint.Location, "A constraint cannot be the dynamic type");
+					context.Module.Compiler.Report.Error (1967, constraint.Location, "A constraint cannot be the dynamic type");
 					continue;
 				}
 
 				if (type.IsSealed || !type.IsClass) {
-					context.Compiler.Report.Error (701, loc,
+					context.Module.Compiler.Report.Error (701, loc,
 						"`{0}' is not a valid constraint. A constraint must be an interface, a non-sealed class or a type parameter",
 						TypeManager.CSharpName (type));
 					continue;
 				}
 
 				if (type.IsStatic) {
-					context.Compiler.Report.Error (717, constraint.Location,
+					context.Module.Compiler.Report.Error (717, constraint.Location,
 						"`{0}' is not a valid constraint. Static classes cannot be used as constraints",
 						type.GetSignatureForError ());
 				} else if (type == TypeManager.array_type || type == TypeManager.delegate_type ||
 							type == TypeManager.enum_type || type == TypeManager.value_type ||
 							type == TypeManager.object_type || type == TypeManager.multicast_delegate_type) {
-					context.Compiler.Report.Error (702, constraint.Location,
+					context.Module.Compiler.Report.Error (702, constraint.Location,
 						"A constraint cannot be special class `{0}'", type.GetSignatureForError ());
 					continue;
 				}
@@ -1738,13 +1738,13 @@ namespace Mono.CSharp {
 				atypes[i] = te.Type;
 
 				if (te.Type.IsStatic) {
-					ec.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
+					ec.Module.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					ok = false;
 				}
 
 				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
-					ec.Compiler.Report.Error (306, te.Location,
+					ec.Module.Compiler.Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
 					ok = false;
@@ -1999,7 +1999,7 @@ namespace Mono.CSharp {
 			//
 			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
 				if (mc != null) {
-					mc.Compiler.Report.Error (452, loc,
+					mc.Module.Compiler.Report.Error (452, loc,
 						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2009,7 +2009,7 @@ namespace Mono.CSharp {
 
 			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
 				if (mc != null) {
-					mc.Compiler.Report.Error (453, loc,
+					mc.Module.Compiler.Report.Error (453, loc,
 						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2048,7 +2048,7 @@ namespace Mono.CSharp {
 					if (mc == null)
 						return false;
 
-					mc.Compiler.Report.Error (313, loc,
+					mc.Module.Compiler.Report.Error (313, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 					ok = false;
@@ -2099,8 +2099,8 @@ namespace Mono.CSharp {
 
 			if (!HasDefaultConstructor (atype)) {
 				if (mc != null) {
-					mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
-					mc.Compiler.Report.Error (310, loc,
+					mc.Module.Compiler.Report.SymbolRelatedToPreviousError (atype);
+					mc.Module.Compiler.Report.Error (310, loc,
 						"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2150,17 +2150,17 @@ namespace Mono.CSharp {
 				return true;
 
 			if (mc != null) {
-				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
+				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
-					mc.Compiler.Report.Error (315, loc,
+					mc.Module.Compiler.Report.Error (315, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (atype.IsGenericParameter) {
-					mc.Compiler.Report.Error (314, loc,
+					mc.Module.Compiler.Report.Error (314, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else {
-					mc.Compiler.Report.Error (311, loc,
+					mc.Module.Compiler.Report.Error (311, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
@@ -2508,7 +2508,7 @@ namespace Mono.CSharp {
 					t_i = TypeManager.GetTypeArguments (t_i) [0];
 				}
 
-				var mi = Delegate.GetInvokeMethod (ec.Compiler, t_i);
+				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
 				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
@@ -2740,7 +2740,7 @@ namespace Mono.CSharp {
 				if (t.IsGenericParameter)
 					continue;
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
 					continue;
@@ -2943,7 +2943,7 @@ namespace Mono.CSharp {
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
 				if (TypeManager.IsDelegateType (returnType)) {
-					invoke = Delegate.GetInvokeMethod (ec.Compiler, returnType);
+					invoke = Delegate.GetInvokeMethod (returnType);
 					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
 				}
 					
@@ -3134,7 +3134,7 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
 			if (ame != null) {
 				TypeSpec rt = ame.InferReturnType (ec, this, t);
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 
 				if (rt == null) {
 					AParametersCollection pd = invoke.Parameters;
@@ -3159,7 +3159,7 @@ namespace Mono.CSharp {
 					t = TypeManager.GetTypeArguments (t)[0];
 				}
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 
 				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))

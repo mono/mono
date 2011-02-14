@@ -145,7 +145,7 @@ namespace Mono.CSharp
 				"   -help                Lists all compiler options (short: -?)\n" + 
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, Default, or Future\n" + 
+				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, Default or Future\n" + 
 				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig            Disables implicitly referenced assemblies\n" +
@@ -159,8 +159,8 @@ namespace Mono.CSharp
 				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" + 
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +
-				"   -sdk:VERSION         Specifies SDK version of referenced assemlies\n" +
-				"                        VERSION can be one of: 2 (default), 4\n" +
+				"   -sdk:VERSION         Specifies SDK version of referenced assemblies\n" +
+				"                        VERSION can be one of: 2, 4 (default) or custom value\n" +
 				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
 				"                        KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
@@ -1174,18 +1174,7 @@ namespace Mono.CSharp
 					break;
 				}
 
-				switch (value.ToLowerInvariant ()) {
-					case "2":
-						RootContext.SdkVersion = SdkVersion.v2;
-						break;
-					case "4":
-						RootContext.SdkVersion = SdkVersion.v4;
-						break;
-					default:
-						Report.Error (-26, "Invalid sdk version name");
-						break;
-				}
-
+				RootContext.SdkVersion = value;
 				return true;
 
 				// We just ignore this.

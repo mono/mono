@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Web.Extensions</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="..\System.Web\System.Web.Util\MachineKeySectionUtils.cs" />
+   <Compile Include="..\System.Web\System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
+   <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs" />
+   <Compile Include=".\Assembly\AssemblyInfo.cs" />
+   <Compile Include=".\System.Web.ClientServices\ClientFormsIdentity.cs" />
+   <Compile Include=".\System.Web.ClientServices\ClientRolePrincipal.cs" />
+   <Compile Include=".\System.Web.ClientServices\ConnectivityStatus.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\ClientFormsAuthenticationCredentials.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\ClientFormsAuthenticationMembershipProvider.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\ClientRoleProvider.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\ClientSettingsProvider.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\ClientWindowsAuthenticationMembershipProvider.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\IClientFormsAuthenticationCredentialsProvider.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\SettingsSavedEventArgs.cs" />
+   <Compile Include=".\System.Web.ClientServices.Providers\UserValidatedEventArgs.cs" />
+   <Compile Include=".\System.Web.Configuration\Converter.cs" />
+   <Compile Include=".\System.Web.Configuration\ConvertersCollection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingAuthenticationServiceSection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingJsonSerializationSection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingProfileServiceSection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingRoleServiceSection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingScriptResourceHandlerSection.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingSectionGroup.cs" />
+   <Compile Include=".\System.Web.Configuration\ScriptingWebServicesSectionGroup.cs" />
+   <Compile Include=".\System.Web.Configuration\SystemWebExtensionsSectionGroup.cs" />
+   <Compile Include=".\System.Web.DynamicData\DynamicDataSourceOperation.cs" />
+   <Compile Include=".\System.Web.DynamicData\DynamicValidatorEventArgs.cs" />
+   <Compile Include=".\System.Web.DynamicData\IDynamicDataSource.cs" />
+   <Compile Include=".\System.Web.DynamicData\IDynamicValidatorException.cs" />
+   <Compile Include=".\System.Web.Handlers\ScriptModule.cs" />
+   <Compile Include=".\System.Web.Handlers\ScriptResourceHandler.cs" />
+   <Compile Include=".\System.Web.Query.Dynamic\DynamicClass.cs" />
+   <Compile Include=".\System.Web.Query.Dynamic\ParseException.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JavaScriptConverter.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JavaScriptSerializer.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JavaScriptTypeResolver.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\Json.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JsonDeserializer.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\JsonSerializer.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\ScriptIgnoreAttribute.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\SimpleTypeResolver.cs" />
+   <Compile Include=".\System.Web.Script.Serialization\StringBuilderExtensions.cs" />
+   <Compile Include=".\System.Web.Script.Services\AuthenticationService.cs" />
+   <Compile Include=".\System.Web.Script.Services\ClientProxyHandler.cs" />
+   <Compile Include=".\System.Web.Script.Services\GenerateScriptTypeAttribute.cs" />
+   <Compile Include=".\System.Web.Script.Services\LogicalTypeInfo.cs" />
+   <Compile Include=".\System.Web.Script.Services\ProfileService.cs" />
+   <Compile Include=".\System.Web.Script.Services\ProxyGenerator.cs" />
+   <Compile Include=".\System.Web.Script.Services\ResponseFormat.cs" />
+   <Compile Include=".\System.Web.Script.Services\RestHandler.cs" />
+   <Compile Include=".\System.Web.Script.Services\ScriptHandlerFactory.cs" />
+   <Compile Include=".\System.Web.Script.Services\ScriptMethodAttribute.cs" />
+   <Compile Include=".\System.Web.Script.Services\ScriptServiceAttribute.cs" />
+   <Compile Include=".\System.Web.UI\AsyncPostBackErrorEventArgs.cs" />
+   <Compile Include=".\System.Web.UI\AsyncPostBackTrigger.cs" />
+   <Compile Include=".\System.Web.UI\AuthenticationServiceManager.cs" />
+   <Compile Include=".\System.Web.UI\ExtenderControl.cs" />
+   <Compile Include=".\System.Web.UI\IExtenderControl.cs" />
+   <Compile Include=".\System.Web.UI\IScriptControl.cs" />
+   <Compile Include=".\System.Web.UI\PostBackTrigger.cs" />
+   <Compile Include=".\System.Web.UI\ProfileServiceManager.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredArrayDeclaration.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredDisposeScript.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredExpandoAttribute.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredHiddenField.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredScript.cs" />
+   <Compile Include=".\System.Web.UI\RegisteredScriptType.cs" />
+   <Compile Include=".\System.Web.UI\ScriptBehaviorDescriptor.cs" />
+   <Compile Include=".\System.Web.UI\ScriptComponentDescriptor.cs" />
+   <Compile Include=".\System.Web.UI\ScriptControl.cs" />
+   <Compile Include=".\System.Web.UI\ScriptControlDescriptor.cs" />
+   <Compile Include=".\System.Web.UI\ScriptDescriptor.cs" />
+   <Compile Include=".\System.Web.UI\ScriptManager.cs" />
+   <Compile Include=".\System.Web.UI\ScriptManagerProxy.cs" />
+   <Compile Include=".\System.Web.UI\ScriptMode.cs" />
+   <Compile Include=".\System.Web.UI\ScriptReferenceBase.cs" />
+   <Compile Include=".\System.Web.UI\ScriptReferenceCollection.cs" />
+   <Compile Include=".\System.Web.UI\ScriptReference.cs" />
+   <Compile Include=".\System.Web.UI\ScriptReferenceEventArgs.cs" />
+   <Compile Include=".\System.Web.UI\ScriptResourceAttribute.cs" />
+   <Compile Include=".\System.Web.UI\ServiceReferenceCollection.cs" />
+   <Compile Include=".\System.Web.UI\ServiceReference.cs" />
+   <Compile Include=".\System.Web.UI\TargetControlTypeAttribute.cs" />
+   <Compile Include=".\System.Web.UI\Timer.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanelControlTrigger.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanel.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanelRenderMode.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanelTriggerCollection.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanelTrigger.cs" />
+   <Compile Include=".\System.Web.UI\UpdatePanelUpdateMode.cs" />
+   <Compile Include=".\System.Web.UI\UpdateProgress.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPagerCommandEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPager.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPagerFieldCollection.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPagerFieldCommandEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPagerField.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\DataPagerFieldItem.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\HelperExtensions.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\InsertItemPosition.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\IPageableItemContainer.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceContextEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSource.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceDeleteEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceDisposeEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceInsertEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceSelectEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceStatusEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceUpdateEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceValidationException.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\LinqDataSourceView.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewCancelEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewCancelMode.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewCommandEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewContainer.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListView.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewDataItem.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewDeletedEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewDeleteEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewEditEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewInsertedEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewInsertEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewItem.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewItemEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewItemType.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewPagedDataSource.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewSelectEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewSortEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewTableCell.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewTableRow.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewUpdatedEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\ListViewUpdateEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\NextPreviousPagerField.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\NumericPagerField.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\PageEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\PagePropertiesChangingEventArgs.cs" />
+   <Compile Include=".\System.Web.UI.WebControls\TemplatePagerField.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Linq.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.EnterpriseServices.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.EnterpriseServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.ApplicationServices.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjax.debug.js">
+       <LogicalName>MicrosoftAjax.debug.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjax.js">
+       <LogicalName>MicrosoftAjax.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjaxTimer.debug.js">
+       <LogicalName>MicrosoftAjaxTimer.debug.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjaxTimer.js">
+       <LogicalName>MicrosoftAjaxTimer.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjaxWebForms.debug.js">
+       <LogicalName>MicrosoftAjaxWebForms.debug.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjaxWebForms.js">
+       <LogicalName>MicrosoftAjaxWebForms.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

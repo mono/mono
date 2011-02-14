@@ -257,6 +257,11 @@ namespace IKVM.Reflection
 			get { return callingConvention; }
 		}
 
+		internal int GenericParameterCount
+		{
+			get { return genericParamCount; }
+		}
+
 		private sealed class Binder : IGenericBinder
 		{
 			private readonly Type declaringType;

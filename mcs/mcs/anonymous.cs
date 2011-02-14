@@ -973,7 +973,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 			
-			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegate_type);
+			AParametersCollection d_params = Delegate.GetParameters (delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;
 
@@ -1033,7 +1033,7 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler, delegate_type);
+			var invoke_mb = Delegate.GetInvokeMethod (delegate_type);
 			TypeSpec return_type = invoke_mb.ReturnType;
 
 			//
@@ -1106,7 +1106,7 @@ namespace Mono.CSharp {
 
 		protected virtual ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
-			var delegate_parameters = Delegate.GetParameters (ec.Compiler, delegate_type);
+			var delegate_parameters = Delegate.GetParameters (delegate_type);
 
 			if (Parameters == ParametersCompiled.Undefined) {
 				//
@@ -1613,7 +1613,7 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Ldftn, delegate_method);
 			}
 
-			var constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
+			var constructor_method = Delegate.GetConstructor (type);
 			ec.Emit (OpCodes.Newobj, constructor_method);
 
 			if (am_cache != null) {
@@ -1677,7 +1677,7 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
-		public static AnonymousTypeClass Create (CompilerContext ctx, TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
+		public static AnonymousTypeClass Create (TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
 			string name = ClassNamePrefix + types_counter++;
 
@@ -1716,7 +1716,7 @@ namespace Mono.CSharp {
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				null, all_parameters, null, loc);
-			c.Block = new ToplevelBlock (ctx, c.ParameterInfo, loc);
+			c.Block = new ToplevelBlock (parent.Module.Compiler, c.ParameterInfo, loc);
 
 			// 
 			// Create fields and contructor body with field initialization
@@ -1737,7 +1737,7 @@ namespace Mono.CSharp {
 					new SimpleAssign (new MemberAccess (new This (p.Location), f.Name),
 						c.Block.GetParameterReference (i, p.Location))));
 
-				ToplevelBlock get_block = new ToplevelBlock (ctx, p.Location);
+				ToplevelBlock get_block = new ToplevelBlock (parent.Module.Compiler, p.Location);
 				get_block.AddStatement (new Return (
 					new MemberAccess (new This (p.Location), f.Name), p.Location));
 

@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (nsName, false);
 			ns = ns ?? mc.Module.GlobalRootNamespace.GetNamespace(nsName, false);
 			if (ns != null) {
-				var te = ns.LookupType(mc.Compiler, typeName, 0, true, mc.Location);
+				var te = ns.LookupType(mc, typeName, 0, true, mc.Location);
 				if(te != null)
 					return te.Type;
 			}

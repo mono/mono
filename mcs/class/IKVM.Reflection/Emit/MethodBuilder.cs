@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,8 +37,8 @@ namespace IKVM.Reflection.Emit
 	{
 		private readonly TypeBuilder typeBuilder;
 		private readonly string name;
-		private readonly int nameIndex;
 		private readonly int pseudoToken;
+		private int nameIndex;
 		private int signature;
 		private Type returnType;
 		private Type[] parameterTypes;
@@ -46,7 +46,7 @@ namespace IKVM.Reflection.Emit
 		private MethodAttributes attributes;
 		private MethodImplAttributes implFlags;
 		private ILGenerator ilgen;
-		private int rva;
+		private int rva = -1;
 		private readonly CallingConventions callingConvention;
 		private List<ParameterBuilder> parameters;
 		private GenericTypeParameterBuilder[] gtpb;
@@ -59,9 +59,6 @@ namespace IKVM.Reflection.Emit
 			this.typeBuilder = typeBuilder;
 			this.name = name;
 			this.pseudoToken = typeBuilder.ModuleBuilder.AllocPseudoToken();
-			// because all the MethodBuilders constitute a virtual MethodDef table, we cannot allocate the string during WriteMethodDefRecord,
-			// since by then the metadata has already been frozen
-			this.nameIndex = typeBuilder.ModuleBuilder.Strings.Add(name);
 			this.attributes = attributes;
 			if ((attributes & MethodAttributes.Static) == 0)
 			{
@@ -77,11 +74,32 @@ namespace IKVM.Reflection.Emit
 
 		public ILGenerator GetILGenerator(int streamSize)
 		{
+			if (rva != -1)
+			{
+				throw new InvalidOperationException();
+			}
 			if (ilgen == null)
 			{
 				ilgen = new ILGenerator(typeBuilder.ModuleBuilder, streamSize);
 			}
 			return ilgen;
+		}
+
+		public void __ReleaseILGenerator()
+		{
+			if (ilgen != null)
+			{
+				if (this.ModuleBuilder.symbolWriter != null)
+				{
+					this.ModuleBuilder.symbolWriter.OpenMethod(new SymbolToken(-pseudoToken | 0x06000000));
+				}
+				rva = ilgen.WriteBody(initLocals);
+				if (this.ModuleBuilder.symbolWriter != null)
+				{
+					this.ModuleBuilder.symbolWriter.CloseMethod();
+				}
+				ilgen = null;
+			}
 		}
 
 		public void SetCustomAttribute(ConstructorInfo con, byte[] binaryAttribute)
@@ -125,7 +143,6 @@ namespace IKVM.Reflection.Emit
 			const short BestFitOff = 0x0020;
 			const short CharMapErrorOn = 0x1000;
 			const short CharMapErrorOff = 0x2000;
-			int name = this.nameIndex;
 			short flags = CharSetNotSpec | CallConvWinapi;
 			if (bestFitMapping.HasValue)
 			{
@@ -174,10 +191,6 @@ namespace IKVM.Reflection.Emit
 						break;
 				}
 			}
-			if (entryName != null)
-			{
-				name = this.ModuleBuilder.Strings.Add(entryName);
-			}
 			if (exactSpelling.HasValue && exactSpelling.Value)
 			{
 				flags |= NoMangle;
@@ -193,7 +206,7 @@ namespace IKVM.Reflection.Emit
 			ImplMapTable.Record rec = new ImplMapTable.Record();
 			rec.MappingFlags = flags;
 			rec.MemberForwarded = pseudoToken;
-			rec.ImportName = name;
+			rec.ImportName = this.ModuleBuilder.Strings.Add(entryName ?? name);
 			rec.ImportScope = this.ModuleBuilder.ModuleRef.FindOrAddRecord(dllName == null ? 0 : this.ModuleBuilder.Strings.Add(dllName));
 			this.ModuleBuilder.ImplMap.AddRecord(rec);
 		}
@@ -582,25 +595,10 @@ namespace IKVM.Reflection.Emit
 
 		internal void Bake()
 		{
+			this.nameIndex = this.ModuleBuilder.Strings.Add(name);
 			this.signature = this.ModuleBuilder.GetSignatureBlobIndex(this.MethodSignature);
 
-			if (ilgen != null)
-			{
-				if (this.ModuleBuilder.symbolWriter != null)
-				{
-					this.ModuleBuilder.symbolWriter.OpenMethod(new SymbolToken(-pseudoToken | 0x06000000));
-				}
-				rva = ilgen.WriteBody(initLocals);
-				if (this.ModuleBuilder.symbolWriter != null)
-				{
-					this.ModuleBuilder.symbolWriter.CloseMethod();
-				}
-				ilgen = null;
-			}
-			else
-			{
-				rva = -1;
-			}
+			__ReleaseILGenerator();
 
 			if (declarativeSecurity != null)
 			{

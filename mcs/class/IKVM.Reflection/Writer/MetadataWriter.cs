@@ -75,9 +75,8 @@ namespace IKVM.Reflection.Writer
 
 		internal void Write(short value)
 		{
-			buffer[0] = (byte)value;
-			buffer[1] = (byte)(value >> 8);
-			stream.Write(buffer, 0, 2);
+			stream.WriteByte((byte)value);
+			stream.WriteByte((byte)(value >> 8));
 		}
 
 		internal void Write(uint value)

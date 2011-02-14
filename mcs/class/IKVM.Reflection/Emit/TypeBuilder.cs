@@ -86,11 +86,6 @@ namespace IKVM.Reflection.Emit
 			get { return DeclaringType.Namespace; }
 		}
 
-		public override Type UnderlyingSystemType
-		{
-			get { return this; }
-		}
-
 		public override string Name
 		{
 			get { return name; }
@@ -1049,37 +1044,35 @@ namespace IKVM.Reflection.Emit
 
 	sealed class BakedType : Type
 	{
-		private readonly TypeBuilder typeBuilder;
-
 		internal BakedType(TypeBuilder typeBuilder)
+			: base(typeBuilder)
 		{
-			this.typeBuilder = typeBuilder;
 		}
 
 		public override string AssemblyQualifiedName
 		{
-			get { return typeBuilder.AssemblyQualifiedName; }
+			get { return underlyingType.AssemblyQualifiedName; }
 		}
 
 		public override Type BaseType
 		{
-			get { return typeBuilder.BaseType; }
+			get { return underlyingType.BaseType; }
 		}
 
 		public override string __Name
 		{
-			get { return typeBuilder.__Name; }
+			get { return underlyingType.__Name; }
 		}
 
 		public override string __Namespace
 		{
-			get { return typeBuilder.__Namespace; }
+			get { return underlyingType.__Namespace; }
 		}
 
 		public override string Name
 		{
 			// we need to escape here, because TypeBuilder.Name does not escape
-			get { return TypeNameParser.Escape(typeBuilder.__Name); }
+			get { return TypeNameParser.Escape(underlyingType.__Name); }
 		}
 
 		public override string FullName
@@ -1089,108 +1082,102 @@ namespace IKVM.Reflection.Emit
 
 		public override TypeAttributes Attributes
 		{
-			get { return typeBuilder.Attributes; }
+			get { return underlyingType.Attributes; }
 		}
 
 		public override Type[] __GetDeclaredInterfaces()
 		{
-			return typeBuilder.__GetDeclaredInterfaces();
+			return underlyingType.__GetDeclaredInterfaces();
 		}
 
 		public override MethodBase[] __GetDeclaredMethods()
 		{
-			return typeBuilder.__GetDeclaredMethods();
+			return underlyingType.__GetDeclaredMethods();
 		}
 
 		public override __MethodImplMap __GetMethodImplMap()
 		{
-			return typeBuilder.__GetMethodImplMap();
+			return underlyingType.__GetMethodImplMap();
 		}
 
 		public override FieldInfo[] __GetDeclaredFields()
 		{
-			return typeBuilder.__GetDeclaredFields();
+			return underlyingType.__GetDeclaredFields();
 		}
 
 		public override EventInfo[] __GetDeclaredEvents()
 		{
-			return typeBuilder.__GetDeclaredEvents();
+			return underlyingType.__GetDeclaredEvents();
 		}
 
 		public override PropertyInfo[] __GetDeclaredProperties()
 		{
-			return typeBuilder.__GetDeclaredProperties();
+			return underlyingType.__GetDeclaredProperties();
 		}
 
 		public override Type[] __GetDeclaredTypes()
 		{
-			return typeBuilder.__GetDeclaredTypes();
+			return underlyingType.__GetDeclaredTypes();
 		}
 
 		public override Type DeclaringType
 		{
-			get { return typeBuilder.DeclaringType; }
+			get { return underlyingType.DeclaringType; }
 		}
 
 		public override StructLayoutAttribute StructLayoutAttribute
 		{
-			get { return typeBuilder.StructLayoutAttribute; }
-		}
-
-		public override Type UnderlyingSystemType
-		{
-			// Type.Equals/GetHashCode relies on this
-			get { return typeBuilder; }
+			get { return underlyingType.StructLayoutAttribute; }
 		}
 
 		public override Type[] GetGenericArguments()
 		{
-			return typeBuilder.GetGenericArguments();
+			return underlyingType.GetGenericArguments();
 		}
 
 		internal override Type GetGenericTypeArgument(int index)
 		{
-			return typeBuilder.GetGenericTypeArgument(index);
+			return underlyingType.GetGenericTypeArgument(index);
 		}
 
 		public override Type[][] __GetGenericArgumentsOptionalCustomModifiers()
 		{
-			return typeBuilder.__GetGenericArgumentsOptionalCustomModifiers();
+			return underlyingType.__GetGenericArgumentsOptionalCustomModifiers();
 		}
 
 		public override Type[][] __GetGenericArgumentsRequiredCustomModifiers()
 		{
-			return typeBuilder.__GetGenericArgumentsRequiredCustomModifiers();
+			return underlyingType.__GetGenericArgumentsRequiredCustomModifiers();
 		}
 
 		public override bool IsGenericType
 		{
-			get { return typeBuilder.IsGenericType; }
+			get { return underlyingType.IsGenericType; }
 		}
 
 		public override bool IsGenericTypeDefinition
 		{
-			get { return typeBuilder.IsGenericTypeDefinition; }
+			get { return underlyingType.IsGenericTypeDefinition; }
 		}
 
 		public override bool ContainsGenericParameters
 		{
-			get { return typeBuilder.ContainsGenericParameters; }
+			get { return underlyingType.ContainsGenericParameters; }
 		}
 
 		public override int MetadataToken
 		{
-			get { return typeBuilder.MetadataToken; }
+			get { return underlyingType.MetadataToken; }
 		}
 
 		public override Module Module
 		{
-			get { return typeBuilder.Module; }
+			get { return underlyingType.Module; }
 		}
 
 		internal override int GetModuleBuilderToken()
 		{
-			return typeBuilder.GetModuleBuilderToken();
+			return underlyingType.GetModuleBuilderToken();
 		}
 	}
 }

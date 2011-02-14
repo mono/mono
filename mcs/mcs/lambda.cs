@@ -61,7 +61,7 @@ namespace Mono.CSharp {
 			if (!delegateType.IsDelegate)
 				return null;
 
-			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegateType);
+			AParametersCollection d_params = Delegate.GetParameters (delegateType);
 
 			if (HasExplicitParameters) {
 				if (!VerifyExplicitParameters (ec, delegateType, d_params))

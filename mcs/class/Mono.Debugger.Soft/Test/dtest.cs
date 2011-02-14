@@ -1318,7 +1318,8 @@ public class DebuggerTests
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly, m.Assembly);
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly.ManifestModule, m);
 
-		Assert.AreEqual ("Assembly", frame.Method.DeclaringType.Assembly.GetAssemblyObject ().Type.Name);
+		// This is no longer true on 4.0
+		//Assert.AreEqual ("Assembly", frame.Method.DeclaringType.Assembly.GetAssemblyObject ().Type.Name);
 
 		TypeMirror t = vm.RootDomain.Corlib.GetType ("System.Diagnostics.DebuggerDisplayAttribute");
 		Assert.AreEqual ("DebuggerDisplayAttribute", t.Name);

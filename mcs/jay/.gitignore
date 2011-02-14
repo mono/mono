@@ -1,1 +1,4 @@
 /jay
+*.suo
+*.ilk
+*.vcxproj.*

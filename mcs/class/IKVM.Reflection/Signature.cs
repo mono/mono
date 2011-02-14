@@ -360,9 +360,17 @@ namespace IKVM.Reflection
 			{
 				bb.Write(ELEMENT_TYPE_VOID);
 			}
+			else if (type == u.System_Int32)
+			{
+				bb.Write(ELEMENT_TYPE_I4);
+			}
 			else if (type == u.System_Boolean)
 			{
 				bb.Write(ELEMENT_TYPE_BOOLEAN);
+			}
+			else if (type == u.System_String)
+			{
+				bb.Write(ELEMENT_TYPE_STRING);
 			}
 			else if (type == u.System_Char)
 			{
@@ -384,10 +392,6 @@ namespace IKVM.Reflection
 			{
 				bb.Write(ELEMENT_TYPE_U2);
 			}
-			else if (type == u.System_Int32)
-			{
-				bb.Write(ELEMENT_TYPE_I4);
-			}
 			else if (type == u.System_UInt32)
 			{
 				bb.Write(ELEMENT_TYPE_U4);
@@ -407,10 +411,6 @@ namespace IKVM.Reflection
 			else if (type == u.System_Double)
 			{
 				bb.Write(ELEMENT_TYPE_R8);
-			}
-			else if (type == u.System_String)
-			{
-				bb.Write(ELEMENT_TYPE_STRING);
 			}
 			else if (type == u.System_IntPtr)
 			{

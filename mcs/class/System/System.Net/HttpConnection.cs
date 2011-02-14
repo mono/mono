@@ -58,6 +58,7 @@ namespace System.Net {
 		AsymmetricAlgorithm key;
 		int s_timeout = 90000; // 90k ms for first request, 15k ms from then on
 		Timer timer;
+		IPEndPoint local_ep;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
 		{
@@ -100,7 +101,13 @@ namespace System.Net {
 		}
 
 		public IPEndPoint LocalEndPoint {
-			get { return (IPEndPoint) sock.LocalEndPoint; }
+			get {
+				if (local_ep != null)
+					return local_ep;
+
+				local_ep = (IPEndPoint) sock.LocalEndPoint;
+				return local_ep;
+			}
 		}
 
 		public IPEndPoint RemoteEndPoint {
@@ -297,7 +304,7 @@ namespace System.Net {
 		string ReadLine (byte [] buffer, int offset, int len, ref int used)
 		{
 			if (current_line == null)
-				current_line = new StringBuilder ();
+				current_line = new StringBuilder (128);
 			int last = offset + len;
 			used = 0;
 			for (int i = offset; i < last && line_state != LineState.LF; i++) {

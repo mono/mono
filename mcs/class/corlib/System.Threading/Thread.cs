@@ -189,6 +189,77 @@ namespace System.Threading {
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
 #if !MOONLIGHT
+		static void DeserializePrincipal (Thread th)
+		{
+			MemoryStream ms = new MemoryStream (ByteArrayToCurrentDomain (th.Internal._serialized_principal));
+			int type = ms.ReadByte ();
+			if (type == 0) {
+				BinaryFormatter bf = new BinaryFormatter ();
+				th.principal = (IPrincipal) bf.Deserialize (ms);
+				th.principal_version = th.Internal._serialized_principal_version;
+			} else if (type == 1) {
+				BinaryReader reader = new BinaryReader (ms);
+				string name = reader.ReadString ();
+				string auth_type = reader.ReadString ();
+				int n_roles = reader.ReadInt32 ();
+				string [] roles = null;
+				if (n_roles >= 0) {
+					roles = new string [n_roles];
+					for (int i = 0; i < n_roles; i++)
+						roles [i] = reader.ReadString ();
+				}
+				th.principal = new GenericPrincipal (new GenericIdentity (name, auth_type), roles);
+			} else if (type == 2 || type == 3) {
+				string [] roles = type == 2 ? null : new string [0];
+				th.principal = new GenericPrincipal (new GenericIdentity ("", ""), roles);
+			}
+		}
+
+		static void SerializePrincipal (Thread th, IPrincipal value)
+		{
+			MemoryStream ms = new MemoryStream ();
+			bool done = false;
+			if (value.GetType () == typeof (GenericPrincipal)) {
+				GenericPrincipal gp = (GenericPrincipal) value;
+				if (gp.Identity != null && gp.Identity.GetType () == typeof (GenericIdentity)) {
+					GenericIdentity id = (GenericIdentity) gp.Identity;
+					if (id.Name == "" && id.AuthenticationType == "") {
+						if (gp.Roles == null) {
+							ms.WriteByte (2);
+							done = true;
+						} else if (gp.Roles.Length == 0) {
+							ms.WriteByte (3);
+							done = true;
+						}
+					} else {
+						ms.WriteByte (1);
+						BinaryWriter br = new BinaryWriter (ms);
+						br.Write (gp.Identity.Name);
+						br.Write (gp.Identity.AuthenticationType);
+						string [] roles = gp.Roles;
+						if  (roles == null) {
+							br.Write ((int) (-1));
+						} else {
+							br.Write (roles.Length);
+							foreach (string s in roles) {
+								br.Write (s);
+							}
+						}
+						br.Flush ();
+						done = true;
+					}
+				}
+			}
+			if (!done) {
+				ms.WriteByte (0);
+				BinaryFormatter bf = new BinaryFormatter ();
+				try {
+					bf.Serialize (ms, value);
+				} catch {}
+			}
+			th.Internal._serialized_principal = ByteArrayToRootDomain (ms.ToArray ());
+		}
+
 		public static IPrincipal CurrentPrincipal {
 			get {
 				Thread th = CurrentThread;
@@ -201,13 +272,9 @@ namespace System.Threading {
 
 				if (th.Internal._serialized_principal != null) {
 					try {
-						BinaryFormatter bf = new BinaryFormatter ();
-						MemoryStream ms = new MemoryStream (ByteArrayToCurrentDomain (th.Internal._serialized_principal));
-						th.principal = (IPrincipal) bf.Deserialize (ms);
-						th.principal_version = th.Internal._serialized_principal_version;
+						DeserializePrincipal (th);
 						return th.principal;
-					} catch (Exception) {
-					}
+					} catch {}
 				}
 
 				th.principal = GetDomain ().DefaultPrincipal;
@@ -218,18 +285,19 @@ namespace System.Threading {
 			set {
 				Thread th = CurrentThread;
 
-				++th.Internal._serialized_principal_version;
-				try {
-					BinaryFormatter bf = new BinaryFormatter ();
-					MemoryStream ms = new MemoryStream ();
-					bf.Serialize (ms, value);
-					th.Internal._serialized_principal = ByteArrayToRootDomain (ms.ToArray ());
-				} catch (Exception) {
+				if (value != GetDomain ().DefaultPrincipal) {
+					++th.Internal._serialized_principal_version;
+					try {
+						SerializePrincipal (th, value);
+					} catch (Exception) {
+						th.Internal._serialized_principal = null;
+					}
+					th.principal_version = th.Internal._serialized_principal_version;
+				} else {
 					th.Internal._serialized_principal = null;
 				}
 
 				th.principal = value;
-				th.principal_version = th.Internal._serialized_principal_version;
 			}
 		}
 #endif
@@ -823,8 +891,10 @@ namespace System.Threading {
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 131072)
-				throw new ArgumentException ("< 128 kb", "maxStackSize");
+			if (maxStackSize < 0)
+				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
+			if (maxStackSize < 131072) //make sure stack is at least 128k big
+				maxStackSize = 131072;
 
 			threadstart = start;
 			Internal.stack_size = maxStackSize;
@@ -842,8 +912,10 @@ namespace System.Threading {
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 131072)
-				throw new ArgumentException ("< 128 kb", "maxStackSize");
+			if (maxStackSize < 0)
+				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
+			if (maxStackSize < 131072) //make sure stack is at least 128k big
+				maxStackSize = 131072;
 
 			threadstart = start;
 			Internal.stack_size = maxStackSize;

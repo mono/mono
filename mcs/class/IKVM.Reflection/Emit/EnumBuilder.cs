@@ -33,6 +33,7 @@ namespace IKVM.Reflection.Emit
 		private readonly FieldBuilder fieldBuilder;
 
 		internal EnumBuilder(TypeBuilder typeBuilder, FieldBuilder fieldBuilder)
+			: base(typeBuilder)
 		{
 			this.typeBuilder = typeBuilder;
 			this.fieldBuilder = fieldBuilder;
@@ -56,11 +57,6 @@ namespace IKVM.Reflection.Emit
 		public override string FullName
 		{
 			get { return typeBuilder.FullName; }
-		}
-
-		public override Type UnderlyingSystemType
-		{
-			get { return typeBuilder.UnderlyingSystemType; }
 		}
 
 		public override Type BaseType

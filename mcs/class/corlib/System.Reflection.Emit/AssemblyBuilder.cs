@@ -277,11 +277,6 @@ namespace System.Reflection.Emit
 					"Argument value {0} is not valid.", (int) access),
 					"access");
 
-#if NET_4_0
-			if ((access & AssemblyBuilderAccess.RunAndCollect) == AssemblyBuilderAccess.RunAndCollect)
-				throw new NotSupportedException ("RunAndCollect not yet supported.");
-#endif
-
 			name = n.Name;
 			this.access = (uint)access;
 			flags = (uint) n.Flags;
@@ -884,7 +879,13 @@ namespace System.Reflection.Emit
 
 			}
 		}
-
+/*
+		internal bool IsCollectible {
+			get {
+				return access == (uint)AssemblyBuilderAccess.RunAndCollect;
+			}
+		}
+*/
 		internal string AssemblyDir {
 			get {
 				return dir;

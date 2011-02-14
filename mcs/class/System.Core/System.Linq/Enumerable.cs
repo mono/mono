@@ -2791,14 +2791,34 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			TSource[] array;
 			var collection = source as ICollection<TSource>;
 			if (collection != null) {
-				var array = new TSource [collection.Count];
+				if (collection.Count == 0)
+					return EmptyOf<TSource>.Instance;
+				
+				array = new TSource [collection.Count];
 				collection.CopyTo (array, 0);
 				return array;
 			}
+			
+			int pos = 0;
+			array = EmptyOf<TSource>.Instance;
+			foreach (var element in source) {
+				if (pos == array.Length) {
+					if (pos == 0)
+						array = new TSource [4];
+					else
+						Array.Resize (ref array, pos * 2);
+				}
 
-			return new List<TSource> (source).ToArray ();
+				array[pos++] = element;
+			}
+
+			if (pos != array.Length)
+				Array.Resize (ref array, pos);
+			
+			return array;
 		}
 
 		#endregion

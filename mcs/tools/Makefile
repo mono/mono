@@ -4,7 +4,6 @@ per_profile_dirs = \
 	al		\
 	linker		\
 	tuner		\
-	csharp		\
 	culevel		\
 	genxs		\
 	mkbundle	\
@@ -18,6 +17,7 @@ per_profile_dirs = \
 
 net_4_0_dirs := \
 	$(per_profile_dirs) \
+	csharp		\
 	corcompare	\
 	compiler-tester	\
 	mono-xmltool	\

@@ -35,6 +35,7 @@ using System.Text.RegularExpressions;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 
@@ -303,7 +304,7 @@ namespace Microsoft.Build.Tasks {
 
 		[MonoTODO]
 		protected override string ToolName {
-			get { return Utilities.RunningOnWindows ? "vbnc.bat" : "vbnc"; }
+			get { return MSBuildUtils.RunningOnWindows ? "vbnc.bat" : "vbnc"; }
 		}
 
 		[MonoTODO]
