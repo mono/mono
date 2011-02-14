@@ -210,7 +210,7 @@ namespace Mono.CSharp
 		{
 			this.importer = importer;
 			domain = new Universe ();
-			domain.EnableMissingTypeResolution ();
+			domain.EnableMissingMemberResolution ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 

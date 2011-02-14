@@ -85,7 +85,7 @@ namespace IKVM.Reflection
 		private readonly Dictionary<string, Assembly> assembliesByName = new Dictionary<string, Assembly>();
 		private readonly Dictionary<System.Type, Type> importedTypes = new Dictionary<System.Type, Type>();
 		private Dictionary<ScopedTypeName, Type> missingTypes;
-		private bool resolveMissingTypes;
+		private bool resolveMissingMembers;
 		private Type typeof_System_Object;
 		private Type typeof_System_ValueType;
 		private Type typeof_System_Enum;
@@ -815,9 +815,9 @@ namespace IKVM.Reflection
 			return asm;
 		}
 
-		public void EnableMissingTypeResolution()
+		public void EnableMissingMemberResolution()
 		{
-			resolveMissingTypes = true;
+			resolveMissingMembers = true;
 		}
 
 		private struct ScopedTypeName : IEquatable<ScopedTypeName>
@@ -850,7 +850,7 @@ namespace IKVM.Reflection
 
 		internal Type GetMissingTypeOrThrow(Module module, Type declaringType, TypeName typeName)
 		{
-			if (resolveMissingTypes || module.Assembly.__IsMissing)
+			if (resolveMissingMembers || module.Assembly.__IsMissing)
 			{
 				if (missingTypes == null)
 				{
@@ -871,6 +871,20 @@ namespace IKVM.Reflection
 				fullName = declaringType.FullName + "+" + fullName;
 			}
 			throw new TypeLoadException(String.Format("Type '{0}' not found in assembly '{1}'", fullName, module.Assembly.FullName));
+		}
+
+		internal MethodBase GetMissingMethodOrThrow(Type declaringType, string name, MethodSignature signature)
+		{
+			if (resolveMissingMembers)
+			{
+				MethodInfo method = new MissingMethod(declaringType, name, signature);
+				if (name == ".ctor")
+				{
+					return new ConstructorInfoImpl(method);
+				}
+				return method;
+			}
+			throw new MissingMethodException(declaringType.ToString(), name);
 		}
 	}
 }

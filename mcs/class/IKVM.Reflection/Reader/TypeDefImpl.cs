@@ -216,11 +216,6 @@ namespace IKVM.Reflection.Reader
 			get { return GetFullName(); }
 		}
 
-		public override Type UnderlyingSystemType
-		{
-			get { return this; }
-		}
-
 		public override int MetadataToken
 		{
 			get { return (TypeDefTable.Index << 24) + index + 1; }

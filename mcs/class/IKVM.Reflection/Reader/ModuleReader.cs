@@ -199,7 +199,7 @@ namespace IKVM.Reflection.Reader
 					tables[i].RowCount = 0;
 				}
 			}
-			MetadataReader mr = new MetadataReader(this, br, HeapSizes);
+			MetadataReader mr = new MetadataReader(this, br.BaseStream, HeapSizes);
 			for (int i = 0; i < 64; i++)
 			{
 				if ((Valid & (1UL << i)) != 0)
@@ -814,7 +814,7 @@ namespace IKVM.Reflection.Reader
 					}
 					type = type.BaseType;
 				} while (type != null);
-				throw new MissingMethodException(org.ToString(), name);
+				return universe.GetMissingMethodOrThrow(org, name, methodSig);
 			}
 		}
 

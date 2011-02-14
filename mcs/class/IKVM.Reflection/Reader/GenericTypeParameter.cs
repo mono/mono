@@ -73,11 +73,6 @@ namespace IKVM.Reflection.Reader
 			get { return TypeAttributes.Public; }
 		}
 
-		public sealed override Type UnderlyingSystemType
-		{
-			get { return this; }
-		}
-
 		public sealed override string FullName
 		{
 			get { return null; }

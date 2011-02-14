@@ -44,10 +44,17 @@ namespace IKVM.Reflection
 	public abstract class Type : MemberInfo, IGenericContext, IGenericBinder
 	{
 		public static readonly Type[] EmptyTypes = Empty<Type>.Array;
+		protected readonly Type underlyingType;
 
 		// prevent subclassing by outsiders
 		internal Type()
 		{
+			this.underlyingType = this;
+		}
+
+		internal Type(Type underlyingType)
+		{
+			this.underlyingType = underlyingType;
 		}
 
 		public static Binder DefaultBinder
@@ -180,9 +187,9 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
-		public virtual Type UnderlyingSystemType
+		public Type UnderlyingSystemType
 		{
-			get { return this; }
+			get { return underlyingType; }
 		}
 
 		public override Type DeclaringType
@@ -222,9 +229,23 @@ namespace IKVM.Reflection
 			throw new InvalidOperationException();
 		}
 
+		public static bool operator ==(Type t1, Type t2)
+		{
+			// Casting to object results in smaller code than calling ReferenceEquals and makes
+			// this method more likely to be inlined.
+			// On CLR v2 x86, microbenchmarks show this to be faster than calling ReferenceEquals.
+			return (object)t1 == (object)t2
+				|| ((object)t1 != null && (object)t2 != null && (object)t1.underlyingType == (object)t2.underlyingType);
+		}
+
+		public static bool operator !=(Type t1, Type t2)
+		{
+			return !(t1 == t2);
+		}
+
 		public bool Equals(Type type)
 		{
-			return !ReferenceEquals(type, null) && ReferenceEquals(type.UnderlyingSystemType, this.UnderlyingSystemType);
+			return this == type;
 		}
 
 		public override bool Equals(object obj)
@@ -2327,11 +2348,6 @@ namespace IKVM.Reflection
 		public override string Namespace
 		{
 			get { return type.Namespace; }
-		}
-
-		public override Type UnderlyingSystemType
-		{
-			get { return this; }
 		}
 
 		public override string Name
