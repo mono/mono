@@ -1,4 +1,4 @@
-﻿//
+//
 // OracleParameter.cs
 //
 // Part of the Mono class libraries at
@@ -1305,8 +1305,25 @@ namespace System.Data.OracleClient
 				OciCalls.OCICharSetToUnicode (env, ret, bytes, out rsize);
 
 				// if not empty, parse string as a decimal using session format
-				if (ret.Length > 0)
-					value = Decimal.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+				if (ret.Length > 0) {
+					switch (dbType) {
+					case DbType.UInt16: 
+						value = UInt16.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+						break;
+					case DbType.UInt32: 
+						value = UInt32.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+						break;
+					case DbType.Int16:
+						value = Int16.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+						break;							
+					case DbType.Int32:
+						value = Int32.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+						break;
+					default:
+						value = Decimal.Parse (ret.ToString (), cmd.Connection.SessionFormatProvider);
+						break;
+					}
+				}
 				break;
 			case OciDataType.TimeStamp:
 				value = dateTimeDesc.GetDateTime (connection.Environment, dateTimeDesc.ErrorHandle);
