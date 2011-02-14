@@ -154,11 +154,11 @@ namespace System.Net {
 			if (colon >= 0)
 				host = host.Substring (0, colon);
 
-			string base_uri = String.Format ("http://host");
-			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
-				base_uri = String.Format ("{0}://{1}:{2}",
+			string base_uri = String.Format ("{0}://{1}:{2}",
 								(IsSecureConnection) ? "https" : "http",
 								host, LocalEndPoint.Port);
+
+			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
 				context.ErrorMessage = "Invalid url: " + base_uri + path;
 				return;
 			}
