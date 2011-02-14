@@ -25,7 +25,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0 || MOBILE || BOOTSTRAP_NET_4_0 || INSIDE_SYSTEM_WEB
 
 using System;
 using System.Threading;
