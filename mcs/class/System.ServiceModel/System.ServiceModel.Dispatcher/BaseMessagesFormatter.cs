@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -161,6 +162,7 @@ namespace System.ServiceModel.Dispatcher
 		protected abstract Message PartsToMessage (
 			MessageDescription md, MessageVersion version, string action, object [] parts);
 		protected abstract object [] MessageToParts (MessageDescription md, Message message);
+		protected abstract Dictionary<MessageHeaderDescription,object> MessageToHeaderObjects (MessageDescription md, Message message);
 
 		public Message SerializeRequest (
 			MessageVersion version, object [] parameters)
@@ -171,15 +173,20 @@ namespace System.ServiceModel.Dispatcher
 					md = mdi;
 
 			object [] parts = CreatePartsArray (md.Body);
+			var headers = md.Headers.Count > 0 ? new Dictionary<MessageHeaderDescription,object> () : null;
 			if (md.MessageType != null)
-				MessageObjectToParts (md, parameters [0], parts);
+				MessageObjectToParts (md, parameters [0], headers, parts);
 			else {
 				int index = 0;
 				foreach (ParameterInfo pi in requestMethodParams)
 					if (!pi.IsOut)
 						parts [index++] = parameters [pi.Position];
 			}
-			return PartsToMessage (md, version, md.Action, parts);
+			var msg = PartsToMessage (md, version, md.Action, parts);
+			if (headers != null)
+				foreach (var pair in headers)
+					msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
+			return msg;
 		}
 
 		public Message SerializeReply (
@@ -193,8 +200,9 @@ namespace System.ServiceModel.Dispatcher
 					md = mdi;
 
 			object [] parts = CreatePartsArray (md.Body);
+			var headers = md.Headers.Count > 0 ? new Dictionary<MessageHeaderDescription,object> () : null;
 			if (md.MessageType != null)
-				MessageObjectToParts (md, result, parts);
+				MessageObjectToParts (md, result, headers, parts);
 			else {
 				if (HasReturnValue (md.Body))
 					parts [0] = result;
@@ -205,7 +213,11 @@ namespace System.ServiceModel.Dispatcher
 				parts [index++] = parameters [paramsIdx++];
 			}
 			string action = version.Addressing == AddressingVersion.None ? null : md.Action;
-			return PartsToMessage (md, version, action, parts);
+			var msg = PartsToMessage (md, version, action, parts);
+			if (headers != null)
+				foreach (var pair in headers)
+					msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
+			return msg;
 		}
 
 		public void DeserializeRequest (Message message, object [] parameters)
@@ -215,6 +227,7 @@ namespace System.ServiceModel.Dispatcher
 			if (md == null)
 				throw new ActionNotSupportedException (String.Format ("Action '{0}' is not supported by this operation.", action));
 
+			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
 #if NET_2_1
@@ -222,7 +235,7 @@ namespace System.ServiceModel.Dispatcher
 #else
 				parameters [0] = Activator.CreateInstance (md.MessageType, true);
 #endif
-				PartsToMessageObject (md, parts, parameters [0]);
+				PartsToMessageObject (md, headers, parts, parameters [0]);
 			}
 			else
 			{
@@ -242,6 +255,7 @@ namespace System.ServiceModel.Dispatcher
 				if (!mdi.IsRequest)
 					md = mdi;
 
+			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
 #if NET_2_1
@@ -249,7 +263,7 @@ namespace System.ServiceModel.Dispatcher
 #else
 				object msgObject = Activator.CreateInstance (md.MessageType, true);
 #endif
-				PartsToMessageObject (md, parts, msgObject);
+				PartsToMessageObject (md, headers, parts, msgObject);
 				return msgObject;
 			}
 			else {
@@ -261,8 +275,17 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-		void PartsToMessageObject (MessageDescription md, object [] parts, object msgObject)
+		void PartsToMessageObject (MessageDescription md, Dictionary<MessageHeaderDescription,object> headers, object [] parts, object msgObject)
 		{
+			if (headers != null)
+				foreach (var pair in headers) {
+					var mi = pair.Key.MemberInfo;
+					if (mi is FieldInfo)
+						((FieldInfo) mi).SetValue (msgObject, pair.Value);
+					else
+						((PropertyInfo) mi).SetValue (msgObject, pair.Value, null);
+				}
+
 			foreach (MessagePartDescription partDesc in md.Body.Parts)
 				if (partDesc.MemberInfo is FieldInfo)
 					((FieldInfo) partDesc.MemberInfo).SetValue (msgObject, parts [partDesc.Index]);
@@ -270,8 +293,16 @@ namespace System.ServiceModel.Dispatcher
 					((PropertyInfo) partDesc.MemberInfo).SetValue (msgObject, parts [partDesc.Index], null);
 		}
 
-		void MessageObjectToParts (MessageDescription md, object msgObject, object [] parts)
+		void MessageObjectToParts (MessageDescription md, object msgObject, Dictionary<MessageHeaderDescription,object> headers, object [] parts)
 		{
+			foreach (var headDesc in md.Headers) {
+				var mi = headDesc.MemberInfo;
+				if (mi is FieldInfo)
+					headers [headDesc] = ((FieldInfo) mi).GetValue (msgObject);
+				else
+					headers [headDesc] = ((PropertyInfo) mi).GetValue (msgObject, null);
+			}
+
 			foreach (MessagePartDescription partDesc in md.Body.Parts)
 				if (partDesc.MemberInfo is FieldInfo)
 					parts [partDesc.Index] = ((FieldInfo) partDesc.MemberInfo).GetValue (msgObject);
@@ -338,6 +369,12 @@ namespace System.ServiceModel.Dispatcher
 				
 			XmlDictionaryReader r = message.GetReaderAtBodyContents ();
 			return (object []) GetSerializer (md.Body).Deserialize (r);
+		}
+
+		protected override Dictionary<MessageHeaderDescription,object> MessageToHeaderObjects (MessageDescription md, Message message)
+		{
+			// FIXME: do we need header serializers?
+			return null;
 		}
 
 		XmlSerializer GetSerializer (MessageBodyDescription desc)
@@ -413,6 +450,21 @@ namespace System.ServiceModel.Dispatcher
 			MessageDescription md, MessageVersion version, string action, object [] parts)
 		{
 			return Message.CreateMessage (version, action, new DataContractBodyWriter (md.Body, this, parts));
+		}
+
+		protected override Dictionary<MessageHeaderDescription,object> MessageToHeaderObjects (MessageDescription md, Message message)
+		{
+			if (message.IsEmpty || md.Headers.Count == 0)
+				return null;
+			
+			var dic = new Dictionary<MessageHeaderDescription,object> ();
+			for (int i = 0; i < message.Headers.Count; i++) {
+				var r = message.Headers.GetReaderAtHeader (i);
+				var mh = md.Headers.FirstOrDefault (h => h.Name == r.LocalName && h.Namespace == r.NamespaceURI);
+				if (mh != null)
+					dic [mh] = GetSerializer (mh).ReadObject (r);
+			}
+			return dic;
 		}
 
 		protected override object [] MessageToParts (
