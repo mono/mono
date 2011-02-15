@@ -54,24 +54,30 @@ namespace Microsoft.Build.Tasks {
 			assignedFiles = new ITaskItem [files.Length];
 			for (int i = 0; i < files.Length; i ++) {
 				string file = files [i].ItemSpec;
+				string link = files [i].GetMetadata ("Link");
 				string afile = null;
-				//FIXME: Hack!
-				string normalized_root = Path.GetFullPath (rootFolder);
 
-				// cur dir should already be set to
-				// the project dir
-				file = Path.GetFullPath (file);
+				if (String.IsNullOrEmpty (link)) {
+					//FIXME: Hack!
+					string normalized_root = Path.GetFullPath (rootFolder);
 
-				if (file.StartsWith (normalized_root)) {
-					afile = Path.GetFullPath (file).Substring (
-							normalized_root.Length);
-					// skip over "root/"
-					if (afile [0] == '\\' ||
-						afile [0] == '/')
-						afile = afile.Substring (1);
+					// cur dir should already be set to
+					// the project dir
+					file = Path.GetFullPath (file);
 
+					if (file.StartsWith (normalized_root)) {
+						afile = Path.GetFullPath (file).Substring (
+								normalized_root.Length);
+						// skip over "root/"
+						if (afile [0] == '\\' ||
+							afile [0] == '/')
+							afile = afile.Substring (1);
+
+					} else {
+						afile = Path.GetFileName (file);
+					}
 				} else {
-					afile = Path.GetFileName (file);
+					afile = link;
 				}
 
 				assignedFiles [i] = new TaskItem (files [i]);
