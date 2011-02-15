@@ -277,7 +277,7 @@ namespace System.ServiceModel.Description
 				if (oca.HasProtectionLevel)
 					od.ProtectionLevel = oca.ProtectionLevel;
 
-				if (HasInvalidMessageContract (mi))
+				if (HasInvalidMessageContract (mi, oca.AsyncPattern))
 					throw new InvalidOperationException (String.Format ("The operation {0} contains more than one parameters and one or more of them are marked with MessageContractAttribute, but the attribute must be used within an operation that has only one parameter.", od.Name));
 
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
@@ -334,12 +334,19 @@ namespace System.ServiceModel.Description
 			return od;
 		}
 
-		static bool HasInvalidMessageContract (MethodInfo mi)
+		static bool HasInvalidMessageContract (MethodInfo mi, bool async)
 		{
 			var pars = mi.GetParameters ();
-			if (pars.Length > 1) {
-				if (pars.Any (par => par.ParameterType.GetCustomAttribute<MessageContractAttribute> (true) != null))
-					return true;
+			if (async) {
+				if (pars.Length > 3) {
+					if (pars.Take (pars.Length - 2).Any (par => par.ParameterType.GetCustomAttribute<MessageContractAttribute> (true) != null))
+						return true;
+				}
+			} else {
+				if (pars.Length > 1) {
+					if (pars.Any (par => par.ParameterType.GetCustomAttribute<MessageContractAttribute> (true) != null))
+						return true;
+				}
 			}
 			return false;
 		}
