@@ -102,11 +102,11 @@ namespace System.Net {
 			return Create (new Uri (requestUriString));
 		}
 
-		public static WebRequest Create (Uri uri)
+		public static WebRequest Create (Uri requestUri)
 		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
-			if (!uri.IsAbsoluteUri)
+			if (requestUri == null)
+				throw new ArgumentNullException ("requestUri");
+			if (!requestUri.IsAbsoluteUri)
 				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
 
 			IWebRequestCreate creator = null;
@@ -114,7 +114,7 @@ namespace System.Net {
 			// look for the most promising match in the registred prefixes
 			foreach (KeyValuePair<string, IWebRequestCreate> kvp in registred_prefixes) {
 				string key = kvp.Key;
-				if ((key.Length > n) && uri.AbsoluteUri.StartsWith (key)) {
+				if ((key.Length > n) && requestUri.AbsoluteUri.StartsWith (key)) {
 					creator = kvp.Value;
 					n = key.Length;
 				}
@@ -122,14 +122,14 @@ namespace System.Net {
 
 			// 'http:/[/]' or 'https:/[/]' needs to be registred otherwise it gets ignored
 			// note that this is unlike other protocols (e.g. 'ftp') - see unit tests
-			string scheme = uri.Scheme;
+			string scheme = requestUri.Scheme;
 			if ((scheme == "http" && n <= 5) || (scheme == "https" && n <= 6))
 				creator = default_creator;
 
 			if (creator == null)
 				throw new NotSupportedException (string.Format ("Scheme {0} not supported", scheme));
 
-			return creator.Create (uri);
+			return creator.Create (requestUri);
 		}
 
 		public static HttpWebRequest CreateHttp (string requestUriString)
@@ -137,20 +137,20 @@ namespace System.Net {
 			return CreateHttp (new Uri (requestUriString));
 		}
 
-		public static HttpWebRequest CreateHttp (Uri uri)
+		public static HttpWebRequest CreateHttp (Uri requestUri)
 		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
-			if (!uri.IsAbsoluteUri)
+			if (requestUri == null)
+				throw new ArgumentNullException ("requestUri");
+			if (!requestUri.IsAbsoluteUri)
 				throw new InvalidOperationException ("Uri is not absolute.");
 
 			// we do not check the registred prefixes from CreateHttp and *always* use the client HTTP stack
-			switch (uri.Scheme) {
+			switch (requestUri.Scheme) {
 			case "http":
 			case "https":
-				return (HttpWebRequest) client_creator.Create (uri);
+				return (HttpWebRequest) client_creator.Create (requestUri);
 			default:
-				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+				throw new NotSupportedException (string.Format ("Scheme {0} not supported", requestUri.Scheme));
 			}
 		}
 

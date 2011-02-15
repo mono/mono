@@ -43,9 +43,9 @@ namespace System.Net.Sockets {
 			error_code = WSAGetLastError_internal ();
 		}
 
-		public SocketException (int error)
+		public SocketException (int errorCode)
 		{
-			error_code = error;
+			error_code = errorCode;
 		}
 
 		internal SocketException (int error, string message)

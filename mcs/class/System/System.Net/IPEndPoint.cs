@@ -49,9 +49,9 @@ namespace System.Net {
 			Port = port;
 		}
 		
-		public IPEndPoint (long iaddr, int port)
+		public IPEndPoint (long address, int port)
 		{
-			Address = new IPAddress (iaddr);
+			Address = new IPAddress (address);
 			Port = port;
 		}
 
@@ -199,9 +199,9 @@ namespace System.Net {
 			return(address.ToString() + ":" + port);
 		}
 
-		public override bool Equals (Object obj)
+		public override bool Equals (object comparand)
 		{
-			IPEndPoint p = obj as IPEndPoint;
+			IPEndPoint p = comparand as IPEndPoint;
 			return p != null && 
 			       p.port == port && 
 			       p.address.Equals (address);

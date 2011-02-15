@@ -850,43 +850,43 @@ namespace System.Net.Sockets {
 						      out int error);
 #endif		
 		
-		public Socket(AddressFamily family, SocketType type, ProtocolType proto)
+		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
 #if NET_2_1
-			switch (family) {
+			switch (addressFamily) {
 			case AddressFamily.InterNetwork:	// ok
 			case AddressFamily.InterNetworkV6:	// ok
 			case AddressFamily.Unknown:		// SocketException will be thrown later (with right error #)
 				break;
 			// case AddressFamily.Unspecified:
 			default:
-				throw new ArgumentException ("family");
+				throw new ArgumentException ("addressFamily");
 			}
 
-			switch (type) {
+			switch (socketType) {
 			case SocketType.Stream:			// ok
 			case SocketType.Unknown:		// SocketException will be thrown later (with right error #)
 				break;
 			default:
-				throw new ArgumentException ("type");
+				throw new ArgumentException ("socketType");
 			}
 
-			switch (proto) {
+			switch (protocolType) {
 			case ProtocolType.Tcp:			// ok
 			case ProtocolType.Unspecified:		// ok
 			case ProtocolType.Unknown:		// SocketException will be thrown later (with right error #)
 				break;
 			default:
-				throw new ArgumentException ("proto");
+				throw new ArgumentException ("protocolType");
 			}
 #endif
-			address_family=family;
-			socket_type=type;
-			protocol_type=proto;
+			address_family = addressFamily;
+			socket_type = socketType;
+			protocol_type = protocolType;
 			
 			int error;
 			
-			socket = Socket_internal (family, type, proto, out error);
+			socket = Socket_internal (addressFamily, socketType, protocolType, out error);
 			if (error != 0)
 				throw new SocketException (error);
 #if !NET_2_1
@@ -1101,7 +1101,7 @@ namespace System.Net.Sockets {
 			}
 		}
 
-		protected virtual void Dispose (bool explicitDisposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;
