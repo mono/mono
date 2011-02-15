@@ -166,33 +166,21 @@ namespace IKVM.Reflection.Emit
 				{
 					return 0;
 				}
-				if (x.tryOffset >= y.handlerOffset && x.tryOffset + x.tryLength <= y.handlerOffset + y.handlerLength)
-				{
-					return -1;
-				}
-				if (y.tryOffset >= x.handlerOffset && y.tryOffset + y.tryLength <= x.handlerOffset + x.handlerLength)
-				{
-					return 1;
-				}
-				if (x.tryOffset == y.tryOffset && x.tryLength == y.tryLength)
+				else if (x.tryOffset == y.tryOffset && x.tryLength == y.tryLength)
 				{
 					return x.ordinal < y.ordinal ? -1 : 1;
 				}
-				if (x.tryOffset + x.tryLength <= y.tryOffset)
+				else if (x.tryOffset >= y.tryOffset && x.handlerOffset + x.handlerLength <= y.handlerOffset + y.handlerLength)
 				{
 					return -1;
 				}
-				if (y.tryOffset + y.tryLength <= x.tryOffset)
+				else if (y.tryOffset >= x.tryOffset && y.handlerOffset + y.handlerLength <= x.handlerOffset + x.handlerLength)
 				{
 					return 1;
-				}
-				if (x.tryOffset > y.tryOffset || (x.tryOffset == y.tryOffset && x.tryLength < y.tryLength))
-				{
-					return -1;
 				}
 				else
 				{
-					return 1;
+					return x.ordinal < y.ordinal ? -1 : 1;
 				}
 			}
 		}
