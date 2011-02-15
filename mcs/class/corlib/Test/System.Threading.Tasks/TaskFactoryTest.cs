@@ -80,10 +80,10 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			bool r = false, result = false, finished = false;
 			
-			Task[] tasks = new Task[3];
+			Task[] tasks = new Task[2];
 			tasks[0] = new Task (() => { Thread.Sleep (300); r = true; });
 			tasks[1] = new Task (() => { SpinWait sw; while (!finished) sw.SpinOnce (); });
-			tasks[2] = new Task (() => { SpinWait sw; while (!finished) sw.SpinOnce (); });
+			//tasks[2] = new Task (() => { SpinWait sw; while (!finished) sw.SpinOnce (); });
 			
 			Task cont = factory.ContinueWhenAny (tasks, (t) => { if (r) result = t == tasks[0]; finished = true; });
 			
@@ -95,6 +95,62 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (r, "#1");
 			Assert.IsTrue (result, "#2");
 			Assert.IsTrue (finished, "#3");
+		}
+
+		[Test]
+		public void FromAsyncWithBeginTest ()
+		{
+			bool result = false;
+			bool continuationTest = false;
+
+			Func<int, int> func = (i) => { result = true; return i + 3; };
+			Task<int> task = factory.FromAsync<int, int> (func.BeginInvoke, func.EndInvoke, 1, null);
+			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
+			task.Wait ();
+			cont.Wait ();
+
+			Assert.IsTrue (result);
+			Assert.IsTrue (continuationTest);
+			Assert.AreEqual (4, task.Result);
+		}
+
+		[Test]
+		public void FromAsyncWithDirectAsyncResultTest ()
+		{
+			bool result = false;
+			bool continuationTest = false;
+
+			Func<int, int> func = (i) => { result = true; return i + 3; };
+			Task<int> task = factory.FromAsync<int> (func.BeginInvoke (1, delegate {}, null), func.EndInvoke);
+			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
+			task.Wait ();
+			cont.Wait ();
+
+			Assert.IsTrue (result);
+			Assert.IsTrue (continuationTest);
+			Assert.AreEqual (4, task.Result);
+		}
+
+		[Test]
+		public void FromAsyncWithBeginAndExceptionTest ()
+		{
+			bool result = false;
+			bool continuationTest = false;
+
+			Func<int, int> func = (i) => { result = true; throw new ApplicationException ("bleh"); return i + 3; };
+			Task<int> task = factory.FromAsync<int, int> (func.BeginInvoke, func.EndInvoke, 1, null);
+			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
+			try {
+				task.Wait ();
+			} catch {}
+			cont.Wait ();
+
+			Assert.IsTrue (result);
+			Assert.IsTrue (continuationTest);
+			Assert.IsNotNull (task.Exception);
+			var agg = task.Exception;
+			Assert.AreEqual (1, agg.InnerExceptions.Count);
+			Assert.IsInstanceOfType (typeof (ApplicationException), agg.InnerExceptions[0]);
 		}
 	}
 }
