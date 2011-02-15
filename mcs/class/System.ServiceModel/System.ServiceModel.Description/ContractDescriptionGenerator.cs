@@ -276,6 +276,10 @@ namespace System.ServiceModel.Description
 				od.IsOneWay = oca.IsOneWay;
 				if (oca.HasProtectionLevel)
 					od.ProtectionLevel = oca.ProtectionLevel;
+
+				if (HasInvalidMessageContract (mi))
+					throw new InvalidOperationException (String.Format ("The operation {0} contains more than one parameters and one or more of them are marked with MessageContractAttribute, but the attribute must be used within an operation that has only one parameter.", od.Name));
+
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
 				if (!od.IsOneWay)
 					od.Messages.Add (GetMessage (od, mi, oca, false, isCallback, asyncReturnType));
@@ -328,6 +332,16 @@ namespace System.ServiceModel.Description
 				od.InOrdinalContract = true;
 
 			return od;
+		}
+
+		static bool HasInvalidMessageContract (MethodInfo mi)
+		{
+			var pars = mi.GetParameters ();
+			if (pars.Length > 1) {
+				if (pars.Any (par => par.ParameterType.GetCustomAttribute<MessageContractAttribute> (true) != null))
+					return true;
+			}
+			return false;
 		}
 
 		static MessageDescription GetMessage (
@@ -401,15 +415,22 @@ namespace System.ServiceModel.Description
 				else
 					continue;
 
-				MessageBodyMemberAttribute mba = GetMessageBodyMemberAttribute (bmi);
-				if (mba == null)
-					continue;
-
-				MessagePartDescription pd = CreatePartCore (mba, mname, defaultNamespace);
-				pd.Index = index++;
-				pd.Type = MessageFilterOutByRef (mtype);
-				pd.MemberInfo = bmi;
-				mb.Parts.Add (pd);
+				var mha = bmi.GetCustomAttribute<MessageHeaderAttribute> (false);
+				if (mha != null) {
+					var pd = CreateHeaderDescription (mha, mname, defaultNamespace);
+					pd.Type = MessageFilterOutByRef (mtype);
+					pd.MemberInfo = bmi;
+					md.Headers.Add (pd);
+				}
+				var mba = GetMessageBodyMemberAttribute (bmi);
+				if (mba != null) {
+					var pd = CreatePartCore (mba, mname, defaultNamespace);
+					if (pd.Index <= 0)
+						pd.Index = index++;
+					pd.Type = MessageFilterOutByRef (mtype);
+					pd.MemberInfo = bmi;
+					mb.Parts.Add (pd);
+				}
 			}
 
 			// FIXME: fill headers and properties.
@@ -463,9 +484,18 @@ namespace System.ServiceModel.Description
 			return md;
 		}
 
-		public static void FillMessageBodyDescriptionByContract (
-			Type messageType, MessageBodyDescription mb)
+//		public static void FillMessageBodyDescriptionByContract (
+//			Type messageType, MessageBodyDescription mb)
+//		{
+//		}
+
+		static MessageHeaderDescription CreateHeaderDescription (MessageHeaderAttribute mha, string defaultName, string defaultNamespace)
 		{
+			var ret = CreatePartCore<MessageHeaderDescription> (mha, defaultName, defaultNamespace, delegate (string n, string ns) { return new MessageHeaderDescription (n, ns); });
+			ret.Actor = mha.Actor;
+			ret.MustUnderstand = mha.MustUnderstand;
+			ret.Relay = mha.Relay;
+			return ret;
 		}
 
 		static MessagePartDescription CreatePartCore (
@@ -480,9 +510,14 @@ namespace System.ServiceModel.Description
 			return new MessagePartDescription (pname, defaultNamespace);
 		}
 
-		static MessagePartDescription CreatePartCore (
-			MessageBodyMemberAttribute mba, string defaultName,
-			string defaultNamespace)
+		static MessagePartDescription CreatePartCore (MessageBodyMemberAttribute mba, string defaultName, string defaultNamespace)
+		{
+			var ret = CreatePartCore<MessagePartDescription> (mba, defaultName, defaultNamespace, delegate (string n, string ns) { return new MessagePartDescription (n, ns); });
+			ret.Index = mba.Order;
+			return ret;
+		}
+
+		static T CreatePartCore<T> (MessageContractMemberAttribute mba, string defaultName, string defaultNamespace, Func<string,string,T> creator)
 		{
 			string pname = null, pns = null;
 			if (mba != null) {
@@ -496,7 +531,7 @@ namespace System.ServiceModel.Description
 			if (pns == null)
 				pns = defaultNamespace;
 
-			return new MessagePartDescription (pname, pns);
+			return creator (pname, pns);
 		}
 
 		static Type MessageFilterOutByRef (Type type)
