@@ -4,7 +4,9 @@
 
 base_prog = $(notdir $(PROGRAM))
 prog_dir := $(filter-out . ./, $(dir $(PROGRAM)))
-sourcefile = $(base_prog).sources
+ifndef sourcefile
+sourcefile := $(base_prog).sources
+endif
 base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
 ifndef base_prog_config
 base_prog_config := $(wildcard $(base_prog).config)
