@@ -322,7 +322,7 @@ namespace System.ServiceModel
 			ServiceElement service = GetServiceElement ();
 			
 			if (service != null)
-				ApplyServiceElement (service);
+				LoadConfigurationSection (service);
 #if NET_4_0
 			// simplified configuration
 			AddServiceBehaviors (String.Empty, false);
@@ -508,15 +508,14 @@ namespace System.ServiceModel
 				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
 		}
 
-		[MonoTODO]
 		protected void LoadConfigurationSection (ServiceElement element)
 		{
-			ServicesSection services = ConfigUtil.ServicesSection;
+			ApplyServiceElement (element);
 		}
 
-		[MonoTODO]
 		protected override sealed void OnAbort ()
 		{
+			OnCloseOrAbort (TimeSpan.Zero);
 		}
 
 		Action<TimeSpan> close_delegate;
@@ -539,6 +538,11 @@ namespace System.ServiceModel
 		}
 
 		protected override void OnClose (TimeSpan timeout)
+		{
+			OnCloseOrAbort (timeout);
+		}
+		
+		void OnCloseOrAbort (TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
 			ReleasePerformanceCounters ();
