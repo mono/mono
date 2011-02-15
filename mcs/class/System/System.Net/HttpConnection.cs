@@ -59,6 +59,7 @@ namespace System.Net {
 		int s_timeout = 90000; // 90k ms for first request, 15k ms from then on
 		Timer timer;
 		IPEndPoint local_ep;
+		HttpListener last_listener;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
 		{
@@ -96,6 +97,10 @@ namespace System.Net {
 			context = new HttpListenerContext (this);
 		}
 
+		public bool IsClosed {
+			get { return (sock == null); }
+		}
+
 		public int Reuses {
 			get { return reuses; }
 		}
@@ -125,11 +130,8 @@ namespace System.Net {
 
 		void OnTimeout (object unused)
 		{
+			CloseSocket ();
 			Unbind ();
-			try {
-				sock.Close (); // stream disposed
-			} catch {
-			}
 		}
 
 		public void BeginReadRequest ()
@@ -142,6 +144,7 @@ namespace System.Net {
 				timer.Change (s_timeout, Timeout.Infinite);
 				stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
 			} catch {
+				timer.Change (Timeout.Infinite, Timeout.Infinite);
 				CloseSocket ();
 			}
 		}
@@ -216,7 +219,16 @@ namespace System.Net {
 					SendError ("Invalid host", 400);
 					Close (true);
 				}
-				context_bound = true;
+				if (last_listener == null)
+					epl.RemoveConnection (this);
+				else
+					last_listener.RemoveConnection (this);
+
+				if (context.Listener != null) {
+					context.Listener.AddConnection (this);
+					context_bound = true;
+				}
+				last_listener = context.Listener;
 				return;
 			}
 			stream.BeginRead (buffer, 0, BufferSize, OnRead, cnc);
@@ -378,6 +390,8 @@ namespace System.Net {
 			} finally {
 				sock = null;
 			}
+			if (last_listener == null)
+				epl.RemoveConnection (this);
 		}
 
 		internal void Close (bool force_close)
@@ -430,6 +444,8 @@ namespace System.Net {
 						s.Close ();
 				}
 				Unbind ();
+				if (last_listener == null)
+					epl.RemoveConnection (this);
 				return;
 			}
 		}
