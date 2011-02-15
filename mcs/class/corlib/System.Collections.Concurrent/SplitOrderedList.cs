@@ -50,7 +50,6 @@ namespace System.Collections.Concurrent
 
 				this.Marked = false;
 				this.Next = null;
-				this.SubKey = default (TKey);
 
 				return this;
 			}
