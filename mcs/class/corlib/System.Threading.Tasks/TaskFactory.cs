@@ -430,173 +430,197 @@ namespace System.Threading.Tasks
 		#endregion
 		
 		#region FromAsync
-		// For these methods to work we first have to convert the ThreadPool to use Tasks as it
-		// is doing in 4.0, then all that is remaining is to identify the Task on which is 
-		// run the async operation (probably with some additional state in a IAsyncResult subclass)
-		// and call its ContinueWith method accordingly
-		
-		const string errorMsg = "Mono's thread pool doesn't support this operation yet";
-		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod)
 		{
-			return FromAsync (asyncResult, endMethod, creationOptions);
+			return FromAsync (asyncResult, endMethod, creationOptions, scheduler);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod,
 		                       TaskCreationOptions creationOptions)
 		{
-			return FromAsync (asyncResult, endMethod, creationOptions);
+			return FromAsync (asyncResult, endMethod, creationOptions, scheduler);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod,
 		                       TaskCreationOptions creationOptions, TaskScheduler scheduler)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync<object> (asyncResult, (ar) => { endMethod (ar); return null; }, creationOptions, scheduler);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod)
 		{
-			return FromAsync<TResult> (asyncResult, endMethod, creationOptions);
+			return FromAsync<TResult> (asyncResult, endMethod, creationOptions, scheduler);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
 		                                         TaskCreationOptions creationOptions)
 		{
-			return FromAsync<TResult> (asyncResult, endMethod, creationOptions);
+			return FromAsync<TResult> (asyncResult, endMethod, creationOptions, scheduler);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
 		                                         TaskCreationOptions creationOptions, TaskScheduler scheduler)
 		{
-			throw new NotSupportedException (errorMsg);
+			var completionSource = new TaskCompletionSource<TResult> ();
+
+			ThreadPool.RegisterWaitForSingleObject (asyncResult.AsyncWaitHandle,
+			                                        (o, b) => {
+				                                        try {
+					                                        completionSource.SetResult (endMethod (asyncResult));
+				                                        } catch (Exception e) {
+					                                        completionSource.SetException (e);
+				                                        }
+			                                        },
+			                                        null,
+			                                        -1,
+			                                        true);
+
+			return completionSource.Task;
 		}
 		
-		
-		[MonoLimitation(errorMsg)]
-		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
+		                       Action<IAsyncResult> endMethod,
 		                       object state)
 		{
-			return FromAsync<object> ((a, c, o) => beginMethod (c, o), endMethod, state, creationOptions);
+			return FromAsync (beginMethod, endMethod, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
-		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
+		                       Action<IAsyncResult> endMethod,
 		                       object state, TaskCreationOptions creationOptions)
 		{
-			return FromAsync<object> ((a, c, o) => beginMethod (c, o), endMethod, state, creationOptions);
+			return FromAsync (beginMethod, (ar) => { endMethod (ar); return (object)null; }, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                              TArg1 arg1, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                              TArg1 arg1, object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, (ar) => { endMethod (ar); return (object)null; }, arg1, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
-		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                     Action<IAsyncResult> endMethod,
 		                                     TArg1 arg1, TArg2 arg2, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, arg2, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
-		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                     Action<IAsyncResult> endMethod,
 		                                     TArg1 arg1, TArg2 arg2, object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, (ar) => { endMethod (ar); return (object)null; }, arg1, arg2, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                                            TArg1 arg1, TArg2 arg2, TArg3 arg3, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, arg2, arg3, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                                            TArg1 arg1, TArg2 arg2, TArg3 arg3, object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, (ar) => { endMethod (ar); return (object)null; }, arg1, arg2, arg3, state, creationOptions);
 		}		
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                         Func<IAsyncResult, TResult> endMethod,
 		                                         object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                         Func<IAsyncResult, TResult> endMethod,
-		                       object state, TaskCreationOptions creationOptions)
+		                                         object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			var completionSource = new TaskCompletionSource<TResult> (creationOptions);
+			beginMethod ((ar) => {
+				try {
+					completionSource.SetResult (endMethod (ar));
+				} catch (Exception e) {
+					completionSource.SetException (e);
+				}
+			}, state);
+
+			return completionSource.Task;
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TArg1, TResult> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                Func<IAsyncResult, TResult> endMethod,
 		                                                TArg1 arg1, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TArg1, TResult> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
-		                                             Func<IAsyncResult, TResult> endMethod,
-		                                             TArg1 arg1, object state, TaskCreationOptions creationOptions)
+		                                                Func<IAsyncResult, TResult> endMethod,
+		                                                TArg1 arg1, object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			var completionSource = new TaskCompletionSource<TResult> (creationOptions);
+			beginMethod (arg1, (ar) => {
+				try {
+					completionSource.SetResult (endMethod (ar));
+				} catch (Exception e) {
+					completionSource.SetException (e);
+				}
+			}, state);
+
+			return completionSource.Task;
 		}
-		
-		[MonoLimitation(errorMsg)]
+
 		public Task<TResult> FromAsync<TArg1, TArg2, TResult> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                       Func<IAsyncResult, TResult> endMethod,
 		                                                       TArg1 arg1, TArg2 arg2, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, arg2, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TArg1, TArg2, TResult> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                       Func<IAsyncResult, TResult> endMethod,
 		                                                       TArg1 arg1, TArg2 arg2, object state, TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			var completionSource = new TaskCompletionSource<TResult> (creationOptions);
+			beginMethod (arg1, arg2, (ar) => {
+				try {
+					completionSource.SetResult (endMethod (ar));
+				} catch (Exception e) {
+					completionSource.SetException (e);
+				}
+			}, state);
+
+			return completionSource.Task;
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TArg1, TArg2, TArg3, TResult> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                              Func<IAsyncResult, TResult> endMethod,
 		                                                              TArg1 arg1, TArg2 arg2, TArg3 arg3, object state)
 		{
-			throw new NotSupportedException (errorMsg);
+			return FromAsync (beginMethod, endMethod, arg1, arg2, arg3, state, creationOptions);
 		}
 		
-		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TArg1, TArg2, TArg3, TResult> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                              Func<IAsyncResult, TResult> endMethod,
 		                                                              TArg1 arg1, TArg2 arg2, TArg3 arg3, object state,
 		                                                              TaskCreationOptions creationOptions)
 		{
-			throw new NotSupportedException (errorMsg);
+			var completionSource = new TaskCompletionSource<TResult> (creationOptions);
+			beginMethod (arg1, arg2, arg3, (ar) => {
+				try {
+					completionSource.SetResult (endMethod (ar));
+				} catch (Exception e) {
+					completionSource.SetException (e);
+				}
+			}, state);
+
+			return completionSource.Task;
 		}
 		#endregion
 		
