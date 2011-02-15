@@ -207,8 +207,13 @@ namespace System.ServiceModel.Channels
 			var binding = new NetTcpBinding ();
 			binding.Security.Mode = SecurityMode.None;
 			var channel_factory = new DuplexChannelFactory<IPeerConnectorClient> (conn.Instance, binding);
+			channel_factory.Open ();
 
-			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), conn.Address.EndpointAddress.Uri);
+			var ch = channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), conn.Address.EndpointAddress.Uri);
+			ch.Closed += delegate {
+				channel_factory.Close ();
+				};
+			return ch;
 		}
 
 		public override void Send (Message message, TimeSpan timeout)
