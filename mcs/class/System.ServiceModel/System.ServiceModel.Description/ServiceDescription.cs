@@ -35,16 +35,6 @@ using System.ServiceModel.Channels;
 
 namespace System.ServiceModel.Description
 {
-	internal static class Extensions
-	{
-		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit) where T : Attribute
-		{
-			foreach (T att in mi.GetCustomAttributes (typeof (T), inherit))
-				return att;
-			return null;
-		}
-	}
-	
 	public class ServiceDescription
 	{
 		ServiceEndpointCollection endpoints = new ServiceEndpointCollection ();
