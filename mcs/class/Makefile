@@ -228,11 +228,11 @@ lib/monolite:
 	$(MKINSTALLDIRS) $@
 
 $(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/basic/%
+$(monolite_files): lib/monolite/%: lib/build/%
 	cp -p $< $@
 
-$(basic_files:%=lib/basic/%):
-	cd $(topdir) && $(MAKE) profile-do--basic--all SKIP_AOT=1
+$(basic_files:%=lib/build/%):
+	cd $(topdir) && $(MAKE) profile-do--basic--all
 
 dist-default: $(monolite_files)
 dist-local: dist-default
