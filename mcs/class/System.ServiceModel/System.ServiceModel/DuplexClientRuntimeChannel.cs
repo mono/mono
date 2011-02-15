@@ -157,7 +157,7 @@ namespace System.ServiceModel.MonoInternal
 
 		void ProcessInputCore (IInputChannel input, Message message)
 		{
-				bool isReply = message != null && Contract.Operations.Any (od => !od.InCallbackContract && od.Messages.Any (md => md.Action == message.Headers.Action));
+				bool isReply = message != null && Contract.Operations.Any (od => (od.DeclaringContract.CallbackContractType == od.DeclaringContract.ContractType || !od.InCallbackContract) && od.Messages.Any (md => md.Action == message.Headers.Action));
 				if (isReply) {
 					if (ReplyHandlerQueue.Count > 0) {
 						if (isReply) {
