@@ -36,6 +36,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Cairo;
 
 namespace Cairo {
@@ -868,21 +869,46 @@ namespace Cairo {
 		{
 			NativeMethods.cairo_show_page (state);
 		}
-		
-                public void ShowText (string str)
-                {
-                        NativeMethods.cairo_show_text (state, str);
-                }		
-		
-                public void TextPath (string str)
-                {
-                        NativeMethods.cairo_text_path  (state, str);
-                }		
 
-		public TextExtents TextExtents (string utf8)
+		private static byte[] TerminateUtf8(byte[] utf8)
+		{
+			if (utf8.Length > 0 && utf8[utf8.Length - 1] == 0)
+				return utf8;
+			var termedArray = new byte[utf8.Length + 1];
+			Array.Copy(utf8, termedArray, utf8.Length);
+			termedArray[utf8.Length] = 0;
+			return termedArray;
+		}
+
+		public void ShowText(string str)
+		{
+			ShowText(Encoding.UTF8.GetBytes(str));
+		}
+
+		public void ShowText(byte[] utf8)
+		{
+			NativeMethods.cairo_show_text(state, TerminateUtf8(utf8));
+		}
+
+		public void TextPath(string str)
+		{
+			TextPath(Encoding.UTF8.GetBytes(str));
+		}
+
+		public void TextPath(byte[] utf8)
+		{
+			NativeMethods.cairo_text_path(state, TerminateUtf8(utf8));
+		}
+
+		public TextExtents TextExtents(string s)
+		{
+			return TextExtents(Encoding.UTF8.GetBytes(s));
+		}
+
+		public TextExtents TextExtents(byte[] utf8)
 		{
 			TextExtents extents;
-			NativeMethods.cairo_text_extents (state, utf8, out extents);
+			NativeMethods.cairo_text_extents(state, TerminateUtf8(utf8), out extents);
 			return extents;
 		}
 
