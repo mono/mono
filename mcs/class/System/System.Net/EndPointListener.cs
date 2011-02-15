@@ -48,6 +48,7 @@ namespace System.Net {
 		X509Certificate2 cert;
 		AsymmetricAlgorithm key;
 		bool secure;
+		Hashtable unregistered;
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
@@ -66,6 +67,7 @@ namespace System.Net {
 			sock.AcceptAsync (args);
 			prefixes = new Hashtable ();
 			plock = new ReaderWriterLock ();
+			unregistered = Hashtable.Synchronized (new Hashtable ());
 		}
 
 		void LoadCertificateAndKey (IPAddress addr, int port)
@@ -114,7 +116,13 @@ namespace System.Net {
 				return;
 			}
 			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
+			epl.unregistered [conn] = conn;
 			conn.BeginReadRequest ();
+		}
+
+		internal void RemoveConnection (HttpConnection conn)
+		{
+			unregistered.Remove (conn);
 		}
 
 		public bool BindContext (HttpListenerContext context)
@@ -279,6 +287,11 @@ namespace System.Net {
 		public void Close ()
 		{
 			sock.Close ();
+			lock (unregistered) {
+				foreach (HttpConnection c in unregistered.Keys)
+					c.Close (true);
+				unregistered.Clear ();
+			}
 		}
 
 		public void AddPrefix (ListenerPrefix prefix, HttpListener listener)

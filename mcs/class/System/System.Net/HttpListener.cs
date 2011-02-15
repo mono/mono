@@ -45,11 +45,13 @@ namespace System.Net {
 		Hashtable registry;   // Dictionary<HttpListenerContext,HttpListenerContext> 
 		ArrayList ctx_queue;  // List<HttpListenerContext> ctx_queue;
 		ArrayList wait_queue; // List<ListenerAsyncResult> wait_queue;
+		Hashtable connections;
 
 		public HttpListener ()
 		{
 			prefixes = new HttpListenerPrefixCollection (this);
 			registry = new Hashtable ();
+			connections = Hashtable.Synchronized (new Hashtable ());
 			ctx_queue = new ArrayList ();
 			wait_queue = new ArrayList ();
 			auth_schemes = AuthenticationSchemes.Anonymous;
@@ -135,7 +137,7 @@ namespace System.Net {
 				return;
 			}
 
-			Close (false);
+			Close (true);
 			disposed = true;
 		}
 
@@ -153,12 +155,18 @@ namespace System.Net {
 					foreach (HttpListenerContext context in registry.Keys) {
 						context.Connection.Close ();
 					}
-					registry.Clear (); // Just in case.
+					registry.Clear ();
 				}
 
+				lock (connections) {
+					foreach (HttpConnection cnc in connections.Keys) {
+						cnc.Close (true);
+					}
+					connections.Clear ();
+				}
 				lock (ctx_queue) {
 					foreach (HttpListenerContext context in ctx_queue)
-						context.Connection.Close ();
+						context.Connection.Close (true);
 
 					ctx_queue.Clear ();
 				}
@@ -309,6 +317,16 @@ namespace System.Net {
 				if (idx >= 0)
 					ctx_queue.RemoveAt (idx);
 			}
+		}
+
+		internal void AddConnection (HttpConnection cnc)
+		{
+			connections [cnc] = cnc;
+		}
+
+		internal void RemoveConnection (HttpConnection cnc)
+		{
+			connections.Remove (cnc);
 		}
 	}
 }
