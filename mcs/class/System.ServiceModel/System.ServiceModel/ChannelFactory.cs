@@ -287,8 +287,6 @@ namespace System.ServiceModel
 		{
 			if (Endpoint == null)
 				throw new InvalidOperationException ("A service endpoint must be configured for this channel factory");
-			if (Endpoint.Address == null)
-				throw new InvalidOperationException ("An EndpointAddress must be configured for this channel factory");
 			if (Endpoint.Contract == null)
 				throw new InvalidOperationException ("A service Contract must be configured for this channel factory");
 			if (Endpoint.Binding == null)
