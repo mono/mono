@@ -160,13 +160,13 @@ namespace IKVM.Reflection.Reader
 			{
 				throw new BadImageFormatException("Invalid metadata signature");
 			}
-			ushort MajorVersion = br.ReadUInt16();
-			ushort MinorVersion = br.ReadUInt16();
-			uint Reserved = br.ReadUInt32();
+			/*ushort MajorVersion =*/ br.ReadUInt16();
+			/*ushort MinorVersion =*/ br.ReadUInt16();
+			/*uint Reserved =*/ br.ReadUInt32();
 			uint Length = br.ReadUInt32();
 			byte[] buf = br.ReadBytes((int)Length);
 			Version = Encoding.UTF8.GetString(buf).TrimEnd('\u0000');
-			ushort Flags = br.ReadUInt16();
+			/*ushort Flags =*/ br.ReadUInt16();
 			ushort Streams = br.ReadUInt16();
 			StreamHeader[] streamHeaders = new StreamHeader[Streams];
 			for (int i = 0; i < streamHeaders.Length; i++)
@@ -180,14 +180,14 @@ namespace IKVM.Reflection.Reader
 		private void ReadTables(BinaryReader br)
 		{
 			Table[] tables = GetTables();
-			uint Reserved0 = br.ReadUInt32();
+			/*uint Reserved0 =*/ br.ReadUInt32();
 			byte MajorVersion = br.ReadByte();
 			byte MinorVersion = br.ReadByte();
 			metadataStreamVersion = MajorVersion << 16 | MinorVersion;
 			byte HeapSizes = br.ReadByte();
-			byte Reserved7 = br.ReadByte();
+			/*byte Reserved7 =*/ br.ReadByte();
 			ulong Valid = br.ReadUInt64();
-			ulong Sorted = br.ReadUInt64();
+			/*ulong Sorted =*/ br.ReadUInt64();
 			for (int i = 0; i < 64; i++)
 			{
 				if ((Valid & (1UL << i)) != 0)
