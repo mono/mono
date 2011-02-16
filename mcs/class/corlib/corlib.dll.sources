@@ -1573,4 +1573,5 @@ System.Threading.Tasks/ParallelLoopResult.cs
 System.Threading.Tasks/ParallelLoopState.cs
 System/AggregateException.cs
 System.Threading.Tasks/SimpleConcurrentBag.cs
+System.Threading.Tasks/SynchronizationContextScheduler.cs
 System.Threading.Tasks/UnobservedTaskExceptionEventArgs.cs
