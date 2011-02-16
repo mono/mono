@@ -231,7 +231,7 @@ $(monolite_files): | lib/monolite
 $(monolite_files): lib/monolite/%: lib/basic/%
 	cp -p $< $@
 
-$(basic_files:%=lib/build/%):
+$(basic_files:%=lib/basic/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
 dist-default: $(monolite_files)
