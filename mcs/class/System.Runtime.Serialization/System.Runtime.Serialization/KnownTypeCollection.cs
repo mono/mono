@@ -692,8 +692,12 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetCollectionContractQName (type);
 			CheckStandardQName (qname);
-			if (FindUserMap (qname) != null)
-				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
+			var map = FindUserMap (qname);
+			if (map != null) {
+				var cmap = map as CollectionContractTypeMap;
+				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
+					throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
+			}
 
 			var ret = new CollectionContractTypeMap (type, cdca, element, qname, this);
 			contracts.Add (ret);
@@ -713,7 +717,7 @@ namespace System.Runtime.Serialization
 			var map = FindUserMap (qname);
 			if (map != null) {
 				var cmap = map as CollectionTypeMap;
-				if (cmap == null || cmap.RuntimeType != type)
+				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
 					throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
 				return cmap;
 			}
@@ -744,12 +748,16 @@ namespace System.Runtime.Serialization
 			DictionaryTypeMap ret =
 				new DictionaryTypeMap (type, cdca, this);
 
-			if (FindUserMap (ret.XmlName) != null)
-				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, ret.XmlName));
-			contracts.Add (ret);
-
 			TryRegister (ret.KeyType);
 			TryRegister (ret.ValueType);
+
+			var map = FindUserMap (ret.XmlName);
+			if (map != null) {
+				var dmap = map as DictionaryTypeMap;
+				if (dmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
+					throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, ret.XmlName));
+			}
+			contracts.Add (ret);
 
 			return ret;
 		}
