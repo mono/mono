@@ -66,6 +66,8 @@ namespace System.Threading.Tasks
 		const int sleepThreshold = 100;
 		int deepSleepTime = 8;
 		readonly Action<Task> adder;
+
+		Task currentTask;
 		
 		public ThreadWorker (ThreadWorker[] others,
 		                     int workerPosition,
@@ -146,7 +148,7 @@ namespace System.Threading.Tasks
 		{
 			int sleepTime = 0;
 			autoReference = this;
-			bool wasWokenUp = true;
+			bool wasWokenUp = false;
 			
 			// Main loop
 			while (started == 1) {
@@ -199,10 +201,7 @@ namespace System.Threading.Tasks
 					// Now we process our work
 					while (dDeque.PopBottom (out value) == PopResult.Succeed) {
 						waitHandle.Set ();
-						if (value != null) {
-							value.Execute (adder);
-							result = true;
-						}
+						ExecuteTask (value, ref result);
 					}
 				}
 
@@ -224,16 +223,25 @@ namespace System.Threading.Tasks
 								waitHandle.Set ();
 
 							hasStolenFromOther = true;
-							if (value != null) {
-								value.Execute (adder);
-								result = true;
-							}
+							ExecuteTask (value, ref result);
 						}
 					}
 				}
 			} while (sharedWorkQueue.Count > 0 || hasStolenFromOther);
 			
 			return result;
+		}
+
+		void ExecuteTask (Task value, ref bool result)
+		{
+			if (value == null)
+				return;
+
+			var saveCurrent = currentTask;
+			currentTask = value;
+			value.Execute (adder);
+			result = true;
+			currentTask = saveCurrent;
 		}
 
 #if !INSIDE_MONO_PARALLEL
@@ -359,7 +367,10 @@ namespace System.Threading.Tasks
 
 		static bool CheckTaskFitness (Task self, Task t)
 		{
-			return ((t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id) || t.Parent == self || t == self;
+			return ((t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id)
+				|| t.Parent == self
+				|| t == self
+				|| (autoReference != null && autoReference.currentTask != null && autoReference.currentTask == t.Parent);
 		}
 #else
 		public static ThreadWorker AutoReference {
