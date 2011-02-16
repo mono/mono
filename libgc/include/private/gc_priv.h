@@ -1840,7 +1840,7 @@ void GC_dump GC_PROTO((void));
 #   ifdef __DMC__
       GC_API void GC_noop(...);
 #   else
-      GC_API void GC_noop(void);
+      GC_API void GC_noop(void*,...);
 #   endif
 # endif
 
