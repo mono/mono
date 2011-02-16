@@ -122,6 +122,7 @@ System.ServiceModel.Description/WsdlExporterTest.cs
 System.ServiceModel.Description/WsdlImporterTest.cs
 System.ServiceModel.Dispatcher/ActionFilterTest.cs
 System.ServiceModel.Dispatcher/Bug652331Test.cs
+System.ServiceModel.Dispatcher/Bug652331_2Test.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherTest.cs
 System.ServiceModel.Dispatcher/DispatchOperationTest.cs
 System.ServiceModel.Dispatcher/DispatchRuntimeTest.cs

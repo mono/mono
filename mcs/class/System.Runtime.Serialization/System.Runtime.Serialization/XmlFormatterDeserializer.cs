@@ -110,11 +110,11 @@ namespace System.Runtime.Serialization
 			QName graph_qname = types.GetQName (type);
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (itype != null) {
-				string[] parts = itype.Split (':');
+				string [] parts = itype.Split (':');
 				if (parts.Length > 1)
-					graph_qname = new QName (parts [1], reader.LookupNamespace (reader.NameTable.Get (parts[0])));
+					graph_qname = new QName (parts [1], reader.LookupNamespace (reader.NameTable.Get (parts [0])));
 				else
-					graph_qname = new QName (itype, reader.NamespaceURI);
+					graph_qname = new QName (itype, reader.LookupNamespace (String.Empty));
 			}
 
 			string label = reader.GetAttribute ("Ref", KnownTypeCollection.MSSimpleNamespace);
