@@ -61,13 +61,14 @@ namespace System.Collections.Concurrent
 
 			int i;
 			T result;
+			int tries = 3;
 
 			do {
 				i = removeIndex;
-				if ((addIndex & ~bit) - 1 == i)
+				if ((addIndex & ~bit) - 1 == i || tries == 0)
 					return Creator ();
 				result = buffer[i % capacity];
-			} while (Interlocked.CompareExchange (ref removeIndex, i + 1, i) != i);
+			} while (Interlocked.CompareExchange (ref removeIndex, i + 1, i) != i && --tries > -1);
 
 			return result;
 		}
