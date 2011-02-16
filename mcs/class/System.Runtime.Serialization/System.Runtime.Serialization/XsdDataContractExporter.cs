@@ -217,9 +217,10 @@ namespace System.Runtime.Serialization
 			return true;
 		}
 		
-		internal void ExportDictionaryContractType (CollectionDataContractAttribute attr, Type type, Type dicType)
+		internal void ExportDictionaryContractType (CollectionDataContractAttribute attr, SerializationMap map, Type dicType)
 		{
-			var qname = GetSchemaTypeName (type);
+			var type = map.RuntimeType;
+			var qname = map.XmlName;
 
 			var typeArgs = dicType.IsGenericType ? dicType.GetGenericArguments () : null;
 			var keyType = typeArgs != null ? typeArgs [0] : typeof (object);
@@ -255,9 +256,10 @@ namespace System.Runtime.Serialization
 			dictSeq.Items.Add (new XmlSchemaElement () { Name = valueName, SchemaTypeName = GetSchemaTypeName (valueType), IsNillable = true });
 		}
 		
-		internal void ExportListContractType (CollectionDataContractAttribute attr, Type type)
+		internal void ExportListContractType (CollectionDataContractAttribute attr, CollectionTypeMap map)
 		{
-			var qname = attr != null && attr.Name != null ? new QName (attr.Name, attr.Namespace ?? GetXmlNamespace (type)) : GetSchemaTypeName (type);
+			Type type = map.RuntimeType;
+			var qname = map.XmlName;
 
 			var typeArgs = type.IsGenericType ? type.GetGenericArguments () : null;
 			if (typeArgs != null && typeArgs.Length != 1)
@@ -289,9 +291,10 @@ namespace System.Runtime.Serialization
 			*/
 		}
 
-		internal void ExportEnumContractType (DataContractAttribute attr, Type type)
+		internal void ExportEnumContractType (DataContractAttribute attr, SerializationMap map)
 		{
-			var qname = attr != null && attr.Name != null ? new QName (attr.Name, attr.Namespace ?? GetXmlNamespace (type)) : GetSchemaTypeName (type);
+			Type type = map.RuntimeType;
+			var qname = map.XmlName;
 			var st = CreateSimpleType (qname, type);
 			if (type.GetCustomAttribute<FlagsAttribute> (false) != null) {
 				var list = new XmlSchemaSimpleTypeList ();
@@ -317,9 +320,10 @@ namespace System.Runtime.Serialization
 			return r;
 		}
 
-		internal void ExportStandardComplexType (DataContractAttribute attr, Type type, List<DataMemberInfo> members)
+		internal void ExportStandardComplexType (DataContractAttribute attr, SerializationMap map, List<DataMemberInfo> members)
 		{
-			var qname = attr != null && attr.Name != null ? new QName (attr.Name, attr.Namespace ?? GetXmlNamespace (type)) : GetSchemaTypeName (type);
+			Type type = map.RuntimeType;
+			var qname = map.XmlName;
 			var ct = CreateComplexType (qname, type);
 
 			if (type.BaseType != null && type.BaseType != typeof (object)) {
@@ -423,7 +427,11 @@ namespace System.Runtime.Serialization
 		string GetXmlTypeName (Type type)
 		{
 			var qname = KnownTypeCollection.GetPrimitiveTypeName (type);
-			return qname.Equals (QName.Empty) ? type.Name : qname.Name;
+			if (!qname.Equals (QName.Empty))
+				return qname.Name;
+			var ret = type.Name;
+			int idx = ret.IndexOf ('`');
+			return idx < 0 ? ret : ret.Substring (0, idx);
 		}
 
 		string GetXmlNamespace (Type type)
@@ -468,6 +476,13 @@ namespace System.Runtime.Serialization
 			info = imported_types.FirstOrDefault (i => i.ClrType == type);
 			if (info != null && info.SchemaTypeName != null)
 				return info.SchemaTypeName;
+
+			known_types.Add (type);
+			var map = known_types.FindUserMap (type);
+			if (map != null)
+				return map.XmlName;
+
+			// The following lines would be mostly redundant (legacy code now that it widely uses SerializationMap.XmlName for consistency...)
 
 			var cdca = type.GetCustomAttribute<CollectionDataContractAttribute> (false);
 			if (cdca != null)
