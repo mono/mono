@@ -47,16 +47,6 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace System.Runtime.Serialization
 {
-	static class TypeExtension
-	{
-		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit)
-		{
-			foreach (T att in mi.GetCustomAttributes (typeof (T), inherit))
-				return att;
-			return default (T);
-		}
-	}
-
 	public class XsdDataContractExporter
 	{
 		class TypeImportInfo

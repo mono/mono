@@ -76,7 +76,7 @@ namespace System.Runtime.Serialization
 */
 	internal static class TypeExtensions
 	{
-		public static T GetCustomAttribute<T> (this Type type, bool inherit)
+		public static T GetCustomAttribute<T> (this MemberInfo type, bool inherit)
 		{
 			var arr = type.GetCustomAttributes (typeof (T), inherit);
 			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
@@ -386,8 +386,12 @@ namespace System.Runtime.Serialization
 
 		protected override void InsertItem (int index, Type type)
 		{
-			if (!Contains (type) && TryRegister (type))
+			if (ShouldNotRegister (type))
+				return;
+			if (!Contains (type)) {
+				TryRegister (type);
 				base.InsertItem (index, type);
+			}
 		}
 
 		// FIXME: it could remove other types' dependencies.
@@ -407,6 +411,13 @@ namespace System.Runtime.Serialization
 
 		protected override void SetItem (int index, Type type)
 		{
+			if (ShouldNotRegister (type))
+				return;
+
+			// Since this collection is not assured to be ordered, it ignores the whole Set operation if the type already exists.
+			if (Contains (type))
+				return;
+
 			if (index != Count)
 				RemoveItem (index);
 			if (TryRegister (type))
@@ -605,10 +616,15 @@ namespace System.Runtime.Serialization
 			return false;
 		}
 
+		bool ShouldNotRegister (Type type)
+		{
+			return IsPrimitiveNotEnum (type);
+		}
+
 		internal bool TryRegister (Type type)
 		{
 			// exclude predefined maps
-			if (IsPrimitiveNotEnum (type))
+			if (ShouldNotRegister (type))
 				return false;
 
 			if (FindUserMap (type) != null)
