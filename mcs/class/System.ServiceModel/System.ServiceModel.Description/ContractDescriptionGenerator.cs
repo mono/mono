@@ -283,10 +283,11 @@ namespace System.ServiceModel.Description
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
 				if (!od.IsOneWay)
 					od.Messages.Add (GetMessage (od, mi, oca, false, isCallback, asyncReturnType));
-				foreach (ServiceKnownTypeAttribute a in cd.ContractType.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
-					foreach (Type t in a.GetTypes ())
-						od.KnownTypes.Add (t);
-				foreach (ServiceKnownTypeAttribute a in serviceMethod.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
+				var knownTypeAtts =
+						    cd.ContractType.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false).Union (
+						    mi.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false)).Union (
+						    serviceMethod.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false));
+				foreach (ServiceKnownTypeAttribute a in knownTypeAtts)
 					foreach (Type t in a.GetTypes ())
 						od.KnownTypes.Add (t);
 				foreach (FaultContractAttribute a in mi.GetCustomAttributes (typeof (FaultContractAttribute), false)) {
