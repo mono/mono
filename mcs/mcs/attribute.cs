@@ -2017,7 +2017,7 @@ namespace Mono.CSharp {
 			if (Resolve (loc) == null)
 				return false;
 
-			tctor = TypeManager.GetPredefinedConstructor (type, Location.Null, ArrayContainer.MakeType (TypeManager.bool_type));
+			tctor = TypeManager.GetPredefinedConstructor (type, Location.Null, ArrayContainer.MakeType (module, TypeManager.bool_type));
 			return tctor != null;
 		}
 	}

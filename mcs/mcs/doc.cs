@@ -264,7 +264,7 @@ namespace Mono.CSharp {
 			}
 			TypeSpec t = FindDocumentedTypeNonArray (mc, identifier, ds, cref, r);
 			if (t != null && is_array)
-				t = ArrayContainer.MakeType (t);
+				t = ArrayContainer.MakeType (mc.Module, t);
 			return t;
 		}
 

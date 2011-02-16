@@ -253,7 +253,7 @@ namespace Mono.CSharp {
 						// Switch to inflated version as it's used by all expressions
 						//
 						var targs = CurrentTypeParameters == null ? TypeSpec.EmptyTypes : CurrentTypeParameters.Select (l => l.Type).ToArray ();
-						current_type = spec.MakeGenericType (targs);
+						current_type = spec.MakeGenericType (this, targs);
 					} else {
 						current_type = spec;
 					}

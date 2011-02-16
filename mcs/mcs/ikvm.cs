@@ -47,7 +47,8 @@ namespace Mono.CSharp
 
 	sealed class StaticImporter : MetadataImporter
 	{
-		public StaticImporter ()
+		public StaticImporter (ModuleContainer module)
+			: base (module)
 		{
 		}
 

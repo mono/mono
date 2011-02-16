@@ -610,14 +610,13 @@ namespace Mono.CSharp {
 						return ParseResult.Error;
 					}
 					packages = String.Join (" ", value.Split (new Char[] { ';', ',', '\n', '\r' }));
-					string pkgout = Driver.GetPackageFlags (packages, true, report);
+					string pkgout = Driver.GetPackageFlags (packages, report);
 
-					if (pkgout != null) {
-						string[] xargs = pkgout.Trim (new Char[] { ' ', '\n', '\r', '\t' }).
-							Split (new Char[] { ' ', '\t' });
-						args = AddArgs (args, xargs);
-					}
+					if (pkgout == null)
+						return ParseResult.Error;
 
+					string[] xargs = pkgout.Trim (new Char[] { ' ', '\n', '\r', '\t' }).Split (new Char[] { ' ', '\t' });
+					args = AddArgs (args, xargs);
 					return ParseResult.Success;
 				}
 

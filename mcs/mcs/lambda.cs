@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 				// When type inference context exists try to apply inferred type arguments
 				//
 				if (tic != null) {
-					d_param = tic.InflateGenericArgument (d_param);
+					d_param = tic.InflateGenericArgument (ec, d_param);
 				}
 
 				ptypes [i] = d_param;

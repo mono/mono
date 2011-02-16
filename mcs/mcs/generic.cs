@@ -1105,17 +1105,19 @@ namespace Mono.CSharp {
 		readonly TypeSpec type;
 		readonly TypeParameterSpec[] tparams;
 		readonly TypeSpec[] targs;
+		readonly IModuleContext context;
 
 		public TypeParameterInflator (TypeParameterInflator nested, TypeSpec type)
-			: this (type, nested.tparams, nested.targs)
+			: this (nested.context, type, nested.tparams, nested.targs)
 		{
 		}
 
-		public TypeParameterInflator (TypeSpec type, TypeParameterSpec[] tparams, TypeSpec[] targs)
+		public TypeParameterInflator (IModuleContext context, TypeSpec type, TypeParameterSpec[] tparams, TypeSpec[] targs)
 		{
 			if (tparams.Length != targs.Length)
 				throw new ArgumentException ("Invalid arguments");
 
+			this.context = context;
 			this.tparams = tparams;
 			this.targs = targs;
 			this.type = type;
@@ -1123,8 +1125,16 @@ namespace Mono.CSharp {
 
 		#region Properties
 
+		public IModuleContext Context {
+			get {
+				return context;
+			}
+		}
+
 		public TypeSpec TypeInstance {
-			get { return type; }
+			get {
+				return type;
+			}
 		}
 
 		//
@@ -1148,7 +1158,7 @@ namespace Mono.CSharp {
 			if (ac != null) {
 				var et = Inflate (ac.Element);
 				if (et != ac.Element)
-					return ArrayContainer.MakeType (et, ac.Rank);
+					return ArrayContainer.MakeType (context.Module, et, ac.Rank);
 
 				return ac;
 			}
@@ -1190,7 +1200,7 @@ namespace Mono.CSharp {
 					for (; i < targs.Length; ++i)
 						inflated_targs[i] = Inflate (targs[i]);
 
-					type = type.MakeGenericType (inflated_targs);
+					type = type.MakeGenericType (context, inflated_targs);
 				}
 
 				return type;
@@ -1219,7 +1229,7 @@ namespace Mono.CSharp {
 					targs[i++] = Inflate (ds_tp);
 			}
 
-			return type.MakeGenericType (targs);
+			return type.MakeGenericType (context, targs);
 		}
 
 		public TypeSpec Inflate (TypeParameterSpec tp)
@@ -1338,14 +1348,16 @@ namespace Mono.CSharp {
 		TypeSpec[] targs;
 		TypeParameterSpec[] constraints;
 		readonly TypeSpec open_type;
+		readonly IModuleContext context;
 
-		public InflatedTypeSpec (TypeSpec openType, TypeSpec declaringType, TypeSpec[] targs)
+		public InflatedTypeSpec (IModuleContext context, TypeSpec openType, TypeSpec declaringType, TypeSpec[] targs)
 			: base (openType.Kind, declaringType, openType.MemberDefinition, null, openType.Modifiers)
 		{
 			if (targs == null)
 				throw new ArgumentNullException ("targs");
 
 //			this.state = openType.state;
+			this.context = context;
 			this.open_type = openType;
 			this.targs = targs;
 
@@ -1377,7 +1389,7 @@ namespace Mono.CSharp {
 		public TypeParameterSpec[] Constraints {
 			get {
 				if (constraints == null) {
-					constraints = TypeParameterSpec.InflateConstraints (MemberDefinition.TypeParameters, l => l.CreateLocalInflator (), this);
+					constraints = TypeParameterSpec.InflateConstraints (MemberDefinition.TypeParameters, l => l.CreateLocalInflator (context), this);
 				}
 
 				return constraints;
@@ -1422,7 +1434,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		TypeParameterInflator CreateLocalInflator ()
+		TypeParameterInflator CreateLocalInflator (IModuleContext context)
 		{
 			TypeParameterSpec[] tparams_full;
 			TypeSpec[] targs_full = targs;
@@ -1471,7 +1483,7 @@ namespace Mono.CSharp {
 				tparams_full = open_type.MemberDefinition.TypeParameters;
 			}
 
-			return new TypeParameterInflator (this, tparams_full, targs_full);
+			return new TypeParameterInflator (context, this, tparams_full, targs_full);
 		}
 
 		MetaType CreateMetaInfo (TypeParameterMutator mutator)
@@ -1550,7 +1562,7 @@ namespace Mono.CSharp {
 			if (cache == null)
 				cache = new MemberCache (onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache);
 
-			var inflator = CreateLocalInflator ();
+			var inflator = CreateLocalInflator (context);
 
 			//
 			// Two stage inflate due to possible nested types recursive
@@ -1857,7 +1869,7 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters
 			//
-			type = open_type.MakeGenericType (atypes);
+			type = open_type.MakeGenericType (ec, atypes);
 
 			//
 			// Check constraints when context is not method/base type
@@ -2896,7 +2908,7 @@ namespace Mono.CSharp {
 		// Uses inferred or partially infered types to inflate delegate type argument. Returns
 		// null when type parameter has not been fixed
 		//
-		public TypeSpec InflateGenericArgument (TypeSpec parameter)
+		public TypeSpec InflateGenericArgument (IModuleContext context, TypeSpec parameter)
 		{
 			var tp = parameter as TypeParameterSpec;
 			if (tp != null) {
@@ -2919,14 +2931,14 @@ namespace Mono.CSharp {
 			if (gt != null) {
 				var inflated_targs = new TypeSpec [gt.TypeArguments.Length];
 				for (int ii = 0; ii < inflated_targs.Length; ++ii) {
-					var inflated = InflateGenericArgument (gt.TypeArguments [ii]);
+					var inflated = InflateGenericArgument (context, gt.TypeArguments [ii]);
 					if (inflated == null)
 						return null;
 
 					inflated_targs[ii] = inflated;
 				}
 
-				return gt.GetDefinition ().MakeGenericType (inflated_targs);
+				return gt.GetDefinition ().MakeGenericType (context, inflated_targs);
 			}
 
 			return parameter;
@@ -3171,7 +3183,7 @@ namespace Mono.CSharp {
 				// if all delegate generic arguments are fixed.
 				TypeSpec[] param_types = new TypeSpec [invoke.Parameters.Count];
 				for (int i = 0; i < param_types.Length; ++i) {
-					var inflated = InflateGenericArgument (invoke.Parameters.Types[i]);
+					var inflated = InflateGenericArgument (ec, invoke.Parameters.Types[i]);
 					if (inflated == null)
 						return 0;
 

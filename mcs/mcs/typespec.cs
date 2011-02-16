@@ -387,13 +387,13 @@ namespace Mono.CSharp
 			// because type parameters are same for all nested types
 			//
 			if (DeclaringType == inflator.TypeInstance) {
-				return MakeGenericType (targs);
+				return MakeGenericType (inflator.Context, targs);
 			}
 
-			return new InflatedTypeSpec (this, inflator.TypeInstance, targs);
+			return new InflatedTypeSpec (inflator.Context, this, inflator.TypeInstance, targs);
 		}
 
-		public InflatedTypeSpec MakeGenericType (TypeSpec[] targs)
+		public InflatedTypeSpec MakeGenericType (IModuleContext context, TypeSpec[] targs)
 		{
 			if (targs.Length == 0 && !IsNested)
 				throw new ArgumentException ("Empty type arguments for type " + GetSignatureForError ());
@@ -421,7 +421,7 @@ namespace Mono.CSharp
 					throw new InternalErrorException ("`{0}' must be type definition or nested non-inflated type to MakeGenericType",
 						GetSignatureForError ());
 
-				instance = new InflatedTypeSpec (this, declaringType, targs);
+				instance = new InflatedTypeSpec (context, this, declaringType, targs);
 				inflated_instances.Add (targs, instance);
 			}
 
@@ -1274,7 +1274,7 @@ namespace Mono.CSharp
 
 	public class ArrayContainer : ElementTypeSpec
 	{
-		struct TypeRankPair : IEquatable<TypeRankPair>
+		public struct TypeRankPair : IEquatable<TypeRankPair>
 		{
 			TypeSpec ts;
 			int rank;
@@ -1301,11 +1301,12 @@ namespace Mono.CSharp
 		}
 
 		readonly int rank;
-		static Dictionary<TypeRankPair, ArrayContainer> instances = new Dictionary<TypeRankPair, ArrayContainer> ();
+		readonly ModuleContainer module;
 
-		private ArrayContainer (TypeSpec element, int rank)
+		private ArrayContainer (ModuleContainer module, TypeSpec element, int rank)
 			: base (MemberKind.ArrayType, element, null)
 		{
+			this.module = module;
 			this.rank = rank;
 		}
 
@@ -1317,7 +1318,7 @@ namespace Mono.CSharp
 
 		public MethodInfo GetConstructor ()
 		{
-			var mb = RootContext.ToplevelTypes.Builder;
+			var mb = module.Builder;
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
@@ -1333,7 +1334,7 @@ namespace Mono.CSharp
 
 		public MethodInfo GetAddressMethod ()
 		{
-			var mb = RootContext.ToplevelTypes.Builder;
+			var mb = module.Builder;
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
@@ -1349,7 +1350,7 @@ namespace Mono.CSharp
 
 		public MethodInfo GetGetMethod ()
 		{
-			var mb = RootContext.ToplevelTypes.Builder;
+			var mb = module.Builder;
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
@@ -1365,7 +1366,7 @@ namespace Mono.CSharp
 
 		public MethodInfo GetSetMethod ()
 		{
-			var mb = RootContext.ToplevelTypes.Builder;
+			var mb = module.Builder;
 
 			var arg_types = new MetaType[rank + 1];
 			for (int i = 0; i < rank; i++)
@@ -1410,29 +1411,24 @@ namespace Mono.CSharp
 			return sb.ToString ();
 		}
 
-		public static ArrayContainer MakeType (TypeSpec element)
+		public static ArrayContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
-			return MakeType (element, 1);
+			return MakeType (module, element, 1);
 		}
 
-		public static ArrayContainer MakeType (TypeSpec element, int rank)
+		public static ArrayContainer MakeType (ModuleContainer module, TypeSpec element, int rank)
 		{
 			ArrayContainer ac;
 			var key = new TypeRankPair (element, rank);
-			if (!instances.TryGetValue (key, out ac)) {
-				ac = new ArrayContainer (element, rank) {
+			if (!module.ArraysCache.TryGetValue (key, out ac)) {
+				ac = new ArrayContainer (module, element, rank) {
 					BaseType = TypeManager.array_type
 				};
 
-				instances.Add (key, ac);
+				module.ArraysCache.Add (key, ac);
 			}
 
 			return ac;
-		}
-
-		public static void Reset ()
-		{
-			instances = new Dictionary<TypeRankPair, ArrayContainer> ();
 		}
 	}
 

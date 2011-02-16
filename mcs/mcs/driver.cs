@@ -141,7 +141,7 @@ namespace Mono.CSharp
 			return 1;
 		}
 
-		public static string GetPackageFlags (string packages, bool fatal, Report report)
+		public static string GetPackageFlags (string packages, Report report)
 		{
 			ProcessStartInfo pi = new ProcessStartInfo ();
 			pi.FileName = "pkg-config";
@@ -152,29 +152,34 @@ namespace Mono.CSharp
 			try {
 				p = Process.Start (pi);
 			} catch (Exception e) {
+				if (report == null)
+					throw;
+
 				report.Error (-27, "Couldn't run pkg-config: " + e.Message);
-				if (fatal)
-					Environment.Exit (1);
-				p.Close ();
 				return null;
 			}
 			
-			if (p.StandardOutput == null){
+			if (p.StandardOutput == null) {
+				if (report == null)
+					throw new ApplicationException ("Specified package did not return any information");
+
 				report.Warning (-27, 1, "Specified package did not return any information");
 				p.Close ();
 				return null;
 			}
+
 			string pkgout = p.StandardOutput.ReadToEnd ();
 			p.WaitForExit ();
 			if (p.ExitCode != 0) {
+				if (report == null)
+					throw new ApplicationException (pkgout);
+
 				report.Error (-27, "Error running pkg-config. Check the above output.");
-				if (fatal)
-					Environment.Exit (1);
 				p.Close ();
 				return null;
 			}
-			p.Close ();
 
+			p.Close ();
 			return pkgout;
 		}
 
@@ -238,7 +243,7 @@ namespace Mono.CSharp
 			}
 
 #if STATIC
-			var importer = new StaticImporter ();
+			var importer = new StaticImporter (module);
 			var references_loader = new StaticLoader (importer, ctx);
 
 			tr.Start (TimeReporter.TimerType.AssemblyBuilderSetup);
@@ -268,7 +273,7 @@ namespace Mono.CSharp
 			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
 			module.SetDeclaringAssembly (assembly);
 
-			var importer = new ReflectionImporter (ctx.BuildinTypes);
+			var importer = new ReflectionImporter (module, ctx.BuildinTypes);
 			assembly.Importer = importer;
 
 			var loader = new DynamicLoader (importer, ctx);
@@ -390,7 +395,6 @@ namespace Mono.CSharp
 
 			RootContext.Reset (full_flag);
 			TypeManager.Reset ();
-			ArrayContainer.Reset ();
 			ReferenceContainer.Reset ();
 			PointerContainer.Reset ();
 			Parameter.Reset ();

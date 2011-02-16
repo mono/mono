@@ -116,7 +116,7 @@ namespace Mono.CSharp.Linq
 						TypeInferenceContext tic = new TypeInferenceContext (source_type.TypeArguments);
 						tic.OutputTypeInference (rc, a.Expr, source_type);
 						if (tic.FixAllTypes (rc)) {
-							source_type = source_type.GetDefinition ().MakeGenericType (tic.InferredTypeArguments);
+							source_type = source_type.GetDefinition ().MakeGenericType (rc, tic.InferredTypeArguments);
 						}
 					}
 

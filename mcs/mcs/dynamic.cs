@@ -884,7 +884,7 @@ namespace Mono.CSharp
 
 			// Inflated type instance has to be updated manually
 			if (instance_type is InflatedTypeSpec) {
-				var inflator = new TypeParameterInflator (instance_type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				var inflator = new TypeParameterInflator (this, instance_type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				inflated = (TypeSpec) d.CurrentType.InflateMember (inflator);
 				instance_type.MemberCache.AddMember (inflated);
 
@@ -910,7 +910,7 @@ namespace Mono.CSharp
 				//
 				// Inflate the field, no need to keep it in MemberCache as it's accessed only once
 				//
-				var inflator = new TypeParameterInflator (instance_type, spec.MemberDefinition.TypeParameters, instance_type.TypeArguments);
+				var inflator = new TypeParameterInflator (this, instance_type, spec.MemberDefinition.TypeParameters, instance_type.TypeArguments);
 				fs = (FieldSpec) fs.InflateMember (inflator);
 			}
 
@@ -921,7 +921,7 @@ namespace Mono.CSharp
 		{
 			instance_type = spec;
 			if (mutator != null)
-				instance_type = instance_type.MakeGenericType (mutator.MethodTypeParameters.Select (l => l.Type).ToArray ());
+				instance_type = instance_type.MakeGenericType (this, mutator.MethodTypeParameters.Select (l => l.Type).ToArray ());
 
 			return true;
 		}

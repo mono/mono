@@ -24,7 +24,7 @@ namespace Mono.CSharp
 	// Implemented by elements which can act as independent contexts
 	// during resolve phase. Used mostly for lookups.
 	//
-	public interface IMemberContext
+	public interface IMemberContext : IModuleContext
 	{
 		//
 		// A scope type context, it can be inflated for generic types
@@ -48,13 +48,17 @@ namespace Mono.CSharp
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 		bool HasUnresolvedConstraints { get; }
-		ModuleContainer Module { get; }
 
 		string GetSignatureForError ();
 
 		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope);
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
+	}
+
+	public interface IModuleContext
+	{
+		ModuleContainer Module { get; }
 	}
 
 	//

@@ -5713,7 +5713,7 @@ namespace Mono.CSharp
 					t, MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
 			}
 
-			var ctor_factory = TypeManager.activator_create_instance.MakeGenericMethod (type);
+			var ctor_factory = TypeManager.activator_create_instance.MakeGenericMethod (ec.MemberContext, type);
 			var tparam = (TypeParameterSpec) type;
 
 			if (tparam.IsReferenceType) {
@@ -6724,7 +6724,7 @@ namespace Mono.CSharp
 			//
 			UnifyInitializerElement (ec);
 
-			type = ArrayContainer.MakeType (array_element_type, dimensions);
+			type = ArrayContainer.MakeType (ec.Module, array_element_type, dimensions);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -8952,19 +8952,19 @@ namespace Mono.CSharp
 					ec.Module.Compiler.Report.Error (719, loc, "Array elements cannot be of static type `{0}'",
 						type.GetSignatureForError ());
 				} else {
-					MakeArray (single_spec);
+					MakeArray (ec.Module, single_spec);
 				}
 			}
 
 			return this;
 		}
 
-		void MakeArray (ComposedTypeSpecifier spec)
+		void MakeArray (ModuleContainer module, ComposedTypeSpecifier spec)
 		{
 			if (spec.Next != null)
-				MakeArray (spec.Next);
+				MakeArray (module, spec.Next);
 
-			type = ArrayContainer.MakeType (type, spec.Dimension);
+			type = ArrayContainer.MakeType (module, type, spec.Dimension);
 		}
 
 		public override string GetSignatureForError ()

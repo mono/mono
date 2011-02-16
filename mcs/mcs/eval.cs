@@ -60,12 +60,12 @@ namespace Mono.CSharp
 		static Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = new Dictionary<string, Tuple<FieldSpec, FieldInfo>> ();
 
 		static TypeSpec interactive_base_class;
-		static Driver driver;
 		static bool inited;
 
 		static CompilerContext ctx;
 		static DynamicLoader loader;
 		static NamespaceEntry ns;
+		static ModuleContainer module;
 		
 		public static TextWriter MessageOutput = Console.Out;
 
@@ -141,7 +141,7 @@ namespace Mono.CSharp
 					IsEvalutor = true
 				};
 
-				RootContext.ToplevelTypes = new ModuleContainer (ctx);
+				RootContext.ToplevelTypes = module = new ModuleContainer (ctx);
 				
 				var startup_files = new List<string> ();
 				foreach (CompilationUnit file in Location.SourceFiles)
@@ -149,14 +149,14 @@ namespace Mono.CSharp
 				
 				CompilerCallableEntryPoint.PartialReset ();
 
-				var importer = new ReflectionImporter (ctx.BuildinTypes);
+				var importer = new ReflectionImporter (module, ctx.BuildinTypes);
 				loader = new DynamicLoader (importer, ctx);
 
-				RootContext.ToplevelTypes.SetDeclaringAssembly (new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp"));
+				module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "temp"));
 
-				loader.LoadReferences (RootContext.ToplevelTypes);
-				ctx.BuildinTypes.CheckDefinitions (RootContext.ToplevelTypes);
-				RootContext.ToplevelTypes.InitializePredefinedTypes ();
+				loader.LoadReferences (module);
+				ctx.BuildinTypes.CheckDefinitions (module);
+				module.InitializePredefinedTypes ();
 
 				inited = true;
 
@@ -267,8 +267,6 @@ namespace Mono.CSharp
 					Init ();
 				else
 					ctx.Report.Printer.Reset ();
-
-			//	RootContext.ToplevelTypes = new ModuleContainer (ctx);
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
@@ -414,11 +412,11 @@ namespace Mono.CSharp
 				Class parser_result = parser.InteractiveResult;
 
 				try {
-					var a = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp");
+					var a = new AssemblyDefinitionDynamic (module, "temp");
 					a.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Run);
-					RootContext.ToplevelTypes.SetDeclaringAssembly (a);
-					RootContext.ToplevelTypes.CreateType ();
-					RootContext.ToplevelTypes.Define ();
+					module.SetDeclaringAssembly (a);
+					module.CreateType ();
+					module.Define ();
 
 					parser_result.CreateType ();
 					parser_result.Define ();
@@ -649,9 +647,9 @@ namespace Mono.CSharp
 			seekable.Position = 0;
 
 			if (ns == null)
-				ns = new NamespaceEntry (RootContext.ToplevelTypes, null, Location.SourceFiles[0], null);
+				ns = new NamespaceEntry (module, null, Location.SourceFiles[0], null);
 
-			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], RootContext.ToplevelTypes, ns);
+			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], module, ns);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -705,7 +703,7 @@ namespace Mono.CSharp
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
 				access = AssemblyBuilderAccess.RunAndSave;
-				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name, current_debug_name);
+				assembly = new AssemblyDefinitionDynamic (module, current_debug_name, current_debug_name);
 				assembly.Importer = loader.Importer;
 			} else {
 #if NET_4_0
@@ -713,7 +711,7 @@ namespace Mono.CSharp
 #else
 				access = AssemblyBuilderAccess.Run;
 #endif
-				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name);
+				assembly = new AssemblyDefinitionDynamic (module, current_debug_name);
 			}
 
 			assembly.Create (AppDomain.CurrentDomain, access);
@@ -723,8 +721,8 @@ namespace Mono.CSharp
 				host.Define ();
 			}
 
-			RootContext.ToplevelTypes.CreateType ();
-			RootContext.ToplevelTypes.Define ();
+			module.CreateType ();
+			module.Define ();
 
 			if (Report.Errors != 0){
 				if (undo != null)
@@ -754,14 +752,14 @@ namespace Mono.CSharp
 				host.EmitType ();
 			}
 			
-			RootContext.ToplevelTypes.Emit ();
+			module.Emit ();
 			if (Report.Errors != 0){
 				if (undo != null)
 					undo.ExecuteUndo ();
 				return null;
 			}
 
-			RootContext.ToplevelTypes.CloseType ();
+			module.CloseType ();
 			if (host != null)
 				host.CloseType ();
 
@@ -917,7 +915,7 @@ namespace Mono.CSharp
 			lock (evaluator_lock){
 				var a = loader.LoadAssemblyFile (file);
 				if (a != null)
-					loader.Importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
+					loader.Importer.ImportAssembly (a, module.GlobalRootNamespace);
 			}
 		}
 
@@ -927,7 +925,7 @@ namespace Mono.CSharp
 		static public void ReferenceAssembly (Assembly a)
 		{
 			lock (evaluator_lock){
-				loader.Importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
+				loader.Importer.ImportAssembly (a, module.GlobalRootNamespace);
 			}
 		}
 
@@ -1035,9 +1033,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			string pkgout = Driver.GetPackageFlags (pkg, false, RootContext.ToplevelTypes.Compiler.Report);
-			if (pkgout == null)
-				return;
+			string pkgout = Driver.GetPackageFlags (pkg, null);
 
 			string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
 				Split (new Char [] { ' ', '\t'});

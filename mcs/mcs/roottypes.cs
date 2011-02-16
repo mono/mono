@@ -120,6 +120,7 @@ namespace Mono.CSharp
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
 		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
+		Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> arrays;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
@@ -146,9 +147,16 @@ namespace Mono.CSharp
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
+			arrays = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
 		}
 
 		#region Properties
+
+		public Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArraysCache {
+			get {
+				return arrays;
+			}
+		}
 
  		public override AttributeTargets AttributeTargets {
  			get {

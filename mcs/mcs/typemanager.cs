@@ -310,7 +310,7 @@ namespace Mono.CSharp
 		string ns;
 		int arity;
 		MemberKind kind;
-		ModuleContainer module;
+		protected readonly ModuleContainer module;
 		protected TypeSpec type;
 
 		public PredefinedType (ModuleContainer module, MemberKind kind, string ns, string name, int arity)

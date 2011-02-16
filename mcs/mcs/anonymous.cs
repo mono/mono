@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 
 				// A copy is not enough, inflate any type parameter constraints
 				// using a new type parameters
-				var inflator = new TypeParameterInflator (null, src, dst);
+				var inflator = new TypeParameterInflator (this, null, src, dst);
 				for (int i = 0; i < type_params.Length; ++i) {
 					src[i].InflateConstraints (inflator, dst[i]);
 				}
@@ -211,10 +211,10 @@ namespace Mono.CSharp {
 
 			// Inflated type instance has to be updated manually
 			if (Instance.Type is InflatedTypeSpec) {
-				var inflator = new TypeParameterInflator (Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				var inflator = new TypeParameterInflator (this, Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				Instance.Type.MemberCache.AddMember (f.Spec.InflateMember (inflator));
 
-				inflator = new TypeParameterInflator (f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				inflator = new TypeParameterInflator (this, f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				f.Parent.CurrentType.MemberCache.AddMember (f.Spec.InflateMember (inflator));
 			}
 		}
@@ -1608,7 +1608,7 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
 				if (delegate_method.IsGeneric)
-					delegate_method = delegate_method.MakeGenericMethod (method.TypeParameters);
+					delegate_method = delegate_method.MakeGenericMethod (ec.MemberContext, method.TypeParameters);
 
 				ec.Emit (OpCodes.Ldftn, delegate_method);
 			}

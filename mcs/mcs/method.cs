@@ -392,7 +392,7 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
-		public MethodSpec MakeGenericMethod (params TypeSpec[] targs)
+		public MethodSpec MakeGenericMethod (IMemberContext context, params TypeSpec[] targs)
 		{
 			if (targs == null)
 				throw new ArgumentNullException ();
@@ -403,7 +403,7 @@ namespace Mono.CSharp {
 			//if (generic_intances == null)
 			//    generic_intances = new Dictionary<TypeSpec[], Method> (TypeSpecArrayComparer.Default);
 
-			var inflator = new TypeParameterInflator (DeclaringType, GenericDefinition.TypeParameters, targs);
+			var inflator = new TypeParameterInflator (context, DeclaringType, GenericDefinition.TypeParameters, targs);
 
 			var inflated = (MethodSpec) MemberwiseClone ();
 			inflated.declaringType = inflator.TypeInstance;
@@ -1031,7 +1031,7 @@ namespace Mono.CSharp {
 					var local_tparam = tp.Type;
 					local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
 
-					var inflator = new TypeParameterInflator (CurrentType, base_decl_tparams, base_targs);
+					var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
 					base_tparam.InflateConstraints (inflator, local_tparam);
 
 					//

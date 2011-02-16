@@ -22,7 +22,7 @@ namespace Mono.CSharp
 #if STATIC
 	public class ReflectionImporter
 	{
-		public ReflectionImporter (BuildinTypes buildin)
+		public ReflectionImporter (ModuleContainer module, BuildinTypes buildin)
 		{
 			throw new NotSupportedException ();
 		}
@@ -45,7 +45,8 @@ namespace Mono.CSharp
 #else
 	public sealed class ReflectionImporter : MetadataImporter
 	{
-		public ReflectionImporter (BuildinTypes buildin)
+		public ReflectionImporter (ModuleContainer module, BuildinTypes buildin)
+			: base (module)
 		{
 			Initialize (buildin);
 		}

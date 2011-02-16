@@ -2636,7 +2636,7 @@ namespace Mono.CSharp {
 				}
 
 				if (targs != null)
-					method = method.MakeGenericMethod (targs);
+					method = method.MakeGenericMethod (rc, targs);
 			}
 
 			//
@@ -3854,7 +3854,7 @@ namespace Mono.CSharp {
 					if (g_args_count != type_arguments.Count)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
-					ms = ms.MakeGenericMethod (type_arguments.Arguments);
+					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
 				} else {
 					// TODO: It should not be here (we don't know yet whether any argument is lambda) but
 					// for now it simplifies things. I should probably add a callback to ResolveContext
@@ -3871,7 +3871,7 @@ namespace Mono.CSharp {
 						return ti.InferenceScore - 20000;
 
 					if (i_args.Length != 0) {
-						ms = ms.MakeGenericMethod (i_args);
+						ms = ms.MakeGenericMethod (ec, i_args);
 					}
 
 					cc.IgnoreInferredDynamic = true;
@@ -3894,7 +3894,7 @@ namespace Mono.CSharp {
 				//
 				if (candidate != pm) {
 					MethodSpec override_ms = (MethodSpec) pm;
-					var inflator = new TypeParameterInflator (ms.DeclaringType, override_ms.GenericDefinition.TypeParameters, ms.TypeArguments);
+					var inflator = new TypeParameterInflator (ec, ms.DeclaringType, override_ms.GenericDefinition.TypeParameters, ms.TypeArguments);
 					returnType = inflator.Inflate (returnType);
 				} else {
 					returnType = ms.ReturnType;
