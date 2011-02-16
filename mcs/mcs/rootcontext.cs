@@ -185,6 +185,7 @@ namespace Mono.CSharp {
 
 		readonly Report report;
 		readonly TextWriter output;
+		bool stop_argument;
 
 		public event Func<string[], int, int> UnknownOptionHandler;
 
@@ -197,6 +198,12 @@ namespace Mono.CSharp {
 		{
 			this.report = report;
 			this.output = messagesOutput;
+		}
+
+		public bool HasBeenStopped {
+			get {
+				return stop_argument;
+			}
 		}
 
 		void About ()
@@ -217,6 +224,7 @@ namespace Mono.CSharp {
 			CompilerSettings settings = new CompilerSettings ();
 			List<string> response_file_list = null;
 			bool parsing_options = true;
+			stop_argument = false;
 
 			for (int i = 0; i < args.Length; i++) {
 				string arg = args[i];
@@ -261,7 +269,8 @@ namespace Mono.CSharp {
 						case ParseResult.Success:
 							continue;
 						case ParseResult.Stop:
-							return null;
+							stop_argument = true;
+							return settings;
 						}
 					}
 
@@ -285,7 +294,8 @@ namespace Mono.CSharp {
 							return null;
 
 						case ParseResult.Stop:
-							return null;
+							stop_argument = true;
+							return settings;
 						}
 					}
 					

@@ -124,6 +124,9 @@ namespace Mono.CSharp
 			if (settings == null || r.Errors > 0)
 				return 1;
 
+			if (cmd.HasBeenStopped)
+				return 0;
+
 			Driver d = new Driver (new CompilerContext (settings, r));
 
 			if (d.Compile () && d.Report.Errors == 0) {
