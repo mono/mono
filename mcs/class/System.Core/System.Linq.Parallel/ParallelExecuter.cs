@@ -117,7 +117,7 @@ namespace System.Linq.Parallel
 						if (endAction != null)
 							endAction ();
 					}
-				  }, options.Token);
+				}, options.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
 			}
 
 			return tasks;
