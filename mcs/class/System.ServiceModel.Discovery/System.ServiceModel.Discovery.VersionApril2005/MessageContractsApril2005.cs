@@ -43,12 +43,21 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 		public const string ProbeMatchAction = NS + "/ProbeMatches";
 		public const string ResolveAction = NS + "/Resolve";
 		public const string ResolveMatchAction = NS + "/ResolveMatches";
+		public const string ToUrn = "urn:schemas-xmlsoap-org:ws:2005:04:discovery";
 
 		[MessageContract (IsWrapped = false)]
 		public class OnlineAnnouncement
 		{
+			public OnlineAnnouncement ()
+			{
+				To = new Uri (MessageContractsApril2005.ToUrn);
+			}
+
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
+			[MessageHeader (Name = "To", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			public Uri To { get; set; }
+
 			[MessageBodyMember (Name = "Hello", Namespace = NS)]
 			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
 		}
@@ -56,8 +65,15 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 		[MessageContract (IsWrapped = false)]
 		public class OfflineAnnouncement
 		{
+			public OfflineAnnouncement ()
+			{
+				To = new Uri (MessageContractsApril2005.ToUrn);
+			}
+
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
+			[MessageHeader (Name = "To", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			public Uri To { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
 		}
