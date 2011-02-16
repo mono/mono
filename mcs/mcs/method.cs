@@ -1086,7 +1086,7 @@ namespace Mono.CSharp {
 			if (partialMethodImplementation != null && IsPartialDefinition)
 				MethodBuilder = partialMethodImplementation.MethodBuilder;
 
-			if (RootContext.StdLib && TypeManager.IsSpecialType (ReturnType)) {
+			if (Compiler.Settings.StdLib && TypeManager.IsSpecialType (ReturnType)) {
 				Error1599 (Location, ReturnType, Report);
 				return false;
 			}
@@ -1141,12 +1141,9 @@ namespace Mono.CSharp {
 			//
 			// This is used to track the Entry Point,
 			//
-			if (RootContext.NeedsEntryPoint &&
-				Name == "Main" &&
-				(RootContext.MainClass == null ||
-				RootContext.MainClass == Parent.TypeBuilder.FullName)){
+			var settings = Compiler.Settings;
+			if (settings.NeedsEntryPoint && Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
-
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",

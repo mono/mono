@@ -126,13 +126,20 @@ namespace Mono.CSharp
 					return new string [0];
 
 				CompilerCallableEntryPoint.Reset ();
-				var crp = new ConsoleReportPrinter ();
-				driver = Driver.Create (args, false, unknownOptionParser, crp);
-				if (driver == null)
+				var r = new Report (new ConsoleReportPrinter ());
+				var cmd = new CommandLineParser (r);
+				if (unknownOptionParser != null)
+					cmd.UnknownOptionHandler += unknownOptionParser;
+
+				var settings = cmd.ParseArguments (args);
+
+				// TODO: Should use ReportPrinter with throw instead of this
+				if (settings == null || r.Errors > 0)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 
-				crp.Fatal = driver.fatal_errors;
-				ctx = driver.ctx;
+				ctx = new CompilerContext (settings, r) {
+					IsEvalutor = true
+				};
 
 				RootContext.ToplevelTypes = new ModuleContainer (ctx);
 				
@@ -151,7 +158,6 @@ namespace Mono.CSharp
 				ctx.BuildinTypes.CheckDefinitions (RootContext.ToplevelTypes);
 				RootContext.ToplevelTypes.InitializePredefinedTypes ();
 
-				RootContext.EvalMode = true;
 				inited = true;
 
 				return startup_files.ToArray ();
@@ -439,7 +445,8 @@ namespace Mono.CSharp
 						return cr.Result;
 					} 
 				} finally {
-					parser.undo.ExecuteUndo ();
+					if (parser.undo != null)
+						parser.undo.ExecuteUndo ();
 				}
 				
 			}
@@ -648,10 +655,10 @@ namespace Mono.CSharp
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
-				RootContext.StatementMode = true;
+				ctx.Settings.StatementMode = true;
 			} else {
 				parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
-				RootContext.StatementMode = false;
+				ctx.Settings.StatementMode = false;
 			}
 
 			if (mode == ParseMode.GetCompletions)
@@ -668,7 +675,9 @@ namespace Mono.CSharp
 					if (mode != ParseMode.ReportErrors  && parser.UnexpectedEOF)
 						partial_input = true;
 
-					parser.undo.ExecuteUndo ();
+					if (parser.undo != null)
+						parser.undo.ExecuteUndo ();
+
 					parser = null;
 				}
 
@@ -718,7 +727,9 @@ namespace Mono.CSharp
 			RootContext.ToplevelTypes.Define ();
 
 			if (Report.Errors != 0){
-				undo.ExecuteUndo ();
+				if (undo != null)
+					undo.ExecuteUndo ();
+
 				return null;
 			}
 
@@ -745,7 +756,8 @@ namespace Mono.CSharp
 			
 			RootContext.ToplevelTypes.Emit ();
 			if (Report.Errors != 0){
-				undo.ExecuteUndo ();
+				if (undo != null)
+					undo.ExecuteUndo ();
 				return null;
 			}
 
@@ -796,7 +808,7 @@ namespace Mono.CSharp
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
 		}
 #endif
-		
+
 		/// <summary>
 		///   A sentinel value used to indicate that no value was
 		///   was set by the compiled function.   This is used to

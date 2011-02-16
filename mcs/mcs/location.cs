@@ -239,6 +239,12 @@ namespace Mono.CSharp {
 			compile_units.Add (unit);
 		}
 
+		public static string FirstFile {
+			get {
+				return compile_units.Count == 0 ? null : compile_units[0].Name;
+			}
+		}
+
 		public static IList<CompilationUnit> SourceFiles {
 			get {
 				return compile_units;

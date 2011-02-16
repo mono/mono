@@ -157,7 +157,7 @@ namespace Mono.CSharp
 				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
 			} else {
 				// Sets output file metadata version when there is no mscorlib
-				switch (RootContext.StdLibRuntimeVersion) {
+				switch (module.Compiler.Settings.StdLibRuntimeVersion) {
 				case RuntimeVersion.v4:
 					Builder.__SetImageRuntimeVersion ("v4.0.30319", 0x20000);
 					break;
@@ -218,7 +218,7 @@ namespace Mono.CSharp
 			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
 			string sdk_path = null;
 
-			string sdk_version = RootContext.SdkVersion ?? "4";
+			string sdk_version = compiler.Settings.SdkVersion ?? "4";
 			string[] sdk_sub_dirs;
 
 			if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
@@ -355,9 +355,9 @@ namespace Mono.CSharp
 			default_references.Add ("System.dll");
 			default_references.Add ("System.Xml.dll");
 
-			if (RootContext.Version > LanguageVersion.ISO_2)
+			if (compiler.Settings.Version > LanguageVersion.ISO_2)
 				default_references.Add ("System.Core.dll");
-			if (RootContext.Version > LanguageVersion.V_3)
+			if (compiler.Settings.Version > LanguageVersion.V_3)
 				default_references.Add ("Microsoft.CSharp.dll");
 
 			return default_references.ToArray ();
@@ -528,10 +528,7 @@ namespace Mono.CSharp
 
 		public void LoadModules (AssemblyDefinitionStatic assembly, RootNamespace targetNamespace)
 		{
-			if (RootContext.Modules.Count == 0)
-				return;
-
-			foreach (var moduleName in RootContext.Modules) {
+			foreach (var moduleName in compiler.Settings.Modules) {
 				var m = LoadModuleFile (moduleName);
 				if (m == null)
 					continue;

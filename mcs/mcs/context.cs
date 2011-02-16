@@ -349,7 +349,7 @@ namespace Mono.CSharp
 			//
 			// The default setting comes from the command line option
 			//
-			if (RootContext.Checked)
+			if (mc.Module.Compiler.Settings.Checked)
 				flags |= Options.CheckedScope;
 
 			//
@@ -571,9 +571,11 @@ namespace Mono.CSharp
 
 		readonly Report report;
 		readonly BuildinTypes buildin_types;
+		readonly CompilerSettings settings;
 
-		public CompilerContext (Report report)
+		public CompilerContext (CompilerSettings settings, Report report)
 		{
+			this.settings = settings;
 			this.report = report;
 			this.buildin_types = new BuildinTypes ();
 			this.TimeReporter = DisabledTimeReporter;
@@ -589,7 +591,18 @@ namespace Mono.CSharp
 
 		// Used for special handling of runtime dynamic context mostly
 		// by error reporting but also by member accessibility checks
-		public bool IsRuntimeBinder { get; set; }
+		public bool IsRuntimeBinder {
+			get; set;
+		}
+
+		//
+		// If true, it means that the compiler is executing as
+		// in eval mode so unresolved variables are resolved in
+		// static classes maintained by the eval engine.
+		//
+		public bool IsEvalutor {
+			get; set;
+		}
 
 		public Report Report {
 			get {
@@ -597,7 +610,15 @@ namespace Mono.CSharp
 			}
 		}
 
-		internal TimeReporter TimeReporter { get; set; }
+		public CompilerSettings Settings {
+			get {
+				return settings;
+			}
+		}
+
+		internal TimeReporter TimeReporter {
+			get; set;
+		}
 
 		#endregion
 	}

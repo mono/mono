@@ -1490,7 +1490,7 @@ namespace Mono.CSharp {
 				var hoisted_tparams = ec.CurrentTypeParameters;
 				var type_params = new TypeParameter[hoisted_tparams.Length];
 				for (int i = 0; i < type_params.Length; ++i) {
-					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (null, null);
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (parent, null);
 				}
 
 				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name, type_params,
@@ -1672,7 +1672,7 @@ namespace Mono.CSharp {
 		readonly IList<AnonymousTypeParameter> parameters;
 
 		private AnonymousTypeClass (DeclSpace parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
-			: base (parent, name, (RootContext.EvalMode ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
+			: base (parent, name, (parent.Compiler.IsEvalutor ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}

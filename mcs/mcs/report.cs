@@ -92,10 +92,10 @@ namespace Mono.CSharp {
 			--reporting_disabled;
 		}
 
-		public void FeatureIsNotAvailable (Location loc, string feature)
+		public void FeatureIsNotAvailable (CompilerContext compiler, Location loc, string feature)
 		{
 			string version;
-			switch (RootContext.Version) {
+			switch (compiler.Settings.Version) {
 			case LanguageVersion.ISO_1:
 				version = "1.0";
 				break;
@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 				version = "3.0";
 				break;
 			default:
-				throw new InternalErrorException ("Invalid feature version", RootContext.Version);
+				throw new InternalErrorException ("Invalid feature version", compiler.Settings.Version);
 			}
 
 			Error (1644, loc,
@@ -601,27 +601,23 @@ namespace Mono.CSharp {
 	//
 	// Generic base for any message writer
 	//
-	public abstract class ReportPrinter {
-		/// <summary>  
-		///   Whether to dump a stack trace on errors. 
-		/// </summary>
-		public bool Stacktrace;
-		
-		int warnings, errors;
+	public abstract class ReportPrinter
+	{
+		#region Properties
 
-		public int WarningsCount {
-			get { return warnings; }
-		}
-		
-		public int ErrorsCount {
-			get { return errors; }
-		}
+		public int FatalCounter { get; set; }
 
-		protected virtual string FormatText (string txt)
-		{
-			return txt;
-		}
+		public int ErrorsCount { get; protected set; }
+	
+		public bool ShowFullPaths { get; set; }
 
+		//
+		// Whether to dump a stack trace on errors. 
+		//
+		public bool Stacktrace { get; set; }
+
+		public int WarningsCount { get; private set; }
+	
 		//
 		// When (symbols related to previous ...) can be used
 		//
@@ -629,19 +625,31 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+		#endregion
+
+
+		protected virtual string FormatText (string txt)
+		{
+			return txt;
+		}
+
 		public virtual void Print (AbstractMessage msg)
 		{
-			if (msg.IsWarning)
-				++warnings;
-			else
-				++errors;
+			if (msg.IsWarning) {
+				++WarningsCount;
+			} else {
+				++ErrorsCount;
+
+				if (ErrorsCount == FatalCounter)
+					throw new Exception (msg.Text);
+			}
 		}
 
 		protected void Print (AbstractMessage msg, TextWriter output)
 		{
 			StringBuilder txt = new StringBuilder ();
 			if (!msg.Location.IsNull) {
-				if (RootContext.ShowFullPaths)
+				if (ShowFullPaths)
 					txt.Append (msg.Location.ToStringFullName ());
 				else
 					txt.Append (msg.Location.ToString ());
@@ -664,8 +672,8 @@ namespace Mono.CSharp {
 
 		public void Reset ()
 		{
-			// Temporary hack for broken repl flow
-			errors = warnings = 0;
+			// HACK: Temporary hack for broken repl flow
+			ErrorsCount = WarningsCount = 0;
 		}
 	}
 
@@ -860,8 +868,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public int Fatal { get; set; }
-
 		static int NameToCode (string s)
 		{
 			switch (s) {
@@ -951,16 +957,12 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		int print_count;
 		public override void Print (AbstractMessage msg)
 		{
 			base.Print (msg);
 
 			if (Stacktrace)
 				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
-
-			if (++print_count == Fatal)
-				throw new Exception (msg.Text);
 		}
 
 		public static string FriendlyStackTrace (Exception e)

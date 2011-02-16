@@ -74,7 +74,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 					WarningLevel = 0
 				};
 
-				var cc = new Compiler.CompilerContext (reporter) {
+				var settings = new Compiler.CompilerSettings ();
+
+				var cc = new Compiler.CompilerContext (settings, reporter) {
 					IsRuntimeBinder = true
 				};
 
@@ -103,13 +105,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IgnorePrivateMembers = false
 				};
 
+				bool reinitialized = Compiler.RootContext.ToplevelTypes != null;
 				Compiler.RootContext.ToplevelTypes = module;
 
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					importer.ImportAssembly (a, module.GlobalRootNamespace);
 				}
 
-				if (!Compiler.RootContext.EvalMode) {
+				if (!reinitialized) {
 					cc.BuildinTypes.CheckDefinitions (module);
 					module.InitializePredefinedTypes ();
 				}

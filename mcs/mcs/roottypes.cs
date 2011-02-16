@@ -370,7 +370,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (RootContext.Unsafe) {
+			if (Compiler.Settings.Unsafe) {
 				var pa = PredefinedAttributes.UnverifiableCode;
 				if (pa.IsDefined)
 					pa.EmitAttribute (builder);

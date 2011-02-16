@@ -805,103 +805,7 @@ namespace Mono.CSharp {
 			var cab = new CustomAttributeBuilder ((ConstructorInfo) ctor.GetMetaInfo (), values, prop, prop_values);
 			permissions.Add (cab);
 #else
-			Type orig_assembly_type = null;
-
-			if (Type.MemberDefinition is TypeContainer) {
-				if (!RootContext.StdLib) {
-					orig_assembly_type = System.Type.GetType (Type.GetMetaInfo ().FullName);
-				} else {
-					string orig_version_path = Environment.GetEnvironmentVariable ("__SECURITY_BOOTSTRAP_DB");
-					if (orig_version_path == null) {
-						Error_AttributeEmitError ("security custom attributes can not be referenced from defining assembly");
-						return;
-					}
-
-					if (orig_sec_assembly == null) {
-						string file = Path.Combine (orig_version_path, Path.GetFileName (RootContext.OutputFile));
-						orig_sec_assembly = Assembly.LoadFile (file);
-					}
-
-					orig_assembly_type = orig_sec_assembly.GetType (Type.GetMetaInfo ().FullName, true);
-					if (orig_assembly_type == null) {
-						Report.Warning (-112, 1, Location, "Self-referenced security attribute `{0}' " +
-								"was not found in previous version of assembly");
-						return;
-					}
-				}
-			}
-
-			SecurityAttribute sa;
-			object[] args;
-
-			// For all non-selfreferencing security attributes we can avoid all hacks
-			if (orig_assembly_type == null) {
-				args = new object[PosArguments.Count];
-				for (int j = 0; j < args.Length; ++j) {
-					args[j] = ((Constant) PosArguments[j].Expr).GetValue ();
-				}
-
-				sa = (SecurityAttribute) Activator.CreateInstance (Type.GetMetaInfo (), args);
-
-				if (named_values != null) {
-					for (int i = 0; i < named_values.Count; ++i) {
-						PropertyInfo pi = ((PropertyExpr) named_values[i].Key).PropertyInfo.MetaInfo;
-						pi.SetValue (sa, ((Constant) named_values [i].Value.Expr).GetValue (), null);
-					}
-				}
-			} else {
-				// HACK: All security attributes have same ctor syntax
-				args = new object[] { GetSecurityActionValue () };
-				sa = (SecurityAttribute) Activator.CreateInstance (orig_assembly_type, args);
-
-				// All types are from newly created assembly but for invocation with old one we need to convert them
-				if (named_values != null) {
-					for (int i = 0; i < named_values.Count; ++i) {
-						PropertyInfo emited_pi = ((PropertyExpr) named_values[i].Key).PropertyInfo.MetaInfo;
-						// FIXME: We are missing return type filter
-						// TODO: pi can be null
-						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name);
-
-						pi.SetValue (sa, ((Constant) named_values[i].Value.Expr).GetValue (), null);
-					}
-				}
-			}
-
-			IPermission perm;
-			perm = sa.CreatePermission ();
-			SecurityAction action = (SecurityAction) args [0];
-
-			// IS is correct because for corlib we are using an instance from old corlib
-			if (!(perm is System.Security.CodeAccessPermission)) {
-				switch (action) {
-				case SecurityAction.Demand:
-					action = (SecurityAction)13;
-					break;
-				case SecurityAction.LinkDemand:
-					action = (SecurityAction)14;
-					break;
-				case SecurityAction.InheritanceDemand:
-					action = (SecurityAction)15;
-					break;
-				}
-			}
-
-			if (permissions == null)
-				permissions = new SecurityType ();
-
-			PermissionSet ps;
-			if (!permissions.TryGetValue (action, out ps)) {
-				if (sa is PermissionSetAttribute)
-					ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
-				else
-					ps = new PermissionSet (PermissionState.None);
-
-				permissions.Add (action, ps);
-			} else if (!ps.IsUnrestricted () && (sa is PermissionSetAttribute) && sa.Unrestricted) {
-				ps = ps.Union (new PermissionSet (PermissionState.Unrestricted));
-				permissions [action] = ps;
-			}
-			ps.AddPermission (perm);
+			throw new NotSupportedException ();
 #endif
 		}
 
@@ -1101,7 +1005,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!RootContext.VerifyClsCompliance)
+			if (!context.Module.Compiler.Settings.VerifyClsCompliance)
 				return;
 
 			// Here we are testing attribute arguments for array usage (error 3016)

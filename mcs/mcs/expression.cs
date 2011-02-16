@@ -2866,7 +2866,7 @@ namespace Mono.CSharp
 				return new DynamicExpressionStatement (this, args, loc).Resolve (ec);
 			}
 
-			if (RootContext.Version >= LanguageVersion.ISO_2 &&
+			if (ec.Module.Compiler.Settings.Version >= LanguageVersion.ISO_2 &&
 				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
 				(TypeManager.IsValueType (left.Type) && right is NullLiteral) ||
 				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
@@ -7897,7 +7897,7 @@ namespace Mono.CSharp
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
-			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
+			if (ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
 				ec.Report.SymbolRelatedToPreviousError (type);
 				ec.Report.Error (1061, loc,
 					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found (are you missing a using directive or an assembly reference?)",

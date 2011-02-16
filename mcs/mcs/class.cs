@@ -726,7 +726,7 @@ namespace Mono.CSharp {
 				if (initialized_static_fields == null)
 					return;
 
-				bool has_complex_initializer = !RootContext.Optimize;
+				bool has_complex_initializer = !ec.Module.Compiler.Settings.Optimize;
 				int i;
 				ExpressionStatement [] init = new ExpressionStatement [initialized_static_fields.Count];
 				for (i = 0; i < initialized_static_fields.Count; ++i) {
@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 				//
 				// Field is re-initialized to its default value => removed
 				//
-				if (fi.IsDefaultInitializer && RootContext.Optimize)
+				if (fi.IsDefaultInitializer && ec.Module.Compiler.Settings.Optimize)
 					continue;
 
 				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
@@ -1097,7 +1097,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < type_params.Length; ++i) {
 						var tp = hoisted_tparams[i];
 						targs.Add (new TypeParameterName (tp.Name, null, Location));
-						type_params[i] = new TypeParameter (tp, null, null, new MemberName (tp.Name), null);
+						type_params[i] = new TypeParameter (tp, this, null, new MemberName (tp.Name), null);
 					}
 
 					member_name = new MemberName (name, targs, Location);
@@ -1709,7 +1709,7 @@ namespace Mono.CSharp {
 			// Check for internal or private fields that were never assigned
 			//
 			if (Report.WarningLevel >= 3) {
-				if (RootContext.EnhancedWarnings) {
+				if (Compiler.Settings.EnhancedWarnings) {
 					CheckMemberUsage (properties, "property");
 					CheckMemberUsage (methods, "method");
 					CheckMemberUsage (constants, "constant");
@@ -1807,7 +1807,7 @@ namespace Mono.CSharp {
 			if (instance_constructors == null)
 				return;
 
-			if (spec.IsAttribute && IsExposedFromAssembly () && RootContext.VerifyClsCompliance && IsClsComplianceRequired ()) {
+			if (spec.IsAttribute && IsExposedFromAssembly () && Compiler.Settings.VerifyClsCompliance && IsClsComplianceRequired ()) {
 				bool has_compliant_args = false;
 
 				foreach (Constructor c in instance_constructors) {
@@ -2413,10 +2413,6 @@ namespace Mono.CSharp {
 			var accmods = (Parent == null || Parent.Parent == null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
-
-			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
-				Report.FeatureIsNotAvailable (Location, "static classes");
-			}
 		}
 
 		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)

@@ -1284,8 +1284,8 @@ namespace Mono.CSharp {
 					// 
 					var texpr = type_expr.ResolveAsTypeTerminal (bc, true);
 					if (texpr == null) {
-						if (RootContext.Version < LanguageVersion.V_3)
-							bc.Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
+						if (bc.Module.Compiler.Settings.Version < LanguageVersion.V_3)
+							bc.Report.FeatureIsNotAvailable (bc.Module.Compiler, loc, "implicitly typed local variable");
 
 						if (li.IsFixed) {
 							bc.Report.Error (821, loc, "A fixed statement cannot use an implicitly typed local variable");
@@ -1330,13 +1330,10 @@ namespace Mono.CSharp {
 				if (type.IsStatic)
 					FieldBase.Error_VariableOfStaticClass (loc, li.Name, type, bc.Report);
 
-				if (type.IsPointer && !bc.IsUnsafe)
-					Expression.UnsafeError (bc, loc);
-
 				li.Type = type;
 			}
 
-			bool eval_global = RootContext.StatementMode && bc.CurrentBlock is ToplevelBlock;
+			bool eval_global = bc.Module.Compiler.Settings.StatementMode && bc.CurrentBlock is ToplevelBlock;
 			if (eval_global) {
 				CreateEvaluatorVariable (bc, li);
 			} else {
@@ -3635,8 +3632,8 @@ namespace Mono.CSharp {
 			// Validate switch.
 			SwitchType = new_expr.Type;
 
-			if (RootContext.Version == LanguageVersion.ISO_1 && SwitchType == TypeManager.bool_type) {
-				ec.Report.FeatureIsNotAvailable (loc, "switch expression of boolean type");
+			if (ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1 && SwitchType == TypeManager.bool_type) {
+				ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
 				return false;
 			}
 

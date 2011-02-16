@@ -164,7 +164,7 @@ namespace Mono.CSharp {
 
 			CheckProtectedModifier ();
 
-			if (RootContext.StdLib && TypeManager.IsSpecialType (ret_type)) {
+			if (Compiler.Settings.StdLib && TypeManager.IsSpecialType (ret_type)) {
 				Method.Error1599 (Location, ret_type, Report);
 				return false;
 			}
@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 		//
 		// 15.2 Delegate compatibility
 		//
-		public static bool IsTypeCovariant (Expression a, TypeSpec b)
+		public static bool IsTypeCovariant (ResolveContext rc, Expression a, TypeSpec b)
 		{
 			//
 			// For each value parameter (a parameter with no ref or out modifier), an 
@@ -394,7 +394,7 @@ namespace Mono.CSharp {
 			if (a.Type == b)
 				return true;
 
-			if (RootContext.Version == LanguageVersion.ISO_1)
+			if (rc.Module.Compiler.Settings.Version == LanguageVersion.ISO_1)
 				return false;
 
 			return Convert.ImplicitReferenceConversionExists (a, b);
@@ -503,7 +503,7 @@ namespace Mono.CSharp {
 
 			TypeSpec rt = delegate_method.ReturnType;
 			Expression ret_expr = new TypeExpression (rt, loc);
-			if (!Delegate.IsTypeCovariant (ret_expr, invoke_method.ReturnType)) {
+			if (!Delegate.IsTypeCovariant (ec, ret_expr, invoke_method.ReturnType)) {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
@@ -556,7 +556,7 @@ namespace Mono.CSharp {
 
 			ec.Report.SymbolRelatedToPreviousError (type);
 			ec.Report.SymbolRelatedToPreviousError (method);
-			if (RootContext.Version == LanguageVersion.ISO_1) {
+			if (ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.Error (410, loc, "A method or delegate `{0} {1}' parameters and return type must be same as delegate `{2} {3}' parameters and return type",
 					TypeManager.CSharpName (method.ReturnType), member_name,
 					TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
@@ -663,7 +663,7 @@ namespace Mono.CSharp {
 			Expression e = a.Expr;
 
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
-			if (ame != null && RootContext.Version != LanguageVersion.ISO_1) {
+			if (ame != null && ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1) {
 				e = ame.Compatible (ec, type);
 				if (e == null)
 					return null;

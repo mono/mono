@@ -827,10 +827,6 @@ namespace Mono.CSharp {
 				Compiler.Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
 			}
 
-			if (RootContext.Version != LanguageVersion.ISO_1 && alias == "global")
-				Compiler.Report.Warning (440, 2, loc, "An alias named `global' will not be used when resolving 'global::';" +
-					" the global namespace will be used instead");
-
 			AddUsingAlias (new LocalUsingAliasEntry (alias, name, loc));
 		}
 

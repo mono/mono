@@ -690,8 +690,8 @@ namespace Mono.CSharp
 						
 						res = Token.FROM_FIRST;
 						query_parsing = true;
-						if (RootContext.Version <= LanguageVersion.ISO_2)
-							Report.FeatureIsNotAvailable (Location, "query expressions");
+						if (context.Settings.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (context, Location, "query expressions");
 						break;
 					case Token.VOID:
 						Expression.Error_VoidInvalidInTheContext (Location, Report);
@@ -746,11 +746,10 @@ namespace Mono.CSharp
 
 				if (ok) {
 					if (next_token == Token.VOID) {
-						if (RootContext.Version == LanguageVersion.ISO_1 ||
-						    RootContext.Version == LanguageVersion.ISO_2)
-							Report.FeatureIsNotAvailable (Location, "partial methods");
-					} else if (RootContext.Version == LanguageVersion.ISO_1)
-						Report.FeatureIsNotAvailable (Location, "partial types");
+						if (context.Settings.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (context, Location, "partial methods");
+					} else if (context.Settings.Version == LanguageVersion.ISO_1)
+						Report.FeatureIsNotAvailable (context, Location, "partial types");
 
 					return res;
 				}
@@ -765,7 +764,7 @@ namespace Mono.CSharp
 				break;
 
 			case Token.ASYNC:
-				if (parsing_block > 0 || RootContext.Version != LanguageVersion.Future) {
+				if (parsing_block > 0 || context.Settings.Version != LanguageVersion.Future) {
 					res = -1;
 					break;
 				}
@@ -2584,8 +2583,8 @@ namespace Mono.CSharp
 				return true;
 
 			case PreprocessorDirective.Pragma:
-				if (RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotAvailable (Location, "#pragma");
+				if (context.Settings.Version == LanguageVersion.ISO_1) {
+					Report.FeatureIsNotAvailable (context, Location, "#pragma");
 				}
 
 				ParsePragmaDirective (arg);
@@ -3029,7 +3028,7 @@ namespace Mono.CSharp
 					// Handle double-slash comments.
 					if (d == '/'){
 						get_char ();
-						if (RootContext.Documentation != null && peek_char () == '/') {
+						if (context.Settings.Documentation != null && peek_char () == '/') {
 							get_char ();
 							// Don't allow ////.
 							if ((d = peek_char ()) != '/') {
@@ -3049,7 +3048,7 @@ namespace Mono.CSharp
 					} else if (d == '*'){
 						get_char ();
 						bool docAppend = false;
-						if (RootContext.Documentation != null && peek_char () == '*') {
+						if (context.Settings.Documentation != null && peek_char () == '*') {
 							get_char ();
 							update_comment_location ();
 							// But when it is /**/, just do nothing.

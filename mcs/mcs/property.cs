@@ -763,8 +763,8 @@ namespace Mono.CSharp
 
 			if (!IsInterface && (ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
 				AccessorSecond != null && Get.Block == null && Set.Block == null) {
-				if (RootContext.Version <= LanguageVersion.ISO_2)
-					Report.FeatureIsNotAvailable (Location, "automatically implemented properties");
+				if (Compiler.Settings.Version <= LanguageVersion.ISO_2)
+					Report.FeatureIsNotAvailable (Compiler, Location, "automatically implemented properties");
 
 				Get.ModFlags |= Modifiers.COMPILER_GENERATED;
 				Set.ModFlags |= Modifiers.COMPILER_GENERATED;

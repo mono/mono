@@ -228,18 +228,9 @@ namespace Mono.CSharp
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
-			try {
-				Builder = file_name == null ?
-					domain.DefineDynamicAssembly (an, access) :
-					domain.DefineDynamicAssembly (an, access, Dirname (file_name));
-			} catch (ArgumentException) {
-				// specified key may not be exportable outside it's container
-				if (RootContext.StrongNameKeyContainer != null) {
-					Report.Error (1548, "Could not access the key inside the container `" +
-						RootContext.StrongNameKeyContainer + "'.");
-				}
-				throw;
-			}
+			Builder = file_name == null ?
+				domain.DefineDynamicAssembly (an, access) :
+				domain.DefineDynamicAssembly (an, access, Dirname (file_name));
 
 			module.Create (this, CreateModuleBuilder ());
 			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
@@ -436,9 +427,9 @@ namespace Mono.CSharp
 			default_references.Add ("System.Windows.Browser");
 #endif
 
-			if (RootContext.Version > LanguageVersion.ISO_2)
+			if (compiler.Settings.Version > LanguageVersion.ISO_2)
 				default_references.Add ("System.Core");
-			if (RootContext.Version > LanguageVersion.V_3)
+			if (compiler.Settings.Version > LanguageVersion.V_3)
 				default_references.Add ("Microsoft.CSharp");
 
 			return default_references.ToArray ();
@@ -544,10 +535,7 @@ namespace Mono.CSharp
 
 		public void LoadModules (AssemblyDefinitionDynamic assembly, RootNamespace targetNamespace)
 		{
-			if (RootContext.Modules.Count == 0)
-				return;
-
-			foreach (var moduleName in RootContext.Modules) {
+			foreach (var moduleName in compiler.Settings.Modules) {
 				var m = LoadModuleFile (assembly, moduleName);
 				if (m == null)
 					continue;

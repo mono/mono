@@ -2265,7 +2265,7 @@ namespace Mono.CSharp {
 					return fne;
 			}
 
-			if (Arity == 0 && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
+			if (Arity == 0 && Name == "dynamic" && ec.Module.Compiler.Settings.Version > LanguageVersion.V_3) {
 				if (!ec.Module.PredefinedAttributes.Dynamic.IsDefined) {
 					ec.Module.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
@@ -2418,7 +2418,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (RootContext.EvalMode) {
+				if (rc.Module.Compiler.IsEvalutor) {
 					var fi = Evaluator.LookupField (Name);
 					if (fi != null)
 						return new FieldExpr (fi.Item1, loc);
@@ -3420,7 +3420,7 @@ namespace Mono.CSharp {
 			//
 			// If argument is an anonymous function
 			//
-			if (argument_type == InternalType.AnonymousMethod && RootContext.Version > LanguageVersion.ISO_2) {
+			if (argument_type == InternalType.AnonymousMethod && ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2) {
 				//
 				// p and q are delegate types or expression tree types
 				//
@@ -4596,7 +4596,7 @@ namespace Mono.CSharp {
 				if (a.Expr.Type == InternalType.Dynamic)
 					continue;
 
-				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (a.Expr, pt)) {
+				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr, pt)) {
 					custom_errors.NoArgumentMatch (ec, member);
 					return false;
 				}
@@ -5884,7 +5884,7 @@ namespace Mono.CSharp {
 
 		protected override void Error_TypeOrNamespaceNotFound (IMemberContext ec)
 		{
-			if (RootContext.Version < LanguageVersion.V_3)
+			if (ec.Module.Compiler.Settings.Version < LanguageVersion.V_3)
 				base.Error_TypeOrNamespaceNotFound (ec);
 			else
 				ec.Module.Compiler.Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");

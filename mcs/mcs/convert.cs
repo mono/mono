@@ -647,7 +647,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (expr.eclass == ExprClass.MethodGroup) {
-				if (target_type.IsDelegate && RootContext.Version != LanguageVersion.ISO_1) {
+				if (target_type.IsDelegate && ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1) {
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return DelegateCreation.ImplicitStandardConversionExists (ec, mg, target_type);
@@ -1260,7 +1260,7 @@ namespace Mono.CSharp {
 				//
 				// Only allow anonymous method conversions on post ISO_1
 				//
-				if (RootContext.Version != LanguageVersion.ISO_1){
+				if (ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return ImplicitDelegateCreation.Create (
