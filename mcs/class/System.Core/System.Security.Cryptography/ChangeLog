@@ -1,3 +1,14 @@
+2011-02-16  Juho Vähä-Herttua  <juhovh@iki.fi>
+
+	* CngExportPolicies.cs: New.
+	* CngKeyCreationOptions.cs: New.
+	* CngKeyOpenOptions.cs: New.
+	* CngKeyUsages.cs: New.
+	* CngPropertyOptions.cs: New.
+	* CngUIProtectionLevels.cs: New.
+	* ECDiffieHellmanKeyDerivationFunction.cs: New.
+	* ECKeyXmlFormat.cs: New.
+
 2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Aes.cs: Build here before NET_4_0 (or MOONLIGHT) otherwise 
