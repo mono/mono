@@ -50,10 +50,10 @@ namespace System.Threading.Tasks
 			this.id = Interlocked.Increment (ref lastId);
 		}
 
-		// FIXME: Probably not correct
 		public static TaskScheduler FromCurrentSynchronizationContext ()
 		{
-			return Current;
+			var syncCtx = SynchronizationContext.Current;
+			return new SynchronizationContextScheduler (syncCtx);
 		}
 		
 		public static TaskScheduler Default  {
