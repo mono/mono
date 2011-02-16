@@ -590,8 +590,8 @@ namespace System.Runtime.Serialization
 
 		static Type GetGenericCollectionInterface (Type type)
 		{
-			foreach (var iface in type.GetInterfaces ())
-				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>))
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IEnumerable<>))
 					return iface;
 
 			return null;
@@ -731,7 +731,7 @@ namespace System.Runtime.Serialization
 
 		static Type GetGenericDictionaryInterface (Type type)
 		{
-			foreach (var iface in type.GetInterfaces ())
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
 				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>))
 					return iface;
 

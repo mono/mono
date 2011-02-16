@@ -81,6 +81,14 @@ namespace System.Runtime.Serialization
 			var arr = type.GetCustomAttributes (typeof (T), inherit);
 			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
 		}
+
+		public static IEnumerable<Type> GetInterfacesOrSelfInterface (this Type type)
+		{
+			if (type.IsInterface)
+				yield return type;
+			foreach (var t in type.GetInterfaces ())
+				yield return t;
+		}
 	}
 
 	internal sealed class KnownTypeCollection : Collection<Type>
@@ -431,6 +439,8 @@ namespace System.Runtime.Serialization
 
 		internal Type GetSerializedType (Type type)
 		{
+			if (IsPrimitiveNotEnum (type))
+				return type;
 			Type element = GetCollectionElementType (type);
 			if (element == null)
 				return type;
@@ -661,10 +671,9 @@ namespace System.Runtime.Serialization
 		{
 			if (type.IsArray)
 				return type.GetElementType ();
-
-			Type [] ifaces = type.GetInterfaces ();
+			var ifaces = type.GetInterfacesOrSelfInterface ();
 			foreach (Type i in ifaces)
-				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (IEnumerable<>)))
 					return i.GetGenericArguments () [0];
 			foreach (Type i in ifaces)
 				if (i == typeof (IList))
@@ -730,7 +739,7 @@ namespace System.Runtime.Serialization
 
 		static bool TypeImplementsIDictionary (Type type)
 		{
-			foreach (var iface in type.GetInterfaces ())
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
 				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
 					return true;
 
