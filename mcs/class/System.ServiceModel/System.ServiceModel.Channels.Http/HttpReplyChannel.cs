@@ -28,9 +28,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IdentityModel.Selectors;
+using System.IdentityModel.Tokens;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Security;
 using System.Text;
 using System.Threading;
 
@@ -40,11 +43,18 @@ namespace System.ServiceModel.Channels.Http
 	{
 		HttpChannelListener<IReplyChannel> source;
 		RequestContext reqctx;
+		SecurityTokenAuthenticator security_token_authenticator;
+		SecurityTokenResolver security_token_resolver;
 
 		public HttpReplyChannel (HttpChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.source = listener;
+
+			if (listener.SecurityTokenManager != null) {
+				var str = new SecurityTokenRequirement () { TokenType = SecurityTokenTypes.UserName };
+				security_token_authenticator = listener.SecurityTokenManager.CreateSecurityTokenAuthenticator (str, out security_token_resolver);
+			}
 		}
 
 		public MessageEncoder Encoder {
@@ -138,6 +148,19 @@ namespace System.ServiceModel.Channels.Http
 				return false;
 			if (ctxi == null)
 				return true; // returning true, yet context is null. This happens at closing phase.
+
+			if (source.Source.AuthenticationScheme != AuthenticationSchemes.Anonymous) {
+				if (security_token_authenticator != null)
+					// FIXME: use return value?
+					try {
+						security_token_authenticator.ValidateToken (new UserNameSecurityToken (ctxi.User, ctxi.Password));
+					} catch (Exception) {
+						ctxi.ReturnUnauthorized ();
+					}
+				else {
+					ctxi.ReturnUnauthorized ();
+				}
+			}
 
 			Message msg = null;
 

@@ -127,7 +127,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			listener_manager = GetOrCreateListenerManager ();
 			Properties.Add (listener_manager);
-			listener_manager.RegisterListener (ChannelDispatcher, timeout);
+			listener_manager.RegisterListener (ChannelDispatcher, Source, timeout);
 		}
 
 		protected override void OnAbort ()
