@@ -30,6 +30,7 @@ namespace System.Threading.Tasks
 {
 	internal class TpScheduler: TaskScheduler, IScheduler
 	{
+		static readonly WaitCallback callback = TaskExecuterCallback;
 
 		public TpScheduler ()
 			: this (Environment.ProcessorCount, ThreadPriority.Normal)
@@ -42,7 +43,7 @@ namespace System.Threading.Tasks
 
 		public void AddWork (Task t)
 		{
-			ThreadPool.QueueUserWorkItem (TaskExecuterCallback, t);
+			ThreadPool.QueueUserWorkItem (callback, task);
 		}
 
 		static void TaskExecuterCallback (object obj)
