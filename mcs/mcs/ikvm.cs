@@ -355,11 +355,11 @@ namespace Mono.CSharp
 
 			default_references.Add ("System.dll");
 			default_references.Add ("System.Xml.dll");
+			default_references.Add ("System.Core.dll");
 
-			if (compiler.Settings.Version > LanguageVersion.ISO_2)
-				default_references.Add ("System.Core.dll");
-			if (compiler.Settings.Version > LanguageVersion.V_3)
+			if (corlib != null && corlib.GetName ().Version.Major >= 4) {
 				default_references.Add ("Microsoft.CSharp.dll");
+			}
 
 			return default_references.ToArray ();
 		}

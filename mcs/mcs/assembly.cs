@@ -1069,16 +1069,10 @@ namespace Mono.CSharp
 		protected readonly CompilerContext compiler;
 
 		protected readonly List<string> paths;
-		readonly string[] default_references;
 
 		public AssemblyReferencesLoader (CompilerContext compiler)
 		{
 			this.compiler = compiler;
-
-			if (compiler.Settings.LoadDefaultReferences)
-				default_references = GetDefaultReferences ();
-			else
-				default_references = new string[0];
 
 			paths = new List<string> ();
 			paths.AddRange (compiler.Settings.ReferencesLookupPaths);
@@ -1131,12 +1125,6 @@ namespace Mono.CSharp
 			}
 
 			T a;
-			foreach (string r in default_references) {
-				a = LoadAssemblyDefault (r);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
 			foreach (string r in module.Compiler.Settings.AssemblyReferences) {
 				a = LoadAssemblyFile (r);
 				if (a == null || EqualityComparer<T>.Default.Equals (a, corlib_assembly))
@@ -1165,6 +1153,20 @@ namespace Mono.CSharp
 					continue;
 
 				loaded.Add (key);
+			}
+
+			if (compiler.Settings.LoadDefaultReferences) {
+				foreach (string r in GetDefaultReferences ()) {
+					a = LoadAssemblyDefault (r);
+					if (a == null)
+						continue;
+
+					var key = Tuple.Create (module.GlobalRootNamespace, a);
+					if (loaded.Contains (key))
+						continue;
+
+					loaded.Add (key);
+				}
 			}
 
 			compiler.TimeReporter.Stop (TimeReporter.TimerType.ReferencesLoading);
