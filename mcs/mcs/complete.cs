@@ -72,9 +72,9 @@ namespace Mono.CSharp {
 		{
 			var results = new List<string> ();
 
-			AppendResults (results, Prefix, Evaluator.GetVarNames ());
+			AppendResults (results, Prefix, ec.Module.Evaluator.GetVarNames ());
 			AppendResults (results, Prefix, ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
-			AppendResults (results, Prefix, Evaluator.GetUsingList ());
+			AppendResults (results, Prefix, ec.Module.Evaluator.GetUsingList ());
 			
 			throw new CompletionResult (Prefix, results.ToArray ());
 		}

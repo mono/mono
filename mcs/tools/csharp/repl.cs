@@ -33,26 +33,26 @@ namespace Mono {
 
 	public class Driver {
 		public static string StartupEvalExpression;
+		static int? attach;
+		static string agent;
 		
 		static int Main (string [] args)
 		{
-#if !ON_DOTNET
-			if (args.Length > 0 && args [0] == "--attach") {
-				new ClientCSharpShell (Int32.Parse (args [1])).Run (null);
-				return 0;
-			}
+			var r = new Report (new ConsoleReportPrinter ());
+			var cmd = new CommandLineParser (r);
+			cmd.UnknownOptionHandler += HandleExtraArguments;
 
-			if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
-				new CSharpAgent (args [0]);
-				return 0;
-			}
-#endif
-			return Startup(args);
-		}
+			var settings = cmd.ParseArguments (args);
+			if (settings == null || r.Errors > 0)
+				return 1;
 
-		static int Startup (string[] args)
-		{
-			string[] startup_files;
+			var eval = new Evaluator (settings, r);
+
+			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
+			eval.DescribeTypeExpressions = true;
+
+			string[] startup_files = { };
+			/*
 			try {
 				startup_files = Evaluator.InitAndGetStartupFiles (args, HandleExtraArguments);
 				Evaluator.DescribeTypeExpressions = true;
@@ -60,15 +60,44 @@ namespace Mono {
 			} catch {
 				return 1;
 			}
-			return new CSharpShell ().Run (startup_files);
+			*/
+
+			CSharpShell shell;
+#if !ON_DOTNET
+			if (attach.HasValue) {
+				shell = new ClientCSharpShell (eval, attach.Value);
+			} else if (agent != null) {
+				new CSharpAgent (eval, agent).Run (startup_files);
+				return 0;
+			} else
+#endif
+			{
+				shell = new CSharpShell (eval);
+			}
+
+			return shell.Run (startup_files);
 		}
 
 		static int HandleExtraArguments (string [] args, int pos)
 		{
-			if (args [pos] == "-e" && pos+1 < args.Length){
-				StartupEvalExpression = args [pos+1];
-				return pos+1;
+			switch (args [pos]) {
+			case "-e":
+				if (pos + 1 < args.Length) {
+					StartupEvalExpression = args[pos + 1];
+					return pos + 1;
+				}
+				break;
+			case "--attach":
+				if (pos + 1 < args.Length) {
+					attach = Int32.Parse (args[1]);
+					return pos + 1;
+				}
+				break;
+			case "--agent:":
+				agent = args[pos];
+				return pos + 1;
 			}
+
 			return -1;
 		}
 		
@@ -110,13 +139,19 @@ namespace Mono {
 		
 		Mono.Terminal.LineEditor editor;
 		bool dumb;
+		readonly Evaluator evaluator;
+
+		public CSharpShell (Evaluator evaluator)
+		{
+			this.evaluator = evaluator;
+		}
 
 		protected virtual void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
 		{
 			// Do not about our program
 			a.Cancel = true;
 
-			Mono.CSharp.Evaluator.Interrupt ();
+			evaluator.Interrupt ();
 		}
 		
 		void SetupConsole ()
@@ -135,7 +170,7 @@ namespace Mono {
 
 				string complete = s.Substring (0, pos);
 				
-				string [] completions = Evaluator.GetCompletions (complete, out prefix);
+				string [] completions = evaluator.GetCompletions (complete, out prefix);
 				
 				return new Mono.Terminal.LineEditor.Completion (prefix, completions);
 			};
@@ -259,7 +294,7 @@ namespace Mono {
 			}
 
 			foreach (string file in libraries)
-				Evaluator.LoadAssembly (file);
+				evaluator.LoadAssembly (file);
 
 			ExecuteSources (sources, true);
 		}
@@ -310,7 +345,7 @@ namespace Mono {
 			object result;
 
 			try {
-				input = Evaluator.Evaluate (input, out result, out result_set);
+				input = evaluator.Evaluate (input, out result, out result_set);
 
 				if (result_set){
 					PrettyPrint (Console.Out, result);
@@ -438,10 +473,6 @@ namespace Mono {
 			}
 		}
 
-		public CSharpShell ()
-		{
-		}
-
 		public virtual int Run (string [] startup_files)
 		{
 			this.startup_files = startup_files;
@@ -460,7 +491,8 @@ namespace Mono {
 	class ClientCSharpShell : CSharpShell {
 		NetworkStream ns, interrupt_stream;
 		
-		public ClientCSharpShell (int pid)
+		public ClientCSharpShell (Evaluator evaluator, int pid)
+			: base (evaluator)
 		{
 			// Create a server socket we listen on whose address is passed to the agent
 			TcpListener listener = new TcpListener (new IPEndPoint (IPAddress.Loopback, 0));
@@ -590,9 +622,11 @@ namespace Mono {
 	class CSharpAgent
 	{
 		NetworkStream interrupt_stream;
+		readonly Evaluator evaluator;
 		
-		public CSharpAgent (String arg)
+		public CSharpAgent (Evaluator evaluator, String arg)
 		{
+			this.evaluator = evaluator;
 			new Thread (new ParameterizedThreadStart (Run)).Start (arg);
 		}
 
@@ -602,7 +636,7 @@ namespace Mono {
 				int b = interrupt_stream.ReadByte();
 				if (b == -1)
 					return;
-				Evaluator.Interrupt ();
+				evaluator.Interrupt ();
 				interrupt_stream.WriteByte (0);
 			}
 		}
@@ -626,20 +660,12 @@ namespace Mono {
 			new Thread (InterruptListener).Start ();
 
 			try {
-				Evaluator.Init (new string [0]);
-			} catch {
-				// TODO: send a result back.
-				Console.WriteLine ("csharp-agent: initialization failed");
-				return;
-			}
-	
-			try {
 				// Add all assemblies loaded later
 				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
 	
 				// Add all currently loaded assemblies
 				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
-					Evaluator.ReferenceAssembly (a);
+					evaluator.ReferenceAssembly (a);
 	
 				RunRepl (s);
 			} finally {
@@ -650,9 +676,9 @@ namespace Mono {
 			}
 		}
 	
-		static void AssemblyLoaded (object sender, AssemblyLoadEventArgs e)
+		void AssemblyLoaded (object sender, AssemblyLoadEventArgs e)
 		{
-			Evaluator.ReferenceAssembly (e.LoadedAssembly);
+			evaluator.ReferenceAssembly (e.LoadedAssembly);
 		}
 	
 		public void RunRepl (NetworkStream s)
@@ -676,7 +702,7 @@ namespace Mono {
 						input = input + "\n" + line;
 	
 					try {
-						input = Evaluator.Evaluate (input, out result, out result_set);
+						input = evaluator.Evaluate (input, out result, out result_set);
 					} catch (Exception e) {
 						s.WriteByte ((byte) AgentStatus.ERROR);
 						s.WriteString (e.ToString ());

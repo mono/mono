@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertReportPrinter.cs" />
     <Compile Include="Evaluator\BuildinCommands.cs" />
     <Compile Include="Evaluator\CompletionTest.cs" />
     <Compile Include="Evaluator\EvaluatorFixture.cs" />

@@ -171,7 +171,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class CommandLineParser
+	public class CommandLineParser
 	{
 		enum ParseResult
 		{
@@ -271,6 +271,15 @@ namespace Mono.CSharp {
 						case ParseResult.Stop:
 							stop_argument = true;
 							return settings;
+						case ParseResult.UnknownOption:
+							if (UnknownOptionHandler != null) {
+								var ret = UnknownOptionHandler (args, i);
+								if (ret != -1) {
+									i = ret;
+									continue;
+								}
+							}
+							break;
 						}
 					}
 
@@ -294,11 +303,8 @@ namespace Mono.CSharp {
 								}
 							}
 
-							if (!slash_opt) {
-								Error_WrongOption (arg);
-								return null;
-							}
-							break;
+							Error_WrongOption (arg);
+							return null;
 
 						case ParseResult.Stop:
 							stop_argument = true;

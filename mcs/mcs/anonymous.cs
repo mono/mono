@@ -1672,7 +1672,7 @@ namespace Mono.CSharp {
 		readonly IList<AnonymousTypeParameter> parameters;
 
 		private AnonymousTypeClass (DeclSpace parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
-			: base (parent, name, (parent.Compiler.IsEvalutor ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
+			: base (parent, name, (parent.Module.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}

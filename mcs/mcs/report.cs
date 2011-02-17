@@ -792,7 +792,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class StreamReportPrinter : ReportPrinter
+	public class StreamReportPrinter : ReportPrinter
 	{
 		readonly TextWriter writer;
 
@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class ConsoleReportPrinter : StreamReportPrinter
+	public class ConsoleReportPrinter : StreamReportPrinter
 	{
 		static readonly string prefix, postfix;
 

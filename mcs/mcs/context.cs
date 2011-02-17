@@ -599,15 +599,6 @@ namespace Mono.CSharp
 			get; set;
 		}
 
-		//
-		// If true, it means that the compiler is executing as
-		// in eval mode so unresolved variables are resolved in
-		// static classes maintained by the eval engine.
-		//
-		public bool IsEvalutor {
-			get; set;
-		}
-
 		public Report Report {
 			get {
 				return report;

@@ -182,6 +182,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		public Evaluator Evaluator {
+			get; set;
+		}
+
 		public bool HasDefaultCharSet {
 			get {
 				return DefaultCharSet.HasValue;

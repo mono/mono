@@ -1,3 +1,5 @@
+AssertReportPrinter.cs
+Evaluator/BuildinCommands.cs
 Evaluator/CompletionTest.cs
 Evaluator/EvaluatorFixture.cs
 Evaluator/ExpressionsTest.cs

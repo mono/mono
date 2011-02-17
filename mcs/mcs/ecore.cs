@@ -2418,8 +2418,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (rc.Module.Compiler.IsEvalutor) {
-					var fi = Evaluator.LookupField (Name);
+				if (rc.Module.Evaluator != null) {
+					var fi = rc.Module.Evaluator.LookupField (Name);
 					if (fi != null)
 						return new FieldExpr (fi.Item1, loc);
 				}

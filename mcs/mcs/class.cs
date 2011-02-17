@@ -1943,7 +1943,6 @@ namespace Mono.CSharp {
 					c.CloseType ();
 			
 			types = null;
-			fields = null;
 			initialized_fields = null;
 			initialized_static_fields = null;
 			constants = null;
