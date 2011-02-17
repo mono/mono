@@ -49,13 +49,6 @@ csproj-local:
 	echo $(BUILT_SOURCES); \
 	echo $(PROGRAM); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
-	
-ifeq (basic, $(PROFILE))
-install-local:
-	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	test ! -f $(PROGRAM).mdb || $(INSTALL_BIN) $(PROGRAM).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-endif
 
 #
 # Below this line we have local targets used for testing and development
