@@ -98,6 +98,17 @@ namespace System.ServiceModel.Configuration
 			return b;
 		}
 
+		public static Type GetTypeFromConfigString (string name)
+		{
+			Type type = Type.GetType (name);
+			if (type != null)
+				return type;
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
+				if ((type = ass.GetType (name)) != null)
+					return type;
+			return null;
+		}
+
 #if NET_4_0
 		public static Binding GetBindingByProtocolMapping (Uri address)
 		{
@@ -129,17 +140,6 @@ namespace System.ServiceModel.Configuration
 			}
 			
 			return inst;
-		}
-
-		public static Type GetTypeFromConfigString (string name)
-		{
-			Type type = Type.GetType (name);
-			if (type != null)
-				return type;
-			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
-				if ((type = ass.GetType (name)) != null)
-					return type;
-			return null;
 		}
 
 		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ServiceEndpointElement element)
