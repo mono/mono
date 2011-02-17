@@ -39,7 +39,8 @@ if ($minimal)
 print("libtarget: $libtarget\n");
 
 system("rm -f $bintarget/mono");
-system("rm -f $libtarget/libmono.so.0");
+system("rm -f $libtarget/libmono.so");
+system("rm -f $libtarget/libmono-static.a");
 
 if (not $skipbuild)
 {
@@ -106,14 +107,14 @@ mkpath($bintarget);
 mkpath($libtarget);
 
 print "Copying libmono.so\n";
-system("cp", "$root/mono/mini/.libs/libmono.so.0","$libtarget/libmono.so.0") eq 0 or die ("failed symlinking libmono.so.0");
+system("cp", "$root/mono/mini/.libs/libmono.so.0","$libtarget/libmono.so") eq 0 or die ("failed copying libmono.so.0");
 
 print "Copying libmono.a\n";
-system("cp", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
+system("cp", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono-static.a") eq 0 or die ("failed copying libmono.a");
 
 if ($ENV{"UNITY_THISISABUILDMACHINE"})
 {
-	system("strip $libtarget/libmono.so.0") eq 0 or die("failed to strip libmono (shared)");
+	system("strip $libtarget/libmono.so") eq 0 or die("failed to strip libmono (shared)");
 }
 
 system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
