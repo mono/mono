@@ -35,7 +35,7 @@ namespace System.Security.Cryptography {
 	[Serializable]
 	public sealed class CngAlgorithmGroup : IEquatable<CngAlgorithmGroup> {
 
-		private string group;
+		private string m_algorithmGroup;
 
 		public CngAlgorithmGroup (string algorithmGroup)
 		{
@@ -44,16 +44,18 @@ namespace System.Security.Cryptography {
 			if (algorithmGroup.Length == 0)
 				throw new ArgumentException ("algorithmGroup");
 
-			group = algorithmGroup;
+			m_algorithmGroup = algorithmGroup;
 		}
 
 		public string AlgorithmGroup {
-			get { return group; }
+			get { return m_algorithmGroup; }
 		}
 
 		public bool Equals (CngAlgorithmGroup other)
 		{
-			return this == other;
+			if (other == null)
+				return false;
+			return m_algorithmGroup == other.m_algorithmGroup;
 		}
 
 		public override bool Equals (object obj)
@@ -63,12 +65,12 @@ namespace System.Security.Cryptography {
 
 		public override int GetHashCode ()
 		{
-			return group.GetHashCode ();
+			return m_algorithmGroup.GetHashCode ();
 		}
 
 		public override string ToString ()
 		{
-			return group;
+			return m_algorithmGroup;
 		}
 
 		// static
@@ -123,18 +125,14 @@ namespace System.Security.Cryptography {
 		{
 			if ((object)left == null)
 				return ((object)right == null);
-			if ((object)right == null)
-				return false;
-			return left.group == right.group;
+			return left.Equals (right);
 		}
 
 		public static bool operator != (CngAlgorithmGroup left, CngAlgorithmGroup right)
 		{
 			if ((object)left == null)
 				return ((object)right != null);
-			if ((object)right == null)
-				return true;
-			return left.group != right.group;
+			return !left.Equals (right);
 		}
 	}
 }
