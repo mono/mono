@@ -32,19 +32,6 @@ namespace System.Threading.Tasks
 	{
 		static readonly WaitCallback callback = TaskExecuterCallback;
 
-		public TpScheduler ()
-			: this (Environment.ProcessorCount, ThreadPriority.Normal)
-		{
-		}
-
-		public TpScheduler (int maxWorker, ThreadPriority priority)
-		{
-			int workers, ioPorts;
-			ThreadPool.GetMinThreads (out workers, out ioPorts);
-			if (!ThreadPool.SetMaxThreads (workers, ioPorts))
-				Console.WriteLine ("Setting up TP parameters wasn't successfully");
-		}
-
 		protected internal override void QueueTask (Task task)
 		{
 			ThreadPool.QueueUserWorkItem (callback, task);
