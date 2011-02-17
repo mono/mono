@@ -169,8 +169,6 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public struct Location : IEquatable<Location>
 	{
-		int token; 
-
 		struct Checkpoint {
 			public readonly int LineOffset;
 			public readonly int CompilationUnit;
@@ -184,17 +182,29 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if FULL_AST
+		long token;
+
+		const int column_bits = 32;
+		const int line_delta_bits = 16;
+#else
+		int token;
+
+		const int column_bits = 8;
+		const int line_delta_bits = 8;
+#endif
+		const int checkpoint_bits = 16;
+
+		// -2 because the last one is used for hidden
+		const int max_column = (1 << column_bits) - 2;
+		const int column_mask = (1 << column_bits) - 1;
+
 		static List<SourceFile> source_list;
 		static List<CompilationUnit> compile_units;
 		static Dictionary<string, int> source_files;
-		static int checkpoint_bits;
 		static int source_count;
 		static int current_source;
 		static int current_compile_unit;
-		static int line_delta_bits;
-		static int line_delta_mask;
-		static int column_bits;
-		static int column_mask;
 		static Checkpoint [] checkpoints;
 		static int checkpoint_index;
 		
@@ -204,7 +214,6 @@ namespace Mono.CSharp {
 		static Location ()
 		{
 			Reset ();
-			checkpoints = new Checkpoint [10];
 		}
 
 		public static void Reset ()
@@ -215,6 +224,7 @@ namespace Mono.CSharp {
 			current_source = 0;
 			current_compile_unit = 0;
 			source_count = 0;
+			checkpoint_index = 0;
 		}
 
 		// <summary>
@@ -262,13 +272,6 @@ namespace Mono.CSharp {
 			checkpoints = new Checkpoint [source_list.Count * 2];
 			if (checkpoints.Length > 0)
 				checkpoints [0] = new Checkpoint (0, 0, 0);
-
-			column_bits = 8;
-			column_mask = 0xFF;
-			line_delta_bits = 8;
-			line_delta_mask = 0xFF00;
-			checkpoint_index = 0;
-			checkpoint_bits = 16;
 		}
 
 		// <remarks>
@@ -293,7 +296,7 @@ namespace Mono.CSharp {
 				return retval;
 			}
 
-			int index = (int) source_files [path];
+			int index = source_files [path];
 			return source_list [index - 1];
 		}
 
@@ -325,12 +328,15 @@ namespace Mono.CSharp {
 			if (row <= 0)
 				token = 0;
 			else {
-				if (column > 254)
-					column = 254;
-				if (column < 0)
-					column = 255;
-				int target = -1;
-				int delta = 0;
+				if (column > max_column)
+					column = max_column;
+				else if (column < 0)
+					column = max_column + 1;
+
+				long target = -1;
+				long delta = 0;
+
+				// FIXME: This value is certainly wrong but what was the intension
 				int max = checkpoint_index < 10 ?
 					checkpoint_index : 10;
 				for (int i = 0; i < max; i++) {
@@ -348,10 +354,15 @@ namespace Mono.CSharp {
 					target = checkpoint_index;
 					delta = row % (1 << line_delta_bits);
 				}
+
 				long l = column +
-					(long) (delta << column_bits) +
-					(long) (target << (line_delta_bits + column_bits));
+					(delta << column_bits) +
+					(target << (line_delta_bits + column_bits));
+#if FULL_AST
+				token = l;
+#else
 				token = l > 0xFFFFFFFF ? 0 : (int) l;
+#endif
 			}
 		}
 
@@ -363,9 +374,7 @@ namespace Mono.CSharp {
 		static void AddCheckpoint (int compile_unit, int file, int row)
 		{
 			if (checkpoints.Length == ++checkpoint_index) {
-				Checkpoint [] tmp = new Checkpoint [checkpoint_index * 2];
-				Array.Copy (checkpoints, tmp, checkpoints.Length);
-				checkpoints = tmp;
+				Array.Resize (ref checkpoints, checkpoint_index + 2);
 			}
 			checkpoints [checkpoint_index] = new Checkpoint (compile_unit, file, row);
 		}
@@ -376,7 +385,7 @@ namespace Mono.CSharp {
 				return fileName + "(" + Row.ToString () + "):";
 
 			return fileName + "(" + Row.ToString () + "," + Column.ToString () +
-				(Column == column_mask ? "+):" : "):");
+				(Column == max_column ? "+):" : "):");
 		}
 		
 		public override string ToString ()
@@ -418,14 +427,21 @@ namespace Mono.CSharp {
 		}
 
 		int CheckpointIndex {
-			get { return (int) ((token & 0xFFFF0000) >> (line_delta_bits + column_bits)); }
+			get {
+				const int checkpoint_mask = (1 << checkpoint_bits) - 1;
+				return ((int) (token >> (line_delta_bits + column_bits))) & checkpoint_mask;
+			}
 		}
 
 		public int Row {
 			get {
 				if (token == 0)
 					return 1;
-				return checkpoints [CheckpointIndex].LineOffset + ((token & line_delta_mask) >> column_bits);
+
+				int offset = checkpoints[CheckpointIndex].LineOffset;
+
+				const int line_delta_mask = (1 << column_bits) - 1;
+				return offset + (((int)(token >> column_bits)) & line_delta_mask);
 			}
 		}
 
@@ -434,13 +450,13 @@ namespace Mono.CSharp {
 				if (token == 0)
 					return 1;
 				int col = (int) (token & column_mask);
-				return col == 255 ? 1 : col;
+				return col > max_column ? 1 : col;
 			}
 		}
 
 		public bool Hidden {
 			get {
-				return (int) (token & column_mask) == 255;
+				return (int) (token & column_mask) == max_column + 1;
 			}
 		}
 
