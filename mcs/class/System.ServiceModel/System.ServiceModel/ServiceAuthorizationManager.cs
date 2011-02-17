@@ -27,24 +27,30 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Policy;
+using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
 {
 	public class ServiceAuthorizationManager
 	{
-		public bool CheckAccess (OperationContext context)
+		public virtual bool CheckAccess (OperationContext context)
+		{
+			return CheckAccessCore (context);
+		}
+
+		public virtual bool CheckAccess (OperationContext context, ref Message message)
 		{
 			return CheckAccessCore (context);
 		}
 
 		[MonoTODO]
-		public virtual bool CheckAccessCore (OperationContext context)
+		protected virtual bool CheckAccessCore (OperationContext context)
 		{
 			return false;
 		}
 
 		[MonoTODO]
-		public ReadOnlyCollection<IAuthorizationPolicy> GetAuthorizationPolicies (OperationContext context)
+		protected virtual ReadOnlyCollection<IAuthorizationPolicy> GetAuthorizationPolicies (OperationContext context)
 		{
 			throw new NotImplementedException ();
 		}
