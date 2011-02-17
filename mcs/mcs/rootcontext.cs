@@ -282,6 +282,10 @@ namespace Mono.CSharp {
 						case ParseResult.Success:
 							continue;
 						case ParseResult.UnknownOption:
+							// Need to skip `/home/test.cs' however /test.cs is considered as error
+							if ((slash_opt && arg.Length > 3 && arg.IndexOf ('/', 2) > 0))
+								break;
+
 							if (UnknownOptionHandler != null) {
 								var ret = UnknownOptionHandler (args, i);
 								if (ret != -1) {
@@ -296,14 +300,6 @@ namespace Mono.CSharp {
 						case ParseResult.Stop:
 							stop_argument = true;
 							return settings;
-						}
-					}
-					
-					if (slash_opt) {
-						// Need to skip `/home/test.cs' however /test.cs is considered as error
-						if (arg.Length < 2 || arg.IndexOf ('/', 2) == -1) {
-							Error_WrongOption (arg);
-							return null;
 						}
 					}
 				}
