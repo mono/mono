@@ -50,7 +50,7 @@ namespace System.ServiceModel.Channels.Http
 
 		public List<HttpChannelListenerEntry> Entries { get; private set; }
 
-		public abstract void RegisterListener (ChannelDispatcher channel, TimeSpan timeout);
+		public abstract void RegisterListener (ChannelDispatcher channel, HttpTransportBindingElement element, TimeSpan timeout);
 		public abstract void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout);
 
 		protected void RegisterListenerCommon (ChannelDispatcher channel, TimeSpan timeout)
@@ -125,12 +125,21 @@ namespace System.ServiceModel.Channels.Http
 		Thread loop;
 
 		// FIXME: use timeout
-		public override void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
+		public override void RegisterListener (ChannelDispatcher channel, HttpTransportBindingElement element, TimeSpan timeout)
 		{
 			RegisterListenerCommon (channel, timeout);
 
 			if (Entries.Count != 1)
 				return;
+
+			if (element != null) {
+				var l = listener;
+				l.AuthenticationSchemeSelectorDelegate = delegate (HttpListenerRequest req) {
+					return element.AuthenticationScheme;
+				};
+				l.Realm = element.Realm;
+				l.UnsafeConnectionNtlmAuthentication = element.UnsafeConnectionNtlmAuthentication;
+			}
 
 			// Start here. It is shared between channel listeners
 			// that share the same listen Uri. So there is no other appropriate place.
@@ -190,7 +199,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 		}
 
-		public override void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
+		public override void RegisterListener (ChannelDispatcher channel, HttpTransportBindingElement element, TimeSpan timeout)
 		{
 			RegisterListenerCommon (channel, timeout);
 		}
