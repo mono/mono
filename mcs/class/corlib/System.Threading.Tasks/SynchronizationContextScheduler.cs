@@ -31,7 +31,7 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
-	public class SynchronizationContextScheduler : TaskScheduler, IScheduler
+	public class SynchronizationContextScheduler : TaskScheduler
 	{
 		readonly SynchronizationContext ctx;
 		static readonly SendOrPostCallback callback = TaskLaunchWrapper;
@@ -41,9 +41,9 @@ namespace System.Threading.Tasks
 			this.ctx = ctx;
 		}
 
-		public void AddWork (Task t)
+		protected internal override void QueueTask (Task task)
 		{
-			ctx.Post (callback, t);
+			ctx.Post (callback, task);
 		}
 
 		static void TaskLaunchWrapper (object obj)
@@ -51,7 +51,7 @@ namespace System.Threading.Tasks
 			((Task)obj).Execute (null);
 		}
 
-		public void ParticipateUntil (Task task)
+		internal override void ParticipateUntil (Task task)
 		{
 			if (task.IsCompleted)
 				return;
@@ -64,7 +64,7 @@ namespace System.Threading.Tasks
 			ParticipateUntilInternal (task, evt, -1);
 		}
 
-		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
+		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
@@ -85,7 +85,7 @@ namespace System.Threading.Tasks
 			evt.Wait (millisecondsTimeout);
 		}
 
-		public void PulseAll ()
+		internal override void PulseAll ()
 		{
 		}
 
@@ -96,11 +96,6 @@ namespace System.Threading.Tasks
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{
 			throw new System.NotImplementedException();
-		}
-
-		protected internal override void QueueTask (Task task)
-		{
-			AddWork (task);
 		}
 
 		protected internal override bool TryDequeue (Task task)

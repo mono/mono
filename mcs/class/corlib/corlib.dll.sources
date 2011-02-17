@@ -1536,7 +1536,6 @@ System.Threading.Tasks/TaskCreationOptions.cs
 System.Threading.Tasks/ThreadWorker.cs
 System.Threading.Tasks/SchedulerProxy.cs
 System.Threading.Tasks/Scheduler.cs
-System.Threading.Tasks/IScheduler.cs
 System.Threading.Tasks/CyclicDeque.cs
 System.Threading.Tasks/TaskScheduler.cs
 System.Threading.Tasks/TaskContinuationOptions.cs

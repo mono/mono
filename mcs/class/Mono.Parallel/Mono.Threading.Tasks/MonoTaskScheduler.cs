@@ -34,8 +34,8 @@ namespace Mono.Threading.Tasks
 {
 	public interface IMonoTaskScheduler
 	{
-		void ParticipateUntil (Task task);
-		bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout);
+		void MonoParticipateUntil (Task task);
+		bool MonoParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout);
 	}
 }
 

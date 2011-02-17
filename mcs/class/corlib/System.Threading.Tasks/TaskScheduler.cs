@@ -36,6 +36,7 @@ namespace System.Threading.Tasks
 	public abstract class TaskScheduler
 	{
 		static TaskScheduler defaultScheduler = new TpScheduler ();
+		SchedulerProxy proxy;
 		
 		[ThreadStatic]
 		static TaskScheduler currentScheduler;
@@ -48,6 +49,7 @@ namespace System.Threading.Tasks
 		protected TaskScheduler ()
 		{
 			this.id = Interlocked.Increment (ref lastId);
+			this.proxy = new SchedulerProxy (this);
 		}
 
 		public static TaskScheduler FromCurrentSynchronizationContext ()
@@ -85,7 +87,22 @@ namespace System.Threading.Tasks
 				return Environment.ProcessorCount;
 			}
 		}
-		
+
+		internal virtual void ParticipateUntil (Task task)
+		{
+			proxy.ParticipateUntil (task);
+		}
+
+		internal virtual bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout)
+		{
+			return proxy.ParticipateUntil (task, predicateEvt, millisecondsTimeout);
+		}
+
+		internal virtual void PulseAll ()
+		{
+			proxy.PulseAll ();
+		}
+
 		protected abstract IEnumerable<Task> GetScheduledTasks ();
 		protected internal abstract void QueueTask (Task task);
 		protected internal virtual bool TryDequeue (Task task)
