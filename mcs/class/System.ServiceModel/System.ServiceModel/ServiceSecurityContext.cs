@@ -84,6 +84,7 @@ namespace System.ServiceModel
 
 		public ReadOnlyCollection<IAuthorizationPolicy> AuthorizationPolicies {
 			get { return policies; }
+			set { policies = value; }
 		}
 
 		[MonoTODO]
