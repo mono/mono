@@ -51,7 +51,7 @@ namespace System.Threading.Tasks
 
 		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
 		{
-			int num = Math.Min (GetBestWorkerNumber (),
+			int num = Math.Min (GetBestWorkerNumber (options.TaskScheduler),
 			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
 			// Integer range that each task process
 			if ((step = (to - from) / num) < 5) {
