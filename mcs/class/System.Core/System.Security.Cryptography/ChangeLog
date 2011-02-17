@@ -1,3 +1,14 @@
+2011-02-17  Juho Vähä-Herttua  <juhovh@iki.fi>
+
+	* CngAlgorithm.cs, CngAlgorithmGroup.cs: Change the private
+	variable name to match .NET when the class is serialized
+	* CngKeyBlobFormat.cs: New.
+	* CngKeyCreationParameters.cs: New.
+	* CngProperty.cs: New.
+	* CngPropertyCollection.cs: New.
+	* CngProvider.cs: New.
+	* CngUIPolicy.cs: New.
+
 2011-02-16  Juho Vähä-Herttua  <juhovh@iki.fi>
 
 	* CngExportPolicies.cs: New.
