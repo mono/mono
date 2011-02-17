@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.Util;
@@ -43,6 +44,15 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			this.wrapped = wrapped;
 		}
 		
+		public string this [int index] {
+			get { return Get (index); }
+		}
+
+		public string this [string name] {
+			get { return Get (name); }
+			set{ Set (name,value); }
+		}
+
 		public override string Get (string name)
 		{
 			return Validate (name, wrapped.Get (name));
@@ -51,6 +61,26 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 		public override string Get (int index)
 		{
 			return Validate (wrapped.GetKey (index), wrapped.Get (index));
+		}
+
+		public override IEnumerator GetEnumerator ()
+		{
+			return wrapped.GetEnumerator ();
+		}
+
+		public override string GetKey (int index)
+		{
+			return wrapped.GetKey (index);
+		}
+
+		public override string[] GetValues (int index)
+		{
+			return wrapped.GetValues (index);
+		}
+
+		public override string[] GetValues (string name)
+		{
+			return wrapped.GetValues (name);
 		}
 
 		string Validate (string key, string value)
