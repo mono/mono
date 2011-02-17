@@ -695,7 +695,7 @@ namespace Mono.CSharp {
 			else
 				ns = ctx.GlobalRootNamespace;
 
-			SlaveDeclSpace = new RootDeclSpace (this);
+			SlaveDeclSpace = new RootDeclSpace (ctx, this);
 		}
 
 		private NamespaceEntry (ModuleContainer ctx, NamespaceEntry parent, CompilationUnit file, Namespace ns, bool slave)
@@ -705,7 +705,7 @@ namespace Mono.CSharp {
 			this.file = file;
 			this.IsImplicit = true;
 			this.ns = ns;
-			this.SlaveDeclSpace = slave ? new RootDeclSpace (this) : null;
+			this.SlaveDeclSpace = slave ? new RootDeclSpace (ctx, this) : null;
 		}
 
 		public List<UsingEntry> Usings {

@@ -27,6 +27,11 @@ namespace Mono.CSharp
 			//}
 		}
 
+		public virtual void Visit (ModuleContainer module)
+		{
+			VisitTypeContainer (module);
+		}
+
 		public virtual void Visit (Class c)
 		{
 			VisitTypeContainer (c);

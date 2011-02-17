@@ -305,6 +305,8 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public abstract void Accept (StructuralVisitor visitor);
+
 		public bool AddMember (MemberCore symbol)
 		{
 			return AddToContainer (symbol, symbol.MemberName.Basename);
@@ -2415,6 +2417,11 @@ namespace Mono.CSharp {
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
 		{
 			if (part.Name == "System.Object")
@@ -2654,6 +2661,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
@@ -2834,16 +2846,7 @@ namespace Mono.CSharp {
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
-		{
-			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
-				a.Error_MissingGuidAttribute ();
-				return;
-			}
-
-			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
-		}
-
+		#region Properties
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -2860,6 +2863,23 @@ namespace Mono.CSharp {
 
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
+		}
+
+		#endregion
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
+		{
+			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
+				a.Error_MissingGuidAttribute ();
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		protected override bool VerifyClsCompliance ()

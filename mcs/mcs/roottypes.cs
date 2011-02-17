@@ -232,6 +232,11 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public void AddAnonymousType (AnonymousTypeClass type)
 		{
 			List<AnonymousTypeClass> existing;
@@ -475,10 +480,10 @@ namespace Mono.CSharp
 	}
 
 	class RootDeclSpace : TypeContainer {
-		public RootDeclSpace (NamespaceEntry ns)
+		public RootDeclSpace (ModuleContainer module, NamespaceEntry ns)
 			: base (ns, null, MemberName.Null, null, 0)
 		{
-			PartialContainer = RootContext.ToplevelTypes;
+			PartialContainer = module;
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -504,6 +509,11 @@ namespace Mono.CSharp
 			get {
 				return PartialContainer.Module;
 			}
+		}
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			throw new InternalErrorException ("should not be called");
 		}
 
 		public override bool IsClsComplianceRequired ()

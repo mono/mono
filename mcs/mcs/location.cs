@@ -185,8 +185,8 @@ namespace Mono.CSharp {
 #if FULL_AST
 		long token;
 
-		const int column_bits = 32;
-		const int line_delta_bits = 16;
+		const int column_bits = 24;
+		const int line_delta_bits = 24;
 #else
 		int token;
 
