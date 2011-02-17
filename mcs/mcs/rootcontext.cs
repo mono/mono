@@ -294,8 +294,11 @@ namespace Mono.CSharp {
 								}
 							}
 
-							Error_WrongOption (arg);
-							return null;
+							if (!slash_opt) {
+								Error_WrongOption (arg);
+								return null;
+							}
+							break;
 
 						case ParseResult.Stop:
 							stop_argument = true;
