@@ -548,6 +548,7 @@ namespace Mono.CSharp
 			if (ns == null)
 				ns = new NamespaceEntry (module, null, Location.SourceFiles[0], null);
 
+			ns.DeclarationFound = false;
 			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], module, ns);
 
 			if (kind == InputKind.StatementOrExpression){

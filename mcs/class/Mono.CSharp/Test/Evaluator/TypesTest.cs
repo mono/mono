@@ -44,5 +44,13 @@ namespace MonoTests.EvaluatorTest
 			object res = Evaluator.Evaluate ("typeof (Z);");
 			Assert.AreEqual ("Z", res.ToString ());
 		}
+
+		[Test]
+		public void UsingAfterType ()
+		{
+			Evaluator.Run ("struct Z { }");
+			Evaluator.Run ("using System;");
+			Evaluator.Run ("struct Z { }");
+		}
 	}
 }
