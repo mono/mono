@@ -431,8 +431,8 @@ namespace System
 
 				return FindPosition (enumType, value, info.values) >= 0;
 			} else {
-				throw new ArgumentException("The value parameter is not the correct type."
-					+ "It must be type String or the same type as the underlying type"
+				throw new ArgumentException("The value parameter is not the correct type. "
+					+ "It must be type String or the same type as the underlying type "
 					+ "of the Enum.");
 			}
 		}
