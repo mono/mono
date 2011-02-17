@@ -28,7 +28,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class TpScheduler: TaskScheduler, IScheduler
+	internal class TpScheduler: TaskScheduler
 	{
 		static readonly WaitCallback callback = TaskExecuterCallback;
 
@@ -39,9 +39,13 @@ namespace System.Threading.Tasks
 
 		public TpScheduler (int maxWorker, ThreadPriority priority)
 		{
+			int workers, ioPorts;
+			ThreadPool.GetMinThreads (out workers, out ioPorts);
+			if (!ThreadPool.SetMaxThreads (workers, ioPorts))
+				Console.WriteLine ("Setting up TP parameters wasn't successfully");
 		}
 
-		public void AddWork (Task t)
+		protected internal override void QueueTask (Task task)
 		{
 			ThreadPool.QueueUserWorkItem (callback, task);
 		}
@@ -54,7 +58,7 @@ namespace System.Threading.Tasks
 			task.Execute (null);
 		}
 
-		public void ParticipateUntil (Task task)
+		internal override void ParticipateUntil (Task task)
 		{
 			if (task.Status == TaskStatus.WaitingToRun)
 				task.Execute (null);
@@ -65,7 +69,7 @@ namespace System.Threading.Tasks
 			ParticipateUntil (task, new ManualResetEventSlim (false), -1);
 		}
 
-		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
+		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
@@ -83,20 +87,15 @@ namespace System.Threading.Tasks
 			return self.IsCompleted;
 		}
 
-		public void PulseAll ()
+		internal override void PulseAll ()
 		{
 		}
 
 		public void Dispose ()
 		{
 		}
-#region Scheduler dummy stubs
-		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
-		{
-			throw new System.NotImplementedException();
-		}
 
-		protected internal override void QueueTask (Task task)
+		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{
 			throw new System.NotImplementedException();
 		}
@@ -117,7 +116,6 @@ namespace System.Threading.Tasks
 				return base.MaximumConcurrencyLevel;
 			}
 		}
-#endregion
 	}
 }
 #endif
