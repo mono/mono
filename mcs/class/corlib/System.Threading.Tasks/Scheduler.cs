@@ -28,7 +28,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class Scheduler: TaskScheduler, IScheduler
+	internal class Scheduler: TaskScheduler
 	{
 		readonly IProducerConsumerCollection<Task> workQueue;
 		readonly ThreadWorker[]        workers;
@@ -46,12 +46,12 @@ namespace System.Threading.Tasks
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, i, workQueue, priority, pulseHandle);
+				workers [i] = new ThreadWorker (workers, i, workQueue, priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
-		
-		public void AddWork (Task t)
+
+		protected internal override void QueueTask (Task t)
 		{
 			// Add to the shared work pool
 			workQueue.TryAdd (t);
@@ -59,7 +59,7 @@ namespace System.Threading.Tasks
 			PulseAll ();
 		}
 
-		public void ParticipateUntil (Task task)
+		internal override void ParticipateUntil (Task task)
 		{
 			if (task.IsCompleted)
 				return;
@@ -72,7 +72,7 @@ namespace System.Threading.Tasks
 			ParticipateUntilInternal (task, evt, -1);
 		}
 		
-		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
+		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
@@ -99,7 +99,7 @@ namespace System.Threading.Tasks
 			return self.IsCompleted;
 		}
 		
-		public void PulseAll ()
+		internal override void PulseAll ()
 		{
 			pulseHandle.Set ();
 		}
@@ -111,11 +111,6 @@ namespace System.Threading.Tasks
 		}
 		#region Scheduler dummy stubs
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected internal override void QueueTask (Task task)
 		{
 			throw new System.NotImplementedException();
 		}

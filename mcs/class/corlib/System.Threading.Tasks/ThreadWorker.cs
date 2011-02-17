@@ -44,7 +44,6 @@ namespace System.Threading.Tasks
 		readonly ThreadWorker[]         others;
 		readonly ManualResetEvent       waitHandle;
 		readonly IProducerConsumerCollection<Task> sharedWorkQueue;
-		readonly IScheduler             sched;
 		readonly ThreadPriority         threadPriority;
 
 		// Flag to tell if workerThread is running
@@ -57,8 +56,7 @@ namespace System.Threading.Tasks
 		const int sleepThreshold = 100;
 		int deepSleepTime = 8;
 		
-		public ThreadWorker (IScheduler sched,
-		                     ThreadWorker[] others,
+		public ThreadWorker (ThreadWorker[] others,
 		                     int workerPosition,
 		                     IProducerConsumerCollection<Task> sharedWorkQueue,
 		                     ThreadPriority priority,
@@ -66,7 +64,6 @@ namespace System.Threading.Tasks
 		{
 			this.others          = others;
 			this.dDeque          = new CyclicDeque<Task> ();
-			this.sched           = sched;
 			this.sharedWorkQueue = sharedWorkQueue;
 			this.workerLength    = others.Length;
 			this.workerPosition  = workerPosition;
@@ -299,7 +296,7 @@ namespace System.Threading.Tasks
 		internal void ChildWorkAdder (Task t)
 		{
 			dDeque.PushBottom (t);
-			sched.PulseAll ();
+			waitHandle.Set ();
 		}
 		
 		static bool CheckTaskFitness (Task self, Task t)
