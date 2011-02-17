@@ -2103,7 +2103,13 @@ namespace Mono.CSharp {
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			Constant new_value = value.ConvertExplicitly (in_checked_context, target_type);
-			return new_value == null ? null : new SideEffectConstant (new_value, side_effect, new_value.Location);
+			if (new_value == null)
+				return null;
+
+			var c = new SideEffectConstant (new_value, side_effect, new_value.Location);
+			c.type = target_type;
+			c.eclass = eclass;
+			return c;
 		}
 	}
 }

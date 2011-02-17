@@ -31710,7 +31710,7 @@
         <size>15</size>
       </method>
       <method name="Int32 Main()">
-        <size>2</size>
+        <size>15</size>
       </method>
     </type>
   </test>
@@ -46231,6 +46231,21 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>86</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-807.cs">
+    <type name="AException">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>55</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
