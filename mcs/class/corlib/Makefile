@@ -8,8 +8,12 @@ LIBRARY_NAME = mscorlib.dll
 LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
+LIB_MCS_FLAGS += --runtime:v2
+else ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += --runtime:v4
+else
+error
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
