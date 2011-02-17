@@ -117,10 +117,34 @@ namespace System.ServiceModel.Configuration
 		}
 
 		[MonoTODO]
-		protected internal override object CreateBehavior () {
-			throw new NotImplementedException ();
-		}
+		protected internal override object CreateBehavior ()
+		{
+			var b = new ServiceAuthorizationBehavior ();
+			if (!String.IsNullOrEmpty (ServiceAuthorizationManagerType))
+				b.ServiceAuthorizationManager = (ServiceAuthorizationManager) Activator.CreateInstance (ConfigUtil.GetTypeFromConfigString (ServiceAuthorizationManagerType));
 
+			foreach (var apte in AuthorizationPolicies)
+				throw new NotImplementedException ();
+
+			if (!String.IsNullOrEmpty (RoleProviderName))
+				throw new NotImplementedException ();
+
+			b.ImpersonateCallerForAllOperations = ImpersonateCallerForAllOperations;
+			b.PrincipalPermissionMode = PrincipalPermissionMode;
+
+			return b;
+		}
+		
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (ServiceAuthorizationElement) from;
+			foreach (AuthorizationPolicyTypeElement ae in e.AuthorizationPolicies)
+				AuthorizationPolicies.Add (new AuthorizationPolicyTypeElement (ae.PolicyType));
+			ImpersonateCallerForAllOperations = e.ImpersonateCallerForAllOperations;
+			PrincipalPermissionMode = e.PrincipalPermissionMode;
+			RoleProviderName = e.RoleProviderName;
+			ServiceAuthorizationManagerType = e.ServiceAuthorizationManagerType;
+		}
 	}
 
 }
