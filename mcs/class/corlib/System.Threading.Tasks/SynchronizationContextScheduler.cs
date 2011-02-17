@@ -51,48 +51,6 @@ namespace System.Threading.Tasks
 			((Task)obj).Execute (null);
 		}
 
-		internal override void ParticipateUntil (Task task)
-		{
-			if (task.IsCompleted)
-				return;
-
-			ManualResetEventSlim evt = new ManualResetEventSlim (false);
-			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
-			if (evt.IsSet || task.IsCompleted)
-				return;
-
-			ParticipateUntilInternal (task, evt, -1);
-		}
-
-		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
-		{
-			if (task.IsCompleted)
-				return false;
-
-			bool isFromPredicate = true;
-			task.ContinueWith (_ => { isFromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
-
-			ParticipateUntilInternal (task, evt, millisecondsTimeout);
-
-			if (task.IsCompleted)
-				return false;
-
-			return isFromPredicate;
-		}
-
-		internal void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
-		{
-			evt.Wait (millisecondsTimeout);
-		}
-
-		internal override void PulseAll ()
-		{
-		}
-
-		public void Dispose ()
-		{
-		}
-
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{
 			throw new System.NotImplementedException();

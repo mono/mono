@@ -68,13 +68,19 @@ namespace System.Threading.Tasks
 			field = Delegate.CreateDelegate (typeof(TDelegate), scheduler, method) as TDelegate;
 			Console.WriteLine ("Created delegate for " + name);
 		}
-		
+
 		public void ParticipateUntil (Task task)
 		{
 			if (participateUntil1 != null) {
 				participateUntil1 (task);
 				return;
 			}
+
+			if (task.Status == TaskStatus.WaitingToRun)
+				task.Execute (null);
+
+			if (task.IsCompleted)
+				return;
 
 			ManualResetEventSlim evt = new ManualResetEventSlim (false);
 			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
@@ -84,6 +90,9 @@ namespace System.Threading.Tasks
 		
 		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
+			if (task.IsCompleted)
+				return false;
+
 			if (participateUntil2 != null)
 				return participateUntil2 (task, evt, millisecondsTimeout);
 
