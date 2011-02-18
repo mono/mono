@@ -216,7 +216,8 @@ namespace System.ServiceModel.Dispatcher
 			var msg = PartsToMessage (md, version, action, parts);
 			if (headers != null)
 				foreach (var pair in headers)
-					msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
+					if (pair.Value != null)
+						msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
 			return msg;
 		}
 
