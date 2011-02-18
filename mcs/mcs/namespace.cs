@@ -466,6 +466,7 @@ namespace Mono.CSharp {
 		public void RemoveDeclSpace (string name)
 		{
 			types.Remove (name);
+			cached_types.Remove (name);
 		}
 
 		public void ReplaceTypeWithPredefined (TypeSpec ts, BuildinTypeSpec pts)

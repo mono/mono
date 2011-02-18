@@ -1033,41 +1033,39 @@ namespace Mono.CSharp
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);
 
+			clone = clone.Resolve (ec);
+			if (clone == null)
+				return null;
+
 			//
 			// A useful feature for the REPL: if we can resolve the expression
 			// as a type, Describe the type;
 			//
 			if (ec.Module.Evaluator.DescribeTypeExpressions){
 				var old_printer = ec.Report.SetPrinter (new SessionReportPrinter ());
+				Expression tclone;
 				try {
-					clone = clone.Resolve (ec);
-					if (clone == null) {
-						clone = source.Clone (cc);
-						clone = clone.Resolve (ec, ResolveFlags.Type);
-						if (clone == null) {
-							clone = source.Clone (cc);
-							clone = clone.Resolve (ec);
-							return null;
-						}
-
-						Arguments args = new Arguments (1);
-						args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
-						source = new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
-					}
+					tclone = source.Clone (cc);
+					tclone = tclone.Resolve (ec, ResolveFlags.Type);
+					if (ec.Report.Errors > 0)
+						tclone = null;
 				} finally {
 					ec.Report.SetPrinter (old_printer);
 				}
-			} else {
-				clone = clone.Resolve (ec);
-				if (clone == null)
-					return null;
+
+				if (tclone != null) {
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
+					return new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
+				}
 			}
-	
+
 			// This means its really a statement.
 			if (clone.Type == TypeManager.void_type || clone is DynamicInvocation || clone is Assign) {
 				return clone;
 			}
 
+			source = clone;
 			return base.DoResolve (ec);
 		}
 	}
