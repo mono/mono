@@ -795,8 +795,10 @@ monitor_thread (gpointer data)
 		} while (ms > 0);
 
 		if (mono_runtime_is_shutting_down ()) {
-			if (tp->threads)
-				g_list_free (tp->threads);
+			if (tp->threads) {
+				GList* ts = InterlockedExchangePointer ((volatile gpointer*)&tp->threads, NULL);
+				g_list_free (ts);
+			}
 			break;
 		}
 		if (tp->waiting > 0)
