@@ -349,6 +349,26 @@ namespace System
 
 		}
 
+		static EventInfo GetBaseEventDefinition (EventInfo evt)
+		{
+			MethodInfo method = evt.GetAddMethod (true);
+			if (method == null || !method.IsVirtual)
+				method = evt.GetRaiseMethod (true);
+			if (method == null || !method.IsVirtual)
+				method = evt.GetRemoveMethod (true);
+			if (method == null || !method.IsVirtual)
+				return null;
+
+			MethodInfo baseMethod = method.GetBaseMethod ();
+			if (baseMethod != null && baseMethod != method) {
+				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
+				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
+
+				return baseMethod.DeclaringType.GetEvent (evt.Name, flags);
+			}
+			return null;
+		}
+
 		// Handles Type, MonoProperty and MonoMethod.
 		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
 		// but for those we return null here.
@@ -363,6 +383,8 @@ namespace System
 			MethodInfo method = null;
 			if (obj is MonoProperty)
 				return GetBasePropertyDefinition ((MonoProperty) obj);
+			else if (obj is MonoEvent)
+				return GetBaseEventDefinition ((MonoEvent)obj);
 			else if (obj is MonoMethod)
 				method = (MethodInfo) obj;
 
