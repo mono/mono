@@ -1673,9 +1673,18 @@ namespace Mono.CSharp
 			if (putback_char != -1) {
 				x = putback_char;
 				putback_char = -1;
-			} else
+			} else {
 				x = reader.Read ();
-			if (x == '\n') {
+			}
+			
+			if (x == '\r') {
+				if (peek_char () == '\n') {
+					putback_char = -1;
+				}
+
+				x = '\n';
+				advance_line ();
+			} else if (x == '\n') {
 				advance_line ();
 			} else {
 				col++;
@@ -1752,7 +1761,7 @@ namespace Mono.CSharp
 			// skip over white space
 			do {
 				c = get_char ();
-			} while (c == '\r' || c == ' ' || c == '\t');
+			} while (c == ' ' || c == '\t');
 
 
 			int pos = 0;
@@ -1790,13 +1799,13 @@ namespace Mono.CSharp
 				return cmd;
 
 			// skip over white space
-			while (c == '\r' || c == ' ' || c == '\t')
+			while (c == ' ' || c == '\t')
 				c = get_char ();
 
 			static_cmd_arg.Length = 0;
 			int has_identifier_argument = (int)(cmd & PreprocessorDirective.RequiresArgument);
 
-			while (c != -1 && c != '\n' && c != '\r') {
+			while (c != -1 && c != '\n') {
 				if (c == '\\' && has_identifier_argument >= 0) {
 					if (has_identifier_argument != 0) {
 						has_identifier_argument = 1;
@@ -2093,7 +2102,7 @@ namespace Mono.CSharp
 				c = get_char ();
 
 				// skip over white space
-				while (c == '\r' || c == ' ' || c == '\t')
+				while (c == ' ' || c == '\t')
 					c = get_char ();
 
 				if (c == ',') {
@@ -2101,7 +2110,7 @@ namespace Mono.CSharp
 				}
 
 				// skip over white space
-				while (c == '\r' || c == ' ' || c == '\t')
+				while (c == ' ' || c == '\t')
 					c = get_char ();
 			} else {
 				number = -1;
@@ -2150,7 +2159,7 @@ namespace Mono.CSharp
 					bool disable = IsTokenIdentifierEqual (pragma_warning_disable);
 					if (disable || IsTokenIdentifierEqual (pragma_warning_restore)) {
 						// skip over white space
-						while (c == '\r' || c == ' ' || c == '\t')
+						while (c == ' ' || c == '\t')
 							c = get_char ();
 
 						var loc = Location;
@@ -2785,17 +2794,6 @@ namespace Mono.CSharp
 					}
 					break;
 */
-				case '\r':
-					if (peek_char () != '\n')
-						advance_line ();
-					else
-						get_char ();
-
-					any_token_seen |= tokens_seen;
-					tokens_seen = false;
-					comments_seen = false;
-					continue;
-
 				case '\\':
 					tokens_seen = true;
 					return consume_identifier (c);
@@ -3039,7 +3037,8 @@ namespace Mono.CSharp
 									warn_incorrect_doc_comment ();
 							}
 						}
-						while ((d = get_char ()) != -1 && (d != '\n') && d != '\r');
+
+						while ((d = get_char ()) != -1 && d != '\n');
 
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
@@ -3163,7 +3162,7 @@ namespace Mono.CSharp
 							continue;
 						}
 
-						if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' || c == '\v' )
+						if (c == ' ' || c == '\t' || c == '\n' || c == '\f' || c == '\v' )
 							continue;
 
 						if (c == '#') {
@@ -3238,7 +3237,7 @@ namespace Mono.CSharp
 				return Token.LITERAL;
 			}
 
-			if (c == '\r' || c == '\n') {
+			if (c == '\n') {
 				Report.Error (1010, Location, "Newline in constant");
 				return Token.ERROR;
 			}
