@@ -130,21 +130,14 @@ mono_wsq_local_push (void *obj)
 }
 
 gboolean
-mono_wsq_local_pop (void **ptr)
+mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 {
-	MonoWSQ *wsq;
 	gint32 b, t;
 	gint size;
 	MonoArray* a;
 
-	if (ptr == NULL || wsq_tlskey == NO_KEY)
+	if (ptr == NULL || wsq == NULL)
 		return FALSE;
-
-	wsq = (MonoWSQ *) TlsGetValue (wsq_tlskey);
-	if (wsq == NULL) {
-		WSQ_DEBUG ("local_pop: no wsq\n");
-		return FALSE;
-	}
 
 	b = InterlockedDecrement (&wsq->bottom);
 	a = wsq->queue;
@@ -175,10 +168,7 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 	MonoArray* a;
 	guint32 start_ticks = mono_msec_ticks ();
 
-	if (wsq == NULL || ptr == NULL || *ptr != NULL || wsq_tlskey == NO_KEY)
-		return;
-
-	if (TlsGetValue (wsq_tlskey) == wsq)
+	if (wsq == NULL || ptr == NULL || *ptr != NULL)
 		return;
 
 	do {

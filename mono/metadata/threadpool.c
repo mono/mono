@@ -1224,7 +1224,7 @@ remove_wsq (MonoWSQ *wsq)
 	 * if we're removing a queue that still has work items.
 	 */
 	if (mono_runtime_is_shutting_down ()) {
-		while (mono_wsq_local_pop (&data)) {
+		while (mono_wsq_local_pop (wsq, &data)) {
 			threadpool_jobs_dec (data);
 			data = NULL;
 		}
@@ -1234,7 +1234,7 @@ remove_wsq (MonoWSQ *wsq)
 }
 
 static void
-try_steal (gpointer *data, gboolean retry)
+try_steal (gpointer *data, gboolean retry, MonoWSQ* local_wsq)
 {
 	int i;
 	int ms;
@@ -1250,7 +1250,8 @@ try_steal (gpointer *data, gboolean retry)
 			if (mono_runtime_is_shutting_down ()) {
 				return;
 			}
-			mono_wsq_try_steal (wsqs->pdata [i], data, ms);
+			if (wsqs->pdata [i] != local_wsq)
+				mono_wsq_try_steal (wsqs->pdata [i], data, ms);
 			if (*data != NULL) {
 				return;
 			}
@@ -1260,13 +1261,13 @@ try_steal (gpointer *data, gboolean retry)
 }
 
 static gboolean
-dequeue_or_steal (ThreadPool *tp, gpointer *data)
+dequeue_or_steal (ThreadPool *tp, gpointer *data, MonoWSQ* local_wsq)
 {
 	if (mono_runtime_is_shutting_down ())
 		return FALSE;
 	mono_cq_dequeue (tp->queue, (MonoObject **) data);
 	if (!tp->is_io && !*data)
-		try_steal (data, FALSE);
+		try_steal (data, FALSE, local_wsq);
 	return (*data != NULL);
 }
 
@@ -1477,8 +1478,8 @@ async_invoke_thread (gpointer data)
 		ar = NULL;
 		data = NULL;
 		must_die = should_i_die (tp);
-		if (!must_die && (tp->is_io || !mono_wsq_local_pop (&data)))
-			dequeue_or_steal (tp, &data);
+		if (!must_die && (tp->is_io || !mono_wsq_local_pop (wsq, &data)))
+			dequeue_or_steal (tp, &data, wsq);
 
 		n_naps = 0;
 		while (!must_die && !data && n_naps < 4) {
@@ -1499,12 +1500,12 @@ async_invoke_thread (gpointer data)
 			if (mono_runtime_is_shutting_down ())
 				break;
 			must_die = should_i_die (tp);
-			dequeue_or_steal (tp, &data);
+			dequeue_or_steal (tp, &data, wsq);
 			n_naps++;
 		}
 
 		if (!data && !tp->is_io && !mono_runtime_is_shutting_down ()) {
-			mono_wsq_local_pop (&data);
+			mono_wsq_local_pop (wsq, &data);
 			if (data && must_die) {
 				InterlockedCompareExchange (&tp->destroy_thread, 1, 0);
 				pulse_on_new_job (tp);
