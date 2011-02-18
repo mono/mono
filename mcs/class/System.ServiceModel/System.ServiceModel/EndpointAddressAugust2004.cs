@@ -40,7 +40,6 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel
 {
-	[MonoTODO]
 	[XmlSchemaProvider ("GetSchema")]
 	[XmlRoot ("EndpointReference", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 	public class EndpointAddressAugust2004 : IXmlSerializable
@@ -63,7 +62,10 @@ namespace System.ServiceModel
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet xmlSchemaSet)
 		{
-			throw new NotImplementedException ();
+			if (xmlSchemaSet == null)
+				throw new ArgumentNullException ("xmlSchemaSet");
+			xmlSchemaSet.Add (XmlSchema.Read (typeof (EndpointAddress10).Assembly.GetManifestResourceStream ("WS-Addressing.schema"), null));
+			return new XmlQualifiedName ("EndpointReferenceType", Constants.WsaNamespace);
 		}
 
 		public EndpointAddress ToEndpointAddress ()
@@ -83,11 +85,7 @@ namespace System.ServiceModel
 
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
-			address.WriteTo (
-				AddressingVersion.WSAddressingAugust2004, 
-				writer, 
-				"Address", 
-				AddressingVersion.WSAddressingAugust2004.Namespace);
+			address.WriteContentsTo (AddressingVersion.WSAddressingAugust2004, writer);
 		}
 	}
 }
