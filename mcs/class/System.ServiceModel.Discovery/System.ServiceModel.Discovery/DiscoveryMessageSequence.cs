@@ -96,7 +96,7 @@ namespace System.ServiceModel.Discovery
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
-			if (reader.LocalName != "AppSequenceType" || reader.NamespaceURI != version.Namespace)
+			if (reader.LocalName != "AppSequence" || reader.NamespaceURI != version.Namespace)
 				throw new ArgumentException (String.Format ("AppSequenceType element in namespace '{0}' was expected. Got '{1}' element in '{2}' namespace", version.Namespace, reader.LocalName, reader.NamespaceURI));
 
 			var instId = reader.GetAttribute ("InstanceId");
