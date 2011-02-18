@@ -37,10 +37,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-#if !NET_2_1
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
-#endif
 
 namespace System.ServiceModel
 {
@@ -96,36 +92,7 @@ namespace System.ServiceModel
 
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
-			if (writer == null)
-				throw new ArgumentNullException ("writer");
-			writer.WriteStartElement ("Address", Constants.WsaNamespace);
-			writer.WriteString (address.Uri.AbsoluteUri);
-			writer.WriteEndElement ();
-
-			if (address.Identity == null)
-				return;
-
-			if (address.Headers != null)
-				foreach (AddressHeader ah in address.Headers)
-					ah.WriteAddressHeader (writer);
-
-			writer.WriteStartElement ("Identity", Constants.WsaIdentityUri);
-#if !NET_2_1
-			X509CertificateEndpointIdentity x509 =
-				address.Identity as X509CertificateEndpointIdentity;
-			if (x509 != null) {
-				KeyInfo ki = new KeyInfo ();
-				KeyInfoX509Data x = new KeyInfoX509Data ();
-				foreach (X509Certificate2 cert in x509.Certificates)
-					x.AddCertificate (cert);
-				ki.AddClause (x);
-				ki.GetXml ().WriteTo (writer);
-			} else {
-				DataContractSerializer ds = new DataContractSerializer (address.Identity.IdentityClaim.GetType ());
-				ds.WriteObject (writer, address.Identity.IdentityClaim);
-			}
-#endif
-			writer.WriteEndElement ();
+			address.WriteContentsTo (AddressingVersion.WSAddressing10, writer);
 		}
 	}
 }
