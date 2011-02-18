@@ -1052,6 +1052,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	header = mono_method_get_header (cfg->method);
 
+	/* See mono_arch_get_global_int_regs () */
+	if (cfg->flags & MONO_CFG_HAS_CALLS)
+		cfg->uses_rgctx_reg = TRUE;
+
 	/* 
 	 * We use the frame register also for any method that has
 	 * exception clauses. This way, when the handlers are called,
