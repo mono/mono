@@ -171,7 +171,7 @@ namespace System.ServiceModel.Channels
 				if (reader.NodeType == XmlNodeType.Element) {
 					if (nHeaders++ == max_headers)
 						throw new InvalidOperationException (String.Format ("Message header size has exceeded the maximum header size {0}", max_headers));
-					headers.Add (new MessageHeader.RawMessageHeader (reader, envNS));
+					headers.Add (new MessageHeader.XmlMessageHeader (reader, Version));
 				}
 				else
 					reader.Skip ();

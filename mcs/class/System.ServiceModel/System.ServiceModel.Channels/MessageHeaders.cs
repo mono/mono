@@ -210,8 +210,8 @@ namespace System.ServiceModel.Channels
 			MessageHeader item = (MessageHeader) l [index];
 
 			XmlReader reader =
-				item is MessageHeader.RawMessageHeader ?
-				((MessageHeader.RawMessageHeader) item).CreateReader () :
+				item is MessageHeader.XmlMessageHeader ?
+				((MessageHeader.XmlMessageHeader) item).CreateReader () :
 				XmlReader.Create (
 					new StringReader (item.ToString ()),
 					reader_settings);
@@ -323,7 +323,6 @@ namespace System.ServiceModel.Channels
 
 		void AddEndpointAddressHeader (string name, string ns, EndpointAddress address)
 		{
-			RemoveAll ("FaultTo", Constants.WsaNamespace);
 			if (address == null)
 				return;
 			if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressing10))
