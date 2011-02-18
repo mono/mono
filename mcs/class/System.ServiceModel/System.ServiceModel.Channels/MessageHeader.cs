@@ -205,9 +205,8 @@ namespace System.ServiceModel.Channels
 
 		public override bool Relay { get { return default_relay; }}
 
-		internal class RawMessageHeader : MessageHeader
+		internal class XmlMessageHeader : MessageHeader
 		{
-			string soap_ns;
 			bool is_ref, must_understand, relay;
 			string actor;
 #if NET_2_1
@@ -221,18 +220,20 @@ namespace System.ServiceModel.Channels
 			string local_name;
 			string namespace_uri;
 
-			public RawMessageHeader (XmlReader reader, string soap_ns)
+			public XmlMessageHeader (XmlReader reader, MessageVersion version)
 			{
+				var soapNS = version.Envelope.Namespace;
+				var addrNS = version.Addressing.Namespace;
 				Prefix = reader.Prefix;
 				Id = reader.GetAttribute ("Id", Constants.WsuNamespace);
 
-				string s = reader.GetAttribute ("relay", soap_ns);
+				string s = reader.GetAttribute ("relay", soapNS);
 				relay = s != null ? XmlConvert.ToBoolean (s) : false;
-				s = reader.GetAttribute ("mustUnderstand", soap_ns);
+				s = reader.GetAttribute ("mustUnderstand", soapNS);
 				must_understand = s != null ? XmlConvert.ToBoolean (s) : false;
-				actor = reader.GetAttribute ("actor", soap_ns) ?? String.Empty;
+				actor = reader.GetAttribute ("actor", soapNS) ?? String.Empty;
 
-				s = reader.GetAttribute ("IsReferenceParameter", Constants.WsaNamespace);
+				s = reader.GetAttribute ("IsReferenceParameter", addrNS);
 				is_ref = s != null ? XmlConvert.ToBoolean (s) : false;
 
 				local_name = reader.LocalName;
