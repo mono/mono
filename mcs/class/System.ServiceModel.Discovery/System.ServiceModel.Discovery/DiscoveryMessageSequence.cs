@@ -84,12 +84,12 @@ namespace System.ServiceModel.Discovery
 
 		public static bool operator == (DiscoveryMessageSequence messageSequence1, DiscoveryMessageSequence messageSequence2)
 		{
-			return messageSequence1 != null ? messageSequence1.Equals (messageSequence2) : messageSequence2 == null;
+			return object.ReferenceEquals (messageSequence1, null) ? object.ReferenceEquals (messageSequence2, null) : messageSequence1.Equals (messageSequence2);
 		}
 
 		public static bool operator != (DiscoveryMessageSequence messageSequence1, DiscoveryMessageSequence messageSequence2)
 		{
-			return messageSequence1 == null ? messageSequence2 != null : !messageSequence1.Equals (messageSequence2);
+			return object.ReferenceEquals (messageSequence1, null) ? !object.ReferenceEquals (messageSequence2, null) : !messageSequence1.Equals (messageSequence2);
 		}
 
 		internal static DiscoveryMessageSequence ReadXml (XmlReader reader, DiscoveryVersion version)
