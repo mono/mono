@@ -128,6 +128,7 @@ typedef struct {
 	volatile gint n_sum;
 	gint64 averages [2];
 	gboolean is_io;
+	GList* threads;
 } ThreadPool;
 
 static ThreadPool async_tp;
@@ -672,7 +673,7 @@ threadpool_start_idle_threads (ThreadPool *tp)
 				break;
 		}
 		mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
-		mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE);
+		tp->threads = g_list_prepend (tp->threads, mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE));
 		SleepEx (100, TRUE);
 	} while (1);
 }
@@ -750,6 +751,22 @@ signal_handler (int signo)
 }
 #endif
 
+static gboolean
+check_thread_interrupted (MonoInternalThread* thread)
+{
+	const MonoThreadState interrupted_state =
+		ThreadState_StopRequested
+		| ThreadState_SuspendRequested
+		| ThreadState_Stopped
+		| ThreadState_WaitSleepJoin
+		| ThreadState_Suspended;
+
+	if (thread == NULL)
+		return FALSE;
+
+	return mono_thread_test_state (thread, interrupted_state);
+}
+
 static void
 monitor_thread (gpointer data)
 {
@@ -758,6 +775,7 @@ monitor_thread (gpointer data)
 	guint32 ms;
 	gboolean need_one;
 	int i;
+	GList* curr_thread;
 
 	tp = data;
 	thread = mono_thread_internal_current ();
@@ -776,8 +794,11 @@ monitor_thread (gpointer data)
 				mono_thread_interruption_checkpoint ();
 		} while (ms > 0);
 
-		if (mono_runtime_is_shutting_down ())
+		if (mono_runtime_is_shutting_down ()) {
+			if (tp->threads)
+				g_list_free (tp->threads);
 			break;
+		}
 		if (tp->waiting > 0)
 			continue;
 		need_one = (mono_cq_count (tp->queue) > 0);
@@ -792,6 +813,22 @@ monitor_thread (gpointer data)
 				}
 			}
 			LeaveCriticalSection (&wsqs_lock);
+		}
+		/* Check if current threads are blocked somehow, if not do not create new thread */
+		if (need_one && tp->threads != NULL) {
+			int avail_threads = tp->nthreads / 4;
+			if (avail_threads <= 0)
+				avail_threads = 2;
+			curr_thread = tp->threads;
+			do {
+				if (curr_thread->data != NULL && !check_thread_interrupted (curr_thread->data)) {
+					// If a quarter of the threads aren't blocked, don't create new ones
+					if (--avail_threads <= 0) {
+						need_one = FALSE;
+						break;
+					}
+				}
+			} while ((curr_thread = g_list_next (curr_thread)) != NULL);
 		}
 		if (need_one)
 			threadpool_start_thread (tp);
@@ -995,7 +1032,7 @@ threadpool_start_thread (ThreadPool *tp)
 	while (!mono_runtime_is_shutting_down () && (n = tp->nthreads) < tp->max_threads) {
 		if (InterlockedCompareExchange (&tp->nthreads, n + 1, n) == n) {
 			mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
-			mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE);
+			tp->threads = g_list_prepend (tp->threads, mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE));
 			return TRUE;
 		}
 	}
@@ -1475,6 +1512,7 @@ async_invoke_thread (gpointer data)
 		if (!data) {
 			gint nt;
 			gboolean down;
+			GList* thread_node;
 			while (1) {
 				nt = tp->nthreads;
 				down = mono_runtime_is_shutting_down ();
@@ -1487,6 +1525,12 @@ async_invoke_thread (gpointer data)
 					}
 
 					mono_profiler_thread_end (thread->tid);
+
+					if (tp->threads != NULL) {
+						thread_node = g_list_find (tp->threads, thread);
+						if (thread_node != NULL)
+							thread_node->data = NULL;
+					}
 
 					if (tp_finish_func)
 						tp_finish_func (tp_hooks_user_data);
