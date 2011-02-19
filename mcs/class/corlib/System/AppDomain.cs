@@ -739,14 +739,14 @@ namespace System {
 			if (assemblyRef.Name != aname.Name)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
-			if (assemblyRef.Version != new Version () && assemblyRef.Version != aname.Version)
+			if (assemblyRef.Version != null && assemblyRef.Version != new Version (0, 0, 0, 0) && assemblyRef.Version != aname.Version)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			if (assemblyRef.CultureInfo != null && assemblyRef.CultureInfo.Equals (aname))
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			byte [] pt = assemblyRef.GetPublicKeyToken ();
-			if (pt != null) {
+			if (pt != null && pt.Length != 0) {
 				byte [] loaded_pt = aname.GetPublicKeyToken ();
 				if (loaded_pt == null || (pt.Length != loaded_pt.Length))
 					throw new FileNotFoundException (null, assemblyRef.Name);
