@@ -14,7 +14,7 @@ LIB_MCS_FLAGS += --runtime:v2
 else ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += --runtime:v4
 else
-error
+$(error Unknown framework version)
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
