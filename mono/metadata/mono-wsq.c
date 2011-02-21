@@ -71,21 +71,22 @@ struct _MonoWSQ {
 /* Redefine the Interlocked* functions for 64bits
  */
 #if defined(__x86_64__)
-static inline gint64 InterlockedIncrementLong(volatile gint64 *val)
+static inline gint64 NativeInterlockedIncrement(volatile gint64 *val)
 {
 	gint64 tmp;
 	__asm__ __volatile__ ("lock; xadd %0, %1" : "=r" (tmp), "=m" (*val) : "0" (1), "m" (*val));
 	return(tmp+1);
 }
-#define InterlockedIncrement(addr) InterlockedIncrementLong(addr)
 
-static inline gint64 InterlockedCompareExchangeLong(volatile gint64 *dest, gint64 exch, gint64 comp)
+static inline gint64 NativeInterlockedCompareExchange(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	gint64 old;
 	__asm__ __volatile__ ("lock; cmpxchg %2, %0" : "=m" (*dest), "=a" (old) : "r" (exch), "m" (*dest), "a" (comp));
 	return (old);
 }
-#define InterlockedCompareExchange(addr, newval, compval) InterlockedCompareExchangeLong(addr, newval, compval)
+#else
+#define NativeInterlockedIncrement(addr) InterlockedIncrement(addr)
+#define NativeInterlockedCompareExchange(addr, newval, compval) InterlockedCompareExchange(addr, newval, compval)
 #endif
 
 void
@@ -180,7 +181,7 @@ mono_wsq_local_push (void *obj)
 	}
 
 	mono_array_setref (wsq->queue, b % size, obj);
-	InterlockedIncrement (&wsq->bottom);
+	NativeInterlockedIncrement (&wsq->bottom);
 
 	WSQ_DEBUG ("local_push: push successfull\n");
 
@@ -212,7 +213,7 @@ mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 		return TRUE;
 
 	wsq->bottom = t + 1;
-	if (InterlockedCompareExchange (&wsq->top, t + 1, t) != t)
+	if (NativeInterlockedCompareExchange (&wsq->top, t + 1, t) != t)
 		return FALSE;
 
 	return TRUE;
@@ -236,7 +237,7 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 		if (b - t <= 0)
 			return;
 
-		if (InterlockedCompareExchange (&wsq->top, t + 1, t) == t)
+		if (NativeInterlockedCompareExchange (&wsq->top, t + 1, t) == t)
 			break;
 
 		if (!ms_timeout || mono_msec_ticks () - start_ticks < ms_timeout)
