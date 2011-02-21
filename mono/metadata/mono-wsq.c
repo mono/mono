@@ -21,6 +21,40 @@
 #define array_get(_array, _index) mono_array_get(_array, void*, _index)
 #define array_length(_array) ((_array)->max_length)
 
+#define NO_KEY ((guint32) -1)
+static guint32 wsq_tlskey = NO_KEY;
+
+/* Macros borrowed from domain.c
+ * Look there for the rationale behind this
+ */
+#if (defined(__i386__) || defined(__x86_64__)) && !defined(HOST_WIN32)
+#define NO_TLS_SET_VALUE
+#endif
+
+#ifdef HAVE_KW_THREAD
+
+static __thread MonoWSQ * tls_local_wsq MONO_TLS_FAST;
+
+#define GET_LOCAL_WSQ() tls_local_wsq
+
+#ifdef NO_TLS_SET_VALUE
+#define SET_LOCAL_WSQ(x) do { \
+	tls_local_wsq = x; \
+} while (FALSE)
+#else
+#define SET_LOCAL_WSQ(x) do { \
+	tls_local_wsq = x; \
+	TlsSetValue (wsq_tlskey, x); \
+} while (FALSE)
+#endif
+
+#else
+
+#define GET_LOCAL_WSQ() ((MonoWSQ *)TlsGetValue (wsq_tlskey))
+#define SET_LOCAL_WSQ(x) TlsSetValue (wsq_tlskey, x);
+
+#endif
+
 struct _MonoWSQ {
 	gint32 top;
 	gint32 bottom;
@@ -59,10 +93,8 @@ mono_wsq_create ()
 	MONO_GC_REGISTER_ROOT_SINGLE (wsq->queue);
 	root = mono_get_root_domain ();
 	wsq->queue = mono_array_new_cached (root, mono_defaults.object_class, INITIAL_LENGTH);
-	if (!TlsSetValue (wsq_tlskey, wsq)) {
-		mono_wsq_destroy (wsq);
-		wsq = NULL;
-	}
+	SET_LOCAL_WSQ(wsq);
+
 	return wsq;
 }
 
@@ -75,8 +107,8 @@ mono_wsq_destroy (MonoWSQ *wsq)
 	g_assert (mono_wsq_count (wsq) == 0);
 	MONO_GC_UNREGISTER_ROOT (wsq->queue);
 	memset (wsq, 0, sizeof (MonoWSQ));
-	if (wsq_tlskey != NO_KEY && TlsGetValue (wsq_tlskey) == wsq)
-		TlsSetValue (wsq_tlskey, NULL);
+	if (wsq_tlskey != NO_KEY && GET_LOCAL_WSQ() == wsq)
+		SET_LOCAL_WSQ (NULL);
 	g_free (wsq);
 }
 
@@ -99,7 +131,7 @@ mono_wsq_local_push (void *obj)
 	if (obj == NULL || wsq_tlskey == NO_KEY)
 		return FALSE;
 
-	wsq = (MonoWSQ *) TlsGetValue (wsq_tlskey);
+	wsq = GET_LOCAL_WSQ();
 	if (wsq == NULL) {
 		WSQ_DEBUG ("local_push: no wsq\n");
 		return FALSE;
@@ -192,4 +224,3 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 	size = array_length (a);
 	*ptr = array_get (a, t % size);
 }
-
