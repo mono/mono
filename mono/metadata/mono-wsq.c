@@ -56,14 +56,37 @@ static __thread MonoWSQ * tls_local_wsq MONO_TLS_FAST;
 #endif
 
 struct _MonoWSQ {
+#if defined(__x86_64__)
+	gint64 top;
+	gint64 bottom;
+	gint64 upper_bound;
+#else
 	gint32 top;
 	gint32 bottom;
 	gint32 upper_bound;
+#endif
 	MonoArray *queue;
 };
 
-#define NO_KEY ((guint32) -1)
-static guint32 wsq_tlskey = NO_KEY;
+/* Redefine the Interlocked* functions for 64bits
+ */
+#if defined(__x86_64__)
+static inline gint64 InterlockedIncrementLong(volatile gint64 *val)
+{
+	gint64 tmp;
+	__asm__ __volatile__ ("lock; xadd %0, %1" : "=r" (tmp), "=m" (*val) : "0" (1), "m" (*val));
+	return(tmp+1);
+}
+#define InterlockedIncrement(addr) InterlockedIncrementLong(addr)
+
+static inline gint64 InterlockedCompareExchangeLong(volatile gint64 *dest, gint64 exch, gint64 comp)
+{
+	gint64 old;
+	__asm__ __volatile__ ("lock; cmpxchg %2, %0" : "=m" (*dest), "=a" (old) : "r" (exch), "m" (*dest), "a" (comp));
+	return (old);
+}
+#define InterlockedCompareExchange(addr, newval, compval) InterlockedCompareExchangeLong(addr, newval, compval)
+#endif
 
 void
 mono_wsq_init ()
