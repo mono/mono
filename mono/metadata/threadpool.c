@@ -1229,7 +1229,7 @@ remove_wsq (MonoWSQ *wsq)
 }
 
 static void
-try_steal (gpointer *data, gboolean retry, MonoWSQ* local_wsq)
+try_steal (MonoWSQ* local_wsq, gpointer *data, gboolean retry)
 {
 	int i;
 	int ms;
@@ -1255,13 +1255,13 @@ try_steal (gpointer *data, gboolean retry, MonoWSQ* local_wsq)
 }
 
 static gboolean
-dequeue_or_steal (ThreadPool *tp, gpointer *data, MonoWSQ* local_wsq)
+dequeue_or_steal (ThreadPool *tp, MonoWSQ* local_wsq, gpointer *data)
 {
 	if (mono_runtime_is_shutting_down ())
 		return FALSE;
 	mono_cq_dequeue (tp->queue, (MonoObject **) data);
 	if (!tp->is_io && !*data)
-		try_steal (data, FALSE, local_wsq);
+		try_steal (local_wsq, data, FALSE);
 	return (*data != NULL);
 }
 
@@ -1473,7 +1473,7 @@ async_invoke_thread (gpointer data)
 		data = NULL;
 		must_die = should_i_die (tp);
 		if (!must_die && (tp->is_io || !mono_wsq_local_pop (wsq, &data)))
-			dequeue_or_steal (tp, &data, wsq);
+			dequeue_or_steal (tp, wsq, &data);
 
 		n_naps = 0;
 		while (!must_die && !data && n_naps < 4) {
@@ -1494,7 +1494,7 @@ async_invoke_thread (gpointer data)
 			if (mono_runtime_is_shutting_down ())
 				break;
 			must_die = should_i_die (tp);
-			dequeue_or_steal (tp, &data, wsq);
+			dequeue_or_steal (tp, wsq, &data);
 			n_naps++;
 		}
 
