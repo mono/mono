@@ -1082,7 +1082,7 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 			MonoAsyncResult *o = (MonoAsyncResult *) ar;
 			o->add_time = mono_100ns_ticks ();
 		}
-		threadpool_jobs_inc (ar); 
+		threadpool_jobs_inc (ar);
 		mono_perfcounter_update_value (tp->pc_nitems, TRUE, 1);
 		if (!tp->is_io && mono_wsq_local_push (ar))
 			continue;
@@ -1250,11 +1250,10 @@ try_steal (gpointer *data, gboolean retry, MonoWSQ* local_wsq)
 			if (mono_runtime_is_shutting_down ()) {
 				return;
 			}
-			if (wsqs->pdata [i] != local_wsq)
+			if (wsqs->pdata [i] != local_wsq && mono_wsq_count (wsqs->pdata [i]) > 0)
 				mono_wsq_try_steal (wsqs->pdata [i], data, ms);
-			if (*data != NULL) {
+			if (*data != NULL)
 				return;
-			}
 		}
 		ms += 10;
 	} while (retry && ms < 11);
