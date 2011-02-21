@@ -880,9 +880,18 @@ namespace Cairo {
 			return termedArray;
 		}
 
+		private static byte[] TerminateUtf8(string s)
+		{
+			// compute the byte count including the trailing \0
+			var byteCount = Encoding.UTF8.GetMaxByteCount(s.Length + 1);
+			var bytes = new byte[byteCount];
+			Encoding.UTF8.GetBytes(s, 0, s.Length, bytes, 0);
+			return bytes;
+		}
+
 		public void ShowText(string str)
 		{
-			ShowText(Encoding.UTF8.GetBytes(str));
+			NativeMethods.cairo_show_text(state, TerminateUtf8(str));
 		}
 
 		public void ShowText(byte[] utf8)
@@ -892,7 +901,7 @@ namespace Cairo {
 
 		public void TextPath(string str)
 		{
-			TextPath(Encoding.UTF8.GetBytes(str));
+			NativeMethods.cairo_text_path(state, TerminateUtf8(str));
 		}
 
 		public void TextPath(byte[] utf8)
@@ -902,7 +911,9 @@ namespace Cairo {
 
 		public TextExtents TextExtents(string s)
 		{
-			return TextExtents(Encoding.UTF8.GetBytes(s));
+			TextExtents extents;
+			NativeMethods.cairo_text_extents(state, TerminateUtf8(s), out extents);
+			return extents;
 		}
 
 		public TextExtents TextExtents(byte[] utf8)
