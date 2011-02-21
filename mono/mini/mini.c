@@ -3245,7 +3245,7 @@ if (valgrind_register){
 	mono_arch_save_unwind_info (cfg);
 #endif
 	
-	mono_arch_patch_code (cfg->method, cfg->domain, cfg->native_code, cfg->patch_info, cfg->run_cctors);
+	mono_arch_patch_code (cfg->method, cfg->domain, cfg->native_code, cfg->patch_info, cfg->dynamic_info ? cfg->dynamic_info->code_mp : NULL, cfg->run_cctors);
 
 	if (cfg->method->dynamic) {
 		mono_code_manager_commit (cfg->dynamic_info->code_mp, cfg->native_code, cfg->code_size, cfg->code_len);
@@ -4444,7 +4444,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 			g_hash_table_remove (domain_jit_info (target_domain)->jump_target_hash, method);
 
 			for (tmp = jlist->list; tmp; tmp = tmp->next)
-				mono_arch_patch_code (NULL, target_domain, tmp->data, &patch_info, TRUE);
+				mono_arch_patch_code (NULL, target_domain, tmp->data, &patch_info, NULL, TRUE);
 		}
 	}
 
