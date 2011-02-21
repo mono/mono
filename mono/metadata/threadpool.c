@@ -1528,8 +1528,9 @@ async_invoke_thread (gpointer data)
 
 					mono_profiler_thread_end (thread->tid);
 
-					if (tp->threads != NULL) {
-						thread_node = g_list_find (tp->threads, thread);
+					thread_node = tp->threads;
+					if (thread_node) {
+						thread_node = g_list_find (thread_node, thread);
 						if (thread_node != NULL)
 							thread_node->data = NULL;
 					}
