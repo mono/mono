@@ -794,13 +794,8 @@ monitor_thread (gpointer data)
 				mono_thread_interruption_checkpoint ();
 		} while (ms > 0);
 
-		if (mono_runtime_is_shutting_down ()) {
-			if (tp->threads) {
-				GList* ts = InterlockedExchangePointer ((volatile gpointer*)&tp->threads, NULL);
-				g_list_free (ts);
-			}
+		if (mono_runtime_is_shutting_down ())
 			break;
-		}
 		if (tp->waiting > 0)
 			continue;
 		need_one = (mono_cq_count (tp->queue) > 0);
