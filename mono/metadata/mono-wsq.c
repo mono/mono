@@ -18,9 +18,12 @@
 #define WSQ_DEBUG(...)
 //#define WSQ_DEBUG(...) g_message(__VA_ARGS__)
 
+#define array_get(_array, _index) mono_array_get(_array, void*, _index)
+#define array_length(_array) ((_array)->max_length)
+
 struct _MonoWSQ {
-	volatile gint32 top;
-	volatile gint32 bottom;
+	gint32 top;
+	gint32 bottom;
 	gint32 upper_bound;
 	MonoArray *queue;
 };
@@ -104,7 +107,7 @@ mono_wsq_local_push (void *obj)
 
 	b = wsq->bottom;
 	a = wsq->queue;
-	size = mono_array_length (a);
+	size = array_length (a);
 
 	if (b - wsq->upper_bound >= size - 1) {
 		MonoArray *new_array;
@@ -116,7 +119,7 @@ mono_wsq_local_push (void *obj)
 
 		new_array = mono_array_new_cached (mono_get_root_domain (), mono_defaults.object_class, new_size);
 		for (i = wsq->upper_bound; i < b; ++i)
-			mono_array_setref (new_array, i, mono_array_get (a, void*, i % size));
+			mono_array_setref (new_array, i, array_get (a, i % size));
 
 		wsq->queue = new_array;
 	}
@@ -139,21 +142,21 @@ mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 	if (ptr == NULL || wsq == NULL)
 		return FALSE;
 
-	b = InterlockedDecrement (&wsq->bottom);
+	b = --wsq->bottom;
 	a = wsq->queue;
 	t = wsq->top;
 	size = b - t;
 
 	if (size < 0) {
-		InterlockedExchangeAdd (&wsq->bottom, t - b);
+		wsq->bottom = t;
 		return FALSE;
 	}
 
-	*ptr = mono_array_get (a, void*, b % mono_array_length (a));
+	*ptr = array_get (a, b % array_length (a));
 	if (size > 0)
 		return TRUE;
 
-	InterlockedExchangeAdd (&wsq->bottom, t + 1 - b);
+	wsq->bottom = t + 1;
 	if (InterlockedCompareExchange (&wsq->top, t + 1, t) != t)
 		return FALSE;
 
@@ -181,11 +184,12 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 		if (InterlockedCompareExchange (&wsq->top, t + 1, t) == t)
 			break;
 
-		ves_icall_System_Threading_Thread_Yield ();
-	} while (mono_msec_ticks () - start_ticks < ms_timeout);
+		if (!ms_timeout || mono_msec_ticks () - start_ticks < ms_timeout)
+			return;
+	} while (TRUE);
 
 	a = wsq->queue;
-	size = mono_array_length (a);
-	*ptr = mono_array_get (a, void*, t % size);
+	size = array_length (a);
+	*ptr = array_get (a, t % size);
 }
 
