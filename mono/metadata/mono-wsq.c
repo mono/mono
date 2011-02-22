@@ -55,16 +55,16 @@ static __thread MonoWSQ * tls_local_wsq MONO_TLS_FAST;
 
 #endif
 
-struct _MonoWSQ {
 #if defined(__x86_64__)
-	gint64 top;
-	gint64 bottom;
-	gint64 upper_bound;
+typedef gint64 gnative;
 #else
-	gint32 top;
-	gint32 bottom;
-	gint32 upper_bound;
+typedef gint32 gnative;
 #endif
+
+struct _MonoWSQ {
+	gnative top;
+	gnative bottom;
+	gnative upper_bound;
 	MonoArray *queue;
 };
 
@@ -148,7 +148,7 @@ gboolean
 mono_wsq_local_push (void *obj)
 {
 	MonoWSQ *wsq;
-	gint32 b;
+	gnative b;
 	MonoArray* a;
 	gint size;
 
@@ -191,7 +191,7 @@ mono_wsq_local_push (void *obj)
 gboolean
 mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 {
-	gint32 b, t;
+	gnative b, t;
 	gint size;
 	MonoArray* a;
 
@@ -208,21 +208,25 @@ mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 		return FALSE;
 	}
 
-	*ptr = array_get (a, b % array_length (a));
-	if (size > 0)
+	length = array_length (a);
+	*ptr = array_get (a, b % length);
+	if (size > 0) {
+		array_clear (a, b % length);
 		return TRUE;
+	}
 
 	wsq->bottom = t + 1;
 	if (NativeInterlockedCompareExchange (&wsq->top, t + 1, t) != t)
 		return FALSE;
 
+	array_clear (a, b % length);
 	return TRUE;
 }
 
 void
 mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 {
-	gint32 t, b;
+	gnative t, b;
 	gint size;
 	MonoArray* a;
 	guint32 start_ticks = mono_msec_ticks ();
