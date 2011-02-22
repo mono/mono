@@ -823,7 +823,7 @@ monitor_thread (gpointer data)
 					continue;
 				}
 
-				if (curr_thread->data != NULL && !check_thread_interrupted (curr_thread->data)) {
+				if (!check_thread_interrupted (curr_thread->data)) {
 					// If a quarter of the threads aren't blocked, don't create new ones
 					if (--avail_threads <= 0) {
 						need_one = FALSE;
