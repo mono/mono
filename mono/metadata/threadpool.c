@@ -1515,7 +1515,7 @@ async_invoke_thread (gpointer data)
 		if (!data) {
 			gint nt;
 			gboolean down;
-			GList* thread_node;
+
 			while (1) {
 				nt = tp->nthreads;
 				down = mono_runtime_is_shutting_down ();
