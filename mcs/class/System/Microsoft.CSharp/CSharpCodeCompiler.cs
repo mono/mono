@@ -78,9 +78,9 @@ namespace Mono.CSharp
 				if (!File.Exists (windowsMonoPath))
 					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
 
-				windowsMcsPath = Path.Combine (p, "2.0\\mcs.exe");
+				windowsMcsPath = Path.Combine (p, "4.0\\mcs.exe");
 				if (!File.Exists (windowsMcsPath))
-					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\basic\\mcs.exe");
+					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\build\\mcs.exe");
 				
 				if (!File.Exists (windowsMcsPath))
 					throw new FileNotFoundException ("Windows mcs path not found: " + windowsMcsPath);
@@ -178,7 +178,7 @@ namespace Mono.CSharp
 
 			mcsOutput = new StringCollection ();
 			mcsOutMutex = new Mutex ();
-
+/*
 			string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
 			if (monoPath == null)
 				monoPath = String.Empty;
@@ -194,7 +194,7 @@ namespace Mono.CSharp
 				else
 					dict.Add ("MONO_PATH", monoPath);
 			}
-			
+*/
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
