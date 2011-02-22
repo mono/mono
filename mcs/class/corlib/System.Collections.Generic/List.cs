@@ -648,6 +648,10 @@ namespace System.Collections.Generic {
 		
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array"); 
+			if (array.Rank > 1 || array.GetLowerBound (0) != 0)
+				throw new ArgumentException ("Array must be zero based and single dimentional", "array");
 			Array.Copy (_items, 0, array, arrayIndex, _size);
 		}
 		
