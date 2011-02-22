@@ -18,7 +18,7 @@
 #define WSQ_DEBUG(...)
 //#define WSQ_DEBUG(...) g_message(__VA_ARGS__)
 
-#define array_get(_array, _index) mono_array_get(_array, void*, _index)
+#define array_get(_array, _index) mono_array_get((_array), void*, (_index))
 #define array_length(_array) ((_array)->max_length)
 #define array_clear(_array, _index) mono_array_set ((_array), void *, (_index), NULL);
 
@@ -157,10 +157,8 @@ mono_wsq_local_push (void *obj)
 		return FALSE;
 
 	wsq = GET_LOCAL_WSQ();
-	if (wsq == NULL) {
-		WSQ_DEBUG ("local_push: no wsq\n");
+	if (wsq == NULL)
 		return FALSE;
-	}
 
 	b = wsq->bottom;
 	a = wsq->queue;
@@ -171,20 +169,19 @@ mono_wsq_local_push (void *obj)
 		gint new_size;
 		int i;
 
-		wsq->upper_bound = wsq->top;
 		new_size = size * 2;
-
 		new_array = mono_array_new_cached (mono_get_root_domain (), mono_defaults.object_class, new_size);
-		for (i = wsq->upper_bound; i < b; ++i)
+
+		i = wsq->upper_bound = wsq->top;
+		for (; i < b; ++i)
 			mono_array_setref (new_array, i, array_get (a, i % size));
 
-		wsq->queue = new_array;
+		size = new_size;
+		wsq->queue = a = new_array;
 	}
 
-	mono_array_setref (wsq->queue, b % size, obj);
+	mono_array_setref (a, b % size, obj);
 	NativeInterlockedIncrement (&wsq->bottom);
-
-	WSQ_DEBUG ("local_push: push successfull\n");
 
 	return TRUE;
 }
@@ -194,11 +191,11 @@ mono_wsq_local_pop (MonoWSQ *wsq, void **ptr)
 {
 	gnative b, t;
 	gint size;
+	gint length;
 	MonoArray* a;
 
 	if (ptr == NULL || wsq == NULL)
 		return FALSE;
-
 	b = --wsq->bottom;
 	a = wsq->queue;
 	t = wsq->top;
