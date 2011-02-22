@@ -25,7 +25,10 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("class X {}");
 			Evaluator.Run ("class X { public static string Foo () { return \"Test\"; } }");
 			object res = Evaluator.Evaluate ("X.Foo ();");
-			Assert.AreEqual ("Test", res);
+			Assert.AreEqual ("Test", res, "#1");
+			Evaluator.Run ("class X { public static int Foo () { return 5; } }");
+			res = Evaluator.Evaluate ("X.Foo ();");
+			Assert.AreEqual (5, res, "#2");
 		}
 
 		[Test]

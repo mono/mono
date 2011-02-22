@@ -413,6 +413,8 @@ namespace Mono.CSharp {
 		{
 			if (types != null)
 				types.Remove (next_part);
+
+			Cache.Remove (next_part.Basename);
 			RemoveMemberType (next_part);
 		}
 		

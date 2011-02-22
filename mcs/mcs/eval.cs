@@ -1091,6 +1091,7 @@ namespace Mono.CSharp
 			var existing = current_container.Types.FirstOrDefault (l => l.MemberName.Basename == tc.MemberName.Basename);
 			if (existing != null) {
 				current_container.RemoveTypeContainer (existing);
+				existing.NamespaceEntry.SlaveDeclSpace.RemoveTypeContainer (existing);
 				undo_actions.Add (() => current_container.AddTypeContainer (existing));
 			}
 
