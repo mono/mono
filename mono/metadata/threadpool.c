@@ -757,7 +757,6 @@ check_thread_interrupted (MonoInternalThread* thread)
 	const MonoThreadState interrupted_state =
 		ThreadState_StopRequested
 		| ThreadState_SuspendRequested
-		| ThreadState_Stopped
 		| ThreadState_WaitSleepJoin
 		| ThreadState_Suspended;
 
@@ -818,6 +817,12 @@ monitor_thread (gpointer data)
 				avail_threads = 2;
 			curr_thread = tp->threads;
 			do {
+				if (curr_thread->data == NULL || mono_thread_test_state (curr_thread->data, ThreadState_Stopped)) {
+					curr_thread = curr_thread->prev;
+					tp->threads = g_list_delete_link (tp->threads, curr_thread->next);
+					continue;
+				}
+
 				if (curr_thread->data != NULL && !check_thread_interrupted (curr_thread->data)) {
 					// If a quarter of the threads aren't blocked, don't create new ones
 					if (--avail_threads <= 0) {
@@ -1029,7 +1034,8 @@ threadpool_start_thread (ThreadPool *tp)
 	while (!mono_runtime_is_shutting_down () && (n = tp->nthreads) < tp->max_threads) {
 		if (InterlockedCompareExchange (&tp->nthreads, n + 1, n) == n) {
 			mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
-			tp->threads = g_list_prepend (tp->threads, mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE));
+			tp->threads = g_list_prepend (tp->threads,
+			                              mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE));
 			return TRUE;
 		}
 	}
@@ -1522,13 +1528,6 @@ async_invoke_thread (gpointer data)
 					}
 
 					mono_profiler_thread_end (thread->tid);
-
-					thread_node = tp->threads;
-					if (thread_node) {
-						thread_node = g_list_find (thread_node, thread);
-						if (thread_node != NULL)
-							thread_node->data = NULL;
-					}
 
 					if (tp_finish_func)
 						tp_finish_func (tp_hooks_user_data);
