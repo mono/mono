@@ -73,8 +73,8 @@ to $prefix/lib/mono/xbuild . When used in Import, like:
 
 xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
 
-  1. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
-  2. Paths specified in the environment variable $MSBuildExtensionsPath.
+  1. Paths specified in the environment variable $MSBuildExtensionsPath.
+  2. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
   3. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
   4. $prefix/lib/mono/xbuild (default location)
 
