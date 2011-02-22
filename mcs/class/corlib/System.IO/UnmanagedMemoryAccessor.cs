@@ -38,7 +38,9 @@ namespace System.IO
 	[MonoTODO ("Offset is ignored")]
 	public class UnmanagedMemoryAccessor : IDisposable {
 		SafeBuffer buffer;
+#pragma warning disable 414
 		long offset;
+#pragma warning restore
 		long capacity;
 		bool canwrite, canread;
 
