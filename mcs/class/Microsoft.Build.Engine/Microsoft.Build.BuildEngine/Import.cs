@@ -120,10 +120,10 @@ namespace Microsoft.Build.BuildEngine {
 
 			string envvar = Environment.GetEnvironmentVariable (property_name);
 			envvar = String.Join (":", new string [] {
+						(envvar ?? String.Empty),
 						// For mac osx, look in the 'External' dir on macosx,
 						// see bug #663180
 						MSBuildUtils.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
-						(envvar ?? String.Empty),
 						DotConfigExtensionsPath});
 
 			string [] paths = envvar.Split (new char [] {':'}, StringSplitOptions.RemoveEmptyEntries);
