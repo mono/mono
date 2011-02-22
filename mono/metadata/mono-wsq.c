@@ -20,6 +20,7 @@
 
 #define array_get(_array, _index) mono_array_get(_array, void*, _index)
 #define array_length(_array) ((_array)->max_length)
+#define array_clear(_array, _index) mono_array_set ((_array), void *, (_index), NULL);
 
 #define NO_KEY ((guint32) -1)
 static guint32 wsq_tlskey = NO_KEY;
@@ -251,4 +252,5 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 	a = wsq->queue;
 	size = array_length (a);
 	*ptr = array_get (a, t % size);
+	array_clear (a, t % size);
 }
