@@ -71,6 +71,9 @@ namespace Microsoft.Build.BuildEngine {
 				} 
 			} else
 				this.propertiesByName = new Dictionary <string, BuildProperty> (StringComparer.InvariantCultureIgnoreCase);
+
+			DefinedInFileName = importedProject != null ? importedProject.FullFileName :
+						(project != null ? project.FullFileName : null);
 		}
 
 		public BuildProperty AddNewProperty (string propertyName,
@@ -287,7 +290,9 @@ namespace Microsoft.Build.BuildEngine {
 				propertiesByName [propertyName] = value;
 			}
 		}
-		
+
+		internal string DefinedInFileName { get; private set; }
+
 		internal GroupingCollection GroupingCollection {
 			get { return parentCollection; }
 			set { parentCollection = value; }
