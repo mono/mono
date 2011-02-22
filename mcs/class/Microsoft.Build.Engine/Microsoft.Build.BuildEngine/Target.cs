@@ -123,6 +123,16 @@ namespace Microsoft.Build.BuildEngine {
 
 		bool Build (string built_targets_key, out bool executeOnErrors)
 		{
+			project.PushThisFileProperty (TargetFile);
+			try {
+				return BuildActual (built_targets_key, out executeOnErrors);
+			} finally {
+				project.PopThisFileProperty ();
+			}
+		}
+
+		bool BuildActual (string built_targets_key, out bool executeOnErrors)
+		{
 			bool result = false;
 			executeOnErrors = false;
 

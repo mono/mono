@@ -36,13 +36,20 @@ namespace Microsoft.Build.BuildEngine {
 		
 		BuildWhen	otherwise;
 		Project		project;
+		ImportedProject	importedProject;
 		XmlElement	xmlElement;
 		List <BuildWhen>	whens;
 		
 		public BuildChoose (XmlElement xmlElement, Project project)
+			: this (xmlElement, project, null)
+		{
+		}
+
+		internal BuildChoose (XmlElement xmlElement, Project project, ImportedProject importedProject)
 		{
 			this.xmlElement = xmlElement;
 			this.project = project;
+			this.importedProject = importedProject;
 			this.whens = new List <BuildWhen> ();
 
 			foreach (XmlNode xn in xmlElement.ChildNodes) {
@@ -65,6 +72,9 @@ namespace Microsoft.Build.BuildEngine {
 					otherwise = new BuildWhen (xe, project);
 				}
 			}
+
+			DefinedInFileName = importedProject != null ? importedProject.FullFileName :
+						project != null ? project.FullFileName : null;
 		}
 		
 		public void Evaluate ()
@@ -85,6 +95,8 @@ namespace Microsoft.Build.BuildEngine {
 			get { return whens; }
 			set { whens = value; }
 		}
+
+		internal string DefinedInFileName { get; private set; }
 	}
 }
 

@@ -180,8 +180,13 @@ namespace Microsoft.Build.BuildEngine {
 				while (evaluate_iterator != null) {
 					if (evaluate_iterator.Value is BuildPropertyGroup) {
 						bpg = (BuildPropertyGroup) evaluate_iterator.Value;
-						if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
-							bpg.Evaluate ();
+						project.PushThisFileProperty (bpg.DefinedInFileName);
+						try {
+							if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
+								bpg.Evaluate ();
+						} finally {
+							project.PopThisFileProperty ();
+						}
 					}
 
 					// if it wasn't moved by adding anything because of evaluating a Import shift it
@@ -197,8 +202,13 @@ namespace Microsoft.Build.BuildEngine {
 				while (evaluate_iterator != null) {
 					if (evaluate_iterator.Value is BuildItemGroup) {
 						big = (BuildItemGroup) evaluate_iterator.Value;
-						if (ConditionParser.ParseAndEvaluate (big.Condition, project))
-							big.Evaluate ();
+						project.PushThisFileProperty (big.DefinedInFileName);
+						try {
+							if (ConditionParser.ParseAndEvaluate (big.Condition, project))
+								big.Evaluate ();
+						} finally {
+							project.PopThisFileProperty ();
+						}
 					}
 
 					evaluate_iterator = evaluate_iterator.Next;
@@ -210,17 +220,22 @@ namespace Microsoft.Build.BuildEngine {
 				while (evaluate_iterator != null) {
 					if (evaluate_iterator.Value is BuildChoose) {
 						BuildChoose bc = (BuildChoose)evaluate_iterator.Value;
-						bool whenUsed = false;
-						foreach (BuildWhen bw in bc.Whens) {
-							if (ConditionParser.ParseAndEvaluate (bw.Condition, project)) {
-								bw.Evaluate ();
-								whenUsed = true;
-								break;
+						project.PushThisFileProperty (bc.DefinedInFileName);
+						try {
+							bool whenUsed = false;
+							foreach (BuildWhen bw in bc.Whens) {
+								if (ConditionParser.ParseAndEvaluate (bw.Condition, project)) {
+									bw.Evaluate ();
+									whenUsed = true;
+									break;
+								}
 							}
-						}
-						if (!whenUsed && bc.Otherwise != null &&
-							ConditionParser.ParseAndEvaluate (bc.Otherwise.Condition, project)) {
-							bc.Otherwise.Evaluate ();
+							if (!whenUsed && bc.Otherwise != null &&
+								ConditionParser.ParseAndEvaluate (bc.Otherwise.Condition, project)) {
+								bc.Otherwise.Evaluate ();
+							}
+						} finally {
+							project.PopThisFileProperty ();
 						}
 					}
 
