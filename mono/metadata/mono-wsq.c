@@ -227,7 +227,7 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 	gnative t, b;
 	gint size;
 	MonoArray* a;
-	guint32 start_ticks = mono_msec_ticks ();
+	guint32 start_ticks = 0;
 
 	if (wsq == NULL || ptr == NULL || *ptr != NULL)
 		return;
@@ -241,6 +241,9 @@ mono_wsq_try_steal (MonoWSQ *wsq, void **ptr, guint32 ms_timeout)
 
 		if (NativeInterlockedCompareExchange (&wsq->top, t + 1, t) == t)
 			break;
+
+		if (start_ticks == 0)
+			start_ticks = mono_msec_ticks ();
 
 		if (!ms_timeout || mono_msec_ticks () - start_ticks < ms_timeout)
 			return;
