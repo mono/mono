@@ -339,7 +339,11 @@ namespace Mono.CSharp
 
 		protected virtual void InitializeMemberCache (bool onlyTypes)
 		{
-			MemberDefinition.LoadMembers (this, onlyTypes, ref cache);
+			try {
+				MemberDefinition.LoadMembers (this, onlyTypes, ref cache);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, "Unexpected error when loading type `{0}'", GetSignatureForError ());
+			}
 
 			if (onlyTypes)
 				state |= StateFlags.PendingMemberCacheMembers;
