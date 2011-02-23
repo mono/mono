@@ -1153,8 +1153,13 @@ namespace TestRunner {
 						if (check_msg) {
 							int first = line.IndexOf (':');
 							int second = line.IndexOf (':', first + 1);
-							if (second == -1 || !check_error_line)
+							if (line.IndexOf ("Warning as Error: ", first, StringComparison.Ordinal) > 0) {
+								if (check_error_line) {
+									second = line.IndexOf (':', second + 1);
+								}
+							} else if (second == -1 || !check_error_line) {
 								second = first;
+							}
 
 							string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
 							if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
