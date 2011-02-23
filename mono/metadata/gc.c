@@ -339,7 +339,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	DomainFinalizationReq *req;
 	guint32 res;
 	HANDLE done_event;
-	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoThread *thread = mono_thread_current ();
 
 	if (mono_thread_current () == gc_thread)
 		/* We are called from inside a finalizer, not much we can do here */
