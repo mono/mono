@@ -5164,6 +5164,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 						MonoCallInst *call2;
 						MonoInst *iargs [1];
 						MonoInst *conv;
+						GSList *l;
 
 						/* Convert the call into a call returning an int */
 						MONO_INST_NEW_CALL (cfg, call2, OP_CALL);
