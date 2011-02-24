@@ -182,6 +182,7 @@ namespace Mono.CSharp {
 		}
 
 		static readonly char[] argument_value_separator = new char[] { ';', ',' };
+		static readonly char[] numeric_value_separator = new char[] { ';', ',', ' ' };
 
 		readonly Report report;
 		readonly TextWriter output;
@@ -809,7 +810,7 @@ namespace Mono.CSharp {
 				if (value.Length == 0) {
 					report.WarningsAreErrors = true;
 				} else {
-					foreach (string wid in value.Split (argument_value_separator))
+					foreach (string wid in value.Split (numeric_value_separator))
 						report.AddWarningAsError (wid);
 				}
 				return ParseResult.Success;
@@ -818,7 +819,7 @@ namespace Mono.CSharp {
 				if (value.Length == 0) {
 					report.WarningsAreErrors = false;
 				} else {
-					foreach (string wid in value.Split (argument_value_separator))
+					foreach (string wid in value.Split (numeric_value_separator))
 						report.RemoveWarningAsError (wid);
 				}
 				return ParseResult.Success;
@@ -838,7 +839,7 @@ namespace Mono.CSharp {
 						return ParseResult.Error;
 					}
 
-					var warns = value.Split (argument_value_separator);
+					var warns = value.Split (numeric_value_separator);
 					foreach (string wc in warns) {
 						try {
 							if (wc.Trim ().Length == 0)
