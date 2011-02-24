@@ -170,7 +170,7 @@ namespace System.ServiceModel.Channels
 			var dic = Constants.SoapDictionary;
 			if (Id != null)
 				writer.WriteAttributeString ("u", dic.Add ("Id"), dic.Add (Constants.WsuNamespace), Id);
-			if (Actor != String.Empty) {
+			if (!String.IsNullOrEmpty (Actor)) {
 				if (version.Envelope == EnvelopeVersion.Soap11) 
 					writer.WriteAttributeString ("s", dic.Add ("actor"), dic.Add (version.Envelope.Namespace), Actor);
 
@@ -300,7 +300,7 @@ namespace System.ServiceModel.Channels
 				this.formatter = formatter;
 				this.is_ref = isReferenceParameter;
 				this.must_understand = mustUnderstand;
-				this.actor = actor;
+				this.actor = actor ?? String.Empty;
 				this.relay = relay;
 			}
 
