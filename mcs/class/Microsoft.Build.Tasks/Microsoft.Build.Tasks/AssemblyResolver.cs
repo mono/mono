@@ -186,8 +186,8 @@ namespace Microsoft.Build.Tasks {
 		ResolvedReference ResolveReferenceForPath (string filename, ITaskItem reference, AssemblyName aname,
 					string error_message, SearchPath spath, bool specific_version)
 		{
-			AssemblyName found_aname = GetAssemblyNameFromFile (filename);
-			if (found_aname == null) {
+			AssemblyName found_aname;
+			if (!TryGetAssemblyNameFromFile (filename, out found_aname)) {
 				if (error_message != null)
 					log.LogMessage (MessageImportance.Low, error_message);
 				return null;
@@ -209,8 +209,8 @@ namespace Microsoft.Build.Tasks {
 		{
 			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
 			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
-				AssemblyName aname = GetAssemblyNameFromFile (file);
-				if (aname != null)
+				AssemblyName aname;
+				if (TryGetAssemblyNameFromFile (file, out aname))
 					gac_asm.NameToAssemblyNameCache [aname.Name] =
 						new KeyValuePair<AssemblyName, string> (aname, file);
 			}
@@ -312,9 +312,9 @@ namespace Microsoft.Build.Tasks {
 						SearchPath.HintPath, specific_version);
 		}
 
-		public AssemblyName GetAssemblyNameFromFile (string filename)
+		public bool TryGetAssemblyNameFromFile (string filename, out AssemblyName aname)
 		{
-			AssemblyName aname = null;
+			aname = null;
 			filename = Path.GetFullPath (filename);
 			try {
 				aname = AssemblyName.GetAssemblyName (filename);
@@ -326,7 +326,7 @@ namespace Microsoft.Build.Tasks {
 						filename);
 			}
 
-			return aname;
+			return aname != null;
 		}
 
 		bool TryGetAssemblyNameFromFullName (string full_name, out AssemblyName aname)
