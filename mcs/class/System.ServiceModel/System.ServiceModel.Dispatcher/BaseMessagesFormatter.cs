@@ -185,7 +185,8 @@ namespace System.ServiceModel.Dispatcher
 			var msg = PartsToMessage (md, version, md.Action, parts);
 			if (headers != null)
 				foreach (var pair in headers)
-					msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
+					if (pair.Value != null)
+						msg.Headers.Add (CreateHeader (pair.Key, pair.Value));
 			return msg;
 		}
 
@@ -217,8 +218,13 @@ namespace System.ServiceModel.Dispatcher
 			if (headers != null)
 				foreach (var pair in headers)
 					if (pair.Value != null)
-						msg.Headers.Add (MessageHeader.CreateHeader (pair.Key.Name, pair.Key.Namespace, pair.Value));
+						msg.Headers.Add (CreateHeader (pair.Key, pair.Value));
 			return msg;
+		}
+
+		MessageHeader CreateHeader (MessageHeaderDescription mh, object value)
+		{
+			return MessageHeader.CreateHeader (mh.Name, mh.Namespace, value, mh.MustUnderstand, mh.Actor, mh.Relay);
 		}
 
 		public void DeserializeRequest (Message message, object [] parameters)
@@ -463,7 +469,7 @@ namespace System.ServiceModel.Dispatcher
 				var r = message.Headers.GetReaderAtHeader (i);
 				var mh = md.Headers.FirstOrDefault (h => h.Name == r.LocalName && h.Namespace == r.NamespaceURI);
 				if (mh != null)
-					dic [mh] = GetSerializer (mh).ReadObject (r);
+					dic [mh] = ReadHeaderObject (mh.Type, GetSerializer (mh), r);
 			}
 			return dic;
 		}
@@ -506,6 +512,17 @@ namespace System.ServiceModel.Dispatcher
 				serializers [partDesc] = new DataContractSerializer (
 					partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes);
 			return serializers [partDesc];
+		}
+
+		object ReadHeaderObject (Type type, XmlObjectSerializer serializer, XmlDictionaryReader reader)
+		{
+			// FIXME: it's a nasty workaround just to avoid UniqueId output as a string.
+			// Seealso MessageHeader.DefaultMessageHeader.OnWriteHeaderContents().
+			// Note that msg.Headers.GetHeader<UniqueId> () simply fails (on .NET too) and it is useless. The API is lame by design.
+			if (type == typeof (UniqueId))
+				return new UniqueId (reader.ReadElementContentAsString ());
+			else
+				return serializer.ReadObject (reader);
 		}
 
 		class DataContractBodyWriter : BodyWriter
