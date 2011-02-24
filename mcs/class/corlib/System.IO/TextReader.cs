@@ -108,14 +108,32 @@ namespace System.IO {
 			return total_read_count;
 		}
 
-		public virtual string ReadLine()
+		public virtual string ReadLine ()
 		{ 
-			return String.Empty;
+			var result = new System.Text.StringBuilder ();
+			int c;
+
+			while ((c = Read ()) != -1){
+				// check simple character line ending
+				if (c == '\n')
+					break;
+				if (c == '\r') {
+					if (Peek () == '\n') 
+						Read ();
+					break;
+				}
+				result.Append ((char) c);
+			}
+			return result.ToString ();
 		}
 
-		public virtual string ReadToEnd()
+		public virtual string ReadToEnd ()
 		{ 
-			return String.Empty;
+			var result = new System.Text.StringBuilder ();
+			int c;
+			while ((c = Read ()) != -1)
+				result.Append ((char) c);
+			return result.ToString ();
 		}
 
 		public static TextReader Synchronized (TextReader reader)
@@ -131,6 +149,11 @@ namespace System.IO {
 		private class NullTextReader : System.IO.TextReader {
 
 			public override string ReadLine ()
+			{
+				return null;
+			}
+
+			public override string ReadToEnd ()
 			{
 				return null;
 			}
