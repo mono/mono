@@ -208,6 +208,8 @@ namespace System.Windows.Forms {
 				XSetICFocus (xic);
 		}
 
+		private bool have_Xutf8ResetIC = true;
+
 		public void FocusOut (IntPtr window)
 		{
 			if (xim == IntPtr.Zero)
@@ -216,7 +218,13 @@ namespace System.Windows.Forms {
 			this.client_window = IntPtr.Zero;
 			IntPtr xic = GetXic (window);
 			if (xic != IntPtr.Zero) {
-				Xutf8ResetIC (xic);
+				if (have_Xutf8ResetIC) {
+					try {
+						Xutf8ResetIC (xic);
+					} catch (EntryPointNotFoundException) {
+						have_Xutf8ResetIC = false;
+					}
+				}
 				XUnsetICFocus (xic);
 			}
 		}
@@ -1173,6 +1181,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private bool have_Xutf8LookupString = true;
+
 		private int LookupString (ref XEvent xevent, int len, out XKeySym keysym, out IntPtr status)
 		{
 			IntPtr keysym_res;
@@ -1180,9 +1190,26 @@ namespace System.Windows.Forms {
 
 			status = IntPtr.Zero;
 			IntPtr xic = GetXic (client_window);
-			if (xic != IntPtr.Zero) {
+			if (xic != IntPtr.Zero && have_Xutf8LookupString) {
 				do {
-					res = Xutf8LookupString (xic, ref xevent, lookup_byte_buffer, 100, out keysym_res,  out status);
+					try {
+						res = Xutf8LookupString (xic, ref xevent, lookup_byte_buffer, 100, out keysym_res,  out status);
+					} catch (EntryPointNotFoundException) {
+						have_Xutf8LookupString = false;
+
+						/* Duplicate of the non-xic clause */
+						do {
+							res = XLookupString (ref xevent, lookup_byte_buffer, 100, out keysym_res, out status);
+							if ((int) status != -1) // XLookupBufferOverflow
+								break;
+							lookup_byte_buffer = new byte [lookup_byte_buffer.Length << 1];
+						} while (true);
+						lookup_buffer.Length = 0;
+						string s2 = Encoding.ASCII.GetString (lookup_byte_buffer, 0, res);
+						lookup_buffer.Append (s2);
+						keysym = (XKeySym) keysym_res.ToInt32 ();
+						return res;
+					}
 					if ((int) status != -1) // XLookupBufferOverflow
 						break;
 					lookup_byte_buffer = new byte [lookup_byte_buffer.Length << 1];
