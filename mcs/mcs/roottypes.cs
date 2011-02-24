@@ -483,7 +483,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RootDeclSpace : TypeContainer {
+	sealed class RootDeclSpace : TypeContainer {
 		public RootDeclSpace (ModuleContainer module, NamespaceEntry ns)
 			: base (ns, null, MemberName.Null, null, 0)
 		{
@@ -523,6 +523,11 @@ namespace Mono.CSharp
 		public override bool IsClsComplianceRequired ()
 		{
 			return PartialContainer.IsClsComplianceRequired ();
+		}
+
+		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		{
+			return null;
 		}
 
 		public override FullNamedExpression LookupNamespaceAlias (string name)
