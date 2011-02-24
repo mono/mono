@@ -893,8 +893,10 @@ mono_debugger_agent_cleanup (void)
 
 	/* This will interrupt the agent thread */
 	/* Close the read part only so it can still send back replies */
+	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
-	shutdown (conn_fd, SD_RECEIVE);
+	/* SD_RECEIVE doesn't break the recv in the debugger thread */
+	shutdown (conn_fd, SD_BOTH);
 #else
 	shutdown (conn_fd, SHUT_RD);
 #endif
@@ -909,31 +911,33 @@ mono_debugger_agent_cleanup (void)
 	 */
 	//WaitForSingleObject (debugger_thread_handle, INFINITE);
 	if (GetCurrentThreadId () != debugger_thread_id) {
-		mono_mutex_lock (&debugger_thread_exited_mutex);
-		while (!debugger_thread_exited) {
+		do {
+			mono_mutex_lock (&debugger_thread_exited_mutex);
+			if (!debugger_thread_exited) {
 #ifdef HOST_WIN32
-			if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 0)) {
-				mono_mutex_unlock (&debugger_thread_exited_mutex);
-				Sleep(1);
-				mono_mutex_lock (&debugger_thread_exited_mutex);
-			}
+				if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 0)) {
+					mono_mutex_unlock (&debugger_thread_exited_mutex);
+					Sleep(1);
+					mono_mutex_lock (&debugger_thread_exited_mutex);
+				}
 #else
-			mono_cond_wait (&debugger_thread_exited_cond, &debugger_thread_exited_mutex);
+				mono_cond_wait (&debugger_thread_exited_cond, &debugger_thread_exited_mutex);
 #endif
-		}
-		mono_mutex_unlock (&debugger_thread_exited_mutex);
+			}
+			mono_mutex_unlock (&debugger_thread_exited_mutex);
+		} while (!debugger_thread_exited);
 	}
-
-	breakpoints_cleanup ();
-	objrefs_cleanup ();
-	ids_cleanup ();
 
 #ifdef HOST_WIN32
 	shutdown (conn_fd, SD_BOTH);
 #else
 	shutdown (conn_fd, SHUT_RDWR);
 #endif
-	
+
+	breakpoints_cleanup ();
+	objrefs_cleanup ();
+	ids_cleanup ();
+
 	mono_mutex_destroy (&debugger_thread_exited_mutex);
 	mono_cond_destroy (&debugger_thread_exited_cond);
 }
