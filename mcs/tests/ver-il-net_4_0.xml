@@ -17112,8 +17112,18 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()">
-        <size>30</size>
+        <size>36</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+MM">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
