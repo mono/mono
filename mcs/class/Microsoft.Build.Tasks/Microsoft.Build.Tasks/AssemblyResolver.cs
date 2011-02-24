@@ -121,7 +121,10 @@ namespace Microsoft.Build.Tasks {
 			if (!Directory.Exists (framework_dir))
 				return null;
 			
-			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+			AssemblyName key_aname;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out key_aname))
+				return null;
+
 			TargetFrameworkAssemblies gac_asm;
 			if (!target_framework_cache.TryGetValue (framework_dir, out gac_asm)) {
 				// fill gac_asm
@@ -160,7 +163,9 @@ namespace Microsoft.Build.Tasks {
 
 			// Try as a filename
 			string path = Path.GetFullPath (Path.Combine (directory, filename));
-			AssemblyName aname = specific_version ? new AssemblyName (reference.ItemSpec) : null;
+			AssemblyName aname = null;
+			if (specific_version && !TryGetAssemblyNameFromFullName (reference.ItemSpec, out aname))
+				return null;
 
 			ResolvedReference resolved_ref = ResolveReferenceForPath (path, reference, aname, null, SearchPath.Directory, specific_version);
 			if (resolved_ref != null)
@@ -215,7 +220,10 @@ namespace Microsoft.Build.Tasks {
 
 		public ResolvedReference ResolveGacReference (ITaskItem reference, bool specific_version)
 		{
-			AssemblyName name = new AssemblyName (reference.ItemSpec);
+			AssemblyName name;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out name))
+				return null;
+
 			if (!gac.ContainsKey (name.Name)) {
 				LogSearchMessage ("Considered {0}, but could not find in the GAC.",
 						reference.ItemSpec);
@@ -264,7 +272,11 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			ResolvedReference rr = GetResolvedReference (reference, pkg.File, new AssemblyName (pkg.FullName),
+			AssemblyName aname;
+			if (!TryGetAssemblyNameFromFullName (pkg.FullName, out aname))
+				return null;
+
+			ResolvedReference rr = GetResolvedReference (reference, pkg.File, aname,
 						false, SearchPath.PkgConfig);
 			rr.FoundInSearchPathAsString = String.Format ("{{PkgConfig}} provided by package named {0}",
 							pkg.ParentPackage.Name);
@@ -291,7 +303,11 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			return ResolveReferenceForPath (hintpath, reference, new AssemblyName (reference.ItemSpec),
+			AssemblyName aname;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out aname))
+				return null;
+
+			return ResolveReferenceForPath (hintpath, reference, aname,
 						String.Format ("File at HintPath {0}, is either an invalid assembly or the file does not exist.", hintpath),
 						SearchPath.HintPath, specific_version);
 		}
@@ -311,6 +327,18 @@ namespace Microsoft.Build.Tasks {
 			}
 
 			return aname;
+		}
+
+		bool TryGetAssemblyNameFromFullName (string full_name, out AssemblyName aname)
+		{
+			aname = null;
+			try {
+				aname = new AssemblyName (full_name);
+			} catch (FileLoadException) {
+				LogSearchMessage ("Considered '{0}' as an assembly name, but it is invalid.", full_name);
+			}
+
+			return aname != null;
 		}
 
 		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
