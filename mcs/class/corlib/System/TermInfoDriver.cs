@@ -578,8 +578,7 @@ namespace System {
 				if (!inited) {
 					Init ();
 				}
-
-				throw new NotSupportedException ();
+				return false;
 			}
 		}
 
@@ -677,7 +676,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				return false;
 			}
 		}
 
