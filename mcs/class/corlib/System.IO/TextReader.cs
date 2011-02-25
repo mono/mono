@@ -158,7 +158,7 @@ namespace System.IO {
 
 			public override string ReadToEnd ()
 			{
-				return null;
+				return String.Empty;
 			}
 		}
 	}
