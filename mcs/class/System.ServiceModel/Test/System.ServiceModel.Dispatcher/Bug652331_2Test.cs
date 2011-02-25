@@ -1,3 +1,4 @@
+#if NET_4_0
 //
 // Authors:
 //	David Straw
@@ -664,3 +665,4 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
     }
 }
 
+#endif
