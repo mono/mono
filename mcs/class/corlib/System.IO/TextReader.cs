@@ -124,6 +124,9 @@ namespace System.IO {
 				}
 				result.Append ((char) c);
 			}
+			if (c == -1 && result.Length == 0)
+				return null;
+			
 			return result.ToString ();
 		}
 
