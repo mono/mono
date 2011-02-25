@@ -212,8 +212,11 @@ namespace System {
 					endString += resetColors;
 				
 				unsafe {
-					if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size))
-						throw new IOException ("Error initializing terminal.");
+					if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size)){
+						control_characters = new byte [17];
+						native_terminal_size = -1;
+						//throw new IOException ("Error initializing terminal.");
+					}
 				}
 				
 				stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
@@ -247,7 +250,7 @@ namespace System {
 				
 				GetCursorPosition ();
 #if DEBUG
-					logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
+				logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
 				logger.Flush ();
 #endif
 				if (noGetPosition) {
