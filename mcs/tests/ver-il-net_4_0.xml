@@ -10451,7 +10451,7 @@
         <size>24</size>
       </method>
       <method name="Int32 Test(Boolean)">
-        <size>54</size>
+        <size>52</size>
       </method>
       <method name="Int32 Main()">
         <size>194</size>
@@ -12128,10 +12128,16 @@
         <size>29</size>
       </method>
       <method name="Int32 Main()">
-        <size>60</size>
+        <size>85</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Boolean Test_5()">
+        <size>63</size>
+      </method>
+      <method name="Int32 Test_6()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -39231,12 +39237,27 @@
     </type>
   </test>
   <test name="test-499.cs">
-    <type name="X">
+    <type name="A">
+      <method name="Int32 switch1(UInt64)">
+        <size>96</size>
+      </method>
+      <method name="Int32 switch2(SByte)">
+        <size>26</size>
+      </method>
+      <method name="Int32 switch3(Int64)">
+        <size>27</size>
+      </method>
+      <method name="Int32 switch4(UInt64)">
+        <size>39</size>
+      </method>
+      <method name="Int32 switch5(UInt64)">
+        <size>22</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>116</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>24</size>
       </method>
     </type>
   </test>

@@ -1300,11 +1300,20 @@ namespace Mono.CSharp {
 			return child.GetValueAsLiteral ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return child.GetValueAsLong ();
+		}
+
 		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
 		{
+			if (type == target_type)
+				return this;
+
 			// FIXME: Do we need to check user conversions?
 			if (!Convert.ImplicitStandardConversionExists (this, target_type))
 				return null;
+
 			return child.ConvertImplicitly (rc, target_type);
 		}
 	}
@@ -1382,6 +1391,11 @@ namespace Mono.CSharp {
 		public override string GetValueAsLiteral ()
 		{
 			return Child.GetValueAsLiteral ();
+		}
+
+		public override long GetValueAsLong ()
+		{
+			return Child.GetValueAsLong ();
 		}
 
 		public EnumConstant Increment()

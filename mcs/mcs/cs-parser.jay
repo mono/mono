@@ -4985,7 +4985,7 @@ switch_section
 switch_labels
 	: switch_label 
 	  {
-		var labels = new List<SwitchLabel> (4);
+		var labels = new List<SwitchLabel> (2);
 
 		labels.Add ((SwitchLabel) $1);
 		$$ = labels;

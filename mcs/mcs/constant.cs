@@ -40,6 +40,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract object GetValue ();
 
+		public abstract long GetValueAsLong ();
+
 		public abstract string GetValueAsLiteral ();
 
 #if !STATIC
@@ -348,6 +350,11 @@ namespace Mono.CSharp {
 			return Value ? "true" : "false";
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value ? 1 : 0;
+		}
+
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Encode (Value);
@@ -384,7 +391,8 @@ namespace Mono.CSharp {
 
 	}
 
-	public class ByteConstant : IntegralConstant {
+	public class ByteConstant : IntegralConstant
+	{
 		public readonly byte Value;
 
 		public ByteConstant (byte v, Location loc):
@@ -411,6 +419,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -537,6 +550,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override string GetValueAsLiteral ()
 		{
 			return "\"" + descape (Value) + "\"";
@@ -628,6 +646,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -733,6 +756,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new ShortConstant (checked((short)(Value + 1)), loc);
@@ -815,7 +843,8 @@ namespace Mono.CSharp {
 
 	}
 
-	public class UShortConstant : IntegralConstant {
+	public class UShortConstant : IntegralConstant
+	{
 		public readonly ushort Value;
 
 		public UShortConstant (ushort v, Location loc):
@@ -842,6 +871,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -949,6 +983,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -1129,6 +1168,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new UIntConstant (checked(Value + 1), loc);
@@ -1243,6 +1287,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -1381,6 +1430,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return (long) Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new ULongConstant (checked(Value + 1), loc);
@@ -1496,6 +1550,11 @@ namespace Mono.CSharp {
 		public override string GetValueAsLiteral ()
 		{
 			return Value.ToString ();
+		}
+
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override bool IsDefaultValue {
@@ -1621,6 +1680,11 @@ namespace Mono.CSharp {
 			return Value.ToString ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1724,16 +1788,6 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override object GetValue ()
-		{
-			return Value;
-		}
-
-		public override string GetValueAsLiteral ()
-		{
-			return Value.ToString () + "M";
-		}
-
 		public override void Emit (EmitContext ec)
 		{
 			int [] words = decimal.GetBits (Value);
@@ -1831,6 +1885,20 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override string GetValueAsLiteral ()
+		{
+			return Value.ToString () + "M";
+		}
+
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
 	}
 
 	public class StringConstant : Constant {
@@ -1858,6 +1926,11 @@ namespace Mono.CSharp {
 		{
 			// FIXME: Escape the string.
 			return "\"" + Value + "\"";
+		}
+
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2023,6 +2096,11 @@ namespace Mono.CSharp {
 			return GetSignatureForError ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get { return true; }
 		}
@@ -2074,6 +2152,11 @@ namespace Mono.CSharp {
 		public override string GetValueAsLiteral ()
 		{
 			return value.GetValueAsLiteral ();
+		}
+
+		public override long GetValueAsLong ()
+		{
+			return value.GetValueAsLong ();
 		}
 
 		public override void Emit (EmitContext ec)
