@@ -214,7 +214,7 @@ namespace System {
 				unsafe {
 					if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size)){
 						control_characters = new byte [17];
-						native_terminal_size = -1;
+						native_terminal_size = null;
 						//throw new IOException ("Error initializing terminal.");
 					}
 				}
