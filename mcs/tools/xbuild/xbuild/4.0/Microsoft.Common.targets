@@ -16,7 +16,12 @@
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
+
+		<TargetFrameworkIdentifier Condition="'$(TargetFrameworkIdentifier)' == ''">.NETFramework</TargetFrameworkIdentifier>
 		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.0</TargetFrameworkVersion>
+
+		<TargetFrameworkMoniker Condition="'$(TargetFrameworkMoniker)' == '' and '$(TargetFrameworkProfile)' != ''">$(TargetFrameworkIdentifier),Version=$(TargetFrameworkVersion),Profile=$(TargetFrameworkProfile)</TargetFrameworkMoniker>
+	        <TargetFrameworkMoniker Condition="'$(TargetFrameworkMoniker)' == ''">$(TargetFrameworkIdentifier),Version=$(TargetFrameworkVersion)</TargetFrameworkMoniker>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -100,27 +105,57 @@
 		/>
 	</Target>
 
-	<Target Name="GetFrameworkPaths">
+	<PropertyGroup>
+		<GetFrameworkPathsDependsOn />
+	</PropertyGroup>
+	<Target Name="GetFrameworkPaths"
+		Condition="'$(TargetFrameworkIdentifier)' == '' or '$(TargetFrameworkIdentifier)' == '.NETFramework'"
+		DependsOnTargets="$(GetFrameworkPathsDependsOn)">
 		<GetFrameworkPath>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.0'"
 				TaskParameter="FrameworkVersion40Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion30Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion20Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 		</GetFrameworkPath>
-		<CreateProperty Value="@(_TargetFrameworkDirectories)">
+		<CreateProperty Value="@(_CombinedTargetFrameworkDirectoriesItem)">
 			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
 		</CreateProperty>
 
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
 			Condition="'$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
+	</Target>
+
+	<PropertyGroup>
+		<GetReferenceAssemblyPathsDependsOn />
+	</PropertyGroup>
+	<Target Name="GetReferenceAssemblyPaths" DependsOnTargets="$(GetReferenceAssemblyPathsDependsOn)">
+		<!-- in case of .NETFramework, $(TargetFrameworkDirectory) would have been set by
+		GetFrameworkPaths, if it hasn't been changed, then clear it, to avoid duplicates -->
+		<CreateProperty Value="" Condition="'@(_CombinedTargetFrameworkDirectoriesItem)' == '$(TargetFrameworkDirectory)'">
+			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
+		</CreateProperty>
+
+		<GetReferenceAssemblyPaths
+			Condition="'$(TargetFrameworkMoniker)' != ''"
+			TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
+			RootPath="$(TargetFrameworkRootPath)">
+
+			<Output TaskParameter="ReferenceAssemblyPaths" PropertyName="_TargetFrameworkDirectories"/>
+			<Output TaskParameter="FullFrameworkReferenceAssemblyPaths" PropertyName="_FullFrameworkReferenceAssemblyPaths"/>
+			<Output TaskParameter="TargetFrameworkMonikerDisplayName" PropertyName="TargetFrameworkMonikerDisplayName"/>
+		</GetReferenceAssemblyPaths>
+
+		<CreateProperty Value="$(_TargetFrameworkDirectories);$(TargetFrameworkDirectory)">
+			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
+		</CreateProperty>
 	</Target>
 
 	<PropertyGroup>
@@ -153,6 +188,7 @@
 
 		<ResolveAssemblyReferencesDependsOn>
 			GetFrameworkPaths;
+			GetReferenceAssemblyPaths;
 			PrepareForBuild
 		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
@@ -291,6 +327,7 @@
 		<CoreBuildDependsOn>
 			PrepareForBuild;
 			GetFrameworkPaths;
+			GetReferenceAssemblyPaths;
 			PreBuildEvent;
 			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
