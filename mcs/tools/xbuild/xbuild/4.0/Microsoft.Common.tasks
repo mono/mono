@@ -17,6 +17,7 @@
 	<UsingTask TaskName="Microsoft.Build.Tasks.GenerateResource"	AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.GetFrameworkPath"	AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.GetFrameworkSdkPath"	AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<UsingTask TaskName="Microsoft.Build.Tasks.GetReferenceAssemblyPaths"	AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.LC"			AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.MakeDir"		AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.Message"		AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
