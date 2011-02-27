@@ -114,22 +114,16 @@ namespace Microsoft.Build.Utilities
 			toolOutput = new StringBuilder ();
 
 			try {
-				string arguments = commandLineCommands;
+				string responseFileSwitch = String.Empty;
 				if (!String.IsNullOrEmpty (responseFileCommands)) {
 					responseFileName = Path.GetTempFileName ();
 					File.WriteAllText (responseFileName, responseFileCommands);
-					arguments = arguments + " " + GetResponseFileSwitch (responseFileName);
+					responseFileSwitch = GetResponseFileSwitch (responseFileName);
 				}
 
+				var pinfo = GetProcessStartInfo (pathToTool, commandLineCommands, responseFileSwitch);
 				LogToolCommand (String.Format ("Tool {0} execution started with arguments: {1} {2}",
-						pathToTool, commandLineCommands, responseFileCommands));
-
-				ProcessStartInfo pinfo = new ProcessStartInfo (pathToTool, arguments);
-				pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
-
-				pinfo.UseShellExecute = false;
-				pinfo.RedirectStandardOutput = true;
-				pinfo.RedirectStandardError = true;
+						pinfo.FileName, commandLineCommands, responseFileCommands));
 
 				var pendingLineFragmentOutput = new StringBuilder ();
 				var pendingLineFragmentError = new StringBuilder ();
@@ -296,6 +290,18 @@ namespace Microsoft.Build.Utilities
 		protected virtual string GetResponseFileSwitch (string responseFilePath)
 		{
 			return String.Format ("@{0}", responseFilePath);
+		}
+
+		protected virtual ProcessStartInfo GetProcessStartInfo (string pathToTool, string commandLineCommands, string responseFileSwitch)
+		{
+			var pinfo = new ProcessStartInfo (pathToTool, String.Format ("{0} {1}", commandLineCommands, responseFileSwitch));
+
+			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
+			pinfo.UseShellExecute = false;
+			pinfo.RedirectStandardOutput = true;
+			pinfo.RedirectStandardError = true;
+
+			return pinfo;
 		}
 
 		protected virtual bool HandleTaskExecutionErrors ()
