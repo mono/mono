@@ -98,25 +98,35 @@
 		/>
 	</Target>
 
-	<Target Name="GetFrameworkPaths">
+	<PropertyGroup>
+		<GetFrameworkPathsDependsOn />
+	</PropertyGroup>
+	<Target Name="GetFrameworkPaths" DependsOnTargets="$(GetFrameworkPathsDependsOn)">
 		<GetFrameworkPath>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion30Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion20Path"
-				ItemName="_TargetFrameworkDirectories"/>
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 		</GetFrameworkPath>
-		<CreateProperty Value="@(_TargetFrameworkDirectories)">
+		<CreateProperty Value="@(_CombinedTargetFrameworkDirectoriesItem)">
 			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
 		</CreateProperty>
 
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
 			Condition="'$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
+
+	<PropertyGroup>
+		<GetReferenceAssemblyPathsDependsOn />
+	</PropertyGroup>
+	<!-- Multi-targeting against "framework packs" is not supported with ToolsVersion < 4.0,
+	     this target is just a place holder, can be overridden -->
+	<Target Name="GetReferenceAssemblyPaths" DependsOnTargets="$(GetReferenceAssemblyPathsDependsOn)" />
 
 	<PropertyGroup>
 		<AllowedReferenceAssemblyFileExtensions Condition=" '$(AllowedReferenceAssemblyFileExtensions)' == '' ">
@@ -148,6 +158,7 @@
 
 		<ResolveAssemblyReferencesDependsOn>
 			GetFrameworkPaths;
+			GetReferenceAssemblyPaths;
 			PrepareForBuild
 		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
@@ -278,6 +289,7 @@
 		<CoreBuildDependsOn>
 			PrepareForBuild;
 			GetFrameworkPaths;
+			GetReferenceAssemblyPaths;
 			PreBuildEvent;
 			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
