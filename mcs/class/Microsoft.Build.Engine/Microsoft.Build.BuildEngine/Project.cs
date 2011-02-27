@@ -967,6 +967,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception (String.Format ("Invalid tools version '{0}', no tools path set for this.", effective_tools_version));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsRoot", Path.GetDirectoryName (toolsPath), PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", effective_tools_version, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
