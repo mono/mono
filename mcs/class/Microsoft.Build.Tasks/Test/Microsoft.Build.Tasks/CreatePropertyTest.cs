@@ -127,5 +127,45 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual ("@(IG)", project.EvaluatedProperties["C"].FinalValue, "A6");
 		}
 
+		[Test]
+		public void TestEmptyPropertyValue ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A>1</A>
+					</PropertyGroup>
+					<Target Name='1'>
+						<Message Text='Before: $(A)'/>
+						<CreateProperty Value=''>
+							<Output
+								TaskParameter='Value'
+								PropertyName='A'
+							/>
+						</CreateProperty>
+						<Message Text='After: $(A)'/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			testLogger.CheckLoggedMessageHead ("Before: 1", "A1");
+			testLogger.CheckLoggedMessageHead ("After: ", "A2");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected messages found");
+		}
 	}
 }
