@@ -831,7 +831,7 @@ namespace Mono.CSharp
 			source.Emit (ec);
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
-				temporary = new LocalTemporary (expr.Type);
+				temporary = new LocalTemporary (source.Type);
 				temporary.Store (ec);
 			}
 			
