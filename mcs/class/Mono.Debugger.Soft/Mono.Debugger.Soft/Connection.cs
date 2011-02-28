@@ -1206,6 +1206,9 @@ namespace Mono.Debugger.Soft
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
 			int id = IdGenerator;
 
+			if (disconnected)
+				throw new VMDisconnectedException ();
+
 			if (packet == null)
 				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
 			else
