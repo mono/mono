@@ -258,7 +258,7 @@ namespace Microsoft.Build.Utilities
 			string col = match.Result ("${column}");
 			int columnNumber = 0;
 			if (!string.IsNullOrEmpty (col))
-				columnNumber = col == "255+" ? -1 : Int32.Parse (col);
+				columnNumber = col.IndexOf ("+") >= 0 ? -1 : Int32.Parse (col);
 
 			string category = match.Result ("${level}");
 			string code = match.Result ("${number}");
