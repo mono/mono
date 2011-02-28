@@ -55,5 +55,12 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("using System;");
 			Evaluator.Run ("struct Z { }");
 		}
+
+		[Test]
+		public void GG ()
+		{
+			Evaluator.Run ("public class D { int x; public int X { get { return x; } set { x = value;} } };");
+			Evaluator.Run ("public class C { public int Speed{get;set;}};");
+		}
 	}
 }
