@@ -644,7 +644,15 @@ namespace Microsoft.Build.Tasks {
 		public ITaskItem[] SuggestedRedirects {
 			get { return suggestedRedirects; }
 		}
-		
+
+#if NET_4_0
+		public string TargetFrameworkMoniker { get; set; }
+
+		public string TargetFrameworkMonikerDisplayName { get; set; }
+#endif
+
+		public string TargetFrameworkVersion { get; set; }
+
 		public string[] TargetFrameworkDirectories {
 			get { return targetFrameworkDirectories; }
 			set { targetFrameworkDirectories = value; }
@@ -654,6 +662,7 @@ namespace Microsoft.Build.Tasks {
 			get { return targetProcessorArchitecture; }
 			set { targetProcessorArchitecture = value; }
 		}
+
 
                 static Dictionary<string, string> cultureNamesTable;
                 static Dictionary<string, string> CultureNamesTable {

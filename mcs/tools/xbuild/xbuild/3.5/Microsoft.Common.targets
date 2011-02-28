@@ -180,6 +180,7 @@
 			FindDependencies="true"
 			FindSatellites="true"
 			FindRelatedFiles="true"
+			TargetFrameworkVersion="$(TargetFrameworkVersion)"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
