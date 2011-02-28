@@ -99,6 +99,8 @@ namespace Microsoft.Build.Tasks {
 				// nothing to resolve
 				return true;
 
+			LogTaskParameters ();
+
 			assembly_resolver.Log = Log;
 			tempResolvedFiles = new List<ITaskItem> ();
 			tempCopyLocalFiles = new Dictionary<string, ITaskItem> ();
@@ -521,6 +523,19 @@ namespace Microsoft.Build.Tasks {
 		{
 			return rr.FoundInSearchPath == SearchPath.Gac ||
 				rr.FoundInSearchPath == SearchPath.TargetFrameworkDirectory;
+		}
+
+		void LogTaskParameters ()
+		{
+			Log.LogMessage (MessageImportance.Low, "TargetFrameworkDirectories:");
+			if (TargetFrameworkDirectories != null)
+				foreach (string dir in TargetFrameworkDirectories)
+					Log.LogMessage (MessageImportance.Low, "\t{0}", dir);
+
+			Log.LogMessage (MessageImportance.Low, "SearchPaths:");
+			if (SearchPaths != null)
+				foreach (string path in SearchPaths)
+					Log.LogMessage (MessageImportance.Low, "\t{0}", path);
 		}
 
 		public bool AutoUnify {
