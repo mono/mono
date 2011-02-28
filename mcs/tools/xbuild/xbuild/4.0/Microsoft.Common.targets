@@ -218,6 +218,9 @@
 			FindDependencies="true"
 			FindSatellites="true"
 			FindRelatedFiles="true"
+			TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
+			TargetFrameworkMonikerDisplayName="$(TargetFrameworkMonikerDisplayName)"
+			TargetFrameworkVersion="$(TargetFrameworkVersion)"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
