@@ -302,7 +302,7 @@ namespace Mono.CSharp
 			//
 			// Primitive types first
 			//
-			if (BuildinTypeSpec.IsPrimitiveNumericType (expr_type)) {
+			if (BuildinTypeSpec.IsPrimitiveType (expr_type)) {
 				best_expr = ResolvePrimitivePredefinedType (expr);
 				if (best_expr == null)
 					return null;
@@ -496,7 +496,7 @@ namespace Mono.CSharp
 			case Operator.UnaryNegation:
 				if (ec.HasSet (EmitContext.Options.CheckedScope) && !IsFloat (type)) {
 					ec.Emit (OpCodes.Ldc_I4_0);
-					if (type == TypeManager.int64_type)
+					if (type.BuildinType == BuildinTypeSpec.Type.Long)
 						ec.Emit (OpCodes.Conv_U8);
 					Expr.Emit (ec);
 					ec.Emit (OpCodes.Sub_Ovf);
@@ -1104,47 +1104,67 @@ namespace Mono.CSharp
 			//
 			// Step 2: Try predefined types
 			//
-			if (predefined == null)
-				CreatePredefinedOperators ();
 
-			// Predefined without user conversion first for speed-up
 			Expression source = null;
-			bool primitive_type = false;
-			foreach (var t in predefined) {
-				if (t == type) {
-					source = operation;
-					primitive_type = true;
-					break;
-				}
-			}
+			bool primitive_type;
 
-			// ++/-- on pointer variables of all types except void*
-			if (source == null && type.IsPointer) {
-				if (((PointerContainer) type).Element.BuildinType == BuildinTypeSpec.Type.Void) {
-					Error_VoidPointerOperation (ec);
+			//
+			// Predefined without user conversion first for speed-up
+			//
+			// Predefined ++ and -- operators exist for the following types: 
+			// sbyte, byte, short, ushort, int, uint, long, ulong, char, float, double, decimal
+			//
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.Float:
+			case BuildinTypeSpec.Type.Double:
+			case BuildinTypeSpec.Type.Decimal:
+				source = operation;
+				primitive_type = true;
+				break;
+			default:
+				primitive_type = false;
+
+				// ++/-- on pointer variables of all types except void*
+				if (type.IsPointer) {
+					if (((PointerContainer) type).Element.BuildinType == BuildinTypeSpec.Type.Void) {
+						Error_VoidPointerOperation (ec);
+						return null;
+					}
+
+					source = operation;
+				} else {
+					if (predefined == null)
+						CreatePredefinedOperators ();
+
+					foreach (var t in predefined) {
+						source = Convert.ImplicitUserConversion (ec, operation, t, loc);
+
+						// LAMESPEC: It should error on ambiguous operators but that would make us incompatible
+						if (source != null) {
+							break;
+						}
+					}
+				}
+
+				// ++/-- on enum types
+				if (source == null && type.IsEnum)
+					source = operation;
+
+				if (source == null) {
+					Unary.Error_OperatorCannotBeApplied (ec, loc, Operator.GetName (user_op), type);
 					return null;
 				}
 
-				source = operation;
-			}
-
-			if (source == null) {
-				// LAMESPEC: It should error on ambiguous operators but that would make us incompatible
-				foreach (var t in predefined) {
-					source = Convert.ImplicitUserConversion (ec, operation, t, loc);
-					if (source != null) {
-						break;
-					}
-				}
-			}
-
-			// ++/-- on enum types
-			if (source == null && type.IsEnum)
-				source = operation;
-
-			if (source == null) {
-				Unary.Error_OperatorCannotBeApplied (ec, loc, Operator.GetName (user_op), type);
-				return null;
+				break;
 			}
 
 			var one = new IntConstant (1, loc);
@@ -1881,7 +1901,7 @@ namespace Mono.CSharp
 
 				Expression expr_tree_expr = Convert.ImplicitConversion (ec, b.right, TypeManager.int32_type, b.right.Location);
 
-				int right_mask = left == TypeManager.int32_type || left == TypeManager.uint32_type ? 0x1f : 0x3f;
+				int right_mask = left.BuildinType == BuildinTypeSpec.Type.Int || left.BuildinType == BuildinTypeSpec.Type.UInt ? 0x1f : 0x3f;
 
 				//
 				// b = b.left >> b.right & (0x1f|0x3f)
@@ -2290,7 +2310,7 @@ namespace Mono.CSharp
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.HasSet (EmitContext.Options.CheckedScope)) {
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+					if (l.BuildinType == BuildinTypeSpec.Type.Int || l.BuildinType == BuildinTypeSpec.Type.Long)
 						opcode = OpCodes.Mul_Ovf;
 					else if (!IsFloat (l))
 						opcode = OpCodes.Mul_Ovf_Un;
@@ -2317,7 +2337,7 @@ namespace Mono.CSharp
 
 			case Operator.Addition:
 				if (ec.HasSet (EmitContext.Options.CheckedScope)) {
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+					if (l.BuildinType == BuildinTypeSpec.Type.Int || l.BuildinType == BuildinTypeSpec.Type.Long)
 						opcode = OpCodes.Add_Ovf;
 					else if (!IsFloat (l))
 						opcode = OpCodes.Add_Ovf_Un;
@@ -2329,7 +2349,7 @@ namespace Mono.CSharp
 
 			case Operator.Subtraction:
 				if (ec.HasSet (EmitContext.Options.CheckedScope)) {
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+					if (l.BuildinType == BuildinTypeSpec.Type.Int || l.BuildinType == BuildinTypeSpec.Type.Long)
 						opcode = OpCodes.Sub_Ovf;
 					else if (!IsFloat (l))
 						opcode = OpCodes.Sub_Ovf_Un;
@@ -2452,9 +2472,9 @@ namespace Mono.CSharp
 			//
 			// Handles predefined primitive types
 			//
-			if (BuildinTypeSpec.IsPrimitiveNumericType (l) && BuildinTypeSpec.IsPrimitiveNumericType (r)) {
+			if (BuildinTypeSpec.IsPrimitiveType (l) && BuildinTypeSpec.IsPrimitiveType (r)) {
 				if ((oper & Operator.ShiftMask) == 0) {
-					if (l != TypeManager.bool_type && !DoBinaryOperatorPromotion (ec))
+					if (l.BuildinType != BuildinTypeSpec.Type.Bool && !DoBinaryOperatorPromotion (ec))
 						return null;
 
 					primitives_only = true;
@@ -2662,7 +2682,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (type == TypeManager.uint32_type) {
+			if (type.BuildinType == BuildinTypeSpec.Type.UInt) {
 				switch (prim_expr.Type.BuildinType) {
 				case BuildinTypeSpec.Type.Int:
 				case BuildinTypeSpec.Type.Short:
@@ -2682,7 +2702,7 @@ namespace Mono.CSharp
 					}
 					break;
 				}
-			} else if (type == TypeManager.uint64_type) {
+			} else if (type.BuildinType == BuildinTypeSpec.Type.ULong) {
 				//
 				// A compile-time error occurs if the other operand is of type sbyte, short, int, or long
 				//
@@ -2771,7 +2791,7 @@ namespace Mono.CSharp
 
 			Constant lc = left as Constant;
 
-			if (lc != null && lc.Type == TypeManager.bool_type &&
+			if (lc != null && lc.Type.BuildinType == BuildinTypeSpec.Type.Bool &&
 				((oper == Operator.LogicalAnd && lc.IsDefaultValue) ||
 				 (oper == Operator.LogicalOr && !lc.IsDefaultValue))) {
 
@@ -3330,12 +3350,12 @@ namespace Mono.CSharp
 			if (!TypeManager.IsReferenceType (l) || !TypeManager.IsReferenceType (r))
 				return null;
 
-			if (l == TypeManager.string_type || l == TypeManager.delegate_type || MemberCache.GetUserOperator (l, CSharp.Operator.OpType.Equality, false) != null)
+			if (l.BuildinType == BuildinTypeSpec.Type.String || l == TypeManager.delegate_type || MemberCache.GetUserOperator (l, CSharp.Operator.OpType.Equality, false) != null)
 				ec.Report.Warning (253, 2, loc,
 					"Possible unintended reference comparison. Consider casting the right side expression to type `{0}' to get value comparison",
 					l.GetSignatureForError ());
 
-			if (r == TypeManager.string_type || r == TypeManager.delegate_type || MemberCache.GetUserOperator (r, CSharp.Operator.OpType.Equality, false) != null)
+			if (r.BuildinType == BuildinTypeSpec.Type.String || r == TypeManager.delegate_type || MemberCache.GetUserOperator (r, CSharp.Operator.OpType.Equality, false) != null)
 				ec.Report.Warning (252, 2, loc,
 					"Possible unintended reference comparison. Consider casting the left side expression to type `{0}' to get value comparison",
 					r.GetSignatureForError ());
@@ -3611,11 +3631,11 @@ namespace Mono.CSharp
 				//
 				// brtrue/brfalse works with native int only
 				//
-				if (((Constant) right).IsZeroInteger && right.Type != TypeManager.int64_type && right.Type != TypeManager.uint64_type) {
+				if (((Constant) right).IsZeroInteger && right.Type.BuildinType != BuildinTypeSpec.Type.Long && right.Type.BuildinType != BuildinTypeSpec.Type.ULong) {
 					left.EmitBranchable (ec, target, my_on_true);
 					return;
 				}
-				if (right.Type == TypeManager.bool_type) {
+				if (right.Type.BuildinType == BuildinTypeSpec.Type.Bool) {
 					// right is a boolean, and it's not 'false' => it is 'true'
 					left.EmitBranchable (ec, target, !my_on_true);
 					return;
@@ -4301,7 +4321,7 @@ namespace Mono.CSharp
 					"Assignment in conditional expression is always constant. Did you mean to use `==' instead ?");
 			}
 
-			if (expr.Type == TypeManager.bool_type)
+			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Bool)
 				return expr;
 
 			if (expr.Type == InternalType.Dynamic) {
@@ -6519,7 +6539,7 @@ namespace Mono.CSharp
 			// is more than 10 items to be initialized
 			// NOTE: const_initializers_count does not contain default constant values.
 			if (const_initializers_count > 2 && (array_data.Count > 10 || const_initializers_count * 4 > (array_data.Count)) &&
-				(BuildinTypeSpec.IsPrimitiveNumericType (array_element_type) || array_element_type.IsEnum)) {
+				(BuildinTypeSpec.IsPrimitiveType (array_element_type) || array_element_type.IsEnum)) {
 				EmitStaticInitializers (ec);
 
 				if (!only_constant_initializers)
@@ -6544,7 +6564,7 @@ namespace Mono.CSharp
 
 			// No array covariance, except for array -> object
 			if (type != targetType) {
-				if (targetType != TypeManager.object_type) {
+				if (targetType.BuildinType != BuildinTypeSpec.Type.Object) {
 					base.EncodeAttributeValue (rc, enc, targetType);
 					return;
 				}
@@ -8227,7 +8247,7 @@ namespace Mono.CSharp
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
-			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !BuildinTypeSpec.IsPrimitiveNumericType (t))) {
+			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !BuildinTypeSpec.IsPrimitiveType (t))) {
 				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
 
@@ -8982,7 +9002,7 @@ namespace Mono.CSharp
 		public ArrayIndexCast (Expression expr)
 			: base (expr, TypeManager.int32_type)
 		{
-			if (expr.Type == TypeManager.int32_type)
+			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Int)
 				throw new ArgumentException ("unnecessary array index conversion");
 		}
 
@@ -8997,16 +9017,19 @@ namespace Mono.CSharp
 		{
 			child.Emit (ec);
 
-			var expr_type = child.Type;
-
-			if (expr_type == TypeManager.uint32_type)
+			switch (child.Type.BuildinType) {
+			case BuildinTypeSpec.Type.UInt:
 				ec.Emit (OpCodes.Conv_U);
-			else if (expr_type == TypeManager.int64_type)
+				break;
+			case BuildinTypeSpec.Type.Long:
 				ec.Emit (OpCodes.Conv_Ovf_I);
-			else if (expr_type == TypeManager.uint64_type)
+				break;
+			case BuildinTypeSpec.Type.ULong:
 				ec.Emit (OpCodes.Conv_Ovf_I_Un);
-			else
+				break;
+			default:
 				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);
+			}
 		}
 	}
 
@@ -9036,7 +9059,7 @@ namespace Mono.CSharp
 			if (count == null)
 				return null;
 			
-			if (count.Type != TypeManager.uint32_type){
+			if (count.Type.BuildinType != BuildinTypeSpec.Type.UInt){
 				count = Convert.ImplicitConversionRequired (ec, count, TypeManager.int32_type, loc);
 				if (count == null)
 					return null;

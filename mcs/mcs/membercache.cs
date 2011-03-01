@@ -302,7 +302,7 @@ namespace Mono.CSharp {
 		{
 			if (member.Kind == MemberKind.Operator) {
 				var dt = member.DeclaringType;
-				if (dt == TypeManager.string_type || dt == TypeManager.delegate_type || dt == TypeManager.multicast_delegate_type) {
+				if (dt.BuildinType == BuildinTypeSpec.Type.String || dt == TypeManager.delegate_type || dt == TypeManager.multicast_delegate_type) {
 					// Some core types have user operators but they cannot be used as normal
 					// user operators as they are predefined and therefore having different
 					// rules (e.g. binary operators) by not setting the flag we hide them for

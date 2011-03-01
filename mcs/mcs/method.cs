@@ -881,7 +881,7 @@ namespace Mono.CSharp {
 		bool IsEntryPoint ()
 		{
 			if (ReturnType != TypeManager.void_type &&
-				ReturnType != TypeManager.int32_type)
+				ReturnType.BuildinType != BuildinTypeSpec.Type.Int)
 				return false;
 
 			if (parameters.IsEmpty)
@@ -891,7 +891,7 @@ namespace Mono.CSharp {
 				return false;
 
 			var ac = parameters.Types [0] as ArrayContainer;
-			return ac != null && ac.Rank == 1 && ac.Element == TypeManager.string_type &&
+			return ac != null && ac.Rank == 1 && ac.Element.BuildinType == BuildinTypeSpec.Type.String &&
 					(parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
@@ -1093,7 +1093,7 @@ namespace Mono.CSharp {
 
 			if (CurrentTypeParameters == null) {
 				if (base_method != null) {
-					if (parameters.Count == 1 && ParameterTypes[0] == TypeManager.object_type && Name == "Equals")
+					if (parameters.Count == 1 && ParameterTypes[0].BuildinType == BuildinTypeSpec.Type.Object && Name == "Equals")
 						Parent.PartialContainer.Mark_HasEquals ();
 					else if (parameters.IsEmpty && Name == "GetHashCode")
 						Parent.PartialContainer.Mark_HasGetHashCode ();
@@ -2444,7 +2444,7 @@ namespace Mono.CSharp {
 					}
 				}
 			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
-				if (first_arg_type != declaring_type || parameters.Types[1] != TypeManager.int32_type) {
+				if (first_arg_type != declaring_type || parameters.Types[1].BuildinType != BuildinTypeSpec.Type.Int) {
 					Report.Error (564, Location, "Overloaded shift operator must have the type of the first operand be the containing type, and the type of the second operand must be int");
 					return false;
 				}
@@ -2471,7 +2471,7 @@ namespace Mono.CSharp {
 				}
 
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
-					if (return_type != TypeManager.bool_type) {
+					if (return_type.BuildinType != BuildinTypeSpec.Type.Bool) {
 						Report.Error (
 							215, Location,
 							"The return type of operator True or False " +

@@ -3418,7 +3418,7 @@ namespace Mono.CSharp {
 					} else {
 						// TODO: if all the keys in the block are the same and there are
 						//       no gaps/defaults then just use a range-check.
-						if (compare_type == TypeManager.int64_type || compare_type == TypeManager.uint64_type) {
+						if (compare_type.BuildinType == BuildinTypeSpec.Type.Long || compare_type.BuildinType == BuildinTypeSpec.Type.ULong) {
 							// TODO: optimize constant/I4 cases
 
 							// check block range (could be > 2^31)
@@ -3576,7 +3576,7 @@ namespace Mono.CSharp {
 			// Validate switch.
 			SwitchType = new_expr.Type;
 
-			if (SwitchType == TypeManager.bool_type && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
+			if (SwitchType.BuildinType == BuildinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
 				return false;
 			}
@@ -3634,7 +3634,7 @@ namespace Mono.CSharp {
 			if (!ok)
 				return false;
 
-			if (SwitchType == TypeManager.string_type && !is_constant) {
+			if (SwitchType.BuildinType == BuildinTypeSpec.Type.String && !is_constant) {
 				// TODO: Optimize single case, and single+default case
 				ResolveStringSwitchMap (ec);
 			}
@@ -4468,7 +4468,7 @@ namespace Mono.CSharp {
 				//
 				// Case 2: string
 				//
-				if (initializer.Type == TypeManager.string_type) {
+				if (initializer.Type.BuildinType == BuildinTypeSpec.Type.String) {
 					return new StringEmitter (initializer, li, loc).Resolve (bc);
 				}
 
@@ -5674,7 +5674,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (expr.Type == TypeManager.string_type) {
+			if (expr.Type.BuildinType == BuildinTypeSpec.Type.String) {
 				statement = new ArrayForeach (this, 1);
 			} else if (expr.Type is ArrayContainer) {
 				statement = new ArrayForeach (this, ((ArrayContainer) expr.Type).Rank);

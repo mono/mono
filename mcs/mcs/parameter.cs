@@ -420,7 +420,7 @@ namespace Mono.CSharp {
 
 				Constant c = default_expr as Constant;
 				if (c == null) {
-					if (parameter_type == TypeManager.object_type) {
+					if (parameter_type.BuildinType == BuildinTypeSpec.Type.Object) {
 						rc.Report.Error (1910, default_expr.Location,
 							"Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
 							default_expr.Type.GetSignatureForError ());
@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 				var def_value = DefaultValue;
 				Constant c = def_value != null ? def_value.Child as Constant : default_expr as Constant;
 				if (c != null) {
-					if (default_expr.Type == TypeManager.decimal_type) {
+					if (default_expr.Type.BuildinType == BuildinTypeSpec.Type.Decimal) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetValue ());
@@ -1240,7 +1240,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type != TypeManager.string_type) {
+				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuildinType != BuildinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
 						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
 						p.Name, parameter_type.GetSignatureForError ());

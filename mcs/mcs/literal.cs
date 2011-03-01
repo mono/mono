@@ -190,12 +190,12 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
-			if (target == TypeManager.float_type) {
+			if (target.BuildinType == BuildinTypeSpec.Type.Float) {
 				Error_664 (ec, loc, "float", "f");
 				return;
 			}
 
-			if (target == TypeManager.decimal_type) {
+			if (target.BuildinType == BuildinTypeSpec.Type.Decimal) {
 				Error_664 (ec, loc, "decimal", "m");
 				return;
 			}

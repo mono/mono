@@ -577,8 +577,8 @@ namespace Mono.CSharp.Nullable
 		bool IsBitwiseBoolean {
 			get {
 				return (Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) &&
-				((left_unwrap != null && left_unwrap.Type == TypeManager.bool_type) ||
-				 (right_unwrap != null && right_unwrap.Type == TypeManager.bool_type));
+				((left_unwrap != null && left_unwrap.Type.BuildinType == BuildinTypeSpec.Type.Bool) ||
+				 (right_unwrap != null && right_unwrap.Type.BuildinType == BuildinTypeSpec.Type.Bool));
 			}
 		}
 
@@ -918,7 +918,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuildinType == BuildinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 
@@ -938,7 +938,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuildinType == BuildinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 

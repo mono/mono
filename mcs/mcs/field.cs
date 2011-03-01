@@ -388,7 +388,7 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (!BuildinTypeSpec.IsPrimitiveNumericType (MemberType)) {
+			if (!BuildinTypeSpec.IsPrimitiveType (MemberType)) {
 				Report.Error (1663, Location,
 					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());

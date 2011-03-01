@@ -196,7 +196,7 @@ namespace Mono.CSharp
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
-				if (field_type == TypeManager.decimal_type) {
+				if (field_type.BuildinType == BuildinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
@@ -374,7 +374,7 @@ namespace Mono.CSharp
 						}
 					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
 						kind = MemberKind.Destructor;
-						if (declaringType == TypeManager.object_type) {
+						if (declaringType.BuildinType == BuildinTypeSpec.Type.Object) {
 							mod &= ~Modifiers.OVERRIDE;
 							mod |= Modifiers.VIRTUAL;
 						}
@@ -483,7 +483,7 @@ namespace Mono.CSharp
 							default_value = EmptyExpression.MissingValue;
 						} else if (value == null) {
 							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
-						} else if (ptype == TypeManager.decimal_type) {
+						} else if (ptype.BuildinType == BuildinTypeSpec.Type.Decimal) {
 							default_value = ImportParameterConstant (value).Resolve (null);
 						}
 					}
@@ -644,7 +644,7 @@ namespace Mono.CSharp
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
-				if (spec == TypeManager.object_type) {
+				if (spec.BuildinType == BuildinTypeSpec.Type.Object) {
 					if (dtype.IsDynamicObject (this))
 						return InternalType.Dynamic;
 

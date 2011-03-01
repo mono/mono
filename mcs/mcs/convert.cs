@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 			//
 			// Implicit reference conversions (no-boxing) to object or dynamic
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Object || target_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (expr_type.Kind) {
 				case MemberKind.Class:
 				case MemberKind.Interface:
@@ -340,10 +340,12 @@ namespace Mono.CSharp {
 
 		public static Expression ImplicitBoxingConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
+			switch (target_type.BuildinType) {
 			//
 			// From any value-type to the type object.
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			case BuildinTypeSpec.Type.Object:
+			case BuildinTypeSpec.Type.Dynamic:
 				//
 				// A pointer type cannot be converted to object
 				//
@@ -354,24 +356,24 @@ namespace Mono.CSharp {
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
-			
+
 			//
 			// From any value-type to the type System.ValueType.
 			//
-			if (target_type == TypeManager.value_type) {
+			case BuildinTypeSpec.Type.ValueType:
 				if (!TypeManager.IsValueType (expr_type))
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
 
-			if (target_type == TypeManager.enum_type) {
+			case BuildinTypeSpec.Type.Enum:
 				//
 				// From any enum-type to the type System.Enum.
 				//
 				if (TypeManager.IsEnumType (expr_type))
 					return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
+
+				break;
 			}
 
 			//
@@ -1018,10 +1020,10 @@ namespace Mono.CSharp {
 			// UIntPtr -> long uses ulong
 			//
 			if (source.Type == TypeManager.intptr_type) {
-				if (target == TypeManager.uint32_type)
+				if (target.BuildinType == BuildinTypeSpec.Type.UInt)
 					target = TypeManager.int32_type;
 			} else if (source.Type == TypeManager.uintptr_type) {
-				if (target == TypeManager.int64_type)
+				if (target.BuildinType == BuildinTypeSpec.Type.Long)
 					target = TypeManager.uint64_type;
 			}
 
@@ -1317,7 +1319,7 @@ namespace Mono.CSharp {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
-					if (target_type == TypeManager.object_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Object)
 						return EmptyCast.Create (expr, target_type);
 
 					goto case MemberKind.Struct;
@@ -1794,7 +1796,7 @@ namespace Mono.CSharp {
 			// From any interface-type S to to any class type T, provided T is not
 			// sealed, or provided T implements S.
 			//
-			if (source_type.IsInterface) {
+			if (source_type.Kind == MemberKind.Interface) {
 				if (!target_type.IsSealed || target_type.ImplementsInterface (source_type, true)) {
 					if (source == null)
 						return EmptyExpression.Null;
@@ -2112,23 +2114,25 @@ namespace Mono.CSharp {
 
 			TypeSpec expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
+				TypeSpec target;
+
 				if (TypeManager.IsNullableType (expr_type)) {
-					TypeSpec target = Nullable.NullableInfo.GetUnderlyingType (target_type);
+					target = Nullable.NullableInfo.GetUnderlyingType (target_type);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
 						return null;
 
 					return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
-				} else if (expr_type == TypeManager.object_type) {
-					return new UnboxCast (expr, target_type);
-				} else {
-					TypeSpec target = TypeManager.GetTypeArguments (target_type) [0];
-
-					e = ExplicitConversionCore (ec, expr, target, loc);
-					if (e != null)
-						return Nullable.Wrap.Create (e, target_type);
 				}
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.Object) {
+					return new UnboxCast (expr, target_type);
+				}
+
+				target = TypeManager.GetTypeArguments (target_type) [0];
+				e = ExplicitConversionCore (ec, expr, target, loc);
+				if (e != null)
+					return Nullable.Wrap.Create (e, target_type);
 			} else if (TypeManager.IsNullableType (expr_type)) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)

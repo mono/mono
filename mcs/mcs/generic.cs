@@ -267,8 +267,19 @@ namespace Mono.CSharp {
 						type.GetSignatureForError ());
 				}
 
-				if (type == InternalType.Dynamic) {
-					context.Module.Compiler.Report.Error (1967, constraint.Location, "A constraint cannot be the dynamic type");
+				switch (type.BuildinType) {
+				case BuildinTypeSpec.Type.Array:
+				case BuildinTypeSpec.Type.Delegate:
+				case BuildinTypeSpec.Type.MulticastDelegate:
+				case BuildinTypeSpec.Type.Enum:
+				case BuildinTypeSpec.Type.ValueType:
+				case BuildinTypeSpec.Type.Object:
+					context.Module.Compiler.Report.Error (702, constraint.Location,
+						"A constraint cannot be special class `{0}'", type.GetSignatureForError ());
+					continue;
+				case BuildinTypeSpec.Type.Dynamic:
+					context.Module.Compiler.Report.Error (1967, constraint.Location,
+						"A constraint cannot be the dynamic type");
 					continue;
 				}
 
@@ -283,12 +294,6 @@ namespace Mono.CSharp {
 					context.Module.Compiler.Report.Error (717, constraint.Location,
 						"`{0}' is not a valid constraint. Static classes cannot be used as constraints",
 						type.GetSignatureForError ());
-				} else if (type == TypeManager.array_type || type == TypeManager.delegate_type ||
-							type == TypeManager.enum_type || type == TypeManager.value_type ||
-							type == TypeManager.object_type || type == TypeManager.multicast_delegate_type) {
-					context.Module.Compiler.Report.Error (702, constraint.Location,
-						"A constraint cannot be special class `{0}'", type.GetSignatureForError ());
-					continue;
 				}
 
 				spec.BaseType = type;

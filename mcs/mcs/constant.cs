@@ -60,8 +60,8 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			if (!expl && IsLiteral && 
-				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (target) &&
-				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (type)) {
+				BuildinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
+				BuildinTypeSpec.IsPrimitiveTypeOrDecimal (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValueAsLiteral (), TypeManager.CSharpName (target));
 			} else {
@@ -1443,7 +1443,7 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
 		{
-			if (Value >= 0 && type == TypeManager.uint64_type) {
+			if (Value >= 0 && type.BuildinType == BuildinTypeSpec.Type.ULong) {
 				return new ULongConstant ((ulong) Value, loc).Resolve (rc);
 			}
 
@@ -2056,7 +2056,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Type it as string cast
-			if (targetType == TypeManager.object_type || targetType == InternalType.Null)
+			if (targetType.BuildinType == BuildinTypeSpec.Type.Object || targetType == InternalType.Null)
 				enc.Encode (TypeManager.string_type);
 
 			var ac = targetType as ArrayContainer;

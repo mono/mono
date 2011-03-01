@@ -847,7 +847,7 @@ namespace Mono.CSharp {
 				Error_NegativeArrayIndex (ec, source.loc);
 
 			// No conversion needed to array index
-			if (converted.Type == TypeManager.int32_type)
+			if (converted.Type.BuildinType == BuildinTypeSpec.Type.Int)
 				return converted;
 
 			return new ArrayIndexCast (converted).Resolve (ec);
@@ -1141,7 +1141,7 @@ namespace Mono.CSharp {
 		public CastFromDecimal (Expression child, TypeSpec return_type)
 			: base (child, return_type)
 		{
-			if (child.Type != TypeManager.decimal_type)
+			if (child.Type.BuildinType != BuildinTypeSpec.Type.Decimal)
 				throw new ArgumentException ("Expected decimal child " + child.Type.GetSignatureForError ());
 		}
 
@@ -1155,7 +1155,7 @@ namespace Mono.CSharp {
 				operators = new Dictionary<TypeSpec, MethodSpec> ();
 				foreach (MethodSpec oper in all_oper) {
 					AParametersCollection pd = oper.Parameters;
-					if (pd.Types [0] == TypeManager.decimal_type)
+					if (pd.Types [0].BuildinType == BuildinTypeSpec.Type.Decimal)
 						operators.Add (oper.ReturnType, oper);
 				}
 			}
@@ -1438,7 +1438,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Only boxing to object type is supported
-			if (targetType != TypeManager.object_type) {
+			if (targetType.BuildinType != BuildinTypeSpec.Type.Object) {
 				base.EncodeAttributeValue (rc, enc, targetType);
 				return;
 			}
@@ -1459,7 +1459,7 @@ namespace Mono.CSharp {
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
 			if (TypeManager.IsStruct (child.Type) &&
-			    (type == TypeManager.object_type || type == TypeManager.value_type))
+			    (type.BuildinType == BuildinTypeSpec.Type.Object || type == TypeManager.value_type))
 				child.EmitSideEffect (ec);
 			else
 				base.EmitSideEffect (ec);
@@ -3942,7 +3942,7 @@ namespace Mono.CSharp {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && ptypes[i] == TypeManager.object_type || ptypes[i] == InternalType.Dynamic) {
+						if (e == EmptyExpression.MissingValue && ptypes[i].BuildinType == BuildinTypeSpec.Type.Object || ptypes[i] == InternalType.Dynamic) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 						} else {

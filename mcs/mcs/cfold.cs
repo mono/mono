@@ -69,7 +69,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (type == TypeManager.uint32_type) {
+			if (type.BuildinType == BuildinTypeSpec.Type.UInt) {
 				type = TypeManager.int64_type;
 				prim = prim.ConvertImplicitly (rc, type);
 				second = second.ConvertImplicitly (rc, type);
@@ -118,7 +118,7 @@ namespace Mono.CSharp {
 			TypeSpec rt = right.Type;
 			bool bool_res;
 
-			if (lt == TypeManager.bool_type && lt == rt) {
+			if (lt.BuildinType == BuildinTypeSpec.Type.Bool && lt == rt) {
 				bool lv = (bool) left.GetValue ();
 				bool rv = (bool) right.GetValue ();			
 				switch (oper) {
@@ -196,8 +196,8 @@ namespace Mono.CSharp {
 				//
 				// bool? operator &(bool? x, bool? y);
 				//
-				if ((lt == TypeManager.bool_type && right is NullLiteral) ||
-					(rt == TypeManager.bool_type && left is NullLiteral)) {
+				if ((lt.BuildinType == BuildinTypeSpec.Type.Bool && right is NullLiteral) ||
+					(rt.BuildinType == BuildinTypeSpec.Type.Bool && left is NullLiteral)) {
 					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 					// false | null => null
@@ -240,8 +240,8 @@ namespace Mono.CSharp {
 				//
 				// bool? operator &(bool? x, bool? y);
 				//
-				if ((lt == TypeManager.bool_type && right is NullLiteral) ||
-					(rt == TypeManager.bool_type && left is NullLiteral)) {
+				if ((lt.BuildinType == BuildinTypeSpec.Type.Bool && right is NullLiteral) ||
+					(rt.BuildinType == BuildinTypeSpec.Type.Bool && left is NullLiteral)) {
 					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 					// false & null => false
@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 				// one is a string, and the other is not, then defer
 				// to runtime concatenation
 				//
-				if (lt == TypeManager.string_type || rt == TypeManager.string_type){
+				if (lt.BuildinType == BuildinTypeSpec.Type.String || rt.BuildinType == BuildinTypeSpec.Type.String){
 					if (lt == rt)
 						return new StringConstant ((string)left.GetValue () + (string)right.GetValue (),
 							left.Location);
@@ -868,19 +868,21 @@ namespace Mono.CSharp {
 				}
 
 				int lshift_val = ic.Value;
-				if (left.Type == TypeManager.uint64_type)
-					return new ULongConstant (((ULongConstant)left).Value << lshift_val, left.Location);
-				if (left.Type == TypeManager.int64_type)
-					return new LongConstant (((LongConstant)left).Value << lshift_val, left.Location);
-				if (left.Type == TypeManager.uint32_type)
-					return new UIntConstant (((UIntConstant)left).Value << lshift_val, left.Location);
+				switch (left.Type.BuildinType) {
+				case BuildinTypeSpec.Type.ULong:
+					return new ULongConstant (((ULongConstant) left).Value << lshift_val, left.Location);
+				case BuildinTypeSpec.Type.Long:
+					return new LongConstant (((LongConstant) left).Value << lshift_val, left.Location);
+				case BuildinTypeSpec.Type.UInt:
+					return new UIntConstant (((UIntConstant) left).Value << lshift_val, left.Location);
+				}
 
 				// null << value => null
 				if (left is NullLiteral)
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
-				if (left.Type == TypeManager.int32_type)
+				if (left.Type.BuildinType == BuildinTypeSpec.Type.Int)
 					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
@@ -901,19 +903,21 @@ namespace Mono.CSharp {
 					return null;
 				}
 				int rshift_val = sic.Value;
-				if (left.Type == TypeManager.uint64_type)
-					return new ULongConstant (((ULongConstant)left).Value >> rshift_val, left.Location);
-				if (left.Type == TypeManager.int64_type)
-					return new LongConstant (((LongConstant)left).Value >> rshift_val, left.Location);
-				if (left.Type == TypeManager.uint32_type)
-					return new UIntConstant (((UIntConstant)left).Value >> rshift_val, left.Location);
+				switch (left.Type.BuildinType) {
+				case BuildinTypeSpec.Type.ULong:
+					return new ULongConstant (((ULongConstant) left).Value >> rshift_val, left.Location);
+				case BuildinTypeSpec.Type.Long:
+					return new LongConstant (((LongConstant) left).Value >> rshift_val, left.Location);
+				case BuildinTypeSpec.Type.UInt:
+					return new UIntConstant (((UIntConstant) left).Value >> rshift_val, left.Location);
+				}
 
 				// null >> value => null
 				if (left is NullLiteral)
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
-				if (left.Type == TypeManager.int32_type)
+				if (left.Type.BuildinType == BuildinTypeSpec.Type.Int)
 					return new IntConstant (((IntConstant)left).Value >> rshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);

@@ -604,11 +604,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		//
-		// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
-		// the pieces in the code where we use IsBuiltinType and special case decimal_type.
-		// 
-		public static bool IsPrimitiveNumericType (TypeSpec type)
+		public static bool IsPrimitiveType (TypeSpec type)
 		{
 			switch (type.BuildinType) {
 			case Type.Int:
@@ -619,16 +615,16 @@ namespace Mono.CSharp
 			case Type.Double:
 			case Type.Char:
 			case Type.Short:
-			case Type.Bool:
 			case Type.SByte:
 			case Type.Byte:
 			case Type.UShort:
+			case Type.Bool:
 				return true;
 			}
 			return false;
 		}
 
-		public static bool IsPrimitiveNumericOrDecimalType (TypeSpec type)
+		public static bool IsPrimitiveTypeOrDecimal (TypeSpec type)
 		{
 			switch (type.BuildinType) {
 			case Type.Int:
@@ -805,7 +801,7 @@ namespace Mono.CSharp
 				}
 
 				if (a == InternalType.Dynamic || b == InternalType.Dynamic)
-					return b == TypeManager.object_type || a == TypeManager.object_type;
+					return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
 
 				if (a.MemberDefinition != b.MemberDefinition)
 					return false;
