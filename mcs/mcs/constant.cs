@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Globalization;
 
 #if STATIC
 using IKVM.Reflection.Emit;
@@ -22,7 +23,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Base class for constants and literals.
 	/// </summary>
-	public abstract class Constant : Expression {
+	public abstract class Constant : Expression
+	{
+		static readonly NumberFormatInfo nfi = CultureInfo.InvariantCulture.NumberFormat;
 
 		protected Constant (Location loc)
 		{
@@ -57,8 +60,8 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			if (!expl && IsLiteral && 
-				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
-				(TypeManager.IsPrimitiveType (type) || type == TypeManager.decimal_type)) {
+				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (target) &&
+				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValueAsLiteral (), TypeManager.CSharpName (target));
 			} else {
@@ -84,7 +87,7 @@ namespace Mono.CSharp {
 				return null;
 
 			bool fail;			
-			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
+			object constant_value = ChangeType (GetValue (), type, out fail);
 			if (fail){
 				//
 				// We should always catch the error before this is ever
@@ -166,13 +169,75 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
-
 		/// <summary>
 		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
 		/// It throws OverflowException 
 		/// </summary>
 		// DON'T CALL THIS METHOD DIRECTLY AS IT DOES NOT HANDLE ENUMS
 		public abstract Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type);
+
+		// This is a custom version of Convert.ChangeType() which works
+		// with the TypeBuilder defined types when compiling corlib.
+		static object ChangeType (object value, TypeSpec targetType, out bool error)
+		{
+			IConvertible convert_value = value as IConvertible;
+
+			if (convert_value == null) {
+				error = true;
+				return null;
+			}
+
+			//
+			// We cannot rely on build-in type conversions as they are
+			// more limited than what C# supports.
+			// See char -> float/decimal/double conversion
+			//
+			error = false;
+			try {
+				switch (targetType.BuildinType) {
+				case BuildinTypeSpec.Type.Bool:
+					return convert_value.ToBoolean (nfi);
+				case BuildinTypeSpec.Type.Byte:
+					return convert_value.ToByte (nfi);
+				case BuildinTypeSpec.Type.Char:
+					return convert_value.ToChar (nfi);
+				case BuildinTypeSpec.Type.Short:
+					return convert_value.ToInt16 (nfi);
+				case BuildinTypeSpec.Type.Int:
+					return convert_value.ToInt32 (nfi);
+				case BuildinTypeSpec.Type.Long:
+					return convert_value.ToInt64 (nfi);
+				case BuildinTypeSpec.Type.SByte:
+					return convert_value.ToSByte (nfi);
+				case BuildinTypeSpec.Type.Decimal:
+					if (convert_value.GetType () == typeof (char))
+						return (decimal) convert_value.ToInt32 (nfi);
+					return convert_value.ToDecimal (nfi);
+				case BuildinTypeSpec.Type.Double:
+					if (convert_value.GetType () == typeof (char))
+						return (double) convert_value.ToInt32 (nfi);
+					return convert_value.ToDouble (nfi);
+				case BuildinTypeSpec.Type.Float:
+					if (convert_value.GetType () == typeof (char))
+						return (float) convert_value.ToInt32 (nfi);
+					return convert_value.ToSingle (nfi);
+				case BuildinTypeSpec.Type.String:
+					return convert_value.ToString (nfi);
+				case BuildinTypeSpec.Type.UShort:
+					return convert_value.ToUInt16 (nfi);
+				case BuildinTypeSpec.Type.UInt:
+					return convert_value.ToUInt32 (nfi);
+				case BuildinTypeSpec.Type.ULong:
+					return convert_value.ToUInt64 (nfi);
+				case BuildinTypeSpec.Type.Object:
+					return value;
+				}
+			} catch {
+			}
+
+			error = true;
+			return null;
+		}
 
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.

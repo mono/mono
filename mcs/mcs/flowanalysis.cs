@@ -1260,7 +1260,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type)
 			{
-				if (!type.IsStruct || TypeManager.IsBuiltinType (type))
+				if (!type.IsStruct || type.BuildinType > 0)
 					return null;
 
 				StructInfo info;

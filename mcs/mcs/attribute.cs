@@ -353,14 +353,36 @@ namespace Mono.CSharp {
 
 		static bool IsValidArgumentType (TypeSpec t)
 		{
-			if (t.IsArray)
-				t = TypeManager.GetElementType (t);
+			if (t.IsArray) {
+				var ac = (ArrayContainer) t;
+				if (ac.Rank > 1)
+					return false;
 
-			return t == TypeManager.string_type ||
-				TypeManager.IsPrimitiveType (t) ||
-				TypeManager.IsEnumType (t) ||
-				t == TypeManager.object_type ||
-				t == TypeManager.type_type;
+				t = ac.Element;
+			}
+
+			switch (t.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Float:
+			case BuildinTypeSpec.Type.Double:
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.Bool:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.UShort:
+
+			case BuildinTypeSpec.Type.String:
+			case BuildinTypeSpec.Type.Object:
+			case BuildinTypeSpec.Type.Dynamic:
+			case BuildinTypeSpec.Type.Type:
+				return true;
+			}
+
+			return t.IsEnum;
 		}
 
 		// TODO: Don't use this ambiguous value
@@ -954,7 +976,7 @@ namespace Mono.CSharp {
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty");
 								}
-							} else if (Type == predefined.MethodImpl && pt == TypeManager.short_type &&
+							} else if (Type == predefined.MethodImpl && pt.BuildinType == BuildinTypeSpec.Type.Short &&
 								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
 								Error_AttributeEmitError ("Incorrect argument value.");
 								return;

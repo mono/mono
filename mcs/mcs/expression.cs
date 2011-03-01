@@ -302,7 +302,7 @@ namespace Mono.CSharp
 			//
 			// Primitive types first
 			//
-			if (TypeManager.IsPrimitiveType (expr_type)) {
+			if (BuildinTypeSpec.IsPrimitiveNumericType (expr_type)) {
 				best_expr = ResolvePrimitivePredefinedType (expr);
 				if (best_expr == null)
 					return null;
@@ -2452,7 +2452,7 @@ namespace Mono.CSharp
 			//
 			// Handles predefined primitive types
 			//
-			if (TypeManager.IsPrimitiveType (l) && TypeManager.IsPrimitiveType (r)) {
+			if (BuildinTypeSpec.IsPrimitiveNumericType (l) && BuildinTypeSpec.IsPrimitiveNumericType (r)) {
 				if ((oper & Operator.ShiftMask) == 0) {
 					if (l != TypeManager.bool_type && !DoBinaryOperatorPromotion (ec))
 						return null;
@@ -6269,130 +6269,111 @@ namespace Mono.CSharp
 			int idx = 0;
 
 			for (int i = 0; i < count; ++i) {
-				object v = array_data [i];
-
-				if (v is EnumConstant)
-					v = ((EnumConstant) v).Child;
-				
-				if (v is Constant && !(v is StringConstant))
-					v = ((Constant) v).GetValue ();
-				else {
+				var c = array_data[i] as Constant;
+				if (c == null) {
 					idx += factor;
 					continue;
 				}
-				
-				if (element_type == TypeManager.int64_type){
-					if (!(v is Expression)){
-						long val = (long) v;
-						
-						for (int j = 0; j < factor; ++j) {
-							data [idx + j] = (byte) (val & 0xFF);
-							val = (val >> 8);
-						}
-					}
-				} else if (element_type == TypeManager.uint64_type){
-					if (!(v is Expression)){
-						ulong val = (ulong) v;
 
-						for (int j = 0; j < factor; ++j) {
-							data [idx + j] = (byte) (val & 0xFF);
-							val = (val >> 8);
-						}
-					}
-				} else if (element_type == TypeManager.float_type) {
-					if (!(v is Expression)){
-						element = BitConverter.GetBytes ((float) v);
-							
-						for (int j = 0; j < factor; ++j)
-							data [idx + j] = element [j];
-						if (!BitConverter.IsLittleEndian)
-							System.Array.Reverse (data, idx, 4);
-					}
-				} else if (element_type == TypeManager.double_type) {
-					if (!(v is Expression)){
-						element = BitConverter.GetBytes ((double) v);
+				object v = c.GetValue ();
 
-						for (int j = 0; j < factor; ++j)
-							data [idx + j] = element [j];
+				switch (element_type.BuildinType) {
+				case BuildinTypeSpec.Type.Long:
+					long lval = (long) v;
 
-						// FIXME: Handle the ARM float format.
-						if (!BitConverter.IsLittleEndian)
-							System.Array.Reverse (data, idx, 8);
+					for (int j = 0; j < factor; ++j) {
+						data[idx + j] = (byte) (lval & 0xFF);
+						lval = (lval >> 8);
 					}
-				} else if (element_type == TypeManager.char_type){
-					if (!(v is Expression)){
-						int val = (int) ((char) v);
-						
-						data [idx] = (byte) (val & 0xff);
-						data [idx+1] = (byte) (val >> 8);
-					}
-				} else if (element_type == TypeManager.short_type){
-					if (!(v is Expression)){
-						int val = (int) ((short) v);
-					
-						data [idx] = (byte) (val & 0xff);
-						data [idx+1] = (byte) (val >> 8);
-					}
-				} else if (element_type == TypeManager.ushort_type){
-					if (!(v is Expression)){
-						int val = (int) ((ushort) v);
-					
-						data [idx] = (byte) (val & 0xff);
-						data [idx+1] = (byte) (val >> 8);
-					}
-				} else if (element_type == TypeManager.int32_type) {
-					if (!(v is Expression)){
-						int val = (int) v;
-					
-						data [idx]   = (byte) (val & 0xff);
-						data [idx+1] = (byte) ((val >> 8) & 0xff);
-						data [idx+2] = (byte) ((val >> 16) & 0xff);
-						data [idx+3] = (byte) (val >> 24);
-					}
-				} else if (element_type == TypeManager.uint32_type) {
-					if (!(v is Expression)){
-						uint val = (uint) v;
-					
-						data [idx]   = (byte) (val & 0xff);
-						data [idx+1] = (byte) ((val >> 8) & 0xff);
-						data [idx+2] = (byte) ((val >> 16) & 0xff);
-						data [idx+3] = (byte) (val >> 24);
-					}
-				} else if (element_type == TypeManager.sbyte_type) {
-					if (!(v is Expression)){
-						sbyte val = (sbyte) v;
-						data [idx] = (byte) val;
-					}
-				} else if (element_type == TypeManager.byte_type) {
-					if (!(v is Expression)){
-						byte val = (byte) v;
-						data [idx] = (byte) val;
-					}
-				} else if (element_type == TypeManager.bool_type) {
-					if (!(v is Expression)){
-						bool val = (bool) v;
-						data [idx] = (byte) (val ? 1 : 0);
-					}
-				} else if (element_type == TypeManager.decimal_type){
-					if (!(v is Expression)){
-						int [] bits = Decimal.GetBits ((decimal) v);
-						int p = idx;
+					break;
+				case BuildinTypeSpec.Type.ULong:
+					ulong ulval = (ulong) v;
 
-						// FIXME: For some reason, this doesn't work on the MS runtime.
-						int [] nbits = new int [4];
-						nbits [0] = bits [3];
-						nbits [1] = bits [2];
-						nbits [2] = bits [0];
-						nbits [3] = bits [1];
-						
-						for (int j = 0; j < 4; j++){
-							data [p++] = (byte) (nbits [j] & 0xff);
-							data [p++] = (byte) ((nbits [j] >> 8) & 0xff);
-							data [p++] = (byte) ((nbits [j] >> 16) & 0xff);
-							data [p++] = (byte) (nbits [j] >> 24);
-						}
+					for (int j = 0; j < factor; ++j) {
+						data[idx + j] = (byte) (ulval & 0xFF);
+						ulval = (ulval >> 8);
 					}
-				} else {
+					break;
+				case BuildinTypeSpec.Type.Float:
+					element = BitConverter.GetBytes ((float) v);
+
+					for (int j = 0; j < factor; ++j)
+						data[idx + j] = element[j];
+					if (!BitConverter.IsLittleEndian)
+						System.Array.Reverse (data, idx, 4);
+					break;
+				case BuildinTypeSpec.Type.Double:
+					element = BitConverter.GetBytes ((double) v);
+
+					for (int j = 0; j < factor; ++j)
+						data[idx + j] = element[j];
+
+					// FIXME: Handle the ARM float format.
+					if (!BitConverter.IsLittleEndian)
+						System.Array.Reverse (data, idx, 8);
+					break;
+				case BuildinTypeSpec.Type.Char:
+					int chval = (int) ((char) v);
+
+					data[idx] = (byte) (chval & 0xff);
+					data[idx + 1] = (byte) (chval >> 8);
+					break;
+				case BuildinTypeSpec.Type.Short:
+					int sval = (int) ((short) v);
+
+					data[idx] = (byte) (sval & 0xff);
+					data[idx + 1] = (byte) (sval >> 8);
+					break;
+				case BuildinTypeSpec.Type.UShort:
+					int usval = (int) ((ushort) v);
+
+					data[idx] = (byte) (usval & 0xff);
+					data[idx + 1] = (byte) (usval >> 8);
+					break;
+				case BuildinTypeSpec.Type.Int:
+					int val = (int) v;
+
+					data[idx] = (byte) (val & 0xff);
+					data[idx + 1] = (byte) ((val >> 8) & 0xff);
+					data[idx + 2] = (byte) ((val >> 16) & 0xff);
+					data[idx + 3] = (byte) (val >> 24);
+					break;
+				case BuildinTypeSpec.Type.UInt:
+					uint uval = (uint) v;
+
+					data[idx] = (byte) (uval & 0xff);
+					data[idx + 1] = (byte) ((uval >> 8) & 0xff);
+					data[idx + 2] = (byte) ((uval >> 16) & 0xff);
+					data[idx + 3] = (byte) (uval >> 24);
+					break;
+				case BuildinTypeSpec.Type.SByte:
+					data[idx] = (byte) (sbyte) v;
+					break;
+				case BuildinTypeSpec.Type.Byte:
+					data[idx] = (byte) v;
+					break;
+				case BuildinTypeSpec.Type.Bool:
+					data[idx] = (byte) ((bool) v ? 1 : 0);
+					break;
+				case BuildinTypeSpec.Type.Decimal:
+					int[] bits = Decimal.GetBits ((decimal) v);
+					int p = idx;
+
+					// FIXME: For some reason, this doesn't work on the MS runtime.
+					int[] nbits = new int[4];
+					nbits[0] = bits[3];
+					nbits[1] = bits[2];
+					nbits[2] = bits[0];
+					nbits[3] = bits[1];
+
+					for (int j = 0; j < 4; j++) {
+						data[p++] = (byte) (nbits[j] & 0xff);
+						data[p++] = (byte) ((nbits[j] >> 8) & 0xff);
+						data[p++] = (byte) ((nbits[j] >> 16) & 0xff);
+						data[p++] = (byte) (nbits[j] >> 24);
+					}
+					break;
+				default:
 					throw new Exception ("Unrecognized type in MakeByteBlob: " + element_type);
 				}
 
@@ -6479,11 +6460,25 @@ namespace Mono.CSharp
 					// If we are dealing with a struct, get the
 					// address of it, so we can store it.
 					//
-					if ((dims == 1) && TypeManager.IsStruct (etype) &&
-					    (!TypeManager.IsBuiltinOrEnum (etype) ||
-					     etype == TypeManager.decimal_type)) {
-
-						ec.Emit (OpCodes.Ldelema, etype);
+					if (dims == 1 && TypeManager.IsStruct (etype)) {
+						switch (etype.BuildinType) {
+						case BuildinTypeSpec.Type.Byte:
+						case BuildinTypeSpec.Type.SByte:
+						case BuildinTypeSpec.Type.Bool:
+						case BuildinTypeSpec.Type.Short:
+						case BuildinTypeSpec.Type.UShort:
+						case BuildinTypeSpec.Type.Char:
+						case BuildinTypeSpec.Type.Int:
+						case BuildinTypeSpec.Type.UInt:
+						case BuildinTypeSpec.Type.Long:
+						case BuildinTypeSpec.Type.ULong:
+						case BuildinTypeSpec.Type.Float:
+						case BuildinTypeSpec.Type.Double:
+							break;
+						default:
+							ec.Emit (OpCodes.Ldelema, etype);
+							break;
+						}
 					}
 
 					e.Emit (ec);
@@ -6524,7 +6519,7 @@ namespace Mono.CSharp
 			// is more than 10 items to be initialized
 			// NOTE: const_initializers_count does not contain default constant values.
 			if (const_initializers_count > 2 && (array_data.Count > 10 || const_initializers_count * 4 > (array_data.Count)) &&
-				(TypeManager.IsPrimitiveType (array_element_type) || TypeManager.IsEnumType (array_element_type))) {
+				(BuildinTypeSpec.IsPrimitiveNumericType (array_element_type) || array_element_type.IsEnum)) {
 				EmitStaticInitializers (ec);
 
 				if (!only_constant_initializers)
@@ -8232,7 +8227,7 @@ namespace Mono.CSharp
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
-			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !TypeManager.IsPrimitiveType (t))) {
+			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !BuildinTypeSpec.IsPrimitiveNumericType (t))) {
 				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
 

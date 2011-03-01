@@ -2529,11 +2529,7 @@ opt_enum_base
 	| COLON type
 	 {
 	 	var te = $2 as TypeExpression;
-		if (te == null ||
-			(te.Type != TypeManager.int32_type && te.Type != TypeManager.uint32_type &&
-			te.Type != TypeManager.int64_type && te.Type != TypeManager.uint64_type &&
-			te.Type != TypeManager.short_type && te.Type != TypeManager.ushort_type &&
-			te.Type != TypeManager.byte_type && te.Type != TypeManager.sbyte_type)) {
+		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
 			Enum.Error_1008 (GetLocation ($2), Report);
 			$$ = null;
 		} else {

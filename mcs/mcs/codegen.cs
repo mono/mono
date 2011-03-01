@@ -454,9 +454,6 @@ namespace Mono.CSharp
 			case BuildinTypeSpec.Type.Double:
 				Emit (OpCodes.Stelem_R8);
 				return;
-			case BuildinTypeSpec.Type.IntPtr:
-				Emit (OpCodes.Stobj, type);
-				return;
 			}
 
 			if (TypeManager.IsStruct (type))

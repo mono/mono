@@ -258,10 +258,13 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			if (UnderlyingType == TypeManager.uint32_type ||
-				UnderlyingType == TypeManager.uint64_type ||
-				UnderlyingType == TypeManager.ushort_type) {
-				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+			switch (UnderlyingType.BuildinType) {
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.UShort:
+				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant",
+					GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				break;
 			}
 
 			return true;
@@ -293,6 +296,23 @@ namespace Mono.CSharp {
 		public static TypeSpec GetUnderlyingType (TypeSpec t)
 		{
 			return ((EnumSpec) t.GetDefinition ()).UnderlyingType;
+		}
+
+		public static bool IsValidUnderlyingType (TypeSpec type)
+		{
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.ULong:
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

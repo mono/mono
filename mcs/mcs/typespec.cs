@@ -139,7 +139,25 @@ namespace Mono.CSharp
 				if ((Kind & (MemberKind.Enum | MemberKind.Class | MemberKind.Interface | MemberKind.Delegate | MemberKind.ArrayType)) != 0)
 					return true;
 
-				return TypeManager.IsPrimitiveType (this) || this == TypeManager.decimal_type || this == InternalType.Dynamic;
+				switch (BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Long:
+				case BuildinTypeSpec.Type.ULong:
+				case BuildinTypeSpec.Type.Float:
+				case BuildinTypeSpec.Type.Double:
+				case BuildinTypeSpec.Type.Char:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.Decimal:
+				case BuildinTypeSpec.Type.Bool:
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.Dynamic:
+					return true;
+				}
+
+				return false;
 			}
 		}
 
@@ -506,12 +524,15 @@ namespace Mono.CSharp
 			ULong = 10,
 			Float = 11,
 			Double = 12,
-			IntPtr = 13,
-			UIntPtr = 14,
-			Decimal = 15,
+			Decimal = 13,
 
-			Object,
-			String,
+			IntPtr = 14,
+			UIntPtr = 15,
+
+			Object = 16,
+			Dynamic = 17,
+			String = 18,
+			Type = 19,
 
 			ValueType,
 			Attribute,
@@ -520,7 +541,6 @@ namespace Mono.CSharp
 			MulticastDelegate,
 			Void,
 			Array,
-			Type,
 			IEnumerator,
 			IEnumerable,
 			IDisposable,
@@ -529,7 +549,6 @@ namespace Mono.CSharp
 			Exception,
 
 			Null,
-			Dynamic
 		}
 
 		readonly Type type;
@@ -585,6 +604,52 @@ namespace Mono.CSharp
 
 		#endregion
 
+		//
+		// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
+		// the pieces in the code where we use IsBuiltinType and special case decimal_type.
+		// 
+		public static bool IsPrimitiveNumericType (TypeSpec type)
+		{
+			switch (type.BuildinType) {
+			case Type.Int:
+			case Type.UInt:
+			case Type.Long:
+			case Type.ULong:
+			case Type.Float:
+			case Type.Double:
+			case Type.Char:
+			case Type.Short:
+			case Type.Bool:
+			case Type.SByte:
+			case Type.Byte:
+			case Type.UShort:
+				return true;
+			}
+			return false;
+		}
+
+		public static bool IsPrimitiveNumericOrDecimalType (TypeSpec type)
+		{
+			switch (type.BuildinType) {
+			case Type.Int:
+			case Type.UInt:
+			case Type.Long:
+			case Type.ULong:
+			case Type.Float:
+			case Type.Double:
+			case Type.Char:
+			case Type.Short:
+			case Type.Bool:
+			case Type.SByte:
+			case Type.Byte:
+			case Type.UShort:
+
+			case Type.Decimal:
+				return true;
+			}
+			return false;
+		}
+
 		public override string GetSignatureForError ()
 		{
 			switch (Name) {
@@ -618,23 +683,23 @@ namespace Mono.CSharp
 		public static int GetSize (TypeSpec type)
 		{
 			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Float:
+			case Type.Int:
+			case Type.UInt:
+			case Type.Float:
 				return 4;
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Double:
+			case Type.Long:
+			case Type.ULong:
+			case Type.Double:
 				return 8;
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Bool:
+			case Type.Byte:
+			case Type.SByte:
+			case Type.Bool:
 				return 1;
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.Char:
-			case BuildinTypeSpec.Type.UShort:
+			case Type.Short:
+			case Type.Char:
+			case Type.UShort:
 				return 2;
-			case BuildinTypeSpec.Type.Decimal:
+			case Type.Decimal:
 				return 16;
 			default:
 				return 0;

@@ -3232,20 +3232,22 @@ namespace Mono.CSharp {
 		//
 		Expression SwitchGoverningType (ResolveContext ec, Expression expr)
 		{
-			TypeSpec t = expr.Type;
+			switch (expr.Type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.String:
+			case BuildinTypeSpec.Type.Bool:
+				return expr;
+			}
 
-			if (t == TypeManager.byte_type ||
-			    t == TypeManager.sbyte_type ||
-			    t == TypeManager.ushort_type ||
-			    t == TypeManager.short_type ||
-			    t == TypeManager.uint32_type ||
-			    t == TypeManager.int32_type ||
-			    t == TypeManager.uint64_type ||
-			    t == TypeManager.int64_type ||
-			    t == TypeManager.char_type ||
-			    t == TypeManager.string_type ||
-			    t == TypeManager.bool_type ||
-			    TypeManager.IsEnumType (t))
+			if (expr.Type.IsEnum)
 				return expr;
 
 			if (allowed_types == null){
