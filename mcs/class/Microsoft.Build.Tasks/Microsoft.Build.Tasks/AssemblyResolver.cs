@@ -369,11 +369,8 @@ namespace Microsoft.Build.Tasks {
 			bool a_is_empty = (a_bytes == null || a_bytes.Length == 0);
 			bool b_is_empty = (b_bytes == null || b_bytes.Length == 0);
 
-			if (a_is_empty && b_is_empty)
-				return true;
-
 			if (a_is_empty || b_is_empty)
-				return false;
+				return true;
 
 			for (int i = 0; i < a_bytes.Length; i++)
 				if (a_bytes [i] != b_bytes [i])
