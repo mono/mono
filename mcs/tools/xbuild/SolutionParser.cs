@@ -313,7 +313,6 @@ namespace Mono.XBuild.CommandLine {
 
                 string GetSlnFileVersion (StreamReader reader)
                 {
-                        string strVersion = null;
                         string strInput = null;
                         Match match;
 
