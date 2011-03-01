@@ -2417,11 +2417,16 @@ namespace Mono.CSharp
 
 		static bool IsUnsigned (TypeSpec t)
 		{
-			if (t.IsPointer)
+			switch (t.BuildinType) {
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Byte:
 				return true;
+			}
 
-			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
-				t == TypeManager.ushort_type || t == TypeManager.byte_type);
+			return t.IsPointer;
 		}
 
 		static bool IsFloat (TypeSpec t)
@@ -2647,7 +2652,6 @@ namespace Mono.CSharp
 		static bool DoNumericPromotion (ResolveContext rc, ref Expression prim_expr, ref Expression second_expr, TypeSpec type)
 		{
 			Expression temp;
-			TypeSpec etype;
 
 			Constant c = prim_expr as Constant;
 			if (c != null) {
@@ -2659,8 +2663,11 @@ namespace Mono.CSharp
 			}
 
 			if (type == TypeManager.uint32_type) {
-				etype = prim_expr.Type;
-				if (etype == TypeManager.int32_type || etype == TypeManager.short_type || etype == TypeManager.sbyte_type) {
+				switch (prim_expr.Type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Long:
 					type = TypeManager.int64_type;
 
 					if (type != second_expr.Type) {
@@ -2673,6 +2680,7 @@ namespace Mono.CSharp
 							return false;
 						second_expr = temp;
 					}
+					break;
 				}
 			} else if (type == TypeManager.uint64_type) {
 				//
@@ -2803,8 +2811,8 @@ namespace Mono.CSharp
 				if (left.Equals (right)) {
 					ec.Report.Warning (1718, 3, loc, "A comparison made to same variable. Did you mean to compare something else?");
 				}
-				CheckUselessComparison (ec, lc, right.Type);
-				CheckUselessComparison (ec, rc, left.Type);
+				CheckOutOfRangeComparison (ec, lc, right.Type);
+				CheckOutOfRangeComparison (ec, rc, left.Type);
 			}
 
 			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
@@ -3559,97 +3567,17 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		private void CheckUselessComparison (ResolveContext ec, Constant c, TypeSpec type)
+		void CheckOutOfRangeComparison (ResolveContext ec, Constant c, TypeSpec type)
 		{
-			if (c == null || !IsTypeIntegral (type)
-				|| c is StringConstant
-				|| c is BoolConstant
-				|| c is FloatConstant
-				|| c is DoubleConstant
-				|| c is DecimalConstant
-				)
-				return;
-
-			long value = 0;
-
-			if (c is ULongConstant) {
-				ulong uvalue = ((ULongConstant) c).Value;
-				if (uvalue > long.MaxValue) {
-					if (type == TypeManager.byte_type ||
-					    type == TypeManager.sbyte_type ||
-					    type == TypeManager.short_type ||
-					    type == TypeManager.ushort_type ||
-					    type == TypeManager.int32_type ||
-					    type == TypeManager.uint32_type ||
-					    type == TypeManager.int64_type ||
-						type == TypeManager.char_type)
-						WarnUselessComparison (ec, type);
-					return;
+			if (c is IntegralConstant || c is CharConstant) {
+				try {
+					c.ConvertExplicitly (true, type);
+				} catch (OverflowException) {
+					ec.Report.Warning (652, 2, loc,
+						"A comparison between a constant and a variable is useless. The constant is out of the range of the variable type `{0}'",
+						TypeManager.CSharpName (type));
 				}
-				value = (long) uvalue;
 			}
-			else if (c is ByteConstant)
-				value = ((ByteConstant) c).Value;
-			else if (c is SByteConstant)
-				value = ((SByteConstant) c).Value;
-			else if (c is ShortConstant)
-				value = ((ShortConstant) c).Value;
-			else if (c is UShortConstant)
-				value = ((UShortConstant) c).Value;
-			else if (c is IntConstant)
-				value = ((IntConstant) c).Value;
-			else if (c is UIntConstant)
-				value = ((UIntConstant) c).Value;
-			else if (c is LongConstant)
-				value = ((LongConstant) c).Value;
-			else if (c is CharConstant)
-				value = ((CharConstant)c).Value;
-
-			if (value == 0)
-				return;
-
-			if (IsValueOutOfRange (value, type))
-				WarnUselessComparison (ec, type);
-		}
-
-		static bool IsValueOutOfRange (long value, TypeSpec type)
-		{
-			if (IsTypeUnsigned (type) && value < 0)
-				return true;
-			return type == TypeManager.sbyte_type && (value >= 0x80 || value < -0x80) ||
-				type == TypeManager.byte_type && value >= 0x100 ||
-				type == TypeManager.short_type && (value >= 0x8000 || value < -0x8000) ||
-				type == TypeManager.ushort_type && value >= 0x10000 ||
-				type == TypeManager.int32_type && (value >= 0x80000000 || value < -0x80000000) ||
-				type == TypeManager.uint32_type && value >= 0x100000000;
-		}
-
-		private static bool IsTypeIntegral (TypeSpec type)
-		{
-			return type == TypeManager.uint64_type ||
-				type == TypeManager.int64_type ||
-				type == TypeManager.uint32_type ||
-				type == TypeManager.int32_type ||
-				type == TypeManager.ushort_type ||
-				type == TypeManager.short_type ||
-				type == TypeManager.sbyte_type ||
-				type == TypeManager.byte_type ||
-				type == TypeManager.char_type;
-		}
-
-		private static bool IsTypeUnsigned (TypeSpec type)
-		{
-			return type == TypeManager.uint64_type ||
-				type == TypeManager.uint32_type ||
-				type == TypeManager.ushort_type ||
-				type == TypeManager.byte_type ||
-				type == TypeManager.char_type;
-		}
-
-		private void WarnUselessComparison (ResolveContext ec, TypeSpec type)
-		{
-			ec.Report.Warning (652, 2, loc, "A comparison between a constant and a variable is useless. The constant is out of the range of the variable type `{0}'",
-				TypeManager.CSharpName (type));
 		}
 
 		/// <remarks>
