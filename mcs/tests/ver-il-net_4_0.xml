@@ -41948,13 +41948,13 @@
         <size>7</size>
       </method>
       <method name="Void ZeroBasedReductions()">
-        <size>17</size>
-      </method>
-      <method name="Void Main()">
-        <size>11</size>
+        <size>15</size>
       </method>
       <method name="Void ZeroBasedReductionsWithConversion()">
         <size>15</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>28</size>
       </method>
     </type>
   </test>
