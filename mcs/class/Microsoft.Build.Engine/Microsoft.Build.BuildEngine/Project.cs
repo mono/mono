@@ -929,6 +929,7 @@ namespace Microsoft.Build.BuildEngine {
 			BuildProperty bp;
 
 			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
+			conditionedProperties = new Dictionary<string, List<string>> ();
 
 			foreach (BuildProperty gp in GlobalProperties) {
 				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
