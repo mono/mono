@@ -756,7 +756,7 @@ namespace Mono.CSharp {
 			// 
 			// Pop the return value if there is one
 			//
-			if (type != TypeManager.void_type)
+			if (type.Kind != MemberKind.Void)
 				ec.Emit (OpCodes.Pop);
 		}
 

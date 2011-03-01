@@ -723,7 +723,7 @@ namespace Mono.CSharp {
 		protected override bool DoResolve (BlockContext ec)
 		{
 			if (Expr == null) {
-				if (ec.ReturnType == TypeManager.void_type)
+				if (ec.ReturnType.Kind == MemberKind.Void)
 					return true;
 
 				if (ec.CurrentIterator != null) {
@@ -741,7 +741,7 @@ namespace Mono.CSharp {
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null) {
-				if (ec.ReturnType == TypeManager.void_type) {
+				if (ec.ReturnType.Kind == MemberKind.Void) {
 					ec.Report.Error (127, loc,
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
@@ -2558,7 +2558,7 @@ namespace Mono.CSharp {
 					throw;
 			}
 
-			if (rc.ReturnType != TypeManager.void_type && !unreachable) {
+			if (rc.ReturnType.Kind != MemberKind.Void && !unreachable) {
 				if (rc.CurrentAnonymousMethod == null) {
 					// FIXME: Missing FlowAnalysis for generated iterator MoveNext method
 					if (md is IteratorMethod) {
@@ -2951,7 +2951,7 @@ namespace Mono.CSharp {
 				//
 
 				if (ec.HasReturnLabel || !unreachable) {
-					if (ec.ReturnType != TypeManager.void_type)
+					if (ec.ReturnType.Kind != MemberKind.Void)
 						ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
 					ec.Emit (OpCodes.Ret);
 				}

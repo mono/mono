@@ -191,9 +191,6 @@ namespace Mono.CSharp {
 				expr.Emit (null);
 			}
 
-			if (expr_type == TypeManager.void_type)
-				return null;
-
 			if (expr_type.Kind == MemberKind.TypeParameter)
 				return ImplicitTypeParameterConversion (expr, target_type);
 
@@ -703,9 +700,6 @@ namespace Mono.CSharp {
 			if (nl != null)
 				return nl.ConvertImplicitly (null, target_type) != null;
 
-			if (expr_type == TypeManager.void_type)
-				return false;
-
 			if (expr_type == target_type)
 				return true;
 
@@ -812,7 +806,7 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface && expr_type.ImplementsInterface (target_type, true))
 				return true;
 
-			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.Kind == MemberKind.Void)
 				return true;
 
 			// Conversion from __arglist to System.ArgIterator
@@ -1324,11 +1318,6 @@ namespace Mono.CSharp {
 
 					goto case MemberKind.Struct;
 				case MemberKind.Struct:
-					// TODO: Should really introduce MemberKind.Void
-					if (target_type == TypeManager.void_type)
-						return null;
-
-					goto case MemberKind.Enum;
 				case MemberKind.Delegate:
 				case MemberKind.Enum:
 				case MemberKind.Interface:
@@ -1392,7 +1381,7 @@ namespace Mono.CSharp {
 						if (expr_type == target_pc)
 							return expr;
 
-						if (target_pc.Element.BuildinType == BuildinTypeSpec.Type.Void)
+						if (target_pc.Element.Kind == MemberKind.Void)
 							return EmptyCast.Create (expr, target_type);
 
 						//return null;
@@ -2082,7 +2071,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.Kind == MemberKind.Void)
 				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);

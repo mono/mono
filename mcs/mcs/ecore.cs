@@ -3437,15 +3437,15 @@ namespace Mono.CSharp {
 				//
 				// if p is void returning, and q has a return type Y, then C2 is the better conversion.
 				//
-				if (p == TypeManager.void_type) {
-					return q != TypeManager.void_type ? 2 : 0;
+				if (p.Kind == MemberKind.Void) {
+					return q.Kind != MemberKind.Void ? 2 : 0;
 				}
 
 				//
 				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
 				//
-				if (q == TypeManager.void_type) {
-					return p != TypeManager.void_type ? 1: 0;
+				if (q.Kind == MemberKind.Void) {
+					return p.Kind != MemberKind.Void ? 1: 0;
 				}
 			} else {
 				if (argument_type == p)
@@ -5881,7 +5881,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
 			type = right_side.Type;
-			if (type == InternalType.Null || type == TypeManager.void_type || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
+			if (type == InternalType.Null || type.Kind == MemberKind.Void || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
 				ec.Report.Error (815, loc,
 					"An implicitly typed local variable declaration cannot be initialized with `{0}'",
 					type.GetSignatureForError ());

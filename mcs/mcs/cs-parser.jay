@@ -1067,7 +1067,7 @@ field_declaration
 	  	lexer.parsing_generic_declaration = false;
 
 		FullNamedExpression type = (FullNamedExpression) $3;
-		if (type.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (670, GetLocation ($3), "Fields cannot have void type");
 			
 		var lt = (Tokenizer.LocatedToken) $4;
@@ -1684,10 +1684,11 @@ property_declaration
 	  }
 	  OPEN_BRACE
 	  {
-		current_property = new Property (current_class, (FullNamedExpression) $3, (Modifiers) $2,
+		var type = (FullNamedExpression) $3;
+		current_property = new Property (current_class, type, (Modifiers) $2,
 			(MemberName) $4, (Attributes) $1);
 			
-		if (current_property.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", current_property.GetSignatureForError ());					
 			
 		current_container.AddProperty ((Property)current_property);
@@ -1719,8 +1720,8 @@ indexer_declaration
 	  opt_formal_parameter_list CLOSE_BRACKET OPEN_BRACE
 	  {
 		valid_param_mod = 0;
-	  
-		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
+		var type = (FullNamedExpression) $3;
+		Indexer indexer = new Indexer (current_class, type,
 			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
 			
 		current_property = indexer;
@@ -1728,7 +1729,7 @@ indexer_declaration
   		current_container.AddIndexer (indexer);
 		lbag.AddMember (current_property, mod_locations, GetLocation ($5), GetLocation ($8), GetLocation ($9));
   		
-		if (indexer.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
 
 		if (indexer.Parameters.IsEmpty) {

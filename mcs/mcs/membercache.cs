@@ -39,11 +39,11 @@ namespace Mono.CSharp {
 		PointerType = 1 << 20,
 		InternalCompilerType = 1 << 21,
 		MissingType = 1 << 22,
+		Void = 1 << 23,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,
-		MaskType = Constructor | Event | Field | Method | Property | Indexer | Operator | Destructor | NestedMask,
-		All = MaskType
+		MaskType = Constructor | Event | Field | Method | Property | Indexer | Operator | Destructor | NestedMask
 	}
 
 	[Flags]

@@ -518,7 +518,7 @@ namespace Mono.CSharp
 
 			bool is_valid_property = true;
 			if (set != null) {
-				if (set.ReturnType != TypeManager.void_type)
+				if (set.ReturnType.Kind != MemberKind.Void)
 					is_valid_property = false;
 
 				var set_param_count = set.Parameters.Count - 1;

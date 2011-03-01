@@ -881,7 +881,7 @@ namespace Mono.CSharp
 
 			type = pc.Element;
 
-			if (type.BuildinType == BuildinTypeSpec.Type.Void) {
+			if (type.Kind == MemberKind.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}
@@ -1135,7 +1135,7 @@ namespace Mono.CSharp
 
 				// ++/-- on pointer variables of all types except void*
 				if (type.IsPointer) {
-					if (((PointerContainer) type).Element.BuildinType == BuildinTypeSpec.Type.Void) {
+					if (((PointerContainer) type).Element.Kind == MemberKind.Void) {
 						Error_VoidPointerOperation (ec);
 						return null;
 					}
@@ -1444,7 +1444,7 @@ namespace Mono.CSharp
 						OperatorName, t.GetSignatureForError ());
 				}
 
-				if (TypeManager.IsStruct (d) && d != TypeManager.void_type) {
+				if (TypeManager.IsStruct (d)) {
 					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
 						return CreateConstantResult (ec, true);
 				} else {
@@ -2838,8 +2838,8 @@ namespace Mono.CSharp
 			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
 				var lt = left.Type;
 				var rt = right.Type;
-				if (lt == TypeManager.void_type || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
-					rt == TypeManager.void_type || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
+				if (lt.Kind == MemberKind.Void || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
+					rt.Kind == MemberKind.Void || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
 					Error_OperatorCannotBeApplied (ec, left, right);
 					return null;
 				}
@@ -4169,7 +4169,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Variable;
 
 			var pc = left.Type as PointerContainer;
-			if (pc != null && pc.Element.BuildinType == BuildinTypeSpec.Type.Void) {
+			if (pc != null && pc.Element.Kind == MemberKind.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}
@@ -5332,7 +5332,7 @@ namespace Mono.CSharp
 			LocalTemporary this_arg = null;
 
 			// Speed up the check by not doing it on not allowed targets
-			if (method.ReturnType == TypeManager.void_type && method.IsConditionallyExcluded (loc))
+			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (loc))
 				return;
 
 			OpCode call_op;
@@ -5444,7 +5444,7 @@ namespace Mono.CSharp
 			// 
 			// Pop the return value if there is one
 			//
-			if (type != TypeManager.void_type)
+			if (type.Kind != MemberKind.Void)
 				ec.Emit (OpCodes.Pop);
 		}
 
@@ -7105,7 +7105,7 @@ namespace Mono.CSharp
 
 			typearg = texpr.Type;
 
-			if (typearg == TypeManager.void_type && !(QueriedType is TypeExpression)) {
+			if (typearg.Kind == MemberKind.Void && !(QueriedType is TypeExpression)) {
 				ec.Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
 			} else if (texpr is DynamicTypeExpr) {
 				ec.Report.Error (1962, QueriedType.Location,
@@ -7652,7 +7652,7 @@ namespace Mono.CSharp
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
-			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
+			if ((expr_type.Kind & dot_kinds) == 0) {
 				if (expr_type == InternalType.Null && rc.IsRuntimeBinder)
 					rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 				else
@@ -9711,7 +9711,7 @@ namespace Mono.CSharp
 			}
 
 			type = e.Type;
-			if (type == TypeManager.void_type || type == InternalType.Null ||
+			if (type.Kind == MemberKind.Void || type == InternalType.Null ||
 				type == InternalType.AnonymousMethod || type.IsPointer) {
 				Error_InvalidInitializer (ec, e.GetSignatureForError ());
 				return null;

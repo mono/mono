@@ -880,8 +880,7 @@ namespace Mono.CSharp {
 
 		bool IsEntryPoint ()
 		{
-			if (ReturnType != TypeManager.void_type &&
-				ReturnType.BuildinType != BuildinTypeSpec.Type.Int)
+			if (ReturnType.Kind != MemberKind.Void && ReturnType.BuildinType != BuildinTypeSpec.Type.Int)
 				return false;
 
 			if (parameters.IsEmpty)
@@ -922,7 +921,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (ReturnType != TypeManager.void_type) {
+				if (ReturnType.Kind != MemberKind.Void) {
 					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
 					return;
 				}
@@ -1076,12 +1075,13 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
-			if (type_expr.Type == TypeManager.void_type && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
-				Report.Warning (465, 1, Location, "Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
-			}
-
 			if (!base.Define ())
 				return false;
+
+			if (type_expr.Type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
+				Report.Warning (465, 1, Location,
+					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
+			}
 
 			if (partialMethodImplementation != null && IsPartialDefinition)
 				MethodBuilder = partialMethodImplementation.MethodBuilder;

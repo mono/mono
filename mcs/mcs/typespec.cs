@@ -539,7 +539,6 @@ namespace Mono.CSharp
 			Enum,
 			Delegate,
 			MulticastDelegate,
-			Void,
 			Array,
 			IEnumerator,
 			IEnumerable,

@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 				// Get all the method parameters and pass them as arguments
 				var real_base_call = new Invocation (mg, block.GetAllParametersArguments ());
 				Statement statement;
-				if (method.ReturnType == TypeManager.void_type)
+				if (method.ReturnType.Kind == MemberKind.Void)
 					statement = new StatementExpression (real_base_call);
 				else
 					statement = new Return (real_base_call, Location);

@@ -98,7 +98,7 @@ namespace Mono.CSharp
 			Delegate = new BuildinTypeSpec (MemberKind.Class, "System", "Delegate", BuildinTypeSpec.Type.Delegate);
 			Enum = new BuildinTypeSpec (MemberKind.Class, "System", "Enum", BuildinTypeSpec.Type.Enum);
 			Array = new BuildinTypeSpec (MemberKind.Class, "System", "Array", BuildinTypeSpec.Type.Array);
-			Void = new BuildinTypeSpec (MemberKind.Struct, "System", "Void", BuildinTypeSpec.Type.Void);
+			Void = new BuildinTypeSpec (MemberKind.Void, "System", "Void", BuildinTypeSpec.Type.None);
 			Type = new BuildinTypeSpec (MemberKind.Class, "System", "Type", BuildinTypeSpec.Type.Type);
 			Exception = new BuildinTypeSpec (MemberKind.Class, "System", "Exception", BuildinTypeSpec.Type.Exception);
 			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.RuntimeFieldHandle);
@@ -134,9 +134,9 @@ namespace Mono.CSharp
 			TypeManager.ushort_type = UShort;
 			TypeManager.enum_type = Enum;
 			TypeManager.delegate_type = Delegate;
-			TypeManager.multicast_delegate_type = MulticastDelegate; ;
+			TypeManager.multicast_delegate_type = MulticastDelegate;
 			TypeManager.void_type = Void;
-			TypeManager.array_type = Array; ;
+			TypeManager.array_type = Array;
 			TypeManager.runtime_handle_type = RuntimeTypeHandle;
 			TypeManager.type_type = Type;
 			TypeManager.ienumerator_type = IEnumerator;
@@ -399,8 +399,13 @@ namespace Mono.CSharp
 
 			var type = te.Type;
 			if (type.Kind != kind) {
-				module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
-				return null;
+				if (type.Kind == MemberKind.Struct && kind == MemberKind.Void && type.MemberDefinition is TypeContainer) {
+					// Void is declared as struct but we keep it internally as
+					// special kind, the swap will happen at caller
+				} else {
+					module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
+					return null;
+				}
 			}
 
 			return type;
@@ -643,6 +648,9 @@ namespace Mono.CSharp
 		var ds = t.MemberDefinition as DeclSpace;
 		if (ds != null)
 			return ds.IsUnmanagedType ();
+
+		if (t.Kind == MemberKind.Void)
+			return true;
 
 		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)

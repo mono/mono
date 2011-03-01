@@ -201,7 +201,7 @@ namespace Mono.CSharp {
 			//
 			// When delegate returns void, only expression statements can be used
 			//
-			if (ec.ReturnType == TypeManager.void_type) {
+			if (ec.ReturnType.Kind == MemberKind.Void) {
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;

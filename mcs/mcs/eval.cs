@@ -1061,7 +1061,7 @@ namespace Mono.CSharp
 			}
 
 			// This means its really a statement.
-			if (clone.Type == TypeManager.void_type || clone is DynamicInvocation || clone is Assign) {
+			if (clone.Type.Kind == MemberKind.Void || clone is DynamicInvocation || clone is Assign) {
 				return clone;
 			}
 
