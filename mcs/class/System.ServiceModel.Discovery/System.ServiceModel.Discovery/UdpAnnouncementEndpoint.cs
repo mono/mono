@@ -81,7 +81,7 @@ namespace System.ServiceModel.Discovery
 			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
 			MaxAnnouncementDelay = TimeSpan.FromMilliseconds (500);
-			Behaviors.Add (new DiscoveryViaUriBehavior (multicastAddress));
+			Behaviors.Add (new DiscoveryViaUriBehavior (discoveryVersion, multicastAddress));
 		}
 
 		static Binding CreateBinding (DiscoveryVersion discoveryVersion)

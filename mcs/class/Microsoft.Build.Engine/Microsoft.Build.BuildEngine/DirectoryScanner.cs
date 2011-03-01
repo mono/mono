@@ -57,7 +57,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Dictionary <string, bool> excludedItems;
 			List <ITaskItem> includedItems;
-			string[] splitExclude;
 			
 			if (includes == null)
 				throw new ArgumentNullException ("Includes");

@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -76,6 +77,11 @@ namespace Microsoft.Build.BuildEngine {
 		bool				building;
 		BuildSettings			current_settings;
 		Stack<Batch>			batches;
+
+		// This is used to keep track of "current" file,
+		// which is then used to set the reserved properties
+		// $(MSBuildThisFile*)
+		Stack<string> this_file_property_stack;
 		ProjectLoadSettings		project_load_settings;
 
 
@@ -113,6 +119,7 @@ namespace Microsoft.Build.BuildEngine {
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
 			batches = new Stack<Batch> ();
+			this_file_property_stack = new Stack<string> ();
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)
@@ -308,7 +315,11 @@ namespace Microsoft.Build.BuildEngine {
 				needToReevaluate = false;
 				Reevaluate ();
 			}
-			
+
+#if NET_4_0
+			ProcessBeforeAndAfterTargets ();
+#endif
+
 			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0) {
 					targetNames = defaultTargets;
@@ -381,6 +392,44 @@ namespace Microsoft.Build.BuildEngine {
 				sb.AppendFormat (" {0}:{1}", bp.Name, bp.FinalValue);
 			return sb.ToString ();
 		}
+
+#if NET_4_0
+		void ProcessBeforeAndAfterTargets ()
+		{
+			var beforeTable = Targets.AsIEnumerable ()
+						.SelectMany (target => GetTargetNamesFromString (target.BeforeTargets),
+								(target, before_target) => new {before_target, name = target.Name})
+						.ToLookup (x => x.before_target, x => x.name)
+						.ToDictionary (x => x.Key, x => x.Distinct ().ToList ());
+
+			foreach (var pair in beforeTable) {
+				if (targets.Exists (pair.Key))
+					targets [pair.Key].BeforeThisTargets = pair.Value;
+				else
+					LogWarning (FullFileName, "Target '{0}', not found in the project", pair.Key);
+			}
+
+			var afterTable = Targets.AsIEnumerable ()
+						.SelectMany (target => GetTargetNamesFromString (target.AfterTargets),
+								(target, after_target) => new {after_target, name = target.Name})
+						.ToLookup (x => x.after_target, x => x.name)
+						.ToDictionary (x => x.Key, x => x.Distinct ().ToList ());
+
+			foreach (var pair in afterTable) {
+				if (targets.Exists (pair.Key))
+					targets [pair.Key].AfterThisTargets = pair.Value;
+				else
+					LogWarning (FullFileName, "Target '{0}', not found in the project", pair.Key);
+			}
+		}
+
+		string[] GetTargetNamesFromString (string targets)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (targets, ParseOptions.AllowItemsNoMetadataAndSplit);
+			return (string []) expr.ConvertTo (this, typeof (string []));
+		}
+#endif
 
 		[MonoTODO]
 		public string [] GetConditionedPropertyValues (string propertyName)
@@ -463,6 +512,7 @@ namespace Microsoft.Build.BuildEngine {
 						"projectFileName");
 
 			this.fullFileName = Utilities.FromMSBuildPath (Path.GetFullPath (projectFileName));
+			PushThisFileProperty (fullFileName);
 
 			string filename = fullFileName;
 			if (String.Compare (Path.GetExtension (fullFileName), ".sln", true) == 0) {
@@ -881,7 +931,7 @@ namespace Microsoft.Build.BuildEngine {
 						AddPropertyGroup (xe, ip);
 						break;
 					case  "Choose":
-						AddChoose (xe);
+						AddChoose (xe, ip);
 						break;
 					default:
 						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file.", xe.Name));
@@ -922,6 +972,7 @@ namespace Microsoft.Build.BuildEngine {
 			BuildProperty bp;
 
 			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
+			conditionedProperties = new Dictionary<string, List<string>> ();
 
 			foreach (BuildProperty gp in GlobalProperties) {
 				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
@@ -960,6 +1011,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception (String.Format ("Invalid tools version '{0}', no tools path set for this.", effective_tools_version));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsRoot", Path.GetDirectoryName (toolsPath), PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", effective_tools_version, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
@@ -975,6 +1027,11 @@ namespace Microsoft.Build.BuildEngine {
 				projectDir = Path.GetDirectoryName (FullFileName);
 
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
+
+			if (this_file_property_stack.Count > 0)
+				// Just re-inited the properties, but according to the stack,
+				// we should have a MSBuild*This* property set
+				SetMSBuildThisFileProperties (this_file_property_stack.Peek ());
 		}
 
 		// precedence:
@@ -1066,9 +1123,9 @@ namespace Microsoft.Build.BuildEngine {
 			PropertyGroups.Add (bpg);
 		}
 		
-		void AddChoose (XmlElement xmlElement)
+		void AddChoose (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			BuildChoose bc = new BuildChoose (xmlElement, this);
+			BuildChoose bc = new BuildChoose (xmlElement, this, importedProject);
 			groupingCollection.Add (bc);
 		}
 		
@@ -1260,6 +1317,41 @@ namespace Microsoft.Build.BuildEngine {
 
 			return default (T);
 		}
+
+		// Used for MSBuild*This* set of properties
+		internal void PushThisFileProperty (string full_filename)
+		{
+			string last_file = this_file_property_stack.Count == 0 ? String.Empty : this_file_property_stack.Peek ();
+			this_file_property_stack.Push (full_filename);
+			if (last_file != full_filename)
+				// first time, or different from previous one
+				SetMSBuildThisFileProperties (full_filename);
+		}
+
+		internal void PopThisFileProperty ()
+		{
+			string last_file = this_file_property_stack.Pop ();
+			if (this_file_property_stack.Count > 0 && last_file != this_file_property_stack.Peek ())
+				SetMSBuildThisFileProperties (this_file_property_stack.Peek ());
+		}
+
+		void SetMSBuildThisFileProperties (string full_filename)
+		{
+			if (String.IsNullOrEmpty (full_filename))
+				return;
+
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFile", Path.GetFileName (full_filename), PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFileFullPath", full_filename, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFileName", Path.GetFileNameWithoutExtension (full_filename), PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFileExtension", Path.GetExtension (full_filename), PropertyType.Reserved));
+
+			string project_dir = Path.GetDirectoryName (full_filename) + Path.DirectorySeparatorChar;
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFileDirectory", project_dir, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildThisFileDirectoryNoRoot",
+						project_dir.Substring (Path.GetPathRoot (project_dir).Length),
+						PropertyType.Reserved));
+		}
+
 
 		internal void LogWarning (string filename, string message, params object[] messageArgs)
 		{

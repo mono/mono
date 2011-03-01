@@ -623,29 +623,6 @@ namespace Mono.CSharp
 		return GetPredefinedMember (t, MemberFilter.Property (name, type), false, loc) as PropertySpec;
 	}
 
-	public static bool IsBuiltinType (TypeSpec t)
-	{
-		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
-		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
-		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type)
-			return true;
-		else
-			return false;
-	}
-
-	//
-	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
-	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
-	// 
-	public static bool IsPrimitiveType (TypeSpec t)
-	{
-		return (t == int32_type || t == uint32_type ||
-		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
-		    t == char_type || t == short_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type);
-	}
-
 	// Obsolete
 	public static bool IsDelegateType (TypeSpec t)
 	{
@@ -658,17 +635,6 @@ namespace Mono.CSharp
 		return t.IsEnum;
 	}
 
-	public static bool IsBuiltinOrEnum (TypeSpec t)
-	{
-		if (IsBuiltinType (t))
-			return true;
-		
-		if (IsEnumType (t))
-			return true;
-
-		return false;
-	}
-
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
@@ -677,13 +643,6 @@ namespace Mono.CSharp
 		var ds = t.MemberDefinition as DeclSpace;
 		if (ds != null)
 			return ds.IsUnmanagedType ();
-
-		// some builtins that are not unmanaged types
-		if (t == TypeManager.object_type || t == TypeManager.string_type)
-			return false;
-
-		if (IsBuiltinOrEnum (t))
-			return true;
 
 		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)
@@ -799,77 +758,6 @@ namespace Mono.CSharp
 	public static bool HasElementType (TypeSpec t)
 	{
 		return t is ElementTypeSpec;
-	}
-
-	static NumberFormatInfo nf_provider = CultureInfo.CurrentCulture.NumberFormat;
-
-	// This is a custom version of Convert.ChangeType() which works
-	// with the TypeBuilder defined types when compiling corlib.
-	public static object ChangeType (object value, TypeSpec targetType, out bool error)
-	{
-		IConvertible convert_value = value as IConvertible;
-		
-		if (convert_value == null){
-			error = true;
-			return null;
-		}
-		
-		//
-		// We cannot rely on build-in type conversions as they are
-		// more limited than what C# supports.
-		// See char -> float/decimal/double conversion
-		//
-		error = false;
-		try {
-			if (targetType == TypeManager.bool_type)
-				return convert_value.ToBoolean (nf_provider);
-			if (targetType == TypeManager.byte_type)
-				return convert_value.ToByte (nf_provider);
-			if (targetType == TypeManager.char_type)
-				return convert_value.ToChar (nf_provider);
-			if (targetType == TypeManager.short_type)
-				return convert_value.ToInt16 (nf_provider);
-			if (targetType == TypeManager.int32_type)
-				return convert_value.ToInt32 (nf_provider);
-			if (targetType == TypeManager.int64_type)
-				return convert_value.ToInt64 (nf_provider);
-			if (targetType == TypeManager.sbyte_type)
-				return convert_value.ToSByte (nf_provider);
-
-			if (targetType == TypeManager.decimal_type) {
-				if (convert_value.GetType () == typeof (char))
-					return (decimal) convert_value.ToInt32 (nf_provider);
-				return convert_value.ToDecimal (nf_provider);
-			}
-
-			if (targetType == TypeManager.double_type) {
-				if (convert_value.GetType () == typeof (char))
-					return (double) convert_value.ToInt32 (nf_provider);
-				return convert_value.ToDouble (nf_provider);
-			}
-
-			if (targetType == TypeManager.float_type) {
-				if (convert_value.GetType () == typeof (char))
-					return (float)convert_value.ToInt32 (nf_provider);
-				return convert_value.ToSingle (nf_provider);
-			}
-
-			if (targetType == TypeManager.string_type)
-				return convert_value.ToString (nf_provider);
-			if (targetType == TypeManager.ushort_type)
-				return convert_value.ToUInt16 (nf_provider);
-			if (targetType == TypeManager.uint32_type)
-				return convert_value.ToUInt32 (nf_provider);
-			if (targetType == TypeManager.uint64_type)
-				return convert_value.ToUInt64 (nf_provider);
-			if (targetType == TypeManager.object_type)
-				return value;
-
-			error = true;
-		} catch {
-			error = true;
-		}
-		return null;
 	}
 
 	/// <summary>

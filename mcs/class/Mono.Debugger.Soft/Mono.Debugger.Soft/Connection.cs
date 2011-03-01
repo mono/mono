@@ -1043,7 +1043,7 @@ namespace Mono.Debugger.Soft
 		bool disconnected;
 
 		void receiver_thread_main () {
-			while (true) {
+			while (!closed) {
 				try {
 					bool res = ReceivePacket ();
 					if (!res)
@@ -1057,6 +1057,7 @@ namespace Mono.Debugger.Soft
 			lock (reply_packets_monitor) {
 				disconnected = true;
 				Monitor.PulseAll (reply_packets_monitor);
+				socket.Close ();
 			}
 			EventHandler.VMDisconnect (0, 0, null);
 		}
@@ -1204,6 +1205,9 @@ namespace Mono.Debugger.Soft
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
 			int id = IdGenerator;
+
+			if (disconnected)
+				throw new VMDisconnectedException ();
 
 			if (packet == null)
 				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));

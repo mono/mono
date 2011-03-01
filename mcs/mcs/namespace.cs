@@ -670,7 +670,7 @@ namespace Mono.CSharp {
 		// End
 
 		public readonly bool IsImplicit;
-		public readonly DeclSpace SlaveDeclSpace;
+		public readonly TypeContainer SlaveDeclSpace;
 		static readonly Namespace [] empty_namespaces = new Namespace [0];
 		Namespace [] namespace_using_table;
 		ModuleContainer ctx;

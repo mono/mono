@@ -73,8 +73,8 @@ to $prefix/lib/mono/xbuild . When used in Import, like:
 
 xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
 
-  1. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
-  2. Paths specified in the environment variable $MSBuildExtensionsPath.
+  1. Paths specified in the environment variable $MSBuildExtensionsPath.
+  2. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
   3. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
   4. $prefix/lib/mono/xbuild (default location)
 
@@ -82,6 +82,34 @@ Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve
 location. This is a xbuild-only feature.
 This is also applicable for the properties $(MSBuildExtensionsPath32) and $(MSBuildExtensionsPath64),
 and the environment variables have the corresponding names - MSBuildExtensionsPath32/64 .
+.TP
+.I "XBUILD_FRAMEWORK_FOLDERS_PATH"
+With ToolsVersion 4.0, projects can target arbitrary frameworks referenced by TargetFrameworkMoniker,
+which is of the format:
+
+  Identifier,Version=<version>[,Profile=<profile>]
+
+Eg. ".NETFramework,Version=v4.0"
+
+The 3 parts of the moniker are given by the msbuild properties:
+
+  $(TargetFrameworkIdentifier), $(TargetFrameworkVersion) and $(TargetFrameworkProfile)
+
+This moniker maps to a framework description file on disk:
+
+  <framework_root>/Identifier/Version/[Profile]/RedistList/FrameworkList.xml
+
+Framework root here is configurable and is resolved in the following order:
+
+.nf
+  1. Paths specified in the environment variable $XBUILD_FRAMEWORK_FOLDERS_PATH
+  2. /Library/Frameworks/Mono.framework/External/xbuild-frameworks on Mac OSX.
+  3. MSBuild property $(TargetFrameworkRoot)
+  4. $prefix/lib/mono/xbuild-frameworks (default location)
+.fi
+
+XBuild tries the paths given above, in order, till it finds a FrameworkList.xml for the moniker.
+Running with /v:detailed or higher verbosity will show the various paths that it tries.
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form

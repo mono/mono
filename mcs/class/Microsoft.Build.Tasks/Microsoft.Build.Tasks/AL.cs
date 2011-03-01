@@ -37,8 +37,6 @@ using Mono.XBuild.Utilities;
 namespace Microsoft.Build.Tasks {
 	public class AL : ToolTaskExtension {
 	
-		Process	alProcess;
-	
 		public AL ()
 		{
 		}

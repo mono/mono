@@ -852,7 +852,7 @@ namespace System.Net.Sockets {
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
-#if NET_2_1
+#if NET_2_1 && !MOBILE
 			switch (addressFamily) {
 			case AddressFamily.InterNetwork:	// ok
 			case AddressFamily.InterNetworkV6:	// ok
@@ -889,7 +889,7 @@ namespace System.Net.Sockets {
 			socket = Socket_internal (addressFamily, socketType, protocolType, out error);
 			if (error != 0)
 				throw new SocketException (error);
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 			SocketDefaults ();
 #endif
 		}
@@ -1454,7 +1454,7 @@ namespace System.Net.Sockets {
 
 		private void ThrowIfUpd ()
 		{
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 			if (protocol_type == ProtocolType.Udp)
 				throw new SocketException ((int)SocketError.ProtocolOption);
 #endif

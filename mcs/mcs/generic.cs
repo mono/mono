@@ -1559,8 +1559,14 @@ namespace Mono.CSharp {
 
 		protected override void InitializeMemberCache (bool onlyTypes)
 		{
-			if (cache == null)
-				cache = new MemberCache (onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache);
+			if (cache == null) {
+				var open_cache = onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache;
+
+				// Surprisingly, calling MemberCache on open type could meantime create cache on this type
+				// for imported type parameter constraints referencing nested type of this declaration
+				if (cache == null)
+					cache = new MemberCache (open_cache);
+			}
 
 			var inflator = CreateLocalInflator (context);
 

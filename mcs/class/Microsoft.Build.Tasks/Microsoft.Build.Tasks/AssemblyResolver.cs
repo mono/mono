@@ -46,7 +46,6 @@ namespace Microsoft.Build.Tasks {
 		Dictionary<string, TargetFrameworkAssemblies> target_framework_cache;
 		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
-		StringWriter sw;
 		List<string> search_log;
 
 		static LibraryPcFileCache cache;
@@ -121,7 +120,10 @@ namespace Microsoft.Build.Tasks {
 			if (!Directory.Exists (framework_dir))
 				return null;
 			
-			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+			AssemblyName key_aname;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out key_aname))
+				return null;
+
 			TargetFrameworkAssemblies gac_asm;
 			if (!target_framework_cache.TryGetValue (framework_dir, out gac_asm)) {
 				// fill gac_asm
@@ -160,7 +162,9 @@ namespace Microsoft.Build.Tasks {
 
 			// Try as a filename
 			string path = Path.GetFullPath (Path.Combine (directory, filename));
-			AssemblyName aname = specific_version ? new AssemblyName (reference.ItemSpec) : null;
+			AssemblyName aname = null;
+			if (specific_version && !TryGetAssemblyNameFromFullName (reference.ItemSpec, out aname))
+				return null;
 
 			ResolvedReference resolved_ref = ResolveReferenceForPath (path, reference, aname, null, SearchPath.Directory, specific_version);
 			if (resolved_ref != null)
@@ -181,8 +185,8 @@ namespace Microsoft.Build.Tasks {
 		ResolvedReference ResolveReferenceForPath (string filename, ITaskItem reference, AssemblyName aname,
 					string error_message, SearchPath spath, bool specific_version)
 		{
-			AssemblyName found_aname = GetAssemblyNameFromFile (filename);
-			if (found_aname == null) {
+			AssemblyName found_aname;
+			if (!TryGetAssemblyNameFromFile (filename, out found_aname)) {
 				if (error_message != null)
 					log.LogMessage (MessageImportance.Low, error_message);
 				return null;
@@ -204,8 +208,8 @@ namespace Microsoft.Build.Tasks {
 		{
 			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
 			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
-				AssemblyName aname = GetAssemblyNameFromFile (file);
-				if (aname != null)
+				AssemblyName aname;
+				if (TryGetAssemblyNameFromFile (file, out aname))
 					gac_asm.NameToAssemblyNameCache [aname.Name] =
 						new KeyValuePair<AssemblyName, string> (aname, file);
 			}
@@ -215,7 +219,10 @@ namespace Microsoft.Build.Tasks {
 
 		public ResolvedReference ResolveGacReference (ITaskItem reference, bool specific_version)
 		{
-			AssemblyName name = new AssemblyName (reference.ItemSpec);
+			AssemblyName name;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out name))
+				return null;
+
 			if (!gac.ContainsKey (name.Name)) {
 				LogSearchMessage ("Considered {0}, but could not find in the GAC.",
 						reference.ItemSpec);
@@ -264,7 +271,11 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			ResolvedReference rr = GetResolvedReference (reference, pkg.File, new AssemblyName (pkg.FullName),
+			AssemblyName aname;
+			if (!TryGetAssemblyNameFromFullName (pkg.FullName, out aname))
+				return null;
+
+			ResolvedReference rr = GetResolvedReference (reference, pkg.File, aname,
 						false, SearchPath.PkgConfig);
 			rr.FoundInSearchPathAsString = String.Format ("{{PkgConfig}} provided by package named {0}",
 							pkg.ParentPackage.Name);
@@ -291,14 +302,18 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			return ResolveReferenceForPath (hintpath, reference, new AssemblyName (reference.ItemSpec),
+			AssemblyName aname;
+			if (!TryGetAssemblyNameFromFullName (reference.ItemSpec, out aname))
+				return null;
+
+			return ResolveReferenceForPath (hintpath, reference, aname,
 						String.Format ("File at HintPath {0}, is either an invalid assembly or the file does not exist.", hintpath),
 						SearchPath.HintPath, specific_version);
 		}
 
-		public AssemblyName GetAssemblyNameFromFile (string filename)
+		public bool TryGetAssemblyNameFromFile (string filename, out AssemblyName aname)
 		{
-			AssemblyName aname = null;
+			aname = null;
 			filename = Path.GetFullPath (filename);
 			try {
 				aname = AssemblyName.GetAssemblyName (filename);
@@ -310,7 +325,19 @@ namespace Microsoft.Build.Tasks {
 						filename);
 			}
 
-			return aname;
+			return aname != null;
+		}
+
+		bool TryGetAssemblyNameFromFullName (string full_name, out AssemblyName aname)
+		{
+			aname = null;
+			try {
+				aname = new AssemblyName (full_name);
+			} catch (FileLoadException) {
+				LogSearchMessage ("Considered '{0}' as an assembly name, but it is invalid.", full_name);
+			}
+
+			return aname != null;
 		}
 
 		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
@@ -341,11 +368,8 @@ namespace Microsoft.Build.Tasks {
 			bool a_is_empty = (a_bytes == null || a_bytes.Length == 0);
 			bool b_is_empty = (b_bytes == null || b_bytes.Length == 0);
 
-			if (a_is_empty && b_is_empty)
-				return true;
-
 			if (a_is_empty || b_is_empty)
-				return false;
+				return true;
 
 			for (int i = 0; i < a_bytes.Length; i++)
 				if (a_bytes [i] != b_bytes [i])

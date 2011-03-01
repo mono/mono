@@ -1265,6 +1265,48 @@ namespace MonoTests.System.Collections.Generic {
 			((IDisposable) e4).Dispose ();
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
 		}
+
+		[Test] //bug #672907
+		public void ICollectionCopyToExceptions ()
+		{
+			var l = new List <int> ();
+			ICollection x = l;
+			try {
+				x.CopyTo (null, 0);
+				Assert.Fail ("#1");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentNullException, "#2");
+			}
+
+			try {
+				x.CopyTo (new int [10], -1);
+				Assert.Fail ("#3");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentOutOfRangeException, "#4");
+			}
+
+			try {
+				x.CopyTo (new int [10, 1], 0);
+				Assert.Fail ("#5");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentException, "#6");
+			}
+
+			try {
+				x.CopyTo (Array.CreateInstance (typeof (int), new int [] { 10 }, new int[] { 1 }), 0);
+				Assert.Fail ("#7");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentException, "#8");
+			}
+
+			l.Add (10); l.Add (20);
+			try {
+				x.CopyTo (new int [1], 0);
+				Assert.Fail ("#9");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentException, "#10");
+			}
+		}
 	}
 }
 #endif

@@ -413,6 +413,8 @@ namespace Mono.CSharp {
 		{
 			if (types != null)
 				types.Remove (next_part);
+
+			Cache.Remove (next_part.Basename);
 			RemoveMemberType (next_part);
 		}
 		
@@ -1845,6 +1847,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void EmitType ()
 		{
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
+				return;
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 

@@ -185,22 +185,26 @@ namespace System.ServiceModel.Discovery
 				throw new ArgumentNullException ("writer");
 
 			// standard members
-			writer.WriteStartElement ("d", "Types", version.Namespace);
-			int p = 0;
-			foreach (var qname in ContractTypeNames)
-				if (writer.LookupPrefix (qname.Namespace) == null)
-					writer.WriteAttributeString ("xmlns", "p" + p++, "http://www.w3.org/2000/xmlns/", qname.Namespace);
-			writer.WriteValue (ContractTypeNames);
-			writer.WriteEndElement ();
-
-			writer.WriteStartElement ("Scopes", version.Namespace);
-			if (ScopeMatchBy != null) {
-				writer.WriteStartAttribute ("MatchBy");
-				writer.WriteValue (ScopeMatchBy);
-				writer.WriteEndAttribute ();
+			if (ContractTypeNames.Count > 0) {
+				writer.WriteStartElement ("d", "Types", version.Namespace);
+				int p = 0;
+				foreach (var qname in ContractTypeNames)
+					if (writer.LookupPrefix (qname.Namespace) == null)
+						writer.WriteAttributeString ("xmlns", "p" + p++, "http://www.w3.org/2000/xmlns/", qname.Namespace);
+				writer.WriteValue (ContractTypeNames);
+				writer.WriteEndElement ();
 			}
-			writer.WriteValue (Scopes);
-			writer.WriteEndElement ();
+
+			if (Scopes.Count > 0) {
+				writer.WriteStartElement ("Scopes", version.Namespace);
+				if (ScopeMatchBy != null) {
+					writer.WriteStartAttribute ("MatchBy");
+					writer.WriteValue (ScopeMatchBy);
+					writer.WriteEndAttribute ();
+				}
+				writer.WriteValue (Scopes);
+				writer.WriteEndElement ();
+			}
 
 			// non-standard members
 			if (MaxResults != default_max_results) {

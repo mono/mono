@@ -244,6 +244,12 @@ host/port configured with the \fBaddress\fR option.  If you set it to 'y', it
 instructs the Mono runtime to start debugging in server mode, where Mono
 actively waits for the debugger front end to connect to the Mono process.  
 Mono will print out to stdout the IP address and port where it is listening.
+.TP
+.I suspend=[y/n]
+Defaults to yes, with the default option Mono will suspend the vm on startup 
+until it connects successfully to a debugger front end.  If you set it to 'n', in 
+conjunction with \fBserver=y\fR, it instructs the Mono runtime to run as normal, 
+while caching metadata to send to the debugger front end on connection.
 .ne
 .RE
 .TP

@@ -285,7 +285,7 @@ namespace Mono.CSharp
 				var type = tparams[pos];
 				int index = pos - first;
 
-				tspec [index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
+				tspec[index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
 			}
 
 			return tspec;
@@ -407,7 +407,12 @@ namespace Mono.CSharp
 
 			IMemberDefinition definition;
 			if (tparams != null) {
-				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
+				var gmd = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
+				foreach (var tp in gmd.TypeParameters) {
+					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
+				}
+
+				definition = gmd;
 			} else {
 				definition = new ImportedParameterMemberDefinition (mb, returnType, parameters, this);
 			}
@@ -792,15 +797,9 @@ namespace Mono.CSharp
 					kind = MemberKind.Class;
 
 			} else if (kind == MemberKind.TypeParameter) {
-				// Return as type_cache was updated
-				return CreateTypeParameter (type, declaringType);
+				spec = CreateTypeParameter (type, declaringType);
 			} else if (type.IsGenericTypeDefinition) {
 				definition.TypeParameters = CreateGenericParameters (type, declaringType);
-
-				// Constraints are not loaded on demand and can reference this type
-				if (import_cache.TryGetValue (type, out spec))
-					return spec;
-
 			} else if (compiled_types.TryGetValue (type, out pt)) {
 				//
 				// Same type was found in inside compiled types. It's
@@ -882,38 +881,11 @@ namespace Mono.CSharp
 
 			TypeParameterSpec spec;
 			var def = new ImportedTypeParameterDefinition (type, this);
-			if (type.DeclaringMethod != null)
+			if (type.DeclaringMethod != null) {
 				spec = new TypeParameterSpec (type.GenericParameterPosition, def, special, variance, type);
-			else
+			} else {
 				spec = new TypeParameterSpec (declaringType, type.GenericParameterPosition, def, special, variance, type);
-
-			// Add it now, so any constraint can reference it and get same instance
-			import_cache.Add (type, spec);
-
-			var constraints = type.GetGenericParameterConstraints ();
-			List<TypeSpec> tparams = null;
-			foreach (var ct in constraints) {
-				if (ct.IsGenericParameter) {
-					if (tparams == null)
-						tparams = new List<TypeSpec> ();
-
-					tparams.Add (CreateType (ct));
-					continue;
-				}
-
-				if (!IsMissingType (ct) && ct.IsClass) {
-					spec.BaseType = CreateType (ct);
-					continue;
-				}
-
-				spec.AddInterface (CreateType (ct));
 			}
-
-			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
-
-			if (tparams != null)
-				spec.TypeArguments = tparams.ToArray ();
 
 			return spec;
 		}
@@ -975,6 +947,13 @@ namespace Mono.CSharp
 				}
 			}
 #endif
+
+			if (spec.MemberDefinition.TypeParametersCount > 0) {
+				foreach (var tp in spec.MemberDefinition.TypeParameters) {
+					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
+				}
+			}
+
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
@@ -1008,6 +987,34 @@ namespace Mono.CSharp
 					it.SetExtensionMethodContainer ();
 				}
 			}
+		}
+
+		void ImportTypeParameterTypeConstraints (TypeParameterSpec spec, MetaType type)
+		{
+			var constraints = type.GetGenericParameterConstraints ();
+			List<TypeSpec> tparams = null;
+			foreach (var ct in constraints) {
+				if (ct.IsGenericParameter) {
+					if (tparams == null)
+						tparams = new List<TypeSpec> ();
+
+					tparams.Add (CreateType (ct));
+					continue;
+				}
+
+				if (!IsMissingType (ct) && ct.IsClass) {
+					spec.BaseType = CreateType (ct);
+					continue;
+				}
+
+				spec.AddInterface (CreateType (ct));
+			}
+
+			if (spec.BaseType == null)
+				spec.BaseType = TypeManager.object_type;
+
+			if (tparams != null)
+				spec.TypeArguments = tparams.ToArray ();
 		}
 
 		static Constant ImportParameterConstant (object value)

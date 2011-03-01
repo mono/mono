@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Globalization;
 
 #if STATIC
 using IKVM.Reflection.Emit;
@@ -22,7 +23,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Base class for constants and literals.
 	/// </summary>
-	public abstract class Constant : Expression {
+	public abstract class Constant : Expression
+	{
+		static readonly NumberFormatInfo nfi = CultureInfo.InvariantCulture.NumberFormat;
 
 		protected Constant (Location loc)
 		{
@@ -40,6 +43,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract object GetValue ();
 
+		public abstract long GetValueAsLong ();
+
 		public abstract string GetValueAsLiteral ();
 
 #if !STATIC
@@ -55,8 +60,8 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			if (!expl && IsLiteral && 
-				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
-				(TypeManager.IsPrimitiveType (type) || type == TypeManager.decimal_type)) {
+				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (target) &&
+				BuildinTypeSpec.IsPrimitiveNumericOrDecimalType (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValueAsLiteral (), TypeManager.CSharpName (target));
 			} else {
@@ -82,7 +87,7 @@ namespace Mono.CSharp {
 				return null;
 
 			bool fail;			
-			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
+			object constant_value = ChangeType (GetValue (), type, out fail);
 			if (fail){
 				//
 				// We should always catch the error before this is ever
@@ -105,38 +110,44 @@ namespace Mono.CSharp {
 
 		public static Constant CreateConstantFromValue (TypeSpec t, object v, Location loc)
 		{
-			if (t == TypeManager.int32_type)
-				return new IntConstant ((int) v, loc);
-			if (t == TypeManager.string_type)
-				return new StringConstant ((string) v, loc);
-			if (t == TypeManager.uint32_type)
-				return new UIntConstant ((uint) v, loc);
-			if (t == TypeManager.int64_type)
-				return new LongConstant ((long) v, loc);
-			if (t == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) v, loc);
-			if (t == TypeManager.float_type)
-				return new FloatConstant ((float) v, loc);
-			if (t == TypeManager.double_type)
-				return new DoubleConstant ((double) v, loc);
-			if (t == TypeManager.short_type)
-				return new ShortConstant ((short)v, loc);
-			if (t == TypeManager.ushort_type)
-				return new UShortConstant ((ushort)v, loc);
-			if (t == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte)v, loc);
-			if (t == TypeManager.byte_type)
-				return new ByteConstant ((byte)v, loc);
-			if (t == TypeManager.char_type)
-				return new CharConstant ((char)v, loc);
-			if (t == TypeManager.bool_type)
-				return new BoolConstant ((bool) v, loc);
-			if (t == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) v, loc);
-			if (TypeManager.IsEnumType (t)) {
+			if (t.BuildinType > 0) {
+				switch (t.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+					return new IntConstant ((int) v, loc);
+				case BuildinTypeSpec.Type.String:
+					return new StringConstant ((string) v, loc);
+				case BuildinTypeSpec.Type.UInt:
+					return new UIntConstant ((uint) v, loc);
+				case BuildinTypeSpec.Type.Long:
+					return new LongConstant ((long) v, loc);
+				case BuildinTypeSpec.Type.ULong:
+					return new ULongConstant ((ulong) v, loc);
+				case BuildinTypeSpec.Type.Float:
+					return new FloatConstant ((float) v, loc);
+				case BuildinTypeSpec.Type.Double:
+					return new DoubleConstant ((double) v, loc);
+				case BuildinTypeSpec.Type.Short:
+					return new ShortConstant ((short) v, loc);
+				case BuildinTypeSpec.Type.UShort:
+					return new UShortConstant ((ushort) v, loc);
+				case BuildinTypeSpec.Type.SByte:
+					return new SByteConstant ((sbyte) v, loc);
+				case BuildinTypeSpec.Type.Byte:
+					return new ByteConstant ((byte) v, loc);
+				case BuildinTypeSpec.Type.Char:
+					return new CharConstant ((char) v, loc);
+				case BuildinTypeSpec.Type.Bool:
+					return new BoolConstant ((bool) v, loc);
+				case BuildinTypeSpec.Type.Decimal:
+					return new DecimalConstant ((decimal) v, loc);
+				}
+			}
+
+			if (t.IsEnum) {
 				var real_type = EnumSpec.GetUnderlyingType (t);
 				return new EnumConstant (CreateConstantFromValue (real_type, v, loc).Resolve (null), t);
 			}
+
 			if (v == null) {
 				if (TypeManager.IsNullableType (t))
 					return Nullable.LiftedNull.Create (t, loc);
@@ -158,13 +169,75 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
-
 		/// <summary>
 		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
 		/// It throws OverflowException 
 		/// </summary>
 		// DON'T CALL THIS METHOD DIRECTLY AS IT DOES NOT HANDLE ENUMS
 		public abstract Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type);
+
+		// This is a custom version of Convert.ChangeType() which works
+		// with the TypeBuilder defined types when compiling corlib.
+		static object ChangeType (object value, TypeSpec targetType, out bool error)
+		{
+			IConvertible convert_value = value as IConvertible;
+
+			if (convert_value == null) {
+				error = true;
+				return null;
+			}
+
+			//
+			// We cannot rely on build-in type conversions as they are
+			// more limited than what C# supports.
+			// See char -> float/decimal/double conversion
+			//
+			error = false;
+			try {
+				switch (targetType.BuildinType) {
+				case BuildinTypeSpec.Type.Bool:
+					return convert_value.ToBoolean (nfi);
+				case BuildinTypeSpec.Type.Byte:
+					return convert_value.ToByte (nfi);
+				case BuildinTypeSpec.Type.Char:
+					return convert_value.ToChar (nfi);
+				case BuildinTypeSpec.Type.Short:
+					return convert_value.ToInt16 (nfi);
+				case BuildinTypeSpec.Type.Int:
+					return convert_value.ToInt32 (nfi);
+				case BuildinTypeSpec.Type.Long:
+					return convert_value.ToInt64 (nfi);
+				case BuildinTypeSpec.Type.SByte:
+					return convert_value.ToSByte (nfi);
+				case BuildinTypeSpec.Type.Decimal:
+					if (convert_value.GetType () == typeof (char))
+						return (decimal) convert_value.ToInt32 (nfi);
+					return convert_value.ToDecimal (nfi);
+				case BuildinTypeSpec.Type.Double:
+					if (convert_value.GetType () == typeof (char))
+						return (double) convert_value.ToInt32 (nfi);
+					return convert_value.ToDouble (nfi);
+				case BuildinTypeSpec.Type.Float:
+					if (convert_value.GetType () == typeof (char))
+						return (float) convert_value.ToInt32 (nfi);
+					return convert_value.ToSingle (nfi);
+				case BuildinTypeSpec.Type.String:
+					return convert_value.ToString (nfi);
+				case BuildinTypeSpec.Type.UShort:
+					return convert_value.ToUInt16 (nfi);
+				case BuildinTypeSpec.Type.UInt:
+					return convert_value.ToUInt32 (nfi);
+				case BuildinTypeSpec.Type.ULong:
+					return convert_value.ToUInt64 (nfi);
+				case BuildinTypeSpec.Type.Object:
+					return value;
+				}
+			} catch {
+			}
+
+			error = true;
+			return null;
+		}
 
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
@@ -348,6 +421,11 @@ namespace Mono.CSharp {
 			return Value ? "true" : "false";
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value ? 1 : 0;
+		}
+
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Encode (Value);
@@ -384,7 +462,8 @@ namespace Mono.CSharp {
 
 	}
 
-	public class ByteConstant : IntegralConstant {
+	public class ByteConstant : IntegralConstant
+	{
 		public readonly byte Value;
 
 		public ByteConstant (byte v, Location loc):
@@ -411,6 +490,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -444,33 +528,34 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.sbyte_type) {
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.SByte:
 				if (in_checked_context){
 					if (Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type)
+			case BuildinTypeSpec.Type.Short:
 				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
+			case BuildinTypeSpec.Type.UShort:
 				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
+			case BuildinTypeSpec.Type.Int:
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
+			case BuildinTypeSpec.Type.UInt:
 				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			case BuildinTypeSpec.Type.ULong:
 				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type)
+			case BuildinTypeSpec.Type.Char:
 				return new CharConstant ((char) Value, Location);
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -537,6 +622,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override string GetValueAsLiteral ()
 		{
 			return "\"" + descape (Value) + "\"";
@@ -560,41 +650,41 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < Byte.MinValue || Value > Byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value > Int16.MaxValue)
 						throw new OverflowException ();
-				}					
+				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
+			case BuildinTypeSpec.Type.Int:
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
+			case BuildinTypeSpec.Type.UInt:
 				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			case BuildinTypeSpec.Type.ULong:
 				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -632,6 +722,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 		    return new SByteConstant (checked((sbyte)(Value + 1)), loc);
@@ -661,41 +756,40 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type)
+			case BuildinTypeSpec.Type.Short:
 				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type) {
+			case BuildinTypeSpec.Type.UShort:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new UShortConstant ((ushort) Value, Location);
-			} if (target_type == TypeManager.int32_type)
-				  return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type) {
+			case BuildinTypeSpec.Type.Int:
+				return new IntConstant ((int) Value, Location);
+			case BuildinTypeSpec.Type.UInt:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new UIntConstant ((uint) Value, Location);
-			} if (target_type == TypeManager.int64_type)
-				  return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
+			case BuildinTypeSpec.Type.Long:
+				return new LongConstant ((long) Value, Location);
+			case BuildinTypeSpec.Type.ULong:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
+			case BuildinTypeSpec.Type.Char:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -733,6 +827,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new ShortConstant (checked((short)(Value + 1)), loc);
@@ -762,60 +861,57 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < Byte.MinValue || Value > Byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value < SByte.MinValue || Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
+			case BuildinTypeSpec.Type.UShort:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
-				
+
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
+			case BuildinTypeSpec.Type.Int:
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type) {
+			case BuildinTypeSpec.Type.UInt:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
+			case BuildinTypeSpec.Type.ULong:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < Char.MinValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
 
 	}
 
-	public class UShortConstant : IntegralConstant {
+	public class UShortConstant : IntegralConstant
+	{
 		public readonly ushort Value;
 
 		public UShortConstant (ushort v, Location loc):
@@ -842,6 +938,11 @@ namespace Mono.CSharp {
 		}
 
 		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override long GetValueAsLong ()
 		{
 			return Value;
 		}
@@ -875,48 +976,46 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value > Byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value > Int16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
+			case BuildinTypeSpec.Type.Int:
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
+			case BuildinTypeSpec.Type.UInt:
 				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			case BuildinTypeSpec.Type.ULong:
 				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value > Char.MaxValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -953,6 +1052,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new IntConstant (checked(Value + 1), loc);
@@ -982,61 +1086,56 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < Byte.MinValue || Value > Byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value < SByte.MinValue || Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value < Int16.MinValue || Value > Int16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UShort:
+				if (in_checked_context) {
 					if (Value < UInt16.MinValue || Value > UInt16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UInt:
+				if (in_checked_context) {
 					if (Value < UInt32.MinValue)
 						throw new OverflowException ();
 				}
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
+			case BuildinTypeSpec.Type.ULong:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < Char.MinValue || Value > Char.MaxValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1060,27 +1159,28 @@ namespace Mono.CSharp {
 		/// </summary>
 		Constant TryImplicitIntConversion (TypeSpec target_type)
 		{
-			if (target_type == TypeManager.sbyte_type) {
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.SByte:
 				if (Value >= SByte.MinValue && Value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) Value, loc);
-			} 
-			else if (target_type == TypeManager.byte_type) {
+				break;
+			case BuildinTypeSpec.Type.Byte:
 				if (Value >= Byte.MinValue && Value <= Byte.MaxValue)
 					return new ByteConstant ((byte) Value, loc);
-			} 
-			else if (target_type == TypeManager.short_type) {
+				break;
+			case BuildinTypeSpec.Type.Short:
 				if (Value >= Int16.MinValue && Value <= Int16.MaxValue)
 					return new ShortConstant ((short) Value, loc);
-			} 
-			else if (target_type == TypeManager.ushort_type) {
+				break;
+			case BuildinTypeSpec.Type.UShort:
 				if (Value >= UInt16.MinValue && Value <= UInt16.MaxValue)
 					return new UShortConstant ((ushort) Value, loc);
-			} 
-			else if (target_type == TypeManager.uint32_type) {
+				break;
+			case BuildinTypeSpec.Type.UInt:
 				if (Value >= 0)
 					return new UIntConstant ((uint) Value, loc);
-			} 
-			else if (target_type == TypeManager.uint64_type) {
+				break;
+			case BuildinTypeSpec.Type.ULong:
 				//
 				// we can optimize this case: a positive int32
 				// always fits on a uint64.  But we need an opcode
@@ -1088,11 +1188,12 @@ namespace Mono.CSharp {
 				//
 				if (Value >= 0)
 					return new ULongConstant ((ulong) Value, loc);
-			} 
-			else if (target_type == TypeManager.double_type)
+				break;
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, loc);
-			else if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, loc);
+			}
 
 			return null;
 		}
@@ -1129,6 +1230,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new UIntConstant (checked(Value + 1), loc);
@@ -1158,58 +1264,54 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < 0 || Value > byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value > Int16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UShort:
+				if (in_checked_context) {
 					if (Value < UInt16.MinValue || Value > UInt16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Int:
+				if (in_checked_context) {
 					if (Value > Int32.MaxValue)
 						throw new OverflowException ();
 				}
 				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			case BuildinTypeSpec.Type.ULong:
 				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < Char.MinValue || Value > Char.MaxValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1247,6 +1349,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new LongConstant (checked(Value + 1), loc);
@@ -1276,66 +1383,60 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < Byte.MinValue || Value > Byte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value < SByte.MinValue || Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value < Int16.MinValue || Value > Int16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UShort:
+				if (in_checked_context) {
 					if (Value < UInt16.MinValue || Value > UInt16.MaxValue)
 						throw new OverflowException ();
 				}
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Int:
+				if (in_checked_context) {
 					if (Value < Int32.MinValue || Value > Int32.MaxValue)
 						throw new OverflowException ();
 				}
 				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UInt:
+				if (in_checked_context) {
 					if (Value < UInt32.MinValue || Value > UInt32.MaxValue)
 						throw new OverflowException ();
 				}
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.uint64_type) {
+			case BuildinTypeSpec.Type.ULong:
 				if (in_checked_context && Value < 0)
 					throw new OverflowException ();
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < Char.MinValue || Value > Char.MaxValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1381,6 +1482,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override long GetValueAsLong ()
+		{
+			return (long) Value;
+		}
+
 		public override Constant Increment ()
 		{
 			return new ULongConstant (checked(Value + 1), loc);
@@ -1410,52 +1516,46 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
 				if (in_checked_context && Value > Byte.MaxValue)
 					throw new OverflowException ();
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
+			case BuildinTypeSpec.Type.SByte:
 				if (in_checked_context && Value > ((ulong) SByte.MaxValue))
 					throw new OverflowException ();
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
+			case BuildinTypeSpec.Type.Short:
 				if (in_checked_context && Value > ((ulong) Int16.MaxValue))
 					throw new OverflowException ();
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
+			case BuildinTypeSpec.Type.UShort:
 				if (in_checked_context && Value > UInt16.MaxValue)
 					throw new OverflowException ();
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
+			case BuildinTypeSpec.Type.Int:
 				if (in_checked_context && Value > UInt32.MaxValue)
 					throw new OverflowException ();
 				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				if  (in_checked_context && Value > UInt32.MaxValue)
+			case BuildinTypeSpec.Type.UInt:
+				if (in_checked_context && Value > UInt32.MaxValue)
 					throw new OverflowException ();
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type) {
+			case BuildinTypeSpec.Type.Long:
 				if (in_checked_context && Value > Int64.MaxValue)
 					throw new OverflowException ();
 				return new LongConstant ((long) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
+			case BuildinTypeSpec.Type.Char:
 				if (in_checked_context && Value > Char.MaxValue)
 					throw new OverflowException ();
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1498,6 +1598,11 @@ namespace Mono.CSharp {
 			return Value.ToString ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1512,73 +1617,66 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < byte.MinValue || Value > byte.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value < sbyte.MinValue || Value > sbyte.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value < short.MinValue || Value > short.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UShort:
+				if (in_checked_context) {
 					if (Value < ushort.MinValue || Value > ushort.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Int:
+				if (in_checked_context) {
 					if (Value < int.MinValue || Value > int.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UInt:
+				if (in_checked_context) {
 					if (Value < uint.MinValue || Value > uint.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Long:
+				if (in_checked_context) {
 					if (Value < long.MinValue || Value > long.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new LongConstant ((long) Value, Location);
-			}
-			if (target_type == TypeManager.uint64_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.ULong:
+				if (in_checked_context) {
 					if (Value < ulong.MinValue || Value > ulong.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < (float) char.MinValue || Value > (float) char.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1621,6 +1719,11 @@ namespace Mono.CSharp {
 			return Value.ToString ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1635,73 +1738,66 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.byte_type) {
-				if (in_checked_context){
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+				if (in_checked_context) {
 					if (Value < Byte.MinValue || Value > Byte.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.SByte:
+				if (in_checked_context) {
 					if (Value < SByte.MinValue || Value > SByte.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Short:
+				if (in_checked_context) {
 					if (Value < short.MinValue || Value > short.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UShort:
+				if (in_checked_context) {
 					if (Value < ushort.MinValue || Value > ushort.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Int:
+				if (in_checked_context) {
 					if (Value < int.MinValue || Value > int.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.UInt:
+				if (in_checked_context) {
 					if (Value < uint.MinValue || Value > uint.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Long:
+				if (in_checked_context) {
 					if (Value < long.MinValue || Value > long.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new LongConstant ((long) Value, Location);
-			}
-			if (target_type == TypeManager.uint64_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.ULong:
+				if (in_checked_context) {
 					if (Value < ulong.MinValue || Value > ulong.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				if (in_checked_context){
+			case BuildinTypeSpec.Type.Char:
+				if (in_checked_context) {
 					if (Value < (double) char.MinValue || Value > (double) char.MaxValue || double.IsNaN (Value))
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant ((decimal) Value, Location);
+			}
 
 			return null;
 		}
@@ -1722,16 +1818,6 @@ namespace Mono.CSharp {
 			type = TypeManager.decimal_type;
 			eclass = ExprClass.Value;
 			return this;
-		}
-
-		public override object GetValue ()
-		{
-			return Value;
-		}
-
-		public override string GetValueAsLiteral ()
-		{
-			return Value.ToString () + "M";
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1805,32 +1891,48 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte)Value, loc);
-			if (target_type == TypeManager.byte_type)
-				return new ByteConstant ((byte)Value, loc);
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short)Value, loc);
-			if (target_type == TypeManager.ushort_type)
-				return new UShortConstant ((ushort)Value, loc);
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int)Value, loc);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint)Value, loc);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long)Value, loc);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong)Value, loc);
-			if (target_type == TypeManager.char_type)
-				return new CharConstant ((char)Value, loc);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float)Value, loc);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double)Value, loc);
+			switch (target_type.BuildinType) {
+			case BuildinTypeSpec.Type.SByte:
+				return new SByteConstant ((sbyte) Value, loc);
+			case BuildinTypeSpec.Type.Byte:
+				return new ByteConstant ((byte) Value, loc);
+			case BuildinTypeSpec.Type.Short:
+				return new ShortConstant ((short) Value, loc);
+			case BuildinTypeSpec.Type.UShort:
+				return new UShortConstant ((ushort) Value, loc);
+			case BuildinTypeSpec.Type.Int:
+				return new IntConstant ((int) Value, loc);
+			case BuildinTypeSpec.Type.UInt:
+				return new UIntConstant ((uint) Value, loc);
+			case BuildinTypeSpec.Type.Long:
+				return new LongConstant ((long) Value, loc);
+			case BuildinTypeSpec.Type.ULong:
+				return new ULongConstant ((ulong) Value, loc);
+			case BuildinTypeSpec.Type.Char:
+				return new CharConstant ((char) Value, loc);
+			case BuildinTypeSpec.Type.Float:
+				return new FloatConstant ((float) Value, loc);
+			case BuildinTypeSpec.Type.Double:
+				return new DoubleConstant ((double) Value, loc);
+			}
 
 			return null;
 		}
 
+		public override object GetValue ()
+		{
+			return Value;
+		}
+
+		public override string GetValueAsLiteral ()
+		{
+			return Value.ToString () + "M";
+		}
+
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
 	}
 
 	public class StringConstant : Constant {
@@ -1858,6 +1960,11 @@ namespace Mono.CSharp {
 		{
 			// FIXME: Escape the string.
 			return "\"" + Value + "\"";
+		}
+
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2023,6 +2130,11 @@ namespace Mono.CSharp {
 			return GetSignatureForError ();
 		}
 
+		public override long GetValueAsLong ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get { return true; }
 		}
@@ -2074,6 +2186,11 @@ namespace Mono.CSharp {
 		public override string GetValueAsLiteral ()
 		{
 			return value.GetValueAsLiteral ();
+		}
+
+		public override long GetValueAsLong ()
+		{
+			return value.GetValueAsLong ();
 		}
 
 		public override void Emit (EmitContext ec)

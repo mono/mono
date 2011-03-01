@@ -299,10 +299,12 @@ namespace Mono.CSharp {
 				return;
 
 			AbstractMessage msg;
-			if (IsWarningAsError (code))
+			if (IsWarningAsError (code)) {
+				message = "Warning as Error: " + message;
 				msg = new ErrorMessage (code, loc, message, extra_information);
-			else
+			} else {
 				msg = new WarningMessage (code, loc, message, extra_information);
+			}
 
 			extra_information.Clear ();
 			printer.Print (msg);
