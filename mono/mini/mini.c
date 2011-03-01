@@ -4512,6 +4512,26 @@ invalidated_delegate_trampoline (char *desc)
 }
 #endif
 
+static void
+remove_ip_from_jump_list (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoJumpList *jlist = value;
+	MonoJitDynamicMethodInfo *ji = user_data;
+	GSList *tmp, *remove;
+
+	remove = NULL;
+	for (tmp = jlist->list; tmp; tmp = tmp->next) {
+		guint8 *ip = tmp->data;
+
+		if (ip >= (guint8*)ji->ji->code_start && ip < (guint8*)ji->ji->code_start + ji->ji->code_size)
+			remove = g_slist_prepend (remove, tmp);
+	}
+	for (tmp = remove; tmp; tmp = tmp->next) {
+		jlist->list = g_slist_delete_link (jlist->list, tmp->data);
+	}
+	g_slist_free (remove);
+}
+
 /*
  * mono_jit_free_method:
  *
@@ -4522,8 +4542,6 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 {
 	MonoJitDynamicMethodInfo *ji;
 	gboolean destroy = TRUE;
-	GHashTableIter iter;
-	MonoJumpList *jlist;
 
 	g_assert (method->dynamic);
 
@@ -4541,22 +4559,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	g_hash_table_remove (domain_jit_info (domain)->runtime_invoke_hash, method);
 
 	/* Remove jump targets in this method */
-	g_hash_table_iter_init (&iter, domain_jit_info (domain)->jump_target_hash);
-	while (g_hash_table_iter_next (&iter, NULL, (void**)&jlist)) {
-		GSList *tmp, *remove;
-
-		remove = NULL;
-		for (tmp = jlist->list; tmp; tmp = tmp->next) {
-			guint8 *ip = tmp->data;
-
-			if (ip >= (guint8*)ji->ji->code_start && ip < (guint8*)ji->ji->code_start + ji->ji->code_size)
-				remove = g_slist_prepend (remove, tmp);
-		}
-		for (tmp = remove; tmp; tmp = tmp->next) {
-			jlist->list = g_slist_delete_link (jlist->list, tmp->data);
-		}
-		g_slist_free (remove);
-	}
+	g_hash_table_foreach (domain_jit_info (domain)->jump_target_hash, remove_ip_from_jump_list, ji);
 
 	mono_domain_unlock (domain);
 
