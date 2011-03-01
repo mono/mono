@@ -45,7 +45,7 @@ namespace Microsoft.Build.BuildEngine {
 		const string		defaultTasksProjectName = "Microsoft.Common.tasks";
 		EventSource		eventSource;
 		bool			buildStarted;
-		ToolsetDefinitionLocations toolsetLocations;
+		//ToolsetDefinitionLocations toolsetLocations;
 		BuildPropertyGroup	global_properties;
 		//IDictionary		importedProjects;
 		List <ILogger>		loggers;
@@ -73,7 +73,7 @@ namespace Microsoft.Build.BuildEngine {
 		public Engine (ToolsetDefinitionLocations locations)
 			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
 		{
-			toolsetLocations = locations;
+			//toolsetLocations = locations;
 		}
 		
 		public Engine (BuildPropertyGroup globalProperties)
@@ -86,7 +86,7 @@ namespace Microsoft.Build.BuildEngine {
 			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
 		{
 			this.global_properties = globalProperties;
-			toolsetLocations = locations;
+			//toolsetLocations = locations;
 		}
 
 		// engine should be invoked with path where binary files are

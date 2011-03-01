@@ -46,7 +46,6 @@ namespace Microsoft.Build.Tasks {
 		Dictionary<string, TargetFrameworkAssemblies> target_framework_cache;
 		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
-		StringWriter sw;
 		List<string> search_log;
 
 		static LibraryPcFileCache cache;
