@@ -35,6 +35,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -49,6 +50,10 @@ namespace Microsoft.Build.Tasks {
 		string		stdOutEncoding;
 		string		workingDirectory;
 		string scriptFile;
+
+#if NET_4_0
+		Func<string, bool> errorMatcher, warningMatcher;
+#endif
 		
 		public Exec ()
 		{
@@ -77,6 +82,10 @@ namespace Microsoft.Build.Tasks {
 						    string commandLineCommands)
 		{
 			try {
+#if NET_4_0
+				errorMatcher = GetTryMatchRegexFunc (CustomErrorRegularExpression, true);
+				warningMatcher = GetTryMatchRegexFunc (CustomWarningRegularExpression, false);
+#endif
 				return base.ExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
 			} finally {
 				if (scriptFile != null)
@@ -117,8 +126,47 @@ namespace Microsoft.Build.Tasks {
 		
 		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
-			Log.LogMessage (importance, singleLine);
+#if NET_4_0
+			if (IgnoreStandardErrorWarningFormat ||
+				(!errorMatcher (singleLine) && !warningMatcher (singleLine)))
+#endif
+				Log.LogMessage (importance, singleLine);
 		}
+
+#if NET_4_0
+		// @is_error_type - log as errors, else warnings
+		Func<string, bool> GetTryMatchRegexFunc (string regex_str, bool is_error_type)
+		{
+			bool is_bad = false;
+			Regex regex = null;
+			return (singleLine) => {
+				if (String.IsNullOrEmpty (regex_str) || is_bad)
+					return false;
+
+				try {
+					if (regex == null)
+						regex = new Regex (regex_str, RegexOptions.Compiled);
+				} catch (ArgumentException ae) {
+					Log.LogError ("The regular expression specified for '{0}' is invalid : {1}",
+							is_error_type ? "errors" : "warnings", ae.Message);
+					Log.LogMessage (MessageImportance.Low, "The regular expression specified for '{0}' is invalid : {1}",
+							is_error_type ? "errors" : "warnings", ae.ToString ());
+
+					is_bad = true;
+					return false;
+				}
+
+				if (!regex.Match (singleLine).Success)
+					return false;
+
+				if (is_error_type)
+					Log.LogError (singleLine);
+				else
+					Log.LogWarning (singleLine);
+				return true;
+			};
+		}
+#endif
 
 		[MonoTODO]
 		protected override bool ValidateParameters ()
@@ -162,6 +210,14 @@ namespace Microsoft.Build.Tasks {
 		protected override MessageImportance StandardOutputLoggingImportance {
 			get { return base.StandardOutputLoggingImportance; }
 		}
+
+#if NET_4_0
+		public bool IgnoreStandardErrorWarningFormat { get; set; }
+
+		public string CustomErrorRegularExpression { get; set; }
+
+		public string CustomWarningRegularExpression { get; set; }
+#endif
 		
 		[MonoTODO]
 		[Output]
