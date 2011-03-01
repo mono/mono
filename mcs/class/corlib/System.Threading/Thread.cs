@@ -303,8 +303,15 @@ namespace System.Threading {
 #endif
 
 		// Looks up the object associated with the current thread
+		// this is called by the JIT directly, too
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static InternalThread CurrentInternalThread_internal();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static uint AllocTlsData (Type type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void DestroyTlsData (uint offset);
 
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
