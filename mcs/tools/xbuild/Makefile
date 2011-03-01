@@ -36,7 +36,7 @@ WEBAPP_DIR = Microsoft/VisualStudio/v9.0/WebApplications
 SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 EXTRAS_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 install-extras: 
-	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList
+	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
