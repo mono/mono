@@ -5317,7 +5317,7 @@ namespace Mono.CSharp {
 
 		bool IsSingleDimensionalArrayLength ()
 		{
-			if (best_candidate.DeclaringType != TypeManager.array_type || !best_candidate.HasGet || Name != "Length")
+			if (best_candidate.DeclaringType.BuildinType != BuildinTypeSpec.Type.Array || !best_candidate.HasGet || Name != "Length")
 				return false;
 
 			ArrayContainer ac = InstanceExpression.Type as ArrayContainer;

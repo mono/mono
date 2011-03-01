@@ -108,14 +108,16 @@ namespace Mono.CSharp {
 
 		protected override bool DoDefineMembers ()
 		{
+			var buildin_types = Compiler.BuildinTypes;
+
 			var ctor_parameters = ParametersCompiled.CreateFullyResolved (
 				new [] {
-					new Parameter (new TypeExpression (TypeManager.object_type, Location), "object", Parameter.Modifier.NONE, null, Location),
-					new Parameter (new TypeExpression (TypeManager.intptr_type, Location), "method", Parameter.Modifier.NONE, null, Location)
+					new Parameter (new TypeExpression (buildin_types.Object, Location), "object", Parameter.Modifier.NONE, null, Location),
+					new Parameter (new TypeExpression (buildin_types.IntPtr, Location), "method", Parameter.Modifier.NONE, null, Location)
 				},
 				new [] {
-					TypeManager.object_type,
-					TypeManager.intptr_type
+					buildin_types.Object,
+					buildin_types.IntPtr
 				}
 			);
 
@@ -222,11 +224,11 @@ namespace Mono.CSharp {
 			async_parameters = ParametersCompiled.MergeGenerated (Compiler, async_parameters, false,
 				new Parameter[] {
 					new Parameter (new TypeExpression (async_callback.TypeSpec, Location), "callback", Parameter.Modifier.NONE, null, Location),
-					new Parameter (new TypeExpression (TypeManager.object_type, Location), "object", Parameter.Modifier.NONE, null, Location)
+					new Parameter (new TypeExpression (Compiler.BuildinTypes.Object, Location), "object", Parameter.Modifier.NONE, null, Location)
 				},
 				new [] {
 					async_callback.TypeSpec,
-					TypeManager.object_type
+					Compiler.BuildinTypes.Object
 				}
 			);
 
@@ -326,7 +328,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			base_type = TypeManager.multicast_delegate_type;
+			base_type = Compiler.BuildinTypes.MulticastDelegate;
 			base_class = null;
 			return null;
 		}
@@ -526,7 +528,7 @@ namespace Mono.CSharp {
 
 			var expr = method_group.InstanceExpression;
 			if (expr != null && (expr.Type.IsGenericParameter || !TypeManager.IsReferenceType (expr.Type)))
-				method_group.InstanceExpression = new BoxedCast (expr, TypeManager.object_type);
+				method_group.InstanceExpression = new BoxedCast (expr, ec.BuildinTypes.Object);
 
 			eclass = ExprClass.Value;
 			return this;
@@ -581,8 +583,8 @@ namespace Mono.CSharp {
 
 		public static bool ImplicitStandardConversionExists (ResolveContext ec, MethodGroupExpr mg, TypeSpec target_type)
 		{
-			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
-				return false;
+//			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
+//				return false;
 
 			var invoke = Delegate.GetInvokeMethod (target_type);
 

@@ -2451,7 +2451,7 @@ namespace Mono.CSharp
 
 		static bool IsFloat (TypeSpec t)
 		{
-			return t == TypeManager.float_type || t == TypeManager.double_type;
+			return t.BuildinType == BuildinTypeSpec.Type.Float || t.BuildinType == BuildinTypeSpec.Type.Double;
 		}
 
 		public static void Reset ()
@@ -3253,7 +3253,7 @@ namespace Mono.CSharp
 			var tparam_r = r as TypeParameterSpec;
 			if (tparam_l != null) {
 				if (right is NullLiteral && !tparam_l.HasSpecialStruct) {
-					left = new BoxedCast (left, TypeManager.object_type);
+					left = new BoxedCast (left, ec.BuildinTypes.Object);
 					return this;
 				}
 
@@ -3271,7 +3271,7 @@ namespace Mono.CSharp
 
 			if (tparam_r != null) {
 				if (left is NullLiteral && !tparam_r.HasSpecialStruct) {
-					right = new BoxedCast (right, TypeManager.object_type);
+					right = new BoxedCast (right, ec.BuildinTypes.Object);
 					return this;
 				}
 
@@ -5384,7 +5384,7 @@ namespace Mono.CSharp
 					} else if (iexpr_type.IsEnum || iexpr_type.IsStruct) {
 						instance_expr.Emit (ec);
 						ec.Emit (OpCodes.Box, iexpr_type);
-						t = iexpr_type = TypeManager.object_type;
+						t = iexpr_type = ec.BuildinTypes.Object;
 					} else {
 						instance_expr.Emit (ec);
 					}
@@ -6434,7 +6434,7 @@ namespace Mono.CSharp
 
 				TypeManager.void_initializearray_array_fieldhandle = TypeManager.GetPredefinedMethod (
 					helper, "InitializeArray", loc,
-					TypeManager.array_type, TypeManager.runtime_field_handle_type);
+					ec.BuildinTypes.Array, ec.BuildinTypes.RuntimeFieldHandle);
 				if (TypeManager.void_initializearray_array_fieldhandle == null)
 					return;
 			}
@@ -7112,17 +7112,12 @@ namespace Mono.CSharp
 					"The typeof operator cannot be used on the dynamic type");
 			}
 
-			type = TypeManager.type_type;
+			type = ec.BuildinTypes.Type;
 			QueriedType = texpr;
 
-			return DoResolveBase ();
-		}
-
-		protected Expression DoResolveBase ()
-		{
 			if (TypeManager.system_type_get_type_from_handle == null) {
 				TypeManager.system_type_get_type_from_handle = TypeManager.GetPredefinedMethod (
-					TypeManager.type_type, "GetTypeFromHandle", loc, TypeManager.runtime_handle_type);
+					type, "GetTypeFromHandle", loc, ec.BuildinTypes.RuntimeTypeHandle);
 			}
 
 			// Even though what is returned is a type object, it's treated as a value by the compiler.
@@ -7285,7 +7280,7 @@ namespace Mono.CSharp
 
 				mi = TypeManager.GetPredefinedMethod (declaring_type, GetMethodName, loc,
 					is_generic ?
-					new TypeSpec[] { handle_type, TypeManager.runtime_handle_type } :
+					new TypeSpec[] { handle_type, ec.BuildinTypes.RuntimeTypeHandle } :
 					new TypeSpec[] { handle_type } );
 
 				if (is_generic)
@@ -8730,7 +8725,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Value;
-			type = TypeManager.object_type;
+			type = ec.BuildinTypes.Object;
 			return this;
 		}
 
@@ -9359,12 +9354,12 @@ namespace Mono.CSharp
 					} else {
 						var t = ec.CurrentInitializerVariable.Type;
 						// LAMESPEC: The collection must implement IEnumerable only, no dynamic support
-						if (!t.ImplementsInterface (TypeManager.ienumerable_type, false) && t != InternalType.Dynamic) {
+						if (!t.ImplementsInterface (ec.BuildinTypes.IEnumerable, false) && t != InternalType.Dynamic) {
 							ec.Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
 								"object initializer because type `{1}' does not implement `{2}' interface",
 								ec.CurrentInitializerVariable.GetSignatureForError (),
 								TypeManager.CSharpName (ec.CurrentInitializerVariable.Type),
-								TypeManager.CSharpName (TypeManager.ienumerable_type));
+								TypeManager.CSharpName (ec.BuildinTypes.IEnumerable));
 							return null;
 						}
 						is_collection_initialization = true;

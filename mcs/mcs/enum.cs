@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			base_type = TypeManager.enum_type;
+			base_type = Compiler.BuildinTypes.Enum;
 			base_class = base_type_expr;
 			return null;
 		}

@@ -1511,13 +1511,13 @@ namespace Mono.CSharp {
 				ca, CallingConventions,
 				parameters.GetMetaInfo ());
 
-			spec = new MethodSpec (MemberKind.Constructor, Parent.Definition, this, TypeManager.void_type, ConstructorBuilder, parameters, ModFlags);
+			spec = new MethodSpec (MemberKind.Constructor, Parent.Definition, this, Compiler.BuildinTypes.Void, ConstructorBuilder, parameters, ModFlags);
 			
 			Parent.MemberCache.AddMember (spec);
 			
 			// It's here only to report an error
 			if (block != null && block.IsIterator) {
-				member_type = TypeManager.void_type;
+				member_type = Compiler.BuildinTypes.Void;
 				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
 			}
 
@@ -1556,7 +1556,7 @@ namespace Mono.CSharp {
 			bool emit_field_initializers = ((ModFlags & Modifiers.STATIC) != 0) ||
 				!(Initializer is ConstructorThisInitializer);
 
-			BlockContext bc = new BlockContext (this, block, TypeManager.void_type);
+			BlockContext bc = new BlockContext (this, block, Compiler.BuildinTypes.Void);
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (emit_field_initializers)
@@ -2058,7 +2058,7 @@ namespace Mono.CSharp {
 
 		protected override bool ResolveMemberType ()
 		{
-			member_type = TypeManager.void_type;
+			member_type = Compiler.BuildinTypes.Void;
 			return true;
 		}
 

@@ -344,7 +344,7 @@ namespace Mono.CSharp
 				parser_result.CreateType ();
 
 				var method = parser_result.Methods[0] as Method;
-				BlockContext bc = new BlockContext (method, method.Block, TypeManager.void_type);
+				BlockContext bc = new BlockContext (method, method.Block, ctx.BuildinTypes.Void);
 
 				try {
 					method.Block.Resolve (null, bc, method);

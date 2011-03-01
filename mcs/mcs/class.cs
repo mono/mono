@@ -1217,7 +1217,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Kind == MemberKind.Interface) {
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = Compiler.BuildinTypes.Object;
 				return true;
 			}
 
@@ -2437,7 +2437,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.AttributeUsage) {
-				if (!BaseType.IsAttribute && spec != TypeManager.attribute_type) {
+				if (!BaseType.IsAttribute && spec.BuildinType != BuildinTypeSpec.Type.Attribute) {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
@@ -2549,7 +2549,7 @@ namespace Mono.CSharp {
 
 			if (base_class == null) {
 				if (spec != TypeManager.object_type)
-					base_type = TypeManager.object_type;
+					base_type = Compiler.BuildinTypes.Object;
 			} else {
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
@@ -2571,13 +2571,19 @@ namespace Mono.CSharp {
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
-				if (base_type is BuildinTypeSpec && !(spec is BuildinTypeSpec) &&
-					(base_type == TypeManager.enum_type || base_type == TypeManager.value_type || base_type == TypeManager.multicast_delegate_type ||
-					base_type == TypeManager.delegate_type || base_type == TypeManager.array_type)) {
-					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
-						GetSignatureForError (), base_type.GetSignatureForError ());
+				switch (base_type.BuildinType) {
+				case BuildinTypeSpec.Type.Enum:
+				case BuildinTypeSpec.Type.ValueType:
+				case BuildinTypeSpec.Type.MulticastDelegate:
+				case BuildinTypeSpec.Type.Delegate:
+				case BuildinTypeSpec.Type.Array:
+					if (!(spec is BuildinTypeSpec)) {
+						Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
+							GetSignatureForError (), base_type.GetSignatureForError ());
 
-					base_type = TypeManager.object_type;
+						base_type = Compiler.BuildinTypes.Object;
+					}
+					break;
 				}
 
 				if (!IsAccessibleAs (base_type)) {

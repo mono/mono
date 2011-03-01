@@ -384,7 +384,7 @@ namespace Mono.CSharp
 
 				// Convert any internal type like dynamic or null to object
 				if (t.Kind == MemberKind.InternalCompilerType)
-					t = TypeManager.object_type;
+					t = ec.BuildinTypes.Object;
 
 				targs [i + 1] = new TypeExpression (t, loc);
 			}

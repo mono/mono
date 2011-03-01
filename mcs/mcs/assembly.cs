@@ -991,7 +991,7 @@ namespace Mono.CSharp
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
 			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
 		{
-			assembly = new Field (this, new TypeExpression (TypeManager.object_type, Location), Modifiers.PUBLIC | Modifiers.STATIC,
+			assembly = new Field (this, new TypeExpression (parent.Compiler.BuildinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);
 
 			AddField (assembly);

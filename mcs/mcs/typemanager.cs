@@ -98,11 +98,11 @@ namespace Mono.CSharp
 			Delegate = new BuildinTypeSpec (MemberKind.Class, "System", "Delegate", BuildinTypeSpec.Type.Delegate);
 			Enum = new BuildinTypeSpec (MemberKind.Class, "System", "Enum", BuildinTypeSpec.Type.Enum);
 			Array = new BuildinTypeSpec (MemberKind.Class, "System", "Array", BuildinTypeSpec.Type.Array);
-			Void = new BuildinTypeSpec (MemberKind.Void, "System", "Void", BuildinTypeSpec.Type.None);
+			Void = new BuildinTypeSpec (MemberKind.Void, "System", "Void", BuildinTypeSpec.Type.Other);
 			Type = new BuildinTypeSpec (MemberKind.Class, "System", "Type", BuildinTypeSpec.Type.Type);
 			Exception = new BuildinTypeSpec (MemberKind.Class, "System", "Exception", BuildinTypeSpec.Type.Exception);
-			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.RuntimeFieldHandle);
-			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.RuntimeTypeHandle);
+			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.Other);
+			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.Other);
 
 			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
 			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
@@ -132,21 +132,8 @@ namespace Mono.CSharp
 			TypeManager.sbyte_type = SByte;
 			TypeManager.byte_type = Byte;
 			TypeManager.ushort_type = UShort;
-			TypeManager.enum_type = Enum;
 			TypeManager.delegate_type = Delegate;
-			TypeManager.multicast_delegate_type = MulticastDelegate;
 			TypeManager.void_type = Void;
-			TypeManager.array_type = Array;
-			TypeManager.runtime_handle_type = RuntimeTypeHandle;
-			TypeManager.type_type = Type;
-			TypeManager.ienumerator_type = IEnumerator;
-			TypeManager.ienumerable_type = IEnumerable;
-			TypeManager.idisposable_type = IDisposable;
-			TypeManager.intptr_type = IntPtr;
-			TypeManager.uintptr_type = UIntPtr;
-			TypeManager.runtime_field_handle_type = RuntimeFieldHandle;
-			TypeManager.attribute_type = Attribute;
-			TypeManager.exception_type = Exception;
 
 			InternalType.Dynamic = Dynamic;
 			InternalType.Null = Null;
@@ -440,22 +427,9 @@ namespace Mono.CSharp
 	static public BuildinTypeSpec sbyte_type;
 	static public BuildinTypeSpec byte_type;
 	static public BuildinTypeSpec ushort_type;
-	static public BuildinTypeSpec enum_type;
 	static public BuildinTypeSpec delegate_type;
 	static public BuildinTypeSpec multicast_delegate_type;
 	static public BuildinTypeSpec void_type;
-	static public BuildinTypeSpec array_type;
-	static public BuildinTypeSpec runtime_handle_type;
-	static public BuildinTypeSpec type_type;
-	static public BuildinTypeSpec ienumerator_type;
-	static public BuildinTypeSpec ienumerable_type;
-	static public BuildinTypeSpec idisposable_type;
-	static public BuildinTypeSpec intptr_type;
-	static public BuildinTypeSpec uintptr_type;
-	static public BuildinTypeSpec runtime_field_handle_type;
-	static public BuildinTypeSpec attribute_type;
-	static public BuildinTypeSpec exception_type;
-
 
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;

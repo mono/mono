@@ -259,15 +259,11 @@ namespace Mono.CSharp {
 				return expr_type == InternalType.Dynamic;
 			}
 
-			if (target_type == TypeManager.value_type) {
-				return expr_type == TypeManager.enum_type;
-			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
-				//
-				// Special case: enumeration to System.Enum.
-				// System.Enum is not a value type, it is a class, so we need
-				// a boxing conversion
-				//
-				if (target_type == TypeManager.enum_type || TypeManager.IsGenericParameter (expr_type))
+			if (target_type == TypeManager.value_type)
+				return expr_type.BuildinType == BuildinTypeSpec.Type.Enum;
+
+			if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
+				if (TypeManager.IsGenericParameter (expr_type))
 					return false;
 
 				if (TypeManager.IsValueType (expr_type))
@@ -306,7 +302,7 @@ namespace Mono.CSharp {
 				}
 
 				// from an array-type to System.Array
-				if (target_type == TypeManager.array_type)
+				if (target_type.BuildinType == BuildinTypeSpec.Type.Array)
 					return true;
 
 				// from an array-type of type T to IList<T>
@@ -1013,17 +1009,16 @@ namespace Mono.CSharp {
 			// IntPtr -> uint uses int
 			// UIntPtr -> long uses ulong
 			//
-			if (source.Type == TypeManager.intptr_type) {
+			if (source.Type.BuildinType == BuildinTypeSpec.Type.IntPtr) {
 				if (target.BuildinType == BuildinTypeSpec.Type.UInt)
 					target = TypeManager.int32_type;
-			} else if (source.Type == TypeManager.uintptr_type) {
+			} else if (source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr) {
 				if (target.BuildinType == BuildinTypeSpec.Type.Long)
 					target = TypeManager.uint64_type;
-			}
-
-			// Neither A nor B are interface-types
-			if (source.Type.IsInterface)
+			} else if (source.Type.IsInterface) {
+				// Neither A nor B are interface-types
 				return;
+			}
 
 			// For a conversion operator to be applicable, it must be possible
 			// to perform a standard conversion from the source type to
@@ -1051,7 +1046,7 @@ namespace Mono.CSharp {
 				t = op.ReturnType;
 
 				// LAMESPEC: Exclude UIntPtr -> int conversion
-				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
+				if (t == TypeManager.uint32_type && source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr)
 					continue;
 
 				if (t.IsInterface)
@@ -1744,7 +1739,7 @@ namespace Mono.CSharp {
 			//
 			// From object to a generic parameter
 			//
-			if (source_type == TypeManager.object_type && TypeManager.IsGenericParameter (target_type))
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Object && TypeManager.IsGenericParameter (target_type))
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
@@ -1764,7 +1759,7 @@ namespace Mono.CSharp {
 			//
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic) {
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Object || source_type == InternalType.Dynamic) {
 				if (target_type.IsPointer)
 					return null;
 
@@ -1815,7 +1810,7 @@ namespace Mono.CSharp {
 					//
 					// From System.Array to any array-type
 					//
-					if (source_type == TypeManager.array_type)
+					if (source_type.BuildinType == BuildinTypeSpec.Type.Array)
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 					//
@@ -1939,7 +1934,7 @@ namespace Mono.CSharp {
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (ne == null && (real_target == TypeManager.intptr_type || real_target == TypeManager.uintptr_type))
+				if (ne == null && (real_target.BuildinType == BuildinTypeSpec.Type.IntPtr || real_target.BuildinType == BuildinTypeSpec.Type.UIntPtr))
 					ne = ExplicitUserConversion (ec, underlying, real_target, loc);
 
 				return ne != null ? EmptyCast.Create (ne, target_type) : null;
@@ -1949,7 +1944,7 @@ namespace Mono.CSharp {
 				//
 				// System.Enum can be unboxed to any enum-type
 				//
-				if (expr_type == TypeManager.enum_type)
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.Enum)
 					return new UnboxCast (expr, target_type);
 
 				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
@@ -1968,7 +1963,7 @@ namespace Mono.CSharp {
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.IntPtr || expr_type.BuildinType == BuildinTypeSpec.Type.UIntPtr) {
 					ne = ExplicitUserConversion (ec, expr, real_target, loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);

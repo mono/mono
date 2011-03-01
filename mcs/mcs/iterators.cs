@@ -355,8 +355,7 @@ namespace Mono.CSharp {
 
 			var list = new List<FullNamedExpression> ();
 			if (Iterator.IsEnumerable) {
-				enumerable_type = new TypeExpression (
-					TypeManager.ienumerable_type, Location);
+				enumerable_type = new TypeExpression (Compiler.BuildinTypes.IEnumerable, Location);
 				list.Add (enumerable_type);
 
 				if (TypeManager.generic_ienumerable_type != null) {
@@ -367,11 +366,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			enumerator_type = new TypeExpression (
-				TypeManager.ienumerator_type, Location);
+			enumerator_type = new TypeExpression (Compiler.BuildinTypes.IEnumerator, Location);
 			list.Add (enumerator_type);
 
-			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
+			list.Add (new TypeExpression (Compiler.BuildinTypes.IDisposable, Location));
 
 			var ienumerator_generic = Module.PredefinedTypes.IEnumeratorGeneric;
 			if (ienumerator_generic.Define ()) {
@@ -468,7 +466,7 @@ namespace Mono.CSharp {
 				type = iterator_type_expr;
 			} else {
 				name = new MemberName (name, "IEnumerator");
-				type = new TypeExpression (TypeManager.object_type, Location);
+				type = new TypeExpression (Compiler.BuildinTypes.Object, Location);
 			}
 
 			name = new MemberName (name, "Current", Location);
@@ -896,12 +894,12 @@ namespace Mono.CSharp {
 			original_iterator_type = null;
 			is_enumerable = false;
 
-			if (ret == TypeManager.ienumerable_type) {
+			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerable) {
 				original_iterator_type = TypeManager.object_type;
 				is_enumerable = true;
 				return true;
 			}
-			if (ret == TypeManager.ienumerator_type) {
+			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerator) {
 				original_iterator_type = TypeManager.object_type;
 				is_enumerable = false;
 				return true;

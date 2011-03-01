@@ -503,7 +503,7 @@ namespace Mono.CSharp
 				return;
 
 			pa = Module.PredefinedAttributes.FixedBuffer;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Type, TypeManager.int32_type))
 				return;
 
 			encoder = new AttributeEncoder ();

@@ -112,7 +112,7 @@ namespace Mono.CSharp
 					if (type.IsGeneric)
 						return false;
 
-					if (type == TypeManager.attribute_type)
+					if (type.BuildinType == BuildinTypeSpec.Type.Attribute)
 						return true;
 					
 					type = type.base_type;
@@ -534,18 +534,18 @@ namespace Mono.CSharp
 			String = 18,
 			Type = 19,
 
-			ValueType,
-			Attribute,
-			Enum,
-			Delegate,
-			MulticastDelegate,
-			Array,
+			ValueType = 20,
+			Enum = 21,
+			Delegate = 22,
+			MulticastDelegate = 23,
+			Array = 24,
+
 			IEnumerator,
 			IEnumerable,
 			IDisposable,
-			RuntimeFieldHandle,
-			RuntimeTypeHandle,
 			Exception,
+			Attribute,
+			Other,
 
 			Null,
 		}
@@ -1052,7 +1052,7 @@ namespace Mono.CSharp
 			// when replacing all occurences of dynamic with object.
 			//
 			if (a == InternalType.Dynamic || b == InternalType.Dynamic)
-				return b == TypeManager.object_type || a == TypeManager.object_type;
+				return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
 
 			if (a == null)
 				return false;
@@ -1472,7 +1472,7 @@ namespace Mono.CSharp
 			var set = mb.GetArrayMethod (
 				GetMetaInfo (), "Set",
 				CallingConventions.HasThis | CallingConventions.Standard,
-				TypeManager.void_type.GetMetaInfo (), arg_types);
+				module.Compiler.BuildinTypes.Void.GetMetaInfo (), arg_types);
 
 			return set;
 		}
@@ -1517,7 +1517,7 @@ namespace Mono.CSharp
 			var key = new TypeRankPair (element, rank);
 			if (!module.ArraysCache.TryGetValue (key, out ac)) {
 				ac = new ArrayContainer (module, element, rank) {
-					BaseType = TypeManager.array_type
+					BaseType = module.Compiler.BuildinTypes.Array
 				};
 
 				module.ArraysCache.Add (key, ac);

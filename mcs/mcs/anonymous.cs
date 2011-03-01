@@ -1787,7 +1787,7 @@ namespace Mono.CSharp {
 			Location loc = Location;
 
 			var equals_parameters = ParametersCompiled.CreateFullyResolved (
-				new Parameter (new TypeExpression (TypeManager.object_type, loc), "obj", 0, null, loc),	TypeManager.object_type);
+				new Parameter (new TypeExpression (Compiler.BuildinTypes.Object, loc), "obj", 0, null, loc), Compiler.BuildinTypes.Object);
 
 			Method equals = new Method (this, null, new TypeExpression (TypeManager.bool_type, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),

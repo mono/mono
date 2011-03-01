@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 			List<TypeParameterSpec> tparam_types = null;
 			bool iface_found = false;
 
-			spec.BaseType = TypeManager.object_type;
+			spec.BaseType = context.Module.Compiler.BuildinTypes.Object;
 
 			for (int i = 0; i < constraints.Count; ++i) {
 				var constraint = constraints[i];
@@ -503,7 +503,7 @@ namespace Mono.CSharp {
 			if (spec.HasSpecialConstructor)
 				attr |= GenericParameterAttributes.DefaultConstructorConstraint;
 
-			if (spec.BaseType != TypeManager.object_type)
+			if (spec.BaseType.BuildinType != BuildinTypeSpec.Type.Object)
 				builder.SetBaseTypeConstraint (spec.BaseType.GetMetaInfo ());
 
 			if (spec.InterfacesDefined != null)
@@ -1057,7 +1057,7 @@ namespace Mono.CSharp {
 			// For a type parameter the membercache is the union of the sets of members of the types
 			// specified as a primary constraint or secondary constraint
 			//
-			if (BaseType != TypeManager.object_type && BaseType != TypeManager.value_type)
+			if (BaseType.BuildinType != BuildinTypeSpec.Type.Object && BaseType != TypeManager.value_type)
 				cache.AddBaseType (BaseType);
 
 			if (ifaces != null) {
@@ -1068,7 +1068,7 @@ namespace Mono.CSharp {
 
 			if (targs != null) {
 				foreach (var ta in targs) {
-					if (ta.BaseType != TypeManager.object_type && ta.BaseType != TypeManager.value_type)
+					if (ta.BaseType.BuildinType != BuildinTypeSpec.Type.Object && ta.BaseType != TypeManager.value_type)
 						cache.AddBaseType (ta.BaseType);
 
 					if (ta.Interfaces != null) {

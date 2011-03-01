@@ -1060,8 +1060,9 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (Convert.ImplicitConversionExists (ec, expr, TypeManager.exception_type))
-				expr = Convert.ImplicitConversion (ec, expr, TypeManager.exception_type, loc);
+			var et = ec.BuildinTypes.Exception;
+			if (Convert.ImplicitConversionExists (ec, expr, et))
+				expr = Convert.ImplicitConversion (ec, expr, et, loc);
 			else
 				ec.Report.Error (155, expr.Location, "The type caught or thrown must be derived from System.Exception");
 
@@ -3760,7 +3761,7 @@ namespace Mono.CSharp {
 				if (get_item == null)
 					return;
 
-				LocalTemporary get_item_object = new LocalTemporary (TypeManager.object_type);
+				LocalTemporary get_item_object = new LocalTemporary (ec.BuildinTypes.Object);
 				get_item_object.EmitAssign (ec, get_item, true, false);
 				ec.Emit (OpCodes.Brfalse, default_target);
 
@@ -4067,7 +4068,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr.Type.IsGenericParameter) {
-				expr = Convert.ImplicitTypeParameterConversion (expr, TypeManager.object_type);
+				expr = Convert.ImplicitTypeParameterConversion (expr, ec.BuildinTypes.Object);
 			}
 
 			VariableReference lv = expr as VariableReference;
@@ -4094,7 +4095,7 @@ namespace Mono.CSharp {
 			// Have to keep original lock value around to unlock same location
 			// in the case the original has changed or is null
 			//
-			expr_copy = TemporaryVariableReference.Create (TypeManager.object_type, ec.CurrentBlock.Parent, loc);
+			expr_copy = TemporaryVariableReference.Create (ec.BuildinTypes.Object, ec.CurrentBlock.Parent, loc);
 			expr_copy.Resolve (ec);
 
 			//
@@ -4173,18 +4174,18 @@ namespace Mono.CSharp {
 							new ParameterData (null, Parameter.Modifier.REF)
 						},
 					new[] {
-							TypeManager.object_type,
+							rc.BuildinTypes.Object,
 							TypeManager.bool_type
 						}, false), null);
 
 				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (monitor_type, filter, true, loc);
 				if (TypeManager.void_monitor_enter_object == null) {
 					TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
-						monitor_type, "Enter", loc, TypeManager.object_type);
+						monitor_type, "Enter", loc, rc.BuildinTypes.Object);
 				}
 
 				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
-					monitor_type, "Exit", loc, TypeManager.object_type);
+					monitor_type, "Exit", loc, rc.BuildinTypes.Object);
 			}
 
 			return TypeManager.void_monitor_enter_object.Parameters.Count;
@@ -4634,7 +4635,7 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (IsGeneral)
-				ec.BeginCatchBlock (TypeManager.object_type);
+				ec.BeginCatchBlock (ec.BuildinTypes.Object);
 			else
 				ec.BeginCatchBlock (CatchType);
 
@@ -4673,7 +4674,7 @@ namespace Mono.CSharp {
 						return false;
 
 					type = te.Type;
-					if (type != TypeManager.exception_type && !TypeSpec.IsBaseClass (type, TypeManager.exception_type, false)) {
+					if (type.BuildinType != BuildinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuildinTypes.Exception, false)) {
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
 						li.Type = type;
@@ -4815,7 +4816,7 @@ namespace Mono.CSharp {
 
 			if (General != null) {
 				foreach (Catch c in Specific) {
-					if (c.CatchType != TypeManager.exception_type)
+					if (c.CatchType.BuildinType != BuildinTypeSpec.Type.Exception)
 						continue;
 
 					if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
@@ -4945,11 +4946,11 @@ namespace Mono.CSharp {
 					// Once there is dynamic used defer conversion to runtime even if we know it will never succeed
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (initializer));
-					initializer = new DynamicConversion (TypeManager.idisposable_type, 0, args, initializer.Location).Resolve (bc);
+					initializer = new DynamicConversion (bc.BuildinTypes.IDisposable, 0, args, initializer.Location).Resolve (bc);
 					if (initializer == null)
 						return null;
 
-					var var = LocalVariable.CreateCompilerGenerated (TypeManager.idisposable_type, bc.CurrentBlock, loc);
+					var var = LocalVariable.CreateCompilerGenerated (initializer.Type, bc.CurrentBlock, loc);
 					dispose_call = CreateDisposeCall (bc, var);
 					dispose_call.Resolve (bc);
 
@@ -4969,7 +4970,7 @@ namespace Mono.CSharp {
 			{
 				var type = li.Type;
 
-				if (type != TypeManager.idisposable_type && !type.ImplementsInterface (TypeManager.idisposable_type, false)) {
+				if (type.BuildinType != BuildinTypeSpec.Type.IDisposable && !type.ImplementsInterface (bc.BuildinTypes.IDisposable, false)) {
 					if (TypeManager.IsNullableType (type)) {
 						// it's handled in CreateDisposeCall
 						return;
@@ -4990,14 +4991,15 @@ namespace Mono.CSharp {
 				var type = lv.Type;
 				var loc = lv.Location;
 
+				var idt = bc.BuildinTypes.IDisposable;
 				if (TypeManager.void_dispose_void == null) {
 					TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-						TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
+						idt, "Dispose", loc, TypeSpec.EmptyTypes);
 				}
 
-				var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
+				var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
 				dispose_mg.InstanceExpression = TypeManager.IsNullableType (type) ?
-					new Cast (new TypeExpression (TypeManager.idisposable_type, loc), lvr, loc).Resolve (bc) :
+					new Cast (new TypeExpression (idt, loc), lvr, loc).Resolve (bc) :
 					lvr;
 
 				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
@@ -5347,9 +5349,11 @@ namespace Mono.CSharp {
 
 				protected override Statement CreateDisposeCall (BlockContext bc, LocalVariable lv)
 				{
+					var idt = bc.BuildinTypes.IDisposable;
+
 					if (TypeManager.void_dispose_void == null) {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-							TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
+							idt, "Dispose", loc, TypeSpec.EmptyTypes);
 					}
 
 					//
@@ -5358,14 +5362,14 @@ namespace Mono.CSharp {
 					// if ((temp = vr as IDisposable) != null) temp.Dispose ();
 					//
 
-					var dispose_variable = LocalVariable.CreateCompilerGenerated (TypeManager.idisposable_type, bc.CurrentBlock, loc);
+					var dispose_variable = LocalVariable.CreateCompilerGenerated (idt, bc.CurrentBlock, loc);
 
 					var idisaposable_test = new Binary (Binary.Operator.Inequality, new CompilerAssign (
 						dispose_variable.CreateReferenceExpression (bc, loc),
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
 						loc), new NullLiteral (loc), loc);
 
-					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
+					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
 					dispose_mg.InstanceExpression = dispose_variable.CreateReferenceExpression (bc, loc);
 
 					Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
@@ -5436,7 +5440,7 @@ namespace Mono.CSharp {
 					if (ifaces != null) {
 						foreach (var iface in ifaces) {
 							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
-								if (iface_candidate != null && iface_candidate != TypeManager.ienumerable_type) {
+								if (iface_candidate != null && iface_candidate.BuildinType != BuildinTypeSpec.Type.IEnumerable) {
 									rc.Report.SymbolRelatedToPreviousError (expr.Type);
 									rc.Report.Error (1640, loc,
 										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
@@ -5449,7 +5453,7 @@ namespace Mono.CSharp {
 								continue;
 							}
 
-							if (iface == TypeManager.ienumerable_type && iface_candidate == null) {
+							if (iface.BuildinType == BuildinTypeSpec.Type.IEnumerable && iface_candidate == null) {
 								iface_candidate = iface;
 							}
 						}
@@ -5514,7 +5518,7 @@ namespace Mono.CSharp {
 				bool is_dynamic = expr.Type == InternalType.Dynamic;
 
 				if (is_dynamic) {
-					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
+					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuildinTypes.IEnumerable, loc);
 				} else if (TypeManager.IsNullableType (expr.Type)) {
 					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
 				}
@@ -5576,7 +5580,7 @@ namespace Mono.CSharp {
 				//
 				// Add Dispose method call when enumerator can be IDisposable
 				//
-				if (!enum_type.ImplementsInterface (TypeManager.idisposable_type, false)) {
+				if (!enum_type.ImplementsInterface (ec.BuildinTypes.IDisposable, false)) {
 					if (!enum_type.IsSealed && !TypeManager.IsValueType (enum_type)) {
 						//
 						// Runtime Dispose check
