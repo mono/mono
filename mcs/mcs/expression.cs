@@ -147,22 +147,26 @@ namespace Mono.CSharp
 			switch (Oper){
 			case Operator.UnaryPlus:
 				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type)
+				switch (expr_type.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
 					return new IntConstant (((ByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.sbyte_type)
+				case BuildinTypeSpec.Type.SByte:
 					return new IntConstant (((SByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new IntConstant (((ShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new IntConstant (((UShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new IntConstant (((CharConstant)e).Value, e.Location);
 				
 				// Predefined operators
-				if (expr_type == TypeManager.int32_type || expr_type == TypeManager.uint32_type ||
-				    expr_type == TypeManager.int64_type || expr_type == TypeManager.uint64_type ||
-				    expr_type == TypeManager.float_type || expr_type == TypeManager.double_type ||
-				    expr_type == TypeManager.decimal_type) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Long:
+				case BuildinTypeSpec.Type.ULong:
+				case BuildinTypeSpec.Type.Float:
+				case BuildinTypeSpec.Type.Double:
+				case BuildinTypeSpec.Type.Decimal:
 					return e;
 				}
 				
@@ -170,81 +174,81 @@ namespace Mono.CSharp
 				
 			case Operator.UnaryNegation:
 				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type)
-					return new IntConstant (-((ByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.sbyte_type)
-					return new IntConstant (-((SByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.short_type)
-					return new IntConstant (-((ShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.ushort_type)
-					return new IntConstant (-((UShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.char_type)
-					return new IntConstant (-((CharConstant)e).Value, e.Location);
-				
+				switch (expr_type.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
+					return new IntConstant (-((ByteConstant) e).Value, e.Location);
+				case BuildinTypeSpec.Type.SByte:
+					return new IntConstant (-((SByteConstant) e).Value, e.Location);
+				case BuildinTypeSpec.Type.Short:
+					return new IntConstant (-((ShortConstant) e).Value, e.Location);
+				case BuildinTypeSpec.Type.UShort:
+					return new IntConstant (-((UShortConstant) e).Value, e.Location);
+				case BuildinTypeSpec.Type.Char:
+					return new IntConstant (-((CharConstant) e).Value, e.Location);
+
 				// Predefined operators
-				if (expr_type == TypeManager.int32_type) {
-					int value = ((IntConstant)e).Value;
-					if (value == int.MinValue) {
+				case BuildinTypeSpec.Type.Int:
+					int ivalue = ((IntConstant) e).Value;
+					if (ivalue == int.MinValue) {
 						if (ec.ConstantCheckState) {
 							ConstantFold.Error_CompileTimeOverflow (ec, loc);
 							return null;
 						}
 						return e;
 					}
-					return new IntConstant (-value, e.Location);
-				}
-				if (expr_type == TypeManager.int64_type) {
-					long value = ((LongConstant)e).Value;
-					if (value == long.MinValue) {
+					return new IntConstant (-ivalue, e.Location);
+
+				case BuildinTypeSpec.Type.Long:
+					long lvalue = ((LongConstant) e).Value;
+					if (lvalue == long.MinValue) {
 						if (ec.ConstantCheckState) {
 							ConstantFold.Error_CompileTimeOverflow (ec, loc);
 							return null;
 						}
 						return e;
 					}
-					return new LongConstant (-value, e.Location);
-				}
-				
-				if (expr_type == TypeManager.uint32_type) {
+					return new LongConstant (-lvalue, e.Location);
+
+				case BuildinTypeSpec.Type.UInt:
 					UIntLiteral uil = e as UIntLiteral;
 					if (uil != null) {
 						if (uil.Value == int.MaxValue + (uint) 1)
 							return new IntLiteral (int.MinValue, e.Location);
 						return new LongLiteral (-uil.Value, e.Location);
 					}
-					return new LongConstant (-((UIntConstant)e).Value, e.Location);
-				}
-				
-				if (expr_type == TypeManager.uint64_type) {
+					return new LongConstant (-((UIntConstant) e).Value, e.Location);
+
+
+				case BuildinTypeSpec.Type.ULong:
 					ULongLiteral ull = e as ULongLiteral;
 					if (ull != null && ull.Value == 9223372036854775808)
 						return new LongLiteral (long.MinValue, e.Location);
 					return null;
-				}
-				
-				if (expr_type == TypeManager.float_type) {
+
+				case BuildinTypeSpec.Type.Float:
 					FloatLiteral fl = e as FloatLiteral;
 					// For better error reporting
 					if (fl != null)
 						return new FloatLiteral (-fl.Value, e.Location);
 
-					return new FloatConstant (-((FloatConstant)e).Value, e.Location);
-				}
-				if (expr_type == TypeManager.double_type) {
+					return new FloatConstant (-((FloatConstant) e).Value, e.Location);
+
+				case BuildinTypeSpec.Type.Double:
 					DoubleLiteral dl = e as DoubleLiteral;
 					// For better error reporting
 					if (dl != null)
 						return new DoubleLiteral (-dl.Value, e.Location);
 
-					return new DoubleConstant (-((DoubleConstant)e).Value, e.Location);
+					return new DoubleConstant (-((DoubleConstant) e).Value, e.Location);
+
+				case BuildinTypeSpec.Type.Decimal:
+					return new DecimalConstant (-((DecimalConstant) e).Value, e.Location);
 				}
-				if (expr_type == TypeManager.decimal_type)
-					return new DecimalConstant (-((DecimalConstant)e).Value, e.Location);
-				
+
 				return null;
 				
 			case Operator.LogicalNot:
-				if (expr_type != TypeManager.bool_type)
+				if (expr_type.BuildinType != BuildinTypeSpec.Type.Bool)
 					return null;
 				
 				bool b = (bool)e.GetValue ();
@@ -252,25 +256,26 @@ namespace Mono.CSharp
 				
 			case Operator.OnesComplement:
 				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type)
+				switch (expr_type.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
 					return new IntConstant (~((ByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.sbyte_type)
+				case BuildinTypeSpec.Type.SByte:
 					return new IntConstant (~((SByteConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new IntConstant (~((ShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new IntConstant (~((UShortConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new IntConstant (~((CharConstant)e).Value, e.Location);
 				
 				// Predefined operators
-				if (expr_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new IntConstant (~((IntConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new UIntConstant (~((UIntConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new LongConstant (~((LongConstant)e).Value, e.Location);
-				if (expr_type == TypeManager.uint64_type){
+				case BuildinTypeSpec.Type.ULong:
 					return new ULongConstant (~((ULongConstant)e).Value, e.Location);
 				}
 				if (e is EnumConstant) {
@@ -412,13 +417,18 @@ namespace Mono.CSharp
 		static Expression DoNumericPromotion (Operator op, Expression expr)
 		{
 			TypeSpec expr_type = expr.Type;
-			if ((op == Operator.UnaryPlus || op == Operator.UnaryNegation || op == Operator.OnesComplement) &&
-				expr_type == TypeManager.byte_type || expr_type == TypeManager.sbyte_type ||
-				expr_type == TypeManager.short_type || expr_type == TypeManager.ushort_type ||
-				expr_type == TypeManager.char_type)
-				return Convert.ImplicitNumericConversion (expr, TypeManager.int32_type);
+			if (op == Operator.UnaryPlus || op == Operator.UnaryNegation || op == Operator.OnesComplement) {
+				switch (expr_type.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.Char:
+					return Convert.ImplicitNumericConversion (expr, TypeManager.int32_type);
+				}
+			}
 
-			if (op == Operator.UnaryNegation && expr_type == TypeManager.uint32_type)
+			if (op == Operator.UnaryNegation && expr_type.BuildinType == BuildinTypeSpec.Type.UInt)
 				return Convert.ImplicitNumericConversion (expr, TypeManager.int64_type);
 
 			return expr;
@@ -564,7 +574,7 @@ namespace Mono.CSharp
 
 		static bool IsFloat (TypeSpec t)
 		{
-			return t == TypeManager.float_type || t == TypeManager.double_type;
+			return t.BuildinType == BuildinTypeSpec.Type.Double || t.BuildinType == BuildinTypeSpec.Type.Float;
 		}
 
 		//
@@ -2668,9 +2678,13 @@ namespace Mono.CSharp
 				//
 				// A compile-time error occurs if the other operand is of type sbyte, short, int, or long
 				//
-				if (type == TypeManager.int32_type || type == TypeManager.int64_type ||
-					type == TypeManager.short_type || type == TypeManager.sbyte_type)
+				switch (type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.Long:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.SByte:
 					return false;
+				}
 			}
 
 			temp = Convert.ImplicitNumericConversion (prim_expr, type);
@@ -4231,7 +4245,7 @@ namespace Mono.CSharp
 					element = op_type;
 			}
 
-			int size = GetTypeSize (element);
+			int size = BuildinTypeSpec.GetSize(element);
 			TypeSpec rtype = right.Type;
 			
 			if ((op & Binary.Operator.SubtractionMask) != 0 && rtype.IsPointer){
@@ -4289,11 +4303,16 @@ namespace Mono.CSharp
 				}
 
 				right.Emit (ec);
-				if (rtype == TypeManager.sbyte_type || rtype == TypeManager.byte_type ||
-					rtype == TypeManager.short_type || rtype == TypeManager.ushort_type) {
+				switch (rtype.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.UShort:
 					ec.Emit (OpCodes.Conv_I);
-				} else if (rtype == TypeManager.uint32_type) {
+					break;
+				case BuildinTypeSpec.Type.UInt:
 					ec.Emit (OpCodes.Conv_U);
+					break;
 				}
 
 				if (right_const == null && size != 1){
@@ -4301,16 +4320,16 @@ namespace Mono.CSharp
 						ec.Emit (OpCodes.Sizeof, element);
 					else 
 						ec.EmitInt (size);
-					if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+					if (rtype.BuildinType == BuildinTypeSpec.Type.Long || rtype.BuildinType == BuildinTypeSpec.Type.ULong)
 						ec.Emit (OpCodes.Conv_I8);
 
 					Binary.EmitOperatorOpcode (ec, Binary.Operator.Multiply, rtype);
 				}
 
 				if (left_const == null) {
-					if (rtype == TypeManager.int64_type)
+					if (rtype.BuildinType == BuildinTypeSpec.Type.Long)
 						ec.Emit (OpCodes.Conv_I);
-					else if (rtype == TypeManager.uint64_type)
+					else if (rtype.BuildinType == BuildinTypeSpec.Type.ULong)
 						ec.Emit (OpCodes.Conv_U);
 
 					Binary.EmitOperatorOpcode (ec, op, op_type);
@@ -5543,32 +5562,35 @@ namespace Mono.CSharp
 		/// </summary>
 		public static Constant Constantify (TypeSpec t, Location loc)
 		{
-			if (t == TypeManager.int32_type)
+			switch (t.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
 				return new IntConstant (0, loc);
-			if (t == TypeManager.uint32_type)
+			case BuildinTypeSpec.Type.UInt:
 				return new UIntConstant (0, loc);
-			if (t == TypeManager.int64_type)
+			case BuildinTypeSpec.Type.Long:
 				return new LongConstant (0, loc);
-			if (t == TypeManager.uint64_type)
+			case BuildinTypeSpec.Type.ULong:
 				return new ULongConstant (0, loc);
-			if (t == TypeManager.float_type)
+			case BuildinTypeSpec.Type.Float:
 				return new FloatConstant (0, loc);
-			if (t == TypeManager.double_type)
+			case BuildinTypeSpec.Type.Double:
 				return new DoubleConstant (0, loc);
-			if (t == TypeManager.short_type)
+			case BuildinTypeSpec.Type.Short:
 				return new ShortConstant (0, loc);
-			if (t == TypeManager.ushort_type)
+			case BuildinTypeSpec.Type.UShort:
 				return new UShortConstant (0, loc);
-			if (t == TypeManager.sbyte_type)
+			case BuildinTypeSpec.Type.SByte:
 				return new SByteConstant (0, loc);
-			if (t == TypeManager.byte_type)
+			case BuildinTypeSpec.Type.Byte:
 				return new ByteConstant (0, loc);
-			if (t == TypeManager.char_type)
+			case BuildinTypeSpec.Type.Char:
 				return new CharConstant ('\0', loc);
-			if (t == TypeManager.bool_type)
+			case BuildinTypeSpec.Type.Bool:
 				return new BoolConstant (false, loc);
-			if (t == TypeManager.decimal_type)
+			case BuildinTypeSpec.Type.Decimal:
 				return new DecimalConstant (0, loc);
+			}
+
 			if (TypeManager.IsEnumType (t))
 				return new EnumConstant (Constantify (EnumSpec.GetUnderlyingType (t), loc), t);
 			if (TypeManager.IsNullableType (t))
@@ -6311,7 +6333,7 @@ namespace Mono.CSharp
 			if (TypeManager.IsEnumType (element_type))
 				element_type = EnumSpec.GetUnderlyingType (element_type);
 
-			factor = GetTypeSize (element_type);
+			factor = BuildinTypeSpec.GetSize (element_type);
 			if (factor == 0)
 				throw new Exception ("unrecognized type in MakeByteBlob: " + element_type);
 
@@ -7438,7 +7460,7 @@ namespace Mono.CSharp
 			if (TypeManager.IsEnumType (type_queried))
 				type_queried = EnumSpec.GetUnderlyingType (type_queried);
 
-			int size_of = GetTypeSize (type_queried);
+			int size_of = BuildinTypeSpec.GetSize (type_queried);
 			if (size_of > 0) {
 				return new IntConstant (size_of, loc).Resolve (ec);
 			}
@@ -9123,7 +9145,7 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			int size = GetTypeSize (otype);
+			int size = BuildinTypeSpec.GetSize (otype);
 
 			count.Emit (ec);
 

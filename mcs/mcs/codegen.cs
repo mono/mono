@@ -361,32 +361,46 @@ namespace Mono.CSharp
 			}
 
 			var type = ac.Element;
-			if (TypeManager.IsEnumType (type))
+			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.Bool:
 				Emit (OpCodes.Ldelem_U1);
-			else if (type == TypeManager.sbyte_type)
+				return;
+			case BuildinTypeSpec.Type.SByte:
 				Emit (OpCodes.Ldelem_I1);
-			else if (type == TypeManager.short_type)
+				return;
+			case BuildinTypeSpec.Type.Short:
 				Emit (OpCodes.Ldelem_I2);
-			else if (type == TypeManager.ushort_type || type == TypeManager.char_type)
+				return;
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Char:
 				Emit (OpCodes.Ldelem_U2);
-			else if (type == TypeManager.int32_type)
+				return;
+			case BuildinTypeSpec.Type.Int:
 				Emit (OpCodes.Ldelem_I4);
-			else if (type == TypeManager.uint32_type)
+				return;
+			case BuildinTypeSpec.Type.UInt:
 				Emit (OpCodes.Ldelem_U4);
-			else if (type == TypeManager.uint64_type)
+				return;
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Long:
 				Emit (OpCodes.Ldelem_I8);
-			else if (type == TypeManager.int64_type)
-				Emit (OpCodes.Ldelem_I8);
-			else if (type == TypeManager.float_type)
+				return;
+			case BuildinTypeSpec.Type.Float:
 				Emit (OpCodes.Ldelem_R4);
-			else if (type == TypeManager.double_type)
+				return;
+			case BuildinTypeSpec.Type.Double:
 				Emit (OpCodes.Ldelem_R8);
-			else if (type == TypeManager.intptr_type)
+				return;
+			case BuildinTypeSpec.Type.IntPtr:
 				Emit (OpCodes.Ldelem_I);
-			else if (TypeManager.IsStruct (type)) {
+				return;
+			}
+
+			if (TypeManager.IsStruct (type)) {
 				Emit (OpCodes.Ldelema, type);
 				Emit (OpCodes.Ldobj, type);
 			} else if (type.IsGenericParameter) {
@@ -412,24 +426,40 @@ namespace Mono.CSharp
 
 			var type = ac.Element;
 
-			if (type.IsEnum)
+			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.byte_type || type == TypeManager.sbyte_type || type == TypeManager.bool_type)
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Bool:
 				Emit (OpCodes.Stelem_I1);
-			else if (type == TypeManager.short_type || type == TypeManager.ushort_type || type == TypeManager.char_type)
+				return;
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Char:
 				Emit (OpCodes.Stelem_I2);
-			else if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				return;
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
 				Emit (OpCodes.Stelem_I4);
-			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				return;
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.ULong:
 				Emit (OpCodes.Stelem_I8);
-			else if (type == TypeManager.float_type)
+				return;
+			case BuildinTypeSpec.Type.Float:
 				Emit (OpCodes.Stelem_R4);
-			else if (type == TypeManager.double_type)
+				return;
+			case BuildinTypeSpec.Type.Double:
 				Emit (OpCodes.Stelem_R8);
-			else if (type == TypeManager.intptr_type)
+				return;
+			case BuildinTypeSpec.Type.IntPtr:
 				Emit (OpCodes.Stobj, type);
-			else if (TypeManager.IsStruct (type))
+				return;
+			}
+
+			if (TypeManager.IsStruct (type))
 				Emit (OpCodes.Stobj, type);
 			else if (type.IsGenericParameter)
 				Emit (OpCodes.Stelem, type);
@@ -511,42 +541,50 @@ namespace Mono.CSharp
 		//
 		// Load the object from the pointer.  
 		//
-		public void EmitLoadFromPtr (TypeSpec t)
+		public void EmitLoadFromPtr (TypeSpec type)
 		{
-			if (t == TypeManager.int32_type)
+			if (type.Kind == MemberKind.Enum)
+				type = EnumSpec.GetUnderlyingType (type);
+
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
 				ig.Emit (OpCodes.Ldind_I4);
-			else if (t == TypeManager.uint32_type)
+				return;
+			case BuildinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Ldind_U4);
-			else if (t == TypeManager.short_type)
+				return;
+			case BuildinTypeSpec.Type.Short:
 				ig.Emit (OpCodes.Ldind_I2);
-			else if (t == TypeManager.ushort_type)
+				return;
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Char:
 				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.char_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.byte_type)
+				return;
+			case BuildinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldind_U1);
-			else if (t == TypeManager.sbyte_type)
+				return;
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.uint64_type)
+				return;
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Long:
 				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.int64_type)
-				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.float_type)
+				return;
+			case BuildinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Ldind_R4);
-			else if (t == TypeManager.double_type)
+				return;
+			case BuildinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Ldind_R8);
-			else if (t == TypeManager.bool_type)
-				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.intptr_type)
+				return;
+			case BuildinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Ldind_I);
-			else if (t.IsEnum) {
-				if (t == TypeManager.enum_type)
-					ig.Emit (OpCodes.Ldind_Ref);
-				else
-					EmitLoadFromPtr (EnumSpec.GetUnderlyingType (t));
-			} else if (TypeManager.IsStruct (t) || TypeManager.IsGenericParameter (t))
-				Emit (OpCodes.Ldobj, t);
-			else if (t.IsPointer)
+				return;
+			}
+
+			if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+				Emit (OpCodes.Ldobj, type);
+			else if (type.IsPointer)
 				ig.Emit (OpCodes.Ldind_I);
 			else
 				ig.Emit (OpCodes.Ldind_Ref);
@@ -560,23 +598,37 @@ namespace Mono.CSharp
 			if (type.IsEnum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Stind_I4);
-			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				return;
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.ULong:
 				ig.Emit (OpCodes.Stind_I8);
-			else if (type == TypeManager.char_type || type == TypeManager.short_type ||
-				 type == TypeManager.ushort_type)
+				return;
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
 				ig.Emit (OpCodes.Stind_I2);
-			else if (type == TypeManager.float_type)
+				return;
+			case BuildinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Stind_R4);
-			else if (type == TypeManager.double_type)
+				return;
+			case BuildinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Stind_R8);
-			else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
-				 type == TypeManager.bool_type)
+				return;
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Stind_I1);
-			else if (type == TypeManager.intptr_type)
+				return;
+			case BuildinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Stind_I);
-			else if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+				return;
+			}
+
+			if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
 				Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);

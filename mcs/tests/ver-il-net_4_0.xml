@@ -39936,7 +39936,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>77</size>
+        <size>76</size>
       </method>
       <method name="Void Compile()">
         <size>19</size>
@@ -46292,6 +46292,16 @@
     <type name="Program">
       <method name="Int32 Main()">
         <size>55</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-808.cs">
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>52</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

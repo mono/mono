@@ -487,143 +487,172 @@ namespace Mono.CSharp {
 
 		static Expression ImplicitNumericConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
-			if (expr_type == TypeManager.sbyte_type){
+			switch (expr_type.BuildinType) {
+			case BuildinTypeSpec.Type.SByte:
 				//
 				// From sbyte to short, int, long, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.byte_type){
+				}
+
+				break;
+			case BuildinTypeSpec.Type.Byte:
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type ||
-				    target_type == TypeManager.short_type || target_type == TypeManager.ushort_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.UShort:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-
-				if (target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-
-			} else if (expr_type == TypeManager.short_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Short:
 				//
 				// From short to int, long, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-
-			} else if (expr_type == TypeManager.ushort_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.UShort:
 				//
 				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				
-				if (target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.int32_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Int:
 				//
 				// From int to long, float, double, decimal
 				//
-				if (target_type == TypeManager.int64_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.uint32_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.UInt:
 				//
 				// From uint to long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int64_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.int64_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Long:
 				//
-				// From long/ulong to float, double
+				// From long to float, double, decimal
 				//
-				if (target_type == TypeManager.double_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.uint64_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.ULong:
 				//
-				// From ulong to float, double
+				// From ulong to float, double, decimal
 				//
-				if (target_type == TypeManager.double_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.char_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Char:
 				//
 				// From char to ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if ((target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type))
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				if (target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.double_type)
+				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.float_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Float:
 				//
 				// float to double
 				//
 				if (target_type == TypeManager.double_type)
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				break;
 			}
 
 			return null;
@@ -717,23 +746,28 @@ namespace Mono.CSharp {
 			//
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
-
-				if (target_type == TypeManager.sbyte_type){
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					if (value >= SByte.MinValue && value <= SByte.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.byte_type){
+					break;
+				case BuildinTypeSpec.Type.Byte:
 					if (value >= 0 && value <= Byte.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.short_type){
+					break;
+				case BuildinTypeSpec.Type.Short:
 					if (value >= Int16.MinValue && value <= Int16.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.ushort_type){
+					break;
+				case BuildinTypeSpec.Type.UShort:
 					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.uint32_type){
+					break;
+				case BuildinTypeSpec.Type.UInt:
 					if (value >= 0)
 						return true;
-				} else if (target_type == TypeManager.uint64_type){
+					break;
+				case BuildinTypeSpec.Type.ULong:
 					 //
 					 // we can optimize this case: a positive int32
 					 // always fits on a uint64.  But we need an opcode
@@ -741,10 +775,12 @@ namespace Mono.CSharp {
 					 //
 					if (value >= 0)
 						return true;
+
+					break;
 				}
 			}
 
-			if (expr is LongConstant && target_type == TypeManager.uint64_type){
+			if (expr is LongConstant && target_type.BuildinType == BuildinTypeSpec.Type.ULong){
 				//
 				// Try the implicit constant expression conversion
 				// from long to ulong, instead of a nice routine,
@@ -1425,249 +1461,271 @@ namespace Mono.CSharp {
 		public static Expression ExplicitNumericConversion (Expression expr, TypeSpec target_type)
 		{
 			TypeSpec expr_type = expr.Type;
-			TypeSpec real_target_type = target_type;
-
-			if (expr_type == TypeManager.sbyte_type){
+			switch (expr_type.BuildinType) {
+			case BuildinTypeSpec.Type.SByte:
 				//
 				// From sbyte to byte, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.byte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U1);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
+				case BuildinTypeSpec.Type.UIntPtr:
 					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I1_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+					return new OperatorCast (u8e, target_type, true);
 				}
-			} else if (expr_type == TypeManager.byte_type){
+				break;
+			case BuildinTypeSpec.Type.Byte:
 				//
 				// From byte to sbyte and char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U1_I1);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U1_CH);
-			} else if (expr_type == TypeManager.short_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Short:
 				//
 				// From short to sbyte, byte, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U1);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
+				case BuildinTypeSpec.Type.UIntPtr:
 					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+					return new OperatorCast (u8e, target_type, true);
 				}
-			} else if (expr_type == TypeManager.ushort_type){
+				break;
+			case BuildinTypeSpec.Type.UShort:
 				//
 				// From ushort to sbyte, byte, short, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I2);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_CH);
-			} else if (expr_type == TypeManager.int32_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Int:
 				//
 				// From int to sbyte, byte, short, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
+				case BuildinTypeSpec.Type.UIntPtr:
 					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+					return new OperatorCast (u8e, target_type, true);
 				}
-			} else if (expr_type == TypeManager.uint32_type){
+				break;
+			case BuildinTypeSpec.Type.UInt:
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I4);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_CH);
-			} else if (expr_type == TypeManager.int64_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Long:
 				//
 				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_CH);
-			} else if (expr_type == TypeManager.uint64_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.ULong:
 				//
 				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.intptr_type){
-					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type),
-								 TypeManager.intptr_type, true);
+				case BuildinTypeSpec.Type.IntPtr:
+					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type), target_type, true);
 				}
-			} else if (expr_type == TypeManager.char_type){
+				break;
+			case BuildinTypeSpec.Type.Char:
 				//
 				// From char to sbyte, byte, short
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I2);
-			} else if (expr_type == TypeManager.float_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Float:
 				//
 				// From float to sbyte, byte, short,
 				// ushort, int, uint, long, ulong, char
 				// or decimal
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I8);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_CH);
-				if (real_target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return new CastToDecimal (expr, true);
-			} else if (expr_type == TypeManager.double_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.Double:
 				//
 				// From double to sbyte, byte, short,
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I8);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_CH);
-				if (real_target_type == TypeManager.float_type)
+				case BuildinTypeSpec.Type.Float:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
-				if (real_target_type == TypeManager.decimal_type)
+				case BuildinTypeSpec.Type.Decimal:
 					return new CastToDecimal (expr, true);
-			} else if (expr_type == TypeManager.uintptr_type){
+				}
+				break;
+			case BuildinTypeSpec.Type.UIntPtr:
 				//
 				// Various built-in conversions that belonged in the class library
 				//
 				// from uintptr to sbyte, short, int32
 				//
-				if (real_target_type == TypeManager.sbyte_type){
-					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
-					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I1);
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
+					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I1);
+				case BuildinTypeSpec.Type.Short:
+					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I2);
+				case BuildinTypeSpec.Type.Int:
+					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true), target_type);
 				}
-				if (real_target_type == TypeManager.short_type){
-					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
-					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I2);
+				break;
+			case BuildinTypeSpec.Type.IntPtr:
+				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong) {
+					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true), target_type);
 				}
-				if (real_target_type == TypeManager.int32_type){
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true),
-							      TypeManager.int32_type);
-				}
-			} else if (expr_type == TypeManager.intptr_type){
-				if (real_target_type == TypeManager.uint64_type){
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true),
-							      TypeManager.uint64_type);
-				}
-			} else if (expr_type == TypeManager.decimal_type) {
+				break;
+			case BuildinTypeSpec.Type.Decimal:
 				return new CastFromDecimal (expr, target_type).Resolve ();
 			}
+
 			return null;
 		}
 
@@ -1958,40 +2016,44 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer)
 					return EmptyCast.Create (expr, target_type);
 
-				if (expr_type == TypeManager.sbyte_type ||
-					expr_type == TypeManager.short_type ||
-					expr_type == TypeManager.int32_type)
+				switch (expr_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.Int:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I);
 
-				if (expr_type == TypeManager.ushort_type ||
-					expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Byte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
 
-				if (expr_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I);
 
-				if (expr_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I);
+				}
 			}
 
 			if (expr_type.IsPointer){
-				if (target_type == TypeManager.sbyte_type)
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
-				if (target_type == TypeManager.byte_type)
+				case BuildinTypeSpec.Type.Byte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
-				if (target_type == TypeManager.short_type)
+				case BuildinTypeSpec.Type.Short:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (target_type == TypeManager.ushort_type)
+				case BuildinTypeSpec.Type.UShort:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
-				if (target_type == TypeManager.int32_type)
+				case BuildinTypeSpec.Type.Int:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				if (target_type == TypeManager.uint32_type)
+				case BuildinTypeSpec.Type.UInt:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
-				if (target_type == TypeManager.int64_type)
+				case BuildinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I_I8);
-				if (target_type == TypeManager.uint64_type)
+				case BuildinTypeSpec.Type.ULong:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				}
 			}
 			return null;
 		}

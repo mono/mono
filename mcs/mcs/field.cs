@@ -445,7 +445,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			int type_size = Expression.GetTypeSize (MemberType);
+			int type_size = BuildinTypeSpec.GetSize (MemberType);
 
 			if (buffer_size > int.MaxValue / type_size) {
 				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
@@ -570,13 +570,20 @@ namespace Mono.CSharp
 			if (TypeManager.IsReferenceType (MemberType))
 				return true;
 
-			if (MemberType == TypeManager.bool_type || MemberType == TypeManager.char_type ||
-				MemberType == TypeManager.sbyte_type || MemberType == TypeManager.byte_type ||
-				MemberType == TypeManager.short_type || MemberType == TypeManager.ushort_type ||
-				MemberType == TypeManager.int32_type || MemberType == TypeManager.uint32_type ||
-				MemberType == TypeManager.float_type ||
-				MemberType == TypeManager.intptr_type || MemberType == TypeManager.uintptr_type)
+			switch (MemberType.BuildinType) {
+			case BuildinTypeSpec.Type.Bool:
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Float:
+			case BuildinTypeSpec.Type.UIntPtr:
+			case BuildinTypeSpec.Type.IntPtr:
 				return true;
+			}
 
 			if (MemberType.IsEnum)
 				return true;

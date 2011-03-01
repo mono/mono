@@ -46,10 +46,20 @@ namespace Mono.CSharp {
 
 		static bool IsValidEnumType (TypeSpec t)
 		{
-			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
-				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||
-				t == TypeManager.ushort_type || t == TypeManager.uint64_type || t == TypeManager.char_type ||
-				TypeManager.IsEnumType (t));
+			switch (t.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.UShort:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Char:
+				return true;
+			default:
+				return t.IsEnum;
+			}
 		}
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)

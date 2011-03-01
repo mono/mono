@@ -799,34 +799,6 @@ namespace Mono.CSharp {
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
 		}
 
-	
-		//
-		// Returns the size of type `t' if known, otherwise, 0
-		//
-		public static int GetTypeSize (TypeSpec t)
-		{
-			if (t == TypeManager.int32_type ||
-			    t == TypeManager.uint32_type ||
-			    t == TypeManager.float_type)
-			        return 4;
-			else if (t == TypeManager.int64_type ||
-				 t == TypeManager.uint64_type ||
-				 t == TypeManager.double_type)
-			        return 8;
-			else if (t == TypeManager.byte_type ||
-				 t == TypeManager.sbyte_type ||
-				 t == TypeManager.bool_type) 	
-			        return 1;
-			else if (t == TypeManager.short_type ||
-				 t == TypeManager.char_type ||
-				 t == TypeManager.ushort_type)
-				return 2;
-			else if (t == TypeManager.decimal_type)
-				return 16;
-			else
-				return 0;
-		}
-	
 		protected void Error_CannotModifyIntermediateExpressionValue (ResolveContext ec)
 		{
 			ec.Report.SymbolRelatedToPreviousError (type);
@@ -3494,40 +3466,64 @@ namespace Mono.CSharp {
 			if (p == null || q == null)
 				throw new InternalErrorException ("BetterTypeConversion got a null conversion");
 
-			if (p == TypeManager.int32_type) {
-				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
+			switch (p.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+				if (q.BuildinType == BuildinTypeSpec.Type.UInt || q.BuildinType == BuildinTypeSpec.Type.ULong)
 					return 1;
-			} else if (p == TypeManager.int64_type) {
-				if (q == TypeManager.uint64_type)
+				break;
+			case BuildinTypeSpec.Type.Long:
+				if (q.BuildinType == BuildinTypeSpec.Type.ULong)
 					return 1;
-			} else if (p == TypeManager.sbyte_type) {
-				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
-					q == TypeManager.uint32_type || q == TypeManager.uint64_type)
+				break;
+			case BuildinTypeSpec.Type.SByte:
+				switch (q.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.ULong:
 					return 1;
-			} else if (p == TypeManager.short_type) {
-				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
-					q == TypeManager.uint64_type)
+				}
+				break;
+			case BuildinTypeSpec.Type.Short:
+				switch (q.BuildinType) {
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.ULong:
 					return 1;
-			} else if (p == InternalType.Dynamic) {
+				}
+				break;
+			case BuildinTypeSpec.Type.Dynamic:
 				// Dynamic is never better
 				return 2;
 			}
 
-			if (q == TypeManager.int32_type) {
-				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+			switch (q.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+				if (p.BuildinType == BuildinTypeSpec.Type.UInt || p.BuildinType == BuildinTypeSpec.Type.ULong)
 					return 2;
-			} if (q == TypeManager.int64_type) {
-				if (p == TypeManager.uint64_type)
+				break;
+			case BuildinTypeSpec.Type.Long:
+				if (p.BuildinType == BuildinTypeSpec.Type.ULong)
 					return 2;
-			} else if (q == TypeManager.sbyte_type) {
-				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
-					p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+				break;
+			case BuildinTypeSpec.Type.SByte:
+				switch (p.BuildinType) {
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.ULong:
 					return 2;
-			} if (q == TypeManager.short_type) {
-				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
-					p == TypeManager.uint64_type)
+				}
+				break;
+			case BuildinTypeSpec.Type.Short:
+				switch (p.BuildinType) {
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.ULong:
 					return 2;
-			} else if (q == InternalType.Dynamic) {
+				}
+				break;
+			case BuildinTypeSpec.Type.Dynamic:
 				// Dynamic is never better
 				return 1;
 			}

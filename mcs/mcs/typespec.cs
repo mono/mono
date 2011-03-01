@@ -493,24 +493,28 @@ namespace Mono.CSharp
 		{
 			None = 0,
 
-			// TODO: Reorder it more carefully so we can do fast compares
+			// Ordered carefully for fast compares
+			Bool = 1,
+			Byte = 2,
+			SByte = 3,
+			Char = 4,
+			Short = 5,
+			UShort = 6,
+			Int = 7,
+			UInt = 8,
+			Long = 9,
+			ULong = 10,
+			Float = 11,
+			Double = 12,
+			IntPtr = 13,
+			UIntPtr = 14,
+			Decimal = 15,
+
 			Object,
+			String,
+
 			ValueType,
 			Attribute,
-			Int,
-			UInt,
-			Long,
-			ULong,
-			Float,
-			Double,
-			Char,
-			Short,
-			Decimal,
-			Bool,
-			SByte,
-			Byte,
-			UShort,
-			String,
 			Enum,
 			Delegate,
 			MulticastDelegate,
@@ -520,8 +524,6 @@ namespace Mono.CSharp
 			IEnumerator,
 			IEnumerable,
 			IDisposable,
-			IntPtr,
-			UIntPtr,
 			RuntimeFieldHandle,
 			RuntimeTypeHandle,
 			Exception,
@@ -608,6 +610,35 @@ namespace Mono.CSharp
 				return name;
 
 			return FullName;
+		}
+
+		//
+		// Returns the size of type if known, otherwise, 0
+		//
+		public static int GetSize (TypeSpec type)
+		{
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Int:
+			case BuildinTypeSpec.Type.UInt:
+			case BuildinTypeSpec.Type.Float:
+				return 4;
+			case BuildinTypeSpec.Type.Long:
+			case BuildinTypeSpec.Type.ULong:
+			case BuildinTypeSpec.Type.Double:
+				return 8;
+			case BuildinTypeSpec.Type.Byte:
+			case BuildinTypeSpec.Type.SByte:
+			case BuildinTypeSpec.Type.Bool:
+				return 1;
+			case BuildinTypeSpec.Type.Short:
+			case BuildinTypeSpec.Type.Char:
+			case BuildinTypeSpec.Type.UShort:
+				return 2;
+			case BuildinTypeSpec.Type.Decimal:
+				return 16;
+			default:
+				return 0;
+			}
 		}
 
 		public void SetDefinition (ITypeDefinition td, MetaType type, Modifiers mod)

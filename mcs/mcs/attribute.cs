@@ -1381,45 +1381,67 @@ namespace Mono.CSharp {
 
 		public EncodedTypeProperties Encode (TypeSpec type)
 		{
-			if (type == TypeManager.bool_type) {
+			switch (type.BuildinType) {
+			case BuildinTypeSpec.Type.Bool:
 				Encode ((byte) 0x02);
-			} else if (type == TypeManager.char_type) {
+				break;
+			case BuildinTypeSpec.Type.Char:
 				Encode ((byte) 0x03);
-			} else if (type == TypeManager.sbyte_type) {
+				break;
+			case BuildinTypeSpec.Type.SByte:
 				Encode ((byte) 0x04);
-			} else if (type == TypeManager.byte_type) {
+				break;
+			case BuildinTypeSpec.Type.Byte:
 				Encode ((byte) 0x05);
-			} else if (type == TypeManager.short_type) {
+				break;
+			case BuildinTypeSpec.Type.Short:
 				Encode ((byte) 0x06);
-			} else if (type == TypeManager.ushort_type) {
+				break;
+			case BuildinTypeSpec.Type.UShort:
 				Encode ((byte) 0x07);
-			} else if (type == TypeManager.int32_type) {
+				break;
+			case BuildinTypeSpec.Type.Int:
 				Encode ((byte) 0x08);
-			} else if (type == TypeManager.uint32_type) {
+				break;
+			case BuildinTypeSpec.Type.UInt:
 				Encode ((byte) 0x09);
-			} else if (type == TypeManager.int64_type) {
+				break;
+			case BuildinTypeSpec.Type.Long:
 				Encode ((byte) 0x0A);
-			} else if (type == TypeManager.uint64_type) {
+				break;
+			case BuildinTypeSpec.Type.ULong:
 				Encode ((byte) 0x0B);
-			} else if (type == TypeManager.float_type) {
+				break;
+			case BuildinTypeSpec.Type.Float:
 				Encode ((byte) 0x0C);
-			} else if (type == TypeManager.double_type) {
+				break;
+			case BuildinTypeSpec.Type.Double:
 				Encode ((byte) 0x0D);
-			} else if (type == TypeManager.string_type) {
+				break;
+			case BuildinTypeSpec.Type.String:
 				Encode ((byte) 0x0E);
-			} else if (type == TypeManager.type_type) {
+				break;
+			case BuildinTypeSpec.Type.Type:
 				Encode ((byte) 0x50);
-			} else if (type == TypeManager.object_type) {
+				break;
+			case BuildinTypeSpec.Type.Object:
 				Encode ((byte) 0x51);
-			} else if (TypeManager.IsEnumType (type)) {
-				Encode ((byte) 0x55);
-				EncodeTypeName (type);
-			} else if (type.IsArray) {
-				Encode ((byte) 0x1D);
-				return Encode (TypeManager.GetElementType (type));
-			} else if (type == InternalType.Dynamic) {
+				break;
+			case BuildinTypeSpec.Type.Dynamic:
 				Encode ((byte) 0x51);
 				return EncodedTypeProperties.DynamicType;
+			default:
+				if (type.IsArray) {
+					Encode ((byte) 0x1D);
+					return Encode (TypeManager.GetElementType (type));
+				}
+
+				if (type.Kind == MemberKind.Enum) {
+					Encode ((byte) 0x55);
+					EncodeTypeName (type);
+				}
+
+				break;
 			}
 
 			return EncodedTypeProperties.None;
