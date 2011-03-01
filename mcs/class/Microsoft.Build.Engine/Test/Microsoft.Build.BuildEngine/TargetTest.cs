@@ -420,5 +420,61 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
 		}
 
+#if NET_4_0
+		[Test]
+		public void TestBeforeAndAfterTargets ()
+		{
+			Engine engine;
+			Project project;
+
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
+			  <Target Name=""DefaultBeforeTarget1"" BeforeTargets=""Default"">
+			    <Message Text=""Hello from DefaultBeforeTarget1""/>
+			  </Target>
+
+			  <Target Name=""DefaultBeforeTarget2"" BeforeTargets=""Default;Default;NonExistant"">
+			    <Message Text=""Hello from DefaultBeforeTarget2""/>
+			  </Target>
+
+
+			  <Target Name=""DefaultAfterTarget"" AfterTargets=""Default  ; Foo"">
+			    <Message Text=""Hello from DefaultAfterTarget""/>
+			  </Target>
+
+			  <Target Name=""Default"" DependsOnTargets=""DefaultDependsOn"">
+			    <Message Text=""Hello from Default""/>
+			  </Target>
+
+			  <Target Name=""DefaultDependsOn"">
+			    <Message Text=""Hello from DefaultDependsOn""/>
+			  </Target>
+			</Project>";
+
+			engine = new Engine ();
+			project = engine.CreateNewProject ();
+			project.LoadXml (projectString);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			if (!project.Build ("Default")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Hello from DefaultDependsOn", "A1");
+			logger.CheckLoggedMessageHead ("Hello from DefaultBeforeTarget1", "A1");
+			logger.CheckLoggedMessageHead ("Hello from DefaultBeforeTarget2", "A1");
+			logger.CheckLoggedMessageHead ("Hello from Default", "A1");
+			logger.CheckLoggedMessageHead ("Hello from DefaultAfterTarget", "A1");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected messages found");
+
+			//warnings for referencing unknown targets: NonExistant and Foo
+			Assert.AreEqual (2, logger.WarningsCount, "Expected warnings not raised");
+		}
+#endif
+
 	}
 }
