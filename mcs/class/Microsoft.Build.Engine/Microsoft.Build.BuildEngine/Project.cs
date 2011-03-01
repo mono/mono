@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -314,7 +315,11 @@ namespace Microsoft.Build.BuildEngine {
 				needToReevaluate = false;
 				Reevaluate ();
 			}
-			
+
+#if NET_4_0
+			ProcessBeforeAndAfterTargets ();
+#endif
+
 			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0) {
 					targetNames = defaultTargets;
@@ -387,6 +392,44 @@ namespace Microsoft.Build.BuildEngine {
 				sb.AppendFormat (" {0}:{1}", bp.Name, bp.FinalValue);
 			return sb.ToString ();
 		}
+
+#if NET_4_0
+		void ProcessBeforeAndAfterTargets ()
+		{
+			var beforeTable = Targets.AsIEnumerable ()
+						.SelectMany (target => GetTargetNamesFromString (target.BeforeTargets),
+								(target, before_target) => new {before_target, name = target.Name})
+						.ToLookup (x => x.before_target, x => x.name)
+						.ToDictionary (x => x.Key, x => x.Distinct ().ToList ());
+
+			foreach (var pair in beforeTable) {
+				if (targets.Exists (pair.Key))
+					targets [pair.Key].BeforeThisTargets = pair.Value;
+				else
+					LogWarning (FullFileName, "Target '{0}', not found in the project", pair.Key);
+			}
+
+			var afterTable = Targets.AsIEnumerable ()
+						.SelectMany (target => GetTargetNamesFromString (target.AfterTargets),
+								(target, after_target) => new {after_target, name = target.Name})
+						.ToLookup (x => x.after_target, x => x.name)
+						.ToDictionary (x => x.Key, x => x.Distinct ().ToList ());
+
+			foreach (var pair in afterTable) {
+				if (targets.Exists (pair.Key))
+					targets [pair.Key].AfterThisTargets = pair.Value;
+				else
+					LogWarning (FullFileName, "Target '{0}', not found in the project", pair.Key);
+			}
+		}
+
+		string[] GetTargetNamesFromString (string targets)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (targets, ParseOptions.AllowItemsNoMetadataAndSplit);
+			return (string []) expr.ConvertTo (this, typeof (string []));
+		}
+#endif
 
 		[MonoTODO]
 		public string [] GetConditionedPropertyValues (string propertyName)

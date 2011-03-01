@@ -69,6 +69,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 			set { task_finished = value; }
 		}
 
+		public int WarningsCount { get; set; }
+		public int ErrorsCount { get; set; }
+
 		public int Count
 		{
 			get { return messages.Count; }
@@ -81,8 +84,13 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void Initialize (IEventSource eventSource)
 		{
 			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
+
 			eventSource.ErrorRaised += new BuildErrorEventHandler (AllMessagesHandler);
+			eventSource.ErrorRaised += (e,o) => ErrorsCount ++;
+
 			eventSource.WarningRaised += new BuildWarningEventHandler(AllMessagesHandler);
+			eventSource.WarningRaised += (e,o) => WarningsCount ++;
+
 			eventSource.TargetStarted += delegate { target_started++; };
 			eventSource.TargetFinished += delegate { target_finished++; };
 			eventSource.TaskStarted += delegate { task_started++; };
