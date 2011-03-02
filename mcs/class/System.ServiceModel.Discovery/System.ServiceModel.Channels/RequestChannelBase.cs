@@ -50,14 +50,6 @@ namespace System.ServiceModel.Channels
 			this.via = via;
 		}
 
-		protected internal override TimeSpan DefaultCloseTimeout {
-			get { return channel_factory.DefaultCloseTimeout; }
-		}
-
-		protected internal override TimeSpan DefaultOpenTimeout {
-			get { return channel_factory.DefaultOpenTimeout; }
-		}
-
 		public EndpointAddress RemoteAddress {
 			get { return address; }
 		}
