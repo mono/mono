@@ -2307,6 +2307,9 @@ free_generic_class (MonoGenericClass *gclass)
 {
 	int i;
 
+	if (gclass->cached_class && gclass->cached_class->interface_id)
+		mono_unload_interface_id (gclass->cached_class);
+
 	/* FIXME: The dynamic case */
 	if (gclass->cached_class && !gclass->cached_class->image->dynamic && !mono_generic_class_is_generic_type_definition (gclass)) {
 		MonoClass *class = gclass->cached_class;

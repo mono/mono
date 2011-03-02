@@ -1258,4 +1258,7 @@ mono_class_vtable_full (MonoDomain *domain, MonoClass *class, gboolean raise_on_
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate) MONO_INTERNAL;
 
+void
+mono_unload_interface_id (MonoClass *class) MONO_INTERNAL;
+
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */
