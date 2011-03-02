@@ -1795,7 +1795,7 @@ namespace Mono.CSharp {
 
 			equals_parameters[0].Resolve (equals, 0);
 
-			Method tostring = new Method (this, null, new TypeExpression (TypeManager.string_type, loc),
+			Method tostring = new Method (this, null, new TypeExpression (Compiler.BuildinTypes.String, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
@@ -1906,7 +1906,7 @@ namespace Mono.CSharp {
 			//
 			// GetHashCode () override
 			//
-			Method hashcode = new Method (this, null, new TypeExpression (TypeManager.int32_type, loc),
+			Method hashcode = new Method (this, null, new TypeExpression (Compiler.BuildinTypes.Int, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("GetHashCode", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -1929,7 +1929,7 @@ namespace Mono.CSharp {
 			Block hashcode_block = new Block (hashcode_top, loc, loc);
 			hashcode_top.AddStatement (new Unchecked (hashcode_block, loc));
 
-			var li_hash = LocalVariable.CreateCompilerGenerated (TypeManager.int32_type, hashcode_top, loc);
+			var li_hash = LocalVariable.CreateCompilerGenerated (Compiler.BuildinTypes.Int, hashcode_top, loc);
 			hashcode_block.AddStatement (new BlockVariableDeclaration (new TypeExpression (li_hash.Type, loc), li_hash));
 			LocalVariableReference hash_variable_assign = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (

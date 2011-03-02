@@ -658,7 +658,7 @@ namespace Mono.CSharp.Nullable
 
 			if (right_orig.IsNull) {
 				if ((Oper & Operator.ShiftMask) != 0)
-					right = new EmptyExpression (TypeManager.int32_type);
+					right = new EmptyExpression (ec.BuildinTypes.Int);
 				else
 					right = left;
 

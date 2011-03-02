@@ -816,25 +816,27 @@ namespace Mono.CSharp {
 		//
 		protected Expression ConvertExpressionToArrayIndex (ResolveContext ec, Expression source)
 		{
+			var btypes = ec.BuildinTypes;
+
 			if (source.type == InternalType.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
-				return new DynamicConversion (TypeManager.int32_type, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
+				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
 			}
 
 			Expression converted;
 			
 			using (ec.Set (ResolveContext.Options.CheckedScope)) {
-				converted = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, source.loc);
+				converted = Convert.ImplicitConversion (ec, source, btypes.Int, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.UInt, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.Long, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.ULong, source.loc);
 
 				if (converted == null) {
-					source.Error_ValueCannotBeConverted (ec, source.loc, TypeManager.int32_type, false);
+					source.Error_ValueCannotBeConverted (ec, source.loc, btypes.Int, false);
 					return null;
 				}
 			}
@@ -1459,7 +1461,7 @@ namespace Mono.CSharp {
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
 			if (TypeManager.IsStruct (child.Type) &&
-			    (type.BuildinType == BuildinTypeSpec.Type.Object || type == TypeManager.value_type))
+			    (type.BuildinType == BuildinTypeSpec.Type.Object || type.BuildinType == BuildinTypeSpec.Type.ValueType))
 				child.EmitSideEffect (ec);
 			else
 				base.EmitSideEffect (ec);

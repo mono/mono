@@ -380,7 +380,7 @@ namespace Mono.CSharp
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ImplicitConversionRequired (rc, TypeManager.int32_type, Location);
+			return expr.ImplicitConversionRequired (rc, rc.BuildinTypes.Int, Location);
 		}
 
 		public override bool Define ()
@@ -406,7 +406,8 @@ namespace Mono.CSharp
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
-				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
+				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+				Compiler.BuildinTypes.ValueType.GetMetaInfo ());
 
 			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			
@@ -473,14 +474,14 @@ namespace Mono.CSharp
 			AttributeEncoder encoder;
 
 			pa = Module.PredefinedAttributes.StructLayout;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short))
 				return;
 
 			var char_set_type = Module.PredefinedTypes.CharSet.Resolve (Location);
 			if (char_set_type == null)
 				return;
 
-			var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
+			var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
 			var field_charset = pa.GetField ("CharSet", char_set_type, Location);
 			if (field_size == null || field_charset == null)
 				return;
@@ -503,7 +504,7 @@ namespace Mono.CSharp
 				return;
 
 			pa = Module.PredefinedAttributes.FixedBuffer;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Type, TypeManager.int32_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Type, Compiler.BuildinTypes.Int))
 				return;
 
 			encoder = new AttributeEncoder ();

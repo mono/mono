@@ -1829,7 +1829,7 @@ namespace Mono.CSharp {
 				if (Value <= int.MaxValue && Value >= int.MinValue) {
 					if (TypeManager.void_decimal_ctor_int_arg == null) {
 						TypeManager.void_decimal_ctor_int_arg = TypeManager.GetPredefinedConstructor (
-							TypeManager.decimal_type, loc, TypeManager.int32_type);
+							TypeManager.decimal_type, loc, ec.BuildinTypes.Int);
 
 						if (TypeManager.void_decimal_ctor_int_arg == null)
 							return;
@@ -1843,7 +1843,7 @@ namespace Mono.CSharp {
 				if (Value <= long.MaxValue && Value >= long.MinValue) {
 					if (TypeManager.void_decimal_ctor_long_arg == null) {
 						TypeManager.void_decimal_ctor_long_arg = TypeManager.GetPredefinedConstructor (
-							TypeManager.decimal_type, loc, TypeManager.int64_type);
+							TypeManager.decimal_type, loc, ec.BuildinTypes.Long);
 
 						if (TypeManager.void_decimal_ctor_long_arg == null)
 							return;
@@ -1867,8 +1867,8 @@ namespace Mono.CSharp {
 
 			if (TypeManager.void_decimal_ctor_five_args == null) {
 				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
-					TypeManager.decimal_type, loc, TypeManager.int32_type, TypeManager.int32_type,
-					TypeManager.int32_type, TypeManager.bool_type, TypeManager.byte_type);
+					TypeManager.decimal_type, loc, ec.BuildinTypes.Int, ec.BuildinTypes.Int,
+					ec.BuildinTypes.Int, TypeManager.bool_type, TypeManager.byte_type);
 
 				if (TypeManager.void_decimal_ctor_five_args == null)
 					return;
@@ -1978,13 +1978,16 @@ namespace Mono.CSharp {
 			// Use string.Empty for both literals and constants even if
 			// it's not allowed at language level
 			//
-			if (Value.Length == 0 && ec.Module.Compiler.Settings.Optimize && ec.CurrentType != TypeManager.string_type) {
-				if (TypeManager.string_empty == null)
-					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc, TypeManager.string_type);
+			if (Value.Length == 0 && ec.Module.Compiler.Settings.Optimize) {
+				var string_type = ec.BuildinTypes.String;
+				if (ec.CurrentType != string_type) {
+					if (TypeManager.string_empty == null)
+						TypeManager.string_empty = TypeManager.GetPredefinedField (string_type, "Empty", loc, string_type);
 
-				if (TypeManager.string_empty != null) {
-					ec.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
-					return;
+					if (TypeManager.string_empty != null) {
+						ec.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
+						return;
+					}
 				}
 			}
 

@@ -3663,8 +3663,8 @@ namespace Mono.CSharp {
 
 				string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
 					new TypeArguments (
-						new TypeExpression (TypeManager.string_type, loc),
-						new TypeExpression (TypeManager.int32_type, loc)), loc);
+						new TypeExpression (ec.BuildinTypes.String, loc),
+						new TypeExpression (ec.BuildinTypes.Int, loc)), loc);
 			} else {
 				MemberAccess system_collections_generic = new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
@@ -3766,7 +3766,7 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Brfalse, default_target);
 
 				ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
-					new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (rc);
+					new Cast (new TypeExpression (ec.BuildinTypes.Int, loc), get_item_object, loc)).Resolve (rc);
 
 				get_item_int.EmitStatement (ec);
 				get_item_object.Release (ec);
@@ -4352,18 +4352,18 @@ namespace Mono.CSharp {
 					LocalVariable.Flags.FixedVariable | LocalVariable.Flags.CompilerGenerated | LocalVariable.Flags.Used,
 					vi.Location);
 
-				pinned_string.Type = TypeManager.string_type;
+				pinned_string.Type = rc.BuildinTypes.String;
 
 				if (TypeManager.int_get_offset_to_string_data == null) {
 					var helper = rc.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
 					if (helper != null) {
 						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (helper,
-							"OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
+							"OffsetToStringData", pinned_string.Location, rc.BuildinTypes.Int);
 					}
 				}
 
 				eclass = ExprClass.Variable;
-				type = TypeManager.int32_type;
+				type = rc.BuildinTypes.Int;
 				return this;
 			}
 
@@ -5174,7 +5174,7 @@ namespace Mono.CSharp {
 				int rank = length_exprs.Length;
 				Arguments list = new Arguments (rank);
 				for (int i = 0; i < rank; i++) {
-					var v = TemporaryVariableReference.Create (TypeManager.int32_type, variables_block, loc);
+					var v = TemporaryVariableReference.Create (ec.BuildinTypes.Int, variables_block, loc);
 					variables[i] = v;
 					counter[i] = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, v, loc));
 					counter[i].Resolve (ec);
@@ -5182,7 +5182,7 @@ namespace Mono.CSharp {
 					if (rank == 1) {
 						length_exprs [i] = new MemberAccess (copy, "Length").Resolve (ec);
 					} else {
-						lengths[i] = TemporaryVariableReference.Create (TypeManager.int32_type, variables_block, loc);
+						lengths[i] = TemporaryVariableReference.Create (ec.BuildinTypes.Int, variables_block, loc);
 						lengths[i].Resolve (ec);
 
 						Arguments args = new Arguments (1);

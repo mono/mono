@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 				if (constraint is SpecialContraintExpr) {
 					spec.SpecialConstraint |= ((SpecialContraintExpr) constraint).Constraint;
 					if (spec.HasSpecialStruct)
-						spec.BaseType = TypeManager.value_type;
+						spec.BaseType = context.Module.Compiler.BuildinTypes.ValueType;
 
 					// Set to null as it does not have a type
 					constraints[i] = null;
@@ -669,7 +669,8 @@ namespace Mono.CSharp {
 
 		public bool HasTypeConstraint {
 			get {
-				return BaseType != TypeManager.object_type && BaseType != TypeManager.value_type;
+				var bt = BaseType.BuildinType;
+				return bt != BuildinTypeSpec.Type.Object && bt != BuildinTypeSpec.Type.ValueType;
 			}
 		}
 
@@ -1057,7 +1058,7 @@ namespace Mono.CSharp {
 			// For a type parameter the membercache is the union of the sets of members of the types
 			// specified as a primary constraint or secondary constraint
 			//
-			if (BaseType.BuildinType != BuildinTypeSpec.Type.Object && BaseType != TypeManager.value_type)
+			if (BaseType.BuildinType != BuildinTypeSpec.Type.Object && BaseType.BuildinType != BuildinTypeSpec.Type.ValueType)
 				cache.AddBaseType (BaseType);
 
 			if (ifaces != null) {
@@ -1068,8 +1069,9 @@ namespace Mono.CSharp {
 
 			if (targs != null) {
 				foreach (var ta in targs) {
-					if (ta.BaseType.BuildinType != BuildinTypeSpec.Type.Object && ta.BaseType != TypeManager.value_type)
-						cache.AddBaseType (ta.BaseType);
+					var b_type = ta.BaseType;
+					if (b_type.BuildinType != BuildinTypeSpec.Type.Object && b_type.BuildinType != BuildinTypeSpec.Type.ValueType)
+						cache.AddBaseType (b_type);
 
 					if (ta.Interfaces != null) {
 						foreach (var iface_type in ta.Interfaces) {

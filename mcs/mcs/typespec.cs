@@ -1417,7 +1417,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
 
 			var ctor = mb.GetArrayMethod (
 				GetMetaInfo (), Constructor.ConstructorName,
@@ -1433,7 +1433,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
 
 			var address = mb.GetArrayMethod (
 				GetMetaInfo (), "Address",
@@ -1449,7 +1449,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
 
 			var get = mb.GetArrayMethod (
 				GetMetaInfo (), "Get",
@@ -1465,7 +1465,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank + 1];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
 
 			arg_types[rank] = Element.GetMetaInfo ();
 

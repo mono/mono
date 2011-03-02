@@ -259,7 +259,7 @@ namespace Mono.CSharp {
 				return expr_type == InternalType.Dynamic;
 			}
 
-			if (target_type == TypeManager.value_type)
+			if (target_type.BuildinType == BuildinTypeSpec.Type.ValueType)
 				return expr_type.BuildinType == BuildinTypeSpec.Type.Enum;
 
 			if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
@@ -1046,7 +1046,7 @@ namespace Mono.CSharp {
 				t = op.ReturnType;
 
 				// LAMESPEC: Exclude UIntPtr -> int conversion
-				if (t == TypeManager.uint32_type && source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr)
+				if (t.BuildinType == BuildinTypeSpec.Type.UInt && source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr)
 					continue;
 
 				if (t.IsInterface)
@@ -1753,7 +1753,7 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion from System.ValueType to any non-nullable-value-type
 			//
-			if (source_type == TypeManager.value_type && target_is_value_type)
+			if (source_type.BuildinType == BuildinTypeSpec.Type.ValueType && target_is_value_type)
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
@@ -2086,10 +2086,10 @@ namespace Mono.CSharp {
 				// Don't eliminate explicit precission casts
 				//
 				if (e == expr) {
-					if (target_type == TypeManager.float_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Float)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 					
-					if (target_type == TypeManager.double_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Double)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				}
 					

@@ -395,7 +395,7 @@ namespace Mono.CSharp {
 
 		void DefineIteratorMembers ()
 		{
-			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (TypeManager.int32_type, Location));
+			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuildinTypes.Int, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
 			if (hoisted_params != null) {
@@ -627,7 +627,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+			current_pc = ec.GetTemporaryLocal (ec.BuildinTypes.UInt);
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 			ec.Emit (OpCodes.Stloc, current_pc);
@@ -703,7 +703,7 @@ namespace Mono.CSharp {
 			}
 
 			if (labels != null) {
-				current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+				current_pc = ec.GetTemporaryLocal (ec.BuildinTypes.UInt);
 				ec.Emit (OpCodes.Ldarg_0);
 				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 				ec.Emit (OpCodes.Stloc, current_pc);

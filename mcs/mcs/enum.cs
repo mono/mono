@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 
 		protected override bool DefineNestedTypes ()
 		{
-			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? TypeManager.int32_type : base_type_expr.Type;
+			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? Compiler.BuildinTypes.Int : base_type_expr.Type;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);

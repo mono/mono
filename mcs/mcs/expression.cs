@@ -2688,7 +2688,7 @@ namespace Mono.CSharp
 				case BuildinTypeSpec.Type.Short:
 				case BuildinTypeSpec.Type.SByte:
 				case BuildinTypeSpec.Type.Long:
-					type = TypeManager.int64_type;
+					type = rc.BuildinTypes.Long;
 
 					if (type != second_expr.Type) {
 						c = second_expr as Constant;
@@ -2740,7 +2740,7 @@ namespace Mono.CSharp
 					return t == ltype || DoNumericPromotion (ec, ref left, ref right, t);
 			}
 
-			TypeSpec int32 = TypeManager.int32_type;
+			TypeSpec int32 = ec.BuildinTypes.Int;
 			if (ltype != int32) {
 				Constant c = left as Constant;
 				if (c != null)
@@ -7413,7 +7413,7 @@ namespace Mono.CSharp
 					TypeManager.CSharpName (type_queried));
 			}
 			
-			type = TypeManager.int32_type;
+			type = ec.BuildinTypes.Int;
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -9055,7 +9055,7 @@ namespace Mono.CSharp
 				return null;
 			
 			if (count.Type.BuildinType != BuildinTypeSpec.Type.UInt){
-				count = Convert.ImplicitConversionRequired (ec, count, TypeManager.int32_type, loc);
+				count = Convert.ImplicitConversionRequired (ec, count, ec.BuildinTypes.Int, loc);
 				if (count == null)
 					return null;
 			}

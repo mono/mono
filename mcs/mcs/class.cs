@@ -1654,8 +1654,7 @@ namespace Mono.CSharp {
 				return;
 
 			PredefinedAttribute pa = Module.PredefinedAttributes.DefaultMember;
-			if (pa.Constructor == null &&
-				!pa.ResolveConstructor (Location, TypeManager.string_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.String))
 				return;
 
 			var encoder = new AttributeEncoder ();
@@ -2804,7 +2803,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
-			base_type = TypeManager.value_type;
+			base_type = Compiler.BuildinTypes.ValueType;
 			return ifaces;
 		}
 
