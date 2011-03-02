@@ -2642,17 +2642,21 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null)
 				return;
 
-			if ((member.Modifiers & Modifiers.AccessibilityMask) == Modifiers.PROTECTED && !(InstanceExpression is This)) {
+			if ((member.Modifiers & Modifiers.PROTECTED) != 0 && !(InstanceExpression is This)) {
 				var ct = rc.CurrentType;
 				var expr_type = InstanceExpression.Type;
-				if (ct != expr_type) {
-					expr_type = expr_type.GetDefinition ();
-					if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
-						rc.Report.SymbolRelatedToPreviousError (member);
-						rc.Report.Error (1540, loc,
-							"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
-							member.GetSignatureForError (), expr_type.GetSignatureForError (), ct.GetSignatureForError ());
-					}
+				if (ct == expr_type)
+					return;
+
+				if ((member.Modifiers & Modifiers.INTERNAL) != 0 && rc.CurrentType.MemberDefinition.IsInternalAsPublic (expr_type.MemberDefinition.DeclaringAssembly))
+					return;
+
+				expr_type = expr_type.GetDefinition ();
+				if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
+					rc.Report.SymbolRelatedToPreviousError (member);
+					rc.Report.Error (1540, loc,
+						"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
+						member.GetSignatureForError (), expr_type.GetSignatureForError (), ct.GetSignatureForError ());
 				}
 			}
 		}
