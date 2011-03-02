@@ -12,25 +12,14 @@ using System;
 
 namespace Mono.CSharp {
 
-	public class ConstantFold {
-
-		static TypeSpec[] binary_promotions;
-
-		public static TypeSpec[] BinaryPromotionsTypes {
-			get {
-				if (binary_promotions == null) {
-					 binary_promotions = new TypeSpec[] { 
-						TypeManager.decimal_type, TypeManager.double_type, TypeManager.float_type,
-						TypeManager.uint64_type, TypeManager.int64_type, TypeManager.uint32_type };
-				}
-
-				return binary_promotions;
-			}
-		}
-
-		public static void Reset ()
+	public static class ConstantFold
+	{
+		public static TypeSpec[] CreateBinaryPromotionsTypes (BuildinTypes types)
 		{
-			binary_promotions = null;
+			return new TypeSpec[] { 
+				types.Decimal, types.Double, types.Float,
+				types.ULong, types.Long, types.UInt
+			};
 		}
 
 		//
@@ -48,7 +37,7 @@ namespace Mono.CSharp {
 			TypeSpec ltype = left.Type;
 			TypeSpec rtype = right.Type;
 
-			foreach (TypeSpec t in BinaryPromotionsTypes) {
+			foreach (TypeSpec t in rc.BuildinTypes.BinaryPromotionsTypes) {
 				if (t == ltype)
 					return t == rtype || ConvertPromotion (rc, ref right, ref left, t);
 

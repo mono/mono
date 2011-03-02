@@ -2060,7 +2060,7 @@ namespace Mono.CSharp {
 		{
 			// Type it as string cast
 			if (targetType.BuildinType == BuildinTypeSpec.Type.Object || targetType == InternalType.Null)
-				enc.Encode (TypeManager.string_type);
+				enc.Encode (rc.Module.Compiler.BuildinTypes.String);
 
 			var ac = targetType as ArrayContainer;
 			if (ac != null) {

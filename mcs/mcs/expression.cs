@@ -115,8 +115,6 @@ namespace Mono.CSharp
 			AddressOf,  TOP
 		}
 
-		static TypeSpec[][] predefined_operators;
-
 		public readonly Operator Oper;
 		public Expression Expr;
 		Expression enum_conversion;
@@ -293,17 +291,16 @@ namespace Mono.CSharp
 		{
 			eclass = ExprClass.Value;
 
-			if (predefined_operators == null)
-				CreatePredefinedOperatorsTable ();
-
 			TypeSpec expr_type = expr.Type;
 			Expression best_expr;
+
+			TypeSpec[] predefined = ec.BuildinTypes.OperatorsUnary [(int) Oper];
 
 			//
 			// Primitive types first
 			//
 			if (BuildinTypeSpec.IsPrimitiveType (expr_type)) {
-				best_expr = ResolvePrimitivePredefinedType (expr);
+				best_expr = ResolvePrimitivePredefinedType (ec, expr, predefined);
 				if (best_expr == null)
 					return null;
 
@@ -316,15 +313,15 @@ namespace Mono.CSharp
 			// E operator ~(E x);
 			//
 			if (Oper == Operator.OnesComplement && TypeManager.IsEnumType (expr_type))
-				return ResolveEnumOperator (ec, expr);
+				return ResolveEnumOperator (ec, expr, predefined);
 
-			return ResolveUserType (ec, expr);
+			return ResolveUserType (ec, expr, predefined);
 		}
 
-		protected virtual Expression ResolveEnumOperator (ResolveContext ec, Expression expr)
+		protected virtual Expression ResolveEnumOperator (ResolveContext ec, Expression expr, TypeSpec[] predefined)
 		{
 			TypeSpec underlying_type = EnumSpec.GetUnderlyingType (expr.Type);
-			Expression best_expr = ResolvePrimitivePredefinedType (EmptyCast.Create (expr, underlying_type));
+			Expression best_expr = ResolvePrimitivePredefinedType (ec, EmptyCast.Create (expr, underlying_type), predefined);
 			if (best_expr == null)
 				return null;
 
@@ -371,50 +368,51 @@ namespace Mono.CSharp
 			return CreateExpressionFactoryCall (ec, method_name, args);
 		}
 
-		static void CreatePredefinedOperatorsTable ()
+		public static TypeSpec[][] CreatePredefinedOperatorsTable (BuildinTypes types)
 		{
-			predefined_operators = new TypeSpec [(int) Operator.TOP] [];
+			var predefined_operators = new TypeSpec[(int) Operator.TOP][];
 
 			//
 			// 7.6.1 Unary plus operator
 			//
 			predefined_operators [(int) Operator.UnaryPlus] = new TypeSpec [] {
-				TypeManager.int32_type, TypeManager.uint32_type,
-				TypeManager.int64_type, TypeManager.uint64_type,
-				TypeManager.float_type, TypeManager.double_type,
-				TypeManager.decimal_type
+				types.Int, types.UInt,
+				types.Long, types.ULong,
+				types.Float, types.Double,
+				types.Decimal
 			};
 
 			//
 			// 7.6.2 Unary minus operator
 			//
 			predefined_operators [(int) Operator.UnaryNegation] = new TypeSpec [] {
-				TypeManager.int32_type, 
-				TypeManager.int64_type,
-				TypeManager.float_type, TypeManager.double_type,
-				TypeManager.decimal_type
+				types.Int,  types.Long,
+				types.Float, types.Double,
+				types.Decimal
 			};
 
 			//
 			// 7.6.3 Logical negation operator
 			//
 			predefined_operators [(int) Operator.LogicalNot] = new TypeSpec [] {
-				TypeManager.bool_type
+				types.Bool
 			};
 
 			//
 			// 7.6.4 Bitwise complement operator
 			//
 			predefined_operators [(int) Operator.OnesComplement] = new TypeSpec [] {
-				TypeManager.int32_type, TypeManager.uint32_type,
-				TypeManager.int64_type, TypeManager.uint64_type
+				types.Int, types.UInt,
+				types.Long, types.ULong
 			};
+
+			return predefined_operators;
 		}
 
 		//
 		// Unary numeric promotions
 		//
-		static Expression DoNumericPromotion (Operator op, Expression expr)
+		static Expression DoNumericPromotion (ResolveContext rc, Operator op, Expression expr)
 		{
 			TypeSpec expr_type = expr.Type;
 			if (op == Operator.UnaryPlus || op == Operator.UnaryNegation || op == Operator.OnesComplement) {
@@ -424,12 +422,12 @@ namespace Mono.CSharp
 				case BuildinTypeSpec.Type.Short:
 				case BuildinTypeSpec.Type.UShort:
 				case BuildinTypeSpec.Type.Char:
-					return Convert.ImplicitNumericConversion (expr, TypeManager.int32_type);
+					return Convert.ImplicitNumericConversion (expr, rc.BuildinTypes.Int);
 				}
 			}
 
 			if (op == Operator.UnaryNegation && expr_type.BuildinType == BuildinTypeSpec.Type.UInt)
-				return Convert.ImplicitNumericConversion (expr, TypeManager.int64_type);
+				return Convert.ImplicitNumericConversion (expr, rc.BuildinTypes.Long);
 
 			return expr;
 		}
@@ -617,11 +615,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void Reset ()
-		{
-			predefined_operators = null;
-		}
-
 		Expression ResolveAddressOf (ResolveContext ec)
 		{
 			if (!ec.IsUnsafe)
@@ -671,11 +664,10 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		Expression ResolvePrimitivePredefinedType (Expression expr)
+		Expression ResolvePrimitivePredefinedType (ResolveContext rc, Expression expr, TypeSpec[] predefined)
 		{
-			expr = DoNumericPromotion (Oper, expr);
+			expr = DoNumericPromotion (rc, Oper, expr);
 			TypeSpec expr_type = expr.Type;
-			TypeSpec[] predefined = predefined_operators [(int) Oper];
 			foreach (TypeSpec t in predefined) {
 				if (t == expr_type)
 					return expr;
@@ -722,13 +714,12 @@ namespace Mono.CSharp
 		//
 		// Unary user type overload resolution
 		//
-		Expression ResolveUserType (ResolveContext ec, Expression expr)
+		Expression ResolveUserType (ResolveContext ec, Expression expr, TypeSpec[] predefined)
 		{
 			Expression best_expr = ResolveUserOperator (ec, expr);
 			if (best_expr != null)
 				return best_expr;
 
-			TypeSpec[] predefined = predefined_operators [(int) Oper];
 			foreach (TypeSpec t in predefined) {
 				Expression oper_expr = Convert.ImplicitUserConversion (ec, expr, t, expr.Location);
 				if (oper_expr == null)
@@ -738,9 +729,9 @@ namespace Mono.CSharp
 				// decimal type is predefined but has user-operators
 				//
 				if (oper_expr.Type == TypeManager.decimal_type)
-					oper_expr = ResolveUserType (ec, oper_expr);
+					oper_expr = ResolveUserType (ec, oper_expr, predefined);
 				else
-					oper_expr = ResolvePrimitivePredefinedType (oper_expr);
+					oper_expr = ResolvePrimitivePredefinedType (ec, oper_expr, predefined);
 
 				if (oper_expr == null)
 					continue;
@@ -998,8 +989,6 @@ namespace Mono.CSharp
 		// Holds the real operation
 		Expression operation;
 
-		static TypeSpec[] predefined;
-
 		public UnaryMutator (Mode m, Expression e, Location loc)
 		{
 			mode = m;
@@ -1012,26 +1001,25 @@ namespace Mono.CSharp
 			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
-		void CreatePredefinedOperators ()
+		public static TypeSpec[] CreatePredefinedOperatorsTable (BuildinTypes types)
 		{
 			//
 			// Predefined ++ and -- operators exist for the following types: 
 			// sbyte, byte, short, ushort, int, uint, long, ulong, char, float, double, decimal
 			//
-			predefined = new TypeSpec[] {
-				TypeManager.int32_type,
+			return new TypeSpec[] {
+				types.Int,
+				types.Long,
 
-				TypeManager.sbyte_type,
-				TypeManager.byte_type,
-				TypeManager.short_type,
-				TypeManager.ushort_type,
-				TypeManager.uint32_type,
-				TypeManager.int64_type,
-				TypeManager.uint64_type,
-				TypeManager.char_type,
-				TypeManager.float_type,
-				TypeManager.double_type,
-				TypeManager.decimal_type
+				types.SByte,
+				types.Byte,
+				types.Short,
+				types.UInt,
+				types.ULong,
+				types.Char,
+				types.Float,
+				types.Double,
+				types.Decimal
 			};
 		}
 
@@ -1142,10 +1130,7 @@ namespace Mono.CSharp
 
 					source = operation;
 				} else {
-					if (predefined == null)
-						CreatePredefinedOperators ();
-
-					foreach (var t in predefined) {
+					foreach (var t in ec.BuildinTypes.OperatorsUnaryMutator) {
 						source = Convert.ImplicitUserConversion (ec, operation, t, loc);
 
 						// LAMESPEC: It should error on ambiguous operators but that would make us incompatible
@@ -1236,11 +1221,6 @@ namespace Mono.CSharp
 			return SLE.Expression.Assign (target, source);
 		}
 #endif
-
-		public static void Reset ()
-		{
-			predefined = null;
-		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
@@ -1397,7 +1377,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			type = TypeManager.bool_type;
+			type = ec.BuildinTypes.Bool;
 			eclass = ExprClass.Value;
 			TypeSpec t = probe_type_expr.Type;
 			bool t_is_nullable = false;
@@ -1746,7 +1726,8 @@ namespace Mono.CSharp
 	/// </summary>
 	public class Binary : Expression, IDynamicBinder
 	{
-		protected class PredefinedOperator {
+		public class PredefinedOperator
+		{
 			protected readonly TypeSpec left;
 			protected readonly TypeSpec right;
 			public readonly Operator OperatorsMask;
@@ -1853,17 +1834,16 @@ namespace Mono.CSharp
 			}
 		}
 
-		class PredefinedStringOperator : PredefinedOperator {
-			public PredefinedStringOperator (TypeSpec type, Operator op_mask)
-				: base (type, op_mask, type)
+		sealed class PredefinedStringOperator : PredefinedOperator
+		{
+			public PredefinedStringOperator (TypeSpec type, Operator op_mask, TypeSpec retType)
+				: base (type, type, op_mask, retType)
 			{
-				ReturnType = TypeManager.string_type;
 			}
 
-			public PredefinedStringOperator (TypeSpec ltype, TypeSpec rtype, Operator op_mask)
-				: base (ltype, rtype, op_mask)
+			public PredefinedStringOperator (TypeSpec ltype, TypeSpec rtype, Operator op_mask, TypeSpec retType)
+				: base (ltype, rtype, op_mask, retType)
 			{
-				ReturnType = TypeManager.string_type;
 			}
 
 			public override Expression ConvertResult (ResolveContext ec, Binary b)
@@ -1889,9 +1869,10 @@ namespace Mono.CSharp
 			}
 		}
 
-		class PredefinedShiftOperator : PredefinedOperator {
-			public PredefinedShiftOperator (TypeSpec ltype, Operator op_mask) :
-				base (ltype, TypeManager.int32_type, op_mask)
+		sealed class PredefinedShiftOperator : PredefinedOperator
+		{
+			public PredefinedShiftOperator (TypeSpec ltype, TypeSpec rtype, Operator op_mask)
+				: base (ltype, rtype, op_mask)
 			{
 			}
 
@@ -1899,7 +1880,7 @@ namespace Mono.CSharp
 			{
 				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
 
-				Expression expr_tree_expr = Convert.ImplicitConversion (ec, b.right, TypeManager.int32_type, b.right.Location);
+				Expression expr_tree_expr = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
 
 				int right_mask = left.BuildinType == BuildinTypeSpec.Type.Int || left.BuildinType == BuildinTypeSpec.Type.UInt ? 0x1f : 0x3f;
 
@@ -1926,7 +1907,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		class PredefinedEqualityOperator : PredefinedOperator
+		sealed class PredefinedEqualityOperator : PredefinedOperator
 		{
 			MethodSpec equal_method, inequal_method;
 
@@ -2087,10 +2068,6 @@ namespace Mono.CSharp
 		protected State state;
 		Expression enum_conversion;
 
-		static PredefinedOperator[] standard_operators;
-		static PredefinedOperator[] equality_operators;
-		static PredefinedOperator[] pointer_operators;
-		
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound, Location loc)
 			: this (oper, left, right, loc)
 		{
@@ -2454,20 +2431,12 @@ namespace Mono.CSharp
 			return t.BuildinType == BuildinTypeSpec.Type.Float || t.BuildinType == BuildinTypeSpec.Type.Double;
 		}
 
-		public static void Reset ()
-		{
-			equality_operators = pointer_operators = standard_operators = null;
-		}
-
 		Expression ResolveOperator (ResolveContext ec)
 		{
 			TypeSpec l = left.Type;
 			TypeSpec r = right.Type;
 			Expression expr;
 			bool primitives_only = false;
-
-			if (standard_operators == null)
-				CreateStandardOperatorsTable ();
 
 			//
 			// Handles predefined primitive types
@@ -2517,7 +2486,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			return ResolveOperatorPredefined (ec, standard_operators, primitives_only, null);
+			return ResolveOperatorPredefined (ec, ec.BuildinTypes.OperatorsBinaryStandard, primitives_only, null);
 		}
 
 		// at least one of 'left' or 'right' is an enumeration constant (EnumConstant or SideEffectConstant or ...)
@@ -2586,84 +2555,82 @@ namespace Mono.CSharp
 				TypeManager.CSharpName (lcast != null ? lcast.UnderlyingType : rcast.UnderlyingType));
 		}
 
-		static void CreatePointerOperatorsTable ()
+		public static PredefinedOperator[] CreatePointerOperatorsTable (BuildinTypes types)
 		{
-			var temp = new List<PredefinedPointerOperator> ();
+			return new PredefinedOperator[] {
+				//
+				// Pointer arithmetic:
+				//
+				// T* operator + (T* x, int y);		T* operator - (T* x, int y);
+				// T* operator + (T* x, uint y);	T* operator - (T* x, uint y);
+				// T* operator + (T* x, long y);	T* operator - (T* x, long y);
+				// T* operator + (T* x, ulong y);	T* operator - (T* x, ulong y);
+				//
+				new PredefinedPointerOperator (null, types.Int, Operator.AdditionMask | Operator.SubtractionMask),
+				new PredefinedPointerOperator (null, types.UInt, Operator.AdditionMask | Operator.SubtractionMask),
+				new PredefinedPointerOperator (null, types.Long, Operator.AdditionMask | Operator.SubtractionMask),
+				new PredefinedPointerOperator (null, types.ULong, Operator.AdditionMask | Operator.SubtractionMask),
 
-			//
-			// Pointer arithmetic:
-			//
-			// T* operator + (T* x, int y);		T* operator - (T* x, int y);
-			// T* operator + (T* x, uint y);	T* operator - (T* x, uint y);
-			// T* operator + (T* x, long y);	T* operator - (T* x, long y);
-			// T* operator + (T* x, ulong y);	T* operator - (T* x, ulong y);
-			//
-			temp.Add (new PredefinedPointerOperator (null, TypeManager.int32_type, Operator.AdditionMask | Operator.SubtractionMask));
-			temp.Add (new PredefinedPointerOperator (null, TypeManager.uint32_type, Operator.AdditionMask | Operator.SubtractionMask));
-			temp.Add (new PredefinedPointerOperator (null, TypeManager.int64_type, Operator.AdditionMask | Operator.SubtractionMask));
-			temp.Add (new PredefinedPointerOperator (null, TypeManager.uint64_type, Operator.AdditionMask | Operator.SubtractionMask));
+				//
+				// T* operator + (int y,   T* x);
+				// T* operator + (uint y,  T *x);
+				// T* operator + (long y,  T *x);
+				// T* operator + (ulong y, T *x);
+				//
+				new PredefinedPointerOperator (types.Int, null, Operator.AdditionMask, null),
+				new PredefinedPointerOperator (types.UInt, null, Operator.AdditionMask, null),
+				new PredefinedPointerOperator (types.Long, null, Operator.AdditionMask, null),
+				new PredefinedPointerOperator (types.ULong, null, Operator.AdditionMask, null),
 
-			//
-			// T* operator + (int y,   T* x);
-			// T* operator + (uint y,  T *x);
-			// T* operator + (long y,  T *x);
-			// T* operator + (ulong y, T *x);
-			//
-			temp.Add (new PredefinedPointerOperator (TypeManager.int32_type, null, Operator.AdditionMask, null));
-			temp.Add (new PredefinedPointerOperator (TypeManager.uint32_type, null, Operator.AdditionMask, null));
-			temp.Add (new PredefinedPointerOperator (TypeManager.int64_type, null, Operator.AdditionMask, null));
-			temp.Add (new PredefinedPointerOperator (TypeManager.uint64_type, null, Operator.AdditionMask, null));
-
-			//
-			// long operator - (T* x, T *y)
-			//
-			temp.Add (new PredefinedPointerOperator (null, Operator.SubtractionMask, TypeManager.int64_type));
-
-			pointer_operators = temp.ToArray ();
+				//
+				// long operator - (T* x, T *y)
+				//
+				new PredefinedPointerOperator (null, Operator.SubtractionMask, types.Long)
+			};
 		}
 
-		static void CreateStandardOperatorsTable ()
+		public static PredefinedOperator[] CreateStandardOperatorsTable (BuildinTypes types)
 		{
-			var temp = new List<PredefinedOperator> ();
-			TypeSpec bool_type = TypeManager.bool_type;
+			TypeSpec bool_type = types.Bool;
+			return new PredefinedOperator[] {
+				new PredefinedOperator (types.Int, Operator.ArithmeticMask | Operator.BitwiseMask),
+				new PredefinedOperator (types.UInt, Operator.ArithmeticMask | Operator.BitwiseMask),
+				new PredefinedOperator (types.Long, Operator.ArithmeticMask | Operator.BitwiseMask),
+				new PredefinedOperator (types.ULong, Operator.ArithmeticMask | Operator.BitwiseMask),
+				new PredefinedOperator (types.Float, Operator.ArithmeticMask),
+				new PredefinedOperator (types.Double, Operator.ArithmeticMask),
+				new PredefinedOperator (types.Decimal, Operator.ArithmeticMask),
 
-			temp.Add (new PredefinedOperator (TypeManager.int32_type, Operator.ArithmeticMask | Operator.BitwiseMask));
-			temp.Add (new PredefinedOperator (TypeManager.uint32_type, Operator.ArithmeticMask | Operator.BitwiseMask));
-			temp.Add (new PredefinedOperator (TypeManager.int64_type, Operator.ArithmeticMask | Operator.BitwiseMask));
-			temp.Add (new PredefinedOperator (TypeManager.uint64_type, Operator.ArithmeticMask | Operator.BitwiseMask));
-			temp.Add (new PredefinedOperator (TypeManager.float_type, Operator.ArithmeticMask));
-			temp.Add (new PredefinedOperator (TypeManager.double_type, Operator.ArithmeticMask));
-			temp.Add (new PredefinedOperator (TypeManager.decimal_type, Operator.ArithmeticMask));
+				new PredefinedOperator (types.Int, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.UInt, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.Long, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.ULong, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.Float, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.Double, Operator.ComparisonMask, bool_type),
+				new PredefinedOperator (types.Decimal, Operator.ComparisonMask, bool_type),
 
-			temp.Add (new PredefinedOperator (TypeManager.int32_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.uint32_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.int64_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.uint64_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.float_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.double_type, Operator.ComparisonMask, bool_type));
-			temp.Add (new PredefinedOperator (TypeManager.decimal_type, Operator.ComparisonMask, bool_type));
+				new PredefinedStringOperator (types.String, Operator.AdditionMask, types.String),
+				new PredefinedStringOperator (types.String, types.Object, Operator.AdditionMask, types.String),
+				new PredefinedStringOperator (types.Object, types.String, Operator.AdditionMask, types.String),
 
-			temp.Add (new PredefinedStringOperator (TypeManager.string_type, Operator.AdditionMask));
-			temp.Add (new PredefinedStringOperator (TypeManager.string_type, TypeManager.object_type, Operator.AdditionMask));
-			temp.Add (new PredefinedStringOperator (TypeManager.object_type, TypeManager.string_type, Operator.AdditionMask));
+				new PredefinedOperator (bool_type, Operator.BitwiseMask | Operator.LogicalMask | Operator.EqualityMask, bool_type),
 
-			temp.Add (new PredefinedOperator (bool_type,
-				Operator.BitwiseMask | Operator.LogicalMask | Operator.EqualityMask, bool_type));
+				new PredefinedShiftOperator (types.Int, types.Int, Operator.ShiftMask),
+				new PredefinedShiftOperator (types.UInt, types.Int, Operator.ShiftMask),
+				new PredefinedShiftOperator (types.Long, types.Int, Operator.ShiftMask),
+				new PredefinedShiftOperator (types.ULong, types.Int, Operator.ShiftMask)
+			};
+		}
 
-			temp.Add (new PredefinedShiftOperator (TypeManager.int32_type, Operator.ShiftMask));
-			temp.Add (new PredefinedShiftOperator (TypeManager.uint32_type, Operator.ShiftMask));
-			temp.Add (new PredefinedShiftOperator (TypeManager.int64_type, Operator.ShiftMask));
-			temp.Add (new PredefinedShiftOperator (TypeManager.uint64_type, Operator.ShiftMask));
+		public static PredefinedOperator[] CreateEqualityOperatorsTable (BuildinTypes types)
+		{
+			TypeSpec bool_type = types.Bool;
 
-			standard_operators = temp.ToArray ();
-
-			var equality = new List<PredefinedOperator> () {
-				new PredefinedEqualityOperator (TypeManager.string_type, bool_type),
-				new PredefinedEqualityOperator (TypeManager.delegate_type, bool_type),
+			return new PredefinedOperator[] {
+				new PredefinedEqualityOperator (types.String, bool_type),
+				new PredefinedEqualityOperator (types.Delegate, bool_type),
 				new PredefinedOperator (bool_type, Operator.EqualityMask, bool_type)
 			};
-
-			equality_operators = equality.ToArray ();
 		}
 
 		//
@@ -2732,7 +2699,7 @@ namespace Mono.CSharp
 			TypeSpec rtype = right.Type;
 			Expression temp;
 
-			foreach (TypeSpec t in ConstantFold.BinaryPromotionsTypes) {
+			foreach (TypeSpec t in ec.BuildinTypes.BinaryPromotionsTypes) {
 				if (t == ltype)
 					return t == rtype || DoNumericPromotion (ec, ref right, ref left, t);
 
@@ -2878,7 +2845,7 @@ namespace Mono.CSharp
 						args.Add (new Argument (right));
 						cond_right = new DynamicExpressionStatement (this, args, loc);
 					} else {
-						LocalVariable temp = LocalVariable.CreateCompilerGenerated (TypeManager.bool_type, ec.CurrentBlock, loc);
+						LocalVariable temp = LocalVariable.CreateCompilerGenerated (ec.BuildinTypes.Bool, ec.CurrentBlock, loc);
 
 						args.Add (new Argument (temp.CreateReferenceExpression (ec, loc).Resolve (ec)));
 						args.Add (new Argument (right));
@@ -3032,7 +2999,7 @@ namespace Mono.CSharp
 				return new EmptyExpression (TypeManager.decimal_type);
 			}
 
-			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
+			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, ec.BuildinTypes.Delegate, loc);
 			Expression expr = new UserOperatorCall (mg.BestCandidate, args, CreateExpressionTree, loc);
 			return new ClassCast (expr, l);
 		}
@@ -3199,7 +3166,7 @@ namespace Mono.CSharp
 				enum_conversion = Convert.ExplicitNumericConversion (new EmptyExpression (left.Type), underlying_type_result);
 			}
 
-			expr = ResolveOperatorPredefined (ec, standard_operators, true, res_type);
+			expr = ResolveOperatorPredefined (ec, ec.BuildinTypes.OperatorsBinaryStandard, true, res_type);
 			if (expr == null)
 				return null;
 
@@ -3238,7 +3205,7 @@ namespace Mono.CSharp
 		Expression ResolveOperatorEquality (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
 			Expression result;
-			type = TypeManager.bool_type;
+			type = ec.BuildinTypes.Bool;
 
 			//
 			// a, Both operands are reference-type values or the value null
@@ -3323,8 +3290,8 @@ namespace Mono.CSharp
 			// LAMESPEC: Reference equality comparison can apply to value types when
 			// they implement an implicit conversion to any of types above.
 			//
-			if (r != TypeManager.object_type && l != TypeManager.object_type) {
-				result = ResolveOperatorPredefined (ec, equality_operators, false, null);
+			if (r.BuildinType != BuildinTypeSpec.Type.Object && l.BuildinType != BuildinTypeSpec.Type.Object) {
+				result = ResolveOperatorPredefined (ec, ec.BuildinTypes.OperatorsBinaryEquality, false, null);
 				if (result != null)
 					return result;
 			}
@@ -3390,14 +3357,11 @@ namespace Mono.CSharp
 					right = temp;
 				}
 
-				type = TypeManager.bool_type;
+				type = ec.BuildinTypes.Bool;
 				return this;
 			}
 
-			if (pointer_operators == null)
-				CreatePointerOperatorsTable ();
-
-			return ResolveOperatorPredefined (ec, pointer_operators, false, null);
+			return ResolveOperatorPredefined (ec, ec.BuildinTypes.OperatorsBinaryUnsafe, false, null);
 		}
 
 		//
@@ -3955,16 +3919,14 @@ namespace Mono.CSharp
 	// Represents the operation a + b [+ c [+ d [+ ...]]], where a is a string
 	// b, c, d... may be strings or objects.
 	//
-	public class StringConcat : Expression {
+	public class StringConcat : Expression
+	{
 		Arguments arguments;
 		static IList<MemberSpec> concat_members;
 		
-		public StringConcat (Expression left, Expression right, Location loc)
+		StringConcat (Location loc)
 		{
 			this.loc = loc;
-			type = TypeManager.string_type;
-			eclass = ExprClass.Value;
-
 			arguments = new Arguments (2);
 		}
 
@@ -3973,7 +3935,10 @@ namespace Mono.CSharp
 			if (left.eclass == ExprClass.Unresolved || right.eclass == ExprClass.Unresolved)
 				throw new ArgumentException ();
 
-			var s = new StringConcat (left, right, loc);
+			var s = new StringConcat (loc);
+			s.type = rc.BuildinTypes.String;
+			s.eclass = ExprClass.Value;
+
 			s.Append (rc, left);
 			s.Append (rc, right);
 			return s;
@@ -4330,7 +4295,7 @@ namespace Mono.CSharp
 				return DynamicUnaryConversion.CreateIsTrue (args, loc).Resolve (ec);
 			}
 
-			type = TypeManager.bool_type;
+			type = ec.BuildinTypes.Bool;
 			Expression converted = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (converted != null)
 				return converted;
@@ -5154,7 +5119,7 @@ namespace Mono.CSharp
 			var method = mg.BestCandidate;
 			type = mg.BestCandidateReturnType;
 		
-			if (arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
+			if (arguments == null && method.DeclaringType.BuildinType == BuildinTypeSpec.Type.Object && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
 					ec.Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
 				else
@@ -8994,10 +8959,10 @@ namespace Mono.CSharp
 	//
 	public class ArrayIndexCast : TypeCast
 	{
-		public ArrayIndexCast (Expression expr)
-			: base (expr, TypeManager.int32_type)
+		public ArrayIndexCast (Expression expr, TypeSpec returnType)
+			: base (expr, returnType)
 		{
-			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Int)
+			if (expr.Type == returnType) // int -> int
 				throw new ArgumentException ("unnecessary array index conversion");
 		}
 

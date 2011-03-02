@@ -169,6 +169,7 @@ namespace Mono.CSharp {
 	//
 	public class MemberCache
 	{
+		[Flags]
 		enum StateFlags
 		{
 			HasConversionOperator = 1 << 1,

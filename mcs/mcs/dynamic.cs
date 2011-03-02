@@ -466,7 +466,7 @@ namespace Mono.CSharp
 
 			public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 			{
-				type = TypeManager.bool_type;
+				type = ec.BuildinTypes.Bool;
 
 				Arguments binder_args = new Arguments (3);
 

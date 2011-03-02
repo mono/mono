@@ -64,6 +64,16 @@ namespace Mono.CSharp
 		public readonly BuildinTypeSpec Dynamic;
 		public readonly BuildinTypeSpec Null;
 
+		// Predefined operators tables
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryStandard;
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryEquality;
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryUnsafe;
+		public readonly TypeSpec[][] OperatorsUnary;
+		public readonly TypeSpec[] OperatorsUnaryMutator;
+
+		public readonly TypeSpec[] BinaryPromotionsTypes;
+		public readonly TypeSpec[] SwitchUserTypes;
+
 		readonly BuildinTypeSpec[] types;
 
 		public BuildinTypes ()
@@ -107,6 +117,15 @@ namespace Mono.CSharp
 			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
 			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
 			Null.MemberCache = MemberCache.Empty;
+
+			OperatorsBinaryStandard = Binary.CreateStandardOperatorsTable (this);
+			OperatorsBinaryEquality = Binary.CreateEqualityOperatorsTable (this);
+			OperatorsBinaryUnsafe = Binary.CreatePointerOperatorsTable (this);
+			OperatorsUnary = Unary.CreatePredefinedOperatorsTable (this);
+			OperatorsUnaryMutator = UnaryMutator.CreatePredefinedOperatorsTable (this);
+
+			BinaryPromotionsTypes = ConstantFold.CreateBinaryPromotionsTypes (this);
+			SwitchUserTypes = Switch.CreateSwitchUserTypes (this);
 
 			types = new BuildinTypeSpec[] {
 				Object, ValueType, Attribute,

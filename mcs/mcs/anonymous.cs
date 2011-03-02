@@ -1789,7 +1789,7 @@ namespace Mono.CSharp {
 			var equals_parameters = ParametersCompiled.CreateFullyResolved (
 				new Parameter (new TypeExpression (Compiler.BuildinTypes.Object, loc), "obj", 0, null, loc), Compiler.BuildinTypes.Object);
 
-			Method equals = new Method (this, null, new TypeExpression (TypeManager.bool_type, loc),
+			Method equals = new Method (this, null, new TypeExpression (Compiler.BuildinTypes.Bool, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
 				equals_parameters, null);
 

@@ -459,7 +459,7 @@ namespace Mono.CSharp
 			if (!wrap_non_exception_throws_custom) {
 				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
 				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = pa.GetProperty ("WrapNonExceptionThrows", TypeManager.bool_type, Location.Null);
+					var prop = pa.GetProperty ("WrapNonExceptionThrows", Compiler.BuildinTypes.Bool, Location.Null);
 					if (prop != null) {
 						AttributeEncoder encoder = new AttributeEncoder ();
 						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (true, Location.Null));

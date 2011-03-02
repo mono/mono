@@ -648,7 +648,7 @@ namespace Mono.CSharp {
 			}
 
 			if (need_skip_finally) {
-				skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
+				skip_finally = ec.GetTemporaryLocal (ec.BuildinTypes.Bool);
 				ec.Emit (OpCodes.Ldc_I4_0);
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
@@ -803,7 +803,7 @@ namespace Mono.CSharp {
 			Block.Resolve (ctx);
 			ctx.EndFlowBranching ();
 
-			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (TypeManager.bool_type, loc),
+			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (ec.BuildinTypes.Bool, loc),
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location));
 			move_next.Block.AddStatement (new MoveNextMethodStatement (this));
 			IteratorHost.AddMethod (move_next);

@@ -534,9 +534,9 @@ namespace Mono.CSharp.Nullable
 			return expr;
 		}
 
-		protected override Expression ResolveEnumOperator (ResolveContext ec, Expression expr)
+		protected override Expression ResolveEnumOperator (ResolveContext ec, Expression expr, TypeSpec[] predefined)
 		{
-			expr = base.ResolveEnumOperator (ec, expr);
+			expr = base.ResolveEnumOperator (ec, expr, predefined);
 			if (expr == null)
 				return null;
 
@@ -653,7 +653,7 @@ namespace Mono.CSharp.Nullable
 			if (left_orig is NullLiteral) {
 				left = right;
 				state |= State.LeftNullLifted;
-				type = TypeManager.bool_type;
+				type = ec.BuildinTypes.Bool;
 			}
 
 			if (right_orig.IsNull) {
@@ -663,7 +663,7 @@ namespace Mono.CSharp.Nullable
 					right = left;
 
 				state |= State.RightNullLifted;
-				type = TypeManager.bool_type;
+				type = ec.BuildinTypes.Bool;
 			}
 
 			eclass = ExprClass.Value;

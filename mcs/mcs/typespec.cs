@@ -512,6 +512,7 @@ namespace Mono.CSharp
 			None = 0,
 
 			// Ordered carefully for fast compares
+			FirstPrimitive = 1,
 			Bool = 1,
 			Byte = 2,
 			SByte = 3,
@@ -524,6 +525,7 @@ namespace Mono.CSharp
 			ULong = 10,
 			Float = 11,
 			Double = 12,
+			LastPrimitive = 12,
 			Decimal = 13,
 
 			IntPtr = 14,
@@ -605,44 +607,12 @@ namespace Mono.CSharp
 
 		public static bool IsPrimitiveType (TypeSpec type)
 		{
-			switch (type.BuildinType) {
-			case Type.Int:
-			case Type.UInt:
-			case Type.Long:
-			case Type.ULong:
-			case Type.Float:
-			case Type.Double:
-			case Type.Char:
-			case Type.Short:
-			case Type.SByte:
-			case Type.Byte:
-			case Type.UShort:
-			case Type.Bool:
-				return true;
-			}
-			return false;
+			return type.BuildinType >= Type.FirstPrimitive && type.BuildinType <= Type.LastPrimitive;
 		}
 
 		public static bool IsPrimitiveTypeOrDecimal (TypeSpec type)
 		{
-			switch (type.BuildinType) {
-			case Type.Int:
-			case Type.UInt:
-			case Type.Long:
-			case Type.ULong:
-			case Type.Float:
-			case Type.Double:
-			case Type.Char:
-			case Type.Short:
-			case Type.Bool:
-			case Type.SByte:
-			case Type.Byte:
-			case Type.UShort:
-
-			case Type.Decimal:
-				return true;
-			}
-			return false;
+			return type.BuildinType >= Type.FirstPrimitive && type.BuildinType <= Type.Decimal;
 		}
 
 		public override string GetSignatureForError ()

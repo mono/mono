@@ -3187,12 +3187,6 @@ namespace Mono.CSharp {
 		//
 		Nullable.Unwrap unwrap;
 
-		//
-		// The types allowed to be implicitly cast from
-		// on the governing type
-		//
-		static TypeSpec [] allowed_types;
-
 		public Switch (Expression e, ExplicitBlock block, List<SwitchSection> sects, Location l)
 		{
 			Expr = e;
@@ -3228,8 +3222,7 @@ namespace Mono.CSharp {
 		//
 		// Determines the governing type for a switch.  The returned
 		// expression might be the expression from the switch, or an
-		// expression that includes any potential conversions to the
-		// integral types or to string.
+		// expression that includes any potential conversions to
 		//
 		Expression SwitchGoverningType (ResolveContext ec, Expression expr)
 		{
@@ -3251,21 +3244,6 @@ namespace Mono.CSharp {
 			if (expr.Type.IsEnum)
 				return expr;
 
-			if (allowed_types == null){
-				allowed_types = new TypeSpec [] {
-					TypeManager.sbyte_type,
-					TypeManager.byte_type,
-					TypeManager.short_type,
-					TypeManager.ushort_type,
-					TypeManager.int32_type,
-					TypeManager.uint32_type,
-					TypeManager.int64_type,
-					TypeManager.uint64_type,
-					TypeManager.char_type,
-					TypeManager.string_type
-				};
-			}
-
 			//
 			// Try to find a *user* defined implicit conversion.
 			//
@@ -3273,7 +3251,7 @@ namespace Mono.CSharp {
 			// conversions, we have to report an error
 			//
 			Expression converted = null;
-			foreach (TypeSpec tt in allowed_types){
+			foreach (TypeSpec tt in ec.BuildinTypes.SwitchUserTypes) {
 				Expression e;
 				
 				e = Convert.ImplicitUserConversion (ec, expr, tt, loc);
@@ -3295,6 +3273,23 @@ namespace Mono.CSharp {
 				converted = e;
 			}
 			return converted;
+		}
+
+		public static TypeSpec[] CreateSwitchUserTypes (BuildinTypes types)
+		{
+			// LAMESPEC: For some reason it does not contain bool which looks like csc bug
+			return new[] {
+				types.SByte,
+				types.Byte,
+				types.Short,
+				types.UShort,
+				types.Int,
+				types.UInt,
+				types.Long,
+				types.ULong,
+				types.Char,
+				types.String
+			};
 		}
 
 		//
@@ -3548,7 +3543,6 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			unique_counter = 0;
-			allowed_types = null;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -4102,7 +4096,7 @@ namespace Mono.CSharp {
 			// Ensure Monitor methods are available
 			//
 			if (ResolvePredefinedMethods (ec) > 1) {
-				lock_taken = TemporaryVariableReference.Create (TypeManager.bool_type, ec.CurrentBlock.Parent, loc);
+				lock_taken = TemporaryVariableReference.Create (ec.BuildinTypes.Bool, ec.CurrentBlock.Parent, loc);
 				lock_taken.Resolve (ec);
 			}
 
@@ -4174,8 +4168,7 @@ namespace Mono.CSharp {
 							new ParameterData (null, Parameter.Modifier.REF)
 						},
 					new[] {
-							rc.BuildinTypes.Object,
-							TypeManager.bool_type
+							rc.BuildinTypes.Object, rc.BuildinTypes.Bool
 						}, false), null);
 
 				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (monitor_type, filter, true, loc);
@@ -5488,7 +5481,7 @@ namespace Mono.CSharp {
 			MethodGroupExpr ResolveMoveNext (ResolveContext rc, MethodSpec enumerator)
 			{
 				var ms = MemberCache.FindMember (enumerator.ReturnType,
-					MemberFilter.Method ("MoveNext", 0, ParametersCompiled.EmptyReadOnlyParameters, TypeManager.bool_type),
+					MemberFilter.Method ("MoveNext", 0, ParametersCompiled.EmptyReadOnlyParameters, rc.BuildinTypes.Bool),
 					BindingRestriction.InstanceOnly) as MethodSpec;
 
 				if (ms == null || !ms.IsPublic) {

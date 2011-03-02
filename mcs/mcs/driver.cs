@@ -402,10 +402,6 @@ namespace Mono.CSharp
 			PointerContainer.Reset ();
 			Parameter.Reset ();
 
-			Unary.Reset ();
-			UnaryMutator.Reset ();
-			Binary.Reset ();
-			ConstantFold.Reset ();
 			CastFromDecimal.Reset ();
 			StringConcat.Reset ();
 			

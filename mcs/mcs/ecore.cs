@@ -852,7 +852,7 @@ namespace Mono.CSharp {
 			if (converted.Type.BuildinType == BuildinTypeSpec.Type.Int)
 				return converted;
 
-			return new ArrayIndexCast (converted).Resolve (ec);
+			return new ArrayIndexCast (converted, btypes.Int).Resolve (ec);
 		}
 
 		//
