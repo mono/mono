@@ -2614,7 +2614,7 @@ namespace Mono.CSharp
 		{
 			int c;
 			string_builder.Length = 0;
-
+			Location start_location = Location;
 			while (true){
 				c = get_char ();
 				if (c == '"') {
@@ -2624,7 +2624,7 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					val = new StringLiteral (string_builder.ToString (), Location);
+					val = new StringLiteral (string_builder.ToString (), start_location);
 					return Token.LITERAL;
 				}
 
