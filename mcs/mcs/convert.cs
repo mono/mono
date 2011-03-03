@@ -645,7 +645,7 @@ namespace Mono.CSharp {
 				//
 				// float to double
 				//
-				if (target_type == TypeManager.double_type)
+				if (target_type.BuildinType == BuildinTypeSpec.Type.Double)
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				break;
 			}

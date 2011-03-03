@@ -1845,8 +1845,8 @@ namespace Mono.CSharp {
 
 			if (TypeManager.void_decimal_ctor_five_args == null) {
 				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
-					TypeManager.decimal_type, loc, ec.BuildinTypes.Int, ec.BuildinTypes.Int,
-					ec.BuildinTypes.Int, TypeManager.bool_type, TypeManager.byte_type);
+					type, loc, ec.BuildinTypes.Int, ec.BuildinTypes.Int,
+					ec.BuildinTypes.Int, ec.BuildinTypes.Bool, TypeManager.byte_type);
 
 				if (TypeManager.void_decimal_ctor_five_args == null)
 					return;

@@ -583,7 +583,7 @@ namespace Mono.CSharp {
 				return constraints.Resolve (context, this);
 
 			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = context.Module.Compiler.BuildinTypes.Object;
 
 			return true;
 		}

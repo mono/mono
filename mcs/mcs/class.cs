@@ -2565,7 +2565,7 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (PartialContainer.IsStatic && base_class.Type != TypeManager.object_type) {
+				} else if (PartialContainer.IsStatic && base_class.Type.BuildinType != BuildinTypeSpec.Type.Object) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}

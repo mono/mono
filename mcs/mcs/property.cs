@@ -291,7 +291,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return TypeManager.void_type;
+					return Parent.Compiler.BuildinTypes.Void;
 				}
 			}
 
@@ -372,7 +372,7 @@ namespace Mono.CSharp
 				CheckProtectedModifier ();
 
 				if (block != null && block.IsIterator)
-					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 				return null;
 			}
@@ -1184,7 +1184,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return TypeManager.void_type;
+					return Parent.Compiler.BuildinTypes.Void;
 				}
 			}
 

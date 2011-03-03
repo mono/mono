@@ -137,22 +137,14 @@ namespace Mono.CSharp
 			// TODO: remove
 			TypeManager.object_type = Object;
 			TypeManager.value_type = ValueType;
-			TypeManager.string_type = String;
 			TypeManager.int32_type = Int;
 			TypeManager.uint32_type = UInt;
 			TypeManager.int64_type = Long;
 			TypeManager.uint64_type = ULong;
-			TypeManager.float_type = Float;
-			TypeManager.double_type = Double;
-			TypeManager.char_type = Char;
-			TypeManager.short_type = Short;
 			TypeManager.decimal_type = Decimal;
 			TypeManager.bool_type = Bool;
-			TypeManager.sbyte_type = SByte;
 			TypeManager.byte_type = Byte;
-			TypeManager.ushort_type = UShort;
 			TypeManager.delegate_type = Delegate;
-			TypeManager.void_type = Void;
 
 			InternalType.Dynamic = Dynamic;
 			InternalType.Null = Null;
@@ -432,23 +424,14 @@ namespace Mono.CSharp
 	//
 	static public BuildinTypeSpec object_type;
 	static public BuildinTypeSpec value_type;
-	static public BuildinTypeSpec string_type;
 	static public BuildinTypeSpec int32_type;
 	static public BuildinTypeSpec uint32_type;
 	static public BuildinTypeSpec int64_type;
 	static public BuildinTypeSpec uint64_type;
-	static public BuildinTypeSpec float_type;
-	static public BuildinTypeSpec double_type;
-	static public BuildinTypeSpec char_type;
-	static public BuildinTypeSpec short_type;
 	static public BuildinTypeSpec decimal_type;
 	static public BuildinTypeSpec bool_type;
-	static public BuildinTypeSpec sbyte_type;
 	static public BuildinTypeSpec byte_type;
-	static public BuildinTypeSpec ushort_type;
 	static public BuildinTypeSpec delegate_type;
-	static public BuildinTypeSpec multicast_delegate_type;
-	static public BuildinTypeSpec void_type;
 
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;

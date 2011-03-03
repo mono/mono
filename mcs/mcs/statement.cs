@@ -3731,7 +3731,7 @@ namespace Mono.CSharp {
 			string_dictionary.EmitStatement (ec);
 			ec.MarkLabel (l_initialized);
 
-			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
+			LocalTemporary string_switch_variable = new LocalTemporary (ec.BuildinTypes.Int);
 
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
 

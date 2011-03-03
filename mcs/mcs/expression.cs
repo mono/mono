@@ -759,7 +759,7 @@ namespace Mono.CSharp
 			// HACK: Decimal user-operator is included in standard operators
 			//
 			if (best_expr.Type == TypeManager.decimal_type)
-				return best_expr;			
+				return best_expr;
 
 			Expr = best_expr;
 			type = best_expr.Type;
@@ -2831,10 +2831,10 @@ namespace Mono.CSharp
 						//
 						left = temp.CreateReferenceExpression (ec, loc);
 						if (oper == Operator.LogicalAnd) {
-							expr = DynamicUnaryConversion.CreateIsFalse (cond_args, loc);
+							expr = DynamicUnaryConversion.CreateIsFalse (ec, cond_args, loc);
 							cond_left = left;
 						} else {
-							expr = DynamicUnaryConversion.CreateIsTrue (cond_args, loc);
+							expr = DynamicUnaryConversion.CreateIsTrue (ec, cond_args, loc);
 							cond_left = left;
 						}
 
@@ -2993,7 +2993,7 @@ namespace Mono.CSharp
 
 				method = TypeManager.delegate_remove_delegate_delegate;
 			} else {
-				return new EmptyExpression (TypeManager.decimal_type);
+				return new EmptyExpression (ec.BuildinTypes.Decimal);
 			}
 
 			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, ec.BuildinTypes.Delegate, loc);
@@ -4288,7 +4288,7 @@ namespace Mono.CSharp
 			if (expr.Type == InternalType.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
-				return DynamicUnaryConversion.CreateIsTrue (args, loc).Resolve (ec);
+				return DynamicUnaryConversion.CreateIsTrue (ec, args, loc).Resolve (ec);
 			}
 
 			type = ec.BuildinTypes.Bool;

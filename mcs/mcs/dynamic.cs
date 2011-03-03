@@ -330,7 +330,7 @@ namespace Mono.CSharp
 			args.Add (new Argument (binder));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
 			
-			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);		
+			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuildinTypes.Void);
 			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
 				init.Emit (ec);
@@ -412,7 +412,7 @@ namespace Mono.CSharp
 			// Create custom delegate when no appropriate predefined one is found
 			//
 			if (del_type == null) {
-				TypeSpec rt = is_statement ? TypeManager.void_type : type;
+				TypeSpec rt = is_statement ? ec.BuildinTypes.Void : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
@@ -831,14 +831,14 @@ namespace Mono.CSharp
 			base.binder = this;
 		}
 
-		public static DynamicUnaryConversion CreateIsTrue (Arguments args, Location loc)
+		public static DynamicUnaryConversion CreateIsTrue (ResolveContext rc, Arguments args, Location loc)
 		{
-			return new DynamicUnaryConversion ("IsTrue", args, loc) { type = TypeManager.bool_type };
+			return new DynamicUnaryConversion ("IsTrue", args, loc) { type = rc.BuildinTypes.Bool };
 		}
 
-		public static DynamicUnaryConversion CreateIsFalse (Arguments args, Location loc)
+		public static DynamicUnaryConversion CreateIsFalse (ResolveContext rc, Arguments args, Location loc)
 		{
-			return new DynamicUnaryConversion ("IsFalse", args, loc) { type = TypeManager.bool_type };
+			return new DynamicUnaryConversion ("IsFalse", args, loc) { type = rc.BuildinTypes.Bool };
 		}
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)

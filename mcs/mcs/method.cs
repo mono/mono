@@ -1108,7 +1108,7 @@ namespace Mono.CSharp {
 				// Current method is turned into automatically generated
 				// wrapper which creates an instance of iterator
 				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			}
 
@@ -1518,7 +1518,7 @@ namespace Mono.CSharp {
 			// It's here only to report an error
 			if (block != null && block.IsIterator) {
 				member_type = Compiler.BuildinTypes.Void;
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 			}
 
 			return true;
@@ -2373,7 +2373,7 @@ namespace Mono.CSharp {
 				// Current method is turned into automatically generated
 				// wrapper which creates an instance of iterator
 				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			}
 

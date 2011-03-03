@@ -271,39 +271,40 @@ namespace Mono.CSharp {
 		private static TypeSpec FindDocumentedTypeNonArray (MemberCore mc, 
 			string identifier, DeclSpace ds, string cref, Report r)
 		{
+			var types = mc.Module.Compiler.BuildinTypes;
 			switch (identifier) {
 			case "int":
-				return TypeManager.int32_type;
+				return types.Int;
 			case "uint":
-				return TypeManager.uint32_type;
+				return types.UInt;
 			case "short":
-				return TypeManager.short_type;;
+				return types.Short;
 			case "ushort":
-				return TypeManager.ushort_type;
+				return types.UShort;
 			case "long":
-				return TypeManager.int64_type;
+				return types.Long;
 			case "ulong":
-				return TypeManager.uint64_type;;
+				return types.ULong;
 			case "float":
-				return TypeManager.float_type;;
+				return types.Float;
 			case "double":
-				return TypeManager.double_type;
+				return types.Double;
 			case "char":
-				return TypeManager.char_type;;
+				return types.Char;
 			case "decimal":
-				return TypeManager.decimal_type;;
+				return types.Decimal;
 			case "byte":
-				return TypeManager.byte_type;;
+				return types.Byte;
 			case "sbyte":
-				return TypeManager.sbyte_type;;
+				return types.SByte;
 			case "object":
-				return TypeManager.object_type;;
+				return types.Object;
 			case "bool":
-				return TypeManager.bool_type;;
+				return types.Bool;
 			case "string":
-				return TypeManager.string_type;;
+				return types.String;
 			case "void":
-				return TypeManager.void_type;;
+				return types.Void;
 			}
 			FullNamedExpression e = ds.LookupNamespaceOrType (identifier, 0, mc.Location, false);
 			if (e != null) {

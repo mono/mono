@@ -1071,9 +1071,10 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Used for predefined class library user casts (no obsolete check, etc.)
+	// Used for predefined class library user operators (no obsolete check, etc.)
 	//
-	public class OperatorCast : TypeCast {
+	public class OperatorCast : TypeCast
+	{
 		MethodSpec conversion_operator;
 			
 		public OperatorCast (Expression child, TypeSpec target_type) 

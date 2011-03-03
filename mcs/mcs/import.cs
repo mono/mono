@@ -357,7 +357,7 @@ namespace Mono.CSharp
 			TypeSpec returnType;
 			if (mb.MemberType == MemberTypes.Constructor) {
 				kind = MemberKind.Constructor;
-				returnType = TypeManager.void_type;
+				returnType = module.Compiler.BuildinTypes.Void;
 			} else {
 				//
 				// Detect operators and destructors
@@ -912,7 +912,7 @@ namespace Mono.CSharp
 		void ImportTypeBase (TypeSpec spec, MetaType type)
 		{
 			if (spec.Kind == MemberKind.Interface)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = module.Compiler.BuildinTypes.Object;
 			else if (type.BaseType != null) {
 				TypeSpec base_type;
 				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
@@ -1021,7 +1021,7 @@ namespace Mono.CSharp
 			}
 
 			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = module.Compiler.BuildinTypes.Object;
 
 			if (tparams != null)
 				spec.TypeArguments = tparams.ToArray ();

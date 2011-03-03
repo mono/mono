@@ -189,10 +189,10 @@ namespace Mono.CSharp {
 									new ParameterData (null, Parameter.Modifier.NONE)
 								},
 							new[] {
-									TypeManager.int32_type, TypeManager.int32_type, TypeManager.int32_type
+									ec.BuildinTypes.Int, ec.BuildinTypes.Int, ec.BuildinTypes.Int
 								},
 							false);
-						var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
+						var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, ec.BuildinTypes.Int);
 						TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
 					}
 
@@ -259,7 +259,7 @@ namespace Mono.CSharp {
 			}
 
 			public DisposeMethod (IteratorStorey host)
-				: base (host, new TypeExpression (TypeManager.void_type, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
+				: base (host, new TypeExpression (host.Compiler.BuildinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("Dispose", host.Location))
 			{
 				host.AddMethod (this);
@@ -484,7 +484,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, new TypeExpression (TypeManager.void_type, Location),
+				this, null, new TypeExpression (Compiler.BuildinTypes.Void, Location),
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -766,7 +766,7 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (ParametersBlock block, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
-			: base (block, TypeManager.bool_type, block.StartLocation)
+			: base (block, host.Compiler.BuildinTypes.Bool, block.StartLocation)
 		{
 			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
@@ -840,7 +840,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers, CompilerContext ctx)
+		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)
 		{
 			bool is_enumerable;
 			TypeSpec iterator_type;
@@ -850,7 +850,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
-				ctx.Report.Error (1624, method.Location,
+				parent.Compiler.Report.Error (1624, method.Location,
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
@@ -863,19 +863,19 @@ namespace Mono.CSharp {
 				Parameter p = parameters [i];
 				Parameter.Modifier mod = p.ModFlags;
 				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
-					ctx.Report.Error (1623, p.Location,
+					parent.Compiler.Report.Error (1623, p.Location,
 						"Iterators cannot have ref or out parameters");
 					return;
 				}
 
 				if (p is ArglistParameter) {
-					ctx.Report.Error (1636, method.Location,
+					parent.Compiler.Report.Error (1636, method.Location,
 						"__arglist is not allowed in parameter list of iterators");
 					return;
 				}
 
 				if (parameters.Types [i].IsPointer) {
-					ctx.Report.Error (1637, p.Location,
+					parent.Compiler.Report.Error (1637, p.Location,
 							  "Iterators cannot have unsafe parameters or " +
 							  "yield types");
 					return;
@@ -883,7 +883,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0) {
-				ctx.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
 			}
 
 			method.Block.WrapIntoIterator (method, parent, iterator_type, is_enumerable);
