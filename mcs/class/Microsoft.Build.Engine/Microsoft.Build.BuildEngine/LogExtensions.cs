@@ -51,10 +51,10 @@ namespace Microsoft.Build.BuildEngine
 		public static void LogError (this Engine engine, string message,
 				     params object[] messageArgs)
 		{
-			engine.LogError (null, message, messageArgs);
+			engine.LogErrorWithFilename (null, message, messageArgs);
 		}
 
-		public static void LogError (this Engine engine, string filename, string message,
+		public static void LogErrorWithFilename (this Engine engine, string filename, string message,
 				     params object[] messageArgs)
 		{
 			if (message == null)
