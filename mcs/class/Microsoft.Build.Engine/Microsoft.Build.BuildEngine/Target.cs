@@ -175,7 +175,7 @@ namespace Microsoft.Build.BuildEngine {
 				project.PopBatch ();
 			}
 
-			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) Outputs.Clone ();
+			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) OutputsAsITaskItems.Clone ();
 
 			return result;
 		}
@@ -381,7 +381,12 @@ namespace Microsoft.Build.BuildEngine {
 			get { return buildState; }
 		}
 
-		internal ITaskItem [] Outputs {
+		public string Outputs {
+			get { return targetElement.GetAttribute ("Outputs"); }
+			set { targetElement.SetAttribute ("Outputs", value); }
+		}
+
+		ITaskItem [] OutputsAsITaskItems {
 			get {
 				string outputs = targetElement.GetAttribute ("Outputs");
 				if (outputs == String.Empty)
