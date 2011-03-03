@@ -52,6 +52,7 @@ CustomConfigureStep() {
     --without-sigaltstack \
     --without-mmap \
     --with-gc=included \
+    --enable-nls=no \
     --enable-nacl-gc \
     --enable-nacl-codegen \
     --cache-file=../config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp
