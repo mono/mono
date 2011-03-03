@@ -32,9 +32,6 @@ else
   readonly HOST_BITSIZE=${HOST_BITSIZE:-"32"}
 fi
 
-NACL_SDK_BASE=/usr/local/google/elijahtaylor/nacl_svn/native_client/tools/sdk/nacl-sdk
-#NACL_SDK_BASE=/usr/local/google/elijahtaylor/nacl_svn/native_client/toolchain/linux_x86
-
 if [ $TARGET_BITSIZE == "64" ]; then
   readonly TARGET_BIT_PREFIX="64"
 else
@@ -49,11 +46,10 @@ fi
 
 # locate default nacl_sdk toolchain
 # TODO: no arm support
-readonly NACL_SDK=${NACL_SDK_PATH:-/usr/local/google/elijahtaylor/naclports_svn}
-readonly NACL_DEV=${NACL_PATH:-/usr/local/google/elijahtaylor/nacl_svn}
-readonly NACL_NATIVE_CLIENT=${NACL_SDK}/src
-readonly NACL_SDK_BASE=${NACL_SDK_BASE:-\
-${NACL_NATIVE_CLIENT}/toolchain/${OS_SUBDIR_SHORT}_x86}
+#readonly NACL_SDK=${NACL_SDK_PATH}
+#readonly NACL_DEV=${NACL_PATH}
+#readonly NACL_NATIVE_CLIENT=${NACL_SDK}/src
+readonly NACL_SDK_BASE=${NACL_NATIVE_CLIENT}/toolchain/${OS_SUBDIR_SHORT}_x86
 
 readonly NACL_BIN_PATH=${NACL_SDK_BASE}/bin
 readonly NACLCC=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-gcc
