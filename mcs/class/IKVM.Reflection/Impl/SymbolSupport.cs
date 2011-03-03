@@ -54,8 +54,8 @@ namespace IKVM.Reflection.Impl
 
 		internal static ISymbolWriterImpl CreateSymbolWriterFor(ModuleBuilder moduleBuilder)
 		{
-#if !NO_SYMBOL_WRITER
-			throw new NotSupportedException ("IKVM.Reflection with no symbol writer support");
+#if NO_SYMBOL_WRITER
+			throw new NotSupportedException("IKVM.Reflection compiled with NO_SYMBOL_WRITER does not support writing debugging symbols.");
 #else
 			if (runningOnMono)
 			{

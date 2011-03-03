@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -574,6 +574,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
+	sealed class FieldPtrTable : Table<int>
+	{
+		internal const int Index = 0x03;
+
+		internal override void Read(MetadataReader mr)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				records[i] = mr.ReadField();
+			}
+		}
+	}
+
 	sealed class FieldTable : Table<FieldTable.Record>
 	{
 		internal const int Index = 0x04;
@@ -607,6 +620,19 @@ namespace IKVM.Reflection.Metadata
 				.WriteStringIndex()
 				.WriteBlobIndex()
 				.Value;
+		}
+	}
+
+	sealed class MethodPtrTable : Table<int>
+	{
+		internal const int Index = 0x05;
+
+		internal override void Read(MetadataReader mr)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				records[i] = mr.ReadMethodDef();
+			}
 		}
 	}
 
@@ -656,6 +682,19 @@ namespace IKVM.Reflection.Metadata
 		internal void Fixup(TextSection code)
 		{
 			baseRVA = (int)code.MethodBodiesRVA;
+		}
+	}
+
+	sealed class ParamPtrTable : Table<int>
+	{
+		internal const int Index = 0x07;
+
+		internal override void Read(MetadataReader mr)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				records[i] = mr.ReadParam();
+			}
 		}
 	}
 
@@ -1428,6 +1467,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
+	sealed class EventPtrTable : Table<int>
+	{
+		internal const int Index = 0x13;
+
+		internal override void Read(MetadataReader mr)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				records[i] = mr.ReadEvent();
+			}
+		}
+	}
+
 	sealed class EventTable : Table<EventTable.Record>
 	{
 		internal const int Index = 0x14;
@@ -1503,6 +1555,19 @@ namespace IKVM.Reflection.Metadata
 				.WriteTypeDef()
 				.WriteProperty()
 				.Value;
+		}
+	}
+
+	sealed class PropertyPtrTable : Table<int>
+	{
+		internal const int Index = 0x16;
+
+		internal override void Read(MetadataReader mr)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				records[i] = mr.ReadProperty();
+			}
 		}
 	}
 

@@ -677,9 +677,9 @@ namespace IKVM.Reflection.Emit
 
 		public void Emit(OpCode opc, MethodInfo method)
 		{
+			UpdateStack(opc, method.HasThis, method.ReturnType, method.ParameterCount);
 			Emit(opc);
 			WriteToken(moduleBuilder.GetMethodTokenForIL(method));
-			UpdateStack(opc, method.HasThis, method.ReturnType, method.ParameterCount);
 		}
 
 		public void Emit(OpCode opc, ConstructorInfo constructor)
