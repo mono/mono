@@ -57,69 +57,87 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (customEventRaised != null)
 				customEventRaised (sender, cbea);
+			FireAnyEvent (sender, cbea);
 		}
 		public void FireErrorRaised (object sender, BuildErrorEventArgs beea)
 		{
 			if (errorRaised != null)
 				errorRaised (sender, beea);
+			FireAnyEvent (sender, beea);
 		}
 		public void FireMessageRaised (object sender, BuildMessageEventArgs bmea)
 		{
 			if (messageRaised != null)
 				messageRaised (sender, bmea);
+			FireAnyEvent (sender, bmea);
 		}
 		public void FireWarningRaised (object sender, BuildWarningEventArgs bwea)
 		{
 			if (warningRaised != null)
 				warningRaised (sender, bwea);
+			FireAnyEvent (sender, bwea);
 		}
 		
 		public void FireTargetStarted (object sender, TargetStartedEventArgs tsea)
 		{
 			if (targetStarted != null)
 				targetStarted (sender, tsea);
+			FireAnyEvent (sender, tsea);
 		}
 		
 		public void FireTargetFinished (object sender, TargetFinishedEventArgs tfea)
 		{
 			if (targetFinished != null)
 				targetFinished (sender, tfea);
+			FireAnyEvent (sender, tfea);
 		}
 		
 		public void FireBuildStarted (object sender, BuildStartedEventArgs bsea)
 		{
 			if (buildStarted != null)
 				buildStarted (sender, bsea);
+			FireAnyEvent (sender, bsea);
 		}
 		
 		public void FireBuildFinished (object sender, BuildFinishedEventArgs bfea)
 		{
 			if (buildFinished != null)
 				buildFinished (sender, bfea);
+			FireAnyEvent (sender, bfea);
 		}
 		
 		public void FireProjectStarted (object sender, ProjectStartedEventArgs psea)
 		{
 			if (projectStarted != null)
 				projectStarted (sender, psea);
+			FireAnyEvent (sender, psea);
 		}
 		
 		public void FireProjectFinished (object sender, ProjectFinishedEventArgs pfea)
 		{
 			if (projectFinished != null)
 				projectFinished (sender, pfea);
+			FireAnyEvent (sender, pfea);
 		}
 		
 		public void FireTaskStarted (object sender, TaskStartedEventArgs tsea)
 		{
 			if (taskStarted != null)
 				taskStarted (sender, tsea);
+			FireAnyEvent (sender, tsea);
 		}
 		
 		public void FireTaskFinished (object sender, TaskFinishedEventArgs tfea)
 		{
 			if (taskFinished != null)
 				taskFinished (sender, tfea);
+			FireAnyEvent (sender, tfea);
+		}
+
+		public void FireAnyEvent (object sender, BuildEventArgs bea)
+		{
+			if (anyEventRaised != null)
+				anyEventRaised (sender, bea);
 		}
 
 		public event AnyEventHandler AnyEventRaised {
