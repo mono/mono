@@ -3026,8 +3026,8 @@ literal
 	;
 
 boolean_literal
-	: TRUE			{ $$ = new BoolLiteral (true, GetLocation ($1)); }
-	| FALSE			{ $$ = new BoolLiteral (false, GetLocation ($1)); }
+	: TRUE			{ $$ = new BoolLiteral (compiler.BuildinTypes, true, GetLocation ($1)); }
+	| FALSE			{ $$ = new BoolLiteral (compiler.BuildinTypes, false, GetLocation ($1)); }
 	;
 
 

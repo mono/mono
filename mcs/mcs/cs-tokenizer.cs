@@ -1326,7 +1326,7 @@ namespace Mono.CSharp
 			}
 
 			if (is_long && is_unsigned){
-				val = new ULongLiteral (ul, Location);
+				val = new ULongLiteral (context.BuildinTypes, ul, Location);
 				return Token.LITERAL;
 			}
 			
@@ -1334,29 +1334,29 @@ namespace Mono.CSharp
 				// uint if possible, or ulong else.
 
 				if ((ul & 0xffffffff00000000) == 0)
-					val = new UIntLiteral ((uint) ul, Location);
+					val = new UIntLiteral (context.BuildinTypes, (uint) ul, Location);
 				else
-					val = new ULongLiteral (ul, Location);
+					val = new ULongLiteral (context.BuildinTypes, ul, Location);
 			} else if (is_long){
 				// long if possible, ulong otherwise
 				if ((ul & 0x8000000000000000) != 0)
-					val = new ULongLiteral (ul, Location);
+					val = new ULongLiteral (context.BuildinTypes, ul, Location);
 				else
-					val = new LongLiteral ((long) ul, Location);
+					val = new LongLiteral (context.BuildinTypes, (long) ul, Location);
 			} else {
 				// int, uint, long or ulong in that order
 				if ((ul & 0xffffffff00000000) == 0){
 					uint ui = (uint) ul;
 					
 					if ((ui & 0x80000000) != 0)
-						val = new UIntLiteral (ui, Location);
+						val = new UIntLiteral (context.BuildinTypes, ui, Location);
 					else
-						val = new IntLiteral ((int) ui, Location);
+						val = new IntLiteral (context.BuildinTypes, (int) ui, Location);
 				} else {
 					if ((ul & 0x8000000000000000) != 0)
-						val = new ULongLiteral (ul, Location);
+						val = new ULongLiteral (context.BuildinTypes, ul, Location);
 					else
-						val = new LongLiteral ((long) ul, Location);
+						val = new LongLiteral (context.BuildinTypes, (long) ul, Location);
 				}
 			}
 			return Token.LITERAL;
@@ -1387,12 +1387,12 @@ namespace Mono.CSharp
 				}
 			} catch (OverflowException) {
 				Error_NumericConstantTooLong ();
-				val = new IntLiteral (0, Location);
+				val = new IntLiteral (context.BuildinTypes, 0, Location);
 				return Token.LITERAL;
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = new IntLiteral (0, Location);
+				val = new IntLiteral (context.BuildinTypes, 0, Location);
 				return Token.LITERAL;
 			}
 		}
@@ -1405,25 +1405,25 @@ namespace Mono.CSharp
 			switch (t){
 			case TypeCode.Decimal:
 				try {
-					val = new DecimalLiteral (decimal.Parse (s, styles, csharp_format_info), Location);
+					val = new DecimalLiteral (context.BuildinTypes, decimal.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = new DecimalLiteral (0, Location);
+					val = new DecimalLiteral (context.BuildinTypes, 0, Location);
 					Report.Error (594, Location, error_details, "decimal");
 				}
 				break;
 			case TypeCode.Single:
 				try {
-					val = new FloatLiteral (float.Parse (s, styles, csharp_format_info), Location);
+					val = new FloatLiteral (context.BuildinTypes, float.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = new FloatLiteral (0, Location);
+					val = new FloatLiteral (context.BuildinTypes, 0, Location);
 					Report.Error (594, Location, error_details, "float");
 				}
 				break;
 			default:
 				try {
-					val = new DoubleLiteral (double.Parse (s, styles, csharp_format_info), Location);
+					val = new DoubleLiteral (context.BuildinTypes, double.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = new DoubleLiteral (0, Location);
+					val = new DoubleLiteral (context.BuildinTypes, 0, Location);
 					Report.Error (594, Location, error_details, "double");
 				}
 				break;
@@ -1454,12 +1454,12 @@ namespace Mono.CSharp
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
 			} catch (OverflowException){
 				Error_NumericConstantTooLong ();
-				val = new IntLiteral (0, Location);
+				val = new IntLiteral (context.BuildinTypes, 0, Location);
 				return Token.LITERAL;
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = new IntLiteral (0, Location);
+				val = new IntLiteral (context.BuildinTypes, 0, Location);
 				return Token.LITERAL;
 			}
 			
@@ -2624,7 +2624,7 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					val = new StringLiteral (string_builder.ToString (), start_location);
+					val = new StringLiteral (context.BuildinTypes, string_builder.ToString (), start_location);
 					return Token.LITERAL;
 				}
 
@@ -3232,7 +3232,7 @@ namespace Mono.CSharp
 			int c = get_char ();
 			tokens_seen = true;
 			if (c == '\'') {
-				val = new CharLiteral ((char) c, Location);
+				val = new CharLiteral (context.BuildinTypes, (char) c, Location);
 				Report.Error (1011, Location, "Empty character literal");
 				return Token.LITERAL;
 			}
@@ -3249,7 +3249,7 @@ namespace Mono.CSharp
 			if (d != 0)
 				throw new NotImplementedException ();
 
-			val = new CharLiteral ((char) c, Location);
+			val = new CharLiteral (context.BuildinTypes, (char) c, Location);
 			c = get_char ();
 
 			if (c != '\'') {

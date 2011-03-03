@@ -79,7 +79,7 @@ namespace Mono.CSharp
 						if (field_size != null) {
 							argsEncoded.EncodeNamedArguments (
 								new[] { field_size, pack },
-								new[] { new IntConstant ((int) data.Length, Location), new IntConstant (1, Location) }
+								new[] { new IntConstant (Compiler.BuildinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuildinTypes, 1, Location) }
 							);
 						}
 

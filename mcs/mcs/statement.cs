@@ -1423,7 +1423,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			c = c.ConvertImplicitly (bc, li.Type);
+			c = c.ConvertImplicitly (li.Type);
 			if (c == null) {
 				if (TypeManager.IsReferenceType (li.Type))
 					initializer.Error_ConstantCanBeInitializedWithNullOnly (bc, li.Type, initializer.Location, li.Name);
@@ -1632,7 +1632,7 @@ namespace Mono.CSharp {
 		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
 		{
 			if (IsConstant && const_value != null)
-				return Constant.CreateConstantFromValue (Type, const_value.GetValue (), loc).Resolve (rc);
+				return Constant.CreateConstantFromValue (Type, const_value.GetValue (), loc);
 
 			return new LocalVariableReference (this, loc);
 		}
@@ -3691,9 +3691,9 @@ namespace Mono.CSharp {
 
 					value = (string) sl.Converted.GetValue ();
 					var init_args = new List<Expression> (2);
-					init_args.Add (new StringLiteral (value, sl.Location));
+					init_args.Add (new StringLiteral (ec.BuildinTypes, value, sl.Location));
 
-					sl.Converted = new IntConstant (counter, loc).Resolve (ec);
+					sl.Converted = new IntConstant (ec.BuildinTypes, counter, loc);
 					init_args.Add (sl.Converted);
 
 					init.Add (new CollectionElementInitializer (init_args, loc));
@@ -3707,7 +3707,7 @@ namespace Mono.CSharp {
 			}
 
 			Arguments args = new Arguments (1);
-			args.Add (new Argument (new IntConstant (init.Count, loc)));
+			args.Add (new Argument (new IntConstant (ec.BuildinTypes, init.Count, loc)));
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
 				new CollectionOrObjectInitializers (init, loc), loc);
 
@@ -4111,7 +4111,7 @@ namespace Mono.CSharp {
 				//
 				// Initialize ref variable
 				//
-				lock_taken.EmitAssign (ec, new BoolLiteral (false, loc));
+				lock_taken.EmitAssign (ec, new BoolLiteral (ec.BuildinTypes, false, loc));
 			} else {
 				//
 				// Monitor.Enter (expr_copy)
@@ -4450,7 +4450,7 @@ namespace Mono.CSharp {
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
 						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (0, loc), loc), loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuildinTypes, 0, loc), loc), loc)),
 							new NullPointer (loc),
 							converted, loc);
 
@@ -5179,7 +5179,7 @@ namespace Mono.CSharp {
 						lengths[i].Resolve (ec);
 
 						Arguments args = new Arguments (1);
-						args.Add (new Argument (new IntConstant (i, loc)));
+						args.Add (new Argument (new IntConstant (ec.BuildinTypes, i, loc)));
 						length_exprs [i] = new Invocation (new MemberAccess (copy, "GetLength"), args).Resolve (ec);
 					}
 
@@ -5242,7 +5242,7 @@ namespace Mono.CSharp {
 						lengths [i].EmitAssign (ec, length_exprs [i]);
 				}
 
-				IntConstant zero = new IntConstant (0, loc);
+				IntConstant zero = new IntConstant (ec.BuildinTypes, 0, loc);
 				for (int i = 0; i < rank; i++) {
 					variables [i].EmitAssign (ec, zero);
 

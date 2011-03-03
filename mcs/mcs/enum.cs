@@ -79,7 +79,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				expr = New.Constantify (underlying, Location);
 
-			return new EnumConstant (expr, MemberType).Resolve (rc);
+			return new EnumConstant (expr, MemberType);
 		}
 
 		public override bool Define ()
@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 		//
 		// Implicit enum member initializer, used when no constant value is provided
 		//
-		class ImplicitInitializer : Expression
+		sealed class ImplicitInitializer : Expression
 		{
 			readonly EnumMember prev;
 			readonly EnumMember current;
@@ -124,18 +124,18 @@ namespace Mono.CSharp {
 			{
 				// We are the first member
 				if (prev == null) {
-					return New.Constantify (current.Parent.Definition, Location).Resolve (rc);
+					return New.Constantify (current.Parent.Definition, Location);
 				}
 
 				var c = ((ConstSpec) prev.Spec).GetConstant (rc) as EnumConstant;
 				try {
-					return c.Increment ().Resolve (rc);
+					return c.Increment ();
 				} catch (OverflowException) {
 					rc.Report.Error (543, current.Location,
 						"The enumerator value `{0}' is outside the range of enumerator underlying type `{1}'",
 						current.GetSignatureForError (), ((Enum) current.Parent).UnderlyingType.GetSignatureForError ());
 
-					return New.Constantify (current.Parent.Definition, current.Location).Resolve (rc);
+					return New.Constantify (current.Parent.Definition, current.Location);
 				}
 			}
 

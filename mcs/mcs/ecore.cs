@@ -1186,7 +1186,7 @@ namespace Mono.CSharp {
 	//
 	public class EmptyConstantCast : Constant
 	{
-		public Constant child;
+		public readonly Constant child;
 
 		public EmptyConstantCast (Constant child, TypeSpec type)
 			: base (child.Location)
@@ -1240,11 +1240,6 @@ namespace Mono.CSharp {
 			get { return child.IsZeroInteger; }
 		}
 
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			return this;
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);			
@@ -1279,7 +1274,7 @@ namespace Mono.CSharp {
 			return child.GetValueAsLong ();
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
+		public override Constant ConvertImplicitly (TypeSpec target_type)
 		{
 			if (type == target_type)
 				return this;
@@ -1288,7 +1283,7 @@ namespace Mono.CSharp {
 			if (!Convert.ImplicitStandardConversionExists (this, target_type))
 				return null;
 
-			return child.ConvertImplicitly (rc, target_type);
+			return child.ConvertImplicitly (target_type);
 		}
 	}
 
@@ -1303,19 +1298,14 @@ namespace Mono.CSharp {
 			: base (child.Location)
 		{
 			this.Child = child;
+
+			this.eclass = ExprClass.Value;
 			this.type = enum_type;
 		}
 
 		protected EnumConstant (Location loc)
 			: base (loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			Child = Child.Resolve (rc);
-			this.eclass = ExprClass.Value;
-			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1401,7 +1391,7 @@ namespace Mono.CSharp {
 			return Child.ConvertExplicitly (in_checked_context, target_type);
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
+		public override Constant ConvertImplicitly (TypeSpec type)
 		{
 			if (this.type == type) {
 				return this;
@@ -1411,7 +1401,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return Child.ConvertImplicitly (rc, type);
+			return Child.ConvertImplicitly (type);
 		}
 	}
 
@@ -1816,9 +1806,9 @@ namespace Mono.CSharp {
 				this.orig_expr = orig_expr;
 			}
 
-			public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
+			public override Constant ConvertImplicitly (TypeSpec target_type)
 			{
-				Constant c = base.ConvertImplicitly (rc, target_type);
+				Constant c = base.ConvertImplicitly (target_type);
 				if (c != null)
 					c = new ReducedConstantExpression (c, orig_expr);
 
@@ -1848,6 +1838,9 @@ namespace Mono.CSharp {
 			{
 				this.orig_expr = orig;
 				this.stm = stm;
+				this.eclass = stm.eclass;
+				this.type = stm.Type;
+
 				this.loc = orig.Location;
 			}
 
@@ -1858,8 +1851,6 @@ namespace Mono.CSharp {
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				eclass = stm.eclass;
-				type = stm.Type;
 				return this;
 			}
 
@@ -4737,7 +4728,7 @@ namespace Mono.CSharp {
 			var c = constant.GetConstant (rc);
 
 			// Creates reference expression to the constant value
-			return Constant.CreateConstant (rc, constant.MemberType, c.GetValue (), loc);
+			return Constant.CreateConstant (constant.MemberType, c.GetValue (), loc);
 		}
 
 		public override void Emit (EmitContext ec)

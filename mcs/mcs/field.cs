@@ -194,7 +194,7 @@ namespace Mono.CSharp
 
 		public virtual Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ConvertImplicitly (rc, MemberType);
+			return expr.ConvertImplicitly (MemberType);
 		}
 
 		protected override void DoMemberTypeDependentChecks ()
@@ -492,7 +492,10 @@ namespace Mono.CSharp
 			encoder.Encode ((short)LayoutKind.Sequential);
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
-				new Constant [] { new IntConstant (buffer_size, Location), new IntConstant ((int) char_set, Location) }
+				new Constant [] { 
+					new IntConstant (Compiler.BuildinTypes, buffer_size, Location),
+					new IntConstant (Compiler.BuildinTypes, (int) char_set, Location)
+				}
 			);
 
 			pa.EmitAttribute (fixed_buffer_type, encoder);

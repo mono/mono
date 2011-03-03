@@ -607,7 +607,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (
 				new TypeExpression (parameter_type, Location), Location)));
-			arguments.Add (new Argument (new StringConstant (Name, Location)));
+			arguments.Add (new Argument (new StringConstant (ec.BuildinTypes, Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
 		}

@@ -227,11 +227,12 @@ namespace Mono.CSharp
 			{
 				this.flags = flags;
 				this.statement = statement;
+				eclass = 0;
 			}
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				Child = new IntConstant ((int) (flags | statement.flags), statement.loc).Resolve (ec);
+				Child = new IntConstant (ec.BuildinTypes, (int) (flags | statement.flags), statement.loc);
 
 				type = ec.Module.PredefinedTypes.BinderFlags.Resolve (loc);
 				eclass = Child.eclass;
@@ -471,7 +472,7 @@ namespace Mono.CSharp
 				Arguments binder_args = new Arguments (3);
 
 				binder_args.Add (new Argument (new BinderFlags (0, this)));
-				binder_args.Add (new Argument (new StringLiteral (name, loc)));
+				binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, name, loc)));
 				binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
 				return new Invocation (GetBinder ("IsEvent", loc), binder_args);
@@ -669,7 +670,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (call_flags, this)));
 
 			if (is_member_access)
-				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
+				binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, member.Name, member.Location)));
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
@@ -729,7 +730,7 @@ namespace Mono.CSharp
 			Arguments binder_args = new Arguments (4);
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
-			binder_args.Add (new Argument (new StringLiteral (name, loc)));
+			binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 

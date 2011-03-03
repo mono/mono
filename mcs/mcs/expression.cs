@@ -147,15 +147,15 @@ namespace Mono.CSharp
 				// Unary numeric promotions
 				switch (expr_type.BuildinType) {
 				case BuildinTypeSpec.Type.Byte:
-					return new IntConstant (((ByteConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ((ByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.SByte:
-					return new IntConstant (((SByteConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ((SByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Short:
-					return new IntConstant (((ShortConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ((ShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.UShort:
-					return new IntConstant (((UShortConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ((UShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Char:
-					return new IntConstant (((CharConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ((CharConstant) e).Value, e.Location);
 				
 				// Predefined operators
 				case BuildinTypeSpec.Type.Int:
@@ -174,15 +174,15 @@ namespace Mono.CSharp
 				// Unary numeric promotions
 				switch (expr_type.BuildinType) {
 				case BuildinTypeSpec.Type.Byte:
-					return new IntConstant (-((ByteConstant) e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, -((ByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.SByte:
-					return new IntConstant (-((SByteConstant) e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, -((SByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Short:
-					return new IntConstant (-((ShortConstant) e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, -((ShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.UShort:
-					return new IntConstant (-((UShortConstant) e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, -((UShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Char:
-					return new IntConstant (-((CharConstant) e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, -((CharConstant) e).Value, e.Location);
 
 				// Predefined operators
 				case BuildinTypeSpec.Type.Int:
@@ -194,7 +194,7 @@ namespace Mono.CSharp
 						}
 						return e;
 					}
-					return new IntConstant (-ivalue, e.Location);
+					return new IntConstant (ec.BuildinTypes, -ivalue, e.Location);
 
 				case BuildinTypeSpec.Type.Long:
 					long lvalue = ((LongConstant) e).Value;
@@ -205,42 +205,42 @@ namespace Mono.CSharp
 						}
 						return e;
 					}
-					return new LongConstant (-lvalue, e.Location);
+					return new LongConstant (ec.BuildinTypes, -lvalue, e.Location);
 
 				case BuildinTypeSpec.Type.UInt:
 					UIntLiteral uil = e as UIntLiteral;
 					if (uil != null) {
 						if (uil.Value == int.MaxValue + (uint) 1)
-							return new IntLiteral (int.MinValue, e.Location);
-						return new LongLiteral (-uil.Value, e.Location);
+							return new IntLiteral (ec.BuildinTypes, int.MinValue, e.Location);
+						return new LongLiteral (ec.BuildinTypes, -uil.Value, e.Location);
 					}
-					return new LongConstant (-((UIntConstant) e).Value, e.Location);
+					return new LongConstant (ec.BuildinTypes, -((UIntConstant) e).Value, e.Location);
 
 
 				case BuildinTypeSpec.Type.ULong:
 					ULongLiteral ull = e as ULongLiteral;
 					if (ull != null && ull.Value == 9223372036854775808)
-						return new LongLiteral (long.MinValue, e.Location);
+						return new LongLiteral (ec.BuildinTypes, long.MinValue, e.Location);
 					return null;
 
 				case BuildinTypeSpec.Type.Float:
 					FloatLiteral fl = e as FloatLiteral;
 					// For better error reporting
 					if (fl != null)
-						return new FloatLiteral (-fl.Value, e.Location);
+						return new FloatLiteral (ec.BuildinTypes, -fl.Value, e.Location);
 
-					return new FloatConstant (-((FloatConstant) e).Value, e.Location);
+					return new FloatConstant (ec.BuildinTypes, -((FloatConstant) e).Value, e.Location);
 
 				case BuildinTypeSpec.Type.Double:
 					DoubleLiteral dl = e as DoubleLiteral;
 					// For better error reporting
 					if (dl != null)
-						return new DoubleLiteral (-dl.Value, e.Location);
+						return new DoubleLiteral (ec.BuildinTypes, -dl.Value, e.Location);
 
-					return new DoubleConstant (-((DoubleConstant) e).Value, e.Location);
+					return new DoubleConstant (ec.BuildinTypes, -((DoubleConstant) e).Value, e.Location);
 
 				case BuildinTypeSpec.Type.Decimal:
-					return new DecimalConstant (-((DecimalConstant) e).Value, e.Location);
+					return new DecimalConstant (ec.BuildinTypes, -((DecimalConstant) e).Value, e.Location);
 				}
 
 				return null;
@@ -250,31 +250,31 @@ namespace Mono.CSharp
 					return null;
 				
 				bool b = (bool)e.GetValue ();
-				return new BoolConstant (!b, e.Location);
+				return new BoolConstant (ec.BuildinTypes, !b, e.Location);
 				
 			case Operator.OnesComplement:
 				// Unary numeric promotions
 				switch (expr_type.BuildinType) {
 				case BuildinTypeSpec.Type.Byte:
-					return new IntConstant (~((ByteConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((ByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.SByte:
-					return new IntConstant (~((SByteConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((SByteConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Short:
-					return new IntConstant (~((ShortConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((ShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.UShort:
-					return new IntConstant (~((UShortConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((UShortConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Char:
-					return new IntConstant (~((CharConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((CharConstant) e).Value, e.Location);
 				
 				// Predefined operators
 				case BuildinTypeSpec.Type.Int:
-					return new IntConstant (~((IntConstant)e).Value, e.Location);
+					return new IntConstant (ec.BuildinTypes, ~((IntConstant)e).Value, e.Location);
 				case BuildinTypeSpec.Type.UInt:
-					return new UIntConstant (~((UIntConstant)e).Value, e.Location);
+					return new UIntConstant (ec.BuildinTypes, ~((UIntConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.Long:
-					return new LongConstant (~((LongConstant)e).Value, e.Location);
+					return new LongConstant (ec.BuildinTypes, ~((LongConstant) e).Value, e.Location);
 				case BuildinTypeSpec.Type.ULong:
-					return new ULongConstant (~((ULongConstant)e).Value, e.Location);
+					return new ULongConstant (ec.BuildinTypes, ~((ULongConstant) e).Value, e.Location);
 				}
 				if (e is EnumConstant) {
 					e = TryReduceConstant (ec, ((EnumConstant)e).Child);
@@ -458,7 +458,7 @@ namespace Mono.CSharp
 			if (cexpr != null) {
 				cexpr = TryReduceConstant (ec, cexpr);
 				if (cexpr != null)
-					return cexpr.Resolve (ec);
+					return cexpr;
 			}
 
 			Expression expr = ResolveOperator (ec, Expr);
@@ -1152,7 +1152,7 @@ namespace Mono.CSharp
 				break;
 			}
 
-			var one = new IntConstant (1, loc);
+			var one = new IntConstant (ec.BuildinTypes, 1, loc);
 			var op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
 			operation = new Binary (op, source, one, loc);
 			operation = operation.Resolve (ec);
@@ -1351,7 +1351,7 @@ namespace Mono.CSharp
 				ec.Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 					TypeManager.CSharpName (probe_type_expr.Type));
 
-			return ReducedExpression.Create (new BoolConstant (result, loc).Resolve (ec), this);
+			return ReducedExpression.Create (new BoolConstant (ec.BuildinTypes, result, loc), this);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1684,14 +1684,14 @@ namespace Mono.CSharp
 			}
 
 			if (type.IsPointer)
-				return new NullLiteral (Location).ConvertImplicitly (ec, type);
+				return new NullLiteral (Location).ConvertImplicitly (type);
 
 			if (TypeManager.IsReferenceType (type))
 				return new NullConstant (type, loc);
 
 			Constant c = New.Constantify (type, expr.Location);
 			if (c != null)
-				return c.Resolve (ec);
+				return c;
 
 			eclass = ExprClass.Variable;
 			return this;
@@ -1888,7 +1888,7 @@ namespace Mono.CSharp
 				// b = b.left >> b.right & (0x1f|0x3f)
 				//
 				b.right = new Binary (Operator.BitwiseAnd,
-					b.right, new IntConstant (right_mask, b.right.Location), b.loc).Resolve (ec);
+					b.right, new IntConstant (ec.BuildinTypes, right_mask, b.right.Location), b.loc).Resolve (ec);
 
 				//
 				// Expression tree representation does not use & mask
@@ -2642,7 +2642,7 @@ namespace Mono.CSharp
 
 			Constant c = prim_expr as Constant;
 			if (c != null) {
-				temp = c.ConvertImplicitly (rc, type);
+				temp = c.ConvertImplicitly (type);
 				if (temp != null) {
 					prim_expr = temp;
 					return true;
@@ -2660,7 +2660,7 @@ namespace Mono.CSharp
 					if (type != second_expr.Type) {
 						c = second_expr as Constant;
 						if (c != null)
-							temp = c.ConvertImplicitly (rc, type);
+							temp = c.ConvertImplicitly (type);
 						else
 							temp = Convert.ImplicitNumericConversion (second_expr, type);
 						if (temp == null)
@@ -2711,7 +2711,7 @@ namespace Mono.CSharp
 			if (ltype != int32) {
 				Constant c = left as Constant;
 				if (c != null)
-					temp = c.ConvertImplicitly (ec, int32);
+					temp = c.ConvertImplicitly (int32);
 				else
 					temp = Convert.ImplicitNumericConversion (left, int32);
 
@@ -2723,7 +2723,7 @@ namespace Mono.CSharp
 			if (rtype != int32) {
 				Constant c = right as Constant;
 				if (c != null)
-					temp = c.ConvertImplicitly (ec, int32);
+					temp = c.ConvertImplicitly (int32);
 				else
 					temp = Convert.ImplicitNumericConversion (right, int32);
 
@@ -2786,9 +2786,6 @@ namespace Mono.CSharp
 			if (rc != null && lc != null) {
 				int prev_e = ec.Report.Errors;
 				Expression e = ConstantFold.BinaryFold (ec, oper, lc, rc, loc);
-				if (e != null)
-					e = e.Resolve (ec);
-
 				if (e != null || ec.Report.Errors != prev_e)
 					return e;
 			}
@@ -3140,14 +3137,14 @@ namespace Mono.CSharp
 			// with constants and expressions
 			if (left.Type != underlying_type) {
 				if (left is Constant)
-					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
+					left = ((Constant) left).ConvertExplicitly (false, underlying_type);
 				else
 					left = EmptyCast.Create (left, underlying_type);
 			}
 
 			if (right.Type != underlying_type) {
 				if (right is Constant)
-					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
+					right = ((Constant) right).ConvertExplicitly (false, underlying_type);
 				else
 					right = EmptyCast.Create (right, underlying_type);
 			}
@@ -3424,7 +3421,7 @@ namespace Mono.CSharp
 						new SideEffectConstant (lc, right, loc) :
 						new SideEffectConstant (rc, left, loc);
 
-					return ReducedExpression.Create (side_effect.Resolve (ec), expr);
+					return ReducedExpression.Create (side_effect, expr);
 				}
 			}
 
@@ -3808,7 +3805,7 @@ namespace Mono.CSharp
 			if ((oper & Operator.LogicalMask) != 0)
 				flags |= CSharpBinderFlags.BinaryOperationLogical;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve (loc))));
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuildinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve (loc))));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));									
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
@@ -3906,7 +3903,7 @@ namespace Mono.CSharp
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
 			if (method != null) {
 				if (lift_arg)
-					args.Add (new Argument (new BoolLiteral (false, loc)));
+					args.Add (new Argument (new BoolLiteral (ec.BuildinTypes, false, loc)));
 
 				args.Add (new Argument (method));
 			}
@@ -3999,8 +3996,7 @@ namespace Mono.CSharp
 					Argument last_argument = arguments [arguments.Count - 1];
 					StringConstant last_expr_constant = last_argument.Expr as StringConstant;
 					if (last_expr_constant != null) {
-						last_argument.Expr = new StringConstant (
-							last_expr_constant.Value + sc.Value, sc.Location).Resolve (rc);
+						last_argument.Expr = new StringConstant (rc.BuildinTypes, last_expr_constant.Value + sc.Value, sc.Location);
 						return;
 					}
 				}
@@ -4204,7 +4200,7 @@ namespace Mono.CSharp
 						return;
 
 					if (size != 0)
-						right = new IntConstant (size, right.Location);
+						right = new IntConstant (ec.BuildinTypes, size, right.Location);
 					else
 						right = new SizeOf (new TypeExpression (element, right.Location), right.Location);
 					
@@ -5477,31 +5473,31 @@ namespace Mono.CSharp
 		{
 			switch (t.BuildinType) {
 			case BuildinTypeSpec.Type.Int:
-				return new IntConstant (0, loc);
+				return new IntConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.UInt:
-				return new UIntConstant (0, loc);
+				return new UIntConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Long:
-				return new LongConstant (0, loc);
+				return new LongConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.ULong:
-				return new ULongConstant (0, loc);
+				return new ULongConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Float:
-				return new FloatConstant (0, loc);
+				return new FloatConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Double:
-				return new DoubleConstant (0, loc);
+				return new DoubleConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Short:
-				return new ShortConstant (0, loc);
+				return new ShortConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.UShort:
-				return new UShortConstant (0, loc);
+				return new UShortConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.SByte:
-				return new SByteConstant (0, loc);
+				return new SByteConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Byte:
-				return new ByteConstant (0, loc);
+				return new ByteConstant (t, 0, loc);
 			case BuildinTypeSpec.Type.Char:
-				return new CharConstant ('\0', loc);
+				return new CharConstant (t, '\0', loc);
 			case BuildinTypeSpec.Type.Bool:
-				return new BoolConstant (false, loc);
+				return new BoolConstant (t, false, loc);
 			case BuildinTypeSpec.Type.Decimal:
-				return new DecimalConstant (0, loc);
+				return new DecimalConstant (t, 0, loc);
 			}
 
 			if (TypeManager.IsEnumType (t))
@@ -5567,7 +5563,7 @@ namespace Mono.CSharp
 			if (arguments == null) {
 				Constant c = Constantify (type, RequestedType.Location);
 				if (c != null)
-					return ReducedExpression.Create (c.Resolve (ec), this);
+					return ReducedExpression.Create (c, this);
 			}
 
 			if (TypeManager.IsDelegateType (type)) {
@@ -6121,23 +6117,17 @@ namespace Mono.CSharp
 			return CreateExpressionFactoryCall (ec, "NewArrayInit", args);
 		}		
 		
-		public void UpdateIndices ()
+		void UpdateIndices (ResolveContext rc)
 		{
 			int i = 0;
 			for (var probe = initializers; probe != null;) {
+				Expression e = new IntConstant (rc.BuildinTypes, probe.Count, Location.Null);
+				arguments.Add (e);
+				bounds[i++] = probe.Count;
+
 				if (probe.Count > 0 && probe [0] is ArrayInitializer) {
-					Expression e = new IntConstant (probe.Count, Location.Null);
-					arguments.Add (e);
-
-					bounds [i++] = probe.Count;
-
 					probe = (ArrayInitializer) probe[0];
-					
 				} else {
-					Expression e = new IntConstant (probe.Count, Location.Null);
-					arguments.Add (e);
-
-					bounds [i++] = probe.Count;
 					return;
 				}
 			}
@@ -6180,7 +6170,7 @@ namespace Mono.CSharp
 			if (!CheckIndices (ec, initializers, 0, false, dimensions))
 				return false;
 				
-			UpdateIndices ();
+			UpdateIndices (ec);
 				
 			return true;
 		}
@@ -7365,7 +7355,7 @@ namespace Mono.CSharp
 
 			int size_of = BuildinTypeSpec.GetSize (type_queried);
 			if (size_of > 0) {
-				return new IntConstant (size_of, loc).Resolve (ec);
+				return new IntConstant (ec.BuildinTypes, size_of, loc);
 			}
 
 			if (!TypeManager.VerifyUnmanaged (ec.Module, type_queried, loc)){

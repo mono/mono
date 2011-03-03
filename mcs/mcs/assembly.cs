@@ -462,7 +462,7 @@ namespace Mono.CSharp
 					var prop = pa.GetProperty ("WrapNonExceptionThrows", Compiler.BuildinTypes.Bool, Location.Null);
 					if (prop != null) {
 						AttributeEncoder encoder = new AttributeEncoder ();
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (true, Location.Null));
+						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuildinTypes, true, Location.Null));
 						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
 					}
 				}
@@ -614,7 +614,7 @@ namespace Mono.CSharp
 				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
-				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
+				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuildinTypes, true, loc)));
 
 				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (module, null, null, null), "assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),

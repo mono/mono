@@ -1820,8 +1820,8 @@ namespace Mono.CSharp {
 				new QualifiedAliasMember ("global", "System", loc), "Collections", loc), "Generic", loc);
 
 			Expression rs_equals = null;
-			Expression string_concat = new StringConstant ("{", loc);
-			Expression rs_hashcode = new IntConstant (-2128831035, loc);
+			Expression string_concat = new StringConstant (Compiler.BuildinTypes, "{", loc);
+			Expression rs_hashcode = new IntConstant (Compiler.BuildinTypes, -2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
 				var p = parameters [i];
 				var f = Fields [i];
@@ -1843,7 +1843,7 @@ namespace Mono.CSharp {
 				Expression field_hashcode = new Invocation (new MemberAccess (equality_comparer,
 					"GetHashCode", loc), arguments_hashcode);
 
-				IntConstant FNV_prime = new IntConstant (16777619, loc);				
+				IntConstant FNV_prime = new IntConstant (Compiler.BuildinTypes, 16777619, loc);				
 				rs_hashcode = new Binary (Binary.Operator.Multiply,
 					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode, loc),
 					FNV_prime, loc);
@@ -1852,14 +1852,14 @@ namespace Mono.CSharp {
 					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc), loc)),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
-					new StringConstant (string.Empty, loc), loc);
+					new StringConstant (Compiler.BuildinTypes, string.Empty, loc), loc);
 
 				if (rs_equals == null) {
 					rs_equals = field_equal;
 					string_concat = new Binary (Binary.Operator.Addition,
 						string_concat,
 						new Binary (Binary.Operator.Addition,
-							new StringConstant (" " + p.Name + " = ", loc),
+							new StringConstant (Compiler.BuildinTypes, " " + p.Name + " = ", loc),
 							field_to_string,
 							loc),
 						loc);
@@ -1872,7 +1872,7 @@ namespace Mono.CSharp {
 				string_concat = new Binary (Binary.Operator.Addition,
 					new Binary (Binary.Operator.Addition,
 						string_concat,
-						new StringConstant (", " + p.Name + " = ", loc),
+						new StringConstant (Compiler.BuildinTypes, ", " + p.Name + " = ", loc),
 						loc),
 					field_to_string,
 					loc);
@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 
 			string_concat = new Binary (Binary.Operator.Addition,
 				string_concat,
-				new StringConstant (" }", loc),
+				new StringConstant (Compiler.BuildinTypes, " }", loc),
 				loc);
 
 			//
@@ -1938,19 +1938,19 @@ namespace Mono.CSharp {
 			var hash_variable = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (13, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuildinTypes, 13, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (7, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuildinTypes, 7, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (3, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuildinTypes, 3, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (17, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuildinTypes, 17, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (5, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuildinTypes, 5, loc), loc), loc)));
 
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_top;

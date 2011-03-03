@@ -199,7 +199,7 @@ namespace Mono.CSharp {
 			//
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null) {
-				return nl.ConvertImplicitly (null, target_type);
+				return nl.ConvertImplicitly (target_type);
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type)) {
@@ -441,7 +441,7 @@ namespace Mono.CSharp {
 					return EmptyExpression.Null;
 
 				if (expr is Constant)
-					return ((Constant) expr).ConvertImplicitly (ec, t_el);
+					return ((Constant) expr).ConvertImplicitly (t_el);
 
 				return ImplicitNumericConversion (null, expr_type, t_el);
 			}
@@ -455,7 +455,7 @@ namespace Mono.CSharp {
 			Expression conv = unwrap;
 			if (!TypeSpecComparer.IsEqual (expr_type, t_el)) {
 				if (conv is Constant)
-					conv = ((Constant)conv).ConvertImplicitly (ec, t_el);
+					conv = ((Constant)conv).ConvertImplicitly (t_el);
 				else
 					conv = ImplicitNumericConversion (conv, expr_type, t_el);
 
@@ -694,7 +694,7 @@ namespace Mono.CSharp {
 
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null)
-				return nl.ConvertImplicitly (null, target_type) != null;
+				return nl.ConvertImplicitly (target_type) != null;
 
 			if (expr_type == target_type)
 				return true;
@@ -1334,7 +1334,7 @@ namespace Mono.CSharp {
 			Constant c = expr as Constant;
 			if (c != null) {
 				try {
-					c = c.ConvertImplicitly (ec, target_type);
+					c = c.ConvertImplicitly (target_type);
 				} catch {
 					Console.WriteLine ("Conversion error happened in line {0}", loc);
 					throw;
@@ -1362,7 +1362,7 @@ namespace Mono.CSharp {
 				//
 				if (i.IsZeroInteger) {
 					// Recreate 0 literal to remove any collected conversions
-					return new EnumConstant (new IntLiteral (0, i.Location), target_type).Resolve (ec);
+					return new EnumConstant (new IntLiteral (ec.BuildinTypes, 0, i.Location), target_type);
 				}
 			}
 

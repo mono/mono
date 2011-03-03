@@ -610,7 +610,7 @@ namespace Mono.CSharp.Nullable
 		Constant CreateNullConstant (ResolveContext ec, Expression expr)
 		{
 			// FIXME: Handle side effect constants
-			Constant c = new BoolConstant (Oper == Operator.Inequality, loc).Resolve (ec);
+			Constant c = new BoolConstant (ec.BuildinTypes, Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
 				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
@@ -929,7 +929,7 @@ namespace Mono.CSharp.Nullable
 				// Value types and null comparison
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
-					return CreateNullConstant (ec, right_orig).Resolve (ec);
+					return CreateNullConstant (ec, right_orig);
 			}
 
 			if (IsRightNullLifted) {
@@ -1112,13 +1112,13 @@ namespace Mono.CSharp.Nullable
 					//
 					Constant lc = left as Constant;
 					if (lc != null && !lc.IsDefaultValue)
-						return ReducedExpression.Create (lc, this).Resolve (ec);
+						return ReducedExpression.Create (lc, this);
 
 					//
 					// Reduce (left ?? null) to left OR (null-constant ?? right) to right
 					//
 					if (right.IsNull || lc != null)
-						return ReducedExpression.Create (lc != null ? right : left, this).Resolve (ec);
+						return ReducedExpression.Create (lc != null ? right : left, this);
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
 					type = ltype;

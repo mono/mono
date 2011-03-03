@@ -274,7 +274,7 @@ namespace Mono.CSharp
 
 				// CSharpArgumentInfoFlags.None = 0
 				const string info_flags_enum = "CSharpArgumentInfoFlags";
-				Expression info_flags = new IntLiteral (0, loc);
+				Expression info_flags = new IntLiteral (rc.BuildinTypes, 0, loc);
 
 				if (a.Expr is Constant) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
@@ -327,7 +327,7 @@ namespace Mono.CSharp
 				}
 
 				dargs.Add (new Argument (info_flags));
-				dargs.Add (new Argument (new StringLiteral (named_value, loc)));
+				dargs.Add (new Argument (new StringLiteral (rc.BuildinTypes, named_value, loc)));
 				all.Add (new Invocation (new MemberAccess (new MemberAccess (binder, "CSharpArgumentInfo", loc), "Create", loc), dargs));
 			}
 
