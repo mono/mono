@@ -209,5 +209,62 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.LoadXml (documentString);
 		}
 
+#if NET_4_0
+		[Test]
+		public void TestImportWildcard ()
+		{
+			string main_project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
+				<ItemGroup>
+					<FooItem Include=""From main.proj""/>
+				</ItemGroup>
+
+				<Import Project=""tmp\*""/>
+
+				<Target Name=""Build"">
+					<Message Text=""FooItem: @(FooItem)""/>
+				</Target>
+			</Project>";
+
+			string other_project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
+				<ItemGroup>
+					<FooItem Include=""From $(MSBuildThisFile)""/>
+				</ItemGroup>
+			</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			string base_dir = Path.GetFullPath (Path.Combine ("Test", "resources")) + Path.DirectorySeparatorChar;
+			string tmp_dir = Path.GetFullPath (Path.Combine (base_dir, "tmp")) + Path.DirectorySeparatorChar;
+
+			string main_project = Path.Combine (base_dir, "main.proj");
+			string first_project = Path.Combine (tmp_dir, "first.proj");
+			string second_project = Path.Combine (tmp_dir, "second.proj");
+
+			Directory.CreateDirectory (tmp_dir);
+			File.WriteAllText (main_project, main_project_xml);
+			File.WriteAllText (first_project, other_project_xml);
+			File.WriteAllText (second_project, other_project_xml);
+
+			Project project = engine.CreateNewProject ();
+			project.Load (main_project);
+			try {
+				Assert.IsTrue (project.Build ("Build"), "Build failed");
+
+				logger.CheckLoggedMessageHead ("FooItem: From main.proj;From first.proj;From second.proj", "A1");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			} finally {
+				File.Delete (main_project);
+				File.Delete (first_project);
+				File.Delete (second_project);
+			}
+		}
+#endif
+
 	}
 }
