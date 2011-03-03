@@ -235,11 +235,11 @@ namespace Microsoft.Build.BuildEngine {
 				result = BuildProjectFileInternal (projectFile, targetNames, globalProperties, targetOutputs, buildFlags, toolsVersion);
 				return result;
 			} catch (InvalidProjectFileException ie) {
-				this.LogError (projectFile, ie.Message);
+				this.LogErrorWithFilename (projectFile, ie.Message);
 				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, ie.ToString ()));
 				return false;
 			} catch (Exception e) {
-				this.LogError (projectFile, e.Message);
+				this.LogErrorWithFilename (projectFile, e.Message);
 				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, e.ToString ()));
 				return false;
 			} finally {
