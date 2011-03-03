@@ -776,8 +776,12 @@ namespace Mono.XBuild.CommandLine {
 				ProjectInfo project = projectInfo.Value;
 				foreach (string buildTarget in buildTargets) {
 					string target_name = GetTargetNameForProject (project.Name, buildTarget);
+					bool is_build_or_rebuild = buildTarget == "Build" || buildTarget == "Rebuild";
 					Target target = p.Targets.AddNewTarget (target_name);
 					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''"; 
+
+					if (is_build_or_rebuild)
+						target.Outputs = "@(CollectedBuildOutput)";
 					if (project.Dependencies.Count > 0)
 						target.DependsOnTargets = String.Join (";",
 								project.Dependencies.Values.Select (
@@ -795,6 +799,8 @@ namespace Mono.XBuild.CommandLine {
 							task = target.AddNewTask ("MSBuild");
 							task.SetParameterValue ("Projects", project.FileName);
 							task.SetParameterValue ("ToolsVersion", "$(ProjectToolsVersion)");
+							if (is_build_or_rebuild)
+								task.AddOutputItem ("TargetOutputs", "CollectedBuildOutput");
 
 							if (buildTarget != "Build")
 								task.SetParameterValue ("Targets", buildTarget);
@@ -877,7 +883,11 @@ namespace Mono.XBuild.CommandLine {
 		{
 			foreach (string buildTarget in buildTargets) {
 				Target t = p.Targets.AddNewTarget (buildTarget);
+				bool is_build_or_rebuild = buildTarget == "Build" || buildTarget == "Rebuild";
+
 				t.Condition = "'$(CurrentSolutionConfigurationContents)' != ''";
+				if (is_build_or_rebuild)
+					t.Outputs = "@(CollectedBuildOutput)";
 
 				BuildTask task = null;
 				for (int i = 0; i < num_levels; i ++) {
@@ -893,6 +903,8 @@ namespace Mono.XBuild.CommandLine {
 					//FIXME: change this to BuildInParallel=true, when parallel
 					//	 build support gets added
 					task.SetParameterValue ("RunEachTargetSeparately", "true");
+					if (is_build_or_rebuild)
+						task.AddOutputItem ("TargetOutputs", "CollectedBuildOutput");
 
 					level_str = String.Format ("SkipLevel{0}", i);
 					task = t.AddNewTask ("Message");
