@@ -1,3 +1,5 @@
+rm -r builds
+
 if [ "${UNITY_THISISABUILDMACHINE}" = "1" ]; then
 	svn --username unitybuild --password uni10666 co svn://svn.hq.unity3d.com/home/svn/external-tools/native_client_sdk ../native_client_sdk
 else
@@ -11,3 +13,17 @@ export NACL_NATIVE_CLIENT="$PWD/../native_client_sdk/builds/"
 make distclean
 cd nacl
 ./nacl-runtime-mono.sh
+
+cd ..
+
+mkdir -p builds/embedruntimes/nacl
+cp nacl/runtime/lib/libmono-2.0.a builds/embedruntimes/nacl/libmono.a
+
+mkdir -p builds/monodistribution/lib/mono/2.0
+cp nacl/runtime/lib/mono/2.0/mscorlib.dll* builds/monodistribution/lib/mono/2.0
+cp nacl/runtime/lib/mono/2.0/System.dll* builds/monodistribution/lib/mono/2.0
+cp nacl/runtime/lib/mono/2.0/System.Core.dll* builds/monodistribution/lib/mono/2.0
+cp nacl/runtime/lib/mono/2.0/Mono.Security.dll* builds/monodistribution/lib/mono/2.0
+
+cd builds
+zip builds.zip -r *
