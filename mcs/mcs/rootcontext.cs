@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 			Version = LanguageVersion.Default;
 			VerifyClsCompliance = true;
 			Optimize = true;
-			Encoding = Encoding.Default;
+			Encoding = Encoding.UTF8;
 			LoadDefaultReferences = true;
 			StdLibRuntimeVersion = RuntimeVersion.v4;
 
@@ -1000,7 +1000,7 @@ namespace Mono.CSharp {
 
 				switch (value) {
 				case "utf8":
-					settings.Encoding = new UTF8Encoding ();
+					settings.Encoding = Encoding.UTF8;
 					break;
 				case "reset":
 					settings.Encoding = Encoding.Default;
