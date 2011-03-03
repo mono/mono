@@ -83,7 +83,7 @@ namespace Microsoft.Build.BuildEngine {
 			FileInfo[] fileInfo;
 
 			string name = include_item.ItemSpec;
-			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
+			if (!HasWildcard (name)) {
 				if (!excludedItems.ContainsKey (Path.GetFullPath(name)))
 					includedItems.Add (include_item);
 			} else {
@@ -209,6 +209,11 @@ namespace Microsoft.Build.BuildEngine {
 					fi [i++] = file;
 				return fi;
 			}
+		}
+
+		public static bool HasWildcard (string expression)
+		{
+			return expression.IndexOf ('?') >= 0 || expression.IndexOf ('*') >= 0;
 		}
 		
 		public DirectoryInfo BaseDirectory {
