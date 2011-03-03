@@ -99,6 +99,8 @@ This moniker maps to a framework description file on disk:
 
   <framework_root>/Identifier/Version/[Profile]/RedistList/FrameworkList.xml
 
+This file is used to determine the path where to find the framework assemblies for this particular framework.
+
 Framework root here is configurable and is resolved in the following order:
 
 .nf
@@ -110,6 +112,19 @@ Framework root here is configurable and is resolved in the following order:
 
 XBuild tries the paths given above, in order, till it finds a FrameworkList.xml for the moniker.
 Running with /v:detailed or higher verbosity will show the various paths that it tries.
+
+The FrameworkList.xml itself just has a root element like:
+
+  <FileList  Name=".NET Framework 3.5" TargetFrameworkDirectory="..\\..\\..\\..\\3.5" IncludeFramework="v3.0">
+  </FileList>
+
+Here the TargetFrameworkDirectory attribute specifies the directory where the assemblies for
+this particular framework can be found. If this is not set, then the parent of the folder
+containing the xml file is taken as the framework directory.
+
+IncludeFramework attribute specifies the version of a framework (under the *same* $(TargetFrameworkIdentifier))
+which should be included in the final list of Target framework directories.
+
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form
