@@ -114,6 +114,8 @@ namespace Mono.XBuild.CommandLine {
 		public void ParseSolution (string file, Project p, RaiseWarningHandler RaiseWarning)
 		{
 			this.RaiseWarning = RaiseWarning;
+			EmitBeforeImports (p, file);
+
 			AddGeneralSettings (file, p);
 
 			StreamReader reader = new StreamReader (file);
@@ -305,6 +307,8 @@ namespace Mono.XBuild.CommandLine {
 			AddWebsiteProperties (p, websiteProjectInfos, projectInfos);
 			AddValidateSolutionConfiguration (p);
 
+			EmitAfterImports (p, file);
+
 			AddGetFrameworkPathTarget (p);
 			AddWebsiteTargets (p, websiteProjectInfos, projectInfos, infosByLevel, solutionTargets);
 			AddProjectTargets (p, solutionTargets, projectInfos);
@@ -333,6 +337,30 @@ namespace Mono.XBuild.CommandLine {
 
                         return null;
                 }
+
+		void EmitBeforeImports (Project p, string file)
+		{
+#if NET_4_0
+			p.AddNewImport ("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportBefore\\*",
+					"'$(ImportByWildcardBeforeSolution)' != 'false' and " +
+					"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportBefore')");
+#endif
+
+			string before_filename = Path.Combine (Path.GetDirectoryName (file), "before." + Path.GetFileName (file) + ".targets");
+			p.AddNewImport (before_filename, String.Format ("Exists ('{0}')", before_filename));
+		}
+
+		void EmitAfterImports (Project p, string file)
+		{
+#if NET_4_0
+			p.AddNewImport ("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportAfter\\*",
+					"'$(ImportByWildcardAfterSolution)' != 'false' and " +
+					"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportAfter')");
+#endif
+
+			string after_filename = Path.Combine (Path.GetDirectoryName (file), "after." + Path.GetFileName (file) + ".targets");
+			p.AddNewImport (after_filename, String.Format ("Exists ('{0}')", after_filename));
+		}
 
 		void AddGeneralSettings (string solutionFile, Project p)
 		{
