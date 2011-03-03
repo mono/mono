@@ -927,8 +927,18 @@ namespace Mono.CSharp
 #if STATIC
 			ifaces = type.__GetDeclaredInterfaces ();
 			if (ifaces.Length != 0) {
-				foreach (var iface in ifaces)
-					spec.AddInterface (CreateType (iface));
+				foreach (var iface in ifaces) {
+					var it = CreateType (iface);
+					spec.AddInterface (it);
+
+					// Unfortunatelly not all languages inlcude inherited interfaces
+					var bifaces = it.Interfaces;
+					if (bifaces != null) {
+						foreach (var biface in bifaces) {
+							spec.AddInterface (biface);
+						}
+					}
+				}
 			}
 
 			if (spec.BaseType != null) {

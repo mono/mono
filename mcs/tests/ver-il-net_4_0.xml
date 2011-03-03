@@ -2761,6 +2761,21 @@
       </method>
     </type>
   </test>
+  <test name="dtest-053.cs">
+    <type name="TestAttribute">
+      <method name="Void .ctor(Object[])">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -46308,6 +46323,16 @@
       </method>
     </type>
   </test>
+  <test name="test-809.cs">
+    <type name="Z">
+      <method name="Int32 Main()">
+        <size>47</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-81.cs">
     <type name="N1.A">
       <method name="Void .ctor()">
@@ -46318,6 +46343,19 @@
       </method>
       <method name="Int32 Main()">
         <size>71</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-810.cs">
+    <type name="C">
+      <method name="IA Test(IC)">
+        <size>4</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

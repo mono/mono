@@ -339,7 +339,7 @@ namespace Mono.CSharp
 		{
 			var t = this;
 			do {
-				if (t.Interfaces != null) {	// TODO: Try t.iface
+				if (t.Interfaces != null) {
 					foreach (TypeSpec i in t.Interfaces) {
 						if (i == iface || TypeSpecComparer.IsEqual (i, iface))
 							return true;
@@ -349,6 +349,7 @@ namespace Mono.CSharp
 					}
 				}
 
+				// TODO: Why is it needed when we do it during import
 				t = t.BaseType;
 			} while (t != null);
 
