@@ -23370,7 +23370,7 @@
         <size>1</size>
       </method>
       <method name="Void Test_2()">
-        <size>1</size>
+        <size>11</size>
       </method>
     </type>
     <type name="Test">
@@ -23378,7 +23378,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>1</size>
+        <size>13</size>
       </method>
     </type>
   </test>
