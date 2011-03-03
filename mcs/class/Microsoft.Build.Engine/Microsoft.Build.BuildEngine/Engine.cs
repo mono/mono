@@ -229,6 +229,31 @@ namespace Microsoft.Build.BuildEngine {
 					      IDictionary targetOutputs,
 					      BuildSettings buildFlags, string toolsVersion)
 		{
+			bool result = false;
+			try {
+				StartEngineBuild ();
+				result = BuildProjectFileInternal (projectFile, targetNames, globalProperties, targetOutputs, buildFlags, toolsVersion);
+				return result;
+			} catch (InvalidProjectFileException ie) {
+				this.LogError (projectFile, ie.Message);
+				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, ie.ToString ()));
+				return false;
+			} catch (Exception e) {
+				this.LogError (projectFile, e.Message);
+				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, e.ToString ()));
+				return false;
+			} finally {
+				EndEngineBuild (result);
+			}
+		}
+
+		bool BuildProjectFileInternal (string projectFile,
+					      string[] targetNames,
+					      BuildPropertyGroup globalProperties,
+					      IDictionary targetOutputs,
+					      BuildSettings buildFlags, string toolsVersion)
+		{
+
 			if ((buildFlags & BuildSettings.DoNotResetPreviouslyBuiltTargets) != BuildSettings.DoNotResetPreviouslyBuiltTargets)
 				builtTargetsOutputByName.Clear ();
 
@@ -366,12 +391,25 @@ namespace Microsoft.Build.BuildEngine {
 			loggers.Clear ();
 		}
 
-		internal void StartProjectBuild (Project project, string [] target_names)
+		void StartEngineBuild ()
 		{
 			if (!buildStarted) {
 				LogBuildStarted ();
 				buildStarted = true;
 			}
+		}
+
+		void EndEngineBuild (bool succeeded)
+		{
+			if (buildStarted && currentlyBuildingProjectsStack.Count == 0) {
+				LogBuildFinished (succeeded);
+				buildStarted = false;
+			}
+		}
+
+		internal void StartProjectBuild (Project project, string [] target_names)
+		{
+			StartEngineBuild ();
 
 			if (currentlyBuildingProjectsStack.Count == 0 ||
 				String.Compare (currentlyBuildingProjectsStack.Peek ().FullFileName, project.FullFileName) != 0)
@@ -397,10 +435,7 @@ namespace Microsoft.Build.BuildEngine {
 				String.Compare (top_project.FullFileName, currentlyBuildingProjectsStack.Peek ().FullFileName) != 0)
 				LogProjectFinished (top_project, succeeded);
 
-			if (currentlyBuildingProjectsStack.Count == 0) {
-				LogBuildFinished (succeeded);
-				buildStarted = false;
-			}
+			EndEngineBuild (succeeded);
 		}
 
 		internal void ClearBuiltTargetsForProject (Project project)
