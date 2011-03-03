@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2006 Marek Sieradzki
+// Copyright 2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +30,13 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
@@ -47,6 +52,11 @@ namespace Microsoft.Build.BuildEngine {
 		static string PathSeparatorAsString = Path.PathSeparator.ToString ();
 	
 		internal Import (XmlElement importElement, Project project, ImportedProject originalProject)
+			: this (importElement, null, project, originalProject)
+		{}
+
+		// if @alternateProjectPath is available then that it used as the EvaluatedProjectPath!
+		internal Import (XmlElement importElement, string alternateProjectPath, Project project, ImportedProject originalProject)
 		{
 			if (importElement == null)
 				throw new ArgumentNullException ("importElement");
@@ -61,7 +71,8 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
 
 			if (ConditionParser.ParseAndEvaluate (Condition, project)) {
-				evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
+				evaluatedProjectPath = String.IsNullOrEmpty (alternateProjectPath) ? EvaluateProjectPath (ProjectPath) : alternateProjectPath;
+
 				evaluatedProjectPath = GetFullPath ();
 				if (EvaluatedProjectPath == String.Empty)
 					throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
@@ -73,9 +84,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			string filename = evaluatedProjectPath;
 			// NOTE: it's a hack to transform Microsoft.CSharp.Targets to Microsoft.CSharp.targets
-			if (Path.HasExtension (filename))
-				filename = Path.ChangeExtension (filename, Path.GetExtension (filename));
-			
+			if (!File.Exists (filename) && Path.GetFileName (filename) == "Microsoft.CSharp.Targets")
+				filename = Path.ChangeExtension (filename, ".targets");
+
 			if (!File.Exists (filename)) {
 				if (ignoreMissingImports) {
 					project.LogWarning (project.FullFileName, "Could not find project file {0}, to import. Ignoring.", filename);
@@ -93,91 +104,152 @@ namespace Microsoft.Build.BuildEngine {
 
 		string EvaluateProjectPath (string file)
 		{
-			string ret;
-			if (EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath", out ret) ||
-				EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath32", out ret) ||
-				EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath64", out ret))
-				return ret;
-
-			return EvaluatePath (file);
-		}
-
-		bool EvaluateAsMSBuildExtensionsPath (string file, string property_name, out string epath)
-		{
-			epath = null;
-			string property_ref = String.Format ("$({0})", property_name);
-			if (file.IndexOf (property_ref) < 0)
-				return false;
-
-			// This is a *HACK* to support multiple paths for
-			// MSBuildExtensionsPath property. Normally it would
-			// get resolved to a single value, but here we special
-			// case it and try ~/.config/xbuild/tasks and any
-			// paths specified in the env var $MSBuildExtensionsPath .
-			//
-			// The property itself will resolve to the default
-			// location though, so you get in any other part of the
-			// project.
-
-			string envvar = Environment.GetEnvironmentVariable (property_name);
-			envvar = String.Join (PathSeparatorAsString, new string [] {
-						(envvar ?? String.Empty),
-						// For mac osx, look in the 'External' dir on macosx,
-						// see bug #663180
-						MSBuildUtils.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
-						DotConfigExtensionsPath});
-
-			string [] paths = envvar.Split (new char [] {Path.PathSeparator}, StringSplitOptions.RemoveEmptyEntries);
-			foreach (string path in paths) {
-				if (!Directory.Exists (path)) {
-					project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", path);
-					continue;
-				}
-
-				string pfile = Path.GetFullPath (file.Replace ("\\", "/").Replace (
-							property_ref, path + Path.DirectorySeparatorChar));
-
-				var evaluated_path = EvaluatePath (pfile);
-				if (File.Exists (evaluated_path)) {
-					project.ParentEngine.LogMessage (MessageImportance.Low,
-						"{0}: Importing project {1} from extension path {2}", project.FullFileName, evaluated_path, path);
-					epath = pfile;
-					return true;
-				}
-				project.ParentEngine.LogMessage (MessageImportance.Low,
-						"{0}: Couldn't find project {1} for extension path {2}", project.FullFileName, evaluated_path, path);
-			}
-
-			return false;
-		}
-
-		string EvaluatePath (string path)
-		{
-			var exp = new Expression ();
-			exp.Parse (path, ParseOptions.Split);
-			return (string) exp.ConvertTo (project, typeof (string));
+			return Expression.ParseAs<string> (file, ParseOptions.Split, project);
 		}
 
 		string GetFullPath ()
 		{
 			string file = EvaluatedProjectPath;
+			if (!Path.IsPathRooted (file) && !String.IsNullOrEmpty (ContainedInProjectFileName))
+				file = Path.Combine (Path.GetDirectoryName (ContainedInProjectFileName), file);
 
-			if (!Path.IsPathRooted (EvaluatedProjectPath)) {
-				string dir = null;
-				if (originalProject == null) {
-					if (project.FullFileName != String.Empty) // Path.GetDirectoryName throws exception on String.Empty
-						dir = Path.GetDirectoryName (project.FullFileName);
-				} else {
-					if (originalProject.FullFileName != String.Empty)
-						dir = Path.GetDirectoryName (originalProject.FullFileName);
-				}
-				if (dir != null)
-					file = Path.Combine (dir, EvaluatedProjectPath);
-			}
-			
 			return MSBuildUtils.FromMSBuildPath (file);
 		}
-		
+
+		// For every extension path, in order, finds suitable
+		// import filename(s) matching the Import, and calls
+		// @func with them
+		//
+		// func: bool func(importPath, from_source_msg)
+		//
+		// If for an extension path, atleast one file gets imported,
+		// then it stops at that.
+		// So, in case imports like "$(MSBuildExtensionsPath)\foo\*",
+		// for every extension path, it will try to import the "foo\*",
+		// and if atleast one file gets successfully imported, then it
+		// stops at that
+		internal static void ForEachExtensionPathTillFound (XmlElement xmlElement, Project project, ImportedProject importingProject,
+				Func<string, string, bool> func)
+		{
+			string project_attribute = xmlElement.GetAttribute ("Project");
+			string condition_attribute = xmlElement.GetAttribute ("Condition");
+
+			bool has_extn_ref = project_attribute.IndexOf ("$(MSBuildExtensionsPath)") >= 0 ||
+						project_attribute.IndexOf ("$(MSBuildExtensionsPath32)") >= 0 ||
+						project_attribute.IndexOf ("$(MSBuildExtensionsPath64)") >= 0;
+
+			string importingFile = importingProject != null ? importingProject.FullFileName : project.FullFileName;
+			DirectoryInfo base_dir_info = null;
+			if (!String.IsNullOrEmpty (importingFile))
+				base_dir_info = new DirectoryInfo (Path.GetDirectoryName (importingFile));
+			else
+				base_dir_info = new DirectoryInfo (Directory.GetCurrentDirectory ());
+
+			IEnumerable<string> extn_paths = has_extn_ref ? GetExtensionPaths (project) : new string [] {null};
+			try {
+				foreach (string path in extn_paths) {
+					string extn_msg = null;
+					if (has_extn_ref) {
+						project.SetExtensionsPathProperties (path);
+						extn_msg = "from extension path " + path;
+					}
+
+					// do this after setting new Extension properties, as condition might
+					// reference it
+					if (!ConditionParser.ParseAndEvaluate (condition_attribute, project)) {
+						project.ParentEngine.LogMessage (MessageImportance.Low,
+								"{0}: Not importing '{1}' project as the condition '{2}' is false",
+								importingFile, project_attribute, condition_attribute);
+						continue;
+					}
+
+					// We stop if atleast one file got imported.
+					// Remaining extension paths are *not* tried
+					bool atleast_one = false;
+					foreach (string importPath in GetImportPathsFromString (project_attribute, project, base_dir_info)) {
+						try {
+							if (func (importPath, extn_msg))
+								atleast_one = true;
+						} catch (Exception e) {
+							throw new InvalidProjectFileException (String.Format (
+										"{0}: Project file could not be imported, it was being imported by " +
+										"{1}: {2}", importPath, importingFile, e.Message), e);
+						}
+					}
+
+					if (atleast_one)
+						return;
+				}
+			} finally {
+				if (has_extn_ref)
+					project.SetExtensionsPathProperties (Project.DefaultExtensionsPath);
+			}
+		}
+
+		// Parses the Project attribute from an Import,
+		// and returns the import filenames that match.
+		// This handles wildcards also
+		static IEnumerable<string> GetImportPathsFromString (string import_string, Project project, DirectoryInfo base_dir_info)
+		{
+			string parsed_import = Expression.ParseAs<string> (import_string, ParseOptions.AllowItemsNoMetadataAndSplit, project);
+			if (parsed_import != null)
+				parsed_import = parsed_import.Trim ();
+
+			if (String.IsNullOrEmpty (parsed_import))
+				throw new InvalidProjectFileException ("The required attribute \"Project\" in Import is empty");
+
+#if NET_4_0
+			if (DirectoryScanner.HasWildcard (parsed_import)) {
+				var directoryScanner = new DirectoryScanner () {
+					Includes = new ITaskItem [] { new TaskItem (parsed_import) },
+					BaseDirectory = base_dir_info
+				};
+				directoryScanner.Scan ();
+
+				foreach (ITaskItem matchedItem in directoryScanner.MatchedItems)
+					yield return matchedItem.ItemSpec;
+			} else
+#endif
+				yield return parsed_import;
+		}
+
+		// Gives a list of extensions paths to try for $(MSBuildExtensionsPath),
+		// *in-order*
+		static IEnumerable<string> GetExtensionPaths (Project project)
+		{
+			// This is a *HACK* to support multiple paths for
+			// MSBuildExtensionsPath property. Normally it would
+			// get resolved to a single value, but here we special
+			// case it and try various paths, see the code below
+			//
+			// The property itself will resolve to the default
+			// location though, so you get that in any other part of the
+			// project.
+
+			string envvar = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath");
+			envvar = String.Join (PathSeparatorAsString, new string [] {
+						(envvar ?? String.Empty),
+						// For mac osx, look in the 'External' dir on macosx,
+						// see bug #663180
+						MSBuildUtils.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
+						DotConfigExtensionsPath,
+						Project.DefaultExtensionsPath});
+
+			var pathsTable = new Dictionary<string, string> ();
+			foreach (string extn_path in envvar.Split (new char [] {Path.PathSeparator}, StringSplitOptions.RemoveEmptyEntries)) {
+				if (pathsTable.ContainsKey (extn_path))
+					continue;
+
+				if (!Directory.Exists (extn_path)) {
+					project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", extn_path);
+					continue;
+				}
+
+				pathsTable [extn_path] = extn_path;
+				yield return extn_path;
+			}
+		}
+
 		public string Condition {
 			get {
 				string s = importElement.GetAttribute ("Condition");
@@ -195,6 +267,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string ProjectPath {
 			get { return importElement.GetAttribute ("Project"); }
+		}
+
+		internal string ContainedInProjectFileName {
+			get { return originalProject != null ? originalProject.FullFileName : project.FullFileName; }
 		}
 	}
 }
