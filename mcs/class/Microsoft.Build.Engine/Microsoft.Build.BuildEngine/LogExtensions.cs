@@ -47,15 +47,21 @@ namespace Microsoft.Build.BuildEngine
 			else
 				return String.Format (unformatted, args);
 		}
-		
+
 		public static void LogError (this Engine engine, string message,
+				     params object[] messageArgs)
+		{
+			engine.LogError (null, message, messageArgs);
+		}
+
+		public static void LogError (this Engine engine, string filename, string message,
 				     params object[] messageArgs)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
 				
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
-				null, null, null, 0, 0, 0, 0, FormatString (message, messageArgs),
+				null, null, filename, 0, 0, 0, 0, FormatString (message, messageArgs),
 				null, null);
 			engine.EventSource.FireErrorRaised (engine, beea);
 		}
