@@ -2020,7 +2020,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			if (type == InternalType.Null || type.BuildinType == BuildinTypeSpec.Type.Object) {
+			if (type == InternalType.NullLiteral || type.BuildinType == BuildinTypeSpec.Type.Object) {
 				// Optimized version, also avoids referencing literal internal type
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (this));
@@ -2033,7 +2033,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Type it as string cast
-			if (targetType.BuildinType == BuildinTypeSpec.Type.Object || targetType == InternalType.Null)
+			if (targetType.BuildinType == BuildinTypeSpec.Type.Object)
 				enc.Encode (rc.Module.Compiler.BuildinTypes.String);
 
 			var ac = targetType as ArrayContainer;
@@ -2072,7 +2072,7 @@ namespace Mono.CSharp {
 			}
 
 			// Exlude internal compiler types
-			if (targetType.Kind == MemberKind.InternalCompilerType && targetType.BuildinType != BuildinTypeSpec.Type.Dynamic && targetType != InternalType.Null)
+			if (targetType.Kind == MemberKind.InternalCompilerType && targetType.BuildinType != BuildinTypeSpec.Type.Dynamic)
 				return null;
 
 			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))

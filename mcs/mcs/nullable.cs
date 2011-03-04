@@ -1124,6 +1124,14 @@ namespace Mono.CSharp.Nullable
 					type = ltype;
 					return this;
 				}
+
+				//
+				// Special case null ?? null
+				//
+				if (ltype == right.Type) {
+					type = ltype;
+					return this;
+				}
 			} else {
 				return null;
 			}

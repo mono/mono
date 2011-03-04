@@ -1077,7 +1077,7 @@ namespace Mono.CSharp
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
-		public static BuildinTypeSpec Null;
+		public static readonly InternalType NullLiteral = new InternalType ("null");
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;

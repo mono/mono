@@ -38,7 +38,7 @@ namespace Mono.CSharp {
 		// Default type of null is an object
 		//
 		public NullLiteral (Location loc)
-			: base (InternalType.Null, loc)
+			: base (InternalType.NullLiteral, loc)
 		{
 		}
 

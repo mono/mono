@@ -2956,13 +2956,13 @@ namespace Mono.CSharp
 		{
 			if (l != r && !TypeSpecComparer.Variant.IsEqual (r, l)) {
 				Expression tmp;
-				if (right.eclass == ExprClass.MethodGroup || r == InternalType.AnonymousMethod || r == InternalType.Null) {
+				if (right.eclass == ExprClass.MethodGroup || r == InternalType.AnonymousMethod || r == InternalType.NullLiteral) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
 					right = tmp;
 					r = right.Type;
-				} else if (left.eclass == ExprClass.MethodGroup || (l == InternalType.AnonymousMethod || l == InternalType.Null)) {
+				} else if (left.eclass == ExprClass.MethodGroup || (l == InternalType.AnonymousMethod || l == InternalType.NullLiteral)) {
 					tmp = Convert.ImplicitConversionRequired (ec, left, r, loc);
 					if (tmp == null)
 						return null;
@@ -7603,7 +7603,7 @@ namespace Mono.CSharp
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
 			if ((expr_type.Kind & dot_kinds) == 0) {
-				if (expr_type == InternalType.Null && rc.IsRuntimeBinder)
+				if (expr_type == InternalType.NullLiteral && rc.IsRuntimeBinder)
 					rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 				else
 					Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
@@ -9661,8 +9661,7 @@ namespace Mono.CSharp
 			}
 
 			type = e.Type;
-			if (type.Kind == MemberKind.Void || type == InternalType.Null ||
-				type == InternalType.AnonymousMethod || type.IsPointer) {
+			if (type.Kind == MemberKind.Void || type == InternalType.NullLiteral || type == InternalType.AnonymousMethod || type.IsPointer) {
 				Error_InvalidInitializer (ec, e.GetSignatureForError ());
 				return null;
 			}

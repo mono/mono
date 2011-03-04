@@ -296,7 +296,7 @@ namespace Mono.CSharp
 
 				var arg_type = a.Expr.Type;
 
-				if (arg_type.BuildinType != BuildinTypeSpec.Type.Dynamic && arg_type != InternalType.Null) {
+				if (arg_type.BuildinType != BuildinTypeSpec.Type.Dynamic && arg_type != InternalType.NullLiteral) {
 					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
 					if (mg != null) {
 						rc.Report.Error (1976, a.Expr.Location,

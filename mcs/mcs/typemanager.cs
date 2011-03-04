@@ -62,7 +62,6 @@ namespace Mono.CSharp
 		// build-in type (mostly object)
 		//
 		public readonly BuildinTypeSpec Dynamic;
-		public readonly BuildinTypeSpec Null;
 
 		// Predefined operators tables
 		public readonly Binary.PredefinedOperator[] OperatorsBinaryStandard;
@@ -116,8 +115,6 @@ namespace Mono.CSharp
 
 			// TODO: Maybe I should promote it to different kind for faster compares
 			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
-			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
-			Null.MemberCache = MemberCache.Empty;
 
 			OperatorsBinaryStandard = Binary.CreateStandardOperatorsTable (this);
 			OperatorsBinaryEquality = Binary.CreateEqualityOperatorsTable (this);
@@ -138,8 +135,6 @@ namespace Mono.CSharp
 			// TODO: remove
 			TypeManager.object_type = Object;
 			TypeManager.value_type = ValueType;
-
-			InternalType.Null = Null;
 		}
 
 		public BuildinTypeSpec[] AllTypes {
@@ -171,7 +166,6 @@ namespace Mono.CSharp
 
 			// Set internal build-in types
 			Dynamic.SetDefinition (Object);
-			Null.SetDefinition (Object);
 
 			return true;
 		}

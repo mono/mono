@@ -299,10 +299,10 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
-				if (lt == InternalType.Null)
+				if (lt == InternalType.NullLiteral)
 					return right;
 
-				if (rt == InternalType.Null)
+				if (rt == InternalType.NullLiteral)
 					return left;
 
 				//

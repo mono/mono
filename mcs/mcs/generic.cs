@@ -2480,7 +2480,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (a.Expr.Type == InternalType.Null)
+				if (a.Expr.Type == InternalType.NullLiteral)
 					continue;
 
 				if (TypeManager.IsValueType (method_parameter)) {
@@ -2806,7 +2806,7 @@ namespace Mono.CSharp {
 
 			if (candidates.Count == 1) {
 				TypeSpec t = candidates[0].Type;
-				if (t == InternalType.Null)
+				if (t == InternalType.NullLiteral)
 					return false;
 
 				fixed_types [i] = t;
