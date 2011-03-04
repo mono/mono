@@ -1071,45 +1071,42 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Used for predefined class library user operators (no obsolete check, etc.)
+	// Used for predefined type user operator (no obsolete check, etc.)
 	//
 	public class OperatorCast : TypeCast
 	{
-		MethodSpec conversion_operator;
-			
-		public OperatorCast (Expression child, TypeSpec target_type) 
-			: this (child, target_type, false)
+		readonly MethodSpec conversion_operator;
+
+		public OperatorCast (Expression expr, TypeSpec target_type)
+			: this (expr, target_type, target_type, false)
 		{
 		}
-
-		public OperatorCast (Expression child, TypeSpec target_type, bool find_explicit)
-			: base (child, target_type)
+		
+		public OperatorCast (Expression expr, TypeSpec target_type, bool find_explicit)
+			: this (expr, target_type, target_type, find_explicit)
 		{
-			conversion_operator = GetConversionOperator (find_explicit);
-			if (conversion_operator == null)
-				throw new InternalErrorException ("Outer conversion routine is out of sync");
 		}
-
-		// Returns the implicit operator that converts from
-		// 'child.Type' to our target type (type)
-		MethodSpec GetConversionOperator (bool find_explicit)
+		
+		public OperatorCast (Expression expr, TypeSpec declaringType, TypeSpec returnType, bool isExplicit)
+			: base (expr, returnType)
 		{
-			var op = find_explicit ? Operator.OpType.Explicit : Operator.OpType.Implicit;
+			var op = isExplicit ? Operator.OpType.Explicit : Operator.OpType.Implicit;
+			var mi = MemberCache.GetUserOperator (declaringType, op, true);
 
-			var mi = MemberCache.GetUserOperator (child.Type, op, true);
-			if (mi == null){
-				mi = MemberCache.GetUserOperator (type, op, true);
+			if (mi != null) {
+				foreach (MethodSpec oper in mi) {
+					if (oper.ReturnType != returnType)
+						continue;
+
+					if (oper.Parameters.Types[0] == expr.Type) {
+						conversion_operator = oper;
+						return;
+					}
+				}
 			}
-			
-			foreach (MethodSpec oper in mi) {
-				if (oper.ReturnType != type)
-					continue;
 
-				if (oper.Parameters.Types [0] == child.Type)
-					return oper;
-			}
-
-			return null;
+			throw new InternalErrorException ("Missing predefined user operator between `{0}' and `{1}'",
+				returnType.GetSignatureForError (), expr.Type.GetSignatureForError ());
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1118,67 +1115,6 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Call, conversion_operator);
 		}
 	}
-	
-	/// <summary>
-	/// 	This is a numeric cast to a Decimal
-	/// </summary>
-	public class CastToDecimal : OperatorCast {
-		public CastToDecimal (Expression child)
-			: this (child, false)
-		{
-		}
-
-		public CastToDecimal (Expression child, bool find_explicit)
-			: base (child, TypeManager.decimal_type, find_explicit)
-		{
-		}
-	}
-
-	/// <summary>
-	/// 	This is an explicit numeric cast from a Decimal
-	/// </summary>
-	public class CastFromDecimal : TypeCast
-	{
-		static Dictionary<TypeSpec, MethodSpec> operators;
-
-		public CastFromDecimal (Expression child, TypeSpec return_type)
-			: base (child, return_type)
-		{
-			if (child.Type.BuildinType != BuildinTypeSpec.Type.Decimal)
-				throw new ArgumentException ("Expected decimal child " + child.Type.GetSignatureForError ());
-		}
-
-		// Returns the explicit operator that converts from an
-		// express of type System.Decimal to 'type'.
-		public Expression Resolve ()
-		{
-			if (operators == null) {
-				var all_oper = MemberCache.GetUserOperator (TypeManager.decimal_type, Operator.OpType.Explicit, true);
-
-				operators = new Dictionary<TypeSpec, MethodSpec> ();
-				foreach (MethodSpec oper in all_oper) {
-					AParametersCollection pd = oper.Parameters;
-					if (pd.Types [0].BuildinType == BuildinTypeSpec.Type.Decimal)
-						operators.Add (oper.ReturnType, oper);
-				}
-			}
-
-			return operators.ContainsKey (type) ? this : null;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			child.Emit (ec);
-
-			ec.Emit (OpCodes.Call, operators [type]);
-		}
-
-		public static void Reset ()
-		{
-			operators = null;
-		}
-	}
-
 	
 	//
 	// Constant specialization of EmptyCast.

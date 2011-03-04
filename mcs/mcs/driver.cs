@@ -402,7 +402,6 @@ namespace Mono.CSharp
 			PointerContainer.Reset ();
 			Parameter.Reset ();
 
-			CastFromDecimal.Reset ();
 			StringConcat.Reset ();
 			
 			NamespaceEntry.Reset ();

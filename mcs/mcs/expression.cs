@@ -326,7 +326,7 @@ namespace Mono.CSharp
 				return null;
 
 			Expr = best_expr;
-			enum_conversion = Convert.ExplicitNumericConversion (new EmptyExpression (best_expr.Type), underlying_type);
+			enum_conversion = Convert.ExplicitNumericConversion (ec, new EmptyExpression (best_expr.Type), underlying_type);
 			type = expr.Type;
 			return EmptyCast.Create (this, type);
 		}
@@ -1161,7 +1161,7 @@ namespace Mono.CSharp
 
 			if (operation.Type != type) {
 				if (primitive_type)
-					operation = Convert.ExplicitNumericConversion (operation, type);
+					operation = Convert.ExplicitNumericConversion (ec, operation, type);
 				else
 					operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
 			}
@@ -3160,7 +3160,7 @@ namespace Mono.CSharp
 			}
 
 			if (underlying_type_result != null && left.Type != underlying_type_result) {
-				enum_conversion = Convert.ExplicitNumericConversion (new EmptyExpression (left.Type), underlying_type_result);
+				enum_conversion = Convert.ExplicitNumericConversion (ec, new EmptyExpression (left.Type), underlying_type_result);
 			}
 
 			expr = ResolveOperatorPredefined (ec, ec.BuildinTypes.OperatorsBinaryStandard, true, res_type);

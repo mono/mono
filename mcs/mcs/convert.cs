@@ -499,7 +499,8 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Short:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+
 				}
 
 				break;
@@ -522,7 +523,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Short:
@@ -539,7 +540,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.UShort:
@@ -559,7 +560,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Int:
@@ -574,7 +575,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.UInt:
@@ -591,7 +592,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Long:
@@ -604,7 +605,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.ULong:
@@ -617,7 +618,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Char:
@@ -638,7 +639,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Float:
@@ -1444,10 +1445,14 @@ namespace Mono.CSharp {
 		///   Int16->UIntPtr
 		///
 		/// </summary>
-		public static Expression ExplicitNumericConversion (Expression expr, TypeSpec target_type)
+		public static Expression ExplicitNumericConversion (ResolveContext rc, Expression expr, TypeSpec target_type)
 		{
-			TypeSpec expr_type = expr.Type;
-			switch (expr_type.BuildinType) {
+			// Not all predefined explicit numeric conversion are
+			// defined here, for some of them (mostly IntPtr/UIntPtr) we
+			// defer to user-operator handling which is now perfect but
+			// works for now
+
+			switch (expr.Type.BuildinType) {
 			case BuildinTypeSpec.Type.SByte:
 				//
 				// From sbyte to byte, ushort, uint, ulong, char, uintptr
@@ -1466,8 +1471,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I1_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I1_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Byte:
@@ -1501,8 +1505,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UShort:
@@ -1542,8 +1545,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UInt:
@@ -1612,7 +1614,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.IntPtr:
-					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type), target_type, true);
+					return new OperatorCast (EmptyCast.Create (expr, rc.BuildinTypes.Long), target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Char:
@@ -1654,7 +1656,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_CH);
 				case BuildinTypeSpec.Type.Decimal:
-					return new CastToDecimal (expr, true);
+					return new OperatorCast (expr, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Double:
@@ -1685,7 +1687,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return new CastToDecimal (expr, true);
+					return new OperatorCast (expr, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UIntPtr:
@@ -1696,20 +1698,38 @@ namespace Mono.CSharp {
 				//
 				switch (target_type.BuildinType) {
 				case BuildinTypeSpec.Type.SByte:
-					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I1);
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type, ConvCast.Mode.U4_I1);
 				case BuildinTypeSpec.Type.Short:
-					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I2);
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type, ConvCast.Mode.U4_I2);
 				case BuildinTypeSpec.Type.Int:
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true), target_type);
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.IntPtr:
-				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong) {
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true), target_type);
-				}
+				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong)
+					return EmptyCast.Create(new OperatorCast (expr, expr.Type, rc.BuildinTypes.Long, true), target_type);
+				
 				break;
 			case BuildinTypeSpec.Type.Decimal:
-				return new CastFromDecimal (expr, target_type).Resolve ();
+				// From decimal to sbyte, byte, short,
+				// ushort, int, uint, long, ulong, char,
+				// float, or double
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Long:
+				case BuildinTypeSpec.Type.ULong:
+				case BuildinTypeSpec.Type.Char:
+				case BuildinTypeSpec.Type.Float:
+				case BuildinTypeSpec.Type.Double:
+					return new OperatorCast (expr, expr.Type, target_type, true);
+				}
+
+				break;
 			}
 
 			return null;
@@ -1929,7 +1949,7 @@ namespace Mono.CSharp {
 					ne = ImplicitNumericConversion (underlying, real_target);
 
 				if (ne == null)
-					ne = ExplicitNumericConversion (underlying, real_target);
+					ne = ExplicitNumericConversion (ec, underlying, real_target);
 
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
@@ -1956,7 +1976,7 @@ namespace Mono.CSharp {
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
-				ne = ExplicitNumericConversion (expr, real_target);
+				ne = ExplicitNumericConversion (ec, expr, real_target);
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
@@ -1969,7 +1989,7 @@ namespace Mono.CSharp {
 						return ExplicitConversionCore (ec, ne, target_type, loc);
 				}
 			} else {
-				ne = ExplicitNumericConversion (expr, target_type);
+				ne = ExplicitNumericConversion (ec, expr, target_type);
 				if (ne != null)
 					return ne;
 			}
@@ -2058,7 +2078,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitNumericConversion (expr, target_type);
+			ne = ExplicitNumericConversion (ec, expr, target_type);
 			if (ne != null)
 				return ne;
 
