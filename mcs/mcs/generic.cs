@@ -1768,7 +1768,7 @@ namespace Mono.CSharp {
 					ok = false;
 				}
 
-				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
+				if (te.Type.IsPointer || te.Type.IsSpecialRuntimeType) {
 					ec.Module.Compiler.Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());

@@ -173,14 +173,12 @@ namespace Mono.CSharp
 
 	//
 	// Compiler predefined types. Usually used for compiler generated
-	// code or for comparison against well known framework type
+	// code or for comparison against well known framework type. They
+	// may not exist as they are optional
 	//
 	class PredefinedTypes
 	{
-		// TODO: These two exist only to reject type comparison
-		public readonly PredefinedType TypedReference;
 		public readonly PredefinedType ArgIterator;
-
 		public readonly PredefinedType MarshalByRefObject;
 		public readonly PredefinedType RuntimeHelpers;
 		public readonly PredefinedType IAsyncResult;
@@ -222,8 +220,9 @@ namespace Mono.CSharp
 
 		public PredefinedTypes (ModuleContainer module)
 		{
-			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
+			var TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
 			ArgIterator = new PredefinedType (module, MemberKind.Struct, "System", "ArgIterator");
+
 			MarshalByRefObject = new PredefinedType (module, MemberKind.Class, "System", "MarshalByRefObject");
 			RuntimeHelpers = new PredefinedType (module, MemberKind.Class, "System.Runtime.CompilerServices", "RuntimeHelpers");
 			IAsyncResult = new PredefinedType (module, MemberKind.Interface, "System", "IAsyncResult");
@@ -261,8 +260,10 @@ namespace Mono.CSharp
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
 			//
-			TypedReference.Define ();
-			ArgIterator.Define ();
+			if (TypedReference.Define ())
+				TypedReference.TypeSpec.IsSpecialRuntimeType = true;
+			if (ArgIterator.Define ())
+				ArgIterator.TypeSpec.IsSpecialRuntimeType = true;
 			MarshalByRefObject.Define ();
 			CharSet.Define ();
 
@@ -276,9 +277,6 @@ namespace Mono.CSharp
 
 			// Deal with obsolete static types
 			// TODO: remove
-			TypeManager.typed_reference_type = TypedReference.TypeSpec;
-			TypeManager.arg_iterator_type = ArgIterator.TypeSpec;
-			TypeManager.mbr_type = MarshalByRefObject.TypeSpec;
 			TypeManager.generic_ilist_type = IListGeneric.TypeSpec;
 			TypeManager.generic_icollection_type = ICollectionGeneric.TypeSpec;
 			TypeManager.generic_ienumerator_type = IEnumeratorGeneric.TypeSpec;
@@ -352,11 +350,9 @@ namespace Mono.CSharp
 
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
 			var te = type_ns.LookupType (module, name, arity, true, Location.Null);
-			if (te == null)
+			if (te == null || te.Type.Kind != kind) {
 				return false;
-
-			if (te.Type.Kind != kind)
-				return false;
+			}
 
 			type = te.Type;
 			return true;
@@ -385,7 +381,7 @@ namespace Mono.CSharp
 			if (type.Kind != kind) {
 				if (type.Kind == MemberKind.Struct && kind == MemberKind.Void && type.MemberDefinition is TypeContainer) {
 					// Void is declared as struct but we keep it internally as
-					// special kind, the swap will happen at caller
+					// special kind, the swap will be done by caller
 				} else {
 					module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
 					return null;
@@ -411,9 +407,6 @@ namespace Mono.CSharp
 	static public BuildinTypeSpec object_type;
 	static public BuildinTypeSpec value_type;
 
-	static public TypeSpec typed_reference_type;
-	static public TypeSpec arg_iterator_type;
-	static public TypeSpec mbr_type;
 	static public TypeSpec generic_ilist_type;
 	static public TypeSpec generic_icollection_type;
 	static public TypeSpec generic_ienumerator_type;
@@ -485,7 +478,6 @@ namespace Mono.CSharp
 
 		string_empty = null;
 
-		typed_reference_type = arg_iterator_type = mbr_type =
 		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
 		generic_ienumerable_type = generic_nullable_type = expression_type = null;
 	}
@@ -702,11 +694,6 @@ namespace Mono.CSharp
 		}
 
 		return false;
-	}
-
-	public static bool IsSpecialType (TypeSpec t)
-	{
-		return t == arg_iterator_type || t == typed_reference_type;
 	}
 
 	public static TypeSpec GetElementType (TypeSpec t)

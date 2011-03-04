@@ -915,6 +915,7 @@ namespace Mono.CSharp {
 			PendingBaseTypeInflate = 1 << 15,
 			InterfacesExpanded = 1 << 16,
 			IsNotRealProperty = 1 << 17,
+			SpecialRuntimeType = 1 << 18,
 		}
 
 		protected Modifiers modifiers;

@@ -168,7 +168,9 @@ namespace Mono.CSharp
 		}
 
 		public bool IsEnum {
-			get { return Kind == MemberKind.Enum; }
+			get {
+				return Kind == MemberKind.Enum;
+			}
 		}
 
 		// TODO: Should probably do
@@ -203,6 +205,15 @@ namespace Mono.CSharp
 
 		public bool IsSealed {
 			get { return (Modifiers & Modifiers.SEALED) != 0; }
+		}
+
+		public bool IsSpecialRuntimeType {
+			get {
+				return (state & StateFlags.SpecialRuntimeType) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.SpecialRuntimeType : state & ~StateFlags.SpecialRuntimeType;
+			}
 		}
 
 		public bool IsStruct {

@@ -364,8 +364,7 @@ namespace Mono.CSharp {
 			texpr = expr;
 			parameter_type = texpr.Type;
 	
-			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 &&
-				TypeManager.IsSpecialType (parameter_type)) {
+			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 && parameter_type.IsSpecialRuntimeType) {
 				rc.Module.Compiler.Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
 					GetSignatureForError ());
 				return null;

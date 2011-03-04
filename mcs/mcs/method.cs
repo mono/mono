@@ -1086,7 +1086,7 @@ namespace Mono.CSharp {
 			if (partialMethodImplementation != null && IsPartialDefinition)
 				MethodBuilder = partialMethodImplementation.MethodBuilder;
 
-			if (Compiler.Settings.StdLib && TypeManager.IsSpecialType (ReturnType)) {
+			if (Compiler.Settings.StdLib && ReturnType.IsSpecialRuntimeType) {
 				Error1599 (Location, ReturnType, Report);
 				return false;
 			}

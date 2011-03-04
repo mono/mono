@@ -171,7 +171,7 @@ namespace Mono.CSharp {
 
 			CheckProtectedModifier ();
 
-			if (Compiler.Settings.StdLib && TypeManager.IsSpecialType (ret_type)) {
+			if (Compiler.Settings.StdLib && ret_type.IsSpecialRuntimeType) {
 				Method.Error1599 (Location, ret_type, Report);
 				return false;
 			}

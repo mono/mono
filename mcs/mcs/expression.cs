@@ -8860,7 +8860,7 @@ namespace Mono.CSharp
 			}
 
 			if (single_spec != null && single_spec.Dimension > 0) {
-				if (TypeManager.IsSpecialType (type)) {
+				if (type.IsSpecialRuntimeType) {
 					ec.Module.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", type.GetSignatureForError ());
 				} else if (type.IsStatic) {
 					ec.Module.Compiler.Report.SymbolRelatedToPreviousError (type);

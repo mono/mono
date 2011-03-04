@@ -3474,7 +3474,7 @@ namespace Mono.CSharp {
 
 		protected bool IsTypePermitted ()
 		{
-			if (TypeManager.IsSpecialType (MemberType)) {
+			if (MemberType.IsSpecialRuntimeType) {
 				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}

@@ -681,6 +681,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			// Conversion from __arglist to System.ArgIterator
+			if (expr.Type == InternalType.Arglist)
+				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
+
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
@@ -805,10 +809,6 @@ namespace Mono.CSharp {
 
 			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.Kind == MemberKind.Void)
 				return true;
-
-			// Conversion from __arglist to System.ArgIterator
-			if (expr_type == InternalType.Arglist)
-				return target_type == TypeManager.arg_iterator_type;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type))
 				return true;
@@ -1380,7 +1380,7 @@ namespace Mono.CSharp {
 					return am.Resolve (ec);
 			}
 
-			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)
+			if (expr_type == InternalType.Arglist && target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec)
 				return expr;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type)) {

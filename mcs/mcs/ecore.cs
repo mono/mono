@@ -2723,7 +2723,7 @@ namespace Mono.CSharp {
 				me.ResolveInstanceExpression (rc, rhs);
 
 				var fe = me as FieldExpr;
-				if (fe != null && fe.IsMarshalByRefAccess ()) {
+				if (fe != null && fe.IsMarshalByRefAccess (rc)) {
 					rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
 					rc.Report.Warning (1690, 1, loc,
 						"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
@@ -4764,12 +4764,11 @@ namespace Mono.CSharp {
 			return TypeManager.GetFullNameSignature (spec);
 		}
 
-		public bool IsMarshalByRefAccess ()
+		public bool IsMarshalByRefAccess (ResolveContext rc)
 		{
 			// Checks possible ldflda of field access expression
-			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) &&
-				TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false) &&
-				!(InstanceExpression is This);
+			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) && !(InstanceExpression is This) &&
+				TypeSpec.IsBaseClass (spec.DeclaringType, rc.Module.PredefinedTypes.MarshalByRefObject.TypeSpec, false);
 		}
 
 		public void SetHasAddressTaken ()
@@ -4945,8 +4944,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (right_side == EmptyExpression.OutAccess.Instance &&
-				!IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false)) {
+			if (right_side == EmptyExpression.OutAccess.Instance && IsMarshalByRefAccess (ec)) {
 				ec.Report.SymbolRelatedToPreviousError (spec.DeclaringType);
 				ec.Report.Warning (197, 1, loc,
 						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
