@@ -128,6 +128,7 @@ namespace UnityProfileShaper
 				"smcs.exe",
 				"booc.exe",
 				"Mono.CompilerServices.SymbolWriter.dll",
+				"Mono.Cecil.dll", // required when referencing UnityEditor.dll for the webplayer target
 			};
 			
 			if (copy_pattern.Where(a => assembly.Contains(a)).Any()) return AssemblyAction.Copy;
