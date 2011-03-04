@@ -1846,7 +1846,7 @@ namespace Mono.CSharp {
 			if (TypeManager.void_decimal_ctor_five_args == null) {
 				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
 					type, loc, ec.BuildinTypes.Int, ec.BuildinTypes.Int,
-					ec.BuildinTypes.Int, ec.BuildinTypes.Bool, TypeManager.byte_type);
+					ec.BuildinTypes.Int, ec.BuildinTypes.Bool, ec.BuildinTypes.Byte);
 
 				if (TypeManager.void_decimal_ctor_five_args == null)
 					return;
@@ -2072,7 +2072,7 @@ namespace Mono.CSharp {
 			}
 
 			// Exlude internal compiler types
-			if (targetType.Kind == MemberKind.InternalCompilerType && targetType != InternalType.Dynamic && targetType != InternalType.Null)
+			if (targetType.Kind == MemberKind.InternalCompilerType && targetType.BuildinType != BuildinTypeSpec.Type.Dynamic && targetType != InternalType.Null)
 				return null;
 
 			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))

@@ -4931,7 +4931,7 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveInitializer (BlockContext bc, LocalVariable li, Expression initializer)
 			{
-				if (li.Type == InternalType.Dynamic) {
+				if (li.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					initializer = initializer.Resolve (bc);
 					if (initializer == null)
 						return null;
@@ -5508,7 +5508,7 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (BlockContext ec)
 			{
-				bool is_dynamic = expr.Type == InternalType.Dynamic;
+				bool is_dynamic = expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic;
 
 				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuildinTypes.IEnumerable, loc);
@@ -5547,14 +5547,14 @@ namespace Mono.CSharp {
 				if (ve != null) {
 					if (is_dynamic) {
 						// Source type is dynamic, set element type to dynamic too
-						var_type = new TypeExpression (InternalType.Dynamic, var_type.Location);
+						var_type = new TypeExpression (ec.BuildinTypes.Dynamic, var_type.Location);
 					} else {
 						// Infer implicitly typed local variable from foreach enumerable type
 						var_type = new TypeExpression (current_pe.Type, var_type.Location);
 					}
 				} else if (is_dynamic) {
 					// Explicit cast of dynamic collection elements has to be done at runtime
-					current_pe = EmptyCast.Create (current_pe, InternalType.Dynamic);
+					current_pe = EmptyCast.Create (current_pe, ec.BuildinTypes.Dynamic);
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);

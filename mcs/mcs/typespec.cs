@@ -383,10 +383,12 @@ namespace Mono.CSharp
 				//
 				// class B : A<object> {}
 				//
+				type = type.BaseType;
 				while (type != null) {
-					type = type.BaseType;
 					if (TypeSpecComparer.IsEqual (type, baseClass))
 						return true;
+
+					type = type.BaseType;
 				}
 
 				return false;
@@ -770,7 +772,7 @@ namespace Mono.CSharp
 					return ac_b != null && ac_a.Rank == ac_b.Rank && IsEqual (ac_a.Element, ac_b.Element);
 				}
 
-				if (a == InternalType.Dynamic || b == InternalType.Dynamic)
+				if (a.BuildinType == BuildinTypeSpec.Type.Dynamic || b.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
 
 				if (a.MemberDefinition != b.MemberDefinition)
@@ -1014,18 +1016,10 @@ namespace Mono.CSharp
 		{
 			if (a == b) {
 				// This also rejects dynamic == dynamic
-				return a.Kind != MemberKind.InternalCompilerType || a == InternalType.Dynamic;
+				return a.Kind != MemberKind.InternalCompilerType || a.BuildinType == BuildinTypeSpec.Type.Dynamic;
 			}
 
-			//
-			// object and dynamic are considered equivalent there is an identity conversion
-			// between object and dynamic, and between constructed types that are the same
-			// when replacing all occurences of dynamic with object.
-			//
-			if (a == InternalType.Dynamic || b == InternalType.Dynamic)
-				return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
-
-			if (a == null)
+			if (a == null || b == null)
 				return false;
 
 			if (a.IsArray) {
@@ -1037,8 +1031,17 @@ namespace Mono.CSharp
 				return IsEqual (a_a.Element, b_a.Element) && a_a.Rank == b_a.Rank;
 			}
 
-			if (!a.IsGeneric || b == null || !b.IsGeneric)
+			if (!a.IsGeneric || !b.IsGeneric) {
+				//
+				// object and dynamic are considered equivalent there is an identity conversion
+				// between object and dynamic, and between constructed types that are the same
+				// when replacing all occurences of dynamic with object.
+				//
+				if (a.BuildinType == BuildinTypeSpec.Type.Dynamic || b.BuildinType == BuildinTypeSpec.Type.Dynamic)
+					return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
+
 				return false;
+			}
 
 			if (a.MemberDefinition != b.MemberDefinition)
 				return false;
@@ -1073,7 +1076,6 @@ namespace Mono.CSharp
 	{
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
-		public static BuildinTypeSpec Dynamic;
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
 		public static BuildinTypeSpec Null;
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
@@ -1215,7 +1217,7 @@ namespace Mono.CSharp
 			state &= ~shared_flags;
 			state |= (element.state & shared_flags);
 
-			if (element == InternalType.Dynamic)
+			if (element.BuildinType == BuildinTypeSpec.Type.Dynamic)
 				state |= StateFlags.HasDynamicElement;
 
 			// Has to use its own type definition instead of just element definition to

@@ -45,13 +45,11 @@ namespace Mono.CSharp
 		public DynamicTypeExpr (Location loc)
 		{
 			this.loc = loc;
-
-			type = InternalType.Dynamic;
-			eclass = ExprClass.Type;
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
+			type = ec.Module.Compiler.BuildinTypes.Dynamic;
 			return this;
 		}
 	}
@@ -294,7 +292,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 
 			if (type == null)
-				type = InternalType.Dynamic;
+				type = rc.BuildinTypes.Dynamic;
 
 			if (rc.Report.Errors == errors)
 				return true;
@@ -497,7 +495,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			type = InternalType.Dynamic;
+			type = rc.BuildinTypes.Dynamic;
 			eclass = ExprClass.Value;
 			condition = condition.Resolve (rc);
 			return this;

@@ -1369,7 +1369,7 @@ namespace Mono.CSharp {
 			this.targs = targs;
 
 			foreach (var arg in targs) {
-				if (arg.HasDynamicElement || arg == InternalType.Dynamic) {
+				if (arg.HasDynamicElement || arg.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					state |= StateFlags.HasDynamicElement;
 					break;
 				}
@@ -1922,7 +1922,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < args.Length; ++i) {
 				var item = args[i];
 
-				if (item == InternalType.Dynamic)
+				if (item.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					return true;
 
 				if (TypeManager.IsGenericType (item))
@@ -1933,7 +1933,7 @@ namespace Mono.CSharp {
 						item = ((ArrayContainer) item).Element;
 					}
 
-					if (item == InternalType.Dynamic)
+					if (item.BuildinType == BuildinTypeSpec.Type.Dynamic)
 						return true;
 				}
 			}
@@ -2007,7 +2007,7 @@ namespace Mono.CSharp {
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (ignore_inferred_dynamic && targs[i] == InternalType.Dynamic)
+				if (ignore_inferred_dynamic && targs[i].BuildinType == BuildinTypeSpec.Type.Dynamic)
 					continue;
 
 				if (!CheckConstraint (context, targs [i], tparams [i], loc))
@@ -2139,7 +2139,7 @@ namespace Mono.CSharp {
 		{
 			for (int i = 0; i < targs.Length; ++i) {
 				var targ = targs [i];
-				if (targ == InternalType.Dynamic)
+				if (targ.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					return true;
 
 				if (HasDynamicTypeArgument (targ.TypeArguments))
@@ -2900,10 +2900,10 @@ namespace Mono.CSharp {
 				//
 				if (best_candidate != null) {
 
-					if (best_candidate == InternalType.Dynamic)
+					if (best_candidate.BuildinType == BuildinTypeSpec.Type.Dynamic)
 						continue;
 
-					if (bound.Type != InternalType.Dynamic && best_candidate != bound.Type)
+					if (bound.Type.BuildinType != BuildinTypeSpec.Type.Dynamic && best_candidate != bound.Type)
 						return false;
 				}
 
@@ -3075,7 +3075,7 @@ namespace Mono.CSharp {
 					// Using this trick for dynamic type inference, the spec says the type arguments are "unknown" but
 					// that would complicate the process a lot, instead I treat them as dynamic
 					//
-					if (t == InternalType.Dynamic)
+					if (t.BuildinType == BuildinTypeSpec.Type.Dynamic)
 						u_candidates.Add (t);
 
 					if (t.Interfaces != null) {
@@ -3116,7 +3116,7 @@ namespace Mono.CSharp {
 					//
 					// dynamic becomes both T and U when the arguments are of dynamic type
 					//
-					if (u_candidate == InternalType.Dynamic) {
+					if (u_candidate.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 						unique_candidate_targs = new TypeSpec[ga_v.Length];
 						for (int i = 0; i < unique_candidate_targs.Length; ++i)
 							unique_candidate_targs[i] = u_candidate;

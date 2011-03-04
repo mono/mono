@@ -1917,7 +1917,8 @@ namespace Mono.CSharp {
 			if (Resolve (loc) == null)
 				return;
 
-			if (ctor == null && !ResolveConstructor (loc, TypeManager.byte_type, TypeManager.byte_type, TypeManager.uint32_type, TypeManager.uint32_type, TypeManager.uint32_type))
+			if (ctor == null && !ResolveConstructor (loc, module.Compiler.BuildinTypes.Byte, module.Compiler.BuildinTypes.Byte,
+				module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt))
 				return;
 
 			int[] bits = decimal.GetBits (value);
@@ -1937,7 +1938,8 @@ namespace Mono.CSharp {
 			if (Resolve (loc) == null)
 				return;
 
-			if (ctor == null && !ResolveConstructor (loc, TypeManager.byte_type, TypeManager.byte_type, TypeManager.uint32_type, TypeManager.uint32_type, TypeManager.uint32_type))
+			if (ctor == null && !ResolveConstructor (loc, module.Compiler.BuildinTypes.Byte, module.Compiler.BuildinTypes.Byte,
+				module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt))
 				return;
 
 			int[] bits = decimal.GetBits (value);
@@ -2047,7 +2049,7 @@ namespace Mono.CSharp {
 					return transform.ToArray ();
 			}
 
-			if (t == InternalType.Dynamic)
+			if (t.BuildinType == BuildinTypeSpec.Type.Dynamic)
 				return new bool[] { true };
 
 			return null;
@@ -2061,7 +2063,7 @@ namespace Mono.CSharp {
 			if (Resolve (loc) == null)
 				return false;
 
-			tctor = TypeManager.GetPredefinedConstructor (type, Location.Null, ArrayContainer.MakeType (module, TypeManager.bool_type));
+			tctor = TypeManager.GetPredefinedConstructor (type, Location.Null, ArrayContainer.MakeType (module, module.Compiler.BuildinTypes.Bool));
 			return tctor != null;
 		}
 	}

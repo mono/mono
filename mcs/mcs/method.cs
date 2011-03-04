@@ -623,7 +623,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
 
-			if (ReturnType == InternalType.Dynamic) {
+			if (ReturnType.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
@@ -2197,7 +2197,7 @@ namespace Mono.CSharp {
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
-			if (ReturnType == InternalType.Dynamic) {
+			if (ReturnType.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
@@ -2416,7 +2416,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (conv_type == InternalType.Dynamic) {
+				if (conv_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					Report.Error (1964, Location,
 						"User-defined conversion `{0}' cannot convert to or from the dynamic type",
 						GetSignatureForError ());

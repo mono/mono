@@ -646,7 +646,7 @@ namespace Mono.CSharp
 			if (import_cache.TryGetValue (type, out spec)) {
 				if (spec.BuildinType == BuildinTypeSpec.Type.Object) {
 					if (dtype.IsDynamicObject (this))
-						return InternalType.Dynamic;
+						return module.Compiler.BuildinTypes.Dynamic;
 
 					return spec;
 				}

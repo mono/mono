@@ -114,6 +114,7 @@ namespace Mono.CSharp
 			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.Other);
 			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.Other);
 
+			// TODO: Maybe I should promote it to different kind for faster compares
 			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
 			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
 			Null.MemberCache = MemberCache.Empty;
@@ -137,16 +138,7 @@ namespace Mono.CSharp
 			// TODO: remove
 			TypeManager.object_type = Object;
 			TypeManager.value_type = ValueType;
-			TypeManager.int32_type = Int;
-			TypeManager.uint32_type = UInt;
-			TypeManager.int64_type = Long;
-			TypeManager.uint64_type = ULong;
-			TypeManager.decimal_type = Decimal;
-			TypeManager.bool_type = Bool;
-			TypeManager.byte_type = Byte;
-			TypeManager.delegate_type = Delegate;
 
-			InternalType.Dynamic = Dynamic;
 			InternalType.Null = Null;
 		}
 
@@ -424,14 +416,6 @@ namespace Mono.CSharp
 	//
 	static public BuildinTypeSpec object_type;
 	static public BuildinTypeSpec value_type;
-	static public BuildinTypeSpec int32_type;
-	static public BuildinTypeSpec uint32_type;
-	static public BuildinTypeSpec int64_type;
-	static public BuildinTypeSpec uint64_type;
-	static public BuildinTypeSpec decimal_type;
-	static public BuildinTypeSpec bool_type;
-	static public BuildinTypeSpec byte_type;
-	static public BuildinTypeSpec delegate_type;
 
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;

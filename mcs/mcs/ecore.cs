@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 		{
 			var btypes = ec.BuildinTypes;
 
-			if (source.type == InternalType.Dynamic) {
+			if (source.type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
 				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
@@ -2188,7 +2188,7 @@ namespace Mono.CSharp {
 						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
-				return new DynamicTypeExpr (loc);
+				return new DynamicTypeExpr (loc).ResolveAsTypeStep (ec, silent);
 			}
 
 			if (fne != null)
@@ -3876,7 +3876,7 @@ namespace Mono.CSharp {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && ptypes[i].BuildinType == BuildinTypeSpec.Type.Object || ptypes[i] == InternalType.Dynamic) {
+						if (e == EmptyExpression.MissingValue && ptypes[i].BuildinType == BuildinTypeSpec.Type.Object || ptypes[i].BuildinType == BuildinTypeSpec.Type.Dynamic) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 						} else {
@@ -3984,7 +3984,7 @@ namespace Mono.CSharp {
 						//
 						// Using dynamic for ref/out parameter can still succeed at runtime
 						//
-						if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 							return -1;
 
 						return 2;
@@ -3995,14 +3995,14 @@ namespace Mono.CSharp {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
 				}
 
 			} else {
-				if (argument.Type == InternalType.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
+				if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
 					return -1;
 
 				//
@@ -4537,7 +4537,7 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (a.Expr.Type == InternalType.Dynamic)
+				if (a.Expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					continue;
 
 				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr, pt)) {

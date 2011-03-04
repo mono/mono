@@ -653,7 +653,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (member_type == InternalType.Dynamic) {
+			if (member_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
 			} else if (member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
@@ -964,7 +964,7 @@ namespace Mono.CSharp
 				get {
 					if (TypeManager.delegate_combine_delegate_delegate == null) {
 						TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-							TypeManager.delegate_type, "Combine", Location, TypeManager.delegate_type, TypeManager.delegate_type);
+							Compiler.BuildinTypes.Delegate, "Combine", Location, Compiler.BuildinTypes.Delegate, Compiler.BuildinTypes.Delegate);
 					}
 
 					return TypeManager.delegate_combine_delegate_delegate;
@@ -983,7 +983,7 @@ namespace Mono.CSharp
 				get {
 					if (TypeManager.delegate_remove_delegate_delegate == null) {
 						TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-							TypeManager.delegate_type, "Remove", Location, TypeManager.delegate_type, TypeManager.delegate_type);
+							Compiler.BuildinTypes.Delegate, "Remove", Location, Compiler.BuildinTypes.Delegate, Compiler.BuildinTypes.Delegate);
 					}
 
 					return TypeManager.delegate_remove_delegate_delegate;

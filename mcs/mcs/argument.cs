@@ -296,7 +296,7 @@ namespace Mono.CSharp
 
 				var arg_type = a.Expr.Type;
 
-				if (arg_type != InternalType.Dynamic && arg_type != InternalType.Null) {
+				if (arg_type.BuildinType != BuildinTypeSpec.Type.Dynamic && arg_type != InternalType.Null) {
 					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
 					if (mg != null) {
 						rc.Report.Error (1976, a.Expr.Location,
@@ -436,7 +436,7 @@ namespace Mono.CSharp
 		public bool HasDynamic {
 			get {
 				foreach (Argument a in args) {
-					if (a.Type == InternalType.Dynamic && !a.IsByRef)
+					if (a.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && !a.IsByRef)
 						return true;
 				}
 				
@@ -506,7 +506,7 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				if (a.Type == InternalType.Dynamic && !a.IsByRef)
+				if (a.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && !a.IsByRef)
 					dynamic = true;
 			}
 		}

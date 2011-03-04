@@ -296,7 +296,7 @@ namespace Mono.CSharp {
 		public override void EmitType ()
 		{
 			if (ReturnType.Type != null) {
-				if (ReturnType.Type == InternalType.Dynamic) {
+				if (ReturnType.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 				} else if (ReturnType.Type.HasDynamicElement) {
@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 
 			method_group = e as MethodGroupExpr;
 			if (method_group == null) {
-				if (e.Type == InternalType.Dynamic) {
+				if (e.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					e = Convert.ImplicitConversionRequired (ec, e, type, loc);
 				} else if (!e.Type.IsDelegate) {
 					e.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup | ResolveFlags.Type, loc);

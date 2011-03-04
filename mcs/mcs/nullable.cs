@@ -1085,7 +1085,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type == InternalType.Dynamic) {
+					if (right.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 
 						// Need to box underlying value type
@@ -1102,7 +1102,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type == InternalType.Dynamic) {
+					if (right.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 						return this;
 					}

@@ -442,7 +442,7 @@ namespace Mono.CSharp
 			if (Expr == null)
 				return null;
 
-			if (Expr.Type == InternalType.Dynamic) {
+			if (Expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (Expr));
 				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
@@ -728,7 +728,7 @@ namespace Mono.CSharp
 				//
 				// decimal type is predefined but has user-operators
 				//
-				if (oper_expr.Type == TypeManager.decimal_type)
+				if (oper_expr.Type.BuildinType == BuildinTypeSpec.Type.Decimal)
 					oper_expr = ResolveUserType (ec, oper_expr, predefined);
 				else
 					oper_expr = ResolvePrimitivePredefinedType (ec, oper_expr, predefined);
@@ -758,7 +758,7 @@ namespace Mono.CSharp
 			//
 			// HACK: Decimal user-operator is included in standard operators
 			//
-			if (best_expr.Type == TypeManager.decimal_type)
+			if (best_expr.Type.BuildinType == BuildinTypeSpec.Type.Decimal)
 				return best_expr;
 
 			Expr = best_expr;
@@ -1030,7 +1030,7 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			if (expr.Type == InternalType.Dynamic) {
+			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				//
 				// Handle postfix unary operators using local
 				// temporary variable
@@ -1418,7 +1418,7 @@ namespace Mono.CSharp
 				if (TypeManager.IsGenericParameter (t))
 					return ResolveGenericParameter (ec, d, (TypeParameterSpec) t);
 
-				if (t == InternalType.Dynamic) {
+				if (t.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 					ec.Report.Warning (1981, 3, loc,
 						"Using `{0}' to test compatibility with `{1}' is identical to testing compatibility with `object'",
 						OperatorName, t.GetSignatureForError ());
@@ -1527,7 +1527,7 @@ namespace Mono.CSharp
 			}
 
 			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
-			if (etype == InternalType.Dynamic) {
+			if (etype.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				return this;
 			}
 			
@@ -1771,7 +1771,7 @@ namespace Mono.CSharp
 				// is considered to be predefined type therefore we apply predefined operators rules
 				// and then look for decimal user-operator implementation
 				//
-				if (left == TypeManager.decimal_type)
+				if (left.BuildinType == BuildinTypeSpec.Type.Decimal)
 					return b.ResolveUserOperator (ec, b.left, b.right);
 
 				var c = b.right as Constant;
@@ -2799,7 +2799,7 @@ namespace Mono.CSharp
 				CheckOutOfRangeComparison (ec, rc, left.Type);
 			}
 
-			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
+			if (left.Type.BuildinType == BuildinTypeSpec.Type.Dynamic || right.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				var lt = left.Type;
 				var rt = right.Type;
 				if (lt.Kind == MemberKind.Void || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
@@ -2819,7 +2819,7 @@ namespace Mono.CSharp
 
 					args = new Arguments (2);
 
-					if (lt == InternalType.Dynamic) {
+					if (lt.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 						LocalVariable temp = LocalVariable.CreateCompilerGenerated (lt, ec.CurrentBlock, loc);
 
 						var cond_args = new Arguments (1);
@@ -2981,14 +2981,14 @@ namespace Mono.CSharp
 			if (oper == Operator.Addition) {
 				if (TypeManager.delegate_combine_delegate_delegate == null) {
 					TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-						TypeManager.delegate_type, "Combine", loc, TypeManager.delegate_type, TypeManager.delegate_type);
+						ec.BuildinTypes.Delegate, "Combine", loc, ec.BuildinTypes.Delegate, ec.BuildinTypes.Delegate);
 				}
 
 				method = TypeManager.delegate_combine_delegate_delegate;
 			} else if (oper == Operator.Subtraction) {
 				if (TypeManager.delegate_remove_delegate_delegate == null) {
 					TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-						TypeManager.delegate_type, "Remove", loc, TypeManager.delegate_type, TypeManager.delegate_type);
+						ec.BuildinTypes.Delegate, "Remove", loc, ec.BuildinTypes.Delegate, ec.BuildinTypes.Delegate);
 				}
 
 				method = TypeManager.delegate_remove_delegate_delegate;
@@ -3314,12 +3314,12 @@ namespace Mono.CSharp
 			if (!TypeManager.IsReferenceType (l) || !TypeManager.IsReferenceType (r))
 				return null;
 
-			if (l.BuildinType == BuildinTypeSpec.Type.String || l == TypeManager.delegate_type || MemberCache.GetUserOperator (l, CSharp.Operator.OpType.Equality, false) != null)
+			if (l.BuildinType == BuildinTypeSpec.Type.String || l.BuildinType == BuildinTypeSpec.Type.Delegate || MemberCache.GetUserOperator (l, CSharp.Operator.OpType.Equality, false) != null)
 				ec.Report.Warning (253, 2, loc,
 					"Possible unintended reference comparison. Consider casting the right side expression to type `{0}' to get value comparison",
 					l.GetSignatureForError ());
 
-			if (r.BuildinType == BuildinTypeSpec.Type.String || r == TypeManager.delegate_type || MemberCache.GetUserOperator (r, CSharp.Operator.OpType.Equality, false) != null)
+			if (r.BuildinType == BuildinTypeSpec.Type.String || r.BuildinType == BuildinTypeSpec.Type.Delegate || MemberCache.GetUserOperator (r, CSharp.Operator.OpType.Equality, false) != null)
 				ec.Report.Warning (252, 2, loc,
 					"Possible unintended reference comparison. Consider casting the left side expression to type `{0}' to get value comparison",
 					r.GetSignatureForError ());
@@ -4285,7 +4285,7 @@ namespace Mono.CSharp
 			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Bool)
 				return expr;
 
-			if (expr.Type == InternalType.Dynamic) {
+			if (expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
 				return DynamicUnaryConversion.CreateIsTrue (ec, args, loc).Resolve (ec);
@@ -4383,13 +4383,13 @@ namespace Mono.CSharp
 			//
 			if (!TypeSpecComparer.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
-				if (conv != null && true_type != InternalType.Dynamic) {
+				if (conv != null && true_type.BuildinType != BuildinTypeSpec.Type.Dynamic) {
 					//
 					// Check if both can convert implicitly to each other's type
 					//
 					type = false_type;
 
-					if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
+					if (false_type.BuildinType != BuildinTypeSpec.Type.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
 						ec.Report.Error (172, true_expr.Location,
 							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
 								true_type.GetSignatureForError (), false_type.GetSignatureForError ());
@@ -5072,7 +5072,7 @@ namespace Mono.CSharp
 				arguments.Resolve (ec, out dynamic_arg);
 
 			TypeSpec expr_type = member_expr.Type;
-			if (expr_type == InternalType.Dynamic)
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic)
 				return DoResolveDynamic (ec, member_expr);
 
 			mg = member_expr as MethodGroupExpr;
@@ -5210,7 +5210,7 @@ namespace Mono.CSharp
 			case MemberKind.Field:
 			case MemberKind.Property:
 				var m = member as IInterfaceMemberSpec;
-				return m.MemberType.IsDelegate || m.MemberType == InternalType.Dynamic;
+				return m.MemberType.IsDelegate || m.MemberType.BuildinType == BuildinTypeSpec.Type.Dynamic;
 			default:
 				return false;
 			}
@@ -7083,7 +7083,7 @@ namespace Mono.CSharp
 
 		static bool ContainsDynamicType (TypeSpec type)
 		{
-			if (type == InternalType.Dynamic)
+			if (type.BuildinType == BuildinTypeSpec.Type.Dynamic)
 				return true;
 
 			var element_container = type as ElementTypeSpec;
@@ -7589,7 +7589,7 @@ namespace Mono.CSharp
 
 			MemberExpr me;
 			TypeSpec expr_type = expr.Type;
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				me = expr as MemberExpr;
 				if (me != null)
 					me.ResolveInstanceExpression (rc, null);
@@ -7991,7 +7991,7 @@ namespace Mono.CSharp
 			}
 
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
-			if (indexers != null || type == InternalType.Dynamic) {
+			if (indexers != null || type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				return new IndexerExpr (indexers, type, this);
 			}
 
@@ -8431,7 +8431,7 @@ namespace Mono.CSharp
 			bool dynamic;
 			arguments.Resolve (rc, out dynamic);
 
-			if (indexers == null && InstanceExpression.Type == InternalType.Dynamic) {
+			if (indexers == null && InstanceExpression.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				dynamic = true;
 			} else {
 				var res = new OverloadResolver (indexers, OverloadResolver.Restrictions.None, loc);
@@ -9102,7 +9102,7 @@ namespace Mono.CSharp
 				return EmptyExpressionStatement.Instance;
 
 			var t = ec.CurrentInitializerVariable.Type;
-			if (t == InternalType.Dynamic) {
+			if (t.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (ec.CurrentInitializerVariable));
 				target = new DynamicMemberBinder (Name, args, loc);
@@ -9309,7 +9309,7 @@ namespace Mono.CSharp
 					} else {
 						var t = ec.CurrentInitializerVariable.Type;
 						// LAMESPEC: The collection must implement IEnumerable only, no dynamic support
-						if (!t.ImplementsInterface (ec.BuildinTypes.IEnumerable, false) && t != InternalType.Dynamic) {
+						if (!t.ImplementsInterface (ec.BuildinTypes.IEnumerable, false) && t.BuildinType != BuildinTypeSpec.Type.Dynamic) {
 							ec.Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
 								"object initializer because type `{1}' does not implement `{2}' interface",
 								ec.CurrentInitializerVariable.GetSignatureForError (),

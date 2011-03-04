@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
-			if (target_type == InternalType.Dynamic) {
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -256,7 +256,7 @@ namespace Mono.CSharp {
 					return true;
 				}
 
-				return expr_type == InternalType.Dynamic;
+				return expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic;
 			}
 
 			if (target_type.BuildinType == BuildinTypeSpec.Type.ValueType)
@@ -324,8 +324,8 @@ namespace Mono.CSharp {
 			}
 
 			// from any delegate type to System.Delegate
-			if (target_type == TypeManager.delegate_type &&
-				(expr_type == TypeManager.delegate_type || expr_type.IsDelegate))
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Delegate &&
+				(expr_type.BuildinType == BuildinTypeSpec.Type.Delegate || expr_type.IsDelegate))
 				return true;
 
 			return false;
@@ -701,7 +701,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Implicit dynamic conversion
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
@@ -1005,18 +1005,7 @@ namespace Mono.CSharp {
 
 		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
 		{
-			//
-			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
-			// IntPtr -> uint uses int
-			// UIntPtr -> long uses ulong
-			//
-			if (source.Type.BuildinType == BuildinTypeSpec.Type.IntPtr) {
-				if (target.BuildinType == BuildinTypeSpec.Type.UInt)
-					target = TypeManager.int32_type;
-			} else if (source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr) {
-				if (target.BuildinType == BuildinTypeSpec.Type.Long)
-					target = TypeManager.uint64_type;
-			} else if (source.Type.IsInterface) {
+			if (source.Type.IsInterface) {
 				// Neither A nor B are interface-types
 				return;
 			}
@@ -1045,10 +1034,6 @@ namespace Mono.CSharp {
 				}
 
 				t = op.ReturnType;
-
-				// LAMESPEC: Exclude UIntPtr -> int conversion
-				if (t.BuildinType == BuildinTypeSpec.Type.UInt && source.Type.BuildinType == BuildinTypeSpec.Type.UIntPtr)
-					continue;
 
 				if (t.IsInterface)
 					continue;
@@ -1108,7 +1093,7 @@ namespace Mono.CSharp {
 			// Only these containers can contain a user defined implicit or explicit operators
 			const MemberKind user_conversion_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.TypeParameter;
 
-			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type != TypeManager.decimal_type) {
+			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type.BuildinType != BuildinTypeSpec.Type.Decimal) {
 				bool declared_only = source_type.IsStruct;
 
 				var operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Implicit, declared_only);
@@ -1124,7 +1109,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if ((target.Kind & user_conversion_kinds) != 0 && target_type != TypeManager.decimal_type) {
+			if ((target.Kind & user_conversion_kinds) != 0 && target_type.BuildinType != BuildinTypeSpec.Type.Decimal) {
 				bool declared_only = target.IsStruct || implicitOnly;
 
 				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
@@ -1305,7 +1290,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
@@ -1451,6 +1436,11 @@ namespace Mono.CSharp {
 			// defined here, for some of them (mostly IntPtr/UIntPtr) we
 			// defer to user-operator handling which is now perfect but
 			// works for now
+			//
+			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
+			// IntPtr -> uint uses int
+			// UIntPtr -> long uses ulong
+			//
 
 			switch (expr.Type.BuildinType) {
 			case BuildinTypeSpec.Type.SByte:
@@ -1703,11 +1693,17 @@ namespace Mono.CSharp {
 					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type, ConvCast.Mode.U4_I2);
 				case BuildinTypeSpec.Type.Int:
 					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type);
+				case BuildinTypeSpec.Type.UInt:
+					return new OperatorCast (expr, expr.Type, target_type, true);
+				case BuildinTypeSpec.Type.Long:
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.ULong, true), target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.IntPtr:
+				if (target_type.BuildinType == BuildinTypeSpec.Type.UInt)
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.Int, true), target_type);
 				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong)
-					return EmptyCast.Create(new OperatorCast (expr, expr.Type, rc.BuildinTypes.Long, true), target_type);
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.Long, true), target_type);
 				
 				break;
 			case BuildinTypeSpec.Type.Decimal:
@@ -1779,7 +1775,7 @@ namespace Mono.CSharp {
 			//
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type.BuildinType == BuildinTypeSpec.Type.Object || source_type == InternalType.Dynamic) {
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Object || source_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				if (target_type.IsPointer)
 					return null;
 
@@ -1879,7 +1875,7 @@ namespace Mono.CSharp {
 			//
 			// From System delegate to any delegate-type
 			//
-			if (source_type == TypeManager.delegate_type && TypeManager.IsDelegateType (target_type))
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Delegate && TypeManager.IsDelegateType (target_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
