@@ -1,13 +1,13 @@
-mono doc/en/examples/bundling.exe --help
+mono Documentation/en/examples/bundling.exe --help
 
-mono doc/en/examples/bundling.exe -D
+mono Documentation/en/examples/bundling.exe -D
 
-mono doc/en/examples/bundling.exe -DA -DB=C "-dD-->E" "-dF=>G" -d "H=>I" -cf input --color -ooutput
+mono Documentation/en/examples/bundling.exe -DA -DB=C "-dD-->E" "-dF=>G" -d "H=>I" -cf input --color -ooutput
 
-mono doc/en/examples/bundling.exe -cfv input
+mono Documentation/en/examples/bundling.exe -cfv input
 
-mono doc/en/examples/bundling.exe -xctf input
+mono Documentation/en/examples/bundling.exe -xctf input
 
-mono doc/en/examples/bundling.exe --color=auto -o output -finput
+mono Documentation/en/examples/bundling.exe --color=auto -o output -finput
 
-mono doc/en/examples/bundling.exe --color=on A B --color=off C D
+mono Documentation/en/examples/bundling.exe --color=on A B --color=off C D

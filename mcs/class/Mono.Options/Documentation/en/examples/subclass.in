@@ -1,9 +1,9 @@
-mono doc/en/examples/subclass.exe -n A -Name=B --NAME=C /nAMe D
+mono Documentation/en/examples/subclass.exe -n A -Name=B --NAME=C /nAMe D
 
-mono doc/en/examples/subclass.exe --Repeat -name A
+mono Documentation/en/examples/subclass.exe --Repeat -name A
 
-mono doc/en/examples/subclass.exe -Name --Repeat 3
+mono Documentation/en/examples/subclass.exe -Name --Repeat 3
 
-mono doc/en/examples/subclass.exe --Map a b -mAp c=d /maP=e=f
+mono Documentation/en/examples/subclass.exe --Map a b -mAp c=d /maP=e=f
 
-mono doc/en/examples/subclass.exe --map 'a\\' 'b\\' c 'd\\' 'e\\' f
+mono Documentation/en/examples/subclass.exe --map 'a\\' 'b\\' c 'd\\' 'e\\' f

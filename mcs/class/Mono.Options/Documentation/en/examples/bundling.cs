@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	public static void Main (string[] args)

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
