@@ -65,6 +65,12 @@ Documentation/en/examples/localization.exe: Documentation/en/examples/locale/es/
 	done ; \
 	exec 3>&-;
 
+EXTRA_DISTFILES = \
+	$(wildcard Documentation/en/examples/*.cs) \
+	$(wildcard Documentation/en/examples/*.in) \
+	$(wildcard Documentation/en/examples/*.po) \
+	$(wildcard Documentation/en/examples/*.txt) \
+	Documentation/en/examples/locale/es/LC_MESSAGES/localization.mo
 
 CLEAN_FILES = \
 	Documentation/en/examples/Mono.Options.dll* \
