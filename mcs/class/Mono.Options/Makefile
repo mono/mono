@@ -38,7 +38,7 @@ DOC_EXAMPLES_OUTPUT = \
 	Documentation/en/examples/localization.txt \
 	Documentation/en/examples/subclass.txt
 
-doc-update-local: $(DOC_EXAMPLES_OUTPUT) 
+$(the_libdir)/.doc-stamp: $(DOC_EXAMPLES_OUTPUT) 
 
 Documentation/en/examples/Mono.Options.dll: $(the_lib)
 	cp $^ $@
