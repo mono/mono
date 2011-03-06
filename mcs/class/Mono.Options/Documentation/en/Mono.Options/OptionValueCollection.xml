@@ -241,7 +241,7 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public string this[int index] { set; get; }" />
+      <MemberSignature Language="C#" Value="public string this[int index] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -491,7 +491,7 @@
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
-      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { set; get; }" />
+      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IList.Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>

@@ -296,7 +296,7 @@
       </para>
       <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
@@ -443,7 +443,7 @@ Try `greet --help' for more information.
       <code lang="C#" src="examples/bundling.cs">using System;
 using System.Linq;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	public static void Main (string[] args)
@@ -636,7 +636,7 @@ Options:
       <code lang="C#" src="examples/subclass.cs">// Case-Insensitive and Concatenating OptionSet
 using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class DemoOptionSet : OptionSet {
 	protected override void InsertItem (int index, Option item)
@@ -907,8 +907,8 @@ Key: a\b\c=d\e\f
 //   gmcs -r:Mono.Posix.dll -r:NDesk.Options.dll code-localization.cs
 using System;
 using System.IO;
+using Mono.Options;
 using Mono.Unix;
-using NDesk.Options;
 
 class LocalizationDemo {
 	public static void Main (string[] args)
@@ -2092,7 +2092,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
@@ -2399,7 +2399,7 @@ class Test {
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;

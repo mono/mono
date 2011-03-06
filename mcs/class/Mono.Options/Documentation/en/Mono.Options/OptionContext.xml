@@ -49,7 +49,7 @@
       </Docs>
     </Member>
     <Member MemberName="Option">
-      <MemberSignature Language="C#" Value="public Mono.Options.Option Option { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Options.Option Option { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.Option Option" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -68,7 +68,7 @@
       </Docs>
     </Member>
     <Member MemberName="OptionIndex">
-      <MemberSignature Language="C#" Value="public int OptionIndex { set; get; }" />
+      <MemberSignature Language="C#" Value="public int OptionIndex { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 OptionIndex" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -95,7 +95,7 @@
       </Docs>
     </Member>
     <Member MemberName="OptionName">
-      <MemberSignature Language="C#" Value="public string OptionName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string OptionName { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string OptionName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
