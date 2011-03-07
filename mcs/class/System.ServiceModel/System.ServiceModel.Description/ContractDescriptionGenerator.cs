@@ -191,7 +191,7 @@ namespace System.ServiceModel.Description
 			
 			FillOperationsForInterface (cd, cd.ContractType, givenServiceType, false);
 			
-			if (cd.CallbackContractType != null && cd.CallbackContractType != cd.ContractType)
+			if (cd.CallbackContractType != null)
 				FillOperationsForInterface (cd, cd.CallbackContractType, null, true);
 
 			// FIXME: enable this when I found where this check is needed.
@@ -270,7 +270,7 @@ namespace System.ServiceModel.Description
 		{
 			string name = oca.Name ?? (oca.AsyncPattern ? mi.Name.Substring (5) : mi.Name);
 
-			OperationDescription od = isCallback ? null : cd.Operations.FirstOrDefault (o => o.Name == name);
+			OperationDescription od = cd.Operations.FirstOrDefault (o => o.Name == name && o.InCallbackContract == isCallback);
 			if (od == null) {
 				od = new OperationDescription (name, cd);
 				od.IsOneWay = oca.IsOneWay;
