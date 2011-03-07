@@ -855,7 +855,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (i == 0 && Kind == MemberKind.Class && !fne_resolved.Type.IsInterface) {
-					if (fne_resolved.Type == InternalType.Dynamic) {
+					if (fne_resolved.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
 
@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 				// Get all the method parameters and pass them as arguments
 				var real_base_call = new Invocation (mg, block.GetAllParametersArguments ());
 				Statement statement;
-				if (method.ReturnType == TypeManager.void_type)
+				if (method.ReturnType.Kind == MemberKind.Void)
 					statement = new StatementExpression (real_base_call);
 				else
 					statement = new Return (real_base_call, Location);
@@ -1217,7 +1217,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Kind == MemberKind.Interface) {
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = Compiler.BuildinTypes.Object;
 				return true;
 			}
 
@@ -1654,8 +1654,7 @@ namespace Mono.CSharp {
 				return;
 
 			PredefinedAttribute pa = Module.PredefinedAttributes.DefaultMember;
-			if (pa.Constructor == null &&
-				!pa.ResolveConstructor (Location, TypeManager.string_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.String))
 				return;
 
 			var encoder = new AttributeEncoder ();
@@ -2437,7 +2436,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.AttributeUsage) {
-				if (!BaseType.IsAttribute && spec != TypeManager.attribute_type) {
+				if (!BaseType.IsAttribute && spec.BuildinType != BuildinTypeSpec.Type.Attribute) {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
@@ -2549,7 +2548,7 @@ namespace Mono.CSharp {
 
 			if (base_class == null) {
 				if (spec != TypeManager.object_type)
-					base_type = TypeManager.object_type;
+					base_type = Compiler.BuildinTypes.Object;
 			} else {
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
@@ -2566,18 +2565,24 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (PartialContainer.IsStatic && base_class.Type != TypeManager.object_type) {
+				} else if (PartialContainer.IsStatic && base_class.Type.BuildinType != BuildinTypeSpec.Type.Object) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
-				if (base_type is BuildinTypeSpec && !(spec is BuildinTypeSpec) &&
-					(base_type == TypeManager.enum_type || base_type == TypeManager.value_type || base_type == TypeManager.multicast_delegate_type ||
-					base_type == TypeManager.delegate_type || base_type == TypeManager.array_type)) {
-					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
-						GetSignatureForError (), base_type.GetSignatureForError ());
+				switch (base_type.BuildinType) {
+				case BuildinTypeSpec.Type.Enum:
+				case BuildinTypeSpec.Type.ValueType:
+				case BuildinTypeSpec.Type.MulticastDelegate:
+				case BuildinTypeSpec.Type.Delegate:
+				case BuildinTypeSpec.Type.Array:
+					if (!(spec is BuildinTypeSpec)) {
+						Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
+							GetSignatureForError (), base_type.GetSignatureForError ());
 
-					base_type = TypeManager.object_type;
+						base_type = Compiler.BuildinTypes.Object;
+					}
+					break;
 				}
 
 				if (!IsAccessibleAs (base_type)) {
@@ -2798,7 +2803,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
-			base_type = TypeManager.value_type;
+			base_type = Compiler.BuildinTypes.ValueType;
 			return ifaces;
 		}
 
@@ -3469,7 +3474,7 @@ namespace Mono.CSharp {
 
 		protected bool IsTypePermitted ()
 		{
-			if (TypeManager.IsSpecialType (MemberType)) {
+			if (MemberType.IsSpecialRuntimeType) {
 				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}

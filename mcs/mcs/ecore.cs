@@ -816,25 +816,27 @@ namespace Mono.CSharp {
 		//
 		protected Expression ConvertExpressionToArrayIndex (ResolveContext ec, Expression source)
 		{
-			if (source.type == InternalType.Dynamic) {
+			var btypes = ec.BuildinTypes;
+
+			if (source.type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
-				return new DynamicConversion (TypeManager.int32_type, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
+				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
 			}
 
 			Expression converted;
 			
 			using (ec.Set (ResolveContext.Options.CheckedScope)) {
-				converted = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, source.loc);
+				converted = Convert.ImplicitConversion (ec, source, btypes.Int, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.UInt, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.Long, source.loc);
 				if (converted == null)
-					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, source.loc);
+					converted = Convert.ImplicitConversion (ec, source, btypes.ULong, source.loc);
 
 				if (converted == null) {
-					source.Error_ValueCannotBeConverted (ec, source.loc, TypeManager.int32_type, false);
+					source.Error_ValueCannotBeConverted (ec, source.loc, btypes.Int, false);
 					return null;
 				}
 			}
@@ -847,10 +849,10 @@ namespace Mono.CSharp {
 				Error_NegativeArrayIndex (ec, source.loc);
 
 			// No conversion needed to array index
-			if (converted.Type == TypeManager.int32_type)
+			if (converted.Type.BuildinType == BuildinTypeSpec.Type.Int)
 				return converted;
 
-			return new ArrayIndexCast (converted).Resolve (ec);
+			return new ArrayIndexCast (converted, btypes.Int).Resolve (ec);
 		}
 
 		//
@@ -1069,44 +1071,42 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Used for predefined class library user casts (no obsolete check, etc.)
+	// Used for predefined type user operator (no obsolete check, etc.)
 	//
-	public class OperatorCast : TypeCast {
-		MethodSpec conversion_operator;
-			
-		public OperatorCast (Expression child, TypeSpec target_type) 
-			: this (child, target_type, false)
+	public class OperatorCast : TypeCast
+	{
+		readonly MethodSpec conversion_operator;
+
+		public OperatorCast (Expression expr, TypeSpec target_type)
+			: this (expr, target_type, target_type, false)
 		{
 		}
-
-		public OperatorCast (Expression child, TypeSpec target_type, bool find_explicit)
-			: base (child, target_type)
+		
+		public OperatorCast (Expression expr, TypeSpec target_type, bool find_explicit)
+			: this (expr, target_type, target_type, find_explicit)
 		{
-			conversion_operator = GetConversionOperator (find_explicit);
-			if (conversion_operator == null)
-				throw new InternalErrorException ("Outer conversion routine is out of sync");
 		}
-
-		// Returns the implicit operator that converts from
-		// 'child.Type' to our target type (type)
-		MethodSpec GetConversionOperator (bool find_explicit)
+		
+		public OperatorCast (Expression expr, TypeSpec declaringType, TypeSpec returnType, bool isExplicit)
+			: base (expr, returnType)
 		{
-			var op = find_explicit ? Operator.OpType.Explicit : Operator.OpType.Implicit;
+			var op = isExplicit ? Operator.OpType.Explicit : Operator.OpType.Implicit;
+			var mi = MemberCache.GetUserOperator (declaringType, op, true);
 
-			var mi = MemberCache.GetUserOperator (child.Type, op, true);
-			if (mi == null){
-				mi = MemberCache.GetUserOperator (type, op, true);
+			if (mi != null) {
+				foreach (MethodSpec oper in mi) {
+					if (oper.ReturnType != returnType)
+						continue;
+
+					if (oper.Parameters.Types[0] == expr.Type) {
+						conversion_operator = oper;
+						return;
+					}
+				}
 			}
-			
-			foreach (MethodSpec oper in mi) {
-				if (oper.ReturnType != type)
-					continue;
 
-				if (oper.Parameters.Types [0] == child.Type)
-					return oper;
-			}
-
-			return null;
+			throw new InternalErrorException ("Missing predefined user operator between `{0}' and `{1}'",
+				returnType.GetSignatureForError (), expr.Type.GetSignatureForError ());
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1116,67 +1116,6 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	/// <summary>
-	/// 	This is a numeric cast to a Decimal
-	/// </summary>
-	public class CastToDecimal : OperatorCast {
-		public CastToDecimal (Expression child)
-			: this (child, false)
-		{
-		}
-
-		public CastToDecimal (Expression child, bool find_explicit)
-			: base (child, TypeManager.decimal_type, find_explicit)
-		{
-		}
-	}
-
-	/// <summary>
-	/// 	This is an explicit numeric cast from a Decimal
-	/// </summary>
-	public class CastFromDecimal : TypeCast
-	{
-		static Dictionary<TypeSpec, MethodSpec> operators;
-
-		public CastFromDecimal (Expression child, TypeSpec return_type)
-			: base (child, return_type)
-		{
-			if (child.Type != TypeManager.decimal_type)
-				throw new ArgumentException ("Expected decimal child " + child.Type.GetSignatureForError ());
-		}
-
-		// Returns the explicit operator that converts from an
-		// express of type System.Decimal to 'type'.
-		public Expression Resolve ()
-		{
-			if (operators == null) {
-				var all_oper = MemberCache.GetUserOperator (TypeManager.decimal_type, Operator.OpType.Explicit, true);
-
-				operators = new Dictionary<TypeSpec, MethodSpec> ();
-				foreach (MethodSpec oper in all_oper) {
-					AParametersCollection pd = oper.Parameters;
-					if (pd.Types [0] == TypeManager.decimal_type)
-						operators.Add (oper.ReturnType, oper);
-				}
-			}
-
-			return operators.ContainsKey (type) ? this : null;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			child.Emit (ec);
-
-			ec.Emit (OpCodes.Call, operators [type]);
-		}
-
-		public static void Reset ()
-		{
-			operators = null;
-		}
-	}
-
-	
 	//
 	// Constant specialization of EmptyCast.
 	// We need to special case this since an empty cast of
@@ -1184,7 +1123,7 @@ namespace Mono.CSharp {
 	//
 	public class EmptyConstantCast : Constant
 	{
-		public Constant child;
+		public readonly Constant child;
 
 		public EmptyConstantCast (Constant child, TypeSpec type)
 			: base (child.Location)
@@ -1238,11 +1177,6 @@ namespace Mono.CSharp {
 			get { return child.IsZeroInteger; }
 		}
 
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			return this;
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);			
@@ -1277,7 +1211,7 @@ namespace Mono.CSharp {
 			return child.GetValueAsLong ();
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
+		public override Constant ConvertImplicitly (TypeSpec target_type)
 		{
 			if (type == target_type)
 				return this;
@@ -1286,7 +1220,7 @@ namespace Mono.CSharp {
 			if (!Convert.ImplicitStandardConversionExists (this, target_type))
 				return null;
 
-			return child.ConvertImplicitly (rc, target_type);
+			return child.ConvertImplicitly (target_type);
 		}
 	}
 
@@ -1301,19 +1235,14 @@ namespace Mono.CSharp {
 			: base (child.Location)
 		{
 			this.Child = child;
+
+			this.eclass = ExprClass.Value;
 			this.type = enum_type;
 		}
 
 		protected EnumConstant (Location loc)
 			: base (loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			Child = Child.Resolve (rc);
-			this.eclass = ExprClass.Value;
-			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1399,7 +1328,7 @@ namespace Mono.CSharp {
 			return Child.ConvertExplicitly (in_checked_context, target_type);
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
+		public override Constant ConvertImplicitly (TypeSpec type)
 		{
 			if (this.type == type) {
 				return this;
@@ -1409,7 +1338,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return Child.ConvertImplicitly (rc, type);
+			return Child.ConvertImplicitly (type);
 		}
 	}
 
@@ -1438,7 +1367,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Only boxing to object type is supported
-			if (targetType != TypeManager.object_type) {
+			if (targetType.BuildinType != BuildinTypeSpec.Type.Object) {
 				base.EncodeAttributeValue (rc, enc, targetType);
 				return;
 			}
@@ -1459,7 +1388,7 @@ namespace Mono.CSharp {
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
 			if (TypeManager.IsStruct (child.Type) &&
-			    (type == TypeManager.object_type || type == TypeManager.value_type))
+			    (type.BuildinType == BuildinTypeSpec.Type.Object || type.BuildinType == BuildinTypeSpec.Type.ValueType))
 				child.EmitSideEffect (ec);
 			else
 				base.EmitSideEffect (ec);
@@ -1814,9 +1743,9 @@ namespace Mono.CSharp {
 				this.orig_expr = orig_expr;
 			}
 
-			public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
+			public override Constant ConvertImplicitly (TypeSpec target_type)
 			{
-				Constant c = base.ConvertImplicitly (rc, target_type);
+				Constant c = base.ConvertImplicitly (target_type);
 				if (c != null)
 					c = new ReducedConstantExpression (c, orig_expr);
 
@@ -1846,6 +1775,9 @@ namespace Mono.CSharp {
 			{
 				this.orig_expr = orig;
 				this.stm = stm;
+				this.eclass = stm.eclass;
+				this.type = stm.Type;
+
 				this.loc = orig.Location;
 			}
 
@@ -1856,8 +1788,6 @@ namespace Mono.CSharp {
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				eclass = stm.eclass;
-				type = stm.Type;
 				return this;
 			}
 
@@ -2258,7 +2188,7 @@ namespace Mono.CSharp {
 						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
-				return new DynamicTypeExpr (loc);
+				return new DynamicTypeExpr (loc).ResolveAsTypeStep (ec, silent);
 			}
 
 			if (fne != null)
@@ -2640,17 +2570,21 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null)
 				return;
 
-			if ((member.Modifiers & Modifiers.AccessibilityMask) == Modifiers.PROTECTED && !(InstanceExpression is This)) {
+			if ((member.Modifiers & Modifiers.PROTECTED) != 0 && !(InstanceExpression is This)) {
 				var ct = rc.CurrentType;
 				var expr_type = InstanceExpression.Type;
-				if (ct != expr_type) {
-					expr_type = expr_type.GetDefinition ();
-					if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
-						rc.Report.SymbolRelatedToPreviousError (member);
-						rc.Report.Error (1540, loc,
-							"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
-							member.GetSignatureForError (), expr_type.GetSignatureForError (), ct.GetSignatureForError ());
-					}
+				if (ct == expr_type)
+					return;
+
+				if ((member.Modifiers & Modifiers.INTERNAL) != 0 && expr_type.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
+					return;
+
+				expr_type = expr_type.GetDefinition ();
+				if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
+					rc.Report.SymbolRelatedToPreviousError (member);
+					rc.Report.Error (1540, loc,
+						"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
+						member.GetSignatureForError (), expr_type.GetSignatureForError (), ct.GetSignatureForError ());
 				}
 			}
 		}
@@ -2789,7 +2723,7 @@ namespace Mono.CSharp {
 				me.ResolveInstanceExpression (rc, rhs);
 
 				var fe = me as FieldExpr;
-				if (fe != null && fe.IsMarshalByRefAccess ()) {
+				if (fe != null && fe.IsMarshalByRefAccess (rc)) {
 					rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
 					rc.Report.Warning (1690, 1, loc,
 						"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
@@ -3437,15 +3371,15 @@ namespace Mono.CSharp {
 				//
 				// if p is void returning, and q has a return type Y, then C2 is the better conversion.
 				//
-				if (p == TypeManager.void_type) {
-					return q != TypeManager.void_type ? 2 : 0;
+				if (p.Kind == MemberKind.Void) {
+					return q.Kind != MemberKind.Void ? 2 : 0;
 				}
 
 				//
 				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
 				//
-				if (q == TypeManager.void_type) {
-					return p != TypeManager.void_type ? 1: 0;
+				if (q.Kind == MemberKind.Void) {
+					return p.Kind != MemberKind.Void ? 1: 0;
 				}
 			} else {
 				if (argument_type == p)
@@ -3942,7 +3876,7 @@ namespace Mono.CSharp {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && ptypes[i] == TypeManager.object_type || ptypes[i] == InternalType.Dynamic) {
+						if (e == EmptyExpression.MissingValue && ptypes[i].BuildinType == BuildinTypeSpec.Type.Object || ptypes[i].BuildinType == BuildinTypeSpec.Type.Dynamic) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 						} else {
@@ -4050,7 +3984,7 @@ namespace Mono.CSharp {
 						//
 						// Using dynamic for ref/out parameter can still succeed at runtime
 						//
-						if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 							return -1;
 
 						return 2;
@@ -4061,14 +3995,14 @@ namespace Mono.CSharp {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
 				}
 
 			} else {
-				if (argument.Type == InternalType.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
+				if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
 					return -1;
 
 				//
@@ -4603,7 +4537,7 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (a.Expr.Type == InternalType.Dynamic)
+				if (a.Expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					continue;
 
 				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr, pt)) {
@@ -4731,7 +4665,7 @@ namespace Mono.CSharp {
 			var c = constant.GetConstant (rc);
 
 			// Creates reference expression to the constant value
-			return Constant.CreateConstant (rc, constant.MemberType, c.GetValue (), loc);
+			return Constant.CreateConstant (constant.MemberType, c.GetValue (), loc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4830,12 +4764,11 @@ namespace Mono.CSharp {
 			return TypeManager.GetFullNameSignature (spec);
 		}
 
-		public bool IsMarshalByRefAccess ()
+		public bool IsMarshalByRefAccess (ResolveContext rc)
 		{
 			// Checks possible ldflda of field access expression
-			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) &&
-				TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false) &&
-				!(InstanceExpression is This);
+			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) && !(InstanceExpression is This) &&
+				TypeSpec.IsBaseClass (spec.DeclaringType, rc.Module.PredefinedTypes.MarshalByRefObject.TypeSpec, false);
 		}
 
 		public void SetHasAddressTaken ()
@@ -5011,8 +4944,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (right_side == EmptyExpression.OutAccess.Instance &&
-				!IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false)) {
+			if (right_side == EmptyExpression.OutAccess.Instance && IsMarshalByRefAccess (ec)) {
 				ec.Report.SymbolRelatedToPreviousError (spec.DeclaringType);
 				ec.Report.Warning (197, 1, loc,
 						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
@@ -5317,7 +5249,7 @@ namespace Mono.CSharp {
 
 		bool IsSingleDimensionalArrayLength ()
 		{
-			if (best_candidate.DeclaringType != TypeManager.array_type || !best_candidate.HasGet || Name != "Length")
+			if (best_candidate.DeclaringType.BuildinType != BuildinTypeSpec.Type.Array || !best_candidate.HasGet || Name != "Length")
 				return false;
 
 			ArrayContainer ac = InstanceExpression.Type as ArrayContainer;
@@ -5881,7 +5813,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
 			type = right_side.Type;
-			if (type == InternalType.Null || type == TypeManager.void_type || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
+			if (type == InternalType.NullLiteral || type.Kind == MemberKind.Void || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
 				ec.Report.Error (815, loc,
 					"An implicitly typed local variable declaration cannot be initialized with `{0}'",
 					type.GetSignatureForError ());

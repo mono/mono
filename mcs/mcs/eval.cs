@@ -344,7 +344,7 @@ namespace Mono.CSharp
 				parser_result.CreateType ();
 
 				var method = parser_result.Methods[0] as Method;
-				BlockContext bc = new BlockContext (method, method.Block, TypeManager.void_type);
+				BlockContext bc = new BlockContext (method, method.Block, ctx.BuildinTypes.Void);
 
 				try {
 					method.Block.Resolve (null, bc, method);
@@ -1061,7 +1061,7 @@ namespace Mono.CSharp
 			}
 
 			// This means its really a statement.
-			if (clone.Type == TypeManager.void_type || clone is DynamicInvocation || clone is Assign) {
+			if (clone.Type.Kind == MemberKind.Void || clone is DynamicInvocation || clone is Assign) {
 				return clone;
 			}
 

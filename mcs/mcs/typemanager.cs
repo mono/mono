@@ -62,7 +62,16 @@ namespace Mono.CSharp
 		// build-in type (mostly object)
 		//
 		public readonly BuildinTypeSpec Dynamic;
-		public readonly BuildinTypeSpec Null;
+
+		// Predefined operators tables
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryStandard;
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryEquality;
+		public readonly Binary.PredefinedOperator[] OperatorsBinaryUnsafe;
+		public readonly TypeSpec[][] OperatorsUnary;
+		public readonly TypeSpec[] OperatorsUnaryMutator;
+
+		public readonly TypeSpec[] BinaryPromotionsTypes;
+		public readonly TypeSpec[] SwitchUserTypes;
 
 		readonly BuildinTypeSpec[] types;
 
@@ -98,15 +107,23 @@ namespace Mono.CSharp
 			Delegate = new BuildinTypeSpec (MemberKind.Class, "System", "Delegate", BuildinTypeSpec.Type.Delegate);
 			Enum = new BuildinTypeSpec (MemberKind.Class, "System", "Enum", BuildinTypeSpec.Type.Enum);
 			Array = new BuildinTypeSpec (MemberKind.Class, "System", "Array", BuildinTypeSpec.Type.Array);
-			Void = new BuildinTypeSpec (MemberKind.Struct, "System", "Void", BuildinTypeSpec.Type.Void);
+			Void = new BuildinTypeSpec (MemberKind.Void, "System", "Void", BuildinTypeSpec.Type.Other);
 			Type = new BuildinTypeSpec (MemberKind.Class, "System", "Type", BuildinTypeSpec.Type.Type);
 			Exception = new BuildinTypeSpec (MemberKind.Class, "System", "Exception", BuildinTypeSpec.Type.Exception);
-			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.RuntimeFieldHandle);
-			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.RuntimeTypeHandle);
+			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.Other);
+			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.Other);
 
+			// TODO: Maybe I should promote it to different kind for faster compares
 			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
-			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
-			Null.MemberCache = MemberCache.Empty;
+
+			OperatorsBinaryStandard = Binary.CreateStandardOperatorsTable (this);
+			OperatorsBinaryEquality = Binary.CreateEqualityOperatorsTable (this);
+			OperatorsBinaryUnsafe = Binary.CreatePointerOperatorsTable (this);
+			OperatorsUnary = Unary.CreatePredefinedOperatorsTable (this);
+			OperatorsUnaryMutator = UnaryMutator.CreatePredefinedOperatorsTable (this);
+
+			BinaryPromotionsTypes = ConstantFold.CreateBinaryPromotionsTypes (this);
+			SwitchUserTypes = Switch.CreateSwitchUserTypes (this);
 
 			types = new BuildinTypeSpec[] {
 				Object, ValueType, Attribute,
@@ -118,38 +135,6 @@ namespace Mono.CSharp
 			// TODO: remove
 			TypeManager.object_type = Object;
 			TypeManager.value_type = ValueType;
-			TypeManager.string_type = String;
-			TypeManager.int32_type = Int;
-			TypeManager.uint32_type = UInt;
-			TypeManager.int64_type = Long;
-			TypeManager.uint64_type = ULong;
-			TypeManager.float_type = Float;
-			TypeManager.double_type = Double;
-			TypeManager.char_type = Char;
-			TypeManager.short_type = Short;
-			TypeManager.decimal_type = Decimal;
-			TypeManager.bool_type = Bool;
-			TypeManager.sbyte_type = SByte;
-			TypeManager.byte_type = Byte;
-			TypeManager.ushort_type = UShort;
-			TypeManager.enum_type = Enum;
-			TypeManager.delegate_type = Delegate;
-			TypeManager.multicast_delegate_type = MulticastDelegate; ;
-			TypeManager.void_type = Void;
-			TypeManager.array_type = Array; ;
-			TypeManager.runtime_handle_type = RuntimeTypeHandle;
-			TypeManager.type_type = Type;
-			TypeManager.ienumerator_type = IEnumerator;
-			TypeManager.ienumerable_type = IEnumerable;
-			TypeManager.idisposable_type = IDisposable;
-			TypeManager.intptr_type = IntPtr;
-			TypeManager.uintptr_type = UIntPtr;
-			TypeManager.runtime_field_handle_type = RuntimeFieldHandle;
-			TypeManager.attribute_type = Attribute;
-			TypeManager.exception_type = Exception;
-
-			InternalType.Dynamic = Dynamic;
-			InternalType.Null = Null;
 		}
 
 		public BuildinTypeSpec[] AllTypes {
@@ -181,7 +166,6 @@ namespace Mono.CSharp
 
 			// Set internal build-in types
 			Dynamic.SetDefinition (Object);
-			Null.SetDefinition (Object);
 
 			return true;
 		}
@@ -189,14 +173,12 @@ namespace Mono.CSharp
 
 	//
 	// Compiler predefined types. Usually used for compiler generated
-	// code or for comparison against well known framework type
+	// code or for comparison against well known framework type. They
+	// may not exist as they are optional
 	//
 	class PredefinedTypes
 	{
-		// TODO: These two exist only to reject type comparison
-		public readonly PredefinedType TypedReference;
 		public readonly PredefinedType ArgIterator;
-
 		public readonly PredefinedType MarshalByRefObject;
 		public readonly PredefinedType RuntimeHelpers;
 		public readonly PredefinedType IAsyncResult;
@@ -238,8 +220,9 @@ namespace Mono.CSharp
 
 		public PredefinedTypes (ModuleContainer module)
 		{
-			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
+			var TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
 			ArgIterator = new PredefinedType (module, MemberKind.Struct, "System", "ArgIterator");
+
 			MarshalByRefObject = new PredefinedType (module, MemberKind.Class, "System", "MarshalByRefObject");
 			RuntimeHelpers = new PredefinedType (module, MemberKind.Class, "System.Runtime.CompilerServices", "RuntimeHelpers");
 			IAsyncResult = new PredefinedType (module, MemberKind.Interface, "System", "IAsyncResult");
@@ -277,8 +260,10 @@ namespace Mono.CSharp
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
 			//
-			TypedReference.Define ();
-			ArgIterator.Define ();
+			if (TypedReference.Define ())
+				TypedReference.TypeSpec.IsSpecialRuntimeType = true;
+			if (ArgIterator.Define ())
+				ArgIterator.TypeSpec.IsSpecialRuntimeType = true;
 			MarshalByRefObject.Define ();
 			CharSet.Define ();
 
@@ -292,9 +277,6 @@ namespace Mono.CSharp
 
 			// Deal with obsolete static types
 			// TODO: remove
-			TypeManager.typed_reference_type = TypedReference.TypeSpec;
-			TypeManager.arg_iterator_type = ArgIterator.TypeSpec;
-			TypeManager.mbr_type = MarshalByRefObject.TypeSpec;
 			TypeManager.generic_ilist_type = IListGeneric.TypeSpec;
 			TypeManager.generic_icollection_type = ICollectionGeneric.TypeSpec;
 			TypeManager.generic_ienumerator_type = IEnumeratorGeneric.TypeSpec;
@@ -368,11 +350,9 @@ namespace Mono.CSharp
 
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
 			var te = type_ns.LookupType (module, name, arity, true, Location.Null);
-			if (te == null)
+			if (te == null || te.Type.Kind != kind) {
 				return false;
-
-			if (te.Type.Kind != kind)
-				return false;
+			}
 
 			type = te.Type;
 			return true;
@@ -399,8 +379,13 @@ namespace Mono.CSharp
 
 			var type = te.Type;
 			if (type.Kind != kind) {
-				module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
-				return null;
+				if (type.Kind == MemberKind.Struct && kind == MemberKind.Void && type.MemberDefinition is TypeContainer) {
+					// Void is declared as struct but we keep it internally as
+					// special kind, the swap will be done by caller
+				} else {
+					module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
+					return null;
+				}
 			}
 
 			return type;
@@ -421,40 +406,7 @@ namespace Mono.CSharp
 	//
 	static public BuildinTypeSpec object_type;
 	static public BuildinTypeSpec value_type;
-	static public BuildinTypeSpec string_type;
-	static public BuildinTypeSpec int32_type;
-	static public BuildinTypeSpec uint32_type;
-	static public BuildinTypeSpec int64_type;
-	static public BuildinTypeSpec uint64_type;
-	static public BuildinTypeSpec float_type;
-	static public BuildinTypeSpec double_type;
-	static public BuildinTypeSpec char_type;
-	static public BuildinTypeSpec short_type;
-	static public BuildinTypeSpec decimal_type;
-	static public BuildinTypeSpec bool_type;
-	static public BuildinTypeSpec sbyte_type;
-	static public BuildinTypeSpec byte_type;
-	static public BuildinTypeSpec ushort_type;
-	static public BuildinTypeSpec enum_type;
-	static public BuildinTypeSpec delegate_type;
-	static public BuildinTypeSpec multicast_delegate_type;
-	static public BuildinTypeSpec void_type;
-	static public BuildinTypeSpec array_type;
-	static public BuildinTypeSpec runtime_handle_type;
-	static public BuildinTypeSpec type_type;
-	static public BuildinTypeSpec ienumerator_type;
-	static public BuildinTypeSpec ienumerable_type;
-	static public BuildinTypeSpec idisposable_type;
-	static public BuildinTypeSpec intptr_type;
-	static public BuildinTypeSpec uintptr_type;
-	static public BuildinTypeSpec runtime_field_handle_type;
-	static public BuildinTypeSpec attribute_type;
-	static public BuildinTypeSpec exception_type;
 
-
-	static public TypeSpec typed_reference_type;
-	static public TypeSpec arg_iterator_type;
-	static public TypeSpec mbr_type;
 	static public TypeSpec generic_ilist_type;
 	static public TypeSpec generic_icollection_type;
 	static public TypeSpec generic_ienumerator_type;
@@ -526,7 +478,6 @@ namespace Mono.CSharp
 
 		string_empty = null;
 
-		typed_reference_type = arg_iterator_type = mbr_type =
 		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
 		generic_ienumerable_type = generic_nullable_type = expression_type = null;
 	}
@@ -644,6 +595,9 @@ namespace Mono.CSharp
 		if (ds != null)
 			return ds.IsUnmanagedType ();
 
+		if (t.Kind == MemberKind.Void)
+			return true;
+
 		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)
 			return IsUnmanagedType (GetElementType (t));
@@ -740,11 +694,6 @@ namespace Mono.CSharp
 		}
 
 		return false;
-	}
-
-	public static bool IsSpecialType (TypeSpec t)
-	{
-		return t == arg_iterator_type || t == typed_reference_type;
 	}
 
 	public static TypeSpec GetElementType (TypeSpec t)

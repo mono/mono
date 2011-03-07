@@ -99,6 +99,9 @@ namespace System.Runtime.Serialization
 			"http://schemas.microsoft.com/2003/10/Serialization/Arrays";
 		internal const string DefaultClrNamespaceBase =
 			"http://schemas.datacontract.org/2004/07/";
+		internal const string DefaultClrNamespaceSystem =
+			"http://schemas.datacontract.org/2004/07/System";
+
 
 		static QName any_type, bool_type,
 			byte_type, date_type, decimal_type, double_type,
@@ -110,14 +113,10 @@ namespace System.Runtime.Serialization
 			// custom in ms nsURI schema
 			char_type, guid_type,
 			// not in ms nsURI schema
-			dbnull_type;
+			dbnull_type, date_time_offset_type;
 
 		static KnownTypeCollection ()
 		{
-			//any_type, bool_type,	byte_type, date_type, decimal_type, double_type,	float_type, string_type,
-			// short_type, int_type, long_type, 	ubyte_type, ushort_type, uint_type, ulong_type,
-			// 	any_uri_type, base64_type, duration_type, qname_type,
-			// 	char_type, guid_type,	dbnull_type;
 			string s = MSSimpleNamespace;
 			any_type = new QName ("anyType", s);
 			any_uri_type = new QName ("anyURI", s);
@@ -141,7 +140,8 @@ namespace System.Runtime.Serialization
 			guid_type = new QName ("guid", s);
 			char_type = new QName ("char", s);
 
-			dbnull_type = new QName ("DBNull", MSSimpleNamespace + "System");
+			dbnull_type = new QName ("DBNull", DefaultClrNamespaceBase + "System");
+			date_time_offset_type = new QName ("DateTimeOffset", DefaultClrNamespaceBase + "System");
 		}
 
 		// FIXME: find out how QName and guid are processed
@@ -161,6 +161,8 @@ namespace System.Runtime.Serialization
 				return name;
 			if (type == typeof (DBNull))
 				return dbnull_type;
+			if (type == typeof (DateTimeOffset))
+				return date_time_offset_type;
 			return QName.Empty;
 		}
 
@@ -274,55 +276,67 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		// FIXME: xsd types and ms serialization types should be differentiated.
-		internal static Type GetPrimitiveTypeFromName (string name)
+		internal static Type GetPrimitiveTypeFromName (QName name)
 		{
-			switch (name) {
-			case "anyURI":
-				return typeof (Uri);
-			case "boolean":
-				return typeof (bool);
-			case "base64Binary":
-				return typeof (byte []);
-			case "dateTime":
-				return typeof (DateTime);
-			case "duration":
-				return typeof (TimeSpan);
-			case "QName":
-				return typeof (QName);
-			case "decimal":
-				return typeof (decimal);
-			case "double":
-				return typeof (double);
-			case "float":
-				return typeof (float);
-			case "byte":
-				return typeof (sbyte);
-			case "short":
-				return typeof (short);
-			case "int":
-				return typeof (int);
-			case "long":
-				return typeof (long);
-			case "unsignedByte":
-				return typeof (byte);
-			case "unsignedShort":
-				return typeof (ushort);
-			case "unsignedInt":
-				return typeof (uint);
-			case "unsignedLong":
-				return typeof (ulong);
-			case "string":
-				return typeof (string);
-			case "anyType":
-				return typeof (object);
-			case "guid":
-				return typeof (Guid);
-			case "char":
-				return typeof (char);
-			default:
-				return null;
+			switch (name.Namespace) {
+			case DefaultClrNamespaceSystem:
+				switch (name.Name) {
+				case "DBNull":
+					return typeof (DBNull);
+				case "DateTimeOffset":
+					return typeof (DateTimeOffset);
+				}
+				break;
+			// FIXME: xsd types and ms serialization types should be differentiated. (usage problem)
+			case XmlSchema.Namespace:
+			case MSSimpleNamespace:
+				switch (name.Name) {
+				case "anyURI":
+					return typeof (Uri);
+				case "boolean":
+					return typeof (bool);
+				case "base64Binary":
+					return typeof (byte []);
+				case "dateTime":
+					return typeof (DateTime);
+				case "duration":
+					return typeof (TimeSpan);
+				case "QName":
+					return typeof (QName);
+				case "decimal":
+					return typeof (decimal);
+				case "double":
+					return typeof (double);
+				case "float":
+					return typeof (float);
+				case "byte":
+					return typeof (sbyte);
+				case "short":
+					return typeof (short);
+				case "int":
+					return typeof (int);
+				case "long":
+					return typeof (long);
+				case "unsignedByte":
+					return typeof (byte);
+				case "unsignedShort":
+					return typeof (ushort);
+				case "unsignedInt":
+					return typeof (uint);
+				case "unsignedLong":
+					return typeof (ulong);
+				case "string":
+					return typeof (string);
+				case "anyType":
+					return typeof (object);
+				case "guid":
+					return typeof (Guid);
+				case "char":
+					return typeof (char);
+				}
+				break;
 			}
+			return null;
 		}
 
 

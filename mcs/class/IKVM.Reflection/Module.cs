@@ -105,6 +105,7 @@ namespace IKVM.Reflection
 		internal readonly ModuleTable ModuleTable = new ModuleTable();
 		internal readonly TypeRefTable TypeRef = new TypeRefTable();
 		internal readonly TypeDefTable TypeDef = new TypeDefTable();
+		internal readonly FieldPtrTable FieldPtr = new FieldPtrTable();
 		internal readonly FieldTable Field = new FieldTable();
 		internal readonly MemberRefTable MemberRef = new MemberRefTable();
 		internal readonly ConstantTable Constant = new ConstantTable();
@@ -113,12 +114,15 @@ namespace IKVM.Reflection
 		internal readonly DeclSecurityTable DeclSecurity = new DeclSecurityTable();
 		internal readonly ClassLayoutTable ClassLayout = new ClassLayoutTable();
 		internal readonly FieldLayoutTable FieldLayout = new FieldLayoutTable();
+		internal readonly ParamPtrTable ParamPtr = new ParamPtrTable();
 		internal readonly ParamTable Param = new ParamTable();
 		internal readonly InterfaceImplTable InterfaceImpl = new InterfaceImplTable();
 		internal readonly StandAloneSigTable StandAloneSig = new StandAloneSigTable();
 		internal readonly EventMapTable EventMap = new EventMapTable();
+		internal readonly EventPtrTable EventPtr = new EventPtrTable();
 		internal readonly EventTable Event = new EventTable();
 		internal readonly PropertyMapTable PropertyMap = new PropertyMapTable();
+		internal readonly PropertyPtrTable PropertyPtr = new PropertyPtrTable();
 		internal readonly PropertyTable Property = new PropertyTable();
 		internal readonly MethodSemanticsTable MethodSemantics = new MethodSemanticsTable();
 		internal readonly MethodImplTable MethodImpl = new MethodImplTable();
@@ -128,6 +132,7 @@ namespace IKVM.Reflection
 		internal readonly FieldRVATable FieldRVA = new FieldRVATable();
 		internal readonly AssemblyTable AssemblyTable = new AssemblyTable();
 		internal readonly AssemblyRefTable AssemblyRef = new AssemblyRefTable();
+		internal readonly MethodPtrTable MethodPtr = new MethodPtrTable();
 		internal readonly MethodDefTable MethodDef = new MethodDefTable();
 		internal readonly NestedClassTable NestedClass = new NestedClassTable();
 		internal readonly FileTable File = new FileTable();
@@ -148,6 +153,7 @@ namespace IKVM.Reflection
 			tables[ModuleTable.Index] = ModuleTable;
 			tables[TypeRefTable.Index] = TypeRef;
 			tables[TypeDefTable.Index] = TypeDef;
+			tables[FieldPtrTable.Index] = FieldPtr;
 			tables[FieldTable.Index] = Field;
 			tables[MemberRefTable.Index] = MemberRef;
 			tables[ConstantTable.Index] = Constant;
@@ -156,12 +162,15 @@ namespace IKVM.Reflection
 			tables[DeclSecurityTable.Index] = DeclSecurity;
 			tables[ClassLayoutTable.Index] = ClassLayout;
 			tables[FieldLayoutTable.Index] = FieldLayout;
+			tables[ParamPtrTable.Index] = ParamPtr;
 			tables[ParamTable.Index] = Param;
 			tables[InterfaceImplTable.Index] = InterfaceImpl;
 			tables[StandAloneSigTable.Index] = StandAloneSig;
 			tables[EventMapTable.Index] = EventMap;
+			tables[EventPtrTable.Index] = EventPtr;
 			tables[EventTable.Index] = Event;
 			tables[PropertyMapTable.Index] = PropertyMap;
+			tables[PropertyPtrTable.Index] = PropertyPtr;
 			tables[PropertyTable.Index] = Property;
 			tables[MethodSemanticsTable.Index] = MethodSemantics;
 			tables[MethodImplTable.Index] = MethodImpl;
@@ -171,6 +180,7 @@ namespace IKVM.Reflection
 			tables[FieldRVATable.Index] = FieldRVA;
 			tables[AssemblyTable.Index] = AssemblyTable;
 			tables[AssemblyRefTable.Index] = AssemblyRef;
+			tables[MethodPtrTable.Index] = MethodPtr;
 			tables[MethodDefTable.Index] = MethodDef;
 			tables[NestedClassTable.Index] = NestedClass;
 			tables[FileTable.Index] = File;

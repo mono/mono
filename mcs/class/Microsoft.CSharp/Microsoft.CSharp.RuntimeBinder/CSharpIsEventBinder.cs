@@ -56,7 +56,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				name, 0, Compiler.Expression.MemberLookupRestrictions.ExactArity, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (
-				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);
+				this, new Compiler.BoolConstant (ctx.CompilerContext.BuildinTypes, expr is Compiler.EventExpr, Compiler.Location.Null), null);
 
 			binder.AddRestrictions (target);
 			return binder.Bind (ctx, callingContext);

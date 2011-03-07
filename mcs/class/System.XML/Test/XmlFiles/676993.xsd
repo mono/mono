@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:espt="urn:DRMS.ESPTable" targetNamespace="urn:DRMS.ESPTable" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:simpleType name="Percentage">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeDouble">
+    <xs:restriction base="xs:double">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ESPTable">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ESPPump" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="PerformanceTable">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="PerformanceValue" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="a1" type="espt:nonNegativeDouble"/>
+                          <xs:element name="a2" type="espt:nonNegativeDouble"/>
+                          <xs:element name="a3" type="espt:Percentage"/>
+                          <xs:element name="a4" type="espt:nonNegativeDouble"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="t1" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t2" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t3" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t4" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t5" type="espt:Percentage" use="optional"/>
+                  <xs:attribute name="t6" type="espt:Percentage" use="optional"/>
+                  <xs:attribute name="t7" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t8" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t9" type="espt:nonNegativeDouble" use="optional"/>
+                  <xs:attribute name="t10" type="espt:nonNegativeDouble" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:all>
+            <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+

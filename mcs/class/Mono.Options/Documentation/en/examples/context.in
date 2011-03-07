@@ -1,13 +1,13 @@
-mono doc/en/examples/context.exe -f
+mono Documentation/en/examples/context.exe -f
 
-mono doc/en/examples/context.exe -n
+mono Documentation/en/examples/context.exe -n
 
-mono doc/en/examples/context.exe -s
+mono Documentation/en/examples/context.exe -s
 
-mono doc/en/examples/context.exe -f=invalid
+mono Documentation/en/examples/context.exe -f=invalid
 
-mono doc/en/examples/context.exe -n invalid
+mono Documentation/en/examples/context.exe -n invalid
 
-mono doc/en/examples/context.exe -s=
+mono Documentation/en/examples/context.exe -s=
 
-mono doc/en/examples/context.exe -f=A --n=42 /s=fourty-two
+mono Documentation/en/examples/context.exe -f=A --n=42 /s=fourty-two

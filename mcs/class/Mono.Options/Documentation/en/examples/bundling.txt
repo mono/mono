@@ -2,15 +2,21 @@ $ mono bundling.exe --help
 Usage: bundling [OPTIONS]+
 Demo program to show the effects of bundling options and their values
 
-Options:
+gcc-like options:
   -D[=VALUE1:VALUE2]         Predefine a macro with an (optional) value.
   -d=VALUE1-->VALUE2         Alternate macro syntax.
   -o=VALUE                   Specify the output file
+
+tar-like options:
   -f=VALUE                   The input file
   -x                         Extract the file
   -c                         Create the file
   -t                         List the file
+
+ls-like optional values:
       --color[=VALUE]        control whether and when color is used
+
+other:
   -h, --help                 show this message and exit
 
 $ mono bundling.exe -D

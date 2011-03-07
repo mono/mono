@@ -370,6 +370,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		public BuildinTypes BuildinTypes {
+			get {
+				return MemberContext.Module.Compiler.BuildinTypes;
+			}
+		}
+
 		public virtual ExplicitBlock ConstructorBlock {
 			get {
 				return CurrentBlock.Explicit;

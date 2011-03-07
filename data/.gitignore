@@ -3,3 +3,4 @@
 /config
 /.cvsignore
 /*.pc
+/gdb/mono-sgen-gdb.py

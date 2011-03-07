@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
-			if (target_type == InternalType.Dynamic) {
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -191,9 +191,6 @@ namespace Mono.CSharp {
 				expr.Emit (null);
 			}
 
-			if (expr_type == TypeManager.void_type)
-				return null;
-
 			if (expr_type.Kind == MemberKind.TypeParameter)
 				return ImplicitTypeParameterConversion (expr, target_type);
 
@@ -202,7 +199,7 @@ namespace Mono.CSharp {
 			//
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null) {
-				return nl.ConvertImplicitly (null, target_type);
+				return nl.ConvertImplicitly (target_type);
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type)) {
@@ -229,7 +226,7 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 
 			// from the null type to any reference-type.
-			if (expr_type == InternalType.Null)
+			if (expr_type == InternalType.NullLiteral)
 				return target_type != InternalType.AnonymousMethod;
 
 			if (TypeManager.IsGenericParameter (expr_type))
@@ -250,7 +247,7 @@ namespace Mono.CSharp {
 			//
 			// Implicit reference conversions (no-boxing) to object or dynamic
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Object || target_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (expr_type.Kind) {
 				case MemberKind.Class:
 				case MemberKind.Interface:
@@ -259,18 +256,14 @@ namespace Mono.CSharp {
 					return true;
 				}
 
-				return expr_type == InternalType.Dynamic;
+				return expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic;
 			}
 
-			if (target_type == TypeManager.value_type) {
-				return expr_type == TypeManager.enum_type;
-			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
-				//
-				// Special case: enumeration to System.Enum.
-				// System.Enum is not a value type, it is a class, so we need
-				// a boxing conversion
-				//
-				if (target_type == TypeManager.enum_type || TypeManager.IsGenericParameter (expr_type))
+			if (target_type.BuildinType == BuildinTypeSpec.Type.ValueType)
+				return expr_type.BuildinType == BuildinTypeSpec.Type.Enum;
+
+			if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
+				if (TypeManager.IsGenericParameter (expr_type))
 					return false;
 
 				if (TypeManager.IsValueType (expr_type))
@@ -309,7 +302,7 @@ namespace Mono.CSharp {
 				}
 
 				// from an array-type to System.Array
-				if (target_type == TypeManager.array_type)
+				if (target_type.BuildinType == BuildinTypeSpec.Type.Array)
 					return true;
 
 				// from an array-type of type T to IList<T>
@@ -331,8 +324,8 @@ namespace Mono.CSharp {
 			}
 
 			// from any delegate type to System.Delegate
-			if (target_type == TypeManager.delegate_type &&
-				(expr_type == TypeManager.delegate_type || expr_type.IsDelegate))
+			if (target_type.BuildinType == BuildinTypeSpec.Type.Delegate &&
+				(expr_type.BuildinType == BuildinTypeSpec.Type.Delegate || expr_type.IsDelegate))
 				return true;
 
 			return false;
@@ -340,10 +333,12 @@ namespace Mono.CSharp {
 
 		public static Expression ImplicitBoxingConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
+			switch (target_type.BuildinType) {
 			//
 			// From any value-type to the type object.
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			case BuildinTypeSpec.Type.Object:
+			case BuildinTypeSpec.Type.Dynamic:
 				//
 				// A pointer type cannot be converted to object
 				//
@@ -354,24 +349,24 @@ namespace Mono.CSharp {
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
-			
+
 			//
 			// From any value-type to the type System.ValueType.
 			//
-			if (target_type == TypeManager.value_type) {
+			case BuildinTypeSpec.Type.ValueType:
 				if (!TypeManager.IsValueType (expr_type))
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
 
-			if (target_type == TypeManager.enum_type) {
+			case BuildinTypeSpec.Type.Enum:
 				//
 				// From any enum-type to the type System.Enum.
 				//
 				if (TypeManager.IsEnumType (expr_type))
 					return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
+
+				break;
 			}
 
 			//
@@ -425,7 +420,7 @@ namespace Mono.CSharp {
 			//
 			// From null to any nullable type
 			//
-			if (expr_type == InternalType.Null)
+			if (expr_type == InternalType.NullLiteral)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
@@ -446,7 +441,7 @@ namespace Mono.CSharp {
 					return EmptyExpression.Null;
 
 				if (expr is Constant)
-					return ((Constant) expr).ConvertImplicitly (ec, t_el);
+					return ((Constant) expr).ConvertImplicitly (t_el);
 
 				return ImplicitNumericConversion (null, expr_type, t_el);
 			}
@@ -460,7 +455,7 @@ namespace Mono.CSharp {
 			Expression conv = unwrap;
 			if (!TypeSpecComparer.IsEqual (expr_type, t_el)) {
 				if (conv is Constant)
-					conv = ((Constant)conv).ConvertImplicitly (ec, t_el);
+					conv = ((Constant)conv).ConvertImplicitly (t_el);
 				else
 					conv = ImplicitNumericConversion (conv, expr_type, t_el);
 
@@ -504,7 +499,8 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Short:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+
 				}
 
 				break;
@@ -527,7 +523,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Short:
@@ -544,7 +540,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.UShort:
@@ -564,7 +560,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Int:
@@ -579,7 +575,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.UInt:
@@ -596,7 +592,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Long:
@@ -609,7 +605,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.ULong:
@@ -622,7 +618,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Char:
@@ -643,14 +639,14 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				case BuildinTypeSpec.Type.Decimal:
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.Float:
 				//
 				// float to double
 				//
-				if (target_type == TypeManager.double_type)
+				if (target_type.BuildinType == BuildinTypeSpec.Type.Double)
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				break;
 			}
@@ -685,6 +681,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			// Conversion from __arglist to System.ArgIterator
+			if (expr.Type == InternalType.Arglist)
+				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
+
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
@@ -699,16 +699,13 @@ namespace Mono.CSharp {
 
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null)
-				return nl.ConvertImplicitly (null, target_type) != null;
-
-			if (expr_type == TypeManager.void_type)
-				return false;
+				return nl.ConvertImplicitly (target_type) != null;
 
 			if (expr_type == target_type)
 				return true;
 
 			// Implicit dynamic conversion
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
@@ -810,12 +807,8 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface && expr_type.ImplementsInterface (target_type, true))
 				return true;
 
-			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.Kind == MemberKind.Void)
 				return true;
-
-			// Conversion from __arglist to System.ArgIterator
-			if (expr_type == InternalType.Arglist)
-				return target_type == TypeManager.arg_iterator_type;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type))
 				return true;
@@ -1012,22 +1005,10 @@ namespace Mono.CSharp {
 
 		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
 		{
-			//
-			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
-			// IntPtr -> uint uses int
-			// UIntPtr -> long uses ulong
-			//
-			if (source.Type == TypeManager.intptr_type) {
-				if (target == TypeManager.uint32_type)
-					target = TypeManager.int32_type;
-			} else if (source.Type == TypeManager.uintptr_type) {
-				if (target == TypeManager.int64_type)
-					target = TypeManager.uint64_type;
-			}
-
-			// Neither A nor B are interface-types
-			if (source.Type.IsInterface)
+			if (source.Type.IsInterface) {
+				// Neither A nor B are interface-types
 				return;
+			}
 
 			// For a conversion operator to be applicable, it must be possible
 			// to perform a standard conversion from the source type to
@@ -1053,10 +1034,6 @@ namespace Mono.CSharp {
 				}
 
 				t = op.ReturnType;
-
-				// LAMESPEC: Exclude UIntPtr -> int conversion
-				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
-					continue;
 
 				if (t.IsInterface)
 					continue;
@@ -1116,7 +1093,7 @@ namespace Mono.CSharp {
 			// Only these containers can contain a user defined implicit or explicit operators
 			const MemberKind user_conversion_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.TypeParameter;
 
-			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type != TypeManager.decimal_type) {
+			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type.BuildinType != BuildinTypeSpec.Type.Decimal) {
 				bool declared_only = source_type.IsStruct;
 
 				var operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Implicit, declared_only);
@@ -1132,7 +1109,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if ((target.Kind & user_conversion_kinds) != 0 && target_type != TypeManager.decimal_type) {
+			if ((target.Kind & user_conversion_kinds) != 0 && target_type.BuildinType != BuildinTypeSpec.Type.Decimal) {
 				bool declared_only = target.IsStruct || implicitOnly;
 
 				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
@@ -1308,25 +1285,20 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (expr_type == target_type) {
-				if (expr_type != InternalType.Null && expr_type != InternalType.AnonymousMethod)
+				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod)
 					return expr;
 				return null;
 			}
 
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
-					if (target_type == TypeManager.object_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Object)
 						return EmptyCast.Create (expr, target_type);
 
 					goto case MemberKind.Struct;
 				case MemberKind.Struct:
-					// TODO: Should really introduce MemberKind.Void
-					if (target_type == TypeManager.void_type)
-						return null;
-
-					goto case MemberKind.Enum;
 				case MemberKind.Delegate:
 				case MemberKind.Enum:
 				case MemberKind.Interface:
@@ -1348,7 +1320,7 @@ namespace Mono.CSharp {
 			Constant c = expr as Constant;
 			if (c != null) {
 				try {
-					c = c.ConvertImplicitly (ec, target_type);
+					c = c.ConvertImplicitly (target_type);
 				} catch {
 					Console.WriteLine ("Conversion error happened in line {0}", loc);
 					throw;
@@ -1376,7 +1348,7 @@ namespace Mono.CSharp {
 				//
 				if (i.IsZeroInteger) {
 					// Recreate 0 literal to remove any collected conversions
-					return new EnumConstant (new IntLiteral (0, i.Location), target_type).Resolve (ec);
+					return new EnumConstant (new IntLiteral (ec.BuildinTypes, 0, i.Location), target_type);
 				}
 			}
 
@@ -1390,13 +1362,13 @@ namespace Mono.CSharp {
 						if (expr_type == target_pc)
 							return expr;
 
-						if (target_pc.Element.BuildinType == BuildinTypeSpec.Type.Void)
+						if (target_pc.Element.Kind == MemberKind.Void)
 							return EmptyCast.Create (expr, target_type);
 
 						//return null;
 					}
 
-					if (expr_type == InternalType.Null)
+					if (expr_type == InternalType.NullLiteral)
 						return EmptyCast.Create (new NullPointer (loc), target_type);
 				}
 			}
@@ -1408,7 +1380,7 @@ namespace Mono.CSharp {
 					return am.Resolve (ec);
 			}
 
-			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)
+			if (expr_type == InternalType.Arglist && target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec)
 				return expr;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type)) {
@@ -1458,10 +1430,19 @@ namespace Mono.CSharp {
 		///   Int16->UIntPtr
 		///
 		/// </summary>
-		public static Expression ExplicitNumericConversion (Expression expr, TypeSpec target_type)
+		public static Expression ExplicitNumericConversion (ResolveContext rc, Expression expr, TypeSpec target_type)
 		{
-			TypeSpec expr_type = expr.Type;
-			switch (expr_type.BuildinType) {
+			// Not all predefined explicit numeric conversion are
+			// defined here, for some of them (mostly IntPtr/UIntPtr) we
+			// defer to user-operator handling which is now perfect but
+			// works for now
+			//
+			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
+			// IntPtr -> uint uses int
+			// UIntPtr -> long uses ulong
+			//
+
+			switch (expr.Type.BuildinType) {
 			case BuildinTypeSpec.Type.SByte:
 				//
 				// From sbyte to byte, ushort, uint, ulong, char, uintptr
@@ -1480,8 +1461,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I1_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I1_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Byte:
@@ -1515,8 +1495,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UShort:
@@ -1556,8 +1535,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.UIntPtr:
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-					return new OperatorCast (u8e, target_type, true);
+					return new OperatorCast (new ConvCast (expr, rc.BuildinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UInt:
@@ -1626,7 +1604,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				case BuildinTypeSpec.Type.IntPtr:
-					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type), target_type, true);
+					return new OperatorCast (EmptyCast.Create (expr, rc.BuildinTypes.Long), target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Char:
@@ -1668,7 +1646,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_CH);
 				case BuildinTypeSpec.Type.Decimal:
-					return new CastToDecimal (expr, true);
+					return new OperatorCast (expr, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.Double:
@@ -1699,7 +1677,7 @@ namespace Mono.CSharp {
 				case BuildinTypeSpec.Type.Float:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
 				case BuildinTypeSpec.Type.Decimal:
-					return new CastToDecimal (expr, true);
+					return new OperatorCast (expr, target_type, true);
 				}
 				break;
 			case BuildinTypeSpec.Type.UIntPtr:
@@ -1710,20 +1688,44 @@ namespace Mono.CSharp {
 				//
 				switch (target_type.BuildinType) {
 				case BuildinTypeSpec.Type.SByte:
-					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I1);
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type, ConvCast.Mode.U4_I1);
 				case BuildinTypeSpec.Type.Short:
-					return new ConvCast (new OperatorCast (expr, TypeManager.uint32_type, true), target_type, ConvCast.Mode.U4_I2);
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type, ConvCast.Mode.U4_I2);
 				case BuildinTypeSpec.Type.Int:
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true), target_type);
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.UInt, true), target_type);
+				case BuildinTypeSpec.Type.UInt:
+					return new OperatorCast (expr, expr.Type, target_type, true);
+				case BuildinTypeSpec.Type.Long:
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.ULong, true), target_type);
 				}
 				break;
 			case BuildinTypeSpec.Type.IntPtr:
-				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong) {
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true), target_type);
-				}
+				if (target_type.BuildinType == BuildinTypeSpec.Type.UInt)
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.Int, true), target_type);
+				if (target_type.BuildinType == BuildinTypeSpec.Type.ULong)
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuildinTypes.Long, true), target_type);
+				
 				break;
 			case BuildinTypeSpec.Type.Decimal:
-				return new CastFromDecimal (expr, target_type).Resolve ();
+				// From decimal to sbyte, byte, short,
+				// ushort, int, uint, long, ulong, char,
+				// float, or double
+				switch (target_type.BuildinType) {
+				case BuildinTypeSpec.Type.SByte:
+				case BuildinTypeSpec.Type.Byte:
+				case BuildinTypeSpec.Type.Short:
+				case BuildinTypeSpec.Type.UShort:
+				case BuildinTypeSpec.Type.Int:
+				case BuildinTypeSpec.Type.UInt:
+				case BuildinTypeSpec.Type.Long:
+				case BuildinTypeSpec.Type.ULong:
+				case BuildinTypeSpec.Type.Char:
+				case BuildinTypeSpec.Type.Float:
+				case BuildinTypeSpec.Type.Double:
+					return new OperatorCast (expr, expr.Type, target_type, true);
+				}
+
+				break;
 			}
 
 			return null;
@@ -1753,7 +1755,7 @@ namespace Mono.CSharp {
 			//
 			// From object to a generic parameter
 			//
-			if (source_type == TypeManager.object_type && TypeManager.IsGenericParameter (target_type))
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Object && TypeManager.IsGenericParameter (target_type))
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
@@ -1767,13 +1769,13 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion from System.ValueType to any non-nullable-value-type
 			//
-			if (source_type == TypeManager.value_type && target_is_value_type)
+			if (source_type.BuildinType == BuildinTypeSpec.Type.ValueType && target_is_value_type)
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic) {
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Object || source_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				if (target_type.IsPointer)
 					return null;
 
@@ -1794,7 +1796,7 @@ namespace Mono.CSharp {
 			// From any interface-type S to to any class type T, provided T is not
 			// sealed, or provided T implements S.
 			//
-			if (source_type.IsInterface) {
+			if (source_type.Kind == MemberKind.Interface) {
 				if (!target_type.IsSealed || target_type.ImplementsInterface (source_type, true)) {
 					if (source == null)
 						return EmptyExpression.Null;
@@ -1824,7 +1826,7 @@ namespace Mono.CSharp {
 					//
 					// From System.Array to any array-type
 					//
-					if (source_type == TypeManager.array_type)
+					if (source_type.BuildinType == BuildinTypeSpec.Type.Array)
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 					//
@@ -1873,7 +1875,7 @@ namespace Mono.CSharp {
 			//
 			// From System delegate to any delegate-type
 			//
-			if (source_type == TypeManager.delegate_type && TypeManager.IsDelegateType (target_type))
+			if (source_type.BuildinType == BuildinTypeSpec.Type.Delegate && TypeManager.IsDelegateType (target_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
@@ -1943,12 +1945,12 @@ namespace Mono.CSharp {
 					ne = ImplicitNumericConversion (underlying, real_target);
 
 				if (ne == null)
-					ne = ExplicitNumericConversion (underlying, real_target);
+					ne = ExplicitNumericConversion (ec, underlying, real_target);
 
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (ne == null && (real_target == TypeManager.intptr_type || real_target == TypeManager.uintptr_type))
+				if (ne == null && (real_target.BuildinType == BuildinTypeSpec.Type.IntPtr || real_target.BuildinType == BuildinTypeSpec.Type.UIntPtr))
 					ne = ExplicitUserConversion (ec, underlying, real_target, loc);
 
 				return ne != null ? EmptyCast.Create (ne, target_type) : null;
@@ -1958,7 +1960,7 @@ namespace Mono.CSharp {
 				//
 				// System.Enum can be unboxed to any enum-type
 				//
-				if (expr_type == TypeManager.enum_type)
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.Enum)
 					return new UnboxCast (expr, target_type);
 
 				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
@@ -1970,20 +1972,20 @@ namespace Mono.CSharp {
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
-				ne = ExplicitNumericConversion (expr, real_target);
+				ne = ExplicitNumericConversion (ec, expr, real_target);
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.IntPtr || expr_type.BuildinType == BuildinTypeSpec.Type.UIntPtr) {
 					ne = ExplicitUserConversion (ec, expr, real_target, loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);
 				}
 			} else {
-				ne = ExplicitNumericConversion (expr, target_type);
+				ne = ExplicitNumericConversion (ec, expr, target_type);
 				if (ne != null)
 					return ne;
 			}
@@ -1993,7 +1995,7 @@ namespace Mono.CSharp {
 			// from Null to a ValueType, and ExplicitReference wont check against
 			// null literal explicitly
 			//
-			if (expr_type != InternalType.Null) {
+			if (expr_type != InternalType.NullLiteral) {
 				ne = ExplicitReferenceConversion (expr, expr_type, target_type);
 				if (ne != null)
 					return ne;
@@ -2072,7 +2074,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitNumericConversion (expr, target_type);
+			ne = ExplicitNumericConversion (ec, expr, target_type);
 			if (ne != null)
 				return ne;
 
@@ -2080,7 +2082,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.Kind == MemberKind.Void)
 				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
@@ -2100,10 +2102,10 @@ namespace Mono.CSharp {
 				// Don't eliminate explicit precission casts
 				//
 				if (e == expr) {
-					if (target_type == TypeManager.float_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Float)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 					
-					if (target_type == TypeManager.double_type)
+					if (target_type.BuildinType == BuildinTypeSpec.Type.Double)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				}
 					
@@ -2112,23 +2114,25 @@ namespace Mono.CSharp {
 
 			TypeSpec expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
+				TypeSpec target;
+
 				if (TypeManager.IsNullableType (expr_type)) {
-					TypeSpec target = Nullable.NullableInfo.GetUnderlyingType (target_type);
+					target = Nullable.NullableInfo.GetUnderlyingType (target_type);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
 						return null;
 
 					return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
-				} else if (expr_type == TypeManager.object_type) {
-					return new UnboxCast (expr, target_type);
-				} else {
-					TypeSpec target = TypeManager.GetTypeArguments (target_type) [0];
-
-					e = ExplicitConversionCore (ec, expr, target, loc);
-					if (e != null)
-						return Nullable.Wrap.Create (e, target_type);
 				}
+				if (expr_type.BuildinType == BuildinTypeSpec.Type.Object) {
+					return new UnboxCast (expr, target_type);
+				}
+
+				target = TypeManager.GetTypeArguments (target_type) [0];
+				e = ExplicitConversionCore (ec, expr, target, loc);
+				if (e != null)
+					return Nullable.Wrap.Create (e, target_type);
 			} else if (TypeManager.IsNullableType (expr_type)) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)

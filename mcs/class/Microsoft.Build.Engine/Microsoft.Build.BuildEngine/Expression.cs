@@ -66,6 +66,20 @@ namespace Microsoft.Build.BuildEngine {
 			this.expressionCollection = new ExpressionCollection ();
 		}
 
+		public static T ParseAs<T> (string expression, ParseOptions options, Project project)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (expression, options);
+			return (T)expr.ConvertTo (project, typeof (T));
+		}
+
+		public static T ParseAs<T> (string expression, ParseOptions options, Project project, ExpressionOptions exprOptions)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (expression, options);
+			return (T)expr.ConvertTo (project, typeof (T), exprOptions);
+		}
+
 		// Split: Split on ';'
 		//	   Eg. Property values don't need to be split
 		//

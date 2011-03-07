@@ -139,6 +139,7 @@ namespace IKVM.Reflection.Reader
 						guidHeap = ReadHeap(stream, sh);
 						break;
 					case "#~":
+					case "#-":
 						stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaDataRVA + sh.Offset), SeekOrigin.Begin);
 						ReadTables(br);
 						break;
@@ -206,6 +207,10 @@ namespace IKVM.Reflection.Reader
 				{
 					tables[i].Read(mr);
 				}
+			}
+			if (ParamPtr.RowCount != 0)
+			{
+				throw new NotImplementedException("ParamPtr table support has not yet been implemented.");
 			}
 		}
 

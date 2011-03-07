@@ -1067,7 +1067,7 @@ field_declaration
 	  	lexer.parsing_generic_declaration = false;
 
 		FullNamedExpression type = (FullNamedExpression) $3;
-		if (type.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (670, GetLocation ($3), "Fields cannot have void type");
 			
 		var lt = (Tokenizer.LocatedToken) $4;
@@ -1327,7 +1327,7 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
-				new TypeExpression (TypeManager.void_type, GetLocation ($4)),
+				new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($4)),
 				current_local_parameters);
 
 			generic.SetParameterInfo ((List<Constraints>) $11);
@@ -1352,7 +1352,7 @@ method_header
 		
 		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
 		
-		method = new Method (current_class, generic, new TypeExpression (TypeManager.void_type, GetLocation ($4)),
+		method = new Method (current_class, generic, new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($4)),
 				     modifiers, name, current_local_parameters, (Attributes) $1);
 
 		if (doc_support)
@@ -1684,10 +1684,11 @@ property_declaration
 	  }
 	  OPEN_BRACE
 	  {
-		current_property = new Property (current_class, (FullNamedExpression) $3, (Modifiers) $2,
+		var type = (FullNamedExpression) $3;
+		current_property = new Property (current_class, type, (Modifiers) $2,
 			(MemberName) $4, (Attributes) $1);
 			
-		if (current_property.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", current_property.GetSignatureForError ());					
 			
 		current_container.AddProperty ((Property)current_property);
@@ -1719,8 +1720,8 @@ indexer_declaration
 	  opt_formal_parameter_list CLOSE_BRACKET OPEN_BRACE
 	  {
 		valid_param_mod = 0;
-	  
-		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
+		var type = (FullNamedExpression) $3;
+		Indexer indexer = new Indexer (current_class, type,
 			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
 			
 		current_property = indexer;
@@ -1728,7 +1729,7 @@ indexer_declaration
   		current_container.AddIndexer (indexer);
 		lbag.AddMember (current_property, mod_locations, GetLocation ($5), GetLocation ($8), GetLocation ($9));
   		
-		if (indexer.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
 
 		if (indexer.Parameters.IsEmpty) {
@@ -1998,7 +1999,7 @@ operator_type
 	| VOID
 	  {
 		Report.Error (590, GetLocation ($1), "User-defined operators cannot return void");
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }
 	;
 
@@ -2840,7 +2841,7 @@ type_and_void
 	: type_expression_or_array
 	| VOID
 	  {
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -2859,7 +2860,7 @@ type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2868,7 +2869,7 @@ simple_type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2877,7 +2878,7 @@ parameter_type
 	| VOID
 	  {
 	  	Report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }	
 	;
 
@@ -2918,7 +2919,7 @@ type_expression
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }
 	;
 
@@ -2957,25 +2958,25 @@ base_type_name
  * simple types, but we need this to reuse it easily in variable_type
  */
 builtin_types
-	: OBJECT	{ $$ = new TypeExpression (TypeManager.object_type, GetLocation ($1)); }
-	| STRING	{ $$ = new TypeExpression (TypeManager.string_type, GetLocation ($1)); }
-	| BOOL		{ $$ = new TypeExpression (TypeManager.bool_type, GetLocation ($1)); }
-	| DECIMAL	{ $$ = new TypeExpression (TypeManager.decimal_type, GetLocation ($1)); }
-	| FLOAT		{ $$ = new TypeExpression (TypeManager.float_type, GetLocation ($1)); }
-	| DOUBLE	{ $$ = new TypeExpression (TypeManager.double_type, GetLocation ($1)); }
+	: OBJECT	{ $$ = new TypeExpression (compiler.BuildinTypes.Object, GetLocation ($1)); }
+	| STRING	{ $$ = new TypeExpression (compiler.BuildinTypes.String, GetLocation ($1)); }
+	| BOOL		{ $$ = new TypeExpression (compiler.BuildinTypes.Bool, GetLocation ($1)); }
+	| DECIMAL	{ $$ = new TypeExpression (compiler.BuildinTypes.Decimal, GetLocation ($1)); }
+	| FLOAT		{ $$ = new TypeExpression (compiler.BuildinTypes.Float, GetLocation ($1)); }
+	| DOUBLE	{ $$ = new TypeExpression (compiler.BuildinTypes.Double, GetLocation ($1)); }
 	| integral_type
 	;
 
 integral_type
-	: SBYTE		{ $$ = new TypeExpression (TypeManager.sbyte_type, GetLocation ($1)); }
-	| BYTE		{ $$ = new TypeExpression (TypeManager.byte_type, GetLocation ($1)); }
-	| SHORT		{ $$ = new TypeExpression (TypeManager.short_type, GetLocation ($1)); }
-	| USHORT	{ $$ = new TypeExpression (TypeManager.ushort_type, GetLocation ($1)); }
-	| INT		{ $$ = new TypeExpression (TypeManager.int32_type, GetLocation ($1)); }
-	| UINT		{ $$ = new TypeExpression (TypeManager.uint32_type, GetLocation ($1)); }
-	| LONG		{ $$ = new TypeExpression (TypeManager.int64_type, GetLocation ($1)); }
-	| ULONG		{ $$ = new TypeExpression (TypeManager.uint64_type, GetLocation ($1)); }
-	| CHAR		{ $$ = new TypeExpression (TypeManager.char_type, GetLocation ($1)); }
+	: SBYTE		{ $$ = new TypeExpression (compiler.BuildinTypes.SByte, GetLocation ($1)); }
+	| BYTE		{ $$ = new TypeExpression (compiler.BuildinTypes.Byte, GetLocation ($1)); }
+	| SHORT		{ $$ = new TypeExpression (compiler.BuildinTypes.Short, GetLocation ($1)); }
+	| USHORT	{ $$ = new TypeExpression (compiler.BuildinTypes.UShort, GetLocation ($1)); }
+	| INT		{ $$ = new TypeExpression (compiler.BuildinTypes.Int, GetLocation ($1)); }
+	| UINT		{ $$ = new TypeExpression (compiler.BuildinTypes.UInt, GetLocation ($1)); }
+	| LONG		{ $$ = new TypeExpression (compiler.BuildinTypes.Long, GetLocation ($1)); }
+	| ULONG		{ $$ = new TypeExpression (compiler.BuildinTypes.ULong, GetLocation ($1)); }
+	| CHAR		{ $$ = new TypeExpression (compiler.BuildinTypes.Char, GetLocation ($1)); }
 	;
 
 //
@@ -3025,8 +3026,8 @@ literal
 	;
 
 boolean_literal
-	: TRUE			{ $$ = new BoolLiteral (true, GetLocation ($1)); }
-	| FALSE			{ $$ = new BoolLiteral (false, GetLocation ($1)); }
+	: TRUE			{ $$ = new BoolLiteral (compiler.BuildinTypes, true, GetLocation ($1)); }
+	| FALSE			{ $$ = new BoolLiteral (compiler.BuildinTypes, false, GetLocation ($1)); }
 	;
 
 
@@ -4698,12 +4699,12 @@ variable_type_simple
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }	  
 	| VOID
 	  {
 		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -5951,7 +5952,7 @@ interactive_parsing
 
 		// (ref object retval)
 		Parameter [] mpar = new Parameter [1];
-		mpar [0] = new Parameter (new TypeExpression (TypeManager.object_type, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
+		mpar [0] = new Parameter (new TypeExpression (compiler.BuildinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
 
 		ParametersCompiled pars = new ParametersCompiled (mpar);
 		var mods = Modifiers.PUBLIC | Modifiers.STATIC;
@@ -5962,7 +5963,7 @@ interactive_parsing
 		Method method = new Method (
 			current_class,
 			null, // generic
-			new TypeExpression (TypeManager.void_type, Location.Null),
+			new TypeExpression (compiler.BuildinTypes.Void, Location.Null),
 			mods,
 			new MemberName ("Host"),
 			pars,

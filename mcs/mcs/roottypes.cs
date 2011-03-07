@@ -70,16 +70,16 @@ namespace Mono.CSharp
 					size_types.Add (data.Length, size_type);
 
 					var pa = Module.PredefinedAttributes.StructLayout;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.short_type)) {
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short)) {
 						var argsEncoded = new AttributeEncoder ();
 						argsEncoded.Encode ((short) LayoutKind.Explicit);
 
-						var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
-						var pack = pa.GetField ("Pack", TypeManager.int32_type, Location);
+						var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
+						var pack = pa.GetField ("Pack", Compiler.BuildinTypes.Int, Location);
 						if (field_size != null) {
 							argsEncoded.EncodeNamedArguments (
 								new[] { field_size, pack },
-								new[] { new IntConstant ((int) data.Length, Location), new IntConstant (1, Location) }
+								new[] { new IntConstant (Compiler.BuildinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuildinTypes, 1, Location) }
 							);
 						}
 

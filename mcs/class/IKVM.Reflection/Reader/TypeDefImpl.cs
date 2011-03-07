@@ -74,9 +74,19 @@ namespace IKVM.Reflection.Reader
 					int evt = module.EventMap.records[i].EventList - 1;
 					int end = module.EventMap.records.Length > i + 1 ? module.EventMap.records[i + 1].EventList - 1 : module.Event.records.Length;
 					EventInfo[] events = new EventInfo[end - evt];
-					for (int j = 0; evt < end; evt++, j++)
+					if (module.EventPtr.RowCount == 0)
 					{
-						events[j] = new EventInfoImpl(module, this, evt);
+						for (int j = 0; evt < end; evt++, j++)
+						{
+							events[j] = new EventInfoImpl(module, this, evt);
+						}
+					}
+					else
+					{
+						for (int j = 0; evt < end; evt++, j++)
+						{
+							events[j] = new EventInfoImpl(module, this, module.EventPtr.records[evt] - 1);
+						}
 					}
 					return events;
 				}
@@ -89,9 +99,19 @@ namespace IKVM.Reflection.Reader
 			int field = module.TypeDef.records[index].FieldList - 1;
 			int end = module.TypeDef.records.Length > index + 1 ? module.TypeDef.records[index + 1].FieldList - 1 : module.Field.records.Length;
 			FieldInfo[] fields = new FieldInfo[end - field];
-			for (int i = 0; field < end; i++, field++)
+			if (module.FieldPtr.RowCount == 0)
 			{
-				fields[i] = module.GetFieldAt(this, field);
+				for (int i = 0; field < end; i++, field++)
+				{
+					fields[i] = module.GetFieldAt(this, field);
+				}
+			}
+			else
+			{
+				for (int i = 0; field < end; i++, field++)
+				{
+					fields[i] = module.GetFieldAt(this, module.FieldPtr.records[field] - 1);
+				}
 			}
 			return fields;
 		}
@@ -120,9 +140,19 @@ namespace IKVM.Reflection.Reader
 			int method = module.TypeDef.records[index].MethodList - 1;
 			int end = module.TypeDef.records.Length > index + 1 ? module.TypeDef.records[index + 1].MethodList - 1 : module.MethodDef.records.Length;
 			MethodBase[] methods = new MethodBase[end - method];
-			for (int i = 0; method < end; method++, i++)
+			if (module.MethodPtr.RowCount == 0)
 			{
-				methods[i] = module.GetMethodAt(this, method);
+				for (int i = 0; method < end; method++, i++)
+				{
+					methods[i] = module.GetMethodAt(this, method);
+				}
+			}
+			else
+			{
+				for (int i = 0; method < end; method++, i++)
+				{
+					methods[i] = module.GetMethodAt(this, module.MethodPtr.records[method] - 1);
+				}
 			}
 			return methods;
 		}
@@ -186,9 +216,19 @@ namespace IKVM.Reflection.Reader
 					int property = module.PropertyMap.records[i].PropertyList - 1;
 					int end = module.PropertyMap.records.Length > i + 1 ? module.PropertyMap.records[i + 1].PropertyList - 1 : module.Property.records.Length;
 					PropertyInfo[] properties = new PropertyInfo[end - property];
-					for (int j = 0; property < end; property++, j++)
+					if (module.PropertyPtr.RowCount == 0)
 					{
-						properties[j] = new PropertyInfoImpl(module, this, property);
+						for (int j = 0; property < end; property++, j++)
+						{
+							properties[j] = new PropertyInfoImpl(module, this, property);
+						}
+					}
+					else
+					{
+						for (int j = 0; property < end; property++, j++)
+						{
+							properties[j] = new PropertyInfoImpl(module, this, module.PropertyPtr.records[property] - 1);
+						}
 					}
 					return properties;
 				}

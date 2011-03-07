@@ -101,6 +101,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		public BuildinTypes BuildinTypes {
+			get {
+				return MemberContext.Module.Compiler.BuildinTypes;
+			}
+		}
+
 		public TypeSpec CurrentType {
 			get { return member_context.CurrentType; }
 		}

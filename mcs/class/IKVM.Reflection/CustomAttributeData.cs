@@ -395,8 +395,7 @@ namespace IKVM.Reflection
 			return true;
 		}
 
-		// for use by mcs
-		internal byte[] __GetBlob()
+		public byte[] __GetBlob()
 		{
 			return ((ModuleReader)module).GetBlobCopy(module.CustomAttribute.records[index].Value);
 		}
@@ -462,7 +461,7 @@ namespace IKVM.Reflection
 			object[] args = new object[ConstructorArguments.Count];
 			for (int i = 0; i < args.Length; i++)
 			{
-				args[i] = ConstructorArguments[i].Value;
+				args[i] = RewrapArray(ConstructorArguments[i]);
 			}
 			List<PropertyInfo> namedProperties = new List<PropertyInfo>();
 			List<object> propertyValues = new List<object>();
@@ -473,15 +472,34 @@ namespace IKVM.Reflection
 				if (named.MemberInfo is PropertyInfo)
 				{
 					namedProperties.Add((PropertyInfo)named.MemberInfo);
-					propertyValues.Add(named.TypedValue.Value);
+					propertyValues.Add(RewrapArray(named.TypedValue));
 				}
 				else
 				{
 					namedFields.Add((FieldInfo)named.MemberInfo);
-					fieldValues.Add(named.TypedValue.Value);
+					fieldValues.Add(RewrapArray(named.TypedValue));
 				}
 			}
 			return new CustomAttributeBuilder(Constructor, args, namedProperties.ToArray(), propertyValues.ToArray(), namedFields.ToArray(), fieldValues.ToArray());
+		}
+
+		private static object RewrapArray(CustomAttributeTypedArgument arg)
+		{
+			IList<CustomAttributeTypedArgument> list = arg.Value as IList<CustomAttributeTypedArgument>;
+			if (list != null)
+			{
+				object[] arr = new object[list.Count];
+				for (int i = 0; i < arr.Length; i++)
+				{
+					// note that CLI spec only allows one dimensional arrays, so we don't need to rewrap the elements
+					arr[i] = list[i].Value;
+				}
+				return arr;
+			}
+			else
+			{
+				return arg.Value;
+			}
 		}
 
 		public static IList<CustomAttributeData> GetCustomAttributes(MemberInfo member)

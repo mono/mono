@@ -386,7 +386,7 @@ namespace System.Runtime.Serialization
 			KnownTypes.Add (memberType);
 			QName qname = KnownTypes.GetQName (memberType);
 			
-			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name) != null)
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname) != null)
 				return new DataMemberInfo (mi, dma, ownerNamespace, null);
 			else
 				return new DataMemberInfo (mi, dma, ownerNamespace, qname.Namespace);

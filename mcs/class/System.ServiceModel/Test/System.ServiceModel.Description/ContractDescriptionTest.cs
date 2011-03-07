@@ -447,6 +447,39 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IService).GetMethod ("Join") && od.Messages.Any (md => md.Action == "http://tempuri.org/IService/Join")), "#2"); // self
 			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IService2).GetMethod ("Join") && od.Messages.Any (md => md.Action == "http://tempuri.org/IService/Join")), "#3"); // callback
 		}
+		
+		[Test]
+		public void AsyncContractWithSymmetricCallbackContract ()
+		{
+			var cd = ContractDescription.GetContract (typeof(IAsyncContractWithSymmetricCallbackContract));
+			Assert.AreEqual (2, cd.Operations.Count, "#1");
+			Assert.AreSame (typeof (IAsyncContractWithSymmetricCallbackContract), cd.ContractType, "#2");
+			Assert.AreSame (typeof (IAsyncContractWithSymmetricCallbackContract), cd.CallbackContractType, "#3");
+		}
+		
+		[Test]
+		public void InheritingDuplexContract ()
+		{
+			var cd = ContractDescription.GetContract (typeof (IDerivedDuplexContract));
+			Assert.AreEqual (4, cd.Operations.Count, "#1");
+			Assert.AreSame (typeof (IDerivedDuplexContract), cd.ContractType, "#2");
+			Assert.AreSame (typeof (IDerivedDuplexCallback), cd.CallbackContractType, "#3");
+			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IBaseDuplexCallback).GetMethod ("CallbackMethod")), "#4");
+			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IDerivedDuplexCallback).GetMethod ("CallbackSomething")), "#5");
+			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IBaseDuplexContract).GetMethod ("ContractMethod")), "#6");
+			Assert.IsTrue (cd.Operations.Any (od => od.SyncMethod == typeof (IDerivedDuplexContract).GetMethod ("Something")), "#7");
+		}
+		
+		[Test]
+		public void SymmetricInheritingContract ()
+		{
+			var cd = ContractDescription.GetContract (typeof(ISymmetricInheritance));
+			Assert.AreEqual (4, cd.Operations.Count, "#1");
+			Assert.AreSame (typeof (ISymmetricInheritance), cd.ContractType, "#2");
+			Assert.AreSame (typeof (ISymmetricInheritance), cd.CallbackContractType, "#3");
+			Assert.AreEqual (2, cd.Operations.Count(od => od.SyncMethod == typeof (IAsyncContractWithSymmetricCallbackContract).GetMethod ("Foo")), "#4");
+			Assert.AreEqual (2, cd.Operations.Count(od => od.SyncMethod == typeof (ISymmetricInheritance).GetMethod ("Bar")), "#5");
+		}
 
 		[Test]
 		public void MessageContractAttributes ()
@@ -789,5 +822,56 @@ namespace MonoTests.System.ServiceModel.Description
 			[OperationContract]
 			void Join ();
 		}
+		
+		[ServiceContract (CallbackContract = typeof (IAsyncContractWithSymmetricCallbackContract))]
+		public interface IAsyncContractWithSymmetricCallbackContract
+		{
+			[OperationContract]
+			void Foo();
+
+			[OperationContract (AsyncPattern = true)]
+			IAsyncResult BeginFoo (AsyncCallback callback, object asyncState);
+
+			 void EndFoo (IAsyncResult result);
+		}
+		
+		[ServiceContract (CallbackContract = typeof (ISymmetricInheritance))]
+		public interface ISymmetricInheritance : IAsyncContractWithSymmetricCallbackContract
+		{
+			[OperationContract]
+			void Bar ();
+
+			[OperationContract (AsyncPattern = true)]
+			IAsyncResult BeginBar (AsyncCallback callback, object asyncState);
+
+			 void EndBar (IAsyncResult result);
+		}
+		
+		public interface IBaseDuplexCallback
+		{
+			[OperationContract]
+			void CallbackMethod ();
+		}
+		
+		[ServiceContract (CallbackContract = typeof (IBaseDuplexCallback))]
+		public interface IBaseDuplexContract
+		{
+			[OperationContract]
+			void ContractMethod ();
+		}
+		
+		public interface IDerivedDuplexCallback : IBaseDuplexCallback
+		{
+			[OperationContract]
+			void CallbackSomething ();
+		}
+		
+		[ServiceContract (CallbackContract = typeof(IDerivedDuplexCallback))]
+		public interface IDerivedDuplexContract : IBaseDuplexContract
+		{
+			[OperationContract]
+			void Something ();
+		}
+
 	}
 }

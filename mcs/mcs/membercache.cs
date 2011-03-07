@@ -39,11 +39,11 @@ namespace Mono.CSharp {
 		PointerType = 1 << 20,
 		InternalCompilerType = 1 << 21,
 		MissingType = 1 << 22,
+		Void = 1 << 23,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,
-		MaskType = Constructor | Event | Field | Method | Property | Indexer | Operator | Destructor | NestedMask,
-		All = MaskType
+		MaskType = Constructor | Event | Field | Method | Property | Indexer | Operator | Destructor | NestedMask
 	}
 
 	[Flags]
@@ -169,6 +169,7 @@ namespace Mono.CSharp {
 	//
 	public class MemberCache
 	{
+		[Flags]
 		enum StateFlags
 		{
 			HasConversionOperator = 1 << 1,
@@ -302,16 +303,24 @@ namespace Mono.CSharp {
 		{
 			if (member.Kind == MemberKind.Operator) {
 				var dt = member.DeclaringType;
-				if (dt == TypeManager.string_type || dt == TypeManager.delegate_type || dt == TypeManager.multicast_delegate_type) {
+				switch (dt.BuildinType) {
+				case BuildinTypeSpec.Type.String:
+				case BuildinTypeSpec.Type.Delegate:
+				case BuildinTypeSpec.Type.MulticastDelegate:
 					// Some core types have user operators but they cannot be used as normal
 					// user operators as they are predefined and therefore having different
 					// rules (e.g. binary operators) by not setting the flag we hide them for
 					// user conversions
 					// TODO: Should I do this for all core types ?
-				} else if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
-					state |= StateFlags.HasConversionOperator;
-				} else {
-					state |= StateFlags.HasUserOperator;
+					break;
+				default:
+					if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
+						state |= StateFlags.HasConversionOperator;
+					} else {
+						state |= StateFlags.HasUserOperator;
+					}
+
+					break;
 				}
 			}
 

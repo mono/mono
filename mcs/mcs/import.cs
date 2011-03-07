@@ -196,7 +196,7 @@ namespace Mono.CSharp
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
-				if (field_type == TypeManager.decimal_type) {
+				if (field_type.BuildinType == BuildinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
@@ -357,7 +357,7 @@ namespace Mono.CSharp
 			TypeSpec returnType;
 			if (mb.MemberType == MemberTypes.Constructor) {
 				kind = MemberKind.Constructor;
-				returnType = TypeManager.void_type;
+				returnType = module.Compiler.BuildinTypes.Void;
 			} else {
 				//
 				// Detect operators and destructors
@@ -374,7 +374,7 @@ namespace Mono.CSharp
 						}
 					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
 						kind = MemberKind.Destructor;
-						if (declaringType == TypeManager.object_type) {
+						if (declaringType.BuildinType == BuildinTypeSpec.Type.Object) {
 							mod &= ~Modifiers.OVERRIDE;
 							mod |= Modifiers.VIRTUAL;
 						}
@@ -471,20 +471,20 @@ namespace Mono.CSharp
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
 							if (value == null) {
-								default_value = Constant.CreateConstant (null, ptype, null, Location.Null);
+								default_value = Constant.CreateConstant (ptype, null, Location.Null);
 							} else {
-								default_value = ImportParameterConstant (value).Resolve (null);
+								default_value = ImportParameterConstant (value);
 
 								if (ptype.IsEnum) {
-									default_value = new EnumConstant ((Constant) default_value, ptype).Resolve (null);
+									default_value = new EnumConstant ((Constant) default_value, ptype);
 								}
 							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
 						} else if (value == null) {
 							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
-						} else if (ptype == TypeManager.decimal_type) {
-							default_value = ImportParameterConstant (value).Resolve (null);
+						} else if (ptype.BuildinType == BuildinTypeSpec.Type.Decimal) {
+							default_value = ImportParameterConstant (value);
 						}
 					}
 				}
@@ -518,7 +518,7 @@ namespace Mono.CSharp
 
 			bool is_valid_property = true;
 			if (set != null) {
-				if (set.ReturnType != TypeManager.void_type)
+				if (set.ReturnType.Kind != MemberKind.Void)
 					is_valid_property = false;
 
 				var set_param_count = set.Parameters.Count - 1;
@@ -644,9 +644,9 @@ namespace Mono.CSharp
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
-				if (spec == TypeManager.object_type) {
+				if (spec.BuildinType == BuildinTypeSpec.Type.Object) {
 					if (dtype.IsDynamicObject (this))
-						return InternalType.Dynamic;
+						return module.Compiler.BuildinTypes.Dynamic;
 
 					return spec;
 				}
@@ -912,7 +912,7 @@ namespace Mono.CSharp
 		void ImportTypeBase (TypeSpec spec, MetaType type)
 		{
 			if (spec.Kind == MemberKind.Interface)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = module.Compiler.BuildinTypes.Object;
 			else if (type.BaseType != null) {
 				TypeSpec base_type;
 				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
@@ -927,8 +927,18 @@ namespace Mono.CSharp
 #if STATIC
 			ifaces = type.__GetDeclaredInterfaces ();
 			if (ifaces.Length != 0) {
-				foreach (var iface in ifaces)
-					spec.AddInterface (CreateType (iface));
+				foreach (var iface in ifaces) {
+					var it = CreateType (iface);
+					spec.AddInterface (it);
+
+					// Unfortunatelly not all languages inlcude inherited interfaces
+					var bifaces = it.Interfaces;
+					if (bifaces != null) {
+						foreach (var biface in bifaces) {
+							spec.AddInterface (biface);
+						}
+					}
+				}
 			}
 
 			if (spec.BaseType != null) {
@@ -1011,47 +1021,48 @@ namespace Mono.CSharp
 			}
 
 			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = module.Compiler.BuildinTypes.Object;
 
 			if (tparams != null)
 				spec.TypeArguments = tparams.ToArray ();
 		}
 
-		static Constant ImportParameterConstant (object value)
+		Constant ImportParameterConstant (object value)
 		{
 			//
 			// Get type of underlying value as int constant can be used for object
 			// parameter type. This is not allowed in C# but other languages can do that
 			//
+			var types = module.Compiler.BuildinTypes;
 			switch (System.Type.GetTypeCode (value.GetType ())) {
 			case TypeCode.Boolean:
-				return new BoolConstant ((bool) value, Location.Null);
+				return new BoolConstant (types, (bool) value, Location.Null);
 			case TypeCode.Byte:
-				return new ByteConstant ((byte) value, Location.Null);
+				return new ByteConstant (types, (byte) value, Location.Null);
 			case TypeCode.Char:
-				return new CharConstant ((char) value, Location.Null);
+				return new CharConstant (types, (char) value, Location.Null);
 			case TypeCode.Decimal:
-				return new DecimalConstant ((decimal) value, Location.Null);
+				return new DecimalConstant (types, (decimal) value, Location.Null);
 			case TypeCode.Double:
-				return new DoubleConstant ((double) value, Location.Null);
+				return new DoubleConstant (types, (double) value, Location.Null);
 			case TypeCode.Int16:
-				return new ShortConstant ((short) value, Location.Null);
+				return new ShortConstant (types, (short) value, Location.Null);
 			case TypeCode.Int32:
-				return new IntConstant ((int) value, Location.Null);
+				return new IntConstant (types, (int) value, Location.Null);
 			case TypeCode.Int64:
-				return new LongConstant ((long) value, Location.Null);
+				return new LongConstant (types, (long) value, Location.Null);
 			case TypeCode.SByte:
-				return new SByteConstant ((sbyte) value, Location.Null);
+				return new SByteConstant (types, (sbyte) value, Location.Null);
 			case TypeCode.Single:
-				return new FloatConstant ((float) value, Location.Null);
+				return new FloatConstant (types, (float) value, Location.Null);
 			case TypeCode.String:
-				return new StringConstant ((string) value, Location.Null);
+				return new StringConstant (types, (string) value, Location.Null);
 			case TypeCode.UInt16:
-				return new UShortConstant ((ushort) value, Location.Null);
+				return new UShortConstant (types, (ushort) value, Location.Null);
 			case TypeCode.UInt32:
-				return new UIntConstant ((uint) value, Location.Null);
+				return new UIntConstant (types, (uint) value, Location.Null);
 			case TypeCode.UInt64:
-				return new ULongConstant ((ulong) value, Location.Null);
+				return new ULongConstant (types, (ulong) value, Location.Null);
 			}
 
 			throw new NotImplementedException (value.GetType ().ToString ());
@@ -1114,7 +1125,7 @@ namespace Mono.CSharp
 					(byte) ca.ConstructorArguments[1].Value != 0,
 					(byte) ca.ConstructorArguments[0].Value);
 
-				return new DecimalConstant (value, Location.Null).Resolve (null);
+				return new DecimalConstant (module.Compiler.BuildinTypes, value, Location.Null);
 			}
 
 			return null;

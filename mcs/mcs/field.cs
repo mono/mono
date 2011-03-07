@@ -194,7 +194,7 @@ namespace Mono.CSharp
 
 		public virtual Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ConvertImplicitly (rc, MemberType);
+			return expr.ConvertImplicitly (MemberType);
 		}
 
 		protected override void DoMemberTypeDependentChecks ()
@@ -220,7 +220,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (member_type == InternalType.Dynamic) {
+			if (member_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
 			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
@@ -380,7 +380,7 @@ namespace Mono.CSharp
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ImplicitConversionRequired (rc, TypeManager.int32_type, Location);
+			return expr.ImplicitConversionRequired (rc, rc.BuildinTypes.Int, Location);
 		}
 
 		public override bool Define ()
@@ -388,7 +388,7 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (!BuildinTypeSpec.IsPrimitiveNumericType (MemberType)) {
+			if (!BuildinTypeSpec.IsPrimitiveType (MemberType)) {
 				Report.Error (1663, Location,
 					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
@@ -406,7 +406,8 @@ namespace Mono.CSharp
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
-				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
+				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+				Compiler.BuildinTypes.ValueType.GetMetaInfo ());
 
 			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			
@@ -473,14 +474,14 @@ namespace Mono.CSharp
 			AttributeEncoder encoder;
 
 			pa = Module.PredefinedAttributes.StructLayout;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short))
 				return;
 
 			var char_set_type = Module.PredefinedTypes.CharSet.Resolve (Location);
 			if (char_set_type == null)
 				return;
 
-			var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
+			var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
 			var field_charset = pa.GetField ("CharSet", char_set_type, Location);
 			if (field_size == null || field_charset == null)
 				return;
@@ -491,7 +492,10 @@ namespace Mono.CSharp
 			encoder.Encode ((short)LayoutKind.Sequential);
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
-				new Constant [] { new IntConstant (buffer_size, Location), new IntConstant ((int) char_set, Location) }
+				new Constant [] { 
+					new IntConstant (Compiler.BuildinTypes, buffer_size, Location),
+					new IntConstant (Compiler.BuildinTypes, (int) char_set, Location)
+				}
 			);
 
 			pa.EmitAttribute (fixed_buffer_type, encoder);
@@ -503,7 +507,7 @@ namespace Mono.CSharp
 				return;
 
 			pa = Module.PredefinedAttributes.FixedBuffer;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Type, Compiler.BuildinTypes.Int))
 				return;
 
 			encoder = new AttributeEncoder ();

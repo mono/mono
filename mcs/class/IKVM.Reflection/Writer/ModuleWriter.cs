@@ -47,14 +47,25 @@ namespace IKVM.Reflection.Writer
 		{
 			if (stream == null)
 			{
-				using (FileStream fs = new FileStream(moduleBuilder.FullyQualifiedName, FileMode.Create))
+				string fileName = moduleBuilder.FullyQualifiedName;
+				bool mono = System.Type.GetType("Mono.Runtime") != null;
+				if (mono)
+				{
+					try
+					{
+						// Mono mmaps the file, so unlink the previous version since it may be in use
+						File.Delete(fileName);
+					}
+					catch { }
+				}
+				using (FileStream fs = new FileStream(fileName, FileMode.Create))
 				{
 					WriteModuleImpl(keyPair, publicKey, moduleBuilder, fileKind, portableExecutableKind, imageFileMachine, resources, entryPointToken, fs);
 				}
 				// if we're running on Mono, mark the module as executable by using a Mono private API extension
-				if (System.Type.GetType("Mono.Runtime") != null)
+				if (mono)
 				{
-					File.SetAttributes(moduleBuilder.FullyQualifiedName, (FileAttributes)(unchecked((int)0x80000000)));
+					File.SetAttributes(fileName, (FileAttributes)(unchecked((int)0x80000000)));
 				}
 			}
 			else
