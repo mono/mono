@@ -149,21 +149,11 @@ namespace System.Runtime.Serialization
 				}
 			}
 
-			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname) != null) {
 				string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
 
-				string value;
-				if (reader.IsEmptyElement) {
-					reader.Read (); // advance
-					if (type.IsValueType)
-						return Activator.CreateInstance (type);
-					else
-						// FIXME: Workaround for creating empty objects of the correct type.
-						value = String.Empty;
-				}
-				else
-					value = reader.ReadElementContentAsString ();
-				object ret = KnownTypeCollection.PredefinedTypeStringToObject (value, graph_qname.Name, reader);
+				object ret = DeserializePrimitive (type, reader, graph_qname);
+
 				if (id != null) {
 					if (references.ContainsKey (id))
 						throw new InvalidOperationException (String.Format ("Object with Id '{0}' already exists as '{1}'", id, references [id]));
@@ -173,6 +163,37 @@ namespace System.Runtime.Serialization
 			}
 
 			return DeserializeByMap (graph_qname, type, reader);
+		}
+
+		object DeserializePrimitive (Type type, XmlReader reader, QName qname)
+		{
+			// It is the only exceptional type that does not serialize to string but serializes into complex element.
+			if (type == typeof (DateTimeOffset)) {
+				if (reader.IsEmptyElement) {
+					reader.Read ();
+					return default (DateTimeOffset);
+				}
+				reader.ReadStartElement ();
+				reader.MoveToContent ();
+				var date = reader.ReadElementContentAsDateTime ("DateTime", qname.Namespace);
+				var off = TimeSpan.FromMinutes (reader.ReadElementContentAsInt ("OffsetMinutes", qname.Namespace));
+				reader.MoveToContent ();
+				reader.ReadEndElement ();
+				return new DateTimeOffset (DateTime.SpecifyKind (date.ToUniversalTime () + off, DateTimeKind.Unspecified), off);
+			}
+
+			string value;
+			if (reader.IsEmptyElement) {
+				reader.Read (); // advance
+				if (type.IsValueType)
+					return Activator.CreateInstance (type);
+				else
+					// FIXME: Workaround for creating empty objects of the correct type.
+					value = String.Empty;
+			}
+			else
+				value = reader.ReadElementContentAsString ();
+			return KnownTypeCollection.PredefinedTypeStringToObject (value, qname.Name, reader);
 		}
 
 		object DeserializeByMap (QName name, Type type, XmlReader reader)
@@ -193,7 +214,7 @@ namespace System.Runtime.Serialization
 
 		Type GetTypeFromNamePair (string name, string ns)
 		{
-			Type p = KnownTypeCollection.GetPrimitiveTypeFromName (name); // FIXME: namespace?
+			Type p = KnownTypeCollection.GetPrimitiveTypeFromName (new QName (name, ns));
 			if (p != null)
 				return p;
 			bool makeArray = false;

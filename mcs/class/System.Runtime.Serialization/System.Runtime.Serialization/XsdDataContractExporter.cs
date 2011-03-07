@@ -76,21 +76,14 @@ namespace System.Runtime.Serialization
 			}
 		}
 
+		// Note that this does not handle DBNull and DateTimeOffset
+		// (they are not included in the predefined schema)
 		static Type GetPredefinedTypeFromQName (QName qname)
 		{
 			switch (qname.Namespace) {
 			case XmlSchema.Namespace:
-				return KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name);
 			case KnownTypeCollection.MSSimpleNamespace:
-				switch (qname.Name) {
-				case "char":
-					return typeof (char);
-				case "duration":
-					return typeof (TimeSpan);
-				case "guid":
-					return typeof (Guid);
-				}
-				break;
+				return KnownTypeCollection.GetPrimitiveTypeFromName (qname);
 			}
 			throw new Exception ("Should not happen");
 		}

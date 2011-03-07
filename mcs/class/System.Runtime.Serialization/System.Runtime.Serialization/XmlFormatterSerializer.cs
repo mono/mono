@@ -145,7 +145,19 @@ namespace System.Runtime.Serialization
 //			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
 //			writer.WriteQualifiedName (qname.Name, qname.Namespace);
 //			writer.WriteEndAttribute ();
-			writer.WriteString (KnownTypeCollection.PredefinedTypeObjectToString (graph));
+
+			// It is the only exceptional type that does not serialize to string but serializes into complex element.
+			if (type == typeof (DateTimeOffset)) {
+				var v = (DateTimeOffset) graph;
+				writer.WriteStartElement ("DateTime");
+				SerializePrimitive (typeof (DateTime), DateTime.SpecifyKind (v.DateTime.Subtract (v.Offset), DateTimeKind.Utc), KnownTypeCollection.GetPredefinedTypeName (typeof (DateTime)));
+				writer.WriteEndElement ();
+				writer.WriteStartElement ("OffsetMinutes");
+				SerializePrimitive (typeof (int), v.Offset.TotalMinutes, KnownTypeCollection.GetPredefinedTypeName (typeof (int)));
+				writer.WriteEndElement ();
+			}
+			else
+				writer.WriteString (KnownTypeCollection.PredefinedTypeObjectToString (graph));
 		}
 
 		public void WriteStartElement (string memberName, string memberNamespace, string contentNamespace)

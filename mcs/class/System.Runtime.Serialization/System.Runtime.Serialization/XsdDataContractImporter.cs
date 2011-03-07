@@ -542,18 +542,10 @@ namespace System.Runtime.Serialization
 
 		bool IsPredefinedType (XmlQualifiedName qname)
 		{
-			// FIXME: support char, guid and duration (MSSimpleNamespace); fix GetPrimitiveTypeFromName() first and then this at a time.
 			switch (qname.Namespace) {
 			case KnownTypeCollection.MSSimpleNamespace:
-				switch (qname.Name) {
-				case "char":
-				case "guid":
-				case "duration":
-					return true;
-				}
-				return false;
 			case XmlSchema.Namespace:
-				return KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name) != null;
+				return KnownTypeCollection.GetPrimitiveTypeFromName (qname) != null;
 			}
 			return false;
 		}
@@ -622,15 +614,8 @@ namespace System.Runtime.Serialization
 
 			switch (typeName.Namespace) {
 			case XmlSchema.Namespace:
-				return new CodeTypeReference (KnownTypeCollection.GetPrimitiveTypeFromName (typeName.Name));
 			case KnownTypeCollection.MSSimpleNamespace:
-				switch (typeName.Name) {
-				case "guid":
-					return new CodeTypeReference (typeof (Guid));
-				case "duration":
-					return new CodeTypeReference (typeof (TimeSpan));
-				}
-				break;
+				return new CodeTypeReference (KnownTypeCollection.GetPrimitiveTypeFromName (typeName));
 			}
 
 			var info = GetTypeInfo (typeName, throwError);
