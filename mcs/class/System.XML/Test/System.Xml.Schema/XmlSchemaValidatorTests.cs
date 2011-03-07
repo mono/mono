@@ -367,6 +367,12 @@ namespace MonoTests.System.Xml
 			if (shouldFail)
 				Assert.Fail (testName + " should fail");
 		}
+
+		[Test]
+		public void Bug676993 ()
+		{
+			Validate (File.ReadAllText ("Test/XmlFiles/676993.xml"), File.ReadAllText ("Test/XmlFiles/676993.xsd"));
+		}
 	}
 }
 

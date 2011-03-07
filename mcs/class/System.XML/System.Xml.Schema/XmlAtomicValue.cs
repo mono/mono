@@ -183,7 +183,11 @@ namespace System.Xml.Schema
 
 			switch (Type.GetTypeCode (value.GetType ())) {
 			case TypeCode.Int16:
+				Init ((short) value, xmlType);
+				return;
 			case TypeCode.UInt16:
+				Init ((ushort) value, xmlType);
+				return;
 			case TypeCode.Int32:
 				Init ((int) value, xmlType);
 				return;
@@ -197,8 +201,10 @@ namespace System.Xml.Schema
 				Init ((float) value, xmlType);
 				return;
 			case TypeCode.Int64:
-			case TypeCode.UInt32:
 				Init ((long) value, xmlType);
+				return;
+			case TypeCode.UInt32:
+				Init ((uint) value, xmlType);
 				return;
 			case TypeCode.String:
 				Init ((string) value, xmlType);
