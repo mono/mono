@@ -45,8 +45,8 @@ mono_DATA =  config \
 
 gdbdir = $(bindir)
 
-gdb/mono-sgen-gdb.py: gdb/mono-gdb.py
+mono-sgen-gdb.py: gdb/mono-gdb.py
 	cp $< $@
 
-gdb_DATA = gdb/mono-gdb.py gdb/mono-sgen-gdb.py
+gdb_DATA = gdb/mono-gdb.py mono-sgen-gdb.py
 
