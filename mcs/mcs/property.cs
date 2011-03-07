@@ -872,7 +872,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected abstract MethodSpec Operation { get; }
+			protected abstract MethodSpec GetOperation (Location loc);
 
 			public override void Emit (DeclSpace parent)
 			{
@@ -886,28 +886,6 @@ namespace Mono.CSharp
 
 			void FabricateBodyStatement ()
 			{
-				var cas = TypeManager.gen_interlocked_compare_exchange;
-				if (cas == null) {
-					var t = Module.PredefinedTypes.Interlocked.Resolve (Location);
-					if (t == null)
-						return;
-
-					var p = new ParametersImported (
-						new[] {
-								new ParameterData (null, Parameter.Modifier.REF),
-								new ParameterData (null, Parameter.Modifier.NONE),
-								new ParameterData (null, Parameter.Modifier.NONE)
-							},
-						new[] {
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-							}, false);
-
-					var filter = new MemberFilter ("CompareExchange", 1, MemberKind.Method, p, null);
-					cas = TypeManager.gen_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, filter, Location);
-				}
-
 				//
 				// Delegate obj1 = backing_field
 				// do {
@@ -939,13 +917,19 @@ namespace Mono.CSharp
 				args_oper.Add (new Argument (new LocalVariableReference (obj2, Location)));
 				args_oper.Add (new Argument (block.GetParameterReference (0, Location)));
 
+				var op_method = GetOperation (Location);
+
 				var args = new Arguments (3);
 				args.Add (new Argument (f_expr, Argument.AType.Ref));
 				args.Add (new Argument (new Cast (
 					new TypeExpression (field_info.MemberType, Location),
-					new Invocation (MethodGroupExpr.CreatePredefined (Operation, Operation.DeclaringType, Location), args_oper),
+					new Invocation (MethodGroupExpr.CreatePredefined (op_method, op_method.DeclaringType, Location), args_oper),
 					Location)));
 				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
+
+				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
+				if (cas == null)
+					return;
 
 				body.AddStatement (new StatementExpression (new SimpleAssign (
 					new LocalVariableReference (obj1, Location),
@@ -960,15 +944,9 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override MethodSpec Operation {
-				get {
-					if (TypeManager.delegate_combine_delegate_delegate == null) {
-						TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-							Compiler.BuildinTypes.Delegate, "Combine", Location, Compiler.BuildinTypes.Delegate, Compiler.BuildinTypes.Delegate);
-					}
-
-					return TypeManager.delegate_combine_delegate_delegate;
-				}
+			protected override MethodSpec GetOperation (Location loc)
+			{
+				return Module.PredefinedMembers.DelegateCombine.Resolve (loc);
 			}
 		}
 
@@ -979,15 +957,9 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override MethodSpec Operation {
-				get {
-					if (TypeManager.delegate_remove_delegate_delegate == null) {
-						TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-							Compiler.BuildinTypes.Delegate, "Remove", Location, Compiler.BuildinTypes.Delegate, Compiler.BuildinTypes.Delegate);
-					}
-
-					return TypeManager.delegate_remove_delegate_delegate;
-				}
+			protected override MethodSpec GetOperation (Location loc)
+			{
+				return Module.PredefinedMembers.DelegateRemove.Resolve (loc);
 			}
 		}
 

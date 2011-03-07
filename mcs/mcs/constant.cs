@@ -1800,35 +1800,31 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			MethodSpec m;
+
 			int [] words = decimal.GetBits (Value);
 			int power = (words [3] >> 16) & 0xff;
 
 			if (power == 0) {
 				if (Value <= int.MaxValue && Value >= int.MinValue) {
-					if (TypeManager.void_decimal_ctor_int_arg == null) {
-						TypeManager.void_decimal_ctor_int_arg = TypeManager.GetPredefinedConstructor (
-							type, loc, ec.BuildinTypes.Int);
-
-						if (TypeManager.void_decimal_ctor_int_arg == null)
-							return;
+					m = ec.Module.PredefinedMembers.DecimalCtorInt.Resolve (loc);
+					if (m == null) {
+						return;
 					}
 
 					ec.EmitInt ((int) Value);
-					ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
+					ec.Emit (OpCodes.Newobj, m);
 					return;
 				}
 
 				if (Value <= long.MaxValue && Value >= long.MinValue) {
-					if (TypeManager.void_decimal_ctor_long_arg == null) {
-						TypeManager.void_decimal_ctor_long_arg = TypeManager.GetPredefinedConstructor (
-							type, loc, ec.BuildinTypes.Long);
-
-						if (TypeManager.void_decimal_ctor_long_arg == null)
-							return;
+					m = ec.Module.PredefinedMembers.DecimalCtorLong.Resolve (loc);
+					if (m == null) {
+						return;
 					}
 
 					ec.EmitLong ((long) Value);
-					ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_long_arg);
+					ec.Emit (OpCodes.Newobj, m);
 					return;
 				}
 			}
@@ -1843,16 +1839,10 @@ namespace Mono.CSharp {
 			// power
 			ec.EmitInt (power);
 
-			if (TypeManager.void_decimal_ctor_five_args == null) {
-				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
-					type, loc, ec.BuildinTypes.Int, ec.BuildinTypes.Int,
-					ec.BuildinTypes.Int, ec.BuildinTypes.Bool, ec.BuildinTypes.Byte);
-
-				if (TypeManager.void_decimal_ctor_five_args == null)
-					return;
+			m = ec.Module.PredefinedMembers.DecimalCtor.Resolve (loc);
+			if (m != null) {
+				ec.Emit (OpCodes.Newobj, m);
 			}
-
-			ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
 
 		public override bool IsDefaultValue {
@@ -1960,11 +1950,9 @@ namespace Mono.CSharp {
 			if (Value.Length == 0 && ec.Module.Compiler.Settings.Optimize) {
 				var string_type = ec.BuildinTypes.String;
 				if (ec.CurrentType != string_type) {
-					if (TypeManager.string_empty == null)
-						TypeManager.string_empty = TypeManager.GetPredefinedField (string_type, "Empty", loc, string_type);
-
-					if (TypeManager.string_empty != null) {
-						ec.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
+					var m = ec.Module.PredefinedMembers.StringEmpty.Get ();
+					if (m != null) {
+						ec.Emit (OpCodes.Ldsfld, m);
 						return;
 					}
 				}

@@ -53,7 +53,8 @@ namespace Mono.CSharp.Nullable
 	{
 		public static MethodSpec GetConstructor (TypeSpec nullableType)
 		{
-			return TypeManager.GetPredefinedConstructor (nullableType, Location.Null, GetUnderlyingType (nullableType));
+			return (MethodSpec) MemberCache.FindMember (nullableType,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (GetUnderlyingType (nullableType))), BindingRestriction.DeclaredOnly);
 		}
 
 		public static MethodSpec GetHasValue (TypeSpec nullableType)

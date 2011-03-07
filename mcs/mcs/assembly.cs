@@ -459,7 +459,7 @@ namespace Mono.CSharp
 			if (!wrap_non_exception_throws_custom) {
 				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
 				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = pa.GetProperty ("WrapNonExceptionThrows", Compiler.BuildinTypes.Bool, Location.Null);
+					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
 					if (prop != null) {
 						AttributeEncoder encoder = new AttributeEncoder ();
 						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuildinTypes, true, Location.Null));
@@ -608,7 +608,7 @@ namespace Mono.CSharp
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
-				var req_min = (ConstSpec) module.PredefinedTypes.SecurityAction.GetField ("RequestMinimum", module.PredefinedTypes.SecurityAction.TypeSpec, loc);
+				var req_min = module.PredefinedMembers.SecurityActionRequestMinimum.Resolve (loc);
 
 				Arguments pos = new Arguments (1);
 				pos.Add (new Argument (req_min.GetConstant (null)));

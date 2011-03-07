@@ -68,22 +68,21 @@ namespace Mono.CSharp
 					size_type.DefineType ();
 
 					size_types.Add (data.Length, size_type);
-
-					var pa = Module.PredefinedAttributes.StructLayout;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short)) {
+					var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
+					if (ctor != null) {
 						var argsEncoded = new AttributeEncoder ();
 						argsEncoded.Encode ((short) LayoutKind.Explicit);
 
-						var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
-						var pack = pa.GetField ("Pack", Compiler.BuildinTypes.Int, Location);
-						if (field_size != null) {
+						var field_size = Module.PredefinedMembers.StructLayoutSize.Resolve (Location);
+						var pack = Module.PredefinedMembers.StructLayoutPack.Resolve (Location);
+						if (field_size != null && pack != null) {
 							argsEncoded.EncodeNamedArguments (
 								new[] { field_size, pack },
 								new[] { new IntConstant (Compiler.BuildinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuildinTypes, 1, Location) }
 							);
-						}
 
-						pa.EmitAttribute (size_type.TypeBuilder, argsEncoded);
+							size_type.TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), argsEncoded.ToArray ());
+						}
 					}
 				}
 
@@ -133,6 +132,7 @@ namespace Mono.CSharp
 
 		PredefinedAttributes predefined_attributes;
 		PredefinedTypes predefined_types;
+		PredefinedMembers predefined_members;
 
 		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
 
@@ -219,6 +219,12 @@ namespace Mono.CSharp
 		internal PredefinedAttributes PredefinedAttributes {
 			get {
 				return predefined_attributes;
+			}
+		}
+
+		internal PredefinedMembers PredefinedMembers {
+			get {
+				return predefined_members;
 			}
 		}
 
@@ -446,6 +452,7 @@ namespace Mono.CSharp
 		{
 			predefined_attributes = new PredefinedAttributes (this);
 			predefined_types = new PredefinedTypes (this);
+			predefined_members = new PredefinedMembers (this);
 		}
 
 		public override bool IsClsComplianceRequired ()

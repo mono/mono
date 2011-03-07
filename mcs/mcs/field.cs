@@ -470,19 +470,14 @@ namespace Mono.CSharp
 
 		void EmitFieldSize (int buffer_size)
 		{
-			PredefinedAttribute pa;
 			AttributeEncoder encoder;
 
-			pa = Module.PredefinedAttributes.StructLayout;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short))
+			var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
+			if (ctor == null)
 				return;
 
-			var char_set_type = Module.PredefinedTypes.CharSet.Resolve (Location);
-			if (char_set_type == null)
-				return;
-
-			var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
-			var field_charset = pa.GetField ("CharSet", char_set_type, Location);
+			var field_size = Module.PredefinedMembers.StructLayoutSize.Resolve (Location);
+			var field_charset = Module.PredefinedMembers.StructLayoutCharSet.Resolve (Location);
 			if (field_size == null || field_charset == null)
 				return;
 
@@ -498,7 +493,7 @@ namespace Mono.CSharp
 				}
 			);
 
-			pa.EmitAttribute (fixed_buffer_type, encoder);
+			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
@@ -506,8 +501,8 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.PRIVATE) != 0)
 				return;
 
-			pa = Module.PredefinedAttributes.FixedBuffer;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.Type, Compiler.BuildinTypes.Int))
+			ctor = Module.PredefinedMembers.FixedBufferAttributeCtor.Resolve (Location);
+			if (ctor == null)
 				return;
 
 			encoder = new AttributeEncoder ();
@@ -515,7 +510,7 @@ namespace Mono.CSharp
 			encoder.Encode (buffer_size);
 			encoder.EncodeEmptyNamedArguments ();
 
-			pa.EmitAttribute (FieldBuilder, encoder);
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 	}
 

@@ -180,22 +180,6 @@ namespace Mono.CSharp {
 					if (new_storey != null)
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
-					var t = ec.Module.PredefinedTypes.Interlocked.Resolve (loc);
-					if (t != null) {
-						var p = new ParametersImported (
-							new[] {
-									new ParameterData (null, Parameter.Modifier.REF),
-									new ParameterData (null, Parameter.Modifier.NONE),
-									new ParameterData (null, Parameter.Modifier.NONE)
-								},
-							new[] {
-									ec.BuildinTypes.Int, ec.BuildinTypes.Int, ec.BuildinTypes.Int
-								},
-							false);
-						var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, ec.BuildinTypes.Int);
-						TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
-					}
-
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
 					return true;
 				}
@@ -208,7 +192,10 @@ namespace Mono.CSharp {
 					ec.Emit (OpCodes.Ldflda, host.PC.Spec);
 					ec.EmitInt ((int) Iterator.State.Start);
 					ec.EmitInt ((int) Iterator.State.Uninitialized);
-					ec.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
+
+					var m = ec.Module.PredefinedMembers.InterlockedCompareExchange.Resolve (loc);
+					if (m != null)
+						ec.Emit (OpCodes.Call, m);
 
 					ec.EmitInt ((int) Iterator.State.Uninitialized);
 					ec.Emit (OpCodes.Bne_Un_S, label_init);

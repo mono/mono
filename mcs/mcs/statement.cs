@@ -4117,7 +4117,7 @@ namespace Mono.CSharp {
 				// Monitor.Enter (expr_copy)
 				//
 				expr_copy.Emit (ec);
-				ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+				ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.MonitorEnter.Get ());
 			}
 		}
 
@@ -4130,7 +4130,7 @@ namespace Mono.CSharp {
 				expr_copy.Emit (ec);
 				lock_taken.LocalInfo.CreateBuilder (ec);
 				lock_taken.AddressOf (ec, AddressOp.Load);
-				ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+				ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.MonitorEnter_v4.Get ());
 			}
 
 			Statement.Emit (ec);
@@ -4149,39 +4149,26 @@ namespace Mono.CSharp {
 			}
 
 			expr_copy.Emit (ec);
-			ec.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
+			var m = ec.Module.PredefinedMembers.MonitorExit.Resolve (loc);
+			if (m != null)
+				ec.Emit (OpCodes.Call, m);
+
 			ec.MarkLabel (skip);
 		}
 
 		int ResolvePredefinedMethods (ResolveContext rc)
 		{
-			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
-				TypeSpec monitor_type = rc.Module.PredefinedTypes.Monitor.Resolve (loc);
+			// Try 4.0 Monitor.Enter (object, ref bool) overload first
+			var m = rc.Module.PredefinedMembers.MonitorEnter_v4.Get ();
+			if (m != null)
+				return 4;
 
-				if (monitor_type == null)
-					return 0;
+			m = rc.Module.PredefinedMembers.MonitorEnter.Get ();
+			if (m != null)
+				return 1;
 
-				// Try 4.0 Monitor.Enter (object, ref bool) overload first
-				var filter = MemberFilter.Method ("Enter", 0, new ParametersImported (
-					new[] {
-							new ParameterData (null, Parameter.Modifier.NONE),
-							new ParameterData (null, Parameter.Modifier.REF)
-						},
-					new[] {
-							rc.BuildinTypes.Object, rc.BuildinTypes.Bool
-						}, false), null);
-
-				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (monitor_type, filter, true, loc);
-				if (TypeManager.void_monitor_enter_object == null) {
-					TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
-						monitor_type, "Enter", loc, rc.BuildinTypes.Object);
-				}
-
-				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
-					monitor_type, "Exit", loc, rc.BuildinTypes.Object);
-			}
-
-			return TypeManager.void_monitor_enter_object.Parameters.Count;
+			rc.Module.PredefinedMembers.MonitorEnter_v4.Resolve (loc);
+			return 0;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4344,16 +4331,7 @@ namespace Mono.CSharp {
 				pinned_string = new LocalVariable (vi.Block, "$pinned",
 					LocalVariable.Flags.FixedVariable | LocalVariable.Flags.CompilerGenerated | LocalVariable.Flags.Used,
 					vi.Location);
-
 				pinned_string.Type = rc.BuildinTypes.String;
-
-				if (TypeManager.int_get_offset_to_string_data == null) {
-					var helper = rc.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
-					if (helper != null) {
-						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (helper,
-							"OffsetToStringData", pinned_string.Location, rc.BuildinTypes.Int);
-					}
-				}
 
 				eclass = ExprClass.Variable;
 				type = rc.BuildinTypes.Int;
@@ -4371,7 +4349,11 @@ namespace Mono.CSharp {
 				pinned_string.Emit (ec);
 				ec.Emit (OpCodes.Conv_I);
 
-				PropertyExpr pe = new PropertyExpr (TypeManager.int_get_offset_to_string_data, pinned_string.Location);
+				var m = ec.Module.PredefinedMembers.RuntimeHelpersOffsetToStringData.Resolve (loc);
+				if (m == null)
+					return;
+
+				PropertyExpr pe = new PropertyExpr (m, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
@@ -4985,12 +4967,9 @@ namespace Mono.CSharp {
 				var loc = lv.Location;
 
 				var idt = bc.BuildinTypes.IDisposable;
-				if (TypeManager.void_dispose_void == null) {
-					TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-						idt, "Dispose", loc, TypeSpec.EmptyTypes);
-				}
+				var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 
-				var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
+				var dispose_mg = MethodGroupExpr.CreatePredefined (m, idt, loc);
 				dispose_mg.InstanceExpression = TypeManager.IsNullableType (type) ?
 					new Cast (new TypeExpression (idt, loc), lvr, loc).Resolve (bc) :
 					lvr;
@@ -5344,11 +5323,6 @@ namespace Mono.CSharp {
 				{
 					var idt = bc.BuildinTypes.IDisposable;
 
-					if (TypeManager.void_dispose_void == null) {
-						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-							idt, "Dispose", loc, TypeSpec.EmptyTypes);
-					}
-
 					//
 					// Fabricates code like
 					//
@@ -5362,7 +5336,9 @@ namespace Mono.CSharp {
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
 						loc), new NullLiteral (loc), loc);
 
-					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
+					var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
+
+					var dispose_mg = MethodGroupExpr.CreatePredefined (m, idt, loc);
 					dispose_mg.InstanceExpression = dispose_variable.CreateReferenceExpression (bc, loc);
 
 					Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
@@ -5426,14 +5402,19 @@ namespace Mono.CSharp {
 				//
 				// Option 2: Try to match using IEnumerable interfaces with preference of generic version
 				//
-				TypeSpec iface_candidate = null;
 				var t = expr.Type;
+				PredefinedMember<MethodSpec> iface_candidate = null;
+				var ptypes = rc.Module.PredefinedTypes;
+				var gen_ienumerable = ptypes.IEnumerableGeneric;
+				if (!gen_ienumerable.Define ())
+					gen_ienumerable = null;
+
 				do {
 					var ifaces = t.Interfaces;
 					if (ifaces != null) {
 						foreach (var iface in ifaces) {
-							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
-								if (iface_candidate != null && iface_candidate.BuildinType != BuildinTypeSpec.Type.IEnumerable) {
+							if (gen_ienumerable != null && iface.MemberDefinition == gen_ienumerable.TypeSpec.MemberDefinition) {
+								if (iface_candidate != null && iface_candidate != rc.Module.PredefinedMembers.IEnumerableGetEnumerator) {
 									rc.Report.SymbolRelatedToPreviousError (expr.Type);
 									rc.Report.Error (1640, loc,
 										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
@@ -5442,12 +5423,15 @@ namespace Mono.CSharp {
 									return null;
 								}
 
-								iface_candidate = iface;
+								// TODO: Cache this somehow
+								iface_candidate = new PredefinedMember<MethodSpec> (rc.Module.Compiler, iface,
+									MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null));
+
 								continue;
 							}
 
 							if (iface.BuildinType == BuildinTypeSpec.Type.IEnumerable && iface_candidate == null) {
-								iface_candidate = iface;
+								iface_candidate = rc.Module.PredefinedMembers.IEnumerableGetEnumerator;
 							}
 						}
 					}
@@ -5467,9 +5451,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				var method = TypeManager.GetPredefinedMethod (iface_candidate, 
-					MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
-
+				var method = iface_candidate.Resolve (loc);
 				if (method == null)
 					return null;
 

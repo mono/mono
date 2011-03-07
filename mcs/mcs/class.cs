@@ -1653,15 +1653,15 @@ namespace Mono.CSharp {
 			if (!seen_normal_indexers)
 				return;
 
-			PredefinedAttribute pa = Module.PredefinedAttributes.DefaultMember;
-			if (pa.Constructor == null && !pa.ResolveConstructor (Location, Compiler.BuildinTypes.String))
+			var ctor = Module.PredefinedMembers.DefaultMemberAttributeCtor.Get ();
+			if (ctor == null)
 				return;
 
 			var encoder = new AttributeEncoder ();
 			encoder.Encode (GetAttributeDefaultMember ());
 			encoder.EncodeEmptyNamedArguments ();
 
-			pa.EmitAttribute (TypeBuilder, encoder);
+			TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 
 		protected virtual void CheckEqualsAndGetHashCode ()

@@ -69,8 +69,7 @@ namespace Mono.CSharp {
 		public readonly MemberKind Kind;
 		public readonly AParametersCollection Parameters;
 		public readonly TypeSpec MemberType;
-
-		int arity; // -1 to ignore the check
+		public readonly int Arity; // -1 to ignore the check
 
 		private MemberFilter (string name, MemberKind kind)
 		{
@@ -78,7 +77,7 @@ namespace Mono.CSharp {
 			Kind = kind;
 			Parameters = null;
 			MemberType = null;
-			arity = -1;
+			Arity = -1;
 		}
 
 		public MemberFilter (MethodSpec m)
@@ -87,7 +86,7 @@ namespace Mono.CSharp {
 			Kind = MemberKind.Method;
 			Parameters = m.Parameters;
 			MemberType = m.ReturnType;
-			arity = m.Arity;
+			Arity = m.Arity;
 		}
 
 		public MemberFilter (string name, int arity, MemberKind kind, AParametersCollection param, TypeSpec type)
@@ -96,7 +95,7 @@ namespace Mono.CSharp {
 			Kind = kind;
 			Parameters = param;
 			MemberType = type;
-			this.arity = arity;
+			this.Arity = arity;
 		}
 
 		public static MemberFilter Constructor (AParametersCollection param)
@@ -129,7 +128,7 @@ namespace Mono.CSharp {
 				return false;
 
 			// Check arity when not disabled
-			if (arity >= 0 && arity != other.Arity)
+			if (Arity >= 0 && Arity != other.Arity)
 				return false;
 
 			if (Parameters != null) {

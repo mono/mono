@@ -1930,15 +1930,23 @@ namespace Mono.CSharp
 				MethodSpec method;
 				if (b.oper == Operator.Equality) {
 					if (equal_method == null) {
-						equal_method = TypeManager.GetPredefinedMethod (left,
-							new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, ReturnType), b.loc);
+						if (left.BuildinType == BuildinTypeSpec.Type.String)
+							equal_method = ec.Module.PredefinedMembers.StringEqual.Resolve (b.loc);
+						else if (left.BuildinType == BuildinTypeSpec.Type.Delegate)
+							equal_method = ec.Module.PredefinedMembers.DelegateEqual.Resolve (b.loc);
+						else
+							throw new NotImplementedException (left.GetSignatureForError ());
 					}
 
 					method = equal_method;
 				} else {
 					if (inequal_method == null) {
-						inequal_method = TypeManager.GetPredefinedMethod (left,
-							new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, ReturnType), b.loc);
+						if (left.BuildinType == BuildinTypeSpec.Type.String)
+							inequal_method = ec.Module.PredefinedMembers.StringInequal.Resolve (b.loc);
+						else if (left.BuildinType == BuildinTypeSpec.Type.Delegate)
+							inequal_method = ec.Module.PredefinedMembers.DelegateInequal.Resolve (b.loc);
+						else
+							throw new NotImplementedException (left.GetSignatureForError ());
 					}
 
 					method = inequal_method;
@@ -2973,28 +2981,19 @@ namespace Mono.CSharp
 				}
 			}
 
-			MethodSpec method;
+			MethodSpec method = null;
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (left));
 			args.Add (new Argument (right));
 
 			if (oper == Operator.Addition) {
-				if (TypeManager.delegate_combine_delegate_delegate == null) {
-					TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-						ec.BuildinTypes.Delegate, "Combine", loc, ec.BuildinTypes.Delegate, ec.BuildinTypes.Delegate);
-				}
-
-				method = TypeManager.delegate_combine_delegate_delegate;
+				method = ec.Module.PredefinedMembers.DelegateCombine.Resolve (loc);
 			} else if (oper == Operator.Subtraction) {
-				if (TypeManager.delegate_remove_delegate_delegate == null) {
-					TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-						ec.BuildinTypes.Delegate, "Remove", loc, ec.BuildinTypes.Delegate, ec.BuildinTypes.Delegate);
-				}
-
-				method = TypeManager.delegate_remove_delegate_delegate;
-			} else {
-				return new EmptyExpression (ec.BuildinTypes.Decimal);
+				method = ec.Module.PredefinedMembers.DelegateRemove.Resolve (loc);
 			}
+
+			if (method == null)
+				return new EmptyExpression (ec.BuildinTypes.Decimal);
 
 			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, ec.BuildinTypes.Delegate, loc);
 			Expression expr = new UserOperatorCall (mg.BestCandidate, args, CreateExpressionTree, loc);
@@ -5634,17 +5633,11 @@ namespace Mono.CSharp
 
 		bool DoEmitTypeParameter (EmitContext ec)
 		{
-			var activator = ec.Module.PredefinedTypes.Activator;
-			var t = activator.Resolve (loc);
-			if (t == null)
+			var m = ec.Module.PredefinedMembers.ActivatorCreateInstance.Resolve (loc);
+			if (m == null)
 				return true;
 
-			if (TypeManager.activator_create_instance == null) {
-				TypeManager.activator_create_instance = TypeManager.GetPredefinedMethod (
-					t, MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
-			}
-
-			var ctor_factory = TypeManager.activator_create_instance.MakeGenericMethod (ec.MemberContext, type);
+			var ctor_factory = m.MakeGenericMethod (ec.MemberContext, type);
 			var tparam = (TypeParameterSpec) type;
 
 			if (tparam.IsReferenceType) {
@@ -6382,17 +6375,9 @@ namespace Mono.CSharp
 		//
 		void EmitStaticInitializers (EmitContext ec)
 		{
-			if (TypeManager.void_initializearray_array_fieldhandle == null) {
-				var helper = ec.CurrentTypeDefinition.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
-				if (helper == null)
-					return;
-
-				TypeManager.void_initializearray_array_fieldhandle = TypeManager.GetPredefinedMethod (
-					helper, "InitializeArray", loc,
-					ec.BuildinTypes.Array, ec.BuildinTypes.RuntimeFieldHandle);
-				if (TypeManager.void_initializearray_array_fieldhandle == null)
-					return;
-			}
+			var m = ec.Module.PredefinedMembers.RuntimeHelpersInitializeArray.Resolve (loc);
+			if (m == null)
+				return;
 
 			//
 			// First, the static data
@@ -6402,7 +6387,7 @@ namespace Mono.CSharp
 
 			ec.Emit (OpCodes.Dup);
 			ec.Emit (OpCodes.Ldtoken, fb);
-			ec.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+			ec.Emit (OpCodes.Call, m);
 		}
 #endif
 
@@ -7070,11 +7055,6 @@ namespace Mono.CSharp
 			type = ec.BuildinTypes.Type;
 			QueriedType = texpr;
 
-			if (TypeManager.system_type_get_type_from_handle == null) {
-				TypeManager.system_type_get_type_from_handle = TypeManager.GetPredefinedMethod (
-					type, "GetTypeFromHandle", loc, ec.BuildinTypes.RuntimeTypeHandle);
-			}
-
 			// Even though what is returned is a type object, it's treated as a value by the compiler.
 			// In particular, 'typeof (Foo).X' is something totally different from 'Foo.X'.
 			eclass = ExprClass.Value;
@@ -7130,7 +7110,9 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			ec.Emit (OpCodes.Ldtoken, typearg);
-			ec.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+			var m = ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Resolve (loc);
+			if (m != null)
+				ec.Emit (OpCodes.Call, m);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7141,7 +7123,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class TypeOfMethod : TypeOfMember<MethodSpec>
+	sealed class TypeOfMethod : TypeOfMember<MethodSpec>
 	{
 		public TypeOfMethod (MethodSpec method, Location loc)
 			: base (method, loc)
@@ -7170,36 +7152,14 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Castclass, type);
 		}
 
-		protected override string GetMethodName {
-			get { return "GetMethodFromHandle"; }
-		}
-
-		protected override PredefinedType GetDeclaringType (PredefinedTypes types)
+		protected override PredefinedMember<MethodSpec> GetTypeFromHandle (EmitContext ec)
 		{
-			return types.MethodBase;
+			return ec.Module.PredefinedMembers.MethodInfoGetMethodFromHandle;
 		}
 
-		protected override PredefinedType GetRuntimeHandle (PredefinedTypes types)
+		protected override PredefinedMember<MethodSpec> GetTypeFromHandleGeneric (EmitContext ec)
 		{
-			return types.RuntimeMethodHandle;
-		}
-
-		protected override MethodSpec TypeFromHandle {
-			get {
-				return TypeManager.methodbase_get_type_from_handle;
-			}
-			set {
-				TypeManager.methodbase_get_type_from_handle = value;
-			}
-		}
-
-		protected override MethodSpec TypeFromHandleGeneric {
-			get {
-				return TypeManager.methodbase_get_type_from_handle_generic;
-			}
-			set {
-				TypeManager.methodbase_get_type_from_handle_generic = value;
-			}
+			return ec.Module.PredefinedMembers.MethodInfoGetMethodFromHandle2;
 		}
 	}
 
@@ -7223,27 +7183,6 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			bool is_generic = member.DeclaringType.IsGenericOrParentIsGeneric;
-			var mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
-
-			if (mi == null) {
-				TypeSpec declaring_type = GetDeclaringType (ec.Module.PredefinedTypes).Resolve (loc);
-				TypeSpec handle_type = GetRuntimeHandle (ec.Module.PredefinedTypes).Resolve (loc);
-
-				if (handle_type == null || declaring_type == null)
-					return null;
-
-				mi = TypeManager.GetPredefinedMethod (declaring_type, GetMethodName, loc,
-					is_generic ?
-					new TypeSpec[] { handle_type, ec.BuildinTypes.RuntimeTypeHandle } :
-					new TypeSpec[] { handle_type } );
-
-				if (is_generic)
-					TypeFromHandleGeneric = mi;
-				else
-					TypeFromHandle = mi;
-			}
-
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7251,25 +7190,24 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			bool is_generic = member.DeclaringType.IsGenericOrParentIsGeneric;
-			MethodSpec mi;
+			PredefinedMember<MethodSpec> p;
 			if (is_generic) {
-				mi = TypeFromHandleGeneric;
+				p = GetTypeFromHandleGeneric (ec);
 				ec.Emit (OpCodes.Ldtoken, member.DeclaringType);
 			} else {
-				mi = TypeFromHandle;
+				p = GetTypeFromHandle (ec);
 			}
 
-			ec.Emit (OpCodes.Call, mi);
+			var mi = p.Resolve (loc);
+			if (mi != null)
+				ec.Emit (OpCodes.Call, mi);
 		}
 
-		protected abstract PredefinedType GetDeclaringType (PredefinedTypes types);
-		protected abstract string GetMethodName { get; }
-		protected abstract PredefinedType GetRuntimeHandle (PredefinedTypes types);
-		protected abstract MethodSpec TypeFromHandle { get; set; }
-		protected abstract MethodSpec TypeFromHandleGeneric { get; set; }
+		protected abstract PredefinedMember<MethodSpec> GetTypeFromHandle (EmitContext ec);
+		protected abstract PredefinedMember<MethodSpec> GetTypeFromHandleGeneric (EmitContext ec);
 	}
 
-	class TypeOfField : TypeOfMember<FieldSpec>
+	sealed class TypeOfField : TypeOfMember<FieldSpec>
 	{
 		public TypeOfField (FieldSpec field, Location loc)
 			: base (field, loc)
@@ -7291,36 +7229,14 @@ namespace Mono.CSharp
 			base.Emit (ec);
 		}
 
-		protected override PredefinedType GetDeclaringType (PredefinedTypes types)
+		protected override PredefinedMember<MethodSpec> GetTypeFromHandle (EmitContext ec)
 		{
-			return types.FieldInfo;
+			return ec.Module.PredefinedMembers.FieldInfoGetFieldFromHandle;
 		}
 
-		protected override string GetMethodName {
-			get { return "GetFieldFromHandle"; }
-		}
-
-		protected override PredefinedType GetRuntimeHandle (PredefinedTypes types)
+		protected override PredefinedMember<MethodSpec> GetTypeFromHandleGeneric (EmitContext ec)
 		{
-			return types.RuntimeFieldHandle;
-		}
-
-		protected override MethodSpec TypeFromHandle {
-			get {
-				return TypeManager.fieldinfo_get_field_from_handle;
-			}
-			set {
-				TypeManager.fieldinfo_get_field_from_handle = value;
-			}
-		}
-
-		protected override MethodSpec TypeFromHandleGeneric {
-			get {
-				return TypeManager.fieldinfo_get_field_from_handle_generic;
-			}
-			set {
-				TypeManager.fieldinfo_get_field_from_handle_generic = value;
-			}
+			return ec.Module.PredefinedMembers.FieldInfoGetFieldFromHandle2;
 		}
 	}
 

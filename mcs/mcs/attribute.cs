@@ -1747,7 +1747,6 @@ namespace Mono.CSharp {
 	public class PredefinedAttribute : PredefinedType
 	{
 		protected MethodSpec ctor;
-		List<PropertySpec> properties;
 
 		public PredefinedAttribute (ModuleContainer module, string ns, string name)
 			: base (module, MemberKind.Class, ns, name)
@@ -1852,31 +1851,6 @@ namespace Mono.CSharp {
 			return (ConstructorInfo) ctor.GetMetaInfo ();
 		}
 
-		public PropertySpec GetProperty (string name, TypeSpec memberType, Location loc)
-		{
-			PropertySpec spec;
-
-			if (properties != null) {
-				spec = properties.Find (l => l.Name == name);
-			} else {
-				spec = null;
-			}
-
-			if (spec == null) {
-				spec = TypeManager.GetPredefinedProperty (type, name, loc, memberType);
-
-				if (spec != null) {
-					if (properties == null) {
-						properties = new List<PropertySpec> ();
-					}
-
-					properties.Add (spec);
-				}
-			}
-
-			return spec;
-		}
-
 		public bool ResolveBuilder ()
 		{
 			if (ctor != null)
@@ -1888,19 +1862,7 @@ namespace Mono.CSharp {
 			if (!IsDefined)
 				return false;
 
-			ctor = TypeManager.GetPredefinedConstructor (type, Location.Null, TypeSpec.EmptyTypes);
-			return ctor != null;
-		}
-
-		public bool ResolveConstructor (Location loc, params TypeSpec[] argType)
-		{
-			if (ctor != null)
-				throw new InternalErrorException ("Predefined ctor redefined");
-
-			if (Resolve (loc) == null)
-				return false;
-
-			ctor = TypeManager.GetPredefinedConstructor (type, loc, argType);
+			ctor = (MethodSpec) MemberCache.FindMember (type, MemberFilter.Constructor (ParametersCompiled.EmptyReadOnlyParameters), BindingRestriction.DeclaredOnly);
 			return ctor != null;
 		}
 	}
@@ -1914,11 +1876,8 @@ namespace Mono.CSharp {
 
 		public void EmitAttribute (ParameterBuilder builder, decimal value, Location loc)
 		{
-			if (Resolve (loc) == null)
-				return;
-
-			if (ctor == null && !ResolveConstructor (loc, module.Compiler.BuildinTypes.Byte, module.Compiler.BuildinTypes.Byte,
-				module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt))
+			var ctor = module.PredefinedMembers.DecimalConstantAttributeCtor.Resolve (loc);
+			if (ctor == null)
 				return;
 
 			int[] bits = decimal.GetBits (value);
@@ -1930,16 +1889,13 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			EmitAttribute (builder, encoder);
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 
 		public void EmitAttribute (FieldBuilder builder, decimal value, Location loc)
 		{
-			if (Resolve (loc) == null)
-				return;
-
-			if (ctor == null && !ResolveConstructor (loc, module.Compiler.BuildinTypes.Byte, module.Compiler.BuildinTypes.Byte,
-				module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt, module.Compiler.BuildinTypes.UInt))
+			var ctor = module.PredefinedMembers.DecimalConstantAttributeCtor.Resolve (loc);
+			if (ctor == null)
 				return;
 
 			int[] bits = decimal.GetBits (value);
@@ -1951,7 +1907,7 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			EmitAttribute (builder, encoder);
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 	}
 
@@ -2060,10 +2016,7 @@ namespace Mono.CSharp {
 			if (tctor != null)
 				return true;
 
-			if (Resolve (loc) == null)
-				return false;
-
-			tctor = TypeManager.GetPredefinedConstructor (type, Location.Null, ArrayContainer.MakeType (module, module.Compiler.BuildinTypes.Bool));
+			tctor = module.PredefinedMembers.DynamicAttributeCtor.Resolve (loc);
 			return tctor != null;
 		}
 	}
