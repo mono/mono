@@ -95,6 +95,9 @@ namespace System.Xml.Linq
 		public static XDocument Load (string uri, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+#if !MOONLIGHT
+			s.ProhibitDtd = false; // see XNodeNavigatorTest.MoveToId().
+#endif
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
 				return LoadCore (r, options);
