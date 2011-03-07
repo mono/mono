@@ -67,6 +67,7 @@ namespace System.Reflection.Emit {
 		private MonoMethod method;
 		private ParameterBuilder[] pinfo;
 		internal bool creating;
+		private DynamicILInfo il_info;
 
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Module m) : this (name, returnType, parameterTypes, m, false) {
 		}
@@ -213,9 +214,10 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		public DynamicILInfo GetDynamicILInfo () {
-			throw new NotImplementedException ();
+			if (il_info == null)
+				il_info = new DynamicILInfo (this);
+			return il_info;
 		}
 
 		public ILGenerator GetILGenerator () {

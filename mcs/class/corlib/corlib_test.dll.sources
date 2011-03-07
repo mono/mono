@@ -148,6 +148,7 @@ System.Reflection.Emit/ConstructorOnTypeBuilderInstTest.cs
 System.Reflection.Emit/CustomAttributeBuilderTest.cs
 System.Reflection.Emit/DerivedTypesTest.cs
 System.Reflection.Emit/DynamicMethodTest.cs
+System.Reflection.Emit/DynamicILInfoTest.cs
 System.Reflection.Emit/EnumBuilderTest.cs
 System.Reflection.Emit/EventBuilderTest.cs
 System.Reflection.Emit/FieldBuilderTest.cs
