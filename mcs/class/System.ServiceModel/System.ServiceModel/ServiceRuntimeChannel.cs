@@ -35,8 +35,11 @@ using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel.MonoInternal
 {
+#if DISABLE_REAL_PROXY
 	// FIXME: this is a (similar) workaround for bug 571907.
-	public class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel
+	public
+#endif
+	class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel, IInternalContextChannel
 	{
 		public DuplexServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 			: base (channel, runtime)
@@ -47,12 +50,13 @@ namespace System.ServiceModel.MonoInternal
 			var crt = runtime.CallbackClientRuntime;
 			if (crt == null)
 				throw new InvalidOperationException ("The DispatchRuntime does not have CallbackClientRuntime");
-			var cd = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
-			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
+			contract = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
+			client = new ClientRuntimeChannel (crt, contract, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
 							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);
 		}
 
 		ClientRuntimeChannel client;
+		ContractDescription contract;
 
 		public override bool AllowOutputBatching {
 			get { return client.AllowOutputBatching; }
@@ -70,6 +74,10 @@ namespace System.ServiceModel.MonoInternal
 		}
 
 		public InstanceContext CallbackInstance { get; set; }
+
+		public ContractDescription Contract {
+			get { return contract; }
+		}
 
 		Action<TimeSpan> session_shutdown_delegate;
 
@@ -108,8 +116,11 @@ namespace System.ServiceModel.MonoInternal
 		}
 	}
 
+#if DISABLE_REAL_PROXY
 	// FIXME: this is a (similar) workaround for bug 571907.
-	public class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
+	public
+#endif
+	class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
 	{
 		IExtensionCollection<IContextChannel> extensions;
 		readonly IChannel channel;

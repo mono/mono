@@ -1,3 +1,4 @@
+#if DISABLE_REAL_PROXY
 //
 // ClientProxyGenerator.cs
 //
@@ -305,4 +306,6 @@ namespace System.ServiceModel
 		}
 	}
 }
+#endif
+
 #endif
