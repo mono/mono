@@ -13,7 +13,10 @@ class Test {
 		string color  = null;
 
 		var p = new OptionSet () {
-			// gcc-like options
+			"Usage: bundling [OPTIONS]+",
+			"Demo program to show the effects of bundling options and their values",
+			"",
+			"gcc-like options:",
 			{ "D:", "Predefine a macro with an (optional) value.",
 				(m, v) => {
 					if (m == null)
@@ -25,17 +28,20 @@ class Test {
 				(m, v) => macros.Add (m, v) },
 			{ "o=", "Specify the output file", v => output = v },
 
-			// tar-like options
+			"",
+			"tar-like options:",
 			{ "f=", "The input file",   v => input = v },
 			{ "x",  "Extract the file", v => extract = v != null },
 			{ "c",  "Create the file",  v => create = v != null },
 			{ "t",  "List the file",    v => list = v != null },
 
-			// ls-like optional values
+			"",
+			"ls-like optional values:",
 			{ "color:", "control whether and when color is used", 
 				v => color = v },
 
-			// other...
+			"",
+			"other:",
 			{ "h|help",  "show this message and exit", 
 			  v => show_help = v != null },
 			// default
@@ -54,7 +60,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -69,15 +75,6 @@ class Test {
 		Console.WriteLine ("\t    Extract: {0}", extract);
 		Console.WriteLine ("\t       List: {0}", list);
 		Console.WriteLine ("\t      Color: {0}", color ?? "<null>");
-	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: bundling [OPTIONS]+");
-		Console.WriteLine ("Demo program to show the effects of bundling options and their values");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
 	}
 }
 

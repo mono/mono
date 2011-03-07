@@ -6,6 +6,7 @@
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
     <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -30,6 +31,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="set" Type="Mono.Options.OptionSet" />
@@ -56,6 +58,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.Option</ReturnType>
@@ -75,6 +78,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -102,6 +106,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -125,6 +130,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -155,6 +161,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueCollection</ReturnType>

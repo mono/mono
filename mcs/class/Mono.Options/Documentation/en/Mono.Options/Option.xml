@@ -6,6 +6,7 @@
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
     <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
     All members of this type are safe for multithreaded operations.
@@ -94,6 +95,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -164,6 +166,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -360,6 +363,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -393,6 +397,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -423,6 +428,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -474,6 +480,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -527,6 +534,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -566,6 +574,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -754,6 +763,7 @@ class Demo {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
@@ -784,6 +794,7 @@ class Demo {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>T</ReturnType>
@@ -845,6 +856,7 @@ class Demo {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -880,6 +892,7 @@ class Demo {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

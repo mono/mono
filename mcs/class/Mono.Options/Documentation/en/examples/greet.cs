@@ -12,6 +12,11 @@ class Test {
 		int repeat = 1;
 
 		var p = new OptionSet () {
+			"Usage: greet [OPTIONS]+ message",
+			"Greet a list of individuals with an optional message.",
+			"If no message is specified, a generic greeting is used.",
+			"",
+			"Options:",
 			{ "n|name=", "the {NAME} of someone to greet.",
 			  v => names.Add (v) },
 			{ "r|repeat=", 
@@ -36,7 +41,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -54,16 +59,6 @@ class Test {
 			for (int i = 0; i < repeat; ++i)
 				Console.WriteLine (message, name);
 		}
-	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: greet [OPTIONS]+ message");
-		Console.WriteLine ("Greet a list of individuals with an optional message.");
-		Console.WriteLine ("If no message is specified, a generic greeting is used.");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
 	}
 
 	static void Debug (string format, params object[] args)

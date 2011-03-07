@@ -6,6 +6,7 @@
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
     <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
     All public static members of this type are safe for multithreaded
@@ -53,6 +54,13 @@
       <para>
         Response files, as used by <c>mcs</c> and other compiler tools, may be
         supported by using <see cref="T:Mono.Options.ResponseFileSource" />.
+      </para>
+      <para>
+        "Headers" -- string constants which allow grouping of options in the
+        output of
+        <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />
+        -- may be provided "inline" with the actual options. The <c>greet</c>
+        example below shows such usage.
       </para>
       <para>
         Three conditions must be met for a sequence of arguments to be
@@ -291,7 +299,7 @@
     </remarks>
     <example>
       <para>
-        The following example demonstrates some simple usage of 
+        The following <c>greet</c> example demonstrates some simple usage of
         <see cref="T:Mono.Options.OptionSet" />.
       </para>
       <code lang="C#" src="examples/greet.cs">using System;
@@ -308,6 +316,11 @@ class Test {
 		int repeat = 1;
 
 		var p = new OptionSet () {
+			"Usage: greet [OPTIONS]+ message",
+			"Greet a list of individuals with an optional message.",
+			"If no message is specified, a generic greeting is used.",
+			"",
+			"Options:",
 			{ "n|name=", "the {NAME} of someone to greet.",
 			  v =&gt; names.Add (v) },
 			{ "r|repeat=", 
@@ -332,7 +345,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -350,16 +363,6 @@ class Test {
 			for (int i = 0; i &lt; repeat; ++i)
 				Console.WriteLine (message, name);
 		}
-	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: greet [OPTIONS]+ message");
-		Console.WriteLine ("Greet a list of individuals with an optional message.");
-		Console.WriteLine ("If no message is specified, a generic greeting is used.");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
 	}
 
 	static void Debug (string format, params object[] args)
@@ -455,7 +458,10 @@ class Test {
 		string color  = null;
 
 		var p = new OptionSet () {
-			// gcc-like options
+			"Usage: bundling [OPTIONS]+",
+			"Demo program to show the effects of bundling options and their values",
+			"",
+			"gcc-like options:",
 			{ "D:", "Predefine a macro with an (optional) value.",
 				(m, v) =&gt; {
 					if (m == null)
@@ -467,17 +473,20 @@ class Test {
 				(m, v) =&gt; macros.Add (m, v) },
 			{ "o=", "Specify the output file", v =&gt; output = v },
 
-			// tar-like options
+			"",
+			"tar-like options:",
 			{ "f=", "The input file",   v =&gt; input = v },
 			{ "x",  "Extract the file", v =&gt; extract = v != null },
 			{ "c",  "Create the file",  v =&gt; create = v != null },
 			{ "t",  "List the file",    v =&gt; list = v != null },
 
-			// ls-like optional values
+			"",
+			"ls-like optional values:",
 			{ "color:", "control whether and when color is used", 
 				v =&gt; color = v },
 
-			// other...
+			"",
+			"other:",
 			{ "h|help",  "show this message and exit", 
 			  v =&gt; show_help = v != null },
 			// default
@@ -496,7 +505,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -512,15 +521,6 @@ class Test {
 		Console.WriteLine ("\t       List: {0}", list);
 		Console.WriteLine ("\t      Color: {0}", color ?? "&lt;null&gt;");
 	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: bundling [OPTIONS]+");
-		Console.WriteLine ("Demo program to show the effects of bundling options and their values");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
-	}
 }
 
 </code>
@@ -531,15 +531,21 @@ class Test {
 Usage: bundling [OPTIONS]+
 Demo program to show the effects of bundling options and their values
 
-Options:
+gcc-like options:
   -D[=VALUE1:VALUE2]         Predefine a macro with an (optional) value.
   -d=VALUE1--&gt;VALUE2         Alternate macro syntax.
   -o=VALUE                   Specify the output file
+
+tar-like options:
   -f=VALUE                   The input file
   -x                         Extract the file
   -c                         Create the file
   -t                         List the file
+
+ls-like optional values:
       --color[=VALUE]        control whether and when color is used
+
+other:
   -h, --help                 show this message and exit
 
 $ mono bundling.exe -D
@@ -830,6 +836,7 @@ Key: a\b\c=d\e\f
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -856,6 +863,7 @@ Key: a\b\c=d\e\f
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
@@ -1026,6 +1034,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1062,6 +1071,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1100,6 +1110,41 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string header);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string header) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">
+          A <see cref="T:System.String" /> containing the header to display
+          during <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </param>
+        <summary>
+          Declare a header to be printed during
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            The <c>Add(string)</c> method can be used to provide option groupin
+            in the output generatedy by
+            <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, Mono.Options.OptionAction&lt;string,string&gt; action);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, class Mono.Options.OptionAction`2&lt;string, string&gt; action) cil managed" />
       <MemberType>Method</MemberType>
@@ -1107,6 +1152,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1168,6 +1214,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1229,6 +1276,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1300,6 +1348,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1361,6 +1410,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1422,6 +1472,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1517,6 +1568,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1590,6 +1642,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1674,6 +1727,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;Mono.Options.ArgumentSource&gt;</ReturnType>
@@ -1703,6 +1757,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionContext</ReturnType>
@@ -1742,6 +1797,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       <AssemblyInfo>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1794,6 +1850,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1842,6 +1899,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1936,6 +1994,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1968,6 +2027,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Converter&lt;System.String,System.String&gt;</ReturnType>
@@ -1999,6 +2059,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.List&lt;System.String&gt;</ReturnType>
@@ -2104,6 +2165,11 @@ class Test {
 		int repeat = 1;
 
 		var p = new OptionSet () {
+			"Usage: greet [OPTIONS]+ message",
+			"Greet a list of individuals with an optional message.",
+			"If no message is specified, a generic greeting is used.",
+			"",
+			"Options:",
 			{ "n|name=", "the {NAME} of someone to greet.",
 			  v =&gt; names.Add (v) },
 			{ "r|repeat=", 
@@ -2128,7 +2194,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -2146,16 +2212,6 @@ class Test {
 			for (int i = 0; i &lt; repeat; ++i)
 				Console.WriteLine (message, name);
 		}
-	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: greet [OPTIONS]+ message");
-		Console.WriteLine ("Greet a list of individuals with an optional message.");
-		Console.WriteLine ("If no message is specified, a generic greeting is used.");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
 	}
 
 	static void Debug (string format, params object[] args)
@@ -2179,6 +2235,7 @@ class Test {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2276,6 +2333,7 @@ class Test {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2304,6 +2362,7 @@ class Test {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2338,6 +2397,7 @@ class Test {
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2411,6 +2471,11 @@ class Test {
 		int repeat = 1;
 
 		var p = new OptionSet () {
+			"Usage: greet [OPTIONS]+ message",
+			"Greet a list of individuals with an optional message.",
+			"If no message is specified, a generic greeting is used.",
+			"",
+			"Options:",
 			{ "n|name=", "the {NAME} of someone to greet.",
 			  v =&gt; names.Add (v) },
 			{ "r|repeat=", 
@@ -2435,7 +2500,7 @@ class Test {
 		}
 
 		if (show_help) {
-			ShowHelp (p);
+			p.WriteOptionDescriptions (Console.Out);
 			return;
 		}
 
@@ -2453,16 +2518,6 @@ class Test {
 			for (int i = 0; i &lt; repeat; ++i)
 				Console.WriteLine (message, name);
 		}
-	}
-
-	static void ShowHelp (OptionSet p)
-	{
-		Console.WriteLine ("Usage: greet [OPTIONS]+ message");
-		Console.WriteLine ("Greet a list of individuals with an optional message.");
-		Console.WriteLine ("If no message is specified, a generic greeting is used.");
-		Console.WriteLine ();
-		Console.WriteLine ("Options:");
-		p.WriteOptionDescriptions (Console.Out);
 	}
 
 	static void Debug (string format, params object[] args)
