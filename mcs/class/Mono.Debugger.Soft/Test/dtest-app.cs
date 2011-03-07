@@ -584,6 +584,14 @@ public class Tests : TestsBase
 		return 42;
 	}
 
+	public int? invoke_return_nullable () {
+		return 42;
+	}
+
+	public int? invoke_return_nullable_null () {
+		return null;
+	}
+
 	public void invoke_type_load () {
 		new Class3 ();
 	}
