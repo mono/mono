@@ -1740,6 +1740,16 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
 
+		// return nullable
+		m = t.GetMethod ("invoke_return_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, null);
+		Assert.IsInstanceOfType (typeof (StructMirror), v);
+
+		// return nullable null
+		m = t.GetMethod ("invoke_return_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, null);
+		AssertValue (null, v);
+
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
 		Value[] args = new Value [] {
