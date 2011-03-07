@@ -38,9 +38,27 @@ using System.Xml;
 
 namespace System.ServiceModel.MonoInternal
 {
+#if DISABLE_REAL_PROXY
 	// FIXME: This is a quick workaround for bug #571907
-	public class ClientRuntimeChannel
-		: CommunicationObject, IClientChannel
+	public
+#endif
+	interface IInternalContextChannel
+	{
+		ContractDescription Contract { get; }
+
+		object Process (MethodBase method, string operationName, object [] parameters);
+
+		IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState);
+
+		object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result);
+	}
+
+#if DISABLE_REAL_PROXY
+	// FIXME: This is a quick workaround for bug #571907
+	public
+#endif
+	class ClientRuntimeChannel
+		: CommunicationObject, IClientChannel, IInternalContextChannel
 	{
 		ClientRuntime runtime;
 		EndpointAddress remote_address;
@@ -363,7 +381,8 @@ namespace System.ServiceModel.MonoInternal
 		protected override void OnClose (TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
-			channel.Close (timeout);
+			if (channel.State == CommunicationState.Opened)
+				channel.Close (timeout);
 		}
 
 		Action<TimeSpan> open_callback;

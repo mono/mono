@@ -1,3 +1,4 @@
+#if DISABLE_REAL_PROXY
 //
 // ServiceProxyGenerator.cs
 //
@@ -79,3 +80,4 @@ namespace System.ServiceModel
 		}
 	}
 }
+#endif

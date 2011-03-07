@@ -171,6 +171,7 @@ System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
 System.ServiceModel/ClientBase.cs
 System.ServiceModel/ClientProxyGenerator.cs
+System.ServiceModel/ClientRealProxy.cs
 System.ServiceModel/ClientRuntimeChannel.cs
 System.ServiceModel/CommunicationException.cs
 System.ServiceModel/CommunicationObjectAbortedException.cs

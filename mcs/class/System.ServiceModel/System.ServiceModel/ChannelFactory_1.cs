@@ -28,9 +28,11 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel
 {
@@ -116,7 +118,10 @@ namespace System.ServiceModel
 		static TChannel CreateChannelCore (ChannelFactory<TChannel> cf, Func<ChannelFactory<TChannel>, TChannel> f)
 		{
 			var ch = f (cf);
-			((CommunicationObject) (object) ch).Closed += delegate { cf.Close (); };
+			((ICommunicationObject) (object) ch).Closed += delegate {
+				if (cf.State == CommunicationState.Opened)
+					cf.Close ();
+			};
 			return ch;
 		}
 
@@ -141,16 +146,23 @@ namespace System.ServiceModel
 			Endpoint.Address = address;
 			EnsureOpened ();
 			Endpoint.Validate ();
+#if DISABLE_REAL_PROXY
 			Type type = ClientProxyGenerator.CreateProxyType (typeof (TChannel), Endpoint.Contract, false);
 			// in .NET and SL2, it seems that the proxy is RealProxy.
 			// But since there is no remoting in SL2 (and we have
 			// no special magic), we have to use different approach
 			// that should work either.
 			var proxy = (IClientChannel) Activator.CreateInstance (type, new object [] {Endpoint, this, address ?? Endpoint.Address, via});
-			OpenedChannels.Add (proxy);
-			proxy.Closed += delegate {
+#else
+			var proxy = (IClientChannel) new ClientRealProxy (typeof (TChannel), new ClientRuntimeChannel (Endpoint, this, address ?? Endpoint.Address, via), false).GetTransparentProxy ();
+#endif
+			proxy.Opened += delegate {
+				OpenedChannels.Add (proxy);
+			};
+			proxy.Closing += delegate {
 				OpenedChannels.Remove (proxy);
 			};
+
 			return (TChannel) proxy;
 			} catch (TargetInvocationException ex) {
 				if (ex.InnerException != null)
