@@ -197,8 +197,68 @@ namespace Microsoft.Build.BuildEngine {
 		public void ApplyParameter (string parameterName,
 					    string parameterValue)
 		{
-			// FIXME: what we should do here? in msbuild it isn't
-			// changing "parameters" property
+			switch (parameterName) {
+				case "PerformanceSummary":
+					this.performanceSummary = true;
+					break;
+				case "Summary":
+					this.showSummary = true;
+					break;
+				case "NoSummary":
+					this.showSummary = false;
+					break;
+				case "NoItemAndPropertyList":
+					this.noItemAndPropertyList = true;
+					break;
+				default:
+					if (parameterName.StartsWith ("Verbosity="))
+						ParseVerbosity (parameterName);
+					break;
+			}
+		}
+
+		void ParseVerbosity (string s)
+		{
+			string key, value;
+			if (!TrySplitKeyValuePair (s, out key, out value))
+				throw new LoggerException ("Unknown Verbosity, should be set as 'Verbosity=<verbosity>'");
+
+			switch (value) {
+			case "q":
+			case "quiet":
+				Verbosity = LoggerVerbosity.Quiet;
+				break;
+			case "m":
+			case "minimal":
+				Verbosity = LoggerVerbosity.Minimal;
+				break;
+			case "n":
+			case "normal":
+				Verbosity = LoggerVerbosity.Normal;
+				break;
+			case "d":
+			case "detailed":
+				Verbosity = LoggerVerbosity.Detailed;
+				break;
+			case "diag":
+			case "diagnostic":
+				Verbosity = LoggerVerbosity.Diagnostic;
+				break;
+			default:
+				throw new LoggerException (String.Format ("Unknown verbosity - '{0}'", s));
+			}
+		}
+
+		bool TrySplitKeyValuePair (string pair, out string key, out string value)
+		{
+			key = value = null;
+			string[] parts = pair.Split ('=');
+			if (parts.Length != 2)
+				return false;
+
+			key = parts [0];
+			value = parts [1];
+			return true;
 		}
 
 		public virtual void Initialize (IEventSource eventSource)
@@ -220,6 +280,9 @@ namespace Microsoft.Build.BuildEngine {
 			eventSource.MessageRaised += MessageHandler;
 			eventSource.WarningRaised += WarningHandler;
 			eventSource.ErrorRaised += ErrorHandler;
+
+			if (!String.IsNullOrEmpty (parameters))
+				ParseParameters ();
 		}
 
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
@@ -607,21 +670,8 @@ namespace Microsoft.Build.BuildEngine {
 		private void ParseParameters ()
 		{
 			string[] splittedParameters = parameters.Split (';');
-			foreach (string s in splittedParameters ) {
-				switch (s) {
-				case "PerformanceSummary":
-					this.performanceSummary = true;
-					break;
-				case "NoSummary":
-					this.showSummary = false;
-					break;
-				case "NoItemAndPropertyList":
-					this.noItemAndPropertyList = true;
-					break;
-				default:
-					throw new ArgumentException ("Invalid parameter : " + s);
-				}
-			}
+			foreach (string s in splittedParameters )
+				ApplyParameter (s, null);
 		}
 		
 		public virtual void Shutdown ()
@@ -779,8 +829,6 @@ namespace Microsoft.Build.BuildEngine {
 				if (value == null)
 					throw new ArgumentNullException ();
 				parameters = value;
-				if (parameters != String.Empty)
-					ParseParameters ();
 			}
 		}
 
