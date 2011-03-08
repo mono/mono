@@ -858,7 +858,7 @@ namespace System.Runtime.Serialization
 			return DeserializeContent (reader, deserializer, id);
 		}
 
-		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer, string id)
+		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			object instance = CreateInstance ();
 			HandleId (id, deserializer, instance);
@@ -872,7 +872,9 @@ namespace System.Runtime.Serialization
 				object key = deserializer.Deserialize (key_type, reader);
 				reader.MoveToContent ();
 				object val = deserializer.Deserialize (value_type, reader);
+				reader.MoveToContent ();
 				reader.ReadEndElement (); // of pair
+				reader.MoveToContent ();
 
 				if (instance is IDictionary)
 					((IDictionary)instance).Add (key, val);
