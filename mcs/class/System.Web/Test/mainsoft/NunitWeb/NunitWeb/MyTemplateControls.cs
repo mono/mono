@@ -35,12 +35,8 @@ namespace MyTemplateControls
     {
       container = new TestContainerControl (this);
     }
-#if SYSTEM_WEB_EXTENSIONS
-    protected
-#else
-    protected internal 
-#endif
-    override void CreateChildControls ()
+    
+    protected override void CreateChildControls ()
     {
       Controls.Clear ();
       container.AddItem ();
