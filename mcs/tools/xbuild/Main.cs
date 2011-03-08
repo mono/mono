@@ -98,6 +98,21 @@ namespace Mono.XBuild.CommandLine {
 					cl.Verbosity = parameters.LoggerVerbosity; 
 					engine.RegisterLogger (cl);
 				}
+
+				if (parameters.FileLoggerParameters != null) {
+					for (int i = 0; i < parameters.FileLoggerParameters.Length; i ++) {
+						string fl_params = parameters.FileLoggerParameters [i];
+						if (fl_params == null)
+							continue;
+
+						var fl = new FileLogger ();
+						if (fl_params.Length == 0 && i > 0)
+							fl.Parameters = String.Format ("LogFile=msbuild{0}.log", i);
+						else
+							fl.Parameters = fl_params;
+						engine.RegisterLogger (fl);
+					}
+				}
 				
 				foreach (LoggerInfo li in parameters.Loggers) {
 					Assembly assembly;

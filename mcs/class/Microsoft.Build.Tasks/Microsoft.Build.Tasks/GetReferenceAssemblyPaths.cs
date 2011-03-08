@@ -265,7 +265,6 @@ namespace Microsoft.Build.Tasks
 	}
 
 	class Framework {
-		public string Moniker;
 		public string[] Directories;
 		public string DisplayName;
 	}

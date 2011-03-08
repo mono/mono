@@ -35,9 +35,9 @@ namespace Microsoft.Build.BuildEngine {
 	internal class BuildChoose {
 		
 		BuildWhen	otherwise;
-		Project		project;
-		ImportedProject	importedProject;
-		XmlElement	xmlElement;
+		//Project		project;
+		//ImportedProject	importedProject;
+		//XmlElement	xmlElement;
 		List <BuildWhen>	whens;
 		
 		public BuildChoose (XmlElement xmlElement, Project project)
@@ -47,9 +47,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal BuildChoose (XmlElement xmlElement, Project project, ImportedProject importedProject)
 		{
-			this.xmlElement = xmlElement;
-			this.project = project;
-			this.importedProject = importedProject;
+			//this.xmlElement = xmlElement;
+			//this.project = project;
+			//this.importedProject = importedProject;
 			this.whens = new List <BuildWhen> ();
 
 			foreach (XmlNode xn in xmlElement.ChildNodes) {
