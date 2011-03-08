@@ -216,7 +216,7 @@ namespace Mono.CSharp
 				if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "FixedBufferAttribute", CompilerServicesNamespace)) {
 
-					// TODO: Sanity check on field_type (only few type are allowed)
+					// TODO: Sanity check on field_type (only few types are allowed)
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
 					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
 				}

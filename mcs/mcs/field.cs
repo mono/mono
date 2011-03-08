@@ -409,10 +409,11 @@ namespace Mono.CSharp
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
 				Compiler.BuildinTypes.ValueType.GetMetaInfo ());
 
-			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
+			var ffield = fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
-			var element_spec = new FieldSpec (null, this, MemberType, FieldBuilder, ModFlags);
+
+			var element_spec = new FieldSpec (null, this, MemberType, ffield, ModFlags);
 			spec = new FixedFieldSpec (Parent.Definition, this, FieldBuilder, element_spec, ModFlags);
 
 			Parent.MemberCache.AddMember (spec);
@@ -446,14 +447,6 @@ namespace Mono.CSharp
 				return;
 			}
 
-			int type_size = BuildinTypeSpec.GetSize (MemberType);
-
-			if (buffer_size > int.MaxValue / type_size) {
-				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
-					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
-				return;
-			}
-
 			EmitFieldSize (buffer_size);
 
 #if STATIC
@@ -470,6 +463,14 @@ namespace Mono.CSharp
 
 		void EmitFieldSize (int buffer_size)
 		{
+			int type_size = BuildinTypeSpec.GetSize (MemberType);
+
+			if (buffer_size > int.MaxValue / type_size) {
+				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
+					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+				return;
+			}
+
 			AttributeEncoder encoder;
 
 			var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
@@ -488,7 +489,7 @@ namespace Mono.CSharp
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
 				new Constant [] { 
-					new IntConstant (Compiler.BuildinTypes, buffer_size, Location),
+					new IntConstant (Compiler.BuildinTypes, buffer_size * type_size, Location),
 					new IntConstant (Compiler.BuildinTypes, (int) char_set, Location)
 				}
 			);
