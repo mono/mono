@@ -109,7 +109,9 @@ namespace System.ServiceModel.Syndication
 
 		public XmlReader GetReader ()
 		{
-			return handler.GetReader ();
+			var r = handler.GetReader ();
+			r.MoveToContent ();
+			return r;
 		}
 
 		public void WriteTo (XmlWriter writer)

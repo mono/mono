@@ -112,5 +112,16 @@ namespace MonoTests.System.ServiceModel.Syndication
 			s.OmitXmlDeclaration = true;
 			return XmlWriter.Create (sw, s);
 		}
+
+		[Test]
+		public void GetReaderAtContent ()
+		{
+			var x = new SyndicationElementExtension (6);
+			// premise.
+			Assert.AreEqual ("<int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">6</int>", x.GetReader ().ReadOuterXml (), "#1");
+
+			var t = new XmlSyndicationContent ("text/xml", 6, (XmlObjectSerializer) null);
+			Assert.AreEqual ("<content type=\"text/xml\" xmlns=\"http://www.w3.org/2005/Atom\"><int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">6</int></content>", t.GetReaderAtContent ().ReadOuterXml (), "#2");
+		}
 	}
 }
