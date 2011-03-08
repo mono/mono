@@ -872,7 +872,7 @@ namespace Mono.CSharp {
 			if (delegate_type.IsDelegate)
 				return delegate_type;
 
-			if (delegate_type.IsGeneric && delegate_type.GetDefinition () == TypeManager.expression_type) {
+			if (delegate_type.IsExpressionTreeType) {
 				delegate_type = delegate_type.TypeArguments [0];
 				if (delegate_type.IsDelegate)
 					return delegate_type;
@@ -965,7 +965,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!delegate_type.IsDelegate) {
-				if (delegate_type.GetDefinition () != TypeManager.expression_type)
+				if (!delegate_type.IsExpressionTreeType)
 					return false;
 
 				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];

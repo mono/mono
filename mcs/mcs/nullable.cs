@@ -79,11 +79,6 @@ namespace Mono.CSharp.Nullable
 		{
 			return ((InflatedTypeSpec) nullableType).TypeArguments[0];
 		}
-
-		public static bool IsNullableType (TypeSpec type)
-		{
-			throw new NotImplementedException ("net");
-		}
 	}
 
 	public class Unwrap : Expression, IMemoryLocation, IAssignMethod
@@ -406,7 +401,7 @@ namespace Mono.CSharp.Nullable
 			//
 			if (unwrap == null) {
 				// S -> T? is wrap only
-				if (TypeManager.IsNullableType (type))
+				if (type.IsNullableType)
 					return Wrap.Create (expr, type);
 
 				// S -> T can be simplified
@@ -414,7 +409,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			// Wrap target for T?
-			if (TypeManager.IsNullableType (type)) {
+			if (type.IsNullableType) {
 				expr = Wrap.Create (expr, type);
 				if (expr == null)
 					return null;
@@ -633,14 +628,14 @@ namespace Mono.CSharp.Nullable
 
 			bool use_default_call = (Oper & (Operator.BitwiseMask | Operator.EqualityMask)) != 0;
 			left_orig = left;
-			if (TypeManager.IsNullableType (left.Type)) {
+			if (left.Type.IsNullableType) {
 				left = left_unwrap = Unwrap.Create (left, use_default_call);
 				if (left == null)
 					return null;
 			}
 
 			right_orig = right;
-			if (TypeManager.IsNullableType (right.Type)) {
+			if (right.Type.IsNullableType) {
 				right = right_unwrap = Unwrap.Create (right, use_default_call);
 				if (right == null)
 					return null;
@@ -862,7 +857,7 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
-			if (TypeManager.IsNullableType (l))
+			if (l.IsNullableType)
 				l = TypeManager.GetTypeArguments (l) [0];
 
 			base.EmitOperator (ec, l);
@@ -1068,7 +1063,7 @@ namespace Mono.CSharp.Nullable
 			// If left is a nullable type and an implicit conversion exists from right to underlying type of left,
 			// the result is underlying type of left
 			//
-			if (TypeManager.IsNullableType (ltype)) {
+			if (ltype.IsNullableType) {
 				unwrap = Unwrap.Create (left, false);
 				if (unwrap == null)
 					return null;

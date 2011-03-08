@@ -916,6 +916,8 @@ namespace Mono.CSharp {
 			InterfacesExpanded = 1 << 16,
 			IsNotRealProperty = 1 << 17,
 			SpecialRuntimeType = 1 << 18,
+			InflatedExpressionType = 1 << 19,
+			InflatedNullableType = 1 << 20,
 		}
 
 		protected Modifiers modifiers;

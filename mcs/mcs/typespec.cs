@@ -167,6 +167,18 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Returns true for instances of Expression<T>
+		//
+		public virtual bool IsExpressionTreeType {
+			get {
+				return false;
+			}
+			set {
+				state = value ? state | StateFlags.InflatedExpressionType : state & ~StateFlags.InflatedExpressionType;
+			}
+		}
+
 		public bool IsEnum {
 			get {
 				return Kind == MemberKind.Enum;
@@ -191,6 +203,18 @@ namespace Mono.CSharp
 
 		public bool IsGenericParameter {
 			get { return Kind == MemberKind.TypeParameter; }
+		}
+
+		//
+		// Returns true for instances of Nullable<T>
+		//
+		public virtual bool IsNullableType {
+			get {
+				return false;
+			}
+			set {
+				state = value ? state | StateFlags.InflatedNullableType : state & ~StateFlags.InflatedNullableType;
+			}
 		}
 
 		public bool IsNested {

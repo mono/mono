@@ -373,7 +373,7 @@ namespace Mono.CSharp {
 			// From a nullable-type to a reference type, if a boxing conversion exists from
 			// the underlying type to the reference type
 			//
-			if (TypeManager.IsNullableType (expr_type)) {
+			if (expr_type.IsNullableType) {
 				if (!TypeManager.IsReferenceType (target_type))
 					return null;
 
@@ -427,7 +427,7 @@ namespace Mono.CSharp {
 			TypeSpec t_el = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
 			// S? -> T?
-			if (TypeManager.IsNullableType (expr_type))
+			if (expr_type.IsNullableType)
 				expr_type = Nullable.NullableInfo.GetUnderlyingType (expr_type);
 
 			//
@@ -664,7 +664,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (expr.Type == InternalType.AnonymousMethod) {
-				if (!TypeManager.IsDelegateType (target_type) && target_type.GetDefinition () != TypeManager.expression_type)
+				if (!target_type.IsDelegate && !target_type.IsExpressionTreeType)
 					return false;
 
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
@@ -724,7 +724,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (TypeManager.IsNullableType (target_type)) {
+			if (target_type.IsNullableType) {
 				return ImplicitNulableConversion (null, expr, target_type) != null;
 			}
 
@@ -1039,7 +1039,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (target != t) {
-					if (TypeManager.IsNullableType (t))
+					if (t.IsNullableType)
 						t = Nullable.NullableInfo.GetUnderlyingType (t);
 
 					if (!ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
@@ -1076,9 +1076,9 @@ namespace Mono.CSharp {
 			TypeSpec target_type = target;
 			Expression source_type_expr;
 
-			if (TypeManager.IsNullableType (source_type)) {
+			if (source_type.IsNullableType) {
 				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !TypeManager.IsNullableType (target_type))
+				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !target_type.IsNullableType)
 					return null;
 
 				source_type_expr = Nullable.Unwrap.Create (source);
@@ -1087,7 +1087,7 @@ namespace Mono.CSharp {
 				source_type_expr = source;
 			}
 
-			if (TypeManager.IsNullableType (target_type))
+			if (target_type.IsNullableType)
 				target_type = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
 			// Only these containers can contain a user defined implicit or explicit operators
@@ -1199,7 +1199,7 @@ namespace Mono.CSharp {
 				//
 				// User operator is of T?, no need to lift it
 				//
-				if (TypeManager.IsNullableType (t_x) && t_x == target)
+				if (t_x == target && t_x.IsNullableType)
 					return source;
 
 				source = implicitOnly ?
@@ -1214,7 +1214,7 @@ namespace Mono.CSharp {
 			// Source expression is of nullable type, lift the result in the case it's null and
 			// not nullable/lifted user operator is used
 			//
-			if (source_type_expr is Nullable.Unwrap && !TypeManager.IsNullableType (s_x) && (TypeManager.IsReferenceType (target) || target_type != target))
+			if (source_type_expr is Nullable.Unwrap && !s_x.IsNullableType && (TypeManager.IsReferenceType (target) || target_type != target))
 				source = new Nullable.Lifted (source, source_type_expr, target).Resolve (ec);
 			else if (target_type != target)
 				source = Nullable.Wrap.Create (source, target);
@@ -1311,7 +1311,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsNullableType (target_type))
+			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (ec, expr, target_type);
 
 			//
@@ -2113,10 +2113,10 @@ namespace Mono.CSharp {
 			}
 
 			TypeSpec expr_type = expr.Type;
-			if (TypeManager.IsNullableType (target_type)) {
+			if (target_type.IsNullableType) {
 				TypeSpec target;
 
-				if (TypeManager.IsNullableType (expr_type)) {
+				if (expr_type.IsNullableType) {
 					target = Nullable.NullableInfo.GetUnderlyingType (target_type);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
@@ -2133,7 +2133,7 @@ namespace Mono.CSharp {
 				e = ExplicitConversionCore (ec, expr, target, loc);
 				if (e != null)
 					return Nullable.Wrap.Create (e, target_type);
-			} else if (TypeManager.IsNullableType (expr_type)) {
+			} else if (expr_type.IsNullableType) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)
 					return e;

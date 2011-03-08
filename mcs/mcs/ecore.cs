@@ -3344,7 +3344,7 @@ namespace Mono.CSharp {
 				//
 				// p and q are delegate types or expression tree types
 				//
-				if (p.GetDefinition () == TypeManager.expression_type || q.GetDefinition () == TypeManager.expression_type) {
+				if (p.IsExpressionTreeType || q.IsExpressionTreeType) {
 					if (q.MemberDefinition != p.MemberDefinition) {
 						return 0;
 					}

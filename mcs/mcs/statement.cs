@@ -3553,7 +3553,7 @@ namespace Mono.CSharp {
 
 			new_expr = SwitchGoverningType (ec, Expr);
 
-			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
+			if (new_expr == null && Expr.Type.IsNullableType) {
 				unwrap = Nullable.Unwrap.Create (Expr, false);
 				if (unwrap == null)
 					return false;
@@ -4946,7 +4946,7 @@ namespace Mono.CSharp {
 				var type = li.Type;
 
 				if (type.BuildinType != BuildinTypeSpec.Type.IDisposable && !type.ImplementsInterface (bc.BuildinTypes.IDisposable, false)) {
-					if (TypeManager.IsNullableType (type)) {
+					if (type.IsNullableType) {
 						// it's handled in CreateDisposeCall
 						return;
 					}
@@ -4970,14 +4970,14 @@ namespace Mono.CSharp {
 				var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 
 				var dispose_mg = MethodGroupExpr.CreatePredefined (m, idt, loc);
-				dispose_mg.InstanceExpression = TypeManager.IsNullableType (type) ?
+				dispose_mg.InstanceExpression = type.IsNullableType ?
 					new Cast (new TypeExpression (idt, loc), lvr, loc).Resolve (bc) :
 					lvr;
 
 				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
 
 				// Add conditional call when disposing possible null variable
-				if (!type.IsStruct || TypeManager.IsNullableType (type))
+				if (!type.IsStruct || type.IsNullableType)
 					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
 
 				return dispose;
@@ -5494,7 +5494,7 @@ namespace Mono.CSharp {
 
 				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuildinTypes.IEnumerable, loc);
-				} else if (TypeManager.IsNullableType (expr.Type)) {
+				} else if (expr.Type.IsNullableType) {
 					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
 				}
 

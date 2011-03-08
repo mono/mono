@@ -1228,7 +1228,7 @@ namespace Mono.CSharp {
 
 			var res = Convert.ImplicitConversionStandard (rc, expr, parameter_type, Location);
 			if (res != null) {
-				if (TypeManager.IsNullableType (parameter_type) && res is Nullable.Wrap) {
+				if (parameter_type.IsNullableType && res is Nullable.Wrap) {
 					Nullable.Wrap wrap = (Nullable.Wrap) res;
 					res = wrap.Child;
 					if (!(res is Constant)) {

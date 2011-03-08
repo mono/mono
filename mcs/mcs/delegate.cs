@@ -490,7 +490,7 @@ namespace Mono.CSharp {
 
 			var delegate_method = method_group.BestCandidate;
 			
-			if (TypeManager.IsNullableType (delegate_method.DeclaringType)) {
+			if (delegate_method.DeclaringType.IsNullableType) {
 				ec.Report.Error (1728, loc, "Cannot create delegate from method `{0}' because it is a member of System.Nullable<T> type",
 					delegate_method.GetSignatureForError ());
 				return null;

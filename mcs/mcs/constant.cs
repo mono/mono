@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 			}
 
 			if (v == null) {
-				if (TypeManager.IsNullableType (t))
+				if (t.IsNullableType)
 					return Nullable.LiftedNull.Create (t, loc);
 
 				if (TypeManager.IsReferenceType (t))
@@ -2069,7 +2069,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsReferenceType (targetType))
 				return new NullConstant (targetType, loc);
 
-			if (TypeManager.IsNullableType (targetType))
+			if (targetType.IsNullableType)
 				return Nullable.LiftedNull.Create (targetType, loc);
 
 			return null;

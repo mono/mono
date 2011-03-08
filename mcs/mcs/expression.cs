@@ -448,7 +448,7 @@ namespace Mono.CSharp
 				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
 			}
 
-			if (TypeManager.IsNullableType (Expr.Type))
+			if (Expr.Type.IsNullableType)
 				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
 
 			//
@@ -1043,7 +1043,7 @@ namespace Mono.CSharp
 				return new SimpleAssign (expr, new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc)).Resolve (ec);
 			}
 
-			if (TypeManager.IsNullableType (expr.Type))
+			if (expr.Type.IsNullableType)
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
 			eclass = ExprClass.Value;
@@ -1369,7 +1369,7 @@ namespace Mono.CSharp
 			if (expr.IsNull || expr.eclass == ExprClass.MethodGroup)
 				return CreateConstantResult (ec, false);
 
-			if (TypeManager.IsNullableType (d)) {
+			if (d.IsNullableType) {
 				var ut = Nullable.NullableInfo.GetUnderlyingType (d);
 				if (!ut.IsGenericParameter) {
 					d = ut;
@@ -1381,7 +1381,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 			TypeSpec t = probe_type_expr.Type;
 			bool t_is_nullable = false;
-			if (TypeManager.IsNullableType (t)) {
+			if (t.IsNullableType) {
 				var ut = Nullable.NullableInfo.GetUnderlyingType (t);
 				if (!ut.IsGenericParameter) {
 					t = ut;
@@ -1492,7 +1492,7 @@ namespace Mono.CSharp
 
 			ec.Emit (OpCodes.Isinst, type);
 
-			if (TypeManager.IsGenericParameter (type) || TypeManager.IsNullableType (type))
+			if (TypeManager.IsGenericParameter (type) || type.IsNullableType)
 				ec.Emit (OpCodes.Unbox_Any, type);
 		}
 
@@ -1509,7 +1509,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 			TypeSpec etype = expr.Type;
 
-			if (!TypeManager.IsReferenceType (type) && !TypeManager.IsNullableType (type)) {
+			if (!TypeManager.IsReferenceType (type) && !type.IsNullableType) {
 				if (TypeManager.IsGenericParameter (type)) {
 					ec.Report.Error (413, loc,
 						"The `as' operator cannot be used with a non-reference type parameter `{0}'. Consider adding `class' or a reference type constraint",
@@ -1522,7 +1522,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			if (expr.IsNull && TypeManager.IsNullableType (type)) {
+			if (expr.IsNull && type.IsNullableType) {
 				return Nullable.LiftedNull.CreateFromExpression (ec, this);
 			}
 
@@ -2881,9 +2881,9 @@ namespace Mono.CSharp
 			}
 
 			if (ec.Module.Compiler.Settings.Version >= LanguageVersion.ISO_2 &&
-				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
+				((left.Type.IsNullableType && (right is NullLiteral || right.Type.IsNullableType || TypeManager.IsValueType (right.Type))) ||
 				(TypeManager.IsValueType (left.Type) && right is NullLiteral) ||
-				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
+				(right.Type.IsNullableType && (left is NullLiteral || left.Type.IsNullableType || TypeManager.IsValueType (left.Type))) ||
 				(TypeManager.IsValueType (right.Type) && left is NullLiteral))) {
 				var lifted = new Nullable.LiftedBinaryOperator (oper, left, right, loc);
 				lifted.state = state;
@@ -3441,10 +3441,10 @@ namespace Mono.CSharp
 		{
 			var op = ConvertBinaryToUserOperator (oper);
 			var l = left.Type;
-			if (TypeManager.IsNullableType (l))
+			if (l.IsNullableType)
 				l = Nullable.NullableInfo.GetUnderlyingType (l);
 			var r = right.Type;
-			if (TypeManager.IsNullableType (r))
+			if (r.IsNullableType)
 				r = Nullable.NullableInfo.GetUnderlyingType (r);
 
 			IList<MemberSpec> left_operators = MemberCache.GetUserOperator (l, op, false);
@@ -5320,7 +5320,7 @@ namespace Mono.CSharp
 					// Push the instance expression
 					//
 					if ((iexpr_type.IsStruct && (call_op == OpCodes.Callvirt || (call_op == OpCodes.Call && method.DeclaringType == iexpr_type))) ||
-						iexpr_type.IsGenericParameter || TypeManager.IsNullableType (method.DeclaringType)) {
+						iexpr_type.IsGenericParameter || method.DeclaringType.IsNullableType) {
 						//
 						// If the expression implements IMemoryLocation, then
 						// we can optimize and use AddressOf on the
@@ -5499,9 +5499,10 @@ namespace Mono.CSharp
 				return new DecimalConstant (t, 0, loc);
 			}
 
-			if (TypeManager.IsEnumType (t))
+			if (t.IsEnum)
 				return new EnumConstant (Constantify (EnumSpec.GetUnderlyingType (t), loc), t);
-			if (TypeManager.IsNullableType (t))
+
+			if (t.IsNullableType)
 				return Nullable.LiftedNull.Create (t, loc);
 
 			return null;

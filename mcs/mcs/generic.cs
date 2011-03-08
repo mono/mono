@@ -1412,6 +1412,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool IsExpressionTreeType {
+			get {
+				return (open_type.state & StateFlags.InflatedExpressionType) != 0;
+			}
+		}
+
+		public override bool IsNullableType {
+			get {
+				return (open_type.state & StateFlags.InflatedNullableType) != 0;
+			}
+		}
+
 		//
 		// Types used to inflate the generic  type
 		//
@@ -1550,7 +1562,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			if (TypeManager.IsNullableType (open_type))
+			if (IsNullableType)
 				return targs[0].GetSignatureForError () + "?";
 
 			return base.GetSignatureForError ();
@@ -2032,7 +2044,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
+			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || atype.IsNullableType)) {
 				if (mc != null) {
 					mc.Module.Compiler.Report.Error (453, loc,
 						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
@@ -2069,7 +2081,7 @@ namespace Mono.CSharp {
 			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
-				if (TypeManager.IsNullableType (atype)) {
+				if (atype.IsNullableType) {
 					if (mc == null)
 						return false;
 
@@ -2527,7 +2539,7 @@ namespace Mono.CSharp {
 				TypeSpec t_i = methodParameters [i >= methodParameters.Length ? methodParameters.Length - 1: i];
 				
 				if (!TypeManager.IsDelegateType (t_i)) {
-					if (t_i.GetDefinition () != TypeManager.expression_type)
+					if (!t_i.IsExpressionTreeType)
 						continue;
 
 					t_i = TypeManager.GetTypeArguments (t_i) [0];
@@ -2756,7 +2768,7 @@ namespace Mono.CSharp {
 				TypeSpec t = methodParameters[i];
 
 				if (!TypeManager.IsDelegateType (t)) {
-					if (TypeManager.expression_type == null || t.MemberDefinition != TypeManager.expression_type.MemberDefinition)
+					if (!t.IsExpressionTreeType)
 						continue;
 
 					t =  TypeManager.GetTypeArguments (t) [0];
@@ -3178,7 +3190,7 @@ namespace Mono.CSharp {
 			//
 			if (e is MethodGroupExpr) {
 				if (!TypeManager.IsDelegateType (t)) {
-					if (TypeManager.expression_type == null || t.MemberDefinition != TypeManager.expression_type.MemberDefinition)
+					if (!t.IsExpressionTreeType)
 						return 0;
 
 					t = TypeManager.GetTypeArguments (t)[0];

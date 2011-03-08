@@ -272,8 +272,11 @@ namespace Mono.CSharp
 			ICollectionGeneric.Define ();
 			IEnumerableGeneric.Define ();
 			IEnumeratorGeneric.Define ();
-			Nullable.Define ();
-			ExpressionGeneric.Define ();
+			if (Nullable.Define ())
+				Nullable.TypeSpec.IsNullableType = true;
+
+			if (ExpressionGeneric.Define ())
+				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
 
 			// Deal with obsolete static types
 			// TODO: remove
@@ -281,8 +284,6 @@ namespace Mono.CSharp
 			TypeManager.generic_icollection_type = ICollectionGeneric.TypeSpec;
 			TypeManager.generic_ienumerator_type = IEnumeratorGeneric.TypeSpec;
 			TypeManager.generic_ienumerable_type = IEnumerableGeneric.TypeSpec;
-			TypeManager.generic_nullable_type = Nullable.TypeSpec;
-			TypeManager.expression_type = ExpressionGeneric.TypeSpec;
 		}
 	}
 
@@ -704,8 +705,6 @@ namespace Mono.CSharp
 	static public TypeSpec generic_icollection_type;
 	static public TypeSpec generic_ienumerator_type;
 	static public TypeSpec generic_ienumerable_type;
-	static public TypeSpec generic_nullable_type;
-	static internal TypeSpec expression_type;
 
 	static TypeManager ()
 	{
@@ -715,7 +714,7 @@ namespace Mono.CSharp
 	static public void Reset ()
 	{
 		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
-		generic_ienumerable_type = generic_nullable_type = expression_type = null;
+		generic_ienumerable_type = null;
 	}
 
 	/// <summary>
@@ -931,11 +930,6 @@ namespace Mono.CSharp
 	public static bool IsInstantiationOfSameGenericType (TypeSpec type, TypeSpec parent)
 	{
 		return type == parent || type.MemberDefinition == parent.MemberDefinition;
-	}
-
-	public static bool IsNullableType (TypeSpec t)
-	{
-		return generic_nullable_type == t.GetDefinition ();
 	}
 #endregion
 }

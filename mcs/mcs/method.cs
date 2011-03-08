@@ -2388,12 +2388,12 @@ namespace Mono.CSharp {
 			TypeSpec first_arg_type = ParameterTypes [0];
 			
 			TypeSpec first_arg_type_unwrap = first_arg_type;
-			if (TypeManager.IsNullableType (first_arg_type))
-				first_arg_type_unwrap = TypeManager.GetTypeArguments (first_arg_type) [0];
+			if (first_arg_type.IsNullableType)
+				first_arg_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (first_arg_type);
 			
 			TypeSpec return_type_unwrap = return_type;
-			if (TypeManager.IsNullableType (return_type))
-				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];
+			if (return_type.IsNullableType)
+				return_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (return_type);
 
 			//
 			// Rules for conversion operators
@@ -2484,8 +2484,8 @@ namespace Mono.CSharp {
 				// Checks for Binary operators
 
 				var second_arg_type = ParameterTypes[1];
-				if (TypeManager.IsNullableType (second_arg_type))
-					second_arg_type = TypeManager.GetTypeArguments (second_arg_type)[0];
+				if (second_arg_type.IsNullableType)
+					second_arg_type = Nullable.NullableInfo.GetUnderlyingType (second_arg_type);
 
 				if (second_arg_type != declaring_type) {
 					Report.Error (563, Location,
