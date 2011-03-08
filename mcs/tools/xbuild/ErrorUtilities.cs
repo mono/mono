@@ -90,7 +90,11 @@ namespace Mono.XBuild.CommandLine {
 				"    /validate		Validate the project file against the schema\n" +
 				"    /validate:<schema>	Validate the project file against the specified schema\n" +
 				"    /consoleloggerparameters:<params>\n" +
+				"    /clp:<params>\n" +
 				"			Parameters for the console logger\n" +
+				"    /fileloggerparameters[n]:<params>\n" +
+				"    /flp[n]:<params>\n" +
+				"		        Parameters for the file logger, eg. LogFile=foo.log\n" +
 				"    /nologo		Don't show the initial banner\n" +
 				"    /help		Show this help\n"
 				);
