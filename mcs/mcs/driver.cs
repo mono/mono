@@ -397,7 +397,6 @@ namespace Mono.CSharp
 				return;
 
 			RootContext.Reset (full_flag);
-			TypeManager.Reset ();
 			ReferenceContainer.Reset ();
 			PointerContainer.Reset ();
 			Parameter.Reset ();

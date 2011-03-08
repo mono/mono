@@ -4768,6 +4768,7 @@ namespace Mono.CSharp {
 		{
 			// Checks possible ldflda of field access expression
 			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) && !(InstanceExpression is This) &&
+				rc.Module.PredefinedTypes.MarshalByRefObject.Define () &&
 				TypeSpec.IsBaseClass (spec.DeclaringType, rc.Module.PredefinedTypes.MarshalByRefObject.TypeSpec, false);
 		}
 

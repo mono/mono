@@ -2054,7 +2054,7 @@ namespace Mono.CSharp {
 		{
 			if (targetType.IsPointer) {
 				if (IsLiteral || this is NullPointer)
-					return new EmptyConstantCast (new NullPointer (loc), targetType);
+					return new NullPointer (targetType, loc);
 
 				return null;
 			}
@@ -2114,6 +2114,33 @@ namespace Mono.CSharp {
 
 		public override bool IsZeroInteger {
 			get { return true; }
+		}
+	}
+
+
+	//
+	// A null constant in a pointer context
+	//
+	class NullPointer : NullConstant
+	{
+		public NullPointer (TypeSpec type, Location loc)
+			: base (type, loc)
+		{
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			Error_PointerInsideExpressionTree (ec);
+			return base.CreateExpressionTree (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			//
+			// Emits null pointer
+			//
+			ec.Emit (OpCodes.Ldc_I4_0);
+			ec.Emit (OpCodes.Conv_U);
 		}
 	}
 

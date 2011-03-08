@@ -45,13 +45,7 @@ namespace Mono.CSharp {
 		//
 		static bool ArrayToIList (ArrayContainer array, TypeSpec list, bool isExplicit)
 		{
-			if (array.Rank != 1 || !list.IsGeneric)
-				return false;
-
-			var open_version = list.GetDefinition ();
-			if ((open_version != TypeManager.generic_ilist_type) &&
-				(open_version != TypeManager.generic_icollection_type) &&
-				(open_version != TypeManager.generic_ienumerable_type))
+			if (array.Rank != 1 || !list.IsGenericIterateInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -71,13 +65,7 @@ namespace Mono.CSharp {
 		
 		static bool IList_To_Array(TypeSpec list, ArrayContainer array)
 		{
-			if (array.Rank != 1 || !list.IsGeneric)
-				return false;
-
-			var open_version = list.GetDefinition ();
-			if ((open_version != TypeManager.generic_ilist_type) &&
-				(open_version != TypeManager.generic_icollection_type) &&
-				(open_version != TypeManager.generic_ienumerable_type))
+			if (array.Rank != 1 || !list.IsGenericIterateInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -128,7 +116,7 @@ namespace Mono.CSharp {
 
 			//
 			// From T to its effective base class C
-			// From T to any base class of C (it cannot contain dynamic of be of dynamic type)
+			// From T to any base class of C (it cannot contain dynamic or be of dynamic type)
 			// From T to any interface implemented by C
 			//
 			var base_type = expr_type.GetEffectiveBase ();
@@ -1369,7 +1357,7 @@ namespace Mono.CSharp {
 					}
 
 					if (expr_type == InternalType.NullLiteral)
-						return EmptyCast.Create (new NullPointer (loc), target_type);
+						return new NullPointer (target_type, loc);
 				}
 			}
 

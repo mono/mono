@@ -817,9 +817,8 @@ namespace Mono.CSharp {
 		//
 		public TypeSpec GetEffectiveBase ()
 		{
-			if (HasSpecialStruct) {
-				return TypeManager.value_type;
-			}
+			if (HasSpecialStruct)
+				return BaseType;
 
 			if (BaseType != null && targs == null)
 				return BaseType;
@@ -1415,6 +1414,12 @@ namespace Mono.CSharp {
 		public override bool IsExpressionTreeType {
 			get {
 				return (open_type.state & StateFlags.InflatedExpressionType) != 0;
+			}
+		}
+
+		public override bool IsGenericIterateInterface {
+			get {
+				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
 			}
 		}
 
@@ -3054,23 +3059,17 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1)
+				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
 					return 0;
 
-				if (TypeManager.IsGenericType (v)) {
-					TypeSpec g_v = v.GetDefinition ();
-					if (g_v != TypeManager.generic_ilist_type &&
-						g_v != TypeManager.generic_icollection_type &&
-						g_v != TypeManager.generic_ienumerable_type)
-						return 0;
+				var v_i = TypeManager.GetTypeArguments (v) [0];
+				if (TypeManager.IsValueType (u_ac.Element))
+					return ExactInference (u_ac.Element, v_i);
 
-					var v_i = TypeManager.GetTypeArguments (v) [0];
-					if (TypeManager.IsValueType (u_ac.Element))
-						return ExactInference (u_ac.Element, v_i);
-
-					return LowerBoundInference (u_ac.Element, v_i);
-				}
-			} else if (TypeManager.IsGenericType (v)) {
+				return LowerBoundInference (u_ac.Element, v_i);
+			}
+			
+			if (TypeManager.IsGenericType (v)) {
 				//
 				// if V is a constructed type C<V1..Vk> and there is a unique type C<U1..Uk>
 				// such that U is identical to, inherits from (directly or indirectly),

@@ -134,7 +134,6 @@ namespace Mono.CSharp
 			// Deal with obsolete static types
 			// TODO: remove
 			TypeManager.object_type = Object;
-			TypeManager.value_type = ValueType;
 		}
 
 		public BuildinTypeSpec[] AllTypes {
@@ -198,6 +197,8 @@ namespace Mono.CSharp
 		public readonly PredefinedType RuntimeFieldHandle;
 		public readonly PredefinedType RuntimeMethodHandle;
 		public readonly PredefinedType SecurityAction;
+		public readonly PredefinedType Dictionary;
+		public readonly PredefinedType Hashtable;
 
 		//
 		// C# 3.0
@@ -242,6 +243,8 @@ namespace Mono.CSharp
 			RuntimeFieldHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeFieldHandle");
 			RuntimeMethodHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeMethodHandle");
 			SecurityAction = new PredefinedType (module, MemberKind.Enum, "System.Security.Permissions", "SecurityAction");
+			Dictionary = new PredefinedType (module, MemberKind.Class, "System.Collections.Generic", "Dictionary", 2);
+			Hashtable = new PredefinedType (module, MemberKind.Class, "System.Collections", "Hashtable");
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
@@ -262,28 +265,24 @@ namespace Mono.CSharp
 			//
 			if (TypedReference.Define ())
 				TypedReference.TypeSpec.IsSpecialRuntimeType = true;
+
 			if (ArgIterator.Define ())
 				ArgIterator.TypeSpec.IsSpecialRuntimeType = true;
-			MarshalByRefObject.Define ();
-			CharSet.Define ();
 
-			IEnumerableGeneric.Define ();
-			IListGeneric.Define ();
-			ICollectionGeneric.Define ();
-			IEnumerableGeneric.Define ();
-			IEnumeratorGeneric.Define ();
+			if (IEnumerableGeneric.Define ())
+				IEnumerableGeneric.TypeSpec.IsGenericIterateInterface = true;
+
+			if (IListGeneric.Define ())
+				IListGeneric.TypeSpec.IsGenericIterateInterface = true;
+
+			if (ICollectionGeneric.Define ())
+				ICollectionGeneric.TypeSpec.IsGenericIterateInterface = true;
+
 			if (Nullable.Define ())
 				Nullable.TypeSpec.IsNullableType = true;
 
 			if (ExpressionGeneric.Define ())
 				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
-
-			// Deal with obsolete static types
-			// TODO: remove
-			TypeManager.generic_ilist_type = IListGeneric.TypeSpec;
-			TypeManager.generic_icollection_type = ICollectionGeneric.TypeSpec;
-			TypeManager.generic_ienumerator_type = IEnumeratorGeneric.TypeSpec;
-			TypeManager.generic_ienumerable_type = IEnumerableGeneric.TypeSpec;
 		}
 	}
 
@@ -699,23 +698,7 @@ namespace Mono.CSharp
 	// A list of core types that the compiler requires or uses
 	//
 	static public BuildinTypeSpec object_type;
-	static public BuildinTypeSpec value_type;
 
-	static public TypeSpec generic_ilist_type;
-	static public TypeSpec generic_icollection_type;
-	static public TypeSpec generic_ienumerator_type;
-	static public TypeSpec generic_ienumerable_type;
-
-	static TypeManager ()
-	{
-		Reset ();
-	}
-
-	static public void Reset ()
-	{
-		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
-		generic_ienumerable_type = null;
-	}
 
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise

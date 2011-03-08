@@ -75,26 +75,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// A null literal in a pointer context
-	//
-	class NullPointer : NullLiteral {
-		public NullPointer (Location loc):
-			base (loc)
-		{
-			type = TypeManager.object_type;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			//
-			// Emits null pointer
-			//
-			ec.Emit (OpCodes.Ldc_I4_0);
-			ec.Emit (OpCodes.Conv_U);
-		}
-	}
-
 	public class BoolLiteral : BoolConstant {
 		public BoolLiteral (BuildinTypes types, bool val, Location loc)
 			: base (types, val, loc)

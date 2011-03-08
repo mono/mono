@@ -345,10 +345,8 @@ namespace Mono.CSharp {
 				enumerable_type = new TypeExpression (Compiler.BuildinTypes.IEnumerable, Location);
 				list.Add (enumerable_type);
 
-				if (TypeManager.generic_ienumerable_type != null) {
-					generic_enumerable_type = new GenericTypeExpr (
-						TypeManager.generic_ienumerable_type,
-						generic_args, Location);
+				if (Module.PredefinedTypes.IEnumerableGeneric.Define ()) {
+					generic_enumerable_type = new GenericTypeExpr (Module.PredefinedTypes.IEnumerableGeneric.TypeSpec, generic_args, Location);
 					list.Add (generic_enumerable_type);
 				}
 			}
@@ -836,7 +834,7 @@ namespace Mono.CSharp {
 			if (ret == null)
 				return;
 
-			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
+			if (!CheckType (ret, parent, out iterator_type, out is_enumerable)) {
 				parent.Compiler.Report.Error (1624, method.Location,
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
@@ -876,18 +874,18 @@ namespace Mono.CSharp {
 			method.Block.WrapIntoIterator (method, parent, iterator_type, is_enumerable);
 		}
 
-		static bool CheckType (TypeSpec ret, out TypeSpec original_iterator_type, out bool is_enumerable)
+		static bool CheckType (TypeSpec ret, TypeContainer parent, out TypeSpec original_iterator_type, out bool is_enumerable)
 		{
 			original_iterator_type = null;
 			is_enumerable = false;
 
 			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerable) {
-				original_iterator_type = TypeManager.object_type;
+				original_iterator_type = parent.Compiler.BuildinTypes.Object;
 				is_enumerable = true;
 				return true;
 			}
 			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerator) {
-				original_iterator_type = TypeManager.object_type;
+				original_iterator_type = parent.Compiler.BuildinTypes.Object;
 				is_enumerable = false;
 				return true;
 			}
@@ -896,14 +894,17 @@ namespace Mono.CSharp {
 			if (inflated == null)
 				return false;
 
-			ret = inflated.GetDefinition ();
-			if (ret == TypeManager.generic_ienumerable_type) {
+			var member_definition = inflated.MemberDefinition;
+			PredefinedType ptype = parent.Module.PredefinedTypes.IEnumerableGeneric;
+
+			if (ptype.Define () && ptype.TypeSpec.MemberDefinition == member_definition) {
 				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = true;
 				return true;
 			}
-			
-			if (ret == TypeManager.generic_ienumerator_type) {
+
+			ptype = parent.Module.PredefinedTypes.IEnumeratorGeneric;
+			if (ptype.Define () && ptype.TypeSpec.MemberDefinition == member_definition) {
 				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = false;
 				return true;

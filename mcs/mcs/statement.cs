@@ -3651,19 +3651,16 @@ namespace Mono.CSharp {
 		void ResolveStringSwitchMap (ResolveContext ec)
 		{
 			FullNamedExpression string_dictionary_type;
-			if (TypeManager.generic_ienumerable_type != null) {
-				MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
-					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
-
-				string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
-					new TypeArguments (
-						new TypeExpression (ec.BuildinTypes.String, loc),
-						new TypeExpression (ec.BuildinTypes.Int, loc)), loc);
+			if (ec.Module.PredefinedTypes.Dictionary.Define ()) {
+				string_dictionary_type = new TypeExpression (
+					ec.Module.PredefinedTypes.Dictionary.TypeSpec.MakeGenericType (ec,
+						new [] { ec.BuildinTypes.String, ec.BuildinTypes.Int }),
+					loc);
+			} else if (ec.Module.PredefinedTypes.Hashtable.Define ()) {
+				string_dictionary_type = new TypeExpression (ec.Module.PredefinedTypes.Hashtable.TypeSpec, loc);
 			} else {
-				MemberAccess system_collections_generic = new MemberAccess (
-					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
-
-				string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
+				ec.Module.PredefinedTypes.Dictionary.Resolve (loc);
+				return;
 			}
 
 			var ctype = ec.CurrentMemberDefinition.Parent.PartialContainer;
@@ -3735,7 +3732,7 @@ namespace Mono.CSharp {
 
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
 
-			if (TypeManager.generic_ienumerable_type != null) {
+			if (switch_cache_field.Type.IsGeneric) {
 				Arguments get_value_args = new Arguments (2);
 				get_value_args.Add (new Argument (value));
 				get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
@@ -4433,7 +4430,7 @@ namespace Mono.CSharp {
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
 						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
 						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuildinTypes, 0, loc), loc), loc)),
-							new NullPointer (loc),
+							new NullLiteral (loc),
 							converted, loc);
 
 					converted = converted.Resolve (bc);
@@ -5418,7 +5415,7 @@ namespace Mono.CSharp {
 									rc.Report.SymbolRelatedToPreviousError (expr.Type);
 									rc.Report.Error (1640, loc,
 										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-										expr.Type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
+										expr.Type.GetSignatureForError (), gen_ienumerable.TypeSpec.GetSignatureForError ());
 
 									return null;
 								}

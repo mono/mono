@@ -136,7 +136,7 @@ namespace Mono.CSharp {
 			if (HasField (dll_import_char_set))
 				return;
 
-			if (!rc.Module.PredefinedTypes.CharSet.IsDefined) {
+			if (!rc.Module.PredefinedTypes.CharSet.Define ()) {
 				return;
 			}
 

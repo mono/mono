@@ -2547,7 +2547,7 @@ namespace Mono.CSharp {
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
 
 			if (base_class == null) {
-				if (spec != TypeManager.object_type)
+				if (spec.BuildinType != BuildinTypeSpec.Type.Object)
 					base_type = Compiler.BuildinTypes.Object;
 			} else {
 				if (base_type.IsGenericParameter){

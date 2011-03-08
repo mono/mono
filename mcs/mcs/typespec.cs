@@ -185,6 +185,18 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Returns true for instances of IList<T>, IEnumerable<T>, ICollection<T>
+		//
+		public virtual bool IsGenericIterateInterface {
+			get {
+				return false;
+			}
+			set {
+				state = value ? state | StateFlags.GenericIterateInterface : state & ~StateFlags.GenericIterateInterface;
+			}
+		}
+
 		// TODO: Should probably do
 		// IsGenericType -- recursive
 		// HasTypeParameter -- non-recursive

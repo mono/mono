@@ -918,6 +918,7 @@ namespace Mono.CSharp {
 			SpecialRuntimeType = 1 << 18,
 			InflatedExpressionType = 1 << 19,
 			InflatedNullableType = 1 << 20,
+			GenericIterateInterface = 1 << 21,
 		}
 
 		protected Modifiers modifiers;
