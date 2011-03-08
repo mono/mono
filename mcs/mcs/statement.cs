@@ -4059,7 +4059,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr.Type.IsGenericParameter) {
-				expr = Convert.ImplicitTypeParameterConversion (expr, ec.BuildinTypes.Object);
+				expr = Convert.ImplicitTypeParameterConversion (expr, (TypeParameterSpec)expr.Type, ec.BuildinTypes.Object);
 			}
 
 			VariableReference lv = expr as VariableReference;

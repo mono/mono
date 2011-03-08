@@ -2172,13 +2172,12 @@ namespace Mono.CSharp {
 				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			} else {
-				var expr = new EmptyExpression (atype);
-
 				if (atype.IsGenericParameter) {
-					if (Convert.ImplicitTypeParameterConversion (expr, ttype) != null)
+					if (Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
 						return true;
 				}
 
+				var expr = new EmptyExpression (atype);
 				if (Convert.ImplicitStandardConversionExists (expr, ttype))
 					return true;
 			}

@@ -60,21 +60,21 @@ namespace Mono.CSharp {
 			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
 		}
 
-		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeSpec target_type)
+		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeParameterSpec expr_type, TypeSpec target_type)
 		{
-			var expr_type = (TypeParameterSpec) expr.Type;
-
 			//
 			// From T to a type parameter U, provided T depends on U
 			//
-			var ttype = target_type as TypeParameterSpec;
-			if (ttype != null) {
+			if (target_type.IsGenericParameter) {
 				if (expr_type.TypeArguments != null) {
 					foreach (var targ in expr_type.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (ttype, targ))
+						if (!TypeSpecComparer.Override.IsEqual (target_type, targ))
 							continue;
 
-						if (expr_type.IsReferenceType && !ttype.IsReferenceType)
+						if (expr == null)
+							return EmptyExpression.Null;
+
+						if (expr_type.IsReferenceType && !((TypeParameterSpec)target_type).IsReferenceType)
 							return new BoxedCast (expr, target_type);
 
 						return new ClassCast (expr, target_type);
@@ -88,6 +88,9 @@ namespace Mono.CSharp {
 			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
 			if (target_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -101,6 +104,9 @@ namespace Mono.CSharp {
 			//
 			var base_type = expr_type.GetEffectiveBase ();
 			if (base_type == target_type || TypeSpec.IsBaseClass (base_type, target_type, false) || base_type.ImplementsInterface (target_type, true)) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -108,6 +114,9 @@ namespace Mono.CSharp {
 			}
 
 			if (target_type.IsInterface && expr_type.IsConvertibleToInterface (target_type)) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -160,7 +169,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type.Kind == MemberKind.TypeParameter)
-				return ImplicitTypeParameterConversion (expr, target_type);
+				return ImplicitTypeParameterConversion (expr, (TypeParameterSpec) expr.Type, target_type);
 
 			//
 			// from the null type to any reference-type.
@@ -198,7 +207,7 @@ namespace Mono.CSharp {
 				return target_type != InternalType.AnonymousMethod;
 
 			if (TypeManager.IsGenericParameter (expr_type))
-				return ImplicitTypeParameterConversion (expr, target_type) != null;
+				return ImplicitTypeParameterConversion (null, (TypeParameterSpec)expr_type, target_type) != null;
 
 			// This code is kind of mirrored inside ImplicitStandardConversionExists
 			// with the small distinction that we only probe there
