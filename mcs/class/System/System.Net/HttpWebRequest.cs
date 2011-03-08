@@ -498,7 +498,7 @@ namespace System.Net
 				if (value == null || value.Trim () == "")
 					throw new ArgumentException ("not a valid method");
 
-				method = value;
+				method = value.ToUpperInvariant ();
 			}
 		}
 		
