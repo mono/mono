@@ -1358,5 +1358,21 @@ namespace MonoTests.System.Xml
 				Assert.AreEqual (reader.GetAttribute("myAttribute", null), "the value", "#1");
 			}
 		}
+
+		[Test] // bug #675384
+		public void ReadCharsWithVeryLimitedBuffer ()
+		{
+			var r = new XmlTextReader ("<root><child>a</child></root>", XmlNodeType.Document, null);
+			r.MoveToContent ();
+			char [] buff = new char [1];
+			int read = 0;
+			var sb = new StringBuilder ();
+			do {
+				read = r.ReadChars (buff, 0, buff.Length);
+			if (read > 0)
+				sb.Append (buff [0]);
+			} while (read > 0);
+			Assert.AreEqual ("<child>a</child>", sb.ToString (), "#1");
+		}
 	}
 }
