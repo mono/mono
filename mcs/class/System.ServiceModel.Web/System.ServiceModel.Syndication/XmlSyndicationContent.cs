@@ -43,6 +43,9 @@ namespace System.ServiceModel.Syndication
 
 		public XmlSyndicationContent (XmlReader reader)
 		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			this.type = reader.GetAttribute ("type");
 			extension = new SyndicationElementExtension (reader);
 		}
 
@@ -81,10 +84,22 @@ namespace System.ServiceModel.Syndication
 
 		public XmlDictionaryReader GetReaderAtContent ()
 		{
-			XmlReader r = extension.GetReader ();
-			if (!(r is XmlDictionaryReader))
-				r = XmlDictionaryReader.CreateDictionaryReader (r);
-			return (XmlDictionaryReader) r;
+			var ms = new MemoryStream ();
+			using (var bw = XmlDictionaryWriter.CreateBinaryWriter (ms)) {
+				// default seems to be Atom 1.0
+				bw.WriteStartElement ("content", Namespaces.Atom10);
+				bw.WriteAttributeString ("type", "text/xml");
+
+				XmlReader r = extension.GetReader ();
+				while (!r.EOF)
+					bw.WriteNode (r, false);
+
+				bw.WriteEndElement (); // </content>
+			}
+			ms.Position = 0;
+			var ret = XmlDictionaryReader.CreateBinaryReader (ms, new XmlDictionaryReaderQuotas ());
+			ret.MoveToContent ();
+			return ret;
 		}
 
 		public TContent ReadContent<TContent> ()
