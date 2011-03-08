@@ -2576,7 +2576,7 @@ namespace Mono.CSharp {
 				if (ct == expr_type)
 					return;
 
-				if ((member.Modifiers & Modifiers.INTERNAL) != 0 && expr_type.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
+				if ((member.Modifiers & Modifiers.INTERNAL) != 0 && member.DeclaringType.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
 					return;
 
 				expr_type = expr_type.GetDefinition ();
