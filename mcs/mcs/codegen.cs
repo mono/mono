@@ -406,15 +406,21 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (TypeManager.IsStruct (type)) {
+			switch (type.Kind) {
+			case MemberKind.Struct:
 				Emit (OpCodes.Ldelema, type);
 				Emit (OpCodes.Ldobj, type);
-			} else if (type.IsGenericParameter) {
+				break;
+			case MemberKind.TypeParameter:
 				Emit (OpCodes.Ldelem, type);
-			} else if (type.IsPointer)
+				break;
+			case MemberKind.PointerType:
 				Emit (OpCodes.Ldelem_I);
-			else
+				break;
+			default:
 				Emit (OpCodes.Ldelem_Ref);
+				break;
+			}
 		}
 
 		//
@@ -462,14 +468,20 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (TypeManager.IsStruct (type))
+			switch (type.Kind) {
+			case MemberKind.Struct:
 				Emit (OpCodes.Stobj, type);
-			else if (type.IsGenericParameter)
+				break;
+			case MemberKind.TypeParameter:
 				Emit (OpCodes.Stelem, type);
-			else if (type.IsPointer)
+				break;
+			case MemberKind.PointerType:
 				Emit (OpCodes.Stelem_I);
-			else
+				break;
+			default:
 				Emit (OpCodes.Stelem_Ref);
+				break;
+			}
 		}
 
 		public void EmitInt (int i)
@@ -585,12 +597,18 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+			switch (type.Kind) {
+			case MemberKind.Struct:
+			case MemberKind.TypeParameter:
 				Emit (OpCodes.Ldobj, type);
-			else if (type.IsPointer)
+				break;
+			case MemberKind.PointerType:
 				ig.Emit (OpCodes.Ldind_I);
-			else
+				break;
+			default:
 				ig.Emit (OpCodes.Ldind_Ref);
+				break;
+			}
 		}
 
 		//
@@ -631,7 +649,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+			if (type.IsStruct || TypeManager.IsGenericParameter (type))
 				Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);

@@ -214,7 +214,9 @@ namespace Mono.CSharp
 		}
 
 		public bool IsGenericParameter {
-			get { return Kind == MemberKind.TypeParameter; }
+			get {
+				return Kind == MemberKind.TypeParameter;
+			}
 		}
 
 		//

@@ -130,10 +130,6 @@ namespace Mono.CSharp
 				Int, UInt, Long, ULong, Float, Double, Char, Short, Decimal, Bool, SByte, Byte, UShort, String,
 				Enum, Delegate, MulticastDelegate, Void, Array, Type, IEnumerator, IEnumerable, IDisposable,
 				IntPtr, UIntPtr, RuntimeFieldHandle, RuntimeTypeHandle, Exception };
-
-			// Deal with obsolete static types
-			// TODO: remove
-			TypeManager.object_type = Object;
 		}
 
 		public BuildinTypeSpec[] AllTypes {
@@ -694,11 +690,6 @@ namespace Mono.CSharp
 	}
 
 	partial class TypeManager {
-	//
-	// A list of core types that the compiler requires or uses
-	//
-	static public BuildinTypeSpec object_type;
-
 
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
@@ -787,11 +778,6 @@ namespace Mono.CSharp
 			return ((TypeParameterSpec) t).IsValueType;
 
 		return t.IsStruct || IsEnumType (t);
-	}
-
-	public static bool IsStruct (TypeSpec t)
-	{
-		return t.IsStruct;
 	}
 
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)

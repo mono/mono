@@ -832,7 +832,7 @@ namespace Mono.CSharp {
 			if (types != null)
 				return Convert.FindMostEncompassedType (types.Select (l => l.BaseType));
 
-			return TypeManager.object_type;
+			return BaseType;
 		}
 
 		public override string GetSignatureForError ()

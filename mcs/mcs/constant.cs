@@ -2040,7 +2040,7 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Ldnull);
 
 			// Only to make verifier happy
-			if (TypeManager.IsGenericParameter (type))
+			if (type.IsGenericParameter)
 				ec.Emit (OpCodes.Unbox_Any, type);
 		}
 

@@ -1329,7 +1329,7 @@ namespace Mono.CSharp {
 					//
 					// struct D { public D (int a) : this () {}
 					//
-					if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
+					if (ec.CurrentType.IsStruct && argument_list == null)
 						return this;
 				}
 

@@ -138,7 +138,7 @@ namespace Mono.CSharp
 
 				// Verify that the argument is writeable
 				if (Expr != null && IsByRef)
-					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess.Instance);
+					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
 
 				if (Expr == null)
 					Expr = EmptyExpression.Null;

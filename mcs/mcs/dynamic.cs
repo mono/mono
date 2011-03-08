@@ -771,7 +771,7 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
-			if (right_side == EmptyExpression.OutAccess.Instance) {
+			if (right_side == EmptyExpression.OutAccess) {
 				right_side.DoResolveLValue (rc, this);
 				return null;
 			}

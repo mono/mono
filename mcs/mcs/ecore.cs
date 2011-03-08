@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			int errors = ec.Report.Errors;
-			bool out_access = right_side == EmptyExpression.OutAccess.Instance;
+			bool out_access = right_side == EmptyExpression.OutAccess;
 
 			Expression e = DoResolveLValue (ec, right_side);
 
@@ -1387,7 +1387,7 @@ namespace Mono.CSharp {
 		{
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
-			if (TypeManager.IsStruct (child.Type) &&
+			if (child.Type.IsStruct &&
 			    (type.BuildinType == BuildinTypeSpec.Type.Object || type.BuildinType == BuildinTypeSpec.Type.ValueType))
 				child.EmitSideEffect (ec);
 			else
@@ -4816,7 +4816,7 @@ namespace Mono.CSharp {
 
 				if (lvalue_instance) {
 					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-						bool out_access = rhs == EmptyExpression.OutAccess.Instance || rhs == EmptyExpression.LValueMemberOutAccess;
+						bool out_access = rhs == EmptyExpression.OutAccess || rhs == EmptyExpression.LValueMemberOutAccess;
 
 						Expression right_side =
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
@@ -4899,7 +4899,7 @@ namespace Mono.CSharp {
 		Expression Report_AssignToReadonly (ResolveContext ec, Expression right_side)
 		{
 			int i = 0;
-			if (right_side == EmptyExpression.OutAccess.Instance || right_side == EmptyExpression.LValueMemberOutAccess)
+			if (right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess)
 				i += 1;
 			if (IsStatic)
 				i += 2;
@@ -4919,7 +4919,7 @@ namespace Mono.CSharp {
 
 			spec.MemberDefinition.SetIsAssigned ();
 
-			if ((right_side == EmptyExpression.UnaryAddress || right_side == EmptyExpression.OutAccess.Instance) &&
+			if ((right_side == EmptyExpression.UnaryAddress || right_side == EmptyExpression.OutAccess) &&
 					(spec.Modifiers & Modifiers.VOLATILE) != 0) {
 				ec.Report.Warning (420, 1, loc,
 					"`{0}': A volatile field references will not be treated as volatile",
@@ -4945,7 +4945,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (right_side == EmptyExpression.OutAccess.Instance && IsMarshalByRefAccess (ec)) {
+			if (right_side == EmptyExpression.OutAccess && IsMarshalByRefAccess (ec)) {
 				ec.Report.SymbolRelatedToPreviousError (spec.DeclaringType);
 				ec.Report.Warning (197, 1, loc,
 						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
@@ -5009,7 +5009,7 @@ namespace Mono.CSharp {
 					EmitInstance (ec, false);
 
 				// Optimization for build-in types
-				if (TypeManager.IsStruct (type) && type == ec.CurrentType && InstanceExpression.Type == type) {
+				if (type.IsStruct && type == ec.CurrentType && InstanceExpression.Type == type) {
 					ec.EmitLoadFromPtr (type);
 				} else {
 					var ff = spec as FixedFieldSpec;
@@ -5401,7 +5401,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (right_side == EmptyExpression.OutAccess.Instance) {
+			if (right_side == EmptyExpression.OutAccess) {
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
 				if (best_candidate != null && ec.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, ec.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {

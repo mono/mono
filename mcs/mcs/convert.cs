@@ -24,20 +24,8 @@ namespace Mono.CSharp {
 	//
 	// A container class for all the conversion operations
 	//
-	static class Convert {
-		
-		static EmptyExpression MyEmptyExpr;
-		
-		static Convert ()
-		{
-			Reset ();
-		}
-		
-		public static void Reset ()
-		{
-			MyEmptyExpr = null;
-		}
-		
+	static class Convert
+	{
 		//
 		// From a one-dimensional array-type S[] to System.Collections.IList<T> and base
 		// interfaces of this interface, provided there is an implicit reference conversion
@@ -55,11 +43,7 @@ namespace Mono.CSharp {
 			if (isExplicit)
 				return ExplicitReferenceConversionExists (array.Element, arg_type);
 
-			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (array.Element);
-			else
-				MyEmptyExpr.SetType (array.Element);
-
+			var MyEmptyExpr = new EmptyExpression (array.Element);
 			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
 		}
 		
@@ -72,11 +56,7 @@ namespace Mono.CSharp {
 			if (array.Element == arg_type)
 				return true;
 			
-			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (array.Element);
-			else
-				MyEmptyExpr.SetType (array.Element);
-
+			var MyEmptyExpr = new EmptyExpression (array.Element);
 			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
 		}
 
@@ -208,7 +188,7 @@ namespace Mono.CSharp {
 		//
 		public static bool ImplicitReferenceConversionExists (Expression expr, TypeSpec target_type)
 		{
-			if (TypeManager.IsStruct (target_type))
+			if (target_type.IsStruct)
 				return false;
 
 			TypeSpec expr_type = expr.Type;
@@ -281,11 +261,7 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsReferenceType (target_element_type))
 						return false;
 
-					if (MyEmptyExpr == null)
-						MyEmptyExpr = new EmptyExpression (expr_element_type);
-					else
-						MyEmptyExpr.SetType (expr_element_type);
-
+					var MyEmptyExpr = new EmptyExpression (expr_element_type);
 					return ImplicitStandardConversionExists (MyEmptyExpr, target_element_type);
 				}
 
@@ -351,7 +327,7 @@ namespace Mono.CSharp {
 				//
 				// From any enum-type to the type System.Enum.
 				//
-				if (TypeManager.IsEnumType (expr_type))
+				if (expr_type.IsEnum)
 					return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
 
 				break;
@@ -776,7 +752,7 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)) {
+			if (expr is IntegralConstant && target_type.IsEnum) {
 				var i = (IntegralConstant) expr;
 				//
 				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
@@ -811,7 +787,7 @@ namespace Mono.CSharp {
 		public static TypeSpec FindMostEncompassedType (IEnumerable<TypeSpec> types)
 		{
 			TypeSpec best = null;
-			EmptyExpression expr = EmptyExpression.Grab ();
+			EmptyExpression expr;
 
 			foreach (TypeSpec t in types) {
 				if (best == null) {
@@ -819,12 +795,12 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				expr.SetType (t);
+				expr = new EmptyExpression (t);
 				if (ImplicitStandardConversionExists (expr, best))
 					best = t;
 			}
 
-			expr.SetType (best);
+			expr = new EmptyExpression (best);
 			foreach (TypeSpec t in types) {
 				if (best == t)
 					continue;
@@ -833,8 +809,6 @@ namespace Mono.CSharp {
 					break;
 				}
 			}
-
-			EmptyExpression.Release (expr);
 
 			return best;
 		}
@@ -853,15 +827,13 @@ namespace Mono.CSharp {
 			if (types.Count == 1)
 				return types [0];
 
-			EmptyExpression expr = EmptyExpression.Grab ();
-
 			foreach (TypeSpec t in types) {
 				if (best == null) {
 					best = t;
 					continue;
 				}
 
-				expr.SetType (best);
+				var expr = new EmptyExpression (best);
 				if (ImplicitStandardConversionExists (expr, t))
 					best = t;
 			}
@@ -869,14 +841,13 @@ namespace Mono.CSharp {
 			foreach (TypeSpec t in types) {
 				if (best == t)
 					continue;
-				expr.SetType (t);
+
+				var expr = new EmptyExpression (best);
 				if (!ImplicitStandardConversionExists (expr, best)) {
 					best = null;
 					break;
 				}
 			}
-
-			EmptyExpression.Release (expr);
 
 			return best;
 		}
@@ -951,16 +922,12 @@ namespace Mono.CSharp {
 			if (apply_explicit_conv_rules) {
 				var candidate_set = new List<TypeSpec> ();
 
-				EmptyExpression expr = EmptyExpression.Grab ();
-
-				foreach (TypeSpec ret_type in tgt_types_set){
-					expr.SetType (ret_type);
+				foreach (TypeSpec ret_type in tgt_types_set) {
+					var expr = new EmptyExpression (ret_type);
 
 					if (ImplicitStandardConversionExists (expr, target))
 						candidate_set.Add (ret_type);
 				}
-
-				EmptyExpression.Release (expr);
 
 				if (candidate_set.Count != 0)
 					return FindMostEncompassingType (candidate_set);
@@ -1752,7 +1719,7 @@ namespace Mono.CSharp {
 			if (source_type.Kind == MemberKind.TypeParameter)
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
-			bool target_is_value_type = TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type);
+			bool target_is_value_type = target_type.Kind == MemberKind.Struct || target_type.Kind == MemberKind.Enum;
 
 			//
 			// Unboxing conversion from System.ValueType to any non-nullable-value-type

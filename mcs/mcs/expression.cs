@@ -1389,7 +1389,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (TypeManager.IsStruct (t)) {
+			if (t.IsStruct) {
 				if (d == t) {
 					//
 					// D and T are the same value types but D can be null
@@ -1424,7 +1424,7 @@ namespace Mono.CSharp
 						OperatorName, t.GetSignatureForError ());
 				}
 
-				if (TypeManager.IsStruct (d)) {
+				if (d.IsStruct) {
 					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
 						return CreateConstantResult (ec, true);
 				} else {
@@ -1447,7 +1447,7 @@ namespace Mono.CSharp
 		Expression ResolveGenericParameter (ResolveContext ec, TypeSpec d, TypeParameterSpec t)
 		{
 			if (t.IsReferenceType) {
-				if (TypeManager.IsStruct (d))
+				if (d.IsStruct)
 					return CreateConstantResult (ec, false);
 			}
 
@@ -4725,13 +4725,13 @@ namespace Mono.CSharp
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			// is out param
-			if (right_side == EmptyExpression.OutAccess.Instance)
+			if (right_side == EmptyExpression.OutAccess)
 				local_info.SetIsUsed ();
 
 			if (local_info.IsReadonly && !ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.UsingInitializerScope)) {
 				int code;
 				string msg;
-				if (right_side == EmptyExpression.OutAccess.Instance) {
+				if (right_side == EmptyExpression.OutAccess) {
 					code = 1657; msg = "Cannot pass `{0}' as a ref or out argument because it is a `{1}'";
 				} else if (right_side == EmptyExpression.LValueMemberAccess) {
 					code = 1654; msg = "Cannot assign to members of `{0}' because it is a `{1}'";
@@ -5773,16 +5773,6 @@ namespace Mono.CSharp
 				return value_target;
 			}
 
-			if (!TypeManager.IsStruct (type)){
-				//
-				// We throw an exception.  So far, I believe we only need to support
-				// value types:
-				// foreach (int j in new StructType ())
-				// see bug 42390
-				//
-				throw new Exception ("AddressOf should not be used for classes");
-			}
-
 			value_target.AddressOf (ec, AddressOp.Store);
 
 			if (method == null) {
@@ -6421,7 +6411,7 @@ namespace Mono.CSharp
 					// If we are dealing with a struct, get the
 					// address of it, so we can store it.
 					//
-					if (dims == 1 && TypeManager.IsStruct (etype)) {
+					if (dims == 1 && etype.IsStruct) {
 						switch (etype.BuildinType) {
 						case BuildinTypeSpec.Type.Byte:
 						case BuildinTypeSpec.Type.SByte:
@@ -6798,7 +6788,7 @@ namespace Mono.CSharp
 			if (ignoreAnonymous || ec.CurrentAnonymousMethod == null)
 				return true;
 
-			if (TypeManager.IsStruct (ec.CurrentType) && ec.CurrentIterator == null)
+			if (ec.CurrentType.IsStruct && ec.CurrentIterator == null)
 				return false;
 
 			return true;
@@ -6857,7 +6847,7 @@ namespace Mono.CSharp
 			if (type.IsClass){
 				if (right_side == EmptyExpression.UnaryAddress)
 					ec.Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
-				else if (right_side == EmptyExpression.OutAccess.Instance)
+				else if (right_side == EmptyExpression.OutAccess)
 					ec.Report.Error (1605, loc, "Cannot pass `this' as a ref or out argument because it is read-only");
 				else
 					ec.Report.Error (1604, loc, "Cannot assign to `this' because it is read-only");
@@ -8491,12 +8481,14 @@ namespace Mono.CSharp
 	///   This is also now used as a placeholder where a no-action expression
 	///   is needed (the `New' class).
 	/// </summary>
-	public class EmptyExpression : Expression {
-		public static readonly Expression Null = new EmptyExpression ();
-
-		public class OutAccess : EmptyExpression
+	class EmptyExpression : Expression
+	{
+		sealed class OutAccessExpression : EmptyExpression
 		{
-			public static readonly OutAccess Instance = new OutAccess ();
+			public OutAccessExpression (TypeSpec t)
+				: base (t)
+			{
+			}
 
 			public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 			{
@@ -8507,33 +8499,14 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
-		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
-		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();
-		public static readonly EmptyExpression EventAddition = new EmptyExpression ();
-		public static readonly EmptyExpression EventSubtraction = new EmptyExpression ();
+		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression (InternalType.FakeInternalType);
+		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression (InternalType.FakeInternalType);
+		public static readonly EmptyExpression UnaryAddress = new EmptyExpression (InternalType.FakeInternalType);
+		public static readonly EmptyExpression EventAddition = new EmptyExpression (InternalType.FakeInternalType);
+		public static readonly EmptyExpression EventSubtraction = new EmptyExpression (InternalType.FakeInternalType);
 		public static readonly EmptyExpression MissingValue = new EmptyExpression (InternalType.FakeInternalType);
-
-		static EmptyExpression temp = new EmptyExpression ();
-		public static EmptyExpression Grab ()
-		{
-			EmptyExpression retval = temp == null ? new EmptyExpression () : temp;
-			temp = null;
-			return retval;
-		}
-
-		public static void Release (EmptyExpression e)
-		{
-			temp = e;
-		}
-
-		EmptyExpression ()
-		{
-			// FIXME: Don't set to object
-			type = TypeManager.object_type;
-			eclass = ExprClass.Value;
-			loc = Location.Null;
-		}
+		public static readonly Expression Null = new EmptyExpression (InternalType.FakeInternalType);
+		public static readonly EmptyExpression OutAccess = new OutAccessExpression (InternalType.FakeInternalType);
 
 		public EmptyExpression (TypeSpec t)
 		{
@@ -8559,16 +8532,6 @@ namespace Mono.CSharp
 
 		public override void EmitSideEffect (EmitContext ec)
 		{
-		}
-
-		//
-		// This is just because we might want to reuse this bad boy
-		// instead of creating gazillions of EmptyExpressions.
-		// (CanImplicitConversion uses it)
-		//
-		public void SetType (TypeSpec t)
-		{
-			type = t;
 		}
 	}
 	
