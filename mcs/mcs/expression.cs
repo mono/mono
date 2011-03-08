@@ -1434,7 +1434,7 @@ namespace Mono.CSharp
 					if (InflatedTypeSpec.ContainsTypeParameter (d))
 						return this;
 
-					if (Convert.ImplicitReferenceConversionExists (expr, t) ||
+					if (Convert.ImplicitReferenceConversionExists (d, t) ||
 						Convert.ExplicitReferenceConversionExists (d, t)) {
 						return this;
 					}

@@ -43,8 +43,7 @@ namespace Mono.CSharp {
 			if (isExplicit)
 				return ExplicitReferenceConversionExists (array.Element, arg_type);
 
-			var MyEmptyExpr = new EmptyExpression (array.Element);
-			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
+			return ImplicitReferenceConversionExists (array.Element, arg_type);
 		}
 		
 		static bool IList_To_Array(TypeSpec list, ArrayContainer array)
@@ -56,8 +55,7 @@ namespace Mono.CSharp {
 			if (array.Element == arg_type)
 				return true;
 			
-			var MyEmptyExpr = new EmptyExpression (array.Element);
-			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
+			return ImplicitReferenceConversionExists (array.Element, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
 		}
 
 		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeParameterSpec expr_type, TypeSpec target_type)
@@ -179,7 +177,7 @@ namespace Mono.CSharp {
 				return nl.ConvertImplicitly (target_type);
 			}
 
-			if (ImplicitReferenceConversionExists (expr, target_type)) {
+			if (ImplicitReferenceConversionExists (expr_type, target_type)) {
 				// 
 				// Avoid wrapping implicitly convertible reference type
 				//
@@ -195,12 +193,10 @@ namespace Mono.CSharp {
 		//
 		// 6.1.6 Implicit reference conversions
 		//
-		public static bool ImplicitReferenceConversionExists (Expression expr, TypeSpec target_type)
+		public static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type)
 		{
 			if (target_type.IsStruct)
 				return false;
-
-			TypeSpec expr_type = expr.Type;
 
 			// from the null type to any reference-type.
 			if (expr_type == InternalType.NullLiteral)
@@ -705,7 +701,7 @@ namespace Mono.CSharp {
 			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
 				return true;
 
-			if (ImplicitReferenceConversionExists (expr, target_type))
+			if (ImplicitReferenceConversionExists (expr_type, target_type))
 				return true;
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)
@@ -1861,7 +1857,7 @@ namespace Mono.CSharp {
 						//
 						//If TP is covariant, an implicit or explicit identity or reference conversion is required
 						//
-						if (ImplicitReferenceConversionExists (new EmptyExpression (targs_src[i]), targs_dst[i]))
+						if (ImplicitReferenceConversionExists (targs_src[i], targs_dst[i]))
 							continue;
 
 						if (ExplicitReferenceConversionExists (targs_src[i], targs_dst[i]))

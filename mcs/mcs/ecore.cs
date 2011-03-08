@@ -3908,8 +3908,8 @@ namespace Mono.CSharp {
 						//
 						var at = a.Type;
 						if (at == pt || TypeSpecComparer.IsEqual (at, pt) ||
-							Convert.ImplicitReferenceConversionExists (a.Expr, pt) ||
-							Convert.ImplicitBoxingConversion (EmptyExpression.Null, at, pt) != null) {
+							Convert.ImplicitReferenceConversionExists (at, pt) ||
+							Convert.ImplicitBoxingConversion (null, at, pt) != null) {
 							score = 0;
 							continue;
 						}
@@ -4540,7 +4540,7 @@ namespace Mono.CSharp {
 				if (a.Expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic)
 					continue;
 
-				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr, pt)) {
+				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr.Type, pt)) {
 					custom_errors.NoArgumentMatch (ec, member);
 					return false;
 				}

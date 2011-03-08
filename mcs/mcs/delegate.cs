@@ -391,14 +391,14 @@ namespace Mono.CSharp {
 		//
 		// 15.2 Delegate compatibility
 		//
-		public static bool IsTypeCovariant (ResolveContext rc, Expression a, TypeSpec b)
+		public static bool IsTypeCovariant (ResolveContext rc, TypeSpec a, TypeSpec b)
 		{
 			//
 			// For each value parameter (a parameter with no ref or out modifier), an 
 			// identity conversion or implicit reference conversion exists from the
 			// parameter type in D to the corresponding parameter type in M
 			//
-			if (a.Type == b)
+			if (a == b)
 				return true;
 
 			if (rc.Module.Compiler.Settings.Version == LanguageVersion.ISO_1)
@@ -509,8 +509,8 @@ namespace Mono.CSharp {
 			}
 
 			TypeSpec rt = delegate_method.ReturnType;
-			Expression ret_expr = new TypeExpression (rt, loc);
-			if (!Delegate.IsTypeCovariant (ec, ret_expr, invoke_method.ReturnType)) {
+			if (!Delegate.IsTypeCovariant (ec, rt, invoke_method.ReturnType)) {
+				Expression ret_expr = new TypeExpression (rt, loc);
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
