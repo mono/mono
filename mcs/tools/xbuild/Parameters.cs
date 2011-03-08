@@ -81,6 +81,7 @@ namespace Mono.XBuild.CommandLine {
 			flatArguments = new ArrayList ();
 			remainingArguments = new ArrayList ();
 			responseFiles = new Hashtable ();
+			FileLoggerParameters = new string[10];
 			foreach (string s in args) {
 				if (s.StartsWith ("/noautoresponse") || s.StartsWith ("/noautorsp")) {
 					autoResponse = false;
@@ -222,8 +223,19 @@ namespace Mono.XBuild.CommandLine {
 			case "/val":
 				validate = true;
 				break;
+			case "/fl":
+			case "/filelogger":
+				if (FileLoggerParameters [0] == null)
+					FileLoggerParameters [0] = String.Empty;
+				break;
 			default:
-				if (s.StartsWith ("/target:") || s.StartsWith ("/t:")) {
+				if (s.StartsWith ("/fl") && s.Length == 4 && Char.IsDigit (s[3])) {
+					int index = Int32.Parse (s[3].ToString ());
+					if (FileLoggerParameters [index] == null)
+						FileLoggerParameters [index] = String.Empty;
+				} else if (s.StartsWith ("/fileloggerparameters") || s.StartsWith ("/flp")) {
+					ProcessFileLoggerParameters (s);
+				} else if (s.StartsWith ("/target:") || s.StartsWith ("/t:")) {
 					ProcessTarget (s);
 				} else if (s.StartsWith ("/property:") || s.StartsWith ("/p:")) {
 					if (!ProcessProperty (s))
@@ -327,7 +339,22 @@ namespace Mono.XBuild.CommandLine {
 				break;
 			}
 		}
-		
+
+		void ProcessFileLoggerParameters (string s)
+		{
+			int colon = s.IndexOf (':');
+			if (colon + 1 == s.Length)
+				ReportError (5, "Invalid syntax, specify parameters as /fileloggerparameters[n]:parameters");
+
+			int index = 0;
+			string key = s.Substring (0, colon);
+			if (Char.IsDigit (key [key.Length - 1]))
+			//if (key.Length == 22 && Char.IsDigit (key [21]))
+				index = Int32.Parse (key [key.Length - 1].ToString ());
+
+			FileLoggerParameters [index] = s.Substring (colon + 1);
+		}
+
 		internal void ProcessConsoleLoggerParameters (string s)
 		{
 			int colon = s.IndexOf (':');
@@ -379,6 +406,8 @@ namespace Mono.XBuild.CommandLine {
 		public bool NoConsoleLogger {
 			get { return noConsoleLogger; }
 		}
+
+		public string[] FileLoggerParameters { get; set; }
 		
 		public bool Validate {
 			get { return validate; }
