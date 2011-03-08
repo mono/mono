@@ -149,10 +149,10 @@ namespace System.Runtime.Serialization
 			// It is the only exceptional type that does not serialize to string but serializes into complex element.
 			if (type == typeof (DateTimeOffset)) {
 				var v = (DateTimeOffset) graph;
-				writer.WriteStartElement ("DateTime");
+				writer.WriteStartElement ("DateTime", KnownTypeCollection.DefaultClrNamespaceSystem);
 				SerializePrimitive (typeof (DateTime), DateTime.SpecifyKind (v.DateTime.Subtract (v.Offset), DateTimeKind.Utc), KnownTypeCollection.GetPredefinedTypeName (typeof (DateTime)));
 				writer.WriteEndElement ();
-				writer.WriteStartElement ("OffsetMinutes");
+				writer.WriteStartElement ("OffsetMinutes", KnownTypeCollection.DefaultClrNamespaceSystem);
 				SerializePrimitive (typeof (int), v.Offset.TotalMinutes, KnownTypeCollection.GetPredefinedTypeName (typeof (int)));
 				writer.WriteEndElement ();
 			}

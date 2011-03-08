@@ -175,8 +175,8 @@ namespace System.Runtime.Serialization
 				}
 				reader.ReadStartElement ();
 				reader.MoveToContent ();
-				var date = reader.ReadElementContentAsDateTime ("DateTime", qname.Namespace);
-				var off = TimeSpan.FromMinutes (reader.ReadElementContentAsInt ("OffsetMinutes", qname.Namespace));
+				var date = reader.ReadElementContentAsDateTime ("DateTime", KnownTypeCollection.DefaultClrNamespaceSystem);
+				var off = TimeSpan.FromMinutes (reader.ReadElementContentAsInt ("OffsetMinutes", KnownTypeCollection.DefaultClrNamespaceSystem));
 				reader.MoveToContent ();
 				reader.ReadEndElement ();
 				return new DateTimeOffset (DateTime.SpecifyKind (date.ToUniversalTime () + off, DateTimeKind.Unspecified), off);
