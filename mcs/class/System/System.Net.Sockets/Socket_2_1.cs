@@ -1245,10 +1245,9 @@ namespace System.Net.Sockets {
 				res.Buffers = e.BufferList;
 			}
 			res.SockFlags = e.SocketFlags;
-			Worker worker = new Worker (e);
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (worker);
+				readQ.Enqueue (e.Worker);
 				count = readQ.Count;
 			}
 			if (count == 1) {
@@ -1279,10 +1278,9 @@ namespace System.Net.Sockets {
 				res.Buffers = e.BufferList;
 			}
 			res.SockFlags = e.SocketFlags;
-			Worker worker = new Worker (e);
 			int count;
 			lock (writeQ) {
-				writeQ.Enqueue (worker);
+				writeQ.Enqueue (e.Worker);
 				count = writeQ.Count;
 			}
 			if (count == 1) {
