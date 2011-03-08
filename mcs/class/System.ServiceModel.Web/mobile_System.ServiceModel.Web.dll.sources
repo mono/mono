@@ -2,7 +2,6 @@ Assembly/AssemblyInfo.cs
 System.Runtime.Serialization.Json/DataContractJsonSerializer.cs
 System.Runtime.Serialization.Json/IXmlJsonReaderInitializer.cs
 System.Runtime.Serialization.Json/IXmlJsonWriterInitializer.cs
-System.Runtime.Serialization.Json/JavaScriptObjectDeserializer.cs
 System.Runtime.Serialization.Json/JavaScriptReader.cs
 System.Runtime.Serialization.Json/JsonReader.cs
 System.Runtime.Serialization.Json/JsonReaderWriterFactory.cs
