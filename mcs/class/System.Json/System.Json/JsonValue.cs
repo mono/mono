@@ -17,7 +17,7 @@ namespace System.Json
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			return Load (new JavaScriptObjectDeserializer.BufferedStreamReader (stream));
+			return Load (new StreamReader (stream, true));
 		}
 
 		public static JsonValue Load (TextReader textReader)
@@ -25,7 +25,7 @@ namespace System.Json
 			if (textReader == null)
 				throw new ArgumentNullException ("textReader");
 
-			var ret = new JavaScriptObjectDeserializer (textReader.ReadToEnd (), true).BasicDeserialize ();
+			var ret = new JavaScriptReader (textReader, true).Read ();
 
 			return ToJsonValue (ret);
 		}
