@@ -129,6 +129,7 @@ namespace Mono.CSharp {
 
 		// Compiler debug flags only
 		public bool ParseOnly, TokenizeOnly, Timestamps;
+		public int DebugFlags;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -1240,7 +1241,7 @@ namespace Mono.CSharp {
 				}
 
 				try {
-					Report.DebugFlags = int.Parse (args [++i]);
+					settings.DebugFlags = int.Parse (args [++i]);
 				} catch {
 					Error_RequiresArgument (arg);
 					return ParseResult.Error;

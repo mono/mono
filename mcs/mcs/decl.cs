@@ -1257,7 +1257,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static string[] attribute_targets = new string [] { "type" };
+		static readonly string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)

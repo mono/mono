@@ -482,7 +482,7 @@ namespace Mono.CSharp {
 		SecurityType declarative_security;
 		protected MethodData MethodData;
 
-		static string[] attribute_targets = new string [] { "method", "return" };
+		static readonly string[] attribute_targets = new string [] { "method", "return" };
 
 		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, Modifiers mod,
 				Modifiers allowed_mod, MemberName name,
@@ -1709,8 +1709,12 @@ namespace Mono.CSharp {
 	//
 	// Encapsulates most of the Method's state
 	//
-	public class MethodData {
+	public class MethodData
+	{
+#if !STATIC
 		static FieldInfo methodbuilder_attrs_field;
+#endif
+
 		public readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;

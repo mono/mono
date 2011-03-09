@@ -567,8 +567,6 @@ namespace Mono.CSharp {
 
 		public void AddCompilerGeneratedClass (CompilerGeneratedClass c)
 		{
-			Report.Debug (64, "ADD COMPILER GENERATED CLASS", this, c);
-
 			if (compiler_generated == null)
 				compiler_generated = new List<CompilerGeneratedClass> ();
 

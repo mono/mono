@@ -374,7 +374,7 @@ namespace Mono.CSharp
 			bool? has_extension = null;
 			foreach (var path in paths) {
 				var file = Path.Combine (path, fileName);
-				if (Report.DebugFlags > 0)
+				if (compiler.Settings.DebugFlags > 0)
 					Console.WriteLine ("Probing assembly location `{0}'", file);
 
 				if (!File.Exists (file)) {
@@ -428,7 +428,7 @@ namespace Mono.CSharp
 							}
 						}
 
-						if (Report.DebugFlags > 0)
+						if (compiler.Settings.DebugFlags > 0)
 							Console.WriteLine ("Loading assembly `{0}'", fileName);
 
 						var assembly = domain.LoadAssembly (module);
@@ -480,14 +480,14 @@ namespace Mono.CSharp
 			foreach (var path in paths) {
 				var file = Path.Combine (path, assembly);
 
-				if (Report.DebugFlags > 0)
+				if (compiler.Settings.DebugFlags > 0)
 					Console.WriteLine ("Probing default assembly location `{0}'", file);
 
 				if (!File.Exists (file))
 					continue;
 
 				try {
-					if (Report.DebugFlags > 0)
+					if (compiler.Settings.DebugFlags > 0)
 						Console.WriteLine ("Loading default assembly `{0}'", file);
 
 					var a = domain.LoadFile (file);

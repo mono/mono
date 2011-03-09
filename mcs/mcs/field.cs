@@ -630,6 +630,10 @@ namespace Mono.CSharp
 				}
 			}
 
+/*
+			if ((ModFlags & (Modifiers.STATIC | Modifiers.READONLY | Modifiers.COMPILER_GENERATED)) == Modifiers.STATIC)
+				Console.WriteLine ("{0}: {1}", Location.ToString (), GetSignatureForError ());
+*/
 			return true;
 		}
 

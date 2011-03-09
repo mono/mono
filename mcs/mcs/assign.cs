@@ -513,7 +513,7 @@ namespace Mono.CSharp {
 		{
 			this.mc = mc;
 			if (!spec.IsStatic)
-				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
+				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 			This	= 128
 		}
 
-		static string[] attribute_targets = new string [] { "param" };
+		static readonly string[] attribute_targets = new string[] { "param" };
 
 		FullNamedExpression texpr;
 		readonly Modifier modFlags;

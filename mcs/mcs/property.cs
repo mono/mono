@@ -197,7 +197,7 @@ namespace Mono.CSharp
 
 		public class GetMethod : PropertyMethod
 		{
-			static string[] attribute_targets = new string [] { "method", "return" };
+			static readonly string[] attribute_targets = new string [] { "method", "return" };
 
 			internal const string Prefix = "get_";
 
@@ -243,7 +243,7 @@ namespace Mono.CSharp
 
 		public class SetMethod : PropertyMethod {
 
-			static string[] attribute_targets = new string [] { "method", "param", "return" };
+			static readonly string[] attribute_targets = new string[] { "method", "param", "return" };
 
 			internal const string Prefix = "set_";
 
@@ -302,7 +302,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		static string[] attribute_targets = new string [] { "property" };
+		static readonly string[] attribute_targets = new string[] { "property" };
 
 		public abstract class PropertyMethod : AbstractPropertyEventMethod
 		{

@@ -249,7 +249,22 @@ namespace Mono.CSharp
 		// This is needed because `define' is not allowed to be used
 		// after a token has been seen.
 		//
-		bool any_token_seen = false;
+		bool any_token_seen;
+
+		//
+		// Class variables
+		// 
+		static readonly KeywordEntry<int>[][] keywords;
+		static readonly KeywordEntry<PreprocessorDirective>[][] keywords_preprocessor;
+		static readonly Dictionary<string, object> keyword_strings; 		// TODO: HashSet
+		static readonly NumberStyles styles;
+		static readonly NumberFormatInfo csharp_format_info;
+
+		// Pragma arguments
+		static readonly char[] pragma_warning = "warning".ToCharArray ();
+		static readonly char[] pragma_warning_disable = "disable".ToCharArray ();
+		static readonly char[] pragma_warning_restore = "restore".ToCharArray ();
+		static readonly char[] pragma_checksum = "checksum".ToCharArray ();
 
 		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
 
@@ -306,21 +321,6 @@ namespace Mono.CSharp
 			return escaped_identifiers != null && escaped_identifiers.Contains (name.Location);
 		}
 
-		//
-		// Class variables
-		// 
-		static KeywordEntry<int>[][] keywords;
-		static KeywordEntry<PreprocessorDirective>[][] keywords_preprocessor;
-		static Dictionary<string, object> keyword_strings; 		// TODO: HashSet
-		static NumberStyles styles;
-		static NumberFormatInfo csharp_format_info;
-
-		// Pragma arguments
-		static readonly char[] pragma_warning = "warning".ToCharArray ();
-		static readonly char[] pragma_warning_disable = "disable".ToCharArray ();
-		static readonly char[] pragma_warning_restore = "restore".ToCharArray ();
-		static readonly char[] pragma_checksum = "checksum".ToCharArray ();
-		
 		//
 		// Values for the associated token returned
 		//
@@ -463,12 +463,15 @@ namespace Mono.CSharp
 			kwe.Next = new KeywordEntry<T> (kw, token);
 		}
 
-		static void InitTokens ()
+		//
+		// Class initializer
+		// 
+		static Tokenizer ()
 		{
 			keyword_strings = new Dictionary<string, object> ();
 
 			// 11 is the length of the longest keyword for now
-			keywords = new KeywordEntry<int> [11] [];
+			keywords = new KeywordEntry<int>[11][];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
 			AddKeyword ("abstract", Token.ABSTRACT);
@@ -584,14 +587,7 @@ namespace Mono.CSharp
 			AddPreprocessorKeyword ("warning", PreprocessorDirective.Warning);
 			AddPreprocessorKeyword ("pragma", PreprocessorDirective.Pragma);
 			AddPreprocessorKeyword ("line", PreprocessorDirective.Line);
-		}
 
-		//
-		// Class initializer
-		// 
-		static Tokenizer ()
-		{
-			InitTokens ();			
 			csharp_format_info = NumberFormatInfo.InvariantInfo;
 			styles = NumberStyles.Float;
 

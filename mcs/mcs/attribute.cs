@@ -106,7 +106,6 @@ namespace Mono.CSharp {
 		IMemberContext context;
 
 		public static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
-		static Assembly orig_sec_assembly;
 		public static readonly object[] EmptyObject = new object [0];
 
 		List<KeyValuePair<MemberExpr, NamedArgument>> named_values;

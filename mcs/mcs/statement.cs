@@ -148,8 +148,6 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			Report.Debug (1, "START IF BLOCK", loc);
-
 			expr = expr.Resolve (ec);
 			if (expr == null) {
 				ok = false;
@@ -194,8 +192,6 @@ namespace Mono.CSharp {
 				ok &= FalseStatement.Resolve (ec);
 					
 			ec.EndFlowBranching ();
-
-			Report.Debug (1, "END IF BLOCK", loc);
 
 			return ok;
 		}
@@ -1947,8 +1943,6 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
 
-			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
-
 			//
 			// Compiler generated scope statements
 			//
@@ -2011,9 +2005,6 @@ namespace Mono.CSharp {
 				if (unreachable && s is LabeledStatement)
 					throw new InternalErrorException ("should not happen");
 			}
-
-			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
-				      ec.CurrentBranching, statement_count);
 
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
@@ -2555,7 +2546,7 @@ namespace Mono.CSharp {
 					rc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
 
-				if (Report.DebugFlags > 0)
+				if (rc.Module.Compiler.Settings.DebugFlags > 0)
 					throw;
 			}
 

@@ -27,8 +27,6 @@ namespace Mono.CSharp {
 		List<int> warnings_as_error;
 		List<int> warnings_only;
 
-		public static int DebugFlags = 0;
-
 		public const int RuntimeErrorId = 10000;
 
 		//
@@ -448,8 +446,8 @@ namespace Mono.CSharp {
 		[Conditional ("MCS_DEBUG")]
 		static public void Debug (int category, string message, params object[] args)
 		{
-			if ((category & DebugFlags) == 0)
-				return;
+//			if ((category & DebugFlags) == 0)
+//				return;
 
 			StringBuilder sb = new StringBuilder (message);
 

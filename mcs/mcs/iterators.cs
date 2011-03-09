@@ -55,9 +55,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			Report.Debug (64, "RESOLVE YIELD #1", this, ec, expr, expr.GetType (),
-				      ec.CurrentAnonymousMethod, ec.CurrentIterator);
-
 			if (!CheckContext (ec, loc))
 				return false;
 
@@ -150,7 +147,7 @@ namespace Mono.CSharp {
 						init = new List<Expression> (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
 						HoistedThis ht = host.hoisted_this;
 						FieldExpr from = new FieldExpr (ht.Field, loc);
-						from.InstanceExpression = CompilerGeneratedThis.Instance;
+						from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 						init.Add (new ElementInitializer (ht.Field.Name, from, loc));
 					}
 
@@ -163,7 +160,7 @@ namespace Mono.CSharp {
 							HoistedParameter hp_cp = (HoistedParameter) host.hoisted_params_copy [i];
 
 							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
-							from.InstanceExpression = CompilerGeneratedThis.Instance;
+							from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
 							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
 						}

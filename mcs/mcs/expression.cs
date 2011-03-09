@@ -4514,8 +4514,6 @@ namespace Mono.CSharp
 
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			Report.Debug (64, "VARIABLE EMIT", this, Variable, type, IsRef, loc);
-
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null) {
 				hv.Emit (ec, leave_copy);
@@ -6639,25 +6637,15 @@ namespace Mono.CSharp
 	
 	sealed class CompilerGeneratedThis : This
 	{
-		public static This Instance = new CompilerGeneratedThis ();
-
-		private CompilerGeneratedThis ()
-			: base (Location.Null)
-		{
-		}
-
 		public CompilerGeneratedThis (TypeSpec type, Location loc)
 			: base (loc)
 		{
 			this.type = type;
+			eclass = ExprClass.Variable;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			eclass = ExprClass.Variable;
-			if (type == null)
-				type = ec.CurrentType;
-
 			return this;
 		}
 
