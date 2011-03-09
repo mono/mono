@@ -58,11 +58,6 @@ namespace System.ServiceModel
 		IInternalContextChannel channel;
 		Dictionary<object,object[]> saved_params = new Dictionary<object,object[]> ();
 
-		// FIXME: Those environmental conditions are for bug #633945
-		// (which seems fixed, but we have some similar switches so
-		// far, so keep them here too until we remove all of them).
-		object [] current_client_params;
-
 		// It is used for such case that EndProcess() gets invoked
 		// before storing params is done after BeginProcess().
 		ManualResetEvent wait = new ManualResetEvent (false);
@@ -115,39 +110,16 @@ namespace System.ServiceModel
 					pl = new object [inmsg.ArgCount - 2];
 					Array.Copy (inmsg.Args, 0, pl, 0, pl.Length);
 
-					switch (Environment.OSVersion.Platform) {
-					case PlatformID.Unix:
-					case PlatformID.MacOSX:
-						break;
-					default:
-						current_client_params = pl;
-						break;
-					}
-
 					ret = channel.BeginProcess (inmsg.MethodBase, od.Name, pl, (AsyncCallback) inmsg.Args [inmsg.ArgCount - 2], inmsg.Args [inmsg.ArgCount - 1]);
 					saved_params [ret] = pl;
 
-					switch (Environment.OSVersion.Platform) {
-					case PlatformID.Unix:
-					case PlatformID.MacOSX:
-						wait.Set ();
-						break;
-					}
+					wait.Set ();
 
 				} else {
 					var result = (IAsyncResult) inmsg.InArgs [0];
 
-					switch (Environment.OSVersion.Platform) {
-					case PlatformID.Unix:
-					case PlatformID.MacOSX:
-						wait.WaitOne ();
-						pl = saved_params [result];
-						break;
-					default:
-						pl = current_client_params;
-						break;
-					}
-
+					wait.WaitOne ();
+					pl = saved_params [result];
 					wait.Reset ();
 					saved_params.Remove (result);
 					ret = channel.EndProcess (inmsg.MethodBase, od.Name, pl, result);
