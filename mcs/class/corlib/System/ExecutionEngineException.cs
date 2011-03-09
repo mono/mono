@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 	[Obsolete]
 #endif
 	[Serializable]
