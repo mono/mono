@@ -995,7 +995,7 @@ threadpool_start_thread (ThreadPool *tp)
 {
 	gint n;
 	guint32 stack_size;
- 
+
 	stack_size = (!tp->is_io) ? 0 : SMALL_STACK;
 	while (!mono_runtime_is_shutting_down () && (n = tp->nthreads) < tp->max_threads) {
 		if (InterlockedCompareExchange (&tp->nthreads, n + 1, n) == n) {
