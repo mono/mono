@@ -200,10 +200,10 @@ namespace Mono.CSharp {
 
 			// from the null type to any reference-type.
 			if (expr_type == InternalType.NullLiteral)
-				return target_type != InternalType.AnonymousMethod;
+				return true;
 
-			if (TypeManager.IsGenericParameter (expr_type))
-				return ImplicitTypeParameterConversion (null, (TypeParameterSpec)expr_type, target_type) != null;
+			if (expr_type.IsGenericParameter)
+				return ImplicitTypeParameterConversion (null, (TypeParameterSpec) expr_type, target_type) != null;
 
 			// This code is kind of mirrored inside ImplicitStandardConversionExists
 			// with the small distinction that we only probe there
@@ -231,9 +231,6 @@ namespace Mono.CSharp {
 
 				return expr_type.BuildinType == BuildinTypeSpec.Type.Dynamic;
 			}
-
-			if (target_type.BuildinType == BuildinTypeSpec.Type.ValueType)
-				return expr_type.BuildinType == BuildinTypeSpec.Type.Enum;
 
 			if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
 				if (TypeManager.IsGenericParameter (expr_type))
@@ -266,8 +263,10 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsReferenceType (target_element_type))
 						return false;
 
-					var MyEmptyExpr = new EmptyExpression (expr_element_type);
-					return ImplicitStandardConversionExists (MyEmptyExpr, target_element_type);
+					//
+					// An implicit reference conversion exists from SE to TE
+					//
+					return ImplicitReferenceConversionExists (expr_element_type, target_element_type);
 				}
 
 				// from an array-type to System.Array
