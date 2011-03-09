@@ -71,6 +71,7 @@
 			} while (1)
 
 #define SPIN_UNLOCK(i) i = 0
+#define SMALL_STACK (128 * (sizeof (gpointer) / 4) * 1024)
 
 #define EPOLL_DEBUG(...)
 #define EPOLL_DEBUG_STMT(...)
@@ -842,7 +843,6 @@ socket_io_init (SocketIOData *data)
 	int len;
 #endif
 	int inited;
-	guint32 stack_size;
 
 	if (data->inited >= 2) // 2 -> initialized, 3-> cleaned up
 		return;
@@ -913,20 +913,17 @@ socket_io_init (SocketIOData *data)
 		g_assert (data->new_sem != NULL);
 	}
 
-	stack_size = mono_threads_get_default_stacksize ();
-	/* 128k stacks could lead to problems on 64 bit systems with large pagesizes+altstack */
-	mono_threads_set_default_stacksize (128 * (sizeof (gpointer) / 4) * 1024);
 	if (data->epoll_disabled) {
-		mono_thread_create_internal (mono_get_root_domain (), socket_io_poll_main, data, TRUE);
+		mono_thread_create_internal (mono_get_root_domain (), socket_io_poll_main, data, TRUE, SMALL_STACK);
 	}
 #ifdef HAVE_EPOLL
 	else {
-		mono_thread_create_internal (mono_get_root_domain (), socket_io_epoll_main, data, TRUE);
+		mono_thread_create_internal (mono_get_root_domain (), socket_io_epoll_main, data, TRUE, SMALL_STACK);
 	}
 #endif
-	mono_threads_set_default_stacksize (stack_size);
 	LeaveCriticalSection (&data->io_lock);
 	data->inited = 2;
+	mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, &async_io_tp, TRUE, SMALL_STACK);
 }
 
 static void
@@ -1148,9 +1145,9 @@ static void
 threadpool_start_idle_threads (ThreadPool *tp)
 {
 	int n;
+	guint32 stack_size;
 
-	if (tp->pool_status == 1 && !tp->is_io)
-		mono_thread_create_internal (mono_get_root_domain (), monitor_thread, tp, TRUE);
+	stack_size = (!tp->is_io) ? 0 : SMALL_STACK;
 	do {
 		while (1) {
 			n = tp->nthreads;
@@ -1160,7 +1157,7 @@ threadpool_start_idle_threads (ThreadPool *tp)
 				break;
 		}
 		mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
-		mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE);
+		mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE, stack_size);
 		SleepEx (100, TRUE);
 	} while (1);
 }
@@ -1532,11 +1529,13 @@ static gboolean
 threadpool_start_thread (ThreadPool *tp)
 {
 	gint n;
-
+	guint32 stack_size;
+ 
+	stack_size = (!tp->is_io) ? 0 : SMALL_STACK;
 	while (!mono_runtime_is_shutting_down () && (n = tp->nthreads) < tp->max_threads) {
 		if (InterlockedCompareExchange (&tp->nthreads, n + 1, n) == n) {
 			mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
-			mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE);
+			mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE, stack_size);
 			return TRUE;
 		}
 	}
@@ -1596,8 +1595,14 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 	if (mono_runtime_is_shutting_down ())
 		return;
 
-	if (tp->pool_status == 0 && InterlockedCompareExchange (&tp->pool_status, 1, 0) == 0)
-		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE);
+	if (tp->pool_status == 0 && InterlockedCompareExchange (&tp->pool_status, 1, 0) == 0) {
+		if (!tp->is_io)
+			mono_thread_create_internal (mono_get_root_domain (), monitor_thread, tp, TRUE, SMALL_STACK);
+		/* Create on demand up to min_threads to avoid startup penalty for apps that don't use
+		 * the threadpool that much
+		* mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, SMALL_STACK);
+		*/
+	}
 
 	for (i = 0; i < njobs; i++) {
 		ar = jobs [i];
@@ -2149,9 +2154,9 @@ ves_icall_System_Threading_ThreadPool_SetMinThreads (gint workerThreads, gint co
 	InterlockedExchange (&async_tp.min_threads, workerThreads);
 	InterlockedExchange (&async_io_tp.min_threads, completionPortThreads);
 	if (workerThreads > async_tp.nthreads)
-		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, &async_tp, TRUE);
+		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, &async_tp, TRUE, SMALL_STACK);
 	if (completionPortThreads > async_io_tp.nthreads)
-		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, &async_io_tp, TRUE);
+		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, &async_io_tp, TRUE, SMALL_STACK);
 	return TRUE;
 }
 
