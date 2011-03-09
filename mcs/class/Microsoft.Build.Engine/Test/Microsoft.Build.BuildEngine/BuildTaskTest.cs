@@ -342,6 +342,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			bt [0].AddOutputItem ("Property", "ItemName");
 			project.Build ("T");
 
+			Assert.IsNotNull (project.EvaluatedItems [0], "No items found");
 			Assert.AreEqual ("ItemName", project.EvaluatedItems [0].Name, "A1");
 			Assert.AreEqual ("some_text", project.EvaluatedItems [0].FinalItemSpec, "A2");
         }

@@ -42,6 +42,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		string [] files;
 		Project project;
+		Engine engine;
 
 		[SetUp]
 		public void SetUp ()
@@ -63,7 +64,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 				"sample.txt", @"bar\sample.txt",
 				"sample.it.png", @"dir\sample.en.png", "sample.inv.txt"};
 
-			Engine engine = new Engine (Consts.BinPath);
+			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 		}
 
@@ -141,7 +142,14 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			string projectText = CreateProjectString (files_list);
 			project.LoadXml (projectText);
-			Assert.IsTrue (project.Build ("1"), "A1 : Error in building");
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("A1 : Error in building");
+			}
 		}
 
 		void CheckItems (string [] values, string [] cultures, string itemlist_name, string prefix)

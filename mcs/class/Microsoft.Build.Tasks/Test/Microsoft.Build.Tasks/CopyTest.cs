@@ -210,7 +210,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				testLogger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
-			testLogger.DumpMessages ();
 		}
 
 		[Test]
