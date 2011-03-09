@@ -148,7 +148,11 @@ namespace MonoTests.Microsoft.Build.Tasks
 			Assert.IsTrue(project.Build("1"), id + "1 : Error in building");
 
 			string [] files = new string [] { "xyz.cs", "rel/bar.resx", "rel/qwe.txt"};
-			string [] assignedFiles = new string [] { "Test/Link/xyz.cs", "Test/Link/bar.resx", "../Test/Link/qwe.txt"};
+			string [] assignedFiles = new string [] {
+				PathCombine ("Test", "Link", "xyz.cs"),
+				PathCombine ("Test", "Link", "bar.resx"),
+				PathCombine ("..", "Test", "Link", "qwe.txt")
+			};
 
 			BuildItemGroup include = project.GetEvaluatedItemsByName("FooPath");
 			Assert.AreEqual(files.Length, include.Count, id + "2");
@@ -160,6 +164,18 @@ namespace MonoTests.Microsoft.Build.Tasks
 				Assert.IsTrue (include [i].HasMetadata ("Child"), id + "6, file #" + i + ", Child metadata missing");
 				Assert.AreEqual ("C" + files [i], include [i].GetMetadata ("Child"), id + "7, file #" + i + ", Child metadata value incorrect");
 			}
+		}
+
+		string PathCombine (string path1, params string[] parts)
+		{
+			if (parts == null || parts.Length == 0)
+				return path1;
+
+			string final_path = path1;
+			foreach (string part in parts)
+				final_path = Path.Combine (final_path, part);
+
+			return final_path;
 		}
 
 		void CheckTargetPath(string[] files, string[] assignedFiles, string rootFolder, string id)
