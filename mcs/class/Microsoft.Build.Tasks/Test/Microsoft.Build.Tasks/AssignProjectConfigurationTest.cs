@@ -118,7 +118,6 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 			try {
 				Assert.AreEqual (build_result, project.Build (), "Build " + (build_result ? "failed" : "should've failed"));
-				testLogger.DumpMessages ();
 				if (!build_result || messages == null)
 					// build failed as expected, don't check outputs
 					return;
