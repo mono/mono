@@ -1374,5 +1374,13 @@ namespace MonoTests.System.Xml
 			} while (read > 0);
 			Assert.AreEqual ("<child>a</child>", sb.ToString (), "#1");
 		}
+
+		[Test]
+		public void BOMLessUTF16Detection () // bug #674580
+		{
+			var ms = new MemoryStream (Encoding.Unicode.GetBytes ("<root />"));
+			var xtr = new XmlTextReader (ms);
+			xtr.Read ();
+		}
 	}
 }
