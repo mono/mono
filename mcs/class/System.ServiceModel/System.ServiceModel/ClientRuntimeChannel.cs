@@ -435,42 +435,13 @@ namespace System.ServiceModel.MonoInternal
 
 		#region Request/Output processing
 
-		class TempAsyncResult : IAsyncResult
-		{
-			public TempAsyncResult (object returnValue, object state)
-			{
-				ReturnValue = returnValue;
-				AsyncState = state;
-				CompletedSynchronously = true;
-				IsCompleted = true;
-				AsyncWaitHandle = new ManualResetEvent (true);
-			}
-			
-			public object ReturnValue { get; set; }
-			public object AsyncState { get; set; }
-			public bool CompletedSynchronously { get; set; }
-			public bool IsCompleted { get; set; }
-			public WaitHandle AsyncWaitHandle { get; set; }
-		}
-
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
 			if (context != null)
 				throw new InvalidOperationException ("another operation is in progress");
 			context = OperationContext.Current;
 
-			// FIXME: this is a workaround for bug #633945
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Unix:
-			case PlatformID.MacOSX:
-				return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
-			default:
-				var result = Process (method, operationName, parameters);
-				var ret = new TempAsyncResult (result, asyncState);
-				if (callback != null)
-					callback (ret);
-				return ret;
-			}
+			return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
@@ -482,14 +453,7 @@ namespace System.ServiceModel.MonoInternal
 				throw new ArgumentNullException ("parameters");
 			// FIXME: the method arguments should be verified to be 
 			// identical to the arguments in the corresponding begin method.
-			// FIXME: this is a workaround for bug #633945
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Unix:
-			case PlatformID.MacOSX:
-				return _processDelegate.EndInvoke (result);
-			default:
-				return ((TempAsyncResult) result).ReturnValue;
-			}
+			return _processDelegate.EndInvoke (result);
 		}
 
 		public object Process (MethodBase method, string operationName, object [] parameters)
