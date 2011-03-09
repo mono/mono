@@ -139,6 +139,8 @@ namespace Mono.CSharp {
 
 		public RuntimeVersion StdLibRuntimeVersion;
 
+		readonly List<string> conditional_symbols;
+
 		public CompilerSettings ()
 		{
 			StdLib = true;
@@ -156,7 +158,15 @@ namespace Mono.CSharp {
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
 			Modules = new List<string> ();
 			ReferencesLookupPaths = new List<string> ();
+
+			conditional_symbols = new List<string> ();
+			//
+			// Add default mcs define
+			//
+			conditional_symbols.Add ("__MonoCS__");
 		}
+
+		#region Properties
 
 		public bool HasKeyFileOrContainer {
 			get {
@@ -168,6 +178,19 @@ namespace Mono.CSharp {
 			get {
 				return Target == Target.Exe || Target == Target.WinExe;
 			}
+		}
+
+		#endregion
+
+		public void AddConditionalSymbol (string symbol)
+		{
+			if (!conditional_symbols.Contains (symbol))
+				conditional_symbols.Add (symbol);
+		}
+
+		public bool IsConditionalSymbolDefined (string symbol)
+		{
+			return conditional_symbols.Contains (symbol);
 		}
 	}
 
@@ -606,7 +629,8 @@ namespace Mono.CSharp {
 							report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", conditional);
 							continue;
 						}
-						RootContext.AddConditional (conditional);
+
+						settings.AddConditionalSymbol (conditional);
 					}
 					return ParseResult.Success;
 				}
@@ -976,7 +1000,6 @@ namespace Mono.CSharp {
 					return ParseResult.Success;
 				case "default":
 					settings.Version = LanguageVersion.Default;
-					RootContext.AddConditional ("__V2__");
 					return ParseResult.Success;
 				case "iso-2":
 					settings.Version = LanguageVersion.ISO_2;
@@ -1065,7 +1088,8 @@ namespace Mono.CSharp {
 					Error_RequiresArgument (arg);
 					return ParseResult.Error;
 				}
-				RootContext.AddConditional (args [++i]);
+
+				settings.AddConditionalSymbol (args [++i]);
 				return ParseResult.Success;
 
 			case "--tokenize":
@@ -1395,49 +1419,6 @@ namespace Mono.CSharp {
 		// Contains the parsed tree
 		//
 		static ModuleContainer root;
-
-		//
-		// This hashtable contains all of the #definitions across the source code
-		// it is used by the ConditionalAttribute handler.
-		//
-		static List<string> AllDefines;
-
-		//
-		// Constructor
-		//
-		static RootContext ()
-		{
-			Reset (true);
-		}
-
-		public static void PartialReset ()
-		{
-			Reset (false);
-		}
-		
-		public static void Reset (bool full)
-		{
-			if (!full)
-				return;
-			
-			//
-			// Setup default defines
-			//
-			AllDefines = new List<string> ();
-			AddConditional ("__MonoCS__");
-		}
-
-		public static void AddConditional (string p)
-		{
-			if (AllDefines.Contains (p))
-				return;
-			AllDefines.Add (p);
-		}
-
-		public static bool IsConditionalDefined (string value)
-		{
-			return AllDefines.Contains (value);
-		}
 
 		static public ModuleContainer ToplevelTypes {
 			get { return root; }

@@ -230,7 +230,6 @@ namespace Mono.CSharp {
 		public bool HasAddressTaken;
 
 		TemporaryVariableReference expr_tree_variable;
-		static TypeExpr parameter_expr_tree_type;
 
 		HoistedVariable hoisted_variant;
 
@@ -338,11 +337,6 @@ namespace Mono.CSharp {
 				return true;
 
 			return member.IsAccessibleAs (parameter_type);
-		}
-
-		public static void Reset ()
-		{
-			parameter_expr_tree_type = null;
 		}
 
 		// <summary>
@@ -660,14 +654,8 @@ namespace Mono.CSharp {
 		//
 		public static TypeExpr ResolveParameterExpressionType (IMemberContext ec, Location location)
 		{
-			if (parameter_expr_tree_type != null)
-				return parameter_expr_tree_type;
-
 			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve (location);
-			parameter_expr_tree_type = new TypeExpression (p_type, location).
-				ResolveAsTypeTerminal (ec, false);
-
-			return parameter_expr_tree_type;
+			return new TypeExpression (p_type, location);
 		}
 
 		public void Warning_UselessOptionalParameter (Report Report)

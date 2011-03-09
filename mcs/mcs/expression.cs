@@ -659,7 +659,7 @@ namespace Mono.CSharp
 				ec.Report.Error (212, loc, "You can only take the address of unfixed expression inside of a fixed statement initializer");
 			}
 
-			type = PointerContainer.MakeType (Expr.Type);
+			type = PointerContainer.MakeType (ec.Module, Expr.Type);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -3918,7 +3918,6 @@ namespace Mono.CSharp
 	public class StringConcat : Expression
 	{
 		Arguments arguments;
-		static IList<MemberSpec> concat_members;
 		
 		StringConcat (Location loc)
 		{
@@ -3960,7 +3959,7 @@ namespace Mono.CSharp
 			concat_args.Add (arguments [pos]);
 			add_args.Add (new Argument (arguments [pos].CreateExpressionTree (ec)));
 
-			var methods = CreateConcatMethodCandidates ();
+			var methods = GetConcatMethodCandidates ();
 			if (methods == null)
 				return null;
 
@@ -4013,18 +4012,14 @@ namespace Mono.CSharp
 			arguments.Add (new Argument (operand));
 		}
 
-		IList<MemberSpec> CreateConcatMethodCandidates ()
+		IList<MemberSpec> GetConcatMethodCandidates ()
 		{
-			if (concat_members == null) {
-				concat_members = MemberCache.FindMembers (type, "Concat", true);
-			}
-
-			return concat_members;
+			return MemberCache.FindMembers (type, "Concat", true);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			var members = CreateConcatMethodCandidates ();
+			var members = GetConcatMethodCandidates ();
 			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var method = res.ResolveMember<MethodSpec> (new ResolveContext (ec.MemberContext), ref arguments);
 			if (method != null)
@@ -4038,11 +4033,6 @@ namespace Mono.CSharp
 
 			var concat = typeof (string).GetMethod ("Concat", new[] { typeof (object), typeof (object) });
 			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
-		}
-
-		public static void Reset ()
-		{
-			concat_members = null;
 		}
 	}
 
@@ -5292,7 +5282,7 @@ namespace Mono.CSharp
 			LocalTemporary this_arg = null;
 
 			// Speed up the check by not doing it on not allowed targets
-			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (loc))
+			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.Module.Compiler, loc))
 				return;
 
 			OpCode call_op;
@@ -5340,7 +5330,7 @@ namespace Mono.CSharp
 
 						// avoid the overhead of doing this all the time.
 						if (dup_args)
-							t = ReferenceContainer.MakeType (iexpr_type);
+							t = ReferenceContainer.MakeType (ec.Module, iexpr_type);
 					} else if (iexpr_type.IsEnum || iexpr_type.IsStruct) {
 						instance_expr.Emit (ec);
 						ec.Emit (OpCodes.Box, iexpr_type);
@@ -8734,7 +8724,7 @@ namespace Mono.CSharp
 				}
 
 				do {
-					type = PointerContainer.MakeType (type);
+					type = PointerContainer.MakeType (ec.Module, type);
 					single_spec = single_spec.Next;
 				} while (single_spec != null && single_spec.IsPointer);
 			}
@@ -8768,16 +8758,15 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class FixedBufferPtr : Expression {
-		Expression array;
+	class FixedBufferPtr : Expression
+	{
+		readonly Expression array;
 
 		public FixedBufferPtr (Expression array, TypeSpec array_type, Location l)
 		{
+			this.type = array_type;
 			this.array = array;
 			this.loc = l;
-
-			type = PointerContainer.MakeType (array_type);
-			eclass = ExprClass.Value;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -8793,9 +8782,8 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			//
-			// We are born fully resolved
-			//
+			type = PointerContainer.MakeType (ec.Module, type);
+			eclass = ExprClass.Value;
 			return this;
 		}
 	}
@@ -8806,13 +8794,11 @@ namespace Mono.CSharp
 	// only by the Fixed statement, this generates "&a [0]" construct
 	// for fixed (char *pa = a)
 	//
-	public class ArrayPtr : FixedBufferPtr {
-		TypeSpec array_type;
-		
+	class ArrayPtr : FixedBufferPtr
+	{
 		public ArrayPtr (Expression array, TypeSpec array_type, Location l):
 			base (array, array_type, l)
 		{
-			this.array_type = array_type;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8820,7 +8806,7 @@ namespace Mono.CSharp
 			base.Emit (ec);
 			
 			ec.EmitInt (0);
-			ec.Emit (OpCodes.Ldelema, array_type);
+			ec.Emit (OpCodes.Ldelema, ((PointerContainer) type).Element);
 		}
 	}
 
@@ -8913,7 +8899,7 @@ namespace Mono.CSharp
 			if (!TypeManager.VerifyUnmanaged (ec.Module, otype, loc))
 				return null;
 
-			type = PointerContainer.MakeType (otype);
+			type = PointerContainer.MakeType (ec.Module, otype);
 			eclass = ExprClass.Value;
 
 			return this;

@@ -111,9 +111,6 @@ namespace Mono.CSharp {
 
 		List<KeyValuePair<MemberExpr, NamedArgument>> named_values;
 
-		// Cache for parameter-less attributes
-		static Dictionary<TypeSpec, MethodSpec> att_cache;
-
 		public Attribute (string target, ATypeNameExpression expr, Arguments[] args, Location loc, bool nameEscaped)
 		{
 			this.expression = expr;
@@ -153,16 +150,6 @@ namespace Mono.CSharp {
 			a.PosArguments = PosArguments;
 			a.NamedArguments = NamedArguments;
 			return a;
-		}
-
-		static Attribute ()
-		{
-			Reset ();
-		}
-
-		public static void Reset ()
-		{
-			att_cache = new Dictionary<TypeSpec, MethodSpec> ();
 		}
 
 		//
@@ -418,19 +405,19 @@ namespace Mono.CSharp {
 				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location, Report);
 			}
 
-			MethodSpec ctor;
-			// Try if the attribute is simple has been resolved before
-			if (PosArguments == null && NamedArguments == null) {
-				if (att_cache.TryGetValue (Type, out ctor)) {
-					resolve_error = false;
-					return ctor;
-				}
-			}
+			ResolveContext rc = null;
 
-			ResolveContext rc = CreateResolveContext ();
-			ctor = ResolveConstructor (rc);
-			if (ctor == null) {
-				return null;
+			MethodSpec ctor;
+			// Try if the attribute is simple and has been resolved before
+			if (PosArguments != null || !context.Module.AttributeConstructorCache.TryGetValue (Type, out ctor)) {
+				rc = CreateResolveContext ();
+				ctor = ResolveConstructor (rc);
+				if (ctor == null) {
+					return null;
+				}
+
+				if (PosArguments == null && ctor.Parameters.IsEmpty)
+					context.Module.AttributeConstructorCache.Add (Type, ctor);
 			}
 
 			//
@@ -438,11 +425,18 @@ namespace Mono.CSharp {
 			//
 			var module = context.Module;
 			if (Type == module.PredefinedAttributes.DllImport && module.HasDefaultCharSet) {
+				if (rc == null)
+					rc = CreateResolveContext ();
+
 				AddModuleCharSet (rc);
 			}
 
-			if (NamedArguments != null && !ResolveNamedArguments (rc)) {
-				return null;
+			if (NamedArguments != null) {
+				if (rc == null)
+					rc = CreateResolveContext ();
+
+				if (!ResolveNamedArguments (rc))
+					return null;
 			}
 
 			resolve_error = false;

@@ -1083,9 +1083,9 @@ namespace Mono.CSharp
 				if (type.IsArray)
 					return ArrayContainer.MakeType (module, spec, type.GetArrayRank ());
 				if (type.IsByRef)
-					return ReferenceContainer.MakeType (spec);
+					return ReferenceContainer.MakeType (module, spec);
 				if (type.IsPointer)
-					return PointerContainer.MakeType (spec);
+					return PointerContainer.MakeType (module, spec);
 
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}

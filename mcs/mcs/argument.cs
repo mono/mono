@@ -201,7 +201,7 @@ namespace Mono.CSharp
 			if (IsByRef) {
 				var ml = (IMemoryLocation) Expr;
 				ml.AddressOf (ec, AddressOp.Load);
-				type = ReferenceContainer.MakeType (type);
+				type = ReferenceContainer.MakeType (ec.Module, type);
 			} else {
 				Expr.Emit (ec);
 			}

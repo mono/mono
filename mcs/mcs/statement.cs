@@ -4419,8 +4419,7 @@ namespace Mono.CSharp {
 					//
 					ArrayPtr array_ptr = new ArrayPtr (initializer, array_type, loc);
 
-					Expression converted = Convert.ImplicitConversionRequired (
-						bc, array_ptr, li.Type, loc);
+					Expression converted = Convert.ImplicitConversionRequired (bc, array_ptr.Resolve (bc), li.Type, loc);
 					if (converted == null)
 						return null;
 

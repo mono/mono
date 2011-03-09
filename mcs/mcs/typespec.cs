@@ -1460,7 +1460,7 @@ namespace Mono.CSharp
 			var address = mb.GetArrayMethod (
 				GetMetaInfo (), "Address",
 				CallingConventions.HasThis | CallingConventions.Standard,
-				ReferenceContainer.MakeType (Element).GetMetaInfo (), arg_types);
+				ReferenceContainer.MakeType (module, Element).GetMetaInfo (), arg_types);
 
 			return address;
 		}
@@ -1537,12 +1537,12 @@ namespace Mono.CSharp
 		{
 			ArrayContainer ac;
 			var key = new TypeRankPair (element, rank);
-			if (!module.ArraysCache.TryGetValue (key, out ac)) {
+			if (!module.ArrayTypesCache.TryGetValue (key, out ac)) {
 				ac = new ArrayContainer (module, element, rank) {
 					BaseType = module.Compiler.BuildinTypes.Array
 				};
 
-				module.ArraysCache.Add (key, ac);
+				module.ArrayTypesCache.Add (key, ac);
 			}
 
 			return ac;
@@ -1551,8 +1551,6 @@ namespace Mono.CSharp
 
 	class ReferenceContainer : ElementTypeSpec
 	{
-		static Dictionary<TypeSpec, ReferenceContainer> instances = new Dictionary<TypeSpec, ReferenceContainer> ();
-
 		private ReferenceContainer (TypeSpec element)
 			: base (MemberKind.Class, element, null)	// TODO: Kind.Class is most likely wrong
 		{
@@ -1567,27 +1565,20 @@ namespace Mono.CSharp
 			return info;
 		}
 
-		public static ReferenceContainer MakeType (TypeSpec element)
+		public static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
 			ReferenceContainer pc;
-			if (!instances.TryGetValue (element, out pc)) {
+			if (!module.ReferenceTypesCache.TryGetValue (element, out pc)) {
 				pc = new ReferenceContainer (element);
-				instances.Add (element, pc);
+				module.ReferenceTypesCache.Add (element, pc);
 			}
 
 			return pc;
-		}
-
-		public static void Reset ()
-		{
-			instances = new Dictionary<TypeSpec, ReferenceContainer> ();
 		}
 	}
 
 	class PointerContainer : ElementTypeSpec
 	{
-		static Dictionary<TypeSpec, PointerContainer> instances = new Dictionary<TypeSpec, PointerContainer> ();
-
 		private PointerContainer (TypeSpec element)
 			: base (MemberKind.PointerType, element, null)
 		{
@@ -1609,20 +1600,15 @@ namespace Mono.CSharp
  			return "*";
 		}
 
-		public static PointerContainer MakeType (TypeSpec element)
+		public static PointerContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
 			PointerContainer pc;
-			if (!instances.TryGetValue (element, out pc)) {
+			if (!module.PointerTypesCache.TryGetValue (element, out pc)) {
 				pc = new PointerContainer (element);
-				instances.Add (element, pc);
+				module.PointerTypesCache.Add (element, pc);
 			}
 
 			return pc;
-		}
-
-		public static void Reset ()
-		{
-			instances = new Dictionary<TypeSpec, PointerContainer> ();
 		}
 	}
 }

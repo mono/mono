@@ -36,7 +36,7 @@ namespace Mono.CSharp
 		//
 		sealed class StaticDataContainer : CompilerGeneratedClass
 		{
-			Dictionary<int, Struct> size_types;
+			readonly Dictionary<int, Struct> size_types;
 			new int fields;
 
 			public StaticDataContainer (ModuleContainer module)
@@ -118,13 +118,16 @@ namespace Mono.CSharp
 		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
-		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
-		Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> arrays;
+		readonly Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
+		readonly Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> array_types;
+		readonly Dictionary<TypeSpec, PointerContainer> pointer_types;
+		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
+		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
 		readonly RootNamespace global_ns;
-		Dictionary<string, RootNamespace> alias_ns;
+		readonly Dictionary<string, RootNamespace> alias_ns;
 
 		ModuleBuilder builder;
 
@@ -147,14 +150,26 @@ namespace Mono.CSharp
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
-			arrays = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
+			array_types = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
+			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
+			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
+			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
 		}
 
 		#region Properties
 
-		public Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArraysCache {
+		internal Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArrayTypesCache {
 			get {
-				return arrays;
+				return array_types;
+			}
+		}
+
+		//
+		// Cache for parameter-less attributes
+		//
+		internal Dictionary<TypeSpec, MethodSpec> AttributeConstructorCache {
+			get {
+				return attrs_cache;
 			}
 		}
 
@@ -216,6 +231,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal Dictionary<TypeSpec, PointerContainer> PointerTypesCache {
+			get {
+				return pointer_types;
+			}
+		}
+
 		internal PredefinedAttributes PredefinedAttributes {
 			get {
 				return predefined_attributes;
@@ -231,6 +252,12 @@ namespace Mono.CSharp
 		internal PredefinedTypes PredefinedTypes {
 			get {
 				return predefined_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
+			get {
+				return reference_types;
 			}
 		}
 

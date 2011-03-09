@@ -1165,7 +1165,7 @@ namespace Mono.CSharp {
 			return (state & StateFlags.CLSCompliant) != 0;
 		}
 
-		public bool IsConditionallyExcluded (Location loc)
+		public bool IsConditionallyExcluded (CompilerContext ctx, Location loc)
 		{
 			if ((Kind & (MemberKind.Class | MemberKind.Method)) == 0)
 				return false;
@@ -1175,7 +1175,7 @@ namespace Mono.CSharp {
 				return false;
 
 			foreach (var condition in conditions) {
-				if (loc.CompilationUnit.IsConditionalDefined (condition))
+				if (loc.CompilationUnit.IsConditionalDefined (ctx, condition))
 					return false;
 			}
 

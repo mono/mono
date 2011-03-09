@@ -396,15 +396,7 @@ namespace Mono.CSharp
 			if (!full_flag)
 				return;
 
-			RootContext.Reset (full_flag);
-			ReferenceContainer.Reset ();
-			PointerContainer.Reset ();
-			Parameter.Reset ();
-
-			StringConcat.Reset ();
-			
 			NamespaceEntry.Reset ();
-			Attribute.Reset ();
 			AnonymousTypeClass.Reset ();
 			AnonymousMethodBody.Reset ();
 			AnonymousMethodStorey.Reset ();

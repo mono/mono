@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsConditionalDefined (string value)
+		public bool IsConditionalDefined (CompilerContext ctx, string value)
 		{
 			if (conditionals != null) {
 				bool res;
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 					return false;					
 			}
 
-			return RootContext.IsConditionalDefined (value);
+			return ctx.Settings.IsConditionalSymbolDefined (value);
 		}
 	}
 

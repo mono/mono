@@ -1918,7 +1918,7 @@ namespace Mono.CSharp
 				//
 				// #define ident
 				//
-				if (RootContext.IsConditionalDefined (ident))
+				if (context.Settings.IsConditionalSymbolDefined (ident))
 					return;
 
 				file_name.AddDefine (ident);
@@ -2223,7 +2223,7 @@ namespace Mono.CSharp
 			if (s == "false")
 				return false;
 
-			return file_name.IsConditionalDefined (s);
+			return file_name.IsConditionalDefined (context, s);
 		}
 
 		bool pp_primary (ref string s)
