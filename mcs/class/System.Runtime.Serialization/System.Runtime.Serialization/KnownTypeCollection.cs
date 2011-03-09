@@ -419,6 +419,12 @@ namespace System.Runtime.Serialization
 		// FIXME: it could remove other types' dependencies.
 		protected override void RemoveItem (int index)
 		{
+			lock (this)
+				DoRemoveItem (index);
+		}
+
+		void DoRemoveItem (int index)
+		{
 			Type t = base [index];
 			List<SerializationMap> l = new List<SerializationMap> ();
 			foreach (SerializationMap m in contracts) {
@@ -448,7 +454,8 @@ namespace System.Runtime.Serialization
 
 		internal SerializationMap FindUserMap (QName qname)
 		{
-			return contracts.FirstOrDefault (c => c.XmlName == qname);
+			lock (this)
+				return contracts.FirstOrDefault (c => c.XmlName == qname);
 		}
 
 		internal Type GetSerializedType (Type type)
@@ -467,10 +474,12 @@ namespace System.Runtime.Serialization
 
 		internal SerializationMap FindUserMap (Type type)
 		{
-			for (int i = 0; i < contracts.Count; i++)
-				if (type == contracts [i].RuntimeType)
-					return contracts [i];
-			return null;
+			lock (this) {
+				for (int i = 0; i < contracts.Count; i++)
+					if (type == contracts [i].RuntimeType)
+						return contracts [i];
+				return null;
+			}
 		}
 
 		internal QName GetQName (Type type)
@@ -646,6 +655,13 @@ namespace System.Runtime.Serialization
 		}
 
 		internal bool TryRegister (Type type)
+		{
+			lock (this) {
+				return DoTryRegister (type);
+			}
+		}
+
+		bool DoTryRegister (Type type)
 		{
 			// exclude predefined maps
 			if (ShouldNotRegister (type))
