@@ -403,10 +403,10 @@ namespace Mono.CSharp
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, Parent.Module.DefaultCharSetType |
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
 
-			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
+			var ffield = fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
-			var element_spec = new FieldSpec (null, this, MemberType, FieldBuilder, ModFlags);
+			var element_spec = new FieldSpec (null, this, MemberType, ffield, ModFlags);
 			spec = new FixedFieldSpec (Parent.Definition, this, FieldBuilder, element_spec, ModFlags);
 
 			Parent.MemberCache.AddMember (spec);
@@ -440,14 +440,6 @@ namespace Mono.CSharp
 				return;
 			}
 
-			int type_size = Expression.GetTypeSize (MemberType);
-
-			if (buffer_size > int.MaxValue / type_size) {
-				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
-					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
-				return;
-			}
-
 			EmitFieldSize (buffer_size);
 
 			Module.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
@@ -459,6 +451,14 @@ namespace Mono.CSharp
 
 		void EmitFieldSize (int buffer_size)
 		{
+			int type_size = Expression.GetTypeSize (MemberType);
+
+			if (buffer_size > int.MaxValue / type_size) {
+				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
+					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+				return;
+			}
+			
 			PredefinedAttribute pa;
 			AttributeEncoder encoder;
 
@@ -481,7 +481,7 @@ namespace Mono.CSharp
 			encoder.Encode ((short)LayoutKind.Sequential);
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
-				new Constant [] { new IntConstant (buffer_size, Location), new IntConstant ((int) char_set, Location) }
+				new Constant [] { new IntConstant (buffer_size * type_size, Location), new IntConstant ((int) char_set, Location) }
 			);
 
 			pa.EmitAttribute (fixed_buffer_type, encoder);
