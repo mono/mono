@@ -1096,12 +1096,18 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluate_properties)
 				groupingCollection.Evaluate (EvaluationType.Property);
 
-			string project_attribute = xmlElement.GetAttribute ("Project");
-			if (String.IsNullOrEmpty (project_attribute))
-				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+			try {
+				PushThisFileProperty (importingProject != null ? importingProject.FullFileName : FullFileName);
 
-			Import.ForEachExtensionPathTillFound (xmlElement, this, importingProject,
-				(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
+				string project_attribute = xmlElement.GetAttribute ("Project");
+				if (String.IsNullOrEmpty (project_attribute))
+					throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+
+				Import.ForEachExtensionPathTillFound (xmlElement, this, importingProject,
+					(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
+			} finally {
+				PopThisFileProperty ();
+			}
 		}
 
 		bool AddSingleImport (XmlElement xmlElement, string projectPath, ImportedProject importingProject, string from_source_msg)
