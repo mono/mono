@@ -4003,6 +4003,9 @@ mono_gc_alloc_mature (MonoVTable *vtable)
 	res = alloc_degraded (vtable, size);
 	*res = vtable;
 	UNLOCK_GC;
+	if (G_UNLIKELY (vtable->klass->has_finalize))
+		mono_object_register_finalizer ((MonoObject*)res);
+
 	return res;
 }
 
