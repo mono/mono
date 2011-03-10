@@ -66,8 +66,8 @@ namespace System.Net.Sockets {
 			ReceiveFrom,
 			Send,
 			SendTo,
-			UsedInManaged1,
-			UsedInManaged2,
+			RecvJustCallback,
+			SendJustCallback,
 			UsedInProcess,
 			UsedInConsole2,
 			Disconnect,
@@ -211,7 +211,7 @@ namespace System.Net.Sockets {
 					Worker worker = (Worker) pending [i];
 					SocketAsyncResult ares = worker.result;
 					cb = new WaitCallback (ares.CompleteDisposed);
-					ThreadPool.QueueUserWorkItem (cb, null);
+					ThreadPool.UnsafeQueueUserWorkItem (cb, null);
 				}
 			}
 
@@ -251,7 +251,7 @@ namespace System.Net.Sockets {
 						if (queue.Count > 0) {
 							worker = (Worker) queue.Peek ();
 							if (!Sock.disposed) {
-								sac = GetDelegate (worker, worker.result.operation);
+								sac = Worker.Dispatcher;
 							} else {
 								CompleteAllOnDispose (queue);
 							}
@@ -262,11 +262,6 @@ namespace System.Net.Sockets {
 						Socket.socket_pool_queue (sac, worker.result);
 				}
 				// IMPORTANT: 'callback', if any is scheduled from unmanaged code
-			}
-
-			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
-			{
-				return Worker.Dispatcher;
 			}
 
 			public void Complete (bool synch)
@@ -404,9 +399,11 @@ namespace System.Net.Sockets {
 			static void DispatcherCB (SocketAsyncResult sar)
 			{
 				SocketOperation op = sar.operation;
-				if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
+				if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric ||
+					op == Socket.SocketOperation.RecvJustCallback)
 					sar.Worker.Receive ();
-				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
+				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric ||
+					op == Socket.SocketOperation.SendJustCallback)
 					sar.Worker.Send ();
 #if !MOONLIGHT
 				else if (op == Socket.SocketOperation.ReceiveFrom)
@@ -428,8 +425,6 @@ namespace System.Net.Sockets {
 				/*
 				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
-				*/
-				/*
 				else if (op == Socket.SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
 				*/
@@ -439,9 +434,9 @@ namespace System.Net.Sockets {
 			}
 
 			/* This is called when reusing a SocketAsyncEventArgs */
-			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation op)
+			public void Init (Socket sock, SocketAsyncEventArgs args, SocketOperation op)
 			{
-				result.Init (sock, state, callback, op);
+				result.Init (sock, args, SocketAsyncEventArgs.Dispatcher, op);
 				result.Worker = this;
 				SocketAsyncOperation async_op;
 
@@ -1268,7 +1263,7 @@ namespace System.Net.Sockets {
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Receive : SocketOperation.ReceiveGeneric;
-			e.Worker.Init (this, null, e.ReceiveCallback, op);
+			e.Worker.Init (this, e, op);
 			SocketAsyncResult res = e.Worker.result;
 			if (e.Buffer != null) {
 				res.Buffer = e.Buffer;
@@ -1301,7 +1296,7 @@ namespace System.Net.Sockets {
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Send : SocketOperation.SendGeneric;
-			e.Worker.Init (this, null, e.SendCallback, op);
+			e.Worker.Init (this, e, op);
 			SocketAsyncResult res = e.Worker.result;
 			if (e.Buffer != null) {
 				res.Buffer = e.Buffer;

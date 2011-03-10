@@ -152,10 +152,13 @@ namespace System.Net {
 		{
 			lock (registry) {
 				if (close_existing) {
-					foreach (HttpListenerContext context in registry.Keys) {
-						context.Connection.Close ();
-					}
+					// Need to copy this since closing will call UnregisterContext
+					ICollection keys = registry.Keys;
+					var all = new HttpListenerContext [keys.Count];
+					keys.CopyTo (all, 0);
 					registry.Clear ();
+					for (int i = all.Length - 1; i >= 0; i--)
+						all[i].Connection.Close (true);
 				}
 
 				lock (connections) {

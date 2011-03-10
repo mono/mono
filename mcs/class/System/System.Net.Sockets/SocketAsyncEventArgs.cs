@@ -217,6 +217,40 @@ namespace System.Net.Sockets
 		}
 
 #region Internals
+		internal static AsyncCallback Dispatcher = new AsyncCallback (DispatcherCB);
+
+		static void DispatcherCB (IAsyncResult ares)
+		{
+			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
+			SocketAsyncOperation op = args.LastOperation;
+			// Notes;
+			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
+			//	-SendPackets and ReceiveMessageFrom are not implemented yet
+			if (op == SocketAsyncOperation.Receive)
+				args.ReceiveCallback (ares);
+			else if (op == SocketAsyncOperation.Send)
+				args.SendCallback (ares);
+#if !MOONLIGHT
+			else if (op == SocketAsyncOperation.ReceiveFrom)
+				args.ReceiveFromCallback (ares);
+			else if (op == SocketAsyncOperation.SendTo)
+				args.SendToCallback (ares);
+			else if (op == SocketAsyncOperation.Accept)
+				args.AcceptCallback (ares);
+			else if (op == SocketAsyncOperation.Disconnect)
+				args.DisconnectCallback (ares);
+#endif
+			else if (op == SocketAsyncOperation.Connect)
+				args.ConnectCallback (); /* This should not be hit yet. See DoOperation() */
+			/*
+			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+			else if (op == Socket.SocketOperation.SendPackets)
+			*/
+			else
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+
+		}
+
 		internal void ReceiveCallback (IAsyncResult ares)
 		{
 			try {
