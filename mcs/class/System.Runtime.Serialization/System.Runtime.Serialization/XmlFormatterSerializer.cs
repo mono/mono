@@ -102,7 +102,8 @@ namespace System.Runtime.Serialization
 				// For some collection types, the actual type does not matter. So get nominal serialization type instead.
 				// (The code below also covers the lines above, but I don't remove above lines to avoid extra search cost.)
 				if (map == null) {
-					actualType = types.GetSerializedType (actualType);
+					// FIXME: not sure if type.IsInterface is the correct condition to determine whether items are serialized with i:type or not. (e.g. bug #675144 server response).
+					actualType = types.GetSerializedType (type.IsInterface ? type : actualType);
 					map = types.FindUserMap (actualType);
 				}
 				// If it is still unknown, then register it.
