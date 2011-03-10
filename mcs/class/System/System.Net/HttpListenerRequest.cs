@@ -297,7 +297,10 @@ namespace System.Net {
 			while (true) {
 				// TODO: test if MS has a timeout when doing this
 				try {
-					if (InputStream.Read (bytes, 0, length) <= 0)
+					IAsyncResult ares = InputStream.BeginRead (bytes, 0, length, null, null);
+					if (!ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (100))
+						return false;
+					if (InputStream.EndRead (ares) <= 0)
 						return true;
 				} catch {
 					return false;
