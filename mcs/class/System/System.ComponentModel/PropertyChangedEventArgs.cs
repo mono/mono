@@ -37,8 +37,9 @@ namespace System.ComponentModel
 	{
 		private string propertyName;
 		
-		public PropertyChangedEventArgs (string name) {
-			propertyName = name;
+		public PropertyChangedEventArgs (string propertyName)
+		{
+			this.propertyName = propertyName;
 		}
 
 #if NET_2_1

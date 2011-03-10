@@ -51,12 +51,12 @@ namespace System.ComponentModel
 			get { return property_name; }
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is DefaultPropertyAttribute))
+			if (!(obj is DefaultPropertyAttribute))
 				return false;
 
-			return (((DefaultPropertyAttribute) o).Name == property_name);
+			return (((DefaultPropertyAttribute) obj).Name == property_name);
 		}
 
 		public override int GetHashCode ()

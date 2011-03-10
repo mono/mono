@@ -45,9 +45,9 @@ namespace System.ComponentModel {
 			desc = string.Empty;
 		}
 
-		public DescriptionAttribute (string name)
+		public DescriptionAttribute (string description)
 		{
-			desc = name;
+			desc = description;
 		}
 
 		public virtual string Description {
