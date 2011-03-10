@@ -673,7 +673,7 @@ attribute_sections
 
 			if (global_attrs_enabled) {
 				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect);
+					module.AddAttributes (sect, current_namespace);
 					$$ = null;
 				} else {
 					if (attrs == null)
@@ -764,8 +764,7 @@ attribute
 			$$ = null;
 		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
-			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+			$$ = new GlobalAttribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 		else
 			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }

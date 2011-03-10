@@ -286,11 +286,6 @@ namespace Mono.CSharp
 			existing.Add (type);
 		}
 
-		public void AddAttributes (List<Attribute> attrs)
-		{
-			AddAttributes (attrs, this);
-		}
-
 		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
 		{
 			foreach (Attribute a in attrs)

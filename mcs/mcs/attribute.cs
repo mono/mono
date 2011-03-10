@@ -238,14 +238,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IMemberContext ec)
-		{
-			return expr.ResolveAsTypeTerminal (ec, false);
-		}
-
 		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr, ref bool is_attr)
 		{
-			TypeExpr te = ResolveAsTypeTerminal (expr, context);
+			TypeExpr te = expr.ResolveAsTypeTerminal (context, false);
 			if (te == null)
 				return null;
 
@@ -310,7 +305,7 @@ namespace Mono.CSharp {
 			resolve_error = true;
 		}
 
-		public virtual TypeSpec ResolveType ()
+		public TypeSpec ResolveType ()
 		{
 			if (Type == null && !resolve_error)
 				ResolveAttributeType ();
@@ -442,7 +437,7 @@ namespace Mono.CSharp {
 			return ctor;
 		}
 
-		protected virtual MethodSpec ResolveConstructor (ResolveContext ec)
+		MethodSpec ResolveConstructor (ResolveContext ec)
 		{
 			if (PosArguments != null) {
 				bool dynamic;
@@ -456,7 +451,7 @@ namespace Mono.CSharp {
 			return ConstructorLookup (ec, Type, ref PosArguments, loc);
 		}
 
-		protected virtual bool ResolveNamedArguments (ResolveContext ec)
+		bool ResolveNamedArguments (ResolveContext ec)
 		{
 			int named_arg_count = NamedArguments.Count;
 			var seen_names = new List<string> (named_arg_count);
@@ -1090,71 +1085,14 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class GlobalAttribute : Attribute
 	{
-		public readonly NamespaceEntry ns;
-
-		public GlobalAttribute (NamespaceEntry ns, string target, ATypeNameExpression expression,
-					Arguments[] args, Location loc, bool nameEscaped):
-			base (target, expression, args, loc, nameEscaped)
+		public GlobalAttribute (string target, ATypeNameExpression expression, Arguments[] args, Location loc, bool nameEscaped)
+			: base (target, expression, args, loc, nameEscaped)
 		{
-			this.ns = ns;
-		}
-
-		void Enter ()
-		{
-			// RootContext.ToplevelTypes has a single NamespaceEntry which gets overwritten
-			// each time a new file is parsed.  However, we need to use the NamespaceEntry
-			// in effect where the attribute was used.  Since code elsewhere cannot assume
-			// that the NamespaceEntry is right, just overwrite it.
-			//
-			// Precondition: RootContext.ToplevelTypes == null
-
-			if (RootContext.ToplevelTypes.NamespaceEntry != null)
-				throw new InternalErrorException (Location + " non-null NamespaceEntry");
-
-			RootContext.ToplevelTypes.NamespaceEntry = ns;
 		}
 
 		protected override bool IsSecurityActionValid (bool for_assembly)
 		{
 			return base.IsSecurityActionValid (true);
-		}
-
-		void Leave ()
-		{
-			RootContext.ToplevelTypes.NamespaceEntry = null;
-		}
-
-		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IMemberContext ec)
-		{
-			try {
-				Enter ();
-				return base.ResolveAsTypeTerminal (expr, ec);
-			}
-			finally {
-				Leave ();
-			}
-		}
-
-		protected override MethodSpec ResolveConstructor (ResolveContext ec)
-		{
-			try {
-				Enter ();
-				return base.ResolveConstructor (ec);
-			}
-			finally {
-				Leave ();
-			}
-		}
-
-		protected override bool ResolveNamedArguments (ResolveContext ec)
-		{
-			try {
-				Enter ();
-				return base.ResolveNamedArguments (ec);
-			}
-			finally {
-				Leave ();
-			}
 		}
 	}
 

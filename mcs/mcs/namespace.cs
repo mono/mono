@@ -1170,11 +1170,6 @@ namespace Mono.CSharp {
 			return ns.GetSignatureForError ();
 		}
 
-		public override string ToString ()
-		{
-			return ns.ToString ();
-		}
-
 		#region IMemberContext Members
 
 		CompilerContext Compiler {
