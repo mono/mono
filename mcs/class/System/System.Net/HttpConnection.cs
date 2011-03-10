@@ -40,6 +40,7 @@ using Mono.Security.Protocol.Tls;
 namespace System.Net {
 	sealed class HttpConnection
 	{
+		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
 		const int BufferSize = 8192;
 		Socket sock;
 		Stream stream;
@@ -133,7 +134,7 @@ namespace System.Net {
 				if (reuses == 1)
 					s_timeout = 15000;
 				timer.Change (s_timeout, Timeout.Infinite);
-				stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
+				stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
 			} catch {
 				CloseSocket ();
 			}
@@ -167,10 +168,15 @@ namespace System.Net {
 			return o_stream;
 		}
 
-		void OnRead (IAsyncResult ares)
+		static void OnRead (IAsyncResult ares)
+		{
+			HttpConnection cnc = (HttpConnection) ares.AsyncState;
+			cnc.OnReadInternal (ares);
+		}
+
+		void OnReadInternal (IAsyncResult ares)
 		{
 			timer.Change (Timeout.Infinite, Timeout.Infinite);
-			HttpConnection cnc = (HttpConnection) ares.AsyncState;
 			int nread = -1;
 			try {
 				nread = stream.EndRead (ares);
@@ -212,7 +218,7 @@ namespace System.Net {
 				context_bound = true;
 				return;
 			}
-			stream.BeginRead (buffer, 0, BufferSize, OnRead, cnc);
+			stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
 		}
 
 		enum InputState {

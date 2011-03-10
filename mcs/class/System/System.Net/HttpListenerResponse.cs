@@ -475,12 +475,12 @@ namespace System.Net {
 					headers.SetInternal ("Set-Cookie", cookie.ToClientString ());
 			}
 
-			StreamWriter writer = new StreamWriter (ms, encoding);
+			StreamWriter writer = new StreamWriter (ms, encoding, 256);
 			writer.Write ("HTTP/{0} {1} {2}\r\n", version, status_code, status_description);
 			string headers_str = headers.ToStringMultiValue ();
 			writer.Write (headers_str);
 			writer.Flush ();
-			int preamble = encoding.GetPreamble ().Length;
+			int preamble = (encoding.CodePage == 65001) ? 3 : encoding.GetPreamble ().Length;
 			if (output_stream == null)
 				output_stream = context.Connection.GetResponseStream ();
 

@@ -109,10 +109,12 @@ namespace System.Net {
 
 		void CreateQueryString (string query)
 		{
-			query_string = new NameValueCollection ();
-			if (query == null || query.Length == 0)
+			if (query == null || query.Length == 0) {
+				query_string = new NameValueCollection (1);
 				return;
+			}
 
+			query_string = new NameValueCollection ();
 			if (query [0] == '?')
 				query = query.Substring (1);
 			string [] components = query.Split ('&');
