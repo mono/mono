@@ -495,7 +495,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		protected override void RemoveMemberType (DeclSpace ds)
+		protected override void RemoveMemberType (TypeContainer ds)
 		{
 			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
 			base.RemoveMemberType (ds);

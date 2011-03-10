@@ -322,7 +322,7 @@ namespace Mono.CSharp {
 			return AddToContainer (ds, ds.Basename);
 		}
 
-		protected virtual void RemoveMemberType (DeclSpace ds)
+		protected virtual void RemoveMemberType (TypeContainer ds)
 		{
 			RemoveFromContainer (ds.Basename);
 		}
@@ -2370,9 +2370,6 @@ namespace Mono.CSharp {
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
-				while (top_level.Parent != null)
-					top_level = top_level.Parent;
-
 				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
 				if (candidates != null) {
 					scope = NamespaceEntry;

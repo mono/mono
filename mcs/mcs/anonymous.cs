@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 
 	public abstract class CompilerGeneratedClass : Class
 	{
-		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, Modifiers mod)
+		protected CompilerGeneratedClass (TypeContainer parent, MemberName name, Modifiers mod)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
 		{
 		}
@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 
 		protected TypeParameterMutator mutator;
 
-		public HoistedStoreyClass (DeclSpace parent, MemberName name, TypeParameter[] tparams, Modifiers mod)
+		public HoistedStoreyClass (TypeContainer parent, MemberName name, TypeParameter[] tparams, Modifiers mod)
 			: base (parent, name, mod | Modifiers.PRIVATE)
 		{
 			if (tparams != null) {
@@ -197,7 +197,6 @@ namespace Mono.CSharp {
 			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
 				tparams, Modifiers.SEALED)
 		{
-			Parent = parent;
 			OriginalSourceBlock = block;
 			ID = unique_id++;
 		}
@@ -1671,7 +1670,7 @@ namespace Mono.CSharp {
 		
 		readonly IList<AnonymousTypeParameter> parameters;
 
-		private AnonymousTypeClass (DeclSpace parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
+		private AnonymousTypeClass (TypeContainer parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
 			: base (parent, name, (parent.Module.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
