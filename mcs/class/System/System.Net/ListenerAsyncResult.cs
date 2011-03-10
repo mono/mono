@@ -63,10 +63,11 @@ namespace System.Net {
 					handle.Set ();
 
 				if (cb != null)
-					ThreadPool.QueueUserWorkItem (InvokeCallback, this);
+					ThreadPool.UnsafeQueueUserWorkItem (InvokeCB, this);
 			}
 		}
 
+		static WaitCallback InvokeCB = new WaitCallback (InvokeCallback);
 		static void InvokeCallback (object o)
 		{
 			ListenerAsyncResult ares = (ListenerAsyncResult) o;
@@ -117,7 +118,7 @@ namespace System.Net {
 						handle.Set ();
 
 					if (cb != null)
-						ThreadPool.QueueUserWorkItem (InvokeCallback, this);
+						ThreadPool.UnsafeQueueUserWorkItem (InvokeCB, this);
 				}
 			}
 		}

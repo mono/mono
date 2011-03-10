@@ -522,7 +522,7 @@ namespace System.Net.Sockets
 
 			e.curSocket = this;
 			Worker w = e.Worker;
-			w.Init (this, null, e.AcceptCallback, SocketOperation.Accept);
+			w.Init (this, e, SocketOperation.Accept);
 			socket_pool_queue (Worker.Dispatcher, w.result);
 			return true;
 		}
@@ -705,6 +705,7 @@ namespace System.Net.Sockets
 			if (blocking || error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
 				// continue asynch
 				connected = false;
+				socket_pool_queue (Worker.Dispatcher, req);
 			}
 
 			return(req);
@@ -1261,7 +1262,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.DisconnectCallback, SocketOperation.Disconnect);
+			e.Worker.Init (this, e, SocketOperation.Disconnect);
 			socket_pool_queue (Worker.Dispatcher, e.Worker.result);
 			return true;
 		}
@@ -1699,7 +1700,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.ReceiveFromCallback, SocketOperation.ReceiveFrom);
+			e.Worker.Init (this, e, SocketOperation.ReceiveFrom);
 			SocketAsyncResult res = e.Worker.result;
 			res.Buffer = e.Buffer;
 			res.Offset = e.Offset;
@@ -2037,7 +2038,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.SendToCallback, SocketOperation.SendTo);
+			e.Worker.Init (this, e, SocketOperation.SendTo);
 			SocketAsyncResult res = e.Worker.result;
 			res.Buffer = e.Buffer;
 			res.Offset = e.Offset;
