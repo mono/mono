@@ -144,11 +144,7 @@ namespace System.Net {
 			if (context == null || context.Request == null)
 				return;
 
-			HttpListenerRequest req = context.Request;
-			ListenerPrefix prefix;
-			HttpListener listener = SearchListener (req.Url, out prefix);
-			if (listener != null)
-				listener.UnregisterContext (context);
+			context.Listener.UnregisterContext (context);
 		}
 
 		HttpListener SearchListener (Uri uri, out ListenerPrefix prefix)

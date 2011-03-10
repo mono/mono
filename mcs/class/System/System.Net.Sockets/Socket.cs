@@ -523,7 +523,7 @@ namespace System.Net.Sockets
 			e.curSocket = this;
 			Worker w = e.Worker;
 			w.Init (this, null, e.AcceptCallback, SocketOperation.Accept);
-			socket_pool_queue (w.Accept, w.result);
+			socket_pool_queue (Worker.Dispatcher, w.result);
 			return true;
 		}
 #endif
@@ -605,8 +605,7 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ();
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
-			Worker worker = new Worker (req);
-			socket_pool_queue (worker.Accept, req);
+			socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -621,12 +620,11 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
-			Worker worker = new Worker (req);
 			req.Buffer = new byte[receiveSize];
 			req.Offset = 0;
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
-			socket_pool_queue (worker.AcceptReceive, req);
+			socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -658,13 +656,12 @@ namespace System.Net.Sockets
 			}
 			
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
-			Worker worker = new Worker (req);
 			req.Buffer = new byte[receiveSize];
 			req.Offset = 0;
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
 			req.AcceptSocket = acceptSocket;
-			socket_pool_queue (worker.AcceptReceive, req);
+			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
 
@@ -708,8 +705,6 @@ namespace System.Net.Sockets
 			if (blocking || error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
 				// continue asynch
 				connected = false;
-				Worker worker = new Worker (req);
-				socket_pool_queue (worker.Connect, req);
 			}
 
 			return(req);
@@ -756,11 +751,8 @@ namespace System.Net.Sockets
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.Addresses = addresses;
 			req.Port = port;
-			
 			connected = false;
-			Worker worker = new Worker (req);
-			socket_pool_queue (worker.Connect, req);
-			
+			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
 
@@ -794,10 +786,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Disconnect);
 			req.ReuseSocket = reuseSocket;
-			
-			Worker worker = new Worker (req);
-			socket_pool_queue (worker.Disconnect, req);
-			
+			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
 		
@@ -824,14 +813,13 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (worker);
+				readQ.Enqueue (req.Worker);
 				count = readQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.Receive, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -867,14 +855,13 @@ namespace System.Net.Sockets
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveGeneric);
 			req.Buffers = buffers;
 			req.SockFlags = socketFlags;
-			Worker worker = new Worker (req);
 			int count;
 			lock(readQ) {
-				readQ.Enqueue (worker);
+				readQ.Enqueue (req.Worker);
 				count = readQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.ReceiveGeneric, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 		
@@ -922,14 +909,13 @@ namespace System.Net.Sockets
 			req.Size = size;
 			req.SockFlags = socket_flags;
 			req.EndPoint = remote_end;
-			Worker worker = new Worker (req);
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (worker);
+				readQ.Enqueue (req.Worker);
 				count = readQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.ReceiveFrom, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -983,14 +969,13 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
 			int count;
 			lock (writeQ) {
-				writeQ.Enqueue (worker);
+				writeQ.Enqueue (req.Worker);
 				count = writeQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.Send, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -1029,14 +1014,13 @@ namespace System.Net.Sockets
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.SendGeneric);
 			req.Buffers = buffers;
 			req.SockFlags = socketFlags;
-			Worker worker = new Worker (req);
 			int count;
 			lock (writeQ) {
-				writeQ.Enqueue (worker);
+				writeQ.Enqueue (req.Worker);
 				count = writeQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.SendGeneric, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -1156,14 +1140,13 @@ namespace System.Net.Sockets
 			req.Size = size;
 			req.SockFlags = socket_flags;
 			req.EndPoint = remote_end;
-			Worker worker = new Worker (req);
 			int count;
 			lock (writeQ) {
-				writeQ.Enqueue (worker);
+				writeQ.Enqueue (req.Worker);
 				count = writeQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (worker.SendTo, req);
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -1279,7 +1262,7 @@ namespace System.Net.Sockets
 
 			e.curSocket = this;
 			e.Worker.Init (this, null, e.DisconnectCallback, SocketOperation.Disconnect);
-			socket_pool_queue (e.Worker.Disconnect, e.Worker.result);
+			socket_pool_queue (Worker.Dispatcher, e.Worker.result);
 			return true;
 		}
 #endif
@@ -1730,7 +1713,7 @@ namespace System.Net.Sockets
 				count = readQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (e.Worker.ReceiveFrom, res);
+				socket_pool_queue (Worker.Dispatcher, res);
 			return true;
 		}
 #endif
@@ -2068,7 +2051,7 @@ namespace System.Net.Sockets
 				count = writeQ.Count;
 			}
 			if (count == 1)
-				socket_pool_queue (e.Worker.SendTo, res);
+				socket_pool_queue (Worker.Dispatcher, res);
 			return true;
 		}
 #endif
