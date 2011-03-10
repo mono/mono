@@ -94,7 +94,7 @@ namespace Mono.CSharp
 		///
 		/// The current file.
 		///
-		CompilationUnit file;
+		readonly CompilationSourceFile file;
 
 		///
 		/// Temporary Xml documentation cache.
@@ -6169,20 +6169,16 @@ static CSharpParser ()
 	oob_stack = new Stack<object> ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
-	: this (reader, file, module, new NamespaceEntry (module, null, file, null))
-{
-}
-
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module, NamespaceEntry ns)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
 {
 	this.file = file;
-	this.module = module;
+	current_namespace = file.NamespaceContainer;
+	
+	this.module = current_namespace.Module;
 	this.compiler = module.Compiler;
 	this.settings = compiler.Settings;
 	lang_version = settings.Version;
 	doc_support = settings.Documentation != null;
-	current_namespace = ns;
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();

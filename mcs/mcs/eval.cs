@@ -66,9 +66,7 @@ namespace Mono.CSharp
 		readonly CompilerContext ctx;
 		readonly ModuleContainer module;
 		readonly ReflectionImporter importer;
-
-		// TODO: somehow merge with module
-		NamespaceEntry ns;
+		readonly CompilationSourceFile source_file;
 		
 		public Evaluator (CompilerSettings settings, Report report)
 		{
@@ -76,6 +74,11 @@ namespace Mono.CSharp
 
 			module = new ModuleContainer (ctx);
 			module.Evaluator = this;
+
+			source_file = new CompilationSourceFile ("{interactive}", "", 1);
+ 			source_file.NamespaceContainer = new NamespaceEntry (module, null, source_file, null);
+
+			ctx.SourceFiles.Add (source_file);
 
 			// FIXME: Importer needs this assembly for internalsvisibleto
 			module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "evaluator"));
@@ -103,12 +106,12 @@ namespace Mono.CSharp
 			inited = true;
 		}
 
-		static void Reset ()
+		void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
 			
-			Location.AddFile (null, "{interactive}");
-			Location.Initialize ();
+			Location.Reset ();
+			Location.Initialize (ctx.SourceFiles);
 		}
 
 		/// <summary>
@@ -417,7 +420,7 @@ namespace Mono.CSharp
 		//
 		InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, (CompilationUnit) Location.SourceFiles [0], ctx);
+			Tokenizer tokenizer = new Tokenizer (seekable, source_file, ctx);
 			
 			int t = tokenizer.token ();
 			switch (t){
@@ -545,11 +548,8 @@ namespace Mono.CSharp
 			}
 			seekable.Position = 0;
 
-			if (ns == null)
-				ns = new NamespaceEntry (module, null, Location.SourceFiles[0], null);
-
-			ns.DeclarationFound = false;
-			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], module, ns);
+			source_file.NamespaceContainer.DeclarationFound = false;
+			CSharpParser parser = new CSharpParser (seekable, source_file);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -725,15 +725,12 @@ namespace Mono.CSharp
 
 		public string GetUsing ()
 		{
-			if (ns == null)
-				return null;
-
 			StringBuilder sb = new StringBuilder ();
 			// TODO:
 			//foreach (object x in ns.using_alias_list)
 			//    sb.AppendFormat ("using {0};\n", x);
 
-			foreach (var ue in ns.Usings) {
+			foreach (var ue in source_file.NamespaceContainer.Usings) {
 				sb.AppendFormat ("using {0};", ue.ToString ());
 				sb.Append (Environment.NewLine);
 			}
@@ -745,7 +742,7 @@ namespace Mono.CSharp
 		{
 			var res = new List<string> ();
 
-			foreach (var ue in ns.Usings)
+			foreach (var ue in source_file.NamespaceContainer.Usings)
 				res.Add (ue.ToString ());
 			return res;
 		}

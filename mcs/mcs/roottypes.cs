@@ -398,8 +398,6 @@ namespace Mono.CSharp
 
 		public new void Define ()
 		{
-			InitializePredefinedTypes ();
-
 			foreach (TypeContainer tc in types)
 				tc.DefineType ();
 

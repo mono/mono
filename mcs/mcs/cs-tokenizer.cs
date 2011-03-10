@@ -164,7 +164,7 @@ namespace Mono.CSharp
 
 		SeekableStreamReader reader;
 		SourceFile ref_name;
-		CompilationUnit file_name;
+		CompilationSourceFile file_name;
 		CompilerContext context;
 		bool hidden = false;
 		int ref_line = 1;
@@ -808,7 +808,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Tokenizer (SeekableStreamReader input, CompilationUnit file, CompilerContext ctx)
+		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, CompilerContext ctx)
 		{
 			this.ref_name = file;
 			this.file_name = file;
@@ -1867,8 +1867,8 @@ namespace Mono.CSharp
 					char [] quotes = { '\"' };
 					
 					string name = arg.Substring (pos). Trim (quotes);
-					ref_name = Location.LookupFile (file_name, name);
-					file_name.AddFile (ref_name);
+					ref_name = context.LookupFile (file_name, name);
+					file_name.AddIncludeFile (ref_name);
 					hidden = false;
 					Location.Push (file_name, ref_name);
 				} else {
@@ -1992,7 +1992,7 @@ namespace Mono.CSharp
 			if (c != ' ')
 				return false;
 
-			SourceFile file = Location.LookupFile (file_name, string_builder.ToString ());
+			SourceFile file = context.LookupFile (file_name, string_builder.ToString ());
 
 			if (get_char () != '"' || get_char () != '{')
 				return false;
