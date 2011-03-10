@@ -117,6 +117,9 @@ namespace System.Net.Sockets {
 			public object ares;
 			public int EndCalled;
 
+			// These fields are not in MonoSocketAsyncResult
+			public Worker Worker;
+
 			public SocketAsyncResult ()
 			{
 			}
@@ -133,6 +136,7 @@ namespace System.Net.Sockets {
 				}
 				this.state = state;
 				this.callback = callback;
+				GC.KeepAlive (this.callback);
 				this.operation = operation;
 				SockFlags = SocketFlags.None;
 				if (waithandle != null)
@@ -159,6 +163,7 @@ namespace System.Net.Sockets {
 				error = 0;
 				ares = null;
 				EndCalled = 0;
+				Worker = null;
 			}
 
 			public void Dispose ()
@@ -177,8 +182,10 @@ namespace System.Net.Sockets {
 				this.handle = sock.socket;
 				this.state = state;
 				this.callback = callback;
+				GC.KeepAlive (this.callback);
 				this.operation = operation;
 				SockFlags = SocketFlags.None;
+				Worker = new Worker (this);
 			}
 
 			public void CheckIfThrowDelayedException ()
@@ -259,22 +266,7 @@ namespace System.Net.Sockets {
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
 			{
-				switch (op) {
-				case SocketOperation.ReceiveGeneric:
-					goto case SocketOperation.Receive;
-				case SocketOperation.Receive:
-					return new SocketAsyncCall (worker.Receive);
-				case SocketOperation.ReceiveFrom:
-					return new SocketAsyncCall (worker.ReceiveFrom);
-				case SocketOperation.SendGeneric:
-					goto case SocketOperation.Send;
-				case SocketOperation.Send:
-					return new SocketAsyncCall (worker.Send);
-				case SocketOperation.SendTo:
-					return new SocketAsyncCall (worker.SendTo);
-				default:
-					return null; // never happens
-				}
+				return Worker.Dispatcher;
 			}
 
 			public void Complete (bool synch)
@@ -390,6 +382,7 @@ namespace System.Net.Sockets {
 			{
 				this.args = args;
 				result = new SocketAsyncResult ();
+				result.Worker = this;
 			}
 
 			public Worker (SocketAsyncResult ares)
@@ -406,10 +399,50 @@ namespace System.Net.Sockets {
 				}
 			}
 
+			public static SocketAsyncCall Dispatcher = new SocketAsyncCall (DispatcherCB);
+
+			static void DispatcherCB (SocketAsyncResult sar)
+			{
+				SocketOperation op = sar.operation;
+				if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
+					sar.Worker.Receive ();
+				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
+					sar.Worker.Send ();
+#if !MOONLIGHT
+				else if (op == Socket.SocketOperation.ReceiveFrom)
+					sar.Worker.ReceiveFrom ();
+				else if (op == Socket.SocketOperation.SendTo)
+					sar.Worker.SendTo ();
+#endif
+				else if (op == Socket.SocketOperation.Connect)
+					sar.Worker.Connect ();
+#if !MOONLIGHT
+				else if (op == Socket.SocketOperation.Accept)
+					sar.Worker.Accept ();
+				else if (op == Socket.SocketOperation.AcceptReceive)
+					sar.Worker.AcceptReceive ();
+				else if (op == Socket.SocketOperation.Disconnect)
+					sar.Worker.Disconnect ();
+
+				// SendPackets and ReceiveMessageFrom are not implemented yet
+				/*
+				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+					async_op = SocketAsyncOperation.ReceiveMessageFrom;
+				*/
+				/*
+				else if (op == Socket.SocketOperation.SendPackets)
+					async_op = SocketAsyncOperation.SendPackets;
+				*/
+#endif
+				else
+					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+			}
+
 			/* This is called when reusing a SocketAsyncEventArgs */
 			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation op)
 			{
 				result.Init (sock, state, callback, op);
+				result.Worker = this;
 				SocketAsyncOperation async_op;
 
 				// Notes;
@@ -669,7 +702,7 @@ namespace System.Net.Sockets {
 					}
 
 					if (result.Size > 0) {
-						Socket.socket_pool_queue (this.Send, result);
+						Socket.socket_pool_queue (Worker.Dispatcher, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
@@ -690,7 +723,7 @@ namespace System.Net.Sockets {
 
 					UpdateSendValues (total);
 					if (result.Size > 0) {
-						Socket.socket_pool_queue (this.SendTo, result);
+						Socket.socket_pool_queue (Worker.Dispatcher, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
@@ -719,7 +752,7 @@ namespace System.Net.Sockets {
 		private Queue readQ = new Queue (2);
 		private Queue writeQ = new Queue (2);
 
-		delegate void SocketAsyncCall ();
+		internal delegate void SocketAsyncCall (SocketAsyncResult sar);
 
 		/*
 		 *	These two fields are looked up by name by the runtime, don't change
@@ -1252,7 +1285,7 @@ namespace System.Net.Sockets {
 			}
 			if (count == 1) {
 				// Receive takes care of ReceiveGeneric
-				socket_pool_queue (e.Worker.Receive, res);
+				socket_pool_queue (Worker.Dispatcher, res);
 			}
 
 			return true;
@@ -1285,7 +1318,7 @@ namespace System.Net.Sockets {
 			}
 			if (count == 1) {
 				// Send takes care of SendGeneric
-				socket_pool_queue (e.Worker.Send, res);
+				socket_pool_queue (Worker.Dispatcher, res);
 			}
 			return true;
 		}
