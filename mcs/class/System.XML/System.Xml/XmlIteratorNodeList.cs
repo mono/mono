@@ -34,17 +34,22 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	internal class XmlIteratorNodeList : XmlNodeList
+	internal class XmlIteratorNodeList : XmlNodeList, IDisposable
 	{
+		XmlDocument doc;
 		XPathNodeIterator source;
 		XPathNodeIterator iterator;
 		ArrayList list;
-		bool finished;
+		bool finished, event_detached;
 
 		#region Constructors
 
-		public XmlIteratorNodeList (XPathNodeIterator iter)
+		public XmlIteratorNodeList (XmlDocument doc, XPathNodeIterator iter)
 		{
+			if (doc == null)
+				throw new Exception ("huh?");
+			this.doc = doc;
+			doc.NodeRemoving += SaveNodeList;
 			source = iter;
 			iterator = iter.Clone ();
 			list = new ArrayList ();
@@ -97,13 +102,29 @@ namespace System.Xml
 
 		#region Methods
 
+		void IDisposable.Dispose ()
+		{
+			if (!event_detached) {
+				event_detached = true;
+				doc.NodeRemoving -= SaveNodeList;
+			}
+		}
+
+		void SaveNodeList (object o, XmlNodeChangedEventArgs e)
+		{
+			if (Item (Count) != null || !finished)
+				throw new Exception (); // dummy. It accesses to the end of the list
+			doc.NodeRemoving -= SaveNodeList;
+			event_detached = true;
+		}
+
 		public override IEnumerator GetEnumerator ()
 		{
 			if (finished)
 				return list.GetEnumerator ();
 			else
-				return new XPathNodeIteratorNodeListIterator (source);
-//				return new XPathNodeIteratorNodeListIterator2 (this);
+				//return new XPathNodeIteratorNodeListIterator (source);
+				return new XPathNodeIteratorNodeListIterator2 (this);
 		}
 
 		public override XmlNode Item (int index)
@@ -125,6 +146,7 @@ namespace System.Xml
 
 		#endregion
 
+		// unused anymore.
 		class XPathNodeIteratorNodeListIterator : IEnumerator
 		{
 			XPathNodeIterator iter;
@@ -150,7 +172,6 @@ namespace System.Xml
 			}
 		}
 
-		/*
 		class XPathNodeIteratorNodeListIterator2 : IEnumerator
 		{
 			int current = -1;
@@ -175,6 +196,5 @@ namespace System.Xml
 				current = -1;
 			}
 		}
-		*/
 	}
 }

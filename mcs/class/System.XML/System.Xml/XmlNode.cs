@@ -850,7 +850,7 @@ namespace System.Xml
 			}
 			return new XmlNodeArrayList (rgNodes);
 			*/
-			return new XmlIteratorNodeList (iter);
+			return new XmlIteratorNodeList (this as XmlDocument ?? ownerDocument, iter);
 		}
 
 		public XmlNode SelectSingleNode (string xpath)
