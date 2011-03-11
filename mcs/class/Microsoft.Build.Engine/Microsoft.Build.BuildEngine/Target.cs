@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -175,7 +176,12 @@ namespace Microsoft.Build.BuildEngine {
 				project.PopBatch ();
 			}
 
-			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) OutputsAsITaskItems.Clone ();
+			ITaskItem[] outputs = (ITaskItem[]) OutputsAsITaskItems.Clone ();
+			foreach (ITaskItem item in outputs) {
+				item.SetMetadata ("MSBuildProjectFile", TargetFile);
+				item.SetMetadata ("MSBuildTargetName", Name);
+			}
+			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = outputs;
 
 			return result;
 		}
