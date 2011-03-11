@@ -304,6 +304,7 @@ namespace Mono.XBuild.CommandLine {
 			int num_levels = AddBuildLevels (p, solutionTargets, projectInfos, ref infosByLevel);
 
 			AddCurrentSolutionConfigurationContents (p, solutionTargets, projectInfos, websiteProjectInfos);
+			AddProjectReferences (p, projectInfos);
 			AddWebsiteProperties (p, websiteProjectInfos, projectInfos);
 			AddValidateSolutionConfiguration (p);
 
@@ -485,6 +486,13 @@ namespace Mono.XBuild.CommandLine {
 				platformPropertyGroup.AddNewProperty ("CurrentSolutionConfigurationContents",
 						solutionConfigurationContents.ToString ());
 			}
+		}
+
+		void AddProjectReferences (Project p, Dictionary<Guid, ProjectInfo> projectInfos)
+		{
+			BuildItemGroup big = p.AddNewItemGroup ();
+			foreach (KeyValuePair<Guid, ProjectInfo> pair in projectInfos)
+				big.AddNewItem ("ProjectReference", pair.Value.FileName);
 		}
 
 		void AddProjectConfigurationItems (Guid guid, ProjectInfo projectInfo, TargetInfo solutionTarget,
