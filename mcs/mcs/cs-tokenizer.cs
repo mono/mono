@@ -345,7 +345,7 @@ namespace Mono.CSharp
 		static System.Text.StringBuilder string_builder;
 
 		const int max_id_size = 512;
-		static char [] id_builder = new char [max_id_size];
+		static readonly char [] id_builder = new char [max_id_size];
 
 		public static Dictionary<char[], string>[] identifiers = new Dictionary<char[], string>[max_id_size + 1];
 
@@ -353,8 +353,8 @@ namespace Mono.CSharp
 		static char [] number_builder = new char [max_number_size];
 		static int number_pos;
 
-		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
-		
+		static char[] value_builder = new char[256];
+
 		public int Line {
 			get {
 				return ref_line;
@@ -1800,8 +1800,8 @@ namespace Mono.CSharp
 			while (c == ' ' || c == '\t')
 				c = get_char ();
 
-			static_cmd_arg.Length = 0;
 			int has_identifier_argument = (int)(cmd & PreprocessorDirective.RequiresArgument);
+			int pos = 0;
 
 			while (c != -1 && c != '\n') {
 				if (c == '\\' && has_identifier_argument >= 0) {
@@ -1813,27 +1813,44 @@ namespace Mono.CSharp
 							int surrogate;
 							c = EscapeUnicode (c, out surrogate);
 							if (surrogate != 0) {
-								if (is_identifier_part_character ((char) c))
-									static_cmd_arg.Append ((char) c);
+								if (is_identifier_part_character ((char) c)) {
+									if (pos == value_builder.Length)
+										Array.Resize (ref value_builder, pos * 2);
+
+									value_builder[pos++] = (char) c;
+								}
 								c = surrogate;
 							}
 						}
 					} else {
 						has_identifier_argument = -1;
 					}
+				} else if (c == '/' && peek_char () == '/') {
+					//
+					// Eat single-line comments
+					//
+					get_char ();
+					do {
+						c = get_char ();
+					} while (c != -1 && c != '\n');
+
+					break;
 				}
-				static_cmd_arg.Append ((char) c);
+
+				if (pos == value_builder.Length)
+					Array.Resize (ref value_builder, pos * 2);
+
+				value_builder[pos++] = (char) c;
 				c = get_char ();
 			}
 
-			if (static_cmd_arg.Length != 0) {
-				arg = static_cmd_arg.ToString ();
+			if (pos != 0) {
+				if (pos > max_id_size)
+					arg = new string (value_builder, 0, pos);
+				else
+					arg = InternIdentifier (value_builder, pos);
 
-				// Eat any trailing whitespaces and single-line comments
-				if (arg.IndexOf ("//") != -1) {
-					arg = arg.Substring (0, arg.IndexOf ("//"));
-				}
-
+				// Eat any trailing whitespaces
 				arg = arg.Trim (simple_whitespaces);
 			}
 
@@ -2611,18 +2628,29 @@ namespace Mono.CSharp
 		private int consume_string (bool quoted)
 		{
 			int c;
-			string_builder.Length = 0;
+			int pos = 0;
 			Location start_location = Location;
 			while (true){
 				c = get_char ();
 				if (c == '"') {
 					if (quoted && peek_char () == '"') {
-						string_builder.Append ((char) c);
+						if (pos == value_builder.Length)
+							Array.Resize (ref value_builder, pos * 2);
+
+						value_builder[pos++] = (char) c;
 						get_char ();
 						continue;
 					}
 
-					val = new StringLiteral (context.BuildinTypes, string_builder.ToString (), start_location);
+					string s;
+					if (pos == 0)
+						s = string.Empty;
+					else if (pos <= 4)
+						s = InternIdentifier (value_builder, pos);
+					else
+						s = new string (value_builder, 0, pos);
+
+					val = new StringLiteral (context.BuildinTypes, s, start_location);
 					return Token.LITERAL;
 				}
 
@@ -2635,7 +2663,10 @@ namespace Mono.CSharp
 					if (c == -1)
 						return Token.ERROR;
 					if (surrogate != 0) {
-						string_builder.Append ((char) c);
+						if (pos == value_builder.Length)
+							Array.Resize (ref value_builder, pos * 2);
+
+						value_builder[pos++] = (char) c;
 						c = surrogate;
 					}
 				} else if (c == -1) {
@@ -2643,7 +2674,10 @@ namespace Mono.CSharp
 					return Token.EOF;
 				}
 
-				string_builder.Append ((char) c);
+				if (pos == value_builder.Length)
+					Array.Resize (ref value_builder, pos * 2);
+
+				value_builder[pos++] = (char) c;
 			}
 		}
 
@@ -2727,38 +2761,40 @@ namespace Mono.CSharp
 				}
 			}
 
-			//
-			// Keep identifiers in an array of hashtables to avoid needless
-			// allocations
-			//
-			var identifiers_group = identifiers [pos];
-			string s;
-			if (identifiers_group != null) {
-				if (identifiers_group.TryGetValue (id_builder, out s)) {
-					val = LocatedToken.Create (s, ref_line, column);
-					if (quoted && parsing_attribute_section)
-						AddEscapedIdentifier (((LocatedToken) val).Location);
-					return Token.IDENTIFIER;
-				}
-			} else {
-				// TODO: this should be number of files dependant
-				// corlib compilation peaks at 1000 and System.Core at 150
-				int capacity = pos > 20 ? 10 : 100;
-				identifiers_group = new Dictionary<char[],string> (capacity, new IdentifiersComparer (pos));
-				identifiers [pos] = identifiers_group;
-			}
-
-			char [] chars = new char [pos];
-			Array.Copy (id_builder, chars, pos);
-
-			s = new string (id_builder, 0, pos);
-			identifiers_group.Add (chars, s);
-
+			string s = InternIdentifier (id_builder, pos);
 			val = LocatedToken.Create (s, ref_line, column);
 			if (quoted && parsing_attribute_section)
 				AddEscapedIdentifier (((LocatedToken) val).Location);
 
 			return Token.IDENTIFIER;
+		}
+
+		static string InternIdentifier (char[] charBuffer, int length)
+		{
+			//
+			// Keep identifiers in an array of hashtables to avoid needless
+			// allocations
+			//
+			var identifiers_group = identifiers[length];
+			string s;
+			if (identifiers_group != null) {
+				if (identifiers_group.TryGetValue (charBuffer, out s)) {
+					return s;
+				}
+			} else {
+				// TODO: this should be number of files dependant
+				// corlib compilation peaks at 1000 and System.Core at 150
+				int capacity = length > 20 ? 10 : 100;
+				identifiers_group = new Dictionary<char[], string> (capacity, new IdentifiersComparer (length));
+				identifiers[length] = identifiers_group;
+			}
+
+			char[] chars = new char[length];
+			Array.Copy (charBuffer, chars, length);
+
+			s = new string (charBuffer, 0, length);
+			identifiers_group.Add (chars, s);
+			return s;
 		}
 		
 		public int xtoken ()

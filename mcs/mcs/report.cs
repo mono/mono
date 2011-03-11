@@ -1055,7 +1055,7 @@ namespace Mono.CSharp {
 			};
 
 			int counter = 0;
-			double percentage = total.ElapsedMilliseconds / 100;
+			double percentage = (double) total.ElapsedMilliseconds / 100;
 			long subtotal = total.ElapsedMilliseconds;
 			foreach (var timer in timers) {
 				string msg = timer_names[(TimerType) counter++];

@@ -220,8 +220,11 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 
-			if (settings.TokenizeOnly || settings.ParseOnly)
+			if (settings.TokenizeOnly || settings.ParseOnly) {
+				tr.StopTotal ();
+				tr.ShowStats ();
 				return true;
+			}
 
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
 				throw new InternalErrorException ("who set it?");
