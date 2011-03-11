@@ -351,9 +351,13 @@ namespace Microsoft.Build.BuildEngine {
 				initialTargetsBuilt = true;
 			}
 
-			foreach (string target in targetNames)
+			foreach (string target in targetNames) {
+				if (target == null)
+					throw new ArgumentNullException ("Target name cannot be null");
+
 				if (!BuildTarget (target.Trim (), targetOutputs))
 					return false;
+			}
 				
 			return true;
 		}
