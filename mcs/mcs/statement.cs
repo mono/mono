@@ -5368,7 +5368,7 @@ namespace Mono.CSharp {
 				//
 				// Option 1: Try to match by name GetEnumerator first
 				//
-				var mexpr = Expression.MemberLookup (rc, rc.CurrentType, expr.Type,
+				var mexpr = Expression.MemberLookup (rc, false, expr.Type,
 					"GetEnumerator", 0, Expression.MemberLookupRestrictions.ExactArity, loc);		// TODO: What if CS0229 ?
 
 				var mg = mexpr as MethodGroupExpr;
@@ -5411,7 +5411,7 @@ namespace Mono.CSharp {
 								}
 
 								// TODO: Cache this somehow
-								iface_candidate = new PredefinedMember<MethodSpec> (rc.Module.Compiler, iface,
+								iface_candidate = new PredefinedMember<MethodSpec> (rc.Module, iface,
 									MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null));
 
 								continue;

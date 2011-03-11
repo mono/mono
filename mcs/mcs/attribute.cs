@@ -469,10 +469,10 @@ namespace Mono.CSharp {
 
 				a.Resolve (ec);
 
-				Expression member = Expression.MemberLookup (ec, ec.CurrentType, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
+				Expression member = Expression.MemberLookup (ec, false, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
 
 				if (member == null) {
-					member = Expression.MemberLookup (null, ec.CurrentType, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
+					member = Expression.MemberLookup (ec, true, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
 
 					if (member != null) {
 						// TODO: ec.Report.SymbolRelatedToPreviousError (member);

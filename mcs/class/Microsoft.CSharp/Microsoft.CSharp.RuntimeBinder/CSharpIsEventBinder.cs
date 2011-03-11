@@ -52,7 +52,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var queried_type = ctx.ImportType (target.LimitType);
 			var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
 
-			var expr = Compiler.Expression.MemberLookup (rc, context_type, queried_type,
+			var expr = Compiler.Expression.MemberLookup (rc, false, queried_type,
 				name, 0, Compiler.Expression.MemberLookupRestrictions.ExactArity, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (

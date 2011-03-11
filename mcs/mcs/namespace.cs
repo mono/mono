@@ -878,10 +878,10 @@ namespace Mono.CSharp {
 			using_aliases.Add (uae);
 		}
 
-		///
-		/// Does extension methods look up to find a method which matches name and extensionType.
-		/// Search starts from this namespace and continues hierarchically up to top level.
-		///
+		//
+		// Does extension methods look up to find a method which matches name and extensionType.
+		// Search starts from this namespace and continues hierarchically up to top level.
+		//
 		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			List<MethodSpec> candidates = null;

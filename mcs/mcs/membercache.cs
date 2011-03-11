@@ -513,7 +513,7 @@ namespace Mono.CSharp {
 				if (!ms.IsExtensionMethod)
 					continue;
 
-				if (!ms.IsAccessible (invocationType.CurrentType))
+				if (!ms.IsAccessible (invocationType))
 					continue;
 
 				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 && !ms.DeclaringType.MemberDefinition.IsInternalAsPublic (invocationType.DeclaringAssembly))
@@ -671,7 +671,7 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (member.GetType ().ToString ());
 		}
 
-		public static IList<MemberSpec> GetCompletitionMembers (TypeSpec container, string name)
+		public static IList<MemberSpec> GetCompletitionMembers (IMemberContext ctx, TypeSpec container, string name)
 		{
 			var matches = new List<MemberSpec> ();
 			foreach (var entry in container.MemberCache.member_hash) {
@@ -682,7 +682,7 @@ namespace Mono.CSharp {
 					if ((name_entry.Kind & (MemberKind.Constructor | MemberKind.Destructor | MemberKind.Operator)) != 0)
 						continue;
 
-					if (!name_entry.IsAccessible (InternalType.FakeInternalType))
+					if (!name_entry.IsAccessible (ctx))
 						continue;
 
 					if (name == null || name_entry.Name.StartsWith (name)) {

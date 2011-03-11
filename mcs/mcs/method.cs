@@ -1688,7 +1688,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Interface for MethodData class. Holds links to parent members to avoid member duplication.
 	/// </summary>
-	public interface IMethodData
+	public interface IMethodData : IMemberContext
 	{
 		CallingConventions CallingConventions { get; }
 		Location Location { get; }
@@ -1702,7 +1702,6 @@ namespace Mono.CSharp {
 		ToplevelBlock Block { get; set; }
 
 		EmitContext CreateEmitContext (ILGenerator ig);
-		string GetSignatureForError ();
 		void EmitExtraSymbolInfo (SourceMethod source);
 	}
 

@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!te.type.IsAccessible (ec.CurrentType)) {
+			if (!te.type.IsAccessible (ec)) {
 				ec.Module.Compiler.Report.SymbolRelatedToPreviousError (te.Type);
 				ErrorIsInaccesible (ec, te.Type.GetSignatureForError (), loc);
 			}
@@ -577,7 +577,7 @@ namespace Mono.CSharp {
 		// Lookup type `queried_type' for code in class `container_type' with a qualifier of
 		// `qualifier_type' or null to lookup members in the current class.
 		//
-		public static Expression MemberLookup (ResolveContext rc, TypeSpec currentType, TypeSpec queried_type, string name, int arity, MemberLookupRestrictions restrictions, Location loc)
+		public static Expression MemberLookup (IMemberContext rc, bool errorMode, TypeSpec queried_type, string name, int arity, MemberLookupRestrictions restrictions, Location loc)
 		{
 			var members = MemberCache.FindMembers (queried_type, name, false);
 			if (members == null)
@@ -585,7 +585,6 @@ namespace Mono.CSharp {
 
 			MemberSpec non_method = null;
 			MemberSpec ambig_non_method = null;
-			currentType = currentType ?? InternalType.FakeInternalType;
 			do {
 				for (int i = 0; i < members.Count; ++i) {
 					var member = members[i];
@@ -597,8 +596,8 @@ namespace Mono.CSharp {
 					if ((arity > 0 || (restrictions & MemberLookupRestrictions.ExactArity) != 0) && member.Arity != arity)
 						continue;
 
-					if (rc != null) {
-						if (!member.IsAccessible (currentType))
+					if (!errorMode) {
+						if (!member.IsAccessible (rc))
 							continue;
 
 						//
@@ -615,7 +614,7 @@ namespace Mono.CSharp {
 						//		}
 						//	}
 						//
-						if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (currentType))
+						if (rc.Module.Compiler.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
 							continue;
 					}
 
@@ -629,16 +628,17 @@ namespace Mono.CSharp {
 
 					if (non_method == null || member is MethodSpec) {
 						non_method = member;
-					} else if (currentType != null) {
+					} else if (!errorMode) {
 						ambig_non_method = member;
 					}
 				}
 
 				if (non_method != null) {
 					if (ambig_non_method != null && rc != null) {
-						rc.Report.SymbolRelatedToPreviousError (non_method);
-						rc.Report.SymbolRelatedToPreviousError (ambig_non_method);
-						rc.Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+						var report = rc.Module.Compiler.Report;
+						report.SymbolRelatedToPreviousError (non_method);
+						report.SymbolRelatedToPreviousError (ambig_non_method);
+						report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
 							non_method.GetSignatureForError (), ambig_non_method.GetSignatureForError ());
 					}
 
@@ -2239,9 +2239,8 @@ namespace Mono.CSharp {
 				// Stage 2: Lookup members if we are inside a type up to top level type for nested types
 				//
 				TypeSpec member_type = rc.CurrentType;
-				TypeSpec current_type = member_type;
 				for (; member_type != null; member_type = member_type.DeclaringType) {
-					e = MemberLookup (errorMode ? null : rc, current_type, member_type, Name, lookup_arity, restrictions, loc);
+					e = MemberLookup (rc, errorMode, member_type, Name, lookup_arity, restrictions, loc);
 					if (e == null)
 						continue;
 
@@ -2284,12 +2283,12 @@ namespace Mono.CSharp {
 
 							// Break as there is no other overload available anyway
 							if ((restrictions & MemberLookupRestrictions.ReadAccess) != 0) {
-								if (!pe.PropertyInfo.HasGet || !pe.PropertyInfo.Get.IsAccessible (current_type))
+								if (!pe.PropertyInfo.HasGet || !pe.PropertyInfo.Get.IsAccessible (rc))
 									break;
 
 								pe.Getter = pe.PropertyInfo.Get;
 							} else {
-								if (!pe.PropertyInfo.HasSet || !pe.PropertyInfo.Set.IsAccessible (current_type))
+								if (!pe.PropertyInfo.HasSet || !pe.PropertyInfo.Set.IsAccessible (rc))
 									break;
 
 								pe.Setter = pe.PropertyInfo.Set;
@@ -4087,7 +4086,6 @@ namespace Mono.CSharp {
 
 			Arguments candidate_args = args;
 			bool error_mode = false;
-			var current_type = rc.CurrentType;
 			MemberSpec invocable_member = null;
 
 			// Be careful, cannot return until error reporter is restored
@@ -4110,10 +4108,10 @@ namespace Mono.CSharp {
 								continue;
 
 							if (!error_mode) {
-								if (!member.IsAccessible (current_type))
+								if (!member.IsAccessible (rc))
 									continue;
 
-								if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (current_type))
+								if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
 									continue;
 							}
 
@@ -4417,7 +4415,7 @@ namespace Mono.CSharp {
 				int unexpanded_count = ((IParametersMember) best_candidate).Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
 				if (pm.Parameters.Count == arg_count || params_expanded || unexpanded_count == arg_count) {
 					// Reject any inaccessible member
-					if (!best_candidate.IsAccessible (rc.CurrentType) || !best_candidate.DeclaringType.IsAccessible (rc.CurrentType)) {
+					if (!best_candidate.IsAccessible (rc) || !best_candidate.DeclaringType.IsAccessible (rc)) {
 						rc.Report.SymbolRelatedToPreviousError (best_candidate);
 						Expression.ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), loc);
 						return;
@@ -4614,7 +4612,7 @@ namespace Mono.CSharp {
 			if (type_arguments == null && member.IsGeneric) {
 				var ms = (MethodSpec) member;
 				foreach (var ta in ms.TypeArguments) {
-					if (!ta.IsAccessible (ec.CurrentType)) {
+					if (!ta.IsAccessible (ec)) {
 						ec.Report.SymbolRelatedToPreviousError (ta);
 						Expression.ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
 						break;
@@ -5457,7 +5455,7 @@ namespace Mono.CSharp {
 						best_candidate.GetSignatureForError ());
 					return false;
 				}
-			} else if (!best_candidate.Get.IsAccessible (rc.CurrentType)) {
+			} else if (!best_candidate.Get.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Get);
 					rc.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
@@ -5484,7 +5482,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!best_candidate.Set.IsAccessible (rc.CurrentType)) {
+			if (!best_candidate.Set.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
 					rc.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",

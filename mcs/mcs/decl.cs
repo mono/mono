@@ -1094,32 +1094,32 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Is this member accessible from invocationType
+		// Is this member accessible from invocation context
 		//
-		public bool IsAccessible (TypeSpec invocationType)
+		public bool IsAccessible (IMemberContext ctx)
 		{
 			var ma = Modifiers & Modifiers.AccessibilityMask;
 			if (ma == Modifiers.PUBLIC)
 				return true;
 
 			var parentType = /* this as TypeSpec ?? */ DeclaringType;
+			var ctype = ctx.CurrentType;
 
-			// It's null for module context
-			if (invocationType == null)
-				invocationType = InternalType.FakeInternalType;
-		
-			//
-			// If only accessible to the current class or children
-			//
-			if (ma == Modifiers.PRIVATE)
-				return invocationType.MemberDefinition == parentType.MemberDefinition ||
-					TypeManager.IsNestedChildOf (invocationType, parentType.MemberDefinition);
+			if (ma == Modifiers.PRIVATE) {
+				if (ctype == null)
+					return false;
+				//
+				// It's only accessible to the current class or children
+				//
+				if (parentType.MemberDefinition == ctype.MemberDefinition)
+					return true;
+
+				return TypeManager.IsNestedChildOf (ctype, parentType.MemberDefinition);
+			}
 
 			if ((ma & Modifiers.INTERNAL) != 0) {
 				bool b;
-				var assembly = invocationType == InternalType.FakeInternalType ?
-					RootContext.ToplevelTypes.DeclaringAssembly :
-					invocationType.MemberDefinition.DeclaringAssembly;
+				var assembly = ctype == null ? ctx.Module.DeclaringAssembly : ctype.MemberDefinition.DeclaringAssembly;
 
 				if (parentType == null) {
 					b = ((ITypeDefinition) MemberDefinition).IsInternalAsPublic (assembly);
@@ -1131,11 +1131,18 @@ namespace Mono.CSharp {
 					return b;
 			}
 
-			// PROTECTED
-			if (!TypeManager.IsNestedFamilyAccessible (invocationType, parentType))
-				return false;
+			//
+			// Checks whether `ctype' is a subclass or nested child of `parentType'.
+			//
+			while (ctype != null) {
+				if (TypeManager.IsFamilyAccessible (ctype, parentType))
+					return true;
 
-			return true;
+				// Handle nested types.
+				ctype = ctype.DeclaringType;	// TODO: Untested ???
+			}
+
+			return false;
 		}
 
 		//

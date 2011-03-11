@@ -2182,7 +2182,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// FIXME: Breaks error reporting
-			if (!t.IsAccessible (CurrentType))
+			if (!t.IsAccessible (this))
 				return null;
 
 			return t;

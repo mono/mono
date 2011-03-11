@@ -7495,12 +7495,11 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			var current_type = rc.CurrentType;
 			var lookup_arity = Arity;
 			bool errorMode = false;
 			Expression member_lookup;
 			while (true) {
-				member_lookup = MemberLookup (errorMode ? null : rc, current_type, expr_type, Name, lookup_arity, restrictions, loc);
+				member_lookup = MemberLookup (rc, errorMode, expr_type, Name, lookup_arity, restrictions, loc);
 				if (member_lookup == null) {
 					//
 					// Try to look for extension method when member lookup failed
@@ -7545,7 +7544,6 @@ namespace Mono.CSharp
 				if (member_lookup != null)
 					break;
 
-				current_type = null;
 				lookup_arity = 0;
 				restrictions &= ~MemberLookupRestrictions.InvocableOnly;
 				errorMode = true;
@@ -7562,7 +7560,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (!texpr.Type.IsAccessible (rc.CurrentType)) {
+				if (!texpr.Type.IsAccessible (rc)) {
 					rc.Report.SymbolRelatedToPreviousError (member_lookup.Type);
 					ErrorIsInaccesible (rc, member_lookup.Type.GetSignatureForError (), loc);
 					return null;
@@ -7655,7 +7653,7 @@ namespace Mono.CSharp
 					break;
 				}
 
-				if (nested.IsAccessible (rc.CurrentType))
+				if (nested.IsAccessible (rc))
 					break;
 
 				// Keep looking after inaccessible candidate
@@ -7685,7 +7683,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			var any_other_member = MemberLookup (null, rc.CurrentType, expr_type, Name, 0, MemberLookupRestrictions.None, loc);
+			var any_other_member = MemberLookup (rc, true, expr_type, Name, 0, MemberLookupRestrictions.None, loc);
 			if (any_other_member != null) {
 				any_other_member.Error_UnexpectedKind (rc.Module.Compiler.Report, null, "type", loc);
 				return;
@@ -8962,9 +8960,9 @@ namespace Mono.CSharp
 				target = new DynamicMemberBinder (Name, args, loc);
 			} else {
 
-				var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
+				var member = MemberLookup (ec, false, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
 				if (member == null) {
-					member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
+					member = Expression.MemberLookup (ec, true, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
 
 					if (member != null) {
 						// TODO: ec.Report.SymbolRelatedToPreviousError (member);

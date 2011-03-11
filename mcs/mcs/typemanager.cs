@@ -322,59 +322,58 @@ namespace Mono.CSharp
 
 		public PredefinedMembers (ModuleContainer module)
 		{
-			var ctx = module.Compiler;
 			var types = module.PredefinedTypes;
 			var atypes = module.PredefinedAttributes;
 			var btypes = module.Compiler.BuildinTypes;
 
-			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (ctx, types.Activator,
+			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
 
-			DecimalCtor = new PredefinedMember<MethodSpec> (ctx, btypes.Decimal,
+			DecimalCtor = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
 					btypes.Int, btypes.Int, btypes.Int, btypes.Bool, btypes.Byte)));
 
-			DecimalCtorInt = new PredefinedMember<MethodSpec> (ctx, btypes.Decimal,
+			DecimalCtorInt = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Int)));
 
-			DecimalCtorLong = new PredefinedMember<MethodSpec> (ctx, btypes.Decimal,
+			DecimalCtorLong = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Long)));
 
-			DecimalConstantAttributeCtor = new PredefinedMember<MethodSpec> (ctx, atypes.DecimalConstant,
+			DecimalConstantAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DecimalConstant,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
 					btypes.Byte, btypes.Byte, btypes.UInt, btypes.UInt, btypes.UInt)));
 
-			DefaultMemberAttributeCtor = new PredefinedMember<MethodSpec> (ctx, atypes.DefaultMember,
+			DefaultMemberAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DefaultMember,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.String)));
 
-			DelegateCombine = new PredefinedMember<MethodSpec> (ctx, btypes.Delegate, "Combine", btypes.Delegate, btypes.Delegate);
-			DelegateRemove = new PredefinedMember<MethodSpec> (ctx, btypes.Delegate, "Remove", btypes.Delegate, btypes.Delegate);
+			DelegateCombine = new PredefinedMember<MethodSpec> (module, btypes.Delegate, "Combine", btypes.Delegate, btypes.Delegate);
+			DelegateRemove = new PredefinedMember<MethodSpec> (module, btypes.Delegate, "Remove", btypes.Delegate, btypes.Delegate);
 
-			DelegateEqual = new PredefinedMember<MethodSpec> (ctx, btypes.Delegate,
+			DelegateEqual = new PredefinedMember<MethodSpec> (module, btypes.Delegate,
 				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Equality), 0, MemberKind.Operator, null, btypes.Bool));
 
-			DelegateInequal = new PredefinedMember<MethodSpec> (ctx, btypes.Delegate,
+			DelegateInequal = new PredefinedMember<MethodSpec> (module, btypes.Delegate,
 				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Inequality), 0, MemberKind.Operator, null, btypes.Bool));
 
-			DynamicAttributeCtor = new PredefinedMember<MethodSpec> (ctx, atypes.Dynamic,
+			DynamicAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.Dynamic,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
 					ArrayContainer.MakeType (module, btypes.Bool))));
 
-			FieldInfoGetFieldFromHandle = new PredefinedMember<MethodSpec> (ctx, types.FieldInfo,
+			FieldInfoGetFieldFromHandle = new PredefinedMember<MethodSpec> (module, types.FieldInfo,
 				"GetFieldFromHandle", MemberKind.Method, types.RuntimeFieldHandle);
 
-			FieldInfoGetFieldFromHandle2 = new PredefinedMember<MethodSpec> (ctx, types.FieldInfo,
+			FieldInfoGetFieldFromHandle2 = new PredefinedMember<MethodSpec> (module, types.FieldInfo,
 				"GetFieldFromHandle", MemberKind.Method, types.RuntimeFieldHandle, new PredefinedType (btypes.RuntimeTypeHandle));
 
-			FixedBufferAttributeCtor = new PredefinedMember<MethodSpec> (ctx, atypes.FixedBuffer,
+			FixedBufferAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.FixedBuffer,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Type, btypes.Int)));
 
-			IDisposableDispose = new PredefinedMember<MethodSpec> (ctx, btypes.IDisposable, "Dispose", TypeSpec.EmptyTypes);
+			IDisposableDispose = new PredefinedMember<MethodSpec> (module, btypes.IDisposable, "Dispose", TypeSpec.EmptyTypes);
 
-			IEnumerableGetEnumerator = new PredefinedMember<MethodSpec> (ctx, btypes.IEnumerable,
+			IEnumerableGetEnumerator = new PredefinedMember<MethodSpec> (module, btypes.IEnumerable,
 				"GetEnumerator", TypeSpec.EmptyTypes);
 
-			InterlockedCompareExchange = new PredefinedMember<MethodSpec> (ctx, types.Interlocked,
+			InterlockedCompareExchange = new PredefinedMember<MethodSpec> (module, types.Interlocked,
 				MemberFilter.Method ("CompareExchange", 0,
 					new ParametersImported (
 						new[] {
@@ -388,7 +387,7 @@ namespace Mono.CSharp
 						false),
 				btypes.Int));
 
-			InterlockedCompareExchange_T = new PredefinedMember<MethodSpec> (ctx, types.Interlocked,
+			InterlockedCompareExchange_T = new PredefinedMember<MethodSpec> (module, types.Interlocked,
 				MemberFilter.Method ("CompareExchange", 1,
 					new ParametersImported (
 						new[] {
@@ -403,15 +402,15 @@ namespace Mono.CSharp
 							}, false),
 					null));
 
-			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (ctx, types.MethodBase,
+			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);
 
-			MethodInfoGetMethodFromHandle2 = new PredefinedMember<MethodSpec> (ctx, types.MethodBase,
+			MethodInfoGetMethodFromHandle2 = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle, new PredefinedType (btypes.RuntimeTypeHandle));
 
-			MonitorEnter = new PredefinedMember<MethodSpec> (ctx, types.Monitor, "Enter", btypes.Object);
+			MonitorEnter = new PredefinedMember<MethodSpec> (module, types.Monitor, "Enter", btypes.Object);
 
-			MonitorEnter_v4 = new PredefinedMember<MethodSpec> (ctx, types.Monitor,
+			MonitorEnter_v4 = new PredefinedMember<MethodSpec> (module, types.Monitor,
 				MemberFilter.Method ("Enter", 0,
 					new ParametersImported (new[] {
 							new ParameterData (null, Parameter.Modifier.NONE),
@@ -421,41 +420,41 @@ namespace Mono.CSharp
 							btypes.Object, btypes.Bool
 						}, false), null));
 
-			MonitorExit = new PredefinedMember<MethodSpec> (ctx, types.Monitor, "Exit", btypes.Object);
+			MonitorExit = new PredefinedMember<MethodSpec> (module, types.Monitor, "Exit", btypes.Object);
 
-			RuntimeCompatibilityWrapNonExceptionThrows = new PredefinedMember<PropertySpec> (ctx, atypes.RuntimeCompatibility,
+			RuntimeCompatibilityWrapNonExceptionThrows = new PredefinedMember<PropertySpec> (module, atypes.RuntimeCompatibility,
 				MemberFilter.Property ("WrapNonExceptionThrows", btypes.Bool));
 
-			RuntimeHelpersInitializeArray = new PredefinedMember<MethodSpec> (ctx, types.RuntimeHelpers,
+			RuntimeHelpersInitializeArray = new PredefinedMember<MethodSpec> (module, types.RuntimeHelpers,
 				"InitializeArray", btypes.Array, btypes.RuntimeFieldHandle);
 
-			RuntimeHelpersOffsetToStringData = new PredefinedMember<PropertySpec> (ctx, types.RuntimeHelpers,
+			RuntimeHelpersOffsetToStringData = new PredefinedMember<PropertySpec> (module, types.RuntimeHelpers,
 				MemberFilter.Property ("OffsetToStringData", btypes.Int));
 
-			SecurityActionRequestMinimum = new PredefinedMember<ConstSpec> (ctx, types.SecurityAction, "RequestMinimum",
+			SecurityActionRequestMinimum = new PredefinedMember<ConstSpec> (module, types.SecurityAction, "RequestMinimum",
 				MemberKind.Field, types.SecurityAction);
 
-			StringEmpty = new PredefinedMember<FieldSpec> (ctx, btypes.String, MemberFilter.Field ("Empty", btypes.String));
+			StringEmpty = new PredefinedMember<FieldSpec> (module, btypes.String, MemberFilter.Field ("Empty", btypes.String));
 
-			StringEqual = new PredefinedMember<MethodSpec> (ctx, btypes.String,
+			StringEqual = new PredefinedMember<MethodSpec> (module, btypes.String,
 				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Equality), 0, MemberKind.Operator, null, btypes.Bool));
 
-			StringInequal = new PredefinedMember<MethodSpec> (ctx, btypes.String,
+			StringInequal = new PredefinedMember<MethodSpec> (module, btypes.String,
 				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Inequality), 0, MemberKind.Operator, null, btypes.Bool));
 
-			StructLayoutAttributeCtor = new PredefinedMember<MethodSpec> (ctx, atypes.StructLayout,
+			StructLayoutAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.StructLayout,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Short)));
 
-			StructLayoutCharSet = new PredefinedMember<FieldSpec> (ctx, atypes.StructLayout, "CharSet",
+			StructLayoutCharSet = new PredefinedMember<FieldSpec> (module, atypes.StructLayout, "CharSet",
 				MemberKind.Field, types.CharSet);
 
-			StructLayoutPack = new PredefinedMember<FieldSpec> (ctx, atypes.StructLayout,
+			StructLayoutPack = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
 				MemberFilter.Field ("Pack", btypes.Int));
 
-			StructLayoutSize = new PredefinedMember<FieldSpec> (ctx, atypes.StructLayout,
+			StructLayoutSize = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
 				MemberFilter.Field ("Size", btypes.Int));
 
-			TypeGetTypeFromHandle = new PredefinedMember<MethodSpec> (ctx, btypes.Type, "GetTypeFromHandle", btypes.RuntimeTypeHandle);
+			TypeGetTypeFromHandle = new PredefinedMember<MethodSpec> (module, btypes.Type, "GetTypeFromHandle", btypes.RuntimeTypeHandle);
 		}
 	}
 
@@ -578,40 +577,40 @@ namespace Mono.CSharp
 
 	class PredefinedMember<T> where T : MemberSpec
 	{
-		readonly CompilerContext ctx;
+		readonly ModuleContainer module;
 		T member;
 		TypeSpec declaring_type;
 		readonly PredefinedType declaring_type_predefined;
 		readonly PredefinedType[] parameters_predefined;
 		MemberFilter filter;
 
-		public PredefinedMember (CompilerContext ctx, PredefinedType type, MemberFilter filter)
+		public PredefinedMember (ModuleContainer module, PredefinedType type, MemberFilter filter)
 		{
-			this.ctx = ctx;
+			this.module = module;
 			this.declaring_type_predefined = type;
 			this.filter = filter;
 		}
 
-		public PredefinedMember (CompilerContext ctx, TypeSpec type, MemberFilter filter)
+		public PredefinedMember (ModuleContainer module, TypeSpec type, MemberFilter filter)
 		{
-			this.ctx = ctx;
+			this.module = module;
 			this.declaring_type = type;
 			this.filter = filter;
 		}
 
-		public PredefinedMember (CompilerContext ctx, PredefinedType type, string name, params TypeSpec[] types)
-			: this (ctx, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, params TypeSpec[] types)
+			: this (module, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
 		{
 		}
 
-		public PredefinedMember (CompilerContext ctx, PredefinedType type, string name, MemberKind kind, params PredefinedType[] types)
-			: this (ctx, type, new MemberFilter (name, 0, kind, null, null))
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, params PredefinedType[] types)
+			: this (module, type, new MemberFilter (name, 0, kind, null, null))
 		{
 			parameters_predefined = types;
 		}
 
-		public PredefinedMember (CompilerContext ctx, BuildinTypeSpec type, string name, params TypeSpec[] types)
-			: this (ctx, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
+		public PredefinedMember (ModuleContainer module, BuildinTypeSpec type, string name, params TypeSpec[] types)
+			: this (module, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
 		{
 		}
 
@@ -647,7 +646,7 @@ namespace Mono.CSharp
 			if (member == null)
 				return null;
 
-			if (!member.IsAccessible (InternalType.FakeInternalType))
+			if (!member.IsAccessible (module))
 				return null;
 
 			return member;
@@ -682,7 +681,7 @@ namespace Mono.CSharp
 			if (filter.Parameters != null)
 				method_args = filter.Parameters.GetSignatureForError ();
 
-			ctx.Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
+			module.Compiler.Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
 				declaring_type.GetSignatureForError (), filter.Name, method_args);
 
 			return null;
@@ -798,22 +797,6 @@ namespace Mono.CSharp
 				return true;
 
 			type = type.BaseType;
-		} while (type != null);
-
-		return false;
-	}
-
-	//
-	// Checks whether `type' is a subclass or nested child of `base_type'.
-	//
-	public static bool IsNestedFamilyAccessible (TypeSpec type, TypeSpec base_type)
-	{
-		do {
-			if (IsFamilyAccessible (type, base_type))
-				return true;
-
-			// Handle nested types.
-			type = type.DeclaringType;
 		} while (type != null);
 
 		return false;

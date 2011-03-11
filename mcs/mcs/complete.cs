@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 					partial_name, 
 					ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
 			} else {
-				var r = MemberCache.GetCompletitionMembers (expr_type, partial_name).Select (l => l.Name);
+				var r = MemberCache.GetCompletitionMembers (ec, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);
 			}
 
@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			var members = MemberCache.GetCompletitionMembers (ec.CurrentInitializerVariable.Type, partial_name);
+			var members = MemberCache.GetCompletitionMembers (ec, ec.CurrentInitializerVariable.Type, partial_name);
 
 // TODO: Does this mean exact match only ?
 //			if (partial_name != null && results.Count > 0 && result [0] == "")
