@@ -369,6 +369,7 @@ namespace System.Net {
 		void Unbind ()
 		{
 			if (context_bound) {
+				context.Listener.RemoveConnection (this);
 				epl.UnbindContext (context);
 				context_bound = false;
 			}
