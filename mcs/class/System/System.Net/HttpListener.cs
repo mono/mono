@@ -158,20 +158,24 @@ namespace System.Net {
 					keys.CopyTo (all, 0);
 					registry.Clear ();
 					for (int i = all.Length - 1; i >= 0; i--)
-						all[i].Connection.Close (true);
+						all [i].Connection.Close (true);
 				}
 
 				lock (connections) {
-					foreach (HttpConnection cnc in connections.Keys) {
-						cnc.Close (true);
-					}
+					ICollection keys = connections.Keys;
+					var conns = new HttpConnection [keys.Count];
+					keys.CopyTo (conns, 0);
 					connections.Clear ();
+					for (int i = conns.Length - 1; i >= 0; i--)
+						conns [i].Close (true);
 				}
 				lock (ctx_queue) {
-					foreach (HttpListenerContext context in ctx_queue)
-						context.Connection.Close (true);
-
+					ICollection keys = connections.Keys;
+					var ctxs = new HttpListenerContext [keys.Count];
+					keys.CopyTo (ctxs, 0);
 					ctx_queue.Clear ();
+					for (int i = ctxs.Length - 1; i >= 0; i--)
+						ctxs [i].Connection.Close (true);
 				}
 
 				lock (wait_queue) {
