@@ -154,11 +154,6 @@ namespace Mono.XBuild.CommandLine {
 			catch (CommandLineException cle) {
 				ErrorUtilities.ReportError(cle.ErrorCode, show_stacktrace ? cle.ToString() : cle.Message);
 			}
-
-			catch (Exception) {
-				throw;
-			}
-			
 			finally {
 				if (engine != null)
 					engine.UnregisterAllLoggers ();
