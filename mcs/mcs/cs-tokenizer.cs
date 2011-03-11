@@ -206,6 +206,8 @@ namespace Mono.CSharp
 		//
 		public int parsing_declaration;
 
+		public bool parsing_attribute_section;
+
 		//
 		// The special character to inject on streams to trigger the EXPRESSION_PARSE
 		// token to be returned.   It just happens to be a Unicode character that
@@ -2734,7 +2736,7 @@ namespace Mono.CSharp
 			if (identifiers_group != null) {
 				if (identifiers_group.TryGetValue (id_builder, out s)) {
 					val = LocatedToken.Create (s, ref_line, column);
-					if (quoted)
+					if (quoted && parsing_attribute_section)
 						AddEscapedIdentifier (((LocatedToken) val).Location);
 					return Token.IDENTIFIER;
 				}
@@ -2753,7 +2755,7 @@ namespace Mono.CSharp
 			identifiers_group.Add (chars, s);
 
 			val = LocatedToken.Create (s, ref_line, column);
-			if (quoted)
+			if (quoted && parsing_attribute_section)
 				AddEscapedIdentifier (((LocatedToken) val).Location);
 
 			return Token.IDENTIFIER;

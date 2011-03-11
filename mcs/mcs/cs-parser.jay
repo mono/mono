@@ -696,20 +696,28 @@ attribute_sections
 	;
 
 attribute_section
-	: OPEN_BRACKET attribute_target_specifier attribute_list opt_comma CLOSE_BRACKET
+	: OPEN_BRACKET
 	  {
+		lexer.parsing_attribute_section = true;
+	  }
+	  attribute_section_cont
+	  {
+		lexer.parsing_attribute_section = false;
 		$$ = $3;
- 	  }
-	| OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
-	  {
-		$$ = $2;
 	  }
 	;
- 
-attribute_target_specifier
+	
+attribute_section_cont
 	: attribute_target COLON
 	  {
-		current_attr_target = (string)$1;
+		current_attr_target = (string)$1;	  
+	  }
+	  attribute_list opt_comma CLOSE_BRACKET
+	  {
+		$$ = $4;
+ 	  }
+	| attribute_list opt_comma CLOSE_BRACKET
+	  {
 		$$ = $1;
 	  }
 	;

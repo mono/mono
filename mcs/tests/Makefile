@@ -60,7 +60,7 @@ TEST_ILS := $(wildcard *-lib.il)
 build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
-qcheck: build-compiler-lib
+qcheck:
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
 test-local:

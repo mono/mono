@@ -325,7 +325,7 @@ namespace Mono.CSharp {
 		static void AddCheckpoint (int compile_unit, int file, int row)
 		{
 			if (checkpoints.Length == ++checkpoint_index) {
-				Array.Resize (ref checkpoints, checkpoint_index + 2);
+				Array.Resize (ref checkpoints, checkpoint_index * 2);
 			}
 			checkpoints [checkpoint_index] = new Checkpoint (compile_unit, file, row);
 		}
