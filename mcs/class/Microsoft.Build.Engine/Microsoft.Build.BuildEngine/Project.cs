@@ -297,6 +297,13 @@ namespace Microsoft.Build.BuildEngine {
 					Directory.SetCurrentDirectory (Path.GetDirectoryName (fullFileName));
 				building = true;
 				result = BuildInternal (targetNames, targetOutputs, buildFlags);
+			} catch (InvalidProjectFileException ie) {
+				ParentEngine.LogErrorWithFilename (fullFileName, ie.Message);
+				ParentEngine.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", fullFileName, ie.ToString ()));
+			} catch (Exception e) {
+				ParentEngine.LogErrorWithFilename (fullFileName, e.Message);
+				ParentEngine.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", fullFileName, e.ToString ()));
+				throw;
 			} finally {
 				ParentEngine.EndProjectBuild (this, result);
 				current_settings = BuildSettings.None;
