@@ -48,7 +48,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		
 		public BinaryFormatter()
 		{
-			surrogate_selector=null;
+			surrogate_selector=DefaultSurrogateSelector;
 			context=new StreamingContext(StreamingContextStates.All);
 		}
 		
@@ -57,7 +57,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			surrogate_selector=selector;
 			this.context=context;
 		}
-
+		
+		static ISurrogateSelector DefaultSurrogateSelector { get; set; }
+		
 		public FormatterAssemblyStyle AssemblyFormat
 		{
 			get {
