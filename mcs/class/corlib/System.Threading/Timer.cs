@@ -338,7 +338,11 @@ namespace System.Threading
 							list.RemoveAt (i);
 							count--;
 							i--;
+#if MOONLIGHT
+							ThreadPool.QueueUserWorkItem (TimerCaller, timer);
+#else
 							ThreadPool.UnsafeQueueUserWorkItem (TimerCaller, timer);
+#endif
 							long period = timer.period_ms;
 							long due_time = timer.due_time_ms;
 							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));

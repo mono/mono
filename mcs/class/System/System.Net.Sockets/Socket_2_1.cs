@@ -211,7 +211,11 @@ namespace System.Net.Sockets {
 					Worker worker = (Worker) pending [i];
 					SocketAsyncResult ares = worker.result;
 					cb = new WaitCallback (ares.CompleteDisposed);
+#if MOONLIGHT
+					ThreadPool.QueueUserWorkItem (cb, null);
+#else
 					ThreadPool.UnsafeQueueUserWorkItem (cb, null);
+#endif
 				}
 			}
 
