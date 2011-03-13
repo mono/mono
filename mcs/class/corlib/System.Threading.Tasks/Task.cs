@@ -555,34 +555,39 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
 			
-			foreach (var t in tasks)
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 				t.Wait ();
+			}
 		}
 
 		public static void WaitAll (Task[] tasks, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
 			
-			foreach (var t in tasks)
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+
 				t.Wait (cancellationToken);
+			}
 		}
 		
 		public static bool WaitAll (Task[] tasks, TimeSpan timeout)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
 			
 			bool result = true;
-			foreach (var t in tasks)
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+
 				result &= t.Wait (timeout);
+			}
 			return result;
 		}
 		
@@ -590,12 +595,14 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
 			
 			bool result = true;
-			foreach (var t in tasks)
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+
 				result &= t.Wait (millisecondsTimeout);
+			}
 			return result;
 		}
 		
@@ -603,12 +610,14 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
 			
 			bool result = true;
-			foreach (var t in tasks)
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+
 				result &= t.Wait (millisecondsTimeout, cancellationToken);
+			}
 			return result;
 		}
 		
