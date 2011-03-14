@@ -437,10 +437,16 @@ namespace System.ServiceModel.Dispatcher
 	class DataContractMessagesFormatter : BaseMessagesFormatter
 	{
 		DataContractFormatAttribute attr;
+#if !NET_2_1
+		DataContractSerializerOperationBehavior serializerBehavior;
+#endif
 
 		public DataContractMessagesFormatter (OperationDescription desc, DataContractFormatAttribute attr)
 			: base (desc)
 		{
+#if !NET_2_1
+			this.serializerBehavior = desc.Behaviors.Find<DataContractSerializerOperationBehavior>();
+#endif
 			this.attr = attr;
 		}
 
@@ -509,8 +515,14 @@ namespace System.ServiceModel.Dispatcher
 		XmlObjectSerializer GetSerializer (MessagePartDescription partDesc)
 		{
 			if (!serializers.ContainsKey (partDesc))
-				serializers [partDesc] = new DataContractSerializer (
-					partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes);
+#if !NET_2_1
+				if (serializerBehavior != null)
+					serializers [partDesc] = serializerBehavior.CreateSerializer(
+						partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes as IList<Type>);
+				else
+#endif
+					serializers [partDesc] = new DataContractSerializer (
+						partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes);
 			return serializers [partDesc];
 		}
 
