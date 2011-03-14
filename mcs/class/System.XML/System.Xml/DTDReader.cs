@@ -44,9 +44,8 @@ using System.Text;
 using Mono.Xml;
 #if NET_2_1
 using XmlSchemaException = System.Xml.XmlException;
-#else
-using System.Xml.Schema;
 #endif
+using System.Xml.Schema;
 
 namespace System.Xml
 {
