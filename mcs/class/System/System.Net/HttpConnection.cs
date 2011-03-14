@@ -230,11 +230,13 @@ namespace System.Net {
 				else
 					last_listener.RemoveConnection (this);
 
-				if (context.Listener != null) {
-					context.Listener.AddConnection (this);
+				HttpListener listener = context.Listener;
+				if (listener != null) {
+					listener.AddConnection (this);
 					context_bound = true;
 				}
-				last_listener = context.Listener;
+				last_listener = listener;
+				listener.RegisterContext (context);
 				return;
 			}
 			stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
