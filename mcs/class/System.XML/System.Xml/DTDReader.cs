@@ -936,7 +936,7 @@ namespace System.Xml
 
 		private DTDAttributeDefinition ReadAttributeDefinition ()
 		{
-#if NET_2_1_HACK
+#if MOONLIGHT
 			throw new NotImplementedException ();
 #else
 			DTDAttributeDefinition def = new DTDAttributeDefinition (DTD);
