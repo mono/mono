@@ -154,7 +154,7 @@ namespace System.Threading {
 							    (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 
 		[CLSCompliant (false)]
 		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
