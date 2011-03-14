@@ -338,7 +338,7 @@ namespace System.Threading
 							list.RemoveAt (i);
 							count--;
 							i--;
-#if MOONLIGHT
+#if NET_2_1
 							ThreadPool.QueueUserWorkItem (TimerCaller, timer);
 #else
 							ThreadPool.UnsafeQueueUserWorkItem (TimerCaller, timer);
