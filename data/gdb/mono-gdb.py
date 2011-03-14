@@ -280,6 +280,19 @@ class MonoMethodRgctxPrinter:
             inst_str = inst_str + type_printer.to_string ()
         return "MRGCTX[%s, [%s]]" % (klass_printer.to_string(), inst_str)
 
+class MonoVTablePrinter:
+    "Print a MonoVTable structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        vtable = self.val.dereference ()
+        klass = vtable ["klass"]
+        klass_printer = MonoClassPrinter (klass)
+
+        return "vtable(%s)" % (klass_printer.to_string ())
+
 def lookup_pretty_printer(val):
     t = str (val.type)
     if t == "object":
@@ -302,6 +315,8 @@ def lookup_pretty_printer(val):
         return MonoGenericClassPrinter (val)
     if t == "MonoMethodRuntimeGenericContext *":
         return MonoMethodRgctxPrinter (val)
+    if t == "MonoVTable *":
+        return MonoVTablePrinter (val)
     return None
 
 def register_csharp_printers(obj):
