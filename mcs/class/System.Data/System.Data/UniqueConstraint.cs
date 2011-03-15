@@ -108,6 +108,11 @@ namespace System.Data {
 			InitInProgress = true;
 
 			//keep list of names to resolve later
+			
+			_dataColumnNames = new string [columnNames.Length];
+			for (int i = 0; i < columnNames.Length; i++)
+				_dataColumnNames[i] = columnNames[i];
+			
 			_dataColumnNames = columnNames;
 			base.ConstraintName = name;
 			_isPrimaryKey = isPrimaryKey;
@@ -140,9 +145,9 @@ namespace System.Data {
 			//Set Constraint Name
 			base.ConstraintName = name;
 
-			//keep reference
-			_dataColumns = columns;
-
+			//copy the columns - Do not keep reference #672113
+			//_dataColumns = columns;
+			Columns = columns;
 			//PK?
 			_isPrimaryKey = isPrimaryKey;			
 		}
@@ -150,7 +155,7 @@ namespace System.Data {
 		#endregion // Constructors
 
 		#region Helpers
-		
+
 		private void _validateColumns(DataColumn [] columns)
 		{
 			DataTable table;
@@ -302,6 +307,11 @@ namespace System.Data {
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _dataColumns; }
+			internal set {
+				_dataColumns = new DataColumn [value.Length];
+				for (int i = 0; i < value.Length; i++)
+					_dataColumns[i] = value[i];				
+			}
 		}
 
 		[DataCategory ("Data")]
