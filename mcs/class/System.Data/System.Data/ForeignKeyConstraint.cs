@@ -102,6 +102,7 @@ namespace System.Data {
 		[Browsable (false)]
 		public ForeignKeyConstraint(string constraintName, string parentTableName, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule) 
 		{
+			int i;
 			InitInProgress = true;
 			base.ConstraintName = constraintName;
 
@@ -112,11 +113,16 @@ namespace System.Data {
 			// Keep reference to parentTableName to resolve later
 			_parentTableName = parentTableName;
 
-			// Keep reference to parentColumnNames to resolve later
-			_parentColumnNames = parentColumnNames;
-
-			// Keep reference to childColumnNames to resolve later
-			_childColumnNames = childColumnNames;
+			// Keep a copy of parentColumnNames to resolve later
+			_parentColumnNames = new string [parentColumnNames.Length];
+			for (i = 0; i < parentColumnNames.Length; i++)
+			       _parentColumnNames[i] = parentColumnNames[i];
+			
+			// Keep a copy of childColumnNames to resolve later
+			_childColumnNames = new string [childColumnNames.Length];
+			for (i = 0; i < childColumnNames.Length; i++)
+			       _childColumnNames[i] = childColumnNames[i];
+                       
 
 			_acceptRejectRule = acceptRejectRule;
 			_deleteRule = deleteRule;
@@ -196,16 +202,21 @@ namespace System.Data {
 		private void _foreignKeyConstraint(string constraintName, DataColumn[] parentColumns,
 				DataColumn[] childColumns)
 		{
-
+			int i;
 			//Validate 
 			_validateColumns(parentColumns, childColumns);
 
 			//Set Constraint Name
 			base.ConstraintName = constraintName;	
 
-			//Keep reference to columns
-			_parentColumns = parentColumns;
-			_childColumns = childColumns;
+			//copy the columns - Do not keep reference #672113
+			_parentColumns = new DataColumn [parentColumns.Length];
+			for (i = 0; i < parentColumns.Length; i++)
+			       _parentColumns[i] = parentColumns[i];
+			
+			_childColumns = new DataColumn [childColumns.Length];                   
+			for (i = 0; i < childColumns.Length; i++)
+			       _childColumns[i] = childColumns[i];
 		}
 
 #endregion // Constructors
