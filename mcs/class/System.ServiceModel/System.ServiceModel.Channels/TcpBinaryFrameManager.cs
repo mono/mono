@@ -388,7 +388,8 @@ namespace System.ServiceModel.Channels
 					benc.CurrentWriterSession = session;
 				Encoder.WriteMessage (message, ms);
 			} finally {
-				benc.CurrentWriterSession = null;
+				if (benc != null)
+					benc.CurrentWriterSession = null;
 			}
 
 			// dictionary
