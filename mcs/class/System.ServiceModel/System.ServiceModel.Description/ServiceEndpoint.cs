@@ -117,7 +117,7 @@ namespace System.ServiceModel.Description
 		}
 
 		internal void Validate () {
-#if !NET_2_1
+#if !MOONLIGHT
 			foreach (IContractBehavior b in Contract.Behaviors)
 				b.Validate (Contract, this);
 			foreach (IEndpointBehavior b in Behaviors)

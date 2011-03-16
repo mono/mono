@@ -53,8 +53,9 @@ namespace System.ServiceModel.Dispatcher
 			release_after_call, release_before_call,
 			tx_auto_complete, tx_required,
 			auto_dispose_params = true;
-		ImpersonationOption impersonation;
 		IDispatchMessageFormatter formatter;
+#if !NET_2_1
+		ImpersonationOption impersonation;
 		IOperationInvoker invoker;
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
@@ -62,6 +63,7 @@ namespace System.ServiceModel.Dispatcher
 			= new SynchronizedCollection<FaultContractInfo> ();
 		SynchronizedCollection<ICallContextInitializer> ctx_initializers
 			= new SynchronizedCollection<ICallContextInitializer> ();
+#endif
 
 		public DispatchOperation (DispatchRuntime parent,
 			string name, string action)
@@ -91,38 +93,16 @@ namespace System.ServiceModel.Dispatcher
 			get { return action; }
 		}
 
+#if !NET_2_1
 		public SynchronizedCollection<ICallContextInitializer> CallContextInitializers {
 			get { return ctx_initializers; }
-		}
-
-		public bool AutoDisposeParameters {
-			get { return auto_dispose_params; }
-			set {
-				ThrowIfOpened ();
-				auto_dispose_params = value;
-			}
-		}
-
-		public bool DeserializeRequest {
-			get { return deserialize_request; }
-			set {
-				ThrowIfOpened ();
-				deserialize_request = value;
-			}
 		}
 
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
 			get { return fault_contract_infos; }
 		}
 
-		public IDispatchMessageFormatter Formatter {
-			get { return formatter; }
-			set {
-				ThrowIfOpened ();
-				formatter = value;
-			}
-		}
-
+		[MonoTODO ("not considered")]
 		public ImpersonationOption Impersonation {
 			get { return impersonation; }
 			set {
@@ -139,10 +119,6 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-		public bool IsOneWay {
-			get { return is_oneway; }
-		}
-
 		public bool IsTerminating {
 			get { return is_terminating; }
 			set {
@@ -151,16 +127,8 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-		public string Name {
-			get { return name; }
-		}
-
 		public SynchronizedCollection<IParameterInspector> ParameterInspectors {
 			get { return inspectors; }
-		}
-
-		public DispatchRuntime Parent {
-			get { return parent; }
 		}
 
 		public bool ReleaseInstanceAfterCall {
@@ -183,14 +151,6 @@ namespace System.ServiceModel.Dispatcher
 			get { return reply_action; }
 		}
 
-		public bool SerializeReply {
-			get { return serialize_reply; }
-			set {
-				ThrowIfOpened ();
-				serialize_reply = value;
-			}
-		}
-
 		public bool TransactionAutoComplete {
 			get { return tx_auto_complete; }
 			set {
@@ -206,9 +166,55 @@ namespace System.ServiceModel.Dispatcher
 				tx_required = value;
 			}
 		}
+#endif
+
+		public bool AutoDisposeParameters {
+			get { return auto_dispose_params; }
+			set {
+				ThrowIfOpened ();
+				auto_dispose_params = value;
+			}
+		}
+
+		public bool DeserializeRequest {
+			get { return deserialize_request; }
+			set {
+				ThrowIfOpened ();
+				deserialize_request = value;
+			}
+		}
+
+		public IDispatchMessageFormatter Formatter {
+			get { return formatter; }
+			set {
+				ThrowIfOpened ();
+				formatter = value;
+			}
+		}
+
+		public bool IsOneWay {
+			get { return is_oneway; }
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public DispatchRuntime Parent {
+			get { return parent; }
+		}
+
+		public bool SerializeReply {
+			get { return serialize_reply; }
+			set {
+				ThrowIfOpened ();
+				serialize_reply = value;
+			}
+		}
 
 		void ThrowIfOpened ()
 		{
+#if !NET_2_1
 			// FIXME: get callback client runtime status when ChannelDispatcher is not available.
 			var state = Parent.ChannelDispatcher != null ? Parent.ChannelDispatcher.State : CommunicationState.Created; // Parent.CallbackClientRuntime.ChannelFactory.State;
 			switch (state) {
@@ -217,6 +223,7 @@ namespace System.ServiceModel.Dispatcher
 				return;
 			}
 			throw new InvalidOperationException ("Cannot change this property after the service host is opened");
+#endif
 		}
 	}
 }
