@@ -55,7 +55,7 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 
 			[MessageBodyMember (Name = "Hello", Namespace = NS)]
@@ -72,7 +72,7 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
@@ -86,7 +86,7 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Probe", Namespace = NS)]
 			public FindCriteriaApril2005 Body { get; set; }
@@ -114,7 +114,7 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
 			public ResolveCriteriaApril2005 Body { get; set; }
