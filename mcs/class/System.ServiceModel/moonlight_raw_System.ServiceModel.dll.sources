@@ -134,6 +134,7 @@ System.ServiceModel.Description/ContractDescription.cs
 System.ServiceModel.Description/ContractDescriptionGenerator.cs
 System.ServiceModel.Description/FaultDescription.cs
 System.ServiceModel.Description/FaultDescriptionCollection.cs
+System.ServiceModel.Description/IContractBehavior.cs
 System.ServiceModel.Description/IEndpointBehavior.cs
 System.ServiceModel.Description/IOperationBehavior.cs
 System.ServiceModel.Description/MessageBodyDescription.cs
@@ -152,6 +153,8 @@ System.ServiceModel.Description/XmlName.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
 System.ServiceModel.Dispatcher/ClientOperation.cs
 System.ServiceModel.Dispatcher/ClientRuntime.cs
+System.ServiceModel.Dispatcher/DispatchRuntime.cs
+System.ServiceModel.Dispatcher/DispatchOperation.cs
 System.ServiceModel.Dispatcher/FaultContractInfo.cs
 System.ServiceModel.Dispatcher/IChannelInitializer.cs
 System.ServiceModel.Dispatcher/IClientMessageFormatter.cs
