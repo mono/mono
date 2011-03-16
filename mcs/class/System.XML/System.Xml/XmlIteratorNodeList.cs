@@ -123,8 +123,8 @@ namespace System.Xml
 			if (finished)
 				return list.GetEnumerator ();
 			else
-				//return new XPathNodeIteratorNodeListIterator (source);
-				return new XPathNodeIteratorNodeListIterator2 (this);
+				return new XPathNodeIteratorNodeListIterator (source);
+				//return new XPathNodeIteratorNodeListIterator2 (this);
 		}
 
 		public override XmlNode Item (int index)
@@ -146,7 +146,7 @@ namespace System.Xml
 
 		#endregion
 
-		// unused anymore.
+		// FIXME: switch to XPathNodeIteratorNodeListIterator2.
 		class XPathNodeIteratorNodeListIterator : IEnumerator
 		{
 			XPathNodeIterator iter;
@@ -172,6 +172,7 @@ namespace System.Xml
 			}
 		}
 
+		/*
 		class XPathNodeIteratorNodeListIterator2 : IEnumerator
 		{
 			int current = -1;
@@ -196,5 +197,6 @@ namespace System.Xml
 				current = -1;
 			}
 		}
+		*/
 	}
 }
