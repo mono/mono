@@ -112,12 +112,15 @@ namespace System.ServiceModel.Channels
 		public const byte SimplexMode = 3;
 		public const byte SingletonSizedMode = 4;
 
-		public const byte EncodingUtf8 = 3;
-		public const byte EncodingUtf16 = 4;
-		public const byte EncodingUtf16LE = 5;
-		public const byte EncodingMtom = 6;
-		public const byte EncodingBinary = 7;
-		public const byte EncodingBinaryWithDictionary = 8;
+		public const byte Soap11EncodingUtf8 = 0;
+		public const byte Soap11EncodingUtf16 = 1;
+		public const byte Soap11EncodingUtf16LE = 2;
+		public const byte Soap12EncodingUtf8 = 3;
+		public const byte Soap12EncodingUtf16 = 4;
+		public const byte Soap12EncodingUtf16LE = 5;
+		public const byte Soap12EncodingMtom = 6;
+		public const byte Soap12EncodingBinary = 7;
+		public const byte Soap12EncodingBinaryWithDictionary = 8;
 
 		MyBinaryReader reader;
 		MyBinaryWriter writer;
@@ -130,7 +133,7 @@ namespace System.ServiceModel.Channels
 			reader = new MyBinaryReader (s);
 			ResetWriteBuffer ();
 
-			EncodingRecord = EncodingBinaryWithDictionary; // FIXME: it should depend on mode.
+			EncodingRecord = Soap12EncodingBinaryWithDictionary; // FIXME: it should depend on mode.
 		}
 
 		Stream s;
@@ -302,31 +305,51 @@ namespace System.ServiceModel.Channels
 			var ms = new MemoryStream (buffer, 0, buffer.Length);
 
 			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
-			if (EncodingRecord != EncodingBinaryWithDictionary)
-				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
-
-			// Encoding type 8:
-			// the returned buffer consists of a serialized reader 
-			// session and the binary xml body. 
-
-			var session = reader_session ?? new XmlBinaryReaderSession ();
-			reader_session = session;
-			byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
-			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
-				var rbr = new BinaryReader (rms, Encoding.UTF8);
-				while (rms.Position < rms.Length)
-					session.Add (reader_session_items++, rbr.ReadString ());
+			bool inBandDic = false;
+			XmlBinaryReaderSession session = null;
+			switch (EncodingRecord) {
+			case Soap11EncodingUtf8:
+			case Soap11EncodingUtf16:
+			case Soap11EncodingUtf16LE:
+			case Soap12EncodingUtf8:
+			case Soap12EncodingUtf16:
+			case Soap12EncodingUtf16LE:
+				if (!(Encoder is TextMessageEncoder))
+					throw new InvalidOperationException (String.Format ("Unexpected message encoding value: {0:X}", EncodingRecord));
+				break;
+			case Soap12EncodingMtom:
+				if (!(Encoder is MtomMessageEncoder))
+					throw new InvalidOperationException (String.Format ("Unexpected message encoding value: {0:X}", EncodingRecord));
+				break;
+			default:
+				throw new InvalidOperationException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+			case Soap12EncodingBinaryWithDictionary:
+				inBandDic = true;
+				goto case Soap12EncodingBinary;
+			case Soap12EncodingBinary:
+				session = inBandDic ? (reader_session ?? new XmlBinaryReaderSession ()) : null;
+				reader_session = session;
+				byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
+				if (inBandDic) {
+					using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
+						var rbr = new BinaryReader (rms, Encoding.UTF8);
+						while (rms.Position < rms.Length)
+							session.Add (reader_session_items++, rbr.ReadString ());
+					}
+				}
+				break;
 			}
 			var benc = Encoder as BinaryMessageEncoder;
-			if (benc != null)
-				benc.CurrentReaderSession = session;
+			lock (Encoder) {
+				if (benc != null)
+					benc.CurrentReaderSession = session;
 
-			// FIXME: supply maxSizeOfHeaders.
-			Message msg = Encoder.ReadMessage (ms, 0x10000);
-			if (benc != null)
-				benc.CurrentReaderSession = null;
-
-			return msg;
+				// FIXME: supply maxSizeOfHeaders.
+				Message msg = Encoder.ReadMessage (ms, 0x10000);
+				if (benc != null)
+					benc.CurrentReaderSession = null;
+				return msg;
+			}
 			
 			}
 		}
@@ -337,7 +360,7 @@ namespace System.ServiceModel.Channels
 			lock (read_lock) {
 
 			// Encoding type 7 is expected
-			if (EncodingRecord != EncodingBinary)
+			if (EncodingRecord != Soap12EncodingBinary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
 			var packetType = s.ReadByte ();
@@ -424,7 +447,7 @@ namespace System.ServiceModel.Channels
 
 			ResetWriteBuffer ();
 
-			if (EncodingRecord != EncodingBinary)
+			if (EncodingRecord != Soap12EncodingBinary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
 			s.WriteByte (UnsizedEnvelopeRecord);
