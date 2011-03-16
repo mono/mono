@@ -90,7 +90,7 @@ namespace System.Web.Routing
 			var pathInfo = httpContext.Request.PathInfo;
 
 			if (!String.IsNullOrEmpty (pathInfo))
-				throw new NotImplementedException ();
+				path += pathInfo;
 
 			// probably code like this causes ArgumentOutOfRangeException under .NET.
 			// It somehow allows such path that is completely equivalent to the Url. Dunno why.
