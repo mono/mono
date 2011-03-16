@@ -342,7 +342,7 @@ namespace System.Web.UI.WebControls
 			if (displayChildren)
 				owner.RenderMenu (writer, item.ChildItems, vertical, isDynamicItem, itemLevel, notLast);
 
-			if (itemLevel > 1)
+			if (itemLevel > 0)
 				writer.RenderEndTag (); // </li>
 		}
 
