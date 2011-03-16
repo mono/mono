@@ -33,16 +33,12 @@ namespace System.ServiceModel.Description
 {
 	public interface IEndpointBehavior
 	{
-#if !MOONLIGHT
 		void AddBindingParameters (ServiceEndpoint endpoint,
 			BindingParameterCollection parameters);
-#if !NET_2_1
 		void ApplyDispatchBehavior (ServiceEndpoint serviceEndpoint,
 			EndpointDispatcher dispatcher);
-#endif
 		void ApplyClientBehavior (ServiceEndpoint serviceEndpoint,
 			ClientRuntime behavior);
 		void Validate (ServiceEndpoint serviceEndpoint);
-#endif
 	}
 }
