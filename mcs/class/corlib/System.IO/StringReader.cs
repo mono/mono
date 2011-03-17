@@ -42,8 +42,8 @@ namespace System.IO {
 		int nextChar;
 		int sourceLength;
 
-		public StringReader( string s ) {
-
+		public StringReader (string s)
+		{
 			if (s == null) 
 				throw new ArgumentNullException ("s");
 
@@ -63,28 +63,25 @@ namespace System.IO {
 			base.Dispose (disposing);
 		}
 
-		public override int Peek() {
+		public override int Peek ()
+		{
+			if (source == null)
+				ObjectDisposedException ();
 
-			CheckObjectDisposedException ();
-
-			if( nextChar >= sourceLength ) {
+			if (nextChar >= sourceLength) 
 				return -1;
-			} else {
-				return (int)source[ nextChar ];
-			}
+			return (int)source [nextChar];
 		}
 
-		public override int Read() {
+		public override int Read ()
+		{
+			if (source == null)
+				ObjectDisposedException ();
 
-			CheckObjectDisposedException ();
-
-			if( nextChar >= sourceLength ) {
+			if (nextChar >= sourceLength)
 				return -1;
-			} else {
-				return (int)source[ nextChar++ ];
-			}
+			return (int)source [nextChar++];
 		}
-
 
 		// The method will read up to count characters from the StringReader
 		// into the buffer character array starting at position index. Returns
@@ -93,7 +90,8 @@ namespace System.IO {
 
 		public override int Read ([In, Out] char[] buffer, int index, int count)
 		{
-			CheckObjectDisposedException ();
+			if (source == null)
+				ObjectDisposedException ();
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -123,7 +121,8 @@ namespace System.IO {
 		{
 			// Reads until next \r or \n or \r\n, otherwise return null
 
-			CheckObjectDisposedException ();
+			if (source == null)
+				ObjectDisposedException ();
 
 			if (nextChar >= source.Length)
 				return null;
@@ -147,17 +146,17 @@ namespace System.IO {
 
                 public override string ReadToEnd ()
 		{
-			CheckObjectDisposedException ();
+			if (source == null)
+				ObjectDisposedException ();
                         string toEnd = source.Substring (nextChar, sourceLength - nextChar);
                         nextChar = sourceLength;
                         return toEnd;
                 }
 
-		private void CheckObjectDisposedException ()
+		private void ObjectDisposedException ()
 		{
-			if (source == null)
-				throw new ObjectDisposedException ("StringReader", 
-					Locale.GetText ("Cannot read from a closed StringReader"));
+			throw new ObjectDisposedException ("StringReader", 
+							   Locale.GetText ("Cannot read from a closed StringReader"));
 		}
 	}
 }
