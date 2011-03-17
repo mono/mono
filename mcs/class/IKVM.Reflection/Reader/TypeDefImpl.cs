@@ -379,7 +379,8 @@ namespace IKVM.Reflection.Reader
 				switch (this.Attributes & TypeAttributes.LayoutMask)
 				{
 					case TypeAttributes.AutoLayout:
-						return null;
+						layout = new StructLayoutAttribute(LayoutKind.Auto);
+						break;
 					case TypeAttributes.SequentialLayout:
 						layout = new StructLayoutAttribute(LayoutKind.Sequential);
 						break;
@@ -389,34 +390,46 @@ namespace IKVM.Reflection.Reader
 					default:
 						throw new BadImageFormatException();
 				}
-				int token = this.MetadataToken;
-				// TODO use binary search?
-				for (int i = 0; i < module.ClassLayout.records.Length; i++)
+				switch (this.Attributes & TypeAttributes.StringFormatMask)
 				{
-					if (module.ClassLayout.records[i].Parent == token)
-					{
-						layout.Pack = module.ClassLayout.records[i].PackingSize;
-						layout.Size = module.ClassLayout.records[i].ClassSize;
-						switch (this.Attributes & TypeAttributes.StringFormatMask)
-						{
-							case TypeAttributes.AnsiClass:
-								layout.CharSet = CharSet.Ansi;
-								break;
-							case TypeAttributes.UnicodeClass:
-								layout.CharSet = CharSet.Unicode;
-								break;
-							case TypeAttributes.AutoClass:
-								layout.CharSet = CharSet.Auto;
-								break;
-							default:
-								layout.CharSet = CharSet.None;
-								break;
-						}
-						return layout;
-					}
+					case TypeAttributes.AnsiClass:
+						layout.CharSet = CharSet.Ansi;
+						break;
+					case TypeAttributes.UnicodeClass:
+						layout.CharSet = CharSet.Unicode;
+						break;
+					case TypeAttributes.AutoClass:
+						layout.CharSet = CharSet.Auto;
+						break;
+					default:
+						layout.CharSet = CharSet.None;
+						break;
 				}
-				return null;
+				if (!__GetLayout(out layout.Pack, out layout.Size))
+				{
+					// compatibility with System.Reflection
+					layout.Pack = 8;
+				}
+				return layout;
 			}
+		}
+
+		public override bool __GetLayout(out int packingSize, out int typeSize)
+		{
+			int token = this.MetadataToken;
+			// TODO use binary search?
+			for (int i = 0; i < module.ClassLayout.records.Length; i++)
+			{
+				if (module.ClassLayout.records[i].Parent == token)
+				{
+					packingSize = module.ClassLayout.records[i].PackingSize;
+					typeSize = module.ClassLayout.records[i].ClassSize;
+					return true;
+				}
+			}
+			packingSize = 0;
+			typeSize = 0;
+			return false;
 		}
 
 		public override Module Module

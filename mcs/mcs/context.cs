@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 #if STATIC
 using IKVM.Reflection.Emit;
@@ -370,9 +371,9 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return MemberContext.Module.Compiler.BuildinTypes;
+				return MemberContext.Module.Compiler.BuiltinTypes;
 			}
 		}
 
@@ -580,22 +581,24 @@ namespace Mono.CSharp
 		static readonly TimeReporter DisabledTimeReporter = new TimeReporter (false);
 
 		readonly Report report;
-		readonly BuildinTypes buildin_types;
+		readonly BuiltinTypes builtin_types;
 		readonly CompilerSettings settings;
+
+		Dictionary<string, SourceFile> all_source_files;
 
 		public CompilerContext (CompilerSettings settings, Report report)
 		{
 			this.settings = settings;
 			this.report = report;
-			this.buildin_types = new BuildinTypes ();
+			this.builtin_types = new BuiltinTypes ();
 			this.TimeReporter = DisabledTimeReporter;
 		}
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return buildin_types;
+				return builtin_types;
 			}
 		}
 
@@ -617,11 +620,45 @@ namespace Mono.CSharp
 			}
 		}
 
+		public List<CompilationSourceFile> SourceFiles {
+			get {
+				return settings.SourceFiles;
+			}
+		}
+
 		internal TimeReporter TimeReporter {
 			get; set;
 		}
 
 		#endregion
+
+		//
+		// This is used when we encounter a #line preprocessing directive during parsing
+		// to register additional source file names
+		//
+		public SourceFile LookupFile (CompilationSourceFile comp_unit, string name)
+		{
+			if (all_source_files == null) {
+				all_source_files = new Dictionary<string, SourceFile> ();
+				foreach (var source in SourceFiles)
+					all_source_files[source.FullPathName] = source;
+			}
+
+			string path;
+			if (!Path.IsPathRooted (name)) {
+				string root = Path.GetDirectoryName (comp_unit.FullPathName);
+				path = Path.Combine (root, name);
+			} else
+				path = name;
+
+			SourceFile retval;
+			if (all_source_files.TryGetValue (path, out retval))
+				return retval;
+
+			retval = Location.AddFile (name, path);
+			all_source_files.Add (path, retval);
+			return retval;
+		}
 	}
 
 	//

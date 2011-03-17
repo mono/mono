@@ -19,49 +19,49 @@ using System.Text;
 namespace Mono.CSharp
 {
 	//
-	// All compiler build-in types (they have to exist otherwise the compile will not work)
+	// All compiler built-in types (they have to exist otherwise the compiler will not work)
 	//
-	public class BuildinTypes
+	public class BuiltinTypes
 	{
-		public readonly BuildinTypeSpec Object;
-		public readonly BuildinTypeSpec ValueType;
-		public readonly BuildinTypeSpec Attribute;
+		public readonly BuiltinTypeSpec Object;
+		public readonly BuiltinTypeSpec ValueType;
+		public readonly BuiltinTypeSpec Attribute;
 
-		public readonly BuildinTypeSpec Int;
-		public readonly BuildinTypeSpec UInt;
-		public readonly BuildinTypeSpec Long;
-		public readonly BuildinTypeSpec ULong;
-		public readonly BuildinTypeSpec Float;
-		public readonly BuildinTypeSpec Double;
-		public readonly BuildinTypeSpec Char;
-		public readonly BuildinTypeSpec Short;
-		public readonly BuildinTypeSpec Decimal;
-		public readonly BuildinTypeSpec Bool;
-		public readonly BuildinTypeSpec SByte;
-		public readonly BuildinTypeSpec Byte;
-		public readonly BuildinTypeSpec UShort;
-		public readonly BuildinTypeSpec String;
+		public readonly BuiltinTypeSpec Int;
+		public readonly BuiltinTypeSpec UInt;
+		public readonly BuiltinTypeSpec Long;
+		public readonly BuiltinTypeSpec ULong;
+		public readonly BuiltinTypeSpec Float;
+		public readonly BuiltinTypeSpec Double;
+		public readonly BuiltinTypeSpec Char;
+		public readonly BuiltinTypeSpec Short;
+		public readonly BuiltinTypeSpec Decimal;
+		public readonly BuiltinTypeSpec Bool;
+		public readonly BuiltinTypeSpec SByte;
+		public readonly BuiltinTypeSpec Byte;
+		public readonly BuiltinTypeSpec UShort;
+		public readonly BuiltinTypeSpec String;
 
-		public readonly BuildinTypeSpec Enum;
-		public readonly BuildinTypeSpec Delegate;
-		public readonly BuildinTypeSpec MulticastDelegate;
-		public readonly BuildinTypeSpec Void;
-		public readonly BuildinTypeSpec Array;
-		public readonly BuildinTypeSpec Type;
-		public readonly BuildinTypeSpec IEnumerator;
-		public readonly BuildinTypeSpec IEnumerable;
-		public readonly BuildinTypeSpec IDisposable;
-		public readonly BuildinTypeSpec IntPtr;
-		public readonly BuildinTypeSpec UIntPtr;
-		public readonly BuildinTypeSpec RuntimeFieldHandle;
-		public readonly BuildinTypeSpec RuntimeTypeHandle;
-		public readonly BuildinTypeSpec Exception;
+		public readonly BuiltinTypeSpec Enum;
+		public readonly BuiltinTypeSpec Delegate;
+		public readonly BuiltinTypeSpec MulticastDelegate;
+		public readonly BuiltinTypeSpec Void;
+		public readonly BuiltinTypeSpec Array;
+		public readonly BuiltinTypeSpec Type;
+		public readonly BuiltinTypeSpec IEnumerator;
+		public readonly BuiltinTypeSpec IEnumerable;
+		public readonly BuiltinTypeSpec IDisposable;
+		public readonly BuiltinTypeSpec IntPtr;
+		public readonly BuiltinTypeSpec UIntPtr;
+		public readonly BuiltinTypeSpec RuntimeFieldHandle;
+		public readonly BuiltinTypeSpec RuntimeTypeHandle;
+		public readonly BuiltinTypeSpec Exception;
 
 		//
 		// These are internal buil-in types which depend on other
 		// build-in type (mostly object)
 		//
-		public readonly BuildinTypeSpec Dynamic;
+		public readonly BuiltinTypeSpec Dynamic;
 
 		// Predefined operators tables
 		public readonly Binary.PredefinedOperator[] OperatorsBinaryStandard;
@@ -73,48 +73,48 @@ namespace Mono.CSharp
 		public readonly TypeSpec[] BinaryPromotionsTypes;
 		public readonly TypeSpec[] SwitchUserTypes;
 
-		readonly BuildinTypeSpec[] types;
+		readonly BuiltinTypeSpec[] types;
 
-		public BuildinTypes ()
+		public BuiltinTypes ()
 		{
-			Object = new BuildinTypeSpec (MemberKind.Class, "System", "Object", BuildinTypeSpec.Type.Object);
-			ValueType = new BuildinTypeSpec (MemberKind.Class, "System", "ValueType", BuildinTypeSpec.Type.ValueType);
-			Attribute = new BuildinTypeSpec (MemberKind.Class, "System", "Attribute", BuildinTypeSpec.Type.Attribute);
+			Object = new BuiltinTypeSpec (MemberKind.Class, "System", "Object", BuiltinTypeSpec.Type.Object);
+			ValueType = new BuiltinTypeSpec (MemberKind.Class, "System", "ValueType", BuiltinTypeSpec.Type.ValueType);
+			Attribute = new BuiltinTypeSpec (MemberKind.Class, "System", "Attribute", BuiltinTypeSpec.Type.Attribute);
 
-			Int = new BuildinTypeSpec (MemberKind.Struct, "System", "Int32", BuildinTypeSpec.Type.Int);
-			Long = new BuildinTypeSpec (MemberKind.Struct, "System", "Int64", BuildinTypeSpec.Type.Long);
-			UInt = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt32", BuildinTypeSpec.Type.UInt);
-			ULong = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt64", BuildinTypeSpec.Type.ULong);
-			Byte = new BuildinTypeSpec (MemberKind.Struct, "System", "Byte", BuildinTypeSpec.Type.Byte);
-			SByte = new BuildinTypeSpec (MemberKind.Struct, "System", "SByte", BuildinTypeSpec.Type.SByte);
-			Short = new BuildinTypeSpec (MemberKind.Struct, "System", "Int16", BuildinTypeSpec.Type.Short);
-			UShort = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt16", BuildinTypeSpec.Type.UShort);
+			Int = new BuiltinTypeSpec (MemberKind.Struct, "System", "Int32", BuiltinTypeSpec.Type.Int);
+			Long = new BuiltinTypeSpec (MemberKind.Struct, "System", "Int64", BuiltinTypeSpec.Type.Long);
+			UInt = new BuiltinTypeSpec (MemberKind.Struct, "System", "UInt32", BuiltinTypeSpec.Type.UInt);
+			ULong = new BuiltinTypeSpec (MemberKind.Struct, "System", "UInt64", BuiltinTypeSpec.Type.ULong);
+			Byte = new BuiltinTypeSpec (MemberKind.Struct, "System", "Byte", BuiltinTypeSpec.Type.Byte);
+			SByte = new BuiltinTypeSpec (MemberKind.Struct, "System", "SByte", BuiltinTypeSpec.Type.SByte);
+			Short = new BuiltinTypeSpec (MemberKind.Struct, "System", "Int16", BuiltinTypeSpec.Type.Short);
+			UShort = new BuiltinTypeSpec (MemberKind.Struct, "System", "UInt16", BuiltinTypeSpec.Type.UShort);
 
-			IEnumerator = new BuildinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerator", BuildinTypeSpec.Type.IEnumerator);
-			IEnumerable = new BuildinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerable", BuildinTypeSpec.Type.IEnumerable);
-			IDisposable = new BuildinTypeSpec (MemberKind.Interface, "System", "IDisposable", BuildinTypeSpec.Type.IDisposable);
+			IEnumerator = new BuiltinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerator", BuiltinTypeSpec.Type.IEnumerator);
+			IEnumerable = new BuiltinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerable", BuiltinTypeSpec.Type.IEnumerable);
+			IDisposable = new BuiltinTypeSpec (MemberKind.Interface, "System", "IDisposable", BuiltinTypeSpec.Type.IDisposable);
 
-			Char = new BuildinTypeSpec (MemberKind.Struct, "System", "Char", BuildinTypeSpec.Type.Char);
-			String = new BuildinTypeSpec (MemberKind.Class, "System", "String", BuildinTypeSpec.Type.String);
-			Float = new BuildinTypeSpec (MemberKind.Struct, "System", "Single", BuildinTypeSpec.Type.Float);
-			Double = new BuildinTypeSpec (MemberKind.Struct, "System", "Double", BuildinTypeSpec.Type.Double);
-			Decimal = new BuildinTypeSpec (MemberKind.Struct, "System", "Decimal", BuildinTypeSpec.Type.Decimal);
-			Bool = new BuildinTypeSpec (MemberKind.Struct, "System", "Boolean", BuildinTypeSpec.Type.Bool);
-			IntPtr = new BuildinTypeSpec (MemberKind.Struct, "System", "IntPtr", BuildinTypeSpec.Type.IntPtr);
-			UIntPtr = new BuildinTypeSpec (MemberKind.Struct, "System", "UIntPtr", BuildinTypeSpec.Type.UIntPtr);
+			Char = new BuiltinTypeSpec (MemberKind.Struct, "System", "Char", BuiltinTypeSpec.Type.Char);
+			String = new BuiltinTypeSpec (MemberKind.Class, "System", "String", BuiltinTypeSpec.Type.String);
+			Float = new BuiltinTypeSpec (MemberKind.Struct, "System", "Single", BuiltinTypeSpec.Type.Float);
+			Double = new BuiltinTypeSpec (MemberKind.Struct, "System", "Double", BuiltinTypeSpec.Type.Double);
+			Decimal = new BuiltinTypeSpec (MemberKind.Struct, "System", "Decimal", BuiltinTypeSpec.Type.Decimal);
+			Bool = new BuiltinTypeSpec (MemberKind.Struct, "System", "Boolean", BuiltinTypeSpec.Type.Bool);
+			IntPtr = new BuiltinTypeSpec (MemberKind.Struct, "System", "IntPtr", BuiltinTypeSpec.Type.IntPtr);
+			UIntPtr = new BuiltinTypeSpec (MemberKind.Struct, "System", "UIntPtr", BuiltinTypeSpec.Type.UIntPtr);
 
-			MulticastDelegate = new BuildinTypeSpec (MemberKind.Class, "System", "MulticastDelegate", BuildinTypeSpec.Type.MulticastDelegate);
-			Delegate = new BuildinTypeSpec (MemberKind.Class, "System", "Delegate", BuildinTypeSpec.Type.Delegate);
-			Enum = new BuildinTypeSpec (MemberKind.Class, "System", "Enum", BuildinTypeSpec.Type.Enum);
-			Array = new BuildinTypeSpec (MemberKind.Class, "System", "Array", BuildinTypeSpec.Type.Array);
-			Void = new BuildinTypeSpec (MemberKind.Void, "System", "Void", BuildinTypeSpec.Type.Other);
-			Type = new BuildinTypeSpec (MemberKind.Class, "System", "Type", BuildinTypeSpec.Type.Type);
-			Exception = new BuildinTypeSpec (MemberKind.Class, "System", "Exception", BuildinTypeSpec.Type.Exception);
-			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.Other);
-			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.Other);
+			MulticastDelegate = new BuiltinTypeSpec (MemberKind.Class, "System", "MulticastDelegate", BuiltinTypeSpec.Type.MulticastDelegate);
+			Delegate = new BuiltinTypeSpec (MemberKind.Class, "System", "Delegate", BuiltinTypeSpec.Type.Delegate);
+			Enum = new BuiltinTypeSpec (MemberKind.Class, "System", "Enum", BuiltinTypeSpec.Type.Enum);
+			Array = new BuiltinTypeSpec (MemberKind.Class, "System", "Array", BuiltinTypeSpec.Type.Array);
+			Void = new BuiltinTypeSpec (MemberKind.Void, "System", "Void", BuiltinTypeSpec.Type.Other);
+			Type = new BuiltinTypeSpec (MemberKind.Class, "System", "Type", BuiltinTypeSpec.Type.Type);
+			Exception = new BuiltinTypeSpec (MemberKind.Class, "System", "Exception", BuiltinTypeSpec.Type.Exception);
+			RuntimeFieldHandle = new BuiltinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuiltinTypeSpec.Type.Other);
+			RuntimeTypeHandle = new BuiltinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuiltinTypeSpec.Type.Other);
 
 			// TODO: Maybe I should promote it to different kind for faster compares
-			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
+			Dynamic = new BuiltinTypeSpec ("dynamic", BuiltinTypeSpec.Type.Dynamic);
 
 			OperatorsBinaryStandard = Binary.CreateStandardOperatorsTable (this);
 			OperatorsBinaryEquality = Binary.CreateEqualityOperatorsTable (this);
@@ -125,19 +125,14 @@ namespace Mono.CSharp
 			BinaryPromotionsTypes = ConstantFold.CreateBinaryPromotionsTypes (this);
 			SwitchUserTypes = Switch.CreateSwitchUserTypes (this);
 
-			types = new BuildinTypeSpec[] {
+			types = new BuiltinTypeSpec[] {
 				Object, ValueType, Attribute,
 				Int, UInt, Long, ULong, Float, Double, Char, Short, Decimal, Bool, SByte, Byte, UShort, String,
 				Enum, Delegate, MulticastDelegate, Void, Array, Type, IEnumerator, IEnumerable, IDisposable,
 				IntPtr, UIntPtr, RuntimeFieldHandle, RuntimeTypeHandle, Exception };
-
-			// Deal with obsolete static types
-			// TODO: remove
-			TypeManager.object_type = Object;
-			TypeManager.value_type = ValueType;
 		}
 
-		public BuildinTypeSpec[] AllTypes {
+		public BuiltinTypeSpec[] AllTypes {
 			get {
 				return types;
 			}
@@ -198,6 +193,8 @@ namespace Mono.CSharp
 		public readonly PredefinedType RuntimeFieldHandle;
 		public readonly PredefinedType RuntimeMethodHandle;
 		public readonly PredefinedType SecurityAction;
+		public readonly PredefinedType Dictionary;
+		public readonly PredefinedType Hashtable;
 
 		//
 		// C# 3.0
@@ -242,6 +239,8 @@ namespace Mono.CSharp
 			RuntimeFieldHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeFieldHandle");
 			RuntimeMethodHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeMethodHandle");
 			SecurityAction = new PredefinedType (module, MemberKind.Enum, "System.Security.Permissions", "SecurityAction");
+			Dictionary = new PredefinedType (module, MemberKind.Class, "System.Collections.Generic", "Dictionary", 2);
+			Hashtable = new PredefinedType (module, MemberKind.Class, "System.Collections", "Hashtable");
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
@@ -262,36 +261,209 @@ namespace Mono.CSharp
 			//
 			if (TypedReference.Define ())
 				TypedReference.TypeSpec.IsSpecialRuntimeType = true;
+
 			if (ArgIterator.Define ())
 				ArgIterator.TypeSpec.IsSpecialRuntimeType = true;
-			MarshalByRefObject.Define ();
-			CharSet.Define ();
 
-			IEnumerableGeneric.Define ();
-			IListGeneric.Define ();
-			ICollectionGeneric.Define ();
-			IEnumerableGeneric.Define ();
-			IEnumeratorGeneric.Define ();
-			Nullable.Define ();
-			ExpressionGeneric.Define ();
+			if (IEnumerableGeneric.Define ())
+				IEnumerableGeneric.TypeSpec.IsGenericIterateInterface = true;
 
-			// Deal with obsolete static types
-			// TODO: remove
-			TypeManager.generic_ilist_type = IListGeneric.TypeSpec;
-			TypeManager.generic_icollection_type = ICollectionGeneric.TypeSpec;
-			TypeManager.generic_ienumerator_type = IEnumeratorGeneric.TypeSpec;
-			TypeManager.generic_ienumerable_type = IEnumerableGeneric.TypeSpec;
-			TypeManager.generic_nullable_type = Nullable.TypeSpec;
-			TypeManager.expression_type = ExpressionGeneric.TypeSpec;
+			if (IListGeneric.Define ())
+				IListGeneric.TypeSpec.IsGenericIterateInterface = true;
+
+			if (ICollectionGeneric.Define ())
+				ICollectionGeneric.TypeSpec.IsGenericIterateInterface = true;
+
+			if (Nullable.Define ())
+				Nullable.TypeSpec.IsNullableType = true;
+
+			if (ExpressionGeneric.Define ())
+				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
+		}
+	}
+
+	class PredefinedMembers
+	{
+		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> DecimalCtor;
+		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
+		public readonly PredefinedMember<MethodSpec> DecimalCtorLong;
+		public readonly PredefinedMember<MethodSpec> DecimalConstantAttributeCtor;
+		public readonly PredefinedMember<MethodSpec> DefaultMemberAttributeCtor;
+		public readonly PredefinedMember<MethodSpec> DelegateCombine;
+		public readonly PredefinedMember<MethodSpec> DelegateEqual;
+		public readonly PredefinedMember<MethodSpec> DelegateInequal;
+		public readonly PredefinedMember<MethodSpec> DelegateRemove;
+		public readonly PredefinedMember<MethodSpec> DynamicAttributeCtor;
+		public readonly PredefinedMember<MethodSpec> FieldInfoGetFieldFromHandle;
+		public readonly PredefinedMember<MethodSpec> FieldInfoGetFieldFromHandle2;
+		public readonly PredefinedMember<MethodSpec> IDisposableDispose;
+		public readonly PredefinedMember<MethodSpec> IEnumerableGetEnumerator;
+		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange;
+		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange_T;
+		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
+		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
+		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
+		public readonly PredefinedMember<MethodSpec> MonitorEnter;
+		public readonly PredefinedMember<MethodSpec> MonitorEnter_v4;
+		public readonly PredefinedMember<MethodSpec> MonitorExit;
+		public readonly PredefinedMember<PropertySpec> RuntimeCompatibilityWrapNonExceptionThrows;
+		public readonly PredefinedMember<MethodSpec> RuntimeHelpersInitializeArray;
+		public readonly PredefinedMember<PropertySpec> RuntimeHelpersOffsetToStringData;
+		public readonly PredefinedMember<ConstSpec> SecurityActionRequestMinimum;
+		public readonly PredefinedMember<FieldSpec> StringEmpty;
+		public readonly PredefinedMember<MethodSpec> StringEqual;
+		public readonly PredefinedMember<MethodSpec> StringInequal;
+		public readonly PredefinedMember<MethodSpec> StructLayoutAttributeCtor;
+		public readonly PredefinedMember<FieldSpec> StructLayoutCharSet;
+		public readonly PredefinedMember<FieldSpec> StructLayoutPack;
+		public readonly PredefinedMember<FieldSpec> StructLayoutSize;
+		public readonly PredefinedMember<MethodSpec> TypeGetTypeFromHandle;
+
+		public PredefinedMembers (ModuleContainer module)
+		{
+			var types = module.PredefinedTypes;
+			var atypes = module.PredefinedAttributes;
+			var btypes = module.Compiler.BuiltinTypes;
+
+			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
+				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			DecimalCtor = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Int, btypes.Int, btypes.Int, btypes.Bool, btypes.Byte)));
+
+			DecimalCtorInt = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Int)));
+
+			DecimalCtorLong = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Long)));
+
+			DecimalConstantAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DecimalConstant,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Byte, btypes.Byte, btypes.UInt, btypes.UInt, btypes.UInt)));
+
+			DefaultMemberAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DefaultMember,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.String)));
+
+			DelegateCombine = new PredefinedMember<MethodSpec> (module, btypes.Delegate, "Combine", btypes.Delegate, btypes.Delegate);
+			DelegateRemove = new PredefinedMember<MethodSpec> (module, btypes.Delegate, "Remove", btypes.Delegate, btypes.Delegate);
+
+			DelegateEqual = new PredefinedMember<MethodSpec> (module, btypes.Delegate,
+				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Equality), 0, MemberKind.Operator, null, btypes.Bool));
+
+			DelegateInequal = new PredefinedMember<MethodSpec> (module, btypes.Delegate,
+				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Inequality), 0, MemberKind.Operator, null, btypes.Bool));
+
+			DynamicAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.Dynamic,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					ArrayContainer.MakeType (module, btypes.Bool))));
+
+			FieldInfoGetFieldFromHandle = new PredefinedMember<MethodSpec> (module, types.FieldInfo,
+				"GetFieldFromHandle", MemberKind.Method, types.RuntimeFieldHandle);
+
+			FieldInfoGetFieldFromHandle2 = new PredefinedMember<MethodSpec> (module, types.FieldInfo,
+				"GetFieldFromHandle", MemberKind.Method, types.RuntimeFieldHandle, new PredefinedType (btypes.RuntimeTypeHandle));
+
+			FixedBufferAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.FixedBuffer,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Type, btypes.Int)));
+
+			IDisposableDispose = new PredefinedMember<MethodSpec> (module, btypes.IDisposable, "Dispose", TypeSpec.EmptyTypes);
+
+			IEnumerableGetEnumerator = new PredefinedMember<MethodSpec> (module, btypes.IEnumerable,
+				"GetEnumerator", TypeSpec.EmptyTypes);
+
+			InterlockedCompareExchange = new PredefinedMember<MethodSpec> (module, types.Interlocked,
+				MemberFilter.Method ("CompareExchange", 0,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.NONE),
+								new ParameterData (null, Parameter.Modifier.NONE)
+							},
+						new[] {
+								btypes.Int, btypes.Int, btypes.Int
+							},
+						false),
+				btypes.Int));
+
+			InterlockedCompareExchange_T = new PredefinedMember<MethodSpec> (module, types.Interlocked,
+				MemberFilter.Method ("CompareExchange", 1,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.NONE),
+								new ParameterData (null, Parameter.Modifier.NONE)
+							},
+						new[] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+							}, false),
+					null));
+
+			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
+				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);
+
+			MethodInfoGetMethodFromHandle2 = new PredefinedMember<MethodSpec> (module, types.MethodBase,
+				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle, new PredefinedType (btypes.RuntimeTypeHandle));
+
+			MonitorEnter = new PredefinedMember<MethodSpec> (module, types.Monitor, "Enter", btypes.Object);
+
+			MonitorEnter_v4 = new PredefinedMember<MethodSpec> (module, types.Monitor,
+				MemberFilter.Method ("Enter", 0,
+					new ParametersImported (new[] {
+							new ParameterData (null, Parameter.Modifier.NONE),
+							new ParameterData (null, Parameter.Modifier.REF)
+						},
+					new[] {
+							btypes.Object, btypes.Bool
+						}, false), null));
+
+			MonitorExit = new PredefinedMember<MethodSpec> (module, types.Monitor, "Exit", btypes.Object);
+
+			RuntimeCompatibilityWrapNonExceptionThrows = new PredefinedMember<PropertySpec> (module, atypes.RuntimeCompatibility,
+				MemberFilter.Property ("WrapNonExceptionThrows", btypes.Bool));
+
+			RuntimeHelpersInitializeArray = new PredefinedMember<MethodSpec> (module, types.RuntimeHelpers,
+				"InitializeArray", btypes.Array, btypes.RuntimeFieldHandle);
+
+			RuntimeHelpersOffsetToStringData = new PredefinedMember<PropertySpec> (module, types.RuntimeHelpers,
+				MemberFilter.Property ("OffsetToStringData", btypes.Int));
+
+			SecurityActionRequestMinimum = new PredefinedMember<ConstSpec> (module, types.SecurityAction, "RequestMinimum",
+				MemberKind.Field, types.SecurityAction);
+
+			StringEmpty = new PredefinedMember<FieldSpec> (module, btypes.String, MemberFilter.Field ("Empty", btypes.String));
+
+			StringEqual = new PredefinedMember<MethodSpec> (module, btypes.String,
+				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Equality), 0, MemberKind.Operator, null, btypes.Bool));
+
+			StringInequal = new PredefinedMember<MethodSpec> (module, btypes.String,
+				new MemberFilter (Operator.GetMetadataName (Operator.OpType.Inequality), 0, MemberKind.Operator, null, btypes.Bool));
+
+			StructLayoutAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.StructLayout,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (btypes.Short)));
+
+			StructLayoutCharSet = new PredefinedMember<FieldSpec> (module, atypes.StructLayout, "CharSet",
+				MemberKind.Field, types.CharSet);
+
+			StructLayoutPack = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
+				MemberFilter.Field ("Pack", btypes.Int));
+
+			StructLayoutSize = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
+				MemberFilter.Field ("Size", btypes.Int));
+
+			TypeGetTypeFromHandle = new PredefinedMember<MethodSpec> (module, btypes.Type, "GetTypeFromHandle", btypes.RuntimeTypeHandle);
 		}
 	}
 
 	public class PredefinedType
 	{
-		string name;
-		string ns;
-		int arity;
-		MemberKind kind;
+		readonly string name;
+		readonly string ns;
+		readonly int arity;
+		readonly MemberKind kind;
 		protected readonly ModuleContainer module;
 		protected TypeSpec type;
 
@@ -307,6 +479,14 @@ namespace Mono.CSharp
 			this.kind = kind;
 			this.name = name;
 			this.ns = ns;
+		}
+
+		public PredefinedType (BuiltinTypeSpec type)
+		{
+			this.kind = type.Kind;
+			this.name = type.Name;
+			this.ns = type.Namespace;
+			this.type = type;
 		}
 
 		#region Properties
@@ -358,11 +538,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public FieldSpec GetField (string name, TypeSpec memberType, Location loc)
-		{
-			return TypeManager.GetPredefinedField (type, name, loc, memberType);
-		}
-
 		public string GetSignatureForError ()
 		{
 			return ns + "." + name;
@@ -400,87 +575,120 @@ namespace Mono.CSharp
 		}
 	}
 
+	class PredefinedMember<T> where T : MemberSpec
+	{
+		readonly ModuleContainer module;
+		T member;
+		TypeSpec declaring_type;
+		readonly PredefinedType declaring_type_predefined;
+		readonly PredefinedType[] parameters_predefined;
+		MemberFilter filter;
+
+		public PredefinedMember (ModuleContainer module, PredefinedType type, MemberFilter filter)
+		{
+			this.module = module;
+			this.declaring_type_predefined = type;
+			this.filter = filter;
+		}
+
+		public PredefinedMember (ModuleContainer module, TypeSpec type, MemberFilter filter)
+		{
+			this.module = module;
+			this.declaring_type = type;
+			this.filter = filter;
+		}
+
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, params TypeSpec[] types)
+			: this (module, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
+		{
+		}
+
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, params PredefinedType[] types)
+			: this (module, type, new MemberFilter (name, 0, kind, null, null))
+		{
+			parameters_predefined = types;
+		}
+
+		public PredefinedMember (ModuleContainer module, BuiltinTypeSpec type, string name, params TypeSpec[] types)
+			: this (module, type, MemberFilter.Method (name, 0, ParametersCompiled.CreateFullyResolved (types), null))
+		{
+		}
+
+		public T Get ()
+		{
+			if (member != null)
+				return member;
+
+			if (declaring_type == null) {
+				if (!declaring_type_predefined.Define ())
+					return null;
+
+				declaring_type = declaring_type_predefined.TypeSpec;
+			}
+
+			if (parameters_predefined != null) {
+				TypeSpec[] types = new TypeSpec [parameters_predefined.Length];
+				for (int i = 0; i < types.Length; ++i) {
+					var p = parameters_predefined [i];
+					if (!p.Define ())
+						return null;
+
+					types[i] = p.TypeSpec;
+				}
+
+				if (filter.Kind == MemberKind.Field)
+					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, null, types [0]);
+				else
+					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
+			}
+
+			member = MemberCache.FindMember (declaring_type, filter, BindingRestriction.DeclaredOnly) as T;
+			if (member == null)
+				return null;
+
+			if (!member.IsAccessible (module))
+				return null;
+
+			return member;
+		}
+
+		public T Resolve (Location loc)
+		{
+			if (member != null)
+				return member;
+
+			if (Get () != null)
+				return member;
+
+			if (declaring_type == null) {
+				if (declaring_type_predefined.Resolve (loc) == null)
+					return null;
+			}
+
+			if (parameters_predefined != null) {
+				TypeSpec[] types = new TypeSpec[parameters_predefined.Length];
+				for (int i = 0; i < types.Length; ++i) {
+					var p = parameters_predefined[i];
+					types[i] = p.Resolve (loc);
+					if (types[i] == null)
+						return null;
+				}
+
+				filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
+			}
+
+			string method_args = null;
+			if (filter.Parameters != null)
+				method_args = filter.Parameters.GetSignatureForError ();
+
+			module.Compiler.Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
+				declaring_type.GetSignatureForError (), filter.Name, method_args);
+
+			return null;
+		}
+	}
+
 	partial class TypeManager {
-	//
-	// A list of core types that the compiler requires or uses
-	//
-	static public BuildinTypeSpec object_type;
-	static public BuildinTypeSpec value_type;
-
-	static public TypeSpec generic_ilist_type;
-	static public TypeSpec generic_icollection_type;
-	static public TypeSpec generic_ienumerator_type;
-	static public TypeSpec generic_ienumerable_type;
-	static public TypeSpec generic_nullable_type;
-	static internal TypeSpec expression_type;
-
-	//
-	// These methods are called by code generated by the compiler
-	//
-	static public FieldSpec string_empty;
-	static public MethodSpec system_type_get_type_from_handle;
-	static public MethodSpec bool_movenext_void;
-	static public MethodSpec void_dispose_void;
-	static public MethodSpec void_monitor_enter_object;
-	static public MethodSpec void_monitor_exit_object;
-	static public MethodSpec void_initializearray_array_fieldhandle;
-	static public MethodSpec delegate_combine_delegate_delegate;
-	static public MethodSpec delegate_remove_delegate_delegate;
-	static public PropertySpec int_get_offset_to_string_data;
-	static public MethodSpec int_interlocked_compare_exchange;
-	public static MethodSpec gen_interlocked_compare_exchange;
-	static public PropertySpec ienumerator_getcurrent;
-	public static MethodSpec methodbase_get_type_from_handle;
-	public static MethodSpec methodbase_get_type_from_handle_generic;
-	public static MethodSpec fieldinfo_get_field_from_handle;
-	public static MethodSpec fieldinfo_get_field_from_handle_generic;
-	public static MethodSpec activator_create_instance;
-
-	//
-	// The constructors.
-	//
-	static public MethodSpec void_decimal_ctor_five_args;
-	static public MethodSpec void_decimal_ctor_int_arg;
-	public static MethodSpec void_decimal_ctor_long_arg;
-
-	static TypeManager ()
-	{
-		Reset ();
-	}
-
-	static public void Reset ()
-	{
-//		object_type = null;
-	
-		// TODO: I am really bored by all this static stuff
-		system_type_get_type_from_handle =
-		bool_movenext_void =
-		void_dispose_void =
-		void_monitor_enter_object =
-		void_monitor_exit_object =
-		void_initializearray_array_fieldhandle =
-		int_interlocked_compare_exchange =
-		gen_interlocked_compare_exchange =
-		methodbase_get_type_from_handle =
-		methodbase_get_type_from_handle_generic =
-		fieldinfo_get_field_from_handle =
-		fieldinfo_get_field_from_handle_generic =
-		activator_create_instance =
-		delegate_combine_delegate_delegate =
-		delegate_remove_delegate_delegate = null;
-
-		int_get_offset_to_string_data =
-		ienumerator_getcurrent = null;
-
-		void_decimal_ctor_five_args =
-		void_decimal_ctor_int_arg =
-		void_decimal_ctor_long_arg = null;
-
-		string_empty = null;
-
-		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
-		generic_ienumerable_type = generic_nullable_type = expression_type = null;
-	}
 
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
@@ -513,65 +721,6 @@ namespace Mono.CSharp
 	static public string CSharpSignature (MemberSpec mb)
 	{
 		return mb.GetSignatureForError ();
-	}
-
-	static MemberSpec GetPredefinedMember (TypeSpec t, MemberFilter filter, bool optional, Location loc)
-	{
-		var member = MemberCache.FindMember (t, filter, BindingRestriction.DeclaredOnly);
-
-		if (member != null && member.IsAccessible (InternalType.FakeInternalType))
-			return member;
-
-		if (optional)
-			return member;
-
-		string method_args = null;
-		if (filter.Parameters != null)
-			method_args = filter.Parameters.GetSignatureForError ();
-
-		RootContext.ToplevelTypes.Compiler.Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
-			TypeManager.CSharpName (t), filter.Name, method_args);
-
-		return null;
-	}
-
-	//
-	// Returns the ConstructorInfo for "args"
-	//
-	public static MethodSpec GetPredefinedConstructor (TypeSpec t, Location loc, params TypeSpec [] args)
-	{
-		var pc = ParametersCompiled.CreateFullyResolved (args);
-		return GetPredefinedMember (t, MemberFilter.Constructor (pc), false, loc) as MethodSpec;
-	}
-
-	//
-	// Returns the method specification for a method named `name' defined
-	// in type `t' which takes arguments of types `args'
-	//
-	public static MethodSpec GetPredefinedMethod (TypeSpec t, string name, Location loc, params TypeSpec [] args)
-	{
-		var pc = ParametersCompiled.CreateFullyResolved (args);
-		return GetPredefinedMethod (t, MemberFilter.Method (name, 0, pc, null), false, loc);
-	}
-
-	public static MethodSpec GetPredefinedMethod (TypeSpec t, MemberFilter filter, Location loc)
-	{
-		return GetPredefinedMethod (t, filter, false, loc);
-	}
-
-	public static MethodSpec GetPredefinedMethod (TypeSpec t, MemberFilter filter, bool optional, Location loc)
-	{
-		return GetPredefinedMember (t, filter, optional, loc) as MethodSpec;
-	}
-
-	public static FieldSpec GetPredefinedField (TypeSpec t, string name, Location loc, TypeSpec type)
-	{
-		return GetPredefinedMember (t, MemberFilter.Field (name, type), false, loc) as FieldSpec;
-	}
-
-	public static PropertySpec GetPredefinedProperty (TypeSpec t, string name, Location loc, TypeSpec type)
-	{
-		return GetPredefinedMember (t, MemberFilter.Property (name, type), false, loc) as PropertySpec;
 	}
 
 	// Obsolete
@@ -630,11 +779,6 @@ namespace Mono.CSharp
 		return t.IsStruct || IsEnumType (t);
 	}
 
-	public static bool IsStruct (TypeSpec t)
-	{
-		return t.IsStruct;
-	}
-
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
 //		TypeParameter tparam = LookupTypeParameter (type);
@@ -653,22 +797,6 @@ namespace Mono.CSharp
 				return true;
 
 			type = type.BaseType;
-		} while (type != null);
-
-		return false;
-	}
-
-	//
-	// Checks whether `type' is a subclass or nested child of `base_type'.
-	//
-	public static bool IsNestedFamilyAccessible (TypeSpec type, TypeSpec base_type)
-	{
-		do {
-			if (IsFamilyAccessible (type, base_type))
-				return true;
-
-			// Handle nested types.
-			type = type.DeclaringType;
 		} while (type != null);
 
 		return false;
@@ -754,11 +882,6 @@ namespace Mono.CSharp
 	public static bool IsInstantiationOfSameGenericType (TypeSpec type, TypeSpec parent)
 	{
 		return type == parent || type.MemberDefinition == parent.MemberDefinition;
-	}
-
-	public static bool IsNullableType (TypeSpec t)
-	{
-		return generic_nullable_type == t.GetDefinition ();
 	}
 #endregion
 }

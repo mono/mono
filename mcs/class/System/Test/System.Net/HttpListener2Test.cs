@@ -528,7 +528,7 @@ namespace MonoTests.System.Net {
 			lock (_lock) {
 				bool foundCookie = false;
 				foreach (String str in cookieResponse.Split ('\n')) {
-					if (!str.StartsWith ("Set-Cookie2"))
+					if (!str.StartsWith ("Set-Cookie"))
 						continue;
 					Dictionary<string, String> dic = new Dictionary<string, String>();
 					foreach (String p in str.Substring (str.IndexOf (":") + 1).Split (';')) {

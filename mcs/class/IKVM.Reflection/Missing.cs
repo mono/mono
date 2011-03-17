@@ -96,6 +96,36 @@ namespace IKVM.Reflection
 		}
 	}
 
+	public struct MissingGenericMethodBuilder
+	{
+		private readonly MissingMethod method;
+
+		public MissingGenericMethodBuilder(Type declaringType, CallingConventions callingConvention, string name, int genericParameterCount)
+		{
+			method = new MissingMethod(declaringType, name, new MethodSignature(null, null, null, callingConvention, genericParameterCount));
+		}
+
+		public Type[] GetGenericArguments()
+		{
+			return method.GetGenericArguments();
+		}
+
+		public void SetSignature(Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
+			method.signature = new MethodSignature(
+				returnType ?? method.Module.universe.System_Void,
+				Util.Copy(parameterTypes),
+				PackedCustomModifiers.CreateFromExternal(returnTypeOptionalCustomModifiers, returnTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers, parameterTypeRequiredCustomModifiers, parameterTypes.Length),
+				method.signature.CallingConvention,
+				method.signature.GenericParameterCount);
+		}
+
+		public MethodInfo Finish()
+		{
+			return method;
+		}
+	}
+
 	sealed class MissingAssembly : Assembly
 	{
 		private readonly MissingModule module;
@@ -194,7 +224,7 @@ namespace IKVM.Reflection
 		}
 	}
 
-	sealed class MissingModule : Module
+	sealed class MissingModule : NonPEModule
 	{
 		private readonly MissingAssembly assembly;
 
@@ -229,36 +259,6 @@ namespace IKVM.Reflection
 			get { throw new MissingModuleException(this); }
 		}
 
-		public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override string ResolveString(int metadataToken)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
-		{
-			throw new MissingModuleException(this);
-		}
-
 		public override string ScopeName
 		{
 			get { throw new MissingModuleException(this); }
@@ -270,21 +270,6 @@ namespace IKVM.Reflection
 		}
 
 		internal override void GetTypesImpl(System.Collections.Generic.List<Type> list)
-		{
-			throw new MissingModuleException(this);
-		}
-
-		public override AssemblyName[] __GetReferencedAssemblies()
-		{
-			throw new MissingModuleException(this);
-		}
-
-		internal override Type GetModuleType()
-		{
-			throw new MissingModuleException(this);
-		}
-
-		internal override IKVM.Reflection.Reader.ByteReader GetBlob(int blobIndex)
 		{
 			throw new MissingModuleException(this);
 		}
@@ -333,6 +318,21 @@ namespace IKVM.Reflection
 		{
 			throw new MissingModuleException(this);
 		}
+
+		protected override Exception InvalidOperationException()
+		{
+			return new MissingModuleException(this);
+		}
+
+		protected override Exception NotSupportedException()
+		{
+			return new MissingModuleException(this);
+		}
+
+		protected override Exception ArgumentOutOfRangeException()
+		{
+			return new MissingModuleException(this);
+		}
 	}
 
 	sealed class MissingType : Type
@@ -341,6 +341,8 @@ namespace IKVM.Reflection
 		private readonly Type declaringType;
 		private readonly string ns;
 		private readonly string name;
+		private Type[] typeArgs;
+		private int token;
 
 		internal MissingType(Module module, Type declaringType, string ns, string name)
 		{
@@ -358,6 +360,11 @@ namespace IKVM.Reflection
 				return new ConstructorInfoImpl(method);
 			}
 			return method;
+		}
+
+		internal override FieldInfo FindField(string name, FieldSignature signature)
+		{
+			return new MissingField(this, name, signature);
 		}
 
 		internal override Type FindNestedType(TypeName name)
@@ -398,6 +405,22 @@ namespace IKVM.Reflection
 		public override Module Module
 		{
 			get { return module; }
+		}
+
+		public override bool IsValueType
+		{
+			get
+			{
+				switch (typeFlags & (TypeFlags.ValueType | TypeFlags.NotValueType))
+				{
+					case TypeFlags.ValueType:
+						return true;
+					case TypeFlags.NotValueType:
+						return false;
+					default:
+						throw new MissingMemberException(this);
+				}
+			}
 		}
 
 		public override Type BaseType
@@ -485,6 +508,19 @@ namespace IKVM.Reflection
 			get { throw new MissingMemberException(this); }
 		}
 
+		internal override Type GetGenericTypeArgument(int index)
+		{
+			if (typeArgs == null)
+			{
+				typeArgs = new Type[index + 1];
+			}
+			else if (typeArgs.Length <= index)
+			{
+				Array.Resize(ref typeArgs, index + 1);
+			}
+			return typeArgs[index] ?? (typeArgs[index] = new MissingTypeParameter(this, index));
+		}
+
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
 		{
 			throw new MissingMemberException(this);
@@ -494,14 +530,63 @@ namespace IKVM.Reflection
 		{
 			return this;
 		}
+
+		internal int GetMetadataTokenForMissing()
+		{
+			return token;
+		}
+
+		internal override Type SetMetadataTokenForMissing(int token)
+		{
+			this.token = token;
+			return this;
+		}
+	}
+
+	sealed class MissingTypeParameter : IKVM.Reflection.Reader.TypeParameterType
+	{
+		private readonly MemberInfo owner;
+		private readonly int index;
+
+		internal MissingTypeParameter(MemberInfo owner, int index)
+		{
+			this.owner = owner;
+			this.index = index;
+		}
+
+		public override Module Module
+		{
+			get { return owner.Module; }
+		}
+
+		public override string Name
+		{
+			get { return null; }
+		}
+
+		public override int GenericParameterPosition
+		{
+			get { return index; }
+		}
+
+		public override MethodBase DeclaringMethod
+		{
+			get { return owner as MethodBase; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return owner as Type; }
+		}
 	}
 
 	sealed class MissingMethod : MethodInfo
 	{
 		private readonly Type declaringType;
 		private readonly string name;
-		private readonly MethodSignature signature;
+		internal MethodSignature signature;
 		private MethodInfo forwarder;
+		private Type[] typeArgs;
 
 		internal MissingMethod(Type declaringType, string name, MethodSignature signature)
 		{
@@ -683,7 +768,12 @@ namespace IKVM.Reflection
 
 		internal override int ImportTo(IKVM.Reflection.Emit.ModuleBuilder module)
 		{
-			return Forwarder.ImportTo(module);
+			MethodInfo method = TryGetForwarder();
+			if (method != null)
+			{
+				return method.ImportTo(module);
+			}
+			return module.ImportMethodOrField(declaringType, this.Name, this.MethodSignature);
 		}
 
 		public override string Name
@@ -717,7 +807,12 @@ namespace IKVM.Reflection
 
 		internal override MethodBase BindTypeParameters(Type type)
 		{
-			return Forwarder.BindTypeParameters(type);
+			MethodInfo forwarder = TryGetForwarder();
+			if (forwarder != null)
+			{
+				return forwarder.BindTypeParameters(type);
+			}
+			return new GenericMethodInstance(type, this, null);
 		}
 
 		public override bool ContainsGenericParameters
@@ -732,12 +827,25 @@ namespace IKVM.Reflection
 
 		public override Type[] GetGenericArguments()
 		{
-			return Forwarder.GetGenericArguments();
+			MethodInfo method = TryGetForwarder();
+			if (method != null)
+			{
+				return Forwarder.GetGenericArguments();
+			}
+			if (typeArgs == null)
+			{
+				typeArgs = new Type[signature.GenericParameterCount];
+				for (int i = 0; i < typeArgs.Length; i++)
+				{
+					typeArgs[i] = new MissingTypeParameter(this, i);
+				}
+			}
+			return Util.Copy(typeArgs);
 		}
 
 		internal override Type GetGenericMethodArgument(int index)
 		{
-			return Forwarder.GetGenericMethodArgument(index);
+			return GetGenericArguments()[index];
 		}
 
 		internal override int GetGenericMethodArgumentCount()
@@ -757,7 +865,7 @@ namespace IKVM.Reflection
 
 		internal override bool HasThis
 		{
-			get { return Forwarder.HasThis; }
+			get { return (signature.CallingConvention & (CallingConventions.HasThis | CallingConventions.ExplicitThis)) == CallingConventions.HasThis; }
 		}
 
 		public override bool IsGenericMethod
@@ -772,12 +880,228 @@ namespace IKVM.Reflection
 
 		public override MethodInfo MakeGenericMethod(params Type[] typeArguments)
 		{
-			return Forwarder.MakeGenericMethod(typeArguments);
+			MethodInfo method = TryGetForwarder();
+			if (method != null)
+			{
+				return method.MakeGenericMethod(typeArguments);
+			}
+			return new GenericMethodInstance(declaringType, this, typeArguments);
 		}
 
 		public override int MetadataToken
 		{
 			get { return Forwarder.MetadataToken; }
+		}
+	}
+
+	sealed class MissingField : FieldInfo
+	{
+		private readonly Type declaringType;
+		private readonly string name;
+		private readonly FieldSignature signature;
+		private FieldInfo forwarder;
+
+		internal MissingField(Type declaringType, string name, FieldSignature signature)
+		{
+			this.declaringType = declaringType;
+			this.name = name;
+			this.signature = signature;
+		}
+
+		private FieldInfo Forwarder
+		{
+			get
+			{
+				FieldInfo field = TryGetForwarder();
+				if (field == null)
+				{
+					throw new MissingMemberException(this);
+				}
+				return field;
+			}
+		}
+
+		private FieldInfo TryGetForwarder()
+		{
+			if (forwarder == null && !declaringType.__IsMissing)
+			{
+				forwarder = declaringType.FindField(name, signature);
+			}
+			return forwarder;
+		}
+
+		public override bool __IsMissing
+		{
+			get { return TryGetForwarder() == null; }
+		}
+
+		public override FieldAttributes Attributes
+		{
+			get { return Forwarder.Attributes; }
+		}
+
+		public override void __GetDataFromRVA(byte[] data, int offset, int length)
+		{
+			Forwarder.__GetDataFromRVA(data, offset, length);
+		}
+
+		public override int __FieldRVA
+		{
+			get { return Forwarder.__FieldRVA; }
+		}
+
+		public override object GetRawConstantValue()
+		{
+			return Forwarder.GetRawConstantValue();
+		}
+
+		internal override FieldSignature FieldSignature
+		{
+			get { return signature; }
+		}
+
+		internal override int ImportTo(IKVM.Reflection.Emit.ModuleBuilder module)
+		{
+			FieldInfo field = TryGetForwarder();
+			if (field != null)
+			{
+				return field.ImportTo(module);
+			}
+			return module.ImportMethodOrField(declaringType, this.Name, this.FieldSignature);
+		}
+
+		public override string Name
+		{
+			get { return name; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return declaringType.IsModulePseudoType ? null : declaringType; }
+		}
+
+		public override Module Module
+		{
+			get { return declaringType.Module; }
+		}
+
+		internal override FieldInfo BindTypeParameters(Type type)
+		{
+			FieldInfo forwarder = TryGetForwarder();
+			if (forwarder != null)
+			{
+				return forwarder.BindTypeParameters(type);
+			}
+			return new GenericFieldInstance(type, this);
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		{
+			return Forwarder.GetCustomAttributesData(attributeType);
+		}
+
+		public override int MetadataToken
+		{
+			get { return Forwarder.MetadataToken; }
+		}
+
+		public override bool Equals(object obj)
+		{
+			MissingField other = obj as MissingField;
+			return other != null
+				&& other.declaringType == declaringType
+				&& other.name == name
+				&& other.signature.Equals(signature);
+		}
+
+		public override int GetHashCode()
+		{
+			return declaringType.GetHashCode() ^ name.GetHashCode() ^ signature.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return this.FieldType.Name + " " + this.Name;
+		}
+	}
+
+	// NOTE this is currently only used by CustomAttributeData (because there is no other way to refer to a property)
+	sealed class MissingProperty : PropertyInfo
+	{
+		private readonly Type declaringType;
+		private readonly string name;
+		private readonly PropertySignature signature;
+
+		internal MissingProperty(Type declaringType, string name, PropertySignature signature)
+		{
+			this.declaringType = declaringType;
+			this.name = name;
+			this.signature = signature;
+		}
+
+		public override PropertyAttributes Attributes
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		public override bool CanRead
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		public override bool CanWrite
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		public override MethodInfo GetGetMethod(bool nonPublic)
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override MethodInfo GetSetMethod(bool nonPublic)
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override MethodInfo[] GetAccessors(bool nonPublic)
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override object GetRawConstantValue()
+		{
+			throw new MissingMemberException(this);
+		}
+
+		internal override bool IsPublic
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		internal override bool IsStatic
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		internal override PropertySignature PropertySignature
+		{
+			get { return signature; }
+		}
+
+		public override string Name
+		{
+			get { return name; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return declaringType; }
+		}
+
+		public override Module Module
+		{
+			get { return declaringType.Module; }
 		}
 	}
 }

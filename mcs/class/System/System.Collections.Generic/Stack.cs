@@ -53,12 +53,12 @@ namespace System.Collections.Generic
 		{
 		}
 		
-		public Stack (int count)
+		public Stack (int capacity)
 		{
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 
-			_array = new T [count];
+			_array = new T [capacity];
 		}
 		
 		public Stack (IEnumerable <T> collection)
@@ -87,22 +87,22 @@ namespace System.Collections.Generic
 			_version ++;
 		}
 		
-		public bool Contains (T t)
+		public bool Contains (T item)
 		{		
-			return _array != null && Array.IndexOf (_array, t, 0, _size) != -1;
+			return _array != null && Array.IndexOf (_array, item, 0, _size) != -1;
 		}
 		
-		public void CopyTo (T [] dest, int idx)
+		public void CopyTo (T [] array, int arrayIndex)
 		{
-			if (dest == null)
-				throw new ArgumentNullException ("dest");
-			if (idx < 0)
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (arrayIndex < 0)
 				throw new ArgumentOutOfRangeException ("idx");
 			
 			// this gets copied in the order that it is poped
 			if (_array != null) {
-				Array.Copy (_array, 0, dest, idx, _size);
-				Array.Reverse (dest, idx, _size);
+				Array.Copy (_array, 0, array, arrayIndex, _size);
+				Array.Reverse (array, arrayIndex, _size);
 			}
 		}
 		
@@ -126,14 +126,14 @@ namespace System.Collections.Generic
 			return popped;
 		}
 
-		public void Push (T t)
+		public void Push (T item)
 		{
 			if (_array == null || _size == _array.Length)
 				Array.Resize <T> (ref _array, _size == 0 ? INITIAL_SIZE : 2 * _size);
 			
 			_version ++;
 			
-			_array [_size++] = t;
+			_array [_size++] = item;
 		}
 		
 		public T [] ToArray ()

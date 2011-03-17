@@ -176,7 +176,10 @@ namespace System.Web.UI.HtmlControls
 
 		public override string UniqueID {
 			get {
-				return base.UniqueID;
+				Control container = NamingContainer;
+				if (container is Page)
+					return ID;
+				return "aspnetForm";
 			}
 		}
 
@@ -236,10 +239,6 @@ namespace System.Web.UI.HtmlControls
 		{
 			/* Need to always render: method, action and id
 			 */
-			/* The name attribute is rendered _only_ if we're not in
-			   2.0 mode or if the xhtml conformance mode is set to
-			   Legacy for 2.0 according to http://msdn2.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlform.name.aspx
-			*/
 			
 			string action;
 			string customAction = Attributes ["action"];
@@ -292,11 +291,11 @@ namespace System.Web.UI.HtmlControls
 				action = customAction;
 
 #endif
-
-			XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as
-				XhtmlConformanceSection;
-			
-			if (xhtml != null && xhtml.Mode == XhtmlConformanceMode.Legacy)
+#if NET_4_0
+			if (RenderingCompatibilityLessThan40)
+#endif
+				// LAMESPEC: MSDN says the 'name' attribute is rendered only in
+				// Legacy mode, this is not true.
 				w.WriteAttribute ("name", Name);
 
 			w.WriteAttribute ("method", Method);

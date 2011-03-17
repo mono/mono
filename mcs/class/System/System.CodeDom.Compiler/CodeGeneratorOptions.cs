@@ -119,7 +119,6 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public bool VerbatimOrder {
 			get {
@@ -130,6 +129,5 @@ namespace System.CodeDom.Compiler {
 				properties["VerbatimOrder"] = value;
 			}
 		}
-#endif
 	}
 }

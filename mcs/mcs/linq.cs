@@ -723,7 +723,7 @@ namespace Mono.CSharp.Linq
 				Identifier = identifier.Name;
 			}
 
-			public new static void Reset ()
+			public static void Reset ()
 			{
 				Counter = 0;
 			}

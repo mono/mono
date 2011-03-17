@@ -27,8 +27,6 @@ namespace Mono.CSharp {
 		List<int> warnings_as_error;
 		List<int> warnings_only;
 
-		public static int DebugFlags = 0;
-
 		public const int RuntimeErrorId = 10000;
 
 		//
@@ -448,8 +446,8 @@ namespace Mono.CSharp {
 		[Conditional ("MCS_DEBUG")]
 		static public void Debug (int category, string message, params object[] args)
 		{
-			if ((category & DebugFlags) == 0)
-				return;
+//			if ((category & DebugFlags) == 0)
+//				return;
 
 			StringBuilder sb = new StringBuilder (message);
 
@@ -989,7 +987,7 @@ namespace Mono.CSharp {
 			ReferencesImporting,
 			PredefinedTypesInit,
 			ModuleDefinitionTotal,
-			UsingVerification,
+			UsingResolve,
 			EmitTotal,
 			CloseTypes,
 			Resouces,
@@ -1048,7 +1046,7 @@ namespace Mono.CSharp {
 				{ TimerType.ReferencesImporting, "Referenced assemblies importing" },
 				{ TimerType.PredefinedTypesInit, "Predefined types initialization" },
 				{ TimerType.ModuleDefinitionTotal, "Module definition" },
-				{ TimerType.UsingVerification, "Usings verification" },
+				{ TimerType.UsingResolve, "Top-level usings resolve" },
 				{ TimerType.EmitTotal, "Resolving and emitting members blocks" },
 				{ TimerType.CloseTypes, "Module types closed" },
 				{ TimerType.Resouces, "Embedding resources" },
@@ -1057,7 +1055,7 @@ namespace Mono.CSharp {
 			};
 
 			int counter = 0;
-			double percentage = total.ElapsedMilliseconds / 100;
+			double percentage = (double) total.ElapsedMilliseconds / 100;
 			long subtotal = total.ElapsedMilliseconds;
 			foreach (var timer in timers) {
 				string msg = timer_names[(TimerType) counter++];

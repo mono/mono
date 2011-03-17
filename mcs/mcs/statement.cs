@@ -148,8 +148,6 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			Report.Debug (1, "START IF BLOCK", loc);
-
 			expr = expr.Resolve (ec);
 			if (expr == null) {
 				ok = false;
@@ -194,8 +192,6 @@ namespace Mono.CSharp {
 				ok &= FalseStatement.Resolve (ec);
 					
 			ec.EndFlowBranching ();
-
-			Report.Debug (1, "END IF BLOCK", loc);
 
 			return ok;
 		}
@@ -1060,7 +1056,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			var et = ec.BuildinTypes.Exception;
+			var et = ec.BuiltinTypes.Exception;
 			if (Convert.ImplicitConversionExists (ec, expr, et))
 				expr = Convert.ImplicitConversion (ec, expr, et, loc);
 			else
@@ -1947,8 +1943,6 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
 
-			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
-
 			//
 			// Compiler generated scope statements
 			//
@@ -2011,9 +2005,6 @@ namespace Mono.CSharp {
 				if (unreachable && s is LabeledStatement)
 					throw new InternalErrorException ("should not happen");
 			}
-
-			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
-				      ec.CurrentBranching, statement_count);
 
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
@@ -2555,7 +2546,7 @@ namespace Mono.CSharp {
 					rc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
 
-				if (Report.DebugFlags > 0)
+				if (rc.Module.Compiler.Settings.DebugFlags > 0)
 					throw;
 			}
 
@@ -3226,18 +3217,18 @@ namespace Mono.CSharp {
 		//
 		Expression SwitchGoverningType (ResolveContext ec, Expression expr)
 		{
-			switch (expr.Type.BuildinType) {
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.Char:
-			case BuildinTypeSpec.Type.String:
-			case BuildinTypeSpec.Type.Bool:
+			switch (expr.Type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.String:
+			case BuiltinTypeSpec.Type.Bool:
 				return expr;
 			}
 
@@ -3251,7 +3242,7 @@ namespace Mono.CSharp {
 			// conversions, we have to report an error
 			//
 			Expression converted = null;
-			foreach (TypeSpec tt in ec.BuildinTypes.SwitchUserTypes) {
+			foreach (TypeSpec tt in ec.BuiltinTypes.SwitchUserTypes) {
 				Expression e;
 				
 				e = Convert.ImplicitUserConversion (ec, expr, tt, loc);
@@ -3275,7 +3266,7 @@ namespace Mono.CSharp {
 			return converted;
 		}
 
-		public static TypeSpec[] CreateSwitchUserTypes (BuildinTypes types)
+		public static TypeSpec[] CreateSwitchUserTypes (BuiltinTypes types)
 		{
 			// LAMESPEC: For some reason it does not contain bool which looks like csc bug
 			return new[] {
@@ -3302,7 +3293,7 @@ namespace Mono.CSharp {
 		bool CheckSwitch (ResolveContext ec)
 		{
 			bool error = false;
-			if (SwitchType.BuildinType == BuildinTypeSpec.Type.String)
+			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String)
 				string_labels = new Dictionary<string, SwitchLabel> (Sections.Count + 1);
 			else
 				labels = new Dictionary<long, SwitchLabel> (Sections.Count + 1);
@@ -3414,7 +3405,7 @@ namespace Mono.CSharp {
 					} else {
 						// TODO: if all the keys in the block are the same and there are
 						//       no gaps/defaults then just use a range-check.
-						if (compare_type.BuildinType == BuildinTypeSpec.Type.Long || compare_type.BuildinType == BuildinTypeSpec.Type.ULong) {
+						if (compare_type.BuiltinType == BuiltinTypeSpec.Type.Long || compare_type.BuiltinType == BuiltinTypeSpec.Type.ULong) {
 							// TODO: optimize constant/I4 cases
 
 							// check block range (could be > 2^31)
@@ -3553,7 +3544,7 @@ namespace Mono.CSharp {
 
 			new_expr = SwitchGoverningType (ec, Expr);
 
-			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
+			if (new_expr == null && Expr.Type.IsNullableType) {
 				unwrap = Nullable.Unwrap.Create (Expr, false);
 				if (unwrap == null)
 					return false;
@@ -3571,7 +3562,7 @@ namespace Mono.CSharp {
 			// Validate switch.
 			SwitchType = new_expr.Type;
 
-			if (SwitchType.BuildinType == BuildinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
+			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
 				return false;
 			}
@@ -3629,7 +3620,7 @@ namespace Mono.CSharp {
 			if (!ok)
 				return false;
 
-			if (SwitchType.BuildinType == BuildinTypeSpec.Type.String && !is_constant) {
+			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String && !is_constant) {
 				// TODO: Optimize single case, and single+default case
 				ResolveStringSwitchMap (ec);
 			}
@@ -3651,19 +3642,16 @@ namespace Mono.CSharp {
 		void ResolveStringSwitchMap (ResolveContext ec)
 		{
 			FullNamedExpression string_dictionary_type;
-			if (TypeManager.generic_ienumerable_type != null) {
-				MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
-					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
-
-				string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
-					new TypeArguments (
-						new TypeExpression (ec.BuildinTypes.String, loc),
-						new TypeExpression (ec.BuildinTypes.Int, loc)), loc);
+			if (ec.Module.PredefinedTypes.Dictionary.Define ()) {
+				string_dictionary_type = new TypeExpression (
+					ec.Module.PredefinedTypes.Dictionary.TypeSpec.MakeGenericType (ec,
+						new [] { ec.BuiltinTypes.String, ec.BuiltinTypes.Int }),
+					loc);
+			} else if (ec.Module.PredefinedTypes.Hashtable.Define ()) {
+				string_dictionary_type = new TypeExpression (ec.Module.PredefinedTypes.Hashtable.TypeSpec, loc);
 			} else {
-				MemberAccess system_collections_generic = new MemberAccess (
-					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
-
-				string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
+				ec.Module.PredefinedTypes.Dictionary.Resolve (loc);
+				return;
 			}
 
 			var ctype = ec.CurrentMemberDefinition.Parent.PartialContainer;
@@ -3691,9 +3679,9 @@ namespace Mono.CSharp {
 
 					value = (string) sl.Converted.GetValue ();
 					var init_args = new List<Expression> (2);
-					init_args.Add (new StringLiteral (ec.BuildinTypes, value, sl.Location));
+					init_args.Add (new StringLiteral (ec.BuiltinTypes, value, sl.Location));
 
-					sl.Converted = new IntConstant (ec.BuildinTypes, counter, loc);
+					sl.Converted = new IntConstant (ec.BuiltinTypes, counter, loc);
 					init_args.Add (sl.Converted);
 
 					init.Add (new CollectionElementInitializer (init_args, loc));
@@ -3707,7 +3695,7 @@ namespace Mono.CSharp {
 			}
 
 			Arguments args = new Arguments (1);
-			args.Add (new Argument (new IntConstant (ec.BuildinTypes, init.Count, loc)));
+			args.Add (new Argument (new IntConstant (ec.BuiltinTypes, init.Count, loc)));
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
 				new CollectionOrObjectInitializers (init, loc), loc);
 
@@ -3731,11 +3719,11 @@ namespace Mono.CSharp {
 			string_dictionary.EmitStatement (ec);
 			ec.MarkLabel (l_initialized);
 
-			LocalTemporary string_switch_variable = new LocalTemporary (ec.BuildinTypes.Int);
+			LocalTemporary string_switch_variable = new LocalTemporary (ec.BuiltinTypes.Int);
 
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
 
-			if (TypeManager.generic_ienumerable_type != null) {
+			if (switch_cache_field.Type.IsGeneric) {
 				Arguments get_value_args = new Arguments (2);
 				get_value_args.Add (new Argument (value));
 				get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
@@ -3755,12 +3743,12 @@ namespace Mono.CSharp {
 				if (get_item == null)
 					return;
 
-				LocalTemporary get_item_object = new LocalTemporary (ec.BuildinTypes.Object);
+				LocalTemporary get_item_object = new LocalTemporary (ec.BuiltinTypes.Object);
 				get_item_object.EmitAssign (ec, get_item, true, false);
 				ec.Emit (OpCodes.Brfalse, default_target);
 
 				ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
-					new Cast (new TypeExpression (ec.BuildinTypes.Int, loc), get_item_object, loc)).Resolve (rc);
+					new Cast (new TypeExpression (ec.BuiltinTypes.Int, loc), get_item_object, loc)).Resolve (rc);
 
 				get_item_int.EmitStatement (ec);
 				get_item_object.Release (ec);
@@ -4062,7 +4050,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr.Type.IsGenericParameter) {
-				expr = Convert.ImplicitTypeParameterConversion (expr, ec.BuildinTypes.Object);
+				expr = Convert.ImplicitTypeParameterConversion (expr, (TypeParameterSpec)expr.Type, ec.BuiltinTypes.Object);
 			}
 
 			VariableReference lv = expr as VariableReference;
@@ -4089,14 +4077,14 @@ namespace Mono.CSharp {
 			// Have to keep original lock value around to unlock same location
 			// in the case the original has changed or is null
 			//
-			expr_copy = TemporaryVariableReference.Create (ec.BuildinTypes.Object, ec.CurrentBlock.Parent, loc);
+			expr_copy = TemporaryVariableReference.Create (ec.BuiltinTypes.Object, ec.CurrentBlock.Parent, loc);
 			expr_copy.Resolve (ec);
 
 			//
 			// Ensure Monitor methods are available
 			//
 			if (ResolvePredefinedMethods (ec) > 1) {
-				lock_taken = TemporaryVariableReference.Create (ec.BuildinTypes.Bool, ec.CurrentBlock.Parent, loc);
+				lock_taken = TemporaryVariableReference.Create (ec.BuiltinTypes.Bool, ec.CurrentBlock.Parent, loc);
 				lock_taken.Resolve (ec);
 			}
 
@@ -4111,13 +4099,13 @@ namespace Mono.CSharp {
 				//
 				// Initialize ref variable
 				//
-				lock_taken.EmitAssign (ec, new BoolLiteral (ec.BuildinTypes, false, loc));
+				lock_taken.EmitAssign (ec, new BoolLiteral (ec.BuiltinTypes, false, loc));
 			} else {
 				//
 				// Monitor.Enter (expr_copy)
 				//
 				expr_copy.Emit (ec);
-				ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+				ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.MonitorEnter.Get ());
 			}
 		}
 
@@ -4130,7 +4118,7 @@ namespace Mono.CSharp {
 				expr_copy.Emit (ec);
 				lock_taken.LocalInfo.CreateBuilder (ec);
 				lock_taken.AddressOf (ec, AddressOp.Load);
-				ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+				ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.MonitorEnter_v4.Get ());
 			}
 
 			Statement.Emit (ec);
@@ -4149,39 +4137,26 @@ namespace Mono.CSharp {
 			}
 
 			expr_copy.Emit (ec);
-			ec.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
+			var m = ec.Module.PredefinedMembers.MonitorExit.Resolve (loc);
+			if (m != null)
+				ec.Emit (OpCodes.Call, m);
+
 			ec.MarkLabel (skip);
 		}
 
 		int ResolvePredefinedMethods (ResolveContext rc)
 		{
-			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
-				TypeSpec monitor_type = rc.Module.PredefinedTypes.Monitor.Resolve (loc);
+			// Try 4.0 Monitor.Enter (object, ref bool) overload first
+			var m = rc.Module.PredefinedMembers.MonitorEnter_v4.Get ();
+			if (m != null)
+				return 4;
 
-				if (monitor_type == null)
-					return 0;
+			m = rc.Module.PredefinedMembers.MonitorEnter.Get ();
+			if (m != null)
+				return 1;
 
-				// Try 4.0 Monitor.Enter (object, ref bool) overload first
-				var filter = MemberFilter.Method ("Enter", 0, new ParametersImported (
-					new[] {
-							new ParameterData (null, Parameter.Modifier.NONE),
-							new ParameterData (null, Parameter.Modifier.REF)
-						},
-					new[] {
-							rc.BuildinTypes.Object, rc.BuildinTypes.Bool
-						}, false), null);
-
-				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (monitor_type, filter, true, loc);
-				if (TypeManager.void_monitor_enter_object == null) {
-					TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
-						monitor_type, "Enter", loc, rc.BuildinTypes.Object);
-				}
-
-				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
-					monitor_type, "Exit", loc, rc.BuildinTypes.Object);
-			}
-
-			return TypeManager.void_monitor_enter_object.Parameters.Count;
+			rc.Module.PredefinedMembers.MonitorEnter_v4.Resolve (loc);
+			return 0;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4344,19 +4319,10 @@ namespace Mono.CSharp {
 				pinned_string = new LocalVariable (vi.Block, "$pinned",
 					LocalVariable.Flags.FixedVariable | LocalVariable.Flags.CompilerGenerated | LocalVariable.Flags.Used,
 					vi.Location);
-
-				pinned_string.Type = rc.BuildinTypes.String;
-
-				if (TypeManager.int_get_offset_to_string_data == null) {
-					var helper = rc.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
-					if (helper != null) {
-						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (helper,
-							"OffsetToStringData", pinned_string.Location, rc.BuildinTypes.Int);
-					}
-				}
+				pinned_string.Type = rc.BuiltinTypes.String;
 
 				eclass = ExprClass.Variable;
-				type = rc.BuildinTypes.Int;
+				type = rc.BuiltinTypes.Int;
 				return this;
 			}
 
@@ -4371,7 +4337,11 @@ namespace Mono.CSharp {
 				pinned_string.Emit (ec);
 				ec.Emit (OpCodes.Conv_I);
 
-				PropertyExpr pe = new PropertyExpr (TypeManager.int_get_offset_to_string_data, pinned_string.Location);
+				var m = ec.Module.PredefinedMembers.RuntimeHelpersOffsetToStringData.Resolve (loc);
+				if (m == null)
+					return;
+
+				PropertyExpr pe = new PropertyExpr (m, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
@@ -4440,8 +4410,7 @@ namespace Mono.CSharp {
 					//
 					ArrayPtr array_ptr = new ArrayPtr (initializer, array_type, loc);
 
-					Expression converted = Convert.ImplicitConversionRequired (
-						bc, array_ptr, li.Type, loc);
+					Expression converted = Convert.ImplicitConversionRequired (bc, array_ptr.Resolve (bc), li.Type, loc);
 					if (converted == null)
 						return null;
 
@@ -4450,8 +4419,8 @@ namespace Mono.CSharp {
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
 						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuildinTypes, 0, loc), loc), loc)),
-							new NullPointer (loc),
+						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc), loc), loc)),
+							new NullLiteral (loc),
 							converted, loc);
 
 					converted = converted.Resolve (bc);
@@ -4462,7 +4431,7 @@ namespace Mono.CSharp {
 				//
 				// Case 2: string
 				//
-				if (initializer.Type.BuildinType == BuildinTypeSpec.Type.String) {
+				if (initializer.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
 					return new StringEmitter (initializer, li, loc).Resolve (bc);
 				}
 
@@ -4628,7 +4597,7 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (IsGeneral)
-				ec.BeginCatchBlock (ec.BuildinTypes.Object);
+				ec.BeginCatchBlock (ec.BuiltinTypes.Object);
 			else
 				ec.BeginCatchBlock (CatchType);
 
@@ -4667,7 +4636,7 @@ namespace Mono.CSharp {
 						return false;
 
 					type = te.Type;
-					if (type.BuildinType != BuildinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuildinTypes.Exception, false)) {
+					if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuiltinTypes.Exception, false)) {
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
 						li.Type = type;
@@ -4809,7 +4778,7 @@ namespace Mono.CSharp {
 
 			if (General != null) {
 				foreach (Catch c in Specific) {
-					if (c.CatchType.BuildinType != BuildinTypeSpec.Type.Exception)
+					if (c.CatchType.BuiltinType != BuiltinTypeSpec.Type.Exception)
 						continue;
 
 					if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
@@ -4931,7 +4900,7 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveInitializer (BlockContext bc, LocalVariable li, Expression initializer)
 			{
-				if (li.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (li.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					initializer = initializer.Resolve (bc);
 					if (initializer == null)
 						return null;
@@ -4939,7 +4908,7 @@ namespace Mono.CSharp {
 					// Once there is dynamic used defer conversion to runtime even if we know it will never succeed
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (initializer));
-					initializer = new DynamicConversion (bc.BuildinTypes.IDisposable, 0, args, initializer.Location).Resolve (bc);
+					initializer = new DynamicConversion (bc.BuiltinTypes.IDisposable, 0, args, initializer.Location).Resolve (bc);
 					if (initializer == null)
 						return null;
 
@@ -4963,8 +4932,8 @@ namespace Mono.CSharp {
 			{
 				var type = li.Type;
 
-				if (type.BuildinType != BuildinTypeSpec.Type.IDisposable && !type.ImplementsInterface (bc.BuildinTypes.IDisposable, false)) {
-					if (TypeManager.IsNullableType (type)) {
+				if (type.BuiltinType != BuiltinTypeSpec.Type.IDisposable && !type.ImplementsInterface (bc.BuiltinTypes.IDisposable, false)) {
+					if (type.IsNullableType) {
 						// it's handled in CreateDisposeCall
 						return;
 					}
@@ -4984,21 +4953,18 @@ namespace Mono.CSharp {
 				var type = lv.Type;
 				var loc = lv.Location;
 
-				var idt = bc.BuildinTypes.IDisposable;
-				if (TypeManager.void_dispose_void == null) {
-					TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-						idt, "Dispose", loc, TypeSpec.EmptyTypes);
-				}
+				var idt = bc.BuiltinTypes.IDisposable;
+				var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 
-				var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
-				dispose_mg.InstanceExpression = TypeManager.IsNullableType (type) ?
+				var dispose_mg = MethodGroupExpr.CreatePredefined (m, idt, loc);
+				dispose_mg.InstanceExpression = type.IsNullableType ?
 					new Cast (new TypeExpression (idt, loc), lvr, loc).Resolve (bc) :
 					lvr;
 
 				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
 
 				// Add conditional call when disposing possible null variable
-				if (!type.IsStruct || TypeManager.IsNullableType (type))
+				if (!type.IsStruct || type.IsNullableType)
 					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
 
 				return dispose;
@@ -5167,7 +5133,7 @@ namespace Mono.CSharp {
 				int rank = length_exprs.Length;
 				Arguments list = new Arguments (rank);
 				for (int i = 0; i < rank; i++) {
-					var v = TemporaryVariableReference.Create (ec.BuildinTypes.Int, variables_block, loc);
+					var v = TemporaryVariableReference.Create (ec.BuiltinTypes.Int, variables_block, loc);
 					variables[i] = v;
 					counter[i] = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, v, loc));
 					counter[i].Resolve (ec);
@@ -5175,11 +5141,11 @@ namespace Mono.CSharp {
 					if (rank == 1) {
 						length_exprs [i] = new MemberAccess (copy, "Length").Resolve (ec);
 					} else {
-						lengths[i] = TemporaryVariableReference.Create (ec.BuildinTypes.Int, variables_block, loc);
+						lengths[i] = TemporaryVariableReference.Create (ec.BuiltinTypes.Int, variables_block, loc);
 						lengths[i].Resolve (ec);
 
 						Arguments args = new Arguments (1);
-						args.Add (new Argument (new IntConstant (ec.BuildinTypes, i, loc)));
+						args.Add (new Argument (new IntConstant (ec.BuiltinTypes, i, loc)));
 						length_exprs [i] = new Invocation (new MemberAccess (copy, "GetLength"), args).Resolve (ec);
 					}
 
@@ -5242,7 +5208,7 @@ namespace Mono.CSharp {
 						lengths [i].EmitAssign (ec, length_exprs [i]);
 				}
 
-				IntConstant zero = new IntConstant (ec.BuildinTypes, 0, loc);
+				IntConstant zero = new IntConstant (ec.BuiltinTypes, 0, loc);
 				for (int i = 0; i < rank; i++) {
 					variables [i].EmitAssign (ec, zero);
 
@@ -5342,12 +5308,7 @@ namespace Mono.CSharp {
 
 				protected override Statement CreateDisposeCall (BlockContext bc, LocalVariable lv)
 				{
-					var idt = bc.BuildinTypes.IDisposable;
-
-					if (TypeManager.void_dispose_void == null) {
-						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-							idt, "Dispose", loc, TypeSpec.EmptyTypes);
-					}
+					var idt = bc.BuiltinTypes.IDisposable;
 
 					//
 					// Fabricates code like
@@ -5362,7 +5323,9 @@ namespace Mono.CSharp {
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
 						loc), new NullLiteral (loc), loc);
 
-					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, idt, loc);
+					var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
+
+					var dispose_mg = MethodGroupExpr.CreatePredefined (m, idt, loc);
 					dispose_mg.InstanceExpression = dispose_variable.CreateReferenceExpression (bc, loc);
 
 					Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
@@ -5405,7 +5368,7 @@ namespace Mono.CSharp {
 				//
 				// Option 1: Try to match by name GetEnumerator first
 				//
-				var mexpr = Expression.MemberLookup (rc, rc.CurrentType, expr.Type,
+				var mexpr = Expression.MemberLookup (rc, false, expr.Type,
 					"GetEnumerator", 0, Expression.MemberLookupRestrictions.ExactArity, loc);		// TODO: What if CS0229 ?
 
 				var mg = mexpr as MethodGroupExpr;
@@ -5426,28 +5389,36 @@ namespace Mono.CSharp {
 				//
 				// Option 2: Try to match using IEnumerable interfaces with preference of generic version
 				//
-				TypeSpec iface_candidate = null;
 				var t = expr.Type;
+				PredefinedMember<MethodSpec> iface_candidate = null;
+				var ptypes = rc.Module.PredefinedTypes;
+				var gen_ienumerable = ptypes.IEnumerableGeneric;
+				if (!gen_ienumerable.Define ())
+					gen_ienumerable = null;
+
 				do {
 					var ifaces = t.Interfaces;
 					if (ifaces != null) {
 						foreach (var iface in ifaces) {
-							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
-								if (iface_candidate != null && iface_candidate.BuildinType != BuildinTypeSpec.Type.IEnumerable) {
+							if (gen_ienumerable != null && iface.MemberDefinition == gen_ienumerable.TypeSpec.MemberDefinition) {
+								if (iface_candidate != null && iface_candidate != rc.Module.PredefinedMembers.IEnumerableGetEnumerator) {
 									rc.Report.SymbolRelatedToPreviousError (expr.Type);
 									rc.Report.Error (1640, loc,
 										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-										expr.Type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
+										expr.Type.GetSignatureForError (), gen_ienumerable.TypeSpec.GetSignatureForError ());
 
 									return null;
 								}
 
-								iface_candidate = iface;
+								// TODO: Cache this somehow
+								iface_candidate = new PredefinedMember<MethodSpec> (rc.Module, iface,
+									MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null));
+
 								continue;
 							}
 
-							if (iface.BuildinType == BuildinTypeSpec.Type.IEnumerable && iface_candidate == null) {
-								iface_candidate = iface;
+							if (iface.BuiltinType == BuiltinTypeSpec.Type.IEnumerable && iface_candidate == null) {
+								iface_candidate = rc.Module.PredefinedMembers.IEnumerableGetEnumerator;
 							}
 						}
 					}
@@ -5467,9 +5438,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				var method = TypeManager.GetPredefinedMethod (iface_candidate, 
-					MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
-
+				var method = iface_candidate.Resolve (loc);
 				if (method == null)
 					return null;
 
@@ -5481,7 +5450,7 @@ namespace Mono.CSharp {
 			MethodGroupExpr ResolveMoveNext (ResolveContext rc, MethodSpec enumerator)
 			{
 				var ms = MemberCache.FindMember (enumerator.ReturnType,
-					MemberFilter.Method ("MoveNext", 0, ParametersCompiled.EmptyReadOnlyParameters, rc.BuildinTypes.Bool),
+					MemberFilter.Method ("MoveNext", 0, ParametersCompiled.EmptyReadOnlyParameters, rc.BuiltinTypes.Bool),
 					BindingRestriction.InstanceOnly) as MethodSpec;
 
 				if (ms == null || !ms.IsPublic) {
@@ -5508,11 +5477,11 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (BlockContext ec)
 			{
-				bool is_dynamic = expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic;
+				bool is_dynamic = expr.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
 				if (is_dynamic) {
-					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuildinTypes.IEnumerable, loc);
-				} else if (TypeManager.IsNullableType (expr.Type)) {
+					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuiltinTypes.IEnumerable, loc);
+				} else if (expr.Type.IsNullableType) {
 					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
 				}
 
@@ -5547,14 +5516,14 @@ namespace Mono.CSharp {
 				if (ve != null) {
 					if (is_dynamic) {
 						// Source type is dynamic, set element type to dynamic too
-						var_type = new TypeExpression (ec.BuildinTypes.Dynamic, var_type.Location);
+						var_type = new TypeExpression (ec.BuiltinTypes.Dynamic, var_type.Location);
 					} else {
 						// Infer implicitly typed local variable from foreach enumerable type
 						var_type = new TypeExpression (current_pe.Type, var_type.Location);
 					}
 				} else if (is_dynamic) {
 					// Explicit cast of dynamic collection elements has to be done at runtime
-					current_pe = EmptyCast.Create (current_pe, ec.BuildinTypes.Dynamic);
+					current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);
@@ -5573,7 +5542,7 @@ namespace Mono.CSharp {
 				//
 				// Add Dispose method call when enumerator can be IDisposable
 				//
-				if (!enum_type.ImplementsInterface (ec.BuildinTypes.IDisposable, false)) {
+				if (!enum_type.ImplementsInterface (ec.BuiltinTypes.IDisposable, false)) {
 					if (!enum_type.IsSealed && !TypeManager.IsValueType (enum_type)) {
 						//
 						// Runtime Dispose check
@@ -5671,7 +5640,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (expr.Type.BuildinType == BuildinTypeSpec.Type.String) {
+			if (expr.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
 				statement = new ArrayForeach (this, 1);
 			} else if (expr.Type is ArrayContainer) {
 				statement = new ArrayForeach (this, ((ArrayContainer) expr.Type).Rank);

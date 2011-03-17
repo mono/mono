@@ -1,3 +1,9 @@
+2011-03-15  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes 672113
+	* UniqueConstraint.cs (ctor): Make a copy of columns and columnnames array
+	* ForeignKeyConstraint.cs (ctor): Make a copy of parent and child columns array
+       
 2010-10-01  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	** Fixes #582732 - Patch by Jeffrey Alvarez <kuritsu@gmail.com>

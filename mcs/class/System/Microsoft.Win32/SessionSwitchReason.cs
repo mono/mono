@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace Microsoft.Win32 {
 
 	public enum SessionSwitchReason {
@@ -42,5 +40,3 @@ namespace Microsoft.Win32 {
 		SessionRemoteControl
 	}
 }
-
-#endif

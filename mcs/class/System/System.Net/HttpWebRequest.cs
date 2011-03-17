@@ -498,7 +498,12 @@ namespace System.Net
 				if (value == null || value.Trim () == "")
 					throw new ArgumentException ("not a valid method");
 
-				method = value;
+				method = value.ToUpperInvariant ();
+				if (method != "HEAD" && method != "GET" && method != "POST" && method != "PUT" &&
+					method != "DELETE" && method != "CONNECT" && method != "TRACE" &&
+					method != "MKCOL") {
+					method = value;
+				}
 			}
 		}
 		

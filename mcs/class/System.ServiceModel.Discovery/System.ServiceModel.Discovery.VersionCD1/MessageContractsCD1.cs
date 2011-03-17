@@ -55,7 +55,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceCD1 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 
 			[MessageBodyMember (Name = "Hello", Namespace = NS)]
@@ -72,7 +72,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceCD1 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataCD1 EndpointDiscoveryMetadata { get; set; }
@@ -86,7 +86,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Probe", Namespace = NS)]
 			public FindCriteriaCD1 Body { get; set; }
@@ -114,7 +114,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
 			public ResolveCriteriaCD1 Body { get; set; }

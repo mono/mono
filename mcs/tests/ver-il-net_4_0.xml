@@ -23234,7 +23234,7 @@
   <test name="gtest-fixedbuffer-09.cs">
     <type name="Test">
       <method name="Int32 Main()">
-        <size>65</size>
+        <size>125</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

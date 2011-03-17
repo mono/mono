@@ -905,7 +905,6 @@ namespace MonoTests.Microsoft.Build.Tasks
 				testLogger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
-			testLogger.DumpMessages ();
 
 			try {
 				testLogger.CheckLoggedAny ("For md: 3 Item1:  Item1Ref:  Item2: Three Item2Ref: Three  Prop1:  Prop1Ref:  Prop2: Three Prop2Ref: Three", MessageImportance.Normal, "A1");

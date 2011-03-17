@@ -111,7 +111,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				Assert.AreEqual (false, project.IsDirty, "A4");
 				Assert.AreEqual (false, project.IsValidated, "A5");
 				Assert.AreEqual (engine, project.ParentEngine, "A6");
-				Console.WriteLine ("time: {0} p.t: {1}", time, project.TimeOfLastDirty);
+				//Console.WriteLine ("time: {0} p.t: {1}", time, project.TimeOfLastDirty);
 				Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
 				Assert.IsTrue (String.Empty != project.Xml, "A8");
 				return;
@@ -1487,7 +1487,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail ("A1: Build failed");
 			}
-			logger.DumpMessages ();
 			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
 			Assert.AreEqual (3, include.Count, "A2");
 		}
@@ -2104,7 +2103,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail ("A1: Build failed");
 			}
-			logger.DumpMessages ();
 
 			logger.CheckLoggedMessageHead ("Full item: foo;FOO;hmm;bar", "#A2");
 			logger.CheckLoggedMessageHead ("metadata1 :md1 metadata2: md2", "#A3");
@@ -2265,7 +2263,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					logger.CheckLoggedMessageHead (expected_output_msg, "A");
 					Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected messages found");
 				}
-			} finally {
+			} catch {
 				logger.DumpMessages ();
 			}
 			return project;

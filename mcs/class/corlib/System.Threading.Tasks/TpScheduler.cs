@@ -57,15 +57,7 @@ namespace System.Threading.Tasks
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			if (task.IsCompleted)
-				return false;
-
-			if (task.Status == TaskStatus.WaitingToRun) {
-				task.Execute (null);
-				return true;
-			}
-
-			return false;
+		    return TryExecuteTask(task);
 		}
 
 		public override int MaximumConcurrencyLevel {

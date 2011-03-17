@@ -43,9 +43,9 @@ namespace System.ComponentModel {
 			Default = new ReadOnlyAttribute (false);
 		}
 		
-		public ReadOnlyAttribute (bool read_only)
+		public ReadOnlyAttribute (bool isReadOnly)
 		{
-			this.read_only = read_only;
+			this.read_only = isReadOnly;
 		}
 
 		public bool IsReadOnly {
@@ -59,12 +59,12 @@ namespace System.ComponentModel {
 			return read_only.GetHashCode ();
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is ReadOnlyAttribute))
+			if (!(obj is ReadOnlyAttribute))
 				return false;
 
-			return (((ReadOnlyAttribute) o).IsReadOnly.Equals (read_only));
+			return (((ReadOnlyAttribute) obj).IsReadOnly.Equals (read_only));
 		}
 
 		public override bool IsDefaultAttribute ()

@@ -2099,12 +2099,14 @@ namespace MonoTests.System.Reflection.Emit
 			ig = mb.GetILGenerator ();
 
 			ConstructorInfo ci = TypeBuilder.GetConstructor (t, cb);
-
+			
 			ig.Emit (OpCodes.Newobj, ci);
 			ig.Emit (OpCodes.Ret);
 
 			// Finish the ctorbuilder
 			ig = cb.GetILGenerator ();
+			ig.Emit(OpCodes.Ldarg_0);
+			ig.Emit(OpCodes.Call, tb.BaseType.GetConstructor(Type.EmptyTypes));		
 			ig.Emit (OpCodes.Ret);
 
 			Type t2 = tb.CreateType ();
@@ -10417,6 +10419,10 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb2 = module.DefineType("Bar");
 			ConstructorBuilder cb = tb2.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ilgen = cb.GetILGenerator();
+			
+			ilgen.Emit(OpCodes.Ldarg_0);
+			ilgen.Emit(OpCodes.Call, tb2.BaseType.GetConstructor(Type.EmptyTypes));
+
 			ilgen.Emit(OpCodes.Ldsfld, field);
 			ilgen.Emit(OpCodes.Pop);
 			ilgen.Emit(OpCodes.Ret);

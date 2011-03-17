@@ -44,11 +44,10 @@ namespace System.CodeDom
 		//
 		// Constructors
 		//
-#if NET_2_0
 		public CodeSnippetCompileUnit ()
 		{
 		}
-#endif
+
 		public CodeSnippetCompileUnit( string value )
 		{
 			this.value = value;

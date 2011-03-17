@@ -239,9 +239,11 @@ namespace Microsoft.Build.BuildEngine {
 				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, ie.ToString ()));
 				return false;
 			} catch (Exception e) {
-				this.LogErrorWithFilename (projectFile, e.Message);
-				this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, e.ToString ()));
-				return false;
+				if (buildStarted) {
+					this.LogErrorWithFilename (projectFile, e.Message);
+					this.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", projectFile, e.ToString ()));
+				}
+				throw;
 			} finally {
 				EndEngineBuild (result);
 			}

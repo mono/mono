@@ -129,6 +129,7 @@ namespace Mono.CSharp {
 
 		// Compiler debug flags only
 		public bool ParseOnly, TokenizeOnly, Timestamps;
+		public int DebugFlags;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -138,6 +139,10 @@ namespace Mono.CSharp {
 		public bool StdLib;
 
 		public RuntimeVersion StdLibRuntimeVersion;
+
+		readonly List<string> conditional_symbols;
+
+		readonly List<CompilationSourceFile> source_files;
 
 		public CompilerSettings ()
 		{
@@ -156,6 +161,22 @@ namespace Mono.CSharp {
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
 			Modules = new List<string> ();
 			ReferencesLookupPaths = new List<string> ();
+
+			conditional_symbols = new List<string> ();
+			//
+			// Add default mcs define
+			//
+			conditional_symbols.Add ("__MonoCS__");
+
+			source_files = new List<CompilationSourceFile> ();
+		}
+
+		#region Properties
+
+		public CompilationSourceFile FirstSourceFile {
+			get {
+				return source_files.Count > 0 ? source_files [0] : null;
+			}
 		}
 
 		public bool HasKeyFileOrContainer {
@@ -168,6 +189,25 @@ namespace Mono.CSharp {
 			get {
 				return Target == Target.Exe || Target == Target.WinExe;
 			}
+		}
+
+		public List<CompilationSourceFile> SourceFiles {
+			get {
+				return source_files;
+			}
+		}
+
+		#endregion
+
+		public void AddConditionalSymbol (string symbol)
+		{
+			if (!conditional_symbols.Contains (symbol))
+				conditional_symbols.Add (symbol);
+		}
+
+		public bool IsConditionalSymbolDefined (string symbol)
+		{
+			return conditional_symbols.Contains (symbol);
 		}
 	}
 
@@ -187,6 +227,8 @@ namespace Mono.CSharp {
 		readonly Report report;
 		readonly TextWriter output;
 		bool stop_argument;
+
+		Dictionary<string, int> source_file_index;
 
 		public event Func<string[], int, int> UnknownOptionHandler;
 
@@ -226,6 +268,7 @@ namespace Mono.CSharp {
 			List<string> response_file_list = null;
 			bool parsing_options = true;
 			stop_argument = false;
+			source_file_index = new Dictionary<string, int> ();
 
 			for (int i = 0; i < args.Length; i++) {
 				string arg = args[i];
@@ -314,19 +357,19 @@ namespace Mono.CSharp {
 					}
 				}
 
-				ProcessSourceFiles (arg, false);
+				ProcessSourceFiles (arg, false, settings.SourceFiles);
 			}
 
 			return settings;
 		}
 
-		void ProcessSourceFiles (string spec, bool recurse)
+		void ProcessSourceFiles (string spec, bool recurse, List<CompilationSourceFile> sourceFiles)
 		{
 			string path, pattern;
 
 			SplitPathAndPattern (spec, out path, out pattern);
 			if (pattern.IndexOf ('*') == -1) {
-				AddSourceFile (spec);
+				AddSourceFile (spec, sourceFiles);
 				return;
 			}
 
@@ -341,7 +384,7 @@ namespace Mono.CSharp {
 				return;
 			}
 			foreach (string f in files) {
-				AddSourceFile (f);
+				AddSourceFile (f, sourceFiles);
 			}
 
 			if (!recurse)
@@ -358,7 +401,7 @@ namespace Mono.CSharp {
 
 				// Don't include path in this string, as each
 				// directory entry already does
-				ProcessSourceFiles (d + "/" + pattern, true);
+				ProcessSourceFiles (d + "/" + pattern, true, sourceFiles);
 			}
 		}
 
@@ -414,11 +457,25 @@ namespace Mono.CSharp {
 			settings.Resources.Add (res);
 		}
 
-		void AddSourceFile (string f)
+		void AddSourceFile (string fileName, List<CompilationSourceFile> sourceFiles)
 		{
-			Location.AddFile (report, f);
-		}
+			string path = Path.GetFullPath (fileName);
 
+			int index;
+			if (source_file_index.TryGetValue (path, out index)) {
+				string other_name = sourceFiles[index - 1].Name;
+				if (fileName.Equals (other_name))
+					report.Warning (2002, 1, "Source file `{0}' specified multiple times", other_name);
+				else
+					report.Warning (2002, 1, "Source filenames `{0}' and `{1}' both refer to the same file: {2}", fileName, other_name, path);
+
+				return;
+			}
+
+			var unit = new CompilationSourceFile (fileName, path, sourceFiles.Count + 1);
+			sourceFiles.Add (unit);
+			source_file_index.Add (path, unit.Index);
+		}
 
 		void Error_RequiresArgument (string option)
 		{
@@ -606,7 +663,8 @@ namespace Mono.CSharp {
 							report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", conditional);
 							continue;
 						}
-						RootContext.AddConditional (conditional);
+
+						settings.AddConditionalSymbol (conditional);
 					}
 					return ParseResult.Success;
 				}
@@ -675,7 +733,7 @@ namespace Mono.CSharp {
 					Error_RequiresFileName (option);
 					return ParseResult.Error;
 				}
-				ProcessSourceFiles (value, true);
+				ProcessSourceFiles (value, true, settings.SourceFiles);
 				return ParseResult.Success;
 
 			case "/r":
@@ -976,7 +1034,6 @@ namespace Mono.CSharp {
 					return ParseResult.Success;
 				case "default":
 					settings.Version = LanguageVersion.Default;
-					RootContext.AddConditional ("__V2__");
 					return ParseResult.Success;
 				case "iso-2":
 					settings.Version = LanguageVersion.ISO_2;
@@ -1065,7 +1122,8 @@ namespace Mono.CSharp {
 					Error_RequiresArgument (arg);
 					return ParseResult.Error;
 				}
-				RootContext.AddConditional (args [++i]);
+
+				settings.AddConditionalSymbol (args [++i]);
 				return ParseResult.Success;
 
 			case "--tokenize":
@@ -1216,7 +1274,7 @@ namespace Mono.CSharp {
 				}
 
 				try {
-					Report.DebugFlags = int.Parse (args [++i]);
+					settings.DebugFlags = int.Parse (args [++i]);
 				} catch {
 					Error_RequiresArgument (arg);
 					return ParseResult.Error;
@@ -1234,7 +1292,7 @@ namespace Mono.CSharp {
 					Error_RequiresArgument (arg);
 					return ParseResult.Error;
 				}
-				ProcessSourceFiles (args [++i], true); 
+				ProcessSourceFiles (args [++i], true, settings.SourceFiles);
 				return ParseResult.Success;
 				
 			case "--timestamp":
@@ -1395,49 +1453,6 @@ namespace Mono.CSharp {
 		// Contains the parsed tree
 		//
 		static ModuleContainer root;
-
-		//
-		// This hashtable contains all of the #definitions across the source code
-		// it is used by the ConditionalAttribute handler.
-		//
-		static List<string> AllDefines;
-
-		//
-		// Constructor
-		//
-		static RootContext ()
-		{
-			Reset (true);
-		}
-
-		public static void PartialReset ()
-		{
-			Reset (false);
-		}
-		
-		public static void Reset (bool full)
-		{
-			if (!full)
-				return;
-			
-			//
-			// Setup default defines
-			//
-			AllDefines = new List<string> ();
-			AddConditional ("__MonoCS__");
-		}
-
-		public static void AddConditional (string p)
-		{
-			if (AllDefines.Contains (p))
-				return;
-			AllDefines.Add (p);
-		}
-
-		public static bool IsConditionalDefined (string value)
-		{
-			return AllDefines.Contains (value);
-		}
 
 		static public ModuleContainer ToplevelTypes {
 			get { return root; }

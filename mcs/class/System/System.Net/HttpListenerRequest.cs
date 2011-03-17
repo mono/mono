@@ -109,10 +109,12 @@ namespace System.Net {
 
 		void CreateQueryString (string query)
 		{
-			query_string = new NameValueCollection ();
-			if (query == null || query.Length == 0)
+			if (query == null || query.Length == 0) {
+				query_string = new NameValueCollection (1);
 				return;
+			}
 
+			query_string = new NameValueCollection ();
 			if (query [0] == '?')
 				query = query.Substring (1);
 			string [] components = query.Split ('&');
@@ -295,7 +297,10 @@ namespace System.Net {
 			while (true) {
 				// TODO: test if MS has a timeout when doing this
 				try {
-					if (InputStream.Read (bytes, 0, length) <= 0)
+					IAsyncResult ares = InputStream.BeginRead (bytes, 0, length, null, null);
+					if (!ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (100))
+						return false;
+					if (InputStream.EndRead (ares) <= 0)
 						return true;
 				} catch {
 					return false;

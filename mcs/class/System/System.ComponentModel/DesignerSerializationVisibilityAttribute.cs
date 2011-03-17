@@ -34,9 +34,7 @@
 namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property
-#if NET_2_0
 			 | AttributeTargets.Field | AttributeTargets.Event
-#endif
 			 )]
 	public sealed class DesignerSerializationVisibilityAttribute : Attribute
 	{

@@ -113,7 +113,15 @@ namespace System.Threading.Tasks
 
 		internal protected bool TryExecuteTask (Task task)
 		{
-			return TryExecuteTaskInline (task, false);
+			if (task.IsCompleted)
+				return false;
+
+			if (task.Status == TaskStatus.WaitingToRun) {
+				task.Execute (null);
+				return true;
+			}
+
+			return false;
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);

@@ -156,12 +156,8 @@ namespace Microsoft.Build.BuildEngine {
 
 					// do this after setting new Extension properties, as condition might
 					// reference it
-					if (!ConditionParser.ParseAndEvaluate (condition_attribute, project)) {
-						project.ParentEngine.LogMessage (MessageImportance.Low,
-								"{0}: Not importing '{1}' project as the condition '{2}' is false",
-								importingFile, project_attribute, condition_attribute);
+					if (!ConditionParser.ParseAndEvaluate (condition_attribute, project))
 						continue;
-					}
 
 					// We stop if atleast one file got imported.
 					// Remaining extension paths are *not* tried

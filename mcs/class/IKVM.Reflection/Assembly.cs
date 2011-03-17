@@ -126,7 +126,7 @@ namespace IKVM.Reflection
 					return null;
 				}
 			}
-			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this, throwOnError, typeName);
+			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this, throwOnError, typeName, false);
 		}
 
 		public virtual Module LoadModule(string moduleName, byte[] rawModule)
@@ -175,6 +175,11 @@ namespace IKVM.Reflection
 		public virtual bool __IsMissing
 		{
 			get { return false; }
+		}
+
+		public virtual AssemblyNameFlags __AssemblyFlags
+		{
+			get { return GetName().Flags; }
 		}
 
 		internal abstract IList<CustomAttributeData> GetCustomAttributesData(Type attributeType);

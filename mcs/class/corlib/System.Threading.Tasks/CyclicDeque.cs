@@ -136,7 +136,7 @@ namespace System.Threading.Tasks
 		public IEnumerable<T> GetEnumerable ()
 		{
 			var a = array;
-			return a.GetEnumerable ();
+			return a.GetEnumerable (bottom, ref top);
 		}
 	}
 	
@@ -179,9 +179,22 @@ namespace System.Threading.Tasks
 			return grow;
 		}
 		
-		public IEnumerable<T> GetEnumerable ()
+		public IEnumerable<T> GetEnumerable (long bottom, ref long top)
 		{
-			return ((IEnumerable<T>)segment);
+			long instantTop = top;
+			T[] slice = new T[bottom - instantTop];
+			int destIndex = -1;
+			for (long i = instantTop; i < bottom; i++)
+				slice[++destIndex] = segment[i % size];
+
+			return RealGetEnumerable (slice, bottom, top, instantTop);
+		}
+
+		IEnumerable<T> RealGetEnumerable (T[] slice, long bottom, long realTop, long initialTop)
+		{
+			int destIndex = (int)(realTop - initialTop - 1);
+			for (long i = realTop; i < bottom; ++i)
+				yield return slice[++destIndex];
 		}
 	}
 }

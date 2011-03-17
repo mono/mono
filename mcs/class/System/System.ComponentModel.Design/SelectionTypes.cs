@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
 {
-#if NET_2_0
 	[Flags]
 	[ComVisible(true)]
 	public enum SelectionTypes
@@ -55,19 +54,4 @@ namespace System.ComponentModel.Design
 		Add = 64,
 		Remove = 128
 	}
-#else
-	
-	[Flags]
-	[Serializable]
-	[ComVisible(true)]
-	public enum SelectionTypes
-	{
-		Click = 16,
-		MouseDown = 4,
-		MouseUp = 8,
-		Normal = 1,
-		Replace = 2,
-		Valid = 31
-	}
-#endif
 }

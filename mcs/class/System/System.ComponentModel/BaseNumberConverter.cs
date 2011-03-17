@@ -95,15 +95,8 @@ namespace System.ComponentModel
 			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
 
-#if NET_2_0
 			if (destinationType == typeof (string) && value is IConvertible)
 				return ((IConvertible) value).ToType (destinationType, culture);
-#else
-			if (destinationType == typeof (string) && value.GetType () == InnerType) {
-				NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat (typeof (NumberFormatInfo));
-				return ConvertToString (value, numberFormatInfo);
-			}
-#endif
 
 			if (destinationType.IsPrimitive)
 				return Convert.ChangeType (value, destinationType, culture);

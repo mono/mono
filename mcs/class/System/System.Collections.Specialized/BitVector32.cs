@@ -53,7 +53,6 @@ namespace System.Collections.Specialized {
 			public short Offset {
 				get { return offset; }
 			}
-#if NET_2_0
 			public static bool operator == (Section v1, Section v2)
 			{
 				return v1.mask == v2.mask &&
@@ -71,7 +70,7 @@ namespace System.Collections.Specialized {
 				return this.mask == obj.mask &&
 				       this.offset == obj.offset;
 			}
-#endif
+
 			public override bool Equals (object o) 
 			{
 				if (! (o is Section))
@@ -140,12 +139,7 @@ namespace System.Collections.Specialized {
 		
 		public bool this [int mask] {
 			get {
-#if NET_2_0
 				return (bits & mask) == mask;
-#else
-				long tmp = (uint)bits;
-				return (tmp & (long)mask) == (long)mask;
-#endif
 			}
 			
 			set { 

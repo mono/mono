@@ -125,6 +125,8 @@ namespace IKVM.Reflection
 		private Type typeof_System_Runtime_InteropServices_StructLayoutAttribute;
 		private Type typeof_System_Runtime_InteropServices_OptionalAttribute;
 		private Type typeof_System_Runtime_InteropServices_PreserveSigAttribute;
+		private Type typeof_System_Runtime_InteropServices_CallingConvention;
+		private Type typeof_System_Runtime_InteropServices_CharSet;
 		private Type typeof_System_Runtime_InteropServices_ComImportAttribute;
 		private Type typeof_System_Runtime_CompilerServices_DecimalConstantAttribute;
 		private Type typeof_System_Runtime_CompilerServices_SpecialNameAttribute;
@@ -143,6 +145,7 @@ namespace IKVM.Reflection
 		private Type typeof_System_Security_Permissions_PermissionSetAttribute;
 		private Type typeof_System_Security_Permissions_SecurityAction;
 		private List<ResolveEventHandler> resolvers = new List<ResolveEventHandler>();
+		private bool forceAssemblyResolve;
 
 		internal Assembly Mscorlib
 		{
@@ -151,6 +154,10 @@ namespace IKVM.Reflection
 
 		private Type ImportMscorlibType(System.Type type)
 		{
+			if (Mscorlib.__IsMissing)
+			{
+				return Mscorlib.ResolveType(new TypeName(type.Namespace, type.Name));
+			}
 			// We use FindType instead of ResolveType here, because on some versions of mscorlib some of
 			// the special types we use/support are missing and the type properties are defined to
 			// return null in that case.
@@ -367,6 +374,16 @@ namespace IKVM.Reflection
 			get { return typeof_System_Runtime_InteropServices_PreserveSigAttribute ?? (typeof_System_Runtime_InteropServices_PreserveSigAttribute = ImportMscorlibType(typeof(System.Runtime.InteropServices.PreserveSigAttribute))); }
 		}
 
+		internal Type System_Runtime_InteropServices_CallingConvention
+		{
+			get { return typeof_System_Runtime_InteropServices_CallingConvention ?? (typeof_System_Runtime_InteropServices_CallingConvention = ImportMscorlibType(typeof(System.Runtime.InteropServices.CallingConvention))); }
+		}
+
+		internal Type System_Runtime_InteropServices_CharSet
+		{
+			get { return typeof_System_Runtime_InteropServices_CharSet ?? (typeof_System_Runtime_InteropServices_CharSet = ImportMscorlibType(typeof(System.Runtime.InteropServices.CharSet))); }
+		}
+
 		internal Type System_Runtime_InteropServices_ComImportAttribute
 		{
 			get { return typeof_System_Runtime_InteropServices_ComImportAttribute ?? (typeof_System_Runtime_InteropServices_ComImportAttribute = ImportMscorlibType(typeof(System.Runtime.InteropServices.ComImportAttribute))); }
@@ -530,9 +547,20 @@ namespace IKVM.Reflection
 				}
 				return Import(type.GetGenericTypeDefinition()).MakeGenericType(importedArgs);
 			}
+			else if (type.IsNested)
+			{
+				// note that we can't pass in the namespace here, because .NET's Type.Namespace implementation is broken for nested types
+				// (it returns the namespace of the declaring type)
+				return Import(type.DeclaringType).ResolveNestedType(new TypeName(null, type.Name));
+			}
+			else if (type.Assembly == typeof(object).Assembly)
+			{
+				// make sure mscorlib types always end up in our mscorlib
+				return Mscorlib.ResolveType(new TypeName(type.Namespace, type.Name));
+			}
 			else
 			{
-				return Import(type.Assembly).GetType(type.FullName);
+				return Import(type.Assembly).ResolveType(new TypeName(type.Namespace, type.Name));
 			}
 		}
 
@@ -626,10 +654,14 @@ namespace IKVM.Reflection
 
 		internal Assembly Load(string refname, Assembly requestingAssembly, bool throwOnError)
 		{
-			Assembly asm = GetLoadedAssembly(refname);
-			if (asm != null)
+			Assembly asm = null;
+			if (!forceAssemblyResolve)
 			{
-				return asm;
+				asm = GetLoadedAssembly(refname);
+				if (asm != null)
+				{
+					return asm;
+				}
 			}
 			if (resolvers.Count == 0)
 			{
@@ -654,7 +686,7 @@ namespace IKVM.Reflection
 			if (asm != null)
 			{
 				string defname = asm.FullName;
-				if (refname != defname)
+				if (refname != defname && !forceAssemblyResolve)
 				{
 					assembliesByName.Add(refname, asm);
 				}
@@ -729,7 +761,7 @@ namespace IKVM.Reflection
 			{
 				return null;
 			}
-			return parser.GetType(this, context, throwOnError, assemblyQualifiedTypeName);
+			return parser.GetType(this, context, throwOnError, assemblyQualifiedTypeName, false);
 		}
 
 		public Assembly[] GetAssemblies()
@@ -811,13 +843,27 @@ namespace IKVM.Reflection
 		public Assembly CreateMissingAssembly(string assemblyName)
 		{
 			Assembly asm = new MissingAssembly(this, assemblyName);
-			assembliesByName.Add(asm.FullName, asm);
+			if (!forceAssemblyResolve)
+			{
+				assembliesByName.Add(asm.FullName, asm);
+			}
 			return asm;
 		}
 
 		public void EnableMissingMemberResolution()
 		{
 			resolveMissingMembers = true;
+		}
+
+		internal bool MissingMemberResolution
+		{
+			get { return resolveMissingMembers; }
+		}
+
+		public bool ForceAssemblyResolve
+		{
+			get { return forceAssemblyResolve; }
+			set { forceAssemblyResolve = value; }
 		}
 
 		private struct ScopedTypeName : IEquatable<ScopedTypeName>
@@ -885,6 +931,26 @@ namespace IKVM.Reflection
 				return method;
 			}
 			throw new MissingMethodException(declaringType.ToString(), name);
+		}
+
+		internal FieldInfo GetMissingFieldOrThrow(Type declaringType, string name, FieldSignature signature)
+		{
+			if (resolveMissingMembers)
+			{
+				return new MissingField(declaringType, name, signature);
+			}
+			throw new MissingFieldException(declaringType.ToString(), name);
+		}
+
+		internal PropertyInfo GetMissingPropertyOrThrow(Type declaringType, string name, PropertySignature propertySignature)
+		{
+			// HACK we need to check __IsMissing here, because Type doesn't have a FindProperty API
+			// since properties are never resolved, except by custom attributes
+			if (resolveMissingMembers || declaringType.__IsMissing)
+			{
+				return new MissingProperty(declaringType, name, propertySignature);
+			}
+			throw new System.MissingMemberException(declaringType.ToString(), name);
 		}
 	}
 }

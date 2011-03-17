@@ -34,12 +34,7 @@ using System.ServiceModel.Dispatcher;
 namespace System.ServiceModel.Web
 {
 	[AttributeUsage (AttributeTargets.Method)]
-	public sealed class WebInvokeAttribute
-#if NET_2_1
-		: Attribute
-#else
-		: Attribute, IOperationBehavior
-#endif
+	public sealed class WebInvokeAttribute : Attribute, IOperationBehavior
 	{
 		WebAttributeInfo info = new WebAttributeInfo ();
 
@@ -84,7 +79,6 @@ namespace System.ServiceModel.Web
 			set { info.UriTemplate = value; }
 		}
 
-#if !NET_2_1
 		void IOperationBehavior.AddBindingParameters (OperationDescription operation, BindingParameterCollection parameters)
 		{
 			// "it is a passive operation behavior"
@@ -104,6 +98,5 @@ namespace System.ServiceModel.Web
 		{
 			// "it is a passive operation behavior"
 		}
-#endif
 	}
 }

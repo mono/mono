@@ -271,7 +271,7 @@ namespace Mono.CSharp {
 		private static TypeSpec FindDocumentedTypeNonArray (MemberCore mc, 
 			string identifier, DeclSpace ds, string cref, Report r)
 		{
-			var types = mc.Module.Compiler.BuildinTypes;
+			var types = mc.Module.Compiler.BuiltinTypes;
 			switch (identifier) {
 			case "int":
 				return types.Int;

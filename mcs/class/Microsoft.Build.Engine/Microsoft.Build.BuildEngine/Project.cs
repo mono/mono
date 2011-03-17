@@ -297,6 +297,13 @@ namespace Microsoft.Build.BuildEngine {
 					Directory.SetCurrentDirectory (Path.GetDirectoryName (fullFileName));
 				building = true;
 				result = BuildInternal (targetNames, targetOutputs, buildFlags);
+			} catch (InvalidProjectFileException ie) {
+				ParentEngine.LogErrorWithFilename (fullFileName, ie.Message);
+				ParentEngine.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", fullFileName, ie.ToString ()));
+			} catch (Exception e) {
+				ParentEngine.LogErrorWithFilename (fullFileName, e.Message);
+				ParentEngine.LogMessage (MessageImportance.Low, String.Format ("{0}: {1}", fullFileName, e.ToString ()));
+				throw;
 			} finally {
 				ParentEngine.EndProjectBuild (this, result);
 				current_settings = BuildSettings.None;
@@ -344,9 +351,13 @@ namespace Microsoft.Build.BuildEngine {
 				initialTargetsBuilt = true;
 			}
 
-			foreach (string target in targetNames)
+			foreach (string target in targetNames) {
+				if (target == null)
+					throw new ArgumentNullException ("Target name cannot be null");
+
 				if (!BuildTarget (target.Trim (), targetOutputs))
 					return false;
+			}
 				
 			return true;
 		}
@@ -1096,12 +1107,18 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluate_properties)
 				groupingCollection.Evaluate (EvaluationType.Property);
 
-			string project_attribute = xmlElement.GetAttribute ("Project");
-			if (String.IsNullOrEmpty (project_attribute))
-				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+			try {
+				PushThisFileProperty (importingProject != null ? importingProject.FullFileName : FullFileName);
 
-			Import.ForEachExtensionPathTillFound (xmlElement, this, importingProject,
-				(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
+				string project_attribute = xmlElement.GetAttribute ("Project");
+				if (String.IsNullOrEmpty (project_attribute))
+					throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+
+				Import.ForEachExtensionPathTillFound (xmlElement, this, importingProject,
+					(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
+			} finally {
+				PopThisFileProperty ();
+			}
 		}
 
 		bool AddSingleImport (XmlElement xmlElement, string projectPath, ImportedProject importingProject, string from_source_msg)

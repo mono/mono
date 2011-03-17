@@ -41,6 +41,7 @@ namespace IKVM.Reflection
 		public abstract MethodInfo GetRaiseMethod(bool nonPublic);
 		public abstract MethodInfo GetRemoveMethod(bool nonPublic);
 		public abstract MethodInfo[] GetOtherMethods(bool nonPublic);
+		public abstract MethodInfo[] __GetMethods();
 		public abstract Type EventHandlerType { get; }
 		internal abstract bool IsPublic { get; }
 		internal abstract bool IsStatic { get; }

@@ -56,7 +56,6 @@ namespace Microsoft.VisualBasic
 {
 	internal class VBCodeGenerator : CodeGenerator
 	{
-#if NET_2_0
 		private string [] Keywords = new string [] {
 			"AddHandler", "AddressOf", "Alias", "And",
 			"AndAlso", "Ansi", "As", "Assembly",
@@ -94,46 +93,6 @@ namespace Microsoft.VisualBasic
 			"While", "With", "WithEvents", "WriteOnly", 
 			"Xor" 
 		};
-#else
-		private string [] Keywords = new string [] {
-			"AddHandler", "AddressOf", "Alias", "And",
-			"AndAlso", "Ansi", "As", "Assembly",
-			"Auto", "Boolean", "ByRef", "Byte", 
-			"ByVal", "Call", "Case", "Catch", 
-			"CBool", "CByte", "CChar", "CDate", 
-			"CDec", "CDbl", "Char", "CInt", 
-			"Class", "CLng", "CObj", "Const", 
-			"CShort", "CSng", "CStr", "CType", 
-			"Date", "Decimal", "Declare", "Default", 
-			"Delegate", "Dim", "DirectCast", "Do", 
-			"Double", "Each", "Else", "ElseIf", 
-			"End", "Enum", "Erase", "Error", 
-			"Event", "Exit", "False", "Finally", 
-			"For", "Friend", "Function", "Get", 
-			"GetType", "GoSub", "GoTo", "Handles", 
-			"If", "Implements", "Imports", "In", 
-			"Inherits", "Integer", "Interface", "Is", 
-			"Let", "Lib", "Like", "Long", 
-			"Loop", "Me", "Mod", "Module", 
-			"MustInherit", "MustOverride", "MyBase", "MyClass", 
-			"Namespace", "New", "Next", "Not", 
-			"Nothing", "NotInheritable", "NotOverridable", "Object", 
-			"On", "Option", "Optional", "Or", 
-			"OrElse", "Overloads", "Overridable", "Overrides", 
-			"ParamArray", "Preserve", "Private", "Property", 
-			"Protected", "Public", "RaiseEvent", "ReadOnly", 
-			"ReDim", "REM", "RemoveHandler", "Resume", 
-			"Return", "Select", "Set", "Shadows", 
-			"Shared", "Short", "Single", "Static", 
-			"Step", "Stop", "String", "Structure", 
-			"Sub", "SyncLock", "Then", "Throw", 
-			"To", "True", "Try", "TypeOf", 
-			"Unicode", "Until", "Variant", "When", 
-			"While", "With", "WithEvents", "WriteOnly", 
-			"Xor" 
-		};
-#endif
-
 		public VBCodeGenerator()
 		{
 		}
@@ -420,7 +379,6 @@ namespace Microsoft.VisualBasic
 			if (e.Value is char) {
 				char c = (char) e.Value;
 				int ch = (int) c;
-#if NET_2_0
 				Output.Write("Global.Microsoft.VisualBasic.ChrW(" + ch.ToString(CultureInfo.InvariantCulture) + ")");
 			} else if (e.Value is ushort) {
 				ushort uc = (ushort) e.Value;
@@ -439,9 +397,6 @@ namespace Microsoft.VisualBasic
 				Output.Write ("CSByte(");
 				Output.Write (sb.ToString(CultureInfo.InvariantCulture));
 				Output.Write (')');
-#else
-				Output.Write("Microsoft.VisualBasic.ChrW(" + ch.ToString(CultureInfo.InvariantCulture) + ")");
-#endif
 			} else {
 				base.GeneratePrimitiveExpression(e);
 			}
@@ -716,7 +671,6 @@ namespace Microsoft.VisualBasic
 			output.Write ("Event ");
 			OutputTypeNamePair (eventRef.Type, GetEventName(eventRef));
 
-#if NET_2_0
 			if (eventRef.ImplementationTypes.Count > 0) {
 				OutputImplementationTypes (eventRef.ImplementationTypes, eventRef.Name);
 			} else if (eventRef.PrivateImplementationType != null) {
@@ -725,7 +679,6 @@ namespace Microsoft.VisualBasic
 				output.Write ('.');
 				output.Write (eventRef.Name);
 			}
-#endif
 
 			output.WriteLine ();
 		}
@@ -766,10 +719,8 @@ namespace Microsoft.VisualBasic
 		
 		protected override void GenerateEntryPointMethod (CodeEntryPointMethod method, CodeTypeDeclaration declaration)
 		{
-#if NET_2_0
 			OutputAttributes (method.CustomAttributes, null,
 				LineHandling.ContinueLine);
-#endif
 
 			Output.WriteLine ("Public Shared Sub Main()");
 			Indent++;
@@ -812,11 +763,7 @@ namespace Microsoft.VisualBasic
 				output.Write ("Function ");
 
 			output.Write (GetMethodName(method));
-
-#if NET_2_0
 			OutputTypeParameters (method.TypeParameters);
-#endif
-
 			output.Write ('(');
 			OutputParameters (method.Parameters);
 			output.Write (')');
@@ -889,19 +836,11 @@ namespace Microsoft.VisualBasic
 
 			output.Write ("Property ");
 			Output.Write (GetPropertyName (property));
-#if NET_2_0
 			// in .NET 2.0, always output parantheses (whether or not there 
 			// are any parameters to output
 			Output.Write ('(');
 			OutputParameters (property.Parameters);
 			Output.Write (')');
-#else
-			if (property.Parameters.Count > 0) {
-				Output.Write ('(');
-				OutputParameters (property.Parameters);
-				Output.Write (')');
-			}
-#endif
 			Output.Write (" As ");
 			Output.Write (GetTypeOutput(property.Type));
 
@@ -968,11 +907,7 @@ namespace Microsoft.VisualBasic
 					Output.Write ("MyBase.New(");
 					OutputExpressionList (ctorArgs);
 					Output.WriteLine (")");
-#if NET_2_0
 				} else if (IsCurrentClass) {
-#else
-				} else {
-#endif
 					// call default base ctor
 					Output.WriteLine ("MyBase.New");
 				}
@@ -987,10 +922,8 @@ namespace Microsoft.VisualBasic
 			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface)
 				return;
 
-#if NET_2_0
 			OutputAttributes (constructor.CustomAttributes, null,
 				LineHandling.ContinueLine);
-#endif
 
 			Output.WriteLine ("Shared Sub New()");
 			Indent++;
@@ -1024,9 +957,7 @@ namespace Microsoft.VisualBasic
 				}
 
 				output.Write (CreateEscapedIdentifier (delegateDecl.Name));
-#if NET_2_0
 				OutputTypeParameters (delegateDecl.TypeParameters);
-#endif
 				output.Write ("(");
 				OutputParameters (delegateDecl.Parameters);
 				Output.Write (")");
@@ -1038,9 +969,7 @@ namespace Microsoft.VisualBasic
 			} else {
 				OutputTypeAttributes (declaration);
 				output.Write (CreateEscapedIdentifier (declaration.Name));
-#if NET_2_0
 				OutputTypeParameters (declaration.TypeParameters);
-#endif
 
 				if (IsCurrentEnum) {
 					if (declaration.BaseTypes.Count > 0) {
@@ -1332,11 +1261,7 @@ namespace Microsoft.VisualBasic
 				//
 				MemberAttributes access = attributes & MemberAttributes.AccessMask;
 				if (access == MemberAttributes.Public || 
-#if NET_2_0
 					access == MemberAttributes.Family || access == MemberAttributes.Assembly)
-#else
-					access == MemberAttributes.Family)
-#endif
 					Output.Write ("Overridable ");
 				break;
 			}
@@ -1404,10 +1329,8 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 			TypeAttributes attributes = declaration.TypeAttributes;
 
-#if NET_2_0
 			if (declaration.IsPartial)
 				output.Write ("Partial ");
-#endif
 			
 			switch (attributes & TypeAttributes.VisibilityMask) {
 			case TypeAttributes.Public:
@@ -1417,7 +1340,6 @@ namespace Microsoft.VisualBasic
 			case TypeAttributes.NestedPrivate:
 				output.Write ("Private ");
 				break;
-#if NET_2_0
 			case TypeAttributes.NotPublic:
 			case TypeAttributes.NestedFamANDAssem:
 			case TypeAttributes.NestedAssembly:
@@ -1429,7 +1351,6 @@ namespace Microsoft.VisualBasic
 			case TypeAttributes.NestedFamORAssem:
 				output.Write ("Protected Friend ");
 				break;
-#endif
 			}
 
 			if (declaration.IsStruct) {
@@ -1451,7 +1372,6 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-#if NET_2_0
 		void OutputTypeParameters (CodeTypeParameterCollection parameters)
 		{
 			int count = parameters.Count;
@@ -1497,14 +1417,11 @@ namespace Microsoft.VisualBasic
 			if (constraint_count > 1)
 				Output.Write ("}");
 		}
-#endif
 
 		protected override void OutputTypeNamePair (CodeTypeReference typeRef, String name)
 		{
-#if NET_2_0
 			if (name.Length == 0)
 				name = "__exception";
-#endif
 			Output.Write (CreateEscapedIdentifier(name) + " As " + GetTypeOutput (typeRef));
 		}
 
@@ -1625,7 +1542,6 @@ namespace Microsoft.VisualBasic
 				case "System.Object":
 					output = "Object";
 					break;
-#if NET_2_0
 				case "System.SByte":
 					output = "SByte";
 					break;
@@ -1638,7 +1554,6 @@ namespace Microsoft.VisualBasic
 				case "System.UInt64":
 					output = "ULong";
 					break;
-#endif
 				default:
 					output = type.BaseType.Replace('+', '.');
 					output = CreateEscapedIdentifier (output);
@@ -1710,15 +1625,11 @@ namespace Microsoft.VisualBasic
 
 		private string GetEventName (CodeMemberEvent evt)
 		{
-#if NET_2_0
 			if (evt.PrivateImplementationType == null)
 				return evt.Name;
 
 			string baseType = evt.PrivateImplementationType.BaseType.Replace ('.', '_');
 			return baseType + "_" + evt.Name;
-#else
-			return evt.Name;
-#endif
 		}
 
 		private string GetMethodName (CodeMemberMethod method)

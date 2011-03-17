@@ -119,7 +119,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				testLogger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
-			testLogger.DumpMessages ();
 
 			Assert.AreEqual (1, testLogger.NormalMessageCount, "Expected number of messages");
 			testLogger.CheckLoggedMessageHead (expected, "A1");

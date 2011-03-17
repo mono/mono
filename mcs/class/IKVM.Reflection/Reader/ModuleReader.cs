@@ -343,7 +343,13 @@ namespace IKVM.Reflection.Reader
 				}
 				int index = metadataToken & 0xFFFFFF;
 				int len = ReadCompressedInt(userStringHeap, ref index) & ~1;
-				str = Encoding.Unicode.GetString(userStringHeap, index, len);
+				StringBuilder sb = new StringBuilder(len / 2);
+				for (int i = 0; i < len; i += 2)
+				{
+					char ch = (char)(userStringHeap[index + i] | userStringHeap[index + i + 1] << 8);
+					sb.Append(ch);
+				}
+				str = sb.ToString();
 				strings.Add(metadataToken, str);
 			}
 			return str;
@@ -383,22 +389,26 @@ namespace IKVM.Reflection.Reader
 										break;
 									}
 								case ModuleTable.Index:
-									if (scope != 0 && scope != 1)
-									{
-										throw new NotImplementedException("self reference scope?");
-									}
-									typeRefs[index] = FindType(GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName));
-									break;
 								case ModuleRefTable.Index:
 									{
-										Module module = ResolveModuleRef(ModuleRef.records[(scope & 0xFFFFFF) - 1]);
-										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
-										Type type = module.FindType(typeName);
-										if (type == null)
+										Module module;
+										if (scope >> 24 == ModuleTable.Index)
 										{
-											throw new TypeLoadException(String.Format("Type '{0}' not found in module '{1}'", typeName, module.Name));
+											if (scope == 0 || scope == 1)
+											{
+												module = this;
+											}
+											else
+											{
+												throw new NotImplementedException("self reference scope?");
+											}
 										}
-										typeRefs[index] = type;
+										else
+										{
+											module = ResolveModuleRef(ModuleRef.records[(scope & 0xFFFFFF) - 1]);
+										}
+										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
+										typeRefs[index] = module.FindType(typeName) ?? module.universe.GetMissingTypeOrThrow(module, null, typeName);
 										break;
 									}
 								default:
@@ -753,14 +763,41 @@ namespace IKVM.Reflection.Reader
 					case MethodDefTable.Index:
 						return GetMethodAt(null, (owner & 0xFFFFFF) - 1);
 					case ModuleRefTable.Index:
-						memberRefs[index] = ResolveTypeMemberRef(ResolveModuleType(owner), name, ByteReader.FromBlob(blobHeap, sig), genericTypeArguments, genericMethodArguments);
+						memberRefs[index] = ResolveTypeMemberRef(ResolveModuleType(owner), name, ByteReader.FromBlob(blobHeap, sig));
 						break;
 					case TypeDefTable.Index:
 					case TypeRefTable.Index:
-						memberRefs[index] = ResolveTypeMemberRef(ResolveType(owner), name, ByteReader.FromBlob(blobHeap, sig), genericTypeArguments, genericMethodArguments);
+						memberRefs[index] = ResolveTypeMemberRef(ResolveType(owner), name, ByteReader.FromBlob(blobHeap, sig));
 						break;
 					case TypeSpecTable.Index:
-						return ResolveTypeMemberRef(ResolveType(owner, genericTypeArguments, genericMethodArguments), name, ByteReader.FromBlob(blobHeap, sig), genericTypeArguments, genericMethodArguments);
+					{
+						Type type = ResolveType(owner, genericTypeArguments, genericMethodArguments);
+						if (type.IsArray)
+						{
+							MethodSignature methodSig = MethodSignature.ReadSig(this, ByteReader.FromBlob(blobHeap, sig), new GenericContext(genericTypeArguments, genericMethodArguments));
+							return type.FindMethod(name, methodSig)
+								?? universe.GetMissingMethodOrThrow(type, name, methodSig);
+						}
+						else if (type.IsGenericTypeInstance)
+						{
+							MemberInfo member = ResolveTypeMemberRef(type.GetGenericTypeDefinition(), name, ByteReader.FromBlob(blobHeap, sig));
+							MethodBase mb = member as MethodBase;
+							if (mb != null)
+							{
+								member = mb.BindTypeParameters(type);
+							}
+							FieldInfo fi = member as FieldInfo;
+							if (fi != null)
+							{
+								member = fi.BindTypeParameters(type);
+							}
+							return member;
+						}
+						else
+						{
+							return ResolveTypeMemberRef(type, name, ByteReader.FromBlob(blobHeap, sig));
+						}
+					}
 					default:
 						throw new BadImageFormatException();
 				}
@@ -780,46 +817,45 @@ namespace IKVM.Reflection.Reader
 			return module.GetModuleType();
 		}
 
-		private MemberInfo ResolveTypeMemberRef(Type type, string name, ByteReader sig, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		private MemberInfo ResolveTypeMemberRef(Type type, string name, ByteReader sig)
 		{
-			IGenericContext context;
-			if ((genericTypeArguments == null && genericMethodArguments == null) || type.IsGenericType)
-			{
-				context = type;
-			}
-			else
-			{
-				context = new GenericContext(genericTypeArguments, genericMethodArguments);
-			}
 			if (sig.PeekByte() == Signature.FIELD)
 			{
 				Type org = type;
-				FieldSignature fieldSig = FieldSignature.ReadSig(this, sig, context);
-				do
+				FieldSignature fieldSig = FieldSignature.ReadSig(this, sig, type);
+				FieldInfo field = type.FindField(name, fieldSig);
+				if (field == null && universe.MissingMemberResolution)
 				{
-					FieldInfo field = type.FindField(name, fieldSig);
-					if (field != null)
-					{
-						return field;
-					}
-					type = type.BaseType;
-				} while (type != null);
+					return universe.GetMissingFieldOrThrow(type, name, fieldSig);
+				}
+				while (field == null && (type = type.BaseType) != null)
+				{
+					field = type.FindField(name, fieldSig);
+				}
+				if (field != null)
+				{
+					return field;
+				}
 				throw new MissingFieldException(org.ToString(), name);
 			}
 			else
 			{
 				Type org = type;
-				MethodSignature methodSig = MethodSignature.ReadSig(this, sig, context);
-				do
+				MethodSignature methodSig = MethodSignature.ReadSig(this, sig, type);
+				MethodBase method = type.FindMethod(name, methodSig);
+				if (method == null && universe.MissingMemberResolution)
 				{
-					MethodBase method = type.FindMethod(name, methodSig);
-					if (method != null)
-					{
-						return method;
-					}
-					type = type.BaseType;
-				} while (type != null);
-				return universe.GetMissingMethodOrThrow(org, name, methodSig);
+					return universe.GetMissingMethodOrThrow(type, name, methodSig);
+				}
+				while (method == null && (type = type.BaseType) != null)
+				{
+					method = type.FindMethod(name, methodSig);
+				}
+				if (method != null)
+				{
+					return method;
+				}
+				throw new MissingMethodException(org.ToString(), name);
 			}
 		}
 
@@ -921,10 +957,60 @@ namespace IKVM.Reflection.Reader
 				{
 					name.CultureInfo = System.Globalization.CultureInfo.InvariantCulture;
 				}
+				if (AssemblyRef.records[i].HashValue != 0)
+				{
+					name.hash = GetBlobCopy(AssemblyRef.records[i].HashValue);
+				}
 				name.Flags = (AssemblyNameFlags)AssemblyRef.records[i].Flags;
 				list.Add(name);
 			}
 			return list.ToArray();
+		}
+
+		public override string[] __GetReferencedModules()
+		{
+			string[] arr = new string[this.ModuleRef.RowCount];
+			for (int i = 0; i < arr.Length; i++)
+			{
+				arr[i] = GetString(this.ModuleRef.records[i]);
+			}
+			return arr;
+		}
+
+		public override Type[] __GetReferencedTypes()
+		{
+			Type[] arr = new Type[this.TypeRef.RowCount];
+			for (int i = 0; i < arr.Length; i++)
+			{
+				arr[i] = ResolveType((TypeRefTable.Index << 24) + i + 1);
+			}
+			return arr;
+		}
+
+		public override Type[] __GetExportedTypes()
+		{
+			Type[] arr = new Type[this.ExportedType.RowCount];
+			for (int i = 0; i < arr.Length; i++)
+			{
+				arr[i] = ResolveExportedType(i);
+			}
+			return arr;
+		}
+
+		private Type ResolveExportedType(int index)
+		{
+			TypeName typeName = GetTypeName(ExportedType.records[index].TypeNamespace, ExportedType.records[index].TypeName);
+			int implementation = ExportedType.records[index].Implementation;
+			int token = ExportedType.records[index].TypeDefId;
+			switch (implementation >> 24)
+			{
+				case AssemblyRefTable.Index:
+					return ResolveAssemblyRef((implementation & 0xFFFFFF) - 1).ResolveType(typeName).SetMetadataTokenForMissing(token);
+				case ExportedTypeTable.Index:
+					return ResolveExportedType((implementation & 0xFFFFFF) - 1).ResolveNestedType(typeName).SetMetadataTokenForMissing(token);
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		internal override Type GetModuleType()
@@ -951,6 +1037,11 @@ namespace IKVM.Reflection.Reader
 		public override long __RelativeVirtualAddressToFileOffset(int rva)
 		{
 			return peFile.RvaToFileOffset((uint)rva);
+		}
+
+		public override bool __GetSectionInfo(int rva, out string name, out int characteristics)
+		{
+			return peFile.GetSectionInfo(rva, out name, out characteristics);
 		}
 
 		public override void GetPEKind(out PortableExecutableKinds peKind, out ImageFileMachine machine)
@@ -1021,6 +1112,16 @@ namespace IKVM.Reflection.Reader
 		{
 			PopulateTypeDef();
 			manifestModule.ExportTypes(typeDefs, fileToken);
+		}
+
+		protected override long GetImageBaseImpl()
+		{
+			return (long)peFile.OptionalHeader.ImageBase;
+		}
+
+		public override long __StackReserve
+		{
+			get { return (long)peFile.OptionalHeader.SizeOfStackReserve; }
 		}
 	}
 }

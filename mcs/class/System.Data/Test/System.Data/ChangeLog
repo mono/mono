@@ -1,3 +1,8 @@
+2011-03-15  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	* DataSetTest2.cs (WriteXmlSchema_Relations_ForeignKeys): Add
+	PrimaryKey before other constraints.  Fixes regression of #672113.
+       
 2011-01-18  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	* DataRowTest.cs (ParentChildRowVersionTest): Don't run

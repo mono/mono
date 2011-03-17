@@ -513,7 +513,7 @@ namespace Mono.CSharp {
 		{
 			this.mc = mc;
 			if (!spec.IsStatic)
-				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
+				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -749,7 +749,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (source.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+			if (source.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Arguments arg = new Arguments (1);
 				arg.Add (new Argument (source));
 				return new SimpleAssign (target, new DynamicConversion (target_type, CSharpBinderFlags.ConvertExplicit, arg, loc), loc).Resolve (ec);

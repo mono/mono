@@ -186,6 +186,18 @@ namespace IKVM.Reflection.Writer
 			return offset;
 		}
 
+		internal string Find(int index)
+		{
+			foreach (KeyValuePair<string, int> kv in strings)
+			{
+				if (kv.Value == index)
+				{
+					return kv.Key;
+				}
+			}
+			return null;
+		}
+
 		protected override int GetLength()
 		{
 			return nextOffset;

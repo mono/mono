@@ -442,8 +442,12 @@ namespace Mono.CSharp
 			if (Compiler.Settings.GenerateDebugInfo) {
 				symbol_writer = new MonoSymbolWriter (file_name);
 
+				// Register all source files with symbol writer
+				foreach (var source in Compiler.SourceFiles) {
+					source.DefineSymbolInfo (symbol_writer);
+				}
+
 				// TODO: global variables
-				Location.DefineSymbolDocuments (symbol_writer);
 				SymbolWriter.symwriter = symbol_writer;
 			}
 
@@ -459,10 +463,10 @@ namespace Mono.CSharp
 			if (!wrap_non_exception_throws_custom) {
 				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
 				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = pa.GetProperty ("WrapNonExceptionThrows", Compiler.BuildinTypes.Bool, Location.Null);
+					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
 					if (prop != null) {
 						AttributeEncoder encoder = new AttributeEncoder ();
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuildinTypes, true, Location.Null));
+						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
 						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
 					}
 				}
@@ -608,15 +612,15 @@ namespace Mono.CSharp
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
-				var req_min = (ConstSpec) module.PredefinedTypes.SecurityAction.GetField ("RequestMinimum", module.PredefinedTypes.SecurityAction.TypeSpec, loc);
+				var req_min = module.PredefinedMembers.SecurityActionRequestMinimum.Resolve (loc);
 
 				Arguments pos = new Arguments (1);
 				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
-				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuildinTypes, true, loc)));
+				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuiltinTypes, true, loc)));
 
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (module, null, null, null), "assembly",
+				GlobalAttribute g = new GlobalAttribute ("assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (module, module);
@@ -991,7 +995,7 @@ namespace Mono.CSharp
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
 			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
 		{
-			assembly = new Field (this, new TypeExpression (parent.Compiler.BuildinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
+			assembly = new Field (this, new TypeExpression (parent.Compiler.BuiltinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);
 
 			AddField (assembly);

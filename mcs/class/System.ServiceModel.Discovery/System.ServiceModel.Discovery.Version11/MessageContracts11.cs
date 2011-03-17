@@ -55,7 +55,7 @@ namespace System.ServiceModel.Discovery.Version11
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://www.w3.org/2005/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://www.w3.org/2005/08/addressing")]
 			public UniqueId Id { get; set; }
 
 			[MessageBodyMember (Name = "Hello", Namespace = NS)]
@@ -72,7 +72,7 @@ namespace System.ServiceModel.Discovery.Version11
 
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageHeader (Name = "MessageId", Namespace = "http://www.w3.org/2005/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://www.w3.org/2005/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadata11 EndpointDiscoveryMetadata { get; set; }
@@ -86,7 +86,7 @@ namespace System.ServiceModel.Discovery.Version11
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://www.w3.org/2005/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://www.w3.org/2005/08/addressing")]
 			public UniqueId Id { get; set; }
 
 			[MessageBodyMember (Name = "Probe", Namespace = NS)]
@@ -115,7 +115,7 @@ namespace System.ServiceModel.Discovery.Version11
 				Id = new UniqueId ();
 			}
 
-			[MessageHeader (Name = "MessageId", Namespace = "http://www.w3.org/2005/08/addressing")]
+			[MessageHeader (Name = "MessageID", Namespace = "http://www.w3.org/2005/08/addressing")]
 			public UniqueId Id { get; set; }
 			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
 			public ResolveCriteria11 Body { get; set; }

@@ -190,7 +190,7 @@ namespace System
 
 		public Decimal (double value) 
 		{
-#if false
+#if true
 			//
 			// We cant use the double2decimal method
 			// because it incorrectly turns the floating point

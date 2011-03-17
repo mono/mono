@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,9 +37,15 @@ namespace IKVM.Reflection.Emit
 		private PropertySignature sig;
 		private MethodBuilder getter;
 		private MethodBuilder setter;
-		private List<MethodBuilder> otherMethods;
+		private readonly List<Accessor> accessors = new List<Accessor>();
 		private int lazyPseudoToken;
 		private bool patchCallingConvention;
+
+		private struct Accessor
+		{
+			internal short Semantics;
+			internal MethodBuilder Method;
+		}
 
 		internal PropertyBuilder(TypeBuilder typeBuilder, string name, PropertyAttributes attributes, PropertySignature sig, bool patchCallingConvention)
 		{
@@ -55,34 +61,30 @@ namespace IKVM.Reflection.Emit
 			get { return sig; }
 		}
 
-		private void PatchCallingConvention(MethodBuilder mdBuilder)
-		{
-			if (patchCallingConvention && !mdBuilder.IsStatic)
-			{
-				sig.HasThis = true;
-			}
-		}
-
 		public void SetGetMethod(MethodBuilder mdBuilder)
 		{
-			PatchCallingConvention(mdBuilder);
 			getter = mdBuilder;
+			Accessor acc;
+			acc.Semantics = MethodSemanticsTable.Getter;
+			acc.Method = mdBuilder;
+			accessors.Add(acc);
 		}
 
 		public void SetSetMethod(MethodBuilder mdBuilder)
 		{
-			PatchCallingConvention(mdBuilder);
 			setter = mdBuilder;
+			Accessor acc;
+			acc.Semantics = MethodSemanticsTable.Setter;
+			acc.Method = mdBuilder;
+			accessors.Add(acc);
 		}
 
 		public void AddOtherMethod(MethodBuilder mdBuilder)
 		{
-			PatchCallingConvention(mdBuilder);
-			if (otherMethods == null)
-			{
-				otherMethods = new List<MethodBuilder>();
-			}
-			otherMethods.Add(mdBuilder);
+			Accessor acc;
+			acc.Semantics = MethodSemanticsTable.Other;
+			acc.Method = mdBuilder;
+			accessors.Add(acc);
 		}
 
 		public void SetCustomAttribute(ConstructorInfo con, byte[] binaryAttribute)
@@ -144,14 +146,9 @@ namespace IKVM.Reflection.Emit
 		public override MethodInfo[] GetAccessors(bool nonPublic)
 		{
 			List<MethodInfo> list = new List<MethodInfo>();
-			AddAccessor(list, nonPublic, getter);
-			AddAccessor(list, nonPublic, setter);
-			if (otherMethods != null)
+			foreach (Accessor acc in accessors)
 			{
-				foreach (MethodInfo method in otherMethods)
-				{
-					AddAccessor(list, nonPublic, method);
-				}
+				AddAccessor(list, nonPublic, acc.Method);
 			}
 			return list.ToArray();
 		}
@@ -191,6 +188,11 @@ namespace IKVM.Reflection.Emit
 
 		internal void Bake()
 		{
+			if (patchCallingConvention)
+			{
+				sig.HasThis = !this.IsStatic;
+			}
+
 			PropertyTable.Record rec = new PropertyTable.Record();
 			rec.Flags = (short)attributes;
 			rec.Name = typeBuilder.ModuleBuilder.Strings.Add(name);
@@ -202,20 +204,9 @@ namespace IKVM.Reflection.Emit
 				typeBuilder.ModuleBuilder.RegisterTokenFixup(lazyPseudoToken, token);
 			}
 
-			if (getter != null)
+			foreach (Accessor acc in accessors)
 			{
-				AddMethodSemantics(MethodSemanticsTable.Getter, getter.MetadataToken, token);
-			}
-			if (setter != null)
-			{
-				AddMethodSemantics(MethodSemanticsTable.Setter, setter.MetadataToken, token);
-			}
-			if (otherMethods != null)
-			{
-				foreach (MethodBuilder method in otherMethods)
-				{
-					AddMethodSemantics(MethodSemanticsTable.Other, method.MetadataToken, token);
-				}
+				AddMethodSemantics(acc.Semantics, acc.Method.MetadataToken, token);
 			}
 		}
 
@@ -232,18 +223,11 @@ namespace IKVM.Reflection.Emit
 		{
 			get
 			{
-				if ((getter != null && getter.IsPublic) || (setter != null && setter.IsPublic))
+				foreach (Accessor acc in accessors)
 				{
-					return true;
-				}
-				if (otherMethods != null)
-				{
-					foreach (MethodBuilder method in otherMethods)
+					if (acc.Method.IsPublic)
 					{
-						if (method.IsPublic)
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 				return false;
@@ -254,18 +238,11 @@ namespace IKVM.Reflection.Emit
 		{
 			get
 			{
-				if ((getter != null && getter.IsStatic) || (setter != null && setter.IsStatic))
+				foreach (Accessor acc in accessors)
 				{
-					return true;
-				}
-				if (otherMethods != null)
-				{
-					foreach (MethodBuilder method in otherMethods)
+					if (acc.Method.IsStatic)
 					{
-						if (method.IsStatic)
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 				return false;

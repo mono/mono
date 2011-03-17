@@ -47,19 +47,19 @@ namespace System.Diagnostics {
 		}
 
 		[Conditional ("DEBUG")]
-		public static void Assert (bool condition, string message, string details)
+		public static void Assert (bool condition, string message, string detailMessage)
 		{
 		}
 
 		[Conditional ("DEBUG")]
-		public static void Assert (bool condition, string message, string details, object [] args)
+		public static void Assert (bool condition, string message, string detailMessageFormat, params object [] args)
 		{
 		}
 
 		[Conditional ("DEBUG")]
-		public static void WriteLine (object obj)
+		public static void WriteLine (object value)
 		{
-			Console.WriteLine (obj);
+			Console.WriteLine (value);
 		}
 
 		[Conditional ("DEBUG")]

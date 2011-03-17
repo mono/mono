@@ -36,7 +36,7 @@ namespace Mono.CSharp
 		//
 		sealed class StaticDataContainer : CompilerGeneratedClass
 		{
-			Dictionary<int, Struct> size_types;
+			readonly Dictionary<int, Struct> size_types;
 			new int fields;
 
 			public StaticDataContainer (ModuleContainer module)
@@ -68,22 +68,21 @@ namespace Mono.CSharp
 					size_type.DefineType ();
 
 					size_types.Add (data.Length, size_type);
-
-					var pa = Module.PredefinedAttributes.StructLayout;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, Compiler.BuildinTypes.Short)) {
+					var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
+					if (ctor != null) {
 						var argsEncoded = new AttributeEncoder ();
 						argsEncoded.Encode ((short) LayoutKind.Explicit);
 
-						var field_size = pa.GetField ("Size", Compiler.BuildinTypes.Int, Location);
-						var pack = pa.GetField ("Pack", Compiler.BuildinTypes.Int, Location);
-						if (field_size != null) {
+						var field_size = Module.PredefinedMembers.StructLayoutSize.Resolve (Location);
+						var pack = Module.PredefinedMembers.StructLayoutPack.Resolve (Location);
+						if (field_size != null && pack != null) {
 							argsEncoded.EncodeNamedArguments (
 								new[] { field_size, pack },
-								new[] { new IntConstant (Compiler.BuildinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuildinTypes, 1, Location) }
+								new[] { new IntConstant (Compiler.BuiltinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuiltinTypes, 1, Location) }
 							);
-						}
 
-						pa.EmitAttribute (size_type.TypeBuilder, argsEncoded);
+							size_type.TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), argsEncoded.ToArray ());
+						}
 					}
 				}
 
@@ -119,13 +118,16 @@ namespace Mono.CSharp
 		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
-		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
-		Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> arrays;
+		readonly Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
+		readonly Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> array_types;
+		readonly Dictionary<TypeSpec, PointerContainer> pointer_types;
+		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
+		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
 		readonly RootNamespace global_ns;
-		Dictionary<string, RootNamespace> alias_ns;
+		readonly Dictionary<string, RootNamespace> alias_ns;
 
 		ModuleBuilder builder;
 
@@ -133,6 +135,7 @@ namespace Mono.CSharp
 
 		PredefinedAttributes predefined_attributes;
 		PredefinedTypes predefined_types;
+		PredefinedMembers predefined_members;
 
 		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
 
@@ -147,14 +150,26 @@ namespace Mono.CSharp
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
-			arrays = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
+			array_types = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
+			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
+			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
+			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
 		}
 
 		#region Properties
 
-		public Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArraysCache {
+		internal Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArrayTypesCache {
 			get {
-				return arrays;
+				return array_types;
+			}
+		}
+
+		//
+		// Cache for parameter-less attributes
+		//
+		internal Dictionary<TypeSpec, MethodSpec> AttributeConstructorCache {
+			get {
+				return attrs_cache;
 			}
 		}
 
@@ -216,15 +231,33 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal Dictionary<TypeSpec, PointerContainer> PointerTypesCache {
+			get {
+				return pointer_types;
+			}
+		}
+
 		internal PredefinedAttributes PredefinedAttributes {
 			get {
 				return predefined_attributes;
 			}
 		}
 
+		internal PredefinedMembers PredefinedMembers {
+			get {
+				return predefined_members;
+			}
+		}
+
 		internal PredefinedTypes PredefinedTypes {
 			get {
 				return predefined_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
+			get {
+				return reference_types;
 			}
 		}
 
@@ -251,11 +284,6 @@ namespace Mono.CSharp
 			}
 
 			existing.Add (type);
-		}
-
-		public void AddAttributes (List<Attribute> attrs)
-		{
-			AddAttributes (attrs, this);
 		}
 
 		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
@@ -365,8 +393,6 @@ namespace Mono.CSharp
 
 		public new void Define ()
 		{
-			InitializePredefinedTypes ();
-
 			foreach (TypeContainer tc in types)
 				tc.DefineType ();
 
@@ -446,6 +472,7 @@ namespace Mono.CSharp
 		{
 			predefined_attributes = new PredefinedAttributes (this);
 			predefined_types = new PredefinedTypes (this);
+			predefined_members = new PredefinedMembers (this);
 		}
 
 		public override bool IsClsComplianceRequired ()
@@ -461,7 +488,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		protected override void RemoveMemberType (DeclSpace ds)
+		protected override void RemoveMemberType (TypeContainer ds)
 		{
 			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
 			base.RemoveMemberType (ds);

@@ -155,6 +155,11 @@ namespace IKVM.Reflection
 			return GetAccessors(false);
 		}
 
+		public CallingConventions __CallingConvention
+		{
+			get { return this.PropertySignature.CallingConvention; }
+		}
+
 		internal virtual PropertyInfo BindTypeParameters(Type type)
 		{
 			return new GenericPropertyInfo(this.DeclaringType.BindTypeParameters(type), this);

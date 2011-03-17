@@ -35,10 +35,10 @@ namespace MyTemplateControls
     {
       container = new TestContainerControl (this);
     }
-#if SYSTEM_WEB_EXTENSIONS
-    protected
-#else
-    protected internal 
+    
+    protected 
+#if !SYSTEM_WEB_EXTENSIONS
+    internal 
 #endif
     override void CreateChildControls ()
     {

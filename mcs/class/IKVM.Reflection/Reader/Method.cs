@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -266,7 +266,7 @@ namespace IKVM.Reflection.Reader
 					const short CharMapErrorOff = 0x2000;
 
 					Type type = module.universe.System_Runtime_InteropServices_DllImportAttribute;
-					ConstructorInfo constructor = type.GetConstructor(new Type[] { module.universe.System_String });
+					ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor(module.universe.System_String);
 					List<CustomAttributeNamedArgument> list = new List<CustomAttributeNamedArgument>();
 					int flags = module.ImplMap.records[i].MappingFlags;
 					string entryPoint = module.GetString(module.ImplMap.records[i].ImportName);
@@ -304,18 +304,20 @@ namespace IKVM.Reflection.Reader
 							callingConvention = System.Runtime.InteropServices.CallingConvention.ThisCall;
 							break;
 						case CallConvWinapi:
-						default:
 							callingConvention = System.Runtime.InteropServices.CallingConvention.Winapi;
+							break;
+						default:
+							callingConvention = 0;
 							break;
 					}
 					AddNamedArgument(list, type, "EntryPoint", entryPoint);
 					AddNamedArgument(list, type, "ExactSpelling", flags, NoMangle);
 					AddNamedArgument(list, type, "SetLastError", flags, SupportsLastError);
 					AddNamedArgument(list, type, "PreserveSig", (int)GetMethodImplementationFlags(), (int)MethodImplAttributes.PreserveSig);
-					AddNamedArgument(list, type, "CallingConvention", (int)callingConvention);
+					AddNamedArgument(list, type, "CallingConvention", module.universe.System_Runtime_InteropServices_CallingConvention, (int)callingConvention);
 					if (charSet.HasValue)
 					{
-						AddNamedArgument(list, type, "CharSet", (int)charSet.Value);
+						AddNamedArgument(list, type, "CharSet", module.universe.System_Runtime_InteropServices_CharSet, (int)charSet.Value);
 					}
 					if ((flags & (BestFitOn | BestFitOff)) != 0)
 					{
@@ -325,7 +327,7 @@ namespace IKVM.Reflection.Reader
 					{
 						AddNamedArgument(list, type, "ThrowOnUnmappableChar", flags, CharMapErrorOn);
 					}
-					attribs.Add(new CustomAttributeData(constructor, new object[] { dllName }, list));
+					attribs.Add(new CustomAttributeData(module, constructor, new object[] { dllName }, list));
 					return;
 				}
 			}
@@ -349,7 +351,7 @@ namespace IKVM.Reflection.Reader
 		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
 		{
 			// some fields are not available on the .NET Compact Framework version of DllImportAttribute
-			FieldInfo field = attributeType.GetField(fieldName);
+			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, null, null));
 			if (field != null)
 			{
 				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));

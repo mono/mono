@@ -51,12 +51,12 @@ namespace System.ComponentModel
 			get { return eventName; }
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is DefaultEventAttribute))
+			if (!(obj is DefaultEventAttribute))
 				return false;
 
-			return (((DefaultEventAttribute) o).eventName == eventName);
+			return (((DefaultEventAttribute) obj).eventName == eventName);
 		}
 
 		public override int GetHashCode ()

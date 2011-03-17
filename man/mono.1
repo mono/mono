@@ -1061,7 +1061,7 @@ method. The right option, unfortunately, requires experimentation.
 When using Mono with the SGen garbage collector this environment
 variable can be used to turn on various debugging features of the
 collector.  The value of this variable is a comma separated list of
-words.
+words.  Do not use these options in production.
 .RS
 .ne 8
 .TP
@@ -1085,6 +1085,13 @@ unloaded AppDomain.
 This clears the nursery at GC time instead of doing it when the thread
 local allocation buffer (TLAB) is created.  The default is to clear
 the nursery at TLAB creation time.
+.TP
+\fBdisable-minor\fR
+Don't do minor collections.  If the nursery is full, a major collection
+is triggered instead, unless it, too, is disabled.
+.TP
+\fBdisable-major\fR
+Don't do major collections.
 .TP
 \fBconservative-stack-mark\fR
 Forces the GC to scan the stack conservatively, even if precise

@@ -141,6 +141,22 @@ Sys.WebForms.Menu.Helpers = {
 		element.className = cname;
 	},
 
+	highlight: function (element) {
+		if (element == null)
+			return;
+		if (element.classList.contains ("highlighted"))
+			return;
+		element.classList.add ("highlighted");
+	},
+
+	unhighlight: function (element) {
+		if (element == null)
+			return;
+		if (!element.classList.contains ("highlighted"))
+			return;
+		element.classList.remove ("highlighted");
+	},
+
 	getNextSubMenuId: function () {
 		return ++this.__subMenuCounter;
 	},
@@ -237,6 +253,8 @@ Sys.WebForms.MenuItem = function (options)
 		switch (child.tagName) {
 			case "A":
 				Sys.WebForms.Menu.Helpers.appendCssClass (child, this.menuType);
+				Sys.WebForms.Menu.Helpers.addEventHandler (child, "mouseover", this.mouseOverHandler);
+				Sys.WebForms.Menu.Helpers.addEventHandler (child, "mouseout", this.mouseOutHandler);
 				child.setAttribute ("tabindex", "-1");
 				break;
 
@@ -298,8 +316,10 @@ Sys.WebForms.MenuItem.prototype.hide = function (popup, leaveParentOpen)
 		if (current.menuType == "static" || (leaveParentOpen && current == this.parentMenu))
 			break;
 
-		if (current.mainElement != null)
+		if (current.mainElement != null) {
 			current.mainElement.style.display = "none";
+			Sys.WebForms.Menu.Helpers.unhighlight (current.mainElement.parentNode.children [0]);	
+		}
 
 		if (current.hideTimerId != null) {
 			window.clearTimeout (current.hideTimerId);
@@ -310,26 +330,53 @@ Sys.WebForms.MenuItem.prototype.hide = function (popup, leaveParentOpen)
 	}
 }
 
+Sys.WebForms.MenuItem.prototype.isPopupChildOf = function (popup, element)
+{
+	if (popup == null || element == null)
+		return false;
+
+	var cur = popup.parentNode;
+	while (cur != null) {
+		if (cur == element)
+			return true;
+		cur = cur.parentNode;
+	}
+
+	return false;
+}
+
 Sys.WebForms.MenuItem.prototype.onMouseOver = function (popupId)
 {
+	var popup;
+	var noPopup = popupId == null || popupId == "";
+	if (noPopup)
+		popup = null;
+	else
+		popup = document.getElementById (popupId);
+
 	var cur = Sys.WebForms.Menu.Helpers.getPopupToClose ();
 	if (cur != null) {
 		if (cur.hideTimerId != null) {
 			window.clearTimeout (cur.hideTimerId);
 			cur.hideTimerId = null;
 		}
-		this.hide (cur, true);
+
+		if (popup == null || (popup != cur.mainElement && !this.isPopupChildOf (popup, cur.mainElement)))
+			this.hide (cur, true);
 		Sys.WebForms.Menu.Helpers.setPopupToClose (null);
 	}
-	if (popupId == null || popupId == "")
+
+	if (noPopup)
 		return;
 
-	var popup = document.getElementById (popupId);
 	if (popup == null)
 		throw "Popup with id '" + popupId + "' could not be found.";
 
-	this.hide (cur, true);
-	popup.style.display = "block";
+	if (cur != null && popup != cur.mainElement)
+		this.hide (cur, true);
+	if (popup.style.display != "block")
+		popup.style.display = "block";
+	Sys.WebForms.Menu.Helpers.highlight (popup.parentNode.children [0]);
 }
 
 Sys.WebForms.MenuItem.prototype.onMouseOut = function (popupId)
@@ -355,6 +402,14 @@ Sys.WebForms.MenuItem.prototype.onMouseOut = function (popupId)
 
 Sys.WebForms.MenuItem.prototype.mouseOverHandler = function (e)
 {
+
+	if (this.nodeName == "A") {
+		if (this.parentNode.getAttribute ("role") != "menuitem" || this.parentNode.getAttribute ("aria-haspopup") != null)
+			return;
+		Sys.WebForms.Menu.Helpers.highlight (this);
+		return;
+	}
+
 	var menuItem = Sys.WebForms.Menu.Helpers.getMenuItem (this);
 	if (menuItem == null || !(menuItem instanceof Sys.WebForms.MenuItem)) {
 		e.returnResult = false;
@@ -368,6 +423,13 @@ Sys.WebForms.MenuItem.prototype.mouseOverHandler = function (e)
 
 Sys.WebForms.MenuItem.prototype.mouseOutHandler = function (e)
 {
+	if (this.nodeName == "A") {
+		if (this.parentNode.getAttribute ("role") != "menuitem" || this.parentNode.getAttribute ("aria-haspopup") != null)
+			return;
+		Sys.WebForms.Menu.Helpers.unhighlight (this);
+		return;
+	}
+
 	var menuItem = Sys.WebForms.Menu.Helpers.getMenuItem (this);
 
 	if (menuItem == null || !(menuItem instanceof Sys.WebForms.MenuItem)) {

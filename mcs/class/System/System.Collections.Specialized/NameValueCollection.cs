@@ -49,28 +49,17 @@ namespace System.Collections.Specialized{
 		public NameValueCollection (int capacity) : base (capacity)
 		{
 		}
-#if NET_2_0
-        public NameValueCollection (NameValueCollection col) : base (( col == null ) ? null : col.EqualityComparer ,
-                                                                (col == null) ? null : col.Comparer, 
-                                                                (col == null) ? null : col.HashCodeProvider)
-        {
-            if (col==null)
-                throw new ArgumentNullException ("col");		
-            Add(col);
-        }
-#else
-		public NameValueCollection (NameValueCollection col) : base ((col == null) ? null : col.HashCodeProvider ,
-																(col == null) ? null : col.Comparer)																
+		
+		public NameValueCollection (NameValueCollection col) : base (( col == null ) ? null : col.EqualityComparer ,
+									     (col == null) ? null : col.Comparer, 
+									     (col == null) ? null : col.HashCodeProvider)
 		{
 			if (col==null)
-				throw new NullReferenceException ();		
+				throw new ArgumentNullException ("col");		
 			Add(col);
 		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("Use NameValueCollection (IEqualityComparer)")]
-#endif
 		public NameValueCollection (IHashCodeProvider hashProvider, IComparer comparer)
 			: base (hashProvider, comparer)
 		{
@@ -90,16 +79,13 @@ namespace System.Collections.Specialized{
 			
 		}
 		
-#if NET_2_0
 		[Obsolete ("Use NameValueCollection (IEqualityComparer)")]
-#endif
 		public NameValueCollection (int capacity, IHashCodeProvider hashProvider, IComparer comparer)
 			:base (capacity, hashProvider, comparer)
 		{
 			
 		}
 
-#if NET_2_0
 		public NameValueCollection (IEqualityComparer equalityComparer)
 			: base (equalityComparer)
 		{
@@ -109,7 +95,6 @@ namespace System.Collections.Specialized{
 			: base (capacity, equalityComparer)
 		{
 		}
-#endif
 
 		public virtual string[] AllKeys 
 		{
@@ -140,10 +125,9 @@ namespace System.Collections.Specialized{
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("Collection is read-only");
-#if NET_2_0
 			if (c == null)
 				throw new ArgumentNullException ("c");
-#endif
+
 // make sense - but it's not the exception thrown
 //				throw new ArgumentNullException ();
 			
@@ -190,11 +174,7 @@ namespace System.Collections.Specialized{
 
 		}
 
-#if NET_2_0
 		public virtual void Clear ()
-#else
-		public void Clear ()
-#endif
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("Collection is read-only");
@@ -213,17 +193,11 @@ namespace System.Collections.Specialized{
 
 			if (cachedAll == null)
 				RefreshCachedAll ();
-#if NET_2_0
 			try {
-#endif			
-			cachedAll.CopyTo (dest, index);
-#if NET_2_0
-		        }
-		        catch (ArrayTypeMismatchException)  
-		        {
+				cachedAll.CopyTo (dest, index);
+		        } catch (ArrayTypeMismatchException) {
 		        	throw new InvalidCastException();
 		        }
-#endif		        
 		}
 
 		private void RefreshCachedAll ()

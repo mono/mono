@@ -55,7 +55,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 95;
+		private const int mono_corlib_version = 96;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -197,12 +197,21 @@ namespace System {
 			get;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string GetNewLine ();
+
+		static string nl;
 		/// <summary>
 		/// Gets the standard new line value
 		/// </summary>
-		public extern static string NewLine {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public static string NewLine {
+			get {
+				if (nl != null)
+					return nl;
+
+				nl = GetNewLine ();
+				return nl;
+			}
 		}
 
 		//

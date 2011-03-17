@@ -204,17 +204,19 @@ namespace System.Net.Mime {
 				return TransferEncoding.QuotedPrintable;
 		}
 
+		static char [] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		internal static string To2047(byte [] bytes)
 		{
-			System.IO.StringWriter writer = new System.IO.StringWriter ();
+			StringBuilder sb = new StringBuilder ();
 			foreach (byte i in bytes) {
-				if (i > 127 || i == '\t') {
-					writer.Write ("=");
-					writer.Write (Convert.ToString (i, 16).ToUpper ());
+				if (i < 0x21 || i > 0x7E || i == '?' || i == '=' || i == '_') {
+					sb.Append ('=');
+					sb.Append (hex [(i >> 4) & 0x0f]);
+					sb.Append (hex [i & 0x0f]);
 				} else
-				writer.Write (Convert.ToChar (i));
+					sb.Append ((char) i);
 			}
-			return writer.GetStringBuilder ().ToString ();
+			return sb.ToString ();
 		}
 
 		internal static string EncodeSubjectRFC2047 (string s, Encoding enc)

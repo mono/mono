@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 			This	= 128
 		}
 
-		static string[] attribute_targets = new string [] { "param" };
+		static readonly string[] attribute_targets = new string[] { "param" };
 
 		FullNamedExpression texpr;
 		readonly Modifier modFlags;
@@ -230,7 +230,6 @@ namespace Mono.CSharp {
 		public bool HasAddressTaken;
 
 		TemporaryVariableReference expr_tree_variable;
-		static TypeExpr parameter_expr_tree_type;
 
 		HoistedVariable hoisted_variant;
 
@@ -340,11 +339,6 @@ namespace Mono.CSharp {
 			return member.IsAccessibleAs (parameter_type);
 		}
 
-		public static void Reset ()
-		{
-			parameter_expr_tree_type = null;
-		}
-
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
@@ -380,7 +374,7 @@ namespace Mono.CSharp {
 				return parameter_type;
 			}
 
-			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || parameter_type.BuildinType == BuildinTypeSpec.Type.Dynamic)) {
+			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)) {
 				rc.Module.Compiler.Report.Error (1103, Location, "The extension method cannot be of type `{0}'",
 					TypeManager.CSharpName (parameter_type));
 			}
@@ -419,7 +413,7 @@ namespace Mono.CSharp {
 
 				Constant c = default_expr as Constant;
 				if (c == null) {
-					if (parameter_type.BuildinType == BuildinTypeSpec.Type.Object) {
+					if (parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 						rc.Report.Error (1910, default_expr.Location,
 							"Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
 							default_expr.Type.GetSignatureForError ());
@@ -435,7 +429,7 @@ namespace Mono.CSharp {
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
 					(default_expr is NullConstant && TypeManager.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
-					TypeSpecComparer.IsEqual (parameter_type, TypeManager.object_type)) {
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return;
 				}
 
@@ -562,7 +556,7 @@ namespace Mono.CSharp {
 				var def_value = DefaultValue;
 				Constant c = def_value != null ? def_value.Child as Constant : default_expr as Constant;
 				if (c != null) {
-					if (default_expr.Type.BuildinType == BuildinTypeSpec.Type.Decimal) {
+					if (default_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetValue ());
@@ -578,7 +572,7 @@ namespace Mono.CSharp {
 			}
 
 			if (parameter_type != null) {
-				if (parameter_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					pa.Dynamic.EmitAttribute (builder);
 				} else if (parameter_type.HasDynamicElement) {
 					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
@@ -606,7 +600,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (
 				new TypeExpression (parameter_type, Location), Location)));
-			arguments.Add (new Argument (new StringConstant (ec.BuildinTypes, Name, Location)));
+			arguments.Add (new Argument (new StringConstant (ec.BuiltinTypes, Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
 		}
@@ -660,14 +654,8 @@ namespace Mono.CSharp {
 		//
 		public static TypeExpr ResolveParameterExpressionType (IMemberContext ec, Location location)
 		{
-			if (parameter_expr_tree_type != null)
-				return parameter_expr_tree_type;
-
 			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve (location);
-			parameter_expr_tree_type = new TypeExpression (p_type, location).
-				ResolveAsTypeTerminal (ec, false);
-
-			return parameter_expr_tree_type;
+			return new TypeExpression (p_type, location);
 		}
 
 		public void Warning_UselessOptionalParameter (Report Report)
@@ -982,7 +970,7 @@ namespace Mono.CSharp {
 		// TODO: This does not fit here, it should go to different version of AParametersCollection
 		// as the underlying type is not Parameter and some methods will fail to cast
 		//
-		public static AParametersCollection CreateFullyResolved (TypeSpec[] types)
+		public static AParametersCollection CreateFullyResolved (params TypeSpec[] types)
 		{
 			var pd = new ParameterData [types.Length];
 			for (int i = 0; i < pd.Length; ++i)
@@ -1228,7 +1216,7 @@ namespace Mono.CSharp {
 
 			var res = Convert.ImplicitConversionStandard (rc, expr, parameter_type, Location);
 			if (res != null) {
-				if (TypeManager.IsNullableType (parameter_type) && res is Nullable.Wrap) {
+				if (parameter_type.IsNullableType && res is Nullable.Wrap) {
 					Nullable.Wrap wrap = (Nullable.Wrap) res;
 					res = wrap.Child;
 					if (!(res is Constant)) {
@@ -1239,7 +1227,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuildinType != BuildinTypeSpec.Type.String) {
+				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
 						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
 						p.Name, parameter_type.GetSignatureForError ());

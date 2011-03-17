@@ -313,6 +313,8 @@ System.Web/HttpForbiddenHandler.cs
 System.Web/HttpHeaderCollection.cs
 System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
+System.Web/HttpNotFoundHandler.cs
+System.Web/HttpNotImplementedHandler.cs
 System.Web/HttpParamsCollection.cs
 System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs

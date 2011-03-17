@@ -94,7 +94,7 @@ namespace Mono.CSharp
 		///
 		/// The current file.
 		///
-		CompilationUnit file;
+		readonly CompilationSourceFile file;
 
 		///
 		/// Temporary Xml documentation cache.
@@ -673,7 +673,7 @@ attribute_sections
 
 			if (global_attrs_enabled) {
 				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect);
+					module.AddAttributes (sect, current_namespace);
 					$$ = null;
 				} else {
 					if (attrs == null)
@@ -696,20 +696,28 @@ attribute_sections
 	;
 
 attribute_section
-	: OPEN_BRACKET attribute_target_specifier attribute_list opt_comma CLOSE_BRACKET
+	: OPEN_BRACKET
 	  {
+		lexer.parsing_attribute_section = true;
+	  }
+	  attribute_section_cont
+	  {
+		lexer.parsing_attribute_section = false;
 		$$ = $3;
- 	  }
-	| OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
-	  {
-		$$ = $2;
 	  }
 	;
- 
-attribute_target_specifier
+	
+attribute_section_cont
 	: attribute_target COLON
 	  {
-		current_attr_target = (string)$1;
+		current_attr_target = (string)$1;	  
+	  }
+	  attribute_list opt_comma CLOSE_BRACKET
+	  {
+		$$ = $4;
+ 	  }
+	| attribute_list opt_comma CLOSE_BRACKET
+	  {
 		$$ = $1;
 	  }
 	;
@@ -764,8 +772,7 @@ attribute
 			$$ = null;
 		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
-			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+			$$ = new GlobalAttribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 		else
 			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }
@@ -1327,7 +1334,7 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
-				new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($4)),
+				new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				current_local_parameters);
 
 			generic.SetParameterInfo ((List<Constraints>) $11);
@@ -1352,7 +1359,7 @@ method_header
 		
 		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
 		
-		method = new Method (current_class, generic, new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($4)),
+		method = new Method (current_class, generic, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				     modifiers, name, current_local_parameters, (Attributes) $1);
 
 		if (doc_support)
@@ -1999,7 +2006,7 @@ operator_type
 	| VOID
 	  {
 		Report.Error (590, GetLocation ($1), "User-defined operators cannot return void");
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 
@@ -2841,7 +2848,7 @@ type_and_void
 	: type_expression_or_array
 	| VOID
 	  {
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -2860,7 +2867,7 @@ type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2869,7 +2876,7 @@ simple_type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2878,7 +2885,7 @@ parameter_type
 	| VOID
 	  {
 	  	Report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 
@@ -2919,7 +2926,7 @@ type_expression
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }
 	;
 
@@ -2958,25 +2965,25 @@ base_type_name
  * simple types, but we need this to reuse it easily in variable_type
  */
 builtin_types
-	: OBJECT	{ $$ = new TypeExpression (compiler.BuildinTypes.Object, GetLocation ($1)); }
-	| STRING	{ $$ = new TypeExpression (compiler.BuildinTypes.String, GetLocation ($1)); }
-	| BOOL		{ $$ = new TypeExpression (compiler.BuildinTypes.Bool, GetLocation ($1)); }
-	| DECIMAL	{ $$ = new TypeExpression (compiler.BuildinTypes.Decimal, GetLocation ($1)); }
-	| FLOAT		{ $$ = new TypeExpression (compiler.BuildinTypes.Float, GetLocation ($1)); }
-	| DOUBLE	{ $$ = new TypeExpression (compiler.BuildinTypes.Double, GetLocation ($1)); }
+	: OBJECT	{ $$ = new TypeExpression (compiler.BuiltinTypes.Object, GetLocation ($1)); }
+	| STRING	{ $$ = new TypeExpression (compiler.BuiltinTypes.String, GetLocation ($1)); }
+	| BOOL		{ $$ = new TypeExpression (compiler.BuiltinTypes.Bool, GetLocation ($1)); }
+	| DECIMAL	{ $$ = new TypeExpression (compiler.BuiltinTypes.Decimal, GetLocation ($1)); }
+	| FLOAT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Float, GetLocation ($1)); }
+	| DOUBLE	{ $$ = new TypeExpression (compiler.BuiltinTypes.Double, GetLocation ($1)); }
 	| integral_type
 	;
 
 integral_type
-	: SBYTE		{ $$ = new TypeExpression (compiler.BuildinTypes.SByte, GetLocation ($1)); }
-	| BYTE		{ $$ = new TypeExpression (compiler.BuildinTypes.Byte, GetLocation ($1)); }
-	| SHORT		{ $$ = new TypeExpression (compiler.BuildinTypes.Short, GetLocation ($1)); }
-	| USHORT	{ $$ = new TypeExpression (compiler.BuildinTypes.UShort, GetLocation ($1)); }
-	| INT		{ $$ = new TypeExpression (compiler.BuildinTypes.Int, GetLocation ($1)); }
-	| UINT		{ $$ = new TypeExpression (compiler.BuildinTypes.UInt, GetLocation ($1)); }
-	| LONG		{ $$ = new TypeExpression (compiler.BuildinTypes.Long, GetLocation ($1)); }
-	| ULONG		{ $$ = new TypeExpression (compiler.BuildinTypes.ULong, GetLocation ($1)); }
-	| CHAR		{ $$ = new TypeExpression (compiler.BuildinTypes.Char, GetLocation ($1)); }
+	: SBYTE		{ $$ = new TypeExpression (compiler.BuiltinTypes.SByte, GetLocation ($1)); }
+	| BYTE		{ $$ = new TypeExpression (compiler.BuiltinTypes.Byte, GetLocation ($1)); }
+	| SHORT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Short, GetLocation ($1)); }
+	| USHORT	{ $$ = new TypeExpression (compiler.BuiltinTypes.UShort, GetLocation ($1)); }
+	| INT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Int, GetLocation ($1)); }
+	| UINT		{ $$ = new TypeExpression (compiler.BuiltinTypes.UInt, GetLocation ($1)); }
+	| LONG		{ $$ = new TypeExpression (compiler.BuiltinTypes.Long, GetLocation ($1)); }
+	| ULONG		{ $$ = new TypeExpression (compiler.BuiltinTypes.ULong, GetLocation ($1)); }
+	| CHAR		{ $$ = new TypeExpression (compiler.BuiltinTypes.Char, GetLocation ($1)); }
 	;
 
 //
@@ -3026,8 +3033,8 @@ literal
 	;
 
 boolean_literal
-	: TRUE			{ $$ = new BoolLiteral (compiler.BuildinTypes, true, GetLocation ($1)); }
-	| FALSE			{ $$ = new BoolLiteral (compiler.BuildinTypes, false, GetLocation ($1)); }
+	: TRUE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, true, GetLocation ($1)); }
+	| FALSE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, false, GetLocation ($1)); }
 	;
 
 
@@ -4699,12 +4706,12 @@ variable_type_simple
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }	  
 	| VOID
 	  {
 		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (compiler.BuildinTypes.Void, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -5952,7 +5959,7 @@ interactive_parsing
 
 		// (ref object retval)
 		Parameter [] mpar = new Parameter [1];
-		mpar [0] = new Parameter (new TypeExpression (compiler.BuildinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
+		mpar [0] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
 
 		ParametersCompiled pars = new ParametersCompiled (mpar);
 		var mods = Modifiers.PUBLIC | Modifiers.STATIC;
@@ -5963,7 +5970,7 @@ interactive_parsing
 		Method method = new Method (
 			current_class,
 			null, // generic
-			new TypeExpression (compiler.BuildinTypes.Void, Location.Null),
+			new TypeExpression (compiler.BuiltinTypes.Void, Location.Null),
 			mods,
 			new MemberName ("Host"),
 			pars,
@@ -6169,20 +6176,16 @@ static CSharpParser ()
 	oob_stack = new Stack<object> ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
-	: this (reader, file, module, new NamespaceEntry (module, null, file, null))
-{
-}
-
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module, NamespaceEntry ns)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
 {
 	this.file = file;
-	this.module = module;
+	current_namespace = file.NamespaceContainer;
+	
+	this.module = current_namespace.Module;
 	this.compiler = module.Compiler;
 	this.settings = compiler.Settings;
 	lang_version = settings.Version;
 	doc_support = settings.Documentation != null;
-	current_namespace = ns;
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
