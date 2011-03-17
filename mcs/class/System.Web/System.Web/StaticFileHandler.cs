@@ -105,6 +105,7 @@ namespace System.Web
 					ftime = fi.LastWriteTime.ToUniversalTime ();
 #endif
 					if (ftime <= dtIfModifiedSince) {
+						response.ContentType = MimeTypes.GetMimeType (fileName);
 						response.StatusCode = 304;
 						return;
 					}
