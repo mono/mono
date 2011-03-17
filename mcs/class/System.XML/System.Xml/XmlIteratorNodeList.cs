@@ -34,7 +34,7 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	internal class XmlIteratorNodeList : XmlNodeList, IDisposable
+	internal class XmlIteratorNodeList : XmlNodeList//, IDisposable
 	{
 		XmlDocument doc;
 		XPathNodeIterator source;
@@ -49,7 +49,7 @@ namespace System.Xml
 			if (doc == null)
 				throw new Exception ("huh?");
 			this.doc = doc;
-			doc.NodeRemoving += SaveNodeList;
+			//doc.NodeRemoving += SaveNodeList;
 			source = iter;
 			iterator = iter.Clone ();
 			list = new ArrayList ();
@@ -102,6 +102,7 @@ namespace System.Xml
 
 		#region Methods
 
+		/*
 		void IDisposable.Dispose ()
 		{
 			if (!event_detached) {
@@ -117,6 +118,7 @@ namespace System.Xml
 			doc.NodeRemoving -= SaveNodeList;
 			event_detached = true;
 		}
+		*/
 
 		public override IEnumerator GetEnumerator ()
 		{
