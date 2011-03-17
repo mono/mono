@@ -70,8 +70,7 @@ namespace System.ServiceModel.Channels
 			stream.Connect ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, stream, false) {
 				Encoder = this.Encoder,
-				Via = this.Via,
-				EncodingRecord = TcpBinaryFrameManager.Soap12EncodingBinary };
+				Via = this.Via };
 			frame.ProcessPreambleInitiator ();
 			frame.ProcessPreambleAckInitiator ();
 		}
