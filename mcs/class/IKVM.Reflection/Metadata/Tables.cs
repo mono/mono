@@ -421,6 +421,42 @@ namespace IKVM.Reflection.Metadata
 		{
 			throw new InvalidOperationException();
 		}
+
+#if STABLE_SORT
+		private struct OrdinalWrapper
+		{
+			internal int ordinal;
+			internal T value;
+		}
+
+		protected void Sort(IComparer<T> comparer)
+		{
+			OrdinalWrapper[] items = new OrdinalWrapper[rowCount];
+			for (int i = 0; i < items.Length; i++)
+			{
+				items[i].ordinal = i;
+				items[i].value = records[i];
+			}
+			Array.Sort(items, delegate(OrdinalWrapper x, OrdinalWrapper y)
+			{
+				int res = comparer.Compare(x.value, y.value);
+				if (res == 0)
+				{
+					res = x.ordinal.CompareTo(y.ordinal);
+				}
+				return res;
+			});
+			for (int i = 0; i < items.Length; i++)
+			{
+				records[i] = items[i].value;
+			}
+		}
+#else
+		protected void Sort(IComparer<T> comparer)
+		{
+			Array.Sort(records, 0, rowCount, comparer);
+		}
+#endif
 	}
 
 	sealed class ModuleTable : Table<ModuleTable.Record>
@@ -792,14 +828,20 @@ namespace IKVM.Reflection.Metadata
 				}
 				records[i].Interface = token;
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)
 		{
 			if (x.Class == y.Class)
 			{
+#if STABLE_SORT
+				return 0;
+#else
+				// LAMESPEC the CLI spec says that InterfaceImpl should be sorted by { Class, Interface }, but it appears to be
+				// only necessary to sort by Class.
 				return x.Interface == y.Interface ? 0 : (x.Interface > y.Interface ? 1 : -1);
+#endif
 			}
 			return x.Class > y.Class ? 1 : -1;
 		}
@@ -1122,7 +1164,7 @@ namespace IKVM.Reflection.Metadata
 						throw new InvalidOperationException();
 				}
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)
@@ -1260,7 +1302,7 @@ namespace IKVM.Reflection.Metadata
 				}
 				records[i].Parent = token;
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)
@@ -1278,19 +1320,6 @@ namespace IKVM.Reflection.Metadata
 			internal short PackingSize;
 			internal int ClassSize;
 			internal int Parent;
-		}
-
-		internal void AddOrReplaceRecord(Record rec)
-		{
-			for (int i = 0; i < records.Length; i++)
-			{
-				if (records[i].Parent == rec.Parent)
-				{
-					records[i] = rec;
-					return;
-				}
-			}
-			AddRecord(rec);
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1325,19 +1354,6 @@ namespace IKVM.Reflection.Metadata
 		int IComparer<Record>.Compare(Record x, Record y)
 		{
 			return x.Parent == y.Parent ? 0 : (x.Parent > y.Parent ? 1 : -1);
-		}
-
-		internal void GetLayout(int token, ref int pack, ref int size)
-		{
-			for (int i = 0; i < rowCount; i++)
-			{
-				if (records[i].Parent == token)
-				{
-					pack = records[i].PackingSize;
-					size = records[i].ClassSize;
-					break;
-				}
-			}
 		}
 	}
 
@@ -1683,7 +1699,7 @@ namespace IKVM.Reflection.Metadata
 				}
 				records[i].Association = token;
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)
@@ -1801,7 +1817,7 @@ namespace IKVM.Reflection.Metadata
 					records[i].MethodDeclaration = moduleBuilder.ResolvePseudoToken(records[i].MethodDeclaration);
 				}
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)
@@ -1944,7 +1960,7 @@ namespace IKVM.Reflection.Metadata
 
 		internal struct Record
 		{
-			internal int RVA;
+			internal int RVA;		// we set the high bit to signify that the RVA is in the CIL stream (instead of .sdata)
 			internal int Field;
 		}
 
@@ -1974,11 +1990,18 @@ namespace IKVM.Reflection.Metadata
 				.Value;
 		}
 
-		internal void Fixup(ModuleBuilder moduleBuilder, int sdataRVA)
+		internal void Fixup(ModuleBuilder moduleBuilder, int sdataRVA, int cilRVA)
 		{
 			for (int i = 0; i < rowCount; i++)
 			{
-				records[i].RVA += sdataRVA;
+				if (records[i].RVA < 0)
+				{
+					records[i].RVA = (records[i].RVA & 0x7fffffff) + cilRVA;
+				}
+				else
+				{
+					records[i].RVA += sdataRVA;
+				}
 				if (moduleBuilder.IsPseudoToken(records[i].Field))
 				{
 					records[i].Field = moduleBuilder.ResolvePseudoToken(records[i].Field);
@@ -2074,6 +2097,7 @@ namespace IKVM.Reflection.Metadata
 		{
 			for (int i = 0; i < rowCount; i++)
 			{
+				// note that we ignore HashValue here!
 				if (records[i].Name == rec.Name
 					&& records[i].MajorVersion == rec.MajorVersion
 					&& records[i].MinorVersion == rec.MinorVersion
@@ -2082,7 +2106,6 @@ namespace IKVM.Reflection.Metadata
 					&& records[i].Flags == rec.Flags
 					&& records[i].PublicKeyOrToken == rec.PublicKeyOrToken
 					&& records[i].Culture == rec.Culture
-					&& records[i].HashValue == rec.HashValue
 					)
 				{
 					return i + 1;
@@ -2550,7 +2573,7 @@ namespace IKVM.Reflection.Metadata
 			{
 				records[i].Owner = fixups[records[i].Owner - 1] + 1;
 			}
-			Array.Sort(records, 0, rowCount, this);
+			Sort(this);
 		}
 
 		int IComparer<Record>.Compare(Record x, Record y)

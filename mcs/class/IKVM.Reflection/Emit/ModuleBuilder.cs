@@ -38,8 +38,9 @@ namespace IKVM.Reflection.Emit
 	public sealed class ModuleBuilder : Module, ITypeOwner
 	{
 		private static readonly bool usePublicKeyAssemblyReference = false;
-		private readonly Guid mvid = Guid.NewGuid();
+		private Guid mvid = Guid.NewGuid();
 		private long imageBaseAddress = 0x00400000;
+		private long stackReserve = -1;
 		private readonly AssemblyBuilder asm;
 		internal readonly string moduleName;
 		internal readonly string fileName;
@@ -210,7 +211,10 @@ namespace IKVM.Reflection.Emit
 			TypeBuilder typeBuilder = __DefineType(ns, name);
 			typeBuilder.__SetAttributes(attr);
 			typeBuilder.SetParent(parent);
-			SetPackingSizeAndTypeSize(typeBuilder, packingSize, typesize);
+			if (packingSize != PackingSize.Unspecified || typesize != 0)
+			{
+				typeBuilder.__SetLayout((int)packingSize, typesize);
+			}
 			return typeBuilder;
 		}
 
@@ -224,18 +228,6 @@ namespace IKVM.Reflection.Emit
 			TypeBuilder typeBuilder = new TypeBuilder(owner, ns, name);
 			types.Add(typeBuilder);
 			return typeBuilder;
-		}
-
-		internal void SetPackingSizeAndTypeSize(TypeBuilder typeBuilder, PackingSize packingSize, int typesize)
-		{
-			if (packingSize != PackingSize.Unspecified || typesize != 0)
-			{
-				ClassLayoutTable.Record rec = new ClassLayoutTable.Record();
-				rec.PackingSize = (short)packingSize;
-				rec.ClassSize = typesize;
-				rec.Parent = typeBuilder.MetadataToken;
-				this.ClassLayout.AddRecord(rec);
-			}
 		}
 
 		public EnumBuilder DefineEnum(string name, TypeAttributes visibility, Type underlyingType)
@@ -298,18 +290,29 @@ namespace IKVM.Reflection.Emit
 		internal void AddTypeForwarder(Type type)
 		{
 			ExportType(type);
-			foreach (Type nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+			if (!type.__IsMissing)
 			{
-				// we export all nested types (i.e. even the private ones)
-				// (this behavior is the same as the C# compiler)
-				AddTypeForwarder(nested);
+				foreach (Type nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+				{
+					// we export all nested types (i.e. even the private ones)
+					// (this behavior is the same as the C# compiler)
+					AddTypeForwarder(nested);
+				}
 			}
 		}
 
 		private int ExportType(Type type)
 		{
 			ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
-			rec.TypeDefId = type.MetadataToken;
+			MissingType missing = type as MissingType;
+			if (missing != null)
+			{
+				rec.TypeDefId = missing.GetMetadataTokenForMissing();
+			}
+			else
+			{
+				rec.TypeDefId = type.MetadataToken;
+			}
 			rec.TypeName = this.Strings.Add(type.__Name);
 			if (type.IsNested)
 			{
@@ -392,6 +395,12 @@ namespace IKVM.Reflection.Emit
 
 		private int WriteDeclSecurityBlob(List<CustomAttributeBuilder> list)
 		{
+			string xml;
+			if (list.Count == 1 && (xml = list[0].GetLegacyDeclSecurity()) != null)
+			{
+				// write .NET 1.1 format
+				return this.Blobs.Add(ByteBuffer.Wrap(System.Text.Encoding.Unicode.GetBytes(xml)));
+			}
 			ByteBuffer namedArgs = new ByteBuffer(100);
 			ByteBuffer bb = new ByteBuffer(list.Count * 100);
 			bb.Write((byte)'.');
@@ -409,6 +418,7 @@ namespace IKVM.Reflection.Emit
 
 		public void DefineManifestResource(string name, Stream stream, ResourceAttributes attribute)
 		{
+			manifestResources.Align(8);
 			ManifestResourceTable.Record rec = new ManifestResourceTable.Record();
 			rec.Offset = manifestResources.Position;
 			rec.Flags = (int)attribute;
@@ -475,7 +485,11 @@ namespace IKVM.Reflection.Emit
 
 		internal int GetTypeTokenForMemberRef(Type type)
 		{
-			if (type.IsGenericTypeDefinition)
+			if (type.__IsMissing)
+			{
+				return ImportType(type);
+			}
+			else if (type.IsGenericTypeDefinition)
 			{
 				int token;
 				if (!memberRefTypeTokens.TryGetValue(type, out token))
@@ -500,7 +514,7 @@ namespace IKVM.Reflection.Emit
 		private static bool IsFromGenericTypeDefinition(MemberInfo member)
 		{
 			Type decl = member.DeclaringType;
-			return decl != null && decl.IsGenericTypeDefinition;
+			return decl != null && !decl.__IsMissing && decl.IsGenericTypeDefinition;
 		}
 
 		public FieldToken GetFieldToken(FieldInfo field)
@@ -606,7 +620,7 @@ namespace IKVM.Reflection.Emit
 			int token;
 			if (!typeTokens.TryGetValue(type, out token))
 			{
-				if (type.HasElementType || (type.IsGenericType && !type.IsGenericTypeDefinition))
+				if (type.HasElementType || type.IsGenericTypeInstance)
 				{
 					ByteBuffer spec = new ByteBuffer(5);
 					Signature.WriteTypeSpec(this, spec, type);
@@ -678,7 +692,7 @@ namespace IKVM.Reflection.Emit
 		private int FindOrAddAssemblyRef(AssemblyName name)
 		{
 			AssemblyRefTable.Record rec = new AssemblyRefTable.Record();
-			Version ver = name.Version;
+			Version ver = name.Version ?? new Version(0, 0, 0, 0);
 			rec.MajorVersion = (ushort)ver.Major;
 			rec.MinorVersion = (ushort)ver.Minor;
 			rec.BuildNumber = (ushort)ver.Build;
@@ -691,7 +705,7 @@ namespace IKVM.Reflection.Emit
 			}
 			if (publicKeyOrToken == null || publicKeyOrToken.Length == 0)
 			{
-				publicKeyOrToken = name.GetPublicKeyToken();
+				publicKeyOrToken = name.GetPublicKeyToken() ?? Empty<byte>.Array;
 			}
 			else
 			{
@@ -708,7 +722,14 @@ namespace IKVM.Reflection.Emit
 			{
 				rec.Culture = 0;
 			}
-			rec.HashValue = 0;
+			if (name.hash != null)
+			{
+				rec.HashValue = this.Blobs.Add(ByteBuffer.Wrap(name.hash));
+			}
+			else
+			{
+				rec.HashValue = 0;
+			}
 			return 0x23000000 | this.AssemblyRef.FindOrAddRecord(rec);
 		}
 
@@ -1080,6 +1101,11 @@ namespace IKVM.Reflection.Emit
 			get { return mvid; }
 		}
 
+		public void __SetModuleVersionId(Guid guid)
+		{
+			mvid = guid;
+		}
+
 		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
 		{
 			throw new NotImplementedException();
@@ -1164,10 +1190,30 @@ namespace IKVM.Reflection.Emit
 		}
 
 		// non-standard API
-		public long __ImageBase
+		public new long __ImageBase
 		{
 			get { return imageBaseAddress; }
 			set { imageBaseAddress = value; }
+		}
+
+		protected override long GetImageBaseImpl()
+		{
+			return imageBaseAddress;
+		}
+
+		public override long __StackReserve
+		{
+			get { return stackReserve; }
+		}
+
+		public void __SetStackReserve(long stackReserve)
+		{
+			this.stackReserve = stackReserve;
+		}
+
+		internal ulong GetStackReserve(ulong defaultValue)
+		{
+			return stackReserve == -1 ? defaultValue : (ulong)stackReserve;
 		}
 
 		public override int MDStreamVersion
@@ -1273,6 +1319,63 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			return list.ToArray();
+		}
+
+		public void __AddModuleReference(string module)
+		{
+			this.ModuleRef.FindOrAddRecord(module == null ? 0 : this.Strings.Add(module));
+		}
+
+		public override string[] __GetReferencedModules()
+		{
+			string[] arr = new string[this.ModuleRef.RowCount];
+			for (int i = 0; i < arr.Length; i++)
+			{
+				arr[i] = this.Strings.Find(this.ModuleRef.records[i]);
+			}
+			return arr;
+		}
+
+		public override Type[] __GetReferencedTypes()
+		{
+			List<Type> list = new List<Type>();
+			foreach (KeyValuePair<Type, int> kv in typeTokens)
+			{
+				if (kv.Value >> 24 == TypeRefTable.Index)
+				{
+					list.Add(kv.Key);
+				}
+			}
+			return list.ToArray();
+		}
+
+		public override Type[] __GetExportedTypes()
+		{
+			throw new NotImplementedException();
+		}
+
+		public int __AddModule(int flags, string name, byte[] hash)
+		{
+			FileTable.Record file = new FileTable.Record();
+			file.Flags = flags;
+			file.Name = this.Strings.Add(name);
+			file.HashValue = this.Blobs.Add(ByteBuffer.Wrap(hash));
+			return 0x26000000 + this.File.AddRecord(file);
+		}
+
+		public int __AddManifestResource(int offset, ResourceAttributes flags, string name, int implementation)
+		{
+			ManifestResourceTable.Record res = new ManifestResourceTable.Record();
+			res.Offset = offset;
+			res.Flags = (int)flags;
+			res.Name = this.Strings.Add(name);
+			res.Implementation = implementation;
+			return 0x28000000 + this.ManifestResource.AddRecord(res);
+		}
+
+		public void __SetCustomAttributeFor(int token, CustomAttributeBuilder customBuilder)
+		{
+			SetCustomAttribute(token, customBuilder);
 		}
 	}
 

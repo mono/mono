@@ -43,6 +43,11 @@ namespace IKVM.Reflection
 			return new ConstructorInfoImpl((MethodInfo)GetMethodInfo().BindTypeParameters(type));
 		}
 
+		public sealed override MethodBase __GetMethodOnTypeDefinition()
+		{
+			return new ConstructorInfoImpl((MethodInfo)GetMethodInfo().__GetMethodOnTypeDefinition());
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Constructor; }

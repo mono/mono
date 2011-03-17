@@ -133,6 +133,11 @@ namespace IKVM.Reflection
 			get { return IsGenericMethodDefinition; }
 		}
 
+		public virtual MethodBase __GetMethodOnTypeDefinition()
+		{
+			return this;
+		}
+
 		// This goes to the (uninstantiated) MethodInfo on the (uninstantiated) Type. For constructors
 		// it also has the effect of removing the ConstructorInfo wrapper and returning the underlying MethodInfo.
 		internal abstract MethodInfo GetMethodOnTypeDefinition();

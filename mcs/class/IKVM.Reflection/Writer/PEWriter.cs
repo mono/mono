@@ -189,7 +189,7 @@ namespace IKVM.Reflection.Writer
 		public DWORD CheckSum = 0;
 		public WORD Subsystem;
 		public WORD DllCharacteristics;
-		public ULONGLONG SizeOfStackReserve = 0x100000;
+		public ULONGLONG SizeOfStackReserve;
 		public ULONGLONG SizeOfStackCommit = 0x1000;
 		public ULONGLONG SizeOfHeapReserve = 0x100000;
 		public ULONGLONG SizeOfHeapCommit = 0x1000;

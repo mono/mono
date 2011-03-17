@@ -38,6 +38,11 @@ namespace IKVM.Reflection
 			this.index = index;
 		}
 
+		public ResourceAttributes __ResourceAttributes
+		{
+			get { return (ResourceAttributes)module.ManifestResource.records[index].Flags; }
+		}
+
 		public ResourceLocation ResourceLocation
 		{
 			get

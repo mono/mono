@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using IKVM.Reflection.Writer;
 
 namespace IKVM.Reflection.Emit
@@ -43,6 +44,13 @@ namespace IKVM.Reflection.Emit
 		{
 			this.con = con;
 			this.blob = blob;
+		}
+
+		private CustomAttributeBuilder(ConstructorInfo con, int securityAction, byte[] blob)
+		{
+			this.con = con;
+			this.blob = blob;
+			this.constructorArgs = new object[] { securityAction };
 		}
 
 		public CustomAttributeBuilder(ConstructorInfo con, object[] constructorArgs)
@@ -70,15 +78,30 @@ namespace IKVM.Reflection.Emit
 			this.fieldValues = fieldValues;
 		}
 
+		public static CustomAttributeBuilder __FromBlob(ConstructorInfo con, byte[] blob)
+		{
+			return new CustomAttributeBuilder(con, blob);
+		}
+
+		public static CustomAttributeBuilder __FromBlob(ConstructorInfo con, int securityAction, byte[] blob)
+		{
+			return new CustomAttributeBuilder(con, securityAction, blob);
+		}
+
+		public static CustomAttributeTypedArgument __MakeTypedArgument(Type type, object value)
+		{
+			return new CustomAttributeTypedArgument(type, value);
+		}
+
 		private sealed class BlobWriter
 		{
-			private readonly ModuleBuilder moduleBuilder;
+			private readonly Assembly assembly;
 			private readonly CustomAttributeBuilder cab;
 			private readonly ByteBuffer bb;
 
-			internal BlobWriter(ModuleBuilder moduleBuilder, CustomAttributeBuilder cab, ByteBuffer bb)
+			internal BlobWriter(Assembly assembly, CustomAttributeBuilder cab, ByteBuffer bb)
 			{
-				this.moduleBuilder = moduleBuilder;
+				this.assembly = assembly;
 				this.cab = cab;
 				this.bb = bb;
 			}
@@ -156,10 +179,58 @@ namespace IKVM.Reflection.Emit
 
 			private void WriteFixedArg(Type type, object value)
 			{
-				Universe u = moduleBuilder.universe;
+				Universe u = assembly.universe;
 				if (type == u.System_String)
 				{
 					WriteString((string)value);
+				}
+				else if (type == u.System_Boolean)
+				{
+					WriteByte((bool)value ? (byte)1 : (byte)0);
+				}
+				else if (type == u.System_Char)
+				{
+					WriteUInt16((char)value);
+				}
+				else if (type == u.System_SByte)
+				{
+					WriteByte((byte)(sbyte)value);
+				}
+				else if (type == u.System_Byte)
+				{
+					WriteByte((byte)value);
+				}
+				else if (type == u.System_Int16)
+				{
+					WriteUInt16((ushort)(short)value);
+				}
+				else if (type == u.System_UInt16)
+				{
+					WriteUInt16((ushort)value);
+				}
+				else if (type == u.System_Int32)
+				{
+					WriteInt32((int)value);
+				}
+				else if (type == u.System_UInt32)
+				{
+					WriteInt32((int)(uint)value);
+				}
+				else if (type == u.System_Int64)
+				{
+					WriteInt64((long)value);
+				}
+				else if (type == u.System_UInt64)
+				{
+					WriteInt64((long)(ulong)value);
+				}
+				else if (type == u.System_Single)
+				{
+					WriteSingle((float)value);
+				}
+				else if (type == u.System_Double)
+				{
+					WriteDouble((double)value);
 				}
 				else if (type == u.System_Type)
 				{
@@ -175,6 +246,12 @@ namespace IKVM.Reflection.Emit
 					{
 						// value.GetType() would return a subclass of Type, but we don't want to deal with that
 						type = u.System_Type;
+					}
+					else if (value is CustomAttributeTypedArgument)
+					{
+						CustomAttributeTypedArgument cta = (CustomAttributeTypedArgument)value;
+						value = cta.Value;
+						type = cta.ArgumentType;
 					}
 					else
 					{
@@ -206,47 +283,7 @@ namespace IKVM.Reflection.Emit
 				}
 				else
 				{
-					switch (Type.GetTypeCode(type))
-					{
-						case TypeCode.Boolean:
-							WriteByte((bool)value ? (byte)1 : (byte)0);
-							break;
-						case TypeCode.Char:
-							WriteUInt16((char)value);
-							break;
-						case TypeCode.SByte:
-							WriteByte((byte)(sbyte)value);
-							break;
-						case TypeCode.Byte:
-							WriteByte((byte)value);
-							break;
-						case TypeCode.Int16:
-							WriteUInt16((ushort)(short)value);
-							break;
-						case TypeCode.UInt16:
-							WriteUInt16((ushort)value);
-							break;
-						case TypeCode.Int32:
-							WriteInt32((int)value);
-							break;
-						case TypeCode.UInt32:
-							WriteInt32((int)(uint)value);
-							break;
-						case TypeCode.Int64:
-							WriteInt64((long)value);
-							break;
-						case TypeCode.UInt64:
-							WriteInt64((long)(ulong)value);
-							break;
-						case TypeCode.Single:
-							WriteSingle((float)value);
-							break;
-						case TypeCode.Double:
-							WriteDouble((double)value);
-							break;
-						default:
-							throw new ArgumentException();
-					}
+					throw new ArgumentException();
 				}
 			}
 
@@ -270,18 +307,69 @@ namespace IKVM.Reflection.Emit
 				string name = null;
 				if (type != null)
 				{
-					if (type.Assembly == moduleBuilder.Assembly)
-					{
-						name = type.FullName;
-					}
-					else
-					{
-						name = type.AssemblyQualifiedName;
-					}
+					StringBuilder sb = new StringBuilder();
+					GetTypeName(sb, type, false);
+					name = sb.ToString();
 				}
 				WriteString(name);
 			}
 
+			private void GetTypeName(StringBuilder sb, Type type, bool isTypeParam)
+			{
+				bool v1 = !assembly.ManifestModule.__IsMissing && assembly.ManifestModule.MDStreamVersion < 0x20000;
+				bool includeAssemblyName = type.Assembly != assembly && (!v1 || type.Assembly != type.Module.universe.Mscorlib);
+				if (isTypeParam && includeAssemblyName)
+				{
+					sb.Append('[');
+				}
+				GetTypeNameImpl(sb, type);
+				if (includeAssemblyName)
+				{
+					if (v1)
+					{
+						sb.Append(',');
+					}
+					else
+					{
+						sb.Append(", ");
+					}
+					if (isTypeParam)
+					{
+						sb.Append(type.Assembly.FullName.Replace("]", "\\]")).Append(']');
+					}
+					else
+					{
+						sb.Append(type.Assembly.FullName);
+					}
+				}
+			}
+
+			private void GetTypeNameImpl(StringBuilder sb, Type type)
+			{
+				if (type.HasElementType)
+				{
+					GetTypeNameImpl(sb, type.GetElementType());
+					sb.Append(((ElementHolderType)type).GetSuffix());
+				}
+				else if (type.IsGenericTypeInstance)
+				{
+					sb.Append(type.GetGenericTypeDefinition().FullName);
+					sb.Append('[');
+					string sep = "";
+					foreach (Type typeParam in type.GetGenericArguments())
+					{
+						sb.Append(sep);
+						GetTypeName(sb, typeParam, true);
+						sep = ",";
+					}
+					sb.Append(']');
+				}
+				else
+				{
+					sb.Append(type.FullName);
+				}
+			}
+	
 			private void WriteString(string val)
 			{
 				bb.Write(val);
@@ -303,6 +391,58 @@ namespace IKVM.Reflection.Emit
 				{
 					WriteByte(0x51);
 				}
+				else if (type == u.System_Boolean)
+				{
+					WriteByte(0x02);
+				}
+				else if (type == u.System_Char)
+				{
+					WriteByte(0x03);
+				}
+				else if (type == u.System_SByte)
+				{
+					WriteByte(0x04);
+				}
+				else if (type == u.System_Byte)
+				{
+					WriteByte(0x05);
+				}
+				else if (type == u.System_Int16)
+				{
+					WriteByte(0x06);
+				}
+				else if (type == u.System_UInt16)
+				{
+					WriteByte(0x07);
+				}
+				else if (type == u.System_Int32)
+				{
+					WriteByte(0x08);
+				}
+				else if (type == u.System_UInt32)
+				{
+					WriteByte(0x09);
+				}
+				else if (type == u.System_Int64)
+				{
+					WriteByte(0x0A);
+				}
+				else if (type == u.System_UInt64)
+				{
+					WriteByte(0x0B);
+				}
+				else if (type == u.System_Single)
+				{
+					WriteByte(0x0C);
+				}
+				else if (type == u.System_Double)
+				{
+					WriteByte(0x0D);
+				}
+				else if (type == u.System_String)
+				{
+					WriteByte(0x0E);
+				}
 				else if (type.IsArray)
 				{
 					WriteByte(0x1D);
@@ -315,50 +455,7 @@ namespace IKVM.Reflection.Emit
 				}
 				else
 				{
-					switch (Type.GetTypeCode(type))
-					{
-						case TypeCode.Boolean:
-							WriteByte(0x02);
-							break;
-						case TypeCode.Char:
-							WriteByte(0x03);
-							break;
-						case TypeCode.SByte:
-							WriteByte(0x04);
-							break;
-						case TypeCode.Byte:
-							WriteByte(0x05);
-							break;
-						case TypeCode.Int16:
-							WriteByte(0x06);
-							break;
-						case TypeCode.UInt16:
-							WriteByte(0x07);
-							break;
-						case TypeCode.Int32:
-							WriteByte(0x08);
-							break;
-						case TypeCode.UInt32:
-							WriteByte(0x09);
-							break;
-						case TypeCode.Int64:
-							WriteByte(0x0A);
-							break;
-						case TypeCode.UInt64:
-							WriteByte(0x0B);
-							break;
-						case TypeCode.Single:
-							WriteByte(0x0C);
-							break;
-						case TypeCode.Double:
-							WriteByte(0x0D);
-							break;
-						case TypeCode.String:
-							WriteByte(0x0E);
-							break;
-						default:
-							throw new ArgumentException();
-					}
+					throw new ArgumentException();
 				}
 			}
 		}
@@ -383,7 +480,7 @@ namespace IKVM.Reflection.Emit
 			else
 			{
 				bb = new ByteBuffer(100);
-				BlobWriter bw = new BlobWriter(moduleBuilder, this, bb);
+				BlobWriter bw = new BlobWriter(moduleBuilder.Assembly, this, bb);
 				bw.WriteCustomAttributeBlob();
 			}
 			return moduleBuilder.Blobs.Add(bb);
@@ -440,16 +537,41 @@ namespace IKVM.Reflection.Emit
 			return null;
 		}
 
+		internal string GetLegacyDeclSecurity()
+		{
+			if (con.DeclaringType == con.Module.universe.System_Security_Permissions_PermissionSetAttribute
+				&& blob == null
+				&& (namedFields == null || namedFields.Length == 0)
+				&& namedProperties != null
+				&& namedProperties.Length == 1
+				&& namedProperties[0].Name == "XML")
+			{
+				return propertyValues[0] as string;
+			}
+			return null;
+		}
+
 		internal void WriteNamedArgumentsForDeclSecurity(ModuleBuilder moduleBuilder, ByteBuffer bb)
 		{
-			BlobWriter bw = new BlobWriter(moduleBuilder, this, bb);
-			bw.WriteNamedArguments(true);
+			if (blob != null)
+			{
+				bb.Write(blob);
+			}
+			else
+			{
+				BlobWriter bw = new BlobWriter(moduleBuilder.Assembly, this, bb);
+				bw.WriteNamedArguments(true);
+			}
 		}
 
 		internal CustomAttributeData ToData(Assembly asm)
 		{
 			if (blob != null)
 			{
+				if (constructorArgs != null)
+				{
+					return new CustomAttributeData(asm, con, (int)constructorArgs[0], blob);
+				}
 				return new CustomAttributeData(asm, con, new IKVM.Reflection.Reader.ByteReader(blob, 0, blob.Length));
 			}
 			else
@@ -459,18 +581,58 @@ namespace IKVM.Reflection.Emit
 				{
 					for (int i = 0; i < namedProperties.Length; i++)
 					{
-						namedArgs.Add(new CustomAttributeNamedArgument(namedProperties[i], new CustomAttributeTypedArgument(namedProperties[i].PropertyType, propertyValues[i])));
+						namedArgs.Add(new CustomAttributeNamedArgument(namedProperties[i], RewrapValue(namedProperties[i].PropertyType, propertyValues[i])));
 					}
 				}
 				if (namedFields != null)
 				{
 					for (int i = 0; i < namedFields.Length; i++)
 					{
-						namedArgs.Add(new CustomAttributeNamedArgument(namedFields[i], new CustomAttributeTypedArgument(namedFields[i].FieldType, fieldValues[i])));
+						namedArgs.Add(new CustomAttributeNamedArgument(namedFields[i], RewrapValue(namedFields[i].FieldType, fieldValues[i])));
 					}
 				}
-				return new CustomAttributeData(con, constructorArgs, namedArgs);
+				List<CustomAttributeTypedArgument> args = new List<CustomAttributeTypedArgument>(constructorArgs.Length);
+				ParameterInfo[] parameters = this.Constructor.GetParameters();
+				for (int i = 0; i < constructorArgs.Length; i++)
+				{
+					args.Add(RewrapValue(parameters[i].ParameterType, constructorArgs[i]));
+				}
+				return new CustomAttributeData(asm.ManifestModule, con, args, namedArgs);
 			}
+		}
+
+		private static CustomAttributeTypedArgument RewrapValue(Type type, object value)
+		{
+			if (value is Array)
+			{
+				Array array = (Array)value;
+				Type arrayType = type.Module.universe.Import(array.GetType());
+				return RewrapArray(arrayType, array);
+			}
+			else if (value is CustomAttributeTypedArgument)
+			{
+				CustomAttributeTypedArgument arg = (CustomAttributeTypedArgument)value;
+				if (arg.Value is Array)
+				{
+					return RewrapArray(arg.ArgumentType, (Array)arg.Value);
+				}
+				return arg;
+			}
+			else
+			{
+				return new CustomAttributeTypedArgument(type, value);
+			}
+		}
+
+		private static CustomAttributeTypedArgument RewrapArray(Type arrayType, Array array)
+		{
+			Type elementType = arrayType.GetElementType();
+			CustomAttributeTypedArgument[] newArray = new CustomAttributeTypedArgument[array.Length];
+			for (int i = 0; i < newArray.Length; i++)
+			{
+				newArray[i] = RewrapValue(elementType, array.GetValue(i));
+			}
+			return new CustomAttributeTypedArgument(arrayType, newArray);
 		}
 
 		internal bool HasBlob
@@ -488,6 +650,14 @@ namespace IKVM.Reflection.Emit
 			{
 				return ToData(asm).__ToBuilder();
 			}
+		}
+
+		internal byte[] GetBlob(Assembly asm)
+		{
+			ByteBuffer bb = new ByteBuffer(100);
+			BlobWriter bw = new BlobWriter(asm, this, bb);
+			bw.WriteCustomAttributeBlob();
+			return bb.ToArray();
 		}
 	}
 }

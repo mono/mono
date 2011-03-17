@@ -45,6 +45,20 @@ namespace IKVM.Reflection
 	{
 		public static readonly Type[] EmptyTypes = Empty<Type>.Array;
 		protected readonly Type underlyingType;
+		protected TypeFlags typeFlags;
+
+		[Flags]
+		protected enum TypeFlags
+		{
+			// for use by TypeBuilder
+			IsGenericTypeDefinition = 1,
+			HasNestedTypes = 2,
+			Baked = 4,
+
+			// for general use
+			ValueType = 8,
+			NotValueType = 16,
+		}
 
 		// prevent subclassing by outsiders
 		internal Type()
@@ -284,12 +298,24 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
+		public virtual bool __GetLayout(out int packingSize, out int typeSize)
+		{
+			packingSize = 0;
+			typeSize = 0;
+			return false;
+		}
+
 		public virtual bool IsGenericType
 		{
 			get { return false; }
 		}
 
 		public virtual bool IsGenericTypeDefinition
+		{
+			get { return false; }
+		}
+
+		internal virtual bool IsGenericTypeInstance
 		{
 			get { return false; }
 		}
@@ -1223,7 +1249,7 @@ namespace IKVM.Reflection
 
 		public Type __MakeGenericType(Type[] typeArguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
-			if (!this.IsGenericTypeDefinition)
+			if (!this.__IsMissing && !this.IsGenericTypeDefinition)
 			{
 				throw new InvalidOperationException();
 			}
@@ -1281,7 +1307,7 @@ namespace IKVM.Reflection
 			{
 				return TypeCode.Empty;
 			}
-			if (type.IsEnum)
+			if (!type.__IsMissing && type.IsEnum)
 			{
 				type = type.GetEnumUnderlyingType();
 			}
@@ -1349,6 +1375,10 @@ namespace IKVM.Reflection
 			else if (type == u.System_String)
 			{
 				return TypeCode.String;
+			}
+			else if (type.__IsMissing)
+			{
+				throw new MissingMemberException(type);
 			}
 			else
 			{
@@ -1553,7 +1583,7 @@ namespace IKVM.Reflection
 			return null;
 		}
 
-		internal FieldInfo FindField(string name, FieldSignature signature)
+		internal virtual FieldInfo FindField(string name, FieldSignature signature)
 		{
 			foreach (FieldInfo field in __GetDeclaredFields())
 			{
@@ -1604,6 +1634,54 @@ namespace IKVM.Reflection
 					|| this == u.System_Runtime_CompilerServices_MethodImplAttribute
 					;
 			}
+		}
+
+		internal Type MarkNotValueType()
+		{
+			typeFlags |= TypeFlags.NotValueType;
+			return this;
+		}
+
+		internal Type MarkValueType()
+		{
+			typeFlags |= TypeFlags.ValueType;
+			return this;
+		}
+
+		internal ConstructorInfo GetPseudoCustomAttributeConstructor(params Type[] parameterTypes)
+		{
+			Universe u = this.Module.universe;
+			MethodSignature methodSig = MethodSignature.MakeFromBuilder(u.System_Void, parameterTypes, null, CallingConventions.Standard | CallingConventions.HasThis, 0);
+			MethodBase mb =
+				FindMethod(".ctor", methodSig) ??
+				u.GetMissingMethodOrThrow(this, ".ctor", methodSig);
+			return (ConstructorInfo)mb;
+		}
+
+		public MethodBase __CreateMissingMethod(string name, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
+			MethodSignature sig = new MethodSignature(
+				returnType ?? this.Module.universe.System_Void,
+				Util.Copy(parameterTypes),
+				PackedCustomModifiers.CreateFromExternal(returnTypeOptionalCustomModifiers, returnTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers, parameterTypeRequiredCustomModifiers, parameterTypes.Length),
+				callingConvention,
+				0);
+			MethodInfo method = new MissingMethod(this, name, sig);
+			if (name == ".ctor" || name == ".cctor")
+			{
+				return new ConstructorInfoImpl(method);
+			}
+			return method;
+		}
+
+		public FieldInfo __CreateMissingField(string name, Type fieldType, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		{
+			return new MissingField(this, name, FieldSignature.Create(fieldType, optionalCustomModifiers, requiredCustomModifiers));
+		}
+
+		internal virtual Type SetMetadataTokenForMissing(int token)
+		{
+			return this;
 		}
 	}
 
@@ -1755,7 +1833,7 @@ namespace IKVM.Reflection
 			return CustomAttributeData.EmptyList;
 		}
 
-		protected abstract string GetSuffix();
+		internal abstract string GetSuffix();
 
 		protected abstract Type Wrap(Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers);
 	}
@@ -1833,7 +1911,7 @@ namespace IKVM.Reflection
 			return elementType.GetHashCode() * 5;
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "[]";
 		}
@@ -1913,7 +1991,7 @@ namespace IKVM.Reflection
 			return elementType.GetHashCode() * 9 + rank;
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			if (rank == 1)
 			{
@@ -2075,7 +2153,7 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "&";
 		}
@@ -2123,7 +2201,7 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "*";
 		}
@@ -2359,15 +2437,17 @@ namespace IKVM.Reflection
 		{
 			get
 			{
-				if (this.ContainsGenericParameters)
+				if (!this.__ContainsMissingType && this.ContainsGenericParameters)
 				{
 					return null;
 				}
 				StringBuilder sb = new StringBuilder(this.type.FullName);
 				sb.Append('[');
+				string sep = "";
 				foreach (Type type in args)
 				{
-					sb.Append('[').Append(type.AssemblyQualifiedName.Replace("]", "\\]")).Append(']');
+					sb.Append(sep).Append('[').Append(type.FullName).Append(", ").Append(type.Assembly.FullName.Replace("]", "\\]")).Append(']');
+					sep = ",";
 				}
 				sb.Append(']');
 				return sb.ToString();
@@ -2395,6 +2475,11 @@ namespace IKVM.Reflection
 		}
 
 		public override bool IsGenericType
+		{
+			get { return true; }
+		}
+
+		internal override bool IsGenericTypeInstance
 		{
 			get { return true; }
 		}

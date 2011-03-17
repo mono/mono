@@ -104,7 +104,7 @@ namespace IKVM.Reflection.Emit
 			this.requiredPermissions = requiredPermissions;
 			this.optionalPermissions = optionalPermissions;
 			this.refusedPermissions = refusedPermissions;
-			if (universe.HasMscorlib && universe.Mscorlib.ImageRuntimeVersion != null)
+			if (universe.HasMscorlib && !universe.Mscorlib.__IsMissing && universe.Mscorlib.ImageRuntimeVersion != null)
 			{
 				this.imageRuntimeVersion = universe.Mscorlib.ImageRuntimeVersion;
 			}
@@ -173,6 +173,11 @@ namespace IKVM.Reflection.Emit
 		public void __SetAssemblyFlags(AssemblyNameFlags flags)
 		{
 			this.flags = flags;
+		}
+
+		public override AssemblyNameFlags __AssemblyFlags
+		{
+			get { return flags; }
 		}
 
 		public override AssemblyName GetName()
@@ -435,11 +440,7 @@ namespace IKVM.Reflection.Emit
 					ModuleWriter.HashChunk(fs, cs, buf, (int)fs.Length);
 				}
 			}
-			FileTable.Record file = new FileTable.Record();
-			file.Flags = flags;
-			file.Name = manifestModule.Strings.Add(Path.GetFileName(fileName));
-			file.HashValue = manifestModule.Blobs.Add(ByteBuffer.Wrap(hash.Hash));
-			return 0x26000000 + manifestModule.File.AddRecord(file);
+			return manifestModule.__AddModule(flags, Path.GetFileName(fileName), hash.Hash);
 		}
 
 		public void AddResourceFile(string name, string fileName)
@@ -641,7 +642,7 @@ namespace IKVM.Reflection.Emit
 		}
 	}
 
-	sealed class ManifestModule : Module
+	sealed class ManifestModule : NonPEModule
 	{
 		private readonly AssemblyBuilder assembly;
 		private readonly Guid guid = Guid.NewGuid();
@@ -686,54 +687,14 @@ namespace IKVM.Reflection.Emit
 			get { return guid; }
 		}
 
-		public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override string ResolveString(int metadataToken)
-		{
-			throw new ArgumentException();
-		}
-
-		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
-		{
-			throw new ArgumentException();
-		}
-
 		public override string ScopeName
 		{
 			get { return "RefEmit_InMemoryManifestModule"; }
 		}
 
-		public override AssemblyName[] __GetReferencedAssemblies()
+		protected override Exception NotSupportedException()
 		{
-			throw new InvalidOperationException();
-		}
-
-		internal override Type GetModuleType()
-		{
-			throw new InvalidOperationException();
-		}
-
-		internal override IKVM.Reflection.Reader.ByteReader GetBlob(int blobIndex)
-		{
-			throw new InvalidOperationException();
+			return new InvalidOperationException();
 		}
 	}
 }

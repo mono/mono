@@ -47,7 +47,7 @@ namespace IKVM.Reflection.Emit
 		private MethodImplAttributes implFlags;
 		private ILGenerator ilgen;
 		private int rva = -1;
-		private readonly CallingConventions callingConvention;
+		private CallingConventions callingConvention;
 		private List<ParameterBuilder> parameters;
 		private GenericTypeParameterBuilder[] gtpb;
 		private List<CustomAttributeBuilder> declarativeSecurity;
@@ -402,6 +402,11 @@ namespace IKVM.Reflection.Emit
 		public void __SetAttributes(MethodAttributes attributes)
 		{
 			this.attributes = attributes;
+		}
+
+		public void __SetCallingConvention(CallingConventions callingConvention)
+		{
+			this.callingConvention = callingConvention;
 		}
 
 		public override MethodImplAttributes GetMethodImplementationFlags()

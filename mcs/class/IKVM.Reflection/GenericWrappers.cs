@@ -173,7 +173,7 @@ namespace IKVM.Reflection
 				{
 					return this;
 				}
-				else if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+				else if (declaringType.IsGenericTypeInstance)
 				{
 					return new GenericMethodInstance(declaringType, method, null);
 				}
@@ -183,6 +183,11 @@ namespace IKVM.Reflection
 				}
 			}
 			throw new InvalidOperationException();
+		}
+
+		public override MethodBase __GetMethodOnTypeDefinition()
+		{
+			return method;
 		}
 
 		public override Type[] GetGenericArguments()
@@ -259,6 +264,11 @@ namespace IKVM.Reflection
 			System.Diagnostics.Debug.Assert(methodArgs == null);
 			return new GenericMethodInstance(declaringType.BindTypeParameters(type), method, null);
 		}
+
+		internal override bool HasThis
+		{
+			get { return method.HasThis; }
+		}
 	}
 
 	sealed class GenericFieldInstance : FieldInfo
@@ -316,6 +326,16 @@ namespace IKVM.Reflection
 		public override void __GetDataFromRVA(byte[] data, int offset, int length)
 		{
 			field.__GetDataFromRVA(data, offset, length);
+		}
+
+		public override int __FieldRVA
+		{
+			get { return field.__FieldRVA; }
+		}
+
+		public override FieldInfo __GetFieldOnTypeDefinition()
+		{
+			return field;
 		}
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
@@ -576,6 +596,16 @@ namespace IKVM.Reflection
 		public override MethodInfo[] GetOtherMethods(bool nonPublic)
 		{
 			MethodInfo[] others = eventInfo.GetOtherMethods(nonPublic);
+			for (int i = 0; i < others.Length; i++)
+			{
+				others[i] = Wrap(others[i]);
+			}
+			return others;
+		}
+
+		public override MethodInfo[] __GetMethods()
+		{
+			MethodInfo[] others = eventInfo.__GetMethods();
 			for (int i = 0; i < others.Length; i++)
 			{
 				others[i] = Wrap(others[i]);

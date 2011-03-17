@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -142,7 +142,7 @@ namespace IKVM.Reflection
 		internal readonly MethodSpecTable MethodSpec = new MethodSpecTable();
 		internal readonly GenericParamConstraintTable GenericParamConstraint = new GenericParamConstraintTable();
 
-		internal Module(Universe universe)
+		protected Module(Universe universe)
 		{
 			this.universe = universe;
 		}
@@ -202,6 +202,11 @@ namespace IKVM.Reflection
 			throw new NotSupportedException();
 		}
 
+		public virtual bool __GetSectionInfo(int rva, out string name, out int characteristics)
+		{
+			throw new NotSupportedException();
+		}
+
 		public virtual void GetPEKind(out PortableExecutableKinds peKind, out ImageFileMachine machine)
 		{
 			throw new NotSupportedException();
@@ -214,47 +219,47 @@ namespace IKVM.Reflection
 
 		public FieldInfo GetField(string name)
 		{
-			return IsResource() ? null : GetModuleType().GetField(name);
+			return GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
 
 		public FieldInfo GetField(string name, BindingFlags bindingFlags)
 		{
-			return IsResource() ? null : GetModuleType().GetField(name, bindingFlags);
+			return IsResource() ? null : GetModuleType().GetField(name, bindingFlags | BindingFlags.DeclaredOnly);
 		}
 
 		public FieldInfo[] GetFields()
 		{
-			return IsResource() ? Empty<FieldInfo>.Array : GetModuleType().GetFields();
+			return GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
 
 		public FieldInfo[] GetFields(BindingFlags bindingFlags)
 		{
-			return IsResource() ? Empty<FieldInfo>.Array : GetModuleType().GetFields(bindingFlags);
+			return IsResource() ? Empty<FieldInfo>.Array : GetModuleType().GetFields(bindingFlags | BindingFlags.DeclaredOnly);
 		}
 
 		public MethodInfo GetMethod(string name)
 		{
-			return IsResource() ? null : GetModuleType().GetMethod(name);
+			return IsResource() ? null : GetModuleType().GetMethod(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
 
 		public MethodInfo GetMethod(string name, Type[] types)
 		{
-			return IsResource() ? null : GetModuleType().GetMethod(name, types);
+			return IsResource() ? null : GetModuleType().GetMethod(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly, null, types, null);
 		}
 
 		public MethodInfo GetMethod(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
 		{
-			return IsResource() ? null : GetModuleType().GetMethod(name, bindingAttr, binder, callConv, types, modifiers);
+			return IsResource() ? null : GetModuleType().GetMethod(name, bindingAttr | BindingFlags.DeclaredOnly, binder, callConv, types, modifiers);
 		}
 
 		public MethodInfo[] GetMethods()
 		{
-			return IsResource() ? Empty<MethodInfo>.Array : GetModuleType().GetMethods();
+			return GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
 
 		public MethodInfo[] GetMethods(BindingFlags bindingFlags)
 		{
-			return IsResource() ? Empty<MethodInfo>.Array : GetModuleType().GetMethods(bindingFlags);
+			return IsResource() ? Empty<MethodInfo>.Array : GetModuleType().GetMethods(bindingFlags | BindingFlags.DeclaredOnly);
 		}
 
 		public ConstructorInfo __ModuleInitializer
@@ -338,7 +343,7 @@ namespace IKVM.Reflection
 			{
 				throw new MissingModuleException((MissingModule)this);
 			}
-			return parser.Expand(type, this.Assembly, throwOnError, className);
+			return parser.Expand(type, this.Assembly, throwOnError, className, false);
 		}
 
 		public Type[] GetTypes()
@@ -403,9 +408,37 @@ namespace IKVM.Reflection
 
 		public abstract AssemblyName[] __GetReferencedAssemblies();
 
+		public abstract string[] __GetReferencedModules();
+
+		public abstract Type[] __GetReferencedTypes();
+
+		public abstract Type[] __GetExportedTypes();
+
 		public virtual bool __IsMissing
 		{
 			get { return false; }
+		}
+
+		public long __ImageBase
+		{
+			get { return GetImageBaseImpl(); }
+		}
+
+		protected abstract long GetImageBaseImpl();
+
+		public virtual long __StackReserve
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public virtual byte[] __ModuleHash
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public List<CustomAttributeData> __GetCustomAttributesFor(int token)
+		{
+			return GetCustomAttributes(token, null);
 		}
 
 		internal Type CanonicalizeType(Type type)
@@ -475,6 +508,94 @@ namespace IKVM.Reflection
 
 		internal virtual void ExportTypes(int fileToken, IKVM.Reflection.Emit.ModuleBuilder manifestModule)
 		{
+		}
+	}
+
+	abstract class NonPEModule : Module
+	{
+		protected NonPEModule(Universe universe)
+			: base(universe)
+		{
+		}
+
+		protected virtual Exception InvalidOperationException()
+		{
+			return new InvalidOperationException();
+		}
+
+		protected virtual Exception NotSupportedException()
+		{
+			return new NotSupportedException();
+		}
+
+		protected virtual Exception ArgumentOutOfRangeException()
+		{
+			return new ArgumentOutOfRangeException();
+		}
+
+		internal sealed override Type GetModuleType()
+		{
+			throw InvalidOperationException();
+		}
+
+		internal sealed override ByteReader GetBlob(int blobIndex)
+		{
+			throw InvalidOperationException();
+		}
+
+		public sealed override AssemblyName[] __GetReferencedAssemblies()
+		{
+			throw NotSupportedException();
+		}
+
+		public sealed override string[] __GetReferencedModules()
+		{
+			throw NotSupportedException();
+		}
+
+		public override Type[] __GetReferencedTypes()
+		{
+			throw NotSupportedException();
+		}
+
+		public override Type[] __GetExportedTypes()
+		{
+			throw NotSupportedException();
+		}
+
+		protected sealed override long GetImageBaseImpl()
+		{
+			throw NotSupportedException();
+		}
+
+		public sealed override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		{
+			throw ArgumentOutOfRangeException();
+		}
+
+		public sealed override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		{
+			throw ArgumentOutOfRangeException();
+		}
+
+		public sealed override FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		{
+			throw ArgumentOutOfRangeException();
+		}
+
+		public sealed override MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		{
+			throw ArgumentOutOfRangeException();
+		}
+
+		public sealed override string ResolveString(int metadataToken)
+		{
+			throw ArgumentOutOfRangeException();
+		}
+
+		public sealed override Type[] __ResolveOptionalParameterTypes(int metadataToken)
+		{
+			throw ArgumentOutOfRangeException();
 		}
 	}
 

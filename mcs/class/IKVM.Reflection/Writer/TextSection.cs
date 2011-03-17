@@ -264,7 +264,7 @@ namespace IKVM.Reflection.Writer
 			moduleBuilder.GenericParam.Fixup(moduleBuilder);
 			moduleBuilder.CustomAttribute.Fixup(moduleBuilder);
 			moduleBuilder.FieldLayout.Fixup(moduleBuilder);
-			moduleBuilder.FieldRVA.Fixup(moduleBuilder, sdataRVA);
+			moduleBuilder.FieldRVA.Fixup(moduleBuilder, sdataRVA, (int)this.MethodBodiesRVA);
 			moduleBuilder.ImplMap.Fixup(moduleBuilder);
 			moduleBuilder.MethodSpec.Fixup(moduleBuilder);
 			moduleBuilder.GenericParamConstraint.Fixup(moduleBuilder);

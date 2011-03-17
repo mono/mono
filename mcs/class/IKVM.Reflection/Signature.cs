@@ -82,15 +82,18 @@ namespace IKVM.Reflection
 
 		private static Type ReadGenericInst(ModuleReader module, ByteReader br, IGenericContext context)
 		{
+			Type type;
 			switch (br.ReadByte())
 			{
 				case ELEMENT_TYPE_CLASS:
+					type = ReadTypeDefOrRefEncoded(module, br, context).MarkNotValueType();
+					break;
 				case ELEMENT_TYPE_VALUETYPE:
+					type = ReadTypeDefOrRefEncoded(module, br, context).MarkValueType();
 					break;
 				default:
 					throw new BadImageFormatException();
 			}
-			Type type = ReadTypeDefOrRefEncoded(module, br, context);
 			if (!type.__IsMissing && !type.IsGenericTypeDefinition)
 			{
 				throw new BadImageFormatException();
@@ -185,8 +188,9 @@ namespace IKVM.Reflection
 			switch (br.ReadByte())
 			{
 				case ELEMENT_TYPE_CLASS:
+					return ReadTypeDefOrRefEncoded(module, br, context).MarkNotValueType();
 				case ELEMENT_TYPE_VALUETYPE:
-					return ReadTypeDefOrRefEncoded(module, br, context);
+					return ReadTypeDefOrRefEncoded(module, br, context).MarkValueType();
 				case ELEMENT_TYPE_BOOLEAN:
 					return module.universe.System_Boolean;
 				case ELEMENT_TYPE_CHAR:
@@ -440,7 +444,7 @@ namespace IKVM.Reflection
 				}
 				bb.WriteCompressedInt(type.GenericParameterPosition);
 			}
-			else if (type.IsGenericType)
+			else if (!type.__IsMissing && type.IsGenericType)
 			{
 				WriteGenericSignature(module, bb, type);
 			}

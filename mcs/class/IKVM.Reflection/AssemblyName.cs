@@ -32,6 +32,7 @@ namespace IKVM.Reflection
 	public sealed class AssemblyName : ICloneable
 	{
 		private readonly System.Reflection.AssemblyName name;
+		internal byte[] hash;
 		private string culture;
 
 		private AssemblyName(System.Reflection.AssemblyName name, string culture)

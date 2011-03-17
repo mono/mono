@@ -94,11 +94,21 @@ namespace IKVM.Reflection.Reader
 		private static readonly DummyModule module = new DummyModule();
 		private readonly int position;
 
-		private sealed class DummyModule : Module
+		private sealed class DummyModule : NonPEModule
 		{
 			internal DummyModule()
 				: base(new Universe())
 			{
+			}
+
+			protected override Exception NotSupportedException()
+			{
+				return new InvalidOperationException();
+			}
+
+			protected override Exception ArgumentOutOfRangeException()
+			{
+				return new InvalidOperationException();
 			}
 
 			public override bool Equals(object obj)
@@ -151,54 +161,9 @@ namespace IKVM.Reflection.Reader
 				get { throw new InvalidOperationException(); }
 			}
 
-			public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-			{
-				throw new InvalidOperationException();
-			}
-
-			public override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-			{
-				throw new InvalidOperationException();
-			}
-
-			public override FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-			{
-				throw new InvalidOperationException();
-			}
-
-			public override MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-			{
-				throw new InvalidOperationException();
-			}
-
-			public override string ResolveString(int metadataToken)
-			{
-				throw new InvalidOperationException();
-			}
-
-			public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
-			{
-				throw new InvalidOperationException();
-			}
-
 			public override string ScopeName
 			{
 				get { throw new InvalidOperationException(); }
-			}
-
-			public override AssemblyName[] __GetReferencedAssemblies()
-			{
-				throw new InvalidOperationException();
-			}
-
-			internal override Type GetModuleType()
-			{
-				throw new InvalidOperationException();
-			}
-
-			internal override ByteReader GetBlob(int blobIndex)
-			{
-				throw new InvalidOperationException();
 			}
 		}
 

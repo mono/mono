@@ -193,17 +193,21 @@ namespace IKVM.Reflection.Reader
 			}
 			// TODO add ModuleResolve event
 			string location = Path.Combine(Path.GetDirectoryName(this.location), manifestModule.GetString(manifestModule.File.records[index].Name));
-			return LoadModule(index, File.ReadAllBytes(location), location);
+			return LoadModule(index, null, location);
 		}
 
 		private Module LoadModule(int index, byte[] rawModule, string location)
 		{
 			if ((manifestModule.File.records[index].Flags & ContainsNoMetaData) != 0)
 			{
-				return externalModules[index] = new ResourceModule(this, manifestModule.GetString(manifestModule.File.records[index].Name), location);
+				return externalModules[index] = new ResourceModule(manifestModule, index, location);
 			}
 			else
 			{
+				if (rawModule == null)
+				{
+					rawModule = File.ReadAllBytes(location);
+				}
 				return externalModules[index] = new ModuleReader(this, manifestModule.universe, new MemoryStream(rawModule), location);
 			}
 		}
@@ -245,6 +249,11 @@ namespace IKVM.Reflection.Reader
 		public override AssemblyName[] GetReferencedAssemblies()
 		{
 			return manifestModule.__GetReferencedAssemblies();
+		}
+
+		public override AssemblyNameFlags __AssemblyFlags
+		{
+			get { return (AssemblyNameFlags)manifestModule.AssemblyTable.records[0].Flags; }
 		}
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
