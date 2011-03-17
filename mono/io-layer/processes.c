@@ -378,23 +378,14 @@ sigchld_signal (int dummy, siginfo_t *info, void *context)
 	struct _WapiHandle_process *process_handle;
 	gpointer p;
 	int status;
-	gboolean allocated;
-	pid_t ret;
 
 	p = (gpointer) info->si_pid;
-	/* If allocated == FALSE, we must not call _wapi_lookup_handle() as it will use locks/g_new */
-	allocated = _wapi_private_handle_is_allocated (p);
 	/* If the handle exists, wait for it using process_wait, which will fill in the data.
 	 * If the handle does not exist, call waitpid() to avoid leaving a zombie */
-	if (allocated && _wapi_lookup_handle (p, WAPI_HANDLE_PROCESS, (gpointer *)&process_handle) != FALSE) {
+	if (_wapi_lookup_handle (p, WAPI_HANDLE_PROCESS, (gpointer *)&process_handle) != FALSE)
 		process_wait (p, 0);
-	} else {
-		while ((ret = waitpid (info->si_pid, &status, WNOHANG)) != info->si_pid) {
-			if (ret == (pid_t)(-1) && errno == EINTR)
-				continue;
-			break;
-		}
-	}
+	else
+		waitpid (info->si_pid, &status, WNOHANG);
 }
 
 void
