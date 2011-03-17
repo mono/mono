@@ -447,18 +447,23 @@ Console.Error.WriteLine (Encoding.UTF8.GetString (buffer));
 			}
 
 			// dictionary
-			MemoryStream msd = new MemoryStream ();
-			BinaryWriter dw = new BinaryWriter (msd);
-			for (int i = writer_session_count; i < session.List.Count; i++)
-				dw.Write (session.List [i].Value);
-			dw.Flush ();
+			if (EncodingRecord == Soap12EncodingBinaryWithDictionary) {
+				MemoryStream msd = new MemoryStream ();
+				BinaryWriter dw = new BinaryWriter (msd);
+				for (int i = writer_session_count; i < session.List.Count; i++)
+					dw.Write (session.List [i].Value);
+				dw.Flush ();
 
-			int length = (int) (msd.Position + ms.Position);
-			var msda = msd.ToArray ();
-			int sizeOfLength = writer.GetSizeOfLength (msda.Length);
+				int length = (int) (msd.Position + ms.Position);
+				var msda = msd.ToArray ();
+				int sizeOfLength = writer.GetSizeOfLength (msda.Length);
 
-			writer.WriteVariableInt (length + sizeOfLength); // dictionary array also involves the size of itself.
-			WriteSizedChunk (msda, 0, msda.Length);
+				writer.WriteVariableInt (length + sizeOfLength); // dictionary array also involves the size of itself.
+				WriteSizedChunk (msda, 0, msda.Length);
+			}
+			else
+				writer.WriteVariableInt ((int) ms.Position);
+
 			// message body
 			var arr = ms.GetBuffer ();
 			writer.Write (arr, 0, (int) ms.Position);
