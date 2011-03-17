@@ -207,7 +207,11 @@ namespace System.ComponentModel {
 		protected override void ClearItems ()
 		{
 			EndNew (pending_add_index);
-
+			if (type_raises_item_changed_events) {
+				foreach ( T item in base.Items ) {
+					(item as INotifyPropertyChanged).PropertyChanged -= Item_PropertyChanged;
+				}
+			}
 			base.ClearItems ();
 
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
@@ -237,6 +241,14 @@ namespace System.ComponentModel {
 
 			if (raise_list_changed_events)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, index));
+
+			if (type_raises_item_changed_events)
+				(item as INotifyPropertyChanged).PropertyChanged += Item_PropertyChanged;
+		}
+
+		void Item_PropertyChanged (object item, PropertyChangedEventArgs args)
+		{
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, base.IndexOf ((T) item)) );
 		}
 
 		protected virtual void OnAddingNew (AddingNewEventArgs e)
@@ -257,7 +269,9 @@ namespace System.ComponentModel {
 				throw new NotSupportedException ();
 
 			EndNew (pending_add_index);
-
+			if (type_raises_item_changed_events) {
+				(base[index] as INotifyPropertyChanged).PropertyChanged -= Item_PropertyChanged;
+			}
 			base.RemoveItem (index);
 
 			if (raise_list_changed_events)
@@ -281,6 +295,10 @@ namespace System.ComponentModel {
 
 		protected override void SetItem (int index, T item)
 		{
+			if (type_raises_item_changed_events) {
+				(base[index] as INotifyPropertyChanged).PropertyChanged -= Item_PropertyChanged;
+				(item as INotifyPropertyChanged).PropertyChanged += Item_PropertyChanged;
+			}
 			base.SetItem (index, item);
 
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, index));
@@ -358,3 +376,4 @@ namespace System.ComponentModel {
 	}
 
 }
+
