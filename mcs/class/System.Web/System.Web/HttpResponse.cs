@@ -1136,7 +1136,6 @@ namespace System.Web
 
 		public void WriteFile (string filename, bool readIntoMemory)
 		{
-			Console.WriteLine ("{0}.WriteLine (\"{1}\", {2})", this, filename, readIntoMemory);
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
