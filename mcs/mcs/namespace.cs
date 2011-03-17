@@ -1119,15 +1119,15 @@ namespace Mono.CSharp {
 
 			switch (name) {
 			case "Gtk": case "GtkSharp":
-				MsgtryPkg ("gtk-sharp");
+				MsgtryPkg ("gtk-sharp-2.0");
 				break;
 
 			case "Gdk": case "GdkSharp":
-				MsgtryPkg ("gdk-sharp");
+				MsgtryPkg ("gdk-sharp-2.0");
 				break;
 
 			case "Glade": case "GladeSharp":
-				MsgtryPkg ("glade-sharp");
+				MsgtryPkg ("glade-sharp-2.0");
 				break;
 
 			case "System.Drawing":
