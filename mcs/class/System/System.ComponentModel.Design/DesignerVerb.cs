@@ -38,9 +38,7 @@ namespace System.ComponentModel.Design
 	public class DesignerVerb : MenuCommand
 	{
 		private string text;
-#if NET_2_0
 		private string description;
-#endif
 
 		public DesignerVerb (string text, EventHandler handler) 
 			: this (text, handler, StandardCommands.VerbFirst)
@@ -56,12 +54,10 @@ namespace System.ComponentModel.Design
 			get { return text; }
 		}
 
-#if NET_2_0
 		public string Description {
 			get { return description; }
 			set { description = value; }
 		}
-#endif
 
 		public override string ToString()
 		{

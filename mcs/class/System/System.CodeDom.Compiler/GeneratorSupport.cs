@@ -55,14 +55,11 @@ namespace System.CodeDom.Compiler
 		PublicStaticMembers = 1 << 18,
 		ComplexExpressions = 1 << 19,
 		Win32Resources = 1 << 20,
-
-#if NET_2_0
 		Resources = 1 << 21,
 		PartialTypes = 1 << 22,
 		GenericTypeReference = 1 << 23,
 		GenericTypeDeclaration = 1 << 24,
 		DeclareIndexerProperties = 1 << 25,
-#endif
 	}
 }
 

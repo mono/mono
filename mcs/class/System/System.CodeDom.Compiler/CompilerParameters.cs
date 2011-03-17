@@ -35,19 +35,13 @@ using System.Security.Policy;
 
 namespace System.CodeDom.Compiler {
 
-#if NET_2_0
 	[Serializable]
-#else
-	[ComVisible (false)]
-#endif
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class CompilerParameters {
 
 		private string compilerOptions;
-#if NET_1_1
 		private Evidence evidence;
-#endif
 		private bool generateExecutable = false;
 		private bool generateInMemory = false;
 		private bool includeDebugInformation = false;
@@ -59,10 +53,8 @@ namespace System.CodeDom.Compiler {
 		private IntPtr userToken = IntPtr.Zero;
 		private int warningLevel = -1;
 		private string win32Resource;
-#if NET_2_0
 		private StringCollection embedded_resources;
 		private StringCollection linked_resources;
-#endif
 
 		//
 		// Constructors
@@ -104,7 +96,6 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 
-#if NET_1_1
 #if NET_4_0
 		[Obsolete]
 #endif
@@ -113,7 +104,6 @@ namespace System.CodeDom.Compiler {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			set { evidence = value; }
 		}
-#endif
 
 		public bool GenerateExecutable {
 			get {
@@ -215,7 +205,6 @@ namespace System.CodeDom.Compiler {
 				win32Resource = value;
 			}
 		}
-#if NET_2_0
 		[ComVisible (false)]
 		public StringCollection EmbeddedResources {
 			get {
@@ -233,6 +222,5 @@ namespace System.CodeDom.Compiler {
 				return linked_resources;
 			}
 		}
-#endif
 	}
 }

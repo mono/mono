@@ -79,23 +79,10 @@ namespace System.CodeDom.Compiler {
 		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)] // UnmanagedCode "covers" more than ControlPrincipal
 		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
-#if NET_2_0
 			// WindowsImpersonationContext implements IDisposable only in 2.0
 			using (WindowsImpersonationContext context = WindowsIdentity.Impersonate (userToken)) {
 				return InternalExecWaitWithCapture (cmd, currentDir, tempFiles, ref outputName, ref errorName);
 			}
-#else
-			int result = -1;
-			WindowsImpersonationContext context = WindowsIdentity.Impersonate (userToken);
-			try {
-				result = InternalExecWaitWithCapture (cmd, currentDir, tempFiles, ref outputName, ref errorName);
-			}
-			finally {
-				context.Undo ();
-				context = null;
-			}
-			return result;
-#endif
 		}
 		
 		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName)

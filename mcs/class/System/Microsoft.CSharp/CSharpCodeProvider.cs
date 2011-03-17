@@ -33,19 +33,14 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
-
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace Microsoft.CSharp {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class CSharpCodeProvider : CodeDomProvider {
-#if NET_2_0
 		IDictionary <string, string> providerOptions;
-#endif
 		
 		//
 		// Constructors
@@ -54,12 +49,11 @@ namespace Microsoft.CSharp {
 		{
 		}
 
-#if NET_2_0
 		public CSharpCodeProvider (IDictionary <string, string> providerOptions)
 		{
 			this.providerOptions = providerOptions;
 		}
-#endif
+
 		//
 		// Properties
 		//
@@ -72,27 +66,19 @@ namespace Microsoft.CSharp {
 		//
 		// Methods
 		//
-#if NET_2_0
 		[Obsolete ("Use CodeDomProvider class")]
-#endif
 		public override ICodeCompiler CreateCompiler()
 		{
-#if NET_2_0
 			if (providerOptions != null && providerOptions.Count > 0)
 				return new Mono.CSharp.CSharpCodeCompiler (providerOptions);
-#endif
 			return new Mono.CSharp.CSharpCodeCompiler();
 		}
 
-#if NET_2_0
 		[Obsolete ("Use CodeDomProvider class")]
-#endif
 		public override ICodeGenerator CreateGenerator()
 		{
-#if NET_2_0
 			if (providerOptions != null && providerOptions.Count > 0)
 				return new Mono.CSharp.CSharpCodeGenerator (providerOptions);
-#endif
 			return new Mono.CSharp.CSharpCodeGenerator();
 		}
 		
@@ -102,12 +88,10 @@ namespace Microsoft.CSharp {
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
 		{
 			throw new NotImplementedException();
 		}
-#endif
 	}
 }

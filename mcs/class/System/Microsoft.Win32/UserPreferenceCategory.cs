@@ -44,8 +44,6 @@ namespace Microsoft.Win32 {
 		Screensaver = 11,
 		Window = 12,
 		Locale = 13,
-#if NET_2_0
 		VisualStyle
-#endif
 	}
 }

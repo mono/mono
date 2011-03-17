@@ -36,18 +36,12 @@ using System.Runtime.Serialization;
 
 namespace System.ComponentModel.Design
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class CheckoutException : ExternalException
 	{
 		public static readonly CheckoutException Canceled = new CheckoutException (
 			"The user canceled the checkout.",
-#if NET_2_0
 			-2147467260);
-#else
-			-2147467259);
-#endif
 
 		public CheckoutException()
 			: base ()
@@ -64,7 +58,6 @@ namespace System.ComponentModel.Design
 		{
 		}
 
-#if NET_2_0
 		public CheckoutException (string message, Exception innerException)
 			: base (message, innerException)
 		{
@@ -74,6 +67,5 @@ namespace System.ComponentModel.Design
 			: base (info, context)
 		{
 		}
-#endif
 	}
 }

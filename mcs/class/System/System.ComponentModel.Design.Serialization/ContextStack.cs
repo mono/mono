@@ -98,14 +98,12 @@ namespace System.ComponentModel.Design.Serialization
 			_contextList.Add (context);
 		}
 
-#if NET_2_0
 		public void Append (object context)
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
 			_contextList.Insert (0, context);
 		}
-#endif
 	}
 }
 

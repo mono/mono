@@ -26,11 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace Microsoft.Win32 {
 
 	public delegate void SessionSwitchEventHandler (object sender, SessionSwitchEventArgs e);
 }
-
-#endif

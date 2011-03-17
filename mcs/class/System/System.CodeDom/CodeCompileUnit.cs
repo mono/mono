@@ -79,8 +79,6 @@ namespace System.CodeDom
 			}
 		}
 
-#if NET_2_0
-
 		CodeDirectiveCollection startDirectives;
 		CodeDirectiveCollection endDirectives;
 
@@ -99,8 +97,5 @@ namespace System.CodeDom
 				return endDirectives;
 			}
 		}
-
-#endif
-
 	}
 }

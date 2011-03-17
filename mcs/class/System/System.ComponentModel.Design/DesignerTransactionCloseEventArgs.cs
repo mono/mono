@@ -36,31 +36,23 @@ namespace System.ComponentModel.Design
 	public class DesignerTransactionCloseEventArgs : EventArgs
 	{
 		private bool commit;
-#if NET_2_0		
 		private bool last_transaction;
-#endif
 
-#if NET_2_0
 		public DesignerTransactionCloseEventArgs (bool commit, bool lastTransaction)
 		{
 			this.commit = commit;
 			this.last_transaction = lastTransaction;
 		}
-#endif
 		
-#if NET_2_0
 		[Obsolete ("Use another constructor that indicates lastTransaction")]
-#endif
 		public DesignerTransactionCloseEventArgs (bool commit)
 		{
 			this.commit = commit;
 		}
 
-#if NET_2_0		
 		public bool LastTransaction {
 			get { return last_transaction; }
 		}
-#endif
 
 		public bool TransactionCommitted {
 			get { return commit; }

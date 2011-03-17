@@ -34,9 +34,7 @@ using System.Globalization;
 
 namespace System.Collections.Specialized {
 
-#if NET_2_0
 	[Serializable]
-#endif
 #if !NET_2_1
 	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 #endif
@@ -68,18 +66,14 @@ namespace System.Collections.Specialized {
 		public virtual string this[string key]
 		{
 			get {
-#if NET_2_0
-			if (key == null)
-				throw new ArgumentNullException ("key");
-#endif
-			return (string) contents [key.ToLower (CultureInfo.InvariantCulture)];
+				if (key == null)
+					throw new ArgumentNullException ("key");
+				return (string) contents [key.ToLower (CultureInfo.InvariantCulture)];
 			}
 			
 			set {
-#if NET_2_0
-			if (key == null)
-				throw new ArgumentNullException ("key");
-#endif
+				if (key == null)
+					throw new ArgumentNullException ("key");
 				contents[key.ToLower(CultureInfo.InvariantCulture)] = value;
 			}
 		}
@@ -109,10 +103,8 @@ namespace System.Collections.Specialized {
 		
 		public virtual void Add(string key, string value)
 		{
-#if NET_2_0
 			if (key == null)
 				throw new ArgumentNullException ("key");
-#endif
 			contents.Add (key.ToLower (CultureInfo.InvariantCulture), value);
 		}
 		
@@ -123,10 +115,8 @@ namespace System.Collections.Specialized {
 		
 		public virtual bool ContainsKey(string key)
 		{
-#if NET_2_0
 			if (key == null)
 				throw new ArgumentNullException ("key");
-#endif
 			return contents.ContainsKey (key.ToLower (CultureInfo.InvariantCulture));
 		}
 		
@@ -147,10 +137,8 @@ namespace System.Collections.Specialized {
 		
 		public virtual void Remove(string key)
 		{
-#if NET_2_0
 			if (key == null)
 				throw new ArgumentNullException ("key");
-#endif
 			contents.Remove (key.ToLower (CultureInfo.InvariantCulture));
 		}
 	}
