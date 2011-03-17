@@ -76,14 +76,12 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 		
-#if !NET_2_1
 		void IOperationBehavior.ApplyDispatchBehavior (
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		void IOperationBehavior.ApplyClientBehavior (
 			OperationDescription description,
