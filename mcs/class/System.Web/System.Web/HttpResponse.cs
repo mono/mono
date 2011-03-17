@@ -1099,14 +1099,17 @@ namespace System.Web
 			if (len >= 3 && fn [1] == ':' && IsFileSystemDirSeparator (fn [2]))
 				return Path.GetFullPath (fn); // drive-qualified absolute file path
 
-			if (len >= 2 && IsFileSystemDirSeparator (fn [0]) && IsFileSystemDirSeparator (fn [1]))
+			bool startsWithDirSeparator = IsFileSystemDirSeparator (fn [0]);
+			if (len >= 2 && startsWithDirSeparator && IsFileSystemDirSeparator (fn [1]))
 				return Path.GetFullPath (fn); // UNC path
 
-			HttpContext ctx = context ?? HttpContext.Current;
-			HttpRequest req = ctx != null ? ctx.Request : null;
-
-			if (req != null)
-				return req.MapPath (fn);
+			if (!startsWithDirSeparator) {
+				HttpContext ctx = context ?? HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+				
+				if (req != null)
+					return req.MapPath (fn);
+			}
 			
 			return fn; // Or should we rather throw?
 		}
@@ -1133,6 +1136,7 @@ namespace System.Web
 
 		public void WriteFile (string filename, bool readIntoMemory)
 		{
+			Console.WriteLine ("{0}.WriteLine (\"{1}\", {2})", this, filename, readIntoMemory);
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
