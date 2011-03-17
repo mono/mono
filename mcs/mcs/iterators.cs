@@ -243,7 +243,7 @@ namespace Mono.CSharp {
 			}
 
 			public DisposeMethod (IteratorStorey host)
-				: base (host, new TypeExpression (host.Compiler.BuildinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
+				: base (host, new TypeExpression (host.Compiler.BuiltinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("Dispose", host.Location))
 			{
 				host.AddMethod (this);
@@ -339,7 +339,7 @@ namespace Mono.CSharp {
 
 			var list = new List<FullNamedExpression> ();
 			if (Iterator.IsEnumerable) {
-				enumerable_type = new TypeExpression (Compiler.BuildinTypes.IEnumerable, Location);
+				enumerable_type = new TypeExpression (Compiler.BuiltinTypes.IEnumerable, Location);
 				list.Add (enumerable_type);
 
 				if (Module.PredefinedTypes.IEnumerableGeneric.Define ()) {
@@ -348,10 +348,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			enumerator_type = new TypeExpression (Compiler.BuildinTypes.IEnumerator, Location);
+			enumerator_type = new TypeExpression (Compiler.BuiltinTypes.IEnumerator, Location);
 			list.Add (enumerator_type);
 
-			list.Add (new TypeExpression (Compiler.BuildinTypes.IDisposable, Location));
+			list.Add (new TypeExpression (Compiler.BuiltinTypes.IDisposable, Location));
 
 			var ienumerator_generic = Module.PredefinedTypes.IEnumeratorGeneric;
 			if (ienumerator_generic.Define ()) {
@@ -377,7 +377,7 @@ namespace Mono.CSharp {
 
 		void DefineIteratorMembers ()
 		{
-			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuildinTypes.Int, Location));
+			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
 			if (hoisted_params != null) {
@@ -448,7 +448,7 @@ namespace Mono.CSharp {
 				type = iterator_type_expr;
 			} else {
 				name = new MemberName (name, "IEnumerator");
-				type = new TypeExpression (Compiler.BuildinTypes.Object, Location);
+				type = new TypeExpression (Compiler.BuiltinTypes.Object, Location);
 			}
 
 			name = new MemberName (name, "Current", Location);
@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, new TypeExpression (Compiler.BuildinTypes.Void, Location),
+				this, null, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -609,7 +609,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			current_pc = ec.GetTemporaryLocal (ec.BuildinTypes.UInt);
+			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 			ec.Emit (OpCodes.Stloc, current_pc);
@@ -630,7 +630,7 @@ namespace Mono.CSharp {
 			}
 
 			if (need_skip_finally) {
-				skip_finally = ec.GetTemporaryLocal (ec.BuildinTypes.Bool);
+				skip_finally = ec.GetTemporaryLocal (ec.BuiltinTypes.Bool);
 				ec.Emit (OpCodes.Ldc_I4_0);
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
@@ -685,7 +685,7 @@ namespace Mono.CSharp {
 			}
 
 			if (labels != null) {
-				current_pc = ec.GetTemporaryLocal (ec.BuildinTypes.UInt);
+				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 				ec.Emit (OpCodes.Ldarg_0);
 				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 				ec.Emit (OpCodes.Stloc, current_pc);
@@ -748,7 +748,7 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (ParametersBlock block, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
-			: base (block, host.Compiler.BuildinTypes.Bool, block.StartLocation)
+			: base (block, host.Compiler.BuiltinTypes.Bool, block.StartLocation)
 		{
 			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
@@ -785,7 +785,7 @@ namespace Mono.CSharp {
 			Block.Resolve (ctx);
 			ctx.EndFlowBranching ();
 
-			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (ec.BuildinTypes.Bool, loc),
+			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (ec.BuiltinTypes.Bool, loc),
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location));
 			move_next.Block.AddStatement (new MoveNextMethodStatement (this));
 			IteratorHost.AddMethod (move_next);
@@ -876,13 +876,13 @@ namespace Mono.CSharp {
 			original_iterator_type = null;
 			is_enumerable = false;
 
-			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerable) {
-				original_iterator_type = parent.Compiler.BuildinTypes.Object;
+			if (ret.BuiltinType == BuiltinTypeSpec.Type.IEnumerable) {
+				original_iterator_type = parent.Compiler.BuiltinTypes.Object;
 				is_enumerable = true;
 				return true;
 			}
-			if (ret.BuildinType == BuildinTypeSpec.Type.IEnumerator) {
-				original_iterator_type = parent.Compiler.BuildinTypes.Object;
+			if (ret.BuiltinType == BuiltinTypeSpec.Type.IEnumerator) {
+				original_iterator_type = parent.Compiler.BuiltinTypes.Object;
 				is_enumerable = false;
 				return true;
 			}

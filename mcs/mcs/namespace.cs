@@ -229,9 +229,9 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					var pts = best as BuildinTypeSpec;
+					var pts = best as BuiltinTypeSpec;
 					if (pts == null)
-						pts = ts as BuildinTypeSpec;
+						pts = ts as BuiltinTypeSpec;
 
 					if (pts != null) {
 						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
@@ -469,7 +469,7 @@ namespace Mono.CSharp {
 			cached_types.Remove (name);
 		}
 
-		public void ReplaceTypeWithPredefined (TypeSpec ts, BuildinTypeSpec pts)
+		public void ReplaceTypeWithPredefined (TypeSpec ts, BuiltinTypeSpec pts)
 		{
 			var found = types [ts.Name];
 			cached_types.Remove (ts.Name);

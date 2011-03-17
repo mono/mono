@@ -374,7 +374,7 @@ namespace Mono.CSharp {
 				return parameter_type;
 			}
 
-			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || parameter_type.BuildinType == BuildinTypeSpec.Type.Dynamic)) {
+			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)) {
 				rc.Module.Compiler.Report.Error (1103, Location, "The extension method cannot be of type `{0}'",
 					TypeManager.CSharpName (parameter_type));
 			}
@@ -413,7 +413,7 @@ namespace Mono.CSharp {
 
 				Constant c = default_expr as Constant;
 				if (c == null) {
-					if (parameter_type.BuildinType == BuildinTypeSpec.Type.Object) {
+					if (parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 						rc.Report.Error (1910, default_expr.Location,
 							"Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
 							default_expr.Type.GetSignatureForError ());
@@ -429,7 +429,7 @@ namespace Mono.CSharp {
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
 					(default_expr is NullConstant && TypeManager.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
-					parameter_type.BuildinType == BuildinTypeSpec.Type.Object) {
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return;
 				}
 
@@ -556,7 +556,7 @@ namespace Mono.CSharp {
 				var def_value = DefaultValue;
 				Constant c = def_value != null ? def_value.Child as Constant : default_expr as Constant;
 				if (c != null) {
-					if (default_expr.Type.BuildinType == BuildinTypeSpec.Type.Decimal) {
+					if (default_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetValue ());
@@ -572,7 +572,7 @@ namespace Mono.CSharp {
 			}
 
 			if (parameter_type != null) {
-				if (parameter_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					pa.Dynamic.EmitAttribute (builder);
 				} else if (parameter_type.HasDynamicElement) {
 					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
@@ -600,7 +600,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (
 				new TypeExpression (parameter_type, Location), Location)));
-			arguments.Add (new Argument (new StringConstant (ec.BuildinTypes, Name, Location)));
+			arguments.Add (new Argument (new StringConstant (ec.BuiltinTypes, Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
 		}
@@ -1227,7 +1227,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuildinType != BuildinTypeSpec.Type.String) {
+				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
 						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
 						p.Name, parameter_type.GetSignatureForError ());

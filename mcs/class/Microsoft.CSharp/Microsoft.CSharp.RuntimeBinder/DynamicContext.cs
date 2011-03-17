@@ -101,7 +101,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				var domain = AppDomain.CurrentDomain;
 
 				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
-				var importer = new Compiler.ReflectionImporter (module, cc.BuildinTypes) {
+				var importer = new Compiler.ReflectionImporter (module, cc.BuiltinTypes) {
 					IgnorePrivateMembers = false
 				};
 
@@ -113,7 +113,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				if (!reinitialized) {
-					cc.BuildinTypes.CheckDefinitions (module);
+					cc.BuiltinTypes.CheckDefinitions (module);
 					module.InitializePredefinedTypes ();
 				}
 

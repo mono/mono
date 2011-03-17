@@ -82,7 +82,7 @@ namespace Mono.CSharp
 
 			// FIXME: Importer needs this assembly for internalsvisibleto
 			module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "evaluator"));
-			importer = new ReflectionImporter (module, ctx.BuildinTypes);
+			importer = new ReflectionImporter (module, ctx.BuiltinTypes);
 
 			InteractiveBaseClass = typeof (InteractiveBase);
 			fields = new Dictionary<string, Tuple<FieldSpec, FieldInfo>> ();
@@ -100,7 +100,7 @@ namespace Mono.CSharp
 			//    startup_files.Add (file.Path);
 
 			loader.LoadReferences (module);
-			ctx.BuildinTypes.CheckDefinitions (module);
+			ctx.BuiltinTypes.CheckDefinitions (module);
 			module.InitializePredefinedTypes ();
 
 			inited = true;
@@ -347,7 +347,7 @@ namespace Mono.CSharp
 				parser_result.CreateType ();
 
 				var method = parser_result.Methods[0] as Method;
-				BlockContext bc = new BlockContext (method, method.Block, ctx.BuildinTypes.Void);
+				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
 					method.Block.Resolve (null, bc, method);

@@ -291,7 +291,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return Parent.Compiler.BuildinTypes.Void;
+					return Parent.Compiler.BuiltinTypes.Void;
 				}
 			}
 
@@ -653,7 +653,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (member_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
 			} else if (member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
@@ -1156,7 +1156,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return Parent.Compiler.BuildinTypes.Void;
+					return Parent.Compiler.BuiltinTypes.Void;
 				}
 			}
 

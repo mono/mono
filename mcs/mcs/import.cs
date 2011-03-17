@@ -196,7 +196,7 @@ namespace Mono.CSharp
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
-				if (field_type.BuildinType == BuildinTypeSpec.Type.Decimal) {
+				if (field_type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
@@ -357,7 +357,7 @@ namespace Mono.CSharp
 			TypeSpec returnType;
 			if (mb.MemberType == MemberTypes.Constructor) {
 				kind = MemberKind.Constructor;
-				returnType = module.Compiler.BuildinTypes.Void;
+				returnType = module.Compiler.BuiltinTypes.Void;
 			} else {
 				//
 				// Detect operators and destructors
@@ -374,7 +374,7 @@ namespace Mono.CSharp
 						}
 					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
 						kind = MemberKind.Destructor;
-						if (declaringType.BuildinType == BuildinTypeSpec.Type.Object) {
+						if (declaringType.BuiltinType == BuiltinTypeSpec.Type.Object) {
 							mod &= ~Modifiers.OVERRIDE;
 							mod |= Modifiers.VIRTUAL;
 						}
@@ -483,7 +483,7 @@ namespace Mono.CSharp
 							default_value = EmptyExpression.MissingValue;
 						} else if (value == null) {
 							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
-						} else if (ptype.BuildinType == BuildinTypeSpec.Type.Decimal) {
+						} else if (ptype.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 							default_value = ImportParameterConstant (value);
 						}
 					}
@@ -644,9 +644,9 @@ namespace Mono.CSharp
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
-				if (spec.BuildinType == BuildinTypeSpec.Type.Object) {
+				if (spec.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					if (dtype.IsDynamicObject (this))
-						return module.Compiler.BuildinTypes.Dynamic;
+						return module.Compiler.BuiltinTypes.Dynamic;
 
 					return spec;
 				}
@@ -807,7 +807,7 @@ namespace Mono.CSharp
 				// which point into just compiled assembly.
 				//
 				spec = pt;
-				BuildinTypeSpec bts = pt as BuildinTypeSpec;
+				BuiltinTypeSpec bts = pt as BuiltinTypeSpec;
 				if (bts != null)
 					bts.SetDefinition (definition, type, mod);
 			}
@@ -912,7 +912,7 @@ namespace Mono.CSharp
 		void ImportTypeBase (TypeSpec spec, MetaType type)
 		{
 			if (spec.Kind == MemberKind.Interface)
-				spec.BaseType = module.Compiler.BuildinTypes.Object;
+				spec.BaseType = module.Compiler.BuiltinTypes.Object;
 			else if (type.BaseType != null) {
 				TypeSpec base_type;
 				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
@@ -1021,7 +1021,7 @@ namespace Mono.CSharp
 			}
 
 			if (spec.BaseType == null)
-				spec.BaseType = module.Compiler.BuildinTypes.Object;
+				spec.BaseType = module.Compiler.BuiltinTypes.Object;
 
 			if (tparams != null)
 				spec.TypeArguments = tparams.ToArray ();
@@ -1033,7 +1033,7 @@ namespace Mono.CSharp
 			// Get type of underlying value as int constant can be used for object
 			// parameter type. This is not allowed in C# but other languages can do that
 			//
-			var types = module.Compiler.BuildinTypes;
+			var types = module.Compiler.BuiltinTypes;
 			switch (System.Type.GetTypeCode (value.GetType ())) {
 			case TypeCode.Boolean:
 				return new BoolConstant (types, (bool) value, Location.Null);
@@ -1125,7 +1125,7 @@ namespace Mono.CSharp
 					(byte) ca.ConstructorArguments[1].Value != 0,
 					(byte) ca.ConstructorArguments[0].Value);
 
-				return new DecimalConstant (module.Compiler.BuildinTypes, value, Location.Null);
+				return new DecimalConstant (module.Compiler.BuiltinTypes, value, Location.Null);
 			}
 
 			return null;

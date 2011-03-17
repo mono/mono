@@ -75,9 +75,9 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual BuildinTypeSpec.Type BuildinType {
+		public virtual BuiltinTypeSpec.Type BuiltinType {
 			get {
-				return BuildinTypeSpec.Type.None;
+				return BuiltinTypeSpec.Type.None;
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace Mono.CSharp
 					if (type.IsGeneric)
 						return false;
 
-					if (type.BuildinType == BuildinTypeSpec.Type.Attribute)
+					if (type.BuiltinType == BuiltinTypeSpec.Type.Attribute)
 						return true;
 					
 					type = type.base_type;
@@ -139,21 +139,21 @@ namespace Mono.CSharp
 				if ((Kind & (MemberKind.Enum | MemberKind.Class | MemberKind.Interface | MemberKind.Delegate | MemberKind.ArrayType)) != 0)
 					return true;
 
-				switch (BuildinType) {
-				case BuildinTypeSpec.Type.Int:
-				case BuildinTypeSpec.Type.UInt:
-				case BuildinTypeSpec.Type.Long:
-				case BuildinTypeSpec.Type.ULong:
-				case BuildinTypeSpec.Type.Float:
-				case BuildinTypeSpec.Type.Double:
-				case BuildinTypeSpec.Type.Char:
-				case BuildinTypeSpec.Type.Short:
-				case BuildinTypeSpec.Type.Decimal:
-				case BuildinTypeSpec.Type.Bool:
-				case BuildinTypeSpec.Type.SByte:
-				case BuildinTypeSpec.Type.Byte:
-				case BuildinTypeSpec.Type.UShort:
-				case BuildinTypeSpec.Type.Dynamic:
+				switch (BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.Long:
+				case BuiltinTypeSpec.Type.ULong:
+				case BuiltinTypeSpec.Type.Float:
+				case BuiltinTypeSpec.Type.Double:
+				case BuiltinTypeSpec.Type.Char:
+				case BuiltinTypeSpec.Type.Short:
+				case BuiltinTypeSpec.Type.Decimal:
+				case BuiltinTypeSpec.Type.Bool:
+				case BuiltinTypeSpec.Type.SByte:
+				case BuiltinTypeSpec.Type.Byte:
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.Dynamic:
 					return true;
 				}
 
@@ -557,7 +557,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public sealed class BuildinTypeSpec : TypeSpec
+	public sealed class BuiltinTypeSpec : TypeSpec
 	{
 		public enum Type
 		{
@@ -608,16 +608,16 @@ namespace Mono.CSharp
 		readonly string ns;
 		readonly string name;
 
-		public BuildinTypeSpec (MemberKind kind, string ns, string name, Type buildinKind)
+		public BuiltinTypeSpec (MemberKind kind, string ns, string name, Type builtinKind)
 			: base (kind, null, null, null, Modifiers.PUBLIC)
 		{
-			this.type = buildinKind;
+			this.type = builtinKind;
 			this.ns = ns;
 			this.name = name;
 		}
 
-		public BuildinTypeSpec (string name, Type buildinKind)
-			: this (MemberKind.InternalCompilerType, "", name, buildinKind)
+		public BuiltinTypeSpec (string name, Type builtinKind)
+			: this (MemberKind.InternalCompilerType, "", name, builtinKind)
 		{
 			// Make all internal types CLS-compliant, non-obsolete, compact
 			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected | StateFlags.MissingDependency_Undetected)) | StateFlags.CLSCompliant;
@@ -631,7 +631,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override BuildinTypeSpec.Type BuildinType {
+		public override BuiltinTypeSpec.Type BuiltinType {
 			get {
 				return type;
 			}
@@ -659,12 +659,12 @@ namespace Mono.CSharp
 
 		public static bool IsPrimitiveType (TypeSpec type)
 		{
-			return type.BuildinType >= Type.FirstPrimitive && type.BuildinType <= Type.LastPrimitive;
+			return type.BuiltinType >= Type.FirstPrimitive && type.BuiltinType <= Type.LastPrimitive;
 		}
 
 		public static bool IsPrimitiveTypeOrDecimal (TypeSpec type)
 		{
-			return type.BuildinType >= Type.FirstPrimitive && type.BuildinType <= Type.Decimal;
+			return type.BuiltinType >= Type.FirstPrimitive && type.BuiltinType <= Type.Decimal;
 		}
 
 		public override string GetSignatureForError ()
@@ -699,7 +699,7 @@ namespace Mono.CSharp
 		//
 		public static int GetSize (TypeSpec type)
 		{
-			switch (type.BuildinType) {
+			switch (type.BuiltinType) {
 			case Type.Int:
 			case Type.UInt:
 			case Type.Float:
@@ -821,8 +821,8 @@ namespace Mono.CSharp
 					return ac_b != null && ac_a.Rank == ac_b.Rank && IsEqual (ac_a.Element, ac_b.Element);
 				}
 
-				if (a.BuildinType == BuildinTypeSpec.Type.Dynamic || b.BuildinType == BuildinTypeSpec.Type.Dynamic)
-					return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
+				if (a.BuiltinType == BuiltinTypeSpec.Type.Dynamic || b.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+					return b.BuiltinType == BuiltinTypeSpec.Type.Object || a.BuiltinType == BuiltinTypeSpec.Type.Object;
 
 				if (a.MemberDefinition != b.MemberDefinition)
 					return false;
@@ -1065,7 +1065,7 @@ namespace Mono.CSharp
 		{
 			if (a == b) {
 				// This also rejects dynamic == dynamic
-				return a.Kind != MemberKind.InternalCompilerType || a.BuildinType == BuildinTypeSpec.Type.Dynamic;
+				return a.Kind != MemberKind.InternalCompilerType || a.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 			}
 
 			if (a == null || b == null)
@@ -1086,8 +1086,8 @@ namespace Mono.CSharp
 				// between object and dynamic, and between constructed types that are the same
 				// when replacing all occurences of dynamic with object.
 				//
-				if (a.BuildinType == BuildinTypeSpec.Type.Dynamic || b.BuildinType == BuildinTypeSpec.Type.Dynamic)
-					return b.BuildinType == BuildinTypeSpec.Type.Object || a.BuildinType == BuildinTypeSpec.Type.Object;
+				if (a.BuiltinType == BuiltinTypeSpec.Type.Dynamic || b.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+					return b.BuiltinType == BuiltinTypeSpec.Type.Object || a.BuiltinType == BuiltinTypeSpec.Type.Object;
 
 				return false;
 			}
@@ -1266,7 +1266,7 @@ namespace Mono.CSharp
 			state &= ~shared_flags;
 			state |= (element.state & shared_flags);
 
-			if (element.BuildinType == BuildinTypeSpec.Type.Dynamic)
+			if (element.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				state |= StateFlags.HasDynamicElement;
 
 			// Has to use its own type definition instead of just element definition to
@@ -1439,7 +1439,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
 			var ctor = mb.GetArrayMethod (
 				GetMetaInfo (), Constructor.ConstructorName,
@@ -1455,7 +1455,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
 			var address = mb.GetArrayMethod (
 				GetMetaInfo (), "Address",
@@ -1471,7 +1471,7 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
 			var get = mb.GetArrayMethod (
 				GetMetaInfo (), "Get",
@@ -1487,14 +1487,14 @@ namespace Mono.CSharp
 
 			var arg_types = new MetaType[rank + 1];
 			for (int i = 0; i < rank; i++)
-				arg_types[i] = module.Compiler.BuildinTypes.Int.GetMetaInfo ();
+				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
 			arg_types[rank] = Element.GetMetaInfo ();
 
 			var set = mb.GetArrayMethod (
 				GetMetaInfo (), "Set",
 				CallingConventions.HasThis | CallingConventions.Standard,
-				module.Compiler.BuildinTypes.Void.GetMetaInfo (), arg_types);
+				module.Compiler.BuiltinTypes.Void.GetMetaInfo (), arg_types);
 
 			return set;
 		}
@@ -1539,7 +1539,7 @@ namespace Mono.CSharp
 			var key = new TypeRankPair (element, rank);
 			if (!module.ArrayTypesCache.TryGetValue (key, out ac)) {
 				ac = new ArrayContainer (module, element, rank) {
-					BaseType = module.Compiler.BuildinTypes.Array
+					BaseType = module.Compiler.BuiltinTypes.Array
 				};
 
 				module.ArrayTypesCache.Add (key, ac);

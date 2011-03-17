@@ -220,7 +220,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (member_type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
 			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
@@ -380,7 +380,7 @@ namespace Mono.CSharp
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ImplicitConversionRequired (rc, rc.BuildinTypes.Int, Location);
+			return expr.ImplicitConversionRequired (rc, rc.BuiltinTypes.Int, Location);
 		}
 
 		public override bool Define ()
@@ -388,7 +388,7 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (!BuildinTypeSpec.IsPrimitiveType (MemberType)) {
+			if (!BuiltinTypeSpec.IsPrimitiveType (MemberType)) {
 				Report.Error (1663, Location,
 					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
@@ -407,7 +407,7 @@ namespace Mono.CSharp
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-				Compiler.BuildinTypes.ValueType.GetMetaInfo ());
+				Compiler.BuiltinTypes.ValueType.GetMetaInfo ());
 
 			var ffield = fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			
@@ -463,7 +463,7 @@ namespace Mono.CSharp
 
 		void EmitFieldSize (int buffer_size)
 		{
-			int type_size = BuildinTypeSpec.GetSize (MemberType);
+			int type_size = BuiltinTypeSpec.GetSize (MemberType);
 
 			if (buffer_size > int.MaxValue / type_size) {
 				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
@@ -489,8 +489,8 @@ namespace Mono.CSharp
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
 				new Constant [] { 
-					new IntConstant (Compiler.BuildinTypes, buffer_size * type_size, Location),
-					new IntConstant (Compiler.BuildinTypes, (int) char_set, Location)
+					new IntConstant (Compiler.BuiltinTypes, buffer_size * type_size, Location),
+					new IntConstant (Compiler.BuiltinTypes, (int) char_set, Location)
 				}
 			);
 
@@ -570,18 +570,18 @@ namespace Mono.CSharp
 			if (TypeManager.IsReferenceType (MemberType))
 				return true;
 
-			switch (MemberType.BuildinType) {
-			case BuildinTypeSpec.Type.Bool:
-			case BuildinTypeSpec.Type.Char:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Float:
-			case BuildinTypeSpec.Type.UIntPtr:
-			case BuildinTypeSpec.Type.IntPtr:
+			switch (MemberType.BuiltinType) {
+			case BuiltinTypeSpec.Type.Bool:
+			case BuiltinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.UIntPtr:
+			case BuiltinTypeSpec.Type.IntPtr:
 				return true;
 			}
 

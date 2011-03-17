@@ -302,10 +302,10 @@ namespace Mono.CSharp {
 		{
 			if (member.Kind == MemberKind.Operator) {
 				var dt = member.DeclaringType;
-				switch (dt.BuildinType) {
-				case BuildinTypeSpec.Type.String:
-				case BuildinTypeSpec.Type.Delegate:
-				case BuildinTypeSpec.Type.MulticastDelegate:
+				switch (dt.BuiltinType) {
+				case BuiltinTypeSpec.Type.String:
+				case BuiltinTypeSpec.Type.Delegate:
+				case BuiltinTypeSpec.Type.MulticastDelegate:
 					// Some core types have user operators but they cannot be used as normal
 					// user operators as they are predefined and therefore having different
 					// rules (e.g. binary operators) by not setting the flag we hide them for

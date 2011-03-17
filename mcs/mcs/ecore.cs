@@ -816,9 +816,9 @@ namespace Mono.CSharp {
 		//
 		protected Expression ConvertExpressionToArrayIndex (ResolveContext ec, Expression source)
 		{
-			var btypes = ec.BuildinTypes;
+			var btypes = ec.BuiltinTypes;
 
-			if (source.type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+			if (source.type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
 				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
@@ -849,7 +849,7 @@ namespace Mono.CSharp {
 				Error_NegativeArrayIndex (ec, source.loc);
 
 			// No conversion needed to array index
-			if (converted.Type.BuildinType == BuildinTypeSpec.Type.Int)
+			if (converted.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
 				return converted;
 
 			return new ArrayIndexCast (converted, btypes.Int).Resolve (ec);
@@ -1367,7 +1367,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Only boxing to object type is supported
-			if (targetType.BuildinType != BuildinTypeSpec.Type.Object) {
+			if (targetType.BuiltinType != BuiltinTypeSpec.Type.Object) {
 				base.EncodeAttributeValue (rc, enc, targetType);
 				return;
 			}
@@ -1388,7 +1388,7 @@ namespace Mono.CSharp {
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
 			if (child.Type.IsStruct &&
-			    (type.BuildinType == BuildinTypeSpec.Type.Object || type.BuildinType == BuildinTypeSpec.Type.ValueType))
+			    (type.BuiltinType == BuiltinTypeSpec.Type.Object || type.BuiltinType == BuiltinTypeSpec.Type.ValueType))
 				child.EmitSideEffect (ec);
 			else
 				base.EmitSideEffect (ec);
@@ -3399,64 +3399,64 @@ namespace Mono.CSharp {
 			if (p == null || q == null)
 				throw new InternalErrorException ("BetterTypeConversion got a null conversion");
 
-			switch (p.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-				if (q.BuildinType == BuildinTypeSpec.Type.UInt || q.BuildinType == BuildinTypeSpec.Type.ULong)
+			switch (p.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+				if (q.BuiltinType == BuiltinTypeSpec.Type.UInt || q.BuiltinType == BuiltinTypeSpec.Type.ULong)
 					return 1;
 				break;
-			case BuildinTypeSpec.Type.Long:
-				if (q.BuildinType == BuildinTypeSpec.Type.ULong)
+			case BuiltinTypeSpec.Type.Long:
+				if (q.BuiltinType == BuiltinTypeSpec.Type.ULong)
 					return 1;
 				break;
-			case BuildinTypeSpec.Type.SByte:
-				switch (q.BuildinType) {
-				case BuildinTypeSpec.Type.Byte:
-				case BuildinTypeSpec.Type.UShort:
-				case BuildinTypeSpec.Type.UInt:
-				case BuildinTypeSpec.Type.ULong:
-					return 1;
-				}
-				break;
-			case BuildinTypeSpec.Type.Short:
-				switch (q.BuildinType) {
-				case BuildinTypeSpec.Type.UShort:
-				case BuildinTypeSpec.Type.UInt:
-				case BuildinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.SByte:
+				switch (q.BuiltinType) {
+				case BuiltinTypeSpec.Type.Byte:
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.ULong:
 					return 1;
 				}
 				break;
-			case BuildinTypeSpec.Type.Dynamic:
+			case BuiltinTypeSpec.Type.Short:
+				switch (q.BuiltinType) {
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.ULong:
+					return 1;
+				}
+				break;
+			case BuiltinTypeSpec.Type.Dynamic:
 				// Dynamic is never better
 				return 2;
 			}
 
-			switch (q.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-				if (p.BuildinType == BuildinTypeSpec.Type.UInt || p.BuildinType == BuildinTypeSpec.Type.ULong)
+			switch (q.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+				if (p.BuiltinType == BuiltinTypeSpec.Type.UInt || p.BuiltinType == BuiltinTypeSpec.Type.ULong)
 					return 2;
 				break;
-			case BuildinTypeSpec.Type.Long:
-				if (p.BuildinType == BuildinTypeSpec.Type.ULong)
+			case BuiltinTypeSpec.Type.Long:
+				if (p.BuiltinType == BuiltinTypeSpec.Type.ULong)
 					return 2;
 				break;
-			case BuildinTypeSpec.Type.SByte:
-				switch (p.BuildinType) {
-				case BuildinTypeSpec.Type.Byte:
-				case BuildinTypeSpec.Type.UShort:
-				case BuildinTypeSpec.Type.UInt:
-				case BuildinTypeSpec.Type.ULong:
-					return 2;
-				}
-				break;
-			case BuildinTypeSpec.Type.Short:
-				switch (p.BuildinType) {
-				case BuildinTypeSpec.Type.UShort:
-				case BuildinTypeSpec.Type.UInt:
-				case BuildinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.SByte:
+				switch (p.BuiltinType) {
+				case BuiltinTypeSpec.Type.Byte:
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.ULong:
 					return 2;
 				}
 				break;
-			case BuildinTypeSpec.Type.Dynamic:
+			case BuiltinTypeSpec.Type.Short:
+				switch (p.BuiltinType) {
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.ULong:
+					return 2;
+				}
+				break;
+			case BuiltinTypeSpec.Type.Dynamic:
 				// Dynamic is never better
 				return 1;
 			}
@@ -3875,7 +3875,7 @@ namespace Mono.CSharp {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && ptypes[i].BuildinType == BuildinTypeSpec.Type.Object || ptypes[i].BuildinType == BuildinTypeSpec.Type.Dynamic) {
+						if (e == EmptyExpression.MissingValue && ptypes[i].BuiltinType == BuiltinTypeSpec.Type.Object || ptypes[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 						} else {
@@ -3983,7 +3983,7 @@ namespace Mono.CSharp {
 						//
 						// Using dynamic for ref/out parameter can still succeed at runtime
 						//
-						if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 							return -1;
 
 						return 2;
@@ -3994,14 +3994,14 @@ namespace Mono.CSharp {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
 				}
 
 			} else {
-				if (argument.Type.BuildinType == BuildinTypeSpec.Type.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
+				if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
 					return -1;
 
 				//
@@ -4535,7 +4535,7 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (a.Expr.Type.BuildinType == BuildinTypeSpec.Type.Dynamic)
+				if (a.Expr.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					continue;
 
 				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr.Type, pt)) {
@@ -5248,7 +5248,7 @@ namespace Mono.CSharp {
 
 		bool IsSingleDimensionalArrayLength ()
 		{
-			if (best_candidate.DeclaringType.BuildinType != BuildinTypeSpec.Type.Array || !best_candidate.HasGet || Name != "Length")
+			if (best_candidate.DeclaringType.BuiltinType != BuiltinTypeSpec.Type.Array || !best_candidate.HasGet || Name != "Length")
 				return false;
 
 			ArrayContainer ac = InstanceExpression.Type as ArrayContainer;

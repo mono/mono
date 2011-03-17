@@ -108,16 +108,16 @@ namespace Mono.CSharp {
 
 		protected override bool DoDefineMembers ()
 		{
-			var buildin_types = Compiler.BuildinTypes;
+			var builtin_types = Compiler.BuiltinTypes;
 
 			var ctor_parameters = ParametersCompiled.CreateFullyResolved (
 				new [] {
-					new Parameter (new TypeExpression (buildin_types.Object, Location), "object", Parameter.Modifier.NONE, null, Location),
-					new Parameter (new TypeExpression (buildin_types.IntPtr, Location), "method", Parameter.Modifier.NONE, null, Location)
+					new Parameter (new TypeExpression (builtin_types.Object, Location), "object", Parameter.Modifier.NONE, null, Location),
+					new Parameter (new TypeExpression (builtin_types.IntPtr, Location), "method", Parameter.Modifier.NONE, null, Location)
 				},
 				new [] {
-					buildin_types.Object,
-					buildin_types.IntPtr
+					builtin_types.Object,
+					builtin_types.IntPtr
 				}
 			);
 
@@ -224,11 +224,11 @@ namespace Mono.CSharp {
 			async_parameters = ParametersCompiled.MergeGenerated (Compiler, async_parameters, false,
 				new Parameter[] {
 					new Parameter (new TypeExpression (async_callback.TypeSpec, Location), "callback", Parameter.Modifier.NONE, null, Location),
-					new Parameter (new TypeExpression (Compiler.BuildinTypes.Object, Location), "object", Parameter.Modifier.NONE, null, Location)
+					new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, Location), "object", Parameter.Modifier.NONE, null, Location)
 				},
 				new [] {
 					async_callback.TypeSpec,
-					Compiler.BuildinTypes.Object
+					Compiler.BuiltinTypes.Object
 				}
 			);
 
@@ -296,7 +296,7 @@ namespace Mono.CSharp {
 		public override void EmitType ()
 		{
 			if (ReturnType.Type != null) {
-				if (ReturnType.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (ReturnType.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 				} else if (ReturnType.Type.HasDynamicElement) {
@@ -328,7 +328,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			base_type = Compiler.BuildinTypes.MulticastDelegate;
+			base_type = Compiler.BuiltinTypes.MulticastDelegate;
 			base_class = null;
 			return null;
 		}
@@ -528,7 +528,7 @@ namespace Mono.CSharp {
 
 			var expr = method_group.InstanceExpression;
 			if (expr != null && (expr.Type.IsGenericParameter || !TypeManager.IsReferenceType (expr.Type)))
-				method_group.InstanceExpression = new BoxedCast (expr, ec.BuildinTypes.Object);
+				method_group.InstanceExpression = new BoxedCast (expr, ec.BuiltinTypes.Object);
 
 			eclass = ExprClass.Value;
 			return this;
@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 
 			method_group = e as MethodGroupExpr;
 			if (method_group == null) {
-				if (e.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+				if (e.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					e = Convert.ImplicitConversionRequired (ec, e, type, loc);
 				} else if (!e.Type.IsDelegate) {
 					e.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup | ResolveFlags.Type, loc);

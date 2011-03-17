@@ -49,7 +49,7 @@ namespace Mono.CSharp
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
-			type = ec.Module.Compiler.BuildinTypes.Dynamic;
+			type = ec.Module.Compiler.BuiltinTypes.Dynamic;
 			return this;
 		}
 	}
@@ -230,7 +230,7 @@ namespace Mono.CSharp
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				Child = new IntConstant (ec.BuildinTypes, (int) (flags | statement.flags), statement.loc);
+				Child = new IntConstant (ec.BuiltinTypes, (int) (flags | statement.flags), statement.loc);
 
 				type = ec.Module.PredefinedTypes.BinderFlags.Resolve (loc);
 				eclass = Child.eclass;
@@ -292,7 +292,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 
 			if (type == null)
-				type = rc.BuildinTypes.Dynamic;
+				type = rc.BuiltinTypes.Dynamic;
 
 			if (rc.Report.Errors == errors)
 				return true;
@@ -328,7 +328,7 @@ namespace Mono.CSharp
 			args.Add (new Argument (binder));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
 			
-			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuildinTypes.Void);
+			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuiltinTypes.Void);
 			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
 				init.Emit (ec);
@@ -383,7 +383,7 @@ namespace Mono.CSharp
 
 				// Convert any internal type like dynamic or null to object
 				if (t.Kind == MemberKind.InternalCompilerType)
-					t = ec.BuildinTypes.Object;
+					t = ec.BuiltinTypes.Object;
 
 				targs [i + 1] = new TypeExpression (t, loc);
 			}
@@ -410,7 +410,7 @@ namespace Mono.CSharp
 			// Create custom delegate when no appropriate predefined one is found
 			//
 			if (del_type == null) {
-				TypeSpec rt = is_statement ? ec.BuildinTypes.Void : type;
+				TypeSpec rt = is_statement ? ec.BuiltinTypes.Void : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
@@ -465,12 +465,12 @@ namespace Mono.CSharp
 
 			public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 			{
-				type = ec.BuildinTypes.Bool;
+				type = ec.BuiltinTypes.Bool;
 
 				Arguments binder_args = new Arguments (3);
 
 				binder_args.Add (new Argument (new BinderFlags (0, this)));
-				binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, name, loc)));
+				binder_args.Add (new Argument (new StringLiteral (ec.BuiltinTypes, name, loc)));
 				binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
 				return new Invocation (GetBinder ("IsEvent", loc), binder_args);
@@ -495,7 +495,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			type = rc.BuildinTypes.Dynamic;
+			type = rc.BuiltinTypes.Dynamic;
 			eclass = ExprClass.Value;
 			condition = condition.Resolve (rc);
 			return this;
@@ -668,7 +668,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (call_flags, this)));
 
 			if (is_member_access)
-				binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, member.Name, member.Location)));
+				binder_args.Add (new Argument (new StringLiteral (ec.BuiltinTypes, member.Name, member.Location)));
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
@@ -728,7 +728,7 @@ namespace Mono.CSharp
 			Arguments binder_args = new Arguments (4);
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
-			binder_args.Add (new Argument (new StringLiteral (ec.BuildinTypes, name, loc)));
+			binder_args.Add (new Argument (new StringLiteral (ec.BuiltinTypes, name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
@@ -831,12 +831,12 @@ namespace Mono.CSharp
 
 		public static DynamicUnaryConversion CreateIsTrue (ResolveContext rc, Arguments args, Location loc)
 		{
-			return new DynamicUnaryConversion ("IsTrue", args, loc) { type = rc.BuildinTypes.Bool };
+			return new DynamicUnaryConversion ("IsTrue", args, loc) { type = rc.BuiltinTypes.Bool };
 		}
 
 		public static DynamicUnaryConversion CreateIsFalse (ResolveContext rc, Arguments args, Location loc)
 		{
-			return new DynamicUnaryConversion ("IsFalse", args, loc) { type = rc.BuildinTypes.Bool };
+			return new DynamicUnaryConversion ("IsFalse", args, loc) { type = rc.BuiltinTypes.Bool };
 		}
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)

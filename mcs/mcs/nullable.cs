@@ -573,8 +573,8 @@ namespace Mono.CSharp.Nullable
 		bool IsBitwiseBoolean {
 			get {
 				return (Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) &&
-				((left_unwrap != null && left_unwrap.Type.BuildinType == BuildinTypeSpec.Type.Bool) ||
-				 (right_unwrap != null && right_unwrap.Type.BuildinType == BuildinTypeSpec.Type.Bool));
+				((left_unwrap != null && left_unwrap.Type.BuiltinType == BuiltinTypeSpec.Type.Bool) ||
+				 (right_unwrap != null && right_unwrap.Type.BuiltinType == BuiltinTypeSpec.Type.Bool));
 			}
 		}
 
@@ -606,7 +606,7 @@ namespace Mono.CSharp.Nullable
 		Constant CreateNullConstant (ResolveContext ec, Expression expr)
 		{
 			// FIXME: Handle side effect constants
-			Constant c = new BoolConstant (ec.BuildinTypes, Oper == Operator.Inequality, loc);
+			Constant c = new BoolConstant (ec.BuiltinTypes, Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
 				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
@@ -649,17 +649,17 @@ namespace Mono.CSharp.Nullable
 			if (left_orig is NullLiteral) {
 				left = right;
 				state |= State.LeftNullLifted;
-				type = ec.BuildinTypes.Bool;
+				type = ec.BuiltinTypes.Bool;
 			}
 
 			if (right_orig.IsNull) {
 				if ((Oper & Operator.ShiftMask) != 0)
-					right = new EmptyExpression (ec.BuildinTypes.Int);
+					right = new EmptyExpression (ec.BuiltinTypes.Int);
 				else
 					right = left;
 
 				state |= State.RightNullLifted;
-				type = ec.BuildinTypes.Bool;
+				type = ec.BuiltinTypes.Bool;
 			}
 
 			eclass = ExprClass.Value;
@@ -914,7 +914,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuildinType == BuildinTypeSpec.Type.Bool) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuiltinType == BuiltinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 
@@ -934,7 +934,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuildinType == BuildinTypeSpec.Type.Bool) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuiltinType == BuiltinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 
@@ -1081,7 +1081,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 
 						// Need to box underlying value type
@@ -1098,7 +1098,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 						return this;
 					}

@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return this;
 
-			BlockContext bc = new BlockContext (ec.MemberContext, ec.ConstructorBlock, ec.BuildinTypes.Void) {
+			BlockContext bc = new BlockContext (ec.MemberContext, ec.ConstructorBlock, ec.BuiltinTypes.Void) {
 				CurrentAnonymousMethod = ec.CurrentAnonymousMethod
 			};
 

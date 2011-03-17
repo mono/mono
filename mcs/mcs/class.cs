@@ -853,7 +853,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (i == 0 && Kind == MemberKind.Class && !fne_resolved.Type.IsInterface) {
-					if (fne_resolved.Type.BuildinType == BuildinTypeSpec.Type.Dynamic) {
+					if (fne_resolved.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
 
@@ -1215,7 +1215,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Kind == MemberKind.Interface) {
-				spec.BaseType = Compiler.BuildinTypes.Object;
+				spec.BaseType = Compiler.BuiltinTypes.Object;
 				return true;
 			}
 
@@ -1356,15 +1356,15 @@ namespace Mono.CSharp {
 		// Replaces normal spec with predefined one when compiling corlib
 		// and this type container defines predefined type
 		//
-		public void SetPredefinedSpec (BuildinTypeSpec spec)
+		public void SetPredefinedSpec (BuiltinTypeSpec spec)
 		{
 			// When compiling build-in types we start with two
-			// version of same type. One is of BuildinTypeSpec and
+			// version of same type. One is of BuiltinTypeSpec and
 			// second one is ordinary TypeSpec. The unification
 			// happens at later stage when we know which type
-			// really matches the buildin type signature. However
+			// really matches the builtin type signature. However
 			// that means TypeSpec create during CreateType of this
-			// type has to be replaced with buildin one
+			// type has to be replaced with builtin one
 			// 
 			spec.SetMetaInfo (TypeBuilder);
 			spec.MemberCache = this.spec.MemberCache;
@@ -2436,7 +2436,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.AttributeUsage) {
-				if (!BaseType.IsAttribute && spec.BuildinType != BuildinTypeSpec.Type.Attribute) {
+				if (!BaseType.IsAttribute && spec.BuiltinType != BuiltinTypeSpec.Type.Attribute) {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
@@ -2547,8 +2547,8 @@ namespace Mono.CSharp {
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
 
 			if (base_class == null) {
-				if (spec.BuildinType != BuildinTypeSpec.Type.Object)
-					base_type = Compiler.BuildinTypes.Object;
+				if (spec.BuiltinType != BuiltinTypeSpec.Type.Object)
+					base_type = Compiler.BuiltinTypes.Object;
 			} else {
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
@@ -2565,22 +2565,22 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (PartialContainer.IsStatic && base_class.Type.BuildinType != BuildinTypeSpec.Type.Object) {
+				} else if (PartialContainer.IsStatic && base_class.Type.BuiltinType != BuiltinTypeSpec.Type.Object) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
-				switch (base_type.BuildinType) {
-				case BuildinTypeSpec.Type.Enum:
-				case BuildinTypeSpec.Type.ValueType:
-				case BuildinTypeSpec.Type.MulticastDelegate:
-				case BuildinTypeSpec.Type.Delegate:
-				case BuildinTypeSpec.Type.Array:
-					if (!(spec is BuildinTypeSpec)) {
+				switch (base_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Enum:
+				case BuiltinTypeSpec.Type.ValueType:
+				case BuiltinTypeSpec.Type.MulticastDelegate:
+				case BuiltinTypeSpec.Type.Delegate:
+				case BuiltinTypeSpec.Type.Array:
+					if (!(spec is BuiltinTypeSpec)) {
 						Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
 							GetSignatureForError (), base_type.GetSignatureForError ());
 
-						base_type = Compiler.BuildinTypes.Object;
+						base_type = Compiler.BuiltinTypes.Object;
 					}
 					break;
 				}
@@ -2713,7 +2713,7 @@ namespace Mono.CSharp {
 				if (!ftype.IsStruct)
 					continue;
 
-				if (ftype is BuildinTypeSpec)
+				if (ftype is BuiltinTypeSpec)
 					continue;
 
 				foreach (var targ in ftype.TypeArguments) {
@@ -2803,7 +2803,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
-			base_type = Compiler.BuildinTypes.ValueType;
+			base_type = Compiler.BuiltinTypes.ValueType;
 			return ifaces;
 		}
 

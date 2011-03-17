@@ -371,9 +371,9 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return MemberContext.Module.Compiler.BuildinTypes;
+				return MemberContext.Module.Compiler.BuiltinTypes;
 			}
 		}
 
@@ -581,7 +581,7 @@ namespace Mono.CSharp
 		static readonly TimeReporter DisabledTimeReporter = new TimeReporter (false);
 
 		readonly Report report;
-		readonly BuildinTypes buildin_types;
+		readonly BuiltinTypes builtin_types;
 		readonly CompilerSettings settings;
 
 		Dictionary<string, SourceFile> all_source_files;
@@ -590,15 +590,15 @@ namespace Mono.CSharp
 		{
 			this.settings = settings;
 			this.report = report;
-			this.buildin_types = new BuildinTypes ();
+			this.builtin_types = new BuiltinTypes ();
 			this.TimeReporter = DisabledTimeReporter;
 		}
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return buildin_types;
+				return builtin_types;
 			}
 		}
 

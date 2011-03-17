@@ -46,16 +46,16 @@ namespace Mono.CSharp {
 
 		static bool IsValidEnumType (TypeSpec t)
 		{
-			switch (t.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Char:
+			switch (t.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Char:
 				return true;
 			default:
 				return t.IsEnum;
@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 
 		protected override bool DefineNestedTypes ()
 		{
-			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? Compiler.BuildinTypes.Int : base_type_expr.Type;
+			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? Compiler.BuiltinTypes.Int : base_type_expr.Type;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			base_type = Compiler.BuildinTypes.Enum;
+			base_type = Compiler.BuiltinTypes.Enum;
 			base_class = base_type_expr;
 			return null;
 		}
@@ -258,10 +258,10 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			switch (UnderlyingType.BuildinType) {
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.UShort:
+			switch (UnderlyingType.BuiltinType) {
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.UShort:
 				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant",
 					GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 				break;
@@ -300,15 +300,15 @@ namespace Mono.CSharp {
 
 		public static bool IsValidUnderlyingType (TypeSpec type)
 		{
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.ULong:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.ULong:
 				return true;
 			}
 

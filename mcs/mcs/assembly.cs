@@ -466,7 +466,7 @@ namespace Mono.CSharp
 					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
 					if (prop != null) {
 						AttributeEncoder encoder = new AttributeEncoder ();
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuildinTypes, true, Location.Null));
+						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
 						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
 					}
 				}
@@ -618,7 +618,7 @@ namespace Mono.CSharp
 				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
-				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuildinTypes, true, loc)));
+				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuiltinTypes, true, loc)));
 
 				GlobalAttribute g = new GlobalAttribute ("assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
@@ -995,7 +995,7 @@ namespace Mono.CSharp
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
 			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
 		{
-			assembly = new Field (this, new TypeExpression (parent.Compiler.BuildinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
+			assembly = new Field (this, new TypeExpression (parent.Compiler.BuiltinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);
 
 			AddField (assembly);

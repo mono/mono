@@ -101,9 +101,9 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return MemberContext.Module.Compiler.BuildinTypes;
+				return MemberContext.Module.Compiler.BuiltinTypes;
 			}
 		}
 
@@ -370,38 +370,38 @@ namespace Mono.CSharp
 			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.Bool:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.Bool:
 				Emit (OpCodes.Ldelem_U1);
 				return;
-			case BuildinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.SByte:
 				Emit (OpCodes.Ldelem_I1);
 				return;
-			case BuildinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.Short:
 				Emit (OpCodes.Ldelem_I2);
 				return;
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
 				Emit (OpCodes.Ldelem_U2);
 				return;
-			case BuildinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.Int:
 				Emit (OpCodes.Ldelem_I4);
 				return;
-			case BuildinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.UInt:
 				Emit (OpCodes.Ldelem_U4);
 				return;
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
 				Emit (OpCodes.Ldelem_I8);
 				return;
-			case BuildinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Float:
 				Emit (OpCodes.Ldelem_R4);
 				return;
-			case BuildinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Double:
 				Emit (OpCodes.Ldelem_R8);
 				return;
-			case BuildinTypeSpec.Type.IntPtr:
+			case BuiltinTypeSpec.Type.IntPtr:
 				Emit (OpCodes.Ldelem_I);
 				return;
 			}
@@ -441,29 +441,29 @@ namespace Mono.CSharp
 			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Bool:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				Emit (OpCodes.Stelem_I1);
 				return;
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
 				Emit (OpCodes.Stelem_I2);
 				return;
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
 				Emit (OpCodes.Stelem_I4);
 				return;
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
 				Emit (OpCodes.Stelem_I8);
 				return;
-			case BuildinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Float:
 				Emit (OpCodes.Stelem_R4);
 				return;
-			case BuildinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Double:
 				Emit (OpCodes.Stelem_R8);
 				return;
 			}
@@ -561,38 +561,38 @@ namespace Mono.CSharp
 			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
 				ig.Emit (OpCodes.Ldind_I4);
 				return;
-			case BuildinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Ldind_U4);
 				return;
-			case BuildinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.Short:
 				ig.Emit (OpCodes.Ldind_I2);
 				return;
-			case BuildinTypeSpec.Type.UShort:
-			case BuildinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
 				ig.Emit (OpCodes.Ldind_U2);
 				return;
-			case BuildinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldind_U1);
 				return;
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Bool:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
 				return;
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
 				ig.Emit (OpCodes.Ldind_I8);
 				return;
-			case BuildinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Ldind_R4);
 				return;
-			case BuildinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Ldind_R8);
 				return;
-			case BuildinTypeSpec.Type.IntPtr:
+			case BuiltinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Ldind_I);
 				return;
 			}
@@ -619,32 +619,32 @@ namespace Mono.CSharp
 			if (type.IsEnum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Stind_I4);
 				return;
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
 				ig.Emit (OpCodes.Stind_I8);
 				return;
-			case BuildinTypeSpec.Type.Char:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
 				ig.Emit (OpCodes.Stind_I2);
 				return;
-			case BuildinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Stind_R4);
 				return;
-			case BuildinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Stind_R8);
 				return;
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Bool:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Stind_I1);
 				return;
-			case BuildinTypeSpec.Type.IntPtr:
+			case BuiltinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Stind_I);
 				return;
 			}

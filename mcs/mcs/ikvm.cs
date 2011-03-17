@@ -22,7 +22,7 @@ namespace Mono.CSharp
 #if !STATIC
 	public class StaticImporter
 	{
-		public StaticImporter (BuildinTypes buildin)
+		public StaticImporter (BuiltinTypes builtin)
 		{
 			throw new NotSupportedException ();
 		}
@@ -114,12 +114,12 @@ namespace Mono.CSharp
 			return module_definition;
 		}
 
-		public void InitializeBuildinTypes (BuildinTypes buildin, Assembly corlib)
+		public void InitializeBuiltinTypes (BuiltinTypes builtin, Assembly corlib)
 		{
 			//
 			// Setup mapping for build-in types to avoid duplication of their definition
 			//
-			foreach (var type in buildin.AllTypes) {
+			foreach (var type in builtin.AllTypes) {
 				compiled_types.Add (corlib.GetType (type.FullName), type);
 			}
 		}
@@ -366,7 +366,7 @@ namespace Mono.CSharp
 
 		public override bool HasObjectType (Assembly assembly)
 		{
-			return assembly.GetType (compiler.BuildinTypes.Object.FullName) != null;
+			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
 		}
 
 		public override Assembly LoadAssemblyFile (string fileName)
@@ -516,7 +516,7 @@ namespace Mono.CSharp
 				// System.Object was not found in any referenced assembly, use compiled assembly as corlib
 				corlib = module.DeclaringAssembly.Builder;
 			} else {
-				importer.InitializeBuildinTypes (compiler.BuildinTypes, corlib);
+				importer.InitializeBuiltinTypes (compiler.BuiltinTypes, corlib);
 				importer.ImportAssembly (corlib, module.GlobalRootNamespace);
 			}
 

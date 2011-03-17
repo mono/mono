@@ -76,7 +76,7 @@ namespace Mono.CSharp {
 	}
 
 	public class BoolLiteral : BoolConstant {
-		public BoolLiteral (BuildinTypes types, bool val, Location loc)
+		public BoolLiteral (BuiltinTypes types, bool val, Location loc)
 			: base (types, val, loc)
 		{
 		}
@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 	}
 
 	public class CharLiteral : CharConstant {
-		public CharLiteral (BuildinTypes types, char c, Location loc)
+		public CharLiteral (BuiltinTypes types, char c, Location loc)
 			: base (types, c, loc)
 		{
 		}
@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 	}
 
 	public class IntLiteral : IntConstant {
-		public IntLiteral (BuildinTypes types, int l, Location loc)
+		public IntLiteral (BuiltinTypes types, int l, Location loc)
 			: base (types, l, loc)
 		{
 		}
@@ -125,7 +125,7 @@ namespace Mono.CSharp {
 	}
 
 	public class UIntLiteral : UIntConstant {
-		public UIntLiteral (BuildinTypes types, uint l, Location loc)
+		public UIntLiteral (BuiltinTypes types, uint l, Location loc)
 			: base (types, l, loc)
 		{
 		}
@@ -136,7 +136,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class LongLiteral : LongConstant {
-		public LongLiteral (BuildinTypes types, long l, Location loc)
+		public LongLiteral (BuiltinTypes types, long l, Location loc)
 			: base (types, l, loc)
 		{
 		}
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 	}
 
 	public class ULongLiteral : ULongConstant {
-		public ULongLiteral (BuildinTypes types, ulong l, Location loc)
+		public ULongLiteral (BuiltinTypes types, ulong l, Location loc)
 			: base (types, l, loc)
 		{
 		}
@@ -159,7 +159,7 @@ namespace Mono.CSharp {
 	
 	public class FloatLiteral : FloatConstant {
 
-		public FloatLiteral (BuildinTypes types, float f, Location loc)
+		public FloatLiteral (BuiltinTypes types, float f, Location loc)
 			: base (types, f, loc)
 		{
 		}
@@ -171,19 +171,19 @@ namespace Mono.CSharp {
 	}
 
 	public class DoubleLiteral : DoubleConstant {
-		public DoubleLiteral (BuildinTypes types, double d, Location loc)
+		public DoubleLiteral (BuiltinTypes types, double d, Location loc)
 			: base (types, d, loc)
 		{
 		}
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
-			if (target.BuildinType == BuildinTypeSpec.Type.Float) {
+			if (target.BuiltinType == BuiltinTypeSpec.Type.Float) {
 				Error_664 (ec, loc, "float", "f");
 				return;
 			}
 
-			if (target.BuildinType == BuildinTypeSpec.Type.Decimal) {
+			if (target.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 				Error_664 (ec, loc, "decimal", "m");
 				return;
 			}
@@ -205,7 +205,7 @@ namespace Mono.CSharp {
 	}
 
 	public class DecimalLiteral : DecimalConstant {
-		public DecimalLiteral (BuildinTypes types, decimal d, Location loc)
+		public DecimalLiteral (BuiltinTypes types, decimal d, Location loc)
 			: base (types, d, loc)
 		{
 		}
@@ -216,7 +216,7 @@ namespace Mono.CSharp {
 	}
 
 	public class StringLiteral : StringConstant {
-		public StringLiteral (BuildinTypes types, string s, Location loc)
+		public StringLiteral (BuiltinTypes types, string s, Location loc)
 			: base (types, s, loc)
 		{
 		}

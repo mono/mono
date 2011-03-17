@@ -14,7 +14,7 @@ namespace Mono.CSharp {
 
 	public static class ConstantFold
 	{
-		public static TypeSpec[] CreateBinaryPromotionsTypes (BuildinTypes types)
+		public static TypeSpec[] CreateBinaryPromotionsTypes (BuiltinTypes types)
 		{
 			return new TypeSpec[] { 
 				types.Decimal, types.Double, types.Float,
@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 			TypeSpec ltype = left.Type;
 			TypeSpec rtype = right.Type;
 
-			foreach (TypeSpec t in rc.BuildinTypes.BinaryPromotionsTypes) {
+			foreach (TypeSpec t in rc.BuiltinTypes.BinaryPromotionsTypes) {
 				if (t == ltype)
 					return t == rtype || ConvertPromotion (rc, ref right, ref left, t);
 
@@ -45,8 +45,8 @@ namespace Mono.CSharp {
 					return t == ltype || ConvertPromotion (rc, ref left, ref right, t);
 			}
 
-			left = left.ConvertImplicitly (rc.BuildinTypes.Int);
-			right = right.ConvertImplicitly (rc.BuildinTypes.Int);
+			left = left.ConvertImplicitly (rc.BuiltinTypes.Int);
+			right = right.ConvertImplicitly (rc.BuiltinTypes.Int);
 			return left != null && right != null;
 		}
 
@@ -58,8 +58,8 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (type.BuildinType == BuildinTypeSpec.Type.UInt) {
-				type = rc.BuildinTypes.Long;
+			if (type.BuiltinType == BuiltinTypeSpec.Type.UInt) {
+				type = rc.BuiltinTypes.Long;
 				prim = prim.ConvertImplicitly (type);
 				second = second.ConvertImplicitly (type);
 				return prim != null && second != null;
@@ -107,22 +107,22 @@ namespace Mono.CSharp {
 			TypeSpec rt = right.Type;
 			bool bool_res;
 
-			if (lt.BuildinType == BuildinTypeSpec.Type.Bool && lt == rt) {
+			if (lt.BuiltinType == BuiltinTypeSpec.Type.Bool && lt == rt) {
 				bool lv = (bool) left.GetValue ();
 				bool rv = (bool) right.GetValue ();			
 				switch (oper) {
 				case Binary.Operator.BitwiseAnd:
 				case Binary.Operator.LogicalAnd:
-					return new BoolConstant (ec.BuildinTypes, lv && rv, left.Location);
+					return new BoolConstant (ec.BuiltinTypes, lv && rv, left.Location);
 				case Binary.Operator.BitwiseOr:
 				case Binary.Operator.LogicalOr:
-					return new BoolConstant (ec.BuildinTypes, lv || rv, left.Location);
+					return new BoolConstant (ec.BuiltinTypes, lv || rv, left.Location);
 				case Binary.Operator.ExclusiveOr:
-					return new BoolConstant (ec.BuildinTypes, lv ^ rv, left.Location);
+					return new BoolConstant (ec.BuiltinTypes, lv ^ rv, left.Location);
 				case Binary.Operator.Equality:
-					return new BoolConstant (ec.BuildinTypes, lv == rv, left.Location);
+					return new BoolConstant (ec.BuiltinTypes, lv == rv, left.Location);
 				case Binary.Operator.Inequality:
-					return new BoolConstant (ec.BuildinTypes, lv != rv, left.Location);
+					return new BoolConstant (ec.BuiltinTypes, lv != rv, left.Location);
 				}
 				return null;
 			}
@@ -185,8 +185,8 @@ namespace Mono.CSharp {
 				//
 				// bool? operator &(bool? x, bool? y);
 				//
-				if ((lt.BuildinType == BuildinTypeSpec.Type.Bool && right is NullLiteral) ||
-					(rt.BuildinType == BuildinTypeSpec.Type.Bool && left is NullLiteral)) {
+				if ((lt.BuiltinType == BuiltinTypeSpec.Type.Bool && right is NullLiteral) ||
+					(rt.BuiltinType == BuiltinTypeSpec.Type.Bool && left is NullLiteral)) {
 					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 					// false | null => null
@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 
 					// true | null => true
 					// null | true => true
-					return ReducedExpression.Create (new BoolConstant (ec.BuildinTypes, true, loc), b);					
+					return ReducedExpression.Create (new BoolConstant (ec.BuiltinTypes, true, loc), b);					
 				}
 
 				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
@@ -205,23 +205,23 @@ namespace Mono.CSharp {
 				if (left is IntConstant){
 					int res = ((IntConstant) left).Value | ((IntConstant) right).Value;
 
-					return new IntConstant (ec.BuildinTypes, res, left.Location);
+					return new IntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value | ((UIntConstant)right).Value;
 
-					return new UIntConstant (ec.BuildinTypes, res, left.Location);
+					return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is LongConstant){
 					long res = ((LongConstant)left).Value | ((LongConstant)right).Value;
 
-					return new LongConstant (ec.BuildinTypes, res, left.Location);
+					return new LongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value |
 						((ULongConstant)right).Value;
 
-					return new ULongConstant (ec.BuildinTypes, res, left.Location);
+					return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				break;
 				
@@ -229,14 +229,14 @@ namespace Mono.CSharp {
 				//
 				// bool? operator &(bool? x, bool? y);
 				//
-				if ((lt.BuildinType == BuildinTypeSpec.Type.Bool && right is NullLiteral) ||
-					(rt.BuildinType == BuildinTypeSpec.Type.Bool && left is NullLiteral)) {
+				if ((lt.BuiltinType == BuiltinTypeSpec.Type.Bool && right is NullLiteral) ||
+					(rt.BuiltinType == BuiltinTypeSpec.Type.Bool && left is NullLiteral)) {
 					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 					// false & null => false
 					// null & false => false
 					if ((right is NullLiteral && left.IsDefaultValue) || (left is NullLiteral && right.IsDefaultValue))
-						return ReducedExpression.Create (new BoolConstant (ec.BuildinTypes, false, loc), b);
+						return ReducedExpression.Create (new BoolConstant (ec.BuiltinTypes, false, loc), b);
 
 					// true & null => null
 					// null & true => null
@@ -254,21 +254,21 @@ namespace Mono.CSharp {
 				///
 				if (left is IntConstant){
 					int res = ((IntConstant) left).Value & ((IntConstant) right).Value;
-					return new IntConstant (ec.BuildinTypes, res, left.Location);
+					return new IntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value & ((UIntConstant)right).Value;
-					return new UIntConstant (ec.BuildinTypes, res, left.Location);
+					return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is LongConstant){
 					long res = ((LongConstant)left).Value & ((LongConstant)right).Value;
-					return new LongConstant (ec.BuildinTypes, res, left.Location);
+					return new LongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value &
 						((ULongConstant)right).Value;
 
-					return new ULongConstant (ec.BuildinTypes, res, left.Location);
+					return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				break;
 
@@ -278,23 +278,23 @@ namespace Mono.CSharp {
 				
 				if (left is IntConstant){
 					int res = ((IntConstant) left).Value ^ ((IntConstant) right).Value;
-					return new IntConstant (ec.BuildinTypes, res, left.Location);
+					return new IntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value ^ ((UIntConstant)right).Value;
 
-					return new UIntConstant (ec.BuildinTypes, res, left.Location);
+					return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is LongConstant){
 					long res = ((LongConstant)left).Value ^ ((LongConstant)right).Value;
 
-					return new LongConstant (ec.BuildinTypes, res, left.Location);
+					return new LongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value ^
 						((ULongConstant)right).Value;
 
-					return new ULongConstant (ec.BuildinTypes, res, left.Location);
+					return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 				}
 				break;
 
@@ -310,9 +310,9 @@ namespace Mono.CSharp {
 				// one is a string, and the other is not, then defer
 				// to runtime concatenation
 				//
-				if (lt.BuildinType == BuildinTypeSpec.Type.String || rt.BuildinType == BuildinTypeSpec.Type.String){
+				if (lt.BuiltinType == BuiltinTypeSpec.Type.String || rt.BuiltinType == BuiltinTypeSpec.Type.String){
 					if (lt == rt)
-						return new StringConstant (ec.BuildinTypes, (string)left.GetValue () + (string)right.GetValue (),
+						return new StringConstant (ec.BuiltinTypes, (string)left.GetValue () + (string)right.GetValue (),
 							left.Location);
 					
 					return null;
@@ -361,7 +361,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value +
 									 ((DoubleConstant) right).Value);
 
-						return new DoubleConstant (ec.BuildinTypes, res, left.Location);
+						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					}
 					if (left is FloatConstant){
 						float res;
@@ -373,7 +373,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value +
 									 ((FloatConstant) right).Value);
 
-						result = new FloatConstant (ec.BuildinTypes, res, left.Location);
+						result = new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value +
 									 ((ULongConstant) right).Value);
 
-						result = new ULongConstant (ec.BuildinTypes, res, left.Location);
+						result = new ULongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -395,7 +395,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value +
 									 ((LongConstant) right).Value);
 
-						result = new LongConstant (ec.BuildinTypes, res, left.Location);
+						result = new LongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -406,7 +406,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value +
 									 ((UIntConstant) right).Value);
 
-						result = new UIntConstant (ec.BuildinTypes, res, left.Location);
+						result = new UIntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is IntConstant){
 						int res;
 
@@ -417,7 +417,7 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value +
 									 ((IntConstant) right).Value);
 
-						result = new IntConstant (ec.BuildinTypes, res, left.Location);
+						result = new IntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is DecimalConstant) {
 						decimal res;
 
@@ -428,7 +428,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DecimalConstant) left).Value +
 								((DecimalConstant) right).Value);
 
-						result = new DecimalConstant (ec.BuildinTypes, res, left.Location);
+						result = new DecimalConstant (ec.BuiltinTypes, res, left.Location);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (ec, loc);
@@ -467,7 +467,7 @@ namespace Mono.CSharp {
 				}
 
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
@@ -485,7 +485,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value -
 									 ((DoubleConstant) right).Value);
 
-						result = new DoubleConstant (ec.BuildinTypes, res, left.Location);
+						result = new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
 						float res;
 						
@@ -496,7 +496,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value -
 									 ((FloatConstant) right).Value);
 
-						result = new FloatConstant (ec.BuildinTypes, res, left.Location);
+						result = new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -507,7 +507,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value -
 									 ((ULongConstant) right).Value);
 
-						result = new ULongConstant (ec.BuildinTypes, res, left.Location);
+						result = new ULongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -518,7 +518,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value -
 									 ((LongConstant) right).Value);
 
-						result = new LongConstant (ec.BuildinTypes, res, left.Location);
+						result = new LongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value -
 									 ((UIntConstant) right).Value);
 
-						result = new UIntConstant (ec.BuildinTypes, res, left.Location);
+						result = new UIntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is IntConstant){
 						int res;
 
@@ -540,7 +540,7 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value -
 									 ((IntConstant) right).Value);
 
-						result = new IntConstant (ec.BuildinTypes, res, left.Location);
+						result = new IntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is DecimalConstant) {
 						decimal res;
 
@@ -551,7 +551,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DecimalConstant) left).Value -
 								((DecimalConstant) right).Value);
 
-						return new DecimalConstant (ec.BuildinTypes, res, left.Location);
+						return new DecimalConstant (ec.BuiltinTypes, res, left.Location);
 					} else {
 						throw new Exception ( "Unexepected subtraction input: " + left);
 					}
@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 				
 			case Binary.Operator.Multiply:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
@@ -581,7 +581,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value *
 								((DoubleConstant) right).Value);
 
-						return new DoubleConstant (ec.BuildinTypes, res, left.Location);
+						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
 						float res;
 						
@@ -592,7 +592,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value *
 								((FloatConstant) right).Value);
 
-						return new FloatConstant (ec.BuildinTypes, res, left.Location);
+						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value *
 								((ULongConstant) right).Value);
 
-						return new ULongConstant (ec.BuildinTypes, res, left.Location);
+						return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -614,7 +614,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value *
 								((LongConstant) right).Value);
 
-						return new LongConstant (ec.BuildinTypes, res, left.Location);
+						return new LongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value *
 								((UIntConstant) right).Value);
 
-						return new UIntConstant (ec.BuildinTypes, res, left.Location);
+						return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is IntConstant){
 						int res;
 
@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value *
 								((IntConstant) right).Value);
 
-						return new IntConstant (ec.BuildinTypes, res, left.Location);
+						return new IntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is DecimalConstant) {
 						decimal res;
 
@@ -647,7 +647,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DecimalConstant) left).Value *
 								((DecimalConstant) right).Value);
 
-						return new DecimalConstant (ec.BuildinTypes, res, left.Location);
+						return new DecimalConstant (ec.BuiltinTypes, res, left.Location);
 					} else {
 						throw new Exception ( "Unexepected multiply input: " + left);
 					}
@@ -658,7 +658,7 @@ namespace Mono.CSharp {
 
 			case Binary.Operator.Division:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
@@ -676,7 +676,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value /
 								((DoubleConstant) right).Value);
 
-						return new DoubleConstant (ec.BuildinTypes, res, left.Location);
+						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
 						float res;
 						
@@ -687,7 +687,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value /
 								((FloatConstant) right).Value);
 
-						return new FloatConstant (ec.BuildinTypes, res, left.Location);
+						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -698,7 +698,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value /
 								((ULongConstant) right).Value);
 
-						return new ULongConstant (ec.BuildinTypes, res, left.Location);
+						return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -709,7 +709,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value /
 								((LongConstant) right).Value);
 
-						return new LongConstant (ec.BuildinTypes, res, left.Location);
+						return new LongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -720,7 +720,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value /
 								((UIntConstant) right).Value);
 
-						return new UIntConstant (ec.BuildinTypes, res, left.Location);
+						return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is IntConstant){
 						int res;
 
@@ -731,7 +731,7 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value /
 								((IntConstant) right).Value);
 
-						return new IntConstant (ec.BuildinTypes, res, left.Location);
+						return new IntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is DecimalConstant) {
 						decimal res;
 
@@ -742,7 +742,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DecimalConstant) left).Value /
 								((DecimalConstant) right).Value);
 
-						return new DecimalConstant (ec.BuildinTypes, res, left.Location);
+						return new DecimalConstant (ec.BuiltinTypes, res, left.Location);
 					} else {
 						throw new Exception ( "Unexepected division input: " + left);
 					}
@@ -757,7 +757,7 @@ namespace Mono.CSharp {
 				
 			case Binary.Operator.Modulus:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
@@ -775,7 +775,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value %
 									 ((DoubleConstant) right).Value);
 
-						return new DoubleConstant (ec.BuildinTypes, res, left.Location);
+						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
 						float res;
 						
@@ -786,7 +786,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value %
 									 ((FloatConstant) right).Value);
 
-						return new FloatConstant (ec.BuildinTypes, res, left.Location);
+						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -797,7 +797,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value %
 									 ((ULongConstant) right).Value);
 
-						return new ULongConstant (ec.BuildinTypes, res, left.Location);
+						return new ULongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value %
 									 ((LongConstant) right).Value);
 
-						return new LongConstant (ec.BuildinTypes, res, left.Location);
+						return new LongConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -819,7 +819,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value %
 									 ((UIntConstant) right).Value);
 
-						return new UIntConstant (ec.BuildinTypes, res, left.Location);
+						return new UIntConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is IntConstant){
 						int res;
 
@@ -830,7 +830,7 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value %
 									 ((IntConstant) right).Value);
 
-						return new IntConstant (ec.BuildinTypes, res, left.Location);
+						return new IntConstant (ec.BuiltinTypes, res, left.Location);
 					} else {
 						throw new Exception ( "Unexepected modulus input: " + left);
 					}
@@ -846,33 +846,33 @@ namespace Mono.CSharp {
 				//
 			case Binary.Operator.LeftShift:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
-				IntConstant ic = right.ConvertImplicitly (ec.BuildinTypes.Int) as IntConstant;
+				IntConstant ic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (ic == null){
 					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
 				}
 
 				int lshift_val = ic.Value;
-				switch (left.Type.BuildinType) {
-				case BuildinTypeSpec.Type.ULong:
-					return new ULongConstant (ec.BuildinTypes, ((ULongConstant) left).Value << lshift_val, left.Location);
-				case BuildinTypeSpec.Type.Long:
-					return new LongConstant (ec.BuildinTypes, ((LongConstant) left).Value << lshift_val, left.Location);
-				case BuildinTypeSpec.Type.UInt:
-					return new UIntConstant (ec.BuildinTypes, ((UIntConstant) left).Value << lshift_val, left.Location);
+				switch (left.Type.BuiltinType) {
+				case BuiltinTypeSpec.Type.ULong:
+					return new ULongConstant (ec.BuiltinTypes, ((ULongConstant) left).Value << lshift_val, left.Location);
+				case BuiltinTypeSpec.Type.Long:
+					return new LongConstant (ec.BuiltinTypes, ((LongConstant) left).Value << lshift_val, left.Location);
+				case BuiltinTypeSpec.Type.UInt:
+					return new UIntConstant (ec.BuiltinTypes, ((UIntConstant) left).Value << lshift_val, left.Location);
 				}
 
 				// null << value => null
 				if (left is NullLiteral)
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
-				left = left.ConvertImplicitly (ec.BuildinTypes.Int);
-				if (left.Type.BuildinType == BuildinTypeSpec.Type.Int)
-					return new IntConstant (ec.BuildinTypes, ((IntConstant) left).Value << lshift_val, left.Location);
+				left = left.ConvertImplicitly (ec.BuiltinTypes.Int);
+				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
+					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value << lshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 				break;
@@ -882,32 +882,32 @@ namespace Mono.CSharp {
 				//
 			case Binary.Operator.RightShift:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 				}
 
-				IntConstant sic = right.ConvertImplicitly (ec.BuildinTypes.Int) as IntConstant;
+				IntConstant sic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (sic == null){
 					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc); ;
 					return null;
 				}
 				int rshift_val = sic.Value;
-				switch (left.Type.BuildinType) {
-				case BuildinTypeSpec.Type.ULong:
-					return new ULongConstant (ec.BuildinTypes, ((ULongConstant) left).Value >> rshift_val, left.Location);
-				case BuildinTypeSpec.Type.Long:
-					return new LongConstant (ec.BuildinTypes, ((LongConstant) left).Value >> rshift_val, left.Location);
-				case BuildinTypeSpec.Type.UInt:
-					return new UIntConstant (ec.BuildinTypes, ((UIntConstant) left).Value >> rshift_val, left.Location);
+				switch (left.Type.BuiltinType) {
+				case BuiltinTypeSpec.Type.ULong:
+					return new ULongConstant (ec.BuiltinTypes, ((ULongConstant) left).Value >> rshift_val, left.Location);
+				case BuiltinTypeSpec.Type.Long:
+					return new LongConstant (ec.BuiltinTypes, ((LongConstant) left).Value >> rshift_val, left.Location);
+				case BuiltinTypeSpec.Type.UInt:
+					return new UIntConstant (ec.BuiltinTypes, ((UIntConstant) left).Value >> rshift_val, left.Location);
 				}
 
 				// null >> value => null
 				if (left is NullLiteral)
 					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
-				left = left.ConvertImplicitly (ec.BuildinTypes.Int);
-				if (left.Type.BuildinType == BuildinTypeSpec.Type.Int)
-					return new IntConstant (ec.BuildinTypes, ((IntConstant) left).Value >> rshift_val, left.Location);
+				left = left.ConvertImplicitly (ec.BuiltinTypes.Int);
+				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
+					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value >> rshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 				break;
@@ -918,12 +918,12 @@ namespace Mono.CSharp {
 					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
-							new BoolConstant (ec.BuildinTypes, left.IsNull == right.IsNull, left.Location),
+							new BoolConstant (ec.BuiltinTypes, left.IsNull == right.IsNull, left.Location),
 							new Binary (oper, left, right, loc));
 					}
 
 					if (left is StringConstant && right is StringConstant)
-						return new BoolConstant (ec.BuildinTypes,
+						return new BoolConstant (ec.BuiltinTypes,
 							((StringConstant) left).Value == ((StringConstant) right).Value, left.Location);
 
 					return null;
@@ -954,7 +954,7 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
 				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (rt) ||
@@ -962,12 +962,12 @@ namespace Mono.CSharp {
 					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
-							new BoolConstant (ec.BuildinTypes, left.IsNull != right.IsNull, left.Location),
+							new BoolConstant (ec.BuiltinTypes, left.IsNull != right.IsNull, left.Location),
 							new Binary (oper, left, right, loc));
 					}
 
 					if (left is StringConstant && right is StringConstant)
-						return new BoolConstant (ec.BuildinTypes,
+						return new BoolConstant (ec.BuiltinTypes,
 							((StringConstant) left).Value != ((StringConstant) right).Value, left.Location);
 
 					return null;
@@ -998,12 +998,12 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 
 			case Binary.Operator.LessThan:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 						return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 					}
 
@@ -1037,12 +1037,12 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 				
 			case Binary.Operator.GreaterThan:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 						return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 					}
 
@@ -1076,12 +1076,12 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 
 			case Binary.Operator.GreaterThanOrEqual:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 						return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 					}
 
@@ -1115,12 +1115,12 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 
 			case Binary.Operator.LessThanOrEqual:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuildinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
+						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc).ResolveAsTypeTerminal (ec, false);
 						return (Constant) new Nullable.LiftedBinaryOperator (oper, lifted_int, right, loc).Resolve (ec);
 					}
 
@@ -1154,7 +1154,7 @@ namespace Mono.CSharp {
 				else
 					return null;
 
-				return new BoolConstant (ec.BuildinTypes, bool_res, left.Location);
+				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 			}
 					
 			return null;

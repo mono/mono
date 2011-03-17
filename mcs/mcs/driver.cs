@@ -272,7 +272,7 @@ namespace Mono.CSharp
 			references_loader.LoadReferences (module);
 
 			tr.Start (TimeReporter.TimerType.PredefinedTypesInit);
-			if (!ctx.BuildinTypes.CheckDefinitions (module))
+			if (!ctx.BuiltinTypes.CheckDefinitions (module))
 				return false;
 
 			tr.Stop (TimeReporter.TimerType.PredefinedTypesInit);
@@ -282,13 +282,13 @@ namespace Mono.CSharp
 			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
 			module.SetDeclaringAssembly (assembly);
 
-			var importer = new ReflectionImporter (module, ctx.BuildinTypes);
+			var importer = new ReflectionImporter (module, ctx.BuiltinTypes);
 			assembly.Importer = importer;
 
 			var loader = new DynamicLoader (importer, ctx);
 			loader.LoadReferences (module);
 
-			if (!ctx.BuildinTypes.CheckDefinitions (module))
+			if (!ctx.BuiltinTypes.CheckDefinitions (module))
 				return false;
 
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))

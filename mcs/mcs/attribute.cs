@@ -342,24 +342,24 @@ namespace Mono.CSharp {
 				t = ac.Element;
 			}
 
-			switch (t.BuildinType) {
-			case BuildinTypeSpec.Type.Int:
-			case BuildinTypeSpec.Type.UInt:
-			case BuildinTypeSpec.Type.Long:
-			case BuildinTypeSpec.Type.ULong:
-			case BuildinTypeSpec.Type.Float:
-			case BuildinTypeSpec.Type.Double:
-			case BuildinTypeSpec.Type.Char:
-			case BuildinTypeSpec.Type.Short:
-			case BuildinTypeSpec.Type.Bool:
-			case BuildinTypeSpec.Type.SByte:
-			case BuildinTypeSpec.Type.Byte:
-			case BuildinTypeSpec.Type.UShort:
+			switch (t.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.Bool:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.UShort:
 
-			case BuildinTypeSpec.Type.String:
-			case BuildinTypeSpec.Type.Object:
-			case BuildinTypeSpec.Type.Dynamic:
-			case BuildinTypeSpec.Type.Type:
+			case BuiltinTypeSpec.Type.String:
+			case BuiltinTypeSpec.Type.Object:
+			case BuiltinTypeSpec.Type.Dynamic:
+			case BuiltinTypeSpec.Type.Type:
 				return true;
 			}
 
@@ -964,7 +964,7 @@ namespace Mono.CSharp {
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty");
 								}
-							} else if (Type == predefined.MethodImpl && pt.BuildinType == BuildinTypeSpec.Type.Short &&
+							} else if (Type == predefined.MethodImpl && pt.BuiltinType == BuiltinTypeSpec.Type.Short &&
 								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
 								Error_AttributeEmitError ("Incorrect argument value.");
 								return;
@@ -1334,53 +1334,53 @@ namespace Mono.CSharp {
 
 		public EncodedTypeProperties Encode (TypeSpec type)
 		{
-			switch (type.BuildinType) {
-			case BuildinTypeSpec.Type.Bool:
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Bool:
 				Encode ((byte) 0x02);
 				break;
-			case BuildinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.Char:
 				Encode ((byte) 0x03);
 				break;
-			case BuildinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.SByte:
 				Encode ((byte) 0x04);
 				break;
-			case BuildinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.Byte:
 				Encode ((byte) 0x05);
 				break;
-			case BuildinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.Short:
 				Encode ((byte) 0x06);
 				break;
-			case BuildinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.UShort:
 				Encode ((byte) 0x07);
 				break;
-			case BuildinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.Int:
 				Encode ((byte) 0x08);
 				break;
-			case BuildinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.UInt:
 				Encode ((byte) 0x09);
 				break;
-			case BuildinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Long:
 				Encode ((byte) 0x0A);
 				break;
-			case BuildinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.ULong:
 				Encode ((byte) 0x0B);
 				break;
-			case BuildinTypeSpec.Type.Float:
+			case BuiltinTypeSpec.Type.Float:
 				Encode ((byte) 0x0C);
 				break;
-			case BuildinTypeSpec.Type.Double:
+			case BuiltinTypeSpec.Type.Double:
 				Encode ((byte) 0x0D);
 				break;
-			case BuildinTypeSpec.Type.String:
+			case BuiltinTypeSpec.Type.String:
 				Encode ((byte) 0x0E);
 				break;
-			case BuildinTypeSpec.Type.Type:
+			case BuiltinTypeSpec.Type.Type:
 				Encode ((byte) 0x50);
 				break;
-			case BuildinTypeSpec.Type.Object:
+			case BuiltinTypeSpec.Type.Object:
 				Encode ((byte) 0x51);
 				break;
-			case BuildinTypeSpec.Type.Dynamic:
+			case BuiltinTypeSpec.Type.Dynamic:
 				Encode ((byte) 0x51);
 				return EncodedTypeProperties.DynamicType;
 			default:
@@ -1936,7 +1936,7 @@ namespace Mono.CSharp {
 					return transform.ToArray ();
 			}
 
-			if (t.BuildinType == BuildinTypeSpec.Type.Dynamic)
+			if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				return new bool[] { true };
 
 			return null;
