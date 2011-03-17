@@ -954,14 +954,18 @@ namespace System.Web.Compilation
 
 		static Type GetPrecompiledType (string virtualPath)
 		{
+			if (precompiled == null || precompiled.Count == 0)
+				return null;
+
 			PreCompilationData pc_data;
-			if (precompiled != null && precompiled.TryGetValue (virtualPath, out pc_data)) {
-				if (pc_data.Type == null) {
-					pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
-				}
-				return pc_data.Type;
-			}
-			return null;
+			var vp = new VirtualPath (virtualPath);
+			if (!precompiled.TryGetValue (vp.Absolute, out pc_data))
+				if (!precompiled.TryGetValue (virtualPath, out pc_data))
+					return null;
+				
+			if (pc_data.Type == null)
+				pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
+			return pc_data.Type;
 		}
 
 		internal static Type GetPrecompiledApplicationType ()
@@ -969,9 +973,10 @@ namespace System.Web.Compilation
 			if (!is_precompiled)
 				return null;
 
-			Type apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath, "Global.asax"));
+			string appVp = VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath);
+			Type apptype = GetPrecompiledType (VirtualPathUtility.Combine (appVp, "global.asax"));
 			if (apptype == null)
-				apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath , "global.asax"));
+				apptype = GetPrecompiledType (VirtualPathUtility.Combine (appVp, "Global.asax"));
 			return apptype;
 		}
 
