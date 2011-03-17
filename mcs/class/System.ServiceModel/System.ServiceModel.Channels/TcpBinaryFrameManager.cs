@@ -121,6 +121,7 @@ namespace System.ServiceModel.Channels
 		public const byte Soap12EncodingMtom = 6;
 		public const byte Soap12EncodingBinary = 7;
 		public const byte Soap12EncodingBinaryWithDictionary = 8;
+		public const byte UseExtendedEncodingRecord = 0xFF;
 
 		MyBinaryReader reader;
 		MyBinaryWriter writer;
@@ -142,11 +143,44 @@ namespace System.ServiceModel.Channels
 
 		int mode;
 
-		public byte EncodingRecord { get; set; }
+		public byte EncodingRecord { get; private set; }
+		public string ExtendedEncodingRecord { get; private set; }
 
 		public Uri Via { get; set; }
 
-		public MessageEncoder Encoder { get; set; }
+		static readonly char [] convtest = new char [1] {'A'};
+		MessageEncoder encoder;
+		public MessageEncoder Encoder {
+			get { return encoder; }
+			set {
+				encoder = value;
+				EncodingRecord = UseExtendedEncodingRecord;
+				var be = encoder as BinaryMessageEncoder;
+				if (be != null)
+					EncodingRecord = be.UseSession ? Soap12EncodingBinaryWithDictionary : Soap12EncodingBinary;
+				var te = encoder as TextMessageEncoder;
+				if (te != null) {
+					var u16 = te.Encoding as UnicodeEncoding;
+					bool u16be = u16 != null && u16.GetBytes (convtest) [0] == 0;
+					if (encoder.MessageVersion.Envelope.Equals (EnvelopeVersion.Soap11)) {
+						if (u16 != null)
+							EncodingRecord = u16be ? Soap11EncodingUtf16 : Soap11EncodingUtf16LE;
+						else
+							EncodingRecord = Soap11EncodingUtf8;
+					} else {
+						if (u16 != null)
+							EncodingRecord = u16be ? Soap12EncodingUtf16 : Soap12EncodingUtf16LE;
+						else
+							EncodingRecord = Soap12EncodingUtf8;
+					}
+				}
+				if (value is MtomMessageEncoder)
+					EncodingRecord = Soap12EncodingMtom;
+
+				if (EncodingRecord == UseExtendedEncodingRecord)
+					ExtendedEncodingRecord = encoder.ContentType;
+			}
+		}
 
 		void ResetWriteBuffer ()
 		{
@@ -301,7 +335,7 @@ namespace System.ServiceModel.Channels
 			}
 
 			byte [] buffer = ReadSizedChunk ();
-
+Console.Error.WriteLine (Encoding.UTF8.GetString (buffer));
 			var ms = new MemoryStream (buffer, 0, buffer.Length);
 
 			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
@@ -315,22 +349,22 @@ namespace System.ServiceModel.Channels
 			case Soap12EncodingUtf16:
 			case Soap12EncodingUtf16LE:
 				if (!(Encoder is TextMessageEncoder))
-					throw new InvalidOperationException (String.Format ("Unexpected message encoding value: {0:X}", EncodingRecord));
+					throw new InvalidOperationException (String.Format ("Unexpected message encoding value in the received message: {0:X}", EncodingRecord));
 				break;
 			case Soap12EncodingMtom:
 				if (!(Encoder is MtomMessageEncoder))
-					throw new InvalidOperationException (String.Format ("Unexpected message encoding value: {0:X}", EncodingRecord));
+					throw new InvalidOperationException (String.Format ("Unexpected message encoding value in the received message: {0:X}", EncodingRecord));
 				break;
 			default:
-				throw new InvalidOperationException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+					throw new InvalidOperationException (String.Format ("Unexpected message encoding value in the received message: {0:X}", EncodingRecord));
 			case Soap12EncodingBinaryWithDictionary:
 				inBandDic = true;
 				goto case Soap12EncodingBinary;
 			case Soap12EncodingBinary:
 				session = inBandDic ? (reader_session ?? new XmlBinaryReaderSession ()) : null;
 				reader_session = session;
-				byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
 				if (inBandDic) {
+					byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
 					using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
 						var rbr = new BinaryReader (rms, Encoding.UTF8);
 						while (rms.Position < rms.Length)
@@ -396,9 +430,6 @@ namespace System.ServiceModel.Channels
 
 			ResetWriteBuffer ();
 
-			if (EncodingRecord != 8)
-				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
-
 			buffer.WriteByte (SizedEnvelopeRecord);
 
 			MemoryStream ms = new MemoryStream ();
@@ -446,9 +477,6 @@ namespace System.ServiceModel.Channels
 			lock (write_lock) {
 
 			ResetWriteBuffer ();
-
-			if (EncodingRecord != Soap12EncodingBinary)
-				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
 			s.WriteByte (UnsizedEnvelopeRecord);
 			s.Flush ();

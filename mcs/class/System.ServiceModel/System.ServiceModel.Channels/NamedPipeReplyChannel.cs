@@ -128,7 +128,7 @@ namespace System.ServiceModel.Channels
 			DateTime start = DateTime.Now;
 
 			// FIXME: use timeout
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, server, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.Soap12EncodingBinary };
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, server, true) { Encoder = this.Encoder };
 			frame.ProcessPreambleRecipient ();
 			frame.ProcessPreambleAckRecipient ();
 		}

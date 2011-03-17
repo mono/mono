@@ -77,8 +77,7 @@ namespace System.ServiceModel.Channels
 			NetworkStream ns = client.GetStream ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, false) {
 				Encoder = this.Encoder,
-				Via = this.Via,
-				EncodingRecord = TcpBinaryFrameManager.Soap12EncodingBinary };
+				Via = this.Via };
 		}
 
 		public override Message Request (Message input, TimeSpan timeout)

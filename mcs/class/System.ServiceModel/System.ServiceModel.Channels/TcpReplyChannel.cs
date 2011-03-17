@@ -64,7 +64,7 @@ namespace System.ServiceModel.Channels
 			if (client == null)
 				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
 			NetworkStream ns = client.GetStream ();
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.Soap12EncodingBinary };
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder };
 
 			// FIXME: use timeout
 			if (!frame.ProcessPreambleRecipient ())

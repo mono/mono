@@ -44,6 +44,10 @@ namespace System.ServiceModel.Channels
 			this.encoding = encoding;
 		}
 
+		internal Encoding Encoding {
+			get { return encoding; }
+		}
+
 		public override string ContentType {
 			get { return String.Concat (MediaType, "; charset=", encoding.WebName); }
 		}

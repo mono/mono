@@ -48,6 +48,10 @@ namespace System.ServiceModel.Channels
 		BinaryMessageEncoderFactory owner;
 		bool session;
 
+		internal bool UseSession {
+			get { return session; }
+		}
+
 		public override string ContentType {
 			get { return MediaType; }
 		}
