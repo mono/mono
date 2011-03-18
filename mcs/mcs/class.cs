@@ -2985,6 +2985,8 @@ namespace Mono.CSharp {
 			IsExplicitImpl = (MemberName.Left != null);
 			explicit_mod_flags = mod;
 		}
+
+		public abstract Variance ExpectedMemberTypeVariance { get; }
 		
 		protected override bool CheckBase ()
 		{
@@ -3245,6 +3247,13 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
+		protected override void DoMemberTypeDependentChecks ()
+		{
+			base.DoMemberTypeDependentChecks ();
+
+			TypeManager.CheckTypeVariance (MemberType, ExpectedMemberTypeVariance, this);
+		}
+
 		public override void Emit()
 		{
 			// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
@@ -3466,9 +3475,6 @@ namespace Mono.CSharp {
 						      "accessible than field `" + GetSignatureForError () + "'");
 				}
 			}
-
-			Variance variance = this is Event ? Variance.Contravariant : Variance.Covariant;
-			TypeManager.CheckTypeVariance (MemberType, variance, this);
 		}
 
 		protected bool IsTypePermitted ()

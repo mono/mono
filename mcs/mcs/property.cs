@@ -438,6 +438,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return (get != null && set != null) ?
+					Variance.None : set == null ?
+					Variance.Covariant :
+					Variance.Contravariant;
+			}
+		}
+
 		public PropertyMethod Get {
 			get {
 				return get;
@@ -1206,6 +1215,12 @@ namespace Mono.CSharp
 			set {
 				add = value;
 				Parent.AddMember (value);
+			}
+		}
+
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return Variance.Contravariant;
 			}
 		}
 

@@ -28403,6 +28403,28 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-17.cs">
+    <type name="A">
+      <method name="Void InterfaceContravariat&lt;int&gt;.set_Prop(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void InterfaceContravariat&lt;int&gt;.set_Item(Int32, Int32)">
+        <size>6</size>
+      </method>
+      <method name="Int64 InterfaceCovariant&lt;long&gt;.get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Int64 InterfaceCovariant&lt;long&gt;.get_Item(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-2.cs">
     <type name="Foo">
       <method name="System.String Bar(System.Object)">
