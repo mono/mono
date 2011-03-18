@@ -28,7 +28,7 @@
       </Docs>
     </Member>
     <Member MemberName="B">
-      <MemberSignature Language="C#" Value="public int B { set; get; }" />
+      <MemberSignature Language="C#" Value="public int B { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 B" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
