@@ -302,25 +302,25 @@ namespace System.Threading.Tasks
 			
 			if (kindCode >= ((int)TaskContinuationOptions.NotOnRanToCompletion)) {
 				if (status == TaskStatus.Canceled) {
-					if (kind == TaskContinuationOptions.NotOnCanceled)
+					if ((kind & TaskContinuationOptions.NotOnCanceled) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
+					if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
+					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) & 0)
 						return false;
 				} else if (status == TaskStatus.Faulted) {
-					if (kind == TaskContinuationOptions.NotOnFaulted)
+					if ((kind & TaskContinuationOptions.NotOnFaulted) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
+					if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
+					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
 						return false;
 				} else if (status == TaskStatus.RanToCompletion) {
-					if (kind == TaskContinuationOptions.NotOnRanToCompletion)
+					if ((kind & TaskContinuationOptions.NotOnRanToCompletion) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
+					if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
 						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
+					if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
 						return false;
 				}
 			}
