@@ -42,9 +42,9 @@ namespace System.Threading.Tasks
 			get {
 				if (function != null) {
 					Wait ();
-                } else if (Exception != null) {
-                    throw Exception;
-                }
+				} else if (Exception != null) {
+					throw Exception;
+				}
 				return value;
 			}
 			internal set {
