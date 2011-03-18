@@ -40,8 +40,11 @@ namespace System.Threading.Tasks
 		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
 		public TResult Result {
 			get {
-				if (function != null)
+				if (function != null) {
 					Wait ();
+                } else if (Exception != null) {
+                    throw Exception;
+                }
 				return value;
 			}
 			internal set {
