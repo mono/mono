@@ -35,6 +35,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+[assembly: System.Windows.Markup.XmlnsDefinition ("http://www.domain.com/path", "XamlTest")] // bug #680385
+
 namespace MonoTests.System.Xaml
 {
 	public class ArgumentAttributed
@@ -828,5 +830,34 @@ namespace MonoTests.System.Xaml
 			set { foo = Bar = value; }
 		}
 		public string Bar { get; private set; }
+	}
+}
+
+namespace XamlTest
+{
+	public class Configurations : List<Configuration>
+	{
+		private Configuration active;
+		private bool isFrozen;
+
+		public Configuration Active {
+			get { return this.active; }
+			set {
+				if (this.isFrozen) {
+				throw new InvalidOperationException ("The 'Active' configuration can only be changed via modifying the source file (" + this.Source + ").");
+				}
+
+				this.active = value;
+			}
+		}
+
+		public string Source { get; private set; }
+	}
+
+	public class Configuration
+	{
+		public string Version { get; set; }
+
+		public string Path { get; set; }
 	}
 }

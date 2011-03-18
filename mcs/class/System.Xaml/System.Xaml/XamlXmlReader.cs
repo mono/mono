@@ -243,7 +243,9 @@ namespace System.Xaml
 				r.MoveToElement ();
 				
 				if (inside_object_not_member) {
-					if (!ReadExtraStartMember ())
+					if (r.LocalName.StartsWith (types.Peek ().Name + ".", StringComparison.Ordinal))
+						ReadStartMember ();
+					else if (!ReadExtraStartMember ())
 						ReadStartMember ();
 				} else {
 					if (node_type == XamlNodeType.StartMember && current_member != null && !current_member.IsWritePublic) {
@@ -270,7 +272,9 @@ namespace System.Xaml
 						ReadEndType ();
 				}
 				else {
-					if (!ReadExtraEndMember ())
+					if (r.LocalName.StartsWith (types.Peek ().Name + ".", StringComparison.Ordinal))
+						ReadEndMember ();
+					else if (!ReadExtraEndMember ())
 						ReadEndMember ();
 				}
 				return true;
@@ -296,7 +300,7 @@ namespace System.Xaml
 		bool ReadExtraStartMember ()
 		{
 			var xm = GetExtraMember (types.Peek ());
-			if (xm != null) {
+			if (xm != null && current != xm) {
 				inside_object_not_member = false;
 				current = current_member = xm;
 				members.Push (xm);
@@ -309,7 +313,7 @@ namespace System.Xaml
 		bool ReadExtraEndMember ()
 		{
 			var xm = GetExtraMember (types.Peek ());
-			if (xm != null) {
+			if (xm != null && current_member != xm) {
 				inside_object_not_member = true;
 				current_member = members.Pop ();
 				node_type = XamlNodeType.EndMember;

@@ -84,7 +84,7 @@ namespace MonoTests.System.Xaml
 		{
 			var ctx = new XamlSchemaContext (null, null);
 			var arr = ctx.GetAllXamlNamespaces ().ToArray ();
-			Assert.AreEqual (3, arr.Length, "#1");
+			Assert.AreEqual (4, arr.Length, "#1");
 			Assert.IsTrue (arr.Contains (XamlLanguage.Xaml2006Namespace), "#1-2");
 			Assert.IsTrue (arr.Contains ("urn:mono-test"), "#1-3");
 			Assert.IsTrue (arr.Contains ("urn:mono-test2"), "#1-4");
@@ -96,7 +96,7 @@ namespace MonoTests.System.Xaml
 
 			ctx = NewThisAssemblyContext ();
 			arr = ctx.GetAllXamlNamespaces ().ToArray ();
-			Assert.AreEqual (2, arr.Length, "#3");
+			Assert.AreEqual (3, arr.Length, "#3");
 			Assert.IsTrue (arr.Contains ("urn:mono-test"), "#3-2");
 			Assert.IsTrue (arr.Contains ("urn:mono-test2"), "#3-3");
 		}
