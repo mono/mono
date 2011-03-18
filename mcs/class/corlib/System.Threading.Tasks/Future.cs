@@ -63,19 +63,19 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken)
-			: this ((o) => function (), null, cancellationToken, TaskCreationOptions.None)
+			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, TaskCreationOptions creationOptions)
-			: this ((o) => function (), null, CancellationToken.None, creationOptions)
+			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this ((o) => function (), null, cancellationToken, creationOptions)
+			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, creationOptions)
 		{
 			
 		}
