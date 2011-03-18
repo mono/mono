@@ -28,7 +28,7 @@ namespace Mono.CSharp
 	//
 	// Module (top-level type) container
 	//
-	public class ModuleContainer : TypeContainer
+	public sealed class ModuleContainer : TypeContainer
 	{
 #if STATIC
 		//
@@ -484,7 +484,7 @@ namespace Mono.CSharp
 		{
 			if (!AddToContainer (ds, ds.Name))
 				return false;
-			ds.NamespaceEntry.NS.AddType (ds.Definition);
+			ds.NamespaceEntry.NS.AddType (this, ds.Definition);
 			return true;
 		}
 

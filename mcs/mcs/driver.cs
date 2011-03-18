@@ -226,9 +226,6 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			if (RootContext.ToplevelTypes.NamespaceEntry != null)
-				throw new InternalErrorException ("who set it?");
-
 			var output_file = settings.OutputFile;
 			string output_file_name;
 			if (output_file == null) {
@@ -313,9 +310,7 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 
-			if (settings.Documentation != null &&
-				!settings.Documentation.OutputDocComment (
-					output_file, Report))
+			if (settings.Documentation != null && !settings.Documentation.OutputDocComment (output_file, module))
 				return false;
 
 			assembly.Resolve ();

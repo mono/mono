@@ -2374,7 +2374,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
-				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
+				var candidates = NamespaceEntry.NS.LookupExtensionMethod (this, extensionType, name, arity);
 				if (candidates != null) {
 					scope = NamespaceEntry;
 					return candidates;

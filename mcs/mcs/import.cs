@@ -990,7 +990,7 @@ namespace Mono.CSharp
 					prev_namespace = t.Namespace;
 				}
 
-				ns.AddType (it);
+				ns.AddType (module, it);
 
 				if (it.IsStatic && hasExtensionTypes &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {

@@ -889,7 +889,7 @@ namespace Mono.CSharp {
 		//
 		// Outputs XML documentation comment from tokenized comments.
 		//
-		public bool OutputDocComment (string asmfilename, Report Report)
+		public bool OutputDocComment (string asmfilename, ModuleContainer module)
 		{
 			XmlTextWriter w = null;
 			try {
@@ -905,14 +905,14 @@ namespace Mono.CSharp {
 				w.WriteEndElement (); // assembly
 				w.WriteStartElement ("members");
 				XmlCommentOutput = w;
-				GenerateDocComment (Report);
+				GenerateDocComment (module);
 				w.WriteFullEndElement (); // members
 				w.WriteEndElement ();
 				w.WriteWhitespace (Environment.NewLine);
 				w.WriteEndDocument ();
 				return true;
 			} catch (Exception ex) {
-				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
+				module.Compiler.Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
 				return false;
 			} finally {
 				if (w != null)
@@ -923,13 +923,11 @@ namespace Mono.CSharp {
 		//
 		// Fixes full type name of each documented types/members up.
 		//
-		public void GenerateDocComment (Report r)
+		void GenerateDocComment (ModuleContainer module)
 		{
-			TypeContainer root = RootContext.ToplevelTypes;
-
-			if (root.Types != null)
-				foreach (TypeContainer tc in root.Types)
-					DocUtil.GenerateTypeDocComment (tc, null, r);
+			if (module.Types != null)
+				foreach (TypeContainer tc in module.Types)
+					DocUtil.GenerateTypeDocComment (tc, null, module.Compiler.Report);
 		}
 	}
 }

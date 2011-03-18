@@ -498,7 +498,7 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (TypeContainer invocationType, TypeSpec extensionType, string name, int arity)
+		public List<MethodSpec> FindExtensionMethods (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
 		{
 			IList<MemberSpec> entries;
 			if (!member_hash.TryGetValue (name, out entries))
@@ -513,10 +513,13 @@ namespace Mono.CSharp {
 				if (!ms.IsExtensionMethod)
 					continue;
 
-				if (!ms.IsAccessible (invocationType))
+				if (!ms.IsAccessible (invocationContext))
 					continue;
 
-				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 && !ms.DeclaringType.MemberDefinition.IsInternalAsPublic (invocationType.DeclaringAssembly))
+				//
+				// Extension methods cannot be nested hence checking parent is enough
+				//
+				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 && !ms.DeclaringType.MemberDefinition.IsInternalAsPublic (invocationContext.Module.DeclaringAssembly))
 					continue;
 
 				if (candidates == null)

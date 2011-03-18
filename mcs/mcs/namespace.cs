@@ -262,7 +262,7 @@ namespace Mono.CSharp {
 					if (best.MemberDefinition.IsImported)
 						best = ts;
 
-					if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (RootContext.ToplevelTypes.DeclaringAssembly))
+					if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
 						continue;
 
 					if (silent)
@@ -291,7 +291,7 @@ namespace Mono.CSharp {
 			if (best == null)
 				return null;
 
-			if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (RootContext.ToplevelTypes.DeclaringAssembly))
+			if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
 				return null;
 
 			te = new TypeExpression (best, Location.Null);
@@ -363,7 +363,7 @@ namespace Mono.CSharp {
 		/// 
 		/// Looks for extension method in this namespace
 		/// 
-		public List<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, TypeContainer invocationContext, string name, int arity)
+		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
 		{
 			if (types == null)
 				return null;
@@ -392,7 +392,7 @@ namespace Mono.CSharp {
 			return found;
 		}
 
-		public void AddType (TypeSpec ts)
+		public void AddType (ModuleContainer module, TypeSpec ts)
 		{
 			if (types == null) {
 				types = new Dictionary<string, IList<TypeSpec>> (64);
@@ -406,7 +406,7 @@ namespace Mono.CSharp {
 				if (existing.Count == 1) {
 					found = existing[0];
 					if (ts.Arity == found.Arity) {
-						better_type = IsImportedTypeOverride (ts, found);
+						better_type = IsImportedTypeOverride (module, ts, found);
 						if (better_type == found)
 							return;
 
@@ -425,7 +425,7 @@ namespace Mono.CSharp {
 						if (ts.Arity != found.Arity)
 							continue;
 
-						better_type = IsImportedTypeOverride (ts, found);
+						better_type = IsImportedTypeOverride (module, ts, found);
 						if (better_type == found)
 							return;
 
@@ -448,10 +448,10 @@ namespace Mono.CSharp {
 		// but one has better visibility (either public or internal with friend)
 		// the less visible type is removed from the namespace cache
 		//
-		public static TypeSpec IsImportedTypeOverride (TypeSpec ts, TypeSpec found)
+		public static TypeSpec IsImportedTypeOverride (ModuleContainer module, TypeSpec ts, TypeSpec found)
 		{
-			var ts_accessible = (ts.Modifiers & Modifiers.PUBLIC) != 0 || ts.MemberDefinition.IsInternalAsPublic (RootContext.ToplevelTypes.DeclaringAssembly);
-			var found_accessible = (found.Modifiers & Modifiers.PUBLIC) != 0 || found.MemberDefinition.IsInternalAsPublic (RootContext.ToplevelTypes.DeclaringAssembly);
+			var ts_accessible = (ts.Modifiers & Modifiers.PUBLIC) != 0 || ts.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly);
+			var found_accessible = (found.Modifiers & Modifiers.PUBLIC) != 0 || found.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly);
 
 			if (ts_accessible && !found_accessible)
 				return ts;
@@ -886,7 +886,7 @@ namespace Mono.CSharp {
 		{
 			List<MethodSpec> candidates = null;
 			foreach (Namespace n in GetUsingTable ()) {
-				var a = n.LookupExtensionMethod (extensionType, RootContext.ToplevelTypes, name, arity);
+				var a = n.LookupExtensionMethod (this, extensionType, name, arity);
 				if (a == null)
 					continue;
 
@@ -908,7 +908,7 @@ namespace Mono.CSharp {
 			//
 			Namespace parent_ns = ns.Parent;
 			do {
-				candidates = parent_ns.LookupExtensionMethod (extensionType, RootContext.ToplevelTypes, name, arity);
+				candidates = parent_ns.LookupExtensionMethod (this, extensionType, name, arity);
 				if (candidates != null)
 					return candidates;
 
@@ -1002,7 +1002,7 @@ namespace Mono.CSharp {
 			}
 
 			if (fne != null) {
-				if (!((fne.Type.Modifiers & Modifiers.INTERNAL) != 0 && !fne.Type.MemberDefinition.IsInternalAsPublic (RootContext.ToplevelTypes.DeclaringAssembly)))
+				if (!((fne.Type.Modifiers & Modifiers.INTERNAL) != 0 && !fne.Type.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly)))
 					return fne;
 			}
 
@@ -1039,7 +1039,7 @@ namespace Mono.CSharp {
 					return match;
 
 				// It can be top level accessibility only
-				var better = Namespace.IsImportedTypeOverride (texpr_match.Type, texpr_fne.Type);
+				var better = Namespace.IsImportedTypeOverride (module, texpr_match.Type, texpr_fne.Type);
 				if (better == null) {
 					Compiler.Report.SymbolRelatedToPreviousError (texpr_match.Type);
 					Compiler.Report.SymbolRelatedToPreviousError (texpr_fne.Type);
