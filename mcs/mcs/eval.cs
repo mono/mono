@@ -1027,8 +1027,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			CloneContext cc = new CloneContext ();
-			Expression clone = source.Clone (cc);
+			Expression clone = source.Clone (new CloneContext ());
 
 			clone = clone.Resolve (ec);
 			if (clone == null)
@@ -1042,10 +1041,13 @@ namespace Mono.CSharp
 				var old_printer = ec.Report.SetPrinter (new SessionReportPrinter ());
 				Expression tclone;
 				try {
-					tclone = source.Clone (cc);
-					tclone = tclone.Resolve (ec, ResolveFlags.Type);
-					if (ec.Report.Errors > 0)
-						tclone = null;
+					// Note: clone context cannot be shared otherwise block mapping would leak
+					tclone = source.Clone (new CloneContext ());
+					using (ec.Set (ResolveContext.Options.ProbingMode)) {
+						tclone = tclone.Resolve (ec, ResolveFlags.Type);
+						if (ec.Report.Errors > 0)
+							tclone = null;
+					}
 				} finally {
 					ec.Report.SetPrinter (old_printer);
 				}
