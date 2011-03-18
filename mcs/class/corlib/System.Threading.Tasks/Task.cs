@@ -302,27 +302,27 @@ namespace System.Threading.Tasks
 			
 			if (kindCode >= ((int)TaskContinuationOptions.NotOnRanToCompletion)) {
 				if (status == TaskStatus.Canceled) {
-					if (kind == TaskContinuationOptions.NotOnCanceled)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
-						return false;
-				} else if (status == TaskStatus.Faulted) {
-					if (kind == TaskContinuationOptions.NotOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
-						return false;
-				} else if (status == TaskStatus.RanToCompletion) {
-					if (kind == TaskContinuationOptions.NotOnRanToCompletion)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
-						return false;
-				}
+                    if ((kind & TaskContinuationOptions.NotOnCanceled) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
+                        return false;
+                } else if (status == TaskStatus.Faulted) {
+                    if ((kind & TaskContinuationOptions.NotOnFaulted) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
+                        return false;
+                } else if (status == TaskStatus.RanToCompletion) {
+                    if ((kind & TaskContinuationOptions.NotOnRanToCompletion) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
+                        return false;
+                    if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
+                        return false;
+                }
 			}
 			
 			return true;
@@ -348,9 +348,9 @@ namespace System.Threading.Tasks
 			
 			return options;
 		}
-		#endregion
+        #endregion
 		
-		#region Internal and protected thingies
+#region Internal and protected thingies
 		internal void Schedule ()
 		{	
 			status = TaskStatus.WaitingToRun;
@@ -469,9 +469,9 @@ namespace System.Threading.Tasks
 			while (completed.TryDequeue (out handler))
 				handler (this, EventArgs.Empty);
 		}
-		#endregion
+        #endregion
 		
-		#region Cancel and Wait related method
+#region Cancel and Wait related method
 		
 		internal void CancelReal ()
 		{
@@ -734,9 +734,9 @@ namespace System.Threading.Tasks
 			return millisecondsTimeout == -1 ? -1 : (int)Math.Max (watch.ElapsedMilliseconds - millisecondsTimeout, 1);
 		}
 
-		#endregion
+        #endregion
 		
-		#region Dispose
+#region Dispose
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -751,9 +751,9 @@ namespace System.Threading.Tasks
 				state = null;
 			}
 		}
-		#endregion
+        #endregion
 		
-		#region Properties
+#region Properties
 		public static TaskFactory Factory {
 			get {
 				return defaultFactory;
@@ -841,7 +841,7 @@ namespace System.Threading.Tasks
 				return parent;
 			}
 		}
-		#endregion
+        #endregion
 	}
 }
 #endif
