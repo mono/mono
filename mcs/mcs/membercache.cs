@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 		readonly Dictionary<string, IList<MemberSpec>> member_hash;
 		Dictionary<string, MemberSpec[]> locase_members;
 		IList<MethodSpec> missing_abstract;
-		StateFlags state;
+		StateFlags state;	// TODO: Move to TypeSpec or ITypeDefinition
 
 		public static readonly string IndexerNameAlias = "<this>";
 

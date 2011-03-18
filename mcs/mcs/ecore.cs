@@ -289,8 +289,8 @@ namespace Mono.CSharp {
 			string from_type = type.GetSignatureForError ();
 			string to_type = target.GetSignatureForError ();
 			if (from_type == to_type) {
-				from_type = string.Format ("{0} [{1}]", from_type, type.MemberDefinition.DeclaringAssembly.FullName);
-				to_type = string.Format ("{0} [{1}]", to_type, target.MemberDefinition.DeclaringAssembly.FullName);
+				from_type = type.GetSignatureForErrorIncludingAssemblyName ();
+				to_type = target.GetSignatureForErrorIncludingAssemblyName ();
 			}
 
 			if (expl) {
@@ -4379,9 +4379,8 @@ namespace Mono.CSharp {
 				string p2 = TypeManager.CSharpName (paramType);
 
 				if (p1 == p2) {
-					ec.Report.ExtraInformation (loc, "(equally named types possibly from different assemblies in previous ");
-					ec.Report.SymbolRelatedToPreviousError (a.Expr.Type);
-					ec.Report.SymbolRelatedToPreviousError (paramType);
+					p1 = a.Type.GetSignatureForErrorIncludingAssemblyName ();
+					p2 = paramType.GetSignatureForErrorIncludingAssemblyName ();
 				}
 
 				ec.Report.Error (1503, loc,
