@@ -80,7 +80,7 @@ namespace System.Xaml
 		IList<Assembly> reference_assemblies;
 
 		// assembly attribute caches
-		List<string> xaml_nss;
+		Dictionary<string,string> xaml_nss;
 		Dictionary<string,string> prefixes;
 		Dictionary<string,string> compat_nss;
 		Dictionary<string,List<XamlType>> all_xaml_types;
@@ -103,14 +103,22 @@ namespace System.Xaml
 
 		public bool SupportMarkupExtensionsWithDuplicateArity { get; private set; }
 
+		internal string GetXamlNamespace (string clrNamespace)
+		{
+			if (xaml_nss == null) // fill it first
+				GetAllXamlNamespaces ();
+			string ret;
+			return xaml_nss.TryGetValue (clrNamespace, out ret) ? ret : null;
+		}
+
 		public virtual IEnumerable<string> GetAllXamlNamespaces ()
 		{
 			if (xaml_nss == null) {
-				xaml_nss = new List<string> ();
+				xaml_nss = new Dictionary<string,string> ();
 				foreach (var ass in AssembliesInScope)
 					FillXamlNamespaces (ass);
 			}
-			return xaml_nss;
+			return xaml_nss.Values;
 		}
 
 		public virtual ICollection<XamlType> GetAllXamlTypes (string xamlNamespace)
@@ -274,7 +282,7 @@ namespace System.Xaml
 		void FillXamlNamespaces (Assembly ass)
 		{
 			foreach (XmlnsDefinitionAttribute xda in ass.GetCustomAttributes (typeof (XmlnsDefinitionAttribute), false))
-				xaml_nss.Add (xda.XmlNamespace);
+				xaml_nss.Add (xda.ClrNamespace, xda.XmlNamespace);
 		}
 		
 		void FillPrefixes (Assembly ass)

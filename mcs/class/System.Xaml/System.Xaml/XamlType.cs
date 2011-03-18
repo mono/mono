@@ -66,7 +66,7 @@ namespace System.Xaml
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 			} else {
 				Name = GetXamlName (type);
-				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+				PreferredXamlNamespace = schemaContext.GetXamlNamespace (type.Namespace) ?? String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
 			}
 			if (type.IsGenericType) {
 				TypeArguments = new List<XamlType> ();
