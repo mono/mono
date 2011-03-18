@@ -1043,11 +1043,9 @@ namespace Mono.CSharp
 				try {
 					// Note: clone context cannot be shared otherwise block mapping would leak
 					tclone = source.Clone (new CloneContext ());
-					using (ec.Set (ResolveContext.Options.ProbingMode)) {
-						tclone = tclone.Resolve (ec, ResolveFlags.Type);
-						if (ec.Report.Errors > 0)
-							tclone = null;
-					}
+					tclone = tclone.Resolve (ec, ResolveFlags.Type);
+					if (ec.Report.Errors > 0)
+						tclone = null;
 				} finally {
 					ec.Report.SetPrinter (old_printer);
 				}
