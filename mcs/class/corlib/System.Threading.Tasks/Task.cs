@@ -306,7 +306,7 @@ namespace System.Threading.Tasks
 						return false;
 					if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) & 0)
+					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
 						return false;
 				} else if (status == TaskStatus.Faulted) {
 					if ((kind & TaskContinuationOptions.NotOnFaulted) > 0)
