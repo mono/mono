@@ -162,7 +162,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task t = new Task(delegate { taskResult = true; }, src.Token);
 				src.Cancel ();
 				
-				Task cont = t.ContinueWith (delegate { result = true; }, TaskContinuationOptions.OnlyOnCanceled);
+				Task cont = t.ContinueWith (delegate { result = true; },
+				                            TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
 
 				t.Start();
 				cont.Wait();

@@ -418,10 +418,9 @@ namespace Mono.CSharp {
 			RemoveMemberType (next_part);
 		}
 		
-		public virtual TypeSpec AddDelegate (Delegate d)
+		public void AddDelegate (Delegate d)
 		{
 			AddTypeContainer (d);
-			return null;
 		}
 
 		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
@@ -2375,7 +2374,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
-				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
+				var candidates = NamespaceEntry.NS.LookupExtensionMethod (this, extensionType, name, arity);
 				if (candidates != null) {
 					scope = NamespaceEntry;
 					return candidates;
@@ -2986,6 +2985,8 @@ namespace Mono.CSharp {
 			IsExplicitImpl = (MemberName.Left != null);
 			explicit_mod_flags = mod;
 		}
+
+		public abstract Variance ExpectedMemberTypeVariance { get; }
 		
 		protected override bool CheckBase ()
 		{
@@ -3246,6 +3247,13 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
+		protected override void DoMemberTypeDependentChecks ()
+		{
+			base.DoMemberTypeDependentChecks ();
+
+			TypeManager.CheckTypeVariance (MemberType, ExpectedMemberTypeVariance, this);
+		}
+
 		public override void Emit()
 		{
 			// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
@@ -3467,9 +3475,6 @@ namespace Mono.CSharp {
 						      "accessible than field `" + GetSignatureForError () + "'");
 				}
 			}
-
-			Variance variance = this is Event ? Variance.Contravariant : Variance.Covariant;
-			TypeManager.CheckTypeVariance (MemberType, variance, this);
 		}
 
 		protected bool IsTypePermitted ()

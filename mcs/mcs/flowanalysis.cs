@@ -1124,6 +1124,10 @@ namespace Mono.CSharp
 			for (int i = 0; i < struct_info.Count; i++) {
 				var field = struct_info.Fields [i];
 
+				// Fixed size buffers are not subject to definite assignment checking
+				if (field is FixedFieldSpec)
+					continue;
+
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,

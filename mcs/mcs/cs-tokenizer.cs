@@ -3246,6 +3246,9 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 				}
 
+				if (char.IsWhiteSpace ((char) c))
+					continue;
+
 				Report.Error (1056, Location, "Unexpected character `{0}'", ((char) c).ToString ());
 			}
 

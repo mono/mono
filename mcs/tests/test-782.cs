@@ -8,5 +8,6 @@ class Test {
 
 	public static void Main()
 	{
+		string s = 　"(" + 1;	// This line contains IDEOGRAPHIC SPACE
 	}
 }

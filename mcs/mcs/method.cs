@@ -54,6 +54,12 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return Variance.Covariant;
+			}
+		}
+
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//

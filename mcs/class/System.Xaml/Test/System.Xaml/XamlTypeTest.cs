@@ -793,6 +793,13 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (xt.BaseType.IsUnknown, "#3");
 			Assert.AreEqual (typeof (object), xt.BaseType.UnderlyingType, "#4");
 		}
+
+		[Test] // wrt bug #680385
+		public void DerivedListMembers ()
+		{
+			var xt = sctx.GetXamlType (typeof (XamlTest.Configurations));
+			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Active"), "#1"); // make sure that the member name is Active, not Configurations.Active ...
+		}
 	}
 
 	class MyXamlType : XamlType

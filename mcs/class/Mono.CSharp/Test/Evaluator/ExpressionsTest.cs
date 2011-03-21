@@ -83,13 +83,12 @@ namespace MonoTests.EvaluatorTest
 			Assert.AreEqual ("1+", sres, "The result should have been the input string, since we have a partial input");
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void DynamicStatement ()
 		{
 			Evaluator.Run ("dynamic d = 1;");
 			Evaluator.Run ("d = 'a';");
-			var o = Evaluator.Evaluate ("d.GetType ();") as Type;
-			Assert.AreSame (o, typeof (char));
+			Evaluator.Run ("d.GetType ();");
 		}
 
 	}

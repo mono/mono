@@ -123,7 +123,7 @@ namespace Mono.CSharp
 			get { return member_context.IsStatic; }
 		}
 
-		bool IsAnonymousStoreyMutateRequired {
+		public bool IsAnonymousStoreyMutateRequired {
 			get {
 				return CurrentAnonymousMethod != null &&
 					CurrentAnonymousMethod.Storey != null &&
@@ -208,7 +208,7 @@ namespace Mono.CSharp
 		//
 		// Creates a nested container in this context for all dynamic compiler generated stuff
 		//
-		public DynamicSiteClass CreateDynamicSite ()
+		internal DynamicSiteClass CreateDynamicSite ()
 		{
 			if (dynamic_site_container == null) {
 				var mc = member_context.CurrentMemberDefinition as MemberBase;
@@ -219,6 +219,10 @@ namespace Mono.CSharp
 				dynamic_site_container.DefineType ();
 				dynamic_site_container.ResolveTypeParameters ();
 				dynamic_site_container.Define ();
+
+				var inflator = new TypeParameterInflator (Module, CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				var inflated = dynamic_site_container.CurrentType.InflateMember (inflator);
+				CurrentType.MemberCache.AddMember (inflated);
 			}
 
 			return dynamic_site_container;

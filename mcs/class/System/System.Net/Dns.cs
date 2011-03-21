@@ -35,14 +35,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.Net {
-#if NET_2_0
 	public static class Dns {
-#else
-	public sealed class Dns {
-
-		private Dns () {}
-#endif
-
 		static Dns ()
 		{
 			System.Net.Sockets.Socket.CheckProtocolSupport();
@@ -52,15 +45,11 @@ namespace System.Net {
 
 		private delegate IPHostEntry GetHostByNameCallback (string hostName);
 		private delegate IPHostEntry ResolveCallback (string hostName);
-#if NET_2_0
 		private delegate IPHostEntry GetHostEntryNameCallback (string hostName);
 		private delegate IPHostEntry GetHostEntryIPCallback (IPAddress hostAddress);
 		private delegate IPAddress [] GetHostAddressesCallback (string hostName);
-#endif
 
-#if NET_2_0
 		[Obsolete ("Use BeginGetHostEntry instead")]
-#endif
 		public static IAsyncResult BeginGetHostByName (string hostName,
 			AsyncCallback requestCallback, object stateObject)
 		{
@@ -71,9 +60,7 @@ namespace System.Net {
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
 		}
 
-#if NET_2_0
 		[Obsolete ("Use BeginGetHostEntry instead")]
-#endif
 		public static IAsyncResult BeginResolve (string hostName,
 			AsyncCallback requestCallback, object stateObject)
 		{
@@ -84,7 +71,6 @@ namespace System.Net {
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
 		}
 
-#if NET_2_0
 		public static IAsyncResult BeginGetHostAddresses (string hostNameOrAddress,
 			AsyncCallback requestCallback, object stateObject)
 		{
@@ -124,11 +110,8 @@ namespace System.Net {
 			GetHostEntryIPCallback c = new GetHostEntryIPCallback (GetHostEntry);
 			return c.BeginInvoke (address, requestCallback, stateObject);
 		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("Use EndGetHostEntry instead")]
-#endif
 		public static IPHostEntry EndGetHostByName (IAsyncResult asyncResult) 
 		{
 			if (asyncResult == null)
@@ -139,9 +122,7 @@ namespace System.Net {
 			return cb.EndInvoke(asyncResult);
 		}
 
-#if NET_2_0
 		[Obsolete ("Use EndGetHostEntry instead")]
-#endif
 		public static IPHostEntry EndResolve (IAsyncResult asyncResult) 
 		{
 			if (asyncResult == null)
@@ -150,8 +131,6 @@ namespace System.Net {
 			ResolveCallback cb = (ResolveCallback) async.AsyncDelegate;
 			return cb.EndInvoke(asyncResult);
 		}
-
-#if NET_2_0
 
 		public static IPAddress [] EndGetHostAddresses (IAsyncResult asyncResult) 
 		{
@@ -168,14 +147,11 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 			AsyncResult async = (AsyncResult) asyncResult;
-#if NET_2_0
 			if (async.AsyncDelegate is GetHostEntryIPCallback)
 				return ((GetHostEntryIPCallback) async.AsyncDelegate).EndInvoke (asyncResult);
-#endif
 			GetHostEntryNameCallback cb = (GetHostEntryNameCallback) async.AsyncDelegate;
 			return cb.EndInvoke(asyncResult);
 		}
-#endif
 		
 #endif // !MOONLIGHT: global remove of async methods
 
@@ -220,9 +196,7 @@ namespace System.Net {
 			return he;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
-#endif
 		public static IPHostEntry GetHostByAddress(IPAddress address)
 		{
 			if (address == null)
@@ -231,9 +205,7 @@ namespace System.Net {
 			return GetHostByAddressFromString (address.ToString (), false);
 		}
 
-#if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
-#endif
 		public static IPHostEntry GetHostByAddress(string address)
 		{
 			if (address == null)
@@ -284,12 +256,7 @@ namespace System.Net {
 			
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static IPHostEntry GetHostEntry (string hostNameOrAddress)
+		public static IPHostEntry GetHostEntry (string hostNameOrAddress)
 		{
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
@@ -306,12 +273,7 @@ namespace System.Net {
 			return GetHostByName (hostNameOrAddress);
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static IPHostEntry GetHostEntry (IPAddress address)
+		public static IPHostEntry GetHostEntry (IPAddress address)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
@@ -319,12 +281,7 @@ namespace System.Net {
 			return GetHostByAddressFromString (address.ToString (), false);
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static IPAddress [] GetHostAddresses (string hostNameOrAddress)
+		public static IPAddress [] GetHostAddresses (string hostNameOrAddress)
 		{
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
@@ -342,9 +299,7 @@ namespace System.Net {
 			return GetHostEntry (hostNameOrAddress).AddressList;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
-#endif
 		public static IPHostEntry GetHostByName (string hostName)
 		{
 			if (hostName == null)
@@ -396,9 +351,7 @@ namespace System.Net {
 #endif
 		}
 
-#if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
-#endif
 		public static IPHostEntry Resolve(string hostName) 
 		{
 			if (hostName == null)

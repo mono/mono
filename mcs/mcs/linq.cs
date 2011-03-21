@@ -16,7 +16,7 @@ namespace Mono.CSharp.Linq
 	public class QueryExpression : AQueryClause
 	{
 		public QueryExpression (AQueryClause start)
-			: base (null, null, Location.Null)
+			: base (null, null, start.Location)
 		{
 			this.next = start;
 		}

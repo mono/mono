@@ -57,6 +57,7 @@ namespace System.Threading.Tasks
 		
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
+		ConcurrentQueue<AggregateException> childExceptions;
 
 		TaskStatus          status;
 		
@@ -301,6 +302,12 @@ namespace System.Threading.Tasks
 			int kindCode = (int)kind;
 			
 			if (kindCode >= ((int)TaskContinuationOptions.NotOnRanToCompletion)) {
+				// Remove other options
+				kind &= ~(TaskContinuationOptions.PreferFairness
+				          | TaskContinuationOptions.LongRunning
+				          | TaskContinuationOptions.AttachedToParent
+				          | TaskContinuationOptions.ExecuteSynchronously);
+
 				if (status == TaskStatus.Canceled) {
 					if (kind == TaskContinuationOptions.NotOnCanceled)
 						return false;
@@ -412,11 +419,17 @@ namespace System.Threading.Tasks
 			childTasks.AddCount ();
 		}
 
-		internal void ChildCompleted ()
+		internal void ChildCompleted (AggregateException childEx)
 		{
+			if (childEx != null) {
+				if (childExceptions == null)
+					Interlocked.CompareExchange (ref childExceptions, new ConcurrentQueue<AggregateException> (), null);
+				childExceptions.Enqueue (childEx);
+			}
+
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
-				
+				ProcessChildExceptions ();
 				ProcessCompleteDelegates ();
 			}
 		}
@@ -455,8 +468,8 @@ namespace System.Threading.Tasks
 			TaskScheduler.Current = null;
 			
 			// Tell parent that we are finished
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null){
-				parent.ChildCompleted ();
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
+				parent.ChildCompleted (this.Exception);
 			}
 		}
 
@@ -468,6 +481,19 @@ namespace System.Threading.Tasks
 			EventHandler handler;
 			while (completed.TryDequeue (out handler))
 				handler (this, EventArgs.Empty);
+		}
+
+		void ProcessChildExceptions ()
+		{
+			if (childExceptions == null)
+				return;
+
+			if (exception == null)
+				exception = new AggregateException ();
+
+			AggregateException childEx;
+			while (childExceptions.TryDequeue (out childEx))
+				exception.AddChildException (childEx);
 		}
 		#endregion
 		
@@ -486,6 +512,7 @@ namespace System.Threading.Tasks
 		internal void HandleGenericException (AggregateException e)
 		{
 			exception = e;
+			Thread.MemoryBarrier ();
 			status = TaskStatus.Faulted;
 			if (scheduler != null && scheduler.FireUnobservedEvent (exception).Observed)
 				exceptionObserved = true;

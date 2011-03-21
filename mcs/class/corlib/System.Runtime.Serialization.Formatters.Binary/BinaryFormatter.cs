@@ -58,6 +58,14 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			this.context=context;
 		}
 		
+
+		// Deserializing objects of type Dictionary<,> List<> and friends does not work in a CoreCLR sandbox, because
+		// the default deserialization code uses reflection to do its job, and the fields being reflected on live in mscorlib.dll.
+		// DefaultSurrogateSelector enables embedders to provide an alternative method of deserializing specific types in a way
+		// that does not violate the CoreCLR rules. See https://gist.github.com/878267 for some actual code that provides CoreCLR safe 
+		// deserialization code for List<> and Dictionary<,>.
+		// DefaultSurrogateSelector is private, and needs to be set by the embedder trough reflection, so we do not expose any public
+		// API point that is not present in .NET
 		static ISurrogateSelector DefaultSurrogateSelector { get; set; }
 		
 		public FormatterAssemblyStyle AssemblyFormat

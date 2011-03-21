@@ -173,11 +173,15 @@ namespace System.Threading
 			lock (this) {
 				if (!HasWriterLock())
 					throw new ApplicationException ("The thread does not have the writer lock.");
-				
-				state = lockCookie.ReaderLocks;
-				reader_locks [Thread.CurrentThreadId] = state;
-				if (readers > 0) {
-					Monitor.PulseAll (this);
+
+				if (lockCookie.WriterLocks != 0)
+					state++;
+				else {
+					state = lockCookie.ReaderLocks;
+					reader_locks [Thread.CurrentThreadId] = state;
+					if (readers > 0) {
+						Monitor.PulseAll (this);
+					}
 				}
 				
 				// MSDN: A thread does not block when downgrading from the writer lock, 

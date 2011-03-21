@@ -2776,6 +2776,80 @@
       </method>
     </type>
   </test>
+  <test name="dtest-054.cs">
+    <type name="C">
+      <method name="System.Action`1[T] Test[T](T)">
+        <size>13</size>
+      </method>
+      <method name="System.Action Test2[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Action`1[T] Test3[T](T)">
+        <size>13</size>
+      </method>
+      <method name="System.Action Test4[T](T)">
+        <size>26</size>
+      </method>
+      <method name="Void Method(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void MethodRef(C ByRef)">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>64</size>
+      </method>
+      <method name="Void &lt;Test`1&gt;m__0[T](T)">
+        <size>102</size>
+      </method>
+      <method name="Void &lt;Test3`1&gt;m__2[T](T)">
+        <size>104</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>45</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test4&gt;c__AnonStorey2`1[T]">
+      <method name="Void &lt;&gt;m__3()">
+        <size>113</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;&lt;Test3`1&gt;m__2&gt;c__DynamicSite1`1+Container0[T]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, T ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__AnonStorey0`1+&lt;Test2&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__4()">
+        <size>117</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test4&gt;c__AnonStorey2`1+&lt;&lt;&gt;m__3&gt;c__DynamicSite0+Container0[T]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, T ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -17150,6 +17224,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-553.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -19704,6 +19788,30 @@
       </method>
       <method name="Void &lt;&gt;m__1()">
         <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-65.cs">
+    <type name="C">
+      <method name="Void Foo[T]()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="T &lt;Foo`1&gt;m__0[T](T)">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="T &lt;&gt;m__1()">
+        <size>7</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -23238,6 +23346,21 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-10.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestStruct">
+      <method name="Void .ctor(String)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -28308,6 +28431,28 @@
       </method>
       <method name="Int32 Main()">
         <size>45</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-variance-17.cs">
+    <type name="A">
+      <method name="Void InterfaceContravariat&lt;int&gt;.set_Prop(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void InterfaceContravariat&lt;int&gt;.set_Item(Int32, Int32)">
+        <size>6</size>
+      </method>
+      <method name="Int64 InterfaceCovariant&lt;long&gt;.get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Int64 InterfaceCovariant&lt;long&gt;.get_Item(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -45732,7 +45877,7 @@
   <test name="test-782.cs">
     <type name="Test">
       <method name="Void Main()">
-        <size>1</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

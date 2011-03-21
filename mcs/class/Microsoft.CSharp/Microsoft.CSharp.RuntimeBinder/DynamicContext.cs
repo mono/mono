@@ -105,17 +105,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IgnorePrivateMembers = false
 				};
 
-				bool reinitialized = Compiler.RootContext.ToplevelTypes != null;
-				Compiler.RootContext.ToplevelTypes = module;
-
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					importer.ImportAssembly (a, module.GlobalRootNamespace);
 				}
 
-				if (!reinitialized) {
-					cc.BuiltinTypes.CheckDefinitions (module);
-					module.InitializePredefinedTypes ();
-				}
+				cc.BuiltinTypes.CheckDefinitions (module);
+				module.InitializePredefinedTypes ();
 
 				dc = new DynamicContext (module, importer);
 			}

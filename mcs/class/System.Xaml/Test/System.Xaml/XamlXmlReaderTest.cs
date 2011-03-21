@@ -620,5 +620,13 @@ namespace MonoTests.System.Xaml
 			while (!r.IsEof)
 				r.Read ();
 		}
+
+		#region non-common tests
+		[Test]
+		public void Bug680385 ()
+		{
+			XamlServices.Load ("Test/XmlFiles/CurrentVersion.xaml");
+		}
+		#endregion
 	}
 }

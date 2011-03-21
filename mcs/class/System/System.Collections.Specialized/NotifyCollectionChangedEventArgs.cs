@@ -23,12 +23,14 @@
 //	Chris Toshok (toshok@ximian.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized
 {
+#if !MOBILE
 	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+#endif
 	public class NotifyCollectionChangedEventArgs : EventArgs
 	{
 		private NotifyCollectionChangedAction action;

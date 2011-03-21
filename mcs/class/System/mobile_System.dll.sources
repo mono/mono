@@ -16,6 +16,8 @@ System.Collections.Generic/RBTree.cs
 System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/Stack.cs
+System.Collections.ObjectModel/ObservableCollection.cs
+System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
 System.Collections.Specialized/CollectionsUtil.cs
 System.Collections.Specialized/HybridDictionary.cs
@@ -26,6 +28,10 @@ System.Collections.Specialized/ProcessStringDictionary.cs
 System.Collections.Specialized/StringCollection.cs
 System.Collections.Specialized/StringDictionary.cs
 System.Collections.Specialized/StringEnumerator.cs
+System.Collections.Specialized/INotifyCollectionChanged.cs
+System.Collections.Specialized/NotifyCollectionChangedEventArgs.cs
+System.Collections.Specialized/NotifyCollectionChangedAction.cs
+System.Collections.Specialized/NotifyCollectionChangedEventHandler.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
 System.ComponentModel.Design/CommandID.cs
 System.ComponentModel.Design/ComponentChangedEventArgs.cs

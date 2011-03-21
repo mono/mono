@@ -376,6 +376,11 @@ namespace Mono.CSharp
 			return s + Name + GetTypeNameSignature ();
 		}
 
+		public string GetSignatureForErrorIncludingAssemblyName ()
+		{
+			return string.Format ("{0} [{1}]", GetSignatureForError (), MemberDefinition.DeclaringAssembly.FullName);
+		}
+
 		protected virtual string GetTypeNameSignature ()
 		{
 			if (!IsGeneric)
