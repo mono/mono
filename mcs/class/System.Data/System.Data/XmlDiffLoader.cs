@@ -54,7 +54,6 @@ namespace System.Data {
 		private DataTable table;
 		private Hashtable DiffGrRows = new Hashtable ();
 		private Hashtable ErrorRows = new Hashtable ();
-
 		#endregion // Fields
 
 		#region ctors
@@ -222,7 +221,7 @@ namespace System.Data {
 
 		private void LoadColumnAttributes (DataTable Table, DataRow Row,
 			XmlReader reader, DataRowVersion loadType)
-		{
+		{			
 			if (!reader.HasAttributes // this check will be faster
 				|| !reader.MoveToFirstAttribute ())
 				return;
@@ -273,8 +272,10 @@ namespace System.Data {
 				{
 					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadString ());
 					
-					if (loadType == DataRowVersion.Current) Row [colName] = data;
-					else Row.SetOriginalValue (colName, data);
+					if (loadType == DataRowVersion.Current)
+						Row [colName] = data;
+					else
+						Row.SetOriginalValue (colName, data);
 					reader.Read ();
 				}
 				else 
@@ -289,7 +290,6 @@ namespace System.Data {
 						reader.Skip ();
 				}
 			}
-			
 			reader.ReadEndElement ();
 		}
 
