@@ -302,26 +302,32 @@ namespace System.Threading.Tasks
 			int kindCode = (int)kind;
 			
 			if (kindCode >= ((int)TaskContinuationOptions.NotOnRanToCompletion)) {
+				// Remove other options
+				kind &= ~(TaskContinuationOptions.PreferFairness
+				          | TaskContinuationOptions.LongRunning
+				          | TaskContinuationOptions.AttachedToParent
+				          | TaskContinuationOptions.ExecuteSynchronously);
+
 				if (status == TaskStatus.Canceled) {
-					if ((kind & TaskContinuationOptions.NotOnCanceled) > 0)
+					if (kind == TaskContinuationOptions.NotOnCanceled)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnFaulted)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
 						return false;
 				} else if (status == TaskStatus.Faulted) {
-					if ((kind & TaskContinuationOptions.NotOnFaulted) > 0)
+					if (kind == TaskContinuationOptions.NotOnFaulted)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnCanceled)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnRanToCompletion) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
 						return false;
 				} else if (status == TaskStatus.RanToCompletion) {
-					if ((kind & TaskContinuationOptions.NotOnRanToCompletion) > 0)
+					if (kind == TaskContinuationOptions.NotOnRanToCompletion)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnFaulted) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnFaulted)
 						return false;
-					if ((kind & TaskContinuationOptions.OnlyOnCanceled) > 0)
+					if (kind == TaskContinuationOptions.OnlyOnCanceled)
 						return false;
 				}
 			}
