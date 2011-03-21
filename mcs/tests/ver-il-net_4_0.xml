@@ -45843,7 +45843,7 @@
   <test name="test-782.cs">
     <type name="Test">
       <method name="Void Main()">
-        <size>1</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
