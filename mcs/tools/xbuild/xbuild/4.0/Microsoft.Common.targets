@@ -151,7 +151,7 @@
 		</CreateProperty>
 
 		<GetReferenceAssemblyPaths
-			Condition="'$(TargetFrameworkMoniker)' != ''"
+			Condition="'$(TargetFrameworkMoniker)' != '' and '$(_TargetFrameworkDirectories)' == ''"
 			TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
 			RootPath="$(TargetFrameworkRootPath)">
 
