@@ -455,7 +455,7 @@ namespace System.Threading.Tasks
 			TaskScheduler.Current = null;
 			
 			// Tell parent that we are finished
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null){
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
 				parent.ChildCompleted ();
 			}
 		}
