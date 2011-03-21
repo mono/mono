@@ -56,7 +56,7 @@ namespace System.IO.IsolatedStorage {
 		private ulong _maxSize;
 		private Evidence _fullEvidences;
 		private static Mutex mutex = new Mutex ();
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		private bool closed;
 		private bool disposed;
 #endif
@@ -257,7 +257,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
@@ -415,7 +415,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public override ulong CurrentSize {
@@ -423,7 +423,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public override ulong MaximumSize {
@@ -473,7 +473,7 @@ namespace System.IO.IsolatedStorage {
 			get { return directory.FullName; }
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public override long AvailableFreeSpace {
 			get {
@@ -529,7 +529,7 @@ namespace System.IO.IsolatedStorage {
 
 		public void Close ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			closed = true;
 #endif
 		}
@@ -541,7 +541,7 @@ namespace System.IO.IsolatedStorage {
 
 			if (dir.IndexOfAny (Path.PathSeparatorChars) < 0) {
 				if (directory.GetFiles (dir).Length > 0)
-#if NET_4_0
+#if NET_4_0 || MOBILE
 					throw new IsolatedStorageException ("Unable to create directory.");
 #else
 					throw new IOException (Locale.GetText ("Directory name already exists as a file."));
@@ -553,7 +553,7 @@ namespace System.IO.IsolatedStorage {
 
 				for (int i = 0; i < dirs.Length; i++) {
 					if (dinfo.GetFiles (dirs [i]).Length > 0)
-#if NET_4_0
+#if NET_4_0 || MOBILE
 						throw new IsolatedStorageException ("Unable to create directory.");
 #else
 						throw new IOException (Locale.GetText (
@@ -564,7 +564,7 @@ namespace System.IO.IsolatedStorage {
 			}
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public void CopyFile (string sourceFileName, string destinationFileName)
 		{
@@ -643,7 +643,7 @@ namespace System.IO.IsolatedStorage {
 
 		public void Dispose ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			// Dispose may be calling Close, but we are not sure
 			disposed = true;
 #endif
@@ -651,7 +651,7 @@ namespace System.IO.IsolatedStorage {
 			GC.SuppressFinalize (this);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public bool DirectoryExists (string path)
 		{
@@ -738,7 +738,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			if (searchPattern.Contains (".."))
 				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
 #endif
@@ -765,7 +765,7 @@ namespace System.IO.IsolatedStorage {
 			return GetNames (adi);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public string [] GetDirectoryNames ()
 		{
@@ -785,7 +785,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			if (searchPattern.Contains (".."))
 				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
 #endif
@@ -812,7 +812,7 @@ namespace System.IO.IsolatedStorage {
 			return GetNames (afi);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public string [] GetFileNames ()
 		{
@@ -915,7 +915,7 @@ namespace System.IO.IsolatedStorage {
 
 		public override void Remove ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			CheckOpen (false);
 #endif
 			try {
@@ -937,7 +937,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// internal stuff
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		void CheckOpen ()
 		{
 			CheckOpen (true);

@@ -82,7 +82,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant (false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public virtual ulong CurrentSize {
@@ -105,7 +105,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant (false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public virtual ulong MaximumSize {
@@ -119,7 +119,7 @@ namespace System.IO.IsolatedStorage {
 			get { return storage_scope; }
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public virtual long AvailableFreeSpace {
 			get {
@@ -183,7 +183,7 @@ namespace System.IO.IsolatedStorage {
 		}
 		public abstract void Remove ();
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public virtual bool IncreaseQuotaTo (long newQuotaSize)
 		{
