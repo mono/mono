@@ -818,25 +818,6 @@ namespace System
 			return true;
 		}
 
-		struct TimeType 
-		{
-			public readonly int Offset;
-			public readonly bool IsDst;
-			public string Name;
-
-			public TimeType (int offset, bool is_dst, string abbrev)
-			{
-				this.Offset = offset;
-				this.IsDst = is_dst;
-				this.Name = abbrev;
-			}
-
-			public override string ToString ()
-			{
-				return "offset: " + Offset + "s, is_dst: " + IsDst + ", zone name: " + Name;
-			}
-		}
-
 		static int SwapInt32 (int i)
 		{
 			return (((i >> 24) & 0xff)
@@ -997,6 +978,26 @@ namespace System
 			DateTime date_time = new DateTime (1970, 1, 1);
 			return date_time.AddSeconds (unix_time);
 		}
+	}
+
+	struct TimeType {
+		public readonly int Offset;
+		public readonly bool IsDst;
+		public string Name;
+
+		public TimeType (int offset, bool is_dst, string abbrev)
+		{
+			this.Offset = offset;
+			this.IsDst = is_dst;
+			this.Name = abbrev;
+		}
+
+		public override string ToString ()
+		{
+			return "offset: " + Offset + "s, is_dst: " + IsDst + ", zone name: " + Name;
+		}
+#else
+	}
 #endif
 	}
 }
