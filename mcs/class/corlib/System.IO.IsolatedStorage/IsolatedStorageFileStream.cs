@@ -62,7 +62,7 @@ namespace System.IO.IsolatedStorage {
 					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.UnprotectedGetEvidence ()));
 			}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			if (isf.IsDisposed)
 				throw new ObjectDisposedException ("IsolatedStorageFile");
 			if (isf.IsClosed)
@@ -210,7 +210,7 @@ namespace System.IO.IsolatedStorage {
 			base.Flush ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		public override void Flush (bool flushToDisk)
 		{
 			base.Flush (flushToDisk);
