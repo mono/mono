@@ -101,6 +101,8 @@ namespace Mono.CSharp {
 				for (int i = 0; i < type_params.Length; ++i) {
 					src[i].InflateConstraints (inflator, dst[i]);
 				}
+
+				mutator = new TypeParameterMutator (tparams, type_params);
 			}
 		}
 

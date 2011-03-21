@@ -714,7 +714,7 @@ namespace Mono.CSharp {
 				return ifaces_defined;
 			}
 			set {
-				ifaces_defined = value;
+				ifaces = ifaces_defined = value;
 			}
 		}
 
@@ -999,7 +999,7 @@ namespace Mono.CSharp {
 
 			for (int i = 0; i < tparams.Length; ++i) {
 				var tp = tparams[i];
-				if (tp.HasTypeConstraint || tp.Interfaces != null || tp.TypeArguments != null) {
+				if (tp.HasTypeConstraint || tp.InterfacesDefined != null || tp.TypeArguments != null) {
 					if (constraints == null) {
 						constraints = new TypeParameterSpec[tparams.Length];
 						Array.Copy (tparams, constraints, constraints.Length);
@@ -1256,9 +1256,9 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameterMutator
 	{
-		TypeParameter[] mvar;
-		TypeParameter[] var;
-		Dictionary<TypeSpec, TypeSpec> mutated_typespec = new Dictionary<TypeSpec, TypeSpec> ();
+		readonly TypeParameter[] mvar;
+		readonly TypeParameter[] var;
+		Dictionary<TypeSpec, TypeSpec> mutated_typespec;
 
 		public TypeParameterMutator (TypeParameter[] mvar, TypeParameter[] var)
 		{
@@ -1295,10 +1295,13 @@ namespace Mono.CSharp {
 		public TypeSpec Mutate (TypeSpec ts)
 		{
 			TypeSpec value;
-			if (mutated_typespec.TryGetValue (ts, out value))
+			if (mutated_typespec != null && mutated_typespec.TryGetValue (ts, out value))
 				return value;
 
 			value = ts.Mutate (this);
+			if (mutated_typespec == null)
+				mutated_typespec = new Dictionary<TypeSpec, TypeSpec> ();
+
 			mutated_typespec.Add (ts, value);
 			return value;
 		}

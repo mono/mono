@@ -2218,9 +2218,6 @@ namespace Mono.CSharp {
 			}
 
 			am_storey.CreateType ();
-			if (am_storey.Mutator == null && ec.CurrentTypeParameters != null)
-				am_storey.Mutator = new TypeParameterMutator (ec.CurrentTypeParameters, am_storey.CurrentTypeParameters);
-
 			am_storey.DefineType ();
 			am_storey.ResolveTypeParameters ();
 

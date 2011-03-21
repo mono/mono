@@ -19784,6 +19784,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-65.cs">
+    <type name="C">
+      <method name="Void Foo[T]()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="T &lt;Foo`1&gt;m__0[T](T)">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="T &lt;&gt;m__1()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-7.cs">
     <type name="MyDisposable">
       <method name="Void .ctor()">
