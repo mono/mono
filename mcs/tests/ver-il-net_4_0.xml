@@ -17224,6 +17224,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-553.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">

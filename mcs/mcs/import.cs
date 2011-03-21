@@ -713,6 +713,9 @@ namespace Mono.CSharp
 						name = name.Substring (0, index);
 
 					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+					if (spec == null)
+						return null;
+
 					if (spec.Arity > 0) {
 						spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
 					}
@@ -929,9 +932,12 @@ namespace Mono.CSharp
 			if (ifaces.Length != 0) {
 				foreach (var iface in ifaces) {
 					var it = CreateType (iface);
+					if (it == null)
+						continue;
+
 					spec.AddInterface (it);
 
-					// Unfortunatelly not all languages inlcude inherited interfaces
+					// Unfortunately not all languages expand inherited interfaces
 					var bifaces = it.Interfaces;
 					if (bifaces != null) {
 						foreach (var biface in bifaces) {

@@ -1621,6 +1621,9 @@ namespace Mono.CSharp {
 					ifaces = new List<TypeSpec> (open_type.Interfaces.Count);
 					foreach (var iface in open_type.Interfaces) {
 						var iface_inflated = inflator.Inflate (iface);
+						if (iface_inflated == null)
+							continue;
+
 						AddInterface (iface_inflated);
 					}
 				}
