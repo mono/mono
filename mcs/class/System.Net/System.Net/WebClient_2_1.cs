@@ -217,11 +217,8 @@ namespace System.Net {
 					s = response.GetResponseStream ();
 			}
 			catch (Exception e) {
-				throw new WebException ("NotFound", e, WebExceptionStatus.UnknownError, response);
-			}
-			finally {
-				if (status_code != HttpStatusCode.OK)
-					throw new WebException ("NotFound", null, WebExceptionStatus.UnknownError, response);
+				throw new WebException ("NotFound", status_code == HttpStatusCode.OK ? e : null, 
+					WebExceptionStatus.UnknownError, response);
 			}
 			return s;
 		}
