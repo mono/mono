@@ -111,6 +111,16 @@ namespace System
 				return innerExceptions.AsReadOnly ();
 			}
 		}
+
+		internal void AddChildException (AggregateException childEx)
+		{
+			if (innerExceptions == null)
+				innerExceptions = new List<Exception> ();
+			if (childEx == null)
+				return;
+
+			innerExceptions.Add (childEx);
+		}
 		
 		public override string ToString ()
 		{

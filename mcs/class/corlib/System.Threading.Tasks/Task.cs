@@ -57,6 +57,7 @@ namespace System.Threading.Tasks
 		
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
+		ConcurrentQueue<AggregateException> childExceptions;
 
 		TaskStatus          status;
 		
@@ -412,11 +413,17 @@ namespace System.Threading.Tasks
 			childTasks.AddCount ();
 		}
 
-		internal void ChildCompleted ()
+		internal void ChildCompleted (AggregateException childEx)
 		{
+			if (childEx != null) {
+				if (childExceptions == null)
+					Interlocked.CompareExchange (ref childExceptions, new ConcurrentQueue<AggregateException> (), null);
+				childExceptions.Enqueue (childEx);
+			}
+
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
-				
+				ProcessChildExceptions ();
 				ProcessCompleteDelegates ();
 			}
 		}
@@ -456,7 +463,7 @@ namespace System.Threading.Tasks
 			
 			// Tell parent that we are finished
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
-				parent.ChildCompleted ();
+				parent.ChildCompleted (this.Exception);
 			}
 		}
 
@@ -468,6 +475,19 @@ namespace System.Threading.Tasks
 			EventHandler handler;
 			while (completed.TryDequeue (out handler))
 				handler (this, EventArgs.Empty);
+		}
+
+		void ProcessChildExceptions ()
+		{
+			if (childExceptions == null)
+				return;
+
+			if (exception == null)
+				exception = new AggregateException ();
+
+			AggregateException childEx;
+			while (childExceptions.TryDequeue (out childEx))
+				exception.AddChildException (childEx);
 		}
 		#endregion
 		
