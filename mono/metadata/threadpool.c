@@ -807,23 +807,6 @@ mono_thread_pool_remove_socket (int sock)
 	}
 }
 
-#ifdef HOST_WIN32
-static void
-connect_hack (gpointer x)
-{
-	struct sockaddr_in *addr = (struct sockaddr_in *) x;
-	int count = 0;
-
-	while (connect ((SOCKET) socket_io_data.pipe [1], (SOCKADDR *) addr, sizeof (struct sockaddr_in))) {
-		Sleep (500);
-		if (++count > 3) {
-			g_warning ("Error initializing async. sockets %d.", WSAGetLastError ());
-			g_assert (WSAGetLastError ());
-		}
-	}
-}
-#endif
-
 static void
 socket_io_init (SocketIOData *data)
 {
@@ -891,7 +874,10 @@ socket_io_init (SocketIOData *data)
 	len = sizeof (server);
 	getsockname (srv, (SOCKADDR *) &server, &len);
 	listen (srv, 1);
-	mono_thread_create (mono_get_root_domain (), connect_hack, &server);
+	if (connect ((SOCKET) result->pipe [1], (SOCKADDR *) &server, sizeof (server)) == SOCKET_ERROR) {
+		g_print ("%d\n", WSAGetLastError ());
+		g_assert (1 != 0);
+	}
 	len = sizeof (server);
 	data->pipe [0] = accept (srv, (SOCKADDR *) &client, &len);
 	g_assert (data->pipe [0] != INVALID_SOCKET);
