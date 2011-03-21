@@ -486,6 +486,7 @@ namespace System.Threading.Tasks
 		internal void HandleGenericException (AggregateException e)
 		{
 			exception = e;
+			Thread.MemoryBarrier ();
 			status = TaskStatus.Faulted;
 			if (scheduler != null && scheduler.FireUnobservedEvent (exception).Observed)
 				exceptionObserved = true;
