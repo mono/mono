@@ -476,6 +476,9 @@ namespace Mono.CSharp
 			keywords = new KeywordEntry<int>[11][];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
+			AddKeyword ("__makeref", Token.MAKEREF);
+			AddKeyword ("__reftype", Token.REFTYPE);
+			AddKeyword ("__refvalue", Token.REFVALUE);
 			AddKeyword ("abstract", Token.ABSTRACT);
 			AddKeyword ("as", Token.AS);
 			AddKeyword ("add", Token.ADD);

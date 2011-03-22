@@ -6962,6 +6962,94 @@ namespace Mono.CSharp
 		}
 	}
 
+	class RefValueExpr : ShimExpression
+	{
+		FullNamedExpression texpr;
+
+		public RefValueExpr (Expression expr, FullNamedExpression texpr, Location loc)
+			: base (expr)
+		{
+			this.texpr = texpr;
+			this.loc = loc;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			expr = expr.Resolve (rc);
+			texpr = texpr.ResolveAsTypeTerminal (rc, false);
+			if (expr == null || texpr == null)
+				return null;
+
+			type = texpr.Type;
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+			ec.Emit (OpCodes.Refanyval, type);
+			ec.EmitLoadFromPtr (type);
+		}
+	}
+
+	class RefTypeExpr : ShimExpression
+	{
+		public RefTypeExpr (Expression expr, Location loc)
+			: base (expr)
+		{
+			this.loc = loc;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			expr = expr.Resolve (rc);
+			if (expr == null)
+				return null;
+
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			if (expr == null)
+				return null;
+
+			type = rc.BuiltinTypes.Type;
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+			ec.Emit (OpCodes.Refanytype);
+			var m = ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Resolve (loc);
+			if (m != null)
+				ec.Emit (OpCodes.Call, m);
+		}
+	}
+
+	class MakeRefExpr : ShimExpression
+	{
+		public MakeRefExpr (Expression expr, Location loc)
+			: base (expr)
+		{
+			this.loc = loc;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			expr = expr.ResolveLValue (rc, EmptyExpression.LValueMemberAccess);
+			type = rc.Module.PredefinedTypes.TypedReference.Resolve (loc);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			((IMemoryLocation) expr).AddressOf (ec, AddressOp.Load);
+			ec.Emit (OpCodes.Mkrefany, expr.Type);
+		}
+	}
+
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>

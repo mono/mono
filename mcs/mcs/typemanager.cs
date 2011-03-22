@@ -174,6 +174,7 @@ namespace Mono.CSharp
 	class PredefinedTypes
 	{
 		public readonly PredefinedType ArgIterator;
+		public readonly PredefinedType TypedReference;
 		public readonly PredefinedType MarshalByRefObject;
 		public readonly PredefinedType RuntimeHelpers;
 		public readonly PredefinedType IAsyncResult;
@@ -217,7 +218,7 @@ namespace Mono.CSharp
 
 		public PredefinedTypes (ModuleContainer module)
 		{
-			var TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
+			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
 			ArgIterator = new PredefinedType (module, MemberKind.Struct, "System", "ArgIterator");
 
 			MarshalByRefObject = new PredefinedType (module, MemberKind.Class, "System", "MarshalByRefObject");

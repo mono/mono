@@ -253,6 +253,9 @@ namespace Mono.CSharp
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
 %token ASYNC
+%token REFVALUE
+%token REFTYPE
+%token MAKEREF
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -3011,6 +3014,7 @@ primary_expression
 	| unchecked_expression
 	| pointer_member_access
 	| anonymous_method_expression
+	| undocumented_expressions
 	;
 
 primary_expression_or_type
@@ -4147,7 +4151,25 @@ non_assignment_expression
 	| ARGLIST
 	  {
 		$$ = new ArglistAccess (GetLocation ($1));
-	  }	
+	  }
+	;
+	
+undocumented_expressions
+	: REFVALUE OPEN_PARENS non_assignment_expression COMMA type CLOSE_PARENS
+	  {
+		$$ = new RefValueExpr ((Expression) $3, (FullNamedExpression) $5, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4), GetLocation ($6));
+	  }
+	| REFTYPE open_parens_any expression CLOSE_PARENS
+	  {
+		$$ = new RefTypeExpr ((Expression) $3, GetLocation ($1));	// MSAF
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| MAKEREF open_parens_any expression CLOSE_PARENS
+	  {
+		$$ = new MakeRefExpr ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));	  
+	  }
 	;
 
 constant_expression
@@ -6676,6 +6698,12 @@ static string GetTokenName (int token)
 		return "while";
 	case Token.ARGLIST:
 		return "__arglist";
+	case Token.REFVALUE:
+		return "__refvalue";
+	case Token.REFTYPE:
+		return "__reftype";
+	case Token.MAKEREF:
+		return "__makeref";
 	case Token.PARTIAL:
 		return "partial";
 	case Token.ARROW:
