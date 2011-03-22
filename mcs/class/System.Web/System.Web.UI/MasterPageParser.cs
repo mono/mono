@@ -103,9 +103,11 @@ namespace System.Web.UI
 				} else {
 					string path = GetString (atts, "VirtualPath", null);
 					if (!String.IsNullOrEmpty (path)) {
-						if (!HostingEnvironment.VirtualPathProvider.FileExists (path))
+						var vpp = HostingEnvironment.VirtualPathProvider;
+						if (!vpp.FileExists (path))
 							ThrowParseFileNotFound (path);
-						
+
+						path = vpp.CombineVirtualPaths (VirtualPath.Absolute, VirtualPathUtility.ToAbsolute (path));
 						masterTypeVirtualPath = path;
 						AddDependency (path);
 					} else

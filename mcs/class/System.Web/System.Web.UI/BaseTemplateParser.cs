@@ -28,6 +28,7 @@
 
 using System;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Compilation;
 using System.Web.Configuration;
 
@@ -69,7 +70,8 @@ namespace System.Web.UI
 				if (!pageParserFilter.AllowVirtualReference (virtualPath, reftype))
 					throw new HttpException ("The parser does not permit a virtual reference to the UserControl.");
 			}
-			
+
+			virtualPath = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (VirtualPath.Absolute, virtualPath);
 			return BuildManager.GetCompiledType (virtualPath);
 		}
 
