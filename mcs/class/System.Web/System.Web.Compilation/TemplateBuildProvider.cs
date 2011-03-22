@@ -220,14 +220,14 @@ namespace System.Web.Compilation
 		IDictionary <string, bool> AddParsedDependencies (IDictionary <string, bool> dict)
 		{
 			if (Parsed) {
-				ArrayList deps = Parser.Dependencies;
+				List <string> deps = Parser.Dependencies;
 				if (deps == null || deps.Count > 0)
 					return dict;
 				
 				if (dict == null) {
 					dict = dependencies;
 					if (dict == null)
-						dict = dependencies = new SortedDictionary <string, bool> (StringComparer.InvariantCultureIgnoreCase);
+						dict = dependencies = new SortedDictionary <string, bool> (StringComparer.OrdinalIgnoreCase);
 				}
 				
 				string s;

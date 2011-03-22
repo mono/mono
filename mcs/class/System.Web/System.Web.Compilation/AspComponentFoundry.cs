@@ -335,12 +335,11 @@ namespace System.Web.Compilation
 				}
 				
 				if ((type = CachingCompiler.GetTypeFromCache (realpath)) != null)
-					return type;
-				
-				ArrayList other_deps = new ArrayList ();
+					return type;				
+
 				type = BuildManager.GetCompiledType (vpath);
 				if (type != null) {
-					AspGenerator.AddTypeToCache (other_deps, realpath, type);
+					AspGenerator.AddTypeToCache (null, realpath, type);
 					BuildManager.AddToReferencedAssemblies (type.Assembly);
 				}
 				return type;

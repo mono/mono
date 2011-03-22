@@ -30,6 +30,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Web;
@@ -40,7 +41,7 @@ namespace System.Web.UI
 {
 	sealed class ApplicationFileParser : TemplateParser
 	{
-		static ArrayList dependencies;
+		static List <string> dependencies;
 		TextReader reader;
 		
 		public ApplicationFileParser (string fname, HttpContext context)
@@ -95,7 +96,7 @@ namespace System.Web.UI
 			base.AddDirective (directive, atts);
 		}
 
-		internal static ArrayList FileDependencies {
+		internal static List <string> FileDependencies {
 			get { return dependencies; }
 		}		
 #if NET_4_0
