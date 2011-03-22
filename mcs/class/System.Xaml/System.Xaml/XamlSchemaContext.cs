@@ -120,7 +120,7 @@ namespace System.Xaml
 				foreach (var ass in AssembliesInScope)
 					FillXamlNamespaces (ass);
 			}
-			return xaml_nss.Values;
+			return xaml_nss.Values.Distinct ();
 		}
 
 		public virtual ICollection<XamlType> GetAllXamlTypes (string xamlNamespace)
@@ -302,8 +302,11 @@ namespace System.Xaml
 		void FillAllXamlTypes (Assembly ass)
 		{
 			foreach (XmlnsDefinitionAttribute xda in ass.GetCustomAttributes (typeof (XmlnsDefinitionAttribute), false)) {
-				var l = new List<XamlType> ();
-				all_xaml_types.Add (xda.XmlNamespace, l);
+				var l = all_xaml_types.FirstOrDefault (p => p.Key == xda.XmlNamespace).Value;
+				if (l == null) {
+					l = new List<XamlType> ();
+					all_xaml_types.Add (xda.XmlNamespace, l);
+				}
 				foreach (var t in ass.GetTypes ())
 					if (t.Namespace == xda.ClrNamespace)
 						l.Add (GetXamlType (t));

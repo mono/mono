@@ -36,6 +36,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 [assembly: System.Windows.Markup.XmlnsDefinition ("http://www.domain.com/path", "XamlTest")] // bug #680385
+[assembly: System.Windows.Markup.XmlnsDefinition ("http://www.domain.com/path", "SecondTest")] // bug #681045, same xmlns key for different clrns.
 
 namespace MonoTests.System.Xaml
 {
