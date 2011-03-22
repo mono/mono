@@ -177,8 +177,9 @@ namespace System.Net {
 				}
 
 				lock (wait_queue) {
+					Exception exc = new ObjectDisposedException ("listener");
 					foreach (ListenerAsyncResult ares in wait_queue) {
-						ares.Complete ("Listener was closed.");
+						ares.Complete (exc);
 					}
 					wait_queue.Clear ();
 				}
@@ -218,6 +219,9 @@ namespace System.Net {
 			ListenerAsyncResult ares = asyncResult as ListenerAsyncResult;
 			if (ares == null)
 				throw new ArgumentException ("Wrong IAsyncResult.", "asyncResult");
+			if (ares.EndCalled)
+				throw new ArgumentException ("Cannot reuse this IAsyncResult");
+			ares.EndCalled = true;
 
 			if (!ares.IsCompleted)
 				ares.AsyncWaitHandle.WaitOne ();
@@ -247,7 +251,8 @@ namespace System.Net {
 			if (prefixes.Count == 0)
 				throw new InvalidOperationException ("Please, call AddPrefix before using this method.");
 
-			IAsyncResult ares = BeginGetContext (null, null);
+			ListenerAsyncResult ares = (ListenerAsyncResult) BeginGetContext (null, null);
+			ares.InGet = true;
 			return EndGetContext (ares);
 		}
 

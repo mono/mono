@@ -280,7 +280,6 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-		[Category ("NotWorking")]  // we throw a HttpListenerException
 		public void CloseWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -297,7 +296,6 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-		[Category ("NotWorking")]  // we throw a HttpListenerException
 		public void AbortWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
