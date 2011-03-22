@@ -42,6 +42,8 @@ namespace System.Net {
 		HttpListenerContext context;
 		object locker = new object ();
 		ListenerAsyncResult forward;
+		internal bool EndCalled;
+		internal bool InGet;
 
 		public ListenerAsyncResult (AsyncCallback cb, object state)
 		{
@@ -49,14 +51,15 @@ namespace System.Net {
 			this.state = state;
 		}
 
-		internal void Complete (string error)
+		internal void Complete (Exception exc)
 		{
 			if (forward != null) {
-				forward.Complete (error);
+				forward.Complete (exc);
 				return;
 			}
-			//FIXME: error_code?
-			exception = new HttpListenerException (0, error);
+			exception = exc;
+			if (InGet && (exc is ObjectDisposedException))
+				exception = new HttpListenerException (500, "Listener closed");
 			lock (locker) {
 				completed = true;
 				if (handle != null)
@@ -109,7 +112,7 @@ namespace System.Net {
 					ListenerAsyncResult next = forward;
 					for (int i = 0; next.forward != null; i++) {
 						if (i > 20)
-							Complete ("Too many authentication errors");
+							Complete (new HttpListenerException (400, "Too many authentication errors"));
 						next = next.forward;
 					}
 				} else {
