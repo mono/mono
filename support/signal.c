@@ -36,7 +36,9 @@ G_BEGIN_DECLS
 typedef void (*mph_sighandler_t)(int);
 typedef struct Mono_Unix_UnixSignal_SignalInfo signal_info;
 
+#ifndef HOST_WIN32
 static int count_handlers (int signum);
+#endif
 
 void*
 Mono_Posix_Stdlib_SIG_DFL (void)
