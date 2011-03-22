@@ -738,8 +738,9 @@ namespace Mono.CSharp {
 				sb.Append (", ");
 			}
 			sb.Remove (sb.Length - 2, 2);
-			Report.Error (657, Location, "`{0}' is not a valid attribute location for this declaration. " +
-				"Valid attribute locations for this declaration are `{1}'", ExplicitTarget, sb.ToString ());
+			Report.Warning (657, 1, Location,
+				"`{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `{1}'. All attributes in this section will be ignored",
+				ExplicitTarget, sb.ToString ());
 			return false;
 		}
 
@@ -1135,10 +1136,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool CheckTargets ()
 		{
-			foreach (Attribute a in Attrs) {
-				if (!a.CheckTarget ())
-					return false;
+			for (int i = 0; i < Attrs.Count; ++i) {
+				if (!Attrs [i].CheckTarget ())
+					Attrs.RemoveAt (i--);
 			}
+
 			return true;
 		}
 

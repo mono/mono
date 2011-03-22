@@ -371,9 +371,9 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-        : outer_declarations opt_EOF
-        | outer_declarations global_attributes opt_EOF
-        | global_attributes opt_EOF
+	: outer_declarations opt_EOF
+	| outer_declarations global_attributes opt_EOF
+	| global_attributes opt_EOF
 	| opt_EOF /* allow empty files */
 	| interactive_parsing  { Lexer.CompleteOnEOF = false; } opt_EOF
 	;
