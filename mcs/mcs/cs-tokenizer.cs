@@ -178,9 +178,9 @@ namespace Mono.CSharp
 		bool handle_where = false;
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
-		Location current_comment_location = Location.Null;
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
+		readonly bool doc_processing;
 		
 		//
 		// Used mainly for parser optimizations. Some expressions for instance
@@ -402,6 +402,30 @@ namespace Mono.CSharp
 				current_token = t.current_token;
 				val = t.val;
 			}
+		}
+
+		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, CompilerContext ctx)
+		{
+			this.ref_name = file;
+			this.file_name = file;
+			this.context = ctx;
+			reader = input;
+
+			putback_char = -1;
+
+			xml_comment_buffer = new StringBuilder ();
+			doc_processing = ctx.Settings.Documentation != null;
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				tab_size = 4;
+			else
+				tab_size = 8;
+
+			//
+			// FIXME: This could be `Location.Push' but we have to
+			// find out why the MS compiler allows this
+			//
+			Mono.CSharp.Location.Push (file, file);
 		}
 		
 		public void PushPosition ()
@@ -811,29 +835,6 @@ namespace Mono.CSharp
 			get {
 				return new Location (ref_line, hidden ? -1 : col);
 			}
-		}
-
-		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, CompilerContext ctx)
-		{
-			this.ref_name = file;
-			this.file_name = file;
-			this.context = ctx;
-			reader = input;
-			
-			putback_char = -1;
-
-			xml_comment_buffer = new StringBuilder ();
-
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				tab_size = 4;
-			else
-				tab_size = 8;
-
-			//
-			// FIXME: This could be `Location.Push' but we have to
-			// find out why the MS compiler allows this
-			//
-			Mono.CSharp.Location.Push (file, file);
 		}
 
 		static bool is_identifier_start_character (int c)
@@ -2427,6 +2428,18 @@ namespace Mono.CSharp
 		{
 			Report.Error (1025, Location, "Single-line comment or end-of-line expected");
 		}
+
+		//
+		// Raises a warning when tokenizer found documentation comment
+		// on unexpected place
+		//
+		void WarningMisplacedComment (Location loc)
+		{
+			if (doc_state != XmlCommentState.Error) {
+				doc_state = XmlCommentState.Error;
+				Report.Warning (1587, 2, loc, "XML comment is not placed on a valid language element");
+			}
+		}
 		
 		//
 		// if true, then the code continues processing the code
@@ -3063,15 +3076,14 @@ namespace Mono.CSharp
 					// Handle double-slash comments.
 					if (d == '/'){
 						get_char ();
-						if (context.Settings.Documentation != null && peek_char () == '/') {
+						if (doc_processing && peek_char () == '/') {
 							get_char ();
 							// Don't allow ////.
 							if ((d = peek_char ()) != '/') {
-								update_comment_location ();
 								if (doc_state == XmlCommentState.Allowed)
 									handle_one_line_xml_comment ();
 								else if (doc_state == XmlCommentState.NotAllowed)
-									warn_incorrect_doc_comment ();
+									WarningMisplacedComment (Location - 3);
 							}
 						}
 
@@ -3084,9 +3096,8 @@ namespace Mono.CSharp
 					} else if (d == '*'){
 						get_char ();
 						bool docAppend = false;
-						if (context.Settings.Documentation != null && peek_char () == '*') {
+						if (doc_processing && peek_char () == '*') {
 							get_char ();
-							update_comment_location ();
 							// But when it is /**/, just do nothing.
 							if (peek_char () == '/') {
 								get_char ();
@@ -3094,8 +3105,9 @@ namespace Mono.CSharp
 							}
 							if (doc_state == XmlCommentState.Allowed)
 								docAppend = true;
-							else if (doc_state == XmlCommentState.NotAllowed)
-								warn_incorrect_doc_comment ();
+							else if (doc_state == XmlCommentState.NotAllowed) {
+								WarningMisplacedComment (Location - 2);
+							}
 						}
 
 						int current_comment_start = 0;
@@ -3399,40 +3411,13 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Updates current comment location.
-		//
-		private void update_comment_location ()
-		{
-			if (current_comment_location.IsNull) {
-				// "-2" is for heading "//" or "/*"
-				current_comment_location =
-					new Location (ref_line, hidden ? -1 : col - 2);
-			}
-		}
-
-		//
 		// Checks if there was incorrect doc comments and raise
 		// warnings.
 		//
 		public void check_incorrect_doc_comment ()
 		{
 			if (xml_comment_buffer.Length > 0)
-				warn_incorrect_doc_comment ();
-		}
-
-		//
-		// Raises a warning when tokenizer found incorrect doccomment
-		// markup.
-		//
-		private void warn_incorrect_doc_comment ()
-		{
-			if (doc_state != XmlCommentState.Error) {
-				doc_state = XmlCommentState.Error;
-				// in csc, it is 'XML comment is not placed on 
-				// a valid language element'. But that does not
-				// make sense.
-				Report.Warning (1587, 2, Location, "XML comment is not placed on a valid language element");
-			}
+				WarningMisplacedComment (Location);
 		}
 
 		//
@@ -3456,7 +3441,6 @@ namespace Mono.CSharp
 		void reset_doc_comment ()
 		{
 			xml_comment_buffer.Length = 0;
-			current_comment_location = Location.Null;
 		}
 
 		public void cleanup ()
