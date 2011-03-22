@@ -154,13 +154,13 @@ namespace System.Threading {
 							    (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
-#if !NET_2_1 || MOBILE
-
 		[CLSCompliant (false)]
 		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
 		{
 			throw new NotImplementedException ();
 		}
+
+#if !NET_2_1 || MOBILE
 
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)

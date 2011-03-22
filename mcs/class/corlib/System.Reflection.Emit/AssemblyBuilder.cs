@@ -1266,6 +1266,11 @@ namespace System.Reflection.Emit
 			return modules;
 		}
 
+		public override AssemblyName GetName (bool copiedName)
+		{
+			return base.GetName (copiedName);
+		}
+
 		[MonoTODO ("This always returns an empty array")]
 		public override AssemblyName[] GetReferencedAssemblies () {
 			return GetReferencedAssemblies (this);
