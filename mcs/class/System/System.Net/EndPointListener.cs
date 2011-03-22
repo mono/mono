@@ -261,7 +261,7 @@ namespace System.Net {
 		public void Close ()
 		{
 			sock.Close ();
-			lock (unregistered) {
+			lock (unregistered.SyncRoot) {
 				foreach (HttpConnection c in unregistered.Keys)
 					c.Close (true);
 				unregistered.Clear ();

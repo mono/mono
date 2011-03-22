@@ -161,7 +161,7 @@ namespace System.Net {
 						all [i].Connection.Close (true);
 				}
 
-				lock (connections) {
+				lock (connections.SyncRoot) {
 					ICollection keys = connections.Keys;
 					var conns = new HttpConnection [keys.Count];
 					keys.CopyTo (conns, 0);
@@ -170,9 +170,7 @@ namespace System.Net {
 						conns [i].Close (true);
 				}
 				lock (ctx_queue) {
-					ICollection keys = connections.Keys;
-					var ctxs = new HttpListenerContext [keys.Count];
-					keys.CopyTo (ctxs, 0);
+					var ctxs = (HttpListenerContext []) ctx_queue.ToArray (typeof (HttpListenerContext));
 					ctx_queue.Clear ();
 					for (int i = ctxs.Length - 1; i >= 0; i--)
 						ctxs [i].Connection.Close (true);
