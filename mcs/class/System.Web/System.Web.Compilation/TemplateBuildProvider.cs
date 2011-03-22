@@ -351,16 +351,13 @@ namespace System.Web.Compilation
 			if (parser == null)
 				return null;
 			
-			ArrayList al = parser.Assemblies;
-			if (al == null || al.Count == 0)
+			List <string> asms = parser.Assemblies;
+			if (asms == null || asms.Count == 0)
 				return null;
 
-			List <string> ret = new List <string> ();
-			string loc;
-			
-			foreach (object o in al) {
-				loc = o as string;
-				if (loc == null)
+			List <string> ret = new List <string> ();			
+			foreach (string loc in asms) {
+				if (String.IsNullOrEmpty (loc))
 					continue;
 
 				if (ret.Contains (loc))
