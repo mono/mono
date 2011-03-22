@@ -369,12 +369,12 @@ namespace System.Xaml
 		{
 			var state = object_states.Peek ();
 
-			var args = state.Type.GetSortedConstructorArguments ();
+			var args = state.Type.GetSortedConstructorArguments ().ToArray ();
 			var argt = args != null ? (IList<XamlType>) (from arg in args select arg.Type).ToArray () : considerPositionalParameters ? state.Type.GetPositionalParameters (contents.Count) : null;
 
 			var argv = new object [argt.Count];
 			for (int i = 0; i < argv.Length; i++)
-				argv [i] = GetCorrectlyTypedValue (argt [i], contents [i]);
+				argv [i] = GetCorrectlyTypedValue (args [i], argt [i], contents [i]);
 			state.Value = state.Type.Invoker.CreateInstance (argv);
 			state.IsInstantiated = true;
 		}
@@ -400,7 +400,7 @@ namespace System.Xaml
 				var xt = state.Type;
 				var xm = ms.Member;
 				if (xm == XamlLanguage.Initialization) {
-					state.Value = GetCorrectlyTypedValue (xt, obj);
+					state.Value = GetCorrectlyTypedValue (null, xt, obj);
 					state.IsInstantiated = true;
 				} else if (xm.IsEvent) {
 					ms.Value = (string) obj; // save name of value delegate (method).
@@ -412,15 +412,15 @@ namespace System.Xaml
 						ixser.ReadXml ((XmlReader) xdata.XmlReader);
 				}
 				else if (xm == XamlLanguage.Base)
-					ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
+					ms.Value = GetCorrectlyTypedValue (null, xm.Type, obj);
 				else if (xm == XamlLanguage.Name || xm == xt.GetAliasedProperty (XamlLanguage.Name))
-					ms.Value = GetCorrectlyTypedValue (XamlLanguage.String, obj);
+					ms.Value = GetCorrectlyTypedValue (xm, XamlLanguage.String, obj);
 				else if (xm == XamlLanguage.Key)
-					state.KeyValue = GetCorrectlyTypedValue (xt.KeyType, obj);
+					state.KeyValue = GetCorrectlyTypedValue (null, xt.KeyType, obj);
 				else {
 					if (!AddToCollectionIfAppropriate (xt, xm, parent, obj, keyObj)) {
 						if (!xm.IsReadOnly)
-							ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
+							ms.Value = GetCorrectlyTypedValue (xm, xm.Type, obj);
 					}
 				}
 			}
@@ -433,19 +433,19 @@ namespace System.Xaml
 			    xm == XamlLanguage.PositionalParameters ||
 			    xm == XamlLanguage.Arguments) {
 				if (xt.IsDictionary)
-					mt.Invoker.AddToDictionary (parent, GetCorrectlyTypedValue (xt.KeyType, keyObj), GetCorrectlyTypedValue (xt.ItemType, obj));
+					mt.Invoker.AddToDictionary (parent, GetCorrectlyTypedValue (null, xt.KeyType, keyObj), GetCorrectlyTypedValue (null, xt.ItemType, obj));
 				else // collection. Note that state.Type isn't usable for PositionalParameters to identify collection kind.
-					mt.Invoker.AddToCollection (parent, GetCorrectlyTypedValue (xt.ItemType, obj));
+					mt.Invoker.AddToCollection (parent, GetCorrectlyTypedValue (null, xt.ItemType, obj));
 				return true;
 			}
 			else
 				return false;
 		}
 
-		object GetCorrectlyTypedValue (XamlType xt, object value)
+		object GetCorrectlyTypedValue (XamlMember xm, XamlType xt, object value)
 		{
 			try {
-				return DoGetCorrectlyTypedValue (xt, value);
+				return DoGetCorrectlyTypedValue (xm, xt, value);
 			} catch (XamlObjectWriterException) {
 				throw;
 			} catch (Exception ex) {
@@ -459,7 +459,7 @@ namespace System.Xaml
 		// When it is passed null, then it returns a default instance.
 		// For example, passing null as Int32 results in 0.
 		// But do not immediately try to instantiate with the type, since the type might be abstract.
-		object DoGetCorrectlyTypedValue (XamlType xt, object value)
+		object DoGetCorrectlyTypedValue (XamlMember xm, XamlType xt, object value)
 		{
 			if (value == null) {
 				if (xt.IsContentValue (service_provider)) // it is for collection/dictionary key and item
@@ -488,14 +488,15 @@ namespace System.Xaml
 			if (IsAllowedType (xt, value))
 				return value;
 
-			if (xt.TypeConverter != null && value != null) {
-				var tc = xt.TypeConverter.ConverterInstance;
+			var xtc = (xm != null ? xm.TypeConverter : null) ?? xt.TypeConverter;
+			if (xtc != null && value != null) {
+				var tc = xtc.ConverterInstance;
 				if (tc != null && tc.CanConvertFrom (value.GetType ()))
 					value = tc.ConvertFrom (value);
 				return value;
 			}
 
-			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));
+			throw new XamlObjectWriterException (String.Format ("Value '{0}' (of type {1}) is not of or convertible to type {0} (member {3})", value, value != null ? (object) value.GetType () : "(null)", xt, xm));
 		}
 
 		XamlType ResolveTypeFromName (string name)

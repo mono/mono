@@ -480,7 +480,6 @@ namespace System.Xaml
 
 		void ReadValue ()
 		{
-			// FIXME: (probably) use ValueSerializer to deserialize the value to the expected type.
 			current = r.Value;
 
 			r.Read ();

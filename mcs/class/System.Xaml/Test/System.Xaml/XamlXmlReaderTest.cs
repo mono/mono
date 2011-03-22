@@ -621,6 +621,13 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
+		[Test]
+		public void Read_TypeConverterOnListMember ()
+		{
+			var r = GetReader ("TypeConverterOnListMember.xml");
+			Read_TypeConverterOnListMember (r);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

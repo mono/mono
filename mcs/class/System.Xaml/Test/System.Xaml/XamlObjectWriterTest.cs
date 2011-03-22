@@ -1285,5 +1285,15 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual ("x", res.Bar, "#2");
 			}
 		}
+
+		[Test]
+		public void Write_TypeConverterOnListMember ()
+		{
+			using (var xr = GetReader ("TypeConverterOnListMember.xml")) {
+				var res = (SecondTest.TypeOtherAssembly) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Values.Count, "#1");
+				Assert.AreEqual (3, res.Values [2], "#2");
+			}
+		}
 	}
 }

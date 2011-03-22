@@ -1006,6 +1006,14 @@ namespace MonoTests.System.Xaml
 			xw.Close ();
 			Assert.IsTrue (sw.ToString ().IndexOf ("Bar") > 0, "#2"); // it is not rejected by XamlXmlWriter. But XamlServices does not write it.
 		}
+
+		[Test]
+		public void Write_TypeConverterOnListMember ()
+		{
+			var obj = new SecondTest.TypeOtherAssembly ();
+			obj.Values.AddRange (new uint? [] {1, 2, 3});
+			Assert.AreEqual (ReadXml ("TypeConverterOnListMember.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

@@ -678,5 +678,14 @@ namespace MonoTests.System.Xaml
 			while (!xr.IsEof)
 				xr.Read ();
 		}
+
+		[Test]
+		public void Read_TypeConverterOnListMember ()
+		{
+			var obj = new SecondTest.TypeOtherAssembly ();
+			obj.Values.AddRange (new uint? [] {1, 2, 3});
+			var xr = new XamlObjectReader (obj);
+			Read_TypeConverterOnListMember (xr);
+		}
 	}
 }

@@ -862,3 +862,56 @@ namespace XamlTest
 		public string Path { get; set; }
 	}
 }
+
+// see bug #681480
+namespace SecondTest
+{
+	public class TypeOtherAssembly
+	{
+		[TypeConverter (typeof (NullableUintListConverter))]
+		public List<uint?> Values { get; set; }
+
+		public TypeOtherAssembly ()
+		{
+			this.Values = new List<uint?> ();
+		}
+	}
+
+	public class NullableUintListConverter : CustomTypeConverterBase
+	{
+		public override object ConvertFrom (System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		{
+			string configValue = value as string;
+			if (string.IsNullOrWhiteSpace (configValue))
+				return null;
+
+			string delimiterStr = ", ";
+			char [] delimiters = delimiterStr.ToCharArray ();
+			string [] tokens = configValue.Split (delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+			List<uint?> parsedList = new List<uint?> (tokens.Length);
+			foreach (string token in tokens)
+				parsedList.Add(uint.Parse(token));
+
+			return parsedList;
+		}
+
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			var v = (List<uint?>) value;
+			return String.Join (", ", (from i in v select i.ToString ()).ToArray ());
+		}
+	}
+	
+	public class CustomTypeConverterBase : TypeConverter
+	{
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof (string))
+			{
+				return true;
+			}
+			return base.CanConvertFrom (context, sourceType);
+		}
+	}
+}
