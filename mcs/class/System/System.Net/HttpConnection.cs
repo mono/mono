@@ -141,6 +141,7 @@ namespace System.Net {
 			} catch {
 				timer.Change (Timeout.Infinite, Timeout.Infinite);
 				CloseSocket ();
+				Unbind ();
 			}
 		}
 
@@ -193,8 +194,10 @@ namespace System.Net {
 			} catch {
 				if (ms != null && ms.Length > 0)
 					SendError ();
-				if (sock != null)
+				if (sock != null) {
 					CloseSocket ();
+					Unbind ();
+				}
 				return;
 			}
 
@@ -202,6 +205,7 @@ namespace System.Net {
 				//if (ms.Length > 0)
 				//	SendError (); // Why bother?
 				CloseSocket ();
+				Unbind ();
 				return;
 			}
 
@@ -218,22 +222,28 @@ namespace System.Net {
 				if (!epl.BindContext (context)) {
 					SendError ("Invalid host", 400);
 					Close (true);
+					return;
 				}
-				if (last_listener == null)
-					epl.RemoveConnection (this);
-				else
-					last_listener.RemoveConnection (this);
-
 				HttpListener listener = context.Listener;
-				if (listener != null) {
+				if (last_listener != listener) {
+					RemoveConnection ();
 					listener.AddConnection (this);
-					context_bound = true;
+					last_listener = listener;
 				}
-				last_listener = listener;
+
+				context_bound = true;
 				listener.RegisterContext (context);
 				return;
 			}
 			stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
+		}
+
+		void RemoveConnection ()
+		{
+			if (last_listener == null)
+				epl.RemoveConnection (this);
+			else
+				last_listener.RemoveConnection (this);
 		}
 
 		enum InputState {
@@ -371,7 +381,6 @@ namespace System.Net {
 		void Unbind ()
 		{
 			if (context_bound) {
-				context.Listener.RemoveConnection (this);
 				epl.UnbindContext (context);
 				context_bound = false;
 			}
@@ -393,8 +402,7 @@ namespace System.Net {
 			} finally {
 				sock = null;
 			}
-			if (last_listener == null)
-				epl.RemoveConnection (this);
+			RemoveConnection ();
 		}
 
 		internal void Close (bool force_close)
@@ -447,8 +455,7 @@ namespace System.Net {
 						s.Close ();
 				}
 				Unbind ();
-				if (last_listener == null)
-					epl.RemoveConnection (this);
+				RemoveConnection ();
 				return;
 			}
 		}
