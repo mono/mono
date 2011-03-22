@@ -47,6 +47,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.Adapters;
@@ -2386,14 +2387,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ApplyMasterPage ()
 	{
 		if (masterPageFile != null && masterPageFile.Length > 0) {
-			List <string> appliedMasterPageFiles = new List <string> ();
-
-			if (Master != null) {
-				MasterPage.ApplyMasterPageRecursive (Master, appliedMasterPageFiles);
-
-				Master.Page = this;
+			MasterPage master = Master;
+			
+			if (master != null) {
+				var appliedMasterPageFiles = new Dictionary <string, bool> (StringComparer.Ordinal);
+				MasterPage.ApplyMasterPageRecursive (Request.CurrentExecutionFilePath, HostingEnvironment.VirtualPathProvider, master, appliedMasterPageFiles);
+				master.Page = this;
 				Controls.Clear ();
-				Controls.Add (Master);
+				Controls.Add (master);
 			}
 		}
 	}
