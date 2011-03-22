@@ -105,6 +105,8 @@ namespace System.Xaml
 
 		internal string GetXamlNamespace (string clrNamespace)
 		{
+			if (clrNamespace == null) // could happen on nested generic type (see bug #680385-comment#4). Not sure if null is correct though.
+				return null;
 			if (xaml_nss == null) // fill it first
 				GetAllXamlNamespaces ();
 			string ret;
