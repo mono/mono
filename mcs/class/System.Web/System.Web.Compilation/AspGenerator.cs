@@ -679,13 +679,13 @@ namespace System.Web.Compilation
 			}
 		}
 
-		internal static void AddTypeToCache (ArrayList dependencies, string inputFile, Type type)
+		internal static void AddTypeToCache (List <string> dependencies, string inputFile, Type type)
 		{
 			if (type == null || inputFile == null || inputFile.Length == 0)
 				return;
 
 			if (dependencies != null && dependencies.Count > 0) {
-				string [] deps = (string []) dependencies.ToArray (typeof (string));
+				string [] deps = dependencies.ToArray ();
 				HttpContext ctx = HttpContext.Current;
 				HttpRequest req = ctx != null ? ctx.Request : null;
 				

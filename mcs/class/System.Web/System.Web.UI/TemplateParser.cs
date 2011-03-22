@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
@@ -78,7 +79,7 @@ namespace System.Web.UI {
 		string inputFile;
 		string text;
 		IDictionary mainAttributes;
-		ArrayList dependencies;
+		List <string> dependencies;
 		ArrayList assemblies;
 		IDictionary anames;
 		string[] binDirAssemblies;
@@ -540,11 +541,16 @@ namespace System.Web.UI {
 
 		internal virtual void AddDependency (string filename)
 		{
-			if (filename == null || filename == String.Empty)
+			AddDependency (filename, true);
+		}
+		
+		internal virtual void AddDependency (string filename, bool combinePaths)
+		{
+			if (String.IsNullOrEmpty (filename))
 				return;
 
 			if (dependencies == null)
-				dependencies = new ArrayList ();
+				dependencies = new List <string> ();
 
 			if (!dependencies.Contains (filename))
 				dependencies.Add (filename);
@@ -1183,7 +1189,7 @@ namespace System.Web.UI {
 			set { rootBuilder = value; }
 		}
 
-		internal ArrayList Dependencies {
+		internal List <string> Dependencies {
 			get { return dependencies; }
 			set { dependencies = value; }
 		}

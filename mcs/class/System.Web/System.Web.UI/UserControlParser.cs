@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
@@ -47,7 +48,7 @@ namespace System.Web.UI
 		{
 		}
 
-		internal UserControlParser (VirtualPath virtualPath, string inputFile, ArrayList deps, HttpContext context)
+		internal UserControlParser (VirtualPath virtualPath, string inputFile, List <string> deps, HttpContext context)
 			: this (virtualPath, inputFile, context, null)
 		{
 			this.Dependencies = deps;
@@ -110,7 +111,7 @@ namespace System.Web.UI
 			return ucp.CompileIntoType ();
 		}
 		
-		internal static Type GetCompiledType (string virtualPath, string inputFile, ArrayList deps, HttpContext context)
+		internal static Type GetCompiledType (string virtualPath, string inputFile, List <string> deps, HttpContext context)
 		{
 			UserControlParser ucp = new UserControlParser (new VirtualPath (virtualPath), inputFile, deps, context);
 
