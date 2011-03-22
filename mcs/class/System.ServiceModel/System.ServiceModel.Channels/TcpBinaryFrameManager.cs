@@ -335,7 +335,6 @@ namespace System.ServiceModel.Channels
 			}
 
 			byte [] buffer = ReadSizedChunk ();
-Console.Error.WriteLine (Encoding.UTF8.GetString (buffer));
 			var ms = new MemoryStream (buffer, 0, buffer.Length);
 
 			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
