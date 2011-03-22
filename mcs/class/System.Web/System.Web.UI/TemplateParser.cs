@@ -80,7 +80,7 @@ namespace System.Web.UI {
 		string text;
 		IDictionary mainAttributes;
 		List <string> dependencies;
-		ArrayList assemblies;
+		List <string> assemblies;
 		IDictionary anames;
 		string[] binDirAssemblies;
 		Dictionary <string, bool> namespacesCache;
@@ -132,7 +132,7 @@ namespace System.Web.UI {
 		{
 			imports = new Dictionary <string, bool> (StringComparer.Ordinal);
 			LoadConfigDefaults ();
-			assemblies = new ArrayList ();
+			assemblies = new List <string> ();
 			CompilationSection compConfig = CompilationConfig;
 			foreach (AssemblyInfo info in compConfig.Assemblies) {
 				if (info.Assembly != "*")
@@ -156,7 +156,8 @@ namespace System.Web.UI {
                                         // controls registered from Web.Config
 			string location = Context.ApplicationInstance.AssemblyLocation;
 			if (location != typeof (TemplateParser).Assembly.Location) {
-				appAssemblyIndex = assemblies.Add (location);
+				 assemblies.Add (location);
+				 appAssemblyIndex = assemblies.Count - 1;
 			}
 		}
 
@@ -1163,10 +1164,10 @@ namespace System.Web.UI {
 			get { return interfaces; }
 		}
 		
-		internal ArrayList Assemblies {
+		internal List <string> Assemblies {
 			get {
 				if (appAssemblyIndex != -1) {
-					object o = assemblies [appAssemblyIndex];
+					string o = assemblies [appAssemblyIndex];
 					assemblies.RemoveAt (appAssemblyIndex);
 					assemblies.Add (o);
 					appAssemblyIndex = -1;
