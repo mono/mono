@@ -200,7 +200,7 @@ namespace System.Web.UI {
 			VirtualFile vf = null;
 			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 			VirtualPath vp = new VirtualPath (src, BaseVirtualDir);
-			string vpAbsolute = vp.Absolute;
+			string vpAbsolute = vpp.CombineVirtualPaths (VirtualPath.Absolute, vp.Absolute);
 			
 			if (vpp.FileExists (vpAbsolute)) {
 				fileExists = true;
@@ -212,7 +212,7 @@ namespace System.Web.UI {
 			if (!fileExists)
 				ThrowParseFileNotFound (src);
 
-			if (String.Compare (realpath, inputFile, false, Helpers.InvariantCulture) == 0)
+			if (String.Compare (realpath, inputFile, StringComparison.Ordinal) == 0)
                                 return;
 			
 			string vpath = vf.VirtualPath;
@@ -553,6 +553,9 @@ namespace System.Web.UI {
 			if (dependencies == null)
 				dependencies = new List <string> ();
 
+			if (combinePaths)
+				filename = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (VirtualPath.Absolute, filename);
+
 			if (!dependencies.Contains (filename))
 				dependencies.Add (filename);
 		}
@@ -669,8 +672,9 @@ namespace System.Web.UI {
 				ThrowParseException ("The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute");
 
 			string legacySrc = GetString (atts, "Src", null);
+			var vpp = HostingEnvironment.VirtualPathProvider;
 			if (legacySrc != null) {
-				legacySrc = UrlUtils.Combine (BaseVirtualDir, legacySrc);
+				legacySrc = vpp.CombineVirtualPaths (BaseVirtualDir, legacySrc);
 				GetAssemblyFromSource (legacySrc);
 
 				if (src == null) {
@@ -684,15 +688,15 @@ namespace System.Web.UI {
 				} else 
 					legacySrc = MapPath (legacySrc, false);				
 
-				AddDependency (legacySrc);
+				AddDependency (legacySrc, false);
 			}
 			
 			if (!srcIsLegacy && src != null && inherits != null) {
 				// Make sure the source exists
-				src = UrlUtils.Combine (BaseVirtualDir, src);
+				src = vpp.CombineVirtualPaths (BaseVirtualDir, src);
 				srcRealPath = MapPath (src, false);
 
-				if (!HostingEnvironment.VirtualPathProvider.FileExists (src))
+				if (!vpp.FileExists (src))
 					ThrowParseException ("File " + src + " not found");
 
 				// We are going to create a partial class that shares
@@ -724,7 +728,7 @@ namespace System.Web.UI {
 			if (src != null) {
 				if (VirtualPathUtility.IsAbsolute (src))
 					src = VirtualPathUtility.ToAppRelative (src);
-				AddDependency (src);
+				AddDependency (src, false);
 			}
 			
 			className = GetString (atts, "ClassName", null);
