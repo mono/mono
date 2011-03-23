@@ -896,6 +896,11 @@ namespace System {
 				return (platform == 4 || platform == 128 || platform == 6);
 			}
 		}
+		static internal bool IsMacOS {
+			get {
+				return Environment.Platform == PlatformID.MacOSX;
+			}
+		}
 	}
 }
 
