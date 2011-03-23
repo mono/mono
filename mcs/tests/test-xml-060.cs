@@ -1,4 +1,4 @@
-// Compiler options: -doc:gxml-03.xml /warnaserror /warn:4
+// Compiler options: -doc:xml-060.xml /warnaserror /warn:4
 
 	// gmcs documents generic members incorrectly
 	using System.Collections.Generic;

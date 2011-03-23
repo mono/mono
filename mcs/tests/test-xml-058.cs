@@ -1,4 +1,4 @@
-// Compiler options: -doc:gxml-01.xml
+// Compiler options: -doc:xml-058.xml
 using System; 
 
 ///<summary>This file throws an error when compiled with XML documentation</summary>
