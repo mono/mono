@@ -2313,6 +2313,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (r.Namespace, "ns#1-3");
 			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
 			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
 
 			// t:EnumContainer
 			Assert.IsTrue (r.Read (), "so#1-1");
@@ -2338,6 +2339,99 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
 
 			// /t:EnumContainer
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_CollectionContentProperty (XamlReader r, bool contentPropertyIsUsed)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("scg", r.Namespace.Prefix, "ns#2-4");
+			assns = "clr-namespace:System.Collections.Generic;assembly=" + typeof (IList<>).Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#2-5");
+
+			Assert.IsTrue (r.Read (), "ns#3-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#3-2");
+			Assert.IsNotNull (r.Namespace, "ns#3-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#3-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#3-5");
+
+			// t:CollectionContentProperty
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (CollectionContentProperty), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// m:ListOfItems
+			Assert.IsTrue (r.Read (), "sm1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm1#2");
+			Assert.AreEqual (xt.GetMember ("ListOfItems"), r.Member, "sm1#3");
+
+			// t:CollectionContentProperty
+			xt = new XamlType (typeof (List<SimpleClass>), r.SchemaContext);
+			Assert.IsTrue (r.Read (), "so#2-1");
+			if (contentPropertyIsUsed)
+				Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "so#2-2.1");
+			else {
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2.2");
+				Assert.AreEqual (xt, r.Type, "so#2-3");
+
+				// m:Capacity
+				Assert.IsTrue (r.Read (), "sm#2-1");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#2-2");
+				Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "sm#2-3");
+
+				// r.Skip (); // LAMESPEC: .NET then skips to *post* Items node (i.e. at the first TestClass item)
+
+				Assert.IsTrue (r.Read (), "v#1-1");
+
+				Assert.IsTrue (r.Read (), "em#2-1");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#2-2");
+			}
+
+			Assert.IsTrue (r.Read (), "sm#3-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#3-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sm#3-3");
+
+			for (int i = 0; i < 4; i++) {
+				// t:SimpleClass
+				Assert.IsTrue (r.Read (), "so#3-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#3-2." + i);
+				xt = new XamlType (typeof (SimpleClass), r.SchemaContext);
+				Assert.AreEqual (xt, r.Type, "so#3-3." + i);
+
+				// /t:SimpleClass
+				Assert.IsTrue (r.Read (), "eo#3-1");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#3-2");
+			}
+
+			// /m:Items
+			Assert.IsTrue (r.Read (), "em#3-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#3-2");
+
+			// /t:CollectionContentProperty
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			// /m:ListOfItems
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
+
+			// /t:CollectionContentProperty
 			Assert.IsTrue (r.Read (), "eo#1-1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
 

@@ -146,6 +146,7 @@ namespace System.Xaml
 		object current;
 		bool inside_object_not_member, is_xdata, is_empty_object, is_empty_member;
 		Stack<XamlType> types = new Stack<XamlType> ();
+		Stack<bool> get_flags = new Stack<bool> ();
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 		XamlMember current_member;
 
@@ -204,12 +205,12 @@ namespace System.Xaml
 
 			if (is_xdata) {
 				is_xdata = false;
-				SetEndOfObject ();
+				ReadEndType (true);
 				return true;
 			}
 			if (is_empty_object) {
 				is_empty_object = false;
-				ReadEndType ();
+				ReadEndType (false);
 				return true;
 			}
 			if (is_empty_member) {
@@ -257,7 +258,7 @@ namespace System.Xaml
 							throw new XamlParseException (String.Format ("Read-only member '{0}' showed up in the source XML, and the xml contains element content that cannot be read.", current_member.Name)) { LineNumber = this.LineNumber, LinePosition = this.LinePosition };
 					}
 					else
-						ReadStartType ();
+						ReadStartTypeOrContentGetObject ();
 				}
 				return true;
 
@@ -267,9 +268,9 @@ namespace System.Xaml
 				if (inside_object_not_member) {
 					var xm = members.Count > 0 ? members.Peek () : null;
 					if (xm != null && !xm.IsWritePublic && xm.Type.IsCollection)
-						SetEndOfObject ();
+						ReadEndType (true);
 					else
-						ReadEndType ();
+						ReadEndType (false);
 				}
 				else {
 					if (r.LocalName.StartsWith (types.Peek ().Name + ".", StringComparison.Ordinal))
@@ -281,7 +282,7 @@ namespace System.Xaml
 
 			default:
 
-				// could be: normal property Value (Initialization and ContentProperty are handled at ReadStartType()).
+				// could be: normal property Value (Initialization and ContentProperty are handled at ReadStartTypeOrContentGetObject()).
 				ReadValue ();
 				return true;
 			}
@@ -290,10 +291,10 @@ namespace System.Xaml
 		// returns an optional member without xml node.
 		XamlMember GetExtraMember (XamlType xt)
 		{
-			if (xt.IsCollection || xt.IsDictionary)
-				return XamlLanguage.Items;
 			if (xt.ContentProperty != null) // e.g. Array.Items
 				return xt.ContentProperty;
+			if (xt.IsCollection || xt.IsDictionary)
+				return XamlLanguage.Items;
 			return null;
 		}
 
@@ -313,7 +314,14 @@ namespace System.Xaml
 		bool ReadExtraEndMember ()
 		{
 			var xm = GetExtraMember (types.Peek ());
-			if (xm != null && current_member != xm) {
+			// FIXME: unlike ReadExtraEndMember, I removed current
+			// member check, as current_member might be kept since
+			// ReadExtraStartMember(). And for PositionalParameters
+			// I cannot "clean up" this field. I guess it is still
+			// safe, but might cause some corner-case bugs.
+			// I may have to simplify the entire implementation
+			// like I did for (now push-based) XamlObjectReader.
+			if (xm != null) {
 				inside_object_not_member = true;
 				current_member = members.Pop ();
 				node_type = XamlNodeType.EndMember;
@@ -334,11 +342,12 @@ namespace System.Xaml
 			return false;
 		}
 
-		void ReadStartType ()
+		void ReadStartTypeOrContentGetObject ()
 		{
 			string name = r.LocalName;
 			string ns = r.NamespaceURI;
 			string typeArgNames = null;
+
 			var members = new List<Pair> ();
 			var atts = ProcessAttributes (members);
 
@@ -358,10 +367,21 @@ namespace System.Xaml
 			IList<XamlTypeName> typeArgs = typeArgNames == null ? null : XamlTypeName.ParseList (typeArgNames, xaml_namespace_resolver);
 			var xtn = new XamlTypeName (ns, name, typeArgs);
 			xt = sctx.GetXamlType (xtn);
-			if (xt == null)
+			if (xt == null) {
 				// creates name-only XamlType. Also, it does not seem that it does not store this XamlType to XamlSchemaContext (Try GetXamlType(xtn) after reading such xaml node, it will return null).
 				xt = new XamlType (ns, name, typeArgs == null ? null : typeArgs.Select<XamlTypeName,XamlType> (xxtn => sctx.GetXamlType (xxtn)).ToArray (), sctx);
+			}
+
+			if (current_member != null && !xt.CanAssignTo (current_member.Type)) {
+				var pxt = types.Count > 0 ? types.Peek () : null;
+				if (pxt != null && pxt.ContentProperty == current_member) {
+					SetGetObject ();
+					return;
+				}
+			}
+
 			types.Push (xt);
+			get_flags.Push (false);
 			current = xt;
 
 			if (!r.IsEmptyElement) {
@@ -423,6 +443,7 @@ namespace System.Xaml
 			stored_member_enumerator = new List<Pair> (new Pair [] { new Pair (xt.GetMember ("Text"), xdata) }).GetEnumerator ();
 			
 			types.Push (xt);
+			get_flags.Push (false);
 			current = xt;
 			node_type = XamlNodeType.StartObject;
 			inside_object_not_member = true;
@@ -454,14 +475,12 @@ namespace System.Xaml
 			r.Read ();
 		}
 		
-		void ReadEndType ()
+		void ReadEndType (bool skipRead)
 		{
-			r.Read ();
-			SetEndOfObject ();
-		}
-		
-		void SetEndOfObject ()
-		{
+			var wasGet = get_flags.Pop ();
+			if (!skipRead && !wasGet)
+				r.Read ();
+
 			types.Pop ();
 			current = null;
 			node_type = XamlNodeType.EndObject;
@@ -493,6 +512,7 @@ namespace System.Xaml
 			node_type = XamlNodeType.GetObject;
 			inside_object_not_member = true;
 			types.Push (current_member.Type);
+			get_flags.Push (true);
 		}
 
 		XamlDirective FindStandardDirective (string name, AllowedMemberLocations loc)
@@ -571,6 +591,7 @@ namespace System.Xaml
 					return true;
 				case XamlNodeType.EndObject:
 					types.Pop ();
+					get_flags.Pop ();
 					markup_extension_attr_members = null;
 					return false;
 				case XamlNodeType.StartMember:
@@ -624,6 +645,7 @@ namespace System.Xaml
 					if (!String.IsNullOrEmpty (v) && v [0] == '{') {
 						var pai = ParsedMarkupExtensionInfo.Parse (v, xaml_namespace_resolver, sctx);
 						types.Push (pai.Type);
+						get_flags.Push (false);
 						current = pai.Type;
 						node_type = XamlNodeType.StartObject;
 						markup_extension_attr_members = pai.Arguments.GetEnumerator ();

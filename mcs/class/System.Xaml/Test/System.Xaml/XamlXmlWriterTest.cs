@@ -1021,6 +1021,15 @@ namespace MonoTests.System.Xaml
 			var obj = new EnumContainer () { EnumProperty = EnumValueType.Two };
 			Assert.AreEqual (ReadXml ("EnumContainer.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_CollectionContentProperty ()
+		{
+			var obj = new CollectionContentProperty ();
+			for (int i = 0; i < 4; i++)
+				obj.ListOfItems.Add (new SimpleClass ());
+			Assert.AreEqual (ReadXml ("CollectionContentProperty.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

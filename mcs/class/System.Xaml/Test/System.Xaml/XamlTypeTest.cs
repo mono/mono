@@ -811,6 +811,15 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (xt.IsUsableDuringInitialization, "#4");
 			Assert.IsNotNull (xt.TypeConverter, "#5");
 		}
+
+		[Test]
+		public void CollectionContentProperty ()
+		{
+			var xt = sctx.GetXamlType (typeof (CollectionContentProperty));
+			var p = xt.ContentProperty;
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual ("ListOfItems", p.Name, "#2");
+		}
 	}
 
 	class MyXamlType : XamlType

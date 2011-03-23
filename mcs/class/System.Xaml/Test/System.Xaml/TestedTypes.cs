@@ -845,6 +845,21 @@ namespace MonoTests.System.Xaml
 		Three,
 		Four
 	}
+
+	[ContentProperty ("ListOfItems")]
+	public class CollectionContentProperty
+	{
+		public IList<SimpleClass> ListOfItems { get; set; }
+
+		public CollectionContentProperty ()
+		{
+			this.ListOfItems = new List<SimpleClass> ();
+		}
+	}
+
+	public class SimpleClass
+	{
+	}
 }
 
 namespace XamlTest

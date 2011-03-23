@@ -695,5 +695,15 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_EnumContainer (xr);
 		}
+
+		[Test]
+		public void Read_CollectionContentProperty ()
+		{
+			var obj = new CollectionContentProperty ();
+			for (int i = 0; i < 4; i++)
+				obj.ListOfItems.Add (new SimpleClass ());
+			var xr = new XamlObjectReader (obj);
+			Read_CollectionContentProperty (xr, false);
+		}
 	}
 }

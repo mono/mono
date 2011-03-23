@@ -1304,5 +1304,23 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (EnumValueType.Two, res.EnumProperty, "#1");
 			}
 		}
+
+		[Test]
+		public void Write_CollectionContentProperty ()
+		{
+			using (var xr = GetReader ("CollectionContentProperty.xml")) {
+				var res = (CollectionContentProperty) XamlServices.Load (xr);
+				Assert.AreEqual (4, res.ListOfItems.Count, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_CollectionContentProperty2 ()
+		{
+			using (var xr = GetReader ("CollectionContentProperty2.xml")) {
+				var res = (CollectionContentProperty) XamlServices.Load (xr);
+				Assert.AreEqual (4, res.ListOfItems.Count, "#1");
+			}
+		}
 	}
 }

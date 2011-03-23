@@ -635,6 +635,21 @@ namespace MonoTests.System.Xaml
 			Read_EnumContainer (r);
 		}
 
+		[Test]
+		public void Read_CollectionContentProperty ()
+		{
+			var r = GetReader ("CollectionContentProperty.xml");
+			Read_CollectionContentProperty (r, false);
+		}
+
+		[Test]
+		public void Read_CollectionContentProperty2 ()
+		{
+			// bug #681835
+			var r = GetReader ("CollectionContentProperty2.xml");
+			Read_CollectionContentProperty (r, true);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()
