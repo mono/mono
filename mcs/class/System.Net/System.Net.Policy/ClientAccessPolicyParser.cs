@@ -76,6 +76,16 @@ namespace System.Net.Policy {
 
 	partial class ClientAccessPolicy {
 
+		static bool IsNonElement (XmlReader reader)
+		{
+			return (reader.NodeType != XmlNodeType.Element);
+		}
+
+		static bool IsNonEmptyElement (XmlReader reader)
+		{
+			return (reader.IsEmptyElement || IsNonElement (reader));
+		}
+
 		static public ICrossDomainPolicy FromStream (Stream stream)
 		{
 			ClientAccessPolicy cap = new ClientAccessPolicy ();
@@ -95,20 +105,14 @@ namespace System.Net.Policy {
 				}
 				reader.ReadStartElement ("access-policy", String.Empty);
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-					if (reader.NodeType != XmlNodeType.Element)
-						throw new XmlException (String.Format ("Unexpected access-policy content: {0}", reader.NodeType));
-
-					if ((reader.LocalName != "cross-domain-access") || reader.IsEmptyElement) {
+					if (IsNonEmptyElement (reader) || (reader.LocalName != "cross-domain-access")) {
 						reader.Skip ();
 						continue;
 					}
 
 					reader.ReadStartElement ("cross-domain-access", String.Empty);
 					for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-						if (reader.NodeType != XmlNodeType.Element)
-							throw new XmlException (String.Format ("Unexpected access-policy content: {0}", reader.NodeType));
-
-						if ((reader.Name != "policy") || reader.IsEmptyElement) {
+						if (IsNonEmptyElement (reader) || (reader.Name != "policy")) {
 							reader.Skip ();
 							continue;
 						}
@@ -134,8 +138,10 @@ namespace System.Net.Policy {
 
 			reader.ReadStartElement ("policy", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-				if (reader.NodeType != XmlNodeType.Element)
-					throw new XmlException (String.Format ("Unexpected policy content: {0}", reader.NodeType));
+				if (IsNonEmptyElement (reader)) {
+					reader.Skip ();
+					continue;
+				}
 
 				switch (reader.LocalName) {
 				case "allow-from":
@@ -158,7 +164,7 @@ namespace System.Net.Policy {
 
 		static void ReadAllowFromElement (XmlReader reader, AccessPolicy policy)
 		{
-			if (reader.IsEmptyElement) {
+			if (IsNonEmptyElement (reader)) {
 				reader.Skip ();
 				return;
 			}
@@ -182,9 +188,7 @@ namespace System.Net.Policy {
 			v.AllowAnyMethod = (methods == "*"); // only legal value defined, otherwise restricted to GET and POST
 			reader.ReadStartElement ("allow-from", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-				if (reader.NodeType != XmlNodeType.Element)
-					throw new XmlException (String.Format ("Unexpected allow-from content: {0}", reader.NodeType));
-				if (!String.IsNullOrEmpty (reader.NamespaceURI)) {
+				if (IsNonElement (reader) || !String.IsNullOrEmpty (reader.NamespaceURI)) {
 					reader.Skip ();
 					continue;
 				}
@@ -239,9 +243,7 @@ namespace System.Net.Policy {
 
 			reader.ReadStartElement ("grant-to", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-				if (reader.NodeType != XmlNodeType.Element)
-					throw new XmlException (String.Format ("Unexpected grant-to content: {0}", reader.NodeType));
-				if (!String.IsNullOrEmpty (reader.NamespaceURI)) {
+				if (IsNonElement (reader) || !String.IsNullOrEmpty (reader.NamespaceURI)) {
 					reader.Skip ();
 					continue;
 				}
