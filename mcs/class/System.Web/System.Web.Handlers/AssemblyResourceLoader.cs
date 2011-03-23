@@ -85,7 +85,7 @@ namespace System.Web.Handlers
 			for (int i = 0; i < attrs.Length; i++) {
 				attr = attrs [i];
 				string resourceName = attr.WebResource;
-				if (resourceName == null || resourceName.Length == 0) {
+				if (resourceName != null && resourceName.Length > 0) {
 					string resourceNameHash = GetStringHash (kha, resourceName);
 #if SYSTEM_WEB_EXTENSIONS
 					bool debug = resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase);
