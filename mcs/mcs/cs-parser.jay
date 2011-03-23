@@ -106,9 +106,6 @@ namespace Mono.CSharp
 		/// Current attribute target
 		string current_attr_target;
 		
-		/// assembly and module attribute definitions are enabled
-		bool global_attrs_enabled = true;
-		
 		ParameterModifierType valid_param_mod;
 		
 		bool default_parameter_used;
@@ -371,33 +368,39 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-	: outer_declarations opt_EOF
-	| outer_declarations global_attributes opt_EOF
-	| global_attributes opt_EOF
-	| opt_EOF /* allow empty files */
+	: outer_declaration opt_EOF
+	  {
+		Lexer.check_incorrect_doc_comment ();
+	  }
 	| interactive_parsing  { Lexer.CompleteOnEOF = false; } opt_EOF
 	;
-
+	
+outer_declaration
+	: opt_extern_alias_directives opt_using_directives
+	| opt_extern_alias_directives opt_using_directives namespace_or_type_declarations opt_attributes
+	  {
+		if ($4 != null) {
+			Attributes attrs = (Attributes) $4;
+			Report.Error (1730, attrs.Attrs [0].Location,
+				"Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+		}
+	  }
+	| opt_extern_alias_directives opt_using_directives attribute_sections
+	  {
+		module.AddAttributes ((Attributes) $3, current_namespace);
+	  }
+	| error
+	  {
+		if (yyToken == Token.EXTERN_ALIAS)
+			Report.Error (439, lexer.Location, "An extern alias declaration must precede all other elements");
+		else
+			Error_SyntaxError (yyToken);
+	  }
+	;
+	
 opt_EOF
 	: /* empty */
-	  {
-		Lexer.check_incorrect_doc_comment ();
-	  }
 	| EOF
-	  {
-		Lexer.check_incorrect_doc_comment ();
-	  }
-	;
-
-outer_declarations
-	: outer_declaration
-	| outer_declarations outer_declaration
-	;
- 
-outer_declaration
-	: extern_alias_directive
-	| using_directive 
-	| namespace_member_declaration
 	;
 
 extern_alias_directives
@@ -476,19 +479,44 @@ using_namespace_directive
 namespace_declaration
 	: opt_attributes NAMESPACE qualified_identifier
 	  {
+		Attributes attrs = (Attributes) $1;
 		MemberName name = (MemberName) $3;
-
-		if ($1 != null) {
-			Report.Error(1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
+		if (attrs != null) {
+			bool valid_global_attrs = true;
+			if ((current_namespace.DeclarationFound || current_namespace != file.NamespaceContainer)) {
+				valid_global_attrs = false;
+			} else {
+				foreach (var a in attrs.Attrs) {
+					if (a.ExplicitTarget == "assembly" || a.ExplicitTarget == "module")
+						continue;
+						
+					valid_global_attrs = false;
+					break;
+				}
+			}
+			
+			if (!valid_global_attrs)
+				Report.Error (1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
-
-		current_namespace = new NamespaceEntry (module,
-			current_namespace, file, name.GetName ());
+		
+		current_namespace = new NamespaceEntry (module, current_namespace, file, name.GetName ());
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
-	  } 
-	  namespace_body opt_semicolon
-	  { 
+		
+		module.AddAttributes (attrs, current_namespace);
+	  }
+	  OPEN_BRACE
+	  {
+		if (doc_support)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  opt_extern_alias_directives opt_using_directives opt_namespace_or_type_declarations CLOSE_BRACE opt_semicolon
+	  {
+		if ($11 != null)
+			lbag.AddLocation (current_namespace, GetLocation ($2), GetLocation ($5), GetLocation ($10), GetLocation ($11));
+		else
+			lbag.AddLocation (current_namespace, GetLocation ($2), GetLocation ($5), GetLocation ($10));
+	  
 		current_namespace = current_namespace.Parent;
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
@@ -535,18 +563,6 @@ namespace_name
 	  }
 	;
 
-namespace_body
-	: OPEN_BRACE
-	  {
-		if (doc_support)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	  opt_extern_alias_directives
-	  opt_using_directives
-	  opt_namespace_member_declarations
-	  CLOSE_BRACE
-	;
-
 opt_using_directives
 	: /* empty */
 	| using_directives
@@ -557,25 +573,32 @@ opt_extern_alias_directives
 	| extern_alias_directives
 	;
 
-opt_namespace_member_declarations
+opt_namespace_or_type_declarations
 	: /* empty */
-	| namespace_member_declarations
+	| namespace_or_type_declarations
 	;
 
-namespace_member_declarations
-	: namespace_member_declaration
-	| namespace_member_declarations namespace_member_declaration
+namespace_or_type_declarations
+	: namespace_or_type_declaration
+	| namespace_or_type_declarations namespace_or_type_declaration
 	;
 
-namespace_member_declaration
+namespace_or_type_declaration
 	: type_declaration
 	  {
 		if ($1 != null) {
-			DeclSpace ds = (DeclSpace)$1;
+			TypeContainer ds = (TypeContainer)$1;
 
-			if ((ds.ModFlags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+			if ((ds.ModFlags & (Modifiers.PRIVATE | Modifiers.PROTECTED)) != 0){
 				Report.Error (1527, ds.Location, 
 				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
+			}
+
+			// Here is a trick, for explicit attributes we don't know where they belong to until
+			// we parse succeeding declaration hence we parse them as normal and re-attach them
+			// when we know whether they are global (assembly:, module:) or local (type:).
+			if (ds.OptAttributes != null) {
+				ds.OptAttributes.ConvertGlobalAttributes (ds, current_namespace, !current_namespace.DeclarationFound && current_namespace == file.NamespaceContainer);
 			}
 		}
 		current_namespace.DeclarationFound = true;
@@ -584,10 +607,6 @@ namespace_member_declaration
 	  {
 		current_namespace.DeclarationFound = true;
 	  }
-	| error
-	 {
-		Error_SyntaxError (yyToken);
-	 }
 	;
 
 type_declaration
@@ -606,98 +625,32 @@ type_declaration
 	;
 
 //
-// Attributes 17.2
+// Attributes
 //
-
-global_attributes
-	: attribute_sections
-	  {
-		if ($1 != null) {
-			Attributes attrs = (Attributes)$1;
-			if (global_attrs_enabled) {
-				module.AddAttributes (attrs.Attrs, current_namespace);
-			} else {
-				foreach (Attribute a in attrs.Attrs) {
-					Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
-				}
-			}
-		}
-		$$ = $1;
-	  }
-	;
 
 opt_attributes
 	: /* empty */ 
-	  {
-		global_attrs_enabled = false;
-		$$ = null;
-      }
 	| attribute_sections
-	  { 
-		global_attrs_enabled = false;
-		$$ = $1;
-	  }
     ;
  
-
 attribute_sections
 	: attribute_section
 	  {
-		if (current_attr_target != String.Empty) {
-			var sect = (List<Attribute>) $1;
-
-			if (global_attrs_enabled) {
-				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect, current_namespace);
-					$$ = null;
-				} else {
-					$$ = new Attributes (sect);
-				}
-				if ($$ == null) {
-					if (doc_support) {
-						Lexer.check_incorrect_doc_comment ();
-						Lexer.doc_state =
-							XmlCommentState.Allowed;
-					}
-				}
-			} else {
-				$$ = new Attributes (sect);
-			}		
-		}
-		else
-			$$ = null;
-		current_attr_target = null;
+		var sect = (List<Attribute>) $1;
+		$$ = new Attributes (sect);
 	  }
 	| attribute_sections attribute_section
 	  {
-		if (current_attr_target != String.Empty) {
-			Attributes attrs = $1 as Attributes;
-			var sect = (List<Attribute>) $2;
-
-			if (global_attrs_enabled) {
-				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect, current_namespace);
-					$$ = null;
-				} else {
-					if (attrs == null)
-						attrs = new Attributes (sect);
-					else
-						attrs.AddAttributes (sect);			
-				}
-			} else {
-				if (attrs == null)
-					attrs = new Attributes (sect);
-				else
-					attrs.AddAttributes (sect);
-			}		
-			$$ = attrs;
-		}
+		Attributes attrs = $1 as Attributes;
+		var sect = (List<Attribute>) $2;
+		if (attrs == null)
+			attrs = new Attributes (sect);
 		else
-			$$ = null;
-		current_attr_target = null;
+			attrs.AddAttributes (sect);
+		$$ = attrs;
 	  }
 	;
-
+	
 attribute_section
 	: OPEN_BRACKET
 	  {
@@ -708,22 +661,32 @@ attribute_section
 		lexer.parsing_attribute_section = false;
 		$$ = $3;
 	  }
-	;
+	;	
 	
 attribute_section_cont
 	: attribute_target COLON
 	  {
-		current_attr_target = (string)$1;	  
+		current_attr_target = (string) $1;
+		if (current_attr_target == "assembly" || current_attr_target == "module") {
+			Lexer.check_incorrect_doc_comment ();
+		}
 	  }
 	  attribute_list opt_comma CLOSE_BRACKET
 	  {
-		$$ = $4;
+		// when attribute target is invalid
+		if (current_attr_target == string.Empty)
+			$$ = new List<Attribute> (0);
+		else
+			$$ = $4;
+	  
+		current_attr_target = null;
+		lexer.parsing_attribute_section = false;
  	  }
 	| attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $1;
 	  }
-	;
+	;	
 
 attribute_target
 	: IDENTIFIER
@@ -735,8 +698,13 @@ attribute_target
 	| RETURN { $$ = "return"; }
 	| error
 	  {
-		string name = GetTokenName (yyToken);
-		$$ = CheckAttributeTarget (name, GetLocation ($1));
+		if (yyToken == Token.IDENTIFIER) {
+			Error_SyntaxError (yyToken);
+			$$ = null;
+		} else {
+			string name = GetTokenName (yyToken);
+			$$ = CheckAttributeTarget (name, GetLocation ($1));
+		}
 	  }
 	;
 
@@ -770,19 +738,12 @@ attribute
 
 		Arguments [] arguments = (Arguments []) $3;
 		ATypeNameExpression expr = mname.GetTypeExpression ();
-
-		if (current_attr_target == String.Empty)
-			$$ = null;
-		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
-			// FIXME: supply "nameEscaped" parameter here.
-			$$ = new GlobalAttribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
-		else
-			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+		$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }
 	;
 
 attribute_name
-	: namespace_or_type_name  { /* reserved attribute name or identifier: 17.4 */ }
+	: namespace_or_type_name
 	;
 
 opt_attribute_arguments
@@ -890,17 +851,17 @@ class_member_declarations
 	| class_member_declarations 
 	  class_member_declaration
 	;
-
+	
 class_member_declaration
-	: constant_declaration			// done
-	| field_declaration			// done
-	| method_declaration			// done
-	| property_declaration			// done
-	| event_declaration			// done
-	| indexer_declaration			// done
-	| operator_declaration			// done
-	| constructor_declaration		// done
-	| destructor_declaration		// done
+	: constant_declaration
+	| field_declaration
+	| method_declaration
+	| property_declaration
+	| event_declaration
+	| indexer_declaration
+	| operator_declaration
+	| constructor_declaration
+	| destructor_declaration
 	| type_declaration
 	| error
 	  {
@@ -4162,7 +4123,7 @@ undocumented_expressions
 	  }
 	| REFTYPE open_parens_any expression CLOSE_PARENS
 	  {
-		$$ = new RefTypeExpr ((Expression) $3, GetLocation ($1));	// MSAF
+		$$ = new RefTypeExpr ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
 	| MAKEREF open_parens_any expression CLOSE_PARENS
@@ -6018,10 +5979,8 @@ interactive_parsing
 	;
 
 interactive_compilation_unit
-	: outer_declarations 
-	| outer_declarations global_attributes 
-	| global_attributes 
-	| /* nothing */
+	: opt_extern_alias_directives opt_using_directives
+	| opt_extern_alias_directives opt_using_directives namespace_or_type_declarations
 	;
 
 opt_COMPLETE_COMPLETION
@@ -6605,6 +6564,7 @@ static string GetTokenName (int token)
 	case Token.EXPLICIT:
 		return "explicit";
 	case Token.EXTERN:
+	case Token.EXTERN_ALIAS:
 		return "extern";
 	case Token.FALSE:
 		return "false";

@@ -286,16 +286,16 @@ namespace Mono.CSharp
 			existing.Add (type);
 		}
 
-		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
+		public void AddAttribute (Attribute attr, IMemberContext context)
 		{
-			foreach (Attribute a in attrs)
-				a.AttachTo (this, context);
+			attr.AttachTo (this, context);
 
 			if (attributes == null) {
-				attributes = new Attributes (attrs);
+				attributes = new Attributes (attr);
 				return;
 			}
-			attributes.AddAttributes (attrs);
+
+			attributes.AddAttribute (attr);
 		}
 
 		public override TypeContainer AddPartial (TypeContainer nextPart)

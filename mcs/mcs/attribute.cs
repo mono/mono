@@ -48,9 +48,9 @@ namespace Mono.CSharp {
 			if (attributes == null)
 				attributes = attrs;
 			else
-				throw new NotImplementedException ();
+				attributes.AddAttributes (attrs.Attrs);
 
-			attributes.AttachTo (this, context);
+			attrs.AttachTo (this, context);
 		}
 
 		public Attributes OptAttributes {
@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 		//
 		// An attribute can be attached to multiple targets (e.g. multiple fields)
 		//
-		protected Attributable[] targets;
+		Attributable[] targets;
 
 		//
 		// A member context for the attribute, it's much easier to hold it here
@@ -114,8 +114,8 @@ namespace Mono.CSharp {
 		{
 			this.expression = expr;
 			if (args != null) {
-				PosArguments = args [0];
-				NamedArguments = args [1];				
+				PosArguments = args[0];
+				NamedArguments = args[1];
 			}
 			this.loc = loc;
 			ExplicitTarget = target;
@@ -160,6 +160,13 @@ namespace Mono.CSharp {
 		{
 			if (this.targets == null) {
 				this.targets = new Attributable[] { target };
+				this.context = context;
+				return;
+			}
+
+			// When re-attaching global attributes
+			if (context is NamespaceEntry) {
+				this.targets[0] = target;
 				this.context = context;
 				return;
 			}
@@ -329,7 +336,7 @@ namespace Mono.CSharp {
 
 		public bool IsValidSecurityAttribute ()
 		{
-			return HasSecurityAttribute && IsSecurityActionValid (false);
+			return HasSecurityAttribute && IsSecurityActionValid ();
 		}
 
 		static bool IsValidArgumentType (TypeSpec t)
@@ -747,9 +754,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Tests permitted SecurityAction for assembly or other types
 		/// </summary>
-		protected virtual bool IsSecurityActionValid (bool for_assembly)
+		bool IsSecurityActionValid ()
 		{
 			SecurityAction action = GetSecurityActionValue ();
+			bool for_assembly = Target == AttributeTargets.Assembly || Target == AttributeTargets.Module;
 
 			switch (action) {
 #pragma warning disable 618
@@ -1079,25 +1087,8 @@ namespace Mono.CSharp {
 		}
 	}
 	
-
-	/// <summary>
-	/// For global attributes (assembly, module) we need special handling.
-	/// Attributes can be located in the several files
-	/// </summary>
-	public class GlobalAttribute : Attribute
+	public class Attributes
 	{
-		public GlobalAttribute (string target, ATypeNameExpression expression, Arguments[] args, Location loc, bool nameEscaped)
-			: base (target, expression, args, loc, nameEscaped)
-		{
-		}
-
-		protected override bool IsSecurityActionValid (bool for_assembly)
-		{
-			return base.IsSecurityActionValid (true);
-		}
-	}
-
-	public class Attributes {
 		public readonly List<Attribute> Attrs;
 
 		public Attributes (Attribute a)
@@ -1109,6 +1100,11 @@ namespace Mono.CSharp {
 		public Attributes (List<Attribute> attrs)
 		{
 			Attrs = attrs;
+		}
+
+		public void AddAttribute (Attribute attr)
+		{
+			Attrs.Add (attr);
 		}
 
 		public void AddAttributes (List<Attribute> attrs)
@@ -1142,6 +1138,31 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public void ConvertGlobalAttributes (TypeContainer member, NamespaceEntry currentNamespace, bool isGlobal)
+		{
+			var member_explicit_targets = member.ValidAttributeTargets;
+			for (int i = 0; i < Attrs.Count; ++i) {
+				var attr = Attrs[0];
+				if (attr.ExplicitTarget == null)
+					continue;
+
+				int ii;
+				for (ii = 0; ii < member_explicit_targets.Length; ++ii) {
+					if (attr.ExplicitTarget == member_explicit_targets[ii]) {
+						ii = -1;
+						break;
+					}
+				}
+
+				if (ii < 0 || !isGlobal)
+					continue;
+
+				member.Module.AddAttribute (attr, currentNamespace);
+				Attrs.RemoveAt (i);
+				--i;
+			}
 		}
 
 		public Attribute Search (PredefinedAttribute t)
