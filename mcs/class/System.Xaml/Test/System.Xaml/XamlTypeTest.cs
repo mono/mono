@@ -800,6 +800,17 @@ namespace MonoTests.System.Xaml
 			var xt = sctx.GetXamlType (typeof (XamlTest.Configurations));
 			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Active"), "#1"); // make sure that the member name is Active, not Configurations.Active ...
 		}
+
+		[Test]
+		public void EnumType ()
+		{
+			var xt = sctx.GetXamlType (typeof (EnumValueType));
+			Assert.IsTrue (xt.IsConstructible, "#1");
+			Assert.IsFalse (xt.IsNullable, "#2");
+			Assert.IsFalse (xt.IsUnknown, "#3");
+			Assert.IsFalse (xt.IsUsableDuringInitialization, "#4");
+			Assert.IsNotNull (xt.TypeConverter, "#5");
+		}
 	}
 
 	class MyXamlType : XamlType

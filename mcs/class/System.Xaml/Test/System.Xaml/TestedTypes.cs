@@ -832,6 +832,19 @@ namespace MonoTests.System.Xaml
 		}
 		public string Bar { get; private set; }
 	}
+
+	public class EnumContainer
+	{
+		public EnumValueType EnumProperty { get; set; }
+	}
+
+	public enum EnumValueType
+	{
+		One,
+		Two,
+		Three,
+		Four
+	}
 }
 
 namespace XamlTest

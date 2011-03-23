@@ -22,6 +22,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace System.Xaml.Schema
 {
@@ -88,6 +89,9 @@ namespace System.Xaml.Schema
 
 			if (!typeof (TConverterBase).IsAssignableFrom (ConverterType))
 				throw new XamlSchemaException (String.Format ("ConverterType '{0}' is not derived from '{1}' type", ConverterType, typeof (TConverterBase)));
+
+			if (TargetType != null && TargetType.UnderlyingType != null && TargetType.UnderlyingType.IsEnum)
+				return (TConverterBase) (object) new EnumConverter (TargetType.UnderlyingType);
 
 			if (ConverterType.GetConstructor (Type.EmptyTypes) == null)
 				return null;

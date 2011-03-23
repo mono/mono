@@ -1295,5 +1295,14 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (3, res.Values [2], "#2");
 			}
 		}
+
+		[Test]
+		public void Write_EnumContainer ()
+		{
+			using (var xr = GetReader ("EnumContainer.xml")) {
+				var res = (EnumContainer) XamlServices.Load (xr);
+				Assert.AreEqual (EnumValueType.Two, res.EnumProperty, "#1");
+			}
+		}
 	}
 }

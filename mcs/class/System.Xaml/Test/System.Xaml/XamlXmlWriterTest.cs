@@ -1014,6 +1014,13 @@ namespace MonoTests.System.Xaml
 			obj.Values.AddRange (new uint? [] {1, 2, 3});
 			Assert.AreEqual (ReadXml ("TypeConverterOnListMember.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_EnumContainer ()
+		{
+			var obj = new EnumContainer () { EnumProperty = EnumValueType.Two };
+			Assert.AreEqual (ReadXml ("EnumContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

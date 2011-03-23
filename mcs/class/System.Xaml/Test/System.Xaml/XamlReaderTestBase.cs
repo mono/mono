@@ -2295,10 +2295,49 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#1-2");
 			Assert.AreEqual ("1, 2, 3", r.Value, "v#1-3");
 
+			// /m:Values
 			Assert.IsTrue (r.Read (), "em#1-1");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
 
 			// /t:TypeOtherAssembly
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_EnumContainer (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+
+			// t:EnumContainer
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (EnumContainer), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// m:EnumProperty
+			Assert.IsTrue (r.Read (), "sm1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm1#2");
+			Assert.AreEqual (xt.GetMember ("EnumProperty"), r.Member, "sm1#3");
+
+			// x:Value
+			Assert.IsTrue (r.Read (), "v#1-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#1-2");
+			Assert.AreEqual ("Two", r.Value, "v#1-3");
+
+			// /m:EnumProperty
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
+
+			// /t:EnumContainer
 			Assert.IsTrue (r.Read (), "eo#1-1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
 

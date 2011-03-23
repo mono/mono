@@ -687,5 +687,13 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_TypeConverterOnListMember (xr);
 		}
+
+		[Test]
+		public void Read_EnumContainer ()
+		{
+			var obj = new EnumContainer () { EnumProperty = EnumValueType.Two };
+			var xr = new XamlObjectReader (obj);
+			Read_EnumContainer (xr);
+		}
 	}
 }

@@ -628,6 +628,13 @@ namespace MonoTests.System.Xaml
 			Read_TypeConverterOnListMember (r);
 		}
 
+		[Test]
+		public void Read_EnumContainer ()
+		{
+			var r = GetReader ("EnumContainer.xml");
+			Read_EnumContainer (r);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()
