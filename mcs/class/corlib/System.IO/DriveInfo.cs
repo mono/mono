@@ -32,13 +32,11 @@ namespace System.IO {
 	[SerializableAttribute] 
 	[ComVisibleAttribute(true)] 
 	public sealed class DriveInfo : ISerializable {
-		_DriveType _drive_type;
 		string drive_format;
 		string path;
 
-		DriveInfo (_DriveType _drive_type, string path, string fstype)
+		DriveInfo (string path, string fstype)
 		{
-			this._drive_type = _drive_type;
 			this.drive_format = fstype;
 			this.path = path;
 		}
@@ -68,12 +66,6 @@ namespace System.IO {
 			throw new ArgumentException ("The drive name does not exist", "driveName");
 		}
 		
-		enum _DriveType {
-			GenericUnix,
-			Linux,
-			Windows,
-		}
-
 		static void GetDiskFreeSpace (string path, out ulong availableFreeSpace, out ulong totalSize, out ulong totalFreeSpace)
 		{
 			MonoIOError error;
@@ -117,10 +109,7 @@ namespace System.IO {
 		[MonoTODO ("Currently get only works on Mono/Unix; set not implemented")]
 		public string VolumeLabel {
 			get {
-				if (_drive_type != _DriveType.Windows)
-					return path;
-				else
-					return path;
+				return path;
 			}
 			set {
 				throw new NotImplementedException ();
@@ -154,10 +143,6 @@ namespace System.IO {
 		[MonoTODO("It always returns true")]
 		public bool IsReady {
 			get {
-				if (_drive_type != _DriveType.Windows)
-					return true;
-
-				// Do something for Windows here.
 				return true;
 			}
 		}
@@ -184,7 +169,7 @@ namespace System.IO {
 						continue;
 					string path = Unescape (parts [1]);
 					string fstype = parts [2];
-					drives.Add (new DriveInfo (_DriveType.Linux, path, fstype));
+					drives.Add (new DriveInfo (path, fstype));
 				}
 
 				return drives.ToArray ();
@@ -235,29 +220,31 @@ namespace System.IO {
 			}
 			
 			DriveInfo [] unknown = new DriveInfo [1];
-			unknown [0]= new DriveInfo (_DriveType.GenericUnix, "/", "unixfs");
+			unknown [0]= new DriveInfo ("/", "unixfs");
 
 			return unknown;
 		}
 
-		static DriveInfo [] WindowsGetDrives ()
+		static DriveInfo [] RuntimeGetDrives ()
 		{
-			string [] drives = Environment.GetLogicalDrives ();
+			var drives = Environment.GetLogicalDrives ();
 			DriveInfo [] infos = new DriveInfo [drives.Length];
 			int i = 0;
 			foreach (string s in drives) {
-				infos [i++] = new DriveInfo (_DriveType.Windows, s, "Fixed");
+				infos [i++] = new DriveInfo (s, GetDriveFormat (s));
+				Console.WriteLine (infos [i-1].path);
 			}
+
 			return infos;
 		}
 		
 		[MonoTODO("In windows, alldrives are 'Fixed'")]
 		public static DriveInfo[] GetDrives ()
 		{
-			if (Environment.IsUnix)
-				return UnixGetDrives ();
-			else
-				return WindowsGetDrives ();
+			if (!Environment.IsUnix || Environment.IsMacOS)
+				return RuntimeGetDrives ();
+			
+			return UnixGetDrives ();
 		}
 
 		void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -277,5 +264,8 @@ namespace System.IO {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static uint GetDriveTypeInternal (string rootPathName);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string GetDriveFormat (string rootPathName);
 	}
 }
