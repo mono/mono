@@ -824,7 +824,7 @@ namespace Mono.CSharp {
 			if (ds == null || this is DeclSpace)
 				return DocCommentHeader + Name;
 			else
-				return String.Concat (DocCommentHeader, ds.Name, ".", Name);
+				return DocCommentHeader + Parent.Name + "." + Name;
 		}
 
 		//

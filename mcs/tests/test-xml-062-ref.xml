@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-062</name>
+    </assembly>
+    <members>
+        <member name="T:Maybe`1">
+            <summary>
+            </summary>
+            <typeparam name="T"></typeparam></member>
+        <member name="T:Tuple`2">
+            <summary>
+            </summary>
+            <typeparam name="T1"></typeparam>
+            <typeparam name="T2"></typeparam></member>
+        <member name="M:Tuple`2.Match``1(System.Func{`0,`1,Maybe{``0}}[])">
+            <summary>
+            Test
+            <typeparamref name="TResult" />.
+            </summary></member>
+    </members>
+</doc>

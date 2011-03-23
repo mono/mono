@@ -80,8 +80,7 @@ namespace Mono.CSharp {
 		private static readonly string line_head =
 			Environment.NewLine + "            ";
 
-		private static XmlNode GetDocCommentNode (MemberCore mc,
-			string name, Report Report)
+		static XmlNode GetDocCommentNode (MemberCore mc, string name, Report Report)
 		{
 			// FIXME: It could be even optimizable as not
 			// to use XmlDocument. But anyways the nodes
@@ -110,9 +109,10 @@ namespace Mono.CSharp {
 					line_head, split, 0, j);
 				return el;
 			} catch (Exception ex) {
-				Report.Warning (1570, 1, mc.Location, "XML comment on `{0}' has non-well-formed XML ({1})", name, ex.Message);
-				XmlComment com = doc.CreateComment (String.Format ("FIXME: Invalid documentation markup was found for member {0}", name));
-				return com;
+				Report.Warning (1570, 1, mc.Location, "XML documentation comment on `{0}' is not well-formed XML markup ({1})",
+					mc.GetSignatureForError (), ex.Message);
+
+				return doc.CreateComment (String.Format ("FIXME: Invalid documentation markup was found for member {0}", name));
 			}
 		}
 
