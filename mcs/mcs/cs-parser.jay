@@ -2590,11 +2590,6 @@ delegate_declaration
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (Modifiers) $2, name, p, (Attributes) $1);
 
-		if (doc_support) {
-			del.DocComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-		}
-
 		current_container.AddDelegate (del);
 		current_delegate = del;
 		lexer.ConstraintsParsing = true;
@@ -2605,6 +2600,11 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
+		if (doc_support) {
+			current_delegate.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+	  
 		current_delegate.SetParameterInfo ((List<Constraints>) $11);
 		lbag.AddMember (current_delegate, mod_locations, GetLocation ($3), GetLocation ($6), GetLocation ($9), GetLocation ($13));
 
