@@ -650,6 +650,20 @@ namespace MonoTests.System.Xaml
 			Read_CollectionContentProperty (r, true);
 		}
 
+		[Test]
+		public void Read_CollectionContentPropertyX ()
+		{
+			var r = GetReader ("CollectionContentPropertyX.xml");
+			Read_CollectionContentPropertyX (r, false);
+		}
+
+		[Test]
+		public void Read_CollectionContentPropertyX2 ()
+		{
+			var r = GetReader ("CollectionContentPropertyX2.xml");
+			Read_CollectionContentPropertyX (r, true);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

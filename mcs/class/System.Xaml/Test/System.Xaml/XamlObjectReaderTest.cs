@@ -705,5 +705,17 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_CollectionContentProperty (xr, false);
 		}
+
+		[Test]
+		public void Read_CollectionContentPropertyX ()
+		{
+			var obj = new CollectionContentPropertyX ();
+			var l = new List<object> ();
+			obj.ListOfItems.Add (l);
+			for (int i = 0; i < 4; i++)
+				l.Add (new SimpleClass ());
+			var xr = new XamlObjectReader (obj);
+			Read_CollectionContentPropertyX (xr, false);
+		}
 	}
 }

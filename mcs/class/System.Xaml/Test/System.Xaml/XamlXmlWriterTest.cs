@@ -1030,6 +1030,17 @@ namespace MonoTests.System.Xaml
 				obj.ListOfItems.Add (new SimpleClass ());
 			Assert.AreEqual (ReadXml ("CollectionContentProperty.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_CollectionContentPropertyX ()
+		{
+			var obj = new CollectionContentPropertyX ();
+			var l = new List<object> ();
+			obj.ListOfItems.Add (l);
+			for (int i = 0; i < 4; i++)
+				l.Add (new SimpleClass ());
+			Assert.AreEqual (ReadXml ("CollectionContentPropertyX.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

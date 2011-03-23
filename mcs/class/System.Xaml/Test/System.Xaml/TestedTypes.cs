@@ -857,6 +857,17 @@ namespace MonoTests.System.Xaml
 		}
 	}
 
+	[ContentProperty ("ListOfItems")]
+	public class CollectionContentPropertyX
+	{
+		public IList ListOfItems { get; set; }
+
+		public CollectionContentPropertyX ()
+		{
+			this.ListOfItems = new List<IEnumerable> ();
+		}
+	}
+
 	public class SimpleClass
 	{
 	}
