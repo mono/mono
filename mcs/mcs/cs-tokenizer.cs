@@ -3076,14 +3076,18 @@ namespace Mono.CSharp
 					// Handle double-slash comments.
 					if (d == '/'){
 						get_char ();
-						if (doc_processing && peek_char () == '/') {
-							get_char ();
-							// Don't allow ////.
-							if ((d = peek_char ()) != '/') {
-								if (doc_state == XmlCommentState.Allowed)
-									handle_one_line_xml_comment ();
-								else if (doc_state == XmlCommentState.NotAllowed)
-									WarningMisplacedComment (Location - 3);
+						if (doc_processing) {
+							if (peek_char () == '/') {
+								get_char ();
+								// Don't allow ////.
+								if ((d = peek_char ()) != '/') {
+									if (doc_state == XmlCommentState.Allowed)
+										handle_one_line_xml_comment ();
+									else if (doc_state == XmlCommentState.NotAllowed)
+										WarningMisplacedComment (Location - 3);
+								}
+							} else {
+								check_incorrect_doc_comment ();
 							}
 						}
 
