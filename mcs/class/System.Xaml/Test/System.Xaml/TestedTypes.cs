@@ -872,6 +872,11 @@ namespace MonoTests.System.Xaml
 	public class SimpleClass
 	{
 	}
+
+	public class NullableContainer
+	{
+		public int? TestProp { get; set; }
+	}
 }
 
 namespace XamlTest
@@ -997,17 +1002,6 @@ namespace SecondTest
 	[UsableDuringInitialization (true), Ambient]
 	public class ResourcesDict : Dictionary<object, object>
 	{
-		/*
-		public string Source { get; set; }
-		public void Load ()
-		{
-			ResourcesDict instance = XamlServices.Load (this.Source) as ResourcesDict;
-			foreach (var item in instance)
-			{
-				this.Add(item.Key, item.Value);
-			}
-		}
-		*/
 	}
 
 	public class TestObject

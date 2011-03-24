@@ -633,7 +633,7 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsNullable ()
 		{
-			return !type.IsValueType || type.ImplementsInterface (typeof (Nullable<>));
+			return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 
 		protected virtual bool LookupIsPublic ()

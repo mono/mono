@@ -832,6 +832,21 @@ namespace MonoTests.System.Xaml
 			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Keys", l [0].ToString (), "#3");
 			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Values", l [1].ToString (), "#4");
 		}
+
+		[Test]
+		public void NullableContainer ()
+		{
+			var xt = sctx.GetXamlType (typeof (NullableContainer));
+			Assert.IsFalse (xt.IsGeneric, "#1");
+			Assert.IsTrue (xt.IsNullable, "#2");
+			var xm = xt.GetMember ("TestProp");
+			Assert.IsTrue (xm.Type.IsGeneric, "#3");
+			Assert.IsTrue (xm.Type.IsNullable, "#4");
+
+			var obj = new NullableContainer ();
+			xm.Invoker.SetValue (obj, 5);
+			xm.Invoker.SetValue (obj, null);
+		}
 	}
 
 	class MyXamlType : XamlType
