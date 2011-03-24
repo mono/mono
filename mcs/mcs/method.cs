@@ -130,9 +130,9 @@ namespace Mono.CSharp {
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public override string GetDocCommentName (DeclSpace ds)
+		public override string GetDocCommentName ()
 		{
-			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
+			return DocUtil.GetMethodDocCommentName (this, parameters);
 		}
 
 		//

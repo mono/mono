@@ -801,9 +801,9 @@ namespace Mono.CSharp
 			base.Emit ();
 		}
 
-		public override string GetDocCommentName (DeclSpace ds)
+		public override string GetDocCommentName ()
 		{
-			return String.Concat (DocCommentHeader, ds.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
+			return String.Concat (DocCommentHeader, Parent.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
 		}
 	}
 
@@ -1549,9 +1549,9 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
-		public override string GetDocCommentName (DeclSpace ds)
+		public override string GetDocCommentName ()
 		{
-			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
+			return DocUtil.GetMethodDocCommentName (this, parameters);
 		}
 
 		public override string GetSignatureForError ()

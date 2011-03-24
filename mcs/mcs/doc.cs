@@ -32,48 +32,48 @@ namespace Mono.CSharp {
 		// handle warning report.
 		//
 		internal static void GenerateTypeDocComment (TypeContainer t,
-			DeclSpace ds, Report Report)
+			Report Report)
 		{
-			GenerateDocComment (t, ds, Report);
+			GenerateDocComment (t, Report);
 
 			if (t.DefaultStaticConstructor != null)
-				t.DefaultStaticConstructor.GenerateDocComment (t);
+				t.DefaultStaticConstructor.GenerateDocComment ();
 
 			if (t.InstanceConstructors != null)
 				foreach (Constructor c in t.InstanceConstructors)
-					c.GenerateDocComment (t);
+					c.GenerateDocComment ();
 
 			if (t.Types != null)
 				foreach (TypeContainer tc in t.Types)
-					tc.GenerateDocComment (t);
+					tc.GenerateDocComment ();
 
 			if (t.Constants != null)
 				foreach (Const c in t.Constants)
-					c.GenerateDocComment (t);
+					c.GenerateDocComment ();
 
 			if (t.Fields != null)
 				foreach (FieldBase f in t.Fields)
-					f.GenerateDocComment (t);
+					f.GenerateDocComment ();
 
 			if (t.Events != null)
 				foreach (Event e in t.Events)
-					e.GenerateDocComment (t);
+					e.GenerateDocComment ();
 
 			if (t.Indexers != null)
 				foreach (Indexer ix in t.Indexers)
-					ix.GenerateDocComment (t);
+					ix.GenerateDocComment ();
 
 			if (t.Properties != null)
 				foreach (Property p in t.Properties)
-					p.GenerateDocComment (t);
+					p.GenerateDocComment ();
 
 			if (t.Methods != null)
 				foreach (MethodOrOperator m in t.Methods)
-					m.GenerateDocComment (t);
+					m.GenerateDocComment ();
 
 			if (t.Operators != null)
 				foreach (Operator o in t.Operators)
-					o.GenerateDocComment (t);
+					o.GenerateDocComment ();
 		}
 
 		// MemberCore
@@ -121,10 +121,10 @@ namespace Mono.CSharp {
 		// handle warning report.
 		//
 		internal static void GenerateDocComment (MemberCore mc,
-			DeclSpace ds, Report Report)
+			Report Report)
 		{
 			if (mc.DocComment != null) {
-				string name = mc.GetDocCommentName (ds);
+				string name = mc.GetDocCommentName ();
 
 				XmlNode n = GetDocCommentNode (mc, name, Report);
 
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 					// FIXME: it could be done with XmlReader
 					DeclSpace ds_target = mc as DeclSpace;
 					if (ds_target == null)
-						ds_target = ds;
+						ds_target = mc.Parent;
 
 					foreach (XmlElement see in n.SelectNodes (".//see"))
 						HandleSee (mc, ds_target, see, Report);
@@ -706,7 +706,7 @@ namespace Mono.CSharp {
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public static string GetMethodDocCommentName (MemberCore mc, ParametersCompiled parameters, DeclSpace ds)
+		public static string GetMethodDocCommentName (MemberCore mc, ParametersCompiled parameters)
 		{
 			IParameterData [] plist = parameters.FixedParameters;
 			string paramSpec = String.Empty;
@@ -747,7 +747,7 @@ namespace Mono.CSharp {
 					break;
 				}
 			}
-			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec, suffix);
+			return String.Concat (mc.DocCommentHeader, mc.Parent.Name, ".", name, paramSpec, suffix);
 		}
 
 		static string GetSignatureForDoc (TypeSpec type)
@@ -927,7 +927,7 @@ namespace Mono.CSharp {
 		{
 			if (module.Types != null)
 				foreach (TypeContainer tc in module.Types)
-					DocUtil.GenerateTypeDocComment (tc, null, module.Compiler.Report);
+					DocUtil.GenerateTypeDocComment (tc, module.Compiler.Report);
 		}
 	}
 }

@@ -2231,9 +2231,9 @@ namespace Mono.CSharp {
 		// Generates xml doc comments (if any), and if required,
 		// handle warning report.
 		//
-		internal override void GenerateDocComment (DeclSpace ds)
+		internal override void GenerateDocComment ()
 		{
-			DocUtil.GenerateTypeDocComment (this, ds, Report);
+			DocUtil.GenerateTypeDocComment (this, Report);
 		}
 
 		public override string DocCommentHeader {

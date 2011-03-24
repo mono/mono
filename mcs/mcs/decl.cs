@@ -819,22 +819,19 @@ namespace Mono.CSharp {
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public virtual string GetDocCommentName (DeclSpace ds)
+		public virtual string GetDocCommentName ()
 		{
-			if (ds == null || this is DeclSpace)
-				return DocCommentHeader + Name;
-			else
-				return DocCommentHeader + Parent.Name + "." + Name;
+			return DocCommentHeader + Parent.Name + "." + Name;
 		}
 
 		//
 		// Generates xml doc comments (if any), and if required,
 		// handle warning report.
 		//
-		internal virtual void GenerateDocComment (DeclSpace ds)
+		internal virtual void GenerateDocComment ()
 		{
 			try {
-				DocUtil.GenerateDocComment (this, ds, Report);
+				DocUtil.GenerateDocComment (this, Report);
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
@@ -1368,6 +1365,11 @@ namespace Mono.CSharp {
 			Report.Error (260, type.Location,
 				"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
 				type.GetSignatureForError ());
+		}
+
+		public override string GetDocCommentName ()
+		{
+			return DocCommentHeader + Name;
 		}
 
 		public override string GetSignatureForError ()
