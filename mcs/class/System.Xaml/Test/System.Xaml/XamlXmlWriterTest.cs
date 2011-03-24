@@ -1041,6 +1041,19 @@ namespace MonoTests.System.Xaml
 				l.Add (new SimpleClass ());
 			Assert.AreEqual (ReadXml ("CollectionContentPropertyX.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		[Category ("NotWorking")] // TestProperty is written as element so far.
+		public void Write_AmbientPropertyContainer ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			var t2 = new SecondTest.TestObject ();
+			t2.TestProperty = t1;
+			obj.Add ("okay", t2);
+			Assert.AreEqual (ReadXml ("AmbientPropertyContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

@@ -2573,6 +2573,229 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
+		#region ambient property test
+		protected void Read_AmbientPropertyContainer (XamlReader r, bool extensionBased)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("http://www.domain.com/path", r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			// t:AmbientPropertyContainer
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (SecondTest.ResourcesDict), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// m:Items
+			Assert.IsTrue (r.Read (), "sm#1-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#1-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sm#1-3");
+
+			xt = new XamlType (typeof (SecondTest.TestObject), r.SchemaContext);
+			for (int i = 0; i < 2; i++) {
+
+				if (i == 1 && r is XamlObjectReader && extensionBased) {
+					ReadReasourceExtension_AmbientPropertyContainer (r, i, extensionBased);
+					continue;
+				}
+
+				// t:TestObject
+				Assert.IsTrue (r.Read (), "so#2-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2." + i);
+				Assert.AreEqual (xt, r.Type, "so#2-3." + i);
+
+				if (!extensionBased) {
+					if (i == 0 && r is XamlXmlReader) // order difference between XamlObjectReader and XamlXmlReader ...
+						ReadName_AmbientPropertyContainer (r, i);
+
+					ReadTestProperty_AmbientPropertyContainer (r, i, extensionBased);
+
+					if (i == 0 && r is XamlObjectReader) // order difference between XamlObjectReader and XamlXmlReader ...
+						ReadName_AmbientPropertyContainer (r, i);
+				}
+
+				if (r is XamlObjectReader && extensionBased) { 
+					ReadTestProperty_AmbientPropertyContainer (r, i, extensionBased);
+					ReadName_AmbientPropertyContainer (r, i);
+				}
+
+				ReadKey_AmbientPropertyContainer (r, i, extensionBased);
+
+				if (extensionBased && i == 1)
+					 ReadTestProperty_AmbientPropertyContainer (r, i, extensionBased);
+
+				// /t:TestObject
+				Assert.IsTrue (r.Read (), "eo#2-1." + i);
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2." + i);
+			}
+
+			// /m:Items
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
+
+			// /t:AmbientPropertyContainer
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		void ReadKey_AmbientPropertyContainer (XamlReader r, int i, bool extensionBased)
+		{
+			// m:Key
+			Assert.IsTrue (r.Read (), "sm#4-1." + i);
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#4-2." + i);
+			Assert.AreEqual (XamlLanguage.Key, r.Member, "sm#4-3." + i);
+
+			if (!extensionBased || r is XamlObjectReader) {
+				// t:String (as it is specific derived type as compared to the key object type in Dictionary<object,object>)
+				Assert.IsTrue (r.Read (), "so#5-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#5-2." + i);
+				Assert.AreEqual (XamlLanguage.String, r.Type, "so#5-3." + i);
+
+				Assert.IsTrue (r.Read (), "sm#5-1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#5-2." + i);
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sm#5-3." + i);
+
+				Assert.IsTrue (r.Read (), "v#5-1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#5-2." + i);
+
+				Assert.IsTrue (r.Read (), "em#5-1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#5-2." + i);
+
+				// /t:String
+				Assert.IsTrue (r.Read (), "eo#5-1." + i);
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#5-2." + i);
+			} else {
+				// it is in attribute string without type in xml.
+				Assert.IsTrue (r.Read (), "v#y-1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#y-2." + i);
+				Assert.AreEqual (i == 0 ? "TestDictItem" : "okay", r.Value, "v#y-3." + i);
+			}
+
+			// /m:Key
+			Assert.IsTrue (r.Read (), "em#4-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#4-2." + i);
+		}
+
+		void ReadName_AmbientPropertyContainer (XamlReader r, int i)
+		{
+			// m:Name
+			Assert.IsTrue (r.Read (), "sm#3-1." + i);
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#3-2." + i);
+			Assert.AreEqual (XamlLanguage.Name, r.Member, "sm#3-3." + i);
+
+			Assert.IsTrue (r.Read (), "v#3-1." + i);
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#3-2." + i);
+			Assert.AreEqual ("__ReferenceID0", r.Value, "v#3-3." + i);
+
+			// /m:Name
+			Assert.IsTrue (r.Read (), "em#3-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#3-2." + i);
+		}
+
+		void ReadTestProperty_AmbientPropertyContainer (XamlReader r, int i, bool extensionBased)
+		{
+			var xt = new XamlType (typeof (SecondTest.TestObject), r.SchemaContext);
+
+			// m:TestProperty
+			Assert.IsTrue (r.Read (), "sm#2-1." + i);
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#2-2." + i);
+			Assert.AreEqual (xt.GetMember ("TestProperty"), r.Member, "sm#2-3." + i);
+
+			if (i == 0) {
+				// t:TestObject={x:Null}
+				Assert.IsTrue (r.Read (), "so#3-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#3-2." + i);
+				Assert.AreEqual (XamlLanguage.Null, r.Type, "so#3-3." + i);
+				Assert.IsTrue (r.Read (), "eo#3-1." + i);
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#3-2." + i);
+			} else if (extensionBased) {
+				ReadReasourceExtension_AmbientPropertyContainer (r, i, extensionBased);
+			} else {
+				ReadReference_AmbientPropertyContainer (r, i, extensionBased);
+			}
+
+			// /m:TestProperty
+			Assert.IsTrue (r.Read (), "em#2-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#2-2." + i);
+		}
+
+		void ReadReasourceExtension_AmbientPropertyContainer (XamlReader r, int i, bool extensionBased)
+		{
+			// t:ResourceExtension
+			var xt = r.SchemaContext.GetXamlType (typeof (SecondTest.ResourceExtension));
+			Assert.IsTrue (r.Read (), "so#z-1." + i);
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#z-2." + i);
+			Assert.AreEqual (xt, r.Type, "so#z-2." + i);
+
+			if (r is XamlObjectReader) {
+
+				// m:Arguments
+				Assert.IsTrue (r.Read (), "sm#zz-1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#zz-2." + i);
+				Assert.AreEqual (XamlLanguage.Arguments, r.Member, "sm#zz-3." + i);
+
+				ReadReference_AmbientPropertyContainer (r, i, extensionBased);
+
+				// /m:Arguments
+				Assert.IsTrue (r.Read (), "em#zz-1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#zz-2." + i);
+
+				ReadKey_AmbientPropertyContainer (r, i, extensionBased);
+
+			} else {
+
+				// m:PositionalParameters
+				Assert.IsTrue (r.Read (), "sm#z-1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#z-2." + i);
+				Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "sm#z-3." + i);
+
+				Assert.IsTrue (r.Read (), "v#z-1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#z-2." + i);
+
+				// /m:PositionalParameters
+				Assert.IsTrue (r.Read (), "em#z-1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#z-2." + i);
+			}
+			
+			// /t:ResourceExtension
+			Assert.IsTrue (r.Read (), "eo#z-1." + i);
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#z-2." + i);
+		}
+
+		void ReadReference_AmbientPropertyContainer (XamlReader r, int i, bool extensionBased)
+		{
+			// x:Reference
+			Assert.IsTrue (r.Read (), "so#zz2-1." + i);
+			Assert.AreEqual (XamlLanguage.Reference, r.Type, "so#zz2-2." + i);
+
+			// posparm
+			Assert.IsTrue (r.Read (), "sm#zz2-1." + i);
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "sm#zz2-3." + i);
+			// value
+			Assert.IsTrue (r.Read (), "v#zz2-1." + i);
+			Assert.AreEqual ("__ReferenceID0", r.Value, "v#zz2-2." + i);
+			// /posparm
+			Assert.IsTrue (r.Read (), "em#zz2-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#zz2-2." + i);
+			// /x:Reference
+			Assert.IsTrue (r.Read (), "eo#zz2-1." + i);
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#zz2-2." + i);
+		}
+		#endregion
+		
 		protected void Read_AttachedProperty (XamlReader r)
 		{
 			var at = new XamlType (typeof (Attachable), r.SchemaContext);

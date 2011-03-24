@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -944,7 +945,7 @@ namespace SecondTest
 	
 	public class CustomTypeConverterBase : TypeConverter
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof (string))
 			{
@@ -953,4 +954,67 @@ namespace SecondTest
 			return base.CanConvertFrom (context, sourceType);
 		}
 	}
+
+	#region bug #681202
+
+	[MarkupExtensionReturnType (typeof (object))]
+	public class ResourceExtension : MarkupExtension
+	{
+		[ConstructorArgument ("key")]
+		public object Key { get; set; }
+
+		public ResourceExtension (object key)
+		{
+			this.Key = key;
+		}
+
+		public override object ProvideValue (IServiceProvider serviceProvider)
+		{
+			IXamlSchemaContextProvider service = serviceProvider.GetService (typeof (IXamlSchemaContextProvider)) as IXamlSchemaContextProvider;
+			IAmbientProvider provider = serviceProvider.GetService (typeof (IAmbientProvider)) as IAmbientProvider;
+			Debug.Assert (provider != null, "The provider should not be null!");
+
+			XamlSchemaContext schemaContext = service.SchemaContext;
+			XamlType[] types = new XamlType [] { schemaContext.GetXamlType (typeof (ResourcesDict)) };
+
+			// ResourceDict is marked as Ambient, so the instance current being deserialized should be in this list.
+			List<AmbientPropertyValue> list = provider.GetAllAmbientValues (null, false, types) as List<AmbientPropertyValue>;
+			Debug.Assert (list.Count == 1, "expected ambient property count == 1 but " + list.Count);
+			for (int i = 0; i < list.Count; i++) {
+				AmbientPropertyValue value = list [i];
+				ResourcesDict dict = value.Value as ResourcesDict;
+
+				// For this example, we know that dict should not be null and that it is the only value in list.
+				object result = dict [this.Key];
+				return result;
+			}
+
+			return null;
+		}
+	}
+
+	[UsableDuringInitialization (true), Ambient]
+	public class ResourcesDict : Dictionary<object, object>
+	{
+		/*
+		public string Source { get; set; }
+		public void Load ()
+		{
+			ResourcesDict instance = XamlServices.Load (this.Source) as ResourcesDict;
+			foreach (var item in instance)
+			{
+				this.Add(item.Key, item.Value);
+			}
+		}
+		*/
+	}
+
+	public class TestObject
+	{
+		public TestObject TestProperty { get; set; }
+	}
+
+	#endregion
 }
+
+

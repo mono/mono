@@ -717,5 +717,31 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_CollectionContentPropertyX (xr, false);
 		}
+
+		[Test]
+		[Category ("NotWorking")] // only member ordering difference, maybe.
+		public void Read_AmbientPropertyContainer ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			var t2 = new SecondTest.TestObject ();
+			t2.TestProperty = t1;
+			obj.Add ("okay", t2);
+			var xr = new XamlObjectReader (obj);
+			Read_AmbientPropertyContainer (xr, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // only member ordering difference, maybe.
+		public void Read_AmbientPropertyContainer2 ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			obj.Add ("okay", new SecondTest.ResourceExtension (t1));
+			var xr = new XamlObjectReader (obj);
+			Read_AmbientPropertyContainer (xr, true);
+		}
 	}
 }

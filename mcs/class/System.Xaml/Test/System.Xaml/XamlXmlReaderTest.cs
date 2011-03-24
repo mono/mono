@@ -664,6 +664,20 @@ namespace MonoTests.System.Xaml
 			Read_CollectionContentPropertyX (r, true);
 		}
 
+		[Test]
+		public void Read_AmbientPropertyContainer ()
+		{
+			var r = GetReader ("AmbientPropertyContainer.xml");
+			Read_AmbientPropertyContainer (r, false);
+		}
+
+		[Test]
+		public void Read_AmbientPropertyContainer2 ()
+		{
+			var r = GetReader ("AmbientPropertyContainer2.xml");
+			Read_AmbientPropertyContainer (r, true);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

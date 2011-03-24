@@ -1322,5 +1322,36 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (4, res.ListOfItems.Count, "#1");
 			}
 		}
+
+		[Test]
+		public void Write_AmbientPropertyContainer ()
+		{
+			using (var xr = GetReader ("AmbientPropertyContainer.xml")) {
+				var res = (SecondTest.ResourcesDict) XamlServices.Load (xr);
+				Assert.AreEqual (2, res.Count, "#1");
+				Assert.IsTrue (res.ContainsKey ("TestDictItem"), "#2");
+				Assert.IsTrue (res.ContainsKey ("okay"), "#3");
+				var i1 = res ["TestDictItem"] as SecondTest.TestObject;
+				Assert.IsNull (i1.TestProperty, "#4");
+				var i2 = res ["okay"] as SecondTest.TestObject;
+				Assert.AreEqual (i1, i2.TestProperty, "#5");
+			}
+		}
+
+		[Test] // bug #682102
+		[Category ("NotWorking")]
+		public void Write_AmbientPropertyContainer2 ()
+		{
+			using (var xr = GetReader ("AmbientPropertyContainer2.xml")) {
+				var res = (SecondTest.ResourcesDict) XamlServices.Load (xr);
+				Assert.AreEqual (2, res.Count, "#1");
+				Assert.IsTrue (res.ContainsKey ("TestDictItem"), "#2");
+				Assert.IsTrue (res.ContainsKey ("okay"), "#3");
+				var i1 = res ["TestDictItem"] as SecondTest.TestObject;
+				Assert.IsNull (i1.TestProperty, "#4");
+				var i2 = res ["okay"] as SecondTest.TestObject;
+				Assert.AreEqual (i1, i2.TestProperty, "#5");
+			}
+		}
 	}
 }
