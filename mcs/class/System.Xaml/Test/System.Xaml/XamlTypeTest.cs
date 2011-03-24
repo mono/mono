@@ -852,6 +852,17 @@ namespace MonoTests.System.Xaml
 			xm.Invoker.SetValue (obj, 5);
 			xm.Invoker.SetValue (obj, null);
 		}
+
+		[Test]
+		public void DerivedCollectionAndDictionary ()
+		{
+			var xt = sctx.GetXamlType (typeof (IList<int>));
+			Assert.IsTrue (xt.IsCollection, "#1");
+			Assert.IsFalse (xt.IsDictionary, "#2");
+			xt = sctx.GetXamlType (typeof (IDictionary<EnumValueType,int>));
+			Assert.IsTrue (xt.IsDictionary, "#3");
+			Assert.IsFalse (xt.IsCollection, "#4");
+		}
 	}
 
 	class MyXamlType : XamlType

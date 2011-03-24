@@ -1371,5 +1371,15 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual ("Hello3", res.Items [2].Value, "#2");
 			}
 		}
+
+		[Test]
+		public void Write_DirectDictionaryContainer ()
+		{
+			using (var xr = GetReader ("DirectDictionaryContainer.xml")) {
+				var res = (DirectDictionaryContainer) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Items.Count, "#1");
+				Assert.AreEqual (40, res.Items [EnumValueType.Three], "#2");
+			}
+		}
 	}
 }

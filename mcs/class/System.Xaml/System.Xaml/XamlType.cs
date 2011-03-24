@@ -466,9 +466,12 @@ namespace System.Xaml
 
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			foreach (var pi in UnderlyingType.GetProperties (bf))
+			foreach (var pi in UnderlyingType.GetProperties (bf)) {
+				if (pi.Name.Contains ('.')) // exclude explicit interface implementations.
+					continue;
 				if (pi.CanRead && (pi.CanWrite || IsCollectionType (pi.PropertyType) || typeof (IXmlSerializable).IsAssignableFrom (pi.PropertyType)) && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
+			}
 			foreach (var ei in UnderlyingType.GetEvents (bf))
 				yield return new XamlMember (ei, SchemaContext);
 		}

@@ -70,6 +70,9 @@ namespace System.Xaml
 			if (type == definition)
 				return true;
 
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == definition)
+				return true;
+
 			foreach (var iface in type.GetInterfaces ())
 				if (iface == definition || (iface.IsGenericType && iface.GetGenericTypeDefinition () == definition))
 					return true;

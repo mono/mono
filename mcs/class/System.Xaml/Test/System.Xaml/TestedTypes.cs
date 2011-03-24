@@ -892,6 +892,16 @@ namespace MonoTests.System.Xaml
 	{
 		public string Value { get; set; }
 	}
+
+	public class DirectDictionaryContainer // for such xml that directly contains items in <*.Items> element.
+	{
+		public IDictionary<EnumValueType,int> Items { get; set; }
+
+		public DirectDictionaryContainer ()
+		{
+			this.Items = new Dictionary<EnumValueType,int> ();
+		}
+	}
 }
 
 namespace XamlTest
