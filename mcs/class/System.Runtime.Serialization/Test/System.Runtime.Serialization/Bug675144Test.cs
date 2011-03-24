@@ -17,7 +17,7 @@ namespace MonoTests.System.Runtime.Serialization
 		[Test]
 		public void ServerSerialization ()
 		{
-			var obj = new DataType2 { Items = new List<DataType1> { new DataType1 { Id = "D" }, new DataType1 { Id = "E" } } };
+			var obj = new DataType2 { Items = new List<object> { new DataType1 { Id = "D" }, new DataType1 { Id = "E" } } };
 			var ds = new DataContractSerializer (typeof (DataType2));
 			var sw = new StringWriter ();
 			using (var xw = XmlWriter.Create (sw))
