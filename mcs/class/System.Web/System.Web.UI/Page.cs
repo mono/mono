@@ -933,6 +933,10 @@ public partial class Page : TemplateControl, IHttpHandler
 					       OutputCacheLocation location,
 					       string varyByParam)
 	{
+		if (duration <= 0)
+			// No need to do anything, cache will be ineffective anyway
+			return;
+		
 		HttpResponse response = Response;
 		HttpCachePolicy cache = response.Cache;
 		bool set_vary = false;
