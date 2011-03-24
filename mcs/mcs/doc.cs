@@ -18,74 +18,53 @@ using System.Xml;
 using System.Linq;
 
 
-namespace Mono.CSharp {
-
+namespace Mono.CSharp
+{
 	//
-	// Support class for XML documentation.
+	// Implements XML documentation generation.
 	//
-	static class DocUtil
+	class DocumentationBuilder
 	{
-		// TypeContainer
+		//
+		// Used to create element which helps well-formedness checking.
+		//
+		readonly XmlDocument XmlDocumentation;
+
+		readonly ModuleContainer module;
 
 		//
-		// Generates xml doc comments (if any), and if required,
-		// handle warning report.
+		// The output for XML documentation.
 		//
-		internal static void GenerateTypeDocComment (TypeContainer t,
-			Report Report)
+		public XmlWriter XmlCommentOutput;
+
+		static readonly string line_head = Environment.NewLine + "            ";
+		static readonly char[] wsChars = new char[] { ' ', '\t', '\n', '\r' };
+
+		//
+		// Stores XmlDocuments that are included in XML documentation.
+		// Keys are included filenames, values are XmlDocuments.
+		//
+		Dictionary<string, XmlDocument> StoredDocuments = new Dictionary<string, XmlDocument> ();
+
+		public DocumentationBuilder (ModuleContainer module)
 		{
-			GenerateDocComment (t, Report);
-
-			if (t.DefaultStaticConstructor != null)
-				t.DefaultStaticConstructor.GenerateDocComment ();
-
-			if (t.InstanceConstructors != null)
-				foreach (Constructor c in t.InstanceConstructors)
-					c.GenerateDocComment ();
-
-			if (t.Types != null)
-				foreach (TypeContainer tc in t.Types)
-					tc.GenerateDocComment ();
-
-			if (t.Constants != null)
-				foreach (Const c in t.Constants)
-					c.GenerateDocComment ();
-
-			if (t.Fields != null)
-				foreach (FieldBase f in t.Fields)
-					f.GenerateDocComment ();
-
-			if (t.Events != null)
-				foreach (Event e in t.Events)
-					e.GenerateDocComment ();
-
-			if (t.Indexers != null)
-				foreach (Indexer ix in t.Indexers)
-					ix.GenerateDocComment ();
-
-			if (t.Properties != null)
-				foreach (Property p in t.Properties)
-					p.GenerateDocComment ();
-
-			if (t.Methods != null)
-				foreach (MethodOrOperator m in t.Methods)
-					m.GenerateDocComment ();
-
-			if (t.Operators != null)
-				foreach (Operator o in t.Operators)
-					o.GenerateDocComment ();
+			this.module = module;
+			XmlDocumentation = new XmlDocument ();
+			XmlDocumentation.PreserveWhitespace = false;
 		}
 
-		// MemberCore
-		private static readonly string line_head =
-			Environment.NewLine + "            ";
+		Report Report {
+			get {
+				return module.Compiler.Report;
+			}
+		}
 
-		static XmlNode GetDocCommentNode (MemberCore mc, string name, Report Report)
+		XmlNode GetDocCommentNode (MemberCore mc, string name)
 		{
 			// FIXME: It could be even optimizable as not
 			// to use XmlDocument. But anyways the nodes
 			// are not kept in memory.
-			XmlDocument doc = mc.Compiler.Settings.Documentation.XmlDocumentation;
+			XmlDocument doc = XmlDocumentation;
 			try {
 				XmlElement el = doc.CreateElement ("member");
 				el.SetAttribute ("name", name);
@@ -120,58 +99,49 @@ namespace Mono.CSharp {
 		// Generates xml doc comments (if any), and if required,
 		// handle warning report.
 		//
-		internal static void GenerateDocComment (MemberCore mc,
-			Report Report)
+		internal void GenerateDocumentationForMember (MemberCore mc)
 		{
-			if (mc.DocComment != null) {
-				string name = mc.GetDocCommentName ();
+			string name = mc.GetDocCommentName ();
 
-				XmlNode n = GetDocCommentNode (mc, name, Report);
+			XmlNode n = GetDocCommentNode (mc, name);
 
-				XmlElement el = n as XmlElement;
-				if (el != null) {
-					mc.OnGenerateDocComment (el);
+			XmlElement el = n as XmlElement;
+			if (el != null) {
+				mc.OnGenerateDocComment (el);
 
-					// FIXME: it could be done with XmlReader
-					XmlNodeList nl = n.SelectNodes (".//include");
-					if (nl.Count > 0) {
-						// It could result in current node removal, so prepare another list to iterate.
-						var al = new List<XmlNode> (nl.Count);
-						foreach (XmlNode inc in nl)
-							al.Add (inc);
-						foreach (XmlElement inc in al)
-							if (!HandleInclude (mc, inc, Report))
-								inc.ParentNode.RemoveChild (inc);
-					}
-
-					// FIXME: it could be done with XmlReader
-					DeclSpace ds_target = mc as DeclSpace;
-					if (ds_target == null)
-						ds_target = mc.Parent;
-
-					foreach (XmlElement see in n.SelectNodes (".//see"))
-						HandleSee (mc, ds_target, see, Report);
-					foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
-						HandleSeeAlso (mc, ds_target, seealso ,Report);
-					foreach (XmlElement see in n.SelectNodes (".//exception"))
-						HandleException (mc, ds_target, see, Report);
+				// FIXME: it could be done with XmlReader
+				XmlNodeList nl = n.SelectNodes (".//include");
+				if (nl.Count > 0) {
+					// It could result in current node removal, so prepare another list to iterate.
+					var al = new List<XmlNode> (nl.Count);
+					foreach (XmlNode inc in nl)
+						al.Add (inc);
+					foreach (XmlElement inc in al)
+						if (!HandleInclude (mc, inc))
+							inc.ParentNode.RemoveChild (inc);
 				}
 
-				n.WriteTo (mc.Compiler.Settings.Documentation.XmlCommentOutput);
+				// FIXME: it could be done with XmlReader
+				DeclSpace ds_target = mc as DeclSpace;
+				if (ds_target == null)
+					ds_target = mc.Parent;
+
+				foreach (XmlElement see in n.SelectNodes (".//see"))
+					HandleSee (mc, ds_target, see);
+				foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
+					HandleSeeAlso (mc, ds_target, seealso);
+				foreach (XmlElement see in n.SelectNodes (".//exception"))
+					HandleException (mc, ds_target, see);
 			}
-			else if (mc.IsExposedFromAssembly ()) {
-				Constructor c = mc as Constructor;
-				if (c == null || !c.IsDefault ())
-					Report.Warning (1591, 4, mc.Location,
-						"Missing XML comment for publicly visible type or member `{0}'", mc.GetSignatureForError ());
-			}
+
+			n.WriteTo (XmlCommentOutput);
 		}
 
 		//
 		// Processes "include" element. Check included file and
 		// embed the document content inside this documentation node.
 		//
-		private static bool HandleInclude (MemberCore mc, XmlElement el, Report Report)
+		bool HandleInclude (MemberCore mc, XmlElement el)
 		{
 			bool keep_include_node = false;
 			string file = el.GetAttribute ("file");
@@ -188,11 +158,11 @@ namespace Mono.CSharp {
 			}
 			else {
 				XmlDocument doc;
-				if (!mc.Compiler.Settings.Documentation.StoredDocuments.TryGetValue (file, out doc)) {
+				if (!StoredDocuments.TryGetValue (file, out doc)) {
 					try {
 						doc = new XmlDocument ();
 						doc.Load (file);
-						mc.Compiler.Settings.Documentation.StoredDocuments.Add (file, doc);
+						StoredDocuments.Add (file, doc);
 					} catch (Exception) {
 						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (String.Format (" Badly formed XML in at comment file `{0}': cannot be included ", file)), el);
 						Report.Warning (1592, 1, mc.Location, "Badly formed XML in included comments file -- `{0}'", file);
@@ -220,38 +190,32 @@ namespace Mono.CSharp {
 		//
 		// Handles <see> elements.
 		//
-		private static void HandleSee (MemberCore mc,
-			DeclSpace ds, XmlElement see, Report r)
+		void HandleSee (MemberCore mc, DeclSpace ds, XmlElement see)
 		{
-			HandleXrefCommon (mc, ds, see, r);
+			HandleXrefCommon (mc, ds, see);
 		}
 
 		//
 		// Handles <seealso> elements.
 		//
-		private static void HandleSeeAlso (MemberCore mc,
-			DeclSpace ds, XmlElement seealso, Report r)
+		void HandleSeeAlso (MemberCore mc, DeclSpace ds, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso, r);
+			HandleXrefCommon (mc, ds, seealso);
 		}
 
 		//
 		// Handles <exception> elements.
 		//
-		private static void HandleException (MemberCore mc,
-			DeclSpace ds, XmlElement seealso, Report r)
+		void HandleException (MemberCore mc, DeclSpace ds, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso, r);
+			HandleXrefCommon (mc, ds, seealso);
 		}
-
-		static readonly char [] wsChars =
-			new char [] {' ', '\t', '\n', '\r'};
 
 		//
 		// returns a full runtime type name from a name which might
 		// be C# specific type name.
 		//
-		private static TypeSpec FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref, Report r)
+		TypeSpec FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
 		{
 			bool is_array = false;
 			string identifier = name;
@@ -262,16 +226,15 @@ namespace Mono.CSharp {
 					is_array = true;
 				}
 			}
-			TypeSpec t = FindDocumentedTypeNonArray (mc, identifier, ds, cref, r);
+			TypeSpec t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
 			if (t != null && is_array)
 				t = ArrayContainer.MakeType (mc.Module, t);
 			return t;
 		}
 
-		private static TypeSpec FindDocumentedTypeNonArray (MemberCore mc, 
-			string identifier, DeclSpace ds, string cref, Report r)
+		TypeSpec FindDocumentedTypeNonArray (MemberCore mc, string identifier, DeclSpace ds, string cref)
 		{
-			var types = mc.Module.Compiler.BuiltinTypes;
+			var types = module.Compiler.BuiltinTypes;
 			switch (identifier) {
 			case "int":
 				return types.Int;
@@ -327,13 +290,13 @@ namespace Mono.CSharp {
 			}
 
 			int warn;
-			TypeSpec parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref, r);
+			TypeSpec parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
 			if (parent == null)
 				return null;
 			// no need to detect warning 419 here
 			var ts = FindDocumentedMember (mc, parent,
 				identifier.Substring (index + 1),
-				null, ds, out warn, cref, false, null, r) as TypeSpec;
+				null, ds, out warn, cref, false, null) as TypeSpec;
 			if (ts != null)
 				return ts;
 			return null;
@@ -343,16 +306,16 @@ namespace Mono.CSharp {
 		// Returns a MemberInfo that is referenced in XML documentation
 		// (by "see" or "seealso" elements).
 		//
-		private static MemberSpec FindDocumentedMember (MemberCore mc,
+		MemberSpec FindDocumentedMember (MemberCore mc,
 			TypeSpec type, string member_name, AParametersCollection param_list, 
 			DeclSpace ds, out int warning_type, string cref,
-			bool warn419, string name_for_error, Report r)
+			bool warn419, string name_for_error)
 		{
 //			for (; type != null; type = type.DeclaringType) {
 				var mi = FindDocumentedMemberNoNest (
 					mc, type, member_name, param_list, ds,
 					out warning_type, cref, warn419,
-					name_for_error, r);
+					name_for_error);
 				if (mi != null)
 					return mi; // new FoundMember (type, mi);
 //			}
@@ -360,10 +323,10 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		private static MemberSpec FindDocumentedMemberNoNest (
+		MemberSpec FindDocumentedMemberNoNest (
 			MemberCore mc, TypeSpec type, string member_name,
 			AParametersCollection param_list, DeclSpace ds, out int warning_type, 
-			string cref, bool warn419, string name_for_error, Report Report)
+			string cref, bool warn419, string name_for_error)
 		{
 			warning_type = 0;
 //			var filter = new MemberFilter (member_name, 0, MemberKind.All, param_list, null);
@@ -377,7 +340,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (warn419 && found.Count > 1) {
-				Report419 (mc, name_for_error, found.ToArray (), Report);
+				Report419 (mc, name_for_error, found.ToArray ());
 			}
 
 			return found [0];
@@ -477,8 +440,7 @@ namespace Mono.CSharp {
 		// Processes "see" or "seealso" elements.
 		// Checks cref attribute.
 		//
-		private static void HandleXrefCommon (MemberCore mc,
-			DeclSpace ds, XmlElement xref, Report Report)
+		void HandleXrefCommon (MemberCore mc, DeclSpace ds, XmlElement xref)
 		{
 			string cref = xref.GetAttribute ("cref").Trim (wsChars);
 			// when, XmlReader, "if (cref == null)"
@@ -521,7 +483,7 @@ namespace Mono.CSharp {
 				name = signature;
 				parameters = null;
 			}
-			Normalize (mc, ref name, Report);
+			Normalize (mc, ref name);
 
 			string identifier = GetBodyIdentifierFromName (name);
 
@@ -532,7 +494,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < name_elems.Length; i++) {
 				string nameElem = GetBodyIdentifierFromName (name_elems [i]);
 				if (i > 0)
-					Normalize (mc, ref nameElem, Report);
+					Normalize (mc, ref nameElem);
 				if (!Tokenizer.IsValidIdentifier (nameElem)
 					&& nameElem.IndexOf ("operator") < 0) {
 					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
@@ -553,8 +515,8 @@ namespace Mono.CSharp {
 				var plist = new List<TypeSpec> ();
 				for (int i = 0; i < param_list.Length; i++) {
 					string param_type_name = param_list [i].Trim (wsChars);
-					Normalize (mc, ref param_type_name, Report);
-					TypeSpec param_type = FindDocumentedType (mc, param_type_name, ds, cref, Report);
+					Normalize (mc, ref param_type_name);
+					TypeSpec param_type = FindDocumentedType (mc, param_type_name, ds, cref);
 					if (param_type == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
 							(i + 1).ToString (), cref);
@@ -566,7 +528,7 @@ namespace Mono.CSharp {
 				parameter_types = ParametersCompiled.CreateFullyResolved (plist.ToArray ());
 			}
 
-			TypeSpec type = FindDocumentedType (mc, name, ds, cref, Report);
+			TypeSpec type = FindDocumentedType (mc, name, ds, cref);
 			if (type != null
 				// delegate must not be referenced with args
 				&& (!type.IsDelegate
@@ -582,12 +544,12 @@ namespace Mono.CSharp {
 				string typeName = name.Substring (0, period);
 				string member_name = name.Substring (period + 1);
 				string lookup_name = member_name == "this" ? MemberCache.IndexerNameAlias : member_name;
-				Normalize (mc, ref lookup_name, Report);
-				Normalize (mc, ref member_name, Report);
-				type = FindDocumentedType (mc, typeName, ds, cref, Report);
+				Normalize (mc, ref lookup_name);
+				Normalize (mc, ref member_name);
+				type = FindDocumentedType (mc, typeName, ds, cref);
 				int warn_result;
 				if (type != null) {
-					var mi = FindDocumentedMember (mc, type, lookup_name, parameter_types, ds, out warn_result, cref, true, name, Report);
+					var mi = FindDocumentedMember (mc, type, lookup_name, parameter_types, ds, out warn_result, cref, true, name);
 					if (warn_result > 0)
 						return;
 					if (mi != null) {
@@ -601,7 +563,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				int warn_result;
-				var mi = FindDocumentedMember (mc, ds.PartialContainer.Definition, name, parameter_types, ds, out warn_result, cref, true, name, Report);
+				var mi = FindDocumentedMember (mc, ds.PartialContainer.Definition, name, parameter_types, ds, out warn_result, cref, true, name);
 
 				if (warn_result > 0)
 					return;
@@ -671,7 +633,7 @@ namespace Mono.CSharp {
 			return identifier;
 		}
 
-		static void Report419 (MemberCore mc, string member_name, MemberSpec [] mis, Report Report)
+		void Report419 (MemberCore mc, string member_name, MemberSpec [] mis)
 		{
 			Report.Warning (419, 3, mc.Location, 
 				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
@@ -821,7 +783,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		private static void Normalize (MemberCore mc, ref string name, Report Report)
+		void Normalize (MemberCore mc, ref string name)
 		{
 			if (name.Length > 0 && name [0] == '@')
 				name = name.Substring (1);
@@ -854,80 +816,39 @@ namespace Mono.CSharp {
 			}
 			return false;
 		}
-	}
-
-	//
-	// Implements XML documentation generation.
-	//
-	public class Documentation
-	{
-		public Documentation (string xml_output_filename)
-		{
-			docfilename = xml_output_filename;
-			XmlDocumentation = new XmlDocument ();
-			XmlDocumentation.PreserveWhitespace = false;
-		}
-
-		private string docfilename;
-
-		//
-		// Used to create element which helps well-formedness checking.
-		//
-		public XmlDocument XmlDocumentation;
-
-		//
-		// The output for XML documentation.
-		//
-		public XmlWriter XmlCommentOutput;
-
-		//
-		// Stores XmlDocuments that are included in XML documentation.
-		// Keys are included filenames, values are XmlDocuments.
-		//
-		public Dictionary<string, XmlDocument> StoredDocuments = new Dictionary<string, XmlDocument> ();
 
 		//
 		// Outputs XML documentation comment from tokenized comments.
 		//
-		public bool OutputDocComment (string asmfilename, ModuleContainer module)
+		public bool OutputDocComment (string asmfilename, string xmlFileName)
 		{
 			XmlTextWriter w = null;
 			try {
-				w = new XmlTextWriter (docfilename, null);
+				w = new XmlTextWriter (xmlFileName, null);
 				w.Indentation = 4;
 				w.Formatting = Formatting.Indented;
 				w.WriteStartDocument ();
 				w.WriteStartElement ("doc");
 				w.WriteStartElement ("assembly");
 				w.WriteStartElement ("name");
-				w.WriteString (Path.ChangeExtension (asmfilename, null));
+				w.WriteString (Path.GetFileNameWithoutExtension (asmfilename));
 				w.WriteEndElement (); // name
 				w.WriteEndElement (); // assembly
 				w.WriteStartElement ("members");
 				XmlCommentOutput = w;
-				GenerateDocComment (module);
+				module.GenerateDocComment (this);
 				w.WriteFullEndElement (); // members
 				w.WriteEndElement ();
 				w.WriteWhitespace (Environment.NewLine);
 				w.WriteEndDocument ();
 				return true;
 			} catch (Exception ex) {
-				module.Compiler.Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
+				module.Compiler.Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", xmlFileName, ex.Message);
 				return false;
 			} finally {
 				if (w != null)
 					w.Close ();
 			}
-		}
-
-		//
-		// Fixes full type name of each documented types/members up.
-		//
-		void GenerateDocComment (ModuleContainer module)
-		{
-			if (module.Types != null)
-				foreach (TypeContainer tc in module.Types)
-					DocUtil.GenerateTypeDocComment (tc, module.Compiler.Report);
 		}
 	}
 }

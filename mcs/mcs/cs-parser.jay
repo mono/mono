@@ -6166,7 +6166,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
 	this.compiler = module.Compiler;
 	this.settings = compiler.Settings;
 	lang_version = settings.Version;
-	doc_support = settings.Documentation != null;
+	doc_support = settings.DocumentationFile != null;
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();

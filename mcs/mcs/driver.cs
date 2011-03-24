@@ -310,8 +310,10 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 
-			if (settings.Documentation != null && !settings.Documentation.OutputDocComment (output_file, module))
-				return false;
+			if (settings.DocumentationFile != null) {
+				var doc = new DocumentationBuilder (module);
+				doc.OutputDocComment (output_file, settings.DocumentationFile);
+			}
 
 			assembly.Resolve ();
 			

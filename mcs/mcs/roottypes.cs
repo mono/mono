@@ -436,6 +436,12 @@ namespace Mono.CSharp
 					c.EmitType ();
 		}
 
+		internal override void GenerateDocComment (DocumentationBuilder builder)
+		{
+			foreach (var tc in types)
+				tc.GenerateDocComment (builder);
+		}
+
 		public AnonymousTypeClass GetAnonymousType (IList<AnonymousTypeParameter> parameters)
 		{
 			List<AnonymousTypeClass> candidates;

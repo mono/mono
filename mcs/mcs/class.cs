@@ -793,6 +793,50 @@ namespace Mono.CSharp {
 			get { return pending; }
 		}
 
+		internal override void GenerateDocComment (DocumentationBuilder builder)
+		{
+			base.GenerateDocComment (builder);
+
+			if (DefaultStaticConstructor != null)
+				DefaultStaticConstructor.GenerateDocComment (builder);
+
+			if (InstanceConstructors != null)
+				foreach (Constructor c in InstanceConstructors)
+					c.GenerateDocComment (builder);
+
+			if (Types != null)
+				foreach (TypeContainer tc in Types)
+					tc.GenerateDocComment (builder);
+
+			if (Constants != null)
+				foreach (Const c in Constants)
+					c.GenerateDocComment (builder);
+
+			if (Fields != null)
+				foreach (FieldBase f in Fields)
+					f.GenerateDocComment (builder);
+
+			if (Events != null)
+				foreach (Event e in Events)
+					e.GenerateDocComment (builder);
+
+			if (Indexers != null)
+				foreach (Indexer ix in Indexers)
+					ix.GenerateDocComment (builder);
+
+			if (Properties != null)
+				foreach (Property p in Properties)
+					p.GenerateDocComment (builder);
+
+			if (Methods != null)
+				foreach (MethodOrOperator m in Methods)
+					m.GenerateDocComment (builder);
+
+			if (Operators != null)
+				foreach (Operator o in Operators)
+					o.GenerateDocComment (builder);
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (OptAttributes == null)
@@ -2225,15 +2269,6 @@ namespace Mono.CSharp {
 				else
 					cached_method &= ~CachedMethods.HasStaticFieldInitializer;
 			}
-		}
-
-		//
-		// Generates xml doc comments (if any), and if required,
-		// handle warning report.
-		//
-		internal override void GenerateDocComment ()
-		{
-			DocUtil.GenerateTypeDocComment (this, Report);
 		}
 
 		public override string DocCommentHeader {

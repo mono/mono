@@ -414,7 +414,7 @@ namespace Mono.CSharp
 			putback_char = -1;
 
 			xml_comment_buffer = new StringBuilder ();
-			doc_processing = ctx.Settings.Documentation != null;
+			doc_processing = ctx.Settings.DocumentationFile != null;
 
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
 				tab_size = 4;

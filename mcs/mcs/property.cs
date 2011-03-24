@@ -1551,7 +1551,7 @@ namespace Mono.CSharp
 
 		public override string GetDocCommentName ()
 		{
-			return DocUtil.GetMethodDocCommentName (this, parameters);
+			return DocumentationBuilder.GetMethodDocCommentName (this, parameters);
 		}
 
 		public override string GetSignatureForError ()

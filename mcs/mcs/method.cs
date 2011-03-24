@@ -132,7 +132,7 @@ namespace Mono.CSharp {
 		//
 		public override string GetDocCommentName ()
 		{
-			return DocUtil.GetMethodDocCommentName (this, parameters);
+			return DocumentationBuilder.GetMethodDocCommentName (this, parameters);
 		}
 
 		//
@@ -144,7 +144,7 @@ namespace Mono.CSharp {
 		//
 		internal override void OnGenerateDocComment (XmlElement el)
 		{
-			DocUtil.OnMethodGenerateDocComment (this, el, Report);
+			DocumentationBuilder.OnMethodGenerateDocComment (this, el, Report);
 		}
 
 		//

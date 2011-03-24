@@ -91,7 +91,7 @@ namespace Mono.CSharp {
 		//
 		// If set, enable XML documentation generation
 		//
-		public Documentation Documentation;
+		public string DocumentationFile;
 
 		public string MainClass;
 
@@ -806,7 +806,7 @@ namespace Mono.CSharp {
 						return ParseResult.Error;
 					}
 
-					settings.Documentation = new Documentation (value);
+					settings.DocumentationFile = value;
 					return ParseResult.Success;
 				}
 			case "/lib": {
