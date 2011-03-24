@@ -743,5 +743,13 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_AmbientPropertyContainer (xr, true);
 		}
+
+		[Test]
+		public void Read_NullableContainer ()
+		{
+			var obj = new NullableContainer () { TestProp = 5 };
+			var xr = new XamlObjectReader (obj);
+			Read_NullableContainer (xr);
+		}
 	}
 }

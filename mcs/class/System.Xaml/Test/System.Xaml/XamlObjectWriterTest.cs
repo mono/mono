@@ -1352,5 +1352,14 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (i1, i2.TestProperty, "#5");
 			}
 		}
+
+		[Test]
+		public void Write_NullableContainer ()
+		{
+			using (var xr = GetReader ("NullableContainer.xml")) {
+				var res = (NullableContainer) XamlServices.Load (xr);
+				Assert.AreEqual (5, res.TestProp, "#1");
+			}
+		}
 	}
 }

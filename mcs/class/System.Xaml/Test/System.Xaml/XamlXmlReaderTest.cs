@@ -678,6 +678,13 @@ namespace MonoTests.System.Xaml
 			Read_AmbientPropertyContainer (r, true);
 		}
 
+		[Test]
+		public void Read_NullableContainer ()
+		{
+			var r = GetReader ("NullableContainer.xml");
+			Read_NullableContainer (r);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

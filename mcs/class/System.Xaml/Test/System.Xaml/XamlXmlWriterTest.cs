@@ -1054,6 +1054,13 @@ namespace MonoTests.System.Xaml
 			obj.Add ("okay", t2);
 			Assert.AreEqual (ReadXml ("AmbientPropertyContainer.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_NullableContainer ()
+		{
+			var obj = new NullableContainer () { TestProp = 5 };
+			Assert.AreEqual (ReadXml ("NullableContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

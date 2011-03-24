@@ -842,6 +842,11 @@ namespace MonoTests.System.Xaml
 			var xm = xt.GetMember ("TestProp");
 			Assert.IsTrue (xm.Type.IsGeneric, "#3");
 			Assert.IsTrue (xm.Type.IsNullable, "#4");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", xm.Type.PreferredXamlNamespace, "#5");
+			Assert.AreEqual (1, xm.Type.TypeArguments.Count, "#6");
+			Assert.AreEqual (XamlLanguage.Int32, xm.Type.TypeArguments [0], "#7");
+			Assert.IsNotNull (xm.Type.TypeConverter, "#8");
+			Assert.IsNotNull (xm.Type.TypeConverter.ConverterInstance, "#9");
 
 			var obj = new NullableContainer ();
 			xm.Invoker.SetValue (obj, 5);

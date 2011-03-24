@@ -90,8 +90,14 @@ namespace System.Xaml.Schema
 			if (!typeof (TConverterBase).IsAssignableFrom (ConverterType))
 				throw new XamlSchemaException (String.Format ("ConverterType '{0}' is not derived from '{1}' type", ConverterType, typeof (TConverterBase)));
 
-			if (TargetType != null && TargetType.UnderlyingType != null && TargetType.UnderlyingType.IsEnum)
-				return (TConverterBase) (object) new EnumConverter (TargetType.UnderlyingType);
+			if (TargetType != null && TargetType.UnderlyingType != null) {
+				// special case: Enum
+				if (TargetType.UnderlyingType.IsEnum)
+					return (TConverterBase) (object) new EnumConverter (TargetType.UnderlyingType);
+				// special case: Nullable<T>
+				if (TargetType.IsNullable && TargetType.UnderlyingType.IsValueType)
+					return (TConverterBase) (object) new NullableConverter (TargetType.UnderlyingType);
+			}
 
 			if (ConverterType.GetConstructor (Type.EmptyTypes) == null)
 				return null;
