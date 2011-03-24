@@ -255,8 +255,8 @@ namespace System.Xaml
 					obj = ((MarkupExtension) obj).ProvideValue (service_provider);
 				} catch (XamlObjectWriterException) {
 					throw;
-//				} catch (Exception ex) {
-//					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
+				} catch (Exception ex) {
+					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
 				}
 			}
 			var nfr = obj as NameFixupRequired;
