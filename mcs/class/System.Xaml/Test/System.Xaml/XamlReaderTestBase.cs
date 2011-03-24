@@ -2834,6 +2834,96 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsFalse (r.Read (), "end");
 		}
+
+		protected void Read_DirectListContainer (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#x-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#x-2");
+			Assert.IsNotNull (r.Namespace, "ns#x-3");
+			Assert.AreEqual ("scg", r.Namespace.Prefix, "ns#x-4");
+			assns = "clr-namespace:System.Collections.Generic;assembly=" + typeof (IList<>).Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#x-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			// t:DirectListContainer
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (DirectListContainer), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// m:Items
+			Assert.IsTrue (r.Read (), "sm1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm1#2");
+			Assert.AreEqual (xt.GetMember ("Items"), r.Member, "sm1#3");
+
+			// GetObject
+			Assert.IsTrue (r.Read (), "go#1");
+			Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "go#2");
+
+			// m:Items(GetObject)
+			Assert.IsTrue (r.Read (), "sm2#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm2#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sm2#3");
+
+			xt = r.SchemaContext.GetXamlType (typeof (DirectListContent));
+			for (int i = 0; i < 3; i++) {
+				// t:DirectListContent
+				Assert.IsTrue (r.Read (), "so#x-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#x-2." + i);
+				Assert.AreEqual (xt, r.Type, "so#x-3." + i);
+
+				// m:Value
+				Assert.IsTrue (r.Read (), "sm#x1");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#x2");
+				Assert.AreEqual (xt.GetMember ("Value"), r.Member, "sm#x3");
+
+				// x:Value
+				Assert.IsTrue (r.Read (), "v#x-1");
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#x-2");
+				Assert.AreEqual ("Hello" + (i + 1), r.Value, "v#x-3");
+
+				// /m:Value
+				Assert.IsTrue (r.Read (), "em#x-1");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#x-2");
+
+				// /t:DirectListContent
+				Assert.IsTrue (r.Read (), "eo#x-1");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#x-2");
+			}
+
+			// /m:Items(GetObject)
+			Assert.IsTrue (r.Read (), "em#2-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#2-2");
+
+			// /GetObject
+			Assert.IsTrue (r.Read (), "ego#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "ego#2-2");
+
+			// /m:Items
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#1-2");
+
+			// /t:DirectListContainer
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
 		
 		protected void Read_AttachedProperty (XamlReader r)
 		{

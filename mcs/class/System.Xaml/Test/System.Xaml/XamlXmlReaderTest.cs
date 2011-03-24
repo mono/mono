@@ -685,6 +685,14 @@ namespace MonoTests.System.Xaml
 			Read_NullableContainer (r);
 		}
 
+		// It is not really a common test; it just makes use of base helper methods.
+		[Test]
+		public void Read_DirectListContainer ()
+		{
+			var r = GetReader ("DirectListContainer.xml");
+			Read_DirectListContainer (r);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

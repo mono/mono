@@ -378,6 +378,19 @@ namespace System.Xaml
 					SetGetObject ();
 					return;
 				}
+
+				// It could still be GetObject if current_member
+				// is not a directive and current type is not
+				// a markup extension.
+				// (I'm not very sure about the condition;
+				// it could be more complex.)
+				// seealso: bug #682131
+				if (!get_flags.Peek () &&
+				    !(current_member is XamlDirective) &&
+				    !xt.IsMarkupExtension) {
+					SetGetObject ();
+					return;
+				}
 			}
 
 			types.Push (xt);
@@ -508,11 +521,11 @@ namespace System.Xaml
 		
 		void SetGetObject ()
 		{
-			current = null; // do not clear current_member as it is reused in the next Read().
-			node_type = XamlNodeType.GetObject;
-			inside_object_not_member = true;
 			types.Push (current_member.Type);
 			get_flags.Push (true);
+			current = current_member = null;
+			node_type = XamlNodeType.GetObject;
+			inside_object_not_member = true;
 		}
 
 		XamlDirective FindStandardDirective (string name, AllowedMemberLocations loc)

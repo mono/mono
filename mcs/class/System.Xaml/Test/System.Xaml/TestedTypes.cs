@@ -877,6 +877,21 @@ namespace MonoTests.System.Xaml
 	{
 		public int? TestProp { get; set; }
 	}
+
+	public class DirectListContainer // for such xml that directly contains items in <*.Items> element.
+	{
+		public IList<DirectListContent> Items { get; set; }
+
+		public DirectListContainer ()
+		{
+			this.Items = new List<DirectListContent> ();
+		}
+	}
+
+	public class DirectListContent
+	{
+		public string Value { get; set; }
+	}
 }
 
 namespace XamlTest

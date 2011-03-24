@@ -1361,5 +1361,15 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (5, res.TestProp, "#1");
 			}
 		}
+
+		[Test]
+		public void Write_DirectListContainer ()
+		{
+			using (var xr = GetReader ("DirectListContainer.xml")) {
+				var res = (DirectListContainer) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Items.Count, "#1");
+				Assert.AreEqual ("Hello3", res.Items [2].Value, "#2");
+			}
+		}
 	}
 }
