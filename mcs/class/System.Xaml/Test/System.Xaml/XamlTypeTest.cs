@@ -820,6 +820,18 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (p, "#1");
 			Assert.AreEqual ("ListOfItems", p.Name, "#2");
 		}
+
+		[Test]
+		public void AmbientPropertyContainer ()
+		{
+			var xt = sctx.GetXamlType (typeof (SecondTest.ResourcesDict));
+			Assert.IsTrue (xt.IsAmbient, "#1");
+			var l = xt.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#2");
+			// FIXME: enable when string representation difference become compatible
+			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Keys", l [0].ToString (), "#3");
+			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Values", l [1].ToString (), "#4");
+		}
 	}
 
 	class MyXamlType : XamlType

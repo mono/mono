@@ -42,8 +42,9 @@ namespace System.Xaml
 		NamespaceResolver namespace_resolver;
 		PrefixLookup prefix_lookup;
 		XamlSchemaContext sctx;
+		IAmbientProvider ambient_provider;
 
-		public ValueSerializerContext (PrefixLookup prefixLookup, XamlSchemaContext schemaContext)
+		public ValueSerializerContext (PrefixLookup prefixLookup, XamlSchemaContext schemaContext, IAmbientProvider ambientProvider)
 		{
 			if (prefixLookup == null)
 				throw new ArgumentNullException ("prefixLookup");
@@ -53,6 +54,7 @@ namespace System.Xaml
 			namespace_resolver = new NamespaceResolver (prefix_lookup.Namespaces);
 			type_resolver = new XamlTypeResolver (namespace_resolver, schemaContext);
 			sctx = schemaContext;
+			ambient_provider = ambientProvider;
 		}
 
 		public object GetService (Type serviceType)
@@ -67,6 +69,8 @@ namespace System.Xaml
 				return name_resolver;
 			if (serviceType == typeof (IXamlTypeResolver))
 				return type_resolver;
+			if (serviceType == typeof (IAmbientProvider))
+				return ambient_provider;
 			if (serviceType == typeof (IXamlSchemaContextProvider))
 				return this;
 			return null;
@@ -142,6 +146,84 @@ namespace System.Xaml
 		public IEnumerable<NamespaceDeclaration> GetNamespacePrefixes ()
 		{
 			return source;
+		}
+	}
+
+	internal class AmbientProvider : IAmbientProvider
+	{
+		List<AmbientPropertyValue> values = new List<AmbientPropertyValue> ();
+		Stack<AmbientPropertyValue> live_stack = new Stack<AmbientPropertyValue> ();
+
+		public void Push (AmbientPropertyValue v)
+		{
+			live_stack.Push (v);
+			values.Add (v);
+		}
+
+		public void Pop ()
+		{
+			live_stack.Pop ();
+		}
+
+		public IEnumerable<object> GetAllAmbientValues (params XamlType [] types)
+		{
+			return GetAllAmbientValues (null, false, types);
+		}
+		
+		public IEnumerable<AmbientPropertyValue> GetAllAmbientValues (IEnumerable<XamlType> ceilingTypes, params XamlMember [] properties)
+		{
+			return GetAllAmbientValues (ceilingTypes, false, null, properties);
+		}
+		
+		public IEnumerable<AmbientPropertyValue> GetAllAmbientValues (IEnumerable<XamlType> ceilingTypes, bool searchLiveStackOnly, IEnumerable<XamlType> types, params XamlMember [] properties)
+		{
+			return DoGetAllAmbientValues (ceilingTypes, searchLiveStackOnly, types, properties).ToList ();
+		}
+		
+		IEnumerable<AmbientPropertyValue> DoGetAllAmbientValues (IEnumerable<XamlType> ceilingTypes, bool searchLiveStackOnly, IEnumerable<XamlType> types, params XamlMember [] properties)
+		{
+			if (searchLiveStackOnly) {
+				if (live_stack.Count > 0) {
+					// pop, call recursively, then push back.
+					var p = live_stack.Pop ();
+					if (p.RetrievedProperty != null && ceilingTypes != null && ceilingTypes.Contains (p.RetrievedProperty.Type))
+						yield break;
+					if (DoesAmbientPropertyApply (p, types, properties))
+						yield return p;
+
+					foreach (var i in GetAllAmbientValues (ceilingTypes, searchLiveStackOnly, types, properties))
+						yield return i;
+
+					live_stack.Push (p);
+				}
+			} else {
+				// FIXME: does ceilingTypes matter?
+				foreach (var p in values)
+					if (DoesAmbientPropertyApply (p, types, properties))
+						yield return p;
+			}
+		}
+		
+		bool DoesAmbientPropertyApply (AmbientPropertyValue p, IEnumerable<XamlType> types, params XamlMember [] properties)
+		{
+			if (types == null || !types.Any () || types.Any (xt => xt.UnderlyingType != null && xt.UnderlyingType.IsInstanceOfType (p.Value)))
+				if (properties == null || !properties.Any () || properties.Contains (p.RetrievedProperty))
+					return true;
+			return false;
+		}
+		
+		public object GetFirstAmbientValue (params XamlType [] types)
+		{
+			foreach (var obj in GetAllAmbientValues (types))
+				return obj;
+			return null;
+		}
+		
+		public AmbientPropertyValue GetFirstAmbientValue (IEnumerable<XamlType> ceilingTypes, params XamlMember [] properties)
+		{
+			foreach (var obj in GetAllAmbientValues (ceilingTypes, properties))
+				return obj;
+			return null;
 		}
 	}
 }

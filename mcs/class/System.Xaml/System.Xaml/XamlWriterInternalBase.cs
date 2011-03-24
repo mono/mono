@@ -47,7 +47,7 @@ namespace System.Xaml
 			this.sctx = schemaContext;
 			this.manager = manager;
 			var p = new PrefixLookup (sctx) { IsCollectingNamespaces = true }; // it does not raise unknown namespace error.
-			service_provider = new ValueSerializerContext (p, schemaContext);
+			service_provider = new ValueSerializerContext (p, schemaContext, AmbientProvider);
 		}
 
 		XamlSchemaContext sctx;
@@ -62,6 +62,10 @@ namespace System.Xaml
 
 		List<NamespaceDeclaration> namespaces {
 			get { return prefix_lookup.Namespaces; }
+		}
+
+		internal virtual IAmbientProvider AmbientProvider {
+			get { return null; }
 		}
 
 		internal class ObjectState

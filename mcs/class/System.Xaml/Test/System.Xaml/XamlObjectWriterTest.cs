@@ -1339,7 +1339,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test] // bug #682102
-		[Category ("NotWorking")]
 		public void Write_AmbientPropertyContainer2 ()
 		{
 			using (var xr = GetReader ("AmbientPropertyContainer2.xml")) {

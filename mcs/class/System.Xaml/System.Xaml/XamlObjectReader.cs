@@ -98,7 +98,7 @@ namespace System.Xaml
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 			}
 
-			value_serializer_context = new ValueSerializerContext (new PrefixLookup (sctx), sctx);
+			value_serializer_context = new ValueSerializerContext (new PrefixLookup (sctx), sctx, null);
 			new XamlObjectNodeIterator (instance, sctx, value_serializer_context).PrepareReading ();
 		}
 		

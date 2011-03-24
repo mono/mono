@@ -212,6 +212,7 @@ namespace System.Xaml
 		XamlSchemaContext sctx;
 		INameScope name_scope = new NameScope ();
 		List<NameFixupRequired> pending_name_references = new List<NameFixupRequired> ();
+		AmbientProvider ambient_provider = new AmbientProvider ();
 
 		public object Result { get; set; }
 		
@@ -254,8 +255,8 @@ namespace System.Xaml
 					obj = ((MarkupExtension) obj).ProvideValue (service_provider);
 				} catch (XamlObjectWriterException) {
 					throw;
-				} catch (Exception ex) {
-					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
+//				} catch (Exception ex) {
+//					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
 				}
 			}
 			var nfr = obj as NameFixupRequired;
@@ -269,6 +270,10 @@ namespace System.Xaml
 			}
 			else
 				StoreAppropriatelyTypedValue (obj, state.KeyValue);
+			
+			if (state.Type.IsAmbient)
+				ambient_provider.Pop ();
+			
 			object_states.Push (state);
 			if (object_states.Count == 1) {
 				Result = obj;
@@ -377,6 +382,8 @@ namespace System.Xaml
 				argv [i] = GetCorrectlyTypedValue (args [i], argt [i], contents [i]);
 			state.Value = state.Type.Invoker.CreateInstance (argv);
 			state.IsInstantiated = true;
+			if (state.Type.IsAmbient)
+				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, state.Value));
 		}
 
 		protected override void OnWriteValue (object value)
@@ -532,10 +539,16 @@ namespace System.Xaml
 				obj = state.Type.Invoker.CreateInstance (null);
 			state.Value = obj;
 			state.IsInstantiated = true;
+			if (state.Type.IsAmbient)
+				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, obj));
 		}
 
 		internal IXamlNameResolver name_resolver {
 			get { return (IXamlNameResolver) service_provider.GetService (typeof (IXamlNameResolver)); }
+		}
+
+		internal override IAmbientProvider AmbientProvider {
+			get { return ambient_provider; }
 		}
 
 		void ResolvePendingReferences ()

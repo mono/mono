@@ -979,7 +979,8 @@ namespace SecondTest
 
 			// ResourceDict is marked as Ambient, so the instance current being deserialized should be in this list.
 			List<AmbientPropertyValue> list = provider.GetAllAmbientValues (null, false, types) as List<AmbientPropertyValue>;
-			Debug.Assert (list.Count == 1, "expected ambient property count == 1 but " + list.Count);
+			if (list.Count != 1)
+				throw new Exception ("expected ambient property count == 1 but " + list.Count);
 			for (int i = 0; i < list.Count; i++) {
 				AmbientPropertyValue value = list [i];
 				ResourcesDict dict = value.Value as ResourcesDict;
