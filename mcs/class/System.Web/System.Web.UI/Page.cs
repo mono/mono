@@ -460,10 +460,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		get {
 			if (_request == null)
 				throw new HttpException("Request is not available in this context.");
-			return _request;
+			return RequestInternal;
 		}
 	}
 
+	internal HttpRequest RequestInternal {
+		get { return _request; }
+	}
+	
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
 	public HttpResponse Response {

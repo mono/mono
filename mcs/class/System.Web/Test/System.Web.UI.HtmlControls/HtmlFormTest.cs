@@ -213,7 +213,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			// Indirect test for HttpRequest.QueryStringRaw, see
 			// https://bugzilla.novell.com/show_bug.cgi?id=376352
+#if NET_4_0
 			Assert.AreEqual (" method=\"post\" action=\"?q=1&amp;q2=2\"", attrs, "A1");
+			form.RenderingCompatibility = new Version (3, 5);
+			attrs = form.RenderAttributes ();
+#endif
+			Assert.AreEqual (" name=\"aspnetForm\" method=\"post\" action=\"?q=1&amp;q2=2\"", attrs, "A2");
 		}
 #endif
 
@@ -226,8 +231,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			form.Page = p;
 			form.Action = "someactionfile.aspx";
 			string attrs = form.RenderAttributes ();
-
+#if NET_4_0
 			Assert.AreEqual (" method=\"post\" action=\"someactionfile.aspx\"", attrs, "A1");
+			form.RenderingCompatibility = new Version (3, 5);
+			attrs = form.RenderAttributes ();
+#endif
+			Assert.AreEqual (" name=\"aspnetForm\" method=\"post\" action=\"someactionfile.aspx\"", attrs, "A2");
 		}
 #endif
 		
