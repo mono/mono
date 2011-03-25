@@ -1360,7 +1360,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only")]
 	public void Locals () {
 		var be = run_until ("locals1");
 
@@ -2033,7 +2032,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only")]
 	public void Frame_SetValue () {
 		Event e = run_until ("locals2");
 
@@ -2082,6 +2080,47 @@ public class DebuggerTests
 				l = frame.Method.GetLocal ("i");
 				frame.SetValue (l, vm.CreateValue (55));
 			});
+	}
+
+	[Test]
+	[Category ("only")]
+	public void Frame_SetValue_Registers () {
+		Event e = run_until ("locals6_1");
+
+		StackFrame frame = e.Thread.GetFrames () [1];
+
+		// Set 'j' to 99
+		var l = frame.Method.GetLocal ("j");
+		frame.SetValue (l, vm.CreateValue (99));
+		AssertValue (99, frame.GetValue (l));
+
+		// Check it during execution
+		e = run_until ("locals6_2");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (99, frame.GetValue (frame.Method.GetParameters ()[0]));
+
+		// Set it while in a frame which clobbers its register
+		e = run_until ("locals6_3");
+		frame = e.Thread.GetFrames () [1];
+		frame.SetValue (l, vm.CreateValue (100));
+		AssertValue (100, frame.GetValue (l));
+
+		// Check it during execution
+		e = run_until ("locals6_4");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (100, frame.GetValue (frame.Method.GetParameters ()[0]));
+
+		// Signed byte value
+		e = run_until ("locals6_5");
+		frame = e.Thread.GetFrames () [1];
+		var l2 = frame.Method.GetLocal ("sb");
+		frame.SetValue (l2, vm.CreateValue ((sbyte)-99));
+		AssertValue (-99, frame.GetValue (l2));
+
+		// Check it during execution
+		e = run_until ("locals6_6");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (-99, frame.GetValue (frame.Method.GetParameters ()[0]));
 	}
 
 	[Test]
