@@ -138,7 +138,7 @@ namespace System.Net.Policy {
 
 			reader.ReadStartElement ("policy", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-				if (IsNonEmptyElement (reader)) {
+				if (IsNonElement (reader)) {
 					reader.Skip ();
 					continue;
 				}
