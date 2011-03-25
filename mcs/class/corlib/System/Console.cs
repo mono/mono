@@ -133,6 +133,11 @@ namespace System
 					inputEncoding = outputEncoding = Encoding.Default;
 			}
 
+			SetupStreams (inputEncoding, outputEncoding);
+		}
+
+		static void SetupStreams (Encoding inputEncoding, Encoding outputEncoding)
+		{
 			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr, true);
@@ -523,12 +528,18 @@ namespace System
 
 		public static Encoding InputEncoding {
 			get { return inputEncoding; }
-			set { inputEncoding = value; }
+			set {
+				inputEncoding = value;
+				SetupStreams (inputEncoding, outputEncoding);
+			}
 		}
 
 		public static Encoding OutputEncoding {
 			get { return outputEncoding; }
-			set { outputEncoding = value; }
+			set {
+				outputEncoding = value;
+				SetupStreams (inputEncoding, outputEncoding);
+			}
 		}
 
 		public static ConsoleColor BackgroundColor {
