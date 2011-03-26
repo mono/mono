@@ -123,8 +123,8 @@ namespace System.Xml
 		public override void WriteTo (XmlWriter w)
 		{
 			// This doesn't seem to match up very well with w.WriteStartDocument()
-			// so writing out custom here.
-			w.WriteRaw (String.Format ("<?xml {0}?>", Value));
+			// so writing out PI here. (it used to be WriteRaw)
+			w.WriteProcessingInstruction ("xml", Value);
 		}
 
 		private int SkipWhitespace (string input, int index)
