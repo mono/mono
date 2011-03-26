@@ -54,7 +54,7 @@ namespace System.Runtime.Serialization.Json
 		string attr_name, attr_value, runtime_type;
 		Encoding encoding;
 		byte [] encbuf = new byte [1024];
-		bool no_string_yet = true, is_null;
+		bool no_string_yet = true, is_null, is_ascii_single;
 
 		public JsonWriter (Stream stream, Encoding encoding, bool closeOutput)
 		{
@@ -70,6 +70,11 @@ namespace System.Runtime.Serialization.Json
 			output = stream;
 			this.encoding = encoding;
 			close_output = ownsStream;
+#if MOONLIGHT
+			is_ascii_single = encoding is UTF8Encoding;
+#else
+			is_ascii_single = encoding is UTF8Encoding || encoding.IsSingleByte;
+#endif
 		}
 
 		void CheckState ()
@@ -520,9 +525,16 @@ namespace System.Runtime.Serialization.Json
 			WriteString (text);
 		}
 
+		char [] char_buf = new char [1];
 		void OutputAsciiChar (char c)
 		{
-			output.WriteByte ((byte) c);
+			if (is_ascii_single)
+				output.WriteByte ((byte) c);
+			else {
+				char_buf [0] = c;
+				int size = encoding.GetBytes (char_buf, 0, 1, encbuf, 0);
+				output.Write (encbuf, 0, size);
+			}
 		}
 
 		void OutputString (string s)
