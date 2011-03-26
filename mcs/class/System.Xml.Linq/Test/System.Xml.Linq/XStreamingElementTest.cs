@@ -54,5 +54,24 @@ namespace MonoTests.System.Xml.Linq
 				new XAttribute ("bar", "baz"));
 			el.ToString ();
 		}
+
+		[Test]
+		public void WriteXStreamingElementChildren ()
+		{
+			var xml = "<?xml version='1.0' encoding='utf-8'?><root type='array'><item type='number'>0</item><item type='number'>2</item><item type='number'>5</item></root>".Replace ('\'', '"');
+			
+			var ms = new MemoryStream ();
+			var xw = XmlWriter.Create (ms);
+			int [] arr = new int [] {0, 2, 5};
+			var xe = new XStreamingElement (XName.Get ("root"));
+			xe.Add (new XAttribute (XName.Get ("type"), "array"));
+			var at = new XAttribute (XName.Get ("type"), "number");
+			foreach (var i in arr)
+				xe.Add (new XStreamingElement (XName.Get ("item"), at, i));
+
+			xe.WriteTo (xw);
+			xw.Close ();
+			Assert.AreEqual (xml, new StreamReader (new MemoryStream (ms.ToArray ())).ReadToEnd (), "#1");
+		}
 	}
 }
