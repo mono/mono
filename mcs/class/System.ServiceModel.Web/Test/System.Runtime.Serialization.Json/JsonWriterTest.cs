@@ -591,5 +591,16 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			w.Close ();
 			Assert.AreEqual ("\"\\/my date\\/\"", ResultString);
 		}
+
+		[Test]
+		public void WriteNullType ()
+		{
+			w.WriteStartElement ("root");
+			w.WriteAttributeString ("type", "object");
+			w.WriteStartElement ("foo");
+			w.WriteAttributeString ("type", "null");
+			w.Close ();
+			Assert.AreEqual ("{\"foo\":null}", ResultString);
+		}
 	}
 }
