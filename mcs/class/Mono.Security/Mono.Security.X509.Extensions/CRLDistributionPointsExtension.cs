@@ -29,7 +29,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using Mono.Security;
@@ -73,19 +73,19 @@ namespace Mono.Security.X509.Extensions {
 
 	public class CRLDistributionPointsExtension : X509Extension {
 
-		internal class DP {
-			public string DistributionPoint;
-			public ReasonFlags Reasons;
-			public string CRLIssuer;
+		public class DistributionPoint {
+			public string Name { get; private set; }
+			public ReasonFlags Reasons { get; private set; }
+			public string CRLIssuer { get; private set; }
 
-			public DP (string dp, ReasonFlags reasons, string issuer) 
+			public DistributionPoint (string dp, ReasonFlags reasons, string issuer) 
 			{
-				DistributionPoint = dp;
+				Name = dp;
 				Reasons = reasons;
 				CRLIssuer = issuer;
 			}
 
-			public DP (ASN1 dp)
+			public DistributionPoint (ASN1 dp)
 			{
 				for (int i = 0; i < dp.Count; i++) {
 					ASN1 el = dp[i];
@@ -94,7 +94,7 @@ namespace Mono.Security.X509.Extensions {
 						for (int j = 0; j < el.Count; j++) {
 							ASN1 dpn = el [j];
 							if (dpn.Tag == 0xA0) {
-								DistributionPoint = new GeneralNames (dpn).ToString ();
+								Name = new GeneralNames (dpn).ToString ();
 							}
 						}
 						break;
@@ -121,12 +121,12 @@ namespace Mono.Security.X509.Extensions {
 			AACompromise = 8
 		}
 
-		private ArrayList dps;
+		private List<DistributionPoint> dps;
 
 		public CRLDistributionPointsExtension () : base () 
 		{
 			extnOid = "2.5.29.31";
-			dps = new ArrayList ();
+			dps = new List<DistributionPoint> ();
 		}
 
 		public CRLDistributionPointsExtension (ASN1 asn1) 
@@ -141,13 +141,13 @@ namespace Mono.Security.X509.Extensions {
 
 		protected override void Decode () 
 		{
-			dps = new ArrayList ();
+			dps = new List<DistributionPoint> ();
 			ASN1 sequence = new ASN1 (extnValue.Value);
 			if (sequence.Tag != 0x30)
 				throw new ArgumentException ("Invalid CRLDistributionPoints extension");
 			// for every distribution point
 			for (int i=0; i < sequence.Count; i++) {
-				dps.Add (new DP (sequence [i]));
+				dps.Add (new DistributionPoint (sequence [i]));
 			}
 		}
 
@@ -155,11 +155,15 @@ namespace Mono.Security.X509.Extensions {
 			get { return "CRL Distribution Points"; }
 		}
 
+		public IEnumerable<DistributionPoint> DistributionPoints {
+			get { return dps; }
+		}
+
 		public override string ToString () 
 		{
 			StringBuilder sb = new StringBuilder ();
 			int i = 1;
-			foreach (DP dp in dps) {
+			foreach (DistributionPoint dp in dps) {
 				sb.Append ("[");
 				sb.Append (i++);
 				sb.Append ("]CRL Distribution Point");
@@ -168,7 +172,7 @@ namespace Mono.Security.X509.Extensions {
 				sb.Append ("\t\tFull Name:");
 				sb.Append (Environment.NewLine);
 				sb.Append ("\t\t\t");
-				sb.Append (dp.DistributionPoint);
+				sb.Append (dp.Name);
 				sb.Append (Environment.NewLine);
 			}
 			return sb.ToString ();
