@@ -534,10 +534,20 @@ namespace Mono.Security.X509 {
 
 		public bool IsSelfSigned {
 			get { 
-				if (m_issuername == m_subject)
-					return VerifySignature (RSA); 
-				else
+				if (m_issuername != m_subject)
 					return false;
+
+				try {
+					if (RSA != null)
+						return VerifySignature (RSA);
+					else if (DSA != null)
+						return VerifySignature (DSA);
+					else
+						return false; // e.g. a certificate with only DSA parameters
+				}
+				catch (CryptographicException) {
+					return false;
+				}
 			}
 		}
 
