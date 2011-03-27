@@ -52,7 +52,6 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO("Only works on Linux and Windows")]
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
 			if (runningOnUnix) {

@@ -32,6 +32,8 @@ MPH_UNIX_SOURCE =				\
 	fstab.c					\
 	grp.c					\
 	macros.c				\
+	nl.c					\
+	nl.h					\
 	old-map.c				\
 	old-map.h				\
 	pwd.c					\
