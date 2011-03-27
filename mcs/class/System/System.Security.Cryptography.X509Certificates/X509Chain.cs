@@ -894,7 +894,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
-				result = CheckCrls (subject, ski, UserCAStore.Store.Crls);
+				result = (UserCAStore.Store == null) ? null : CheckCrls (subject, ski, UserCAStore.Store.Crls);
 				if (result != null)
 					return result;
 			}
