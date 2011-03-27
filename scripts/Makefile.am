@@ -75,6 +75,7 @@ scripts_4_0 = \
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
 	chktrust$(SCRIPT_SUFFIX)		\
+	crlupdate$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
 	lc$(SCRIPT_SUFFIX)			\

@@ -1,0 +1,56 @@
+.\" 
+.\" crlupdate manual page.
+.\" 
+.\" Author:
+.\"   Sebastien Pouliot  <sebastien@ximian.com>
+.\" 
+.\" Copyright (C) 2011 Novell, Inc (http://www.novell.com)
+.\"
+.TH Mono "crlupdate"
+.SH NAME
+crlupdate \- Mono Certficate Revocation List Downloader and Updater
+.SH SYNOPSIS
+.PP
+.B crlupdate [-m] [-v] [-f]
+.SH DESCRIPTION
+This tool allows the download of new, or update of existing, Certficate 
+Revocation List (CRL) associated with the certificates present in the 
+user (default) or machine stores. The CRL present in the stores are used
+to determine the validity of unexpired, trusted X.509 certificates.
+To ensure CRL are always fresh consider automating the updates using the
+\fIat\fR (or similar) command(s).
+.SH OPTIONS
+.TP
+.I "-m"
+Update CRL associated with certificates in the machine store. By default
+the tool works on the user store.
+.TP
+.I "-v"
+Verbose mode. Display extra information while downloading and updating
+the CRL.
+.TP
+.I "-f"
+Force the download of all CRL even if they are not normally due to be 
+updated (i.e. nextUpdate is still in the future).
+
+.SH EXAMPLES
+.TP
+.B mono crlupdate.exe
+Download (if missing) or update (if existing and past due date) all CRL
+associated with certificates present in user store.
+.TP
+.B mono crlupdate.exe -f -m
+Force the download of every CRL associated with certificates present in
+the machine store. Note that the user running this needs read/write 
+access to the machine store or not update will occur.
+
+.SH AUTHOR
+Written by Sebastien Pouliot
+.SH COPYRIGHT
+Copyright (C) 2011 Novell.
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
+.SH SEE ALSO
+.BR certmgr(1), at(1)
