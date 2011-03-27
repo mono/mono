@@ -353,6 +353,24 @@ namespace Mono.Tools {
 			Console.WriteLine ();
 		}
 
+		static void DisplayCrl (X509Crl crl, bool machine, bool verbose)
+		{
+			Console.WriteLine ("X.509 v{0} CRL", crl.Version);
+			Console.WriteLine ("  Issuer Name:   {0}", crl.IssuerName);
+			Console.WriteLine ("  This Update:   {0}", crl.ThisUpdate);
+			Console.WriteLine ("  Next Update:   {0} {1}", crl.NextUpdate, crl.IsCurrent ? String.Empty : "update overdue!");
+			Console.WriteLine ("  Unique Hash:   {0}", CryptoConvert.ToHex (crl.Hash));
+			if (verbose) {
+				Console.WriteLine ("  Signature Algorithm:  {0}", crl.SignatureAlgorithm);
+				Console.WriteLine ("  Signature:            {0}", CryptoConvert.ToHex (crl.Signature));
+				int n = 0;
+				foreach (X509Crl.X509CrlEntry entry in crl.Entries) {
+					Console.WriteLine ("    #{0}: Serial: {1} revoked on {2}",
+						++n, CryptoConvert.ToHex (entry.SerialNumber), entry.RevocationDate);
+				}
+			}
+		}
+
 		static void List (ObjectType type, X509Store store, bool machine, string file, bool verbose) 
 		{
 			switch (type) {
@@ -362,7 +380,9 @@ namespace Mono.Tools {
 					}
 					break;
 				case ObjectType.CRL:
-					// TODO
+					foreach (X509Crl crl in store.Crls) {
+						DisplayCrl (crl, machine, verbose);
+					}
 					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
