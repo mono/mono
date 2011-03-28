@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
@@ -1547,6 +1548,33 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (xml, sw.ToString (), "#1");
 			Assert.AreEqual (v, ds.ReadObject (XmlReader.Create (new StringReader (sw.ToString ()))), "#2");
 		}
+
+		[Test]
+		public void XmlDocumentSupport ()
+		{
+			var xml = "<XmlDocumentContract xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='urn:foo'><Content><Root xmlns=''>Hello, world!</Root></Content><Nodes><child1 xmlns='' /><child2 xmlns='' /></Nodes></XmlDocumentContract>".Replace ('\'', '"');
+			var xml2 = "<Root>Hello, world!</Root>";
+			var obj = new XmlDocumentContract ();
+			var doc = new XmlDocument ();
+			doc.LoadXml (xml2);
+			obj.Content = doc.DocumentElement;
+			doc = new XmlDocument ();
+			doc.LoadXml ("<root><child1/><child2/></root>");
+			var l = new List<XmlNode> ();
+			foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+				l.Add (node);
+			obj.Nodes = l.ToArray ();
+			var serializer = new DataContractSerializer (typeof (XmlDocumentContract))
+			;
+			var sb = new StringBuilder ();
+			using (var writer = new StringWriter (sb))
+				serializer.WriteObject (new XmlTextWriter (writer), obj);
+			Assert.AreEqual (xml, sb.ToString (), "#1");
+			using (var reader = new StringReader (sb.ToString ()))
+				obj = serializer.ReadObject (new XmlTextReader (reader)) as XmlDocumentContract;
+			Assert.AreEqual ("Hello, world!", obj.Content != null ? obj.Content.InnerText : String.Empty, "#2");
+			Assert.AreEqual (2, obj.Nodes != null ? obj.Nodes.Length : -1, "#3");
+		}
 	}
 	
 	[DataContract]
@@ -1866,6 +1894,26 @@ namespace MonoTests.System.Runtime.Serialization
 	[DataContract]
 	class BaseConstraintType4 : BaseConstraintType2
 	{
+	}
+
+	[DataContract (Namespace = "urn:foo")]
+	public class XmlDocumentContract
+	{
+		[DataMember (Name = "Content")]
+		private XmlElement content;
+
+		public XmlElement Content {
+			get { return content; }
+			set { content = value; }
+		}
+
+		[DataMember (Name = "Nodes")]
+		private XmlNode [] nodes;
+
+		public XmlNode [] Nodes {
+			get { return nodes; }
+			set { nodes = value; }
+		}
 	}
 }
 

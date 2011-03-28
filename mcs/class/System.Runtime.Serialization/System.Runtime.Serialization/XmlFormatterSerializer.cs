@@ -87,6 +87,14 @@ namespace System.Runtime.Serialization
 		{
 			if (graph == null)
 				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+#if !MOONLIGHT
+			else if (type == typeof (XmlElement))
+				((XmlElement) graph).WriteTo (Writer);
+			else if (type == typeof (XmlNode [])) {
+				foreach (var xn in (XmlNode []) graph)
+					xn.WriteTo (Writer);
+			}
+#endif
 			else {
 				QName resolvedQName = null;
 				if (resolver != null) {
