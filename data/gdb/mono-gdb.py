@@ -188,6 +188,8 @@ class MonoGenericInstPrinter:
         self.val = val
 
     def to_string(self):
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
+            return "0x0"
         inst = self.val.dereference ()
         inst_len = inst ["type_argc"]
         inst_args = inst ["type_argv"]
