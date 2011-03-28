@@ -1,3 +1,12 @@
+/*
+ * Network availability and change notifications for linux.
+ *
+ * Authors:
+ *   Gonzalo Paniagua Javier (gonzalo@novell.com)
+ *
+ * Copyright (c) Novell, Inc. 2011
+ */
+
 #include <config.h>
 #include "nl.h"
 
