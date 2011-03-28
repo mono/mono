@@ -643,6 +643,11 @@ namespace System.Runtime.Serialization
 				return true;
 			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type==typeof(Uri)) // special primitives
 				return true;
+#if !MOONLIGHT
+			// DOM nodes
+			if (type == typeof (XmlElement) || type == typeof (XmlNode []))
+				return true;
+#endif
 			// nullable
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
 				return IsPrimitiveNotEnum (type.GetGenericArguments () [0]);

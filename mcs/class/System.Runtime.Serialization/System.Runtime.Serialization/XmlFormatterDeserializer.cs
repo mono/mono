@@ -104,9 +104,31 @@ namespace System.Runtime.Serialization
 			get { return references; }
 		}
 
+#if !MOONLIGHT
+		XmlDocument document;
+		
+		XmlDocument XmlDocument {
+			get { return (document = document ?? new XmlDocument ()); }
+		}
+#endif
+
 		// This method handles z:Ref, xsi:nil and primitive types, and then delegates to DeserializeByMap() for anything else.
+
 		public object Deserialize (Type type, XmlReader reader)
 		{
+#if !MOONLIGHT
+			if (type == typeof (XmlElement))
+				return XmlDocument.ReadNode (reader);
+			else if (type == typeof (XmlNode [])) {
+				reader.ReadStartElement ();
+				var l = new List<XmlNode> ();
+				for(; !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ())
+					l.Add (XmlDocument.ReadNode (reader));
+				reader.ReadEndElement ();
+				return l.ToArray ();
+			}
+#endif
+
 			QName graph_qname = types.GetQName (type);
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (itype != null) {
