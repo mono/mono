@@ -37,7 +37,10 @@ namespace System.ComponentModel.DataAnnotations
 	public abstract class ValidationAttribute : Attribute
 	{
 		const string DEFAULT_ERROR_MESSAGE = "The field {0} is invalid.";
-#if !NET_4_0
+#if NET_4_0
+		object nestedCallLock = new object ();
+		bool nestedCall;
+#else
 		string errorMessageResourceName;
 		string errorMessageString;
 		Type errorMessageResourceType;
@@ -127,20 +130,50 @@ namespace System.ComponentModel.DataAnnotations
 			get { return GetStringFromResourceAccessor (); }
 		}
 #if NET_4_0
+		NotImplementedException NestedNIEX ()
+		{
+			return new NotImplementedException ("IsValid(object value) has not been implemented by this class.  The preferred entry point is GetValidationResult() and classes should override IsValid(object value, ValidationContext context).");
+		}
+		
+		//
+		// This is the weirdest (to be gentle) idea ever... The IsValid (object) overload
+		// throws the NIEX when it is called from the default IsValid (object,
+		// ValidationContext) overload, but not when directly. And the reverse situation is
+		// true as well. That means, the calls detect the "nested" calls and that we need to
+		// protect the nestedCall flag... ugh
+		//
 		public virtual bool IsValid (object value)
 		{
-			throw new NotImplementedException ("IsValid(object value) has not been implemented by this class.  The preferred entry point is GetValidationResult() and classes should override IsValid(object value, ValidationContext context).");
+			lock (nestedCallLock) {
+				if (nestedCall)
+					throw NestedNIEX ();
+				try {
+					nestedCall = true;
+					return IsValid (value, null) == ValidationResult.Success;
+				} finally {
+					nestedCall = false;
+				}
+			}
 		}
 
 		protected virtual ValidationResult IsValid (object value, ValidationContext validationContext)
 		{
-			// .NET emulation
-			if (validationContext == null)
-				throw new NullReferenceException (".NET emulation.");
-			
-			if (!IsValid (value)) {
-				string memberName = validationContext.MemberName;
-				return new ValidationResult (FormatErrorMessage (validationContext.DisplayName), memberName != null ? new string[] { memberName } : new string[] {});
+			lock (nestedCallLock) {
+				if (nestedCall)
+					throw NestedNIEX ();
+				
+				try {
+					nestedCall = true;
+					if (!IsValid (value)) {
+						// .NET emulation
+						if (validationContext == null)
+							throw new NullReferenceException (".NET emulation.");
+						string memberName = validationContext.MemberName;
+						return new ValidationResult (FormatErrorMessage (validationContext.DisplayName), memberName != null ? new string[] { memberName } : new string[] {});
+					}
+				} finally {
+					nestedCall = false;
+				}
 			}
 
 			return ValidationResult.Success;
