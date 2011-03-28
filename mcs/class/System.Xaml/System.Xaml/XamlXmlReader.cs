@@ -199,6 +199,9 @@ namespace System.Xaml
 			if (is_eof)
 				return false;
 
+			if (node_type == XamlNodeType.EndMember && members.Count > 0)
+				current_member = members.Peek (); // set parent member _after_ EndMember.
+
 			// check this before is_empty_* so that they aren't ignored.
 			if (MoveToNextStoredMember ())
 				return true;

@@ -701,6 +701,14 @@ namespace MonoTests.System.Xaml
 			Read_DirectDictionaryContainer (r);
 		}
 
+		// It is not really a common test; it just makes use of base helper methods.
+		[Test]
+		public void Read_DirectDictionaryContainer2 ()
+		{
+			var r = GetReader ("DirectDictionaryContainer2.xml");
+			Read_DirectDictionaryContainer2 (r);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

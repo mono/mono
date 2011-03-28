@@ -1035,6 +1035,15 @@ namespace SecondTest
 	}
 
 	#endregion
+
+	public class ResourcesDict2 : Dictionary<object, object>
+	{
+	}
+
+	public class TestObject2
+	{
+		public string TestProperty { get; set; }
+	}
 }
 
 
