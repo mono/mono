@@ -1945,6 +1945,9 @@ namespace Mono.CSharp {
 
 			constraints_checked = true;
 
+			if ((type.Modifiers & Modifiers.COMPILER_GENERATED) != 0)
+				return true;
+
 			var gtype = (InflatedTypeSpec) type;
 			var constraints = gtype.Constraints;
 			if (constraints == null)
