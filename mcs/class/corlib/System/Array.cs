@@ -82,12 +82,12 @@ namespace System
 
 		internal void InternalArray__ICollection_Add<T> (T item)
 		{
-			throw new NotSupportedException ("Collection is read-only");
+			throw new NotSupportedException ("Collection is of a fixed size");
 		}
 
 		internal bool InternalArray__ICollection_Remove<T> (T item)
 		{
-			throw new NotSupportedException ("Collection is read-only");
+			throw new NotSupportedException ("Collection is of a fixed size");
 		}
 
 		internal bool InternalArray__ICollection_Contains<T> (T item)
@@ -137,12 +137,12 @@ namespace System
 
 		internal void InternalArray__Insert<T> (int index, T item)
 		{
-			throw new NotSupportedException ("Collection is read-only");
+			throw new NotSupportedException ("Collection is of a fixed size");
 		}
 
 		internal void InternalArray__RemoveAt (int index)
 		{
-			throw new NotSupportedException ("Collection is read-only");
+			throw new NotSupportedException ("Collection is of a fixed size");
 		}
 
 		internal int InternalArray__IndexOf<T> (T item)
