@@ -197,6 +197,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal DocumentationBuilder DocumentationBuilder {
+			get; set;
+		}
+
 		public Evaluator Evaluator {
 			get; set;
 		}

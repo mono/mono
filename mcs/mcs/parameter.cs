@@ -215,6 +215,7 @@ namespace Mono.CSharp {
 			ISBYREF = 8,
 			REFMASK	= 32,
 			OUTMASK = 64,
+			SignatureMask = REFMASK | OUTMASK,
 			This	= 128
 		}
 
@@ -795,6 +796,26 @@ namespace Mono.CSharp {
 			}
 
 			return -1;
+		}
+
+		public string GetSignatureForDocumentation ()
+		{
+			if (IsEmpty)
+				return string.Empty;
+
+			StringBuilder sb = new StringBuilder ("(");
+			for (int i = 0; i < Count; ++i) {
+				if (i != 0)
+					sb.Append (",");
+
+				sb.Append (types [i].GetSignatureForDocumentation ());
+
+				if ((parameters[i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
+					sb.Append ("@");
+			}
+			sb.Append (")");
+
+			return sb.ToString ();
 		}
 
 		public string GetSignatureForError ()

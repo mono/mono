@@ -99,7 +99,7 @@ namespace Mono.CSharp {
 		{
 			// Expression members.
 			this.eclass = ExprClass.Namespace;
-			this.Type = InternalType.FakeInternalType;
+			this.Type = InternalType.Namespace;
 			this.loc = Location.Null;
 
 			this.parent = parent;

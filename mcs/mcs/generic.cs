@@ -559,6 +559,11 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return MemberName.Name;
@@ -833,6 +838,19 @@ namespace Mono.CSharp {
 				return Convert.FindMostEncompassedType (types.Select (l => l.BaseType));
 
 			return BaseType;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			int c = 0;
+			var type = DeclaringType;
+			while (type != null && type.DeclaringType != null) {
+				type = type.DeclaringType;
+				c += type.MemberDefinition.TypeParametersCount;
+			}
+
+			var prefix = IsMethodOwned ? "``" : "`";
+			return prefix + (c + DeclaredPosition);
 		}
 
 		public override string GetSignatureForError ()

@@ -2938,6 +2938,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public IList<MemberSpec> Candidates {
+			get {
+				return Methods;
+			}
+		}
+
 		protected override TypeSpec DeclaringType {
 			get {
 				return queried_type;
@@ -4625,7 +4631,7 @@ namespace Mono.CSharp {
 
 	public class ConstantExpr : MemberExpr
 	{
-		ConstSpec constant;
+		readonly ConstSpec constant;
 
 		public ConstantExpr (ConstSpec constant, Location loc)
 		{

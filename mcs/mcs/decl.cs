@@ -819,10 +819,7 @@ namespace Mono.CSharp {
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public virtual string GetDocCommentName ()
-		{
-			return DocCommentHeader + Parent.Name + "." + Name;
-		}
+		public abstract string GetSignatureForDocumentation ();
 
 		//
 		// Generates xml doc comments (if any), and if required,
@@ -1080,6 +1077,11 @@ namespace Mono.CSharp {
 			var cls = MemberDefinition.CLSAttributeValue;
 			attrValue = cls ?? false;
 			return cls == false;
+		}
+
+		public virtual string GetSignatureForDocumentation ()
+		{
+			return DeclaringType.GetSignatureForDocumentation () + "." + Name;
 		}
 
 		public virtual string GetSignatureForError ()
@@ -1378,9 +1380,9 @@ namespace Mono.CSharp {
 				type.GetSignatureForError ());
 		}
 
-		public override string GetDocCommentName ()
+		public override string GetSignatureForDocumentation ()
 		{
-			return DocCommentHeader + Name;
+			return Name;
 		}
 
 		public override string GetSignatureForError ()

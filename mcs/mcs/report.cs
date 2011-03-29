@@ -677,6 +677,10 @@ namespace Mono.CSharp {
 		}
 	}
 
+	sealed class NullReportPrinter : ReportPrinter
+	{
+	}
+
 	//
 	// Default message recorder, it uses two types of message groups.
 	// Common messages: messages reported in all sessions.

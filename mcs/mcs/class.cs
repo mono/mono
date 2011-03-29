@@ -3389,6 +3389,14 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (InterfaceType) + "." + name;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			if (IsExplicitImpl)
+				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetExplicitNameSignatureForDocumentation () + "#" + ShortName;
+
+			return Parent.GetSignatureForDocumentation () + "." + ShortName;
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ()) {
@@ -3526,6 +3534,11 @@ namespace Mono.CSharp {
 			CheckProtectedModifier ();
 
 			return true;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return Parent.Name + "." + Name;
 		}
 
 		protected virtual bool ResolveMemberType ()

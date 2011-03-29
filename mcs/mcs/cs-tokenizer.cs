@@ -199,6 +199,7 @@ namespace Mono.CSharp
 		// Set when parsing generic declaration (type or method header)
 		//
 		public bool parsing_generic_declaration;
+		public bool parsing_generic_declaration_doc;
 		
 		//
 		// The value indicates that we have not reach any declaration or
@@ -209,18 +210,19 @@ namespace Mono.CSharp
 		public bool parsing_attribute_section;
 
 		//
-		// The special character to inject on streams to trigger the EXPRESSION_PARSE
-		// token to be returned.   It just happens to be a Unicode character that
-		// would never be part of a program (can not be an identifier).
+		// The special characters to inject on streams to run the unit parser
+		// in the special expression mode. Using private characters from
+		// Plane Sixteen (U+100000 to U+10FFFD)
 		//
 		// This character is only tested just before the tokenizer is about to report
 		// an error;   So on the regular operation mode, this addition will have no
 		// impact on the tokenizer's performance.
 		//
 		
-		public const int EvalStatementParserCharacter = 0x2190;   // Unicode Left Arrow
-		public const int EvalCompilationUnitParserCharacter = 0x2191;  // Unicode Arrow
-		public const int EvalUsingDeclarationsParserCharacter = 0x2192;  // Unicode Arrow
+		public const int EvalStatementParserCharacter = 0x100000;
+		public const int EvalCompilationUnitParserCharacter = 0x100001;
+		public const int EvalUsingDeclarationsParserCharacter = 0x100002;
+		public const int DocumentationXref = 0x100003;
 		
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -3258,6 +3260,8 @@ namespace Mono.CSharp
 					return Token.EVAL_COMPILATION_UNIT_PARSER;
 				case EvalUsingDeclarationsParserCharacter:
 					return Token.EVAL_USING_DECLARATIONS_UNIT_PARSER;
+				case DocumentationXref:
+					return Token.DOC_SEE;
 				}
 
 				if (is_identifier_start_character (c)) {
@@ -3337,7 +3341,7 @@ namespace Mono.CSharp
 			// Save current position and parse next token.
 			PushPosition ();
 			if (parse_less_than ()) {
-				if (parsing_generic_declaration && token () != Token.DOT) {
+				if (parsing_generic_declaration && (parsing_generic_declaration_doc || token () != Token.DOT)) {
 					d = Token.OP_GENERICS_LT_DECL;
 				} else {
 					d = Token.OP_GENERICS_LT;

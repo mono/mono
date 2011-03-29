@@ -800,11 +800,6 @@ namespace Mono.CSharp
 
 			base.Emit ();
 		}
-
-		public override string GetDocCommentName ()
-		{
-			return String.Concat (DocCommentHeader, Parent.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
-		}
 	}
 
 	/// <summary>
@@ -1549,22 +1544,22 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
-		public override string GetDocCommentName ()
-		{
-			return DocumentationBuilder.GetMethodDocCommentName (this, parameters);
-		}
-
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
 			if (MemberName.Left != null) {
-				sb.Append ('.');
+				sb.Append (".");
 				sb.Append (MemberName.Left.GetSignatureForError ());
 			}
 
 			sb.Append (".this");
-			sb.Append (parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
+			sb.Append (parameters.GetSignatureForError ("[", "]", parameters.Count));
 			return sb.ToString ();
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
 		}
 
 		public AParametersCollection Parameters {
@@ -1606,6 +1601,11 @@ namespace Mono.CSharp
 			}
 		}
 		#endregion
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
+		}
 
 		public override string GetSignatureForError ()
 		{

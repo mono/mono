@@ -1,4 +1,4 @@
-// cs1580-2.cs: Invalid type for parameter `1' in XML comment cref attribute `Method(x,y)'
+// CS1574: XML comment on `Test' has cref attribute `Method(x,y)' that could not be resolved
 // Line: 7
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 
