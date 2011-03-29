@@ -594,8 +594,10 @@ namespace System.Xaml
 		{
 			if (markup_extension_attr_members != null) {
 				switch (node_type) {
-				case XamlNodeType.StartObject:
 				case XamlNodeType.EndMember:
+					members.Pop ();
+					goto case XamlNodeType.StartObject;
+				case XamlNodeType.StartObject:
 					// -> next member or end object
 					if (!markup_extension_attr_members.MoveNext ()) {
 						node_type = XamlNodeType.EndObject;
