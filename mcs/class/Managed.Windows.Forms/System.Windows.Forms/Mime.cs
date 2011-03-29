@@ -645,6 +645,11 @@ namespace System.Windows.Forms
 		
 		public int Init ()
 		{
+			int p = (int) Environment.OSVersion.Platform;
+			if ((p != 4) && (p != 6) && (p != 128))
+				// Not running on Unix.
+				return -1;
+
 			CheckFDOMimePaths ();
 			
 			if (!fdo_mime_available)
