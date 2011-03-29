@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-064</name>
+    </assembly>
+    <members>
+        <member name="T:Test">
+            <returns>A <see cref="T:System.Collections.Generic.IList`1"/>.</returns>
+        </member>
+    </members>
+</doc>

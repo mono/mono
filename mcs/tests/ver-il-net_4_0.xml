@@ -19818,6 +19818,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-66.cs">
+    <type name="A">
+      <method name="Void Test[T,U]()">
+        <size>20</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void &lt;Test`2&gt;m__0[T,U]()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+&lt;Test&gt;c__AnonStorey0`2[T,U]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-7.cs">
     <type name="MyDisposable">
       <method name="Void .ctor()">

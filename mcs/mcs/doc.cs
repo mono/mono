@@ -262,6 +262,9 @@ namespace Mono.CSharp
 			if (cref.Length > 2 && cref [1] == ':')
 				return;
 
+			// Additional symbols for < and > are allowed for easier XML typing
+			cref = cref.Replace ('{', '<').Replace ('}', '>');
+
 			var encoding = module.Compiler.Settings.Encoding;
 			var s = new MemoryStream (encoding.GetBytes (cref));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding);
