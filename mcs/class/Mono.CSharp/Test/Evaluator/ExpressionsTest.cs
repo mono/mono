@@ -83,6 +83,7 @@ namespace MonoTests.EvaluatorTest
 			Assert.AreEqual ("1+", sres, "The result should have been the input string, since we have a partial input");
 		}
 
+#if NET_4_0
 		[Test]
 		public void DynamicStatement ()
 		{
@@ -90,6 +91,6 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("d = 'a';");
 			Evaluator.Run ("d.GetType ();");
 		}
-
+#endif
 	}
 }
