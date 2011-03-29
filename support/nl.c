@@ -7,7 +7,10 @@
  * Copyright (c) Novell, Inc. 2011
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include "nl.h"
 
 #if defined(HAVE_LINUX_NETLINK_H) && defined(HAVE_LINUX_RTNETLINK_H)
@@ -22,11 +25,23 @@
 #include <linux/rtnetlink.h>
 
 #undef NL_DEBUG
+#define NL_DEBUG_STMT(a) do { } while (0)
 #define NL_DEBUG_PRINT(...)
+
 /*
 #define NL_DEBUG 1
+#define NL_DEBUG_STMT(a) do { a } while (0)
 #define NL_DEBUG_PRINT(...) g_message(__VA_ARGS__)
 */
+
+
+#ifdef AF_INET6
+#define ADDR_BYTE_LENGTH 16
+#define ADDR_STR_LENGTH INET6_ADDRSTRLEN
+#else
+#define ADDR_LENGTH	 4
+#define ADDR_STR_LENGTH INET_ADDRSTRLEN
+#endif
 
 enum event_type {
 	EVT_NONE = 0,
@@ -158,14 +173,12 @@ CreateNLSocket (void)
 	sock = socket (AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
 	ret = fcntl (sock, F_GETFL, 0);
-#ifdef O_NONBLOCK
 	if (ret != -1) {
 		ret |= O_NONBLOCK;
 		ret = fcntl (sock, F_SETFL, ret);
 		if (ret < 0)
 			return -1;
 	}
-#endif
 
 	memset (&sa, 0, sizeof (sa));
 	if (sock < 0)
@@ -215,17 +228,10 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 		gboolean have_src;
 		gboolean have_pref_src;
 		gboolean have_gw;
-#ifdef AF_INET6
-		char dst [16];
-		char src [16];
-		char pref_src [16];
-		char gw [16];
-#else
-		char dst [4];
-		char src [4];
-		char pref_src [4];
-		char gw [4];
-#endif
+		char dst [ADDR_BYTE_LENGTH];
+		char src [ADDR_BYTE_LENGTH];
+		char pref_src [ADDR_BYTE_LENGTH];
+		char gw [ADDR_BYTE_LENGTH];
 
 		msg_type = nlp->nlmsg_type;
 		NL_DEBUG_PRINT ("TYPE: %d %s", msg_type, FIND_RT_TYPE_NAME (msg_type));
@@ -235,10 +241,14 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 		rtp = (struct rtmsg *) NLMSG_DATA (nlp);
 		family = rtp->rtm_family;
 #ifdef AF_INET6
-		addr_length = (family == AF_INET) ? 4 : 16;
+		if (family != AF_INET && family != AF_INET6) {
 #else
-		addr_length = 4;
+		if (family != AF_INET) {
 #endif
+			continue;
+		}
+
+		addr_length = (family == AF_INET) ? 4 : 16;
 		table = rtp->rtm_table;
 		protocol = rtp->rtm_protocol;
 		scope = rtp->rtm_scope;
@@ -266,13 +276,7 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 		for(; RTA_OK (rtap, rtl); rtap = RTA_NEXT(rtap, rtl)) {
 			char *data;
 #ifdef NL_DEBUG
-#ifdef AF_INET6
-			char ip [INET6_ADDRSTRLEN];
-			int ip_length = INET6_ADDRSTRLEN;
-#else
-			char ip [INET_ADDRSTRLEN];
-			int ip_length = INET_ADDRSTRLEN;
-#endif
+			char ip [ADDR_STR_LENGTH];
 #endif
 
 			NL_DEBUG_PRINT ("\tAttribute: %d %d (%s)", rtap->rta_len, rtap->rta_type, FIND_RTM_ATTRS_NAME (rtap->rta_type));
@@ -281,38 +285,38 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 			case RTA_DST:
 				have_dst = TRUE;
 				memcpy (dst, data, addr_length);
-#ifdef NL_DEBUG
-				*ip = 0;
-				inet_ntop (family, RTA_DATA (rtap), ip, ip_length);
-				NL_DEBUG_PRINT ("\t\tDst: %s", ip);
-#endif
+				NL_DEBUG_STMT (
+					*ip = 0;
+					inet_ntop (family, RTA_DATA (rtap), ip, sizeof (ip));
+					NL_DEBUG_PRINT ("\t\tDst: %s", ip);
+				);
 				break;
 			case RTA_PREFSRC:
 				have_pref_src = TRUE;
 				memcpy (pref_src, data, addr_length);
-#ifdef NL_DEBUG
-				*ip = 0;
-				inet_ntop (family, RTA_DATA (rtap), ip, ip_length);
-				NL_DEBUG_PRINT ("\t\tPref. Src.: %s", ip);
-#endif
+				NL_DEBUG_STMT (
+					*ip = 0;
+					inet_ntop (family, RTA_DATA (rtap), ip, sizeof (ip));
+					NL_DEBUG_PRINT ("\t\tPref. Src.: %s", ip);
+				);
 				break;
 			case RTA_SRC:
 				have_src = TRUE;
 				memcpy (src, data, addr_length);
-#ifdef NL_DEBUG
-				*ip = 0;
-				inet_ntop (family, RTA_DATA (rtap), ip, ip_length);
-				NL_DEBUG_PRINT ("\tSrc: %s", ip);
-#endif
+				NL_DEBUG_STMT (
+					*ip = 0;
+					inet_ntop (family, RTA_DATA (rtap), ip, sizeof (ip));
+					NL_DEBUG_PRINT ("\tSrc: %s", ip);
+				);
 				break;
 			case RTA_GATEWAY:
 				have_gw = TRUE;
 				memcpy (gw, data, addr_length);
-#ifdef NL_DEBUG
-				*ip = 0;
-				inet_ntop (family, RTA_DATA (rtap), ip, ip_length);
-				NL_DEBUG_PRINT ("\t\tGateway: %s", ip);
-#endif
+				NL_DEBUG_STMT (
+					*ip = 0;
+					inet_ntop (family, RTA_DATA (rtap), ip, sizeof (ip));
+					NL_DEBUG_PRINT ("\t\tGateway: %s", ip);
+				);
 				break;
 			default:
 				break;
