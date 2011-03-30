@@ -56,6 +56,42 @@ namespace Mono.Tools {
 			Console.WriteLine ();
 		}
 
+		static X509Certificate FindCrlIssuer (string name, byte[] aki, X509CertificateCollection col)
+		{
+			foreach (X509Certificate cert in col) {
+				if (name != cert.SubjectName)
+					continue;
+				if ((aki == null) || Compare (aki, GetSubjectKeyIdentifier (cert.Extensions ["2.5.29.14"])))
+					return cert;
+			}
+			return null;
+		}
+
+		static X509Certificate FindCrlIssuer (X509Crl crl)
+		{
+			string name = crl.IssuerName;
+			byte [] aki = GetAuthorityKeyIdentifier (crl.Extensions ["2.5.29.35"]);
+			X509Certificate cert = FindCrlIssuer (name, aki, X509StoreManager.IntermediateCACertificates);
+			if (cert != null)
+				return cert;
+			return FindCrlIssuer (name, aki, X509StoreManager.TrustedRootCertificates);
+		}
+
+		static X509Chain chain = new X509Chain ();
+
+		static bool VerifyCrl (X509Crl crl)
+		{
+			X509Certificate issuer = FindCrlIssuer (crl);
+			if (issuer == null)
+				return false;
+
+			if (!crl.VerifySignature (issuer))
+				return false;
+
+			chain.Reset ();
+			return chain.Build (issuer);
+		}
+
 		static void Download (string url, X509Store store)
 		{
 			if (verbose)
@@ -68,7 +104,15 @@ namespace Mono.Tools {
 				error = "decode";
 				X509Crl crl = new X509Crl (data);
 				error = "import";
-				store.Import (crl);
+				// warn if CRL is not current - but still allow it to be imported
+				if (!crl.IsCurrent && verbose)
+					Console.WriteLine ("WARNING: CRL is not current: {0}", url);
+
+				// only import the CRL if its signature is valid and coming from a trusted root
+				if (VerifyCrl (crl))
+					store.Import (crl);
+				else
+					Console.WriteLine ("ERROR: could not validate CRL: {0}", url);
 			}
 			catch (Exception e) {
 				Console.WriteLine ("ERROR: could not {0}: {1}", error, url);
@@ -119,7 +163,7 @@ namespace Mono.Tools {
 			string name = cert.SubjectName;
 			byte [] ski = GetSubjectKeyIdentifier (cert.Extensions ["2.5.29.14"]);
 			foreach (X509Crl crl in store.Crls) {
-				if (crl.IssuerName != cert.SubjectName)
+				if (crl.IssuerName != name)
 					continue;
 				if ((ski == null) || Compare (ski, GetAuthorityKeyIdentifier (crl.Extensions ["2.5.29.35"])))
 					return crl;
