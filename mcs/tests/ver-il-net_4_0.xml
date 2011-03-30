@@ -46561,6 +46561,22 @@
       </method>
     </type>
   </test>
+  <test name="test-814.cs">
+    <type name="Test">
+      <method name="System.String get_A()">
+        <size>6</size>
+      </method>
+      <method name="System.String get_B()">
+        <size>6</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>265</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-82.cs">
     <type name="N1.N2.B">
       <method name="Void .ctor()">
