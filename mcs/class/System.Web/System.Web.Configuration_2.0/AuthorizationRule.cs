@@ -199,6 +199,10 @@ namespace System.Web.Configuration {
 		{
 			base.Unmerge (sourceElement, parentElement, saveMode);
 			this.saveMode = saveMode;
+
+			AuthorizationRule source = sourceElement as AuthorizationRule;
+			if (source != null)
+				this.action = source.Action;
 		}
 
 		public AuthorizationRuleAction Action {
