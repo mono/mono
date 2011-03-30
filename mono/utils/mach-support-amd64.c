@@ -74,7 +74,7 @@ mono_mach_arch_get_tls_value_from_thread (thread_port_t thread, guint32 key)
 	 * is baked into their pthread_getspecific implementation
 	 */
 	intptr_t *p = (intptr_t *) pthread_from_mach_thread_np (thread);
-	intptr_t **tsd = (intptr_t **) (p + 0x60);
+	intptr_t **tsd = (intptr_t **) ((char*)p + 0x60);
 
 	return (void *) tsd [key];
 }
