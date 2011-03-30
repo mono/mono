@@ -1,7 +1,7 @@
 .\" 
 .\" makecert manual page.
 .\" Copyright 2003 Motus Technologies
-.\" Copyright 2004-2005 Novell
+.\" Copyright 2004-2005, 2011 Novell
 .\" Author:
 .\"   Sebastien Pouliot (sebastien@ximian.com)
 .\"
@@ -103,6 +103,12 @@ Add a path length restriction to the certificate chain. This is only
 applicable for certificates that have BasicConstraint set to Authority (-cy 
 authority). This is used to limit the chain of certificates than can be
 issued under this authority.
+.TP
+.I "-alt filename"
+Add a subjectAltName extension to the certificate. Each line from 'filename'
+will be added as a DNS entry of the extension. This option is useful if you
+want to create a single SSL certificate to work on several hosts that do not
+share a common domain name (i.e. CN=*.domain.com would not work).
 .TP
 .I "-eku oid[,oid]"
 Add some extended key usage OID to the certificate.

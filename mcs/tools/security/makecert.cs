@@ -111,6 +111,7 @@ namespace Mono.Tools {
 			CspParameters issuerParams = new CspParameters ();
 			BasicConstraintsExtension bce = null;
 			ExtendedKeyUsageExtension eku = null;
+			SubjectAltNameExtension alt = null;
 			string p12file = null;
 			string p12pwd = null;
 			X509Certificate issuerCertificate = null;
@@ -213,6 +214,12 @@ namespace Mono.Tools {
 								bce.CertificateAuthority = true;
 							}
 							bce.PathLenConstraint = Convert.ToInt32 (args [i++]);
+							break;
+						case "-alt":
+							if (alt == null) {
+								string [] dnsNames = File.ReadAllLines (args [i++]);
+								alt = new SubjectAltNameExtension (null, dnsNames, null, null);
+							}
 							break;
 						case "-ic":
 							issuerCertificate = LoadCertificate (args [i++]);
@@ -393,6 +400,8 @@ namespace Mono.Tools {
 					cb.Extensions.Add (bce);
 				if (eku != null)
 					cb.Extensions.Add (eku);
+				if (alt != null)
+					cb.Extensions.Add (alt);
 				// signature
 				cb.Hash = hashName;
 				byte[] rawcert = cb.Sign (issuerKey);
