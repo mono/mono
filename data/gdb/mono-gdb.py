@@ -166,6 +166,8 @@ class MonoClassPrinter:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
+        if klass ["generic_class"].cast (gdb.lookup_type ("guint64")) != 0:
+            class_name = "%s<%s>" % (class_name, str (klass ["generic_class"]["context"]["class_inst"]))
         if add_quotes:
             return "\"%s\"" % (class_name)
         else:
