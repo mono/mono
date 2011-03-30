@@ -502,12 +502,12 @@ namespace_declaration
 			if (!valid_global_attrs)
 				report.Error (1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
+	
+		module.AddAttributes (attrs, current_namespace);
 		
 		current_namespace = new NamespaceEntry (module, current_namespace, file, name.GetName ());
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
-		
-		module.AddAttributes (attrs, current_namespace);
 	  }
 	  OPEN_BRACE
 	  {

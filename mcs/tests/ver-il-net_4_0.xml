@@ -46551,6 +46551,16 @@
       </method>
     </type>
   </test>
+  <test name="test-813.cs">
+    <type name="NS.System.A">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-82.cs">
     <type name="N1.N2.B">
       <method name="Void .ctor()">
