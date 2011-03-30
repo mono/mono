@@ -40,7 +40,12 @@ using System.Runtime.ConstrainedExecution;
 namespace System.Threading
 {
 	[ComVisible (true)]
-	public abstract class WaitHandle : MarshalByRefObject, IDisposable
+	public abstract class WaitHandle
+#if MOONLIGHT
+		: IDisposable
+#else
+		: MarshalByRefObject, IDisposable
+#endif
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
@@ -213,7 +218,7 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0 || MOBILE || MOONLIGHT
 		public void Dispose ()
 #else		
 		void IDisposable.Dispose ()

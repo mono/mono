@@ -78,4 +78,8 @@ using System.Runtime.InteropServices;
 	[assembly: DefaultDependency (LoadHint.Always)]
 #endif
 
+#if NET_2_1 || NET_4_0
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+#endif
+
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

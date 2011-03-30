@@ -1603,7 +1603,7 @@ namespace System.Linq {
 
 		#endregion
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		#region Zip
 
 		public static IQueryable<TResult> Zip<TFirst, TSecond, TResult> (this IQueryable<TFirst> source1, IEnumerable<TSecond> source2, Expression<Func<TFirst, TSecond, TResult>> resultSelector)

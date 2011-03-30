@@ -57,12 +57,14 @@ using System.Text;
 namespace System {
 
 	[ComVisible (true)]
-#if !NET_2_1
+#if !NET_2_1 || MOONLIGHT
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
-#if NET_2_1
-	public sealed class AppDomain : MarshalByRefObject {
+#if MOONLIGHT
+	public sealed class AppDomain : _AppDomain {
+#elif NET_2_1
+	public sealed class AppDomain : MarshalByRefObject, _AppDomain {
 #else
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
@@ -679,10 +681,12 @@ namespace System {
 			return base.GetType ();
 		}
 
+#if !MOONLIGHT
 		public override object InitializeLifetimeService ()
 		{
 			return null;
 		}
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly);

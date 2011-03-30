@@ -56,6 +56,7 @@ Mono.Xml/SmallXmlParser.cs
 System/AccessViolationException.cs
 System/Activator.cs
 System/AppDomain.cs
+System/_AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager_2_1.cs
 System/AppDomainSetup.cs

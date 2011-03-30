@@ -36,7 +36,10 @@ using System.Runtime.InteropServices;
 namespace System.Threading
 {
 	[ComVisible (true)]
-	public sealed class RegisteredWaitHandle : MarshalByRefObject
+	public sealed class RegisteredWaitHandle
+#if !MOONLIGHT
+		: MarshalByRefObject
+#endif
 	{
 		WaitHandle _waitObject;
 		WaitOrTimerCallback _callback;

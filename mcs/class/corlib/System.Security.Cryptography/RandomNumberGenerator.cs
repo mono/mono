@@ -58,7 +58,7 @@ namespace System.Security.Cryptography {
 		public abstract void GetBytes (byte[] data);
 
 		public abstract void GetNonZeroBytes (byte[] data);
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public void Dispose ()
 		{
 			Dispose (true);

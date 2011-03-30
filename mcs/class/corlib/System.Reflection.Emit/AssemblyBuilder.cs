@@ -1308,6 +1308,35 @@ namespace System.Reflection.Emit
 		public override bool IsDynamic {
 			get { return true; }
 		}
+
+		public override bool Equals (object obj)
+		{
+			return base.Equals (obj);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return base.IsDefined (attributeType, inherit);
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			return base.GetCustomAttributes (inherit);
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return base.GetCustomAttributes (attributeType, inherit);
+		}
+
+		public override string FullName {
+			get { return base.FullName; }
+		}
 #endif
 	}
 }

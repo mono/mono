@@ -42,7 +42,7 @@ namespace System.Reflection {
 		public abstract EventAttributes Attributes {get;}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		virtual
 #endif
 		Type EventHandlerType {
@@ -62,7 +62,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		virtual
 #endif
 		bool IsMulticast {get {return true;}}
@@ -78,7 +78,7 @@ namespace System.Reflection {
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		virtual
 #endif
 		void AddEventHandler (object target, Delegate handler)
@@ -125,7 +125,7 @@ namespace System.Reflection {
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		virtual
 #endif
 		void RemoveEventHandler (object target, Delegate handler)

@@ -651,5 +651,11 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0 || MOONLIGHT
+		public override ParameterInfo ReturnParameter {
+			get { return base.ReturnParameter; }
+		}
+#endif
 	}
 }

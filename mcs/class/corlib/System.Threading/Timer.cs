@@ -34,7 +34,12 @@ using System.Collections;
 namespace System.Threading
 {
 	[ComVisible (true)]
-	public sealed class Timer : MarshalByRefObject, IDisposable
+	public sealed class Timer
+#if MOONLIGHT
+		: IDisposable
+#else
+		: MarshalByRefObject, IDisposable
+#endif
 	{
 		static Scheduler scheduler = Scheduler.Instance;
 #region Timer instance fields

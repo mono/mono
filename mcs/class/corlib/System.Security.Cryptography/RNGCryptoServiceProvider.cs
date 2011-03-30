@@ -145,5 +145,12 @@ namespace System.Security.Cryptography {
 				_handle = IntPtr.Zero;
 			}
 		}
+
+#if NET_4_0 || MOONLIGHT
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+#endif
 	}
 }
