@@ -438,6 +438,7 @@ namespace System.Threading {
 #if NET_4_0 || MOBILE
 		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static bool Yield ();
 #endif
 

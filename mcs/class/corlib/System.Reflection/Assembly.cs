@@ -797,22 +797,6 @@ namespace System.Reflection {
 			Assembly other = (Assembly) o;
 			return other._mono_assembly == _mono_assembly;
 		}
-		
-#if NET_4_0
-#if MOONLIGHT || MOBILE
-		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
-			return CustomAttributeData.GetCustomAttributes (this);
-		}
-#endif
-		public PermissionSet PermissionSet {
-			get { return this.GrantedPermissionSet; }
-		}
-
-		[MonoTODO]
-		public bool IsFullyTrusted {
-			get { return true; }
-		}
-#endif
 
 #if !MOONLIGHT
 		// Code Access Security
@@ -896,11 +880,27 @@ namespace System.Reflection {
 			}
 		}
 #endif
+		
+#if NET_4_0
+		public PermissionSet PermissionSet {
+			get { return this.GrantedPermissionSet; }
+		}
+#endif
 
 #if NET_4_0 || MOONLIGHT || MOBILE
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");
+		}
+		
+		public virtual IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+		[MonoTODO]
+		public bool IsFullyTrusted {
+			get { return true; }
 		}
 
 		public virtual Type GetType (string name, bool throwOnError, bool ignoreCase)

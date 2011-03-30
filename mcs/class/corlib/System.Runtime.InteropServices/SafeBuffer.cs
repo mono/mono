@@ -32,6 +32,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
+using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime.InteropServices
 {
@@ -70,6 +71,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public unsafe void AcquirePointer (ref byte* pointer) {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -80,6 +82,7 @@ namespace System.Runtime.InteropServices
 				pointer = (byte*)handle;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void ReleasePointer () {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -94,6 +97,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public T Read<T> (ulong byteOffset) where T : struct
 		{
 			if (!inited)
@@ -110,6 +114,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void ReadArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -125,6 +130,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Write<T> (ulong byteOffset, T value) where T : struct {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -139,6 +145,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct
 		{
 			if (!inited)

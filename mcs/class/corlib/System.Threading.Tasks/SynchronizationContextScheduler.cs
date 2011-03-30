@@ -31,7 +31,7 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
-	public class SynchronizationContextScheduler : TaskScheduler
+	sealed class SynchronizationContextScheduler : TaskScheduler
 	{
 		readonly SynchronizationContext ctx;
 		static readonly SendOrPostCallback callback = TaskLaunchWrapper;
