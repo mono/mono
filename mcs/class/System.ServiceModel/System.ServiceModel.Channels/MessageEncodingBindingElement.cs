@@ -35,12 +35,22 @@ namespace System.ServiceModel.Channels
 {
 	public abstract class MessageEncodingBindingElement : BindingElement
 	{
-		public MessageEncodingBindingElement ()
+#if MOONLIGHT
+		protected
+#else
+		public
+#endif
+		MessageEncodingBindingElement ()
 		{
 		}
 
 		[MonoTODO]
-		public MessageEncodingBindingElement (MessageEncodingBindingElement source)
+#if MOONLIGHT
+		protected
+#else
+		public
+#endif
+		MessageEncodingBindingElement (MessageEncodingBindingElement source)
 		{
 			MessageVersion = source.MessageVersion;
 		}

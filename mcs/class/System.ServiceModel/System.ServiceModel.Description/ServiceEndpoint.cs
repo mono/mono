@@ -27,12 +27,15 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}")]
+	[DebuggerDisplay ("Address={address}")]
 	public class ServiceEndpoint
 	{
 		ContractDescription contract;

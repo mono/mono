@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -36,6 +37,7 @@ using System.Xml;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Action={action}, Direction={direction}, MessageType={messageType}")]
 	public class MessageDescription
 	{
 		string action;

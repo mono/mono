@@ -75,5 +75,26 @@ namespace System.ServiceModel.Description
 		{
 			return encoded_name;
 		}
+
+		public static bool operator == (XmlName a, XmlName b)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool operator != (XmlName a, XmlName b)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public override int GetHashCode ()
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 }

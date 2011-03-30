@@ -105,6 +105,12 @@ namespace System.ServiceModel
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public static FaultException CreateFault (MessageFault messageFault, string action, params Type[] faultDetailTypes)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual MessageFault CreateMessageFault ()
 		{
 			return fault;

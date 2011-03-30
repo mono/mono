@@ -36,6 +36,9 @@ using System.Text;
 namespace System.ServiceModel.Dispatcher
 {
 	public sealed class DispatchOperation
+#if MOONLIGHT
+		: IDispatchOperation
+#endif
 	{
 		internal class DispatchOperationCollection :
 			SynchronizedKeyedCollection<string, DispatchOperation>
@@ -225,5 +228,26 @@ namespace System.ServiceModel.Dispatcher
 			throw new InvalidOperationException ("Cannot change this property after the service host is opened");
 #endif
 		}
+
+#if MOONLIGHT
+		bool IDispatchOperation.DeserializeRequest {
+			get { return DeserializeRequest; }
+			set { DeserializeRequest = value; }
+		}
+
+		IDispatchMessageFormatter IDispatchOperation.Formatter {
+			get { return Formatter; }
+			set { Formatter = value; }
+		}
+
+		string IDispatchOperation.Name {
+			get { return Name; }
+		}
+
+		bool IDispatchOperation.SerializeReply { 
+			get { return SerializeReply; }
+			set { SerializeReply = value; }
+		}
+#endif
 	}
 }

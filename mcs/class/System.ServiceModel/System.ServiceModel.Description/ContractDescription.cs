@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Security;
 using System.Reflection;
@@ -49,6 +50,7 @@ namespace System.ServiceModel.Description
 		}
 	}
 
+	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
 	public class ContractDescription
 	{		
 		[MonoTODO]

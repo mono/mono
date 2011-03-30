@@ -61,12 +61,12 @@ namespace System.ServiceModel.Dispatcher
 			get { return operation_name; }
 		}
 
-		public bool IsValidReturnValue (MessagePartDescription part)
+		internal static bool IsValidReturnValue (MessagePartDescription part)
 		{
 			return part != null && part.Type != typeof (void);
 		}
 
-		void Validate (OperationDescription od, bool isRpc, bool isEncoded)
+		internal static void Validate (OperationDescription od, bool isRpc, bool isEncoded)
 		{
 			bool hasParameter = false, hasVoid = false;
 			foreach (var md in od.Messages) {

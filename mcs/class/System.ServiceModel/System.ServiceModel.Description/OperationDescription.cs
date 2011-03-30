@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -35,6 +36,7 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}, IsInitiating={isInitiating}, IsTerminating={isTerminating}")]
 	public class OperationDescription
 	{
 		MethodInfo begin_method, end_method, sync_method;

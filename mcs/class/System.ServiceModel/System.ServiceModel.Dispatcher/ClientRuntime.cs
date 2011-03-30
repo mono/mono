@@ -84,7 +84,11 @@ namespace System.ServiceModel.Dispatcher
 		public DispatchRuntime CallbackDispatchRuntime { get; internal set; }
 #endif
 
+#if MOONLIGHT
+		public IList<IClientMessageInspector> MessageInspectors {
+#else
 		public SynchronizedCollection<IClientMessageInspector> MessageInspectors {
+#endif
 			get { return inspectors; }
 		}
 
@@ -126,6 +130,12 @@ namespace System.ServiceModel.Dispatcher
 		[MonoTODO]
 		public ClientOperation UnhandledClientOperation {
 			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public bool MessageVersionNoneFaultsEnabled {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 	}
 }
