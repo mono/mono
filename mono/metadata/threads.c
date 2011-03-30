@@ -1185,6 +1185,8 @@ void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 				if (ms != INFINITE)
 					break;
 			}
+		} else {
+			break;
 		}
 	}
 }
