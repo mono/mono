@@ -127,18 +127,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		// FIXME: with a few effort, it could be done with XmlReader,
-		// that means removal of DOM use.
-		//
-		internal override void OnGenerateDocComment (XmlElement el)
-		{
-			DocumentationBuilder.OnMethodGenerateDocComment (this, el, Report);
-		}
-
-		//
 		//   Represents header string for documentation comment.
 		//
 		public override string DocCommentHeader 

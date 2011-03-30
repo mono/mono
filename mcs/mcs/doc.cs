@@ -35,7 +35,7 @@ namespace Mono.CSharp
 		//
 		// The output for XML documentation.
 		//
-		public XmlWriter XmlCommentOutput;
+		XmlWriter XmlCommentOutput;
 
 		static readonly string line_head = Environment.NewLine + "            ";
 
@@ -122,7 +122,10 @@ namespace Mono.CSharp
 
 			XmlElement el = n as XmlElement;
 			if (el != null) {
-				mc.OnGenerateDocComment (el);
+				var pm = mc as IParametersMember;
+				if (pm != null) {
+					CheckParametersComments (mc, pm, el);
+				}
 
 				// FIXME: it could be done with XmlReader
 				XmlNodeList nl = n.SelectNodes (".//include");
@@ -455,15 +458,6 @@ namespace Mono.CSharp
 			xref.SetAttribute ("cref", cref);
 		}
 
-		void Report419 (MemberCore mc, string member_name, MemberSpec [] mis)
-		{
-			Report.Warning (419, 3, mc.Location, 
-				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
-				member_name,
-				TypeManager.GetFullNameSignature (mis [0]),
-				TypeManager.GetFullNameSignature (mis [1]));
-		}
-
 		//
 		// Get a prefix from member type for XML documentation (used
 		// to formalize cref target name).
@@ -491,27 +485,42 @@ namespace Mono.CSharp
 		// FIXME: with a few effort, it could be done with XmlReader,
 		// that means removal of DOM use.
 		//
-		internal static void OnMethodGenerateDocComment (
-			MethodCore mc, XmlElement el, Report Report)
+		void CheckParametersComments (MemberCore member, IParametersMember paramMember, XmlElement el)
 		{
-			var paramTags = new Dictionary<string, string> ();
+			HashSet<string> found_tags = null;
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
 				string xname = pelem.GetAttribute ("name");
 				if (xname.Length == 0)
 					continue; // really? but MS looks doing so
-				if (xname != "" && mc.ParameterInfo.GetParameterIndexByName (xname) < 0)
-					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
-						mc.GetSignatureForError (), xname);
-				else if (paramTags.ContainsKey (xname))
-					Report.Warning (1571, 2, mc.Location, "XML comment on `{0}' has a duplicate param tag for `{1}'",
-						mc.GetSignatureForError (), xname);
-				paramTags [xname] = xname;
+
+				if (found_tags == null) {
+					found_tags = new HashSet<string> ();
+				}
+
+				if (xname != "" && paramMember.Parameters.GetParameterIndexByName (xname) < 0) {
+					Report.Warning (1572, 2, member.Location,
+						"XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
+						member.GetSignatureForError (), xname);
+					continue;
+				}
+
+				if (found_tags.Contains (xname)) {
+					Report.Warning (1571, 2, member.Location,
+						"XML comment on `{0}' has a duplicate param tag for `{1}'",
+						member.GetSignatureForError (), xname);
+					continue;
+				}
+
+				found_tags.Add (xname);
 			}
-			IParameterData [] plist = mc.ParameterInfo.FixedParameters;
-			foreach (Parameter p in plist) {
-				if (paramTags.Count > 0 && !paramTags.ContainsKey (p.Name))
-					Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
-						p.Name, mc.GetSignatureForError ());
+
+			if (found_tags != null) {
+				foreach (Parameter p in paramMember.Parameters.FixedParameters) {
+					if (!found_tags.Contains (p.Name) && !(p is ArglistParameter))
+						Report.Warning (1573, 4, member.Location,
+							"Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
+							p.Name, member.GetSignatureForError ());
+				}
 			}
 		}
 

@@ -808,14 +808,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		internal virtual void OnGenerateDocComment (XmlElement intermediateNode)
-		{
-		}
-
-		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
