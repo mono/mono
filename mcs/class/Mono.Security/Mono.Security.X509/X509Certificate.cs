@@ -303,6 +303,9 @@ namespace Mono.Security.X509 {
 						case "1.2.840.10040.4.3":	// SHA1-1 with DSA
 							hash = SHA1.Create ();
 							break;
+						case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
+							hash = SHA256.Create ();
+							break;
 						default:
 							return null;
 					}
@@ -400,6 +403,7 @@ namespace Mono.Security.X509 {
 					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
 					case "1.3.14.3.2.29":		// SHA1 with RSA signature
+					case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
 						return (byte[]) signature.Clone ();
 
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
@@ -506,6 +510,10 @@ namespace Mono.Security.X509 {
 				case "1.2.840.113549.1.1.5":
 				case "1.3.14.3.2.29":
 					v.SetHashAlgorithm ("SHA1");
+					break;
+				// SHA-256 with RSA Encryption 
+				case "1.2.840.113549.1.1.11":
+					v.SetHashAlgorithm ("SHA256");
 					break;
 				default:
 					throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
