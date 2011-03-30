@@ -13143,14 +13143,6 @@
         <size>1</size>
       </method>
     </type>
-    <type name="Db4objects.Db4o.Internal.ExternalObjectContainer">
-      <method name="IList Db4objects.Db4o.IObjectContainer.Query()">
-        <size>7</size>
-      </method>
-      <method name="IList`1 Db4objects.Db4o.IObjectContainer.Query[Extent](IList`1, IList`1)">
-        <size>9</size>
-      </method>
-    </type>
   </test>
   <test name="gtest-370.cs">
     <type name="N2.X`1[T]">
@@ -17229,6 +17221,35 @@
       <method name="Int32 Main()">
         <size>14</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-554.cs">
+    <type name="Mono.Test.Program">
+      <method name="Int32 Main()">
+        <size>125</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Mono.Test.A">
+      <method name="Boolean get_Success()">
+        <size>2</size>
+      </method>
+      <method name="Void Run()">
+        <size>1</size>
+      </method>
+      <method name="Void Gen[U]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Mono.Test.B">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -35806,11 +35827,6 @@
         <size>34</size>
       </method>
     </type>
-    <type name="FLMID.Bugs.BoolOne.B">
-      <method name="Void FLMID.Bugs.BoolOne.IB.Add(Boolean, Boolean, UInt32, Boolean)">
-        <size>12</size>
-      </method>
-    </type>
   </test>
   <test name="test-341.cs">
     <type name="Test">
@@ -39674,12 +39690,6 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
-      </method>
-      <method name="Void EventInterface.add_OnEvent(DelegateHandler)">
-        <size>8</size>
-      </method>
-      <method name="Void EventInterface.remove_OnEvent(DelegateHandler)">
-        <size>8</size>
       </method>
     </type>
     <type name="DelegateHandler">
@@ -46332,9 +46342,6 @@
       </method>
       <method name="Int32 Main()">
         <size>34</size>
-      </method>
-      <method name="Int32 A.Add(Int32, Int32)">
-        <size>9</size>
       </method>
     </type>
   </test>
