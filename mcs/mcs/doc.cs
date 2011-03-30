@@ -302,7 +302,7 @@ namespace Mono.CSharp
 			// Try built-in type first because we are using ParsedName as identifier of
 			// member names on built-in types
 			//
-			if (ParsedBuiltinType != null && ParsedParameters == null) {
+			if (ParsedBuiltinType != null && (ParsedParameters == null || ParsedName != null)) {
 				member = ParsedBuiltinType.Type;
 			} else {
 				member = null;

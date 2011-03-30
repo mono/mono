@@ -3089,7 +3089,8 @@ namespace Mono.CSharp
 										WarningMisplacedComment (Location - 3);
 								}
 							} else {
-								check_incorrect_doc_comment ();
+								if (xml_comment_buffer.Length > 0)
+									doc_state = XmlCommentState.NotAllowed;
 							}
 						}
 
