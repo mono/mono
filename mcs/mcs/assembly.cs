@@ -376,6 +376,12 @@ namespace Mono.CSharp
 						a.FullName);
 				}
 
+				var ci = a.Assembly.GetName ().CultureInfo;
+				if (ci != System.Globalization.CultureInfo.InvariantCulture) {
+					Report.Warning (1607, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
+						a.Name, ci.Name);
+				}
+
 				if (!a.IsFriendAssemblyTo (this))
 					continue;
 
