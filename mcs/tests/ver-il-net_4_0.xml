@@ -46577,6 +46577,24 @@
       </method>
     </type>
   </test>
+  <test name="test-815.cs">
+    <type name="D">
+      <method name="Int32 get_DUUU(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 IS.get_Hello(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()">
+        <size>30</size>
+      </method>
+    </type>
+  </test>
   <test name="test-82.cs">
     <type name="N1.N2.B">
       <method name="Void .ctor()">

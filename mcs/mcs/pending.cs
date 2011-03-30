@@ -327,10 +327,11 @@ namespace Mono.CSharp {
 
 			MethodBuilder proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,
+				MethodAttributes.Private |
 				MethodAttributes.HideBySig |
 				MethodAttributes.NewSlot |
 				MethodAttributes.CheckAccessOnOverride |
-				MethodAttributes.Virtual,
+				MethodAttributes.Virtual | MethodAttributes.Final,
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType.GetMetaInfo (), param.GetMetaInfo ());
 
