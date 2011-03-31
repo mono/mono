@@ -187,6 +187,16 @@ namespace System
 			"d/yy/MMM",
 			"yy/d/MMM",
 		};
+		
+		private static readonly string[] ParseGenericYearMonthDayFormats = new string [] {
+			"yyyy/M/dT",
+			"yyyy/M/d",
+			"M/yyyy/dT",
+			"M/yyyy/d",
+			"yyyy'\u5E74'M'\u6708'd'\u65E5",
+			"yyyy'-'M'-'dT",
+			"yyyy'-'M'-'d",
+		};
 
 		// Patterns influenced by the MonthDayPattern in DateTimeFormatInfo.
 		// Note that these patterns cannot be followed by the time.
@@ -848,7 +858,7 @@ namespace System
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
 			// Try first all the combinations of ParseAllDateFormats & ParseTimeFormats
-			string[] allDateFormats = YearMonthDayFormats (dfi, setExceptionOnError, ref exception);
+			string[] allDateFormats = YearMonthDayFormats (dfi);
 			if (allDateFormats == null){
 				result = MinValue;
 				return false;
@@ -927,16 +937,13 @@ namespace System
 			return ParseExact (s, format, provider, DateTimeStyles.None);
 		}
 
-		private static string[] YearMonthDayFormats (DateTimeFormatInfo dfi, bool setExceptionOnError, ref Exception exc)
+		private static string[] YearMonthDayFormats (DateTimeFormatInfo dfi)
 		{
 			int dayIndex = dfi.ShortDatePattern.IndexOf('d');
 			int monthIndex = dfi.ShortDatePattern.IndexOf('M');
 			int yearIndex = dfi.ShortDatePattern.IndexOf('y');
-			if (dayIndex == -1 || monthIndex == -1 || yearIndex == -1){
-				if (setExceptionOnError)
-					exc = new FormatException (Locale.GetText("Order of year, month and date is not defined by {0}", dfi.ShortDatePattern));
-				return null;
-			}
+			if (dayIndex == -1 || monthIndex == -1 || yearIndex == -1)
+				return ParseGenericYearMonthDayFormats;
 
 			if (yearIndex < monthIndex)
 				if (monthIndex < dayIndex)
@@ -945,9 +952,7 @@ namespace System
 					return ParseYearDayMonthFormats;
 				else {
 					// The year cannot be between the date and the month
-					if (setExceptionOnError)
-						exc = new FormatException (Locale.GetText("Order of date, year and month defined by {0} is not supported", dfi.ShortDatePattern));
-					return null;
+					return ParseGenericYearMonthDayFormats;
 				}
 			else if (dayIndex < monthIndex)
 				return ParseDayMonthYearFormats;
@@ -955,9 +960,7 @@ namespace System
 				return ParseMonthDayYearFormats;
 			else {
 				// The year cannot be between the month and the date
-				if (setExceptionOnError)
-					exc = new FormatException (Locale.GetText("Order of month, year and date defined by {0} is not supported", dfi.ShortDatePattern));
-				return null;
+				return ParseGenericYearMonthDayFormats;
 			}
 		}
 
