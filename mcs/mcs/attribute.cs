@@ -428,7 +428,7 @@ namespace Mono.CSharp {
 			// Add [module: DefaultCharSet] to all DllImport import attributes
 			//
 			var module = context.Module;
-			if (Type == module.PredefinedAttributes.DllImport && module.HasDefaultCharSet) {
+			if ((Type == module.PredefinedAttributes.DllImport || Type == module.PredefinedAttributes.UnmanagedFunctionPointer) && module.HasDefaultCharSet) {
 				if (rc == null)
 					rc = CreateResolveContext ();
 
@@ -1618,8 +1618,6 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute DefaultParameterValue;
 		public readonly PredefinedAttribute OptionalParameter;
 		public readonly PredefinedAttribute UnverifiableCode;
-
-		// New in .NET 2.0
 		public readonly PredefinedAttribute DefaultCharset;
 		public readonly PredefinedAttribute TypeForwarder;
 		public readonly PredefinedAttribute FixedBuffer;
@@ -1628,6 +1626,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute RuntimeCompatibility;
 		public readonly PredefinedAttribute DebuggerHidden;
 		public readonly PredefinedAttribute UnsafeValueType;
+		public readonly PredefinedAttribute UnmanagedFunctionPointer;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1681,6 +1680,7 @@ namespace Mono.CSharp {
 			RuntimeCompatibility = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
 			DebuggerHidden = new PredefinedAttribute (module, "System.Diagnostics", "DebuggerHiddenAttribute");
 			UnsafeValueType = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "UnsafeValueTypeAttribute");
+			UnmanagedFunctionPointer = new PredefinedAttribute (module, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
 
 			Extension = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "ExtensionAttribute");
 
