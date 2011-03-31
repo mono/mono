@@ -82,7 +82,6 @@ tp_epoll_wait (gpointer p)
 	thread = mono_thread_internal_current ();
 	events = g_new0 (struct epoll_event, EPOLL_NEVENTS);
 
-	printf ("epoll_wait\n");
 	while (1) {
 		do {
 			if (ready == -1) {

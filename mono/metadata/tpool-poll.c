@@ -150,7 +150,6 @@ tp_poll_wait (gpointer p)
 	for (i = 1; i < allocated; i++)
 		INIT_POLLFD (&pfds [i], -1, 0);
 
-	printf ("poll_wait\n");
 	while (1) {
 		int nsock = 0;
 		mono_pollfd *pfd;
