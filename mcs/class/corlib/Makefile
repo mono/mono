@@ -92,24 +92,27 @@ endif
 
 vts = VersionTolerantSerialization
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/$(vts)
-test-vts:
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/1.0/Address.cs
-	$(MCS) $(test_nunit_ref) \
+vtslibs = \
+	$(vtsdir)/$(vts)TestLib/1.0/Address.dll \
+	$(vtsdir)/$(vts)TestLib/2.0/Address.dll \
+	$(vtsdir)/$(vts)TestLib/3.0/Address.dll \
+	$(vtsdir)/$(vts)TestLib/4.0/Address.dll \
+	$(vtsdir)/$(vts)TestLib/5.0/Address.dll \
+	$(vtsdir)/$(vts)TestLib/6.0/Address.dll
+
+test-vts: $(vtslibs) $(vtsdir)/BinarySerializationOverVersions.exe
+
+$(vtsdir)/$(vts)TestLib/%/Address.dll: $(vtsdir)/$(vts)TestLib/%/Address.cs
+	$(Q_MCS) $(MCS) -target:library -warn:0  $^
+
+$(vtsdir)/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(vts)TestLib/1.0/Address.dll
+	$(Q_MCS) $(MCS) $(test_nunit_ref) -warn:0  \
 		-r:$(vtsdir)/$(vts)TestLib/1.0/Address.dll \
 		$(vtsdir)/BinarySerializationOverVersions.cs
-	cp $(vtsdir)/$(vts)TestLib/1.0/Address.dll $(vtsdir)
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/2.0/Address.cs
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/3.0/Address.cs
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/4.0/Address.cs
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/5.0/Address.cs
-	$(MCS) -target:library \
-		$(vtsdir)/$(vts)TestLib/6.0/Address.cs
+	@cp $(vtsdir)/$(vts)TestLib/1.0/Address.dll $(vtsdir)
+
 run-test-vts: test-vts
+	@echo Running vts tests...
 	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
 		$(vtsdir)/BinarySerializationOverVersions.exe 
 test: test-vts
