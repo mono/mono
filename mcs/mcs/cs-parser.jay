@@ -1490,7 +1490,7 @@ fixed_parameter
 	  {
 		Error_SyntaxError (yyToken);	  
 	  	Location l = GetLocation ($4);
-		$$ = new Parameter ((FullNamedExpression) $3, "NeedSomeGeneratorHere", (Parameter.Modifier) $2, (Attributes) $1, l);
+		$$ = new Parameter ((FullNamedExpression) $3, null, (Parameter.Modifier) $2, (Attributes) $1, l);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier

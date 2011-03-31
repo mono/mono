@@ -2501,7 +2501,8 @@ namespace Mono.CSharp {
 
 				// TODO: Should use Parameter only and more block there
 				parameter_info[i] = new ParameterInfo (this, i);
-				AddLocalName (p.Name, parameter_info[i]);
+				if (p.Name != null)
+					AddLocalName (p.Name, parameter_info[i]);
 			}
 		}
 
