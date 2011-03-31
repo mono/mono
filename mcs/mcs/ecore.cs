@@ -4281,6 +4281,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			//
+			// These flags indicates we are running delegate probing conversion. No need to
+			// do more expensive checks
+			// 
+			if ((restrictions & (Restrictions.ProbingOnly | Restrictions.CovariantDelegate)) == (Restrictions.CovariantDelegate | Restrictions.ProbingOnly))
+				return (T) best_candidate;
+
 			if (ambiguous_candidates != null) {
 				//
 				// Now check that there are no ambiguities i.e the selected method
@@ -4812,31 +4819,33 @@ namespace Mono.CSharp {
 		{
 			bool lvalue_instance = rhs != null && IsInstance && spec.DeclaringType.IsStruct;
 
-			if (ResolveInstanceExpression (ec, rhs)) {
-				// Resolve the field's instance expression while flow analysis is turned
-				// off: when accessing a field "a.b", we must check whether the field
-				// "a.b" is initialized, not whether the whole struct "a" is initialized.
+			if (rhs != this) {
+				if (ResolveInstanceExpression (ec, rhs)) {
+					// Resolve the field's instance expression while flow analysis is turned
+					// off: when accessing a field "a.b", we must check whether the field
+					// "a.b" is initialized, not whether the whole struct "a" is initialized.
 
-				if (lvalue_instance) {
-					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-						bool out_access = rhs == EmptyExpression.OutAccess || rhs == EmptyExpression.LValueMemberOutAccess;
+					if (lvalue_instance) {
+						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+							bool out_access = rhs == EmptyExpression.OutAccess || rhs == EmptyExpression.LValueMemberOutAccess;
 
-						Expression right_side =
-							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
+							Expression right_side =
+								out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
-						InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
+							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
+						}
+					} else {
+						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+							InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
+						}
 					}
-				} else {
-					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-						InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
-					}
+
+					if (InstanceExpression == null)
+						return null;
 				}
 
-				if (InstanceExpression == null)
-					return null;
+				DoBestMemberChecks (ec, spec);
 			}
-
-			DoBestMemberChecks (ec, spec);
 
 			var fb = spec as FixedFieldSpec;
 			IVariableReference var = InstanceExpression as IVariableReference;

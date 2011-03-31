@@ -1091,7 +1091,7 @@ namespace Mono.CSharp
 		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-			ParametersCompiled parameters;
+			readonly ParametersCompiled parameters;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -1142,7 +1142,10 @@ namespace Mono.CSharp
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
-				parameters.Resolve (this);
+				// Fill in already resolved event type to speed things up and
+				// avoid confusing duplicate errors
+				((Parameter) parameters.FixedParameters[0]).Type = method.member_type;
+				parameters.Types = new TypeSpec[] { method.member_type };
 
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);

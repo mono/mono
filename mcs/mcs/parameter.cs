@@ -279,6 +279,9 @@ namespace Mono.CSharp {
 			get {
 				return parameter_type;
 			}
+			set {
+				parameter_type = value;
+			}
 		}
 
 		public FullNamedExpression TypeExpression  {

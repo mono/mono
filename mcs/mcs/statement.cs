@@ -1873,14 +1873,7 @@ namespace Mono.CSharp {
 			var pi = variable as ParametersBlock.ParameterInfo;
 			if (pi != null) {
 				var p = pi.Parameter;
-				if (p is AnonymousTypeClass.GeneratedParameter) {
-					ParametersBlock.TopBlock.Report.Error (833, p.Location, "`{0}': An anonymous type cannot have multiple properties with the same name",
-						p.Name);
-				} else {
-					ParametersBlock.TopBlock.Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
-				}
-
-				return;
+				ParametersBlock.TopBlock.Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
 			}
 
 			ParametersBlock.TopBlock.Report.Error (128, variable.Location,

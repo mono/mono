@@ -245,20 +245,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr, ref bool is_attr)
+		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr)
 		{
 			TypeExpr te = expr.ResolveAsTypeTerminal (context, false);
 			if (te == null)
 				return null;
 
-			TypeSpec t = te.Type;
-			if (t.IsAttribute) {
-				is_attr = true;
-			} else {
-				Report.SymbolRelatedToPreviousError (t);
-				Report.Error (616, Location, "`{0}': is not an attribute class", TypeManager.CSharpName (t));
-			}
-			return t;
+			return te.Type;
 		}
 
 		/// <summary>
@@ -278,7 +271,11 @@ namespace Mono.CSharp {
 			// print on success
 
 			try {
-				t1 = ResolvePossibleAttributeType (expression, ref t1_is_attr);
+				t1 = ResolvePossibleAttributeType (expression);
+				if (t1 != null)
+					t1_is_attr = t1.IsAttribute;
+
+				resolve_printer.EndSession ();
 
 				if (nameEscaped) {
 					t2 = null;
@@ -286,15 +283,15 @@ namespace Mono.CSharp {
 					expanded = (ATypeNameExpression) expression.Clone (null);
 					expanded.Name += "Attribute";
 
-					t2 = ResolvePossibleAttributeType (expanded, ref t2_is_attr);
+					t2 = ResolvePossibleAttributeType (expanded);
+					if (t2 != null)
+						t2_is_attr = t2.IsAttribute;
 				}
-
-				resolve_printer.EndSession ();
 			} finally {
 				context.Module.Compiler.Report.SetPrinter (prev_recorder);
 			}
 
-			if (t1_is_attr && t2_is_attr) {
+			if (t1_is_attr && t2_is_attr && t1 != t2) {
 				Report.Error (1614, Location, "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}Attribute'",
 					GetSignatureForError (), expression.GetSignatureForError (), expanded.GetSignatureForError ());
 				resolve_error = true;
@@ -311,8 +308,23 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			resolve_printer.Merge (prev_recorder);
 			resolve_error = true;
+
+			if (t1 != null) {
+				resolve_printer.Merge (prev_recorder);
+
+				Report.SymbolRelatedToPreviousError (t1);
+				Report.Error (616, Location, "`{0}': is not an attribute class", t1.GetSignatureForError ());
+				return;
+			}
+
+			if (t2 != null) {
+				Report.SymbolRelatedToPreviousError (t2);
+				Report.Error (616, Location, "`{0}': is not an attribute class", t2.GetSignatureForError ());
+				return;
+			}
+
+			resolve_printer.Merge (prev_recorder);
 		}
 
 		public TypeSpec ResolveType ()

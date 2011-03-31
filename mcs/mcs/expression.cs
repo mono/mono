@@ -2532,7 +2532,7 @@ namespace Mono.CSharp
 					break;
 				return left;
 			}
-			Error_OperatorCannotBeApplied (ec, this.left, this.right);
+
 			return null;
 		}
 
@@ -4859,6 +4859,9 @@ namespace Mono.CSharp
 
 		bool DoResolveBase (ResolveContext ec)
 		{
+			if (eclass != ExprClass.Unresolved)
+				return true;
+
 			type = pi.ParameterType;
 			eclass = ExprClass.Variable;
 
