@@ -17,8 +17,6 @@ cs0162-7.cs NO ERROR
 cs0457-2.cs
 cs0457.cs
 
-cs1540-6.cs NO ERROR
-
 dcs0165.cs NO ERROR # Bug 593369
 
 # all the following are from bug #628673
@@ -29,13 +27,10 @@ cs0023-11.cs
 cs0111-3.cs
 cs0122-19.cs
 cs0122-28.cs
-cs0122-8.cs
 cs0168-2.cs
 cs0177-8.cs NO ERROR
-cs0307-6.cs
 cs0308-7.cs
 cs0519.cs
 cs0647-14.cs NO ERROR
-cs1542.cs NO ERROR
 cs1612-6.cs NO ERROR
 cs3006-7.cs NO ERROR

@@ -1,6 +1,6 @@
-// cs0122-8.cs: `A.member' is inaccessible due to its protection level
+// CS1540: Cannot access protected member `A.member' via a qualifier of type `A'. The qualifier must be of type `B' or derived from it
 // Line: 17
-// NOTE: if `member' were a field or a property, this'd be CS1540
+// NOTE: csc report simple inaccessible error which is less precise
 
 using System;
 
@@ -19,5 +19,3 @@ class B : A
        
        static void Handler (object sender, EventArgs args) {}
 }
-
-

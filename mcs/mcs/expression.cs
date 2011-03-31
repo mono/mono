@@ -7770,7 +7770,7 @@ namespace Mono.CSharp
 			var nested = MemberCache.FindNestedType (expr_type, Name, -System.Math.Max (1, Arity));
 
 			if (nested != null) {
-				Error_TypeArgumentsCannotBeUsed (rc.Module.Compiler.Report, expr.Location, nested, Arity);
+				Error_TypeArgumentsCannotBeUsed (rc, nested, Arity, expr.Location);
 				return;
 			}
 
@@ -8451,7 +8451,7 @@ namespace Mono.CSharp
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "indexer", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "indexer", GetSignatureForError (), loc);
 		}
 
 		#region IBaseMembersProvider Members

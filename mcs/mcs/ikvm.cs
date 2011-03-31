@@ -535,7 +535,7 @@ namespace Mono.CSharp
 					continue;
 
 				if (m.IsManifestModule) {
-					Error_FileCorrupted (moduleName);
+					Error_ModuleIsAssembly (moduleName);
 					continue;
 				}
 

@@ -46630,6 +46630,47 @@
       </method>
     </type>
   </test>
+  <test name="test-818.cs">
+    <type name="A.CAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B.CAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo.Foo">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-819.cs">
+    <type name="AAttribute">
+      <method name="Int32 Main()">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AAttribute+BAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="test-82.cs">
     <type name="N1.N2.B">
       <method name="Void .ctor()">

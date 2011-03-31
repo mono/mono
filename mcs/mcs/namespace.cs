@@ -163,13 +163,13 @@ namespace Mono.CSharp {
 		{
 			FullNamedExpression retval = Lookup (ctx, name, -System.Math.Max (1, arity), loc);
 			if (retval != null) {
-				Error_TypeArgumentsCannotBeUsed (ctx.Module.Compiler.Report, loc, retval.Type, arity);
+				Error_TypeArgumentsCannotBeUsed (ctx, retval.Type, arity, loc);
 				return;
 			}
 
 			Namespace ns;
 			if (arity > 0 && namespaces.TryGetValue (name, out ns)) {
-				ns.Error_TypeArgumentsCannotBeUsed (ctx.Module.Compiler.Report, loc, null, arity);
+				ns.Error_TypeArgumentsCannotBeUsed (ctx, null, arity, loc);
 				return;
 			}
 

@@ -313,10 +313,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void Error_TypeArgumentsCannotBeUsed (Report report, Location loc, MemberSpec member, int arity)
+		public void Error_TypeArgumentsCannotBeUsed (IMemberContext context, MemberSpec member, int arity, Location loc)
 		{
 			// Better message for possible generic expressions
 			if (member != null && (member.Kind & MemberKind.GenericMask) != 0) {
+				var report = context.Module.Compiler.Report;
 				report.SymbolRelatedToPreviousError (member);
 				if (member is TypeSpec)
 					member = ((TypeSpec) member).GetDefinition ();
@@ -332,13 +333,13 @@ namespace Mono.CSharp {
 						name, member.GetSignatureForError ());
 				}
 			} else {
-				Error_TypeArgumentsCannotBeUsed (report, ExprClassName, GetSignatureForError (), loc);
+				Error_TypeArgumentsCannotBeUsed (context, ExprClassName, GetSignatureForError (), loc);
 			}
 		}
 
-		public void Error_TypeArgumentsCannotBeUsed (Report report, string exprType, string name, Location loc)
+		public void Error_TypeArgumentsCannotBeUsed (IMemberContext context, string exprType, string name, Location loc)
 		{
-			report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
+			context.Module.Compiler.Report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
 				exprType, name);
 		}
 
@@ -561,7 +562,15 @@ namespace Mono.CSharp {
 			}
 
 			var r = new OverloadResolver (ctors, OverloadResolver.Restrictions.NoBaseMembers, loc);
-			return r.ResolveMember<MethodSpec> (rc, ref args);
+			var ctor = r.ResolveMember<MethodSpec> (rc, ref args);
+			if (ctor == null)
+				return null;
+
+			if ((ctor.Modifiers & Modifiers.PROTECTED) != 0 && !rc.HasSet (ResolveContext.Options.BaseInitializer)) {
+				MemberExpr.CheckProtectedMemberAccess (rc, ctor, ctor.DeclaringType, loc);
+			}
+
+			return ctor;
 		}
 
 		[Flags]
@@ -2135,7 +2144,7 @@ namespace Mono.CSharp {
 
 			FullNamedExpression retval = ec.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), loc, true);
 			if (retval != null) {
-				Error_TypeArgumentsCannotBeUsed (ec.Module.Compiler.Report, loc, retval.Type, Arity);
+				Error_TypeArgumentsCannotBeUsed (ec, retval.Type, Arity, loc);
 /*
 				var te = retval as TypeExpr;
 				if (HasTypeArguments && te != null && !te.Type.IsGeneric)
@@ -2227,7 +2236,7 @@ namespace Mono.CSharp {
 							e = variable.CreateReferenceExpression (rc, loc);
 							if (e != null) {
 								if (Arity > 0)
-									Error_TypeArgumentsCannotBeUsed (rc.Report, "variable", Name, loc);
+									Error_TypeArgumentsCannotBeUsed (rc, "variable", Name, loc);
 
 								return e;
 							}
@@ -2327,6 +2336,32 @@ namespace Mono.CSharp {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
 					} else {
+						if (Arity > 0) {
+							TypeParameter[] tparams = rc.CurrentTypeParameters;
+							if (tparams != null) {
+								foreach (var ctp in tparams) {
+									if (ctp.Name == Name) {
+										Error_TypeArgumentsCannotBeUsed (rc, "type parameter", Name, loc);
+										return null;
+									}
+								}
+							}
+
+							var ct = rc.CurrentType;
+							do {
+								if (ct.MemberDefinition.TypeParametersCount > 0) {
+									foreach (var ctp in ct.MemberDefinition.TypeParameters) {
+										if (ctp.Name == Name) {
+											Error_TypeArgumentsCannotBeUsed (rc, "type parameter", Name, loc);
+											return null;
+										}
+									}
+								}
+
+								ct = ct.DeclaringType;
+							} while (ct != null);
+						}
+
 						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
 					}
 
@@ -2570,21 +2605,25 @@ namespace Mono.CSharp {
 				return;
 
 			if ((member.Modifiers & Modifiers.PROTECTED) != 0 && !(InstanceExpression is This)) {
-				var ct = rc.CurrentType;
-				var expr_type = InstanceExpression.Type;
-				if (ct == expr_type)
-					return;
+				CheckProtectedMemberAccess (rc, member, InstanceExpression.Type, loc);
+			}
+		}
 
-				if ((member.Modifiers & Modifiers.INTERNAL) != 0 && member.DeclaringType.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
-					return;
+		public static void CheckProtectedMemberAccess<T> (ResolveContext rc, T member, TypeSpec qualifier, Location loc) where T : MemberSpec
+		{
+			var ct = rc.CurrentType;
+			if (ct == qualifier)
+				return;
 
-				expr_type = expr_type.GetDefinition ();
-				if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
-					rc.Report.SymbolRelatedToPreviousError (member);
-					rc.Report.Error (1540, loc,
-						"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
-						member.GetSignatureForError (), expr_type.GetSignatureForError (), ct.GetSignatureForError ());
-				}
+			if ((member.Modifiers & Modifiers.INTERNAL) != 0 && member.DeclaringType.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
+				return;
+
+			qualifier = qualifier.GetDefinition ();
+			if (ct != qualifier && !IsSameOrBaseQualifier (ct, qualifier)) {
+				rc.Report.SymbolRelatedToPreviousError (member);
+				rc.Report.Error (1540, loc,
+					"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
+					member.GetSignatureForError (), qualifier.GetSignatureForError (), ct.GetSignatureForError ());
 			}
 		}
 
@@ -4411,7 +4450,7 @@ namespace Mono.CSharp {
 
 			if (ta_count != best_candidate.Arity && (ta_count > 0 || ((IParametersMember) best_candidate).Parameters.IsEmpty)) {
 				var mg = new MethodGroupExpr (new [] { best_candidate }, best_candidate.DeclaringType, loc);
-				mg.Error_TypeArgumentsCannotBeUsed (rc.Report, loc, best_candidate, ta_count);
+				mg.Error_TypeArgumentsCannotBeUsed (rc, best_candidate, ta_count, loc);
 				return;
 			}
 
@@ -4690,7 +4729,7 @@ namespace Mono.CSharp {
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "constant", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "constant", GetSignatureForError (), loc);
 		}
 	}
 
@@ -5152,7 +5191,7 @@ namespace Mono.CSharp {
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "field", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "field", GetSignatureForError (), loc);
 		}
 	}
 
@@ -5354,7 +5393,7 @@ namespace Mono.CSharp {
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "property", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "property", GetSignatureForError (), loc);
 		}
 	}
 
@@ -5682,7 +5721,7 @@ namespace Mono.CSharp {
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "event", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "event", GetSignatureForError (), loc);
 		}
 	}
 
