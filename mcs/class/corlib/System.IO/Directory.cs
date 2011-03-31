@@ -295,7 +295,7 @@ namespace System.IO
 		
 		public static string [] GetFiles (string path, string searchPattern)
 		{
-			return GetFileSystemEntries (path, searchPattern, 0, 0);
+			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
 #if !MOONLIGHT
