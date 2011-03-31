@@ -274,6 +274,9 @@ namespace Mono.CSharp {
 			TypeSpec t1, t2;
 			ATypeNameExpression expanded = null;
 
+			// TODO: Additional warnings such as CS0436 are swallowed because we don't
+			// print on success
+
 			try {
 				t1 = ResolvePossibleAttributeType (expression, ref t1_is_attr);
 
@@ -1644,8 +1647,8 @@ namespace Mono.CSharp {
 		{
 			ParamArray = new PredefinedAttribute (module, "System", "ParamArrayAttribute");
 			Out = new PredefinedAttribute (module, "System.Runtime.InteropServices", "OutAttribute");
-			ParamArray.Resolve (Location.Null);
-			Out.Resolve (Location.Null);
+			ParamArray.Resolve ();
+			Out.Resolve ();
 
 			Obsolete = new PredefinedAttribute (module, "System", "ObsoleteAttribute");
 			DllImport = new PredefinedAttribute (module, "System.Runtime.InteropServices", "DllImportAttribute");

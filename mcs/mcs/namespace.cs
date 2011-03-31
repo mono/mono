@@ -208,7 +208,16 @@ namespace Mono.CSharp {
 			return ns;
 		}
 
-		public TypeExpr LookupType (IMemberContext ctx, string name, int arity, bool silent, Location loc)
+		public IList<TypeSpec> GetAllTypes (string name)
+		{
+			IList<TypeSpec> found;
+			if (types == null || !types.TryGetValue (name, out found))
+				return null;
+
+			return found;
+		}
+
+		public TypeExpr LookupType (IMemberContext ctx, string name, int arity, Location loc)
 		{
 			if (types == null)
 				return null;
@@ -229,33 +238,10 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					var pts = best as BuiltinTypeSpec;
-					if (pts == null)
-						pts = ts as BuiltinTypeSpec;
-
-					if (pts != null) {
-						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
-						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
-
-						// TODO: This should use different warning number but we want to be csc compatible
-						ctx.Module.Compiler.Report.Warning (1685, 1, loc,
-							"The predefined type `{0}.{1}' is redefined in the source code. Ignoring the local type definition",
-							pts.Namespace, pts.Name);
-						best = pts;
-						continue;
-					}
-
 					if (best.MemberDefinition.IsImported && ts.MemberDefinition.IsImported) {
 						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
 						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
-						if (silent) {
-							ctx.Module.Compiler.Report.Warning (1685, 1, loc,
-								"The predefined type `{0}' is defined in multiple assemblies. Using definition from `{1}'",
-								ts.GetSignatureForError (), best.MemberDefinition.DeclaringAssembly.Name);
-						} else {
-							ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
-						}
-
+						ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
 						break;
 					}
 
@@ -263,9 +249,6 @@ namespace Mono.CSharp {
 						best = ts;
 
 					if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
-						continue;
-
-					if (silent)
 						continue;
 
 					if (ts.MemberDefinition.IsImported)
@@ -297,7 +280,7 @@ namespace Mono.CSharp {
 			te = new TypeExpression (best, Location.Null);
 
 			// TODO MemberCache: Cache more
-			if (arity == 0 && !silent)
+			if (arity == 0)
 				cached_types.Add (name, te);
 
 			return te;
@@ -339,7 +322,7 @@ namespace Mono.CSharp {
 			if (arity == 0 && namespaces.ContainsKey (name))
 				return namespaces [name];
 
-			return LookupType (ctx, name, arity, false, loc);
+			return LookupType (ctx, name, arity, loc);
 		}
 
 		//
@@ -469,12 +452,12 @@ namespace Mono.CSharp {
 			cached_types.Remove (name);
 		}
 
-		public void ReplaceTypeWithPredefined (TypeSpec ts, BuiltinTypeSpec pts)
+		public void SetBuiltinType (BuiltinTypeSpec pts)
 		{
-			var found = types [ts.Name];
-			cached_types.Remove (ts.Name);
+			var found = types[pts.Name];
+			cached_types.Remove (pts.Name);
 			if (found.Count == 1) {
-				types[ts.Name][0] = pts;
+				types[pts.Name][0] = pts;
 			} else {
 				throw new NotImplementedException ();
 			}
@@ -1016,7 +999,7 @@ namespace Mono.CSharp {
 			foreach (Namespace using_ns in GetUsingTable ()) {
 				// A using directive imports only types contained in the namespace, it
 				// does not import any nested namespaces
-				fne = using_ns.LookupType (this, name, arity, false, loc);
+				fne = using_ns.LookupType (this, name, arity, loc);
 				if (fne == null)
 					continue;
 

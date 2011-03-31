@@ -39,7 +39,7 @@ namespace Mono.CSharp.Nullable
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
-			var type = ec.Module.PredefinedTypes.Nullable.Resolve (loc);
+			var type = ec.Module.PredefinedTypes.Nullable.Resolve ();
 			if (type == null)
 				return null;
 

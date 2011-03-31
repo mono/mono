@@ -3647,7 +3647,7 @@ namespace Mono.CSharp {
 			} else if (ec.Module.PredefinedTypes.Hashtable.Define ()) {
 				string_dictionary_type = new TypeExpression (ec.Module.PredefinedTypes.Hashtable.TypeSpec, loc);
 			} else {
-				ec.Module.PredefinedTypes.Dictionary.Resolve (loc);
+				ec.Module.PredefinedTypes.Dictionary.Resolve ();
 				return;
 			}
 

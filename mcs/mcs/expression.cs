@@ -3804,7 +3804,7 @@ namespace Mono.CSharp
 			if ((oper & Operator.LogicalMask) != 0)
 				flags |= CSharpBinderFlags.BinaryOperationLogical;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuiltinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve (loc))));
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuiltinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve ())));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));									
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
@@ -6877,7 +6877,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = ec.Module.PredefinedTypes.RuntimeArgumentHandle.Resolve (loc);
+			type = ec.Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
 
 			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.ParametersBlock.Parameters.HasArglist) {
 				ec.Report.Error (190, loc,
@@ -6981,7 +6981,7 @@ namespace Mono.CSharp
 				return null;
 
 			type = texpr.Type;
-			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (), loc);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7008,7 +7008,7 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (), loc);
 			if (expr == null)
 				return null;
 
@@ -7038,7 +7038,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.ResolveLValue (rc, EmptyExpression.LValueMemberAccess);
-			type = rc.Module.PredefinedTypes.TypedReference.Resolve (loc);
+			type = rc.Module.PredefinedTypes.TypedReference.Resolve ();
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7190,9 +7190,9 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (member.IsConstructor) {
-				type = ec.Module.PredefinedTypes.ConstructorInfo.Resolve (loc);
+				type = ec.Module.PredefinedTypes.ConstructorInfo.Resolve ();
 			} else {
-				type = ec.Module.PredefinedTypes.MethodInfo.Resolve (loc);
+				type = ec.Module.PredefinedTypes.MethodInfo.Resolve ();
 			}
 
 			if (type == null)
@@ -7273,7 +7273,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			type = ec.Module.PredefinedTypes.FieldInfo.Resolve (loc);
+			type = ec.Module.PredefinedTypes.FieldInfo.Resolve ();
 			if (type == null)
 				return null;
 

@@ -910,7 +910,7 @@ namespace Mono.CSharp {
 
 		protected static TypeExpr CreateExpressionTypeExpression (ResolveContext ec, Location loc)
 		{
-			var t = ec.Module.PredefinedTypes.Expression.Resolve (loc);
+			var t = ec.Module.PredefinedTypes.Expression.Resolve ();
 			if (t == null)
 				return null;
 

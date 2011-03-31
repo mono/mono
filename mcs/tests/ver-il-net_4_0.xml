@@ -46602,6 +46602,34 @@
       </method>
     </type>
   </test>
+  <test name="test-816.cs">
+    <type name="System.Int32">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="System.Program">
+      <method name="Int32 Main()">
+        <size>58</size>
+      </method>
+      <method name="System.Reflection.Assembly CurrentDomain_TypeResolve(System.Object, System.ResolveEventArgs)">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-817.cs">
+    <type name="System.Program">
+      <method name="Void Main()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-82.cs">
     <type name="N1.N2.B">
       <method name="Void .ctor()">

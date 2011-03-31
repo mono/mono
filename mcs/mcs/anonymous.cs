@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 			protected override Expression DoResolve (ResolveContext ec)
 			{
 				eclass = ExprClass.Value;
-				type = ec.Module.PredefinedTypes.Expression.Resolve (Location);
+				type = ec.Module.PredefinedTypes.Expression.Resolve ();
 				return this;
 			}
 

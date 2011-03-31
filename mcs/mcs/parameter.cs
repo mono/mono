@@ -655,7 +655,7 @@ namespace Mono.CSharp {
 		//
 		public static TypeExpr ResolveParameterExpressionType (IMemberContext ec, Location location)
 		{
-			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve (location);
+			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve ();
 			return new TypeExpression (p_type, location);
 		}
 

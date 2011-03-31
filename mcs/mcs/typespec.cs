@@ -109,11 +109,11 @@ namespace Mono.CSharp
 
 				var type = this;
 				do {
-					if (type.IsGeneric)
-						return false;
-
 					if (type.BuiltinType == BuiltinTypeSpec.Type.Attribute)
 						return true;
+
+					if (type.IsGeneric)
+						return false;
 					
 					type = type.base_type;
 				} while (type != null);
