@@ -1044,6 +1044,28 @@ namespace SecondTest
 	{
 		public string TestProperty { get; set; }
 	}
+
+	#region bug #683290
+	[ContentProperty ("Items")]
+	public class SimpleType
+	{
+		public IList<SimpleType> Items { get; set; }
+		
+		public IList<SimpleType> NonContentItems { get; set; }
+		
+		public string TestProperty { get; set; }
+		
+		public SimpleType ()
+		{
+			this.Items = new List<SimpleType> ();
+			this.NonContentItems=new List<SimpleType> ();
+		}
+	}
+	
+	public class ContentPropertyContainer : Dictionary<object, object>
+	{
+	}
+	#endregion
 }
 
 

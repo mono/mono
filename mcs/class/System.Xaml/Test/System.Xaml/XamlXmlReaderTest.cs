@@ -708,6 +708,13 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("DirectDictionaryContainer2.xml");
 			Read_DirectDictionaryContainer2 (r);
 		}
+		
+		[Test]
+		public void Read_ContentPropertyContainer ()
+		{
+			var r = GetReader ("ContentPropertyContainer.xml");
+			Read_ContentPropertyContainer (r);
+		}
 
 		#region non-common tests
 		[Test]
