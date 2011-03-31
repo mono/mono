@@ -152,7 +152,11 @@ namespace MonoTests.System.Globalization
 			CultureInfo ci = new CultureInfo ("nl");
 			try {
 				DateTimeFormatInfo dfi = ci.DateTimeFormat;
+#if NET_4_0
+				Assert.IsNotNull (dfi, "#1");
+#else
 				Assert.Fail ("#1:" + (dfi != null));
+#endif
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -174,7 +178,9 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+#if !NET_4_0
 		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void TrySetNeutralCultureNotInvariant ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("ar");
@@ -322,7 +328,11 @@ namespace MonoTests.System.Globalization
 			CultureInfo ci = new CultureInfo ("nl");
 			try {
 				NumberFormatInfo nfi = ci.NumberFormat;
+#if NET_4_0
+				Assert.IsNotNull (nfi, "#1");
+#else
 				Assert.Fail ("#1:" + (nfi != null));
+#endif
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -368,7 +378,11 @@ namespace MonoTests.System.Globalization
 				CultureInfo.GetCultureInfo (666);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
+#if NET_4_0
+				Assert.AreEqual (typeof (CultureNotFoundException), ex.GetType (), "#2");
+#else
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+#endif
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
@@ -398,7 +412,11 @@ namespace MonoTests.System.Globalization
 				CultureInfo.GetCultureInfo ("666");
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
+#if NET_4_0
+				Assert.AreEqual (typeof (CultureNotFoundException), ex.GetType (), "#2");
+#else
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+#endif
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");

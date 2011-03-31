@@ -494,7 +494,7 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !MOONLIGHT
+#if !MOONLIGHT && !NET_4_0
 			if (IsNeutralCulture) {
 				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 						"a neutral culture. It can not be used in formatting " +
@@ -736,10 +736,17 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!ConstructInternalLocaleFromLcid (culture))
+			if (!ConstructInternalLocaleFromLcid (culture)) {
+#if NET_4_0
+				throw new CultureNotFoundException ("culture", 
+					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
+							"supported culture.", culture));
+#else
 				throw new ArgumentException (
 					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
 							"supported culture.", culture), "culture");
+#endif
+			}
 		}
 
 		public CultureInfo (string name) : this (name, true) {}
@@ -762,9 +769,15 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!ConstructInternalLocaleFromName (name.ToLowerInvariant ()))
+			if (!ConstructInternalLocaleFromName (name.ToLowerInvariant ())) {
+#if NET_4_0
+				throw new CultureNotFoundException ("name",
+						"Culture name " + name + " is not supported.");
+#else
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", "name");
+#endif
+			}
 		}
 
 		// This is used when creating by specific name and creating by
