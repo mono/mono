@@ -56,9 +56,7 @@ namespace System.ServiceModel.Channels
 			if (writeEncoding == null)
 				throw new ArgumentNullException ("writeEncoding");
 			WriteEncoding = writeEncoding;
-#if !NET_2_1
 			ReaderQuotas = new XmlDictionaryReaderQuotas ();
-#endif
 		}
 
 		// Properties

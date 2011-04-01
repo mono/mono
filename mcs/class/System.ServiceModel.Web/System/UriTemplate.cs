@@ -106,7 +106,7 @@ namespace System
 
 		// Bind
 
-#if !NET_2_1
+#if !MOONLIGHT
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
