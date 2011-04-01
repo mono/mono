@@ -185,10 +185,8 @@ namespace System.ServiceModel.Description
 
 				if (!proxy.Operations.Contains (od.Name))
 					PopulateClientOperation (proxy, od, isCallback);
-#if !MOONLIGHT
 				foreach (IOperationBehavior ob in od.Behaviors)
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
-#endif
 			}
 		}
 
