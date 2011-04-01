@@ -118,7 +118,9 @@ namespace System.ServiceModel.Configuration
 
 				if (cached_assemblies.Contains (ass))
 					continue;
+#if NET_4_0
 				if (!ass.IsDynamic)
+#endif
 					cached_assemblies.Add (ass);
 
 				foreach (var t in ass.GetTypes ()) {
