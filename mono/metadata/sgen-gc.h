@@ -113,6 +113,11 @@ struct _SgenThreadInfo {
 	gpointer runtime_data;
 	gpointer stopped_ip;	/* only valid if the thread is stopped */
 	MonoDomain *stopped_domain; /* ditto */
+
+#if defined(__MACH__)
+	gpointer regs[ARCH_NUM_REGS];	    /* ditto */
+#endif
+
 	gpointer *stopped_regs;	    /* ditto */
 #ifndef HAVE_KW_THREAD
 	char *tlab_start;

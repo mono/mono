@@ -53,10 +53,12 @@ mono_sgen_thread_handshake (int signum)
 	mcontext_t mctx;
 
 	SgenThreadInfo *info;
-	gpointer regs [ARCH_NUM_REGS];
 	gpointer stack_start;
 
 	int i, count = 0;
+
+	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
+	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
 	for (i = 0; i < THREAD_HASH_SIZE; ++i) {
 		for (info = mono_sgen_get_thread_table () [i]; info; info = info->next) {
@@ -69,12 +71,10 @@ mono_sgen_thread_handshake (int signum)
 				if (ret != KERN_SUCCESS)
 					continue;
 
-				state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
 				ret = mono_mach_arch_get_thread_state (info->mach_port, state, &num_state);
 				if (ret != KERN_SUCCESS)
 					continue;
 
-				mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 				mono_mach_arch_thread_state_to_mcontext (state, mctx);
 				ctx.uc_mcontext = mctx;
 
@@ -84,8 +84,8 @@ mono_sgen_thread_handshake (int signum)
 				/* If stack_start is not within the limits, then don't set it in info and we will be restarted. */
 				if (stack_start >= info->stack_start_limit && info->stack_start <= info->stack_end) {
 					info->stack_start = stack_start;
-					ARCH_COPY_SIGCTX_REGS (regs, &ctx);
-					info->stopped_regs = regs;
+					ARCH_COPY_SIGCTX_REGS (&info->regs[0], &ctx);
+					info->stopped_regs = &info->regs[0];
 				} else {
 					g_assert (!info->stack_start);
 				}
