@@ -264,10 +264,10 @@ namespace System.ServiceModel
 			ContractDescription cd = Endpoint.Contract;
 #if !NET_2_1
 			pl.Add (ChannelProtectionRequirements.CreateFromContract (cd));
+#endif
 
 			foreach (IEndpointBehavior behavior in Endpoint.Behaviors)
 				behavior.AddBindingParameters (Endpoint, pl);
-#endif
 
 			return pl;
 		}

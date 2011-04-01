@@ -141,18 +141,16 @@ namespace System.ServiceModel.Channels
 
 			// apply HttpRequestMessageProperty if exists.
 			bool suppressEntityBody = false;
-#if !NET_2_1
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
-				web_request.Headers.Clear ();
-				web_request.Headers.Add (hp.Headers);
+				foreach (var key in hp.Headers.AllKeys)
+					web_request.Headers [key] = hp.Headers [key];
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
-#endif
 
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				MemoryStream buffer = new MemoryStream ();
