@@ -28,6 +28,8 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -97,15 +99,47 @@ namespace System.ServiceModel.Configuration
 
 			return b;
 		}
+		
+		static readonly List<Assembly> cached_assemblies = new List<Assembly> ();
+		static readonly List<NamedConfigType> cached_named_config_types = new List<NamedConfigType> ();
 
-		public static Type GetTypeFromConfigString (string name)
+		public static Type GetTypeFromConfigString (string name, NamedConfigCategory category)
 		{
 			Type type = Type.GetType (name);
 			if (type != null)
 				return type;
-			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+				var cache = cached_named_config_types.FirstOrDefault (c => c.Name == name && c.Category == category);
+				if (cache != null)
+					return cache.Type;
+
 				if ((type = ass.GetType (name)) != null)
 					return type;
+
+				if (cached_assemblies.Contains (ass))
+					continue;
+				if (!ass.IsDynamic)
+					cached_assemblies.Add (ass);
+
+				foreach (var t in ass.GetTypes ()) {
+					if (cached_named_config_types.Any (ct => ct.Type == t))
+						continue;
+
+					NamedConfigType c = null;
+					var sca = t.GetCustomAttribute<ServiceContractAttribute> (false);
+					if (sca != null && !String.IsNullOrEmpty (sca.ConfigurationName)) {
+						c = new NamedConfigType () { Category = NamedConfigCategory.Contract, Name = sca.ConfigurationName, Type = t };
+						cached_named_config_types.Add (c);
+					}
+
+					// If we need more category, add to here.
+
+					if (c != null && c.Name == name && c.Category == category)
+						cache = c; // do not break and continue caching (as the assembly is being cached)
+				}
+				if (cache != null)
+					return cache.Type;
+			}
 			return null;
 		}
 
@@ -263,4 +297,18 @@ namespace System.ServiceModel.Configuration
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);
 		}
 	}
+
+	enum NamedConfigCategory
+	{
+		None,
+		Contract
+	}
+
+	class NamedConfigType
+	{
+		public NamedConfigCategory Category { get; set; }
+		public string Name { get; set; }
+		public Type Type { get; set; }
+	}
+
 }

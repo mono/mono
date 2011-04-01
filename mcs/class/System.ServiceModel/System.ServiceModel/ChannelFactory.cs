@@ -132,7 +132,10 @@ namespace System.ServiceModel
 
 #if NET_4_0
 			var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
-			var contract = String.IsNullOrEmpty (endpoint.Contract) ? Endpoint.Contract : ContractDescription.GetContract (ConfigUtil.GetTypeFromConfigString (endpoint.Contract));
+			var contractType = ConfigUtil.GetTypeFromConfigString (endpoint.Contract, NamedConfigCategory.Contract);
+			if (contractType == null)
+				throw new ArgumentException (String.Format ("Contract '{0}' was not found", endpoint.Contract));
+			var contract = String.IsNullOrEmpty (endpoint.Contract) ? Endpoint.Contract : ContractDescription.GetContract (contractType);
 
 			if (!String.IsNullOrEmpty (endpoint.Kind)) {
 				var se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);

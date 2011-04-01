@@ -53,24 +53,31 @@ namespace System.ServiceModel.Description
 	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
 	public class ContractDescription
 	{		
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
 			return ContractDescriptionGenerator.GetContract (contractType);
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType, object serviceImplementation)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
+			if (serviceImplementation == null)
+				throw new ArgumentNullException ("serviceImplementation");
 			return ContractDescriptionGenerator.GetContract (contractType, serviceImplementation);
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType, Type serviceType)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType");
 			return ContractDescriptionGenerator.GetContract (contractType, serviceType);
 		}
 
