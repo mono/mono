@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Util;
 
@@ -44,13 +45,40 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			this.wrapped = wrapped;
 		}
 		
-		public string this [int index] {
+		public new string this [int index] {
 			get { return Get (index); }
 		}
 
-		public string this [string name] {
+		public new string this [string name] {
 			get { return Get (name); }
 			set{ Set (name,value); }
+		}
+		
+		public override string[] AllKeys {
+			get { return wrapped.AllKeys; }
+		}
+
+		public override int Count {
+			get { return wrapped.Count; }
+		}
+		
+		public override NameObjectCollectionBase.KeysCollection Keys {
+			get { return wrapped.Keys; }
+		}
+
+		public new void Add (NameValueCollection c)
+		{
+			wrapped.Add (c);
+		}
+			
+		public override void Add (string name, string val)
+		{
+			wrapped.Add (name, val);
+		}
+		
+		public override void Clear ()
+		{
+			wrapped.Clear ();
 		}
 
 		public override string Get (string name)
@@ -63,6 +91,11 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			return Validate (wrapped.GetKey (index), wrapped.Get (index));
 		}
 
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			wrapped.GetObjectData (info, context);
+		}
+		
 		public override IEnumerator GetEnumerator ()
 		{
 			return wrapped.GetEnumerator ();
@@ -83,6 +116,16 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			return wrapped.GetValues (name);
 		}
 
+		public override void OnDeserialization (object sender)
+		{
+			wrapped.OnDeserialization (sender);
+		}
+		
+		public override void Set (string name, string value)
+		{
+			wrapped.Set (name, value);
+		}
+		
 		string Validate (string key, string value)
 		{
 			if (String.IsNullOrEmpty (value))
