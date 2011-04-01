@@ -28204,6 +28204,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-18.cs">
+    <type name="C">
+      <method name="Void Test(Decimal)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -46689,6 +46702,24 @@
       </method>
       <method name="Void Method(A ByRef)">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-820.cs">
+    <type name="NS.C">
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main(System.String[])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

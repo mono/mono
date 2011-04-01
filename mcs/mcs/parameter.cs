@@ -560,7 +560,7 @@ namespace Mono.CSharp {
 				var def_value = DefaultValue;
 				Constant c = def_value != null ? def_value.Child as Constant : default_expr as Constant;
 				if (c != null) {
-					if (default_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
+					if (c.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetValue ());
