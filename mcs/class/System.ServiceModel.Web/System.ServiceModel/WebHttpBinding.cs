@@ -155,12 +155,10 @@ namespace System.ServiceModel
 			set { t.MaxReceivedMessageSize = value; }
 		}
 
-#if !NET_2_1
 		public XmlDictionaryReaderQuotas ReaderQuotas {
 			get { return msgenc.ReaderQuotas; }
 			set { msgenc.ReaderQuotas = value; }
 		}
-#endif
 
 		public override string Scheme {
 			get { return Security.Mode != WebHttpSecurityMode.None ? Uri.UriSchemeHttps : Uri.UriSchemeHttp; }
