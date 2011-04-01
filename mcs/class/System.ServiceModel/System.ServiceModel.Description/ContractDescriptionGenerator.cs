@@ -186,7 +186,9 @@ namespace System.ServiceModel.Description
 			foreach (var icd in cd.GetInheritedContracts ()) {
 				FillOperationsForInterface (icd, icd.ContractType, givenServiceType, false);
 				foreach (var od in icd.Operations)
-					cd.Operations.Add (od);
+					if (!cd.Operations.Any(o => o.Name == od.Name && o.SyncMethod == od.SyncMethod && 
+							       o.BeginMethod == od.BeginMethod && o.InCallbackContract == od.InCallbackContract))
+						cd.Operations.Add (od);
 			}
 			
 			FillOperationsForInterface (cd, cd.ContractType, givenServiceType, false);

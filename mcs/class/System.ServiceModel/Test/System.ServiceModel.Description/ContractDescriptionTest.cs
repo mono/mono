@@ -480,6 +480,15 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (2, cd.Operations.Count(od => od.SyncMethod == typeof (IAsyncContractWithSymmetricCallbackContract).GetMethod ("Foo")), "#4");
 			Assert.AreEqual (2, cd.Operations.Count(od => od.SyncMethod == typeof (ISymmetricInheritance).GetMethod ("Bar")), "#5");
 		}
+		
+		[Test]
+		public void DeepContractHierarchyTest ()
+		{
+			var cd = ContractDescription.GetContract (typeof(IDeepContractHierarchy));
+			Assert.AreEqual (6, cd.Operations.Count, "#1");
+			Assert.AreSame (typeof (IDeepContractHierarchy), cd.ContractType, "#2");
+			Assert.AreSame (typeof (IDeepContractHierarchy), cd.CallbackContractType, "#3");
+		}
 
 		[Test]
 		public void MessageContractAttributes ()
@@ -845,6 +854,13 @@ namespace MonoTests.System.ServiceModel.Description
 			IAsyncResult BeginBar (AsyncCallback callback, object asyncState);
 
 			 void EndBar (IAsyncResult result);
+		}
+		
+		[ServiceContract (CallbackContract = typeof (IDeepContractHierarchy))]
+		public interface IDeepContractHierarchy : ISymmetricInheritance
+		{
+			[OperationContract]
+			void Foobar();
 		}
 		
 		public interface IBaseDuplexCallback
