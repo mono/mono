@@ -103,7 +103,7 @@ g_get_home_dir (void)
 			pthread_mutex_unlock (&home_lock);
 		}
 	}
-	return home_dir;
+	return home_dir == NULL ? "/" : home_dir;
 }
 
 const char *
