@@ -44,7 +44,7 @@ namespace Mono.CSharp
 		
 		static readonly object ModifierNone = 0;
 	
-		NamespaceEntry  current_namespace;
+		NamespaceContainer  current_namespace;
 		TypeContainer   current_container;
 		DeclSpace	current_class;
 		PropertyBase current_property;
@@ -505,7 +505,8 @@ namespace_declaration
 	
 		module.AddAttributes (attrs, current_namespace);
 		
-		current_namespace = new NamespaceEntry (module, current_namespace, file, name.GetName ());
+		current_namespace = new NamespaceContainer (name, module, current_namespace, file);
+		module.AddTypesContainer (current_namespace);
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
 	  }
@@ -6443,12 +6444,6 @@ AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
 
 	return retval;
-}
-
-public NamespaceEntry CurrentNamespace {
-       get { 
-       	   return current_namespace;
-       }
 }
 
 void Error_SyntaxError (int token)

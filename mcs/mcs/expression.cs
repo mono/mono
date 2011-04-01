@@ -7596,7 +7596,7 @@ namespace Mono.CSharp
 					// Try to look for extension method when member lookup failed
 					//
 					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
-						NamespaceEntry scope = null;
+						NamespaceContainer scope = null;
 						var methods = rc.LookupExtensionMethod (expr_type, Name, lookup_arity, ref scope);
 						if (methods != null) {
 							var emg = new ExtensionMethodGroupExpr (methods, scope, expr, loc);

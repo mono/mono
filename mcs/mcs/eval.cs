@@ -76,7 +76,7 @@ namespace Mono.CSharp
 			module.Evaluator = this;
 
 			source_file = new CompilationSourceFile ("{interactive}", "", 1);
- 			source_file.NamespaceContainer = new NamespaceEntry (module, null, source_file, null);
+ 			source_file.NamespaceContainer = new NamespaceContainer (null, module, null, source_file);
 
 			ctx.SourceFiles.Add (source_file);
 

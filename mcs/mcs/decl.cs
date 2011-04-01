@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -33,6 +34,7 @@ namespace Mono.CSharp {
 	//
 	// Better name would be DottenName
 	//
+	[DebuggerDisplay ("{GetSignatureForError()}")]
 	public class MemberName {
 		public readonly string Name;
 		public TypeArguments TypeArguments;
@@ -684,7 +686,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
 		{
 			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
@@ -1239,7 +1241,7 @@ namespace Mono.CSharp {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		public NamespaceEntry NamespaceEntry;
+		public NamespaceContainer NamespaceEntry;
 
 		public readonly string Basename;
 		
@@ -1268,7 +1270,7 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "type" };
 
-		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public DeclSpace (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)
 			: base (parent, name, attrs)
 		{
@@ -1311,17 +1313,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (this is ModuleContainer) {
-				Report.Error (101, symbol.Location, 
-					"The namespace `{0}' already contains a definition for `{1}'",
-					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
-			} else if (symbol is TypeParameter) {
+			if (symbol is TypeParameter) {
 				Report.Error (692, symbol.Location,
 					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
-					      "The type `{0}' already contains a definition for `{1}'",
-					      GetSignatureForError (), symbol.MemberName.Name);
+					"The type `{0}' already contains a definition for `{1}'",
+					GetSignatureForError (), symbol.MemberName.Name);
 			}
 
 			return false;

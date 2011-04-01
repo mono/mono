@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpression type,
+		public Enum (NamespaceContainer ns, DeclSpace parent, TypeExpression type,
 			     Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Enum)
 		{

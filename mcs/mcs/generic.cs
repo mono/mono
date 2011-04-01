@@ -2291,14 +2291,14 @@ namespace Mono.CSharp {
 	{
 		ParametersCompiled parameters;
 
-		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public GenericMethod (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				      FullNamedExpression return_type, ParametersCompiled parameters)
 			: base (ns, parent, name, null)
 		{
 			this.parameters = parameters;
 		}
 
-		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name, TypeParameter[] tparams,
+		public GenericMethod (NamespaceContainer ns, DeclSpace parent, MemberName name, TypeParameter[] tparams,
 					  FullNamedExpression return_type, ParametersCompiled parameters)
 			: this (ns, parent, name, return_type, parameters)
 		{

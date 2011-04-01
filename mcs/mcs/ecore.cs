@@ -2155,7 +2155,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			NamespaceEntry.Error_NamespaceNotFound (loc, Name, ec.Module.Compiler.Report);
+			NamespaceContainer.Error_NamespaceNotFound (loc, Name, ec.Module.Compiler.Report);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -2838,10 +2838,10 @@ namespace Mono.CSharp {
 	// 
 	class ExtensionMethodGroupExpr : MethodGroupExpr, OverloadResolver.IErrorHandler
 	{
-		NamespaceEntry namespace_entry;
+		NamespaceContainer namespace_entry;
 		public readonly Expression ExtensionExpression;
 
-		public ExtensionMethodGroupExpr (IList<MethodSpec> list, NamespaceEntry n, Expression extensionExpr, Location l)
+		public ExtensionMethodGroupExpr (IList<MethodSpec> list, NamespaceContainer n, Expression extensionExpr, Location l)
 			: base (list.Cast<MemberSpec>().ToList (), extensionExpr.Type, l)
 		{
 			this.namespace_entry = n;
@@ -3200,7 +3200,7 @@ namespace Mono.CSharp {
 				return null;
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			NamespaceEntry methods_scope = null;
+			NamespaceContainer methods_scope = null;
 			var methods = rc.LookupExtensionMethod (InstanceExpression.Type, Methods[0].Name, arity, ref methods_scope);
 			if (methods == null)
 				return null;

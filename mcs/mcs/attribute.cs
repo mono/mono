@@ -165,7 +165,7 @@ namespace Mono.CSharp {
 			}
 
 			// When re-attaching global attributes
-			if (context is NamespaceEntry) {
+			if (context is NamespaceContainer) {
 				this.targets[0] = target;
 				this.context = context;
 				return;
@@ -1155,7 +1155,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void ConvertGlobalAttributes (TypeContainer member, NamespaceEntry currentNamespace, bool isGlobal)
+		public void ConvertGlobalAttributes (TypeContainer member, NamespaceContainer currentNamespace, bool isGlobal)
 		{
 			var member_explicit_targets = member.ValidAttributeTargets;
 			for (int i = 0; i < Attrs.Count; ++i) {

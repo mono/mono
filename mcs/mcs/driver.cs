@@ -110,7 +110,7 @@ namespace Mono.CSharp
 		
 		public void Parse (SeekableStreamReader reader, CompilationSourceFile file, ModuleContainer module)
 		{
-			file.NamespaceContainer = new NamespaceEntry (module, null, file, null);
+			file.NamespaceContainer = new NamespaceContainer (null, module, null, file);
 
 			CSharpParser parser = new CSharpParser (reader, file);
 			parser.parse ();
