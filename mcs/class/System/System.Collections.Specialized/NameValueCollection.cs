@@ -5,7 +5,7 @@
 //   Gleb Novodran
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell (http://www.novell.com)
+// Copyright (C) 2004-2011 Novell (http://www.novell.com)
 //
 
 //
@@ -135,13 +135,13 @@ namespace System.Collections.Specialized{
 			int max = c.Count;
 			for (int i=0; i < max; i++){
 				string key = c.GetKey (i);
-				ArrayList new_values = (ArrayList) c.BaseGet (i);
-				ArrayList values = (ArrayList) BaseGet (key);
-				if (values != null && new_values != null)
-					values.AddRange (new_values);
-				else if (new_values != null)
-					values = new ArrayList (new_values);
-				BaseSet (key, values);
+				string[] values = c.GetValues (i);
+
+				if (values != null && values.Length > 0) {
+					foreach (string value in values)
+						Add (key, value);
+				} else
+					Add (key, null);
 			}
 		}
 
