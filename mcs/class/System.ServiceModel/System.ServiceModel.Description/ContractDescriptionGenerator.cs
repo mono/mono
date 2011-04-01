@@ -95,8 +95,7 @@ namespace System.ServiceModel.Description
 			return table;
 		}
 
-		public static ContractDescription GetContract (
-			Type contractType) {
+		public static ContractDescription GetContract (Type contractType) {
 			return GetContract (contractType, (Type) null);
 		}
 
@@ -140,6 +139,8 @@ namespace System.ServiceModel.Description
 
 		internal static ContractDescription GetContractInternal (Type givenContractType, Type givenServiceType, Type serviceTypeForCallback)
 		{
+			if (givenContractType == null)
+				throw new ArgumentNullException ("givenContractType");
 			// FIXME: serviceType should be used for specifying attributes like OperationBehavior.
 
 			Type exactContractType = null;

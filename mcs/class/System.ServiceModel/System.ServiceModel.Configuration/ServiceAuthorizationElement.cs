@@ -121,7 +121,7 @@ namespace System.ServiceModel.Configuration
 		{
 			var b = new ServiceAuthorizationBehavior ();
 			if (!String.IsNullOrEmpty (ServiceAuthorizationManagerType))
-				b.ServiceAuthorizationManager = (ServiceAuthorizationManager) Activator.CreateInstance (ConfigUtil.GetTypeFromConfigString (ServiceAuthorizationManagerType));
+				b.ServiceAuthorizationManager = (ServiceAuthorizationManager) Activator.CreateInstance (ConfigUtil.GetTypeFromConfigString (ServiceAuthorizationManagerType, NamedConfigCategory.None));
 
 			foreach (var apte in AuthorizationPolicies)
 				throw new NotImplementedException ();
