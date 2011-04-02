@@ -211,11 +211,14 @@ namespace System.Web
 				if (modcoll != null)
 					return;
 
+				bool mustNullContext = context == null;
 				try {
 					HttpModulesSection modules;
 					modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
 					HttpContext saved = HttpContext.Current;
 					HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
+					if (context == null)
+						context = HttpContext.Current;
 					HttpModuleCollection coll = modules.LoadModules (this);
 					Interlocked.CompareExchange (ref modcoll, coll, null);
 					HttpContext.Current = saved;
@@ -227,6 +230,9 @@ namespace System.Web
 					}
 				} catch (Exception e) {
 					initialization_exception = e;
+				} finally {
+					if (mustNullContext)
+						context = null;
 				}
 			}
 		}
