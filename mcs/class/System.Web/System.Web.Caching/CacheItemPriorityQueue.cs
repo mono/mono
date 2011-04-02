@@ -62,8 +62,9 @@ namespace System.Web.Caching
 
 		void ResizeHeap (int newSize)
 		{
-			//CacheItem[] oldHeap = heap;
+			CacheItem[] oldHeap = heap;
 			Array.Resize <CacheItem> (ref heap, newSize);
+			heapSize = newSize;
 			
 			// TODO: The code helps the GC in case the array is pinned. In such instance clearing
 			// the old array will release references to the CacheItems stored in there. If the
@@ -71,13 +72,10 @@ namespace System.Web.Caching
 			// Currently we don't know if the array is pinned or not so it's safer to always clear it.
 			// However when we have more precise stack scanning the code should be
 			// revisited.
-			//
-			// FIXME: code disabled for now as it causes NREX to be thrown in Bubble{Up,Down}
-			//
-			// if (oldHeap != null) {
-			// 	((IList)oldHeap).Clear ();
-			// 	oldHeap = null;
-			// }
+			if (oldHeap != null) {
+				((IList)oldHeap).Clear ();
+				oldHeap = null;
+			}
 		}
 		
 		CacheItem[] GetHeapWithGrow ()
@@ -89,10 +87,8 @@ namespace System.Web.Caching
 				return heap;
 			}
 
-			if (heapCount >= heapSize) {
-				heapSize <<= 1;
-				ResizeHeap (heapSize);
-			}
+			if (heapCount >= heapSize)
+				ResizeHeap (heapSize <<= 1);
 
 			return heap;
 		}
