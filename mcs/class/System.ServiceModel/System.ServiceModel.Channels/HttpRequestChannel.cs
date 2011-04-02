@@ -144,8 +144,11 @@ namespace System.ServiceModel.Channels
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
+#if !NET_2_1 // FIXME: how can this be done?
 				foreach (var key in hp.Headers.AllKeys)
-					web_request.Headers [key] = hp.Headers [key];
+					if (!WebHeaderCollection.IsRestricted (key))
+						web_request.Headers [key] = hp.Headers [key];
+#endif
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
 				if (hp.SuppressEntityBody)
