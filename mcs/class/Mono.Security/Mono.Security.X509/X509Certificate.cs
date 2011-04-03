@@ -515,6 +515,11 @@ namespace Mono.Security.X509 {
 				case "1.2.840.113549.1.1.11":
 					v.SetHashAlgorithm ("SHA256");
 					break;
+				// SHA1-1 with DSA
+				case "1.2.840.10040.4.3":
+					// invalid but this can occurs when building a bad chain - e.g. missing certificate(s)
+					// we return false so we can report the "chain" error to the user (not an exception)
+					return false;
 				default:
 					throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
 			}
