@@ -582,7 +582,7 @@ namespace Mono {
 				
 				case 'f':
 					if (Prepare (buffer, ref idx, 4, ref align)){
-						result.Add (conv.GetDouble (buffer, idx));
+						result.Add (conv.GetFloat (buffer, idx));
 						idx += 4;
 					}
 					break;
