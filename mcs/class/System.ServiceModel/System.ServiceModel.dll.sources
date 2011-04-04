@@ -372,6 +372,7 @@ System.ServiceModel.Configuration/DataContractSerializerElement.cs
 System.ServiceModel.Configuration/DiagnosticSection.cs
 System.ServiceModel.Configuration/DnsElement.cs
 System.ServiceModel.Configuration/EncodingConverter.cs
+System.ServiceModel.Configuration/EndToEndTracingElement.cs
 System.ServiceModel.Configuration/EndpointAddressElementBase.cs
 System.ServiceModel.Configuration/EndpointBehaviorElement.cs
 System.ServiceModel.Configuration/EndpointBehaviorElementCollection.cs
@@ -626,6 +627,8 @@ System.ServiceModel.Description/XmlName.cs
 System.ServiceModel.Description/XmlSerializerMessageContractImporter.cs
 System.ServiceModel.Description/XmlSerializerOperationBehavior.cs
 System.ServiceModel.Diagnostics/PerformanceCounterScope.cs
+System.ServiceModel.Diagnostics/MessageLoggingSettings.cs
+System.ServiceModel.Diagnostics/MessageLogTraceRecord.cs
 System.ServiceModel.Dispatcher/ActionMessageFilter.cs
 System.ServiceModel.Dispatcher/ActionMessageFilterTable.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
@@ -869,6 +872,7 @@ System.ServiceModel/IOnlineStatus.cs
 System.ServiceModel/IServiceChannel.cs
 System.ServiceModel/InstanceContext.cs
 System.ServiceModel/InvalidMessageContractException.cs
+System.ServiceModel/Logger.cs
 System.ServiceModel/MessageBodyAttribute.cs
 System.ServiceModel/MessageContractAttribute.cs
 System.ServiceModel/MessageContractMemberAttribute.cs
