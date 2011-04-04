@@ -282,6 +282,7 @@ static void
 on_gc_heap_resize (size_t new_size)
 {
 	guint64 heap_size = GC_get_heap_size ();
+	if (!mono_perfcounters) return;
 	mono_perfcounters->gc_committed_bytes = heap_size;
 	mono_perfcounters->gc_reserved_bytes = heap_size;
 	mono_perfcounters->gc_gen0size = heap_size;
