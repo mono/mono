@@ -295,6 +295,14 @@ namespace Mono.Security.X509 {
 							hash = Mono.Security.Cryptography.MD2.Create ();
 #endif
 							break;
+						case "1.2.840.113549.1.1.3":	// MD4 with RSA encryption 
+							// maybe someone installed MD4 ?
+#if INSIDE_CORLIB
+							hash = HashAlgorithm.Create ("MD4");
+#else
+							hash = Mono.Security.Cryptography.MD4.Create ();
+#endif
+							break;
 						case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 							hash = MD5.Create ();
 							break;
@@ -305,6 +313,12 @@ namespace Mono.Security.X509 {
 							break;
 						case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
 							hash = SHA256.Create ();
+							break;
+						case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
+							hash = SHA384.Create ();
+							break;
+						case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
+							hash = SHA512.Create ();
 							break;
 						default:
 							return null;
@@ -400,10 +414,13 @@ namespace Mono.Security.X509 {
 
 				switch (m_signaturealgo) {
 					case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
+					case "1.2.840.113549.1.1.3":	// MD4 with RSA encryption 
 					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
 					case "1.3.14.3.2.29":		// SHA1 with RSA signature
 					case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
+					case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
+					case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
 						return (byte[]) signature.Clone ();
 
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
@@ -502,6 +519,11 @@ namespace Mono.Security.X509 {
 					// maybe someone installed MD2 ?
 					v.SetHashAlgorithm ("MD2");
 					break;
+				// MD4 with RSA encryption 
+				case "1.2.840.113549.1.1.3":
+					// maybe someone installed MD4 ?
+					v.SetHashAlgorithm ("MD4");
+					break;
 				// MD5 with RSA encryption 
 				case "1.2.840.113549.1.1.4":
 					v.SetHashAlgorithm ("MD5");
@@ -514,6 +536,14 @@ namespace Mono.Security.X509 {
 				// SHA-256 with RSA Encryption 
 				case "1.2.840.113549.1.1.11":
 					v.SetHashAlgorithm ("SHA256");
+					break;
+				// SHA-384 with RSA Encryption 
+				case "1.2.840.113549.1.1.12":
+					v.SetHashAlgorithm ("SHA384");
+					break;
+				// SHA-512 with RSA Encryption 
+				case "1.2.840.113549.1.1.13":
+					v.SetHashAlgorithm ("SHA512");
 					break;
 				// SHA1-1 with DSA
 				case "1.2.840.10040.4.3":
