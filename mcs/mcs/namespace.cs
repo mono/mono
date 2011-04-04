@@ -319,10 +319,24 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression Lookup (IMemberContext ctx, string name, int arity, Location loc)
 		{
-			if (arity == 0 && namespaces.ContainsKey (name))
-				return namespaces [name];
+			var texpr = LookupType (ctx, name, arity, loc);
 
-			return LookupType (ctx, name, arity, loc);
+			Namespace ns;
+			if (arity == 0 && namespaces.TryGetValue (name, out ns)) {
+				if (texpr == null)
+					return ns;
+
+				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (texpr.Type);
+				// ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ns.loc, "");
+				ctx.Module.Compiler.Report.Warning (437, 2, loc,
+					"The type `{0}' conflicts with the imported namespace `{1}'. Using the definition found in the source file",
+					texpr.GetSignatureForError (), ns.GetSignatureForError ());
+
+				if (texpr.Type.MemberDefinition.IsImported)
+					return ns;
+			}
+
+			return texpr;
 		}
 
 		//

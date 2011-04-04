@@ -2117,29 +2117,6 @@ namespace Mono.CSharp {
 						return;
 					}
 				}
-
-				/*
-								// TODO MemberCache: Implement
- 
-								string ns = ec.CurrentType.Namespace;
-								string fullname = (ns.Length > 0) ? ns + "." + Name : Name;
-								foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
-									var type = a.GetType (fullname);
-									if (type != null) {
-										ec.Compiler.Report.SymbolRelatedToPreviousError (type);
-										Expression.ErrorIsInaccesible (loc, TypeManager.CSharpName (type), ec.Compiler.Report);
-										return;
-									}
-								}
-
-								if (ec.CurrentTypeDefinition != null) {
-									TypeSpec t = ec.CurrentTypeDefinition.LookupAnyGeneric (Name);
-									if (t != null) {
-										Namespace.Error_InvalidNumberOfTypeArguments (ec.Compiler.Report, t, loc);
-										return;
-									}
-								}
-				*/
 			}
 
 			FullNamedExpression retval = ec.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), loc, true);
@@ -2362,7 +2339,12 @@ namespace Mono.CSharp {
 							} while (ct != null);
 						}
 
-						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+						var retval = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), loc, true);
+						if (retval != null) {
+							Error_TypeArgumentsCannotBeUsed (rc, retval.Type, Arity, loc);
+						} else {
+							rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+						}
 					}
 
 					return null;
