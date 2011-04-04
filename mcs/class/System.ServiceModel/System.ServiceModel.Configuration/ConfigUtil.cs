@@ -67,6 +67,10 @@ namespace System.ServiceModel.Configuration
 			get { return (BehaviorsSection) GetSection ("system.serviceModel/behaviors"); }
 		}
 
+		public static DiagnosticSection DiagnosticSection {
+			get { return (DiagnosticSection) GetSection ("system.serviceModel/diagnostics"); }
+		}
+
 		public static ExtensionsSection ExtensionsSection {
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}

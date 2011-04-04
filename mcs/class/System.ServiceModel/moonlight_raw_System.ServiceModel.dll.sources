@@ -150,6 +150,8 @@ System.ServiceModel.Description/OperationDescription.cs
 System.ServiceModel.Description/OperationDescriptionCollection.cs
 System.ServiceModel.Description/ServiceEndpoint.cs
 System.ServiceModel.Description/XmlName.cs
+System.ServiceModel.Diagnostics/MessageLoggingSettings.cs
+System.ServiceModel.Diagnostics/MessageLogTraceRecord.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
 System.ServiceModel.Dispatcher/ClientOperation.cs
 System.ServiceModel.Dispatcher/ClientRuntime.cs
@@ -204,6 +206,7 @@ System.ServiceModel/IExtensibleObject.cs
 System.ServiceModel/IExtension.cs
 System.ServiceModel/IExtensionCollection.cs
 System.ServiceModel/InvalidMessageContractException.cs
+System.ServiceModel/Logger.cs
 System.ServiceModel/MessageBodyAttribute.cs
 System.ServiceModel/MessageContractAttribute.cs
 System.ServiceModel/MessageContractMemberAttribute.cs
