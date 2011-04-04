@@ -898,7 +898,7 @@ namespace Mono.CSharp
 			for (int i = 0, j = 0; i < count; i++){
 				FullNamedExpression fne = type_bases [i];
 
-				TypeExpr fne_resolved = fne.ResolveAsTypeTerminal (base_context, false);
+				TypeExpr fne_resolved = fne.ResolveAsType (base_context, false);
 				if (fne_resolved == null)
 					continue;
 
@@ -3225,7 +3225,7 @@ namespace Mono.CSharp
 			}
 
 			if (IsExplicitImpl) {
-				TypeExpr iface_texpr = MemberName.Left.GetTypeExpression ().ResolveAsTypeTerminal (Parent, false);
+				TypeExpr iface_texpr = MemberName.Left.GetTypeExpression ().ResolveAsType (Parent, false);
 				if (iface_texpr == null)
 					return false;
 
@@ -3548,7 +3548,7 @@ namespace Mono.CSharp
 			if (member_type != null)
 				throw new InternalErrorException ("Multi-resolve");
 
-			TypeExpr te = type_expr.ResolveAsTypeTerminal (this, false);
+			TypeExpr te = type_expr.ResolveAsType (this, false);
 			if (te == null)
 				return false;
 			

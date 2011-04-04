@@ -583,7 +583,7 @@ namespace Mono.CSharp
 
 		public void Resolve (IMemberContext context)
 		{
-			Type = Type.ResolveAsTypeTerminal (context, true);
+			Type = Type.ResolveAsType (context, true);
 		}
 	}
 }

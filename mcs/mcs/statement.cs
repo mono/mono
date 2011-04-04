@@ -1275,7 +1275,7 @@ namespace Mono.CSharp {
 					// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
 					// same name exists or as a keyword when no type was found
 					// 
-					var texpr = type_expr.ResolveAsTypeTerminal (bc, true);
+					var texpr = type_expr.ResolveAsType (bc, true);
 					if (texpr == null) {
 						if (bc.Module.Compiler.Settings.Version < LanguageVersion.V_3)
 							bc.Report.FeatureIsNotAvailable (bc.Module.Compiler, loc, "implicitly typed local variable");
@@ -1309,7 +1309,7 @@ namespace Mono.CSharp {
 				}
 
 				if (type == null) {
-					var texpr = type_expr.ResolveAsTypeTerminal (bc, false);
+					var texpr = type_expr.ResolveAsType (bc, false);
 					if (texpr == null)
 						return false;
 
@@ -4622,7 +4622,7 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (ResolveContext.Options.CatchScope, true)) {
 				if (type_expr != null) {
-					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
+					TypeExpr te = type_expr.ResolveAsType (ec, false);
 					if (te == null)
 						return false;
 
@@ -5154,7 +5154,7 @@ namespace Mono.CSharp {
 					var_type = new TypeExpression (access.Type, ve.Location);
 				}
 
-				var_type = var_type.ResolveAsTypeTerminal (ec, false);
+				var_type = var_type.ResolveAsType (ec, false);
 				if (var_type == null)
 					return false;
 
@@ -5517,7 +5517,7 @@ namespace Mono.CSharp {
 					current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
 				}
 
-				var_type = var_type.ResolveAsTypeTerminal (ec, false);
+				var_type = var_type.ResolveAsType (ec, false);
 				if (var_type == null)
 					return false;
 

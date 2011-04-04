@@ -466,6 +466,11 @@ namespace Mono.CSharp {
 			cached_types.Remove (name);
 		}
 
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool silent)
+		{
+			return this;
+		}
+
 		public void SetBuiltinType (BuiltinTypeSpec pts)
 		{
 			var found = types[pts.Name];
@@ -1144,7 +1149,7 @@ namespace Mono.CSharp {
 			if (resolved != null)
 				return resolved;
 
-			FullNamedExpression fne = name.GetTypeExpression ().ResolveAsTypeStep (rc, false);
+			FullNamedExpression fne = name.GetTypeExpression ().ResolveAsTypeOrNamespace (rc, false);
 			if (fne == null)
 				return null;
 
@@ -1202,14 +1207,14 @@ namespace Mono.CSharp {
 			if (local)
 				return null;
 
-			resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
+			resolved = value.GetTypeExpression ().ResolveAsTypeOrNamespace (rc, false);
 			if (resolved == null) {
 				value = null;
 				return null;
 			}
 
 			if (resolved is TypeExpr)
-				resolved = resolved.ResolveAsTypeTerminal (rc, false);
+				resolved = resolved.ResolveAsType (rc, false);
 
 			return resolved;
 		}

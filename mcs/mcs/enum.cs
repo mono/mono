@@ -27,15 +27,11 @@ namespace Mono.CSharp {
 	{
 		class EnumTypeExpr : TypeExpr
 		{
-			protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
+			public override TypeExpr ResolveAsType (IMemberContext ec, bool silent)
 			{
 				type = ec.CurrentType;
+				eclass = ExprClass.Type;
 				return this;
-			}
-
-			public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
-			{
-				return DoResolveAsTypeStep (ec);
 			}
 		}
 
