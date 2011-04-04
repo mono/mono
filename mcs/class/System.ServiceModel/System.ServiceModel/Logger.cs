@@ -47,7 +47,7 @@ namespace System.ServiceModel
 
 	internal static class Logger
 	{
-#if MOONLIGHT
+#if NET_2_1
 		enum TraceEventType // dummy
 		{
 			Critical,
@@ -66,7 +66,7 @@ namespace System.ServiceModel
 		const string xmlns = "http://schemas.microsoft.com/2004/06/ServiceModel/Management/MessageTrace";
 		static MessageLoggingSettings settings = new MessageLoggingSettings ();
 		static int event_id;
-#if !MOONLIGHT
+#if !NET_2_1
 		static readonly TraceSource source = new TraceSource ("System.ServiceModel");
 		static readonly TraceSource message_source = new TraceSource ("System.ServiceModel.MessageLogging");
 #endif
@@ -102,7 +102,7 @@ namespace System.ServiceModel
 
 		static void Log (TraceEventType eventType, string message, params object [] args)
 		{
-#if MOONLIGHT
+#if NET_2_1
 			Console.Error.Write ("[{0}]", event_id++);
 			Console.Error.WriteLine (message, args);
 #else
@@ -135,7 +135,7 @@ namespace System.ServiceModel
 			xw.WriteAttributeString ("Type", log.Type.FullName);
 			log.Message.CreateMessage ().WriteMessage (xw);
 			xw.WriteEndElement ();
-#if MOONLIGHT
+#if NET_2_1
 			Console.Error.Write ("[{0}]", event_id++);
 			Console.Error.WriteLine (sw);
 #else
