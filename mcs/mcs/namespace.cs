@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Namespace cache for imported and compiler namespaces
+	// Namespace cache for imported and compiled namespaces
 	//
 	// This is an Expression to allow it to be referenced in the
 	// compiler parse/intermediate tree during name resolution.
@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 			cached_types.Remove (name);
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
 		{
 			return this;
 		}
@@ -1149,7 +1149,7 @@ namespace Mono.CSharp {
 			if (resolved != null)
 				return resolved;
 
-			FullNamedExpression fne = name.GetTypeExpression ().ResolveAsTypeOrNamespace (rc, false);
+			FullNamedExpression fne = name.GetTypeExpression ().ResolveAsTypeOrNamespace (rc);
 			if (fne == null)
 				return null;
 
@@ -1207,14 +1207,14 @@ namespace Mono.CSharp {
 			if (local)
 				return null;
 
-			resolved = value.GetTypeExpression ().ResolveAsTypeOrNamespace (rc, false);
+			resolved = value.GetTypeExpression ().ResolveAsTypeOrNamespace (rc);
 			if (resolved == null) {
 				value = null;
 				return null;
 			}
 
 			if (resolved is TypeExpr)
-				resolved = resolved.ResolveAsType (rc, false);
+				resolved = resolved.ResolveAsType (rc);
 
 			return resolved;
 		}

@@ -247,7 +247,7 @@ namespace Mono.CSharp {
 
 		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr)
 		{
-			TypeExpr te = expr.ResolveAsType (context, false);
+			TypeExpr te = expr.ResolveAsType (context);
 			if (te == null)
 				return null;
 

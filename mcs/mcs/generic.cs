@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				var type_expr = constraints[i] = constraint.ResolveAsType (context, false);
+				var type_expr = constraints[i] = constraint.ResolveAsType (context);
 				if (type_expr == null)
 					continue;
 
@@ -1789,7 +1789,7 @@ namespace Mono.CSharp {
 			atypes = new TypeSpec [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = args[i].ResolveAsType (ec, false);
+				TypeExpr te = args[i].ResolveAsType (ec);
 				if (te == null) {
 					ok = false;
 					continue;
@@ -1907,7 +1907,7 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (type);
 		}
 
-		public override TypeExpr ResolveAsType (IMemberContext ec, bool silent)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
 			if (!args.Resolve (ec))
 				return null;

@@ -1258,7 +1258,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			probe_type_expr = ProbeType.ResolveAsType (ec, false);
+			probe_type_expr = ProbeType.ResolveAsType (ec);
 			if (probe_type_expr == null)
 				return null;
 
@@ -1583,7 +1583,7 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			TypeExpr target = target_type.ResolveAsType (ec, false);
+			TypeExpr target = target_type.ResolveAsType (ec);
 			if (target == null)
 				return null;
 
@@ -1673,7 +1673,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = expr.ResolveAsType (ec, false);
+			TypeExpr texpr = expr.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -5528,7 +5528,7 @@ namespace Mono.CSharp
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = RequestedType.ResolveAsType (ec, false);
+			TypeExpr texpr = RequestedType.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -6155,7 +6155,7 @@ namespace Mono.CSharp
 				array_type_expr = requested_base_type;
 			}
 
-			array_type_expr = array_type_expr.ResolveAsType (ec, false);
+			array_type_expr = array_type_expr.ResolveAsType (ec);
 			if (array_type_expr == null)
 				return false;
 
@@ -6969,7 +6969,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
-			texpr = texpr.ResolveAsType (rc, false);
+			texpr = texpr.ResolveAsType (rc);
 			if (expr == null || texpr == null)
 				return null;
 
@@ -7087,7 +7087,7 @@ namespace Mono.CSharp
 			// Pointer types are allowed without explicit unsafe, they are just tokens
 			//
 			using (ec.Set (ResolveContext.Options.UnsafeScope)) {
-				texpr = QueriedType.ResolveAsType (ec, false);
+				texpr = QueriedType.ResolveAsType (ec);
 			}
 
 			if (texpr == null)
@@ -7311,7 +7311,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsType (ec, false);
+			TypeExpr texpr = QueriedType.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -7375,11 +7375,11 @@ namespace Mono.CSharp
 			this.alias = alias;
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
 			if (alias == GlobalAlias) {
 				expr = ec.Module.GlobalRootNamespace;
-				return base.ResolveAsTypeOrNamespace (ec, silent);
+				return base.ResolveAsTypeOrNamespace (ec);
 			}
 
 			int errors = ec.Module.Compiler.Report.Errors;
@@ -7390,15 +7390,14 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			FullNamedExpression fne = base.ResolveAsTypeOrNamespace (ec, silent);
+			FullNamedExpression fne = base.ResolveAsTypeOrNamespace (ec);
 			if (fne == null)
 				return null;
 
 			if (expr.eclass == ExprClass.Type) {
-				if (!silent) {
-					ec.Module.Compiler.Report.Error (431, loc,
-						"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
-				}
+				ec.Module.Compiler.Report.Error (431, loc,
+					"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
+
 				return null;
 			}
 
@@ -7407,7 +7406,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			return ResolveAsTypeOrNamespace (ec, false);
+			return ResolveAsTypeOrNamespace (ec);
 		}
 
 		protected override void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
@@ -7679,13 +7678,13 @@ namespace Mono.CSharp
 			return me;
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext rc, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext rc)
 		{
 			FullNamedExpression fexpr = expr as FullNamedExpression;
 			if (fexpr == null)
-				return expr.ResolveAsType (rc, silent);
+				return expr.ResolveAsType (rc);
 
-			FullNamedExpression expr_resolved = fexpr.ResolveAsTypeOrNamespace (rc, silent);
+			FullNamedExpression expr_resolved = fexpr.ResolveAsTypeOrNamespace (rc);
 
 			if (expr_resolved == null)
 				return null;
@@ -7695,16 +7694,15 @@ namespace Mono.CSharp
 				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
 
 				if (retval == null) {
-					if (!silent)
-						ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
+					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
 				} else if (HasTypeArguments) {
-					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsType (rc, silent);
+					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsType (rc);
 				}
 
 				return retval;
 			}
 
-			TypeExpr tnew_expr = expr_resolved.ResolveAsType (rc, false);
+			TypeExpr tnew_expr = expr_resolved.ResolveAsType (rc);
 			if (tnew_expr == null)
 				return null;
 
@@ -7719,9 +7717,6 @@ namespace Mono.CSharp
 			while (expr_type != null) {
 				nested = MemberCache.FindNestedType (expr_type, Name, Arity);
 				if (nested == null) {
-					if (silent)
-						return null;
-
 					if (expr_type == tnew_expr.Type) {
 						Error_IdentifierNotFound (rc, expr_type, Name);
 						return null;
@@ -7751,7 +7746,7 @@ namespace Mono.CSharp
 				texpr = new TypeExpression (nested, loc);
 			}
 
-			return texpr.ResolveAsTypeOrNamespace (rc, false);
+			return texpr.ResolveAsTypeOrNamespace (rc);
 		}
 
 		protected virtual void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
@@ -8763,9 +8758,9 @@ namespace Mono.CSharp
 			this.loc = spec.Location;
 		}
 
-		public override TypeExpr ResolveAsType (IMemberContext ec, bool silent)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
-			TypeExpr lexpr = left.ResolveAsType (ec, false);
+			TypeExpr lexpr = left.ResolveAsType (ec);
 			if (lexpr == null)
 				return null;
 
@@ -8776,7 +8771,7 @@ namespace Mono.CSharp
 
 			if (single_spec.IsNullable) {
 				lexpr = new Nullable.NullableType (lexpr, loc);
-				lexpr = lexpr.ResolveAsType (ec, false);
+				lexpr = lexpr.ResolveAsType (ec);
 				if (lexpr != null)
 					type = lexpr.Type;
 
@@ -8956,7 +8951,7 @@ namespace Mono.CSharp
 				ec.Report.Error (255, loc, "Cannot use stackalloc in finally or catch");
 			}
 
-			TypeExpr texpr = t.ResolveAsType (ec, false);
+			TypeExpr texpr = t.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 

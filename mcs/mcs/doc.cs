@@ -345,9 +345,11 @@ namespace Mono.CSharp
 				}
 
 				if (ParsedParameters != null) {
+					var old_printer = mc.Module.Compiler.Report.SetPrinter (new NullReportPrinter ());
 					foreach (var pp in ParsedParameters) {
 						pp.Resolve (mc);
 					}
+					mc.Module.Compiler.Report.SetPrinter (old_printer);
 				}
 
 				if (type != null) {
@@ -583,7 +585,7 @@ namespace Mono.CSharp
 
 		public void Resolve (IMemberContext context)
 		{
-			Type = Type.ResolveAsType (context, true);
+			Type = Type.ResolveAsType (context);
 		}
 	}
 }

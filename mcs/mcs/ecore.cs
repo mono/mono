@@ -183,14 +183,12 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual TypeExpr ResolveAsType (IMemberContext mc,  bool silent)
+		public virtual TypeExpr ResolveAsType (IMemberContext mc)
 		{
-			if (!silent) {
-				ResolveContext ec = new ResolveContext (mc);
-				Expression e = Resolve (ec);
-				if (e != null)
-					e.Error_UnexpectedKind (ec, ResolveFlags.Type, loc);
-			}
+			ResolveContext ec = new ResolveContext (mc);
+			Expression e = Resolve (ec);
+			if (e != null)
+				e.Error_UnexpectedKind (ec, ResolveFlags.Type, loc);
 
 			return null;
 		}
@@ -2097,16 +2095,15 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, right_side, false);
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
-			int errors = ec.Module.Compiler.Report.Errors;
 			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, Arity, loc, /*ignore_cs0104=*/ false);
 
 			if (fne != null) {
 				if (fne.Type != null && Arity > 0) {
 					if (HasTypeArguments) {
 						GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
-						return ct.ResolveAsType (ec, false);
+						return ct.ResolveAsType (ec);
 					}
 
 					return new GenericOpenTypeExpr (fne.Type, loc);
@@ -2126,17 +2123,19 @@ namespace Mono.CSharp {
 						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
-				return new DynamicTypeExpr (loc).ResolveAsType (ec, silent);
+				return new DynamicTypeExpr (loc).ResolveAsType (ec);
 			}
 
 			if (fne != null)
 				return fne;
 
-			if (silent || errors != ec.Module.Compiler.Report.Errors)
-				return null;
-
 			Error_TypeOrNamespaceNotFound (ec);
 			return null;
+		}
+
+		public bool IsPossibleTypeOrNamespace (IMemberContext mc)
+		{
+			return mc.LookupNamespaceOrType (Name, Arity, loc, /*ignore_cs0104=*/ false) != null;
 		}
 
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
@@ -2250,14 +2249,13 @@ namespace Mono.CSharp {
 				// Stage 3: Lookup nested types, namespaces and type parameters in the context
 				//
 				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
-					e = ResolveAsTypeOrNamespace (rc, lookup_arity == 0 || !errorMode);
-					if (e != null) {
+					if (IsPossibleTypeOrNamespace (rc)) {
 						if (variable != null) {
 							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
 							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
 						}
 
-						return e;
+						return ResolveAsTypeOrNamespace (rc);
 					}
 				}
 
@@ -2354,27 +2352,23 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public abstract FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool silent);
+		public abstract FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc);
 
 		//
 		// This is used to resolve the expression as a type, a null
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public override TypeExpr ResolveAsType (IMemberContext mc, bool silent)
+		public override TypeExpr ResolveAsType (IMemberContext mc)
 		{
-			// FIXME: THIS IS TOO SLOW and it should not be needed either
-			int errors = mc.Module.Compiler.Report.Errors;
-
-			FullNamedExpression fne = ResolveAsTypeOrNamespace (mc, silent);
+			FullNamedExpression fne = ResolveAsTypeOrNamespace (mc);
 
 			if (fne == null)
 				return null;
 
 			TypeExpr te = fne as TypeExpr;
 			if (te == null) {
-				if (!silent && errors == mc.Module.Compiler.Report.Errors)
-					fne.Error_UnexpectedKind (mc.Module.Compiler.Report, null, "type", loc);
+				fne.Error_UnexpectedKind (mc.Module.Compiler.Report, null, "type", loc);
 				return null;
 			}
 
@@ -2394,7 +2388,7 @@ namespace Mono.CSharp {
 			// Obsolete checks cannot be done when resolving base context as they
 			// require type dependecies to be set but we are just resolving them
 			//
-			if (!silent && !(mc is TypeContainer.BaseContext)) {
+			if (!(mc is TypeContainer.BaseContext)) {
 				ObsoleteAttribute obsolete_attr = te.Type.GetAttributeObsolete ();
 				if (obsolete_attr != null && !mc.IsObsolete) {
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location, mc.Module.Compiler.Report);
@@ -2417,14 +2411,14 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression
 	{
-		public sealed override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool silent)
+		public sealed override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
 		{
-			return ResolveAsType (mc, silent);
+			return ResolveAsType (mc);
 		}
 
 		protected sealed override Expression DoResolve (ResolveContext ec)
 		{
-			return ResolveAsType (ec, false);
+			return ResolveAsType (ec);
 		}
 
 		public override bool Equals (object obj)
@@ -2454,7 +2448,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public sealed override TypeExpr ResolveAsType (IMemberContext ec, bool silent)
+		public sealed override TypeExpr ResolveAsType (IMemberContext ec)
 		{
 			return this;
 		}

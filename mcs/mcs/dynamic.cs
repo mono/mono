@@ -47,7 +47,7 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
-		public override TypeExpr ResolveAsType (IMemberContext ec, bool silent)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
 			eclass = ExprClass.Type;
 			type = ec.Module.Compiler.BuiltinTypes.Dynamic;
@@ -464,7 +464,7 @@ namespace Mono.CSharp
 
 			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuiltinTypes.Void);
 
-			instanceAccessExprType = instanceAccessExprType.ResolveAsType (bc, false);
+			instanceAccessExprType = instanceAccessExprType.ResolveAsType (bc);
 			if (instanceAccessExprType == null)
 				return;
 

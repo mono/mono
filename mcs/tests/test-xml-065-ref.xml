@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-065</name>
+    </assembly>
+    <members>
+        <member name="T:Test">
+            <seealso cref="M:Test.#ctor(System.Byte*)"/>
+        </member>
+        <member name="M:Test.#ctor(System.Byte*)">
+            Start
+        </member>
+    </members>
+</doc>
