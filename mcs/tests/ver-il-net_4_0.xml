@@ -801,7 +801,7 @@
         <size>6</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Boolean op_True(MyType)">
         <size>14</size>
@@ -4488,7 +4488,7 @@
         <size>7</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Void Increment()">
         <size>15</size>
@@ -4502,7 +4502,7 @@
         <size>15</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
     </type>
     <type name="ReferenceTypeCounters.InterfaceCounter">
@@ -4513,7 +4513,7 @@
         <size>15</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Void Increment()">
         <size>15</size>
@@ -4542,7 +4542,7 @@
     </type>
     <type name="ValueTypeCounters.PrintingCounter">
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Void Increment()">
         <size>15</size>
@@ -4553,7 +4553,7 @@
         <size>15</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
     </type>
     <type name="ValueTypeCounters.InterfaceCounter">
@@ -4561,7 +4561,7 @@
         <size>15</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Void Increment()">
         <size>15</size>
@@ -6508,7 +6508,7 @@
         <size>20</size>
       </method>
       <method name="System.String ToString()">
-        <size>15</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -7414,7 +7414,7 @@
         <size>56</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(Int32)">
-        <size>8</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -9201,7 +9201,7 @@
     </type>
     <type name="MyTest">
       <method name="System.String &lt;Main&gt;m__0(Int32)">
-        <size>8</size>
+        <size>14</size>
       </method>
     </type>
     <type name="MyTest+&lt;Map&gt;c__Iterator0`4[Aa,Af,Rf,Rr]">
@@ -17994,7 +17994,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>570</size>
+        <size>576</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -20723,7 +20723,7 @@
         <size>7</size>
       </method>
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)">
-        <size>83</size>
+        <size>89</size>
       </method>
       <method name="Int32 Main()">
         <size>528</size>
@@ -21749,7 +21749,7 @@
         <size>1</size>
       </method>
       <method name="System.String &lt;InvokeTest_2&gt;m__5(Int32)">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__6(System.Reflection.MethodInfo)">
         <size>12</size>
@@ -21804,7 +21804,7 @@
         <size>6</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Int32 op_Implicit(MyType)">
         <size>8</size>
@@ -29624,7 +29624,7 @@
         <size>36</size>
       </method>
       <method name="System.String ToString()">
-        <size>35</size>
+        <size>47</size>
       </method>
       <method name="Fraction op_Implicit(Int32)">
         <size>17</size>
@@ -29923,7 +29923,7 @@
         <size>13</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="Int32 Main()">
         <size>31</size>
@@ -33388,7 +33388,7 @@
         <size>8</size>
       </method>
       <method name="System.String ToString()">
-        <size>12</size>
+        <size>18</size>
       </method>
       <method name="MyBool op_BitwiseAnd(MyBool, MyBool)">
         <size>21</size>
@@ -33456,7 +33456,7 @@
         <size>10</size>
       </method>
       <method name="Void Main()">
-        <size>26</size>
+        <size>32</size>
       </method>
     </type>
   </test>
@@ -33634,7 +33634,7 @@
         <size>1</size>
       </method>
       <method name="Void Assert(System.Object[], Boolean, Int32)">
-        <size>65</size>
+        <size>71</size>
       </method>
       <method name="Int32 Main()">
         <size>1159</size>
@@ -36290,7 +36290,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>50</size>
+        <size>56</size>
       </method>
     </type>
   </test>
@@ -38068,7 +38068,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>65</size>
+        <size>71</size>
       </method>
     </type>
   </test>
@@ -39148,7 +39148,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>119</size>
+        <size>131</size>
       </method>
     </type>
   </test>
@@ -41244,7 +41244,7 @@
         <size>80</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>160</size>
+        <size>166</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
         <size>83</size>
@@ -41842,7 +41842,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>157</size>
+        <size>163</size>
       </method>
     </type>
     <type name="Info">
@@ -43474,7 +43474,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>147</size>
+        <size>171</size>
       </method>
     </type>
   </test>
@@ -43561,7 +43561,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>71</size>
+        <size>77</size>
       </method>
       <method name="System.Double[][,] ReturnArray()">
         <size>62</size>
@@ -44661,7 +44661,7 @@
   <test name="test-733.cs">
     <type name="Test">
       <method name="Int32 Main()">
-        <size>88</size>
+        <size>94</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44835,7 +44835,7 @@
     </type>
     <type name="FixedTest+TValue">
       <method name="System.String ToString()">
-        <size>17</size>
+        <size>23</size>
       </method>
       <method name="Void .ctor(Int64)">
         <size>28</size>
@@ -46717,6 +46717,34 @@
     <type name="C">
       <method name="Int32 Main(System.String[])">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-821.cs">
+    <type name="S">
+      <method name="T Test[T]()">
+        <size>10</size>
+      </method>
+      <method name="Void M()">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-822.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>22</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -53232,7 +53260,7 @@
         <size>2</size>
       </method>
       <method name="System.String Bar(Int32, System.String, Char)">
-        <size>20</size>
+        <size>26</size>
       </method>
       <method name="Int32 Test(Int32, Int32)">
         <size>30</size>

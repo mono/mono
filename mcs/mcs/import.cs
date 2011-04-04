@@ -1182,7 +1182,7 @@ namespace Mono.CSharp
 			if ((ma & MethodAttributes.Final) != 0)
 				mod |= Modifiers.SEALED;
 
-			if ((ma & MethodAttributes.Virtual) != 0 && !declaringType.IsSealed) {
+			if ((ma & MethodAttributes.Virtual) != 0) {
 				// Not every member can be detected based on MethodAttribute, we
 				// set virtual or non-virtual only when we are certain. Further checks
 				// to really find out what `virtual' means for this member are done
