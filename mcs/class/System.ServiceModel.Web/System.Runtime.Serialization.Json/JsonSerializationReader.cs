@@ -168,7 +168,7 @@ namespace System.Runtime.Serialization.Json
 			var ret = root_type.Assembly.GetType (name, false) ?? Type.GetType (name, false);
 			if (ret != null)
 				return ret;
-#if !MOONLIGHT // how to do that in ML?
+
 			// We probably have to iterate all the existing
 			// assemblies that are loaded in current domain.
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
@@ -176,7 +176,7 @@ namespace System.Runtime.Serialization.Json
 				if (ret != null)
 					return ret;
 			}
-#endif
+
 			return null;
 		}
 
