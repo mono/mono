@@ -39,7 +39,9 @@ namespace System.ServiceModel.Diagnostics
 #if !NET_2_1
 			var e = ConfigUtil.DiagnosticSection.MessageLogging;
 			LogEntireMessage = e.LogEntireMessage;
+#if NET_4_0
 			LogKnownPii = e.LogKnownPii;
+#endif
 			LogMalformedMessages = e.LogMalformedMessages;
 			LogMessagesAtServiceLevel = e.LogMessagesAtServiceLevel;
 			LogMessagesAtTransportLevel = e.LogMessagesAtTransportLevel;
