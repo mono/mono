@@ -245,20 +245,10 @@ namespace System.Runtime.Serialization.Json
 	class PushbackReader : StreamReader
 	{
 		Stack<int> pushback;
-		Encoding encoding;
-		bool is_ascii_single;
-		byte [] encbuf;
-		char [] charbuf;
 
 		public PushbackReader (Stream stream, Encoding encoding) : base (stream, encoding)
 		{
 			pushback = new Stack<int>();
-			this.encoding = encoding;
-#if MOONLIGHT
-			is_ascii_single = encoding is UTF8Encoding;
-#else
-			is_ascii_single = encoding is UTF8Encoding || encoding.IsSingleByte;
-#endif
 		}
 
 		public PushbackReader (Stream stream) : this (new EncodingDetecingInputStream (stream))
@@ -296,22 +286,7 @@ namespace System.Runtime.Serialization.Json
 
 		public void Pushback (int ch)
 		{
-			if (ch < 0)
-				pushback.Push (ch);
-			else {
-				if (!is_ascii_single) {
-					if (encbuf == null) {
-						encbuf = new byte [encoding.GetMaxByteCount (1)];
-						charbuf = new char [1];
-					}
-					charbuf [0] = (char) ch;
-					int size = encoding.GetBytes (charbuf, 0, 1, encbuf, 0);
-					for (int i = 0; i < size; i++)
-						pushback.Push (encbuf [i]);
-				}
-				else
-					pushback.Push (ch);
-			}
+			pushback.Push (ch);
 		}
 	}
 
