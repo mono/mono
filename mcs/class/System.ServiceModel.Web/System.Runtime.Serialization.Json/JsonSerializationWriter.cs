@@ -71,7 +71,11 @@ namespace System.Runtime.Serialization.Json
 			if (serialized_object_count ++ == serializer.MaxItemsInObjectGraph)
 				throw new SerializationException (String.Format ("The object graph exceeded the maximum object count '{0}' specified in the serializer", serializer.MaxItemsInObjectGraph));
 
-			switch (Type.GetTypeCode (graph.GetType ())) {
+			var type = graph.GetType ();
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
+				type = type.GetGenericArguments () [0];
+
+			switch (Type.GetTypeCode (type)) {
 			case TypeCode.Char:
 			case TypeCode.String:
 				writer.WriteString (graph.ToString ());
@@ -91,8 +95,8 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.UInt64:
 			case TypeCode.Decimal:
 				writer.WriteAttributeString ("type", "number");
-				if (graph.GetType ().IsEnum)
-					graph = ((IConvertible) graph).ToType (Enum.GetUnderlyingType (graph.GetType ()), CultureInfo.InvariantCulture);
+				if (type.IsEnum)
+					graph = ((IConvertible) graph).ToType (Enum.GetUnderlyingType (type), CultureInfo.InvariantCulture);
 				writer.WriteString (((IFormattable) graph).ToString ("G", CultureInfo.InvariantCulture));
 				break;
 			case TypeCode.Boolean:
@@ -115,44 +119,44 @@ namespace System.Runtime.Serialization.Json
 					writer.WriteString (qn.Name);
 					writer.WriteString (":");
 					writer.WriteString (qn.Namespace);
-				} else if (TypeMap.IsDictionary (graph.GetType ())) {
+				} else if (TypeMap.IsDictionary (type)) {
 					writer.WriteAttributeString ("type", "array");
-					var itemGetter = graph.GetType ().GetProperty ("Item");
-					var keysGetter = graph.GetType ().GetProperty ("Keys");
+					var itemGetter = type.GetProperty ("Item");
+					var keysGetter = type.GetProperty ("Keys");
 					var argarr = new object [1];
 					foreach (object o in (IEnumerable) keysGetter.GetValue (graph, null)) {
 						writer.WriteStartElement ("item");
 						writer.WriteAttributeString ("type", "object");
 						// outputting a KeyValuePair as <Key .. /><Value ... />
 						writer.WriteStartElement ("Key");
-						WriteObjectContent (o, false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						WriteObjectContent (o, false, !(graph is Array && type.GetElementType () != typeof (object)));
 						writer.WriteEndElement ();
 						writer.WriteStartElement ("Value");
 						argarr [0] = o;
-						WriteObjectContent (itemGetter.GetValue (graph, argarr), false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						WriteObjectContent (itemGetter.GetValue (graph, argarr), false, !(graph is Array && type.GetElementType () != typeof (object)));
 						writer.WriteEndElement ();
 						writer.WriteEndElement ();
 					}
-				} else if (TypeMap.IsCollection (graph.GetType ())) { // array
+				} else if (TypeMap.IsCollection (type)) { // array
 					writer.WriteAttributeString ("type", "array");
 					foreach (object o in (ICollection) graph) {
 						writer.WriteStartElement ("item");
 						// when it is typed, then no need to output "__type"
-						WriteObjectContent (o, false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						WriteObjectContent (o, false, !(graph is Array && type.GetElementType () != typeof (object)));
 						writer.WriteEndElement ();
 					}
 				} else { // object
-					TypeMap tm = GetTypeMap (graph.GetType ());
+					TypeMap tm = GetTypeMap (type);
 					if (tm != null) {
 						// FIXME: I'm not sure how it is determined whether __type is written or not...
 						if (outputTypeName || always_emit_type)
-							writer.WriteAttributeString ("__type", FormatTypeName (graph.GetType ()));
+							writer.WriteAttributeString ("__type", FormatTypeName (type));
 						tm.Serialize (this, graph, "object");
 					}
 					else
 						// it does not emit type="object" (as the graph is regarded as a string)
 //						writer.WriteString (graph.ToString ());
-throw new InvalidDataContractException (String.Format ("Type {0} cannot be serialized by this JSON serializer", graph.GetType ()));
+throw new InvalidDataContractException (String.Format ("Type {0} cannot be serialized by this JSON serializer", type));
 				}
 				break;
 			}
