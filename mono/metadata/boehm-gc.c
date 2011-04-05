@@ -261,6 +261,7 @@ static gint64 gc_start_time;
 static void
 on_gc_notification (GCEventType event)
 {
+	if (!mono_perfcounters) return;
 	if (event == MONO_GC_EVENT_START) {
 		mono_perfcounters->gc_collections0++;
 		mono_stats.major_gc_count ++;
