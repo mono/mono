@@ -1185,6 +1185,7 @@ namespace Mono.CSharp
 			case Token.CLOSE_PARENS:
 			case Token.OPEN_BRACKET:
 			case Token.OP_GENERICS_GT:
+			case Token.INTERR:
 				next_token = Token.INTERR_NULLABLE;
 				break;
 				
