@@ -313,17 +313,7 @@ namespace System.Runtime.Serialization.Json
 					argarr [0] = elem;
 					addMethod.Invoke (c, argarr);
 				}
-#if NET_2_1
-				if (collectionType.IsArray) {
-					Array array = Array.CreateInstance (elementType, c.Count);
-					c.CopyTo (array, 0);
-					ret = array;
-				}
-				else
-					ret = c;
-#else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
-#endif
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});
