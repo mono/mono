@@ -1102,7 +1102,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (type_expr.Type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
+			if (member_type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
 				Report.Warning (465, 1, Location,
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
@@ -1212,14 +1212,10 @@ namespace Mono.CSharp {
 				}
 
 				if (CurrentTypeParameters != null) {
-					var ge = type_expr as GenericTypeExpr;
-					if (ge != null)
-						ge.CheckConstraints (this);
+					ConstraintChecker.Check (this, member_type, type_expr.Location);
 
-					foreach (Parameter p in parameters.FixedParameters) {
-						ge = p.TypeExpression as GenericTypeExpr;
-						if (ge != null)
-							ge.CheckConstraints (this);
+					for (int i = 0; i < parameters.Count; ++i) {
+						ConstraintChecker.Check (this, parameters.Types[i], Location); // TODO: Location is wrong
 					}
 
 					for (int i = 0; i < CurrentTypeParameters.Length; ++i) {
@@ -2628,7 +2624,8 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				sb.AppendFormat ("{0}.{1} operator {2}",
-					Parent.GetSignatureForError (), GetName (OperatorType), type_expr.GetSignatureForError ());
+					Parent.GetSignatureForError (), GetName (OperatorType),
+					member_type == null ? type_expr.GetSignatureForError () : member_type.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));

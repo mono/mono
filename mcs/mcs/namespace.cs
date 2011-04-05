@@ -1213,9 +1213,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (resolved is TypeExpr)
-				resolved = resolved.ResolveAsType (rc);
-
 			return resolved;
 		}
 	}

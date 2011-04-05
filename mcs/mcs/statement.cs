@@ -1308,11 +1308,9 @@ namespace Mono.CSharp {
 				}
 
 				if (type == null) {
-					var texpr = type_expr.ResolveAsType (bc);
-					if (texpr == null)
+					type = type_expr.ResolveAsType (bc);
+					if (type == null)
 						return false;
-
-					type = texpr.Type;
 
 					if (li.IsConstant && !type.IsConstantCompatible) {
 						Const.Error_InvalidConstantType (type, loc, bc.Report);
@@ -4621,11 +4619,10 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (ResolveContext.Options.CatchScope, true)) {
 				if (type_expr != null) {
-					TypeExpr te = type_expr.ResolveAsType (ec);
-					if (te == null)
+					type = type_expr.ResolveAsType (ec);
+					if (type == null)
 						return false;
 
-					type = te.Type;
 					if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuiltinTypes.Exception, false)) {
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
@@ -5146,18 +5143,18 @@ namespace Mono.CSharp {
 				if (access == null)
 					return false;
 
-				Expression var_type = for_each.type;
-				VarExpr ve = var_type as VarExpr;
-				if (ve != null) {
+				TypeSpec var_type;
+				if (for_each.type is VarExpr) {
 					// Infer implicitly typed local variable from foreach array type
-					var_type = new TypeExpression (access.Type, ve.Location);
+					var_type = access.Type;
+				} else {
+					var_type = for_each.type.ResolveAsType (ec);
 				}
 
-				var_type = var_type.ResolveAsType (ec);
 				if (var_type == null)
 					return false;
 
-				conv = Convert.ExplicitConversion (ec, access, var_type.Type, loc);
+				conv = Convert.ExplicitConversion (ec, access, var_type, loc);
 				if (conv == null)
 					return false;
 
@@ -5503,29 +5500,31 @@ namespace Mono.CSharp {
 					return false;
 
 				VarExpr ve = var_type as VarExpr;
+
 				if (ve != null) {
 					if (is_dynamic) {
 						// Source type is dynamic, set element type to dynamic too
-						var_type = new TypeExpression (ec.BuiltinTypes.Dynamic, var_type.Location);
+						variable.Type = ec.BuiltinTypes.Dynamic;
 					} else {
 						// Infer implicitly typed local variable from foreach enumerable type
-						var_type = new TypeExpression (current_pe.Type, var_type.Location);
+						variable.Type = current_pe.Type;
 					}
-				} else if (is_dynamic) {
-					// Explicit cast of dynamic collection elements has to be done at runtime
-					current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
+				} else {
+					if (is_dynamic) {
+						// Explicit cast of dynamic collection elements has to be done at runtime
+						current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
+					}
+
+					variable.Type = var_type.ResolveAsType (ec);
 				}
 
-				var_type = var_type.ResolveAsType (ec);
-				if (var_type == null)
+				if (variable.Type == null)
 					return false;
-
-				variable.Type = var_type.Type;
 
 				var init = new Invocation (get_enumerator_mg, null);
 
 				statement = new While (new BooleanExpression (new Invocation (move_next_mg, null)),
-					new Body (var_type.Type, variable, current_pe, statement, loc), loc);
+					new Body (variable.Type, variable, current_pe, statement, loc), loc);
 
 				var enum_type = enumerator_variable.Type;
 

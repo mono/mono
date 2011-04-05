@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new TypeOf (type, loc)));
 
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}

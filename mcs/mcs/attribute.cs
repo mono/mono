@@ -245,15 +245,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr)
-		{
-			TypeExpr te = expr.ResolveAsType (context);
-			if (te == null)
-				return null;
-
-			return te.Type;
-		}
-
 		/// <summary>
 		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
 		/// </summary>
@@ -271,7 +262,7 @@ namespace Mono.CSharp {
 			// print on success
 
 			try {
-				t1 = ResolvePossibleAttributeType (expression);
+				t1 = expression.ResolveAsType (context);
 				if (t1 != null)
 					t1_is_attr = t1.IsAttribute;
 
@@ -283,7 +274,7 @@ namespace Mono.CSharp {
 					expanded = (ATypeNameExpression) expression.Clone (null);
 					expanded.Name += "Attribute";
 
-					t2 = ResolvePossibleAttributeType (expanded);
+					t2 = expanded.ResolveAsType (context);
 					if (t2 != null)
 						t2_is_attr = t2.IsAttribute;
 				}

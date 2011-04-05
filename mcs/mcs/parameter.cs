@@ -354,13 +354,11 @@ namespace Mono.CSharp {
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
 
-			var expr = texpr.ResolveAsType (rc);
-			if (expr == null)
+			parameter_type = texpr.ResolveAsType (rc);
+			if (parameter_type == null)
 				return null;
 
 			this.idx = index;
-			texpr = expr;
-			parameter_type = texpr.Type;
 	
 			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 && parameter_type.IsSpecialRuntimeType) {
 				rc.Module.Compiler.Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
@@ -602,8 +600,7 @@ namespace Mono.CSharp {
 			expr_tree_variable = (TemporaryVariableReference) expr_tree_variable.Resolve (ec);
 
 			Arguments arguments = new Arguments (2);
-			arguments.Add (new Argument (new TypeOf (
-				new TypeExpression (parameter_type, Location), Location)));
+			arguments.Add (new Argument (new TypeOf (parameter_type, Location)));
 			arguments.Add (new Argument (new StringConstant (ec.BuiltinTypes, Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));

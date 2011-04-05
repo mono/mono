@@ -328,7 +328,7 @@ namespace Mono.CSharp {
 			get { return hoisted_params; }
 		}
 
-		protected override TypeExpr [] ResolveBaseTypes (out TypeExpr base_class)
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var mtype = Iterator.OriginalIteratorType;
 			if (Mutator != null)

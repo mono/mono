@@ -130,9 +130,9 @@ namespace Mono.CSharp {
 		public void CheckGenericConstraints (IMemberContext context)
 		{
 			foreach (var c in constraints) {
-				var ge = c as GenericTypeExpr;
-				if (ge != null)
-					ge.CheckConstraints (context);
+				if (c != null && c.Type != null) {
+					ConstraintChecker.Check (context, c.Type, c.Location);
+				}
 			}
 		}
 
@@ -168,18 +168,15 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				var type_expr = constraints[i] = constraint.ResolveAsType (context);
-				if (type_expr == null)
+				var type = constraint.ResolveAsType (context);
+				if (type == null)
 					continue;
 
-				var gexpr = type_expr as GenericTypeExpr;
-				if (gexpr != null && gexpr.HasDynamicArguments ()) {
+				if (type.Arity > 0 && ((InflatedTypeSpec) type).HasDynamicArgument ()) {
 					context.Module.Compiler.Report.Error (1968, constraint.Location,
-						"A constraint cannot be the dynamic type `{0}'", gexpr.GetSignatureForError ());
+						"A constraint cannot be the dynamic type `{0}'", type.GetSignatureForError ());
 					continue;
 				}
-
-				var type = type_expr.Type;
 
 				if (!context.CurrentMemberDefinition.IsAccessibleAs (type)) {
 					context.Module.Compiler.Report.SymbolRelatedToPreviousError (type);
@@ -267,7 +264,7 @@ namespace Mono.CSharp {
 				}
 
 				if (spec.HasSpecialStruct || spec.HasSpecialClass) {
-					context.Module.Compiler.Report.Error (450, type_expr.Location,
+					context.Module.Compiler.Report.Error (450, constraint.Location,
 						"`{0}': cannot specify both a constraint class and the `class' or `struct' constraint",
 						type.GetSignatureForError ());
 				}
@@ -1596,6 +1593,34 @@ namespace Mono.CSharp {
 			return "<" + TypeManager.CSharpName (targs) + ">";
 		}
 
+		public bool HasDynamicArgument ()
+		{
+			for (int i = 0; i < targs.Length; ++i) {
+				var item = targs[i];
+
+				if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+					return true;
+
+				if (item is InflatedTypeSpec) {
+					if (((InflatedTypeSpec) item).HasDynamicArgument ())
+						return true;
+
+					continue;
+				}
+
+				if (item.IsArray) {
+					while (item.IsArray) {
+						item = ((ArrayContainer) item).Element;
+					}
+
+					if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 		protected override void InitializeMemberCache (bool onlyTypes)
 		{
 			if (cache == null) {
@@ -1789,22 +1814,22 @@ namespace Mono.CSharp {
 			atypes = new TypeSpec [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = args[i].ResolveAsType (ec);
+				var te = args[i].ResolveAsType (ec);
 				if (te == null) {
 					ok = false;
 					continue;
 				}
 
-				atypes[i] = te.Type;
+				atypes[i] = te;
 
-				if (te.Type.IsStatic) {
-					ec.Module.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
+				if (te.IsStatic) {
+					ec.Module.Compiler.Report.Error (718, args[i].Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					ok = false;
 				}
 
-				if (te.Type.IsPointer || te.Type.IsSpecialRuntimeType) {
-					ec.Module.Compiler.Report.Error (306, te.Location,
+				if (te.IsPointer || te.IsSpecialRuntimeType) {
+					ec.Module.Compiler.Report.Error (306, args[i].Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
 					ok = false;
@@ -1884,7 +1909,6 @@ namespace Mono.CSharp {
 	{
 		TypeArguments args;
 		TypeSpec open_type;
-		bool constraints_checked;
 
 		/// <summary>
 		///   Instantiate the generic type `t' with the type arguments `args'.
@@ -1907,7 +1931,7 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (type);
 		}
 
-		public override TypeExpr ResolveAsType (IMemberContext ec)
+		public override TypeSpec ResolveAsType (IMemberContext ec)
 		{
 			if (!args.Resolve (ec))
 				return null;
@@ -1924,60 +1948,9 @@ namespace Mono.CSharp {
 			// Check constraints when context is not method/base type
 			//
 			if (!ec.HasUnresolvedConstraints)
-				CheckConstraints (ec);
+				ConstraintChecker.Check (ec, type, loc);
 
-			return this;
-		}
-
-		//
-		// Checks the constraints of open generic type against type
-		// arguments. Has to be called after all members have been defined
-		//
-		public bool CheckConstraints (IMemberContext ec)
-		{
-			if (constraints_checked)
-				return true;
-
-			constraints_checked = true;
-
-			if ((type.Modifiers & Modifiers.COMPILER_GENERATED) != 0)
-				return true;
-
-			var gtype = (InflatedTypeSpec) type;
-			var constraints = gtype.Constraints;
-			if (constraints == null)
-				return true;
-
-			return new ConstraintChecker(ec).CheckAll (open_type, args.Arguments, constraints, loc);
-		}
-
-		public bool HasDynamicArguments ()
-		{
-			return HasDynamicArguments (args.Arguments);
-		}
-
-		static bool HasDynamicArguments (TypeSpec[] args)
-		{
-			for (int i = 0; i < args.Length; ++i) {
-				var item = args[i];
-
-				if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-					return true;
-
-				if (TypeManager.IsGenericType (item))
-					return HasDynamicArguments (TypeManager.GetTypeArguments (item));
-
-				if (item.IsArray) {
-					while (item.IsArray) {
-						item = ((ArrayContainer) item).Element;
-					}
-
-					if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-						return true;
-				}
-			}
-
-			return false;
+			return type;
 		}
 
 		public override bool Equals (object obj)
@@ -2032,6 +2005,26 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		//
+		// Checks the constraints of open generic type against type
+		// arguments. Has to be called after all members have been defined
+		//
+		public static bool Check (IMemberContext mc, TypeSpec type, Location loc)
+		{
+			if ((type.Modifiers & Modifiers.COMPILER_GENERATED) != 0)
+				return true;
+
+			if (type.Arity == 0)
+				return true;
+
+			var gtype = (InflatedTypeSpec) type;
+			var constraints = gtype.Constraints;
+			if (constraints == null)
+				return true;
+
+			return new ConstraintChecker(mc).CheckAll (type.GetDefinition (), type.TypeArguments, constraints, loc);
+		}
 
 		//
 		// Checks all type arguments againts type parameters constraints

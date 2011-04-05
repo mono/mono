@@ -565,6 +565,7 @@ namespace Mono.CSharp
 	{
 		public readonly Parameter.Modifier Modifier;
 		public FullNamedExpression Type;
+		TypeSpec type;
 
 		public DocumentationParameter (Parameter.Modifier modifier, FullNamedExpression type)
 			: this (type)
@@ -579,13 +580,13 @@ namespace Mono.CSharp
 
 		public TypeSpec TypeSpec {
 			get {
-				return Type == null ? null : Type.Type;
+				return type;
 			}
 		}
 
 		public void Resolve (IMemberContext context)
 		{
-			Type = Type.ResolveAsType (context);
+			type = Type.ResolveAsType (context);
 		}
 	}
 }
