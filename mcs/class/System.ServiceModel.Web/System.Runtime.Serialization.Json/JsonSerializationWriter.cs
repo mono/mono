@@ -63,6 +63,7 @@ namespace System.Runtime.Serialization.Json
 			if (graph == null) {
 				if (top)
 					GetTypeMap (root_type); // to make sure to reject invalid contracts
+				writer.WriteAttributeString ("type", "null");
 				writer.WriteString (null);
 				return;
 			}
