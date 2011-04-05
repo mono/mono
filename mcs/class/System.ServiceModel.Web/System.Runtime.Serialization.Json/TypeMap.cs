@@ -89,13 +89,22 @@ namespace System.Runtime.Serialization.Json
 				if (!fi.IsStatic)
 					l.Add (new TypeMapField (fi, null));
 			foreach (var pi in type.GetProperties ())
-				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic)
+				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic && pi.GetIndexParameters ().Length == 0)
 					l.Add (new TypeMapProperty (pi, null));
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
 		}
 
-		static bool IsCollection (Type type)
+		internal static bool IsDictionary (Type type)
+		{
+			if (type.GetInterface ("System.Collections.IDictionary", false) != null)
+				return true;
+			if (type.GetInterface ("System.Collections.Generic.IDictionary`2", false) != null)
+				return true;
+			return false;
+		}
+
+		internal static bool IsCollection (Type type)
 		{
 			if (type.GetInterface ("System.Collections.IList", false) != null)
 				return true;

@@ -114,10 +114,12 @@ namespace System.Runtime.Serialization.Json
 					writer.WriteString (qn.Name);
 					writer.WriteString (":");
 					writer.WriteString (qn.Namespace);
-				} else if (graph is IDictionary) {
+				} else if (TypeMap.IsDictionary (graph.GetType ())) {
 					writer.WriteAttributeString ("type", "array");
-					IDictionary dic = (IDictionary) graph;
-					foreach (object o in dic.Keys) {
+					var itemGetter = graph.GetType ().GetProperty ("Item");
+					var keysGetter = graph.GetType ().GetProperty ("Keys");
+					var argarr = new object [1];
+					foreach (object o in (IEnumerable) keysGetter.GetValue (graph, null)) {
 						writer.WriteStartElement ("item");
 						writer.WriteAttributeString ("type", "object");
 						// outputting a KeyValuePair as <Key .. /><Value ... />
@@ -125,11 +127,12 @@ namespace System.Runtime.Serialization.Json
 						WriteObjectContent (o, false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
 						writer.WriteEndElement ();
 						writer.WriteStartElement ("Value");
-						WriteObjectContent (dic[o], false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						argarr [0] = o;
+						WriteObjectContent (itemGetter.GetValue (graph, argarr), false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
 						writer.WriteEndElement ();
 						writer.WriteEndElement ();
 					}
-				} else if (graph is ICollection) { // array
+				} else if (TypeMap.IsCollection (graph.GetType ())) { // array
 					writer.WriteAttributeString ("type", "array");
 					foreach (object o in (ICollection) graph) {
 						writer.WriteStartElement ("item");
