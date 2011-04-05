@@ -237,7 +237,7 @@ namespace Mono.CSharp
 			var left = ResolveMemberName (context, mn.Left);
 			var ns = left as Namespace;
 			if (ns != null)
-				return ns.Lookup (context, mn.Name, mn.Arity, Location.Null);
+				return ns.LookupTypeOrNamespace (context, mn.Name, mn.Arity, Location.Null);
 
 			TypeExpr texpr = left as TypeExpr;
 			if (texpr != null) {
@@ -320,7 +320,7 @@ namespace Mono.CSharp
 						if (fne != null) {
 							var ns = fne as Namespace;
 							if (ns != null) {
-								fne = ns.Lookup (mc, ParsedName.Name, ParsedName.Arity, Location.Null);
+								fne = ns.LookupTypeOrNamespace (mc, ParsedName.Name, ParsedName.Arity, Location.Null);
 								if (fne != null) {
 									member = fne.Type;
 								}

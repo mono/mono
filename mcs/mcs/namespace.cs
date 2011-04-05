@@ -161,7 +161,7 @@ namespace Mono.CSharp {
 
 		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, int arity, IMemberContext ctx)
 		{
-			FullNamedExpression retval = Lookup (ctx, name, -System.Math.Max (1, arity), loc);
+			var retval = LookupType (ctx, name, -System.Math.Max (1, arity), loc);
 			if (retval != null) {
 				Error_TypeArgumentsCannotBeUsed (ctx, retval.Type, arity, loc);
 				return;
@@ -317,7 +317,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public FullNamedExpression Lookup (IMemberContext ctx, string name, int arity, Location loc)
+		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, Location loc)
 		{
 			var texpr = LookupType (ctx, name, arity, loc);
 
@@ -877,7 +877,7 @@ namespace Mono.CSharp {
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = ns.Lookup (this, name, arity, loc);
+			FullNamedExpression fne = ns.LookupTypeOrNamespace (this, name, arity, loc);
 
 			//
 			// Check aliases. 

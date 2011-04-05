@@ -7539,7 +7539,7 @@ namespace Mono.CSharp
 
 			Namespace ns = expr as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
+				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
 
 				if (retval == null) {
 					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
@@ -7691,7 +7691,7 @@ namespace Mono.CSharp
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
+				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
 
 				if (retval == null) {
 					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
