@@ -291,8 +291,10 @@ namespace System.Runtime.Serialization.Json
 #else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
 #endif
-			} else if (typeof (IDictionary).IsAssignableFrom(collectionType)) {
-				IDictionary id = (IDictionary)Activator.CreateInstance (collectionType);
+			} else if (TypeMap.IsDictionary (collectionType)) {
+				object dic = Activator.CreateInstance (collectionType);
+				var itemSetter = dic.GetType ().GetProperty ("Item");
+				var keyarr = new object [1];
 
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
@@ -301,13 +303,14 @@ namespace System.Runtime.Serialization.Json
 					// reading a KeyValuePair in the form of <Key .../><Value .../>
 					reader.Read ();
 					reader.MoveToContent ();
-					object key = ReadObject (elementType.GetGenericArguments ()[0]);
+					object key = ReadObject (elementType.GetGenericArguments () [0]);
 					reader.MoveToContent ();
-					object val = ReadObject (elementType.GetGenericArguments ()[1]);
+					object val = ReadObject (elementType.GetGenericArguments () [1]);
 					reader.Read ();
-					id[key] = val;
+					keyarr [0] = key;
+					itemSetter.SetValue (dic, val, keyarr);
 				}
-				ret = id;
+				ret = dic;
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});
