@@ -5284,7 +5284,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_unwind_init ();
 
-	// mini_gc_init ();
+	mini_gc_init ();
 
 	if (getenv ("MONO_DEBUG") != NULL)
 		mini_parse_debug_options ();
@@ -5373,10 +5373,6 @@ mini_init (const char *filename, const char *runtime_version)
 	else
 		domain = mono_init_from_assembly (filename, filename);
 
-	// This is after mono_init so that the perfcounters
-	// used by the callbacks are guaranteed to be initialized
-	mini_gc_init ();
-	
 	if (mono_aot_only) {
 		/* This helps catch code allocation requests */
 		mono_code_manager_set_read_only (domain->code_mp);
