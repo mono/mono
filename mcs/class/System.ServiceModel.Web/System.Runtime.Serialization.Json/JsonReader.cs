@@ -1,10 +1,10 @@
 //
-// JsonWriter.cs
+// JsonReader.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007-2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,18 +34,239 @@ using System.Xml;
 
 namespace System.Runtime.Serialization.Json
 {
+	// It is a subset of XmlInputStream from System.XML.
+	class EncodingDetecingInputStream : Stream
+	{
+		internal static readonly Encoding StrictUTF8, Strict1234UTF32, StrictBigEndianUTF16, StrictUTF16;
+
+		static EncodingDetecingInputStream ()
+		{
+			StrictUTF8 = new UTF8Encoding (false, true);
+			Strict1234UTF32 = new UTF32Encoding (true, false, true);
+			StrictBigEndianUTF16 = new UnicodeEncoding (true, false, true);
+			StrictUTF16 = new UnicodeEncoding (false, false, true);
+		}
+
+		Encoding enc;
+		Stream stream;
+		byte[] buffer;
+		int bufLength;
+		int bufPos;
+
+		static XmlException encodingException = new XmlException ("invalid encoding specification.");
+
+		public EncodingDetecingInputStream (Stream stream)
+		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+			Initialize (stream);
+		}
+
+		private void Initialize (Stream stream)
+		{
+			buffer = new byte [6];
+			this.stream = stream;
+			enc = StrictUTF8; // Default to UTF8 if we can't guess it
+			bufLength = stream.Read (buffer, 0, buffer.Length);
+			if (bufLength == -1 || bufLength == 0) {
+				return;
+			}
+
+			int c = ReadByteSpecial ();
+			switch (c) {
+			case 0xFF:
+				c = ReadByteSpecial ();
+				if (c == 0xFE) {
+					// BOM-ed little endian utf-16
+					enc = Encoding.Unicode;
+				} else {
+					// It doesn't start from "<?xml" then its encoding is utf-8
+					bufPos = 0;
+				}
+				break;
+			case 0xFE:
+				c = ReadByteSpecial ();
+				if (c == 0xFF) {
+					// BOM-ed big endian utf-16
+					enc = Encoding.BigEndianUnicode;
+					return;
+				} else {
+					// It doesn't start from "<?xml" then its encoding is utf-8
+					bufPos = 0;
+				}
+				break;
+			case 0xEF:
+				c = ReadByteSpecial ();
+				if (c == 0xBB) {
+					c = ReadByteSpecial ();
+					if (c != 0xBF) {
+						bufPos = 0;
+					}
+				} else {
+					buffer [--bufPos] = 0xEF;
+				}
+				break;
+			case 0:
+				// It could still be 1234/2143/3412 variants of UTF32, but only 1234 version is available on .NET.
+				c = ReadByteSpecial ();
+				if (c == 0)
+					enc = Strict1234UTF32;
+				else
+					enc = StrictBigEndianUTF16;
+				break;
+			default:
+				c = ReadByteSpecial ();
+				if (c == 0)
+					enc = StrictUTF16;
+				bufPos = 0;
+				break;
+			}
+		}
+
+		// Just like readbyte, but grows the buffer too.
+		int ReadByteSpecial ()
+		{
+			if (bufLength > bufPos)
+				return buffer [bufPos++];
+
+			byte [] newbuf = new byte [buffer.Length * 2];
+			Buffer.BlockCopy (buffer, 0, newbuf, 0, bufLength);
+			int nbytes = stream.Read (newbuf, bufLength, buffer.Length);
+			if (nbytes == -1 || nbytes == 0)
+				return -1;
+				
+			bufLength += nbytes;
+			buffer = newbuf;
+			return buffer [bufPos++];
+		}
+
+		public Encoding ActualEncoding {
+			get { return enc; }
+		}
+
+		#region Public Overrides
+		public override bool CanRead {
+			get {
+				if (bufLength > bufPos)
+					return true;
+				else
+					return stream.CanRead; 
+			}
+		}
+
+		// FIXME: It should support base stream's CanSeek.
+		public override bool CanSeek {
+			get { return false; } // stream.CanSeek; }
+		}
+
+		public override bool CanWrite {
+			get { return false; }
+		}
+
+		public override long Length {
+			get {
+				return stream.Length;
+			}
+		}
+
+		public override long Position {
+			get {
+				return stream.Position - bufLength + bufPos;
+			}
+			set {
+				if(value < bufLength)
+					bufPos = (int)value;
+				else
+					stream.Position = value - bufLength;
+			}
+		}
+
+		public override void Close ()
+		{
+			stream.Close ();
+		}
+
+		public override void Flush ()
+		{
+			stream.Flush ();
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			int ret;
+			if (count <= bufLength - bufPos)	{	// all from buffer
+				Buffer.BlockCopy (this.buffer, bufPos, buffer, offset, count);
+				bufPos += count;
+				ret = count;
+			} else {
+				int bufRest = bufLength - bufPos;
+				if (bufLength > bufPos) {
+					Buffer.BlockCopy (this.buffer, bufPos, buffer, offset, bufRest);
+					bufPos += bufRest;
+				}
+				ret = bufRest +
+					stream.Read (buffer, offset + bufRest, count - bufRest);
+			}
+			return ret;
+		}
+
+		public override int ReadByte ()
+		{
+			if (bufLength > bufPos) {
+				return buffer [bufPos++];
+			}
+			return stream.ReadByte ();
+		}
+
+		public override long Seek (long offset, System.IO.SeekOrigin origin)
+		{
+			int bufRest = bufLength - bufPos;
+			if (origin == SeekOrigin.Current)
+				if (offset < bufRest)
+					return buffer [bufPos + offset];
+				else
+					return stream.Seek (offset - bufRest, origin);
+			else
+				return stream.Seek (offset, origin);
+		}
+
+		public override void SetLength (long value)
+		{
+			stream.SetLength (value);
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			throw new NotSupportedException ();
+		}
+		#endregion
+	}
+
 	class PushbackReader : StreamReader
 	{
 		Stack<int> pushback;
+		Encoding encoding;
+		bool is_ascii_single;
+		byte [] encbuf;
+		char [] charbuf;
 
 		public PushbackReader (Stream stream, Encoding encoding) : base (stream, encoding)
 		{
 			pushback = new Stack<int>();
+			this.encoding = encoding;
+#if MOONLIGHT
+			is_ascii_single = encoding is UTF8Encoding;
+#else
+			is_ascii_single = encoding is UTF8Encoding || encoding.IsSingleByte;
+#endif
 		}
 
-		public PushbackReader (Stream stream) : base (stream, true)
+		public PushbackReader (Stream stream) : this (new EncodingDetecingInputStream (stream))
 		{
-			pushback = new Stack<int>();
+		}
+
+		public PushbackReader (EncodingDetecingInputStream stream) : this (stream, stream.ActualEncoding)
+		{
 		}
 
 		public override void Close ()
@@ -75,7 +296,22 @@ namespace System.Runtime.Serialization.Json
 
 		public void Pushback (int ch)
 		{
-			pushback.Push (ch);
+			if (ch < 0)
+				pushback.Push (ch);
+			else {
+				if (!is_ascii_single) {
+					if (encbuf == null) {
+						encbuf = new byte [encoding.GetMaxByteCount (1)];
+						charbuf = new char [1];
+					}
+					charbuf [0] = (char) ch;
+					int size = encoding.GetBytes (charbuf, 0, 1, encbuf, 0);
+					for (int i = 0; i < size; i++)
+						pushback.Push (encbuf [i]);
+				}
+				else
+					pushback.Push (ch);
+			}
 		}
 	}
 
