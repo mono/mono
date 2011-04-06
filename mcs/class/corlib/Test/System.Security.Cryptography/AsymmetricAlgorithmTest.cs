@@ -12,16 +12,19 @@ using System.Security.Cryptography;
 using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography {
-
-	public class AsymmetricAlgorithmTest : TestCase {
+	
+	[TestFixture]
+	public class AsymmetricAlgorithmTest : Assertion {
 		private AsymmetricAlgorithm _algo;
-		protected override void SetUp() {
+		[SetUp]
+		public void SetUp() {
 			_algo = AsymmetricAlgorithm.Create();
 		}
 
 		private void SetDefaultData() {
 		}
 		
+		[Test]
 		public void TestProperties() {
 			Assert("Properties (1)", _algo != null);
 			
