@@ -807,6 +807,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("NotDotNet")] // it crashes nunit.
 		public void Test_InterruptCurrentThread ()
 		{
 			bool interruptedExceptionThrown = false;

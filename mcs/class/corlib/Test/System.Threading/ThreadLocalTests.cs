@@ -99,6 +99,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotDotNet")] // nunit results in stack overflow
 		public void MultipleReferenceToValueTest ()
 		{
 			threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
