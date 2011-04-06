@@ -123,7 +123,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return null;
 		}
 
-		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, int arity, Mono.CSharp.Location loc, bool ignore_cs0104)
+		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, int arity, Mono.CSharp.LookupMode mode, Mono.CSharp.Location loc)
 		{
 			throw new NotImplementedException ();
 		}

@@ -113,7 +113,7 @@ namespace Mono.CSharp
 				return tc.Parent.LookupNamespaceAlias (name);
 			}
 
-			public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+			public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 			{
 				if (arity == 0) {
 					TypeParameter[] tp = CurrentTypeParameters;
@@ -124,7 +124,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				return tc.Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+				return tc.Parent.LookupNamespaceOrType (name, arity, mode, loc);
 			}
 
 			#endregion
@@ -2165,10 +2165,10 @@ namespace Mono.CSharp
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			FullNamedExpression e;
-			if (arity == 0 && Cache.TryGetValue (name, out e))
+			if (arity == 0 && Cache.TryGetValue (name, out e) && mode != LookupMode.IgnoreAccessibility)
 				return e;
 
 			e = null;
@@ -2185,14 +2185,14 @@ namespace Mono.CSharp
 			if (e == null) {
 				TypeSpec t = LookupNestedTypeInHierarchy (name, arity);
 
-				if (t != null)
+				if (t != null && (t.IsAccessible (this) || mode == LookupMode.IgnoreAccessibility))
 					e = new TypeExpression (t, Location.Null);
 				else if (Parent != null) {
-					e = Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+					e = Parent.LookupNamespaceOrType (name, arity, mode, loc);
 				} else {
 					int errors = Report.Errors;
 
-					e = NamespaceEntry.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+					e = NamespaceEntry.LookupNamespaceOrType (name, arity, mode, loc);
 
 					if (errors != Report.Errors)
 						return e;
@@ -2200,7 +2200,7 @@ namespace Mono.CSharp
 			}
 
 			// TODO MemberCache: How to cache arity stuff ?
-			if (arity == 0)
+			if (arity == 0 && mode == LookupMode.Normal)
 				Cache[name] = e;
 
 			return e;
@@ -2223,15 +2223,7 @@ namespace Mono.CSharp
 			if (container == null)
 				return null;
 
-			var t = MemberCache.FindNestedType (container, name, arity);
-			if (t == null)
-				return null;
-
-			// FIXME: Breaks error reporting
-			if (!t.IsAccessible (this))
-				return null;
-
-			return t;
+			return MemberCache.FindNestedType (container, name, arity);
 		}
 
 		public void Mark_HasEquals ()

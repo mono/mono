@@ -17255,6 +17255,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-555.cs">
+    <type name="Program">
+      <method name="Int32 Test[T](T)">
+        <size>24</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>45</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">

@@ -21,6 +21,13 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp
 {
+	public enum LookupMode
+	{
+		Normal = 0,
+		Probing = 1,
+		IgnoreAccessibility = 2
+	}
+
 	//
 	// Implemented by elements which can act as independent contexts
 	// during resolve phase. Used mostly for lookups.
@@ -53,7 +60,7 @@ namespace Mono.CSharp
 		string GetSignatureForError ();
 
 		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope);
-		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
+		FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc);
 		FullNamedExpression LookupNamespaceAlias (string name);
 	}
 
@@ -520,9 +527,9 @@ namespace Mono.CSharp
 			return MemberContext.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
-			return MemberContext.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return MemberContext.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public FullNamedExpression LookupNamespaceAlias (string name)

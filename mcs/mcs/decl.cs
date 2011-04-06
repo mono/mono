@@ -696,9 +696,9 @@ namespace Mono.CSharp {
 			return Parent.NamespaceEntry.LookupNamespaceAlias (name);
 		}
 
-		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
-			return Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return Parent.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		/// <summary>

@@ -7540,10 +7540,10 @@ namespace Mono.CSharp
 
 			Namespace ns = expr as Namespace;
 			if (ns != null) {
-				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
+				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 					return null;
 				}
 
@@ -7694,10 +7694,10 @@ namespace Mono.CSharp
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
+				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 				} else if (HasTypeArguments) {
 					retval = new GenericTypeExpr (retval.Type, targs, loc);
 					if (retval.ResolveAsType (rc) == null)

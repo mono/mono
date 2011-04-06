@@ -918,7 +918,7 @@ namespace Mono.CSharp {
 					(parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			if (arity == 0) {
 				TypeParameter[] tp = CurrentTypeParameters;
@@ -929,7 +929,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return base.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return base.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

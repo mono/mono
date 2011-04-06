@@ -383,7 +383,7 @@ namespace Mono.CSharp
 				TypeExpr te = null;
 				Namespace type_ns = module.GlobalRootNamespace.GetNamespace ("System", true);
 				if (type_ns != null) {
-					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, Location.Null);
+					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, LookupMode.Normal, loc);
 				}
 
 				if (te != null) {
