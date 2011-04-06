@@ -339,13 +339,14 @@ namespace System.Xml
 
 	class XmlInputStream : Stream
 	{
-		internal static readonly Encoding StrictUTF8, Strict1234UTF32, StrictBigEndianUTF16;
+		internal static readonly Encoding StrictUTF8, Strict1234UTF32, StrictBigEndianUTF16, StrictUTF16;
 
 		static XmlInputStream ()
 		{
 			StrictUTF8 = new UTF8Encoding (false, true);
 			Strict1234UTF32 = new UTF32Encoding (true, false, true);
 			StrictBigEndianUTF16 = new UnicodeEncoding (true, false, true);
+			StrictUTF16 = new UnicodeEncoding (false, false, true);
 		}
 
 		Encoding enc;
@@ -490,6 +491,8 @@ namespace System.Xml
 				bufPos = 0;
 				break;
 			default:
+				if (c == 0)
+					enc = StrictUTF16;
 				bufPos = 0;
 				break;
 			}
