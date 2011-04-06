@@ -39,7 +39,7 @@ namespace MonoTests.System.Windows.Forms
 	public class DataGridViewColumnCollectionTest : TestHelper 
 	{
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException), "Column's SortMode cannot be set to Automatic while the DataGridView control's SelectionMode is set to FullColumnSelect.")]
+		[ExpectedException (typeof (InvalidOperationException), ExpectedMessage = "Column's SortMode cannot be set to Automatic while the DataGridView control's SelectionMode is set to FullColumnSelect.")]
 		public void AddFullColumnSelect ()
 		{
 			DataGridView dgv = new DataGridView ();

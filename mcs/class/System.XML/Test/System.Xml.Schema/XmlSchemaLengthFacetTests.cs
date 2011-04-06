@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlSchemaLengthFacetTests : Assertion
+	public class XmlSchemaLengthFacetTests
 	{
 
     [Test]
@@ -72,10 +72,7 @@ namespace MonoTests.System.Xml
       schema.Items.Add(testType);
       schema.Compile(new ValidationEventHandler(ValidationCallbackOne));
 
-      Assert( 
-        (passed ? "Test passed, should have failed" : "Test failed, should have passed") +
-        ": " + length + " " + minLength + " " + maxLength,
-        expected == passed);
+      Assert.IsTrue (expected == passed, (passed ? "Test passed, should have failed" : "Test failed, should have passed") + ": " + length + " " + minLength + " " + maxLength);
       
     }
 

@@ -15,6 +15,8 @@ using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
 
+namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
+
 namespace MonoTests.Mono.Unix {
 
 	[TestFixture]

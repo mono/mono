@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.Cscompmgd
 {
 	[TestFixture]
-	public class CompilerTest : Assertion
+	public class CompilerTest
 	{
 		[SetUp]
 		public void GetReady ()
