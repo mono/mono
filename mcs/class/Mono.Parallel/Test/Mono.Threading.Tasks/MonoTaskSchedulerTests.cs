@@ -66,12 +66,12 @@ namespace MonoTests.Mono.Threading.Tasks
 				throw new NotSupportedException ();
 			}
 
-			public void ParticipateUntil (Task task)
+			public void MonoParticipateUntil (Task task)
 			{
 				ParticipateMethod1 = true;
 			}
 
-			public bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout)
+			public bool MonoParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout)
 			{
 				ParticipateMethod2 = true;
 				return true;
