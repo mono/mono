@@ -70,7 +70,7 @@ namespace System.Threading {
 		private IntPtr stack_ptr;
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr jit_data;
-		private IntPtr lock_data;
+		private IntPtr runtime_thread_info;
 		/* current System.Runtime.Remoting.Contexts.Context instance
 		   keep as an object to avoid triggering its class constructor when not needed */
 		private object current_appcontext;
