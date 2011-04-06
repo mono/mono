@@ -37,8 +37,8 @@ namespace MyTemplateControls
     }
 
     protected 
-#if !SYSTEM_WEB_EXTENSIONS
-    internal
+#if INSIDE_SYSTEM_WEB
+    internal 
 #endif
     override void CreateChildControls ()
     {
