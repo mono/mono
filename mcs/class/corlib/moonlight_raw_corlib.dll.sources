@@ -12,8 +12,9 @@ Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
 Mono.Globalization.Unicode/SimpleCollator.cs
 Mono.Globalization.Unicode/SortKey.cs
 Mono.Globalization.Unicode/SortKeyBuffer.cs
-Mono/Runtime.cs
 Mono/DataConverter.cs
+Mono/MoonlightHelper.cs
+Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs
 Mono.Math.Prime/PrimalityTests.cs
