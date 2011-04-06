@@ -170,7 +170,8 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/Site.css,MonoTests.WebPages.Site.css	\
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\
-	Test/WebPages/web.config,MonoTests.WebPages.web.config
+	Test/WebPages/web.config.2.0,MonoTests.WebPages.web.config.2.0 \
+	Test/WebPages/web.config.4.0,MonoTests.WebPages.web.config.4.0
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
