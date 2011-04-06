@@ -88,6 +88,7 @@ namespace Mono.Collections.Concurrent
 				throw new ArgumentNullException ("comparer");
 
 			this.comparer = comparer;
+			Init ();
 		}
 
 		void Init ()
