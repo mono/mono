@@ -103,19 +103,17 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.Int16:
 			case TypeCode.Int32:
 			case TypeCode.UInt16:
-				int i = reader.ReadElementContentAsInt ();
 				if (type.IsEnum)
-					return Enum.ToObject (type, (object)i);
+					return Enum.ToObject (type, Convert.ChangeType (reader.ReadElementContentAsLong (), Enum.GetUnderlyingType (type), null));
 				else
-					return Convert.ChangeType (i, type, null);
+					return Convert.ChangeType (reader.ReadElementContentAsDecimal (), type, null);
 			case TypeCode.UInt32:
 			case TypeCode.Int64:
 			case TypeCode.UInt64:
-				long l = reader.ReadElementContentAsLong ();
 				if (type.IsEnum)
-					return Enum.ToObject (type, (object)l);
+					return Enum.ToObject (type, Convert.ChangeType (reader.ReadElementContentAsLong (), Enum.GetUnderlyingType (type), null));
 				else
-					return Convert.ChangeType (l, type, null);
+					return Convert.ChangeType (reader.ReadElementContentAsDecimal (), type, null);
 			case TypeCode.Boolean:
 				return reader.ReadElementContentAsBoolean ();
 			case TypeCode.DateTime:
