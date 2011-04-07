@@ -138,6 +138,12 @@ namespace System.ServiceModel.Dispatcher
 			operation_known_types.AddRange (desc.KnownTypes);
 		}
 
+		// FIXME: this should be refactored and eliminated.
+		// XmlSerializerFormatAttribute and DataContractFormatAttribute
+		// should be handled at ContractDescription.GetContract (to fill
+		// IOperationBehavior for each).
+		//
+		// Fixing the issue above should also fix "Formatter is already filled at initial state" issue described in EndpointDispatcher.cs and ContractDescription.cs.
 		public static BaseMessagesFormatter Create (OperationDescription desc)
 		{
 			MethodInfo attrProvider = desc.SyncMethod ?? desc.BeginMethod;
