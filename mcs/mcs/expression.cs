@@ -7605,10 +7605,14 @@ namespace Mono.CSharp
 
 				if (errorMode) {
 					if (member_lookup == null) {
-						if (expr is TypeExpr)
+						var dep = expr_type.GetMissingDependencies ();
+						if (dep != null) {
+							ImportedTypeDefinition.Error_MissingDependency (rc, dep, loc);
+						} else if (expr is TypeExpr) {
 							base.Error_TypeDoesNotContainDefinition (rc, expr_type, Name);
-						else
+						} else {
 							Error_TypeDoesNotContainDefinition (rc, expr_type, Name);
+						}
 
 						return null;
 					}
