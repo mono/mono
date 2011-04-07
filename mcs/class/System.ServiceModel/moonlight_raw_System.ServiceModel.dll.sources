@@ -132,6 +132,7 @@ System.ServiceModel.Channels/XmlReaderBodyWriter.cs
 System.ServiceModel.Description/ClientCredentials.cs
 System.ServiceModel.Description/ContractDescription.cs
 System.ServiceModel.Description/ContractDescriptionGenerator.cs
+System.ServiceModel.Description/DataContractSerializerOperationBehavior.cs
 System.ServiceModel.Description/FaultDescription.cs
 System.ServiceModel.Description/FaultDescriptionCollection.cs
 System.ServiceModel.Description/IContractBehavior.cs
