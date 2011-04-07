@@ -2270,6 +2270,8 @@ case "$host" in
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__ -DHAVE_ARMV6=1"
 		jit_wanted=true
+		# libgc's gc_locks.h depends on this
+	    NESTED_LIBGC_FLAGS="$NESTED_LIBGC_FLAGS -DHAVE_ARMV6"
 		sgen_supported=true
 		;;
 	arm*-linux*)
