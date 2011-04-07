@@ -56,6 +56,15 @@ namespace System.ServiceModel.Channels
 			get { return source.MessageEncoder; }
 		}
 
+#if NET_2_1
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (IHttpCookieContainerManager))
+				return source.GetProperty<T> ();
+			return base.GetProperty<T> ();
+		}
+#endif
+
 		// Request
 
 		public override Message Request (Message message, TimeSpan timeout)
