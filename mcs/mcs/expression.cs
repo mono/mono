@@ -8631,7 +8631,27 @@ namespace Mono.CSharp
 		{
 			// Do nothing
 		}
-	}	
+	}
+
+	class ErrorExpression : EmptyExpression
+	{
+		public static readonly ErrorExpression Instance = new ErrorExpression ();
+
+		private ErrorExpression ()
+			: base (InternalType.FakeInternalType)
+		{
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			return this;
+		}
+	}
 
 	public class UserCast : Expression {
 		MethodSpec method;

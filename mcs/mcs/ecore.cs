@@ -2311,7 +2311,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					return null;
+					return ErrorExpression.Instance;
 				}
 
 				if (rc.Module.Evaluator != null) {
@@ -4401,7 +4401,7 @@ namespace Mono.CSharp {
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else {
+			} else if (a.Expr != ErrorExpression.Instance) {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
