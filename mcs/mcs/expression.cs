@@ -7619,7 +7619,7 @@ namespace Mono.CSharp
 
 					if (member_lookup is MethodGroupExpr) {
 						// Leave it to overload resolution to report correct error
-					} else {
+					} else if (!(member_lookup is TypeExpr)) {
 						// TODO: rc.SymbolRelatedToPreviousError
 						ErrorIsInaccesible (rc, member_lookup.GetSignatureForError (), loc);
 					}
