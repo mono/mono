@@ -283,6 +283,15 @@ namespace System.ServiceModel.Description
 				if (HasInvalidMessageContract (mi, oca.AsyncPattern))
 					throw new InvalidOperationException (String.Format ("The operation {0} contains more than one parameters and one or more of them are marked with MessageContractAttribute, but the attribute must be used within an operation that has only one parameter.", od.Name));
 
+#if !NET_2_1
+				var xfa = serviceMethod.GetCustomAttribute<XmlSerializerFormatAttribute> (false);
+				if (xfa != null)
+					od.Behaviors.Add (new XmlSerializerOperationBehavior (od, xfa));
+#endif
+				var dfa = serviceMethod.GetCustomAttribute<DataContractFormatAttribute> (false);
+				if (dfa != null)
+					od.Behaviors.Add (new DataContractSerializerOperationBehavior (od, dfa));
+
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
 				if (!od.IsOneWay)
 					od.Messages.Add (GetMessage (od, mi, oca, false, isCallback, asyncReturnType));
