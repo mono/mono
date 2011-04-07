@@ -1947,7 +1947,7 @@ namespace Mono.CSharp
 			}
 
 			if (pending != null)
-				pending.VerifyPendingMethods (Report);
+				pending.VerifyPendingMethods ();
 
 			if (Report.Errors > 0)
 				return;
