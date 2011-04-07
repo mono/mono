@@ -300,7 +300,12 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			((IDisposable) this).Dispose ();
+			if (stream != null) {
+				Stream st = stream;
+				stream = null;
+				if (st != null)
+					st.Close ();
+			}
 		}
 		
 		void IDisposable.Dispose ()
@@ -311,24 +316,9 @@ namespace System.Net
 
 		void Dispose (bool disposing) 
 		{
-			if (this.disposed)
-				return;
 			this.disposed = true;
-			
-			if (disposing) {
-				// release managed resources
-				uri = null;
-				cookieCollection = null;
-				method = null;
-				version = null;
-				statusDescription = null;
-			}
-			
-			// release unmanaged resources
-			Stream st = stream;
-			stream = null;
-			if (st != null)
-				st.Close ();
+			if (disposing)
+				Close ();
 		}
 		
 		private void CheckDisposed () 
