@@ -2302,30 +2302,6 @@ namespace Mono.CSharp {
 
 			var tdef = atype.GetDefinition ();
 
-			//
-			// In some circumstances MemberCache is not yet populated and members
-			// cannot be defined yet (recursive type new constraints)
-			//
-			// class A<T> where T : B<T>, new () {}
-			// class B<T> where T : A<T>, new () {}
-			//
-			var tc = tdef.MemberDefinition as Class;
-			if (tc != null) {
-				if (tc.InstanceConstructors == null) {
-					// Default ctor will be generated later
-					return true;
-				}
-
-				foreach (var c in tc.InstanceConstructors) {
-					if (c.ParameterInfo.IsEmpty) {
-						if ((c.ModFlags & Modifiers.PUBLIC) != 0)
-							return true;
-					}
-				}
-
-				return false;
-			}
-
 			var found = MemberCache.FindMember (tdef,
 				MemberFilter.Constructor (ParametersCompiled.EmptyReadOnlyParameters),
 				BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);
