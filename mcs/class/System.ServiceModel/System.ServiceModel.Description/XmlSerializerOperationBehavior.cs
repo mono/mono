@@ -81,22 +81,30 @@ namespace System.ServiceModel.Description
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
+#if NET_2_1
+			throw new NotImplementedException ();
+#else
 			if (description == null)
 				throw new ArgumentNullException ("description");
 			if (dispatch == null)
 				throw new ArgumentNullException ("dispatch");
 			dispatch.Formatter = new XmlMessagesFormatter (description, format);
+#endif
 		}
 
 		void IOperationBehavior.ApplyClientBehavior (
 			OperationDescription description,
 			ClientOperation proxy)
 		{
+#if NET_2_1
+			throw new NotImplementedException ();
+#else
 			if (description == null)
 				throw new ArgumentNullException ("description");
 			if (proxy == null)
 				throw new ArgumentNullException ("proxy");
 			proxy.Formatter = new XmlMessagesFormatter (description, format);
+#endif
 		}
 
 		void IOperationBehavior.Validate (
