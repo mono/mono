@@ -127,12 +127,23 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public void CheckGenericConstraints (IMemberContext context)
+		public void CheckGenericConstraints (IMemberContext context, bool obsoleteCheck)
 		{
 			foreach (var c in constraints) {
-				if (c != null && c.Type != null) {
-					ConstraintChecker.Check (context, c.Type, c.Location);
+				if (c == null)
+					continue;
+
+				var t = c.Type;
+				if (t == null)
+					continue;
+
+				if (obsoleteCheck) {
+					ObsoleteAttribute obsolete_attr = t.GetAttributeObsolete ();
+					if (obsolete_attr != null)
+						AttributeTester.Report_ObsoleteMessage (obsolete_attr, t.GetSignatureForError (), c.Location, context.Module.Compiler.Report);
 				}
+
+				ConstraintChecker.Check (context, t, c.Location);
 			}
 		}
 
@@ -457,10 +468,10 @@ namespace Mono.CSharp {
 			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
-		public void CheckGenericConstraints ()
+		public void CheckGenericConstraints (bool obsoleteCheck)
 		{
 			if (constraints != null)
-				constraints.CheckGenericConstraints (this);
+				constraints.CheckGenericConstraints (this, obsoleteCheck);
 		}
 
 		public TypeParameter CreateHoistedCopy (TypeContainer declaringType, TypeSpec declaringSpec)
@@ -1388,6 +1399,9 @@ namespace Mono.CSharp {
 
 			if (open_type.Kind == MemberKind.MissingType)
 				MemberCache = MemberCache.Empty;
+
+			if ((open_type.Modifiers & Modifiers.COMPILER_GENERATED) != 0)
+				state |= StateFlags.ConstraintsChecked;
 		}
 
 		#region Properties
@@ -1411,6 +1425,18 @@ namespace Mono.CSharp {
 				}
 
 				return constraints;
+			}
+		}
+
+		//
+		// Used to cache expensive constraints validation on constructed types
+		//
+		public bool HasConstraintsChecked {
+			get {
+				return (state & StateFlags.ConstraintsChecked) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.ConstraintsChecked : state & ~StateFlags.ConstraintsChecked;
 			}
 		}
 
@@ -1931,9 +1957,12 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (type);
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext ec)
+		public override TypeSpec ResolveAsType (IMemberContext mc)
 		{
-			if (!args.Resolve (ec))
+			if (eclass != ExprClass.Unresolved)
+				return type;
+
+			if (!args.Resolve (mc))
 				return null;
 
 			TypeSpec[] atypes = args.Arguments;
@@ -1941,14 +1970,22 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters
 			//
-			type = open_type.MakeGenericType (ec, atypes);
+			var inflated = open_type.MakeGenericType (mc, atypes);
+			type = inflated;
 			eclass = ExprClass.Type;
 
 			//
-			// Check constraints when context is not method/base type
+			// The constraints can be checked only when full type hierarchy is known
 			//
-			if (!ec.HasUnresolvedConstraints)
-				ConstraintChecker.Check (ec, type, loc);
+			if (!inflated.HasConstraintsChecked && mc.Module.HasTypesFullyDefined) {
+				var constraints = inflated.Constraints;
+				if (constraints != null) {
+					var cc = new ConstraintChecker (mc);
+					if (cc.CheckAll (open_type, atypes, constraints, loc)) {
+						inflated.HasConstraintsChecked = true;
+					}
+				}
+			}
 
 			return type;
 		}
@@ -1986,11 +2023,13 @@ namespace Mono.CSharp {
 	{
 		IMemberContext mc;
 		bool ignore_inferred_dynamic;
+		bool recursive_checks;
 
 		public ConstraintChecker (IMemberContext ctx)
 		{
 			this.mc = ctx;
 			ignore_inferred_dynamic = false;
+			recursive_checks = false;
 		}
 
 		#region Properties
@@ -2008,22 +2047,44 @@ namespace Mono.CSharp {
 
 		//
 		// Checks the constraints of open generic type against type
-		// arguments. Has to be called after all members have been defined
+		// arguments. This version is used for types which could not be
+		// checked immediatelly during construction because the type
+		// hierarchy was not yet fully setup (before Emit phase)
 		//
 		public static bool Check (IMemberContext mc, TypeSpec type, Location loc)
 		{
-			if ((type.Modifiers & Modifiers.COMPILER_GENERATED) != 0)
-				return true;
+			//
+			// Check declaring type first if there is any
+			//
+			if (type.DeclaringType != null && !Check (mc, type.DeclaringType, loc))
+				return false;
+
+			while (type is ElementTypeSpec)
+				type = ((ElementTypeSpec) type).Element;
 
 			if (type.Arity == 0)
 				return true;
 
-			var gtype = (InflatedTypeSpec) type;
+			var gtype = type as InflatedTypeSpec;
+			if (gtype == null)
+				return true;
+
 			var constraints = gtype.Constraints;
 			if (constraints == null)
 				return true;
 
-			return new ConstraintChecker(mc).CheckAll (type.GetDefinition (), type.TypeArguments, constraints, loc);
+			if (gtype.HasConstraintsChecked)
+				return true;
+
+			var cc = new ConstraintChecker (mc);
+			cc.recursive_checks = true;
+
+			if (cc.CheckAll (gtype.GetDefinition (), type.TypeArguments, constraints, loc)) {
+				gtype.HasConstraintsChecked = true;
+				return true;
+			}
+
+			return false;
 		}
 
 		//
@@ -2036,7 +2097,14 @@ namespace Mono.CSharp {
 				if (ignore_inferred_dynamic && targs[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					continue;
 
-				if (!CheckConstraint (context, targs [i], tparams [i], loc))
+				var targ = targs[i];
+				if (!CheckConstraint (context, targ, tparams [i], loc))
+					return false;
+
+				if (!recursive_checks)
+					continue;
+
+				if (!Check (mc, targ, loc))
 					return false;
 			}
 

@@ -668,6 +668,8 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
 
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
+
 			first.Emit (Parent);
 			if (AccessorSecond != null)
 				AccessorSecond.Emit (Parent);
@@ -1300,6 +1302,8 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 			}
 
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
+
 			Add.Emit (Parent);
 			Remove.Emit (Parent);
 
@@ -1469,6 +1473,22 @@ namespace Mono.CSharp
 			this.parameters = parameters;
 		}
 
+		#region Properties
+
+		AParametersCollection IParametersMember.Parameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public ParametersCompiled ParameterInfo {
+			get {
+				return parameters;
+			}
+		}
+
+		#endregion
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.IndexerName) {
@@ -1547,6 +1567,13 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
+		public override void Emit ()
+		{
+			parameters.CheckConstraints (this);
+
+			base.Emit ();
+		}
+
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
@@ -1563,18 +1590,6 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
-		}
-
-		public AParametersCollection Parameters {
-			get {
-				return parameters;
-			}
-		}
-
-		public ParametersCompiled ParameterInfo {
-			get {
-				return parameters;
-			}
 		}
 
 		protected override bool VerifyClsCompliance ()

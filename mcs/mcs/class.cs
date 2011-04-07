@@ -78,10 +78,6 @@ namespace Mono.CSharp
 				get { return tc; }
 			}
 
-			public bool HasUnresolvedConstraints {
-				get { return true; }
-			}
-
 			public bool IsObsolete {
 				get { return tc.IsObsolete; }
 			}
@@ -1558,9 +1554,6 @@ namespace Mono.CSharp
 						// TODO: passing `this' is wrong, should be base type iface instead
 						TypeManager.CheckTypeVariance (iface_type, Variance.Covariant, this);
 
-						// TODO: Location is wrong, it should be unresolved iface expr location
-						ConstraintChecker.Check (this, iface_type, Location);
-
 						if (((InflatedTypeSpec) iface_type).HasDynamicArgument () && !IsCompilerGenerated) {
 							Report.Error (1966, Location,
 								"`{0}': cannot implement a dynamic interface `{1}'",
@@ -1572,12 +1565,13 @@ namespace Mono.CSharp
 			}
 
 			if (base_type != null) {
+				//
+				// Run checks skipped during FullNamedExpression::ResolveAsType
+				//
 				if (base_type_expr != null) {
 					ObsoleteAttribute obsolete_attr = base_type.GetAttributeObsolete ();
 					if (obsolete_attr != null && !IsObsolete)
 						AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), base_type_expr.Location, Report);
-
-					ConstraintChecker.Check (this, base_type, base_type_expr.Location);
 				}
 
 				if (base_type.Interfaces != null) {
@@ -1594,12 +1588,6 @@ namespace Mono.CSharp
 					//
 					if (HasMembersDefined)
 						return true;
-				}
-			}
-
-			if (type_params != null) {
-				foreach (var tp in type_params) {
-					tp.CheckGenericConstraints ();
 				}
 			}
 
@@ -1826,13 +1814,31 @@ namespace Mono.CSharp
 				}
 			}
 
+			// Run constraints check on all possible generic types
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				if (base_type != null && base_type_expr != null) {
+					ConstraintChecker.Check (this, base_type, base_type_expr.Location);
+				}
+
+				if (iface_exprs != null) {
+					foreach (var iface_type in iface_exprs) {
+						if (iface_type == null)
+							continue;
+
+						ConstraintChecker.Check (this, iface_type, Location);	// TODO: Location is wrong
+					}
+				}
+			}
+
 			if (all_tp_builders != null) {
 				int current_starts_index = CurrentTypeParametersStartIndex;
 				for (int i = 0; i < all_tp_builders.Length; i++) {
 					if (i < current_starts_index) {
 						TypeParameters[i].EmitConstraints (all_tp_builders [i]);
 					} else {
-						CurrentTypeParameters [i - current_starts_index].Emit ();
+						var tp = CurrentTypeParameters [i - current_starts_index];
+						tp.CheckGenericConstraints (!IsObsolete);
+						tp.Emit ();
 					}
 				}
 			}

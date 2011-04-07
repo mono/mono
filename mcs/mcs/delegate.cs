@@ -301,11 +301,14 @@ namespace Mono.CSharp {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type, Location);
 				}
+
+				ConstraintChecker.Check (this, ReturnType.Type, ReturnType.Location);
 			}
 
 			Constructor.ParameterInfo.ApplyAttributes (this, Constructor.ConstructorBuilder);
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
+			parameters.CheckConstraints (this);
 			parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 

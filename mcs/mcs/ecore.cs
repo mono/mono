@@ -2397,7 +2397,7 @@ namespace Mono.CSharp {
 
 			//
 			// Obsolete checks cannot be done when resolving base context as they
-			// require type dependecies to be set but we are just resolving them
+			// require type dependencies to be set but we are in process of resolving them
 			//
 			if (!(mc is TypeContainer.BaseContext)) {
 				ObsoleteAttribute obsolete_attr = type.GetAttributeObsolete ();

@@ -80,12 +80,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public bool HasUnresolvedConstraints {
-			get {
-				return false;
-			}
-		}
-
 		public bool IsObsolete {
 			get {
 				// Always true to ignore obsolete attribute checks

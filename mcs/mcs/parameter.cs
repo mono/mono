@@ -1007,6 +1007,17 @@ namespace Mono.CSharp {
 				null);
 		}
 
+		public void CheckConstraints (IMemberContext mc)
+		{
+			foreach (Parameter p in parameters) {
+				//
+				// It's null for compiler generated types or special types like __arglist
+				//
+				if (p.TypeExpression != null)
+					ConstraintChecker.Check (mc, p.Type, p.TypeExpression.Location);
+			}
+		}
+
 		//
 		// Returns non-zero value for equal CLS parameter signatures
 		//

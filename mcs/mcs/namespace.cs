@@ -288,9 +288,6 @@ namespace Mono.CSharp {
 			if (best == null)
 				return null;
 
-//			if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
-//				return null;
-
 			te = new TypeExpression (best, Location.Null);
 
 			// TODO MemberCache: Cache more
@@ -1104,11 +1101,6 @@ namespace Mono.CSharp {
 
 		public TypeParameter[] CurrentTypeParameters {
 			get { return SlaveDeclSpace.CurrentTypeParameters; }
-		}
-
-		// FIXME: It's false for expression types
-		public bool HasUnresolvedConstraints {
-			get { return true; }
 		}
 
 		public bool IsObsolete {

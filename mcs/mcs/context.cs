@@ -55,7 +55,6 @@ namespace Mono.CSharp
 		bool IsObsolete { get; }
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
-		bool HasUnresolvedConstraints { get; }
 
 		string GetSignatureForError ();
 
@@ -419,10 +418,6 @@ namespace Mono.CSharp
 
 		public bool DoFlowAnalysis {
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
-		}
-
-		public bool HasUnresolvedConstraints {
-			get { return false; }
 		}
 
 		public bool IsInProbingMode {

@@ -134,6 +134,15 @@ namespace Mono.CSharp {
 			get { return "M:"; }
 		}
 
+		public override void Emit ()
+		{
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				parameters.CheckConstraints (this);
+			}
+
+			base.Emit ();
+		}
+
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
 			if (overload is MethodCore) {
@@ -668,10 +677,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (MethodData != null)
-				MethodData.Emit (Parent);
+			if (type_expr != null)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
+
+			if (MethodData != null)
+				MethodData.Emit (Parent);
 
 			Block = null;
 			MethodData = null;
@@ -855,23 +867,6 @@ namespace Mono.CSharp {
 					return GenericMethod.CurrentTypeParameters;
 
 				return null;
-			}
-		}
-
-		public override bool HasUnresolvedConstraints {
-			get {
-				if (CurrentTypeParameters == null)
-					return false;
-
-				// When overriding base method constraints are fetched from
-				// base method but to find it we have to resolve parameters
-				// to find exact base method match
-				if (IsExplicitImpl || (ModFlags & Modifiers.OVERRIDE) != 0)
-					return base_method == null;
-
-				// Even for non-override generic method constraints check has to be
-				// delayed after all constraints are resolved
-				return true;
 			}
 		}
 
@@ -1212,15 +1207,9 @@ namespace Mono.CSharp {
 				}
 
 				if (CurrentTypeParameters != null) {
-					ConstraintChecker.Check (this, member_type, type_expr.Location);
-
-					for (int i = 0; i < parameters.Count; ++i) {
-						ConstraintChecker.Check (this, parameters.Types[i], Location); // TODO: Location is wrong
-					}
-
 					for (int i = 0; i < CurrentTypeParameters.Length; ++i) {
 						var tp = CurrentTypeParameters [i];
-						tp.CheckGenericConstraints ();
+						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
 				}
@@ -1568,6 +1557,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			base.Emit ();
+			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			//
 			// If we use a "this (...)" constructor initializer, then
@@ -1598,8 +1588,6 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
-			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 

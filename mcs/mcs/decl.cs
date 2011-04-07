@@ -857,10 +857,6 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
-		public virtual bool HasUnresolvedConstraints {
-			get { return false; }
-		}
-
 		public bool IsObsolete {
 			get {
 				if (GetAttributeObsolete () != null)
@@ -904,6 +900,7 @@ namespace Mono.CSharp {
 			MissingDependency_Undetected = 1 << 4,
 			MissingDependency = 1 << 5,
 			HasDynamicElement = 1 << 6,
+			ConstraintsChecked = 1 << 7,
 
 			IsAccessor = 1 << 9,		// Method is an accessor
 			IsGeneric = 1 << 10,		// Member contains type arguments
