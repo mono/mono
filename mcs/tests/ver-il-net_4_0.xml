@@ -46449,7 +46449,7 @@
   <test name="test-805.cs">
     <type name="TestClass">
       <method name="Int32 Main()">
-        <size>29</size>
+        <size>36</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -46464,6 +46464,11 @@
       </method>
     </type>
     <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[T]">
       <method name="Void .ctor()">
         <size>7</size>
       </method>

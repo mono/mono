@@ -25,6 +25,12 @@
     IL_0000:  newobj      instance void ['test-805']B::.ctor()
     IL_0005:  ret
   }
+  
+  .method public hidebysig instance void
+          Test2(class ['test-805']G`1<float64> arg) cil managed
+  {
+    ret
+  }
 
   .method public hidebysig specialname rtspecialname 
           instance void  .ctor() cil managed
