@@ -81,7 +81,7 @@ namespace System.ServiceModel.Description
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
-#if NET_2_1
+#if MOONLIGHT
 			throw new NotImplementedException ();
 #else
 			if (description == null)
@@ -96,7 +96,7 @@ namespace System.ServiceModel.Description
 			OperationDescription description,
 			ClientOperation proxy)
 		{
-#if NET_2_1
+#if MOONLIGHT
 			throw new NotImplementedException ();
 #else
 			if (description == null)
