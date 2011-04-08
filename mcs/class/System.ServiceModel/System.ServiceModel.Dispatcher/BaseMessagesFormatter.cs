@@ -148,7 +148,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			MethodInfo attrProvider = desc.SyncMethod ?? desc.BeginMethod;
 			object [] attrs;
-#if !NET_2_1
+#if !MOONLIGHT
 			attrs = attrProvider.GetCustomAttributes (typeof (XmlSerializerFormatAttribute), false);
 			if (attrs != null && attrs.Length > 0)
 				return new XmlMessagesFormatter (desc, (XmlSerializerFormatAttribute) attrs [0]);

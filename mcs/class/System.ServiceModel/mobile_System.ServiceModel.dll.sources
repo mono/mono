@@ -1,3 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
 #include moonlight_raw_System.ServiceModel.dll.sources
+System.ServiceModel/XmlSerializerFormatAttribute.cs
+System.ServiceModel.Description/XmlSerializerOperationBehavior.cs
+System.ServiceModel.Dispatcher/XmlMessagesFormatter.cs
