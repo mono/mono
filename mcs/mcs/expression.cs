@@ -725,6 +725,9 @@ namespace Mono.CSharp
 				if (oper_expr == null)
 					continue;
 
+				if (oper_expr == ErrorExpression.Instance)
+					return oper_expr;
+
 				//
 				// decimal type is predefined but has user-operators
 				//
@@ -743,8 +746,13 @@ namespace Mono.CSharp
 
 				int result = OverloadResolver.BetterTypeConversion (ec, best_expr.Type, t);
 				if (result == 0) {
-					ec.Report.Error (35, loc, "Operator `{0}' is ambiguous on an operand of type `{1}'",
-						OperName (Oper), TypeManager.CSharpName (expr.Type));
+					if ((oper_expr is UserOperatorCall || oper_expr is UserCast) && (best_expr is UserOperatorCall || best_expr is UserCast)) {
+						ec.Report.Error (35, loc, "Operator `{0}' is ambiguous on an operand of type `{1}'",
+							OperName (Oper), expr.Type.GetSignatureForError ());
+					} else {
+						Error_OperatorCannotBeApplied (ec, loc, OperName (Oper), expr.Type);
+					}
+
 					break;
 				}
 
@@ -2182,6 +2190,9 @@ namespace Mono.CSharp
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, string oper, Location loc)
 		{
+			if (left.Type == InternalType.FakeInternalType || right.Type == InternalType.FakeInternalType)
+				return;
+
 			string l, r;
 			l = TypeManager.CSharpName (left.Type);
 			r = TypeManager.CSharpName (right.Type);
@@ -8650,6 +8661,10 @@ namespace Mono.CSharp
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			return this;
+		}
+
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		{
 		}
 	}
 
