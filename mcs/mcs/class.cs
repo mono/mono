@@ -1732,6 +1732,9 @@ namespace Mono.CSharp
 				if ((mc.ModFlags & Modifiers.AccessibilityMask) != Modifiers.PRIVATE)
 					continue;
 
+				if ((mc.ModFlags & Modifiers.PARTIAL) != 0)
+					continue;
+
 				if (!mc.IsUsed && (mc.caching_flags & Flags.Excluded) == 0) {
 					Report.Warning (169, 3, mc.Location, "The private {0} `{1}' is never used", member_type, mc.GetSignatureForError ());
 				}
