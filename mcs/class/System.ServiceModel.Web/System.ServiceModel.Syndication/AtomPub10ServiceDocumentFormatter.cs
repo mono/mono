@@ -94,8 +94,18 @@ namespace System.ServiceModel.Syndication
 				throw new ArgumentNullException ("writer");
 
 			writer.WriteStartElement ("app", "service", Version);
-			writer.WriteAttributeString ("xmlns", "a10", Namespaces.Xmlns, Namespaces.Atom10);
-			writer.WriteAttributeString ("xmlns", "app", Namespaces.Xmlns, Version);
+
+			WriteContentTo (writer);
+
+			writer.WriteEndElement ();
+		}
+		
+		void WriteContentTo (XmlWriter writer)
+		{
+			if (writer.LookupPrefix (Namespaces.Atom10) == null)
+				writer.WriteAttributeString ("xmlns", "a10", Namespaces.Xmlns, Namespaces.Atom10);
+			if (writer.LookupPrefix (Version) == null)
+				writer.WriteAttributeString ("xmlns", "app", Namespaces.Xmlns, Version);
 
 			// xml:lang, xml:base, workspace*
 			if (Document.Language != null)
@@ -143,7 +153,6 @@ namespace System.ServiceModel.Syndication
 				}
 				writer.WriteEndElement ();
 			}
-			writer.WriteEndElement ();
 		}
 
 		XmlSchema IXmlSerializable.GetSchema ()
@@ -158,7 +167,7 @@ namespace System.ServiceModel.Syndication
 
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
-			WriteTo (writer);
+			WriteContentTo (writer);
 		}
 	}
 }
