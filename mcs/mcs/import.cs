@@ -683,6 +683,11 @@ namespace Mono.CSharp
 
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
 				var type_def = type.GetGenericTypeDefinition ();
+
+				// Generic type definition can also be forwarded
+				if (compiled_types.TryGetValue (type_def, out spec))
+					return spec;
+
 				var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
 				if (declaringType == null) {
 					// Simple case, no nesting

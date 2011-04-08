@@ -8,7 +8,8 @@ public class TestClass
 		var b = a.Test ();
 		if (b.ReturnValue () != 5)
 			return 1;
-		
+
+		a.Test2 (null);
 		return 0;
 	}
 }
@@ -22,5 +23,9 @@ public class B
 }
 
 public class C
+{
+}
+
+public class G<T>
 {
 }

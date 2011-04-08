@@ -134,6 +134,15 @@ namespace Mono.CSharp {
 			get { return "M:"; }
 		}
 
+		public override void Emit ()
+		{
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				parameters.CheckConstraints (this);
+			}
+
+			base.Emit ();
+		}
+
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
 			if (overload is MethodCore) {
@@ -668,10 +677,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (MethodData != null)
-				MethodData.Emit (Parent);
+			if (type_expr != null)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
+
+			if (MethodData != null)
+				MethodData.Emit (Parent);
 
 			Block = null;
 			MethodData = null;
@@ -858,23 +870,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool HasUnresolvedConstraints {
-			get {
-				if (CurrentTypeParameters == null)
-					return false;
-
-				// When overriding base method constraints are fetched from
-				// base method but to find it we have to resolve parameters
-				// to find exact base method match
-				if (IsExplicitImpl || (ModFlags & Modifiers.OVERRIDE) != 0)
-					return base_method == null;
-
-				// Even for non-override generic method constraints check has to be
-				// delayed after all constraints are resolved
-				return true;
-			}
-		}
-
 		public TypeParameterSpec[] TypeParameters {
 			get {
 				// TODO: Cache this
@@ -918,7 +913,7 @@ namespace Mono.CSharp {
 					(parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			if (arity == 0) {
 				TypeParameter[] tp = CurrentTypeParameters;
@@ -929,7 +924,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return base.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return base.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -1102,7 +1097,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (type_expr.Type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
+			if (member_type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
 				Report.Warning (465, 1, Location,
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
@@ -1212,19 +1207,9 @@ namespace Mono.CSharp {
 				}
 
 				if (CurrentTypeParameters != null) {
-					var ge = type_expr as GenericTypeExpr;
-					if (ge != null)
-						ge.CheckConstraints (this);
-
-					foreach (Parameter p in parameters.FixedParameters) {
-						ge = p.TypeExpression as GenericTypeExpr;
-						if (ge != null)
-							ge.CheckConstraints (this);
-					}
-
 					for (int i = 0; i < CurrentTypeParameters.Length; ++i) {
 						var tp = CurrentTypeParameters [i];
-						tp.CheckGenericConstraints ();
+						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
 				}
@@ -1572,6 +1557,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			base.Emit ();
+			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			//
 			// If we use a "this (...)" constructor initializer, then
@@ -1602,8 +1588,6 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
-			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
@@ -2628,7 +2612,8 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				sb.AppendFormat ("{0}.{1} operator {2}",
-					Parent.GetSignatureForError (), GetName (OperatorType), type_expr.GetSignatureForError ());
+					Parent.GetSignatureForError (), GetName (OperatorType),
+					member_type == null ? type_expr.GetSignatureForError () : member_type.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));

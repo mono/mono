@@ -697,6 +697,7 @@ System.ServiceModel.Dispatcher/XPathMessageFilter.cs
 System.ServiceModel.Dispatcher/XPathMessageFilterTable.cs
 System.ServiceModel.Dispatcher/XPathNavigatorException.cs
 System.ServiceModel.Dispatcher/InstanceManager.cs
+System.ServiceModel.Dispatcher/XmlMessagesFormatter.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationBinding.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationBindingElement.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationMessageProperty.cs

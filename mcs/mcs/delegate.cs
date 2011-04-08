@@ -150,11 +150,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ReturnType = ReturnType.ResolveAsType (this);
-			if (ReturnType == null)
+			var ret_type = ReturnType.ResolveAsType (this);
+			if (ret_type == null)
 				return false;
-
-			var ret_type = ReturnType.Type;
 
 			//
 			// We don't have to check any others because they are all
@@ -303,11 +301,14 @@ namespace Mono.CSharp {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type, Location);
 				}
+
+				ConstraintChecker.Check (this, ReturnType.Type, ReturnType.Location);
 			}
 
 			Constructor.ParameterInfo.ApplyAttributes (this, Constructor.ConstructorBuilder);
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
+			parameters.CheckConstraints (this);
 			parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -326,7 +327,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			base_type = Compiler.BuiltinTypes.MulticastDelegate;
 			base_class = null;
@@ -356,7 +357,7 @@ namespace Mono.CSharp {
 
 			parameters.VerifyClsCompliance (this);
 
-			if (!ReturnType.Type.IsCLSCompliant ()) {
+			if (!InvokeBuilder.MemberType.IsCLSCompliant ()) {
 				Report.Warning (3002, 1, Location, "Return type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
@@ -458,7 +459,7 @@ namespace Mono.CSharp {
 			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
 
 			Arguments args = new Arguments (3);
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new TypeOf (type, loc)));
 
 			if (method_group.InstanceExpression == null)
 				args.Add (new Argument (new NullLiteral (loc)));

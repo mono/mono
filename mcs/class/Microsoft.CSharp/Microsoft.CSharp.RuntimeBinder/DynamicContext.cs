@@ -94,6 +94,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				// TODO: Remove this code and rely on GetAssemblyDefinition only
 				//
 				var module = new Compiler.ModuleContainer (cc);
+				module.HasTypesFullyDefined = true;
 				var temp = new Compiler.AssemblyDefinitionDynamic (module, "dynamic");
 				module.SetDeclaringAssembly (temp);
 

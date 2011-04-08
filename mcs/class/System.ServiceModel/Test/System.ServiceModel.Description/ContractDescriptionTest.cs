@@ -535,6 +535,15 @@ namespace MonoTests.System.ServiceModel.Description
 			ContractDescription.GetContract (typeof (IFoo2_6));
 		}
 
+		[Test]
+		public void XmlSerializedOperation ()
+		{
+			var cd = ContractDescription.GetContract (typeof (XmlSerializedService));
+			var od = cd.Operations.First ();
+			var xb = od.Behaviors.Find<XmlSerializerOperationBehavior> ();
+			Assert.IsNotNull (xb, "#1");
+		}
+
 		// It is for testing attribute search in interfaces.
 		public class Foo : IFoo
 		{
@@ -889,5 +898,12 @@ namespace MonoTests.System.ServiceModel.Description
 			void Something ();
 		}
 
+		[ServiceContract]
+		public interface XmlSerializedService
+		{
+			[OperationContract]
+			[XmlSerializerFormat]
+			string Echo (string input);
+		}
 	}
 }

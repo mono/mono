@@ -147,104 +147,16 @@ namespace System.IO {
 			}
 		}
 		
-		static StreamReader TryOpen (string name)
-		{
-			if (File.Exists (name))
-				return new StreamReader (name);
-			return null;
-		}
-
-		static char [] space = { ' ' };
-		static DriveInfo [] LinuxGetDrives ()
-		{
-			using (StreamReader mounts = TryOpen ("/proc/mounts")){
-				var drives = new List<DriveInfo> ();
-				string line;
-				
-				while ((line = mounts.ReadLine ()) != null){
-					if (line.StartsWith ("rootfs"))
-						continue;
-					string [] parts = line.Split (space, 4);
-					if (parts.Length < 3)
-						continue;
-					string path = Unescape (parts [1]);
-					string fstype = parts [2];
-					drives.Add (new DriveInfo (path, fstype));
-				}
-
-				return drives.ToArray ();
-			}
-		}
-
-		static string Unescape (string path)
-		{
-			StringBuilder sb = null;
-			int start = 0;
-			do {
-				int slash = path.IndexOf ('\\', start);
-				if (slash >= 0) {
-					if (sb == null)
-						sb = new StringBuilder ();
-					sb.Append (path.Substring (start, slash - start));
-					char c = (char) ((path [slash + 1] - '0') << 6);
-					c += (char) ((path [slash + 2] - '0') << 3);
-					c += (char) (path [slash + 3] - '0');
-					sb.Append (c);
-					start = slash + 4;
-					continue;
-				}
-				if (start == 0)
-					return path;
-				sb.Append (path.Substring (start));
-				return sb.ToString ();
-			} while (true);
-		}
-		
-		static DriveInfo [] UnixGetDrives ()
-		{
-			DriveInfo [] di = null;
-
-			try {
-				using (StreamReader linux_ostype = TryOpen ("/proc/sys/kernel/ostype")){
-					if (linux_ostype != null){
-						string line = linux_ostype.ReadLine ();
-						if (line == "Linux")
-							di = LinuxGetDrives ();
-					}
-				}
-				
-				if (di != null)
-					return di;
-			} catch (Exception) {
-				// If anything happens.
-			}
-			
-			DriveInfo [] unknown = new DriveInfo [1];
-			unknown [0]= new DriveInfo ("/", "unixfs");
-
-			return unknown;
-		}
-
-		static DriveInfo [] RuntimeGetDrives ()
+		[MonoTODO("In windows, alldrives are 'Fixed'")]
+		public static DriveInfo[] GetDrives ()
 		{
 			var drives = Environment.GetLogicalDrives ();
 			DriveInfo [] infos = new DriveInfo [drives.Length];
 			int i = 0;
-			foreach (string s in drives) {
+			foreach (string s in drives)
 				infos [i++] = new DriveInfo (s, GetDriveFormat (s));
-				Console.WriteLine (infos [i-1].path);
-			}
 
 			return infos;
-		}
-		
-		[MonoTODO("In windows, alldrives are 'Fixed'")]
-		public static DriveInfo[] GetDrives ()
-		{
-			if (!Environment.IsUnix || Environment.IsMacOS)
-				return RuntimeGetDrives ();
-			
-			return UnixGetDrives ();
 		}
 
 		void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)

@@ -225,6 +225,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasTypesFullyDefined {
+			get; set;
+		}
+
 		//
 		// Returns module global:: namespace
 		//
@@ -418,6 +422,8 @@ namespace Mono.CSharp
 					throw new InternalErrorException (tc, e);
 				}
 			}
+
+			HasTypesFullyDefined = true;
 		}
 
 		public override void Emit ()

@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual TypeExpr ResolveAsType (IMemberContext mc)
+		public virtual TypeSpec ResolveAsType (IMemberContext mc)
 		{
 			ResolveContext ec = new ResolveContext (mc);
 			Expression e = Resolve (ec);
@@ -957,7 +957,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new TypeOf (type, loc)));
 
 			if (type.IsPointer || child.Type.IsPointer)
 				Error_PointerInsideExpressionTree (ec);
@@ -1108,7 +1108,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, null,
 				child.CreateExpressionTree (ec),
-				new TypeOf (new TypeExpression (type, loc), loc));
+				new TypeOf (type, loc));
 
 			if (type.IsPointer)
 				Error_PointerInsideExpressionTree (ec);
@@ -2057,34 +2057,6 @@ namespace Mono.CSharp {
 			return new SimpleName (Name, targs, loc);
 		}
 
-		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ec)
-		{
-			if (ec.CurrentType != null) {
-				if (ec.CurrentMemberDefinition != null) {
-					MemberCore mc = ec.CurrentMemberDefinition.Parent.GetDefinition (Name);
-					if (mc != null) {
-						Error_UnexpectedKind (ec.Module.Compiler.Report, mc, "type", GetMemberType (mc), loc);
-						return;
-					}
-				}
-			}
-
-			FullNamedExpression retval = ec.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), loc, true);
-			if (retval != null) {
-				Error_TypeArgumentsCannotBeUsed (ec, retval.Type, Arity, loc);
-/*
-				var te = retval as TypeExpr;
-				if (HasTypeArguments && te != null && !te.Type.IsGeneric)
-					retval.Error_TypeArgumentsCannotBeUsed (ec.Compiler.Report, loc);
-				else
-					Namespace.Error_InvalidNumberOfTypeArguments (ec.Compiler.Report, retval.Type, loc);
-*/
-				return;
-			}
-
-			NamespaceContainer.Error_NamespaceNotFound (loc, Name, ec.Module.Compiler.Report);
-		}
-
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return SimpleNameResolve (ec, null, false);
@@ -2095,15 +2067,47 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, right_side, false);
 		}
 
+		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ctx)
+		{
+			if (ctx.CurrentType != null) {
+				if (ctx.CurrentMemberDefinition != null) {
+					MemberCore mc = ctx.CurrentMemberDefinition.Parent.GetDefinition (Name);
+					if (mc != null) {
+						Error_UnexpectedKind (ctx.Module.Compiler.Report, mc, "type", GetMemberType (mc), loc);
+						return;
+					}
+				}
+			}
+
+			// MSAF
+			var retval = ctx.LookupNamespaceOrType (Name, Arity, LookupMode.IgnoreAccessibility, loc);
+			if (retval != null) {
+				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.Type);
+				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
+				return;
+			}
+
+			retval = ctx.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
+			if (retval != null) {
+				Error_TypeArgumentsCannotBeUsed (ctx, retval.Type, Arity, loc);
+				return;
+			}
+
+			NamespaceContainer.Error_NamespaceNotFound (loc, Name, ctx.Module.Compiler.Report);
+		}
+
 		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
-			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, Arity, loc, /*ignore_cs0104=*/ false);
+			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, Arity, LookupMode.Normal, loc);
 
 			if (fne != null) {
 				if (fne.Type != null && Arity > 0) {
 					if (HasTypeArguments) {
 						GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
-						return ct.ResolveAsType (ec);
+						if (ct.ResolveAsType (ec) == null)
+							return null;
+
+						return ct;
 					}
 
 					return new GenericOpenTypeExpr (fne.Type, loc);
@@ -2123,7 +2127,8 @@ namespace Mono.CSharp {
 						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
-				return new DynamicTypeExpr (loc).ResolveAsType (ec);
+				fne = new DynamicTypeExpr (loc);
+				fne.ResolveAsType (ec);
 			}
 
 			if (fne != null)
@@ -2135,7 +2140,7 @@ namespace Mono.CSharp {
 
 		public bool IsPossibleTypeOrNamespace (IMemberContext mc)
 		{
-			return mc.LookupNamespaceOrType (Name, Arity, loc, /*ignore_cs0104=*/ false) != null;
+			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing, loc) != null;
 		}
 
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
@@ -2289,15 +2294,24 @@ namespace Mono.CSharp {
 							} while (ct != null);
 						}
 
-						var retval = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), loc, true);
-						if (retval != null) {
-							Error_TypeArgumentsCannotBeUsed (rc, retval.Type, Arity, loc);
+						if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
+							e = rc.LookupNamespaceOrType (Name, Arity, LookupMode.IgnoreAccessibility, loc);
+							if (e != null) {
+								rc.Report.SymbolRelatedToPreviousError (e.Type);
+								ErrorIsInaccesible (rc, e.GetSignatureForError (), loc);
+								return e;
+							}
+						}
+
+						e = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
+						if (e != null) {
+							Error_TypeArgumentsCannotBeUsed (rc, e.Type, Arity, loc);
 						} else {
 							rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
 						}
 					}
 
-					return null;
+					return ErrorExpression.Instance;
 				}
 
 				if (rc.Module.Evaluator != null) {
@@ -2359,7 +2373,7 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public override TypeExpr ResolveAsType (IMemberContext mc)
+		public override TypeSpec ResolveAsType (IMemberContext mc)
 		{
 			FullNamedExpression fne = ResolveAsTypeOrNamespace (mc);
 
@@ -2372,30 +2386,27 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!te.type.IsAccessible (mc)) {
-				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (te.Type);
-				ErrorIsInaccesible (mc, te.Type.GetSignatureForError (), loc);
-			}
-
 			te.loc = loc;
 
-			var dep = te.type.GetMissingDependencies ();
+			type = te.Type;
+
+			var dep = type.GetMissingDependencies ();
 			if (dep != null) {
 				ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
 			}
 
 			//
 			// Obsolete checks cannot be done when resolving base context as they
-			// require type dependecies to be set but we are just resolving them
+			// require type dependencies to be set but we are in process of resolving them
 			//
 			if (!(mc is TypeContainer.BaseContext)) {
-				ObsoleteAttribute obsolete_attr = te.Type.GetAttributeObsolete ();
+				ObsoleteAttribute obsolete_attr = type.GetAttributeObsolete ();
 				if (obsolete_attr != null && !mc.IsObsolete) {
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location, mc.Module.Compiler.Report);
 				}
 			}
 
-			return te;
+			return type;
 		}
 
 
@@ -2413,12 +2424,14 @@ namespace Mono.CSharp {
 	{
 		public sealed override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
 		{
-			return ResolveAsType (mc);
+			ResolveAsType (mc);
+			return this;
 		}
 
 		protected sealed override Expression DoResolve (ResolveContext ec)
 		{
-			return ResolveAsType (ec);
+			ResolveAsType (ec);
+			return this;
 		}
 
 		public override bool Equals (object obj)
@@ -2448,9 +2461,9 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public sealed override TypeExpr ResolveAsType (IMemberContext ec)
+		public sealed override TypeSpec ResolveAsType (IMemberContext ec)
 		{
-			return this;
+			return type;
 		}
 	}
 
@@ -2649,9 +2662,7 @@ namespace Mono.CSharp {
 			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
 
 			if (left is MemberExpr || left is VariableReference) {
-				rc.Report.DisableReporting ();
-				Expression identical_type = rc.LookupNamespaceOrType (name.Name, 0, loc, true) as TypeExpr;
-				rc.Report.EnableReporting ();
+				var identical_type = rc.LookupNamespaceOrType (name.Name, 0, LookupMode.Probing, loc) as TypeExpr;
 				if (identical_type != null && identical_type.Type == left.Type)
 					return identical_type;
 			}
@@ -4390,7 +4401,7 @@ namespace Mono.CSharp {
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else {
+			} else if (a.Expr != ErrorExpression.Instance) {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 

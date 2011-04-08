@@ -1708,7 +1708,7 @@ indexer_declaration
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
 
-		if (indexer.Parameters.IsEmpty) {
+		if (indexer.ParameterInfo.IsEmpty) {
 			report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
 		}
 

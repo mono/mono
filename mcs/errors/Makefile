@@ -22,7 +22,7 @@ DISTFILES = \
 
 TEST_SUPPORT_FILES = \
 	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll CS0012-12-lib.dll CS0029-26-lib.dll \
-	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0143-lib.dll CS0144-3-lib.dll \
+	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0122-36-lib.dll CS0143-lib.dll CS0144-3-lib.dll \
 	CS0205-3-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll \
 	CS0315-2-lib.dll \
 	CS0433-lib.dll CS0433-2-lib.dll \

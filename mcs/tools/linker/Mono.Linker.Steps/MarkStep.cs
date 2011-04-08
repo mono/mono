@@ -289,6 +289,9 @@ namespace Mono.Linker.Steps {
 //			if (IgnoreScope (reference.DeclaringType.Scope))
 //				return;
 
+			if (reference.DeclaringType is GenericInstanceType)
+				MarkType (reference.DeclaringType);
+
 			FieldDefinition field = ResolveFieldDefinition (reference);
 
 			if (field == null)
@@ -681,8 +684,16 @@ namespace Mono.Linker.Steps {
 			if (list == null)
 				return;
 
-			foreach (MethodDefinition method in list)
-				MarkMethod (method);
+			MarkMethodCollection (list);
+		}
+
+		void ApplyPreserveMethods (MethodDefinition method)
+		{
+			var list = Annotations.GetPreservedMethods (method);
+			if (list == null)
+				return;
+
+			MarkMethodCollection (list);
 		}
 
 		void MarkFields (TypeDefinition type)
@@ -712,6 +723,9 @@ namespace Mono.Linker.Steps {
 
 			if (reference.DeclaringType is ArrayType)
 				return;
+
+			if (reference.DeclaringType is GenericInstanceType)
+				MarkType (reference.DeclaringType);
 
 //			if (IgnoreScope (reference.DeclaringType.Scope))
 //				return;
@@ -799,6 +813,8 @@ namespace Mono.Linker.Steps {
 				MarkMethodBody (method.Body);
 
 			Annotations.Mark (method);
+
+			ApplyPreserveMethods (method);
 		}
 
 		void MarkBaseMethods (MethodDefinition method)
