@@ -471,9 +471,12 @@ namespace System.Net
 			cnc.position = 0;
 
 			WebConnectionStream stream = new WebConnectionStream (cnc);
+			bool expect_content = ExpectContent (data.StatusCode, data.request.Method);
+			string tencoding = null;
+			if (expect_content)
+				tencoding = data.Headers ["Transfer-Encoding"];
 
-			string contentType = data.Headers ["Transfer-Encoding"];
-			cnc.chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
+			cnc.chunkedRead = (tencoding != null && tencoding.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 			if (!cnc.chunkedRead) {
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
@@ -498,14 +501,16 @@ namespace System.Net
 
 			data.stream = stream;
 			
-			if (!ExpectContent (data.StatusCode) || data.request.Method == "HEAD")
+			if (!expect_content)
 				stream.ForceCompletion ();
 
 			data.request.SetResponseData (data);
 		}
 
-		static bool ExpectContent (int statusCode)
+		static bool ExpectContent (int statusCode, string method)
 		{
+			if (method == "HEAD")
+				return false;
 			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
