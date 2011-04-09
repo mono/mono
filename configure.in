@@ -2151,6 +2151,8 @@ case "$host" in
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -DARM_FPU_NONE=1"
 		jit_wanted=true
+		# libgc's gc_locks.h depends on this
+	    NESTED_LIBGC_FLAGS="$NESTED_LIBGC_FLAGS -DHAVE_ARMV6"
 		;;
 	arm*-linux*)
 		TARGET=ARM;
