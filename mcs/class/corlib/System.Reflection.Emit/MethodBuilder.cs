@@ -235,6 +235,10 @@ namespace System.Reflection.Emit
 			return parameters.Length;
 		}
 
+		internal override Type GetParameterType (int pos) {
+			return parameters [pos];
+		}
+
 		public Module GetModule ()
 		{
 			return type.Module;
