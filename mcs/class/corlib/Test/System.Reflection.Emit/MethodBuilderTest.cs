@@ -1128,5 +1128,16 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNull (mb.GetGenericArguments ());
 
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetConstantIllegalType ()
+		{
+			var tb = module.DefineType ("Base");
+	
+			var mb = tb.DefineMethod ("foo", MethodAttributes.Public, typeof (void), new Type [] { typeof (decimal) });
+			ParameterBuilder pb = mb.DefineParameter (1, ParameterAttributes.In, "foo");
+			pb.SetConstant (5m);
+		}
 	}
 }

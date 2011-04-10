@@ -92,6 +92,14 @@ namespace System.Reflection.Emit {
 
 		public virtual void SetConstant (object defaultValue)
 		{
+			if (position > 0) {
+				Type t = methodb.GetParameterType (position - 1);
+				if (defaultValue != null && t != defaultValue.GetType ())
+					throw new ArgumentException ("Constant does not match the defined type.");
+				if (t.IsValueType && !t.IsPrimitive && !t.IsEnum && t != typeof (DateTime))
+					throw new ArgumentException ("" + t + " is not a supported constant type.");
+			}
+
 			def_value = defaultValue;
 			attrs |= ParameterAttributes.HasDefault;
 		}
