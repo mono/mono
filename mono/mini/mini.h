@@ -1283,6 +1283,7 @@ typedef struct {
 	guint            gen_seq_points : 1;
 	guint            explicit_null_checks : 1;
 	guint            compute_gc_maps : 1;
+	guint            soft_breakpoints : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
     guint16          *intvars;
@@ -1600,6 +1601,14 @@ typedef struct {
 	 * debugging of the stack marking code in the GC.
 	 */
 	gboolean init_stacks;
+
+	/*
+	 * Whenever to implement single stepping and breakpoints without signals in the
+	 * soft debugger. This is useful on platforms without signals, like the ps3, or during
+	 * runtime debugging, since it avoids SIGSEGVs when a single step location or breakpoint
+	 * is hit.
+	 */
+	gboolean soft_breakpoints;
 } MonoDebugOptions;
 
 enum {
