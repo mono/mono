@@ -332,8 +332,19 @@ namespace System.Web.Caching
 				
 				ci.LastChange = DateTime.Now;
 				if (!disableExpiration && ci.AbsoluteExpiration != NoAbsoluteExpiration) {
-					ci.IsTimedItem = true;
-					EnqueueTimedItem (ci);
+					bool enqueue;
+					if (ci.IsTimedItem) {
+						enqueue = UpdateTimedItem (ci);
+						if (!enqueue)
+							UpdateTimerPeriod (ci);
+					} else
+						enqueue = true;
+
+					if (enqueue) {
+						ci.IsTimedItem = true;
+						EnqueueTimedItem (ci);
+					}
+					
 				}
 			} finally {
 				if (doLock) {
@@ -344,28 +355,45 @@ namespace System.Web.Caching
 		}
 
 		// MUST be called with cache lock held
-		void EnqueueTimedItem (CacheItem item)
+		bool UpdateTimedItem (CacheItem item)
 		{
-			long remaining = Math.Max (0, (long)(item.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
+			if (timedItems == null)
+				return true;
+
 			item.ExpiresAt = item.AbsoluteExpiration.Ticks;
-			
+			return !timedItems.Update (item);
+		}
+
+		// MUST be called with cache lock held
+		void UpdateTimerPeriod (CacheItem item)
+		{
 			if (timedItems == null)
 				timedItems = new CacheItemPriorityQueue ();
+
+			long remaining = Math.Max (0, (long)(item.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
+			item.ExpiresAt = item.AbsoluteExpiration.Ticks;
 			
 			if (remaining > 4294967294)
 				// Maximum due time for timer
 				// Item will expire properly anyway, as the timer will be
 				// rescheduled for the item's expiration time once that item is
 				// bubbled to the top of the priority queue.
-				expirationTimerPeriod = 4294967294;
-			else
-				expirationTimerPeriod = remaining;
+				remaining = 4294967294;
+
+			if (expirationTimer != null && expirationTimerPeriod <= remaining)
+				return;
+			expirationTimerPeriod = remaining;
 
 			if (expirationTimer == null)
 				expirationTimer = new Timer (new TimerCallback (ExpireItems), null, expirationTimerPeriod, expirationTimerPeriod);
 			else
 				expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
-			
+		}
+		
+		// MUST be called with cache lock held
+		void EnqueueTimedItem (CacheItem item)
+		{
+			UpdateTimerPeriod (item);
 			timedItems.Enqueue (item);
 		}
 
@@ -543,11 +571,13 @@ namespace System.Web.Caching
 
 			if (item != null) {
 				long remaining = Math.Max (0, (long)(item.AbsoluteExpiration - now).TotalMilliseconds);
-				if (remaining > 0 && expirationTimerPeriod > remaining)
+				if (remaining > 0 && (expirationTimerPeriod == 0 || expirationTimerPeriod > remaining)) {
 					expirationTimerPeriod = remaining;
-				
-				expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
-				return;
+					expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
+					return;
+				}
+				if (expirationTimerPeriod > 0)
+					return;
 			}
 
 			expirationTimer.Change (Timeout.Infinite, Timeout.Infinite);

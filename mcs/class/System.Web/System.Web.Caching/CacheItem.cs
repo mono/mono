@@ -45,6 +45,7 @@ namespace System.Web.Caching
 		public long ExpiresAt;
 		public bool Disabled;
 		public bool IsTimedItem;
+		public int PriorityQueueIndex = -1;
 #if DEBUG
 		public Guid Guid;
 
