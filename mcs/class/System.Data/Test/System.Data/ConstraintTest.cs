@@ -31,7 +31,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using System;
@@ -63,26 +62,28 @@ namespace MonoTests.System.Data
 		private Constraint _constraint2;
 
 		[SetUp]
-		public void GetReady() {
+		public void GetReady ()
+		{
 
 			//Setup DataTable
-			_table = new DataTable("TestTable");
+			_table = new DataTable ("TestTable");
 
-			_table.Columns.Add("Col1",typeof(int));
-			_table.Columns.Add("Col2",typeof(int));
+			_table.Columns.Add ("Col1", typeof(int));
+			_table.Columns.Add ("Col2", typeof(int));
 
 			//Use UniqueConstraint to test Constraint Base Class
-			_constraint1 = new UniqueConstraint(_table.Columns[0],false); 
-			_constraint2 = new UniqueConstraint(_table.Columns[1],false); 
+			_constraint1 = new UniqueConstraint (_table.Columns [0], false); 
+			_constraint2 = new UniqueConstraint (_table.Columns [1], false); 
 
 			// not sure why this is needed since a new _table was just created
 			// for us, but this Clear() keeps the tests from throwing
 			// an exception when the Add() is called.
-			_table.Constraints.Clear();
+			_table.Constraints.Clear ();
 		}  
-		
+
 		[Test]
-		public void SetConstraintNameNullOrEmptyExceptions() {
+		public void SetConstraintNameNullOrEmptyExceptions ()
+		{
 			bool exceptionCaught = false;
 			string name = null;
 
@@ -90,8 +91,10 @@ namespace MonoTests.System.Data
 
 			for (int i = 0; i <= 1; i++) {
 				exceptionCaught = false;
-				if (0 == i) name = null;
-				if (1 == i) name = String.Empty;
+				if (0 == i)
+					name = null;
+				if (1 == i)
+					name = String.Empty;
 	
 				try {
 				
@@ -100,15 +103,13 @@ namespace MonoTests.System.Data
 					//or empty while the constraint is part of the
 					//collection
 					_constraint1.ConstraintName = name; 
-				}
-				catch (ArgumentException){ 
+				} catch (ArgumentException) { 
 					exceptionCaught = true;
-				}
-				catch {
-					Assert.Fail("Wrong exception type thrown.");
+				} catch {
+					Assert.Fail ("Wrong exception type thrown.");
 				}
 				
-				Assert.That(exceptionCaught, Is.True, "Failed to throw exception.");
+				Assert.That (exceptionCaught, Is.True, "Failed to throw exception.");
 			}	
 		}
 
@@ -119,29 +120,31 @@ namespace MonoTests.System.Data
 			_constraint1.ConstraintName = "Dog";
 			_constraint2.ConstraintName = "Cat";
 
-			_table.Constraints.Add(_constraint1);
-			_table.Constraints.Add(_constraint2);
+			_table.Constraints.Add (_constraint1);
+			_table.Constraints.Add (_constraint2);
 
 			//Should throw DuplicateNameException
 			_constraint2.ConstraintName = "Dog";
 		}
 
 		[Test]
-		public void ToStringTest() {
+		public void ToStringTest ()
+		{
 			_constraint1.ConstraintName = "Test";
-			Assert.That(_constraint1.ConstraintName, Is.EqualTo(_constraint1.ToString()),
+			Assert.That (_constraint1.ConstraintName, Is.EqualTo (_constraint1.ToString ()),
 				"ToString is the same as constraint name.");
 			
 			_constraint1.ConstraintName = null;
-			Assert.That(_constraint1.ToString(), Is.Not.Null, "ToString should return empty.");
+			Assert.That (_constraint1.ToString (), Is.Not.Null, "ToString should return empty.");
 		}
 
 		[Test]
-		public void GetExtendedProperties() {
+		public void GetExtendedProperties ()
+		{
 			PropertyCollection col = _constraint1.ExtendedProperties as
 				PropertyCollection;
 
-			Assert.That(col, Is.Not.Null, "ExtendedProperties returned null or didn't " +
+			Assert.That (col, Is.Not.Null, "ExtendedProperties returned null or didn't " +
 				"return the correct type");
 		}
 	}
