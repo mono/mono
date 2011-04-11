@@ -138,10 +138,6 @@ namespace System.Reflection.Emit {
 			
 			return parameters.Length;
 		}
-
-		internal override Type GetParameterType (int pos) {
-			return parameters [pos];
-		}
 		
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 		{

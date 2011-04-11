@@ -90,10 +90,6 @@ namespace System.Reflection {
 			throw new NotImplementedException ("must be implemented");
 		}
 
-		internal virtual Type GetParameterType (int pos) {
-			throw new NotImplementedException ();
-		}
-
 		[DebuggerHidden]
 		[DebuggerStepThrough]		
 		public Object Invoke(Object obj, Object[] parameters) {
@@ -225,6 +221,7 @@ namespace System.Reflection {
 		public virtual MethodBody GetMethodBody () {
 			throw new NotSupportedException ();
 		}
+
 
 #if NET_4_0
 		public override bool Equals (object obj)

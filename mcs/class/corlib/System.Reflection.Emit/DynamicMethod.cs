@@ -254,10 +254,6 @@ namespace System.Reflection.Emit {
 			return parameters == null ? 0 : parameters.Length;
 		}		
 
-		internal override Type GetParameterType (int pos) {
-			return parameters [pos];
-		}
-
 		/*
 		public override object Invoke (object obj, object[] parameters) {
 			CreateDynMethod ();
