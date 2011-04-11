@@ -33,6 +33,7 @@
 //
 
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using System;
 using System.Data;
 
@@ -55,7 +56,7 @@ namespace MonoTests.System.Data
 //	}
 
 	[TestFixture]
-	public class ConstraintTest : Assertion
+	public class ConstraintTest
 	{
 		private DataTable _table;
 		private Constraint _constraint1;
@@ -104,11 +105,10 @@ namespace MonoTests.System.Data
 					exceptionCaught = true;
 				}
 				catch {
-					Fail("Wrong exception type thrown.");
+					Assert.Fail("Wrong exception type thrown.");
 				}
 				
-				Assert("Failed to throw exception.",
-					true == exceptionCaught);
+				Assert.That(exceptionCaught, Is.True, "Failed to throw exception.");
 			}	
 		}
 
@@ -129,10 +129,11 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ToStringTest() {
 			_constraint1.ConstraintName = "Test";
-			Assert("ToString is the same as constraint name.", _constraint1.ConstraintName.CompareTo( _constraint1.ToString()) == 0);
+			Assert.That(_constraint1.ConstraintName, Is.EqualTo(_constraint1.ToString()),
+				"ToString is the same as constraint name.");
 			
 			_constraint1.ConstraintName = null;
-			AssertNotNull("ToString should return empty.",_constraint1.ToString());
+			Assert.That(_constraint1.ToString(), Is.Not.Null, "ToString should return empty.");
 		}
 
 		[Test]
@@ -140,8 +141,8 @@ namespace MonoTests.System.Data
 			PropertyCollection col = _constraint1.ExtendedProperties as
 				PropertyCollection;
 
-			AssertNotNull("ExtendedProperties returned null or didn't " +
-				"return the correct type", col);
+			Assert.That(col, Is.Not.Null, "ExtendedProperties returned null or didn't " +
+				"return the correct type");
 		}
 	}
 }

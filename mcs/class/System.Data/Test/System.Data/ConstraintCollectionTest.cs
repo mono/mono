@@ -34,13 +34,14 @@
 
 
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using System;
 using System.Data;
 
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class ConstraintCollectionTest : Assertion {
+	public class ConstraintCollectionTest {
 		private DataTable _table;
 		private DataTable _table2;
 		private Constraint _constraint1;
@@ -76,7 +77,7 @@ namespace MonoTests.System.Data
 			col.Add(_constraint1);
 			col.Add(_constraint2);
 
-			AssertEquals("Count doesn't equal added.",2, col.Count);
+			Assert.That(col.Count, Is.EqualTo(2), "Count doesn't equal added.");
 		}
 
 		[Test]
@@ -88,13 +89,13 @@ namespace MonoTests.System.Data
 			try 
 			{
 				col.Add(null);
-				Fail("B1: Failed to throw ArgumentNullException.");
+				Assert.Fail("B1: Failed to throw ArgumentNullException.");
 			}
 			catch (ArgumentNullException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Fail("A1: Wrong exception type");
+				Assert.Fail("A1: Wrong exception type");
 			}
 
 			//duplicate name
@@ -106,7 +107,7 @@ namespace MonoTests.System.Data
 				col.Add(_constraint2);
 #if NET_1_1
 #else
-				Fail("Failed to throw Duplicate name exception.");
+				Assert.Fail("Failed to throw Duplicate name exception.");
 #endif
 				col.Remove (_constraint2); // only for !1.0
 				col.Remove (_constraint1);
@@ -119,7 +120,7 @@ namespace MonoTests.System.Data
 /* Don't use such catch. They cover our eyes from the exact exception location.
 			catch (Exception exc)
 			{
-				Fail("A2: Wrong exception type. " + exc.ToString());
+				Assert.Fail("A2: Wrong exception type. " + exc.ToString());
 			}
 */
 			//Constraint Already exists
@@ -128,7 +129,7 @@ namespace MonoTests.System.Data
 				col.Add(_constraint1);
 #if NET_1_1
 #else
-				Fail("B2: Failed to throw ArgumentException.");
+				Assert.Fail("B2: Failed to throw ArgumentException.");
 #endif
 				col.Remove (_constraint1);
 			}
@@ -141,7 +142,7 @@ namespace MonoTests.System.Data
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Fail("A3: Wrong exception type");
+				Assert.Fail("A3: Wrong exception type");
 			}
 		}
 
@@ -158,11 +159,11 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(c1);
 			_table.Constraints.Add(c2);
 
-			AssertSame("A1", c1, _table.Constraints[0]); 
-			AssertSame("A2", c2, _table.Constraints[1]);
+			Assert.AreSame(c1, _table.Constraints[0], "A1"); 
+			Assert.AreSame(c2, _table.Constraints[1], "A2");
 
-			AssertSame("A3", c1, _table.Constraints["first"]);
-			AssertSame("A4", c2, _table.Constraints["sEcond"]); //case insensitive
+			Assert.AreSame(c1, _table.Constraints["first"], "A3");
+			Assert.AreSame(c2, _table.Constraints["sEcond"], "A4"); //case insensitive
 
 		}
 
@@ -178,10 +179,10 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(c1);
 			_table.Constraints.Add(c2);
 
-			AssertEquals("A1", 0, _table.Constraints.IndexOf(c1));
-			AssertEquals("A2", 1, _table.Constraints.IndexOf(c2));
-			AssertEquals("A3", 0, _table.Constraints.IndexOf("first"));
-			AssertEquals("A4", 1, _table.Constraints.IndexOf("second"));
+			Assert.AreEqual(0, _table.Constraints.IndexOf(c1), "A1");
+			Assert.AreEqual(1, _table.Constraints.IndexOf(c2), "A2");
+			Assert.AreEqual(0, _table.Constraints.IndexOf("first"), "A3");
+			Assert.AreEqual(1, _table.Constraints.IndexOf("second"), "A4");
 		}
 
 		[Test]
@@ -195,8 +196,8 @@ namespace MonoTests.System.Data
 
 			_table.Constraints.Add(c1);
 
-			Assert("A1", _table.Constraints.Contains(c1.ConstraintName)); //true
-			Assert("A2", _table.Constraints.Contains(c2.ConstraintName) == false); //doesn't contain
+			Assert.That(_table.Constraints.Contains(c1.ConstraintName), Is.True);
+			Assert.That(_table.Constraints.Contains(c2.ConstraintName), Is.False);
 		}
 
 		[Test]
@@ -205,32 +206,32 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(new UniqueConstraint(_table.Columns[0]));
 
 			//This doesn't throw
-			AssertNull(_table.Constraints["notInCollection"]);
+			Assert.That(_table.Constraints["notInCollection"], Is.Null);
 			
 			//Index too high
 			try 
 			{
 				Constraint c = _table.Constraints[_table.Constraints.Count];
-				Fail("B1: Failed to throw IndexOutOfRangeException.");
+				Assert.Fail("B1: Failed to throw IndexOutOfRangeException.");
 			}
 			catch (IndexOutOfRangeException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Fail("A1: Wrong exception type");
+				Assert.Fail("A1: Wrong exception type");
 			}
 
 			//Index too low
 			try 
 			{
 				Constraint c = _table.Constraints[-1];
-				Fail("B2: Failed to throw IndexOutOfRangeException.");
+				Assert.Fail("B2: Failed to throw IndexOutOfRangeException.");
 			}
 			catch (IndexOutOfRangeException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Fail("A2: Wrong exception type");
+				Assert.Fail("A2: Wrong exception type");
 			}	
 
 		}
@@ -253,13 +254,13 @@ namespace MonoTests.System.Data
 											_table2.Columns[0]);
 				
 				_table2.Constraints.Add(fkc);	//should throw			
-				Fail("B1: Failed to throw ArgumentException.");
+				Assert.Fail("B1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A1: Wrong Exception type. " + exc.ToString());
 			}
 
 
@@ -290,13 +291,13 @@ namespace MonoTests.System.Data
 					_table2.Columns[0]);
 				
 				_table2.Constraints.Add(fkc);	//should throw			
-				Fail("B1: Failed to throw ArgumentException.");
+				Assert.Fail("B1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A1: Wrong Exception type. " + exc.ToString());
 			}
 
 
@@ -316,13 +317,13 @@ namespace MonoTests.System.Data
 				UniqueConstraint uc = new UniqueConstraint( _table.Columns[0]);
 				
 				_table.Constraints.Add(uc);	//should throw			
-				Fail("B1: Failed to throw ArgumentException.");
+				Assert.Fail("B1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A1: Wrong Exception type. " + exc.ToString());
 			}
 		}
 
@@ -359,11 +360,11 @@ namespace MonoTests.System.Data
                         Constraint [] constraints1 = {_constraint3, _constraint4};
                         _table2.Constraints.AddRange (constraints1);
                                                                                                     
-                        AssertEquals ("A1", "UK1", _table.Constraints [0].ConstraintName);
-                        AssertEquals ("A2", "UK12", _table.Constraints [1].ConstraintName);
-                                                                                                    
-                        AssertEquals ("A3", "FK2", _table2.Constraints [0].ConstraintName);
-                        AssertEquals ("A4", "UK2", _table2.Constraints [1].ConstraintName);
+                        Assert.AreEqual ("UK1", _table.Constraints [0].ConstraintName, "A1");
+                        Assert.AreEqual ("UK12", _table.Constraints [1].ConstraintName, "A2");
+                                                                                              
+                        Assert.AreEqual ("FK2", _table2.Constraints [0].ConstraintName, "A3");
+                        Assert.AreEqual ("UK2", _table2.Constraints [1].ConstraintName, "A4");
 
 		}
 		
@@ -371,7 +372,7 @@ namespace MonoTests.System.Data
 		[Category ("NotDotNet")]
 		// Even after EndInit(), MS.NET does not fill Table property
 		// on UniqueConstraint.
-		public void TestAddRange2()
+ 		public void TestAddRange2()
                 {
                         DataTable table = new DataTable ("Table");
                         DataColumn column1 = new DataColumn ("col1");
@@ -393,33 +394,30 @@ namespace MonoTests.System.Data
                                                                                                     
                         //Check the table property of UniqueConstraint Object
                         try{
-                                Assertion.AssertNull ("#01", constraints [2].Table);
+                                Assert.That (constraints [2].Table, Is.Null, "#A01");
                         }
                         catch (Exception e) {
-                                Assertion.Assert ("#A02", "System.NullReferenceException".Equals (e.GetType().ToString()));
+                                Assert.That (e, Is.TypeOf(typeof(NullReferenceException)), "#A02");
                         }
 
 			table.EndInit();
 
 			// After EndInit is called the constraints associated with most recent call to AddRange() must be
 			// added to the ConstraintCollection
-                        Assertion.Assert ("#A03", constraints [2].Table.ToString().Equals ("Table"));
-                        Assertion.Assert ("#A04", table.Constraints.Contains ("Unique1"));
-                        Assertion.Assert ("#A05", table.Constraints.Contains ("Unique2"));
-                        Assertion.Assert ("#A06", table.Constraints.Contains ("Unique3"));
-
+                        Assert.That (constraints [2].Table.ToString(), Is.EqualTo ("Table"), "#A03");
+                        Assert.That (table.Constraints.Contains ("Unique1"), Is.True, "#A04");
+                        Assert.That (table.Constraints.Contains ("Unique3"), Is.True, "#A06");
+                        Assert.That (table.Constraints.Contains ("Unique2"), Is.True, "#A05");
                 }
-        
-
 
 		[Test]
 		public void Clear()
 		{
  			try {
                                _table.Constraints.Clear (); //Clear all constraints
-                                AssertEquals ("A1", 0, _table.Constraints.Count); //No constraints should remain
+                                Assert.That (_table.Constraints.Count, Is.EqualTo(0), "A1"); //No constraints should remain
                                 _table2.Constraints.Clear ();
-                                AssertEquals ("A2", 0, _table2.Constraints.Count);
+                                Assert.That (_table2.Constraints.Count, Is.EqualTo(0), "A2"); //No constraints should remain
                         }
                         catch (Exception e) {
                                 Console.WriteLine (e);
@@ -431,8 +429,7 @@ namespace MonoTests.System.Data
 		[Ignore ("This never works on MS.NET (and it should not)")]
 		public void CanRemove()
 		{
-			AssertEquals ("A1", false, _table.Constraints.CanRemove (_table.Constraints [0]));
-
+			Assert.That (_table.Constraints.CanRemove (_table.Constraints [0]), Is.False, "A1");
 		}
 
 		[Test]
@@ -461,7 +458,7 @@ namespace MonoTests.System.Data
 		public void Remove()
 		{
 			_table2.Constraints.Remove (_table2.Constraints [1]); //Remove constraint and again add it
-                        AssertEquals ("A1", 1, _table2.Constraints.Count);                      
+                        Assert.That (_table2.Constraints.Count, Is.EqualTo(1), "A1");
                         UniqueConstraint _constraint4 = new UniqueConstraint ("UK2", _table2.Columns [1]);                                                                               
                         // Add the constraints.
                         Constraint [] constraints = {_constraint4};
@@ -474,9 +471,9 @@ namespace MonoTests.System.Data
 			try {
                                 //Remove constraint that cannot be removed
                                 _table.Constraints.Remove (_table.Constraints [0]);
-				Fail ("A1");
+				Assert.Fail ("A1");
 			} catch (Exception e) {
-				AssertEquals ("A2", typeof (IndexOutOfRangeException), e.GetType ());
+				Assert.That (e, Is.TypeOf (typeof (IndexOutOfRangeException)), "A2");
                         }
                 }
 
