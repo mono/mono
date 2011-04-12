@@ -1215,6 +1215,14 @@ namespace Mono.CSharp {
 				targs = type.TypeArguments;
 
 				//
+				// When inflating imported nested type used inside same declaring type, we get TypeSpec
+				// because the import cache helps us to catch it. However, that means we have to look at
+				// type definition to get type argument (they are in fact type parameter in this case)
+				//
+				if (targs.Length == 0 && type.Arity > 0)
+					targs = type.MemberDefinition.TypeParameters;
+
+				//
 				// Parent was inflated, find the same type on inflated type
 				// to use same cache for nested types on same generic parent
 				//
