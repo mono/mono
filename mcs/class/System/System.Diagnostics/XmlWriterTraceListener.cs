@@ -102,7 +102,6 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			params object [] data)
 		{
-			// FIXME: what is the correct level?
 			TraceCore (eventCache, source, eventType, id, false,
 				   Guid.Empty, 2, true, data);
 		}
@@ -112,8 +111,7 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			string message)
 		{
-			// FIXME: what is the correct level?
-			TraceCore (eventCache, source, TraceEventType.Transfer,
+			TraceCore (eventCache, source, eventType,
 				   id, false, Guid.Empty, 2, true, message);
 		}
 
@@ -122,8 +120,7 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			string format, params object [] args)
 		{
-			// FIXME: what is the correct level?
-			TraceCore (eventCache, source, TraceEventType.Transfer,
+			TraceCore (eventCache, source, eventType,
 				   id, false, Guid.Empty, 2, true, String.Format (format, args));
 		}
 
