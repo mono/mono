@@ -1024,8 +1024,17 @@ namespace Mono.CSharp
 			//
 			public static bool IsEqual (TypeSpec a, TypeSpec b)
 			{
-				if (a.MemberDefinition != b.MemberDefinition)
+				if (a.MemberDefinition != b.MemberDefinition) {
+					var base_ifaces = a.Interfaces;
+					if (base_ifaces != null) {
+						foreach (var base_iface in base_ifaces) {
+							if (base_iface.Arity > 0 && IsEqual (base_iface, b))
+								return true;
+						}
+					}
+
 					return false;
+				}
 
 				var ta = a.TypeArguments;
 				var tb = b.TypeArguments;
@@ -1073,7 +1082,7 @@ namespace Mono.CSharp
 					//    class X<T> : I<T>, I<float>
 					// 
 					if (b.IsGenericParameter)
-						return a.DeclaringType == b.DeclaringType;
+						return a != b && a.DeclaringType == b.DeclaringType;
 
 					//
 					// We're now comparing a type parameter with a

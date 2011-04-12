@@ -1829,6 +1829,8 @@ namespace Mono.CSharp {
 										method.GetSignatureForError (), implementing.GetSignatureForError ());
 								}
 							}
+						} else if (!implementing.IsAccessor) {
+							implementing = null;
 						}
 					}
 				}

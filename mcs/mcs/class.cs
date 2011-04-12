@@ -1566,12 +1566,18 @@ namespace Mono.CSharp
 
 			if (base_type != null) {
 				//
-				// Run checks skipped during FullNamedExpression::ResolveAsType
+				// Run checks skipped during DefineType (e.g FullNamedExpression::ResolveAsType)
 				//
 				if (base_type_expr != null) {
 					ObsoleteAttribute obsolete_attr = base_type.GetAttributeObsolete ();
 					if (obsolete_attr != null && !IsObsolete)
 						AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), base_type_expr.Location, Report);
+
+					if (IsGeneric && base_type.IsAttribute) {
+						Report.Error (698, base_type_expr.Location,
+							"A generic type cannot derive from `{0}' because it is an attribute class",
+							base_type.GetSignatureForError ());
+					}
 				}
 
 				if (base_type.Interfaces != null) {
@@ -2591,10 +2597,6 @@ namespace Mono.CSharp
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (IsGeneric && base_type.IsAttribute) {
-					Report.Error (698, base_class.Location,
-						"A generic type cannot derive from `{0}' because it is an attribute class",
-						base_type.GetSignatureForError ());
 				} else if (base_type.IsStatic) {
 					Report.SymbolRelatedToPreviousError (base_type);
 					Report.Error (709, Location, "`{0}': Cannot derive from static class `{1}'",

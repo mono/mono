@@ -2715,7 +2715,7 @@ namespace Mono.CSharp {
 			//
 			// Some types cannot be used as type arguments
 			//
-			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer)
+			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType)
 				return;
 
 			var a = bounds [index];
