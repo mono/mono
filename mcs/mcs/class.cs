@@ -2875,7 +2875,7 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
-		public const Modifiers AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW       |
 			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |

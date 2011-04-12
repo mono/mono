@@ -306,7 +306,7 @@ namespace Mono.CSharp
 
 		public abstract class PropertyMethod : AbstractPropertyEventMethod
 		{
-			public const Modifiers AllowedModifiers =
+			const Modifiers AllowedModifiers =
 				Modifiers.PUBLIC |
 				Modifiers.PROTECTED |
 				Modifiers.INTERNAL |
@@ -319,7 +319,8 @@ namespace Mono.CSharp
 				: base (method, prefix, attrs, loc)
 			{
 				this.method = method;
-				this.ModFlags = modifiers | (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
+				this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, modifiers, 0, loc, Report);
+				this.ModFlags |= (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
 			}
 
 			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -356,8 +357,7 @@ namespace Mono.CSharp
 					if (container.Kind == MemberKind.Interface)
 						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
 							GetSignatureForError ());
-
-					if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
+					else if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
 						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
 					}
 
