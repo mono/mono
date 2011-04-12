@@ -401,7 +401,10 @@ namespace Mono.CSharp
 		public new void CreateType ()
 		{
 			// Release cache used by parser only
-			defined_type_containers = null;
+			if (Evaluator == null)
+				defined_type_containers = null;
+			else
+				defined_type_containers.Clear ();
 
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
@@ -555,6 +558,7 @@ namespace Mono.CSharp
 
 		protected override void RemoveMemberType (TypeContainer ds)
 		{
+			defined_type_containers.Remove (ds.MemberName);
 			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
 			base.RemoveMemberType (ds);
 		}

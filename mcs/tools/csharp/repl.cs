@@ -128,7 +128,7 @@ namespace Mono {
 		public static new string help {
 			get {
 				return InteractiveBase.help +
-					"  TabAtStartCompletes - Whether tab will complete even on emtpy lines\n";
+					"  TabAtStartCompletes - Whether tab will complete even on empty lines\n";
 			}
 		}
 	}

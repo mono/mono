@@ -6178,7 +6178,7 @@ void Error_NamedArgumentExpected (NamedArgument a)
 
 void push_current_class (TypeContainer tc, object partial_token)
 {
-	if (module.Evaluator != null){
+	if (module.Evaluator != null && current_container is ModuleContainer){
 		tc.Definition.Modifiers = tc.ModFlags = (tc.ModFlags & ~Modifiers.AccessibilityMask) | Modifiers.PUBLIC;
 		if (undo == null)
 			undo = new Undo ();
