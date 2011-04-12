@@ -35,6 +35,8 @@ public class Blah {
 
 		sbyte [] s_arr = { 10, 15, 30, 123 };
 		
+		int[,,] ints = new int[,,] { };
+		
 		if (a [2] != 6)
 			return 1;
 

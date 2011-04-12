@@ -6098,6 +6098,8 @@ namespace Mono.CSharp
 
 				if (probe.Count > 0 && probe [0] is ArrayInitializer) {
 					probe = (ArrayInitializer) probe[0];
+				} else if (dimensions > i) {
+					continue;
 				} else {
 					return;
 				}
