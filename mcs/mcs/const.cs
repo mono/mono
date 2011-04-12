@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 
 	public class Const : FieldBase
 	{
-		public const Modifiers AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
