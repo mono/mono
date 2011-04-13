@@ -4027,7 +4027,7 @@ namespace Mono.CSharp {
 				//
 				// Deploy custom error reporting for lambda methods. When probing lambda methods
 				// keep all errors reported in separate set and once we are done and no best
-				// candidate found, this set is used to report more details about what was wrong
+				// candidate was found, this set is used to report more details about what was wrong
 				// with lambda body
 				//
 				if (argument.Expr.Type == InternalType.AnonymousMethod) {
@@ -4037,6 +4037,10 @@ namespace Mono.CSharp {
 					}
 				}
 
+				//
+				// Use implicit conversion in all modes to return same candidates when the expression
+				// is used as argument or delegate conversion
+				//
 				if (!Convert.ImplicitConversionExists (ec, argument.Expr, parameter)) {
 					if (lambda_conv_msgs != null) {
 						lambda_conv_msgs.EndSession ();

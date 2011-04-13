@@ -405,6 +405,9 @@ namespace Mono.CSharp {
 			if (rc.Module.Compiler.Settings.Version == LanguageVersion.ISO_1)
 				return false;
 
+			if (a.IsGenericParameter && b.IsGenericParameter)
+				return a == b;
+
 			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
 

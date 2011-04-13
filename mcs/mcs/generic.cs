@@ -752,6 +752,13 @@ namespace Mono.CSharp {
 
 				if (targs != null) {
 					foreach (var ta in targs) {
+						//
+						// Secondary special constraints are ignored (I am not sure why)
+						//
+						var tp = ta as TypeParameterSpec;
+						if (tp != null && (tp.spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0)
+							continue;
+
 						if (TypeManager.IsReferenceType (ta))
 							return true;
 					}

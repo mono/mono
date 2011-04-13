@@ -40,6 +40,12 @@ namespace Mono.CSharp {
 			if (array.Element == arg_type)
 				return true;
 
+			//
+			// Reject conversion from T[] to IList<U> even if T has U dependency
+			//
+			if (arg_type.IsGenericParameter)
+				return false;
+
 			if (isExplicit)
 				return ExplicitReferenceConversionExists (array.Element, arg_type);
 
@@ -253,20 +259,17 @@ namespace Mono.CSharp {
 				if (target_type_array != null && expr_type_array.Rank == target_type_array.Rank) {
 
 					//
-					// Both SE and TE are reference-types
+					// Both SE and TE are reference-types. TE check is defered
+					// to ImplicitReferenceConversionExists
 					//
 					TypeSpec expr_element_type = expr_type_array.Element;
 					if (!TypeManager.IsReferenceType (expr_element_type))
 						return false;
 
-					TypeSpec target_element_type = target_type_array.Element;
-					if (!TypeManager.IsReferenceType (target_element_type))
-						return false;
-
 					//
 					// An implicit reference conversion exists from SE to TE
 					//
-					return ImplicitReferenceConversionExists (expr_element_type, target_element_type);
+					return ImplicitReferenceConversionExists (expr_element_type, target_type_array.Element);
 				}
 
 				// from an array-type to System.Array
