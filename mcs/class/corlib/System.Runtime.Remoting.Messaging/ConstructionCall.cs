@@ -49,7 +49,9 @@ namespace System.Runtime.Remoting.Messaging
 		Type _activationType;
 		string _activationTypeName;
 		bool _isContextOk;
+#if !MOONLIGHT
 		[NonSerialized] RemotingProxy _sourceProxy;
+#endif
 
 		public ConstructionCall (IMessage m): base (m)
 		{
@@ -154,12 +156,13 @@ namespace System.Runtime.Remoting.Messaging
 		public override IDictionary Properties 
 		{
 			get { return base.Properties; }
-		}
-		
+		}	
+#if !MOONLIGHT
 		internal RemotingProxy SourceProxy
 		{
 			get { return _sourceProxy; }
 			set {_sourceProxy = value; }
 		}
+#endif
 	}
 }

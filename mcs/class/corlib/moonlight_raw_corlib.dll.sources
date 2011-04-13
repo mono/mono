@@ -796,7 +796,6 @@ System.Runtime.Remoting.Metadata/SoapParameterAttribute.cs
 System.Runtime.Remoting.Metadata/SoapTypeAttribute.cs
 System.Runtime.Remoting.Metadata/XmlFieldOrderOption.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
-System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
