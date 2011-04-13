@@ -90,6 +90,8 @@ namespace System.ServiceModel.Description
 namespace System.ServiceModel
 {
 	// introduced for silverlight sdk compatibility
+	internal interface IDuplexHelper { }
+
 	[FriendAccessAllowed ()]
 	internal class DiagnosticUtility
 	{
