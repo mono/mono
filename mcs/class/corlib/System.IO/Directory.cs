@@ -461,11 +461,9 @@ namespace System.IO
 			MonoIOError error;
 			if (!MonoIO.ExistsDirectory (wildpath, out error)) {
 				if (error == MonoIOError.ERROR_SUCCESS) {
-					MonoIOError file_error;
-					if (MonoIO.ExistsFile (wildpath, out file_error)) {
-						stop = true;
-						return wildpath;
-					}
+				 	MonoIOError file_error;
+				 	if (MonoIO.ExistsFile (wildpath, out file_error))
+						throw new IOException ("The directory name is invalid.");
 				}
 
 				if (error != MonoIOError.ERROR_PATH_NOT_FOUND)
