@@ -281,6 +281,9 @@ namespace Mono.CSharp {
 					// for an interface indexer).
 					//
 					if (op != Operation.Lookup) {
+						if (m.IsAccessor != method.method.IsAccessor)
+							continue;
+
 						// If `t != null', then this is an explicitly interface
 						// implementation and we can always clear the method.
 						// `need_proxy' is not null if we're implementing an

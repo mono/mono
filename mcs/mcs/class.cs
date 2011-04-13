@@ -1806,7 +1806,8 @@ namespace Mono.CSharp
 		{
 			if (!IsTopLevel) {
 				MemberSpec candidate;
-				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+				bool overrides = false;
+				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate, ref overrides);
 				if (conflict_symbol == null && candidate == null) {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
@@ -3045,7 +3046,8 @@ namespace Mono.CSharp
 				return true;
 
 			MemberSpec candidate;
-			var base_member = FindBaseMember (out candidate);
+			bool overrides = false;
+			var base_member = FindBaseMember (out candidate, ref overrides);
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (base_member == null) {
@@ -3071,6 +3073,22 @@ namespace Mono.CSharp
 					}
 
 					return false;
+				}
+
+				//
+				// Handles ambiguous overrides
+				//
+				if (candidate != null) {
+					Report.SymbolRelatedToPreviousError (candidate);
+					Report.SymbolRelatedToPreviousError (base_member);
+
+					// Get member definition for error reporting
+					var m1 = MemberCache.GetMember (base_member.DeclaringType.GetDefinition (), base_member);
+					var m2 = MemberCache.GetMember (candidate.DeclaringType.GetDefinition (), candidate);
+
+					Report.Error (462, Location,
+						"`{0}' cannot override inherited members `{1}' and `{2}' because they have the same signature when used in type `{3}'",
+						GetSignatureForError (), m1.GetSignatureForError (), m2.GetSignatureForError (), Parent.GetSignatureForError ());
 				}
 
 				if (!CheckOverrideAgainstBase (base_member))
@@ -3120,7 +3138,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (!IsInterface && base_member.IsAbstract && candidate == null) {
+				if (!IsInterface && base_member.IsAbstract && !overrides) {
 					Report.SymbolRelatedToPreviousError (base_member);
 					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
 						GetSignatureForError (), base_member.GetSignatureForError ());
@@ -3355,9 +3373,9 @@ namespace Mono.CSharp
 		/// <summary>
 		/// Gets base method and its return type
 		/// </summary>
-		protected virtual MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected virtual MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
-			return MemberCache.FindBaseMember (this, out bestCandidate);
+			return MemberCache.FindBaseMember (this, out bestCandidate, ref overrides);
 		}
 
 		//

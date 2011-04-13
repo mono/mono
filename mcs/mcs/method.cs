@@ -716,6 +716,12 @@ namespace Mono.CSharp {
 
 		#region IMethodData Members
 
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
+		}
+
 		public TypeSpec ReturnType {
 			get {
 				return MemberType;
@@ -1432,7 +1438,15 @@ namespace Mono.CSharp {
 		}
 
 		public override AttributeTargets AttributeTargets {
-			get { return AttributeTargets.Constructor; }
+			get {
+				return AttributeTargets.Constructor;
+			}
+		}
+
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
 		}
 
 		//
@@ -1621,7 +1635,7 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Is never override
 			bestCandidate = null;
@@ -1710,6 +1724,7 @@ namespace Mono.CSharp {
 		GenericMethod GenericMethod { get; }
 		ParametersCompiled ParameterInfo { get; }
 		MethodSpec Spec { get; }
+		bool IsAccessor { get; }
 
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
@@ -1801,7 +1816,7 @@ namespace Mono.CSharp {
 						}
 						return false;
 					}
-					if (implementing.IsAccessor && !(method is AbstractPropertyEventMethod)) {
+					if (implementing.IsAccessor && !method.IsAccessor) {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (683, method.Location, "`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
@@ -1809,8 +1824,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					if (implementing != null) {
-						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
-						if (prop_method == null) {
+						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (470, method.Location, "Method `{0}' cannot implement interface accessor `{1}'",
@@ -1822,15 +1836,13 @@ namespace Mono.CSharp {
 								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
 							} else {
-								PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
+								PropertyBase.PropertyMethod pm = method as PropertyBase.PropertyMethod;
 								if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
 									Report.SymbolRelatedToPreviousError (implementing);
 									Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
 										method.GetSignatureForError (), implementing.GetSignatureForError ());
 								}
 							}
-						} else if (!implementing.IsAccessor) {
-							implementing = null;
 						}
 					}
 				}
@@ -2135,6 +2147,12 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (this, ig, ReturnType);
+		}
+
+		public bool IsAccessor {
+			get {
+				return true;
+			}
 		}
 
 		public bool IsExcluded ()
@@ -2530,7 +2548,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Operator cannot be override
 			bestCandidate = null;

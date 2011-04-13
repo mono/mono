@@ -166,7 +166,8 @@ namespace Mono.CSharp
  				return false;
 
 			MemberSpec candidate;
-			var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+			bool overrides = false;
+			var conflict_symbol = MemberCache.FindBaseMember (this, out candidate, ref overrides);
 			if (conflict_symbol == null)
 				conflict_symbol = candidate;
 
