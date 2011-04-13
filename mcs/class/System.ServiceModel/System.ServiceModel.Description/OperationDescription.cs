@@ -59,6 +59,7 @@ namespace System.ServiceModel.Description
 			this.name = name;
 			contract = declaringContract;
 			is_initiating = true;
+			XmlName = new XmlName (name);
 		}
 
 		internal bool InOrdinalContract { get; set; }
@@ -134,6 +135,10 @@ namespace System.ServiceModel.Description
 		}
 
 		#region internal members for moonlight compatibility
+
+		internal XmlName XmlName {
+			get; private set;
+		}
 
 		internal object FormatterBehavior { get; set; }
 

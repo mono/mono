@@ -54,6 +54,7 @@ namespace System.ServiceModel.Description
 		{
 			this.name = name;
 			this.ns = ns;
+			XmlName = new XmlName (name);
 		}
 
 		public int Index {
@@ -102,6 +103,10 @@ namespace System.ServiceModel.Description
 #endif
 
 		#region internals required for moonlight compatibility
+
+		internal XmlName XmlName {
+			get; private set;
+		}
 
 		ICustomAttributeProvider additional_att_provider;
 
