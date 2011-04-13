@@ -68,15 +68,7 @@ namespace System.Diagnostics.Contracts
 
 		static void AssertMustUseRewriter (ContractFailureKind kind, string message)
 		{
-			if (Environment.UserInteractive) {
-				// FIXME: This should trigger an assertion.
-				// But code will never get here at the moment, as Environment.UserInteractive currently
-				// always returns false.
-				throw new ContractShouldAssertException (message);
-			} else {
-				// TODO: Note that FailFast() currently throws a NotImplementedException()
-				Environment.FailFast(message/*, new ExecutionEngineException()*/);
-			}
+			ContractHelper.TriggerFailure (kind, "Assembly must be re-written by the code contract rewritter", null, message, null);
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
