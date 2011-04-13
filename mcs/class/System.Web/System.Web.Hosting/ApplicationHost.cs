@@ -39,25 +39,22 @@ namespace System.Web.Hosting {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ApplicationHost {
-		internal static readonly string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
-		internal static string [] WebConfigFileNames = { "web.config", "Web.config", "Web.Config" };
-
+		const string DEFAULT_WEB_CONFIG_NAME = "web.config";
+		internal const string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
+		
 		ApplicationHost ()
 		{
 		}
 
-		static string FindWebConfig (string basedir)
+		internal static string FindWebConfig (string basedir)
 		{
-			string r = null;
-				
-			foreach (string s in WebConfigFileNames){
-				r = Path.Combine (basedir, s);
-
-				if (File.Exists (r))
-					return r;
-			}
-			// default: return the last one
-			return r;
+			if (String.IsNullOrEmpty (basedir) || File.Exists (basedir))
+				return null;
+			
+			string[] files = Directory.GetFileSystemEntries (basedir, "?eb.?onfig");
+			if (files == null || files.Length == 0)
+				return null;
+			return files [0];
 		}
 
 #if NET_2_0
@@ -167,7 +164,11 @@ namespace System.Web.Hosting {
 
 			setup.ApplicationBase = physicalDir;
 
-			setup.ConfigurationFile = FindWebConfig (physicalDir);
+			string webConfig = FindWebConfig (physicalDir);
+
+			if (webConfig == null)
+				webConfig = Path.Combine (physicalDir, DEFAULT_WEB_CONFIG_NAME);
+			setup.ConfigurationFile = webConfig;
 			setup.DisallowCodeDownload = true;
 
 			string[] bindirPath = new string [1] {
