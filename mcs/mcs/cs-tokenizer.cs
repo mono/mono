@@ -2649,6 +2649,9 @@ namespace Mono.CSharp
 			int c;
 			int pos = 0;
 			Location start_location = Location;
+			if (quoted)
+				start_location = start_location - 1;
+
 			while (true){
 				c = get_char ();
 				if (c == '"') {
@@ -2719,6 +2722,8 @@ namespace Mono.CSharp
 
 			int pos = 0;
 			int column = col;
+			if (quoted)
+				--column;
 
 			if (c == '\\') {
 				int surrogate;
