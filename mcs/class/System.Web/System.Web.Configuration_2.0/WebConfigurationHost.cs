@@ -318,11 +318,9 @@ namespace System.Web.Configuration
 			bool hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 
 			if (hosted) {
-				foreach (string fn in ApplicationHost.WebConfigFileNames) {
-					string file = Path.Combine (dir, fn);
-					if (File.Exists (file))
-						return file;
-				}
+				string file = ApplicationHost.FindWebConfig (dir);
+				if (file != null)
+					return file;
 			} else {
 				Assembly asm = Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly ();
 				string name = Path.GetFileName (asm.Location);
