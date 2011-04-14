@@ -317,11 +317,9 @@ namespace System.Web.Configuration
 			AppDomain domain = AppDomain.CurrentDomain;
 			bool hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 
-			if (hosted) {
-				string file = ApplicationHost.FindWebConfig (dir);
-				if (file != null)
-					return file;
-			} else {
+			if (hosted)
+				return ApplicationHost.FindWebConfig (dir);
+			else {
 				Assembly asm = Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly ();
 				string name = Path.GetFileName (asm.Location);
 				string[] fileNames = new string[] {name + ".config", name + ".Config"};
