@@ -49,7 +49,6 @@ public class CompareInfoTest
 		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare (null, null), "Compare two null references");
 		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", null), "Compare a string to a null reference");
 		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare (null, ""), "Compare a null reference to a string");
-		
 	}
 
 	// Culture-sensitive collation tests
@@ -977,9 +976,6 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
-	[Category ("NotDotNet")]
-#endif
 	public void IndexOfString ()
 	{
 		if (!doTest)
@@ -996,19 +992,16 @@ public class CompareInfoTest
 		AssertIndexOf ("#8", 0, "-ABC", "-", CompareOptions.None);
 		AssertIndexOf ("#9", 0, "--ABC", "--", CompareOptions.None);
 		AssertIndexOf ("#10", -1, "--ABC", "--", 1, 2, CompareOptions.None, invariant);
-// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
-		AssertIndexOf ("#11", 0, "AE", "\u00C6", CompareOptions.None);
+
 		// U+3007 is completely ignored character.
 		AssertIndexOf ("#12", 0, "\uff21\uff21", "\uff21", CompareOptions.None);
-// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
-		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+
 		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIndexOf ("#15", 0, "\uff21\uff21", "\u3007", CompareOptions.None);
 		AssertIndexOf ("#15-2", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
 		// target is "empty" (in culture-sensitive context).
 		AssertIndexOf ("#16", -1, String.Empty, "\u3007");
-// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
-		AssertIndexOf ("#17", 0, "A", "\u3007");
+
 		AssertIndexOf ("#18", 0, "ABC", "\u3007");
 
 		AssertIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
@@ -1016,6 +1009,22 @@ public class CompareInfoTest
 		Assert.AreEqual (0, new CultureInfo ("ja").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"), "#19ja");
 	}
 
+	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
+	public void IndexOfStringWeird ()
+	{
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
+		AssertIndexOf ("#11", 0, "AE", "\u00C6", CompareOptions.None);
+
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
+		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
+		AssertIndexOf ("#17", 0, "A", "\u3007");
+	}
+	
 	[Test]
 	public void IndexOfSpecialWeight ()
 	{
@@ -1042,9 +1051,6 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
-	[Category ("NotDotNet")]
-#endif
 	public void LastIndexOfString ()
 	{
 		if (!doTest)
@@ -1057,18 +1063,15 @@ public class CompareInfoTest
 		AssertLastIndexOf ("#5", 4, "ABCABC", "BC", CompareOptions.IgnoreCase);
 		AssertLastIndexOf ("#6", 4, "BBCBBC", "BC", CompareOptions.IgnoreCase);
 		AssertLastIndexOf ("#7", 1, "original", "rig", CompareOptions.None);
-// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
-		AssertLastIndexOf ("#8", 0, "\u00E6", "ae", CompareOptions.None);
+
 		AssertLastIndexOf ("#9", 0, "-ABC", "-", CompareOptions.None);
 		AssertLastIndexOf ("#10", 0, "--ABC", "--", CompareOptions.None);
 		AssertLastIndexOf ("#11", -1, "--ABC", "--", 2, 2, CompareOptions.None, invariant);
 		AssertLastIndexOf ("#12", -1, "--ABC", "--", 4, 2, CompareOptions.None, invariant);
-// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
-		AssertLastIndexOf ("#13", 0, "AE", "\u00C6", CompareOptions.None);
+
 		// U+3007 is completely ignored character.
 		AssertLastIndexOf ("#14", 1, "\uff21\uff21", "\uff21", CompareOptions.None);
-// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
-		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+
 		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#18", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
@@ -1078,6 +1081,25 @@ public class CompareInfoTest
 		// bug #80612
 		AssertLastIndexOf ("#20", 8, "/system/web", "w");
 		Assert.AreEqual (8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", "w"), "#20sv");
+
+		AssertLastIndexOf ("#21", 2, "foo", String.Empty);
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	public void LastIndexOfStringDotnetWeird ()
+	{
+		if (!doTest)
+			return;
+
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
+		AssertLastIndexOf ("#8", 0, "\u00E6", "ae", CompareOptions.None);
+
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
+		AssertLastIndexOf ("#13", 0, "AE", "\u00C6", CompareOptions.None);
+
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
+		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 	}
 
 	[Test]
@@ -1125,20 +1147,27 @@ public class CompareInfoTest
 	}
 
 	[Test]
-	// for bug #76702
 	public void NullCharacter ()
 	{
+		// for bug #76702
 		Assert.AreEqual (-1, "MONO".IndexOf ("\0\0\0"), "#1");
 		Assert.AreEqual (-1, "MONO".LastIndexOf ("\0\0\0"), "#2");
 		Assert.AreEqual (1, "MONO".CompareTo ("\0\0\0"), "#3");
+
+		// I don't really understand why they are so...
+		AssertIndexOf ("#4", 0, "\0\0", "\0");
+		AssertIndexOf ("#5", -1, "\0", "\0\0");
+		AssertIndexOf ("#6", -1, "foo", "\0");
+		AssertLastIndexOf ("#7", 1, "\0\0", "\0");
+		AssertLastIndexOf ("#8", -1, "\0", "\0\0");
+		AssertLastIndexOf ("#9", -1, "foo", "\0");
 	}
 
 	[Test]
-	[Category ("NotDotNet")]
-	// MS.NET treats it as equivalent, while in IndexOf() it does not match.
+	// LAMESPEC: MS.NET treats it as equivalent, while in IndexOf() it does not match.
 	public void NullCharacterWeird ()
 	{
-		Assert.AreEqual (-1, "MONO".CompareTo ("MONO\0\0\0"), "#4");
+		Assert.AreEqual (0, "MONO".CompareTo ("MONO\0\0\0"), "#4");
 	}
 
 #if NET_2_0

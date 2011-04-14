@@ -824,7 +824,7 @@ namespace System.Globalization
 
 			int valuelen=value.Length;
 			if(valuelen==0) {
-				return(0);
+				return(startIndex);
 			}
 
 			return(internal_index_switch (source, startIndex, count,

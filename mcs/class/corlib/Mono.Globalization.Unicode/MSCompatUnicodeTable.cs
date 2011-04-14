@@ -317,7 +317,7 @@ namespace Mono.Globalization.Unicode
 		public static bool IsIgnorable (int cp, byte flag)
 		{
 			if (cp == 0)
-				return false;
+				return true;
 			if ((flag & 1) != 0) {
 				UnicodeCategory uc = Char.GetUnicodeCategory ((char) cp);
 				// This check eliminates some extraneous code areas
