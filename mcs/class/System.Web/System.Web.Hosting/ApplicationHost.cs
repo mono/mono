@@ -41,7 +41,9 @@ namespace System.Web.Hosting {
 	public sealed class ApplicationHost {
 		const string DEFAULT_WEB_CONFIG_NAME = "web.config";
 		internal const string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
-		
+
+		static object create_dir = new object ();
+
 		ApplicationHost ()
 		{
 		}
@@ -56,10 +58,6 @@ namespace System.Web.Hosting {
 				return null;
 			return files [0];
 		}
-
-#if NET_2_0
-		static object create_dir = new object ();
-#endif
 
 		internal static bool ClearDynamicBaseDirectory (string directory)
 		{
@@ -105,30 +103,22 @@ namespace System.Web.Hosting {
 		
 		static bool CreateDirectory (string directory)
 		{
-#if NET_2_0
 			lock (create_dir) {
-#endif
 				if (!Directory.Exists (directory)) {
 					Directory.CreateDirectory (directory);
 					return false;
 				} else
 					return true;
-#if NET_2_0
 			}
-#endif
 		}
 
 		static string BuildPrivateBinPath (string physicalPath, string[] dirs)
 		{
-#if NET_2_0
 			int len = dirs.Length;
 			string[] ret = new string [len];
 			for (int i = 0; i < len; i++)
 				ret [i] = Path.Combine (physicalPath, dirs [i]);
 			return String.Join (";", ret);
-#else
-			return String.Join (";", dirs);
-#endif
 		}
 		
 		//
@@ -171,24 +161,14 @@ namespace System.Web.Hosting {
 			setup.ConfigurationFile = webConfig;
 			setup.DisallowCodeDownload = true;
 
-			string[] bindirPath = new string [1] {
-#if NET_2_0
-				Path.Combine (physicalDir, "bin")
-#else
-				"bin"
-#endif
-			};
+			string[] bindirPath = new string [1] { Path.Combine (physicalDir, "bin") };
 			string bindir;
 
 			foreach (string dir in HttpApplication.BinDirs) {
 				bindir = Path.Combine (physicalDir, dir);
 			
 				if (Directory.Exists (bindir)) {
-#if NET_2_0
 					bindirPath [0] = bindir;
-#else
-					bindirPath [0] = dir;
-#endif
 					break;
 				}
 			}
@@ -258,18 +238,13 @@ namespace System.Web.Hosting {
 			appdomain.SetData (".domainId", domain_id);
 			appdomain.SetData (".hostingVirtualPath", virtualDir);
 			appdomain.SetData (".hostingInstallDir", Path.GetDirectoryName (typeof (Object).Assembly.CodeBase));
-#if NET_2_0
 			appdomain.SetData ("DataDirectory", Path.Combine (physicalDir, "App_Data"));
-#endif
 			appdomain.SetData (MonoHostedDataKey, "yes");
-			
-#if NET_2_0
+
 			appdomain.DoCallBack (SetHostingEnvironment);
-#endif
 			return appdomain.CreateInstanceAndUnwrap (hostType.Module.Assembly.FullName, hostType.FullName);
 		}
 
-#if NET_2_0
 		static void SetHostingEnvironment ()
 		{
 			bool shadow_copy_enabled = true;
@@ -286,6 +261,5 @@ namespace System.Web.Hosting {
 			HostingEnvironment.IsHosted = true;
 			HostingEnvironment.SiteName = HostingEnvironment.ApplicationID;
 		}
-#endif
 	}
 }
