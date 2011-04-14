@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Text;
 using System.Xml;
 
 namespace System.Runtime.CompilerServices
@@ -50,6 +51,17 @@ namespace System.ServiceModel
 namespace System.ServiceModel.Channels
 {
 	public interface ITransportTokenAssertionProvider {}
+	public static class UrlUtility {
+		public static string UrlEncode (string s, Encoding e)
+		{
+			return s;
+		}
+
+		public static string UrlDecode (string s, Encoding e)
+		{
+			return s;
+		}
+	}
 }
 namespace System.ServiceModel.Channels.Http
 {
