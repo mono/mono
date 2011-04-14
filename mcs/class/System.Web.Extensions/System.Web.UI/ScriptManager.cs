@@ -47,6 +47,7 @@ using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Xml;
 using System.Collections.ObjectModel;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -237,8 +238,7 @@ namespace System.Web.UI
 				if (IsDeploymentRetail)
 					return false;
 
-				CompilationSection compilation = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-				if (!compilation.Debug && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
+				if (!RuntimeHelpers.DebuggingEnabled && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
 					return false;
 
 				if (ScriptMode == ScriptMode.Release)
@@ -402,7 +402,7 @@ namespace System.Web.UI
 			return GetCurrentInternal (page);
 		}
 
-		static ScriptManager GetCurrentInternal (Page page)
+		internal static ScriptManager GetCurrentInternal (Page page)
 		{
 			if (page == null)
 				return null;
@@ -1192,17 +1192,16 @@ namespace System.Web.UI
 
 		#endregion
 
-		internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
+		internal static void WriteCallbackException (ScriptManager current, TextWriter output, Exception ex, bool writeMessage)
+		{
 #if TARGET_DOTNET
 			if (ex is HttpUnhandledException)
 				ex = ex.InnerException;
 #endif
 			HttpException httpEx = ex as HttpException;
-			string message = AsyncPostBackErrorMessage;
+			string message = current != null ? current.AsyncPostBackErrorMessage : null;
 			if (String.IsNullOrEmpty (message) && writeMessage) {
-				HttpContext ctx = HttpContext.Current;
-				
-				if (IsDebuggingEnabled)
+				if ((current != null && current.IsDebuggingEnabled) || (current == null && RuntimeHelpers.DebuggingEnabled))
 					message = ex.ToString ();
 				else
 					message = ex.Message;

@@ -425,8 +425,11 @@ namespace System.Web
 				values.Add (ExceptionPageTemplate.Template_DetailsName, sb.ToString ());
 			}
 			
-			if (showTrace)
-				values.Add (ExceptionPageTemplate.Template_StackTraceName, HtmlEncode (baseEx.StackTrace.ToString ()));
+			if (showTrace) {
+				string stackTrace = baseEx.StackTrace;
+				if (!String.IsNullOrEmpty (stackTrace))
+					values.Add (ExceptionPageTemplate.Template_StackTraceName, HtmlEncode (stackTrace));
+			}
 		}
 		
 		static string HtmlEncode (string s)
