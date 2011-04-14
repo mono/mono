@@ -48,9 +48,9 @@ namespace System.Web.Hosting {
 
 		internal static string FindWebConfig (string basedir)
 		{
-			if (String.IsNullOrEmpty (basedir) || File.Exists (basedir))
+			if (String.IsNullOrEmpty (basedir) || !Directory.Exists (basedir))
 				return null;
-			
+
 			string[] files = Directory.GetFileSystemEntries (basedir, "?eb.?onfig");
 			if (files == null || files.Length == 0)
 				return null;
