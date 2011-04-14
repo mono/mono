@@ -2786,7 +2786,7 @@ namespace Mono.CSharp {
 			TypeSpec instance_type = InstanceExpression.Type;
 			if (TypeManager.IsValueType (instance_type)) {
 				if (InstanceExpression is IMemoryLocation) {
-					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
+					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.Load);
 				} else {
 					LocalTemporary t = new LocalTemporary (instance_type);
 					InstanceExpression.Emit (ec);

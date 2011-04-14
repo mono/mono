@@ -5318,7 +5318,7 @@ namespace Mono.CSharp
 						// it.
 						var iml = instance_expr as IMemoryLocation;
 						if (iml != null) {
-							iml.AddressOf (ec, AddressOp.LoadStore);
+							iml.AddressOf (ec, AddressOp.Load);
 						} else {
 							LocalTemporary temp = new LocalTemporary (iexpr_type);
 							instance_expr.Emit (ec);
@@ -8241,6 +8241,10 @@ namespace Mono.CSharp
 			var ac = (ArrayContainer) ea.Expr.Type;
 
 			LoadArrayAndArguments (ec);
+
+			if (ac.Element.IsGenericParameter && mode == AddressOp.Load)
+				ec.Emit (OpCodes.Readonly);
+
 			ec.EmitArrayAddress (ac);
 		}
 
