@@ -190,6 +190,7 @@ System.ServiceModel/ServiceEndpointCollectionTest.cs
 System.ServiceModel/ServiceEndpointTest.cs
 System.ServiceModel/ServiceHostBaseTest.cs
 System.ServiceModel/ServiceHostTest.cs
+System.ServiceModel/ServiceKnownTypeAttributeTest.cs
 System.ServiceModel/SynchronizedReadOnlyCollectionTest.cs
 System.ServiceModel/TransactionProtocolTest.cs
 System.ServiceModel/UriSchemeKeyedCollectionTest.cs
