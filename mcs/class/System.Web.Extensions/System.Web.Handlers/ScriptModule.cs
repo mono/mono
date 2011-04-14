@@ -88,7 +88,8 @@ namespace System.Web.Handlers
 			}
 		}
 
-		void PreSendRequestHeaders (object sender, EventArgs e) {
+		void PreSendRequestHeaders (object sender, EventArgs e)
+		{
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
@@ -97,23 +98,18 @@ namespace System.Web.Handlers
 				if (p == null && context.CurrentHandler is IServiceProvider)
 					p = (Page) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Page));
 #endif
-				if (p == null)
-					return;
-				ScriptManager sm = ScriptManager.GetCurrent (p);
-				if (sm == null)
-					return;
+				ScriptManager sm = ScriptManager.GetCurrentInternal (p);
 				if (context.Response.StatusCode == 302) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();
-					if (context.Error == null || sm.AllowCustomErrorsRedirect)
+					if (context.Error == null || (sm != null && sm.AllowCustomErrorsRedirect))
 						ScriptManager.WriteCallbackRedirect (context.Response.Output, context.Response.RedirectLocation);
 					else
-						sm.WriteCallbackException (context.Response.Output, context.Error, false);
-				}
-				else if (context.Error != null) {
+						ScriptManager.WriteCallbackException (sm, context.Response.Output, context.Error, false);
+				} else if (context.Error != null) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();
-					sm.WriteCallbackException (context.Response.Output, context.Error, true);
+					ScriptManager.WriteCallbackException (sm, context.Response.Output, context.Error, true);
 				}
 			}
 		}
