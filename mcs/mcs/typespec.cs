@@ -1169,7 +1169,7 @@ namespace Mono.CSharp
 				if (b_a == null)
 					return false;
 
-				return IsEqual (a_a.Element, b_a.Element) && a_a.Rank == b_a.Rank;
+				return a_a.Rank == b_a.Rank && IsEqual (a_a.Element, b_a.Element);
 			}
 
 			if (!a.IsGeneric || !b.IsGeneric) {

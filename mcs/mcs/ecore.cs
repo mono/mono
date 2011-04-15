@@ -3381,7 +3381,7 @@ namespace Mono.CSharp {
 				//
 				// With identical parameter lists
 				//
-				if (!TypeSpecComparer.Equals (p_m.Parameters.Types,q_m.Parameters.Types))
+				if (!TypeSpecComparer.Equals (p_m.Parameters.Types, q_m.Parameters.Types))
 					return 0;
 
 				p = p_m.ReturnType;

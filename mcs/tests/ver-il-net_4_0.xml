@@ -1868,13 +1868,16 @@
     </type>
     <type name="DynamicAssignments">
       <method name="Int32 Main()">
-        <size>130</size>
+        <size>158</size>
       </method>
       <method name="System.Object &lt;Main&gt;m__0(System.Object)">
         <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void Foo(IA`1)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -17288,6 +17291,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-558.cs">
+    <type name="A`1[T]">
+      <method name="Void Foo[U](U)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo[U](U)">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -28544,6 +28568,16 @@
       </method>
       <method name="Int32 Main()">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-variance-18.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>17</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
