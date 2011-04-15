@@ -17291,6 +17291,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-557.cs">
+    <type name="Test">
+      <method name="U[] Foo[T,U](T[])">
+        <size>2</size>
+      </method>
+      <method name="Void TestByRef[T]()">
+        <size>21</size>
+      </method>
+      <method name="Void PassByRef[T](T ByRef)">
+        <size>16</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-558.cs">
     <type name="A`1[T]">
       <method name="Void Foo[U](U)">
