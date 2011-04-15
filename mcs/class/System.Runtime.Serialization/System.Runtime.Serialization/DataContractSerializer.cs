@@ -231,7 +231,8 @@ namespace System.Runtime.Serialization
 			object [] attrs = elementType.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i ++) {
 				KnownTypeAttribute kt = (KnownTypeAttribute) attrs [i];
-				known_types.Add (kt.Type);
+				foreach (var t in kt.GetTypes (elementType))
+					known_types.Add (t);
 			}
 		}
 

@@ -869,7 +869,8 @@ namespace System.Runtime.Serialization
 			object [] attrs = type.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i++) {
 				KnownTypeAttribute kt = (KnownTypeAttribute) attrs [i];
-				TryRegister (kt.Type);
+				foreach (var t in kt.GetTypes (type))
+					TryRegister (t);
 			}
 
 			return ret;
