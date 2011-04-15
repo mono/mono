@@ -69,6 +69,11 @@ namespace System.ServiceModel
 #if !NET_2_1
 		static readonly TraceSource source = new TraceSource ("System.ServiceModel");
 		static readonly TraceSource message_source = new TraceSource ("System.ServiceModel.MessageLogging");
+
+		static Logger ()
+		{
+			message_source.Switch.Level = SourceLevels.Information;
+		}
 #endif
 
 		#region logger methods
