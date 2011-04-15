@@ -139,7 +139,7 @@ namespace System
 				return String.Empty;
 			
 			if (sb [0] == '/')
-				sb.Remove (0, 1);
+				return sb.ToString (1, sb.Length - 1);
 
 			return sb.ToString ();
 		}
