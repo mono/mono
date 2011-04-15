@@ -238,7 +238,7 @@ namespace System.ServiceModel.Channels
 				// TODO: unit test to make sure an empty response never throws
 				// an exception at this level
 				if (hrr.ContentLength == 0) {
-					ret = Message.CreateMessage (MessageVersion.Default, String.Empty);
+					ret = Message.CreateMessage (Encoder.MessageVersion, String.Empty);
 				} else {
 
 					using (var responseStream = resstr) {
