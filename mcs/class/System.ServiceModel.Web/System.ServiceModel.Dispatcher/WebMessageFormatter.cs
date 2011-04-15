@@ -169,7 +169,7 @@ namespace System.ServiceModel.Dispatcher
 				throw new ArgumentNullException ("messageVersion");
 
 			if (!MessageVersion.None.Equals (messageVersion))
-				throw new ArgumentException ("Only MessageVersion.None is supported");
+				throw new ArgumentException (String.Format ("Only MessageVersion.None is supported. {0} is not.", messageVersion));
 		}
 
 		protected MessageDescription GetMessageDescription (MessageDirection dir)
@@ -197,7 +197,7 @@ namespace System.ServiceModel.Dispatcher
 #endif
 				return json_serializer;
 			default:
-				throw new NotImplementedException ();
+				throw new NotImplementedException (msgfmt.ToString ());
 			}
 		}
 
@@ -358,6 +358,9 @@ namespace System.ServiceModel.Dispatcher
 				if (parameters == null)
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (message.Version);
+
+				if (message.IsEmpty)
+					return null; // empty message, could be returned by HttpReplyChannel.
 
 				string pname = WebBodyFormatMessageProperty.Name;
 				if (!message.Properties.ContainsKey (pname))
