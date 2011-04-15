@@ -94,6 +94,9 @@ namespace System.Xml.Serialization
 
 		object ReadEncodedObject (XmlTypeMapping typeMap)
 		{
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			object ob = null;
 			Reader.MoveToContent();
 			if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
@@ -108,10 +111,14 @@ namespace System.Xml.Serialization
 
 			ReadReferencedElements();
 			return ob;
+#endif
 		}
 
 		protected virtual object ReadMessage (XmlMembersMapping typeMap)
 		{
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			object[] parameters = new object[typeMap.Count];
 
 			if (typeMap.HasWrapperElement)
@@ -168,6 +175,7 @@ namespace System.Xml.Serialization
 				ReadReferencedElements();
 
 			return parameters;
+#endif
 		}
 
 		object ReadRoot (XmlTypeMapping rootMap)
@@ -271,6 +279,7 @@ namespace System.Xml.Serialization
 							nss.Add ("", Reader.Value);
 					}
 				}	
+#if !MOONLIGHT
 				else if (anyAttrMember != null) 
 				{
 					XmlAttribute attr = (XmlAttribute) Document.ReadNode(Reader);
@@ -279,13 +288,16 @@ namespace System.Xml.Serialization
 				}
 				else
 					ProcessUnknownAttribute(ob);
+#endif
 			}
 
+#if !MOONLIGHT
 			if (anyAttrMember != null)
 			{
 				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
 				SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 			}
+#endif
 			Reader.MoveToElement ();
 		}
 
@@ -494,9 +506,10 @@ namespace System.Xml.Serialization
 							SetMemberValue (mem, ob, GetValueFromXmlString (Reader.ReadString(), info.TypeData, info.MappedType), isValueList);
 					}
 				}
+#if !MOONLIGHT
 				else 
 					UnknownNode(ob);
-
+#endif
 				Reader.MoveToContent();
 			}
 
@@ -779,10 +792,14 @@ namespace System.Xml.Serialization
 		
 		object ReadXmlNode (TypeData type, bool wrapped)
 		{
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			if (type.Type == typeof (XmlDocument))
 				return ReadXmlDocument (wrapped);
 			else
 				return ReadXmlNode (wrapped);
+#endif
 		}
 
 		object ReadPrimitiveElement (XmlTypeMapping typeMap, bool isNullable)

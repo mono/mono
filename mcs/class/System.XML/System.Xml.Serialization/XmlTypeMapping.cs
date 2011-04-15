@@ -191,7 +191,7 @@ namespace System.Xml.Serialization
 	internal class XmlSerializableMapping : XmlTypeMapping
 	{
 		XmlSchema _schema;
-#if NET_2_0
+#if NET_2_0 && !MOONLIGHT
 		XmlSchemaComplexType _schemaType;
 		XmlQualifiedName _schemaTypeName;
 #endif
@@ -199,7 +199,7 @@ namespace System.Xml.Serialization
 		internal XmlSerializableMapping(XmlRootAttribute root, string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
 			: base(elementName, ns, typeData, xmlType, xmlTypeNamespace)
 		{
-#if NET_2_0
+#if NET_2_0 && !MOONLIGHT
 			XmlSchemaProviderAttribute schemaProvider = (XmlSchemaProviderAttribute) Attribute.GetCustomAttribute (typeData.Type, typeof (XmlSchemaProviderAttribute));
 
 			if (schemaProvider != null) {
@@ -247,7 +247,7 @@ namespace System.Xml.Serialization
 			}
 #endif
 			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
-#if NET_2_0
+#if NET_2_0 && !MOONLIGHT
 			try {
 				_schema = serializable.GetSchema();
 			} catch (Exception) {
@@ -256,11 +256,13 @@ namespace System.Xml.Serialization
 #else
 			_schema = serializable.GetSchema();
 #endif
+#if !MOONLIGHT
 			if (_schema != null) 
 			{
 				if (_schema.Id == null || _schema.Id.Length == 0) 
 					throw new InvalidOperationException("Schema Id is missing. The schema returned from " + typeData.Type.FullName + ".GetSchema() must have an Id.");
 			}
+#endif
 		}
 
 		internal XmlSchema Schema
@@ -268,7 +270,7 @@ namespace System.Xml.Serialization
 			get { return _schema; }
 		}
 
-#if NET_2_0
+#if NET_2_0 && !MOONLIGHT
 		internal XmlSchemaType SchemaType {
 			get { return _schemaType; }
 		}

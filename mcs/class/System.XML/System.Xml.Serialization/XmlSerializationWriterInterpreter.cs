@@ -107,12 +107,14 @@ namespace System.Xml.Serialization
 				return;
 			}
 
+#if !MOONLIGHT
 			if (ob is XmlNode)
 			{
 				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, false);
 				else WriteElementEncoded((XmlNode)ob, "", "", true, false);
 				return;
 			}
+#endif
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
@@ -124,6 +126,7 @@ namespace System.Xml.Serialization
 
 			if (map == null) 
 			{
+#if !MOONLIGHT
 				// bug #81539
 				if (ob.GetType ().IsArray && typeof (XmlNode).IsAssignableFrom (ob.GetType ().GetElementType ())) {
 					Writer.WriteStartElement (element, namesp);
@@ -132,6 +135,7 @@ namespace System.Xml.Serialization
 					Writer.WriteEndElement ();
 				}
 				else
+#endif
 					WriteTypedPrimitive (element, namesp, ob, true);
 				return;
 			}
@@ -209,6 +213,7 @@ namespace System.Xml.Serialization
 			// Write attributes
 
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+#if !MOONLIGHT
 			if (anyAttrMember != null && MemberHasValue (anyAttrMember, ob, isValueList))
 			{
 				ICollection extraAtts = (ICollection) GetMemberValue (anyAttrMember, ob, isValueList);
@@ -219,6 +224,7 @@ namespace System.Xml.Serialization
 							WriteXmlAttribute (attr, ob);
 				}
 			}
+#endif
 
 			ICollection attributes = map.AttributeMembers;
 			if (attributes != null)
@@ -303,10 +309,14 @@ namespace System.Xml.Serialization
 			switch (elem.TypeData.SchemaType)
 			{
 				case SchemaTypes.XmlNode:
+#if MOONLIGHT
+					throw new NotSupportedException ();
+#else
 					string elemName = elem.WrappedElement ? elem.ElementName : "";
 					if (_format == SerializationFormat.Literal) WriteElementLiteral(((XmlNode)memberValue), elemName, elem.Namespace, elem.IsNullable, false);
 					else WriteElementEncoded(((XmlNode)memberValue), elemName, elem.Namespace, elem.IsNullable, false);
 					break;
+#endif
 
 				case SchemaTypes.Enum:
 				case SchemaTypes.Primitive:
@@ -468,6 +478,9 @@ namespace System.Xml.Serialization
 
 		void WriteAnyElementContent (XmlTypeMapMemberAnyElement member, object memberValue)
 		{
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			if (member.TypeData.Type == typeof (XmlElement)) {
 				memberValue = new object[] { memberValue };
 			}
@@ -491,6 +504,7 @@ namespace System.Xml.Serialization
 				else
 					elem.WriteTo (Writer);
 			}
+#endif
 		}
 
 		protected virtual void WritePrimitiveElement (XmlTypeMapping typeMap, object ob, string element, string namesp)

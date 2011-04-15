@@ -37,7 +37,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
-#if !TARGET_JVM && !MOBILE
+#if !TARGET_JVM && !NET_2_1
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -150,7 +150,7 @@ namespace System.Xml.Serialization
 			}
 #endif
 			deleteTempFiles = (db == null || db == "no");
-#if !MOBILE
+#if !NET_2_1
 			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
 			if (table != null) 
 			{
@@ -249,11 +249,11 @@ namespace System.Xml.Serialization
 #endregion // Constructors
 
 #region Events
-
+		private UnreferencedObjectEventHandler onUnreferencedObject;
+#if !MOONLIGHT
 		private XmlAttributeEventHandler onUnknownAttribute;
 		private XmlElementEventHandler onUnknownElement;
 		private XmlNodeEventHandler onUnknownNode;
-		private UnreferencedObjectEventHandler onUnreferencedObject;
 
 		public event XmlAttributeEventHandler UnknownAttribute 
 		{
@@ -268,11 +268,6 @@ namespace System.Xml.Serialization
 		public event XmlNodeEventHandler UnknownNode 
 		{
 			add { onUnknownNode += value; } remove { onUnknownNode -= value; }
-		}
-
-		public event UnreferencedObjectEventHandler UnreferencedObject 
-		{
-			add { onUnreferencedObject += value; } remove { onUnreferencedObject -= value; }
 		}
 
 
@@ -291,11 +286,17 @@ namespace System.Xml.Serialization
 			if (onUnknownNode != null) onUnknownNode(this, e);
 		}
 
+#endif
+
 		internal virtual void OnUnreferencedObject (UnreferencedObjectEventArgs e) 
 		{
 			if (onUnreferencedObject != null) onUnreferencedObject(this, e);
 		}
 
+		public event UnreferencedObjectEventHandler UnreferencedObject 
+		{
+			add { onUnreferencedObject += value; } remove { onUnreferencedObject -= value; }
+		}
 
 #endregion // Events
 
@@ -491,7 +492,7 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-#if NET_2_0
+#if !NET_2_1
 		
 		[MonoTODO]
 		public object Deserialize (XmlReader xmlReader, string encodingStyle, XmlDeserializationEvents events)
@@ -582,6 +583,7 @@ namespace System.Xml.Serialization
 				}
 			}
 			
+#if !NET_2_1
 			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
 				return new XmlSerializationWriterInterpreter (typeMapping);
 
@@ -596,11 +598,13 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException ("Error while generating serializer");
 			}
 			
+#endif
 			return new XmlSerializationWriterInterpreter (typeMapping);
 		}
 		
 		XmlSerializationReader CreateReader (XmlMapping typeMapping)
 		{
+#if !NET_2_1
 			XmlSerializationReader reader;
 			
 			lock (this) {
@@ -625,11 +629,12 @@ namespace System.Xml.Serialization
 				if (!generatorFallback)
 					throw new InvalidOperationException ("Error while generating serializer");
 			}
-			
+
+#endif
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
-#if TARGET_JVM || MOBILE
+#if TARGET_JVM || NET_2_1
  		void CheckGeneratedTypes (XmlMapping typeMapping)
  		{
 			throw new NotImplementedException();

@@ -98,16 +98,20 @@ namespace System.Xml.Serialization
 			nameCache.Add (typeof (decimal), new TypeData (typeof (decimal), "decimal", true));
 			nameCache.Add (typeof (XmlQualifiedName), new TypeData (typeof (XmlQualifiedName), "QName", true));
 			nameCache.Add (typeof (string), new TypeData (typeof (string), "string", true));
+#if !MOONLIGHT
 			XmlSchemaPatternFacet guidFacet = new XmlSchemaPatternFacet();
 			guidFacet.Value = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 			nameCache.Add (typeof (Guid), new TypeData (typeof (Guid), "guid", true, (TypeData)nameCache[typeof (string)], guidFacet));
+#endif
 			nameCache.Add (typeof (byte), new TypeData (typeof (byte), "unsignedByte", true));
 			nameCache.Add (typeof (sbyte), new TypeData (typeof (sbyte), "byte", true));
 			nameCache.Add (typeof (char), new TypeData (typeof (char), "char", true, (TypeData)nameCache[typeof (ushort)], null));
 			nameCache.Add (typeof (object), new TypeData (typeof (object), "anyType", false));
 			nameCache.Add (typeof (byte[]), new TypeData (typeof (byte[]), "base64Binary", true));
+#if !MOONLIGHT
 			nameCache.Add (typeof (XmlNode), new TypeData (typeof (XmlNode), "XmlNode", false));
 			nameCache.Add (typeof (XmlElement), new TypeData (typeof (XmlElement), "XmlElement", false));
+#endif
 
 			primitiveTypes = new Hashtable();
 			ICollection types = nameCache.Values;

@@ -161,8 +161,10 @@ namespace System.Xml.Serialization {
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+#if !NET_2_1
 			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, extraTypes);
 			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
+#endif
 			return mps;
 		}
 
@@ -230,8 +232,10 @@ namespace System.Xml.Serialization {
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
+#if !NET_2_1
 				map.Source = new XmlTypeSerializationSource (typeData.Type, root, attributeOverrides, defaultNamespace, extraTypes);
 				if (allowPrivateTypes) map.Source.CanBeGenerated = false;
+#endif
 				return map;
 			} catch (InvalidOperationException ex) {
 				throw new InvalidOperationException (string.Format (CultureInfo.InvariantCulture,
@@ -397,8 +401,10 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mem = classMap.XmlTextCollector;
 				if (mem.TypeData.Type != typeof(string) && 
 				   mem.TypeData.Type != typeof(string[]) && 
-				   mem.TypeData.Type != typeof(object[]) && 
-				   mem.TypeData.Type != typeof(XmlNode[]))
+#if !MOONLIGHT
+				   mem.TypeData.Type != typeof(XmlNode[]) && 
+#endif
+				   mem.TypeData.Type != typeof(object[]))
 				   
 					throw new InvalidOperationException (String.Format (errSimple2, map.TypeData.TypeName, mem.Name, mem.TypeData.TypeName));
 			}
@@ -796,6 +802,7 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("XmlArrayAttribute can be applied to members of array or collection type.");
 			}
 
+#if !MOONLIGHT
 			if (atts.XmlAnyAttribute != null)
 			{
 				if ( (rmember.MemberType.FullName == "System.Xml.XmlAttribute[]") ||
@@ -806,7 +813,9 @@ namespace System.Xml.Serialization {
 				else
 					throw new InvalidOperationException ("XmlAnyAttributeAttribute can only be applied to members of type XmlAttribute[] or XmlNode[]");
 			}
-			else if (atts.XmlAnyElements != null && atts.XmlAnyElements.Count > 0)
+			else
+#endif
+			if (atts.XmlAnyElements != null && atts.XmlAnyElements.Count > 0)
 			{
 				// no XmlNode type check is done here (seealso: bug #553032).
 				XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement();
@@ -1023,6 +1032,7 @@ namespace System.Xml.Serialization {
 
 			ImportTextElementInfo (list, rmember.MemberType, member, atts, defaultNamespace);
 
+#if !MOONLIGHT // no practical anyElement support
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
@@ -1040,6 +1050,7 @@ namespace System.Xml.Serialization {
 				}
 				list.Add (elem);
 			}
+#endif
 			return list;
 		}
 
@@ -1055,7 +1066,9 @@ namespace System.Xml.Serialization {
 					}
 					defaultType = atts.XmlText.Type;
 				}
+#if !MOONLIGHT
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
+#endif
 
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
 

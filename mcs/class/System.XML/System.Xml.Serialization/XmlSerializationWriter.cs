@@ -297,6 +297,7 @@ namespace System.Xml.Serialization
 			Writer.WriteAttributeString (prefix, localName, ns, value);
 		}
 
+#if !MOONLIGHT
 		void WriteXmlNode (XmlNode node)
 		{
 			if (node is XmlDocument)
@@ -344,6 +345,7 @@ namespace System.Xml.Serialization
 			else
 				WriteXmlNode (node);
 		}
+#endif
 
 		protected void WriteElementQualifiedName (string localName, XmlQualifiedName value)
 		{
@@ -910,6 +912,7 @@ namespace System.Xml.Serialization
 				Writer.WriteString (value);
 		}
 
+#if !MOONLIGHT
 		protected void WriteXmlAttribute (XmlNode node)
 		{
 			WriteXmlAttribute (node, null);
@@ -935,6 +938,7 @@ namespace System.Xml.Serialization
 			
 			WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, attr.Value);
 		}
+#endif
 
 		protected void WriteXsiType (string name, string ns)
 		{
