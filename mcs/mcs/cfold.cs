@@ -919,7 +919,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Equality:
-				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (rt) ||
+				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
 					(left is Nullable.LiftedNull && right.IsNull) ||
 					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
@@ -963,7 +963,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
-				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (rt) ||
+				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
 					(left is Nullable.LiftedNull && right.IsNull) ||
 					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {

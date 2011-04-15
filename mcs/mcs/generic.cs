@@ -745,7 +745,7 @@ namespace Mono.CSharp {
 		//
 		// Returns whether the type parameter is known to be a reference type
 		//
-		public bool IsReferenceType {
+		public new bool IsReferenceType {
 			get {
 				if ((spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0)
 					return (spec & SpecialConstraint.Class) != 0;
@@ -753,7 +753,7 @@ namespace Mono.CSharp {
 				//
 				// Full check is needed (see IsValueType for details)
 				//
-				if (HasTypeConstraint && TypeManager.IsReferenceType (BaseType))
+				if (HasTypeConstraint && TypeSpec.IsReferenceType (BaseType))
 					return true;
 
 				if (targs != null) {
@@ -765,7 +765,7 @@ namespace Mono.CSharp {
 						if (tp != null && (tp.spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0)
 							continue;
 
-						if (TypeManager.IsReferenceType (ta))
+						if (TypeSpec.IsReferenceType (ta))
 							return true;
 					}
 				}
@@ -777,7 +777,7 @@ namespace Mono.CSharp {
 		//
 		// Returns whether the type parameter is known to be a value type
 		//
-		public bool IsValueType {
+		public new bool IsValueType {
 			get {
 				//
 				// Even if structs/enums cannot be used directly as constraints
@@ -788,7 +788,7 @@ namespace Mono.CSharp {
 				// class A : B<int> { override void Foo<U> () {} }
 				// class B<T> { virtual void Foo<U> () where U : T {} }
 				//
-				return HasSpecialStruct || TypeManager.IsValueType (BaseType);
+				return HasSpecialStruct || TypeSpec.IsValueType (BaseType);
 			}
 		}
 
@@ -2148,7 +2148,7 @@ namespace Mono.CSharp {
 			//
 			// First, check the `class' and `struct' constraints.
 			//
-			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
+			if (tparam.HasSpecialClass && !TypeSpec.IsReferenceType (atype)) {
 				if (mc != null) {
 					mc.Module.Compiler.Report.Error (452, loc,
 						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
@@ -2158,7 +2158,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || atype.IsNullableType)) {
+			if (tparam.HasSpecialStruct && (!TypeSpec.IsValueType (atype) || atype.IsNullableType)) {
 				if (mc != null) {
 					mc.Module.Compiler.Report.Error (453, loc,
 						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
@@ -2280,7 +2280,7 @@ namespace Mono.CSharp {
 			if (atype.IsGenericParameter) {
 				if (atype == ttype || Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
 					return true;
-			} else if (TypeManager.IsValueType (atype)) {
+			} else if (TypeSpec.IsValueType (atype)) {
 				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			} else {
@@ -2303,7 +2303,7 @@ namespace Mono.CSharp {
 					mc.Module.Compiler.Report.Error (314, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
-				} else if (TypeManager.IsValueType (atype)) {
+				} else if (TypeSpec.IsValueType (atype)) {
 					mc.Module.Compiler.Report.Error (315, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
@@ -2582,7 +2582,7 @@ namespace Mono.CSharp {
 				if (a.Expr.Type == InternalType.NullLiteral)
 					continue;
 
-				if (TypeManager.IsValueType (method_parameter)) {
+				if (TypeSpec.IsValueType (method_parameter)) {
 					score -= tic.LowerBoundInference (a.Type, method_parameter);
 					continue;
 				}
@@ -3135,7 +3135,7 @@ namespace Mono.CSharp {
 					if (u_ac.Rank != v_ac.Rank)
 						return 0;
 
-					if (TypeManager.IsValueType (u_ac.Element))
+					if (TypeSpec.IsValueType (u_ac.Element))
 						return ExactInference (u_ac.Element, v_ac.Element);
 
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
@@ -3145,7 +3145,7 @@ namespace Mono.CSharp {
 					return 0;
 
 				var v_i = TypeManager.GetTypeArguments (v) [0];
-				if (TypeManager.IsValueType (u_ac.Element))
+				if (TypeSpec.IsValueType (u_ac.Element))
 					return ExactInference (u_ac.Element, v_i);
 
 				return LowerBoundInference (u_ac.Element, v_i);
@@ -3225,7 +3225,7 @@ namespace Mono.CSharp {
 						Variance variance = ga_open_v [i].Variance;
 
 						TypeSpec u_i = unique_candidate_targs [i];
-						if (variance == Variance.None || TypeManager.IsValueType (u_i)) {
+						if (variance == Variance.None || TypeSpec.IsValueType (u_i)) {
 							if (ExactInference (u_i, ga_v [i]) == 0)
 								++score;
 						} else {

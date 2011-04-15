@@ -506,7 +506,7 @@ namespace Mono.CSharp {
 			if (emg != null) {
 				method_group.InstanceExpression = emg.ExtensionExpression;
 				TypeSpec e_type = emg.ExtensionExpression.Type;
-				if (TypeManager.IsValueType (e_type)) {
+				if (TypeSpec.IsValueType (e_type)) {
 					ec.Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
 						delegate_method.GetSignatureForError (), TypeManager.CSharpName (e_type));
 				}
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 			}
 
 			var expr = method_group.InstanceExpression;
-			if (expr != null && (expr.Type.IsGenericParameter || !TypeManager.IsReferenceType (expr.Type)))
+			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type)))
 				method_group.InstanceExpression = new BoxedCast (expr, ec.BuiltinTypes.Object);
 
 			eclass = ExprClass.Value;

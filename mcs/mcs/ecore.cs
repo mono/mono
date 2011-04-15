@@ -2772,7 +2772,7 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			if (left != null && left.IsNull && TypeManager.IsReferenceType (left.Type)) {
+			if (left != null && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
 				ec.Report.Warning (1720, 1, left.Location,
 					"Expression will always cause a `{0}'", "System.NullReferenceException");
 			}
@@ -2784,7 +2784,7 @@ namespace Mono.CSharp {
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
 		{
 			TypeSpec instance_type = InstanceExpression.Type;
-			if (TypeManager.IsValueType (instance_type)) {
+			if (TypeSpec.IsValueType (instance_type)) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.Load);
 				} else {
@@ -2797,7 +2797,7 @@ namespace Mono.CSharp {
 				InstanceExpression.Emit (ec);
 
 				// Only to make verifier happy
-				if (instance_type.IsGenericParameter && !(InstanceExpression is This) && TypeManager.IsReferenceType (instance_type))
+				if (instance_type.IsGenericParameter && !(InstanceExpression is This) && TypeSpec.IsReferenceType (instance_type))
 					ec.Emit (OpCodes.Box, instance_type);
 			}
 
@@ -4795,7 +4795,7 @@ namespace Mono.CSharp {
 		public bool IsMarshalByRefAccess (ResolveContext rc)
 		{
 			// Checks possible ldflda of field access expression
-			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) && !(InstanceExpression is This) &&
+			return !spec.IsStatic && TypeSpec.IsValueType (spec.MemberType) && !(InstanceExpression is This) &&
 				rc.Module.PredefinedTypes.MarshalByRefObject.Define () &&
 				TypeSpec.IsBaseClass (spec.DeclaringType, rc.Module.PredefinedTypes.MarshalByRefObject.TypeSpec, false);
 		}

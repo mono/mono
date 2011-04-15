@@ -1418,7 +1418,7 @@ namespace Mono.CSharp {
 
 			c = c.ConvertImplicitly (li.Type);
 			if (c == null) {
-				if (TypeManager.IsReferenceType (li.Type))
+				if (TypeSpec.IsReferenceType (li.Type))
 					initializer.Error_ConstantCanBeInitializedWithNullOnly (bc, li.Type, initializer.Location, li.Name);
 				else
 					initializer.Error_ValueCannotBeConverted (bc, initializer.Location, li.Type, false);
@@ -4031,7 +4031,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!TypeManager.IsReferenceType (expr.Type)){
+			if (!TypeSpec.IsReferenceType (expr.Type)) {
 				ec.Report.Error (185, loc,
 					"`{0}' is not a reference type as required by the lock statement",
 					expr.Type.GetSignatureForError ());
@@ -5532,7 +5532,7 @@ namespace Mono.CSharp {
 				// Add Dispose method call when enumerator can be IDisposable
 				//
 				if (!enum_type.ImplementsInterface (ec.BuiltinTypes.IDisposable, false)) {
-					if (!enum_type.IsSealed && !TypeManager.IsValueType (enum_type)) {
+					if (!enum_type.IsSealed && !TypeSpec.IsValueType (enum_type)) {
 						//
 						// Runtime Dispose check
 						//

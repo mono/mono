@@ -479,7 +479,7 @@ namespace Mono.CSharp
 					if (!is_params && p.IsOptional) {
 						object value = p.RawDefaultValue;
 						var ptype = types[i];
-						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
+						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeSpec.IsReferenceType (ptype))) {
 							if (value == null) {
 								default_value = Constant.CreateConstant (ptype, null, Location.Null);
 							} else {

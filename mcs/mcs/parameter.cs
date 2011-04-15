@@ -430,7 +430,7 @@ namespace Mono.CSharp {
 				}
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
-					(default_expr is NullConstant && TypeManager.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
+					(default_expr is NullConstant && TypeSpec.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
 					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return;
 				}
@@ -1259,7 +1259,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
+				if (!expr.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
 						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
 						p.Name, parameter_type.GetSignatureForError ());

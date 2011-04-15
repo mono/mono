@@ -413,7 +413,7 @@ namespace Mono.CSharp.Nullable
 					return null;
 
 				null_value = LiftedNull.Create (type, loc);
-			} else if (TypeManager.IsValueType (type)) {
+			} else if (TypeSpec.IsValueType (type)) {
 				null_value = LiftedNull.Create (type, loc);
 			} else {
 				null_value = new NullConstant (type, loc);
@@ -992,7 +992,7 @@ namespace Mono.CSharp.Nullable
 			// Lift the result in the case it can be null and predefined or user operator
 			// result type is of a value type
 			//
-			if (!TypeManager.IsValueType (expr.Type))
+			if (!TypeSpec.IsValueType (expr.Type))
 				return null;
 
 			if (state != orig_state)
@@ -1087,7 +1087,7 @@ namespace Mono.CSharp.Nullable
 					type = ltype;
 					return this;
 				}
-			} else if (TypeManager.IsReferenceType (ltype)) {
+			} else if (TypeSpec.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
 					// If right is a dynamic expression, the result type is dynamic

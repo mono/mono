@@ -261,7 +261,7 @@ namespace Mono.CSharp {
 					// to ImplicitReferenceConversionExists
 					//
 					TypeSpec expr_element_type = expr_type_array.Element;
-					if (!TypeManager.IsReferenceType (expr_element_type))
+					if (!TypeSpec.IsReferenceType (expr_element_type))
 						return false;
 
 					//
@@ -333,7 +333,7 @@ namespace Mono.CSharp {
 				if (target_type.Kind == MemberKind.InternalCompilerType)
 					return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
-				return TypeManager.IsReferenceType (target_type);
+				return TypeSpec.IsReferenceType (target_type);
 			}
 
 			return false;
@@ -354,7 +354,7 @@ namespace Mono.CSharp {
 				//
 				// No ned to check for nullable type as underlying type is always convertible
 				//
-				if (!TypeManager.IsValueType (expr_type))
+				if (!TypeSpec.IsValueType (expr_type))
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
@@ -374,7 +374,7 @@ namespace Mono.CSharp {
 			// the underlying type to the reference type
 			//
 			if (expr_type.IsNullableType) {
-				if (!TypeManager.IsReferenceType (target_type))
+				if (!TypeSpec.IsReferenceType (target_type))
 					return null;
 
 				var res = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
@@ -391,7 +391,7 @@ namespace Mono.CSharp {
 			// A value type has a boxing conversion to an interface type I if it has a boxing conversion
 			// to an interface or delegate type I0 and I0 is variance-convertible to I
 			//
-			if (target_type.IsInterface && TypeManager.IsValueType (expr_type) && expr_type.ImplementsInterface (target_type, true)) {
+			if (target_type.IsInterface && TypeSpec.IsValueType (expr_type) && expr_type.ImplementsInterface (target_type, true)) {
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
 			}
 
@@ -1062,7 +1062,7 @@ namespace Mono.CSharp {
 
 			if (source_type.IsNullableType) {
 				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !target_type.IsNullableType)
+				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType)
 					return null;
 
 				source_type_expr = Nullable.Unwrap.Create (source);
@@ -1200,7 +1200,7 @@ namespace Mono.CSharp {
 			// Source expression is of nullable type, lift the result in the case it's null and
 			// not nullable/lifted user operator is used
 			//
-			if (source_type_expr is Nullable.Unwrap && !s_x.IsNullableType && (TypeManager.IsReferenceType (target) || target_type != target))
+			if (source_type_expr is Nullable.Unwrap && !s_x.IsNullableType && (TypeSpec.IsReferenceType (target) || target_type != target))
 				source = new Nullable.Lifted (source, source_type_expr, target).Resolve (ec);
 			else if (target_type != target)
 				source = Nullable.Wrap.Create (source, target);
@@ -1829,11 +1829,11 @@ namespace Mono.CSharp {
 					if (source_array.Rank == target_array.Rank) {
 
 						source_type = source_array.Element;
-						if (!TypeManager.IsReferenceType (source_type))
+						if (!TypeSpec.IsReferenceType (source_type))
 							return null;
 
 						var target_element = target_array.Element;
-						if (!TypeManager.IsReferenceType (target_element))
+						if (!TypeSpec.IsReferenceType (target_element))
 							return null;
 
 						if (ExplicitReferenceConversionExists (source_type, target_element))
@@ -1896,7 +1896,7 @@ namespace Mono.CSharp {
 						//
 						//If TP is contravariant, both are either identical or reference types
 						//
-						if (TypeManager.IsReferenceType (targs_src[i]) && TypeManager.IsReferenceType (targs_dst[i]))
+						if (TypeSpec.IsReferenceType (targs_src[i]) && TypeSpec.IsReferenceType (targs_dst[i]))
 							continue;
 					}
 

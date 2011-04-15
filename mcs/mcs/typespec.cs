@@ -516,6 +516,37 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public static bool IsReferenceType (TypeSpec t)
+		{
+			switch (t.Kind) {
+			case MemberKind.TypeParameter:
+				return ((TypeParameterSpec) t).IsReferenceType;
+			case MemberKind.Struct:
+			case MemberKind.Enum:
+				return false;
+			case MemberKind.InternalCompilerType:
+				//
+				// Null is considered to be a reference type
+				//			
+				return t == InternalType.NullLiteral || t.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			default:
+				return true;
+			}
+		}
+
+		public static bool IsValueType (TypeSpec t)
+		{
+			switch (t.Kind) {
+			case MemberKind.TypeParameter:
+				return ((TypeParameterSpec) t).IsValueType;
+			case MemberKind.Struct:
+			case MemberKind.Enum:
+				return true;
+			default:
+				return false;
+			}
+		}
+
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var targs = IsGeneric ? MemberDefinition.TypeParameters : TypeSpec.EmptyTypes;
@@ -664,8 +695,6 @@ namespace Mono.CSharp
 			Exception,
 			Attribute,
 			Other,
-
-			Null,
 		}
 
 		readonly Type type;

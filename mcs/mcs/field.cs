@@ -570,9 +570,6 @@ namespace Mono.CSharp
 
 		bool CanBeVolatile ()
 		{
-			if (TypeManager.IsReferenceType (MemberType))
-				return true;
-
 			switch (MemberType.BuiltinType) {
 			case BuiltinTypeSpec.Type.Bool:
 			case BuiltinTypeSpec.Type.Char:
@@ -587,6 +584,9 @@ namespace Mono.CSharp
 			case BuiltinTypeSpec.Type.IntPtr:
 				return true;
 			}
+
+			if (TypeSpec.IsReferenceType (MemberType))
+				return true;
 
 			if (MemberType.IsEnum)
 				return true;
