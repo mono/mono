@@ -70,7 +70,7 @@ namespace System.ServiceModel.Channels.Http
 
 		public object ServiceHostKey { get; private set; }
 
-		public HttpListenerManager GetOrCreateManager (Uri uri)
+		public HttpListenerManager GetOrCreateManager (Uri uri, HttpTransportBindingElement element)
 		{
 			var m = listeners.FirstOrDefault (p => p.Key.Equals (uri)).Value;
 			if (m == null) {
@@ -78,7 +78,7 @@ namespace System.ServiceModel.Channels.Http
 				string absolutePath = uri.AbsolutePath;
 				if (absolutePath.EndsWith ("/js", StringComparison.Ordinal) ||
 				    absolutePath.EndsWith ("/jsdebug", StringComparison.Ordinal))
-					return CreateListenerManager (uri);
+					return CreateListenerManager (uri, element);
 				
 				// Try without the query, if any
 				UriBuilder ub = null;
@@ -110,19 +110,19 @@ namespace System.ServiceModel.Channels.Http
 			}
 			
 			if (m == null)
-				return CreateListenerManager (uri);
+				return CreateListenerManager (uri, element);
 			
 			return m;
 		}
 
-		HttpListenerManager CreateListenerManager (Uri uri)
+		HttpListenerManager CreateListenerManager (Uri uri, HttpTransportBindingElement element)
 		{
 			HttpListenerManager m;
 			
 			if (ServiceHostingEnvironment.InAspNet)
 				m = new AspNetHttpListenerManager (uri);
 			else
-				m = new HttpStandaloneListenerManager (uri);
+				m = new HttpStandaloneListenerManager (uri, element);
 			listeners [uri] = m;
 
 			return m;
