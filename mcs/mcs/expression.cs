@@ -4686,8 +4686,13 @@ namespace Mono.CSharp
 			// flag it for capturing
 			//
 			if (ec.MustCaptureVariable (local_info)) {
-				if (local_info.AddressTaken)
+				if (local_info.AddressTaken) {
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
+				} else if (local_info.IsFixed) {
+					ec.Report.Error (1764, loc,
+						"Cannot use fixed local `{0}' inside an anonymous method, lambda expression or query expression",
+						GetSignatureForError ());
+				}
 
 				if (ec.IsVariableCapturingRequired) {
 					AnonymousMethodStorey storey = local_info.Block.Explicit.CreateAnonymousMethodStorey (ec);
