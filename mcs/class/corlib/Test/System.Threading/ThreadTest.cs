@@ -922,6 +922,107 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
+	[Serializable]
+	public class ThreadTest_ManagedThreadId
+	{
+		AppDomain ad1;
+		AppDomain ad2;
+		MBRO mbro = new MBRO ();
+
+		class MBRO : MarshalByRefObject {
+			public int id_a1;
+			public int id_b1;
+			public int id_b2;
+			public string ad_a1;
+			public string ad_b1;
+			public string ad_b2;
+			public string message;
+		}
+
+		[Test]
+		public void ManagedThreadId_AppDomains ()
+		{
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+			ad1 = AppDomain.CreateDomain ("AppDomain 1", currentDomain.Evidence, currentDomain.SetupInformation);
+			ad2 = AppDomain.CreateDomain ("AppDomain 2", currentDomain.Evidence, currentDomain.SetupInformation);
+
+			Thread a = new Thread (ThreadA);
+			Thread b = new Thread (ThreadB);
+			// execute on AppDomain 1 thread A
+			// execute on AppDomain 2 thread B
+			// execute on AppDomain 1 thread B - must have same ManagedThreadId as Ad 2 on thread B
+			a.Start ();
+			a.Join ();
+			b.Start ();
+			b.Join ();
+
+			AppDomain.Unload (ad1);
+			AppDomain.Unload (ad2);
+
+			if (mbro.message != null)
+				Assert.Fail (mbro.message);
+
+			// Console.WriteLine ("Done id_a1: {0} id_b1: {1} id_b2: {2} ad_a1: {3} ad_b1: {4} ad_b2: {5}", mbro.id_a1, mbro.id_b1, mbro.id_b2, mbro.ad_a1, mbro.ad_b1, mbro.ad_b2);
+
+			Assert.AreEqual ("AppDomain 1", mbro.ad_a1, "Name #1");
+			Assert.AreEqual ("AppDomain 1", mbro.ad_b1, "Name #2");
+			Assert.AreEqual ("AppDomain 2", mbro.ad_b2, "Name #3");
+
+			Assert.AreNotEqual (mbro.id_a1, mbro.id_b1, "Id #1");
+			Assert.AreNotEqual (mbro.id_a1, mbro.id_b2, "Id #2");
+			Assert.AreEqual (mbro.id_b1, mbro.id_b2, "Id #3");
+
+			Assert.AreNotEqual (mbro.id_a1, Thread.CurrentThread.ManagedThreadId, "Id #4");
+			Assert.AreNotEqual (mbro.id_b1, Thread.CurrentThread.ManagedThreadId, "Id #5");
+			Assert.AreNotEqual (mbro.id_b2, Thread.CurrentThread.ManagedThreadId, "Id #6");
+			Assert.AreNotEqual (mbro.ad_a1, AppDomain.CurrentDomain.FriendlyName, "Name #4");
+			Assert.AreNotEqual (mbro.ad_b1, AppDomain.CurrentDomain.FriendlyName, "Name #5");
+			Assert.AreNotEqual (mbro.ad_b2, AppDomain.CurrentDomain.FriendlyName, "Name #6");
+		}
+
+		void A1 ()
+		{
+			mbro.id_a1 = Thread.CurrentThread.ManagedThreadId;
+			mbro.ad_a1 = AppDomain.CurrentDomain.FriendlyName;
+		}
+		
+		void B2 ()
+		{
+			mbro.id_b2 = Thread.CurrentThread.ManagedThreadId;
+			mbro.ad_b2 = AppDomain.CurrentDomain.FriendlyName;
+		}
+
+		void B1 ()
+		{
+			mbro.id_b1 = Thread.CurrentThread.ManagedThreadId;
+			mbro.ad_b1 = AppDomain.CurrentDomain.FriendlyName;
+		}
+
+		void ThreadA (object obj)
+		{
+			// Console.WriteLine ("ThreadA");
+			try {
+				ad1.DoCallBack (A1);
+			} catch (Exception ex) {
+				mbro.message = string.Format ("ThreadA exception: {0}", ex);
+			}
+			// Console.WriteLine ("ThreadA Done");
+		}
+
+		void ThreadB (object obj)
+		{
+			// Console.WriteLine ("ThreadB");
+			try {
+				ad2.DoCallBack (B2);
+				ad1.DoCallBack (B1);
+			} catch (Exception ex) {
+				mbro.message = string.Format ("ThreadB exception: {0}", ex);
+			}
+			// Console.WriteLine ("ThreadB Done");
+		}
+	}
+
+	[TestFixture]
 	public class ThreadApartmentTest
 	{
 		void Start ()

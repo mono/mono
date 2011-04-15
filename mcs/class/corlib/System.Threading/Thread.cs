@@ -102,11 +102,9 @@ namespace System.Threading {
 		private IntPtr unused3;
 		private IntPtr unused4;
 		private IntPtr unused5;
-		private IntPtr unused6;
+		internal int managed_id;
 		#endregion
 #pragma warning restore 169, 414, 649
-
-		internal int managed_id;
 
 		internal byte[] _serialized_principal;
 		internal int _serialized_principal_version;
@@ -155,8 +153,6 @@ namespace System.Threading {
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
 		//private string thread_name=null;
-
-		private static int _managed_id_counter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void ConstructInternalThread ();
@@ -891,10 +887,6 @@ namespace System.Threading {
 		
 #endif
 
-		private static int GetNewManagedId() {
-			return Interlocked.Increment(ref _managed_id_counter);
-		}
-
 		public Thread (ThreadStart start, int maxStackSize)
 		{
 			if (start == null)
@@ -942,16 +934,6 @@ namespace System.Threading {
 		public int ManagedThreadId {
 			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
-				// Fastpath
-				if (internal_thread != null && internal_thread.managed_id != 0)
-					return internal_thread.managed_id;
-
-				if (Internal.managed_id == 0) {
-					int new_managed_id = GetNewManagedId ();
-					
-					Interlocked.CompareExchange (ref Internal.managed_id, new_managed_id, 0);
-				}
-				
 				return Internal.managed_id;
 			}
 		}
