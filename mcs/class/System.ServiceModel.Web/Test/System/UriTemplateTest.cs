@@ -218,6 +218,17 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void BindByName2 ()
+		{
+			var t = new UriTemplate ("{foo}/{bar}");
+			var n = new NameValueCollection ();
+			n.Add ("Bar", "value1"); // case insensitive
+			n.Add ("FOO", "value2"); // case insensitive
+			var u = t.BindByName (new Uri ("http://localhost/x"), n);
+			Assert.AreEqual ("http://localhost/x/value2/value1", u.ToString ());
+		}
+
+		[Test]
 		public void BindByNameManySlashes ()
 		{
 			var t = new UriTemplate ("////{foo}/{bar}/");
