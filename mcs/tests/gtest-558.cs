@@ -10,6 +10,11 @@ class B : A<int>
 	public override void Foo<U> (U arg)
 	{
 		ValueType vt = arg;
+		Next (arg);
+	}
+	
+	void Next<UU> (UU a) where UU : struct
+	{
 	}
 
 	public static void Main ()

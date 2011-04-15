@@ -17021,7 +17021,7 @@
     </type>
     <type name="B">
       <method name="G Foo[G]()">
-        <size>6</size>
+        <size>10</size>
       </method>
       <method name="G Foo2[G]()">
         <size>7</size>
@@ -17304,27 +17304,6 @@
       </method>
       <method name="Int32 Main()">
         <size>51</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-558.cs">
-    <type name="A`1[T]">
-      <method name="Void Foo[U](U)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void Foo[U](U)">
-        <size>8</size>
-      </method>
-      <method name="Void Main()">
-        <size>12</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

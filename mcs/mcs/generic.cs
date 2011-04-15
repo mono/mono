@@ -743,11 +743,17 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns whether the type parameter is "known to be a reference type"
+		// Returns whether the type parameter is known to be a reference type
 		//
 		public bool IsReferenceType {
 			get {
-				if ((spec & SpecialConstraint.Class) != 0 || HasTypeConstraint)
+				if ((spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0)
+					return (spec & SpecialConstraint.Class) != 0;
+
+				//
+				// Full check is needed (see IsValueType for details)
+				//
+				if (HasTypeConstraint && TypeManager.IsReferenceType (BaseType))
 					return true;
 
 				if (targs != null) {
@@ -768,10 +774,21 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsValueType {	// TODO: Do I need this ?
+		//
+		// Returns whether the type parameter is known to be a value type
+		//
+		public bool IsValueType {
 			get {
-				// TODO MemberCache: probably wrong
-				return HasSpecialStruct;
+				//
+				// Even if structs/enums cannot be used directly as constraints
+				// they can apear as constraint type when inheriting base constraint
+				// which has dependant type parameter constraint which has been
+				// inflated using value type
+				//
+				// class A : B<int> { override void Foo<U> () {} }
+				// class B<T> { virtual void Foo<U> () where U : T {} }
+				//
+				return HasSpecialStruct || TypeManager.IsValueType (BaseType);
 			}
 		}
 
@@ -2260,15 +2277,13 @@ namespace Mono.CSharp {
 
 		bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
-			if (TypeManager.IsValueType (atype)) {
+			if (atype.IsGenericParameter) {
+				if (atype == ttype || Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
+					return true;
+			} else if (TypeManager.IsValueType (atype)) {
 				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			} else {
-				if (atype.IsGenericParameter) {
-					if (Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
-						return true;
-				}
-
 				var expr = new EmptyExpression (atype);
 				if (Convert.ImplicitStandardConversionExists (expr, ttype))
 					return true;
@@ -2284,13 +2299,13 @@ namespace Mono.CSharp {
 
 			if (mc != null) {
 				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (tparam);
-				if (TypeManager.IsValueType (atype)) {
-					mc.Module.Compiler.Report.Error (315, loc,
-						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
-						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
-				} else if (atype.IsGenericParameter) {
+				if (atype.IsGenericParameter) {
 					mc.Module.Compiler.Report.Error (314, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
+						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+				} else if (TypeManager.IsValueType (atype)) {
+					mc.Module.Compiler.Report.Error (315, loc,
+						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else {
 					mc.Module.Compiler.Report.Error (311, loc,
