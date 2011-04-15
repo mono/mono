@@ -228,6 +228,14 @@ static GArray *delayed_free_table = NULL;
 
 static gboolean shutting_down = FALSE;
 
+static gint32 managed_thread_id_counter = 0;
+
+static guint32
+get_next_managed_thread_id (void)
+{
+	return InterlockedIncrement (&managed_thread_id_counter);
+}
+
 guint32
 mono_thread_get_tls_key (void)
 {
@@ -938,6 +946,7 @@ MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer fu
 	internal->tid=tid;
 	internal->apartment_state=ThreadApartmentState_Unknown;
 	small_id_alloc (internal);
+	internal->managed_id = get_next_managed_thread_id ();
 
 	internal->synch_cs = g_new0 (CRITICAL_SECTION, 1);
 	InitializeCriticalSection (internal->synch_cs);
@@ -1060,6 +1069,7 @@ mono_thread_attach (MonoDomain *domain)
 #endif
 	thread->apartment_state=ThreadApartmentState_Unknown;
 	small_id_alloc (thread);
+	thread->managed_id = get_next_managed_thread_id ();
 	thread->stack_ptr = &tid;
 
 	thread->synch_cs = g_new0 (CRITICAL_SECTION, 1);
@@ -1149,6 +1159,7 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this)
 
 	internal->state = ThreadState_Unstarted;
 	internal->apartment_state = ThreadApartmentState_Unknown;
+	internal->managed_id = get_next_managed_thread_id ();
 
 	InterlockedCompareExchangePointer ((gpointer)&this->internal_thread, internal, NULL);
 }

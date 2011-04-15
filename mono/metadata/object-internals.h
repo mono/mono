@@ -409,7 +409,7 @@ struct _MonoInternalThread {
 	 * when a new field is added to the unmanaged MonoThread structure.
 	 */
 	gpointer unused5;
-	gpointer unused6;
+	gint32 managed_id;
 };
 
 struct _MonoThread {
