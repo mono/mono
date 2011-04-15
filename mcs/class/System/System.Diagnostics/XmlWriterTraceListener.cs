@@ -213,6 +213,10 @@ namespace System.Diagnostics
 			w.WriteEndElement ();
 
 			w.WriteEndElement ();
+
+			w.Flush (); // for XmlWriter
+			Flush (); // for TextWriter
+			Console.Error.WriteLine ("LOGGED");
 		}
 	}
 }
