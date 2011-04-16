@@ -37,6 +37,8 @@ using System.Web.UI.HtmlControls;
 using System.Reflection;
 using NUnit.Framework;
 
+using MonoTests.Common;
+
 #if NET_2_0
 namespace MonoTests.System.Web.UI {
 
@@ -91,9 +93,27 @@ namespace MonoTests.System.Web.UI {
 		public void ConvertFrom ()
 		{
 			TypeConverter tc = GetTypeConverter ();
+			var culture = global::System.Globalization.CultureInfo.InvariantCulture;
 
-			Assert.AreEqual ("hi", tc.ConvertTo ("hi", typeof (string)), "A1");
-			Assert.AreEqual ("", tc.ConvertTo ("", typeof (string)), "A2");
+			Assert.AreEqual (true, tc.ConvertFrom (null, culture, "hi"), "A1");
+			Assert.AreEqual (false, tc.ConvertFrom (null, culture, String.Empty), "A2");
+			Assert.AreEqual (false, tc.ConvertFrom (null, culture, "false"), "A3");
+			Assert.AreEqual (false, tc.ConvertFrom (null, culture, "False"), "A4");
+			Assert.AreEqual (false, tc.ConvertFrom (null, culture, "FALSE"), "A5");
+			Assert.AreEqual (true, tc.ConvertFrom (null, culture, "true"), "A6");
+			Assert.AreEqual (true, tc.ConvertFrom (null, culture, "True"), "A");
+			AssertExtensions.Throws<NotSupportedException> (() => {
+				tc.ConvertFrom (null, culture, true);
+			}, "A8");
+			AssertExtensions.Throws<NotSupportedException> (() => {
+				tc.ConvertFrom (null, culture, false);
+			}, "A9");
+			AssertExtensions.Throws<NotSupportedException> (() => {
+				tc.ConvertFrom (null, culture, 1234);
+			}, "A10");
+			AssertExtensions.Throws<NotSupportedException> (() => {
+				tc.ConvertFrom (null, culture, null);
+			}, "A11");
 		}
 
 		[Test]
