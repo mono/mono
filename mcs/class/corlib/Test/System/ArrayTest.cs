@@ -11,6 +11,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -301,6 +302,15 @@ public class ArrayTest
 
 		d1[0][0] = 'z';
 		Assert.AreEqual (d1[0], d2[0], "#D07");
+	}
+
+	[Test]
+	public void TestMemberwiseClone () {
+		int[] array = new int[] { 1, 2, 3 };
+		MethodBase mi = array.GetType ().GetMethod("MemberwiseClone",
+												   BindingFlags.Instance | BindingFlags.NonPublic);
+		int[] res = (int[])mi.Invoke (array, null);
+		Assert.AreEqual (3, res.Length);
 	}
 
 	[Test] public void TestIndexer ()
