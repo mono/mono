@@ -50,6 +50,7 @@ System.Web.Compilation/AssemblyBuilder.cs
 System.Web.Compilation/BaseCompiler.cs
 System.Web.Compilation/BuildDependencySet.cs
 System.Web.Compilation/BuildManager.cs
+System.Web.Compilation/BuildManagerHost.cs
 System.Web.Compilation/BuildManagerCacheItem.cs
 System.Web.Compilation/BuildManagerDirectoryBuilder.cs
 System.Web.Compilation/BuildManagerRemoveEntryEventHandler.cs
