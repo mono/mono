@@ -789,7 +789,8 @@ namespace System.Net
 			WebRequest request = GetWebRequest (uri);
 			if (Proxy != null)
 				request.Proxy = Proxy;
-			request.Credentials = credentials;
+			if (credentials != null)
+				request.Credentials = credentials;
 
 			// Special headers. These are properties of HttpWebRequest.
 			// What do we do with other requests differnt from HttpWebRequest?
