@@ -3,18 +3,18 @@
 
 interface I<T, U>
 {
-    void Foo(ref U x);
-    void Foo(out T x);
+    void Foo(ref U t);
+    void Foo(out T u);
 }
 
 class A : I<int, int>
 {
-    void I<int, int>.Foo(ref int x)
+    void I<int, int>.Foo(ref int arg)
 	{
 	}
 	
-    public virtual void Foo(out int x)
+    public virtual void Foo(out int arg)
 	{
-		x = 8;
+		arg = 8;
 	}
 }
