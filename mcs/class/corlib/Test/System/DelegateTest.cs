@@ -1097,6 +1097,19 @@ namespace MonoTests.System
 				this.GetType ().GetMethod ("Banga"));
 		}
 
+		[Test] // #664205
+		public void DynamicInvokeNullTarget ()
+		{
+			var method = new DynamicMethod ("test", typeof (int), new [] { typeof (object) }, true);
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldc_I4, 42);
+			il.Emit (OpCodes.Ret);
+
+			var @delegate = method.CreateDelegate (typeof (Func<int>), null);
+
+			Assert.AreEqual (42, (int) @delegate.DynamicInvoke ());
+		}
+
 #endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
