@@ -387,7 +387,7 @@ namespace System.Net
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				if (!CheckValidHost (value))
+				if (!CheckValidHost (actualUri.Scheme, value))
 					throw new ArgumentException ("Invalid host: " + value);
 
 				host = value;
@@ -395,7 +395,7 @@ namespace System.Net
 		}
 
 		static char [] colon = { ':' };
-		static bool CheckValidHost (string val)
+		static bool CheckValidHost (string scheme, string val)
 		{
 			if (val == null)
 				throw new ArgumentNullException ("value");
@@ -406,19 +406,12 @@ namespace System.Net
 			if (val [0] == '.')
 				return false;
 
-			string [] parts = val.Split ('.');
-			int l = parts.Length;
-			string [] last = parts [l - 1].Split (colon, 2);
-			if (last.Length == 2) {
-				parts [l - 1] = last [0];
-				ushort port;
-				if (!UInt16.TryParse (parts [1], out port))
-					return false;
-			}
+			int idx = val.IndexOf ('/');
+			if (idx >= 0)
+				return false;
 
-			// MS does not enforce a max. 255 length
-			// MS does not complain about a leading dash or all numbers...
-			return true;
+			string u = scheme + "://" + val + "/";
+			return Uri.IsWellFormedUriString (u, UriKind.Absolute);
 		}
 
 		public DateTime IfModifiedSince {
