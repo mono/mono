@@ -106,7 +106,10 @@ namespace System.ServiceModel.Channels
 			ReadBodyStart ();
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (reader), IsFault, attributes);
+			if (IsEmpty)
+				return new DefaultMessageBuffer (headers, props, attributes);
+			else
+				return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (reader), IsFault, attributes);
 		}
 
 		protected override string OnGetBodyAttribute (

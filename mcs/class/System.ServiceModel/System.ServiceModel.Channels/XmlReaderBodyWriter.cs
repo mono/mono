@@ -58,6 +58,8 @@ namespace System.ServiceModel.Channels
 			: base (false)
 		{
 			reader.MoveToContent ();
+			if (reader.NodeType != XmlNodeType.Element)
+				throw new InvalidOperationException ("Argument XmlReader is expected to be positioned at element");
 			this.reader = reader;
 		}
 
