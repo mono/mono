@@ -979,25 +979,6 @@ namespace Mono.CSharp
 
 				return true;
 			}
-
-			//
-			// CLR does not distinguishes between ref and out
-			//
-			public static bool IsEqualByRuntime (AParametersCollection a, AParametersCollection b)
-			{
-				if (a == b)
-					return true;
-
-				if (a.Count != b.Count)
-					return false;
-
-				for (int i = 0; i < a.Count; ++i) {
-					if (!IsEqual (a.Types[i], b.Types[i]))
-						return false;
-				}
-
-				return true;
-			}
 		}
 
 		//

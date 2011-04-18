@@ -191,7 +191,56 @@ namespace Mono.CSharp {
 			if (total == 0)
 				return null;
 
-			return new PendingImplementation (container, missing_interfaces, abstract_methods, total);
+			var pending = new PendingImplementation (container, missing_interfaces, abstract_methods, total);
+
+			//
+			// check for inherited conflicting methods
+			//
+			foreach (var p in pending.pending_implementations) {
+				//
+				// It can happen for generic interfaces only
+				//
+				if (!p.type.IsGeneric)
+					continue;
+
+				//
+				// CLR does not distinguishes between ref and out
+				//
+				for (int i = 0; i < p.methods.Count; ++i) {
+					MethodSpec compared_method = p.methods[i];
+					for (int ii = i + 1; ii < p.methods.Count; ++ii) {
+						MethodSpec tested_method = p.methods[ii];
+						if (compared_method.Name != tested_method.Name)
+							continue;
+
+						if (!TypeSpecComparer.Override.IsSame (compared_method.Parameters.Types, tested_method.Parameters.Types))
+							continue;
+
+						bool modifiers_match = true;
+						var cp = compared_method.Parameters.FixedParameters;
+						var tp = tested_method.Parameters.FixedParameters;
+						for (int pi = 0; pi < compared_method.Parameters.Count; ++pi) {
+							if ((cp[i].ModFlags & Parameter.Modifier.ISBYREF) != (tp[i].ModFlags & Parameter.Modifier.ISBYREF)) {
+								modifiers_match = false;
+								break;
+							}
+						}
+
+						if (!modifiers_match)
+							continue;
+
+						pending.Report.SymbolRelatedToPreviousError (compared_method);
+						pending.Report.SymbolRelatedToPreviousError (tested_method);
+						pending.Report.Error (767, container.Location,
+							"Cannot implement interface `{0}' with the specified type parameters because it causes method `{1}' to differ on parameter modifiers only",
+							p.type.GetDefinition().GetSignatureForError (), compared_method.GetSignatureForError ());
+
+						break;
+					}
+				}
+			}
+
+			return pending;
 		}
 
 		public enum Operation {
@@ -396,7 +445,7 @@ namespace Mono.CSharp {
 						continue;
 
 					var candidate_param = ((MethodSpec) candidate).Parameters;
-					if (!TypeSpecComparer.Override.IsEqualByRuntime (parameters, candidate_param))
+					if (!TypeSpecComparer.Override.IsSame (parameters.Types, candidate_param.Types))
 						continue;
 
 					bool modifiers_match = true;

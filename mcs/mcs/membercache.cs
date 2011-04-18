@@ -710,7 +710,7 @@ namespace Mono.CSharp {
 		//
 		// Returns members of @iface only, base members are ignored
 		//
-		public static IList<MethodSpec> GetInterfaceMethods (TypeSpec iface)
+		public static List<MethodSpec> GetInterfaceMethods (TypeSpec iface)
 		{
 			//
 			// MemberCache flatten interfaces, therefore in cases like this one
