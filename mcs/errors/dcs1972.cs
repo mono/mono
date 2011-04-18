@@ -1,6 +1,5 @@
 // CS1972: The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access
 // Line: 18
-// Compiler options: -langversion:future
 
 class A
 {

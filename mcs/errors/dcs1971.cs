@@ -1,6 +1,5 @@
 // CS1971: The base call to method `Foo' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access
 // Line: 16
-// Compiler options: -langversion:future
 
 class A
 {

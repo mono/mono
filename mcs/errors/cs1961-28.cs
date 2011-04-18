@@ -1,6 +1,5 @@
 // CS1961: The covariant type parameter `T' must be contravariantly valid on `B<T>.A'
-// Line: 9
-// Compiler options: -langversion:future
+// Line: 8
 
 interface A<in T>
 {

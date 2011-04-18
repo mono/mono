@@ -1,6 +1,5 @@
 // CS0165: Use of unassigned local variable `errors'
-// Line: 9
-// Compiler options: -langversion:future
+// Line: 8
 
 class T
 {

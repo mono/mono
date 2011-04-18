@@ -1,6 +1,5 @@
 // CS1501: No overload for method `Test' takes `2' arguments
 // Line: 16
-// Compiler options: -langversion:future
 
 static class S
 {
