@@ -392,7 +392,7 @@ namespace System
 				method_info = m_target.GetType ().GetMethod (data.method_name, mtypes);
 			}
 
-			if ((m_target != null) && Method.IsStatic) {
+			if (Method.IsStatic && (args != null ? args.Length : 0) == Method.GetParameters ().Length - 1) {
 				// The delegate is bound to m_target
 				if (args != null) {
 					object[] newArgs = new object [args.Length + 1];
