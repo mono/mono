@@ -26,7 +26,8 @@ DISTCLEANFILES= mono-uninstalled.pc
 # building with monolite
 mcslib = $(mcs_topdir)/class/lib
 monolite = $(mcslib)/monolite
-monolite_url = http://mono.ximian.com/daily/monolite-latest.tar.gz
+mono_corlib_version = $(shell sed -n "s/\#define MONO_CORLIB_VERSION //p" $(srcdir)/mono/metadata/appdomain.c)
+monolite_url = http://mono.ximian.com/daily/monolite-$(mono_corlib_version)-latest.tar.gz
 get-monolite-latest:
 	-rm -fr $(mcslib)/monolite-*
 	-mkdir -p $(mcslib)
