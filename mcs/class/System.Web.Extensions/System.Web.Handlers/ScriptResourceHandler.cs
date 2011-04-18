@@ -51,12 +51,44 @@ namespace System.Web.Handlers
 
 		#endregion
 
-		// TODO: optimize
-		static string GetScriptStringLiteral (string value) {
-			string s = value;
-			s = s.Replace ("\\", "\\\\");
-			s = s.Replace ("\"", "\\\"");
-			return "\"" + s + "\"";
+		// TODO: add value cache?
+		static string GetScriptStringLiteral (string value)
+		{
+			if (String.IsNullOrEmpty (value))
+				return "\"" + value + "\"";
+			
+			var sb = new StringBuilder ("\"");
+			for (int i = 0; i < value.Length; i++) {
+				char ch = value [i];
+				switch (ch) {
+					case '\'':
+						sb.Append ("\\u0027");
+						break;
+
+					case '"':
+						sb.Append ("\\\"");
+						break;
+
+					case '\\':
+						sb.Append ("\\\\");
+						break;
+
+					case '\n':
+						sb.Append ("\\n");
+						break;
+
+					case '\r':
+						sb.Append ("\\r");
+						break;
+
+					default:
+						sb.Append (ch);
+						break;
+				}
+			}
+			sb.Append ("\"");
+			
+			return sb.ToString ();
 		}
 
 		class ResourceKey
