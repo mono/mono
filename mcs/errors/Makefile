@@ -23,7 +23,7 @@ DISTFILES = \
 TEST_SUPPORT_FILES = \
 	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll CS0012-12-lib.dll CS0029-26-lib.dll \
 	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0122-36-lib.dll CS0143-lib.dll CS0144-3-lib.dll \
-	CS0205-3-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll \
+	CS0205-3-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll CS0266-25-lib.dll \
 	CS0315-2-lib.dll \
 	CS0433-lib.dll CS0433-2-lib.dll \
 	CS0506-3-lib.dll CS0507-7-lib.dll CS0507-8-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0534-6-lib.dll CS0571-3-lib.dll CS0571-5-lib.dll CS0571-6-lib.dll \
@@ -58,14 +58,10 @@ run-test-local: clean-local
 TEST_PATTERN = 'v2'
 
 # Required to test parser correctly
-TESTER_OPTIONS =-compiler-options:-v
+# -compiler-options:-v
 
-ifeq (net_4_0, $(PROFILE))
 TEST_PATTERN = 'v4'
 TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0 -sdk:4"
-
-TEST_SUPPORT_FILES += DCS0266-lib.dll
-endif
 
 COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe

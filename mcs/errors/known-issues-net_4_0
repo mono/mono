@@ -17,10 +17,10 @@ cs0162-7.cs NO ERROR
 cs0457-2.cs
 cs0457.cs
 
-dcs0165.cs NO ERROR # Bug 593369
+cs0165-15.cs NO ERROR # Bug 593369
 
 # all the following are from bug #628673
-dcs1979.cs
+cs1979.cs
 cs0168-2.cs
 cs0177-8.cs NO ERROR
 cs0647-14.cs NO ERROR
