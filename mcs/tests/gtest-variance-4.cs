@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 delegate int Foo<in T> (T t);
 
 public class Test

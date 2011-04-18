@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 
 interface IIn<in T>

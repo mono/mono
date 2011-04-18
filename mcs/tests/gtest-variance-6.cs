@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 interface ICovariant<out T> { }
 interface IContravariant<in T> { }
 

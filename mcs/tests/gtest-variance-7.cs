@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 delegate T Covariant<out T> ();
 delegate void Contra<in T> (T t);
 delegate TR CoContra<out TR, in T> (T t);

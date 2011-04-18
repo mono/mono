@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 interface IFoo<in T>
 {
 	string Bar (T t);

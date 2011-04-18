@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 interface IIn<in T>
 {
 }
