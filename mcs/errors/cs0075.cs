@@ -1,4 +1,4 @@
-// cs0075.cs: To cast a negative value, you must enclose the value in parentheses
+// CS0075: To cast a negative value, you must enclose the value in parentheses
 // Line: 20
 class X
 {

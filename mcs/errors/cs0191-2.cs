@@ -1,4 +1,4 @@
-// cs0191-2.cs: A readonly field `Foo.i' cannot be assigned to (except in a constructor or a variable initializer)
+// CS0191: A readonly field `Foo.i' cannot be assigned to (except in a constructor or a variable initializer)
 // Line: 10 
 
 class Foo {

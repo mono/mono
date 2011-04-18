@@ -1,4 +1,4 @@
-// cs0612-2.cs: `Foo.Bar' is obsolete
+// CS0612: `Foo.Bar' is obsolete
 // Line: 8
 // Compiler options: -r:CS0612-2-lib.dll -warnaserror
 

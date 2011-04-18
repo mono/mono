@@ -1,4 +1,4 @@
-// cs0579.cs: The attribute `System.Reflection.AssemblyKeyNameAttribute' cannot be applied multiple times
+// CS0579: The attribute `System.Reflection.AssemblyKeyNameAttribute' cannot be applied multiple times
 // Line : 
 
 using System.Reflection;

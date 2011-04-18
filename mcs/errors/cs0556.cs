@@ -1,5 +1,5 @@
-// cs0556.cs : User-defined conversion must convert to or from the enclosing type
-// Line : 8
+// CS0556: User-defined conversion must convert to or from the enclosing type
+// Line: 8
 
 class Blah {
 

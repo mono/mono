@@ -1,4 +1,4 @@
-// cs1674-2.cs: `object': type used in a using statement must be implicitly convertible to `System.IDisposable'
+// CS1674: `object': type used in a using statement must be implicitly convertible to `System.IDisposable'
 // Line: 10
 
 using System;

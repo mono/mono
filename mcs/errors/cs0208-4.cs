@@ -1,4 +1,4 @@
-// cs0208-4.cs: Cannot take the address of, get the size of, or declare a pointer to a managed type `object'
+// CS0208: Cannot take the address of, get the size of, or declare a pointer to a managed type `object'
 // Line: 11
 // Compiler options: -unsafe
 

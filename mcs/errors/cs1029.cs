@@ -1,4 +1,4 @@
-// cs1029.cs: #error: 'Expected error'
+// CS1029: #error: 'Expected error'
 // Line: 4
 
 #error Expected error

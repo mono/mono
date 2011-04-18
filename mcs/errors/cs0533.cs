@@ -1,4 +1,4 @@
-// cs0533.cs: `DerivedClass.Foo()' hides inherited abstract member `BaseClass.Foo()'
+// CS0533: `DerivedClass.Foo()' hides inherited abstract member `BaseClass.Foo()'
 // Line: 9
 
 abstract public class BaseClass {

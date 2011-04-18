@@ -1,4 +1,4 @@
-// cs0102-8.cs: The type `SampleClass' already contains a definition for `set_Item'
+// CS0102: The type `SampleClass' already contains a definition for `set_Item'
 // Line: 6
 
 public class SampleClass {

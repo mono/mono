@@ -1,4 +1,4 @@
-// cs0254.cs: The right hand side of a fixed statement assignment may not be a cast expression
+// CS0254: The right hand side of a fixed statement assignment may not be a cast expression
 // Line: 16
 // Compiler options: -unsafe
 

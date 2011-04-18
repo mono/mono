@@ -1,4 +1,4 @@
-// cs1657-2.cs: Cannot pass `m' as a ref or out argument because it is a `using variable'
+// CS1657: Cannot pass `m' as a ref or out argument because it is a `using variable'
 // Line: 11
 
 using System.IO;

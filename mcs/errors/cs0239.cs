@@ -1,4 +1,4 @@
-// cs0239.cs: `X.MyMethod()': cannot override inherited member `Bar.MyMethod()' because it is sealed
+// CS0239: `X.MyMethod()': cannot override inherited member `Bar.MyMethod()' because it is sealed
 // Line : 25
 
 using System;

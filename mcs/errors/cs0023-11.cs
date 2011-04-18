@@ -1,4 +1,4 @@
-// cs0023: The `-' operator cannot be applied to operand of type `A'
+// CS0023: The `-' operator cannot be applied to operand of type `A'
 // Line: 16
 
 

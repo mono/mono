@@ -1,4 +1,4 @@
-// cs0266.cs: Cannot implicitly convert type `Helper*' to `Obsolete*'. An explicit conversion exists (are you missing a cast?)
+// CS0266: Cannot implicitly convert type `Helper*' to `Obsolete*'. An explicit conversion exists (are you missing a cast?)
 // Line: 18
 // Compiler options: -unsafe
 

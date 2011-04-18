@@ -1,4 +1,4 @@
-// cs0528-2.cs: `System.IComparable' is already listed in interface list
+// CS0528: `System.IComparable' is already listed in interface list
 // Line: 6
 
 using System;

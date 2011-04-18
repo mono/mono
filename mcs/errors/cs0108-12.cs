@@ -1,4 +1,4 @@
-// cs0108-12.cs: `Libs.MyLib' hides inherited member `Foo.MyLib'. Use the new keyword if hiding was intended
+// CS0108: `Libs.MyLib' hides inherited member `Foo.MyLib'. Use the new keyword if hiding was intended
 // Line: 18
 // Compiler options: -warnaserror -warn:2
 

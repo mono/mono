@@ -1,4 +1,4 @@
-// cs0102-14.cs: The type `T' already contains a definition for `A'
+// CS0102: The type `T' already contains a definition for `A'
 // Line: 6
 
 class T{

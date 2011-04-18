@@ -1,4 +1,4 @@
-// cs0616.cs: `FakeAttribute': is not an attribute class
+// CS0616: `FakeAttribute': is not an attribute class
 // Line: 8
 
 class FakeAttribute {

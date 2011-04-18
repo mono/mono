@@ -1,4 +1,4 @@
-// cs0176-3.cs: Static member `A.X' cannot be accessed with an instance reference, qualify it with a type name instead
+// CS0176: Static member `A.X' cannot be accessed with an instance reference, qualify it with a type name instead
 // Line: 12
 using System;
 

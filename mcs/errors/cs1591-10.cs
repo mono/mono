@@ -1,4 +1,4 @@
-// cs1591-10.cs: Missing XML comment for publicly visible type or member `Testing.Test.Foo()'
+// CS1591: Missing XML comment for publicly visible type or member `Testing.Test.Foo()'
 // Line: 14
 // Compiler options: -doc:dummy.xml -warnaserror -warn:4
 

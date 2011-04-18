@@ -1,4 +1,4 @@
-// cs1584-3.cs: XML comment on `Test' has syntactically incorrect cref attribute `.'
+// CS1584: XML comment on `Test' has syntactically incorrect cref attribute `.'
 // Line: 8
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 

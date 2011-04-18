@@ -1,4 +1,4 @@
-// cs0029.cs: Cannot implicitly convert type `string' to `System.Runtime.InteropServices.CallingConvention'
+// CS0029: Cannot implicitly convert type `string' to `System.Runtime.InteropServices.CallingConvention'
 // Line: 10
 
 using System;

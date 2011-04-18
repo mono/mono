@@ -1,4 +1,4 @@
-// gcs0735-2.cs: Invalid type specified as an argument for TypeForwardedTo attribute
+// CS0735: Invalid type specified as an argument for TypeForwardedTo attribute
 // Line: 7
 
 using System;

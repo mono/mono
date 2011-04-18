@@ -1,4 +1,4 @@
-// gcs1908.cs: The type of the default value should match the type of the parameter
+// CS1908: The type of the default value should match the type of the parameter
 // Line: 
 
 class Test {

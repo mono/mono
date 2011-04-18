@@ -1,4 +1,4 @@
-// cs0165.cs: Use of unassigned local variable `s'
+// CS0165: Use of unassigned local variable `s'
 // Line: 9
 
 public class Test

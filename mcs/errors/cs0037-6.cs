@@ -1,4 +1,4 @@
-// cs0037.cs: Cannot convert null to `bool' because it is a value type
+// CS0037: Cannot convert null to `bool' because it is a value type
 // Line: 13
 
 using System;

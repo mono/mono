@@ -1,4 +1,4 @@
-// cs1618-2.cs: Cannot create delegate with `System.Diagnostics.Debug.Assert(bool)' because it has a Conditional attribute
+// CS1618: Cannot create delegate with `System.Diagnostics.Debug.Assert(bool)' because it has a Conditional attribute
 // Line: 8
 
 namespace Foo {

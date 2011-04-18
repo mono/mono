@@ -1,5 +1,5 @@
-// cs1020.cs : Overloadable binary operator expected
-// Line : 19
+// CS1020: Overloadable binary operator expected
+// Line: 19
 
 
 public class MyClass {

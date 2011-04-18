@@ -1,4 +1,4 @@
-// cs0469.cs: The `goto case' value is not implicitly convertible to type `char'
+// CS0469: The `goto case' value is not implicitly convertible to type `char'
 // Line: 16
 // Compiler options: -warnaserror -warn:2
 

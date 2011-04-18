@@ -1,4 +1,4 @@
-// cs0165.cs: Use of unassigned local variable `errors'
+// CS0165: Use of unassigned local variable `errors'
 // Line: 9
 
 class T {

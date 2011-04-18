@@ -1,4 +1,4 @@
-// cs0208-7.cs: Cannot take the address of, get the size of, or declare a pointer to a managed type `foo'
+// CS0208: Cannot take the address of, get the size of, or declare a pointer to a managed type `foo'
 // Line: 11
 // Compiler options: -unsafe
 

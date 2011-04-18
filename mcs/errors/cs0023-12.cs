@@ -1,4 +1,4 @@
-// cs0023: The `+' operator cannot be applied to operand of type `string'
+// CS0023: The `+' operator cannot be applied to operand of type `string'
 // Line: 10
 
 using System;

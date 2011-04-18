@@ -1,4 +1,4 @@
-// cs0108-11.cs: `Bar.this[int, int]' hides inherited member `Foo.this[int, int]'. Use the new keyword if hiding was intended
+// CS0108: `Bar.this[int, int]' hides inherited member `Foo.this[int, int]'. Use the new keyword if hiding was intended
 // Line: 15
 // Compiler options: -warnaserror -warn:2
 

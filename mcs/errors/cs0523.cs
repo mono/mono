@@ -1,4 +1,4 @@
-// cs0523.cs: Struct member `B.a' of type `A' causes a cycle in the struct layout
+// CS0523: Struct member `B.a' of type `A' causes a cycle in the struct layout
 // Line: 9
 
 struct A {

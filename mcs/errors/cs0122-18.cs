@@ -1,4 +1,4 @@
-// cs0122-18.cs: `Test.TestClass.TestClass()' is inaccessible due to its protection level
+// CS0122: `Test.TestClass.TestClass()' is inaccessible due to its protection level
 // Line: 17
 
 namespace Test

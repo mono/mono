@@ -1,4 +1,4 @@
-// cs0031-3.cs: Constant value `-9' cannot be converted to a `uint'
+// CS0031: Constant value `-9' cannot be converted to a `uint'
 // Line: 9
 
 public class Test

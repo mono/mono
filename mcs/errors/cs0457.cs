@@ -1,4 +1,4 @@
-// cs0457: Ambiguous user defined conversions `A.implicit operator byte(A)' and `A.implicit operator sbyte(A)' when converting from 'A' to 'int'
+// CS0457: Ambiguous user defined conversions `A.implicit operator byte(A)' and `A.implicit operator sbyte(A)' when converting from 'A' to 'int'
 // Line: 20
 
 class A

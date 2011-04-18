@@ -1,4 +1,4 @@
-// cs0664-2.cs: Literal of type double cannot be implicitly converted to type `decimal'. Add suffix `m' to create a literal of this type
+// CS0664: Literal of type double cannot be implicitly converted to type `decimal'. Add suffix `m' to create a literal of this type
 // Line: 7
 
 class X {

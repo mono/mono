@@ -1,4 +1,4 @@
-// cs0592.cs: The attribute `SimpleAttribute' is not valid on this declaration type. It is valid on `constructor' declarations only
+// CS0592: The attribute `SimpleAttribute' is not valid on this declaration type. It is valid on `constructor' declarations only
 // Line : 22
 
 using System;

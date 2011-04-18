@@ -1,4 +1,4 @@
-// cs0234-3.cs: The type or namespace name `Type' does not exist in the namespace `MonoTests.System'. Are you missing an assembly reference?
+// CS0234: The type or namespace name `Type' does not exist in the namespace `MonoTests.System'. Are you missing an assembly reference?
 // Line: 12
 
 using System;

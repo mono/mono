@@ -1,4 +1,4 @@
-// cs0619-15.cs: `Test.Test()' is obsolete: `Causes an error'
+// CS0619: `Test.Test()' is obsolete: `Causes an error'
 // Line: 9
 
 using System;

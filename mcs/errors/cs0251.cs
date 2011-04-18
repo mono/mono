@@ -1,4 +1,4 @@
-// cs0251.cs: Indexing an array with a negative index (array indices always start at zero)
+// CS0251: Indexing an array with a negative index (array indices always start at zero)
 // Line: 10
 // Compiler options: -warn:2 -warnaserror
 

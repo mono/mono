@@ -1,4 +1,4 @@
-// cs1722.cs: `My.Namespace.MyBaseClass': Base class `My.Namespace.MyInterfaceBase' must be specified as first
+// CS1722: `My.Namespace.MyBaseClass': Base class `My.Namespace.MyInterfaceBase' must be specified as first
 // Line: 21
 
 using System;

@@ -1,4 +1,4 @@
-// cs0221-2.cs: Constant value `-9' cannot be converted to a `E' (use `unchecked' syntax to override)
+// CS0221: Constant value `-9' cannot be converted to a `E' (use `unchecked' syntax to override)
 // Line: 10
 
 enum E:byte {

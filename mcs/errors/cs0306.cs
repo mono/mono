@@ -1,4 +1,4 @@
-// gcs0306.cs: The type `char*' may not be used as a type argument
+// CS0306: The type `char*' may not be used as a type argument
 // Line: 9
 // Compiler options: -unsafe
 

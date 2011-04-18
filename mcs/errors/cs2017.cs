@@ -1,4 +1,4 @@
-// cs2017.cs: Cannot specify -main if building a module or library
+// CS2017: Cannot specify -main if building a module or library
 // Line: 0
 // Compiler options: -main:ClassMain -target:library
 

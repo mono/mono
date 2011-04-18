@@ -1,4 +1,4 @@
-// cs0619-2.cs: `ObsoleteIface' is obsolete: `Do not use it.'
+// CS0619: `ObsoleteIface' is obsolete: `Do not use it.'
 // Line: 12
 
 using System;

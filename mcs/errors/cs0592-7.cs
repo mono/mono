@@ -1,4 +1,4 @@
-// cs0592-7.cs: The attribute `EnumAttribute' is not valid on this declaration type. It is valid on `method' declarations only
+// CS0592: The attribute `EnumAttribute' is not valid on this declaration type. It is valid on `method' declarations only
 // Line: 13
 
 using System;

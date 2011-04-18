@@ -1,4 +1,4 @@
-// cs0021.cs: Cannot apply indexing with [] to an expression of type `int'
+// CS0021: Cannot apply indexing with [] to an expression of type `int'
 // Line: 9 
 using System;
 

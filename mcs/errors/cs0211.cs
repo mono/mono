@@ -1,4 +1,4 @@
-// cs0211.cs: Cannot take the address of the given expression
+// CS0211: Cannot take the address of the given expression
 // Line: 7
 // Compiler options: -unsafe
 

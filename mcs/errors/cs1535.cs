@@ -1,4 +1,4 @@
-// cs1535.cs: Overloaded unary operator `--' takes one parameter
+// CS1535: Overloaded unary operator `--' takes one parameter
 // Line: 6
 
 class C

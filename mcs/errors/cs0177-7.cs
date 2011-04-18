@@ -1,4 +1,4 @@
-// cs0177-7.cs: The out parameter `a' must be assigned to before control leaves the current method
+// CS0177: The out parameter `a' must be assigned to before control leaves the current method
 // Line: 6
 
 class Foo {

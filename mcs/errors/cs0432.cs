@@ -1,4 +1,4 @@
-// cs0432.cs: Alias `fool' not found
+// CS0432: Alias `fool' not found
 // Line: 9
 
 using foo = System;

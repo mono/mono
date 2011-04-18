@@ -1,4 +1,4 @@
-// cs0050.cs: Inconsistent accessibility: return type `X' is less accessible than method `Foo.Bar()'
+// CS0050: Inconsistent accessibility: return type `X' is less accessible than method `Foo.Bar()'
 // Line: 13
 
 using System;

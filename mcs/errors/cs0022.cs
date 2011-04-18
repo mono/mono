@@ -1,4 +1,4 @@
-// cs0022.cs: Wrong number of indexes `2' inside [], expected `1'
+// CS0022: Wrong number of indexes `2' inside [], expected `1'
 // Line: 9
 using System;
 

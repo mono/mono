@@ -1,4 +1,4 @@
-// cs1010-2.cs : Newline in constant
+// CS1010: Newline in constant
 // Line: 6
 
 class Foo

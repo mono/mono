@@ -1,4 +1,4 @@
-// cs0505.cs: `DerivedClass.value()': cannot override because `BaseClass.value' is not a method
+// CS0505: `DerivedClass.value()': cannot override because `BaseClass.value' is not a method
 // Line: 9
 
 class BaseClass {

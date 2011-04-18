@@ -1,4 +1,4 @@
-// cs0647-11.cs: Error during emitting `System.Runtime.InteropServices.MarshalAsAttribute' attribute. The reason is `Specified unmanaged type is only valid on fields'
+// CS0647: Error during emitting `System.Runtime.InteropServices.MarshalAsAttribute' attribute. The reason is `Specified unmanaged type is only valid on fields'
 // Line: 10
 
 using System;

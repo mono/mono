@@ -1,4 +1,4 @@
-// cs3005-5.cs: Identifier `CLSClass.Event_A' differing only in case is not CLS-compliant
+// CS3005: Identifier `CLSClass.Event_A' differing only in case is not CLS-compliant
 // Line: 13
 // Compiler options: -warnaserror
 

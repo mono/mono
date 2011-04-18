@@ -1,4 +1,4 @@
-// cs0507-2.cs: `DerivedClass.Message.set': cannot change access modifiers when overriding `protected' inherited member `BaseClass.Message.set'
+// CS0507: `DerivedClass.Message.set': cannot change access modifiers when overriding `protected' inherited member `BaseClass.Message.set'
 // Line: 15
 
 class BaseClass {

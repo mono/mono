@@ -1,4 +1,4 @@
-// cs0162.cs: Unreachable code detected
+// CS0162: Unreachable code detected
 // Line: 13
 // Compiler options: -warnaserror -warn:2
 

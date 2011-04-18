@@ -1,4 +1,4 @@
-// cs0528:  `A' is already listed in interface list
+// CS0528:  `A' is already listed in interface list
 // Line: 6
 interface A {
         void stuff ();

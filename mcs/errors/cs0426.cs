@@ -1,4 +1,4 @@
-// cs0426.cs: The nested type `B' does not exist in the type `A'
+// CS0426: The nested type `B' does not exist in the type `A'
 // Line: 12
 
 class A

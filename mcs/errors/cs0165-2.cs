@@ -1,4 +1,4 @@
-// cs0165.cs: Use of unassigned local variable `x'
+// CS0165: Use of unassigned local variable `x'
 // Line: 16
 
 class T {

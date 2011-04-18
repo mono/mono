@@ -1,4 +1,4 @@
-// cs1644.cs: Feature `static classes' cannot be used because it is not part of the C# 1.0 language specification
+// CS1644: Feature `static classes' cannot be used because it is not part of the C# 1.0 language specification
 // Line: 5
 // Compiler options: -langversion:ISO-1
 

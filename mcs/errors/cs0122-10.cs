@@ -1,4 +1,4 @@
-// cs0122: `X.Y.Y(string)' is inaccessible due to its protection level
+// CS0122: `X.Y.Y(string)' is inaccessible due to its protection level
 // Line: 9
 // Compiler options: -r:CS0122-10-lib.dll
 

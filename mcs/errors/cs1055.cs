@@ -1,4 +1,4 @@
-// cs1055.cs: An add or remove accessor expected
+// CS1055: An add or remove accessor expected
 // Line: 9
 
 class E

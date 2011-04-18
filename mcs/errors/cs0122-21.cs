@@ -1,4 +1,4 @@
-// cs0122-21.cs: `Const.Version' is inaccessible due to its protection level
+// CS0122: `Const.Version' is inaccessible due to its protection level
 // Line: 6
 
 using System.Reflection;

@@ -1,4 +1,4 @@
-// cs1669.cs: __arglist is not valid in this context
+// CS1669: __arglist is not valid in this context
 // Line: 6
 
 public class E

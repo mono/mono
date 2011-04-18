@@ -1,4 +1,4 @@
-// cs0628-3.cs: `Test.print_argv(string[])': new protected member declared in sealed class
+// CS0628: `Test.print_argv(string[])': new protected member declared in sealed class
 // Line: 8
 // Compiler options: -warn:4 -warnaserror
 

@@ -1,4 +1,4 @@
-// cs0133-3.cs: The expression being assigned to `Foo' must be constant
+// CS0133: The expression being assigned to `Foo' must be constant
 // Line: 12
 
 class T

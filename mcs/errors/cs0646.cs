@@ -1,4 +1,4 @@
-// cs0646.cs: Cannot specify the `DefaultMember' attribute on type containing an indexer
+// CS0646: Cannot specify the `DefaultMember' attribute on type containing an indexer
 // Line : 8
 
 using System;

@@ -1,4 +1,4 @@
-// cs0122-7.cs: `BB.AnEvent' is inaccessible due to its protection level
+// CS0122: `BB.AnEvent' is inaccessible due to its protection level
 // Line: 10
 
 using System;

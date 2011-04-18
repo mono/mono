@@ -1,4 +1,4 @@
-// gcs0405.cs: Duplicate constraint `I' for type parameter `T'
+// CS0405: Duplicate constraint `I' for type parameter `T'
 // Line: 8
 
 interface I { }

@@ -1,4 +1,4 @@
-// cs0571-3.cs: `Test.C0.foo.get': cannot explicitly call operator or accessor
+// CS0571: `Test.C0.foo.get': cannot explicitly call operator or accessor
 // Line: 12
 // Compiler options: -r:CS0571-3-lib.dll
 

@@ -1,4 +1,4 @@
-// cs0551.cs: Explicit interface implementation `PropertyClass.PropertyInterface.Value' is missing accessor `PropertyInterface.Value.set'
+// CS0551: Explicit interface implementation `PropertyClass.PropertyInterface.Value' is missing accessor `PropertyInterface.Value.set'
 // Line: 9
 
 interface PropertyInterface {

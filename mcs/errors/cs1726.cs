@@ -1,4 +1,4 @@
-// gcs1726.cs: Friend assembly reference `MyAssemblyName' is invalid. Strong named assemblies must specify a public key in their InternalsVisibleTo declarations
+// CS1726: Friend assembly reference `MyAssemblyName' is invalid. Strong named assemblies must specify a public key in their InternalsVisibleTo declarations
 // Line: 8
 // Compiler options: -keyfile:key.snk
 

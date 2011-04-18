@@ -1,4 +1,4 @@
-// cs0199.cs: A static readonly field `ClassMain.index' cannot be passed ref or out (except in a static constructor)
+// CS0199: A static readonly field `ClassMain.index' cannot be passed ref or out (except in a static constructor)
 // Line: 19
 
 class ClassMain {

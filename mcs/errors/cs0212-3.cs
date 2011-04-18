@@ -1,4 +1,4 @@
-// cs0212-3.cs: You can only take the address of unfixed expression inside of a fixed statement initializer
+// CS0212: You can only take the address of unfixed expression inside of a fixed statement initializer
 // Line: 10
 // Compiler options: -unsafe
 

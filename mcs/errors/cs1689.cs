@@ -1,4 +1,4 @@
-// cs1689.cs: Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes
+// CS1689: Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes
 // Line: 6
 
 using System.Diagnostics;

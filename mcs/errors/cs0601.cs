@@ -1,4 +1,4 @@
-// cs0601.cs: The DllImport attribute must be specified on a method marked `static' and `extern'
+// CS0601: The DllImport attribute must be specified on a method marked `static' and `extern'
 // Line : 9
 
 using System;

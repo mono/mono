@@ -1,4 +1,4 @@
-// cs1510.cs: A ref or out argument must be an assignable variable
+// CS1510: A ref or out argument must be an assignable variable
 // Line: 11
 class X {
 	public static void m (ref int i)

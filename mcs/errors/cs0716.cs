@@ -1,4 +1,4 @@
-// cs0716.cs: Cannot convert to static type `StaticClass'
+// CS0716: Cannot convert to static type `StaticClass'
 // Line: 10
 
 static class StaticClass {

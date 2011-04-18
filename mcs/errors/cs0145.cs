@@ -1,4 +1,4 @@
-// cs0145.cs: A const field requires a value to be provided
+// CS0145: A const field requires a value to be provided
 // Line: 5
 
 class Test {

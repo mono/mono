@@ -1,4 +1,4 @@
-// cs0647-4.cs: Error during emitting `DebugPermissionAttribute' attribute. The reason is `it is attached to invalid parent'
+// CS0647: Error during emitting `DebugPermissionAttribute' attribute. The reason is `it is attached to invalid parent'
 // Line : 10
 
 using System;

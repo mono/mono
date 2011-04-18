@@ -1,4 +1,4 @@
-// cs0213.cs: You cannot use the fixed statement to take the address of an already fixed expression
+// CS0213: You cannot use the fixed statement to take the address of an already fixed expression
 // Line: 12
 // Compiler options: -unsafe
 

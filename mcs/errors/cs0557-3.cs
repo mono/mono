@@ -1,4 +1,4 @@
-// cs0557.cs: Duplicate user-defined conversion in type `Foo'
+// CS0557: Duplicate user-defined conversion in type `Foo'
 // Line: 5
 
 public enum Bar

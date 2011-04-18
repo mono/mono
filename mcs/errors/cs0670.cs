@@ -1,4 +1,4 @@
-// cs0670.cs: Fields cannot have void type
+// CS0670: Fields cannot have void type
 // Line: 5
 
 class X {

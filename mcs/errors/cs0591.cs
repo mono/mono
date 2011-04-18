@@ -1,4 +1,4 @@
-// cs0591.cs: Invalid value for argument to `System.AttributeUsage' attribute
+// CS0591: Invalid value for argument to `System.AttributeUsage' attribute
 // Line: 4
 
 [System.AttributeUsage(0)]

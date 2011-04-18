@@ -1,4 +1,4 @@
-// cs0144-2.cs: Cannot create an instance of the abstract class or interface `X'
+// CS0144: Cannot create an instance of the abstract class or interface `X'
 // Line: 11
 interface X {
 	void A ();

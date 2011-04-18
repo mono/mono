@@ -1,4 +1,4 @@
-// cs0534-2.cs: `DerivedClass' does not implement inherited abstract member `BaseClass.Value.set'
+// CS0534: `DerivedClass' does not implement inherited abstract member `BaseClass.Value.set'
 // Line: 8
 
 abstract class BaseClass {

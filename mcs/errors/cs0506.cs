@@ -1,4 +1,4 @@
-// cs0506.cs: `DerivedClass.Show()': cannot override inherited member `BaseClass.Show()' because it is not marked virtual, abstract or override
+// CS0506: `DerivedClass.Show()': cannot override inherited member `BaseClass.Show()' because it is not marked virtual, abstract or override
 // Line: 9
 
 class BaseClass {

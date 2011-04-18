@@ -1,4 +1,4 @@
-// cs0109-4.cs: The member `Derived.this[string]' does not hide an inherited member. The new keyword is not required
+// CS0109: The member `Derived.this[string]' does not hide an inherited member. The new keyword is not required
 // Line: 10
 // Compiler options: -warnaserror -warn:4
 

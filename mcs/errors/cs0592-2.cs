@@ -1,4 +1,4 @@
-// cs0592-2.cs: The attribute `MyAttributeAttribute' is not valid on this declaration type. It is valid on `interface' declarations only
+// CS0592: The attribute `MyAttributeAttribute' is not valid on this declaration type. It is valid on `interface' declarations only
 // Line : 8
 
 using System;

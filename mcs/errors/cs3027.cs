@@ -1,4 +1,4 @@
-// cs3027.cs: `I' is not CLS-compliant because base interface `I2' is not CLS-compliant
+// CS3027: `I' is not CLS-compliant because base interface `I2' is not CLS-compliant
 // Line: 17
 // Compiler options: -warn:1 -warnaserror
 

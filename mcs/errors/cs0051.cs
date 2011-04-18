@@ -1,4 +1,4 @@
-// cs0051.cs: Inconsistent accessibility: parameter type `MyClass.X' is less accessible than method `MyClass.method(MyClass.X)'
+// CS0051: Inconsistent accessibility: parameter type `MyClass.X' is less accessible than method `MyClass.method(MyClass.X)'
 // Line: 12
 
 public class MyClass {

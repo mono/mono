@@ -1,4 +1,4 @@
-// CS0417.cs: `T': cannot provide arguments when creating an instance of a variable type
+// CS0417: `T': cannot provide arguments when creating an instance of a variable type
 // Line: 9
 
 public class Foo<T>

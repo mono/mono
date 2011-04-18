@@ -1,4 +1,4 @@
-// cs0122-11.cs: `Y.Y(string)' is inaccessible due to its protection level
+// CS0122: `Y.Y(string)' is inaccessible due to its protection level
 // Line: 12
 
 using System;

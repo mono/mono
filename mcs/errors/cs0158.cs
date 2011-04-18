@@ -1,4 +1,4 @@
-// cs0158.cs: The label `start' shadows another label by the same name in a contained scope
+// CS0158: The label `start' shadows another label by the same name in a contained scope
 // Line: 9
 
 class ClassMain {

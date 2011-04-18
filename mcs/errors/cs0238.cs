@@ -1,4 +1,4 @@
-// cs0238.cs: `DerivedClass.Show()' cannot be sealed because it is not an override
+// CS0238: `DerivedClass.Show()' cannot be sealed because it is not an override
 // Line: 10
 
 class BaseClass {

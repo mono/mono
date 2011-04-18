@@ -1,4 +1,4 @@
-// cs01586.cs: Array creation must have array size or array initializer
+// CS1586: Array creation must have array size or array initializer
 // Line: 6
 
 class C

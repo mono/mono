@@ -1,4 +1,4 @@
-// cs0029.cs: Cannot implicitly convert type `T' to `int'
+// CS0029: Cannot implicitly convert type `T' to `int'
 // Line: 4
 
 class X {

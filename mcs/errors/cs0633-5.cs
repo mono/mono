@@ -1,4 +1,4 @@
-// gcs0633-4.cs: The argument to the `System.Diagnostics.ConditionalAttribute' attribute must be a valid identifier
+// CS0633: The argument to the `System.Diagnostics.ConditionalAttribute' attribute must be a valid identifier
 // Line: 6
 
 using System.Diagnostics;

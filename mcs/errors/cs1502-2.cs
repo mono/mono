@@ -1,4 +1,4 @@
-// cs1502-2.cs: The best overloaded method match for `System.Console.WriteLine(bool)' has some invalid arguments
+// CS1502: The best overloaded method match for `System.Console.WriteLine(bool)' has some invalid arguments
 // Line: 10
 using System;
 

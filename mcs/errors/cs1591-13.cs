@@ -1,4 +1,4 @@
-// cs1591-13.cs: Missing XML comment for publicly visible type or member `Testing.Test.this[int]'
+// CS1591: Missing XML comment for publicly visible type or member `Testing.Test.this[int]'
 // Line: 14
 // Compiler options: -doc:dummy.xml -warnaserror -warn:4
 

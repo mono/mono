@@ -1,4 +1,4 @@
-// cs0685.cs: Conditional method `MainClass.Method(out int)' cannot have an out parameter
+// CS0685: Conditional method `MainClass.Method(out int)' cannot have an out parameter
 // Line: 6
 
 class MainClass {

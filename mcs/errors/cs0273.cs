@@ -1,4 +1,4 @@
-// cs0273.cs: The accessibility modifier of the `Error0273.Message.get' accessor must be more restrictive than the modifier of the property or indexer `Error0273.Message'
+// CS0273: The accessibility modifier of the `Error0273.Message.get' accessor must be more restrictive than the modifier of the property or indexer `Error0273.Message'
 // Line: 8
 // Compiler options: -t:library
 

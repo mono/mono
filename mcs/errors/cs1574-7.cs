@@ -1,4 +1,4 @@
-// cs1574-7.cs: XML comment on `A' has cref attribute `ExecuteSilently' that could not be resolved
+// CS1574: XML comment on `A' has cref attribute `ExecuteSilently' that could not be resolved
 // Line: 11
 // Compiler options: -doc:dummy.xml -warnaserror
 /// <summary />

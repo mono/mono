@@ -1,4 +1,4 @@
-// cs1502-5.cs:  The best overloaded method match for `System.Windows.Forms.X11Xim.XCreateIC(System.IntPtr, __arglist)' has some invalid arguments
+// CS1502:  The best overloaded method match for `System.Windows.Forms.X11Xim.XCreateIC(System.IntPtr, __arglist)' has some invalid arguments
 // Line: 16
 
 using System;

@@ -1,4 +1,4 @@
-// cs0027.cs: Keyword `this' is not available in the current context
+// CS0027: Keyword `this' is not available in the current context
 // Line: 7 
 
 using System;

@@ -1,4 +1,4 @@
-// cs0592-9.cs: The attribute `SAttribute' is not valid on this declaration type. It is valid on `return' declarations only
+// CS0592: The attribute `SAttribute' is not valid on this declaration type. It is valid on `return' declarations only
 // Line : 12
 
 using System;

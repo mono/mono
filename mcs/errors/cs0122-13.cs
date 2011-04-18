@@ -1,4 +1,4 @@
-// cs0122-13.cs: `Test.foo' is inaccessible due to its protection level
+// CS0122: `Test.foo' is inaccessible due to its protection level
 // Line: 10
 
 internal class Test 

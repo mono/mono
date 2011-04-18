@@ -1,4 +1,4 @@
-// cs1510-2.cs: A ref or out argument must be an assignable variable
+// CS1510: A ref or out argument must be an assignable variable
 // Line: 14
 // this is bug #56016
 

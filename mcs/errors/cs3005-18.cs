@@ -1,4 +1,4 @@
-// cs3005-18.cs: Identifier `B.TEST()' differing only in case is not CLS-compliant
+// CS3005: Identifier `B.TEST()' differing only in case is not CLS-compliant
 // Line: 15
 // Compiler options: -warnaserror
 

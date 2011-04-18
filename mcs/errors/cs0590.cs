@@ -1,4 +1,4 @@
-// cs0590.cs: User-defined operators cannot return void
+// CS0590: User-defined operators cannot return void
 // Line: 5
 
 class SampleClass {

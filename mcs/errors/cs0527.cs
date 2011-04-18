@@ -1,4 +1,4 @@
-// cs0527.cs: Type `X' in interface list is not an interface
+// CS0527: Type `X' in interface list is not an interface
 // Line: 6
 class X {
 }

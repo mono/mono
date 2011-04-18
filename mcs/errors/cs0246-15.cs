@@ -1,4 +1,4 @@
-// cs0246-15.cs: The type or namespace name `InvalidTypeBlah' could not be found. Are you missing a using directive or an assembly reference?
+// CS0246: The type or namespace name `InvalidTypeBlah' could not be found. Are you missing a using directive or an assembly reference?
 // Line: 17
 
 //

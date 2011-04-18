@@ -1,4 +1,4 @@
-// cs0164.cs: This label has not been referenced
+// CS0164: This label has not been referenced
 // Line: 7
 // Compiler options: -warnaserror -warn:2
 

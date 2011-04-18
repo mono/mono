@@ -1,4 +1,4 @@
-// cs1023.cs: An embedded statement may not be a declaration or labeled statement
+// CS1023: An embedded statement may not be a declaration or labeled statement
 // Line: 9
 
 class Test

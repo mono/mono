@@ -1,4 +1,4 @@
-// cs0579-2.cs: The attribute `System.Diagnostics.DebuggableAttribute' cannot be applied multiple times
+// CS0579: The attribute `System.Diagnostics.DebuggableAttribute' cannot be applied multiple times
 // Line: 7
 
 using System.Diagnostics;

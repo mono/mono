@@ -1,4 +1,4 @@
-// cs0019.cs: Operator `&' cannot be applied to operands of type `System.Reflection.MethodImplAttributes' and `System.Runtime.CompilerServices.MethodImplOptions'
+// CS0019: Operator `&' cannot be applied to operands of type `System.Reflection.MethodImplAttributes' and `System.Runtime.CompilerServices.MethodImplOptions'
 // Line : 13
 
 //

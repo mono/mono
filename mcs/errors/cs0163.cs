@@ -1,4 +1,4 @@
-// cs0163.cs: Control cannot fall through from one case label to another
+// CS0163: Control cannot fall through from one case label to another
 // Line: 17
 
 

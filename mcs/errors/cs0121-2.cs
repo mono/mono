@@ -1,4 +1,4 @@
-// cs0121-2.cs: The call is ambiguous between the following methods or properties: `IFoo.DoIt()' and `IBar.DoIt()'
+// CS0121: The call is ambiguous between the following methods or properties: `IFoo.DoIt()' and `IBar.DoIt()'
 // Line: 9
 
 class A : IFooBar {

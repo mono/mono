@@ -1,4 +1,4 @@
-// cs0031-2.cs: Constant value `-1' cannot be converted to a `byte'
+// CS0031: Constant value `-1' cannot be converted to a `byte'
 // Line: 9
 
 public class Test

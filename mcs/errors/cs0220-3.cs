@@ -1,4 +1,4 @@
-// cs0220.cs: The operation overflows at compile time in checked mode
+// CS0220: The operation overflows at compile time in checked mode
 // Line: 7
 
 enum E1 : byte

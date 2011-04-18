@@ -1,4 +1,4 @@
-// cs01621.cs: The yield statement cannot be used inside anonymous method blocks
+// CS01621: The yield statement cannot be used inside anonymous method blocks
 // Line: 13
 
 using System.Collections;

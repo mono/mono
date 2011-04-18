@@ -1,4 +1,4 @@
-// cs0546.cs: `DerivedClass.Value.set': cannot override because `BaseClass.Value' does not have an overridable set accessor
+// CS0546: `DerivedClass.Value.set': cannot override because `BaseClass.Value' does not have an overridable set accessor
 // Line: 9
 
 abstract class BaseClass {

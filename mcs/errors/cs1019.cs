@@ -1,5 +1,5 @@
-// cs1019.cs : Overloadable unary operator expected
-// Line : 18
+// CS1019: Overloadable unary operator expected
+// Line: 18
 
 public class MyClass {
 

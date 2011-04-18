@@ -1,4 +1,4 @@
-// cs1592.cs: Badly formed XML in included comments file -- `there-is-no-such-file'
+// CS1592: Badly formed XML in included comments file -- `there-is-no-such-file'
 // Line: 12
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

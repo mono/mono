@@ -1,4 +1,4 @@
-// cs0655-2.cs: `a' is not a valid named attribute argument because it is not a valid attribute parameter type
+// CS0655: `a' is not a valid named attribute argument because it is not a valid attribute parameter type
 // Line: 11
 
 using System;

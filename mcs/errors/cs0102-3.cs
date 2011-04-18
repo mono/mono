@@ -1,4 +1,4 @@
-// cs0102-3.cs: The type `ErrorClass' already contains a definition for `Method'
+// CS0102: The type `ErrorClass' already contains a definition for `Method'
 // Line: 6
 
 public class ErrorClass {

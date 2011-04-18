@@ -1,4 +1,4 @@
-// cs1021.cs: Integral constant is too large
+// CS1021: Integral constant is too large
 // Line: 6
 
 class X {

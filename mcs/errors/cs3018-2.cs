@@ -1,4 +1,4 @@
-// cs3018-2.cs: `C1.I2' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `C1'
+// CS3018: `C1.I2' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `C1'
 // Line: 12
 // Compiler options: -warnaserror -warn:1
 

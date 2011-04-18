@@ -1,4 +1,4 @@
-// cs0122-16.cs: `A.x' is inaccessible due to its protection level
+// CS0122: `A.x' is inaccessible due to its protection level
 // Line: 16
 
 public class A

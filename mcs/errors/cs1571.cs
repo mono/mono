@@ -1,4 +1,4 @@
-// cs1571.cs: XML comment on `Testing.Test.Bar(int)' has a duplicate param tag for `i'
+// CS1571: XML comment on `Testing.Test.Bar(int)' has a duplicate param tag for `i'
 // Line: 18
 // Compiler options: -doc:dummy.xml -warn:2 -warnaserror
 

@@ -1,4 +1,4 @@
-// cs0418-3.cs : `Foo': an abstract class cannot be sealed or static
+// CS0418: `Foo': an abstract class cannot be sealed or static
 // Line: 3
 public abstract sealed partial class Foo
 {

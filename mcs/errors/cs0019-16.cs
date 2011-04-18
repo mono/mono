@@ -1,4 +1,4 @@
-// cs0019-16.cs: Operator `<<' cannot be applied to operands of type `byte' and `uint'
+// CS0019: Operator `<<' cannot be applied to operands of type `byte' and `uint'
 // Line: 9
 
 using System;

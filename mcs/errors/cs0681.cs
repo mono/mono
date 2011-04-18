@@ -1,4 +1,4 @@
-// cs0681: The modifier 'abstract' is not valid on fields. Try using a property instead
+// CS0681: The modifier 'abstract' is not valid on fields. Try using a property instead
 // Line: 5
 
 class X {

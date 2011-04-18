@@ -1,4 +1,4 @@
-// cs0619-48.cs: `A.Prop' is obsolete: `!!!'
+// CS0619-48: `A.Prop' is obsolete: `!!!'
 // Line: 13
 
 class A: System.Attribute

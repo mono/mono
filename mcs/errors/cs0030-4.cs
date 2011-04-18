@@ -1,4 +1,4 @@
-// cs0030-4.cs: Cannot convert type `Position' to `Board.Stone'
+// CS0030: Cannot convert type `Position' to `Board.Stone'
 // Line: 20
 
 using System;

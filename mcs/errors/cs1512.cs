@@ -1,4 +1,4 @@
-// cs1512.cs: Keyword `base' is not available in the current context
+// CS1512: Keyword `base' is not available in the current context
 // Line: 11
 
 class Base

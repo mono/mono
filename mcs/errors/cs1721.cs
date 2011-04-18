@@ -1,4 +1,4 @@
-// cs1721.cs: `B': Classes cannot have multiple base classes (`A1' and `A2')
+// CS1721: `B': Classes cannot have multiple base classes (`A1' and `A2')
 // Line: 9
 class A1 {
 }

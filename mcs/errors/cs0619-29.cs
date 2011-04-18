@@ -1,4 +1,4 @@
-// cs0619-29.cs: `Obsolete.Error' is obsolete: `Do not use it.'
+// CS0619-29: `Obsolete.Error' is obsolete: `Do not use it.'
 // Line: 15
 
 class Obsolete {

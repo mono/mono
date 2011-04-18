@@ -1,4 +1,4 @@
-// cs0552.cs: User-defined conversion `NoIDispose.implicit operator System.IDisposable(NoIDispose)' cannot convert to or from an interface type
+// CS0552: User-defined conversion `NoIDispose.implicit operator System.IDisposable(NoIDispose)' cannot convert to or from an interface type
 // Line: 12
 //
 using System;

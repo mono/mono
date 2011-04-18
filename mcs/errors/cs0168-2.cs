@@ -1,4 +1,4 @@
-// cs0168-2.cs: The variable `e' is declared but never used
+// CS0168: The variable `e' is declared but never used
 // Line: 10
 // Compiler options: -warn:3 -warnaserror
 

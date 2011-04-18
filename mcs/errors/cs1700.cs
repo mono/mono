@@ -1,4 +1,4 @@
-// gcs1700.cs: Assembly reference `MyAssemblyName, Version=' is invalid and cannot be resolved
+// CS1700: Assembly reference `MyAssemblyName, Version=' is invalid and cannot be resolved
 // Line: 8
 // Compiler options: -warnaserror -warn:3
 

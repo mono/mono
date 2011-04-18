@@ -1,4 +1,4 @@
-// cs0414.cs: The private field `X.i' is assigned but its value is never used
+// CS0414: The private field `X.i' is assigned but its value is never used
 // Line: 6
 // Compiler options: -warnaserror -warn:3
 

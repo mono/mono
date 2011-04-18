@@ -1,4 +1,4 @@
-// cs0534-3.cs: `MyTestExtended' does not implement inherited abstract member `MyTestAbstract.GetName()'
+// CS0534: `MyTestExtended' does not implement inherited abstract member `MyTestAbstract.GetName()'
 // Line: 6
 // Compiler options: -r:CS0534-3-lib.dll
 

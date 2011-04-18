@@ -1,4 +1,4 @@
-// cs1649.cs: Members of readonly field `B.a' cannot be passed ref or out (except in a constructor)
+// CS1649: Members of readonly field `B.a' cannot be passed ref or out (except in a constructor)
 // Line: 13
 
 class B

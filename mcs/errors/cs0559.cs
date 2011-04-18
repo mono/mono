@@ -1,4 +1,4 @@
-// cs0559.cs: The parameter type for ++ or -- operator must be the containing type
+// CS0559: The parameter type for ++ or -- operator must be the containing type
 // Line: 5
 
 class SampleClass {

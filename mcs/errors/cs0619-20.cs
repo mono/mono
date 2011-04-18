@@ -1,4 +1,4 @@
-// cs0619-20.cs: `ObsoleteException' is obsolete: `'
+// CS0619: `ObsoleteException' is obsolete: `'
 // Line: 15
 
 using System;

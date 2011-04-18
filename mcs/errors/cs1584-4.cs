@@ -1,4 +1,4 @@
-// cs1584-4.cs: XML comment on `Test' has syntactically incorrect cref attribute `Mai()n'
+// CS1584: XML comment on `Test' has syntactically incorrect cref attribute `Mai()n'
 // Line: 7
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 
