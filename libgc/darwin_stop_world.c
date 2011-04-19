@@ -569,6 +569,9 @@ void GC_stop_world()
     thread_act_array_t act_list, prev_list;
     mach_msg_type_number_t listcount, prevcount;
     
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_PRE_STOP_WORLD);
+
 #   if DEBUG_THREADS
       GC_printf1("Stopping the world from 0x%lx\n", mach_thread_self());
 #   endif
@@ -639,6 +642,9 @@ void GC_stop_world()
     #endif
 	  
 	  mach_port_deallocate(my_task, my_thread);
+
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_POST_STOP_WORLD);
 }
 
 /* Caller holds allocation lock, and has held it continuously since	*/
@@ -654,6 +660,9 @@ void GC_start_world()
   mach_msg_type_number_t listcount;
   struct thread_basic_info info;
   mach_msg_type_number_t outCount = THREAD_INFO_MAX;
+
+  if (GC_notify_event)
+      GC_notify_event (GC_EVENT_PRE_START_WORLD);
   
 #   if DEBUG_THREADS
       GC_printf0("World starting\n");
@@ -700,6 +709,10 @@ void GC_start_world()
     vm_deallocate(my_task, (vm_address_t)act_list, sizeof(thread_t) * listcount);
 	
 	mach_port_deallocate(my_task, my_thread);
+
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_POST_START_WORLD);
+
 #   if DEBUG_THREADS
      GC_printf0("World started\n");
 #   endif
