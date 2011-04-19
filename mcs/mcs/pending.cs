@@ -216,20 +216,34 @@ namespace Mono.CSharp {
 						if (compared_method.Name != tested_method.Name)
 							continue;
 
+						if (p.type != tested_method.DeclaringType)
+							continue;
+
 						if (!TypeSpecComparer.Override.IsSame (compared_method.Parameters.Types, tested_method.Parameters.Types))
 							continue;
 
-						bool modifiers_match = true;
+						bool exact_match = true;
+						bool ref_only_difference = false;
 						var cp = compared_method.Parameters.FixedParameters;
 						var tp = tested_method.Parameters.FixedParameters;
 						for (int pi = 0; pi < compared_method.Parameters.Count; ++pi) {
-							if ((cp[i].ModFlags & Parameter.Modifier.ISBYREF) != (tp[i].ModFlags & Parameter.Modifier.ISBYREF)) {
-								modifiers_match = false;
-								break;
+							//
+							// First check exact modifiers match
+							//
+							const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
+							if ((cp[i].ModFlags & ref_out) == (tp[i].ModFlags & ref_out))
+								continue;
+
+							if ((cp[i].ModFlags & tp[i].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+								ref_only_difference = true;
+								continue;
 							}
+
+							exact_match = false;
+							break;
 						}
 
-						if (!modifiers_match)
+						if (!exact_match || !ref_only_difference)
 							continue;
 
 						pending.Report.SymbolRelatedToPreviousError (compared_method);
@@ -257,14 +271,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodSpec IsInterfaceMethod (MemberName name, TypeSpec ifaceType, MethodData method)
+		public MethodSpec IsInterfaceMethod (MemberName name, TypeSpec ifaceType, MethodData method, out MethodSpec ambiguousCandidate)
 		{
-			return InterfaceMethod (name, ifaceType, method, Operation.Lookup);
+			return InterfaceMethod (name, ifaceType, method, Operation.Lookup, out ambiguousCandidate);
 		}
 
-		public void ImplementMethod (MemberName name, TypeSpec ifaceType, MethodData method, bool clear_one) 
+		public void ImplementMethod (MemberName name, TypeSpec ifaceType, MethodData method, bool clear_one, out MethodSpec ambiguousCandidate)
 		{
-			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll);
+			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll, out ambiguousCandidate);
 		}
 
 		/// <remarks>
@@ -284,21 +298,23 @@ namespace Mono.CSharp {
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
-		public MethodSpec InterfaceMethod (MemberName name, TypeSpec iType, MethodData method, Operation op)
+		public MethodSpec InterfaceMethod (MemberName name, TypeSpec iType, MethodData method, Operation op, out MethodSpec ambiguousCandidate)
 		{
+			ambiguousCandidate = null;
+
 			if (pending_implementations == null)
 				return null;
 
 			TypeSpec ret_type = method.method.ReturnType;
 			ParametersCompiled args = method.method.ParameterInfo;
 			bool is_indexer = method.method is Indexer.SetIndexerMethod || method.method is Indexer.GetIndexerMethod;
+			MethodSpec m;
 
 			foreach (TypeAndMethods tm in pending_implementations){
 				if (!(iType == null || tm.type == iType))
 					continue;
 
 				int method_count = tm.methods.Count;
-				MethodSpec m;
 				for (int i = 0; i < method_count; i++){
 					m = tm.methods [i];
 
@@ -351,6 +367,11 @@ namespace Mono.CSharp {
 						tm.found [i] = method;
 					}
 
+					if (op == Operation.Lookup && name.Left != null && ambiguousCandidate == null) {
+						ambiguousCandidate = m;
+						continue;
+					}
+
 					//
 					// Lookups and ClearOne return
 					//
@@ -360,9 +381,12 @@ namespace Mono.CSharp {
 
 				// If a specific type was requested, we can stop now.
 				if (tm.type == iType)
-					return null;
+					break;
 			}
-			return null;
+
+			m = ambiguousCandidate;
+			ambiguousCandidate = null;
+			return m;
 		}
 
 		/// <summary>

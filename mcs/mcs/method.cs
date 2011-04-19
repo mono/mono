@@ -1799,20 +1799,21 @@ namespace Mono.CSharp {
 			TypeContainer container = parent.PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
-			if (pending != null){
-				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this);
+			MethodSpec ambig_iface_method;
+			if (pending != null) {
+				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this, out ambig_iface_method);
 
-				if (member.InterfaceType != null){
-					if (implementing == null){
+				if (member.InterfaceType != null) {
+					if (implementing == null) {
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "`{0}' is an accessor not found in interface member `{1}{2}'",
-								      method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
-								      member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
+									  method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
+									  member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
 							Report.Error (539, method.Location,
-								      "`{0}.{1}' in explicit interface declaration is not a member of interface",
-								      TypeManager.CSharpName (member.InterfaceType), member.ShortName);
+									  "`{0}.{1}' in explicit interface declaration is not a member of interface",
+									  TypeManager.CSharpName (member.InterfaceType), member.ShortName);
 						}
 						return false;
 					}
@@ -1846,6 +1847,8 @@ namespace Mono.CSharp {
 						}
 					}
 				}
+			} else {
+				ambig_iface_method = null;
 			}
 
 			//
@@ -1866,6 +1869,15 @@ namespace Mono.CSharp {
 						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
 							method.GetSignatureForError ());
 					}
+
+					if (ambig_iface_method != null) {
+						Report.SymbolRelatedToPreviousError (ambig_iface_method);
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Warning (473, 2, method.Location,
+							"Explicit interface implementation `{0}' matches more than one interface member. Consider using a non-explicit implementation instead",
+							method.GetSignatureForError ());
+					}
+
 				} else {
 					if (implementing.DeclaringType.IsInterface) {
 						//
@@ -1919,7 +1931,7 @@ namespace Mono.CSharp {
 				// clear the pending implementation flag (requires explicit methods to be defined first)
 				//
 				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
-					member.InterfaceType, this, member.IsExplicitImpl);
+					member.InterfaceType, this, member.IsExplicitImpl, out ambig_iface_method);
 
 				//
 				// Update indexer accessor name to match implementing abstract accessor
