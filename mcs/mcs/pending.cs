@@ -208,6 +208,9 @@ namespace Mono.CSharp {
 				//
 				for (int i = 0; i < p.methods.Count; ++i) {
 					MethodSpec compared_method = p.methods[i];
+					if (compared_method.Parameters.IsEmpty)
+						continue;
+
 					for (int ii = i + 1; ii < p.methods.Count; ++ii) {
 						MethodSpec tested_method = p.methods[ii];
 						if (compared_method.Name != tested_method.Name)
