@@ -855,15 +855,27 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Finds effective base class
+		// Finds effective base class. The effective base class is always a class-type
 		//
 		public TypeSpec GetEffectiveBase ()
 		{
 			if (HasSpecialStruct)
 				return BaseType;
 
-			if (BaseType != null && targs == null)
-				return BaseType;
+			//
+			// If T has a class-type constraint C but no type-parameter constraints, its effective base class is C
+			//
+			if (BaseType != null && targs == null) {
+				//
+				// If T has a constraint V that is a value-type, use instead the most specific base type of V that is a class-type.
+				// 
+				// LAMESPEC: Is System.ValueType always the most specific base type in this case?
+				//
+				// Note: This can never happen in an explicitly given constraint, but may occur when the constraints of a generic method
+				// are implicitly inherited by an overriding method declaration or an explicit implementation of an interface method.
+				//
+				return BaseType.IsStruct ? BaseType.BaseType : BaseType;
+			}
 
 			var types = targs;
 			if (HasTypeConstraint) {
@@ -2277,11 +2289,25 @@ namespace Mono.CSharp {
 
 		bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
+			if (atype == ttype)
+				return true;
+
 			if (atype.IsGenericParameter) {
-				if (atype == ttype || Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
+				var tps = (TypeParameterSpec) atype;
+				if (Convert.ImplicitTypeParameterConversion (null, tps, ttype) != null)
 					return true;
+
+				//
+				// LAMESPEC: Identity conversion with inflated type parameter
+				// It's not clear from the spec what rule should apply to inherited
+				// inflated type parameter. The specification allows only type parameter
+				// conversion but that's clearly not enough
+				//
+				if (tps.HasTypeConstraint && tps.BaseType == ttype)
+					return true;
+
 			} else if (TypeSpec.IsValueType (atype)) {
-				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
+				if (Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			} else {
 				var expr = new EmptyExpression (atype);
