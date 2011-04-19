@@ -180,13 +180,18 @@ namespace System.Net {
 
 			ArrayList list = unhandled;
 			best_match = MatchFromList (host, path, list, out prefix);
+			if (path != path_slash && best_match == null)
+				best_match = MatchFromList (host, path_slash, list, out prefix);
 			if (best_match != null)
 				return best_match;
 
 			list = all;
 			best_match = MatchFromList (host, path, list, out prefix);
+			if (path != path_slash && best_match == null)
+				best_match = MatchFromList (host, path_slash, list, out prefix);
 			if (best_match != null)
 				return best_match;
+
 			return null;
 		}
 
