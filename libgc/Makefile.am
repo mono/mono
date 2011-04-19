@@ -18,7 +18,7 @@
 ## files that should be in the distribution are not mentioned in this
 ## Makefile.am.
 
-AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = include doc
 
