@@ -9,7 +9,7 @@
 # General Public License and is *not* in the public domain.
 #
 # Origin: gettext-0.18
-GETTEXT_MACRO_VERSION = 0.18
+GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
