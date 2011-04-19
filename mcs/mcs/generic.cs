@@ -584,7 +584,7 @@ namespace Mono.CSharp {
 
 		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)
 		{
-			return spec.GetEffectiveBase ().MemberDefinition.DeclaringAssembly == assembly;
+			return spec.MemberDefinition.DeclaringAssembly == assembly;
 		}
 
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
