@@ -166,7 +166,7 @@ namespace System.Collections.Generic
 		{
 			try {
 				if (_array != null) {
-					_array.CopyTo (dest, idx);
+					Array.Copy (_array, 0, dest, idx, _size);
 					Array.Reverse (dest, idx, _size);
 				}
 			} catch (ArrayTypeMismatchException) {
