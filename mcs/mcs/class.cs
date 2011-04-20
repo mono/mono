@@ -1215,20 +1215,6 @@ namespace Mono.CSharp
 					if (!spec.AddInterface (iface_type))
 						continue;
 
-					if (iface_type.IsGeneric && spec.Interfaces != null) {
-						foreach (var prev_iface in iface_exprs) {
-							if (prev_iface == iface_type)
-								break;
-
-							if (!TypeSpecComparer.Unify.IsEqual (iface_type, prev_iface))
-								continue;
-
-							Report.Error (695, Location,
-								"`{0}' cannot implement both `{1}' and `{2}' because they may unify for some type parameter substitutions",
-								GetSignatureForError (), prev_iface.GetSignatureForError (), iface_type.GetSignatureForError ());
-						}
-					}
-
 					TypeBuilder.AddInterfaceImplementation (iface_type.GetMetaInfo ());
 
 					// Ensure the base is always setup
@@ -1559,6 +1545,20 @@ namespace Mono.CSharp
 								"`{0}': cannot implement a dynamic interface `{1}'",
 								GetSignatureForError (), iface_type.GetSignatureForError ());
 							return false;
+						}
+
+						if (spec.Interfaces != null) {
+							foreach (var prev_iface in iface_exprs) {
+								if (prev_iface == iface_type)
+									break;
+
+								if (!TypeSpecComparer.Unify.IsEqual (iface_type, prev_iface))
+									continue;
+
+								Report.Error (695, Location,
+									"`{0}' cannot implement both `{1}' and `{2}' because they may unify for some type parameter substitutions",
+									GetSignatureForError (), prev_iface.GetSignatureForError (), iface_type.GetSignatureForError ());
+							}
 						}
 					}
 				}
