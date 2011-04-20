@@ -255,8 +255,9 @@ namespace Mono {
 						using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
 							ReadEvalPrintLoopWith (p => {
 								var line = r.ReadLine ();
-								if (first && line.StartsWith ("#!")){
-									line = r.ReadLine ();
+								if (first){
+									if (line.StartsWith ("#!"))
+										line = r.ReadLine ();
 									first = false;
 								}
 								return line;
