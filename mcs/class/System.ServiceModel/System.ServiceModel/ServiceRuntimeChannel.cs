@@ -116,6 +116,8 @@ namespace System.ServiceModel.MonoInternal
 		}
 	}
 
+	// Its lifetime is per-session.
+	// InputOrReplyRequestProcessor's lifetime is per-call.
 #if DISABLE_REAL_PROXY
 	// FIXME: this is a (similar) workaround for bug 571907.
 	public
@@ -129,7 +131,6 @@ namespace System.ServiceModel.MonoInternal
 		public ServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 		{
 			this.channel = channel;
-			channel.Closing += OnChannelClose;
 			this.runtime = runtime;
 		}
 

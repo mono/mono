@@ -9,7 +9,9 @@ using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel.Dispatcher
 {
-	internal class InputOrReplyRequestProcessor : BaseRequestProcessor, IDisposable
+	// Its lifetime is per-call.
+	// ServiceRuntimeChannel's lifetime is per-session.
+	internal class InputOrReplyRequestProcessor : BaseRequestProcessor
 	{
 		DispatchRuntime dispatch_runtime;
 		IChannel reply_or_input;
@@ -33,12 +35,6 @@ namespace System.ServiceModel.Dispatcher
 			FinalizationChain.AddHandler (new FinalizeProcessingHandler ());
 		}
 
-		public void Dispose ()
-		{
-			if (context_channel != null)
-				context_channel.Close ();
-		}
-
 		void Init (DispatchRuntime runtime, IChannel replyOrInput)
 		{
 			dispatch_runtime = runtime;
@@ -48,14 +44,14 @@ namespace System.ServiceModel.Dispatcher
 		public void ProcessInput (Message message)
 		{
 			OperationContext opcx = CreateOperationContext (message);
-			ProcessRequest (new MessageProcessingContext (opcx));
+			ProcessRequest (new MessageProcessingContext (opcx, reply_or_input));
 		}
 
 		public void ProcessReply (RequestContext rc)
 		{
 			OperationContext opcx = CreateOperationContext (rc.RequestMessage);
 			opcx.RequestContext = rc;
-			ProcessRequest (new MessageProcessingContext (opcx));
+			ProcessRequest (new MessageProcessingContext (opcx, reply_or_input));
 		}
 
 		OperationContext CreateOperationContext (Message incoming)

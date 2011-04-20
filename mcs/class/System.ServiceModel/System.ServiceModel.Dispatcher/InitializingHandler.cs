@@ -28,6 +28,9 @@ namespace System.ServiceModel.Dispatcher
 			if (iCtx == null) {
 				ServiceHostBase host = dispatchRuntime.ChannelDispatcher.Host;
 				iCtx = new InstanceContext (dispatchRuntime.ChannelDispatcher.Host, null, false);
+				// FIXME: could be easier way to identify session channel
+				if ((mrc.Channel is ISessionChannel<IInputSession> || mrc.Channel is ISessionChannel<IDuplexSession>) && host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().InstanceContextMode == InstanceContextMode.PerSession)
+					mrc.Channel.Closed += delegate { iCtx.Close (); };
 			}
 
 			iCtx.InstanceManager = new InstanceManager (dispatchRuntime);
