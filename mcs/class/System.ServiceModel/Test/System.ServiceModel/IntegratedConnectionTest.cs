@@ -187,8 +187,8 @@ namespace MonoTests.System.ServiceModel
 				Assert.AreEqual (1, proxy.GetInstanceCounter (), "One server instance after second call in session #" + i);
 				factory.Close (); // should close session even when no IsTerminating method has been invoked
 				Thread.Sleep (500); // give WCF time to dispose service object
-				Assert.AreEqual (0, Foo3.InstanceCounter, "Service instances must be disposed after channel is closed");
-				Assert.AreEqual (i, Foo3.CreatedInstances, "One new instance per session");
+				Assert.AreEqual (0, Foo3.InstanceCounter, "Service instances must be disposed after channel is closed, in session #" + i);
+				Assert.AreEqual (i, Foo3.CreatedInstances, "One new instance per session, in session #" + i);
 			}
 			host.Close ();
 		}

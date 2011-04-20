@@ -17,13 +17,19 @@ namespace System.ServiceModel.Dispatcher
 		Exception processingException;
 		DispatchOperation operation;
 		UserEventsHandler user_events_handler;		
+		IChannel reply_or_input;
 
-		public MessageProcessingContext (OperationContext opCtx)
+		public MessageProcessingContext (OperationContext opCtx, IChannel replyOrInput)
 		{
 			operation_context = opCtx;
 			request_context = opCtx.RequestContext;
 			incoming_message = opCtx.IncomingMessage;
 			user_events_handler = new UserEventsHandler (this);
+			reply_or_input = replyOrInput;
+		}
+
+		public IChannel Channel {
+			get { return reply_or_input; }
 		}
 
 		public DispatchOperation Operation

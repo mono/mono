@@ -595,10 +595,7 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					var req = rc.RequestMessage;
 					var ed = FindEndpointDispatcher (req);
-					// FIXME: explicitly dispose this.
-//					using (var processor = new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply))
-					var processor = new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply);
-						processor.ProcessReply (rc);
+					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
 				} catch (Exception ex) {
 					Message res;
 					if (ProcessErrorWithHandlers (reply, ex, out res))
@@ -643,10 +640,7 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					EndpointDispatcher candidate = null;
 					candidate = FindEndpointDispatcher (message);
-					// FIXME: explicitly dispose this.
-//					using (var processor = new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input))
-					var processor = new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input);
-						processor.ProcessInput (message);
+					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).ProcessInput (message);
 				}
 				catch (Exception ex) {
 					Message dummy;
