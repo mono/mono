@@ -524,6 +524,7 @@ if test x$enable_quiet_build = xyes; then
 fi
 
 AC_OUTPUT(Makefile
+m4/Makefile
 include/Makefile
 include/private/Makefile
 doc/Makefile,,
