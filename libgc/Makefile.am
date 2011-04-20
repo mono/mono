@@ -20,7 +20,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = include doc
+SUBDIRS = m4 include doc
 
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 
