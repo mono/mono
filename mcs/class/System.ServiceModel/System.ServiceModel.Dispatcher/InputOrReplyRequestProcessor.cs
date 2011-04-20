@@ -9,10 +9,11 @@ using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel.Dispatcher
 {
-	internal class InputOrReplyRequestProcessor : BaseRequestProcessor
+	internal class InputOrReplyRequestProcessor : BaseRequestProcessor, IDisposable
 	{
 		DispatchRuntime dispatch_runtime;
 		IChannel reply_or_input;
+		IContextChannel context_channel;
 
 		public InputOrReplyRequestProcessor (DispatchRuntime runtime, IChannel replyOrInput)
 		{
@@ -30,6 +31,12 @@ namespace System.ServiceModel.Dispatcher
 
 			//finalize
 			FinalizationChain.AddHandler (new FinalizeProcessingHandler ());
+		}
+
+		public void Dispose ()
+		{
+			if (context_channel != null)
+				context_channel.Close ();
 		}
 
 		void Init (DispatchRuntime runtime, IChannel replyOrInput)
@@ -68,6 +75,7 @@ namespace System.ServiceModel.Dispatcher
 			OperationContext opCtx = new OperationContext (contextChannel);
 			opCtx.IncomingMessage = incoming;
 			opCtx.EndpointDispatcher = dispatch_runtime.EndpointDispatcher;
+			context_channel = contextChannel;
 			return opCtx;
 		}
 	}

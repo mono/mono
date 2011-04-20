@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
 using System.Threading;
@@ -335,6 +336,7 @@ namespace System.ServiceModel.Dispatcher
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
 			AddressFilterMode address_filter_mode;
+			List<ISession> sessions = new List<ISession> ();
 
 			public ListenerLoopManager (ChannelDispatcher owner)
 			{
@@ -428,11 +430,33 @@ namespace System.ServiceModel.Dispatcher
 				loop_thread = null;
 			}
 
+			void AddChannel (IChannel ch)
+			{
+				channels.Add (ch);
+				var ich = ch as ISessionChannel<IInputSession>;
+				if (ich != null && ich.Session != null) {
+					lock (sessions) {
+						var session = sessions.FirstOrDefault (s => s.Id == ich.Session.Id);
+						if (session == null)
+							sessions.Add (session);
+					}
+				}
+			}
+
+			void RemoveChannel (IChannel ch)
+			{
+				channels.Remove (ch); // zonbie, if exists
+				var ich = ch as ISessionChannel<IInputSession>;
+				List<IChannel> l;
+				if (ich != null && ich.Session != null)
+					sessions.Remove (ich.Session);
+			}
+
 			public void CloseInput ()
 			{
 				foreach (var ch in channels.ToArray ()) {
 					if (ch.State == CommunicationState.Closed)
-						channels.Remove (ch); // zonbie, if exists
+						RemoveChannel (ch);
 					else {
 						try {
 							ch.Close (close_timeout - (DateTime.Now - close_started));
@@ -499,18 +523,18 @@ namespace System.ServiceModel.Dispatcher
 				}
 
 				lock (channels)
-					channels.Add (ch);
+					AddChannel (ch);
 				ch.Opened += delegate {
 					ch.Faulted += delegate {
 						lock (channels)
 							if (channels.Contains (ch))
-								channels.Remove (ch);
+								RemoveChannel (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					ch.Closed += delegate {
 						lock (channels)
 							if (channels.Contains (ch))
-								channels.Remove (ch);
+								RemoveChannel (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					};
@@ -571,7 +595,10 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					var req = rc.RequestMessage;
 					var ed = FindEndpointDispatcher (req);
-					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
+					// FIXME: explicitly dispose this.
+//					using (var processor = new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply))
+					var processor = new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply);
+						processor.ProcessReply (rc);
 				} catch (Exception ex) {
 					Message res;
 					if (ProcessErrorWithHandlers (reply, ex, out res))
@@ -616,8 +643,10 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					EndpointDispatcher candidate = null;
 					candidate = FindEndpointDispatcher (message);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).
-						ProcessInput (message);
+					// FIXME: explicitly dispose this.
+//					using (var processor = new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input))
+					var processor = new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input);
+						processor.ProcessInput (message);
 				}
 				catch (Exception ex) {
 					Message dummy;
