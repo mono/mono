@@ -45,22 +45,16 @@ namespace Mono {
 			var settings = cmd.ParseArguments (args);
 			if (settings == null || r.Errors > 0)
 				return 1;
+			var startup_files = new string [settings.SourceFiles.Count];
+			int i = 0;
+			foreach (var source in settings.SourceFiles)
+				startup_files [i++] = source.FullPathName;
+			settings.SourceFiles.Clear ();
 
 			var eval = new Evaluator (settings, r);
 
 			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
 			eval.DescribeTypeExpressions = true;
-
-			string[] startup_files = { };
-			/*
-			try {
-				startup_files = Evaluator.InitAndGetStartupFiles (args, HandleExtraArguments);
-				Evaluator.DescribeTypeExpressions = true;
-				Evaluator.SetInteractiveBaseClass (typeof (InteractiveBaseShell));
-			} catch {
-				return 1;
-			}
-			*/
 
 			CSharpShell shell;
 #if !ON_DOTNET
@@ -74,7 +68,6 @@ namespace Mono {
 			{
 				shell = new CSharpShell (eval);
 			}
-
 			return shell.Run (startup_files);
 		}
 
@@ -97,7 +90,6 @@ namespace Mono {
 				agent = args[pos];
 				return pos + 1;
 			}
-
 			return -1;
 		}
 		
