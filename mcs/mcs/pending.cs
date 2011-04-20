@@ -11,6 +11,7 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -226,15 +227,16 @@ namespace Mono.CSharp {
 						bool ref_only_difference = false;
 						var cp = compared_method.Parameters.FixedParameters;
 						var tp = tested_method.Parameters.FixedParameters;
-						for (int pi = 0; pi < compared_method.Parameters.Count; ++pi) {
+
+						for (int pi = 0; pi < cp.Length; ++pi) {
 							//
 							// First check exact modifiers match
 							//
 							const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
-							if ((cp[i].ModFlags & ref_out) == (tp[i].ModFlags & ref_out))
+							if ((cp[pi].ModFlags & ref_out) == (tp[pi].ModFlags & ref_out))
 								continue;
 
-							if ((cp[i].ModFlags & tp[i].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+							if ((cp[pi].ModFlags & tp[pi].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
 								ref_only_difference = true;
 								continue;
 							}
