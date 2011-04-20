@@ -1122,15 +1122,14 @@ mono_gc_cleanup (void)
 					 * state the finalizer thread depends on will vanish.
 					 */
 					g_warning ("Shutting down finalizer thread timed out.");
-				} else {
-					/*
-					 * FIXME: On unix, when the above wait returns, the thread 
-					 * might still be running io-layer code, or pthreads code.
-					 */
-					Sleep (100);
 				}
-
 			}
+
+			/*
+			 * FIXME: When the above wait returns, the thread 
+			 * might still be running io-layer code, or pthreads code.
+			 */
+			Sleep (100);
 		}
 		gc_thread = NULL;
 #ifdef HAVE_BOEHM_GC
