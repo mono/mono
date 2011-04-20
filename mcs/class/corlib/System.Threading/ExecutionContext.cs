@@ -35,7 +35,11 @@ using System.Security.Permissions;
 namespace System.Threading {
 
 	[Serializable]
-	public sealed class ExecutionContext : ISerializable {
+	public sealed class ExecutionContext : ISerializable
+#if NET_4_0
+		, IDisposable
+#endif
+	{
 #if !MOONLIGHT
 		private SecurityContext _sc;
 #endif
@@ -83,6 +87,14 @@ namespace System.Threading {
 
 			return new ExecutionContext (this);
 		}
+		
+#if NET_4_0
+		public void Dispose ()
+		{
+			if (_sc != null)
+				_sc.Dispose ();
+		}
+#endif
 
 		[MonoTODO]
 		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]

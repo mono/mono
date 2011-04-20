@@ -42,6 +42,9 @@ namespace System.Windows.Forms
 	[Docking (DockingBehavior.AutoDock)]
 	[Designer ("System.Windows.Forms.Design.SplitContainerDesigner, " + Consts.AssemblySystem_Design)]
 	public class SplitContainer : ContainerControl
+#if NET_4_0
+		, ISupportInitialize
+#endif
 	{
 		#region Local Variables
 		private FixedPanel fixed_panel;
@@ -471,6 +474,18 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+#if NET_4_0
+		[MonoTODO]
+		public void BeginInit ()
+		{
+		}
+		
+		[MonoTODO]
+		public void EndInit ()
+		{
+		}
+#endif
+		
 		public void OnSplitterMoved (SplitterEventArgs e)
 		{
 			SplitterEventHandler eh = (SplitterEventHandler)(Events [SplitterMovedEvent]);

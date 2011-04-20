@@ -33,7 +33,11 @@ using System.Threading;
 
 namespace System.Security {
 
-	public sealed class SecurityContext {
+	public sealed class SecurityContext
+#if NET_4_0
+		: IDisposable
+#endif
+	{
 		private bool _capture;
 		private IntPtr _winid;
 		private CompressedStack _stack;
@@ -75,6 +79,12 @@ namespace System.Security {
 			capture._stack = CompressedStack.Capture ();
 			return capture;
 		}
+		
+#if NET_4_0
+		public void Dispose ()
+		{
+		}
+#endif
 
 		// internal stuff
 
