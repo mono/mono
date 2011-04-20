@@ -6464,7 +6464,13 @@
         <size>32</size>
       </method>
       <method name="Int32 Main()">
-        <size>107</size>
+        <size>160</size>
+      </method>
+      <method name="Boolean Check1(Nullable`1)">
+        <size>8</size>
+      </method>
+      <method name="Boolean Check2[T](E)">
+        <size>15</size>
       </method>
     </type>
   </test>
@@ -51481,6 +51487,43 @@
     </type>
     <type name="Foo+&lt;Finalize&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-99.cs">
+    <type name="C">
+      <method name="Void Test()">
+        <size>37</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0()">
+        <size>58</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__1()">
+        <size>69</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0+&lt;Test&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__2()">
         <size>22</size>
       </method>
       <method name="Void .ctor()">

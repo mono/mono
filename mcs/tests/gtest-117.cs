@@ -2,6 +2,8 @@
 
 using System;
 
+enum E { Item };
+
 public interface IFoo<T>
 { }
 
@@ -50,10 +52,20 @@ class X
 	{
 		int? i = null;
 		if (i is int) {
-				return (int) i;
+			return (int) i;
 		}
 		
 		return 3;
+	}
+	
+	static bool Check1 (E? e)
+	{
+		return e is Enum;
+	}
+
+	static bool Check2<T> (E e) where T : struct
+	{
+		return e is T;
 	}
 	
 	static int Main ()
@@ -78,6 +90,15 @@ class X
 		
 		if (TestC () != 3)
 			return 6;
+		
+		if (Check1 (null))
+			return 7;
+
+		if (!Check1 (E.Item))
+			return 8;
+
+		if (Check2<int> (E.Item))
+			return 9;
 		
 		Console.WriteLine ("OK");
 		return 0;

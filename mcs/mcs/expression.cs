@@ -1334,6 +1334,11 @@ namespace Mono.CSharp
 			}
 
 			expr.Emit (ec);
+
+			// Only to make verifier happy
+			if (probe_type_expr.IsGenericParameter && TypeSpec.IsValueType (expr.Type))
+				ec.Emit (OpCodes.Box, expr.Type);
+
 			ec.Emit (OpCodes.Isinst, probe_type_expr);
 			ec.Emit (OpCodes.Ldnull);
 			ec.Emit (OpCodes.Cgt_Un);
@@ -1432,15 +1437,21 @@ namespace Mono.CSharp
 						OperatorName, t.GetSignatureForError ());
 				}
 
-				if (d.IsStruct) {
-					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
-						return CreateConstantResult (ec, true);
-				} else {
-					if (TypeManager.IsGenericParameter (d))
-						return ResolveGenericParameter (ec, t, (TypeParameterSpec) d);
+				if (TypeManager.IsGenericParameter (d))
+					return ResolveGenericParameter (ec, t, (TypeParameterSpec) d);
 
-					if (InflatedTypeSpec.ContainsTypeParameter (d))
-						return this;
+				if (TypeSpec.IsValueType (d)) {
+					if (Convert.ImplicitBoxingConversion (null, d, t) != null) {
+						if (d_is_nullable && !t_is_nullable) {
+							expr_unwrap = Nullable.Unwrap.Create (expr, false);
+							return this;
+						}
+
+						return CreateConstantResult (ec, true);
+					}
+				} else {
+				//	if (InflatedTypeSpec.ContainsTypeParameter (d))
+				//		return this;
 
 					if (Convert.ImplicitReferenceConversionExists (d, t) ||
 						Convert.ExplicitReferenceConversionExists (d, t)) {
