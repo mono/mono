@@ -6047,8 +6047,6 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 
 	// FIXME: Add a free function
 
-	g_assert (mini_get_debug_options ()->soft_breakpoints);
-
 	mono_domain_lock (domain);
 	info = g_hash_table_lookup (domain_jit_info (domain)->arch_seq_points, 
 								code);
