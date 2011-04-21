@@ -203,9 +203,10 @@ namespace System.Diagnostics
 
 			// <ApplicationData>
 			w.WriteStartElement ("ApplicationData", e2e_ns);
+			w.WriteStartElement ("TraceData", e2e_ns);
 			foreach (object o in data) {
 				if (wrapData)
-					w.WriteStartElement ("TraceData", e2e_ns);
+					w.WriteStartElement ("DataItem", e2e_ns);
 				if (o is XPathNavigator)
 					// the output ignores xmlns difference between the parent (E2ETraceEvent and the content node).
 					// To clone such behavior, I took this approach.
@@ -215,6 +216,7 @@ namespace System.Diagnostics
 				if (wrapData)
 					w.WriteEndElement ();
 			}
+			w.WriteEndElement ();
 			w.WriteEndElement ();
 
 			w.WriteEndElement ();
