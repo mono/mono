@@ -588,7 +588,6 @@ namespace Mono.CSharp
 			AddKeyword ("while", Token.WHILE);
 			AddKeyword ("partial", Token.PARTIAL);
 			AddKeyword ("where", Token.WHERE);
-			AddKeyword ("async", Token.ASYNC);
 
 			// LINQ keywords
 			AddKeyword ("from", Token.FROM);
@@ -603,6 +602,10 @@ namespace Mono.CSharp
 			AddKeyword ("ascending", Token.ASCENDING);
 			AddKeyword ("descending", Token.DESCENDING);
 			AddKeyword ("into", Token.INTO);
+
+			// Contextual async keywords
+			AddKeyword ("async", Token.ASYNC);
+			AddKeyword ("await", Token.AWAIT);
 
 			keywords_preprocessor = new KeywordEntry<PreprocessorDirective>[10][];
 
@@ -790,13 +793,22 @@ namespace Mono.CSharp
 				res = -1;
 				break;
 
+			// TODO: async, it's modifiers context only
 			case Token.ASYNC:
 				if (parsing_block > 0 || context.Settings.Version != LanguageVersion.Future) {
 					res = -1;
-					break;
 				}
 				break;
+
+			// TODO: async, it's async block context only
+			case Token.AWAIT:
+				if (context.Settings.Version != LanguageVersion.Future) {
+					res = -1;
+				}
+
+				break;
 			}
+
 
 			return res;
 		}
