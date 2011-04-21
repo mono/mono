@@ -131,7 +131,12 @@ namespace System.ServiceModel
 		public static void LogMessage (MessageLogTraceRecord log)
 		{
 			var sw = new StringWriter ();
+#if NET_2_1
 			var xw = XmlWriter.Create (sw, xws);
+#else
+			var doc = new XmlDocument ();
+			var xw = doc.CreateNavigator ().AppendChild ();
+#endif
 			xw.WriteStartElement ("MessageLogTraceRecord", xmlns);
 			xw.WriteStartAttribute ("Time");
 			xw.WriteValue (log.Time);
@@ -140,11 +145,12 @@ namespace System.ServiceModel
 			xw.WriteAttributeString ("Type", log.Type.FullName);
 			log.Message.CreateMessage ().WriteMessage (xw);
 			xw.WriteEndElement ();
+			xw.Close ();
 #if NET_2_1
 			Console.Error.Write ("[{0}]", event_id++);
 			Console.Error.WriteLine (sw);
 #else
-			message_source.TraceEvent (TraceEventType.Information, event_id++, sw.ToString ());
+			message_source.TraceData (TraceEventType.Information, event_id++, doc.CreateNavigator ());
 #endif
 		}
 
