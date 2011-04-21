@@ -133,6 +133,7 @@ namespace System.Web
 		{
 #if !TARGET_J2EE
 			firstRun = true;
+
 			try {
 				WebConfigurationManager.Init ();
 #if MONOWEB_DEP
@@ -147,12 +148,24 @@ namespace System.Web
 			// and TraceManager are below. The constructors themselves MUST NOT throw any exceptions - we MUST be sure
 			// the objects are created here. The exceptions will be dealt with below, in RealProcessRequest.
 			queue_manager = new QueueManager ();
-			if (queue_manager.HasException)
-				initialException = queue_manager.InitialException;
+			if (queue_manager.HasException) {
+				if (initialException == null)
+					initialException = queue_manager.InitialException;
+				else {
+					Console.Error.WriteLine ("Exception during QueueManager initialization:");
+					Console.Error.WriteLine (queue_manager.InitialException);
+				}
+			}
 
 			trace_manager = new TraceManager ();
-			if (trace_manager.HasException)
+			if (trace_manager.HasException) {
+				if (initialException == null)
 					initialException = trace_manager.InitialException;
+				else {
+					Console.Error.WriteLine ("Exception during TraceManager initialization:");
+					Console.Error.WriteLine (trace_manager.InitialException);
+				}
+			}
 
 			registeredAssemblies = new SplitOrderedList <string, string> (StringComparer.Ordinal);
 			cache = new Cache ();
@@ -421,7 +434,6 @@ namespace System.Web
 				RenamedEventHandler reh = new RenamedEventHandler (AppOfflineFileRenamed);
 
 				string app_dir = AppDomainAppPath;
-				ArrayList watchers = new ArrayList ();
 				FileSystemWatcher watcher;
 				string offlineFile = null, tmp;
 				
@@ -435,8 +447,6 @@ namespace System.Web
 					watcher.Created += seh;
 					watcher.Renamed += reh;
 					watcher.EnableRaisingEvents = true;
-					
-					watchers.Add (watcher);
 
 					tmp = Path.Combine (app_dir, f);
 					if (File.Exists (tmp))
@@ -466,6 +476,7 @@ namespace System.Web
 
 		static void Process (HttpWorkerRequest req)
 		{
+			bool error = false;
 #if TARGET_J2EE
 			HttpContext context = HttpContext.Current;
 			if (context == null)
@@ -473,20 +484,18 @@ namespace System.Web
 			else
 				context.SetWorkerRequest (req);
 #else
-			HttpContext context = new HttpContext (req);
-#endif
-			HttpContext.Current = context;
-			bool error = false;
-#if !TARGET_J2EE
 			if (firstRun) {
-				SetupOfflineWatch ();
 				firstRun = false;
 				if (initialException != null) {
 					FinishWithException (req, HttpException.NewWithCode ("Initial exception", initialException, WebEventCodes.RuntimeErrorRequestAbort));
 					error = true;
 				}
+				SetupOfflineWatch ();
 			}
-
+			HttpContext context = new HttpContext (req);
+#endif
+			HttpContext.Current = context;
+#if !TARGET_J2EE
 			if (AppIsOffline (context))
 				return;
 #endif
