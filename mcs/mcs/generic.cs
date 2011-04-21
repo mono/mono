@@ -1689,6 +1689,9 @@ namespace Mono.CSharp {
 			get {
 				return atypes;
 			}
+			set {
+				atypes = value;
+			}
 		}
 
 		public int Count {
