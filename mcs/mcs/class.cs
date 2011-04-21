@@ -1784,13 +1784,13 @@ namespace Mono.CSharp
 							continue;
 						}
 						
+						if ((f.caching_flags & Flags.IsAssigned) != 0)
+							continue;
+
 						//
 						// Only report 649 on level 4
 						//
 						if (Report.WarningLevel < 4)
-							continue;
-						
-						if ((f.caching_flags & Flags.IsAssigned) != 0)
 							continue;
 
 						//
@@ -1800,8 +1800,24 @@ namespace Mono.CSharp
 							continue;
 						
 						Constant c = New.Constantify (f.MemberType, f.Location);
-						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
-							f.GetSignatureForError (), c == null ? "null" : c.GetValueAsLiteral ());
+						string value;
+						if (c != null) {
+							value = c.GetValueAsLiteral ();
+						} else if (TypeSpec.IsReferenceType (f.MemberType)) {
+							value = "null";
+						} else {
+							// Ignore this warning for struct value fields (they are always initialized)
+							if (f.MemberType.IsStruct)
+								continue;
+
+							value = null;
+						}
+
+						if (value != null)
+							value = " `" + value + "'";
+
+						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value{1}",
+							f.GetSignatureForError (), value);
 					}
 				}
 			}

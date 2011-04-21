@@ -46381,7 +46381,7 @@
   <test name="test-796.cs">
     <type name="Program">
       <method name="Void Main()">
-        <size>1</size>
+        <size>11</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -46390,6 +46390,11 @@
     <type name="FooAttribute">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Test()">
+        <size>19</size>
       </method>
     </type>
   </test>
