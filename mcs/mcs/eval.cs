@@ -760,7 +760,7 @@ namespace Mono.CSharp
 			var res = new List<string> ();
 
 			foreach (var ue in source_file.NamespaceContainer.Usings)
-				res.Add (ue.ToString ());
+				res.Add (ue.Name);
 			return res;
 		}
 		
