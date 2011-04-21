@@ -42,6 +42,9 @@ namespace System.Web.UI
 	{
 		ScriptManager _scriptManager;
 		ScriptReferenceCollection _scripts;
+#if NET_3_5
+		CompositeScriptReference _compositeScript;
+#endif
 		ServiceReferenceCollection _services;
 		AuthenticationServiceManager _authenticationService;
 		ProfileServiceManager _profileService;
@@ -81,7 +84,20 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
-
+#if NET_3_5
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Category ("Behavior")]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[MergableProperty (false)]
+		public CompositeScriptReference CompositeScript {
+			get {
+				if (_compositeScript == null)
+					_compositeScript = new CompositeScriptReference ();
+				return _compositeScript;
+			}
+		}
+#endif
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]

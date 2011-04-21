@@ -97,6 +97,9 @@ namespace System.Web.UI
 		List<UpdatePanel> _panelsToRefresh;
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
+#if NET_3_5
+		CompositeScriptReference _compositeScript;
+#endif
 		ServiceReferenceCollection _services;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
@@ -339,7 +342,20 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
-
+#if NET_3_5
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Category ("Behavior")]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[MergableProperty (false)]
+		public CompositeScriptReference CompositeScript {
+			get {
+				if (_compositeScript == null)
+					_compositeScript = new CompositeScriptReference ();
+				return _compositeScript;
+			}
+		}
+#endif
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[MergableProperty (false)]
@@ -395,7 +411,10 @@ namespace System.Web.UI
 
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
-
+#if NET_3_5
+		[Category ("Action")]
+		public event EventHandler<CompositeScriptReferenceEventArgs> ResolveCompositeScriptReference;
+#endif
 		public static ScriptManager GetCurrent (Page page) {
 			if (page == null)
 				throw new ArgumentNullException ("page");
@@ -513,24 +532,31 @@ namespace System.Web.UI
 			}
 		}
 
-		void OnPreRenderComplete (object sender, EventArgs e) {
+		ScriptReference CreateScriptReference (string path, string assembly, bool notifyScriptLoaded)
+		{
+			var ret = new ScriptReference (path, assembly);
+			if (!notifyScriptLoaded)
+				ret.NotifyScriptLoaded = false;
+			OnResolveScriptReference (new ScriptReferenceEventArgs (ret));
+
+			return ret;
+		}
+
+		ScriptReference CreateScriptReference (string path, string assembly)
+		{
+			return CreateScriptReference (path, assembly, true);
+		}
+		
+		void OnPreRenderComplete (object sender, EventArgs e)
+		{
 			// Resolve Scripts
-			ScriptReference ajaxScript = new ScriptReference ("MicrosoftAjax.js", String.Empty);
-			ajaxScript.NotifyScriptLoaded = false;
-			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxScript));
-
-			ScriptReference ajaxWebFormsScript = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
-			ajaxWebFormsScript.NotifyScriptLoaded = false;
-			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsScript));
-
+			ScriptReference ajaxScript = CreateScriptReference ("MicrosoftAjax.js", String.Empty, false);
+			ScriptReference ajaxWebFormsScript = CreateScriptReference ("MicrosoftAjaxWebForms.js", String.Empty, false);
 			ScriptReference ajaxExtensionScript = null;
 			ScriptReference ajaxWebFormsExtensionScript = null;
 			if (IsMultiForm) {
-				ajaxExtensionScript = new ScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
-				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxExtensionScript));
-
-				ajaxWebFormsExtensionScript = new ScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
-				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsExtensionScript));
+				ajaxExtensionScript = CreateScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
+				ajaxWebFormsExtensionScript = CreateScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
 			}
 
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
@@ -575,7 +601,12 @@ namespace System.Web.UI
 				if (IsMultiForm)
 					RegisterScriptReference (this, ajaxWebFormsExtensionScript, true);
 			}
-			
+#if NET_3_5
+			if (_compositeScript != null && _compositeScript.HaveScripts ()) {
+				OnResolveCompositeScriptReference (new CompositeScriptReferenceEventArgs (_compositeScript));
+				RegisterScriptReference (this, _compositeScript, true);
+			}
+#endif			
 			// Register Scripts
 			if (_scriptToRegister != null)
 				for (int i = 0; i < _scriptToRegister.Count; i++)
@@ -749,7 +780,14 @@ namespace System.Web.UI
 				}
 			}
 		}
-
+#if NET_3_5
+		protected virtual void OnResolveCompositeScriptReference (CompositeScriptReferenceEventArgs e)
+		{
+			EventHandler <CompositeScriptReferenceEventArgs> evt = ResolveCompositeScriptReference;
+			if (evt != null)
+				evt (this, e);
+		}
+#endif
 		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e) {
 			if (ResolveScriptReference != null)
 				ResolveScriptReference (this, e);
@@ -835,12 +873,15 @@ namespace System.Web.UI
 			RegisterClientScriptInclude (control, type, resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
-		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI)
+		void RegisterScriptReference (Control control, ScriptReferenceBase script, bool loadScriptsBeforeUI)
 		{
 			string scriptPath = script.Path;
 			string url = script.GetUrl (this, false);
 			if (control != this && !String.IsNullOrEmpty (scriptPath))
 				url = control.ResolveClientUrl (url);
+
+			if (String.IsNullOrEmpty (url))
+				return;
 			
 			if (loadScriptsBeforeUI)
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
