@@ -146,10 +146,11 @@ namespace MonoTests.System.Diagnostics
 			var doc = new XmlDocument ();
 			string xml = "<root><child xmlns=\"urn:foo\">text</child></root>";
 			doc.LoadXml (xml);
-			xl.TraceData (null, "my source", TraceEventType.Information, 1, doc.CreateNavigator ());
+			xl.TraceData (null, "my source", TraceEventType.Information, 1, doc.CreateNavigator (), doc.CreateNavigator ());
 			// Note that it does not result in "<root xmlns=''>...".
 			// See XmlWriterTraceListener.TraceCore() for details.
 			Assert.IsTrue (sw.ToString ().IndexOf (xml) > 0, "#1");
+			Assert.IsTrue (sw.ToString ().IndexOf ("</DataItem><DataItem>") > 0, "#2");
 		}
 #endif
 	}
