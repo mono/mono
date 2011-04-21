@@ -1,11 +1,12 @@
 ﻿//
 // ScriptReference.cs
 //
-// Author:
+// Authors:
 //   Igor Zelmanovich <igorz@mainsoft.com>
+//   Marek Habersack <grendel@twistedcode.net>
 //
 // (C) 2007 Mainsoft, Inc.  http://www.mainsoft.com
-//
+// (C) 2011 Novell, Inc. http://novell.com/
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +31,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading;
 using System.Web.Handlers;
@@ -44,7 +47,8 @@ namespace System.Web.UI
 		string _name;
 		string _assembly;
 		bool _ignoreScriptPath;
-
+		Assembly _resolvedAssembly;
+		
 		public ScriptReference ()
 		{
 		}
@@ -66,9 +70,37 @@ namespace System.Web.UI
 			}
 			set {
 				_assembly = value;
+				_resolvedAssembly = null;
 			}
 		}
 
+		internal Assembly ResolvedAssembly {
+			get {
+				if (_resolvedAssembly == null) {
+					string assemblyName = this.Assembly;
+				
+					if (String.IsNullOrEmpty (assemblyName))
+						_resolvedAssembly = typeof (ScriptManager).Assembly;
+					else
+						_resolvedAssembly = global::System.Reflection.Assembly.Load (assemblyName);
+				}
+				return _resolvedAssembly;
+			}
+		}
+
+		ScriptMode ScriptModeInternal {
+			get {
+				if (ScriptMode == ScriptMode.Auto) {
+					if (!String.IsNullOrEmpty (Name))
+						return ScriptMode.Inherit;
+					else
+						return ScriptMode.Release;
+				}
+				else
+					return ScriptMode;
+			}
+		}
+		
 		public bool IgnoreScriptPath {
 			get {
 				return _ignoreScriptPath;
@@ -87,74 +119,65 @@ namespace System.Web.UI
 			}
 		}
 
-		internal ScriptMode ScriptModeInternal {
-			get {
-				if (ScriptMode == ScriptMode.Auto) {
-					if (!String.IsNullOrEmpty (Name))
-						return ScriptMode.Inherit;
-					else
-						return ScriptMode.Release;
-				}
-				else
-					return ScriptMode;
+		internal bool IsDebugMode (ScriptManager scriptManager)
+		{
+			if (scriptManager == null)
+				return ScriptModeInternal == ScriptMode.Debug;
+			
+			if (scriptManager.IsDeploymentRetail)
+				return false;
+
+			switch (ScriptModeInternal) {
+				case ScriptMode.Inherit:
+					return scriptManager.IsDebuggingEnabled;
+
+				case ScriptMode.Debug:
+					return true;
+
+				default:
+					return false;
 			}
 		}
-
+		
 		[MonoTODO ("Compression not supported yet.")]
 		protected internal override string GetUrl (ScriptManager scriptManager, bool zip)
 		{
-			bool isDebugMode = scriptManager.IsDeploymentRetail ? false :
-				(ScriptModeInternal == ScriptMode.Inherit ? scriptManager.IsDebuggingEnabled : (ScriptModeInternal == ScriptMode.Debug));
-			string path = Path;
+			bool isDebugMode = IsDebugMode (scriptManager);
+			string path;
 			string url = String.Empty;
+			string name = Name;
+			WebResourceAttribute wra;
 			
-			if (!String.IsNullOrEmpty (path)) {
-				url = GetScriptName (path, isDebugMode, scriptManager.EnableScriptLocalization ? ResourceUICultures : null);
-			} else if (!String.IsNullOrEmpty (Name)) {
-				Assembly assembly;
-				string assemblyName = this.Assembly;
-				
-				if (String.IsNullOrEmpty (assemblyName))
-					assembly = typeof (ScriptManager).Assembly;
-				else
-					assembly = global::System.Reflection.Assembly.Load (assemblyName);
-				string name = GetScriptName (Name, isDebugMode, null);
-				string scriptPath = scriptManager.ScriptPath;
-				if (IgnoreScriptPath || String.IsNullOrEmpty (scriptPath))
+			// LAMESPEC: Name property takes precedence
+			if (!String.IsNullOrEmpty (name)) {
+				Assembly assembly = ResolvedAssembly;
+				name = GetScriptName (name, isDebugMode, null, assembly, out wra);
+				path = scriptManager.ScriptPath;
+				if (IgnoreScriptPath || String.IsNullOrEmpty (path))
 					url = ScriptResourceHandler.GetResourceUrl (assembly, name, NotifyScriptLoaded);
 				else {
 					AssemblyName an = assembly.GetName ();
-					url = scriptManager.ResolveClientUrl (String.Concat (VirtualPathUtility.AppendTrailingSlash (scriptPath), an.Name, '/', an.Version, '/', name));
+					url = scriptManager.ResolveClientUrl (String.Concat (VirtualPathUtility.AppendTrailingSlash (path), an.Name, '/', an.Version, '/', name));
 				}
+			} else if (!String.IsNullOrEmpty ((path = Path))) {
+				url = GetScriptName (path, isDebugMode, scriptManager.EnableScriptLocalization ? ResourceUICultures : null, null, out wra);
 			} else {
 				throw new InvalidOperationException ("Name and Path cannot both be empty.");
 			}
 
 			return url;
 		}
-
-		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
-			if (!isDebugMode && (supportedUICultures == null || supportedUICultures.Length == 0))
-				return releaseName;
-
-			if (releaseName.Length < 3 || !releaseName.EndsWith (".js", StringComparison.OrdinalIgnoreCase))
-				throw new InvalidOperationException (String.Format ("'{0}' is not a valid script path.  The path must end in '.js'.", releaseName));
-
-			StringBuilder sb = new StringBuilder (releaseName);
-			sb.Length -= 3;
-			if (isDebugMode)
-				sb.Append (".debug");
-			string culture = Thread.CurrentThread.CurrentUICulture.Name;
-			if (supportedUICultures != null && Array.IndexOf<string> (supportedUICultures, culture) >= 0)
-				sb.AppendFormat (".{0}", culture);
-			sb.Append (".js");
-
-			return sb.ToString ();
-		}
-		
-		protected internal override bool IsFromSystemWebExtensions ()
+#if NET_4_0
+		protected internal override bool IsAjaxFrameworkScript (ScriptManager scriptManager)
 		{
 			return false;
+		}
+		
+		[Obsolete ("Use IsAjaxFrameworkScript(ScriptManager)")]
+#endif		
+		protected internal override bool IsFromSystemWebExtensions ()
+		{
+			return ResolvedAssembly == ThisAssembly;
 		}
 		
 		public override string ToString ()
