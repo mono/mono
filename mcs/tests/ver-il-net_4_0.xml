@@ -17316,6 +17316,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-558.cs">
+    <type name="A`1[T]">
+      <method name="Void Foo[U](U)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo[U](U)">
+        <size>15</size>
+      </method>
+      <method name="Void Next[UU](UU)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -19806,7 +19830,7 @@
     </type>
     <type name="Test">
       <method name="Void Main()">
-        <size>12</size>
+        <size>27</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -19823,6 +19847,30 @@
     <type name="B+&lt;Test2&gt;c__AnonStorey1`1[T]">
       <method name="Void &lt;&gt;m__1()">
         <size>40</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Foo2[T]()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Test3()">
+        <size>59</size>
+      </method>
+      <method name="Void &lt;Foo2&gt;__BaseCallProxy1[T]()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Test3&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__2()">
+        <size>19</size>
+      </method>
+      <method name="Void &lt;&gt;m__3()">
+        <size>19</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

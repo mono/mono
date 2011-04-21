@@ -5,6 +5,10 @@ class A
 	public virtual void Foo<T> (T a, params string[] b) where T : struct
 	{
 	}
+
+	protected virtual void Foo2<T> ()
+	{
+	}
 }
 
 class B : A
@@ -19,12 +23,33 @@ class B : A
 	{
 		Action a2 = () => base.Foo<T> (b, "as", "asdfa");
 	}
+
+	internal void Test3 ()
+	{
+		int i = 0;
+		Action a = delegate () {
+			i = 1;
+			base.Foo2<string> ();
+		};
+
+		a ();
+
+		a = delegate () {
+			i = 2;
+			base.Foo2<int> ();
+		};
+
+		a ();
+	}
 }
 
 class Test
 {
 	public static void Main ()
 	{
-		new B ().Test (1);
+		var b = new B ();
+		b.Test (1);
+		b.Test2 (2);
+		b.Test3 ();
 	}
 }
