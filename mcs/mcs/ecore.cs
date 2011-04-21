@@ -2527,7 +2527,7 @@ namespace Mono.CSharp {
 			// Overload resulution works on virtual or non-virtual members only (no overrides). That
 			// means for base.member access we have to find the closest match after we found best candidate
 			//
-			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC) {
+			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
 				//
 				// The method could already be what we are looking for
 				//
