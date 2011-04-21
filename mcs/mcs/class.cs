@@ -1097,7 +1097,7 @@ namespace Mono.CSharp {
 						var tp = hoisted_tparams[i];
 						targs.Add (new TypeParameterName (tp.Name, null, Location));
 						targs.Arguments[i] = tp;
-						type_params[i] = new TypeParameter (tp, this, null, new MemberName (tp.Name), null);
+						type_params[i] = new TypeParameter (tp, null, null, new MemberName (tp.Name), null);
 					}
 
 					member_name = new MemberName (name, targs, Location);
