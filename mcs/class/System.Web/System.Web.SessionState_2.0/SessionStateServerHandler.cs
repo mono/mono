@@ -231,7 +231,7 @@ namespace System.Web.SessionState
 #endif
 			
 			try {
-				SessionStateItemCollection items = item.Items as SessionStateItemCollection : null;
+				SessionStateItemCollection items = item.Items as SessionStateItemCollection;
 				if (items != null && items.Count > 0) {
 					stream = new MemoryStream ();
 #if NET_4_0
@@ -249,7 +249,7 @@ namespace System.Web.SessionState
 					writer.Close ();
 					collection_data = stream.ToArray ();
 				}
-				HttpStaticObjectsCollection sobjs = item.StaticObjects : null;
+				HttpStaticObjectsCollection sobjs = item.StaticObjects;
 				if (sobjs != null && sobjs.Count > 0)
 					sobjs_data = sobjs.ToByteArray ();
 			} catch (Exception ex) {
