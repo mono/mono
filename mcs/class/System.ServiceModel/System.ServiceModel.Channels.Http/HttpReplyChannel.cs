@@ -57,6 +57,10 @@ namespace System.ServiceModel.Channels.Http
 			}
 		}
 
+		internal HttpChannelListener<IReplyChannel> Source {
+			get { return source; }
+		}
+
 		public MessageEncoder Encoder {
 			get { return source.MessageEncoder; }
 		}
@@ -176,7 +180,7 @@ namespace System.ServiceModel.Channels.Http
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctxi));
 
-			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref msg, 0x10000); // FIXME: pass maxMessageSize.
+			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref msg, source.Source.MaxReceivedMessageSize);
 
 			context = new HttpRequestContext (this, ctxi, msg);
 			reqctx = context;
