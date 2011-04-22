@@ -217,6 +217,9 @@ namespace System.Web.SessionState
 								 object lockId,
 								 bool newItem)
 		{
+			if (item == null)
+				return;
+			
 			EnsureGoodId (id, true);
 			byte[] collection_data = null;
 			byte[] sobjs_data = null;
@@ -228,7 +231,7 @@ namespace System.Web.SessionState
 #endif
 			
 			try {
-				SessionStateItemCollection items = item.Items as SessionStateItemCollection;
+				SessionStateItemCollection items = item.Items as SessionStateItemCollection : null;
 				if (items != null && items.Count > 0) {
 					stream = new MemoryStream ();
 #if NET_4_0
@@ -246,7 +249,7 @@ namespace System.Web.SessionState
 					writer.Close ();
 					collection_data = stream.ToArray ();
 				}
-				HttpStaticObjectsCollection sobjs = item.StaticObjects;
+				HttpStaticObjectsCollection sobjs = item.StaticObjects : null;
 				if (sobjs != null && sobjs.Count > 0)
 					sobjs_data = sobjs.ToByteArray ();
 			} catch (Exception ex) {
