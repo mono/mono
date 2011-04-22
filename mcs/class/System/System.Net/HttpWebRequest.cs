@@ -394,7 +394,6 @@ namespace System.Net
 			}
 		}
 
-		static char [] colon = { ':' };
 		static bool CheckValidHost (string scheme, string val)
 		{
 			if (val == null)
