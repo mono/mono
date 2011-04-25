@@ -32,6 +32,7 @@ using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel;
+using System.ServiceModel.Channels.NetTcp;
 using System.ServiceModel.Description;
 using System.Threading;
 using System.Xml;
