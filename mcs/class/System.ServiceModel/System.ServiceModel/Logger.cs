@@ -66,15 +66,29 @@ namespace System.ServiceModel
 		const string xmlns = "http://schemas.microsoft.com/2004/06/ServiceModel/Management/MessageTrace";
 		static MessageLoggingSettings settings = new MessageLoggingSettings ();
 		static int event_id;
-#if !NET_2_1
+#if NET_2_1
+		static TextWriter log_writer = TextWriter.Null;
+#else
 		static readonly TraceSource source = new TraceSource ("System.ServiceModel");
 		static readonly TraceSource message_source = new TraceSource ("System.ServiceModel.MessageLogging");
+#endif
 
 		static Logger ()
 		{
+#if NET_2_1
+			// this will work only on moonlight though...
+			switch (Environment.GetEnvironmentVariable ("MOON_WCF_TRACE")) {
+			case "stdout":
+				log_writer = Console.Out;
+				break;
+			case "stderr":
+				log_writer = Console.Error;
+				break;
+			}
+#else
 			message_source.Switch.Level = SourceLevels.Information;
-		}
 #endif
+		}
 
 		#region logger methods
 
@@ -108,8 +122,8 @@ namespace System.ServiceModel
 		static void Log (TraceEventType eventType, string message, params object [] args)
 		{
 #if NET_2_1
-			Console.Error.Write ("[{0}]", event_id++);
-			Console.Error.WriteLine (message, args);
+			log_writer.Write ("[{0}]", event_id++);
+			log_writer.WriteLine (message, args);
 #else
 			source.TraceEvent (eventType, event_id++, message, args);
 #endif
@@ -121,9 +135,11 @@ namespace System.ServiceModel
 		
 		static readonly XmlWriterSettings xws = new XmlWriterSettings () { OmitXmlDeclaration = true };
 		
-		public static void LogMessage (MessageLogSourceKind sourceKind, ref Message msg, int maxMessageSize)
+		public static void LogMessage (MessageLogSourceKind sourceKind, ref Message msg, long maxMessageSize)
 		{
-			var mb = msg.CreateBufferedCopy (maxMessageSize);
+			if (maxMessageSize > int.MaxValue)
+				throw new ArgumentOutOfRangeException ("maxMessageSize");
+			var mb = msg.CreateBufferedCopy ((int) maxMessageSize);
 			msg = mb.CreateMessage ();
 			LogMessage (new MessageLogTraceRecord (sourceKind, msg.GetType (), mb));
 		}
@@ -147,8 +163,8 @@ namespace System.ServiceModel
 			xw.WriteEndElement ();
 			xw.Close ();
 #if NET_2_1
-			Console.Error.Write ("[{0}]", event_id++);
-			Console.Error.WriteLine (sw);
+			log_writer.Write ("[{0}]", event_id++);
+			log_writer.WriteLine (sw);
 #else
 			message_source.TraceData (TraceEventType.Information, event_id++, doc.CreateNavigator ());
 #endif

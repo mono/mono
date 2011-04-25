@@ -217,6 +217,9 @@ namespace System.Web.SessionState
 								 object lockId,
 								 bool newItem)
 		{
+			if (item == null)
+				return;
+			
 			EnsureGoodId (id, true);
 			byte[] collection_data = null;
 			byte[] sobjs_data = null;
