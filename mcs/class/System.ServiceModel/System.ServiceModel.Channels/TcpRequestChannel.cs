@@ -35,7 +35,7 @@ using System.ServiceModel.Description;
 using System.Threading;
 using System.Xml;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.NetTcp
 {
 	internal class TcpRequestChannel : RequestChannelBase
 	{

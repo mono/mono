@@ -17,7 +17,7 @@ using System.ServiceModel.Security;
 using System.Text;
 using System.Xml;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.NetTcp
 {
 	internal class TcpChannelInfo
 	{

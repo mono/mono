@@ -38,7 +38,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.NetTcp
 {
 	internal class TcpChannelListener<TChannel> : InternalChannelListenerBase<TChannel> 
 		where TChannel : class, IChannel
