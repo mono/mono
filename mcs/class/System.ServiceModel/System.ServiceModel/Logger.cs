@@ -85,9 +85,19 @@ namespace System.ServiceModel
 			case "stderr":
 				log_writer = Console.Error;
 				break;
+#if !NET_2_1
+			default:
+				try {
+					if (!String.IsNullOrEmpty (env))
+						log_writer = File.CreateText (env);
+				} catch (Exception ex) {
+					Console.Error.WriteLine ("WARNING: WCF trace environment variable points to non-creatable file name: " + env);
+				}
+				break;
+#endif
 			}
 
-#if NET_2_1
+#if !NET_2_1
 			message_source.Switch.Level = SourceLevels.Information;
 #endif
 		}
@@ -124,8 +134,11 @@ namespace System.ServiceModel
 		static void Log (TraceEventType eventType, string message, params object [] args)
 		{
 			event_id++;
+#if NET_2_1
 			log_writer.Write ("[{0}] ", event_id);
+#endif
 			log_writer.WriteLine (message, args);
+			log_writer.Flush ();
 #if !NET_2_1
 			source.TraceEvent (eventType, event_id, message, args);
 #endif
@@ -166,14 +179,14 @@ namespace System.ServiceModel
 			xw.Close ();
 
 			event_id++;
-
-			log_writer.Write ("[{0}]", event_id);
 #if NET_2_1
+			log_writer.Write ("[{0}] ", event_id);
 			log_writer.WriteLine (sw);
 #else
 			log_writer.WriteLine (doc.OuterXml);
 			message_source.TraceData (TraceEventType.Information, event_id, doc.CreateNavigator ());
 #endif
+			log_writer.Flush ();
 		}
 
 		#endregion
