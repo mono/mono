@@ -375,8 +375,7 @@ namespace System.ServiceModel.Dispatcher
 					try {
 						ChannelAccepted (r.EndAcceptChannel (result));
 					} catch (Exception ex) {
-						Console.WriteLine ("Exception during finishing channel acceptance.");
-						Console.WriteLine (ex);
+						Logger.Error ("Exception during finishing channel acceptance.", ex);
 						creator_handle.Set ();
 					}
 				};
@@ -384,8 +383,7 @@ namespace System.ServiceModel.Dispatcher
 					try {
 						return r.BeginAcceptChannel (callback, null);
 					} catch (Exception ex) {
-						Console.WriteLine ("Exception during accepting channel.");
-						Console.WriteLine (ex);
+						Logger.Error ("Exception during accepting channel.", ex);
 						throw;
 					}
 				};
@@ -421,8 +419,7 @@ namespace System.ServiceModel.Dispatcher
 					stop_handle = null;
 				}
 				if (owner.Listener.State != CommunicationState.Closed) {
-					// FIXME: log it
-					Console.WriteLine ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ());
+					Logger.Warning (String.Format ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ()));
 					owner.Listener.Abort ();
 				}
 				if (loop_thread != null && loop_thread.IsAlive)
@@ -462,7 +459,7 @@ namespace System.ServiceModel.Dispatcher
 							ch.Close (close_timeout - (DateTime.Now - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
-							Console.WriteLine (ex);
+							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);
 							ch.Abort ();
 						}
 					}
@@ -474,9 +471,7 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					LoopCore ();
 				} catch (Exception ex) {
-					// FIXME: log it
-					Console.WriteLine ("ListenerLoopManager caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener);
-					Console.WriteLine (ex);
+					Logger.Error (String.Format ("ListenerLoopManager caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener), ex);
 				} finally {
 					if (stop_handle != null)
 						stop_handle.Set ();
@@ -504,6 +499,8 @@ namespace System.ServiceModel.Dispatcher
 				}
 				try {
 					owner.Listener.Close ();
+				} catch (Exception ex) {
+					Logger.Error (String.Format ("Exception while closing IChannelListener ({0})", owner.Listener.GetType ()), ex);
 				} finally {
 					// make sure to close both listener and channels.
 					owner.CloseInput ();
@@ -621,8 +618,7 @@ namespace System.ServiceModel.Dispatcher
 					if (eh.HandleError (ex))
 						return true; // error is handled appropriately.
 
-				// FIXME: log it.
-				Console.WriteLine (ex);
+				Logger.Error ("An error occured, to be handled", ex);
 
 				foreach (var eh in owner.ErrorHandlers)
 					eh.ProvideFault (ex, owner.MessageVersion, ref res);
