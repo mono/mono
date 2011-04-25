@@ -237,6 +237,13 @@ System.ServiceModel.Channels/NamedPipeConnectionPoolSettings.cs
 System.ServiceModel.Channels/NamedPipeReplyChannel.cs
 System.ServiceModel.Channels/NamedPipeRequestChannel.cs
 System.ServiceModel.Channels/NamedPipetransportBindingElement.cs
+System.ServiceModel.Channels.NetTcp/PeerDuplexChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpBinaryFrameManager.cs
+System.ServiceModel.Channels.NetTcp/TcpChannelFactory.cs
+System.ServiceModel.Channels.NetTcp/TcpChannelListener.cs
+System.ServiceModel.Channels.NetTcp/TcpDuplexSessionChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpReplyChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpRequestChannel.cs
 System.ServiceModel.Channels/OneWayBindingElement.cs
 System.ServiceModel.Channels/OneWayBindingElementImporter.cs
 System.ServiceModel.Channels/OutputChannelBase.cs
@@ -244,7 +251,6 @@ System.ServiceModel.Channels/PeerResolverBindingElement.cs
 System.ServiceModel.Channels/PeerChannelFactory.cs
 System.ServiceModel.Channels/PeerChannelListener.cs
 System.ServiceModel.Channels/PeerCustomResolverBindingElement.cs
-System.ServiceModel.Channels/PeerDuplexChannel.cs
 System.ServiceModel.Channels/PeerInputChannel.cs
 System.ServiceModel.Channels/PeerOutputChannel.cs
 System.ServiceModel.Channels/PeerTransportBindingElement.cs
@@ -273,13 +279,7 @@ System.ServiceModel.Channels/StreamUpgradeProvider.cs
 System.ServiceModel.Channels/SvcHttpHandler.cs
 System.ServiceModel.Channels/SvcHttpHandlerFactory.cs
 System.ServiceModel.Channels/SymmetricSecurityBindingElement.cs
-System.ServiceModel.Channels/TcpChannelFactory.cs
-System.ServiceModel.Channels/TcpChannelListener.cs
 System.ServiceModel.Channels/TcpConnectionPoolSettings.cs
-System.ServiceModel.Channels/TcpBinaryFrameManager.cs
-System.ServiceModel.Channels/TcpDuplexSessionChannel.cs
-System.ServiceModel.Channels/TcpReplyChannel.cs
-System.ServiceModel.Channels/TcpRequestChannel.cs
 System.ServiceModel.Channels/TcpTransportBindingElement.cs
 System.ServiceModel.Channels/TextMessageEncoder.cs
 System.ServiceModel.Channels/TextMessageEncoderFactory.cs
