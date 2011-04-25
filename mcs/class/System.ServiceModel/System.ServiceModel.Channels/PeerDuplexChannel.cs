@@ -34,6 +34,7 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.ServiceModel;
+using System.ServiceModel.Channels.NetTcp;
 using System.ServiceModel.Description;
 using System.ServiceModel.PeerResolvers;
 using System.ServiceModel.Security;

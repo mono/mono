@@ -34,7 +34,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.NetTcp
 {
 	internal class TcpReplyChannel : InternalReplyChannelBase
 	{
