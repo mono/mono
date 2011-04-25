@@ -66,18 +66,19 @@ namespace System.ServiceModel
 		const string xmlns = "http://schemas.microsoft.com/2004/06/ServiceModel/Management/MessageTrace";
 		static MessageLoggingSettings settings = new MessageLoggingSettings ();
 		static int event_id;
-#if NET_2_1
 		static TextWriter log_writer = TextWriter.Null;
-#else
+#if !NET_2_1
 		static readonly TraceSource source = new TraceSource ("System.ServiceModel");
 		static readonly TraceSource message_source = new TraceSource ("System.ServiceModel.MessageLogging");
 #endif
 
 		static Logger ()
 		{
-#if NET_2_1
-			// this will work only on moonlight though...
-			switch (Environment.GetEnvironmentVariable ("MOON_WCF_TRACE")) {
+			var env =
+				Environment.GetEnvironmentVariable ("MOON_WCF_TRACE") ??
+				Environment.GetEnvironmentVariable ("MONO_WCF_TRACE");
+
+			switch (env) {
 			case "stdout":
 				log_writer = Console.Out;
 				break;
@@ -85,7 +86,8 @@ namespace System.ServiceModel
 				log_writer = Console.Error;
 				break;
 			}
-#else
+
+#if NET_2_1
 			message_source.Switch.Level = SourceLevels.Information;
 #endif
 		}
@@ -121,11 +123,11 @@ namespace System.ServiceModel
 
 		static void Log (TraceEventType eventType, string message, params object [] args)
 		{
-#if NET_2_1
-			log_writer.Write ("[{0}]", event_id++);
+			event_id++;
+			log_writer.Write ("[{0}] ", event_id);
 			log_writer.WriteLine (message, args);
-#else
-			source.TraceEvent (eventType, event_id++, message, args);
+#if !NET_2_1
+			source.TraceEvent (eventType, event_id, message, args);
 #endif
 		}
 		
@@ -162,11 +164,15 @@ namespace System.ServiceModel
 			log.Message.CreateMessage ().WriteMessage (xw);
 			xw.WriteEndElement ();
 			xw.Close ();
+
+			event_id++;
+
+			log_writer.Write ("[{0}]", event_id);
 #if NET_2_1
-			log_writer.Write ("[{0}]", event_id++);
 			log_writer.WriteLine (sw);
 #else
-			message_source.TraceData (TraceEventType.Information, event_id++, doc.CreateNavigator ());
+			log_writer.WriteLine (doc.OuterXml);
+			message_source.TraceData (TraceEventType.Information, event_id, doc.CreateNavigator ());
 #endif
 		}
 
