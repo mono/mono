@@ -33,11 +33,14 @@ namespace System.Threading
 	[System.Diagnostics.DebuggerDisplay ("IsCancellationRequested = {IsCancellationRequested}")]
 	public struct CancellationToken
 	{
+		bool canBeCanceled;
+
 		public CancellationToken (bool canceled)
 			: this ()
 		{
 			// dummy, this is actually set by CancellationTokenSource when the token is created
-			Source = null;
+			canBeCanceled = canceled;
+			Source = canceled ? CancellationTokenSource.CanceledSource : CancellationTokenSource.NoneSource;
 		}
 
 		public static CancellationToken None {
@@ -105,7 +108,7 @@ namespace System.Threading
 
 		public bool CanBeCanceled {
 			get {
-				return true;
+				return canBeCanceled;
 			}
 		}
 
