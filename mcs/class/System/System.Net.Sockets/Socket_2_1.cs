@@ -119,6 +119,7 @@ namespace System.Net.Sockets {
 
 			// These fields are not in MonoSocketAsyncResult
 			public Worker Worker;
+			public int CurrentAddress; // Connect
 
 			public SocketAsyncResult ()
 			{
@@ -164,6 +165,17 @@ namespace System.Net.Sockets {
 				ares = null;
 				EndCalled = 0;
 				Worker = null;
+			}
+
+			public void DoMConnectCallback ()
+			{
+				if (callback == null)
+					return;
+#if MOONLIGHT
+				ThreadPool.QueueUserWorkItem (_ => { callback (this); }, null);
+#else
+				ThreadPool.UnsafeQueueUserWorkItem (_ => { callback (this); }, null);
+#endif
 			}
 
 			public void Dispose ()
@@ -554,63 +566,55 @@ namespace System.Net.Sockets {
 
 			public void Connect ()
 			{
-				/* If result.EndPoint is non-null,
-				 * this is the standard one-address
-				 * connect attempt.  Otherwise
-				 * Addresses must be non-null and
-				 * contain a list of addresses to try
-				 * to connect to; the first one to
-				 * succeed causes the rest of the list
-				 * to be ignored.
-				 */
-				if (result.EndPoint != null) {
-					try {
-						int success;
-						result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
-						if (success == 0) {
-							result.Sock.seed_endpoint = result.EndPoint;
-							result.Sock.connected = true;
-						} else {
-							result.Complete (new SocketException (success));
-							return;
-						}
-					} catch (Exception e) {
-						result.Complete (e);
+				if (result.EndPoint == null) {
+					result.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
+					return;
+				}
+
+				SocketAsyncResult mconnect = result.AsyncState as SocketAsyncResult;
+#if !MOONLIGHT
+				bool is_mconnect = (mconnect != null && mconnect.Addresses != null);
+#else
+				bool is_mconnect = false;
+#endif
+				try {
+					int error_code;
+					EndPoint ep = result.EndPoint;
+					SocketAddress serial = ep.Serialize ();
+					Connect_internal (result.Sock.socket, serial, out error_code);
+					if (error_code == 0) {
+						if (is_mconnect)
+							result = mconnect;
+						result.Sock.seed_endpoint = ep;
+						result.Sock.connected = true;
+						result.error = 0;
+						result.Complete ();
+						if (is_mconnect)
+							result.DoMConnectCallback ();
 						return;
 					}
 
-					result.Complete ();
-				} else if (result.Addresses != null) {
-					// FIXME: this is broken
-					int error = (int) SocketError.InProgress; // why?
-					foreach(IPAddress address in result.Addresses) {
-						IPEndPoint iep = new IPEndPoint (address, result.Port);
-						SocketAddress serial = iep.Serialize ();
-						Socket.Connect_internal (result.Sock.socket, serial, out error);
-						if (error == 0) {
-							result.Sock.connected = true;
-							result.Sock.seed_endpoint = iep;
-							result.Complete ();
-							return;
-						} else if (error != (int)SocketError.InProgress &&
-							   error != (int)SocketError.WouldBlock) {
-							continue;
-						}
-
-						if (!result.Sock.Blocking) {
-							int success;
-							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
-							if (success == 0) {
-								result.Sock.connected = true;
-								result.Sock.seed_endpoint = iep;
-								result.Complete ();
-								return;
-							}
-						}
+					if (!is_mconnect) {
+						result.Complete (new SocketException (error_code));
+						return;
 					}
-					result.Complete (new SocketException (error));
-				} else {
-					result.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
+
+					if (mconnect.CurrentAddress >= mconnect.Addresses.Length) {
+						mconnect.Complete (new SocketException (error_code));
+						if (is_mconnect)
+							mconnect.DoMConnectCallback ();
+						return;
+					}
+#if !MOONLIGHT
+					mconnect.Sock.BeginMConnect (mconnect);
+#endif
+				} catch (Exception e) {
+					if (is_mconnect)
+						result = mconnect;
+					result.Complete (e);
+					if (is_mconnect)
+						result.DoMConnectCallback ();
+					return;
 				}
 			}
 

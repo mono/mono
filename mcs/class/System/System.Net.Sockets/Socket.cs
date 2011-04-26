@@ -709,16 +709,14 @@ namespace System.Net.Sockets
 				if (blk)
 					Blocking = true;
 				req.Complete (new SocketException (error), true);
+				return req;
 			}
 
-			if (error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
-				// continue asynch
-				connected = false;
-				if (blk)
-					Blocking = true;
-				socket_pool_queue (Worker.Dispatcher, req);
-			}
-
+			// continue asynch
+			connected = false;
+			if (blk)
+				Blocking = true;
+			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
 
@@ -734,6 +732,9 @@ namespace System.Net.Sockets
 
 			if (address.ToString ().Length == 0)
 				throw new ArgumentException ("The length of the IP address is zero");
+
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
 
 			if (islistening)
 				throw new InvalidOperationException ();
@@ -753,9 +754,15 @@ namespace System.Net.Sockets
 			if (addresses == null)
 				throw new ArgumentNullException ("addresses");
 
+			if (addresses.Length == 0)
+				throw new ArgumentException ("Empty addresses list");
+
 			if (this.AddressFamily != AddressFamily.InterNetwork &&
 				this.AddressFamily != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
+
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
 
 			if (islistening)
 				throw new InvalidOperationException ();
@@ -764,8 +771,33 @@ namespace System.Net.Sockets
 			req.Addresses = addresses;
 			req.Port = port;
 			connected = false;
-			socket_pool_queue (Worker.Dispatcher, req);
-			return(req);
+			return BeginMConnect (req);
+		}
+
+		IAsyncResult BeginMConnect (SocketAsyncResult req)
+		{
+			IAsyncResult ares = null;
+			Exception exc = null;
+			for (int i = req.CurrentAddress; i < req.Addresses.Length; i++) {
+				IPAddress addr = req.Addresses [i];
+				IPEndPoint ep = new IPEndPoint (addr, req.Port);
+				try {
+					req.CurrentAddress++;
+					ares = BeginConnect (ep, null, req);
+					if (ares.IsCompleted && ares.CompletedSynchronously) {
+						((SocketAsyncResult) ares).CheckIfThrowDelayedException ();
+						req.DoMConnectCallback ();
+					}
+					break;
+				} catch (Exception e) {
+					exc = e;
+				}
+			}
+
+			if (ares == null)
+				throw exc;
+
+			return req;
 		}
 
 		public IAsyncResult BeginConnect (string host, int port,
@@ -782,11 +814,13 @@ namespace System.Net.Sockets
 				address_family != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is valid only for sockets in the InterNetwork and InterNetworkV6 families");
 
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+
 			if (islistening)
 				throw new InvalidOperationException ();
 
-			IPAddress [] addresses = Dns.GetHostAddresses (host);
-			return (BeginConnect (addresses, port, callback, state));
+			return BeginConnect (Dns.GetHostAddresses (host), port, callback, state);
 		}
 
 		public IAsyncResult BeginDisconnect (bool reuseSocket,
