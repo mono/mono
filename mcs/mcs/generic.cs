@@ -2895,6 +2895,9 @@ namespace Mono.CSharp {
 
 				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
+				while (rtype.IsArray)
+					rtype = ((ArrayContainer) rtype).Element;
+
 				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
 					continue;
 
@@ -3091,6 +3094,9 @@ namespace Mono.CSharp {
 		//
 		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, TypeSpec returnType)
 		{
+			while (returnType.IsArray)
+				returnType = ((ArrayContainer) returnType).Element;
+
 			if (returnType.IsGenericParameter) {
 				if (IsFixed (returnType))
 				    return false;

@@ -25999,6 +25999,28 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-27.cs">
+    <type name="MainClass">
+      <method name="Void Main()">
+        <size>71</size>
+      </method>
+      <method name="T[] Test1[T](System.Func`2[IB,T[]])">
+        <size>2</size>
+      </method>
+      <method name="IA`1[T][] Test2[T](System.Func`2[IB,IA`1[T][]])">
+        <size>2</size>
+      </method>
+      <method name="System.String[] &lt;Main&gt;m__0(IB)">
+        <size>7</size>
+      </method>
+      <method name="IA`1[System.String][] &lt;Main&gt;m__1(IB)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void .ctor()">
