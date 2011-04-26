@@ -2,8 +2,8 @@
 
 BOOTSTRAP_PROFILE = build
 
-BOOTSTRAP_MCS = $(INTERNAL_GMCS)
-MCS = $(BOOTSTRAP_MCS)
+BOOTSTRAP_MCS = mcs
+MCS = $(INTERNAL_GMCS)
 
 profile-check: $(depsdir)/.stamp
 	@:
