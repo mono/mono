@@ -35,9 +35,41 @@ namespace MonoTests.System.Threading
 	[TestFixtureAttribute]
 	public class CancellationTokenTests
 	{
-
-		public CancellationTokenTests ()
+		[Test]
+		public void TestInitedWithFalseToken ()
 		{
+			CancellationToken tk = new CancellationToken (false);
+			Assert.IsFalse (tk.CanBeCanceled, "#1");
+			Assert.IsFalse (tk.IsCancellationRequested, "#2");
+		}
+
+		[Test]
+		public void TestInitedWithTrueToken ()
+		{
+			CancellationToken tk = new CancellationToken (true);
+			Assert.IsTrue (tk.CanBeCanceled, "#1");
+			Assert.IsTrue (tk.IsCancellationRequested, "#2");
+		}
+
+		[Test]
+		public void TestWithCancellationSourceNotCanceled ()
+		{
+			var src = new CancellationTokenSource ();
+			var tk = src.Token;
+
+			Assert.IsTrue (tk.CanBeCanceled);
+			Assert.IsFalse (tk.IsCancellationRequested);
+		}
+
+		[Test]
+		public void TestWithCancellationSourceCanceled ()
+		{
+			var src = new CancellationTokenSource ();
+			var tk = src.Token;
+			src.Cancel ();
+
+			Assert.IsTrue (tk.CanBeCanceled);
+			Assert.IsTrue (tk.IsCancellationRequested);
 		}
 	}
 }
