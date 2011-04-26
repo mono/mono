@@ -691,14 +691,13 @@ namespace System.Net.Sockets
 			bool blk = blocking;
 			if (blk)
 				Blocking = false;
-
 			SocketAddress serial = end_point.Serialize ();
 			Connect_internal (socket, serial, out error);
+			if (blk)
+				Blocking = true;
 			if (error == 0) {
 				// succeeded synch
 				connected = true;
-				if (blk)
-					Blocking = true;
 				req.Complete (true);
 				return req;
 			}
@@ -706,16 +705,12 @@ namespace System.Net.Sockets
 			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
 				// error synch
 				connected = false;
-				if (blk)
-					Blocking = true;
 				req.Complete (new SocketException (error), true);
 				return req;
 			}
 
 			// continue asynch
 			connected = false;
-			if (blk)
-				Blocking = true;
 			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
