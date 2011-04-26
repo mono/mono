@@ -118,6 +118,12 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 gboolean
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass);
 
+gboolean
+mono_class_is_generic (MonoClass *klass);
+
+gboolean
+mono_class_is_inflated (MonoClass *klass);
+
 gpointer
 mono_ldtoken               (MonoImage *image, guint32 token, MonoClass **retclass, MonoGenericContext *context);
 
