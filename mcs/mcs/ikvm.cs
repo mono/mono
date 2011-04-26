@@ -88,11 +88,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName)
-		{
-			cad.__TryReadTypeName (out typeNamespace, out typeName);
-		}
-
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
 			// It can be used more than once when importing same assembly
@@ -105,7 +100,7 @@ namespace Mono.CSharp
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
 		{
-			var module_definition = new ImportedModuleDefinition (module, this);
+			var module_definition = new ImportedModuleDefinition (module);
 			module_definition.ReadAttributes ();
 
 			var all_types = module.GetTypes ();

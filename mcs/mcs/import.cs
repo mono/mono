@@ -87,10 +87,9 @@ namespace Mono.CSharp
 				}
 
 				if (cad.Count > 0) {
-					string ns, name;
 					foreach (var ca in cad) {
-						importer.GetCustomAttributeTypeName (ca, out ns, out name);
-						if (name != "DynamicAttribute" && ns != CompilerServicesNamespace)
+						var dt = ca.Constructor.DeclaringType;
+						if (dt.Name != "DynamicAttribute" && dt.Namespace != CompilerServicesNamespace)
 							continue;
 
 						if (ca.ConstructorArguments.Count == 0) {
@@ -149,7 +148,6 @@ namespace Mono.CSharp
 		public abstract void AddCompiledType (TypeBuilder builder, TypeSpec spec);
 		protected abstract MemberKind DetermineKindFromBaseType (MetaType baseType);
 		protected abstract bool HasVolatileModifier (MetaType[] modifiers);
-		public abstract void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName);
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
@@ -853,7 +851,7 @@ namespace Mono.CSharp
 			if (!assembly_2_definition.TryGetValue (assembly, out found)) {
 
 				// This can happen in dynamic context only
-				var def = new ImportedAssemblyDefinition (assembly, this);
+				var def = new ImportedAssemblyDefinition (assembly);
 				assembly_2_definition.Add (assembly, def);
 				def.ReadAttributes ();
 				found = def;
@@ -917,10 +915,9 @@ namespace Mono.CSharp
 			if (attributesData.Count == 0)
 				return false;
 
-			string ns, name;
 			foreach (var attr in attributesData) {
-				GetCustomAttributeTypeName (attr, out ns, out name);
-				if (name == attrName && ns == attrNamespace)
+				var dt = attr.Constructor.DeclaringType;
+				if (dt.Name == attrName && dt.Namespace == attrNamespace)
 					return true;
 			}
 
@@ -1133,10 +1130,9 @@ namespace Mono.CSharp
 			if (attrs.Count == 0)
 				return null;
 
-			string name, ns;
 			foreach (var ca in attrs) {
-				GetCustomAttributeTypeName (ca, out ns, out name);
-				if (name != "DecimalConstantAttribute" || ns != CompilerServicesNamespace)
+				var dt = ca.Constructor.DeclaringType;
+				if (dt.Name != "DecimalConstantAttribute" || dt.Namespace != CompilerServicesNamespace)
 					continue;
 
 				var value = new decimal (
@@ -1228,11 +1224,11 @@ namespace Mono.CSharp
 				// It should not throw any loading exception
 				IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (mi);
 
-				string ns, name;
 				foreach (var a in attrs) {
-					importer.GetCustomAttributeTypeName (a, out ns, out name);
+					var dt = a.Constructor.DeclaringType;
+					string name = dt.Name;
 					if (name == "ObsoleteAttribute") {
-						if (ns != "System")
+						if (dt.Namespace != "System")
 							continue;
 
 						if (bag == null)
@@ -1252,7 +1248,7 @@ namespace Mono.CSharp
 					}
 
 					if (name == "ConditionalAttribute") {
-						if (ns != "System.Diagnostics")
+						if (dt.Namespace != "System.Diagnostics")
 							continue;
 
 						if (bag == null)
@@ -1266,7 +1262,7 @@ namespace Mono.CSharp
 					}
 
 					if (name == "CLSCompliantAttribute") {
-						if (ns != "System")
+						if (dt.Namespace != "System")
 							continue;
 
 						if (bag == null)
@@ -1279,7 +1275,7 @@ namespace Mono.CSharp
 					// Type only attributes
 					if (mi.MemberType == MemberTypes.TypeInfo || mi.MemberType == MemberTypes.NestedType) {
 						if (name == "DefaultMemberAttribute") {
-							if (ns != "System.Reflection")
+							if (dt.Namespace != "System.Reflection")
 								continue;
 
 							if (bag == null)
@@ -1290,7 +1286,7 @@ namespace Mono.CSharp
 						}
 
 						if (name == "AttributeUsageAttribute") {
-							if (ns != "System")
+							if (dt.Namespace != "System")
 								continue;
 
 							if (bag == null)
@@ -1308,7 +1304,7 @@ namespace Mono.CSharp
 
 						// Interface only attribute
 						if (name == "CoClassAttribute") {
-							if (ns != "System.Runtime.InteropServices")
+							if (dt.Namespace != "System.Runtime.InteropServices")
 								continue;
 
 							if (bag == null)
@@ -1401,12 +1397,10 @@ namespace Mono.CSharp
 	{
 		readonly Module module;
 		bool cls_compliant;
-		readonly MetadataImporter importer;
 		
-		public ImportedModuleDefinition (Module module, MetadataImporter importer)
+		public ImportedModuleDefinition (Module module)
 		{
 			this.module = module;
-			this.importer = importer;
 		}
 
 		#region Properties
@@ -1429,11 +1423,10 @@ namespace Mono.CSharp
 		{
 			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (module);
 
-			string ns, name;
 			foreach (var a in attrs) {
-				importer.GetCustomAttributeTypeName (a, out ns, out name);
-				if (name == "CLSCompliantAttribute") {
-					if (ns != "System")
+				var dt = a.Constructor.DeclaringType;
+				if (dt.Name == "CLSCompliantAttribute") {
+					if (dt.Namespace != "System")
 						continue;
 
 					cls_compliant = (bool) a.ConstructorArguments[0].Value;
@@ -1482,18 +1475,16 @@ namespace Mono.CSharp
 	{
 		readonly Assembly assembly;
 		readonly AssemblyName aname;
-		readonly MetadataImporter importer;
 		bool cls_compliant;
 		bool contains_extension_methods;
 
 		List<AssemblyName> internals_visible_to;
 		Dictionary<IAssemblyDefinition, AssemblyName> internals_visible_to_cache;
 
-		public ImportedAssemblyDefinition (Assembly assembly, MetadataImporter importer)
+		public ImportedAssemblyDefinition (Assembly assembly)
 		{
 			this.assembly = assembly;
 			this.aname = assembly.GetName ();
-			this.importer = importer;
 		}
 
 		#region Properties
@@ -1608,31 +1599,21 @@ namespace Mono.CSharp
 
 			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (assembly);
 
-			string ns, name;
 			foreach (var a in attrs) {
-				importer.GetCustomAttributeTypeName (a, out ns, out name);
-
+				var dt = a.Constructor.DeclaringType;
+				var name = dt.Name;
 				if (name == "CLSCompliantAttribute") {
-					if (ns == "System") {
-						try {
-							cls_compliant = (bool) a.ConstructorArguments[0].Value;
-						} catch {
-						}
+					if (dt.Namespace == "System") {
+						cls_compliant = (bool) a.ConstructorArguments[0].Value;
 					}
 					continue;
 				}
 
 				if (name == "InternalsVisibleToAttribute") {
-					if (ns != MetadataImporter.CompilerServicesNamespace)
+					if (dt.Namespace != MetadataImporter.CompilerServicesNamespace)
 						continue;
 
-					string s;
-					try {
-						s = a.ConstructorArguments[0].Value as string;
-					} catch {
-						s = null;
-					}
-
+					string s = a.ConstructorArguments[0].Value as string;
 					if (s == null)
 						continue;
 
@@ -1645,7 +1626,7 @@ namespace Mono.CSharp
 				}
 
 				if (name == "ExtensionAttribute") {
-					if (ns == MetadataImporter.CompilerServicesNamespace)
+					if (dt.Namespace == MetadataImporter.CompilerServicesNamespace)
 						contains_extension_methods = true;
 
 					continue;
