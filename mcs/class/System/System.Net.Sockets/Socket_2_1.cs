@@ -565,20 +565,14 @@ namespace System.Net.Sockets {
 				 */
 				if (result.EndPoint != null) {
 					try {
-						if (!result.Sock.Blocking) {
-							int success;
-							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
-							if (success == 0) {
-								result.Sock.seed_endpoint = result.EndPoint;
-								result.Sock.connected = true;
-							} else {
-								result.Complete (new SocketException (success));
-								return;
-							}
-						} else {
+						int success;
+						result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
+						if (success == 0) {
 							result.Sock.seed_endpoint = result.EndPoint;
-							result.Sock.Connect (result.EndPoint);
 							result.Sock.connected = true;
+						} else {
+							result.Complete (new SocketException (success));
+							return;
 						}
 					} catch (Exception e) {
 						result.Complete (e);
@@ -587,6 +581,7 @@ namespace System.Net.Sockets {
 
 					result.Complete ();
 				} else if (result.Addresses != null) {
+					// FIXME: this is broken
 					int error = (int) SocketError.InProgress; // why?
 					foreach(IPAddress address in result.Addresses) {
 						IPEndPoint iep = new IPEndPoint (address, result.Port);
