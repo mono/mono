@@ -688,23 +688,34 @@ namespace System.Net.Sockets
 			}
 
 			int error = 0;
-			if (!blocking) {
-				SocketAddress serial = end_point.Serialize ();
-				Connect_internal (socket, serial, out error);
-				if (error == 0) {
-					// succeeded synch
-					connected = true;
-					req.Complete (true);
-				} else if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
-					// error synch
-					connected = false;
-					req.Complete (new SocketException (error), true);
-				}
+			bool blk = blocking;
+			if (blk)
+				Blocking = false;
+
+			SocketAddress serial = end_point.Serialize ();
+			Connect_internal (socket, serial, out error);
+			if (error == 0) {
+				// succeeded synch
+				connected = true;
+				if (blk)
+					Blocking = true;
+				req.Complete (true);
+				return req;
 			}
 
-			if (blocking || error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
+			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
+				// error synch
+				connected = false;
+				if (blk)
+					Blocking = true;
+				req.Complete (new SocketException (error), true);
+			}
+
+			if (error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
 				// continue asynch
 				connected = false;
+				if (blk)
+					Blocking = true;
 				socket_pool_queue (Worker.Dispatcher, req);
 			}
 
