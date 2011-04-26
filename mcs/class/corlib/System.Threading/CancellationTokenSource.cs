@@ -46,6 +46,13 @@ namespace System.Threading
 		object syncRoot = new object ();
 		
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
+		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
+
+		static CancellationTokenSource ()
+		{
+			CanceledSource.processed = true;
+			CanceledSource.canceled = true;
+		}
 		
 		public void Cancel ()
 		{
@@ -167,7 +174,7 @@ namespace System.Threading
 		
 		CancellationToken CreateToken ()
 		{
-			CancellationToken tk = new CancellationToken (canceled);
+			CancellationToken tk = new CancellationToken (true);
 			tk.Source = this;
 			
 			return tk;
