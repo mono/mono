@@ -87,18 +87,7 @@ namespace IKVM.Reflection.Reader
 				Array.Clear(data, offset, length);
 				return;
 			}
-			module.SeekRVA(rva);
-			while (length > 0)
-			{
-				int read = module.stream.Read(data, offset, length);
-				if (read == 0)
-				{
-					// C++ assemblies can have fields that have an RVA that lies outside of the file
-					break;
-				}
-				offset += read;
-				length -= read;
-			}
+			module.__ReadDataFromRVA(rva, data, offset, length);
 		}
 
 		public override int __FieldRVA

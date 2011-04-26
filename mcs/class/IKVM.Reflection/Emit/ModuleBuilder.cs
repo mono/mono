@@ -65,6 +65,20 @@ namespace IKVM.Reflection.Emit
 		internal readonly UserStringHeap UserStrings = new UserStringHeap();
 		internal readonly GuidHeap Guids = new GuidHeap();
 		internal readonly BlobHeap Blobs = new BlobHeap();
+		internal readonly List<VTableFixups> vtablefixups = new List<VTableFixups>();
+		internal readonly List<UnmanagedExport> unmanagedExports = new List<UnmanagedExport>();
+
+		internal struct VTableFixups
+		{
+			internal uint initializedDataOffset;
+			internal ushort count;
+			internal ushort type;
+
+			internal int SlotWidth
+			{
+				get { return (type & 0x02) == 0 ? 4 : 8; }
+			}
+		}
 
 		struct MemberRefKey : IEquatable<MemberRefKey>
 		{
@@ -667,13 +681,16 @@ namespace IKVM.Reflection.Emit
 			int[] realtokens = new int[referencedAssemblies.Count];
 			foreach (KeyValuePair<Assembly, int> kv in referencedAssemblies)
 			{
-				realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName());
+				if ((kv.Value & 0x7F800000) == 0x23800000)
+				{
+					realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName(), false);
+				}
 			}
 			// now fixup the resolution scopes in TypeRef
 			for (int i = 0; i < this.TypeRef.records.Length; i++)
 			{
 				int resolutionScope = this.TypeRef.records[i].ResolutionScope;
-				if ((resolutionScope >> 24) == AssemblyRefTable.Index)
+				if ((resolutionScope & 0x7F800000) == 0x23800000)
 				{
 					this.TypeRef.records[i].ResolutionScope = realtokens[(resolutionScope & 0x7FFFFF) - 1];
 				}
@@ -682,14 +699,14 @@ namespace IKVM.Reflection.Emit
 			for (int i = 0; i < this.ExportedType.records.Length; i++)
 			{
 				int implementation = this.ExportedType.records[i].Implementation;
-				if ((implementation >> 24) == AssemblyRefTable.Index)
+				if ((implementation & 0x7F800000) == 0x23800000)
 				{
 					this.ExportedType.records[i].Implementation = realtokens[(implementation & 0x7FFFFF) - 1];
 				}
 			}
 		}
 
-		private int FindOrAddAssemblyRef(AssemblyName name)
+		private int FindOrAddAssemblyRef(AssemblyName name, bool alwaysAdd)
 		{
 			AssemblyRefTable.Record rec = new AssemblyRefTable.Record();
 			Version ver = name.Version ?? new Version(0, 0, 0, 0);
@@ -730,7 +747,7 @@ namespace IKVM.Reflection.Emit
 			{
 				rec.HashValue = 0;
 			}
-			return 0x23000000 | this.AssemblyRef.FindOrAddRecord(rec);
+			return 0x23000000 | (alwaysAdd ? this.AssemblyRef.AddRecord(rec) : this.AssemblyRef.FindOrAddRecord(rec));
 		}
 
 		internal void WriteSymbolTokenMap()
@@ -767,6 +784,46 @@ namespace IKVM.Reflection.Emit
 			return resolvedTokens[index];
 		}
 
+		internal void ApplyUnmanagedExports(ImageFileMachine imageFileMachine)
+		{
+			if (unmanagedExports.Count != 0)
+			{
+				int type;
+				int size;
+				if (imageFileMachine == ImageFileMachine.I386)
+				{
+					type = 0x05;
+					size = 4;
+				}
+				else
+				{
+					type = 0x06;
+					size = 8;
+				}
+				List<MethodBuilder> methods = new List<MethodBuilder>();
+				for (int i = 0; i < unmanagedExports.Count; i++)
+				{
+					if (unmanagedExports[i].mb != null)
+					{
+						methods.Add(unmanagedExports[i].mb);
+					}
+				}
+				if (methods.Count != 0)
+				{
+					RelativeVirtualAddress rva = __AddVTableFixups(methods.ToArray(), type);
+					for (int i = 0; i < unmanagedExports.Count; i++)
+					{
+						if (unmanagedExports[i].mb != null)
+						{
+							UnmanagedExport exp = unmanagedExports[i];
+							exp.rva = new RelativeVirtualAddress(rva.initializedDataOffset + (uint)(methods.IndexOf(unmanagedExports[i].mb) * size));
+							unmanagedExports[i] = exp;
+						}
+					}
+				}
+			}
+		}
+
 		internal void FixupMethodBodyTokens()
 		{
 			int methodToken = 0x06000001;
@@ -781,6 +838,14 @@ namespace IKVM.Reflection.Emit
 				methodBodies.Position = offset;
 				int pseudoToken = methodBodies.GetInt32AtCurrentPosition();
 				methodBodies.Write(ResolvePseudoToken(pseudoToken));
+			}
+			foreach (VTableFixups fixup in vtablefixups)
+			{
+				for (int i = 0; i < fixup.count; i++)
+				{
+					initializedData.Position = (int)fixup.initializedDataOffset + i * fixup.SlotWidth;
+					initializedData.Write(ResolvePseudoToken(initializedData.GetInt32AtCurrentPosition()));
+				}
 			}
 		}
 
@@ -1289,12 +1354,21 @@ namespace IKVM.Reflection.Emit
 
 		public void __AddAssemblyReference(AssemblyName assemblyName)
 		{
+			__AddAssemblyReference(assemblyName, null);
+		}
+
+		public void __AddAssemblyReference(AssemblyName assemblyName, Assembly assembly)
+		{
 			if (referencedAssemblyNames == null)
 			{
 				referencedAssemblyNames = new List<AssemblyName>();
 			}
-			FindOrAddAssemblyRef(assemblyName);
 			referencedAssemblyNames.Add((AssemblyName)assemblyName.Clone());
+			int token = FindOrAddAssemblyRef(assemblyName, true);
+			if (assembly != null)
+			{
+				referencedAssemblies.Add(assembly, token);
+			}
 		}
 
 		public override AssemblyName[] __GetReferencedAssemblies()
@@ -1376,6 +1450,63 @@ namespace IKVM.Reflection.Emit
 		public void __SetCustomAttributeFor(int token, CustomAttributeBuilder customBuilder)
 		{
 			SetCustomAttribute(token, customBuilder);
+		}
+
+		public RelativeVirtualAddress __AddVTableFixups(MethodBuilder[] methods, int type)
+		{
+			initializedData.Align(8);
+			VTableFixups fixups;
+			fixups.initializedDataOffset = (uint)initializedData.Position;
+			fixups.count = (ushort)methods.Length;
+			fixups.type = (ushort)type;
+			foreach (MethodBuilder mb in methods)
+			{
+				initializedData.Write(mb.MetadataToken);
+				if (fixups.SlotWidth == 8)
+				{
+					initializedData.Write(0);
+				}
+			}
+			vtablefixups.Add(fixups);
+			return new RelativeVirtualAddress(fixups.initializedDataOffset);
+		}
+
+		public void __AddUnmanagedExportStub(string name, int ordinal, RelativeVirtualAddress rva)
+		{
+			AddUnmanagedExport(name, ordinal, null, rva);
+		}
+
+		internal void AddUnmanagedExport(string name, int ordinal, MethodBuilder methodBuilder, RelativeVirtualAddress rva)
+		{
+			UnmanagedExport export;
+			export.name = name;
+			export.ordinal = ordinal;
+			export.mb = methodBuilder;
+			export.rva = rva;
+			unmanagedExports.Add(export);
+		}
+	}
+
+	struct UnmanagedExport
+	{
+		internal string name;
+		internal int ordinal;
+		internal RelativeVirtualAddress rva;
+		internal MethodBuilder mb;
+	}
+
+	public struct RelativeVirtualAddress
+	{
+		internal readonly uint initializedDataOffset;
+
+		internal RelativeVirtualAddress(uint initializedDataOffset)
+		{
+			this.initializedDataOffset = initializedDataOffset;
+		}
+
+		public static RelativeVirtualAddress operator +(RelativeVirtualAddress rva, int offset)
+		{
+			return new RelativeVirtualAddress(rva.initializedDataOffset + (uint)offset);
 		}
 	}
 

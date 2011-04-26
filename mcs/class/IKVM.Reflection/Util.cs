@@ -84,6 +84,17 @@ namespace IKVM.Reflection
 
 	static class Util
 	{
+		internal static int[] Copy(int[] array)
+		{
+			if (array == null || array.Length == 0)
+			{
+				return Empty<int>.Array;
+			}
+			int[] copy = new int[array.Length];
+			Array.Copy(array, copy, array.Length);
+			return copy;
+		}
+
 		internal static Type[] Copy(Type[] array)
 		{
 			if (array == null || array.Length == 0)

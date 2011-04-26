@@ -598,6 +598,11 @@ namespace IKVM.Reflection.Emit
 			set { initLocals = value; }
 		}
 
+		public void __AddUnmanagedExport(string name, int ordinal)
+		{
+			this.ModuleBuilder.AddUnmanagedExport(name, ordinal, this, new RelativeVirtualAddress(0xFFFFFFFF));
+		}
+
 		internal void Bake()
 		{
 			this.nameIndex = this.ModuleBuilder.Strings.Add(name);

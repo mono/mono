@@ -207,6 +207,11 @@ namespace IKVM.Reflection
 			throw new NotSupportedException();
 		}
 
+		public virtual int __ReadDataFromRVA(int rva, byte[] data, int offset, int length)
+		{
+			throw new NotSupportedException();
+		}
+
 		public virtual void GetPEKind(out PortableExecutableKinds peKind, out ImageFileMachine machine)
 		{
 			throw new NotSupportedException();
@@ -407,6 +412,11 @@ namespace IKVM.Reflection
 		}
 
 		public abstract AssemblyName[] __GetReferencedAssemblies();
+
+		public virtual void __ResolveReferencedAssemblies(Assembly[] assemblies)
+		{
+			throw new NotSupportedException();
+		}
 
 		public abstract string[] __GetReferencedModules();
 

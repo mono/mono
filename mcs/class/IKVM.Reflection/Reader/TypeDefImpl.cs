@@ -43,6 +43,7 @@ namespace IKVM.Reflection.Reader
 			this.index = index;
 			this.typeName = module.GetString(module.TypeDef.records[index].TypeName);
 			this.typeNamespace = module.GetString(module.TypeDef.records[index].TypeNamespace);
+			MarkEnumOrValueType(typeNamespace, typeName);
 		}
 
 		public override Type BaseType

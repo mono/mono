@@ -350,6 +350,7 @@ namespace IKVM.Reflection
 			this.declaringType = declaringType;
 			this.ns = ns;
 			this.name = name;
+			MarkEnumOrValueType(ns, name);
 		}
 
 		internal override MethodBase FindMethod(string name, MethodSignature signature)

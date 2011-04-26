@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -152,20 +152,19 @@ namespace IKVM.Reflection
 			return args;
 		}
 
-		private static int ReadArrayShape(ByteReader br)
+		private static int[] ReadArrayBounds(ByteReader br)
 		{
-			int rank = br.ReadCompressedInt();
-			int numSizes = br.ReadCompressedInt();
-			for (int i = 0; i < numSizes; i++)
+			int num = br.ReadCompressedInt();
+			if (num == 0)
 			{
-				br.ReadCompressedInt();
+				return null;
 			}
-			int numLoBounds = br.ReadCompressedInt();
-			for (int i = 0; i < numLoBounds; i++)
+			int[] arr = new int[num];
+			for (int i = 0; i < num; i++)
 			{
-				br.ReadCompressedInt();
+				arr[i] = br.ReadCompressedInt();
 			}
-			return rank;
+			return arr;
 		}
 
 		private static Type ReadTypeOrVoid(ModuleReader module, ByteReader br, IGenericContext context)
@@ -234,7 +233,7 @@ namespace IKVM.Reflection
 					return ReadType(module, br, context).__MakeArrayType(mods.required, mods.optional);
 				case ELEMENT_TYPE_ARRAY:
 					mods = ReadCustomModifiers(module, br, context);
-					return ReadType(module, br, context).__MakeArrayType(ReadArrayShape(br), mods.required, mods.optional);
+					return ReadType(module, br, context).__MakeArrayType(br.ReadCompressedInt(), ReadArrayBounds(br), ReadArrayBounds(br), mods.required, mods.optional);
 				case ELEMENT_TYPE_PTR:
 					mods = ReadCustomModifiers(module, br, context);
 					return ReadTypeOrVoid(module, br, context).__MakePointerType(mods.required, mods.optional);
@@ -336,14 +335,17 @@ namespace IKVM.Reflection
 					WriteCustomModifiers(module, bb, ELEMENT_TYPE_CMOD_OPT, type.__GetOptionalCustomModifiers());
 					WriteType(module, bb, type.GetElementType());
 					bb.WriteCompressedInt(rank);
-					// since a Type doesn't contain the lower/upper bounds
-					// (they act like a custom modifier, so they are part of the signature, but not of the Type),
-					// we set them to the C# compatible values and hope for the best
-					bb.WriteCompressedInt(0);	// boundsCount
-					bb.WriteCompressedInt(rank);	// loCount
-					for (int i = 0; i < rank; i++)
+					int[] sizes = type.__GetArraySizes();
+					bb.WriteCompressedInt(sizes.Length);
+					for (int i = 0; i < sizes.Length; i++)
 					{
-						bb.WriteCompressedInt(0);
+						bb.WriteCompressedInt(sizes[i]);
+					}
+					int[] lobounds = type.__GetArrayLowerBounds();
+					bb.WriteCompressedInt(lobounds.Length);
+					for (int i = 0; i < lobounds.Length; i++)
+					{
+						bb.WriteCompressedInt(lobounds[i]);
 					}
 					return;
 				}
