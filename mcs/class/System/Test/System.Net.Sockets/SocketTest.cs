@@ -1737,7 +1737,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
-		[Category ("NotOnMac")] // MacOSX will block attempting to connect to 127.0.0.4 causing the test to fail
 		public void BeginConnectMultiple ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
