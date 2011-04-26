@@ -273,7 +273,6 @@ namespace System.Runtime.Serialization.Json
 			object ret;
 			if (collectionType.IsInterface)
 				collectionType = typeof (List<>).MakeGenericType (elementType);
-
 			if (TypeMap.IsDictionary (collectionType)) {
 				object dic = Activator.CreateInstance (collectionType);
 				var itemSetter = dic.GetType ().GetProperty ("Item");
@@ -294,24 +293,31 @@ namespace System.Runtime.Serialization.Json
 					itemSetter.SetValue (dic, val, keyarr);
 				}
 				ret = dic;
-			} else if (typeof (IEnumerable).IsAssignableFrom (collectionType)) {
+			} else if (typeof (IList).IsAssignableFrom (collectionType)) {
 #if NET_2_1
 				Type listType = collectionType.IsArray ? typeof (List<>).MakeGenericType (elementType) : null;
 #else
 				Type listType = collectionType.IsArray ? typeof (ArrayList) : null;
 #endif
-				var c = (IEnumerable) TypeMap.CreateInstance (listType ?? collectionType);
-				var addMethod = c.GetType ().GetMethods ().First (m => m.Name == "Add" && m.GetParameters ().Length == 1);
-				var argarr = new object [1];
+				IList c = (IList) Activator.CreateInstance (listType ?? collectionType);
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
 					Type et = elementType == typeof (object) || elementType.IsAbstract ? null : elementType;
 					object elem = ReadObject (et ?? typeof (object));
-					argarr [0] = elem;
-					addMethod.Invoke (c, argarr);
+					c.Add (elem);
 				}
+#if NET_2_1
+				if (collectionType.IsArray) {
+					Array array = Array.CreateInstance (elementType, c.Count);
+					c.CopyTo (array, 0);
+					ret = array;
+				}
+				else
+					ret = c;
+#else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
+#endif
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});
