@@ -2,8 +2,8 @@
 
 BOOTSTRAP_PROFILE = build
 
-BOOTSTRAP_MCS = mcs
-MCS = $(INTERNAL_GMCS)
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
+MCS = $(BOOTSTRAP_MCS)
 
 profile-check: $(depsdir)/.stamp
 	@:
