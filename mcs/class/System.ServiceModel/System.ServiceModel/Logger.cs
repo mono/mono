@@ -34,7 +34,7 @@ using System.ServiceModel.Configuration;
 using System.ServiceModel.Diagnostics;
 using System.Threading;
 using System.Xml;
-#if !NET_2_1
+#if !MOONLIGHT
 using System.Xml.XPath;
 #endif
 
