@@ -34,13 +34,16 @@ namespace System.Threading
 	public struct CancellationToken
 	{
 		bool canBeCanceled;
+		bool initialized;
+		CancellationTokenSource source;
 
 		public CancellationToken (bool canceled)
 			: this ()
 		{
-			// dummy, this is actually set by CancellationTokenSource when the token is created
+			initialized = true;
 			canBeCanceled = canceled;
-			Source = canceled ? CancellationTokenSource.CanceledSource : CancellationTokenSource.NoneSource;
+			// This is correctly set later if token originates from a Source
+			source = canceled ? CancellationTokenSource.CanceledSource : CancellationTokenSource.NoneSource;
 		}
 
 		public static CancellationToken None {
@@ -77,7 +80,7 @@ namespace System.Threading
 
 		public void ThrowIfCancellationRequested ()
 		{
-			if (Source.IsCancellationRequested)
+			if (initialized && Source.IsCancellationRequested)
 				throw new OperationCanceledException (this);
 		}
 
@@ -114,7 +117,7 @@ namespace System.Threading
 
 		public bool IsCancellationRequested {
 			get {
-				return Source.IsCancellationRequested;
+				return initialized && Source.IsCancellationRequested;
 			}
 		}
 
@@ -125,8 +128,20 @@ namespace System.Threading
 		}
 
 		internal CancellationTokenSource Source {
-			get;
-			set;
+			get {
+				if (!initialized)
+					CorrectlyInitialize ();
+				return source;
+			}
+			set {
+				source = value;
+			}
+		}
+
+		void CorrectlyInitialize ()
+		{
+			Source = CancellationTokenSource.NoneSource;
+			initialized = true;
 		}
 	}
 }
