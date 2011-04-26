@@ -71,6 +71,14 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (tk.CanBeCanceled);
 			Assert.IsTrue (tk.IsCancellationRequested);
 		}
+
+		[Test]
+		public void TestWithUninitializedToken ()
+		{
+			var tk = new CancellationToken ();
+			Assert.IsFalse (tk.CanBeCanceled);
+			Assert.IsFalse (tk.IsCancellationRequested);
+		}
 	}
 }
 #endif
