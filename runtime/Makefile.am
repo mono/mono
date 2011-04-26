@@ -33,7 +33,7 @@ moon-do-basic-clean:
 endif
 
 if ONLY_MOONLIGHT
-build_profiles = moonlight_raw
+build_profiles = build moonlight_raw
 test_profiles = moonlight_raw
 else
 
@@ -45,10 +45,10 @@ build_profiles += moonlight_raw
 test_profiles += moonlight_raw
 
 moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='build moonlight_raw' CC='$(CC)' all-profiles
 
 moon-do-moonlight-raw-clean:
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='build moonlight_raw' CC='$(CC)' clean-profiles
 
 moon-do-build: moon-do-moonlight-raw moon-do-basic
 moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
