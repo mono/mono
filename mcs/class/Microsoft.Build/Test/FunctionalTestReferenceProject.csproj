@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>ZigZag</AssemblyName>
+    <ProjectGuid>{362f36b0-b26c-42de-8586-20df66bd05e8}</ProjectGuid>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <CodePage />
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <Platform>AnyCPU</Platform>
+    <ProjectTypeGuids>{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+    <OutputPath>bin\Debug</OutputPath>
+    <OutputType>winexe</OutputType>
+    <DefineConstants>DEBUG,TRACE</DefineConstants>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Test">
+      <Name>Test</Name>
+      <HintPath>Test.dll</HintPath>
+    </Reference>
+    <Reference Include="Test2">
+      <Name>Test2</Name>
+      <HintPath>Test2.dll</HintPath>
+    </Reference>
+    <Reference Include="Test3">
+      <Name>Test3</Name>
+      <HintPath>Test3.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Test.resx">
+      <LogicalName>Name.Space.Test</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Test2.resx">
+      <LogicalName>Name.Space.Test</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Test3.resx">
+      <LogicalName>Name.Space.Test</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

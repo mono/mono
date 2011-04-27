@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Build", "Microsoft.Build.csproj", "{B2012E7F-8F8D-4908-8045-413F2BD1022D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Build.Test", "Test\Microsoft.Build.Test.csproj", "{5C1BA631-5120-4930-A112-80783328B72B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C1BA631-5120-4930-A112-80783328B72B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C1BA631-5120-4930-A112-80783328B72B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C1BA631-5120-4930-A112-80783328B72B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5C1BA631-5120-4930-A112-80783328B72B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C1BA631-5120-4930-A112-80783328B72B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C1BA631-5120-4930-A112-80783328B72B}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2012E7F-8F8D-4908-8045-413F2BD1022D}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Microsoft.Build.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 120
+		$1.TabWidth = 8
+		$1.NoTabsAfterNonTabs = True
+		$1.RemoveTrailingWhitespace = True
+		$1.inheritsSet = VisualStudio
+		$1.inheritsScope = text/plain
+		$1.scope = text/plain
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+		$0.StandardHeader = $4
+		$4.Text = 
+		$4.inheritsSet = Apache2License
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
