@@ -1277,10 +1277,10 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>145</size>
+        <size>153</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -3075,7 +3075,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -3101,7 +3101,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -4828,10 +4828,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>105</size>
+        <size>113</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -5148,7 +5148,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -6082,10 +6082,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>73</size>
+        <size>81</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -7484,7 +7484,7 @@
         <size>95</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -7533,10 +7533,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>89</size>
+        <size>97</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -7944,10 +7944,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>124</size>
+        <size>148</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -7964,10 +7964,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>143</size>
+        <size>167</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8036,10 +8036,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>82</size>
+        <size>90</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8291,7 +8291,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8311,7 +8311,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8331,7 +8331,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8351,7 +8351,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8368,10 +8368,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>68</size>
+        <size>76</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8388,10 +8388,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>80</size>
+        <size>88</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8408,10 +8408,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>80</size>
+        <size>88</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8534,7 +8534,7 @@
         <size>48</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8554,7 +8554,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8627,7 +8627,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8644,7 +8644,7 @@
         <size>48</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -8852,10 +8852,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>73</size>
+        <size>81</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -9224,10 +9224,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>205</size>
+        <size>213</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -9244,10 +9244,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>116</size>
+        <size>124</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -9933,7 +9933,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -9950,7 +9950,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -10032,7 +10032,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -10219,10 +10219,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>122</size>
+        <size>138</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -10406,10 +10406,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>78</size>
+        <size>86</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -10624,7 +10624,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -10641,7 +10641,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -11393,7 +11393,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -11818,10 +11818,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>67</size>
+        <size>75</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -13399,10 +13399,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>104</size>
+        <size>112</size>
       </method>
       <method name="Void Dispose()">
-        <size>46</size>
+        <size>53</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -13419,10 +13419,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>178</size>
+        <size>186</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -17401,10 +17401,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>108</size>
+        <size>124</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -18856,10 +18856,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>67</size>
+        <size>75</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -19232,10 +19232,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>96</size>
+        <size>112</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -20009,10 +20009,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>178</size>
+        <size>194</size>
       </method>
       <method name="Void Dispose()">
-        <size>66</size>
+        <size>73</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -20116,10 +20116,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>63</size>
+        <size>71</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -20136,10 +20136,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>96</size>
+        <size>112</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -22371,10 +22371,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>106</size>
+        <size>114</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -22424,10 +22424,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>293</size>
+        <size>301</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24005,10 +24005,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>134</size>
+        <size>142</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24041,7 +24041,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24077,10 +24077,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>194</size>
+        <size>202</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24097,10 +24097,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>222</size>
+        <size>230</size>
       </method>
       <method name="Void Dispose()">
-        <size>57</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24160,7 +24160,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24204,10 +24204,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>185</size>
+        <size>193</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24256,10 +24256,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>181</size>
+        <size>189</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24303,10 +24303,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>185</size>
+        <size>193</size>
       </method>
       <method name="Void Dispose()">
-        <size>57</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24342,10 +24342,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>82</size>
+        <size>90</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24391,10 +24391,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>128</size>
+        <size>136</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24436,10 +24436,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>101</size>
+        <size>109</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24501,10 +24501,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>174</size>
+        <size>182</size>
       </method>
       <method name="Void Dispose()">
-        <size>57</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24537,10 +24537,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>115</size>
+        <size>123</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24584,10 +24584,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>215</size>
+        <size>223</size>
       </method>
       <method name="Void Dispose()">
-        <size>76</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24659,10 +24659,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>73</size>
+        <size>81</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24685,10 +24685,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>84</size>
+        <size>92</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24734,10 +24734,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>179</size>
+        <size>187</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24795,10 +24795,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>68</size>
+        <size>76</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24821,10 +24821,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>185</size>
+        <size>193</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24847,10 +24847,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>185</size>
+        <size>193</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24889,7 +24889,7 @@
         <size>40</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24925,10 +24925,10 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>69</size>
+        <size>77</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -24978,10 +24978,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>191</size>
+        <size>199</size>
       </method>
       <method name="Void Dispose()">
-        <size>62</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -27167,10 +27167,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>84</size>
+        <size>92</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -49318,10 +49318,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>197</size>
+        <size>205</size>
       </method>
       <method name="Void Dispose()">
-        <size>76</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -49359,10 +49359,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>118</size>
+        <size>134</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -49441,13 +49441,13 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>199</size>
+        <size>207</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
         <size>22</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -49937,13 +49937,13 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>193</size>
+        <size>201</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>44</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52302,10 +52302,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>124</size>
+        <size>148</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52322,10 +52322,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>124</size>
+        <size>148</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52365,10 +52365,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>171</size>
+        <size>195</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52404,10 +52404,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>149</size>
+        <size>157</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52424,10 +52424,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>236</size>
+        <size>244</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52473,10 +52473,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>121</size>
+        <size>129</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52526,10 +52526,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>181</size>
+        <size>189</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52584,10 +52584,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>181</size>
+        <size>197</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52604,10 +52604,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>134</size>
+        <size>158</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52624,10 +52624,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>129</size>
+        <size>153</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52644,10 +52644,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>134</size>
+        <size>158</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52722,10 +52722,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>253</size>
+        <size>269</size>
       </method>
       <method name="Void Dispose()">
-        <size>112</size>
+        <size>119</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52769,10 +52769,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>358</size>
+        <size>390</size>
       </method>
       <method name="Void Dispose()">
-        <size>102</size>
+        <size>109</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52810,10 +52810,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>635</size>
+        <size>683</size>
       </method>
       <method name="Void Dispose()">
-        <size>96</size>
+        <size>103</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52852,10 +52852,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>124</size>
+        <size>148</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52872,10 +52872,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>143</size>
+        <size>167</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52924,10 +52924,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>122</size>
+        <size>130</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -52960,10 +52960,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>184</size>
+        <size>200</size>
       </method>
       <method name="Void Dispose()">
-        <size>63</size>
+        <size>70</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53013,7 +53013,7 @@
         <size>25</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53055,10 +53055,10 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>98</size>
+        <size>106</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53091,10 +53091,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>122</size>
+        <size>138</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53133,7 +53133,7 @@
         <size>32</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53169,10 +53169,10 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>156</size>
+        <size>164</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53213,10 +53213,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>193</size>
+        <size>209</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53246,10 +53246,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>75</size>
+        <size>83</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53284,10 +53284,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>84</size>
+        <size>92</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53337,10 +53337,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>199</size>
+        <size>207</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53373,13 +53373,66 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>197</size>
+        <size>205</size>
       </method>
       <method name="Void Dispose()">
-        <size>76</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-iter-23.cs">
+    <type name="X">
+      <method name="IEnumerable GetIt2()">
+        <size>16</size>
+      </method>
+      <method name="Int32 Delay()">
+        <size>20</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>118</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetIt2&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>116</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0(System.Object)">
+        <size>28</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -53849,10 +53902,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>67</size>
+        <size>75</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53941,7 +53994,7 @@
         <size>36</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53961,7 +54014,7 @@
         <size>36</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -53981,7 +54034,7 @@
         <size>36</size>
       </method>
       <method name="Void Dispose()">
-        <size>8</size>
+        <size>15</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
