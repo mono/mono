@@ -171,6 +171,15 @@ namespace System.ServiceModel.MonoInternal
 					}
 				}
 				
+				if (message.IsFault) {
+					Exception ex;
+					var mf = MessageFault.CreateFault (message, 0x10000);
+					if (FaultConverter.GetDefaultFaultConverter (message.Version).TryCreateException (message, mf, out ex)) // FIXME: get maxMessageSize somehow
+						throw ex;
+					else
+						throw new FaultException (mf);
+				}
+				
 				if (!MessageMatchesEndpointDispatcher (message, Runtime.CallbackDispatchRuntime.EndpointDispatcher))
 					throw new EndpointNotFoundException (String.Format ("The request message has the target '{0}' with action '{1}' which is not reachable in this service contract", message.Headers.To, message.Headers.Action));
 				new InputOrReplyRequestProcessor (Runtime.CallbackDispatchRuntime, input).ProcessInput (message);
