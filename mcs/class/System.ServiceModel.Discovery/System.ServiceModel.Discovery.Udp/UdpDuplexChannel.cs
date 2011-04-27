@@ -120,6 +120,8 @@ namespace System.ServiceModel.Discovery.Udp
 
 		void SendCore (UdpClient cli, Message message, TimeSpan timeout)
 		{
+			Logger.LogMessage (MessageLogSourceKind.TransportSend, ref message, int.MaxValue);
+
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
 			// It seems .NET sends the same Message a couple of times so that the receivers don't miss it. So, do the same hack.
@@ -195,6 +197,9 @@ namespace System.ServiceModel.Discovery.Udp
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add ("Encoder", message_encoder);
 			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ip.Address.ToString (), ip.Port));
+
+			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref msg, binding_element.MaxReceivedMessageSize);
+
 			return true;
 		}
 
