@@ -169,6 +169,7 @@ net_4_0_dirs := \
 	System.Dynamic		\
 	System.Numerics		\
 	Microsoft.CSharp	\
+	Microsoft.Build		\
 	System.Windows.Forms.DataVisualization	\
 	System.ComponentModel.Composition \
 	System.Xaml \
