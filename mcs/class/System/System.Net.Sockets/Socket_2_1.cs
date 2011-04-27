@@ -582,8 +582,7 @@ namespace System.Net.Sockets {
 				try {
 					int error_code;
 					EndPoint ep = result.EndPoint;
-					SocketAddress serial = ep.Serialize ();
-					Connect_internal (result.Sock.socket, serial, out error_code);
+					error_code = (int) result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 					if (error_code == 0) {
 						if (is_mconnect)
 							result = mconnect;
