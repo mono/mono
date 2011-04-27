@@ -107,7 +107,7 @@ $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           
 $(_boot_:%=profile-do--moonlight--%):         profile-do--moonlight--%:         profile-do--moonlight_raw--%
 $(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--build--%
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%
-$(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:
+$(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:     profile-do--build--%
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
