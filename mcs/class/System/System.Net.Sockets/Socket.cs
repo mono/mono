@@ -786,6 +786,7 @@ namespace System.Net.Sockets
 					break;
 				} catch (Exception e) {
 					exc = e;
+					ares = null;
 				}
 			}
 
