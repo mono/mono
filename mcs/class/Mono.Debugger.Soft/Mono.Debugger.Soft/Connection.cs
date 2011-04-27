@@ -356,7 +356,8 @@ namespace Mono.Debugger.Soft
 			BREAKPOINT = 10,
 			STEP = 11,
 			TYPE_LOAD = 12,
-			EXCEPTION = 13
+			EXCEPTION = 13,
+			KEEPALIVE = 14
 		}
 
 		enum ModifierKind {
@@ -377,7 +378,8 @@ namespace Mono.Debugger.Soft
 			DISPOSE = 6,
 			INVOKE_METHOD = 7,
 			SET_PROTOCOL_VERSION = 8,
-			ABORT_INVOKE = 9
+			ABORT_INVOKE = 9,
+			SET_KEEPALIVE = 10
 		}
 
 		enum CmdEvent {
@@ -1167,6 +1169,8 @@ namespace Mono.Debugger.Soft
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AppDomainUnload (req_id, thread_id, id);
+							} else if (kind == EventKind.KEEPALIVE) {
+								events [i] = new EventInfo (etype, req_id) { };
 							} else {
 								throw new NotImplementedException ("Unknown event kind: " + kind);
 							}
@@ -1383,6 +1387,13 @@ namespace Mono.Debugger.Soft
 		public void VM_AbortInvoke (long thread, int id)
 		{
 			SendReceive (CommandSet.VM, (int)CmdVM.ABORT_INVOKE, new PacketWriter ().WriteId (thread).WriteInt (id));
+		}
+
+		public void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
+		{
+			socket.SendTimeout = send_timeout;
+			socket.ReceiveTimeout = receive_timeout;
+			SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
 		}
 
 		/*
