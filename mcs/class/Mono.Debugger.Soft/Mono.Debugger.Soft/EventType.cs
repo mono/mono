@@ -17,6 +17,7 @@ namespace Mono.Debugger.Soft
 		Step = 11,
 		TypeLoad = 12,
 		Exception = 13,
+		KeepAlive = 14,
 		// Not part of the wire protocol
 		VMDisconnect = 99
 	}
