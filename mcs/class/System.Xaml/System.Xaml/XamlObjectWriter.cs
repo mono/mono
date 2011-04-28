@@ -91,12 +91,16 @@ namespace System.Xaml
 		int line, column;
 		bool lineinfo_was_given;
 
+		internal XamlObjectWriterSettings Settings {
+			get { return settings; }
+		}
+
 		public virtual object Result {
 			get { return intl.Result; }
 		}
 
 		public INameScope RootNameScope {
-			get { throw new NotImplementedException (); }
+			get { return intl.NameScope; }
 		}
 
 		public override XamlSchemaContext SchemaContext {
@@ -206,13 +210,19 @@ namespace System.Xaml
 		{
 			this.source = source;
 			this.sctx = schemaContext;
+			var ext = source.Settings.ExternalNameScope;
+			name_scope = ext != null && source.Settings.RegisterNamesOnExternalNamescope ? ext : new NameScope (ext);
 		}
 		
 		XamlObjectWriter source;
 		XamlSchemaContext sctx;
-		INameScope name_scope = new NameScope ();
+		INameScope name_scope;
 		List<NameFixupRequired> pending_name_references = new List<NameFixupRequired> ();
 		AmbientProvider ambient_provider = new AmbientProvider ();
+
+		public INameScope NameScope {
+			get { return name_scope; }
+		}
 
 		public object Result { get; set; }
 		
@@ -223,6 +233,14 @@ namespace System.Xaml
 				var pstate = object_states.Peek ();
 				if (CurrentMemberState.Value != null)
 					throw new XamlDuplicateMemberException (String.Format ("Member '{0}' is already written to current type '{1}'", CurrentMember, pstate.Type));
+			} else {
+				var obj = source.Settings.RootObjectInstance;
+				if (obj != null) {
+					if (state.Type.UnderlyingType != null && !state.Type.UnderlyingType.IsAssignableFrom (obj.GetType ()))
+						throw new XamlObjectWriterException (String.Format ("RootObjectInstance type '{0}' is not assignable to '{1}'", obj.GetType (), state.Type));
+					state.Value = obj;
+					state.IsInstantiated = true;
+				}
 			}
 			object_states.Push (state);
 			if (!state.Type.IsContentValue (service_provider))

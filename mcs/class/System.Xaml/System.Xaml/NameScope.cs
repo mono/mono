@@ -34,17 +34,20 @@ namespace System.Xaml
 	class NameScope : INameScope
 	{
 		Dictionary<string,object> table = new Dictionary<string,object> ();
+		// It is an external read-only namescope.
+		INameScope external;
+
+		public NameScope (INameScope external)
+		{
+			this.external = external;
+		}
 
 		public object FindName (string name)
 		{
-			object obj;
+			object obj = external != null ? external.FindName (name) : null;
+			if (obj != null)
+				return obj;
 			return table.TryGetValue (name, out obj) ? obj : null;
-		}
-
-		public string GetNameForObject (object obj)
-		{
-			var p = table.FirstOrDefault (kvp => kvp.Value == obj);
-			return p.Key;
 		}
 
 		public void RegisterName (string name, object scopedElement)
