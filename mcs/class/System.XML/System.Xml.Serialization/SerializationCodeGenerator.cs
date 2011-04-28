@@ -1228,7 +1228,10 @@ namespace System.Xml.Serialization
 		string GenerateMemberHasValueCondition (XmlTypeMapMember member, string ob, bool isValueList)
 		{
 			if (isValueList) {
-				return ob + ".Length > " + member.GlobalIndex;
+				if (member.IsOptionalValueType)
+					return ob + ".Length > " + Math.Max (member.GlobalIndex, member.SpecifiedGlobalIndex) + " && " + GetCast (typeof(bool), ob + "[" + member.SpecifiedGlobalIndex + "]");
+				else
+					return ob + ".Length > " + member.GlobalIndex;
 			}
 			else if (member.DefaultValue != System.DBNull.Value) {
 				string mem = ob + ".@" + member.Name;
@@ -2106,11 +2109,24 @@ namespace System.Xml.Serialization
 
 		void GenerateSetMemberValue (XmlTypeMapMember member, string ob, string value, bool isValueList)
 		{
-			if (isValueList) WriteLine (ob + "[" + member.GlobalIndex + "] = " + value + ";");
+			GenerateSetMemberValue (member, ob, value, isValueList, false);
+		}
+		
+		void GenerateSetMemberValue (XmlTypeMapMember member, string ob, string value, bool isValueList, bool initializingMember)
+		{
+			if (isValueList) {
+				WriteLine (ob + "[" + member.GlobalIndex + "] = " + value + ";");
+				if (member.IsOptionalValueType) {
+					string val = initializingMember ? "false" : "true";
+					WriteLine (ob + "[" + member.SpecifiedGlobalIndex + "] = " + val + ";");
+				}
+			}
 			else {
 				WriteLine (ob + ".@" + member.Name + " = " + value + ";");
-				if (member.IsOptionalValueType)
-					WriteLine (ob + "." + member.Name + "Specified = true;");
+				if (member.IsOptionalValueType) {
+					string val = initializingMember ? "false" : "true";
+					WriteLine (ob + "." + member.Name + "Specified = " + val + ";");
+				}
 			}
 		}
 
@@ -2122,7 +2138,7 @@ namespace System.Xml.Serialization
 			
 			if (member.TypeData.Type.IsEnum)
 				value = GetCast (member.TypeData.Type, value);
-			GenerateSetMemberValue (member, ob, value, isValueList);
+			GenerateSetMemberValue (member, ob, value, isValueList, true);
 		}
 
 		string GenerateReadObjectElement (XmlTypeMapElementInfo elem)
