@@ -150,14 +150,17 @@ namespace System.Xml.Serialization {
 		{
 //			Reset ();	Disabled. See ChangeLog
 
-			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
+			ArrayList mapping = new ArrayList ();
 			for (int n=0; n<members.Length; n++)
 			{
+				if (members[n].XmlAttributes.XmlIgnore) continue;
 				XmlTypeMapMember mapMem = CreateMapMember (null, members[n], ns);
-				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, false);
+				mapMem.GlobalIndex = n;
+				mapMem.CheckOptionalValueType (members);
+				mapping.Add (new XmlMemberMapping (members[n].MemberName, ns, mapMem, false));
 			}
 			elementName = XmlConvert.EncodeLocalName (elementName);
-			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, mapping);
+			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, (XmlMemberMapping[])mapping.ToArray (typeof(XmlMemberMapping)));
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;

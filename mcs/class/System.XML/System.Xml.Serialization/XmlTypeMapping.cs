@@ -303,7 +303,6 @@ namespace System.Xml.Serialization
 
 		public void AddMember (XmlTypeMapMember member)
 		{
-			member.GlobalIndex = _allMembers.Count;
 			_allMembers.Add (member);
 			
 			if (!(member.DefaultValue is System.DBNull) && member.DefaultValue != null) {
