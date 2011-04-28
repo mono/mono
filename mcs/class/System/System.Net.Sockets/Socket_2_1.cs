@@ -1594,7 +1594,7 @@ namespace System.Net.Sockets {
 			// Connect to the first address that match the host name, like:
 			// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
 			// while skipping entries that do not match the address family
-			DnsEndPoint dep = (RemoteEndPoint as DnsEndPoint);
+			DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
 				IPEndPoint endpoint;
@@ -1617,7 +1617,7 @@ namespace System.Net.Sockets {
 				e.ConnectByNameError = null;
 #if MOONLIGHT && !INSIDE_SYSTEM
 				if (!e.PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-					if (CrossDomainPolicyManager.CheckEndPoint (RemoteEndPoint, e.SocketClientAccessPolicyProtocol))
+					if (CrossDomainPolicyManager.CheckEndPoint (e.RemoteEndPoint, e.SocketClientAccessPolicyProtocol))
 						return false;
 				} else
 #endif
