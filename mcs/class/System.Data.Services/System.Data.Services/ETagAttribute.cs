@@ -30,7 +30,7 @@ using System.Collections.ObjectModel;
 
 namespace System.Data.Services {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true )]
-	public class ETagAttribute : Attribute {
+	public sealed class ETagAttribute : Attribute {
 		public ETagAttribute (string propertyName)
 		{
 			if (propertyName == null)

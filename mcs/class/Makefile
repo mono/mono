@@ -115,7 +115,6 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
-	System.Data.Services	\
 	System.Net
 
 net_2_0_only_dirs := \
@@ -123,7 +122,8 @@ net_2_0_only_dirs := \
 	System.Web.Extensions.Design_1.0	\
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
-	System.Data.Services.Client
+	System.Data.Services.Client	\
+	System.Data.Services
 
 moonlight_raw_dirs := \
 	corlib			\
@@ -174,7 +174,6 @@ net_4_0_dirs := \
 	System.ComponentModel.Composition \
 	System.Xaml \
 	WindowsBase \
-	System.Data.Services.Client \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
@@ -182,7 +181,9 @@ net_4_0_dirs := \
 	Mono.CodeContracts \
 	Mono.Parallel \
 	Microsoft.Web.Infrastructure \
-	WebMatrix.Data
+	WebMatrix.Data \
+	System.Data.Services.Client	\
+	System.Data.Services
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)

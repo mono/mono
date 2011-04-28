@@ -26,12 +26,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+#if NET_4_0
+using System.Data.Services.Providers;
+#endif
 
-namespace System.Data.Services {
-	public class ExpandSegment {
+namespace System.Data.Services
+{
+	[DebuggerDisplay ("ExpandSegment ({name},Filter={filter})]")]
+	public class ExpandSegment
+	{
 		public ExpandSegment (string name, Expression filter)
 		{
 			if (name == null)
@@ -40,7 +47,13 @@ namespace System.Data.Services {
 			this.Name = name;
 			this.Filter = filter;
 		}
-
+#if NET_4_0
+		public ResourceProperty ExpandedProperty {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		public string Name {
 			get;
 			private set;
@@ -61,12 +74,12 @@ namespace System.Data.Services {
 
 		private int max_results_expected = Int32.MaxValue;
 
-		public static bool PathHasFilter (IEnumerable<ExpandSegment> segments)
+		public static bool PathHasFilter (IEnumerable<ExpandSegment> path)
 		{
-			if (segments == null)
-				throw new ArgumentNullException ("segments");
+			if (path == null)
+				throw new ArgumentNullException ("path");
 
-			return segments.Any (s => s.HasFilter);
+			return path.Any (s => s.HasFilter);
 		}
 	}
 }
