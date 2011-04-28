@@ -2769,6 +2769,7 @@ namespace System.Xml.Serialization
 		{
 			if (ob == null) return "null";
 			if (ob is string) return "\"" + ob.ToString().Replace("\"","\"\"") + "\"";
+			if (ob is char) return (char) ob == '\'' ? "'\\''" : "'" + ob.ToString () + "'";
 			if (ob is DateTime) return "new DateTime (" + ((DateTime) ob).Ticks + ")";
 #if NET_2_0
 			if (ob is DateTimeOffset) return "new DateTimeOffset (" + ((DateTimeOffset) ob).Ticks + ")";
