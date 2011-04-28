@@ -583,12 +583,12 @@ namespace System.Xml.Serialization
 
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
 		{
-			if (isValueList) ((object[])ob)[member.GlobalIndex] = value;
-			else {
+			if (isValueList)
+				((object[])ob)[member.GlobalIndex] = value;
+			else
 				member.SetValue (ob, value);
-				if (member.IsOptionalValueType)
-					member.SetValueSpecified (ob, true); 
-			}
+			if (member.IsOptionalValueType)
+				member.SetValueSpecified (ob, true); 
 		}
 
 		void SetMemberValueFromAttr (XmlTypeMapMember member, object ob, object value, bool isValueList)

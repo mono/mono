@@ -285,6 +285,8 @@ namespace System.Xml.Serialization
 		bool MemberHasValue (XmlTypeMapMember member, object ob, bool isValueList)
 		{
 			if (isValueList) {
+				if (member.IsOptionalValueType && !member.GetValueSpecified (ob))
+					return false;
 				return member.GlobalIndex < ((object[])ob).Length;
 			}
 			else if (member.DefaultValue != System.DBNull.Value) {
