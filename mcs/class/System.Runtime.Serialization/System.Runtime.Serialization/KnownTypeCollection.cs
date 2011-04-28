@@ -115,6 +115,9 @@ namespace System.Runtime.Serialization
 			// not in ms nsURI schema
 			dbnull_type, date_time_offset_type;
 
+		// XmlSchemaType.GetBuiltInPrimitiveType() does not exist in moonlight, so I had to explicitly add them. And now that we have it, it does not make much sense to use #if MOONLIGHT ... #endif for XmlSchemaType anymore :-(
+		static Dictionary<string,Type> xs_predefined_types = new Dictionary<string,Type> ();
+
 		static KnownTypeCollection ()
 		{
 			string s = MSSimpleNamespace;
@@ -142,6 +145,55 @@ namespace System.Runtime.Serialization
 
 			dbnull_type = new QName ("DBNull", DefaultClrNamespaceBase + "System");
 			date_time_offset_type = new QName ("DateTimeOffset", DefaultClrNamespaceBase + "System");
+
+			xs_predefined_types.Add ("string", typeof (string));
+			xs_predefined_types.Add ("boolean", typeof (bool));
+			xs_predefined_types.Add ("float", typeof (float));
+			xs_predefined_types.Add ("double", typeof (double));
+			xs_predefined_types.Add ("decimal", typeof (decimal));
+			xs_predefined_types.Add ("duration", typeof (TimeSpan));
+			xs_predefined_types.Add ("dateTime", typeof (DateTime));
+			xs_predefined_types.Add ("date", typeof (DateTime));
+			xs_predefined_types.Add ("time", typeof (DateTime));
+			xs_predefined_types.Add ("gYearMonth", typeof (DateTime));
+			xs_predefined_types.Add ("gYear", typeof (DateTime));
+			xs_predefined_types.Add ("gMonthDay", typeof (DateTime));
+			xs_predefined_types.Add ("gDay", typeof (DateTime));
+			xs_predefined_types.Add ("gMonth", typeof (DateTime));
+			xs_predefined_types.Add ("hexBinary", typeof (byte []));
+			xs_predefined_types.Add ("base64Binary", typeof (byte []));
+			xs_predefined_types.Add ("anyURI", typeof (Uri));
+			xs_predefined_types.Add ("QName", typeof (QName));
+			xs_predefined_types.Add ("NOTATION", typeof (string));
+
+			xs_predefined_types.Add ("normalizedString", typeof (string));
+			xs_predefined_types.Add ("token", typeof (string));
+			xs_predefined_types.Add ("language", typeof (string));
+			xs_predefined_types.Add ("IDREFS", typeof (string []));
+			xs_predefined_types.Add ("ENTITIES", typeof (string []));
+			xs_predefined_types.Add ("NMTOKEN", typeof (string));
+			xs_predefined_types.Add ("NMTOKENS", typeof (string []));
+			xs_predefined_types.Add ("Name", typeof (string));
+			xs_predefined_types.Add ("NCName", typeof (string));
+			xs_predefined_types.Add ("ID", typeof (string));
+			xs_predefined_types.Add ("IDREF", typeof (string));
+			xs_predefined_types.Add ("ENTITY", typeof (string));
+
+			xs_predefined_types.Add ("integer", typeof (decimal));
+			xs_predefined_types.Add ("nonPositiveInteger", typeof (int));
+			xs_predefined_types.Add ("negativeInteger", typeof (int));
+			xs_predefined_types.Add ("long", typeof (long));
+			xs_predefined_types.Add ("int", typeof (int));
+			xs_predefined_types.Add ("short", typeof (short));
+			xs_predefined_types.Add ("byte", typeof (sbyte));
+			xs_predefined_types.Add ("nonNegativeInteger", typeof (decimal));
+			xs_predefined_types.Add ("unsignedLong", typeof (ulong));
+			xs_predefined_types.Add ("unsignedInt", typeof (uint));
+			xs_predefined_types.Add ("unsignedShort", typeof (ushort));
+			xs_predefined_types.Add ("unsignedByte", typeof (byte));
+			xs_predefined_types.Add ("positiveInteger", typeof (decimal));
+
+			xs_predefined_types.Add ("anyType", typeof (object));
 		}
 
 		// FIXME: find out how QName and guid are processed
@@ -288,10 +340,7 @@ namespace System.Runtime.Serialization
 				}
 				break;
 			case XmlSchema.Namespace:
-				var xt = (XmlSchemaType) XmlSchemaType.GetBuiltInSimpleType (name) ?? XmlSchemaType.GetBuiltInComplexType (name);
-				if (xt != null)
-					return xt.Datatype.ValueType;
-				break;
+				return xs_predefined_types.FirstOrDefault (p => p.Key == name.Name).Value;
 			case MSSimpleNamespace:
 				switch (name.Name) {
 				case "anyURI":
@@ -607,7 +656,7 @@ namespace System.Runtime.Serialization
 
 		static QName GetSerializableQName (Type type)
 		{
-#if !NET_2_1
+#if !MOONLIGHT
 			// First, check XmlSchemaProviderAttribute and try GetSchema() to see if it returns a schema in the expected format.
 			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
 			if (xpa != null) {
