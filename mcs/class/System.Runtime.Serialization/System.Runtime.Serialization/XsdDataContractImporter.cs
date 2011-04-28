@@ -616,7 +616,10 @@ namespace System.Runtime.Serialization
 			switch (typeName.Namespace) {
 			case XmlSchema.Namespace:
 			case KnownTypeCollection.MSSimpleNamespace:
-				return new CodeTypeReference (KnownTypeCollection.GetPrimitiveTypeFromName (typeName));
+				var pt = KnownTypeCollection.GetPrimitiveTypeFromName (typeName);
+				if (pt == null)
+					throw new ArgumentException (String.Format ("Invalid type name in a predefined namespace: {0}", typeName));
+				return new CodeTypeReference (pt);
 			}
 
 			var info = GetTypeInfo (typeName, throwError);
