@@ -143,20 +143,17 @@ namespace System.Runtime.InteropServices
 
 		public static bool operator ==(GCHandle a, GCHandle b)
 		{
-			return a.Equals(b);
+			return a.handle == b.handle;
 		}
 
 		public static bool operator !=(GCHandle a, GCHandle b)
 		{
-			return (!(a.Equals(b)));
+			return !(a == b);
 		}
 		
 		public override bool Equals(object o)
 		{
-			if (o == null || !(o is GCHandle))
-				return false;
-
-			return (handle == ((GCHandle)o).handle);
+			return o is GCHandle ? this == (GCHandle)o : false;
 		}
 
 		public override int GetHashCode()
