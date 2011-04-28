@@ -771,6 +771,22 @@ namespace MonoTests.System.Xml
 			var date = XmlConvert.ToDateTime ("2010-12-29T22:01:15.1619814", XmlDateTimeSerializationMode.Utc);
 			Assert.AreEqual (22, date.Hour, "#1");
 		}
+
+		[Test]
+		public void ToDateTimeZ ()
+		{
+			// bug 690475
+			// looks like *all* XmlDateTimeSerializationMode allows use of Z
+			foreach (XmlDateTimeSerializationMode mode in Enum.GetValues (typeof (XmlDateTimeSerializationMode))) {
+				XmlConvert.ToDateTime ("2009-12-15T08:44:05Z", mode);
+				XmlConvert.ToDateTime ("2009-12-15Z", mode);
+				XmlConvert.ToDateTime ("2009-12Z", mode);
+				XmlConvert.ToDateTime ("2009Z", mode);
+				XmlConvert.ToDateTime ("---09Z", mode);
+				XmlConvert.ToDateTime ("10:01:02Z", mode);
+				XmlConvert.ToDateTime ("2009-12-15T08:44:05.2700544Z", mode);
+			}
+		}
 #endif
 	}
 }
