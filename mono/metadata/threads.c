@@ -2723,6 +2723,10 @@ void mono_thread_cleanup (void)
 
 	g_array_free (delayed_free_table, TRUE);
 	delayed_free_table = NULL;
+	if (hazard_table) {
+		mono_vfree (hazard_table, sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE);
+		hazard_table = NULL;
+	}
 
 	TlsFree (current_object_key);
 }
