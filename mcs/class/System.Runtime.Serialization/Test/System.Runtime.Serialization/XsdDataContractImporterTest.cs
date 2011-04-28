@@ -698,6 +698,11 @@ namespace MonoTests.System.Runtime.Serialization
 			return null;
 		}
 
+		[Test]
+		public void ImportXsdBuiltInTypes ()
+		{
+			DoImport ("Test/Resources/Schemas/xml.xsd");
+		}
 	}
 
 }

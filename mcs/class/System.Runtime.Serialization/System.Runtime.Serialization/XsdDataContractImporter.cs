@@ -544,8 +544,9 @@ namespace System.Runtime.Serialization
 		{
 			switch (qname.Namespace) {
 			case KnownTypeCollection.MSSimpleNamespace:
-			case XmlSchema.Namespace:
 				return KnownTypeCollection.GetPrimitiveTypeFromName (qname) != null;
+			case XmlSchema.Namespace:
+				return XmlSchemaType.GetBuiltInSimpleType (qname) != null || XmlSchemaType.GetBuiltInComplexType (qname) != null;
 			}
 			return false;
 		}
