@@ -287,8 +287,11 @@ namespace System.Runtime.Serialization
 					return typeof (DateTimeOffset);
 				}
 				break;
-			// FIXME: xsd types and ms serialization types should be differentiated. (usage problem)
 			case XmlSchema.Namespace:
+				var xt = (XmlSchemaType) XmlSchemaType.GetBuiltInSimpleType (name) ?? XmlSchemaType.GetBuiltInComplexType (name);
+				if (xt != null)
+					return xt.Datatype.ValueType;
+				break;
 			case MSSimpleNamespace:
 				switch (name.Name) {
 				case "anyURI":
