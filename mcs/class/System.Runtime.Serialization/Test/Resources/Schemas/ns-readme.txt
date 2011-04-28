@@ -17,6 +17,7 @@ ns10.xsd : contains element with substitutionGroup. E2 is resolved to be
 ns11.xsd : contains xs:choice as the particle, not supported in WCF(!)
 ns12.xsd : contains xs:all as the particle, not supported in WCF(!)
 ns13.xsd : contains xs:any as the content of xs:sequence, not supported in WCF.
+	   see also ns33.xsd which contains an xs:element and thus OK.
 ns14.xsd : contains simple content restriction by enum. Mapped to CLI enum.
 ns15.xsd : contains simple list by string, not supported in WCF.
 ns16.xsd : contains simple list by embedded enumeration string type.
@@ -38,3 +39,7 @@ ns28.xsd : dictionary collection type.
 ns29.xsd : variation of ns28, removed Value. Error.
 ns30.xsd : variation of ns28, customized name. Shown in [DataMember].
 ns31.xsd : variation of ns28, removed IsDictionary appInfo. Becomes List<T>.
+ns32.xsd : variation of ns13, moved xs:complexType under xs:element and thus
+	   became OK. (despite the error message explicitly prohibits this!)
+ns33.xsd : variation of ns13, replaced xs:any with xs:element and became OK
+	   (despite the error message explicitly prohibits this!)

@@ -632,6 +632,18 @@ namespace MonoTests.System.Runtime.Serialization
 			DoImport ("Test/Resources/Schemas/ns31.xsd");
 		}
 
+		[Test]
+		public void ImportTestX32 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns32.xsd");
+		}
+
+		[Test]
+		public void ImportTestX33 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns32.xsd");
+		}
+
 		/* Helper methods */
 		private void CheckDC (CodeTypeDeclaration type, string name, Dictionary<string, string> members, string msg)
 		{

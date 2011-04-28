@@ -435,6 +435,12 @@ namespace System.Runtime.Serialization
 
 			if (seq != null) {
 
+			if (seq.Items.Count == 1 && seq.Items [0] is XmlSchemaAny && type.Parent is XmlSchemaElement) {
+
+				// looks like it is not rejected (which contradicts the error message on .NET). See XsdDataContractImporterTest.ImportTestX32(). Also ImporTestX13() for Parent check.
+
+			} else {
+
 			foreach (var child in seq.Items)
 				if (!(child is XmlSchemaElement))
 					throw new InvalidDataContractException (String.Format ("Only local element is allowed as the content of the sequence of the top-level content of a complex type '{0}'. Other particles (sequence, choice, all, any, group ref) are not supported.", qname));
@@ -453,10 +459,12 @@ namespace System.Runtime.Serialization
 			}
 
 			if (seq.Items.Count == 1) {
-				var xe = (XmlSchemaElement) seq.Items [0];
-				if (xe.MaxOccursString == "unbounded") {
+				var pt = (XmlSchemaParticle) seq.Items [0];
+				var xe = pt as XmlSchemaElement;
+				if (pt.MaxOccursString == "unbounded") {
 					// import as a collection contract.
-					if (isDictionary) {
+					if (pt is XmlSchemaAny) {
+					} else if (isDictionary) {
 						var kvt = xe.ElementSchemaType as XmlSchemaComplexType;
 						var seq2 = kvt != null ? kvt.Particle as XmlSchemaSequence : null;
 						var k = seq2 != null && seq2.Items.Count == 2 ? seq2.Items [0] as XmlSchemaElement : null;
@@ -503,6 +511,7 @@ namespace System.Runtime.Serialization
 				AddProperty (td, xe);
 			}
 
+			} // if (seq contains only an xs:any)
 			} // if (seq != 0)
 
 			AddTypeAttributes (td, type);
