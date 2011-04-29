@@ -791,6 +791,12 @@ namespace System.Net
 				request.Proxy = Proxy;
 			if (credentials != null)
 				request.Credentials = credentials;
+			else if (!String.IsNullOrEmpty (uri.UserInfo)) {
+				// Perhaps this should be done by the underlying URI handler?
+				ICredentials creds = GetCredentials (uri.UserInfo);
+				if (creds != null)
+					request.Credentials = creds;
+			}
 
 			// Special headers. These are properties of HttpWebRequest.
 			// What do we do with other requests differnt from HttpWebRequest?
@@ -838,6 +844,21 @@ namespace System.Net
 			WebRequest request = SetupRequest (uri);
 			request.Method = DetermineMethod (uri, method, is_upload);
 			return request;
+		}
+
+		static NetworkCredential GetCredentials (string user_info)
+		{
+			string [] creds = user_info.Split (':');
+			if (creds.Length != 2)
+				return null;
+
+			if (creds [0].IndexOf ('\\') != -1) {
+				string [] user = creds [0].Split ('\\');
+				if (user.Length != 2)
+					return null;
+				return new NetworkCredential (user [1], creds [1], user [0]);
+			}
+			return new NetworkCredential (creds [0], creds [1]);
 		}
 
 		byte [] ReadAll (WebRequest request, object userToken)
