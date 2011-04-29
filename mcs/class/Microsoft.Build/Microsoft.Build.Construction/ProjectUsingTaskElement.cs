@@ -30,35 +30,82 @@ using System;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("TaskName={TaskName} AssemblyName={AssemblyName} "
+                                                      + "AssemblyFile={AssemblyFile} Condition={Condition} "
+                                                      + "Runtime={RequiredRuntime} Platform={RequiredPlatform}")]
         public class ProjectUsingTaskElement : ProjectElementContainer
         {
+                internal ProjectUsingTaskElement (string taskName, string assemblyFile, string assemblyName,
+                                                ProjectRootElement containingProject)
+                {
+                        TaskName = taskName;
+                        AssemblyFile = assemblyFile;
+                        AssemblyName = assemblyName;
+                        ContainingProject = containingProject;
+                }
                 public string AssemblyFile { get; set; }
                 public string AssemblyName { get; set; }
                 public UsingTaskParameterGroupElement ParameterGroup {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return FirstChild as UsingTaskParameterGroupElement; }
                 }
                 public ProjectUsingTaskBodyElement TaskBody {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return LastChild as ProjectUsingTaskBodyElement; }
                 }
                 public string TaskFactory { get; set; }
                 public string TaskName { get; set; }
-
                 public UsingTaskParameterGroupElement AddParameterGroup ()
                 {
-                        throw new NotImplementedException ();
+                        var @group = ContainingProject.CreateUsingTaskParameterGroupElement ();
+                        PrependChild (@group);
+                        return @group;
                 }
-
                 public ProjectUsingTaskBodyElement AddUsingTaskBody (string evaluate, string taskBody)
                 {
-                        throw new NotImplementedException ();
+                        var body = ContainingProject.CreateUsingTaskBodyElement (evaluate, taskBody);
+                        AppendChild (body);
+                        return body;
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "AssemblyName":
+                                AssemblyName = value;
+                                break;
+                        case "AssemblyFile":
+                                AssemblyFile = value;
+                                break;
+                        case "TaskFactory":
+                                TaskFactory = value;
+                                break;
+                        case "TaskName":
+                                TaskName = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
+                }
+                internal override void SaveValue (System.Xml.XmlWriter writer)
+                {
+                        SaveAttribute (writer, "AssemblyName", AssemblyName);
+                        SaveAttribute (writer, "AssemblyFile", AssemblyFile);
+                        SaveAttribute (writer, "TaskFactory", TaskFactory);
+                        SaveAttribute (writer, "TaskName", TaskName);
+                        base.SaveValue (writer);
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
+                        get { return "UsingTask"; }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        switch (name) {
+                        case "ParameterGroup":
+                                return AddParameterGroup ();
+                        case "Task":
+                                return AddUsingTaskBody (null, null);
+                        default:
+                                throw new NotImplementedException (string.Format (
+                                        "Child \"{0}\" is not a known node type.", name));
                         }
                 }
         }

@@ -1,5 +1,5 @@
-//
-// ProjectImportGroupElement.cs
+﻿//
+// ReverseEnumerable.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -27,34 +27,27 @@
 //
 
 using System.Collections.Generic;
-using System;
 
-namespace Microsoft.Build.Construction
+namespace Microsoft.Build.Internal
 {
-        [System.Diagnostics.DebuggerDisplayAttribute ("#Imports={Count} Condition={Condition} Label={Label}")]
-        public class ProjectImportGroupElement : ProjectElementContainer
+        internal class ReverseEnumerable<T> : IEnumerable<T>
         {
-                internal ProjectImportGroupElement (ProjectRootElement containingProject)
+                List<T> backingList;
+
+                public ReverseEnumerable (List<T> list)
                 {
-                        ContainingProject = containingProject;
+                        backingList = list;
                 }
-                public ICollection<ProjectImportElement> Imports {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
-                public ProjectImportElement AddImport (string project)
+
+                public IEnumerator<T> GetEnumerator ()
                 {
-                        return ContainingProject.CreateImportElement (project);
+                        for (int i = backingList.Count - 1; i >= 0; i--)
+                                yield return backingList[i];
                 }
-                internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
-                internal override ProjectElement LoadChildElement (string name)
+
+                System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
                 {
-                        throw new NotImplementedException ();
+                        return GetEnumerator ();
                 }
         }
 }

@@ -26,26 +26,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("ProjectChooseElement (#Children={Count} "
+                                                      + "HasOtherwise={OtherwiseElement != null})")]
         public class ProjectChooseElement : ProjectElementContainer
         {
+                internal ProjectChooseElement (ProjectRootElement containingProject)
+                {
+                        ContainingProject = containingProject;
+                }
+                public override string Condition { get { return null; } set { throw new InvalidOperationException(
+                        "Can not set Condition."); } }
                 public ProjectOtherwiseElement OtherwiseElement {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return LastChild as ProjectOtherwiseElement; }
                 }
                 public ICollection<ProjectWhenElement> WhenElements {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectWhenElement> (
+                                new FilteredEnumerable<ProjectWhenElement> (Children)); }
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
+                        get { return "Choose"; }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        switch (name) {
+                        case "Otherwise":
+                                var other = ContainingProject.CreateOtherwiseElement ();
+                                AppendChild (other);
+                                return other;
+                        case "When":
+                                var when = ContainingProject.CreateWhenElement (null);
+                                PrependChild (when);
+                                return when;
+                        default:
+                                throw new NotImplementedException (string.Format (
+                                        "Child \"{0}\" is not a known node type.", name));
                         }
                 }
         }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,8 +10,7 @@
     <RootNamespace>Microsoft.Build</RootNamespace>
     <AssemblyName>Microsoft.Build</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags />
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -83,7 +82,13 @@
     <Compile Include="Microsoft.Build.Construction\ProjectPropertyGroupElement.cs" />
     <Compile Include="Microsoft.Build.Construction\ProjectRootElement.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollection.cs" />
+    <Compile Include="Microsoft.Build.Exceptions\InvalidProjectFileException.cs" />
     <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Project.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectLoadSettings.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItem.cs" />
+    <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

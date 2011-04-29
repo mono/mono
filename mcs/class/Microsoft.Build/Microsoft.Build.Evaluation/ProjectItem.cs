@@ -1,5 +1,5 @@
 //
-// ProjectImportGroupElement.cs
+// ProjectItem.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -26,35 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Diagnostics;
+using Microsoft.Build.Construction;
 
-namespace Microsoft.Build.Construction
+namespace Microsoft.Build.Evaluation
 {
-        [System.Diagnostics.DebuggerDisplayAttribute ("#Imports={Count} Condition={Condition} Label={Label}")]
-        public class ProjectImportGroupElement : ProjectElementContainer
+        [DebuggerDisplay("{ItemType}={EvaluatedInclude} [{UnevaluatedInclude}] #DirectMetadata={DirectMetadataCount}")]
+        public class ProjectItem
         {
-                internal ProjectImportGroupElement (ProjectRootElement containingProject)
+                internal ProjectItem (ProjectItemElement xml)
                 {
-                        ContainingProject = containingProject;
+                        Xml = xml;
                 }
-                public ICollection<ProjectImportElement> Imports {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
-                public ProjectImportElement AddImport (string project)
-                {
-                        return ContainingProject.CreateImportElement (project);
-                }
-                internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
-                internal override ProjectElement LoadChildElement (string name)
-                {
-                        throw new NotImplementedException ();
-                }
+
+                public ProjectItemElement Xml { get; private set; }
         }
 }

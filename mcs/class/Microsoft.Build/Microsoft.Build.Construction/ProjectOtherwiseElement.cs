@@ -28,30 +28,52 @@
 
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("#Children={Count}")]
         public class ProjectOtherwiseElement : ProjectElementContainer
         {
+                internal ProjectOtherwiseElement (ProjectRootElement containingProject)
+                {
+                        ContainingProject = containingProject;
+                }
                 public ICollection<ProjectChooseElement> ChooseElements {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectChooseElement> (
+                                new FilteredEnumerable<ProjectChooseElement> (Children)); }
                 }
                 public override string Condition { get; set; }
                 public ICollection<ProjectItemGroupElement> ItemGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
+                                new FilteredEnumerable<ProjectItemGroupElement> (Children)); }
                 }
                 public ICollection<ProjectPropertyGroupElement> PropertyGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (
+                                new FilteredEnumerable<ProjectPropertyGroupElement> (Children)); }
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
+                        get { return "Otherwise"; }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        switch (name) {
+                        case "PropertyGroup":
+                                var property = ContainingProject.CreatePropertyGroupElement ();
+                                AppendChild (property);
+                                return property;
+                        case "ItemGroup":
+                                var item = ContainingProject.CreateItemGroupElement ();
+                                AppendChild (item);
+                                return item;
+                        case "When":
+                                var when = ContainingProject.CreateWhenElement (null);
+                                AppendChild (when);
+                                return when;
+                        default:
+                                throw new NotImplementedException (string.Format (
+                                        "Child \"{0}\" is not a known node type.", name));
                         }
                 }
         }

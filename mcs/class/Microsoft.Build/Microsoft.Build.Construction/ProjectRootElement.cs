@@ -36,11 +36,16 @@ using System.Xml;
 using System.IO;
 using System.Linq;
 using System.Globalization;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute("{FullPath} #Children={Count} DefaultTargets={DefaultTargets} "
+                                                     + "ToolsVersion={ToolsVersion} InitialTargets={InitialTargets}")]
         public class ProjectRootElement : ProjectElementContainer
         {
+                public override string Condition { get { return null; } set { throw new InvalidOperationException (
+                        "Can not set Condition."); } }
                 public string DefaultTargets { get; set; }
 
                 string fullPath;
@@ -59,15 +64,13 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectPropertyElement> Properties {
-                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (AllChildren.
-                                Where (p => p as ProjectPropertyElement != null).
-                                Select (p => (ProjectPropertyElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (
+                                new FilteredEnumerable<ProjectPropertyElement> (AllChildren)); }
                 }
 
                 public ICollection<ProjectChooseElement> ChooseElements {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectChooseElement> (
+                                new FilteredEnumerable<ProjectChooseElement> (Children)); }
                 }
 
                 public Encoding Encoding {
@@ -79,59 +82,50 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectImportGroupElement> ImportGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectImportGroupElement> (
+                                new FilteredEnumerable<ProjectImportGroupElement> (Children)); }
                 }
 
                 public ICollection<ProjectImportGroupElement> ImportGroupsReversed {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectImportGroupElement> (
+                                new FilteredEnumerable<ProjectImportGroupElement> (ChildrenReversed)); }
                 }
 
                 public ICollection<ProjectImportElement> Imports {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectImportElement> (
+                                new FilteredEnumerable<ProjectImportElement> (AllChildren)); }
                 }
 
                 public string InitialTargets { get; set; }
 
                 public ICollection<ProjectItemDefinitionGroupElement> ItemDefinitionGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemDefinitionGroupElement> (
+                                new FilteredEnumerable<ProjectItemDefinitionGroupElement> (Children)); }
                 }
 
                 public ICollection<ProjectItemDefinitionGroupElement> ItemDefinitionGroupsReversed {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemDefinitionGroupElement> (
+                                new FilteredEnumerable<ProjectItemDefinitionGroupElement> (ChildrenReversed)); }
                 }
 
                 public ICollection<ProjectItemDefinitionElement> ItemDefinitions {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemDefinitionElement> (
+                                new FilteredEnumerable<ProjectItemDefinitionElement> (AllChildren)); }
                 }
 
                 public ICollection<ProjectItemGroupElement> ItemGroups {
-                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (Children.
-                                Where (p => p as ProjectItemGroupElement != null).
-                                Select (p => (ProjectItemGroupElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
+                                new FilteredEnumerable<ProjectItemGroupElement> (Children)); }
                 }
 
                 public ICollection<ProjectItemGroupElement> ItemGroupsReversed {
-                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (ChildrenReversed.
-                                Where (p => p as ProjectItemGroupElement != null).
-                                Select (p => (ProjectItemGroupElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
+                                new FilteredEnumerable<ProjectItemGroupElement> (ChildrenReversed)); }
                 }
 
                 public ICollection<ProjectItemElement> Items {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemElement> (
+                                new FilteredEnumerable<ProjectItemElement> (AllChildren)); }
                 }
 
                 public DateTime LastWriteTimeWhenRead {
@@ -139,15 +133,13 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectPropertyGroupElement> PropertyGroups {
-                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (Children.
-                                Where (p => p as ProjectPropertyGroupElement != null).
-                                Select (p => (ProjectPropertyGroupElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (
+                                new FilteredEnumerable<ProjectPropertyGroupElement> (Children)); }
                 }
 
                 public ICollection<ProjectPropertyGroupElement> PropertyGroupsReversed {
-                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (ChildrenReversed.
-                                Where (p => p as ProjectPropertyGroupElement != null).
-                                Select (p => (ProjectPropertyGroupElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (
+                                new FilteredEnumerable<ProjectPropertyGroupElement> (ChildrenReversed)); }
                 }
 
                 public string RawXml {
@@ -160,9 +152,8 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectTargetElement> Targets {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectTargetElement> (
+                                new FilteredEnumerable<ProjectTargetElement> (Children)); }
                 }
 
                 public DateTime TimeLastChanged {
@@ -176,9 +167,8 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectUsingTaskElement> UsingTasks {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectUsingTaskElement> (
+                                new FilteredEnumerable<ProjectUsingTaskElement> (Children)); }
                 }
 
                 public int Version {
@@ -201,22 +191,26 @@ namespace Microsoft.Build.Construction
 
                 public static ProjectRootElement Create (string path)
                 {
-                        return Create (XmlReader.Create (path));
+                        return Create (path, ProjectCollection.GlobalProjectCollection);
                 }
 
                 public static ProjectRootElement Create (XmlReader xmlReader)
                 {
-                        throw new NotImplementedException ();
+                        return Create (xmlReader, ProjectCollection.GlobalProjectCollection);
                 }
 
                 public static ProjectRootElement Create (string path, ProjectCollection projectCollection)
                 {
-                        throw new NotImplementedException ();
+                        var result = Create (projectCollection);
+                        result.FullPath = path;
+                        return result;
                 }
 
                 public static ProjectRootElement Create (XmlReader xmlReader, ProjectCollection projectCollection)
                 {
-                        throw new NotImplementedException ();
+                        // yes, this should create en empty project
+                        var result = Create (projectCollection);
+                        return result;
                 }
 
                 public ProjectImportElement AddImport (string project)
@@ -228,7 +222,9 @@ namespace Microsoft.Build.Construction
 
                 public ProjectImportGroupElement AddImportGroup ()
                 {
-                        throw new NotImplementedException ();
+                        var importGroup = CreateImportGroupElement ();
+                        AppendChild (importGroup);
+                        return importGroup;
                 }
 
                 public ProjectItemElement AddItem (string itemType, string include)
@@ -239,17 +235,36 @@ namespace Microsoft.Build.Construction
                 public ProjectItemElement AddItem (string itemType, string include,
                                                    IEnumerable<KeyValuePair<string, string>> metadata)
                 {
-                        throw new NotImplementedException ();
+                        var @group = ItemGroups.
+                                Where (p => string.IsNullOrEmpty (p.Condition)
+                                       && p.Items.Where (s => s.ItemType.Equals (itemType,
+                                                StringComparison.OrdinalIgnoreCase)).FirstOrDefault () != null).
+                                        FirstOrDefault ();
+                        if (@group == null)
+                                @group = AddItemGroup ();
+                        return @group.AddItem (itemType, include, metadata);
                 }
 
                 public ProjectItemDefinitionElement AddItemDefinition (string itemType)
                 {
-                        throw new NotImplementedException ();
+                        var @group = ItemDefinitionGroups.
+                                Where (p => string.IsNullOrEmpty (p.Condition)
+                                       && p.ItemDefinitions.Where (s => s.ItemType.Equals (itemType,
+                                                StringComparison.OrdinalIgnoreCase)).FirstOrDefault () != null).
+                                        FirstOrDefault ();
+                        if (@group == null)
+                                @group = AddItemDefinitionGroup ();
+                        return @group.AddItemDefinition (itemType);
                 }
 
                 public ProjectItemDefinitionGroupElement AddItemDefinitionGroup ()
                 {
-                        throw new NotImplementedException ();
+                        var @group = CreateItemDefinitionGroupElement ();
+                        ProjectElementContainer last = ItemDefinitionGroupsReversed.FirstOrDefault ();
+                        if (last == null)
+                                last = PropertyGroupsReversed.FirstOrDefault ();
+                        InsertAfterChild (@group, last);
+                        return @group;
                 }
 
                 public ProjectItemGroupElement AddItemGroup ()
@@ -264,7 +279,24 @@ namespace Microsoft.Build.Construction
 
                 public ProjectPropertyElement AddProperty (string name, string value)
                 {
-                        throw new NotImplementedException ();
+                        ProjectPropertyGroupElement parentGroup = null;
+                        foreach (var @group in PropertyGroups) {
+                                if (string.IsNullOrEmpty (@group.Condition)) {
+                                        if (parentGroup == null)
+                                                parentGroup = @group;
+                                        var property = @group.Properties.
+                                                Where (p => string.IsNullOrEmpty (p.Condition)
+                                                       && p.Name.Equals (name, StringComparison.OrdinalIgnoreCase)).
+                                                        FirstOrDefault ();
+                                        if (property != null) {
+                                                property.Value = value;
+                                                return property;
+                                        }
+                                }
+                        }
+                        if (parentGroup == null)
+                                parentGroup = AddPropertyGroup ();
+                        return parentGroup.AddProperty (name, value);
                 }
 
                 public ProjectPropertyGroupElement AddPropertyGroup ()
@@ -277,17 +309,21 @@ namespace Microsoft.Build.Construction
 
                 public ProjectTargetElement AddTarget (string name)
                 {
-                        throw new NotImplementedException ();
+                        var target = CreateTargetElement (name);
+                        AppendChild (target);
+                        return target;
                 }
 
                 public ProjectUsingTaskElement AddUsingTask (string name, string assemblyFile, string assemblyName)
                 {
-                        throw new NotImplementedException ();
+                        var usingTask = CreateUsingTaskElement (name, assemblyFile, assemblyName);
+                        AppendChild (usingTask);
+                        return usingTask;
                 }
 
                 public ProjectChooseElement CreateChooseElement ()
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectChooseElement (this);
                 }
 
                 public ProjectImportElement CreateImportElement (string project)
@@ -297,12 +333,17 @@ namespace Microsoft.Build.Construction
 
                 public ProjectImportGroupElement CreateImportGroupElement ()
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectImportGroupElement (this);
                 }
 
                 public ProjectItemDefinitionElement CreateItemDefinitionElement (string itemType)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectItemDefinitionElement (itemType, this);
+                }
+
+                public ProjectItemDefinitionGroupElement CreateItemDefinitionGroupElement ()
+                {
+                        return new ProjectItemDefinitionGroupElement (this);
                 }
 
                 public ProjectItemElement CreateItemElement (string itemType)
@@ -336,23 +377,23 @@ namespace Microsoft.Build.Construction
 
                 public ProjectOnErrorElement CreateOnErrorElement (string executeTargets)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectOnErrorElement (executeTargets, this);
                 }
 
                 public ProjectOtherwiseElement CreateOtherwiseElement ()
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectOtherwiseElement (this);
                 }
 
                 public ProjectOutputElement CreateOutputElement (string taskParameter, string itemType,
                                                                  string propertyName)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectOutputElement (taskParameter, itemType, propertyName, this);
                 }
 
                 public ProjectExtensionsElement CreateProjectExtensionsElement ()
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectExtensionsElement (this);
                 }
 
                 public ProjectPropertyElement CreatePropertyElement (string name)
@@ -367,50 +408,53 @@ namespace Microsoft.Build.Construction
 
                 public ProjectTargetElement CreateTargetElement (string name)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectTargetElement (name, this);
                 }
 
                 public ProjectTaskElement CreateTaskElement (string name)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectTaskElement (name, this);
                 }
 
                 public ProjectUsingTaskBodyElement CreateUsingTaskBodyElement (string evaluate, string body)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectUsingTaskBodyElement (evaluate, body, this);
                 }
 
                 public ProjectUsingTaskElement CreateUsingTaskElement (string taskName, string assemblyFile,
                                                                        string assemblyName)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectUsingTaskElement (taskName, assemblyFile, assemblyName, this);
                 }
 
                 public ProjectUsingTaskParameterElement CreateUsingTaskParameterElement (string name, string output,
                                                                                          string required,
                                                                                          string parameterType)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectUsingTaskParameterElement (name, output, required, parameterType, this);
                 }
 
                 public UsingTaskParameterGroupElement CreateUsingTaskParameterGroupElement ()
                 {
-                        throw new NotImplementedException ();
+                        return new UsingTaskParameterGroupElement (this);
                 }
 
                 public ProjectWhenElement CreateWhenElement (string condition)
                 {
-                        throw new NotImplementedException ();
+                        return new ProjectWhenElement (condition, this);
                 }
 
                 public static ProjectRootElement Open (string path)
                 {
-                        throw new NotImplementedException ();
+                        return Open (path, ProjectCollection.GlobalProjectCollection);
                 }
 
                 public static ProjectRootElement Open (string path, ProjectCollection projectCollection)
                 {
-                        throw new NotImplementedException ();
+                        var result = Create (path, projectCollection);
+                        using (var reader = XmlReader.Create (path))
+                                result.Load (reader);
+                        return result;
                 }
 
                 public void Save ()
@@ -420,7 +464,7 @@ namespace Microsoft.Build.Construction
 
                 public void Save (Encoding saveEncoding)
                 {
-                        using (var writer = new StreamWriter (File.OpenWrite (FullPath), saveEncoding)) {
+                        using (var writer = new StreamWriter (File.Create (FullPath), saveEncoding)) {
                                 Save (writer);
                         }
                 }
@@ -446,24 +490,92 @@ namespace Microsoft.Build.Construction
 
                 public static ProjectRootElement TryOpen (string path)
                 {
-                        throw new NotImplementedException ();
+                        return TryOpen (path, ProjectCollection.GlobalProjectCollection);
                 }
 
                 public static ProjectRootElement TryOpen (string path, ProjectCollection projectCollection)
                 {
-                        throw new NotImplementedException ();
+                        // this should be non-null only if the project is already cached
+                        // and caching is not yet implemented
+                        return null;
+                }
+
+                internal override void Load (XmlReader reader)
+                {
+                        try {
+                                base.Load (reader);
+                        } catch (XmlException ex) {
+                                throw new InvalidProjectFileException (FullPath, ex.LineNumber, ex.LinePosition, 0, 0,
+                                        ex.Message, null, null, null);
+                        }
+                }
+
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        switch (name) {
+                        case "PropertyGroup":
+                                var prop = CreatePropertyGroupElement ();
+                                AppendChild (prop);
+                                return prop;
+                        case "ItemGroup":
+                                var item = CreateItemGroupElement ();
+                                AppendChild (item);
+                                return item;
+                        case "Import":
+                                return AddImport (null);
+                        case "Target":
+                                return AddTarget (null);
+                        case "ItemDefinitionGroup":
+                                var def = CreateItemDefinitionGroupElement ();
+                                AppendChild (def);
+                                return def;
+                        case "UsingTask":
+                                return AddUsingTask (null, null, null);
+                        case "Choose":
+                                var choose = CreateChooseElement ();
+                                AppendChild (choose);
+                                return choose;
+                        case "ProjectExtensions":
+                                var ext = CreateProjectExtensionsElement ();
+                                AppendChild (ext);
+                                return ext;
+                        default:
+                                throw new NotImplementedException (string.Format (
+                                        "Child \"{0}\" is not a known node type.", name));
+                        }
+                }
+
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "ToolsVersion":
+                                ToolsVersion = value;
+                                break;
+                        case "DefaultTargets":
+                                DefaultTargets = value;
+                                break;
+                        case "InitialTargets":
+                                InitialTargets = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
                 }
 
                 internal override void Save (XmlWriter writer)
                 {
                         writer.WriteStartElement (XmlName, "http://schemas.microsoft.com/developer/msbuild/2003");
-                        if (!string.IsNullOrWhiteSpace (ToolsVersion))
-                                writer.WriteAttributeString ("ToolsVersion", ToolsVersion);
-                        if (!string.IsNullOrWhiteSpace (DefaultTargets))
-                                writer.WriteAttributeString ("DefaultTargets", DefaultTargets);
-                        foreach (var child in Children)
-                                child.Save (writer);
+                        SaveValue (writer);
                         writer.WriteEndElement ();
+                }
+
+                internal override void SaveValue (XmlWriter writer)
+                {
+                        SaveAttribute (writer, "ToolsVersion", ToolsVersion);
+                        SaveAttribute (writer, "DefaultTargets", DefaultTargets);
+                        SaveAttribute (writer, "InitialTargets", InitialTargets);
+                        base.SaveValue (writer);
                 }
 
                 internal override string XmlName {

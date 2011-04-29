@@ -26,21 +26,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("Evaluate={Evaluate} TaskBody={TaskBody}")]
         public class ProjectUsingTaskBodyElement : ProjectElement
         {
+                internal ProjectUsingTaskBodyElement (string evaluate, string body, ProjectRootElement containingProject)
+                {
+                        Evaluate = evaluate;
+                        TaskBody = body;
+                        ContainingProject = containingProject;
+                }
                 public string Evaluate { get; set; }
+                public override string Condition { get { return null; } set { throw new InvalidOperationException (
+                        "Can not set Condition."); } }
                 public string TaskBody { get; set; }
                 internal override string XmlName {
-                        get {
-                                throw new System.NotImplementedException ();
+                        get { return "Task"; }
+                }
+                internal override void SaveValue (XmlWriter writer)
+                {
+                        base.SaveValue (writer);
+                        SaveAttribute (writer, "Evaluate", Evaluate);
+                        if (!string.IsNullOrWhiteSpace (TaskBody))
+                                writer.WriteRaw (TaskBody);
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "Evaluate":
+                                Evaluate = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
                         }
                 }
-                internal override void Save (XmlWriter writer)
+                internal override void LoadValue (XmlReader reader)
                 {
-                        throw new System.NotImplementedException ();
+                        reader.MoveToElement ();
+                        TaskBody = reader.ReadInnerXml ();
                 }
         }
 }

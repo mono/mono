@@ -26,22 +26,54 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("Name={Name} ParameterType={ParameterType} Output={Output}")]
         public class ProjectUsingTaskParameterElement : ProjectElement
         {
+                internal ProjectUsingTaskParameterElement (string name, string output, string required,
+                                                         string parameterType, ProjectRootElement containingProject)
+                {
+                        Name = name;
+                        Output = output;
+                        Required = required;
+                        ParameterType = parameterType;
+                        ContainingProject = containingProject;
+                }
+                public string Name { get; set; }
+                public override string Condition { get { return null; } set { throw new InvalidOperationException (
+                        "Can not set Condition."); } }
                 public string Output { get; set; }
                 public string ParameterType { get; set; }
                 public string Required { get; set; }
                 internal override string XmlName {
-                        get {
-                                throw new System.NotImplementedException ();
+                        get { return Name; }
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "ParameterType":
+                                ParameterType = value;
+                                break;
+                        case "Output":
+                                Output = value;
+                                break;
+                        case "Required":
+                                Required = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
                         }
                 }
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        throw new System.NotImplementedException ();
+                        base.SaveValue (writer);
+                        SaveAttribute (writer, "ParameterType", ParameterType);
+                        SaveAttribute (writer, "Required", Required);
+                        SaveAttribute (writer, "Output", Output);
                 }
         }
 }

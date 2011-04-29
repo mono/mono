@@ -54,11 +54,19 @@ namespace Microsoft.Build.Internal
 
                 public bool Contains (T item)
                 {
+                        List<T> backingList = backingEnumerable as List<T>;
+                        if (backingList != null)
+                                return backingList.Contains (item);
                         return backingEnumerable.Contains (item);
                 }
 
                 public void CopyTo (T[] array, int arrayIndex)
                 {
+                        List<T> backingList = backingEnumerable as List<T>;
+                        if (backingList != null) {
+                                backingList.CopyTo (array, arrayIndex);
+                                return;
+                        }
                         int i = arrayIndex;
                         foreach (var item in backingEnumerable) {
                                 array[i++] = item;
@@ -67,7 +75,10 @@ namespace Microsoft.Build.Internal
 
                 public int Count {
                         get {
-                                throw new NotImplementedException ();
+                                var backingList = backingEnumerable as List<T>;
+                                if(backingList == null)
+                                        backingEnumerable = backingList = new List<T> (backingEnumerable);
+                                return backingList.Count;
                         }
                 }
 

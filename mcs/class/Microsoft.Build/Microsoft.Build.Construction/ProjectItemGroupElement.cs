@@ -33,6 +33,7 @@ using System;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("#Items={Count} Condition={Condition} Label={Label}")]
         public class ProjectItemGroupElement : ProjectElementContainer
         {
                 public ProjectItemElement AddItem (string itemType, string include)
@@ -75,12 +76,19 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectItemElement> Items {
-                        get { return new CollectionFromEnumerable<ProjectItemElement> (Children.
-                                Where (p => p as ProjectItemElement != null).Select (p => (ProjectItemElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectItemElement> (
+                                new FilteredEnumerable<ProjectItemElement> (Children)); }
                 }
 
                 internal override string XmlName {
                         get { return "ItemGroup"; }
+                }
+
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        var item = ContainingProject.CreateItemElement (name);
+                        AppendChild (item);
+                        return item;
                 }
         }
 }

@@ -25,5 +25,11 @@ Microsoft.Build.Construction/ProjectUsingTaskElement.cs
 Microsoft.Build.Construction/ProjectUsingTaskParameterElement.cs
 Microsoft.Build.Construction/ProjectWhenElement.cs
 Microsoft.Build.Construction/UsingTaskParameterGroupElement.cs
+Microsoft.Build.Evaluation/Project.cs
 Microsoft.Build.Evaluation/ProjectCollection.cs
+Microsoft.Build.Evaluation/ProjectItem.cs
+Microsoft.Build.Evaluation/ProjectLoadSettings.cs
+Microsoft.Build.Exceptions/InvalidProjectFileException.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
+Microsoft.Build.Internal/FilteredEnumerable.cs
+Microsoft.Build.Internal/ReverseEnumerable.cs

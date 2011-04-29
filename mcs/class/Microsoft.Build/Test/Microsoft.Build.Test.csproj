@@ -37,19 +37,20 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FunctionalTest.cs" />
     <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerableTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Microsoft.Build.Construction\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.Build.csproj">
       <Project>{B2012E7F-8F8D-4908-8045-413F2BD1022D}</Project>
       <Name>Microsoft.Build</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Microsoft.Build.Construction\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

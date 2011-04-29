@@ -30,9 +30,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Internal;
+using System.Xml;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("#Properties={Count} Condition={Condition} Label={Label}")]
         public class ProjectPropertyGroupElement : ProjectElementContainer
         {
                 public ProjectPropertyElement AddProperty (string name, string unevaluatedValue)
@@ -61,19 +63,22 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectPropertyElement> Properties {
-                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (Children.
-                                Where (p => p as ProjectPropertyElement != null).
-                                Select (p => (ProjectPropertyElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (
+                                new FilteredEnumerable<ProjectPropertyElement> (Children)); }
                 }
 
                 public ICollection<ProjectPropertyElement> PropertiesReversed {
-                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (ChildrenReversed.
-                                Where (p => p as ProjectPropertyElement != null).
-                                Select (p => (ProjectPropertyElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectPropertyElement> (
+                                new FilteredEnumerable<ProjectPropertyElement> (ChildrenReversed)); }
                 }
 
                 internal override string XmlName {
                         get { return "PropertyGroup"; }
+                }
+
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        return AddProperty (name, null);
                 }
         }
 }

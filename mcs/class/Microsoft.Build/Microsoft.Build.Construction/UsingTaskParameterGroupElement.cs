@@ -26,31 +26,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("#Parameters={Count}")]
         public class UsingTaskParameterGroupElement : ProjectElementContainer
         {
+                internal UsingTaskParameterGroupElement (ProjectRootElement containingProject)
+                {
+                        ContainingProject = containingProject;
+                }
+                public override string Condition { get { return null; } set { throw new InvalidOperationException(
+                        "Can not set Condition."); } }
                 public ICollection<ProjectUsingTaskParameterElement> Parameters {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectUsingTaskParameterElement> (
+                                new FilteredEnumerable<ProjectUsingTaskParameterElement> (Children)); }
                 }
                 public ProjectUsingTaskParameterElement AddParameter (string name)
                 {
-                        throw new NotImplementedException ();
+                        return AddParameter (name, null, null, null);
                 }
                 public ProjectUsingTaskParameterElement AddParameter (string name, string output, string required,
                                                                       string parameterType)
                 {
-                        throw new NotImplementedException ();
+                        var parameter = ContainingProject.CreateUsingTaskParameterElement (name, output, required,
+                                parameterType);
+                        AppendChild (parameter);
+                        return parameter;
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return "ParameterGroup"; }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        return AddParameter (name);
                 }
         }
 }

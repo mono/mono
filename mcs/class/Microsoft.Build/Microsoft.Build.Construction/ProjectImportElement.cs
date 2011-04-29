@@ -29,11 +29,17 @@
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
-        public class ProjectImportElement : ProjectElementContainer
+        [System.Diagnostics.DebuggerDisplayAttribute ("Project={Project} Condition={Condition}")]
+        public class ProjectImportElement : ProjectElement
         {
                 internal ProjectImportElement (string project, ProjectRootElement containingProject)
+                        : this(containingProject)
                 {
                         Project = project;
+                }
+
+                internal ProjectImportElement (ProjectRootElement containingProject)
+                {
                         ContainingProject = containingProject;
                 }
 
@@ -43,14 +49,22 @@ namespace Microsoft.Build.Construction
                         get { return "Import"; }
                 }
 
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName);
-                        if (!string.IsNullOrWhiteSpace (Project))
-                                writer.WriteAttributeString ("Project", Project);
-                        foreach (var child in Children)
-                                child.Save (writer);
-                        writer.WriteEndElement ();
+                        SaveAttribute (writer, "Project", Project);
+                        base.SaveValue (writer);
+                }
+
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "Project":
+                                Project = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
                 }
         }
 }

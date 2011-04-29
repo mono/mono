@@ -26,16 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
-
 using System;
 using System.Reflection;
 using System.Resources;
+using System.Runtime;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 // General Information about the Microsoft.Build assembly
 
@@ -53,7 +53,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
-[assembly: Guid ("D8A9BA71-4724-481d-9CA7-0DA23A1D615C")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
@@ -63,4 +62,3 @@ using System.Runtime.InteropServices;
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 
-#endif

@@ -1,5 +1,5 @@
-﻿//
-// ProjectExtensionsElement.cs
+//
+// ProjectLoadSettings.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -27,29 +27,15 @@
 //
 
 using System;
-using System.Xml;
 
-namespace Microsoft.Build.Construction
+namespace Microsoft.Build.Evaluation
 {
-        public class ProjectExtensionsElement : ProjectElement
+        [Flags]
+        public enum ProjectLoadSettings
         {
-                internal ProjectExtensionsElement (ProjectRootElement containingProject)
-                {
-                        ContainingProject = containingProject;
-                }
-                public override string Condition { get { return null; } set { throw new InvalidOperationException(
-                        "Can not set Condition."); } }
-                public string Content { get; set; }
-                public string this[string name] {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                        set {
-                                throw new NotImplementedException ();
-                        }
-                }
-                internal override string XmlName {
-                        get { return "ProjectExtentions"; }
-                }
+                Default = 0,
+                IgnoreMissingImports = 1,
+                RecordDuplicateButNotCircularImports = 2,
+                RejectCircularImports = 4
         }
 }

@@ -29,18 +29,37 @@
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("ExecuteTargets={ExecuteTargets}")]
         public class ProjectOnErrorElement : ProjectElement
         {
+                internal ProjectOnErrorElement (string executeTargets, ProjectRootElement containingProject)
+                        : this(containingProject)
+                {
+                        ExecuteTargetsAttribute = executeTargets;
+                }
+                internal ProjectOnErrorElement (ProjectRootElement containingProject)
+                {
+                        ContainingProject = containingProject;
+                }
                 public string ExecuteTargetsAttribute { get; set; }
                 internal override string XmlName {
-                        get {
-                                throw new System.NotImplementedException ();
-                        }
+                        get { return "OnError"; }
                 }
-
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        throw new System.NotImplementedException ();
+                        base.SaveValue (writer);
+                        SaveAttribute (writer, "ExecuteTargets", ExecuteTargetsAttribute);
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "ExecuteTargets":
+                                ExecuteTargetsAttribute = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
                 }
         }
 }

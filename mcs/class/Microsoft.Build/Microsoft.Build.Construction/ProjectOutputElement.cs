@@ -1,5 +1,5 @@
 ﻿//
-// AssemblyInfo.cs
+// ProjectOutputElement.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -29,8 +29,18 @@
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("Name={Name} TaskParameter={TaskParameter} ItemName={ItemName} "
+                                                      + "PropertyName={PropertyName} Condition={Condition}")]
         public class ProjectOutputElement : ProjectElement
         {
+                internal ProjectOutputElement (string taskParameter, string itemType, string propertyName,
+                                               ProjectRootElement containintProject)
+                {
+                        TaskParameter = taskParameter;
+                        ItemType = itemType;
+                        PropertyName = propertyName;
+                        ContainingProject = containintProject;
+                }
                 public bool IsOutputItem {
                         get { return true; }
                 }
@@ -41,13 +51,33 @@ namespace Microsoft.Build.Construction
                 public string PropertyName { get; set; }
                 public string TaskParameter { get; set; }
                 internal override string XmlName {
-                        get {
-                                throw new System.NotImplementedException ();
-                        }
+                        get { return "Output"; }
                 }
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        throw new System.NotImplementedException ();
+                        base.SaveValue (writer);
+                        SaveAttribute (writer, "TaskParameter", TaskParameter);
+                        if (IsOutputProperty)
+                                SaveAttribute (writer, "PropertyName", PropertyName);
+                        else
+                                SaveAttribute (writer, "ItemName", ItemType);
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "TaskParameter":
+                                TaskParameter = value;
+                                break;
+                        case "PropertyName":
+                                PropertyName = value;
+                                break;
+                        case "ItemName":
+                                ItemType = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
                 }
         }
 }

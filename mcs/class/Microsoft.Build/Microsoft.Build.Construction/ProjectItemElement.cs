@@ -33,6 +33,8 @@ using System.Xml;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("{ItemType} Include={Include} Exclude={Exclude} "
+                                                      + "#Metadata={Count} Condition={Condition}")]
         public class ProjectItemElement : ProjectElementContainer
         {
                 internal ProjectItemElement (string itemType, ProjectRootElement containingProject)
@@ -40,7 +42,6 @@ namespace Microsoft.Build.Construction
                         ItemType = itemType;
                         ContainingProject = containingProject;
                 }
-
                 public string Exclude { get; set; }
                 public bool HasMetadata {
                         get {
@@ -48,39 +49,51 @@ namespace Microsoft.Build.Construction
                                 return metadata != null;
                         }
                 }
-
                 public string Include { get; set; }
                 public string ItemType { get; set; }
                 public ICollection<ProjectMetadataElement> Metadata {
-                        get { return new CollectionFromEnumerable<ProjectMetadataElement> (Children.
-                                Where (p => p as ProjectMetadataElement != null).
-                                Select (p => (ProjectMetadataElement)p)); }
+                        get { return new CollectionFromEnumerable<ProjectMetadataElement> (
+                                new FilteredEnumerable<ProjectMetadataElement> (Children)); }
                 }
                 public string Remove { get; set; }
-
                 public ProjectMetadataElement AddMetadata (string name, string unevaluatedValue)
                 {
                         var metadata = ContainingProject.CreateMetadataElement (name, unevaluatedValue);
                         AppendChild (metadata);
                         return metadata;
                 }
-
                 internal override string XmlName {
                         get { return ItemType; }
                 }
-
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName);
-                        if (!string.IsNullOrWhiteSpace (Include))
-                                writer.WriteAttributeString ("Include", Include);
-                        if (!string.IsNullOrWhiteSpace (Exclude))
-                                writer.WriteAttributeString ("Exclude", Exclude);
-                        if (!string.IsNullOrWhiteSpace (Remove))
-                                writer.WriteAttributeString ("Remove", Remove);
-                        foreach (var child in Children)
-                                child.Save (writer);
-                        writer.WriteEndElement ();
+                        SaveAttribute (writer, "Include", Include);
+                        SaveAttribute (writer, "Exclude", Exclude);
+                        SaveAttribute (writer, "Remove", Remove);
+                        base.SaveValue (writer);
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "Include":
+                                Include = value;
+                                break;
+                        case "Exclude":
+                                Exclude = value;
+                                break;
+                        case "Remove":
+                                Remove = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        var metadata = ContainingProject.CreateMetadataElement (name);
+                        AppendChild (metadata);
+                        return metadata;
                 }
         }
 }
