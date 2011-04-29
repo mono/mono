@@ -26,31 +26,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("{ItemType} #Metadata={Count} Condition={Condition}")]
         public class ProjectItemDefinitionElement : ProjectElementContainer
         {
-                public string ItemType {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                internal ProjectItemDefinitionElement (string itemType, ProjectRootElement containingProject)
+                {
+                        ItemType = itemType;
+                        ContainingProject = containingProject;
                 }
+                public string ItemType { get; private set; }
                 public ICollection<ProjectMetadataElement> Metadata {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectMetadataElement> (
+                                new FilteredEnumerable<ProjectMetadataElement> (Children)); }
                 }
                 public ProjectMetadataElement AddMetadata (string name, string unevaluatedValue)
                 {
-                        throw new NotImplementedException ();
+                        var metadata = ContainingProject.CreateMetadataElement (name);
+                        metadata.Value = unevaluatedValue;
+                        AppendChild (metadata);
+                        return metadata;
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return ItemType; }
+                }
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        return AddMetadata (name, null);
                 }
         }
 }

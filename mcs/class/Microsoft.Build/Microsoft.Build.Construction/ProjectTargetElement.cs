@@ -26,13 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("Name={Name} #Children={Count} Condition={Condition}")]
         public class ProjectTargetElement : ProjectElementContainer
         {
+                internal ProjectTargetElement (string name, ProjectRootElement containingProject)
+                        : this(containingProject)
+                {
+                        Name = name;
+                }
+                internal ProjectTargetElement (ProjectRootElement containingProject)
+                {
+                        ContainingProject = containingProject;
+                }
                 public string AfterTargets { get; set; }
                 public string BeforeTargets { get; set; }
                 public string DependsOnTargets { get; set; }
@@ -45,9 +57,8 @@ namespace Microsoft.Build.Construction
                 public string KeepDuplicateOutputs { get; set; }
                 public string Name { get; set; }
                 public ICollection<ProjectOnErrorElement> OnErrors {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectOnErrorElement> (
+                                new FilteredEnumerable<ProjectOnErrorElement> (Children)); }
                 }
                 public string Outputs { get; set; }
                 public ICollection<ProjectPropertyGroupElement> PropertyGroups {
@@ -57,26 +68,89 @@ namespace Microsoft.Build.Construction
                 }
                 public string Returns { get; set; }
                 public ICollection<ProjectTaskElement> Tasks {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectTaskElement> (
+                                new FilteredEnumerable<ProjectTaskElement> (Children)); }
                 }
                 public ProjectItemGroupElement AddItemGroup ()
                 {
-                        throw new NotImplementedException ();
+                        var item = ContainingProject.CreateItemGroupElement ();
+                        AppendChild (item);
+                        return item;
                 }
                 public ProjectPropertyGroupElement AddPropertyGroup ()
                 {
-                        throw new NotImplementedException ();
+                        var property = ContainingProject.CreatePropertyGroupElement ();
+                        AppendChild (property);
+                        return property;
                 }
                 public ProjectTaskElement AddTask (string taskName)
                 {
-                        throw new NotImplementedException ();
+                        var task = ContainingProject.CreateTaskElement (taskName);
+                        AppendChild (task);
+                        return task;
                 }
                 internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
+                        get { return "Target"; }
+                }
+
+                internal override ProjectElement LoadChildElement (string name)
+                {
+                        switch (name) {
+                        case "OnError":
+                                var error = new ProjectOnErrorElement (ContainingProject);
+                                AppendChild (error);
+                                return error;
+                        case "PropertyGroup":
+                                return AddPropertyGroup ();
+                        case "ItemGroup":
+                                return AddItemGroup ();
+                        default:
+                                return AddTask (name);
                         }
+                }
+                internal override void LoadAttribute (string name, string value)
+                {
+                        switch (name) {
+                        case "Name":
+                                Name = value;
+                                break;
+                        case "DependsOnTargets":
+                                DependsOnTargets = value;
+                                break;
+                        case "Returns":
+                                Returns = value;
+                                break;
+                        case "Inputs":
+                                Inputs = value;
+                                break;
+                        case "Outputs":
+                                Outputs = value;
+                                break;
+                        case "BeforeTargets":
+                                BeforeTargets = value;
+                                break;
+                        case "AfterTargets":
+                                AfterTargets = value;
+                                break;
+                        case "KeepDuplicateOutputs":
+                                KeepDuplicateOutputs = value;
+                                break;
+                        default:
+                                base.LoadAttribute (name, value);
+                                break;
+                        }
+                }
+                internal override void SaveValue (System.Xml.XmlWriter writer)
+                {
+                        SaveAttribute (writer, "Name", Name);
+                        SaveAttribute (writer, "DependsOnTargets", DependsOnTargets);
+                        SaveAttribute (writer, "Returns", Returns);
+                        SaveAttribute (writer, "Inputs", Inputs);
+                        SaveAttribute (writer, "Outputs", Outputs);
+                        SaveAttribute (writer, "BeforeTargets", BeforeTargets);
+                        SaveAttribute (writer, "AfterTargets", AfterTargets);
+                        SaveAttribute (writer, "KeepDuplicateOutputs", KeepDuplicateOutputs);
+                        base.SaveValue (writer);
                 }
         }
 }

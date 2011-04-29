@@ -1,4 +1,5 @@
 obj/
 bin/
 *.vs10x
+*.docstates
 *.suo

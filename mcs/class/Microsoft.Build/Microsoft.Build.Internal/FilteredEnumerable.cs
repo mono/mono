@@ -1,5 +1,5 @@
 ﻿//
-// ProjectItemDefinitionGroupElement.cs
+// FilteredEnumerable.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -29,33 +29,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Build.Internal;
+using System.Text;
 
-namespace Microsoft.Build.Construction
+namespace Microsoft.Build.Internal
 {
-        [System.Diagnostics.DebuggerDisplayAttribute ("#ItemDefinitions={Count} Condition={Condition} Label={Label}")]
-        public class ProjectItemDefinitionGroupElement : ProjectElementContainer
+        internal class FilteredEnumerable<T> : IEnumerable<T> where T : class
         {
-                internal ProjectItemDefinitionGroupElement (ProjectRootElement containingProject)
+                System.Collections.IEnumerable backingEnumerable;
+
+                public FilteredEnumerable (System.Collections.IEnumerable enumerable)
                 {
-                        ContainingProject = containingProject;
+                        backingEnumerable = enumerable;
                 }
-                public ICollection<ProjectItemDefinitionElement> ItemDefinitions {
-                        get { return new CollectionFromEnumerable<ProjectItemDefinitionElement> (
-                                new FilteredEnumerable<ProjectItemDefinitionElement> (Children)); }
-                }
-                public ProjectItemDefinitionElement AddItemDefinition (string itemType)
+
+                public IEnumerator<T> GetEnumerator ()
                 {
-                        var definition = ContainingProject.CreateItemDefinitionElement (itemType);
-                        AppendChild (definition);
-                        return definition;
+                        foreach (var item in backingEnumerable) {
+                                var typedItem = item as T;
+                                if (typedItem != null)
+                                        yield return typedItem;
+                        }
+
                 }
-                internal override string XmlName {
-                        get { return "ItemDefinitionGroup"; }
-                }
-                internal override ProjectElement LoadChildElement (string name)
+
+                System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
                 {
-                        return AddItemDefinition (name);
+                        return GetEnumerator ();
                 }
         }
 }
