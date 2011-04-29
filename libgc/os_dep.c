@@ -2131,7 +2131,14 @@ void GC_unmap_gap(ptr_t start1, word bytes1, ptr_t start2, word bytes2)
 	  len -= free_len;
       }
 #   else
-      if (len != 0 && munmap(start_addr, len) != 0) ABORT("munmap failed");
+      if (len != 0) {
+        /* Immediately remap as above. */
+        void * result;
+        result = mmap(start_addr, len, PROT_NONE,
+                      MAP_PRIVATE | MAP_FIXED | OPT_MAP_ANON,
+                      zero_fd, 0/* offset */);
+        if (result != (void *)start_addr) ABORT("mmap(...PROT_NONE...) failed");
+      }
       GC_unmapped_bytes += len;
 #   endif
 }
