@@ -512,7 +512,8 @@ namespace System.Net
 					asyncResult.SetCompleted (false, ftpResponse);
 				}
 				catch (Exception e) {
-					State = RequestState.Error;
+					if (!GetServicePoint ().UsesProxy)
+						State = RequestState.Error;
 					SetCompleteWithError (e);
 				}
 			}
@@ -579,6 +580,19 @@ namespace System.Net
 
 		void ProcessMethod ()
 		{
+			ServicePoint sp = GetServicePoint ();
+			if (sp.UsesProxy) {
+				if (method != WebRequestMethods.Ftp.DownloadFile)
+					throw new NotSupportedException ("FTP+proxy only supports RETR");
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (proxy.GetProxy (requestUri));
+				req.Address = requestUri;
+				requestState = RequestState.Finished;
+				WebResponse response = req.GetResponse ();
+				ftpResponse.Stream = new FtpDataStream (this, response.GetResponseStream (), true);
+				ftpResponse.StatusCode = FtpStatusCode.CommandOK;
+				return;
+			}
 			State = RequestState.Connecting;
 
 			ResolveHost ();

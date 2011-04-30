@@ -179,6 +179,7 @@ namespace System.Net
 		
 		public Uri Address {
 			get { return actualUri; }
+			internal set { actualUri = value; } // Used by Ftp+proxy
 		}
 		
 		public bool AllowAutoRedirect {

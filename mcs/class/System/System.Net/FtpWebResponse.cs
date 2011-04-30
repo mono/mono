@@ -112,7 +112,7 @@ namespace System.Net
 			get {
 				return statusCode;
 			}
-			private set {
+			internal set {
 				statusCode = value;
 			}
 		}
@@ -121,7 +121,7 @@ namespace System.Net
 			get {
 				return statusDescription;
 			}
-			private set {
+			internal set {
 				statusDescription = value;
 			}
 		}
