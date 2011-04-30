@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
+#if !MOBILE
 namespace System.Runtime.CompilerServices
 {
 	// introduced for silverlight sdk compatibility
@@ -11,6 +12,7 @@ namespace System.Runtime.CompilerServices
 		}
 	}
 }
+#endif
 
 namespace System.ServiceModel
 {
@@ -102,6 +104,7 @@ namespace System.ServiceModel.Security
 {
 	class Dummy {}
 }
+#if !MOBILE
 namespace System.Net.Security
 {
 	public enum ProtectionLevel {None}
@@ -118,4 +121,4 @@ namespace Mono.Xml.XPath
 {
 	class Dummy {}
 }
-
+#endif
