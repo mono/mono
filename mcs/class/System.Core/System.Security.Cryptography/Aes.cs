@@ -59,9 +59,9 @@ namespace System.Security.Cryptography {
 			return Create ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core);
 		}
 
-		public static new Aes Create (string algName) 
+		public static new Aes Create (string algorithmName) 
 		{
-			return (Aes) CryptoConfig.CreateFromName (algName);
+			return (Aes) CryptoConfig.CreateFromName (algorithmName);
 		}
 
 		protected Aes ()
