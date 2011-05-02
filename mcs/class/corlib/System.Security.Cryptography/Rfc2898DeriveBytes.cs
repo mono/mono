@@ -187,6 +187,15 @@ namespace System.Security.Cryptography {
 			_pos = 0;
 			_f = 0;
 		}
+#if NET_4_0
+		protected override void Dispose (bool disposing)
+		{
+			Array.Clear (_buffer, 0, _buffer.Length);
+			Array.Clear (_salt, 0, _salt.Length);
+			_hmac.Clear ();
+			base.Dispose (disposing);
+		}
+#endif
 	} 
 }
 

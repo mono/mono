@@ -69,7 +69,11 @@ namespace System.Security.Cryptography {
 			Dispose (true);
 		}
 
+#if NET_4_0
+		public void Dispose ()
+#else
 		void IDisposable.Dispose () 
+#endif
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);  // Finalization is now unnecessary
