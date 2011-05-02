@@ -7,7 +7,6 @@ using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Xml;
 
-#if !MOBILE
 namespace System.Runtime.CompilerServices
 {
 	// introduced for silverlight sdk compatibility
@@ -18,7 +17,6 @@ namespace System.Runtime.CompilerServices
 		}
 	}
 }
-#endif
 
 namespace System.ServiceModel
 {
