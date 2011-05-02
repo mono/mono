@@ -895,7 +895,7 @@ namespace System.Threading {
 			if (maxStackSize < 131072) // make sure stack is at least 128k big
 				return 131072;
 
-			int page_size = Environment.SystemPageSize;
+			int page_size = Environment.GetPageSize ();
 
 			if ((maxStackSize % page_size) != 0) // round up to a divisible of page size
 				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
