@@ -255,8 +255,12 @@ namespace MonoTests.System
 		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k)
 		{
 		}
+
 #if NET_2_0
-		private void GenericMethod<Q> (Q q)
+		public interface IFace {
+		}
+
+		private void GenericMethod<Q, T1> (Q q, T1 t) where T1 : IFace
 		{
 		}
 #endif
@@ -330,6 +334,10 @@ namespace MonoTests.System
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (mi.GetParameters ()[0].ParameterType));
 			Assert.IsFalse (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (typeof (int)));
+
+			// Tests for parameters with generic constraints
+			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
+			Assert.IsTrue (typeof (IFace).IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
 #endif
 		}
 
@@ -1612,6 +1620,19 @@ namespace MonoTests.System
 
 			Type[] t2 = typeof (IFace3).GetInterfaces ();
 			Assert.AreEqual (2, t2.Length);
+		}
+
+		[Test]
+		public void GetInterfacesGenericVarWithConstraints ()
+		{
+			var a = typeof (TypeTest).GetMethod ("GenericMethod");
+
+			var p = a.GetParameters ();
+			var i = p[0].ParameterType.GetElementType ();
+			i.GetInterfaces ();
+		}
+
+		public static void GenericMethod<T, T2> (T[] arr) where T: IComparable<T> {
 		}
 
 		public int AField;
