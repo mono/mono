@@ -449,6 +449,16 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void TestUndivisibleByPageSizeMaxStackSize ()
+		{
+			const int undivisible_stacksize = 1048573;
+
+			var thread = new Thread (new ThreadStart (delegate {}), undivisible_stacksize);
+			thread.Start ();
+			thread.Join ();
+		}
+
+		[Test]
 		public void TestIsBackground1 ()
 		{
 			if (is_win32 && is_mono)
