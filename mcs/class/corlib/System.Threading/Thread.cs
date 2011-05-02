@@ -887,17 +887,34 @@ namespace System.Threading {
 		
 #endif
 
+		static int CheckStackSize (int maxStackSize)
+		{
+			if (maxStackSize < 0)
+				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
+
+			if (maxStackSize < 131072) // make sure stack is at least 128k big
+				return 131072;
+
+			int page_size = Environment.SystemPageSize;
+
+			if ((maxStackSize % page_size) != 0) // round up to a divisible of page size
+				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
+
+			int default_stack_size = (IntPtr.Size / 4) * 1024 * 1024; // from wthreads.c
+
+			if (maxStackSize > default_stack_size)
+				return default_stack_size;
+
+			return maxStackSize; 
+		}
+
 		public Thread (ThreadStart start, int maxStackSize)
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 0)
-				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
-			if (maxStackSize < 131072) //make sure stack is at least 128k big
-				maxStackSize = 131072;
 
 			threadstart = start;
-			Internal.stack_size = maxStackSize;
+			Internal.stack_size = CheckStackSize (maxStackSize);;
 		}
 
 		public Thread (ParameterizedThreadStart start)
@@ -912,13 +929,9 @@ namespace System.Threading {
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 0)
-				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
-			if (maxStackSize < 131072) //make sure stack is at least 128k big
-				maxStackSize = 131072;
 
 			threadstart = start;
-			Internal.stack_size = maxStackSize;
+			Internal.stack_size = CheckStackSize (maxStackSize);
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
