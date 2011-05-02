@@ -512,6 +512,23 @@ public partial      class CryptoConfig {
 		return (string)oid [name];
 	}
 
+#if NET_4_0
+	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
+	public static bool AllowOnlyFipsAlgorithms {
+		get { return false; }
+	}
+
+	public static void AddAlgorithm (Type algorithm, params string[] names)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public static void AddOID (string oid, params string[] names)
+	{
+		throw new NotImplementedException ();
+	}
+#endif
+
 	class CryptoHandler: SmallXmlParser.IContentHandler {
 
 		private Hashtable algorithms;
