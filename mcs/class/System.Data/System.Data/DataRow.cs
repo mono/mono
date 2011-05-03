@@ -586,8 +586,12 @@ namespace System.Data {
 			DataColumn column = _table.Columns [columnName];
 			_table.ChangingDataColumn (this, column, val);
 
-			if (Original < 0 || Original == Current)
+			if (Original < 0 || Original == Current) {
 				Original = Table.RecordCache.NewRecord ();
+				
+				foreach (DataColumn col in _table.Columns)
+					col.DataContainer.CopyValue (Table.DefaultValuesRowIndex, Original);
+			}
 
 			CheckValue (val, column);
 			column [Original] = val;

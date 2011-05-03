@@ -1,3 +1,8 @@
+2011-05-02  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes 663914
+	* DataRow.cs (SetOriginalValue): Retain original version if available.
+	
 2011-03-15  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	** Fixes 672113
