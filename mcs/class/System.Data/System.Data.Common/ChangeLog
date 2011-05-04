@@ -1,3 +1,9 @@
+2011-05-05  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes 688773
+	* RecordCache.cs (CopyRecord): When copying records, assign default value 
+	for the columns that does not exist in the row being imported.
+
 2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	** Fixes #565616 - Based on Patch by Hubert FONGARNAND
