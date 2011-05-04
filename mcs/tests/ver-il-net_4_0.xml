@@ -28658,6 +28658,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-19.cs">
+    <type name="Test">
+      <method name="Void Bla[T,U]()">
+        <size>12</size>
+      </method>
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-2.cs">
     <type name="Foo">
       <method name="System.String Bar(System.Object)">
