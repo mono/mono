@@ -44,6 +44,7 @@ namespace System.Resources
 	[ComVisible (true)]
 	public class ResourceManager
 	{
+		static readonly object thisLock = new object ();
 		static Hashtable ResourceCache = new Hashtable (); 
 		static Hashtable NonExistent = Hashtable.Synchronized (new Hashtable ());
 		public static readonly int HeaderVersionNumber = 1;
@@ -194,7 +195,7 @@ namespace System.Resources
 			if (culture == null)
 				culture = CultureInfo.CurrentUICulture;
 
-			lock (this) {
+			lock (thisLock) {
 				ResourceSet set = InternalGetResourceSet(culture, true, true);
 				object obj = null;
 				
@@ -229,7 +230,7 @@ namespace System.Resources
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			lock (this) {
+			lock (thisLock) {
 				return InternalGetResourceSet (culture, createIfNotExists, tryParents);
 			}
 		}
@@ -247,7 +248,7 @@ namespace System.Resources
 			if (culture == null)
 				culture = CultureInfo.CurrentUICulture;
 
-			lock (this) {
+			lock (thisLock) {
 				ResourceSet set = InternalGetResourceSet (culture, true, true);
 				string str = null;
 
@@ -315,7 +316,12 @@ namespace System.Resources
 				throw new ArgumentNullException ("name");
 			if (culture == null)
 				culture = CultureInfo.CurrentUICulture;
-			ResourceSet set = InternalGetResourceSet (culture, true, true);
+			ResourceSet set;
+
+			lock (thisLock) {
+				set = InternalGetResourceSet (culture, true, true);
+			}
+			
 			return set.GetStream (name, ignoreCase);
 		}
 
@@ -324,13 +330,24 @@ namespace System.Resources
 			if (culture == null)
 				throw new ArgumentNullException ("key"); // 'key' instead of 'culture' to make a test pass
 
-			ResourceSet set;
+			ResourceSet set = null;
 			
 			/* if we already have this resource set, return it */
 			set = (ResourceSet) ResourceSets [culture];
-			if (set != null)
-				return set;
+			if (set != null) {
+				try {
+					if (!set.IsDisposed)
+						return set;
+				} catch {
+					// ignore
+				}
 
+				ResourceSets.Remove (culture);
+				if (NonExistent.Contains (culture))
+					NonExistent.Remove (culture);
+				set = null;
+			}
+			
 			if (NonExistent.Contains (culture))
 				return null;
 
