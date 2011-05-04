@@ -615,7 +615,8 @@ namespace Mono.Data.Tds.Protocol
 			// types if param value is NULL
 			if ((colType == TdsColumnType.BigVarChar || 
 			     colType == TdsColumnType.BigNVarChar ||
-			     colType == TdsColumnType.BigVarBinary) && 
+			     colType == TdsColumnType.BigVarBinary ||
+			     colType == TdsColumnType.Image) && 
 			    (param.Value == null || param.Value == DBNull.Value))
 				size = -1;
 			else
