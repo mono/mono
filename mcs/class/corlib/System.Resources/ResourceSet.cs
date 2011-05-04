@@ -50,6 +50,10 @@ namespace System.Resources
 		[NonSerialized]
 		private bool disposed;
 
+		internal bool IsDisposed {
+			get { return disposed || Reader == null; }
+		}
+		
 		// Constructors
 		protected ResourceSet ()
 		{
@@ -123,7 +127,7 @@ namespace System.Resources
 		[ComVisible (false)]
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
-			if (disposed)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 			ReadResources ();
 			return Table.GetEnumerator();
@@ -138,7 +142,7 @@ namespace System.Resources
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (disposed)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 
 			ReadResources ();
@@ -200,7 +204,7 @@ namespace System.Resources
 			if (resources_read)
 				return;
 
-			if (Reader == null)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 			lock (Table) {
 				if (resources_read)
@@ -216,7 +220,7 @@ namespace System.Resources
 
 		internal UnmanagedMemoryStream GetStream (string name, bool ignoreCase)
 		{
-			if (Reader == null)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 
 			IDictionaryEnumerator i = Reader.GetEnumerator();
