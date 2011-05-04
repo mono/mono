@@ -102,7 +102,7 @@ namespace System.ComponentModel
 
 			// Explicit cast operator in Nullable when the user casts will take care 
 			// of extracting the inner value.
-			if (destinationType == underlyingType && value.GetType() == nullableType)
+			if (destinationType == underlyingType && value.GetType() == underlyingType)
 				return value;
 
 			if (underlyingTypeConverter != null && value != null)
