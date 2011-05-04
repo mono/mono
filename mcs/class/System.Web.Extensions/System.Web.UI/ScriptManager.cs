@@ -876,9 +876,9 @@ namespace System.Web.UI
 		void RegisterScriptReference (Control control, ScriptReferenceBase script, bool loadScriptsBeforeUI)
 		{
 			string scriptPath = script.Path;
-			string url = script.GetUrl (this, false);
+			string url = String.IsNullOrEmpty (scriptPath) ? script.GetUrl (this, false) : scriptPath;
 			if (control != this && !String.IsNullOrEmpty (scriptPath))
-				url = control.ResolveClientUrl (url);
+				url = control.ResolveClientUrl (scriptPath);
 
 			if (String.IsNullOrEmpty (url))
 				return;
