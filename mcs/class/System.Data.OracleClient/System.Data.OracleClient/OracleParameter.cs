@@ -431,8 +431,9 @@ namespace System.Data.OracleClient
 			object v = value;
 			int status = 0;
 			bindType = ociType;
-			int rsize = 0;
-
+			ulong rsize = 0;
+			UIntPtr rsizep = new UIntPtr (rsize);
+			
 			string svalue;
 			string sDate;
 			DateTime dt;
@@ -482,10 +483,10 @@ namespace System.Data.OracleClient
 						// in this case using OCIUnicodeToCharSet
 						rsize = 0;
 						// Get size of buffer
-						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
-
+						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, ref rsizep);
+						rsize = rsizep.ToUInt64 ();
 						if (direction == ParameterDirection.Input)
-							bindSize = rsize;
+							bindSize = (int)rsize;
 						else {
 							// this cannot be rsize because you need room for the output after the execute
 							bindSize = Encoding.UTF8.GetMaxByteCount (Size + 1);
@@ -495,7 +496,7 @@ namespace System.Data.OracleClient
 						bytes = new byte [bindSize];
 
 						// Fill buffer
-						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, ref rsizep);
 					} else {
 						// for Output and ReturnValue parameters, get size in bytes 					
 						bindSize = Encoding.UTF8.GetMaxByteCount (size + 1);
@@ -612,17 +613,17 @@ namespace System.Data.OracleClient
 
 						rsize = 0;
 						// Get size of buffer
-						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, ref rsizep);
 
 						// Fill buffer 
-						
+						rsize = rsizep.ToUInt64 ();
 						if (direction == ParameterDirection.Input)
-							bindSize = rsize;
+							bindSize = (int)rsize;
 						else
 							bindSize = 30; // need room for output possibly being bigger than the input
 						
 						bytes = new byte [bindSize];
-						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, ref rsizep);
 					} else {
 						// Output and ReturnValue parameters allocate memory
 						bindSize = 30;
@@ -672,11 +673,12 @@ namespace System.Data.OracleClient
 						rsize = 0;
 
 						// Get size of buffer
-						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, ref rsizep);
 
 						// Fill buffer
+						rsize = rsizep.ToUInt64 ();
 						bytes = new byte[rsize];
-						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, ref rsizep);
 
 						bindType = OciDataType.Long;
 						bindSize = bytes.Length;
@@ -1245,7 +1247,8 @@ namespace System.Data.OracleClient
 			if (indicator == -1)
 				return;
 
-			int rsize = 0;
+			ulong rsize = 0;
+			UIntPtr rsizep = new UIntPtr (rsize);
 			IntPtr env = IntPtr.Zero;
 			StringBuilder ret = null;
 
@@ -1263,11 +1266,12 @@ namespace System.Data.OracleClient
 				// Get length of returned string
 				rsize = 0;
 				env = cmd.Connection.Environment;
-				OciCalls.OCICharSetToUnicode (env, null, bytes, out rsize);
+				OciCalls.OCICharSetToUnicode (env, null, bytes, ref rsizep);
 
 				// Get string
-				ret = new StringBuilder(rsize);
-				OciCalls.OCICharSetToUnicode (env, ret, bytes, out rsize);
+				rsize = rsizep.ToUInt64 ();
+				ret = new StringBuilder((int)rsize);
+				OciCalls.OCICharSetToUnicode (env, ret, bytes, ref rsizep);
 
 				value = ret.ToString ();
 				break;
@@ -1312,11 +1316,12 @@ namespace System.Data.OracleClient
 			case OciDataType.Float:
 				rsize = 0;
 				env = cmd.Connection.Environment;
-				OciCalls.OCICharSetToUnicode (env, null, bytes, out rsize);
+				OciCalls.OCICharSetToUnicode (env, null, bytes, ref rsizep);
 
 				// Get string
-				ret = new StringBuilder(rsize);
-				OciCalls.OCICharSetToUnicode (env, ret, bytes, out rsize);
+				rsize = rsizep.ToUInt64 ();
+				ret = new StringBuilder((int)rsize);
+				OciCalls.OCICharSetToUnicode (env, ret, bytes, ref rsizep);
 
 				// if not empty, parse string as a decimal using session format
 				if (ret.Length > 0) {

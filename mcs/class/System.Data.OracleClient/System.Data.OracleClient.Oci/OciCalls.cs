@@ -1,4 +1,4 @@
-﻿//
+//
 // OciCalls.cs
 //
 // Part of the Mono class libraries at
@@ -464,7 +464,7 @@ namespace System.Data.OracleClient.Oci
 				[MarshalAs (UnmanagedType.U4)] int dstlen,
 				byte [] src,
 				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] ref UIntPtr rsizep);
 
 			[DllImport ("oci")]
 			internal static extern int OCIUnicodeToCharSet (
@@ -473,7 +473,7 @@ namespace System.Data.OracleClient.Oci
 				[MarshalAs (UnmanagedType.U4)] int dstlen,
 				[MarshalAs (UnmanagedType.LPWStr)] string src,
 				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] ref UIntPtr rsizep);
 		}
 
 		#endregion
@@ -1183,26 +1183,26 @@ namespace System.Data.OracleClient.Oci
 			IntPtr svchp,
 			StringBuilder dst,
 			byte [] src,
-			out int rsize)
+			[MarshalAs (UnmanagedType.SysUInt)] ref UIntPtr rsizep)
 		{
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
 			#endif
 
-			return OciNativeCalls.OCICharSetToUnicode (svchp, dst, dst!=null ? dst.Capacity : 0, src, src.Length, out rsize);
+			return OciNativeCalls.OCICharSetToUnicode (svchp, dst, dst!=null ? dst.Capacity : 0, src, src.Length, ref rsizep);
 		}
 
 		internal static int OCIUnicodeToCharSet (
 			IntPtr svchp,
 			byte [] dst,
 			[MarshalAs (UnmanagedType.LPWStr)] string src,
-			[MarshalAs (UnmanagedType.U4)] out int rsize)
+			[MarshalAs (UnmanagedType.SysUInt)] ref UIntPtr rsizep)
 		{
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCIUnicodeToCharSet", "OCI");
 			#endif
 
-			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);
+			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, ref rsizep);
 		}
 
 		[DllImport ("oci")]

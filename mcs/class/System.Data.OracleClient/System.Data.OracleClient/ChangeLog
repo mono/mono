@@ -1,3 +1,10 @@
+2011-05-05  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	* OracleConnection.cs (GetOracleVersion, GetNlsInfo): 
+	* OracleParameter.cs: Use UIntPtr for referencing size_t 
+	parameters to fix 32/64 bit - big/little-endian issues 
+	while calling native methods.
+	
 2010-02-14  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes 667855

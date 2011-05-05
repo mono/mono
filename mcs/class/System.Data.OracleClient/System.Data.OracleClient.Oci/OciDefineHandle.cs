@@ -1,4 +1,4 @@
-﻿//
+//
 // OciDefineHandle.cs
 //
 // Part of managed C#/.NET library System.Data.OracleClient.dll
@@ -516,15 +516,17 @@ namespace System.Data.OracleClient.Oci
 				Marshal.Copy (Value, buffer, 0, Size);
 
 				// Get length of returned string
-				int 	rsize = 0;
+				ulong 	rsize = 0;
+				UIntPtr rsizep = new UIntPtr (rsize);
 				//IntPtr	env = Parent.Parent;	// Parent is statement, grandparent is environment
 				IntPtr env = conn.Environment;
-				int status = OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
+				int status = OciCalls.OCICharSetToUnicode (env, null, buffer, ref rsizep);
 				OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
 
 				// Get string
-				StringBuilder ret = new StringBuilder(rsize);
-				status = OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
+				rsize = rsizep.ToUInt64 ();
+				StringBuilder ret = new StringBuilder((int)rsize);
+				status = OciCalls.OCICharSetToUnicode (env, ret, buffer, ref rsizep);
 				OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
 
 				return ret.ToString ();
