@@ -38,18 +38,16 @@ using System.Diagnostics;
 
 namespace System.Collections {
 
+	[Serializable]
+#if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-	[Serializable]
-#if INSIDE_CORLIB
-	public
+	public class Hashtable : IDictionary, ICollection, 
+		IEnumerable, ICloneable, ISerializable, IDeserializationCallback {
 #else
-	internal
+	internal class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
-	class Hashtable : IDictionary, ICollection, 
-		IEnumerable, ICloneable, ISerializable, IDeserializationCallback
-	{
 
 		[Serializable]
 		internal struct Slot {
@@ -963,8 +961,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
@@ -1017,8 +1017,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;

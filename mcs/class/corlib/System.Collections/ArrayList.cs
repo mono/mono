@@ -30,18 +30,15 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
+	[Serializable]
+#if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-	[Serializable]
-#if INSIDE_CORLIB
-	public
+	public class ArrayList : IList, ICloneable, ICollection, IEnumerable {
 #else
-	internal
+	internal class ArrayList : IList {
 #endif
-	class ArrayList
-		: IList, ICloneable, ICollection, IEnumerable 
-	{
 		#region Enumerator
 
 		private sealed class ArrayListEnumerator
