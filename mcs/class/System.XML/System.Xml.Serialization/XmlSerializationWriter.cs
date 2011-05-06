@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Xml;
@@ -54,7 +55,11 @@ namespace System.Xml.Serialization
 
 		ArrayList namespaces;
 		XmlWriter writer;
+#if MOONLIGHT
+		Queue<object> referencedElements;
+#else
 		Queue referencedElements;
+#endif
 		Hashtable callbacks;
 		Hashtable serializedObjects;
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
@@ -87,10 +92,17 @@ namespace System.Xml.Serialization
 
 		#region Properties
 
+#if MOONLIGHT
+		protected IList XmlNamespaces {
+			get { return namespaces; }
+			set { namespaces = (value as ArrayList); }
+		}
+#else
 		protected ArrayList Namespaces {
 			get { return namespaces; }
 			set { namespaces = value; }
 		}
+#endif
 
 		protected XmlWriter Writer {
 			get { return writer; }
@@ -492,8 +504,11 @@ namespace System.Xml.Serialization
 		{
 			if (ns == null)
 				return;
-
+#if MOONLIGHT
+			IEnumerable<XmlQualifiedName> namespaces = ns.GetNamespaces ();
+#else
 			ICollection namespaces = ns.Namespaces.Values;
+#endif
 			foreach (XmlQualifiedName qn in namespaces) {
 				if (qn.Namespace != String.Empty && Writer.LookupPrefix (qn.Namespace) != qn.Name)
 					WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
@@ -745,7 +760,11 @@ namespace System.Xml.Serialization
 		{
 			if (referencedElements == null)  
 			{
+#if MOONLIGHT
+				referencedElements = new Queue<object> ();
+#else
 				referencedElements = new Queue ();
+#endif
 				InitCallbacks ();
 			}
 		}

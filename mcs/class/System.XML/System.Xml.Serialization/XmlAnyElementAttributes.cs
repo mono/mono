@@ -28,18 +28,91 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Xml;
-using System.Xml.Serialization;
 using System.Collections;
-using System;
+using System.Collections.Generic;
 
 namespace System.Xml.Serialization
 {
 	/// <summary>
 	/// Summary description for XmlAnyElementAttributes.
 	/// </summary>
-	public class XmlAnyElementAttributes : CollectionBase
-	{
+#if MOONLIGHT
+	public class XmlAnyElementAttributes : IList {
+
+		private List<XmlAnyElementAttribute> List = new List<XmlAnyElementAttribute> ();
+
+		int IList.Add (object value)
+		{
+			return (List as IList).Add (value);
+		}
+
+		void IList.Clear ()
+		{
+			List.Clear ();
+		}
+
+		bool IList.Contains (object value)
+		{
+			return (List as IList).Contains (value);
+		}
+
+		int IList.IndexOf (object value)
+		{
+			return (List as IList).IndexOf (value);
+		}
+
+		void IList.Insert (int index, object value)
+		{
+			(List as IList).Insert (index, value);
+		}
+
+		bool IList.IsFixedSize {
+			get { return (List as IList).IsFixedSize; }
+		}
+
+		bool IList.IsReadOnly {
+			get { return (List as IList).IsReadOnly; }
+		}
+
+		void IList.Remove (object value)
+		{
+			(List as IList).Remove (value);
+		}
+
+		void IList.RemoveAt (int index)
+		{
+			List.RemoveAt (index);
+		}
+
+		object IList.this [int index] {
+			get { return (List as IList) [index]; }
+			set { (List as IList) [index] = value; }
+		}
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			(List as ICollection).CopyTo (array, index);
+		}
+
+		public int Count {
+			get { return List.Count; }
+		}
+
+		bool ICollection.IsSynchronized {
+			get { return (List as ICollection).IsSynchronized; }
+		}
+
+		object ICollection.SyncRoot {
+			get { return (List as ICollection).SyncRoot; }
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return (List as IEnumerable).GetEnumerator ();
+		}
+#else
+	public class XmlAnyElementAttributes : CollectionBase {
+#endif
 		
 		public XmlAnyElementAttribute this[int index] 
 		{
@@ -55,7 +128,7 @@ namespace System.Xml.Serialization
 
 		public int Add(XmlAnyElementAttribute attribute)
 		{
-			return List.Add(attribute);
+			return (List as IList).Add (attribute);
 		}
 
 		public bool Contains(XmlAnyElementAttribute attribute)

@@ -120,7 +120,7 @@ namespace System.Xml.Serialization
 			//       debugging pourposes by adding the "nofallback" option.
 			//       For example: MONO_XMLSERIALIZER_THS=0,nofallback
 			
-#if TARGET_JVM || MOBILE
+#if TARGET_JVM || NET_2_1
 			string db = null;
 			string th = null;
 			generationThreshold = -1;
@@ -422,9 +422,15 @@ namespace System.Xml.Serialization
 			}
 		}
 
+#if MOONLIGHT
+		static Encoding DefaultEncoding = Encoding.UTF8;
+#else
+		static Encoding DefaultEncoding = Encoding.Default;
+#endif
+
 		public void Serialize (Stream stream, object o)
 		{
-			XmlTextWriter xmlWriter = new XmlTextWriter (stream, System.Text.Encoding.Default);
+			XmlTextWriter xmlWriter = new XmlTextWriter (stream, DefaultEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, null);
 		}
@@ -443,7 +449,7 @@ namespace System.Xml.Serialization
 
 		public void Serialize (Stream stream, object o, XmlSerializerNamespaces	namespaces)
 		{
-			XmlTextWriter xmlWriter	= new XmlTextWriter (stream, System.Text.Encoding.Default);
+			XmlTextWriter xmlWriter	= new XmlTextWriter (stream, DefaultEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, namespaces);
 		}

@@ -296,7 +296,7 @@ namespace System.Xml.Serialization
 				{
 					if (val.Equals (member.DefaultValue)) return false;
 					Type t = Enum.GetUnderlyingType(val.GetType());
-					val = Convert.ChangeType (val, t);
+					val = Convert.ChangeType (val, t, null);
 				}
 				if (val != null && val.Equals (member.DefaultValue)) return false;
 			}

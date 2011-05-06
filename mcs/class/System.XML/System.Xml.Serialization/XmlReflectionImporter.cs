@@ -618,7 +618,16 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;
 		}
-
+#if MOONLIGHT
+		// Enum.GetNames is not available in SL API
+		public static System.Collections.Generic.IEnumerable<string> GetEnumNames (Type type)
+		{
+			System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string> ();
+			foreach (FieldInfo fi in type.GetFields (BindingFlags.Static | BindingFlags.Public))
+				names.Add (fi.Name);
+			return names;
+		}
+#endif
 		XmlTypeMapping ImportEnumMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
 			Type type = typeData.Type;
@@ -632,10 +641,13 @@ namespace System.Xml.Serialization {
 			map.IsNullable = false;
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
-			string [] names = Enum.GetNames (type);
 			ArrayList members = new ArrayList();
-			foreach (string name in names)
-			{
+#if MOONLIGHT
+			foreach (string name in GetEnumNames (type)) {
+#else
+			string [] names = Enum.GetNames (type);
+			foreach (string name in names) {
+#endif
 				FieldInfo field = type.GetField (name);
 				string xmlName = null;
 				if (field.IsDefined(typeof(XmlIgnoreAttribute), false))
@@ -1021,7 +1033,7 @@ namespace System.Xml.Serialization {
 							+ " enumeration value '{1}' for element '{1} from"
 							+ " namespace '{2}'.", choiceEnumType, elem.ElementName,
 							elem.Namespace));
-					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname);
+					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname, false);
 				}
 					
 				list.Add (elem);
@@ -1129,11 +1141,15 @@ namespace System.Xml.Serialization {
 			if (defaultValue == DBNull.Value || typeData.SchemaType != SchemaTypes.Enum)
 				return defaultValue;
 
+#if MOONLIGHT
+			string namedValue = (defaultValue as Enum).ToString ("g");
+			string decimalValue = (defaultValue as Enum).ToString ("d");
+#else
 			// get string representation of enum value
 			string namedValue = Enum.Format (typeData.Type, defaultValue, "g");
 			// get decimal representation of enum value
 			string decimalValue = Enum.Format (typeData.Type, defaultValue, "d");
-
+#endif
 			// if decimal representation matches string representation, then
 			// the value is not defined in the enum type (as the "g" format
 			// will return the decimal equivalent of the value if the value

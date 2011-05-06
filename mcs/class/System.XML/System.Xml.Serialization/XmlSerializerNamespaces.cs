@@ -28,9 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Xml;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace System.Xml.Serialization
@@ -40,19 +39,21 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlSerializerNamespaces
 	{
-		private ListDictionary namespaces;
-			
+#if MOONLIGHT
+		private Dictionary<string,XmlQualifiedName> namespaces = new Dictionary<string,XmlQualifiedName> ();
+#else
+		private ListDictionary namespaces = new ListDictionary ();
+#endif
 		public XmlSerializerNamespaces ()
 		{
-			namespaces = new ListDictionary ();
 		}
-	
+
 		public XmlSerializerNamespaces(XmlQualifiedName[] namespaces)
 			: this()
 		{
 			foreach(XmlQualifiedName qname in namespaces) 
 			{
-				this.namespaces[qname.Name] = qname;
+				this.namespaces.Add (qname.Name, qname);
 			}
 		}
 	
@@ -87,12 +88,18 @@ namespace System.Xml.Serialization
 			}
 			return null;
 		}
-
+#if MOONLIGHT
+		internal IEnumerable<XmlQualifiedName> GetNamespaces ()
+		{
+			return namespaces.Values;
+		}
+#else
 		internal ListDictionary Namespaces
 		{
 			get {
 				return namespaces;
 			}
 		}
+#endif
 	}
 }

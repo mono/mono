@@ -246,14 +246,15 @@ namespace System.Xml.Serialization
 				return;
 			}
 #endif
-			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
 #if NET_2_0 && !MOONLIGHT
+			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
 			try {
 				_schema = serializable.GetSchema();
 			} catch (Exception) {
 				// LAMESPEC: .NET has a bad exception catch and swallows it silently.
 			}
 #else
+			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type);
 			_schema = serializable.GetSchema();
 #endif
 #if !MOONLIGHT

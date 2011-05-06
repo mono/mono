@@ -28,17 +28,91 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Xml.Serialization;
 using System.Collections;
-using System;
+using System.Collections.Generic;
 
 namespace System.Xml.Serialization
 {
 	/// <summary>
 	/// Summary description for XmlArrayItemAttributes.
 	/// </summary>
-	public class XmlArrayItemAttributes : CollectionBase
-	{
+#if MOONLIGHT
+	public class XmlArrayItemAttributes : IList {
+
+		private List<XmlArrayItemAttribute> List = new List<XmlArrayItemAttribute> ();
+
+		int IList.Add (object value)
+		{
+			return (List as IList).Add (value);
+		}
+
+		void IList.Clear ()
+		{
+			List.Clear ();
+		}
+
+		bool IList.Contains (object value)
+		{
+			return (List as IList).Contains (value);
+		}
+
+		int IList.IndexOf (object value)
+		{
+			return (List as IList).IndexOf (value);
+		}
+
+		void IList.Insert (int index, object value)
+		{
+			(List as IList).Insert (index, value);
+		}
+
+		bool IList.IsFixedSize {
+			get { return (List as IList).IsFixedSize; }
+		}
+
+		bool IList.IsReadOnly {
+			get { return (List as IList).IsReadOnly; }
+		}
+
+		void IList.Remove (object value)
+		{
+			(List as IList).Remove (value);
+		}
+
+		void IList.RemoveAt (int index)
+		{
+			List.RemoveAt (index);
+		}
+
+		object IList.this [int index] {
+			get { return (List as IList) [index]; }
+			set { (List as IList) [index] = value; }
+		}
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			(List as ICollection).CopyTo (array, index);
+		}
+
+		public int Count {
+			get { return List.Count; }
+		}
+
+		bool ICollection.IsSynchronized {
+			get { return (List as ICollection).IsSynchronized; }
+		}
+
+		object ICollection.SyncRoot {
+			get { return (List as ICollection).SyncRoot; }
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return (List as IEnumerable).GetEnumerator ();
+		}
+#else
+	public class XmlArrayItemAttributes : CollectionBase {
+#endif
 
 		public XmlArrayItemAttribute this [int index] {
 			get {
@@ -51,7 +125,7 @@ namespace System.Xml.Serialization
 
 		public int Add (XmlArrayItemAttribute attribute)
 		{
-			return List.Add(attribute);
+			return (List as IList).Add (attribute);
 		}
 
 		public bool Contains(XmlArrayItemAttribute attribute)

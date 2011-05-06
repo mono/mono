@@ -900,10 +900,17 @@ namespace System.Xml.Serialization
 			return XmlCustomFormatter.ToDateTime (value);
 		}
 
+#if MOONLIGHT
+		protected static long ToEnum (string value, IDictionary h, string typeName)
+		{
+			return XmlCustomFormatter.ToEnum (value, (Hashtable) h, typeName, true);
+		}
+#else
 		protected static long ToEnum (string value, Hashtable h, string typeName)
 		{
 			return XmlCustomFormatter.ToEnum (value, h, typeName, true);
 		}
+#endif
 
 		protected static DateTime ToTime (string value)
 		{
