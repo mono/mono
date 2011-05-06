@@ -41,7 +41,7 @@ namespace System.Xml.Serialization
 	{
 		string _name;
 		int _index;
-		int _globalIndex;
+		int _globalIndex = -1;
 		int _specifiedGlobalIndex = -1;
 		TypeData _typeData;
 		MemberInfo _member;
