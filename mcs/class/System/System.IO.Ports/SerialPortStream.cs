@@ -39,7 +39,7 @@ namespace System.IO.Ports
 			TryBaudRate (baudRate);
 			
 			if (!set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake))
-				ThrowIOException (); // Probably Win32Exc for compatibility			
+				ThrowIOException (); // Probably Win32Exc for compatibility
 
 			read_timeout = readTimeout;
 			write_timeout = writeTimeout;
