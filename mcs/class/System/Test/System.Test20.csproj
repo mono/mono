@@ -327,7 +327,7 @@
     <Compile Include="System\UriTypeConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\nunit24\framework\nunit.framework.dll20.J2EE.csproj">
+    <ProjectReference Include="..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj">
       <Project>{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}</Project>
       <Name>nunit.framework.dll20.J2EE</Name>
     </ProjectReference>
