@@ -2534,6 +2534,7 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			
+			close_raised = true;
 			bool cancelled = FireClosingEvents (CloseReason.UserClosing, cancel);
 			if (!cancelled) {
 				if (!last_check || DialogResult != DialogResult.None) {
@@ -2544,11 +2545,11 @@ namespace System.Windows.Forms {
 					FireClosedEvents (CloseReason.UserClosing);
 				}
 				closing = true;
-				close_raised = true;
 				shown_raised = false;
 			} else {
 				DialogResult = DialogResult.None;
 				closing = false;
+				close_raised = false;
 			}
 				
 			return cancelled;
