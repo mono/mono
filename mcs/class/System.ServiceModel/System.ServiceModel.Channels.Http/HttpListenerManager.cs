@@ -111,11 +111,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			var l = new HttpListener ();
 
-#if false // FIXME: enable this once we found out why this causes problem
 			string uriString = element.HostNameComparisonMode == HostNameComparisonMode.Exact ? uri.ToString () : uri.Scheme + "://*" + uri.GetComponents (UriComponents.Port | UriComponents.Path, UriFormat.SafeUnescaped);
-#else
-			string uriString = uri.ToString ();
-#endif
 			if (!uriString.EndsWith ("/", StringComparison.Ordinal))
 				uriString += "/"; // HttpListener requires this mess.
 
