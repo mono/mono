@@ -152,7 +152,7 @@ namespace System.Runtime.Serialization
 
 			if (isNil) {
 				reader.Skip ();
-				if (!type.IsValueType)
+				if (!type.IsValueType || type == typeof (void))
 					return null;
 				else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
 					return null;
