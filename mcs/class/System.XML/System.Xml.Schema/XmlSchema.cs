@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
@@ -291,19 +292,28 @@ namespace System.Xml.Schema
 		// It is used by XmlSchemaCollection.Add() and XmlSchemaSet.Remove().
 		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
 		{
-			Hashtable handledUris = new Hashtable ();
+			var handledUris = new List<CompiledSchemaMemo> ();
 			CompileSubset (handler, col, resolver, handledUris);
 		}
 
 		// It is used by XmlSchemaSet.Compile().
-		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver, Hashtable handledUris)
+		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver, List<CompiledSchemaMemo> handledUris)
 		{
 			if (SourceUri != null && SourceUri.Length > 0) {
-				if (handledUris.Contains (SourceUri))
+				// if it has line info and are the same as one of existing info, then skip it.
+				if (Contains (handledUris))
 					return;
-				handledUris.Add (SourceUri, SourceUri);
+				handledUris.Add (new CompiledSchemaMemo () {  SourceUri = this.SourceUri, LineNumber = this.LineNumber, LinePosition = this.LinePosition});
 			}
 			DoCompile (handler, handledUris, col, resolver);
+		}
+
+		bool Contains (List<CompiledSchemaMemo> handledUris)
+		{
+			foreach (var i in handledUris)
+				if (i.SourceUri.Equals (SourceUri) && i.LineNumber != 0 && i.LineNumber == LineNumber && i.LinePosition == LinePosition)
+					return true;
+			return false;
 		}
 
 		void SetParent ()
@@ -314,7 +324,7 @@ namespace System.Xml.Schema
 				Includes [i].SetParent (this);
 		}
 
-		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
+		void DoCompile (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlSchemaSet col, XmlResolver resolver)
 		{
 			SetParent ();
 			CompilationId = col.CompilationId;
@@ -477,7 +487,7 @@ namespace System.Xml.Schema
 #endif
 		}
 
-		void ProcessExternal (ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
+		void ProcessExternal (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
 		{
 			if (ext == null) {
 				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
@@ -496,10 +506,11 @@ namespace System.Xml.Schema
 				string url = null;
 				if (resolver != null) {
 					url = GetResolvedUri (resolver, ext.SchemaLocation);
-					if (handledUris.Contains (url))
-						// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
-						return;
-					handledUris.Add (url, url);
+					foreach (var i in handledUris)
+						if (i.SourceUri.Equals (url))
+							// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
+							return;
+					handledUris.Add (new CompiledSchemaMemo () { SourceUri = url });
 					try {
 						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
 					} catch (Exception) {
@@ -589,7 +600,7 @@ namespace System.Xml.Schema
 		}
 
 
-		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaSet col)
+		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaSet col)
 		{
 			foreach (XmlSchemaExternal ext in s.Includes)
 				s.ProcessExternal (handler, handledUris, resolver, ext, col);
@@ -991,5 +1002,12 @@ namespace System.Xml.Schema
 		{
 			return new XmlSchemaSerializationWriter ();
 		}
+	}
+	
+	class CompiledSchemaMemo
+	{
+		public string SourceUri;
+		public int LineNumber;
+		public int LinePosition;
 	}
 }
