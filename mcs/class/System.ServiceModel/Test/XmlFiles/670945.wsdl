@@ -1,0 +1,66 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" targetNamespace="http://www.onvif.org/ver10/device/wsdl">
+  <wsdl:types>
+
+    <xs:schema
+    targetNamespace="http://www.onvif.org/ver10/schema"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tt="http://www.onvif.org/ver10/schema">
+
+      <xs:complexType name="SystemDateTime">
+        <xs:sequence>
+          <xs:element name="foobar" type="xs:string" minOccurs="0" />
+          <xs:element name="Extension" type="tt:SystemDateTimeExtension" minOccurs="0"/>
+        </xs:sequence>
+        <!-- xs:anyAttribute processContents="lax"/ -->
+      </xs:complexType>
+
+      <xs:complexType name="SystemDateTimeExtension">
+        <xs:sequence>
+          <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+
+    </xs:schema>
+
+    <xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified">
+      <xs:element name="GetSystemDateAndTime">
+        <xs:complexType>
+          <xs:sequence/>
+
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetSystemDateAndTimeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SystemDateAndTime" type="tt:SystemDateTime" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSystemDateAndTimeRequest">
+    <wsdl:part name="parameters" element="tds:GetSystemDateAndTime"/>
+  </wsdl:message>
+  <wsdl:message name="GetSystemDateAndTimeResponse">
+    <wsdl:part name="parameters" element="tds:GetSystemDateAndTimeResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="Device">
+    <wsdl:operation name="GetSystemDateAndTime">
+      <wsdl:input message="tds:GetSystemDateAndTimeRequest"/>
+      <wsdl:output message="tds:GetSystemDateAndTimeResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DeviceBinding" type="tds:Device">
+    <wsdl:operation name="GetSystemDateAndTime">
+      <soap:operation soapAction="http://www.onvif.org/ver10/device/wsdl/GetSystemDateAndTime"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+</wsdl:definitions>
+

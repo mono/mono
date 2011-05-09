@@ -45,30 +45,68 @@ namespace System.ServiceModel.Description
 	public class DataContractSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
-		bool enabled = true;
+		IWsdlImportExtension impl = new WsdlDataImportExtensionInternal ();
 
-		public bool Enabled {
-			get { return enabled; }
-			set { enabled = value; }
-		}
+		public bool Enabled { get; set; }
 
 		void IWsdlImportExtension.BeforeImport (
 			ServiceDescriptionCollection wsdlDocuments,
 			XmlSchemaSet xmlSchemas,
 			ICollection<XmlElement> policy)
 		{
+			if (wsdlDocuments == null)
+				throw new ArgumentNullException ("wsdlDocuments");
+			if (xmlSchemas == null)
+				throw new ArgumentNullException ("xmlSchemas");
+
+			if (!Enabled)
+				return;
+
+			impl.BeforeImport (wsdlDocuments, xmlSchemas, policy);
 		}
 
 		void IWsdlImportExtension.ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
-			if (!enabled)
-				return;
-
 			if (importer == null)
 				throw new ArgumentNullException ("importer");
 			if (context == null)
 				throw new ArgumentNullException ("context");
+
+			if (!Enabled)
+				return;
+
+			impl.ImportContract (importer, context);
+		}
+
+		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
+			WsdlEndpointConversionContext context)
+		{
+		}
+	}
+
+	class WsdlDataImportExtensionInternal : IWsdlImportExtension
+	{
+		WsdlImporter importer;
+		WsdlContractConversionContext context;
+
+		XsdDataContractImporter dc_importer;
+
+		XmlSchemaSet schema_set_in_use;
+
+		public bool ImportXmlType { get; set; }
+
+		public void ImportEndpoint (WsdlImporter importer, WsdlEndpointConversionContext context)
+		{
+			// not implemented? nothing to do?
+		}
+
+		public void BeforeImport (ServiceDescriptionCollection wsdlDocuments, XmlSchemaSet xmlSchemas, ICollection<XmlElement> policy)
+		{
+		}
+
+		public void ImportContract (WsdlImporter importer, WsdlContractConversionContext context)
+		{
 			if (this.importer != null || this.context != null)
 				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
 
@@ -92,13 +130,6 @@ namespace System.ServiceModel.Description
 				this.context = null;
 			}
 		}
-
-		WsdlImporter importer;
-		WsdlContractConversionContext context;
-
-		XsdDataContractImporter dc_importer;
-
-		XmlSchemaSet schema_set_in_use;
 
 		void DoImportContract ()
 		{
@@ -174,11 +205,15 @@ namespace System.ServiceModel.Description
 				throw new Exception ("Could not resolve : " + qname.ToString ());
 
 			var ct = element.ElementSchemaType as XmlSchemaComplexType;
-			if (ct == null) // simple type
-				parts.Add (CreateMessagePart (element));
-			else // complex type
+			MessagePartDescription part;
+			if (ct == null) { // simple type
+				if ((part = CreateMessagePart (element)) != null)
+					parts.Add (part);
+			} else { // complex type
 				foreach (var elem in GetElementsInParticle (ct.ContentTypeParticle))
-					parts.Add (CreateMessagePart (elem));
+					if ((part = CreateMessagePart (elem)) != null)
+						parts.Add (part);
+			}
 		}
 
 		IEnumerable<XmlSchemaElement> GetElementsInParticle (XmlSchemaParticle p)
@@ -197,6 +232,10 @@ namespace System.ServiceModel.Description
 		MessagePartDescription CreateMessagePart (XmlSchemaElement elem)
 		{
 			var part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
+			if (part.Importer != null) // already generated.
+				return null;
+			if (!dc_importer.CanImport (schema_set_in_use, elem))
+				return null;
 			part.Importer = dc_importer;
 			var typeQName = dc_importer.Import (schema_set_in_use, elem);
 			part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
@@ -274,11 +313,6 @@ namespace System.ServiceModel.Description
 			}
 
 			return null;
-		}
-
-		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
-			WsdlEndpointConversionContext context)
-		{
 		}
 	}
 }

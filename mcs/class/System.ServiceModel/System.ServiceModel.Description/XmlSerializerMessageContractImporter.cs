@@ -39,16 +39,38 @@ namespace System.ServiceModel.Description
 	public class XmlSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
+		IWsdlImportExtension impl = new WsdlDataImportExtensionInternal () { ImportXmlType = true };
+
+		public bool Enabled { get; set; }
+
 		void IWsdlImportExtension.BeforeImport (
 			ServiceDescriptionCollection wsdlDocuments,
 			XmlSchemaSet xmlSchemas,
 			ICollection<XmlElement> policy)
 		{
+			if (wsdlDocuments == null)
+				throw new ArgumentNullException ("wsdlDocuments");
+			if (xmlSchemas == null)
+				throw new ArgumentNullException ("xmlSchemas");
+
+			if (!Enabled)
+				return;
+
+			impl.BeforeImport (wsdlDocuments, xmlSchemas, policy);
 		}
 
 		void IWsdlImportExtension.ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
+			if (importer == null)
+				throw new ArgumentNullException ("importer");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			if (!Enabled)
+				return;
+
+			impl.ImportContract (importer, context);
 		}
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,

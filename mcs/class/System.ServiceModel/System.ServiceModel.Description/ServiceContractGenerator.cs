@@ -724,7 +724,7 @@ namespace System.ServiceModel.Description
 		string GetCodeTypeName (QName mappedTypeName)
 		{
 			if (mappedTypeName.Namespace == ms_arrays_ns)
-				return DataContractSerializerMessageContractImporter.GetCLRTypeName (mappedTypeName.Name.Substring ("ArrayOf".Length)) + "[]";
+				return WsdlDataImportExtensionInternal.GetCLRTypeName (mappedTypeName.Name.Substring ("ArrayOf".Length)) + "[]";
 			return mappedTypeName.Name;
 		}
 
