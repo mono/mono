@@ -1,3 +1,4 @@
+NUnitMoonHelper.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
 FeatureBased/Features.Client/DataContractTesterProxy.cs
@@ -41,6 +42,7 @@ System.ServiceModel.Channels/BindingElementTest.cs
 System.ServiceModel.Channels/BindingTest.cs
 System.ServiceModel.Channels/CalcSampleProxy.cs
 System.ServiceModel.Channels/CommunicationObjectTest.cs
+System.ServiceModel.Channels/CommunicationObjectSyncTest.cs
 System.ServiceModel.Channels/ConnectionOrientedTransportBindingElementTest.cs
 System.ServiceModel.Channels/CustomBindingTest.cs
 System.ServiceModel.Channels/CustomPolicyConversionContext.cs
