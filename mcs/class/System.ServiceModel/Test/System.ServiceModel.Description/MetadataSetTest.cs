@@ -50,7 +50,6 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadFrom ()
 		{
 			XmlReader xr = XmlTextReader.Create ("Test/XmlFiles/one.xml");
