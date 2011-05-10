@@ -566,6 +566,9 @@ namespace System.ServiceModel.MonoInternal
 
 		internal virtual Message RequestCorrelated (Message msg, TimeSpan timeout, IOutputChannel channel)
 		{
+			// FIXME: implement ConcurrencyMode check:
+			// if it is .Single && this instance for a callback channel && the operation is invoked inside service operation, then error.
+
 			DateTime startTime = DateTime.Now;
 			OutputChannel.Send (msg, timeout);
 			return ((IDuplexChannel) channel).Receive (timeout - (DateTime.Now - startTime));
