@@ -1,0 +1,154 @@
+<Metadata xmlns="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex">
+  <wsx:MetadataSection Dialect="http://schemas.xmlsoap.org/wsdl/" Identifier="http://myns/echo" xmlns="">
+    <wsdl:definitions targetNamespace="http://myns/echo" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://myns/echo" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing">
+      <wsdl:types>
+        <xsd:schema targetNamespace="http://myns/echo/Imports">
+          <xsd:import namespace="http://myns/echo"/>
+          <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          <xsd:import namespace="http://schemas.datacontract.org/2004/07/"/>
+        </xsd:schema>
+      </wsdl:types>
+      <wsdl:message name="IEchoService_Echo_InputMessage">
+        <wsdl:part name="parameters" element="tns:Echo"/>
+      </wsdl:message>
+      <wsdl:message name="IEchoService_Echo_OutputMessage">
+        <wsdl:part name="parameters" element="tns:EchoResponse"/>
+      </wsdl:message>
+      <wsdl:message name="IEchoService_DoubleIt_InputMessage">
+        <wsdl:part name="parameters" element="tns:DoubleIt"/>
+      </wsdl:message>
+      <wsdl:message name="IEchoService_DoubleIt_OutputMessage">
+        <wsdl:part name="parameters" element="tns:DoubleItResponse"/>
+      </wsdl:message>
+      <wsdl:portType name="IEchoService">
+        <wsdl:operation name="Echo">
+          <wsdl:input wsaw:Action="http://myns/echo/IEchoService/Echo" message="tns:IEchoService_Echo_InputMessage"/>
+          <wsdl:output wsaw:Action="http://myns/echo/IEchoService/EchoResponse" message="tns:IEchoService_Echo_OutputMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="DoubleIt">
+          <wsdl:input wsaw:Action="http://myns/echo/IEchoService/DoubleIt" message="tns:IEchoService_DoubleIt_InputMessage"/>
+          <wsdl:output wsaw:Action="http://myns/echo/IEchoService/DoubleItResponse" message="tns:IEchoService_DoubleIt_OutputMessage"/>
+        </wsdl:operation>
+      </wsdl:portType>
+    </wsdl:definitions>
+  </wsx:MetadataSection>
+  <wsx:MetadataSection Dialect="http://schemas.xmlsoap.org/wsdl/" Identifier="http://tempuri.org/" xmlns="">
+    <wsdl:definitions name="EchoService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:i0="http://myns/echo" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing">
+      <wsdl:import namespace="http://myns/echo" location=""/>
+      <wsdl:types/>
+      <wsdl:binding name="BasicHttpBinding_IEchoService" type="i0:IEchoService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Echo">
+          <soap:operation soapAction="http://myns/echo/IEchoService/Echo" style="document"/>
+          <wsdl:input>
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output>
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="DoubleIt">
+          <soap:operation soapAction="http://myns/echo/IEchoService/DoubleIt" style="document"/>
+          <wsdl:input>
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output>
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+      </wsdl:binding>
+      <wsdl:service name="EchoService">
+        <wsdl:port name="BasicHttpBinding_IEchoService" binding="tns:BasicHttpBinding_IEchoService">
+          <soap:address location="http://192.168.0.1:8080/echo/svc"/>
+        </wsdl:port>
+      </wsdl:service>
+    </wsdl:definitions>
+  </wsx:MetadataSection>
+  <wsx:MetadataSection Dialect="http://www.w3.org/2001/XMLSchema" Identifier="http://myns/echo" xmlns="">
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://myns/echo" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://myns/echo">
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/"/>
+      <xs:element name="Echo">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="msg" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="num" type="xs:int"/>
+            <xs:element minOccurs="0" name="d" nillable="true" type="q1:dc" xmlns:q1="http://schemas.datacontract.org/2004/07/"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="EchoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="EchoResult" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DoubleIt">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="it" type="xs:int"/>
+            <xs:element minOccurs="0" name="prefix" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DoubleItResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="DoubleItResult" nillable="true" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsx:MetadataSection>
+  <wsx:MetadataSection Dialect="http://www.w3.org/2001/XMLSchema" Identifier="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="">
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+      <xs:element name="anyType" nillable="true" type="xs:anyType"/>
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+      <xs:element name="boolean" nillable="true" type="xs:boolean"/>
+      <xs:element name="byte" nillable="true" type="xs:byte"/>
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+      <xs:element name="decimal" nillable="true" type="xs:decimal"/>
+      <xs:element name="double" nillable="true" type="xs:double"/>
+      <xs:element name="float" nillable="true" type="xs:float"/>
+      <xs:element name="int" nillable="true" type="xs:int"/>
+      <xs:element name="long" nillable="true" type="xs:long"/>
+      <xs:element name="QName" nillable="true" type="xs:QName"/>
+      <xs:element name="short" nillable="true" type="xs:short"/>
+      <xs:element name="string" nillable="true" type="xs:string"/>
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+      <xs:element name="char" nillable="true" type="tns:char"/>
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int"/>
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration"/>
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid"/>
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName"/>
+    </xs:schema>
+  </wsx:MetadataSection>
+  <wsx:MetadataSection Dialect="http://www.w3.org/2001/XMLSchema" Identifier="http://schemas.datacontract.org/2004/07/" xmlns="">
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/">
+      <xs:complexType name="dc">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="foo" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="dc" nillable="true" type="tns:dc"/>
+    </xs:schema>
+  </wsx:MetadataSection>
+</Metadata>
