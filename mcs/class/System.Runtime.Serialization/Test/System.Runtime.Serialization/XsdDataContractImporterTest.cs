@@ -121,7 +121,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CanImportTest ()
 		{
 			NewXmlSchemaSet ();
@@ -147,7 +146,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CanImportTest2 ()
 		{
 			NewXmlSchemaSet ();

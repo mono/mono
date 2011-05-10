@@ -179,7 +179,7 @@ namespace System.Runtime.Serialization
 				return true; // while it just ignores...
 
 			if (!schemas.GlobalTypes.Contains (typeName))
-				throw new InvalidDataContractException (String.Format ("Type {0} is not found in the schemas", typeName));
+				return false;
 
 			return CanImport (schemas, schemas.GlobalTypes [typeName] as XmlSchemaType);
 		}
