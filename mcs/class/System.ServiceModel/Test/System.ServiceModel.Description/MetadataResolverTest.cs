@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Text;
 using System.Runtime.Serialization;
 using System.ServiceModel.Description;
@@ -37,13 +40,56 @@ using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel.Description
 {
-	//[TestFixture]
+	[TestFixture]
 	public class MetadataResolverTest
 	{
-		//string url = "http://localhost:8080/echo/mex";
-		string url = "http://192.168.0.1:8080/echo/mex";
+		string url = "http://localhost:37564/echo/mex";
+		//string url = "http://192.168.0.1:8080/echo/mex";
+
+		static HttpListener listener;
+		IAsyncResult current_request;
+		int remaining;
+
+		static readonly string mex = File.ReadAllText ("Test/System.ServiceModel.Description/dump.xml");
+
+		[SetUp]
+		public void StartupServer ()
+		{
+			if (listener != null)
+				listener.Stop ();
+			listener = new HttpListener ();
+			listener.Prefixes.Add ("http://*:37564/echo/");
+			listener.Start ();
+			current_request = listener.BeginGetContext (OnReceivedRequest, null);
+			remaining = 1;
+		}
+		
+		void OnReceivedRequest (IAsyncResult result)
+		{
+			try {
+				var ctx = listener.EndGetContext (result);
+				current_request = null;
+				ctx.Response.ContentType = "application/soap+xml";
+				ctx.Response.ContentLength64 = mex.Length;
+				using (var sw = new StreamWriter (ctx.Response.OutputStream))
+					sw.Write (mex);
+				ctx.Response.Close ();
+				if (--remaining > 0)
+					current_request = listener.BeginGetContext (OnReceivedRequest, null);
+			} catch (Exception ex) {
+				// ignore server errors in this test.
+			}
+		}
+		
+		[TearDown]
+		public void ShutdownServer ()
+		{
+			listener.Stop ();
+			listener = null;
+		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ResolveNoEndpoint ()
 		{
 			ServiceEndpointCollection endpoints = MetadataResolver.Resolve (
@@ -55,6 +101,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve1 ()
 		{
 			ServiceEndpointCollection endpoints = MetadataResolver.Resolve (
@@ -64,6 +111,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve2 ()
 		{
 			ServiceEndpointCollection endpoints = MetadataResolver.Resolve (
@@ -75,6 +123,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve3 ()
 		{
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
@@ -90,6 +139,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve4 ()
 		{
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
@@ -106,6 +156,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve5 ()
 		{
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
@@ -122,6 +173,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Resolve6 ()
 		{
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
@@ -153,6 +205,7 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Ignore ("does not fail on .NET either")]
 		public void ErrResolve2 ()
 		{
 			//Mex cannot be fetched with HttpGet from the given url
@@ -194,6 +247,7 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Ignore ("does not fail on .NET either")]
 		public void ErrResolve5 ()
 		{
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
