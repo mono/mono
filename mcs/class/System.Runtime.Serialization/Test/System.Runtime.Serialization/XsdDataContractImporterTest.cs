@@ -45,6 +45,8 @@ using System.Xml.Serialization;
 using Microsoft.CSharp;
 using NUnit.Framework;
 
+using QName = System.Xml.XmlQualifiedName;
+
 namespace MonoTests.System.Runtime.Serialization
 {
 	[TestFixture]
@@ -165,7 +167,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotWorking")]
 		public void CanImportNullTest1 ()
 		{
 			XsdDataContractImporter xsdi = GetImporter ();
@@ -173,7 +174,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CanImportNullTest2 ()
 		{
@@ -182,7 +182,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CanImportNullTest3 ()
 		{
@@ -411,14 +410,28 @@ namespace MonoTests.System.Runtime.Serialization
 
 		CodeCompileUnit DoImport (params string [] schemaFiles)
 		{
+			return DoImport (false, schemaFiles);
+		}
+
+		CodeCompileUnit DoImport (bool xmlType, params string [] schemaFiles)
+		{
 			var ccu = new CodeCompileUnit ();
 			var xdi = new XsdDataContractImporter (ccu);
+			if (xmlType)
+				xdi.Options = new ImportOptions () { ImportXmlType = true };
 			var xss = new XmlSchemaSet ();
 			foreach (var schemaFile in schemaFiles)
 				xss.Add (null, schemaFile);
 			xdi.Import (xss);
 
 			return ccu;
+		}
+
+		string GenerateCode (CodeCompileUnit ccu)
+		{
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, null);
+			return sw.ToString ();
 		}
 
 		// FIXME: this set of tests need further assertion in each test case. Right now it just checks if things import or fail just fine.
@@ -430,9 +443,22 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void ImportTestX0_2 ()
+		{
+			var ccu = DoImport (true, "Test/Resources/Schemas/ns0.xsd");
+			Assert.IsTrue (GenerateCode (ccu).IndexOf ("class") < 0, "#1");
+		}
+
+		[Test]
 		public void ImportTestX1 ()
 		{
 			DoImport ("Test/Resources/Schemas/ns1.xsd");
+		}
+
+		[Test]
+		public void ImportTestX1_2 ()
+		{
+			Assert.AreEqual (GenerateCode (DoImport ("Test/Resources/Schemas/ns1.xsd")), GenerateCode (DoImport (true, "Test/Resources/Schemas/ns1.xsd")), "#1");
 		}
 
 		[Test]
@@ -442,10 +468,29 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void ImportTestX2_2 ()
+		{
+			Assert.AreEqual (GenerateCode (DoImport ("Test/Resources/Schemas/ns2.xsd")), GenerateCode (DoImport (true, "Test/Resources/Schemas/ns2.xsd")), "#1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX3 ()
 		{
 			DoImport ("Test/Resources/Schemas/ns3.xsd");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTestX3_2 ()
+		{
+			var ccu = DoImport (true, "Test/Resources/Schemas/ns3.xsd");
+			var code = GenerateCode (ccu);
+			Assert.IsTrue (code.IndexOf ("class T2") > 0, "#1");
+			Assert.IsTrue (code.IndexOf ("IXmlSerializable") > 0, "#2");
+			Assert.IsTrue (code.IndexOf ("WriteXml") > 0, "#3");
+			Assert.IsTrue (code.IndexOf ("XmlRootAttribute(ElementName=\"E2\", Namespace=\"urn:bar\"") > 0, "#4");
+			Assert.IsTrue (code.IndexOf ("XmlSchemaProviderAttribute(\"ExportSchema\")") > 0, "#5");
 		}
 
 		[Test]
@@ -641,7 +686,13 @@ namespace MonoTests.System.Runtime.Serialization
 		[Test]
 		public void ImportTestX33 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns32.xsd");
+			DoImport ("Test/Resources/Schemas/ns33.xsd");
+		}
+
+		[Test]
+		public void ImportTestX34 ()
+		{
+			DoImport (true, "Test/Resources/Schemas/ns34.xsd", "Test/Resources/Schemas/ns34_2.xsd");
 		}
 
 		/* Helper methods */
