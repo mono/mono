@@ -82,8 +82,7 @@ namespace System.ServiceModel.Description
 			reader.Read ();
 
 			MetadataSectionSerializer xs = new MetadataSectionSerializer ();
-			while (reader.NodeType == XmlNodeType.Element && reader.LocalName == "MetadataSection" &&
-					reader.NamespaceURI == "http://schemas.xmlsoap.org/ws/2004/09/mex") {
+			for (reader.MoveToContent (); reader.NodeType == XmlNodeType.Element && reader.LocalName == "MetadataSection" && reader.NamespaceURI == "http://schemas.xmlsoap.org/ws/2004/09/mex"; reader.MoveToContent ()) {
 				MetadataSection ms = (MetadataSection) xs.Deserialize (reader);
 				MetadataSections.Add (ms);
 			}
