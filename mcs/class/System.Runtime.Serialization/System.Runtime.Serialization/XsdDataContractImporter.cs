@@ -78,7 +78,8 @@ namespace System.Runtime.Serialization
 			var cns = GetCodeNamespace (qname.Namespace);
 			var td = new CodeTypeDeclaration () {
 				Name = GetUniqueName (CodeIdentifier.MakeValid (qname.Name), cns),
-				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public };
+				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public,
+				IsPartial = true };
 			cns.Types.Add (td);
 			td.BaseTypes.Add (new CodeTypeReference (typeof (IXmlSerializable)));
 
@@ -193,7 +194,13 @@ namespace System.Runtime.Serialization
 			if (!schemas.IsCompiled)
 				schemas.Compile ();
 
-			return CanImport (schemas, element.ElementSchemaType as XmlSchemaType);
+			if (element.ElementSchemaType != null)
+				return CanImport (schemas, element.ElementSchemaType as XmlSchemaType);
+			else if (element.SchemaTypeName != null && !element.SchemaTypeName.Equals (QName.Empty))
+				return CanImport (schemas, element.SchemaTypeName);
+			else
+				// anyType
+				return true;
 		}
 
 
@@ -410,6 +417,9 @@ namespace System.Runtime.Serialization
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
 
+			if (!schemas.IsCompiled)
+				schemas.Compile ();
+
 			if (IsPredefinedType (typeName))
 				return;
 
@@ -427,6 +437,9 @@ namespace System.Runtime.Serialization
 				throw new ArgumentNullException ("element");
 
 			var elname = element.QualifiedName;
+
+			if (IsPredefinedType (element.SchemaTypeName))
+				return elname;
 
 			switch (elname.Namespace) {
 			case KnownTypeCollection.MSSimpleNamespace:
@@ -446,8 +459,19 @@ namespace System.Runtime.Serialization
 			}
 
 			// FIXME: use element to fill nillable and arrays.
-			var qname = element.SchemaType != null ? element.QualifiedName : element.ElementSchemaType.QualifiedName;
-			Import (schemas, element.ElementSchemaType, qname);
+			var qname =
+				elname != null && !elname.Equals (QName.Empty) ? elname :
+				element.ElementSchemaType != null ? element.ElementSchemaType.QualifiedName :
+				qname_anytype;
+
+			if (element.ElementSchemaType != null)
+				Import (schemas, element.ElementSchemaType, qname);
+			else if (element.SchemaTypeName != null && !element.SchemaTypeName.Equals (QName.Empty))
+				Import (schemas, schemas.GlobalTypes [element.SchemaTypeName] as XmlSchemaType, qname);
+			// otherwise it is typeless == anyType.
+			else
+				Import (schemas, XmlSchemaType.GetBuiltInComplexType (qname_anytype), qname);
+
 			return qname;
 		}
 
@@ -491,7 +515,8 @@ namespace System.Runtime.Serialization
 
 			var td = new CodeTypeDeclaration () {
 				Name = GetUniqueName (CodeIdentifier.MakeValid (qname.Name), cns),
-				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public };
+				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public,
+				IsPartial = true };
 			cns.Types.Add (td);
 
 			var info = new TypeImportInfo () { ClrType = clrRef, XsdType = type,  XsdTypeName = qname };
@@ -789,6 +814,8 @@ namespace System.Runtime.Serialization
 
 		bool IsPredefinedType (XmlQualifiedName qname)
 		{
+			if (qname == null)
+				return false;
 			switch (qname.Namespace) {
 			case KnownTypeCollection.MSSimpleNamespace:
 				return KnownTypeCollection.GetPrimitiveTypeFromName (qname) != null;

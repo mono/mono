@@ -37,6 +37,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel.Description;
 using System.Xml;
@@ -70,6 +71,7 @@ namespace MonoTests.System.Runtime.Serialization
 				if (section.Metadata is XmlSchema)
 					xss.Add (section.Metadata as XmlSchema);
 
+			Assert.AreEqual (3, xss.Schemas ().Count, "#1");
 			return xss;
 		}
 
@@ -94,7 +96,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void GetCodeTypeReferenceTest ()
 		{
 			XsdDataContractImporter xsdi = GetImporter ();
@@ -102,7 +103,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetCodeTypeReferenceTest2 ()
 		{
 			NewXmlSchemaSet ();
@@ -258,7 +258,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportDataContract1 ()
 		{
 			NewXmlSchemaSet ();
@@ -286,7 +285,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportDataContract2 ()
 		{
 			NewXmlSchemaSet ();
@@ -315,7 +313,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
-		[Category ("NotWorking")]
 		public void ImportMessageEcho ()
 		{
 			XsdDataContractImporter xsdi = GetImporter ();
@@ -740,16 +737,19 @@ namespace MonoTests.System.Runtime.Serialization
 
 		private void CheckDataContractAttribute (CodeTypeDeclaration type, string msg)
 		{
-			Assert.AreEqual (3, type.CustomAttributes.Count, msg + "a");
+			// DebuggerStepThrouAttribute is insignificant. So, no reason to check the attribute count.
+			// Assert.AreEqual (3, type.CustomAttributes.Count, msg + "a");
 
 			// DebuggerStepThroughAttribute - skip it
 
 			//GeneratedCodeAttribute
-			CodeAttributeDeclaration ca = type.CustomAttributes [1];
-			Assert.AreEqual ("System.CodeDom.Compiler.GeneratedCodeAttribute", ca.Name, msg + "b");
+			var l = new List<CodeAttributeDeclaration> ();
+			foreach (CodeAttributeDeclaration a in type.CustomAttributes)
+				l.Add (a);
+			Assert.IsTrue (l.Any (a => a.Name == "System.CodeDom.Compiler.GeneratedCodeAttribute"), msg + "b");
 
-			ca = type.CustomAttributes [2];
-			Assert.AreEqual ("System.Runtime.Serialization.DataContractAttribute", ca.Name, msg + "c");
+			var ca = l.FirstOrDefault (a => a.Name == "System.Runtime.Serialization.DataContractAttribute");
+			Assert.IsNotNull (ca, msg + "b");
 			Assert.AreEqual (2, ca.Arguments.Count, msg + "d");
 		}
 
