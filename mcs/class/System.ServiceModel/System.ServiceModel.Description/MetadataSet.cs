@@ -71,6 +71,9 @@ namespace System.ServiceModel.Description
 
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
 			if (reader.NodeType != XmlNodeType.Element || reader.LocalName != "Metadata" || 
 					reader.NamespaceURI != "http://schemas.xmlsoap.org/ws/2004/09/mex") 
 				throw new InvalidOperationException (String.Format ("Unexpected : <{0} ..", reader.LocalName));
@@ -88,11 +91,16 @@ namespace System.ServiceModel.Description
 
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+
 			throw new NotImplementedException ();
 		}
 
 		public static MetadataSet ReadFrom (XmlReader reader)
 		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
 			XmlSerializer xs = new XmlSerializer (typeof (MetadataSet));
 			MetadataSet ms = (MetadataSet) xs.Deserialize (reader);
 
@@ -101,6 +109,8 @@ namespace System.ServiceModel.Description
 
 		public void WriteTo (XmlWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
 			writer.WriteStartElement ("Metadata", "http://schemas.xmlsoap.org/ws/2004/09/mex");
 
 			writer.WriteAttributeString ("xmlns", "xsd", "http://www.w3.org/2000/xmlns/", XmlSchema.Namespace);

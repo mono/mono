@@ -110,6 +110,7 @@ System.ServiceModel.Description/ContractDescriptionTest.cs
 System.ServiceModel.Description/FaultDescriptionTest.cs
 System.ServiceModel.Description/MetadataExchangeBindingsTest.cs
 System.ServiceModel.Description/MetadataResolverTest.cs
+System.ServiceModel.Description/MetadataSetTest.cs
 System.ServiceModel.Description/OperationDescriptionTest.cs
 System.ServiceModel.Description/ServiceAuthorizationBehaviorTest.cs
 System.ServiceModel.Description/ServiceContractGeneratorTest.cs
