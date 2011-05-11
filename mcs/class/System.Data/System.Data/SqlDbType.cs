@@ -70,7 +70,9 @@ namespace System.Data
 		Xml = 25,
 		Udt = 29,
 		Date = 31,
-		Time = 32
+		Time = 32,
+		DateTime2 = 33,
+		DateTimeOffset = 34
 #endif
 	}
 }
