@@ -236,12 +236,13 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // importing almost-invalid element. This test is almost missing the point.
 		public void ImportTest ()
 		{
 			XsdDataContractImporter xsdi = GetImporter ();
 			XmlSchemaElement element = new XmlSchemaElement();
-			//Assert.IsTrue (xsdi.CanImport (xss, element));
+			Assert.IsTrue (xsdi.CanImport (xss, new QName ("dc", "http://schemas.datacontract.org/2004/07/")), "#i01");
+			Assert.IsTrue (xsdi.CanImport (xss, element), "#i01-2");
 			Assert.AreEqual (new XmlQualifiedName ("anyType", XmlSchema.Namespace), xsdi.Import (xss, element), "#i02");
 
 			CodeCompileUnit ccu = xsdi.CodeCompileUnit;
@@ -318,7 +319,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportAll ()
 		{
 			NewXmlSchemaSet ();

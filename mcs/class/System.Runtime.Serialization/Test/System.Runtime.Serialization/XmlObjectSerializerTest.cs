@@ -315,7 +315,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]
-		[Category ("NotWorking")] // behavior changed in 3.5/SP1
 		public void SerializeSimpleXml ()
 		{
 			DataContractSerializer ser =
@@ -980,7 +979,6 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DeserializeDCWithNullableEnum ()
 		{
 			DCWithNullableEnum dc = Deserialize<DCWithNullableEnum> (
