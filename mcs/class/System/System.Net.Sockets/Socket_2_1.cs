@@ -495,6 +495,7 @@ namespace System.Net.Sockets {
 				args.SetLastOperation (async_op);
 				args.SocketError = SocketError.Success;
 				args.BytesTransferred = 0;
+                                args.Count = 0;
 			}
 
 			public void Accept ()
