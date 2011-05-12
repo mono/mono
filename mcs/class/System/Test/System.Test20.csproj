@@ -241,6 +241,7 @@
     <Compile Include="System.Configuration\SettingsPropertyValueTest.cs" />
     <Compile Include="System.IO.Compression\DeflateStreamTest.cs" />
     <Compile Include="System.IO.Compression\GzipStreamTest.cs" />
+    <Compile Include="System.IO.Ports\SerialPortTest.cs" />
     <Compile Include="System.Net.Configuration\ConnectionManagementSectionTest.cs" />
     <Compile Include="System.Net.Configuration\HttpWebRequestElementTest.cs" />
     <Compile Include="System.Net.Configuration\WebRequestModulesSectionTest.cs" />
