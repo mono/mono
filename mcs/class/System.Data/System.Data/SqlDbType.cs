@@ -69,6 +69,7 @@ namespace System.Data
 #if NET_2_0
 		Xml = 25,
 		Udt = 29,
+		Structured = 30,
 		Date = 31,
 		Time = 32,
 		DateTime2 = 33,
