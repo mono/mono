@@ -60,7 +60,7 @@ namespace System.Net.Sockets
 		}
 
 		public int BytesTransferred { get; internal set; }
-		public int Count { get; private set; }
+		public int Count { get; internal set; }
 		public bool DisconnectReuseSocket { get; set; }
 		public SocketAsyncOperation LastOperation { get; private set; }
 		public int Offset { get; private set; }
