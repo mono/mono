@@ -64,6 +64,7 @@ namespace System.ServiceModel.Description
 		List<OPair> operation_contexts = new List<OPair> ();
 
 		XsdDataContractImporter xsd_data_importer;
+		CodeCompileUnit xs_code_compile_unit;
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -155,6 +156,8 @@ namespace System.ServiceModel.Description
 
 			if (xsd_data_importer != null)
 				MergeCompileUnit (xsd_data_importer.CodeCompileUnit, ccu);
+			if (xs_code_compile_unit != null)
+				MergeCompileUnit (xs_code_compile_unit, ccu);
 
 			// Process extensions. Class first, then methods.
 			// (built-in ones must present before processing class extensions).
@@ -721,13 +724,6 @@ namespace System.ServiceModel.Description
 
 		const string ms_arrays_ns = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
 
-		string GetCodeTypeName (QName mappedTypeName)
-		{
-			if (mappedTypeName.Namespace == ms_arrays_ns)
-				return DataContractSerializerMessageContractImporter.GetCLRTypeName (mappedTypeName.Name.Substring ("ArrayOf".Length)) + "[]";
-			return mappedTypeName.Name;
-		}
-
 		private CodeExpression[] ExportMessages (MessageDescriptionCollection messages, CodeMemberMethod method, bool return_args)
 		{
 			CodeExpression [] args = null;
@@ -807,6 +803,8 @@ namespace System.ServiceModel.Description
 		{
 			if (xsd_data_importer == null)
 				xsd_data_importer = md.Importer;
+			if (xs_code_compile_unit == null)
+				xs_code_compile_unit = md.XsCodeCompileUnit;
 		}
 		
 		private string GetXmlNamespace (CodeTypeDeclaration type)

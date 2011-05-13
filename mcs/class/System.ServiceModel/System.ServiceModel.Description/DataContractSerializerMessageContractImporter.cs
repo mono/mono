@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -45,6 +46,7 @@ namespace System.ServiceModel.Description
 	public class DataContractSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
+		MessageContractImporterInternal impl = new DataContractMessageContractImporterInternal ();
 		bool enabled = true;
 
 		public bool Enabled {
@@ -57,14 +59,36 @@ namespace System.ServiceModel.Description
 			XmlSchemaSet xmlSchemas,
 			ICollection<XmlElement> policy)
 		{
+			if (!Enabled)
+				return;
+
+			impl.BeforeImport (wsdlDocuments, xmlSchemas, policy);
 		}
 
 		void IWsdlImportExtension.ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
-			if (!enabled)
+			if (!Enabled)
 				return;
 
+			impl.ImportContract (importer, context);
+		}
+
+		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
+			WsdlEndpointConversionContext context)
+		{
+			if (!Enabled)
+				return;
+
+			impl.ImportEndpoint (importer, context);
+		}
+	}
+
+	abstract class MessageContractImporterInternal : IWsdlImportExtension
+	{
+		public void ImportContract (WsdlImporter importer,
+			WsdlContractConversionContext context)
+		{
 			if (importer == null)
 				throw new ArgumentNullException ("importer");
 			if (context == null)
@@ -72,15 +96,12 @@ namespace System.ServiceModel.Description
 			if (this.importer != null || this.context != null)
 				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
 
-			dc_importer = new XsdDataContractImporter ();
 			schema_set_in_use = new XmlSchemaSet ();
 			schema_set_in_use.Add (importer.XmlSchemas);
 			foreach (WSDL wsdl in importer.WsdlDocuments)
 				foreach (XmlSchema xs in wsdl.Types.Schemas)
 					schema_set_in_use.Add (xs);
 
-			// commenting out this import operation, but might be required (I guess not).
-			//dc_importer.Import (schema_set_in_use);
 			schema_set_in_use.Compile ();
 
 			this.importer = importer;
@@ -96,9 +117,14 @@ namespace System.ServiceModel.Description
 		WsdlImporter importer;
 		WsdlContractConversionContext context;
 
-		XsdDataContractImporter dc_importer;
+		internal XmlSchemaSet schema_set_in_use;
 
-		XmlSchemaSet schema_set_in_use;
+		public void BeforeImport (
+			ServiceDescriptionCollection wsdlDocuments,
+			XmlSchemaSet xmlSchemas,
+			ICollection<XmlElement> policy)
+		{
+		}
 
 		void DoImportContract ()
 		{
@@ -110,6 +136,10 @@ namespace System.ServiceModel.Description
 			i = 0;
 			foreach (Operation op in port_type.Operations) {
 				OperationDescription opdescr = contract.Operations [i];
+				if (IsOperationImported (port_type, op))
+					continue;
+				if (!CanImportOperation (port_type, op))
+					continue;
 
 				j = 0;
 				foreach (OperationMessage opmsg in op.Messages) {
@@ -150,23 +180,50 @@ namespace System.ServiceModel.Description
 
 		}
 
+		bool IsOperationImported (PortType pt, Operation op)
+		{
+			foreach (OperationMessage opmsg in op.Messages) {
+				var parts = context.GetMessageDescription (opmsg).Body.Parts;
+				foreach (var part in parts)
+					if (part.Importer != null)
+						return true;
+			}
+			return false;
+		}
+
 		void resolveMessage (Message msg, MessageBodyDescription body, List<MessagePartDescription> parts)
 		{
 			foreach (MessagePart part in msg.Parts) {
 				if (part.Name == "parameters") {
 					if (!part.Element.IsEmpty) {
 						body.WrapperName = part.Element.Name;
-						ImportPartsBySchemaElement (part.Element, parts, body.WrapperNamespace);
+						ImportPartsBySchemaElement (part.Element, parts, msg, part);
 					} else {
 						body.WrapperName = part.Type.Name;
-						resolveType (part.Type, parts, body.WrapperNamespace);
+						ResolveType (part.Type, parts, body.WrapperNamespace);
 					}
 				}
 				//FIXME: non-parameters?
 			}
 		}
+
+		public void ImportEndpoint (WsdlImporter importer,
+			WsdlEndpointConversionContext context)
+		{
+		}
+
+		protected abstract void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart part);
+
+		protected abstract void ResolveType (QName qname, List<MessagePartDescription> parts, string ns);
+
+		protected abstract bool CanImportOperation (PortType portType, Operation op);
+	}
+
+	class DataContractMessageContractImporterInternal : MessageContractImporterInternal
+	{
+		XsdDataContractImporter dc_importer = new XsdDataContractImporter ();
 		
-		void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, string ns)
+		protected override void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart part)
 		{
 			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
 			if (element == null)
@@ -175,10 +232,10 @@ namespace System.ServiceModel.Description
 
 			var ct = element.ElementSchemaType as XmlSchemaComplexType;
 			if (ct == null) // simple type
-				parts.Add (CreateMessagePart (element));
+				parts.Add (CreateMessagePart (element, msg, part));
 			else // complex type
 				foreach (var elem in GetElementsInParticle (ct.ContentTypeParticle))
-					parts.Add (CreateMessagePart (elem));
+					parts.Add (CreateMessagePart (elem, msg, part));
 		}
 
 		IEnumerable<XmlSchemaElement> GetElementsInParticle (XmlSchemaParticle p)
@@ -194,16 +251,18 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-		MessagePartDescription CreateMessagePart (XmlSchemaElement elem)
+		MessagePartDescription CreateMessagePart (XmlSchemaElement elem, Message msg, MessagePart msgPart)
 		{
 			var part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
 			part.Importer = dc_importer;
-			var typeQName = dc_importer.Import (schema_set_in_use, elem);
-			part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
+			if (dc_importer.CanImport (schema_set_in_use, elem)) {
+				var typeQName = dc_importer.Import (schema_set_in_use, elem);
+				part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
+			}
 			return part;
 		}
 
-		void resolveType (QName qname, List<MessagePartDescription> parts, string ns)
+		protected override void ResolveType (QName qname, List<MessagePartDescription> parts, string ns)
 		{
 			/*foreach (XmlSchema xs in importer.Schemas)
 				if (xs.Types [qname] != null)
@@ -214,71 +273,53 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		internal static string GetCLRTypeName (QName qname)
+		protected override bool CanImportOperation (PortType portType, Operation op)
 		{
-			switch (qname.Namespace) {
-			case "http://schemas.microsoft.com/2003/10/Serialization/":
-				if (qname.Name == "duration")
-					return "System.TimeSpan";
-				if (qname.Name == "guid")
-					return "System.Guid";
-				break;
-			case "http://www.w3.org/2001/XMLSchema":
-				return GetCLRTypeName (qname.Name);
-			}
-			return null;
+			foreach (OperationMessage om in op.Messages)
+				if (!dc_importer.CanImport (schema_set_in_use, om.Message))
+					return false;
+			return true;
 		}
+	}
 
-		internal static string GetCLRTypeName (string xsdName)
+	class XmlSerializerMessageContractImporterInternal : MessageContractImporterInternal
+	{
+		CodeCompileUnit ccu;
+		XmlSchemaSet schema_set_cache;
+		XmlSchemaImporter schema_importer;
+		XmlCodeExporter code_exporter;
+		
+		protected override void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart msgPart)
 		{
-			switch (xsdName) {
-			case "anyURI":
-				return "System.String";
-			case "boolean":
-				return "System.Boolean";
-
-			//FIXME: case "base64Binary":
-			case "dateTime":
-				return "System.DateTime";
-			case "QName":
-				return "System.String";
-			case "decimal":
-				return "System.Decimal";
-			case "double":
-				return "System.Double";
-			case "float":
-				return "System.Double";
-			case "byte":
-				return "System.SByte";
-			case "short":
-				return "System.Int16";
-			case "int":
-				return "System.Int32";
-			case "long":
-				return "System.Int64";
-			case "unsignedByte":
-				return "System.Byte";
-			case "unsignedShort":
-				return "System.UInt16";
-			case "unsignedInt":
-				return "System.UInt32";
-			case "unsignedLong":
-				return "System.UInt64";
-			case "string":
-				return "System.String";
-			/* FIXME:
-			case "anyType":
-				return true;
-			default:
-				return false;*/
+			if (schema_set_cache != schema_set_in_use) {
+				schema_set_cache = schema_set_in_use;
+				var xss = new XmlSchemas ();
+				foreach (XmlSchema xs in schema_set_cache.Schemas ())
+					xss.Add (xs);
+				schema_importer = new XmlSchemaImporter (xss);
+				ccu = new CodeCompileUnit ();
+				var cns = new CodeNamespace ();
+				ccu.Namespaces.Add (cns);
+				code_exporter = new XmlCodeExporter (cns, ccu);
 			}
 
-			return null;
+			var part = new MessagePartDescription (qname.Name, qname.Namespace);
+			part.XsCodeCompileUnit = ccu;
+			var mbrNS = msg.ServiceDescription.TargetNamespace;
+			code_exporter.ExportMembersMapping (schema_importer.ImportMembersMapping (qname));
+
+			parts.Add (part);
 		}
 
-		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
-			WsdlEndpointConversionContext context)
+		protected override void ResolveType (QName qname, List<MessagePartDescription> parts, string ns)
 		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool CanImportOperation (PortType portType, Operation op)
+		{
+			// FIXME: implement
+			return true;
 		}
 	}
 }
