@@ -245,9 +245,6 @@ namespace System
 					candidate = new Uri(candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
 			}
 
-			if (Uri.Compare (baseAddress, candidate, UriComponents.StrongAuthority, UriFormat.SafeUnescaped, StringComparison.Ordinal) != 0)
-				return null;
-
 			int i = 0, c = 0;
 			UriTemplateMatch m = new UriTemplateMatch ();
 			m.BaseUri = baseAddress;
@@ -255,7 +252,7 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (candidate).ToString ());
+			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (new Uri (baseAddress, candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped))).ToString ());
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
