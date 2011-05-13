@@ -78,6 +78,8 @@ namespace System.ServiceModel.Description
 				wsdl_extensions = new KeyedByTypeCollection<IWsdlImportExtension> (wsdlImportExtensions);
 			}
 
+			// It is okay to fill these members immediately when WsdlImporter.ctor() is invoked
+			// i.e. after this .ctor(), those metadata docs are not considered anymore.
 			this.metadata = metadata;
 			this.wsdl_documents = new ServiceDescriptionCollection ();
 			this.xmlschemas = new XmlSchemaSet ();
