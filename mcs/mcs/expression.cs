@@ -9667,43 +9667,4 @@ namespace Mono.CSharp
 				Name, initializer);
 		}
 	}
-
-	class Await : ExpressionStatement
-	{
-		Expression expr;
-
-		public Await (Expression expr, Location loc)
-		{
-			this.expr = expr;
-			this.loc = loc;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			expr = expr.Resolve (rc);
-			if (expr == null)
-				return null;
-
-//			Iterator.CreateIterator
-
-			type = expr.Type;
-			eclass = expr.eclass;
-			return this;
-		}
-	}
 }

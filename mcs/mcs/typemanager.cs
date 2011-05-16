@@ -3,7 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
-//         Marek Safar     (marek.safar@seznam.cz)
+//         Marek Safar     (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -217,6 +217,12 @@ namespace Mono.CSharp
 		public readonly PredefinedType CallSiteGeneric;
 		public readonly PredefinedType BinderFlags;
 
+		//
+		// C# 5.0
+		//
+		public readonly PredefinedType AsyncVoidMethodBuilder;
+		public readonly PredefinedType Action;
+
 		public PredefinedTypes (ModuleContainer module)
 		{
 			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
@@ -257,6 +263,9 @@ namespace Mono.CSharp
 			Binder = new PredefinedType (module, MemberKind.Class, "Microsoft.CSharp.RuntimeBinder", "Binder");
 			BinderFlags = new PredefinedType (module, MemberKind.Enum, "Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags");
 
+			Action = new PredefinedType (module, MemberKind.Delegate, "System", "Action");
+			AsyncVoidMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncVoidMethodBuilder");
+
 			//
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
@@ -287,6 +296,9 @@ namespace Mono.CSharp
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorLong;
@@ -318,7 +330,6 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> StringInequal;
 		public readonly PredefinedMember<MethodSpec> StructLayoutAttributeCtor;
 		public readonly PredefinedMember<FieldSpec> StructLayoutCharSet;
-		public readonly PredefinedMember<FieldSpec> StructLayoutPack;
 		public readonly PredefinedMember<FieldSpec> StructLayoutSize;
 		public readonly PredefinedMember<MethodSpec> TypeGetTypeFromHandle;
 
@@ -330,6 +341,15 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			AsyncVoidMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
+
+			AsyncVoidMethodBuilderSetException = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("SetException", 0, null, btypes.Void));
+
+			AsyncVoidMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
 
 			DecimalCtor = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
@@ -449,9 +469,6 @@ namespace Mono.CSharp
 
 			StructLayoutCharSet = new PredefinedMember<FieldSpec> (module, atypes.StructLayout, "CharSet",
 				MemberKind.Field, types.CharSet);
-
-			StructLayoutPack = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
-				MemberFilter.Field ("Pack", btypes.Int));
 
 			StructLayoutSize = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
 				MemberFilter.Field ("Size", btypes.Int));

@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="assign.cs">
     </Compile>
+    <Compile Include="async.cs" />
     <Compile Include="attribute.cs">
     </Compile>
     <Compile Include="cfold.cs">

@@ -159,7 +159,7 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingIterator StartFlowBranching (Iterator iterator, FlowBranching parent)
+		public FlowBranchingIterator StartFlowBranching (StateMachineInitializer iterator, FlowBranching parent)
 		{
 			FlowBranchingIterator branching = new FlowBranchingIterator (parent, iterator);
 			current_flow_branching = branching;

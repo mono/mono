@@ -23,65 +23,81 @@ using IKVM.Reflection.Emit;
 using System.Reflection.Emit;
 #endif
 
-namespace Mono.CSharp {
-
-	public class Yield : ResumableStatement {
-		Expression expr;
+namespace Mono.CSharp
+{
+	public abstract class YieldStatement<T> : ResumableStatement where T : StateMachineInitializer
+	{
+		protected Expression expr;
 		bool unwind_protect;
-		Iterator iterator;
+		protected T machine_initializer;
 		int resume_pc;
 
-		public Yield (Expression expr, Location l)
+		protected YieldStatement (Expression expr, Location l)
 		{
 			this.expr = expr;
 			loc = l;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			var target = (YieldStatement<T>) t;
+			target.expr = expr.Clone (clonectx);
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			machine_initializer.InjectYield (ec, expr, resume_pc, unwind_protect, resume_point);
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			expr = expr.Resolve (bc);
+			if (expr == null)
+				return false;
+
+			machine_initializer = bc.CurrentAnonymousMethod as T;
+
+			if (!bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				unwind_protect = bc.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
+
+			return true;
+		}
+	}
+
+	public class Yield : YieldStatement<Iterator>
+	{
+		public Yield (Expression expr, Location loc)
+			: base (expr, loc)
+		{
 		}
 
 		public static bool CheckContext (ResolveContext ec, Location loc)
 		{
 			if (!ec.CurrentAnonymousMethod.IsIterator) {
 				ec.Report.Error (1621, loc,
-					      "The yield statement cannot be used inside " +
-					      "anonymous method blocks");
+					"The yield statement cannot be used inside anonymous method blocks");
 				return false;
 			}
 
 			return true;
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
+			if (!CheckContext (bc, loc))
 				return false;
 
-			if (!CheckContext (ec, loc))
+			if (!base.Resolve (bc))
 				return false;
 
-			iterator = ec.CurrentIterator;
-			if (expr.Type != iterator.OriginalIteratorType) {
-				expr = Convert.ImplicitConversionRequired (
-					ec, expr, iterator.OriginalIteratorType, loc);
+			var otype = bc.CurrentIterator.OriginalIteratorType;
+			if (expr.Type != otype) {
+				expr = Convert.ImplicitConversionRequired (bc, expr, otype, loc);
 				if (expr == null)
 					return false;
 			}
 
-			if (!ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				unwind_protect = ec.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
-
 			return true;
-		}
-
-		protected override void DoEmit (EmitContext ec)
-		{
-			iterator.MarkYield (ec, expr, resume_pc, unwind_protect, resume_point);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Statement t)
-		{
-			Yield target = (Yield) t;
-
-			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -116,18 +132,83 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class IteratorStorey : AnonymousMethodStorey
+	public abstract class StateMachine : AnonymousMethodStorey
 	{
-		class GetEnumeratorMethod : IteratorMethod
+		public enum State
+		{
+			Running = -3, // Used only in CurrentPC, never stored into $PC
+			Uninitialized = -2,
+			After = -1,
+			Start = 0
+		}
+
+		Field disposing_field;
+		Field pc_field;
+		int local_name_idx;
+		StateMachineMethod method;
+
+		protected StateMachine (Block block, TypeContainer parent, MemberBase host, TypeParameter[] tparams, string name)
+			: base (block, parent, host, tparams, name)
+		{
+		}
+
+		#region Properties
+
+		public Field DisposingField {
+			get {
+				return disposing_field;
+			}
+		}
+
+		public StateMachineMethod StateMachineMethod {
+			get {
+				return method;
+			}
+		}
+
+		public Field PC {
+			get {
+				return pc_field;
+			}
+		}
+
+		#endregion
+
+		public void AddEntryMethod (StateMachineMethod method)
+		{
+			if (this.method != null)
+				throw new InternalErrorException ();
+
+			this.method = method;
+			AddMethod (method);
+		}
+
+		protected override bool DoDefineMembers ()
+		{
+			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
+			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
+
+			return base.DoDefineMembers ();
+		}
+
+		protected override string GetVariableMangledName (LocalVariable local_info)
+		{
+			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ();
+		}
+	}
+
+	class IteratorStorey : StateMachine
+	{
+		class GetEnumeratorMethod : StateMachineMethod
 		{
 			sealed class GetEnumeratorStatement : Statement
 			{
-				IteratorStorey host;
-				IteratorMethod host_method;
+				readonly IteratorStorey host;
+				readonly StateMachineMethod host_method;
 
 				Expression new_storey;
 
-				public GetEnumeratorStatement (IteratorStorey host, IteratorMethod host_method)
+				public GetEnumeratorStatement (IteratorStorey host, StateMachineMethod host_method)
 				{
 					this.host = host;
 					this.host_method = host_method;
@@ -156,8 +237,8 @@ namespace Mono.CSharp {
 							init = new List<Expression> (host.HoistedParameters.Count);
 
 						for (int i = 0; i < host.hoisted_params.Count; ++i) {
-							HoistedParameter hp = (HoistedParameter) host.hoisted_params [i];
-							HoistedParameter hp_cp = (HoistedParameter) host.hoisted_params_copy [i];
+							HoistedParameter hp = host.hoisted_params [i];
+							HoistedParameter hp_cp = host.hoisted_params_copy [i];
 
 							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
 							from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
@@ -187,14 +268,14 @@ namespace Mono.CSharp {
 
 					ec.Emit (OpCodes.Ldarg_0);
 					ec.Emit (OpCodes.Ldflda, host.PC.Spec);
-					ec.EmitInt ((int) Iterator.State.Start);
-					ec.EmitInt ((int) Iterator.State.Uninitialized);
+					ec.EmitInt ((int) State.Start);
+					ec.EmitInt ((int) State.Uninitialized);
 
 					var m = ec.Module.PredefinedMembers.InterlockedCompareExchange.Resolve (loc);
 					if (m != null)
 						ec.Emit (OpCodes.Call, m);
 
-					ec.EmitInt ((int) Iterator.State.Uninitialized);
+					ec.EmitInt ((int) State.Uninitialized);
 					ec.Emit (OpCodes.Bne_Un_S, label_init);
 
 					ec.Emit (OpCodes.Ldarg_0);
@@ -208,13 +289,13 @@ namespace Mono.CSharp {
 			}
 
 			public GetEnumeratorMethod (IteratorStorey host, FullNamedExpression returnType, MemberName name)
-				: base (host, returnType, Modifiers.DEBUGGER_HIDDEN, name)
+				: base (host, null, returnType, Modifiers.DEBUGGER_HIDDEN, name)
 			{
 				Block.AddStatement (new GetEnumeratorStatement (host, this));
 			}
 		}
 
-		class DisposeMethod : IteratorMethod
+		class DisposeMethod : StateMachineMethod
 		{
 			sealed class DisposeMethodStatement : Statement
 			{
@@ -238,12 +319,13 @@ namespace Mono.CSharp {
 
 				protected override void DoEmit (EmitContext ec)
 				{
+					ec.CurrentAnonymousMethod = iterator;
 					iterator.EmitDispose (ec);
 				}
 			}
 
 			public DisposeMethod (IteratorStorey host)
-				: base (host, new TypeExpression (host.Compiler.BuiltinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
+				: base (host, null, new TypeExpression (host.Compiler.BuiltinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("Dispose", host.Location))
 			{
 				host.AddMethod (this);
@@ -296,10 +378,10 @@ namespace Mono.CSharp {
 
 		public readonly Iterator Iterator;
 
+		List<HoistedParameter> hoisted_params_copy;
+
 		TypeExpr iterator_type_expr;
-		Field pc_field;
 		Field current_field;
-		Field disposing_field;
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
@@ -307,26 +389,11 @@ namespace Mono.CSharp {
 		TypeExpr generic_enumerator_type;
 		TypeExpr generic_enumerable_type;
 
-		List<HoistedParameter> hoisted_params_copy;
-		int local_name_idx;
-
 		public IteratorStorey (Iterator iterator)
 			: base (iterator.Container.ParametersBlock, iterator.Host,
 			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod == null ? null : iterator.GenericMethod.CurrentTypeParameters, "Iterator")
 		{
 			this.Iterator = iterator;
-		}
-
-		public Field PC {
-			get {
-				return pc_field;
-			}
-		}
-
-		public Field DisposingField {
-			get {
-				return disposing_field;
-			}
 		}
 
 		public Field CurrentField {
@@ -373,22 +440,9 @@ namespace Mono.CSharp {
 			return base.ResolveBaseTypes (out base_class);
 		}
 
-		protected override string GetVariableMangledName (LocalVariable local_info)
-		{
-			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ();
-		}
-
 		protected override bool DoDefineMembers ()
 		{
-			DefineIteratorMembers ();
-			return base.DoDefineMembers ();
-		}
-
-		void DefineIteratorMembers ()
-		{
-			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
-			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
 			if (hoisted_params != null) {
 				//
@@ -418,7 +472,7 @@ namespace Mono.CSharp {
 				name = new MemberName (name, "GetEnumerator", Location);
 
 				if (generic_enumerator_type != null) {
-					Method get_enumerator = new IteratorMethod (this, enumerator_type, 0, name);
+					Method get_enumerator = new StateMachineMethod (this, null, enumerator_type, 0, name);
 
 					name = new MemberName (name.Left.Left, "Generic", Location);
 					name = new MemberName (name, "IEnumerable", generic_args, Location);
@@ -437,12 +491,8 @@ namespace Mono.CSharp {
 					AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
 				}
 			}
-		}
 
-		protected override void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
-		{
-			base.EmitHoistedParameters (ec, hoisted);
-			base.EmitHoistedParameters (ec, hoisted_params_copy);
+			return base.DoDefineMembers ();
 		}
 
 		void Define_Current (bool is_generic)
@@ -490,43 +540,44 @@ namespace Mono.CSharp {
 
 			reset.Block.AddStatement (new Throw (new New (new TypeExpression (ex_type, Location), null, Location), Location));
 		}
+
+		protected override void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
+		{
+			base.EmitHoistedParameters (ec, hoisted);
+			base.EmitHoistedParameters (ec, hoisted_params_copy);
+		}
 	}
 
-	class IteratorMethod : Method
+	public class StateMachineMethod : Method
 	{
-		readonly IteratorStorey host;
+		readonly StateMachineInitializer expr;
 
-		public IteratorMethod (IteratorStorey host, FullNamedExpression returnType, Modifiers mod, MemberName name)
+		public StateMachineMethod (StateMachine host, StateMachineInitializer expr, FullNamedExpression returnType, Modifiers mod, MemberName name)
 			: base (host, null, returnType, mod | Modifiers.COMPILER_GENERATED,
 			  name, ParametersCompiled.EmptyReadOnlyParameters, null)
 		{
-			this.host = host;
-
+			this.expr = expr;
 			Block = new ToplevelBlock (host.Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);
 		}
 
 		public override EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			EmitContext ec = new EmitContext (this, ig, MemberType);
-
-			ec.CurrentAnonymousMethod = host.Iterator;
+			ec.CurrentAnonymousMethod = expr;
 			return ec;
 		}
 	}
 
-	//
-	// Iterators are implemented as hidden anonymous block
-	//
-	public class Iterator : AnonymousExpression
+	public abstract class StateMachineInitializer : AnonymousExpression
 	{
-		sealed class MoveNextMethodStatement : Statement
+		sealed class MoveNextBodyStatement : Statement
 		{
-			Iterator iterator;
+			readonly StateMachineInitializer state_machine;
 
-			public MoveNextMethodStatement (Iterator iterator)
+			public MoveNextBodyStatement (StateMachineInitializer stateMachine)
 			{
-				this.iterator = iterator;
-				this.loc = iterator.Location;
+				this.state_machine = stateMachine;
+				this.loc = stateMachine.Location;
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -541,61 +592,130 @@ namespace Mono.CSharp {
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				iterator.EmitMoveNext (ec);
+				state_machine.EmitMoveNext (ec);
 			}
 		}
 
-		public readonly IMethodData OriginalMethod;
 		public readonly TypeContainer Host;
-		public readonly bool IsEnumerable;
+		protected StateMachine storey;
+
+		//
+		// The state as we generate the machine
+		//
+		Label move_next_ok;
+		protected Label move_next_error;
+		protected LocalBuilder skip_finally, current_pc;
 		List<ResumableStatement> resume_points;
 
-		//
-		// The state as we generate the iterator
-		//
-		Label move_next_ok, move_next_error;
-		LocalBuilder skip_finally, current_pc;
-
-		public LocalBuilder SkipFinally {
-			get { return skip_finally; }
-		}
-
-		public LocalBuilder CurrentPC {
-			get { return current_pc; }
-		}
-
-		public Block Container {
-			get { return OriginalMethod.Block; }
-		}
-
-		public GenericMethod GenericMethod {
-			get { return OriginalMethod.GenericMethod; }
-		}
-
-		public readonly TypeSpec OriginalIteratorType;
-
-		IteratorStorey IteratorHost;
-
-		public enum State {
-			Running = -3, // Used only in CurrentPC, never stored into $PC
-			Uninitialized = -2,
-			After = -1,
-			Start = 0
-		}
-
-		public void EmitYieldBreak (EmitContext ec, bool unwind_protect)
+		protected StateMachineInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
+			: base (block, returnType, block.StartLocation)
 		{
-			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
+			this.Host = host;
+		}
+
+		public override AnonymousMethodStorey Storey {
+			get {
+				return storey;
+			}
+		}
+
+		public int AddResumePoint (ResumableStatement stmt)
+		{
+			if (resume_points == null)
+				resume_points = new List<ResumableStatement> ();
+
+			resume_points.Add (stmt);
+			return resume_points.Count;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
+		protected override Expression DoResolve (ResolveContext ec)
+		{
+			storey = (StateMachine) block.TopBlock.AnonymousMethodStorey;
+
+			BlockContext ctx = new BlockContext (ec, block, ReturnType);
+			ctx.CurrentAnonymousMethod = this;
+
+			ctx.StartFlowBranching (this, ec.CurrentBranching);
+			Block.Resolve (ctx);
+			ctx.EndFlowBranching ();
+
+			var move_next = new StateMachineMethod (storey, this, new TypeExpression (ReturnType, loc), Modifiers.PUBLIC, new MemberName ("MoveNext", loc));
+			move_next.Block.AddStatement (new MoveNextBodyStatement (this));
+			storey.AddEntryMethod (move_next);
+
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			//
+			// Load Iterator storey instance
+			//
+			storey.Instance.Emit (ec);
+		}
+
+		public void EmitDispose (EmitContext ec)
+		{
+			Label end = ec.DefineLabel ();
+
+			Label[] labels = null;
+			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
+			for (int i = 0; i < n_resume_points; ++i) {
+				ResumableStatement s = resume_points[i];
+				Label ret = s.PrepareForDispose (ec, end);
+				if (ret.Equals (end) && labels == null)
+					continue;
+				if (labels == null) {
+					labels = new Label[resume_points.Count + 1];
+					for (int j = 0; j <= i; ++j)
+						labels[j] = end;
+				}
+
+				labels[i + 1] = ret;
+			}
+
+			if (labels != null) {
+				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
+				ec.Emit (OpCodes.Ldarg_0);
+				ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
+				ec.Emit (OpCodes.Stloc, current_pc);
+			}
+
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt (1);
+			ec.Emit (OpCodes.Stfld, storey.DisposingField.Spec);
+
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
+
+			if (labels != null) {
+				//SymbolWriter.StartIteratorDispatcher (ec.ig);
+				ec.Emit (OpCodes.Ldloc, current_pc);
+				ec.Emit (OpCodes.Switch, labels);
+				//SymbolWriter.EndIteratorDispatcher (ec.ig);
+
+				foreach (ResumableStatement s in resume_points)
+					s.EmitForDispose (ec, current_pc, end, true);
+			}
+
+			ec.MarkLabel (end);
 		}
 
 		void EmitMoveNext_NoResumePoints (EmitContext ec, Block original_block)
 		{
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
+			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
 
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt ((int) State.After);
-			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
 			// We only care if the PC is zero (start executing) or non-zero (don't do anything)
 			ec.Emit (OpCodes.Brtrue, move_next_error);
@@ -605,7 +725,9 @@ namespace Mono.CSharp {
 			SymbolWriter.EndIteratorBody (ec);
 
 			ec.MarkLabel (move_next_error);
-			ec.Emit (OpCodes.Ldc_I4_0);
+
+			if (ReturnType.Kind != MemberKind.Void)
+				ec.EmitInt (0);
 			ec.Emit (OpCodes.Ret);
 		}
 
@@ -621,22 +743,22 @@ namespace Mono.CSharp {
 
 			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
+			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
 			ec.Emit (OpCodes.Stloc, current_pc);
 
 			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt ((int) State.After);
-			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
-			Label [] labels = new Label [1 + resume_points.Count];
-			labels [0] = ec.DefineLabel ();
+			Label[] labels = new Label[1 + resume_points.Count];
+			labels[0] = ec.DefineLabel ();
 
 			bool need_skip_finally = false;
 			for (int i = 0; i < resume_points.Count; ++i) {
-				ResumableStatement s = resume_points [i];
+				ResumableStatement s = resume_points[i];
 				need_skip_finally |= s is ExceptionStatement;
-				labels [i+1] = s.PrepareForEmit (ec);
+				labels[i + 1] = s.PrepareForEmit (ec);
 			}
 
 			if (need_skip_finally) {
@@ -652,7 +774,7 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Br, move_next_error);
 			SymbolWriter.EndIteratorDispatcher (ec);
 
-			ec.MarkLabel (labels [0]);
+			ec.MarkLabel (labels[0]);
 
 			SymbolWriter.StartIteratorBody (ec);
 			block.Emit (ec);
@@ -661,93 +783,35 @@ namespace Mono.CSharp {
 			SymbolWriter.StartIteratorDispatcher (ec);
 
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt ((int) State.After);
-			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
 			ec.MarkLabel (move_next_error);
-			ec.EmitInt (0);
+
+			if (ReturnType.Kind != MemberKind.Void)
+				ec.EmitInt (0);
 			ec.Emit (OpCodes.Ret);
 
 			ec.MarkLabel (move_next_ok);
-			ec.Emit (OpCodes.Ldc_I4_1);
+
+			if (ReturnType.Kind != MemberKind.Void)
+				ec.EmitInt (1);
 			ec.Emit (OpCodes.Ret);
 
 			SymbolWriter.EndIteratorDispatcher (ec);
 		}
 
-		public void EmitDispose (EmitContext ec)
-		{
-			Label end = ec.DefineLabel ();
-
-			Label [] labels = null;
-			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
-			for (int i = 0; i < n_resume_points; ++i) {
-				ResumableStatement s = resume_points [i];
-				Label ret = s.PrepareForDispose (ec, end);
-				if (ret.Equals (end) && labels == null)
-					continue;
-				if (labels == null) {
-					labels = new Label [resume_points.Count + 1];
-					for (int j = 0; j <= i; ++j)
-						labels [j] = end;
-				}
-
-				labels [i+1] = ret;
-			}
-
-			if (labels != null) {
-				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
-				ec.Emit (OpCodes.Ldarg_0);
-				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
-				ec.Emit (OpCodes.Stloc, current_pc);
-			}
-
-			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt (1);
-			ec.Emit (OpCodes.Stfld, IteratorHost.DisposingField.Spec);
-
-			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt ((int) State.After);
-			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
-
-			if (labels != null) {
-				//SymbolWriter.StartIteratorDispatcher (ec.ig);
-				ec.Emit (OpCodes.Ldloc, current_pc);
-				ec.Emit (OpCodes.Switch, labels);
-				//SymbolWriter.EndIteratorDispatcher (ec.ig);
-
-				foreach (ResumableStatement s in resume_points)
-					s.EmitForDispose (ec, this, end, true);
-			}
-
-			ec.MarkLabel (end);
-		}
-
-		public int AddResumePoint (ResumableStatement stmt)
-		{
-			if (resume_points == null)
-				resume_points = new List<ResumableStatement> ();
-
-			resume_points.Add (stmt);
-			return resume_points.Count;
-		}
-
 		//
-		// Called back from Yield
+		// Called back from YieldStatement
 		//
-		public void MarkYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
+		public virtual void InjectYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
 		{
-			// Store the new current
-			ec.Emit (OpCodes.Ldarg_0);
-			expr.Emit (ec);
-			ec.Emit (OpCodes.Stfld, IteratorHost.CurrentField.Spec);
-
 			//
 			// Guard against being disposed meantime
 			//
 			Label disposed = ec.DefineLabel ();
 			ec.Emit (OpCodes.Ldarg_0);
-			ec.Emit (OpCodes.Ldfld, IteratorHost.DisposingField.Spec);
+			ec.Emit (OpCodes.Ldfld, storey.DisposingField.Spec);
 			ec.Emit (OpCodes.Brtrue_S, disposed);
 
 			//
@@ -755,7 +819,7 @@ namespace Mono.CSharp {
 			//
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.EmitInt (resume_pc);
-			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 			ec.MarkLabel (disposed);
 
 			// mark finally blocks as disabled
@@ -769,18 +833,40 @@ namespace Mono.CSharp {
 
 			ec.MarkLabel (resume_point);
 		}
+	}
 
-		//
-		// Our constructor
-		//
+	//
+	// Iterators are implemented as hidden anonymous block
+	//
+	public class Iterator : StateMachineInitializer
+	{
+		public readonly IMethodData OriginalMethod;
+		public readonly bool IsEnumerable;
+		public readonly TypeSpec OriginalIteratorType;
+
 		public Iterator (ParametersBlock block, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
-			: base (block, host.Compiler.BuiltinTypes.Bool, block.StartLocation)
+			: base (block, host, host.Compiler.BuiltinTypes.Bool)
 		{
 			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
 			this.IsEnumerable = is_enumerable;
-			this.Host = host;
 			this.type = method.ReturnType;
+		}
+
+		public LocalBuilder SkipFinally {
+			get { return skip_finally; }
+		}
+
+		public LocalBuilder CurrentPC {
+		    get { return current_pc; }
+		}
+
+		public Block Container {
+			get { return OriginalMethod.Block; }
+		}
+
+		public GenericMethod GenericMethod {
+			get { return OriginalMethod.GenericMethod; }
 		}
 
 		public override string ContainerType {
@@ -791,8 +877,9 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override AnonymousMethodStorey Storey {
-			get { return IteratorHost; }
+		public void EmitYieldBreak (EmitContext ec, bool unwind_protect)
+		{
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
 		}
 
 		public override string GetSignatureForError ()
@@ -800,42 +887,22 @@ namespace Mono.CSharp {
 			return OriginalMethod.GetSignatureForError ();
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			IteratorHost = (IteratorStorey) block.TopBlock.AnonymousMethodStorey;
-
-			BlockContext ctx = new BlockContext (ec, block, ReturnType);
-			ctx.CurrentAnonymousMethod = this;
-
-			ctx.StartFlowBranching (this, ec.CurrentBranching);
-			Block.Resolve (ctx);
-			ctx.EndFlowBranching ();
-
-			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (ec.BuiltinTypes.Bool, loc),
-				Modifiers.PUBLIC, new MemberName ("MoveNext", Location));
-			move_next.Block.AddStatement (new MoveNextMethodStatement (this));
-			IteratorHost.AddMethod (move_next);
-
-			eclass = ExprClass.Value;
-			return this;
-		}
-
 		public override void Emit (EmitContext ec)
 		{
 			//
 			// Load Iterator storey instance
 			//
-			IteratorHost.Instance.Emit (ec);
+			storey.Instance.Emit (ec);
 
 			//
 			// Initialize iterator PC when it's unitialized
 			//
 			if (IsEnumerable) {
 				ec.Emit (OpCodes.Dup);
-				ec.EmitInt ((int)State.Uninitialized);
+				ec.EmitInt ((int)IteratorStorey.State.Uninitialized);
 
-				var field = IteratorHost.PC.Spec;
-				if (Storey.MemberName.IsGeneric) {
+				var field = storey.PC.Spec;
+				if (storey.MemberName.IsGeneric) {
 					field = MemberCache.GetMember (Storey.Instance.Type, field);
 				}
 
@@ -843,9 +910,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
+		public override void EmitStatement (EmitContext ec)
 		{
-			throw new NotSupportedException ("ET");
+			throw new NotImplementedException ();
+		}
+
+		public override void InjectYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
+		{
+			// Store the new value into current
+			var fe = new FieldExpr (((IteratorStorey) storey).CurrentField, loc);
+			fe.InstanceExpression = new CompilerGeneratedThis (storey.CurrentType, loc);
+			fe.EmitAssign (ec, expr, false, false);
+
+			base.InjectYield (ec, expr, resume_pc, unwind_protect, resume_point);
 		}
 
 		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)

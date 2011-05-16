@@ -1128,13 +1128,19 @@ namespace Mono.CSharp {
 				DefineTypeParameters ();
 			}
 
-			if (block != null && block.IsIterator) {
-				//
-				// Current method is turned into automatically generated
-				// wrapper which creates an instance of iterator
-				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
-				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			if (block != null) {
+				if (block.IsIterator) {
+					//
+					// Current method is turned into automatically generated
+					// wrapper which creates an instance of iterator
+					//
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				}
+				
+				if (block.IsAsync) {
+					AsyncInitializer.Create (block, Parent.PartialContainer);
+				}
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0)

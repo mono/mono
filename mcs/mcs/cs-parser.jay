@@ -3753,6 +3753,7 @@ cast_expression
 await_expression
 	: AWAIT unary_expression
 	 {
+		current_block.ParametersBlock.IsAsync = true;
 		$$ = new Await ((Expression) $2, GetLocation ($1));
 	 }
 	;
@@ -4876,11 +4877,15 @@ statement_expression
 	  {
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
-			Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
-			s = EmptyExpressionStatement.Instance;
+			if ($1 is Statement) {
+				$$ = $1;
+			} else {
+				Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
+				$$ = new StatementExpression (EmptyExpressionStatement.Instance);
+			}
+		} else {
+			$$ = new StatementExpression (s);
 		}
-
-		$$ = new StatementExpression (s);
 	  }
 	;
 

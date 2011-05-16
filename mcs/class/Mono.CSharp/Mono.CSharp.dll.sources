@@ -2,6 +2,7 @@
 ../../mcs/argument.cs
 ../../mcs/assign.cs
 ../../mcs/assembly.cs
+../../mcs/async.cs
 ../../mcs/attribute.cs
 ../../mcs/cs-tokenizer.cs
 ../../mcs/cfold.cs
