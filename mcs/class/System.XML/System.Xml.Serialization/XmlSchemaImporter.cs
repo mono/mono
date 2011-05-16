@@ -602,10 +602,6 @@ namespace System.Xml.Serialization
 			// the class map is registered before parsing the children. We can't do the same
 			// with the array type because to register the array map we need the type of the array.
 
-			Type anyType = GetAnyElementType (stype);
-			if (anyType != null)
-				return GetTypeMapping (TypeTranslator.GetTypeData(anyType));
-				
 			if (CanBeArray (typeQName, stype))
 			{
 				TypeData typeData;
