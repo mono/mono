@@ -1156,15 +1156,24 @@ namespace System.Web.UI
 		}
 
 		static string FormatUpdatePanelIDs (List<UpdatePanel> list, bool useSingleQuote) {
+			return FormatUpdatePanelIDs (list, useSingleQuote, false);
+		}
+		
+		static string FormatUpdatePanelIDs (List<UpdatePanel> list, bool useSingleQuote, bool useUntaggedName) {
 			if (list == null || list.Count == 0)
 				return null;
 
+			string quote = useSingleQuote ? "'" : String.Empty;
+			string id;
 			StringBuilder sb = new StringBuilder ();
 			foreach (UpdatePanel panel in list) {
 				if (!panel.Visible)
-					continue;
-				
-				sb.AppendFormat ("{0}{1}{2}{0},", useSingleQuote ? "'" : String.Empty, panel.ChildrenAsTriggers ? "t" : "f", panel.UniqueID);
+				 	continue;
+
+				id = panel.UniqueID;
+				sb.AppendFormat ("{0}{1}{2}{0},", quote, panel.ChildrenAsTriggers ? "t" : "f", id);
+				if (useUntaggedName)
+					sb.AppendFormat ("{0}{1}{0},", quote, id);
 			}
 			
 			if (sb.Length > 0)
@@ -1263,6 +1272,7 @@ namespace System.Web.UI
 				return;
 
 			_panelsToRefresh.Add (panel);
+			RegisterUpdatePanel (panel);
 		}
 		
 		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput)
@@ -1364,7 +1374,7 @@ namespace System.Web.UI
 			
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false, false));
-			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
+			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false, true));
 			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false, true));
 			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false, true));
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());

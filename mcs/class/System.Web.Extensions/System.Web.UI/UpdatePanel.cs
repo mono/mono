@@ -318,13 +318,11 @@ namespace System.Web.UI
 					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 					base.RenderChildren (w);
 					w.Flush ();
-					if (sb.Length > 0) {
-						UpdatePanel parent = ParentPanel;
-						if (parent != null && parent.ChildrenAsTriggers)
-							writer.Write (sb.ToString ());
-						else
-							ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
-					}
+					UpdatePanel parent = ParentPanel;
+					if (parent != null && parent.ChildrenAsTriggers)
+						writer.Write (sb.ToString ());
+					else
+						ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
 				} finally {
 					RenderChildrenWriter = null;
 				}
