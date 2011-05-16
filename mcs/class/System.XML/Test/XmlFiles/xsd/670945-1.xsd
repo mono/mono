@@ -1,0 +1,22 @@
+    <xs:schema
+    targetNamespace="http://www.onvif.org/ver10/schema"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tt="http://www.onvif.org/ver10/schema">
+
+      <xs:complexType name="SystemDateTime">
+        <xs:sequence>
+          <xs:element name="foobar" type="xs:string" minOccurs="0" />
+          <xs:element name="Extension" type="tt:SystemDateTimeExtension" minOccurs="0"/>
+        </xs:sequence>
+        <!-- xs:anyAttribute processContents="lax"/ -->
+      </xs:complexType>
+
+      <xs:complexType name="SystemDateTimeExtension">
+        <xs:sequence>
+          <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+
+    </xs:schema>
+
