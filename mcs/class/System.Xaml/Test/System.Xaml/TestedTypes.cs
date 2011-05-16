@@ -737,6 +737,19 @@ namespace MonoTests.System.Xaml
 	{
 	}
 
+	public class Attached2
+	{
+		internal String Property { get; set; }
+	}
+	
+	public class AttachedWrapper3
+	{
+		public static void SetProperty (Attached2 a, string value)
+		{
+			a.Property = value;
+		}
+	}
+
 	public class EventStore
 	{
 		public bool Method1Invoked;

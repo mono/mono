@@ -776,6 +776,30 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AttachablePropertySetValueNullObject ()
+		{
+			var xt = new XamlType (typeof (Attachable), sctx);
+			var apl = xt.GetAllAttachableMembers ();
+			var foo = apl.First (ap => ap.Name == "Foo");
+			Assert.IsTrue (foo.IsAttachable, "#7");
+			foo.Invoker.SetValue (null, "xxx");
+		}
+
+		[Test]
+		public void AttachablePropertySetValueSuccess ()
+		{
+			var xt = new XamlType (typeof (Attachable), sctx);
+			var apl = xt.GetAllAttachableMembers ();
+			var foo = apl.First (ap => ap.Name == "Foo");
+			Assert.IsTrue (foo.IsAttachable, "#7");
+			var obj = new object ();
+			foo.Invoker.SetValue (obj, "xxx"); // obj is non-null, so valid.
+			// FIXME: this line should be unnecessary.
+			AttachablePropertyServices.RemoveProperty (obj, new AttachableMemberIdentifier (foo.Type.UnderlyingType, foo.Name));
+		}
+
+		[Test]
 		public void ReadOnlyPropertyContainer ()
 		{
 			var xt = new XamlType (typeof (ReadOnlyPropertyContainer), sctx);

@@ -80,7 +80,10 @@ namespace System.Xaml.Schema
 				throw new NotSupportedException (String.Format ("not supported operation on directive member {0}", member));
 			if (UnderlyingSetter == null)
 				throw new NotSupportedException (String.Format ("Attempt to set value from read-only property {0}", member));
-			UnderlyingSetter.Invoke (instance, new object [] {value});
+			if (member.IsAttachable)
+				UnderlyingSetter.Invoke (null, new object [] {instance, value});
+			else
+				UnderlyingSetter.Invoke (instance, new object [] {value});
 		}
 
 		public virtual ShouldSerializeResult ShouldSerializeValue (object instance)

@@ -689,6 +689,23 @@ namespace MonoTests.System.Xaml
 			xw.WriteEndObject ();
 		}
 
+		[Test]
+		public void WriteAttachableProperty ()
+		{
+			Attached2 result = null;
+			
+			var rsettings = new XamlXmlReaderSettings ();
+			using (var reader = new XamlXmlReader (new StringReader (String.Format (@"<Attached2 AttachedWrapper3.Property=""Test"" xmlns=""clr-namespace:MonoTests.System.Xaml;assembly={0}""></Attached2>", typeof (AttachedWrapper3).Assembly.GetName ().Name)), rsettings)) {
+				var wsettings = new XamlObjectWriterSettings ();
+				using (var writer = new XamlObjectWriter (reader.SchemaContext, wsettings)) {
+					XamlServices.Transform (reader, writer, false);
+					result = (Attached2) writer.Result;
+				}
+			}
+
+			Assert.AreEqual ("Test", result.Property, "#1");
+		}
+
 		// extra use case based tests.
 
 		[Test]
