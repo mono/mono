@@ -173,6 +173,8 @@ namespace System.Xml
 						return XmlConvert.ToString ((float) TypedValue);
 					case BF.Double:
 						return XmlConvert.ToString ((double) TypedValue);
+					case BF.Decimal:
+						return XmlConvert.ToString ((decimal) TypedValue);
 					case BF.DateTime:
 						return XmlConvert.ToString ((DateTime) TypedValue, XmlDateTimeSerializationMode.RoundtripKind);
 					case BF.TimeSpan:
