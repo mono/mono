@@ -27954,6 +27954,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-named-04.cs">
+    <type name="Test">
+      <method name="Int32 f(Int32)">
+        <size>23</size>
+      </method>
+      <method name="Void m(Int32, Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void m(Int32, Int32, Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>303</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-optional-01.cs">
     <type name="C">
       <method name="Void TestA(Int32)">
