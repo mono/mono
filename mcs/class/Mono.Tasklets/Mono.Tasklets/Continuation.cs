@@ -48,6 +48,7 @@ namespace Mono.Tasklets {
 			if (cont != IntPtr.Zero){
 				free (cont);
 				cont = IntPtr.Zero;
+				GC.SuppressFinalize (this);
 			}
 		}
 
