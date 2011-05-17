@@ -2305,10 +2305,13 @@ namespace Mono.CSharp {
 
 						e = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
 						if (e != null) {
-							Error_TypeArgumentsCannotBeUsed (rc, e.Type, Arity, loc);
-						} else {
-							rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+							if (!(e is TypeExpr) || (restrictions & MemberLookupRestrictions.InvocableOnly) == 0 || !e.Type.IsDelegate) {
+								Error_TypeArgumentsCannotBeUsed (rc, e.Type, Arity, loc);
+								return e;
+							}
 						}
+
+						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
 					}
 
 					return ErrorExpression.Instance;
@@ -2321,7 +2324,6 @@ namespace Mono.CSharp {
 				}
 
 				lookup_arity = 0;
-				restrictions &= ~MemberLookupRestrictions.InvocableOnly;
 				errorMode = true;
 			}
 		}
