@@ -634,8 +634,14 @@ namespace System.Xml.Serialization
 			return map;
 		}
 
+		ArrayList fixup_registered_types = new ArrayList ();
+
 		void RegisterMapFixup (XmlTypeMapping map, XmlQualifiedName typeQName, XmlSchemaComplexType stype)
 		{
+			// This check is introduced for bug #650117, but might be too wide to catch erroneous cases...
+			if (fixup_registered_types.Contains (stype))
+				throw new InvalidOperationException (String.Format ("Circular dependency for schema type {0} in namespace {1}", map.ElementName, map.Namespace));
+			fixup_registered_types.Add (stype);
 			MapFixup fixup = new MapFixup ();
 			fixup.Map = map;
 			fixup.SchemaType = stype;
