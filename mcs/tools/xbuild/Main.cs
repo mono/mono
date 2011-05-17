@@ -195,6 +195,7 @@ namespace Mono.XBuild.CommandLine {
 				break;
 
 			case "xterm-color":
+			case "xterm-256color":
 				xterm_colors = true;
 				break;
 			}

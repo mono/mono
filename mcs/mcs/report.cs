@@ -815,6 +815,7 @@ namespace Mono.CSharp {
 				break;
 
 			case "xterm-color":
+			case "xterm-256color":
 				xterm_colors = true;
 				break;
 			}
