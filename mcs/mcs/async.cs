@@ -29,9 +29,12 @@ namespace Mono.CSharp
 
 			protected override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
 			{
-				rc.Report.Error (1986, loc,
-					"The `await' operand type `{0}' must have suitable GetAwaiter method",
-					type.GetSignatureForError ());
+				Error_WrongGetAwaiter (rc, loc, type);
+			}
+
+			protected override void Error_OperatorCannotBeApplied (ResolveContext rc, TypeSpec type)
+			{
+				rc.Report.Error (1991, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
 			}
 		}
 
@@ -40,7 +43,7 @@ namespace Mono.CSharp
 		MethodSpec on_completed;
 
 		public Await (Expression expr, Location loc)
-			: base (new AwaitableMemberAccess (expr), loc)
+			: base (expr, loc)
 		{
 		}
 
@@ -80,6 +83,13 @@ namespace Mono.CSharp
 			mg_completed.EmitCall (ec, args);
 		}
 
+		static void Error_WrongGetAwaiter (ResolveContext rc, Location loc, TypeSpec type)
+		{
+			rc.Report.Error (1986, loc,
+				"The `await' operand type `{0}' must have suitable GetAwaiter method",
+				type.GetSignatureForError ());
+		}
+
 		void Error_WrongAwaiterPattern (ResolveContext rc, TypeSpec awaiter)
 		{
 			rc.Report.Error (1999, loc, "The awaiter type `{0}' must have suitable IsCompleted, OnCompleted, and GetResult members",
@@ -92,24 +102,29 @@ namespace Mono.CSharp
 				return false;
 
 			//
-			// Check whether the expression is awaitable
-			//
-			var t = expr.Type;
-
-			//
 			// The task t is of type dynamic
 			//
-			if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+			if (expr.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				throw new NotImplementedException ("dynamic await");
 
-			var mg = expr as MethodGroupExpr;
-			if (mg == null)
-				throw new NotImplementedException ("wrong expression kind");
+			//
+			// Check whether the expression is awaitable
+			//
+			Expression ama = new AwaitableMemberAccess (expr).Resolve (bc);
+			if (ama == null)
+				return false;
 
 			Arguments args = new Arguments (0);
 
-			//expr = mg.OverloadResolve (bc, ref args, null, OverloadResolver.Restrictions.NoBaseMembers);
-			expr = new Invocation (expr, args).Resolve (bc);
+			var errors_printer = new SessionReportPrinter ();
+			var old = bc.Report.SetPrinter (errors_printer);
+			ama = new Invocation (ama, args).Resolve (bc);
+
+			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (ama.Type)) {
+				bc.Report.SetPrinter (old);
+				Error_WrongGetAwaiter (bc, loc, expr.Type);
+				return false;
+			}
 
 			var awaiter_type = expr.Type;
 			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (awaiter_type, loc);
@@ -123,9 +138,16 @@ namespace Mono.CSharp
 				if (is_completed != null && is_completed.Type.BuiltinType == BuiltinTypeSpec.Type.Bool && is_completed.IsInstance && is_completed.Getter != null) {
 					// valid
 				} else {
+					bc.Report.SetPrinter (old);
 					Error_WrongAwaiterPattern (bc, awaiter_type);
 					return false;
 				}
+			}
+
+			if (errors_printer.ErrorsCount > 0) {
+				bc.Report.SetPrinter (old);
+				Error_WrongAwaiterPattern (bc, awaiter_type);
+				return false;
 			}
 
 			//

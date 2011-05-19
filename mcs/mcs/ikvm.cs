@@ -356,6 +356,9 @@ namespace Mono.CSharp
 				default_references.Add ("Microsoft.CSharp.dll");
 			}
 
+			if (compiler.Settings.Version == LanguageVersion.Future)
+				default_references.Add ("Mono.Async.dll");
+
 			return default_references.ToArray ();
 		}
 

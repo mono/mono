@@ -2509,7 +2509,6 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		// TODO: Not needed
 		protected abstract TypeSpec DeclaringType {
 			get;
 		}
