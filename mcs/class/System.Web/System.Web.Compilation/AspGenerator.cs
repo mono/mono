@@ -1109,6 +1109,11 @@ namespace System.Web.Compilation
 						break;
 
 					case TextBlockType.Comment: {
+						if (javascript) {
+							this.text.Append (block.Content);
+							break;
+						}
+						
 						this.text.Append ("<!--");
 						FlushText (true);
 						string blockToParse = block.Content.Substring (4, block.Length - 7);
