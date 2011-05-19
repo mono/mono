@@ -638,7 +638,7 @@ namespace System.Xml
 				return df;
 
 			case XmlNodeType.DocumentType:
-				throw new XmlException ("DocumentType cannot be imported.");
+				return ((XmlDocumentType) node).CloneNode (deep);
 
 			case XmlNodeType.Element:
 				XmlElement src = (XmlElement)node;
