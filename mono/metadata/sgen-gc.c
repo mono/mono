@@ -6431,7 +6431,7 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
 	if (ptr_in_nursery (dest_ptr) || count <= 0) {
-		memmove (dest_ptr, src_ptr, count * sizeof (gpointer));
+		mono_gc_memmove (dest_ptr, src_ptr, count * sizeof (gpointer));
 		return;
 	}
 
@@ -6466,7 +6466,7 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 		RememberedSet *rs;
 		TLAB_ACCESS_INIT;
 		LOCK_GC;
-		memmove (dest_ptr, src_ptr, count * sizeof (gpointer));
+		mono_gc_memmove (dest_ptr, src_ptr, count * sizeof (gpointer));
 
 		rs = REMEMBERED_SET;
 		DEBUG (8, fprintf (gc_debug_file, "Adding remset at %p, %d\n", dest_ptr, count));
@@ -6647,7 +6647,7 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (klass->valuetype);
 	LOCK_GC;
-	memmove (dest, src, size);
+	mono_gc_memmove (dest, src, size);
 	if (use_cardtable) {
 		sgen_card_table_mark_range ((mword)dest, size);
 	} else {
@@ -6697,7 +6697,7 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 	size = mono_object_class (obj)->instance_size;
 	LOCK_GC;
 	/* do not copy the sync state */
-	memcpy ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
+	mono_gc_memmove ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 			size - sizeof (MonoObject));
 	if (ptr_in_nursery (obj) || ptr_on_stack (obj)) {
 		UNLOCK_GC;
