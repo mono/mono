@@ -1540,7 +1540,7 @@ System.Threading.Tasks/CyclicDeque.cs
 System.Threading.Tasks/TaskScheduler.cs
 System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
-System.Threading.Tasks/Future.cs
+System.Threading.Tasks/Task_T.cs
 System.Threading.Tasks/Task.cs
 System.Threading.Tasks/TaskCompletionSource.cs
 System.Threading.Tasks/TaskSchedulerException.cs
