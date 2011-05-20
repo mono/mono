@@ -70,6 +70,24 @@ namespace MonoTests.System.IO.Ports
 			Assert.IsTrue(exceptionCatched,
 				"Exception not thrown despite wrong baud rate");
 		}
+
+		/// <summary>
+		/// This test is related to bug #635971
+		/// </summary>
+		[Test]
+		public void ZeroTimeout ()
+		{
+			var sp = new SerialPort ();
+			var exceptionThrown = false;
+			try {
+				sp.ReadTimeout = 0;
+			} catch(ArgumentOutOfRangeException) {
+				exceptionThrown = true;
+			}
+			Assert.IsFalse(exceptionThrown,
+				"Exception thrown despite proper timeout (0)");
+		}
+
 	}
 }
 

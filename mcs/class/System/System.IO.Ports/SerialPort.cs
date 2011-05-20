@@ -388,7 +388,7 @@ namespace System.IO.Ports
 				return read_timeout;
 			}
 			set {
-				if (value <= 0 && value != InfiniteTimeout)
+				if (value < 0 && value != InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
 				if (is_open)
@@ -476,7 +476,7 @@ namespace System.IO.Ports
 				return write_timeout;
 			}
 			set {
-				if (value <= 0 && value != InfiniteTimeout)
+				if (value < 0 && value != InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
 				if (is_open)
