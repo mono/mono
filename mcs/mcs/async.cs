@@ -4,6 +4,8 @@
 // Author:
 //   Marek Safar (marek.safar@gmail.com)
 //
+// Dual licensed under the terms of the MIT X11 or GNU GPL
+//
 // Copyright 2011 Novell, Inc.
 //
 
@@ -65,8 +67,6 @@ namespace Mono.CSharp
 			is_completed.InstanceExpression = fe_awaiter;
 			is_completed.EmitBranchable (ec, resume_point, true);
 
-			base.DoEmit (ec);
-
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
 			mg_completed.InstanceExpression = fe_awaiter;
 
@@ -81,6 +81,8 @@ namespace Mono.CSharp
 			// awaiter.OnCompleted (continuation);
 			//
 			mg_completed.EmitCall (ec, args);
+
+			base.DoEmit (ec);
 		}
 
 		static void Error_WrongGetAwaiter (ResolveContext rc, Location loc, TypeSpec type)
@@ -126,8 +128,9 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			var awaiter_type = expr.Type;
+			var awaiter_type = ama.Type;
 			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (awaiter_type, loc);
+			expr = ama;
 
 			//
 			// bool IsCompleted { get; } 
@@ -144,8 +147,9 @@ namespace Mono.CSharp
 				}
 			}
 
+			bc.Report.SetPrinter (old);
+
 			if (errors_printer.ErrorsCount > 0) {
-				bc.Report.SetPrinter (old);
 				Error_WrongAwaiterPattern (bc, awaiter_type);
 				return false;
 			}

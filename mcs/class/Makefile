@@ -178,6 +178,7 @@ net_4_0_dirs := \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing \
+	Mono.Async \
 	Mono.CodeContracts \
 	Mono.Parallel \
 	Microsoft.Web.Infrastructure \
