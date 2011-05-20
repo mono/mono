@@ -1220,8 +1220,16 @@ method_declaration
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
 		
-		if (current_container.Kind == MemberKind.Interface && method.Block != null) {
-			report.Error (531, method.Location, "`{0}': interface members cannot have a definition", method.GetSignatureForError ());
+		if (method.Block == null) {
+			if ((method.ModFlags & Modifiers.ASYNC) != 0) {
+				report.Error (1994, method.Location, "`{0}': The async modifier can only be used with methods that have a body",
+					method.GetSignatureForError ());
+			}
+		} else {
+			if (current_container.Kind == MemberKind.Interface) {
+				report.Error (531, method.Location, "`{0}': interface members cannot have a definition",
+					method.GetSignatureForError ());
+			}
 		}
 
 		current_local_parameters = null;

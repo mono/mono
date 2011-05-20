@@ -853,8 +853,8 @@ namespace Mono.CSharp {
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
-				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
-				AllowedModifiersClass,
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct | Modifiers.ASYNC :
+				AllowedModifiersClass | Modifiers.ASYNC,
 				name, attrs, parameters)
 		{
 		}
@@ -1137,9 +1137,18 @@ namespace Mono.CSharp {
 					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
-				
-				if (block.IsAsync) {
-					AsyncInitializer.Create (block, Parent.PartialContainer);
+
+				if ((ModFlags & Modifiers.ASYNC) != 0) {
+					if (ReturnType.Kind != MemberKind.Void && ReturnType != Module.PredefinedTypes.Task.TypeSpec && ReturnType != Module.PredefinedTypes.TaskGeneric.TypeSpec) {
+						Report.Error (1983, type_expr.Location, "The return type of an async method `{0}' must be void, Task, or Task<T>",
+							GetSignatureForError ());
+					}
+
+					if (!block.IsAsync) {
+						// TODO: Warning
+					}
+
+					AsyncInitializer.Create (block, Parent.PartialContainer, ReturnType);
 				}
 			}
 

@@ -222,6 +222,8 @@ namespace Mono.CSharp
 		//
 		public readonly PredefinedType AsyncVoidMethodBuilder;
 		public readonly PredefinedType Action;
+		public readonly PredefinedType Task;
+		public readonly PredefinedType TaskGeneric;
 
 		public PredefinedTypes (ModuleContainer module)
 		{
@@ -265,6 +267,8 @@ namespace Mono.CSharp
 
 			Action = new PredefinedType (module, MemberKind.Delegate, "System", "Action");
 			AsyncVoidMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncVoidMethodBuilder");
+			Task = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task");
+			TaskGeneric = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task", 1);
 
 			//
 			// Define types which are used for comparison. It does not matter
@@ -290,6 +294,9 @@ namespace Mono.CSharp
 
 			if (ExpressionGeneric.Define ())
 				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
+
+			Task.Define ();
+			TaskGeneric.Define ();
 		}
 	}
 

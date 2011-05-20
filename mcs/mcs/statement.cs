@@ -748,10 +748,16 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				var l = am as AnonymousMethodBody;
-				if (l != null && l.ReturnTypeInference != null && Expr != null) {
-					l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
-					return true;
+				if (am is AsyncInitializer) {
+					ec.Report.Error (1997, loc,
+						"`{0}': A return keyword must not be followed by an expression when method is async",
+						ec.GetSignatureForError ());
+				} else {
+					var l = am as AnonymousMethodBody;
+					if (l != null && l.ReturnTypeInference != null && Expr != null) {
+						l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+						return true;
+					}
 				}
 			}
 
@@ -2606,13 +2612,13 @@ namespace Mono.CSharp {
 			AddStatement (new Return (iterator, iterator.Location));
 		}
 
-		public AsyncInitializer WrapIntoAsyncTask (TypeContainer host)
+		public AsyncInitializer WrapIntoAsyncTask (TypeContainer host, TypeSpec returnType)
 		{
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
 			pb.statements = statements;
 
-			var initializer = new AsyncInitializer (pb, host);
+			var initializer = new AsyncInitializer (pb, host, returnType);
 			am_storey = new AsyncTaskStorey (initializer);
 
 			statements = new List<Statement> (1);

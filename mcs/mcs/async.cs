@@ -174,8 +174,8 @@ namespace Mono.CSharp
 
 	public class AsyncInitializer : StateMachineInitializer
 	{
-		public AsyncInitializer (ParametersBlock block, TypeContainer host)
-			: base (block, host, host.Compiler.BuiltinTypes.Void)
+		public AsyncInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
+			: base (block, host, returnType)
 		{
 		}
 
@@ -191,9 +191,39 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void Create (ParametersBlock block, TypeContainer host)
+		public static void Create (ParametersBlock block, TypeContainer host, TypeSpec returnType)
 		{
-			var init = block.WrapIntoAsyncTask (host);
+			ParametersCompiled parameters = block.Parameters;
+			for (int i = 0; i < parameters.Count; i++) {
+				Parameter p = parameters[i];
+				Parameter.Modifier mod = p.ModFlags;
+				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
+					host.Compiler.Report.Error (1988, p.Location,
+						"Async methods cannot have ref or out parameters");
+					return;
+				}
+
+				// TODO:
+				if (p is ArglistParameter) {
+					host.Compiler.Report.Error (1636, p.Location,
+						"__arglist is not allowed in parameter list of iterators");
+					return;
+				}
+
+				// TODO:
+				if (parameters.Types[i].IsPointer) {
+					host.Compiler.Report.Error (1637, p.Location,
+						"Iterators cannot have unsafe parameters or yield types");
+					return;
+				}
+			}
+
+			// TODO:
+			//if ((modifiers & Modifiers.UNSAFE) != 0) {
+			//    parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+			//}
+
+			var init = block.WrapIntoAsyncTask (host, returnType);
 			init.type = host.Compiler.BuiltinTypes.Void;
 		}
 

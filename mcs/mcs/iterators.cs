@@ -961,8 +961,7 @@ namespace Mono.CSharp
 
 				if (parameters.Types [i].IsPointer) {
 					parent.Compiler.Report.Error (1637, p.Location,
-							  "Iterators cannot have unsafe parameters or " +
-							  "yield types");
+						"Iterators cannot have unsafe parameters or yield types");
 					return;
 				}
 			}
