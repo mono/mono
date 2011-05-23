@@ -1,5 +1,6 @@
 System.Runtime.Serialization/Bug666333Test.cs
 System.Runtime.Serialization/Bug675144Test.cs
+System.Runtime.Serialization/Bug695203Test.cs
 System.Runtime.Serialization/DataContractResolverTest.cs
 System.Runtime.Serialization/KnownTypeAttributeTest.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
