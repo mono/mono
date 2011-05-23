@@ -44,6 +44,7 @@ namespace System
 
 		string template;
 		ReadOnlyCollection<string> path, query;
+		string wild_path_name;
 		Dictionary<string,string> query_params = new Dictionary<string,string> ();
 
 		public UriTemplate (string template)
@@ -266,6 +267,10 @@ namespace System
 				c++;
 
 			foreach (string name in path) {
+				if (name == wild_path_name) {
+					vc [name] = cp.Substring (c); // all remaining paths.
+					continue;
+				}
 				int n = StringIndexOf (template, '{' + name + '}', i);
 				if (String.CompareOrdinal (cp, c, template, i, n - i) != 0)
 					return null; // doesn't match before current template part.
@@ -282,11 +287,12 @@ namespace System
 				c += value.Length;
 			}
 			int tEnd = template.IndexOf ('?');
+			int wildIdx = template.IndexOf ('*');
+			bool wild = wildIdx >= 0;
 			if (tEnd < 0)
 				tEnd = template.Length;
-			bool wild = (template [tEnd - 1] == '*');
 			if (wild)
-				tEnd--;
+				tEnd = wildIdx - 1;
 			if (!wild && (cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match
@@ -334,8 +340,9 @@ namespace System
 		ReadOnlyCollection<string> ParsePathTemplate (string template, int index, int end)
 		{
 			int widx = template.IndexOf ('*', index, end);
-			if (widx >= 0 && widx != end - 1)
-				throw new FormatException (String.Format ("Wildcard in UriTemplate is valid only if it is placed at the last part of the path: '{0}'", template));
+			if (widx >= 0)
+				if (widx != end - 1 && template.IndexOf ('}', widx) != end - 1)
+					throw new FormatException (String.Format ("Wildcard in UriTemplate is valid only if it is placed at the last part of the path: '{0}'", template));
 			List<string> list = null;
 			int prevEnd = -2;
 			for (int i = index; i <= end; ) {
@@ -353,6 +360,8 @@ namespace System
 				i++;
 				string name = template.Substring (i, e - i);
 				string uname = name.ToUpper (CultureInfo.InvariantCulture);
+				if (uname [0] == '*')
+					uname = wild_path_name = uname.Substring (1);
 				if (list.Contains (uname) || (path != null && path.Contains (uname)))
 					throw new InvalidOperationException (String.Format ("The URI template string contains duplicate template item {{'{0}'}}", name));
 				list.Add (uname);

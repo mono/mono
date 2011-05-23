@@ -458,5 +458,13 @@ namespace MonoTests.System
 			Assert.AreEqual ("http://localhost:8080/id-aaa/bbb", uri.ToString ());
 		}
 
+		[Test]
+		public void NamedWildcard ()
+		{
+			UriTemplate template = new UriTemplate ("{*path}");
+			UriTemplateMatch match = template.Match (new Uri ("http://localhost"), new Uri ("http://localhost/something"));
+			Assert.IsNotNull (match, "#1");
+			Assert.AreEqual ("something", match.BoundVariables ["path"], "#2");
+		}
 	}
 }
