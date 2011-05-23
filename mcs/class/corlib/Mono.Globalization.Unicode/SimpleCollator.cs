@@ -139,19 +139,20 @@ namespace Mono.Globalization.Unicode
 			new SimpleCollator (CultureInfo.InvariantCulture);
 
 		readonly TextInfo textInfo; // for ToLower().
-		readonly bool frenchSort;
-		unsafe readonly byte* cjkCatTable;
-		unsafe readonly byte* cjkLv1Table;
 		readonly CodePointIndexer cjkIndexer;
-		unsafe readonly byte* cjkLv2Table;
-		readonly CodePointIndexer cjkLv2Indexer;
-		readonly int lcid;
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
-
 		// This flag marks characters as "unsafe", where the character
 		// could be used as part of a contraction (whose length > 1).
 		readonly byte [] unsafeFlags;
+
+		unsafe readonly byte* cjkCatTable;
+		unsafe readonly byte* cjkLv1Table;
+		unsafe readonly byte* cjkLv2Table;
+		readonly CodePointIndexer cjkLv2Indexer;
+		readonly int lcid;
+		readonly bool frenchSort;
+
 
 		const int UnsafeFlagLength = 0x300 / 8;
 

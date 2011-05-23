@@ -37,16 +37,16 @@ namespace Mono.Globalization.Unicode
 	{
 		// l4s = small kana sensitivity, l4t = mark type,
 		// l4k = katakana flag, l4w = kana width sensitivity
-		int l1, l2, l3, l4s, l4t, l4k, l4w, l5;
 		byte [] l1b, l2b, l3b, l4sb, l4tb, l4kb, l4wb, l5b;
 //		int level5LastPos;
 
 		string source;
+		int l1, l2, l3, l4s, l4t, l4k, l4w, l5;
+		int lcid;
+		CompareOptions options;
 		bool processLevel2;
 		bool frenchSort;
 		bool frenchSorted;
-		int lcid;
-		CompareOptions options;
 
 		public SortKeyBuffer (int lcid)
 		{

@@ -46,9 +46,9 @@ namespace System.Threading
 		private int seq_num = 1;
 		private int state;
 		private int readers;
+		private int writer_lock_owner;
 		private LockQueue writer_queue;
 		private Hashtable reader_locks;
-		private int writer_lock_owner;
 
 		public ReaderWriterLock()
 		{

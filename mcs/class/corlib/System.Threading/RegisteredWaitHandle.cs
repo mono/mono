@@ -43,12 +43,12 @@ namespace System.Threading
 	{
 		WaitHandle _waitObject;
 		WaitOrTimerCallback _callback;
-		TimeSpan _timeout;
 		object _state;
-		bool _executeOnlyOnce;
 		WaitHandle _finalEvent;
 		ManualResetEvent _cancelEvent;
+		TimeSpan _timeout;
 		int _callsInProcess;
+		bool _executeOnlyOnce;
 		bool _unregistered;
 
 		internal RegisteredWaitHandle (WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce)

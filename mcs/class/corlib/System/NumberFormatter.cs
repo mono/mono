@@ -108,6 +108,9 @@ namespace System
 
 		private NumberFormatInfo _nfi;
 
+		//part of the private stringbuffer
+		private char[] _cbuf;
+
 		private bool _NaN;
 		private bool _infinity;
 		private bool _isCustomFormat;
@@ -542,7 +545,7 @@ namespace System
 
 		#region Inner String Buffer
 
-		private char[] _cbuf;
+		//_cbuf moved to before other fields to improve layout
 		private int _ind;
 
 		private void ResetCharBuf (int size)

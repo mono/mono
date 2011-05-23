@@ -45,6 +45,8 @@ namespace System.IO {
 		protected Stream OutStream;
 		private Encoding m_encoding;
 		private byte [] buffer;
+		byte [] stringBuffer;
+		int maxCharsPerRound;
 		private bool disposed = false;
 
 		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe) {
@@ -271,9 +273,6 @@ namespace System.IO {
 
 			OutStream.Write(BitConverterLE.GetBytes(value), 0, 4);
 		}
-
-		byte [] stringBuffer;
-		int maxCharsPerRound;
 		
 		public virtual void Write(string value) {
 

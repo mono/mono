@@ -1129,23 +1129,25 @@ namespace System.IO
 		static byte[] buf_recycle;
 		static readonly object buf_recycle_lock = new object ();
 
+		private byte [] buf;			// the buffer
+		private string name = "[Unknown]";	// name of file.
+
+		SafeFileHandle safeHandle;              // set only when using one of the
+							// constructors taking SafeFileHandle
+
+		private long append_startpos;
+		IntPtr handle;				// handle to underlying file
+
 		private FileAccess access;
 		private bool owner;
 		private bool async;
 		private bool canseek;
-		private long append_startpos;
 		private bool anonymous;
+		private bool buf_dirty;			// true if buffer has been written to
 
-		private byte [] buf;			// the buffer
 		private int buf_size;			// capacity in bytes
 		private int buf_length;			// number of valid bytes in buffer
 		private int buf_offset;			// position of next byte
-		private bool buf_dirty;			// true if buffer has been written to
 		private long buf_start;			// location of buffer in file
-		private string name = "[Unknown]";	// name of file.
-
-		IntPtr handle;				// handle to underlying file
-		SafeFileHandle safeHandle;              // set only when using one of the
-							// constructors taking SafeFileHandle
 	}
 }

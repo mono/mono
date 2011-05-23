@@ -713,13 +713,13 @@ public abstract class Encoding : ICloneable
 
 #if !ECMA_COMPAT
 
-	internal string body_name;
-	internal string encoding_name;
-	internal string header_name;
 	internal bool is_mail_news_display;
 	internal bool is_mail_news_save;
 	internal bool is_browser_save = false;
 	internal bool is_browser_display = false;
+	internal string body_name;
+	internal string encoding_name;
+	internal string header_name;
 	internal string web_name;
 
 	// Get the mail body name for this encoding.
