@@ -53,10 +53,6 @@ namespace System.Xml.Schema
 		XmlSchemaObjectTable attributes;
 		XmlSchemaObjectTable elements;
 		XmlSchemaObjectTable types;
-//		XmlSchemaObjectTable attributeGroups;
-//		XmlSchemaObjectTable groups;
-		Hashtable idCollection;
-		XmlSchemaObjectTable namedIdentities;
 
 		XmlSchemaCompilationSettings settings =
 			new XmlSchemaCompilationSettings ();
@@ -132,22 +128,6 @@ namespace System.Xml.Schema
 #endif
 		}
 
-		internal Hashtable IDCollection {
-			get {
-				if (idCollection == null)
-					idCollection = new Hashtable ();
-				return idCollection;
-			}
-		}
-
-		internal XmlSchemaObjectTable NamedIdentities {
-			get {
-				if (namedIdentities == null)
-					namedIdentities = new XmlSchemaObjectTable();
-				return namedIdentities;
-			}
-		}
-
 		public XmlSchema Add (string targetNamespace, string url)
 		{
 			XmlTextReader r = null;
@@ -197,8 +177,6 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 			ArrayList al = new ArrayList ();
 			al.AddRange (schemas);
-			IDCollection.Clear ();
-			NamedIdentities.Clear ();
 
 			var handledUris = new List<CompiledSchemaMemo> ();
 			foreach (XmlSchema schema in al)
@@ -228,9 +206,18 @@ namespace System.Xml.Schema
 			GlobalElements.Clear ();
 			GlobalAttributes.Clear ();
 			GlobalTypes.Clear ();
-			// GlobalAttributeGroups.Clear ();
-			// GlobalGroups.Clear ();
+			global_attribute_groups.Clear ();
+			global_groups.Clear ();
+			global_notations.Clear ();
+			global_ids.Clear ();
+			global_identity_constraints.Clear ();
 		}
+		
+		XmlSchemaObjectTable global_attribute_groups = new XmlSchemaObjectTable ();
+		XmlSchemaObjectTable global_groups = new XmlSchemaObjectTable ();
+		XmlSchemaObjectTable global_notations = new XmlSchemaObjectTable ();
+		XmlSchemaObjectTable global_identity_constraints = new XmlSchemaObjectTable ();
+		Hashtable global_ids = new Hashtable ();
 
 		private void AddGlobalComponents (XmlSchema schema)
 		{
@@ -240,6 +227,14 @@ namespace System.Xml.Schema
 				GlobalAttributes.Add (a.QualifiedName, a);
 			foreach (XmlSchemaType t in schema.SchemaTypes.Values)
 				GlobalTypes.Add (t.QualifiedName, t);
+			foreach (XmlSchemaAttributeGroup g in schema.AttributeGroups.Values)
+				global_attribute_groups.Add (g.QualifiedName, g);
+			foreach (XmlSchemaGroup g in schema.Groups.Values)
+				global_groups.Add (g.QualifiedName, g);
+			foreach (DictionaryEntry pair in schema.IDCollection)
+				global_ids.Add (pair.Key, pair.Value);
+			foreach (XmlSchemaIdentityConstraint ic in schema.NamedIdentities.Values)
+				global_identity_constraints.Add (ic.QualifiedName, ic);
 		}
 
 		public bool Contains (string targetNamespace)

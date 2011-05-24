@@ -61,6 +61,8 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection items ;
 		private XmlSchemaObjectTable notations ;
 		private XmlSchemaObjectTable schemaTypes ;
+		private XmlSchemaObjectTable named_identities;
+		private Hashtable ids;
 		private string targetNamespace ;
 		private XmlAttribute[] unhandledAttributes ;
 		private string version;
@@ -93,6 +95,8 @@ namespace System.Xml.Schema
 			groups = new XmlSchemaObjectTable();
 			notations = new XmlSchemaObjectTable();
 			schemaTypes = new XmlSchemaObjectTable();
+			named_identities = new XmlSchemaObjectTable ();
+			ids = new Hashtable ();
 			compilationItems = new XmlSchemaObjectCollection ();
 		}
 
@@ -232,9 +236,8 @@ namespace System.Xml.Schema
 			get{ return notations; }
 		}
 
-		internal XmlSchemaObjectTable NamedIdentities
-		{
-			get { return schemas.NamedIdentities; }
+		internal XmlSchemaObjectTable NamedIdentities {
+			get { return named_identities; }
 		}
 
 		internal XmlSchemaSet Schemas
@@ -242,9 +245,8 @@ namespace System.Xml.Schema
 			get { return schemas; }
 		}
 
-		internal Hashtable IDCollection
-		{
-			get { return schemas.IDCollection; }
+		internal Hashtable IDCollection {
+			get { return ids; }
 		}
 		#endregion
 
@@ -338,6 +340,8 @@ namespace System.Xml.Schema
 			groups.Clear ();
 			notations.Clear ();
 			schemaTypes.Clear ();
+			named_identities.Clear ();
+			ids.Clear ();
 			compilationItems.Clear ();
 
 			//1. Union and List are not allowed in block default
@@ -355,7 +359,7 @@ namespace System.Xml.Schema
 			}
 
 			//3. id must be of type ID
-			XmlSchemaUtil.CompileID(Id, this, col.IDCollection, handler);
+			XmlSchemaUtil.CompileID(Id, this, IDCollection, handler);
 
 			//4. targetNamespace should be of type anyURI or absent
 			if (TargetNamespace != null) {
