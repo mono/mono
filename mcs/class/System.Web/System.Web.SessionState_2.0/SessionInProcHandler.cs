@@ -387,7 +387,7 @@ namespace System.Web.SessionState
 				itemLock = inProcItem.rwlock;
 				if (itemLock != null && itemLock.TryEnterWriteLock (lockAcquireTimeout))
 					locked = true;
-				else
+				else if (itemLock != null)
 					throw new ApplicationException ("Failed to acquire lock");
 				if (inProcItem.resettingTimeout)
 				 	UpdateSessionItemTimeout (itemTimeout, CacheId);
