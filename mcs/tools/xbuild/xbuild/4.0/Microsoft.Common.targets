@@ -567,7 +567,8 @@
 		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')"
+			SkipUnchangedFiles="true">                                                        
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 	</Target>
