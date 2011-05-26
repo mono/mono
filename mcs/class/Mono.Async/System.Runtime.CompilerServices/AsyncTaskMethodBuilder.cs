@@ -1,5 +1,5 @@
 //
-// TaskAwaiter.cs
+// AsyncTaskMethodBuilder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,65 +30,36 @@ using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	public struct AsyncTaskMethodBuilder
 	{
-		readonly Task task;
+		readonly TaskCompletionSource<object> tcs;
 
-		internal TaskAwaiter (Task task)
+		private AsyncTaskMethodBuilder (TaskCompletionSource<object> tcs)
 		{
-			this.task = task;
+			this.tcs = tcs;
 		}
 
-		public bool IsCompleted {
+		public Task Task {
 			get {
-				return task.IsCompleted;
+				return tcs.Task;
 			}
 		}
-
-		public void GetResult ()
+		
+		public static AsyncTaskMethodBuilder Create ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw new NotImplementedException ();
+			return new AsyncTaskMethodBuilder (new TaskCompletionSource<object> ());
 		}
 
-		public void OnCompleted (Action continuation)
+		public void SetException (Exception exception)
 		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
-
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
-		}
-	}
-
-	public struct TaskAwaiter<TResult>
-	{
-		readonly Task<TResult> task;
-
-		internal TaskAwaiter (Task<TResult> task)
-		{
-			this.task = task;
+			if (!tcs.TrySetException (exception))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 
-		public bool IsCompleted {
-			get {
-				return task.IsCompleted;
-			}
-		}
-
-		public TResult GetResult ()
+		public void SetResult ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw new NotImplementedException ();
-
-			return task.Result;
-		}
-
-		public void OnCompleted (Action continuation)
-		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
-
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+			if (!tcs.TrySetResult (null))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 	}
 }

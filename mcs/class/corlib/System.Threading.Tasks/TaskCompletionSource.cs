@@ -1,8 +1,9 @@
 // 
 // TaskCompletionSource.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar <marek.safar@gmail.com>
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
 // 
@@ -32,7 +33,7 @@ namespace System.Threading.Tasks
 {
 	public class TaskCompletionSource<TResult>
 	{
-		Task<TResult> source;
+		readonly Task<TResult> source;
 
 		public TaskCompletionSource ()
 		{
@@ -66,11 +67,17 @@ namespace System.Threading.Tasks
 		
 		public void SetException (Exception exception)
 		{
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
+			
 			SetException (new Exception[] { exception });
 		}
 		
 		public void SetException (IEnumerable<Exception> exceptions)
 		{
+			if (exceptions == null)
+				throw new ArgumentNullException ("exceptions");
+			
 			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
 				ThrowInvalidException ();
 		}
@@ -81,7 +88,7 @@ namespace System.Threading.Tasks
 				ThrowInvalidException ();
 		}
 				
-		void ThrowInvalidException ()
+		static void ThrowInvalidException ()
 		{
 			throw new InvalidOperationException ("The underlying Task is already in one of the three final states: RanToCompletion, Faulted, or Canceled.");
 		}
@@ -93,11 +100,17 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetException (Exception exception)
 		{
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
+			
 			return TrySetException (new Exception[] { exception });
 		}
 		
 		public bool TrySetException (IEnumerable<Exception> exceptions)
 		{
+			if (exceptions == null)
+				throw new ArgumentNullException ("exceptions");
+			
 			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
 		}
 		

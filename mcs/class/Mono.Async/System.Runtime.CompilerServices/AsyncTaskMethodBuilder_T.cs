@@ -1,5 +1,5 @@
 //
-// TaskAwaiter.cs
+// AsyncTaskMethodBuilder_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,65 +30,36 @@ using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	public struct AsyncTaskMethodBuilder<TResult>
 	{
-		readonly Task task;
+		readonly TaskCompletionSource<TResult> tcs;
 
-		internal TaskAwaiter (Task task)
+		private AsyncTaskMethodBuilder (TaskCompletionSource<TResult> tcs)
 		{
-			this.task = task;
+			this.tcs = tcs;
 		}
 
-		public bool IsCompleted {
+		public Task<TResult> Task {
 			get {
-				return task.IsCompleted;
+				return tcs.Task;
 			}
 		}
-
-		public void GetResult ()
+		
+		public static AsyncTaskMethodBuilder<TResult> Create ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw new NotImplementedException ();
+			return new AsyncTaskMethodBuilder<TResult> (new TaskCompletionSource<TResult> ());
 		}
 
-		public void OnCompleted (Action continuation)
+		public void SetException (Exception exception)
 		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
-
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
-		}
-	}
-
-	public struct TaskAwaiter<TResult>
-	{
-		readonly Task<TResult> task;
-
-		internal TaskAwaiter (Task<TResult> task)
-		{
-			this.task = task;
+			if (!tcs.TrySetException (exception))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 
-		public bool IsCompleted {
-			get {
-				return task.IsCompleted;
-			}
-		}
-
-		public TResult GetResult ()
+		public void SetResult (TResult result)
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw new NotImplementedException ();
-
-			return task.Result;
-		}
-
-		public void OnCompleted (Action continuation)
-		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
-
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+			if (!tcs.TrySetResult (result))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 	}
 }

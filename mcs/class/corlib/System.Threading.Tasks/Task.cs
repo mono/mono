@@ -30,8 +30,8 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DisplayActionMethod}")]
+//	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
 	public class Task : IDisposable, IAsyncResult
 	{
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
@@ -868,6 +868,14 @@ namespace System.Threading.Tasks
 				return parent;
 			}
 		}
+		
+		string DisplayActionMethod {
+			get {
+				Delegate d = simpleAction ?? (Delegate) action;
+				return d == null ? "<none>" : d.Method.ToString ();
+			}
+		}
+		
 		#endregion
 	}
 }
