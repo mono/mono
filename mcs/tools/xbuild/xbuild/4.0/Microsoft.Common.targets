@@ -48,6 +48,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<SkipCopyUnchangedFiles Condition="'$(SkipCopyUnchangedFiles)' == ''">true</SkipCopyUnchangedFiles>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj\</BaseIntermediateOutputPath>
 		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' != '' and !HasTrailingSlash('$(BaseIntermediateOutputPath)')">$(BaseIntermediateOutputPath)\</BaseIntermediateOutputPath>
 		<CleanFile Condition="'$(CleanFile)'==''">$(MSBuildProjectFile).FilesWrittenAbsolute.txt</CleanFile>
@@ -568,7 +572,7 @@
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
 			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')"
-			SkipUnchangedFiles="true">                                                        
+			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">                                                        
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 	</Target>
