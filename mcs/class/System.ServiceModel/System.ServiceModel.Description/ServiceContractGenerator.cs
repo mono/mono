@@ -63,8 +63,8 @@ namespace System.ServiceModel.Description
 		ServiceContractGenerationContext contract_context;
 		List<OPair> operation_contexts = new List<OPair> ();
 
-		XsdDataContractImporter xsd_data_importer;
-		CodeCompileUnit xs_code_compile_unit;
+		XsdDataContractImporter data_contract_importer;
+		XmlSerializerMessageContractImporterInternal xml_serialization_importer;
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -154,10 +154,10 @@ namespace System.ServiceModel.Description
 			if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
 				GenerateProxyClass (contractDescription, cns);
 
-			if (xsd_data_importer != null)
-				MergeCompileUnit (xsd_data_importer.CodeCompileUnit, ccu);
-			if (xs_code_compile_unit != null)
-				MergeCompileUnit (xs_code_compile_unit, ccu);
+			if (data_contract_importer != null)
+				MergeCompileUnit (data_contract_importer.CodeCompileUnit, ccu);
+			if (xml_serialization_importer != null)
+				MergeCompileUnit (xml_serialization_importer.CodeCompileUnit, ccu);
 
 			// Process extensions. Class first, then methods.
 			// (built-in ones must present before processing class extensions).
@@ -801,10 +801,14 @@ namespace System.ServiceModel.Description
 
 		private void ExportDataContract (MessagePartDescription md)
 		{
-			if (xsd_data_importer == null)
-				xsd_data_importer = md.Importer;
-			if (xs_code_compile_unit == null)
-				xs_code_compile_unit = md.XsCodeCompileUnit;
+			if (data_contract_importer == null)
+				data_contract_importer = md.DataContractImporter;
+			else if (md.DataContractImporter != null && data_contract_importer != md.DataContractImporter)
+				throw new Exception ("INTERNAL ERROR: should not happen");
+			if (xml_serialization_importer == null)
+				xml_serialization_importer = md.XmlSerializationImporter;
+			else if (md.XmlSerializationImporter != null && xml_serialization_importer != md.XmlSerializationImporter)
+				throw new Exception ("INTERNAL ERROR: should not happen");
 		}
 		
 		private string GetXmlNamespace (CodeTypeDeclaration type)

@@ -98,8 +98,8 @@ namespace System.ServiceModel.Description
 		}
 
 #if !NET_2_1
-		internal XsdDataContractImporter Importer { get; set; }
-		internal System.CodeDom.CodeCompileUnit XsCodeCompileUnit { get; set; }
+		internal XsdDataContractImporter DataContractImporter { get; set; }
+		internal XmlSerializerMessageContractImporterInternal XmlSerializationImporter { get; set; }
 		internal System.CodeDom.CodeTypeReference CodeTypeReference { get; set; }
 #endif
 

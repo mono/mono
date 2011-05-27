@@ -35,7 +35,6 @@ using System.Xml.Schema;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class XmlSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
