@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Web.Services.Description;
 using System.Xml;
@@ -39,10 +41,10 @@ using System.Xml.Serialization;
 
 using QName = System.Xml.XmlQualifiedName;
 using WSDL = System.Web.Services.Description.ServiceDescription;
+using Message = System.Web.Services.Description.Message;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class DataContractSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
@@ -173,6 +175,8 @@ namespace System.ServiceModel.Description
 
 					j ++;
 				}
+				
+				OnOperationImported (opdescr);
 
 
 				i ++;
@@ -185,7 +189,7 @@ namespace System.ServiceModel.Description
 			foreach (OperationMessage opmsg in op.Messages) {
 				var parts = context.GetMessageDescription (opmsg).Body.Parts;
 				foreach (var part in parts)
-					if (part.Importer != null)
+					if (part.DataContractImporter != null)
 						return true;
 			}
 			return false;
@@ -217,6 +221,8 @@ namespace System.ServiceModel.Description
 		protected abstract void ResolveType (QName qname, List<MessagePartDescription> parts, string ns);
 
 		protected abstract bool CanImportOperation (PortType portType, Operation op);
+		
+		protected abstract void OnOperationImported (OperationDescription od);
 	}
 
 	class DataContractMessageContractImporterInternal : MessageContractImporterInternal
@@ -254,7 +260,7 @@ namespace System.ServiceModel.Description
 		MessagePartDescription CreateMessagePart (XmlSchemaElement elem, Message msg, MessagePart msgPart)
 		{
 			var part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
-			part.Importer = dc_importer;
+			part.DataContractImporter = dc_importer;
 			if (dc_importer.CanImport (schema_set_in_use, elem)) {
 				var typeQName = dc_importer.Import (schema_set_in_use, elem);
 				part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
@@ -280,14 +286,23 @@ namespace System.ServiceModel.Description
 					return false;
 			return true;
 		}
+		
+		protected override void OnOperationImported (OperationDescription od)
+		{
+			// do nothing
+		}
 	}
 
 	class XmlSerializerMessageContractImporterInternal : MessageContractImporterInternal
 	{
-		CodeCompileUnit ccu;
+		CodeCompileUnit ccu = new CodeCompileUnit ();
 		XmlSchemaSet schema_set_cache;
 		XmlSchemaImporter schema_importer;
 		XmlCodeExporter code_exporter;
+		
+		public CodeCompileUnit CodeCompileUnit {
+			get { return ccu; }
+		}
 		
 		protected override void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart msgPart)
 		{
@@ -297,18 +312,21 @@ namespace System.ServiceModel.Description
 				foreach (XmlSchema xs in schema_set_cache.Schemas ())
 					xss.Add (xs);
 				schema_importer = new XmlSchemaImporter (xss);
-				ccu = new CodeCompileUnit ();
-				var cns = new CodeNamespace ();
-				ccu.Namespaces.Add (cns);
+				if (ccu.Namespaces.Count == 0)
+					ccu.Namespaces.Add (new CodeNamespace ());
+				var cns = ccu.Namespaces [0];
 				code_exporter = new XmlCodeExporter (cns, ccu);
 			}
 
 			var part = new MessagePartDescription (qname.Name, qname.Namespace);
-			part.XsCodeCompileUnit = ccu;
+			part.XmlSerializationImporter = this;
 			var mbrNS = msg.ServiceDescription.TargetNamespace;
-			code_exporter.ExportMembersMapping (schema_importer.ImportMembersMapping (qname));
-
+			var xmm = schema_importer.ImportMembersMapping (qname);
+			code_exporter.ExportMembersMapping (xmm);
+			// FIXME: use of ElementName is a hack!
+			part.CodeTypeReference = new CodeTypeReference (xmm.ElementName);
 			parts.Add (part);
+			Console.Error.WriteLine ("CodeNamespace {1} in CCU {2} now contains {0} types.", ccu.Namespaces [0].Types.Count, ccu.Namespaces [0].GetHashCode (), ccu.GetHashCode ());
 		}
 
 		protected override void ResolveType (QName qname, List<MessagePartDescription> parts, string ns)
@@ -320,6 +338,31 @@ namespace System.ServiceModel.Description
 		{
 			// FIXME: implement
 			return true;
+		}
+		
+		protected override void OnOperationImported (OperationDescription od)
+		{
+			od.Behaviors.Add (new XmlSerializerMappingBehavior ());
+		}
+	}
+	
+	// just a marker behavior
+	class XmlSerializerMappingBehavior : IOperationBehavior
+	{
+		public void AddBindingParameters (OperationDescription operationDescription, BindingParameterCollection bindingParameters)
+		{
+		}
+		
+		public void ApplyClientBehavior (OperationDescription operationDescription, ClientOperation clientOperation)
+		{
+		}
+		
+		public void ApplyDispatchBehavior (OperationDescription operationDescription, DispatchOperation dispatchOperation)
+		{
+		}
+		
+		public void Validate (OperationDescription operationDescription)
+		{
 		}
 	}
 }
