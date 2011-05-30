@@ -29,27 +29,30 @@
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("{Name} Value={Value} Condition={Condition}")]
         public class ProjectPropertyElement : ProjectElement
         {
                 public string Name { get; set; }
                 public string Value { get; set; }
-
                 internal ProjectPropertyElement (string name, ProjectRootElement containingProject)
                 {
                         Name = name;
                         ContainingProject = containingProject;
                 }
-
                 internal override string XmlName {
                         get { return Name; }
                 }
-
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName);
+                        base.SaveValue (writer);
                         if (!string.IsNullOrWhiteSpace (Value))
                                 writer.WriteValue (Value);
-                        writer.WriteEndElement ();
+                }
+                internal override void LoadValue (XmlReader reader)
+                {
+                        while (reader.Read () & reader.NodeType != XmlNodeType.Text)
+                                ;
+                        Value = reader.Value;
                 }
         }
 }

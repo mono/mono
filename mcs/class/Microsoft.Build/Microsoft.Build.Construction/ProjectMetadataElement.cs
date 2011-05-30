@@ -31,6 +31,7 @@ using System.Xml;
 
 namespace Microsoft.Build.Construction
 {
+        [System.Diagnostics.DebuggerDisplayAttribute ("{Name} Value={Value} Condition={Condition}")]
         public class ProjectMetadataElement : ProjectElement
         {
                 internal ProjectMetadataElement (string name, ProjectRootElement containingProject)
@@ -38,18 +39,22 @@ namespace Microsoft.Build.Construction
                         Name = name;
                         ContainingProject = containingProject;
                 }
-
                 public string Name { get; set; }
                 public string Value { get; set; }
                 internal override string XmlName {
                         get { return Name; }
                 }
-
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName);
-                        writer.WriteValue (Value);
-                        writer.WriteEndElement ();
+                        base.SaveValue (writer);
+                        if (!string.IsNullOrWhiteSpace (Value))
+                                writer.WriteValue (Value);
+                }
+                internal override void LoadValue (XmlReader reader)
+                {
+                        while (reader.Read () & reader.NodeType != XmlNodeType.Text)
+                                ;
+                        Value = reader.Value;
                 }
         }
 }
