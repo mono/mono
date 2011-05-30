@@ -35,6 +35,7 @@ namespace Microsoft.Build.Construction
 {
         public abstract class ProjectElementContainer : ProjectElement
         {
+                internal ProjectElementContainer () {}
                 List<ProjectElement> children = new List<ProjectElement> ();
 
                 public IEnumerable<ProjectElement> AllChildren {
@@ -55,7 +56,7 @@ namespace Microsoft.Build.Construction
 
                 public ICollection<ProjectElement> ChildrenReversed {
                         get { return new CollectionFromEnumerable<ProjectElement> (
-                                children.Reverse<ProjectElement> ()); }
+                                new ReverseEnumerable<ProjectElement> (children)); }
                 }
 
                 public int Count {
@@ -128,18 +129,37 @@ namespace Microsoft.Build.Construction
 
                 public void RemoveAllChildren ()
                 {
+                        foreach (var child in children)
+                                RemoveChild (child);
                 }
 
                 public void RemoveChild (ProjectElement child)
                 {
+                        child.Parent = null;
+                        children.Remove(child);
+                        if (child.NextSibling != null)
+                                child.NextSibling.PreviousSibling = child.PreviousSibling;
+                        if (child.PreviousSibling != null)
+                                child.PreviousSibling.NextSibling = child.NextSibling;
                 }
 
-                internal override void Save (XmlWriter writer)
+                internal override void SaveValue (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName);
+                        base.SaveValue (writer);
                         foreach (var child in Children)
                                 child.Save (writer);
-                        writer.WriteEndElement ();
                 }
+
+                internal override void LoadValue (XmlReader reader)
+                {
+                        while (reader.Read ()) {
+                                if (!reader.IsStartElement ())
+                                        continue;
+                                var child = LoadChildElement (reader.Name);
+                                child.Load (reader.ReadSubtree ());
+                        }
+                }
+
+                internal abstract ProjectElement LoadChildElement (string name);
         }
 }
