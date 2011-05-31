@@ -1300,7 +1300,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		int integer_type_suffix (ulong ul, int c, Location loc)
+		ILiteralConstant integer_type_suffix (ulong ul, int c, Location loc)
 		{
 			bool is_unsigned = false;
 			bool is_long = false;
@@ -1343,40 +1343,38 @@ namespace Mono.CSharp
 			}
 
 			if (is_long && is_unsigned){
-				val = new ULongLiteral (context.BuiltinTypes, ul, loc);
-				return Token.LITERAL;
+				return new ULongLiteral (context.BuiltinTypes, ul, loc);
 			}
 			
 			if (is_unsigned){
 				// uint if possible, or ulong else.
 
 				if ((ul & 0xffffffff00000000) == 0)
-					val = new UIntLiteral (context.BuiltinTypes, (uint) ul, loc);
+					return new UIntLiteral (context.BuiltinTypes, (uint) ul, loc);
 				else
-					val = new ULongLiteral (context.BuiltinTypes, ul, loc);
+					return new ULongLiteral (context.BuiltinTypes, ul, loc);
 			} else if (is_long){
 				// long if possible, ulong otherwise
 				if ((ul & 0x8000000000000000) != 0)
-					val = new ULongLiteral (context.BuiltinTypes, ul, loc);
+					return new ULongLiteral (context.BuiltinTypes, ul, loc);
 				else
-					val = new LongLiteral (context.BuiltinTypes, (long) ul, loc);
+					return new LongLiteral (context.BuiltinTypes, (long) ul, loc);
 			} else {
 				// int, uint, long or ulong in that order
 				if ((ul & 0xffffffff00000000) == 0){
 					uint ui = (uint) ul;
 					
 					if ((ui & 0x80000000) != 0)
-						val = new UIntLiteral (context.BuiltinTypes, ui, loc);
+						return new UIntLiteral (context.BuiltinTypes, ui, loc);
 					else
-						val = new IntLiteral (context.BuiltinTypes, (int) ui, loc);
+						return new IntLiteral (context.BuiltinTypes, (int) ui, loc);
 				} else {
 					if ((ul & 0x8000000000000000) != 0)
-						val = new ULongLiteral (context.BuiltinTypes, ul, loc);
+						return new ULongLiteral (context.BuiltinTypes, ul, loc);
 					else
-						val = new LongLiteral (context.BuiltinTypes, (long) ul, loc);
+						return new LongLiteral (context.BuiltinTypes, (long) ul, loc);
 				}
 			}
-			return Token.LITERAL;
 		}
 				
 		//
@@ -1386,6 +1384,7 @@ namespace Mono.CSharp
 		//
 		int adjust_int (int c, Location loc)
 		{
+			ILiteralConstant res;
 			try {
 				if (number_pos > 9){
 					ulong ul = (uint) (number_builder [0] - '0');
@@ -1393,63 +1392,63 @@ namespace Mono.CSharp
 					for (int i = 1; i < number_pos; i++){
 						ul = checked ((ul * 10) + ((uint)(number_builder [i] - '0')));
 					}
-					return integer_type_suffix (ul, c, loc);
+					res = integer_type_suffix (ul, c, loc);
 				} else {
 					uint ui = (uint) (number_builder [0] - '0');
 
 					for (int i = 1; i < number_pos; i++){
 						ui = checked ((ui * 10) + ((uint)(number_builder [i] - '0')));
 					}
-					return integer_type_suffix (ui, c, loc);
+					res = integer_type_suffix (ui, c, loc);
 				}
 			} catch (OverflowException) {
 				Error_NumericConstantTooLong ();
-				val = new IntLiteral (context.BuiltinTypes, 0, loc);
-				return Token.LITERAL;
+				res = new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = new IntLiteral (context.BuiltinTypes, 0, loc);
-				return Token.LITERAL;
+				res = new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
+
+			val = res;
+#if FULL_AST
+			res.ParsedValue = new char[number_pos];
+			Array.Copy (number_builder, res.ParsedValue, number_pos);
+#endif
+			return Token.LITERAL;
 		}
 		
-		int adjust_real (TypeCode t, Location loc)
+		ILiteralConstant adjust_real (TypeCode t, Location loc)
 		{
-			string s = new String (number_builder, 0, number_pos);
+			string s = new string (number_builder, 0, number_pos);
 			const string error_details = "Floating-point constant is outside the range of type `{0}'";
 
 			switch (t){
 			case TypeCode.Decimal:
 				try {
-					val = new DecimalLiteral (context.BuiltinTypes, decimal.Parse (s, styles, csharp_format_info), loc);
+					return new DecimalLiteral (context.BuiltinTypes, decimal.Parse (s, styles, csharp_format_info), loc);
 				} catch (OverflowException) {
-					val = new DecimalLiteral (context.BuiltinTypes, 0, loc);
 					Report.Error (594, Location, error_details, "decimal");
+					return new DecimalLiteral (context.BuiltinTypes, 0, loc);
 				}
-				break;
 			case TypeCode.Single:
 				try {
-					val = new FloatLiteral (context.BuiltinTypes, float.Parse (s, styles, csharp_format_info), loc);
+					return new FloatLiteral (context.BuiltinTypes, float.Parse (s, styles, csharp_format_info), loc);
 				} catch (OverflowException) {
-					val = new FloatLiteral (context.BuiltinTypes, 0, loc);
 					Report.Error (594, Location, error_details, "float");
+					return new FloatLiteral (context.BuiltinTypes, 0, loc);
 				}
-				break;
 			default:
 				try {
-					val = new DoubleLiteral (context.BuiltinTypes, double.Parse (s, styles, csharp_format_info), loc);
+					return new DoubleLiteral (context.BuiltinTypes, double.Parse (s, styles, csharp_format_info), loc);
 				} catch (OverflowException) {
-					val = new DoubleLiteral (context.BuiltinTypes, 0, loc);
-					Report.Error (594, Location, error_details, "double");
+					Report.Error (594, loc, error_details, "double");
+					return new DoubleLiteral (context.BuiltinTypes, 0, loc);
 				}
-				break;
 			}
-
-			return Token.LITERAL;
 		}
 
-		int handle_hex (Location loc)
+		ILiteralConstant handle_hex (Location loc)
 		{
 			int d;
 			ulong ul;
@@ -1464,23 +1463,22 @@ namespace Mono.CSharp
 			}
 			
 			string s = new String (number_builder, 0, number_pos);
+
 			try {
 				if (number_pos <= 8)
 					ul = System.UInt32.Parse (s, NumberStyles.HexNumber);
 				else
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
+
+				return integer_type_suffix (ul, peek_char (), loc);
 			} catch (OverflowException){
 				Error_NumericConstantTooLong ();
-				val = new IntLiteral (context.BuiltinTypes, 0, Location);
-				return Token.LITERAL;
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = new IntLiteral (context.BuiltinTypes, 0, Location);
-				return Token.LITERAL;
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
-			
-			return integer_type_suffix (ul, peek_char (), loc);
 		}
 
 		//
@@ -1488,7 +1486,7 @@ namespace Mono.CSharp
 		//
 		int is_number (int c)
 		{
-			bool is_real = false;
+			ILiteralConstant res;
 
 			number_pos = 0;
 			var loc = Location;
@@ -1497,8 +1495,18 @@ namespace Mono.CSharp
 				if (c == '0'){
 					int peek = peek_char ();
 
-					if (peek == 'x' || peek == 'X')
-						return handle_hex (loc);
+					if (peek == 'x' || peek == 'X') {
+						res = handle_hex (loc);
+						val = res;
+#if FULL_AST
+						res.ParsedValue = new char[number_pos + 2];
+						res.ParsedValue[0] = (char) c;
+						res.ParsedValue[1] = (char) peek;
+						Array.Copy (number_builder, 0, res.ParsedValue, 2, number_pos);
+#endif
+
+						return Token.LITERAL;
+					}
 				}
 				decimal_digits (c);
 				c = get_char ();
@@ -1508,6 +1516,7 @@ namespace Mono.CSharp
 			// We need to handle the case of
 			// "1.1" vs "1.string" (LITERAL_FLOAT vs NUMBER DOT IDENTIFIER)
 			//
+			bool is_real = false;
 			if (c == '.'){
 				if (decimal_digits ('.')){
 					is_real = true;
@@ -1523,7 +1532,7 @@ namespace Mono.CSharp
 				is_real = true;
 				if (number_pos == max_number_size)
 					Error_NumericConstantTooLong ();
-				number_builder [number_pos++] = 'e';
+				number_builder [number_pos++] = (char) c;
 				c = get_char ();
 				
 				if (c == '+'){
@@ -1556,12 +1565,19 @@ namespace Mono.CSharp
 
 			if (type == TypeCode.Empty){
 				putback (c);
+				c = 0;
 			}
-			
-			if (is_real)
-				return adjust_real (type, loc);
 
-			throw new Exception ("Is Number should never reach this point");
+			val = res = adjust_real (type, loc);
+
+#if FULL_AST
+			res.ParsedValue = new char[number_pos + (c != 0 ? 1 : 0)];
+			Array.Copy (number_builder, res.ParsedValue, number_pos);
+			if (c != 0)
+				res.ParsedValue[number_pos] = (char) c;
+#endif
+
+			return Token.LITERAL;
 		}
 
 		//
