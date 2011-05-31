@@ -6,7 +6,7 @@ class DocAttribute : System.Attribute
 	}
 }
 
-delegate TR Func<[Doc("r")] T1, out TR>(T1 a);
+delegate TR Func<[Doc("b")] in T1, [Doc("a")] out TR>(T1 a);
 
 class Test {
 	public static void Main ()
