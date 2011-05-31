@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>mdoc</RootNamespace>
+    <AssemblyName>mdoc</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="ICSharpCode.SharpZipLib" />
+    <Reference Include="monodoc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\class\lib\net_2_0\monodoc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Build\Common\Consts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs">
+      <Link>Mono.Options\Options.cs</Link>
+    </Compile>
+    <Compile Include="Mono.Rocks\ObjectRocks.cs" />
+    <Compile Include="Mono.Rocks\StreamRocks.cs" />
+    <Compile Include="Mono.Documentation\assembler.cs" />
+    <Compile Include="Mono.Documentation\dump.cs" />
+    <Compile Include="Mono.Documentation\ecmadoc.cs" />
+    <Compile Include="Mono.Documentation\mdoc.cs" />
+    <Compile Include="Mono.Documentation\MdocFile.cs" />
+    <Compile Include="Mono.Documentation\monodocer.cs" />
+    <Compile Include="Mono.Documentation\monodocs2html.cs" />
+    <Compile Include="Mono.Documentation\monodocs2slashdoc.cs" />
+    <Compile Include="Mono.Documentation\msitomsx.cs" />
+    <Compile Include="Mono.Documentation\normalize.cs" />
+    <Compile Include="Mono.Documentation\validate.cs" />
+    <Compile Include="Mono.Documentation\webdoc.cs" />
+    <Compile Include="Mono.Documentation\XhtmlWriter.cs" />
+    <Compile Include="Mono.Documentation\exceptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\monodoc\Resources\mdoc-html-format.xsl">
+      <Link>Resources\mdoc-html-format.xsl</Link>
+      <LogicalName>mdoc-html-format.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\monodoc\Resources\mdoc-html-utils.xsl">
+      <Link>Resources\mdoc-html-utils.xsl</Link>
+      <LogicalName>mdoc-html-utils.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\monodoc\Resources\mdoc-sections-css.xsl">
+      <Link>Resources\mdoc-sections-css.xsl</Link>
+      <LogicalName>mdoc-sections-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\monodoc\Resources\mono-ecma-css.xsl">
+      <Link>Resources\mono-ecma-css.xsl</Link>
+      <LogicalName>mono-ecma-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\defaulttemplate.xsl">
+      <LogicalName>defaulttemplate.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\monodoc-ecma.xsd">
+      <LogicalName>monodoc-ecma.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\msitomsx.xsl">
+      <LogicalName>msitomsx.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\overview.xsl">
+      <LogicalName>overview.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\stylesheet.xsl">
+      <LogicalName>stylesheet.xsl</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

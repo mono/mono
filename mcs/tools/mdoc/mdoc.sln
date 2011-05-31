@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mdoc", "mdoc.csproj", "{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}.Debug|x86.ActiveCfg = Debug|x86
+		{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}.Debug|x86.Build.0 = Debug|x86
+		{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}.Release|x86.ActiveCfg = Release|x86
+		{7DA7CD97-614F-4BCD-A2FA-B379590CEA48}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = mdoc.csproj
+	EndGlobalSection
+EndGlobal
