@@ -38,5 +38,13 @@ namespace MonoTests.EvaluatorTest
 			res = Evaluator.GetCompletions ("new System.Text.StringBuilder () { ", out prefix);
 			Assert.AreEqual (new string[] { "Capacity", "Length", "MaxCapacity" }, res, "#2");
 		}
+
+		[Test]
+		public void StringLocalVariable ()
+		{
+			string prefix;
+			var res = Evaluator.GetCompletions ("string a.", out prefix);
+			Assert.IsNull (res);
+		}
 	}
 }

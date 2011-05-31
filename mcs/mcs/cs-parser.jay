@@ -6475,6 +6475,8 @@ void Error_SyntaxError (int token)
 
 void Error_SyntaxError (int error_code, int token, string msg)
 {
+	Lexer.CompleteOnEOF = false;
+
 	// An error message has been reported by tokenizer
 	if (token == Token.ERROR)
 		return;

@@ -84,6 +84,9 @@
     <Compile Include="..\..\mcs\assign.cs">
       <Link>assign.cs</Link>
     </Compile>
+    <Compile Include="..\..\mcs\async.cs">
+      <Link>async.cs</Link>
+    </Compile>
     <Compile Include="..\..\mcs\attribute.cs">
       <Link>attribute.cs</Link>
     </Compile>
