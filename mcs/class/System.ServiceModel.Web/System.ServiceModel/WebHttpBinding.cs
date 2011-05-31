@@ -27,9 +27,14 @@
 //
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
+#if !NET_2_1
+using System.Configuration;
+using System.ServiceModel.Configuration;
+#endif
 
 namespace System.ServiceModel
 {
@@ -41,11 +46,34 @@ namespace System.ServiceModel
 #endif
 	{
 		public WebHttpBinding ()
-			: this (WebHttpSecurityMode.None)
+			: this (String.Empty)
 		{
 		}
 
 		public WebHttpBinding (WebHttpSecurityMode mode)
+		{
+			Initialize (mode);
+		}
+
+		public WebHttpBinding (string configurationName)
+		{
+#if !NET_2_1
+			BindingsSection bindingsSection = ConfigUtil.BindingsSection;
+			WebHttpBindingElement el = (WebHttpBindingElement) bindingsSection ["webHttpBinding"].ConfiguredBindings.FirstOrDefault (c => c.Name == configurationName);
+			if (el != null) {
+				Initialize (el.Security.Mode); // to initialize Transport correctly.
+				el.ApplyConfiguration (this);
+			}
+			else if (!String.IsNullOrEmpty (configurationName))
+				throw new ConfigurationException (String.Format ("Specified webHttpBinding configuration '{0}' was not found", configurationName));
+			else
+				Initialize (WebHttpSecurityMode.None);
+#else
+			Initialize (WebHttpSecurityMode.None);
+#endif
+		}
+
+		void Initialize (WebHttpSecurityMode mode)
 		{
 			security.Mode = mode;
 			// MSDN says that this security mode can be set only
@@ -53,12 +81,6 @@ namespace System.ServiceModel
 			// this value here.
 			t = mode == WebHttpSecurityMode.Transport ? new HttpsTransportBindingElement () : new HttpTransportBindingElement ();
 			t.ManualAddressing = true;
-		}
-
-		[MonoTODO]
-		public WebHttpBinding (string configurationName)
-		{
-			throw new NotImplementedException ();
 		}
 
 		WebHttpSecurity security = new WebHttpSecurity ();
