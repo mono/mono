@@ -126,7 +126,7 @@ namespace System.ServiceModel
 					method = od.BeginMethod;
 				}
 				
-				if (method != null && method.GetParameters ().Any (pi => pi.IsOut))
+				if (method != null && method.GetParameters ().Any (pi => pi.IsOut || pi.ParameterType.IsByRef))
 					return new ReturnMessage (ret, pl, pl.Length, null, inmsg);
 				else
 					return new ReturnMessage (ret, outArgs != null ? outArgs.ToArray () : null, outArgs != null ? outArgs.Count : 0, null, inmsg);
