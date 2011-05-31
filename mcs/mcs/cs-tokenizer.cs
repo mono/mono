@@ -1086,6 +1086,8 @@ namespace Mono.CSharp
 			case Token.VOID:
 				break;
 			case Token.OP_GENERICS_GT:
+			case Token.IN:
+			case Token.OUT:
 				return true;
 
 			default:

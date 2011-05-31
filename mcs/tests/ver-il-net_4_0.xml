@@ -28708,6 +28708,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-20.cs">
+    <type name="DocAttribute">
+      <method name="Void .ctor(String)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Func`2[T1,TR]">
+      <method name="TR Invoke(T1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="TR EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-3.cs">
     <type name="Test">
       <method name="Int32 Main()">
@@ -46934,6 +46963,16 @@
       </method>
     </type>
   </test>
+  <test name="test-823.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">
@@ -51635,6 +51674,36 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-01.cs">
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>118</size>
+      </method>
+      <method name="Void TestAsync()">
+        <size>13</size>
+      </method>
+      <method name="System.Threading.Tasks.Task RunAsync()">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;RunAsync&gt;m__0()">
+        <size>61</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="Program+&lt;&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>168</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>25</size>
       </method>
     </type>
   </test>
