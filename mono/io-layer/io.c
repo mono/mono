@@ -245,14 +245,14 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 
 	if (S_ISDIR (buf->st_mode)) {
 		attrs = FILE_ATTRIBUTE_DIRECTORY;
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!(buf->st_mode & S_IWUSR) && !(buf->st_mode & S_IWGRP) && !(buf->st_mode & S_IWOTH)) {
 			attrs |= FILE_ATTRIBUTE_READONLY;
 		}
 		if (filename[0] == '.') {
 			attrs |= FILE_ATTRIBUTE_HIDDEN;
 		}
 	} else {
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!(buf->st_mode & S_IWUSR) && !(buf->st_mode & S_IWGRP) && !(buf->st_mode & S_IWOTH)) {
 			attrs = FILE_ATTRIBUTE_READONLY;
 
 			if (filename[0] == '.') {
