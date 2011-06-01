@@ -1,4 +1,4 @@
-// CS01982: An attribute argument cannot be dynamic expression
+// CS1982: An attribute argument cannot be dynamic expression
 // Line: 6
 
 using System;
