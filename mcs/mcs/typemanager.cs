@@ -221,6 +221,8 @@ namespace Mono.CSharp
 		// C# 5.0
 		//
 		public readonly PredefinedType AsyncVoidMethodBuilder;
+		public readonly PredefinedType AsyncTaskMethodBuilder;
+		public readonly PredefinedType AsyncTaskMethodBuilderGeneric;
 		public readonly PredefinedType Action;
 		public readonly PredefinedType Task;
 		public readonly PredefinedType TaskGeneric;
@@ -267,6 +269,8 @@ namespace Mono.CSharp
 
 			Action = new PredefinedType (module, MemberKind.Delegate, "System", "Action");
 			AsyncVoidMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncVoidMethodBuilder");
+			AsyncTaskMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder");
+			AsyncTaskMethodBuilderGeneric = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder", 1);
 			Task = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task");
 			TaskGeneric = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task", 1);
 
@@ -303,6 +307,12 @@ namespace Mono.CSharp
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
+		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderTask;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetResult;
+		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderGenericTask;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
@@ -348,6 +358,31 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));
+
+			AsyncTaskMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
+
+			AsyncTaskMethodBuilderTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Property ("Task", null));
+
+			AsyncTaskMethodBuilderGenericCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
+
+			AsyncTaskMethodBuilderGenericSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("SetResult", 0,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.NONE)
+							},
+						new[] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null)
+							}, false), btypes.Void));
+
+			AsyncTaskMethodBuilderGenericTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Property ("Task", null));
 
 			AsyncVoidMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));

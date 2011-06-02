@@ -830,14 +830,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Dictionary<TypeSpec, Expression> compatibles;
+		readonly Dictionary<TypeSpec, Expression> compatibles;
+		readonly bool is_async;
+
 		public ParametersBlock Block;
 
-		public AnonymousMethodExpression (Location loc)
+		public AnonymousMethodExpression (bool isAsync, Location loc)
 		{
+			this.is_async = isAsync;
 			this.loc = loc;
 			this.compatibles = new Dictionary<TypeSpec, Expression> ();
 		}
+
+		#region Properties
 
 		public override string ExprClassName {
 			get {
@@ -850,10 +855,14 @@ namespace Mono.CSharp {
 				return Parameters != ParametersCompiled.Undefined;
 			}
 		}
-		
+
 		public ParametersCompiled Parameters {
-			get { return Block.Parameters; }
+			get {
+				return Block.Parameters;
+			}
 		}
+
+		#endregion
 
 		//
 		// Returns true if the body of lambda expression can be implicitly
@@ -1079,6 +1088,10 @@ namespace Mono.CSharp {
 							am = CreateExpressionTree (ec, delegate_type);
 					}
 				} else {
+					if (is_async) {
+						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, body.ReturnType, loc);
+					}
+
 					am = body.Compatible (ec);
 				}
 			} catch (CompletionResult) {
@@ -1204,7 +1217,6 @@ namespace Mono.CSharp {
 			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
 
 			return CompatibleMethodFactory (return_type, delegate_type, p, b);
-
 		}
 
 		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
@@ -1416,7 +1428,15 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsIterator {
-			get { return false; }
+			get {
+				return false;
+			}
+		}
+
+		public ParametersCompiled Parameters {
+			get {
+				return parameters;
+			}
 		}
 
 		public TypeInferenceContext ReturnTypeInference {

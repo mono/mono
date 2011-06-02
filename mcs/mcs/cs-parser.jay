@@ -3697,11 +3697,19 @@ pointer_member_access
 anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature
 	  {
-		start_anonymous (false, (ParametersCompiled) $2, GetLocation ($1));
+		start_anonymous (false, (ParametersCompiled) $2, false, GetLocation ($1));
 	  }
 	  block
 	  {
 		$$ = end_anonymous ((ParametersBlock) $4);
+	  }
+	| ASYNC DELEGATE opt_anonymous_method_signature
+	  {
+		start_anonymous (false, (ParametersCompiled) $3, true, GetLocation ($1));
+	  }
+	  block
+	  {
+		$$ = end_anonymous ((ParametersBlock) $5);
 	  }
 	;
 
@@ -4095,31 +4103,53 @@ expression_or_error
 lambda_expression
 	: IDENTIFIER ARROW 
 	  {
-		var lt = (Tokenizer.LocatedToken) $1;
+		var lt = (Tokenizer.LocatedToken) $1;	
 		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), GetLocation ($1));
+		start_anonymous (true, new ParametersCompiled (p), false, lt.Location);
 	  }
 	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $4);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| ASYNC IDENTIFIER ARROW
+	  {
+		var lt = (Tokenizer.LocatedToken) $2;
+		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
+		start_anonymous (true, new ParametersCompiled (p), true, lt.Location);
+	  }
+	  lambda_expression_body
+	  {
+		$$ = end_anonymous ((ParametersBlock) $5);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
+	  }
 	| OPEN_PARENS_LAMBDA
 	  {
-		if (lang_version <= LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (GetLocation ($1), "lambda expressions");
-	  
 	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
 	  	valid_param_mod = 0;
-		start_anonymous (true, (ParametersCompiled) $3, GetLocation ($1));
+		start_anonymous (true, (ParametersCompiled) $3, false, GetLocation ($1));
 	  }
-	  lambda_expression_body 
+	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $7);
 		lbag.AddLocation ($$, GetLocation ($4), GetLocation ($5));
+	  }
+	| ASYNC OPEN_PARENS_LAMBDA
+	  {
+	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;	  
+	  }
+	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
+	  {
+	  	valid_param_mod = 0;
+		start_anonymous (true, (ParametersCompiled) $4, true, GetLocation ($1));
+	  }
+	  lambda_expression_body
+	  {
+		$$ = end_anonymous ((ParametersBlock) $8);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($5), GetLocation ($6));
 	  }
 	;
 
@@ -4332,7 +4362,7 @@ modifier
 		StoreModifierLocation ($$, GetLocation ($1));
 	  }
 	;
-
+	
 opt_class_base
 	: /* empty */
 	| COLON type_list
@@ -4885,12 +4915,8 @@ statement_expression
 	  {
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
-			if ($1 is Statement) {
-				$$ = $1;
-			} else {
-				Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
-				$$ = new StatementExpression (EmptyExpressionStatement.Instance);
-			}
+			Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
+			$$ = new StatementExpression (EmptyExpressionStatement.Instance);
 		} else {
 			$$ = new StatementExpression (s);
 		}
@@ -6430,21 +6456,24 @@ end_block (Location loc)
 	return retval;
 }
 
-void start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
+void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync, Location loc)
 {
-	if (lang_version == LanguageVersion.ISO_1){
-		FeatureIsNotAvailable (loc, "anonymous methods");
-	}
-
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
 	oob_stack.Push (current_variable);
 
 	current_local_parameters = parameters;
+	if (isLambda) {
+		if (lang_version <= LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (loc, "lambda expressions");
 
-	current_anonymous_method = lambda 
-		? new LambdaExpression (loc) 
-		: new AnonymousMethodExpression (loc);
+		current_anonymous_method = new LambdaExpression (isAsync, loc);
+	} else {
+		if (lang_version == LanguageVersion.ISO_1)
+			FeatureIsNotAvailable (loc, "anonymous methods");
+			
+		current_anonymous_method = new AnonymousMethodExpression (isAsync, loc);
+	}
 
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;

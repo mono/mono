@@ -267,6 +267,8 @@ namespace Mono.CSharp
 
 			UsingInitializerScope = 1 << 12,
 
+			LockScope = 1 << 13,
+
 			/// <summary>
 			///   Whether control flow analysis is enabled
 			/// </summary>

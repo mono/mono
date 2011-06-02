@@ -795,7 +795,7 @@ namespace Mono.CSharp
 
 			// TODO: async, it's modifiers context only
 			case Token.ASYNC:
-				if (parsing_block > 0 || context.Settings.Version != LanguageVersion.Future) {
+				if (context.Settings.Version != LanguageVersion.Future) {
 					res = -1;
 				}
 				break;
