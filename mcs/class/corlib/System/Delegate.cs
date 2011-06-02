@@ -136,6 +136,16 @@ namespace System
 			return match;
 		}
 
+		private static bool arg_type_match_this (Type delArgType, Type argType, bool boxedThis) {
+			bool match;
+			if (argType.IsValueType)
+				match = delArgType.IsByRef && delArgType.GetElementType () == argType ||
+						(boxedThis && delArgType == argType);
+			else
+				match = delArgType == argType || argType.IsAssignableFrom (delArgType);
+
+			return match;
+		}
 		private static bool return_type_match (Type delReturnType, Type returnType) {
 			bool returnMatch = returnType == delReturnType;
 
@@ -216,7 +226,7 @@ namespace System
 			bool argsMatch;
 			if (target != null) {
 				if (!method.IsStatic) {
-					argsMatch = arg_type_match (target.GetType (), method.DeclaringType);
+					argsMatch = arg_type_match_this (target.GetType (), method.DeclaringType, true);
 					for (int i = 0; i < args.Length; i++)
 						argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
 				} else {
@@ -228,7 +238,7 @@ namespace System
 				if (!method.IsStatic) {
 					if (args.Length + 1 == delargs.Length) {
 						// The first argument should match this
-						argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
+						argsMatch = arg_type_match_this (delargs [0].ParameterType, method.DeclaringType, false);
 						for (int i = 0; i < args.Length; i++)
 							argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
 					} else {
@@ -240,7 +250,7 @@ namespace System
 				} else {
 					if (delargs.Length + 1 == args.Length) {
 						// closed over a null reference
-						argsMatch = !args [0].ParameterType.IsValueType && allowClosed;
+						argsMatch = !(args [0].ParameterType.IsValueType || args [0].ParameterType.IsByRef) && allowClosed;
 						for (int i = 0; i < delargs.Length; i++)
 							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i + 1].ParameterType);
 					} else {

@@ -1246,6 +1246,55 @@ namespace MonoTests.System
 			Assert.AreEqual (3, a, "#1");
 		}
 
+		struct Struct695978 {
+			public int value;
+			public int test() { return value + 10; }
+			public static int test2 (ref Struct695978 foo) { return foo.value + 20; }
+		}
+
+		delegate int Delegate695978_1 (ref Struct695978 _this);
+		delegate int Delegate695978_2 ();
+		delegate int Delegate695978_3 (Struct695978 _this);
+
+		[Test] //tests for #695978
+		public void DelegateWithValueTypeArguments ()
+		{
+			Struct695978 es = new Struct695978 ();
+			es.value = 100;
+
+			var ar1 = (Delegate695978_1)Delegate.CreateDelegate(typeof (Delegate695978_1), typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar1);
+			Assert.AreEqual (110, ar1 (ref es));
+
+			var ar2 = (Delegate695978_2)Delegate.CreateDelegate(typeof (Delegate695978_2), null, typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar2);
+			Assert.AreEqual (110, ar2 ());
+
+			ar1 = (Delegate695978_1) Delegate.CreateDelegate(typeof (Delegate695978_1), typeof (Struct695978).GetMethod("test2"));
+			Assert.IsNotNull (ar1);
+			Assert.AreEqual (120, ar1 (ref es));
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_2), null, typeof (Struct695978).GetMethod("test2"));
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+
+
+			ar2 = (Delegate695978_2) Delegate.CreateDelegate(typeof (Delegate695978_2), new Struct695978 (), typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar2);
+			Assert.AreEqual (120, ar2 ());
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_2), new Struct695978 (), typeof (Struct695978).GetMethod("test2"));
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {}
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_3), typeof (Struct695978).GetMethod("test"));
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {}
+		}
+
 		public class B {
 
 			public virtual string retarg3 (string s) {
