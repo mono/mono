@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +28,24 @@
 
 using System;
 using System.Collections;
+using System .Collections.Generic;
 
 namespace Mono.Collections.Generic {
 
-	public sealed class ReadOnlyCollection<T> : Collection<T>, IList {
+	public sealed class ReadOnlyCollection<T> : Collection<T>, ICollection<T>, IList {
 
 		static ReadOnlyCollection<T> empty;
 
 		public static ReadOnlyCollection<T> Empty {
 			get { return empty ?? (empty = new ReadOnlyCollection<T> ()); }
+		}
+
+		bool ICollection<T>.IsReadOnly {
+			get { return true; }
+		}
+
+		bool IList.IsFixedSize {
+			get { return true; }
 		}
 
 		bool IList.IsReadOnly {
@@ -52,8 +61,7 @@ namespace Mono.Collections.Generic {
 			if (array == null)
 				throw new ArgumentNullException ();
 
-			this.items = array;
-			this.size = array.Length;
+			Initialize (array, array.Length);
 		}
 
 		public ReadOnlyCollection (Collection<T> collection)
@@ -61,8 +69,14 @@ namespace Mono.Collections.Generic {
 			if (collection == null)
 				throw new ArgumentNullException ();
 
-			this.items = collection.items;
-			this.size = collection.size;
+			Initialize (collection.items, collection.size);
+		}
+
+		void Initialize (T [] items, int size)
+		{
+			this.items = new T [size];
+			Array.Copy (items, 0, this.items, 0, size);
+			this.size = size;
 		}
 
 		internal override void Grow (int desired)

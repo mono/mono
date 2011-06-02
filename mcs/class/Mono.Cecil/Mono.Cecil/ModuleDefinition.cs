@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -439,7 +439,7 @@ namespace Mono.Cecil {
 			if (!HasImage)
 				return false;
 
-			return Read (this, (_, reader) => reader.GetTypeReference (scope, fullName) != null);
+			return GetTypeReference (scope, fullName) != null;
 		}
 
 		public bool TryGetTypeReference (string fullName, out TypeReference type)
@@ -456,7 +456,12 @@ namespace Mono.Cecil {
 				return false;
 			}
 
-			return (type = Read (this, (_, reader) => reader.GetTypeReference (scope, fullName))) != null;
+			return (type = GetTypeReference (scope, fullName)) != null;
+		}
+
+		TypeReference GetTypeReference (string scope, string fullname)
+		{
+			return Read (new Row<string, string> (scope, fullname), (row, reader) => reader.GetTypeReference (row.Col1, row.Col2));
 		}
 
 		public IEnumerable<TypeReference> GetTypeReferences ()
@@ -491,6 +496,26 @@ namespace Mono.Cecil {
 			Mixin.CheckName (name);
 
 			return ((TypeDefinitionCollection) this.Types).GetType (@namespace ?? string.Empty, name);
+		}
+
+		public IEnumerable<TypeDefinition> GetTypes ()
+		{
+			return GetTypes (Types);
+		}
+
+		static IEnumerable<TypeDefinition> GetTypes (Collection<TypeDefinition> types)
+		{
+			for (int i = 0; i < types.Count; i++) {
+				var type = types [i];
+
+				yield return type;
+
+				if (!type.HasNestedTypes)
+					continue;
+
+				foreach (var nested in GetTypes (type.NestedTypes))
+					yield return nested;
+			}
 		}
 
 		static void CheckFullName (string fullName)
@@ -755,7 +780,7 @@ namespace Mono.Cecil {
 
 		public IMetadataTokenProvider LookupToken (MetadataToken token)
 		{
-			return Read (this, (_, reader) => reader.LookupToken (token));
+			return Read (token, (t, reader) => reader.LookupToken (t));
 		}
 
 		internal TRet Read<TItem, TRet> (TItem item, Func<TItem, MetadataReader, TRet> read)

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +36,7 @@ namespace Mono.Cecil {
 		string name;
 		uint attributes;
 		IMetadataScope scope;
+		ModuleDefinition module;
 		int identifier;
 		ExportedType declaring_type;
 		internal MetadataToken token;
@@ -220,16 +221,29 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public ExportedType (string @namespace, string name, IMetadataScope scope)
+		public ExportedType (string @namespace, string name, ModuleDefinition module, IMetadataScope scope)
 		{
 			this.@namespace = @namespace;
 			this.name = name;
 			this.scope = scope;
+			this.module = module;
 		}
 
 		public override string ToString ()
 		{
 			return FullName;
+		}
+
+		public TypeDefinition Resolve ()
+		{
+			return module.Resolve (CreateReference ());
+		}
+
+		internal TypeReference CreateReference ()
+		{
+			return new TypeReference (@namespace, name, module, scope) {
+				DeclaringType = declaring_type != null ? declaring_type.CreateReference () : null,
+			};
 		}
 	}
 }
