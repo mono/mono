@@ -597,6 +597,13 @@ namespace Mono.CSharp {
 //					MethodBase mb = new PartialMethodDefinitionInfo (this);
 
 					spec = new MethodSpec (kind, Parent.Definition, this, ReturnType, null, parameters, ModFlags);
+					if (MemberName.Arity > 0) {
+						spec.IsGeneric = true;
+
+						// TODO: Have to move DefineMethod after Define (ideally to Emit)
+						throw new NotImplementedException ("Generic partial methods");
+					}
+
 					Parent.MemberCache.AddMember (spec);
 				}
 
@@ -1083,7 +1090,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (MethodData.implementing != null) {
+				if (MethodData != null && MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
 					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
 						Report.SymbolRelatedToPreviousError (MethodData.implementing);

@@ -1287,9 +1287,14 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  PARTIAL
-	  VOID method_declaration_name
+	  VOID
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  method_declaration_name
 	  OPEN_PARENS
 	  {
+		lexer.parsing_generic_declaration = false;
 	  	valid_param_mod = ParameterModifierType.All;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS 
@@ -1301,10 +1306,10 @@ method_header
 		lexer.ConstraintsParsing = false;
 		valid_param_mod = 0;
 
-		MemberName name = (MemberName) $5;
-		current_local_parameters = (ParametersCompiled) $8;
+		MemberName name = (MemberName) $6;
+		current_local_parameters = (ParametersCompiled) $9;
 
-		if ($10 != null && name.TypeArguments == null)
+		if ($11 != null && name.TypeArguments == null)
 			report.Error (80, lexer.Location,
 				      "Constraints are not allowed on non-generic declarations");
 
@@ -1319,7 +1324,6 @@ method_header
 		}
 
 		var modifiers = (Modifiers) $2;
-
 
 		const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |
 			Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
@@ -1343,9 +1347,8 @@ method_header
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
-		// TODO: lbag, push void
 		StoreModifierLocation (Modifiers.PARTIAL, GetLocation ($3));
-		lbag.AddMember (method, mod_locations, GetLocation ($6), GetLocation ($9));
+		lbag.AddMember (method, mod_locations, GetLocation ($7), GetLocation ($10));
 		$$ = method;
 	  }
 	| opt_attributes
