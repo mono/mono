@@ -239,6 +239,7 @@ namespace System.ServiceModel.Channels.Http
 					msg.Headers.Action = action;
 				}
 			}
+			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ctxi.Request.ClientIPAddress, ctxi.Request.ClientPort));
 
 			return msg;
 		}
