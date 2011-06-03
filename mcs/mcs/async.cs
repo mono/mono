@@ -58,6 +58,12 @@ namespace Mono.CSharp
 				return null;
 			}
 
+			if (rc.IsUnsafe) {
+				// TODO: New error code
+				rc.Report.Error (-1900, loc,
+					"The `await' operator cannot be used in an unsafe context");
+			}
+
 			var bc = (BlockContext) rc;
 
 			if (!bc.CurrentBlock.ParametersBlock.IsAsync) {
@@ -337,11 +343,6 @@ namespace Mono.CSharp
 					return;
 				}
 			}
-
-			// TODO:
-			//if ((modifiers & Modifiers.UNSAFE) != 0) {
-			//    parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
-			//}
 
 			// TODO: Warning
 			//if (!block.HasAwait) {
