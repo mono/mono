@@ -164,6 +164,8 @@ namespace System.ServiceModel.Channels.Http
 		public abstract string ContentType { get; }
 		public abstract string HttpMethod { get; }
 		public abstract Stream InputStream { get; }
+		public abstract string ClientIPAddress { get; }
+		public abstract int ClientPort { get; }
 	}
 
 	class HttpStandaloneRequestInfo : HttpRequestInfo
@@ -196,6 +198,12 @@ namespace System.ServiceModel.Channels.Http
 		public override Stream InputStream {
 			get { return req.InputStream; }
 		}
+		public override string ClientIPAddress {
+			get { return req.RemoteEndPoint.Address.ToString (); }
+		}
+		public override int ClientPort {
+			get { return req.RemoteEndPoint.Port; }
+		}
 	}
 
 	class AspNetHttpRequestInfo : HttpRequestInfo
@@ -227,6 +235,12 @@ namespace System.ServiceModel.Channels.Http
 		}
 		public override Stream InputStream {
 			get { return req.InputStream; }
+		}
+		public override string ClientIPAddress {
+			get { return req.UserHostAddress; }
+		}
+		public override int ClientPort {
+			get { return -1; } // cannot retrieve
 		}
 	}
 	
