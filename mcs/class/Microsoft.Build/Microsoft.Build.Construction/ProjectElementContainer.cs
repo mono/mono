@@ -51,7 +51,8 @@ namespace Microsoft.Build.Construction
                 }
 
                 public ICollection<ProjectElement> Children {
-                        get { return children; }
+                        get { return new CollectionFromEnumerable<ProjectElement> (
+                                children.Where (p => !(p is ProjectCommentElement))); }
                 }
 
                 public ICollection<ProjectElement> ChildrenReversed {
@@ -146,17 +147,21 @@ namespace Microsoft.Build.Construction
                 internal override void SaveValue (XmlWriter writer)
                 {
                         base.SaveValue (writer);
-                        foreach (var child in Children)
+                        foreach (var child in children)
                                 child.Save (writer);
                 }
 
                 internal override void LoadValue (XmlReader reader)
                 {
                         while (reader.Read ()) {
-                                if (!reader.IsStartElement ())
-                                        continue;
-                                var child = LoadChildElement (reader.Name);
-                                child.Load (reader.ReadSubtree ());
+                                if (reader.NodeType == XmlNodeType.Element) {
+                                        var child = LoadChildElement (reader.Name);
+                                        child.Load (reader.ReadSubtree ());
+                                } else if (reader.NodeType == XmlNodeType.Comment) {
+                                        var commentElement = new ProjectCommentElement (ContainingProject);
+                                        commentElement.Load (reader);
+                                        AppendChild (commentElement);
+                                }
                         }
                 }
 
