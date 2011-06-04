@@ -28,6 +28,7 @@
 
 using System;
 using System.Xml;
+using System.Text;
 
 namespace Microsoft.Build.Construction
 {
@@ -37,19 +38,53 @@ namespace Microsoft.Build.Construction
                 {
                         ContainingProject = containingProject;
                 }
-                public override string Condition { get { return null; } set { throw new InvalidOperationException(
-                        "Can not set Condition."); } }
-                public string Content { get; set; }
+                public override string Condition {
+                        get { return null; }
+                        set {
+                                throw new InvalidOperationException ("Can not set Condition.");
+                        }
+                }
+                public string Content {
+                        get { return element.InnerXml; }
+                        set { element.InnerXml = value; }
+                }
                 public string this[string name] {
                         get {
-                                throw new NotImplementedException ();
+                                var child = element[name];
+                                return child == null ? string.Empty : child.InnerXml;
                         }
                         set {
-                                throw new NotImplementedException ();
+                                var child = element[name];
+                                if (child == null) {
+                                        if (string.IsNullOrEmpty (name))
+                                                return;
+                                        child = document.CreateElement (name);
+                                        element.AppendChild (child);
+                                }
+                                if (string.IsNullOrEmpty (value))
+                                        element.RemoveChild (child);
+                                else
+                                        child.InnerXml = value;
                         }
                 }
-                internal override string XmlName {
-                        get { return "ProjectExtentions"; }
+                internal override void Load (XmlReader reader)
+                {
+                        while (reader.Read () && reader.NodeType != XmlNodeType.Element)
+                                ;
+                        using (XmlReader subReader = reader.ReadSubtree ()) {
+                                document = new XmlDocument ();
+                                document.Load (subReader);
+                                element = document.DocumentElement;
+                        }
                 }
+                internal override void SaveValue (XmlWriter writer)
+                {
+                        element.WriteContentTo (writer);
+                }
+                internal override string XmlName {
+                        get { return "ProjectExtensions"; }
+                }
+                XmlDocument document;
+                XmlElement element;
         }
 }
