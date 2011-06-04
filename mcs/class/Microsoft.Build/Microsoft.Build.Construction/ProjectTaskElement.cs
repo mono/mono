@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Microsoft.Build.Exceptions;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -111,16 +112,13 @@ namespace Microsoft.Build.Construction
                                 AppendChild (output);
                                 return output;
                         default:
-                                throw new NotImplementedException (string.Format (
+                                throw new InvalidProjectFileException (string.Format (
                                         "Child \"{0}\" is not a known node type.", name));
                         }
                 }
                 internal override void LoadAttribute (string name, string value)
                 {
                         switch (name) {
-                        case "Name":
-                                Name = value;
-                                break;
                         case "ContinueOnError":
                                 ContinueOnError = value;
                                 break;
@@ -139,7 +137,6 @@ namespace Microsoft.Build.Construction
                 }
                 internal override void SaveValue (XmlWriter writer)
                 {
-                        SaveAttribute (writer, "Name", Name);
                         SaveAttribute (writer, "ContinueOnError", ContinueOnError);
                         foreach (var parameter in parameters) {
                                 SaveAttribute (writer, parameter.Key, parameter.Value);

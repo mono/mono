@@ -26,8 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
 {
@@ -39,22 +40,19 @@ namespace Microsoft.Build.Construction
                         ContainingProject = containingProject;
                 }
                 public ICollection<ProjectImportElement> Imports {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectImportElement> (
+                                new FilteredEnumerable<ProjectImportElement> (Children)); }
                 }
                 public ProjectImportElement AddImport (string project)
                 {
-                        return ContainingProject.CreateImportElement (project);
+                        var import = ContainingProject.CreateImportElement (project);
+                        AppendChild (import);
+                        return import;
                 }
-                internal override string XmlName {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
+                internal override string XmlName { get { return "ImportGroup"; } }
                 internal override ProjectElement LoadChildElement (string name)
                 {
-                        throw new NotImplementedException ();
+                        return AddImport (null);
                 }
         }
 }

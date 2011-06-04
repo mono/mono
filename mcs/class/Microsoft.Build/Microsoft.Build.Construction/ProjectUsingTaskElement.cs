@@ -27,6 +27,7 @@
 //
 
 using System;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Construction
 {
@@ -104,7 +105,7 @@ namespace Microsoft.Build.Construction
                         case "Task":
                                 return AddUsingTaskBody (null, null);
                         default:
-                                throw new NotImplementedException (string.Format (
+                                throw new InvalidProjectFileException (string.Format (
                                         "Child \"{0}\" is not a known node type.", name));
                         }
                 }

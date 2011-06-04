@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Construction
 {
@@ -43,7 +44,11 @@ namespace Microsoft.Build.Construction
                 public virtual string Condition { get; set; }
                 public IEnumerable<ProjectElementContainer> AllParents {
                         get {
-                                throw new NotImplementedException ();
+                                var parent = Parent;
+                                while(parent != null) {
+                                        yield return parent;
+                                        parent = parent.Parent;
+                                }
                         }
                 }
                 internal virtual void Load (XmlReader reader)
@@ -66,7 +71,7 @@ namespace Microsoft.Build.Construction
                                 Condition = value;
                                 break;
                         default:
-                                throw new NotImplementedException (string.Format (
+                                throw new InvalidProjectFileException (string.Format (
                                         "Attribute \"{0}\" is not known on node \"{1}\" [type {2}].", name, XmlName,
                                         GetType ()));
                         }

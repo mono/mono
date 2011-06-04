@@ -73,6 +73,21 @@ namespace MonoTests.Microsoft.Build
                         FileAssert.AreEqual ("Microsoft.Build.csproj", projectFileName, "#04");
                 }
 
+                [Test]
+                public void TestLoadAndSave3 ()
+                {
+                        var referenceProject = String.Format (
+                                "Test{0}FunctionalTestReferenceProject3.csproj", Path.DirectorySeparatorChar);
+                        var project = ProjectRootElement.Open (referenceProject);
+                        var projectFileName = String.Format ("Test{0}FunctionalTestProject3.csproj",
+                                Path.DirectorySeparatorChar);
+                        project.Save (projectFileName);
+
+                        Assert.AreEqual (new Guid ("{793B20A9-E263-4B54-BB31-305B602087CE}"), GetProjectId (project),
+                                "#05");
+                        FileAssert.AreEqual (referenceProject, projectFileName, "#06");
+                }
+
                 public Guid GetProjectId (ProjectRootElement project)
                 {
                         var value = project.Properties.Where (p => p.Name == "ProjectGuid").First ().Value;

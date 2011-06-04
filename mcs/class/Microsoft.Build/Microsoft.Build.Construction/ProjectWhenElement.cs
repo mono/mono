@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Build.Exceptions;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -72,7 +73,7 @@ namespace Microsoft.Build.Construction
                                 AppendChild (when);
                                 return when;
                         default:
-                                throw new NotImplementedException (string.Format (
+                                throw new InvalidProjectFileException (string.Format (
                                         "Child \"{0}\" is not a known node type.", name));
                         }
                 }
