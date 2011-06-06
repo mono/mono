@@ -1384,9 +1384,8 @@ namespace Mono.CSharp
 		// we need to convert to a special type, and then choose
 		// the best representation for the integer
 		//
-		int adjust_int (int c, Location loc)
+		ILiteralConstant adjust_int (int c, Location loc)
 		{
-			ILiteralConstant res;
 			try {
 				if (number_pos > 9){
 					ulong ul = (uint) (number_builder [0] - '0');
@@ -1394,30 +1393,25 @@ namespace Mono.CSharp
 					for (int i = 1; i < number_pos; i++){
 						ul = checked ((ul * 10) + ((uint)(number_builder [i] - '0')));
 					}
-					res = integer_type_suffix (ul, c, loc);
+
+					return integer_type_suffix (ul, c, loc);
 				} else {
 					uint ui = (uint) (number_builder [0] - '0');
 
 					for (int i = 1; i < number_pos; i++){
 						ui = checked ((ui * 10) + ((uint)(number_builder [i] - '0')));
 					}
-					res = integer_type_suffix (ui, c, loc);
+
+					return integer_type_suffix (ui, c, loc);
 				}
 			} catch (OverflowException) {
 				Error_NumericConstantTooLong ();
-				res = new IntLiteral (context.BuiltinTypes, 0, loc);
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				res = new IntLiteral (context.BuiltinTypes, 0, loc);
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
-
-			val = res;
-#if FULL_AST
-			res.ParsedValue = new char[number_pos];
-			Array.Copy (number_builder, res.ParsedValue, number_pos);
-#endif
-			return Token.LITERAL;
 		}
 		
 		ILiteralConstant adjust_real (TypeCode t, Location loc)
@@ -1490,6 +1484,9 @@ namespace Mono.CSharp
 		{
 			ILiteralConstant res;
 
+#if FULL_AST
+			int read_start = reader.Position - 1;
+#endif
 			number_pos = 0;
 			var loc = Location;
 
@@ -1498,13 +1495,9 @@ namespace Mono.CSharp
 					int peek = peek_char ();
 
 					if (peek == 'x' || peek == 'X') {
-						res = handle_hex (loc);
-						val = res;
+						val = res = handle_hex (loc);
 #if FULL_AST
-						res.ParsedValue = new char[number_pos + 2];
-						res.ParsedValue[0] = (char) c;
-						res.ParsedValue[1] = (char) peek;
-						Array.Copy (number_builder, 0, res.ParsedValue, 2, number_pos);
+						res.ParsedValue = reader.ReadChars (read_start, reader.Position - 1);
 #endif
 
 						return Token.LITERAL;
@@ -1526,7 +1519,12 @@ namespace Mono.CSharp
 				} else {
 					putback ('.');
 					number_pos--;
-					return adjust_int (-1, loc);
+					val = res = adjust_int (-1, loc);
+
+#if FULL_AST
+					res.ParsedValue = reader.ReadChars (read_start, reader.Position - 1);
+#endif
+					return Token.LITERAL;
 				}
 			}
 			
@@ -1558,25 +1556,23 @@ namespace Mono.CSharp
 			}
 
 			var type = real_type_suffix (c);
-			if (type == TypeCode.Empty && !is_real){
+			if (type == TypeCode.Empty && !is_real) {
 				putback (c);
-				return adjust_int (c, loc);
+				res = adjust_int (c, loc);
+			} else {
+				is_real = true;
+
+				if (type == TypeCode.Empty) {
+					putback (c);
+				}
+
+				res = adjust_real (type, loc);
 			}
 
-			is_real = true;
-
-			if (type == TypeCode.Empty){
-				putback (c);
-				c = 0;
-			}
-
-			val = res = adjust_real (type, loc);
+			val = res;
 
 #if FULL_AST
-			res.ParsedValue = new char[number_pos + (c != 0 ? 1 : 0)];
-			Array.Copy (number_builder, res.ParsedValue, number_pos);
-			if (c != 0)
-				res.ParsedValue[number_pos] = (char) c;
+			res.ParsedValue = reader.ReadChars (read_start, reader.Position - (type == TypeCode.Empty ? 1 : 0));
 #endif
 
 			return Token.LITERAL;
@@ -2683,6 +2679,10 @@ namespace Mono.CSharp
 			if (quoted)
 				start_location = start_location - 1;
 
+#if FULL_AST
+			int reader_pos = reader.Position;
+#endif
+
 			while (true){
 				c = get_char ();
 				if (c == '"') {
@@ -2703,7 +2703,12 @@ namespace Mono.CSharp
 					else
 						s = new string (value_builder, 0, pos);
 
-					val = new StringLiteral (context.BuiltinTypes, s, start_location);
+					ILiteralConstant res = new StringLiteral (context.BuiltinTypes, s, start_location);
+					val = res;
+#if FULL_AST
+					res.ParsedValue = reader.ReadChars (reader_pos - (quoted ? 2 : 1), reader.Position);
+#endif
+
 					return Token.LITERAL;
 				}
 
