@@ -72,7 +72,8 @@ namespace Mono.CSharp
 			}
 
 			stmt = new AwaitStatement (expr, loc);
-			stmt.Resolve (bc);
+			if (!stmt.Resolve (bc))
+				return null;
 
 			type = stmt.ResultType;
 			eclass = ExprClass.Variable;
