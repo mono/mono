@@ -13,7 +13,7 @@
         <member name="M:Outer`2.CopyTo(`0[0:,0:,0:],System.Int32)">
             <summary>M:Outer`2.CopyTo(`0[,,],System.Int32)</summary>
         </member>
-        <member name="M:Outer`2.CopyTo(`0[][0:,0:][0:,0:,0:])">
+        <member name="M:Outer`2.CopyTo(`0[0:,0:,0:][0:,0:][])">
             <summary>Outer`2.CopyTo(`0[,,][,][])</summary>
         </member>
         <member name="M:Outer`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,System.Collections.Generic.List{`1}}[],System.Int32)">
