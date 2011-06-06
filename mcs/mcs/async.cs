@@ -316,7 +316,7 @@ namespace Mono.CSharp
 		{
 			if (returnType.Kind != MemberKind.Void &&
 				returnType != host.Module.PredefinedTypes.Task.TypeSpec &&
-				returnType.MemberDefinition != host.Module.PredefinedTypes.TaskGeneric.TypeSpec.MemberDefinition) {
+				!returnType.IsGenericTask) {
 				host.Compiler.Report.Error (1983, loc, "The return type of an async method must be void, Task, or Task<T>");
 			}
 

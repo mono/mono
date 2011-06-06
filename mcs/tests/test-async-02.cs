@@ -58,7 +58,7 @@ class C
 		if (t2.Result != 5)
 			return 4;
 
-		if (t.Status != TaskStatus.RanToCompletion)
+		if (t2.Status != TaskStatus.RanToCompletion)
 			return 5;
 
 		return 0;

@@ -750,7 +750,7 @@ namespace Mono.CSharp {
 						var storey = (AsyncTaskStorey) am.Storey;
 						var async_type = storey.ReturnType;
 
-						if (async_type.MemberDefinition != ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MemberDefinition) {
+						if (!async_type.IsGenericTask) {
 							ec.Report.Error (1997, loc,
 								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
 								ec.GetSignatureForError ());

@@ -643,7 +643,13 @@ namespace Mono.CSharp
 			ctx.StartFlowBranching (this, ec.CurrentBranching);
 			Block.Resolve (ctx);
 
-			ctx.CurrentBranching.CurrentUsageVector.Goto ();
+			//
+			// Explicit return is required for Task<T> state machine
+			//
+			var task_storey = storey as AsyncTaskStorey;
+			if (task_storey == null || !task_storey.ReturnType.IsGenericTask)
+				ctx.CurrentBranching.CurrentUsageVector.Goto ();
+
 			ctx.EndFlowBranching ();
 
 			var move_next = new StateMachineMethod (storey, this, new TypeExpression (ReturnType, loc), Modifiers.PUBLIC, new MemberName ("MoveNext", loc));

@@ -300,7 +300,8 @@ namespace Mono.CSharp
 				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
 
 			Task.Define ();
-			TaskGeneric.Define ();
+			if (TaskGeneric.Define ())
+				TaskGeneric.TypeSpec.IsGenericTask = true;
 		}
 	}
 

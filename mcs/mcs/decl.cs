@@ -915,6 +915,7 @@ namespace Mono.CSharp {
 			InflatedExpressionType = 1 << 19,
 			InflatedNullableType = 1 << 20,
 			GenericIterateInterface = 1 << 21,
+			GenericTask = 1 << 22
 		}
 
 		protected Modifiers modifiers;

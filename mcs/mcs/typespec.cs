@@ -197,6 +197,18 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Returns true for instances of System.Threading.Tasks.Task<T>
+		//
+		public virtual bool IsGenericTask {
+			get {
+				return false;
+			}
+			set {
+				state = value ? state | StateFlags.GenericTask : state & ~StateFlags.GenericTask;
+			}
+		}
+
 		// TODO: Should probably do
 		// IsGenericType -- recursive
 		// HasTypeParameter -- non-recursive

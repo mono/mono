@@ -1505,6 +1505,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool IsGenericTask {
+			get {
+				return (open_type.state & StateFlags.GenericTask) != 0;
+			}
+		}
+
 		public override bool IsNullableType {
 			get {
 				return (open_type.state & StateFlags.InflatedNullableType) != 0;
