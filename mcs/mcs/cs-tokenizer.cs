@@ -2706,7 +2706,9 @@ namespace Mono.CSharp
 					ILiteralConstant res = new StringLiteral (context.BuiltinTypes, s, start_location);
 					val = res;
 #if FULL_AST
-					res.ParsedValue = reader.ReadChars (reader_pos - (quoted ? 2 : 1), reader.Position);
+					res.ParsedValue = quoted ?
+						reader.ReadChars (reader_pos - 2, reader.Position - 1) :
+						reader.ReadChars (reader_pos - 1, reader.Position);
 #endif
 
 					return Token.LITERAL;
