@@ -167,8 +167,12 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
-			if (this.Status != TaskStatus.Created)
+			if (Status != TaskStatus.Created)
 				throw new InvalidOperationException ("The task is not in a valid state to be started");
+
+			SetupScheduler (scheduler);
+			status = TaskStatus.WaitingToRun;
+
 			if (scheduler.TryExecuteTask (this))
 				return;
 
@@ -359,7 +363,7 @@ namespace System.Threading.Tasks
 		
 		#region Internal and protected thingies
 		internal void Schedule ()
-		{	
+		{
 			status = TaskStatus.WaitingToRun;
 			
 			// If worker is null it means it is a local one, revert to the old behavior
