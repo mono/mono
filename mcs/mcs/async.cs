@@ -313,6 +313,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public Block OriginalBlock {
+			get {
+				return block.Parent;
+			}
+		}
+
 		public static void Create (ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
 		{
 			if (returnType.Kind != MemberKind.Void &&
@@ -409,7 +415,7 @@ namespace Mono.CSharp
 		LocalVariable hoisted_return;
 
 		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type)
-			: base (initializer.Block, initializer.Host, null, null, "async")
+			: base (initializer.OriginalBlock, initializer.Host, null, null, "async")
 		{
 			return_type = type;
 		}

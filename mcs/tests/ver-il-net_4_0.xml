@@ -51813,25 +51813,22 @@
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestTaskGeneric()">
         <size>34</size>
       </method>
-      <method name="System.Threading.Tasks.Task`1[System.Int32] CallGeneric()">
-        <size>23</size>
-      </method>
       <method name="Int32 Main()">
-        <size>84</size>
-      </method>
-      <method name="Int32 &lt;CallGeneric&gt;m__0()">
-        <size>14</size>
+        <size>113</size>
       </method>
       <method name="Void .ctor()">
-        <size>19</size>
+        <size>31</size>
       </method>
     </type>
     <type name="C+&lt;&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>145</size>
+        <size>156</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>41</size>
       </method>
     </type>
   </test>
