@@ -125,7 +125,12 @@ namespace System.Threading.Tasks
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
-		
+
+		internal bool RunInline (Task task)
+		{
+			return TryExecuteTaskInline (task, false);
+		}
+
 		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)
 		{
 			UnobservedTaskExceptionEventArgs args = new UnobservedTaskExceptionEventArgs (e);

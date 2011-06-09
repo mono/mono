@@ -167,13 +167,13 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
-			if (Status != TaskStatus.Created)
+			if (Status > TaskStatus.WaitingForActivation)
 				throw new InvalidOperationException ("The task is not in a valid state to be started");
 
 			SetupScheduler (scheduler);
 			status = TaskStatus.WaitingToRun;
 
-			if (scheduler.TryExecuteTask (this))
+			if (scheduler.RunInline (this))
 				return;
 
 			Start (scheduler);
@@ -342,7 +342,7 @@ namespace System.Threading.Tasks
 		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
 		{
 			if ((options & TaskContinuationOptions.ExecuteSynchronously) > 0)
-				continuation.ThreadStart ();
+				continuation.RunSynchronously (scheduler);
 			else
 				continuation.Start (scheduler);
 		}
