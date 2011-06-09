@@ -50,9 +50,8 @@ namespace Microsoft.Build.Construction
                 public string DependsOnTargets { get; set; }
                 public string Inputs { get; set; }
                 public ICollection<ProjectItemGroupElement> ItemGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
+                                new FilteredEnumerable<ProjectItemGroupElement> (Children)); }
                 }
                 public string KeepDuplicateOutputs { get; set; }
                 public string Name { get; set; }
@@ -62,9 +61,8 @@ namespace Microsoft.Build.Construction
                 }
                 public string Outputs { get; set; }
                 public ICollection<ProjectPropertyGroupElement> PropertyGroups {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+                        get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (
+                                new FilteredEnumerable<ProjectPropertyGroupElement> (Children)); }
                 }
                 public string Returns { get; set; }
                 public ICollection<ProjectTaskElement> Tasks {
