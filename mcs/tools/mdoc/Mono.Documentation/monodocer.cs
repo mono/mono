@@ -3261,7 +3261,6 @@ class DocumentationMember {
 
 public enum MemberFormatterState {
 	None,
-	WithinArray,
 	WithinGenericTypeParameters,
 }
 
@@ -3311,16 +3310,8 @@ public abstract class MemberFormatter {
 	{
 		if (type is ArrayType) {
 			TypeSpecification spec = type as TypeSpecification;
-			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
-					.Append (ArrayDelimeters [0]);
-			var origState = MemberFormatterState;
-			MemberFormatterState = MemberFormatterState.WithinArray;
-			ArrayType array = (ArrayType) type;
-			int rank = array.Rank;
-			if (rank > 1)
-				buf.Append (new string (',', rank-1));
-			MemberFormatterState = origState;
-			return buf.Append (ArrayDelimeters [1]);
+			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ());
+			return AppendArrayModifiers (buf, (ArrayType) type);
 		}
 		if (type is ByReferenceType) {
 			return AppendRefTypeName (buf, type);
@@ -3366,6 +3357,15 @@ public abstract class MemberFormatter {
 		if (n >= 0)
 			return buf.Append (typename.Substring (0, n));
 		return buf.Append (typename);
+	}
+
+	protected virtual StringBuilder AppendArrayModifiers (StringBuilder buf, ArrayType array)
+	{
+		buf.Append (ArrayDelimeters [0]);
+		int rank = array.Rank;
+		if (rank > 1)
+			buf.Append (new string (',', rank-1));
+		return buf.Append (ArrayDelimeters [1]);
 	}
 
 	protected virtual string RefTypeModifier {
@@ -4718,6 +4718,19 @@ class SlashDocMemberFormatter : MemberFormatter {
 			}
 		}
 		return buf;
+	}
+
+	protected override StringBuilder AppendArrayModifiers (StringBuilder buf, ArrayType array)
+	{
+		buf.Append (ArrayDelimeters [0]);
+		int rank = array.Rank;
+		if (rank > 1) {
+			buf.Append ("0:");
+			for (int i = 1; i < rank; ++i) {
+				buf.Append (",0:");
+			}
+		}
+		return buf.Append (ArrayDelimeters [1]);
 	}
 
 	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)

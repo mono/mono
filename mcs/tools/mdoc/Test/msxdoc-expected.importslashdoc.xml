@@ -169,12 +169,19 @@ class Example {
             <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}+Helper{``1,``2})">
-            <typeparam name="T">To be added.</typeparam>
-            <typeparam name="U">To be added.</typeparam>
-            <typeparam name="V">To be added.</typeparam>
-            <param name="helper">To be added.</param>
+            <typeparam name="T">
+                <c>T</c>
+            </typeparam>
+            <typeparam name="U">
+                <c>U</c>
+            </typeparam>
+            <typeparam name="V">
+                <c>V</c>
+            </typeparam>
+            <param name="helper">A <see cref="T:Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2}" />.</param>
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2})</c>.</remarks>
         </member>
         <member name="T:Mono.DocTest.Widget">
             <summary>To be added.</summary>
@@ -718,11 +725,12 @@ class Example {
                 <c>M:Mono.DocTest.MyList`1.Test(`0)</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`1.UseHelper``2(Mono.DocTest.Generic.MyList{T}+Helper{``0,``1})">
-            <typeparam name="U">To be added.</typeparam>
-            <typeparam name="V">To be added.</typeparam>
-            <param name="helper">To be added.</param>
+            <typeparam name="U">Argh!</typeparam>
+            <typeparam name="V">Foo Argh!</typeparam>
+            <param name="helper">A <see cref="T:Mono.DocTest.Generic.MyList`1.Helper`2" />.</param>
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.MyList`1.UseHelper``2(Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2})</c>.</remarks>
         </member>
         <member name="T:Mono.DocTest.Generic.MyList`1.Helper`2">
             <typeparam name="U">Seriously!</typeparam>
@@ -790,12 +798,13 @@ class Example {
                 <c>M:Mono.DocTest.MyList`2.GetEnumerator</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.Mono#DocTest#Generic#IFoo{A}#Method``1(A,``0)">
-            <typeparam name="U">To be added.</typeparam>
+            <typeparam name="U">U generic param on MyList`2</typeparam>
             <param name="a">To be added.</param>
             <param name="u">To be added.</param>
             <summary>To be added.</summary>
             <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.Generic.MyList`2.Mono#DocTest#Generic#IFoo{A}#Method``1(`0,``0)</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.MoveNext">
             <summary>To be added.</summary>
@@ -811,40 +820,47 @@ class Example {
                 <c>M:Mono.DocTest.MyList`2.Reset</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Add(A)">
-            <param name="item">To be added.</param>
+            <param name="item">The item to add.</param>
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#Generic#ICollection{A}#Add(`0)</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Clear">
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#Generic#ICollection{A}#Clear</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Contains(A)">
-            <param name="item">To be added.</param>
+            <param name="item">The item to check for</param>
             <summary>To be added.</summary>
-            <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <returns>A <see cref="T:System.Boolean" /> instance (<see langword="false" />).</returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#Generic#ICollection{A}.Contains(`0)</c>.</remarks>
         </member>
         <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#IsReadOnly">
             <summary>To be added.</summary>
-            <value>To be added.</value>
-            <remarks>To be added.</remarks>
+            <value>A <see cref="T:System.Boolean" />.</value>
+            <remarks>
+                <c>P:Mono.DocTest.MyList`2.System#Collections#Generic#ICollection{A}#IsReadOnly</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#ICollection{A}#Remove(A)">
-            <param name="item">To be added.</param>
+            <param name="item">the item to remove</param>
             <summary>To be added.</summary>
-            <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <returns>Whether the item was removed.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#Generic#ICollection{A}#Remove(`0)</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerable{A}#GetEnumerator">
             <summary>To be added.</summary>
-            <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <returns>A <see cref="T:System.Collections.Generic.IEnumerator{`0}" />.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#Generic#IEnumerable{A}#GetEnumerator</c>.</remarks>
         </member>
         <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#Generic#IEnumerator{A}#Current">
             <summary>To be added.</summary>
-            <value>To be added.</value>
-            <remarks>To be added.</remarks>
+            <value>The current value.</value>
+            <remarks>
+                <c>P:Mono.DocTest.MyList`2.Current</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerable#GetEnumerator">
             <summary>To be added.</summary>

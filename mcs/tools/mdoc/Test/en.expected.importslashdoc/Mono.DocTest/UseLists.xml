@@ -172,12 +172,19 @@
         <Parameter Name="helper" Type="Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <typeparam name="U">To be added.</typeparam>
-        <typeparam name="V">To be added.</typeparam>
-        <param name="helper">To be added.</param>
+        <typeparam name="T">
+          <c>T</c>
+        </typeparam>
+        <typeparam name="U">
+          <c>U</c>
+        </typeparam>
+        <typeparam name="V">
+          <c>V</c>
+        </typeparam>
+        <param name="helper">A <see cref="T:Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2}" />.</param>
         <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <c>M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2})</c>.</remarks>
       </Docs>
     </Member>
   </Members>
