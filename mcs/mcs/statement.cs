@@ -1892,12 +1892,11 @@ namespace Mono.CSharp {
 		{
 			var pi = variable as ParametersBlock.ParameterInfo;
 			if (pi != null) {
-				var p = pi.Parameter;
-				ParametersBlock.TopBlock.Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
+				pi.Parameter.Error_DuplicateName (ParametersBlock.TopBlock.Report);
+			} else {
+				ParametersBlock.TopBlock.Report.Error (128, variable.Location,
+					"A local variable named `{0}' is already defined in this scope", name);
 			}
-
-			ParametersBlock.TopBlock.Report.Error (128, variable.Location,
-				"A local variable named `{0}' is already defined in this scope", name);
 		}
 					
 		public virtual void Error_AlreadyDeclaredTypeParameter (string name, Location loc)
@@ -2334,7 +2333,7 @@ namespace Mono.CSharp {
 		}
 
 		// 
-		// Block is converted to an expression
+		// Block is converted into an expression
 		//
 		sealed class BlockScopeExpression : Expression
 		{

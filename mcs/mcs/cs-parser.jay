@@ -1221,6 +1221,8 @@ method_declaration
 		method.Block = (ToplevelBlock) $3;
 		
 		if (method.Block == null) {
+			method.ParameterInfo.CheckParameters (method);
+
 			if ((method.ModFlags & Modifiers.ASYNC) != 0) {
 				report.Error (1994, method.Location, "`{0}': The async modifier can only be used with methods that have a body",
 					method.GetSignatureForError ());
@@ -1709,8 +1711,7 @@ indexer_declaration
 	  {
 		valid_param_mod = 0;
 		var type = (FullNamedExpression) $3;
-		Indexer indexer = new Indexer (current_class, type,
-			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
+		Indexer indexer = new Indexer (current_class, type, (MemberName) $4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
 			
 		current_property = indexer;
 
@@ -1733,10 +1734,13 @@ indexer_declaration
 	  }
 	  accessor_declarations 
 	  {
-		  lexer.PropertyParsing = false;
+		lexer.PropertyParsing = false;
 	  }
 	  CLOSE_BRACE
-	  { 
+	  {
+		if (current_property.AccessorFirst != null && current_property.AccessorFirst.Block == null)
+			((Indexer) current_property).ParameterInfo.CheckParameters (current_property);
+	  
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
 			
@@ -1961,6 +1965,9 @@ operator_declaration
 				current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
 				current_local_parameters,
 				(ToplevelBlock) $5, (Attributes) $1, decl.location);
+				
+			if (op.Block == null)
+				op.ParameterInfo.CheckParameters (op);
 
 			if (doc_support) {
 				op.DocComment = tmpComment;
@@ -2606,6 +2613,8 @@ delegate_declaration
 
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (Modifiers) $2, name, p, (Attributes) $1);
+
+		p.CheckParameters (del);
 
 		current_container.AddDelegate (del);
 		current_delegate = del;
