@@ -1660,6 +1660,20 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void SetElementValue () // #699242
+		{
+			var element = XElement.Parse ("<foo><bar>bar</bar><baz>baz</baz></foo>");
+			element.SetElementValue ("bar", "babar");
+			element.SetElementValue ("baz", "babaz");
+			element.SetElementValue ("gaz", "gazonk");
+
+			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz><gaz>gazonk</gaz></foo>", element.ToString (SaveOptions.DisableFormatting));
+
+			element.SetElementValue ("gaz", null);
+			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz></foo>", element.ToString (SaveOptions.DisableFormatting));
+		}
+
+		[Test]
 		public void Bug3137 ()
 		{
 			CultureInfo current = Thread.CurrentThread.CurrentCulture;
