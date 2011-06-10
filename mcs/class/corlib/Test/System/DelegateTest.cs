@@ -1246,6 +1246,19 @@ namespace MonoTests.System
 			Assert.AreEqual (3, a, "#1");
 		}
 
+		public static int MethodWithIntParam (int x) {
+			return 10;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void CantBindValueTypeToFirstArg () {
+			try {
+				Delegate.CreateDelegate (typeof (Delegate695978_2), 10, typeof (DelegateTest).GetMethod ("MethodWithIntParam"));
+				Assert.Fail ("create delegate must fail");
+			} catch (ArgumentException) {}
+		}
+
 		struct Struct695978 {
 			public int value;
 			public int test() { return value + 10; }
