@@ -994,6 +994,17 @@ namespace MonoTests.System.Collections.Generic {
 			enumerator.MoveNext ();
 		}
 
+		[Test, ExpectedException (typeof (InvalidOperationException))] // #699182
+		public void VersionCheck_Indexer ()
+		{
+			var list = new List<int> () { 0, 2, 3 };
+			var enumerator = list.GetEnumerator ();
+
+			list [0] = 1;
+
+			enumerator.MoveNext ();
+		}
+
 		[Test]
 		public void VersionCheck_Reverse ()
 		{
