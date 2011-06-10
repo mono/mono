@@ -5070,11 +5070,21 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			prepared = prepare_for_load && !(source is DynamicExpressionStatement);
-			if (IsInstance)
-				EmitInstance (ec, prepared);
+			var await_expr = source as Await;
+			if (await_expr != null) {
+				//
+				// Await is not ordinary expression (it contains jump), hence the usual flow cannot be used
+				// to emit instance load before expression
+				//
+				await_expr.EmitAssign (ec, this);
+			} else {
+				prepared = prepare_for_load && !(source is DynamicExpressionStatement);
+				if (IsInstance)
+					EmitInstance (ec, prepared);
 
-			source.Emit (ec);
+				source.Emit (ec);
+			}
+
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
 				if (!IsStatic) {

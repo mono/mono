@@ -732,6 +732,8 @@ namespace Mono.CSharp
 			original_block.Emit (ec);
 			SymbolWriter.EndIteratorBody (ec);
 
+			EmitMoveNextEpilogue (ec);
+
 			ec.MarkLabel (move_next_error);
 
 			if (ReturnType.Kind != MemberKind.Void) {
@@ -791,6 +793,10 @@ namespace Mono.CSharp
 
 			SymbolWriter.StartIteratorDispatcher (ec);
 
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
+
 			EmitMoveNextEpilogue (ec);
 
 			ec.MarkLabel (move_next_error);
@@ -812,9 +818,6 @@ namespace Mono.CSharp
 
 		protected virtual void EmitMoveNextEpilogue (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Ldarg_0);
-			ec.EmitInt ((int) IteratorStorey.State.After);
-			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 		}
 
 		//

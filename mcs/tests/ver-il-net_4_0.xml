@@ -51845,6 +51845,88 @@
       </method>
     </type>
   </test>
+  <test name="test-async-06.cs">
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>437</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;Main&gt;m__4(Decimal)">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0()">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>20</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__2(System.String)">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;&gt;m__3(Decimal)">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;&gt;c__async5">
+      <method name="Void MoveNext()">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>190</size>
+      </method>
+      <method name="Void &lt;&gt;m__5()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>190</size>
+      </method>
+      <method name="Void &lt;&gt;m__6()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;&gt;c__async3">
+      <method name="Void MoveNext()">
+        <size>166</size>
+      </method>
+      <method name="System.String &lt;&gt;m__7()">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;&gt;c__async4">
+      <method name="Void MoveNext()">
+        <size>166</size>
+      </method>
+      <method name="Decimal &lt;&gt;m__8()">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
