@@ -637,6 +637,7 @@ namespace System.Collections.Generic {
 				if ((uint) index == (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
 				_items [index] = value;
+				_version++;
 			}
 		}
 		
