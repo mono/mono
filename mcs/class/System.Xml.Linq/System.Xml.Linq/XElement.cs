@@ -748,9 +748,12 @@ namespace System.Xml.Linq
 
 		public void SetElementValue (XName name, object value)
 		{
-			XElement el = new XElement (name, value);
-			RemoveNodes ();
-			Add (el);
+			var element = Element (name);
+			if (element == null) {
+				element = new XElement (name, value);
+				Add (element);
+			} else
+				element.SetValue (value);
 		}
 
 		public void SetValue (object value)
