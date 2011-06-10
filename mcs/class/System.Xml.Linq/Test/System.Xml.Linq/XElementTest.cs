@@ -1656,5 +1656,16 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
 			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
 		}
+
+		[Test]
+		public void SetElementValue () // #699242
+		{
+			var element = XElement.Parse ("<foo><bar>bar</bar><baz>baz</baz></foo>");
+			element.SetElementValue ("bar", "babar");
+			element.SetElementValue ("baz", "babaz");
+			element.SetElementValue ("gaz", "gazonk");
+
+			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz><gaz>gazonk</gaz></foo>", element.ToString (SaveOptions.DisableFormatting));
+		}
 	}
 }
