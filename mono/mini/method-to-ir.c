@@ -53,6 +53,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/profiler.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-memory-model.h>
 #include <mono/metadata/mono-basic-block.h>
 
 #include "mini.h"
@@ -4275,6 +4276,17 @@ mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 }
 
 static MonoInst*
+emit_memory_barrier (MonoCompile *cfg, int kind)
+{
+	MonoInst *ins = NULL;
+	MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+	MONO_ADD_INS (cfg->cbb, ins);
+	ins->backend.memory_barrier_kind = kind;
+
+	return ins;
+}
+
+static MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	MonoInst *ins = NULL;
@@ -4444,9 +4456,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		} else if (strcmp (cmethod->name, "MemoryBarrier") == 0) {
-			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
+			return emit_memory_barrier (cfg, FullBarrier);
 		}
 	} else if (cmethod->klass == mono_defaults.monitor_class) {
 #if defined(MONO_ARCH_MONITOR_OBJECT_REG)
@@ -7548,6 +7558,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins_flag = 0;
 			MONO_ADD_INS (bblock, ins);
 			*sp++ = ins;
+			if (ins->flags & MONO_INST_VOLATILE) {
+				/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
+				/* FIXME it's questionable if acquire semantics require full barrier or just LoadLoad*/
+				emit_memory_barrier (cfg, FullBarrier);
+			}
 			++ip;
 			break;
 		case CEE_STIND_REF:
@@ -7564,6 +7579,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			NEW_STORE_MEMBASE (cfg, ins, stind_to_store_membase (*ip), sp [0]->dreg, 0, sp [1]->dreg);
 			ins->flags |= ins_flag;
 			ins_flag = 0;
+
+			if (ins->flags & MONO_INST_VOLATILE) {
+				/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
+				/* FIXME it's questionable if acquire semantics require full barrier or just LoadLoad*/
+				emit_memory_barrier (cfg, FullBarrier);
+			}
+
 			MONO_ADD_INS (bblock, ins);
 
 			if (cfg->gen_write_barriers && *ip == CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER && !((sp [1]->opcode == OP_PCONST) && (sp [1]->inst_p0 == 0)))
