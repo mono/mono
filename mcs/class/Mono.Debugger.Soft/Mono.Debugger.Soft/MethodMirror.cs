@@ -61,7 +61,7 @@ namespace Mono.Debugger.Soft
 				sb.Append(" ");
 				sb.Append("(");
 				for (var i = 0; i < param_info.Length; i++) {
-					sb.Append(param_info[i].Name);
+					sb.Append(param_info[i].ParameterType.Name);
 					if (i != param_info.Length - 1)
 						sb.Append(", ");
 				}
