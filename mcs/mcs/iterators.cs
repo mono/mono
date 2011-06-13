@@ -637,7 +637,7 @@ namespace Mono.CSharp
 		{
 			storey = (StateMachine) block.Parent.ParametersBlock.AnonymousMethodStorey;
 
-			BlockContext ctx = new BlockContext (ec, block, ReturnType);
+			BlockContext ctx = new BlockContext (ec, block, ((BlockContext) ec).ReturnType);
 			ctx.CurrentAnonymousMethod = this;
 
 			ctx.StartFlowBranching (this, ec.CurrentBranching);
