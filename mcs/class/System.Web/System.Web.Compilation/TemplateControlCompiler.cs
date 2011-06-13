@@ -957,9 +957,12 @@ namespace System.Web.Compilation
 			string inputFile = parser.InputFile;
 			string physPath = HttpContext.Current.Request.PhysicalApplicationPath;
 	
-			if (StrUtils.StartsWith (inputFile, physPath))
+			if (StrUtils.StartsWith (inputFile, physPath)) {
+				string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
 				inputFile = parser.InputFile.Substring (physPath.Length - 1);
-			else
+				if (appVirtualPath != "/")
+					inputFile = appVirtualPath + inputFile;
+			} else
 				return;
 
 			char dsc = System.IO.Path.DirectorySeparatorChar;
