@@ -53,10 +53,19 @@ namespace Mono.Debugger.Soft
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (ReturnType.Name);
 				sb.Append (' ');
-				if (type_namespace == String.Empty)
-					sb.Append (type_name + ":" + Name + " ()");
-				else
-					sb.Append (type_namespace + "." + type_name + ":" + Name + " ()");
+				if (type_namespace != String.Empty)
+					sb.Append (type_namespace + ".");
+				sb.Append(type_name);
+				sb.Append(":");
+				sb.Append(Name);
+				sb.Append(" ");
+				sb.Append("(");
+				for (var i = 0; i < param_info.Length; i++) {
+					sb.Append(param_info[i].Name);
+					if (i != param_info.Length - 1)
+						sb.Append(", ");
+				}
+				sb.Append(")");
 				return sb.ToString ();
 			}
 	    }
