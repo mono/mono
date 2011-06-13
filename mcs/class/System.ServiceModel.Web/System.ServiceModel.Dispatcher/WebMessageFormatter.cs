@@ -604,7 +604,48 @@ namespace System.ServiceModel.Dispatcher
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
 			{
-				throw new NotSupportedException ();
+				writer.WriteString ("-- message body is raw binary --");
+			}
+
+			protected override MessageBuffer OnCreateBufferedCopy (int maxBufferSize)
+			{
+				var ms = Stream as MemoryStream;
+				if (ms == null) {
+					ms = new MemoryStream ();
+					Stream.CopyTo (ms);
+					this.Stream = ms;
+				}
+				return new RawMessageBuffer (ms.ToArray (), headers, properties);
+			}
+		}
+		
+		internal class RawMessageBuffer : MessageBuffer
+		{
+			byte [] buffer;
+			MessageHeaders headers;
+			MessageProperties properties;
+
+			public RawMessageBuffer (byte [] buffer, MessageHeaders headers, MessageProperties properties)
+			{
+				this.buffer = buffer;
+				this.headers = new MessageHeaders (headers);
+				this.properties = new MessageProperties (properties);
+			}
+			
+			public override int BufferSize {
+				get { return buffer.Length; }
+			}
+			
+			public override void Close ()
+			{
+			}
+			
+			public override Message CreateMessage ()
+			{
+				var msg = new RawMessage (new MemoryStream (buffer));
+				msg.Headers.CopyHeadersFrom (headers);
+				msg.Properties.CopyProperties (properties);
+				return msg;
 			}
 		}
 	}
