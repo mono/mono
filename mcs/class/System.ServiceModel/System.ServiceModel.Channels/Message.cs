@@ -39,6 +39,8 @@ namespace System.ServiceModel.Channels
 	{
 		bool disposed;
 		string body_id;
+		Message copied_message;
+		string string_cache;
 
 		protected Message () {
 			State = MessageState.Created;
@@ -56,11 +58,7 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageProperties Properties { get; }
 
-		MessageState ___state;
-		public MessageState State {
-			get { return ___state; }
-			private set { ___state = value;	}
-		}
+		public MessageState State { get; private set; }
 
 		public abstract MessageVersion Version { get; }
 
@@ -80,6 +78,10 @@ namespace System.ServiceModel.Channels
 		{
 			if (State != MessageState.Created)
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
+
+			if (copied_message != null)
+				return copied_message.CreateBufferedCopy (maxBufferSize);
+
 			try {
 				return OnCreateBufferedCopy (maxBufferSize);
 			} finally {
@@ -109,26 +111,27 @@ namespace System.ServiceModel.Channels
 
 		public XmlDictionaryReader GetReaderAtBodyContents ()
 		{
+			if (copied_message != null)
+				return copied_message.GetReaderAtBodyContents ();
+
 			return OnGetReaderAtBodyContents ();
 		}
 
 		public override string ToString ()
 		{
-			MessageState tempState = State;
-			try {
+			if (string_cache != null)
+				return string_cache;
 
-				StringWriter sw = new StringWriter ();
-				XmlWriterSettings settings = new XmlWriterSettings ();
-				settings.Indent = true;
-				settings.OmitXmlDeclaration = true;
-				using (XmlWriter w = XmlWriter.Create (sw, settings)) {
-					WriteMessage (w);
-				}
-				return sw.ToString ();
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.Indent = true;
+			settings.OmitXmlDeclaration = true;
+
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				OnBodyToString (XmlDictionaryWriter.CreateDictionaryWriter (w));
 			}
-			finally {
-				State = tempState;
-			}
+			string_cache = sw.ToString ();
+			return string_cache;
 		}
 
 		void WriteXsiNil (XmlDictionaryWriter writer)
@@ -155,8 +158,11 @@ namespace System.ServiceModel.Channels
 
 		public void WriteBodyContents (XmlDictionaryWriter writer)
 		{
-			if (!IsEmpty)
+			if (!IsEmpty) {
+				if (copied_message != null)
+					copied_message.WriteBodyContents (writer);
 				OnWriteBodyContents (writer);
+			}
 			else if (Version.Envelope == EnvelopeVersion.None)
 				WriteXsiNil (writer);
 			State = MessageState.Written;
@@ -197,11 +203,19 @@ namespace System.ServiceModel.Channels
 			OnWriteStartEnvelope (writer);
 		}
 
-		[MonoTODO]
 		protected virtual void OnBodyToString (
 			XmlDictionaryWriter writer)
 		{
-			throw new NotImplementedException ();
+			MessageState tempState = State;
+			try {
+				var mb = CreateBufferedCopy (int.MaxValue);
+				copied_message = mb.CreateMessage ();
+				var msg = mb.CreateMessage ();
+				msg.WriteMessage (writer);
+			}
+			finally {
+				State = tempState;
+			}
 		}
 
 		protected virtual void OnClose ()

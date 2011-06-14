@@ -304,11 +304,25 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringSomehowDoesNotConsumeMessage ()
 		{
 			Message m = Message.CreateMessage (MessageVersion.Default, "action", 1);
 			Assert.AreEqual (m.ToString (), m.ToString ());
+		}
+
+		[Test]
+		public void ToStringThenWriteMessageTwice ()
+		{
+			var mmm = Message.CreateMessage (MessageVersion.None, "urn:foo", XmlReader.Create (new StringReader ("<root>test</root>")));
+			mmm.ToString ();
+			mmm.ToString ();
+			mmm.WriteMessage (XmlWriter.Create (TextWriter.Null));
+			try {
+				mmm.WriteMessage (XmlWriter.Create (TextWriter.Null));
+				Assert.Fail ("not allowed; should raise InvalidOperationException");
+			} catch (InvalidOperationException) {
+				// dare avoid ExpectedException, to verify that the first call to WriteMessage() is valid.
+			}
 		}
 
 		[Test]
