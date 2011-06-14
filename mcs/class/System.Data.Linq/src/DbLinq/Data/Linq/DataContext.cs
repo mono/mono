@@ -987,7 +987,7 @@ namespace DbLinq.Data.Linq
         /// <summary>
         /// Execute raw SQL query and return object
         /// </summary>
-        public IEnumerable<TResult> ExecuteQuery<TResult>(string query, params object[] parameters) where TResult : class, new()
+        public IEnumerable<TResult> ExecuteQuery<TResult>(string query, params object[] parameters) where TResult : new()
         {
             if (query == null)
                 throw new ArgumentNullException("query");
