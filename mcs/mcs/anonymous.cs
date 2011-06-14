@@ -856,6 +856,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsAsync {
+			get {
+				return is_async;
+			}
+		}
+
 		public ParametersCompiled Parameters {
 			get {
 				return Block.Parameters;

@@ -3404,6 +3404,28 @@ namespace Mono.CSharp {
 				if (q.Kind == MemberKind.Void) {
 					return p.Kind != MemberKind.Void ? 1: 0;
 				}
+
+				//
+				// When anonymous method is an asynchronous, and P has a return type Task<Y1>, and Q has a return type Task<Y2>
+				// better conversion is performed between underlying types Y1 and Y2
+				//
+				if (p.IsGenericTask || q.IsGenericTask) {
+					if (p.IsGenericTask != q.IsGenericTask) {
+						return 0;
+					}
+
+					var async_am = a.Expr as AnonymousMethodExpression;
+					if (async_am == null || !async_am.IsAsync)
+						return 0;
+
+					q = q.TypeArguments[0];
+					p = p.TypeArguments[0];
+				}
+
+				//
+				// The parameters are identicial and return type is not void, use better type conversion
+				// on return type to determine better one
+				//
 			} else {
 				if (argument_type == p)
 					return 1;

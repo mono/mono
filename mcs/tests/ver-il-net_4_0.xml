@@ -52069,6 +52069,33 @@
       </method>
     </type>
   </test>
+  <test name="test-async-09.cs">
+    <type name="Test">
+      <method name="Int32 Foo[T](System.Func`2[T,System.Threading.Tasks.Task`1[System.Int32]])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo[T](System.Func`2[T,System.Threading.Tasks.Task`1[System.Int16]])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>44</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.String)">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
