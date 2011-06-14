@@ -51722,13 +51722,13 @@
         <size>23</size>
       </method>
       <method name="Int32 Main()">
-        <size>152</size>
+        <size>258</size>
       </method>
       <method name="Void &lt;Call&gt;m__0()">
-        <size>23</size>
+        <size>28</size>
       </method>
       <method name="Int32 &lt;CallGeneric&gt;m__1()">
-        <size>14</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()">
         <size>19</size>
@@ -51743,6 +51743,19 @@
       </method>
     </type>
     <type name="C+&lt;&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>141</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.Threading.Tasks.Task TestTask2()">
+        <size>34</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async2">
       <method name="Void MoveNext()">
         <size>143</size>
       </method>
@@ -51989,6 +52002,67 @@
       </method>
       <method name="Void &lt;&gt;m__6()">
         <size>55</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-08.cs">
+    <type name="AsyncTypeInference">
+      <method name="Int32 Main()">
+        <size>104</size>
+      </method>
+      <method name="System.Threading.Tasks.Task TT()">
+        <size>40</size>
+      </method>
+      <method name="Void Test[T](System.Func`2[System.Int32,System.Threading.Tasks.Task`1[T]])">
+        <size>9</size>
+      </method>
+      <method name="Void Test2[T](System.Func`2[System.Int32,T])">
+        <size>9</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(Int32)">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(Int32)">
+        <size>27</size>
+      </method>
+      <method name="Int32 &lt;TT&gt;m__3()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>171</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;&gt;c__async5">
+      <method name="Void MoveNext()">
+        <size>171</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__5()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;&gt;c__async8">
+      <method name="Void MoveNext()">
+        <size>135</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>

@@ -1012,9 +1012,16 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
-				am = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
-				if (am != null)
-					am = am.Compatible (ec);
+				var body = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
+				if (body != null) {
+					if (is_async) {
+						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, null, loc);
+					}
+
+					am = body.Compatible (ec, body, is_async);
+				} else {
+					am = null;
+				}
 			}
 
 			if (am == null)
@@ -1067,7 +1074,7 @@ namespace Mono.CSharp {
 						// lambda, this also means no variable capturing between this
 						// and parent scope
 						//
-						am = body.Compatible (ec, ec.CurrentAnonymousMethod);
+						am = body.Compatible (ec, ec.CurrentAnonymousMethod, is_async);
 
 						//
 						// Quote nested expression tree
@@ -1327,10 +1334,10 @@ namespace Mono.CSharp {
 
 		public AnonymousExpression Compatible (ResolveContext ec)
 		{
-			return Compatible (ec, this);
+			return Compatible (ec, this, false);
 		}
 
-		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae)
+		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae, bool isAsync)
 		{
 			if (block.Resolved)
 				return this;
@@ -1369,6 +1376,14 @@ namespace Mono.CSharp {
 				am.ReturnTypeInference.FixAllTypes (ec);
 				ReturnType = am.ReturnTypeInference.InferredTypeArguments [0];
 				am.ReturnTypeInference = null;
+
+				//
+				// If e is synchronous the inferred return type is T
+				// If e is asynchronous the inferred return type is Task<T>
+				//
+				if (isAsync && ReturnType != null) {
+					ReturnType = ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
+				}
 			}
 
 			if (res && errors != ec.Report.Errors)

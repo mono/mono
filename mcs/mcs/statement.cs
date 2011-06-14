@@ -718,6 +718,21 @@ namespace Mono.CSharp {
 				if (ec.ReturnType.Kind == MemberKind.Void)
 					return true;
 
+				//
+				// Return must not be followed by an expression when
+				// the method return type is Task
+				//
+				if (ec.CurrentAnonymousMethod is AsyncInitializer) {
+					var storey = (AsyncTaskStorey) ec.CurrentAnonymousMethod.Storey;
+					if (storey.ReturnType == ec.Module.PredefinedTypes.Task.TypeSpec) {
+						//
+						// Extra trick not to emit ret/leave inside awaiter body
+						//
+						Expr = EmptyExpression.Null;
+						return true;
+					}
+				}
+
 				if (ec.CurrentIterator != null) {
 					Error_ReturnFromIterator (ec);
 				} else {
@@ -745,10 +760,16 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (am is AsyncInitializer) {
+				var async_block = am as AsyncInitializer;
+				if (async_block != null) {
 					if (Expr != null) {
 						var storey = (AsyncTaskStorey) am.Storey;
 						var async_type = storey.ReturnType;
+
+						if (async_type == null && async_block.ReturnTypeInference != null) {
+							async_block.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+							return true;
+						}
 
 						if (!async_type.IsGenericTask) {
 							if (this is ContextualReturn)
@@ -758,12 +779,12 @@ namespace Mono.CSharp {
 								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
 								ec.GetSignatureForError ());
 							return false;
-						} else {
-							//
-							// The return type is actually Task<T> type argument
-							//
-							block_return_type = async_type.TypeArguments[0];
 						}
+
+						//
+						// The return type is actually Task<T> type argument
+						//
+						block_return_type = async_type.TypeArguments[0];
 					}
 				} else {
 					var l = am as AnonymousMethodBody;
@@ -2597,6 +2618,19 @@ namespace Mono.CSharp {
 						return false;
 					}
 				} else {
+					//
+					// If an asynchronous body of F is either an expression classified as nothing, or a 
+					// statement block where no return statements have expressions, the inferred return type is Task
+					//
+					if (IsAsync) {
+						var am = rc.CurrentAnonymousMethod as AnonymousMethodBody;
+						if (am != null && am.ReturnTypeInference != null && !am.ReturnTypeInference.HasBounds (0)) {
+							am.ReturnTypeInference = null;
+							am.ReturnType = rc.Module.PredefinedTypes.Task.TypeSpec;
+							return true;
+						}
+					}
+
 					rc.Report.Error (1643, rc.CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
 							  rc.CurrentAnonymousMethod.GetSignatureForError ());
 					return false;

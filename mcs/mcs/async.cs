@@ -22,13 +22,20 @@ namespace Mono.CSharp
 {
 	class Await : ExpressionStatement
 	{
-		readonly Expression expr;
+		Expression expr;
 		AwaitStatement stmt;
 
 		public Await (Expression expr, Location loc)
 		{
 			this.expr = expr;
 			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			var t = (Await) target;
+
+			t.expr = expr.Clone (clonectx);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -311,10 +318,14 @@ namespace Mono.CSharp
 
 	public class AsyncInitializer : StateMachineInitializer
 	{
+		TypeInferenceContext return_inference;
+
 		public AsyncInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
 			: base (block, host, returnType)
 		{
 		}
+
+		#region Properties
 
 		public override string ContainerType {
 			get {
@@ -334,9 +345,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeInferenceContext ReturnTypeInference {
+			get {
+				return return_inference;
+			}
+		}
+
+		#endregion
+
 		public static void Create (ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
 		{
-			if (returnType.Kind != MemberKind.Void &&
+			if (returnType != null && returnType.Kind != MemberKind.Void &&
 				returnType != host.Module.PredefinedTypes.Task.TypeSpec &&
 				!returnType.IsGenericTask) {
 				host.Compiler.Report.Error (1983, loc, "The return type of an async method must be void, Task, or Task<T>");
@@ -371,6 +390,16 @@ namespace Mono.CSharp
 			//}
 
 			block.WrapIntoAsyncTask (host, returnType);
+		}
+
+		protected override BlockContext CreateBlockContext (ResolveContext rc)
+		{
+			var ctx = base.CreateBlockContext (rc);
+			var lambda = rc.CurrentAnonymousMethod as LambdaMethod;
+			if (lambda != null)
+				return_inference = lambda.ReturnTypeInference;
+
+			return ctx;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

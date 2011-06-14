@@ -3054,6 +3054,11 @@ namespace Mono.CSharp {
 			fixed_types[i] = best_candidate;
 			return true;
 		}
+
+		public bool HasBounds (int pos)
+		{
+			return bounds[pos] != null;
+		}
 		
 		//
 		// Uses inferred or partially infered types to inflate delegate type argument. Returns

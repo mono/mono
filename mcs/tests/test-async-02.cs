@@ -13,10 +13,16 @@ class C
 		await Call ();
 	}
 
+	public async Task TestTask2 ()
+	{
+		await Call ();
+		return;
+	}
+
 	Task Call ()
 	{
 		return Task.Factory.StartNew (() => {
-			mre.WaitOne ();
+			mre.WaitOne (3000);
 			Console.WriteLine ("a");
 		});
 	}
@@ -29,7 +35,7 @@ class C
 	Task<int> CallGeneric ()
 	{
 		return Task.Factory.StartNew (() => {
-			mre.WaitOne ();
+			mre.WaitOne (3000);
 			return 5;
 		});
 	}
@@ -42,24 +48,38 @@ class C
 			return 1;
 
 		c.mre.Set ();
-		Task.WaitAll (t);
+		if (!Task.WaitAll (new[] { t }, 3000))
+			return 2;
 
 		if (t.Status != TaskStatus.RanToCompletion)
-			return 2;
+			return 3;
+
+		c = new C ();
+		t = c.TestTask2 ();
+		if (t.Status != TaskStatus.WaitingForActivation)
+			return 4;
+
+		c.mre.Set ();
+		if (!Task.WaitAll (new[] { t }, 3000))
+			return 5;
+
+		if (t.Status != TaskStatus.RanToCompletion)
+			return 6;
 
 		c = new C ();
 		var t2 = c.TestTaskGeneric ();
 		if (t2.Status != TaskStatus.WaitingForActivation)
-			return 3;
+			return 7;
 
 		c.mre.Set ();
-		Task.WaitAll (t2);
+		if (!Task.WaitAll (new[] { t2 }, 3000))
+			return 8;
 
 		if (t2.Result != 5)
-			return 4;
+			return 9;
 
 		if (t2.Status != TaskStatus.RanToCompletion)
-			return 5;
+			return 10;
 
 		return 0;
 	}
