@@ -2715,8 +2715,11 @@ namespace Mono.CSharp
 				}
 
 				if (c == '\n') {
-					if (!quoted)
+					if (!quoted) {
 						Report.Error (1010, Location, "Newline in constant");
+						val = new StringLiteral (context.BuiltinTypes, new string (value_builder, 0, pos), start_location);
+						return Token.LITERAL;
+					}
 				} else if (c == '\\' && !quoted) {
 					int surrogate;
 					c = escape (c, out surrogate);
