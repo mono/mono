@@ -8,6 +8,13 @@ using System;
 /// <typeparam name="T"></typeparam>
 public struct Maybe<T>
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparamref name="T"></typeparamref>
+	public void Method ()
+	{
+	}
 }
 
 /// <summary>
@@ -20,6 +27,7 @@ public struct Tuple<T1, T2>
 	/// <summary>
 	///  Test
 	///  <typeparamref name="TResult" />.
+	///  <typeparamref name="T2" />.
 	/// </summary>
 	public TResult Match<TResult> (params Func<T1, T2, Maybe<TResult>>[] ms)
 	{
