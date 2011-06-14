@@ -365,6 +365,9 @@ namespace System.ServiceModel.Description
 		{
 			CodeMemberMethod cm = new CodeMemberMethod ();
 
+			if (od.Behaviors.Find<XmlSerializerMappingBehavior> () != null)
+				cm.CustomAttributes.Add (new CodeAttributeDeclaration (new CodeTypeReference (typeof (XmlSerializerFormatAttribute))));
+
 			if (async)
 				cm.Name = "Begin" + od.Name;
 			else

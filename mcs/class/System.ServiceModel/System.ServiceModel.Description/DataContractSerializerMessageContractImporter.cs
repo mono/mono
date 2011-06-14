@@ -189,7 +189,7 @@ namespace System.ServiceModel.Description
 			foreach (OperationMessage opmsg in op.Messages) {
 				var parts = context.GetMessageDescription (opmsg).Body.Parts;
 				foreach (var part in parts)
-					if (part.DataContractImporter != null)
+					if (part.DataContractImporter != null || part.XmlSerializationImporter != null)
 						return true;
 			}
 			return false;
