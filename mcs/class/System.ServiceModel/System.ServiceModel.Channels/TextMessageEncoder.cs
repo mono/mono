@@ -82,11 +82,13 @@ namespace System.ServiceModel.Channels
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			return Message.CreateMessage (
+			var ret = Message.CreateMessage (
 				XmlDictionaryReader.CreateDictionaryReader (
 					XmlReader.Create (new StreamReader (stream, encoding))),
 				maxSizeOfHeaders,
 				version);
+			ret.Properties.Encoder = this;
+			return ret;
 		}
 
 		public override void WriteMessage (Message message, Stream stream)

@@ -131,6 +131,7 @@ namespace System.ServiceModel.Channels
 			}
 			if (wp != null)
 				msg.Properties.Add (WebBodyFormatMessageProperty.Name, wp);
+			msg.Properties.Encoder = this;
 			return msg;
 		}
 

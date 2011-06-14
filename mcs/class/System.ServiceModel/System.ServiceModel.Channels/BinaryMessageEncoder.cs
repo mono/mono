@@ -109,9 +109,11 @@ namespace System.ServiceModel.Channels
 				stream = tmpms;
 			}
 
-			return Message.CreateMessage (
+			var ret = Message.CreateMessage (
 				XmlDictionaryReader.CreateBinaryReader (stream, Constants.SoapDictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), session ? CurrentReaderSession : null),
 				maxSizeOfHeaders, MessageVersion);
+			ret.Properties.Encoder = this;
+			return ret;
 		}
 
 		public override void WriteMessage (Message message, Stream stream)
