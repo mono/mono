@@ -1093,6 +1093,9 @@ namespace Mono.CSharp
 					break;
 			}
 
+			if ((declaration.Attributes & MemberAttributes.New) != 0)
+				output.Write ("new ");
+
 			if (declaration.IsStruct) {
 				if (declaration.IsPartial) {
 					output.Write ("partial ");
