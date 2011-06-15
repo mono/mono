@@ -996,7 +996,7 @@ namespace DbLinq.Data.Linq
         }
 
         private IEnumerable<TResult> CreateExecuteQueryEnumerable<TResult>(string query, object[] parameters)
-            where TResult : class, new()
+            where TResult : new()
         {
             foreach (TResult result in ExecuteQuery(typeof(TResult), query, parameters))
                 yield return result;
