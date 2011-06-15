@@ -1334,7 +1334,7 @@ namespace Mono.CSharp
 					break;
 				default:
 					StringBuilder sb = new StringBuilder (baseType.Length);
-					if (type.Options == CodeTypeReferenceOptions.GlobalReference) {
+					if ((type.Options & CodeTypeReferenceOptions.GlobalReference) != 0) {
 						sb.Append ("global::");
 					}
 
