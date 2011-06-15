@@ -158,6 +158,15 @@ mono_get_vcall_slot_addr (guint8* code, mgreg_t *regs)
 #ifdef MONO_ARCH_HAVE_IMT
 
 static gpointer*
+#ifdef __GNUC__
+/*
+ * This works against problems when compiling with gcc 4.6 on arm. The 'then' part of
+ * this line gets executed, even when the condition is false:
+ *		if (impl && mono_method_needs_static_rgctx_invoke (impl, FALSE))
+ *			*need_rgctx_tramp = TRUE;
+ */
+__attribute__ ((noinline))
+#endif
 mono_convert_imt_slot_to_vtable_slot (gpointer* slot, mgreg_t *regs, guint8 *code, MonoMethod *method, MonoMethod **impl_method, gboolean *need_rgctx_tramp)
 {
 	MonoGenericSharingContext *gsctx = mono_get_generic_context_from_code (code);
