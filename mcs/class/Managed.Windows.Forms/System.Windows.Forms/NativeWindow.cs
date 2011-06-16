@@ -35,6 +35,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -257,8 +258,19 @@ namespace System.Windows.Forms
 			}
 			catch (Exception ex) {
 #if !ExternalExceptionHandler
-				if (window != null)
-					window.OnThreadException (ex);
+				if (window != null) {
+					if (msg == Msg.WM_PAINT && window is Control.ControlNativeWindow) {
+						// Replace control with a red cross
+						var control = ((Control.ControlNativeWindow)window).Owner;
+						control.Hide ();
+						var redCross = new Control (control.Parent, string.Empty);
+						redCross.BackColor = Color.White;
+						redCross.ForeColor = Color.Red;
+						redCross.Bounds = control.Bounds;
+						redCross.Paint += HandleRedCrossPaint;
+					}
+ 					window.OnThreadException (ex);
+				}
 #else
 				throw;
 #endif
@@ -268,6 +280,27 @@ namespace System.Windows.Forms
 			#endif
 
 			return result;
+		}
+
+		private static void HandleRedCrossPaint (object sender, PaintEventArgs e)
+		{
+			var control = sender as Control;
+			using (var pen = new Pen (control.ForeColor, 2)) {
+				var paintRect = control.DisplayRectangle;
+				e.Graphics.DrawRectangle (pen, paintRect.Left + 1,
+					paintRect.Top + 1, paintRect.Width - 1, paintRect.Height - 1);
+				// NOTE: .NET's drawing of the red cross seems to have a bug
+				// that draws the bottom and right of the rectangle only 1 pixel
+				// wide. We would get a nicer rectangle using the following code,
+				// but that runs into a problem with libgdiplus.
+				//var paintRect = control.DisplayRectangle;
+				//paintRect.Inflate (-1, -1);
+				//e.Graphics.DrawRectangle (pen, paintRect);
+				e.Graphics.DrawLine (pen, paintRect.Location,
+					paintRect.Location + paintRect.Size);
+				e.Graphics.DrawLine (pen, new Point (paintRect.Left, paintRect.Bottom),
+					new Point (paintRect.Right, paintRect.Top));
+			}
 		}
 
 		private static NativeWindow EnsureCreated (NativeWindow window, IntPtr hWnd)
