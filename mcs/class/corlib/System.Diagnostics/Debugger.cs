@@ -77,12 +77,8 @@ namespace System.Diagnostics
 		/// <summary>
 		/// Checks to see if logging is enabled by an attached debugger.
 		/// </summary>
-		public static bool IsLogging()
-		{
-			// Return false. DefaultTraceListener invokes this method, so throwing
-			// a NotImplementedException wouldn't be appropriate.
-			return false;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern bool IsLogging();
 
 		/// <summary>
 		/// Launches and attaches a debugger to the process.
@@ -105,11 +101,8 @@ namespace System.Diagnostics
 		/// <param name="message">
 		/// A string representing the message to show.
 		/// </param>
-		public static void Log(int level, string category, string message)
-		{
-			// Do nothing. DefaultTraceListener invokes this method, so throwing
-			// a NotImplementedException wouldn't be appropriate.
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void Log(int level, string category, string message);
 
 		[Obsolete]
 		public Debugger()

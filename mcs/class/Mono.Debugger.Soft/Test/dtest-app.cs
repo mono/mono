@@ -176,6 +176,7 @@ public class Tests : TestsBase
 		exception_filter ();
 		threads ();
 		dynamic_methods ();
+		user ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -888,6 +889,13 @@ public class Tests : TestsBase
 			string h = "hi";
 			string_call (h);
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void user () {
+		Debugger.Break ();
+
+		Debugger.Log (5, Debugger.IsLogging () ? "A" : "", "B");
 	}
 }
 

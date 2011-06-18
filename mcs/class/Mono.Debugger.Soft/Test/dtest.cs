@@ -2631,4 +2631,30 @@ public class DebuggerTests
 		Assert.IsTrue (e is StepEvent);
 	}
 
+	[Test]
+	public void DebugBreak () {
+		vm.EnableEvents (EventType.UserBreak);
+
+		run_until ("user");
+
+		vm.Resume ();
+		var e = GetNextEvent ();
+		Assert.IsTrue (e is UserBreakEvent);
+	}
+
+	[Test]
+	public void DebugLog () {
+		vm.EnableEvents (EventType.UserLog);
+
+		run_until ("user");
+
+		vm.Resume ();
+		var e = GetNextEvent ();
+		Assert.IsTrue (e is UserLogEvent);
+		var le = e as UserLogEvent;
+
+		Assert.AreEqual (5, le.Level);
+		Assert.AreEqual ("A", le.Category);
+		Assert.AreEqual ("B", le.Message);
+	}
 }

@@ -68,3 +68,4 @@ Mono.Debugger.Soft/IInvokeAsyncResult.cs
 Mono.Debugger.Soft/ITargetProcess.cs
 Mono.Debugger.Soft/AbsentInformationException.cs
 Mono.Debugger.Soft/UserBreakEvent.cs
+Mono.Debugger.Soft/UserLogEvent.cs

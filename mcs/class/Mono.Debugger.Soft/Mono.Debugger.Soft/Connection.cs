@@ -270,6 +270,18 @@ namespace Mono.Debugger.Soft
 			get; set;
 		}
 
+		public int Level {
+			get; set;
+		}
+
+		public string Category {
+			get; set;
+		}
+
+		public string Message {
+			get; set;
+		}
+
 		public EventInfo (EventType type, int req_id) {
 			EventType = type;
 			ReqId = req_id;
@@ -358,7 +370,8 @@ namespace Mono.Debugger.Soft
 			TYPE_LOAD = 12,
 			EXCEPTION = 13,
 			KEEPALIVE = 14,
-			USER_BREAK = 15
+			USER_BREAK = 15,
+			USER_LOG = 16
 		}
 
 		enum ModifierKind {
@@ -1175,6 +1188,13 @@ namespace Mono.Debugger.Soft
 								long id = 0;
 								long loc = 0;
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
+								//EventHandler.Exception (req_id, thread_id, id, loc);
+							} else if (kind == EventKind.USER_LOG) {
+								long thread_id = r.ReadId ();
+								int level = r.ReadInt ();
+								string category = r.ReadString ();
+								string message = r.ReadString ();
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Level = level, Category = category, Message = message };
 								//EventHandler.Exception (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.KEEPALIVE) {
 								events [i] = new EventInfo (etype, req_id) { };
