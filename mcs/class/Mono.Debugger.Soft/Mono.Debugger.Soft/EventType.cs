@@ -18,6 +18,10 @@ namespace Mono.Debugger.Soft
 		TypeLoad = 12,
 		Exception = 13,
 		KeepAlive = 14,
+		//
+		// System.Diagnostics.Debugger.Break ()
+		//
+		UserBreak = 15,
 		// Not part of the wire protocol
 		VMDisconnect = 99
 	}
