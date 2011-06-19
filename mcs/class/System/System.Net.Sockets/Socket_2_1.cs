@@ -1821,6 +1821,11 @@ namespace System.Net.Sockets {
 
 			for(int i = 0; i < numsegments; i++) {
 				ArraySegment<byte> segment = buffers[i];
+
+				if (segment.Offset < 0 || segment.Count < 0 ||
+				    segment.Count > segment.Array.Length - segment.Offset)
+					throw new ArgumentOutOfRangeException ("segment");
+
 				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
 				bufarray[i].len = segment.Count;
 				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
@@ -1898,6 +1903,11 @@ namespace System.Net.Sockets {
 			GCHandle[] gch = new GCHandle[numsegments];
 			for(int i = 0; i < numsegments; i++) {
 				ArraySegment<byte> segment = buffers[i];
+
+				if (segment.Offset < 0 || segment.Count < 0 ||
+				    segment.Count > segment.Array.Length - segment.Offset)
+					throw new ArgumentOutOfRangeException ("segment");
+
 				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
 				bufarray[i].len = segment.Count;
 				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
