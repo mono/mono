@@ -187,7 +187,7 @@ namespace Mono.CSharp
 			var type = Expr.Type;
 			if (IsByRef) {
 				var ml = (IMemoryLocation) Expr;
-				ml.AddressOf (ec, AddressOp.Load);
+				ml.AddressOf (ec, AddressOp.LoadStore);
 				type = ReferenceContainer.MakeType (ec.Module, type);
 			} else {
 				Expr.Emit (ec);

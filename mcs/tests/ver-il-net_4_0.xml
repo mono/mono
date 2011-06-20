@@ -54034,10 +54034,16 @@
         <size>40</size>
       </method>
       <method name="Int32 Main()">
-        <size>242</size>
+        <size>277</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void Test[T](T[])">
+        <size>22</size>
+      </method>
+      <method name="Void Foo[T](T, T ByRef)">
+        <size>8</size>
       </method>
     </type>
   </test>
