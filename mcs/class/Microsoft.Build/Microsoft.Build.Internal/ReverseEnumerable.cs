@@ -32,17 +32,17 @@ namespace Microsoft.Build.Internal
 {
         internal class ReverseEnumerable<T> : IEnumerable<T>
         {
-                List<T> backingList;
+                LinkedList<T> backingList;
 
-                public ReverseEnumerable (List<T> list)
+                public ReverseEnumerable (LinkedList<T> list)
                 {
                         backingList = list;
                 }
 
                 public IEnumerator<T> GetEnumerator ()
                 {
-                        for (int i = backingList.Count - 1; i >= 0; i--)
-                                yield return backingList[i];
+                        for (var node = backingList.Last; node != null; node = node.Previous)
+                                yield return node.Value;
                 }
 
                 System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()

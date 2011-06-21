@@ -36,7 +36,7 @@ namespace Microsoft.Build.Construction
         public abstract class ProjectElementContainer : ProjectElement
         {
                 internal ProjectElementContainer () {}
-                List<ProjectElement> children = new List<ProjectElement> ();
+                LinkedList<ProjectElement> children = new LinkedList<ProjectElement> ();
 
                 public IEnumerable<ProjectElement> AllChildren {
                         get {
@@ -64,22 +64,18 @@ namespace Microsoft.Build.Construction
                         get { return children.Count; }
                 }
                 public ProjectElement FirstChild {
-                        get { return children.FirstOrDefault (); }
+                        get { return children.First == null ? null : children.First.Value; }
                         private set { }
                 }
                 public ProjectElement LastChild {
-                        get { return Count > 0 ? children[Count - 1] : null; }
+                        get { return children.Last == null ? null: children.Last.Value; }
                         private set { }
                 }
 
                 public void AppendChild (ProjectElement child)
                 {
-                        children.Add (child);
+                        children.AddLast (child.LinkedListNode);
                         child.Parent = this;
-                        if (Count != 1) {
-                                child.PreviousSibling = children[Count - 2];
-                                children[Count - 2].NextSibling = child;
-                        }
                 }
 
                 public void InsertAfterChild (ProjectElement child, ProjectElement reference)
@@ -88,15 +84,7 @@ namespace Microsoft.Build.Construction
                                 PrependChild (child);
                         } else {
                                 child.Parent = this;
-                                var referenceIndex = children.IndexOf (reference);
-                                children.Insert (referenceIndex + 1, child);
-                                child.PreviousSibling = reference;
-                                reference.NextSibling = child;
-                                
-                                if (referenceIndex + 2 < Count) {
-                                        child.NextSibling = children[referenceIndex + 2];
-                                        children[referenceIndex + 2].PreviousSibling = child;
-                                }
+                                children.AddAfter (reference.LinkedListNode, child.LinkedListNode);
                         }
                 }
 
@@ -106,26 +94,14 @@ namespace Microsoft.Build.Construction
                                 AppendChild (child);
                         } else {
                                 child.Parent = this;
-                                var referenceIndex = children.IndexOf (reference);
-                                children.Insert (referenceIndex, child);
-                                child.NextSibling = reference;
-                                reference.PreviousSibling = child;
-                                
-                                if (referenceIndex > 0) {
-                                        child.PreviousSibling = children[referenceIndex - 1];
-                                        children[referenceIndex - 1].NextSibling = child;
-                                }
+                                children.AddBefore (reference.LinkedListNode, child.LinkedListNode);
                         }
                 }
 
                 public void PrependChild (ProjectElement child)
                 {
-                        children.Insert (0, child);
+                        children.AddFirst (child.LinkedListNode);
                         child.Parent = this;
-                        if (Count != 1) {
-                                child.NextSibling = children[1];
-                                children[1].PreviousSibling = child;
-                        }
                 }
 
                 public void RemoveAllChildren ()
@@ -137,11 +113,7 @@ namespace Microsoft.Build.Construction
                 public void RemoveChild (ProjectElement child)
                 {
                         child.Parent = null;
-                        children.Remove(child);
-                        if (child.NextSibling != null)
-                                child.NextSibling.PreviousSibling = child.PreviousSibling;
-                        if (child.PreviousSibling != null)
-                                child.PreviousSibling.NextSibling = child.NextSibling;
+                        children.Remove (child.LinkedListNode);
                 }
 
                 internal override void SaveValue (XmlWriter writer)

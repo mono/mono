@@ -35,22 +35,33 @@ namespace Microsoft.Build.Construction
 {
         public abstract class ProjectElement
         {
-                internal ProjectElement () {}
+                internal ProjectElement ()
+                {
+                        linkedListNode = new LinkedListNode<ProjectElement> (this);
+                }
                 public ProjectRootElement ContainingProject { get; internal set; }
-                public ProjectElement PreviousSibling { get; internal set; }
+                public ProjectElement PreviousSibling {
+                        get { return LinkedListNode.Previous == null ? null : LinkedListNode.Previous.Value; }
+                        internal set { }
+                }
                 public ProjectElementContainer Parent { get; internal set; }
-                public ProjectElement NextSibling { get; internal set; }
+                public ProjectElement NextSibling {
+                        get { return LinkedListNode.Next == null ? null : LinkedListNode.Next.Value; }
+                        internal set { }
+                }
                 public string Label { get; set; }
                 public virtual string Condition { get; set; }
                 public IEnumerable<ProjectElementContainer> AllParents {
                         get {
                                 var parent = Parent;
-                                while(parent != null) {
+                                while (parent != null) {
                                         yield return parent;
                                         parent = parent.Parent;
                                 }
                         }
                 }
+                readonly LinkedListNode<ProjectElement> linkedListNode;
+                internal LinkedListNode<ProjectElement> LinkedListNode { get { return linkedListNode; } }
                 internal virtual void Load (XmlReader reader)
                 {
                         reader.ReadToFollowing (XmlName);
