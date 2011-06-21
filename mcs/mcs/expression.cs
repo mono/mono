@@ -1680,6 +1680,12 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
@@ -6722,6 +6728,12 @@ namespace Mono.CSharp
 			get { return type.IsStruct; }
 		}
 
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
+		}
+
 		protected override ILocalVariable Variable {
 			get { return ThisVariable.Instance; }
 		}
@@ -7088,6 +7100,13 @@ namespace Mono.CSharp
 		}
 
 		#region Properties
+
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
+		}
+
 		public TypeSpec TypeArgument {
 			get {
 				return typearg;
@@ -7254,6 +7273,12 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
@@ -7332,6 +7357,12 @@ namespace Mono.CSharp
 		{
 			this.QueriedType = queried_type;
 			loc = l;
+		}
+
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

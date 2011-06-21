@@ -309,7 +309,13 @@ namespace Mono.CSharp {
 		
 		public virtual bool IsOneInteger {
 			get { return false; }
-		}		
+		}
+
+		public override bool IsSideEffectFree {
+			get {
+				return true;
+			}
+		}
 
 		//
 		// Returns true iff 1) the stack type of this is one of Object, 
@@ -2156,7 +2162,8 @@ namespace Mono.CSharp {
 	///   used by BitwiseAnd to ensure that the second expression is invoked
 	///   regardless of the value of the left side.  
 	/// </summary>
-	public class SideEffectConstant : Constant {
+	public class SideEffectConstant : Constant
+	{
 		public readonly Constant value;
 		Expression side_effect;
 		
@@ -2170,6 +2177,12 @@ namespace Mono.CSharp {
 			while (side_effect is SideEffectConstant)
 				side_effect = ((SideEffectConstant) side_effect).side_effect;
 			this.side_effect = side_effect;
+		}
+
+		public override bool IsSideEffectFree {
+			get {
+				return false;
+			}
 		}
 
 		public override object GetValue ()

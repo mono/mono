@@ -497,9 +497,9 @@ namespace Mono.CSharp
 		public Arguments MarkOrderedArgument (NamedArgument a)
 		{
 			//
-			// Constant expression have no effect on left-to-right execution
+			// An expression has no effect on left-to-right execution
 			//
-			if (a.Expr is Constant)
+			if (a.Expr.IsSideEffectFree)
 				return this;
 
 			ArgumentsOrdered ra = this as ArgumentsOrdered;

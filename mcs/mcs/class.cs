@@ -738,7 +738,7 @@ namespace Mono.CSharp
 					ExpressionStatement s = fi.ResolveStatement (ec);
 					if (s == null) {
 						s = EmptyExpressionStatement.Instance;
-					} else if (fi.IsComplexInitializer) {
+					} else if (!fi.IsSideEffectFree) {
 						has_complex_initializer |= true;
 					}
 

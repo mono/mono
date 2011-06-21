@@ -541,10 +541,6 @@ namespace Mono.CSharp {
 				base.EmitStatement (ec);
 		}
 		
-		public bool IsComplexInitializer {
-			get { return !(source is Constant); }
-		}
-
 		public bool IsDefaultInitializer {
 			get {
 				Constant c = source as Constant;
@@ -553,6 +549,12 @@ namespace Mono.CSharp {
 				
 				FieldExpr fe = (FieldExpr)target;
 				return c.IsDefaultInitializer (fe.Type);
+			}
+		}
+
+		public override bool IsSideEffectFree {
+			get {
+				return source.IsSideEffectFree;
 			}
 		}
 	}

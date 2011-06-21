@@ -130,13 +130,14 @@ namespace Mono.CSharp {
 			set { type = value; }
 		}
 
-		public Location Location {
-			get { return loc; }
+		public virtual bool IsSideEffectFree {
+			get {
+				return false;
+			}
 		}
 
-		public virtual string GetSignatureForError ()
-		{
-			return type.GetDefinition ().GetSignatureForError ();
+		public Location Location {
+			get { return loc; }
 		}
 
 		public virtual bool IsNull {
@@ -339,6 +340,11 @@ namespace Mono.CSharp {
 					throw new InternalErrorException (loc.ToString () + " " +  GetType () + " ExprClass is Invalid after resolve");
 				}
 			}
+		}
+
+		public virtual string GetSignatureForError ()
+		{
+			return type.GetDefinition ().GetSignatureForError ();
 		}
 	       
 		/// <summary>
@@ -1132,6 +1138,12 @@ namespace Mono.CSharp {
 			get { return child.IsOneInteger; }
 		}
 
+		public override bool IsSideEffectFree {
+			get {
+				return child.IsSideEffectFree;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return child.IsZeroInteger; }
 		}
@@ -1266,6 +1278,12 @@ namespace Mono.CSharp {
 		public override bool IsDefaultValue {
 			get {
 				return Child.IsDefaultValue;
+			}
+		}
+
+		public override bool IsSideEffectFree {
+			get {
+				return Child.IsSideEffectFree;
 			}
 		}
 
