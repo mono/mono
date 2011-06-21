@@ -1122,7 +1122,8 @@ namespace Mono.CSharp
 			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesLoading);
 
 			loaded = new List<Tuple<RootNamespace, T>> ();
-
+			bool isDefault = false;
+			
 			//
 			// Load mscorlib.dll as the first
 			//
@@ -1130,6 +1131,7 @@ namespace Mono.CSharp
 				corlib_assembly = LoadAssemblyDefault ("mscorlib.dll");
 			} else {
 				corlib_assembly = default (T);
+				isDefault = true;
 			}
 
 			T a;
@@ -1143,12 +1145,17 @@ namespace Mono.CSharp
 					continue;
 
 				// A corlib assembly is the first assembly which contains System.Object
-				if (corlib_assembly == null && HasObjectType (a)) {
+				if ((corlib_assembly == null || isDefault) && HasObjectType (a)) {
 					corlib_assembly = a;
+					isDefault = false;
 					continue;
 				}
 
 				loaded.Add (key);
+			}
+			
+			if (! isDefault) {
+				module.Compiler.Settings.StdLib = true;
 			}
 
 			foreach (var entry in module.Compiler.Settings.AssemblyReferencesAliases) {
