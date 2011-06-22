@@ -63,7 +63,7 @@ namespace System.Linq {
 			if (enumerable != null)
 				return Expression.Constant (enumerable);
 
-			return constant;
+			return Visit (qe.Expression);
 		}
 
 		static bool IsQueryableExtension (MethodInfo method)
