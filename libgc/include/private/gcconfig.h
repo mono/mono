@@ -1221,6 +1221,9 @@
 #	     if defined(__GLIBC__) && __GLIBC__ >= 2
 #		 define SEARCH_FOR_DATA_START
 #	     else
+#              if defined(PLATFORM_ANDROID)
+#                      define __environ environ
+#              endif
      	         extern char **__environ;
 #                define DATASTART ((ptr_t)(&__environ))
 			      /* hideous kludge: __environ is the first */

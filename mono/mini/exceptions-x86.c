@@ -10,6 +10,9 @@
 #include <config.h>
 #include <glib.h>
 #include <signal.h>
+#ifndef MONO_ARCH_USE_SIGACTION
+	#include <asm/sigcontext.h>
+#endif
 #include <string.h>
 
 #include <mono/arch/x86/x86-codegen.h>
