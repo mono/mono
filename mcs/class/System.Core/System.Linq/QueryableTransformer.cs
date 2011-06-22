@@ -59,7 +59,11 @@ namespace System.Linq {
 			if (qe == null)
 				return constant;
 
-			return Expression.Constant (qe.GetEnumerable ());
+			var enumerable = qe.GetEnumerable ();
+			if (enumerable != null)
+				return Expression.Constant (enumerable);
+
+			return constant;
 		}
 
 		static bool IsQueryableExtension (MethodInfo method)
