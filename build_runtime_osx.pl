@@ -139,6 +139,10 @@ if (not $skipbuild)
 	system("./configure", @autogenparams) eq 0 or die ("failing configuring mono");
 
 	system("make clean") eq 0 or die ("failed make cleaning");
+	if ($iphone_simulator)
+	{
+		system("perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h");
+	}
 	system("make") eq 0 or die ("failing runnig make for mono");
 }
 

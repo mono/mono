@@ -1,5 +1,5 @@
 #!/bin/sh
-SDK_VERSION=4.2
+SDK_VERSION=4.3
 ASPEN_ROOT=/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer
 ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk/
@@ -19,7 +19,7 @@ setenv () {
 
 	export C_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	export CPLUS_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
-	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden"
+	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
 	export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os"
 	export CXXFLAGS="$CFLAGS"
 	export CC="gcc-4.2 -arch $1"
@@ -68,6 +68,7 @@ build_arm_mono ()
 	perl -pi -e 's/#define HAVE_FINITE 1//' config.h
 	#perl -pi -e 's/#define HAVE_MMAP 1//' config.h
 	perl -pi -e 's/#define HAVE_CURSES_H 1//' config.h
+	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
 	make
 
 	make || exit 1
