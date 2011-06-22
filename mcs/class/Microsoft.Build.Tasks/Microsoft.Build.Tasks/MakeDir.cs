@@ -59,7 +59,7 @@ namespace Microsoft.Build.Tasks {
 				try {
 					Directory.CreateDirectory (path);
 					temporaryDirectoriesCreated.Add (directory);
-					Log.LogMessage (MessageImportance.High, "Created directory \"{0}\"", directory.ItemSpec);
+					Log.LogMessage (MessageImportance.Normal, "Created directory \"{0}\"", directory.ItemSpec);
 				}
 				catch (Exception ex) {
 					Log.LogErrorFromException (ex);
