@@ -10,7 +10,7 @@
 #include <config.h>
 #include <glib.h>
 #include <signal.h>
-#ifndef MONO_ARCH_USE_SIGACTION
+#if !defined(MONO_ARCH_USE_SIGACTION) && defined(PLATFORM_ANDROID)
 	#include <asm/sigcontext.h>
 #endif
 #include <string.h>
