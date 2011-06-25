@@ -39,10 +39,12 @@ namespace Microsoft.Build.Construction
                         TaskBody = body;
                         ContainingProject = containingProject;
                 }
-                public string Evaluate { get; set; }
+                string evaluate;
+                public string Evaluate { get { return evaluate ?? String.Empty; } set { evaluate = value; } }
                 public override string Condition { get { return null; } set { throw new InvalidOperationException (
                         "Can not set Condition."); } }
-                public string TaskBody { get; set; }
+                string taskBody;
+                public string TaskBody { get { return taskBody ?? String.Empty; } set { taskBody = value; } }
                 internal override string XmlName {
                         get { return "Task"; }
                 }

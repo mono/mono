@@ -1,5 +1,5 @@
 ﻿//
-// ProjectUsingTaskBodyElement.cs
+// ProjectCommentElement.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -38,7 +38,8 @@ namespace Microsoft.Build.Construction
                         ContainingProject = containingProject;
                 }
 
-                public string Comment { get; set; }
+                string comment;
+                public string Comment { get { return comment ?? String.Empty; } set { comment = value; } }
 
                 internal override string XmlName {
                         get { return String.Empty; }

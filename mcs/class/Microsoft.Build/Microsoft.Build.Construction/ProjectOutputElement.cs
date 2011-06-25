@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
@@ -42,14 +43,20 @@ namespace Microsoft.Build.Construction
                         ContainingProject = containintProject;
                 }
                 public bool IsOutputItem {
-                        get { return true; }
+                        get { return !String.IsNullOrWhiteSpace(itemType); }
                 }
                 public bool IsOutputProperty {
-                        get { return !IsOutputItem; }
+                        get { return !String.IsNullOrWhiteSpace(propertyName); }
                 }
-                public string ItemType { get; set; }
-                public string PropertyName { get; set; }
-                public string TaskParameter { get; set; }
+                string itemType;
+                public string ItemType { get { return itemType ?? String.Empty; } set { itemType = value; } }
+                string propertyName;
+                public string PropertyName { get { return propertyName ?? String.Empty; } set { propertyName = value; } }
+                string taskParameter;
+                public string TaskParameter {
+                        get { return taskParameter ?? String.Empty; }
+                        set { taskParameter = value; }
+                }
                 internal override string XmlName {
                         get { return "Output"; }
                 }

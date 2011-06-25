@@ -44,16 +44,26 @@ namespace Microsoft.Build.Construction
                         AssemblyName = assemblyName;
                         ContainingProject = containingProject;
                 }
-                public string AssemblyFile { get; set; }
-                public string AssemblyName { get; set; }
+                string assemblyFile;
+                public string AssemblyFile {
+                        get { return assemblyFile ?? String.Empty; }
+                        set { assemblyFile = value; }
+                }
+                string assemblyName;
+                public string AssemblyName {
+                        get { return assemblyName ?? String.Empty; }
+                        set { assemblyName = value; }
+                }
                 public UsingTaskParameterGroupElement ParameterGroup {
                         get { return FirstChild as UsingTaskParameterGroupElement; }
                 }
                 public ProjectUsingTaskBodyElement TaskBody {
                         get { return LastChild as ProjectUsingTaskBodyElement; }
                 }
-                public string TaskFactory { get; set; }
-                public string TaskName { get; set; }
+                string taskFactory;
+                public string TaskFactory { get { return taskFactory ?? String.Empty; } set { taskFactory = value; } }
+                string taskName;
+                public string TaskName { get { return taskName ?? String.Empty; } set { taskName = value; } }
                 public UsingTaskParameterGroupElement AddParameterGroup ()
                 {
                         var @group = ContainingProject.CreateUsingTaskParameterGroupElement ();

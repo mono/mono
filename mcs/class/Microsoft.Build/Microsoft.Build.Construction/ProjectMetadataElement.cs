@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Xml;
 
@@ -39,8 +40,10 @@ namespace Microsoft.Build.Construction
                         Name = name;
                         ContainingProject = containingProject;
                 }
-                public string Name { get; set; }
-                public string Value { get; set; }
+                string name;
+                public string Name { get { return name ?? String.Empty; } set { name = value; } }
+                string internalValue;
+                public string Value { get { return internalValue ?? String.Empty; } set { internalValue = value; } }
                 internal override string XmlName {
                         get { return Name; }
                 }
