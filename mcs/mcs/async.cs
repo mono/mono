@@ -440,11 +440,6 @@ namespace Mono.CSharp
 
 			ec.Emit (OpCodes.Ret);
 		}
-
-		public override void InjectYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
-		{
-			base.InjectYield (ec, expr, resume_pc, unwind_protect, resume_point);
-		}
 	}
 
 	class AsyncTaskStorey : StateMachine
