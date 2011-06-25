@@ -46,7 +46,11 @@ namespace Microsoft.Build.Construction
         {
                 public override string Condition { get { return null; } set { throw new InvalidOperationException (
                         "Can not set Condition."); } }
-                public string DefaultTargets { get; set; }
+                string defaultTargets;
+                public string DefaultTargets {
+                        get { return defaultTargets ?? String.Empty; }
+                        set { defaultTargets = value; }
+                }
 
                 string fullPath;
                 public string FullPath {
@@ -96,7 +100,11 @@ namespace Microsoft.Build.Construction
                                 new FilteredEnumerable<ProjectImportElement> (AllChildren)); }
                 }
 
-                public string InitialTargets { get; set; }
+                string initialTargets;
+                public string InitialTargets {
+                        get { return initialTargets ?? String.Empty; }
+                        set { initialTargets = value; }
+                }
 
                 public ICollection<ProjectItemDefinitionGroupElement> ItemDefinitionGroups {
                         get { return new CollectionFromEnumerable<ProjectItemDefinitionGroupElement> (
@@ -160,9 +168,9 @@ namespace Microsoft.Build.Construction
                         get { return DateTime.Now; }
                 }
 
-                string toolsVersion = "4.0";
+                string toolsVersion;
                 public string ToolsVersion {
-                        get { return toolsVersion; }
+                        get { return toolsVersion ?? "4.0"; }
                         set { toolsVersion = value; }
                 }
 

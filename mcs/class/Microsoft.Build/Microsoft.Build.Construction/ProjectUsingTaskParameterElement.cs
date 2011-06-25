@@ -42,12 +42,19 @@ namespace Microsoft.Build.Construction
                         ParameterType = parameterType;
                         ContainingProject = containingProject;
                 }
-                public string Name { get; set; }
+                string name;
+                public string Name { get { return name ?? String.Empty; } set { name = value; } }
                 public override string Condition { get { return null; } set { throw new InvalidOperationException (
                         "Can not set Condition."); } }
-                public string Output { get; set; }
-                public string ParameterType { get; set; }
-                public string Required { get; set; }
+                string output;
+                public string Output { get { return output ?? String.Empty; } set { output = value; } }
+                string parameterType;
+                public string ParameterType {
+                        get { return parameterType ?? String.Empty; }
+                        set { parameterType = value; }
+                }
+                string required;
+                public string Required { get { return required ?? String.Empty; } set { required = value; } }
                 internal override string XmlName {
                         get { return Name; }
                 }

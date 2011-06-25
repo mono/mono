@@ -49,8 +49,10 @@ namespace Microsoft.Build.Construction
                         get { return LinkedListNode.Next == null ? null : LinkedListNode.Next.Value; }
                         internal set { }
                 }
-                public string Label { get; set; }
-                public virtual string Condition { get; set; }
+                string label;
+                public string Label { get { return label ?? String.Empty; } set { label = value; } }
+                string condition;
+                public virtual string Condition { get { return condition ?? String.Empty; } set { condition = value; } }
                 public IEnumerable<ProjectElementContainer> AllParents {
                         get {
                                 var parent = Parent;

@@ -48,8 +48,13 @@ namespace Microsoft.Build.Construction
                 {
                         ContainingProject = containingProject;
                 }
-                public string ContinueOnError { get; set; }
-                public string Name { get; private set; }
+                string continueOnError;
+                public string ContinueOnError {
+                        get { return continueOnError ?? String.Empty; }
+                        set { continueOnError = value; }
+                }
+                string name;
+                public string Name { get { return name ?? String.Empty; } private set { name = value; } }
                 public ICollection<ProjectOutputElement> Outputs {
                         get { return new CollectionFromEnumerable<ProjectOutputElement> (
                                 new FilteredEnumerable<ProjectOutputElement> (AllChildren)); }

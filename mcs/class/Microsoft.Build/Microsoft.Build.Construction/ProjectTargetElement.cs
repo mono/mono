@@ -45,26 +45,46 @@ namespace Microsoft.Build.Construction
                 {
                         ContainingProject = containingProject;
                 }
-                public string AfterTargets { get; set; }
-                public string BeforeTargets { get; set; }
-                public string DependsOnTargets { get; set; }
-                public string Inputs { get; set; }
+                string afterTargets;
+                public string AfterTargets {
+                        get { return afterTargets ?? String.Empty; }
+                        set { afterTargets = value; }
+                }
+                string beforeTargets;
+                public string BeforeTargets {
+                        get { return beforeTargets ?? String.Empty; }
+                        set { beforeTargets = value; }
+                }
+                string dependsOnTargets;
+                public string DependsOnTargets {
+                        get { return dependsOnTargets ?? String.Empty; }
+                        set { dependsOnTargets = value; }
+                }
+                string inputs;
+                public string Inputs { get { return inputs ?? String.Empty; } set { inputs = value; } }
                 public ICollection<ProjectItemGroupElement> ItemGroups {
                         get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
                                 new FilteredEnumerable<ProjectItemGroupElement> (Children)); }
                 }
-                public string KeepDuplicateOutputs { get; set; }
-                public string Name { get; set; }
+                string keepDuplicateOutputs;
+                public string KeepDuplicateOutputs {
+                        get { return keepDuplicateOutputs ?? String.Empty; }
+                        set { keepDuplicateOutputs = value; }
+                }
+                string name;
+                public string Name { get { return name ?? String.Empty; } set { name = value; } }
                 public ICollection<ProjectOnErrorElement> OnErrors {
                         get { return new CollectionFromEnumerable<ProjectOnErrorElement> (
                                 new FilteredEnumerable<ProjectOnErrorElement> (Children)); }
                 }
-                public string Outputs { get; set; }
+                string outputs;
+                public string Outputs { get { return outputs ?? String.Empty; } set { outputs = value; } }
                 public ICollection<ProjectPropertyGroupElement> PropertyGroups {
                         get { return new CollectionFromEnumerable<ProjectPropertyGroupElement> (
                                 new FilteredEnumerable<ProjectPropertyGroupElement> (Children)); }
                 }
-                public string Returns { get; set; }
+                string returns;
+                public string Returns { get { return returns ?? String.Empty; } set { returns = value; } }
                 public ICollection<ProjectTaskElement> Tasks {
                         get { return new CollectionFromEnumerable<ProjectTaskElement> (
                                 new FilteredEnumerable<ProjectTaskElement> (Children)); }

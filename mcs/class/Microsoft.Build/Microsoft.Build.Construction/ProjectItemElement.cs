@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Internal;
@@ -42,20 +43,24 @@ namespace Microsoft.Build.Construction
                         ItemType = itemType;
                         ContainingProject = containingProject;
                 }
-                public string Exclude { get; set; }
+                string exclude;
+                public string Exclude { get { return exclude ?? String.Empty; } set { exclude = value; } }
                 public bool HasMetadata {
                         get {
                                 var metadata = Metadata.FirstOrDefault ();
                                 return metadata != null;
                         }
                 }
-                public string Include { get; set; }
-                public string ItemType { get; set; }
+                string include;
+                public string Include { get { return include ?? String.Empty; } set { include = value; } }
+                string itemType;
+                public string ItemType { get { return itemType ?? String.Empty; } set { itemType = value; } }
                 public ICollection<ProjectMetadataElement> Metadata {
                         get { return new CollectionFromEnumerable<ProjectMetadataElement> (
                                 new FilteredEnumerable<ProjectMetadataElement> (Children)); }
                 }
-                public string Remove { get; set; }
+                string @remove;
+                public string Remove { get { return @remove ?? String.Empty; } set { @remove = value; } }
                 public ProjectMetadataElement AddMetadata (string name, string unevaluatedValue)
                 {
                         var metadata = ContainingProject.CreateMetadataElement (name, unevaluatedValue);

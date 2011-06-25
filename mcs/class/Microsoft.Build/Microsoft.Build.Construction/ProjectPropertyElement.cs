@@ -26,14 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Xml;
 namespace Microsoft.Build.Construction
 {
         [System.Diagnostics.DebuggerDisplayAttribute ("{Name} Value={Value} Condition={Condition}")]
         public class ProjectPropertyElement : ProjectElement
         {
-                public string Name { get; set; }
-                public string Value { get; set; }
+                string name;
+                public string Name { get { return name ?? String.Empty; } set { name = value; } }
+                string internalValue;
+                public string Value { get { return internalValue ?? String.Empty; } set { internalValue = value; } }
                 internal ProjectPropertyElement (string name, ProjectRootElement containingProject)
                 {
                         Name = name;
