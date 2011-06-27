@@ -177,8 +177,10 @@ namespace Mono.CSharp
 			//
 			fe_awaiter.EmitAssign (ec, expr, false, false);
 
+			Label skip_continuation = ec.DefineLabel ();
+
 			is_completed.InstanceExpression = fe_awaiter;
-			is_completed.EmitBranchable (ec, resume_point, true);
+			is_completed.EmitBranchable (ec, skip_continuation, true);
 
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
 			mg_completed.InstanceExpression = fe_awaiter;
@@ -196,6 +198,8 @@ namespace Mono.CSharp
 			mg_completed.EmitCall (ec, args);
 
 			base.DoEmit (ec);
+
+			ec.MarkLabel (skip_continuation);
 		}
 
 		public void EmitStatement (EmitContext ec)
