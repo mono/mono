@@ -14,7 +14,9 @@
 
 #include <glib.h>
 
-#ifdef __x86_64__
+#include "mono-arch.h"
+
+#if MONO_ARCH == MONO_ARCH_X86_64
 #ifndef _MSC_VER
 static inline void mono_memory_barrier (void)
 {
@@ -48,7 +50,7 @@ static inline void mono_memory_write_barrier (void)
 	_WriteBarrier ();
 }
 #endif
-#elif defined(__i386__)
+#elif MONO_ARCH == MONO_ARCH_X86
 #ifndef _MSC_VER
 static inline void mono_memory_barrier (void)
 {
@@ -82,7 +84,7 @@ static inline void mono_memory_write_barrier (void)
 	_WriteBarrier ();
 }
 #endif
-#elif defined(sparc) || defined(__sparc__)
+#elif defined(MONO_ARCH_IS_SPARC)
 static inline void mono_memory_barrier (void)
 {
 	__asm__ __volatile__ ("membar	#LoadLoad | #LoadStore | #StoreStore | #StoreLoad" : : : "memory");
@@ -97,7 +99,7 @@ static inline void mono_memory_write_barrier (void)
 {
 	__asm__ __volatile__ ("membar	#StoreStore" : : : "memory");
 }
-#elif defined(__s390__)
+#elif defined(MONO_ARCH_IS_S390)
 static inline void mono_memory_barrier (void)
 {
 	__asm__ __volatile__ ("bcr 15,0" : : : "memory");
@@ -112,7 +114,7 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#elif defined(__ppc__) || defined(__powerpc__) || defined(__ppc64__)
+#elif defined(MONO_ARCH_IS_PPC)
 static inline void mono_memory_barrier (void)
 {
 	__asm__ __volatile__ ("sync" : : : "memory");
@@ -128,7 +130,7 @@ static inline void mono_memory_write_barrier (void)
 	__asm__ __volatile__ ("eieio" : : : "memory");
 }
 
-#elif defined(__arm__)
+#elif MONO_ARCH == MONO_ARCH_ARM
 static inline void mono_memory_barrier (void)
 {
 #ifdef HAVE_ARMV6
@@ -145,7 +147,7 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#elif defined(__ia64__)
+#elif MONO_ARCH == MONO_ARCH_IA_64
 static inline void mono_memory_barrier (void)
 {
 	__asm__ __volatile__ ("mf" : : : "memory");
@@ -160,7 +162,7 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#elif defined(__alpha__)
+#elif MONO_ARCH == MONO_ARCH_ALPHA
 static inline void mono_memory_barrier (void)
 {
         __asm__ __volatile__ ("mb" : : : "memory");
@@ -175,7 +177,7 @@ static inline void mono_memory_write_barrier (void)
 {
         mono_memory_barrier ();
 }
-#elif defined(__mips__)
+#elif defined(MONO_ARCH_IS_MIPS)
 static inline void mono_memory_barrier (void)
 {
         __asm__ __volatile__ ("" : : : "memory");
