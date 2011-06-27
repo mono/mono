@@ -87,6 +87,7 @@
     <Compile Include="Microsoft.Build.Evaluation\Project.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectLoadSettings.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectItem.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectCommentElement.cs" />
     <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
     <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
   </ItemGroup>

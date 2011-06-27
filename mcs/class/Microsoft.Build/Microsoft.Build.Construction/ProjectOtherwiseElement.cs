@@ -45,7 +45,12 @@ namespace Microsoft.Build.Construction
                         get { return new CollectionFromEnumerable<ProjectChooseElement> (
                                 new FilteredEnumerable<ProjectChooseElement> (Children)); }
                 }
-                public override string Condition { get; set; }
+                public override string Condition {
+                        get { return null; }
+                        set {
+                                throw new InvalidOperationException ("Can not set Condition.");
+                        }
+                }
                 public ICollection<ProjectItemGroupElement> ItemGroups {
                         get { return new CollectionFromEnumerable<ProjectItemGroupElement> (
                                 new FilteredEnumerable<ProjectItemGroupElement> (Children)); }
