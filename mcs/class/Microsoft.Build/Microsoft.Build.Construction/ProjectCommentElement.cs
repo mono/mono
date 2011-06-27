@@ -1,5 +1,5 @@
-//
-// ProjectPropertyElement.cs
+﻿//
+// ProjectCommentElement.cs
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
@@ -28,34 +28,49 @@
 
 using System;
 using System.Xml;
+
 namespace Microsoft.Build.Construction
 {
-        [System.Diagnostics.DebuggerDisplayAttribute ("{Name} Value={Value} Condition={Condition}")]
-        public class ProjectPropertyElement : ProjectElement
+        internal class ProjectCommentElement : ProjectElement
         {
-                string name;
-                public string Name { get { return name ?? String.Empty; } set { name = value; } }
-                string internalValue;
-                public string Value { get { return internalValue ?? String.Empty; } set { internalValue = value; } }
-                internal ProjectPropertyElement (string name, ProjectRootElement containingProject)
+                internal ProjectCommentElement (ProjectRootElement containingProject)
                 {
-                        Name = name;
                         ContainingProject = containingProject;
                 }
+
+                string comment;
+                public string Comment { get { return comment ?? String.Empty; } set { comment = value; } }
+
                 internal override string XmlName {
-                        get { return Name; }
+                        get { return String.Empty; }
                 }
-                internal override void SaveValue (XmlWriter writer)
+
+                internal override void Load (XmlReader reader)
                 {
-                        base.SaveValue (writer);
-                        if (!string.IsNullOrWhiteSpace (Value))
-                                writer.WriteValue (Value);
+                        LoadValue (reader);
                 }
+
+                internal override void LoadAttribute (string name, string value)
+                {
+                }
+
                 internal override void LoadValue (XmlReader reader)
                 {
-                        while (reader.Read () & reader.NodeType != XmlNodeType.Text)
-                                ;
-                        Value = reader.Value;
+                        if (reader.NodeType == XmlNodeType.Comment) {
+                                Comment = reader.Value;
+                        }
+                }
+
+                internal override void Save (XmlWriter writer)
+                {
+                        this.SaveValue (writer);
+                }
+
+                internal override void SaveValue (XmlWriter writer)
+                {
+                        if (!String.IsNullOrEmpty (Comment)) {
+                                writer.WriteComment (Comment);
+                        }
                 }
         }
 }
