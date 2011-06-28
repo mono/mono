@@ -14032,7 +14032,7 @@
         <size>39</size>
       </method>
       <method name="Void Test_5(Boolean, IDisposable)">
-        <size>45</size>
+        <size>43</size>
       </method>
       <method name="Void Test_6(Boolean)">
         <size>47</size>
