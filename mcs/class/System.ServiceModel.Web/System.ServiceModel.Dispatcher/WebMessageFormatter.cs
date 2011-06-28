@@ -544,11 +544,6 @@ namespace System.ServiceModel.Dispatcher
 				
 				var wp = message.Properties [WebBodyFormatMessageProperty.Name] as WebBodyFormatMessageProperty;
 				var fmt = wp != null ? wp.Format : WebContentFormat.Xml;
-				if (fmt == WebContentFormat.Raw) {
-					var rmsg = (RawMessage) message;
-					parameters [0] = rmsg.Stream;
-					return;
-				}
 
 				Uri to = message.Headers.To;
 				UriTemplateMatch match = UriTemplate.Match (Endpoint.Address.Uri, to);
@@ -566,7 +561,10 @@ namespace System.ServiceModel.Dispatcher
 					var str = match.BoundVariables [name];
 					if (str != null)
 						parameters [i] = Converter.ConvertStringToValue (str, p.Type);
-					else {
+					else if (fmt == WebContentFormat.Raw && p.Type == typeof (Stream)) {
+						var rmsg = (RawMessage) message;
+						parameters [i] = rmsg.Stream;
+					} else {
 						var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
 						parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
 					}
