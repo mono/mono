@@ -73,6 +73,27 @@ namespace MonoTests.System.Runtime.Serialization
 			Serialize (new Data4 () { X = new Bar () });
 		}
 
+		[Test]
+		public void GenericTypeNameArgument ()
+		{
+			string expected = "<Foo_KnownTypeAttributeTest.Foo xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns:d1p1='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization' xmlns='urn:foo'><KnownTypeAttributeTest.Foo><d1p1:S>z</d1p1:S></KnownTypeAttributeTest.Foo></Foo_KnownTypeAttributeTest.Foo>".Replace ('\'', '"');
+			var ds = new DataContractSerializer (typeof (MyList<Foo>));
+			var l = new MyList<Foo> ();
+			l.Add (new Foo () { S = "z" });
+			var sw = new StringWriter ();
+			var settings = new XmlWriterSettings () { OmitXmlDeclaration = true };
+			using (var xw = XmlWriter.Create (sw, settings))
+				ds.WriteObject (xw, l);
+			Assert.AreEqual (expected, sw.ToString (), "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void DataContractOnCollection ()
+		{
+			Serialize (new MyListWrong<Foo> ());
+		}
+
 		public class Foo
 		{
 			public string S { get; set; }
@@ -133,6 +154,16 @@ namespace MonoTests.System.Runtime.Serialization
 			{
 				yield return typeof (Bar);
 			}
+		}
+		
+		[CollectionDataContract (Name = "Foo_{0}", Namespace = "urn:foo")]
+		public class MyList<T> : List<T>
+		{
+		}
+		
+		[DataContract (Name = "Foo_{0}", Namespace = "urn:foo")]
+		public class MyListWrong<T> : List<T>
+		{
 		}
 	}
 }

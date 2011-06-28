@@ -591,6 +591,12 @@ namespace System.Runtime.Serialization
 		{
 			if (name == null)
 				name = GetDefaultName (type);
+			else if (type.IsGenericType) {
+				var args = type.GetGenericArguments ();
+				for (int i = 0; i < args.Length; i++)
+					name = name.Replace ("{" + i + "}", GetStaticQName (args [i]).Name);
+			}
+			
 			if (ns == null)
 				ns = GetDefaultNamespace (type);
 			return new QName (name, ns);
