@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -404,10 +405,10 @@ namespace System.ServiceModel.Dispatcher
 				XmlQualifiedName key = new XmlQualifiedName (r.LocalName, r.NamespaceURI);
 				MessagePartDescription rv = md.Body.ReturnValue;
 				if (rv != null && rv.Name == key.Name && rv.Namespace == key.Namespace)
-					parts [0] = GetSerializer (md.Body.ReturnValue).ReadObject (r);
+					parts [0] = ReadMessagePart (md.Body.ReturnValue, r);
 				else if (md.Body.Parts.Contains (key)) {
 					MessagePartDescription p = md.Body.Parts [key];
-					parts [p.Index + offset] = GetSerializer (p).ReadObject (r);
+					parts [p.Index + offset] = ReadMessagePart (p, r);
 				}
 				else // Skip unknown elements
 					r.Skip ();
@@ -417,6 +418,15 @@ namespace System.ServiceModel.Dispatcher
 				r.ReadEndElement ();
 
 			return parts;
+		}
+
+		object ReadMessagePart (MessagePartDescription part, XmlDictionaryReader r)
+		{
+			if (part.Type == typeof (Stream))
+				// FIXME: it seems TransferMode.Streamed* has different serialization than .Buffered. Need to differentiate serialization somewhere (not limited to here).
+				return new MemoryStream (Convert.FromBase64String (r.ReadElementContentAsString (part.Name, part.Namespace)));
+			else
+				return GetSerializer (part).ReadObject (r);
 		}
 
 		XmlObjectSerializer GetSerializer (MessagePartDescription partDesc)
@@ -474,7 +484,42 @@ namespace System.ServiceModel.Dispatcher
 			void WriteMessagePart (
 				XmlDictionaryWriter writer, MessageBodyDescription desc, MessagePartDescription partDesc, object obj)
 			{
-				parent.GetSerializer (partDesc).WriteObject (writer, obj);
+				// FIXME: it seems TransferMode.Streamed* has different serialization than .Buffered. Need to differentiate serialization somewhere (not limited to here).
+				if (partDesc.Type == typeof (Stream)) {
+					writer.WriteStartElement (partDesc.Name, partDesc.Namespace);
+					writer.WriteValue (new StreamProvider ((Stream) obj));
+					writer.WriteEndElement ();
+				}
+				else
+					parent.GetSerializer (partDesc).WriteObject (writer, obj);
+			}
+		}
+		
+		class StreamProvider : IStreamProvider
+		{
+			Stream s;
+			bool busy;
+			
+			public StreamProvider (Stream s)
+			{
+				this.s = s;
+			}
+			
+			public Stream GetStream ()
+			{
+				if (busy)
+					throw new InvalidOperationException ("Stream is already in use.");
+				busy = true;
+				return s;
+			}
+			
+			public void ReleaseStream (Stream stream)
+			{
+				if (stream == null)
+					throw new ArgumentNullException ("stream");
+				if (this.s != stream)
+					throw new ArgumentException ("Incorrect parameter stream");
+				busy = false;
 			}
 		}
 	}
