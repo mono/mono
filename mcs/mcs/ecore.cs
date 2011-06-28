@@ -5187,12 +5187,12 @@ namespace Mono.CSharp {
 			} else
 				need_copy = false;
 			
-			if (need_copy){
-				LocalBuilder local;
+			if (need_copy) {
 				Emit (ec);
-				local = ec.DeclareLocal (type, false);
-				ec.Emit (OpCodes.Stloc, local);
-				ec.Emit (OpCodes.Ldloca, local);
+				var temp = ec.GetTemporaryLocal (type);
+				ec.Emit (OpCodes.Stloc, temp);
+				ec.Emit (OpCodes.Ldloca, temp);
+				ec.FreeTemporaryLocal (temp, type);
 				return;
 			}
 
