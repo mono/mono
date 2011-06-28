@@ -440,15 +440,13 @@ namespace System.Runtime.Serialization
 		internal void Initialize ()
 		{
 			Type type = RuntimeType;
-			List <DataMemberInfo> members = new List <DataMemberInfo> ();
+			List <DataMemberInfo> members;
 			object [] atts = type.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
 			while (type != null) {
-				QName qname = KnownTypes.GetQName (type);
-					
-				members = GetMembers (type, qname, true);
+				members = GetMembers (type);
 				members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 				Members.InsertRange (0, members);
 				members.Clear ();
@@ -457,12 +455,10 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
+		List<DataMemberInfo> GetMembers (Type type)
 		{
 			List<DataMemberInfo> data_members = new List<DataMemberInfo> ();
-			BindingFlags flags = AllInstanceFlags;
-			if (declared_only)
-				flags |= BindingFlags.DeclaredOnly;
+			BindingFlags flags = AllInstanceFlags | BindingFlags.DeclaredOnly;
 
 			foreach (PropertyInfo pi in type.GetProperties (flags)) {
 				DataMemberAttribute dma =
@@ -615,6 +611,9 @@ namespace System.Runtime.Serialization
 		public override void SerializeNonReference (object graph,
 			XmlFormatterSerializer serializer)
 		{
+			// output item xmlns in advance so that it does not result in excessive xmlns overwrites.
+			if (XmlName.Namespace != element_qname.Namespace && element_qname.Namespace != KnownTypeCollection.MSSimpleNamespace)
+				serializer.Writer.WriteXmlnsAttribute (null, element_qname.Namespace);
 
 			foreach (object o in (IEnumerable) graph) {
 				serializer.WriteStartElement (element_qname.Name, XmlName.Namespace, CurrentNamespace);
