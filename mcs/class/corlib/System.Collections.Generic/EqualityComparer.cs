@@ -45,7 +45,6 @@ namespace System.Collections.Generic {
 				_default = new DefaultComparer ();
 		}
 		
-		
 		public abstract int GetHashCode (T obj);
 		public abstract bool Equals (T x, T y);
 	
@@ -59,11 +58,23 @@ namespace System.Collections.Generic {
 
 		int IEqualityComparer.GetHashCode (object obj)
 		{
+			if (obj == null)
+				return 0;
+
+			if (!(obj is T))
+				throw new ArgumentException ("Argument is not compatible", "obj");
+
 			return GetHashCode ((T)obj);
 		}
 
 		bool IEqualityComparer.Equals (object x, object y)
 		{
+			if (x == y)
+				return true;
+
+			if (x == null || y == null)
+				return false;
+
 			if (!(x is T))
 				throw new ArgumentException ("Argument is not compatible", "x");
 			if (!(y is T))
