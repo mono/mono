@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -44,6 +45,20 @@ namespace MonoTests.System.Collections.Generic {
 			// https://bugzilla.novell.com/show_bug.cgi?id=372892
 			Assert.AreEqual (0, EqualityComparer<object>.Default.GetHashCode (null), "object");
 			Assert.AreEqual (0, EqualityComparer<string>.Default.GetHashCode (null), "string");
+		}
+
+		[Test]
+		public void NonGenericGetHashCodeForNullArgument ()
+		{
+			IEqualityComparer comparer = EqualityComparer<object>.Default;
+			Assert.AreEqual (0, comparer.GetHashCode (null));
+		}
+
+		[Test] // #703027
+		public void NonGenericEqualsForNullArguments ()
+		{
+			IEqualityComparer comparer = EqualityComparer<object>.Default;
+			Assert.IsTrue (comparer.Equals (null, null));
 		}
 	}
 }
