@@ -169,7 +169,15 @@ namespace System.Net
 
 				//WebConnectionData data = Data;
 				foreach (IPAddress address in hostEntry.AddressList) {
-					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					try {
+						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					} catch (Exception se) {
+						// The Socket ctor can throw if we run out of FD's
+						if (!request.Aborted)
+								status = WebExceptionStatus.ConnectFailure;
+						connect_exception = se;
+						return;
+					}
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
 					socket.NoDelay = !sPoint.UseNagleAlgorithm;
 					try {
