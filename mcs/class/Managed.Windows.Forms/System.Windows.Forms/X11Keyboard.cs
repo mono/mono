@@ -61,6 +61,7 @@ namespace System.Windows.Forms {
 		private bool num_state, cap_state;
 		private bool initialized;
 		private bool menu_state = false;
+		private Encoding encoding;
 
 		private int NumLockMask;
 		private int AltGrMask;
@@ -70,6 +71,16 @@ namespace System.Windows.Forms {
 			this.display = display;
 			lookup_buffer = new StringBuilder (24);
 			EnsureLayoutInitialized ();
+		}
+
+		private Encoding AnsiEncoding
+		{
+			get
+			{
+				if (encoding == null)
+					encoding = Encoding.GetEncoding(new CultureInfo(lcid).TextInfo.ANSICodePage);
+				return encoding;
+			}
 		}
 
 		public IntPtr ClientWindow {
@@ -197,10 +208,10 @@ namespace System.Windows.Forms {
 
 		public void FocusIn (IntPtr window)
 		{
+			this.client_window = window;
 			if (xim == IntPtr.Zero)
 				return;
 
-			this.client_window = window;
 			if (!xic_table.ContainsKey ((long) window))
 				CreateXicForWindow (window);
 			IntPtr xic = GetXic (window);
@@ -212,10 +223,10 @@ namespace System.Windows.Forms {
 
 		public void FocusOut (IntPtr window)
 		{
+			this.client_window = IntPtr.Zero;
 			if (xim == IntPtr.Zero)
 				return;
 
-			this.client_window = IntPtr.Zero;
 			IntPtr xic = GetXic (window);
 			if (xic != IntPtr.Zero) {
 				if (have_Xutf8ResetIC) {
@@ -459,8 +470,7 @@ namespace System.Windows.Forms {
 				if (dead_char != 0) {
 					byte [] bytes = new byte [1];
 					bytes [0] = (byte) dead_char;
-					Encoding encoding = Encoding.GetEncoding (new CultureInfo (lcid).TextInfo.ANSICodePage);
-					buffer = new string (encoding.GetChars (bytes));
+					buffer = new string (AnsiEncoding.GetChars (bytes));
 					res = -1;
 				}
 			} else {
@@ -981,6 +991,7 @@ namespace System.Windows.Forms {
 				xic = XCreateIC (xim,
 					XNames.XNInputStyle, styleRoot,
 					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
 					IntPtr.Zero);
 			}
 			return xic;
@@ -1190,25 +1201,15 @@ namespace System.Windows.Forms {
 
 			status = IntPtr.Zero;
 			IntPtr xic = GetXic (client_window);
-			if (xic != IntPtr.Zero && have_Xutf8LookupString) {
+			if (xic != IntPtr.Zero && have_Xutf8LookupString && xevent.type == XEventName.KeyPress) {
 				do {
 					try {
 						res = Xutf8LookupString (xic, ref xevent, lookup_byte_buffer, 100, out keysym_res,  out status);
 					} catch (EntryPointNotFoundException) {
 						have_Xutf8LookupString = false;
 
-						/* Duplicate of the non-xic clause */
-						do {
-							res = XLookupString (ref xevent, lookup_byte_buffer, 100, out keysym_res, out status);
-							if ((int) status != -1) // XLookupBufferOverflow
-								break;
-							lookup_byte_buffer = new byte [lookup_byte_buffer.Length << 1];
-						} while (true);
-						lookup_buffer.Length = 0;
-						string s2 = Encoding.ASCII.GetString (lookup_byte_buffer, 0, res);
-						lookup_buffer.Append (s2);
-						keysym = (XKeySym) keysym_res.ToInt32 ();
-						return res;
+						// call again, this time we'll go through the non-xic clause
+						return LookupString (ref xevent, len, out keysym, out status);
 					}
 					if ((int) status != -1) // XLookupBufferOverflow
 						break;
@@ -1220,15 +1221,9 @@ namespace System.Windows.Forms {
 				keysym = (XKeySym) keysym_res.ToInt32 ();
 				return s.Length;
 			} else {
-				do {
-					res = XLookupString (ref xevent, lookup_byte_buffer, 100, out keysym_res, out status);
-					if ((int) status != -1) // XLookupBufferOverflow
-						break;
-					lookup_byte_buffer = new byte [lookup_byte_buffer.Length << 1];
-				} while (true);
+				IntPtr statusPtr = IntPtr.Zero;
 				lookup_buffer.Length = 0;
-				string s = Encoding.ASCII.GetString (lookup_byte_buffer, 0, res);
-				lookup_buffer.Append (s);
+				res = XLookupString (ref xevent, lookup_buffer, len, out keysym_res, out statusPtr);
 				keysym = (XKeySym) keysym_res.ToInt32 ();
 				return res;
 			}
@@ -1294,7 +1289,7 @@ namespace System.Windows.Forms {
 		private static extern bool XSetLocaleModifiers (string mods);
 
 		[DllImport ("libX11")]
-		internal extern static int XLookupString(ref XEvent xevent, byte [] buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
+		internal extern static int XLookupString(ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
 		[DllImport ("libX11")]
 		internal extern static int Xutf8LookupString(IntPtr xic, ref XEvent xevent, byte [] buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
 
