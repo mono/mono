@@ -1270,6 +1270,7 @@ namespace MonoTests.System
 		delegate int Delegate695978_3 (Struct695978 _this);
 
 		[Test] //tests for #695978
+		[Category ("NotWorking")]
 		public void DelegateWithValueTypeArguments ()
 		{
 			Struct695978 es = new Struct695978 ();
