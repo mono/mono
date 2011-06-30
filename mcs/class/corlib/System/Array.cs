@@ -1330,40 +1330,52 @@ namespace System
 
 			int low = index;
 			int high = index + length - 1;
-			
+
 #if !BOOTSTRAP_BASIC			
 			if (comparer == null && items is object[]) {
-				if (keys is int[]) {
-					qsort (keys as int[], items as object[], low, high);
+				/* Its better to compare typecodes as casts treat long/ulong/long based enums the same */
+				switch (Type.GetTypeCode (keys.GetType ().GetElementType ())) {
+				case TypeCode.Int32:
+					qsort (keys as Int32[], items as object[], low, high);
 					return;
-				}
-				if (keys is long[]) {
-					qsort (keys as long[], items as object[], low, high);
+				case TypeCode.Int64:
+					qsort (keys as Int64[], items as object[], low, high);
 					return;
-				}
-				if (keys is char[]) {
-					qsort (keys as char[], items as object[], low, high);
-					return;
-				}
-				if (keys is double[]) {
-					qsort (keys as double[], items as object[], low, high);
-					return;
-				}
-				if (keys is uint[]) {
-					qsort (keys as uint[], items as object[], low, high);
-					return;
-				}
-				if (keys is ulong[]) {
-					qsort (keys as ulong[], items as object[], low, high);
-					return;
-				}
-				if (keys is byte[]) {
+				case TypeCode.Byte:
 					qsort (keys as byte[], items as object[], low, high);
 					return;
-				}
-				if (keys is ushort[]) {
-					qsort (keys as ushort[], items as object[], low, high);
+				case TypeCode.Char:
+					qsort (keys as char[], items as object[], low, high);
 					return;
+				case TypeCode.DateTime:
+					qsort (keys as DateTime[], items as object[], low, high);
+					return;
+				case TypeCode.Decimal:
+					qsort (keys as decimal[], items as object[], low, high);
+					return;
+				case TypeCode.Double:
+					qsort (keys as double[], items as object[], low, high);
+					return;
+				case TypeCode.Int16:
+					qsort (keys as Int16[], items as object[], low, high);
+					return;
+				case TypeCode.SByte:
+					qsort (keys as SByte[], items as object[], low, high);
+					return;
+				case TypeCode.Single:
+					qsort (keys as Single[], items as object[], low, high);
+					return;
+				case TypeCode.UInt16:
+					qsort (keys as UInt16[], items as object[], low, high);
+					return;	
+				case TypeCode.UInt32:
+					qsort (keys as UInt32[], items as object[], low, high);
+					return;
+				case TypeCode.UInt64:
+					qsort (keys as UInt64[], items as object[], low, high);
+					return;
+				default:
+					break;
 				}				
 			}
 #endif

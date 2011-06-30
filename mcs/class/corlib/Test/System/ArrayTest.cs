@@ -2328,6 +2328,25 @@ public class ArrayTest
 			int[] b = new int[256];
 			Array.Sort<double, int> (a, b, 0, 115);
 		}
+
+		/* Check that ulong[] is not sorted as long[] */
+		{
+			string[] names = new string[] {
+				"A", "B", "C", "D", "E"
+			};
+
+			ulong[] arr = new ulong [] {
+				5,
+				unchecked((ulong)0xffffFFFF00000000),
+					0,
+						0x7FFFFFFFffffffff,
+						100
+						};
+
+			Array a = arr;
+			Array.Sort (a, names, null);
+			Assert.AreEqual (0, a.GetValue (0));
+		}
 	}
 
 	[Test] // #616416
