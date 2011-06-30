@@ -113,7 +113,7 @@ namespace System.Reflection.Emit {
 			}
 
 			if (m == null)
-				m = AnonHostModuleHolder.anon_host_module;
+				m = AnonHostModuleHolder.AnonHostModule;
 
 			this.name = name;
 			this.attributes = attributes | MethodAttributes.Static;
@@ -410,6 +410,12 @@ namespace System.Reflection.Emit {
 				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
 
 				anon_host_module = ab.GetManifestModule ();
+			}
+
+			public static Module AnonHostModule {
+				get {
+					return anon_host_module;
+				}
 			}
 		}
 	}
