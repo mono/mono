@@ -182,6 +182,8 @@ namespace Mono.CSharp
 			is_completed.InstanceExpression = fe_awaiter;
 			is_completed.EmitBranchable (ec, skip_continuation, true);
 
+			base.DoEmit (ec);
+
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
 			mg_completed.InstanceExpression = fe_awaiter;
 
@@ -197,7 +199,10 @@ namespace Mono.CSharp
 			//
 			mg_completed.EmitCall (ec, args);
 
-			base.DoEmit (ec);
+			// Return ok
+			machine_initializer.EmitLeave (ec, unwind_protect);
+
+			ec.MarkLabel (resume_point);
 
 			ec.MarkLabel (skip_continuation);
 		}
@@ -461,11 +466,6 @@ namespace Mono.CSharp
 			return_type = type;
 		}
 
-		public Field AddAwaiter (TypeSpec type, Location loc)
-		{
-			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
-		}
-
 		#region Properties
 
 		public Field Builder {
@@ -499,6 +499,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public Field AddAwaiter (TypeSpec type, Location loc)
+		{
+			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
+		}
 
 		protected override bool DoDefineMembers ()
 		{
