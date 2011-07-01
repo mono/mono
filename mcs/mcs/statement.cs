@@ -4395,7 +4395,7 @@ namespace Mono.CSharp {
 
 			public override void EmitExit (EmitContext ec)
 			{
-				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.EmitInt (0);
 				ec.Emit (OpCodes.Conv_U);
 				vi.EmitAssign (ec);
 			}
@@ -4447,7 +4447,7 @@ namespace Mono.CSharp {
 
 			public override void EmitExit (EmitContext ec)
 			{
-				ec.Emit (OpCodes.Ldnull);
+				ec.EmitNull ();
 				pinned_string.EmitAssign (ec);
 			}
 		}

@@ -427,9 +427,9 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (Value)
-				ec.Emit (OpCodes.Ldc_I4_1);
+				ec.EmitInt (1);
 			else
-				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.EmitInt (0);
 		}
 
 		public override bool IsDefaultValue {
@@ -1945,7 +1945,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (Value == null) {
-				ec.Emit (OpCodes.Ldnull);
+				ec.EmitNull ();
 				return;
 			}
 
@@ -2050,7 +2050,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Ldnull);
+			ec.EmitNull ();
 
 			// Only to make verifier happy
 			if (type.IsGenericParameter)
@@ -2152,7 +2152,7 @@ namespace Mono.CSharp {
 			//
 			// Emits null pointer
 			//
-			ec.Emit (OpCodes.Ldc_I4_0);
+			ec.EmitInt (0);
 			ec.Emit (OpCodes.Conv_U);
 		}
 	}

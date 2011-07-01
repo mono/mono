@@ -28,7 +28,7 @@ namespace Mono.CSharp
 	public abstract class YieldStatement<T> : ResumableStatement where T : StateMachineInitializer
 	{
 		protected Expression expr;
-		bool unwind_protect;
+		protected bool unwind_protect;
 		protected T machine_initializer;
 		int resume_pc;
 
@@ -266,7 +266,7 @@ namespace Mono.CSharp
 				{
 					Label label_init = ec.DefineLabel ();
 
-					ec.Emit (OpCodes.Ldarg_0);
+					ec.EmitThis ();
 					ec.Emit (OpCodes.Ldflda, host.PC.Spec);
 					ec.EmitInt ((int) State.Start);
 					ec.EmitInt ((int) State.Uninitialized);
@@ -278,7 +278,7 @@ namespace Mono.CSharp
 					ec.EmitInt ((int) State.Uninitialized);
 					ec.Emit (OpCodes.Bne_Un_S, label_init);
 
-					ec.Emit (OpCodes.Ldarg_0);
+					ec.EmitThis ();
 					ec.Emit (OpCodes.Ret);
 
 					ec.MarkLabel (label_init);
@@ -698,16 +698,16 @@ namespace Mono.CSharp
 
 			if (labels != null) {
 				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
-				ec.Emit (OpCodes.Ldarg_0);
+				ec.EmitThis ();
 				ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
 				ec.Emit (OpCodes.Stloc, current_pc);
 			}
 
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt (1);
 			ec.Emit (OpCodes.Stfld, storey.DisposingField.Spec);
 
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
@@ -726,10 +726,10 @@ namespace Mono.CSharp
 
 		void EmitMoveNext_NoResumePoints (EmitContext ec, Block original_block)
 		{
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
 
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
@@ -761,12 +761,12 @@ namespace Mono.CSharp
 			}
 
 			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
 			ec.Emit (OpCodes.Stloc, current_pc);
 
 			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
@@ -782,7 +782,7 @@ namespace Mono.CSharp
 
 			if (need_skip_finally) {
 				skip_finally = ec.GetTemporaryLocal (ec.BuiltinTypes.Bool);
-				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.EmitInt (0);
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 
@@ -801,7 +801,7 @@ namespace Mono.CSharp
 
 			SymbolWriter.StartIteratorDispatcher (ec);
 
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 
@@ -828,6 +828,12 @@ namespace Mono.CSharp
 		{
 		}
 
+		public void EmitLeave (EmitContext ec, bool unwind_protect)
+		{
+			// Return ok
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
+		}
+
 		//
 		// Called back from YieldStatement
 		//
@@ -837,14 +843,14 @@ namespace Mono.CSharp
 			// Guard against being disposed meantime
 			//
 			Label disposed = ec.DefineLabel ();
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldfld, storey.DisposingField.Spec);
 			ec.Emit (OpCodes.Brtrue_S, disposed);
 
 			//
 			// store resume program-counter
 			//
-			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 			ec.EmitInt (resume_pc);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
 			ec.MarkLabel (disposed);
@@ -854,11 +860,6 @@ namespace Mono.CSharp
 				ec.EmitInt (1);
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
-
-			// Return ok
-			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
-
-			ec.MarkLabel (resume_point);
 		}
 	}
 
@@ -950,6 +951,10 @@ namespace Mono.CSharp
 			fe.EmitAssign (ec, expr, false, false);
 
 			base.InjectYield (ec, expr, resume_pc, unwind_protect, resume_point);
+
+			EmitLeave (ec, unwind_protect);
+
+			ec.MarkLabel (resume_point);
 		}
 
 		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)

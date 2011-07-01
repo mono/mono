@@ -613,40 +613,20 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			int arg_idx = idx;
-			if (!ec.IsStatic)
-				arg_idx++;
-
-			ParameterReference.EmitLdArg (ec, arg_idx);
+			ec.EmitArgumentLoad (idx, parameter_type);
 		}
 
 		public void EmitAssign (EmitContext ec)
 		{
-			int arg_idx = idx;
-			if (!ec.IsStatic)
-				arg_idx++;
-
-			if (arg_idx <= 255)
-				ec.Emit (OpCodes.Starg_S, (byte) arg_idx);
-			else
-				ec.Emit (OpCodes.Starg, arg_idx);
+			ec.EmitArgumentStore (idx);
 		}
 
 		public void EmitAddressOf (EmitContext ec)
 		{
-			int arg_idx = idx;
-
-			if (!ec.IsStatic)
-				arg_idx++;
-
-			bool is_ref = (ModFlags & Modifier.ISBYREF) != 0;
-			if (is_ref) {
-				ParameterReference.EmitLdArg (ec, arg_idx);
+			if ((ModFlags & Modifier.ISBYREF) != 0) {
+				ec.EmitArgumentLoad (idx, parameter_type);
 			} else {
-				if (arg_idx <= 255)
-					ec.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
-				else
-					ec.Emit (OpCodes.Ldarga, arg_idx);
+				ec.EmitArgumentAddress (idx, parameter_type);
 			}
 		}
 

@@ -733,7 +733,7 @@ namespace Mono.CSharp.Nullable
 			if (left_unwrap != null && (IsRightNullLifted || right.IsNull)) {
 				left_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
-					ec.Emit (OpCodes.Ldc_I4_0);
+					ec.EmitInt (0);
 					ec.Emit (OpCodes.Ceq);
 				}
 				return;
@@ -742,7 +742,7 @@ namespace Mono.CSharp.Nullable
 			if (right_unwrap != null && (IsLeftNullLifted || left.IsNull)) {
 				right_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
-					ec.Emit (OpCodes.Ldc_I4_0);
+					ec.EmitInt (0);
 					ec.Emit (OpCodes.Ceq);
 				}
 				return;
@@ -774,7 +774,7 @@ namespace Mono.CSharp.Nullable
 					ec.Emit (OpCodes.Ceq);
 			} else {
 				if (Oper == Operator.Inequality) {
-					ec.Emit (OpCodes.Ldc_I4_0);
+					ec.EmitInt (0);
 					ec.Emit (OpCodes.Ceq);
 				}
 			}
@@ -783,9 +783,9 @@ namespace Mono.CSharp.Nullable
 
 			ec.MarkLabel (dissimilar_label);
 			if (Oper == Operator.Inequality)
-				ec.Emit (OpCodes.Ldc_I4_1);
+				ec.EmitInt (1);
 			else
-				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.EmitInt (0);
 
 			ec.MarkLabel (end_label);
 		}
@@ -839,7 +839,7 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (is_null_label);
 
 			if ((Oper & Operator.ComparisonMask) != 0) {
-				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.EmitInt (0);
 			} else {
 				LiftedNull.Create (type, loc).Emit (ec);
 			}

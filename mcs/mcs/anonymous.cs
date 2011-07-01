@@ -1624,13 +1624,13 @@ namespace Mono.CSharp {
 			//
 
 			if (is_static) {
-				ec.Emit (OpCodes.Ldnull);
+				ec.EmitNull ();
 			} else if (storey != null) {
 				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.MemberContext));
 				if (e != null)
 					e.Emit (ec);
 			} else {
-				ec.Emit (OpCodes.Ldarg_0);
+				ec.EmitThis ();
 			}
 
 			var delegate_method = method.Spec;

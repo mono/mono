@@ -541,7 +541,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (method_group.InstanceExpression == null)
-				ec.Emit (OpCodes.Ldnull);
+				ec.EmitNull ();
 			else
 				method_group.InstanceExpression.Emit (ec);
 

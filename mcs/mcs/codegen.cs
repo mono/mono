@@ -269,16 +269,7 @@ namespace Mono.CSharp
 		public void Emit (OpCode opcode, float arg)
 		{
 			ig.Emit (opcode, arg);
-		}
 
-		public void Emit (OpCode opcode, int arg)
-		{
-			ig.Emit (opcode, arg);
-		}
-
-		public void Emit (OpCode opcode, byte arg)
-		{
-			ig.Emit (opcode, arg);
 		}
 
 		public void Emit (OpCode opcode, Label label)
@@ -333,7 +324,11 @@ namespace Mono.CSharp
 		public void EmitArrayNew (ArrayContainer ac)
 		{
 			if (ac.Rank == 1) {
-				Emit (OpCodes.Newarr, ac.Element);
+				var type = IsAnonymousStoreyMutateRequired ?
+					CurrentAnonymousMethod.Storey.Mutator.Mutate (ac.Element) :
+					ac.Element;
+
+				ig.Emit (OpCodes.Newarr, type.GetMetaInfo ());
 			} else {
 				if (IsAnonymousStoreyMutateRequired)
 					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
@@ -350,7 +345,11 @@ namespace Mono.CSharp
 
 				ig.Emit (OpCodes.Call, ac.GetAddressMethod ());
 			} else {
-				Emit (OpCodes.Ldelema, ac.Element);
+				var type = IsAnonymousStoreyMutateRequired ?
+					CurrentAnonymousMethod.Storey.Mutator.Mutate (ac.Element) :
+					ac.Element;
+
+				ig.Emit (OpCodes.Ldelema, type.GetMetaInfo ());
 			}
 		}
 
@@ -374,52 +373,59 @@ namespace Mono.CSharp
 			switch (type.BuiltinType) {
 			case BuiltinTypeSpec.Type.Byte:
 			case BuiltinTypeSpec.Type.Bool:
-				Emit (OpCodes.Ldelem_U1);
-				return;
+				ig.Emit (OpCodes.Ldelem_U1);
+				break;
 			case BuiltinTypeSpec.Type.SByte:
-				Emit (OpCodes.Ldelem_I1);
-				return;
+				ig.Emit (OpCodes.Ldelem_I1);
+				break;
 			case BuiltinTypeSpec.Type.Short:
-				Emit (OpCodes.Ldelem_I2);
-				return;
+				ig.Emit (OpCodes.Ldelem_I2);
+				break;
 			case BuiltinTypeSpec.Type.UShort:
 			case BuiltinTypeSpec.Type.Char:
-				Emit (OpCodes.Ldelem_U2);
-				return;
+				ig.Emit (OpCodes.Ldelem_U2);
+				break;
 			case BuiltinTypeSpec.Type.Int:
-				Emit (OpCodes.Ldelem_I4);
-				return;
+				ig.Emit (OpCodes.Ldelem_I4);
+				break;
 			case BuiltinTypeSpec.Type.UInt:
-				Emit (OpCodes.Ldelem_U4);
-				return;
+				ig.Emit (OpCodes.Ldelem_U4);
+				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:
-				Emit (OpCodes.Ldelem_I8);
-				return;
+				ig.Emit (OpCodes.Ldelem_I8);
+				break;
 			case BuiltinTypeSpec.Type.Float:
-				Emit (OpCodes.Ldelem_R4);
-				return;
+				ig.Emit (OpCodes.Ldelem_R4);
+				break;
 			case BuiltinTypeSpec.Type.Double:
-				Emit (OpCodes.Ldelem_R8);
-				return;
+				ig.Emit (OpCodes.Ldelem_R8);
+				break;
 			case BuiltinTypeSpec.Type.IntPtr:
-				Emit (OpCodes.Ldelem_I);
-				return;
-			}
-
-			switch (type.Kind) {
-			case MemberKind.Struct:
-				Emit (OpCodes.Ldelema, type);
-				Emit (OpCodes.Ldobj, type);
-				break;
-			case MemberKind.TypeParameter:
-				Emit (OpCodes.Ldelem, type);
-				break;
-			case MemberKind.PointerType:
-				Emit (OpCodes.Ldelem_I);
+				ig.Emit (OpCodes.Ldelem_I);
 				break;
 			default:
-				Emit (OpCodes.Ldelem_Ref);
+				switch (type.Kind) {
+				case MemberKind.Struct:
+					if (IsAnonymousStoreyMutateRequired)
+						type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+					ig.Emit (OpCodes.Ldelema, type.GetMetaInfo ());
+					ig.Emit (OpCodes.Ldobj, type.GetMetaInfo ());
+					break;
+				case MemberKind.TypeParameter:
+					if (IsAnonymousStoreyMutateRequired)
+						type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+					ig.Emit (OpCodes.Ldelem, type.GetMetaInfo ());
+					break;
+				case MemberKind.PointerType:
+					ig.Emit (OpCodes.Ldelem_I);
+					break;
+				default:
+					ig.Emit (OpCodes.Ldelem_Ref);
+					break;
+				}
 				break;
 			}
 		}
@@ -487,6 +493,11 @@ namespace Mono.CSharp
 
 		public void EmitInt (int i)
 		{
+			EmitIntConstant (i);
+		}
+
+		void EmitIntConstant (int i)
+		{
 			switch (i) {
 			case -1:
 				ig.Emit (OpCodes.Ldc_I4_M1);
@@ -540,18 +551,15 @@ namespace Mono.CSharp
 		public void EmitLong (long l)
 		{
 			if (l >= int.MinValue && l <= int.MaxValue) {
-				EmitInt (unchecked ((int) l));
+				EmitIntConstant (unchecked ((int) l));
 				ig.Emit (OpCodes.Conv_I8);
-				return;
-			}
-
-			if (l >= 0 && l <= uint.MaxValue) {
-				EmitInt (unchecked ((int) l));
+			} else if (l >= 0 && l <= uint.MaxValue) {
+				EmitIntConstant (unchecked ((int) l));
 				ig.Emit (OpCodes.Conv_U8);
-				return;
+			} else {
+				ig.Emit (OpCodes.Ldc_I8, l);
 			}
 
-			ig.Emit (OpCodes.Ldc_I8, l);
 		}
 
 		//
@@ -565,51 +573,98 @@ namespace Mono.CSharp
 			switch (type.BuiltinType) {
 			case BuiltinTypeSpec.Type.Int:
 				ig.Emit (OpCodes.Ldind_I4);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Ldind_U4);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.Short:
 				ig.Emit (OpCodes.Ldind_I2);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.UShort:
 			case BuiltinTypeSpec.Type.Char:
 				ig.Emit (OpCodes.Ldind_U2);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldind_U1);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.SByte:
 			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:
 				ig.Emit (OpCodes.Ldind_I8);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Ldind_R4);
-				return;
+				break;
 			case BuiltinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Ldind_R8);
-				return;
-			case BuiltinTypeSpec.Type.IntPtr:
-				ig.Emit (OpCodes.Ldind_I);
-				return;
-			}
-
-			switch (type.Kind) {
-			case MemberKind.Struct:
-			case MemberKind.TypeParameter:
-				Emit (OpCodes.Ldobj, type);
 				break;
-			case MemberKind.PointerType:
+			case BuiltinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Ldind_I);
 				break;
 			default:
-				ig.Emit (OpCodes.Ldind_Ref);
+				switch (type.Kind) {
+				case MemberKind.Struct:
+				case MemberKind.TypeParameter:
+					Emit (OpCodes.Ldobj, type);
+					break;
+				case MemberKind.PointerType:
+					ig.Emit (OpCodes.Ldind_I);
+					break;
+				default:
+					ig.Emit (OpCodes.Ldind_Ref);
+					break;
+				}
 				break;
 			}
+		}
+
+		public void EmitNull ()
+		{
+			ig.Emit (OpCodes.Ldnull);
+		}
+
+		public void EmitArgumentAddress (int pos, TypeSpec type)
+		{
+			if (!IsStatic)
+				++pos;
+
+			if (pos > byte.MaxValue)
+				ig.Emit (OpCodes.Ldarga, pos);
+			else
+				ig.Emit (OpCodes.Ldarga_S, (byte) pos);
+		}
+
+		public void EmitArgumentLoad (int pos, TypeSpec type)
+		{
+			if (!IsStatic)
+				++pos;
+
+			switch (pos) {
+			case 0: ig.Emit (OpCodes.Ldarg_0); break;
+			case 1: ig.Emit (OpCodes.Ldarg_1); break;
+			case 2: ig.Emit (OpCodes.Ldarg_2); break;
+			case 3: ig.Emit (OpCodes.Ldarg_3); break;
+			default:
+				if (pos > byte.MaxValue)
+					ig.Emit (OpCodes.Ldarg, pos);
+				else
+					ig.Emit (OpCodes.Ldarg_S, (byte) pos);
+				break;
+			}
+		}
+
+		public void EmitArgumentStore (int pos)
+		{
+			if (!IsStatic)
+				++pos;
+
+			if (pos > byte.MaxValue)
+				ig.Emit (OpCodes.Starg, pos);
+			else
+				ig.Emit (OpCodes.Starg_S, (byte) pos);
 		}
 
 		//
@@ -650,10 +705,19 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (type.IsStruct || TypeManager.IsGenericParameter (type))
-				Emit (OpCodes.Stobj, type);
-			else
+			if (type.IsStruct || TypeManager.IsGenericParameter (type)) {
+				if (IsAnonymousStoreyMutateRequired)
+					type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
+			} else {
 				ig.Emit (OpCodes.Stind_Ref);
+			}
+		}
+
+		public void EmitThis ()
+		{
+			ig.Emit (OpCodes.Ldarg_0);
 		}
 
 		/// <summary>
