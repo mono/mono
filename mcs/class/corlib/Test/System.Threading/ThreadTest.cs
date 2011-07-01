@@ -822,21 +822,12 @@ namespace MonoTests.System.Threading
 		{
 			bool interruptedExceptionThrown = false;
 
+			Thread.CurrentThread.Interrupt ();
 			try {
-				try {
-					Thread.CurrentThread.Interrupt ();
-				} finally {
-					try {
-						Thread.Sleep (0);
-					} catch (ThreadInterruptedException) {
-						Assert.Fail ("ThreadInterruptedException should not be thrown.");
-					}
-				}
+				Thread.Sleep (0);
+				Assert.Fail ();
 			} catch (ThreadInterruptedException) {
-				interruptedExceptionThrown = true;
 			}
-
-			Assert.IsFalse (interruptedExceptionThrown, "ThreadInterruptedException should not be thrown.");
 		}
 
 		void CheckIsRunning (string s, Thread t)
