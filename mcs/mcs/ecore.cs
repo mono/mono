@@ -5190,8 +5190,8 @@ namespace Mono.CSharp {
 			if (need_copy) {
 				Emit (ec);
 				var temp = ec.GetTemporaryLocal (type);
-				ec.Emit (OpCodes.Stloc, temp);
-				ec.Emit (OpCodes.Ldloca, temp);
+				ec.Emit (OpCodes.Stloc, temp, type);
+				ec.Emit (OpCodes.Ldloca, temp, type);
 				ec.FreeTemporaryLocal (temp, type);
 				return;
 			}

@@ -184,6 +184,32 @@ namespace Mono.CSharp
 
 			base.DoEmit (ec);
 
+			FieldSpec[] stack_fields = null;
+			TypeSpec[] stack = null;
+			//
+			// Here is the clever bit. We know that await statement has to yield the control
+			// back but it can appear inside almost any expression. This means the stack can
+			// contain any depth of values and same values have to be present when the continuation
+			// handles control back.
+			//
+			// For example: await a + await b
+			//
+			// In this case we fabricate a static stack forwarding method which moves the values
+			// from the stack to async storey fields. On re-entry point we restore exactly same
+			// stack using these fields.
+			//
+			// We fabricate a static method because we don't want to touch original stack and
+			// the instance method would require `this' as the first stack value on the stack
+			//
+			if (ec.StackHeight > 0) {
+				var async_storey = (AsyncTaskStorey) machine_initializer.Storey;
+
+				stack = ec.GetStackTypes ();
+				var method = async_storey.GetStackForwarder (stack, out stack_fields);
+				ec.EmitThis ();
+				ec.Emit (OpCodes.Call, method);
+			}
+
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
 			mg_completed.InstanceExpression = fe_awaiter;
 
@@ -203,6 +229,25 @@ namespace Mono.CSharp
 			machine_initializer.EmitLeave (ec, unwind_protect);
 
 			ec.MarkLabel (resume_point);
+
+			if (stack_fields != null) {
+				for (int i = 0; i < stack_fields.Length; ++i) {
+					ec.EmitThis ();
+
+					var field = stack_fields[i];
+
+					//
+					// We don't store `this' because it can be easily re-created
+					//
+					if (field == null)
+						continue;
+
+					if (stack[i] is ReferenceContainer)
+						ec.Emit (OpCodes.Ldflda, field);
+					else
+						ec.Emit (OpCodes.Ldfld, field);
+				}
+			}
 
 			ec.MarkLabel (skip_continuation);
 		}
@@ -453,12 +498,47 @@ namespace Mono.CSharp
 
 	class AsyncTaskStorey : StateMachine
 	{
+		sealed class ParametersLoadStatement : Statement
+		{
+			readonly FieldSpec[] fields;
+			readonly TypeSpec[] parametersTypes;
+
+			public ParametersLoadStatement (FieldSpec[] fields, TypeSpec[] parametersTypes)
+			{
+				this.fields = fields;
+				this.parametersTypes = parametersTypes;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotImplementedException ();
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				for (int i = 0; i < fields.Length; ++i) {
+					var field = fields[i];
+					if (field == null)
+						continue;
+
+					ec.EmitArgumentLoad (fields.Length);
+					ec.EmitArgumentLoad (i);
+					if (parametersTypes[i] is ReferenceContainer)
+						ec.EmitLoadFromPtr (field.MemberType);
+
+					ec.Emit (OpCodes.Stfld, field);
+				}
+			}
+		}
+
 		int awaiters;
 		Field builder, continuation;
 		readonly TypeSpec return_type;
 		MethodSpec set_result;
 		PropertySpec task;
 		LocalVariable hoisted_return;
+		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[]>> stack_forwarders;
+		int captured_stack_fields_count;
 
 		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type)
 			: base (initializer.OriginalBlock, initializer.Host, null, null, "async")
@@ -503,6 +583,14 @@ namespace Mono.CSharp
 		public Field AddAwaiter (TypeSpec type, Location loc)
 		{
 			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
+		}
+
+		FieldSpec CreateStackValueField (TypeSpec type)
+		{
+			var field = AddCompilerGeneratedField ("<s>$" + captured_stack_fields_count++.ToString ("X"), new TypeExpression (type, Location));
+			field.Define ();
+
+			return field.Spec;
 		}
 
 		protected override bool DoDefineMembers ()
@@ -613,6 +701,73 @@ namespace Mono.CSharp
 			}
 
 			mg.EmitCall (ec, args);
+		}
+
+		//
+		// Fabricates stack forwarder based on stack types which copies all
+		// parameters to type fields
+		//
+		public MethodSpec GetStackForwarder (TypeSpec[] types, out FieldSpec[] fields)
+		{
+			if (stack_forwarders == null) {
+				stack_forwarders = new Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[]>> (TypeSpecComparer.Default);
+			} else {
+				//
+				// Does same forwarder method with same types already exist
+				//
+				Tuple<MethodSpec, FieldSpec[]> method;
+				if (stack_forwarders.TryGetValue (types, out method)) {
+					fields = method.Item2;
+					return method.Item1;
+				}
+			}
+
+			Parameter[] p = new Parameter[types.Length + 1];
+			TypeSpec[] ptypes = new TypeSpec[p.Length];
+			fields = new FieldSpec[types.Length];
+
+			for (int i = 0; i < types.Length; ++i) {
+				var t = types[i];
+
+				TypeSpec parameter_type = t;
+				if (parameter_type == InternalType.CurrentTypeOnStack) {
+					parameter_type = CurrentType;
+				}
+
+				p[i] = new Parameter (new TypeExpression (parameter_type, Location), null, 0, null, Location);
+				ptypes[i] = parameter_type;
+
+				if (t == InternalType.CurrentTypeOnStack) {
+					// Null means the type is `this' we can optimize by ignoring
+					continue;
+				}
+
+				var reference = t as ReferenceContainer;
+				if (reference != null)
+					t = reference.Element;
+
+				fields[i] = CreateStackValueField (t);
+			}
+
+			var this_parameter = new Parameter (new TypeExpression (CurrentType, Location), null, 0, null, Location);
+			p[types.Length] = this_parameter;
+			ptypes[types.Length] = CurrentType;
+
+			var parameters = ParametersCompiled.CreateFullyResolved (p, ptypes);
+
+			var m = new Method (this, null, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
+				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
+				new MemberName ("<>s__" + stack_forwarders.Count.ToString ("X")), parameters, null);
+
+			m.Block = new ToplevelBlock (Compiler, parameters, Location);
+			m.Block.AddScopeStatement (new ParametersLoadStatement (fields, ptypes));
+
+			m.Define ();
+			Methods.Add (m);
+
+			stack_forwarders.Add (types, Tuple.Create (m.Spec, fields));
+
+			return m.Spec;
 		}
 	}
 }

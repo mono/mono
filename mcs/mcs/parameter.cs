@@ -613,7 +613,7 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			ec.EmitArgumentLoad (idx, parameter_type);
+			ec.EmitArgumentLoad (idx);
 		}
 
 		public void EmitAssign (EmitContext ec)
@@ -624,9 +624,9 @@ namespace Mono.CSharp {
 		public void EmitAddressOf (EmitContext ec)
 		{
 			if ((ModFlags & Modifier.ISBYREF) != 0) {
-				ec.EmitArgumentLoad (idx, parameter_type);
+				ec.EmitArgumentLoad (idx);
 			} else {
-				ec.EmitArgumentAddress (idx, parameter_type);
+				ec.EmitArgumentAddress (idx);
 			}
 		}
 

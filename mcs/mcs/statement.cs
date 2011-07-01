@@ -831,7 +831,7 @@ namespace Mono.CSharp {
 				}
 
 				if (unwind_protect)
-					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
+					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn (), ec.ReturnType);
 			}
 
 			if (unwind_protect)
@@ -1687,7 +1687,7 @@ namespace Mono.CSharp {
 			if ((flags & Flags.CompilerGenerated) != 0)
 				CreateBuilder (ec);
 
-			ec.Emit (OpCodes.Ldloc, builder);
+			ec.Emit (OpCodes.Ldloc, builder, type);
 		}
 
 		public void EmitAssign (EmitContext ec)
@@ -1696,12 +1696,12 @@ namespace Mono.CSharp {
 			if ((flags & Flags.CompilerGenerated) != 0)
 				CreateBuilder (ec);
 
-			ec.Emit (OpCodes.Stloc, builder);
+			ec.Emit (OpCodes.Stloc, builder, type);
 		}
 
 		public void EmitAddressOf (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Ldloca, builder);
+			ec.Emit (OpCodes.Ldloca, builder, type);
 		}
 
 		public string GetReadOnlyContext ()
@@ -3018,7 +3018,7 @@ namespace Mono.CSharp {
 				ec.MarkLabel (ec.ReturnLabel);
 
 			if (ec.return_value != null) {
-				ec.Emit (OpCodes.Ldloc, ec.return_value);
+				ec.Emit (OpCodes.Ldloc, ec.return_value, ec.ReturnType);
 				ec.Emit (OpCodes.Ret);
 			} else {
 				//
@@ -3036,7 +3036,7 @@ namespace Mono.CSharp {
 
 				if (ec.HasReturnLabel || !unreachable) {
 					if (ec.ReturnType.Kind != MemberKind.Void)
-						ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+						ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn (), ec.ReturnType);
 					ec.Emit (OpCodes.Ret);
 				}
 			}
@@ -3983,7 +3983,7 @@ namespace Mono.CSharp {
 
 			if (resume_points != null) {
 				ec.EmitInt ((int) IteratorStorey.State.Running);
-				ec.Emit (OpCodes.Stloc, iter.CurrentPC);
+				ec.Emit (OpCodes.Stloc, iter.CurrentPC, ec.BuiltinTypes.UInt);
 			}
 
 			ec.BeginExceptionBlock ();
@@ -3993,7 +3993,7 @@ namespace Mono.CSharp {
 
 				// For normal control flow, we want to fall-through the Switch
 				// So, we use CurrentPC rather than the $PC field, and initialize it to an outside value above
-				ec.Emit (OpCodes.Ldloc, iter.CurrentPC);
+				ec.Emit (OpCodes.Ldloc, iter.CurrentPC, ec.BuiltinTypes.UInt);
 				ec.EmitInt (first_resume_pc);
 				ec.Emit (OpCodes.Sub);
 
@@ -4009,7 +4009,7 @@ namespace Mono.CSharp {
 
 			Label start_finally = ec.DefineLabel ();
 			if (resume_points != null) {
-				ec.Emit (OpCodes.Ldloc, iter.SkipFinally);
+				ec.Emit (OpCodes.Ldloc, iter.SkipFinally, ec.BuiltinTypes.Bool);
 				ec.Emit (OpCodes.Brfalse_S, start_finally);
 				ec.Emit (OpCodes.Endfinally);
 			}
@@ -4098,7 +4098,7 @@ namespace Mono.CSharp {
 
 				if (emit_dispatcher) {
 					//SymbolWriter.StartIteratorDispatcher (ec.ig);
-					ec.Emit (OpCodes.Ldloc, pc);
+					ec.Emit (OpCodes.Ldloc, pc, ec.BuiltinTypes.UInt);
 					ec.EmitInt (first_resume_pc);
 					ec.Emit (OpCodes.Sub);
 					ec.Emit (OpCodes.Switch, labels);

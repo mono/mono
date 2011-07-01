@@ -278,6 +278,10 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		public int __StackHeight {
+			get { return stackHeight; }
+		}
+
 		// new in .NET 4.0
 		public int ILOffset
 		{

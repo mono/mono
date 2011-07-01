@@ -52096,6 +52096,270 @@
       </method>
     </type>
   </test>
+  <test name="test-async-10.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task`1[System.String] TestCompositionCall_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] TestCompositionCall_2()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionCall_3()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_2()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_3()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_4()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Byte] M(Byte)">
+        <size>36</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>377</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>311</size>
+      </method>
+      <method name="System.String &lt;&gt;m__1()">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;&gt;m__2()">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(System.String, C+&lt;&gt;c__async0)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>219</size>
+      </method>
+      <method name="System.String &lt;&gt;m__3()">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(System.String, System.String, C+&lt;&gt;c__async1)">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>262</size>
+      </method>
+      <method name="Byte &lt;&gt;m__4()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(C+&lt;&gt;c__async2, C+&lt;&gt;c__async2)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async3">
+      <method name="Void MoveNext()">
+        <size>173</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__5()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async4">
+      <method name="Void MoveNext()">
+        <size>302</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__6()">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__7()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(Int32, C+&lt;&gt;c__async4)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async5">
+      <method name="Void MoveNext()">
+        <size>186</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__8()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(Int32, C+&lt;&gt;c__async5)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async6">
+      <method name="Void MoveNext()">
+        <size>433</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__9()">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__A()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(Int32, C+&lt;&gt;c__async6)">
+        <size>8</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__B()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;M&gt;c__AnonStorey7">
+      <method name="Byte &lt;&gt;m__0()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-11.cs">
+    <type name="G`1[T]">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_1(T)">
+        <size>41</size>
+      </method>
+      <method name="Int32 Call(T, T, T ByRef, Int32)">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 TestCall(Int32 ByRef, System.Type, System.Object, UInt64, Int32)">
+        <size>66</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_1()">
+        <size>27</size>
+      </method>
+      <method name="Int32 TestCall2[T1,T2,T3,T4,T5,T6,T7](T1, T2, T3, T4, T5, T6, T7)">
+        <size>2</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_2(UInt64)">
+        <size>34</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_3()">
+        <size>27</size>
+      </method>
+      <method name="Int32 TestCall3(S ByRef, S ByRef, Int32, Int32)">
+        <size>18</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_4()">
+        <size>27</size>
+      </method>
+      <method name="Int32 TestCall4(E, S, C, Int32)">
+        <size>38</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>254</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1+&lt;&gt;c__async0[T]">
+      <method name="Void MoveNext()">
+        <size>261</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(G`1[T], T, T, T ByRef, G`1+&lt;&gt;c__async0[T])">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>288</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(C, Int32 ByRef, System.Type, System.Object, UInt64, C+&lt;&gt;c__async1)">
+        <size>43</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>282</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__2()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(C, Int32, Int16, UInt64, Single, Double, Decimal, C+&lt;&gt;c__async2)">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async3">
+      <method name="Void MoveNext()">
+        <size>413</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__3()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(S ByRef, S ByRef, Int32, C+&lt;&gt;c__async3)">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async4">
+      <method name="Void MoveNext()">
+        <size>310</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(Byte, S, C, C+&lt;&gt;c__async4)">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">

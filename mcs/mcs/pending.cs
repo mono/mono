@@ -503,7 +503,7 @@ namespace Mono.CSharp {
 			ec.EmitThis ();
 			// TODO: GetAllParametersArguments
 			for (int i = 0; i < top; i++)
-				ec.EmitArgumentLoad (i, param.Types[i]);
+				ec.EmitArgumentLoad (i);
 
 			ec.Emit (OpCodes.Call, base_method);
 			ec.Emit (OpCodes.Ret);

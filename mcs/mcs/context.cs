@@ -696,7 +696,9 @@ namespace Mono.CSharp
 
 			OmitDebugInfo = 1 << 2,
 
-			ConstructorScope = 1 << 3
+			ConstructorScope = 1 << 3,
+
+			AsyncBody = 1 << 4
 		}
 
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
@@ -725,7 +727,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		Options flags;
+		protected Options flags;
 
 		public bool HasSet (Options options)
 		{
