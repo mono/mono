@@ -2,7 +2,6 @@
 
 # NB! Prereq : ANDROID_NDK_ROOT=/usr/local/android-ndk-xxx or similar
 # Todo: set appropriate ARM flags for hard floats
-#ANDROID_NDK_ROOT=/home/pyry/Documents/android-ndk-r5b-linux-glibc
 
 export ANDROID_PLATFORM=android-5
 GCC_VERSION=4.4.3
@@ -39,6 +38,8 @@ TOOLCHAIN=$NDK_ROOT/toolchains/x86-$GCC_VERSION/prebuilt/$HOST_ENV
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
 	echo "Failed to locate toolchain/platform; $NDK_NAME | $HOST_ENV | $GCC_VERSION | $ANDROID_PLATFORM"
+	echo "Toolchain = $TOOLCHAIN"
+	echo "Platform = $PLATFORM_ROOT"
 	exit 1
 fi
 
