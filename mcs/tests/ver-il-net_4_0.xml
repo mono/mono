@@ -52162,13 +52162,10 @@
     </type>
     <type name="C+&lt;&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>262</size>
+        <size>261</size>
       </method>
       <method name="Byte &lt;&gt;m__4()">
         <size>2</size>
-      </method>
-      <method name="Void &lt;&gt;s__0(C+&lt;&gt;c__async2, C+&lt;&gt;c__async2)">
-        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -52244,6 +52241,11 @@
         <size>7</size>
       </method>
     </type>
+    <type name="C+&lt;&gt;c__async2">
+      <method name="Void &lt;&gt;s__0(C+&lt;&gt;c__async2)">
+        <size>1</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-11.cs">
     <type name="G`1[T]">
@@ -52283,7 +52285,7 @@
         <size>38</size>
       </method>
       <method name="Int32 Main()">
-        <size>254</size>
+        <size>302</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -52333,7 +52335,7 @@
     </type>
     <type name="C+&lt;&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>413</size>
+        <size>432</size>
       </method>
       <method name="Int32 &lt;&gt;m__3()">
         <size>2</size>
@@ -52354,6 +52356,31 @@
       </method>
       <method name="Void &lt;&gt;s__0(Byte, S, C, C+&lt;&gt;c__async4)">
         <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(Int32)">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_5()">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async5">
+      <method name="Void MoveNext()">
+        <size>234</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__5()">
+        <size>15</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(C, Int32, C+&lt;&gt;c__async5)">
+        <size>15</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>

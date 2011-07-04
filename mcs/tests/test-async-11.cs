@@ -1,7 +1,9 @@
 // Compiler options: -langversion:future
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 // Async stack spilling tests
 
@@ -35,6 +37,16 @@ class G<T>
 class C
 {
 	int field;
+	
+	int prop_value;
+	int Prop {
+		get {
+			return prop_value;
+		}
+		set {
+			prop_value += value;
+		}
+	}
 
 	int TestCall (ref int a, Type type, object o, ulong ul, int b)
 	{
@@ -79,7 +91,7 @@ class C
 		var s = new S [] { new S () };
 		s[0].value = 6;
 		
-		var s2 = new S [,] { { new S () }, {} };
+		var s2 = new S [,] { { new S () }, { new S () } };
 		s2[0, 0].value = 3;
 		
 		TestCall3 (ref s [0], ref s2 [0, 0], s [0].value++,
@@ -124,6 +136,18 @@ class C
 		
 		return 0;
 	}
+	
+	static async Task<int> TestStack_5 ()
+	{
+		var c = new C ();
+		c.prop_value = 7;
+		c.Prop += await Task.Factory.StartNew (() => { c.prop_value = 99; return 3; });
+		
+		if (c.prop_value != 10)
+			return 1;
+
+		return 0;
+	}
 
 	public static int Main ()
 	{
@@ -164,6 +188,13 @@ class C
 		
 		if (t.Result != 0)
 			return 9;
+		
+		t = TestStack_5 ();
+		if (!Task.WaitAll (new[] { t }, 1000))
+			return 10;
+		
+		if (t.Result != 0)
+			return 11;
 		
 		Console.WriteLine ("ok");
 		return 0;

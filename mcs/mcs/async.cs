@@ -205,8 +205,11 @@ namespace Mono.CSharp
 				var async_storey = (AsyncTaskStorey) machine_initializer.Storey;
 
 				stack = ec.GetStackTypes ();
-				var method = async_storey.GetStackForwarder (stack, out stack_fields);
-				ec.EmitThis ();
+				bool explicit_this;
+				var method = async_storey.GetStackForwarder (stack, out stack_fields, out explicit_this);
+				if (explicit_this)
+					ec.EmitThis ();
+
 				ec.Emit (OpCodes.Call, method);
 			}
 
@@ -502,11 +505,13 @@ namespace Mono.CSharp
 		{
 			readonly FieldSpec[] fields;
 			readonly TypeSpec[] parametersTypes;
+			readonly int thisParameterIndex;
 
-			public ParametersLoadStatement (FieldSpec[] fields, TypeSpec[] parametersTypes)
+			public ParametersLoadStatement (FieldSpec[] fields, TypeSpec[] parametersTypes, int thisParameterIndex)
 			{
 				this.fields = fields;
 				this.parametersTypes = parametersTypes;
+				this.thisParameterIndex = thisParameterIndex;
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -521,7 +526,7 @@ namespace Mono.CSharp
 					if (field == null)
 						continue;
 
-					ec.EmitArgumentLoad (fields.Length);
+					ec.EmitArgumentLoad (thisParameterIndex);
 					ec.EmitArgumentLoad (i);
 					if (parametersTypes[i] is ReferenceContainer)
 						ec.EmitLoadFromPtr (field.MemberType);
@@ -537,7 +542,7 @@ namespace Mono.CSharp
 		MethodSpec set_result;
 		PropertySpec task;
 		LocalVariable hoisted_return;
-		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[]>> stack_forwarders;
+		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> stack_forwarders;
 		int captured_stack_fields_count;
 
 		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type)
@@ -707,17 +712,18 @@ namespace Mono.CSharp
 		// Fabricates stack forwarder based on stack types which copies all
 		// parameters to type fields
 		//
-		public MethodSpec GetStackForwarder (TypeSpec[] types, out FieldSpec[] fields)
+		public MethodSpec GetStackForwarder (TypeSpec[] types, out FieldSpec[] fields, out bool explicitThisNeeded)
 		{
 			if (stack_forwarders == null) {
-				stack_forwarders = new Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[]>> (TypeSpecComparer.Default);
+				stack_forwarders = new Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> (TypeSpecComparer.Default);
 			} else {
 				//
 				// Does same forwarder method with same types already exist
 				//
-				Tuple<MethodSpec, FieldSpec[]> method;
+				Tuple<MethodSpec, FieldSpec[], bool> method;
 				if (stack_forwarders.TryGetValue (types, out method)) {
 					fields = method.Item2;
+					explicitThisNeeded = method.Item3;
 					return method.Item1;
 				}
 			}
@@ -725,6 +731,7 @@ namespace Mono.CSharp
 			Parameter[] p = new Parameter[types.Length + 1];
 			TypeSpec[] ptypes = new TypeSpec[p.Length];
 			fields = new FieldSpec[types.Length];
+			int this_argument_index = -1;
 
 			for (int i = 0; i < types.Length; ++i) {
 				var t = types[i];
@@ -738,6 +745,9 @@ namespace Mono.CSharp
 				ptypes[i] = parameter_type;
 
 				if (t == InternalType.CurrentTypeOnStack) {
+					if (this_argument_index < 0)
+						this_argument_index = i;
+
 					// Null means the type is `this' we can optimize by ignoring
 					continue;
 				}
@@ -749,9 +759,21 @@ namespace Mono.CSharp
 				fields[i] = CreateStackValueField (t);
 			}
 
-			var this_parameter = new Parameter (new TypeExpression (CurrentType, Location), null, 0, null, Location);
-			p[types.Length] = this_parameter;
-			ptypes[types.Length] = CurrentType;
+			//
+			// None of the arguments is `this' need to add an extra parameter to pass it
+			// to static forwarder method
+			//
+			if (this_argument_index < 0) {
+				explicitThisNeeded = true;
+				this_argument_index = types.Length;
+				var this_parameter = new Parameter (new TypeExpression (CurrentType, Location), null, 0, null, Location);
+				p[types.Length] = this_parameter;
+				ptypes[types.Length] = CurrentType;
+			} else {
+				explicitThisNeeded = false;
+				Array.Resize (ref p, p.Length - 1);
+				Array.Resize (ref ptypes, ptypes.Length - 1);
+			}
 
 			var parameters = ParametersCompiled.CreateFullyResolved (p, ptypes);
 
@@ -760,12 +782,12 @@ namespace Mono.CSharp
 				new MemberName ("<>s__" + stack_forwarders.Count.ToString ("X")), parameters, null);
 
 			m.Block = new ToplevelBlock (Compiler, parameters, Location);
-			m.Block.AddScopeStatement (new ParametersLoadStatement (fields, ptypes));
+			m.Block.AddScopeStatement (new ParametersLoadStatement (fields, ptypes, this_argument_index));
 
 			m.Define ();
 			Methods.Add (m);
 
-			stack_forwarders.Add (types, Tuple.Create (m.Spec, fields));
+			stack_forwarders.Add (types, Tuple.Create (m.Spec, fields, explicitThisNeeded));
 
 			return m.Spec;
 		}
