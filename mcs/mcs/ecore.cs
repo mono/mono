@@ -2100,7 +2100,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// MSAF
 			var retval = ctx.LookupNamespaceOrType (Name, Arity, LookupMode.IgnoreAccessibility, loc);
 			if (retval != null) {
 				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.Type);
