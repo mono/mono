@@ -39,6 +39,9 @@ using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
 #endif
+#if MONOTOUCH
+using System.Reflection;
+#endif
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
@@ -62,11 +65,19 @@ namespace System.Net
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
 #endif
+#if MONOTOUCH
+		static MethodInfo cfGetDefaultProxy;
+#endif
 		
 		// Constructors
 		
 		static WebRequest ()
 		{
+#if MONOTOUCH
+			Type type = Type.GetType ("MonoTouch.CoreFoundation.CFNetwork, monotouch");
+			if (type != null)
+				cfGetDefaultProxy = type.GetMethod ("GetDefaultProxy");
+#endif
 #if NET_2_1
 			AddPrefix ("http", typeof (HttpRequestCreator));
 			AddPrefix ("https", typeof (HttpRequestCreator));
@@ -344,6 +355,12 @@ namespace System.Net
 					return new WebProxy (uri);
 				} catch (UriFormatException) { }
 			}
+			
+#if MONOTOUCH
+			if (cfGetDefaultProxy != null)
+				return (IWebProxy) cfGetDefaultProxy.Invoke (null, null);
+#endif
+			
 			return new WebProxy ();
 		}
 #endif
