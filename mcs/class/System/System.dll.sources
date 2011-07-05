@@ -578,6 +578,7 @@ System/GenericUriParser.cs
 System/GenericUriParserOptions.cs
 System/GopherStyleUriParser.cs
 System/HttpStyleUriParser.cs
+System/Platform.cs
 System.IO.Compression/CompressionMode.cs
 System.IO.Compression/DeflateStream.cs
 System.IO.Compression/GZipStream.cs
