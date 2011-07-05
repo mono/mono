@@ -52387,6 +52387,45 @@
       </method>
     </type>
   </test>
+  <test name="test-async-12.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestNested_1()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Call(Int32, Int32, Int32)">
+        <size>30</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>58</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>442</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1()">
+        <size>3</size>
+      </method>
+      <method name="Void &lt;&gt;s__0(Int32, C+&lt;&gt;c__async0)">
+        <size>8</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__2()">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;&gt;s__1(Int32, Int32, C+&lt;&gt;c__async0)">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">

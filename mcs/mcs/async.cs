@@ -12,6 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
+
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
@@ -543,7 +545,7 @@ namespace Mono.CSharp
 		PropertySpec task;
 		LocalVariable hoisted_return;
 		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> stack_forwarders;
-		int captured_stack_fields_count;
+		List<FieldSpec> hoisted_stack_slots;
 
 		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type)
 			: base (initializer.OriginalBlock, initializer.Host, null, null, "async")
@@ -590,11 +592,23 @@ namespace Mono.CSharp
 			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
 		}
 
-		FieldSpec CreateStackValueField (TypeSpec type)
+		FieldSpec CreateStackValueField (TypeSpec type, BitArray usedFields)
 		{
-			var field = AddCompilerGeneratedField ("<s>$" + captured_stack_fields_count++.ToString ("X"), new TypeExpression (type, Location));
+			if (hoisted_stack_slots == null) {
+				hoisted_stack_slots = new List<FieldSpec> ();
+			} else {
+				for (int i = 0; i < usedFields.Count; ++i) {
+					if (hoisted_stack_slots[i].MemberType == type && !usedFields[i]) {
+						usedFields.Set (i, true);
+						return hoisted_stack_slots[i];
+					}
+				}
+			}
+
+			var field = AddCompilerGeneratedField ("<s>$" + hoisted_stack_slots.Count.ToString ("X"), new TypeExpression (type, Location));
 			field.Define ();
 
+			hoisted_stack_slots.Add (field.Spec);
 			return field.Spec;
 		}
 
@@ -732,6 +746,7 @@ namespace Mono.CSharp
 			TypeSpec[] ptypes = new TypeSpec[p.Length];
 			fields = new FieldSpec[types.Length];
 			int this_argument_index = -1;
+			BitArray used_fields_map = null;
 
 			for (int i = 0; i < types.Length; ++i) {
 				var t = types[i];
@@ -756,7 +771,10 @@ namespace Mono.CSharp
 				if (reference != null)
 					t = reference.Element;
 
-				fields[i] = CreateStackValueField (t);
+				if (used_fields_map == null)
+					used_fields_map = new BitArray (hoisted_stack_slots == null ? 0 : hoisted_stack_slots.Count);
+
+				fields[i] = CreateStackValueField (t, used_fields_map);
 			}
 
 			//
