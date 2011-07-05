@@ -69,7 +69,7 @@ namespace System.Net
 		
 		static WebRequest ()
 		{
-			if (Environment.IsMacOS) {
+			if (Environment.OSVersion.Platform == PlatformID.MacOSX) {
 				Type type = Type.GetType ("MonoTouch.CoreFoundation.CFNetwork, monotouch");
 				if (type != null)
 					cfGetDefaultProxy = type.GetMethod ("GetDefaultProxy");
