@@ -26,7 +26,7 @@
 using System.Runtime.InteropServices;
 
 namespace System {
-	internal class Platform {
+	internal static class Platform {
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
 		
