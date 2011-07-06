@@ -530,6 +530,7 @@ System/HttpStyleUriParser.cs
 System/NetPipeStyleUriParser.cs
 System/NetTcpStyleUriParser.cs
 System/NewsStyleUriParser.cs
+System/Platform.cs
 System/SRDescriptionAttribute.cs
 System/Uri.cs
 System/UriBuilder.cs

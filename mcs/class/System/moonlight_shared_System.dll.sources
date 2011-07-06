@@ -78,6 +78,7 @@ System/GenericUriParser.cs
 System/GenericUriParserOptions.cs
 System/GopherStyleUriParser.cs
 System/HttpStyleUriParser.cs
+System/Platform.cs
 System/UriIdnScope.cs
 System/UriTypeConverter.cs
 System.IO.Compression/CompressionMode.cs
