@@ -27,37 +27,22 @@ using System.Runtime.InteropServices;
 
 namespace System {
 	internal static class Platform {
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
+		
 		static bool checkedIsMacOS;
 		static bool isMacOS;
-		
-		// This is the struct layout for MacOSX. Linux has an additional field,
-		// but each field length is only 65 bytes (as opposed to 256 on MacOSX).
-		//
-		// Since we are only using uname() to detect whether or not the system
-		// is MacOSX, we only need .sysname so it doesn't matter if it is too
-		// big for other platforms or not.
-		[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-		struct utsname {
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 256)]
-			public string sysname;
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 256)]
-			public string nodename;
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 256)]
-			public string release;
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 256)]
-			public string version;
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 256)]
-			public string machine;
-		}
-		
-		[DllImport ("libc")]
-                static extern int uname (ref utsname buf);
 		
 		public static bool IsMacOS {
 			get {
 				if (!checkedIsMacOS) {
-					utsname buf = new utsname ();
-					isMacOS = uname (ref buf) == 0 && buf.sysname == "Darwin";
+					IntPtr buf = Marshal.AllocHGlobal (8192);
+					if (uname (buf) == 0) {
+						string os = Marshal.PtrToStringAnsi (buf);
+						if (os == "Darwin")
+							isMacOS = true;
+					}
+					Marshal.FreeHGlobal (buf);
 					checkedIsMacOS = true;
 				}
 				
