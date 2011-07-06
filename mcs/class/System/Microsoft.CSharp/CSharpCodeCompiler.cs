@@ -216,6 +216,12 @@ namespace Mono.CSharp
 					dict.Add ("MONO_PATH", monoPath);
 			}
 */
+			/*
+			 * reset MONO_GC_PARAMS - we are invoking compiler possibly with another GC that
+			 * may not handle some of the options causing compilation failure
+			 */
+			mcs.StartInfo.EnvironmentVariables ["MONO_GC_PARAMS"] = String.Empty;
+
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
