@@ -22,16 +22,15 @@ Prerequistites (see end of file for gclient & svn paths)
 5a. Make sure you have a dbg sel_ldr available
   /home/username/nacl/
     native_client/scons-out/dbg-${OS_SUBDIR}-x86-${BITSIZE}/staging
-5b. If it is not available, scons build it (substitute
-   linux with mac or win as needed)
+5b. If it is not available, scons build it
       cd /home/username/nacl/native_client
-      ./scons MODE=dbg-linux,nacl [platform=x86-64]
+      ./scons --mode=dbg-host,nacl [platform=x86-64]
 
 6. Build naclports libraries
      cd /home/username/naclports/src/packages
      ./nacl-install-all.sh
 
-7. Build NaCl Mono Runtime ('libmono.a' for NaCl, 5 minutes):
+7. Build NaCl Mono Runtime ('libmono.a' for NaCl, ~5 minutes):
   cd /home/username/mono/trunk/nacl
   ./nacl-runtime-mono.sh [TARGET_BITSIZE=32/64 for cross-compiling runtime]
 
@@ -59,7 +58,7 @@ SVN Repos
   cd ~
   mkdir naclports
   cd naclports
-  gclient config https://naclports.googlecode.com/svn/trunk/src
+  gclient config http://naclports.googlecode.com/svn/trunk/src
   gclient sync
 
 2. Getting Native Client repo
@@ -67,26 +66,7 @@ SVN Repos
   cd ~
   mkdir nacl
   cd nacl
-  vim .gclient
---------add text below-------
-solutions = [
-  { "name"        : "native_client",
-    "url"         : "svn://svn.chromium.org/native_client/trunk/src/native_client",
-  },
-  { "name"        : "supplement.DEPS",
-    "url"         : "svn://svn.chromium.org/native_client/trunk/deps/supplement.DEPS",
-  },
-]
----------end text------------
+  gclient config http://src.chromium.org/native_client/trunk/src/native_client
   gclient sync
   gclient runhooks --force
-
-
-3. Getting Mono repo
-
-  cd ~
-  mkdir mono
-  cd mono
-  // see http://mono-project.com/Compiling_Mono_From_Git
-
 
