@@ -36,7 +36,8 @@ CustomConfigureStep() {
     --prefix=${MONO_TRUNK_NACL}/normal-mono \
     --disable-parallel-mark \
     --enable-nls=no \
-    --with-tls=pthread 
+    --with-tls=pthread \
+    --with-sgen=no
 }
 
 CustomPackageInstall() {
