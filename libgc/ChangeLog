@@ -1,3 +1,8 @@
+2010-06-29  Geoff Norton  <gnorton@novell.com>
+
+	* include/private/gc_locks.h: Implement armv6+ variants of
+	GC_test_and_set
+
 2010-06-14  Geoff Norton  <gnorton@novell.com>
 
 	* dyn_load.c: Fix one other place where l_addr could be null on 
