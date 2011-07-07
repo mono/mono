@@ -41,6 +41,7 @@ CustomConfigureStep() {
       --disable-mono-debugger \
       --disable-mcs-build \
       --with-sigaltstack=no \
+      --with-sgen=no \
       --cache-file=../nacl-mono-config-cache.temp
   else
     ../../configure \
@@ -51,6 +52,7 @@ CustomConfigureStep() {
       --disable-mono-debugger \
       --disable-mcs-build \
       --with-sigaltstack=no \
+      --with-sgen=no \
       --cache-file=../nacl-mono-config-cache.temp
   fi
   

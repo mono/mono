@@ -37,7 +37,7 @@ CustomConfigureStep() {
   cd ${PACKAGE_NAME}
   # TODO: remove this once libintl.h becomes available to nacl
   CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig \
-  PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lnosys -lg" \
+  PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lg -lnosys -lnacl_dyncode" \
   CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256" ../../configure \
     --host=nacl${TARGET_BIT_PREFIX} \
     --exec-prefix=${INSTALL_PATH} \
