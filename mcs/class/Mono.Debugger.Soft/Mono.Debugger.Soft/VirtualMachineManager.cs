@@ -117,8 +117,8 @@ namespace Mono.Debugger.Soft
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
-			AsyncResult async = (AsyncResult) asyncResult;
-			LaunchCallback cb = (LaunchCallback) async.AsyncDelegate;
+			AsyncResult result = (AsyncResult) asyncResult;
+			LaunchCallback cb = (LaunchCallback) result.AsyncDelegate;
 			return cb.EndInvoke (asyncResult);
 		}
 
@@ -239,8 +239,8 @@ namespace Mono.Debugger.Soft
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
-			AsyncResult async = (AsyncResult) asyncResult;
-			ListenCallback cb = (ListenCallback) async.AsyncDelegate;
+			AsyncResult result = (AsyncResult) asyncResult;
+			ListenCallback cb = (ListenCallback) result.AsyncDelegate;
 			return cb.EndInvoke (asyncResult);
 		}
 
@@ -332,8 +332,8 @@ namespace Mono.Debugger.Soft
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
-			AsyncResult async = (AsyncResult) asyncResult;
-			ConnectCallback cb = (ConnectCallback) async.AsyncDelegate;
+			AsyncResult result = (AsyncResult) asyncResult;
+			ConnectCallback cb = (ConnectCallback) result.AsyncDelegate;
 			return cb.EndInvoke (asyncResult);
 		}
 
