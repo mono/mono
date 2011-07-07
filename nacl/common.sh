@@ -49,9 +49,6 @@ fi
 #readonly NACL_SDK=${NACL_SDK_PATH}
 #readonly NACL_DEV=${NACL_PATH}
 #readonly NACL_NATIVE_CLIENT=${NACL_SDK}/src
-
-readonly NACL_NATIVE_CLIENT=/usr/local/google/elijahtaylor/nacl_git/native_client
-
 readonly NACL_SDK_BASE=${NACL_NATIVE_CLIENT}/toolchain/${OS_SUBDIR_SHORT}_x86_newlib
 
 readonly NACL_BIN_PATH=${NACL_SDK_BASE}/bin
