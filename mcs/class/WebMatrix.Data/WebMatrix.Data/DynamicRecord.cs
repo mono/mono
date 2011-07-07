@@ -52,13 +52,23 @@ namespace WebMatrix.Data
 
 		public object this[string name] {
 			get {
-				return fields[name];
+				var retval = fields[name];
+
+				if (retval == DBNull.Value)
+					return null;
+
+				return retval;
 			}
 		}
 
 		public object this[int index] {
 			get {				
-				return fields[Columns[index]];
+				var retval = fields[Columns[index]];
+
+				if (retval == DBNull.Value)
+					return null;
+
+				return retval;
 			}
 		}
 
@@ -69,7 +79,12 @@ namespace WebMatrix.Data
 
 		public override bool TryGetMember (GetMemberBinder binder, out object result)
 		{
-			return fields.TryGetValue (binder.Name, out result);
+			bool success = fields.TryGetValue (binder.Name, out result);
+
+			if (result == DBNull.Value)
+				result = null;
+
+			return success;
 		}
 
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
