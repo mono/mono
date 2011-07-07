@@ -2312,6 +2312,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return left.ContainsEmitWithAwait () || right.ContainsEmitWithAwait ();
+		}
+
 		public static void EmitOperatorOpcode (EmitContext ec, Operator oper, TypeSpec l)
 		{
 			OpCode opcode;
@@ -3742,6 +3747,14 @@ namespace Mono.CSharp
 		
 		public override void Emit (EmitContext ec)
 		{
+			if (right.ContainsEmitWithAwait ()) {
+				left = left.EmitToField (ec);
+
+				if ((oper & Operator.LogicalMask) == 0) {
+					right = right.EmitToField (ec);
+				}
+			}
+
 			EmitOperator (ec, left.Type);
 		}
 
@@ -3761,11 +3774,7 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Br_S, end);
 				
 				ec.MarkLabel (load_result);
-				if (is_or)
-					ec.EmitInt (1);
-				else
-					ec.EmitInt (0);
-
+				ec.EmitInt (is_or ? 1 : 0);
 				ec.MarkLabel (end);
 				return;
 			}
@@ -4348,6 +4357,8 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		#region Properties
+
 		public Expression Expr {
 			get {
 				return expr;
@@ -4364,6 +4375,13 @@ namespace Mono.CSharp
 			get {
 				return false_expr;
 			}
+		}
+
+		#endregion
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return Expr.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -5037,6 +5055,13 @@ namespace Mono.CSharp
 				mg.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall (ec, "Call", args);
+		}
+
+		public static Invocation CreatePredefined (MethodGroupExpr mge, Arguments arguments)
+		{
+			return new Invocation (null, arguments) {
+				mg = mge
+			};
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -5966,11 +5991,6 @@ namespace Mono.CSharp
 		{
 		}
 
-		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
-		{
-			ec.Report.Error (248, loc, "Cannot create an array with a negative size");
-		}
-
 		bool CheckIndices (ResolveContext ec, ArrayInitializer probe, int idx, bool specified_dims, int child_bounds)
 		{
 			if (initializers != null && bounds == null) {
@@ -6061,6 +6081,16 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			foreach (var arg in arguments) {
+				if (arg.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return InitializersContainAwait ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args;
@@ -6107,6 +6137,24 @@ namespace Mono.CSharp
 					return;
 				}
 			}
+		}
+
+		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
+		{
+			ec.Report.Error (248, loc, "Cannot create an array with a negative size");
+		}
+
+		bool InitializersContainAwait ()
+		{
+			if (array_data == null)
+				return false;
+
+			foreach (var expr in array_data) {
+				if (expr.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return false;
 		}
 
 		protected virtual Expression ResolveArrayElement (ResolveContext ec, Expression element)
@@ -6379,7 +6427,7 @@ namespace Mono.CSharp
 		//
 		// This always expect the top value on the stack to be the array
 		//
-		void EmitDynamicInitializers (EmitContext ec, bool emitConstants)
+		void EmitDynamicInitializers (EmitContext ec, bool emitConstants, FieldExpr stackArray)
 		{
 			int dims = bounds.Count;
 			var current_pos = new int [dims];
@@ -6391,9 +6439,18 @@ namespace Mono.CSharp
 
 				// Constant can be initialized via StaticInitializer
 				if (c == null || (c != null && emitConstants && !c.IsDefaultInitializer (array_element_type))) {
-					TypeSpec etype = e.Type;
 
-					ec.Emit (OpCodes.Dup);
+					var etype = e.Type;
+
+					if (stackArray != null) {
+						if (e.ContainsEmitWithAwait ()) {
+							e = e.EmitToField (ec);
+						}
+
+						stackArray.Emit (ec);
+					} else {
+						ec.Emit (OpCodes.Dup);
+					}
 
 					for (int idx = 0; idx < dims; idx++) 
 						ec.EmitInt (current_pos [idx]);
@@ -6447,30 +6504,46 @@ namespace Mono.CSharp
 				first_emit_temp.Store (ec);
 			}
 
-			foreach (Expression e in arguments)
-				e.Emit (ec);
+			FieldExpr await_stack_field;
+			if (InitializersContainAwait ()) {
+				await_stack_field = ec.GetTemporaryField (type);
+				ec.EmitThis ();
+			} else {
+				await_stack_field = null;
+			}
+
+			EmitExpressionsList (ec, arguments);
 
 			ec.EmitArrayNew ((ArrayContainer) type);
 			
 			if (initializers == null)
 				return;
 
+			if (await_stack_field != null)
+				await_stack_field.EmitAssignFromStack (ec);
+
 #if STATIC
-			// Emit static initializer for arrays which have contain more than 2 items and
+			//
+			// Emit static initializer for arrays which contain more than 2 items and
 			// the static initializer will initialize at least 25% of array values or there
 			// is more than 10 items to be initialized
+			//
 			// NOTE: const_initializers_count does not contain default constant values.
+			//
 			if (const_initializers_count > 2 && (array_data.Count > 10 || const_initializers_count * 4 > (array_data.Count)) &&
 				(BuiltinTypeSpec.IsPrimitiveType (array_element_type) || array_element_type.IsEnum)) {
 				EmitStaticInitializers (ec);
 
 				if (!only_constant_initializers)
-					EmitDynamicInitializers (ec, false);
+					EmitDynamicInitializers (ec, false, await_stack_field);
 			} else
 #endif
 			{
-				EmitDynamicInitializers (ec, true);
+				EmitDynamicInitializers (ec, true, await_stack_field);
 			}
+
+			if (await_stack_field != null)
+				await_stack_field.Emit (ec);
 
 			if (first_emit_temp != null)
 				first_emit_temp.Release (ec);

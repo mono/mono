@@ -146,6 +146,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Returns true when the expression during Emit phase breaks stack
+		// by using await expression
+		//
+		public virtual bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
 		/// <summary>
 		///   Performs semantic analysis on the Expression
 		/// </summary>
@@ -470,6 +479,85 @@ namespace Mono.CSharp {
 		{
 			Emit (ec);
 			ec.Emit (OpCodes.Pop);
+		}
+
+		//
+		// Emits the expression into temporary field variable. The method
+		// should be used for await expressions only
+		//
+		public virtual Expression EmitToField (EmitContext ec)
+		{
+			//
+			// This is the await prepare Emit method. When emitting code like
+			// a + b we emit code like
+			//
+			// a.Emit ()
+			// b.Emit ()
+			// Opcodes.Add
+			//
+			// For await a + await b we have to interfere the flow to keep the
+			// stack clean because await yields from the expression. The emit
+			// then changes to
+			//
+			// a = a.EmitToField ()	// a is changed to temporary field access
+			// b = b.EmitToField ()
+			// a.Emit ()
+			// b.Emit ()
+			// Opcodes.Add
+			//
+			//
+			// The idea is to emit expression and leave the stack empty with
+			// result value still available.
+			//
+			// Expressions should override this default implementation when
+			// optimized version can be provided (e.g. FieldExpr)
+			//
+			//
+			// We can optimize for side-effect free expressions, they can be
+			// emitted out of order
+			//
+			if (IsSideEffectFree)
+				return this;
+
+			// Emit original code
+			Emit (ec);
+
+			// Create temporary local (we cannot load this before Emit)
+			var temp = ec.GetTemporaryLocal (type);
+			ec.Emit (OpCodes.Stloc, temp, type);
+
+			//
+			// Store the result to temporary field
+			//
+			var field = ec.GetTemporaryField (type);
+			ec.EmitThis ();
+			ec.Emit (OpCodes.Ldloc, temp, type);
+			field.EmitAssignFromStack (ec);
+
+			ec.FreeTemporaryLocal (temp, type);
+
+			return field;
+		}
+
+		protected static void EmitExpressionsList (EmitContext ec, List<Expression> expressions)
+		{
+			bool contains_await = false;
+			for (int i = 1; i < expressions.Count; ++i) {
+				if (expressions[i].ContainsEmitWithAwait ()) {
+					contains_await = true;
+					break;
+				}
+			}
+
+			if (contains_await) {
+				for (int i = 0; i < expressions.Count; ++i) {
+					expressions [i] = expressions[i].EmitToField (ec);
+				}
+			}
+
+			for (int i = 0; i < expressions.Count; ++i) {
+				expressions[i].Emit (ec);
+			}
 		}
 
 		/// <summary>
@@ -5109,20 +5197,15 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			var await_expr = source as Await;
-			if (await_expr != null) {
-				//
-				// Await is not ordinary expression (it contains jump), hence the usual flow cannot be used
-				// to emit instance load before expression
-				//
-				await_expr.EmitAssign (ec, this);
-			} else {
-				prepared = prepare_for_load && !(source is DynamicExpressionStatement);
-				if (IsInstance)
-					EmitInstance (ec, prepared);
-
-				source.Emit (ec);
+			if (source.ContainsEmitWithAwait ()) {
+				source = source.EmitToField (ec);
 			}
+
+			prepared = prepare_for_load && !(source is DynamicExpressionStatement);
+			if (IsInstance)
+				EmitInstance (ec, prepared);
+
+			source.Emit (ec);
 
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
@@ -5146,6 +5229,18 @@ namespace Mono.CSharp {
 				temp.Emit (ec);
 				temp.Release (ec);
 				temp = null;
+			}
+		}
+
+		//
+		// Emits store to field with prepared values on stack
+		//
+		public void EmitAssignFromStack (EmitContext ec)
+		{
+			if (IsStatic) {
+				ec.Emit (OpCodes.Stsfld, spec);
+			} else {
+				ec.Emit (OpCodes.Stfld, spec);
 			}
 		}
 

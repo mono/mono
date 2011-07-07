@@ -103,6 +103,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		internal AsyncTaskStorey AsyncTaskStorey {
+			get {
+				return CurrentAnonymousMethod.Storey as AsyncTaskStorey;
+			}
+		}
+
 		public BuiltinTypes BuiltinTypes {
 			get {
 				return MemberContext.Module.Compiler.BuiltinTypes;
@@ -261,6 +267,17 @@ namespace Mono.CSharp
 		public Label DefineLabel ()
 		{
 			return ig.DefineLabel ();
+		}
+
+		//
+		// Creates temporary field in current async storey
+		//
+		public FieldExpr GetTemporaryField (TypeSpec type)
+		{
+			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
+			var fexpr = new FieldExpr (f, Location.Null);
+			fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null);
+			return fexpr;
 		}
 
 		public void MarkLabel (Label label)

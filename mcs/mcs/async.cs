@@ -45,6 +45,11 @@ namespace Mono.CSharp
 			throw new NotImplementedException ("ET");
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return true;
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			if (rc.HasSet (ResolveContext.Options.FinallyScope)) {
@@ -94,7 +99,13 @@ namespace Mono.CSharp
 			stmt.EmitPrologue (ec);
 			stmt.Emit (ec);
 		}
-
+		
+		public override Expression EmitToField (EmitContext ec)
+		{
+			stmt.EmitPrologue (ec);
+			return stmt.GetResultExpression (ec);
+		}
+		
 		public void EmitAssign (EmitContext ec, FieldExpr field)
 		{
 			stmt.EmitPrologue (ec);
@@ -157,6 +168,11 @@ namespace Mono.CSharp
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			GetResultExpression (ec).Emit (ec);
+		}
+
+		public Invocation GetResultExpression (EmitContext ec)
+		{
 			var fe_awaiter = new FieldExpr (awaiter, loc);
 			fe_awaiter.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
@@ -166,7 +182,7 @@ namespace Mono.CSharp
 			var mg_result = MethodGroupExpr.CreatePredefined (get_result, fe_awaiter.Type, loc);
 			mg_result.InstanceExpression = fe_awaiter;
 
-			mg_result.EmitCall (ec, new Arguments (0));
+			return Invocation.CreatePredefined (mg_result, new Arguments (0));
 		}
 
 		public void EmitPrologue (EmitContext ec)
@@ -590,6 +606,16 @@ namespace Mono.CSharp
 		public Field AddAwaiter (TypeSpec type, Location loc)
 		{
 			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
+		}
+
+		int locals_captured;
+
+		public Field AddCapturedLocalVariable (TypeSpec type)
+		{
+			var field = AddCompilerGeneratedField ("<s>$" + locals_captured++.ToString ("X"), new TypeExpression (type, Location));
+			field.Define ();
+
+			return field;
 		}
 
 		FieldSpec CreateStackValueField (TypeSpec type, BitArray usedFields)
