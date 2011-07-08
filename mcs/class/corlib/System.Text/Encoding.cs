@@ -621,7 +621,7 @@ public abstract class Encoding : ICloneable
 			return GetEncoding (UTF8Encoding.UTF8_CODE_PAGE);
 		
 		case "utf_16":
-		case "UTF_16LE":
+		case "utf_16le":
 		case "ucs_2":
 		case "unicode":
 		case "iso_10646_ucs2":
@@ -632,11 +632,11 @@ public abstract class Encoding : ICloneable
 			return GetEncoding (UnicodeEncoding.BIG_UNICODE_CODE_PAGE);
 		
 		case "utf_32":
-		case "UTF_32LE":
+		case "utf_32le":
 		case "ucs_4":
 			return GetEncoding (UTF32Encoding.UTF32_CODE_PAGE);
 
-		case "UTF_32BE":
+		case "utf_32be":
 			return GetEncoding (UTF32Encoding.BIG_UTF32_CODE_PAGE);
 
 #if !MOONLIGHT
