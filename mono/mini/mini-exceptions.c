@@ -2249,7 +2249,7 @@ static void
 mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX)
 	MonoContext ctx;
 #endif
 	GString* text = g_string_new (0);
