@@ -378,8 +378,15 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	MonoJitInfoTable *table;
 	MonoJitInfo *ji;
 	int chunk_pos, pos;
-	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
+	MonoThreadHazardPointers *hp = NULL;
 	MonoImage *image;
+
+	/* 
+	 * Take the domain lock instead of using hazard pointers.
+	 * This prevents issues with corrupt tls data after 
+	 * reloading domains with child threads running.
+	 */
+	mono_domain_lock (domain);
 
 	++mono_stats.jit_info_table_lookup_count;
 
@@ -391,7 +398,7 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	   table by a hazard pointer and make sure that the pointer is
 	   still there after we've made it hazardous, we don't have to
 	   worry about the writer freeing the table. */
-	table = get_hazardous_pointer ((gpointer volatile*)&domain->jit_info_table, hp, JIT_INFO_TABLE_HAZARD_INDEX);
+	table = domain->jit_info_table;
 
 	chunk_pos = jit_info_table_index (table, (gint8*)addr);
 	g_assert (chunk_pos < table->num_chunks);
@@ -407,18 +414,15 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 		MonoJitInfoTableChunk *chunk = table->chunks [chunk_pos];
 
 		while (pos < chunk->num_elements) {
-			ji = get_hazardous_pointer ((gpointer volatile*)&chunk->data [pos], hp, JIT_INFO_HAZARD_INDEX);
-
+			ji = chunk->data [pos];
 			++pos;
 
 			if (IS_JIT_INFO_TOMBSTONE (ji)) {
-				mono_hazard_pointer_clear (hp, JIT_INFO_HAZARD_INDEX);
 				continue;
 			}
 			if ((gint8*)addr >= (gint8*)ji->code_start
 					&& (gint8*)addr < (gint8*)ji->code_start + ji->code_size) {
-				mono_hazard_pointer_clear (hp, JIT_INFO_TABLE_HAZARD_INDEX);
-				mono_hazard_pointer_clear (hp, JIT_INFO_HAZARD_INDEX);
+				mono_domain_unlock (domain);
 				return ji;
 			}
 
@@ -434,12 +438,7 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	} while (chunk_pos < table->num_chunks);
 
  not_found:
-	if (!hp)
-		return NULL;
-
-	mono_hazard_pointer_clear (hp, JIT_INFO_TABLE_HAZARD_INDEX);
-	mono_hazard_pointer_clear (hp, JIT_INFO_HAZARD_INDEX);
-
+	mono_domain_unlock (domain);
 	ji = NULL;
 
 	/* Maybe its an AOT module */
