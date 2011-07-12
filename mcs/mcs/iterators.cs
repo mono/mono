@@ -607,6 +607,7 @@ namespace Mono.CSharp
 		// The state as we generate the machine
 		//
 		Label move_next_ok;
+		Label iterator_body_end;
 		protected Label move_next_error;
 		protected LocalBuilder skip_finally, current_pc;
 		List<ResumableStatement> resume_points;
@@ -615,6 +616,12 @@ namespace Mono.CSharp
 			: base (block, returnType, block.StartLocation)
 		{
 			this.Host = host;
+		}
+
+		public Label BodyEnd {
+			get {
+				return iterator_body_end;
+			}
 		}
 
 		public override AnonymousMethodStorey Storey {
@@ -740,9 +747,13 @@ namespace Mono.CSharp
 			// We only care if the PC is zero (start executing) or non-zero (don't do anything)
 			ec.Emit (OpCodes.Brtrue, move_next_error);
 
+			iterator_body_end = ec.DefineLabel ();
+
 			SymbolWriter.StartIteratorBody (ec);
 			original_block.Emit (ec);
 			SymbolWriter.EndIteratorBody (ec);
+
+			ec.MarkLabel (iterator_body_end);
 
 			EmitMoveNextEpilogue (ec);
 
@@ -799,11 +810,15 @@ namespace Mono.CSharp
 
 			ec.MarkLabel (labels[0]);
 
+			iterator_body_end = ec.DefineLabel ();
+
 			SymbolWriter.StartIteratorBody (ec);
 			block.Emit (ec);
 			SymbolWriter.EndIteratorBody (ec);
 
 			SymbolWriter.StartIteratorDispatcher (ec);
+
+			ec.MarkLabel (iterator_body_end);
 
 			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);

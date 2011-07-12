@@ -824,8 +824,14 @@ namespace Mono.CSharp {
 					var async_return = ((AsyncTaskStorey) async_body.Storey).HoistedReturn;
 
 					// It's null for await without async
-					if (async_return != null)
+					if (async_return != null) {
 						async_return.EmitAssign (ec);
+
+						if (unwind_protect)
+							throw new NotImplementedException ();
+
+						ec.Emit (OpCodes.Br, async_body.BodyEnd);
+					}
 
 					return;
 				}
