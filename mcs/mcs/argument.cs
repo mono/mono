@@ -103,6 +103,28 @@ namespace Mono.CSharp
 			return Expr.CreateExpressionTree (ec);
 		}
 
+
+		public virtual void Emit (EmitContext ec)
+		{
+			if (!IsByRef) {
+				Expr.Emit (ec);
+				return;
+			}
+
+			AddressOp mode = AddressOp.Store;
+			if (ArgType == AType.Ref)
+				mode |= AddressOp.Load;
+
+			IMemoryLocation ml = (IMemoryLocation) Expr;
+			ml.AddressOf (ec, mode);
+		}
+
+		public Argument EmitToField (EmitContext ec)
+		{
+			var res = Expr.EmitToField (ec);
+			return res == Expr ? this : new Argument (res, ArgType);
+		}
+
 		public string GetSignatureForError ()
 		{
 			if (Expr.eclass == ExprClass.MethodGroup)
@@ -141,21 +163,6 @@ namespace Mono.CSharp
 					Expr = ErrorExpression.Instance;
 //			}
 		}
-
-		public virtual void Emit (EmitContext ec)
-		{
-			if (!IsByRef) {
-				Expr.Emit (ec);
-				return;
-			}
-
-			AddressOp mode = AddressOp.Store;
-			if (ArgType == AType.Ref)
-				mode |= AddressOp.Load;
-
-			IMemoryLocation ml = (IMemoryLocation) Expr;
-			ml.AddressOf (ec, mode);
-		}
 	}
 
 	public class MovableArgument : Argument
@@ -182,7 +189,7 @@ namespace Mono.CSharp
 				variable.Release (ec);
 		}
 
-		public void EmitAssign (EmitContext ec)
+		public void EmitToVariable (EmitContext ec)
 		{
 			var type = Expr.Type;
 			if (IsByRef) {
@@ -246,10 +253,15 @@ namespace Mono.CSharp
 				ordered.Add (arg);
 			}
 
-			public override Expression[] Emit (EmitContext ec, bool dup_args)
+			public override Arguments Emit (EmitContext ec, bool dup_args)
 			{
+				bool await_inside = ContainsEmitWithAwait ();
+
 				foreach (var a in ordered) {
-					a.EmitAssign (ec);
+					if (await_inside)
+						a.EmitToField (ec);
+					else
+						a.EmitToVariable (ec);
 				}
 
 				return base.Emit (ec, dup_args);
@@ -264,6 +276,11 @@ namespace Mono.CSharp
 			args = new List<Argument> (capacity);
 		}
 
+		private Arguments (List<Argument> args)
+		{
+			this.args = args;
+		}
+
 		public void Add (Argument arg)
 		{
 			args.Add (arg);
@@ -272,6 +289,16 @@ namespace Mono.CSharp
 		public void AddRange (Arguments args)
 		{
 			this.args.AddRange (args.args);
+		}
+
+		public bool ContainsEmitWithAwait ()
+		{
+			foreach (var arg in args) {
+				if (arg.Expr.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return false;
 		}
 
 		public ArrayInitializer CreateDynamicBinderArguments (ResolveContext rc)
@@ -399,42 +426,56 @@ namespace Mono.CSharp
 		}
 
 		//
-		// if `dup_args' is true, a copy of the arguments will be left
-		// on the stack and return value will contain an array of access
-		// expressions
-		// NOTE: It's caller responsibility is to release temporary variables
+		// if `dup_args' is true or any of arguments contains await.
+		// A copy of all arguments will be returned to the caller
 		//
-		public virtual Expression[] Emit (EmitContext ec, bool dup_args)
+		public virtual Arguments Emit (EmitContext ec, bool dup_args)
 		{
-			Expression[] temps;
+			List<Argument> dups;
 
-			if (dup_args && Count != 0)
-				temps = new Expression [Count];
+			bool await_inside = ContainsEmitWithAwait ();
+
+			if ((dup_args && Count != 0) || await_inside)
+				dups = new List<Argument> (Count);
 			else
-				temps = null;
+				dups = null;
 
-			int i = 0;
 			LocalTemporary lt;
 			foreach (Argument a in args) {
-				a.Emit (ec);
-				if (!dup_args)
+				if (await_inside) {
+					dups.Add (a.EmitToField (ec));
 					continue;
+				}
+				
+				a.Emit (ec);
 
-				if (a.Expr is Constant || a.Expr is This) {
-					//
-					// No need to create a temporary variable for constants
-					//
-					temps[i] = a.Expr;
-				} else {
-					ec.Emit (OpCodes.Dup);
-					temps[i] = lt = new LocalTemporary (a.Type);
-					lt.Store (ec);
+				if (!dup_args) {
+					continue;
 				}
 
-				++i;
+				if (a.Expr.IsSideEffectFree) {
+					//
+					// No need to create a temporary variable for side effect free expressions. I assume
+					// all side-effect free expressions are cheap, this has to be tweaked when we become
+					// more aggressive on detection
+					//
+					dups.Add (a);
+				} else {
+					ec.Emit (OpCodes.Dup);
+
+					// TODO: Release local temporary on next Emit
+					// Need to add a flag to argument to indicate this
+					lt = new LocalTemporary (a.Type);
+					lt.Store (ec);
+
+					dups.Add (new Argument (lt, a.ArgType));
+				}
 			}
 
-			return temps;
+			if (dups != null)
+				return new Arguments (dups);
+
+			return null;
 		}
 
 		public List<Argument>.Enumerator GetEnumerator ()

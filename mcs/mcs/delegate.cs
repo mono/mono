@@ -717,6 +717,11 @@ namespace Mono.CSharp {
 			this.arguments = args;
 			this.loc = loc;
 		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return InstanceExpr.ContainsEmitWithAwait () || (arguments != null && arguments.ContainsEmitWithAwait ());
+		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -753,7 +758,9 @@ namespace Mono.CSharp {
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
 			//
-			Invocation.EmitCall (ec, InstanceExpr, method, arguments, loc);
+			var call = new CallEmitter ();
+			call.InstanceExpression = InstanceExpr;
+			call.EmitPredefined (ec, method, arguments);
 		}
 
 		public override void EmitStatement (EmitContext ec)

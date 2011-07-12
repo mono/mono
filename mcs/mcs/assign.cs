@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 		// be data on the stack that it can use to compuatate its value. This is
 		// for expressions like a [f ()] ++, where you can't call `f ()' twice.
 		//
-		void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load);
+		void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound);
 
 		/*
 		For simple assignments, this interface is very simple, EmitAssign is called with source
@@ -236,9 +236,9 @@ namespace Mono.CSharp {
 				Emit (ec);
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
-			if (prepare_for_load)
+			if (isCompound)
 				throw new NotImplementedException ();
 
 			source.Emit (ec);
@@ -567,11 +567,17 @@ namespace Mono.CSharp {
 		// This is just a hack implemented for arrays only
 		public sealed class TargetExpression : Expression
 		{
-			Expression child;
+			readonly Expression child;
+
 			public TargetExpression (Expression child)
 			{
 				this.child = child;
 				this.loc = child.Location;
+			}
+
+			public override bool ContainsEmitWithAwait ()
+			{
+				return child.ContainsEmitWithAwait ();
 			}
 
 			public override Expression CreateExpressionTree (ResolveContext ec)
@@ -589,6 +595,11 @@ namespace Mono.CSharp {
 			public override void Emit (EmitContext ec)
 			{
 				child.Emit (ec);
+			}
+
+			public override Expression EmitToField (EmitContext ec)
+			{
+				return child.EmitToField (ec);
 			}
 		}
 

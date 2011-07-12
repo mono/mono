@@ -73,7 +73,8 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, null, oper, arguments, loc);
+			var call = new CallEmitter ();
+			call.Emit (ec, oper, arguments, loc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -828,13 +829,13 @@ namespace Mono.CSharp
 			}
 		}
 		
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
-			prepared = prepare_for_load;
+			prepared = isCompound;
 			
 			expr.Emit (ec);
 
-			if (prepare_for_load)
+			if (isCompound)
 				ec.Emit (OpCodes.Dup);
 			
 			source.Emit (ec);
@@ -957,7 +958,7 @@ namespace Mono.CSharp
 			//
 			// Emits target assignment using unmodified source value
 			//
-			public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+			public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 			{
 				//
 				// Allocate temporary variable to keep original value before it's modified
@@ -966,7 +967,7 @@ namespace Mono.CSharp
 				expr.Emit (ec);
 				temp.Store (ec);
 
-				((IAssignMethod) expr).EmitAssign (ec, source, false, prepare_for_load);
+				((IAssignMethod) expr).EmitAssign (ec, source, false, isCompound);
 
 				if (leave_copy)
 					Emit (ec);
@@ -1002,6 +1003,11 @@ namespace Mono.CSharp
 			mode = m;
 			this.loc = loc;
 			expr = e;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4054,8 +4060,10 @@ namespace Mono.CSharp
 			var members = GetConcatMethodCandidates ();
 			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var method = res.ResolveMember<MethodSpec> (new ResolveContext (ec.MemberContext), ref arguments);
-			if (method != null)
-				Invocation.EmitCall (ec, null, method, arguments, loc);
+			if (method != null) {
+				var call = new CallEmitter ();
+				call.EmitPredefined (ec, method, arguments);
+			}
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -4381,7 +4389,7 @@ namespace Mono.CSharp
 
 		public override bool ContainsEmitWithAwait ()
 		{
-			return Expr.ContainsEmitWithAwait ();
+			return Expr.ContainsEmitWithAwait () || true_expr.ContainsEmitWithAwait () || false_expr.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4614,6 +4622,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Expression EmitToField (EmitContext ec)
+		{
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null) {
+				return hv.EmitToField (ec);
+			}
+
+			return base.EmitToField (ec);
+		}
 
 		public HoistedVariable GetHoistedVariable (ResolveContext rc)
 		{
@@ -5043,6 +5060,13 @@ namespace Mono.CSharp
 			target.expr = expr.Clone (clonectx);
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			if (arguments != null && arguments.ContainsEmitWithAwait ())
+				return true;
+
+			return mg.ContainsEmitWithAwait ();
+		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -5244,168 +5268,6 @@ namespace Mono.CSharp
 				method.GetSignatureForError ());
 	
 			return true;
-		}
-
-		//
-		// Used to decide whether call or callvirt is needed
-		//
-		static bool IsVirtualCallRequired (Expression instance, MethodSpec method)
-		{
-			//
-			// There are 2 scenarious where we emit callvirt
-			//
-			// Case 1: A method is virtual and it's not used to call base
-			// Case 2: A method instance expression can be null. In this casen callvirt ensures
-			// correct NRE exception when the method is called
-			//
-			var decl_type = method.DeclaringType;
-			if (decl_type.IsStruct || decl_type.IsEnum)
-				return false;
-
-			if (instance is BaseThis)
-				return false;
-
-			//
-			// It's non-virtual and will never be null
-			//
-			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation))
-				return false;
-
-			return true;
-		}
-
-		/// <remarks>
-		///   is_base tells whether we want to force the use of the `call'
-		///   opcode instead of using callvirt.  Call is required to call
-		///   a specific method, while callvirt will always use the most
-		///   recent method in the vtable.
-		///
-		///   is_static tells whether this is an invocation on a static method
-		///
-		///   instance_expr is an expression that represents the instance
-		///   it must be non-null if is_static is false.
-		///
-		///   method is the method to invoke.
-		///
-		///   Arguments is the list of arguments to pass to the method or constructor.
-		/// </remarks>
-		public static void EmitCall (EmitContext ec, Expression instance_expr,
-					     MethodSpec method, Arguments Arguments, Location loc)
-		{
-			EmitCall (ec, instance_expr, method, Arguments, loc, false, false);
-		}
-		
-		// `dup_args' leaves an extra copy of the arguments on the stack
-		// `omit_args' does not leave any arguments at all.
-		// So, basically, you could make one call with `dup_args' set to true,
-		// and then another with `omit_args' set to true, and the two calls
-		// would have the same set of arguments. However, each argument would
-		// only have been evaluated once.
-		public static void EmitCall (EmitContext ec, Expression instance_expr,
-					     MethodSpec method, Arguments Arguments, Location loc,
-		                             bool dup_args, bool omit_args)
-		{
-			LocalTemporary this_arg = null;
-
-			// Speed up the check by not doing it on not allowed targets
-			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.Module.Compiler, loc))
-				return;
-
-			OpCode call_op;
-			TypeSpec iexpr_type;
-
-			if (method.IsStatic) {
-				iexpr_type = null;
-				call_op = OpCodes.Call;
-			} else {
-				iexpr_type = instance_expr.Type;
-
-				if (IsVirtualCallRequired (instance_expr, method)) {
-					call_op = OpCodes.Callvirt;
-				} else {
-					call_op = OpCodes.Call;
-				}
-
-				//
-				// If this is ourselves, push "this"
-				//
-				if (!omit_args) {
-					TypeSpec t = iexpr_type;
-
-					//
-					// Push the instance expression
-					//
-					if ((iexpr_type.IsStruct && (call_op == OpCodes.Callvirt || (call_op == OpCodes.Call && method.DeclaringType == iexpr_type))) ||
-						iexpr_type.IsGenericParameter || method.DeclaringType.IsNullableType) {
-						//
-						// If the expression implements IMemoryLocation, then
-						// we can optimize and use AddressOf on the
-						// return.
-						//
-						// If not we have to use some temporary storage for
-						// it.
-						var iml = instance_expr as IMemoryLocation;
-						if (iml != null) {
-							iml.AddressOf (ec, AddressOp.Load);
-						} else {
-							LocalTemporary temp = new LocalTemporary (iexpr_type);
-							instance_expr.Emit (ec);
-							temp.Store (ec);
-							temp.AddressOf (ec, AddressOp.Load);
-						}
-
-						// avoid the overhead of doing this all the time.
-						if (dup_args)
-							t = ReferenceContainer.MakeType (ec.Module, iexpr_type);
-					} else if (iexpr_type.IsEnum || iexpr_type.IsStruct) {
-						instance_expr.Emit (ec);
-						ec.Emit (OpCodes.Box, iexpr_type);
-						t = iexpr_type = ec.BuiltinTypes.Object;
-					} else {
-						instance_expr.Emit (ec);
-					}
-
-					if (dup_args) {
-						ec.Emit (OpCodes.Dup);
-						if (Arguments != null && Arguments.Count != 0) {
-							this_arg = new LocalTemporary (t);
-							this_arg.Store (ec);
-						}
-					}
-				}
-			}
-
-			if (!omit_args && Arguments != null) {
-				var dup_arg_exprs = Arguments.Emit (ec, dup_args);
-				if (dup_args) {
-					this_arg.Emit (ec);
-					LocalTemporary lt;
-					foreach (var dup in dup_arg_exprs) {
-						dup.Emit (ec);
-						lt = dup as LocalTemporary;
-						if (lt != null)
-							lt.Release (ec);
-					}
-				}
-			}
-
-			if (call_op == OpCodes.Callvirt && (iexpr_type.IsGenericParameter || iexpr_type.IsStruct)) {
-				ec.Emit (OpCodes.Constrained, iexpr_type);
-			}
-
-			if (method.Parameters.HasArglist) {
-				var varargs_types = GetVarargsTypes (method, Arguments);
-				ec.Emit (call_op, method, varargs_types);
-				return;
-			}
-
-			//
-			// If you have:
-			// this.DoFoo ();
-			// and DoFoo is not virtual, you can omit the callvirt,
-			// because you don't need the null checking behavior.
-			//
-			ec.Emit (call_op, method);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8182,7 +8044,7 @@ namespace Mono.CSharp
 		ElementAccess ea;
 
 		LocalTemporary temp, expr_copy;
-		Expression[] prepared_arguments;
+		Arguments prepared_arguments;
 		bool prepared;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
@@ -8257,13 +8119,7 @@ namespace Mono.CSharp
 					LoadArrayAndArguments (ec);
 				} else {
 					expr_copy.Emit (ec);
-					LocalTemporary lt;
-					foreach (var expr in prepared_arguments) {
-						expr.Emit (ec);
-						lt = expr as LocalTemporary;
-						if (lt != null)
-							lt.Release (ec);
-					}
+					prepared_arguments.Emit (ec);
 				}
 
 				ec.EmitArrayLoad (ac);
@@ -8281,7 +8137,7 @@ namespace Mono.CSharp
 			Emit (ec, false);
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			var ac = (ArrayContainer) ea.Expr.Type;
 			TypeSpec t = source.Type;
@@ -8291,16 +8147,16 @@ namespace Mono.CSharp
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
-			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !BuiltinTypeSpec.IsPrimitiveType (t))) {
+			if (t.IsStruct && ((isCompound && !(source is DynamicExpressionStatement)) || !BuiltinTypeSpec.IsPrimitiveType (t))) {
 				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
 
-				if (prepare_for_load) {
+				if (isCompound) {
 					ec.Emit (OpCodes.Dup);
 				}
 
 				prepared = true;
-			} else if (prepare_for_load) {
+			} else if (isCompound) {
 				ea.Expr.Emit (ec);
 				ec.Emit (OpCodes.Dup);
 
@@ -8384,9 +8240,8 @@ namespace Mono.CSharp
 	//
 	// Indexer access expression
 	//
-	class IndexerExpr : PropertyOrIndexerExpr<IndexerSpec>, OverloadResolver.IBaseMembersProvider
+	sealed class IndexerExpr : PropertyOrIndexerExpr<IndexerSpec>, OverloadResolver.IBaseMembersProvider
 	{
-		LocalTemporary prepared_value;
 		IList<MemberSpec> indexers;
 		Arguments arguments;
 		TypeSpec queried_type;
@@ -8401,6 +8256,15 @@ namespace Mono.CSharp
 		}
 
 		#region Properties
+
+		protected override Arguments Arguments {
+			get {
+				return arguments;
+			}
+			set {
+				arguments = value;
+			}
+		}
 
 		protected override TypeSpec DeclaringType {
 			get {
@@ -8428,6 +8292,11 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return base.ContainsEmitWithAwait () || arguments.ContainsEmitWithAwait ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
@@ -8436,55 +8305,63 @@ namespace Mono.CSharp
 
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
-
-		public override void Emit (EmitContext ec, bool leave_copy)
+	
+		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
-			if (prepared) {
-				prepared_value.Emit (ec);
-			} else {
-				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc);
-			}
+			LocalTemporary await_source_arg = null;
 
-			if (leave_copy) {
-				ec.Emit (OpCodes.Dup);
-				temp = new LocalTemporary (Type);
-				temp.Store (ec);
-			}
-		}
-		
-		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
-		{
-			prepared = prepare_for_load;
-			Expression value = source;
+			if (isCompound) {
+				emitting_compound_assignment = true;
+				if (source is DynamicExpressionStatement) {
+					Emit (ec, false);
+				} else {
+					source.Emit (ec);
+				}
+				emitting_compound_assignment = false;
 
-			if (prepared) {
-				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, true, false);
+				if (has_await_arguments) {
+					await_source_arg = new LocalTemporary (Type);
+					await_source_arg.Store (ec);
 
-				prepared_value = new LocalTemporary (type);
-				prepared_value.Store (ec);
-				source.Emit (ec);
-				prepared_value.Release (ec);
+					has_await_arguments = false;
+
+					arguments.Add (new Argument (await_source_arg));
+				} else {
+					arguments = null;
+				}
 
 				if (leave_copy) {
 					ec.Emit (OpCodes.Dup);
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
-			} else if (leave_copy) {
-				temp = new LocalTemporary (Type);
-				source.Emit (ec);
-				temp.Store (ec);
-				value = temp;
-			}
-			
-			if (!prepared)
-				arguments.Add (new Argument (value));
+			} else {
+				Expression value = source;
 
-			Invocation.EmitCall (ec, InstanceExpression, Setter, arguments, loc, false, prepared);
-			
+				if (leave_copy) {
+					temp = new LocalTemporary (Type);
+					source.Emit (ec);
+					temp.Store (ec);
+					value = temp;
+				}
+
+				arguments.Add (new Argument (value));
+			}
+
+			var call = new CallEmitter ();
+			call.InstanceExpression = InstanceExpression;
+			if (arguments == null)
+				call.InstanceExpressionOnStack = true;
+
+			call.Emit (ec, Setter, arguments, loc);
+
 			if (temp != null) {
 				temp.Emit (ec);
 				temp.Release (ec);
+			}
+
+			if (await_source_arg != null) {
+				await_source_arg.Release (ec);
 			}
 		}
 

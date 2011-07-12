@@ -637,6 +637,11 @@ namespace Mono.CSharp {
 			GetFieldExpression (ec).Emit (ec);
 		}
 
+		public Expression EmitToField (EmitContext ec)
+		{
+			return GetFieldExpression (ec);
+		}
+
 		//
 		// Creates field access expression for hoisted variable
 		//
@@ -692,7 +697,7 @@ namespace Mono.CSharp {
 			GetFieldExpression (ec).Emit (ec, leave_copy);
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			GetFieldExpression (ec).EmitAssign (ec, source, leave_copy, false);
 		}

@@ -1381,7 +1381,9 @@ namespace Mono.CSharp {
 			
 			ec.Mark (loc);
 
-			Invocation.EmitCall (ec, new CompilerGeneratedThis (type, loc), base_ctor, argument_list, loc);
+			var call = new CallEmitter ();
+			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
+			call.EmitPredefined (ec, base_ctor, argument_list);
 		}
 
 		public override void EmitStatement (EmitContext ec)

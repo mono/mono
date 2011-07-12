@@ -122,7 +122,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			throw new NotImplementedException ();
 		}
@@ -897,7 +897,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			EmitCall (ec, setter, setter_args, !leave_copy);
 		}

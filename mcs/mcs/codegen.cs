@@ -1033,4 +1033,199 @@ namespace Mono.CSharp
 			return return_value;
 		}
 	}
+
+	struct CallEmitter
+	{
+		public Expression InstanceExpression;
+
+		//
+		// When set leaves an extra copy of all arguments on the stack
+		//
+		public bool DuplicateArguments;
+
+		//
+		// Does not emit InstanceExpression load when InstanceExpressionOnStack
+		// is set. Used by compound assignments.
+		//
+		public bool InstanceExpressionOnStack;
+
+		//
+		// Any of arguments contains await expression
+		//
+		public bool HasAwaitArguments;
+
+		//
+		// When dealing with await arguments the original arguments are converted
+		// into a new set with hoisted stack results
+		//
+		public Arguments EmittedArguments;
+
+		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
+		{
+			// Speed up the check by not doing it on not allowed targets
+			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.Module.Compiler, loc))
+				return;
+
+			EmitPredefined (ec, method, Arguments);
+		}
+
+		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments)
+		{
+			Expression instance_copy = null;
+
+			if (!HasAwaitArguments) {
+				HasAwaitArguments = Arguments != null && Arguments.ContainsEmitWithAwait ();
+				if (HasAwaitArguments) {
+					if (InstanceExpressionOnStack)
+						throw new NotSupportedException ();
+				}
+			}
+
+			OpCode call_op;
+
+			if (method.IsStatic) {
+				call_op = OpCodes.Call;
+			} else {
+				if (IsVirtualCallRequired (InstanceExpression, method)) {
+					call_op = OpCodes.Callvirt;
+				} else {
+					call_op = OpCodes.Call;
+				}
+
+				if (HasAwaitArguments) {
+					instance_copy = InstanceExpression.EmitToField (ec);
+					if (Arguments == null)
+						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+				} else if (!InstanceExpressionOnStack) {
+					var instance_on_stack_type = EmitCallInstance (ec, InstanceExpression, method.DeclaringType, call_op);
+
+					if (DuplicateArguments) {
+						ec.Emit (OpCodes.Dup);
+						if (Arguments != null && Arguments.Count != 0) {
+							var lt = new LocalTemporary (instance_on_stack_type);
+							lt.Store (ec);
+							instance_copy = lt;
+						}
+					}
+				}
+			}
+
+			if (Arguments != null && !InstanceExpressionOnStack) {
+				EmittedArguments = Arguments.Emit (ec, DuplicateArguments || HasAwaitArguments);
+				if (EmittedArguments != null) {
+					if (instance_copy != null) {
+						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+
+						var lt = instance_copy as LocalTemporary;
+						if (lt != null)
+							lt.Release (ec);
+					}
+
+					EmittedArguments.Emit (ec);
+				}
+			}
+
+			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStruct)) {
+				ec.Emit (OpCodes.Constrained, InstanceExpression.Type);
+			}
+
+			//
+			// Set instance expression to actual result expression. When it contains await it can be
+			// picked up by caller
+			//
+			InstanceExpression = instance_copy;
+
+			if (method.Parameters.HasArglist) {
+				var varargs_types = GetVarargsTypes (method, Arguments);
+				ec.Emit (call_op, method, varargs_types);
+				return;
+			}
+
+			//
+			// If you have:
+			// this.DoFoo ();
+			// and DoFoo is not virtual, you can omit the callvirt,
+			// because you don't need the null checking behavior.
+			//
+			ec.Emit (call_op, method);
+		}
+
+		static TypeSpec EmitCallInstance (EmitContext ec, Expression instance, TypeSpec declaringType, OpCode callOpcode)
+		{
+			var instance_type = instance.Type;
+
+			//
+			// Push the instance expression
+			//
+			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType == instance_type))) ||
+				instance_type.IsGenericParameter || declaringType.IsNullableType) {
+				//
+				// If the expression implements IMemoryLocation, then
+				// we can optimize and use AddressOf on the
+				// return.
+				//
+				// If not we have to use some temporary storage for
+				// it.
+				var iml = instance as IMemoryLocation;
+				if (iml != null) {
+					iml.AddressOf (ec, AddressOp.Load);
+				} else {
+					LocalTemporary temp = new LocalTemporary (instance_type);
+					instance.Emit (ec);
+					temp.Store (ec);
+					temp.AddressOf (ec, AddressOp.Load);
+					temp.Release (ec);
+				}
+
+				return ReferenceContainer.MakeType (ec.Module, instance_type);
+			}
+
+			if (instance_type.IsEnum || instance_type.IsStruct) {
+				instance.Emit (ec);
+				ec.Emit (OpCodes.Box, instance_type);
+				return ec.BuiltinTypes.Object;
+			}
+
+			instance.Emit (ec);
+			return instance_type;
+		}
+
+		static MetaType[] GetVarargsTypes (MethodSpec method, Arguments arguments)
+		{
+			AParametersCollection pd = method.Parameters;
+
+			Argument a = arguments[pd.Count - 1];
+			Arglist list = (Arglist) a.Expr;
+
+			return list.ArgumentTypes;
+		}
+
+		//
+		// Used to decide whether call or callvirt is needed
+		//
+		static bool IsVirtualCallRequired (Expression instance, MethodSpec method)
+		{
+			//
+			// There are 2 scenarious where we emit callvirt
+			//
+			// Case 1: A method is virtual and it's not used to call base
+			// Case 2: A method instance expression can be null. In this casen callvirt ensures
+			// correct NRE exception when the method is called
+			//
+			var decl_type = method.DeclaringType;
+			if (decl_type.IsStruct || decl_type.IsEnum)
+				return false;
+
+			if (instance is BaseThis)
+				return false;
+
+			//
+			// It's non-virtual and will never be null
+			//
+			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation))
+				return false;
+
+			return true;
+		}
+	}
 }

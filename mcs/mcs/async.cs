@@ -220,6 +220,9 @@ namespace Mono.CSharp
 			// the instance method would require `this' as the first stack value on the stack
 			//
 			if (ec.StackHeight > 0) {
+#if DEBUG
+				throw new InternalErrorException ("Await yield with non-empty stack");
+#else
 				var async_storey = (AsyncTaskStorey) machine_initializer.Storey;
 
 				stack = ec.GetStackTypes ();
@@ -229,6 +232,7 @@ namespace Mono.CSharp
 					ec.EmitThis ();
 
 				ec.Emit (OpCodes.Call, method);
+#endif
 			}
 
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
