@@ -54,7 +54,7 @@ namespace System
 	public abstract class TimeZone
 	{
 		// Fields
-		private static TimeZone currentTimeZone = new CurrentSystemTimeZone (DateTime.GetNow ());
+		static TimeZone currentTimeZone;
 
 		// Constructor
 		protected TimeZone ()
@@ -64,6 +64,8 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
+				if (currentTimeZone == null)
+					currentTimeZone = new CurrentSystemTimeZone (DateTime.GetNow ());
 				return currentTimeZone;
 			}
 		}
