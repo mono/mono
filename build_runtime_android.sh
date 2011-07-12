@@ -4,7 +4,8 @@
 # Todo: set appropriate ARM flags for hard floats
 
 export ANDROID_PLATFORM=android-5
-GCC_VERSION=4.4.0
+GCC_PREFIX=arm-linux-androideabi-
+GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
 
@@ -33,25 +34,25 @@ case "$HOST_ENV" in
 esac
 
 PLATFORM_ROOT=$NDK_ROOT/platforms/$ANDROID_PLATFORM/arch-arm
-TOOLCHAIN=$NDK_ROOT/toolchains/arm-eabi-$GCC_VERSION/prebuilt/$HOST_ENV
+TOOLCHAIN=$NDK_ROOT/toolchains/$GCC_PREFIX$GCC_VERSION/prebuilt/$HOST_ENV
 
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
-	echo "Failed to locate toolchain/platform; $NDK_NAME | $HOST_ENV | $GCC_VERSION | $ANDROID_PLATFORM"
+	echo "Failed to locate toolchain/platform; $NDK_NAME | $HOST_ENV | $GCC_PREFIX$GCC_VERSION | $ANDROID_PLATFORM"
 	exit 1
 fi
 
 PATH="$TOOLCHAIN/bin:$PATH"
-CC="$TOOLCHAIN/bin/arm-eabi-gcc -nostdlib"
-CXX="$TOOLCHAIN/bin/arm-eabi-g++ -nostdlib"
-CPP="$TOOLCHAIN/bin/arm-eabi-cpp"
-CXXCPP="$TOOLCHAIN/bin/arm-eabi-cpp"
+CC="$TOOLCHAIN/bin/${GCC_PREFIX}gcc -nostdlib"
+CXX="$TOOLCHAIN/bin/${GCC_PREFIX}g++ -nostdlib"
+CPP="$TOOLCHAIN/bin/${GCC_PREFIX}cpp"
+CXXCPP="$TOOLCHAIN/bin/${GCC_PREFIX}cpp"
 CPATH="$PLATFORM_ROOT/usr/include"
-LD=$TOOLCHAIN/bin/arm-eabi-ld
-AS=$TOOLCHAIN/bin/arm-eabi-as
-AR=$TOOLCHAIN/bin/arm-eabi-ar
-RANLIB=$TOOLCHAIN/bin/arm-eabi-ranlib
-STRIP=$TOOLCHAIN/bin/arm-eabi-strip
+LD=$TOOLCHAIN/bin/${GCC_PREFIX}ld
+AS=$TOOLCHAIN/bin/${GCC_PREFIX}as
+AR=$TOOLCHAIN/bin/${GCC_PREFIX}ar
+RANLIB=$TOOLCHAIN/bin/${GCC_PREFIX}ranlib
+STRIP=$TOOLCHAIN/bin/${GCC_PREFIX}strip
 CFLAGS="\
 -DANDROID -DPLATFORM_ANDROID -DLINUX -D__linux__ \
 -DHAVE_USR_INCLUDE_MALLOC_H -DPAGE_SIZE=0x1000 \
@@ -62,7 +63,6 @@ CFLAGS="\
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
 -Wl,--no-undefined \
--Wl,-T,$TOOLCHAIN/arm-eabi/lib/ldscripts/armelf.x \
 -L$PLATFORM_ROOT/usr/lib \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
