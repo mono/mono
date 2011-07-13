@@ -1026,7 +1026,7 @@ namespace Mono.CSharp {
 				var body = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
 				if (body != null) {
 					if (is_async) {
-						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, null, loc);
+						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, null, loc);
 					}
 
 					am = body.Compatible (ec, body, is_async);
@@ -1107,7 +1107,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					if (is_async) {
-						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, body.ReturnType, loc);
+						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, body.ReturnType, loc);
 					}
 
 					am = body.Compatible (ec);

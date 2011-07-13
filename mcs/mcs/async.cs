@@ -446,7 +446,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public static void Create (ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
+		public static void Create (IMemberContext context, ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
 		{
 			if (returnType != null && returnType.Kind != MemberKind.Void &&
 				returnType != host.Module.PredefinedTypes.Task.TypeSpec &&
@@ -482,7 +482,7 @@ namespace Mono.CSharp
 			//if (!block.HasAwait) {
 			//}
 
-			block.WrapIntoAsyncTask (host, returnType);
+			block.WrapIntoAsyncTask (host, returnType, context.CurrentTypeParameters);
 		}
 
 		protected override BlockContext CreateBlockContext (ResolveContext rc)
@@ -515,17 +515,31 @@ namespace Mono.CSharp
 		{
 			var storey = (AsyncTaskStorey) Storey;
 			storey.Instance.Emit (ec);
-			ec.Emit (OpCodes.Call, storey.StateMachineMethod.Spec);
 
+			var move_next_entry = storey.StateMachineMethod.Spec;
+			if (storey.MemberName.Arity > 0) {
+				move_next_entry = MemberCache.GetMember (storey.Instance.Type, move_next_entry);
+			}
+
+			ec.Emit (OpCodes.Call, move_next_entry);
+
+			//
+			// Emits return <async-storey-instance>.$builder.Task;
+			//
 			if (storey.Task != null) {
-				//
-				// async.$builder.Task;
-				//
+				var builder_field = storey.Builder.Spec;
+				var task_get = storey.Task.Get;
+
+				if (storey.MemberName.Arity > 0) {
+					builder_field = MemberCache.GetMember (storey.Instance.Type, builder_field);
+					task_get = MemberCache.GetMember (builder_field.MemberType, task_get);
+				}
+
 				var pe_task = new PropertyExpr (storey.Task, loc) {
-					InstanceExpression = new FieldExpr (storey.Builder, loc) {
+					InstanceExpression = new FieldExpr (builder_field, loc) {
 						InstanceExpression = storey.Instance
 					},
-					Getter = storey.Task.Get
+					Getter = task_get
 				};
 
 				pe_task.Emit (ec);
@@ -581,8 +595,8 @@ namespace Mono.CSharp
 		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> stack_forwarders;
 		List<FieldSpec> hoisted_stack_slots;
 
-		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type)
-			: base (initializer.OriginalBlock, initializer.Host, null, null, "async")
+		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type, TypeParameter[] tparams)
+			: base (initializer.OriginalBlock, initializer.Host, null, tparams, "async")
 		{
 			return_type = type;
 		}
@@ -630,6 +644,9 @@ namespace Mono.CSharp
 
 		public Field AddCapturedLocalVariable (TypeSpec type)
 		{
+			if (mutator != null)
+				type = mutator.Mutate (type);
+
 			var field = AddCompilerGeneratedField ("<s>$" + locals_captured++.ToString ("X"), new TypeExpression (type, Location));
 			field.Define ();
 
@@ -697,7 +714,11 @@ namespace Mono.CSharp
 			// Inflate generic Task types
 			//
 			if (has_task_return_type) {
-				bt = bt.MakeGenericType (Module, return_type.TypeArguments);
+				var task_return_type = return_type.TypeArguments;
+				if (mutator != null)
+					task_return_type = mutator.Mutate (task_return_type);
+
+				bt = bt.MakeGenericType (Module, task_return_type);
 				builder_factory = MemberCache.GetMember<MethodSpec> (bt, builder_factory);
 				set_result = MemberCache.GetMember<MethodSpec> (bt, set_result);
 

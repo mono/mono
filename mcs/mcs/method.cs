@@ -1146,7 +1146,7 @@ namespace Mono.CSharp {
 				}
 
 				if ((ModFlags & Modifiers.ASYNC) != 0) {
-					AsyncInitializer.Create (block, parameters, Parent.PartialContainer, ReturnType, Location);
+					AsyncInitializer.Create (this, block, parameters, Parent.PartialContainer, ReturnType, Location);
 				}
 			}
 

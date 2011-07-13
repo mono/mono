@@ -2675,7 +2675,7 @@ namespace Mono.CSharp {
 			AddStatement (new Return (iterator, iterator.Location));
 		}
 
-		public void WrapIntoAsyncTask (TypeContainer host, TypeSpec returnType)
+		public void WrapIntoAsyncTask (TypeContainer host, TypeSpec returnType, TypeParameter[] tparams)
 		{
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
@@ -2685,7 +2685,7 @@ namespace Mono.CSharp {
 			var initializer = new AsyncInitializer (pb, host, block_type);
 			initializer.Type = block_type;
 
-			am_storey = new AsyncTaskStorey (initializer, returnType);
+			am_storey = new AsyncTaskStorey (initializer, returnType, tparams);
 
 			statements = new List<Statement> (1);
 			AddStatement (new StatementExpression (initializer));
