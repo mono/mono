@@ -1,0 +1,67 @@
+.\" 
+.\" cccheck manual page.
+.\" Copyright (C) 2011 Alexander Chebaturkin
+.\" Author:
+.\"   Alexander Chebaturkin (chebaturkin@gmail.com)
+.\"
+.TH Mono "cccheck"
+.SH NAME
+cccheck \- Perform static code contracts verification for CLR assemblies.
+.SH SYNOPSIS
+.PP
+.B cccheck --assembly=<assembly> [options]
+.SH DESCRIPTION
+Perform static code contracts verification to find bugs and inconsistences
+between code and specification. This includes non-null, integer analyses. 
+.PP
+The assembly must have been built with the symbol CONTRACTS_FULL defined,
+otherwise the calls to the contract methods will have been removed
+by the compiler.
+.PP
+Currently only Contract.Assume() and Contract.Assert() methods are 
+supported. Only non-null analysis is supported, the consecutive analyses are
+in development. An error message will be shown if cccheck is unable to process
+all or some of the methods of specified assembly.
+.SH CONFIGURATION OPTIONS
+.TP
+.I "--assembly <assembly-name>"
+The assembly to perform static verification.
+.TP
+.I "--debug"
+Shows debug information about process of proving the assertions. It shows
+four layers of abstraction, raw layer, stack layer, heap layer, 
+and substituted expression level.
+.TP
+.I "--method=<method-name-substring>"
+String for finding method. It filters all methods in assembly where method
+name has this parameter as a substring.
+.TP
+.I "--help"
+Show help for cccheck, listing configuration options.
+
+.SH EXAMPLES
+.TP
+Suppose you have a method:
+  void Method() {
+    object x = null;
+    int y = 1;
+    if (y % 2 == 1)
+      x = new object();
+    else
+      x = new string();
+
+   Contract.Assert(x != null);
+}
+
+After the verification the tool will have results in following format:
+"Assertion at : [Subroutine: <id> Block <blockId> PC <id>] : 
+ is (true|false|unproven|unreachable)".
+(PC is a program counter)
+
+.SH AUTHOR
+Written by Alexander Chebaturkin
+.SH COPYRIGHT
+Copyright 2011 Alexander Chebaturkin.
+Released under MIT license.
+.SH WEB SITE
+Visit http://www.mono-project.com for details

@@ -43,6 +43,7 @@ net_4_0_dirs := \
 	lc		\
 	mono-configuration-crypto \
 	ccrewrite	\
+	cccheck		\
 	security
 
 net_2_0_dirs := \
