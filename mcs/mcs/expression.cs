@@ -46,6 +46,11 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return arguments.ContainsEmitWithAwait ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (expr_tree != null)
@@ -3963,6 +3968,11 @@ namespace Mono.CSharp
 			arguments = new Arguments (2);
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return arguments.ContainsEmitWithAwait ();
+		}
+
 		public static StringConcat Create (ResolveContext rc, Expression left, Expression right, Location loc)
 		{
 			if (left.eclass == ExprClass.Unresolved || right.eclass == ExprClass.Unresolved)
@@ -5079,13 +5089,6 @@ namespace Mono.CSharp
 				mg.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall (ec, "Call", args);
-		}
-
-		public static Invocation CreatePredefined (MethodGroupExpr mge, Arguments arguments)
-		{
-			return new Invocation (null, arguments) {
-				mg = mge
-			};
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -7915,7 +7918,8 @@ namespace Mono.CSharp
 	///   During semantic analysis these are transformed into 
 	///   IndexerAccess, ArrayAccess or a PointerArithmetic.
 	/// </summary>
-	public class ElementAccess : Expression {
+	public class ElementAccess : Expression
+	{
 		public Arguments Arguments;
 		public Expression Expr;
 
@@ -7924,6 +7928,11 @@ namespace Mono.CSharp
 			Expr = e;
 			this.loc = loc;
 			this.Arguments = args;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return Expr.ContainsEmitWithAwait () || Arguments.ContainsEmitWithAwait ();
 		}
 
 		//
@@ -8043,9 +8052,9 @@ namespace Mono.CSharp
 		//
 		ElementAccess ea;
 
-		LocalTemporary temp, expr_copy;
-		Arguments prepared_arguments;
+		LocalTemporary temp;
 		bool prepared;
+		bool has_await_args;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
 		{
@@ -8053,9 +8062,26 @@ namespace Mono.CSharp
 			loc = l;
 		}
 
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			var ac = (ArrayContainer) ea.Expr.Type;
+
+			LoadInstanceAndArguments (ec, false, false);
+
+			if (ac.Element.IsGenericParameter && mode == AddressOp.Load)
+				ec.Emit (OpCodes.Readonly);
+
+			ec.EmitArrayAddress (ac);
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return ea.CreateExpressionTree (ec);
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return ea.ContainsEmitWithAwait ();
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -8102,10 +8128,26 @@ namespace Mono.CSharp
 		//
 		// Load the array arguments into the stack.
 		//
-		void LoadArrayAndArguments (EmitContext ec)
+		bool LoadInstanceAndArguments (EmitContext ec, bool duplicateArguments, bool prepareAwait)
 		{
-			ea.Expr.Emit (ec);
-			ea.Arguments.Emit (ec);
+			if (prepareAwait) {
+				ea.Expr = ea.Expr.EmitToField (ec);
+			} else if (duplicateArguments) {
+				ea.Expr.Emit (ec);
+				ec.Emit (OpCodes.Dup);
+
+				var copy = new LocalTemporary (ea.Expr.Type);
+				copy.Store (ec);
+				ea.Expr = copy;
+			} else {
+				ea.Expr.Emit (ec);
+			}
+
+			var dup_args = ea.Arguments.Emit (ec, duplicateArguments, prepareAwait);
+			if (dup_args != null)
+				ea.Arguments = dup_args;
+
+			return duplicateArguments;
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -8115,11 +8157,14 @@ namespace Mono.CSharp
 			if (prepared) {
 				ec.EmitLoadFromPtr (type);
 			} else {
-				if (prepared_arguments == null) {
-					LoadArrayAndArguments (ec);
+				if (has_await_args) {
+					LoadInstanceAndArguments (ec, false, false);
 				} else {
-					expr_copy.Emit (ec);
-					prepared_arguments.Emit (ec);
+					if (ea.Arguments.ContainsEmitWithAwait ()) {
+						LoadInstanceAndArguments (ec, false, true);
+					}
+
+					LoadInstanceAndArguments (ec, false, false);
 				}
 
 				ec.EmitArrayLoad (ac);
@@ -8142,35 +8187,47 @@ namespace Mono.CSharp
 			var ac = (ArrayContainer) ea.Expr.Type;
 			TypeSpec t = source.Type;
 
+			has_await_args = ea.Arguments.ContainsEmitWithAwait () || source.ContainsEmitWithAwait ();
+
 			//
 			// When we are dealing with a struct, get the address of it to avoid value copy
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
 			if (t.IsStruct && ((isCompound && !(source is DynamicExpressionStatement)) || !BuiltinTypeSpec.IsPrimitiveType (t))) {
-				LoadArrayAndArguments (ec);
-				ec.EmitArrayAddress (ac);
+				LoadInstanceAndArguments (ec, false, has_await_args);
 
-				if (isCompound) {
-					ec.Emit (OpCodes.Dup);
+				if (has_await_args) {
+					if (source.ContainsEmitWithAwait ())
+						source = source.EmitToField (ec);
+
+					LoadInstanceAndArguments (ec, false, false);
+				} else {
+					prepared = true;
 				}
 
-				prepared = true;
-			} else if (isCompound) {
-				ea.Expr.Emit (ec);
-				ec.Emit (OpCodes.Dup);
+				ec.EmitArrayAddress (ac);
 
-				expr_copy = new LocalTemporary (ea.Expr.Type);
-				expr_copy.Store (ec);
-				prepared_arguments = ea.Arguments.Emit (ec, true);
+				if (isCompound && !has_await_args) {
+					ec.Emit (OpCodes.Dup);
+				}
 			} else {
-				LoadArrayAndArguments (ec);
+				LoadInstanceAndArguments (ec, isCompound, has_await_args);
+
+				if (has_await_args) {
+					if (source.ContainsEmitWithAwait ())
+						source = source.EmitToField (ec);
+
+					LoadInstanceAndArguments (ec, false, false);
+				}
 			}
 
 			source.Emit (ec);
 
-			if (expr_copy != null) {
-				expr_copy.Release (ec);
+			if (isCompound) {
+				var lt = ea.Expr as LocalTemporary;
+				if (lt != null)
+					lt.Release (ec);
 			}
 
 			if (leave_copy) {
@@ -8203,16 +8260,19 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public void AddressOf (EmitContext ec, AddressOp mode)
+		public override Expression EmitToField (EmitContext ec)
 		{
-			var ac = (ArrayContainer) ea.Expr.Type;
-
-			LoadArrayAndArguments (ec);
-
-			if (ac.Element.IsGenericParameter && mode == AddressOp.Load)
-				ec.Emit (OpCodes.Readonly);
-
-			ec.EmitArrayAddress (ac);
+			//
+			// Have to be specialized for arrays to get access to
+			// underlying element. Instead of another result copy we
+			// need direct access to element 
+			//
+			// Consider:
+			//
+			// CallRef (ref a[await Task.Factory.StartNew (() => 1)]);
+			//
+			ea.Expr = ea.Expr.EmitToField (ec);
+			return this;
 		}
 
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
@@ -8323,29 +8383,35 @@ namespace Mono.CSharp
 					await_source_arg = new LocalTemporary (Type);
 					await_source_arg.Store (ec);
 
-					has_await_arguments = false;
-
 					arguments.Add (new Argument (await_source_arg));
+
+					if (leave_copy) {
+						temp = await_source_arg;
+					}
+
+					has_await_arguments = false;
 				} else {
 					arguments = null;
-				}
 
-				if (leave_copy) {
-					ec.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (Type);
-					temp.Store (ec);
+					if (leave_copy) {
+						ec.Emit (OpCodes.Dup);
+						temp = new LocalTemporary (Type);
+						temp.Store (ec);
+					}
 				}
 			} else {
-				Expression value = source;
-
 				if (leave_copy) {
-					temp = new LocalTemporary (Type);
-					source.Emit (ec);
-					temp.Store (ec);
-					value = temp;
+					if (arguments.ContainsEmitWithAwait () || source.ContainsEmitWithAwait ()) {
+						source = source.EmitToField (ec);
+					} else {
+						temp = new LocalTemporary (Type);
+						source.Emit (ec);
+						temp.Store (ec);
+						source = temp;
+					}
 				}
 
-				arguments.Add (new Argument (value));
+				arguments.Add (new Argument (source));
 			}
 
 			var call = new CallEmitter ();
@@ -8358,6 +8424,8 @@ namespace Mono.CSharp
 			if (temp != null) {
 				temp.Emit (ec);
 				temp.Release (ec);
+			} else if (leave_copy) {
+				source.Emit (ec);
 			}
 
 			if (await_source_arg != null) {

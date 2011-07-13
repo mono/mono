@@ -139,6 +139,20 @@ namespace Mono.CSharp
 			}
 		}
 
+		sealed class GetResultInvocation : Invocation
+		{
+			public GetResultInvocation (MethodGroupExpr mge, Arguments arguments)
+				: base (null, arguments)
+			{
+				mg = mge;
+			}
+
+			public override Expression EmitToField (EmitContext ec)
+			{
+				return this;
+			}
+		}
+
 		Field awaiter;
 		PropertyExpr is_completed;
 		MethodSpec on_completed;
@@ -182,7 +196,7 @@ namespace Mono.CSharp
 			var mg_result = MethodGroupExpr.CreatePredefined (get_result, fe_awaiter.Type, loc);
 			mg_result.InstanceExpression = fe_awaiter;
 
-			return Invocation.CreatePredefined (mg_result, new Arguments (0));
+			return new GetResultInvocation (mg_result, new Arguments (0));
 		}
 
 		public void EmitPrologue (EmitContext ec)

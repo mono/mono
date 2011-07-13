@@ -80,6 +80,11 @@ class Base
 		return arg;
 	}
 	
+	protected static void CallRefParams (ref int i, params int[] i2)
+	{
+		i = 5;
+	}
+	
 	protected int CallNamed (int a, int b)
 	{
 		return a - b;
@@ -93,6 +98,74 @@ class Base
 
 class Tester : Base
 {
+	async Task<bool> ArrayAccess_1 ()
+	{
+		bool[] b = new bool[1];
+		b [0] = await Task.Factory.StartNew (() => true);
+		return b[await Task.Factory.StartNew (() => 0)];
+	}
+	
+	async Task<int> ArrayAccess_2 ()
+	{
+		double[] b = new double[2];
+		b [await Task.Factory.StartNew (() => 1)] = 5.5;
+		if (b [1] != 5.5)
+			return 1;
+		
+		var d = b [await Task.Factory.StartNew (() => 1)] = 2.5;
+		if (b [1] != 2.5)
+			return 2;
+		
+		if (d != 2.5)
+			return 3;
+		
+		d = b [await Task.Factory.StartNew (() => 1)] = await Task.Factory.StartNew (() => 4.4);
+		if (d != 4.4)
+			return 4;
+		
+		return 0;
+	}
+
+	async Task<int> ArrayAccess_3 ()
+	{
+		decimal[] d = new decimal [4];
+		d[1] = 4;
+		
+		var r = ++d[await Task.Factory.StartNew (() => 1)];
+		if (r != 5)
+			return 1;
+		
+		d [1] = 6;
+		d [await Task.Factory.StartNew (() => 1)] += await Task.Factory.StartNew (() => 9.9m);
+		if (d [1] != 15.9m)
+			return 2;
+		
+		d [1] = 6;
+		r =  d [await Task.Factory.StartNew (() => 1)] -= await Task.Factory.StartNew (() => 5.9m);
+		if (d [1] != 0.1m)
+			return 3;
+		
+		return 0;
+	}
+	
+	async Task<bool> ArrayAccess_4 ()
+	{
+		string[] s = new string [4];
+		s[1] = "a";
+		
+		s [await Task.Factory.StartNew (() => 1)] += await Task.Factory.StartNew (() => "b");
+		return s [1] == "ab";
+	}
+	
+	async Task<bool> ArrayAccess_5 ()
+	{
+		int[][] a = new int[3][];
+		a [1] = new int [5];
+		int index = 1;
+		CallRefParams (ref a[await Task.Factory.StartNew (() => index++)][0], await Task.Factory.StartNew (() => 3));
+		return a [1][0] == 5;
+	}
+
 	async Task<int> AssignTest_1 ()
 	{
 		field_int = await Task.Factory.StartNew (() => 0);
@@ -212,9 +285,9 @@ class Tester : Base
 	
 	async Task<int> IndexerTest_3 ()
 	{
-		int value = 3;
+		int value = -5;
 		this[await Task.Factory.StartNew (() => value++)] += await Task.Factory.StartNew (() => 5);
-		return this[3] - 15;
+		return this[3] + 25;
 	}
 	
 	async Task<int> IndexerTest_4 ()
@@ -235,7 +308,28 @@ class Tester : Base
 		if (PropertyThis[0] != 27)
 			return 2;
 
+		return PropertyThis[5] -= await Task.Factory.StartNew (() => 27);
+	}
+	
+	async Task<int> IndexerTest_6 ()
+	{
+		var r = this[3] = await Task.Factory.StartNew (() => 9);
+		if (r != 9)
+			return 1;
+		
+		var r2 = this[await Task.Factory.StartNew (() => 55)] = await Task.Factory.StartNew (() => 8);
+
+		if (r2 != 8)
+			return 2;
+		
 		return 0;
+	}
+	
+	async Task<bool> IndexerTest_7 ()
+	{
+		int value = -5;
+		var res = ++this[await Task.Factory.StartNew (() => value++)];
+		return res == 1;
 	}
 	
 	async Task<bool> NewArrayInitTest_1 ()
@@ -285,6 +379,24 @@ class Tester : Base
 			return 1;
 		
 		return PropertyInt - 6;
+	}
+	
+	async Task<int> PropertyTest_3 ()
+	{
+		var r = PropertyThis.PropertyInt = await Task.Factory.StartNew (() => 9);
+		if (r != 9)
+			return 1;
+		
+		PropertyThis.PropertyInt = 4;
+		int[] a = new int[4];
+		a [await Task.Factory.StartNew (() => 1)] = PropertyThis.PropertyInt += await Task.Factory.StartNew (() => 8);
+		if (a[1] != 21)
+			return 2;
+		
+		if (PropertyThis.PropertyInt != 34)
+			return 3;
+		
+		return 0;
 	}
 	
 	async Task<bool> StringConcatTest_1 ()

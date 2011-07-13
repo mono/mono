@@ -294,12 +294,6 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 		
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			ec.Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
-			return null;
-		}
-
 		public Expression Target {
 			get { return target; }
 		}
@@ -308,6 +302,17 @@ namespace Mono.CSharp {
 			get {
 				return source;
 			}
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return target.ContainsEmitWithAwait () || source.ContainsEmitWithAwait ();
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			ec.Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
+			return null;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

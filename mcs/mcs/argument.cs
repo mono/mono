@@ -253,18 +253,16 @@ namespace Mono.CSharp
 				ordered.Add (arg);
 			}
 
-			public override Arguments Emit (EmitContext ec, bool dup_args)
+			public override Arguments Emit (EmitContext ec, bool dup_args, bool prepareAwait)
 			{
-				bool await_inside = ContainsEmitWithAwait ();
-
 				foreach (var a in ordered) {
-					if (await_inside)
+					if (prepareAwait)
 						a.EmitToField (ec);
 					else
 						a.EmitToVariable (ec);
 				}
 
-				return base.Emit (ec, dup_args);
+				return base.Emit (ec, dup_args, prepareAwait);
 			}
 		}
 
@@ -422,27 +420,25 @@ namespace Mono.CSharp
 		// 
 		public void Emit (EmitContext ec)
 		{
-			Emit (ec, false);
+			Emit (ec, false, false);
 		}
 
 		//
 		// if `dup_args' is true or any of arguments contains await.
 		// A copy of all arguments will be returned to the caller
 		//
-		public virtual Arguments Emit (EmitContext ec, bool dup_args)
+		public virtual Arguments Emit (EmitContext ec, bool dup_args, bool prepareAwait)
 		{
 			List<Argument> dups;
 
-			bool await_inside = ContainsEmitWithAwait ();
-
-			if ((dup_args && Count != 0) || await_inside)
+			if ((dup_args && Count != 0) || prepareAwait)
 				dups = new List<Argument> (Count);
 			else
 				dups = null;
 
 			LocalTemporary lt;
 			foreach (Argument a in args) {
-				if (await_inside) {
+				if (prepareAwait) {
 					dups.Add (a.EmitToField (ec));
 					continue;
 				}

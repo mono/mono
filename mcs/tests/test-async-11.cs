@@ -39,8 +39,11 @@ class C
 	int field;
 	
 	int prop_value;
+	int get_called;
+	
 	int Prop {
 		get {
+			++get_called;
 			return prop_value;
 		}
 		set {
@@ -101,7 +104,7 @@ class C
 			return 1;
 		
 		if (s2 [0, 0].value != 20)
-			return 1;
+			return 2;
 
 		return 0;
 	}
@@ -141,10 +144,19 @@ class C
 	{
 		var c = new C ();
 		c.prop_value = 7;
-		c.Prop += await Task.Factory.StartNew (() => { c.prop_value = 99; return 3; });
+		c.Prop += await Task.Factory.StartNew (() => {
+			if (c.get_called != 1) 
+				return -44;
+			
+			c.prop_value = 99;
+			return 3;
+		});
 		
-		if (c.prop_value != 10)
+		if (c.get_called != 1)
 			return 1;
+		
+		if (c.prop_value != 109)
+			return 2;
 
 		return 0;
 	}

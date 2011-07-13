@@ -1111,7 +1111,7 @@ namespace Mono.CSharp
 			}
 
 			if (Arguments != null && !InstanceExpressionOnStack) {
-				EmittedArguments = Arguments.Emit (ec, DuplicateArguments || HasAwaitArguments);
+				EmittedArguments = Arguments.Emit (ec, DuplicateArguments, HasAwaitArguments);
 				if (EmittedArguments != null) {
 					if (instance_copy != null) {
 						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);

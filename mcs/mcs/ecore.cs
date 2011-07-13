@@ -5491,17 +5491,19 @@ namespace Mono.CSharp {
 					await_source_arg = new LocalTemporary (Type);
 					await_source_arg.Store (ec);
 
-					has_await_arguments = false;
-
 					args = new Arguments (1);
 					args.Add (new Argument (await_source_arg));
+
+					if (leave_copy) {
+						temp = await_source_arg;
+					}
+
+					has_await_arguments = false;
 				} else {
 					args = null;
-				}
 
-				if (leave_copy) {
-					ec.Emit (OpCodes.Dup);
-					if (!IsStatic) {
+					if (leave_copy) {
+						ec.Emit (OpCodes.Dup);
 						temp = new LocalTemporary (this.Type);
 						temp.Store (ec);
 					}
