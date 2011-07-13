@@ -998,6 +998,11 @@ for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
 `k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
 The default is 512 megabytes.
 .TP
+\fBsoft-heap-limit=\fIsize\fR
+Once the heap size gets larger than this size, ignore what the default
+major collection trigger metric says and only allow four nursery size's
+of major heap growth between major collections.
+.TP
 \fBwbarrier=\fIwbarrier\fR
 Specifies which write barrier to use.  Options are `cardtable' and
 `remset'.  The card table barrier is faster but less precise, and only

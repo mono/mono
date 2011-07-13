@@ -338,6 +338,7 @@ static long long time_major_fragment_creation = 0;
 
 int gc_debug_level = 0;
 FILE* gc_debug_file;
+static gboolean debug_print_allowance = FALSE;
 
 /*
 void
@@ -777,6 +778,7 @@ static MonoVTable *array_fill_vtable;
  */
 /*heap limits*/
 static mword max_heap_size = ((mword)0)- ((mword)1);
+static mword soft_heap_limit = ((mword)0) - ((mword)1);
 static mword allocated_heap;
 
 /*Object was pinned during the current collection*/
@@ -805,10 +807,18 @@ mono_sgen_try_alloc_space (mword size, int space)
 }
 
 static void
-init_heap_size_limits (glong max_heap)
+init_heap_size_limits (glong max_heap, glong soft_limit)
 {
+	if (soft_limit)
+		soft_heap_limit = soft_limit;
+
 	if (max_heap == 0)
 		return;
+
+	if (max_heap < soft_limit) {
+		fprintf (stderr, "max-heap-size must be at least as large as soft-heap-limit.\n");
+		exit (1);
+	}
 
 	if (max_heap < nursery_size * 4) {
 		fprintf (stderr, "max-heap-size must be at least 4 times larger than nursery size.\n");
@@ -2990,7 +3000,7 @@ static void
 try_calculate_minor_collection_allowance (gboolean overwrite)
 {
 	int num_major_sections, num_major_sections_saved, save_target, allowance_target;
-	mword los_memory_saved;
+	mword los_memory_saved, new_major, new_heap_size;
 
 	if (overwrite)
 		g_assert (need_calculate_minor_collection_allowance);
@@ -3009,7 +3019,16 @@ try_calculate_minor_collection_allowance (gboolean overwrite)
 	num_major_sections_saved = MAX (last_collection_old_num_major_sections - num_major_sections, 0);
 	los_memory_saved = MAX (last_collection_old_los_memory_usage - last_collection_los_memory_usage, 1);
 
-	save_target = ((num_major_sections * major_collector.section_size) + los_memory_saved) / 2;
+	new_major = num_major_sections * major_collector.section_size;
+	new_heap_size = new_major + last_collection_los_memory_usage;
+
+	/*
+	 * FIXME: Why is save_target half the major memory plus half the
+	 * LOS memory saved?  Shouldn't it be half the major memory
+	 * saved plus half the LOS memory saved?  Or half the whole heap
+	 * size?
+	 */
+	save_target = (new_major + los_memory_saved) / 2;
 
 	/*
 	 * We aim to allow the allocation of as many sections as is
@@ -3029,6 +3048,23 @@ try_calculate_minor_collection_allowance (gboolean overwrite)
 	allowance_target = (mword)((double)save_target * (double)(minor_collection_sections_alloced * major_collector.section_size + last_collection_los_memory_alloced) / (double)(num_major_sections_saved * major_collector.section_size + los_memory_saved));
 
 	minor_collection_allowance = MAX (MIN (allowance_target, num_major_sections * major_collector.section_size + los_memory_usage), MIN_MINOR_COLLECTION_ALLOWANCE);
+
+	if (new_heap_size + minor_collection_allowance > soft_heap_limit) {
+		if (new_heap_size > soft_heap_limit)
+			minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
+		else
+			minor_collection_allowance = MAX (soft_heap_limit - new_heap_size, MIN_MINOR_COLLECTION_ALLOWANCE);
+	}
+
+	if (debug_print_allowance) {
+		mword old_major = last_collection_old_num_major_sections * major_collector.section_size;
+
+		fprintf (gc_debug_file, "Before collection: %ld bytes (%ld major, %ld LOS)\n",
+				old_major + last_collection_old_los_memory_usage, old_major, last_collection_old_los_memory_usage);
+		fprintf (gc_debug_file, "After collection: %ld bytes (%ld major, %ld LOS)\n",
+				new_heap_size, new_major, last_collection_los_memory_usage);
+		fprintf (gc_debug_file, "Allowance: %ld bytes\n", minor_collection_allowance);
+	}
 
 	if (major_collector.have_computed_minor_collection_allowance)
 		major_collector.have_computed_minor_collection_allowance ();
@@ -7252,6 +7288,8 @@ mono_gc_base_init (void)
 	struct sigaction sinfo;
 	glong max_heap = 0;
 
+	glong soft_limit = 0;
+
 	/* the gc_initialized guard seems to imply this method is
 	   idempotent, but LOCK_INIT(gc_mutex) might not be.  It's
 	   defined in sgen-gc.h as nothing, so there's no danger at
@@ -7354,6 +7392,19 @@ mono_gc_base_init (void)
 				}
 				continue;
 			}
+			if (g_str_has_prefix (opt, "soft-heap-limit=")) {
+				opt = strchr (opt, '=') + 1;
+				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &soft_limit)) {
+					if (soft_limit <= 0) {
+						fprintf (stderr, "soft-heap-limit must be positive.\n");
+						exit (1);
+					}
+				} else {
+					fprintf (stderr, "soft-heap-limit must be an integer.\n");
+					exit (1);
+				}
+				continue;
+			}
 			if (g_str_has_prefix (opt, "stack-mark=")) {
 				opt = strchr (opt, '=') + 1;
 				if (!strcmp (opt, "precise")) {
@@ -7392,6 +7443,7 @@ mono_gc_base_init (void)
 			if (!(major_collector.handle_gc_param && major_collector.handle_gc_param (opt))) {
 				fprintf (stderr, "MONO_GC_PARAMS must be a comma-delimited list of one or more of the following:\n");
 				fprintf (stderr, "  max-heap-size=N (where N is an integer, possibly with a k, m or a g suffix)\n");
+				fprintf (stderr, "  soft-heap-limit=n (where N is an integer, possibly with a k, m or a g suffix)\n");
 				fprintf (stderr, "  nursery-size=N (where N is an integer, possibly with a k, m or a g suffix)\n");
 				fprintf (stderr, "  major=COLLECTOR (where COLLECTOR is `marksweep', `marksweep-par' or `copying')\n");
 				fprintf (stderr, "  wbarrier=WBARRIER (where WBARRIER is `remset' or `cardtable')\n");
@@ -7409,7 +7461,7 @@ mono_gc_base_init (void)
 
 	nursery_size = DEFAULT_NURSERY_SIZE;
 	minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
-	init_heap_size_limits (max_heap);
+	init_heap_size_limits (max_heap, soft_limit);
 
 	alloc_nursery ();
 
@@ -7429,6 +7481,8 @@ mono_gc_base_init (void)
 						gc_debug_file = stderr;
 					g_free (rf);
 				}
+			} else if (!strcmp (opt, "print-allowance")) {
+				debug_print_allowance = TRUE;
 			} else if (!strcmp (opt, "collect-before-allocs")) {
 				collect_before_allocs = 1;
 			} else if (g_str_has_prefix (opt, "collect-before-allocs=")) {
