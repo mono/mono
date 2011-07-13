@@ -1082,6 +1082,7 @@ namespace Mono.CSharp
 			}
 
 			OpCode call_op;
+			LocalTemporary lt = null;
 
 			if (method.IsStatic) {
 				call_op = OpCodes.Call;
@@ -1102,7 +1103,7 @@ namespace Mono.CSharp
 					if (DuplicateArguments) {
 						ec.Emit (OpCodes.Dup);
 						if (Arguments != null && Arguments.Count != 0) {
-							var lt = new LocalTemporary (instance_on_stack_type);
+							lt = new LocalTemporary (instance_on_stack_type);
 							lt.Store (ec);
 							instance_copy = lt;
 						}
@@ -1116,7 +1117,6 @@ namespace Mono.CSharp
 					if (instance_copy != null) {
 						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
 
-						var lt = instance_copy as LocalTemporary;
 						if (lt != null)
 							lt.Release (ec);
 					}

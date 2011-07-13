@@ -10,6 +10,11 @@ struct S
 {
 	public int Value;
 	
+	public S (int a1, string a2)
+	{
+		Value = a1;
+	}
+	
 	public void SetValue (int value)
 	{
 		Value = value;
@@ -23,11 +28,20 @@ enum E
 
 class Base
 {
-	protected int field_int;
+	public int field_int;
 	protected int field_this;
 	protected int property_this_counter;
 	
 	public event Action Event;
+	
+	public Base ()
+	{
+	}
+	
+	public Base (int arg, int arg2)
+	{
+		field_int = arg;
+	}
 	
 	public bool PropertyBool {
 		get {
@@ -332,6 +346,71 @@ class Tester : Base
 		return res == 1;
 	}
 	
+	async Task<bool> NewTest_1 ()
+	{
+		int value = 9;
+		var b = new Base (value, await Task.Factory.StartNew (() => 33));
+		return b.field_int == 9;
+	}
+	
+	async Task<bool> NewTest_2 ()
+	{
+		var s = new S (await Task.Factory.StartNew (() => 77), await Task.Factory.StartNew (() => "b"));
+		return s.Value == 77;
+	}
+	
+	async Task<int> NewInitTest_1 ()
+	{
+		int value = 9;
+		
+		var b = new Base (value, await Task.Factory.StartNew (() => 33)) { };
+		if (b.field_int != 9)
+			return 1;
+		
+		b = new Base (value, await Task.Factory.StartNew (() => 11)) {
+			field_int = await Task.Factory.StartNew (() => 12),
+			PropertyInt = await Task.Factory.StartNew (() => 13)
+		};
+		
+		if (b.field_int != 25)
+			return 2;
+		
+		b = new Base () {
+			field_int = await Task.Factory.StartNew (() => 12),
+			PropertyInt = await Task.Factory.StartNew (() => 13)
+		};
+
+		if (b.field_int != 25)
+			return 3;
+		
+		return 0;
+	}
+	
+	async Task<int> NewInitTest_2 ()
+	{
+		int value = 9;
+		
+		var s = new S (value, await Task.Factory.StartNew (() => "x")) { };
+		if (s.Value != 9)
+			return 1;
+		
+		s = new S (value, await Task.Factory.StartNew (() => "y")) {
+			Value = await Task.Factory.StartNew (() => 12)
+		};
+
+		if (s.Value != 12)
+			return 2;
+		
+		s = new S () {
+			Value = await Task.Factory.StartNew (() => 13)
+		};
+		
+		if (s.Value != 13)
+			return 3;
+		
+		return 0;
+	}
+
 	async Task<bool> NewArrayInitTest_1 ()
 	{
 		var a = new int[await Task.Factory.StartNew (() => 5)];

@@ -5389,6 +5389,11 @@ namespace Mono.CSharp
 			return null;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return arguments != null && arguments.ContainsEmitWithAwait ();
+		}
+
 		//
 		// Checks whether the type is an interface that has the
 		// [ComImport, CoClass] attributes and must be treated
@@ -5590,9 +5595,13 @@ namespace Mono.CSharp
 			} else if (vr != null && vr.IsRef) {
 				vr.EmitLoad (ec);
 			}
-			
-			if (arguments != null)
+
+			if (arguments != null) {
+				if ((arguments.Count > (this is NewInitialize ? 0 : 1)) && arguments.ContainsEmitWithAwait ())
+					arguments = arguments.Emit (ec, false, true);
+
 				arguments.Emit (ec);
+			}
 
 			if (is_value_type) {
 				if (method == null) {
@@ -8248,18 +8257,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void EmitNew (EmitContext ec, New source, bool leave_copy)
-		{
-			if (!source.Emit (ec, this)) {
-				if (leave_copy)
-					throw new NotImplementedException ();
-
-				return;
-			}
-
-			throw new NotImplementedException ();
-		}
-
 		public override Expression EmitToField (EmitContext ec)
 		{
 			//
@@ -9313,6 +9310,16 @@ namespace Mono.CSharp
 				t.initializers.Add (e.Clone (clonectx));
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			foreach (var e in initializers) {
+				if (e.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return false;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			var expr_initializers = new ArrayInitializer (initializers.Count, loc);
@@ -9445,6 +9452,11 @@ namespace Mono.CSharp
 				e.Emit (ec);
 			}
 
+			public override Expression EmitToField (EmitContext ec)
+			{
+				return (Expression) new_instance.instance;
+			}
+
 			#region IMemoryLocation Members
 
 			public void AddressOf (EmitContext ec, AddressOp mode)
@@ -9464,22 +9476,17 @@ namespace Mono.CSharp
 			this.initializers = initializers;
 		}
 
-		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)
-		{
-			instance = base.EmitAddressOf (ec, Mode);
-
-			if (!initializers.IsEmpty)
-				initializers.Emit (ec);
-
-			return instance;
-		}
-
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			base.CloneTo (clonectx, t);
 
 			NewInitialize target = (NewInitialize) t;
 			target.initializers = (CollectionOrObjectInitializers) initializers.Clone (clonectx);
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return base.ContainsEmitWithAwait () || initializers.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -9514,11 +9521,14 @@ namespace Mono.CSharp
 			if (initializers.IsEmpty)
 				return left_on_stack;
 
-			LocalTemporary temp = target as LocalTemporary;
-			if (temp == null) {
+			LocalTemporary temp = null;
+
+			instance = target as LocalTemporary;
+
+			if (instance == null) {
 				if (!left_on_stack) {
 					VariableReference vr = target as VariableReference;
-					
+
 					// FIXME: This still does not work correctly for pre-set variables
 					if (vr != null && vr.IsRef)
 						target.AddressOf (ec, AddressOp.Load);
@@ -9527,21 +9537,39 @@ namespace Mono.CSharp
 					left_on_stack = true;
 				}
 
-				temp = new LocalTemporary (type);
+				if (initializers.ContainsEmitWithAwait ()) {
+					instance = new EmptyExpression (Type).EmitToField (ec) as IMemoryLocation;
+				} else {
+					temp = new LocalTemporary (type);
+					instance = temp;
+				}
 			}
 
-			instance = temp;
-			if (left_on_stack)
+			if (left_on_stack && temp != null)
 				temp.Store (ec);
 
 			initializers.Emit (ec);
 
 			if (left_on_stack) {
-				temp.Emit (ec);
-				temp.Release (ec);
+				if (temp != null) {
+					temp.Emit (ec);
+					temp.Release (ec);
+				} else {
+					((Expression) instance).Emit (ec);
+				}
 			}
 
 			return left_on_stack;
+		}
+
+		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)
+		{
+			instance = base.EmitAddressOf (ec, Mode);
+
+			if (!initializers.IsEmpty)
+				initializers.Emit (ec);
+
+			return instance;
 		}
 	}
 
