@@ -549,17 +549,20 @@ namespace Mono.CSharp {
 
 		protected static void EmitExpressionsList (EmitContext ec, List<Expression> expressions)
 		{
-			bool contains_await = false;
-			for (int i = 1; i < expressions.Count; ++i) {
-				if (expressions[i].ContainsEmitWithAwait ()) {
-					contains_await = true;
-					break;
-				}
-			}
+			if (ec.HasSet (BuilderContext.Options.AsyncBody)) {
+				bool contains_await = false;
 
-			if (contains_await) {
-				for (int i = 0; i < expressions.Count; ++i) {
-					expressions [i] = expressions[i].EmitToField (ec);
+				for (int i = 1; i < expressions.Count; ++i) {
+					if (expressions[i].ContainsEmitWithAwait ()) {
+						contains_await = true;
+						break;
+					}
+				}
+
+				if (contains_await) {
+					for (int i = 0; i < expressions.Count; ++i) {
+						expressions[i] = expressions[i].EmitToField (ec);
+					}
 				}
 			}
 
@@ -2041,6 +2044,11 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
@@ -2482,6 +2490,11 @@ namespace Mono.CSharp {
 		{
 			// Do nothing, most unresolved type expressions cannot be
 			// resolved to different type
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -5218,7 +5231,7 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
-			if (source.ContainsEmitWithAwait ()) {
+			if (ec.HasSet (BuilderContext.Options.AsyncBody) && source.ContainsEmitWithAwait ()) {
 				source = source.EmitToField (ec);
 			}
 

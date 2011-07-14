@@ -1073,11 +1073,10 @@ namespace Mono.CSharp
 		{
 			Expression instance_copy = null;
 
-			if (!HasAwaitArguments) {
+			if (!HasAwaitArguments && ec.HasSet (BuilderContext.Options.AsyncBody)) {
 				HasAwaitArguments = Arguments != null && Arguments.ContainsEmitWithAwait ();
-				if (HasAwaitArguments) {
-					if (InstanceExpressionOnStack)
-						throw new NotSupportedException ();
+				if (HasAwaitArguments && InstanceExpressionOnStack) {
+					throw new NotSupportedException ();
 				}
 			}
 

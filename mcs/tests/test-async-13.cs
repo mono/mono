@@ -19,6 +19,11 @@ struct S
 	{
 		Value = value;
 	}
+	
+	public static implicit operator S (Base b)
+	{
+		return new S (400, "a");
+	}
 }
 
 enum E
@@ -74,6 +79,30 @@ class Base
 		}
 	}
 	
+	public static bool operator true (Base a)
+	{
+		return true;
+	}
+
+	public static bool operator false (Base a)
+	{
+		return false;
+	}
+	
+	public static Base operator & (Base a, Base b)
+	{
+		return new Base () {
+			field_int = 100
+		};
+	}
+	
+	public static Base operator | (Base a, Base b)
+	{
+		return new Base () {
+			field_int = 200
+		};
+	}
+	
 	protected int Call (int arg1, int arg2, int arg3)
 	{
 		if (arg1 != 5)
@@ -94,6 +123,15 @@ class Base
 		return arg;
 	}
 	
+	public void CallBool (bool b)
+	{
+	}
+	
+	public int CallS (S s)
+	{
+		return s.Value;
+	}
+	
 	protected static void CallRefParams (ref int i, params int[] i2)
 	{
 		i = 5;
@@ -112,14 +150,14 @@ class Base
 
 class Tester : Base
 {
-	async Task<bool> ArrayAccess_1 ()
+	async Task<bool> ArrayAccessTest_1 ()
 	{
 		bool[] b = new bool[1];
 		b [0] = await Task.Factory.StartNew (() => true);
 		return b[await Task.Factory.StartNew (() => 0)];
 	}
 	
-	async Task<int> ArrayAccess_2 ()
+	async Task<int> ArrayAccessTest_2 ()
 	{
 		double[] b = new double[2];
 		b [await Task.Factory.StartNew (() => 1)] = 5.5;
@@ -140,7 +178,7 @@ class Tester : Base
 		return 0;
 	}
 
-	async Task<int> ArrayAccess_3 ()
+	async Task<int> ArrayAccessTest_3 ()
 	{
 		decimal[] d = new decimal [4];
 		d[1] = 4;
@@ -162,7 +200,7 @@ class Tester : Base
 		return 0;
 	}
 	
-	async Task<bool> ArrayAccess_4 ()
+	async Task<bool> ArrayAccessTest_4 ()
 	{
 		string[] s = new string [4];
 		s[1] = "a";
@@ -171,13 +209,20 @@ class Tester : Base
 		return s [1] == "ab";
 	}
 	
-	async Task<bool> ArrayAccess_5 ()
+	async Task<bool> ArrayAccessTest_5 ()
 	{
 		int[][] a = new int[3][];
 		a [1] = new int [5];
 		int index = 1;
 		CallRefParams (ref a[await Task.Factory.StartNew (() => index++)][0], await Task.Factory.StartNew (() => 3));
 		return a [1][0] == 5;
+	}
+
+	async Task<int> ArrayAccessTest_6 ()
+	{
+		int value = -6;
+		int[] a = new int[3] { 3, 6, 9 };
+		return a [await Task.Factory.StartNew (() => (long)1)] + value;
 	}
 
 	async Task<int> AssignTest_1 ()
@@ -230,7 +275,7 @@ class Tester : Base
 
 	async Task<bool> CallTest_4 ()
 	{
-		return E.E_1.Equals (await Task.Factory.StartNew (() => E.E_1));
+		return E.E_1.Equals (unchecked (await Task.Factory.StartNew (() => E.E_1)));
 	}
 
 	async Task<int> CallTest_5 ()
@@ -240,7 +285,19 @@ class Tester : Base
 			b: await Task.Factory.StartNew (() => value++),
 			a: value) - 1;
 	}
-
+	
+	async Task<bool> CastTest_1 ()
+	{
+		decimal value = 67;
+		return (value - await Task.Factory.StartNew (() => 66m)) == 1;
+	}
+	
+	async Task<bool> CastTest_2 ()
+	{
+		var t = new Tester ();
+		return t.CallS (await Task.Factory.StartNew (() => this)) == 400;
+	}
+	
 	async Task<int> ConditionalTest_1 ()
 	{
 		// TODO: problem with Resumable point setup when the expression never emitted
@@ -346,6 +403,30 @@ class Tester : Base
 		return res == 1;
 	}
 	
+	async Task<bool> IsTest_1 ()
+	{
+		new Tester ().CallBool (await Task.Factory.StartNew (() => new Tester ()) is Base);
+		return true;
+	}
+
+	async Task<bool> LogicalUserOperator_1 ()
+	{
+		var r = await Task.Factory.StartNew (() => new Base ()) && await Task.Factory.StartNew (() => new Base ());
+		return r.field_int == 100;
+	}
+	
+	async Task<bool> LogicalUserOperator_2 ()
+	{
+		var r = new Base () && await Task.Factory.StartNew (() => new Base ());
+		return r.field_int == 100;
+	}
+	
+	async Task<bool> LogicalUserOperator_3 ()
+	{
+		var r = await Task.Factory.StartNew (() => new Base ()) || await Task.Factory.StartNew (() => new Base ());
+		return r.field_int == 0;
+	}
+
 	async Task<bool> NewTest_1 ()
 	{
 		int value = 9;
@@ -484,7 +565,13 @@ class Tester : Base
 			await Task.Factory.StartNew (() => "b") +
 			await Task.Factory.StartNew (() => (string) null) == "ab");
 	}
-	
+
+	async Task<bool> UnaryTest_1 ()
+	{
+		long a = 1;
+		return (a + checked (-await Task.Factory.StartNew (() => 2))) == -1;
+	}
+
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);

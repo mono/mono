@@ -78,6 +78,11 @@ namespace Mono.CSharp {
 			return c;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
 		public virtual Constant ConvertImplicitly (TypeSpec type)
 		{
 			if (this.type == type)
