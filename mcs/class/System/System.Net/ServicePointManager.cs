@@ -638,8 +638,8 @@ namespace System.Net
 					if (cert.Version < 3)
 						return true;
 
-					X509KeyUsageExtension kux = (X509KeyUsageExtension) cert.Extensions ["2.5.29.15"];
-					X509EnhancedKeyUsageExtension eku = (X509EnhancedKeyUsageExtension) cert.Extensions ["2.5.29.37"];
+					X509KeyUsageExtension kux = (cert.Extensions ["2.5.29.15"] as X509KeyUsageExtension);
+					X509EnhancedKeyUsageExtension eku = (cert.Extensions ["2.5.29.37"] as X509EnhancedKeyUsageExtension);
 					if (kux != null && eku != null) {
 						// RFC3280 states that when both KeyUsageExtension and 
 						// ExtendedKeyUsageExtension are present then BOTH should
