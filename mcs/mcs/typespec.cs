@@ -464,12 +464,13 @@ namespace Mono.CSharp
 		{
 			var t = this;
 			do {
-				if (t.Interfaces != null) {
-					foreach (TypeSpec i in t.Interfaces) {
-						if (i == iface || TypeSpecComparer.IsEqual (i, iface))
+				var ifaces = t.Interfaces;
+				if (ifaces != null) {
+					for (int i = 0; i < ifaces.Count; ++i) {
+						if (TypeSpecComparer.IsEqual (ifaces[i], iface))
 							return true;
 
-						if (variantly && TypeSpecComparer.Variant.IsEqual (i, iface))
+						if (variantly && TypeSpecComparer.Variant.IsEqual (ifaces[i], iface))
 							return true;
 					}
 				}
