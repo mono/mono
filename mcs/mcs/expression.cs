@@ -1329,20 +1329,13 @@ namespace Mono.CSharp
 	/// <summary>
 	///   Implementation of the `is' operator.
 	/// </summary>
-	public class Is : Probe {
+	public class Is : Probe
+	{
 		Nullable.Unwrap expr_unwrap;
 
 		public Is (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
-		}
-
-		public override bool ContainsEmitWithAwait ()
-		{
-			if (expr_unwrap != null)
-				return expr_unwrap.ContainsEmitWithAwait ();
-
-			return base.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4540,7 +4533,8 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation, IVariableReference {
+	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation, IVariableReference
+	{
 		LocalTemporary temp;
 
 		#region Abstract
@@ -4573,6 +4567,11 @@ namespace Mono.CSharp
 			}
 
 			Variable.EmitAddressOf (ec);
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
@@ -8236,7 +8235,7 @@ namespace Mono.CSharp
 		//
 		// Load the array arguments into the stack.
 		//
-		bool LoadInstanceAndArguments (EmitContext ec, bool duplicateArguments, bool prepareAwait)
+		void LoadInstanceAndArguments (EmitContext ec, bool duplicateArguments, bool prepareAwait)
 		{
 			if (prepareAwait) {
 				ea.Expr = ea.Expr.EmitToField (ec);
@@ -8254,8 +8253,6 @@ namespace Mono.CSharp
 			var dup_args = ea.Arguments.Emit (ec, duplicateArguments, prepareAwait);
 			if (dup_args != null)
 				ea.Arguments = dup_args;
-
-			return duplicateArguments;
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -8783,6 +8780,11 @@ namespace Mono.CSharp
 		private EmptyExpressionStatement ()
 		{
 			loc = Location.Null;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
