@@ -224,11 +224,17 @@ class Tester : Base
 		int[] a = new int[3] { 3, 6, 9 };
 		return a [await Task.Factory.StartNew (() => (long)1)] + value;
 	}
-
+	
 	async Task<int> AssignTest_1 ()
 	{
 		field_int = await Task.Factory.StartNew (() => 0);
 		return field_int;
+	}
+	
+	async Task<bool> AssignTest_2 ()
+	{
+		long? l = await Task.Factory.StartNew<sbyte?> (() => null);
+		return l == null;
 	}
 	
 	async Task<int> BinaryTest_1 ()
@@ -246,6 +252,36 @@ class Tester : Base
 			await Task.Factory.StartNew (() => { i += 5; return true; });
 
 		return b ? -1 : i == 8 ? 0 : i;
+	}
+	
+	async Task<int> BinaryTest_3 ()
+	{
+		var r = await Task.Factory.StartNew<bool?> (() => true) & await Task.Factory.StartNew<bool?> (() => null);
+		if (r != null)
+			return 1;
+
+		r = await Task.Factory.StartNew<bool?> (() => null) | await Task.Factory.StartNew<bool?> (() => true);
+		if (r != true)
+			return 2;
+		
+		r = await Task.Factory.StartNew<bool?> (() => null) != await Task.Factory.StartNew<bool?> (() => true);
+		if (r != true)
+			return 3;
+
+		return 0;
+	}
+	
+	async Task<int> BinaryTest_4 ()
+	{
+		var r1 = await Task.Factory.StartNew<short?> (() => 2) * await Task.Factory.StartNew<byte?> (() => null);
+		if (r1 != null)
+			return 1;
+
+		var r2 = await Task.Factory.StartNew<decimal?> (() => 100) / await Task.Factory.StartNew<decimal?> (() => null);
+		if (r2 != null)
+			return 2;
+		
+		return 0;
 	}
 	
 	async Task<int> CallTest_1 ()
@@ -297,6 +333,18 @@ class Tester : Base
 		var t = new Tester ();
 		return t.CallS (await Task.Factory.StartNew (() => this)) == 400;
 	}
+
+	async Task<bool> CoalescingTest_1 ()
+	{
+		var r = await Task.Factory.StartNew<string> (() => null)  ?? await Task.Factory.StartNew (() => "x");
+		return r == "x";
+	}
+
+	async Task<bool> CoalescingTest_2 ()
+	{
+		var r = await Task.Factory.StartNew<short?> (() => null)  ?? await Task.Factory.StartNew<byte> (() => 2);
+		return r == 2;
+	}
 	
 	async Task<int> ConditionalTest_1 ()
 	{
@@ -341,7 +389,7 @@ class Tester : Base
 		CallEvent ();
 		return value - 5;
 	}
-
+	
 	async Task<bool> IndexerTest_1 ()
 	{
 		this[2] = await Task.Factory.StartNew (() => 6);
@@ -409,6 +457,12 @@ class Tester : Base
 		return true;
 	}
 
+	async Task<bool> IsTest_2 ()
+	{
+		var r = await Task.Factory.StartNew<uint?> (() => 1) is uint;
+		return r;
+	}
+	
 	async Task<bool> LogicalUserOperator_1 ()
 	{
 		var r = await Task.Factory.StartNew (() => new Base ()) && await Task.Factory.StartNew (() => new Base ());
@@ -571,7 +625,22 @@ class Tester : Base
 		long a = 1;
 		return (a + checked (-await Task.Factory.StartNew (() => 2))) == -1;
 	}
-
+	
+	async Task<bool> UnaryTest_2 ()
+	{
+		short? s = 2;
+		int value = 2;
+		return (value * ~await Task.Factory.StartNew (() => s)) == -6;
+	}
+	
+	async Task<bool> UnaryTest_3 ()
+	{
+		var d = new decimal? [2];
+		d[1] = 4;
+		var r = ++d[await Task.Factory.StartNew (() => 1)];
+		return r == 5;
+	}
+	
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);

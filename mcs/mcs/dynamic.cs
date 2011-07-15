@@ -95,9 +95,14 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

@@ -1862,6 +1862,11 @@ namespace Mono.CSharp {
 				this.loc = orig.Location;
 			}
 
+			public override bool ContainsEmitWithAwait ()
+			{
+				return stm.ContainsEmitWithAwait ();
+			}
+
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				return orig_expr.CreateExpressionTree (ec);
@@ -1903,6 +1908,11 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
+		}
 
 		//
 		// Creates fully resolved expression switcher
@@ -1985,6 +1995,11 @@ namespace Mono.CSharp {
 		{
 			this.expr = expr;
 			this.loc = expr.Location;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext rc)

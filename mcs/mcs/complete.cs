@@ -43,6 +43,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			return null;
+		}
+
 		public override void EmitStatement (EmitContext ec)
 		{
 			// Do nothing
@@ -51,11 +61,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			// Do nothing
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			return null;
 		}
 	}
 	

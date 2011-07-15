@@ -96,6 +96,11 @@ namespace Mono.CSharp.Nullable
 			eclass = expr.eclass;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
+		}
+
 		public static Expression Create (Expression expr)
 		{
 			//
@@ -396,6 +401,11 @@ namespace Mono.CSharp.Nullable
 			: this (expr, unwrap as Unwrap, type)
 		{
 		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return unwrap.ContainsEmitWithAwait ();
+		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -687,7 +697,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			left_unwrap.Emit (ec);
-			ec.Emit (OpCodes.Brtrue_S, load_right);
+			ec.Emit (OpCodes.Brtrue, load_right);
 
 			// value & null, value | null
 			if (right_unwrap != null) {
@@ -765,6 +775,11 @@ namespace Mono.CSharp.Nullable
 				user_operator.Emit (ec);
 				ec.Emit (Oper == Operator.Equality ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, dissimilar_label);
 			} else {
+				if (ec.HasSet (BuilderContext.Options.AsyncBody) && right.ContainsEmitWithAwait ()) {
+					left = left.EmitToField (ec);
+					right = right.EmitToField (ec);
+				}
+
 				left.Emit (ec);
 				right.Emit (ec);
 
@@ -1151,6 +1166,14 @@ namespace Mono.CSharp.Nullable
 			return this;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			if (unwrap != null)
+				return unwrap.ContainsEmitWithAwait () || right.ContainsEmitWithAwait ();
+
+			return left.ContainsEmitWithAwait () || right.ContainsEmitWithAwait ();
+		}
+
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			left = left.Resolve (ec);
@@ -1226,6 +1249,11 @@ namespace Mono.CSharp.Nullable
 			this.expr = expr;
 			this.Mode = mode;
 			this.loc = loc;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return unwrap.ContainsEmitWithAwait ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

@@ -1311,6 +1311,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");

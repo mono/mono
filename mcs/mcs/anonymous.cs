@@ -583,6 +583,11 @@ namespace Mono.CSharp {
 				this.hv = hv;
 			}
 
+			public override bool ContainsEmitWithAwait ()
+			{
+				return false;
+			}
+
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				return hv.CreateExpressionTree ();
@@ -1042,6 +1047,11 @@ namespace Mono.CSharp {
 			return am.ReturnType;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
 		//
 		// Returns AnonymousMethod container if this anonymous method
 		// expression can be implicitly converted to the delegate type `delegate_type'
@@ -1479,6 +1489,11 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{

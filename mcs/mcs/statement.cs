@@ -2381,6 +2381,11 @@ namespace Mono.CSharp {
 				this.block = block;
 			}
 
+			public override bool ContainsEmitWithAwait ()
+			{
+				return child.ContainsEmitWithAwait ();
+			}
+
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ();

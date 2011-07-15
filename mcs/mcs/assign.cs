@@ -201,6 +201,11 @@ namespace Mono.CSharp {
 			builder = null;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (1);

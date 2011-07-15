@@ -111,6 +111,11 @@ namespace Mono.CSharp {
 				this.prev = prev;
 			}
 
+			public override bool ContainsEmitWithAwait ()
+			{
+				return false;
+			}
+
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ("Missing Resolve call");
