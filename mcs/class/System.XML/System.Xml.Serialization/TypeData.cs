@@ -448,10 +448,13 @@ namespace System.Xml.Serialization
 		};
 
 #if NET_2_0
-		private Type GetGenericListItemType (Type type)
+		internal static Type GetGenericListItemType (Type type)
 		{
-			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (ICollection<>))
-				return type.GetGenericArguments () [0];
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IEnumerable<>)) {
+				Type [] gatypes = type.GetGenericArguments ();
+				if (type.GetMethod ("Add", gatypes) != null)
+					return gatypes [0];
+			}
 			Type t = null;
 			foreach (Type i in type.GetInterfaces ())
 				if ((t = GetGenericListItemType (i)) != null)

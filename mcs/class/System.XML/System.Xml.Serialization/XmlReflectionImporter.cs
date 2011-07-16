@@ -792,7 +792,10 @@ namespace System.Xml.Serialization {
 						XmlAttributes atts = attributeOverrides[type, prop.Name];
 						if (atts == null) atts = new XmlAttributes (prop);
 						if (atts.XmlIgnore) continue;
-						if (!prop.CanWrite && (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray)) continue;
+						if (!prop.CanWrite) {
+							if (prop.PropertyType.IsGenericType && TypeData.GetGenericListItemType (prop.PropertyType) == null) continue; // check this before calling GetTypeData() which raises error for missing Add(). See bug #704813.
+							if (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray) continue;
+						}
 						XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
 						member.DeclaringType = prop.DeclaringType;
 						members.Add(member);

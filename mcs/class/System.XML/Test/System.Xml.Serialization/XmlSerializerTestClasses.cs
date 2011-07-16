@@ -959,5 +959,13 @@ namespace MonoTests.System.Xml.TestClasses
 		{
 		}
 	}
+
+	public class Bug704813Type
+	{
+		IEnumerable<string> foo = new List<string> ();
+		public IEnumerable<string> Foo {
+			get { return foo; }
+		}
+	}
 }
 
