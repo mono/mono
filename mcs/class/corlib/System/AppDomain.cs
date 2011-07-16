@@ -131,7 +131,7 @@ namespace System {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
-				return path;
+				return path.EndsWith(Path.DirectorySeparatorChar) ? path : (path + Path.DirectorySeparatorChar);
 			}
 		}
 
