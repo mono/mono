@@ -45,9 +45,11 @@ namespace System.Linq
 			Throw
 		}
 
+#if !FULL_AOT_RUNTIME
 		static class PredicateOf<T> {
 			public static readonly Func<T, bool> Always = (t) => true;
 		}
+#endif
 
 		static class Function<T> {
 			public static readonly Func<T, T> Identity = (t) => t;
@@ -849,7 +851,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+#if !FULL_AOT_RUNTIME
 			return source.First (PredicateOf<TSource>.Always, Fallback.Default);
+#else
+			return source.First (delegate { return true; }, Fallback.Default);
+#endif
 		}
 
 		public static TSource FirstOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1208,7 +1214,11 @@ namespace System.Linq
 			if (list != null)
 				return list [list.Count - 1];
 
+#if !FULL_AOT_RUNTIME
 			return source.Last (PredicateOf<TSource>.Always, Fallback.Throw);
+#else
+			return source.Last (delegate { return true; }, Fallback.Throw);
+#endif
 		}
 
 		public static TSource Last<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1230,7 +1240,11 @@ namespace System.Linq
 			if (list != null)
 				return list.Count > 0 ? list [list.Count - 1] : default (TSource);
 
+#if !FULL_AOT_RUNTIME
 			return source.Last (PredicateOf<TSource>.Always, Fallback.Default);
+#else
+			return source.Last (delegate { return true; }, Fallback.Default);
+#endif
 		}
 
 		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -2343,7 +2357,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+#if !FULL_AOT_RUNTIME
 			return source.Single (PredicateOf<TSource>.Always, Fallback.Throw);
+#else
+			return source.Single (delegate { return true; }, Fallback.Throw);
+#endif
 		}
 
 		public static TSource Single<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -2361,7 +2379,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+#if !FULL_AOT_RUNTIME
 			return source.Single (PredicateOf<TSource>.Always, Fallback.Default);
+#else
+			return source.Single (delegate { return true; }, Fallback.Default);
+#endif
 		}
 
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
