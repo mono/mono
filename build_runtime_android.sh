@@ -112,7 +112,7 @@ function clean_build
 }
 
 CCFLAGS_ARMv5_CPU="-DARM_FPU_NONE=1 -march=armv5te -mtune=xscale -msoft-float"
-CCFLAGS_ARMv5_VFP="-DARM_FPU_VFP=1  -march=armv5te -mtune=xscale -msoft-float -mfloat-abi=softfp -mfpu=vfp"
+CCFLAGS_ARMv6_VFP="-DARM_FPU_VFP=1  -march=armv6 -mtune=xscale -msoft-float -mfloat-abi=softfp -mfpu=vfp -DHAVE_ARMV6=1"
 CCFLAGS_ARMv7_VFP="-DARM_FPU_VFP=1  -march=armv7-a                            -mfloat-abi=softfp -mfpu=vfp -DHAVE_ARMV6=1"
 LDFLAGS_ARMv5=""
 LDFLAGS_ARMv7="-Wl,--fix-cortex-a8"
@@ -120,7 +120,7 @@ LDFLAGS_ARMv7="-Wl,--fix-cortex-a8"
 rm -rf $OUTDIR
 
 clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/armv5"
-clean_build "$CCFLAGS_ARMv5_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv5_vfp"
+clean_build "$CCFLAGS_ARMv6_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv6_vfp"
 clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/armv7a"
 
 NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
