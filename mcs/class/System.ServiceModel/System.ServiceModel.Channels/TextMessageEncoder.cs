@@ -60,13 +60,28 @@ namespace System.ServiceModel.Channels
 			get { return version; }
 		}
 
+		private static System.Text.RegularExpressions.Regex getAction = new Text.RegularExpressions.Regex("action=\"(.*)\"");
+
+		private static string GetActionFromContentType(string contentType)
+		{
+			if (contentType == null)
+				return string.Empty;
+			System.Text.RegularExpressions.Match match = getAction.Match(contentType);
+
+			if (match.Success)
+				return match.Groups[1].Value;
+			else
+				return string.Empty;
+
+		}
+
 		[MonoTODO]
 		public override Message ReadMessage (ArraySegment<byte> buffer,
 			BufferManager bufferManager, string contentType)
 		{
 			if (bufferManager == null)
 				throw new ArgumentNullException ("bufferManager");
-			return Message.CreateMessage (
+			var ret = Message.CreateMessage (
 				XmlDictionaryReader.CreateDictionaryReader (
 					XmlReader.Create (new StreamReader (
 						new MemoryStream (
@@ -75,6 +90,12 @@ namespace System.ServiceModel.Channels
 				// FIXME: supply max header size
 				int.MaxValue,
 				version);
+
+			string action = GetActionFromContentType(contentType);
+			if (!string.IsNullOrEmpty(action))
+				ret.Headers.Action = action;
+
+			return ret;
 		}
 
 		public override Message ReadMessage (Stream stream,
@@ -88,6 +109,11 @@ namespace System.ServiceModel.Channels
 				maxSizeOfHeaders,
 				version);
 			ret.Properties.Encoder = this;
+
+			string action = GetActionFromContentType(contentType);
+			if (!string.IsNullOrEmpty(action))
+				ret.Headers.Action = action;
+
 			return ret;
 		}
 
