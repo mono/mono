@@ -161,6 +161,7 @@ System.ServiceModel.Channels/CompilationException.cs
 System.ServiceModel.Channels/CompositeDuplexBindingElement.cs
 System.ServiceModel.Channels/CompositeDuplexBindingElementImporter.cs
 System.ServiceModel.Channels/ConnectionOrientedTransportBindingElement.cs
+System.ServiceModel.Channels/ContentType.cs
 System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/DeliveryFailure.cs
 System.ServiceModel.Channels/DeliveryStatus.cs

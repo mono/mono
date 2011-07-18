@@ -70,6 +70,7 @@ System.ServiceModel.Channels/ChannelManagerBase.cs
 System.ServiceModel.Channels/ChannelParameterCollection.cs
 System.ServiceModel.Channels/ChannelPoolSettings.cs
 System.ServiceModel.Channels/CommunicationObject.cs
+System.ServiceModel.Channels/ContentType.cs
 System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HtmlizedException.cs
