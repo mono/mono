@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -136,6 +137,19 @@ namespace MonoTests.System.ServiceModel.Channels
 		{
 			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
 			enc.ReadMessage (new ArraySegment<byte> (new byte [0]), BufferManager.CreateBufferManager (1000, 1000), "text/xml");
+		}
+		
+		[Test]
+		public void ActionContentTypeParameter ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			var msg = Message.CreateMessage (MessageVersion.Soap12, "urn:foo");
+			var ms = new MemoryStream ();
+			using (var xw = XmlWriter.Create (ms))
+				msg.WriteMessage (xw);
+			ms.Position = 0;
+			msg = enc.ReadMessage (ms, 0x1000, "application/soap+xml; action=urn:bar");
+			Assert.AreEqual ("urn:bar", msg.Headers.Action, "#1");
 		}
 	}
 }
