@@ -58,7 +58,7 @@ namespace Mono.CSharp
 
 		string GetSignatureForError ();
 
-		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope);
+		ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity);
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc);
 		FullNamedExpression LookupNamespaceAlias (string name);
 	}
@@ -519,9 +519,9 @@ namespace Mono.CSharp
 			return MemberContext.GetSignatureForError ();
 		}
 
-		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
+		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			return MemberContext.LookupExtensionMethod (extensionType, name, arity, ref scope);
+			return MemberContext.LookupExtensionMethod (extensionType, name, arity);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)

@@ -100,7 +100,7 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
-		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
+		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
 			throw new NotImplementedException ();
 		}

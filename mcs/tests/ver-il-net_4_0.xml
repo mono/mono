@@ -23402,6 +23402,41 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-39.cs">
+    <type name="Extra.S">
+      <method name="Int32 Prefix(System.String, System.String)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="SimpleTest">
+      <method name="Int32 Prefix(System.String, System.String, Boolean)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-exmethod-40.cs">
+    <type name="N.Extensions.s">
+      <method name="Void ShouldEqual(System.String, System.String, System.String, System.String, System.String)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="N.Main.C">
+      <method name="Void Main()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()">

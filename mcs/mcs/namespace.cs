@@ -370,9 +370,9 @@ namespace Mono.CSharp {
 			return res;
 		}
 
-		/// 
-		/// Looks for extension method in this namespace
-		/// 
+		// 
+		// Looks for extension method in this namespace
+		//
 		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
 		{
 			if (types == null)
@@ -400,6 +400,26 @@ namespace Mono.CSharp {
 			}
 
 			return found;
+		}
+
+		//
+		// Extension methods look up for dotted namespace names
+		//
+		public IList<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, out Namespace scope)
+		{
+			//
+			// Inspect parent namespaces in namespace expression
+			//
+			scope = this;
+			do {
+				var candidates = scope.LookupExtensionMethod (invocationContext, extensionType, name, arity);
+				if (candidates != null)
+					return candidates;
+
+				scope = scope.Parent;
+			} while (scope != null);
+
+			return null;
 		}
 
 		public void AddType (ModuleContainer module, TypeSpec ts)
@@ -797,7 +817,7 @@ namespace Mono.CSharp {
 		// Does extension methods look up to find a method which matches name and extensionType.
 		// Search starts from this namespace and continues hierarchically up to top level.
 		//
-		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
+		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
 			List<MethodSpec> candidates = null;
 			foreach (Namespace n in GetUsingTable ()) {
@@ -811,29 +831,21 @@ namespace Mono.CSharp {
 					candidates.AddRange (a);
 			}
 
-			scope = parent;
 			if (candidates != null)
-				return candidates;
+				return new ExtensionMethodCandidates (candidates, this);
 
 			if (parent == null)
 				return null;
 
-			//
-			// Inspect parent namespaces in namespace expression
-			//
-			Namespace parent_ns = ns.Parent;
-			do {
-				candidates = parent_ns.LookupExtensionMethod (this, extensionType, name, arity);
-				if (candidates != null)
-					return candidates;
-
-				parent_ns = parent_ns.Parent;
-			} while (parent_ns != null);
+			Namespace ns_scope;
+			var ns_candidates = ns.Parent.LookupExtensionMethod (this, extensionType, name, arity, out ns_scope);
+			if (ns_candidates != null)
+				return new ExtensionMethodCandidates (ns_candidates, this, ns_scope);
 
 			//
-			// Continue in parent scope
+			// Continue in parent container
 			//
-			return parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
+			return parent.LookupExtensionMethod (extensionType, name, arity);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)

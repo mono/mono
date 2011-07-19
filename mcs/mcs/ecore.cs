@@ -2963,18 +2963,57 @@ namespace Mono.CSharp {
 		public abstract void SetTypeArguments (ResolveContext ec, TypeArguments ta);
 	}
 
+	public class ExtensionMethodCandidates
+	{
+		NamespaceContainer container;
+		Namespace ns;
+		IList<MethodSpec> methods;
+
+		public ExtensionMethodCandidates (IList<MethodSpec> methods, NamespaceContainer nsContainer)
+			: this (methods, nsContainer, null)
+		{
+		}
+
+		public ExtensionMethodCandidates (IList<MethodSpec> methods, NamespaceContainer nsContainer, Namespace ns)
+		{
+			this.methods = methods;
+			this.container = nsContainer;
+			this.ns = ns;
+		}
+
+		public NamespaceContainer Container {
+			get {
+				return container;
+			}
+		}
+
+		public bool HasUninspectedMembers { get; set; }
+
+		public Namespace Namespace {
+			get {
+				return ns;
+			}
+		}
+
+		public IList<MethodSpec> Methods {
+			get {
+				return methods;
+			}
+		}
+	}
+
 	// 
 	// Represents a group of extension method candidates for whole namespace
 	// 
 	class ExtensionMethodGroupExpr : MethodGroupExpr, OverloadResolver.IErrorHandler
 	{
-		NamespaceContainer namespace_entry;
+		ExtensionMethodCandidates candidates;
 		public readonly Expression ExtensionExpression;
 
-		public ExtensionMethodGroupExpr (IList<MethodSpec> list, NamespaceContainer n, Expression extensionExpr, Location l)
-			: base (list.Cast<MemberSpec>().ToList (), extensionExpr.Type, l)
+		public ExtensionMethodGroupExpr (ExtensionMethodCandidates candidates, Expression extensionExpr, Location loc)
+			: base (candidates.Methods.Cast<MemberSpec>().ToList (), extensionExpr.Type, loc)
 		{
-			this.namespace_entry = n;
+			this.candidates = candidates;
 			this.ExtensionExpression = extensionExpr;
 		}
 
@@ -2982,21 +3021,55 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+		//
+		// For extension methodgroup we are not looking for base members but parent
+		// namespace extension methods
+		//
 		public override IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
 		{
-			if (namespace_entry == null)
+			// TODO: candidates are null only when doing error reporting, that's
+			// incorrect. We have to discover same extension methods in error mode
+			if (candidates == null)
 				return null;
 
-			//
-			// For extension methodgroup we are not looking for base members but parent
-			// namespace extension methods
-			//
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			var found = namespace_entry.LookupExtensionMethod (DeclaringType, Name, arity, ref namespace_entry);
-			if (found == null)
+
+			//
+			// Here we try to resume the search for extension method at the point
+			// where the last bunch of candidates was found. It's more tricky than
+			// it seems as we have to check both namespace containers and namespace
+			// in correct order.
+			//
+			// Consider:
+			// 
+			// namespace A {
+			//	using N1;
+			//  namespace B.C.D {
+			//		<our first search found candidates in A.B.C.D
+			//  }
+			// }
+			//
+			// In the example above namespace A.B.C.D, A.B.C and A.B have to be
+			// checked before we hit A.N1 using
+			//
+			if (candidates.Namespace == null) {
+				Namespace scope;
+				var methods = candidates.Container.NS.LookupExtensionMethod (candidates.Container, ExtensionExpression.Type, Name, arity, out scope);
+				if (methods != null) {
+					candidates = new ExtensionMethodCandidates (null, candidates.Container, scope);
+					return methods.Cast<MemberSpec> ().ToList ();
+				}
+			}
+
+			var ns_container = candidates.HasUninspectedMembers ? candidates.Container : candidates.Container.Parent;
+			if (ns_container == null)
 				return null;
 
-			return found.Cast<MemberSpec> ().ToList ();
+			candidates = ns_container.LookupExtensionMethod (ExtensionExpression.Type, Name, arity);
+			if (candidates == null)
+				return null;
+
+			return candidates.Methods.Cast<MemberSpec> ().ToList ();
 		}
 
 		public override MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
@@ -3332,12 +3405,11 @@ namespace Mono.CSharp {
 				return null;
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			NamespaceContainer methods_scope = null;
-			var methods = rc.LookupExtensionMethod (InstanceExpression.Type, Methods[0].Name, arity, ref methods_scope);
+			var methods = rc.LookupExtensionMethod (InstanceExpression.Type, Methods[0].Name, arity);
 			if (methods == null)
 				return null;
 
-			var emg = new ExtensionMethodGroupExpr (methods, methods_scope, InstanceExpression, loc);
+			var emg = new ExtensionMethodGroupExpr (methods, InstanceExpression, loc);
 			emg.SetTypeArguments (rc, type_arguments);
 			return emg;
 		}

@@ -608,7 +608,7 @@ namespace Mono.CSharp
 			return PartialContainer.IsClsComplianceRequired ();
 		}
 
-		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
+		public override ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
 			return null;
 		}

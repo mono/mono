@@ -686,9 +686,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
+		public virtual ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
+			return Parent.LookupExtensionMethod (extensionType, name, arity);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
