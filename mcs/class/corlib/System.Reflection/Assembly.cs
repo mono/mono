@@ -32,7 +32,6 @@ using System.Security.Policy;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.IO;
 using System.Globalization;
 using System.Runtime.CompilerServices;
