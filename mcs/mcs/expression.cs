@@ -1006,7 +1006,7 @@ namespace Mono.CSharp
 		Mode mode;
 		bool is_expr, recurse;
 
-		Expression expr;
+		protected Expression expr;
 
 		// Holds the real operation
 		Expression operation;
@@ -1073,6 +1073,11 @@ namespace Mono.CSharp
 			if (expr.Type.IsNullableType)
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
+			return DoResolveOperation (ec);
+		}
+
+		protected Expression DoResolveOperation (ResolveContext ec)
+		{
 			eclass = ExprClass.Value;
 			type = expr.Type;
 
@@ -1213,13 +1218,18 @@ namespace Mono.CSharp
 			if (recurse) {
 				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement || mode == Mode.PostDecrement));
 
-				operation.Emit (ec);
+				EmitOperation (ec);
 
 				recurse = false;
 				return;
 			}
 
 			EmitCode (ec, true);
+		}
+
+		protected virtual void EmitOperation (EmitContext ec)
+		{
+			operation.Emit (ec);
 		}
 
 		public override void EmitStatement (EmitContext ec)

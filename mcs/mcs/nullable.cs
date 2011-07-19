@@ -79,7 +79,7 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
-	public class Unwrap : Expression, IMemoryLocation, IAssignMethod
+	public class Unwrap : Expression, IMemoryLocation
 	{
 		Expression expr;
 
@@ -182,10 +182,10 @@ namespace Mono.CSharp.Nullable
 
 		void Store (EmitContext ec)
 		{
-			if (expr is VariableReference)
+			if (temp != null)
 				return;
 
-			if (temp != null)
+			if (expr is VariableReference)
 				return;
 
 			expr.Emit (ec);
@@ -222,51 +222,6 @@ namespace Mono.CSharp.Nullable
 				if (temp == null)
 					temp = new LocalTemporary (expr.Type);
 				return temp;
-			}
-		}
-
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			if (leave_copy)
-				Load (ec);
-
-			Emit (ec);
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source,
-					bool leave_copy, bool prepare_for_load)
-		{
-			InternalWrap wrap = new InternalWrap (source, expr.Type, loc);
-			((IAssignMethod) expr).EmitAssign (ec, wrap, leave_copy, false);
-		}
-
-		class InternalWrap : Expression
-		{
-			public Expression expr;
-
-			public InternalWrap (Expression expr, TypeSpec type, Location loc)
-			{
-				this.expr = expr;
-				this.loc = loc;
-				this.type = type;
-
-				eclass = ExprClass.Value;
-			}
-
-			public override Expression CreateExpressionTree (ResolveContext ec)
-			{
-				throw new NotSupportedException ("ET");
-			}
-
-			protected override Expression DoResolve (ResolveContext ec)
-			{
-				return this;
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				expr.Emit (ec);
-				ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
 			}
 		}
 	}
@@ -1237,80 +1192,58 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
-	public class LiftedUnaryMutator : ExpressionStatement
+	class LiftedUnaryMutator : UnaryMutator
 	{
-		public readonly UnaryMutator.Mode Mode;
-		Expression expr;
-		UnaryMutator underlying;
-		Unwrap unwrap;
-
-		public LiftedUnaryMutator (UnaryMutator.Mode mode, Expression expr, Location loc)
+		public LiftedUnaryMutator (Mode mode, Expression expr, Location loc)
+			: base (mode, expr, loc)
 		{
-			this.expr = expr;
-			this.Mode = mode;
-			this.loc = loc;
-		}
-
-		public override bool ContainsEmitWithAwait ()
-		{
-			return unwrap.ContainsEmitWithAwait ();
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				return null;
+			var orig_expr = expr;
 
-			unwrap = Unwrap.Create (expr, false);
-			if (unwrap == null)
-				return null;
+			expr = Unwrap.Create (expr);
 
-			underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap, loc).Resolve (ec);
-			if (underlying == null)
-				return null;
+			var res = base.DoResolveOperation (ec);
 
-
-			eclass = ExprClass.Value;
+			expr = orig_expr;
 			type = expr.Type;
-			return this;
+
+			return res;
 		}
 
-		void DoEmit (EmitContext ec, bool is_expr)
+		protected override void EmitOperation (EmitContext ec)
 		{
 			Label is_null_label = ec.DefineLabel ();
 			Label end_label = ec.DefineLabel ();
 
-			unwrap.EmitCheck (ec);
+			LocalTemporary lt = new LocalTemporary (type);
+
+			// Value is on the stack
+			lt.Store (ec);
+
+			var call = new CallEmitter ();
+			call.InstanceExpression = lt;
+			call.EmitPredefined (ec, NullableInfo.GetHasValue (expr.Type), null);
+
 			ec.Emit (OpCodes.Brfalse, is_null_label);
 
-			if (is_expr) {
-				underlying.Emit (ec);
-				ec.Emit (OpCodes.Br_S, end_label);
-			} else {
-				underlying.EmitStatement (ec);
-			}
+			call = new CallEmitter ();
+			call.InstanceExpression = lt;
+			call.EmitPredefined (ec, NullableInfo.GetValue (expr.Type), null);
+
+			lt.Release (ec);
+
+			base.EmitOperation (ec);
+
+			ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
+			ec.Emit (OpCodes.Br_S, end_label);
 
 			ec.MarkLabel (is_null_label);
-			if (is_expr)
-				LiftedNull.Create (type, loc).Emit (ec);
+			LiftedNull.Create (type, loc).Emit (ec);
 
 			ec.MarkLabel (end_label);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			DoEmit (ec, true);
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			DoEmit (ec, false);
 		}
 	}
 }

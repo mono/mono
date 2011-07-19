@@ -7032,10 +7032,19 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>497</size>
+        <size>1082</size>
       </method>
       <method name="Int32 Main()">
         <size>30</size>
+      </method>
+      <method name="Int32 Index()">
+        <size>26</size>
+      </method>
+      <method name="Nullable`1 get_Item(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, Nullable`1)">
+        <size>8</size>
       </method>
     </type>
   </test>
@@ -10158,7 +10167,7 @@
         <size>55</size>
       </method>
       <method name="Void Test(HashedLinkedList`1[T])">
-        <size>40</size>
+        <size>51</size>
       </method>
     </type>
     <type name="X">
@@ -13034,7 +13043,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>307</size>
+        <size>353</size>
       </method>
     </type>
     <type name="BugReport.A">
@@ -53513,7 +53522,7 @@
     </type>
     <type name="Tester+&lt;&gt;c__async36">
       <method name="Void MoveNext()">
-        <size>364</size>
+        <size>362</size>
       </method>
       <method name="Int32 &lt;&gt;m__6E()">
         <size>2</size>
