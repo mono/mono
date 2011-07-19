@@ -157,7 +157,8 @@ mobile_dirs := \
 	System.Transactions	\
 	System.Data	\
 	Mono.Cairo	\
-	Mono.Data.Sqlite
+	Mono.Data.Sqlite	\
+	System.Data.Services.Client
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
