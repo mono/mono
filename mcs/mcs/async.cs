@@ -218,36 +218,17 @@ namespace Mono.CSharp
 
 			FieldSpec[] stack_fields = null;
 			TypeSpec[] stack = null;
-			//
-			// Here is the clever bit. We know that await statement has to yield the control
-			// back but it can appear inside almost any expression. This means the stack can
-			// contain any depth of values and same values have to be present when the continuation
-			// handles control back.
-			//
-			// For example: await a + await b
-			//
-			// In this case we fabricate a static stack forwarding method which moves the values
-			// from the stack to async storey fields. On re-entry point we restore exactly same
-			// stack using these fields.
-			//
-			// We fabricate a static method because we don't want to touch original stack and
-			// the instance method would require `this' as the first stack value on the stack
-			//
-			if (ec.StackHeight > 0) {
-#if DEBUG
-				throw new InternalErrorException ("Await yield with non-empty stack");
-#else
-				var async_storey = (AsyncTaskStorey) machine_initializer.Storey;
 
-				stack = ec.GetStackTypes ();
-				bool explicit_this;
-				var method = async_storey.GetStackForwarder (stack, out stack_fields, out explicit_this);
-				if (explicit_this)
-					ec.EmitThis ();
-
-				ec.Emit (OpCodes.Call, method);
-#endif
-			}
+			//
+			// The stack has to be empty before calling await continuation. We handle this
+			// by lifting values which would be left on stack into class fields. The process
+			// is quite complicated and quite hard to test because any expression can possibly
+			// leave a value on the stack.
+			//
+			// Following assert fails when some of expression called before is missing EmitToField
+			// or parent expression fails to find await in children expressions
+			//
+			ec.AssertEmptyStack ();
 
 			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
 			mg_completed.InstanceExpression = fe_awaiter;
@@ -592,8 +573,7 @@ namespace Mono.CSharp
 		MethodSpec set_result;
 		PropertySpec task;
 		LocalVariable hoisted_return;
-		Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> stack_forwarders;
-		List<FieldSpec> hoisted_stack_slots;
+		int locals_captured;
 
 		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type, TypeParameter[] tparams)
 			: base (initializer.OriginalBlock, initializer.Host, null, tparams, "async")
@@ -640,8 +620,6 @@ namespace Mono.CSharp
 			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
 		}
 
-		int locals_captured;
-
 		public Field AddCapturedLocalVariable (TypeSpec type)
 		{
 			if (mutator != null)
@@ -651,26 +629,6 @@ namespace Mono.CSharp
 			field.Define ();
 
 			return field;
-		}
-
-		FieldSpec CreateStackValueField (TypeSpec type, BitArray usedFields)
-		{
-			if (hoisted_stack_slots == null) {
-				hoisted_stack_slots = new List<FieldSpec> ();
-			} else {
-				for (int i = 0; i < usedFields.Count; ++i) {
-					if (hoisted_stack_slots[i].MemberType == type && !usedFields[i]) {
-						usedFields.Set (i, true);
-						return hoisted_stack_slots[i];
-					}
-				}
-			}
-
-			var field = AddCompilerGeneratedField ("<s>$" + hoisted_stack_slots.Count.ToString ("X"), new TypeExpression (type, Location));
-			field.Define ();
-
-			hoisted_stack_slots.Add (field.Spec);
-			return field.Spec;
 		}
 
 		protected override bool DoDefineMembers ()
@@ -785,94 +743,6 @@ namespace Mono.CSharp
 			}
 
 			mg.EmitCall (ec, args);
-		}
-
-		//
-		// Fabricates stack forwarder based on stack types which copies all
-		// parameters to type fields
-		//
-		public MethodSpec GetStackForwarder (TypeSpec[] types, out FieldSpec[] fields, out bool explicitThisNeeded)
-		{
-			if (stack_forwarders == null) {
-				stack_forwarders = new Dictionary<TypeSpec[], Tuple<MethodSpec, FieldSpec[], bool>> (TypeSpecComparer.Default);
-			} else {
-				//
-				// Does same forwarder method with same types already exist
-				//
-				Tuple<MethodSpec, FieldSpec[], bool> method;
-				if (stack_forwarders.TryGetValue (types, out method)) {
-					fields = method.Item2;
-					explicitThisNeeded = method.Item3;
-					return method.Item1;
-				}
-			}
-
-			Parameter[] p = new Parameter[types.Length + 1];
-			TypeSpec[] ptypes = new TypeSpec[p.Length];
-			fields = new FieldSpec[types.Length];
-			int this_argument_index = -1;
-			BitArray used_fields_map = null;
-
-			for (int i = 0; i < types.Length; ++i) {
-				var t = types[i];
-
-				TypeSpec parameter_type = t;
-				if (parameter_type == InternalType.CurrentTypeOnStack) {
-					parameter_type = CurrentType;
-				}
-
-				p[i] = new Parameter (new TypeExpression (parameter_type, Location), null, 0, null, Location);
-				ptypes[i] = parameter_type;
-
-				if (t == InternalType.CurrentTypeOnStack) {
-					if (this_argument_index < 0)
-						this_argument_index = i;
-
-					// Null means the type is `this' we can optimize by ignoring
-					continue;
-				}
-
-				var reference = t as ReferenceContainer;
-				if (reference != null)
-					t = reference.Element;
-
-				if (used_fields_map == null)
-					used_fields_map = new BitArray (hoisted_stack_slots == null ? 0 : hoisted_stack_slots.Count);
-
-				fields[i] = CreateStackValueField (t, used_fields_map);
-			}
-
-			//
-			// None of the arguments is `this' need to add an extra parameter to pass it
-			// to static forwarder method
-			//
-			if (this_argument_index < 0) {
-				explicitThisNeeded = true;
-				this_argument_index = types.Length;
-				var this_parameter = new Parameter (new TypeExpression (CurrentType, Location), null, 0, null, Location);
-				p[types.Length] = this_parameter;
-				ptypes[types.Length] = CurrentType;
-			} else {
-				explicitThisNeeded = false;
-				Array.Resize (ref p, p.Length - 1);
-				Array.Resize (ref ptypes, ptypes.Length - 1);
-			}
-
-			var parameters = ParametersCompiled.CreateFullyResolved (p, ptypes);
-
-			var m = new Method (this, null, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
-				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
-				new MemberName ("<>s__" + stack_forwarders.Count.ToString ("X")), parameters, null);
-
-			m.Block = new ToplevelBlock (Compiler, parameters, Location);
-			m.Block.AddScopeStatement (new ParametersLoadStatement (fields, ptypes, this_argument_index));
-
-			m.Define ();
-			Methods.Add (m);
-
-			stack_forwarders.Add (types, Tuple.Create (m.Spec, fields, explicitThisNeeded));
-
-			return m.Spec;
 		}
 	}
 }
