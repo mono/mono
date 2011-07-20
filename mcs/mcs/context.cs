@@ -645,6 +645,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public BuilderContext ()
+		{
+			//
+			// The default setting comes from the command line option
+			//
+			if (RootContext.Checked)
+				flags |= Options.CheckedScope;
+		}
+
 		Options flags;
 
 		public bool HasSet (Options options)
