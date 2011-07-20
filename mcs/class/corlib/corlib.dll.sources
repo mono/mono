@@ -1147,6 +1147,7 @@ System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
 System.Security/SecurityManager_2_1.cs
+System.Security/SecurityManager_mobile.cs
 System.Security/SecurityRuleSet.cs
 System.Security/SecurityRulesAttribute.cs
 System.Security/SecuritySafeCriticalAttribute.cs

@@ -52,9 +52,11 @@ namespace System.Security {
 		internal SecurityContext (SecurityContext sc)
 		{
 			_capture = true;
+#if !MOBILE
 			_winid = sc._winid;
 			if (sc._stack != null)
 				_stack = sc._stack.CreateCopy ();
+#endif
 		}
 
 		public SecurityContext CreateCopy ()
@@ -75,8 +77,10 @@ namespace System.Security {
 
 			SecurityContext capture = new SecurityContext ();
 			capture._capture = true;
+#if !MOBILE
 			capture._winid = WindowsIdentity.GetCurrentToken ();
 			capture._stack = CompressedStack.Capture ();
+#endif
 			return capture;
 		}
 		
@@ -140,7 +144,9 @@ namespace System.Security {
 				throw new InvalidOperationException (Locale.GetText (
 					"Null SecurityContext"));
 			}
-
+#if MOBILE
+			callback (state);
+#else
 			SecurityContext sc = Thread.CurrentThread.ExecutionContext.SecurityContext;
 			IPrincipal original = Thread.CurrentPrincipal;
 			try {
@@ -159,6 +165,7 @@ namespace System.Security {
 				if ((original != null) && (sc.IdentityToken != IntPtr.Zero))
 					Thread.CurrentPrincipal = original;
 			}
+#endif
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]

@@ -159,6 +159,9 @@ namespace System.Reflection {
 		// note: the security runtime requires evidences but may be unable to do so...
 		internal Evidence UnprotectedGetEvidence ()
 		{
+#if MOBILE
+			return null;
+#else
 			// if the host (runtime) hasn't provided it's own evidence...
 			if (_evidence == null) {
 				// ... we will provide our own
@@ -167,6 +170,7 @@ namespace System.Reflection {
 				}
 			}
 			return _evidence;
+#endif
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -797,7 +801,7 @@ namespace System.Reflection {
 			return other._mono_assembly == _mono_assembly;
 		}
 
-#if !MOONLIGHT
+#if !NET_2_1
 		// Code Access Security
 
 		internal void Resolve () 
