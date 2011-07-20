@@ -303,6 +303,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapMember _returnMember;
 		bool _ignoreMemberNamespace;
 		bool _canBeSimpleType = true;
+		bool? _isOrderDependentMap;
 
 		public void AddMember (XmlTypeMapMember member)
 		{
@@ -324,7 +325,7 @@ namespace System.Xml.Serialization
 			{
 				XmlTypeMapMemberAttribute atm = (XmlTypeMapMemberAttribute)member;
 				if (_attributeMembers == null) _attributeMembers = new Hashtable();
-				string key = BuildKey (atm.AttributeName, atm.Namespace);
+				string key = BuildKey (atm.AttributeName, atm.Namespace, -1);
 				if (_attributeMembers.ContainsKey (key))
 					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
 				member.Index = _attributeMembers.Count;
@@ -369,7 +370,7 @@ namespace System.Xml.Serialization
 			ICollection elemsInfo = ((XmlTypeMapMemberElement)member).ElementInfo;
 			foreach (XmlTypeMapElementInfo elem in elemsInfo)
 			{
-				string key = BuildKey (elem.ElementName, elem.Namespace);
+				string key = BuildKey (elem.ElementName, elem.Namespace, elem.ExplicitOrder);
 				if (_elements.ContainsKey (key)) 
 					throw new InvalidOperationException ("The XML element named '" + elem.ElementName + "' from namespace '" + elem.Namespace + "' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.");
 				_elements.Add (key, elem);
@@ -391,13 +392,13 @@ namespace System.Xml.Serialization
 		public XmlTypeMapMemberAttribute GetAttribute (string name, string ns)
 		{
 			if (_attributeMembers == null) return null;
-			return (XmlTypeMapMemberAttribute)_attributeMembers [BuildKey(name,ns)];
+			return (XmlTypeMapMemberAttribute)_attributeMembers [BuildKey (name,ns, -1)];
 		}
 
-		public XmlTypeMapElementInfo GetElement (string name, string ns)
+		public XmlTypeMapElementInfo GetElement (string name, string ns, int order)
 		{
 			if (_elements == null) return null;
-			return (XmlTypeMapElementInfo)_elements [BuildKey(name,ns)];
+			return (XmlTypeMapElementInfo)_elements [BuildKey (name,ns, order)];
 		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)
@@ -415,14 +416,15 @@ namespace System.Xml.Serialization
 					_elementsByIndex [mem.Index] = (XmlTypeMapElementInfo) mem.ElementInfo [0];
 				}
 			}
-			
+			if (index >= _elementMembers.Count)
+				return null;
 			return _elementsByIndex [index];
 		}
 		
-		private string BuildKey (string name, string ns)
+		private string BuildKey (string name, string ns, int explicitOrder)
 		{
 			if (_ignoreMemberNamespace) return name;
-			else return name + " / " + ns;
+			else return name + " / " + ns + (explicitOrder < 0 ? "" : "/" + explicitOrder);
 		}
 		
 		public ICollection AllElementInfos
@@ -435,6 +437,20 @@ namespace System.Xml.Serialization
 		{
 			get { return _ignoreMemberNamespace; }
 			set { _ignoreMemberNamespace = value; }
+		}
+
+		public bool IsOrderDependentMap {
+			get {
+				if (_isOrderDependentMap == null) {
+					_isOrderDependentMap = false;
+					foreach (XmlTypeMapElementInfo ei in _elements.Values)
+						if (ei.ExplicitOrder >= 0) {
+							_isOrderDependentMap = true;
+							break;
+						}
+				}
+				return (bool) _isOrderDependentMap;
+			}
 		}
 
 		public XmlTypeMapMember FindMember (string name)

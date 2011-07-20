@@ -44,9 +44,7 @@ namespace System.Xml.Serialization
 		private XmlSchemaForm form;
 		private bool isNullable;
 		private string ns;
-#if NET_2_0
 		private int order = -1;
-#endif		
 
 		public XmlArrayAttribute()
 		{
@@ -100,13 +98,10 @@ namespace System.Xml.Serialization
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
 		public int Order {
 			get { return order; }
 			set { order = value; }
 		}
-#endif
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{

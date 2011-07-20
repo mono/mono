@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Xml.Schema;
@@ -347,7 +348,18 @@ namespace System.Xml.Serialization {
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
 
-			ICollection members = GetReflectionMembers (type);
+			var members = GetReflectionMembers (type);
+			bool? isOrderExplicit = null;
+			foreach (XmlReflectionMember rmember in members)
+			{
+				if (isOrderExplicit == null)
+					isOrderExplicit = rmember.XmlAttributes.Order >= 0;
+				else if (isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
+					throw new InvalidOperationException ("Inconsistent XML sequence was detected. If there are XmlElement/XmlArray/XmlAnyElement attributes with explicit Order, then every other member must have an explicit order too.");
+			}
+			if (isOrderExplicit == true)
+				members.Sort ((m1, m2) => m1.XmlAttributes.Order - m2.XmlAttributes.Order);
+
 			foreach (XmlReflectionMember rmember in members)
 			{
 				string ns = map.XmlTypeNamespace;
@@ -689,7 +701,7 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		ICollection GetReflectionMembers (Type type)
+		List<XmlReflectionMember> GetReflectionMembers (Type type)
 		{
 			// First we want to find the inheritance hierarchy in reverse order.
 			Type currentType = type;
@@ -757,7 +769,7 @@ namespace System.Xml.Serialization {
 				propList.Insert(currentIndex++, prop);
 			}
 #endif
-			ArrayList members = new ArrayList();
+			var members = new List<XmlReflectionMember>();
 			int fieldIndex=0;
 			int propIndex=0;
 			// We now step through the type hierarchy from the base (object) through
@@ -803,7 +815,8 @@ namespace System.Xml.Serialization {
 					else break;
 				}
 			}
-			return members;		
+			
+			return members;
 		}
 		
 		private XmlTypeMapMember CreateMapMember (Type declaringType, XmlReflectionMember rmember, string defaultNamespace)
@@ -919,6 +932,7 @@ namespace System.Xml.Serialization {
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
 					elem.Form = (atts.XmlArray != null) ? atts.XmlArray.Form : XmlSchemaForm.Qualified;
+					elem.ExplicitOrder = (atts.XmlArray != null) ? atts.XmlArray.Order : -1;
 					// This is a bit tricky, but is done
 					// after filling descendant members, so
 					// that array items could be serialized
@@ -1001,6 +1015,7 @@ namespace System.Xml.Serialization {
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.IsNullable = att.IsNullable;
+				elem.ExplicitOrder = att.Order;
 
 				if (elem.IsNullable && !elem.TypeData.IsNullable)
 					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName + " in member '" + defaultName + "'");
@@ -1066,6 +1081,7 @@ namespace System.Xml.Serialization {
 					if (att.Namespace != null) 
 						throw new InvalidOperationException ("The element " + rmember.MemberName + " has been attributed with an XmlAnyElementAttribute and a namespace '" + att.Namespace + "', but no name. When a namespace is supplied, a name is also required. Supply a name or remove the namespace.");
 				}
+				elem.ExplicitOrder = att.Order;
 				list.Add (elem);
 			}
 #endif

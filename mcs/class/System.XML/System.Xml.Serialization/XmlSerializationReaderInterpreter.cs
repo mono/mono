@@ -301,7 +301,7 @@ namespace System.Xml.Serialization
 			Reader.MoveToElement ();
 		}
 
-		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
+		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readBySoapOrder)
 		{
 			// Reads attributes
 			ReadAttributeMembers (map, ob, isValueList);
@@ -332,7 +332,7 @@ namespace System.Xml.Serialization
 			int ind = 0;
 			int maxInd;
 
-			if (readByOrder) {
+			if (readBySoapOrder) {
 				if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
 				else maxInd = 0;
 			}
@@ -379,16 +379,23 @@ namespace System.Xml.Serialization
 				{
 					XmlTypeMapElementInfo info;
 					
-					if (readByOrder) {
+					if (readBySoapOrder) {
 						info = map.GetElement (ind++);
 					}
 					else if (hasAnyReturnMember) {
 						info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)map.ReturnMember).ElementInfo[0];
 						hasAnyReturnMember = false;
 					}
-					else
-						info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
-						
+					else {
+						if (map.IsOrderDependentMap) {
+							while ((info = map.GetElement (ind++)) != null)
+								if (info.ElementName == Reader.LocalName && info.Namespace == Reader.NamespaceURI)
+									break;
+						}
+						else
+							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, -1);
+					}
+
 					if (info != null && !readFlag[info.Member.Index] )
 					{
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))

@@ -967,5 +967,45 @@ namespace MonoTests.System.Xml.TestClasses
 			get { return foo; }
 		}
 	}
+
+	[XmlRoot("root")]
+	public class ExplicitlyOrderedMembersType1
+	{
+		[XmlElement("child0", Order = 4)]
+		public string Child0;
+
+		[XmlElement("child", Order = 0)]
+		public string Child1;
+
+		[XmlElement("child", Order = 2)]
+		public string Child2;
+	}
+
+	[XmlRoot("root")]
+	public class ExplicitlyOrderedMembersType2
+	{
+		[XmlElement("child0", Order = 4)]
+		public string Child0;
+
+		[XmlElement("child")] // wrong. Needs to be Ordered as well.
+		public string Child1;
+
+		[XmlElement("child", Order = 2)]
+		public string Child2;
+	}
+
+	[XmlRoot("root")]
+	public class ExplicitlyOrderedMembersType3
+	{
+		[XmlElement("child0", Order = 1)] // it's between 0 and 2. After two "child" elements, child0 is not recognized as this member.
+		public string Child0;
+
+		[XmlElement("child", Order = 0)]
+		public string Child1;
+
+		[XmlElement("child", Order = 2)]
+		public string Child2;
+	}
+
 }
 

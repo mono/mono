@@ -161,5 +161,14 @@ namespace System.Xml.Serialization
 				this[n].AddKeyHash (sb);
 			sb.Append ('|');
 		}
+
+		internal int Order {
+			get {
+				foreach (XmlElementAttribute e in this)
+					if (e.Order >= 0)
+						return e.Order;
+				return -1;
+			}
+		}
 	}
 }
