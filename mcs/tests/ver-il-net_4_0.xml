@@ -39383,8 +39383,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main(System.String[])">
-        <size>44</size>
+      <method name="Int32 Main()">
+        <size>32</size>
       </method>
     </type>
   </test>

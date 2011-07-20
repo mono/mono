@@ -7943,19 +7943,19 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.CheckedScope, true))
 				Expr.Emit (ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.CheckedScope, true))
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
+			using (ctx.With (BuilderContext.Options.CheckedScope, true)) {
 				return Expr.MakeExpression (ctx);
 			}
 		}
@@ -8010,13 +8010,13 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.CheckedScope, false))
 				Expr.Emit (ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.CheckedScope, false))
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
@@ -8393,7 +8393,7 @@ namespace Mono.CSharp
 
 		SLE.Expression[] MakeExpressionArguments (BuilderContext ctx)
 		{
-			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
+			using (ctx.With (BuilderContext.Options.CheckedScope, true)) {
 				return Arguments.MakeExpression (ea.Arguments, ctx);
 			}
 		}

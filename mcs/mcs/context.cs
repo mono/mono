@@ -685,15 +685,6 @@ namespace Mono.CSharp
 			/// </summary>
 			CheckedScope = 1 << 0,
 
-			/// <summary>
-			///   The constant check state is always set to `true' and cant be changed
-			///   from the command line.  The source code can change this setting with
-			///   the `checked' and `unchecked' statements and expressions. 
-			/// </summary>
-			ConstantCheckState = 1 << 1,
-
-			AllCheckStateFlags = CheckedScope | ConstantCheckState,
-
 			OmitDebugInfo = 1 << 2,
 
 			ConstructorScope = 1 << 3,

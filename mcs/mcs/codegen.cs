@@ -93,8 +93,10 @@ namespace Mono.CSharp
 		{
 			this.member_context = rc;
 			this.ig = ig;
-
 			this.return_type = return_type;
+
+			if (rc.Module.Compiler.Settings.Checked)
+				flags |= Options.CheckedScope;
 
 #if STATIC
 			ig.__CleverExceptionBlockAssistance ();

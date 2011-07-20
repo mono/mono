@@ -53,6 +53,13 @@ namespace Mono.CSharp {
 
 	struct ProxyMethodContext : IMemberContext
 	{
+		readonly TypeContainer container;
+
+		public ProxyMethodContext (TypeContainer container)
+		{
+			this.container = container;
+		}
+
 		public TypeSpec CurrentType {
 			get {
 				throw new NotImplementedException ();
@@ -91,7 +98,7 @@ namespace Mono.CSharp {
 
 		public ModuleContainer Module {
 			get {
-				throw new NotImplementedException ();
+				return container.Module;
 			}
 		}
 
@@ -499,7 +506,7 @@ namespace Mono.CSharp {
 			}
 
 			int top = param.Count;
-			var ec = new EmitContext (new ProxyMethodContext (), proxy.GetILGenerator (), null);
+			var ec = new EmitContext (new ProxyMethodContext (container), proxy.GetILGenerator (), null);
 			ec.EmitThis ();
 			// TODO: GetAllParametersArguments
 			for (int i = 0; i < top; i++)
