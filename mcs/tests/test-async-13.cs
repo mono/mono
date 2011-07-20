@@ -225,6 +225,26 @@ class Tester : Base
 		return a [await Task.Factory.StartNew (() => (long)1)] + value;
 	}
 	
+	async Task<bool> ArrayAccessTest_7 ()
+	{
+		short?[] s = new short?[] { 3, 2, 1 };
+		var r = s [await Task.Factory.StartNew (() => 1)]++;
+		return r == 2;
+	}
+
+	async Task<int> ArrayAccessTest_8 ()
+	{
+		var s = new byte?[] { 3, 2, 1 };
+		var r = s [await Task.Factory.StartNew (() => 1)] += await Task.Factory.StartNew (() => (byte)30);
+		if (r != 32)
+			return 1;
+		
+		if (s [1] != 32)
+			return 2;
+		
+		return 0;
+	}
+
 	async Task<int> AssignTest_1 ()
 	{
 		field_int = await Task.Factory.StartNew (() => 0);
@@ -625,14 +645,14 @@ class Tester : Base
 		long a = 1;
 		return (a + checked (-await Task.Factory.StartNew (() => 2))) == -1;
 	}
-	
+
 	async Task<bool> UnaryTest_2 ()
 	{
 		short? s = 2;
 		int value = 2;
 		return (value * ~await Task.Factory.StartNew (() => s)) == -6;
 	}
-	
+
 	async Task<bool> UnaryTest_3 ()
 	{
 		var d = new decimal? [2];

@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 		public abstract string[] ValidAttributeTargets { get; }
 	};
 
-	public class Attribute : Expression
+	public class Attribute
 	{
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
@@ -95,6 +95,8 @@ namespace Mono.CSharp {
 		bool resolve_error;
 		bool arg_resolved;
 		readonly bool nameEscaped;
+		readonly Location loc;
+		public TypeSpec Type;	
 
 		//
 		// An attribute can be attached to multiple targets (e.g. multiple fields)
@@ -122,6 +124,12 @@ namespace Mono.CSharp {
 			this.loc = loc;
 			ExplicitTarget = target;
 			this.nameEscaped = nameEscaped;
+		}
+
+		public Location Location {
+			get {
+				return loc;
+			}
 		}
 
 		void AddModuleCharSet (ResolveContext rc)
@@ -327,7 +335,7 @@ namespace Mono.CSharp {
 			return Type;
 		}
 
-		public override string GetSignatureForError ()
+		public string GetSignatureForError ()
 		{
 			if (Type != null)
 				return TypeManager.CSharpName (Type);
@@ -338,7 +346,7 @@ namespace Mono.CSharp {
 		public bool HasSecurityAttribute {
 			get {
 				PredefinedAttribute pa = context.Module.PredefinedAttributes.Security;
-				return pa.IsDefined && TypeSpec.IsBaseClass (type, pa.TypeSpec, false);
+				return pa.IsDefined && TypeSpec.IsBaseClass (Type, pa.TypeSpec, false);
 			}
 		}
 
@@ -463,7 +471,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return ConstructorLookup (ec, Type, ref PosArguments, loc);
+			return Expression.ConstructorLookup (ec, Type, ref PosArguments, loc);
 		}
 
 		bool ResolveNamedArguments (ResolveContext ec)
@@ -484,10 +492,10 @@ namespace Mono.CSharp {
 
 				a.Resolve (ec);
 
-				Expression member = Expression.MemberLookup (ec, false, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
+				Expression member = Expression.MemberLookup (ec, false, Type, name, 0, Expression.MemberLookupRestrictions.ExactArity, loc);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec, true, Type, name, 0, MemberLookupRestrictions.ExactArity, loc);
+					member = Expression.MemberLookup (ec, true, Type, name, 0, Expression.MemberLookupRestrictions.ExactArity, loc);
 
 					if (member != null) {
 						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
@@ -675,7 +683,7 @@ namespace Mono.CSharp {
 		{
 			if (!arg_resolved) {
 				// corlib only case when obsolete is used before is resolved
-				var c = type.MemberDefinition as Class;
+				var c = Type.MemberDefinition as Class;
 				if (c != null && !c.HasMembersDefined)
 					c.Define ();
 				
@@ -914,7 +922,7 @@ namespace Mono.CSharp {
 
 		public override int GetHashCode ()
 		{
-			return type.GetHashCode () ^ Target.GetHashCode ();
+			return Type.GetHashCode () ^ Target.GetHashCode ();
 		}
 
 		/// <summary>
@@ -1081,21 +1089,6 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 			return e.TypeArgument;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 	

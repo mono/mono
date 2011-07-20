@@ -1413,6 +1413,11 @@ namespace Mono.CSharp {
 			return res ? this : null;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return false;
+		}
+
 		public void SetHasThisAccess ()
 		{
 			ExplicitBlock b = block;
@@ -1489,11 +1494,6 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
-
-		public override bool ContainsEmitWithAwait ()
-		{
-			return false;
-		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{

@@ -600,7 +600,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected static MethodSpec ConstructorLookup (ResolveContext rc, TypeSpec type, ref Arguments args, Location loc)
+		public static MethodSpec ConstructorLookup (ResolveContext rc, TypeSpec type, ref Arguments args, Location loc)
 		{
 			var ctors = MemberCache.FindMembers (type, Constructor.ConstructorName, true);
 			if (ctors == null) {
@@ -5137,7 +5137,7 @@ namespace Mono.CSharp {
 				} else if (var != null && var.IsHoisted) {
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, var, loc);
 				}
-				
+
 				return new FixedBufferPtr (this, fb.ElementType, loc).Resolve (ec);
 			}
 

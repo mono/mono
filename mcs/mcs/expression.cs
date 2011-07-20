@@ -3783,6 +3783,11 @@ namespace Mono.CSharp
 		
 		public override void Emit (EmitContext ec)
 		{
+			EmitOperator (ec, left.Type);
+		}
+
+		protected virtual void EmitOperator (EmitContext ec, TypeSpec l)
+		{
 			if (ec.HasSet (BuilderContext.Options.AsyncBody) && right.ContainsEmitWithAwait ()) {
 				left = left.EmitToField (ec);
 
@@ -3791,11 +3796,6 @@ namespace Mono.CSharp
 				}
 			}
 
-			EmitOperator (ec, left.Type);
-		}
-
-		protected virtual void EmitOperator (EmitContext ec, TypeSpec l)
-		{
 			//
 			// Handle short-circuit operators differently
 			// than the rest
@@ -9055,6 +9055,11 @@ namespace Mono.CSharp
 			this.loc = l;
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Error_PointerInsideExpressionTree (ec);
@@ -9553,6 +9558,11 @@ namespace Mono.CSharp
 				this.loc = newInstance.loc;
 				this.eclass = newInstance.eclass;
 				this.new_instance = newInstance;
+			}
+
+			public override bool ContainsEmitWithAwait ()
+			{
+				return false;
 			}
 
 			public override Expression CreateExpressionTree (ResolveContext ec)

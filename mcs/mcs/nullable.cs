@@ -834,8 +834,14 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
-			if (l.IsNullableType)
-				l = TypeManager.GetTypeArguments (l) [0];
+			if (left.Type.IsNullableType) {
+				l = NullableInfo.GetUnderlyingType (left.Type);
+				left = EmptyCast.Create (left, l);
+			}
+
+			if (right.Type.IsNullableType) {
+				right = EmptyCast.Create (right, NullableInfo.GetUnderlyingType (right.Type));
+			}
 
 			base.EmitOperator (ec, l);
 		}
