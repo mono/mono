@@ -280,7 +280,7 @@ namespace Mono.CSharp
 			ig.Emit (opcode);
 		}
 
-		public void Emit (OpCode opcode, LocalBuilder local, TypeSpec type)
+		public void Emit (OpCode opcode, LocalBuilder local)
 		{
 			ig.Emit (opcode, local);
 		}

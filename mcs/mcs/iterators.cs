@@ -711,7 +711,7 @@ namespace Mono.CSharp
 				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 				ec.EmitThis ();
 				ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
-				ec.Emit (OpCodes.Stloc, current_pc, ec.BuiltinTypes.UInt);
+				ec.Emit (OpCodes.Stloc, current_pc);
 			}
 
 			ec.EmitThis ();
@@ -724,7 +724,7 @@ namespace Mono.CSharp
 
 			if (labels != null) {
 				//SymbolWriter.StartIteratorDispatcher (ec.ig);
-				ec.Emit (OpCodes.Ldloc, current_pc, ec.BuiltinTypes.UInt);
+				ec.Emit (OpCodes.Ldloc, current_pc);
 				ec.Emit (OpCodes.Switch, labels);
 				//SymbolWriter.EndIteratorDispatcher (ec.ig);
 
@@ -778,7 +778,7 @@ namespace Mono.CSharp
 			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
-			ec.Emit (OpCodes.Stloc, current_pc, ec.BuiltinTypes.UInt);
+			ec.Emit (OpCodes.Stloc, current_pc);
 
 			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
 			ec.EmitThis ();
@@ -798,11 +798,11 @@ namespace Mono.CSharp
 			if (need_skip_finally) {
 				skip_finally = ec.GetTemporaryLocal (ec.BuiltinTypes.Bool);
 				ec.EmitInt (0);
-				ec.Emit (OpCodes.Stloc, skip_finally, ec.BuiltinTypes.Bool);
+				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 
 			SymbolWriter.StartIteratorDispatcher (ec);
-			ec.Emit (OpCodes.Ldloc, current_pc, ec.BuiltinTypes.UInt);
+			ec.Emit (OpCodes.Ldloc, current_pc);
 			ec.Emit (OpCodes.Switch, labels);
 
 			ec.Emit (OpCodes.Br, move_next_error);
@@ -877,7 +877,7 @@ namespace Mono.CSharp
 			// mark finally blocks as disabled
 			if (unwind_protect && skip_finally != null) {
 				ec.EmitInt (1);
-				ec.Emit (OpCodes.Stloc, skip_finally, ec.Module.Compiler.BuiltinTypes.Bool);
+				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 		}
 	}

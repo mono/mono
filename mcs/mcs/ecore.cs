@@ -524,14 +524,14 @@ namespace Mono.CSharp {
 
 			// Create temporary local (we cannot load this before Emit)
 			var temp = ec.GetTemporaryLocal (type);
-			ec.Emit (OpCodes.Stloc, temp, type);
+			ec.Emit (OpCodes.Stloc, temp);
 
 			//
 			// Store the result to temporary field
 			//
 			var field = ec.GetTemporaryField (type);
 			ec.EmitThis ();
-			ec.Emit (OpCodes.Ldloc, temp, type);
+			ec.Emit (OpCodes.Ldloc, temp);
 			field.EmitAssignFromStack (ec);
 
 			ec.FreeTemporaryLocal (temp, type);
@@ -5405,8 +5405,8 @@ namespace Mono.CSharp {
 			if (need_copy) {
 				Emit (ec);
 				var temp = ec.GetTemporaryLocal (type);
-				ec.Emit (OpCodes.Stloc, temp, type);
-				ec.Emit (OpCodes.Ldloca, temp, type);
+				ec.Emit (OpCodes.Stloc, temp);
+				ec.Emit (OpCodes.Ldloca, temp);
 				ec.FreeTemporaryLocal (temp, type);
 				return;
 			}

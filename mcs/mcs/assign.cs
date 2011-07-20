@@ -228,7 +228,7 @@ namespace Mono.CSharp {
 			if (builder == null)
 				throw new InternalErrorException ("Emit without Store, or after Release");
 
-			ec.Emit (OpCodes.Ldloc, builder, type);
+			ec.Emit (OpCodes.Ldloc, builder);
 		}
 
 		#region IAssignMethod Members
@@ -265,7 +265,7 @@ namespace Mono.CSharp {
 			if (builder == null)
 				builder = ec.GetTemporaryLocal (type);
 
-			ec.Emit (OpCodes.Stloc, builder, type);
+			ec.Emit (OpCodes.Stloc, builder);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -278,9 +278,9 @@ namespace Mono.CSharp {
 				// if is_address, than this is just the address anyways,
 				// so we just return this.
 				//
-				ec.Emit (OpCodes.Ldloc, builder, type);
+				ec.Emit (OpCodes.Ldloc, builder);
 			} else {
-				ec.Emit (OpCodes.Ldloca, builder, type);
+				ec.Emit (OpCodes.Ldloca, builder);
 			}
 		}
 	}
