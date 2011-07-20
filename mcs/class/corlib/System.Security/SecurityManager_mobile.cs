@@ -59,13 +59,13 @@ namespace System.Security {
 		[Obsolete]
 #endif
 		public static bool CheckExecutionRights {
-			get { return true; }
+			get { return false; }
 			set { ; }
 		}
 
 		[Obsolete ("The security manager cannot be turned off on MS runtime")]
 		public static bool SecurityEnabled {
-			get { return true; }
+			get { return false; }
 			set { ; }
 		}
 		
