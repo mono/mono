@@ -68,7 +68,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					raw_data = value [0].GetBytes ();
 
 				X509Extension newt = null;
-#if MOONLIGHT
+#if MOONLIGHT || FULL_AOT_RUNTIME
 				// non-extensible
 				switch (oid) {
 				case "2.5.29.14":
