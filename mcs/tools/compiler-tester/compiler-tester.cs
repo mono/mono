@@ -726,13 +726,13 @@ namespace TestRunner {
 					return true;
 
 				if (md.ILSize > il_size) {
-					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
+					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size);
 					md.ILSize = il_size;
 					return true;
 				}
 
 				checker.HandleFailure (test.FileName, PositiveChecker.TestResult.ILError,
-					string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+					string.Format ("{0} (code size {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size));
 
 				md.ILSize = il_size;
 
