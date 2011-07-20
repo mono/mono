@@ -80,11 +80,12 @@ namespace System.Net
 			}
 			
 #if NET_2_1
-			AddPrefix ("http", typeof (HttpRequestCreator));
-			AddPrefix ("https", typeof (HttpRequestCreator));
+			IWebRequestCreate http = new HttpRequestCreator ();
+			RegisterPrefix ("http", http);
+			RegisterPrefix ("https", http);
 	#if MOBILE
-			AddPrefix ("file", typeof (FileWebRequestCreator));
-			AddPrefix ("ftp", typeof (FtpRequestCreator));
+			RegisterPrefix ("file", new FileWebRequestCreator ());
+			RegisterPrefix ("ftp", new FtpRequestCreator ());
 	#endif
 #else
 	#if NET_2_0
