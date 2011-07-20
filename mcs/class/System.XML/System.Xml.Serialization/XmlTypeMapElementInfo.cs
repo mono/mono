@@ -49,6 +49,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapping _mappedType;
 		TypeData _type;
 		bool _wrappedElement = true;
+		int _explicitOrder = -1;
 		
 		public XmlTypeMapElementInfo (XmlTypeMapMember member, TypeData type)
 		{
@@ -168,6 +169,12 @@ namespace System.Xml.Serialization
 					throw new Exception ("INTERNAL ERROR; someone wrote unexpected code in sys.xml");
 				ElementName = string.Empty; Namespace = string.Empty;
 			}
+		}
+
+		public int ExplicitOrder
+		{
+			get { return _explicitOrder; }
+			set { _explicitOrder = value; }
 		}
 
 		public override bool Equals (object other)

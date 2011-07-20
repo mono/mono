@@ -1606,7 +1606,7 @@ namespace System.Xml.Serialization
 			WriteLine ("return ob;");
 		}
 
-		void GenerateReadMembers (XmlMapping xmlMap, ClassMap map, string ob, bool isValueList, bool readByOrder)
+		void GenerateReadMembers (XmlMapping xmlMap, ClassMap map, string ob, bool isValueList, bool readBySoapOrder)
 		{
 			XmlTypeMapping typeMap = xmlMap as XmlTypeMapping;
 			Type xmlMapType = (typeMap != null) ? typeMap.TypeData.Type : typeof(object[]);
@@ -1636,7 +1636,7 @@ namespace System.Xml.Serialization
 			if (!GenerateReadHook (HookType.elements, xmlMapType))
 			{
 				string[] readFlag = null;
-				if (map.ElementMembers != null && !readByOrder)
+				if (map.ElementMembers != null && !readBySoapOrder)
 				{
 					string readFlagsVars = string.Empty;
 					readFlag = new string[map.ElementMembers.Count];
@@ -1654,6 +1654,11 @@ namespace System.Xml.Serialization
 						readFlagsVars = "bool " + readFlagsVars;
 						WriteLine (readFlagsVars + ";");
 					}
+					foreach (XmlTypeMapElementInfo info in map.AllElementInfos)
+						if (info.ExplicitOrder >= 0) {
+							WriteLine ("int idx = -1;");
+							break;
+						}
 					WriteLine ("");
 				}
 				
@@ -1715,7 +1720,7 @@ namespace System.Xml.Serialization
 				ArrayList infos = null;
 				
 				int maxInd;
-				if (readByOrder) {
+				if (readBySoapOrder) {
 					if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
 					else maxInd = 0;
 				}
@@ -1734,13 +1739,15 @@ namespace System.Xml.Serialization
 				first = true;
 				for (int ind = 0; ind < maxInd; ind++)
 				{
-					XmlTypeMapElementInfo info = readByOrder ? map.GetElement (ind) : (XmlTypeMapElementInfo) infos [ind];
+					XmlTypeMapElementInfo info = readBySoapOrder ? map.GetElement (ind) : (XmlTypeMapElementInfo) infos [ind];
 					
-					if (!readByOrder)
+					if (!readBySoapOrder)
 					{
 						if (info.IsTextElement || info.IsUnnamedAnyElement) continue;
 						string elemCond = first ? "" : "else ";
 						elemCond += "if (";
+						if (info.ExplicitOrder >= 0)
+							elemCond += "idx < " + info.ExplicitOrder + "&& ";
 						if (!(info.Member.IsReturnValue && _format == SerializationFormat.Encoded)) {
 							elemCond += "Reader.LocalName == " + GetLiteral (info.ElementName);
 							if (!map.IgnoreMemberNamespace) elemCond += " && Reader.NamespaceURI == " + GetLiteral (info.Namespace);
@@ -1809,7 +1816,7 @@ namespace System.Xml.Serialization
 								GenerateEndHook ();
 							}
 						}
-						if (!readByOrder)
+						if (!readBySoapOrder)
 							WriteLine (readFlag[info.Member.Index] + " = true;");
 					}
 					else if (info.Member.GetType() == typeof (XmlTypeMapMemberFlatList))
@@ -1843,8 +1850,10 @@ namespace System.Xml.Serialization
 					}
 					else if (info.Member.GetType() == typeof(XmlTypeMapMemberElement))
 					{
-						if (!readByOrder)
+						if (!readBySoapOrder)
 							WriteLine (readFlag[info.Member.Index] + " = true;");
+						if (info.ExplicitOrder >= 0)
+							WriteLine ("idx = " + info.ExplicitOrder + ";");
 						if (_format == SerializationFormat.Encoded)
 						{
 							string val = GetObTempVar ();
@@ -1875,14 +1884,14 @@ namespace System.Xml.Serialization
 					else
 						throw new InvalidOperationException ("Unknown member type");
 	
-					if (!readByOrder)
+					if (!readBySoapOrder)
 						WriteLineUni ("}");
 					else
 						WriteLine ("Reader.MoveToContent();");
 					first = false;
 				}
 				
-				if (!readByOrder)
+				if (!readBySoapOrder)
 				{
 					if (!first) WriteLineInd ("else {");
 					

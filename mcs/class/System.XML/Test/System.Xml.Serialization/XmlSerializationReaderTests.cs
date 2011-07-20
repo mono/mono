@@ -151,6 +151,43 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (1, arr.Length, "#5");
 			Assert.AreEqual ("doh", arr [0], "#6");
 		}
+
+		[Test]
+		public void ExplicitlyOrderedMembers1 ()
+		{
+			var xs = new XmlSerializer (typeof (ExplicitlyOrderedMembersType1));
+			var result = (ExplicitlyOrderedMembersType1) xs.Deserialize(new StringReader (@"
+<root>
+	<child>Hello</child>
+	<child>World</child>
+	<child0>test</child0>
+</root>"));
+			Assert.AreEqual ("Hello", result.Child1, "#1");
+			Assert.AreEqual ("World", result.Child2, "#2");
+			Assert.AreEqual ("test", result.Child0, "#3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ExplicitlyOrderedMembers2 ()
+		{
+			new XmlSerializer (typeof (ExplicitlyOrderedMembersType2));
+		}
+
+		[Test]
+		public void ExplicitlyOrderedMembers3 ()
+		{
+			var xs = new XmlSerializer (typeof (ExplicitlyOrderedMembersType3));
+			var result = (ExplicitlyOrderedMembersType3) xs.Deserialize(new StringReader (@"
+<root>
+	<child>Hello</child>
+	<child>World</child>
+	<child0>test</child0>
+</root>"));
+			Assert.AreEqual ("Hello", result.Child1, "#1");
+			Assert.AreEqual ("World", result.Child2, "#2");
+			Assert.IsNull (result.Child0, "#3"); // not "test"
+		}
 	}
 
 	public class XmlSerializarionReaderTester : XmlSerializationReader

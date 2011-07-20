@@ -278,5 +278,18 @@ namespace System.Xml.Serialization
 				
 			sb.Append ("|");
 		}
+
+		public int Order {
+			get {
+				int order = -1;
+				if (XmlElements != null)
+					order = XmlElements.Order;
+				if (order < 0 && XmlArray != null)
+					order = XmlArray.Order;
+				if (order < 0 && XmlAnyElements != null)
+					order = XmlAnyElements.Order;
+				return order;
+			}
+		}
 	}
 }
