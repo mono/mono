@@ -464,7 +464,7 @@ namespace Mono.CSharp
 			//if (!block.HasAwait) {
 			//}
 
-			block.WrapIntoAsyncTask (host, returnType, context.CurrentTypeParameters);
+			block.WrapIntoAsyncTask (context, host, returnType);
 		}
 
 		protected override BlockContext CreateBlockContext (ResolveContext rc)
@@ -576,8 +576,8 @@ namespace Mono.CSharp
 		LocalVariable hoisted_return;
 		int locals_captured;
 
-		public AsyncTaskStorey (AsyncInitializer initializer, TypeSpec type, TypeParameter[] tparams)
-			: base (initializer.OriginalBlock, initializer.Host, null, tparams, "async")
+		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
+			: base (initializer.OriginalBlock, initializer.Host,context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async")
 		{
 			return_type = type;
 		}

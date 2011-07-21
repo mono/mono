@@ -283,6 +283,17 @@ class Tester : Base
 		return l == null;
 	}
 	
+	async Task<int> AssignTest_3 ()
+	{
+		int a = await Task.Factory.StartNew (() => 1), b = await Task.Factory.StartNew (() => 2);
+		if (a != 1)
+			return 1;
+		if (b != 2)
+			return b;
+		
+		return 0;
+	}
+	
 	async Task<int> BinaryTest_1 ()
 	{
 		return await Task.Factory.StartNew (() => { Thread.Sleep (10); return 5; }) +
