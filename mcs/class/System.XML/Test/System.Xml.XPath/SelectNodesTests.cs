@@ -18,21 +18,6 @@ namespace MonoTests.System.Xml.XPath
 	[TestFixture]
 	public class SelectNodesTests
 	{
-	
-		public static void Main()
-		{
-			SelectNodesTests t = new SelectNodesTests();
-			global::System.Console.WriteLine("AncestorAxis");
-			t.AncestorAxis();
-			global::System.Console.WriteLine("AncestorOrSelfAxis");
-			t.AncestorOrSelfAxis();
-			global::System.Console.WriteLine("AncestorAxisOrder");
-			t.AncestorAxisOrder();
-			global::System.Console.WriteLine("AncestorOrSelfAxisOrder");
-			t.AncestorOrSelfAxisOrder();
-			global::System.Console.WriteLine("AncestorAxisOrder2");
-			t.AncestorAxisOrder2();
-		}
 
 		[Test]
 		public void Root ()
@@ -305,9 +290,6 @@ namespace MonoTests.System.Xml.XPath
 			XmlNode bax = baxs [0];
 			XmlNodeList ans = bax.SelectNodes ("ancestor::*");
 
-			{ int i = 0; while (ans[i] != null)
-				global::System.Console.WriteLine(i+":"+ans[i++].Name); }
-
 			Assert.AreEqual (2, ans.Count, "#1");
 			Assert.AreEqual ("bar", ans [0].Name, "#2");
 			Assert.AreEqual ("baz", ans [1].Name, "#3");
@@ -317,9 +299,6 @@ namespace MonoTests.System.Xml.XPath
 			*/
 			bax = doc.GetElementsByTagName ("bax")[0];
 			ans = bax.SelectNodes ("ancestor::*");
-
-			{ int i = 0; while (ans[i] != null)
-				global::System.Console.WriteLine(i+":"+ans[i++].Name); }
 
 			Assert.AreEqual (3, ans.Count, "doc#1");
 			Assert.AreEqual ("foo", ans [0].Name, "doc#2");
@@ -370,9 +349,6 @@ namespace MonoTests.System.Xml.XPath
 			XmlNode bax = baxs [0];
 			XmlNodeList ans = bax.SelectNodes ("ancestor-or-self::*");
 
-			{ int i = 0; while (ans[i] != null)
-				global::System.Console.WriteLine(i+":"+ans[i++].Name); }
-
 			Assert.AreEqual (3, ans.Count, "#1");
 			Assert.AreEqual ("bar", ans [0].Name, "#2");
 			Assert.AreEqual ("baz", ans [1].Name, "#3");
@@ -383,9 +359,6 @@ namespace MonoTests.System.Xml.XPath
 			*/
 			bax = doc.GetElementsByTagName ("bax")[0];
 			ans = bax.SelectNodes ("ancestor-or-self::*");
-
-			{ int i = 0; while (ans[i] != null)
-				global::System.Console.WriteLine(i+":"+ans[i++].Name); }
 
 			Assert.AreEqual (4, ans.Count, "#1");
 			Assert.AreEqual ("foo", ans [0].Name, "#2");
