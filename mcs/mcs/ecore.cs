@@ -2947,6 +2947,7 @@ namespace Mono.CSharp {
 					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
+					t.Release (ec);
 				}
 			} else {
 				InstanceExpression.Emit (ec);
@@ -5318,13 +5319,22 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
-			if (ec.HasSet (BuilderContext.Options.AsyncBody) && source.ContainsEmitWithAwait ()) {
-				source = source.EmitToField (ec);
+			bool has_await_source = ec.HasSet (BuilderContext.Options.AsyncBody) && source.ContainsEmitWithAwait ();
+			if (isCompound && !(source is DynamicExpressionStatement)) {
+				if (has_await_source) {
+					if (IsInstance)
+						InstanceExpression = InstanceExpression.EmitToField (ec);
+				} else {
+					prepared = true;
+				}
 			}
 
-			prepared = isCompound && !(source is DynamicExpressionStatement);
-			if (IsInstance)
+			if (IsInstance) {
+				if (has_await_source)
+					source = source.EmitToField (ec);
+
 				EmitInstance (ec, prepared);
+			}
 
 			source.Emit (ec);
 

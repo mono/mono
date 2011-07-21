@@ -145,6 +145,7 @@ namespace Mono.CSharp
 				: base (null, arguments)
 			{
 				mg = mge;
+				type = mg.BestCandidateReturnType;
 			}
 
 			public override Expression EmitToField (EmitContext ec)

@@ -324,6 +324,7 @@ namespace Mono.CSharp.Nullable
 			value_target.AddressOf (ec, AddressOp.Store);
 			ec.Emit (OpCodes.Initobj, type);
 			value_target.Emit (ec);
+			value_target.Release (ec);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)

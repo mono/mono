@@ -1761,6 +1761,7 @@ namespace Mono.CSharp
 			temp_storage.AddressOf(ec, AddressOp.LoadStore);
 			ec.Emit(OpCodes.Initobj, type);
 			temp_storage.Emit(ec);
+			temp_storage.Release (ec);
 		}
 
 #if NET_4_0 && !STATIC
@@ -5606,6 +5607,7 @@ namespace Mono.CSharp
 			temp.AddressOf (ec, AddressOp.Store);
 			ec.Emit (OpCodes.Initobj, type);
 			temp.Emit (ec);
+			temp.Release (ec);
 			ec.Emit (OpCodes.Br_S, label_end);
 
 			ec.MarkLabel (label_activator);
@@ -6339,7 +6341,7 @@ namespace Mono.CSharp
 		//
 		// Emits the initializers for the array
 		//
-		void EmitStaticInitializers (EmitContext ec)
+		void EmitStaticInitializers (EmitContext ec, FieldExpr stackArray)
 		{
 			var m = ec.Module.PredefinedMembers.RuntimeHelpersInitializeArray.Resolve (loc);
 			if (m == null)
@@ -6351,7 +6353,12 @@ namespace Mono.CSharp
 			byte [] data = MakeByteBlob ();
 			var fb = ec.CurrentTypeDefinition.Module.MakeStaticData (data, loc);
 
-			ec.Emit (OpCodes.Dup);
+			if (stackArray == null) {
+				ec.Emit (OpCodes.Dup);
+			} else {
+				stackArray.Emit (ec);
+			}
+
 			ec.Emit (OpCodes.Ldtoken, fb);
 			ec.Emit (OpCodes.Call, m);
 		}
@@ -6468,7 +6475,7 @@ namespace Mono.CSharp
 			//
 			if (const_initializers_count > 2 && (array_data.Count > 10 || const_initializers_count * 4 > (array_data.Count)) &&
 				(BuiltinTypeSpec.IsPrimitiveType (array_element_type) || array_element_type.IsEnum)) {
-				EmitStaticInitializers (ec);
+				EmitStaticInitializers (ec, await_stack_field);
 
 				if (!only_constant_initializers)
 					EmitDynamicInitializers (ec, false, await_stack_field);
@@ -8170,7 +8177,7 @@ namespace Mono.CSharp
 
 		LocalTemporary temp;
 		bool prepared;
-		bool has_await_args;
+		bool? has_await_args;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
 		{
@@ -8271,16 +8278,11 @@ namespace Mono.CSharp
 			if (prepared) {
 				ec.EmitLoadFromPtr (type);
 			} else {
-				if (has_await_args) {
-					LoadInstanceAndArguments (ec, false, false);
-				} else {
-					if (ea.Arguments.ContainsEmitWithAwait ()) {
-						LoadInstanceAndArguments (ec, false, true);
-					}
-
-					LoadInstanceAndArguments (ec, false, false);
+				if (!has_await_args.HasValue && ea.Arguments.ContainsEmitWithAwait ()) {
+					LoadInstanceAndArguments (ec, false, true);
 				}
 
+				LoadInstanceAndArguments (ec, false, false);
 				ec.EmitArrayLoad (ac);
 			}	
 
@@ -8309,26 +8311,30 @@ namespace Mono.CSharp
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
 			if (t.IsStruct && ((isCompound && !(source is DynamicExpressionStatement)) || !BuiltinTypeSpec.IsPrimitiveType (t))) {
-				LoadInstanceAndArguments (ec, false, has_await_args);
+				LoadInstanceAndArguments (ec, false, has_await_args.Value);
 
-				if (has_await_args) {
-					if (source.ContainsEmitWithAwait ())
+				if (has_await_args.Value) {
+					if (source.ContainsEmitWithAwait ()) {
 						source = source.EmitToField (ec);
+						isCompound = false;
+						prepared = true;
+					}
 
-					LoadInstanceAndArguments (ec, false, false);
+					LoadInstanceAndArguments (ec, isCompound, false);
 				} else {
 					prepared = true;
 				}
 
 				ec.EmitArrayAddress (ac);
 
-				if (isCompound && !has_await_args) {
+				if (isCompound) {
 					ec.Emit (OpCodes.Dup);
+					prepared = true;
 				}
 			} else {
-				LoadInstanceAndArguments (ec, isCompound, has_await_args);
+				LoadInstanceAndArguments (ec, isCompound, has_await_args.Value);
 
-				if (has_await_args) {
+				if (has_await_args.Value) {
 					if (source.ContainsEmitWithAwait ())
 						source = source.EmitToField (ec);
 

@@ -24,6 +24,13 @@ struct S
 	{
 		return new S (400, "a");
 	}
+	
+	public static S operator + (S a, S b)
+	{
+		return new S () {
+			Value = a.Value + b.Value
+		};
+	}
 }
 
 enum E
@@ -33,7 +40,7 @@ enum E
 
 class Base
 {
-	public int field_int;
+	public volatile int field_int;
 	protected int field_this;
 	protected int property_this_counter;
 	
@@ -130,6 +137,11 @@ class Base
 	public int CallS (S s)
 	{
 		return s.Value;
+	}
+	
+	public T[] CreateArray<T> (int size)
+	{
+		return new T [size];
 	}
 	
 	protected static void CallRefParams (ref int i, params int[] i2)
@@ -245,6 +257,20 @@ class Tester : Base
 		return 0;
 	}
 
+	async Task<int> ArrayAccessTest_9 ()
+	{
+		var s = new Base ();
+		s.CreateArray<int> (await Task.Factory.StartNew (() => 5)) [2] += 9;
+		s.CreateArray<int> (await Task.Factory.StartNew (() => 5)) [2] += await Task.Factory.StartNew (() => 9);
+		
+		var res = s.CreateArray<int> (await Task.Factory.StartNew (() => 5)) [2] += await Task.Factory.StartNew (() => 9);
+		if (res != 9)
+			return 1;
+
+		s.CreateArray<S> (await Task.Factory.StartNew (() => 5)) [2] += await Task.Factory.StartNew (() => new S () { Value = 4 });
+		return 0;
+	}
+
 	async Task<int> AssignTest_1 ()
 	{
 		field_int = await Task.Factory.StartNew (() => 0);
@@ -353,13 +379,13 @@ class Tester : Base
 		var t = new Tester ();
 		return t.CallS (await Task.Factory.StartNew (() => this)) == 400;
 	}
-
+	
 	async Task<bool> CoalescingTest_1 ()
 	{
 		var r = await Task.Factory.StartNew<string> (() => null)  ?? await Task.Factory.StartNew (() => "x");
 		return r == "x";
 	}
-
+	
 	async Task<bool> CoalescingTest_2 ()
 	{
 		var r = await Task.Factory.StartNew<short?> (() => null)  ?? await Task.Factory.StartNew<byte> (() => 2);
@@ -410,6 +436,23 @@ class Tester : Base
 		return value - 5;
 	}
 	
+	async Task<int> FieldTest_1 ()
+	{
+		var s = new Base ();
+		s.field_int = 3;
+		s.field_int += await Task.Factory.StartNew (() => 6);
+		if (s.field_int != 9)
+			return 1;
+		
+		var r = s.field_int -= await Task.Factory.StartNew (() => 5);
+		if (r != 4)
+			return 2;
+		
+		if (s.field_int != 4)
+			return 3;
+		return 0;
+	}
+
 	async Task<bool> IndexerTest_1 ()
 	{
 		this[2] = await Task.Factory.StartNew (() => 6);
@@ -599,7 +642,14 @@ class Tester : Base
 		var a = new S[] { await Task.Factory.StartNew (() => new S () { Value = 4 }) };
 		return a [0].Value - 4;
 	}
-
+	
+	async Task<bool> NewArrayInitTest_6 ()
+	{
+		var a = new int[] { 2, 3, 2, 3, 5, 6, 7, 2, 4, await Task.Factory.StartNew (() => 5), 11, 23, 45 };
+		Console.WriteLine (a.Length);
+		return a.Length == 13;
+	}
+	
 	async Task<bool> PropertyTest_1 ()
 	{
 		PropertyInt = await Task.Factory.StartNew (() => 6);
