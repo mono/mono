@@ -73,6 +73,7 @@ namespace System.Xml.XPath
 			get {
 				if (ReverseAxis) {
 					int diff = Count - CurrentPosition + 1;
+					System.Console.WriteLine(this + " ComparablePosition: " + diff);
 					return diff < 1 ? 1 : diff;
 				}
 				else
@@ -1059,6 +1060,7 @@ namespace System.Xml.XPath
 			{
 				switch (resType) {
 					case XPathResultType.Number:
+						System.Console.WriteLine("Considering "+_iter.ComparablePosition+" as candidate for "+_pred.EvaluateNumber (_iter));
 						if (_pred.EvaluateNumber (_iter) != _iter.ComparablePosition)
 							continue;
 						break;
