@@ -207,7 +207,7 @@ namespace System.Xml.XPath
 
 		public override object Evaluate (BaseIterator iter)
 		{
-			return (double) iter.CurrentPosition;
+			return (double) iter.ComparablePosition;
 		}
 
 		public override string ToString ()
