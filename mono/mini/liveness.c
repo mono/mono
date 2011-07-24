@@ -134,7 +134,7 @@ mono_liveness_handle_exception_clauses (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 	GSList *visited = NULL;
-	MonoMethodHeader *header = cfg->header;
+	MonoMethodHeader *header = mono_method_get_header (cfg->method);
 	MonoExceptionClause *clause, *clause2;
 	int i, j;
 	gboolean *outer_try;
