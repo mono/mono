@@ -91,57 +91,57 @@ namespace System.Xml.Linq
 
 		public void AddAfterSelf (object content)
 		{
-			if (Parent == null)
+			if (Owner == null)
 				throw new InvalidOperationException ();
 			XNode here = this;
 			XNode orgNext = next;
 			foreach (object o in XUtil.ExpandArray (content)) {
-				if (Owner.OnAddingObject (o, true, here, false))
+				if (o == null || Owner.OnAddingObject (o, true, here, false))
 					continue;
 				XNode n = XUtil.ToNode (o);
 				n = (XNode) XUtil.GetDetachedObject (n);
-				n.SetOwner (Parent);
+				n.SetOwner (Owner);
 				n.previous = here;
 				here.next = n;
 				n.next = orgNext;
 				if (orgNext != null)
 					orgNext.previous = n;
 				else
-					Parent.LastNode = n;
+					Owner.LastNode = n;
 				here = n;
 			}
 		}
 
 		public void AddAfterSelf (params object [] content)
 		{
-			if (Parent == null)
+			if (Owner == null)
 				throw new InvalidOperationException ();
 			AddAfterSelf ((object) content);
 		}
 
 		public void AddBeforeSelf (object content)
 		{
-			if (Parent == null)
+			if (Owner == null)
 				throw new InvalidOperationException ();
 			foreach (object o in XUtil.ExpandArray (content)) {
-				if (Owner.OnAddingObject (o, true, previous, true))
+				if (o == null || Owner.OnAddingObject (o, true, previous, true))
 					continue;
 				XNode n = XUtil.ToNode (o);
 				n = (XNode) XUtil.GetDetachedObject (n);
-				n.SetOwner (Parent);
+				n.SetOwner (Owner);
 				n.previous = previous;
 				n.next = this;
 				if (previous != null)
 					previous.next = n;
 				previous = n;
-				if (Parent.FirstNode == this)
-					Parent.FirstNode = n;
+				if (Owner.FirstNode == this)
+					Owner.FirstNode = n;
 			}
 		}
 
 		public void AddBeforeSelf (params object [] content)
 		{
-			if (Parent == null)
+			if (Owner == null)
 				throw new InvalidOperationException ();
 			AddBeforeSelf ((object) content);
 		}
@@ -193,13 +193,13 @@ namespace System.Xml.Linq
 
 		public void Remove ()
 		{
-			if (Parent == null)
-				throw new InvalidOperationException ("Parent is missing");
+			if (Owner == null)
+				throw new InvalidOperationException ("Owner is missing");
 
-			if (Parent.FirstNode == this)
-				Parent.FirstNode = next;
-			if (Parent.LastNode == this)
-				Parent.LastNode = previous;
+			if (Owner.FirstNode == this)
+				Owner.FirstNode = next;
+			if (Owner.LastNode == this)
+				Owner.LastNode = previous;
 			if (previous != null)
 				previous.next = next;
 			if (next != null)
@@ -274,7 +274,7 @@ namespace System.Xml.Linq
 
 		public IEnumerable<XNode> NodesAfterSelf ()
 		{
-			if (Parent == null)
+			if (Owner == null)
 				yield break;
 			for (XNode n = NextNode; n != null; n = n.NextNode)
 				yield return n;
@@ -282,20 +282,46 @@ namespace System.Xml.Linq
 
 		public IEnumerable<XNode> NodesBeforeSelf ()
 		{
-			for (XNode n = Parent.FirstNode; n != this; n = n.NextNode)
+			if (Owner == null)
+				yield break;
+			for (XNode n = Owner.FirstNode; n != this; n = n.NextNode)
 				yield return n;
 		}
 
-		public void ReplaceWith (object item)
+		public void ReplaceWith (object content)
 		{
-			AddAfterSelf (item);
-			Remove ();
+			if (Owner == null)
+				throw new InvalidOperationException ();
+
+			XNode here = previous;
+			XNode orgNext = next;
+			XContainer orgOwner = Owner;
+			Remove();
+			foreach (object o in XUtil.ExpandArray (content)) {
+				if (o == null || orgOwner.OnAddingObject (o, true, here, false))
+					continue;
+				XNode n = XUtil.ToNode (o);
+				n = (XNode) XUtil.GetDetachedObject (n);
+				n.SetOwner (orgOwner);
+				n.previous = here;
+				if (here != null)
+					here.next = n;
+				else
+					orgOwner.FirstNode = n;
+				n.next = orgNext;
+				if (orgNext != null)
+					orgNext.previous = n;
+				else
+					orgOwner.LastNode = n;
+				here = n;
+			}
 		}
 
-		public void ReplaceWith (params object [] items)
+		public void ReplaceWith (params object [] content)
 		{
-			AddAfterSelf (items);
-			Remove ();
+			if (Owner == null)
+				throw new InvalidOperationException ();
+			ReplaceWith ((object) content);
 		}
 	}
 }
