@@ -34,7 +34,7 @@ Mono_Posix_Syscall_closelog (void)
 int
 Mono_Posix_Syscall_syslog (int priority, const char* message)
 {
-	syslog (priority, message);
+	syslog (priority, "%s", message);
 	return 0;
 }
 
