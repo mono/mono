@@ -23,6 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace System {
@@ -35,6 +36,9 @@ namespace System {
 		
 		public static bool IsMacOS {
 			get {
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					return false;
+
 				if (!checkedIsMacOS) {
 					IntPtr buf = Marshal.AllocHGlobal (8192);
 					if (uname (buf) == 0) {
