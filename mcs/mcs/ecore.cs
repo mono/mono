@@ -519,22 +519,33 @@ namespace Mono.CSharp {
 			if (IsSideEffectFree)
 				return this;
 
+			bool needs_temporary = ContainsEmitWithAwait ();
+			if (!needs_temporary)
+				ec.EmitThis ();
+
 			// Emit original code
 			EmitToFieldSource (ec);
 
-			// Create temporary local (we cannot load this before Emit)
-			var temp = ec.GetTemporaryLocal (type);
-			ec.Emit (OpCodes.Stloc, temp);
-
 			//
-			// Store the result to temporary field
+			// Store the result to temporary field when we
+			// cannot load this directly
 			//
 			var field = ec.GetTemporaryField (type);
-			ec.EmitThis ();
-			ec.Emit (OpCodes.Ldloc, temp);
-			field.EmitAssignFromStack (ec);
+			if (needs_temporary) {
+				//
+				// Create temporary local (we cannot load this before Emit)
+				//
+				var temp = ec.GetTemporaryLocal (type);
+				ec.Emit (OpCodes.Stloc, temp);
 
-			ec.FreeTemporaryLocal (temp, type);
+				ec.EmitThis ();
+				ec.Emit (OpCodes.Ldloc, temp);
+				field.EmitAssignFromStack (ec);
+
+				ec.FreeTemporaryLocal (temp, type);
+			} else {
+				field.EmitAssignFromStack (ec);
+			}
 
 			return field;
 		}

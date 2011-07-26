@@ -8796,6 +8796,19 @@ namespace Mono.CSharp
 		}
 	}
 	
+	sealed class EmptyAwaitExpression : EmptyExpression
+	{
+		public EmptyAwaitExpression (TypeSpec type)
+			: base (type)
+		{
+		}
+		
+		public override bool ContainsEmitWithAwait ()
+		{
+			return true;
+		}
+	}
+	
 	//
 	// Empty statement expression
 	//
@@ -9690,7 +9703,7 @@ namespace Mono.CSharp
 				}
 
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
-					instance = new EmptyExpression (Type).EmitToField (ec) as IMemoryLocation;
+					instance = new EmptyAwaitExpression (Type).EmitToField (ec) as IMemoryLocation;
 				} else {
 					temp = new LocalTemporary (type);
 					instance = temp;
