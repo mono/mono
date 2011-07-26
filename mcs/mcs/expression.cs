@@ -1481,11 +1481,22 @@ namespace Mono.CSharp
 						return CreateConstantResult (ec, true);
 					}
 				} else {
-				//	if (InflatedTypeSpec.ContainsTypeParameter (d))
-				//		return this;
+					if (Convert.ImplicitReferenceConversionExists (d, t)) {
+						//
+						// Do not optimize for imported type
+						//
+						if (d.MemberDefinition.IsImported && d.BuiltinType != BuiltinTypeSpec.Type.None)
+							return this;
+						
+						//
+						// Turn is check into simple null check for implicitly convertible reference types
+						//
+						return ReducedExpression.Create (
+							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc), loc).Resolve (ec),
+							this).Resolve (ec);
+					}
 
-					if (Convert.ImplicitReferenceConversionExists (d, t) ||
-						Convert.ExplicitReferenceConversionExists (d, t)) {
+					if (Convert.ExplicitReferenceConversionExists (d, t)) {
 						return this;
 					}
 				}

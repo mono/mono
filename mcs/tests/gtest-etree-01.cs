@@ -292,6 +292,8 @@ class Indexer
 	public string this [params string[] i] { get { return string.Concat (i); } }
 }
 
+class A { }
+class B : A { }
 
 // TODO: Add more nullable tests, follow AddTest pattern.
 
@@ -2687,6 +2689,13 @@ class Tester
 		Expression<Func<object, bool>> e3 = (object a) => null is object;
 		AssertNodeType (e3, ExpressionType.TypeIs);
 		Assert (false, e3.Compile ().Invoke (null));
+	}
+	
+	void TypeIsTest_4 ()
+	{
+		Expression<Func<B, bool>> e = l => l is A;
+		AssertNodeType (e, ExpressionType.TypeIs);
+		Assert (false, e.Compile ().Invoke (null));
 	}
 	
 	void TypeIsTest_5 ()
