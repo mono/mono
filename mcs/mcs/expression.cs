@@ -8295,7 +8295,7 @@ namespace Mono.CSharp
 			if (prepared) {
 				ec.EmitLoadFromPtr (type);
 			} else {
-				if (!has_await_args.HasValue && ea.Arguments.ContainsEmitWithAwait ()) {
+				if (!has_await_args.HasValue && ec.HasSet (BuilderContext.Options.AsyncBody) && ea.Arguments.ContainsEmitWithAwait ()) {
 					LoadInstanceAndArguments (ec, false, true);
 				}
 
