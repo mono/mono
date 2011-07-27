@@ -294,6 +294,15 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsTrue (wasCalled);
 		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void StartFinishedTaskTest ()
+		{
+			var t = Task.Factory.StartNew (delegate () { });
+			t.Wait ();
+
+			t.Start ();
+		}
 	}
 }
 #endif
