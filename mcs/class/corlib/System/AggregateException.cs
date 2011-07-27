@@ -35,18 +35,22 @@ namespace System
 	[System.Diagnostics.DebuggerDisplay ("Count = {InnerExceptions.Count}")]
 	public class AggregateException : Exception
 	{
-		List<Exception> innerExceptions;
+		List<Exception> innerExceptions = new List<Exception> ();
+		const string defaultMessage = "One or more errors occured";
 		
-		public AggregateException (): base()
+		public AggregateException () : base (defaultMessage)
 		{
 		}
 		
-		public AggregateException (string message): base (message, null)
+		public AggregateException (string message): base (message)
 		{
 		}
 		
 		public AggregateException (string message, Exception innerException): base (message, innerException)
 		{
+			if (innerException == null)
+				throw new ArgumentNullException ("innerException");
+			innerExceptions.Add (innerException);
 		}
 		
 		protected AggregateException (SerializationInfo info, StreamingContext context)
@@ -60,19 +64,19 @@ namespace System
 		}
 		
 		public AggregateException (string message, params Exception[] innerExceptions)
-			: this (message, (IEnumerable<Exception>)innerExceptions)
+			: base (GetFormattedMessage (message, innerExceptions), innerExceptions[0])
 		{
+			this.innerExceptions.AddRange (innerExceptions);
 		}
 		
 		public AggregateException (IEnumerable<Exception> innerExceptions)
-			: this (string.Empty, innerExceptions)
+			: this (defaultMessage, innerExceptions)
 		{
 		}
 		
 		public AggregateException (string message, IEnumerable<Exception> innerExceptions)
-			: base(GetFormattedMessage(message, innerExceptions))
+			: this (message, new List<Exception> (innerExceptions).ToArray ())
 		{
-			this.innerExceptions = new List<Exception> (innerExceptions);
 		}
 		
 		public AggregateException Flatten ()
@@ -139,15 +143,22 @@ namespace System
 		
 		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
 		{
-			const string baseMessage = "Exception(s) occurred : {0}.";
-			
-			System.Text.StringBuilder finalMessage
-				= new System.Text.StringBuilder (string.Format (baseMessage, customMessage));
+			if (inner == null)
+				throw new ArgumentNullException ("innerExceptions");
+
+			System.Text.StringBuilder finalMessage = new System.Text.StringBuilder (defaultMessage);
+			if (!string.IsNullOrEmpty (customMessage)) {
+				finalMessage.Append (' ');
+				finalMessage.Append (customMessage);
+				finalMessage.Append ('.');
+			}
+
 			foreach (Exception e in inner) {
+				if (e == null)
+					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
 				finalMessage.Append (Environment.NewLine);
-				finalMessage.Append ("[ ");
+				finalMessage.Append (" --> ");
 				finalMessage.Append (e.ToString ());
-				finalMessage.Append (" ]");
 				finalMessage.Append (Environment.NewLine);
 			}
 			return finalMessage.ToString ();

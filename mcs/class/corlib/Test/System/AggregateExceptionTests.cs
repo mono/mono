@@ -31,11 +31,10 @@ using NUnit;
 using NUnit.Core;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System
 {
-	
 	[TestFixture()]
-	public class AggregateExceptionTests
+	public class AggregateExceptionTest
 	{
 		AggregateException e;
 		
@@ -43,6 +42,22 @@ namespace ParallelFxTests
 		public void Setup()
 		{
 			e = new AggregateException(new Exception("foo"), new AggregateException(new Exception("bar"), new Exception("foobar")));
+		}
+
+		[Test]
+		public void SimpleInnerExceptionTestCase ()
+		{
+			var message = "Foo";
+			var inner = new ApplicationException (message);
+			var ex = new AggregateException (inner);
+
+			Assert.IsNotNull (ex.InnerException);
+			Assert.IsNotNull (ex.InnerExceptions);
+
+			Assert.AreEqual (inner, ex.InnerException);
+			Assert.AreEqual (1, ex.InnerExceptions.Count);
+			Assert.AreEqual (inner, ex.InnerExceptions[0]);
+			Assert.AreEqual (message, ex.InnerException.Message);
 		}
 		
 		[TestAttribute]
