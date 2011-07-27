@@ -7853,8 +7853,14 @@ namespace Mono.CSharp
 				if (nested.IsAccessible (rc))
 					break;
 
-				// Keep looking after inaccessible candidate
-				expr_type = nested.DeclaringType.BaseType;
+				//
+				// Keep looking after inaccessible candidate but only if
+				// we are not in same context as the definition itself
+ 				//
+				if (expr_type.MemberDefinition == rc.CurrentMemberDefinition)
+					break;
+
+				expr_type = expr_type.BaseType;
 			}
 			
 			TypeExpr texpr;
