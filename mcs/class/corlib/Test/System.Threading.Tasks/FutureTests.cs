@@ -99,6 +99,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsNotNull (ex);
 			Assert.AreEqual (thrown, ex.InnerException);
+			Assert.AreEqual (thrown, f.Exception.InnerException);
 			Assert.AreEqual (TaskStatus.Faulted, f.Status);
 
 			ex = null;
@@ -110,6 +111,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsNotNull (ex);
 			Assert.AreEqual (TaskStatus.Faulted, f.Status);
+			Assert.AreEqual (thrown, f.Exception.InnerException);
 			Assert.AreEqual (thrown, ex.InnerException);
 		}
 	}
