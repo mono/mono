@@ -26,6 +26,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Collections.Generic;
 
 using NUnit;
 using NUnit.Core;
@@ -67,6 +68,32 @@ namespace MonoTests.System
 			
 			Assert.AreEqual(3, ex.InnerExceptions.Count, "#1");
 			Assert.AreEqual(3, ex.InnerExceptions.Where((exception) => !(exception is AggregateException)).Count(), "#2");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void InitializationWithNullInnerValuesTest ()
+		{
+			var foo = new AggregateException (new Exception[] { new Exception (), null, new ApplicationException ()});
+		}
+
+		[Test]
+		public void InitializationWithNullValuesTest ()
+		{
+			Throws (typeof (ArgumentNullException), () => new AggregateException ((IEnumerable<Exception>)null));
+			Throws (typeof (ArgumentNullException), () => new AggregateException ((Exception[])null));
+		}
+
+		static void Throws (Type t, Action action)
+		{
+			Exception e = null;
+			try {
+				action ();
+			} catch (Exception ex) {
+				e = ex;
+			}
+
+			if (e == null || e.GetType () != t)
+				Assert.Fail ();
 		}
 	}
 }
