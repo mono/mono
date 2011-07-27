@@ -64,10 +64,14 @@ namespace System
 		}
 		
 		public AggregateException (string message, params Exception[] innerExceptions)
-			: base (message, innerExceptions[0])
+			: base (message, innerExceptions == null || innerExceptions.Length == 0 ? null : innerExceptions[0])
 		{
 			if (innerExceptions == null)
 				throw new ArgumentNullException ("innerExceptions");
+			foreach (var exception in innerExceptions)
+				if (exception == null)
+					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
+
 			this.innerExceptions.AddRange (innerExceptions);
 		}
 		
@@ -134,8 +138,6 @@ namespace System
 
 			int currentIndex = -1;
 			foreach (Exception e in innerExceptions) {
-				if (e == null)
-					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
 				finalMessage.Append (Environment.NewLine);
 				finalMessage.Append (" --> (Inner exception ");
 				finalMessage.Append (++currentIndex);
