@@ -142,6 +142,8 @@ namespace System.Threading.Tasks
 		
 		public void Start (TaskScheduler scheduler)
 		{
+			if (status >= TaskStatus.WaitingToRun)
+				throw new InvalidOperationException ("The Task is not in a valid state to be started.");
 			SetupScheduler (scheduler);
 			Schedule ();
 		}
