@@ -64,8 +64,10 @@ namespace System
 		}
 		
 		public AggregateException (string message, params Exception[] innerExceptions)
-			: base (GetFormattedMessage (message, innerExceptions), innerExceptions[0])
+			: base (message, innerExceptions[0])
 		{
+			if (innerExceptions == null)
+				throw new ArgumentNullException ("innerExceptions");
 			this.innerExceptions.AddRange (innerExceptions);
 		}
 		
@@ -128,7 +130,20 @@ namespace System
 		
 		public override string ToString ()
 		{
-			return this.Message;
+			System.Text.StringBuilder finalMessage = new System.Text.StringBuilder (base.ToString ());
+
+			int currentIndex = -1;
+			foreach (Exception e in innerExceptions) {
+				if (e == null)
+					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
+				finalMessage.Append (Environment.NewLine);
+				finalMessage.Append (" --> (Inner exception ");
+				finalMessage.Append (++currentIndex);
+				finalMessage.Append (") ");
+				finalMessage.Append (e.ToString ());
+				finalMessage.Append (Environment.NewLine);
+			}
+			return finalMessage.ToString ();
 		}
 
 		public override Exception GetBaseException ()
@@ -139,29 +154,6 @@ namespace System
 		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
-		{
-			if (inner == null)
-				throw new ArgumentNullException ("innerExceptions");
-
-			System.Text.StringBuilder finalMessage = new System.Text.StringBuilder (defaultMessage);
-			if (!string.IsNullOrEmpty (customMessage)) {
-				finalMessage.Append (' ');
-				finalMessage.Append (customMessage);
-				finalMessage.Append ('.');
-			}
-
-			foreach (Exception e in inner) {
-				if (e == null)
-					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
-				finalMessage.Append (Environment.NewLine);
-				finalMessage.Append (" --> ");
-				finalMessage.Append (e.ToString ());
-				finalMessage.Append (Environment.NewLine);
-			}
-			return finalMessage.ToString ();
 		}
 	}
 }
