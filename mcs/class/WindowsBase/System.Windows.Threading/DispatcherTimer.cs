@@ -66,7 +66,9 @@ namespace System.Windows.Threading {
 				long repeat_interval = interval;
 				if (repeat_interval == 0)
 					repeat_interval = 1;
-				timer = new Timer (new TimerCallback (timer_tick), null, interval, repeat_interval);
+				timer = new Timer (new TimerCallback (timer_tick),
+							null, new TimeSpan (interval), 
+							new TimeSpan (repeat_interval));
 			}
 		}
 
@@ -108,7 +110,8 @@ namespace System.Windows.Threading {
 				interval = value.Ticks;
 				
 				if (timer != null)
-					timer.Change (interval, interval);
+					timer.Change (new TimeSpan (interval),
+							new TimeSpan (interval));
 			}
 		}
 
