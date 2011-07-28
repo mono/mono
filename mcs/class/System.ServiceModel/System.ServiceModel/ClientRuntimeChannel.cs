@@ -93,6 +93,8 @@ namespace System.ServiceModel.MonoInternal
 		{
 			if (runtime == null)
 				throw new ArgumentNullException ("runtime");
+			if (messageVersion == null)
+				throw new ArgumentNullException ("messageVersion");
 			this.runtime = runtime;
 			this.remote_address = remoteAddress;
 			if (runtime.Via == null)
@@ -418,6 +420,8 @@ namespace System.ServiceModel.MonoInternal
 
 		public T GetProperty<T> () where T : class
 		{
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) message_version;
 			return OperationChannel.GetProperty<T> ();
 		}
 
