@@ -968,6 +968,16 @@ namespace MonoTests.System.Xml.TestClasses
 		}
 	}
 
+	public class Bug708178Type
+	{
+		List<string> foo = new List<string> ();
+
+		[XmlArray("Foo"), XmlArrayItem("Foo", typeof(string))]
+		public List<string> Foo {
+			get { return foo; }
+		}                
+	}
+
 	[XmlRoot("root")]
 	public class ExplicitlyOrderedMembersType1
 	{
