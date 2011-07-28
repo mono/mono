@@ -116,7 +116,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-		WsdlImporter importer;
+		internal WsdlImporter importer;
 		WsdlContractConversionContext context;
 
 		internal XmlSchemaSet schema_set_in_use;
@@ -207,7 +207,8 @@ namespace System.ServiceModel.Description
 						ResolveType (part.Type, parts, body.WrapperNamespace);
 					}
 				}
-				//FIXME: non-parameters?
+				else
+					throw new InvalidOperationException ("Only 'parameters' element in message part is supported"); // this should have been rejected by CanImportOperation().
 			}
 		}
 
@@ -233,8 +234,7 @@ namespace System.ServiceModel.Description
 		{
 			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
 			if (element == null)
-				//FIXME: What to do here?
-				throw new Exception ("Could not resolve : " + qname.ToString ());
+				throw new InvalidOperationException ("Could not resolve : " + qname.ToString ()); // this should have been rejected by CanImportOperation().
 
 			var ct = element.ElementSchemaType as XmlSchemaComplexType;
 			if (ct == null) // simple type
@@ -263,7 +263,7 @@ namespace System.ServiceModel.Description
 			part.DataContractImporter = dc_importer;
 			if (dc_importer.CanImport (schema_set_in_use, elem)) {
 				var typeQName = dc_importer.Import (schema_set_in_use, elem);
-				part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
+				part.CodeTypeReference = dc_importer.GetCodeTypeReference (elem.ElementSchemaType.QualifiedName, elem);
 			}
 			return part;
 		}
@@ -279,11 +279,32 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
+		Message FindMessage (OperationMessage om)
+		{
+			foreach (WSDL sd in importer.WsdlDocuments)
+				if (sd.TargetNamespace == om.Message.Namespace)
+					foreach (Message msg in sd.Messages)
+						if (msg.Name == om.Message.Name)
+							return msg;
+			return null;
+		}
+
 		protected override bool CanImportOperation (PortType portType, Operation op)
 		{
-			foreach (OperationMessage om in op.Messages)
-				if (!dc_importer.CanImport (schema_set_in_use, om.Message))
+			foreach (OperationMessage om in op.Messages) {
+				var msg = FindMessage (om);
+				if (msg == null)
 					return false;
+				foreach (MessagePart part in msg.Parts) {
+					if (part.Name == "parameters" && !part.Element.IsEmpty) {
+						var xe = schema_set_in_use.GlobalElements [part.Element] as XmlSchemaElement;
+						if (xe == null || !dc_importer.CanImport (schema_set_in_use, xe))
+							return false;
+					}
+					else
+						return false;
+				}
+			}
 			return true;
 		}
 		
@@ -326,7 +347,6 @@ namespace System.ServiceModel.Description
 			// FIXME: use of ElementName is a hack!
 			part.CodeTypeReference = new CodeTypeReference (xmm.ElementName);
 			parts.Add (part);
-			Console.Error.WriteLine ("CodeNamespace {1} in CCU {2} now contains {0} types.", ccu.Namespaces [0].Types.Count, ccu.Namespaces [0].GetHashCode (), ccu.GetHashCode ());
 		}
 
 		protected override void ResolveType (QName qname, List<MessagePartDescription> parts, string ns)

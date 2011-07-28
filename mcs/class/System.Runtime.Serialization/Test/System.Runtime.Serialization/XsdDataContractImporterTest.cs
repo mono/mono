@@ -422,6 +422,16 @@ namespace MonoTests.System.Runtime.Serialization
 			return ccu;
 		}
 
+		void DoCanImport (bool result, params string [] schemaFiles)
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			foreach (var schemaFile in schemaFiles)
+				xss.Add (null, schemaFile);
+			Assert.AreEqual (result, xdi.CanImport (xss));
+		}
+
 		string GenerateCode (CodeCompileUnit ccu)
 		{
 			var sw = new StringWriter ();
@@ -688,6 +698,12 @@ namespace MonoTests.System.Runtime.Serialization
 		public void ImportTestX34 ()
 		{
 			DoImport (true, "Test/Resources/Schemas/ns34.xsd", "Test/Resources/Schemas/ns34_2.xsd");
+		}
+
+		[Test]
+		public void CanImportTestX34 ()
+		{
+			DoCanImport (false, "Test/Resources/Schemas/ns34.xsd", "Test/Resources/Schemas/ns34_2.xsd");
 		}
 
 		/* Helper methods */
