@@ -361,6 +361,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void MultipleCalls_DoesntOverrunBuffer ()
 		{
 			Rfc2898DeriveBytes keygen = new Rfc2898DeriveBytes("Password", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+
 			keygen.GetBytes(32);
 			keygen.GetBytes(64);
 		}
