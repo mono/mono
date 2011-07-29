@@ -114,7 +114,9 @@ typedef int32_t        gboolean;
 
 #define G_USEC_PER_SEC  1000000
 
+#ifndef ABS
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
+#endif
 
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
