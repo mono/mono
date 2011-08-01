@@ -8,15 +8,16 @@
 # (installed in ./compiler folder)
 #
 
-readonly MONO_TRUNK_NACL=$(pwd)
-
-readonly PACKAGE_NAME=nacl64-mono-build
-
-readonly INSTALL_PATH=${MONO_TRUNK_NACL}/compiler
+TARGET_BITSIZE=64
 
 source common.sh
 source nacl-common.sh
 
+readonly MONO_TRUNK_NACL=$(pwd)
+
+readonly PACKAGE_NAME=nacl64-mono-build
+
+readonly INSTALL_PATH=${NACL_SDK_USR}
 
 CustomConfigureStep() {
   Banner "Configuring ${PACKAGE_NAME}"
@@ -36,21 +37,25 @@ CustomConfigureStep() {
       --build=amd64-pc-linux \
       --target=nacl64 \
       --prefix=${INSTALL_PATH} \
+      --exec-prefix=${INSTALL_PATH} \
       --with-tls=pthread \
       --enable-nacl-codegen \
       --disable-mono-debugger \
       --disable-mcs-build \
       --with-sigaltstack=no \
+      --with-sgen=no \
       --cache-file=../nacl64-mono-config-cache.temp
   else
     ../../configure \
       --target=nacl64 \
       --prefix=${INSTALL_PATH} \
+      --exec-prefix=${INSTALL_PATH} \
       --with-tls=pthread \
       --enable-nacl-codegen \
       --disable-mono-debugger \
       --disable-mcs-build \
       --with-sigaltstack=no \
+      --with-sgen=no \
       --cache-file=../nacl64-mono-config-cache.temp
   fi
   
@@ -58,22 +63,11 @@ CustomConfigureStep() {
   rm ../nacl64-mono-config-cache.temp
 }
 
-CustomBuildStep() {
-  MONO_NACL_ALIGN_MASK_OFF=1 make -j4
-}
-
-CustomInstallStep() {
-  MONO_NACL_ALIGN_MASK_OFF=1 make install
-}
-
 CustomPackageInstall() {
   CustomConfigureStep
-  #CustomBuildStep
-  #CustomInstallStep
   DefaultBuildStep
   DefaultInstallStep
 }
-
 
 CustomPackageInstall
 exit 0

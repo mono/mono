@@ -44,12 +44,7 @@ else
   readonly HOST_BIT_PREFIX=""
 fi
 
-# locate default nacl_sdk toolchain
-# TODO: no arm support
-#readonly NACL_SDK=${NACL_SDK_PATH}
-#readonly NACL_DEV=${NACL_PATH}
-#readonly NACL_NATIVE_CLIENT=${NACL_SDK}/src
-readonly NACL_SDK_BASE=${NACL_NATIVE_CLIENT}/toolchain/${OS_SUBDIR_SHORT}_x86_newlib
+readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86
 
 readonly NACL_BIN_PATH=${NACL_SDK_BASE}/bin
 readonly NACLCC=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-gcc
@@ -63,7 +58,7 @@ readonly NACLAS=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-as
 readonly NACL_SDK_GCC_SPECS_PATH=${NACL_SDK_BASE}/lib/gcc/nacl64/4.4.3
 
 # NACL_SDK_USR is where the headers, libraries, etc. will be installed
-readonly NACL_SDK_USR=${NACL_SDK_BASE}/nacl/usr
+readonly NACL_SDK_USR=${NACL_SDK_BASE}/nacl${TARGET_BIT_PREFIX}/usr
 readonly NACL_SDK_USR_INCLUDE=${NACL_SDK_USR}/include
 readonly NACL_SDK_USR_LIB=${NACL_SDK_USR}/lib
 

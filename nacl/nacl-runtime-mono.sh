@@ -17,7 +17,7 @@ source common.sh
 source nacl-common.sh
 
 readonly PACKAGE_NAME=runtime${TARGET_BIT_PREFIX}-build
-readonly INSTALL_PATH=${MONO_TRUNK_NACL}/runtime${TARGET_BIT_PREFIX}
+readonly INSTALL_PATH=${NACL_SDK_USR}
 
 
 CustomConfigureStep() {
@@ -35,7 +35,6 @@ CustomConfigureStep() {
   Remove ${PACKAGE_NAME}
   MakeDir ${PACKAGE_NAME}
   cd ${PACKAGE_NAME}
-  # TODO: remove this once libintl.h becomes available to nacl
   CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig \
   PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lg -lnosys -lnacl_dyncode" \
   CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256" ../../configure \
@@ -43,7 +42,7 @@ CustomConfigureStep() {
     --exec-prefix=${INSTALL_PATH} \
     --libdir=${INSTALL_PATH}/lib \
     --prefix=${INSTALL_PATH} \
-    --oldincludedir=${MONO_TRUNK_NACL}/runtime/include \
+    --oldincludedir=${INSTALL_PATH}/include \
     --disable-shared \
     --disable-mcs-build \
     --with-glib=embedded \
@@ -52,8 +51,8 @@ CustomConfigureStep() {
     --without-sigaltstack \
     --without-mmap \
     --with-gc=included \
-    --enable-nls=no \
     --enable-nacl-gc \
+    --enable-nls=no \
     --enable-nacl-codegen \
     --cache-file=../config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp
   echo "// --- Native Client runtime below" >> config.h

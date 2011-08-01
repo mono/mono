@@ -6,8 +6,8 @@ set -o verbose
 
 source ../common.sh
 
-MONO_RUNTIME_BASE=../runtime${TARGET_BIT_PREFIX}
-MONO_BASE=../compiler
+MONO_RUNTIME_BASE=${NACL_SDK_USR}
+MONO_BASE=${NACL_SDK_USR}
 MONO="${MONO_BASE}/bin/nacl${TARGET_BIT_PREFIX}-mono"
 CC=$NACLCC
 AS=$NACLAS
@@ -16,8 +16,7 @@ COMPILE_AOT=0
 AOT_OBJS=
 CC_DEFINES=
 MONO_SNAPSHOT=mono-normal-build
-RELOCATE_RODATA="-Wl,--section-start=.rodata=0x2000000"
-export NACL_ALLOW_DYNCODE_REPLACEMENT=1
+RELOCATE_RODATA="-Wl,--section-start=.rodata=0x10000000"
 
 if [ $# -gt 0 ]; then
   while [ -n "$*" ]
@@ -32,7 +31,7 @@ if [ $# -gt 0 ]; then
     elif [ $1 == "aot" ]; then
       COMPILE_AOT=1
       CC_DEFINES=-DAOT_VERSION
-      RELOCATE_RODATA=
+      #RELOCATE_RODATA=
     elif [ $1 == "regression" ]; then
       MODE=regression
     else
@@ -44,26 +43,24 @@ if [ $# -gt 0 ]; then
 fi
 
 readonly MONO_NORMAL_BASE=../normal-mono
-readonly NCVAL=ncval
+readonly NCVAL=ncval_x86_${TARGET_BITSIZE}
 
 # add nacl-gcc to path (from NaCl SDK)
 export PATH=${NACL_BIN_PATH}:$PATH
 
-# add sel_ldr to path (from NaCl dev tree)
-export PATH=${NACL_NATIVE_CLIENT}/scons-out/dbg-${OS_SUBDIR}-x86-${TARGET_BITSIZE}/staging:$PATH
-
-# add nacl-mono to path
-export PATH=../normal-mono/bin:$PATH
+# add normal mono/gmcs to path
+export PATH=${MONO_NORMAL_BASE}/bin:$PATH
 
 # echo version of nacl-gcc
 $CC --version
 
 echo $PATH
-which sel_ldr
+SEL_LDR=sel_ldr_x86_${TARGET_BITSIZE}
+which ${SEL_LDR}
 
 # echo version of gmcs 
 which gmcs
-../normal-mono/bin/gmcs --version
+${MONO_NORMAL_BASE}/bin/gmcs --version
 
 # echo version of nacl-mono
 ${MONO} --version
@@ -131,10 +128,10 @@ fi
 
 if [ $MODE = "regression" ]; then
   cd fsa-tmp
-  ${NCVAL} -readwrite_sfi fsacheck.nexe 2> validator_out || echo "fsacheck.nexe invalid: continuing anyway"
-  nacl-objdump -d fsacheck.nexe > fsacheck.disasm
+  ${NCVAL} --local_cpuid fsacheck.nexe 2> validator_out || echo "fsacheck.nexe invalid: continuing anyway"
+  nacl${TARGET_BIT_PREFIX}-objdump -d fsacheck.nexe > fsacheck.disasm
   for t in $fsatests; do
-    sel_ldr -a -c fsacheck.nexe $t || true
+    ${SEL_LDR} -S -a -c fsacheck.nexe $t || true
   done
 else
   export MONO_PATH=$(pwd)
@@ -142,9 +139,9 @@ else
   if [ $MODE = "normal" ]; then
     ./hw-test
   else
-    ${NCVAL} -readwrite_sfi hw-test.nexe 2> validator_out || echo "hw-test.nexe invalid: continuing anyway"
-    nacl-objdump -d hw-test.nexe > hw-test.disasm
-    sel_ldr -a -c hw-test.nexe
+    ${NCVAL} --local_cpuid hw-test.nexe 2> validator_out || echo "hw-test.nexe invalid: continuing anyway"
+    nacl${TARGET_BIT_PREFIX}-objdump -d hw-test.nexe > hw-test.disasm
+    ${SEL_LDR} -S -a -c hw-test.nexe
   fi
 fi
 

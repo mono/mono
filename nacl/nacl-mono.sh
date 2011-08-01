@@ -8,14 +8,17 @@
 # (installed in ./compiler folder)
 #
 
+TARGET_BITSIZE=32
+
+source common.sh
+source nacl-common.sh
+
 readonly MONO_TRUNK_NACL=$(pwd)
 
 readonly PACKAGE_NAME=nacl-mono-build
 
-readonly INSTALL_PATH=${MONO_TRUNK_NACL}/compiler
+readonly INSTALL_PATH=${NACL_SDK_USR}
 
-source common.sh
-source nacl-common.sh
 
 
 CustomConfigureStep() {
@@ -36,6 +39,7 @@ CustomConfigureStep() {
       --build=amd64-pc-linux \
       --target=nacl \
       --prefix=${INSTALL_PATH} \
+      --exec-prefix=${INSTALL_PATH} \
       --with-tls=pthread \
       --enable-nacl-codegen \
       --disable-mono-debugger \
@@ -47,6 +51,7 @@ CustomConfigureStep() {
     ../../configure \
       --target=nacl \
       --prefix=${INSTALL_PATH} \
+      --exec-prefix=${INSTALL_PATH} \
       --with-tls=pthread \
       --enable-nacl-codegen \
       --disable-mono-debugger \
@@ -60,22 +65,11 @@ CustomConfigureStep() {
   rm ../nacl-mono-config-cache.temp
 }
 
-CustomBuildStep() {
-  MONO_NACL_ALIGN_MASK_OFF=1 make -j4
-}
-
-CustomInstallStep() {
-  MONO_NACL_ALIGN_MASK_OFF=1 make install
-}
-
 CustomPackageInstall() {
   CustomConfigureStep
-  #CustomBuildStep
-  #CustomInstallStep
   DefaultBuildStep
   DefaultInstallStep
 }
-
 
 CustomPackageInstall
 exit 0
