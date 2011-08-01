@@ -40,6 +40,7 @@ namespace MonoTests.System.IdentityModel.Selectors
 	{
 		static readonly X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
 		static readonly X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test2.pfx", "mono");
+        static readonly X509Certificate2 cert3 = new X509Certificate2("Test/Resources/test_neg_serial.cer");
 
 		[Test]
 		public void Properties ()
@@ -50,5 +51,14 @@ namespace MonoTests.System.IdentityModel.Selectors
 			Assert.AreEqual ("22491767666218099257720700881460366085", ic.IssuerSerialNumber, "#2");
 			Assert.AreEqual (null, ic.ClauseType, "#3");
 		}
+
+        [Test]
+        public void NegativeSerialNumber()
+        {
+            var clause = new X509IssuerSerialKeyIdentifierClause (cert3);
+            Assert.AreEqual("CN=test, OU=cert, O=test, E=test@test.com", clause.IssuerName, "#1");
+            Assert.AreEqual("-168428216848510272180165529369113665228", clause.IssuerSerialNumber, "#2");
+            Assert.AreEqual(null, clause.ClauseType, "#3");
+        }
 	}
 }

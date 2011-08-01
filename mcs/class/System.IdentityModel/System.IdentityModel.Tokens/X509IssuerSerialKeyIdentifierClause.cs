@@ -54,9 +54,23 @@ namespace System.IdentityModel.Tokens
 #if TARGET_DOTNET
 			throw new NotImplementedException ();
 #else			
-			return new BigInteger (FromBinHex (hexString)).ToString ();
+           // http://tools.ietf.org/html/rfc5280#section-4.1.2.2
+           // We SHOULD support negative numbers
+           var bytes = FromBinHex (hexString);
+			
+            var negative = bytes.Length > 0 && bytes[0] >= 0x80;
+			if (negative) 
+				for (int i = 0; i < bytes.Length; i++) 
+					bytes[i] = (byte) ~ bytes[i];
+        	
+			var big = new BigInteger (bytes);
+			if (negative) { 
+				big = big + 1;
+				return "-" + big.ToString();
+			} else 
+				return big.ToString ();
 #endif
-		}
+        }
 
 		public X509IssuerSerialKeyIdentifierClause (X509Certificate2 certificate)
 			: base (null)
