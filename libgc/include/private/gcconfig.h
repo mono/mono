@@ -230,10 +230,16 @@
 # if defined(LINUX) && (defined(i386) || defined(__i386__))
 #    define I386
 #    define mach_type_known
+
+     /* Unity: Don't scan data segments */
+#    define GC_DONT_REGISTER_MAIN_STATIC_DATA
 # endif
 # if defined(LINUX) && defined(__x86_64__)
 #    define X86_64
 #    define mach_type_known
+
+     /* Unity: Don't scan data segments */
+#    define GC_DONT_REGISTER_MAIN_STATIC_DATA
 # endif
 # if defined(LINUX) && (defined(__ia64__) || defined(__ia64))
 #    define IA64
@@ -242,6 +248,9 @@
 # if defined(LINUX) && defined(__arm__)
 #    define ARM32
 #    define mach_type_known
+
+     /* Unity: Don't scan data segments */
+#    define GC_DONT_REGISTER_MAIN_STATIC_DATA
 # endif
 # if defined(LINUX) && defined(__cris__)
 #    ifndef CRIS
@@ -303,6 +312,9 @@
 #   define mach_type_known
 # endif
 # ifdef DARWIN
+     /* Unity: Don't scan data segments */
+#    define GC_DONT_REGISTER_MAIN_STATIC_DATA
+
 #   if defined(__ppc__)  || defined(__ppc64__)
 #    define POWERPC
 #    define mach_type_known

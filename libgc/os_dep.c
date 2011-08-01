@@ -1361,7 +1361,8 @@ void GC_register_data_segments()
   
   void GC_register_data_segments()
   {
-#     ifdef MSWIN32
+      /* Unity: Don't scan data segments */
+#     if defined(MSWIN32) && 0
       static char dummy;
       GC_register_root_section((ptr_t)(&dummy));
 #     endif
