@@ -372,27 +372,58 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static SecurityBindingElement 
 			CreateMutualCertificateBindingElement ()
 		{
-			throw new NotImplementedException ();
+			return CreateMutualCertificateBindingElement (MessageSecurityVersion.Default, false);
 		}
 
-		[MonoTODO]
 		public static SecurityBindingElement 
 			CreateMutualCertificateBindingElement (MessageSecurityVersion version)
 		{
-			throw new NotImplementedException ();
+			return CreateMutualCertificateBindingElement (version, false);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Does not support allowSerializedSigningTokenOnReply.")]
 		public static SecurityBindingElement 
 			CreateMutualCertificateBindingElement (
 			MessageSecurityVersion version,
 			bool allowSerializedSigningTokenOnReply)
 		{
-			throw new NotImplementedException ();
+			if (version == null)
+				throw new ArgumentNullException ("version");
+			
+			if (allowSerializedSigningTokenOnReply)
+				throw new NotSupportedException ("allowSerializedSigningTokenOnReply is not supported");
+			
+			if (version.SecurityVersion == SecurityVersion.WSSecurity10) {
+			
+				var recipient = new X509SecurityTokenParameters (
+					X509KeyIdentifierClauseType.Any,	
+				    SecurityTokenInclusionMode.Never);
+				recipient.RequireDerivedKeys = false;
+				
+				var initiator = new X509SecurityTokenParameters (
+				    X509KeyIdentifierClauseType.Any, 
+				    SecurityTokenInclusionMode.AlwaysToRecipient);
+				initiator.RequireDerivedKeys = false;                                          
+				                                                 
+				return new AsymmetricSecurityBindingElement(recipient, initiator) {
+					MessageSecurityVersion = version
+				};
+			} else {
+				X509SecurityTokenParameters p =
+					new X509SecurityTokenParameters (X509KeyIdentifierClauseType.Thumbprint);
+					p.RequireDerivedKeys = false;
+					
+				var sym = new SymmetricSecurityBindingElement () {
+					MessageSecurityVersion = version,
+					RequireSignatureConfirmation = true};
+				
+				sym.EndpointSupportingTokenParameters.Endorsing.Add (p);
+				return sym;
+			}
+			
 		}
 
 		[MonoTODO]
