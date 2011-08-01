@@ -206,7 +206,7 @@ class MakeBundle {
 			string prog = null;
 
 			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
-			rc.WriteLine ("#include <mono/metadata/mono-config.h>");
+			tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 			tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
 
 			if (compress) {
