@@ -8,14 +8,14 @@
 
 #if defined(__i386__)
 
-#if defined(__FreeBSD__) || defined(__APPLE__)
+#if defined(__FreeBSD__) || defined(__APPLE__) || defined(__DragonFly__)
 #include <ucontext.h>
 #endif
 #if defined(__APPLE__)
 #include <AvailabilityMacros.h>
 #endif
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_eax)
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_ebx)
 	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_ecx)
@@ -99,8 +99,34 @@
 	#define UCONTEXT_REG_R13(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r13)
 	#define UCONTEXT_REG_R14(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r14)
 	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r15)
-#elif defined(__FreeBSD__)
-#define UCONTEXT_GREGS(ctx)	((guint64*)&(((ucontext_t*)(ctx))->uc_mcontext))
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+	#define UCONTEXT_REG_RAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rax)
+	#define UCONTEXT_REG_RBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rbx)
+	#define UCONTEXT_REG_RCX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rcx)
+	#define UCONTEXT_REG_RDX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rdx)
+	#define UCONTEXT_REG_RBP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rbp)
+	#define UCONTEXT_REG_RSP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rsp)
+	#define UCONTEXT_REG_RSI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rsi)
+	#define UCONTEXT_REG_RDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rdi)
+	#define UCONTEXT_REG_RIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rip)
+	#define UCONTEXT_REG_R12(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_r12)
+	#define UCONTEXT_REG_R13(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_r13)
+	#define UCONTEXT_REG_R14(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_r14)
+	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_r15)
+#elif defined(__NetBSD__)
+	#define UCONTEXT_REG_RAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RAX])
+	#define UCONTEXT_REG_RBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RBX])
+	#define UCONTEXT_REG_RCX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RCX])
+	#define UCONTEXT_REG_RDX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RDX])
+	#define UCONTEXT_REG_RBP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RBP])
+	#define UCONTEXT_REG_RSP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RSP])
+	#define UCONTEXT_REG_RSI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RSI])
+	#define UCONTEXT_REG_RDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RDI])
+	#define UCONTEXT_REG_RIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_RIP])
+	#define UCONTEXT_REG_R12(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_R12])
+	#define UCONTEXT_REG_R13(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_R13])
+	#define UCONTEXT_REG_R14(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_R14])
+	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->uc_mcontext.__gregs [_REG_R15])
 #elif defined(__OpenBSD__)
     /* OpenBSD/amd64 has no gregs array, ucontext_t == sigcontext */
 	#define UCONTEXT_REG_RAX(ctx) (((ucontext_t*)(ctx))->sc_rax)
