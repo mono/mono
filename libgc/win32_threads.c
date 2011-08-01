@@ -338,21 +338,26 @@ ptr_t GC_current_stackbottom()
     /* The VirtualQuery calls below won't work properly on WinCE, but	*/
     /* since each stack is restricted to an aligned 64K region of	*/
     /* virtual memory we can just take the next lowest multiple of 64K.	*/
-#   define GC_get_stack_min(s) \
+#   define GC_get_stack_min(s,b) \
         ((ptr_t)(((DWORD)(s) - 1) & 0xFFFF0000))
 # else
-    static ptr_t GC_get_stack_min(ptr_t s)
-    {
+	static ptr_t GC_get_stack_min(ptr_t s, ptr_t lower_bound)
+	{
 	ptr_t bottom;
 	MEMORY_BASIC_INFORMATION info;
 	VirtualQuery(s, &info, sizeof(info));
+
+	if(lower_bound > s)
+		lower_bound = 0;
+
 	do {
-	    bottom = info.BaseAddress;
-	    VirtualQuery(bottom - 1, &info, sizeof(info));
+		bottom = info.BaseAddress;
+		VirtualQuery(bottom - 1, &info, sizeof(info));
 	} while ((info.Protect & PAGE_READWRITE)
-		 && !(info.Protect & PAGE_GUARD));
+		 && !(info.Protect & PAGE_GUARD)
+		 && bottom > lower_bound);
 	return(bottom);
-    }
+	}
 # endif
 
 void GC_push_all_stacks()
@@ -420,7 +425,7 @@ void GC_push_all_stacks()
 #       endif
       }
 
-      stack_min = GC_get_stack_min(thread->stack_base);
+      stack_min = GC_get_stack_min(thread->stack_base, sp);
 
       if (sp >= stack_min && sp < thread->stack_base)
         GC_push_all_stack(sp, thread->stack_base);
@@ -453,7 +458,7 @@ void GC_get_next_stack(char *start, char **lo, char **hi)
     	*lo = ADDR_LIMIT;
 	return;
     }
-    *lo = GC_get_stack_min(current_min);
+    *lo = GC_get_stack_min(current_min, 0);
     if (*lo < start) *lo = start;
 }
 
