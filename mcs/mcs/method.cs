@@ -1630,11 +1630,6 @@ namespace Mono.CSharp {
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType);
 					ec.With (EmitContext.Options.ConstructorScope, true);
 
-					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
-						ec.ReturnLabel = bc.ReturnLabel;
-						ec.HasReturnLabel = true;
-					}
-
 					block.Emit (ec);
 				}
 			}
@@ -2033,10 +2028,6 @@ namespace Mono.CSharp {
 				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
-					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
-						ec.ReturnLabel = bc.ReturnLabel;
-						ec.HasReturnLabel = true;
-					}
 
 					block.Emit (ec);
 				}

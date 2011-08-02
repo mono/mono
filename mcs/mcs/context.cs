@@ -75,18 +75,7 @@ namespace Mono.CSharp
 	{
 		FlowBranching current_flow_branching;
 
-		TypeSpec return_type;
-
-		/// <summary>
-		///   The location where return has to jump to return the
-		///   value
-		/// </summary>
-		public Label ReturnLabel;	// TODO: It's emit dependant
-
-		/// <summary>
-		///   If we already defined the ReturnLabel
-		/// </summary>
-		public bool HasReturnLabel;
+		readonly TypeSpec return_type;
 
 		public int FlowOffset;
 
@@ -114,6 +103,10 @@ namespace Mono.CSharp
 
 		public override FlowBranching CurrentBranching {
 			get { return current_flow_branching; }
+		}
+
+		public TypeSpec ReturnType {
+			get { return return_type; }
 		}
 
 		// <summary>
@@ -196,19 +189,11 @@ namespace Mono.CSharp
 			current_flow_branching = current_flow_branching.Parent;
 		}
 
-		//
-		// This method is used during the Resolution phase to flag the
-		// need to define the ReturnLabel
-		//
+#if !STATIC
 		public void NeedReturnLabel ()
 		{
-			if (!HasReturnLabel)
-				HasReturnLabel = true;
 		}
-
-		public TypeSpec ReturnType {
-			get { return return_type; }
-		}
+#endif
 	}
 
 	//

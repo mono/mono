@@ -30758,7 +30758,7 @@
         <size>30</size>
       </method>
       <method name="Int32 test19()">
-        <size>39</size>
+        <size>36</size>
       </method>
       <method name="Int32 test20()">
         <size>12</size>
@@ -36614,7 +36614,7 @@
         <size>17</size>
       </method>
       <method name="Void Test()">
-        <size>11</size>
+        <size>10</size>
       </method>
     </type>
   </test>
@@ -39878,7 +39878,7 @@
         <size>7</size>
       </method>
       <method name="Int32 f()">
-        <size>18</size>
+        <size>16</size>
       </method>
       <method name="Void Main()">
         <size>33</size>
@@ -40041,7 +40041,7 @@
         <size>17</size>
       </method>
       <method name="Void f()">
-        <size>7</size>
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -40054,7 +40054,7 @@
         <size>17</size>
       </method>
       <method name="Void f()">
-        <size>7</size>
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -40117,7 +40117,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>14</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -40130,7 +40130,7 @@
         <size>22</size>
       </method>
       <method name="Void f()">
-        <size>18</size>
+        <size>17</size>
       </method>
     </type>
   </test>
@@ -40222,16 +40222,16 @@
         <size>7</size>
       </method>
       <method name="Int32 stuff()">
-        <size>15</size>
+        <size>13</size>
       </method>
       <method name="Int32 stuff2()">
-        <size>29</size>
+        <size>27</size>
       </method>
       <method name="Int32 stuff3()">
-        <size>29</size>
+        <size>27</size>
       </method>
       <method name="Void stuff4()">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void stuff_finally()">
         <size>1</size>
@@ -40345,7 +40345,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>247</size>
+        <size>244</size>
       </method>
     </type>
   </test>
@@ -42647,7 +42647,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>81</size>
+        <size>79</size>
       </method>
     </type>
   </test>
@@ -42662,7 +42662,7 @@
         <size>7</size>
       </method>
       <method name="Int32 test(Int32)">
-        <size>27</size>
+        <size>25</size>
       </method>
       <method name="Int32 Main()">
         <size>70</size>
@@ -42827,7 +42827,7 @@
         <size>7</size>
       </method>
       <method name="Void TestFunc()">
-        <size>2</size>
+        <size>1</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>6</size>
