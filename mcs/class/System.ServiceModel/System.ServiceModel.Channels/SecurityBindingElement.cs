@@ -408,17 +408,18 @@ namespace System.ServiceModel.Channels
 				    SecurityTokenInclusionMode.AlwaysToRecipient);
 				initiator.RequireDerivedKeys = false;                                          
 				                                                 
-				return new AsymmetricSecurityBindingElement(recipient, initiator) {
+				return new AsymmetricSecurityBindingElement (recipient, initiator) {
 					MessageSecurityVersion = version
 				};
 			} else {
 				X509SecurityTokenParameters p =
 					new X509SecurityTokenParameters (X509KeyIdentifierClauseType.Thumbprint);
-					p.RequireDerivedKeys = false;
+				p.RequireDerivedKeys = false;
 					
 				var sym = new SymmetricSecurityBindingElement () {
 					MessageSecurityVersion = version,
-					RequireSignatureConfirmation = true};
+					RequireSignatureConfirmation = true
+                };
 				
 				sym.EndpointSupportingTokenParameters.Endorsing.Add (p);
 				return sym;

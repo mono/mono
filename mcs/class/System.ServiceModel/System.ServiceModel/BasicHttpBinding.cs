@@ -206,22 +206,22 @@ namespace System.ServiceModel
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
 				element = SecurityBindingElement.CreateMutualCertificateBindingElement (
-						MessageSecurityVersion.WSSecurity10WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10);
-
+				    MessageSecurityVersion.WSSecurity10WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10);
                 break;
+
 			case BasicHttpSecurityMode.TransportWithMessageCredential:
                 if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
                     // FIXME: pass proper security token parameters.
-                    element = SecurityBindingElement.CreateCertificateOverTransportBindingElement();
+                    element = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
                 else
-                    element = new AsymmetricSecurityBindingElement();
+                    element = new AsymmetricSecurityBindingElement ();
                 break;
 #endif
 			default: 
 				return null;
 			}
 
-            element.SetKeyDerivation(false);
+            element.SetKeyDerivation (false);
             element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
             return element;
 		}
