@@ -352,9 +352,10 @@ namespace System.Xml.Serialization {
 			bool? isOrderExplicit = null;
 			foreach (XmlReflectionMember rmember in members)
 			{
-				if (isOrderExplicit == null)
+				//Make sure one of the attributes is one that supports the Order field , see Bug 707434
+				if ((rmember.XmlAttributes.XmlElements.Count > 0 || rmember.XmlAttributes.XmlArray != null || rmember.XmlAttributes.XmlAnyElements.Count > 0) && isOrderExplicit == null)
 					isOrderExplicit = rmember.XmlAttributes.Order >= 0;
-				else if (isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
+				else if ((rmember.XmlAttributes.XmlElements.Count > 0 || rmember.XmlAttributes.XmlArray != null || rmember.XmlAttributes.XmlAnyElements.Count > 0) && isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
 					throw new InvalidOperationException ("Inconsistent XML sequence was detected. If there are XmlElement/XmlArray/XmlAnyElement attributes with explicit Order, then every other member must have an explicit order too.");
 			}
 			if (isOrderExplicit == true)
