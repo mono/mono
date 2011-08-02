@@ -53,12 +53,12 @@ namespace MonoTests.System.IdentityModel.Selectors
 		}
 
         [Test]
-        public void NegativeSerialNumber()
+        public void NegativeSerialNumber ()
         {
             var clause = new X509IssuerSerialKeyIdentifierClause (cert3);
-            Assert.AreEqual("CN=test, OU=cert, O=test, E=test@test.com", clause.IssuerName, "#1");
-            Assert.AreEqual("-168428216848510272180165529369113665228", clause.IssuerSerialNumber, "#2");
-            Assert.AreEqual(null, clause.ClauseType, "#3");
+            Assert.AreEqual ("CN=test, OU=cert, O=test, E=test@test.com", clause.IssuerName, "#1");
+            Assert.AreEqual ("-168428216848510272180165529369113665228", clause.IssuerSerialNumber, "#2");
+            Assert.AreEqual (null, clause.ClauseType, "#3");
         }
 	}
 }
