@@ -65,6 +65,7 @@ namespace System.ServiceModel.Dispatcher
 			m.IsReturnValue = isReturnValue;
 			m.MemberName = partDesc.Name;
 			m.MemberType = partDesc.Type;
+			m.XmlAttributes = new XmlAttributes(partDesc.MemberInfo);
 			return m;
 		}
 
