@@ -6,15 +6,22 @@ Prerequistites
 1. Native Client SDK (see http://code.google.com/chrome/nativeclient)
 2. Mono with NaCl support (you have it if you're reading this file)
 
-3. Directory conventions used in this document
+
+Directory conventions used in this document
 (your directories will differ...)
   /path/to/naclsdk    Native Client SDK directory
   /path/to/mono       Mono for NaCl
 
-4. Setting your environment:
+
+Instructions
+------------
+1. If this is a clean checkout, you may need to do this from /path/to/mono:
+  ./autogen.sh && make distclean
+
+2. Setting your environment:
   export NACL_SDK_ROOT=/path/to/naclsdk
 
-5. Run ./nacl-install-all.sh to install:
+3. Run ./nacl-install-all.sh to install:
   *) 32-bit NaCl Mono AOT compiler (nacl-mono)
   *) 64-bit NaCl Mono AOT compiler (nacl64-mono)
   *) 32-bit NaCl Mono runtime (+JIT compiler)
