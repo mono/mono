@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace System.ServiceModel {
 
@@ -51,6 +52,7 @@ namespace System.ServiceModel {
 
 		string method;
 		Type declaring_type, type;
+		MethodInfo method_cached;
 
 		public string MethodName {
 			get { return method; }
@@ -63,20 +65,26 @@ namespace System.ServiceModel {
 		public Type Type {
 			get { return type; }
 		}
+		
+		BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		static readonly Type [] get_types = new Type [] { typeof (ICustomAttributeProvider) };
 
-		public IEnumerable<Type> GetTypes ()
+		internal IEnumerable<Type> GetTypes (ICustomAttributeProvider provider)
 		{
+			if (method_cached != null)
+				return (IEnumerable<Type>) method_cached.Invoke (null, new object [] {provider});
 			if (type != null)
 				return new Type [] {type};
 			else if (declaring_type == null || method == null)
 				return Type.EmptyTypes;
 
-			var mi = declaring_type.GetMethod (method);
-			if (mi == null || mi.ReturnType != typeof (Type []) || !mi.IsStatic)
-				// actuall nonstatic method raises anerror on .NET, but it does not make sense
-				// because it ignores other erroneous patterns.
-				return Type.EmptyTypes;
-			return (Type []) mi.Invoke (null, new object [0]);
+			var mi = declaring_type.GetMethod (method, flags, null, get_types, null);
+			if (mi == null)
+				throw new InvalidOperationException (String.Format ("ServiceKnownTypeAttribute specifies method {0} in type {1} which does not exist. The method must be static and takes one parameter of type ICustomAttributeProvider", method, declaring_type));
+			if (!typeof (IEnumerable<Type>).IsAssignableFrom (mi.ReturnType))
+				throw new InvalidOperationException (String.Format ("ServiceKnownTypeAttribute specifies method {0} in type {1} which returns {2} object. This attribute expects the method to have IEnumerable<Type> as its return type", method, declaring_type, mi.ReturnType));
+			method_cached = mi;
+			return GetTypes (provider); // goto top
 		}
 	}
 }

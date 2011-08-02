@@ -57,7 +57,7 @@ namespace System.Web.Configuration
 			get { return (ExpressionBuilder) BaseGet (name); }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return props; }
 		}
 

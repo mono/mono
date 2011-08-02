@@ -71,16 +71,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			return SaveViewState ();
 		}
-#if NET_2_0
+
 		public void Fill (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
 			base.FillStyleAttributes (attributes, urlResolver);
 		}
-#endif
 
 		public bool SetBitCalledFlag = false;
 		public int SetBitCalledValue = 0;
-		protected override void SetBit (int bit) {
+		protected internal override void SetBit (int bit) {
 			SetBitCalledFlag = true;
 			SetBitCalledValue = bit;
 			base.SetBit (bit);

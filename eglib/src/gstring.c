@@ -133,6 +133,20 @@ g_string_append_c (GString *string, gchar c)
 }
 
 GString *
+g_string_append_unichar (GString *string, gunichar c)
+{
+	gchar utf8[6];
+	gint len;
+	
+	g_return_val_if_fail (string != NULL, NULL);
+	
+	if ((len = g_unichar_to_utf8 (c, utf8)) <= 0)
+		return string;
+	
+	return g_string_append_len (string, utf8, len);
+}
+
+GString *
 g_string_prepend (GString *string, const gchar *val)
 {
 	gssize len;
@@ -145,6 +159,24 @@ g_string_prepend (GString *string, const gchar *val)
 	GROW_IF_NECESSARY(string, len);	
 	memmove(string->str + len, string->str, string->len + 1);
 	memcpy(string->str, val, len);
+
+	return string;
+}
+
+GString *
+g_string_insert (GString *string, gssize pos, const gchar *val)
+{
+	gssize len;
+	
+	g_return_val_if_fail (string != NULL, string);
+	g_return_val_if_fail (val != NULL, string);
+	g_return_val_if_fail (pos <= string->len, string);
+
+	len = strlen (val);
+	
+	GROW_IF_NECESSARY(string, len);	
+	memmove(string->str + pos + len, string->str + pos, string->len - pos - len + 1);
+	memcpy(string->str + pos, val, len);
 
 	return string;
 }
@@ -163,6 +195,19 @@ g_string_append_printf (GString *string, const gchar *format, ...)
 	va_end (args);
 	g_string_append (string, ret);
 
+	g_free (ret);
+}
+
+void
+g_string_append_vprintf (GString *string, const gchar *format, va_list args)
+{
+	char *ret;
+
+	g_return_if_fail (string != NULL);
+	g_return_if_fail (format != NULL);
+
+	ret = g_strdup_vprintf (format, args);
+	g_string_append (string, ret);
 	g_free (ret);
 }
 
@@ -199,3 +244,34 @@ g_string_truncate (GString *string, gsize len)
 	return string;
 }
 
+GString *
+g_string_set_size (GString *string, gsize len)
+{
+	g_return_val_if_fail (string != NULL, string);
+
+	GROW_IF_NECESSARY(string, len);
+	
+	string->len = len;
+	string->str[len] = 0;
+	return string;
+}
+
+GString *
+g_string_erase (GString *string, gssize pos, gssize len)
+{
+	g_return_val_if_fail (string != NULL, string);
+
+	/* Silent return */
+	if (pos >= string->len)
+		return string;
+
+	if (len == -1 || (pos + len) >= string->len) {
+		string->str[pos] = 0;
+	}
+	else {
+		memmove (string->str + pos, string->str + pos + len, string->len - (pos + len) + 1);
+		string->len -= len;
+	}
+
+	return string;
+}

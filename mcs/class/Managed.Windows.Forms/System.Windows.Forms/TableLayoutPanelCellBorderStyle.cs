@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum TableLayoutPanelCellBorderStyle
@@ -41,4 +40,3 @@ namespace System.Windows.Forms
 		OutsetPartial = 6
 	}
 }
-#endif

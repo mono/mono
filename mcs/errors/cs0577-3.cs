@@ -1,4 +1,4 @@
-// cs0577-3.cs: Conditional not valid on `MainClass.implicit operator MainClass(C)' because it is a constructor, destructor, operator or explicit interface implementation
+// CS0577: Conditional not valid on `MainClass.implicit operator MainClass(C)' because it is a constructor, destructor, operator or explicit interface implementation
 // Line: 8
 
 class C {}

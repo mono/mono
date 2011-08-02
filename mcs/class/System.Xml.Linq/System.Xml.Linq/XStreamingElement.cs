@@ -156,6 +156,8 @@ namespace System.Xml.Linq
 			foreach (object o in XUtil.ExpandArray (items)) {
 				if (o == null)
 					continue;
+				else if (o is XStreamingElement)
+					((XStreamingElement) o).WriteTo (w);
 				else if (o is XNode)
 					((XNode) o).WriteTo (w);
 				else if (o is object [])

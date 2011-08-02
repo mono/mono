@@ -1,4 +1,4 @@
-// cs1671-2.cs: A namespace declaration cannot have modifiers or attributes
+// CS1671: A namespace declaration cannot have modifiers or attributes
 // Line : 14
 
 using System;

@@ -1,4 +1,4 @@
-// cs0266: Cannot implicitly convert type `int' to `X.E'. An explicit conversion exists (are you missing a cast?)
+// CS0266: Cannot implicitly convert type `int' to `X.E'. An explicit conversion exists (are you missing a cast?)
 // Line : 9
 
 class X {

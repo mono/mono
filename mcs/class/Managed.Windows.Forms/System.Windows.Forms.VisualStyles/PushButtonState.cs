@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum PushButtonState
+	public enum PushButtonState
 	{
 		Normal = 1,
 		Hot = 2,

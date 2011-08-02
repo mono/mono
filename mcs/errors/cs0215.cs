@@ -1,5 +1,5 @@
-// cs0215.cs : The return type of operator True or False must be bool
-// Line : 11 
+// CS0215: The return type of operator True or False must be bool
+// Line: 11 
 
 class Blah {
 

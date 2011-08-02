@@ -1,7 +1,7 @@
-// CS1729: The type `cs0143Test.A' does not contain a constructor that takes `2' arguments
+// CS1729: The type `CS0143Test.A' does not contain a constructor that takes `2' arguments
 // Line: 13 
 
-namespace cs0143Test
+namespace CS0143Test
 {
 	public class A
 	{

@@ -148,19 +148,14 @@ get_bytes_in_buffer (int fd, gboolean input)
 }
 
 gboolean
-set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
+is_baud_rate_legal (int baud_rate)
 {
-	struct termios newtio;
+	return setup_baud_rate (baud_rate) != -1;
+}
 
-	if (tcgetattr (fd, &newtio) == -1)
-		return FALSE;
-
-	newtio.c_cflag |=  (CLOCAL | CREAD);
-	newtio.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN );
-	newtio.c_oflag &= ~(OPOST);
-	newtio.c_iflag = IGNBRK;
-
-	/* setup baudrate */
+int
+setup_baud_rate (int baud_rate)
+{
 	switch (baud_rate)
 	{
 /*Some values are not defined on OSX and *BSD */
@@ -228,9 +223,27 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	case 50:
 	case 0:
 	default:
-	    baud_rate = B9600;
+	    baud_rate = -1;
 		break;
 	}
+	return baud_rate;
+}
+
+gboolean
+set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
+{
+	struct termios newtio;
+
+	if (tcgetattr (fd, &newtio) == -1)
+		return FALSE;
+
+	newtio.c_cflag |=  (CLOCAL | CREAD);
+	newtio.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN );
+	newtio.c_oflag &= ~(OPOST);
+	newtio.c_iflag = IGNBRK;
+
+	/* setup baudrate */
+	baud_rate = setup_baud_rate (baud_rate);
 
 	/* char lenght */
 	newtio.c_cflag &= ~CSIZE;

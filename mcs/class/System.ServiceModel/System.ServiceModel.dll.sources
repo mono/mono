@@ -128,6 +128,7 @@ System.Collections.Generic/KeyedByTypeCollection.cs
 System.Collections.Generic/SynchronizedCollection.cs
 System.Collections.Generic/SynchronizedKeyedCollection.cs
 System.Collections.Generic/SynchronizedReadOnlyCollection.cs
+System.IO/PipeException.cs
 System.ServiceModel.Activation/AspNetIntegrationRequirementsAttribute.cs
 System.ServiceModel.Activation/IServiceHostFactory.cs
 System.ServiceModel.Activation/ServiceHostFactory.cs
@@ -160,6 +161,7 @@ System.ServiceModel.Channels/CompilationException.cs
 System.ServiceModel.Channels/CompositeDuplexBindingElement.cs
 System.ServiceModel.Channels/CompositeDuplexBindingElementImporter.cs
 System.ServiceModel.Channels/ConnectionOrientedTransportBindingElement.cs
+System.ServiceModel.Channels/ContentType.cs
 System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/DeliveryFailure.cs
 System.ServiceModel.Channels/DeliveryStatus.cs
@@ -237,6 +239,13 @@ System.ServiceModel.Channels/NamedPipeConnectionPoolSettings.cs
 System.ServiceModel.Channels/NamedPipeReplyChannel.cs
 System.ServiceModel.Channels/NamedPipeRequestChannel.cs
 System.ServiceModel.Channels/NamedPipetransportBindingElement.cs
+System.ServiceModel.Channels.NetTcp/PeerDuplexChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpBinaryFrameManager.cs
+System.ServiceModel.Channels.NetTcp/TcpChannelFactory.cs
+System.ServiceModel.Channels.NetTcp/TcpChannelListener.cs
+System.ServiceModel.Channels.NetTcp/TcpDuplexSessionChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpReplyChannel.cs
+System.ServiceModel.Channels.NetTcp/TcpRequestChannel.cs
 System.ServiceModel.Channels/OneWayBindingElement.cs
 System.ServiceModel.Channels/OneWayBindingElementImporter.cs
 System.ServiceModel.Channels/OutputChannelBase.cs
@@ -244,7 +253,6 @@ System.ServiceModel.Channels/PeerResolverBindingElement.cs
 System.ServiceModel.Channels/PeerChannelFactory.cs
 System.ServiceModel.Channels/PeerChannelListener.cs
 System.ServiceModel.Channels/PeerCustomResolverBindingElement.cs
-System.ServiceModel.Channels/PeerDuplexChannel.cs
 System.ServiceModel.Channels/PeerInputChannel.cs
 System.ServiceModel.Channels/PeerOutputChannel.cs
 System.ServiceModel.Channels/PeerTransportBindingElement.cs
@@ -273,13 +281,7 @@ System.ServiceModel.Channels/StreamUpgradeProvider.cs
 System.ServiceModel.Channels/SvcHttpHandler.cs
 System.ServiceModel.Channels/SvcHttpHandlerFactory.cs
 System.ServiceModel.Channels/SymmetricSecurityBindingElement.cs
-System.ServiceModel.Channels/TcpChannelFactory.cs
-System.ServiceModel.Channels/TcpChannelListener.cs
 System.ServiceModel.Channels/TcpConnectionPoolSettings.cs
-System.ServiceModel.Channels/TcpBinaryFrameManager.cs
-System.ServiceModel.Channels/TcpDuplexSessionChannel.cs
-System.ServiceModel.Channels/TcpReplyChannel.cs
-System.ServiceModel.Channels/TcpRequestChannel.cs
 System.ServiceModel.Channels/TcpTransportBindingElement.cs
 System.ServiceModel.Channels/TextMessageEncoder.cs
 System.ServiceModel.Channels/TextMessageEncoderFactory.cs
@@ -372,6 +374,7 @@ System.ServiceModel.Configuration/DataContractSerializerElement.cs
 System.ServiceModel.Configuration/DiagnosticSection.cs
 System.ServiceModel.Configuration/DnsElement.cs
 System.ServiceModel.Configuration/EncodingConverter.cs
+System.ServiceModel.Configuration/EndToEndTracingElement.cs
 System.ServiceModel.Configuration/EndpointAddressElementBase.cs
 System.ServiceModel.Configuration/EndpointBehaviorElement.cs
 System.ServiceModel.Configuration/EndpointBehaviorElementCollection.cs
@@ -626,6 +629,8 @@ System.ServiceModel.Description/XmlName.cs
 System.ServiceModel.Description/XmlSerializerMessageContractImporter.cs
 System.ServiceModel.Description/XmlSerializerOperationBehavior.cs
 System.ServiceModel.Diagnostics/PerformanceCounterScope.cs
+System.ServiceModel.Diagnostics/MessageLoggingSettings.cs
+System.ServiceModel.Diagnostics/MessageLogTraceRecord.cs
 System.ServiceModel.Dispatcher/ActionMessageFilter.cs
 System.ServiceModel.Dispatcher/ActionMessageFilterTable.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
@@ -693,7 +698,8 @@ System.ServiceModel.Dispatcher/XPathMessageContext.cs
 System.ServiceModel.Dispatcher/XPathMessageFilter.cs
 System.ServiceModel.Dispatcher/XPathMessageFilterTable.cs
 System.ServiceModel.Dispatcher/XPathNavigatorException.cs
-System.ServiceModel.Dispatcher/InstanceBehavior.cs
+System.ServiceModel.Dispatcher/InstanceManager.cs
+System.ServiceModel.Dispatcher/XmlMessagesFormatter.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationBinding.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationBindingElement.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationMessageProperty.cs
@@ -825,6 +831,7 @@ System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
 System.ServiceModel/ClientBase.cs
 System.ServiceModel/ClientCredentialsSecurityTokenManager.cs
+System.ServiceModel/ClientRealProxy.cs
 System.ServiceModel/ClientProxyGenerator.cs
 System.ServiceModel/ClientRuntimeChannel.cs
 System.ServiceModel/CommunicationException.cs
@@ -868,6 +875,7 @@ System.ServiceModel/IOnlineStatus.cs
 System.ServiceModel/IServiceChannel.cs
 System.ServiceModel/InstanceContext.cs
 System.ServiceModel/InvalidMessageContractException.cs
+System.ServiceModel/Logger.cs
 System.ServiceModel/MessageBodyAttribute.cs
 System.ServiceModel/MessageContractAttribute.cs
 System.ServiceModel/MessageContractMemberAttribute.cs

@@ -47,14 +47,15 @@ namespace System.Runtime.Remoting.Messaging
 	{
 		[ThreadStatic] static Header [] Headers;
 		[ThreadStatic] static Hashtable datastore;
+		[ThreadStatic] static object hostContext;
 		
 		private CallContext ()
 		{
 		}
 
 		public static object HostContext {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return hostContext; }
+			set { hostContext = value; }
 		}
 
 		// public methods

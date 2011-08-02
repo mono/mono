@@ -31,7 +31,6 @@
 //
 
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace System.Runtime.InteropServices.Expando
 {

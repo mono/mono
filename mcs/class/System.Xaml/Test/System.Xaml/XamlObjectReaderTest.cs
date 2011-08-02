@@ -145,6 +145,16 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Skip3 ()
+		{
+			var r = new XamlObjectReader (new ReadOnlyPropertyContainer () { Foo = "x" });
+			while (r.NodeType != XamlNodeType.StartMember)
+				r.Read ();
+			r.Skip ();
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#1");
+		}
+
+		[Test]
 		public void Read_XmlDocument ()
 		{
 			var doc = new XmlDocument ();
@@ -644,6 +654,102 @@ namespace MonoTests.System.Xaml
 				AttachedWrapper2.SetFoo (obj, null);
 				AttachedWrapper2.SetFoo (obj.Value, null);
 			}
+		}
+
+		[Test]
+		public void Read_AbstractContainer ()
+		{
+			var obj = new AbstractContainer () { Value2 = new DerivedObject () { Foo = "x" } };
+			var xr = new XamlObjectReader (obj);
+			while (!xr.IsEof)
+				xr.Read ();
+		}
+
+		[Test]
+		public void Read_ReadOnlyPropertyContainer ()
+		{
+			var obj = new ReadOnlyPropertyContainer () { Foo = "x" };
+			var xr = new XamlObjectReader (obj);
+			var xt = xr.SchemaContext.GetXamlType (obj.GetType ());
+			while (xr.Read ())
+				if (xr.NodeType == XamlNodeType.StartMember)
+					break;
+			Assert.AreEqual (xt.GetMember ("Foo"), xr.Member, "#1");
+			while (!xr.IsEof)
+				xr.Read ();
+		}
+
+		[Test]
+		public void Read_TypeConverterOnListMember ()
+		{
+			var obj = new SecondTest.TypeOtherAssembly ();
+			obj.Values.AddRange (new uint? [] {1, 2, 3});
+			var xr = new XamlObjectReader (obj);
+			Read_TypeConverterOnListMember (xr);
+		}
+
+		[Test]
+		public void Read_EnumContainer ()
+		{
+			var obj = new EnumContainer () { EnumProperty = EnumValueType.Two };
+			var xr = new XamlObjectReader (obj);
+			Read_EnumContainer (xr);
+		}
+
+		[Test]
+		public void Read_CollectionContentProperty ()
+		{
+			var obj = new CollectionContentProperty ();
+			for (int i = 0; i < 4; i++)
+				obj.ListOfItems.Add (new SimpleClass ());
+			var xr = new XamlObjectReader (obj);
+			Read_CollectionContentProperty (xr, false);
+		}
+
+		[Test]
+		public void Read_CollectionContentPropertyX ()
+		{
+			var obj = new CollectionContentPropertyX ();
+			var l = new List<object> ();
+			obj.ListOfItems.Add (l);
+			for (int i = 0; i < 4; i++)
+				l.Add (new SimpleClass ());
+			var xr = new XamlObjectReader (obj);
+			Read_CollectionContentPropertyX (xr, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // only member ordering difference, maybe.
+		public void Read_AmbientPropertyContainer ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			var t2 = new SecondTest.TestObject ();
+			t2.TestProperty = t1;
+			obj.Add ("okay", t2);
+			var xr = new XamlObjectReader (obj);
+			Read_AmbientPropertyContainer (xr, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // only member ordering difference, maybe.
+		public void Read_AmbientPropertyContainer2 ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			obj.Add ("okay", new SecondTest.ResourceExtension (t1));
+			var xr = new XamlObjectReader (obj);
+			Read_AmbientPropertyContainer (xr, true);
+		}
+
+		[Test]
+		public void Read_NullableContainer ()
+		{
+			var obj = new NullableContainer () { TestProp = 5 };
+			var xr = new XamlObjectReader (obj);
+			Read_NullableContainer (xr);
 		}
 	}
 }

@@ -35,10 +35,8 @@ using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	[Designer("System.Windows.Forms.Design.UpDownBaseDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class UpDownBase : ContainerControl {
 		#region UpDownSpinner Sub-class
@@ -390,15 +388,12 @@ namespace System.Windows.Forms
 			auto_select_child = false;
 			SetStyle(ControlStyles.FixedHeight, true);
 			SetStyle(ControlStyles.Selectable, true);
-#if NET_2_0
 			SetStyle (ControlStyles.Opaque | ControlStyles.ResizeRedraw, true);
 			SetStyle (ControlStyles.StandardClick | ControlStyles.UseTextForAccessibility, false);
-#endif
 		}
 		#endregion
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIAUpButtonClickEvent = new object ();
 
 		internal event EventHandler UIAUpButtonClick {
@@ -426,7 +421,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Private Methods
@@ -472,7 +466,6 @@ namespace System.Windows.Forms
 			set { base.AutoScrollMinSize = value; }
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -480,7 +473,6 @@ namespace System.Windows.Forms
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
 		}
-#endif
 
 		public override Color BackColor {
 			get {
@@ -506,7 +498,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -514,7 +505,6 @@ namespace System.Windows.Forms
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
@@ -534,7 +524,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public override ContextMenuStrip ContextMenuStrip {
 			get { return base.ContextMenuStrip; }
 			set {
@@ -543,7 +532,6 @@ namespace System.Windows.Forms
 				spnSpinner.ContextMenuStrip = value;
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -580,7 +568,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public override Size MaximumSize {
 			get { return base.MaximumSize; }
 			set { base.MaximumSize = new Size (value.Width, 0); }
@@ -590,7 +577,6 @@ namespace System.Windows.Forms
 			get { return base.MinimumSize; }
 			set { base.MinimumSize = new Size (value.Width, 0); }
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -717,20 +703,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-#if !NET_2_0
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				txtView.Dispose();
-				txtView = null;
-
-				spnSpinner.Dispose();
-				spnSpinner = null;
-			}
-			base.Dispose (disposing);
-		}
-#endif
-
 		protected virtual void OnChanged (object source, EventArgs e)
 		{
 		}
@@ -746,19 +718,16 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 		}
 
-#if NET_2_0
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
 			base.OnHandleDestroyed (e);
 		}
-#endif
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
 			base.OnLayout(e);
 		}
 
-#if NET_2_0
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 			base.OnMouseDown (e);
@@ -768,7 +737,6 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseUp (mevent);
 		}
-#endif
 
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
@@ -778,12 +746,10 @@ namespace System.Windows.Forms
 				DownButton();
 		}
 
-#if NET_2_0
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint (e);
-		}	
-#endif
+		}
 
 		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
 		{
@@ -835,13 +801,6 @@ namespace System.Windows.Forms
 			OnTextChanged(e);
 		}
 
-#if !NET_2_0
-		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-		{
-			base.SetBoundsCore(x, y, width, height, specified);
-		}
-#endif
-
 		internal override void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCoreInternal (x, y, width, Math.Min (width, PreferredHeight), specified);
@@ -877,14 +836,12 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -893,14 +850,12 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

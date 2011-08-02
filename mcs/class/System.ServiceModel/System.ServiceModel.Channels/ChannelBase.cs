@@ -69,12 +69,10 @@ namespace System.ServiceModel.Channels
 			return null;
 		}
 
-#if !NET_2_1
 		protected override void OnClosed ()
 		{
 			base.OnClosed ();
 		}
-#endif
 
 		TimeSpan IDefaultCommunicationTimeouts.CloseTimeout {
 			get { return DefaultCloseTimeout; }

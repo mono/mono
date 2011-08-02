@@ -217,11 +217,8 @@ namespace System.Net {
 					s = response.GetResponseStream ();
 			}
 			catch (Exception e) {
-				throw new WebException ("NotFound", e, WebExceptionStatus.UnknownError, response);
-			}
-			finally {
-				if (status_code != HttpStatusCode.OK)
-					throw new WebException ("NotFound", null, WebExceptionStatus.UnknownError, response);
+				throw new WebException ("NotFound", status_code == HttpStatusCode.OK ? e : null, 
+					WebExceptionStatus.UnknownError, response);
 			}
 			return s;
 		}
@@ -560,28 +557,28 @@ namespace System.Net {
 				handler (this, e);
 		}
 		
-		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
+		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			OpenReadCompletedEventHandler handler = OpenReadCompleted;
 			if (handler != null)
-				handler (this, args);
+				handler (this, e);
 		}
 
-		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
+		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			DownloadStringCompletedEventHandler handler = DownloadStringCompleted;
 			if (handler != null)
-				handler (this, args);
+				handler (this, e);
 		}
 
-		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
+		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			OpenWriteCompletedEventHandler handler = OpenWriteCompleted;
 			if (handler != null)
-				handler (this, args);
+				handler (this, e);
 		}
 
 		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
@@ -591,12 +588,12 @@ namespace System.Net {
 				handler (this, e);
 		}
 
-		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
+		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			UploadStringCompletedEventHandler handler = UploadStringCompleted;
 			if (handler != null)
-				handler (this, args);
+				handler (this, e);
 		}
 
 		protected virtual void OnWriteStreamClosed (WriteStreamClosedEventArgs e)

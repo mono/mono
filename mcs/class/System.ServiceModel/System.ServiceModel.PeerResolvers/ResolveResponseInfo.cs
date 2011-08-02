@@ -22,6 +22,7 @@ namespace System.ServiceModel.PeerResolvers
 					body = new ResolveResponseInfoDC ();
 				return body;
 			}
+			set { body = value; }
 		}
 		ResolveResponseInfoDC body;
 

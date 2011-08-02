@@ -29,10 +29,7 @@
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum Edges
+	public enum Edges
 	{
 		Left = 1,
 		Top = 2,

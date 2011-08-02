@@ -17,6 +17,7 @@ Microsoft.CSharp.RuntimeBinder/CSharpIsEventBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpSetIndexBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpSetMemberBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpUnaryOperationBinder.cs
+Microsoft.CSharp.RuntimeBinder/DynamicContext.cs
 Microsoft.CSharp.RuntimeBinder/Extensions.cs
 Microsoft.CSharp.RuntimeBinder/RuntimeBinderContext.cs
 Microsoft.CSharp.RuntimeBinder/RuntimeBinderException.cs

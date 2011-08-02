@@ -286,7 +286,7 @@ namespace System.Windows.Forms {
 						size_nesw = new Cursor(typeof(Cursor), "NESW.cur");
 						size_nesw.name = "SizeNESW";
 					} else {
-						size_nesw = new Cursor(StdCursor.SizeNWSE);
+						size_nesw = new Cursor(StdCursor.SizeNESW);
 						size_nesw.name = "SizeNESW";
 					}
 				}

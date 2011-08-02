@@ -39,12 +39,13 @@ using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Microsoft.CSharp;
 
 using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
 
-namespace MonoTests.System.XmlSerialization
+namespace MonoTests.System.Xml.Serialization
 {
 	[TestFixture]
 	public class XmlSchemaImporterTests
@@ -1034,9 +1035,19 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsTrue (a.CheckSpecified, "#4-2");
 
 #if NET_2_0
+			Assert.IsNull (map.TypeName, "#4-3"); // null at this state
+			Assert.IsNull (map.TypeNamespace, "#4-4"); // null at this state
+
 			CodeDomProvider p = new Microsoft.CSharp.CSharpCodeProvider ();
 			Assert.AreEqual ("System.Nullable`1[System.Int32]", bar.GenerateTypeName (p), "#5-1");
 			Assert.AreEqual ("System.Int32", baz.GenerateTypeName (p), "#5-2");
+
+			var table = new Hashtable ();
+			var exp = new XmlCodeExporter (new CodeNamespace ("foobar"), null, p, CodeGenerationOptions.None, table);
+			exp.ExportMembersMapping (map);
+			Assert.AreEqual (null, map.TypeName, "#5-3"); // filled after ExportExportMembersMapping().
+			Assert.AreEqual (null, map.TypeNamespace, "#5-4"); // filled after ExportMembersMapping().
+			// table contains some internal stuff that does not make sense in any public API.
 #endif
 		}
 		
@@ -1202,6 +1213,22 @@ namespace MonoTests.System.XmlSerialization
 			XmlTypeMapping tm = imp.ImportTypeMapping (new XmlQualifiedName ("a"));
 			Assert.AreEqual ("a", tm.ElementName, "#1");
 			Assert.AreEqual ("b", tm.TypeName, "#2");
+		}
+
+		[Test]
+		public void ImportWildcardElementAsClass ()
+		{
+			var xss = new XmlSchemas ();
+			xss.Add (XmlSchema.Read (XmlReader.Create ("Test/XmlFiles/xsd/670945-1.xsd"), null));
+			xss.Add (XmlSchema.Read (XmlReader.Create ("Test/XmlFiles/xsd/670945-2.xsd"), null));
+			var imp = new XmlSchemaImporter (xss);
+			var xtm = imp.ImportSchemaType (new XmlQualifiedName ("SystemDateTime", "http://www.onvif.org/ver10/schema"));
+			var cns = new CodeNamespace ();
+			var exp = new XmlCodeExporter (cns);
+			exp.ExportTypeMapping (xtm);
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromNamespace (cns, sw, null);
+			Assert.IsTrue (sw.ToString ().IndexOf ("class SystemDateTimeExtension") > 0, "#1");
 		}
 
 		XmlSchemaImporter CreateImporter (params string [] schemaXmlStrings)

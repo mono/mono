@@ -48,6 +48,13 @@ security_safe_critical_attribute (void)
 	return class;
 }
 
+/* sometime we get a NULL (not found) caller (e.g. get_reflection_caller) */
+static char*
+get_method_full_name (MonoMethod * method)
+{
+	return method ? mono_method_full_name (method, TRUE) : g_strdup ("'no caller found'");
+}
+
 /*
  * set_type_load_exception_type
  *
@@ -82,8 +89,8 @@ set_type_load_exception_type (const char *format, MonoClass *class)
 static void
 set_type_load_exception_methods (const char *format, MonoMethod *override, MonoMethod *base)
 {
-	char *method_name = mono_method_full_name (override, TRUE);
-	char *base_name = mono_method_full_name (base, TRUE);
+	char *method_name = get_method_full_name (override);
+	char *base_name = get_method_full_name (base);
 	char *message = g_strdup_printf (format, method_name, base_name);
 
 	g_free (base_name);
@@ -141,10 +148,11 @@ get_default_ctor (MonoClass *klass)
  *	Reference: http://msdn.microsoft.com/en-us/magazine/cc765416.aspx#id0190030
  *
  *	Furthermore a class MUST have a default constructor if its base 
- *	class has a non-transparent default constructor. The same 
- *	inheritance rule applies to both default constructors.
+ *	class has a non-transparent, public or protected, default constructor. 
+ *	The same inheritance rule applies to both default constructors.
  *
  *	Reference: message from a SecurityException in SL4RC
+ *	Reference: fxcop CA2132 rule
  */
 void
 mono_security_core_clr_check_inheritance (MonoClass *class)
@@ -163,12 +171,15 @@ mono_security_core_clr_check_inheritance (MonoClass *class)
 			"Inheritance failure for type %s. Parent class %s is more restricted.",
 			class);
 	} else {
-		class_level = mono_security_core_clr_method_level (get_default_ctor (class), FALSE);
-		parent_level = mono_security_core_clr_method_level (get_default_ctor (parent), FALSE);
-		if (class_level < parent_level) {
-			set_type_load_exception_type (
-				"Inheritance failure for type %s. Default constructor security mismatch with %s.",
-				class);
+		MonoMethod *parent_ctor = get_default_ctor (parent);
+		if (parent_ctor && ((parent_ctor->flags & METHOD_ATTRIBUTE_PUBLIC) != 0)) {
+			class_level = mono_security_core_clr_method_level (get_default_ctor (class), FALSE);
+			parent_level = mono_security_core_clr_method_level (parent_ctor, FALSE);
+			if (class_level < parent_level) {
+				set_type_load_exception_type (
+					"Inheritance failure for type %s. Default constructor security mismatch with %s.",
+					class);
+			}
 		}
 	}
 }
@@ -397,6 +408,46 @@ mono_security_core_clr_require_elevated_permissions (void)
 	return (mono_security_core_clr_method_level (cookie.caller, TRUE) == MONO_SECURITY_CORE_CLR_TRANSPARENT);
 }
 
+
+static MonoSecurityCoreCLROptions security_core_clr_options = MONO_SECURITY_CORE_CLR_OPTIONS_DEFAULT;
+
+/**
+ * mono_security_core_clr_set_options:
+ * @options: the new options for the coreclr system to use
+ *
+ * By default, the CoreCLRs security model forbids execution trough reflection of methods not visible from the calling code.
+ * Even if the method being called is not in a platform assembly. For non moonlight CoreCLR users this restriction does not
+ * make a lot of sense, since the author could have just changed the non platform assembly to allow the method to be called.
+ * This function allows specific relaxations from the default behaviour to be set.
+ *
+ * Use MONO_SECURITY_CORE_CLR_OPTIONS_DEFAULT for the default coreclr coreclr behaviour as used in Moonlight.
+ *
+ * Use MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION to allow transparent code to execute methods and access 
+ * fields that are not in platformcode, even if those methods and fields are private or otherwise not visible to the calling code.
+ *
+ * Use MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_DELEGATE to allow delegates to be created that point at methods that are not in
+ * platformcode even if those methods and fields are private or otherwise not visible to the calling code.
+ *
+ */
+
+void 
+mono_security_core_clr_set_options (MonoSecurityCoreCLROptions options) {
+	security_core_clr_options = options;
+}
+
+/**
+ * mono_security_core_clr_get_options:
+ *
+ * Retrieves the current options used by the coreclr system.
+ */
+
+MonoSecurityCoreCLROptions
+mono_security_core_clr_get_options ()
+{
+	return security_core_clr_options;
+}
+
+
 /*
  * check_field_access:
  *
@@ -451,8 +502,8 @@ static MonoException*
 get_argument_exception (const char *format, MonoMethod *caller, MonoMethod *callee)
 {
 	MonoException *ex;
-	char *caller_name = mono_method_full_name (caller, TRUE);
-	char *callee_name = mono_method_full_name (callee, TRUE);
+	char *caller_name = get_method_full_name (caller);
+	char *callee_name = get_method_full_name (callee);
 	char *message = g_strdup_printf (format, caller_name, callee_name);
 	g_free (callee_name);
 	g_free (caller_name);
@@ -476,7 +527,7 @@ static MonoException*
 get_field_access_exception (const char *format, MonoMethod *caller, MonoClassField *field)
 {
 	MonoException *ex;
-	char *caller_name = mono_method_full_name (caller, TRUE);
+	char *caller_name = get_method_full_name (caller);
 	char *field_name = mono_field_full_name (field);
 	char *message = g_strdup_printf (format, caller_name, field_name);
 	g_free (field_name);
@@ -501,8 +552,8 @@ static MonoException*
 get_method_access_exception (const char *format, MonoMethod *caller, MonoMethod *callee)
 {
 	MonoException *ex;
-	char *caller_name = caller ? mono_method_full_name (caller, TRUE) : g_strdup ("no caller found");
-	char *callee_name = mono_method_full_name (callee, TRUE);
+	char *caller_name = get_method_full_name (caller);
+	char *callee_name = get_method_full_name (callee);
 	char *message = g_strdup_printf (format, caller_name, callee_name);
 	g_free (callee_name);
 	g_free (caller_name);
@@ -530,6 +581,11 @@ mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field)
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
 		return;
+
+	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION) {
+		if (!mono_security_core_clr_is_platform_image (mono_field_get_parent(field)->image))
+			return;
+	}
 
 	/* Transparent code cannot [get|set]value on Critical fields */
 	if (mono_security_core_clr_class_level (mono_field_get_parent (field)) == MONO_SECURITY_CORE_CLR_CRITICAL) {
@@ -562,6 +618,11 @@ mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method)
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
 		return;
+
+	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION) {
+		if (!mono_security_core_clr_is_platform_image (method->klass->image))
+			return;
+	}
 
 	/* Transparent code cannot invoke, even using reflection, Critical code */
 	if (mono_security_core_clr_method_level (method, TRUE) == MONO_SECURITY_CORE_CLR_CRITICAL) {
@@ -645,7 +706,12 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, gboolean th
 			"Transparent method %s cannot create a delegate on Critical method %s.", 
 			caller, method));
 	}
-	
+
+	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_DELEGATE) {
+		if (!mono_security_core_clr_is_platform_image (method->klass->image))
+			return TRUE;
+	}
+
 	/* also it cannot create the delegate on a method that is not visible from it's (caller) point of view */
 	if (!check_method_access (caller, method)) {
 		mono_raise_exception (get_method_access_exception (

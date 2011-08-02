@@ -28,18 +28,16 @@ namespace Mono.CSharp
 	//
 	// Module (top-level type) container
 	//
-	public class ModuleContainer : TypeContainer
+	public sealed class ModuleContainer : TypeContainer
 	{
+#if STATIC
 		//
 		// Compiler generated container for static data
 		//
 		sealed class StaticDataContainer : CompilerGeneratedClass
 		{
-			Dictionary<int, Struct> size_types;
+			readonly Dictionary<int, Struct> size_types;
 			new int fields;
-#if !STATIC
-			static MethodInfo set_data;
-#endif
 
 			public StaticDataContainer (ModuleContainer module)
 				: base (module, new MemberName ("<PrivateImplementationDetails>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null), Modifiers.STATIC)
@@ -65,72 +63,69 @@ namespace Mono.CSharp
 					// DefineInitializedData because it creates public type,
 					// and its name is not unique among modules
 					//
-					size_type = new Struct (null, this, new MemberName ("$ArrayType=" + data.Length, Location), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
+					size_type = new Struct (null, this, new MemberName ("$ArrayType=" + data.Length, loc), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
 					size_type.CreateType ();
 					size_type.DefineType ();
 
 					size_types.Add (data.Length, size_type);
 
-					var pa = Module.PredefinedAttributes.StructLayout;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.short_type)) {
-						var argsEncoded = new AttributeEncoder (false);
-						argsEncoded.Encode ((short) LayoutKind.Explicit);
-
-						var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
-						var pack = pa.GetField ("Pack", TypeManager.int32_type, Location);
-						if (field_size != null) {
-							argsEncoded.EncodeNamedArguments (
-								new[] { field_size, pack },
-								new[] { new IntConstant ((int) data.Length, Location), new IntConstant (1, Location) }
-							);
-						}
-
-						pa.EmitAttribute (size_type.TypeBuilder, argsEncoded);
-					}
+					// It has to work even if StructLayoutAttribute does not exist
+					size_type.TypeBuilder.__SetLayout (1, data.Length);
 				}
 
 				var name = "$field-" + fields.ToString ("X");
 				++fields;
 				const Modifiers fmod = Modifiers.STATIC | Modifiers.INTERNAL;
 				var fbuilder = TypeBuilder.DefineField (name, size_type.CurrentType.GetMetaInfo (), ModifiersExtensions.FieldAttr (fmod) | FieldAttributes.HasFieldRVA);
-#if STATIC
 				fbuilder.__SetDataAndRVA (data);
-#else
-				if (set_data == null)
-					set_data = typeof (FieldBuilder).GetMethod ("SetRVAData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-				try {
-					set_data.Invoke (fbuilder, new object[] { data });
-				} catch {
-					Report.RuntimeMissingSupport (loc, "SetRVAData");
-				}
-#endif
 
 				return new FieldSpec (CurrentType, null, size_type.CurrentType, fbuilder, fmod);
 			}
 		}
 
-		public CharSet DefaultCharSet = CharSet.Ansi;
+		StaticDataContainer static_data;
+
+		//
+		// Makes const data field inside internal type container
+		//
+		public FieldSpec MakeStaticData (byte[] data, Location loc)
+		{
+			if (static_data == null) {
+				static_data = new StaticDataContainer (this);
+				static_data.CreateType ();
+				static_data.DefineType ();
+
+				AddCompilerGeneratedClass (static_data);
+			}
+
+			return static_data.DefineInitializedData (data, loc);
+		}
+#endif
+
+		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
-		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
-		StaticDataContainer static_data;
+		readonly Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
+		readonly Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> array_types;
+		readonly Dictionary<TypeSpec, PointerContainer> pointer_types;
+		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
+		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
+
+		// Used for unique namespaces/types during parsing
+		Dictionary<MemberName, ITypesContainer> defined_type_containers;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
 		readonly RootNamespace global_ns;
-		Dictionary<string, RootNamespace> alias_ns;
+		readonly Dictionary<string, RootNamespace> alias_ns;
 
 		ModuleBuilder builder;
 
-		// HACK
-		public List<Enum> hack_corlib_enums = new List<Enum> ();
-
-		bool has_default_charset;
 		bool has_extenstion_method;
 
 		PredefinedAttributes predefined_attributes;
 		PredefinedTypes predefined_types;
+		PredefinedMembers predefined_members;
 
 		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
 
@@ -145,9 +140,30 @@ namespace Mono.CSharp
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
+			array_types = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
+			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
+			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
+			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
+
+			defined_type_containers = new Dictionary<MemberName, ITypesContainer> ();
 		}
 
 		#region Properties
+
+		internal Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ArrayTypesCache {
+			get {
+				return array_types;
+			}
+		}
+
+		//
+		// Cache for parameter-less attributes
+		//
+		internal Dictionary<TypeSpec, MethodSpec> AttributeConstructorCache {
+			get {
+				return attrs_cache;
+			}
+		}
 
  		public override AttributeTargets AttributeTargets {
  			get {
@@ -173,9 +189,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal DocumentationBuilder DocumentationBuilder {
+			get; set;
+		}
+
+		public Evaluator Evaluator {
+			get; set;
+		}
+
 		public bool HasDefaultCharSet {
 			get {
-				return has_default_charset;
+				return DefaultCharSet.HasValue;
 			}
 		}
 
@@ -186,6 +210,10 @@ namespace Mono.CSharp
 			set {
 				has_extenstion_method = value;
 			}
+		}
+
+		public bool HasTypesFullyDefined {
+			get; set;
 		}
 
 		//
@@ -203,15 +231,33 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal Dictionary<TypeSpec, PointerContainer> PointerTypesCache {
+			get {
+				return pointer_types;
+			}
+		}
+
 		internal PredefinedAttributes PredefinedAttributes {
 			get {
 				return predefined_attributes;
 			}
 		}
 
+		internal PredefinedMembers PredefinedMembers {
+			get {
+				return predefined_members;
+			}
+		}
+
 		internal PredefinedTypes PredefinedTypes {
 			get {
 				return predefined_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
+			get {
+				return reference_types;
 			}
 		}
 
@@ -222,6 +268,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 
 		public void AddAnonymousType (AnonymousTypeClass type)
 		{
@@ -235,21 +286,16 @@ namespace Mono.CSharp
 			existing.Add (type);
 		}
 
-		public void AddAttributes (List<Attribute> attrs)
+		public void AddAttribute (Attribute attr, IMemberContext context)
 		{
-			AddAttributes (attrs, this);
-		}
-
-		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
-		{
-			foreach (Attribute a in attrs)
-				a.AttachTo (this, context);
+			attr.AttachTo (this, context);
 
 			if (attributes == null) {
-				attributes = new Attributes (attrs);
+				attributes = new Attributes (attr);
 				return;
 			}
-			attributes.AddAttributes (attrs);
+
+			attributes.AddAttribute (attr);
 		}
 
 		public override TypeContainer AddPartial (TypeContainer nextPart)
@@ -264,7 +310,25 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (a.Type == pa.CLSCompliant) {
+			if (a.Type == pa.DefaultCharset) {
+				switch (a.GetCharSetValue ()) {
+				case CharSet.Ansi:
+				case CharSet.None:
+					break;
+				case CharSet.Auto:
+					DefaultCharSet = CharSet.Auto;
+					DefaultCharSetType = TypeAttributes.AutoClass;
+					break;
+				case CharSet.Unicode:
+					DefaultCharSet = CharSet.Unicode;
+					DefaultCharSetType = TypeAttributes.UnicodeClass;
+					break;
+				default:
+					Report.Error (1724, a.Location, "Value specified for the argument to `{0}' is not valid",
+						a.GetSignatureForError ());
+					break;
+				}
+			} else if (a.Type == pa.CLSCompliant) {
 				Attribute cls = DeclaringAssembly.CLSCompliantAttribute;
 				if (cls == null) {
 					Report.Warning (3012, 1, a.Location,
@@ -282,8 +346,6 @@ namespace Mono.CSharp
 
 		public override void CloseType ()
 		{
-			HackCorlibEnums ();
-
 			foreach (TypeContainer tc in types) {
 				tc.CloseType ();
 			}
@@ -304,7 +366,7 @@ namespace Mono.CSharp
 		public RootNamespace CreateRootNamespace (string alias)
 		{
 			if (alias == global_ns.Alias) {
-				NamespaceEntry.Error_GlobalNamespaceRedefined (Location.Null, Report);
+				NamespaceContainer.Error_GlobalNamespaceRedefined (Location.Null, Report);
 				return global_ns;
 			}
 
@@ -317,22 +379,26 @@ namespace Mono.CSharp
 			return rn;
 		}
 
-		public new void Define ()
+		public void Create (AssemblyDefinition assembly, ModuleBuilder moduleBuilder)
 		{
-			builder = assembly.CreateModuleBuilder ();
+			this.assembly = assembly;
+			builder = moduleBuilder;
+		}
 
-			// FIXME: Temporary hack for repl to reset
-			static_data = null;
-
-			// TODO: It should be done much later when the types are resolved
-			// but that require DefineType clean-up
-			ResolveGlobalAttributes ();
+		public new void CreateType ()
+		{
+			// Release cache used by parser only
+			if (Evaluator == null)
+				defined_type_containers = null;
+			else
+				defined_type_containers.Clear ();
 
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
+		}
 
-			InitializePredefinedTypes ();
-
+		public new void Define ()
+		{
 			foreach (TypeContainer tc in types)
 				tc.DefineType ();
 
@@ -346,6 +412,8 @@ namespace Mono.CSharp
 					throw new InternalErrorException (tc, e);
 				}
 			}
+
+			HasTypesFullyDefined = true;
 		}
 
 		public override void Emit ()
@@ -353,7 +421,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (RootContext.Unsafe) {
+			if (Compiler.Settings.Unsafe) {
 				var pa = PredefinedAttributes.UnverifiableCode;
 				if (pa.IsDefined)
 					pa.EmitAttribute (builder);
@@ -361,8 +429,6 @@ namespace Mono.CSharp
 
 			foreach (var tc in types)
 				tc.DefineConstants ();
-
-			HackCorlib ();
 
 			foreach (TypeContainer tc in types)
 				tc.EmitType ();
@@ -376,6 +442,12 @@ namespace Mono.CSharp
 			if (compiler_generated != null)
 				foreach (var c in compiler_generated)
 					c.EmitType ();
+		}
+
+		internal override void GenerateDocComment (DocumentationBuilder builder)
+		{
+			foreach (var tc in types)
+				tc.GenerateDocComment (builder);
 		}
 
 		public AnonymousTypeClass GetAnonymousType (IList<AnonymousTypeParameter> parameters)
@@ -410,56 +482,11 @@ namespace Mono.CSharp
 			return "<module>";
 		}
 
-		void HackCorlib ()
-		{
-#if !STATIC
-			if (RootContext.StdLib)
-				return;
-
-			//
-			// HACK: When building corlib mcs uses loaded mscorlib which
-			// has different predefined types and this method sets mscorlib types
-			// to be same to avoid type check errors in CreateType.
-			//
-			var type = typeof (Type);
-			var system_4_type_arg = new[] { type, type, type, type };
-
-			MethodInfo set_corlib_type_builders =
-				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
-				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
-				system_4_type_arg, null);
-
-			if (set_corlib_type_builders == null) {
-				Compiler.Report.Warning (-26, 3,
-					"The compilation may fail due to missing `System.Reflection.Emit.AssemblyBuilder.SetCorlibTypeBuilders(...)' method");
-				return;
-			}
-
-			object[] args = new object[4];
-			args[0] = TypeManager.object_type.GetMetaInfo ();
-			args[1] = TypeManager.value_type.GetMetaInfo ();
-			args[2] = TypeManager.enum_type.GetMetaInfo ();
-			args[3] = TypeManager.void_type.GetMetaInfo ();
-			set_corlib_type_builders.Invoke (assembly.Builder, args);
-#endif
-		}
-
-		void HackCorlibEnums ()
-		{
-			if (RootContext.StdLib)
-				return;
-
-			// Another Mono corlib HACK
-			// mono_class_layout_fields requires to have enums created
-			// before creating a class which used the enum for any of its fields
-			foreach (var e in hack_corlib_enums)
-				e.CloseType ();
-		}
-
 		public void InitializePredefinedTypes ()
 		{
 			predefined_attributes = new PredefinedAttributes (this);
 			predefined_types = new PredefinedTypes (this);
+			predefined_members = new PredefinedMembers (this);
 		}
 
 		public override bool IsClsComplianceRequired ()
@@ -467,84 +494,65 @@ namespace Mono.CSharp
 			return DeclaringAssembly.IsCLSCompliant;
 		}
 
-		//
-		// Makes const data field inside internal type container
-		//
-		public FieldSpec MakeStaticData (byte[] data, Location loc)
+		protected override bool AddMemberType (TypeContainer tc)
 		{
-			if (static_data == null) {
-				static_data = new StaticDataContainer (this);
-				static_data.CreateType ();
-				static_data.DefineType ();
+			if (AddTypesContainer (tc)) {
+				if ((tc.ModFlags & Modifiers.PARTIAL) != 0)
+					defined_names.Add (tc.Name, tc);
 
-				AddCompilerGeneratedClass (static_data);
+				tc.NamespaceEntry.NS.AddType (this, tc.Definition);
+				return true;
 			}
 
-			return static_data.DefineInitializedData (data, loc);
+			return false;
 		}
 
-		protected override bool AddMemberType (TypeContainer ds)
+		public bool AddTypesContainer (ITypesContainer container)
 		{
-			if (!AddToContainer (ds, ds.Name))
-				return false;
-			ds.NamespaceEntry.NS.AddType (ds.Definition);
-			return true;
-		}
+			var mn = container.MemberName;
+			ITypesContainer found;
+			if (!defined_type_containers.TryGetValue (mn, out found)) {
+				defined_type_containers.Add (mn, container);
+				return true;
+			}
 
-		protected override void RemoveMemberType (DeclSpace ds)
-		{
-			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
-			base.RemoveMemberType (ds);
-		}
+			if (container is NamespaceContainer && found is NamespaceContainer)
+				return true;
 
-		/// <summary>
-		/// It is called very early therefore can resolve only predefined attributes
-		/// </summary>
-		void ResolveGlobalAttributes ()
-		{
-			if (OptAttributes == null)
-				return;
+			var container_tc = container as TypeContainer;
+			var found_tc = found as TypeContainer;
+			if (container_tc != null && found_tc != null && container_tc.Kind == found_tc.Kind) {
+				if ((found_tc.ModFlags & container_tc.ModFlags & Modifiers.PARTIAL) != 0) {
+					return false;
+				}
 
-			if (!OptAttributes.CheckTargets ())
-				return;
-
-			// FIXME: Define is wrong as the type may not exist yet
-			var DefaultCharSet_attr = new PredefinedAttribute (this, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
-			DefaultCharSet_attr.Define ();
-			Attribute a = ResolveModuleAttribute (DefaultCharSet_attr);
-			if (a != null) {
-				has_default_charset = true;
-				DefaultCharSet = a.GetCharSetValue ();
-				switch (DefaultCharSet) {
-				case CharSet.Ansi:
-				case CharSet.None:
-					break;
-				case CharSet.Auto:
-					DefaultCharSetType = TypeAttributes.AutoClass;
-					break;
-				case CharSet.Unicode:
-					DefaultCharSetType = TypeAttributes.UnicodeClass;
-					break;
-				default:
-					Report.Error (1724, a.Location, "Value specified for the argument to `{0}' is not valid", 
-						DefaultCharSet_attr.GetSignatureForError ());
-					break;
+				if (((found_tc.ModFlags | container_tc.ModFlags) & Modifiers.PARTIAL) != 0) {
+					Report.SymbolRelatedToPreviousError (found_tc);
+					Error_MissingPartialModifier (container_tc);
+					return false;
 				}
 			}
+
+			string ns = mn.Left != null ? mn.Left.GetSignatureForError () : Module.GlobalRootNamespace.GetSignatureForError ();
+			mn = new MemberName (mn.Name, mn.TypeArguments, mn.Location);
+
+			Report.SymbolRelatedToPreviousError (found.Location, "");
+			Report.Error (101, container.Location,
+				"The namespace `{0}' already contains a definition for `{1}'",
+				ns, mn.GetSignatureForError ());
+			return false;
+		}
+
+		protected override void RemoveMemberType (TypeContainer ds)
+		{
+			defined_type_containers.Remove (ds.MemberName);
+			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
+			base.RemoveMemberType (ds);
 		}
 
 		public Attribute ResolveAssemblyAttribute (PredefinedAttribute a_type)
 		{
 			Attribute a = OptAttributes.Search ("assembly", a_type);
-			if (a != null) {
-				a.Resolve ();
-			}
-			return a;
-		}
-
-		Attribute ResolveModuleAttribute (PredefinedAttribute a_type)
-		{
-			Attribute a = OptAttributes.Search ("module", a_type);
 			if (a != null) {
 				a.Resolve ();
 			}
@@ -558,11 +566,11 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RootDeclSpace : TypeContainer {
-		public RootDeclSpace (NamespaceEntry ns)
+	sealed class RootDeclSpace : TypeContainer {
+		public RootDeclSpace (ModuleContainer module, NamespaceContainer ns)
 			: base (ns, null, MemberName.Null, null, 0)
 		{
-			PartialContainer = RootContext.ToplevelTypes;
+			PartialContainer = module;
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -590,9 +598,19 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			throw new InternalErrorException ("should not be called");
+		}
+
 		public override bool IsClsComplianceRequired ()
 		{
 			return PartialContainer.IsClsComplianceRequired ();
+		}
+
+		public override ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+		{
+			return null;
 		}
 
 		public override FullNamedExpression LookupNamespaceAlias (string name)

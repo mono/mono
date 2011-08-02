@@ -65,10 +65,12 @@ namespace System.ServiceModel.Channels
 			// FIXME: where should bufferManager be used?
 			// FIXME: no way to take maxSizeOfHeaders
 			// FIXME: create proper quotas
-			return Message.CreateMessage (
+			var ret = Message.CreateMessage (
 				XmlDictionaryReader.CreateMtomReader (buffer.Array, buffer.Offset, buffer.Count, encoding, quotas),
 				int.MaxValue,
 				MessageVersion);
+			ret.Properties.Encoder = this;
+			return ret;
 		}
 
 		[MonoTODO]

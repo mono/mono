@@ -1,0 +1,68 @@
+<Type Name="IMonoTaskScheduler" FullName="Mono.Threading.Tasks.IMonoTaskScheduler">
+  <TypeSignature Language="C#" Value="public interface IMonoTaskScheduler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMonoTaskScheduler" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>The normal way to use another scheduler with ParalleFx is by creating a new type subclassing <see cref="T:System.Threading.Tasks.TaskScheduler" />. However Mono's ParallelFx has a few specifities which aren't captured by the base API. Developpers can thus also implement this interface with their custom scheduler for better Mono integration.</summary>
+    <remarks>The changes added by implementing this interface are totally non-breaking and the assembly will still work perfectly with .NET ParallelFx provided you implement correctly <see cref="T:System.Threading.Tasks.TaskScheduler" /> correctly.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ParticipateUntil">
+      <MemberSignature Language="C#" Value="public void ParticipateUntil (System.Threading.Tasks.Task task);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ParticipateUntil(class System.Threading.Tasks.Task task) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="task" Type="System.Threading.Tasks.Task" />
+      </Parameters>
+      <Docs>
+        <param name="task">The task to wait on.</param>
+        <summary>This method will be called when a thread decides to wait on a task completion. Developpers are free to simply wait on the supplied Task or provide a smarter cooperative waiting mechanism.</summary>
+        <remarks>A simple waiting mechanism can be achieved via the following pattern:
+
+<example><code lang="C#">
+public void PartiticipateUntil (Task task)
+{
+	ManualResetEventSlim evt = new ManualResetEventSlim (false);
+	task.ContinueWith (_ =&gt; evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
+	evt.Wait ();
+}
+  </code></example></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ParticipateUntil">
+      <MemberSignature Language="C#" Value="public bool ParticipateUntil (System.Threading.Tasks.Task task, System.Threading.ManualResetEventSlim predicateEvt, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ParticipateUntil(class System.Threading.Tasks.Task task, class System.Threading.ManualResetEventSlim predicateEvt, int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="task" Type="System.Threading.Tasks.Task" />
+        <Parameter Name="predicateEvt" Type="System.Threading.ManualResetEventSlim" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="task">Task to wait on.</param>
+        <param name="predicateEvt">Additional preemptive conditions for stopping the waiting.</param>
+        <param name="millisecondsTimeout">An countdown specifying the maximum amount of time the method can last before returning.</param>
+        <summary>This method will be called when a thread decides to wait on a task completion or a set of condition summarized via the given <see cref="T:System.Threading.ManualResetEventSlim" />. Developpers are free to simply wait on the supplied Task/event or provide a smarter cooperative waiting mechanism.</summary>
+        <returns>
+          <see langword="true" /> if the method returns because of either event was set or timeout was reached, <see langword="false" /> if the task completed.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

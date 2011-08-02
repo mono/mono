@@ -113,6 +113,7 @@ namespace System {
 
 			result = 0;
 			exc = null;
+			NumberFormatInfo nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 			if (s == null) {
 				if (!tryParse)
@@ -135,12 +136,11 @@ namespace System {
 				return false;
 			}
 
-			c = s [i];
-			if (c == '+')
-				i++;
-			else if (c == '-'){
+			if (String.Compare (s, i, nfi.PositiveSign, 0, nfi.PositiveSign.Length) == 0)
+				i += nfi.PositiveSign.Length;
+			else if (String.Compare (s, i, nfi.NegativeSign, 0, nfi.NegativeSign.Length) == 0) {
 				sign = -1;
-				i++;
+				i += nfi.NegativeSign.Length;
 			}
 			
 			for (; i < len; i++){

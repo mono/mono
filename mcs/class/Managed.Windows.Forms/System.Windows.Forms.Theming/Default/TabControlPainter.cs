@@ -446,9 +446,30 @@ namespace System.Windows.Forms.Theming.Default
 				} else {
 					Rectangle str_rect = interior;
 
+					if (is_selected) {
+						// Reduce the interior size to match the inner size of non-selected tabs
+						str_rect.X += selectedTabDelta.X;
+						str_rect.Y += selectedTabDelta.Y;
+						str_rect.Width -= selectedTabDelta.Width;
+						str_rect.Height -= selectedTabDelta.Height;
+
+						str_rect.Y -= selectedTabDelta.Y; // Move up the text / image of the selected tab
+					}
+
 					if (tab.ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < tab.ImageList.Images.Count) {
-						int image_y = interior.Y + (interior.Height - tab.ImageList.ImageSize.Height) / 2;
-						tab.ImageList.Draw (dc, new Point (interior.X, image_y), page.ImageIndex);
+						int image_x;
+						if (tab.SizeMode != TabSizeMode.Fixed) {
+							image_x = str_rect.X;
+						}
+						else {
+							image_x = str_rect.X + (str_rect.Width - tab.ImageList.ImageSize.Width) / 2;
+							if (page.Text != null) {
+								SizeF textSize = dc.MeasureString(page.Text, page.Font, str_rect.Size);
+								image_x -= (int)(textSize.Width / 2);
+							}
+						}
+						int image_y = str_rect.Y + (str_rect.Height - tab.ImageList.ImageSize.Height) / 2;
+						tab.ImageList.Draw (dc, new Point (image_x, image_y), page.ImageIndex);
 						str_rect.X += tab.ImageList.ImageSize.Width + 2;
 						str_rect.Width -= tab.ImageList.ImageSize.Width + 2;
 					}

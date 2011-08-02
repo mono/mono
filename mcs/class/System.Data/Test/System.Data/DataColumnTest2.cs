@@ -910,5 +910,48 @@ namespace MonoTests.System.Data
 			} catch (ArgumentOutOfRangeException e) { }
 		}
 #endif
+		[Test]
+		public void bug672113_MulpleColConstraint ()
+		{
+			DataTable FirstTable = new DataTable ("First Table");
+			DataColumn col0 = new DataColumn ("empno", typeof (int));
+			DataColumn col1 = new DataColumn ("name", typeof (string));
+			DataColumn col2 = new DataColumn ("age", typeof (int));
+			FirstTable.Columns.Add (col0);
+			FirstTable.Columns.Add (col1);
+			FirstTable.Columns.Add (col2);
+			DataColumn[] primkeys = new DataColumn[2];
+			primkeys[0] = FirstTable.Columns[0];
+			primkeys[1] = FirstTable.Columns[1];
+			FirstTable.Constraints.Add("PRIM1",primkeys,true);
+
+			DataTable SecondTable = new DataTable ("Second Table");
+			col0 = new DataColumn ("field1", typeof (int));
+			col1 = new DataColumn ("field2", typeof (int));
+			col2 = new DataColumn ("field3", typeof (int));
+			SecondTable.Columns.Add (col0);
+			SecondTable.Columns.Add (col1);
+			SecondTable.Columns.Add (col2);
+
+			primkeys[0] = SecondTable.Columns[0];
+			primkeys[1] = SecondTable.Columns[1];
+			SecondTable.Constraints.Add("PRIM2",primkeys,true);
+
+			DataRow row1 = FirstTable.NewRow ();
+			row1["empno"] = 1;
+			row1["name"] = "Test";
+			row1["age"] = 32;
+			FirstTable.Rows.Add (row1);
+			FirstTable.AcceptChanges ();
+			Assert.AreEqual (32, FirstTable.Rows[0]["age"], "#1");
+
+			row1 = SecondTable.NewRow ();
+			row1["field1"] = 10000;
+			row1["field2"] = 12000;
+			row1["field3"] = 1000;
+			SecondTable.Rows.Add (row1);
+			SecondTable.AcceptChanges ();
+			Assert.AreEqual (12000, SecondTable.Rows[0]["field2"], "#2");
+		}
 	}
 }

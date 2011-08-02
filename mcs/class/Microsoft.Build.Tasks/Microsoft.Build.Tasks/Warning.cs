@@ -47,7 +47,8 @@ namespace Microsoft.Build.Tasks {
 			if (String.IsNullOrEmpty (text))
 				return true;
 
-			Log.LogWarning (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
+			Log.LogWarning (null, code, helpKeyword,
+				String.IsNullOrEmpty (File) ? BuildEngine.ProjectFileOfTaskNode : File,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				text, null);
@@ -68,6 +69,8 @@ namespace Microsoft.Build.Tasks {
 			get { return text; }
 			set { text = value; }
 		}
+
+		public string File { get; set; }
 	}
 }
 

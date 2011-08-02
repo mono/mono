@@ -127,7 +127,7 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		g_message ("%s: handle %p has special wait", __func__, handle);
 #endif
 
-		ret = _wapi_handle_ops_special_wait (handle, timeout);
+		ret = _wapi_handle_ops_special_wait (handle, timeout, alertable);
 	
 		if (alertable && _wapi_thread_apc_pending (current_thread)) {
 			apc_pending = TRUE;
@@ -515,8 +515,6 @@ static gboolean test_and_own (guint32 numobjects, gpointer *handles,
 	return(done);
 }
 
-
-
 /**
  * WaitForMultipleObjectsEx:
  * @numobjects: The number of objects in @handles. The maximum allowed
@@ -551,7 +549,6 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 				 gboolean waitall, guint32 timeout,
 				 gboolean alertable)
 {
-	GHashTable *dups;
 	gboolean duplicate = FALSE, bogustype = FALSE, done;
 	guint32 count, lowest;
 	struct timespec abstime;
@@ -561,6 +558,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	gpointer current_thread = _wapi_thread_handle_from_id (pthread_self ());
 	guint32 retval;
 	gboolean poll;
+	gpointer sorted_handles [MAXIMUM_WAIT_OBJECTS];
 	
 	if (current_thread == NULL) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -580,10 +578,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	}
 
 	/* Check for duplicates */
-	dups = g_hash_table_new (g_direct_hash, g_direct_equal);
 	for (i = 0; i < numobjects; i++) {
-		gpointer exists;
-
 		if (handles[i] == _WAPI_THREAD_CURRENT) {
 			handles[i] = _wapi_thread_handle_from_id (pthread_self ());
 			
@@ -606,17 +601,6 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			bogustype = TRUE;
 			break;
 		}
-		
-		exists = g_hash_table_lookup (dups, handles[i]);
-		if (exists != NULL) {
-#ifdef DEBUG
-			g_message ("%s: Handle %p duplicated", __func__,
-				   handles[i]);
-#endif
-
-			duplicate = TRUE;
-			break;
-		}
 
 		if (_wapi_handle_test_capabilities (handles[i], WAPI_HANDLE_CAP_WAIT) == FALSE) {
 #ifdef DEBUG
@@ -628,10 +612,17 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			break;
 		}
 
-		g_hash_table_insert (dups, handles[i], handles[i]);
+		sorted_handles [i] = handles [i];
 		_wapi_handle_ops_prewait (handles[i]);
 	}
-	g_hash_table_destroy (dups);
+
+	qsort (sorted_handles, numobjects, sizeof (gpointer), g_direct_equal);
+	for (i = 1; i < numobjects; i++) {
+		if (sorted_handles [i - 1] == sorted_handles [i]) {
+			duplicate = TRUE;
+			break;
+		}
+	}
 
 	if (duplicate == TRUE) {
 #ifdef DEBUG
@@ -691,7 +682,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			_wapi_handle_ops_prewait (handles[i]);
 		
 			if (_wapi_handle_test_capabilities (handles[i], WAPI_HANDLE_CAP_SPECIAL_WAIT) == TRUE && _wapi_handle_issignalled (handles[i]) == FALSE) {
-				_wapi_handle_ops_special_wait (handles[i], 0);
+				_wapi_handle_ops_special_wait (handles[i], 0, alertable);
 			}
 		}
 		

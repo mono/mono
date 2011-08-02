@@ -50,6 +50,7 @@ System.Web.Compilation/AssemblyBuilder.cs
 System.Web.Compilation/BaseCompiler.cs
 System.Web.Compilation/BuildDependencySet.cs
 System.Web.Compilation/BuildManager.cs
+System.Web.Compilation/BuildManagerHost.cs
 System.Web.Compilation/BuildManagerCacheItem.cs
 System.Web.Compilation/BuildManagerDirectoryBuilder.cs
 System.Web.Compilation/BuildManagerRemoveEntryEventHandler.cs
@@ -150,6 +151,7 @@ System.Web.Configuration_2.0/CustomError.cs
 System.Web.Configuration_2.0/CustomErrorCollection.cs
 System.Web.Configuration_2.0/CustomErrorsMode.cs
 System.Web.Configuration_2.0/CustomErrorsSection.cs
+System.Web.Configuration_2.0/CustomErrorsRedirectMode.cs
 System.Web.Configuration_2.0/DeploymentSection.cs
 System.Web.Configuration_2.0/EventMappingSettings.cs
 System.Web.Configuration_2.0/EventMappingSettingsCollection.cs
@@ -257,6 +259,12 @@ System.Web.Configuration_2.0/XhtmlConformanceSection.cs
 System.Web.Configuration.Internal/IInternalConfigWebHost.cs
 System.Web/DefaultHttpHandler.cs
 System.Web/EndEventHandler.cs
+System.Web/DefaultExceptionPageTemplate.cs
+System.Web/ExceptionPageTemplate.cs
+System.Web/ExceptionPageTemplateType.cs
+System.Web/ExceptionPageTemplateFragment.cs
+System.Web/ExceptionPageTemplateFragmentValue.cs
+System.Web/ExceptionPageTemplateValues.cs
 System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs
@@ -306,6 +314,8 @@ System.Web/HttpForbiddenHandler.cs
 System.Web/HttpHeaderCollection.cs
 System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
+System.Web/HttpNotFoundHandler.cs
+System.Web/HttpNotImplementedHandler.cs
 System.Web/HttpParamsCollection.cs
 System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs
@@ -1189,3 +1199,5 @@ System.Web/WebROCollection.cs
 System.Web/WebSysDescriptionAttribute.cs
 System.Web/XmlSiteMapProvider.cs
 ../corlib/System.Collections.Concurrent/SplitOrderedList.cs
+../corlib/System.Collections.Concurrent/ObjectPool.cs
+

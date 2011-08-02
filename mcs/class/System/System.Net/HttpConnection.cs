@@ -40,6 +40,7 @@ using Mono.Security.Protocol.Tls;
 namespace System.Net {
 	sealed class HttpConnection
 	{
+		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
 		const int BufferSize = 8192;
 		Socket sock;
 		Stream stream;
@@ -58,6 +59,8 @@ namespace System.Net {
 		AsymmetricAlgorithm key;
 		int s_timeout = 90000; // 90k ms for first request, 15k ms from then on
 		Timer timer;
+		IPEndPoint local_ep;
+		HttpListener last_listener;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
 		{
@@ -95,12 +98,22 @@ namespace System.Net {
 			context = new HttpListenerContext (this);
 		}
 
+		public bool IsClosed {
+			get { return (sock == null); }
+		}
+
 		public int Reuses {
 			get { return reuses; }
 		}
 
 		public IPEndPoint LocalEndPoint {
-			get { return (IPEndPoint) sock.LocalEndPoint; }
+			get {
+				if (local_ep != null)
+					return local_ep;
+
+				local_ep = (IPEndPoint) sock.LocalEndPoint;
+				return local_ep;
+			}
 		}
 
 		public IPEndPoint RemoteEndPoint {
@@ -118,11 +131,8 @@ namespace System.Net {
 
 		void OnTimeout (object unused)
 		{
+			CloseSocket ();
 			Unbind ();
-			try {
-				sock.Close (); // stream disposed
-			} catch {
-			}
 		}
 
 		public void BeginReadRequest ()
@@ -133,9 +143,11 @@ namespace System.Net {
 				if (reuses == 1)
 					s_timeout = 15000;
 				timer.Change (s_timeout, Timeout.Infinite);
-				stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
+				stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
 			} catch {
+				timer.Change (Timeout.Infinite, Timeout.Infinite);
 				CloseSocket ();
+				Unbind ();
 			}
 		}
 
@@ -167,10 +179,15 @@ namespace System.Net {
 			return o_stream;
 		}
 
-		void OnRead (IAsyncResult ares)
+		static void OnRead (IAsyncResult ares)
+		{
+			HttpConnection cnc = (HttpConnection) ares.AsyncState;
+			cnc.OnReadInternal (ares);
+		}
+
+		void OnReadInternal (IAsyncResult ares)
 		{
 			timer.Change (Timeout.Infinite, Timeout.Infinite);
-			HttpConnection cnc = (HttpConnection) ares.AsyncState;
 			int nread = -1;
 			try {
 				nread = stream.EndRead (ares);
@@ -183,8 +200,10 @@ namespace System.Net {
 			} catch {
 				if (ms != null && ms.Length > 0)
 					SendError ();
-				if (sock != null)
+				if (sock != null) {
 					CloseSocket ();
+					Unbind ();
+				}
 				return;
 			}
 
@@ -192,6 +211,7 @@ namespace System.Net {
 				//if (ms.Length > 0)
 				//	SendError (); // Why bother?
 				CloseSocket ();
+				Unbind ();
 				return;
 			}
 
@@ -208,11 +228,28 @@ namespace System.Net {
 				if (!epl.BindContext (context)) {
 					SendError ("Invalid host", 400);
 					Close (true);
+					return;
 				}
+				HttpListener listener = context.Listener;
+				if (last_listener != listener) {
+					RemoveConnection ();
+					listener.AddConnection (this);
+					last_listener = listener;
+				}
+
 				context_bound = true;
+				listener.RegisterContext (context);
 				return;
 			}
-			stream.BeginRead (buffer, 0, BufferSize, OnRead, cnc);
+			stream.BeginRead (buffer, 0, BufferSize, onread_cb, this);
+		}
+
+		void RemoveConnection ()
+		{
+			if (last_listener == null)
+				epl.RemoveConnection (this);
+			else
+				last_listener.RemoveConnection (this);
 		}
 
 		enum InputState {
@@ -297,7 +334,7 @@ namespace System.Net {
 		string ReadLine (byte [] buffer, int offset, int len, ref int used)
 		{
 			if (current_line == null)
-				current_line = new StringBuilder ();
+				current_line = new StringBuilder (128);
 			int last = offset + len;
 			used = 0;
 			for (int i = offset; i < last && line_state != LineState.LF; i++) {
@@ -371,6 +408,7 @@ namespace System.Net {
 			} finally {
 				sock = null;
 			}
+			RemoveConnection ();
 		}
 
 		internal void Close (bool force_close)
@@ -423,6 +461,7 @@ namespace System.Net {
 						s.Close ();
 				}
 				Unbind ();
+				RemoveConnection ();
 				return;
 			}
 		}

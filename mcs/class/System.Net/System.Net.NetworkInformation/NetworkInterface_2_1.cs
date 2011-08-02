@@ -42,7 +42,7 @@ namespace System.Net.NetworkInformation {
 
 		public static bool GetIsNetworkAvailable ()
 		{
-			return NetworkChange.moon_network_service_get_is_network_available (NetworkChange.runtime_get_network_service ());
+			return NetworkChange._moonlight_cbinding_moon_network_service_get_is_network_available (NetworkChange._moonlight_cbinding_runtime_get_network_service ());
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// cs1650.cs: Fields of static readonly field `C.s' cannot be assigned to (except in a static constructor or a variable initializer)
+// CS1650: Fields of static readonly field `C.s' cannot be assigned to (except in a static constructor or a variable initializer)
 // Line: 14
 
 using System;

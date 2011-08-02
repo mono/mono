@@ -47,6 +47,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.Adapters;
@@ -459,10 +460,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		get {
 			if (_request == null)
 				throw new HttpException("Request is not available in this context.");
-			return _request;
+			return RequestInternal;
 		}
 	}
 
+	internal HttpRequest RequestInternal {
+		get { return _request; }
+	}
+	
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
 	public HttpResponse Response {
@@ -932,6 +937,10 @@ public partial class Page : TemplateControl, IHttpHandler
 					       OutputCacheLocation location,
 					       string varyByParam)
 	{
+		if (duration <= 0)
+			// No need to do anything, cache will be ineffective anyway
+			return;
+		
 		HttpResponse response = Response;
 		HttpCachePolicy cache = response.Cache;
 		bool set_vary = false;
@@ -2386,14 +2395,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ApplyMasterPage ()
 	{
 		if (masterPageFile != null && masterPageFile.Length > 0) {
-			List <string> appliedMasterPageFiles = new List <string> ();
-
-			if (Master != null) {
-				MasterPage.ApplyMasterPageRecursive (Master, appliedMasterPageFiles);
-
-				Master.Page = this;
+			MasterPage master = Master;
+			
+			if (master != null) {
+				var appliedMasterPageFiles = new Dictionary <string, bool> (StringComparer.Ordinal);
+				MasterPage.ApplyMasterPageRecursive (Request.CurrentExecutionFilePath, HostingEnvironment.VirtualPathProvider, master, appliedMasterPageFiles);
+				master.Page = this;
 				Controls.Clear ();
-				Controls.Add (Master);
+				Controls.Add (master);
 			}
 		}
 	}

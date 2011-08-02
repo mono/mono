@@ -431,8 +431,8 @@ namespace System
 
 				return FindPosition (enumType, value, info.values) >= 0;
 			} else {
-				throw new ArgumentException("The value parameter is not the correct type."
-					+ "It must be type String or the same type as the underlying type"
+				throw new ArgumentException("The value parameter is not the correct type. "
+					+ "It must be type String or the same type as the underlying type "
 					+ "of the Enum.");
 			}
 		}
@@ -619,7 +619,7 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -1012,11 +1012,12 @@ namespace System
 			}
 			return retVal;
 		}
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public bool HasFlag (Enum flag)
 		{
-			ulong mvalue = Convert.ToUInt64 (get_value (), null);
-			ulong fvalue = Convert.ToUInt64 (flag, null);
+			var val = get_value ();
+			ulong mvalue = GetValue (val, Type.GetTypeCode (val.GetType ()));
+			ulong fvalue = GetValue (flag, Type.GetTypeCode (flag.GetType ()));
 
 			return ((mvalue & fvalue) == fvalue);
 		}

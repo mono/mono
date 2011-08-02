@@ -29,6 +29,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -38,26 +40,51 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
+	internal static class Extensions
+	{
+		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit) where T : Attribute
+		{
+			foreach (T att in mi.GetCustomAttributes (typeof (T), inherit))
+				return att;
+			return null;
+		}
+
+		public static T GetCustomAttribute<T> (this ParameterInfo pi, bool inherit) where T : Attribute
+		{
+			foreach (T att in pi.GetCustomAttributes (typeof (T), inherit))
+				return att;
+			return null;
+		}
+	}
+
+	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
 	public class ContractDescription
 	{		
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
 			return ContractDescriptionGenerator.GetContract (contractType);
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType, object serviceImplementation)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
+			if (serviceImplementation == null)
+				throw new ArgumentNullException ("serviceImplementation");
 			return ContractDescriptionGenerator.GetContract (contractType, serviceImplementation);
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType, Type serviceType)
 		{
+			if (contractType == null)
+				throw new ArgumentNullException ("contractType");
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType");
 			return ContractDescriptionGenerator.GetContract (contractType, serviceType);
 		}
 
@@ -139,10 +166,15 @@ namespace System.ServiceModel.Description
 			set { session = value; }
 		}
 
-		[MonoTODO]
 		public Collection<ContractDescription> GetInheritedContracts ()
 		{
-			throw new NotImplementedException ();
+			var ret = new Collection<ContractDescription> ();
+			foreach (var it in ContractType.GetInterfaces ()) {
+				var icd = ContractDescriptionGenerator.GetContractInternal (it, null, null);
+				if (icd != null)
+					ret.Add (icd);
+			}
+			return ret;
 		}
 
 		internal ClientRuntime CreateClientRuntime (object callbackDispatchRuntime)
@@ -160,10 +192,8 @@ namespace System.ServiceModel.Description
 
 				if (!proxy.Operations.Contains (od.Name))
 					PopulateClientOperation (proxy, od, isCallback);
-#if !MOONLIGHT
 				foreach (IOperationBehavior ob in od.Behaviors)
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
-#endif
 			}
 		}
 

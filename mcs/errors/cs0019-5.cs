@@ -1,4 +1,4 @@
-// cs0019.cs: Operator `==' cannot be applied to operands of type `X' and `Y'
+// CS0019: Operator `==' cannot be applied to operands of type `X' and `Y'
 // Line : 13
 
 class X {

@@ -1,4 +1,4 @@
-// cs1606.cs: Could not sign the assembly. ECMA key can only be used to delay-sign assemblies
+// CS1606: Could not sign the assembly. ECMA key can only be used to delay-sign assemblies
 // Line: 0
 
 using System.Reflection;

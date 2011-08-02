@@ -1,0 +1,5 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:x"
+  xmlns="urn:x" xmlns:y="urn:y">
+  <xs:import namespace="urn:y" schemaLocation="importedNamespace2.xsd" />
+  <xs:element name="foo" type="y:foo" />
+</xs:schema>

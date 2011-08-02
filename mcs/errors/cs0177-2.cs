@@ -1,4 +1,4 @@
-// cs0177-2.cs: The out parameter `f' must be assigned to before control leaves the current method
+// CS0177: The out parameter `f' must be assigned to before control leaves the current method
 // Line: 5
 
 class ClassMain {

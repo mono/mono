@@ -29,10 +29,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.Design
 {
-#if NET_2_0
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public abstract class ComponentEditorPage : Panel
 	{
 		private bool commitOnDeactivate = false;
@@ -47,7 +45,6 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -55,7 +52,6 @@ namespace System.Windows.Forms.Design
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
 		}
-#endif
 
 		public bool CommitOnDeactivate
 		{
@@ -202,14 +198,12 @@ namespace System.Windows.Forms.Design
 		}
 
 		#region Public Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 		#endregion
 	}
 }

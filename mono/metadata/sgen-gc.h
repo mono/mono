@@ -26,12 +26,23 @@
 
 /* pthread impl */
 #include "config.h"
+
+#ifdef HAVE_SGEN_GC
+
+typedef struct _SgenThreadInfo SgenThreadInfo;
+#define THREAD_INFO_TYPE SgenThreadInfo
+
 #include <glib.h>
 #include <pthread.h>
 #include <signal.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-threads.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/sgen-archdep.h>
+#if defined(__MACH__)
+	#include <mach/mach_port.h>
+#endif
 
 /*
  * Turning on heavy statistics will turn off the managed allocator and
@@ -51,13 +62,20 @@
 
 #define SGEN_MAX_DEBUG_LEVEL 2
 
-#define THREAD_HASH_SIZE 11
-
 #define GC_BITS_PER_WORD (sizeof (mword) * 8)
 
-#define ARCH_THREAD_TYPE pthread_t
-#define ARCH_GET_THREAD pthread_self
-#define ARCH_THREAD_EQUALS(a,b) pthread_equal (a, b)
+/* The method used to clear the nursery */
+/* Clearing at nursery collections is the safest, but has bad interactions with caches.
+ * Clearing at TLAB creation is much faster, but more complex and it might expose hard
+ * to find bugs.
+ */
+typedef enum {
+	CLEAR_AT_GC,
+	CLEAR_AT_TLAB_CREATION
+} NurseryClearPolicy;
+
+NurseryClearPolicy mono_sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
+
 
 #if SIZEOF_VOID_P == 4
 typedef guint32 mword;
@@ -80,15 +98,18 @@ struct _RememberedSet {
 };
 
 /* eventually share with MonoThread? */
-typedef struct _SgenThreadInfo SgenThreadInfo;
-
 struct _SgenThreadInfo {
-	SgenThreadInfo *next;
-	ARCH_THREAD_TYPE id;
-	unsigned int stop_count; /* to catch duplicate signals */
+	MonoThreadInfo info;
+#if defined(__MACH__)
+	thread_port_t mach_port;
+#else
 	int signal;
+	unsigned int stop_count; /* to catch duplicate signals */
+#endif
 	int skip;
 	volatile int in_critical_region;
+	gboolean doing_handshake;
+	gboolean thread_is_dying;
 	void *stack_end;
 	void *stack_start;
 	void *stack_start_limit;
@@ -102,7 +123,20 @@ struct _SgenThreadInfo {
 	gpointer runtime_data;
 	gpointer stopped_ip;	/* only valid if the thread is stopped */
 	MonoDomain *stopped_domain; /* ditto */
+
+#if defined(__MACH__)
+#ifdef USE_MONO_CTX
+	MonoContext ctx;		/* ditto */
+#else
+	gpointer regs[ARCH_NUM_REGS];	    /* ditto */
+#endif
+#endif
+
+#ifdef USE_MONO_CTX
+	MonoContext *monoctx;	/* ditto */
+#else
 	gpointer *stopped_regs;	    /* ditto */
+#endif
 #ifndef HAVE_KW_THREAD
 	char *tlab_start;
 	char *tlab_next;
@@ -116,8 +150,7 @@ struct _SgenThreadInfo {
 enum {
 	MEMORY_ROLE_GEN0,
 	MEMORY_ROLE_GEN1,
-	MEMORY_ROLE_PINNED,
-	MEMORY_ROLE_INTERNAL
+	MEMORY_ROLE_PINNED
 };
 
 typedef struct _SgenBlock SgenBlock;
@@ -171,6 +204,21 @@ struct _GCMemSection {
  */
 #define SGEN_MAX_SMALL_OBJ_SIZE 8000
 
+/*
+ * This is the maximum ammount of memory we're willing to waste in order to speed up allocation.
+ * Wastage comes in thre forms:
+ *
+ * -when building the nursery fragment list, small regions are discarded;
+ * -when allocating memory from a fragment if it ends up below the threshold, we remove it from the fragment list; and
+ * -when allocating a new tlab, we discard the remaining space of the old one
+ *
+ * Increasing this value speeds up allocation but will cause more frequent nursery collections as less space will be used.
+ * Descreasing this value will cause allocation to be slower since we'll have to cycle thru more fragments.
+ * 512 annedoctally keeps wastage under control and doesn't impact allocation performance too much. 
+*/
+#define SGEN_MAX_NURSERY_WASTE 512
+
+
 /* This is also the MAJOR_SECTION_SIZE for the copying major
    collector */
 #define SGEN_PINNED_CHUNK_SIZE	(128 * 1024)
@@ -178,13 +226,6 @@ struct _GCMemSection {
 #define SGEN_PINNED_CHUNK_FOR_PTR(o)	((SgenBlock*)(((mword)(o)) & ~(SGEN_PINNED_CHUNK_SIZE - 1)))
 
 typedef struct _SgenPinnedChunk SgenPinnedChunk;
-
-#if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__)
-const static int suspend_signal_num = SIGXFSZ;
-#else
-const static int suspend_signal_num = SIGPWR;
-#endif
-const static int restart_signal_num = SIGXCPU;
 
 /*
  * Recursion is not allowed for the thread lock.
@@ -194,6 +235,7 @@ const static int restart_signal_num = SIGXCPU;
    its use in mono_gc_base_init in sgen-gc.c */
 #define LOCK_INIT(name)
 #define LOCK_GC pthread_mutex_lock (&gc_mutex)
+#define TRYLOCK_GC (pthread_mutex_trylock (&gc_mutex) == 0)
 #define UNLOCK_GC pthread_mutex_unlock (&gc_mutex)
 #define LOCK_INTERRUPTION pthread_mutex_lock (&interruption_mutex)
 #define UNLOCK_INTERRUPTION pthread_mutex_unlock (&interruption_mutex)
@@ -206,8 +248,6 @@ const static int restart_signal_num = SIGXCPU;
 		} while (InterlockedCompareExchange (&(x), __old_x + (i), __old_x) != __old_x); \
 	} while (0)
 
-/* non-pthread will need to provide their own version of start/stop */
-#define USE_SIGNAL_BASED_START_STOP_WORLD 1
 /* we intercept pthread_create calls to know which threads exist */
 #define USE_PTHREAD_INTERCEPT 1
 
@@ -229,7 +269,7 @@ extern FILE* gc_debug_file;
 
 extern int current_collection_generation;
 
-extern gboolean conservative_stack_mark;
+extern unsigned int mono_sgen_global_stop_count;
 
 #define SGEN_ALLOC_ALIGN		8
 #define SGEN_ALLOC_ALIGN_BITS	3
@@ -335,7 +375,6 @@ enum {
 	 * object's class.
 	 */
 	DESC_TYPE_RUN_LENGTH = 1, /* 15 bits aligned byte size | 1-3 (offset, numptr) bytes tuples */
-	DESC_TYPE_SMALL_BITMAP, /* 15 bits aligned byte size | 16-48 bit bitmap */
 	DESC_TYPE_COMPLEX,      /* index for bitmap into complex_descriptors */
 	DESC_TYPE_VECTOR,       /* 10 bits element size | 1 bit array | 2 bits desc | element desc */
 	DESC_TYPE_ARRAY,        /* 10 bits element size | 1 bit array | 2 bits desc | element desc */
@@ -360,8 +399,11 @@ enum {
 		(size) = ((desc) & 0xfff8) >> 1;	\
     } while (0)
 
-//#define PREFETCH(addr) __asm__ __volatile__ ("     prefetchnta     %0": : "m"(*(char *)(addr)))
+#ifdef __GNUC__
+#define PREFETCH(addr)	__builtin_prefetch ((addr))
+#else
 #define PREFETCH(addr)
+#endif
 
 /* code using these macros must define a HANDLE_PTR(ptr) macro that does the work */
 #define OBJ_RUN_LEN_FOREACH_PTR(desc,obj)	do {	\
@@ -381,10 +423,10 @@ enum {
 /* a bitmap desc means that there are pointer references or we'd have
  * choosen run-length, instead: add an assert to check.
  */
-#define OBJ_BITMAP_FOREACH_PTR(desc,obj)	do {	\
+#define OBJ_LARGE_BITMAP_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
-		gsize _bmap = (desc) >> 16;	\
+		gsize _bmap = (desc) >> LOW_TYPE_BITS;	\
 		_objptr += OBJECT_HEADER_WORDS;	\
 		while (_bmap) {	\
 			if ((_bmap & 1)) {	\
@@ -395,32 +437,18 @@ enum {
 		}	\
 	} while (0)
 
-#define OBJ_LARGE_BITMAP_FOREACH_PTR(vt,obj)	do {	\
-		/* there are pointers */	\
-		void **_objptr = (void**)(obj);	\
-		gsize _bmap = (vt)->desc >> LOW_TYPE_BITS;	\
-		_objptr += OBJECT_HEADER_WORDS;	\
-		while (_bmap) {	\
-			if ((_bmap & 1)) {	\
-				HANDLE_PTR (_objptr, (obj));	\
-			}	\
-			_bmap >>= 1;	\
-			++_objptr;	\
-		}	\
-	} while (0)
-
-gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
+gsize* mono_sgen_get_complex_descriptor (mword desc) MONO_INTERNAL;
 
 #define OBJ_COMPLEX_FOREACH_PTR(vt,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
-		gsize *bitmap_data = mono_sgen_get_complex_descriptor ((vt)); \
+		gsize *bitmap_data = mono_sgen_get_complex_descriptor ((desc)); \
 		int bwords = (*bitmap_data) - 1;	\
 		void **start_run = _objptr;	\
 		bitmap_data++;	\
 		if (0) {	\
 			MonoObject *myobj = (MonoObject*)obj;	\
-			g_print ("found %d at %p (0x%zx): %s.%s\n", bwords, (obj), (vt)->desc, myobj->vtable->klass->name_space, myobj->vtable->klass->name);	\
+			g_print ("found %d at %p (0x%zx): %s.%s\n", bwords, (obj), (desc), myobj->vtable->klass->name_space, myobj->vtable->klass->name); \
 		}	\
 		while (bwords-- > 0) {	\
 			gsize _bmap = *bitmap_data++;	\
@@ -440,7 +468,7 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 /* this one is untested */
 #define OBJ_COMPLEX_ARR_FOREACH_PTR(vt,obj)	do {	\
 		/* there are pointers */	\
-		gsize *mbitmap_data = mono_sgen_get_complex_descriptor ((vt)); \
+		gsize *mbitmap_data = mono_sgen_get_complex_descriptor ((vt)->desc); \
 		int mbwords = (*mbitmap_data++) - 1;	\
 		int el_size = mono_array_element_size (vt->klass);	\
 		char *e_start = (char*)(obj) +  G_STRUCT_OFFSET (MonoArray, vector);	\
@@ -468,12 +496,12 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 		}	\
 	} while (0)
 
-#define OBJ_VECTOR_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_VECTOR_FOREACH_PTR(desc,obj)	do {	\
 		/* note: 0xffffc000 excludes DESC_TYPE_V_PTRFREE */	\
-		if ((vt)->desc & 0xffffc000) {	\
-			int el_size = ((vt)->desc >> 3) & MAX_ELEMENT_SIZE;	\
+		if ((desc) & 0xffffc000) {				\
+			int el_size = ((desc) >> 3) & MAX_ELEMENT_SIZE;	\
 			/* there are pointers */	\
-			int etype = (vt)->desc & 0xc000;	\
+			int etype = (desc) & 0xc000;			\
 			if (etype == (DESC_TYPE_V_REFS << 14)) {	\
 				void **p = (void**)((char*)(obj) + G_STRUCT_OFFSET (MonoArray, vector));	\
 				void **end_refs = (void**)((char*)p + el_size * mono_array_length_fast ((MonoArray*)(obj)));	\
@@ -483,8 +511,8 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 					++p;	\
 				}	\
 			} else if (etype == DESC_TYPE_V_RUN_LEN << 14) {	\
-				int offset = ((vt)->desc >> 16) & 0xff;	\
-				int num_refs = ((vt)->desc >> 24) & 0xff;	\
+				int offset = ((desc) >> 16) & 0xff;	\
+				int num_refs = ((desc) >> 24) & 0xff;	\
 				char *e_start = (char*)(obj) + G_STRUCT_OFFSET (MonoArray, vector);	\
 				char *e_end = e_start + el_size * mono_array_length_fast ((MonoArray*)(obj));	\
 				while (e_start < e_end) {	\
@@ -501,7 +529,7 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 				char *e_end = e_start + el_size * mono_array_length_fast ((MonoArray*)(obj));	\
 				while (e_start < e_end) {	\
 					void **p = (void**)e_start;	\
-					gsize _bmap = (vt)->desc >> 16;	\
+					gsize _bmap = (desc) >> 16;	\
 					/* Note: there is no object header here to skip */	\
 					while (_bmap) {	\
 						if ((_bmap & 1)) {	\
@@ -515,8 +543,6 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 			}	\
 		}	\
 	} while (0)
-
-typedef struct _SgenInternalAllocator SgenInternalAllocator;
 
 #define SGEN_GRAY_QUEUE_SECTION_SIZE	(128 - 3)
 
@@ -536,13 +562,16 @@ typedef struct _SgenGrayQueue SgenGrayQueue;
 typedef void (*GrayQueueAllocPrepareFunc) (SgenGrayQueue*);
 
 struct _SgenGrayQueue {
-	SgenInternalAllocator *allocator;
 	GrayQueueSection *first;
 	GrayQueueSection *free_list;
 	int balance;
 	GrayQueueAllocPrepareFunc alloc_prepare_func;
 	void *alloc_prepare_data;
 };
+
+typedef void (*CopyOrMarkObjectFunc) (void**, SgenGrayQueue*);
+typedef void (*ScanObjectFunc) (char*, SgenGrayQueue*);
+typedef void (*ScanVTypeFunc) (char*, mword desc, SgenGrayQueue*);
 
 #if SGEN_MAX_DEBUG_LEVEL >= 9
 #define GRAY_OBJECT_ENQUEUE gray_object_enqueue
@@ -553,6 +582,7 @@ struct _SgenGrayQueue {
 			mono_sgen_gray_object_enqueue ((queue), (o));	\
 		else							\
 			(queue)->first->objects [(queue)->first->end++] = (o); \
+		PREFETCH ((o));						\
 	} while (0)
 #define GRAY_OBJECT_DEQUEUE(queue,o) do {				\
 		if (!(queue)->first)					\
@@ -573,10 +603,14 @@ void* mono_sgen_alloc_os_memory (size_t size, int activate) MONO_INTERNAL;
 void* mono_sgen_alloc_os_memory_aligned (mword size, mword alignment, gboolean activate) MONO_INTERNAL;
 void mono_sgen_free_os_memory (void *addr, size_t size) MONO_INTERNAL;
 
-int mono_sgen_thread_handshake (int signum) MONO_INTERNAL;
-SgenThreadInfo* mono_sgen_thread_info_lookup (ARCH_THREAD_TYPE id) MONO_INTERNAL;
-SgenThreadInfo** mono_sgen_get_thread_table (void) MONO_INTERNAL;
+int mono_sgen_thread_handshake (BOOL suspend) MONO_INTERNAL;
+gboolean mono_sgen_suspend_thread (SgenThreadInfo *info) MONO_INTERNAL;
+gboolean mono_sgen_resume_thread (SgenThreadInfo *info) MONO_INTERNAL;
 void mono_sgen_wait_for_suspend_ack (int count) MONO_INTERNAL;
+gboolean mono_sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p) MONO_INTERNAL;
+void mono_sgen_os_init (void) MONO_INTERNAL;
+
+void mono_sgen_fill_thread_info_for_suspend (SgenThreadInfo *info) MONO_INTERNAL;
 
 gboolean mono_sgen_is_worker_thread (pthread_t thread) MONO_INTERNAL;
 
@@ -590,7 +624,6 @@ void mono_sgen_check_section_scan_starts (GCMemSection *section) MONO_INTERNAL;
 
 /* Keep in sync with mono_sgen_dump_internal_mem_usage() in dump_heap()! */
 enum {
-	INTERNAL_MEM_MANAGED,
 	INTERNAL_MEM_PIN_QUEUE,
 	INTERNAL_MEM_FRAGMENT,
 	INTERNAL_MEM_SECTION,
@@ -609,17 +642,18 @@ enum {
 	INTERNAL_MEM_MS_BLOCK_INFO,
 	INTERNAL_MEM_EPHEMERON_LINK,
 	INTERNAL_MEM_WORKER_DATA,
+	INTERNAL_MEM_BRIDGE_DATA,
+	INTERNAL_MEM_JOB_QUEUE_ENTRY,
 	INTERNAL_MEM_MAX
 };
 
-#define SGEN_INTERNAL_FREELIST_NUM_SLOTS	30
+#define SGEN_PINNED_FREELIST_NUM_SLOTS	30
 
-struct _SgenInternalAllocator {
+typedef struct {
 	SgenPinnedChunk *chunk_list;
-	SgenPinnedChunk *free_lists [SGEN_INTERNAL_FREELIST_NUM_SLOTS];
-	void *delayed_free_lists [SGEN_INTERNAL_FREELIST_NUM_SLOTS];
-	long small_internal_mem_bytes [INTERNAL_MEM_MAX];
-};
+	SgenPinnedChunk *free_lists [SGEN_PINNED_FREELIST_NUM_SLOTS];
+	void *delayed_free_lists [SGEN_PINNED_FREELIST_NUM_SLOTS];
+} SgenPinnedAllocator;
 
 enum {
 	GENERATION_NURSERY,
@@ -628,12 +662,10 @@ enum {
 };
 
 void mono_sgen_init_internal_allocator (void) MONO_INTERNAL;
+void mono_sgen_init_pinned_allocator (void) MONO_INTERNAL;
 
-SgenInternalAllocator* mono_sgen_get_unmanaged_allocator (void) MONO_INTERNAL;
-
-const char* mono_sgen_internal_mem_type_name (int type) MONO_INTERNAL;
 void mono_sgen_report_internal_mem_usage (void) MONO_INTERNAL;
-void mono_sgen_report_internal_mem_usage_full (SgenInternalAllocator *alc) MONO_INTERNAL;
+void mono_sgen_report_pinned_mem_usage (SgenPinnedAllocator *alc) MONO_INTERNAL;
 void mono_sgen_dump_internal_mem_usage (FILE *heap_dump_file) MONO_INTERNAL;
 void mono_sgen_dump_section (GCMemSection *section, const char *type) MONO_INTERNAL;
 void mono_sgen_dump_occupied (char *start, char *end, char *section_start) MONO_INTERNAL;
@@ -648,22 +680,18 @@ void mono_sgen_free_internal (void *addr, int type) MONO_INTERNAL;
 void* mono_sgen_alloc_internal_dynamic (size_t size, int type) MONO_INTERNAL;
 void mono_sgen_free_internal_dynamic (void *addr, size_t size, int type) MONO_INTERNAL;
 
-void* mono_sgen_alloc_internal_fixed (SgenInternalAllocator *allocator, int type) MONO_INTERNAL;
-void mono_sgen_free_internal_fixed (SgenInternalAllocator *allocator, void *addr, int type) MONO_INTERNAL;
+void* mono_sgen_alloc_pinned (SgenPinnedAllocator *allocator, size_t size) MONO_INTERNAL;
+void mono_sgen_free_pinned (SgenPinnedAllocator *allocator, void *addr, size_t size) MONO_INTERNAL;
 
-void* mono_sgen_alloc_internal_full (SgenInternalAllocator *allocator, size_t size, int type) MONO_INTERNAL;
-void mono_sgen_free_internal_full (SgenInternalAllocator *allocator, void *addr, size_t size, int type) MONO_INTERNAL;
-
-void mono_sgen_free_internal_delayed (void *addr, int type, SgenInternalAllocator *thread_allocator) MONO_INTERNAL;
 
 void mono_sgen_debug_printf (int level, const char *format, ...) MONO_INTERNAL;
 
 gboolean mono_sgen_parse_environment_string_extract_number (const char *str, glong *out) MONO_INTERNAL;
 
-void mono_sgen_internal_scan_objects (SgenInternalAllocator *alc, IterateObjectCallbackFunc callback, void *callback_data) MONO_INTERNAL;
-void mono_sgen_internal_scan_pinned_objects (SgenInternalAllocator *alc, IterateObjectCallbackFunc callback, void *callback_data) MONO_INTERNAL;
+void mono_sgen_pinned_scan_objects (SgenPinnedAllocator *alc, IterateObjectCallbackFunc callback, void *callback_data) MONO_INTERNAL;
+void mono_sgen_pinned_scan_pinned_objects (SgenPinnedAllocator *alc, IterateObjectCallbackFunc callback, void *callback_data) MONO_INTERNAL;
 
-void mono_sgen_internal_update_heap_boundaries (SgenInternalAllocator *alc) MONO_INTERNAL;
+void mono_sgen_pinned_update_heap_boundaries (SgenPinnedAllocator *alc) MONO_INTERNAL;
 
 void** mono_sgen_find_optimized_pin_queue_area (void *start, void *end, int *num) MONO_INTERNAL;
 void mono_sgen_find_section_pin_queue_start_end (GCMemSection *section) MONO_INTERNAL;
@@ -674,6 +702,10 @@ void mono_sgen_pin_stats_register_object (char *obj, size_t size);
 void mono_sgen_add_to_global_remset (gpointer ptr) MONO_INTERNAL;
 
 int mono_sgen_get_current_collection_generation (void) MONO_INTERNAL;
+gboolean mono_sgen_nursery_collection_is_parallel (void) MONO_INTERNAL;
+CopyOrMarkObjectFunc mono_sgen_get_copy_object (void) MONO_INTERNAL;
+ScanObjectFunc mono_sgen_get_minor_scan_object (void) MONO_INTERNAL;
+ScanVTypeFunc mono_sgen_get_minor_scan_vtype (void) MONO_INTERNAL;
 
 typedef void (*sgen_cardtable_block_callback) (mword start, mword size);
 
@@ -695,9 +727,12 @@ struct _SgenMajorCollector {
 	void* (*alloc_degraded) (MonoVTable *vtable, size_t size);
 	void (*copy_or_mark_object) (void **obj_slot, SgenGrayQueue *queue);
 	void (*minor_scan_object) (char *start, SgenGrayQueue *queue);
-	char* (*minor_scan_vtype) (char *start, mword desc, char* from_start, char* from_end, SgenGrayQueue *queue);
+	void (*nopar_minor_scan_object) (char *start, SgenGrayQueue *queue);
+	void (*minor_scan_vtype) (char *start, mword desc, SgenGrayQueue *queue);
+	void (*nopar_minor_scan_vtype) (char *start, mword desc, SgenGrayQueue *queue);
 	void (*major_scan_object) (char *start, SgenGrayQueue *queue);
 	void (*copy_object) (void **obj_slot, SgenGrayQueue *queue);
+	void (*nopar_copy_object) (void **obj_slot, SgenGrayQueue *queue);
 	void* (*alloc_object) (int size, gboolean has_references);
 	void (*free_pinned_object) (char *obj, size_t size);
 	void (*iterate_objects) (gboolean non_pinned, gboolean pinned, IterateObjectCallbackFunc callback, void *data);
@@ -723,6 +758,10 @@ struct _SgenMajorCollector {
 	gboolean (*handle_gc_param) (const char *opt);
 	void (*print_gc_param_usage) (void);
 	gboolean (*is_worker_thread) (pthread_t thread);
+	void (*post_param_init) (void);
+	void* (*alloc_worker_data) (void);
+	void (*init_worker_thread) (void *data);
+	void (*reset_worker_data) (void *data);
 };
 
 void mono_sgen_marksweep_init (SgenMajorCollector *collector) MONO_INTERNAL;
@@ -761,9 +800,24 @@ mono_sgen_par_object_get_size (MonoVTable *vtable, MonoObject* o)
 	}
 }
 
-#define mono_sgen_safe_object_get_size(o)		mono_sgen_par_object_get_size ((MonoVTable*)SGEN_LOAD_VTABLE ((o)), (o))
+static inline guint
+mono_sgen_safe_object_get_size (MonoObject *obj)
+{
+       char *forwarded;
+
+       if ((forwarded = SGEN_OBJECT_IS_FORWARDED (obj)))
+               obj = (MonoObject*)forwarded;
+
+       return mono_sgen_par_object_get_size ((MonoVTable*)SGEN_LOAD_VTABLE (obj), obj);
+}
 
 const char* mono_sgen_safe_name (void* obj) MONO_INTERNAL;
+
+gboolean mono_sgen_object_is_live (void *obj) MONO_INTERNAL;
+
+gboolean mono_sgen_need_bridge_processing (void) MONO_INTERNAL;
+void mono_sgen_bridge_processing (int num_objs, MonoObject **objs) MONO_INTERNAL;
+void mono_sgen_register_test_bridge_callbacks (void) MONO_INTERNAL;
 
 enum {
 	SPACE_MAJOR,
@@ -801,5 +855,23 @@ void mono_sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_dat
 void mono_sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback) MONO_INTERNAL;
 void mono_sgen_los_scan_card_table (SgenGrayQueue *queue) MONO_INTERNAL;
 FILE *mono_sgen_get_logfile (void) MONO_INTERNAL;
+
+/* nursery allocator */
+
+void mono_sgen_clear_nursery_fragments (void) MONO_INTERNAL;
+void mono_sgen_nursery_allocator_prepare_for_pinning (void) MONO_INTERNAL;
+void mono_sgen_clear_current_nursery_fragment (void) MONO_INTERNAL;
+void mono_sgen_nursery_allocator_set_nursery_bounds (char *nursery_start, char *nursery_end) MONO_INTERNAL;
+mword mono_sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int num_entries) MONO_INTERNAL;
+void mono_sgen_init_nursery_allocator (void) MONO_INTERNAL;
+void mono_sgen_nursery_allocator_init_heavy_stats (void) MONO_INTERNAL;
+char* mono_sgen_nursery_alloc_get_upper_alloc_bound (void) MONO_INTERNAL;
+void* mono_sgen_nursery_alloc (size_t size) MONO_INTERNAL;
+void* mono_sgen_nursery_alloc_range (size_t size, size_t min_size, int *out_alloc_size) MONO_INTERNAL;
+MonoVTable* mono_sgen_get_array_fill_vtable (void) MONO_INTERNAL;
+gboolean mono_sgen_can_alloc_size (size_t size) MONO_INTERNAL;
+void mono_sgen_nursery_retire_region (void *address, ptrdiff_t size) MONO_INTERNAL;
+
+#endif /* HAVE_SGEN_GC */
 
 #endif /* __MONO_SGENGC_H__ */

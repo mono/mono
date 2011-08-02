@@ -4,11 +4,23 @@
 
 using System;
 
+struct S
+{
+}
+
 [Foo (Product = "Mono")]
 class Program
 {
-	static void Main ()
+	S s;
+	
+	void Test ()
 	{
+		s.ToString ();
+	}
+	
+	public static void Main ()
+	{
+		new Program ().Test ();
 	}
 }
 

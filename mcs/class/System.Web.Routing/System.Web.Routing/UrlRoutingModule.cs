@@ -119,6 +119,9 @@ namespace System.Web.Routing
 			if (rd.RouteHandler == null)
 				throw new InvalidOperationException ("No  IRouteHandler is assigned to the selected route");
 
+			if (rd.RouteHandler is StopRoutingHandler)
+				return; //stop further processing
+			
 			var rc = new RequestContext (context, rd);
 
 			IHttpHandler http = rd.RouteHandler.GetHttpHandler (rc);

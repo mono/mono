@@ -1,6 +1,6 @@
 // CS1066: The default value specified for optional parameter `i' will never be used
 // Line: 7
-// Compiler options: -warnaserror -langversion:future
+// Compiler options: -warnaserror
 
 class C
 {

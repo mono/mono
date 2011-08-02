@@ -1,3 +1,4 @@
+#if DISABLE_REAL_PROXY
 //
 // ClientProxyGenerator.cs
 //
@@ -25,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MONOTOUCH
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -304,3 +306,6 @@ namespace System.ServiceModel
 		}
 	}
 }
+#endif
+
+#endif

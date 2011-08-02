@@ -264,6 +264,37 @@ g_hash_table_insert_replace (GHashTable *hash, gpointer key, gpointer value, gbo
 	sanity_check (hash);
 }
 
+GList*
+g_hash_table_get_keys (GHashTable *hash)
+{
+	GHashTableIter iter;
+	GList *rv = NULL;
+	gpointer key;
+
+	g_hash_table_iter_init (&iter, hash);
+
+	while (g_hash_table_iter_next (&iter, &key, NULL))
+		rv = g_list_prepend (rv, key);
+
+	return g_list_reverse (rv);
+}
+
+GList*
+g_hash_table_get_values (GHashTable *hash)
+{
+	GHashTableIter iter;
+	GList *rv = NULL;
+	gpointer value;
+
+	g_hash_table_iter_init (&iter, hash);
+
+	while (g_hash_table_iter_next (&iter, NULL, &value))
+		rv = g_list_prepend (rv, value);
+
+	return g_list_reverse (rv);
+}
+
+
 guint
 g_hash_table_size (GHashTable *hash)
 {
@@ -298,8 +329,10 @@ g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *ori
 	
 	for (s = hash->table [hashcode]; s != NULL; s = s->next){
 		if ((*equal)(s->key, key)){
-			*orig_key = s->key;
-			*value = s->value;
+			if (orig_key)
+				*orig_key = s->key;
+			if (value)
+				*value = s->value;
 			return TRUE;
 		}
 	}
@@ -434,6 +467,37 @@ g_hash_table_foreach_remove (GHashTable *hash, GHRFunc func, gpointer user_data)
 	if (count > 0)
 		rehash (hash);
 	return count;
+}
+
+gboolean
+g_hash_table_steal (GHashTable *hash, gconstpointer key)
+{
+	GEqualFunc equal;
+	Slot *s, *last;
+	guint hashcode;
+	
+	g_return_val_if_fail (hash != NULL, FALSE);
+	sanity_check (hash);
+	equal = hash->key_equal_func;
+	
+	hashcode = ((*hash->hash_func)(key)) % hash->table_size;
+	last = NULL;
+	for (s = hash->table [hashcode]; s != NULL; s = s->next){
+		if ((*equal)(s->key, key)) {
+			if (last == NULL)
+				hash->table [hashcode] = s->next;
+			else
+				last->next = s->next;
+			g_free (s);
+			hash->in_use--;
+			sanity_check (hash);
+			return TRUE;
+		}
+		last = s;
+	}
+	sanity_check (hash);
+	return FALSE;
+	
 }
 
 guint
@@ -579,13 +643,13 @@ g_direct_hash (gconstpointer v1)
 gboolean
 g_int_equal (gconstpointer v1, gconstpointer v2)
 {
-	return GPOINTER_TO_INT (v1) == GPOINTER_TO_INT (v2);
+	return *(gint *)v1 == *(gint *)v2;
 }
 
 guint
 g_int_hash (gconstpointer v1)
 {
-	return GPOINTER_TO_UINT(v1);
+	return *(guint *)v1;
 }
 
 gboolean

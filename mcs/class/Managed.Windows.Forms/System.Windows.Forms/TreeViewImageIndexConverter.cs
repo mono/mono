@@ -44,7 +44,6 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Public Methods
-#if NET_2_0
 		public override object ConvertFrom (System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
 			string indexStr;
@@ -84,7 +83,6 @@ namespace System.Windows.Forms {
 			int[] stdVal = new int[] { -1, -2 };
 			return new TypeConverter.StandardValuesCollection (stdVal);
 		}
-#endif
 		#endregion
 	}
 }

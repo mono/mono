@@ -830,5 +830,14 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			r.Read ();
 			Assert.AreEqual (2, r.Depth, "Depth-1");
 		}
+
+		[Test]
+		public void UnicodeEncodingAutoDetect ()
+		{
+			var ms = new MemoryStream (Encoding.Unicode.GetBytes ("{\"type\" : \"\", \"valid\" : \"0\"}"));
+			XmlReader r = JsonReaderWriterFactory.CreateJsonReader (ms, new XmlDictionaryReaderQuotas ());
+			r.ReadStartElement ();
+			r.Read ();
+		}
 	}
 }

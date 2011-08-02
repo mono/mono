@@ -1,10 +1,5 @@
 using System.ServiceModel.Channels;
 
-namespace System.IO
-{
-	public class PipeException : Exception { }
-}
-
 namespace System.ServiceModel
 {
 	public class PeerHopCountAttribute { }

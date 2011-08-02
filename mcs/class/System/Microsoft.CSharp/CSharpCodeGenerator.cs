@@ -183,14 +183,12 @@ namespace Mono.CSharp
 			GenerateCompileUnitEnd (compileUnit);
 		}
 
-#if NET_2_0
 		protected override void GenerateDefaultValueExpression (CodeDefaultValueExpression e)
 		{
 			Output.Write ("default(");
 			OutputType (e.Type);
 			Output.Write (')');
 		}
-#endif
 
 		protected override void GenerateDelegateCreateExpression (CodeDelegateCreateExpression expression)
 		{
@@ -1004,6 +1002,9 @@ namespace Mono.CSharp
 		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
 		{
 			switch (attributes & MemberAttributes.ScopeMask) {
+				case MemberAttributes.Final:
+					Output.Write ("readonly ");
+					break;
 				case MemberAttributes.Static:
 					Output.Write ("static ");
 					break;
@@ -1091,6 +1092,9 @@ namespace Mono.CSharp
 					output.Write ("protected internal ");
 					break;
 			}
+
+			if ((declaration.Attributes & MemberAttributes.New) != 0)
+				output.Write ("new ");
 
 			if (declaration.IsStruct) {
 				if (declaration.IsPartial) {
@@ -1330,7 +1334,7 @@ namespace Mono.CSharp
 					break;
 				default:
 					StringBuilder sb = new StringBuilder (baseType.Length);
-					if (type.Options == CodeTypeReferenceOptions.GlobalReference) {
+					if ((type.Options & CodeTypeReferenceOptions.GlobalReference) != 0) {
 						sb.Append ("global::");
 					}
 

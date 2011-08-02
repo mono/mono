@@ -4,6 +4,7 @@
 #include <glib.h>
 
 #include <mono/arch/ia64/ia64-codegen.h>
+#include <mono/utils/mono-context.h>
 
 #define MONO_ARCH_CPU_SPEC ia64_desc
 
@@ -48,13 +49,6 @@
 struct MonoLMF {
 };
 
-typedef struct MonoContext {
-	unw_cursor_t cursor;
-	/* Whenever the ip in 'cursor' points to the ip where the exception happened */
-	/* This is true for the initial context for exceptions thrown from signal handlers */
-	gboolean precise_ip;
-} MonoContext;
-
 typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gint32 lmf_offset;
@@ -76,71 +70,6 @@ typedef struct MonoCompileArch {
 	gboolean omit_fp;
 	GHashTable *branch_targets;
 } MonoCompileArch;
-
-static inline unw_word_t
-mono_ia64_context_get_ip (MonoContext *ctx)
-{
-	unw_word_t ip;
-	int err;
-
-	err = unw_get_reg (&ctx->cursor, UNW_IA64_IP, &ip);
-	g_assert (err == 0);
-
-	if (ctx->precise_ip) {
-		return ip;
-	} else {
-		/* Subtrack 1 so ip points into the actual instruction */
-		return ip - 1;
-	}
-}
-
-static inline unw_word_t
-mono_ia64_context_get_sp (MonoContext *ctx)
-{
-	unw_word_t sp;
-	int err;
-
-	err = unw_get_reg (&ctx->cursor, UNW_IA64_SP, &sp);
-	g_assert (err == 0);
-
-	return sp;
-}
-
-static inline unw_word_t
-mono_ia64_context_get_fp (MonoContext *ctx)
-{
-	unw_cursor_t new_cursor;
-	unw_word_t fp;
-	int err;
-
-	{
-		unw_word_t ip, sp;
-
-		err = unw_get_reg (&ctx->cursor, UNW_IA64_SP, &sp);
-		g_assert (err == 0);
-
-		err = unw_get_reg (&ctx->cursor, UNW_IA64_IP, &ip);
-		g_assert (err == 0);
-	}
-
-	/* fp is the SP of the parent frame */
-	new_cursor = ctx->cursor;
-
-	err = unw_step (&new_cursor);
-	g_assert (err >= 0);
-
-	err = unw_get_reg (&new_cursor, UNW_IA64_SP, &fp);
-	g_assert (err == 0);
-
-	return fp;
-}
-
-#define MONO_CONTEXT_SET_IP(ctx,eip) do { int err = unw_set_reg (&(ctx)->cursor, UNW_IA64_IP, (unw_word_t)(eip)); g_assert (err == 0); } while (0)
-#define MONO_CONTEXT_SET_SP(ctx,esp) do { int err = unw_set_reg (&(ctx)->cursor, UNW_IA64_SP, (unw_word_t)(esp)); g_assert (err == 0); } while (0)
-
-#define MONO_CONTEXT_GET_IP(ctx) ((gpointer)(mono_ia64_context_get_ip ((ctx))))
-#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)(mono_ia64_context_get_fp ((ctx))))
-#define MONO_CONTEXT_GET_SP(ctx) ((gpointer)(mono_ia64_context_get_sp ((ctx))))
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
     MONO_INIT_CONTEXT_FROM_CURRENT (ctx); \

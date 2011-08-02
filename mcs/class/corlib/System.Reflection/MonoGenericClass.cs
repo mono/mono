@@ -301,7 +301,7 @@ namespace System.Reflection
 		{
 			Type[] ifaces = GetInterfacesFromGTD ();
 			if (ifaces == null)
-				return new Type [0];
+				return Type.EmptyTypes;
 			Type[] res = new Type [ifaces.Length];
 			for (int i = 0; i < res.Length; ++i)
 				res [i] = InflateType (ifaces [i]);

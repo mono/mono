@@ -160,21 +160,25 @@ namespace System.Xml {
 		static XmlConvert ()
 		{
 			int l = defaultDateTimeFormats.Length;
-			roundtripDateTimeFormats = new string [l];
-			localDateTimeFormats = new string [l];
+			roundtripDateTimeFormats = new string [l * 2];
+			localDateTimeFormats = new string [l * 2];
 			utcDateTimeFormats = new string [l * 3];
-			unspecifiedDateTimeFormats = new string [l * 4];
+			unspecifiedDateTimeFormats = new string [l * 5];
 			for (int i = 0; i < l; i++) {
 				string s = defaultDateTimeFormats [i];
-				localDateTimeFormats [i] = s + (s [s.Length - 1] == 's' || s [s.Length - 1] == 'F' ? "zzz" : String.Empty);
-				roundtripDateTimeFormats [i] = s + 'K';
+				var z = s + 'Z';
+				localDateTimeFormats [i * 2] = s + (s [s.Length - 1] == 's' || s [s.Length - 1] == 'F' ? "zzz" : String.Empty);
+				localDateTimeFormats [i * 2 + 1] = z;
+				roundtripDateTimeFormats [i * 2] = s + 'K';
+				roundtripDateTimeFormats [i * 2 + 1] = z;
 				utcDateTimeFormats [i * 3] = s;
-				utcDateTimeFormats [i * 3 + 1] = s + 'Z';
+				utcDateTimeFormats [i * 3 + 1] = z;
 				utcDateTimeFormats [i * 3 + 2] = s + "zzz";
-				unspecifiedDateTimeFormats [i * 4] = s;
-				unspecifiedDateTimeFormats [i * 4 + 1] = localDateTimeFormats [i];
-				unspecifiedDateTimeFormats [i * 4 + 2] = roundtripDateTimeFormats [i];
-				unspecifiedDateTimeFormats [i * 4 + 3] = utcDateTimeFormats [i];
+				unspecifiedDateTimeFormats [i * 5] = s;
+				unspecifiedDateTimeFormats [i * 5 + 1] = z;
+				unspecifiedDateTimeFormats [i * 5 + 2] = localDateTimeFormats [i];
+				unspecifiedDateTimeFormats [i * 5 + 3] = roundtripDateTimeFormats [i];
+				unspecifiedDateTimeFormats [i * 5 + 4] = utcDateTimeFormats [i];
 			}
 		}
 #endif
@@ -923,6 +927,53 @@ namespace System.Xml {
 			return new Uri (s, UriKind.RelativeOrAbsolute);
 		}
 
+#endif
+
+#if NET_4_0 || NET_2_1
+		public static bool IsNCNameChar (char ch)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsPublicIdChar (char ch)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsStartNCNameChar (char ch)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsWhitespaceChar (char ch)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsXmlChar (char ch)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsXmlSurrogatePair (char lowChar, char highChar)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static string VerifyPublicId (string publicId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static string VerifyWhitespace (string content)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static string VerifyXmlChars (string content)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 	}
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:simpleType name="MyString">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="MyType">
+		<xs:simpleContent>
+			<xs:extension base="MyString">
+
+				<xs:attribute name="Id" type="MyString" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="MyTest1">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MyType">
+					<xs:maxLength value="10" />
+
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MyTest2">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MyType">
+					<xs:attribute name="Id" type="MyString" use="required" />
+
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MyTest3">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MyType">
+					<xs:maxLength value="10" />
+
+					<xs:attribute name="Id" type="MyString" use="required" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+

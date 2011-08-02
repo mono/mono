@@ -36,6 +36,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Cairo;
 
 namespace Cairo {
@@ -868,21 +869,57 @@ namespace Cairo {
 		{
 			NativeMethods.cairo_show_page (state);
 		}
-		
-                public void ShowText (string str)
-                {
-                        NativeMethods.cairo_show_text (state, str);
-                }		
-		
-                public void TextPath (string str)
-                {
-                        NativeMethods.cairo_text_path  (state, str);
-                }		
 
-		public TextExtents TextExtents (string utf8)
+		private static byte[] TerminateUtf8(byte[] utf8)
+		{
+			if (utf8.Length > 0 && utf8[utf8.Length - 1] == 0)
+				return utf8;
+			var termedArray = new byte[utf8.Length + 1];
+			Array.Copy(utf8, termedArray, utf8.Length);
+			termedArray[utf8.Length] = 0;
+			return termedArray;
+		}
+
+		private static byte[] TerminateUtf8(string s)
+		{
+			// compute the byte count including the trailing \0
+			var byteCount = Encoding.UTF8.GetMaxByteCount(s.Length + 1);
+			var bytes = new byte[byteCount];
+			Encoding.UTF8.GetBytes(s, 0, s.Length, bytes, 0);
+			return bytes;
+		}
+
+		public void ShowText(string str)
+		{
+			NativeMethods.cairo_show_text(state, TerminateUtf8(str));
+		}
+
+		public void ShowText(byte[] utf8)
+		{
+			NativeMethods.cairo_show_text(state, TerminateUtf8(utf8));
+		}
+
+		public void TextPath(string str)
+		{
+			NativeMethods.cairo_text_path(state, TerminateUtf8(str));
+		}
+
+		public void TextPath(byte[] utf8)
+		{
+			NativeMethods.cairo_text_path(state, TerminateUtf8(utf8));
+		}
+
+		public TextExtents TextExtents(string s)
 		{
 			TextExtents extents;
-			NativeMethods.cairo_text_extents (state, utf8, out extents);
+			NativeMethods.cairo_text_extents(state, TerminateUtf8(s), out extents);
+			return extents;
+		}
+
+		public TextExtents TextExtents(byte[] utf8)
+		{
+			TextExtents extents;
+			NativeMethods.cairo_text_extents(state, TerminateUtf8(utf8), out extents);
 			return extents;
 		}
 

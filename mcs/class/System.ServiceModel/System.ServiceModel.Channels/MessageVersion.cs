@@ -35,6 +35,20 @@ namespace System.ServiceModel.Channels {
 		EnvelopeVersion envelope;
 		AddressingVersion addressing;
 
+		static MessageVersion ()
+		{
+			None = new MessageVersion (EnvelopeVersion.None, AddressingVersion.None);
+			Soap11 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.None);
+			Soap12WSAddressing10 = new MessageVersion  (EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10);
+
+#if !MOONLIGHT
+			Soap12 = new MessageVersion (EnvelopeVersion.Soap12, AddressingVersion.None);
+			Soap11WSAddressing10 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressing10);
+			Soap11WSAddressingAugust2004 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressingAugust2004);
+			Soap12WSAddressingAugust2004 = new MessageVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressingAugust2004);
+#endif
+		}
+
 		MessageVersion (EnvelopeVersion envelope, AddressingVersion addressing)
 		{
 			this.envelope = envelope;
@@ -50,7 +64,24 @@ namespace System.ServiceModel.Channels {
 		public static MessageVersion CreateVersion (EnvelopeVersion envelope_version,
 							    AddressingVersion addressing_version)
 		{
-			return new MessageVersion (envelope_version, addressing_version);
+			if (envelope_version == EnvelopeVersion.None && addressing_version == AddressingVersion.None)
+				return None;
+			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.None)
+				return Soap11;
+			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressing10)
+				return Soap12WSAddressing10;
+
+#if !MOONLIGHT
+			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.None)
+				return Soap12;
+			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.WSAddressing10)
+				return Soap11WSAddressing10;
+			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.WSAddressingAugust2004)
+				return Soap11WSAddressingAugust2004;
+			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressingAugust2004)
+				return Soap12WSAddressingAugust2004;
+#endif
+			throw new ArgumentException (string.Format ("EnvelopeVersion {0} cannot be used with AddressingVersion {1}", envelope_version, addressing_version));
 		}
 
 		public override bool Equals (object value)
@@ -86,31 +117,33 @@ namespace System.ServiceModel.Channels {
 		}
 
 		public static MessageVersion None { 
-			get { return CreateVersion (EnvelopeVersion.None, AddressingVersion.None); }
+			get; private set;
 		}
 
 		public static MessageVersion Soap11 {
-			get { return CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.None); }
-		}
-
-		public static MessageVersion Soap12 {
-			get { return CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.None); }
-		}
-
-		public static MessageVersion Soap11WSAddressing10 {
-			get { return CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressing10); }
-		}
-
-		public static MessageVersion Soap11WSAddressingAugust2004 {
-			get { return CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressingAugust2004); }
+			get; private set;
 		}
 
 		public static MessageVersion Soap12WSAddressing10 {
-			get { return CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10); }
+			get; private set;
+		}
+
+#if !MOONLIGHT
+		public static MessageVersion Soap12 {
+			get; private set;
+		}
+
+		public static MessageVersion Soap11WSAddressing10 {
+			get; private set;
+		}
+
+		public static MessageVersion Soap11WSAddressingAugust2004 {
+			get; private set;
 		}
 
 		public static MessageVersion Soap12WSAddressingAugust2004 {
-			get { return CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressingAugust2004); }
+			get; private set;
 		}
+#endif
 	}
 }

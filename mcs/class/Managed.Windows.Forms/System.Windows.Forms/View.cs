@@ -26,17 +26,12 @@
 
 namespace System.Windows.Forms
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum View
 	{
 		LargeIcon = 0,
 		Details = 1,
 		SmallIcon = 2,
 		List = 3,
-#if NET_2_0
 		Tile = 4
-#endif
 	}
 }

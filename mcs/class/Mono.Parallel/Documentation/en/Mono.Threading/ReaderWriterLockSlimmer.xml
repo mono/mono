@@ -1,0 +1,154 @@
+<Type Name="ReaderWriterLockSlimmer" FullName="Mono.Threading.ReaderWriterLockSlimmer">
+  <TypeSignature Language="C#" Value="public struct ReaderWriterLockSlimmer" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ReaderWriterLockSlimmer extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>This is an even lighter and faster version of <see cref="T:System.Threading.ReaderWriterLockSlim" /> that provide only the bare functionnality of a reader-writer lock with no thread tracking and no heavy wait mechanism. In summary, it's what <see cref="T:System.Threading.SpinLock" /> is to <see cref="T:System.Threading.Monitor" />.</summary>
+    <remarks>The Enter methods of this class use <see cref="T:System.Threading.SpinWait" /> for waiting which means you shouldn't use this type with locked long running operations.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="EnterReadLock">
+      <MemberSignature Language="C#" Value="public void EnterReadLock (ref bool taken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnterReadLock(bool taken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="taken" Type="System.Boolean&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="taken">
+          <para>
+Must be set to false prior calling this method.
+</para>
+          <para>
+If value is <see langword="true" /> lock has been taken. This value is safe to trust even under exceptional situations.
+</para>
+        </param>
+        <summary>Attempts to get the lock in Read mode and loops if it's not yet available.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnterWriteLock">
+      <MemberSignature Language="C#" Value="public void EnterWriteLock (ref bool taken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnterWriteLock(bool taken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="taken" Type="System.Boolean&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="taken">
+          <para>
+Must be set to false prior calling this method.
+</para>
+          <para>
+If value is <see langword="true" /> lock has been taken. This value is safe to trust even under exceptional situations.
+</para>
+        </param>
+        <summary>Attempts to get the lock in Write mode and loops if it's not yet available.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ExitReadLock">
+      <MemberSignature Language="C#" Value="public void ExitReadLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExitReadLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Remove a reader from the lock.</summary>
+        <remarks>A call to <see cref="M:Mono.Threading.ReaderWriterLockSlimmer.EnterReadLock()" /> or <see cref="M:Mono.Threading.ReaderWriterLockSlimmer.TryEnterReadLock()" /> must be matched by this method to release it no matter the thread that call it.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ExitWriteLock">
+      <MemberSignature Language="C#" Value="public void ExitWriteLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExitWriteLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Remove writer from the lock.</summary>
+        <remarks>A call to <see cref="M:Mono.Threading.ReaderWriterLockSlimmer.EnterWriteLock()" /> or <see cref="M:Mono.Threading.ReaderWriterLockSlimmer.TryEnterWriteLock()" /> must be matched by this method to release it no matter the thread that call it.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterReadLock">
+      <MemberSignature Language="C#" Value="public void TryEnterReadLock (ref bool taken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TryEnterReadLock(bool taken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="taken" Type="System.Boolean&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="taken">
+          <para>
+Must be set to false prior calling this method.
+</para>
+          <para>
+If value is <see langword="true" /> lock has been taken. This value is safe to trust even under exceptional situations.
+</para>
+        </param>
+        <summary>Non-blocking equivalent of <see cref="m:Mono.Threading.EnterReadLock(System.Boolean@)" />.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterWriteLock">
+      <MemberSignature Language="C#" Value="public void TryEnterWriteLock (ref bool taken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TryEnterWriteLock(bool taken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="taken" Type="System.Boolean&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="taken">
+          <para>
+Must be set to false prior calling this method.
+</para>
+          <para>
+If value is <see langword="true" /> lock has been taken. This value is safe to trust even under exceptional situations.
+</para>
+        </param>
+        <summary>Non-blocking equivalent of <see cref="m:Mono.Threading.EnterWriteLock(System.Boolean@)" />.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

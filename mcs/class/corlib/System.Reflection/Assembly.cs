@@ -32,7 +32,6 @@ using System.Security.Policy;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.IO;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -76,7 +75,7 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		protected
 #else
 		internal
@@ -160,6 +159,9 @@ namespace System.Reflection {
 		// note: the security runtime requires evidences but may be unable to do so...
 		internal Evidence UnprotectedGetEvidence ()
 		{
+#if MOBILE
+			return null;
+#else
 			// if the host (runtime) hasn't provided it's own evidence...
 			if (_evidence == null) {
 				// ... we will provide our own
@@ -168,6 +170,7 @@ namespace System.Reflection {
 				}
 			}
 			return _evidence;
+#endif
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -506,6 +509,13 @@ namespace System.Reflection {
 #endif
 
 #if NET_4_0
+		public static Assembly UnsafeLoadFrom (String assemblyFile)
+		{
+			return LoadFrom (assemblyFile);
+		}
+#endif
+
+#if NET_4_0
 		[Obsolete]
 #endif
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
@@ -608,7 +618,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Not implemented")]
 		public
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		virtual
 #endif
 		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
@@ -663,7 +673,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		virtual
 #endif
 		Object CreateInstance (String typeName, Boolean ignoreCase,
@@ -753,7 +763,7 @@ namespace System.Reflection {
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		virtual
 #endif
 		long HostContext {
@@ -790,24 +800,8 @@ namespace System.Reflection {
 			Assembly other = (Assembly) o;
 			return other._mono_assembly == _mono_assembly;
 		}
-		
-#if NET_4_0
-#if MOONLIGHT
-		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
-			return CustomAttributeData.GetCustomAttributes (this);
-		}
-#endif
-		public PermissionSet PermissionSet {
-			get { return this.GrantedPermissionSet; }
-		}
 
-		[MonoTODO]
-		public bool IsFullyTrusted {
-			get { return true; }
-		}
-#endif
-
-#if !MOONLIGHT
+#if !NET_2_1
 		// Code Access Security
 
 		internal void Resolve () 
@@ -889,11 +883,27 @@ namespace System.Reflection {
 			}
 		}
 #endif
+		
+#if NET_4_0
+		public PermissionSet PermissionSet {
+			get { return this.GrantedPermissionSet; }
+		}
+#endif
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");
+		}
+		
+		public virtual IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+		[MonoTODO]
+		public bool IsFullyTrusted {
+			get { return true; }
 		}
 
 		public virtual Type GetType (string name, bool throwOnError, bool ignoreCase)

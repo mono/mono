@@ -1,4 +1,4 @@
-// cs1574-3.cs: XML comment on `Test' has cref attribute `Test.Foo(int)' that could not be resolved
+// CS1574: XML comment on `Test' has cref attribute `Test.Foo(int)' that could not be resolved
 // Line: 8
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 

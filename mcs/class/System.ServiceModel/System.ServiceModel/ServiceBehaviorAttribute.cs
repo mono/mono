@@ -46,7 +46,6 @@ namespace System.ServiceModel
 			ConcurrencyMode = ConcurrencyMode.Single;
 			InstanceContextMode = InstanceContextMode.PerSession;
 			MaxItemsInObjectGraph = 0x10000;
-			SessionMode = SessionMode.Allowed;
 			ReleaseServiceInstanceOnTransactionComplete = true;
 			TransactionIsolationLevel = IsolationLevel.Unspecified;
 			UseSynchronizationContext = true;
@@ -84,9 +83,6 @@ namespace System.ServiceModel
 
 		[MonoTODO]
 		public bool ReleaseServiceInstanceOnTransactionComplete { get; set; }
-
-		[MonoTODO]
-		public SessionMode SessionMode { get; set; }
 
 		public bool UseSynchronizationContext { get; set; }
 

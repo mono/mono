@@ -1,4 +1,4 @@
-// cs0202.cs: foreach statement requires that the return type `Foo.E[]' of `Foo.P.GetEnumerator()' must have a suitable public MoveNext method and public Current property
+// CS0202: foreach statement requires that the return type `Foo.E[]' of `Foo.P.GetEnumerator()' must have a suitable public MoveNext method and public Current property
 // Line: 18
 
 public class Foo

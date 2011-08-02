@@ -65,7 +65,7 @@ namespace System.Threading {
 			_t = null;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		public void Dispose ()
 #else
 		void IDisposable.Dispose ()

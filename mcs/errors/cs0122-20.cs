@@ -1,4 +1,4 @@
-// cs0122-20.cs: `A.B' is inaccessible due to its protection level
+// CS0122: `A.B' is inaccessible due to its protection level
 // Line: 4
 
 using C = A.B;

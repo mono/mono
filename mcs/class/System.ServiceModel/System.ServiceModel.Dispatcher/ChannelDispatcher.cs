@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
 using System.Threading;
@@ -335,6 +336,7 @@ namespace System.ServiceModel.Dispatcher
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
 			AddressFilterMode address_filter_mode;
+			List<ISession> sessions = new List<ISession> ();
 
 			public ListenerLoopManager (ChannelDispatcher owner)
 			{
@@ -373,8 +375,7 @@ namespace System.ServiceModel.Dispatcher
 					try {
 						ChannelAccepted (r.EndAcceptChannel (result));
 					} catch (Exception ex) {
-						Console.WriteLine ("Exception during finishing channel acceptance.");
-						Console.WriteLine (ex);
+						Logger.Error ("Exception during finishing channel acceptance.", ex);
 						creator_handle.Set ();
 					}
 				};
@@ -382,8 +383,7 @@ namespace System.ServiceModel.Dispatcher
 					try {
 						return r.BeginAcceptChannel (callback, null);
 					} catch (Exception ex) {
-						Console.WriteLine ("Exception during accepting channel.");
-						Console.WriteLine (ex);
+						Logger.Error ("Exception during accepting channel.", ex);
 						throw;
 					}
 				};
@@ -419,8 +419,7 @@ namespace System.ServiceModel.Dispatcher
 					stop_handle = null;
 				}
 				if (owner.Listener.State != CommunicationState.Closed) {
-					// FIXME: log it
-					Console.WriteLine ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ());
+					Logger.Warning (String.Format ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ()));
 					owner.Listener.Abort ();
 				}
 				if (loop_thread != null && loop_thread.IsAlive)
@@ -428,17 +427,39 @@ namespace System.ServiceModel.Dispatcher
 				loop_thread = null;
 			}
 
+			void AddChannel (IChannel ch)
+			{
+				channels.Add (ch);
+				var ich = ch as ISessionChannel<IInputSession>;
+				if (ich != null && ich.Session != null) {
+					lock (sessions) {
+						var session = sessions.FirstOrDefault (s => s.Id == ich.Session.Id);
+						if (session == null)
+							sessions.Add (session);
+					}
+				}
+			}
+
+			void RemoveChannel (IChannel ch)
+			{
+				channels.Remove (ch); // zonbie, if exists
+				var ich = ch as ISessionChannel<IInputSession>;
+				List<IChannel> l;
+				if (ich != null && ich.Session != null)
+					sessions.Remove (ich.Session);
+			}
+
 			public void CloseInput ()
 			{
 				foreach (var ch in channels.ToArray ()) {
 					if (ch.State == CommunicationState.Closed)
-						channels.Remove (ch); // zonbie, if exists
+						RemoveChannel (ch);
 					else {
 						try {
 							ch.Close (close_timeout - (DateTime.Now - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
-							Console.WriteLine (ex);
+							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);
 							ch.Abort ();
 						}
 					}
@@ -450,9 +471,7 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					LoopCore ();
 				} catch (Exception ex) {
-					// FIXME: log it
-					Console.WriteLine ("ListenerLoopManager caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener);
-					Console.WriteLine (ex);
+					Logger.Error (String.Format ("ListenerLoopManager caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener), ex);
 				} finally {
 					if (stop_handle != null)
 						stop_handle.Set ();
@@ -480,6 +499,8 @@ namespace System.ServiceModel.Dispatcher
 				}
 				try {
 					owner.Listener.Close ();
+				} catch (Exception ex) {
+					Logger.Error (String.Format ("Exception while closing IChannelListener ({0})", owner.Listener.GetType ()), ex);
 				} finally {
 					// make sure to close both listener and channels.
 					owner.CloseInput ();
@@ -499,18 +520,18 @@ namespace System.ServiceModel.Dispatcher
 				}
 
 				lock (channels)
-					channels.Add (ch);
+					AddChannel (ch);
 				ch.Opened += delegate {
 					ch.Faulted += delegate {
 						lock (channels)
 							if (channels.Contains (ch))
-								channels.Remove (ch);
+								RemoveChannel (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					ch.Closed += delegate {
 						lock (channels)
 							if (channels.Contains (ch))
-								channels.Remove (ch);
+								RemoveChannel (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					};
@@ -597,8 +618,7 @@ namespace System.ServiceModel.Dispatcher
 					if (eh.HandleError (ex))
 						return true; // error is handled appropriately.
 
-				// FIXME: log it.
-				Console.WriteLine (ex);
+				Logger.Error ("An error occured, to be handled", ex);
 
 				foreach (var eh in owner.ErrorHandlers)
 					eh.ProvideFault (ex, owner.MessageVersion, ref res);
@@ -616,8 +636,7 @@ namespace System.ServiceModel.Dispatcher
 				try {
 					EndpointDispatcher candidate = null;
 					candidate = FindEndpointDispatcher (message);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).
-						ProcessInput (message);
+					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).ProcessInput (message);
 				}
 				catch (Exception ex) {
 					Message dummy;

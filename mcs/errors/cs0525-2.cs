@@ -1,4 +1,4 @@
-// cs0525-2.cs: Interfaces cannot contain fields or constants
+// CS0525: Interfaces cannot contain fields or constants
 // Line: 9
 
 interface Interface

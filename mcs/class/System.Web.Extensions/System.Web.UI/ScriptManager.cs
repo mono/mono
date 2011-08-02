@@ -47,6 +47,7 @@ using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Xml;
 using System.Collections.ObjectModel;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -96,6 +97,9 @@ namespace System.Web.UI
 		List<UpdatePanel> _panelsToRefresh;
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
+#if NET_3_5
+		CompositeScriptReference _compositeScript;
+#endif
 		ServiceReferenceCollection _services;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
@@ -237,8 +241,7 @@ namespace System.Web.UI
 				if (IsDeploymentRetail)
 					return false;
 
-				CompilationSection compilation = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-				if (!compilation.Debug && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
+				if (!RuntimeHelpers.DebuggingEnabled && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
 					return false;
 
 				if (ScriptMode == ScriptMode.Release)
@@ -339,7 +342,20 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
-
+#if NET_3_5
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Category ("Behavior")]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[MergableProperty (false)]
+		public CompositeScriptReference CompositeScript {
+			get {
+				if (_compositeScript == null)
+					_compositeScript = new CompositeScriptReference ();
+				return _compositeScript;
+			}
+		}
+#endif
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[MergableProperty (false)]
@@ -395,14 +411,17 @@ namespace System.Web.UI
 
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
-
+#if NET_3_5
+		[Category ("Action")]
+		public event EventHandler<CompositeScriptReferenceEventArgs> ResolveCompositeScriptReference;
+#endif
 		public static ScriptManager GetCurrent (Page page) {
 			if (page == null)
 				throw new ArgumentNullException ("page");
 			return GetCurrentInternal (page);
 		}
 
-		static ScriptManager GetCurrentInternal (Page page)
+		internal static ScriptManager GetCurrentInternal (Page page)
 		{
 			if (page == null)
 				return null;
@@ -455,7 +474,7 @@ namespace System.Web.UI
 				AsyncPostBackError (this, e);
 		}
 
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			if (GetCurrentInternal (Page) != null)
@@ -471,7 +490,7 @@ namespace System.Web.UI
 				OnAsyncPostBackError (new AsyncPostBackErrorEventArgs (Context.Error));
 		}
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
@@ -513,24 +532,31 @@ namespace System.Web.UI
 			}
 		}
 
-		void OnPreRenderComplete (object sender, EventArgs e) {
+		ScriptReference CreateScriptReference (string path, string assembly, bool notifyScriptLoaded)
+		{
+			var ret = new ScriptReference (path, assembly);
+			if (!notifyScriptLoaded)
+				ret.NotifyScriptLoaded = false;
+			OnResolveScriptReference (new ScriptReferenceEventArgs (ret));
+
+			return ret;
+		}
+
+		ScriptReference CreateScriptReference (string path, string assembly)
+		{
+			return CreateScriptReference (path, assembly, true);
+		}
+		
+		void OnPreRenderComplete (object sender, EventArgs e)
+		{
 			// Resolve Scripts
-			ScriptReference ajaxScript = new ScriptReference ("MicrosoftAjax.js", String.Empty);
-			ajaxScript.NotifyScriptLoaded = false;
-			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxScript));
-
-			ScriptReference ajaxWebFormsScript = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
-			ajaxWebFormsScript.NotifyScriptLoaded = false;
-			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsScript));
-
+			ScriptReference ajaxScript = CreateScriptReference ("MicrosoftAjax.js", String.Empty, false);
+			ScriptReference ajaxWebFormsScript = CreateScriptReference ("MicrosoftAjaxWebForms.js", String.Empty, false);
 			ScriptReference ajaxExtensionScript = null;
 			ScriptReference ajaxWebFormsExtensionScript = null;
 			if (IsMultiForm) {
-				ajaxExtensionScript = new ScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
-				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxExtensionScript));
-
-				ajaxWebFormsExtensionScript = new ScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
-				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsExtensionScript));
+				ajaxExtensionScript = CreateScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
+				ajaxWebFormsExtensionScript = CreateScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
 			}
 
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
@@ -575,7 +601,12 @@ namespace System.Web.UI
 				if (IsMultiForm)
 					RegisterScriptReference (this, ajaxWebFormsExtensionScript, true);
 			}
-			
+#if NET_3_5
+			if (_compositeScript != null && _compositeScript.HaveScripts ()) {
+				OnResolveCompositeScriptReference (new CompositeScriptReferenceEventArgs (_compositeScript));
+				RegisterScriptReference (this, _compositeScript, true);
+			}
+#endif			
 			// Register Scripts
 			if (_scriptToRegister != null)
 				for (int i = 0; i < _scriptToRegister.Count; i++)
@@ -749,7 +780,14 @@ namespace System.Web.UI
 				}
 			}
 		}
-
+#if NET_3_5
+		protected virtual void OnResolveCompositeScriptReference (CompositeScriptReferenceEventArgs e)
+		{
+			EventHandler <CompositeScriptReferenceEventArgs> evt = ResolveCompositeScriptReference;
+			if (evt != null)
+				evt (this, e);
+		}
+#endif
 		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e) {
 			if (ResolveScriptReference != null)
 				ResolveScriptReference (this, e);
@@ -835,12 +873,15 @@ namespace System.Web.UI
 			RegisterClientScriptInclude (control, type, resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
-		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI)
+		void RegisterScriptReference (Control control, ScriptReferenceBase script, bool loadScriptsBeforeUI)
 		{
 			string scriptPath = script.Path;
-			string url = script.GetUrl (this, false);
+			string url = String.IsNullOrEmpty (scriptPath) ? script.GetUrl (this, false) : scriptPath;
 			if (control != this && !String.IsNullOrEmpty (scriptPath))
-				url = control.ResolveClientUrl (url);
+				url = control.ResolveClientUrl (scriptPath);
+
+			if (String.IsNullOrEmpty (url))
+				return;
 			
 			if (loadScriptsBeforeUI)
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
@@ -1086,7 +1127,7 @@ namespace System.Web.UI
 			scriptList.Add (new RegisteredScript (control, type, key, script, url, addScriptTag, scriptType));
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			// MSDN: This method is used by control developers to extend the ScriptManager control. 
 			// Notes to Inheritors: 
 			// When overriding this method, call the base Render(HtmlTextWriter) method 
@@ -1115,15 +1156,24 @@ namespace System.Web.UI
 		}
 
 		static string FormatUpdatePanelIDs (List<UpdatePanel> list, bool useSingleQuote) {
+			return FormatUpdatePanelIDs (list, useSingleQuote, false);
+		}
+		
+		static string FormatUpdatePanelIDs (List<UpdatePanel> list, bool useSingleQuote, bool useUntaggedName) {
 			if (list == null || list.Count == 0)
 				return null;
 
+			string quote = useSingleQuote ? "'" : String.Empty;
+			string id;
 			StringBuilder sb = new StringBuilder ();
 			foreach (UpdatePanel panel in list) {
 				if (!panel.Visible)
-					continue;
-				
-				sb.AppendFormat ("{0}{1}{2}{0},", useSingleQuote ? "'" : String.Empty, panel.ChildrenAsTriggers ? "t" : "f", panel.UniqueID);
+				 	continue;
+
+				id = panel.UniqueID;
+				sb.AppendFormat ("{0}{1}{2}{0},", quote, panel.ChildrenAsTriggers ? "t" : "f", id);
+				if (useUntaggedName)
+					sb.AppendFormat ("{0}{1}{0},", quote, id);
 			}
 			
 			if (sb.Length > 0)
@@ -1192,17 +1242,16 @@ namespace System.Web.UI
 
 		#endregion
 
-		internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
+		internal static void WriteCallbackException (ScriptManager current, TextWriter output, Exception ex, bool writeMessage)
+		{
 #if TARGET_DOTNET
 			if (ex is HttpUnhandledException)
 				ex = ex.InnerException;
 #endif
 			HttpException httpEx = ex as HttpException;
-			string message = AsyncPostBackErrorMessage;
+			string message = current != null ? current.AsyncPostBackErrorMessage : null;
 			if (String.IsNullOrEmpty (message) && writeMessage) {
-				HttpContext ctx = HttpContext.Current;
-				
-				if (IsDebuggingEnabled)
+				if ((current != null && current.IsDebuggingEnabled) || (current == null && RuntimeHelpers.DebuggingEnabled))
 					message = ex.ToString ();
 				else
 					message = ex.Message;
@@ -1223,6 +1272,7 @@ namespace System.Web.UI
 				return;
 
 			_panelsToRefresh.Add (panel);
+			RegisterUpdatePanel (panel);
 		}
 		
 		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput)
@@ -1324,7 +1374,7 @@ namespace System.Web.UI
 			
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false, false));
-			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
+			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false, true));
 			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false, true));
 			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false, true));
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());

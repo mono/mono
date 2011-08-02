@@ -30,6 +30,7 @@
 using System;
 using Microsoft.Build.Framework; 
 using Microsoft.Build.Tasks;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class SGen : ToolTaskExtension {
@@ -115,7 +116,7 @@ namespace Microsoft.Build.Tasks {
 
 		[MonoTODO]
 		protected override string ToolName {
-			get { return Utilities.RunningOnWindows ? "sgen.bat" : "sgen"; }
+			get { return MSBuildUtils.RunningOnWindows ? "sgen.bat" : "sgen"; }
 		}
 
 		[MonoTODO]

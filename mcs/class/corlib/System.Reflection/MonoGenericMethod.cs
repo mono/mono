@@ -30,7 +30,6 @@
 //
 
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace System.Reflection

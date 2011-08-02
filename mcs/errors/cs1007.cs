@@ -1,4 +1,4 @@
-// cs01007.cs: Property accessor already defined
+// CS01007: Property accessor already defined
 // Line: 10
 
 public class C

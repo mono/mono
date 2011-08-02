@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -38,8 +38,9 @@ namespace IKVM.Reflection.Emit
 	public sealed class ModuleBuilder : Module, ITypeOwner
 	{
 		private static readonly bool usePublicKeyAssemblyReference = false;
-		private readonly Guid mvid = Guid.NewGuid();
+		private Guid mvid = Guid.NewGuid();
 		private long imageBaseAddress = 0x00400000;
+		private long stackReserve = -1;
 		private readonly AssemblyBuilder asm;
 		internal readonly string moduleName;
 		internal readonly string fileName;
@@ -48,7 +49,6 @@ namespace IKVM.Reflection.Emit
 		private readonly List<TypeBuilder> types = new List<TypeBuilder>();
 		private readonly Dictionary<Type, int> typeTokens = new Dictionary<Type, int>();
 		private readonly Dictionary<Type, int> memberRefTypeTokens = new Dictionary<Type, int>();
-		private readonly Dictionary<string, TypeBuilder> fullNameToType = new Dictionary<string, TypeBuilder>();
 		internal readonly ByteBuffer methodBodies = new ByteBuffer(128 * 1024);
 		internal readonly List<int> tokenFixupOffsets = new List<int>();
 		internal readonly ByteBuffer initializedData = new ByteBuffer(512);
@@ -65,6 +65,20 @@ namespace IKVM.Reflection.Emit
 		internal readonly UserStringHeap UserStrings = new UserStringHeap();
 		internal readonly GuidHeap Guids = new GuidHeap();
 		internal readonly BlobHeap Blobs = new BlobHeap();
+		internal readonly List<VTableFixups> vtablefixups = new List<VTableFixups>();
+		internal readonly List<UnmanagedExport> unmanagedExports = new List<UnmanagedExport>();
+
+		internal struct VTableFixups
+		{
+			internal uint initializedDataOffset;
+			internal ushort count;
+			internal ushort type;
+
+			internal int SlotWidth
+			{
+				get { return (type & 0x02) == 0 ? 4 : 8; }
+			}
+		}
 
 		struct MemberRefKey : IEquatable<MemberRefKey>
 		{
@@ -109,7 +123,7 @@ namespace IKVM.Reflection.Emit
 				symbolWriter = SymbolSupport.CreateSymbolWriterFor(this);
 			}
 			// <Module> must be the first record in the TypeDef table
-			moduleType = new TypeBuilder(this, "<Module>", null, 0);
+			moduleType = new TypeBuilder(this, null, "<Module>");
 			types.Add(moduleType);
 		}
 
@@ -201,12 +215,32 @@ namespace IKVM.Reflection.Emit
 
 		public TypeBuilder DefineType(string name, TypeAttributes attr, Type parent, PackingSize packingSize, int typesize)
 		{
-			if (parent == null && (attr & TypeAttributes.Interface) == 0)
+			string ns = null;
+			int lastdot = name.LastIndexOf('.');
+			if (lastdot > 0)
 			{
-				parent = universe.System_Object;
+				ns = name.Substring(0, lastdot);
+				name = name.Substring(lastdot + 1);
 			}
-			TypeBuilder typeBuilder = new TypeBuilder(this, name, parent, attr);
-			PostDefineType(typeBuilder, packingSize, typesize);
+			TypeBuilder typeBuilder = __DefineType(ns, name);
+			typeBuilder.__SetAttributes(attr);
+			typeBuilder.SetParent(parent);
+			if (packingSize != PackingSize.Unspecified || typesize != 0)
+			{
+				typeBuilder.__SetLayout((int)packingSize, typesize);
+			}
+			return typeBuilder;
+		}
+
+		public TypeBuilder __DefineType(string ns, string name)
+		{
+			return DefineType(this, ns, name);
+		}
+
+		internal TypeBuilder DefineType(ITypeOwner owner, string ns, string name)
+		{
+			TypeBuilder typeBuilder = new TypeBuilder(owner, ns, name);
+			types.Add(typeBuilder);
 			return typeBuilder;
 		}
 
@@ -215,38 +249,6 @@ namespace IKVM.Reflection.Emit
 			TypeBuilder tb = DefineType(name, (visibility & TypeAttributes.VisibilityMask) | TypeAttributes.Sealed, universe.System_Enum);
 			FieldBuilder fb = tb.DefineField("value__", underlyingType, FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
 			return new EnumBuilder(tb, fb);
-		}
-
-		internal TypeBuilder DefineNestedTypeHelper(TypeBuilder enclosingType, string name, TypeAttributes attr, Type parent, PackingSize packingSize, int typesize)
-		{
-			if (parent == null && (attr & TypeAttributes.Interface) == 0)
-			{
-				parent = universe.System_Object;
-			}
-			TypeBuilder typeBuilder = new TypeBuilder(enclosingType, name, parent, attr);
-			PostDefineType(typeBuilder, packingSize, typesize);
-			if (enclosingType != null)
-			{
-				NestedClassTable.Record rec = new NestedClassTable.Record();
-				rec.NestedClass = typeBuilder.MetadataToken;
-				rec.EnclosingClass = enclosingType.MetadataToken;
-				this.NestedClass.AddRecord(rec);
-			}
-			return typeBuilder;
-		}
-
-		private void PostDefineType(TypeBuilder typeBuilder, PackingSize packingSize, int typesize)
-		{
-			types.Add(typeBuilder);
-			fullNameToType.Add(typeBuilder.FullName, typeBuilder);
-			if (packingSize != PackingSize.Unspecified || typesize != 0)
-			{
-				ClassLayoutTable.Record rec = new ClassLayoutTable.Record();
-				rec.PackingSize = (short)packingSize;
-				rec.ClassSize = typesize;
-				rec.Parent = typeBuilder.MetadataToken;
-				this.ClassLayout.AddRecord(rec);
-			}
 		}
 
 		public FieldBuilder __DefineField(string name, Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers, FieldAttributes attributes)
@@ -302,19 +304,30 @@ namespace IKVM.Reflection.Emit
 		internal void AddTypeForwarder(Type type)
 		{
 			ExportType(type);
-			foreach (Type nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+			if (!type.__IsMissing)
 			{
-				// we export all nested types (i.e. even the private ones)
-				// (this behavior is the same as the C# compiler)
-				AddTypeForwarder(nested);
+				foreach (Type nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+				{
+					// we export all nested types (i.e. even the private ones)
+					// (this behavior is the same as the C# compiler)
+					AddTypeForwarder(nested);
+				}
 			}
 		}
 
 		private int ExportType(Type type)
 		{
 			ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
-			rec.TypeDefId = type.MetadataToken;
-			rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
+			MissingType missing = type as MissingType;
+			if (missing != null)
+			{
+				rec.TypeDefId = missing.GetMetadataTokenForMissing();
+			}
+			else
+			{
+				rec.TypeDefId = type.MetadataToken;
+			}
+			rec.TypeName = this.Strings.Add(type.__Name);
 			if (type.IsNested)
 			{
 				rec.Flags = 0;
@@ -324,8 +337,8 @@ namespace IKVM.Reflection.Emit
 			else
 			{
 				rec.Flags = 0x00200000;	// CorTypeAttr.tdForwarder
-				string ns = type.Namespace;
-				rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
+				string ns = type.__Namespace;
+				rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 				rec.Implementation = ImportAssemblyRef(type.Assembly);
 			}
 			return 0x27000000 | this.ExportedType.FindOrAddRecord(rec);
@@ -396,6 +409,12 @@ namespace IKVM.Reflection.Emit
 
 		private int WriteDeclSecurityBlob(List<CustomAttributeBuilder> list)
 		{
+			string xml;
+			if (list.Count == 1 && (xml = list[0].GetLegacyDeclSecurity()) != null)
+			{
+				// write .NET 1.1 format
+				return this.Blobs.Add(ByteBuffer.Wrap(System.Text.Encoding.Unicode.GetBytes(xml)));
+			}
 			ByteBuffer namedArgs = new ByteBuffer(100);
 			ByteBuffer bb = new ByteBuffer(list.Count * 100);
 			bb.Write((byte)'.');
@@ -413,6 +432,7 @@ namespace IKVM.Reflection.Emit
 
 		public void DefineManifestResource(string name, Stream stream, ResourceAttributes attribute)
 		{
+			manifestResources.Align(8);
 			ManifestResourceTable.Record rec = new ManifestResourceTable.Record();
 			rec.Offset = manifestResources.Position;
 			rec.Flags = (int)attribute;
@@ -432,11 +452,16 @@ namespace IKVM.Reflection.Emit
 			get { return asm; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName name)
 		{
-			TypeBuilder type;
-			fullNameToType.TryGetValue(typeName, out type);
-			return type;
+			foreach (Type type in types)
+			{
+				if (type.__Namespace == name.Namespace && type.__Name == name.Name)
+				{
+					return type;
+				}
+			}
+			return null;
 		}
 
 		internal override void GetTypesImpl(List<Type> list)
@@ -474,7 +499,11 @@ namespace IKVM.Reflection.Emit
 
 		internal int GetTypeTokenForMemberRef(Type type)
 		{
-			if (type.IsGenericTypeDefinition)
+			if (type.__IsMissing)
+			{
+				return ImportType(type);
+			}
+			else if (type.IsGenericTypeDefinition)
 			{
 				int token;
 				if (!memberRefTypeTokens.TryGetValue(type, out token))
@@ -499,7 +528,7 @@ namespace IKVM.Reflection.Emit
 		private static bool IsFromGenericTypeDefinition(MemberInfo member)
 		{
 			Type decl = member.DeclaringType;
-			return decl != null && decl.IsGenericTypeDefinition;
+			return decl != null && !decl.__IsMissing && decl.IsGenericTypeDefinition;
 		}
 
 		public FieldToken GetFieldToken(FieldInfo field)
@@ -605,7 +634,7 @@ namespace IKVM.Reflection.Emit
 			int token;
 			if (!typeTokens.TryGetValue(type, out token))
 			{
-				if (type.HasElementType || (type.IsGenericType && !type.IsGenericTypeDefinition))
+				if (type.HasElementType || type.IsGenericTypeInstance)
 				{
 					ByteBuffer spec = new ByteBuffer(5);
 					Signature.WriteTypeSpec(this, spec, type);
@@ -617,16 +646,14 @@ namespace IKVM.Reflection.Emit
 					if (type.IsNested)
 					{
 						rec.ResolutionScope = GetTypeToken(type.DeclaringType).Token;
-						rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-						rec.TypeNameSpace = 0;
 					}
 					else
 					{
 						rec.ResolutionScope = ImportAssemblyRef(type.Assembly);
-						rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-						string ns = type.Namespace;
-						rec.TypeNameSpace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
 					}
+					rec.TypeName = this.Strings.Add(type.__Name);
+					string ns = type.__Namespace;
+					rec.TypeNameSpace = ns == null ? 0 : this.Strings.Add(ns);
 					token = 0x01000000 | this.TypeRef.AddRecord(rec);
 				}
 				typeTokens.Add(type, token);
@@ -654,13 +681,16 @@ namespace IKVM.Reflection.Emit
 			int[] realtokens = new int[referencedAssemblies.Count];
 			foreach (KeyValuePair<Assembly, int> kv in referencedAssemblies)
 			{
-				realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName());
+				if ((kv.Value & 0x7F800000) == 0x23800000)
+				{
+					realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName(), false);
+				}
 			}
 			// now fixup the resolution scopes in TypeRef
 			for (int i = 0; i < this.TypeRef.records.Length; i++)
 			{
 				int resolutionScope = this.TypeRef.records[i].ResolutionScope;
-				if ((resolutionScope >> 24) == AssemblyRefTable.Index)
+				if ((resolutionScope & 0x7F800000) == 0x23800000)
 				{
 					this.TypeRef.records[i].ResolutionScope = realtokens[(resolutionScope & 0x7FFFFF) - 1];
 				}
@@ -669,17 +699,17 @@ namespace IKVM.Reflection.Emit
 			for (int i = 0; i < this.ExportedType.records.Length; i++)
 			{
 				int implementation = this.ExportedType.records[i].Implementation;
-				if ((implementation >> 24) == AssemblyRefTable.Index)
+				if ((implementation & 0x7F800000) == 0x23800000)
 				{
 					this.ExportedType.records[i].Implementation = realtokens[(implementation & 0x7FFFFF) - 1];
 				}
 			}
 		}
 
-		private int FindOrAddAssemblyRef(AssemblyName name)
+		private int FindOrAddAssemblyRef(AssemblyName name, bool alwaysAdd)
 		{
 			AssemblyRefTable.Record rec = new AssemblyRefTable.Record();
-			Version ver = name.Version;
+			Version ver = name.Version ?? new Version(0, 0, 0, 0);
 			rec.MajorVersion = (ushort)ver.Major;
 			rec.MinorVersion = (ushort)ver.Minor;
 			rec.BuildNumber = (ushort)ver.Build;
@@ -692,7 +722,7 @@ namespace IKVM.Reflection.Emit
 			}
 			if (publicKeyOrToken == null || publicKeyOrToken.Length == 0)
 			{
-				publicKeyOrToken = name.GetPublicKeyToken();
+				publicKeyOrToken = name.GetPublicKeyToken() ?? Empty<byte>.Array;
 			}
 			else
 			{
@@ -709,8 +739,15 @@ namespace IKVM.Reflection.Emit
 			{
 				rec.Culture = 0;
 			}
-			rec.HashValue = 0;
-			return 0x23000000 | this.AssemblyRef.FindOrAddRecord(rec);
+			if (name.hash != null)
+			{
+				rec.HashValue = this.Blobs.Add(ByteBuffer.Wrap(name.hash));
+			}
+			else
+			{
+				rec.HashValue = 0;
+			}
+			return 0x23000000 | (alwaysAdd ? this.AssemblyRef.AddRecord(rec) : this.AssemblyRef.FindOrAddRecord(rec));
 		}
 
 		internal void WriteSymbolTokenMap()
@@ -747,6 +784,46 @@ namespace IKVM.Reflection.Emit
 			return resolvedTokens[index];
 		}
 
+		internal void ApplyUnmanagedExports(ImageFileMachine imageFileMachine)
+		{
+			if (unmanagedExports.Count != 0)
+			{
+				int type;
+				int size;
+				if (imageFileMachine == ImageFileMachine.I386)
+				{
+					type = 0x05;
+					size = 4;
+				}
+				else
+				{
+					type = 0x06;
+					size = 8;
+				}
+				List<MethodBuilder> methods = new List<MethodBuilder>();
+				for (int i = 0; i < unmanagedExports.Count; i++)
+				{
+					if (unmanagedExports[i].mb != null)
+					{
+						methods.Add(unmanagedExports[i].mb);
+					}
+				}
+				if (methods.Count != 0)
+				{
+					RelativeVirtualAddress rva = __AddVTableFixups(methods.ToArray(), type);
+					for (int i = 0; i < unmanagedExports.Count; i++)
+					{
+						if (unmanagedExports[i].mb != null)
+						{
+							UnmanagedExport exp = unmanagedExports[i];
+							exp.rva = new RelativeVirtualAddress(rva.initializedDataOffset + (uint)(methods.IndexOf(unmanagedExports[i].mb) * size));
+							unmanagedExports[i] = exp;
+						}
+					}
+				}
+			}
+		}
+
 		internal void FixupMethodBodyTokens()
 		{
 			int methodToken = 0x06000001;
@@ -761,6 +838,14 @@ namespace IKVM.Reflection.Emit
 				methodBodies.Position = offset;
 				int pseudoToken = methodBodies.GetInt32AtCurrentPosition();
 				methodBodies.Write(ResolvePseudoToken(pseudoToken));
+			}
+			foreach (VTableFixups fixup in vtablefixups)
+			{
+				for (int i = 0; i < fixup.count; i++)
+				{
+					initializedData.Position = (int)fixup.initializedDataOffset + i * fixup.SlotWidth;
+					initializedData.Write(ResolvePseudoToken(initializedData.GetInt32AtCurrentPosition()));
+				}
 			}
 		}
 
@@ -890,9 +975,9 @@ namespace IKVM.Reflection.Emit
 					ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
 					rec.Flags = (int)type.Attributes;
 					rec.TypeDefId = type.MetadataToken & 0xFFFFFF;
-					rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-					string ns = type.Namespace;
-					rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
+					rec.TypeName = this.Strings.Add(type.__Name);
+					string ns = type.__Namespace;
+					rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 					if (type.IsNested)
 					{
 						rec.Implementation = declaringTypes[type.DeclaringType];
@@ -1081,6 +1166,11 @@ namespace IKVM.Reflection.Emit
 			get { return mvid; }
 		}
 
+		public void __SetModuleVersionId(Guid guid)
+		{
+			mvid = guid;
+		}
+
 		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
 		{
 			throw new NotImplementedException();
@@ -1165,10 +1255,30 @@ namespace IKVM.Reflection.Emit
 		}
 
 		// non-standard API
-		public long __ImageBase
+		public new long __ImageBase
 		{
 			get { return imageBaseAddress; }
 			set { imageBaseAddress = value; }
+		}
+
+		protected override long GetImageBaseImpl()
+		{
+			return imageBaseAddress;
+		}
+
+		public override long __StackReserve
+		{
+			get { return stackReserve; }
+		}
+
+		public void __SetStackReserve(long stackReserve)
+		{
+			this.stackReserve = stackReserve;
+		}
+
+		internal ulong GetStackReserve(ulong defaultValue)
+		{
+			return stackReserve == -1 ? defaultValue : (ulong)stackReserve;
 		}
 
 		public override int MDStreamVersion
@@ -1186,6 +1296,20 @@ namespace IKVM.Reflection.Emit
 		}
 
 		public void __Save(PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
+			SaveImpl(null, portableExecutableKind, imageFileMachine);
+		}
+
+		public void __Save(Stream stream, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
+			if (!stream.CanRead || !stream.CanWrite || !stream.CanSeek || stream.Position != 0)
+			{
+				throw new ArgumentException("Stream must support read/write/seek and current position must be zero.", "stream");
+			}
+			SaveImpl(stream, portableExecutableKind, imageFileMachine);
+		}
+
+		private void SaveImpl(Stream streamOrNull, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
 			PopulatePropertyAndEventTables();
 			IList<CustomAttributeData> attributes = asm.GetCustomAttributesData(null);
@@ -1225,17 +1349,26 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			FillAssemblyRefTable();
-			ModuleWriter.WriteModule(null, null, this, PEFileKinds.Dll, portableExecutableKind, imageFileMachine, unmanagedResources, 0);
+			ModuleWriter.WriteModule(null, null, this, PEFileKinds.Dll, portableExecutableKind, imageFileMachine, unmanagedResources, 0, streamOrNull);
 		}
 
 		public void __AddAssemblyReference(AssemblyName assemblyName)
+		{
+			__AddAssemblyReference(assemblyName, null);
+		}
+
+		public void __AddAssemblyReference(AssemblyName assemblyName, Assembly assembly)
 		{
 			if (referencedAssemblyNames == null)
 			{
 				referencedAssemblyNames = new List<AssemblyName>();
 			}
-			FindOrAddAssemblyRef(assemblyName);
 			referencedAssemblyNames.Add((AssemblyName)assemblyName.Clone());
+			int token = FindOrAddAssemblyRef(assemblyName, true);
+			if (assembly != null)
+			{
+				referencedAssemblies.Add(assembly, token);
+			}
 		}
 
 		public override AssemblyName[] __GetReferencedAssemblies()
@@ -1260,6 +1393,120 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			return list.ToArray();
+		}
+
+		public void __AddModuleReference(string module)
+		{
+			this.ModuleRef.FindOrAddRecord(module == null ? 0 : this.Strings.Add(module));
+		}
+
+		public override string[] __GetReferencedModules()
+		{
+			string[] arr = new string[this.ModuleRef.RowCount];
+			for (int i = 0; i < arr.Length; i++)
+			{
+				arr[i] = this.Strings.Find(this.ModuleRef.records[i]);
+			}
+			return arr;
+		}
+
+		public override Type[] __GetReferencedTypes()
+		{
+			List<Type> list = new List<Type>();
+			foreach (KeyValuePair<Type, int> kv in typeTokens)
+			{
+				if (kv.Value >> 24 == TypeRefTable.Index)
+				{
+					list.Add(kv.Key);
+				}
+			}
+			return list.ToArray();
+		}
+
+		public override Type[] __GetExportedTypes()
+		{
+			throw new NotImplementedException();
+		}
+
+		public int __AddModule(int flags, string name, byte[] hash)
+		{
+			FileTable.Record file = new FileTable.Record();
+			file.Flags = flags;
+			file.Name = this.Strings.Add(name);
+			file.HashValue = this.Blobs.Add(ByteBuffer.Wrap(hash));
+			return 0x26000000 + this.File.AddRecord(file);
+		}
+
+		public int __AddManifestResource(int offset, ResourceAttributes flags, string name, int implementation)
+		{
+			ManifestResourceTable.Record res = new ManifestResourceTable.Record();
+			res.Offset = offset;
+			res.Flags = (int)flags;
+			res.Name = this.Strings.Add(name);
+			res.Implementation = implementation;
+			return 0x28000000 + this.ManifestResource.AddRecord(res);
+		}
+
+		public void __SetCustomAttributeFor(int token, CustomAttributeBuilder customBuilder)
+		{
+			SetCustomAttribute(token, customBuilder);
+		}
+
+		public RelativeVirtualAddress __AddVTableFixups(MethodBuilder[] methods, int type)
+		{
+			initializedData.Align(8);
+			VTableFixups fixups;
+			fixups.initializedDataOffset = (uint)initializedData.Position;
+			fixups.count = (ushort)methods.Length;
+			fixups.type = (ushort)type;
+			foreach (MethodBuilder mb in methods)
+			{
+				initializedData.Write(mb.MetadataToken);
+				if (fixups.SlotWidth == 8)
+				{
+					initializedData.Write(0);
+				}
+			}
+			vtablefixups.Add(fixups);
+			return new RelativeVirtualAddress(fixups.initializedDataOffset);
+		}
+
+		public void __AddUnmanagedExportStub(string name, int ordinal, RelativeVirtualAddress rva)
+		{
+			AddUnmanagedExport(name, ordinal, null, rva);
+		}
+
+		internal void AddUnmanagedExport(string name, int ordinal, MethodBuilder methodBuilder, RelativeVirtualAddress rva)
+		{
+			UnmanagedExport export;
+			export.name = name;
+			export.ordinal = ordinal;
+			export.mb = methodBuilder;
+			export.rva = rva;
+			unmanagedExports.Add(export);
+		}
+	}
+
+	struct UnmanagedExport
+	{
+		internal string name;
+		internal int ordinal;
+		internal RelativeVirtualAddress rva;
+		internal MethodBuilder mb;
+	}
+
+	public struct RelativeVirtualAddress
+	{
+		internal readonly uint initializedDataOffset;
+
+		internal RelativeVirtualAddress(uint initializedDataOffset)
+		{
+			this.initializedDataOffset = initializedDataOffset;
+		}
+
+		public static RelativeVirtualAddress operator +(RelativeVirtualAddress rva, int offset)
+		{
+			return new RelativeVirtualAddress(rva.initializedDataOffset + (uint)offset);
 		}
 	}
 

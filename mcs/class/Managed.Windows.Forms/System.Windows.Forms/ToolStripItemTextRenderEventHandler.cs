@@ -26,9 +26,7 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public delegate void ToolStripItemTextRenderEventHandler (object sender, ToolStripItemTextRenderEventArgs e);
 }
-#endif

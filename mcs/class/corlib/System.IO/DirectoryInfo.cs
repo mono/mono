@@ -378,7 +378,7 @@ namespace System.IO {
 		}
 #endif
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
 		{

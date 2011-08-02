@@ -106,9 +106,11 @@ namespace System.Data {
 		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
 		{
 			InitInProgress = true;
-
-			//keep list of names to resolve later
-			_dataColumnNames = columnNames;
+                   
+			_dataColumnNames = new string [columnNames.Length];
+			for (int i = 0; i < columnNames.Length; i++)
+				_dataColumnNames[i] = columnNames[i];
+                       
 			base.ConstraintName = name;
 			_isPrimaryKey = isPrimaryKey;
 		}
@@ -140,8 +142,9 @@ namespace System.Data {
 			//Set Constraint Name
 			base.ConstraintName = name;
 
-			//keep reference
-			_dataColumns = columns;
+			//copy the columns - Do not keep reference #672113
+			//_dataColumns = columns;
+			Columns = columns;
 
 			//PK?
 			_isPrimaryKey = isPrimaryKey;			
@@ -302,6 +305,11 @@ namespace System.Data {
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _dataColumns; }
+			internal set {
+			       _dataColumns = new DataColumn [value.Length];
+			       for (int i = 0; i < value.Length; i++)
+			               _dataColumns[i] = value[i];                             
+			}
 		}
 
 		[DataCategory ("Data")]

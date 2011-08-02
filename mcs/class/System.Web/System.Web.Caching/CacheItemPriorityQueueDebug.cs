@@ -39,7 +39,8 @@ namespace System.Web.Caching
 		Enqueue,
 		Dequeue,
 		Disable,
-		Peek
+		Peek,
+		Update
 	}
 
 #if DEBUG
@@ -80,7 +81,7 @@ namespace System.Web.Caching
 		void InitDebugMode ()
 		{
 #if DEBUG
-			AppDomain.CurrentDomain.DomainUnload += new EventHandler (OnDomainUnload);
+			AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
 #endif
 		}
 
@@ -95,12 +96,12 @@ namespace System.Web.Caching
 #if DEBUG
 		CacheItem CopyItem (CacheItem item)
 		{
-			CacheItem newItem;
+			CacheItem newItem = new CacheItem ();
 
-			if (items.TryGetValue (item.Guid, out newItem))
-				return newItem;
+			// if (items.TryGetValue (item.Guid, out newItem)) {
+			// 	newItem.PriorityQueueIndex = item.PriorityQueueIndex
+			// }
 
-			newItem = new CacheItem ();
 			newItem.Key = item.Key;
 			newItem.AbsoluteExpiration = item.AbsoluteExpiration;
 			newItem.SlidingExpiration = item.SlidingExpiration;
@@ -108,9 +109,10 @@ namespace System.Web.Caching
 			newItem.LastChange = item.LastChange;
 			newItem.ExpiresAt = item.ExpiresAt;
 			newItem.Disabled = item.Disabled;
+			newItem.PriorityQueueIndex = item.PriorityQueueIndex;
 			newItem.Guid = item.Guid;
 			
-			items.Add (newItem.Guid, newItem);
+			//items [newItem.Guid] = newItem;
 			
 			return newItem;
 		}
@@ -125,6 +127,7 @@ namespace System.Web.Caching
 			sb.AppendFormat ("LastChange = DateTime.Parse (\"{0}\"), ", item.LastChange.ToString ());
 			sb.AppendFormat ("ExpiresAt = {0}, ", item.ExpiresAt);
 			sb.AppendFormat ("Disabled = {0}, ", item.Disabled.ToString ().ToLowerInvariant ());
+			sb.AppendFormat ("PriorityQueueIndex = {0},", item.PriorityQueueIndex);
 			sb.AppendFormat ("Guid = new Guid (\"{0}\")}}, \n", item.Guid.ToString ());
 
 			return sb.ToString ();
@@ -147,32 +150,40 @@ namespace System.Web.Caching
 		void OnDomainUnload (object sender, EventArgs e)
 		{
 			if (EDSequence.Count == 0) {
-				Console.WriteLine ("No enqueue/dequeue sequence recorded.");
+				Console.Error.WriteLine ("No enqueue/dequeue sequence recorded.");
 				return;
 			}
 
 			try {
-				string filePath = Path.Combine (HttpRuntime.AppDomainAppPath, String.Format ("cache_pq_sequence_{0}.seq", DateTime.UtcNow.ToString ("yyyy-MM-dd_hh-mm-ss")));
+				string filePath = Path.Combine (HttpRuntime.AppDomainAppPath, String.Format ("cache_pq_sequence_{0}_{1:x}.seq",
+													     DateTime.UtcNow.ToString ("yyyy-MM-dd_hh-mm-ss"),
+													     GetHashCode ()));
 				var settings = new XmlWriterSettings ();
 				settings.Indent = true;
 				settings.IndentChars = "\t";
 				settings.NewLineChars = "\n";
 				settings.Encoding = Encoding.UTF8;
-				
+
+				Console.Error.WriteLine ("Saving sequence in file {0}", filePath);
 				using (XmlWriter writer = XmlWriter.Create (filePath, settings)) {
 					writer.WriteStartDocument (true);
 					writer.WriteStartElement ("sequence");
 					foreach (EDSequenceEntry entry in EDSequence) {
 						writer.WriteStartElement ("entry");
 						writer.WriteAttributeString ("type", entry.Type.ToString ());
-						writer.WriteAttributeString ("key", entry.Item.Key.Replace ("\n", "\\n").Replace ("\r", "\\r"));
-						writer.WriteAttributeString ("absoluteExpiration", entry.Item.AbsoluteExpiration.Ticks.ToString ());
-						writer.WriteAttributeString ("slidingExpiration", entry.Item.SlidingExpiration.Ticks.ToString ());
-						writer.WriteAttributeString ("priority", entry.Item.Priority.ToString ());
-						writer.WriteAttributeString ("lastChange", entry.Item.LastChange.Ticks.ToString ());
-						writer.WriteAttributeString ("expiresAt", entry.Item.ExpiresAt.ToString ());
-						writer.WriteAttributeString ("disabled", entry.Item.Disabled.ToString ());
-						writer.WriteAttributeString ("guid", entry.Item.Guid.ToString ());
+						if (entry.Item == null)
+							writer.WriteAttributeString ("isNull", "true");
+						else {
+							writer.WriteAttributeString ("key", entry.Item.Key != null ? entry.Item.Key.Replace ("\n", "\\n").Replace ("\r", "\\r") : "null");
+							writer.WriteAttributeString ("absoluteExpiration", entry.Item.AbsoluteExpiration.Ticks.ToString ());
+							writer.WriteAttributeString ("slidingExpiration", entry.Item.SlidingExpiration.Ticks.ToString ());
+							writer.WriteAttributeString ("priority", entry.Item.Priority.ToString ());
+							writer.WriteAttributeString ("lastChange", entry.Item.LastChange.Ticks.ToString ());
+							writer.WriteAttributeString ("expiresAt", entry.Item.ExpiresAt.ToString ());
+							writer.WriteAttributeString ("disabled", entry.Item.Disabled.ToString ());
+							writer.WriteAttributeString ("guid", entry.Item.Guid.ToString ());
+							writer.WriteAttributeString ("priorityQueueIndex", entry.Item.PriorityQueueIndex.ToString ());
+						}
 						writer.WriteEndElement ();
 					}
 					writer.WriteEndElement ();

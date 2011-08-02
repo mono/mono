@@ -39,6 +39,7 @@ namespace System.Runtime.Serialization.Json
 		enum ElementType
 		{
 			None,
+			Null,
 			Object,
 			Array,
 			String,
@@ -54,7 +55,7 @@ namespace System.Runtime.Serialization.Json
 		string attr_name, attr_value, runtime_type;
 		Encoding encoding;
 		byte [] encbuf = new byte [1024];
-		bool no_string_yet = true, is_null;
+		bool no_string_yet = true, is_null, is_ascii_single;
 
 		public JsonWriter (Stream stream, Encoding encoding, bool closeOutput)
 		{
@@ -70,6 +71,11 @@ namespace System.Runtime.Serialization.Json
 			output = stream;
 			this.encoding = encoding;
 			close_output = ownsStream;
+#if MOONLIGHT
+			is_ascii_single = encoding is UTF8Encoding;
+#else
+			is_ascii_single = encoding is UTF8Encoding || encoding.IsSingleByte;
+#endif
 		}
 
 		void CheckState ()
@@ -189,6 +195,8 @@ namespace System.Runtime.Serialization.Json
 					break;
 				case ElementType.String:
 					throw new XmlException ("Mixed content is not allowed in this XmlDictionaryWriter");
+				case ElementType.Null:
+					throw new XmlException ("Current type is null and writing element inside null is not allowed");
 				case ElementType.None:
 					throw new XmlException ("Before writing a child element, an element needs 'type' attribute to indicate whether the element is a JSON array or a JSON object in this XmlDictionaryWriter");
 				}
@@ -305,6 +313,11 @@ namespace System.Runtime.Serialization.Json
 					element_kinds.Pop ();
 					element_kinds.Push (ElementType.String);
 					break;
+				case "null":
+					element_kinds.Pop ();
+					element_kinds.Push (ElementType.Null);
+					OutputString ("null");
+					break;
 				default:
 					throw new XmlException (String.Format ("Unexpected type attribute value '{0}'", attr_value));
 				}
@@ -354,7 +367,8 @@ namespace System.Runtime.Serialization.Json
 			else if (text == null) {
 				no_string_yet = false;
 				is_null = true;
-				OutputString ("null");
+				if (element_kinds.Peek () != ElementType.Null)
+					OutputString ("null");
 			} else {
 				switch (element_kinds.Peek ()) {
 				case ElementType.String:
@@ -520,9 +534,16 @@ namespace System.Runtime.Serialization.Json
 			WriteString (text);
 		}
 
+		char [] char_buf = new char [1];
 		void OutputAsciiChar (char c)
 		{
-			output.WriteByte ((byte) c);
+			if (is_ascii_single)
+				output.WriteByte ((byte) c);
+			else {
+				char_buf [0] = c;
+				int size = encoding.GetBytes (char_buf, 0, 1, encbuf, 0);
+				output.Write (encbuf, 0, size);
+			}
 		}
 
 		void OutputString (string s)

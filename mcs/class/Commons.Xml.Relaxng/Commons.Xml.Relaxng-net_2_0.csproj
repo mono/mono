@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>Commons.Xml.Relaxng</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="Commons.Xml\XmlDefaultReader.cs" />
+   <Compile Include="Commons.Xml.Relaxng\Misc.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngDatatype.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngDatatypeProvider.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngDefaultDatatypes.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngException.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngGrammar.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngMergedProvider.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngNameClass.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngPattern.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngPatternType.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngReader.cs" />
+   <Compile Include="Commons.Xml.Relaxng\RelaxngValidatingReader.cs" />
+   <Compile Include="Commons.Xml.Relaxng\XsdDatatypeProvider.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Derivative\RdpContentType.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Derivative\RdpNameClasses.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Derivative\RdpObjects.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Derivative\RdpPatterns.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Derivative\Util.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Inference\RelaxngInference.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Rnc\RncTokenizer.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Rnc\RncWriter.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Rnc\XmlChar.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlBuiltInValidationProvider.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlCompileContext.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlConfig.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlException.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlFilteredXmlReader.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlReader.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlRelaxngSupport.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlSimplified.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlStructures.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlValidatingReader.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlValidationProvider.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlValidator.cs" />
+   <Compile Include="Commons.Xml.Nvdl\NvdlXsdSupport.cs" />
+   <Compile Include="Commons.Xml.Relaxng.Rnc\RncParser.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="resources/relaxng.rng">
+       <LogicalName>relaxng.rng</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

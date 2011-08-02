@@ -24,7 +24,9 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/sample.pfx \
 	Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml \
 	Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml \
-	Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml
+	Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml \
+	Test/System.Security.Cryptography.Pkcs/detached.data \
+	Test/System.Security.Cryptography.Pkcs/detached.p7
 
 include ../../build/library.make
 

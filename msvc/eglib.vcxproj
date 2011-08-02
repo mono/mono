@@ -83,7 +83,6 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -99,7 +98,6 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -156,6 +154,7 @@
     <ClCompile Include="..\eglib\src\gfile-win32.c" />
     <ClCompile Include="..\eglib\src\gfile.c" />
     <ClCompile Include="..\eglib\src\ghashtable.c" />
+    <ClCompile Include="..\eglib\src\giconv.c" />
     <ClCompile Include="..\eglib\src\glist.c" />
     <ClCompile Include="..\eglib\src\gmarkup.c" />
     <ClCompile Include="..\eglib\src\gmem.c" />
@@ -165,6 +164,7 @@
     <ClCompile Include="..\eglib\src\gpath.c" />
     <ClCompile Include="..\eglib\src\gpattern.c" />
     <ClCompile Include="..\eglib\src\gptrarray.c" />
+    <ClCompile Include="..\eglib\src\gqsort.c" />
     <ClCompile Include="..\eglib\src\gqueue.c" />
     <ClCompile Include="..\eglib\src\gshell.c" />
     <ClCompile Include="..\eglib\src\gslist.c" />

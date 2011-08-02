@@ -33,10 +33,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms 
 {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class VScrollBar : ScrollBar 
 	{		
 		#region events

@@ -26,7 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.IO;
@@ -54,7 +53,7 @@ namespace System.Web.Hosting {
 
 		public override bool DirectoryExists (string virtualDir)
 		{
-			if (virtualDir == null || virtualDir == "")
+			if (String.IsNullOrEmpty (virtualDir))
 				throw new ArgumentNullException ("virtualDir");
 
 			string phys_path = HostingEnvironment.MapPath (virtualDir);
@@ -63,7 +62,7 @@ namespace System.Web.Hosting {
 
 		public override bool FileExists (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "")
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			string phys_path = HostingEnvironment.MapPath (virtualPath);
@@ -84,7 +83,7 @@ namespace System.Web.Hosting {
 
 		public override VirtualDirectory GetDirectory (string virtualDir)
 		{
-			if (virtualDir == null || virtualDir == "")
+			if (String.IsNullOrEmpty (virtualDir))
 				throw new ArgumentNullException ("virtualDir");
 
 			return new DefaultVirtualDirectory (virtualDir);
@@ -92,7 +91,7 @@ namespace System.Web.Hosting {
 
 		public override VirtualFile GetFile (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "")
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			return new DefaultVirtualFile (virtualPath);
@@ -112,5 +111,5 @@ namespace System.Web.Hosting {
 		}
 	}
 }
-#endif
+
 

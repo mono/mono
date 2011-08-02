@@ -1,4 +1,4 @@
-// cs0118-4.cs: `x.a.B' is a `property' but a `type' was expected
+// CS0118: `x.a.B' is a `property' but a `type' was expected
 // Line: 9
 
 using System;

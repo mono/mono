@@ -1,4 +1,4 @@
-// cs0205-2.cs: Cannot call an abstract base member `A.Foobar'
+// CS0205: Cannot call an abstract base member `A.Foobar'
 // Line: 15
 
 public abstract class A

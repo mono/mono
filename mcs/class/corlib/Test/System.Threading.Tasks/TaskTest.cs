@@ -162,7 +162,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task t = new Task(delegate { taskResult = true; }, src.Token);
 				src.Cancel ();
 				
-				Task cont = t.ContinueWith (delegate { result = true; }, TaskContinuationOptions.OnlyOnCanceled);
+				Task cont = t.ContinueWith (delegate { result = true; },
+				                            TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
 
 				t.Start();
 				cont.Wait();
@@ -192,6 +193,21 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsNotNull (cont, "#2");
 				Assert.IsTrue (result, "#3");
 			});
+		}
+
+		[Test]
+		public void ContinueWithChildren ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+			    bool result = false;
+
+			    var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => Thread.Sleep (100), TaskCreationOptions.AttachedToParent));
+			    t.ContinueWith (_ => result = true);
+			    while (!t.IsCompleted)
+				    Thread.Sleep (200);
+
+			    Assert.IsTrue (result);
+			}, 2);
 		}
 
 		[TestAttribute]
@@ -248,7 +264,7 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
 				Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#4");
-			}, 10);
+				}, 10);
 		}
 
 		[Test]
@@ -259,6 +275,33 @@ namespace MonoTests.System.Threading.Tasks
 			t.RunSynchronously ();
 
 			Assert.AreEqual (1, val);
+		}
+
+		[Test]
+		public void UnobservedExceptionOnFinalizerThreadTest ()
+		{
+			bool wasCalled = false;
+			TaskScheduler.UnobservedTaskException += (o, args) => {
+				wasCalled = true;
+				args.SetObserved ();
+			};
+			var inner = new ApplicationException ();
+			Task.Factory.StartNew (() => { throw inner; });
+			Thread.Sleep (1000);
+			GC.Collect ();
+			Thread.Sleep (1000);
+			GC.WaitForPendingFinalizers ();
+
+			Assert.IsTrue (wasCalled);
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void StartFinishedTaskTest ()
+		{
+			var t = Task.Factory.StartNew (delegate () { });
+			t.Wait ();
+
+			t.Start ();
 		}
 	}
 }

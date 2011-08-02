@@ -1,0 +1,6 @@
+<ResourcesDict2 xmlns="http://www.domain.com/path"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        <TestObject2 x:Key="1" TestProperty="1" />
+        <TestObject2 x:Key="two" TestProperty="two" />
+</ResourcesDict2>
+

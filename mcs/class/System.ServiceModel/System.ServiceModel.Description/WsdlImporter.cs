@@ -69,15 +69,17 @@ namespace System.ServiceModel.Description
 			if (wsdlImportExtensions == null) {
 				wsdl_extensions = new KeyedByTypeCollection<IWsdlImportExtension> ();
 
-				wsdl_extensions.Add (new StandardBindingImporter ());
-				wsdl_extensions.Add (new TransportBindingElementImporter ());
-				//wsdl_extensions.Add (new MessageEncodingBindingElementImporter ());
-				wsdl_extensions.Add (new XmlSerializerMessageContractImporter ());
 				wsdl_extensions.Add (new DataContractSerializerMessageContractImporter ());
+				wsdl_extensions.Add (new XmlSerializerMessageContractImporter ());
+				//wsdl_extensions.Add (new MessageEncodingBindingElementImporter ());
+				wsdl_extensions.Add (new TransportBindingElementImporter ());
+				wsdl_extensions.Add (new StandardBindingImporter ());
 			} else {
 				wsdl_extensions = new KeyedByTypeCollection<IWsdlImportExtension> (wsdlImportExtensions);
 			}
 
+			// It is okay to fill these members immediately when WsdlImporter.ctor() is invoked
+			// i.e. after this .ctor(), those metadata docs are not considered anymore.
 			this.metadata = metadata;
 			this.wsdl_documents = new ServiceDescriptionCollection ();
 			this.xmlschemas = new XmlSchemaSet ();

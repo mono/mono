@@ -12,23 +12,23 @@
 #include <windows.h>
 #endif
 
-/* FIXME: bsds untested */
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/proc.h>
+#if defined(__APPLE__)
+#include <mach/mach.h>
+#endif
 #ifdef HAVE_SYS_USER_H
 #include <sys/user.h>
 #endif
 #ifdef HAVE_STRUCT_KINFO_PROC_KP_PROC
-#  ifdef KERN_PROC2
-#    define kinfo_pid_member p_pid
-#    define kinfo_name_member p_comm
-#  else
 #    define kinfo_pid_member kp_proc.p_pid
 #    define kinfo_name_member kp_proc.p_comm
-#  endif
+#elif defined(__OpenBSD__)
+#    define kinfo_pid_member p_pid
+#    define kinfo_name_member p_comm
 #else
 #define kinfo_pid_member ki_pid
 #define kinfo_name_member ki_comm
@@ -262,6 +262,63 @@ mono_process_get_name (gpointer pid, char *buf, int len)
 static gint64
 get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 {
+#if defined(__APPLE__) 
+	double process_user_time = 0, process_system_time = 0;//, process_percent = 0;
+	task_t task;
+
+	if (task_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
+		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	
+	struct task_basic_info t_info;
+	mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT, th_count;
+
+	if (task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
+		mach_port_deallocate (mach_task_self (), task);
+		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+	}
+	
+	thread_array_t th_array;
+
+	if (task_threads(task, &th_array, &th_count) != KERN_SUCCESS) {
+		mach_port_deallocate (mach_task_self (), task);
+		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+	}
+		
+	size_t i;
+
+	for (i = 0; i < th_count; i++) {
+		double thread_user_time, thread_system_time;//, thread_percent;
+		
+		struct thread_basic_info th_info;
+		mach_msg_type_number_t th_info_count = THREAD_BASIC_INFO_COUNT;
+		if (thread_info(th_array[i], THREAD_BASIC_INFO, (thread_info_t)&th_info, &th_info_count) == KERN_SUCCESS) {
+			thread_user_time = th_info.user_time.seconds + th_info.user_time.microseconds / 1e6;
+			thread_system_time = th_info.system_time.seconds + th_info.system_time.microseconds / 1e6;
+			//thread_percent = (double)th_info.cpu_usage / TH_USAGE_SCALE;
+			
+			process_user_time += thread_user_time;
+			process_system_time += thread_system_time;
+			//process_percent += th_percent;
+		}
+	}
+	
+	for (i = 0; i < th_count; i++)
+		mach_port_deallocate(task, th_array[i]);
+
+	mach_port_deallocate (mach_task_self (), task);
+
+	process_user_time += t_info.user_time.seconds + t_info.user_time.microseconds / 1e6;
+	process_system_time += t_info.system_time.seconds + t_info.system_time.microseconds / 1e6;
+    
+	if (pos == 10 && sum == TRUE)
+		return (gint64)((process_user_time + process_system_time) * 10000000);
+	else if (pos == 10)
+		return (gint64)(process_user_time * 10000000);
+	else if (pos == 11)
+		return (gint64)(process_system_time * 10000000);
+		
+	return 0;
+#else
 	char buf [512];
 	char *s, *end;
 	FILE *f;
@@ -307,6 +364,7 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	if (error)
 		*error = MONO_PROCESS_ERROR_NONE;
 	return value;
+#endif
 }
 
 static int
@@ -327,20 +385,52 @@ static gint64
 get_process_stat_time (int pid, int pos, int sum, MonoProcessError *error)
 {
 	gint64 val = get_process_stat_item (pid, pos, sum, error);
+#if defined(__APPLE__)
+	return val;
+#else
 	/* return 100ns ticks */
 	return (val * 10000000) / get_user_hz ();
+#endif
 }
 
 static gint64
-get_pid_status_item (int pid, const char *item, MonoProcessError *error)
+get_pid_status_item (int pid, const char *item, MonoProcessError *error, int multiplier)
 {
+#if defined(__APPLE__)
+	// ignore the multiplier
+	
+	gint64 ret;
+	task_t task;
+	if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+
+	struct task_basic_info t_info;
+	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+	
+	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
+		mach_port_deallocate (mach_task_self (), task);
+		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+	}
+
+	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0)
+		ret = t_info.resident_size;
+	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
+		ret = t_info.virtual_size;
+	else if (strcmp (item, "Threads") == 0)
+		ret = th_count;
+
+	mach_port_deallocate (mach_task_self (), task);
+	
+	return ret;
+#else
 	char buf [64];
 	char *s;
 
 	s = get_pid_status_item_buf (pid, item, buf, sizeof (buf), error);
 	if (s)
-		return atoi (s);
+		return atoi (s) * multiplier;
 	return 0;
+#endif
 }
 
 /**
@@ -362,7 +452,7 @@ mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProces
 
 	switch (data) {
 	case MONO_PROCESS_NUM_THREADS:
-		return get_pid_status_item (rpid, "Threads", error);
+		return get_pid_status_item (rpid, "Threads", error, 1);
 	case MONO_PROCESS_USER_TIME:
 		return get_process_stat_time (rpid, 10, FALSE, error);
 	case MONO_PROCESS_SYSTEM_TIME:
@@ -370,20 +460,20 @@ mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProces
 	case MONO_PROCESS_TOTAL_TIME:
 		return get_process_stat_time (rpid, 10, TRUE, error);
 	case MONO_PROCESS_WORKING_SET:
-		return get_pid_status_item (rpid, "VmRSS", error) * 1024;
+		return get_pid_status_item (rpid, "VmRSS", error, 1024);
 	case MONO_PROCESS_WORKING_SET_PEAK:
-		val = get_pid_status_item (rpid, "VmHWM", error) * 1024;
+		val = get_pid_status_item (rpid, "VmHWM", error, 1024);
 		if (val == 0)
-			val = get_pid_status_item (rpid, "VmRSS", error) * 1024;
+			val = get_pid_status_item (rpid, "VmRSS", error, 1024);
 		return val;
 	case MONO_PROCESS_PRIVATE_BYTES:
-		return get_pid_status_item (rpid, "VmData", error) * 1024;
+		return get_pid_status_item (rpid, "VmData", error, 1024);
 	case MONO_PROCESS_VIRTUAL_BYTES:
-		return get_pid_status_item (rpid, "VmSize", error) * 1024;
+		return get_pid_status_item (rpid, "VmSize", error, 1024);
 	case MONO_PROCESS_VIRTUAL_BYTES_PEAK:
-		val = get_pid_status_item (rpid, "VmPeak", error) * 1024;
+		val = get_pid_status_item (rpid, "VmPeak", error, 1024);
 		if (val == 0)
-			val = get_pid_status_item (rpid, "VmSize", error) * 1024;
+			val = get_pid_status_item (rpid, "VmSize", error, 1024);
 		return val;
 	case MONO_PROCESS_FAULTS:
 		return get_process_stat_item (rpid, 6, TRUE, error);
@@ -465,6 +555,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 			continue;
 		}
 		sscanf (data, "%Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_ticks, &nice_ticks, &system_ticks, &idle_ticks, &iowait_ticks, &irq_ticks, &sirq_ticks);
+		break;
 	}
 	fclose (f);
 

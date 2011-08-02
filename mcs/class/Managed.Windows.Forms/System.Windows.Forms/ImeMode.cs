@@ -42,9 +42,7 @@ namespace System.Windows.Forms
 		HangulFull	= 9,
 		Hangul		= 10,
 		Inherit		= -1,
-#if NET_2_0
 		Close		= 11,
 		OnHalf		= 12
-#endif
 	}
 }

@@ -22,13 +22,13 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class Scheduler: TaskScheduler, IScheduler
+	internal class Scheduler: TaskScheduler
 	{
 		readonly IProducerConsumerCollection<Task> workQueue;
 		readonly ThreadWorker[]        workers;
@@ -46,12 +46,12 @@ namespace System.Threading.Tasks
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, i, workQueue, priority, pulseHandle);
+				workers [i] = new ThreadWorker (workers, i, workQueue, new CyclicDeque<Task> (), priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
-		
-		public void AddWork (Task t)
+
+		protected internal override void QueueTask (Task t)
 		{
 			// Add to the shared work pool
 			workQueue.TryAdd (t);
@@ -59,37 +59,38 @@ namespace System.Threading.Tasks
 			PulseAll ();
 		}
 
-		public void ParticipateUntil (Task task)
+		internal override void ParticipateUntil (Task task)
 		{
 			if (task.IsCompleted)
 				return;
+
+			ManualResetEventSlim evt = new ManualResetEventSlim (false);
+			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
+			if (evt.IsSet || task.IsCompleted)
+				return;
 			
-			ParticipateUntilInternal (task, TaskCompletedPredicate);
+			ParticipateUntilInternal (task, evt, -1);
 		}
 		
-		public bool ParticipateUntil (Task task, Func<bool> predicate)
+		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
-			
-			bool isFromPredicate = false;
-			
-			ParticipateUntilInternal (task, delegate {
-				if (predicate ()) {
-					isFromPredicate = true;
-					return true;
-				}
-				return task.IsCompleted;
-			});
+
+			bool isFromPredicate = true;
+			task.ContinueWith (_ => { isFromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
+
+			ParticipateUntilInternal (task, evt, millisecondsTimeout);
+
+			if (task.IsCompleted)
+				return false;
 
 			return isFromPredicate;
 		}
 		
-		// Called with Task.WaitAll(someTasks) or Task.WaitAny(someTasks) so that we can remove ourselves
-		// also when our wait condition is ok
-		public void ParticipateUntilInternal (Task self, Func<Task, bool> predicate)
-		{	
-			ThreadWorker.WorkerMethod (self, predicate, workQueue, workers, pulseHandle);
+		internal void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
+		{
+			ThreadWorker.ParticipativeWorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
 		}
 
 		static bool TaskCompletedPredicate (Task self)
@@ -97,7 +98,7 @@ namespace System.Threading.Tasks
 			return self.IsCompleted;
 		}
 		
-		public void PulseAll ()
+		internal override void PulseAll ()
 		{
 			pulseHandle.Set ();
 		}
@@ -109,11 +110,6 @@ namespace System.Threading.Tasks
 		}
 		#region Scheduler dummy stubs
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected internal override void QueueTask (Task task)
 		{
 			throw new System.NotImplementedException();
 		}

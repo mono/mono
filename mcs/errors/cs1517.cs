@@ -1,4 +1,4 @@
-// cs1517.cs: Invalid preprocessor directive
+// CS1517: Invalid preprocessor directive
 // Line: 4
 
 #if 8

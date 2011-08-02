@@ -62,7 +62,6 @@ static void setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, Mono
 
 static MonoMethod* mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter);
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
-static gboolean mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass);
 static void mono_field_resolve_type (MonoClassField *field, MonoError *error);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
 static void mono_class_setup_vtable_full (MonoClass *class, GList *in_setup);
@@ -901,7 +900,16 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		method = imethod->declaring;
 	}
 
-	if (!method->is_generic && !method->klass->generic_container)
+	/*
+	 * A method only needs to be inflated if the context has argument for which it is
+	 * parametric. Eg:
+	 * 
+	 * class Foo<T> { void Bar(); } - doesn't need to be inflated if only mvars' are supplied
+	 * class Foo { void Bar<T> (); } - doesn't need to be if only vars' are supplied
+	 * 
+	 */
+	if (!((method->is_generic && context->method_inst) || 
+		(method->klass->generic_container && context->class_inst)))
 		return method;
 
 	/*
@@ -1668,10 +1676,16 @@ mono_class_layout_fields (MonoClass *class)
 		if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT)
 			passes = 1;
 
-		if (class->parent)
+		if (class->parent) {
+			mono_class_setup_fields (class->parent);
+			if (class->parent->exception_type) {
+				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+				return;
+			}
 			real_size = class->parent->instance_size;
-		else
+		} else {
 			real_size = sizeof (MonoObject);
+		}
 
 		for (pass = 0; pass < passes; ++pass) {
 			for (i = 0; i < top; i++){
@@ -2392,6 +2406,16 @@ mono_unload_interface_ids (MonoBitSet *bitset)
 	mono_loader_unlock ();
 }
 
+void
+mono_unload_interface_id (MonoClass *class)
+{
+	if (class->interface_id) {
+		mono_loader_lock ();
+		mono_bitset_clear (global_interface_bitset, class->interface_id);
+		mono_loader_unlock ();
+	}
+}
+
 /*
  * mono_get_unique_iid:
  * @class: interface
@@ -2422,16 +2446,18 @@ mono_get_unique_iid (MonoClass *class)
 	}
 	mono_bitset_set (global_interface_bitset, iid);
 	/* set the bit also in the per-image set */
-	if (class->image->interface_bitset) {
-		if (iid >= mono_bitset_size (class->image->interface_bitset)) {
-			MonoBitSet *new_set = mono_bitset_clone (class->image->interface_bitset, iid + 1);
-			mono_bitset_free (class->image->interface_bitset);
-			class->image->interface_bitset = new_set;
+	if (!class->generic_class) {
+		if (class->image->interface_bitset) {
+			if (iid >= mono_bitset_size (class->image->interface_bitset)) {
+				MonoBitSet *new_set = mono_bitset_clone (class->image->interface_bitset, iid + 1);
+				mono_bitset_free (class->image->interface_bitset);
+				class->image->interface_bitset = new_set;
+			}
+		} else {
+			class->image->interface_bitset = mono_bitset_new (iid + 1, 0);
 		}
-	} else {
-		class->image->interface_bitset = mono_bitset_new (iid + 1, 0);
+		mono_bitset_set (class->image->interface_bitset, iid);
 	}
-	mono_bitset_set (class->image->interface_bitset, iid);
 
 #ifndef MONO_SMALL_CONFIG
 	if (mono_print_vtable) {
@@ -2539,7 +2565,7 @@ mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf, gbo
 		return -1;
 
 	for (i = 0; i < klass->interface_offsets_count; i++) {
-		if (mono_class_is_variant_compatible (itf, klass->interfaces_packed [i])) {
+		if (mono_class_is_variant_compatible (itf, klass->interfaces_packed [i], FALSE)) {
 			*non_exact_match = TRUE;
 			return klass->interface_offsets_packed [i];
 		}
@@ -3526,6 +3552,18 @@ print_method_signatures (MonoMethod *im, MonoMethod *cm) {
 
 #endif
 static gboolean
+is_wcf_hack_disabled (void)
+{
+	static gboolean disabled;
+	static gboolean inited = FALSE;
+	if (!inited) {
+		disabled = g_getenv ("MONO_DISABLE_WCF_HACK") != NULL;
+		inited = TRUE;
+	}
+	return disabled;
+}
+
+static gboolean
 check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *cm, gboolean require_newslot, gboolean interface_is_explicitly_implemented_by_class, gboolean slot_is_empty, gboolean security_enabled) {
 	MonoMethodSignature *cmsig, *imsig;
 	if (strcmp (im->name, cm->name) == 0) {
@@ -3569,6 +3607,15 @@ check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *c
 		if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
 			mono_security_core_clr_check_override (class, cm, im);
 		TRACE_INTERFACE_VTABLE (printf ("[NAME CHECK OK]"));
+		if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (cm, im, NULL)) {
+			char *body_name = mono_method_full_name (cm, TRUE);
+			char *decl_name = mono_method_full_name (im, TRUE);
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Method %s overrides method '%s' which is not accessible", body_name, decl_name));
+			g_free (body_name);
+			g_free (decl_name);
+			return FALSE;
+		}
+
 		return TRUE;
 	} else {
 		MonoClass *ic = im->klass;
@@ -3646,6 +3693,15 @@ check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *c
 			mono_security_core_clr_check_override (class, cm, im);
 		
 		TRACE_INTERFACE_VTABLE (printf ("[INJECTED INTERFACE CHECK OK]"));
+		if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (cm, im, NULL)) {
+			char *body_name = mono_method_full_name (cm, TRUE);
+			char *decl_name = mono_method_full_name (im, TRUE);
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Method %s overrides method '%s' which is not accessible", body_name, decl_name));
+			g_free (body_name);
+			g_free (decl_name);
+			return FALSE;
+		}
+		
 		return TRUE;
 	}
 }
@@ -3692,12 +3748,11 @@ print_vtable_full (MonoClass *class, MonoMethod** vtable, int size, int first_no
 	}
 	for (i = 0; i < size; ++i) {
 		MonoMethod *cm = vtable [i];
-		if (cm) {
-			char *cm_name = mono_method_full_name (cm, TRUE);
-			char newness = (i < parent_size) ? 'O' : ((i < first_non_interface_slot) ? 'I' : 'N');
-			printf ("  [%c][%03d][INDEX %03d] %s\n", newness, i, cm->slot, cm_name);
-			g_free (cm_name);
-		}
+		char *cm_name = cm ? mono_method_full_name (cm, TRUE) : g_strdup ("nil");
+		char newness = (i < parent_size) ? 'O' : ((i < first_non_interface_slot) ? 'I' : 'N');
+
+		printf ("  [%c][%03d][INDEX %03d] %s [%p]\n", newness, i, cm ? cm->slot : - 1, cm_name, cm);
+		g_free (cm_name);
 	}
 
 	g_free (full_name);
@@ -3790,6 +3845,14 @@ print_unimplemented_interface_method_info (MonoClass *class, MonoClass *ic, Mono
 	}
 }
 
+static MonoMethod*
+mono_method_get_method_definition (MonoMethod *method)
+{
+	while (method->is_inflated)
+		method = ((MonoMethodInflated*)method)->declaring;
+	return method;
+}
+
 static gboolean
 verify_class_overrides (MonoClass *class, MonoMethod **overrides, int onum)
 {
@@ -3822,6 +3885,18 @@ verify_class_overrides (MonoClass *class, MonoMethod **overrides, int onum)
 
 		if (!mono_class_is_assignable_from_slow (decl->klass, class)) {
 			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Method overrides a class or interface that extended or implemented by this type"));
+			return FALSE;
+		}
+
+		body = mono_method_get_method_definition (body);
+		decl = mono_method_get_method_definition (decl);
+
+		if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (body, decl, NULL)) {
+			char *body_name = mono_method_full_name (body, TRUE);
+			char *decl_name = mono_method_full_name (decl, TRUE);
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Method %s overrides method '%s' which is not accessible", body_name, decl_name));
+			g_free (body_name);
+			g_free (decl_name);
 			return FALSE;
 		}
 	}
@@ -4079,6 +4154,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 			if (im->flags & METHOD_ATTRIBUTE_STATIC)
 				continue;
 
+			TRACE_INTERFACE_VTABLE (printf ("\tchecking iface method %s\n", mono_method_full_name (im,1)));
+
 			// If there is an explicit implementation, just use it right away,
 			// otherwise look for a matching method
 			if (override_im == NULL) {
@@ -4203,9 +4280,21 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 						if (slot == -1)
 							goto fail;
 
+						if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (cm, m1, NULL)) {
+							char *body_name = mono_method_full_name (cm, TRUE);
+							char *decl_name = mono_method_full_name (m1, TRUE);
+							mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Method %s overrides method '%s' which is not accessible", body_name, decl_name));
+							g_free (body_name);
+							g_free (decl_name);
+							goto fail;
+						}
+
 						g_assert (cm->slot < max_vtsize);
 						if (!override_map)
 							override_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
+						TRACE_INTERFACE_VTABLE (printf ("adding iface override from %s [%p] to %s [%p]\n",
+							mono_method_full_name (m1, 1), m1,
+							mono_method_full_name (cm, 1), cm));
 						g_hash_table_insert (override_map, m1, cm);
 						break;
 					}
@@ -4240,6 +4329,9 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
  			overrides [i * 2 + 1]->slot = decl->slot;
 			if (!override_map)
 				override_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
+			TRACE_INTERFACE_VTABLE (printf ("adding explicit override from %s [%p] to %s [%p]\n", 
+				mono_method_full_name (decl, 1), decl,
+				mono_method_full_name (overrides [i * 2 + 1], 1), overrides [i * 2 + 1]));
 			g_hash_table_insert (override_map, decl, overrides [i * 2 + 1]);
 
 			if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
@@ -4252,9 +4344,13 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	 * overriden, then change the other occurances too.
 	 */
 	if (override_map) {
+		MonoMethod *cm;
+
 		for (i = 0; i < max_vtsize; ++i)
 			if (vtable [i]) {
-				MonoMethod *cm = g_hash_table_lookup (override_map, vtable [i]);
+				TRACE_INTERFACE_VTABLE (printf ("checking slot %d method %s[%p] for overrides\n", i, mono_method_full_name (vtable [i], 1), vtable [i]));
+
+				cm = g_hash_table_lookup (override_map, vtable [i]);
 				if (cm)
 					vtable [i] = cm;
 			}
@@ -4718,6 +4814,7 @@ mono_class_init (MonoClass *class)
 		/* AOT case */
 		class->vtable_size = cached_info.vtable_size;
 		class->has_finalize = cached_info.has_finalize;
+		class->has_finalize_inited = TRUE;
 		class->ghcimpl = cached_info.ghcimpl;
 		class->has_cctor = cached_info.has_cctor;
 	} else if (class->rank == 1 && class->byval_arg.type == MONO_TYPE_SZARRAY) {
@@ -4735,12 +4832,14 @@ mono_class_init (MonoClass *class)
 		} else {
 			class->vtable_size = szarray_vtable_size[slot];
 		}
+		class->has_finalize_inited = TRUE;
 	} else if (class->generic_class && !MONO_CLASS_IS_INTERFACE (class)) {
 		MonoClass *gklass = class->generic_class->container_class;
 
 		/* Generic instance case */
 		class->ghcimpl = gklass->ghcimpl;
-		class->has_finalize = gklass->has_finalize;
+		class->has_finalize = mono_class_has_finalizer (gklass);
+		class->has_finalize_inited = TRUE;
 		class->has_cctor = gklass->has_cctor;
 
 		mono_class_setup_vtable (gklass);
@@ -4764,45 +4863,6 @@ mono_class_init (MonoClass *class)
 			}
 		}
 		*/
-
-		/* Interfaces and valuetypes are not supposed to have finalizers */
-		if (!(MONO_CLASS_IS_INTERFACE (class) || class->valuetype)) {
-			MonoMethod *cmethod = NULL;
-
-			if (class->parent && class->parent->has_finalize) {
-				class->has_finalize = 1;
-			} else {
-				if (class->type_token) {
-					cmethod = find_method_in_metadata (class, "Finalize", 0, METHOD_ATTRIBUTE_VIRTUAL);
-				} else if (class->parent) {
-					/* FIXME: Optimize this */
-					mono_class_setup_vtable (class);
-					if (class->exception_type || mono_loader_get_last_error ())
-						goto leave;
-					cmethod = class->vtable [finalize_slot];
-				}
-
-				if (cmethod) {
-					/* Check that this is really the finalizer method */
-					mono_class_setup_vtable (class);
-					if (class->exception_type || mono_loader_get_last_error ())
-						goto leave;
-
-					g_assert (class->vtable_size > finalize_slot);
-
-					class->has_finalize = 0;
-					if (class->parent) { 
-						cmethod = class->vtable [finalize_slot];
-						g_assert (cmethod);
-						if (cmethod->is_inflated)
-							cmethod = ((MonoMethodInflated*)cmethod)->declaring;
-						if (cmethod != default_finalize) {
-							class->has_finalize = 1;
-						}
-					}
-				}
-			}
-		}
 
 		/* C# doesn't allow interfaces to have cctors */
 		if (!MONO_CLASS_IS_INTERFACE (class) || class->image != mono_defaults.corlib) {
@@ -4885,6 +4945,66 @@ mono_class_init (MonoClass *class)
 		mono_debugger_class_init_func (class);
 
 	return class->exception_type == MONO_EXCEPTION_NONE;
+}
+
+/*
+ * mono_class_has_finalizer:
+ *
+ *   Return whenever KLASS has a finalizer, initializing klass->has_finalizer in the
+ * process.
+ */
+gboolean
+mono_class_has_finalizer (MonoClass *klass)
+{
+	if (!klass->has_finalize_inited) {
+		MonoClass *class = klass;
+
+		mono_loader_lock ();
+
+		/* Interfaces and valuetypes are not supposed to have finalizers */
+		if (!(MONO_CLASS_IS_INTERFACE (class) || class->valuetype)) {
+			MonoMethod *cmethod = NULL;
+
+			if (class->parent && class->parent->has_finalize) {
+				class->has_finalize = 1;
+			} else {
+				if (class->parent) {
+					/*
+					 * Can't search in metadata for a method named Finalize, because that
+					 * ignores overrides.
+					 */
+					mono_class_setup_vtable (class);
+					if (class->exception_type || mono_loader_get_last_error ())
+						goto leave;
+					cmethod = class->vtable [finalize_slot];
+				}
+
+				if (cmethod) {
+					g_assert (class->vtable_size > finalize_slot);
+
+					class->has_finalize = 0;
+					if (class->parent) { 
+						if (cmethod->is_inflated)
+							cmethod = ((MonoMethodInflated*)cmethod)->declaring;
+						if (cmethod != default_finalize) {
+							class->has_finalize = 1;
+						}
+					}
+				}
+			}
+		}
+
+		mono_memory_barrier ();
+		klass->has_finalize_inited = TRUE;
+
+		mono_loader_unlock ();
+	}
+
+	return klass->has_finalize;
+
+ leave:
+	mono_loader_unlock ();
+	return FALSE;
 }
 
 gboolean
@@ -5415,14 +5535,16 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 {
 	MonoClass *klass, *gklass;
 
+	if (gclass->cached_class)
+		return gclass->cached_class;
+
 	mono_loader_lock ();
 	if (gclass->cached_class) {
 		mono_loader_unlock ();
 		return gclass->cached_class;
 	}
 
-	gclass->cached_class = mono_image_set_alloc0 (gclass->owner, sizeof (MonoClass));
-	klass = gclass->cached_class;
+	klass = mono_image_set_alloc0 (gclass->owner, sizeof (MonoClass));
 
 	gklass = gclass->container_class;
 
@@ -5495,6 +5617,9 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 			klass->size_inited = 1;
 		}
 	}
+
+	mono_memory_barrier ();
+	gclass->cached_class = klass;
 
 	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
 
@@ -5597,40 +5722,65 @@ make_generic_param_class (MonoGenericParam *param, MonoImage *image, gboolean is
 }
 
 #define FAST_CACHE_SIZE 16
-static MonoClass *var_cache_fast [FAST_CACHE_SIZE];
-static MonoClass *mvar_cache_fast [FAST_CACHE_SIZE];
-static GHashTable *var_cache_slow;
-static GHashTable *mvar_cache_slow;
 
 static MonoClass *
 get_anon_gparam_class (MonoGenericParam *param, gboolean is_mvar)
 {
 	int n = mono_generic_param_num (param);
+	MonoImage *image = param->image;
 	GHashTable *ht;
 
-	if (n < FAST_CACHE_SIZE)
-		return (is_mvar ? mvar_cache_fast : var_cache_fast) [n];
-	ht = is_mvar ? mvar_cache_slow : var_cache_slow;
-	return ht ? g_hash_table_lookup (ht, GINT_TO_POINTER (n)) : NULL;
+	g_assert (image);
+
+	if (n < FAST_CACHE_SIZE) {
+		if (is_mvar)
+			return image->mvar_cache_fast ? image->mvar_cache_fast [n] : NULL;
+		else
+			return image->var_cache_fast ? image->var_cache_fast [n] : NULL;
+	} else {
+		ht = is_mvar ? image->mvar_cache_slow : image->var_cache_slow;
+		return ht ? g_hash_table_lookup (ht, GINT_TO_POINTER (n)) : NULL;
+	}
 }
 
+/*
+ * LOCKING: Acquires the loader lock.
+ */
 static void
 set_anon_gparam_class (MonoGenericParam *param, gboolean is_mvar, MonoClass *klass)
 {
 	int n = mono_generic_param_num (param);
+	MonoImage *image = param->image;
 	GHashTable *ht;
 
+	g_assert (image);
+
 	if (n < FAST_CACHE_SIZE) {
-		(is_mvar ? mvar_cache_fast : var_cache_fast) [n] = klass;
+		if (is_mvar) {
+			/* No locking needed */
+			if (!image->mvar_cache_fast)
+				image->mvar_cache_fast = mono_image_alloc0 (image, sizeof (MonoClass*) * FAST_CACHE_SIZE);
+			image->mvar_cache_fast [n] = klass;
+		} else {
+			if (!image->var_cache_fast)
+				image->var_cache_fast = mono_image_alloc0 (image, sizeof (MonoClass*) * FAST_CACHE_SIZE);
+			image->var_cache_fast [n] = klass;
+		}
 		return;
 	}
-	ht = is_mvar ? mvar_cache_slow : var_cache_slow;
+	ht = is_mvar ? image->mvar_cache_slow : image->var_cache_slow;
 	if (!ht) {
-		ht = g_hash_table_new (NULL, NULL);
-		if (is_mvar)
-			mvar_cache_slow = ht;
-		else
-			var_cache_slow = ht;
+		mono_loader_lock ();
+		ht = is_mvar ? image->mvar_cache_slow : image->var_cache_slow;
+		if (!ht) {
+			ht = g_hash_table_new (NULL, NULL);
+			mono_memory_barrier ();
+			if (is_mvar)
+				image->mvar_cache_slow = ht;
+			else
+				image->var_cache_slow = ht;
+		}
+		mono_loader_unlock ();
 	}
 
 	g_hash_table_insert (ht, GINT_TO_POINTER (n), klass);
@@ -6333,10 +6483,10 @@ mono_class_get_field_token (MonoClassField *field)
 	int i;
 
 	mono_class_setup_fields_locking (klass);
-	if (klass->exception_type)
-		return 0;
 
 	while (klass) {
+		if (!klass->fields)
+			return 0;
 		for (i = 0; i < klass->field.count; ++i) {
 			if (&klass->fields [i] == field) {
 				int idx = klass->field.first + i + 1;
@@ -6390,7 +6540,9 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 		
 	if (!klass->ext->field_def_values [field_index].data) {
 		cindex = mono_metadata_get_constant_index (field->parent->image, mono_class_get_field_token (field), 0);
-		g_assert (cindex);
+		if (!cindex)
+			return NULL;
+
 		g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA));
 
 		mono_metadata_decode_row (&field->parent->image->tables [MONO_TABLE_CONSTANT], cindex - 1, constant_cols, MONO_CONSTANT_SIZE);
@@ -7020,7 +7172,8 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 		name = buf;
 	}
 
-	if (get_class_from_name) {
+	/* FIXME: get_class_from_name () can't handle types in the EXPORTEDTYPE table */
+	if (get_class_from_name && image->tables [MONO_TABLE_EXPORTEDTYPE].rows == 0) {
 		gboolean res = get_class_from_name (image, name_space, name, &class);
 		if (res) {
 			if (!class)
@@ -7139,6 +7292,12 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 	return FALSE;
 }
 
+static gboolean
+mono_type_is_generic_argument (MonoType *type)
+{
+	return type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR;
+}
+
 gboolean
 mono_class_has_variant_generic_params (MonoClass *klass)
 {
@@ -7157,6 +7316,26 @@ mono_class_has_variant_generic_params (MonoClass *klass)
 	return FALSE;
 }
 
+static gboolean
+mono_gparam_is_reference_conversible (MonoClass *target, MonoClass *candidate, gboolean check_for_reference_conv)
+{
+	if (target == candidate)
+		return TRUE;
+
+	if (check_for_reference_conv &&
+		mono_type_is_generic_argument (&target->byval_arg) &&
+		mono_type_is_generic_argument (&candidate->byval_arg)) {
+		MonoGenericParam *gparam = candidate->byval_arg.data.generic_param;
+		MonoGenericParamInfo *pinfo = mono_generic_param_info (gparam);
+
+		if (!pinfo || (pinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0)
+			return FALSE;
+	}
+	if (!mono_class_is_assignable_from (target, candidate))
+		return FALSE;
+	return TRUE;
+}
+
 /**
  * @container the generic container from the GTD
  * @klass: the class to be assigned to
@@ -7165,16 +7344,19 @@ mono_class_has_variant_generic_params (MonoClass *klass)
  * Both klass and oklass must be instances of the same generic interface.
  * Return true if @klass can be assigned to a @klass variable
  */
-static gboolean
-mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass)
+gboolean
+mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv)
 {
 	int j;
 	MonoType **klass_argv, **oklass_argv;
 	MonoClass *klass_gtd = mono_class_get_generic_type_definition (klass);
 	MonoGenericContainer *container = klass_gtd->generic_container;
 
+	if (klass == oklass)
+		return TRUE;
+
 	/*Viable candidates are instances of the same generic interface*/
-	if (mono_class_get_generic_type_definition (oklass) != klass_gtd)
+	if (mono_class_get_generic_type_definition (oklass) != klass_gtd || oklass == klass_gtd)
 		return FALSE;
 
 	klass_argv = &klass->generic_class->context.class_inst->type_argv [0];
@@ -7193,16 +7375,117 @@ mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass)
 		 */
 		if (param1_class != param2_class) {
 			if (mono_generic_container_get_param_info (container, j)->flags & MONO_GEN_PARAM_VARIANT) {
-				if (!mono_class_is_assignable_from (param1_class, param2_class))
+				if (!mono_gparam_is_reference_conversible (param1_class, param2_class, check_for_reference_conv))
 					return FALSE;
 			} else if (mono_generic_container_get_param_info (container, j)->flags & MONO_GEN_PARAM_COVARIANT) {
-				if (!mono_class_is_assignable_from (param2_class, param1_class))
+				if (!mono_gparam_is_reference_conversible (param2_class, param1_class, check_for_reference_conv))
 					return FALSE;
 			} else
 				return FALSE;
 		}
 	}
 	return TRUE;
+}
+
+static gboolean
+mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
+{
+	MonoGenericParam *gparam, *ogparam;
+	MonoGenericParamInfo *tinfo, *cinfo;
+	MonoClass **candidate_class;
+	gboolean class_constraint_satisfied, valuetype_constraint_satisfied;
+	int tmask, cmask;
+
+	if (target == candidate)
+		return TRUE;
+	if (target->byval_arg.type != candidate->byval_arg.type)
+		return FALSE;
+
+	gparam = target->byval_arg.data.generic_param;
+	ogparam = candidate->byval_arg.data.generic_param;
+	tinfo = mono_generic_param_info (gparam);
+	cinfo = mono_generic_param_info (ogparam);
+
+	class_constraint_satisfied = FALSE;
+	valuetype_constraint_satisfied = FALSE;
+
+	/*candidate must have a super set of target's special constraints*/
+	tmask = tinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
+	cmask = cinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
+
+	if (cinfo->constraints) {
+		for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
+			MonoClass *cc = *candidate_class;
+
+			if (mono_type_is_reference (&cc->byval_arg) && !MONO_CLASS_IS_INTERFACE (cc))
+				class_constraint_satisfied = TRUE;
+			else if (!mono_type_is_reference (&cc->byval_arg) && !MONO_CLASS_IS_INTERFACE (cc))
+				valuetype_constraint_satisfied = TRUE;
+		}
+	}
+	class_constraint_satisfied |= (cmask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) != 0;
+	valuetype_constraint_satisfied |= (cmask & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0;
+
+	if ((tmask & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) && !class_constraint_satisfied)
+		return FALSE;
+	if ((tmask & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) && !valuetype_constraint_satisfied)
+		return FALSE;
+	if ((tmask & GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT) && !((cmask & GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT) ||
+		valuetype_constraint_satisfied)) {
+		return FALSE;
+	}
+
+
+	/*candidate type constraints must be a superset of target's*/
+	if (tinfo->constraints) {
+		MonoClass **target_class;
+		for (target_class = tinfo->constraints; *target_class; ++target_class) {
+			MonoClass *tc = *target_class;
+
+			/*
+			 * A constraint from @target might inflate into @candidate itself and in that case we don't need
+			 * check it's constraints since it satisfy the constraint by itself.
+			 */
+			if (mono_metadata_type_equal (&tc->byval_arg, &candidate->byval_arg))
+				continue;
+
+			if (!cinfo->constraints)
+				return FALSE;
+
+			for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
+				MonoClass *cc = *candidate_class;
+
+				if (mono_class_is_assignable_from (tc, cc))
+					break;
+
+				/*
+				 * This happens when we have the following:
+				 *
+				 * Bar<K> where K : IFace
+				 * Foo<T, U> where T : U where U : IFace
+				 * 	...
+				 * 	Bar<T> <- T here satisfy K constraint transitively through to U's constraint
+				 *
+				 */
+				if (mono_type_is_generic_argument (&cc->byval_arg)) {
+					if (mono_gparam_is_assignable_from (target, cc))
+						break;
+				}
+			}
+			if (!*candidate_class)
+				return FALSE;
+		}
+	}
+
+	/*candidate itself must have a constraint that satisfy target*/
+	if (cinfo->constraints) {
+		for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
+			MonoClass *cc = *candidate_class;
+			if (mono_class_is_assignable_from (target, cc))
+				return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 /**
@@ -7226,12 +7509,27 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 	if (klass->exception_type || oklass->exception_type)
 		return FALSE;
 
-	if ((klass->byval_arg.type == MONO_TYPE_VAR) || (klass->byval_arg.type == MONO_TYPE_MVAR))
-		return klass == oklass;
+	if (mono_type_is_generic_argument (&klass->byval_arg)) {
+		if (!mono_type_is_generic_argument (&oklass->byval_arg))
+			return FALSE;
+		return mono_gparam_is_assignable_from (klass, oklass);
+	}
 
 	if (MONO_CLASS_IS_INTERFACE (klass)) {
-		if ((oklass->byval_arg.type == MONO_TYPE_VAR) || (oklass->byval_arg.type == MONO_TYPE_MVAR))
+		if ((oklass->byval_arg.type == MONO_TYPE_VAR) || (oklass->byval_arg.type == MONO_TYPE_MVAR)) {
+			MonoGenericParam *gparam = oklass->byval_arg.data.generic_param;
+			MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
+			int i;
+
+			if (constraints) {
+				for (i = 0; constraints [i]; ++i) {
+					if (mono_class_is_assignable_from (klass, constraints [i]))
+						return TRUE;
+				}
+			}
+
 			return FALSE;
+		}
 
 		/* interface_offsets might not be set for dynamic classes */
 		if (oklass->ref_info_handle && !oklass->interface_bitmap)
@@ -7259,13 +7557,13 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 			for (i = 0; i < oklass->interface_offsets_count; ++i) {
 				MonoClass *iface = oklass->interfaces_packed [i];
 
-				if (mono_class_is_variant_compatible (klass, iface))
+				if (mono_class_is_variant_compatible (klass, iface, FALSE))
 					return TRUE;
 			}
 		}
 		return FALSE;
 	} else if (klass->delegate) {
-		if (mono_class_has_variant_generic_params (klass) && mono_class_is_variant_compatible (klass, oklass))
+		if (mono_class_has_variant_generic_params (klass) && mono_class_is_variant_compatible (klass, oklass, FALSE))
 			return TRUE;
 	}else if (klass->rank) {
 		MonoClass *eclass, *eoclass;
@@ -7314,7 +7612,7 @@ mono_class_is_variant_compatible_slow (MonoClass *klass, MonoClass *oklass)
 	MonoGenericContainer *container = klass_gtd->generic_container;
 
 	/*Viable candidates are instances of the same generic interface*/
-	if (mono_class_get_generic_type_definition (oklass) != klass_gtd)
+	if (mono_class_get_generic_type_definition (oklass) != klass_gtd || oklass == klass_gtd)
 		return FALSE;
 
 	klass_argv = &klass->generic_class->context.class_inst->type_argv [0];
@@ -7431,10 +7729,10 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 		return mono_class_implement_interface_slow (target, candidate);
 
  	if (target->delegate && mono_class_has_variant_generic_params (target))
-		return mono_class_is_variant_compatible (target, candidate);
+		return mono_class_is_variant_compatible (target, candidate, FALSE);
 
 	/*FIXME properly handle nullables and arrays */
-
+	/*FIXME properly handle (M)VAR */
 	return FALSE;
 }
 
@@ -7482,7 +7780,7 @@ mono_class_get_finalizer (MonoClass *klass)
 
 	if (!klass->inited)
 		mono_class_init (klass);
-	if (!klass->has_finalize)
+	if (!mono_class_has_finalizer (klass))
 		return NULL;
 
 	if (mono_class_get_cached_class_info (klass, &cached_info))
@@ -8055,7 +8353,7 @@ mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 			method++;
 		}
 		while (method < &klass->methods [klass->method.count]) {
-			if (((*method)->flags & METHOD_ATTRIBUTE_VIRTUAL))
+			if (*method && ((*method)->flags & METHOD_ATTRIBUTE_VIRTUAL))
 				break;
 			method ++;
 		}
@@ -8967,6 +9265,9 @@ can_access_type (MonoClass *access_klass, MonoClass *member_klass)
 {
 	int access_level;
 
+	if (access_klass->image->assembly && access_klass->image->assembly->corlib_internal)
+		return TRUE;
+
 	if (access_klass->element_class && !access_klass->enumtype)
 		access_klass = access_klass->element_class;
 
@@ -9026,6 +9327,9 @@ static gboolean
 can_access_member (MonoClass *access_klass, MonoClass *member_klass, MonoClass* context_klass, int access_level)
 {
 	MonoClass *member_generic_def;
+	if (access_klass->image->assembly && access_klass->image->assembly->corlib_internal)
+		return TRUE;
+
 	if (((access_klass->generic_class && access_klass->generic_class->container_class) ||
 					access_klass->generic_container) && 
 			(member_generic_def = get_generic_definition_class (member_klass))) {

@@ -1,4 +1,4 @@
-// cs0266-8.cs: Cannot implicitly convert type `void*' to `int*'. An explicit conversion exists (are you missing a cast?)
+// CS0266: Cannot implicitly convert type `void*' to `int*'. An explicit conversion exists (are you missing a cast?)
 // Line: 7
 // Compiler options: -unsafe
 

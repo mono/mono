@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -44,6 +45,7 @@ namespace System.ServiceModel
 
 		ServiceEndpoint service_endpoint;
 		IChannelFactory factory;
+		List<IClientChannel> opened_channels = new List<IClientChannel> ();
 
 		protected ChannelFactory ()
 		{
@@ -61,6 +63,10 @@ namespace System.ServiceModel
 			private set {
 				factory = value;
 			}
+		}
+
+		internal List<IClientChannel> OpenedChannels {
+			get { return opened_channels; }
 		}
 
 		public ServiceEndpoint Endpoint {
@@ -111,25 +117,48 @@ namespace System.ServiceModel
 
 			string contractName = Endpoint.Contract.ConfigurationName;
 			ClientSection client = ConfigUtil.ClientSection;
-			ChannelEndpointElement res = null;
+			ChannelEndpointElement endpoint = null;
+
 			foreach (ChannelEndpointElement el in client.Endpoints) {
 				if (el.Contract == contractName && (endpointConfig == el.Name || endpointConfig == "*")) {
-					if (res != null)
+					if (endpoint != null)
 						throw new InvalidOperationException (String.Format ("More then one endpoint matching contract {0} was found.", contractName));
-					res = el;
+					endpoint = el;
 				}
 			}
 
-			if (res == null)
+			if (endpoint == null)
 				throw new InvalidOperationException (String.Format ("Client endpoint configuration '{0}' was not found in {1} endpoints.", endpointConfig, client.Endpoints.Count));
 
-			if (Endpoint.Binding == null)
-				Endpoint.Binding = ConfigUtil.CreateBinding (res.Binding, res.BindingConfiguration);
-			if (Endpoint.Address == null)
-				Endpoint.Address = new EndpointAddress (res.Address);
+#if NET_4_0
+			var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+			var contractType = ConfigUtil.GetTypeFromConfigString (endpoint.Contract, NamedConfigCategory.Contract);
+			if (contractType == null)
+				throw new ArgumentException (String.Format ("Contract '{0}' was not found", endpoint.Contract));
+			var contract = String.IsNullOrEmpty (endpoint.Contract) ? Endpoint.Contract : ContractDescription.GetContract (contractType);
 
-			if (res.BehaviorConfiguration != "")
-				ApplyBehavior (res.BehaviorConfiguration);
+			if (!String.IsNullOrEmpty (endpoint.Kind)) {
+				var se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
+				if (se.Binding == null)
+					se.Binding = binding;
+				if (se.Address == null && se.Binding != null) // standard endpoint might have empty address
+					se.Address = new EndpointAddress (endpoint.Address);
+				if (se.Binding == null && se.Address != null) // look for protocol mapping
+					se.Binding = ConfigUtil.GetBindingByProtocolMapping (se.Address.Uri);
+
+				service_endpoint = se;
+			} else {
+				if (binding == null && endpoint.Address != null) // look for protocol mapping
+					Endpoint.Binding = ConfigUtil.GetBindingByProtocolMapping (endpoint.Address);
+			}
+#endif
+			if (Endpoint.Binding == null)
+				Endpoint.Binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+			if (Endpoint.Address == null)
+				Endpoint.Address = new EndpointAddress (endpoint.Address);
+
+			if (endpoint.BehaviorConfiguration != "")
+				ApplyBehavior (endpoint.BehaviorConfiguration);
 #endif
 		}
 
@@ -235,10 +264,10 @@ namespace System.ServiceModel
 			ContractDescription cd = Endpoint.Contract;
 #if !NET_2_1
 			pl.Add (ChannelProtectionRequirements.CreateFromContract (cd));
+#endif
 
 			foreach (IEndpointBehavior behavior in Endpoint.Behaviors)
 				behavior.AddBindingParameters (Endpoint, pl);
-#endif
 
 			return pl;
 		}
@@ -261,8 +290,6 @@ namespace System.ServiceModel
 		{
 			if (Endpoint == null)
 				throw new InvalidOperationException ("A service endpoint must be configured for this channel factory");
-			if (Endpoint.Address == null)
-				throw new InvalidOperationException ("An EndpointAddress must be configured for this channel factory");
 			if (Endpoint.Contract == null)
 				throw new InvalidOperationException ("A service Contract must be configured for this channel factory");
 			if (Endpoint.Binding == null)
@@ -341,8 +368,11 @@ namespace System.ServiceModel
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
+			foreach (var ch in opened_channels.ToArray ())
+				ch.Close (timeout - (DateTime.Now - start));
 			if (OpenedChannelFactory != null)
-				OpenedChannelFactory.Close (timeout);
+				OpenedChannelFactory.Close (timeout - (DateTime.Now - start));
 		}
 
 		protected override void OnOpen (TimeSpan timeout)

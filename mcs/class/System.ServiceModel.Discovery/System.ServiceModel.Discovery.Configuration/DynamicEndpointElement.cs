@@ -52,7 +52,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return (DiscoveryClientSettingsElement) base [discovery_client_settings]; }
 		}
 		
-		protected override Type EndpointType {
+		protected internal override Type EndpointType {
 			get { return typeof (DynamicEndpoint); }
 		}
 		
@@ -60,7 +60,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return properties; }
 		}
 		
-		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
+		protected internal override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
 			throw new NotImplementedException ();
 		}

@@ -277,11 +277,6 @@ namespace System.Reflection.Emit
 					"Argument value {0} is not valid.", (int) access),
 					"access");
 
-#if NET_4_0
-			if ((access & AssemblyBuilderAccess.RunAndCollect) == AssemblyBuilderAccess.RunAndCollect)
-				throw new NotSupportedException ("RunAndCollect not yet supported.");
-#endif
-
 			name = n.Name;
 			this.access = (uint)access;
 			flags = (uint) n.Flags;
@@ -884,7 +879,13 @@ namespace System.Reflection.Emit
 
 			}
 		}
-
+/*
+		internal bool IsCollectible {
+			get {
+				return access == (uint)AssemblyBuilderAccess.RunAndCollect;
+			}
+		}
+*/
 		internal string AssemblyDir {
 			get {
 				return dir;
@@ -1216,7 +1217,7 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
@@ -1265,6 +1266,11 @@ namespace System.Reflection.Emit
 			return modules;
 		}
 
+		public override AssemblyName GetName (bool copiedName)
+		{
+			return base.GetName (copiedName);
+		}
+
 		[MonoTODO ("This always returns an empty array")]
 		public override AssemblyName[] GetReferencedAssemblies () {
 			return GetReferencedAssemblies (this);
@@ -1301,6 +1307,35 @@ namespace System.Reflection.Emit
 
 		public override bool IsDynamic {
 			get { return true; }
+		}
+
+		public override bool Equals (object obj)
+		{
+			return base.Equals (obj);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return base.IsDefined (attributeType, inherit);
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			return base.GetCustomAttributes (inherit);
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return base.GetCustomAttributes (attributeType, inherit);
+		}
+
+		public override string FullName {
+			get { return base.FullName; }
 		}
 #endif
 	}

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -27,6 +27,79 @@ using System.Text;
 
 namespace IKVM.Reflection
 {
+	// this respresents a type name as in metadata:
+	// - ns will be null for empty the namespace (never the empty string)
+	// - the strings are not escaped
+	struct TypeName : IEquatable<TypeName>
+	{
+		private readonly string ns;
+		private readonly string name;
+
+		internal TypeName(string ns, string name)
+		{
+			if (name == null)
+			{
+				throw new ArgumentNullException("name");
+			}
+			this.ns = ns;
+			this.name = name;
+		}
+
+		internal string Name
+		{
+			get { return name; }
+		}
+
+		internal string Namespace
+		{
+			get { return ns; }
+		}
+
+		public static bool operator ==(TypeName o1, TypeName o2)
+		{
+			return o1.ns == o2.ns && o1.name == o2.name;
+		}
+
+		public static bool operator !=(TypeName o1, TypeName o2)
+		{
+			return o1.ns != o2.ns || o1.name != o2.name;
+		}
+
+		public override int GetHashCode()
+		{
+			return ns == null ? name.GetHashCode() : ns.GetHashCode() * 37 + name.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			TypeName? other = obj as TypeName?;
+			return other != null && other.Value == this;
+		}
+
+		public override string ToString()
+		{
+			return ns == null ? name : ns + "." + name;
+		}
+
+		bool IEquatable<TypeName>.Equals(TypeName other)
+		{
+			return this == other;
+		}
+
+		internal static TypeName Split(string name)
+		{
+			int dot = name.LastIndexOf('.');
+			if (dot == -1)
+			{
+				return new TypeName(null, name);
+			}
+			else
+			{
+				return new TypeName(name.Substring(0, dot), name.Substring(dot + 1));
+			}
+		}
+	}
+
 	struct TypeNameParser
 	{
 		private const string SpecialChars = "\\+,[]*&";
@@ -366,8 +439,9 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal Type GetType(Universe universe, Assembly context, bool throwOnError, string originalName)
+		internal Type GetType(Universe universe, Assembly context, bool throwOnError, string originalName, bool resolve)
 		{
+			TypeName name = TypeName.Split(this.name);
 			Type type;
 			if (assemblyName != null)
 			{
@@ -376,24 +450,49 @@ namespace IKVM.Reflection
 				{
 					return null;
 				}
-				type = asm.GetTypeImpl(name);
+				if (resolve)
+				{
+					type = asm.ResolveType(name);
+				}
+				else
+				{
+					type = asm.FindType(name);
+				}
 			}
 			else if (context == null)
 			{
-				type = universe.Mscorlib.GetTypeImpl(name);
+				if (resolve)
+				{
+					type = universe.Mscorlib.ResolveType(name);
+				}
+				else
+				{
+					type = universe.Mscorlib.FindType(name);
+				}
 			}
 			else
 			{
-				type = context.GetTypeImpl(name);
+				type = context.FindType(name);
 				if (type == null && context != universe.Mscorlib)
 				{
-					type = universe.Mscorlib.GetTypeImpl(name);
+					type = universe.Mscorlib.FindType(name);
+				}
+				if (type == null && resolve)
+				{
+					if (universe.Mscorlib.__IsMissing && !context.__IsMissing)
+					{
+						type = universe.Mscorlib.ResolveType(name);
+					}
+					else
+					{
+						type = context.ResolveType(name);
+					}
 				}
 			}
-			return Expand(type, context, throwOnError, originalName);
+			return Expand(type, context, throwOnError, originalName, resolve);
 		}
 
-		internal Type Expand(Type type, Assembly context, bool throwOnError, string originalName)
+		internal Type Expand(Type type, Assembly context, bool throwOnError, string originalName, bool resolve)
 		{
 			if (type == null)
 			{
@@ -405,16 +504,26 @@ namespace IKVM.Reflection
 			}
 			if (nested != null)
 			{
+				Type outer;
 				foreach (string nest in nested)
 				{
-					type = type.GetNestedType(nest, BindingFlags.Public | BindingFlags.NonPublic);
+					outer = type;
+					TypeName name = TypeName.Split(TypeNameParser.Unescape(nest));
+					type = outer.FindNestedType(name);
 					if (type == null)
 					{
-						if (throwOnError)
+						if (resolve)
+						{
+							type = outer.Module.universe.GetMissingTypeOrThrow(outer.Module, outer, name);
+						}
+						else if (throwOnError)
 						{
 							throw new TypeLoadException(originalName);
 						}
-						return null;
+						else
+						{
+							return null;
+						}
 					}
 				}
 			}
@@ -423,7 +532,7 @@ namespace IKVM.Reflection
 				Type[] typeArgs = new Type[genericParameters.Length];
 				for (int i = 0; i < typeArgs.Length; i++)
 				{
-					typeArgs[i] = genericParameters[i].GetType(type.Assembly.universe, context, throwOnError, originalName);
+					typeArgs[i] = genericParameters[i].GetType(type.Assembly.universe, context, throwOnError, originalName, resolve);
 					if (typeArgs[i] == null)
 					{
 						return null;

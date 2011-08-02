@@ -1,4 +1,4 @@
-// cs0582.cs: Conditional not valid on interface members
+// CS0582: Conditional not valid on interface members
 // Line: 5
 
 interface Interface {

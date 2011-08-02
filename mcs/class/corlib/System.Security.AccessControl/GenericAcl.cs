@@ -93,6 +93,9 @@ namespace System.Security.AccessControl {
 		{
 			return GetEnumerator ();
 		}
+		
+		internal abstract string GetSddlForm(ControlFlags sdFlags,
+		                                     bool isDacl);
 	}
 }
 

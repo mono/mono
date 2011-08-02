@@ -1,4 +1,4 @@
-// CS1686: Local variable or parameter `i' cannot have their address taken and be used inside an anonymous method or lambda expression
+// CS1686: Local variable or parameter `i' cannot have their address taken and be used inside an anonymous method, lambda expression or query expression
 // Line: 16
 // Compiler options: -unsafe
 

@@ -40,6 +40,7 @@ namespace System.ServiceModel.Description
 	public abstract class MetadataImporter
 	{
 		KeyedByTypeCollection<IPolicyImportExtension> policy_extensions;
+		Collection<MetadataConversionError> errors = new Collection<MetadataConversionError> ();
 
 		internal MetadataImporter (IEnumerable<IPolicyImportExtension> policyImportExtensions)
 		{
@@ -54,8 +55,9 @@ namespace System.ServiceModel.Description
 			policy_extensions.Add (new MessageEncodingBindingElementImporter ());
 		}
 
+		[MonoTODO ("Not in use yet")]
 		public Collection<MetadataConversionError> Errors {
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}
 
 		public KeyedByTypeCollection<IPolicyImportExtension> PolicyImportExtensions {

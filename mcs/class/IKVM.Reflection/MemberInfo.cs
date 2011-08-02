@@ -33,6 +33,11 @@ namespace IKVM.Reflection
 #pragma warning disable 660, 661
 	public abstract class MemberInfo : ICustomAttributeProvider
 	{
+		// prevent external subclasses
+		internal MemberInfo()
+		{
+		}
+
 		public abstract string Name { get; }
 		public abstract Type DeclaringType { get; }
 		public abstract MemberTypes MemberType { get; }
@@ -45,6 +50,11 @@ namespace IKVM.Reflection
 		public abstract Module Module
 		{
 			get;
+		}
+
+		public virtual bool __IsMissing
+		{
+			get { return false; }
 		}
 
 		public bool IsDefined(Type attributeType, bool inherit)

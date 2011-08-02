@@ -1739,30 +1739,6 @@ ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk)
 #endif
 }
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	return mono_string_from_bstr(ptr);
-}
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString* ptr)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	return mono_string_to_bstr(ptr);
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (gpointer ptr)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	mono_free_bstr (ptr);
-}
-
 /**
  * cominterop_get_ccw_object:
  * @ccw_entry: a pointer to the CCWEntry
@@ -2699,7 +2675,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			if (t->byref) {
 				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
 			} else
 				mono_mb_emit_ldarg (mb, argnum);
 
@@ -2714,7 +2690,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			label2 = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
-			index_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+			index_var = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 			mono_mb_emit_byte (mb, CEE_LDC_I4_0);
 			mono_mb_emit_stloc (mb, index_var);
 
@@ -2726,7 +2702,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			if (t->byref) {
 				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_byte (mb, CEE_LDIND_I);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
 			} else
 				mono_mb_emit_ldarg (mb, argnum);
 
@@ -3187,21 +3163,73 @@ mono_marshal_free_ccw (MonoObject* object)
 gpointer
 mono_string_to_bstr (MonoString *string_obj)
 {
-	g_assert_not_reached ();
-	return NULL;
+	if (!string_obj)
+		return NULL;
+#ifdef HOST_WIN32
+	return SysAllocStringLen (mono_string_chars (string_obj), mono_string_length (string_obj));
+#else
+	{
+		int slen = mono_string_length (string_obj);
+		/* allocate len + 1 utf16 characters plus 4 byte integer for length*/
+		char *ret = g_malloc ((slen + 1) * sizeof(gunichar2) + sizeof(guint32));
+		if (ret == NULL)
+			return NULL;
+		memcpy (ret + sizeof(guint32), mono_string_chars (string_obj), slen * sizeof(gunichar2));
+		* ((guint32 *) ret) = slen * sizeof(gunichar2);
+		ret [4 + slen * sizeof(gunichar2)] = 0;
+		ret [5 + slen * sizeof(gunichar2)] = 0;
+
+		return ret + 4;
+	}
+#endif
 }
 
 MonoString *
 mono_string_from_bstr (gpointer bstr)
 {
-	g_assert_not_reached ();
-	return NULL;
+	if (!bstr)
+		return NULL;
+#ifdef HOST_WIN32
+	return mono_string_new_utf16 (mono_domain_get (), bstr, SysStringLen (bstr));
+#else
+	return mono_string_new_utf16 (mono_domain_get (), bstr, *((guint32 *)bstr - 1) / sizeof(gunichar2));
+#endif
 }
 
 void
 mono_free_bstr (gpointer bstr)
 {
-	g_assert_not_reached ();
+	if (!bstr)
+		return;
+#ifdef HOST_WIN32
+	SysFreeString ((BSTR)bstr);
+#else
+	g_free (((char *)bstr) - 4);
+#endif
 }
 
 #endif /* DISABLE_COM */
+
+MonoString *
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr)
+{
+	MONO_ARCH_SAVE_REGS;
+
+	return mono_string_from_bstr(ptr);
+}
+
+gpointer
+ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString* ptr)
+{
+	MONO_ARCH_SAVE_REGS;
+
+	return mono_string_to_bstr(ptr);
+}
+
+void
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (gpointer ptr)
+{
+	MONO_ARCH_SAVE_REGS;
+
+	mono_free_bstr (ptr);
+}

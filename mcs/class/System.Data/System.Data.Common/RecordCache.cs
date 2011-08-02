@@ -106,12 +106,13 @@ namespace System.Data.Common
 				recordIndex = NewRecord ();
 
 			try {
-				foreach (DataColumn fromColumn in fromTable.Columns) {
-					DataColumn column = _table.Columns [fromColumn.ColumnName];
-					if (column != null)
-						column.DataContainer.CopyValue (fromColumn.DataContainer, fromRecordIndex, recordIndex);
+				foreach (DataColumn toColumn in _table.Columns) {
+					DataColumn fromColumn = fromTable.Columns [toColumn.ColumnName];
+					if (fromColumn != null)
+						toColumn.DataContainer.CopyValue (fromColumn.DataContainer, fromRecordIndex, recordIndex);
+					else
+						toColumn.DataContainer.CopyValue (_table.DefaultValuesRowIndex, recordIndex);					
 				}
-
 				return recordIndex;
 			} catch {
 				if (toRecordIndex == -1)

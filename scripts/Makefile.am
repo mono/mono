@@ -31,16 +31,18 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
-	$(scripts_mcs)		\
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mono-test-install	\
 	peverify			\
+	mcs					\
+	gmcs				\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
 if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
+bin_SCRIPTS += dmcs
 endif
 
 scripts_4_0_umask = \
@@ -53,16 +55,13 @@ deprecated = 					\
 
 scripts_2_0 = \
 	al2$(SCRIPT_SUFFIX)			\
-	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
-	gmcs$(SCRIPT_SUFFIX)			\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)
 
 scripts_4_0 = \
-	dmcs$(SCRIPT_SUFFIX)			\
 	disco$(SCRIPT_SUFFIX)			\
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
@@ -76,6 +75,7 @@ scripts_4_0 = \
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
 	chktrust$(SCRIPT_SUFFIX)		\
+	crlupdate$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
 	lc$(SCRIPT_SUFFIX)			\
@@ -132,10 +132,9 @@ scripts_defaults = 		\
 scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
-scripts_mcs = mcs$(SCRIPT_SUFFIX)
 scripts_mono_configuration_crypto = mono-configuration-crypto$(SCRIPT_SUFFIX)
 
-CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_mcs) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -148,6 +147,9 @@ EXTRA_DIST =			\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	peverify.in			\
+	mcs.in				\
+	gmcs.in				\
+	dmcs.in				\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
@@ -197,6 +199,18 @@ peverify: peverify.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/peverify.in > $@.tmp
 	mv -f $@.tmp $@
 
+mcs: mcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+gmcs: gmcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/gmcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+dmcs: dmcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/dmcs.in > $@.tmp
+	mv -f $@.tmp $@
+
 mono-service: mono-service.in Makefile
 	$(REWRITE4) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
 	mv -f $@.tmp $@
@@ -222,10 +236,6 @@ mod$(SCRIPT_SUFFIX): mod.in Makefile
 $(scripts_4_0_umask): script_umask.in Makefile
 	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
 	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/script_umask.in | $(FILTER) > $@.tmp
-	mv -f $@.tmp $@
-
-mcs$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE2) -e "s,@exe_name@,gmcs,g" $(srcdir)/$(SCRIPT_IN) > $@.tmp
 	mv -f $@.tmp $@
 
 $(scripts_defaults): $(SCRIPT_IN) Makefile

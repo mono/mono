@@ -39,7 +39,9 @@ namespace System.Xml.Serialization
 		ObjectMap map;
 		ArrayList relatedMaps;
 		SerializationFormat format;
+#if !MOONLIGHT
 		SerializationSource source;
+#endif
 		
 		internal string _elementName;
 		internal string _namespace;
@@ -104,11 +106,13 @@ namespace System.Xml.Serialization
 			set { format = value; }
 		}
 		
+#if !MOONLIGHT
 		internal SerializationSource Source
 		{
 			get { return source; }
 			set { source = value; }
 		}
+#endif
 	}
 
 	internal class ObjectMap

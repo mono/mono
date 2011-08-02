@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2003-2007 Niels Kokholm and Peter Sestoft
+ Copyright (c) 2003-2010 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -29,11 +29,11 @@ using System;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("C5: Copenhagen Comprehensive Collection Classes for CLI")]
-[assembly: AssemblyDescription("This is a build of release 1.1.0")]
+[assembly: AssemblyDescription("This is a build of release 1.1.1")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("(c) 2003-2008 Niels Kokholm and Peter Sestoft")]
+[assembly: AssemblyCopyright("(c) 2003-2010 Niels Kokholm and Peter Sestoft")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -48,7 +48,7 @@ using System;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.1.0")]
+[assembly: AssemblyVersion("1.1.1")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

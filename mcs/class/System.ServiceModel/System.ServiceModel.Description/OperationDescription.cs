@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -35,6 +36,7 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}, IsInitiating={isInitiating}, IsTerminating={isTerminating}")]
 	public class OperationDescription
 	{
 		MethodInfo begin_method, end_method, sync_method;
@@ -57,6 +59,7 @@ namespace System.ServiceModel.Description
 			this.name = name;
 			contract = declaringContract;
 			is_initiating = true;
+			XmlName = new XmlName (name);
 		}
 
 		internal bool InOrdinalContract { get; set; }
@@ -132,6 +135,10 @@ namespace System.ServiceModel.Description
 		}
 
 		#region internal members for moonlight compatibility
+
+		internal XmlName XmlName {
+			get; private set;
+		}
 
 		internal object FormatterBehavior { get; set; }
 

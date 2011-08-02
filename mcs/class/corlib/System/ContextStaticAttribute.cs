@@ -36,6 +36,9 @@ namespace System
 	/// <summary>
 	///   The ContextStatic attribute is used to flag fields as being unique
 	/// </summary>
+#if MOONLIGHT
+	[Obsolete ("Not supported by the Silverlight runtime", true)]
+#endif
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	[Serializable]
 	[ComVisible (true)]

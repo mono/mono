@@ -41,8 +41,8 @@ public class B
 		return e;
 	}
 	
-	char ch;
-	public char this [int id, char v = 'h'] {
+	byte ch;
+	public byte this [int id, byte v = 1+5] {
 		get { return v; }
 		set { ch = value; } 
 	}

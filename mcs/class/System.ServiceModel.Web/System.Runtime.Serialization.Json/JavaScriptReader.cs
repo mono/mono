@@ -80,7 +80,16 @@ namespace System.Runtime.Serialization.Json
 					if (c == '}')
 						break;
 				}
+#if MONOTOUCH
+				int idx = 0;
+				KeyValuePair<string, object> [] ret = new KeyValuePair<string, object>[obj.Count];
+				foreach (KeyValuePair <string, object> kvp in obj)
+					ret [idx++] = kvp;
+
+				return ret;
+#else
 				return obj.ToArray ();
+#endif
 			case 't':
 				Expect ("true");
 				return true;

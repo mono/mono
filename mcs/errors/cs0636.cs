@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace cs0636 {
+namespace CS0636 {
 	struct GValue {
 		public string name;
 		[ FieldOffset (4) ] public int value;

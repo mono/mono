@@ -29,10 +29,7 @@
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public 
-#endif	
-	enum ScrollOrientation
+	public enum ScrollOrientation
 	{
 		HorizontalScroll = 0,
 		VerticalScroll = 1

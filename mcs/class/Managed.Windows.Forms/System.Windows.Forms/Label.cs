@@ -39,12 +39,10 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty ("Text")]
 	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
 	[DefaultBindingProperty ("Text")]
-#endif
 	public class Label : Control
 	{
 		private bool autosize;
@@ -54,9 +52,7 @@ namespace System.Windows.Forms
 		private FlatStyle flat_style;
 		private bool use_mnemonic;
 		private int image_index = -1;
-#if NET_2_0
 		private string image_key = string.Empty;
-#endif
 		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
@@ -67,16 +63,9 @@ namespace System.Windows.Forms
 		static object AutoSizeChangedEvent = new object ();
 		static object TextAlignChangedEvent = new object ();
 
-#if NET_2_0
-
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#endif
-		public
-#if NET_2_0
-		new
-#endif
-		event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}
@@ -88,14 +77,12 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -157,12 +144,8 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.ResizeRedraw | 
 				ControlStyles.UserPaint | 
 				ControlStyles.AllPaintingInWmPaint |
-				ControlStyles.SupportsTransparentBackColor
-#if NET_2_0
-				| ControlStyles.OptimizedDoubleBuffer
-#else
-				| ControlStyles.DoubleBuffer
-#endif
+				ControlStyles.SupportsTransparentBackColor |
+				ControlStyles.OptimizedDoubleBuffer
 				, true);
 			
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
@@ -173,12 +156,7 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool AutoEllipsis {
+		public bool AutoEllipsis {
 			get { return this.auto_ellipsis; }
 			set
 			{
@@ -197,30 +175,20 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#endif
 		[DefaultValue(false)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.All)]
-		public
-#if NET_2_0
-		override
-#else
-		virtual
-#endif
-		bool AutoSize {
+		public override bool AutoSize {
 			get { return autosize; }
 			set {
 				if (autosize == value)
 					return;
 
-#if NET_2_0
 				base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 				base.AutoSize = value;
-#endif
 				autosize = value;
 				CalcAutoSize ();
 				Invalidate ();
@@ -240,14 +208,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 	
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
@@ -274,11 +240,9 @@ namespace System.Windows.Forms
 			get { return ImeMode.Disable;}
 		}
 
-#if NET_2_0
 		protected override Padding DefaultMargin {
 			get { return new Padding (3, 0, 3, 0); }
 		}
-#endif
 
 		protected override Size DefaultSize {
 			get { return ThemeElements.LabelPainter.DefaultSize; }
@@ -311,26 +275,21 @@ namespace System.Windows.Forms
 					if (this.image_list != null)
 						return this.image_list.Images[this.image_index];
 
-#if NET_2_0
 				if (!string.IsNullOrEmpty (this.image_key))
 					if (this.image_list != null)
 						return this.image_list.Images[this.image_key];
-#endif
+
 				return null;
 			}
 			set {
 				if (this.image != value) {
 					this.image = value;
 					this.image_index = -1;
-#if NET_2_0
 					this.image_key = string.Empty;
-#endif
 					this.image_list = null;
 
-#if NET_2_0
 					if (this.AutoSize && this.Parent != null)
 						this.Parent.PerformLayout (this, "Image");
-#endif
 
 					Invalidate ();
 				}
@@ -357,9 +316,7 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public int ImageIndex {
 			get { 
 				if (ImageList == null) {
@@ -380,15 +337,12 @@ namespace System.Windows.Forms
 				if (this.image_index != value) {
 					this.image_index = value;
 					this.image = null;
-#if NET_2_0
 					this.image_key = string.Empty;
-#endif
 					Invalidate ();
 				}
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -405,12 +359,9 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		[DefaultValue(null)]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public ImageList ImageList {
 			get { return image_list;}
 			set {
@@ -444,15 +395,11 @@ namespace System.Windows.Forms
 				size.Width += 3;
 			}
 
-#if NET_2_0
 			size.Width += Padding.Horizontal;
 			size.Height += Padding.Vertical;
 			
 			if (!use_compatible_text_rendering)
 				return size;
-#else
-				size.Height = Font.Height;
-#endif
 
 			if (border_style == BorderStyle.None)
 				size.Height += 3;
@@ -462,12 +409,10 @@ namespace System.Windows.Forms
 			return size;
 		}
 
-#if NET_2_0
 		public override	Size GetPreferredSize (Size proposedSize)
 		{
 			return InternalGetPreferredSize (proposedSize);
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
@@ -483,9 +428,7 @@ namespace System.Windows.Forms
 			get { return InternalGetPreferredSize (Size.Empty).Width; }
 		}
 
-#if NET_2_0
 		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
-#endif
 		protected virtual bool RenderTransparent {
 			get { return render_transparent; }
 			set { render_transparent = value;}
@@ -635,15 +578,6 @@ namespace System.Windows.Forms
 				ControlPaint.DrawImageDisabled (g, image, rcImageClip.X, rcImageClip.Y, BackColor);
 		}
 
-#if !NET_2_0
-		protected virtual void OnAutoSizeChanged (EventArgs e)
-		{
-			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
-			if (eh != null)
-				eh (this, e);
-		}
-#endif
-
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
@@ -657,12 +591,10 @@ namespace System.Windows.Forms
 			Invalidate ();
 		}
 
-#if NET_2_0
 		protected override void OnPaddingChanged (EventArgs e)
 		{
 			base.OnPaddingChanged (e);
 		}
-#endif
 
 		protected override void OnPaint (PaintEventArgs e)
 		{
@@ -675,12 +607,10 @@ namespace System.Windows.Forms
 			base.OnParentChanged (e);
 		}
 
-#if NET_2_0
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);
 		}
-#endif
 
 		protected virtual void OnTextAlignChanged (EventArgs e)
 		{
@@ -765,7 +695,6 @@ namespace System.Windows.Forms
 		}
 
 		#endregion Private Methods
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get { return use_compatible_text_rendering; }
@@ -794,6 +723,5 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleDestroyed (e);
 		}
-#endif
 	}
 }

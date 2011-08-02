@@ -43,23 +43,21 @@ namespace Tester
 	class PriorityQueueState
 	{
 		public readonly BinaryPriorityQueue Queue;
-		public readonly string ListName;
-		public readonly string TestsName;
 		
 		public int EnqueueCount;
 		public int DequeueCount;
 		public int DisableCount;
 		public int PeekCount;
+		public int UpdateCount;
 		
-		public PriorityQueueState (string listName, string testsName)
+		public PriorityQueueState ()
 		{
 			Queue = new BinaryPriorityQueue (new CacheItemComparer ());
 			EnqueueCount = 0;
 			DequeueCount = 0;
 			DisableCount = 0;
 			PeekCount = 0;
-			ListName = listName;
-			TestsName = testsName;
+			UpdateCount = 0;
 		}
 
 		public void Enqueue (CacheItem item)
@@ -75,6 +73,14 @@ namespace Tester
 		public CacheItem Peek ()
 		{
 			return Queue.Peek () as CacheItem;
+		}
+
+		public void Update (int index)
+		{
+			if (index == -1)
+				return;
+			
+			Queue.Update (index);
 		}
 	}
 }

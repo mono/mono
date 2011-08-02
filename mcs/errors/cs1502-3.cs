@@ -1,4 +1,4 @@
-// cs1502-3.cs: The best overloaded method match for `T.Blah(out int)' has some invalid arguments
+// CS1502: The best overloaded method match for `T.Blah(out int)' has some invalid arguments
 // Line: 11
 
 using System;

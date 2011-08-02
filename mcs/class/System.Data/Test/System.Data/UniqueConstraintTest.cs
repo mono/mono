@@ -30,196 +30,182 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using System;
 using System.Data;
 
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class UniqueConstraintTest : Assertion
+	public class UniqueConstraintTest
 	{
 		private DataTable _table;
 
 		[SetUp]
-		public void GetReady() {
+		public void GetReady ()
+		{
 
 			//Setup DataTable
-			_table = new DataTable("TestTable");
-			_table.Columns.Add("Col1",typeof(int));
-			_table.Columns.Add("Col2",typeof(int));
-			_table.Columns.Add("Col3",typeof(int));
+			_table = new DataTable ("TestTable");
+			_table.Columns.Add ("Col1", typeof(int));
+			_table.Columns.Add ("Col2", typeof(int));
+			_table.Columns.Add ("Col3", typeof(int));
 
 		}  
 
 		[Test]
-		public void CtorExceptions() {
+		public void CtorExceptions ()
+		{
 			//UniqueConstraint(string name, DataColumn column, bool isPrimaryKey)
 
 			UniqueConstraint cst;
 			
 			//must have DataTable exception
-			try{
+			try {
 				//Should throw an ArgumentException
 				//Can only add DataColumns that are attached
 				//to a DataTable
-				cst = new UniqueConstraint(new DataColumn(""));
+				cst = new UniqueConstraint (new DataColumn (""));
 
-				Fail("Failed to throw ArgumentException.");
-			} 
-			catch (Exception e) {
-				AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
-				// Never premise English.
-                        	// AssertEquals ("test#03", "Column must belong to a table.", e.Message);
-                        }        
+				Assert.Fail ("Failed to throw ArgumentException.");
+			} catch (Exception e) {
+				Assert.That (e, Is.TypeOf (typeof(ArgumentException)), "test#02");
+			}        
 
 			//Null exception
 			try {
 				//Should throw argument null exception
-				cst = new UniqueConstraint((DataColumn)null);
+				cst = new UniqueConstraint ((DataColumn)null);
+			} catch (Exception e) {
+				Assert.That (e, Is.TypeOf (typeof(NullReferenceException)), "test#05");
 			}
-                        catch (Exception e) {
-                        	AssertEquals ("test#05", typeof (NullReferenceException), e.GetType ());
-				// Never premise English.
-                                //AssertEquals ("test#06", "Object reference not set to an instance of an object.", e.Message);
-                        }
 			
 			try {
 				//Should throw exception
 				//must have at least one valid column
 				//InvalidConstraintException is thrown by msft ver
-				cst = new UniqueConstraint(new DataColumn [] {});
+				cst = new UniqueConstraint (new DataColumn [] {});
 
-				Fail("B1: Failed to throw InvalidConstraintException.");
+				Assert.Fail ("B1: Failed to throw InvalidConstraintException.");
+			} catch (InvalidConstraintException) {
+			} catch (AssertionException exc) {
+				throw exc;
+			} catch {
+				Assert.Fail ("A3: Wrong Exception type.");
 			}
-			catch (InvalidConstraintException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch {
-				Fail("A3: Wrong Exception type.");
-			}
 
-			DataTable dt = new DataTable("Table1");
-			dt.Columns.Add("Col1",typeof(int));
-			DataTable dt2 = new DataTable("Table2");
-			dt2.Columns.Add("Col1",typeof(int));
+			DataTable dt = new DataTable ("Table1");
+			dt.Columns.Add ("Col1", typeof(int));
+			DataTable dt2 = new DataTable ("Table2");
+			dt2.Columns.Add ("Col1", typeof(int));
 
-			DataSet ds = new DataSet();
-			ds.Tables.Add(dt);
-			ds.Tables.Add(dt2);
+			DataSet ds = new DataSet ();
+			ds.Tables.Add (dt);
+			ds.Tables.Add (dt2);
 
 			//columns from two different tables.
 			try {
 				//next line should throw
 				//can't have columns from two different tables
-				cst = new UniqueConstraint(new DataColumn [] { 
+				cst = new UniqueConstraint (new DataColumn [] { 
 						 dt.Columns[0], dt2.Columns[0]});
 
-				Fail("B2: Failed to throw InvalidConstraintException");
+				Assert.Fail ("B2: Failed to throw InvalidConstraintException");
+			} catch (InvalidConstraintException) {
+			} catch (AssertionException exc) {
+				throw exc;
+			} catch {
+				Assert.Fail ("A4: Wrong Exception type.");
 			}
-			catch (InvalidConstraintException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch {
-				Fail("A4: Wrong Exception type.");
-			}
-			
-
-			
 		}
 
 		[Test]
-		public void Ctor() {
-			
+		public void Ctor ()
+		{
 			UniqueConstraint cst;
 		
 			//Success case
 			try {
-				cst = new UniqueConstraint(_table.Columns[0]);
-			}
-			catch (Exception exc) {
-				Fail("A1: Failed to ctor. " + exc.ToString());
+				cst = new UniqueConstraint (_table.Columns [0]);
+			} catch (Exception exc) {
+				Assert.Fail ("A1: Failed to ctor. " + exc.ToString ());
 			}
 
-			
 			try {
-				cst = new UniqueConstraint( new DataColumn [] {
+				cst = new UniqueConstraint (new DataColumn [] {
 						_table.Columns[0], _table.Columns[1]});
-			}
-			catch (Exception exc) {
-				Fail("A2: Failed to ctor. " + exc.ToString());
+			} catch (Exception exc) {
+				Assert.Fail ("A2: Failed to ctor. " + exc.ToString ());
 			}
 
-			
 			//table is set on ctor
-			cst = new UniqueConstraint(_table.Columns[0]);
+			cst = new UniqueConstraint (_table.Columns [0]);
 			
-			AssertSame("B1", cst.Table, _table);
+			Assert.That (cst.Table, Is.SameAs (_table), "B1");
 
 			//table is set on ctor
-			cst = new UniqueConstraint( new DataColumn [] {
+			cst = new UniqueConstraint (new DataColumn [] {
 				      _table.Columns[0], _table.Columns[1]});
-			AssertSame ("B2", cst.Table, _table);
+			Assert.That (cst.Table, Is.SameAs (_table), "B2");
 
-			cst = new UniqueConstraint("MyName",_table.Columns[0],true);
+			cst = new UniqueConstraint ("MyName", _table.Columns [0], true);
 
 			//Test ctor parm set for ConstraintName & IsPrimaryKey
-			AssertEquals("ConstraintName not set in ctor.", 
-				"MyName", cst.ConstraintName);
-                        AssertEquals("IsPrimaryKey already set.",
-                                false, cst.IsPrimaryKey);
+			Assert.That (cst.ConstraintName, Is.EqualTo ("MyName"), "ConstraintName not set in ctor.");
+			Assert.That (cst.IsPrimaryKey, Is.False, "IsPrimaryKey already set.");
                 
 			_table.Constraints.Add (cst);
 
-                        AssertEquals("IsPrimaryKey not set set.",
-                                true, cst.IsPrimaryKey);
+			Assert.That (cst.IsPrimaryKey, Is.True, "IsPrimaryKey not set set.");
                 	
-                	AssertEquals("PrimaryKey not set.", 1, _table.PrimaryKey.Length);
-                	AssertEquals("Not unigue.", true, _table.PrimaryKey [0].Unique);
-
+			Assert.That (_table.PrimaryKey.Length, Is.EqualTo (1), "PrimaryKey not set.");
+			Assert.That (_table.PrimaryKey [0].Unique, Is.True, "Not unigue.");
 		}
 
 		[Test]
-		public void Unique ()                             
+		public void Unique ()
 		{                                                     
 			UniqueConstraint U = new UniqueConstraint (_table.Columns [0]);
-			AssertEquals ("test#01", false, _table.Columns [0].Unique); 
+			Assert.That (_table.Columns [0].Unique, Is.False, "test#01"); 
 			
-                        U = new UniqueConstraint (new DataColumn [] {_table.Columns [0],_table.Columns [1]});     
+			U = new UniqueConstraint (new DataColumn [] {_table.Columns [0],_table.Columns [1]});     
 			
-                        AssertEquals ("test#02", false, _table.Columns [0].Unique);
-                        AssertEquals ("test#03", false, _table.Columns [1].Unique);
-                        AssertEquals ("test#04", false, _table.Columns [2].Unique);
+			Assert.That (_table.Columns [0].Unique, Is.False, "test#02");
+			Assert.That (_table.Columns [1].Unique, Is.False, "test#03");
+			Assert.That (_table.Columns [2].Unique, Is.False, "test#04");
 			
-                        _table.Constraints.Add (U);
-                        AssertEquals ("test#05", false, _table.Columns [0].Unique);
-                        AssertEquals ("test#06", false, _table.Columns [1].Unique);
-                        AssertEquals ("test#07", false, _table.Columns [2].Unique);
-                }                                                     
-		
+			_table.Constraints.Add (U);
+			Assert.That (_table.Columns [0].Unique, Is.False, "test#05");
+			Assert.That (_table.Columns [1].Unique, Is.False, "test#06");
+			Assert.That (_table.Columns [2].Unique, Is.False, "test#07");
+		}                                                     
+
 		[Test]
-		public void EqualsAndHashCode() {
-			UniqueConstraint cst = new UniqueConstraint( new DataColumn [] {
+		public void EqualsAndHashCode ()
+		{
+			UniqueConstraint cst = new UniqueConstraint (new DataColumn [] {
 					_table.Columns[0], _table.Columns[1]});
-			UniqueConstraint cst2 = new UniqueConstraint( new DataColumn [] {
+			UniqueConstraint cst2 = new UniqueConstraint (new DataColumn [] {
 					 _table.Columns[1], _table.Columns[0]});
 
-			UniqueConstraint cst3 = new UniqueConstraint(_table.Columns[0]);
-			UniqueConstraint cst4 = new UniqueConstraint(_table.Columns[2]);
+			UniqueConstraint cst3 = new UniqueConstraint (_table.Columns [0]);
+			UniqueConstraint cst4 = new UniqueConstraint (_table.Columns [2]);
 			
 			//true
-			Assert(cst.Equals(cst2) == true);
+			Assert.That (cst.Equals (cst2), Is.True, "A0");
 			
 			//false
-			Assert("A1", cst.Equals(23) == false);
-			Assert("A2", cst.Equals(cst3) == false);
-			Assert("A3", cst3.Equals(cst) == false);
-			Assert("A4", cst.Equals(cst4) == false);
+			Assert.That (cst.Equals (23), Is.False, "A1");
+			Assert.That (cst.Equals (cst3), Is.False, "A2");
+			Assert.That (cst3.Equals (cst), Is.False, "A3");
+			Assert.That (cst.Equals (cst4), Is.False, "A4");
 
 			//true
-			Assert("HashEquals", cst.GetHashCode() == cst2.GetHashCode());
+			Assert.That (cst.GetHashCode (), Is.EqualTo (cst2.GetHashCode ()), "HashEquals");
 
 			//false
-			Assert("Hash Not Equals", (cst.GetHashCode() == cst3.GetHashCode()) == false);
+			Assert.That (cst.GetHashCode (), Is.Not.EqualTo (cst3.GetHashCode ()), "Hash Not Equals");
 		}
 
 		[Test]

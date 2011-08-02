@@ -1723,6 +1723,35 @@ namespace MonoTests.System.Xml
 				reader.ReadToNextSibling ("book"); // should not result in an infinite loop
 		}
 
+		// bug #676020
+		[Test]
+		public void ReadToNextSibling4 ()
+		{
+			string xml = @"<SerializableStringDictionary>
+<SerializableStringDictionary>
+<DictionaryEntry Key=""Key1"" Value=""Value1""/>
+<DictionaryEntry Key=""Key2"" Value=""Value2""/>
+<DictionaryEntry Key=""Key3"" Value=""Value3""/>
+</SerializableStringDictionary>
+</SerializableStringDictionary>";
+
+			var reader = XmlReader.Create (new StringReader (xml));
+
+			Assert.IsTrue (reader.ReadToDescendant ("SerializableStringDictionary"), "#1");
+			Assert.IsTrue (reader.ReadToDescendant ("DictionaryEntry"), "#2");
+
+			int count = 0;
+			do {
+				reader.MoveToAttribute ("Key");
+				var key = reader.ReadContentAsString ();
+				reader.MoveToAttribute ("Value");
+				var value = reader.ReadContentAsString ();
+				count++;
+			}
+			while (reader.ReadToNextSibling ("DictionaryEntry"));
+			Assert.AreEqual (3, count, "#3");
+		}
+
 		[Test]
 		public void ReadSubtree ()
 		{

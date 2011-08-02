@@ -14,12 +14,12 @@
 
 dnl Process this file with autoconf to produce configure.
 
-AC_PREREQ(2.53)
-AC_INIT(libgc-mono, 6.6, Hans_Boehm@hp.com)
+AC_PREREQ([2.53])
+AC_INIT([libgc-mono], [6.6], [Hans_Boehm@hp.com])
 
-AM_INIT_AUTOMAKE(libgc-mono, 6.6, no-define)
-
+AM_INIT_AUTOMAKE([1.9 no-define foreign])
 AC_CONFIG_SRCDIR(gcj_mlc.c)
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
 AC_SUBST(PACKAGE)
@@ -524,6 +524,7 @@ if test x$enable_quiet_build = xyes; then
 fi
 
 AC_OUTPUT(Makefile
+m4/Makefile
 include/Makefile
 include/private/Makefile
 doc/Makefile,,

@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum ToolBarState
@@ -39,4 +38,3 @@ namespace System.Windows.Forms.VisualStyles
 		HotChecked = 6
 	}
 }
-#endif

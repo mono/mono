@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 
@@ -142,10 +142,19 @@ namespace System.Threading
 
 		public WaitHandle WaitHandle {
 			get {
-				if (handle != null)
+				if (handle != null) {
+					if (state == isSet)
+						handle.Set ();
+
 					return handle;
-				return LazyInitializer.EnsureInitialized (ref handle,
-				                                          () => new ManualResetEvent (state == isSet ? true : false));
+				}
+
+				var result = LazyInitializer.EnsureInitialized (ref handle,
+				                                                () => new ManualResetEvent (state == isSet ? true : false));
+				if (state == isSet)
+					result.Set ();
+
+				return result;
 			}
 		}
 

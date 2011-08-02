@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class FieldInfo : MemberInfo
 	{
+		// prevent external subclasses
+		internal FieldInfo()
+		{
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Field; }
@@ -34,6 +39,7 @@ namespace IKVM.Reflection
 
 		public abstract FieldAttributes Attributes { get; }
 		public abstract void __GetDataFromRVA(byte[] data, int offset, int length);
+		public abstract int __FieldRVA { get; }
 		public abstract Object GetRawConstantValue();
 		internal abstract FieldSignature FieldSignature { get; }
 
@@ -110,6 +116,11 @@ namespace IKVM.Reflection
 		public bool IsPinvokeImpl
 		{
 			get { return (Attributes & FieldAttributes.PinvokeImpl) != 0; }
+		}
+
+		public virtual FieldInfo __GetFieldOnTypeDefinition()
+		{
+			return this;
 		}
 
 		internal abstract int ImportTo(Emit.ModuleBuilder module);

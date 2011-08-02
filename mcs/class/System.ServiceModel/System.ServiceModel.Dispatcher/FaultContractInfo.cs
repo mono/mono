@@ -27,6 +27,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Description;
+using System.Collections.Generic;
 
 namespace System.ServiceModel.Dispatcher
 {
@@ -41,6 +43,14 @@ namespace System.ServiceModel.Dispatcher
 			Action = action;
 			Detail = detail;
 		}
+
+#if MOONLIGHT
+		// introduced for silverlight sdk compatibility
+		internal FaultContractInfo (string action, Type detail, XmlName elementName, string ns, IList<Type> knownTypes)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		DataContractSerializer serializer;
 

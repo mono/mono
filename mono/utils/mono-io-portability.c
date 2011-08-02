@@ -14,22 +14,7 @@
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/profiler-private.h>
 
-#ifdef DISABLE_PORTABILITY
-int __mono_io_portability_helpers = PORTABILITY_NONE;
-
-void 
-mono_portability_helpers_init (void)
-{
-}
-
-gchar *
-mono_portability_find_file (const gchar *pathname, gboolean last_exists)
-{
-	g_assert_not_reached();
-	return NULL;
-}
-
-#else
+#ifndef DISABLE_PORTABILITY
 
 #include <dirent.h>
 
@@ -114,7 +99,7 @@ static gchar *find_in_dir (DIR *current, const gchar *name)
 
 static inline void append_report (GString **report, const gchar *format, ...)
 {
-#if GLIB_CHECK_VERSION(2,14,0)
+#if defined (_EGLIB_MAJOR) || GLIB_CHECK_VERSION(2,14,0)
 	va_list ap;
 	if (!*report)
 		*report = g_string_new ("");
@@ -147,7 +132,11 @@ static inline void do_mono_profiler_iomap (GString **report, const char *pathnam
 gchar *mono_portability_find_file (const gchar *pathname, gboolean last_exists)
 {
 	GString *report = NULL;
-	gchar *ret = mono_portability_find_file_internal (&report, pathname, last_exists);
+	gchar *ret;
+	
+	if (!pathname || !pathname [0])
+		return NULL;
+	ret = mono_portability_find_file_internal (&report, pathname, last_exists);
 
 	if (report)
 		g_string_free (report, TRUE);

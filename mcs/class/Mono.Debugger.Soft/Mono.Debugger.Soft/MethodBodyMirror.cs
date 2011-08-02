@@ -105,28 +105,23 @@ namespace Mono.Debugger.Soft
 						instr.Operand = br.ReadByte ();
 					break;
 				case OperandType.ShortInlineVar :
-					br.ReadByte ();
-					//instr.Operand = GetVariable (body, br.ReadByte ());
+					instr.Operand = br.ReadByte ();
 					break;
 				case OperandType.ShortInlineArg :
-					br.ReadByte ();
-					//instr.Operand = GetParameter (body, br.ReadByte ());
+					instr.Operand = br.ReadByte ();
 					break;
 				case OperandType.InlineSig :
 					br.ReadInt32 ();
 					//instr.Operand = GetCallSiteAt (br.ReadInt32 (), context);
 					break;
 				case OperandType.InlineI :
-					br.ReadInt32 ();
-					//instr.Operand = br.ReadInt32 ();
+					instr.Operand = br.ReadInt32 ();
 					break;
 				case OperandType.InlineVar :
-					br.ReadInt16 ();
-					//instr.Operand = GetVariable (body, br.ReadInt16 ());
+					instr.Operand = br.ReadInt16 ();
 					break;
 				case OperandType.InlineArg :
-					br.ReadInt16 ();
-					//instr.Operand = GetParameter (body, br.ReadInt16 ());
+					instr.Operand = br.ReadInt16 ();
 					break;
 				case OperandType.InlineI8 :
 					instr.Operand = br.ReadInt64 ();

@@ -46,17 +46,16 @@ namespace System.IO {
 
 		private Stream internalStream;
 
-		private bool iflush;
-		
 		private const int DefaultBufferSize = 1024;
 		private const int DefaultFileBufferSize = 4096;
 		private const int MinimumBufferSize = 256;
 
 		private byte[] byte_buf;
-		private int byte_pos;
 		private char[] decode_buf;
+		private int byte_pos;
 		private int decode_pos;
 
+		private bool iflush;
 		private bool DisposedAlready;
 		private bool preamble_done;
 

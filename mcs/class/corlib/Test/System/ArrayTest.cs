@@ -11,6 +11,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -301,6 +302,15 @@ public class ArrayTest
 
 		d1[0][0] = 'z';
 		Assert.AreEqual (d1[0], d2[0], "#D07");
+	}
+
+	[Test]
+	public void TestMemberwiseClone () {
+		int[] array = new int[] { 1, 2, 3 };
+		MethodBase mi = array.GetType ().GetMethod("MemberwiseClone",
+												   BindingFlags.Instance | BindingFlags.NonPublic);
+		int[] res = (int[])mi.Invoke (array, null);
+		Assert.AreEqual (3, res.Length);
 	}
 
 	[Test] public void TestIndexer ()
@@ -2317,6 +2327,25 @@ public class ArrayTest
 			double[] a = new double[115];
 			int[] b = new int[256];
 			Array.Sort<double, int> (a, b, 0, 115);
+		}
+
+		/* Check that ulong[] is not sorted as long[] */
+		{
+			string[] names = new string[] {
+				"A", "B", "C", "D", "E"
+			};
+
+			ulong[] arr = new ulong [] {
+				5,
+				unchecked((ulong)0xffffFFFF00000000),
+					0,
+						0x7FFFFFFFffffffff,
+						100
+						};
+
+			Array a = arr;
+			Array.Sort (a, names, null);
+			Assert.AreEqual (0, a.GetValue (0));
 		}
 	}
 

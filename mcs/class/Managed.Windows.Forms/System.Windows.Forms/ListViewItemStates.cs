@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	[Flags]
@@ -44,4 +43,3 @@ namespace System.Windows.Forms
 		ShowKeyboardCues = 512
 	}
 }
-#endif

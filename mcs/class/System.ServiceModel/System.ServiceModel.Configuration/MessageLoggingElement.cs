@@ -62,6 +62,7 @@ namespace System.ServiceModel.Configuration
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty filters;
 		static ConfigurationProperty log_entire_message;
+		static ConfigurationProperty log_known_pii;
 		static ConfigurationProperty log_malformed_messages;
 		static ConfigurationProperty log_messages_at_service_level;
 		static ConfigurationProperty log_messages_at_transport_level;
@@ -75,32 +76,23 @@ namespace System.ServiceModel.Configuration
 				typeof (XPathMessageFilterElementCollection), null, null/* FIXME: get converter for XPathMessageFilterElementCollection*/, null,
 				ConfigurationPropertyOptions.None);
 
-			log_entire_message = new ConfigurationProperty ("logEntireMessage",
-				typeof (bool), "false", new BooleanConverter (), null,
-				ConfigurationPropertyOptions.None);
+			log_entire_message = new ConfigurationProperty ("logEntireMessage", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-			log_malformed_messages = new ConfigurationProperty ("logMalformedMessages",
-				typeof (bool), "false", new BooleanConverter (), null,
-				ConfigurationPropertyOptions.None);
+			log_known_pii = new ConfigurationProperty ("logKnownPii", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-			log_messages_at_service_level = new ConfigurationProperty ("logMessagesAtServiceLevel",
-				typeof (bool), "false", new BooleanConverter (), null,
-				ConfigurationPropertyOptions.None);
+			log_malformed_messages = new ConfigurationProperty ("logMalformedMessages", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-			log_messages_at_transport_level = new ConfigurationProperty ("logMessagesAtTransportLevel",
-				typeof (bool), "false", new BooleanConverter (), null,
-				ConfigurationPropertyOptions.None);
+			log_messages_at_service_level = new ConfigurationProperty ("logMessagesAtServiceLevel", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-			max_messages_to_log = new ConfigurationProperty ("maxMessagesToLog",
-				typeof (int), "10000", null/* FIXME: get converter for int*/, null,
-				ConfigurationPropertyOptions.None);
+			log_messages_at_transport_level = new ConfigurationProperty ("logMessagesAtTransportLevel", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-			max_size_of_message_to_log = new ConfigurationProperty ("maxSizeOfMessageToLog",
-				typeof (int), "262144", null/* FIXME: get converter for int*/, null,
-				ConfigurationPropertyOptions.None);
+			max_messages_to_log = new ConfigurationProperty ("maxMessagesToLog", typeof (int), "10000", null, null, ConfigurationPropertyOptions.None);
+
+			max_size_of_message_to_log = new ConfigurationProperty ("maxSizeOfMessageToLog", typeof (int), 262144, null, null, ConfigurationPropertyOptions.None);
 
 			properties.Add (filters);
 			properties.Add (log_entire_message);
+			properties.Add (log_known_pii);
 			properties.Add (log_malformed_messages);
 			properties.Add (log_messages_at_service_level);
 			properties.Add (log_messages_at_transport_level);
@@ -129,6 +121,16 @@ namespace System.ServiceModel.Configuration
 			get { return (bool) base [log_entire_message]; }
 			set { base [log_entire_message] = value; }
 		}
+
+#if NET_4_0
+		[ConfigurationProperty ("logKnownPii",
+			 Options = ConfigurationPropertyOptions.None,
+			DefaultValue = false)]
+		public bool LogKnownPii {
+			get { return (bool) base [log_known_pii]; }
+			set { base [log_known_pii] = value; }
+		}
+#endif
 
 		[ConfigurationProperty ("logMalformedMessages",
 			 Options = ConfigurationPropertyOptions.None,

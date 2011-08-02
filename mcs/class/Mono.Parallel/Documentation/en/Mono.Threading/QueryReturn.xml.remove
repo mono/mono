@@ -1,0 +1,66 @@
+<Type Name="QueryReturn" FullName="System.Threading.QueryReturn">
+  <TypeSignature Language="C#" Value="public struct QueryReturn" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit QueryReturn extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Result returned by <see cref="M:System.Threading.CSnzi.Query()" /></summary>
+    <remarks />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public QueryReturn (bool nonzero, bool open);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool nonzero, bool open) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="nonzero" Type="System.Boolean" />
+        <Parameter Name="open" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="nonzero">To be added.</param>
+        <param name="open">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NonZero">
+      <MemberSignature Language="C#" Value="public readonly bool NonZero;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly bool NonZero" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Zero state of the CSnzi object.</summary>
+        <remarks />
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public readonly bool Open;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly bool Open" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Tells if a CSnzi object is currently closed.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

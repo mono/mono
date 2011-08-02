@@ -61,5 +61,15 @@ namespace Mono.Debugger.Soft
 				return vm.conn.Thread_GetId (id);
 			}
 		}
+
+		/*
+		 * Return the system thread id (TID) for this thread, this id is not unique since
+		 * a newly started thread might reuse a dead thread's id.
+		 */
+		public long TID {
+			get {
+				return vm.conn.Thread_GetTID (id);
+			}
+		}
     }
 }

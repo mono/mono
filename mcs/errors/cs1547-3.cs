@@ -1,4 +1,4 @@
-// CS1547.cs: Keyword `void' cannot be used in this context
+// CS1547: Keyword `void' cannot be used in this context
 // Line: 6
 
 class C {

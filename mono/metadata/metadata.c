@@ -10,9 +10,6 @@
  */
 
 #include <config.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -2696,6 +2693,8 @@ free_generic_class (MonoGenericClass *gclass)
 	/* The gclass itself is allocated from the image set mempool */
 	if (gclass->is_dynamic)
 		mono_reflection_free_dynamic_generic_class (gclass);
+	if (gclass->cached_class && gclass->cached_class->interface_id)
+		mono_unload_interface_id (gclass->cached_class);
 }
 
 static void
@@ -2795,10 +2794,8 @@ mono_metadata_get_generic_inst (int type_argc, MonoType **type_argv)
 			break;
 	is_open = (i < type_argc);
 
-	ginst = alloca (size);
-#ifndef MONO_SMALL_CONFIG
-	ginst->id = 0;
-#endif
+	ginst = g_alloca (size);
+	memset (ginst, 0, sizeof (MonoGenericInst));
 	ginst->is_open = is_open;
 	ginst->type_argc = type_argc;
 	memcpy (ginst->type_argv, type_argv, type_argc * sizeof (MonoType *));
@@ -3095,6 +3092,23 @@ mono_metadata_get_shared_type (MonoType *type)
 	return NULL;
 }
 
+static gboolean
+compare_type_literals (int class_type, int type_type)
+{
+	/* byval_arg.type can be zero if we're decoding a type that references a class been loading.
+	 * See mcs/test/gtest-440. and #650936.
+	 * FIXME This better be moved to the metadata verifier as it can catch more cases.
+	 */
+	if (!class_type)
+		return TRUE;
+	/* NET 1.1 assemblies might encode string and object in a denormalized way.
+	 * See #675464.
+	 */
+	if (type_type == MONO_TYPE_CLASS && (class_type == MONO_TYPE_STRING || class_type == MONO_TYPE_OBJECT))
+		return TRUE;
+	return class_type == type_type;
+}
+
 /* 
  * do_mono_metadata_parse_type:
  * @type: MonoType to be filled in with the return value
@@ -3152,14 +3166,8 @@ do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoGenericContainer 
 		type->data.klass = class;
 		if (!class)
 			return FALSE;
-		/* byval_arg.type can be zero if we're decoding a type that references a class been loading.
-		 * See mcs/test/gtest-440. and #650936.
-		 * FIXME This better be moved to the metadata verifier as it can catch more cases.
-		 */
-		if (class->byval_arg.type && class->byval_arg.type != type->type) {
-			printf ("me [%x] it [%x] -- '%s'\n", type->type, type->data.klass->byval_arg.type, mono_type_full_name (type));
+		if (!compare_type_literals (class->byval_arg.type, type->type))
 			return FALSE;
-		}
 		break;
 	}
 	case MONO_TYPE_SZARRAY: {

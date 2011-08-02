@@ -38,10 +38,12 @@ static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
-static LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
+LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
+guint64 mono_win_chained_exception_filter_result;
+gboolean mono_win_chained_exception_filter_didrun;
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, er, sctx)
+	if (_ex##_handler) _ex##_handler(0, ep, sctx)
 
 /*
  * Unhandled Exception Filter
@@ -54,6 +56,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 	MonoContext* sctx;
 	LONG res;
 
+	mono_win_chained_exception_filter_didrun = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -114,17 +117,20 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 
 	g_free (sctx);
 
+	if (mono_win_chained_exception_filter_didrun)
+		res = mono_win_chained_exception_filter_result;
+
 	return res;
 }
 
 void win32_seh_init()
 {
-	old_handler = SetUnhandledExceptionFilter(seh_handler);
+	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
 }
 
 void win32_seh_cleanup()
 {
-	if (old_handler) SetUnhandledExceptionFilter(old_handler);
+	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
@@ -331,10 +337,9 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 	}
 
 	if (mono_debug_using_mono_debugger ()) {
-		guint8 buf [16], *code;
+		guint8 buf [16];
 
 		mono_breakpoint_clean_code (NULL, (gpointer)rip, 8, buf, sizeof (buf));
-		code = buf + 8;
 
 		if (buf [3] == 0xe8) {
 			MonoContext ctx_cp = ctx;
@@ -414,13 +419,19 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	int i, stack_size, arg_offsets [16], regs_offset;
+	int i, stack_size, arg_offsets [16], regs_offset, dummy_stack_space;
 	const guint kMaxCodeSize = NACL_SIZE (256, 512);
+
+#ifdef TARGET_WIN32
+	dummy_stack_space = 6 * sizeof(mgreg_t);	/* Windows expects stack space allocated for all 6 dummy args. */
+#else
+	dummy_stack_space = 0;
+#endif
 
 	start = code = mono_global_codeman_reserve (kMaxCodeSize);
 
 	/* The stack is unaligned on entry */
-	stack_size = 192 + 8;
+	stack_size = 192 + 8 + dummy_stack_space;
 
 	code = start;
 
@@ -437,11 +448,11 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	 * the stack by passing 6 dummy values in registers.
 	 */
 
-	arg_offsets [0] = 0;
-	arg_offsets [1] = sizeof(mgreg_t);
-	arg_offsets [2] = sizeof(mgreg_t) * 2;
-	arg_offsets [3] = sizeof(mgreg_t) * 3;
-	regs_offset = sizeof(mgreg_t) * 4;
+	arg_offsets [0] = dummy_stack_space + 0;
+	arg_offsets [1] = dummy_stack_space + sizeof(mgreg_t);
+	arg_offsets [2] = dummy_stack_space + sizeof(mgreg_t) * 2;
+	arg_offsets [3] = dummy_stack_space + sizeof(mgreg_t) * 3;
+	regs_offset = dummy_stack_space + sizeof(mgreg_t) * 4;
 
 	/* Save registers */
 	for (i = 0; i < AMD64_NREG; ++i)
@@ -484,7 +495,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, corlib ? "mono_amd64_throw_corlib_exception" : "mono_amd64_throw_exception");
 		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
 	} else {
-		amd64_mov_reg_imm (code, AMD64_R11, resume_unwind ? (mono_amd64_resume_unwind) : (corlib ? (gpointer)mono_amd64_throw_corlib_exception : (gpointer)mono_amd64_throw_exception));
+		amd64_mov_reg_imm (code, AMD64_R11, resume_unwind ? ((gpointer)mono_amd64_resume_unwind) : (corlib ? (gpointer)mono_amd64_throw_corlib_exception : (gpointer)mono_amd64_throw_exception));
 	}
 	amd64_call_reg (code, AMD64_R11);
 	amd64_breakpoint (code);
@@ -556,7 +567,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
-	frame->managed = FALSE;
 
 	*new_ctx = *ctx;
 
@@ -567,9 +577,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint8 *unwind_info;
 
 		frame->type = FRAME_TYPE_MANAGED;
-
-		if (!ji->method->wrapper_type || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD)
-			frame->managed = TRUE;
 
 		if (ji->from_aot)
 			unwind_info = mono_aot_get_unwind_info (ji, &unwind_info_len);
@@ -715,7 +722,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj, gboolean test_only)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
 	static void (*restore_context) (MonoContext *);
 
@@ -749,7 +756,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	guint64 sp = UCONTEXT_REG_RSP (ctx);
 
 	/* Pass the ctx parameter in TLS */
@@ -884,7 +891,7 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 restore_soft_guard_pages (void)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
 }

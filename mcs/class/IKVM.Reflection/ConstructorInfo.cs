@@ -28,6 +28,11 @@ namespace IKVM.Reflection
 {
 	public abstract class ConstructorInfo : MethodBase
 	{
+		// prevent external subclasses
+		internal ConstructorInfo()
+		{
+		}
+
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";
 
@@ -36,6 +41,11 @@ namespace IKVM.Reflection
 		internal override MethodBase BindTypeParameters(Type type)
 		{
 			return new ConstructorInfoImpl((MethodInfo)GetMethodInfo().BindTypeParameters(type));
+		}
+
+		public sealed override MethodBase __GetMethodOnTypeDefinition()
+		{
+			return new ConstructorInfoImpl((MethodInfo)GetMethodInfo().__GetMethodOnTypeDefinition());
 		}
 
 		public sealed override MemberTypes MemberType
@@ -194,6 +204,11 @@ namespace IKVM.Reflection
 		public override int MetadataToken
 		{
 			get { return method.MetadataToken; }
+		}
+
+		public override bool __IsMissing
+		{
+			get { return method.__IsMissing; }
 		}
 
 		internal override MethodInfo GetMethodInfo()

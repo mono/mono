@@ -21,6 +21,7 @@ namespace System.ServiceModel.PeerResolvers
 					body = new UnregisterInfoDC ();
 				return body;
 			}
+			set { body = value; }
 		}
 		UnregisterInfoDC body;
 		

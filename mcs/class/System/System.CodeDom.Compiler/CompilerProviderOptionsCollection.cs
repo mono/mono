@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 using System;
 using System.Configuration;
 using System.Collections.Generic;

@@ -12,6 +12,7 @@
 
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/freebsd-dwarf.h>
+#include <mono/utils/hazard-pointer.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
 
@@ -66,6 +67,11 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8,
 #define NUM_REGS 110
 #define DWARF_DATA_ALIGN (-(gint32)sizeof (mgreg_t))
 #define DWARF_PC_REG 108
+#elif defined (TARGET_S390X)
+static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+#define NUM_REGS 16
+#define DWARF_DATA_ALIGN (-8)
+#define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (14))
 #else
 static int map_hw_reg_to_dwarf_reg [16];
 #define NUM_REGS 16
@@ -504,32 +510,6 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 	return i;
 }
 
-static gpointer
-get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
-{
-	gpointer p;
-
-	for (;;) {
-		/* Get the pointer */
-		p = *pp;
-		/* If we don't have hazard pointers just return the
-		   pointer. */
-		if (!hp)
-			return p;
-		/* Make it hazardous */
-		mono_hazard_pointer_set (hp, hazard_index, p);
-		/* Check that it's still the same.  If not, try
-		   again. */
-		if (*pp != p) {
-			mono_hazard_pointer_clear (hp, hazard_index);
-			continue;
-		}
-		break;
-	}
-
-	return p;
-}
-
 /*
  * This function is signal safe.
  */
@@ -605,6 +585,10 @@ decode_cie_op (guint8 *p, guint8 **endp)
 			break;
 		case DW_CFA_advance_loc4:
 			p += 4;
+			break;
+		case DW_CFA_offset_extended_sf:
+			decode_uleb128 (p, &p);
+			decode_uleb128 (p, &p);
 			break;
 		default:
 			g_assert_not_reached ();

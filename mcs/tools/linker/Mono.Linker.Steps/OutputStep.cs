@@ -30,6 +30,7 @@ using System;
 using System.IO;
 
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Mono.Linker.Steps {
 
@@ -64,14 +65,24 @@ namespace Mono.Linker.Steps {
 				assembly.Write (GetAssemblyFileName (assembly, directory), SaveSymbols (assembly));
 				break;
 			case AssemblyAction.Copy:
-				CopyAssembly (GetOriginalAssemblyFileInfo (assembly), directory);
+				CloseSymbols (assembly);
+				CopyAssembly (GetOriginalAssemblyFileInfo (assembly), directory, Context.LinkSymbols);
 				break;
 			case AssemblyAction.Delete:
+				CloseSymbols (assembly);
 				var target = GetAssemblyFileName (assembly, directory);
 				if (File.Exists (target))
 					File.Delete (target);
 				break;
+			default:
+				CloseSymbols (assembly);
+				break;
 			}
+		}
+
+		void CloseSymbols (AssemblyDefinition assembly)
+		{
+			Annotations.CloseSymbolReader (assembly);
 		}
 
 		WriterParameters SaveSymbols (AssemblyDefinition assembly)
@@ -83,7 +94,10 @@ namespace Mono.Linker.Steps {
 			if (!assembly.MainModule.HasSymbols)
 				return parameters;
 
-			parameters.WriteSymbols = true;
+			if (Context.SymbolWriterProvider != null)
+				parameters.SymbolWriterProvider = Context.SymbolWriterProvider;
+			else
+				parameters.WriteSymbols = true;
 			return parameters;
 		}
 
@@ -111,13 +125,22 @@ namespace Mono.Linker.Steps {
 			return new FileInfo (assembly.MainModule.FullyQualifiedName);
 		}
 
-		static void CopyAssembly (FileInfo fi, string directory)
+		static void CopyAssembly (FileInfo fi, string directory, bool symbols)
 		{
 			string target = Path.GetFullPath (Path.Combine (directory, fi.Name));
-			if (fi.FullName == target)
+			string source = fi.FullName;
+			if (source == target)
 				return;
 
-			File.Copy (fi.FullName, target, true);
+			File.Copy (source, target, true);
+
+			if (!symbols)
+				return;
+
+			source += ".mdb";
+			if (!File.Exists (source))
+				return;
+			File.Copy (source, target + ".mdb", true);
 		}
 
 		static string GetAssemblyFileName (AssemblyDefinition assembly, string directory)

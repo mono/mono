@@ -1,4 +1,4 @@
-// cs0122-17.cs: `A.output' is inaccessible due to its protection level
+// CS0122: `A.output' is inaccessible due to its protection level
 // Line: 12
 
 public class A {

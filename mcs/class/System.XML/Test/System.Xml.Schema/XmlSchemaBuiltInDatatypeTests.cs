@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlSchemaBuiltInDatatypeTests : Assertion
+	public class XmlSchemaBuiltInDatatypeTests
 	{
 
     [Test]
@@ -66,7 +66,7 @@ FIXME: Really we want to test the value of whitespace more
       while(vr.Read()) { };
       vr.Close();
       
-      Assert(type + " doesn't collapse whitespace: " + (errorInfo != null ? errorInfo.Message : null), passed);
+      Assert.IsTrue (passed, type + " doesn't collapse whitespace: " + (errorInfo != null ? errorInfo.Message : null));
     }
 
     bool passed = true;

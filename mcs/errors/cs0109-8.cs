@@ -1,4 +1,4 @@
-// cs0109-8.cs: The member `DerivedClass.get_Value()' does not hide an inherited member. The new keyword is not required
+// CS0109: The member `DerivedClass.get_Value()' does not hide an inherited member. The new keyword is not required
 // Line: 14
 // Compiler options: -warnaserror -warn:4
 

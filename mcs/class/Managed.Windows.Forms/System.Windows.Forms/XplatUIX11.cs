@@ -499,6 +499,12 @@ namespace System.Windows.Forms {
 
 				wake = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 				wake.Connect(listen.LocalEndPoint);
+
+				// Make this non-blocking, so it doesn't
+				// deadlock if too many wakes are sent
+				// before the wake_receive end is polled
+				wake.Blocking = false;
+
 				wake_receive = listen.Accept();
 
 				#if __MonoCS__
@@ -1230,7 +1236,13 @@ namespace System.Windows.Forms {
 		}
 
 		void WakeupMain () {
-			wake.Send (new byte [] { 0xFF });
+			try {
+				wake.Send (new byte [] { 0xFF });
+			} catch (SocketException ex) {
+				if (ex.SocketErrorCode != SocketError.WouldBlock) {
+					throw;
+				}
+			}
 		}
 
 		XEventQueue ThreadQueue(Thread thread) {

@@ -136,6 +136,8 @@ namespace System.Xml.Linq
 			if (xns == XNamespace.Xmlns)
 				// do nothing for xmlns attributes
 				return;
+			if (prefix == null)
+				return;
 
 			if (xns == XNamespace.None)
 				if (el.GetPrefixOfNamespace (xns) != prefix)
@@ -233,7 +235,7 @@ namespace System.Xml.Linq
 				state = XmlNodeType.Element;
 			}
 
-			FillXmlns (el, prefix ?? String.Empty, xns);
+			FillXmlns (el, prefix, xns);
 
 			current = el;
 		}
@@ -281,10 +283,10 @@ namespace System.Xml.Linq
 			if (prefix.Length == 0 && name == "xmlns" && ns == XNamespace.Xmlns.NamespaceName)
 				ns = String.Empty;
 
-			XNamespace xns = XNamespace.Get (ns);
+			XNamespace xns = ns == null ? XNamespace.None : XNamespace.Get (ns);
 			el.SetAttributeValue (xns.GetName (name), String.Empty);
 			attribute = el.LastAttribute;
-			FillXmlns (el, prefix, xns);
+			FillXmlns (el, ns != null ? prefix : null, xns);
 		}
 
 		public override void WriteEndAttribute ()

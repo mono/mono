@@ -76,7 +76,7 @@ namespace System.Linq.Parallel
 
 		internal static int GetBestWorkerNumber (bool blocking)
 		{
-			return blocking ? Environment.ProcessorCount + 1 : Environment.ProcessorCount;
+			return blocking && Task.CurrentId == null ? Environment.ProcessorCount + 1 : Environment.ProcessorCount;
 		}
 
 		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node,
@@ -117,7 +117,7 @@ namespace System.Linq.Parallel
 						if (endAction != null)
 							endAction ();
 					}
-				  }, options.Token);
+				}, options.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
 			}
 
 			return tasks;

@@ -1,0 +1,1488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,612,618,618</NoWarn>
+    <OutputPath>./../../class/lib/net_2_0/tmp</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP;MONOWEB_DEP;SYSTEMCORE_DEP</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Web</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,612,618,618</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP;MONOWEB_DEP;SYSTEMCORE_DEP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,612,618,618</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP;MONOWEB_DEP;SYSTEMCORE_DEP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="..\corlib\System.Collections.Concurrent\SplitOrderedList.cs" />
+   <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXDataNode.cs" />
+   <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXFileRef.cs" />
+   <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXNullRef.cs" />
+   <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXResourceReader.cs" />
+   <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXResourceWriter.cs" />
+   <Compile Include="..\System.Design\System.Data.Design\TypedDataSetGenerator.cs" />
+   <Compile Include="System.Web\ApplicationShutdownReason.cs" />
+   <Compile Include="System.Web\BaseParamsCollection.cs" />
+   <Compile Include="System.Web\BeginEventHandler.cs" />
+   <Compile Include="System.Web\BrowserCapabilities.cs" />
+   <Compile Include="System.Web.Caching\AggregateCacheDependency.cs" />
+   <Compile Include="System.Web.Caching\Cache.cs" />
+   <Compile Include="System.Web.Caching\CacheDependency.cs" />
+   <Compile Include="System.Web.Caching\CachedRawResponse.cs" />
+   <Compile Include="System.Web.Caching\CachedVaryBy.cs" />
+   <Compile Include="System.Web.Caching\CacheItem.cs" />
+   <Compile Include="System.Web.Caching\CacheItemEnumerator.cs" />
+   <Compile Include="System.Web.Caching\CacheItemLRU.cs" />
+   <Compile Include="System.Web.Caching\CacheItemPriority.cs" />
+   <Compile Include="System.Web.Caching\CacheItemPriorityQueue.cs" />
+   <Compile Include="System.Web.Caching\CacheItemPriorityQueueDebug.cs" />
+   <Compile Include="System.Web.Caching\CacheItemRemovedCallback.cs" />
+   <Compile Include="System.Web.Caching\CacheItemRemovedReason.cs" />
+   <Compile Include="System.Web.Caching\CacheItemUpdateCallback.cs" />
+   <Compile Include="System.Web.Caching\CacheItemUpdateReason.cs" />
+   <Compile Include="System.Web.Caching\DatabaseNotEnabledForNotificationException.cs" />
+   <Compile Include="System.Web.Caching\InMemoryOutputCacheProvider.cs" />
+   <Compile Include="System.Web.Caching\OutputCacheModule.cs" />
+   <Compile Include="System.Web.Caching\OutputCacheProvider.cs" />
+   <Compile Include="System.Web.Caching\SqlCacheDependencyAdmin.cs" />
+   <Compile Include="System.Web.Caching\SqlCacheDependency.cs" />
+   <Compile Include="System.Web.Caching\TableNotEnabledForNotificationException.cs" />
+   <Compile Include="System.Web\CapabilitiesLoader.cs" />
+   <Compile Include="System.Web.Compilation\AppCodeCompiler.cs" />
+   <Compile Include="System.Web.Compilation\ApplicationFileBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\AppResourceFileInfo.cs" />
+   <Compile Include="System.Web.Compilation\AppResourceFilesCollection.cs" />
+   <Compile Include="System.Web.Compilation\AppResourcesAssemblyBuilder.cs" />
+   <Compile Include="System.Web.Compilation\AppResourcesCompiler.cs" />
+   <Compile Include="System.Web.Compilation\AppSettingsExpressionBuilder.cs" />
+   <Compile Include="System.Web.Compilation\AppWebReferencesCompiler.cs" />
+   <Compile Include="System.Web.Compilation\AspComponent.cs" />
+   <Compile Include="System.Web.Compilation\AspComponentFoundry.cs" />
+   <Compile Include="System.Web.Compilation\AspGenerator.cs" />
+   <Compile Include="System.Web.Compilation\AspParser.cs" />
+   <Compile Include="System.Web.Compilation\AspTokenizer.cs" />
+   <Compile Include="System.Web.Compilation\AssemblyBuilder.cs" />
+   <Compile Include="System.Web.Compilation\BaseCompiler.cs" />
+   <Compile Include="System.Web.Compilation\BuildDependencySet.cs" />
+   <Compile Include="System.Web.Compilation\BuildManagerCacheItem.cs" />
+   <Compile Include="System.Web.Compilation\BuildManager.cs" />
+   <Compile Include="System.Web.Compilation\BuildManagerDirectoryBuilder.cs" />
+   <Compile Include="System.Web.Compilation\BuildManagerHostUnloadEventArgs.cs" />
+   <Compile Include="System.Web.Compilation\BuildManagerHostUnloadEventHandler.cs" />
+   <Compile Include="System.Web.Compilation\BuildManagerRemoveEntryEventHandler.cs" />
+   <Compile Include="System.Web.Compilation\BuildProviderAppliesToAttribute.cs" />
+   <Compile Include="System.Web.Compilation\BuildProviderAppliesTo.cs" />
+   <Compile Include="System.Web.Compilation\BuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\BuildProviderGroup.cs" />
+   <Compile Include="System.Web.Compilation\BuildProviderResultFlags.cs" />
+   <Compile Include="System.Web.Compilation\CachingCompiler.cs" />
+   <Compile Include="System.Web.Compilation\ClientBuildManagerCallback.cs" />
+   <Compile Include="System.Web.Compilation\ClientBuildManager.cs" />
+   <Compile Include="System.Web.Compilation\ClientBuildManagerParameter.cs" />
+   <Compile Include="System.Web.Compilation\CompilationException.cs" />
+   <Compile Include="System.Web.Compilation\CompilerType.cs" />
+   <Compile Include="System.Web.Compilation\ConnectionStringsExpressionBuilder.cs" />
+   <Compile Include="System.Web.Compilation\DefaultResourceProvider.cs" />
+   <Compile Include="System.Web.Compilation\DefaultResourceProviderFactory.cs" />
+   <Compile Include="System.Web.Compilation\DesignTimeResourceProviderFactoryAttribute.cs" />
+   <Compile Include="System.Web.Compilation\Directive.cs" />
+   <Compile Include="System.Web.Compilation\ExpressionBuilderContext.cs" />
+   <Compile Include="System.Web.Compilation\ExpressionBuilder.cs" />
+   <Compile Include="System.Web.Compilation\ExpressionEditorAttribute.cs" />
+   <Compile Include="System.Web.Compilation\ExpressionPrefixAttribute.cs" />
+   <Compile Include="System.Web.Compilation\ForceCopyBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\GenericBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\GlobalAsaxCompiler.cs" />
+   <Compile Include="System.Web.Compilation\IAssemblyPostProcessor.cs" />
+   <Compile Include="System.Web.Compilation\IgnoreFileBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\IImplicitResourceProvider.cs" />
+   <Compile Include="System.Web.Compilation\ILocation.cs" />
+   <Compile Include="System.Web.Compilation\ImplicitResourceKey.cs" />
+   <Compile Include="System.Web.Compilation\IResourceProvider.cs" />
+   <Compile Include="System.Web.Compilation\LinePragmaCodeInfo.cs" />
+   <Compile Include="System.Web.Compilation\Location.cs" />
+   <Compile Include="System.Web.Compilation\MasterPageBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\MasterPageCompiler.cs" />
+   <Compile Include="System.Web.Compilation\PageBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\PageCompiler.cs" />
+   <Compile Include="System.Web.Compilation\PageThemeCompiler.cs" />
+   <Compile Include="System.Web.Compilation\ParseException.cs" />
+   <Compile Include="System.Web.Compilation\PrecompilationFlags.cs" />
+   <Compile Include="System.Web.Compilation\PreservationFile.cs" />
+   <Compile Include="System.Web.Compilation\ResourceExpressionBuilder.cs" />
+   <Compile Include="System.Web.Compilation\ResourceExpressionFields.cs" />
+   <Compile Include="System.Web.Compilation\ResourceProviderFactory.cs" />
+   <Compile Include="System.Web.Compilation\SimpleBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\TagAttributes.cs" />
+   <Compile Include="System.Web.Compilation\TagType.cs" />
+   <Compile Include="System.Web.Compilation\TemplateBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\TemplateControlCompiler.cs" />
+   <Compile Include="System.Web.Compilation\ThemeDirectoryBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\ThemeDirectoryCompiler.cs" />
+   <Compile Include="System.Web.Compilation\UserControlBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\UserControlCompiler.cs" />
+   <Compile Include="System.Web.Compilation\WebHandlerBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\WebServiceBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\WebServiceCompiler.cs" />
+   <Compile Include="System.Web.Compilation\WsdlBuildProvider.cs" />
+   <Compile Include="System.Web.Compilation\XsdBuildProvider.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AdapterDictionary.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AnonymousIdentificationSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ApplicationSettingsConfigurationFileMap.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AssemblyCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AssemblyInfo.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthenticationMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthenticationSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthorizationRuleAction.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthorizationRuleCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthorizationRule.cs" />
+   <Compile Include="System.Web.Configuration_2.0\AuthorizationSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\BufferModesCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\BufferModeSettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\BuildProviderCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\BuildProvider.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CacheSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CapabilitiesBuild.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CapabilitiesResult.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ClientTargetCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ClientTarget.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ClientTargetSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CodeSubDirectoriesCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CodeSubDirectory.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CompilationSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CompilerCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\Compiler.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CustomErrorCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CustomError.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CustomErrorsMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CustomErrorsRedirectMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\CustomErrorsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\DeploymentSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\EventMappingSettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\EventMappingSettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ExpressionBuilderCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ExpressionBuilder.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsAuthenticationConfiguration.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsAuthenticationCredentials.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsAuthenticationUserCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsAuthenticationUser.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsAuthPasswordFormat.cs" />
+   <Compile Include="System.Web.Configuration_2.0\FormsProtectionEnum.cs" />
+   <Compile Include="System.Web.Configuration_2.0\GlobalizationSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HandlersUtil.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HealthMonitoringSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HostingEnvironmentSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpCapabilitiesBase.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpConfigurationContext.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpConfigurationSystem.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpCookiesSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpHandlerActionCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpHandlerAction.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpHandlersSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpModuleActionCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpModuleAction.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpModulesSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpRuntimeSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ICapabilitiesProcess.cs" />
+   <Compile Include="System.Web.Configuration_2.0\IConfigMapPath.cs" />
+   <Compile Include="System.Web.Configuration_2.0\IConfigMapPathFactory.cs" />
+   <Compile Include="System.Web.Configuration_2.0\IdentitySection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\IRemoteWebConfigurationHostServer.cs" />
+   <Compile Include="System.Web.Configuration_2.0\LowerCaseStringConverter.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MachineKeySection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MachineKeyValidationConverter.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MachineKeyValidation.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MembershipSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\MonoSettingsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\NamespaceCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\NamespaceInfo.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\Build.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\Exception.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\File.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\Identification.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\Node.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\NodeTypes.cs" />
+   <Compile Include="System.Web.Configuration_2.0\nBrowser\Result.cs" />
+   <Compile Include="System.Web.Configuration_2.0\NullableStringValidator.cs" />
+   <Compile Include="System.Web.Configuration_2.0\OutputCacheProfileCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\OutputCacheProfile.cs" />
+   <Compile Include="System.Web.Configuration_2.0\OutputCacheSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\OutputCacheSettingsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\PagesEnableSessionState.cs" />
+   <Compile Include="System.Web.Configuration_2.0\PagesSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\PassportAuthentication.cs" />
+   <Compile Include="System.Web.Configuration_2.0\PositiveTimeSpanValidator.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProcessModelComAuthenticationLevel.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProcessModelComImpersonationLevel.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProcessModelLogLevel.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProcessModelSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfileGroupSettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfileGroupSettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfilePropertyNameValidator.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfilePropertySettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfilePropertySettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfileSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfileSettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProfileSettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\PropertyHelper.cs" />
+   <Compile Include="System.Web.Configuration_2.0\ProvidersHelper.cs" />
+   <Compile Include="System.Web.Configuration_2.0\RegexWorker.cs" />
+   <Compile Include="System.Web.Configuration_2.0\RoleManagerSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\RootProfilePropertySettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\RuleSettingsCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\RuleSettings.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SecurityPolicySection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SerializationMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SessionPageStateSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SessionStateSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SiteMapSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SqlCacheDependencyDatabaseCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SqlCacheDependencyDatabase.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SqlCacheDependencySection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SystemWebCachingSectionGroup.cs" />
+   <Compile Include="System.Web.Configuration_2.0\SystemWebSectionGroup.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TagMapCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TagMapInfo.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TagPrefixCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TagPrefixInfo.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TraceDisplayMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TraceSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TransformerInfoCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TransformerInfo.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TrustLevelCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TrustLevel.cs" />
+   <Compile Include="System.Web.Configuration_2.0\TrustSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\UrlMappingCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\UrlMapping.cs" />
+   <Compile Include="System.Web.Configuration_2.0\UrlMappingsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\VirtualDirectoryMappingCollection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\VirtualDirectoryMapping.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebApplicationLevel.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebConfigurationFileMap.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebConfigurationHost.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebConfigurationManager.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebContext.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebControlsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebPartsPersonalizationAuthorization.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebPartsPersonalization.cs" />
+   <Compile Include="System.Web.Configuration_2.0\WebPartsSection.cs" />
+   <Compile Include="System.Web.Configuration_2.0\XhtmlConformanceMode.cs" />
+   <Compile Include="System.Web.Configuration_2.0\XhtmlConformanceSection.cs" />
+   <Compile Include="System.Web.Configuration.Internal\IInternalConfigWebHost.cs" />
+   <Compile Include="System.Web\DefaultExceptionPageTemplate.cs" />
+   <Compile Include="System.Web\DefaultHttpHandler.cs" />
+   <Compile Include="System.Web\EndEventHandler.cs" />
+   <Compile Include="System.Web\ExceptionPageTemplate.cs" />
+   <Compile Include="System.Web\ExceptionPageTemplateFragment.cs" />
+   <Compile Include="System.Web\ExceptionPageTemplateFragmentValue.cs" />
+   <Compile Include="System.Web\ExceptionPageTemplateType.cs" />
+   <Compile Include="System.Web\ExceptionPageTemplateValues.cs" />
+   <Compile Include="System.Web.Handlers\AssemblyResourceLoader.cs" />
+   <Compile Include="System.Web.Handlers\TraceHandler.cs" />
+   <Compile Include="System.Web\HeadersCollection.cs" />
+   <Compile Include="System.Web.Hosting\AppDomainFactory.cs" />
+   <Compile Include="System.Web.Hosting\ApplicationHost.cs" />
+   <Compile Include="System.Web.Hosting\ApplicationInfo.cs" />
+   <Compile Include="System.Web.Hosting\ApplicationManager.cs" />
+   <Compile Include="System.Web.Hosting\AppManagerAppDomainFactory.cs" />
+   <Compile Include="System.Web.Hosting\BareApplicationHost.cs" />
+   <Compile Include="System.Web.Hosting\DefaultVirtualDirectory.cs" />
+   <Compile Include="System.Web.Hosting\DefaultVirtualFile.cs" />
+   <Compile Include="System.Web.Hosting\DefaultVirtualPathProvider.cs" />
+   <Compile Include="System.Web.Hosting\HostingEnvironment.cs" />
+   <Compile Include="System.Web.Hosting\IAppDomainFactory.cs" />
+   <Compile Include="System.Web.Hosting\IApplicationHost.cs" />
+   <Compile Include="System.Web.Hosting\IAppManagerAppDomainFactory.cs" />
+   <Compile Include="System.Web.Hosting\IISAPIRuntime.cs" />
+   <Compile Include="System.Web.Hosting\IRegisteredObject.cs" />
+   <Compile Include="System.Web.Hosting\ISAPIRuntime.cs" />
+   <Compile Include="System.Web.Hosting\SimpleWorkerRequest.cs" />
+   <Compile Include="System.Web.Hosting\VirtualDirectory.cs" />
+   <Compile Include="System.Web.Hosting\VirtualFileBase.cs" />
+   <Compile Include="System.Web.Hosting\VirtualFile.cs" />
+   <Compile Include="System.Web.Hosting\VirtualPathProvider.cs" />
+   <Compile Include="System.Web\HtmlizedException.cs" />
+   <Compile Include="System.Web\HttpApplication.cs" />
+   <Compile Include="System.Web\HttpApplicationFactory.cs" />
+   <Compile Include="System.Web\HttpApplicationState.cs" />
+   <Compile Include="System.Web\HttpBrowserCapabilities.cs" />
+   <Compile Include="System.Web\HttpCacheability.cs" />
+   <Compile Include="System.Web\HttpCachePolicy.cs" />
+   <Compile Include="System.Web\HttpCacheRevalidation.cs" />
+   <Compile Include="System.Web\HttpCacheValidateHandler.cs" />
+   <Compile Include="System.Web\HttpCacheVaryByContentEncodings.cs" />
+   <Compile Include="System.Web\HttpCacheVaryByHeaders.cs" />
+   <Compile Include="System.Web\HttpCacheVaryByParams.cs" />
+   <Compile Include="System.Web\HttpClientCertificate.cs" />
+   <Compile Include="System.Web\HttpCompileException.cs" />
+   <Compile Include="System.Web\HttpContext.cs" />
+   <Compile Include="System.Web\HttpCookieCollection.cs" />
+   <Compile Include="System.Web\HttpCookie.cs" />
+   <Compile Include="System.Web\HttpCookieMode.cs" />
+   <Compile Include="System.Web\HttpException.cs" />
+   <Compile Include="System.Web\HttpFileCollection.cs" />
+   <Compile Include="System.Web\HttpForbiddenHandler.cs" />
+   <Compile Include="System.Web\HttpHeaderCollection.cs" />
+   <Compile Include="System.Web\HttpMethodNotAllowedHandler.cs" />
+   <Compile Include="System.Web\HttpModuleCollection.cs" />
+   <Compile Include="System.Web\HttpParamsCollection.cs" />
+   <Compile Include="System.Web\HttpParseException.cs" />
+   <Compile Include="System.Web\HttpPostedFile.cs" />
+   <Compile Include="System.Web\HttpRequest.cs" />
+   <Compile Include="System.Web\HttpRequestValidationException.cs" />
+   <Compile Include="System.Web\HttpResponse.cs" />
+   <Compile Include="System.Web\HttpResponseHeader.cs" />
+   <Compile Include="System.Web\HttpResponseStream.cs" />
+   <Compile Include="System.Web\HttpResponseSubstitutionCallback.cs" />
+   <Compile Include="System.Web\HttpRuntime.cs" />
+   <Compile Include="System.Web\HttpServerUtility.cs" />
+   <Compile Include="System.Web\HttpStaticObjectsCollection.cs" />
+   <Compile Include="System.Web\HttpUnhandledException.cs" />
+   <Compile Include="System.Web\HttpUtility.cs" />
+   <Compile Include="System.Web\HttpValidationStatus.cs" />
+   <Compile Include="System.Web\HttpWorkerRequest.cs" />
+   <Compile Include="System.Web\HttpWriter.cs" />
+   <Compile Include="System.Web\IHttpAsyncHandler.cs" />
+   <Compile Include="System.Web\IHttpHandler.cs" />
+   <Compile Include="System.Web\IHttpHandlerFactory.cs" />
+   <Compile Include="System.Web\IHttpMapPath.cs" />
+   <Compile Include="System.Web\IHttpModule.cs" />
+   <Compile Include="System.Web\IisTraceListener.cs" />
+   <Compile Include="System.Web\InputFilterStream.cs" />
+   <Compile Include="System.Web\IntPtrStream.cs" />
+   <Compile Include="System.Web\IPartitionResolver.cs" />
+   <Compile Include="System.Web.Mail\Base64AttachmentEncoder.cs" />
+   <Compile Include="System.Web.Mail\IAttachmentEncoder.cs" />
+   <Compile Include="System.Web.Mail\MailAddressCollection.cs" />
+   <Compile Include="System.Web.Mail\MailAddress.cs" />
+   <Compile Include="System.Web.Mail\MailAttachment.cs" />
+   <Compile Include="System.Web.Mail\MailEncoding.cs" />
+   <Compile Include="System.Web.Mail\MailFormat.cs" />
+   <Compile Include="System.Web.Mail\MailHeader.cs" />
+   <Compile Include="System.Web.Mail\MailMessage.cs" />
+   <Compile Include="System.Web.Mail\MailMessageWrapper.cs" />
+   <Compile Include="System.Web.Mail\MailPriority.cs" />
+   <Compile Include="System.Web.Mail\MailUtil.cs" />
+   <Compile Include="System.Web.Mail\RelatedBodyPart.cs" />
+   <Compile Include="System.Web.Mail\SmtpClient.cs" />
+   <Compile Include="System.Web.Mail\SmtpException.cs" />
+   <Compile Include="System.Web.Mail\SmtpMail.cs" />
+   <Compile Include="System.Web.Mail\SmtpResponse.cs" />
+   <Compile Include="System.Web.Mail\SmtpStream.cs" />
+   <Compile Include="System.Web.Mail\ToUUEncodingTransform.cs" />
+   <Compile Include="System.Web.Mail\UUAttachmentEncoder.cs" />
+   <Compile Include="System.Web.Management\EventNotificationType.cs" />
+   <Compile Include="System.Web.Management\IRegiisUtility.cs" />
+   <Compile Include="System.Web.Management\IWebEventCustomEvaluator.cs" />
+   <Compile Include="System.Web.Management\RuleFiringRecord.cs" />
+   <Compile Include="System.Web.Management\SessionStateType.cs" />
+   <Compile Include="System.Web.Management\SqlFeatures.cs" />
+   <Compile Include="System.Web.Management\WebApplicationInformation.cs" />
+   <Compile Include="System.Web.Management\WebBaseEvent.cs" />
+   <Compile Include="System.Web.Management\WebEventCodes.cs" />
+   <Compile Include="System.Web.Management\WebEventFormatter.cs" />
+   <Compile Include="System.Web\MimeTypes.cs" />
+   <Compile Include="System.Web\NoParamsInvoker.cs" />
+   <Compile Include="System.Web\OutputFilterStream.cs" />
+   <Compile Include="System.Web\ParserErrorCollection.cs" />
+   <Compile Include="System.Web\ParserError.cs" />
+   <Compile Include="System.Web\ProcessInfo.cs" />
+   <Compile Include="System.Web\ProcessModelInfo.cs" />
+   <Compile Include="System.Web\ProcessShutdownReason.cs" />
+   <Compile Include="System.Web\ProcessStatus.cs" />
+   <Compile Include="System.Web.Profile\CustomProviderDataAttribute.cs" />
+   <Compile Include="System.Web.Profile\DefaultProfile.cs" />
+   <Compile Include="System.Web.Profile\ProfileAuthenticationOption.cs" />
+   <Compile Include="System.Web.Profile\ProfileAutoSaveEventArgs.cs" />
+   <Compile Include="System.Web.Profile\ProfileAutoSaveEventHandler.cs" />
+   <Compile Include="System.Web.Profile\ProfileBase.cs" />
+   <Compile Include="System.Web.Profile\ProfileEventArgs.cs" />
+   <Compile Include="System.Web.Profile\ProfileEventHandler.cs" />
+   <Compile Include="System.Web.Profile\ProfileGroupBase.cs" />
+   <Compile Include="System.Web.Profile\ProfileInfoCollection.cs" />
+   <Compile Include="System.Web.Profile\ProfileInfo.cs" />
+   <Compile Include="System.Web.Profile\ProfileManager.cs" />
+   <Compile Include="System.Web.Profile\ProfileMigrateEventArgs.cs" />
+   <Compile Include="System.Web.Profile\ProfileMigrateEventHandler.cs" />
+   <Compile Include="System.Web.Profile\ProfileModule.cs" />
+   <Compile Include="System.Web.Profile\ProfileParser.cs" />
+   <Compile Include="System.Web.Profile\ProfileProviderAttribute.cs" />
+   <Compile Include="System.Web.Profile\ProfileProviderCollection.cs" />
+   <Compile Include="System.Web.Profile\ProfileProvider.cs" />
+   <Compile Include="System.Web.Profile\SettingsAllowAnonymousAttribute.cs" />
+   <Compile Include="System.Web.Profile\SqliteProfileProvider.cs" />
+   <Compile Include="System.Web.Profile\SqlProfileProvider.cs" />
+   <Compile Include="System.Web.Properties\TranslationProperties.Designer.cs" />
+   <Compile Include="System.Web\QueueManager.cs" />
+   <Compile Include="System.Web\RequestNotification.cs" />
+   <Compile Include="System.Web\RequestNotificationStatus.cs" />
+   <Compile Include="System.Web.Security\ActiveDirectoryConnectionProtection.cs" />
+   <Compile Include="System.Web.Security\ActiveDirectoryMembershipProvider.cs" />
+   <Compile Include="System.Web.Security\AnonymousIdentificationEventArgs.cs" />
+   <Compile Include="System.Web.Security\AnonymousIdentificationEventHandler.cs" />
+   <Compile Include="System.Web.Security\AnonymousIdentificationModule.cs" />
+   <Compile Include="System.Web.Security\AspNetDBSchemaChecker.cs" />
+   <Compile Include="System.Web.Security\CookieProtection.cs" />
+   <Compile Include="System.Web.Security\DefaultAuthenticationEventArgs.cs" />
+   <Compile Include="System.Web.Security\DefaultAuthenticationEventHandler.cs" />
+   <Compile Include="System.Web.Security\DefaultAuthenticationModule.cs" />
+   <Compile Include="System.Web.Security\FileAuthorizationModule.cs" />
+   <Compile Include="System.Web.Security\FormsAuthentication.cs" />
+   <Compile Include="System.Web.Security\FormsAuthenticationEventArgs.cs" />
+   <Compile Include="System.Web.Security\FormsAuthenticationEventHandler.cs" />
+   <Compile Include="System.Web.Security\FormsAuthenticationModule.cs" />
+   <Compile Include="System.Web.Security\FormsAuthenticationTicket.cs" />
+   <Compile Include="System.Web.Security\FormsIdentity.cs" />
+   <Compile Include="System.Web.Security\MembershipCreateStatus.cs" />
+   <Compile Include="System.Web.Security\MembershipCreateUserException.cs" />
+   <Compile Include="System.Web.Security\Membership.cs" />
+   <Compile Include="System.Web.Security\MembershipHelper.cs" />
+   <Compile Include="System.Web.Security\MembershipPasswordException.cs" />
+   <Compile Include="System.Web.Security\MembershipPasswordFormat.cs" />
+   <Compile Include="System.Web.Security\MembershipProviderCollection.cs" />
+   <Compile Include="System.Web.Security\MembershipProvider.cs" />
+   <Compile Include="System.Web.Security\MembershipUserCollection.cs" />
+   <Compile Include="System.Web.Security\MembershipUser.cs" />
+   <Compile Include="System.Web.Security\MembershipValidatePasswordEventHandler.cs" />
+   <Compile Include="System.Web.Security\PassportAuthenticationEventArgs.cs" />
+   <Compile Include="System.Web.Security\PassportAuthenticationEventHandler.cs" />
+   <Compile Include="System.Web.Security\PassportAuthenticationModule.cs" />
+   <Compile Include="System.Web.Security\PassportIdentity.cs" />
+   <Compile Include="System.Web.Security\RoleManagerEventArgs.cs" />
+   <Compile Include="System.Web.Security\RoleManagerEventHandler.cs" />
+   <Compile Include="System.Web.Security\RoleManagerModule.cs" />
+   <Compile Include="System.Web.Security\RolePrincipal.cs" />
+   <Compile Include="System.Web.Security\RoleProviderCollection.cs" />
+   <Compile Include="System.Web.Security\RoleProvider.cs" />
+   <Compile Include="System.Web.Security\Roles.cs" />
+   <Compile Include="System.Web.Security\SqliteMembershipProvider.cs" />
+   <Compile Include="System.Web.Security\SqliteRoleProvider.cs" />
+   <Compile Include="System.Web.Security\SqlMembershipProvider.cs" />
+   <Compile Include="System.Web.Security\SqlRoleProvider.cs" />
+   <Compile Include="System.Web.Security\UrlAuthorizationModule.cs" />
+   <Compile Include="System.Web.Security\ValidatePasswordEventArgs.cs" />
+   <Compile Include="System.Web.Security\WindowsAuthenticationEventArgs.cs" />
+   <Compile Include="System.Web.Security\WindowsAuthenticationEventHandler.cs" />
+   <Compile Include="System.Web.Security\WindowsAuthenticationModule.cs" />
+   <Compile Include="System.Web\ServerVariablesCollection.cs" />
+   <Compile Include="System.Web.SessionState_2.0\HttpSessionStateContainer.cs" />
+   <Compile Include="System.Web.SessionState_2.0\HttpSessionState.cs" />
+   <Compile Include="System.Web.SessionState_2.0\IHttpSessionState.cs" />
+   <Compile Include="System.Web.SessionState_2.0\IReadOnlySessionState.cs" />
+   <Compile Include="System.Web.SessionState_2.0\IRequiresSessionState.cs" />
+   <Compile Include="System.Web.SessionState_2.0\ISessionIDManager.cs" />
+   <Compile Include="System.Web.SessionState_2.0\ISessionStateItemCollection.cs" />
+   <Compile Include="System.Web.SessionState_2.0\IStateRuntime.cs" />
+   <Compile Include="System.Web.SessionState_2.0\RemoteStateServer.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionId.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionIDManager.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionInProcHandler.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionSQLServerHandler.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateActions.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateItemCollection.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateItemExpireCallback.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateMode.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateModule.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateServerHandler.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateStoreData.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateStoreProviderBase.cs" />
+   <Compile Include="System.Web.SessionState_2.0\SessionStateUtility.cs" />
+   <Compile Include="System.Web.SessionState_2.0\StateRuntime.cs" />
+   <Compile Include="System.Web.SessionState_2.0\StateServerItem.cs" />
+   <Compile Include="System.Web\SiteMap.cs" />
+   <Compile Include="System.Web\SiteMapNodeCollection.cs" />
+   <Compile Include="System.Web\SiteMapNode.cs" />
+   <Compile Include="System.Web\SiteMapProviderCollection.cs" />
+   <Compile Include="System.Web\SiteMapProvider.cs" />
+   <Compile Include="System.Web\SiteMapResolveEventArgs.cs" />
+   <Compile Include="System.Web\StaticFileHandler.cs" />
+   <Compile Include="System.Web\StaticSiteMapProvider.cs" />
+   <Compile Include="System.Web\TempFileStream.cs" />
+   <Compile Include="System.Web\TraceContext.cs" />
+   <Compile Include="System.Web\TraceContextEventArgs.cs" />
+   <Compile Include="System.Web\TraceContextEventHandler.cs" />
+   <Compile Include="System.Web\TraceContextRecord.cs" />
+   <Compile Include="System.Web\TraceData.cs" />
+   <Compile Include="System.Web\TraceManager.cs" />
+   <Compile Include="System.Web\TraceMode.cs" />
+   <Compile Include="System.Web.UI.Adapters\ControlAdapter.cs" />
+   <Compile Include="System.Web.UI.Adapters\PageAdapter.cs" />
+   <Compile Include="System.Web.UI.Adapters\WmlPostFieldType.cs" />
+   <Compile Include="System.Web.UI\ApplicationFileParser.cs" />
+   <Compile Include="System.Web.UI\AttributeCollection.cs" />
+   <Compile Include="System.Web.UI\BaseParser.cs" />
+   <Compile Include="System.Web.UI\BasePartialCachingControl.cs" />
+   <Compile Include="System.Web.UI\BaseTemplateParser.cs" />
+   <Compile Include="System.Web.UI\BoundPropertyEntry.cs" />
+   <Compile Include="System.Web.UI\BuilderPropertyEntry.cs" />
+   <Compile Include="System.Web.UI\BuildMethod.cs" />
+   <Compile Include="System.Web.UI\BuildTemplateMethod.cs" />
+   <Compile Include="System.Web.UI\ChtmlTextWriter.cs" />
+   <Compile Include="System.Web.UI\ClientScriptManager.cs" />
+   <Compile Include="System.Web.UI\CodeBuilder.cs" />
+   <Compile Include="System.Web.UI\CodeConstructType.cs" />
+   <Compile Include="System.Web.UI\CodeRenderBuilder.cs" />
+   <Compile Include="System.Web.UI\CollectionBuilder.cs" />
+   <Compile Include="System.Web.UI\CompilationMode.cs" />
+   <Compile Include="System.Web.UI\CompiledBindableTemplateBuilder.cs" />
+   <Compile Include="System.Web.UI\CompiledTemplateBuilder.cs" />
+   <Compile Include="System.Web.UI\ComplexPropertyEntry.cs" />
+   <Compile Include="System.Web.UI\ConflictOptions.cs" />
+   <Compile Include="System.Web.UI\ConstructorNeedsTagAttribute.cs" />
+   <Compile Include="System.Web.UI\ControlBuilderAttribute.cs" />
+   <Compile Include="System.Web.UI\ControlBuilder.cs" />
+   <Compile Include="System.Web.UI\ControlCachePolicy.cs" />
+   <Compile Include="System.Web.UI\ControlCollection.cs" />
+   <Compile Include="System.Web.UI\Control.cs" />
+   <Compile Include="System.Web.UI\ControlSkin.cs" />
+   <Compile Include="System.Web.UI\ControlSkinDelegate.cs" />
+   <Compile Include="System.Web.UI\ControlValuePropertyAttribute.cs" />
+   <Compile Include="System.Web.UI\CssClassPropertyAttribute.cs" />
+   <Compile Include="System.Web.UI\CssStyleCollection.cs" />
+   <Compile Include="System.Web.UI\DataBinder.cs" />
+   <Compile Include="System.Web.UI\DataBindingBuilder.cs" />
+   <Compile Include="System.Web.UI\DataBindingCollection.cs" />
+   <Compile Include="System.Web.UI\DataBinding.cs" />
+   <Compile Include="System.Web.UI\DataBindingHandlerAttribute.cs" />
+   <Compile Include="System.Web.UI\DataBoundLiteralControl.cs" />
+   <Compile Include="System.Web.UI\DataSourceCacheDurationConverter.cs" />
+   <Compile Include="System.Web.UI\DataSourceCacheExpiry.cs" />
+   <Compile Include="System.Web.UI\DataSourceCapabilities.cs" />
+   <Compile Include="System.Web.UI\DataSourceControlBuilder.cs" />
+   <Compile Include="System.Web.UI\DataSourceControl.cs" />
+   <Compile Include="System.Web.UI\DataSourceOperation.cs" />
+   <Compile Include="System.Web.UI\DataSourceSelectArguments.cs" />
+   <Compile Include="System.Web.UI\DataSourceView.cs" />
+   <Compile Include="System.Web.UI\DataSourceViewOperationCallback.cs" />
+   <Compile Include="System.Web.UI\DataSourceViewSelectCallback.cs" />
+   <Compile Include="System.Web.UI\DesignerDataBoundLiteralControl.cs" />
+   <Compile Include="System.Web.UI\DesignTimeParseData.cs" />
+   <Compile Include="System.Web.UI\DesignTimeTemplateParser.cs" />
+   <Compile Include="System.Web.UI\EmptyControlCollection.cs" />
+   <Compile Include="System.Web.UI\EventEntry.cs" />
+   <Compile Include="System.Web.UI\ExpressionBindingCollection.cs" />
+   <Compile Include="System.Web.UI\ExpressionBinding.cs" />
+   <Compile Include="System.Web.UI\ExtractTemplateValuesMethod.cs" />
+   <Compile Include="System.Web.UI\FileLevelControlBuilderAttribute.cs" />
+   <Compile Include="System.Web.UI\FileLevelPageControlBuilder.cs" />
+   <Compile Include="System.Web.UI\FileLevelUserControlBuilder.cs" />
+   <Compile Include="System.Web.UI\FilterableAttribute.cs" />
+   <Compile Include="System.Web.UI\HiddenFieldPageStatePersister.cs" />
+   <Compile Include="System.Web.UI\HierarchicalDataSourceControl.cs" />
+   <Compile Include="System.Web.UI\HierarchicalDataSourceView.cs" />
+   <Compile Include="System.Web.UI\Html32TextWriter.cs" />
+   <Compile Include="System.Web.UI\HtmlControlPersistableAttribute.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlAnchor.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlButton.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlContainerControl.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlControlBuilder.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlControl.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlEmptyTagControlBuilder.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlForm.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlGenericControl.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlHeadBuilder.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlHead.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlImage.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputButton.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputCheckBox.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputControl.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputFile.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputHidden.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputImage.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputPassword.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputRadioButton.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputReset.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputSubmit.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlInputText.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlLink.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlMeta.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlSelectBuilder.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlSelect.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTableCellCollection.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTableCell.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTable.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTableRowCollection.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTableRow.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTextArea.cs" />
+   <Compile Include="System.Web.UI.HtmlControls\HtmlTitle.cs" />
+   <Compile Include="System.Web.UI\HtmlTextWriterAttribute.cs" />
+   <Compile Include="System.Web.UI\HtmlTextWriter.cs" />
+   <Compile Include="System.Web.UI\HtmlTextWriterStyle.cs" />
+   <Compile Include="System.Web.UI\HtmlTextWriterTag.cs" />
+   <Compile Include="System.Web.UI\IAttributeAccessor.cs" />
+   <Compile Include="System.Web.UI\IAutoFieldGenerator.cs" />
+   <Compile Include="System.Web.UI\IBindableControl.cs" />
+   <Compile Include="System.Web.UI\IBindableTemplate.cs" />
+   <Compile Include="System.Web.UI\ICallbackEventHandler.cs" />
+   <Compile Include="System.Web.UI\ICheckBoxControl.cs" />
+   <Compile Include="System.Web.UI\IControlBuilderAccessor.cs" />
+   <Compile Include="System.Web.UI\IControlDesignerAccessor.cs" />
+   <Compile Include="System.Web.UI\IDataBindingsAccessor.cs" />
+   <Compile Include="System.Web.UI\IDataItemContainer.cs" />
+   <Compile Include="System.Web.UI\IDataSource.cs" />
+   <Compile Include="System.Web.UI\IDataSourceViewSchemaAccessor.cs" />
+   <Compile Include="System.Web.UI\IDReferencePropertyAttribute.cs" />
+   <Compile Include="System.Web.UI\IEditableTextControl.cs" />
+   <Compile Include="System.Web.UI\IExpressionsAccessor.cs" />
+   <Compile Include="System.Web.UI\IFilterResolutionService.cs" />
+   <Compile Include="System.Web.UI\IgnoreUnknownContentAttribute.cs" />
+   <Compile Include="System.Web.UI\IHierarchicalDataSource.cs" />
+   <Compile Include="System.Web.UI\IHierarchicalEnumerable.cs" />
+   <Compile Include="System.Web.UI\IHierarchyData.cs" />
+   <Compile Include="System.Web.UI\ImageClickEventArgs.cs" />
+   <Compile Include="System.Web.UI\ImageClickEventHandler.cs" />
+   <Compile Include="System.Web.UI\INamingContainer.cs" />
+   <Compile Include="System.Web.UI\INavigateUIData.cs" />
+   <Compile Include="System.Web.UI\IndexedString.cs" />
+   <Compile Include="System.Web.UI\INonBindingContainer.cs" />
+   <Compile Include="System.Web.UI\IParserAccessor.cs" />
+   <Compile Include="System.Web.UI\IPostBackDataHandler.cs" />
+   <Compile Include="System.Web.UI\IPostBackEventHandler.cs" />
+   <Compile Include="System.Web.UI\IResourceUrlGenerator.cs" />
+   <Compile Include="System.Web.UI\IScriptManager.cs" />
+   <Compile Include="System.Web.UI\IStateFormatter.cs" />
+   <Compile Include="System.Web.UI\IStateManager.cs" />
+   <Compile Include="System.Web.UI\IStyleSheet.cs" />
+   <Compile Include="System.Web.UI\ITagNameToTypeMapper.cs" />
+   <Compile Include="System.Web.UI\ITemplate.cs" />
+   <Compile Include="System.Web.UI\ITextControl.cs" />
+   <Compile Include="System.Web.UI\IThemeResolutionService.cs" />
+   <Compile Include="System.Web.UI\IUrlResolutionService.cs" />
+   <Compile Include="System.Web.UI\IUserControlDesignerAccessor.cs" />
+   <Compile Include="System.Web.UI\IUserControlTypeResolutionService.cs" />
+   <Compile Include="System.Web.UI\IValidator.cs" />
+   <Compile Include="System.Web.UI\KeyedList.cs" />
+   <Compile Include="System.Web.UI\KeyedListEnumerator.cs" />
+   <Compile Include="System.Web.UI\ListSourceHelper.cs" />
+   <Compile Include="System.Web.UI\LiteralControl.cs" />
+   <Compile Include="System.Web.UI\LosFormatter.cs" />
+   <Compile Include="System.Web.UI\MainDirectiveAttribute.cs" />
+   <Compile Include="System.Web.UI\MasterPageControlBuilder.cs" />
+   <Compile Include="System.Web.UI\MasterPage.cs" />
+   <Compile Include="System.Web.UI\MasterPageParser.cs" />
+   <Compile Include="System.Web.UI\MinimizableAttributeTypeConverter.cs" />
+   <Compile Include="System.Web.UI\NonVisualControlAttribute.cs" />
+   <Compile Include="System.Web.UI\ObjectConverter.cs" />
+   <Compile Include="System.Web.UI\ObjectPersistData.cs" />
+   <Compile Include="System.Web.UI\ObjectStateFormatter.cs" />
+   <Compile Include="System.Web.UI\ObjectTagBuilder.cs" />
+   <Compile Include="System.Web.UI\ObjectTag.cs" />
+   <Compile Include="System.Web.UI\OutputCacheLocation.cs" />
+   <Compile Include="System.Web.UI\OutputCacheParameters.cs" />
+   <Compile Include="System.Web.UI\PageAsyncTask.cs" />
+   <Compile Include="System.Web.UI\Page.cs" />
+   <Compile Include="System.Web.UI\PageHandlerFactory.cs" />
+   <Compile Include="System.Web.UI\PageLifeCycle.cs" />
+   <Compile Include="System.Web.UI\PageParser.cs" />
+   <Compile Include="System.Web.UI\PageParserFilter.cs" />
+   <Compile Include="System.Web.UI\PageStatePersister.cs" />
+   <Compile Include="System.Web.UI\PageThemeBuilder.cs" />
+   <Compile Include="System.Web.UI\PageTheme.cs" />
+   <Compile Include="System.Web.UI\PageThemeFileParser.cs" />
+   <Compile Include="System.Web.UI\PageThemeParser.cs" />
+   <Compile Include="System.Web.UI\Pair.cs" />
+   <Compile Include="System.Web.UI\ParseChildrenAttribute.cs" />
+   <Compile Include="System.Web.UI\PartialCachingAttribute.cs" />
+   <Compile Include="System.Web.UI\PartialCachingControl.cs" />
+   <Compile Include="System.Web.UI\PersistChildrenAttribute.cs" />
+   <Compile Include="System.Web.UI\PersistenceModeAttribute.cs" />
+   <Compile Include="System.Web.UI\PersistenceMode.cs" />
+   <Compile Include="System.Web.UI\PostBackOptions.cs" />
+   <Compile Include="System.Web.UI\PropertyConverter.cs" />
+   <Compile Include="System.Web.UI\PropertyEntry.cs" />
+   <Compile Include="System.Web.UI\ReadOnlyDataSourceView.cs" />
+   <Compile Include="System.Web.UI\RenderMethod.cs" />
+   <Compile Include="System.Web.UI\ResourceBasedLiteralControl.cs" />
+   <Compile Include="System.Web.UI\RootBuilder.cs" />
+   <Compile Include="System.Web.UI\SessionPageStatePersister.cs" />
+   <Compile Include="System.Web.UI\SimpleHandlerFactory.cs" />
+   <Compile Include="System.Web.UI\SimplePropertyEntry.cs" />
+   <Compile Include="System.Web.UI\SimpleWebHandlerParser.cs" />
+   <Compile Include="System.Web.UI\SkinBuilder.cs" />
+   <Compile Include="System.Web.UI\StateBag.cs" />
+   <Compile Include="System.Web.UI\StateItem.cs" />
+   <Compile Include="System.Web.UI\StateManagedCollection.cs" />
+   <Compile Include="System.Web.UI\StaticPartialCachingControl.cs" />
+   <Compile Include="System.Web.UI\StringPropertyBuilder.cs" />
+   <Compile Include="System.Web.UI\SupportsEventValidationAttribute.cs" />
+   <Compile Include="System.Web.UI\TagPrefixAttribute.cs" />
+   <Compile Include="System.Web.UI\TemplateBuilder.cs" />
+   <Compile Include="System.Web.UI\TemplateContainerAttribute.cs" />
+   <Compile Include="System.Web.UI\TemplateContentType.cs" />
+   <Compile Include="System.Web.UI\TemplateControl.cs" />
+   <Compile Include="System.Web.UI\TemplateControlParser.cs" />
+   <Compile Include="System.Web.UI\TemplateInstanceAttribute.cs" />
+   <Compile Include="System.Web.UI\TemplateInstance.cs" />
+   <Compile Include="System.Web.UI\TemplateParser.cs" />
+   <Compile Include="System.Web.UI\TemplatePropertyEntry.cs" />
+   <Compile Include="System.Web.UI\ThemeableAttribute.cs" />
+   <Compile Include="System.Web.UI\ThemeProvider.cs" />
+   <Compile Include="System.Web.UI\ToolboxDataAttribute.cs" />
+   <Compile Include="System.Web.UI\Triplet.cs" />
+   <Compile Include="System.Web.UI\UnknownAttributeDescriptor.cs" />
+   <Compile Include="System.Web.UI\UrlPropertyAttribute.cs" />
+   <Compile Include="System.Web.UI\UrlTypes.cs" />
+   <Compile Include="System.Web.UI\UserControlControlBuilder.cs" />
+   <Compile Include="System.Web.UI\UserControl.cs" />
+   <Compile Include="System.Web.UI\UserControlParser.cs" />
+   <Compile Include="System.Web.UI\ValidationPropertyAttribute.cs" />
+   <Compile Include="System.Web.UI\ValidatorCollection.cs" />
+   <Compile Include="System.Web.UI\VerificationAttribute.cs" />
+   <Compile Include="System.Web.UI\VerificationConditionalOperator.cs" />
+   <Compile Include="System.Web.UI\VerificationReportLevel.cs" />
+   <Compile Include="System.Web.UI\VerificationRule.cs" />
+   <Compile Include="System.Web.UI\ViewStateEncryptionMode.cs" />
+   <Compile Include="System.Web.UI\ViewStateException.cs" />
+   <Compile Include="System.Web.UI\ViewStateModeByIdAttribute.cs" />
+   <Compile Include="System.Web.UI\VirtualReferenceType.cs" />
+   <Compile Include="System.Web.UI.WebControls\AccessDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\AccessDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls.Adapters\DataBoundControlAdapter.cs" />
+   <Compile Include="System.Web.UI.WebControls.Adapters\HideDisabledControlAdapter.cs" />
+   <Compile Include="System.Web.UI.WebControls.Adapters\HierarchicalDataBoundControlAdapter.cs" />
+   <Compile Include="System.Web.UI.WebControls.Adapters\MenuAdapter.cs" />
+   <Compile Include="System.Web.UI.WebControls.Adapters\WebControlAdapter.cs" />
+   <Compile Include="System.Web.UI.WebControls\AdCreatedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\AdCreatedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\AdRotator.cs" />
+   <Compile Include="System.Web.UI.WebControls\AssociatedControlConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\AuthenticateEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\AuthenticateEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\AutoCompleteType.cs" />
+   <Compile Include="System.Web.UI.WebControls\AutoGeneratedField.cs" />
+   <Compile Include="System.Web.UI.WebControls\AutoGeneratedFieldProperties.cs" />
+   <Compile Include="System.Web.UI.WebControls\BaseCompareValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\BaseDataBoundControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\BaseDataList.cs" />
+   <Compile Include="System.Web.UI.WebControls\BaseMenuRenderer.cs" />
+   <Compile Include="System.Web.UI.WebControls\BaseValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\BorderStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\BoundColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\BoundField.cs" />
+   <Compile Include="System.Web.UI.WebControls\BulletedList.cs" />
+   <Compile Include="System.Web.UI.WebControls\BulletedListDisplayMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\BulletedListEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\BulletedListEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\BulletStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\ButtonColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\ButtonColumnType.cs" />
+   <Compile Include="System.Web.UI.WebControls\Button.cs" />
+   <Compile Include="System.Web.UI.WebControls\ButtonFieldBase.cs" />
+   <Compile Include="System.Web.UI.WebControls\ButtonField.cs" />
+   <Compile Include="System.Web.UI.WebControls\ButtonType.cs" />
+   <Compile Include="System.Web.UI.WebControls\Calendar.cs" />
+   <Compile Include="System.Web.UI.WebControls\CalendarDay.cs" />
+   <Compile Include="System.Web.UI.WebControls\CalendarSelectionMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\ChangePassword.cs" />
+   <Compile Include="System.Web.UI.WebControls\CheckBox.cs" />
+   <Compile Include="System.Web.UI.WebControls\CheckBoxField.cs" />
+   <Compile Include="System.Web.UI.WebControls\CheckBoxList.cs" />
+   <Compile Include="System.Web.UI.WebControls\ChildTable.cs" />
+   <Compile Include="System.Web.UI.WebControls\CircleHotSpot.cs" />
+   <Compile Include="System.Web.UI.WebControls\CollectionDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\CommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\CommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\CommandField.cs" />
+   <Compile Include="System.Web.UI.WebControls\CompareValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\CompleteWizardStep.cs" />
+   <Compile Include="System.Web.UI.WebControls\CompositeControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\CompositeDataBoundControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\ContainedTable.cs" />
+   <Compile Include="System.Web.UI.WebControls\ContentControlBuilderInternal.cs" />
+   <Compile Include="System.Web.UI.WebControls\Content.cs" />
+   <Compile Include="System.Web.UI.WebControls\ContentDirection.cs" />
+   <Compile Include="System.Web.UI.WebControls\ContentPlaceHolderBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\ContentPlaceHolder.cs" />
+   <Compile Include="System.Web.UI.WebControls\ControlIDConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\ControlParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\ControlPropertyNameConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\CookieParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\CreateUserErrorEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\CreateUserErrorEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\CreateUserWizard.cs" />
+   <Compile Include="System.Web.UI.WebControls\CreateUserWizardStep.cs" />
+   <Compile Include="System.Web.UI.WebControls\CustomValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataBoundControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataBoundControlMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlButton.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlCellType.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlCommands.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlFieldCell.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlFieldCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlField.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlFieldHeaderCell.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlRowState.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataControlRowType.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridColumnCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGrid.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridItemCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridItemEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridItemEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridPageChangedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridPageChangedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridPagerStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridSortCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataGridSortCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataKeyArray.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataKeyCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataKey.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataList.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListItemCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListItemEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataListItemEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DataSourceCacheManager.cs" />
+   <Compile Include="System.Web.UI.WebControls\DayNameFormat.cs" />
+   <Compile Include="System.Web.UI.WebControls\DayRenderEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DayRenderEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsView.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewDeletedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewDeletedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewDeleteEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewDeleteEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewInsertedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewInsertedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewInsertEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewInsertEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewModeEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewModeEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewPageEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewPageEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewPagerRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewRowCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewUpdatedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewUpdatedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewUpdateEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\DetailsViewUpdateEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\DropDownList.cs" />
+   <Compile Include="System.Web.UI.WebControls\EditCommandColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\EmbeddedMailObject.cs" />
+   <Compile Include="System.Web.UI.WebControls\EmbeddedMailObjectsCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\FileUpload.cs" />
+   <Compile Include="System.Web.UI.WebControls\FirstDayOfWeek.cs" />
+   <Compile Include="System.Web.UI.WebControls\FontInfo.cs" />
+   <Compile Include="System.Web.UI.WebControls\FontNamesConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\FontSize.cs" />
+   <Compile Include="System.Web.UI.WebControls\FontUnitConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\FontUnit.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormView.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewDeletedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewDeletedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewDeleteEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewDeleteEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewInsertedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewInsertedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewInsertEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewInsertEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewModeEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewModeEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewPageEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewPageEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewPagerRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewUpdatedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewUpdatedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewUpdateEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\FormViewUpdateEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridLines.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewCancelEditEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewCancelEditEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridView.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewDeletedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewDeletedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewDeleteEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewDeleteEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewEditEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewEditEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewPageEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewPageEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewRowCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewRowEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewRowEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewSelectEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewSelectEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewSortEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewSortEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewUpdatedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewUpdatedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewUpdateEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\GridViewUpdateEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\HiddenField.cs" />
+   <Compile Include="System.Web.UI.WebControls\HierarchicalDataBoundControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\HorizontalAlignConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\HorizontalAlign.cs" />
+   <Compile Include="System.Web.UI.WebControls\HotSpotCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\HotSpot.cs" />
+   <Compile Include="System.Web.UI.WebControls\HotSpotMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\HyperLinkColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\HyperLinkControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\HyperLink.cs" />
+   <Compile Include="System.Web.UI.WebControls\HyperLinkField.cs" />
+   <Compile Include="System.Web.UI.WebControls\IButtonControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\ICallbackContainer.cs" />
+   <Compile Include="System.Web.UI.WebControls\ICompositeControlDesignerAccessor.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageAlign.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageButton.cs" />
+   <Compile Include="System.Web.UI.WebControls\Image.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageField.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageMap.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageMapEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ImageMapEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\IMenuRenderer.cs" />
+   <Compile Include="System.Web.UI.WebControls\IPersistedSelector.cs" />
+   <Compile Include="System.Web.UI.WebControls\IPostBackContainer.cs" />
+   <Compile Include="System.Web.UI.WebControls\IRepeatInfoUser.cs" />
+   <Compile Include="System.Web.UI.WebControls\LabelControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\Label.cs" />
+   <Compile Include="System.Web.UI.WebControls\LinkButtonControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\LinkButton.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListBox.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListControl.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListItemCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListItemControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListItemType.cs" />
+   <Compile Include="System.Web.UI.WebControls\ListSelectionMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\LiteralControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\Literal.cs" />
+   <Compile Include="System.Web.UI.WebControls\LiteralMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\Localize.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginCancelEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginCancelEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\Login.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginFailureAction.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginName.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginStatus.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginTextLayout.cs" />
+   <Compile Include="System.Web.UI.WebControls\LoginView.cs" />
+   <Compile Include="System.Web.UI.WebControls\LogoutAction.cs" />
+   <Compile Include="System.Web.UI.WebControls\MailDefinition.cs" />
+   <Compile Include="System.Web.UI.WebControls\MailMessageEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\MailMessageEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\Menu.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemBindingCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemBinding.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemStyleCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuItemTemplateContainer.cs" />
+   <Compile Include="System.Web.UI.WebControls\MenuTableRenderer.cs" />
+   <Compile Include="System.Web.UI.WebControls\MonthChangedEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\MonthChangedEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\MultiViewControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\MultiView.cs" />
+   <Compile Include="System.Web.UI.WebControls\NextPrevFormat.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceDisposingEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceDisposingEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceFilteringEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceFilteringEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceMethodEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceMethodEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceSelectingEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceSelectingEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceStatusEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceStatusEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ObjectDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\Orientation.cs" />
+   <Compile Include="System.Web.UI.WebControls\PagedDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\PagerButtons.cs" />
+   <Compile Include="System.Web.UI.WebControls\PagerMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\PagerPosition.cs" />
+   <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
+   <Compile Include="System.Web.UI.WebControls\Panel.cs" />
+   <Compile Include="System.Web.UI.WebControls\PanelStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\PasswordRecovery.cs" />
+   <Compile Include="System.Web.UI.WebControls\PathDirection.cs" />
+   <Compile Include="System.Web.UI.WebControls\PlaceHolderControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\PlaceHolder.cs" />
+   <Compile Include="System.Web.UI.WebControls\PolygonHotSpot.cs" />
+   <Compile Include="System.Web.UI.WebControls\ProfileParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\QueryStringParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\RadioButton.cs" />
+   <Compile Include="System.Web.UI.WebControls\RadioButtonList.cs" />
+   <Compile Include="System.Web.UI.WebControls\RangeValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\RectangleHotSpot.cs" />
+   <Compile Include="System.Web.UI.WebControls\RegularExpressionValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeatDirection.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\Repeater.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterItemCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterItemEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeaterItemEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeatInfo.cs" />
+   <Compile Include="System.Web.UI.WebControls\RepeatLayout.cs" />
+   <Compile Include="System.Web.UI.WebControls\RequiredFieldValidator.cs" />
+   <Compile Include="System.Web.UI.WebControls\RoleGroupCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\RoleGroup.cs" />
+   <Compile Include="System.Web.UI.WebControls\ScrollBars.cs" />
+   <Compile Include="System.Web.UI.WebControls\SelectedDatesCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\SendMailErrorEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SendMailErrorEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\ServerValidateEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\ServerValidateEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SessionParameter.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapHierarchicalDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapNodeItem.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapNodeItemEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapNodeItemEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapNodeItemType.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapPath.cs" />
+   <Compile Include="System.Web.UI.WebControls\SiteMapViewType.cs" />
+   <Compile Include="System.Web.UI.WebControls\SortDirection.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceCommandEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceCommandEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceCommandType.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceFilteringEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceFilteringEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceSelectingEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceSelectingEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceStatusEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceStatusEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\SqlDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\StringArrayConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\StyleCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\Style.cs" />
+   <Compile Include="System.Web.UI.WebControls\SubMenuStyleCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\SubMenuStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\Substitution.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableCaptionAlign.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableCellCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableCellControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableCell.cs" />
+   <Compile Include="System.Web.UI.WebControls\Table.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableFooterRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableHeaderCell.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableHeaderRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableHeaderScope.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableItemStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableRow.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableRowSection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableSectionStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\TableStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\TargetConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\TemplateColumn.cs" />
+   <Compile Include="System.Web.UI.WebControls\TemplatedWizardStep.cs" />
+   <Compile Include="System.Web.UI.WebControls\TemplateField.cs" />
+   <Compile Include="System.Web.UI.WebControls\TextAlign.cs" />
+   <Compile Include="System.Web.UI.WebControls\TextBoxControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\TextBox.cs" />
+   <Compile Include="System.Web.UI.WebControls\TextBoxMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\TitleFormat.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeBindingCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeBinding.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNode.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeSelectAction.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeView.cs" />
+   <Compile Include="System.Web.UI.WebControls\TreeViewImageSet.cs" />
+   <Compile Include="System.Web.UI.WebControls\UnitConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\Unit.cs" />
+   <Compile Include="System.Web.UI.WebControls\UnitType.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidatedControlConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidationCompareOperator.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidationDataType.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidationSummary.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidationSummaryDisplayMode.cs" />
+   <Compile Include="System.Web.UI.WebControls\ValidatorDisplay.cs" />
+   <Compile Include="System.Web.UI.WebControls\VerticalAlignConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\VerticalAlign.cs" />
+   <Compile Include="System.Web.UI.WebControls\ViewCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\View.cs" />
+   <Compile Include="System.Web.UI.WebControls\WebColorConverter.cs" />
+   <Compile Include="System.Web.UI.WebControls\WebControl.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConnectionConsumerCallback.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConnectionInterfaceCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConnectionPoint.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConnectionPointType.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConnectionProviderCallback.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ConsumerConnectionPoint.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\EditorPartCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\EditorPart.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IPersonalizable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ITrackingPersonalizable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ITransformerConfigurationControl.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IVersioningPersonalizable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebActionable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebEditable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPart.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPartField.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPartHttpHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPartParameters.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPartRow.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\IWebPartTable.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\PartChromeState.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\PartChromeType.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\Part.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\PersonalizableAttribute.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\PersonalizationScope.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\ProviderConnectionPoint.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\TypeCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartAuthorizationEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartAuthorizationEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartCancelEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartCancelEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPart.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartExportMode.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartHelpMode.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartPageMenuMode.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartVerbCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartVerb.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartVerbsEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls.WebParts\WebPartVerbsEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\Wizard.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardNavigationEventArgs.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardNavigationEventHandler.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardStepBase.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardStepCollection.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardStepControlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardStep.cs" />
+   <Compile Include="System.Web.UI.WebControls\WizardStepType.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlBuilder.cs" />
+   <Compile Include="System.Web.UI.WebControls\Xml.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlDataSource.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlDataSourceNodeDescriptor.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlDataSourcePropertyDescriptor.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlHierarchicalDataSourceView.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlHierarchicalEnumerable.cs" />
+   <Compile Include="System.Web.UI.WebControls\XmlHierarchyData.cs" />
+   <Compile Include="System.Web.UI\WebHandlerParser.cs" />
+   <Compile Include="System.Web.UI\WebResourceAttribute.cs" />
+   <Compile Include="System.Web.UI\WebServiceParser.cs" />
+   <Compile Include="System.Web.UI\XhtmlMobileDocType.cs" />
+   <Compile Include="System.Web.UI\XhtmlTextWriter.cs" />
+   <Compile Include="System.Web.UI\XPathBinder.cs" />
+   <Compile Include="System.Web.Util\AltSerialization.cs" />
+   <Compile Include="System.Web.Util\DataSourceHelper.cs" />
+   <Compile Include="System.Web.Util\DataSourceResolver.cs" />
+   <Compile Include="System.Web.Util\FileUtils.cs" />
+   <Compile Include="System.Web.Util\Helpers.cs" />
+   <Compile Include="System.Web.Util\HttpEncoder.cs" />
+   <Compile Include="System.Web.Util\ICalls.cs" />
+   <Compile Include="System.Web.Util\IWebObjectFactory.cs" />
+   <Compile Include="System.Web.Util\IWebPropertyAccessor.cs" />
+   <Compile Include="System.Web.Util\MachineKeySectionUtils.cs" />
+   <Compile Include="System.Web.Util\RuntimeHelpers.cs" />
+   <Compile Include="System.Web.Util\SearchPattern.cs" />
+   <Compile Include="System.Web.Util\SerializationHelper.cs" />
+   <Compile Include="System.Web.Util\StrUtils.cs" />
+   <Compile Include="System.Web.Util\TimeUtil.cs" />
+   <Compile Include="System.Web.Util\TransactedCallback.cs" />
+   <Compile Include="System.Web.Util\Transactions.cs" />
+   <Compile Include="System.Web.Util\UrlUtils.cs" />
+   <Compile Include="System.Web.Util\WebEncoding.cs" />
+   <Compile Include="System.Web.Util\WebTrace.cs" />
+   <Compile Include="System.Web.Util\WorkItemCallback.cs" />
+   <Compile Include="System.Web.Util\WorkItem.cs" />
+   <Compile Include="System.Web\VirtualPath.cs" />
+   <Compile Include="System.Web\VirtualPathUtility.cs" />
+   <Compile Include="System.Web\WebCategoryAttribute.cs" />
+   <Compile Include="System.Web\WebPageTraceListener.cs" />
+   <Compile Include="System.Web\WebROCollection.cs" />
+   <Compile Include="System.Web\WebSysDescriptionAttribute.cs" />
+   <Compile Include="System.Web\XmlSiteMapProvider.cs" />
+   <Compile Include="System.Web\UplevelHelper.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.EnterpriseServices.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.EnterpriseServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="resources/TranslationResources.resources">
+       <LogicalName>TranslationResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WebUIValidation.js">
+       <LogicalName>WebUIValidation.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder.gif">
+       <LogicalName>folder.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/file.gif">
+       <LogicalName>file.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/computer.gif">
+       <LogicalName>computer.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/arrow_minus.gif">
+       <LogicalName>arrow_minus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/arrow_noexpand.gif">
+       <LogicalName>arrow_noexpand.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/arrow_plus.gif">
+       <LogicalName>arrow_plus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/arrow_up.gif">
+       <LogicalName>arrow_up.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/arrow_down.gif">
+       <LogicalName>arrow_down.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/box_full.gif">
+       <LogicalName>box_full.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/box_empty.gif">
+       <LogicalName>box_empty.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/box_minus.gif">
+       <LogicalName>box_minus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/box_noexpand.gif">
+       <LogicalName>box_noexpand.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/box_plus.gif">
+       <LogicalName>box_plus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/contact.gif">
+       <LogicalName>contact.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/dot_empty.gif">
+       <LogicalName>dot_empty.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/dot_full.gif">
+       <LogicalName>dot_full.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/dots.gif">
+       <LogicalName>dots.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/inbox.gif">
+       <LogicalName>inbox.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/star_empty.gif">
+       <LogicalName>star_empty.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/star_full.gif">
+       <LogicalName>star_full.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/warning.gif">
+       <LogicalName>warning.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_noexpand.gif">
+       <LogicalName>TreeView_noexpand.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_dash.gif">
+       <LogicalName>TreeView_dash.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_dashminus.gif">
+       <LogicalName>TreeView_dashminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_dashplus.gif">
+       <LogicalName>TreeView_dashplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_i.gif">
+       <LogicalName>TreeView_i.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_l.gif">
+       <LogicalName>TreeView_l.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_lminus.gif">
+       <LogicalName>TreeView_lminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_lplus.gif">
+       <LogicalName>TreeView_lplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_minus.gif">
+       <LogicalName>TreeView_minus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_plus.gif">
+       <LogicalName>TreeView_plus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_r.gif">
+       <LogicalName>TreeView_r.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_rminus.gif">
+       <LogicalName>TreeView_rminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_rplus.gif">
+       <LogicalName>TreeView_rplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_t.gif">
+       <LogicalName>TreeView_t.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_tminus.gif">
+       <LogicalName>TreeView_tminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_tplus.gif">
+       <LogicalName>TreeView_tplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/transparent.gif">
+       <LogicalName>transparent.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/webform.js">
+       <LogicalName>webform.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WebUIValidation_2.0.js">
+       <LogicalName>WebUIValidation_2.0.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/ErrorTemplateCommon_Top.html">
+       <LogicalName>ErrorTemplateCommon_Top.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DefaultErrorTemplate_CustomErrorDefault.html">
+       <LogicalName>DefaultErrorTemplate_CustomErrorDefault.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/ErrorTemplateCommon_Bottom.html">
+       <LogicalName>ErrorTemplateCommon_Bottom.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DefaultErrorTemplate_StandardPage.html">
+       <LogicalName>DefaultErrorTemplate_StandardPage.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_Top.html">
+       <LogicalName>HtmlizedExceptionPage_Top.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileLongSource.html">
+       <LogicalName>HtmlizedExceptionPage_FileLongSource.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileShortSource.html">
+       <LogicalName>HtmlizedExceptionPage_FileShortSource.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_CompilerOutput.html">
+       <LogicalName>HtmlizedExceptionPage_CompilerOutput.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.UI.WebControls/GridView.js">
+       <LogicalName>GridView.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.UI.WebControls/DetailsView.js">
+       <LogicalName>DetailsView.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.UI.WebControls/TreeView.js">
+       <LogicalName>TreeView.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.UI.WebControls/Menu.js">
+       <LogicalName>Menu.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

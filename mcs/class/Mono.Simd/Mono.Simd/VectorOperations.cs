@@ -993,7 +993,7 @@ namespace Mono.Simd
 		{
 			double *p1 = (double*)&v1;
 			double *p2 = (double*)&v2;
-			return new Vector2d (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2d (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1))); 
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -1001,7 +1001,7 @@ namespace Mono.Simd
 		{
 			long *p1 = (long*)&v1;
 			long *p2 = (long*)&v2;
-			return new Vector2l (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2l (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1)));
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -1009,7 +1009,7 @@ namespace Mono.Simd
 		{
 			ulong *p1 = (ulong*)&v1;
 			ulong *p2 = (ulong*)&v2;
-			return new Vector2ul (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2ul (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1))); 
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -1184,6 +1184,46 @@ namespace Mono.Simd
 			for (int i = 0; i < 8; ++i)
 				*c++ = (sbyte)System.Math.Max (System.Math.Min ((int)*b++, sbyte.MaxValue), sbyte.MinValue);
 			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4f ConvertToFloat (this Vector4i v0) {
+			return new Vector4f (v0.X, v0.Y, v0.Z, v0.W);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2d ConvertToDouble (this Vector4i v0) {
+			return new Vector2d (v0.X, v0.Y);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i ConvertToInt (this Vector2d v0) {
+			return new Vector4i ((int)System.Math.Round (v0.X), (int)System.Math.Round (v0.Y), 0, 0);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i ConvertToIntTruncated (this Vector2d v0) {
+			return new Vector4i ((int) (v0.X), (int) (v0.Y), 0, 0);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4f ConvertToFloat (this Vector2d v0) {
+			return new Vector4f ((float)v0.X, (float)v0.Y, 0, 0);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i ConvertToInt (this Vector4f v0) {
+			return new Vector4i ((int)System.Math.Round (v0.X), (int)System.Math.Round (v0.Y), (int)System.Math.Round (v0.Z), (int)System.Math.Round (v0.W));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i ConvertToIntTruncated (this Vector4f v0) {
+			return new Vector4i ((int)v0.X, (int)v0.Y, (int)v0.Z, (int)v0.W);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2d ConvertToDouble (this Vector4f v0) {
+			return new Vector2d (v0.X, v0.Y);
 		}
 	}
 }

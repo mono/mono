@@ -23,8 +23,6 @@
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.ComponentModel 
 {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
@@ -58,5 +56,3 @@ namespace System.ComponentModel
 		}
 	}
 }
-
-#endif

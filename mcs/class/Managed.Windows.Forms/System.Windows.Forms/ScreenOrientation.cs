@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum ScreenOrientation
@@ -38,4 +37,3 @@ namespace System.Windows.Forms
 		Angle270 = 3
 	}
 }
-#endif

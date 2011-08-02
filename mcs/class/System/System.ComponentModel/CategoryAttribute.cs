@@ -42,9 +42,7 @@ namespace System.ComponentModel {
 		static volatile CategoryAttribute action, appearance, behaviour, data,   def;
 		static volatile CategoryAttribute design, drag_drop,  focus,     format, key;
 		static volatile CategoryAttribute layout, mouse,      window_style;
-#if NET_2_0
 		static volatile CategoryAttribute async;
-#endif
 
 		static object lockobj = new object ();
 
@@ -85,7 +83,6 @@ namespace System.ComponentModel {
 			}
 		}
 
-#if NET_2_0
 		public static CategoryAttribute Asynchronous {
 			get {
 				if (behaviour != null)
@@ -98,7 +95,6 @@ namespace System.ComponentModel {
 				return async;
 			}
 		}
-#endif
 
 		public static CategoryAttribute Behavior {
 			get {

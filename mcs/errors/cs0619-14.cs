@@ -1,4 +1,4 @@
-// cs0619-14.cs: `AA' is obsolete: `'
+// CS0619: `AA' is obsolete: `'
 // Line: 17
 
 class A

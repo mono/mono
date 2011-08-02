@@ -783,7 +783,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
-			logger.DumpMessages ();
 
 			CheckMetadata (project, "A", "Meta", new string[] { "@(B)", "" }, "K1");
 			CheckEvaluatedMetadata (project, "A", "Meta", new string[] { "", "" }, "K2");

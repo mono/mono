@@ -1,0 +1,5 @@
+<AttachedWrapper Attachable.Foo="x" xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0">
+  <AttachedWrapper.Value>
+    <Attached Attachable.Foo="y" />
+  </AttachedWrapper.Value>
+</AttachedWrapper>

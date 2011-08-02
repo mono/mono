@@ -1,4 +1,4 @@
-// cs0619-33.cs: `Error.Report(string)' is obsolete: `Obsolete method'
+// CS0619-33: `Error.Report(string)' is obsolete: `Obsolete method'
 // Line: 11
 // Compiler options: -reference:CS0619-33-lib.dll
 

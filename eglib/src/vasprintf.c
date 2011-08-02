@@ -9,7 +9,7 @@ int vasprintf(char **ret, const char *fmt, va_list ap)
 	size_t buflen;
 	va_list ap2;
 	
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
 	ap2 = ap;
 	len = _vscprintf(fmt, ap2); // NOTE MS specific extension ( :-( )
 #else
@@ -17,7 +17,7 @@ int vasprintf(char **ret, const char *fmt, va_list ap)
 	len = vsnprintf(NULL, 0, fmt, ap2);
 #endif
 	
-	if (len > 0 && (buf = malloc((buflen = (size_t) (len + 1)))) != NULL) {
+	if (len >= 0 && (buf = malloc ((buflen = (size_t) (len + 1)))) != NULL) {
 		len = vsnprintf(buf, buflen, fmt, ap);
 		*ret = buf;
 	} else {
@@ -28,3 +28,4 @@ int vasprintf(char **ret, const char *fmt, va_list ap)
 	va_end(ap2);
 	return len;
 }
+

@@ -138,6 +138,9 @@ static const SimdIntrinsc vector4f_intrinsics[] = {
 	{ SN_CompareNotLessThan, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
 	{ SN_CompareOrdered, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_ORD },
 	{ SN_CompareUnordered, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_UNORD },
+	{ SN_ConvertToDouble, OP_CVTPS2PD, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
+	{ SN_ConvertToInt, OP_CVTPS2DQ, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
+	{ SN_ConvertToIntTruncated, OP_CVTTPS2DQ, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
 	{ SN_DuplicateHigh, OP_DUPPS_HIGH, SIMD_VERSION_SSE3, SIMD_EMIT_UNARY },
 	{ SN_DuplicateLow, OP_DUPPS_LOW, SIMD_VERSION_SSE3, SIMD_EMIT_UNARY },
 	{ SN_HorizontalAdd, OP_HADDPS, SIMD_VERSION_SSE3, SIMD_EMIT_BINARY },
@@ -189,6 +192,9 @@ static const SimdIntrinsc vector2d_intrinsics[] = {
 	{ SN_CompareNotLessThan, OP_COMPPD, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
 	{ SN_CompareOrdered, OP_COMPPD, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_ORD },
 	{ SN_CompareUnordered, OP_COMPPD, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, SIMD_COMP_UNORD },
+	{ SN_ConvertToFloat, OP_CVTPD2PS, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
+	{ SN_ConvertToInt, OP_CVTPD2DQ, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
+	{ SN_ConvertToIntTruncated, OP_CVTTPD2DQ, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
 	{ SN_Duplicate, OP_DUPPD, SIMD_VERSION_SSE3, SIMD_EMIT_UNARY },
 	{ SN_HorizontalAdd, OP_HADDPD, SIMD_VERSION_SSE3, SIMD_EMIT_BINARY },
 	{ SN_HorizontalSub, OP_HSUBPD, SIMD_VERSION_SSE3, SIMD_EMIT_BINARY },	
@@ -315,6 +321,8 @@ static const SimdIntrinsc vector4i_intrinsics[] = {
 	{ SN_ctor, OP_EXPAND_I4, SIMD_VERSION_SSE1, SIMD_EMIT_CTOR },
 	{ SN_CompareEqual, OP_PCMPEQD, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
 	{ SN_CompareGreaterThan, OP_PCMPGTD, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_ConvertToDouble, OP_CVTDQ2PD, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
+	{ SN_ConvertToFloat, OP_CVTDQ2PS, SIMD_VERSION_SSE2, SIMD_EMIT_UNARY },
 	{ SN_LoadAligned, 0, SIMD_VERSION_SSE1, SIMD_EMIT_LOAD_ALIGNED },
 	{ SN_LogicalRightShift, OP_PSHRD, SIMD_VERSION_SSE1, SIMD_EMIT_SHIFT },
 	{ SN_Max, OP_PMAXD, SIMD_VERSION_SSE41, SIMD_EMIT_BINARY },
@@ -889,8 +897,9 @@ mono_type_to_expand_op (MonoType *type)
 		return OP_EXPAND_R4;
 	case MONO_TYPE_R8:
 		return OP_EXPAND_R8;
+	default:
+		g_assert_not_reached ();
 	}
-	g_assert_not_reached ();
 }
 
 static int
@@ -976,8 +985,9 @@ mono_type_to_extract_op (MonoType *type)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_R4:
 		return OP_EXTRACT_I4;
+	default:
+		g_assert_not_reached ();
 	}
-	g_assert_not_reached ();
 }
 
 /*Returns the amount to shift the element index to get the dword it belongs to*/
@@ -995,8 +1005,34 @@ mono_type_elements_shift_bits (MonoType *type)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_R4:
 		return 0;
+	default:
+		g_assert_not_reached ();
 	}
-	g_assert_not_reached ();
+}
+
+static G_GNUC_UNUSED int
+mono_type_to_insert_op (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_INSERT_I1;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_INSERT_I2;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_INSERT_I4;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_INSERT_I8;
+	case MONO_TYPE_R4:
+		return OP_INSERT_R4;
+	case MONO_TYPE_R8:
+		return OP_INSERT_R8;
+	default:
+		g_assert_not_reached ();
+	}
 }
 
 static int
@@ -1019,8 +1055,9 @@ mono_type_to_slow_insert_op (MonoType *type)
 		return OP_INSERTX_R4_SLOW;
 	case MONO_TYPE_R8:
 		return OP_INSERTX_R8_SLOW;
+	default:
+		g_assert_not_reached ();
 	}
-	g_assert_not_reached ();
 }
 
 static MonoInst*
@@ -1034,7 +1071,14 @@ simd_intrinsic_emit_setter (const SimdIntrinsc *intrinsic, MonoCompile *cfg, Mon
 
 	size = mono_type_size (sig->params [0], &align); 
 
-	if (size == 2 || size == 4 || size == 8) {
+	if (COMPILE_LLVM (cfg)) {
+		MONO_INST_NEW (cfg, ins, mono_type_to_insert_op (sig->params [0]));
+		ins->klass = cmethod->klass;
+		ins->dreg = ins->sreg1 = dreg = load_simd_vreg (cfg, cmethod, args [0], &indirect);
+		ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = intrinsic->opcode;
+		MONO_ADD_INS (cfg->cbb, ins);
+	} else if (size == 2 || size == 4 || size == 8) {
 		MONO_INST_NEW (cfg, ins, mono_type_to_slow_insert_op (sig->params [0]));
 		ins->klass = cmethod->klass;
 		/*This is a partial load so we encode the dependency on the previous value by setting dreg and sreg1 to the same value.*/

@@ -1,4 +1,4 @@
-// cs0429.cs: Unreachable expression code detected
+// CS0429: Unreachable expression code detected
 // Line: 9
 // Compiler options: -warn:4 -warnaserror
 

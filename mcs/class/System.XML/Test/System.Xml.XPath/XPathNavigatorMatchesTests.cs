@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XPathNavigatorMatchesTests : Assertion
+	public class XPathNavigatorMatchesTests
 	{
 		private XPathNavigator CreateNavigator (string xml)
 		{
@@ -31,14 +31,14 @@ namespace MonoTests.System.Xml
 		public void MatchRoot ()
 		{
 			XPathNavigator navigator = CreateNavigator ("<foo />");
-			Assert (navigator.Matches ("/"));
+			Assert.IsTrue (navigator.Matches ("/"));
 		}
 
 		[Test]
 		public void FalseMatchRoot ()
 		{
 			XPathNavigator navigator = CreateNavigator ("<foo />");
-			Assert (!navigator.Matches ("foo"));
+			Assert.IsTrue (!navigator.Matches ("foo"));
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo"));
+			Assert.IsTrue (navigator.Matches ("foo"));
 		}
 
 		[Test]
@@ -58,7 +58,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo />");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("/foo"));
+			Assert.IsTrue (navigator.Matches ("/foo"));
 		}
 
 		[Test]
@@ -68,8 +68,8 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("bar"));
-			Assert (navigator.Matches ("foo/bar"));
+			Assert.IsTrue (navigator.Matches ("bar"));
+			Assert.IsTrue (navigator.Matches ("foo/bar"));
 		}
 
 		[Test]
@@ -79,8 +79,8 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo bar='baz' />");
 			XPathNavigator navigator = document.DocumentElement.Attributes[0].CreateNavigator ();
 
-			Assert (navigator.Matches ("@bar"));
-			Assert (navigator.Matches ("foo/@bar"));
+			Assert.IsTrue (navigator.Matches ("@bar"));
+			Assert.IsTrue (navigator.Matches ("foo/@bar"));
 		}
 
 		[Test]
@@ -90,7 +90,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar><baz/></bar></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo//baz"));
+			Assert.IsTrue (navigator.Matches ("foo//baz"));
 		}
 
 		[Test]
@@ -100,7 +100,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar><baz/></bar></foo>");
 			XPathNavigator navigator = document.DocumentElement.FirstChild.FirstChild.CreateNavigator ();
 
-			Assert (navigator.Matches ("//baz"));
+			Assert.IsTrue (navigator.Matches ("//baz"));
 		}
 
 		[Test]
@@ -110,7 +110,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (navigator.Matches ("foo[bar]"));
+			Assert.IsTrue (navigator.Matches ("foo[bar]"));
 		}
 
 		[Test]
@@ -120,7 +120,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><bar /></foo>");
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
-			Assert (!navigator.Matches ("foo[baz]"));
+			Assert.IsTrue (!navigator.Matches ("foo[baz]"));
 		}
 
 		[Test]
@@ -130,9 +130,9 @@ namespace MonoTests.System.Xml
 			nav.MoveToFirstChild (); // foo
 			nav.MoveToFirstChild (); // bar
 			nav.MoveToFirstChild (); // baz
-			Assert (nav.Matches ("baz"));
-			Assert (nav.Matches ("bar/baz"));
-			Assert (!nav.Matches ("foo/bar"));
+			Assert.IsTrue (nav.Matches ("baz"));
+			Assert.IsTrue (nav.Matches ("bar/baz"));
+			Assert.IsTrue (!nav.Matches ("foo/bar"));
 		}
 
 		[Test]

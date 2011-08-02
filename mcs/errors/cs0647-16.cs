@@ -1,4 +1,4 @@
-// cs0647-16.cs: Error during emitting `System.Reflection.AssemblyCultureAttribute' attribute. The reason is `The executables cannot be satelite assemblies, remove the attribute or keep it empty'
+// CS0647: Error during emitting `System.Reflection.AssemblyCultureAttribute' attribute. The reason is `The executables cannot be satelite assemblies, remove the attribute or keep it empty'
 // Line: 7
 
 using System;

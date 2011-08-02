@@ -45,9 +45,9 @@ namespace System.ComponentModel {
 			desc = string.Empty;
 		}
 
-		public DescriptionAttribute (string name)
+		public DescriptionAttribute (string description)
 		{
-			desc = name;
+			desc = description;
 		}
 
 		public virtual string Description {
@@ -83,12 +83,10 @@ namespace System.ComponentModel {
 			return desc.GetHashCode ();
 		}
 
-#if NET_2_0
 		public override bool IsDefaultAttribute ()
 		{
 			return this == Default;
 		}
-#endif
 	}
 }
 

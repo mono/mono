@@ -1,4 +1,4 @@
-// cs0544.cs: `DerivedClass.value': cannot override because `BaseClass.value' is not a property
+// CS0544: `DerivedClass.value': cannot override because `BaseClass.value' is not a property
 // Line: 9
 
 class BaseClass {

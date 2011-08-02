@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -35,7 +35,9 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
 	public abstract class TaskScheduler
 	{
-		static TaskScheduler defaultScheduler = new Scheduler ();
+		static TaskScheduler defaultScheduler =
+			Environment.GetEnvironmentVariable ("USE_OLD_TASK_SCHED") != null ? (TaskScheduler)new Scheduler () : (TaskScheduler)new TpScheduler ();
+		SchedulerProxy proxy;
 		
 		[ThreadStatic]
 		static TaskScheduler currentScheduler;
@@ -48,12 +50,13 @@ namespace System.Threading.Tasks
 		protected TaskScheduler ()
 		{
 			this.id = Interlocked.Increment (ref lastId);
+			this.proxy = new SchedulerProxy (this);
 		}
 
-		// FIXME: Probably not correct
 		public static TaskScheduler FromCurrentSynchronizationContext ()
 		{
-			return Current;
+			var syncCtx = SynchronizationContext.Current;
+			return new SynchronizationContextScheduler (syncCtx);
 		}
 		
 		public static TaskScheduler Default  {
@@ -85,7 +88,22 @@ namespace System.Threading.Tasks
 				return Environment.ProcessorCount;
 			}
 		}
-		
+
+		internal virtual void ParticipateUntil (Task task)
+		{
+			proxy.ParticipateUntil (task);
+		}
+
+		internal virtual bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout)
+		{
+			return proxy.ParticipateUntil (task, predicateEvt, millisecondsTimeout);
+		}
+
+		internal virtual void PulseAll ()
+		{
+			proxy.PulseAll ();
+		}
+
 		protected abstract IEnumerable<Task> GetScheduledTasks ();
 		protected internal abstract void QueueTask (Task task);
 		protected internal virtual bool TryDequeue (Task task)
@@ -95,11 +113,24 @@ namespace System.Threading.Tasks
 
 		internal protected bool TryExecuteTask (Task task)
 		{
-			return TryExecuteTaskInline (task, false);
+			if (task.IsCompleted)
+				return false;
+
+			if (task.Status == TaskStatus.WaitingToRun) {
+				task.Execute (null);
+				return true;
+			}
+
+			return false;
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
-		
+
+		internal bool RunInline (Task task)
+		{
+			return TryExecuteTaskInline (task, false);
+		}
+
 		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)
 		{
 			UnobservedTaskExceptionEventArgs args = new UnobservedTaskExceptionEventArgs (e);

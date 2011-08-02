@@ -37,7 +37,9 @@ namespace System.Xml.Serialization {
 		string memberName;
 		Type memberType;
 		bool overrideIsNullable;
+#if !MOONLIGHT
 		SoapAttributes soapAttributes;
+#endif
 		XmlAttributes xmlAttributes;
 		Type declaringType;
 
@@ -56,12 +58,14 @@ namespace System.Xml.Serialization {
 			xmlAttributes = attributes;
 		}
 
+#if !MOONLIGHT
 		internal XmlReflectionMember (string name, Type type, SoapAttributes attributes)
 		{
 			memberName = name;
 			memberType = type;
 			soapAttributes = attributes;
 		}
+#endif
 
 		#endregion // Constructors
 
@@ -87,6 +91,7 @@ namespace System.Xml.Serialization {
 			set { overrideIsNullable = value; }
 		}
 
+#if !MOONLIGHT
 		public SoapAttributes SoapAttributes {
 			get { 
 				if (soapAttributes == null) soapAttributes = new SoapAttributes();
@@ -94,6 +99,7 @@ namespace System.Xml.Serialization {
 			}
 			set { soapAttributes = value; }
 		}
+#endif
 
 		public XmlAttributes XmlAttributes {
 			get { 
@@ -116,8 +122,10 @@ namespace System.Xml.Serialization {
 			KeyHelper.AddField (sb, 1, memberType);
 			KeyHelper.AddField (sb, 1, overrideIsNullable);
 			
+#if !MOONLIGHT
 			if (soapAttributes != null)
 				soapAttributes.AddKeyHash (sb);
+#endif
 			
 			if (xmlAttributes != null)
 				xmlAttributes.AddKeyHash (sb);

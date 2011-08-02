@@ -12,8 +12,9 @@ Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
 Mono.Globalization.Unicode/SimpleCollator.cs
 Mono.Globalization.Unicode/SortKey.cs
 Mono.Globalization.Unicode/SortKeyBuffer.cs
-Mono/Runtime.cs
 Mono/DataConverter.cs
+Mono/MoonlightHelper.cs
+Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs
 Mono.Math.Prime/PrimalityTests.cs
@@ -56,6 +57,7 @@ Mono.Xml/SmallXmlParser.cs
 System/AccessViolationException.cs
 System/Activator.cs
 System/AppDomain.cs
+System/_AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager_2_1.cs
 System/AppDomainSetup.cs
@@ -166,6 +168,7 @@ System/MissingFieldException.cs
 System/MissingMemberException.cs
 System/MissingMethodException.cs
 System/MonoAsyncCall.cs
+System/MonoCQItem.cs
 System/MonoCustomAttrs.cs
 System/MonoListItem.cs
 System/MonoType.cs
@@ -285,14 +288,17 @@ System.Diagnostics.CodeAnalysis/SuppressMessageAttribute.cs
 System.Diagnostics.Contracts/Contract.cs
 System.Diagnostics.Contracts/ContractClassAttribute.cs
 System.Diagnostics.Contracts/ContractClassForAttribute.cs
+System.Diagnostics.Contracts/ContractException.cs
 System.Diagnostics.Contracts/ContractFailedEventArgs.cs
 System.Diagnostics.Contracts/ContractFailureKind.cs
 System.Diagnostics.Contracts/ContractInvariantMethodAttribute.cs
 System.Diagnostics.Contracts/ContractPublicPropertyNameAttribute.cs
 System.Diagnostics.Contracts/ContractReferenceAssemblyAttribute.cs
 System.Diagnostics.Contracts/ContractRuntimeIgnoredAttribute.cs
+System.Diagnostics.Contracts/ContractShouldAssertException.cs
 System.Diagnostics.Contracts/ContractVerificationAttribute.cs
 System.Diagnostics.Contracts/PureAttribute.cs
+System.Diagnostics.Contracts.Internal/ContractHelper.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs
@@ -581,6 +587,7 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
+System.Runtime.ExceptionServices/HandleProcessCorruptedStateExceptionsAttribute.cs
 System.Runtime.InteropServices/_Activator.cs
 System.Runtime.InteropServices/_Assembly.cs
 System.Runtime.InteropServices/_AssemblyBuilder.cs
@@ -789,7 +796,6 @@ System.Runtime.Remoting.Metadata/SoapParameterAttribute.cs
 System.Runtime.Remoting.Metadata/SoapTypeAttribute.cs
 System.Runtime.Remoting.Metadata/XmlFieldOrderOption.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
-System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
@@ -849,6 +855,8 @@ System.Runtime.Serialization.Formatters.Binary/CodeGenerator.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
+System.Runtime.Versioning/ComponentGuaranteesAttribute.cs
+System.Runtime.Versioning/ComponentGuaranteesOptions.cs
 System.Runtime.Versioning/ResourceExposureAttribute.cs
 System.Runtime.Versioning/ResourceScope.cs
 System.Runtime.Versioning/TargetFrameworkAttribute.cs

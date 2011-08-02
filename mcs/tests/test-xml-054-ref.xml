@@ -5,64 +5,64 @@
     </assembly>
     <members>
         <member name="T:Container`2">
-            <summary>T:Container`2</summary>
+            <summary>Container`2</summary>
         </member>
         <member name="M:Container`2.#ctor">
-            <summary>M:Container`2.#ctor</summary>
+            <summary>Container`2.#ctor</summary>
         </member>
-        <member name="T:Container`2.Element">
-            <summary>T:Container`2.Element</summary>
+        <member name="M:Container`2.System#Collections#Generic#ICollection{TValue}#Add(`1)">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Add(`1)</summary>
         </member>
-        <member name="M:Container`2.Element.System#ICloneable#Clone">
-            <summary>M:Container`2.Element.System#ICloneable#Clone</summary>
+        <member name="M:Container`2.System#Collections#Generic#ICollection{TValue}#Remove(`1)">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Remove(`1)</summary>
         </member>
-        <member name="M:Container`2.Element.Clone">
-            <summary>M:Container`2.Element.Clone</summary>
+        <member name="M:Container`2.System#Collections#Generic#ICollection{TValue}#Clear">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Clear</summary>
         </member>
-        <member name="P:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Item(System.Int32)">
-            <summary>P:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Item(System.Int32)</summary>
+        <member name="M:Container`2.System#Collections#Generic#ICollection{TValue}#Contains(`1)">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Contains(`1)</summary>
         </member>
-        <member name="P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#IsReadOnly">
-            <summary>P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#IsReadOnly</summary>
+        <member name="M:Container`2.System#Collections#Generic#ICollection{TValue}#CopyTo(`1[],System.Int32)">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#CopyTo(`1[],System.Int32)</summary>
         </member>
-        <member name="P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Count">
-            <summary>P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Count</summary>
+        <member name="M:Container`2.System#Collections#Generic#IList{TValue}#IndexOf(`1)">
+            <summary>Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(`1)</summary>
         </member>
-        <member name="M:Container`2.A#I#Bar``1(``0)">
-            <summary>T:Container`2.A#I#Bar``1(``0)</summary>
+        <member name="M:Container`2.System#Collections#Generic#IList{TValue}#Insert(System.Int32,`1)">
+            <summary>Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(System.Int32,`1)</summary>
         </member>
-        <member name="M:Container`2.A#I#Foo">
-            <summary>T:Container`2.A#I#Foo</summary>
+        <member name="M:Container`2.System#Collections#Generic#IList{TValue}#RemoveAt(System.Int32)">
+            <summary>Container`2.System#Collections#Generic#IList&lt;TValue&gt;#RemoveAt(System.Int32)</summary>
         </member>
         <member name="M:Container`2.System#Collections#IEnumerable#GetEnumerator">
-            <summary>M:Container`2.System#Collections#IEnumerable#GetEnumerator</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#RemoveAt(System.Int32)">
-            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#RemoveAt(System.Int32)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Insert(System.Int32,`1)">
-            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(System.Int32,`1)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(`1)">
-            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(`1)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#CopyTo(`1[],System.Int32)">
-            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#CopyTo(`1[],System.Int32)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Contains(`1)">
-            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Contains(`1)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Clear">
-            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Clear</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Remove(`1)">
-            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Remove(`1)</summary>
-        </member>
-        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Add(`1)">
-            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Add(`1)</summary>
+            <summary>Container`2.System#Collections#IEnumerable#GetEnumerator</summary>
         </member>
         <member name="M:Container`2.GetEnumerator">
-            <summary>M:Container`2.GetEnumerator</summary>
+            <summary>Container`2.GetEnumerator</summary>
+        </member>
+        <member name="M:Container`2.A#I#Foo">
+            <summary>Container`2.A#I#Foo</summary>
+        </member>
+        <member name="M:Container`2.A#I#Bar``1(``0)">
+            <summary>Container`2.A#I#Bar``1(``0)</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#ICollection{TValue}#Count">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Count</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#ICollection{TValue}#IsReadOnly">
+            <summary>Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#IsReadOnly</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#IList{TValue}#Item(System.Int32)">
+            <summary>Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Item(System.Int32)</summary>
+        </member>
+        <member name="T:Container`2.Element">
+            <summary>Container`2.Element</summary>
+        </member>
+        <member name="M:Container`2.Element.System#ICloneable#Clone">
+            <summary>Container`2.Element.System#ICloneable#Clone</summary>
+        </member>
+        <member name="M:Container`2.Element.Clone">
+            <summary>Container`2.Element.Clone</summary>
         </member>
     </members>
 </doc>

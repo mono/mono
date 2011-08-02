@@ -153,7 +153,7 @@ namespace IKVM.Reflection.Writer
 
 		internal void Write(float value)
 		{
-			Write(BitConverter.GetBytes(value));
+			Write(SingleConverter.SingleToInt32Bits(value));
 		}
 
 		internal void Write(double value)

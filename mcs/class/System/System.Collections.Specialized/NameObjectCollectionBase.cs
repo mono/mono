@@ -49,13 +49,12 @@ namespace System.Collections.Specialized
 		private bool m_readonly;
 		SerializationInfo infoCopy;
 		private KeysCollection keyscoll;
-#if NET_2_0
 		private IEqualityComparer equality_comparer;
 
 		internal IEqualityComparer EqualityComparer {
 			get { return equality_comparer; }
 		}
-#endif
+
 		internal IComparer Comparer {
 			get {return m_comparer;}
 		}
@@ -131,7 +130,6 @@ namespace System.Collections.Specialized
 			void ICollection.CopyTo (Array array, int arrayIndex)
 			{
 				ArrayList items = m_collection.m_ItemsArray;
-#if NET_2_0
 				if (null == array)
 					throw new ArgumentNullException ("array");
 
@@ -143,7 +141,6 @@ namespace System.Collections.Specialized
 
 				if (arrayIndex + items.Count > array.Length)
 					throw new ArgumentException ("Not enough room from arrayIndex to end of array for this KeysCollection");
-#endif
 
 				if (array != null && array.Rank > 1)
 					throw new ArgumentException ("array is multidimensional");
@@ -223,8 +220,6 @@ namespace System.Collections.Specialized
 			Init();
 		}		
 
-#if NET_2_0
-
 		internal NameObjectCollectionBase (IEqualityComparer equalityComparer, IComparer comparer, IHashCodeProvider hcp)
 		{
 			equality_comparer = equalityComparer;
@@ -240,7 +235,6 @@ namespace System.Collections.Specialized
 		}		
 
 		[Obsolete ("Use NameObjectCollectionBase(IEqualityComparer)")]
-#endif
 		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer )
 		{			
 			m_comparer = comparer;
@@ -255,7 +249,6 @@ namespace System.Collections.Specialized
 			infoCopy = info;
 		}
 
-#if NET_2_0
 		protected NameObjectCollectionBase (int capacity, IEqualityComparer equalityComparer)
 		{
 			m_readonly = false;
@@ -265,7 +258,6 @@ namespace System.Collections.Specialized
 		}
 
 		[Obsolete ("Use NameObjectCollectionBase(int,IEqualityComparer)")]
-#endif
 		protected NameObjectCollectionBase( int capacity, IHashCodeProvider hashProvider, IComparer comparer )
 		{
 			m_readonly = false;
@@ -287,14 +279,10 @@ namespace System.Collections.Specialized
 				m_ItemsArray.Clear ();
 				m_ItemsArray = null;
 			}
-#if NET_2_0
 			if (equality_comparer != null)
 				m_ItemsContainer = new Hashtable (m_defCapacity, equality_comparer);
 			else
 				m_ItemsContainer = new Hashtable (m_defCapacity, m_hashprovider, m_comparer);
-#else
-			m_ItemsContainer = new Hashtable (m_defCapacity, m_hashprovider, m_comparer);
-#endif
 			m_ItemsArray = new ArrayList();
 			m_NullKeyItem = null;	
 		}
@@ -317,11 +305,7 @@ namespace System.Collections.Specialized
 		/// <remark>This enumerator returns the keys of the collection as strings.</remark>
 		/// </summary>
 		/// <returns></returns>
-		public
-#if NET_2_0		
-		virtual
-#endif
-		IEnumerator GetEnumerator()
+		public virtual IEnumerator GetEnumerator()
 		{
 			return new _KeysEnumerator(this);
 		}
@@ -342,7 +326,6 @@ namespace System.Collections.Specialized
 				i++;
 			}
 
-#if NET_2_0
 			if (equality_comparer != null) {
 				info.AddValue ("KeyComparer", equality_comparer, typeof (IEqualityComparer));
 				info.AddValue ("Version", 4, typeof (int));
@@ -351,10 +334,6 @@ namespace System.Collections.Specialized
 				info.AddValue ("Comparer", m_comparer, typeof (IComparer));
 				info.AddValue ("Version", 2, typeof (int));
 			}
-#else
-			info.AddValue ("HashProvider", m_hashprovider, typeof (IHashCodeProvider));
-			info.AddValue ("Comparer", m_comparer, typeof (IComparer));
-#endif
 			info.AddValue("ReadOnly", m_readonly);
 			info.AddValue("Count", count);
 			info.AddValue("Keys", keys, typeof(string[]));
@@ -398,7 +377,6 @@ namespace System.Collections.Specialized
 			infoCopy = null;
 			m_hashprovider = (IHashCodeProvider) info.GetValue ("HashProvider",
 									    typeof (IHashCodeProvider));
-#if NET_2_0
 			if (m_hashprovider == null) {
 				equality_comparer = (IEqualityComparer) info.GetValue ("KeyComparer", typeof (IEqualityComparer));
 			} else {
@@ -406,14 +384,6 @@ namespace System.Collections.Specialized
 				if (m_comparer == null)
 					throw new SerializationException ("The comparer is null");
 			}
-#else
-			if (m_hashprovider == null)
-				throw new SerializationException ("The hash provider is null");
-
-			m_comparer = (IComparer) info.GetValue ("Comparer", typeof (IComparer));
-			if (m_comparer == null)
-				throw new SerializationException ("The comparer is null");
-#endif
 			m_readonly = info.GetBoolean ("ReadOnly");
 			string [] keys = (string []) info.GetValue ("Keys", typeof (string []));
 			if (keys == null)
@@ -616,10 +586,8 @@ namespace System.Collections.Specialized
 		/// <param name="value"></param>
 		protected void BaseSet( int index, object value )
 		{
-#if NET_2_0
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
-#endif
 			_Item item = (_Item)m_ItemsArray[index];
 			item.value = value;
 		}
@@ -631,10 +599,8 @@ namespace System.Collections.Specialized
 		/// <param name="value">The Object that represents the new value of the entry to set. The value can be a null reference</param>
 		protected void BaseSet( string name, object value )
 		{
-#if NET_2_0
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
-#endif
 			_Item item = FindFirstMatchedItem(name);
 			if (item!=null)
 				item.value=value;
@@ -655,14 +621,10 @@ namespace System.Collections.Specialized
 
 		internal bool Equals (string s1, string s2)
 		{
-#if NET_2_0
 			if (m_comparer != null)
 				return (m_comparer.Compare (s1, s2) == 0);
 			else
 				return equality_comparer.Equals (s1, s2);
-#else
-			return (m_comparer.Compare (s1, s2) == 0);
-#endif
 		}
 	}
 }

@@ -1661,7 +1661,7 @@ namespace C5
     }
 
 
-    private bool removeIterativePhase2(Node cursor, int level)
+private bool removeIterativePhase2(Node cursor, int level)
     {
       if (size == 1)
       {
@@ -1670,8 +1670,7 @@ namespace C5
       }
 
 #if BAG
-      int removedcount = cursor.items;
-      size -= removedcount;
+      size -= cursor.items;
 #else
       //We are certain to remove one node:
       size--;
@@ -1731,7 +1730,7 @@ namespace C5
 #endif
       childsibling = comp > 0 ? cursor.right : cursor.left;
 #if BAG
-      cursor.size -= removedcount;
+      cursor.size = cursor.items + (newchild == null ? 0 : newchild.size) + (childsibling == null ? 0 : childsibling.size);
 #elif MAINTAIN_SIZE
       cursor.size--;
 #endif
@@ -1781,7 +1780,7 @@ namespace C5
           Node.update(ref cursor, comp > 0, child, maxsnapid, generation);
 #endif
 #if BAG
-          cursor.size -= removedcount;
+          cursor.size = cursor.items + (child == null ? 0 : child.size) + (childsibling == null ? 0 : childsibling.size);
 #elif MAINTAIN_SIZE
           cursor.size--;
 #endif
@@ -2039,7 +2038,7 @@ namespace C5
 						cursor.right = swap;
 #endif
 #if BAG
-          cursor.size -= removedcount;
+          cursor.size = cursor.items + (cursor.right == null ? 0 : cursor.right.size) + (cursor.left == null ? 0 : cursor.left.size);
 #elif MAINTAIN_SIZE
           cursor.size--;
 #endif
@@ -2058,7 +2057,7 @@ namespace C5
           Node.update(ref cursor, dirs[level] > 0, child, maxsnapid, generation);
 #endif
 #if BAG
-        cursor.size -= removedcount;
+        cursor.size = cursor.items + (cursor.right == null ? 0 : cursor.right.size) + (cursor.left == null ? 0 : cursor.left.size);
 #elif MAINTAIN_SIZE
         cursor.size--;
 #endif
@@ -2809,27 +2808,27 @@ namespace C5
     /// <exception cref="IndexOutOfRangeException"/>.
     /// </summary>
     /// <value>The directed collection of items in a specific index interval.</value>
-    /// <param name="start">The low index of the interval (inclusive).</param>
-    /// <param name="end">The high index of the interval (exclusive).</param>
+    /// <param name="start">The starting index of the interval (inclusive).</param>
+    /// <param name="count">The length of the interval.</param>
     [Tested]
-    public IDirectedCollectionValue<T> this[int start, int end]
+    public IDirectedCollectionValue<T> this[int start, int count]
     {
       [Tested]
       get
       {
-        checkRange(start, end - start);
-        return new Interval(this, start, end - start, true);
+        checkRange(start, count);
+        return new Interval(this, start, count, true);
       }
     }
 
     #region Interval nested class
     class Interval : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
     {
-      int start, length, stamp;
+      readonly int start, length, stamp;
 
-      bool forwards;
+      readonly bool forwards;
 
-      TreeSet<T> tree;
+      readonly TreeSet<T> tree;
 
 
       internal Interval(TreeSet<T> tree, int start, int count, bool forwards)
@@ -2884,12 +2883,11 @@ namespace C5
             if (i > j)
             {
 #if BAG
-              i -= j + cursor.items;
-              if (i < 0)
-              {
-                togo = cursor.items + i;
+              if (cursor.items > i - j) {
+                togo = cursor.items - (i - j);
                 break;
               }
+              i -= j + cursor.items;
 #else
               i -= j + 1;
 #endif
@@ -2901,7 +2899,7 @@ namespace C5
               togo = cursor.items;
 #endif
               break;
-            }
+            } // i < j, start point tree[start] is in left subtree
             else
             {
               path[level++] = cursor;
@@ -2936,7 +2934,7 @@ namespace C5
 #endif
           }
         }
-        else
+        else // backwards
         {
           int i = start + length - 1;
 
@@ -2944,7 +2942,7 @@ namespace C5
           {
             int j = cursor.left == null ? 0 : cursor.left.size;
 
-            if (i > j)
+            if (i > j) 
             {
 #if BAG
               if (i - j < cursor.items)
@@ -2966,7 +2964,7 @@ namespace C5
 #endif
               break;
             }
-            else
+            else // i <= j, end point tree[start+count-1] is in left subtree
             {
               cursor = cursor.left;
             }

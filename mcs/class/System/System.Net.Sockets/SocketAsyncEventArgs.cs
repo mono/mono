@@ -32,9 +32,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Threading;
-#if MOONLIGHT && !INSIDE_SYSTEM
-using System.Net.Policy;
-#endif
 
 namespace System.Net.Sockets
 {
@@ -62,8 +59,8 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public int BytesTransferred { get; private set; }
-		public int Count { get; private set; }
+		public int BytesTransferred { get; internal set; }
+		public int Count { get; internal set; }
 		public bool DisconnectReuseSocket { get; set; }
 		public SocketAsyncOperation LastOperation { get; private set; }
 		public int Offset { get; private set; }
@@ -217,6 +214,40 @@ namespace System.Net.Sockets
 		}
 
 #region Internals
+		internal static AsyncCallback Dispatcher = new AsyncCallback (DispatcherCB);
+
+		static void DispatcherCB (IAsyncResult ares)
+		{
+			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
+			SocketAsyncOperation op = args.LastOperation;
+			// Notes;
+			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
+			//	-SendPackets and ReceiveMessageFrom are not implemented yet
+			if (op == SocketAsyncOperation.Receive)
+				args.ReceiveCallback (ares);
+			else if (op == SocketAsyncOperation.Send)
+				args.SendCallback (ares);
+#if !MOONLIGHT
+			else if (op == SocketAsyncOperation.ReceiveFrom)
+				args.ReceiveFromCallback (ares);
+			else if (op == SocketAsyncOperation.SendTo)
+				args.SendToCallback (ares);
+			else if (op == SocketAsyncOperation.Accept)
+				args.AcceptCallback (ares);
+			else if (op == SocketAsyncOperation.Disconnect)
+				args.DisconnectCallback (ares);
+#endif
+			else if (op == SocketAsyncOperation.Connect)
+				args.ConnectCallback ();
+			/*
+			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+			else if (op == Socket.SocketOperation.SendPackets)
+			*/
+			else
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+
+		}
+
 		internal void ReceiveCallback (IAsyncResult ares)
 		{
 			try {
@@ -232,73 +263,10 @@ namespace System.Net.Sockets
 
 		void ConnectCallback ()
 		{
-			SocketError error = SocketError.AccessDenied;
 			try {
-#if MOONLIGHT || NET_4_0
-				// Connect to the first address that match the host name, like:
-				// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
-				// while skipping entries that do not match the address family
-				DnsEndPoint dep = (RemoteEndPoint as DnsEndPoint);
-				if (dep != null) {
-					IPAddress[] addresses = Dns.GetHostAddresses (dep.Host);
-					IPEndPoint endpoint;
-#if MOONLIGHT && !INSIDE_SYSTEM
-					if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-						List<IPAddress> valid = new List<IPAddress> ();
-						foreach (IPAddress a in addresses) {
-							// if we're not downloading a socket policy then check the policy
-							// and if we're not running with elevated permissions (SL4 OoB option)
-							endpoint = new IPEndPoint (a, dep.Port);
-							if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, policy_protocol))
-								continue;
-							valid.Add (a);
-						}
-						addresses = valid.ToArray ();
-					}
-#endif
-					foreach (IPAddress addr in addresses) {
-						try {
-							if (curSocket.AddressFamily == addr.AddressFamily) {
-								endpoint = new IPEndPoint (addr, dep.Port);
-								error = TryConnect (endpoint);
-								if (error == SocketError.Success) {
-									ConnectByNameError = null;
-									break;
-								}
-							}
-						} catch (SocketException se) {
-							ConnectByNameError = se;
-							error = SocketError.AccessDenied;
-						}
-					}
-				} else {
-					ConnectByNameError = null;
-#if MOONLIGHT && !INSIDE_SYSTEM
-					if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-						if (CrossDomainPolicyManager.CheckEndPoint (RemoteEndPoint, policy_protocol))
-							error = TryConnect (RemoteEndPoint);
-					} else
-#endif
-						error = TryConnect (RemoteEndPoint);
-				}
-#else
-				error = TryConnect (RemoteEndPoint);
-#endif
+				SocketError = (SocketError) Worker.result.error;
 			} finally {
-				SocketError = error;
 				OnCompleted (this);
-			}
-		}
-
-		SocketError TryConnect (EndPoint endpoint)
-		{
-			try {
-				curSocket.Connect (endpoint);
-				return (curSocket.Connected ? 0 : SocketError);
-			} catch (SocketException se){
-				return se.SocketErrorCode;
-			} catch (ObjectDisposedException) {
-				return SocketError.OperationAborted;
 			}
 		}
 
@@ -371,29 +339,6 @@ namespace System.Net.Sockets
 		}
 
 #endif
-		internal void DoOperation (SocketAsyncOperation operation, Socket socket)
-		{
-			ThreadStart callback = null;
-			curSocket = socket;
-			
-			switch (operation) {
-				case SocketAsyncOperation.Connect:
-#if MOONLIGHT
-					socket.seed_endpoint = RemoteEndPoint;
-#endif
-					callback = new ThreadStart (ConnectCallback);
-					SocketError = SocketError.Success;
-					LastOperation = operation;
-					break;
-
-				default:
-					throw new NotSupportedException ();
-			}
-
-			Thread t = new Thread (callback);
-			t.IsBackground = true;
-			t.Start ();
-		}
 #endregion
 	}
 }

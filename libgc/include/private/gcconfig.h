@@ -2481,7 +2481,7 @@
 	           extern void *ps3_get_mem (size_t size);
 #              define GET_MEM(bytes) (struct hblk*) ps3_get_mem (bytes)
 #           else
-		extern ptr_t GC_unix_get_mem();
+		extern ptr_t GC_unix_get_mem(word size);
 #               define GET_MEM(bytes) (struct hblk *)GC_unix_get_mem(bytes)
 #endif
 #	      endif

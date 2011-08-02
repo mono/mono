@@ -116,7 +116,7 @@ namespace System.Web.Configuration {
 			set { base[writeToDiagnosticsTraceProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

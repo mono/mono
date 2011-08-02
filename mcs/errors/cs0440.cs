@@ -1,4 +1,4 @@
-// cs0440.cs: An alias named `global' will not be used when resolving 'global::'; the global namespace will be used instead
+// CS0440: An alias named `global' will not be used when resolving `global::'. The global namespace will be used instead
 // Line: 5
 // Compiler options: -warn:2 -warnaserror
 

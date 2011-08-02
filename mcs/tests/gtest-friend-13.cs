@@ -10,13 +10,16 @@ public class B : FriendClass
 	
 	internal override void Test_2 ()
 	{
-	}	
+		new FriendClass().Test ();
+	}
 }
 
 public class Test
 {
 	static void Main ()
 	{
+		var b = new B ();
+		b.Test_2 ();
 	}
 }
 

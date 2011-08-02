@@ -1,7 +1,7 @@
 // Case-Insensitive and Concatenating OptionSet
 using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class DemoOptionSet : OptionSet {
 	protected override void InsertItem (int index, Option item)

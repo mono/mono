@@ -75,7 +75,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				dataBindTrace.Append ("[End PerformSelect]");
 			}
 
-			protected override void PerformDataBinding () {
+			protected internal override void PerformDataBinding () {
 				dataBindTrace.Append ("[Start PerformDataBinding]");
 				base.PerformDataBinding ();
 				dataBindTrace.Append ("[End PerformDataBinding]");
@@ -130,7 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		class MyHierarchicalDataBoundControlAdapter : HierarchicalDataBoundControlAdapter
 		{
 			internal bool perform_data_binding_called;
-			protected override void PerformDataBinding ()
+			protected internal override void PerformDataBinding ()
 			{
 				perform_data_binding_called = true;
 			}

@@ -980,6 +980,87 @@ namespace MonoTests.System.Xaml
 				Attachable.SetFoo (obj.Value, null);
 			}
 		}
+
+		[Test]
+		[Category ("NotWorking")] // cosmetic attribute order difference
+		public void Write_AbstractWrapper ()
+		{
+			var obj = new AbstractContainer () { Value2 = new DerivedObject () { Foo = "x" } };
+			Assert.AreEqual (ReadXml ("AbstractContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_ReadOnlyPropertyContainer ()
+		{
+			var obj = new ReadOnlyPropertyContainer () { Foo = "x" };
+			Assert.AreEqual (ReadXml ("ReadOnlyPropertyContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+			
+			var sw = new StringWriter ();
+			var xw = new XamlXmlWriter (sw, new XamlSchemaContext ());
+			var xt = xw.SchemaContext.GetXamlType (obj.GetType ());
+			xw.WriteStartObject (xt);
+			xw.WriteStartMember (xt.GetMember ("Bar"));
+			xw.WriteValue ("x");
+			xw.WriteEndMember ();
+			xw.WriteEndObject ();
+			xw.Close ();
+			Assert.IsTrue (sw.ToString ().IndexOf ("Bar") > 0, "#2"); // it is not rejected by XamlXmlWriter. But XamlServices does not write it.
+		}
+
+		[Test]
+		public void Write_TypeConverterOnListMember ()
+		{
+			var obj = new SecondTest.TypeOtherAssembly ();
+			obj.Values.AddRange (new uint? [] {1, 2, 3});
+			Assert.AreEqual (ReadXml ("TypeConverterOnListMember.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_EnumContainer ()
+		{
+			var obj = new EnumContainer () { EnumProperty = EnumValueType.Two };
+			Assert.AreEqual (ReadXml ("EnumContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_CollectionContentProperty ()
+		{
+			var obj = new CollectionContentProperty ();
+			for (int i = 0; i < 4; i++)
+				obj.ListOfItems.Add (new SimpleClass ());
+			Assert.AreEqual (ReadXml ("CollectionContentProperty.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_CollectionContentPropertyX ()
+		{
+			var obj = new CollectionContentPropertyX ();
+			var l = new List<object> ();
+			obj.ListOfItems.Add (l);
+			for (int i = 0; i < 4; i++)
+				l.Add (new SimpleClass ());
+			Assert.AreEqual (ReadXml ("CollectionContentPropertyX.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // TestProperty is written as element so far.
+		public void Write_AmbientPropertyContainer ()
+		{
+			var obj = new SecondTest.ResourcesDict ();
+			var t1 = new SecondTest.TestObject ();
+			obj.Add ("TestDictItem", t1);
+			var t2 = new SecondTest.TestObject ();
+			t2.TestProperty = t1;
+			obj.Add ("okay", t2);
+			Assert.AreEqual (ReadXml ("AmbientPropertyContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_NullableContainer ()
+		{
+			var obj = new NullableContainer () { TestProp = 5 };
+			Assert.AreEqual (ReadXml ("NullableContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

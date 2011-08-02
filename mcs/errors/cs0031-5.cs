@@ -1,4 +1,4 @@
-// cs0031-5.cs: Constant value `200000000000' cannot be converted to a `int'
+// CS0031: Constant value `200000000000' cannot be converted to a `int'
 // Line: 7
 // Compiler options: -unsafe
 

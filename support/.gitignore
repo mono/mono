@@ -7,3 +7,6 @@
 /*.o
 /*.la
 /semantic.cache
+create-native-map.exe
+map.cs
+map.xml

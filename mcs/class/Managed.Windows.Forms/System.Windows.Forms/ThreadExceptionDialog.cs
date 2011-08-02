@@ -36,10 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	public class ThreadExceptionDialog: Form
 	{
 		Exception e;
@@ -217,7 +215,6 @@ namespace System.Windows.Forms
 			g.DrawIcon (SystemIcons.Error, 15, 10);
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -232,6 +229,5 @@ namespace System.Windows.Forms
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 	}
 }

@@ -1,4 +1,4 @@
-// cs0446.cs: Foreach statement cannot operate on a `anonymous method'
+// CS0446: Foreach statement cannot operate on a `anonymous method'
 // Line: 8
 
 class C

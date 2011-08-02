@@ -707,6 +707,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 {
 	guint8 *code, *buf, *tramp;
 	int size;
+	gboolean far_addr = FALSE;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
@@ -717,6 +718,15 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 		size = 5 + 1 + 8;
 
 	code = buf = mono_domain_code_reserve_align (domain, size, 1);
+
+	if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
+#ifndef MONO_ARCH_NOMAP32BIT
+		g_assert_not_reached ();
+#endif
+		far_addr = TRUE;
+		size += 16;
+		code = buf = mono_domain_code_reserve_align (domain, size, 1);
+	}
 #elif defined(__native_client_codegen__)
 	size = 5 + 1 + 4;
 	/* Aligning the call site below could */
@@ -726,7 +736,12 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	code = buf;
 #endif
 
-	amd64_call_code (code, tramp);
+	if (far_addr) {
+		amd64_mov_reg_imm (code, AMD64_R11, tramp);
+		amd64_call_reg (code, AMD64_R11);
+	} else {
+		amd64_call_code (code, tramp);
+	}
 	/* The trampoline code will obtain the argument from the instruction stream */
 #if defined(__default_codegen__)
 	if ((((guint64)arg1) >> 32) == 0) {
@@ -1164,7 +1179,7 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 static void
 handler_block_trampoline_helper (gpointer *ptr)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	*ptr = jit_tls->handler_block_return_address;
 }
 

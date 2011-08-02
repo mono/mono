@@ -118,7 +118,7 @@ namespace System.Web.Configuration
 										PropertyHelper.IntFromZeroToMaxValidator,
 										ConfigurationPropertyOptions.None);
 #if NET_4_0
-			requestPathInvalidCharactersProp = new ConfigurationProperty ("requestPathInvalidCharacters", typeof (string), ",*,%,&,:,\\,?");
+			requestPathInvalidCharactersProp = new ConfigurationProperty ("requestPathInvalidCharacters", typeof (string), "<,>,*,%,&,:,\\,?");
 			requestValidationTypeProp = new ConfigurationProperty ("requestValidationType", typeof (string),"System.Web.Util.RequestValidator",
 									       TypeDescriptor.GetConverter (typeof (string)),
 									       PropertyHelper.NonEmptyStringValidator,
@@ -343,7 +343,7 @@ namespace System.Web.Configuration
 			set { base [relaxedUrlToFileSystemMappingProp] = value; }
 		}
 #endif
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

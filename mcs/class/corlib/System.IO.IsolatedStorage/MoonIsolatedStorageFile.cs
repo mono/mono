@@ -165,6 +165,21 @@ namespace System.IO.IsolatedStorage {
 			return File.Exists (Verify (path));
 		}
 
+		public DateTimeOffset GetCreationTime (string path)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public DateTimeOffset GetLastAccessTime (string path)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public DateTimeOffset GetLastWriteTime (string path)
+		{
+			throw new NotImplementedException ();
+		}
+
 		private string HideAppDir (string path)
 		{
 			// remove the "isolated" part of the path (and the extra '/')
@@ -325,6 +340,32 @@ namespace System.IO.IsolatedStorage {
 			if (result)
 				IsolatedStorage.Quota = newQuotaSize;
 			return result;
+		}
+		
+		public void CopyFile (string sourceFileName, string destinationFileName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void CopyFile (string sourceFileName, string destinationFileName, bool overwrite)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void MoveDirectory (string sourceDirectoryName, string destinationDirectoryName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void MoveFile (string sourceFileName, string destinationFileName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public long UsedSize {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 	}
 }

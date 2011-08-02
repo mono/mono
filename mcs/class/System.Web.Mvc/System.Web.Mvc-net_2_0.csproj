@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/compat/net_2_0/tmp</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_5;MONO</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Web.Mvc</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_5;MONO</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_5;MONO</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="GlobalSuppressions.cs" />
+   <Compile Include="Properties\AssemblyInfo.cs" />
+   <Compile Include="System.Web.Mvc\Resources\MvcResources.Designer.cs" />
+   <Compile Include="System.Web.Mvc\AcceptVerbsAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ActionDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\ActionExecutedContext.cs" />
+   <Compile Include="System.Web.Mvc\ActionExecutingContext.cs" />
+   <Compile Include="System.Web.Mvc\ActionFilterAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ActionMethodDispatcherCache.cs" />
+   <Compile Include="System.Web.Mvc\ActionMethodDispatcher.cs" />
+   <Compile Include="System.Web.Mvc\ActionMethodSelectorAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ActionMethodSelectorCache.cs" />
+   <Compile Include="System.Web.Mvc\ActionMethodSelector.cs" />
+   <Compile Include="System.Web.Mvc\ActionNameAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ActionNameSelectorAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ActionResult.cs" />
+   <Compile Include="System.Web.Mvc\ActionSelector.cs" />
+   <Compile Include="System.Web.Mvc\AntiForgeryData.cs" />
+   <Compile Include="System.Web.Mvc\AntiForgeryDataSerializer.cs" />
+   <Compile Include="System.Web.Mvc\Ajax\AjaxExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Ajax\AjaxOptions.cs" />
+   <Compile Include="System.Web.Mvc\AjaxHelper`1.cs" />
+   <Compile Include="System.Web.Mvc\AjaxHelper.cs" />
+   <Compile Include="System.Web.Mvc\Ajax\InsertionMode.cs" />
+   <Compile Include="System.Web.Mvc\AjaxRequestExtensions.cs" />
+   <Compile Include="System.Web.Mvc\AntiForgeryToken.cs" />
+   <Compile Include="System.Web.Mvc\AntiForgeryTokenSerializer.cs" />
+   <Compile Include="System.Web.Mvc\AuthorizationContext.cs" />
+   <Compile Include="System.Web.Mvc\AuthorizeAttribute.cs" />
+   <Compile Include="System.Web.Mvc\BindAttribute.cs" />
+   <Compile Include="System.Web.Mvc\BuildManagerWrapper.cs" />
+   <Compile Include="System.Web.Mvc\ContentResult.cs" />
+   <Compile Include="System.Web.Mvc\ControllerActionInvoker.cs" />
+   <Compile Include="System.Web.Mvc\ControllerBase.cs" />
+   <Compile Include="System.Web.Mvc\ControllerBuilder.cs" />
+   <Compile Include="System.Web.Mvc\ControllerContext.cs" />
+   <Compile Include="System.Web.Mvc\Controller.cs" />
+   <Compile Include="System.Web.Mvc\ControllerDescriptorCache.cs" />
+   <Compile Include="System.Web.Mvc\ControllerDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\ControllerTypeCache.cs" />
+   <Compile Include="System.Web.Mvc\CustomModelBinderAttribute.cs" />
+   <Compile Include="System.Web.Mvc\DefaultControllerFactory.cs" />
+   <Compile Include="System.Web.Mvc\DefaultModelBinder.cs" />
+   <Compile Include="System.Web.Mvc\DefaultViewLocationCache.cs" />
+   <Compile Include="System.Web.Mvc\DescriptorUtil.cs" />
+   <Compile Include="System.Web.Mvc\DictionaryHelpers.cs" />
+   <Compile Include="System.Web.Mvc\EmptyResult.cs" />
+   <Compile Include="System.Web.Mvc\ExceptionContext.cs" />
+   <Compile Include="System.Web.Mvc\FileContentResult.cs" />
+   <Compile Include="System.Web.Mvc\FilePathResult.cs" />
+   <Compile Include="System.Web.Mvc\FileResult.cs" />
+   <Compile Include="System.Web.Mvc\FileStreamResult.cs" />
+   <Compile Include="System.Web.Mvc\FilterAttribute.cs" />
+   <Compile Include="System.Web.Mvc\FilterInfo.cs" />
+   <Compile Include="System.Web.Mvc\FormCollection.cs" />
+   <Compile Include="System.Web.Mvc\FormMethod.cs" />
+   <Compile Include="System.Web.Mvc\HandleErrorAttribute.cs" />
+   <Compile Include="System.Web.Mvc\HandleErrorInfo.cs" />
+   <Compile Include="System.Web.Mvc\Html\FormExtensions.cs" />
+   <Compile Include="System.Web.Mvc\HtmlHelper`1.cs" />
+   <Compile Include="System.Web.Mvc\HtmlHelper.cs" />
+   <Compile Include="System.Web.Mvc\Html\InputExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Html\LinkExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Html\MvcForm.cs" />
+   <Compile Include="System.Web.Mvc\Html\RenderPartialExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Html\SelectExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Html\TextAreaExtensions.cs" />
+   <Compile Include="System.Web.Mvc\Html\ValidationExtensions.cs" />
+   <Compile Include="System.Web.Mvc\HttpAntiForgeryException.cs" />
+   <Compile Include="System.Web.Mvc\HttpPostedFileBaseModelBinder.cs" />
+   <Compile Include="System.Web.Mvc\HttpUnauthorizedResult.cs" />
+   <Compile Include="System.Web.Mvc\HttpVerbs.cs" />
+   <Compile Include="System.Web.Mvc\IActionFilter.cs" />
+   <Compile Include="System.Web.Mvc\IActionInvoker.cs" />
+   <Compile Include="System.Web.Mvc\IAuthorizationFilter.cs" />
+   <Compile Include="System.Web.Mvc\IBuildManager.cs" />
+   <Compile Include="System.Web.Mvc\IController.cs" />
+   <Compile Include="System.Web.Mvc\IControllerFactory.cs" />
+   <Compile Include="System.Web.Mvc\IExceptionFilter.cs" />
+   <Compile Include="System.Web.Mvc\IModelBinder.cs" />
+   <Compile Include="System.Web.Mvc\InputType.cs" />
+   <Compile Include="System.Web.Mvc\IResultFilter.cs" />
+   <Compile Include="System.Web.Mvc\ITempDataProvider.cs" />
+   <Compile Include="System.Web.Mvc\IView.cs" />
+   <Compile Include="System.Web.Mvc\IViewDataContainer.cs" />
+   <Compile Include="System.Web.Mvc\IViewEngine.cs" />
+   <Compile Include="System.Web.Mvc\IViewLocationCache.cs" />
+   <Compile Include="System.Web.Mvc\JavaScriptResult.cs" />
+   <Compile Include="System.Web.Mvc\JsonResult.cs" />
+   <Compile Include="System.Web.Mvc\ModelBinderAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ModelBinderDictionary.cs" />
+   <Compile Include="System.Web.Mvc\ModelBinders.cs" />
+   <Compile Include="System.Web.Mvc\ModelBindingContext.cs" />
+   <Compile Include="System.Web.Mvc\ModelErrorCollection.cs" />
+   <Compile Include="System.Web.Mvc\ModelError.cs" />
+   <Compile Include="System.Web.Mvc\ModelState.cs" />
+   <Compile Include="System.Web.Mvc\ModelStateDictionary.cs" />
+   <Compile Include="System.Web.Mvc\MultiSelectList.cs" />
+   <Compile Include="System.Web.Mvc\MvcHandler.cs" />
+   <Compile Include="System.Web.Mvc\MvcHttpHandler.cs" />
+   <Compile Include="System.Web.Mvc\MvcRouteHandler.cs" />
+   <Compile Include="System.Web.Mvc\NameValueCollectionExtensions.cs" />
+   <Compile Include="System.Web.Mvc\NonActionAttribute.cs" />
+   <Compile Include="System.Web.Mvc\NullViewLocationCache.cs" />
+   <Compile Include="System.Web.Mvc\OutputCacheAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ParameterBindingInfo.cs" />
+   <Compile Include="System.Web.Mvc\ParameterDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\PartialViewResult.cs" />
+   <Compile Include="System.Web.Mvc\PathHelpers.cs" />
+   <Compile Include="System.Web.Mvc\ReaderWriterCache`2.cs" />
+   <Compile Include="System.Web.Mvc\RedirectResult.cs" />
+   <Compile Include="System.Web.Mvc\RedirectToRouteResult.cs" />
+   <Compile Include="System.Web.Mvc\ReflectedActionDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\ReflectedControllerDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\ReflectedParameterBindingInfo.cs" />
+   <Compile Include="System.Web.Mvc\ReflectedParameterDescriptor.cs" />
+   <Compile Include="System.Web.Mvc\ResultExecutedContext.cs" />
+   <Compile Include="System.Web.Mvc\ResultExecutingContext.cs" />
+   <Compile Include="System.Web.Mvc\RouteCollectionExtensions.cs" />
+   <Compile Include="System.Web.Mvc\RouteValuesHelpers.cs" />
+   <Compile Include="System.Web.Mvc\SelectList.cs" />
+   <Compile Include="System.Web.Mvc\SelectListItem.cs" />
+   <Compile Include="System.Web.Mvc\SessionStateTempDataProvider.cs" />
+   <Compile Include="System.Web.Mvc\TagBuilder.cs" />
+   <Compile Include="System.Web.Mvc\TagRenderMode.cs" />
+   <Compile Include="System.Web.Mvc\TempDataDictionary.cs" />
+   <Compile Include="System.Web.Mvc\TypeHelpers.cs" />
+   <Compile Include="System.Web.Mvc\UrlHelper.cs" />
+   <Compile Include="System.Web.Mvc\ValidateAntiForgeryTokenAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ValidateInputAttribute.cs" />
+   <Compile Include="System.Web.Mvc\ValueProviderDictionary.cs" />
+   <Compile Include="System.Web.Mvc\ValueProviderResult.cs" />
+   <Compile Include="System.Web.Mvc\ViewContext.cs" />
+   <Compile Include="System.Web.Mvc\ViewDataDictionary`1.cs" />
+   <Compile Include="System.Web.Mvc\ViewDataDictionary.cs" />
+   <Compile Include="System.Web.Mvc\ViewEngineCollection.cs" />
+   <Compile Include="System.Web.Mvc\ViewEngineResult.cs" />
+   <Compile Include="System.Web.Mvc\ViewEngines.cs" />
+   <Compile Include="System.Web.Mvc\ViewMasterPage`1.cs" />
+   <Compile Include="System.Web.Mvc\ViewMasterPage.cs" />
+   <Compile Include="System.Web.Mvc\ViewPage`1.cs" />
+   <Compile Include="System.Web.Mvc\ViewPageControlBuilder.cs" />
+   <Compile Include="System.Web.Mvc\ViewPage.cs" />
+   <Compile Include="System.Web.Mvc\ViewResultBase.cs" />
+   <Compile Include="System.Web.Mvc\ViewResult.cs" />
+   <Compile Include="System.Web.Mvc\ViewTypeControlBuilder.cs" />
+   <Compile Include="System.Web.Mvc\ViewType.cs" />
+   <Compile Include="System.Web.Mvc\ViewTypeParserFilter.cs" />
+   <Compile Include="System.Web.Mvc\ViewUserControl`1.cs" />
+   <Compile Include="System.Web.Mvc\ViewUserControlControlBuilder.cs" />
+   <Compile Include="System.Web.Mvc\ViewUserControl.cs" />
+   <Compile Include="System.Web.Mvc\VirtualPathProviderViewEngine.cs" />
+   <Compile Include="System.Web.Mvc\WebFormView.cs" />
+   <Compile Include="System.Web.Mvc\WebFormViewEngine.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Abstractions.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.Routing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.Extensions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="System.Web.Mvc/Resources/MvcResources.resources">
+       <LogicalName>System.Web.Mvc.Resources.MvcResources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

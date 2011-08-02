@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.ComponentModel
 {
 	[AttributeUsageAttribute (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event)]
@@ -80,4 +79,3 @@ namespace System.ComponentModel
 		}
 	}
 }
-#endif

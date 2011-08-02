@@ -55,7 +55,7 @@ namespace System.ServiceModel.Channels
 				throw new ArgumentNullException ("contentType");
 			int idx = contentType.IndexOf (';');
 			if (idx > 0)
-				return contentType == ContentType;
+				return contentType.StartsWith (ContentType, StringComparison.Ordinal);
 			return contentType == MediaType;
 		}
 

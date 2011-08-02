@@ -141,7 +141,7 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO ("why override this?")]
-		protected override object GetRuntimeObject ()
+		protected internal override object GetRuntimeObject ()
 		{
 			return this;
 		}
@@ -261,7 +261,7 @@ namespace System.Web.Configuration
 			set { base [urlLinePragmasProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

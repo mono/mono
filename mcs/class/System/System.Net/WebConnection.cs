@@ -169,10 +169,23 @@ namespace System.Net
 
 				//WebConnectionData data = Data;
 				foreach (IPAddress address in hostEntry.AddressList) {
-					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					try {
+						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					} catch (Exception se) {
+						// The Socket ctor can throw if we run out of FD's
+						if (!request.Aborted)
+								status = WebExceptionStatus.ConnectFailure;
+						connect_exception = se;
+						return;
+					}
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
-					socket.SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, sPoint.UseNagleAlgorithm ? 0 : 1);
 					socket.NoDelay = !sPoint.UseNagleAlgorithm;
+					try {
+						sPoint.KeepAliveSetup (socket);
+					} catch {
+						// Ignore. Not supported in all platforms.
+					}
+
 					if (!sPoint.CallEndPointDelegate (socket, remote)) {
 						socket.Close ();
 						socket = null;
@@ -466,9 +479,12 @@ namespace System.Net
 			cnc.position = 0;
 
 			WebConnectionStream stream = new WebConnectionStream (cnc);
+			bool expect_content = ExpectContent (data.StatusCode, data.request.Method);
+			string tencoding = null;
+			if (expect_content)
+				tencoding = data.Headers ["Transfer-Encoding"];
 
-			string contentType = data.Headers ["Transfer-Encoding"];
-			cnc.chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
+			cnc.chunkedRead = (tencoding != null && tencoding.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 			if (!cnc.chunkedRead) {
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
@@ -493,14 +509,16 @@ namespace System.Net
 
 			data.stream = stream;
 			
-			if (!ExpectContent (data.StatusCode) || data.request.Method == "HEAD")
+			if (!expect_content)
 				stream.ForceCompletion ();
 
 			data.request.SetResponseData (data);
 		}
 
-		static bool ExpectContent (int statusCode)
+		static bool ExpectContent (int statusCode, string method)
 		{
+			if (method == "HEAD")
+				return false;
 			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 

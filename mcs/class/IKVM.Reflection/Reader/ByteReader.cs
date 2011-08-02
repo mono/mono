@@ -167,11 +167,7 @@ namespace IKVM.Reflection.Reader
 
 		internal float ReadSingle()
 		{
-			if (end - pos < 4)
-				throw new BadImageFormatException();
-			float value = BitConverter.ToSingle(buffer, pos);
-			pos += 4;
-			return value;
+			return SingleConverter.Int32BitsToSingle(ReadInt32());
 		}
 
 		internal double ReadDouble()

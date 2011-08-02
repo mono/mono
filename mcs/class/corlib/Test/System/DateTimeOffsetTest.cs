@@ -188,7 +188,7 @@ namespace MonoTests.System {
 				"M/dd/yyyy",
 				"M/d/y",
 				"M/d/yy",
-				"M/d/yyy",
+//				"M/d/yyy", // this fails on .NET 2.0 (3.5) and 4.0
 				"M/d/yyyy",
 				"M/d/yyyyy",
 				"M/d/yyyyyy",
@@ -250,7 +250,7 @@ namespace MonoTests.System {
 		[Test]
 		public void ParseExactWithKFormat ()
 		{
-			DateTimeOffset o = DateTimeOffset.ParseExact ("Wed Mar 17 22:25:08 +0000 2010", "ddd MMM d H:m:ss K yyyy", null);
+			DateTimeOffset o = DateTimeOffset.ParseExact ("Wed Mar 17 22:25:08 +0000 2010", "ddd MMM d H:m:ss K yyyy", CultureInfo.InvariantCulture);
 		}
 		
 		[Test]
@@ -265,7 +265,7 @@ namespace MonoTests.System {
 			};
 
 			string[] formats = {
-				"M/d/yyy H:m zzz",
+//				"M/d/yyy H:m zzz", // fails under .NET 2.0 and 4.0.
 				"M/d/yyyy H:m zzz",
 				"M/d/yyyyy H:m zzz",
 				"M/d/yyyyyy H:m zzz",
@@ -430,14 +430,14 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		[ExpectedException (typeof (FormatException))]
 		public void ParseUnderflow ()
 		{
 			DateTimeOffset.Parse ("01/01/0001 0:0 +09:00", new CultureInfo ("en-US"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		[ExpectedException (typeof (FormatException))]
 		public void ParseOverflow ()
 		{
 			DateTimeOffset.Parse ("12/31/9999 23:59 -09:00", new CultureInfo ("en-US"));

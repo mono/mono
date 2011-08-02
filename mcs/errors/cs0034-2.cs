@@ -1,4 +1,4 @@
-// cs0034-2.cs : Operator `+' is ambiguous on operands of type `A' and `A'
+// CS0034: Operator `+' is ambiguous on operands of type `A' and `A'
 // Line: 22
 
 public class A {

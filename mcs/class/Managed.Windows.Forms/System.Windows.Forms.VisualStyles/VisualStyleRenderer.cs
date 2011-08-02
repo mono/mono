@@ -30,10 +30,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	sealed class VisualStyleRenderer
+	public sealed class VisualStyleRenderer
 	{
 		private string class_name;
 		private int part;

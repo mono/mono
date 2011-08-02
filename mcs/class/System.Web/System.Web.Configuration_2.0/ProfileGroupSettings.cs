@@ -98,7 +98,7 @@ namespace System.Web.Configuration
 			get { return (ProfilePropertySettingsCollection) base [propertySettingsProp]; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

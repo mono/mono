@@ -65,8 +65,8 @@ namespace System.Globalization
 		#endregion
 
 		readonly string source;
-		readonly CompareOptions options;
 		readonly byte [] key;
+		readonly CompareOptions options;
 		readonly int lcid;
 
 		// for legacy unmanaged one

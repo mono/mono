@@ -27,10 +27,12 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
+using System.Xml;
 using NUnit.Framework;
 
 using Element = System.ServiceModel.Channels.TextMessageEncodingBindingElement;
@@ -111,6 +113,43 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.IsFalse (enc.IsContentTypeSupported ("application/xml"), "#1");
 			Assert.IsFalse (enc.IsContentTypeSupported ("text/xml"), "#2");
 			Assert.IsTrue (enc.IsContentTypeSupported ("application/soap+xml"), "#3");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReadNullStream ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			enc.ReadMessage (null, 10, "text/xml");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReadNullBufferManager ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			enc.ReadMessage (new ArraySegment<byte> (new byte [0]), null, "text/xml");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (XmlException))] // (document is expected)
+		public void ReadEmptyBuffer ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			enc.ReadMessage (new ArraySegment<byte> (new byte [0]), BufferManager.CreateBufferManager (1000, 1000), "text/xml");
+		}
+		
+		[Test]
+		public void ActionContentTypeParameter ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			var msg = Message.CreateMessage (MessageVersion.Soap12, "urn:foo");
+			var ms = new MemoryStream ();
+			using (var xw = XmlWriter.Create (ms))
+				msg.WriteMessage (xw);
+			ms.Position = 0;
+			msg = enc.ReadMessage (ms, 0x1000, "application/soap+xml; action=urn:bar");
+			Assert.AreEqual ("urn:bar", msg.Headers.Action, "#1");
 		}
 	}
 }

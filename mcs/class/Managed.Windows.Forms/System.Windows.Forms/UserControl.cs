@@ -34,21 +34,16 @@ namespace System.Windows.Forms {
 	[DesignerCategory("UserControl")]
 	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[Designer("System.Windows.Forms.Design.UserControlDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class UserControl : ContainerControl {
 		#region Public Constructors
 		public UserControl() {
-#if NET_2_0
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
-#endif
 		}
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -75,13 +70,12 @@ namespace System.Windows.Forms {
 			get { return base.AutoValidate; }
 			set { base.AutoValidate = value; }
 		}
-#endif
+
 		protected override Size DefaultSize {
 			get {
 				return new Size(150, 150);
 			}
 		}
-
 
 		[Bindable(false)]
 		[Browsable(false)]
@@ -99,7 +93,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public override bool ValidateChildren ()
@@ -113,7 +106,6 @@ namespace System.Windows.Forms {
 		{
 			return base.ValidateChildren (validationConstraints);
 		}
-#endif
 		#endregion
 		
 		#region Protected Instance Methods
@@ -154,7 +146,6 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Protected Properties
-#if NET_2_0
 		protected override CreateParams CreateParams {
 			get { 
 				CreateParams cp = base.CreateParams;
@@ -163,12 +154,11 @@ namespace System.Windows.Forms {
 				return cp;
 			}
 		}
-#endif
 		#endregion
+
 		#region Events
 		static object LoadEvent = new object ();
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
@@ -182,7 +172,6 @@ namespace System.Windows.Forms {
 			add { base.AutoValidateChanged += value; }
 			remove { base.AutoValidateChanged -= value; }
 		}
-#endif
 
 		public event EventHandler Load {
 			add { Events.AddHandler (LoadEvent, value); }
@@ -195,10 +184,8 @@ namespace System.Windows.Forms {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
-
 		#endregion	// Events
 
-#if NET_2_0
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
@@ -245,6 +232,5 @@ namespace System.Windows.Forms {
 
 			return retsize;
 		}
-#endif
 	}
 }

@@ -1,4 +1,4 @@
-// cs1540.cs: Cannot access protected member `A.n' via a qualifier of type `B'. The qualifier must be of type `C' or derived from it
+// CS1540: Cannot access protected member `A.n' via a qualifier of type `B'. The qualifier must be of type `C' or derived from it
 // Line: 19
 
 class A

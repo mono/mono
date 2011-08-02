@@ -1,4 +1,4 @@
-// cs0619-28.cs: `D' is obsolete: `Do not use it'
+// CS0619: `D' is obsolete: `Do not use it'
 // Line: 12
 
 using System;

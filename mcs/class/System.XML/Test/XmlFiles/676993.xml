@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ESPTable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns="urn:DRMS.ESPTable" xsi:schemaLocation="urn:DRMS.ESPTable ESPTable.xsd">
+   <ESPPump id="1"> <!-- complete pump with all the fields -->
+      <PerformanceTable t1="1.14" t2="1.15" t3="1.16" t4="1.17" t5="1.18" t6="1.19" t7="1.20" t8="1.21" t9="1.22" t10="1.23">
+         <PerformanceValue>
+            <a1>1.24</a1>
+            <a2>1.25</a2>
+            <a3>1.26</a3>
+            <a4>1.27</a4>
+         </PerformanceValue>
+      </PerformanceTable>
+   </ESPPump>
+</ESPTable>

@@ -99,7 +99,7 @@ namespace System.Web.Compilation
 				localVars.Add (new CodeAssignStatement (prop, ct));
 			}
 
-			ArrayList deps = pageParser.Dependencies;
+			List <string> deps = pageParser.Dependencies;
 			int depsCount = deps != null ? deps.Count : 0;
 			
 			if (depsCount > 0) {
@@ -363,7 +363,7 @@ namespace System.Web.Compilation
 		{
 			base.AppendStatementsToFrameworkInitialize (method);
 
-			ArrayList deps = pageParser.Dependencies;
+			List <string> deps = pageParser.Dependencies;
 			int depsCount = deps != null ? deps.Count : 0;
 
 			if (depsCount > 0) {

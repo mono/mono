@@ -1,4 +1,4 @@
-// cs0028.cs: `T.Main(int)' has the wrong signature to be an entry point
+// CS0028: `T.Main(int)' has the wrong signature to be an entry point
 // Line: 8
 // Compiler options: -warnaserror -warn:4
 

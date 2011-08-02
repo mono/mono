@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -172,7 +173,8 @@ namespace System.Web.UI
 				if (dupe)
 					ThrowParseException ("Only one attribute can be specified.");
 
-				AddDependency (vp);
+				vp = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (VirtualPath.Absolute, vp);
+				AddDependency (vp, false);
 				
 				Type ctype;
 				ctype = BuildManager.GetCompiledType (vp);

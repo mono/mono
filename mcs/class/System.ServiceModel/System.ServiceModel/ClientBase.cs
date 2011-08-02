@@ -45,23 +45,6 @@ namespace System.ServiceModel
 		ICommunicationObject where TChannel : class
 	{
 		static InstanceContext initialContxt = new InstanceContext (null);
-#if MOONLIGHT
-		static readonly PropertyInfo dispatcher_main_property;
-		static readonly MethodInfo dispatcher_begin_invoke_method;
-
-		static ClientBase ()
-		{
-			Type dispatcher_type = Type.GetType ("System.Windows.Threading.Dispatcher, System.Windows, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e", true);
-
-			dispatcher_main_property = dispatcher_type.GetProperty ("Main", BindingFlags.NonPublic | BindingFlags.Static);
-			if (dispatcher_main_property == null)
-				throw new SystemException ("Dispatcher.Main not found");
-
-			dispatcher_begin_invoke_method = dispatcher_type.GetMethod ("BeginInvoke", new Type [] {typeof (Delegate), typeof (object [])});
-			if (dispatcher_begin_invoke_method == null)
-				throw new SystemException ("Dispatcher.BeginInvoke not found");
-		}
-#endif
 
 		ChannelFactory<TChannel> factory;
 		IClientChannel inner_channel;
@@ -244,21 +227,8 @@ namespace System.ServiceModel
 #if !MOONLIGHT
 			callback (args);
 #else
-			object dispatcher = dispatcher_main_property.GetValue (null, null);
-			if (dispatcher == null) {
-				callback (args);
-				return;
-			}
-			EventHandler a = delegate {
-				try {
-					callback (args); 
-					//Console.WriteLine ("ClientBase<TChannel>: operationCompletedCallback is successfully done (unless the callback has further async operations)");
-				} catch (Exception ex) {
-					//Console.WriteLine ("ClientBase<TChannel> caught an error during operationCompletedCallback: " + ex);
-					throw;
-				}
-			};
-			dispatcher_begin_invoke_method.Invoke (dispatcher, new object [] {a, new object [] {this, new EventArgs ()}});
+			// this ensure the "dirty" work is done in mscorlib and "frees" this assembly from any [SC] or [SSC] code
+			Mono.MoonlightHelper.RunOnMainThread (callback, args);
 #endif
 		}
 

@@ -1,4 +1,4 @@
-// cs0649.cs: Field `X.s' is never assigned to, and will always have its default value `null'
+// CS0649: Field `X.s' is never assigned to, and will always have its default value `null'
 // Line: 4
 // Compiler options: -warnaserror -warn:4
 

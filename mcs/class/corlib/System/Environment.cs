@@ -55,7 +55,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 94;
+		private const int mono_corlib_version = 96;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -84,7 +84,7 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			MyVideos = 0x0e,
 #endif
 #if NET_4_0
@@ -197,12 +197,21 @@ namespace System {
 			get;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string GetNewLine ();
+
+		static string nl;
 		/// <summary>
 		/// Gets the standard new line value
 		/// </summary>
-		public extern static string NewLine {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public static string NewLine {
+			get {
+				if (nl != null)
+					return nl;
+
+				nl = GetNewLine ();
+				return nl;
+			}
 		}
 
 		//
@@ -609,7 +618,7 @@ namespace System {
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			case SpecialFolder.MyVideos:
 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
 #endif
@@ -812,7 +821,7 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
@@ -885,6 +894,11 @@ namespace System {
 				int platform = (int) Environment.Platform;
 
 				return (platform == 4 || platform == 128 || platform == 6);
+			}
+		}
+		static internal bool IsMacOS {
+			get {
+				return Environment.Platform == PlatformID.MacOSX;
 			}
 		}
 	}

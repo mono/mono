@@ -40,9 +40,7 @@ namespace System.ComponentModel {
 		//BindableSupport flags;
 		private bool bindable;
 
-#if NET_2_0
 		private BindingDirection direction = BindingDirection.OneWay;
-#endif
 		#endregion // Fields
 		
 		public static readonly BindableAttribute No = new BindableAttribute (BindableSupport.No);
@@ -66,7 +64,6 @@ namespace System.ComponentModel {
 			this.bindable = bindable;
 		}
 
-#if NET_2_0
 		public BindableAttribute (bool bindable, BindingDirection direction)
 		{
 			this.bindable = bindable;
@@ -81,7 +78,6 @@ namespace System.ComponentModel {
 		public BindingDirection Direction {
 			get { return direction; }
 		}
-#endif
 
 		#endregion // Constructors
 

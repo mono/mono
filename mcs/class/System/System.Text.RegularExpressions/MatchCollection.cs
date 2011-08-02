@@ -74,9 +74,9 @@ namespace System.Text.RegularExpressions
 			get { return list; }
 		}
 
-		public void CopyTo (Array array, int index)
+		public void CopyTo (Array array, int arrayIndex)
 		{
-			FullList.CopyTo (array, index);
+			FullList.CopyTo (array, arrayIndex);
 		}
 
 		public IEnumerator GetEnumerator ()

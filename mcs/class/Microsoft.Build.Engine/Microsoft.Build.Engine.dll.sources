@@ -2,6 +2,7 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
+../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
 ../../tools/xbuild/SolutionParser.cs
 Microsoft.Build.BuildEngine/BatchingImplBase.cs
@@ -36,6 +37,7 @@ Microsoft.Build.BuildEngine/Engine.cs
 Microsoft.Build.BuildEngine/EventSource.cs
 Microsoft.Build.BuildEngine/Expression.cs
 Microsoft.Build.BuildEngine/ExpressionCollection.cs
+Microsoft.Build.BuildEngine/ExpressionEvaluationException.cs
 Microsoft.Build.BuildEngine/ExpressionParseException.cs
 Microsoft.Build.BuildEngine/FileLogger.cs
 Microsoft.Build.BuildEngine/GroupingCollection.cs

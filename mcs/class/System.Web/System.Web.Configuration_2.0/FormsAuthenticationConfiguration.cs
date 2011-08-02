@@ -118,7 +118,7 @@ namespace System.Web.Configuration
 			/* XXX do some sort of element validation here? */
 		}
 
-		protected override ConfigurationElementProperty ElementProperty {
+		protected internal override ConfigurationElementProperty ElementProperty {
 			get { return elementProperty; }
 		}
 
@@ -199,7 +199,7 @@ namespace System.Web.Configuration
 			set { base [timeoutProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

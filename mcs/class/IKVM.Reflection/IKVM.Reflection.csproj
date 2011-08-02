@@ -93,6 +93,7 @@
     <Compile Include="MethodImplMap.cs" />
     <Compile Include="MethodInfo.cs" />
     <Compile Include="MethodSignature.cs" />
+    <Compile Include="Missing.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ParameterInfo.cs" />
     <Compile Include="ParameterModifier.cs" />

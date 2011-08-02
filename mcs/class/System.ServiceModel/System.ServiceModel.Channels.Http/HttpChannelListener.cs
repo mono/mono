@@ -120,14 +120,14 @@ namespace System.ServiceModel.Channels.Http
 		protected HttpListenerManager GetOrCreateListenerManager ()
 		{
 			var table = HttpListenerManagerTable.GetOrCreate (ChannelDispatcher != null ? ChannelDispatcher.Host : null);
-			return table.GetOrCreateManager (Uri);
+			return table.GetOrCreateManager (Uri, Source);
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
 			listener_manager = GetOrCreateListenerManager ();
 			Properties.Add (listener_manager);
-			listener_manager.RegisterListener (ChannelDispatcher, timeout);
+			listener_manager.RegisterListener (ChannelDispatcher, Source, timeout);
 		}
 
 		protected override void OnAbort ()

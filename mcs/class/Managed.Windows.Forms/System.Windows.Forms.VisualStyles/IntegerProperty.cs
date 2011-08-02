@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum IntegerProperty
+	public enum IntegerProperty
 	{
 		ImageCount = 2401,
 		AlphaLevel = 2402,

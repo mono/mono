@@ -30,100 +30,124 @@
 
 #include "config.h"
 #ifdef HAVE_SGEN_GC
+
+
 #include <glib.h>
-#include "metadata/gc-internal.h"
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-archdep.h"
 #include "metadata/object-internals.h"
+#include "metadata/gc-internal.h"
 
 #if defined(__MACH__)
 #include "utils/mach-support.h"
 #endif
 
-/* LOCKING: assumes the GC lock is held */
 #if defined(__MACH__) && MONO_MACH_ARCH_SUPPORTED
-int
-mono_sgen_thread_handshake (int signum)
+gboolean
+mono_sgen_resume_thread (SgenThreadInfo *info)
 {
-	task_t task = current_task ();
-	thread_port_t cur_thread = mach_thread_self ();
-	thread_act_array_t thread_list;
-	mach_msg_type_number_t num_threads;
+	return thread_resume (info->mach_port) == KERN_SUCCESS;
+}
+
+gboolean
+mono_sgen_suspend_thread (SgenThreadInfo *info)
+{
 	mach_msg_type_number_t num_state;
 	thread_state_t state;
 	kern_return_t ret;
 	ucontext_t ctx;
 	mcontext_t mctx;
-	pthread_t exception_thread = mono_gc_get_mach_exception_thread ();
 
-	SgenThreadInfo *info;
-	gpointer regs [ARCH_NUM_REGS];
 	gpointer stack_start;
 
-	int count, i;
+	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
+	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
-	mono_mach_get_threads (&thread_list, &num_threads);
+	ret = thread_suspend (info->mach_port);
+	if (ret != KERN_SUCCESS)
+		return FALSE;
 
-	for (i = 0, count = 0; i < num_threads; i++) {
-		thread_port_t t = thread_list [i];
-		pthread_t pt = pthread_from_mach_thread_np (t);
-		if (t != cur_thread && pt != exception_thread && !mono_sgen_is_worker_thread (pt)) {
-			if (signum == suspend_signal_num) {
-				ret = thread_suspend (t);
-				if (ret != KERN_SUCCESS) {
-					mach_port_deallocate (task, t);
-					continue;
-				}
+	ret = mono_mach_arch_get_thread_state (info->mach_port, state, &num_state);
+	if (ret != KERN_SUCCESS)
+		return FALSE;
 
-				state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
-				ret = mono_mach_arch_get_thread_state (t, state, &num_state);
-				if (ret != KERN_SUCCESS) {
-					mach_port_deallocate (task, t);
-					continue;
-				}
+	mono_mach_arch_thread_state_to_mcontext (state, mctx);
+	ctx.uc_mcontext = mctx;
 
+	info->stopped_domain = mono_mach_arch_get_tls_value_from_thread (
+		mono_thread_info_get_tid (info), mono_domain_get_tls_offset ());
+	info->stopped_ip = (gpointer) mono_mach_arch_get_ip (state);
+	stack_start = (char*) mono_mach_arch_get_sp (state) - REDZONE_SIZE;
+	/* If stack_start is not within the limits, then don't set it in info and we will be restarted. */
+	if (stack_start >= info->stack_start_limit && info->stack_start <= info->stack_end) {
+		info->stack_start = stack_start;
 
-				info = mono_sgen_thread_info_lookup (pt);
-
-				/* Ensure that the runtime is aware of this thread */
-				if (info != NULL) {
-					mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
-					mono_mach_arch_thread_state_to_mcontext (state, mctx);
-					ctx.uc_mcontext = mctx;
-
-					info->stopped_domain = mono_mach_arch_get_tls_value_from_thread (t, mono_pthread_key_for_tls (mono_domain_get_tls_key ()));
-					info->stopped_ip = (gpointer) mono_mach_arch_get_ip (state);
-					stack_start = (char*) mono_mach_arch_get_sp (state) - REDZONE_SIZE;
-					/* If stack_start is not within the limits, then don't set it in info and we will be restarted. */
-					if (stack_start >= info->stack_start_limit && info->stack_start <= info->stack_end) {
-						info->stack_start = stack_start;
-
-						ARCH_COPY_SIGCTX_REGS (regs, &ctx);
-						info->stopped_regs = regs;
-					} else {
-						g_assert (!info->stack_start);
-					}
-
-					/* Notify the JIT */
-					if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
-						mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, &ctx);
-				}
-			} else {
-				ret = thread_resume (t);
-				if (ret != KERN_SUCCESS) {
-					mach_port_deallocate (task, t);
-					continue;
-				}
-			}
-			count ++;
-
-			mach_port_deallocate (task, t);
-		}
+#ifdef USE_MONO_CTX
+		mono_sigctx_to_monoctx (&ctx, &info->ctx);
+		info->monoctx = &info->ctx;
+#else
+		ARCH_COPY_SIGCTX_REGS (&info->regs, &ctx);
+		info->stopped_regs = &info->regs;
+#endif
+	} else {
+		g_assert (!info->stack_start);
 	}
 
-	mach_port_deallocate (task, cur_thread);
+	/* Notify the JIT */
+	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
+		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, &ctx);
 
+	return TRUE;
+}
+
+void
+mono_sgen_wait_for_suspend_ack (int count)
+{
+    /* mach thread_resume is synchronous so we dont need to wait for them */
+}
+
+/* LOCKING: assumes the GC lock is held */
+int
+mono_sgen_thread_handshake (BOOL suspend)
+{
+	SgenThreadInfo *cur_thread = mono_thread_info_current ();
+	kern_return_t ret;
+	SgenThreadInfo *info;
+
+	int count = 0;
+
+	FOREACH_THREAD_SAFE (info) {
+		if (info == cur_thread || mono_sgen_is_worker_thread (mono_thread_info_get_tid (info)))
+			continue;
+
+		if (suspend) {
+			g_assert (!info->doing_handshake);
+			info->doing_handshake = TRUE;
+
+			if (!mono_sgen_suspend_thread (info))
+				continue;
+		} else {
+			g_assert (info->doing_handshake);
+			info->doing_handshake = FALSE;
+
+			ret = thread_resume (info->mach_port);
+			if (ret != KERN_SUCCESS)
+				continue;
+		}
+		count ++;
+	} END_FOREACH_THREAD_SAFE
 	return count;
+}
+
+void
+mono_sgen_os_init (void)
+{
+}
+
+int
+mono_gc_get_suspend_signal (void)
+{
+	return -1;
 }
 #endif
 #endif

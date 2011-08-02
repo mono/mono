@@ -218,6 +218,67 @@ type=""xsd:string"" use=""required""/>
 			var xsd = schemas.Add ("", XmlReader.Create (new StringReader (xsdraw)));
 			Assert.IsNull (xsd.TargetNamespace, "#1");
 		}
+
+		[Test] // part of bug #670945
+		public void TwoSchemasInSameDocumentUri ()
+		{
+			string xsd1 = @"
+    <xs:schema
+    targetNamespace='http://www.onvif.org/ver10/schema'
+    elementFormDefault='qualified'
+    xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    xmlns:tt='http://www.onvif.org/ver10/schema'>
+
+      <xs:complexType name='SystemDateTime'>
+        <xs:sequence>
+          <xs:element name='foobar' type='xs:string' minOccurs='0' />
+          <xs:element name='Extension' type='tt:SystemDateTimeExtension' minOccurs='0'/>
+        </xs:sequence>
+        <!-- xs:anyAttribute processContents='lax'/ -->
+      </xs:complexType>
+
+      <xs:complexType name='SystemDateTimeExtension'>
+        <xs:sequence>
+          <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded'/>
+        </xs:sequence>
+      </xs:complexType>
+
+    </xs:schema>";
+
+			string xsd2 = @"
+    <xs:schema
+      targetNamespace='http://www.onvif.org/ver10/device/wsdl'
+      xmlns:xs='http://www.w3.org/2001/XMLSchema'
+      xmlns:tt='http://www.onvif.org/ver10/schema'
+      xmlns:tds='http://www.onvif.org/ver10/device/wsdl' 
+      elementFormDefault='qualified'>
+      <xs:element name='GetSystemDateAndTime'>
+        <xs:complexType>
+          <xs:sequence/>
+
+        </xs:complexType>
+      </xs:element>
+      <xs:element name='GetSystemDateAndTimeResponse'>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name='SystemDateAndTime' type='tt:SystemDateTime' />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>";
+
+			var xss = new XmlSchemaSet ();
+			var xs1 = XmlSchema.Read (new StringReader (xsd1), null);
+			xs1.SourceUri = "http://localhost:8080/dummy.wsdl";
+			xs1.LineNumber = 5;
+			xss.Add (xs1);
+			var xs2 = XmlSchema.Read (new StringReader (xsd2), null);
+			xs2.SourceUri = "http://localhost:8080/dummy.wsdl";
+			xs2.LineNumber = 50;
+			xss.Add (xs2);
+			xss.Compile ();
+			Assert.IsNotNull (xss.GlobalElements [new XmlQualifiedName ("GetSystemDateAndTimeResponse", "http://www.onvif.org/ver10/device/wsdl")], "#1");
+		}
 	}
 }
 #endif

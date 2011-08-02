@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Net;
@@ -60,11 +58,11 @@ namespace System.Xml
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
-#if MOONLIGHT || NET_4_0
+#if NET_4_0 || MOONLIGHT
 		private DtdProcessing dtdProcessing;
+#endif
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
-#endif
 
 		public XmlReaderSettings ()
 		{
@@ -118,7 +116,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if MOONLIGHT || NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
@@ -126,7 +124,7 @@ namespace System.Xml
 				prohibitDtd = (value == DtdProcessing.Prohibit);
 			}
 		}
-
+#endif
 		public long MaxCharactersFromEntities {
 			get { return maxCharactersFromEntities; }
 			set { maxCharactersFromEntities = value; }
@@ -137,7 +135,6 @@ namespace System.Xml
 			get { return maxCharactersInDocument; }
 			set { maxCharactersInDocument = value; }
 		}
-#endif
 
 		public bool IgnoreComments {
 			get { return ignoreComments; }
@@ -222,5 +219,3 @@ namespace System.Xml
 		}
 	}
 }
-
-#endif

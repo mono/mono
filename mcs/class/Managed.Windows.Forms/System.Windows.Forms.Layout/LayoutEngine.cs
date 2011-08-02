@@ -29,12 +29,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms.Layout {
 
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	abstract class LayoutEngine {
+	public abstract class LayoutEngine {
 		
 		public virtual void InitLayout (object child, BoundsSpecified specified)
 		{

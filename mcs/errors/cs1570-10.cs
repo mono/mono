@@ -1,4 +1,4 @@
-// cs1570-10.cs: XML comment on `F:Testing.Test.PrivateField2' has non-well-formed XML ('summary' is expected  Line 3, position 4.)
+// CS1570: XML documentation comment on `Testing.Test.PrivateField2' is not well-formed XML markup ('summary' is expected  Line 3, position 4.)
 // Line: 23
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

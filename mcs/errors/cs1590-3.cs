@@ -1,4 +1,4 @@
-// cs1590-3.cs: Invalid XML `include' element. Missing `file' attribute
+// CS1590: Invalid XML `include' element. Missing `file' attribute
 // Line: 16
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

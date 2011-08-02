@@ -1601,5 +1601,71 @@ namespace MonoTests.System.Xml.Linq
 </rt>";
 			Assert.AreEqual (xml, root.ToString ().Replace ("\r\n", "\n"), "#1");
 		}
+		
+		private class EventHandler
+		{
+			public bool ChangingInvoked { get; private set; }
+			
+			public bool HasChanged { get; private set; }
+			
+			public void OnChanging (object node, XObjectChangeEventArgs args)
+			{
+				ChangingInvoked = true;
+			}
+			
+			public void OnChanged (object node, XObjectChangeEventArgs args)
+			{
+				HasChanged = true;
+			}
+		}
+		
+		[Test]
+		public void Add_ToRootNode_ChangeTriggers ()
+		{
+			var inputXml = "<root><a><b /></a></root>";
+			var reader = XmlReader.Create (new StringReader (inputXml), new XmlReaderSettings ());
+			XDocument doc = XDocument.Load (reader);
+			var eventHandler = new EventHandler ();
+			doc.Root.Changing += eventHandler.OnChanging;
+			doc.Root.Changed += eventHandler.OnChanged;
+			
+			var newElement = XElement.Parse ("<c/>");
+			
+			doc.Root.Add (newElement);
+			
+			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
+			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
+		}
+
+		[Test]
+		public void Add_ToChildNode_ChangeTriggersOnRoot ()
+		{
+			var inputXml = "<root><a><b /></a></root>";
+			var reader = XmlReader.Create (new StringReader (inputXml), new XmlReaderSettings ());
+			XDocument doc = XDocument.Load (reader);
+			var eventHandler = new EventHandler ();
+			
+			var newElement = XElement.Parse ("<c/>");
+			doc.Root.Add (newElement);
+
+			doc.Root.Changing += eventHandler.OnChanging;
+			doc.Root.Changed += eventHandler.OnChanged;
+			var nextNewElement = XElement.Parse ("<d/>");
+			newElement.Add (nextNewElement);
+			
+			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
+			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
+		}
+
+		[Test]
+		public void SetElementValue () // #699242
+		{
+			var element = XElement.Parse ("<foo><bar>bar</bar><baz>baz</baz></foo>");
+			element.SetElementValue ("bar", "babar");
+			element.SetElementValue ("baz", "babaz");
+			element.SetElementValue ("gaz", "gazonk");
+
+			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz><gaz>gazonk</gaz></foo>", element.ToString (SaveOptions.DisableFormatting));
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// cs0715.cs: `StaticClass.implicit operator StaticClass(int)': Static classes cannot contain user-defined operators
+// CS0715: `StaticClass.implicit operator StaticClass(int)': Static classes cannot contain user-defined operators
 // Line: 5
 
 static class StaticClass {

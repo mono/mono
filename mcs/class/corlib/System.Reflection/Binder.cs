@@ -182,22 +182,31 @@ namespace System.Reflection
 			static void AdjustArguments (MethodBase selected, ref object [] args)
 			{
 				var parameters = selected.GetParameters ();
-				if (parameters.Length == 0)
+				var parameters_length = parameters.Length;
+				if (parameters_length == 0)
 					return;
 
 				var last_parameter = parameters [parameters.Length - 1];
+				Type last_parameter_type = last_parameter.ParameterType;
 				if (!Attribute.IsDefined (last_parameter, typeof (ParamArrayAttribute)))
 					return;
 
-				var adjusted = new object [parameters.Length];
-				Array.Copy (args, adjusted, parameters.Length - 1);
-
-				var param_args_count = args.Length + 1 - parameters.Length;
-				var params_args = Array.CreateInstance (last_parameter.ParameterType.GetElementType (), param_args_count);
-
+				var args_length = args.Length;
+				var param_args_count = args_length + 1 - parameters_length;
+				var first_vararg_index = args_length - param_args_count;
+				if (first_vararg_index < args_length) {
+					var first_vararg = args [first_vararg_index];
+					if (first_vararg != null && first_vararg.GetType () == last_parameter_type)
+						return;
+				}
+				
+				var params_args = Array.CreateInstance (last_parameter_type.GetElementType (), param_args_count);
 				for (int i = 0; i < param_args_count; i++)
-					params_args.SetValue (args [args.Length - param_args_count + i], i);
+					params_args.SetValue (args [first_vararg_index + i], i);
 
+				var adjusted = new object [parameters_length];
+				Array.Copy (args, adjusted, parameters_length - 1);
+				
 				adjusted [adjusted.Length - 1] = params_args;
 				args = adjusted;
 			}

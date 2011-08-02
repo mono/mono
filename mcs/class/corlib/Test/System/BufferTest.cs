@@ -149,7 +149,7 @@ namespace MonoTests.System {
 			float [,,,] floatArray4 = new float [10,0,10,10];
 			float [,,,] floatArray5 = new float [0,0,0,0];
 			float [] floatArray6 = new float [0];
-			TestCase [] someArray = new TestCase [3];
+			BufferTest [] someArray = new BufferTest [3];
 		
 			try {
 				Buffer.ByteLength (null);	
@@ -195,7 +195,7 @@ namespace MonoTests.System {
 			bool errorThrown = false;
 			byteArray = new byte [10];
 			byteArray [5] = 8;
-			TestCase [] someArray = new TestCase [3];
+			BufferTest [] someArray = new BufferTest [3];
 		
 			try {
 				Buffer.GetByte (null, 5);
@@ -240,7 +240,7 @@ namespace MonoTests.System {
 		public void SetByte ()
 		{
 			bool errorThrown = false;
-			TestCase [] someArray = new TestCase [3];
+			BufferTest [] someArray = new BufferTest [3];
 		
 			try {
 				Buffer.SetByte (null, 5, 12);

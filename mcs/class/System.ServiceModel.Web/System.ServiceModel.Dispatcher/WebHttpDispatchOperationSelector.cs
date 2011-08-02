@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -39,7 +41,7 @@ namespace System.ServiceModel.Dispatcher
 	{
 		public const string HttpOperationSelectorUriMatchedPropertyName = "UriMatched";
 
-		UriTemplateTable table;
+		Dictionary<string,UriTemplateTable> tables = new Dictionary<string,UriTemplateTable> ();
 
 		protected WebHttpDispatchOperationSelector ()
 		{
@@ -52,41 +54,68 @@ namespace System.ServiceModel.Dispatcher
 			if (endpoint.Address == null)
 				throw new InvalidOperationException ("EndpointAddress must be set in the argument ServiceEndpoint");
 
-			table = new UriTemplateTable (endpoint.Address.Uri);
-
 			foreach (OperationDescription od in endpoint.Contract.Operations) {
 				WebAttributeInfo info = od.GetWebAttributeInfo ();
-				if (info != null)
+				if (info != null) {
+					UriTemplateTable table;
+					if (!tables.TryGetValue (info.Method, out table)) {
+						 table = new UriTemplateTable (endpoint.Address.Uri);
+						 tables.Add (info.Method, table);
+					}
 					table.KeyValuePairs.Add (new TemplateTablePair (info.BuildUriTemplate (od, null), od));
+				}
 			}
 		}
 
 		public string SelectOperation (ref Message message)
 		{
-			bool dummy;
-			return SelectOperation (ref message, out dummy);
+			// FIXME: uriMatched should be used to differentiate 404 and 405 (method not allowed)
+			bool uriMatched;
+			return SelectOperation (ref message, out uriMatched);
 		}
 
 		protected virtual string SelectOperation (ref Message message, out bool uriMatched)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
-			if (message.Properties.ContainsKey (WebBodyFormatMessageProperty.Name))
-				throw new ArgumentException ("There is already message property for Web body format");
+			if (message.Properties.ContainsKey (UriMatchedProperty.Name))
+				throw new ArgumentException (String.Format ("There is already a message property for template-matched URI '{0}'", UriMatchedProperty.Name));
 			uriMatched = false;
-			Uri to = message.Headers.To;
-			if (to == null)
-				return String.Empty;
+			var hp = (HttpRequestMessageProperty) message.Properties [HttpRequestMessageProperty.Name];
 
-			UriTemplateMatch match = table.MatchSingle (to);
 			OperationDescription od = null;
+			Message dummy = message; // since lambda expression prohibits ref variable...
+
+			Uri to = message.Headers.To;
+			// First, UriTemplateTable with corresponding HTTP method is tested. Then other tables can be tested for match.
+			UriTemplateTable table = null;
+			if (hp != null && hp.Method != null)
+				tables.TryGetValue (hp.Method, out table);
+			// FIXME: looks like To header does not matter on .NET. (But how to match then? I have no idea)
+			UriTemplateMatch match = to == null || table == null ? null : table.MatchSingle (to);
+			if (to != null && match == null) {
+				foreach (var tab in tables.Values)
+					if ((match = tab.MatchSingle (to)) != null) {
+						table = tab;
+						break;
+					}
+			}
+
 			if (match != null) {
 				uriMatched = true;
 				foreach (TemplateTablePair p in table.KeyValuePairs)
 					if (p.Key == match.Template)
 						od = p.Value as OperationDescription;
 			}
-			return od != null ? od.Name : String.Empty;
+			if (od != null)
+				message.Properties.Add (UriMatchedProperty.Name, new UriMatchedProperty ());
+
+			return uriMatched && od != null ? od.Name : String.Empty;
+		}
+
+		internal class UriMatchedProperty
+		{
+			public static string Name = "UriMatched"; // this is what .NET uses for MessageProperty that represents a matched URI.
 		}
 	}
 }

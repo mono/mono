@@ -20,6 +20,8 @@ EXTRA_DISTFILES = Test/SqliteTest.cs \
 	resources/DataTypes.xml	\
 	resources/MetaDataCollections.xml \
 	$(wildcard resources/*.bmp)
+	
+CLEAN_FILES += $(RESX_RESOURCES)
 
 test-local: test.db 
 

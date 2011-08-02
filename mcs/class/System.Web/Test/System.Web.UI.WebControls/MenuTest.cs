@@ -1229,7 +1229,7 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 		class MyMenuAdapter : global::System.Web.UI.WebControls.Adapters.MenuAdapter
 		{
-			protected override void RenderItem (HtmlTextWriter writer, 
+			protected internal override void RenderItem (HtmlTextWriter writer, 
 								    MenuItem item,
 								    int position)
 			{

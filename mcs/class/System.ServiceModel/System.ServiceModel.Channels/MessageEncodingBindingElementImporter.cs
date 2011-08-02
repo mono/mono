@@ -36,34 +36,33 @@ using System.Xml.Schema;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO]
 	public class MessageEncodingBindingElementImporter
 		: IWsdlImportExtension, IPolicyImportExtension
 	{
+		[MonoTODO]
 		void IWsdlImportExtension.BeforeImport (
 			ServiceDescriptionCollection wsdlDocuments,
 			XmlSchemaSet xmlSchemas,
 			ICollection<XmlElement> policy)
 		{
-			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IWsdlImportExtension.ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
 			WsdlEndpointConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IPolicyImportExtension.ImportPolicy (MetadataImporter importer,
 			PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// cs0192.cs: A readonly field `A.a' cannot be passed ref or out (except in a constructor)
+// CS0192: A readonly field `A.a' cannot be passed ref or out (except in a constructor)
 // Line: 17
 
 using System;
@@ -19,6 +19,6 @@ class A
 	
 	static void Main ()
 	{
-		Console.WriteLine ("Test cs0192.cs");
+		Console.WriteLine ("Test CS0192.cs");
 	}
 }

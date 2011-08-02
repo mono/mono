@@ -2,6 +2,7 @@
 #define __MONO_MINI_ARM_H__
 
 #include <mono/arch/arm/arm-codegen.h>
+#include <mono/utils/mono-context.h>
 #include <glib.h>
 
 #if defined(ARM_FPU_NONE) || (defined(__ARM_EABI__) && !defined(ARM_FPU_VFP))
@@ -43,11 +44,13 @@
 #define MONO_MAX_IREGS 16
 #define MONO_MAX_FREGS 16
 
-#define MONO_SAVED_GREGS 10 /* r4-411, ip, lr */
+#define MONO_SAVED_GREGS 10 /* r4-r11, ip, lr */
 #define MONO_SAVED_FREGS 8
 
 /* r4-r11, ip, lr: registers saved in the LMF  */
 #define MONO_ARM_REGSAVE_MASK 0x5ff0
+#define MONO_ARM_FIRST_SAVED_REG ARMREG_R4
+#define MONO_ARM_NUM_SAVED_REGS 10
 
 /* Parameters used by the register allocator */
 
@@ -91,6 +94,12 @@ int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
 void
 mono_arm_throw_exception_by_token (guint32 type_token, unsigned long eip, unsigned long esp, gulong *int_regs, gdouble *fp_regs);
 
+typedef enum {
+	MONO_ARM_FPU_NONE = 0,
+	MONO_ARM_FPU_FPA = 1,
+	MONO_ARM_FPU_VFP = 2
+} MonoArmFPU;
+
 /* keep the size of the structure a multiple of 8 */
 struct MonoLMF {
 	/* 
@@ -110,21 +119,10 @@ struct MonoLMF {
 	gulong     iregs [14];
 };
 
-/* we define our own structure and we'll copy the data
- * from sigcontext/ucontext/mach when we need it.
- * This also makes us save stack space and time when copying
- * We might also want to add an additional field to propagate
- * the original context from the signal handler.
- */
-typedef struct {
-	gulong eip;          // pc 
-	gulong esp;          // sp
-	gulong regs [16];
-	double fregs [MONO_SAVED_FREGS];
-} MonoContext;
-
 typedef struct MonoCompileArch {
 	gpointer seq_point_info_var, ss_trigger_page_var;
+	gpointer seq_point_read_var, seq_point_ss_method_var;
+	gpointer seq_point_bp_method_var;
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
 } MonoCompileArch;
@@ -168,9 +166,11 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
+#define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 
 /* Matches the HAVE_AEABI_READ_TP define in mini-arm.c */
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID)
+#if defined(__ARM_EABI__) && defined(__linux__) && !defined(TARGET_ANDROID)
 #define MONO_ARCH_HAVE_TLS_GET 1
 #endif
 
@@ -178,15 +178,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_RGCTX_REG ARMREG_V5
 /* First argument reg */
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-
-/* we have the stack pointer, not the base pointer in sigcontext */
-#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->eip = (int)ip; } while (0); 
-#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->regs [ARMREG_FP] = (int)bp; } while (0); 
-#define MONO_CONTEXT_SET_SP(ctx,bp) do { (ctx)->esp = (int)bp; } while (0); 
-
-#define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->eip))
-#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ARMREG_FP]))
-#define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->esp))
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 

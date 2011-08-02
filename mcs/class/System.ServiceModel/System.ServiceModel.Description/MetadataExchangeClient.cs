@@ -98,6 +98,9 @@ namespace System.ServiceModel.Description
 		[MonoTODO ("use dialect and identifier (but how?)")]
 		protected internal virtual ChannelFactory<IMetadataExchange> GetChannelFactory (EndpointAddress metadataAddress, string dialect, string identifier)
 		{
+			if (metadataAddress == null)
+				throw new ArgumentNullException ("metadataAddress");
+
 			var se = new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), CreateBinding (metadataAddress), metadataAddress);
 			if (SoapCredentials != null) {
 				se.Behaviors.RemoveAll<ClientCredentials> ();

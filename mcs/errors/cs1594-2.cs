@@ -1,4 +1,4 @@
-// cs1594-2.cs: Delegate `Test.Foo' has some invalid arguments
+// CS1594: Delegate `Test.Foo' has some invalid arguments
 // Line: 10
 
 namespace Test {

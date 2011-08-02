@@ -1,4 +1,4 @@
-// cs0686.cs: Accessor `C.Method.get' cannot implement interface member `I.get_Method()' for type `C'. Use an explicit interface implementation
+// CS0686: Accessor `C.Method.get' cannot implement interface member `I.get_Method()' for type `C'. Use an explicit interface implementation
 // Line: 13
 
 interface I

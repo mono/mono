@@ -87,6 +87,14 @@ namespace System.Runtime.Serialization
 		{
 			if (graph == null)
 				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+#if !MOONLIGHT
+			else if (type == typeof (XmlElement))
+				((XmlElement) graph).WriteTo (Writer);
+			else if (type == typeof (XmlNode [])) {
+				foreach (var xn in (XmlNode []) graph)
+					xn.WriteTo (Writer);
+			}
+#endif
 			else {
 				QName resolvedQName = null;
 				if (resolver != null) {
@@ -102,7 +110,8 @@ namespace System.Runtime.Serialization
 				// For some collection types, the actual type does not matter. So get nominal serialization type instead.
 				// (The code below also covers the lines above, but I don't remove above lines to avoid extra search cost.)
 				if (map == null) {
-					actualType = types.GetSerializedType (actualType);
+					// FIXME: not sure if type.IsInterface is the correct condition to determine whether items are serialized with i:type or not. (e.g. bug #675144 server response).
+					actualType = types.GetSerializedType (type.IsInterface ? type : actualType);
 					map = types.FindUserMap (actualType);
 				}
 				// If it is still unknown, then register it.
@@ -145,7 +154,19 @@ namespace System.Runtime.Serialization
 //			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
 //			writer.WriteQualifiedName (qname.Name, qname.Namespace);
 //			writer.WriteEndAttribute ();
-			writer.WriteString (KnownTypeCollection.PredefinedTypeObjectToString (graph));
+
+			// It is the only exceptional type that does not serialize to string but serializes into complex element.
+			if (type == typeof (DateTimeOffset)) {
+				var v = (DateTimeOffset) graph;
+				writer.WriteStartElement ("DateTime", KnownTypeCollection.DefaultClrNamespaceSystem);
+				SerializePrimitive (typeof (DateTime), DateTime.SpecifyKind (v.DateTime.Subtract (v.Offset), DateTimeKind.Utc), KnownTypeCollection.GetPredefinedTypeName (typeof (DateTime)));
+				writer.WriteEndElement ();
+				writer.WriteStartElement ("OffsetMinutes", KnownTypeCollection.DefaultClrNamespaceSystem);
+				SerializePrimitive (typeof (int), v.Offset.TotalMinutes, KnownTypeCollection.GetPredefinedTypeName (typeof (int)));
+				writer.WriteEndElement ();
+			}
+			else
+				writer.WriteString (KnownTypeCollection.PredefinedTypeObjectToString (graph));
 		}
 
 		public void WriteStartElement (string memberName, string memberNamespace, string contentNamespace)

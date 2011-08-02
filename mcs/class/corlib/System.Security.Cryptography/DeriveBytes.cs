@@ -4,7 +4,7 @@
 // Author:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,8 +31,11 @@ using System.Runtime.InteropServices;
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
+#if NET_4_0
+	public abstract class DeriveBytes : IDisposable {
+#else
 	public abstract class DeriveBytes {
-	
+#endif
 		protected DeriveBytes ()
 		{
 		}
@@ -40,5 +43,24 @@ namespace System.Security.Cryptography {
 		public abstract byte[] GetBytes (int cb);
 
 		public abstract void Reset ();
+
+#if NET_4_0
+		private bool m_disposed;
+
+		public void Dispose ()
+		{
+			Dispose(true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (!m_disposed) {
+				if (disposing) {
+					// dispose managed objects
+				}
+				m_disposed = true;
+			}
+		}
+#endif
 	}
 }

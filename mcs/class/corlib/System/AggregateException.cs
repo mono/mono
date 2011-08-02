@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -35,18 +35,22 @@ namespace System
 	[System.Diagnostics.DebuggerDisplay ("Count = {InnerExceptions.Count}")]
 	public class AggregateException : Exception
 	{
-		List<Exception> innerExceptions;
+		List<Exception> innerExceptions = new List<Exception> ();
+		const string defaultMessage = "One or more errors occured";
 		
-		public AggregateException (): base()
+		public AggregateException () : base (defaultMessage)
 		{
 		}
 		
-		public AggregateException (string message): base (message, null)
+		public AggregateException (string message): base (message)
 		{
 		}
 		
 		public AggregateException (string message, Exception innerException): base (message, innerException)
 		{
+			if (innerException == null)
+				throw new ArgumentNullException ("innerException");
+			innerExceptions.Add (innerException);
 		}
 		
 		protected AggregateException (SerializationInfo info, StreamingContext context)
@@ -60,19 +64,25 @@ namespace System
 		}
 		
 		public AggregateException (string message, params Exception[] innerExceptions)
-			: this (message, (IEnumerable<Exception>)innerExceptions)
+			: base (message, innerExceptions == null || innerExceptions.Length == 0 ? null : innerExceptions[0])
 		{
+			if (innerExceptions == null)
+				throw new ArgumentNullException ("innerExceptions");
+			foreach (var exception in innerExceptions)
+				if (exception == null)
+					throw new ArgumentException ("One of the inner exception is null", "innerExceptions");
+
+			this.innerExceptions.AddRange (innerExceptions);
 		}
 		
 		public AggregateException (IEnumerable<Exception> innerExceptions)
-			: this (string.Empty, innerExceptions)
+			: this (defaultMessage, innerExceptions)
 		{
 		}
 		
 		public AggregateException (string message, IEnumerable<Exception> innerExceptions)
-			: base(GetFormattedMessage(message, innerExceptions))
+			: this (message, new List<Exception> (innerExceptions).ToArray ())
 		{
-			this.innerExceptions = new List<Exception> (innerExceptions);
 		}
 		
 		public AggregateException Flatten ()
@@ -111,10 +121,31 @@ namespace System
 				return innerExceptions.AsReadOnly ();
 			}
 		}
+
+		internal void AddChildException (AggregateException childEx)
+		{
+			if (innerExceptions == null)
+				innerExceptions = new List<Exception> ();
+			if (childEx == null)
+				return;
+
+			innerExceptions.Add (childEx);
+		}
 		
 		public override string ToString ()
 		{
-			return this.Message;
+			System.Text.StringBuilder finalMessage = new System.Text.StringBuilder (base.ToString ());
+
+			int currentIndex = -1;
+			foreach (Exception e in innerExceptions) {
+				finalMessage.Append (Environment.NewLine);
+				finalMessage.Append (" --> (Inner exception ");
+				finalMessage.Append (++currentIndex);
+				finalMessage.Append (") ");
+				finalMessage.Append (e.ToString ());
+				finalMessage.Append (Environment.NewLine);
+			}
+			return finalMessage.ToString ();
 		}
 
 		public override Exception GetBaseException ()
@@ -125,22 +156,6 @@ namespace System
 		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
-		{
-			const string baseMessage = "Exception(s) occurred : {0}.";
-			
-			System.Text.StringBuilder finalMessage
-				= new System.Text.StringBuilder (string.Format (baseMessage, customMessage));
-			foreach (Exception e in inner) {
-				finalMessage.Append (Environment.NewLine);
-				finalMessage.Append ("[ ");
-				finalMessage.Append (e.ToString ());
-				finalMessage.Append (" ]");
-				finalMessage.Append (Environment.NewLine);
-			}
-			return finalMessage.ToString ();
 		}
 	}
 }

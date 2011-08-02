@@ -1,4 +1,4 @@
-// CS1685: The predefined type `System.Int32' is redefined in the source code. Ignoring the local type definition
+// CS1685: The predefined type `System.Int32' is defined multiple times. Using definition from `mscorlib.dll'
 // Line: 0
 // Compiler options: -warn:1 -warnaserror
 

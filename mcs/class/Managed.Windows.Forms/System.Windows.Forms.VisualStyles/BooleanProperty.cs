@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum BooleanProperty
+	public enum BooleanProperty
 	{
 		Transparent = 2201,
 		AutoSize = 2202,

@@ -54,34 +54,37 @@ namespace System.Xaml
 		
 		public abstract bool Read ();
 		
-		[MonoTODO]
 		public virtual XamlReader ReadSubtree ()
 		{
-			throw new NotImplementedException ();
+			return new XamlSubtreeReader (this);
 		}
 		
 		public virtual void Skip ()
 		{
+			int count = 0;
 			switch (NodeType) {
 			case XamlNodeType.StartMember:
 			case XamlNodeType.StartObject:
-				if (!Read ())
-					return;
-				while (true) {
+			case XamlNodeType.GetObject:
+				count++;
+				while (Read ()) {
 					switch (NodeType) {
 					case XamlNodeType.StartMember:
+					case XamlNodeType.GetObject:
 					case XamlNodeType.StartObject:
-						Skip ();
+						count++;
 						continue;
 					case XamlNodeType.EndMember:
 					case XamlNodeType.EndObject:
-						Read ();
-						return;
-					default:
-						Read ();
+						count--;
+						if (count == 0) {
+							Read ();
+							return;
+						}
 						continue;
 					}
 				}
+				return;
 
 			default:
 				Read ();

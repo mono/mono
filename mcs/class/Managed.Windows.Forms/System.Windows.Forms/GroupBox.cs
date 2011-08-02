@@ -39,24 +39,20 @@ namespace System.Windows.Forms
 	[DefaultProperty("Text")]
 	[DefaultEvent("Enter")]
 	[Designer ("System.Windows.Forms.Design.GroupBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class GroupBox : Control
 	{
 		private FlatStyle flat_style;
 		private Rectangle display_rectangle = new Rectangle ();
 
 		#region Events
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -93,7 +89,6 @@ namespace System.Windows.Forms
 			remove { base.KeyUp -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public new event MouseEventHandler MouseClick {
@@ -107,7 +102,6 @@ namespace System.Windows.Forms
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -169,7 +163,6 @@ namespace System.Windows.Forms
 			set { base.AllowDrop = value; }
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -185,7 +178,6 @@ namespace System.Windows.Forms
 			get { return base.GetAutoSizeMode (); }
 			set { base.SetAutoSizeMode (value); }
 		}
-#endif
 
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams; }
@@ -197,19 +189,11 @@ namespace System.Windows.Forms
 
 		public override Rectangle DisplayRectangle {
 			get {
-#if NET_2_0
 				display_rectangle.X = Padding.Left;
 				display_rectangle.Y = Font.Height + Padding.Top;
 				display_rectangle.Width = Width - Padding.Horizontal;
 				display_rectangle.Height = Height - Font.Height - Padding.Vertical;
 				return display_rectangle;
-#else
-				display_rectangle.X = 3;
-				display_rectangle.Y = Font.Height + 3;
-				display_rectangle.Width = Width - 6;
-				display_rectangle.Height = Height - Font.Height - 6;
-				return display_rectangle;
-#endif
 			}
 		}
 
@@ -250,12 +234,10 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
-#if NET_2_0
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			return new GroupBoxAccessibleObject (this);
 		}
-#endif
 		
 		protected override void OnFontChanged (EventArgs e)
 		{
@@ -282,12 +264,10 @@ namespace System.Windows.Forms
 			return base.ProcessMnemonic (charCode);
 		}
 
-#if NET_2_0
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
 			base.ScaleControl (factor, specified);
 		}
-#endif
 
 		public override string ToString()
 		{
@@ -299,7 +279,7 @@ namespace System.Windows.Forms
 		}
 				
 		#endregion Public Methods
-#if NET_2_0
+
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get {
@@ -315,18 +295,14 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		#region Protected Properties
-#if NET_2_0
 		protected override Padding DefaultPadding {
 			get { return new Padding (3); }
 		}
-#endif
 		#endregion
 
 		#region Internal Methods
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			Size retsize = new Size (Padding.Left, Padding.Top);
@@ -352,7 +328,6 @@ namespace System.Windows.Forms
 			
 			return retsize;
 		}
-#endif
 		#endregion
 
 		#region Private Classes

@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007,2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -104,6 +104,7 @@ public partial      class CryptoConfig {
 	private const string oidSHA256 = "2.16.840.1.101.3.4.2.1";
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2.2";
 	private const string oidSHA512 = "2.16.840.1.101.3.4.2.3";
+	private const string oidRIPEMD160 = "1.3.36.3.2.1";
 	// new in 2.0
 //	private const string oidRSA = "1.2.840.113549.1.1.1";
 //	private const string oidDSA = "1.2.840.10040.4.1";
@@ -212,7 +213,58 @@ public partial      class CryptoConfig {
 	// new (2.0) X509 Chain
 	private const string nameX509Chain = "X509Chain";
 	private const string defaultX509Chain = defaultNamespace + "X509Certificates.X509Chain, " + Consts.AssemblySystem;
+#if NET_4_0
+	// AES
+	const string system_core_assembly = ", System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+	const string nameAES_1 = "AES";
+	const string nameAES_2 = "System.Security.Cryptography.AesCryptoServiceProvider";
+	const string defaultAES_1 = "System.Security.Cryptography.AesCryptoServiceProvider" + system_core_assembly;
+	
+	const string nameAESManaged_1 = "AesManaged";
+	const string nameAESManaged_2 = "System.Security.Cryptography.AesManaged";
+	const string defaultAESManaged = "System.Security.Cryptography.AesManaged" + system_core_assembly;
 
+	// ECDiffieHellman - not implemented in System.Core at the moment
+	const string nameECDiffieHellman_1 = "ECDH";
+	const string nameECDiffieHellman_2 = "ECDiffieHellman";
+	const string nameECDiffieHellman_3 = "ECDiffieHellmanCng";
+	const string nameECDiffieHellman_4 = "System.Security.Cryptography.ECDiffieHellmanCng";
+	const string defaultECDiffieHellman = "System.Security.Cryptography.ECDiffieHellmanCng" + system_core_assembly;
+
+	// ECDsa - not implemented in System.Core at the moment
+	const string nameECDsa_1 = "ECDsa";
+	const string nameECDsa_2 = "ECDsaCng";
+	const string nameECDsa_3 = "System.Security.Cryptography.ECDsaCng";
+	const string defaultECDsa = "System.Security.Cryptography.ECDsaCng" + system_core_assembly;
+
+	// SHA1Cng
+	const string nameSHA1Cng = "System.Security.Cryptography.SHA1Cng";
+	const string defaultSHA1Cng = "System.Security.Cryptography.SHA1Cng" + system_core_assembly;
+
+	// SHA256Cng
+	const string nameSHA256Cng = "System.Security.Cryptography.SHA256Cng";
+	const string defaultSHA256Cng = "System.Security.Cryptography.SHA256Cng" + system_core_assembly;
+
+	// SHA256 provider
+	const string nameSHA256Provider = "System.Security.Cryptography.SHA256CryptoServiceProvider";
+	const string defaultSHA256Provider = "System.Security.Cryptography.SHA256CryptoServiceProvider" + system_core_assembly;
+
+	// SHA384Cng
+	const string nameSHA384Cng = "System.Security.Cryptography.SHA384Cng";
+	const string defaultSHA384Cng = "System.Security.Cryptography.SHA384Cng" + system_core_assembly;
+
+	// SHA384 provider
+	const string nameSHA384Provider = "System.Security.Cryptography.SHA384CryptoServiceProvider";
+	const string defaultSHA384Provider = "System.Security.Cryptography.SHA384CryptoServiceProvider" + system_core_assembly;
+
+	// SHA512Cng
+	const string nameSHA512Cng = "System.Security.Cryptography.SHA512Cng";
+	const string defaultSHA512Cng = "System.Security.Cryptography.SHA512Cng" + system_core_assembly;
+
+	// SHA512 provider
+	const string nameSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider";
+	const string defaultSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider" + system_core_assembly;
+#endif
 	static CryptoConfig () 
 	{
 		// lock(this) is bad
@@ -328,7 +380,29 @@ public partial      class CryptoConfig {
 		algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
 		// note: the default X.509Chain can also be created this way
 		algorithms.Add (nameX509Chain, defaultX509Chain);
+#if NET_4_0
+		algorithms.Add (nameAES_1, defaultAES_1);
+		algorithms.Add (nameAES_2, defaultAES_1);
+		algorithms.Add (nameAESManaged_1, defaultAESManaged);
+		algorithms.Add (nameAESManaged_2, defaultAESManaged);
 
+		algorithms.Add (nameECDiffieHellman_1, defaultECDiffieHellman);
+		algorithms.Add (nameECDiffieHellman_2, defaultECDiffieHellman);
+		algorithms.Add (nameECDiffieHellman_3, defaultECDiffieHellman);
+		algorithms.Add (nameECDiffieHellman_4, defaultECDiffieHellman);
+
+		algorithms.Add (nameECDsa_1, defaultECDsa);
+		algorithms.Add (nameECDsa_2, defaultECDsa);
+		algorithms.Add (nameECDsa_3, defaultECDsa);
+
+		algorithms.Add (nameSHA1Cng, defaultSHA1Cng);
+		algorithms.Add (nameSHA256Cng, defaultSHA256Cng);
+		algorithms.Add (nameSHA256Provider, defaultSHA256Provider);
+		algorithms.Add (nameSHA384Cng, defaultSHA384Cng);
+		algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
+		algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
+		algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
+#endif
 		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 
 		// comments here are to match with MS implementation (but not with doc)
@@ -353,6 +427,10 @@ public partial      class CryptoConfig {
 		oid.Add (defaultSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);
+
+		oid.Add (defaultRIPEMD160, oidRIPEMD160);
+		oid.Add (nameRIPEMD160a, oidRIPEMD160);
+		oid.Add (nameRIPEMD160c, oidRIPEMD160);
 
 		// surprise! documented in ".NET Framework Security" book
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
@@ -433,6 +511,23 @@ public partial      class CryptoConfig {
 
 		return (string)oid [name];
 	}
+
+#if NET_4_0
+	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
+	public static bool AllowOnlyFipsAlgorithms {
+		get { return false; }
+	}
+
+	public static void AddAlgorithm (Type algorithm, params string[] names)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public static void AddOID (string oid, params string[] names)
+	{
+		throw new NotImplementedException ();
+	}
+#endif
 
 	class CryptoHandler: SmallXmlParser.IContentHandler {
 

@@ -1,4 +1,4 @@
-// cs1643.cs: Not all code paths return a value in anonymous method of type `X.T'
+// CS1643: Not all code paths return a value in anonymous method of type `X.T'
 // Line: 12
 using System;
 

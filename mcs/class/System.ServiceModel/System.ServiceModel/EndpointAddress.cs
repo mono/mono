@@ -37,6 +37,9 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+#if !NET_2_1
+using System.Security.Cryptography.Xml;
+#endif
 
 namespace System.ServiceModel
 {
@@ -329,18 +332,45 @@ namespace System.ServiceModel
 			return address.ToString (); 
 		}
 
-		[MonoTODO]
 		public void WriteContentsTo (
 			AddressingVersion addressingVersion,
 			XmlDictionaryWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
 #if NET_2_1
 			writer.WriteString (Uri.AbsoluteUri);
 #else
-			if (addressingVersion == AddressingVersion.WSAddressing10) {
-				((IXmlSerializable) EndpointAddress10.FromEndpointAddress (this)).WriteXml (writer);
-			} else {
+			if (addressingVersion == AddressingVersion.None)
 				writer.WriteString (Uri.AbsoluteUri);
+			else {
+				writer.WriteStartElement ("Address", addressingVersion.Namespace);
+				writer.WriteString (Uri.AbsoluteUri);
+				writer.WriteEndElement ();
+
+				if (Identity == null)
+					return;
+
+				if (Headers != null)
+					foreach (AddressHeader ah in Headers)
+						ah.WriteAddressHeader (writer);
+
+				writer.WriteStartElement ("Identity", Constants.WsaIdentityUri);
+
+				X509CertificateEndpointIdentity x509 =
+					Identity as X509CertificateEndpointIdentity;
+				if (x509 != null) {
+					KeyInfo ki = new KeyInfo ();
+					KeyInfoX509Data x = new KeyInfoX509Data ();
+					foreach (X509Certificate2 cert in x509.Certificates)
+						x.AddCertificate (cert);
+					ki.AddClause (x);
+					ki.GetXml ().WriteTo (writer);
+				} else {
+					DataContractSerializer ds = new DataContractSerializer (Identity.IdentityClaim.GetType ());
+					ds.WriteObject (writer, Identity.IdentityClaim);
+				}
+				writer.WriteEndElement ();
 			}
 #endif
 		}

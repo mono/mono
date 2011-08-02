@@ -58,11 +58,9 @@ namespace System.Windows.Forms {
 				return this.key_char;
 			}
 
-#if NET_2_0
 			set {
 				key_char = value;
 			}
-#endif
 		}
 		#endregion	// Public Instance Properties
 	}

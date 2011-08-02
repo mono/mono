@@ -2864,11 +2864,12 @@ namespace MonoTests_System.Data
 				new DataColumn[] {col1_3, col1_4}, 
 				new DataColumn[] {col2_3, col2_4},
 				false);
+
+			table1.Constraints.Add ("pk 1", col1_7, true);
+
 			table2.Constraints.Add ("fk 1",
 				new DataColumn[] {col1_5, col1_6},
 				new DataColumn[] {col2_5, col2_6});
-
-			table1.Constraints.Add ("pk 1", col1_7, true);
 
 			ms = new System.IO.MemoryStream();
 			ds1.WriteXmlSchema (ms);

@@ -101,21 +101,12 @@ namespace System.Windows.Forms
 		
 		private Mime ()
 		{
-#if NET_2_0
 			Aliases = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
 			SubClasses = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
 			GlobalPatternsShort = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
 			GlobalPatternsLong = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
 			GlobalLiterals = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
 			GlobalSufPref = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
-#else
-			Aliases = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-			SubClasses = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-			GlobalPatternsShort = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-			GlobalPatternsLong = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-			GlobalLiterals = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-			GlobalSufPref = new NameValueCollection (new CaseInsensitiveHashCodeProvider (), new Comparer (System.Globalization.CultureInfo.CurrentUICulture));
-#endif
 			
 			Matches80Plus = new ArrayList ();
 			MatchesBelow80 = new ArrayList ();
@@ -654,6 +645,11 @@ namespace System.Windows.Forms
 		
 		public int Init ()
 		{
+			int p = (int) Environment.OSVersion.Platform;
+			if ((p != 4) && (p != 6) && (p != 128))
+				// Not running on Unix.
+				return -1;
+
 			CheckFDOMimePaths ();
 			
 			if (!fdo_mime_available)

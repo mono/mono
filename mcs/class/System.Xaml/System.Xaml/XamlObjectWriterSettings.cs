@@ -69,15 +69,15 @@ namespace System.Xaml
 		[MonoTODO ("Ignored")]
 		public XamlAccessLevel AccessLevel { get; set; }
 #endif
-		[MonoTODO ("Ignored")]
+
 		public INameScope ExternalNameScope { get; set; }
 		[MonoTODO ("Ignored")]
 		public bool IgnoreCanConvert { get; set; }
 		[MonoTODO ("Ignored")]
 		public bool PreferUnconvertedDictionaryKeys { get; set; }
-		[MonoTODO ("Ignored")]
+
 		public bool RegisterNamesOnExternalNamescope { get; set; }
-		[MonoTODO ("Ignored")]
+
 		public object RootObjectInstance { get; set; }
 		[MonoTODO ("Ignored")]
 		public bool SkipDuplicatePropertyCheck { get; set; }

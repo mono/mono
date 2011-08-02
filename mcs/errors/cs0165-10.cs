@@ -1,4 +1,4 @@
-// cs0165-10.cs: Use of unassigned local variable `fb'
+// CS0165: Use of unassigned local variable `fb'
 // Line: 15
 using System.Collections;
 

@@ -1,4 +1,4 @@
-// cs3012.cs: You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking
+// CS3012: You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking
 // Line: 7
 // Compiler options: -warnaserror
 

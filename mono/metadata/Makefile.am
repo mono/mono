@@ -29,7 +29,9 @@ platform_sources = $(unix_sources)
 endif
 
 if SHARED_MONO
+if SUPPORT_BOEHM
 bin_PROGRAMS = pedump
+endif
 endif
 
 #
@@ -52,7 +54,9 @@ moon-do-clean:
 endif
 
 if SHARED_MONO
+if SUPPORT_BOEHM
 shared_libraries = libmonoruntime.la
+endif
 endif
 noinst_LTLIBRARIES =  $(shared_libraries) libmonoruntime-static.la $(sgen_libraries) $(moonlight_libraries)
 
@@ -81,7 +85,8 @@ sgen_sources = \
 	sgen-gray.c		\
 	sgen-pinning.c		\
 	sgen-pinning-stats.c	\
-	sgen-workers.c
+	sgen-workers.c		\
+	sgen-fin-weak-hash.c
 
 libmonoruntime_la_SOURCES = \
 	$(platform_sources)	\
@@ -139,6 +144,8 @@ libmonoruntime_la_SOURCES = \
 	mono-basic-block.c	\
 	mono-basic-block.h	\
 	mono-config.c		\
+	mono-cq.c		\
+	mono-cq.h		\
 	mono-debug.h		\
 	mono-debug.c		\
 	mono-debug-debugger.h	\
@@ -184,6 +191,7 @@ libmonoruntime_la_SOURCES = \
 	sgen-os-mach.c		\
 	sgen-gc.c		\
 	sgen-internal.c		\
+	sgen-pinned-allocator.c	\
 	sgen-marksweep.c	\
 	sgen-marksweep-fixed.c	\
 	sgen-marksweep-par.c	\
@@ -191,6 +199,8 @@ libmonoruntime_la_SOURCES = \
 	sgen-major-copying.c	\
 	sgen-los.c		\
 	sgen-protocol.c \
+	sgen-bridge.c		\
+	sgen-bridge.h		\
 	sgen-gc.h		\
 	sgen-archdep.h		\
 	sgen-cardtable.h	\
@@ -198,6 +208,7 @@ libmonoruntime_la_SOURCES = \
 	sgen-major-scan-object.h \
 	sgen-protocol.h		\
 	sgen-scan-object.h	\
+	sgen-nursery-allocator.c	\
 	string-icalls.c 	\
 	string-icalls.h 	\
 	sysmath.h		\
@@ -253,6 +264,7 @@ libmonoruntimeinclude_HEADERS = \
 	mono-config.h		\
 	mono-debug.h		\
 	mono-gc.h		\
+	sgen-bridge.h		\
 	object.h		\
 	opcodes.h		\
 	profiler.h		\
@@ -274,16 +286,19 @@ PEDUMP_DTRACE_OBJECT =
 endif
 
 if SHARED_MONO
+if SUPPORT_BOEHM
 pedump_SOURCES =		\
 	pedump.c
 
 pedump_LDADD = libmonoruntime.la ../io-layer/libwapi.la ../utils/libmonoutils.la \
-	$(LIBGC_LIBS) $(GLIB_LIBS) -lm $(PEDUMP_DTRACE_OBJECT)
+	$(LIBGC_LIBS) $(GLIB_LIBS) -lm $(LIBICONV) $(PEDUMP_DTRACE_OBJECT)
 
 if PLATFORM_DARWIN
 pedump_LDFLAGS=-framework CoreFoundation
 endif
 endif
+endif
 
-EXTRA_DIST = make-bundle.pl sample-bundle $(win32_sources) $(unix_sources) $(null_sources) $(sgen_sources) runtime.h
+EXTRA_DIST = make-bundle.pl sample-bundle $(win32_sources) $(unix_sources) $(null_sources) $(sgen_sources) runtime.h \
+		tpool-poll.c tpool-epoll.c tpool-kqueue.c
 

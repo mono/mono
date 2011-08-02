@@ -1,9 +1,9 @@
-mono doc/en/examples/greet.exe --help
+mono Documentation/en/examples/greet.exe --help
 
-mono doc/en/examples/greet.exe -v- -n A -name=B --name=C /name D -nE
+mono Documentation/en/examples/greet.exe -v- -n A -name=B --name=C /name D -nE
 
-mono doc/en/examples/greet.exe -v -n E custom greeting for: {0}
+mono Documentation/en/examples/greet.exe -v -n E custom greeting for: {0}
 
-mono doc/en/examples/greet.exe -r 3 -n A
+mono Documentation/en/examples/greet.exe -r 3 -n A
 
-mono doc/en/examples/greet.exe -r not-an-int
+mono Documentation/en/examples/greet.exe -r not-an-int

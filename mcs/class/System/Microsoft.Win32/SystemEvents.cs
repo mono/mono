@@ -88,13 +88,11 @@ namespace Microsoft.Win32 {
 			add 	{ }
 			remove 	{ }
 		}
-#if NET_2_0
 		[MonoTODO("Currently does nothing on Mono")]
 		public static event EventHandler DisplaySettingsChanging {
 			add {  }
 			remove { }
 		}
-#endif
 		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler EventsThreadShutdown 
 		{

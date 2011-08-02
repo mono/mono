@@ -61,6 +61,11 @@ namespace System.IO {
 		char [] decoded_buffer;
 		static char[] decoded_buffer_recycle;
 
+		Encoding encoding;
+		Decoder decoder;
+		StringBuilder line_builder;
+		Stream base_stream;
+
 		//
 		// Decoded bytes in decoded_buffer.
 		//
@@ -78,12 +83,7 @@ namespace System.IO {
 
 		int do_checks;
 		
-		Encoding encoding;
-		Decoder decoder;
-
-		Stream base_stream;
 		bool mayBlock;
-		StringBuilder line_builder;
 
 		private class NullStreamReader : StreamReader {
 			public override int Peek ()

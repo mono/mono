@@ -17,9 +17,9 @@ common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 PLATFORMS = darwin linux win32
 PROFILES = \
 	basic \
+	build \
 	net_2_0 \
 	moonlight_raw \
-	moonlight \
 	net_3_5	\
 	net_4_0	
 

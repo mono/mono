@@ -217,7 +217,7 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public int this[int i] { set; get; }" />
+      <MemberSignature Language="C#" Value="public int this[int i] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -246,7 +246,7 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public int this[string s, int i] { set; get; }" />
+      <MemberSignature Language="C#" Value="public int this[string s, int i] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Item(string, int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -645,7 +645,7 @@
       </Docs>
     </Member>
     <Member MemberName="Width">
-      <MemberSignature Language="C#" Value="public int Width { protected set; get; }" />
+      <MemberSignature Language="C#" Value="public int Width { get; protected set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Width" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
@@ -690,7 +690,7 @@
       </Docs>
     </Member>
     <Member MemberName="Y">
-      <MemberSignature Language="C#" Value="protected double Y { set; get; }" />
+      <MemberSignature Language="C#" Value="protected double Y { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance float64 Y" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>

@@ -19,7 +19,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -44,27 +44,15 @@ test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 	-rm -f bootstrap-cast.exe casts.cs casts-boot.exe casts-mcs.exe boot-casts.out mcs-casts.out
 
+TEST_PATTERN = 'v2'
+
 ifeq (net_4_0, $(PROFILE))
-COMPILER_NAME = dmcs
 TEST_PATTERN = 'v4'
-LOCAL_RUNTIME_FLAGS = --verify-all
-DEFINES = -compiler-options:"-d:NET_4_0"
-TOPTIONS += '-il:ver-il-dmcs.xml'
-endif
-ifeq (moonlight, $(PROFILE))
-COMPILER_NAME = smcs
-TEST_PATTERN = 'v2'
-LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
-DEFINES = -compiler-options:"-d:MOONLIGHT"
-endif
-ifeq (net_2_0, $(PROFILE))
-COMPILER_NAME = gmcs
-TEST_PATTERN = 'v2'
-LOCAL_RUNTIME_FLAGS = --verify-all
-TOPTIONS += '-il:ver-il-gmcs.xml'
+DEFINES = -compiler-options:"-d:NET_4_0 -sdk:4"
 endif
 
-COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
+LOCAL_RUNTIME_FLAGS = --verify-all
+COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
@@ -72,8 +60,10 @@ TEST_ILS := $(wildcard *-lib.il)
 build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
-qcheck: build-compiler-lib
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS) $(DEFINES)
+qcheck: build-compiler-lib qcheck2
+	
+qcheck2:
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
 test-local:
 	@:

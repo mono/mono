@@ -249,7 +249,13 @@ namespace System.Security.Cryptography.Pkcs {
 
 			ASN1 content = sd.ContentInfo.Content;
 			Oid oid = new Oid (sd.ContentInfo.ContentType);
-			_content = new ContentInfo (oid, content[0].Value);
+
+			if (!_detached || _content == null) {
+				if (content[0] == null)
+					throw new ArgumentException ("ContentInfo has no content. Detached signature ?");
+
+				_content = new ContentInfo (oid, content[0].Value);
+			}
 
 			foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
 				_certs.Add (new X509Certificate2 (x.RawData));

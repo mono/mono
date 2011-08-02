@@ -52,7 +52,12 @@ using System.Runtime.Serialization.Formatters;
 namespace System.Runtime.Remoting
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
-	public sealed class RemotingServices 
+#if NET_4_0
+	static
+#else
+	sealed
+#endif
+	public class RemotingServices 
 	{
 		// Holds the identities of the objects, using uri as index
 		static Hashtable uri_hash = new Hashtable ();		
@@ -90,8 +95,9 @@ namespace System.Runtime.Remoting
 			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
 			FieldGetterMethod = typeof(object).GetMethod ("FieldGetter", BindingFlags.NonPublic|BindingFlags.Instance);
 		}
-	
+#if !NET_4_0
 		private RemotingServices () {}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static object InternalExecute (MethodBase method, Object obj,
@@ -539,6 +545,9 @@ namespace System.Runtime.Remoting
 	
 		internal static object CreateClientProxy (Type objectType, string url, object[] activationAttributes)
 		{
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			string activationUrl = url;
 			if (!activationUrl.EndsWith ("/"))
 				activationUrl += "/";
@@ -549,6 +558,7 @@ namespace System.Runtime.Remoting
 
 			RemotingProxy proxy = new RemotingProxy (objectType, activationUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
+#endif
 		}
 	
 		internal static object CreateClientProxy (WellKnownClientTypeEntry entry)
@@ -565,8 +575,12 @@ namespace System.Runtime.Remoting
 				if (att != null)
 					return att.CreateInstance (type);
 			}
+#if MOONLIGHT
+			throw new NotSupportedException ();
+#else
 			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
+#endif
 		}
 #if !NET_2_1
 		internal static object CreateClientProxyForComInterop (Type type)
@@ -658,7 +672,7 @@ namespace System.Runtime.Remoting
 
 				// Registers the identity
 				uri_hash [uri] = identity;
-				
+#if !MOONLIGHT
 				if (proxyType != null)
 				{
 					RemotingProxy proxy = new RemotingProxy (proxyType, identity);
@@ -669,7 +683,7 @@ namespace System.Runtime.Remoting
 					clientProxy = proxy.GetTransparentProxy();
 					identity.ClientProxy = (MarshalByRefObject) clientProxy;
 				}
-
+#endif
 				return identity;
 			}
 		}

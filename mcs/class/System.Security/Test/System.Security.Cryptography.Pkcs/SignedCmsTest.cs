@@ -437,6 +437,20 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			sp.CheckSignature (true);
 			CheckSignatureProperties (sp, 1);
 		}
+
+		[Test]
+		public void CheckSignatureDetachedSignedCms ()
+		{
+			string path = Path.Combine ("Test", "System.Security.Cryptography.Pkcs");
+			var signedBytes = File.ReadAllBytes (Path.Combine (path, "detached.data"));
+			var bytes = File.ReadAllBytes (Path.Combine (path, "detached.p7"));
+
+			var oid = new Oid ("1.2.840.113549.1.7.2");
+			var contentInfo = new ContentInfo (oid, signedBytes);
+			var signedCms = new SignedCms (contentInfo, true);
+			signedCms.Decode (bytes);
+			signedCms.CheckSignature (true);
+		}
 	}
 }
 

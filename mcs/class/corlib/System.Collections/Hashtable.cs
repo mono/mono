@@ -38,18 +38,16 @@ using System.Diagnostics;
 
 namespace System.Collections {
 
+	[Serializable]
+#if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-	[Serializable]
-#if INSIDE_CORLIB
-	public
+	public class Hashtable : IDictionary, ICollection, 
+		IEnumerable, ICloneable, ISerializable, IDeserializationCallback {
 #else
-	internal
+	internal class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
-	class Hashtable : IDictionary, ICollection, 
-		IEnumerable, ICloneable, ISerializable, IDeserializationCallback
-	{
 
 		[Serializable]
 		internal struct Slot {
@@ -80,24 +78,21 @@ namespace System.Collections {
 		const int CHAIN_MARKER  = ~Int32.MaxValue;
 
 
-		private int inUse;
-		private int modificationCount;
-		private float loadFactor;
 		private Slot [] table;
 		// Hashcodes of the corresponding entries in the slot table. Kept separate to
 		// help the GC
 		private int [] hashes;
-
-		private int threshold;
-	
 		private HashKeys hashKeys;
 		private HashValues hashValues;
-
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
 		private SerializationInfo serializationInfo;
-
 		private IEqualityComparer equalityComparer;
+
+		private int inUse;
+		private int modificationCount;
+		private float loadFactor;
+		private int threshold;
 
 		private static readonly int [] primeTbl = {
 			11,
@@ -861,13 +856,13 @@ namespace System.Collections {
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
 			private Hashtable host;
+			private Object currentKey;
+			private Object currentValue;
+
 			private int stamp;
 			private int pos;
 			private int size;
 			private EnumeratorMode mode;
-
-			private Object currentKey;
-			private Object currentValue;
 
 			private readonly static string xstr = "Hashtable.Enumerator: snapshot out of sync.";
 
@@ -963,8 +958,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
@@ -1017,8 +1014,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;

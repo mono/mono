@@ -85,7 +85,7 @@ namespace System.Web.Configuration
 			return MappedTagType.GetHashCode() + TagType.GetHashCode();
 		}
 
-		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
+		protected internal override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
 			bool ret = base.SerializeElement (writer, serializeCollectionKey);
 
@@ -108,7 +108,7 @@ namespace System.Web.Configuration
 			set { base[tagTypeProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

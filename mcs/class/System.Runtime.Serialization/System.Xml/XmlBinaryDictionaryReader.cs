@@ -72,14 +72,12 @@ namespace System.Xml
 
 			public int ReadByte ()
 			{
-				if (reader.PeekChar () < 0)
-					return -1;
-				return reader.ReadByte ();
+				return reader.BaseStream.ReadByte ();
 			}
 
 			public int Read (byte [] data, int offset, int count)
 			{
-				return reader.Read (data, offset, count);
+				return reader.BaseStream.Read (data, offset, count);
 			}
 		}
 
@@ -175,6 +173,8 @@ namespace System.Xml
 						return XmlConvert.ToString ((float) TypedValue);
 					case BF.Double:
 						return XmlConvert.ToString ((double) TypedValue);
+					case BF.Decimal:
+						return XmlConvert.ToString ((decimal) TypedValue);
 					case BF.DateTime:
 						return XmlConvert.ToString ((DateTime) TypedValue, XmlDateTimeSerializationMode.RoundtripKind);
 					case BF.TimeSpan:
@@ -187,6 +187,8 @@ namespace System.Xml
 					case BF.Bytes16:
 					case BF.Bytes32:
 						return Convert.ToBase64String ((byte []) TypedValue);
+					case BF.QNameIndex:
+						return Name;
 					default:
 						throw new NotImplementedException ("ValueType " + ValueType + " on node " + NodeType);
 					}
@@ -962,6 +964,10 @@ namespace System.Xml
 				node.DictValue = ReadDictName ();
 				node.NodeType = XmlNodeType.Text;
 				break;
+			case BF.QNameIndex:
+				node.Prefix = ((char) (ReadByteOrError () + 'a')).ToString ();
+				node.DictLocalName = ReadDictName();
+				break;	
 			default:
 				if (!canSkip)
 					throw new ArgumentException (String.Format ("Unexpected binary XML data at position {1}: {0:X}", ident + (is_next_end_element ? 1 : 0), source.Position));

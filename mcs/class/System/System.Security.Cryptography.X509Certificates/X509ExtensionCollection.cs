@@ -39,6 +39,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class X509ExtensionCollection : ICollection, IEnumerable {
 
+		static byte[] Empty = new byte [0];
 		private ArrayList _list;
 
 		// constructors
@@ -84,13 +85,13 @@ namespace System.Security.Cryptography.X509Certificates {
 					break;
 				}
 #else
-				parameters [0] = new AsnEncodedData (oid, raw_data);
+				parameters [0] = new AsnEncodedData (oid, raw_data ?? Empty);
 				parameters [1] = critical;
 				newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
 #endif
 				if (newt == null) {
 					// not registred in CryptoConfig, using default
-					newt = new X509Extension (oid, raw_data, critical);
+					newt = new X509Extension (oid, raw_data ?? Empty, critical);
 				}
 				_list.Add (newt);
 			}

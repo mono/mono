@@ -47,11 +47,10 @@ namespace System.CodeDom
 		//
 		// Constructors
 		//
-#if NET_2_0
 		public CodeLinePragma ()
 		{
 		}
-#endif
+
 		public CodeLinePragma (string fileName, int lineNumber)
 		{
 			this.fileName = fileName;

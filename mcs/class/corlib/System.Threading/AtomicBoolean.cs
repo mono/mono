@@ -24,9 +24,18 @@
 
 using System;
 
+#if INSIDE_MONO_PARALLEL
+using System.Threading;
+
+namespace Mono.Threading
+#else
 namespace System.Threading
+#endif
 {
-	internal struct AtomicBooleanValue
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	struct AtomicBooleanValue
 	{
 		int flag;
 		const int UnSet = 0;
@@ -99,7 +108,10 @@ namespace System.Threading
 		}
 	}
 
-	internal class AtomicBoolean
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	class AtomicBoolean
 	{
 		int flag;
 		const int UnSet = 0;

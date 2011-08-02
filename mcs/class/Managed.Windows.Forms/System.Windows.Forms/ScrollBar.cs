@@ -37,10 +37,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent ("Scroll")]
 	[DefaultProperty ("Value")]
 	public abstract class ScrollBar : Control
@@ -98,14 +96,12 @@ namespace System.Windows.Forms
 		}
 
 		#region events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -121,14 +117,12 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -165,7 +159,6 @@ namespace System.Windows.Forms
 			remove { base.ImeModeChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseClick {
@@ -179,7 +172,6 @@ namespace System.Windows.Forms
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -249,11 +241,7 @@ namespace System.Windows.Forms
 			base.TabStop = false;
 			base.Cursor = Cursors.Default;
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
-#if NET_2_0
-				| ControlStyles.UseTextForAccessibility
-#endif
-				, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.UseTextForAccessibility, false);
 		}
 
 		#region Internal & Private Properties
@@ -341,7 +329,6 @@ namespace System.Windows.Forms
 		#endregion	// Internal & Private Properties
 
 		#region Public Properties
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -349,7 +336,6 @@ namespace System.Windows.Forms
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
@@ -377,25 +363,21 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		protected override CreateParams CreateParams
 		{
 			get {	return base.CreateParams; }
 		}
 
-#if NET_2_0
 		protected override Padding DefaultMargin {
 			get { return Padding.Empty; }
 		}
-#endif
 
 		protected override ImeMode DefaultImeMode
 		{
@@ -449,11 +431,7 @@ namespace System.Windows.Forms
 			get { return Math.Min (large_change, maximum - minimum + 1); }
 			set {
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("LargeChange", string.Format ("Value '{0}' must be greater than or equal to 0.", value));
-#else
-					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-#endif
 
 				if (large_change != value) {
 					large_change = value;
@@ -463,10 +441,9 @@ namespace System.Windows.Forms
 					CalcThumbArea ();
 					UpdatePos (Value, true);
 					InvalidateDirty ();
-#if NET_2_0
+
 					// UIA Framework: Generate UIA Event to indicate LargeChange change
 					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.LargeIncrement, value));
-#endif
 				}
 			}
 		}
@@ -482,10 +459,8 @@ namespace System.Windows.Forms
 
 				maximum = value;
 
-#if NET_2_0
 				// UIA Framework: Generate UIA Event to indicate Maximum change
 				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.Last, value));
-#endif
 
 				if (maximum < minimum)
 					minimum = maximum;
@@ -558,10 +533,8 @@ namespace System.Windows.Forms
 
 				minimum = value;
 
-#if NET_2_0
 				// UIA Framework: Generate UIA Event to indicate Minimum change
 				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.First, value));
-#endif
 
 				if (minimum > maximum)
 					maximum = minimum;
@@ -580,20 +553,15 @@ namespace System.Windows.Forms
 			get { return small_change > LargeChange ? LargeChange : small_change; }
 			set {
 				if ( value < 0 )
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("SmallChange", string.Format ("Value '{0}' must be greater than or equal to 0.", value));
-#else
-					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-#endif
 
 				if (small_change != value) {
 					small_change = value;
 					UpdatePos (Value, true);
 					InvalidateDirty ();
-#if NET_2_0
+
 					// UIA Framework: Generate UIA Event to indicate SmallChange change
 					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.SmallIncrement, value));
-#endif
 				}
 			}
 		}
@@ -620,11 +588,7 @@ namespace System.Windows.Forms
 			get { return position; }
 			set {
 				if ( value < minimum || value > maximum )
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Value", string.Format ("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-#else
-					throw new ArgumentException (string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-#endif					
 
 				if (position != value){
 					position = value;
@@ -645,7 +609,6 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
-#if NET_2_0
 		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
 			// Basically, we want to keep our small edge and scale the long edge
@@ -655,7 +618,6 @@ namespace System.Windows.Forms
 			else
 				return base.GetScaledBounds (bounds, factor, (specified & BoundsSpecified.Width) | (specified & BoundsSpecified.Location));
 		}
-#endif		
 		
 		protected override void OnEnabledChanged (EventArgs e)
 		{
@@ -814,12 +776,10 @@ namespace System.Windows.Forms
 			OnScroll (event_args);
     			Value = event_args.NewValue;
 		
-#if NET_2_0
 			// UIA Framework event invoked when the "LargeIncrement 
 			// Button" is "clicked" either by using the Invoke Pattern
 			// or the space between the thumb and the bottom/right button
 			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, Value));
-#endif
     		}
 
     		private void LargeDecrement ()
@@ -835,12 +795,10 @@ namespace System.Windows.Forms
 			OnScroll (event_args);
     			Value = event_args.NewValue;
     			
-#if NET_2_0
 			// UIA Framework event invoked when the "LargeDecrement 
 			// Button" is "clicked" either by using the Invoke Pattern
 			// or the space between the thumb and the top/left button
 			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, Value));
-#endif
     		}
 
     		private void OnResizeSB (Object o, EventArgs e)
@@ -1336,12 +1294,10 @@ namespace System.Windows.Forms
 			OnScroll (event_args);
 			Value = event_args.NewValue;
 			
-#if NET_2_0
 			// UIA Framework event invoked when the "SmallIncrement 
 			// Button" (a.k.a bottom/right button) is "clicked" either
 			// by using the Invoke Pattern or the button itself
 			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, Value));
-#endif
     		}
 
     		private void SmallDecrement ()
@@ -1357,12 +1313,10 @@ namespace System.Windows.Forms
 			OnScroll (event_args);
 			Value = event_args.NewValue;
 			
-#if NET_2_0
 			// UIA Framework event invoked when the "SmallDecrement 
 			// Button" (a.k.a top/left button) is "clicked" either
 			// by using the Invoke Pattern or the button itself
 			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, Value));
-#endif			
     		}
 
     		private void SetHoldButtonClickTimer ()
@@ -1580,16 +1534,13 @@ namespace System.Windows.Forms
 			region_to_invalidate.Dispose ();
 		}
 		#endregion //Private Methods
-#if NET_2_0
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
 			base.OnMouseWheel (e);
 		}
-#endif
 
 		#region UIA Framework Section: Events, Methods and Properties.
 
-#if NET_2_0
 		//NOTE:
 		//	We are using Reflection to add/remove internal events.
 		//	Class ScrollBarButtonInvokePatternInvokeEvent uses the events.
@@ -1662,8 +1613,6 @@ namespace System.Windows.Forms
 		internal Rectangle UIAThumbPosition {
 			get { return thumb_pos; }
 		}
-
-#endif
 
 		#endregion UIA Framework Section: Events, Methods and Properties.
 

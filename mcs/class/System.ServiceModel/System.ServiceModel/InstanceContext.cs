@@ -32,16 +32,16 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel
 {
-	[MonoTODO]
 	public sealed class InstanceContext : CommunicationObject,
 		IExtensibleObject<InstanceContext>
 	{
 		ServiceHostBase host;
 		object implementation;
 		int manual_flow_limit;
-		InstanceBehavior _behavior;
+		InstanceManager instance_manager;
 		bool is_user_instance_provider;
 		bool is_user_context_provider;
+		ExtensionCollection<InstanceContext> _extensions;
 
 		static InstanceContextIdleCallback idle_callback = new InstanceContextIdleCallback(NotifyIdle);
 
@@ -55,12 +55,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		public InstanceContext (ServiceHostBase host,
-			object implementation) : this(host, implementation, true)
-		{}
+		public InstanceContext (ServiceHostBase host, object implementation)
+			: this (host, implementation, true)
+		{
+		}
 
-		internal InstanceContext(ServiceHostBase host, 
-			object implementation, bool userContextProvider)
+		internal InstanceContext (ServiceHostBase host, object implementation, bool userContextProvider)
 		{
 			this.host = host;
 			this.implementation = implementation;
@@ -74,18 +74,12 @@ namespace System.ServiceModel
 		}
 
 		internal bool IsUserProvidedContext {
-			get {
-				return is_user_context_provider;				
-			}
+			get { return is_user_context_provider; }
 		}
 
-		internal InstanceBehavior Behavior {
-			get {
-				return _behavior;
-			}
-			set {
-				_behavior = value;
-			}
+		internal InstanceManager InstanceManager {
+			get { return instance_manager; }
+			set { instance_manager = value; }
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {
@@ -97,7 +91,11 @@ namespace System.ServiceModel
 		}
 
 		public IExtensionCollection<InstanceContext> Extensions {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_extensions == null)
+					_extensions = new ExtensionCollection<InstanceContext> (this);
+				return _extensions;
+			}
 		}
 
 		public ServiceHostBase Host {
@@ -124,8 +122,8 @@ namespace System.ServiceModel
 
 		public object GetServiceInstance (Message message)
 		{
-			if (implementation == null && Behavior != null) {
-				implementation = Behavior.GetServiceInstance (this, message, ref is_user_instance_provider);				
+			if (implementation == null && instance_manager != null) {
+				implementation = instance_manager.GetServiceInstance (this, message, ref is_user_instance_provider);				
 			}
 			return implementation;				
 		}
@@ -136,9 +134,9 @@ namespace System.ServiceModel
 		}
 
 		internal void CloseIfIdle () {
-			if (Behavior.InstanceContextProvider != null && !IsUserProvidedContext) {
-				if (!Behavior.InstanceContextProvider.IsIdle (this)) {
-					Behavior.InstanceContextProvider.NotifyIdle (IdleCallback, this);
+			if (instance_manager.InstanceContextProvider != null && !IsUserProvidedContext) {
+				if (!instance_manager.InstanceContextProvider.IsIdle (this)) {
+					instance_manager.InstanceContextProvider.NotifyIdle (IdleCallback, this);
 				}
 				else {
 					if (State != CommunicationState.Closed)
@@ -158,24 +156,34 @@ namespace System.ServiceModel
 		}
 
 		public void ReleaseServiceInstance ()
-		{			
-			Behavior.ReleaseServiceInstance (this, implementation);
+		{
+			instance_manager.ReleaseServiceInstance (this, implementation);
+			// This does NOT dispose the instance implementation. See DispatrchRuntimeTest.TestInstanceBehavior2 (which never reports "Dispose").
+			implementation = null;
+		}
+
+		void DisposeInstance ()
+		{
+			var disp = implementation as IDisposable;
+			if (disp != null)
+				disp.Dispose ();
 			implementation = null;
 		}
 
 		protected override void OnAbort ()
 		{
+			DisposeInstance ();
 		}
 
-		[MonoTODO]
 		protected override void OnFaulted ()
 		{
+			DisposeInstance ();
 			base.OnFaulted ();
 		}
 
-		[MonoTODO]
 		protected override void OnClosed ()
 		{
+			DisposeInstance ();
 			base.OnClosed ();
 		}
 
@@ -188,18 +196,23 @@ namespace System.ServiceModel
 		protected override void OnOpening ()
 		{
 			base.OnOpening ();
-			if (Behavior != null)
-				Behavior.Initialize (this);
+			if (instance_manager != null)
+				instance_manager.Initialize (this);
 		}
+
+		Action<TimeSpan> open_delegate, close_delegate;
 
 		protected override IAsyncResult OnBeginOpen (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnEndOpen (IAsyncResult result)
 		{
+			open_delegate.EndInvoke (result);
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
@@ -209,15 +222,18 @@ namespace System.ServiceModel
 		protected override IAsyncResult OnBeginClose (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnEndClose (IAsyncResult result)
 		{
+			close_delegate.EndInvoke (result);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-		}		
+		}
 	}
 }

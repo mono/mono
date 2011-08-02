@@ -39,11 +39,9 @@ using System.Windows.Forms.Theming;
 namespace System.Windows.Forms
 {
 	[DefaultEvent("LinkClicked")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
-#endif
 	public class LinkLabel : Label, IButtonControl
 	{
 		/* Encapsulates a piece of text (regular or link)*/
@@ -92,14 +90,12 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (LinkClickedEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}
-#endif
 		#endregion // Events
 
 		public LinkLabel ()
@@ -121,12 +117,8 @@ namespace System.Windows.Forms
 				ControlStyles.UserPaint | 
 				ControlStyles.AllPaintingInWmPaint |
 				ControlStyles.SupportsTransparentBackColor | 
-				ControlStyles.Opaque 
-#if NET_2_0
-				| ControlStyles.OptimizedDoubleBuffer
-#else
-				| ControlStyles.DoubleBuffer
-#endif
+				ControlStyles.Opaque |
+				ControlStyles.OptimizedDoubleBuffer
 				, true);
 			CreateLinkPieces ();
 		}
@@ -180,9 +172,7 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.LinkAreaEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]				
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public LinkArea LinkArea {
 			get { return link_area;}
 			set {
@@ -215,9 +205,6 @@ namespace System.Windows.Forms
 		}
 	
 		[Browsable (false)]
-#if !NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LinkLabel.LinkCollection Links {
 			get {
@@ -260,7 +247,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new FlatStyle FlatStyle {
@@ -284,7 +270,6 @@ namespace System.Windows.Forms
 				CreateLinkPieces ();
 			}
 		}
-#endif
 
 		#endregion // Public Properties
 
@@ -314,12 +299,10 @@ namespace System.Windows.Forms
 			CreateLinkPieces ();
 		}
 
-#if NET_2_0
 		protected override void OnAutoSizeChanged (EventArgs e)
 		{
 			base.OnAutoSizeChanged (e);
 		}
-#endif
 
 		protected override void OnEnabledChanged (EventArgs e)
 		{
@@ -420,12 +403,10 @@ namespace System.Windows.Forms
 			UpdateHover (null);
 		}
 
-#if NET_2_0
 		protected override void OnPaddingChanged (EventArgs e)
 		{
 			base.OnPaddingChanged (e);
 		}
-#endif
 
 		private void UpdateHover (Link link)
 		{
@@ -475,11 +456,7 @@ namespace System.Windows.Forms
 			active_link = null;
 
 			if (clicked_link != null)
-#if NET_2_0
 				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link, e.Button));
-#else
-				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link));
-#endif
 		}
 
 		protected override void OnPaint (PaintEventArgs e)
@@ -685,9 +662,7 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < pieces.Length; i ++) {
 				pieces[i].region = regions[i];
-#if NET_2_0
 				pieces[i].region.Translate (Padding.Left, Padding.Top);
-#endif
 			}
 
 			Invalidate ();
@@ -723,9 +698,7 @@ namespace System.Windows.Forms
 		//
 		// System.Windows.Forms.LinkLabel.Link
 		//
-#if NET_2_0
 		[TypeConverter (typeof (LinkConverter))]
-#endif
 		public class Link
 		{
 			private bool enabled;
@@ -738,11 +711,9 @@ namespace System.Windows.Forms
 			internal ArrayList pieces;
 			private bool focused;
 			private bool active;
-#if NET_2_0
 			private string description;
 			private string name;
 			private object tag;
-#endif
 
 			internal Link (LinkLabel owner)
 			{
@@ -753,12 +724,9 @@ namespace System.Windows.Forms
 				linkData = null;
 				this.owner = owner;
 				pieces = new ArrayList ();
-#if NET_2_0
 				name = string.Empty;
-#endif
 			}
 
-#if NET_2_0
 			public Link ()
 			{
 				this.enabled = true;
@@ -776,10 +744,8 @@ namespace System.Windows.Forms
 			{
 				this.linkData = linkData;
 			}
-#endif
 
 			#region Public Properties
-#if NET_2_0
 			public string Description {
 				get { return this.description; }
 				set { this.description = value; }
@@ -801,7 +767,6 @@ namespace System.Windows.Forms
 			}
 				
 			[DefaultValue (true)]
-#endif
 			public bool Enabled {
 				get { return enabled; }
 				set {
@@ -830,9 +795,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			[DefaultValue (null)]
-#endif
 			public object LinkData {
 				get { return linkData; }
 				set { linkData = value; }
@@ -851,9 +814,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			[DefaultValue (false)]
-#endif
 			public bool Visited {
 				get { return visited; }
 				set {
@@ -929,9 +890,7 @@ namespace System.Windows.Forms
 		public class LinkCollection :  IList, ICollection, IEnumerable
 		{
 			private LinkLabel owner;
-#if NET_2_0			
 			private bool links_added;
-#endif			
 
 			public LinkCollection (LinkLabel owner)
 			{
@@ -965,7 +924,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public virtual Link this[string key] {
 				get {
 					if (string.IsNullOrEmpty (key))
@@ -979,11 +937,7 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			public
-#else
-			internal
-#endif
-			int Add (Link value)
+			public int Add (Link value)
 			{
 				value.Owner = owner;
 				/* remove the default 0,-1 link */
@@ -993,9 +947,7 @@ namespace System.Windows.Forms
 				}
 
 				int idx = owner.links.Add (value);
-#if NET_2_0				
 				links_added = true;
-#endif				
 
 				owner.sorted_links = null;
 				owner.CheckLinks ();
@@ -1041,12 +993,10 @@ namespace System.Windows.Forms
 				return owner.links.Contains (link);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return !(this[key] == null);
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -1058,7 +1008,6 @@ namespace System.Windows.Forms
 				return owner.links.IndexOf (link);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (string.IsNullOrEmpty (key))
@@ -1070,7 +1019,6 @@ namespace System.Windows.Forms
 			public bool LinksAdded {
 				get { return this.links_added; }
 			}
-#endif
 
 			public void Remove (LinkLabel.Link value)
 			{
@@ -1079,12 +1027,10 @@ namespace System.Windows.Forms
 				owner.CreateLinkPieces ();
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{	
 				Remove (this[key]);
 			}
-#endif
 
 			public void RemoveAt (int index)
 			{
@@ -1150,7 +1096,6 @@ namespace System.Windows.Forms
 				Remove ((Link) value);
 			}
 		}
-#if NET_2_0
 
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public new bool UseCompatibleTextRendering {
@@ -1161,6 +1106,5 @@ namespace System.Windows.Forms
 				use_compatible_text_rendering = value;
 			}
 		}
-#endif
 	}
 }

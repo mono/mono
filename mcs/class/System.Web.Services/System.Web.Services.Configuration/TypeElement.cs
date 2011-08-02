@@ -30,6 +30,7 @@
 
 using System;
 using System.Configuration;
+using System.ComponentModel;
 
 #if NET_2_0
 
@@ -42,7 +43,8 @@ namespace System.Web.Services.Configuration {
 
 		static TypeElement ()
 		{
-			typeProp = new ConfigurationProperty ("type", typeof (Type), null, ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (Type), null, new TypeTypeConverter(),
+												  null, ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (typeProp);
@@ -64,9 +66,7 @@ namespace System.Web.Services.Configuration {
 		{
 		}
 
-#if notyet
-		[TypeConverter (typeof (TypeAndNameConverter))]
-#endif
+		[TypeConverter (typeof (TypeTypeConverter))]
 		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsKey)]
 		public Type Type {
 			get { return (Type) base [typeProp];}

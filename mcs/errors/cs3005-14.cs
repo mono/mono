@@ -1,4 +1,4 @@
-// cs3005-14.cs: Identifier `i1' differing only in case is not CLS-compliant
+// CS3005: Identifier `i1' differing only in case is not CLS-compliant
 // Line: 9
 // Compiler options: -warnaserror
 

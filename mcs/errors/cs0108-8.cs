@@ -1,4 +1,4 @@
-// cs0108-8.cs: `Derived.Method()' hides inherited member `Base.Method()'. Use the new keyword if hiding was intended
+// CS0108: `Derived.Method()' hides inherited member `Base.Method()'. Use the new keyword if hiding was intended
 // Line: 11
 // Compiler options: -warnaserror -warn:2
 

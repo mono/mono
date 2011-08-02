@@ -1,4 +1,4 @@
-// cs1537.cs: The using alias `A' appeared previously in this namespace
+// CS1537: The using alias `A' appeared previously in this namespace
 // Line: 7
 
 using A = System;

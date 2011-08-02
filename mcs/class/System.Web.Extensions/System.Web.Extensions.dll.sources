@@ -58,6 +58,9 @@
 ./System.Web.Script.Services/ScriptServiceAttribute.cs
 ./System.Web.UI/AsyncPostBackErrorEventArgs.cs
 ./System.Web.UI/AsyncPostBackTrigger.cs
+./System.Web.UI/CompositeEntry.cs
+./System.Web.UI/CompositeScriptReference.cs
+./System.Web.UI/CompositeScriptReferenceEventArgs.cs
 ./System.Web.UI/AuthenticationServiceManager.cs
 ./System.Web.UI/ExtenderControl.cs
 ./System.Web.UI/IExtenderControl.cs

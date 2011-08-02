@@ -797,7 +797,7 @@ namespace C5UnitTests.arrays.sorted
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void Empty()
 		{
 			array.Clear();
@@ -806,7 +806,7 @@ namespace C5UnitTests.arrays.sorted
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void HighIndex()
 		{
 			array.RemoveAt(array.Count);
@@ -814,7 +814,7 @@ namespace C5UnitTests.arrays.sorted
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void LowIndex()
 		{
 			array.RemoveAt(-1);
@@ -1667,7 +1667,7 @@ namespace C5UnitTests.arrays.sorted
 
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException), "mapper not monotonic")]
+			[ExpectedException(typeof(ArgumentException), ExpectedMessage="mapper not monotonic")]
 			public void BadMap()
 			{
 				for (int i = 0; i < 11; i++)
@@ -1908,7 +1908,7 @@ namespace C5UnitTests.arrays.sorted
 			}
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException), "Argument not sorted")]
+			[ExpectedException(typeof(ArgumentException), ExpectedMessage="Argument not sorted")]
 			public void EmptyBad()
 			{
 				array.AddSorted(new FunEnumerable(9, new Fun<int,int>(bad)));

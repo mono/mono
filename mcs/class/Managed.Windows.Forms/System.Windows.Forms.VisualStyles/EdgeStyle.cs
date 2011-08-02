@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum EdgeStyle
+	public enum EdgeStyle
 	{
 		Raised = 5,
 		Etched = 6,

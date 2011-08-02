@@ -23,7 +23,7 @@
 //	Chris Toshok (toshok@novell.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -32,7 +32,9 @@ using System.Runtime.CompilerServices;
 namespace System.Collections.ObjectModel
 {
 	[Serializable]
+#if !MOBILE
 	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+#endif
 	public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
 		
 		private class Reentrant : IDisposable {

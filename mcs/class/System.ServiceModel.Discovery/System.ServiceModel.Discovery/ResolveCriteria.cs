@@ -71,7 +71,7 @@ namespace System.ServiceModel.Discovery
 
 			// standard members
 			reader.MoveToContent ();
-			ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader);
+			ret.Address = EndpointAddress.ReadFrom (version.MessageVersion.Addressing, reader);
 
 			// non-standard members
 			for (reader.MoveToContent (); !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
@@ -97,7 +97,7 @@ namespace System.ServiceModel.Discovery
 				throw new ArgumentNullException ("writer");
 
 			// standard members
-			Address.WriteTo (AddressingVersion.WSAddressing10, writer);
+			Address.WriteTo (version.MessageVersion.Addressing, writer);
 
 			// non-standard members
 			writer.WriteStartElement ("Duration", SerializationNS);

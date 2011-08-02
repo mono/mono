@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -104,7 +104,7 @@ namespace IKVM.Reflection.Emit
 			this.requiredPermissions = requiredPermissions;
 			this.optionalPermissions = optionalPermissions;
 			this.refusedPermissions = refusedPermissions;
-			if (universe.HasMscorlib && universe.Mscorlib.ImageRuntimeVersion != null)
+			if (universe.HasMscorlib && !universe.Mscorlib.__IsMissing && universe.Mscorlib.ImageRuntimeVersion != null)
 			{
 				this.imageRuntimeVersion = universe.Mscorlib.ImageRuntimeVersion;
 			}
@@ -173,6 +173,11 @@ namespace IKVM.Reflection.Emit
 		public void __SetAssemblyFlags(AssemblyNameFlags flags)
 		{
 			this.flags = flags;
+		}
+
+		public override AssemblyNameFlags __AssemblyFlags
+		{
+			get { return flags; }
 		}
 
 		public override AssemblyName GetName()
@@ -253,12 +258,30 @@ namespace IKVM.Reflection.Emit
 			this.fileKind = fileKind;
 		}
 
+		public void __Save(Stream stream, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
+			if (!stream.CanRead || !stream.CanWrite || !stream.CanSeek || stream.Position != 0)
+			{
+				throw new ArgumentException("Stream must support read/write/seek and current position must be zero.", "stream");
+			}
+			if (modules.Count != 1)
+			{
+				throw new NotSupportedException("Saving to a stream is only supported for single module assemblies.");
+			}
+			SaveImpl(modules[0].fileName, stream, portableExecutableKind, imageFileMachine);
+		}
+
 		public void Save(string assemblyFileName)
 		{
 			Save(assemblyFileName, PortableExecutableKinds.ILOnly, ImageFileMachine.I386);
 		}
 
 		public void Save(string assemblyFileName, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
+			SaveImpl(assemblyFileName, null, portableExecutableKind, imageFileMachine);
+		}
+
+		private void SaveImpl(string assemblyFileName, Stream streamOrNull, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
 			ModuleBuilder manifestModule = null;
 
@@ -398,7 +421,7 @@ namespace IKVM.Reflection.Emit
 			}
 
 			// finally, write the manifest module
-			ModuleWriter.WriteModule(keyPair, publicKey, manifestModule, fileKind, portableExecutableKind, imageFileMachine, unmanagedResources ?? manifestModule.unmanagedResources, entryPointToken);
+			ModuleWriter.WriteModule(keyPair, publicKey, manifestModule, fileKind, portableExecutableKind, imageFileMachine, unmanagedResources ?? manifestModule.unmanagedResources, entryPointToken, streamOrNull);
 		}
 
 		private int AddFile(ModuleBuilder manifestModule, string fileName, int flags)
@@ -417,11 +440,7 @@ namespace IKVM.Reflection.Emit
 					ModuleWriter.HashChunk(fs, cs, buf, (int)fs.Length);
 				}
 			}
-			FileTable.Record file = new FileTable.Record();
-			file.Flags = flags;
-			file.Name = manifestModule.Strings.Add(Path.GetFileName(fileName));
-			file.HashValue = manifestModule.Blobs.Add(ByteBuffer.Wrap(hash.Hash));
-			return 0x26000000 + manifestModule.File.AddRecord(file);
+			return manifestModule.__AddModule(flags, Path.GetFileName(fileName), hash.Hash);
 		}
 
 		public void AddResourceFile(string name, string fileName)
@@ -489,11 +508,11 @@ namespace IKVM.Reflection.Emit
 			return list.ToArray();
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
 			foreach (ModuleBuilder mb in modules)
 			{
-				Type type = mb.GetTypeImpl(typeName);
+				Type type = mb.FindType(typeName);
 				if (type != null)
 				{
 					return type;
@@ -501,7 +520,7 @@ namespace IKVM.Reflection.Emit
 			}
 			foreach (Module module in addedModules)
 			{
-				Type type = module.GetTypeImpl(typeName);
+				Type type = module.FindType(typeName);
 				if (type != null)
 				{
 					return type;
@@ -623,7 +642,7 @@ namespace IKVM.Reflection.Emit
 		}
 	}
 
-	sealed class ManifestModule : Module
+	sealed class ManifestModule : NonPEModule
 	{
 		private readonly AssemblyBuilder assembly;
 		private readonly Guid guid = Guid.NewGuid();
@@ -644,7 +663,7 @@ namespace IKVM.Reflection.Emit
 			get { return assembly; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
 			return null;
 		}
@@ -668,54 +687,14 @@ namespace IKVM.Reflection.Emit
 			get { return guid; }
 		}
 
-		public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			throw new ArgumentException();
-		}
-
-		public override string ResolveString(int metadataToken)
-		{
-			throw new ArgumentException();
-		}
-
-		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
-		{
-			throw new ArgumentException();
-		}
-
 		public override string ScopeName
 		{
 			get { return "RefEmit_InMemoryManifestModule"; }
 		}
 
-		public override AssemblyName[] __GetReferencedAssemblies()
+		protected override Exception NotSupportedException()
 		{
-			throw new InvalidOperationException();
-		}
-
-		internal override Type GetModuleType()
-		{
-			throw new InvalidOperationException();
-		}
-
-		internal override IKVM.Reflection.Reader.ByteReader GetBlob(int blobIndex)
-		{
-			throw new InvalidOperationException();
+			return new InvalidOperationException();
 		}
 	}
 }

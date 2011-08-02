@@ -1,4 +1,4 @@
-// cs0029.cs: Cannot implicitly convert type `X' to `bool'
+// CS0029: Cannot implicitly convert type `X' to `bool'
 // Line : 11
 
 class X {

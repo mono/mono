@@ -3,6 +3,7 @@ anonymous.cs
 argument.cs
 assign.cs
 assembly.cs
+async.cs
 attribute.cs
 cs-tokenizer.cs
 cfold.cs

@@ -1,4 +1,4 @@
-// cs0674.cs: Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead
+// CS0674: Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead
 // Line: 8
 
 using System;

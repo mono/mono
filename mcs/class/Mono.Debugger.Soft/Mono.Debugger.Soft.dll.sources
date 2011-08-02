@@ -1,3 +1,6 @@
+./Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
 Mono.Debugger.Soft/CustomAttributeTypedArgumentMirror.cs
 Mono.Debugger.Soft/ExceptionEvent.cs
 Mono.Debugger.Soft/ModuleMirror.cs
@@ -64,3 +67,5 @@ Mono.Debugger.Soft/InvokeOptions.cs
 Mono.Debugger.Soft/IInvokeAsyncResult.cs
 Mono.Debugger.Soft/ITargetProcess.cs
 Mono.Debugger.Soft/AbsentInformationException.cs
+Mono.Debugger.Soft/UserBreakEvent.cs
+Mono.Debugger.Soft/UserLogEvent.cs

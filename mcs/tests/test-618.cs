@@ -13,7 +13,6 @@ class C
 		a = a - 0;
 		a = a | 0;
 		a = 0 + a;
-		a = 0 - a;
 		a = 0 | a;
 		
 		a = a >> 0x40;
@@ -28,10 +27,17 @@ class C
 		b *= 1;
 	}
 	
-	public static void Main ()
+	public static int Main ()
 	{
 		ZeroBasedReductions ();
 		ZeroBasedReductionsWithConversion ();
+		
+		int a = 9;
+		a = 0 - a;
+		if (a != -9)
+			return 1;
+		
+		return 0;
 	}
 }
 

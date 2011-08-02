@@ -1,4 +1,4 @@
-// cs1502.cs: The best overloaded method match for `X.foo(ref int)' has some invalid arguments
+// CS1502: The best overloaded method match for `X.foo(ref int)' has some invalid arguments
 // Line: 8
 class X {
 	public void foo (ref int blah) {}

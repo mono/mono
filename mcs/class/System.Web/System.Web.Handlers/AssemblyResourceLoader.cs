@@ -36,6 +36,7 @@ using System.IO;
 using System.Resources;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -51,12 +52,7 @@ namespace System.Web.Handlers
 		const string HandlerFileName = "ScriptResource.axd";
 		static Assembly currAsm = typeof (ScriptResourceHandler).Assembly;
 #else
-	#if NET_2_0
-	public sealed
-	#else
-	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
-	#endif
-	class AssemblyResourceLoader : IHttpHandler
+	public sealed class AssemblyResourceLoader : IHttpHandler
 	{
 		const string HandlerFileName = "WebResource.axd";
 		static Assembly currAsm = typeof (AssemblyResourceLoader).Assembly;
@@ -65,38 +61,30 @@ namespace System.Web.Handlers
 
 		static readonly Dictionary <string, AssemblyEmbeddedResources> _embeddedResources = new Dictionary <string, AssemblyEmbeddedResources> (StringComparer.Ordinal);
 		static readonly ReaderWriterLockSlim _embeddedResourcesLock = new ReaderWriterLockSlim ();
+		static readonly ReaderWriterLockSlim _stringHashCacheLock = new ReaderWriterLockSlim ();
+		static readonly Dictionary <string, string> stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
 
 		[ThreadStatic]
 		static KeyedHashAlgorithm hashAlg;
 		static bool canReuseHashAlg = true;
-		
-		[ThreadStatic]
-		static Dictionary <string, string> stringHashCache;
-
-		static Dictionary <string, string> StringHashCache {
-			get {
-				if (stringHashCache == null)
-					stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
-
-				return stringHashCache;
-			}
-		}
 
 		static KeyedHashAlgorithm ReusableHashAlgorithm {
 			get {
 				if (!canReuseHashAlg)
 					return null;
 
-				if (hashAlg != null)
-					return hashAlg;
-				
-				MachineKeySection mks = MachineKeySection.Config;
-				hashAlg = MachineKeySectionUtils.GetValidationAlgorithm (mks);
-				if (!hashAlg.CanReuseTransform) {
-					canReuseHashAlg = false;
-					hashAlg = null;
+				if (hashAlg == null) {				
+					MachineKeySection mks = MachineKeySection.Config;
+					hashAlg = MachineKeySectionUtils.GetValidationAlgorithm (mks);
+					if (!hashAlg.CanReuseTransform) {
+						canReuseHashAlg = false;
+						hashAlg = null;
+					}
 				}
-				
+
+				if (hashAlg != null)
+					hashAlg.Initialize ();
+
 				return hashAlg;
 			}
 		}
@@ -107,12 +95,25 @@ namespace System.Web.Handlers
 				return String.Empty;
 
 			string result;
-			Dictionary <string, string> cache = StringHashCache;
-			if (cache.TryGetValue (str, out result))
-				return result;
+			try {
+				_stringHashCacheLock.EnterUpgradeableReadLock ();
+				if (stringHashCache.TryGetValue (str, out result))
+					return result;
+
+				try {
+					_stringHashCacheLock.EnterWriteLock ();
+					if (stringHashCache.TryGetValue (str, out result))
+						return result;
+					
+					result = Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
+					stringHashCache.Add (str, result);
+				} finally {
+					_stringHashCacheLock.ExitWriteLock ();
+				}
+			} finally {
+				_stringHashCacheLock.ExitUpgradeableReadLock ();
+			}
 			
-			result = Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
-			cache.Add (str, result);
 			return result;
 		}
 		
@@ -136,7 +137,7 @@ namespace System.Web.Handlers
 						var er = new EmbeddedResource () {
 							Name = resourceName,
 							Attribute = attr, 
-							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNoNotify, debug, false)
+							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNoNotify, debug, false, true)
 						};
 						
 						entry.Resources.Add (rkNoNotify, er);
@@ -146,7 +147,7 @@ namespace System.Web.Handlers
 						var er = new EmbeddedResource () {
 							Name = resourceName,
 							Attribute = attr, 
-							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNotify, debug, true)
+							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNotify, debug, true, true)
 						};
 						
 						entry.Resources.Add (rkNotify, er);
@@ -156,7 +157,7 @@ namespace System.Web.Handlers
 						var er = new EmbeddedResource () {
 							Name = resourceName,
 							Attribute = attr, 
-							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, resourceNameHash, false, false)
+							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, resourceNameHash, false, false, true)
 						};
 						entry.Resources.Add (resourceNameHash, er);
 					}
@@ -179,11 +180,8 @@ namespace System.Web.Handlers
 			if (parts.Length != 3)
 				return null;
 
-			Encoding enc = Encoding.UTF8;
 			string asmNameHash = parts [0];
 			string resNameHash = parts [1];
-			bool debug = parts [2] == "t";
-			
 			try {
 				_embeddedResourcesLock.EnterReadLock ();
 				if (!_embeddedResources.TryGetValue (asmNameHash, out entry) || entry == null)
@@ -192,6 +190,7 @@ namespace System.Web.Handlers
 				EmbeddedResource res;
 				if (!entry.Resources.TryGetValue (resNameHash, out res) || res == null) {
 #if SYSTEM_WEB_EXTENSIONS
+					bool debug = parts [2] == "t";
 					if (!debug)
 						return null;
 
@@ -208,6 +207,34 @@ namespace System.Web.Handlers
 			}
 		}
 
+		static void GetAssemblyNameAndHashes (KeyedHashAlgorithm kha, Assembly assembly, string resourceName, out string assemblyName, out string assemblyNameHash, out string resourceNameHash)
+		{
+			assemblyName = assembly == currAsm ? "s" : assembly.GetName ().FullName;
+			assemblyNameHash = GetStringHash (kha, assemblyName);
+			resourceNameHash = GetStringHash (kha, resourceName);
+		}
+		
+		// MUST be called with the _embeddedResourcesLock taken in the upgradeable read lock mode
+		static AssemblyEmbeddedResources GetAssemblyEmbeddedResource (KeyedHashAlgorithm kha, Assembly assembly, string assemblyNameHash, string assemblyName)
+		{
+			AssemblyEmbeddedResources entry;
+			
+			if (!_embeddedResources.TryGetValue (assemblyNameHash, out entry) || entry == null) {
+				try {
+					_embeddedResourcesLock.EnterWriteLock ();
+					entry = new AssemblyEmbeddedResources () {
+							AssemblyName = assemblyName
+								};
+					InitEmbeddedResourcesUrls (kha, assembly, assemblyName, assemblyNameHash, entry);
+					_embeddedResources.Add (assemblyNameHash, entry);
+				} finally {
+					_embeddedResourcesLock.ExitWriteLock ();
+				}
+			}
+
+			return entry;
+		}
+		
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
 			if (assembly == null)
@@ -215,7 +242,6 @@ namespace System.Web.Handlers
 
 			KeyedHashAlgorithm kha = ReusableHashAlgorithm;
 			if (kha != null) {
-				kha.Initialize ();
 				return GetResourceUrl (kha, assembly, resourceName, notifyScriptLoaded);
 			} else {
 				MachineKeySection mks = MachineKeySection.Config;
@@ -228,32 +254,27 @@ namespace System.Web.Handlers
 
 		static string GetResourceUrl (KeyedHashAlgorithm kha, Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
-			string assemblyName = assembly == currAsm ? "s" : assembly.GetName ().FullName;
-			string assemblyNameHash = GetStringHash (kha, assemblyName);
-			string resourceNameHash = GetStringHash (kha, resourceName);
+			string assemblyName;
+			string assemblyNameHash;
+			string resourceNameHash;
+
+			GetAssemblyNameAndHashes (kha, assembly, resourceName, out assemblyName, out assemblyNameHash, out resourceNameHash);
 			bool debug = false;
 			string url;
 			AssemblyEmbeddedResources entry;
+			bool includeTimeStamp = true;
 
 			try {
 				_embeddedResourcesLock.EnterUpgradeableReadLock ();
-				if (!_embeddedResources.TryGetValue (assemblyNameHash, out entry) || entry == null) {
-					try {
-						_embeddedResourcesLock.EnterWriteLock ();
-						entry = new AssemblyEmbeddedResources () {
-							AssemblyName = assemblyName
-						};
-						InitEmbeddedResourcesUrls (kha, assembly, assemblyName, assemblyNameHash, entry);
-						_embeddedResources.Add (assemblyNameHash, entry);
-					} finally {
-						_embeddedResourcesLock.ExitWriteLock ();
-					}
-				}
+				entry = GetAssemblyEmbeddedResource (kha, assembly, assemblyNameHash, assemblyName);
 				string lookupKey;
 #if SYSTEM_WEB_EXTENSIONS
 				debug = resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase);
 				string dbgTail = debug ? "d" : String.Empty;
 				lookupKey = resourceNameHash + (notifyScriptLoaded ? "t" : "f") + dbgTail;
+#if NET_3_5
+				CheckIfResourceIsCompositeScript (resourceName, ref includeTimeStamp);
+#endif
 #else
 				lookupKey = resourceNameHash;
 #endif
@@ -279,12 +300,13 @@ namespace System.Web.Handlers
 			}
 
 			if (url == null)
-				url = CreateResourceUrl (kha, assemblyName, assemblyNameHash, assembly.Location, resourceNameHash, debug, notifyScriptLoaded);
+				url = CreateResourceUrl (kha, assemblyName, assemblyNameHash, assembly.Location, resourceNameHash, debug, notifyScriptLoaded, includeTimeStamp);
 			
 			return url;
 		}
 		
-		static string CreateResourceUrl (KeyedHashAlgorithm kha, string assemblyName, string assemblyNameHash, string assemblyPath, string resourceNameHash, bool debug, bool notifyScriptLoaded)
+		static string CreateResourceUrl (KeyedHashAlgorithm kha, string assemblyName, string assemblyNameHash, string assemblyPath, string resourceNameHash, bool debug,
+						 bool notifyScriptLoaded, bool includeTimeStamp)
 		{
 			string atime = String.Empty;
 			string extra = String.Empty;
@@ -295,10 +317,12 @@ namespace System.Web.Handlers
 #if TARGET_JVM
 			atime = QueryParamSeparator + "t=" + assemblyName.GetHashCode ();
 #else
-			if (!String.IsNullOrEmpty (assemblyPath) && File.Exists (assemblyPath))
-				atime = QueryParamSeparator + "t=" + File.GetLastWriteTimeUtc (assemblyPath).Ticks;
-			else
-				atime = QueryParamSeparator + "t=" + DateTime.UtcNow.Ticks;
+			if (includeTimeStamp) {
+				if (!String.IsNullOrEmpty (assemblyPath) && File.Exists (assemblyPath))
+					atime = QueryParamSeparator + "t=" + File.GetLastWriteTimeUtc (assemblyPath).Ticks;
+				else
+					atime = QueryParamSeparator + "t=" + DateTime.UtcNow.Ticks;
+			}
 #endif
 			string d = assemblyNameHash + "_" + resourceNameHash +  (debug ? "_t" : "_f");
 			string href = HandlerFileName + "?d=" + d + atime + extra;
@@ -312,63 +336,85 @@ namespace System.Web.Handlers
 			return href;
 		}
 
-#if SYSTEM_WEB_EXTENSIONS
-		protected virtual void ProcessRequest (HttpContext context)
-#else
-		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
-#endif
+		bool HasCacheControl (HttpRequest request, NameValueCollection queryString, out long atime)
+		{
+			if (String.Compare (request.Headers ["Cache-Control"], "max-age=0", StringComparison.Ordinal) != 0) {
+				atime = 0;
+				return false;
+			}
+			
+			if (Int64.TryParse (request.QueryString ["t"], out atime))
+				return true;
+
+			return false;
+		}
+
+		bool HasIfModifiedSince (HttpRequest request, out DateTime modified)
+		{
+			string modif_since = request.Headers ["If-Modified-Since"];
+			if (String.IsNullOrEmpty (modif_since)) {
+				modified = DateTime.MinValue;
+				return false;
+			}
+
+			try {
+				if (DateTime.TryParseExact (modif_since, "r", null, 0, out modified))
+					return true;
+			} catch {
+			}
+
+			return false;
+		}
+
+		void RespondWithNotModified (HttpContext context)
+		{
+			HttpResponse response = context.Response;
+			response.Clear ();
+			response.StatusCode = 304;
+			response.ContentType = null;
+			response.CacheControl = "public"; // easier to set it to public as MS than remove it
+			context.ApplicationInstance.CompleteRequest ();
+		}
+		
+		void SendEmbeddedResource (HttpContext context, out EmbeddedResource res, out Assembly assembly)
 		{
 			HttpRequest request = context.Request;
+			NameValueCollection queryString = request.QueryString;
+			
 			// val is URL-encoded, which means every + has been replaced with ' ', we
 			// need to revert that or the base64 conversion will fail.
-			string d = request.QueryString ["d"];
+			string d = queryString ["d"];
 			if (!String.IsNullOrEmpty (d))
 				d = d.Replace (' ', '+');
 
 			AssemblyEmbeddedResources entry;
-			EmbeddedResource res = DecryptAssemblyResource (d, out entry);
+			res = DecryptAssemblyResource (d, out entry);
 			WebResourceAttribute wra = res != null ? res.Attribute : null;
 			if (wra == null)
 				throw new HttpException (404, "Resource not found");
-			
-			Assembly assembly;
+
 			if (entry.AssemblyName == "s")
 				assembly = currAsm;
 			else
 				assembly = Assembly.Load (entry.AssemblyName);
 			
-			HttpResponse response = context.Response;
-			string req_cache = request.Headers ["Cache-Control"];
-			if (String.Compare (req_cache, "max-age=0", StringComparison.Ordinal) == 0) {
-				long atime;
-				if (Int64.TryParse (request.QueryString ["t"], out atime)) {
-					if (atime == File.GetLastWriteTimeUtc (assembly.Location).Ticks) {
-						response.Clear ();
-						response.StatusCode = 304;
-						response.ContentType = null;
-						response.CacheControl = "public"; // easier to set it to public as MS than remove it
-						context.ApplicationInstance.CompleteRequest ();
-						return;
-					}
+			long atime;
+			if (HasCacheControl (request, queryString, out atime)) {
+				if (atime == File.GetLastWriteTimeUtc (assembly.Location).Ticks) {
+					RespondWithNotModified (context);
+					return;
 				}
 			}
-			string modif_since = request.Headers ["If-Modified-Since"];
-			if (!String.IsNullOrEmpty (modif_since)) {
-				try {
-					DateTime modif;
-					if (DateTime.TryParseExact (modif_since, "r", null, 0, out modif)) {
-						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif) {
-							response.Clear ();
-							response.StatusCode = 304;
-							response.ContentType = null;
-							response.CacheControl = "public"; // easier to set it to public as MS than remove it
-							context.ApplicationInstance.CompleteRequest ();
-							return;
-						}
-					}
-				} catch {}
+
+			DateTime modified;
+			if (HasIfModifiedSince (request, out modified)) {
+				if (File.GetLastWriteTimeUtc (assembly.Location) <= modified) {
+					RespondWithNotModified (context);
+					return;
+				}
 			}
 
+			HttpResponse response = context.Response;
 			response.ContentType = wra.ContentType;
 
 			DateTime utcnow = DateTime.UtcNow;
@@ -400,63 +446,17 @@ namespace System.Web.Handlers
 					output.Write (buf, 0, c);
 				} while (c > 0);
 			}
-#if SYSTEM_WEB_EXTENSIONS
-			TextWriter writer = response.Output;
-			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
-				if (String.Compare (sra.ScriptName, res.Name, StringComparison.Ordinal) == 0) {
-					string scriptResourceName = sra.ScriptResourceName;
-					ResourceSet rset = null;
-					try {
-						rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
-					}
-					catch (MissingManifestResourceException) {
-#if TARGET_JVM // GetResourceSet does not throw  MissingManifestResourceException if ressource is not exists
-					}
-					if (rset == null) {
-#endif
-						if (scriptResourceName.EndsWith (".resources")) {
-							scriptResourceName = scriptResourceName.Substring (0, scriptResourceName.Length - 10);
-							rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
-						}
-#if !TARGET_JVM
-						else
-							throw;
-#endif
-					}
-					if (rset == null)
-						break;
-					writer.WriteLine ();
-					string ns = sra.TypeName;
-					int indx = ns.LastIndexOf ('.');
-					if (indx > 0)
-						writer.WriteLine ("Type.registerNamespace('" + ns.Substring (0, indx) + "')");
-					writer.Write ("{0}={{", sra.TypeName);
-					bool first = true;
-					foreach (DictionaryEntry de in rset) {
-						string value = de.Value as string;
-						if (value != null) {
-							if (first)
-								first = false;
-							else
-								writer.Write (',');
-							writer.WriteLine ();
-							writer.Write ("{0}:{1}", GetScriptStringLiteral ((string) de.Key), GetScriptStringLiteral (value));
-						}
-					}
-					writer.WriteLine ();
-					writer.WriteLine ("};");
-					break;
-				}
-			}
-
-			bool notifyScriptLoaded = request.QueryString ["n"] == "t";
-			if (notifyScriptLoaded) {
-				writer.WriteLine ();
-				writer.WriteLine ("if(typeof(Sys)!=='undefined')Sys.Application.notifyScriptLoaded();");
-			}
-#endif
 		}
-
+		
+#if !SYSTEM_WEB_EXTENSIONS
+		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
+		{
+			EmbeddedResource res;
+			Assembly assembly;
+			
+			SendEmbeddedResource (context, out res, out assembly);
+		}
+#endif
 		sealed class PerformSubstitutionHelper
 		{
 			readonly Assembly _assembly;
@@ -500,7 +500,7 @@ namespace System.Web.Handlers
 		{
 			public string AssemblyName = String.Empty;
 			public Dictionary <string, EmbeddedResource> Resources = new Dictionary <string, EmbeddedResource> (StringComparer.Ordinal);
-		}
+		}		
 	}
 }
 

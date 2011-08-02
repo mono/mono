@@ -5,7 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //  Jb Evain  <jbevain@novell.com>
 //
-// Copyright (C) 2007, 2009-2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007, 2009-2011 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -112,9 +112,21 @@ namespace System.Net {
 			get { throw NotImplemented (); }
 		}
 
-		// new in SL4 RC
+		// new in SL4
 		public virtual bool SupportsCookieContainer {
 			get { return false; }
+		}
+
+		// new in SL4 (service release) : WP7 binary compatibility - not for use in SL4 applications (MSDN docs)
+		public virtual bool AllowAutoRedirect {
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
+		}
+
+		// new in SL4 (service release) : WP7 binary compatibility - not for use in SL4 applications (MSDN docs)
+		public string UserAgent {
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
 		}
 
 		public override void Abort ()

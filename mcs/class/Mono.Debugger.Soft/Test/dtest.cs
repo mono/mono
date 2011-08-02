@@ -36,6 +36,12 @@ public class DebuggerTests
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
+	Event GetNextEvent () {
+		var es = vm.GetNextEventSet ();
+		Assert.AreEqual (1, es.Events.Length);
+		return es [0];
+	}
+
 	void Start (string[] args) {
 		if (!listening) {
 			var pi = new Diag.ProcessStartInfo ();
@@ -54,7 +60,7 @@ public class DebuggerTests
 		var load_req = vm.CreateAssemblyLoadRequest ();
 		load_req.Enable ();
 
-		Event vmstart = vm.GetNextEvent ();
+		Event vmstart = GetNextEvent ();
 		Assert.AreEqual (EventType.VMStart, vmstart.EventType);
 
 		vm.Resume ();
@@ -66,7 +72,7 @@ public class DebuggerTests
 
 		/* Find out the entry point */
 		while (true) {
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 
 			if (e is AssemblyLoadEvent) {
 				AssemblyLoadEvent ae = (AssemblyLoadEvent)e;
@@ -91,7 +97,7 @@ public class DebuggerTests
 
 		while (true) {
 			vm.Resume ();
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 			if (e is BreakpointEvent)
 				break;
 		}
@@ -107,7 +113,7 @@ public class DebuggerTests
 		req.Enable ();
 
 		vm.Resume ();
-		Event e = vm.GetNextEvent ();
+		Event e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 
 		req.Disable ();
@@ -155,7 +161,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 		while (true) {
-			Event e = vm.GetNextEvent ();
+			Event e = GetNextEvent ();
 
 			if (e is VMDeathEvent)
 				break;
@@ -175,7 +181,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.IsTrue (e is BreakpointEvent);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
@@ -189,8 +195,6 @@ public class DebuggerTests
 
 	[Test]
 	public void BreakpointsSameLocation () {
-		Event e;
-
 		MethodMirror m = entry_point.DeclaringType.GetMethod ("bp2");
 		Assert.IsNotNull (m);
 
@@ -199,13 +203,13 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
-		Assert.IsTrue (e is BreakpointEvent);
-		Assert.AreEqual (m, (e as BreakpointEvent).Method);
+		var es = vm.GetNextEventSet ();
+		Assert.AreEqual (2, es.Events.Length);
+		Assert.IsTrue (es [0] is BreakpointEvent);
+		Assert.AreEqual (m, (es [0] as BreakpointEvent).Method);
 
-		e = vm.GetNextEvent ();
-		Assert.IsTrue (e is BreakpointEvent);
-		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
+		Assert.IsTrue (es [1] is BreakpointEvent);
+		Assert.AreEqual (m.Name, (es [1] as BreakpointEvent).Method.Name);
 	}
 
 	[Test]
@@ -224,21 +228,21 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
 
 		vm.Resume ();
 
 		/* Non-shared instance */
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.AreEqual (m2.Name, (e as BreakpointEvent).Method.Name);
 
 		vm.Resume ();
 
 		/* Shared instance */
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.AreEqual (m2.Name, (e as BreakpointEvent).Method.Name);
 	}
@@ -259,19 +263,19 @@ public class DebuggerTests
 		/* Run until bp4 */
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
-		Assert.AreEqual (EventType.Breakpoint, e.EventType);
-		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
-		e = vm.GetNextEvent ();
-		Assert.AreEqual (EventType.Breakpoint, e.EventType);
-		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
+		var es = vm.GetNextEventSet ();
+		Assert.AreEqual (2, es.Events.Length);
+		Assert.AreEqual (EventType.Breakpoint, es [0].EventType);
+		Assert.AreEqual (m.Name, (es [0] as BreakpointEvent).Method.Name);
+		Assert.AreEqual (EventType.Breakpoint, es [1].EventType);
+		Assert.AreEqual (m.Name, (es [1] as BreakpointEvent).Method.Name);
 
 		/* Clear one of them */
 		req1.Disable ();
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
 
@@ -280,7 +284,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.AreEqual (m2.Name, (e as BreakpointEvent).Method.Name);
 	}
@@ -301,7 +305,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (!(e is BreakpointEvent));
 		if (e is VMDeathEvent)
 			vm = null;
@@ -318,7 +322,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.IsTrue (e is BreakpointEvent);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
@@ -335,13 +339,13 @@ public class DebuggerTests
 
 		// Step into ss1
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss1", (e as StepEvent).Method.Name);
 
 		// Step out of ss1
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("single_stepping", (e as StepEvent).Method.Name);
 
@@ -352,7 +356,7 @@ public class DebuggerTests
 
 		// Step over ss2
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("single_stepping", (e as StepEvent).Method.Name);
 
@@ -363,7 +367,7 @@ public class DebuggerTests
 
 		// Step into ss3
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss3", (e as StepEvent).Method.Name);
 
@@ -374,7 +378,7 @@ public class DebuggerTests
 
 		// Step back into single_stepping
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("single_stepping", (e as StepEvent).Method.Name);
 
@@ -385,7 +389,7 @@ public class DebuggerTests
 
 		// Step into ss3_2 ()
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss3_2", (e as StepEvent).Method.Name);
 
@@ -396,7 +400,7 @@ public class DebuggerTests
 
 		// Step over ss3_2_2 ()
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss3_2", (e as StepEvent).Method.Name);
 
@@ -406,7 +410,7 @@ public class DebuggerTests
 
 		// Step back into single_stepping () with the new request
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("single_stepping", (e as StepEvent).Method.Name);
 
@@ -417,7 +421,7 @@ public class DebuggerTests
 
 		// Step into ss4 ()
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss4", (e as StepEvent).Method.Name);
 
@@ -429,7 +433,7 @@ public class DebuggerTests
 
 		// Step over ss1 (); ss1 ();
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 
 		// Step into ss2 ()
@@ -438,7 +442,7 @@ public class DebuggerTests
 		req.Enable ();
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss2", (e as StepEvent).Method.Name);
 
@@ -453,7 +457,7 @@ public class DebuggerTests
 
 		// Step into is_even, skipping the linq stuff
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("is_even", (e as StepEvent).Method.Name);
 
@@ -470,10 +474,10 @@ public class DebuggerTests
 
 		// Check that single stepping works in out-of-line bblocks
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss6", (e as StepEvent).Method.Name);
 
@@ -491,12 +495,12 @@ public class DebuggerTests
 		req2.Enable ();
 
 		vm.Resume ();
-		Event e = vm.GetNextEvent ();
+		Event e = GetNextEvent ();
 		Assert.IsTrue (e is MethodEntryEvent);
 		Assert.AreEqual ("ss1", (e as MethodEntryEvent).Method.Name);
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is MethodExitEvent);
 		Assert.AreEqual ("ss1", (e as MethodExitEvent).Method.Name);
 
@@ -518,13 +522,13 @@ public class DebuggerTests
 
 		// Enter ss2, ss1 is skipped
 		vm.Resume ();
-		Event e = vm.GetNextEvent ();
+		Event e = GetNextEvent ();
 		Assert.IsTrue (e is MethodEntryEvent);
 		Assert.AreEqual ("ss2", (e as MethodEntryEvent).Method.Name);
 
 		// Breakpoint on ss3, the entry event is no longer reported
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is BreakpointEvent);
 
 		req1.Disable ();
@@ -1314,7 +1318,8 @@ public class DebuggerTests
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly, m.Assembly);
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly.ManifestModule, m);
 
-		Assert.AreEqual ("Assembly", frame.Method.DeclaringType.Assembly.GetAssemblyObject ().Type.Name);
+		// This is no longer true on 4.0
+		//Assert.AreEqual ("Assembly", frame.Method.DeclaringType.Assembly.GetAssemblyObject ().Type.Name);
 
 		TypeMirror t = vm.RootDomain.Corlib.GetType ("System.Diagnostics.DebuggerDisplayAttribute");
 		Assert.AreEqual ("DebuggerDisplayAttribute", t.Name);
@@ -1355,7 +1360,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only")]
 	public void Locals () {
 		var be = run_until ("locals1");
 
@@ -1375,13 +1379,13 @@ public class DebuggerTests
 		req.Enable ();
 
 		vm.Resume ();
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("locals2", (e as StepEvent).Method.Name);
 
 		// Execute s = "AB";
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("locals2", (e as StepEvent).Method.Name);
 
@@ -1441,7 +1445,7 @@ public class DebuggerTests
 
 		// invalid stack frames
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("locals2", (e as StepEvent).Method.Name);
 
@@ -1493,7 +1497,7 @@ public class DebuggerTests
 
 		vm.Exit (5);
 
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDeathEvent), e);
 
 		var p = vm.Process;
@@ -1517,7 +1521,7 @@ public class DebuggerTests
 
 		vm.Dispose ();
 
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
 
 		var p = vm.Process;
@@ -1547,7 +1551,7 @@ public class DebuggerTests
 		
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 
 		l = e.Thread.GetFrames ()[0].Location;
@@ -1558,28 +1562,28 @@ public class DebuggerTests
 		int line_base = l.LineNumber;
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln2", l.Method.Name);
 		Assert.AreEqual (line_base + 6, l.LineNumber);
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
 		Assert.AreEqual (line_base + 1, l.LineNumber);
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.AreEqual (line_base + 10, l.LineNumber);
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
@@ -1637,7 +1641,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (AssemblyLoadEvent), e);
 		Assert.IsTrue ((e as AssemblyLoadEvent).Assembly.Location.EndsWith ("System.dll"));
 
@@ -1734,6 +1738,16 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_return_primitive");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
+
+		// return nullable
+		m = t.GetMethod ("invoke_return_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, null);
+		Assert.IsInstanceOfType (typeof (StructMirror), v);
+
+		// return nullable null
+		m = t.GetMethod ("invoke_return_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, null);
+		AssertValue (null, v);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
@@ -1904,7 +1918,7 @@ public class DebuggerTests
 		StackFrame invoke_frame = null;
 
 		try {
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 			Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
 			// Check stack trace support and invokes
 			var frames = e.Thread.GetFrames ();
@@ -1982,7 +1996,7 @@ public class DebuggerTests
 				vm.Resume ();
 			}, null);
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.TypeLoad, e.EventType);
 	}
 
@@ -1999,24 +2013,25 @@ public class DebuggerTests
 
 		Assert.IsTrue (e.Thread.ThreadId > 0);
 
+		Assert.AreEqual (e.Thread.TID, e.Thread.TID);
+
 		vm.EnableEvents (EventType.ThreadStart, EventType.ThreadDeath);
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ThreadStartEvent), e);
 		var state = e.Thread.ThreadState;
 		Assert.IsTrue (state == ThreadState.Running || state == ThreadState.Unstarted);
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
 		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
 
 	[Test]
-	[Category ("only")]
 	public void Frame_SetValue () {
 		Event e = run_until ("locals2");
 
@@ -2068,6 +2083,47 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("only")]
+	public void Frame_SetValue_Registers () {
+		Event e = run_until ("locals6_1");
+
+		StackFrame frame = e.Thread.GetFrames () [1];
+
+		// Set 'j' to 99
+		var l = frame.Method.GetLocal ("j");
+		frame.SetValue (l, vm.CreateValue (99));
+		AssertValue (99, frame.GetValue (l));
+
+		// Check it during execution
+		e = run_until ("locals6_2");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (99, frame.GetValue (frame.Method.GetParameters ()[0]));
+
+		// Set it while in a frame which clobbers its register
+		e = run_until ("locals6_3");
+		frame = e.Thread.GetFrames () [1];
+		frame.SetValue (l, vm.CreateValue (100));
+		AssertValue (100, frame.GetValue (l));
+
+		// Check it during execution
+		e = run_until ("locals6_4");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (100, frame.GetValue (frame.Method.GetParameters ()[0]));
+
+		// Signed byte value
+		e = run_until ("locals6_5");
+		frame = e.Thread.GetFrames () [1];
+		var l2 = frame.Method.GetLocal ("sb");
+		frame.SetValue (l2, vm.CreateValue ((sbyte)-99));
+		AssertValue (-99, frame.GetValue (l2));
+
+		// Check it during execution
+		e = run_until ("locals6_6");
+		frame = e.Thread.GetFrames () [0];
+		AssertValue (-99, frame.GetValue (frame.Method.GetParameters ()[0]));
+	}
+
+	[Test]
 	public void InvokeRegress () {
 		Event e = run_until ("invoke1");
 
@@ -2104,7 +2160,7 @@ public class DebuggerTests
 
 		// Step into invoke2
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("invoke2", (e as StepEvent).Method.Name);
 
@@ -2121,7 +2177,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
 
@@ -2137,7 +2193,7 @@ public class DebuggerTests
 		// Skip the throwing of the second OverflowException	   
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("ArgumentException", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
@@ -2148,7 +2204,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
@@ -2159,7 +2215,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("NullReferenceException", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
@@ -2170,7 +2226,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("Exception", (e as ExceptionEvent).Exception.Type.Name);
 		frames = e.Thread.GetFrames ();
@@ -2183,7 +2239,7 @@ public class DebuggerTests
 		sreq.Enable ();
 
 		vm.Resume ();
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (StepEvent), e);
 		frames = e.Thread.GetFrames ();
 		Assert.AreEqual ("exceptions", frames [0].Method.Name);
@@ -2206,7 +2262,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.IsTrue (e is BreakpointEvent);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
@@ -2244,7 +2300,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.IsTrue (e is BreakpointEvent);
 		Assert.AreEqual (filter_method.Name, (e as BreakpointEvent).Method.Name);
@@ -2319,7 +2375,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("NullReferenceException", (e as ExceptionEvent).Exception.Type.Name);
 
@@ -2340,7 +2396,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 		
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (AppDomainCreateEvent), e);
 
 		var domain = (e as AppDomainCreateEvent).Domain;
@@ -2352,7 +2408,7 @@ public class DebuggerTests
 
 		while (true) {
 			vm.Resume ();
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 			if (e is BreakpointEvent)
 				break;
 		}
@@ -2375,7 +2431,7 @@ public class DebuggerTests
 
 		while (true) {
 			vm.Resume ();
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 			if (e is BreakpointEvent)
 				break;
 		}
@@ -2388,7 +2444,7 @@ public class DebuggerTests
 		// Run until the unload
 		while (true) {
 			vm.Resume ();
-			e = vm.GetNextEvent ();
+			e = GetNextEvent ();
 			if (e is AssemblyUnloadEvent) {
 				continue;
 			} else {
@@ -2561,7 +2617,7 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is BreakpointEvent);
 
 		var req = vm.CreateStepRequest (e.Thread);
@@ -2571,8 +2627,34 @@ public class DebuggerTests
 
 		vm.Resume ();
 
-		e = vm.GetNextEvent ();
+		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 	}
 
+	[Test]
+	public void DebugBreak () {
+		vm.EnableEvents (EventType.UserBreak);
+
+		run_until ("user");
+
+		vm.Resume ();
+		var e = GetNextEvent ();
+		Assert.IsTrue (e is UserBreakEvent);
+	}
+
+	[Test]
+	public void DebugLog () {
+		vm.EnableEvents (EventType.UserLog);
+
+		run_until ("user");
+
+		vm.Resume ();
+		var e = GetNextEvent ();
+		Assert.IsTrue (e is UserLogEvent);
+		var le = e as UserLogEvent;
+
+		Assert.AreEqual (5, le.Level);
+		Assert.AreEqual ("A", le.Category);
+		Assert.AreEqual ("B", le.Message);
+	}
 }

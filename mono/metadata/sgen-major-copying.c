@@ -45,15 +45,18 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "config.h"
+
 #ifdef HAVE_SGEN_GC
 
 #include "utils/mono-counters.h"
-#include "metadata/object-internals.h"
-#include "metadata/profiler-private.h"
 
+#include "metadata/gc-internal.h"
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-protocol.h"
 #include "metadata/mono-gc.h"
+#include "metadata/object-internals.h"
+#include "metadata/profiler-private.h"
 
 #define MAJOR_SECTION_SIZE		SGEN_PINNED_CHUNK_SIZE
 #define BLOCK_FOR_OBJECT(o)		SGEN_PINNED_CHUNK_FOR_PTR ((o))
@@ -65,7 +68,7 @@ static int num_major_sections = 0;
 
 static GCMemSection *section_list = NULL;
 
-static SgenInternalAllocator pinned_allocator;
+static SgenPinnedAllocator pinned_allocator;
 
 static gboolean have_swept;
 
@@ -113,7 +116,7 @@ obj_is_from_pinned_alloc (char *p)
 static void
 free_pinned_object (char *obj, size_t size)
 {
-	mono_sgen_free_internal_full (&pinned_allocator, obj, size, INTERNAL_MEM_MANAGED);
+	mono_sgen_free_pinned (&pinned_allocator, obj, size);
 }
 
 /*
@@ -131,7 +134,7 @@ alloc_major_section (void)
 	section->size = MAJOR_SECTION_SIZE - SGEN_SIZEOF_GC_MEM_SECTION;
 	section->end_data = section->data + section->size;
 	mono_sgen_update_heap_boundaries ((mword)section->data, (mword)section->end_data);
-	DEBUG (3, fprintf (gc_debug_file, "New major heap section: (%p-%p), total: %zd\n", section->data, section->end_data, mono_gc_get_heap_size ()));
+	DEBUG (3, fprintf (gc_debug_file, "New major heap section: (%p-%p), total: %jd\n", section->data, section->end_data, mono_gc_get_heap_size ()));
 	scan_starts = (section->size + SGEN_SCAN_START_SIZE - 1) / SGEN_SCAN_START_SIZE;
 	section->scan_starts = mono_sgen_alloc_internal_dynamic (sizeof (char*) * scan_starts, INTERNAL_MEM_SCAN_STARTS);
 	section->num_scan_start = scan_starts;
@@ -243,7 +246,7 @@ major_is_object_live (char *obj)
 static void*
 major_alloc_small_pinned_obj (size_t size, gboolean has_references)
 {
-	return mono_sgen_alloc_internal_full (&pinned_allocator, size, INTERNAL_MEM_MANAGED);
+	return mono_sgen_alloc_pinned (&pinned_allocator, size);
 }
 
 /*
@@ -438,7 +441,7 @@ sweep_pinned_objects_callback (char *ptr, size_t size, void *data)
 static void
 sweep_pinned_objects (void)
 {
-	mono_sgen_internal_scan_objects (&pinned_allocator, sweep_pinned_objects_callback, NULL);
+	mono_sgen_pinned_scan_objects (&pinned_allocator, sweep_pinned_objects_callback, NULL);
 }
 
 static void
@@ -450,7 +453,7 @@ major_iterate_objects (gboolean non_pinned, gboolean pinned, IterateObjectCallba
 			mono_sgen_scan_area_with_callback (section->data, section->end_data, callback, data, FALSE);
 	}
 	if (pinned)
-		mono_sgen_internal_scan_objects (&pinned_allocator, callback, data);
+		mono_sgen_pinned_scan_objects (&pinned_allocator, callback, data);
 }
 
 static void
@@ -477,7 +480,7 @@ major_find_pin_queue_start_ends (SgenGrayQueue *queue)
 
 	for (section = section_list; section; section = section->block.next)
 		mono_sgen_find_section_pin_queue_start_end (section);
-	mono_sgen_internal_scan_pinned_objects (&pinned_allocator, (IterateObjectCallbackFunc)pin_pinned_object_callback, queue);
+	mono_sgen_pinned_scan_pinned_objects (&pinned_allocator, (IterateObjectCallbackFunc)pin_pinned_object_callback, queue);
 }
 
 static void
@@ -506,7 +509,7 @@ major_sweep (void)
 	/* unpin objects from the pinned chunks and free the unmarked ones */
 	sweep_pinned_objects ();
 
-	mono_sgen_internal_update_heap_boundaries (&pinned_allocator);
+	mono_sgen_pinned_update_heap_boundaries (&pinned_allocator);
 
 	/* free the unused sections */
 	prev_section = NULL;
@@ -630,7 +633,7 @@ major_ptr_is_in_non_pinned_space (char *ptr)
 static void
 major_report_pinned_memory_usage (void)
 {
-	mono_sgen_report_internal_mem_usage_full (&pinned_allocator);
+	mono_sgen_report_pinned_mem_usage (&pinned_allocator);
 }
 
 static int

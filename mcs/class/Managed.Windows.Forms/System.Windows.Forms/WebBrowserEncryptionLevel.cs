@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum WebBrowserEncryptionLevel
@@ -41,4 +40,3 @@ namespace System.Windows.Forms
 		Bit128 = 6
 	}
 }
-#endif

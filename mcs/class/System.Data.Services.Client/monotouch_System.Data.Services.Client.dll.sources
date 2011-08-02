@@ -1,0 +1,2 @@
+#include System.Data.Services.Client.dll.sources
+./Client/AssemblyAttributes.cs

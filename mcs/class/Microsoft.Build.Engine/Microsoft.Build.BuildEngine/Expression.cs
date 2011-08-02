@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 
@@ -63,6 +64,20 @@ namespace Microsoft.Build.BuildEngine {
 		public Expression ()
 		{
 			this.expressionCollection = new ExpressionCollection ();
+		}
+
+		public static T ParseAs<T> (string expression, ParseOptions options, Project project)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (expression, options);
+			return (T)expr.ConvertTo (project, typeof (T));
+		}
+
+		public static T ParseAs<T> (string expression, ParseOptions options, Project project, ExpressionOptions exprOptions)
+		{
+			Expression expr = new Expression ();
+			expr.Parse (expression, options);
+			return (T)expr.ConvertTo (project, typeof (T), exprOptions);
 		}
 
 		// Split: Split on ';'
@@ -131,7 +146,7 @@ namespace Microsoft.Build.BuildEngine {
 			for (int i = 0; i < lists.Count; i++) {
 				foreach (object o in lists [i]) {
 					if (o is string)
-						expressionCollection.Add (Utilities.Unescape ((string) o));
+						expressionCollection.Add (MSBuildUtils.Unescape ((string) o));
 					else if (!allowItems && o is ItemReference)
 						expressionCollection.Add (((ItemReference) o).OriginalString);
 					else if (!allowMd && o is MetadataReference) {

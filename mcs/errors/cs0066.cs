@@ -1,4 +1,4 @@
-// cs0066.cs: `Button.Click': event must be of a delegate type
+// CS0066: `Button.Click': event must be of a delegate type
 // Line : 10
 
 using System;

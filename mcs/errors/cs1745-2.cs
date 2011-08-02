@@ -1,6 +1,5 @@
 // CS1745: Cannot specify `System.Runtime.InteropServices.DefaultParameterValue' attribute on optional parameter `u'
 // Line: 8
-// Compiler options: -langversion:future
 
 using System.Runtime.InteropServices;
 

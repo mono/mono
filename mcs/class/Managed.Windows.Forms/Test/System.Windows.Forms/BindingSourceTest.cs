@@ -750,6 +750,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			// Empty IEnumerable, that also implements IList
 			source.DataSource = lv.Items;
 			source.DataMember = "Text";
+			// FIXME: The test below does not pass with .NET (type is BindingList<char>)
 			Assert.IsTrue (source.List is BindingList<string>, "1");
 			Assert.AreEqual (0, source.List.Count, "2");
 		}
@@ -1979,6 +1980,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (1, iblist_raised, "B1");
 			Assert.AreEqual (ListChangedType.Reset, iblist_changed_args.ListChangedType, "B2");
 			Assert.AreEqual (-1, iblist_changed_args.NewIndex, "B3");
+		}
+
+		[Test] // bug 664833
+		public void TestDataMemberValue ()
+		{
+			BindingSource bs = new BindingSource ();
+			bs.DataMember = "TestField";
+			DataTable table = new DataTable ();
+			table.Columns.Add ("TestField");
+			bs.DataSource = table;
+
+			Assert.AreEqual ("TestField", bs.DataMember, "#1");
 		}
 	}
 }

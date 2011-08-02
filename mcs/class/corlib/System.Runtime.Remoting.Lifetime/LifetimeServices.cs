@@ -35,7 +35,7 @@ using System;
 namespace System.Runtime.Remoting.Lifetime {
 
 	//LAMESPEC: MS docs don't say that this class is sealed.
-	[System.Runtime.InteropServices.ComVisible (true)]
+	[System.Runtime.InteropServices.ComVisible (true)]	
 	public sealed class LifetimeServices
 	{
 		private static TimeSpan _leaseManagerPollTime;
@@ -53,6 +53,9 @@ namespace System.Runtime.Remoting.Lifetime {
 			_sponsorshipTimeout = TimeSpan.FromMinutes (2);
 		}
 
+#if NET_4_0
+		[Obsolete("Call the static methods directly on this type instead", true)]
+#endif
 		public LifetimeServices ()
 		{
 		}

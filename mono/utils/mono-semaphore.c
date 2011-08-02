@@ -17,7 +17,7 @@
 #include <unistd.h>
 #endif
 
-#if (defined(HAVE_SEMAPHORE_H) || defined(USE_MACH_SEMA))
+#if (defined (HAVE_SEMAPHORE_H) || defined (USE_MACH_SEMA)) && !defined(HOST_WIN32)
 /* sem_* or semaphore_* functions in use */
 #  ifdef USE_MACH_SEMA
 #    define TIMESPEC mach_timespec_t
@@ -110,9 +110,9 @@ mono_sem_wait (MonoSemType *sem, gboolean alertable)
 {
 	int res;
 #ifndef USE_MACH_SEMA
-	while ((res = sem_wait (sem) == -1) && errno == EINTR)
+	while ((res = sem_wait (sem)) == -1 && errno == EINTR)
 #else
-	while ((res = semaphore_wait (*sem) == -1) && errno == EINTR)
+	while ((res = semaphore_wait (*sem)) == -1 && errno == EINTR)
 #endif
 	{
 		if (alertable)
@@ -129,9 +129,9 @@ mono_sem_post (MonoSemType *sem)
 {
 	int res;
 #ifndef USE_MACH_SEMA
-	while ((res = sem_post (sem) == -1) && errno == EINTR);
+	while ((res = sem_post (sem)) == -1 && errno == EINTR);
 #else
-	while ((res = semaphore_signal (*sem) == -1) && errno == EINTR);
+	while ((res = semaphore_signal (*sem)) == -1 && errno == EINTR);
 	/* OSX might return > 0 for error */
 	if (res != 0)
 		res = -1;
@@ -152,7 +152,7 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 {
 	gboolean res;
 
-	while (res = WaitForSingleObjectEx (*sem, timeout_ms, alertable) == WAIT_IO_COMPLETION) {
+	while ((res = WaitForSingleObjectEx (*sem, timeout_ms, alertable)) == WAIT_IO_COMPLETION) {
 		if (alertable) {
 			errno = EINTR;
 			return -1;

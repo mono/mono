@@ -59,17 +59,22 @@ namespace System.Web.UI
 		
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			// culture?
+			string typeName;
+			
 			if (value != null) {
 				Type t = value.GetType ();
-				if (t == typeof (string))
-					return ((string)value) != String.Empty;
+				if (t == typeof (string)) {
+					string s = value as string;
+					if (String.IsNullOrEmpty (s) || String.Compare (s, "false", StringComparison.OrdinalIgnoreCase) == 0)
+						return false;
+					else
+						return true;
+				}
+				typeName = t.FullName;
+			} else
+				typeName = "null";
 
-				if (t == typeof (bool))
-					return value;
-			}
-			
-			return base.ConvertFrom (context, culture, value);
+			throw new NotSupportedException (String.Format ("MinimizableAttributeTypeConverter cannot convert from {0}", typeName));
 		}
 
 	}

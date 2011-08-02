@@ -27,12 +27,15 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}")]
+	[DebuggerDisplay ("Address={address}")]
 	public class ServiceEndpoint
 	{
 		ContractDescription contract;
@@ -116,8 +119,8 @@ namespace System.ServiceModel.Description
 			set { name = value; }
 		}
 
-		internal void Validate () {
-#if !NET_2_1
+		internal void Validate ()
+		{
 			foreach (IContractBehavior b in Contract.Behaviors)
 				b.Validate (Contract, this);
 			foreach (IEndpointBehavior b in Behaviors)
@@ -126,7 +129,6 @@ namespace System.ServiceModel.Description
 				foreach (IOperationBehavior b in operation.Behaviors)
 					b.Validate (operation);
 			}
-#endif
 		}
 
 
@@ -136,12 +138,11 @@ namespace System.ServiceModel.Description
 
 			var proxy = se.Contract.CreateClientRuntime (callbackDispatchRuntime);
 
-#if !NET_2_1
 			foreach (IEndpointBehavior b in se.Behaviors)
 				b.ApplyClientBehavior (se, proxy);
 			foreach (IContractBehavior b in se.Contract.Behaviors)
 				b.ApplyClientBehavior (se.Contract, se, proxy);
-#endif
+
 			return proxy;
 		}
 	}

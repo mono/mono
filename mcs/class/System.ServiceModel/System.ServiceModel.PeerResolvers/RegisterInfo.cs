@@ -42,6 +42,7 @@ namespace System.ServiceModel.PeerResolvers
 					body = new RegisterInfoDC ();
 				return body;
 			}
+			set { body = value; }
 		}
 		RegisterInfoDC body;
 		

@@ -10,7 +10,7 @@ sources = closure.c error.c lalr.c lr0.c main.c mkpar.c output.c reader.c \
 datafiles = ACKNOWLEDGEMENTS NEW_FEATURES NOTES README README.jay skeleton \
             skeleton.cs
 
-DISTFILES = $(datafiles) $(sources) jay.1 $(wildcard *.h)
+DISTFILES = $(datafiles) $(sources) jay.1 $(wildcard *.h) jay.vcxproj
 
 all-local: jay
 

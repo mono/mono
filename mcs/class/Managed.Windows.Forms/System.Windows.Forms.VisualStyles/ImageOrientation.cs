@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum ImageOrientation
@@ -35,4 +34,3 @@ namespace System.Windows.Forms.VisualStyles
 		Horizontal = 1
 	}
 }
-#endif

@@ -1,4 +1,4 @@
-// cs0619-10.cs: `ObsoleteClass' is obsolete: `Do not use it.'
+// CS0619: `ObsoleteClass' is obsolete: `Do not use it.'
 // Line: 10
 
 using System;

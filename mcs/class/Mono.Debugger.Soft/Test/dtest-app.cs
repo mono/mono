@@ -176,6 +176,7 @@ public class Tests : TestsBase
 		exception_filter ();
 		threads ();
 		dynamic_methods ();
+		user ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -415,6 +416,7 @@ public class Tests : TestsBase
 		locals1 (null);
 		locals2<string> (null, 5, "ABC");
 		locals3 ();
+		locals6 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -466,6 +468,59 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals5 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6 () {
+		int i = 0;
+		int j = 0;
+		for (i = 0; i < 10; ++i)
+			j ++;
+		sbyte sb = 0;
+		for (i = 0; i < 10; ++i)
+			sb ++;
+		locals6_1 ();
+		locals6_2 (j);
+		locals6_3 ();
+		locals6_4 (j);
+		locals6_5 ();
+		locals6_6 (sb);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_1 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_2 (int arg) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_3 () {
+		// Clobber all registers
+		int sum = 0, i, j, k, l, m;
+		for (i = 0; i < 100; ++i)
+			sum ++;
+		for (j = 0; j < 100; ++j)
+			sum ++;
+		for (k = 0; k < 100; ++k)
+			sum ++;
+		for (l = 0; l < 100; ++l)
+			sum ++;
+		for (m = 0; m < 100; ++m)
+			sum ++;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_4 (int arg) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_5 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals6_6 (int arg) {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -582,6 +637,14 @@ public class Tests : TestsBase
 
 	public int invoke_return_primitive () {
 		return 42;
+	}
+
+	public int? invoke_return_nullable () {
+		return 42;
+	}
+
+	public int? invoke_return_nullable_null () {
+		return null;
 	}
 
 	public void invoke_type_load () {
@@ -826,6 +889,13 @@ public class Tests : TestsBase
 			string h = "hi";
 			string_call (h);
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void user () {
+		Debugger.Break ();
+
+		Debugger.Log (5, Debugger.IsLogging () ? "A" : "", "B");
 	}
 }
 

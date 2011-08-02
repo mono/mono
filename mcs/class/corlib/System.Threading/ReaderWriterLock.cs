@@ -46,9 +46,9 @@ namespace System.Threading
 		private int seq_num = 1;
 		private int state;
 		private int readers;
+		private int writer_lock_owner;
 		private LockQueue writer_queue;
 		private Hashtable reader_locks;
-		private int writer_lock_owner;
 
 		public ReaderWriterLock()
 		{
@@ -173,11 +173,15 @@ namespace System.Threading
 			lock (this) {
 				if (!HasWriterLock())
 					throw new ApplicationException ("The thread does not have the writer lock.");
-				
-				state = lockCookie.ReaderLocks;
-				reader_locks [Thread.CurrentThreadId] = state;
-				if (readers > 0) {
-					Monitor.PulseAll (this);
+
+				if (lockCookie.WriterLocks != 0)
+					state++;
+				else {
+					state = lockCookie.ReaderLocks;
+					reader_locks [Thread.CurrentThreadId] = state;
+					if (readers > 0) {
+						Monitor.PulseAll (this);
+					}
 				}
 				
 				// MSDN: A thread does not block when downgrading from the writer lock, 

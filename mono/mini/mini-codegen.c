@@ -271,6 +271,17 @@ mono_call_inst_add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, int vreg, i
 	}
 }
 
+/*
+ * mono_call_inst_add_outarg_vt:
+ *
+ *   Register OUTARG_VT as belonging to CALL.
+ */
+void
+mono_call_inst_add_outarg_vt (MonoCompile *cfg, MonoCallInst *call, MonoInst *outarg_vt)
+{
+	call->outarg_vts = g_slist_append_mempool (cfg->mempool, call->outarg_vts, outarg_vt);
+}
+
 static void
 resize_spill_info (MonoCompile *cfg, int bank)
 {
@@ -552,7 +563,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_VOIDCALLVIRT: {
+	case OP_VOIDCALLVIRT:
+	case OP_TAILCALL: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
 
@@ -2428,7 +2440,6 @@ mono_opcode_to_type (int opcode, int cmp_opcode)
 		switch (cmp_opcode) {
 		case OP_ICOMPARE:
 		case OP_ICOMPARE_IMM:
-		case OP_LCOMPARE_IMM:
 			return CMP_TYPE_I;
 		default:
 			return CMP_TYPE_L;
@@ -2477,8 +2488,9 @@ mono_is_regsize_var (MonoType *t)
 		return FALSE;
 	case MONO_TYPE_VALUETYPE:
 		return FALSE;
+	default:
+		return FALSE;
 	}
-	return FALSE;
 }
 
 #ifndef DISABLE_JIT

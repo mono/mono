@@ -310,6 +310,30 @@ namespace System.Net
 			return Encoding.UTF8.GetBytes(ToString ());
 		}
 
+		internal string ToStringMultiValue ()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			int count = base.Count;
+			for (int i = 0; i < count ; i++) {
+				string key = GetKey (i);
+				if (IsMultiValue (key)) {
+					foreach (string v in GetValues (i)) {
+						sb.Append (key)
+						  .Append (": ")
+						  .Append (v)
+						  .Append ("\r\n");
+					}
+				} else {
+					sb.Append (key)
+					  .Append (": ")
+					  .Append (Get (i))
+					  .Append ("\r\n");
+				}
+			 }
+			return sb.Append("\r\n").ToString();
+		}
+
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -320,7 +344,7 @@ namespace System.Net
 				  .Append (": ")
 				  .Append (Get (i))
 				  .Append ("\r\n");
-				  
+
 			return sb.Append("\r\n").ToString();
 		}
 #if !TARGET_JVM
@@ -406,7 +430,7 @@ namespace System.Net
 			Set (ResponseHeaderToString (header), value);
 		}
 
-		string RequestHeaderToString (HttpRequestHeader value)
+		static string RequestHeaderToString (HttpRequestHeader value)
 		{
 			switch (value){
 			case HttpRequestHeader.CacheControl:

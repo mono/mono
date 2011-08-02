@@ -3,8 +3,10 @@
  *
  * Author:
  *   Aaron Bockover (abockover@novell.com)
+ *   Gonzalo Paniagua Javier (gonzalo@novell.com)
+ *   Jeffrey Stedfast (fejj@novell.com)
  *
- * (C) 2006 Novell, Inc.
+ * (C) 2006,2011 Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -57,7 +59,7 @@ g_ptr_array_grow(GPtrArrayPriv *array, guint length)
 }
 
 GPtrArray *
-g_ptr_array_new()
+g_ptr_array_new(void)
 {
 	return g_ptr_array_sized_new(0);
 }
@@ -209,17 +211,17 @@ g_ptr_array_foreach(GPtrArray *array, GFunc func, gpointer user_data)
 }
 
 void
-g_ptr_array_sort(GPtrArray *array, GCompareFunc compare_func)
+g_ptr_array_sort(GPtrArray *array, GCompareFunc compare)
 {
 	g_return_if_fail(array != NULL);
-	qsort(array->pdata, array->len, sizeof(gpointer), compare_func);
+	qsort(array->pdata, array->len, sizeof(gpointer), compare);
 }
 
 void
-g_ptr_array_sort_with_data(GPtrArray *array, GCompareDataFunc compare_func, 
-	gpointer user_data)
+g_ptr_array_sort_with_data (GPtrArray *array, GCompareDataFunc compare, gpointer user_data)
 {
+	g_return_if_fail (array != NULL);
+	
+	g_qsort_with_data (array->pdata, array->len, sizeof (gpointer), compare, user_data);
 }
-
-
 

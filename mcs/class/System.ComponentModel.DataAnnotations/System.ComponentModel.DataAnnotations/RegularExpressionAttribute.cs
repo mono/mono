@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//  Antoine Cailliau <a.cailliau@maximux.net>
 //
 // Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 20011 Maximux Scris. http://maximux.net
 //
 
 //
@@ -29,29 +31,47 @@
 //
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
+
+#if NET_4_0
+	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Parameter, AllowMultiple = false)]
+#else
+	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]	
+#endif
 	public class RegularExpressionAttribute : ValidationAttribute
 	{
 		public RegularExpressionAttribute (string pattern)
+			: base(GetDefaultErrorMessage)
 		{
+			if (pattern == null)
+				throw new ArgumentNullException("pattern");
 			Pattern = pattern;
 		}
 
 		public string Pattern { get; private set; }
 
-		[MonoTODO]
+		static string GetDefaultErrorMessage ()
+		{
+			return "The field {0} must match the regular expression {1}.";
+		}
+		
 		public override string FormatErrorMessage (string name)
 		{
-			throw new NotImplementedException ();
+			return string.Format(ErrorMessageString, name, Pattern);
 		}
 
-		[MonoTODO]
+		// LAMESPEC: does not throw ValidationException when value does not match the regular expression
 		public override bool IsValid (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null) 
+				return true;
+			
+			string str = (string) value;
+			Regex regex = new Regex(Pattern);
+			return regex.IsMatch(str);
 		}
 	}
 }

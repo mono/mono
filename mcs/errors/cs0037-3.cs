@@ -1,4 +1,4 @@
-// cs0037-2.cs: Cannot convert null to `byte' because it is a value type
+// CS0037: Cannot convert null to `byte' because it is a value type
 // Line : 7
 
 public class Blah {

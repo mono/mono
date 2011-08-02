@@ -722,6 +722,18 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (_serialized, bufferOut);
 		}
 
+		[Test] // bug #676060
+		public void ZeroCapacity ()
+		{
+			MemoryStream ms = new MemoryStream();
+			ms.WriteByte(1);
+			ms.Position = 0;
+			ms.SetLength(0);
+			ms.Capacity = 0;
+			ms.WriteByte(1);
+			byte[] bytes = ms.ToArray();
+		}
+
 		[Test] // bug #80205
 		[Category ("NotWorking")]
 		public void DeserializeTest ()

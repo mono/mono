@@ -78,16 +78,7 @@ namespace System.Windows.Forms
 
 		void Set_PrinterSettings_PrintFileName (PrinterSettings settings, string filename)
 		{
-			#if NET_2_0
-				settings.PrintFileName = filename;
-			#else
-			
-				PropertyInfo printFileName = typeof (PrinterSettings).GetProperty ("PrintFileName", BindingFlags.NonPublic | BindingFlags.Instance);
-				if (printFileName == null) {
-					throw new Exception ("Unable to set filename to print");
-				}
-				printFileName.SetValue (settings, filename, null);
-			#endif
+			settings.PrintFileName = filename;
 		}
 
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e) {
@@ -111,13 +102,11 @@ namespace System.Windows.Forms
 
 		#endregion	// Protected Instance Methods
 
-#if NET_2_0
 		#region Public Properties
 		public override bool IsPreview {
 			get { return underlyingController.IsPreview; }
 		}
 		#endregion
-#endif
 	
 		#region Internal Class
 		class PrintingDialog : Form {

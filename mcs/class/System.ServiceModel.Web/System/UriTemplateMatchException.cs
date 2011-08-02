@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-#if !NET_2_1
+#if !MOONLIGHT
 	[Serializable]
 #endif
 	public class UriTemplateMatchException : SystemException
@@ -39,7 +39,7 @@ namespace System
 		public UriTemplateMatchException () : base () {}
 		public UriTemplateMatchException (string msg) : base (msg) {}
 		public UriTemplateMatchException (string msg, Exception inner) : base (msg, inner) {}
-#if !NET_2_1
+#if !MOONLIGHT
 		protected UriTemplateMatchException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 #endif

@@ -1,4 +1,4 @@
-// cs0037-5.cs: Cannot convert null to `int' because it is a value type
+// CS0037: Cannot convert null to `int' because it is a value type
 // Line: 6
 
 class C

@@ -191,8 +191,7 @@ namespace System.ServiceModel
 				reader.ReadStartElement ();
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (reader.NodeType != XmlNodeType.Element ||
-					    reader.LocalName != "security" ||
-					    reader.IsEmptyElement) {
+					    reader.LocalName != "security") {
 						reader.Skip ();
 						continue;
 					}

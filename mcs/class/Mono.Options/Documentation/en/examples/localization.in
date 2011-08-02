@@ -1,9 +1,9 @@
-mono doc/en/examples/localization.exe --help --version
+mono Documentation/en/examples/localization.exe --help --version
 
-LANGUAGE=es mono doc/en/examples/localization.exe --with-gettext --help --version
+LANGUAGE=es mono Documentation/en/examples/localization.exe --with-gettext --help --version
 
-mono doc/en/examples/localization.exe --with-hello --help --version
+mono Documentation/en/examples/localization.exe --with-hello --help --version
 
-mono doc/en/examples/localization.exe -n not-an-int
+mono Documentation/en/examples/localization.exe -n not-an-int
 
-mono doc/en/examples/localization.exe --with-hello -n not-an-int
+mono Documentation/en/examples/localization.exe --with-hello -n not-an-int

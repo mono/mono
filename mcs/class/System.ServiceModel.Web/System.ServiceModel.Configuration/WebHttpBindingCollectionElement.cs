@@ -63,7 +63,7 @@ namespace System.ServiceModel.Configuration
 
 		// Methods
 
-		protected override Binding GetDefault ()
+		protected internal override Binding GetDefault ()
 		{
 			return new WebHttpBinding ();
 		}

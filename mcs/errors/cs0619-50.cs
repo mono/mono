@@ -1,4 +1,4 @@
-// cs0619-50.cs: `A.B' is obsolete: `yes'
+// CS0619-50: `A.B' is obsolete: `yes'
 // Line: 12
 
 using Z = A.B;

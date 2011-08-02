@@ -1,3 +1,4 @@
+
 # x86-class cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -169,7 +170,7 @@ amd64_loadi8_memindex: dest:i src1:i src2:i len:10
 move: dest:i src1:i len:3
 add_imm: dest:i src1:i len:8 clob:1 nacl:11
 sub_imm: dest:i src1:i len:8 clob:1 nacl:11
-mul_imm: dest:i src1:i len:11
+mul_imm: dest:i src1:i len:12
 and_imm: dest:i src1:i len:8 clob:1
 or_imm: dest:i src1:i len:8 clob:1
 xor_imm: dest:i src1:i len:8 clob:1
@@ -377,7 +378,7 @@ int_bge_un: len:8
 int_ble: len:8
 int_ble_un: len:8
 
-card_table_wbarrier: src1:a src2:i clob:d len:42
+card_table_wbarrier: src1:a src2:i clob:d len:56
 
 relaxed_nop: len:2
 hard_nop: len:1
@@ -554,6 +555,8 @@ rcpps: dest:x src1:x len:5
 pshufflew_high: dest:x src1:x len:6
 pshufflew_low: dest:x src1:x len:6
 pshuffled: dest:x src1:x len:6
+shufps: dest:x src1:x src2:x len:5 clob:1
+shufpd: dest:x src1:x src2:x len:6 clob:1
 
 extract_mask: dest:i src1:x len:6
 
@@ -660,6 +663,15 @@ pshrq_reg: dest:x src1:x src2:x len:5 clob:1
 
 pshlq: dest:x src1:x len:6 clob:1
 pshlq_reg: dest:x src1:x src2:x len:5 clob:1
+
+cvtdq2pd: dest:x src1:x len:5 clob:1
+cvtdq2ps: dest:x src1:x len:4 clob:1
+cvtpd2dq: dest:x src1:x len:5 clob:1
+cvtpd2ps: dest:x src1:x len:5 clob:1
+cvtps2dq: dest:x src1:x len:5 clob:1
+cvtps2pd: dest:x src1:x len:4 clob:1
+cvttpd2dq: dest:x src1:x len:5 clob:1
+cvttps2dq: dest:x src1:x len:5 clob:1
 
 xmove: dest:x src1:x len:5
 xzero: dest:x len:5

@@ -1,4 +1,4 @@
-// cs0118-2.cs: `A.B' is a `namespace' but a `type' was expected
+// CS0118: `A.B' is a `namespace' but a `type' was expected
 // Line: 9
 // Compiler options: -r:CS0118-2-lib.dll
 

@@ -689,6 +689,23 @@ namespace MonoTests.System.Xaml
 			xw.WriteEndObject ();
 		}
 
+		[Test]
+		public void WriteAttachableProperty ()
+		{
+			Attached2 result = null;
+			
+			var rsettings = new XamlXmlReaderSettings ();
+			using (var reader = new XamlXmlReader (new StringReader (String.Format (@"<Attached2 AttachedWrapper3.Property=""Test"" xmlns=""clr-namespace:MonoTests.System.Xaml;assembly={0}""></Attached2>", typeof (AttachedWrapper3).Assembly.GetName ().Name)), rsettings)) {
+				var wsettings = new XamlObjectWriterSettings ();
+				using (var writer = new XamlObjectWriter (reader.SchemaContext, wsettings)) {
+					XamlServices.Transform (reader, writer, false);
+					result = (Attached2) writer.Result;
+				}
+			}
+
+			Assert.AreEqual ("Test", result.Property, "#1");
+		}
+
 		// extra use case based tests.
 
 		[Test]
@@ -1223,6 +1240,173 @@ namespace MonoTests.System.Xaml
 						Attachable.SetFoo (des.Value, null);
 					}
 				}
+			}
+		}
+
+		[Test]
+		public void Write_EventStore ()
+		{
+			using (var xr = GetReader ("EventStore.xml")) {
+				var res = (EventStore) XamlServices.Load (xr);
+				Assert.AreEqual ("foo", res.Examine (), "#1");
+				Assert.IsTrue (res.Method1Invoked, "#2");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (XamlDuplicateMemberException))] // for two occurence of Event1 ...
+		public void Write_EventStore2 ()
+		{
+			using (var xr = GetReader ("EventStore2.xml")) {
+				XamlServices.Load (xr);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (XamlObjectWriterException))] // attaching nonexistent method
+		public void Write_EventStore3 ()
+		{
+			using (var xr = GetReader ("EventStore3.xml")) {
+				XamlServices.Load (xr);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // type resolution failure.
+		public void Write_EventStore4 ()
+		{
+			using (var xr = GetReader ("EventStore4.xml")) {
+				var res = (EventStore2<EventArgs>) XamlServices.Load (xr);
+				Assert.AreEqual ("foo", res.Examine (), "#1");
+				Assert.IsTrue (res.Method1Invoked, "#2");
+			}
+		}
+
+		[Test]
+		public void Write_AbstractWrapper ()
+		{
+			using (var xr = GetReader ("AbstractContainer.xml")) {
+				var res = (AbstractContainer) XamlServices.Load (xr);
+				Assert.IsNull (res.Value1, "#1");
+				Assert.IsNotNull (res.Value2, "#2");
+				Assert.AreEqual ("x", res.Value2.Foo, "#3");
+			}
+		}
+
+		[Test]
+		public void Write_ReadOnlyPropertyContainer ()
+		{
+			using (var xr = GetReader ("ReadOnlyPropertyContainer.xml")) {
+				var res = (ReadOnlyPropertyContainer) XamlServices.Load (xr);
+				Assert.AreEqual ("x", res.Foo, "#1");
+				Assert.AreEqual ("x", res.Bar, "#2");
+			}
+		}
+
+		[Test]
+		public void Write_TypeConverterOnListMember ()
+		{
+			using (var xr = GetReader ("TypeConverterOnListMember.xml")) {
+				var res = (SecondTest.TypeOtherAssembly) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Values.Count, "#1");
+				Assert.AreEqual (3, res.Values [2], "#2");
+			}
+		}
+
+		[Test]
+		public void Write_EnumContainer ()
+		{
+			using (var xr = GetReader ("EnumContainer.xml")) {
+				var res = (EnumContainer) XamlServices.Load (xr);
+				Assert.AreEqual (EnumValueType.Two, res.EnumProperty, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_CollectionContentProperty ()
+		{
+			using (var xr = GetReader ("CollectionContentProperty.xml")) {
+				var res = (CollectionContentProperty) XamlServices.Load (xr);
+				Assert.AreEqual (4, res.ListOfItems.Count, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_CollectionContentProperty2 ()
+		{
+			using (var xr = GetReader ("CollectionContentProperty2.xml")) {
+				var res = (CollectionContentProperty) XamlServices.Load (xr);
+				Assert.AreEqual (4, res.ListOfItems.Count, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_AmbientPropertyContainer ()
+		{
+			using (var xr = GetReader ("AmbientPropertyContainer.xml")) {
+				var res = (SecondTest.ResourcesDict) XamlServices.Load (xr);
+				Assert.AreEqual (2, res.Count, "#1");
+				Assert.IsTrue (res.ContainsKey ("TestDictItem"), "#2");
+				Assert.IsTrue (res.ContainsKey ("okay"), "#3");
+				var i1 = res ["TestDictItem"] as SecondTest.TestObject;
+				Assert.IsNull (i1.TestProperty, "#4");
+				var i2 = res ["okay"] as SecondTest.TestObject;
+				Assert.AreEqual (i1, i2.TestProperty, "#5");
+			}
+		}
+
+		[Test] // bug #682102
+		public void Write_AmbientPropertyContainer2 ()
+		{
+			using (var xr = GetReader ("AmbientPropertyContainer2.xml")) {
+				var res = (SecondTest.ResourcesDict) XamlServices.Load (xr);
+				Assert.AreEqual (2, res.Count, "#1");
+				Assert.IsTrue (res.ContainsKey ("TestDictItem"), "#2");
+				Assert.IsTrue (res.ContainsKey ("okay"), "#3");
+				var i1 = res ["TestDictItem"] as SecondTest.TestObject;
+				Assert.IsNull (i1.TestProperty, "#4");
+				var i2 = res ["okay"] as SecondTest.TestObject;
+				Assert.AreEqual (i1, i2.TestProperty, "#5");
+			}
+		}
+
+		[Test]
+		public void Write_NullableContainer ()
+		{
+			using (var xr = GetReader ("NullableContainer.xml")) {
+				var res = (NullableContainer) XamlServices.Load (xr);
+				Assert.AreEqual (5, res.TestProp, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_DirectListContainer ()
+		{
+			using (var xr = GetReader ("DirectListContainer.xml")) {
+				var res = (DirectListContainer) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Items.Count, "#1");
+				Assert.AreEqual ("Hello3", res.Items [2].Value, "#2");
+			}
+		}
+
+		[Test]
+		public void Write_DirectDictionaryContainer ()
+		{
+			using (var xr = GetReader ("DirectDictionaryContainer.xml")) {
+				var res = (DirectDictionaryContainer) XamlServices.Load (xr);
+				Assert.AreEqual (3, res.Items.Count, "#1");
+				Assert.AreEqual (40, res.Items [EnumValueType.Three], "#2");
+			}
+		}
+
+		[Test]
+		public void Write_DirectDictionaryContainer2 ()
+		{
+			using (var xr = GetReader ("DirectDictionaryContainer2.xml")) {
+				var res = (SecondTest.ResourcesDict2) XamlServices.Load (xr);
+				Assert.AreEqual (2, res.Count, "#1");
+				Assert.AreEqual ("1", ((SecondTest.TestObject2) res ["1"]).TestProperty, "#2");
+				Assert.AreEqual ("two", ((SecondTest.TestObject2) res ["two"]).TestProperty, "#3");
 			}
 		}
 	}

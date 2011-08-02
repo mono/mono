@@ -1,4 +1,4 @@
-// cs1624.cs: The body of `X.Test(int)' cannot be an iterator block because `System.Collections.ArrayList' is not an iterator interface type
+// CS1624: The body of `X.Test(int)' cannot be an iterator block because `System.Collections.ArrayList' is not an iterator interface type
 // Line: 8
 using System;
 using System.Collections;

@@ -1,4 +1,4 @@
-// cs0236-2.cs: A field initializer cannot reference the nonstatic field, method, or property `C1.CC'
+// CS0236: A field initializer cannot reference the nonstatic field, method, or property `C1.CC'
 // Line: 11
 
 class C1

@@ -2685,8 +2685,8 @@ verify_method_table (VerifyContext *ctx)
 		//TODO check signature contents
 
 		if (rva) {
-			if (flags & METHOD_ATTRIBUTE_ABSTRACT)
-				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d has RVA != 0 but is Abstract", i));
+			if ((flags & (METHOD_ATTRIBUTE_ABSTRACT | METHOD_ATTRIBUTE_PINVOKE_IMPL)) || (implflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
+				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d has RVA != 0 but is either Abstract, InternalCall or PinvokeImpl", i));
 			if (code_type == METHOD_IMPL_ATTRIBUTE_OPTIL)
 				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d has RVA != 0 but is CodeTypeMask is neither Native, CIL or Runtime", i));
 		} else {
@@ -3401,7 +3401,7 @@ verify_assembly_table (VerifyContext *ctx)
 	}
 }
 
-#define INVALID_ASSEMBLYREF_FLAGS_BITS ~(1)
+#define INVALID_ASSEMBLYREF_FLAGS_BITS ~((1 << 0) | (1 << 8) | (1 << 14) | (1 << 15))
 static void
 verify_assemblyref_table (VerifyContext *ctx)
 {
@@ -4284,14 +4284,14 @@ mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *e
 	mono_metadata_decode_row (table, row, data, MONO_METHODIMPL_SIZE);
 
 	body = method_from_method_def_or_ref (image, data [MONO_METHODIMPL_BODY], NULL);
-	if (mono_loader_get_last_error ()) {
+	if (!body || mono_loader_get_last_error ()) {
 		mono_loader_clear_error ();
 		mono_error_set_bad_image (error, image, "Invalid methodimpl body for row %x", row);
 		return FALSE;
 	}
 
 	declaration = method_from_method_def_or_ref (image, data [MONO_METHODIMPL_DECLARATION], NULL);
-	if (mono_loader_get_last_error ()) {
+	if (!declaration || mono_loader_get_last_error ()) {
 		mono_loader_clear_error ();
 		mono_error_set_bad_image (error, image, "Invalid methodimpl declaration for row %x", row);
 		return FALSE;

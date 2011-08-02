@@ -326,7 +326,7 @@ namespace System {
 				query = relativeUri.Substring (pos);
 				if (!userEscaped)
 					query = EscapeString (query);
-#if !NET_4_0 && !MOONLIGHT
+#if !NET_4_0 && !MOONLIGHT && !MOBILE
 				consider_query = query.Length > 0;
 #endif
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -833,14 +833,14 @@ namespace System {
 			return (((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
 		}
 
-		public override bool Equals (object comparant) 
+		public override bool Equals (object comparand) 
 		{
-			if (comparant == null) 
+			if (comparand == null) 
 				return false;
 
-			Uri uri = comparant as Uri;
+			Uri uri = comparand as Uri;
 			if ((object) uri == null) {
-				string s = comparant as String;
+				string s = comparand as String;
 				if (s == null)
 					return false;
 				uri = new Uri (s);
@@ -865,14 +865,14 @@ namespace System {
 				&& this.path == uri.path;
 		}
 
-		public static bool operator == (Uri u1, Uri u2)
+		public static bool operator == (Uri uri1, Uri uri2)
 		{
-			return object.Equals(u1, u2);
+			return object.Equals (uri1, uri2);
 		}
 
-		public static bool operator != (Uri u1, Uri u2)
+		public static bool operator != (Uri uri1, Uri uri2)
 		{
-			return !(u1 == u2);
+			return !(uri1 == uri2);
 		}
 
 		public override int GetHashCode () 
@@ -982,11 +982,11 @@ namespace System {
 			return (char) ((msb << 4) | lsb);
 		}
 
-		public static bool IsHexDigit (char digit) 
+		public static bool IsHexDigit (char character) 
 		{
-			return (('0' <= digit && digit <= '9') ||
-			        ('a' <= digit && digit <= 'f') ||
-			        ('A' <= digit && digit <= 'F'));
+			return (('0' <= character && character <= '9') ||
+			        ('a' <= character && character <= 'f') ||
+			        ('A' <= character && character <= 'F'));
 		}
 
 		public static bool IsHexEncoding (string pattern, int index) 
@@ -1004,7 +1004,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2011,7 +2011,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2182,7 +2182,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (relativeUri == null)
 				return false;
 #endif

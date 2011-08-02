@@ -57,17 +57,11 @@ namespace System.Windows.Forms
 		}
 
 		
-#if NET_2_0
 		public DataGridColumnStyle this [PropertyDescriptor propertyDesciptor] {
 			get {
-				PropertyDescriptor propDesc = propertyDesciptor;
-#else
-		public DataGridColumnStyle this [PropertyDescriptor propDesc] {
-			get {
-#endif
 				for (int i = 0; i < items.Count; i++) {
 					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-					if (column.PropertyDescriptor.Equals (propDesc))
+					if (column.PropertyDescriptor.Equals (propertyDesciptor))
 						return column;
 				}
 				
@@ -146,15 +140,9 @@ namespace System.Windows.Forms
 			return (FromColumnNameToIndex (column.MappingName) != -1);
 		}
 
-#if NET_2_0
 		public bool Contains (PropertyDescriptor propertyDescriptor )
 		{
-			PropertyDescriptor propDesc = propertyDescriptor;
-#else
-		public bool Contains (PropertyDescriptor propDesc)
-		{
-#endif
-			return (this [propDesc] != null);
+			return (this [propertyDescriptor] != null);
 		}
 
 		public bool Contains (string name)
@@ -212,16 +200,10 @@ namespace System.Windows.Forms
 			return items.IndexOf (element);
 		}
 		
-#if NET_2_0
 		protected void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
-			CollectionChangeEventArgs ccevent = e;
-#else
-		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
-		{
-#endif
 			if (fire_event && CollectionChanged != null)
-				CollectionChanged (this, ccevent);
+				CollectionChanged (this, e);
 		}
 		
 		public void Remove (DataGridColumnStyle column)

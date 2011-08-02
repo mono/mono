@@ -12,7 +12,7 @@ namespace Tests {
 			get { return BuildSiteMap(); }
 		}
 
-		protected override SiteMapNode GetRootNodeCore() {
+		protected internal override SiteMapNode GetRootNodeCore() {
 			return BuildSiteMap();
 		}
 

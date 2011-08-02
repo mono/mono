@@ -1,4 +1,4 @@
-// cs0619-6.cs: `A._value' is obsolete: `Do not use it'
+// CS0619: `A._value' is obsolete: `Do not use it'
 // Line: 9
 
 class A {

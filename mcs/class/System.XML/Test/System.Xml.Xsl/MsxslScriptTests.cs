@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
-	public class MsxslScriptTests : Assertion
+	public class MsxslScriptTests
 	{
 		// PI calc stuff are one of MSDN samples.
 

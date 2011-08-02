@@ -1,4 +1,4 @@
-// cs0157-6.cs: Control cannot leave the body of a finally clause
+// CS0157: Control cannot leave the body of a finally clause
 // Line: 10
 
 class Foo {

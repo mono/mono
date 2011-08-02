@@ -86,6 +86,12 @@ namespace System.IO.IsolatedStorage {
 			base.Flush ();
 		}
 
+		public override void Flush (bool flushToDisk)
+		{
+			container.PreCheck ();
+			base.Flush (flushToDisk);
+		}
+
 		public override int Read (byte [] buffer, int offset, int count)
 		{
 			container.PreCheck ();

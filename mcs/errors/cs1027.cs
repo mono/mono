@@ -1,4 +1,4 @@
-// cs1027.cs: Expected `#endif' directive
+// CS1027: Expected `#endif' directive
 // Line: 6
 
 #if false

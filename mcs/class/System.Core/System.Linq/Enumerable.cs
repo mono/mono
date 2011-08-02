@@ -637,7 +637,7 @@ namespace System.Linq
 			int counter = 0;
 			using (var enumerator = source.GetEnumerator ())
 				while (enumerator.MoveNext ())
-					counter++;
+					checked { counter++; }
 
 			return counter;
 		}
@@ -649,7 +649,7 @@ namespace System.Linq
 			int counter = 0;
 			foreach (var element in source)
 				if (predicate (element))
-					counter++;
+					checked { counter++; }
 
 			return counter;
 		}
@@ -2163,18 +2163,16 @@ namespace System.Linq
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			long upto = ((long) start + count) - 1;
-
-			if (upto > int.MaxValue)
+			if (((long) start + count) - 1L > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
-			return CreateRangeIterator (start, (int) upto);
+			return CreateRangeIterator (start, count);
 		}
 
-		static IEnumerable<int> CreateRangeIterator (int start, int upto)
+		static IEnumerable<int> CreateRangeIterator (int start, int count)
 		{
-			for (int i = start; i <= upto; i++)
-				yield return i;
+			for (int i = 0; i < count; i++)
+				yield return start + i;
 		}
 
 		#endregion
@@ -2208,12 +2206,10 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateReverseIterator<TSource> (IEnumerable<TSource> source)
 		{
-			var list = source as IList<TSource>;
-			if (list == null)
-				list = new List<TSource> (source);
+			var array = source.ToArray ();
 
-			for (int i = list.Count - 1; i >= 0; i--)
-				yield return list [i];
+			for (int i = array.Length - 1; i >= 0; i--)
+				yield return array [i];
 		}
 
 		#endregion
@@ -2795,14 +2791,34 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			TSource[] array;
 			var collection = source as ICollection<TSource>;
 			if (collection != null) {
-				var array = new TSource [collection.Count];
+				if (collection.Count == 0)
+					return EmptyOf<TSource>.Instance;
+				
+				array = new TSource [collection.Count];
 				collection.CopyTo (array, 0);
 				return array;
 			}
+			
+			int pos = 0;
+			array = EmptyOf<TSource>.Instance;
+			foreach (var element in source) {
+				if (pos == array.Length) {
+					if (pos == 0)
+						array = new TSource [4];
+					else
+						Array.Resize (ref array, pos * 2);
+				}
 
-			return new List<TSource> (source).ToArray ();
+				array[pos++] = element;
+			}
+
+			if (pos != array.Length)
+				Array.Resize (ref array, pos);
+			
+			return array;
 		}
 
 		#endregion
@@ -2972,7 +2988,7 @@ namespace System.Linq
 
 		#endregion
 		
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		#region Zip
 		
 		public static IEnumerable<TResult> Zip<TFirst, TSecond, TResult> (this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)

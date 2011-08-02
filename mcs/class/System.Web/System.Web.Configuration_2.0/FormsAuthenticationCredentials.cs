@@ -70,7 +70,7 @@ namespace System.Web.Configuration
 			get { return (FormsAuthenticationUserCollection) base[usersProp]; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 		

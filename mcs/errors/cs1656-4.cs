@@ -1,4 +1,4 @@
-// cs1656-4.cs: Cannot assign to `i' because it is a `foreach iteration variable'
+// CS1656: Cannot assign to `i' because it is a `foreach iteration variable'
 // Line: 14
 
 using System.Collections;

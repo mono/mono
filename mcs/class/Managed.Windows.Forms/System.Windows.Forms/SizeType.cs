@@ -23,7 +23,7 @@
 //
 // (C) 2004 Novell, Inc.
 //
-#if NET_2_0
+
 namespace System.Windows.Forms {
 	public enum SizeType {
 		AutoSize = 0,
@@ -31,4 +31,3 @@ namespace System.Windows.Forms {
 		Percent = 2
 	}
 }
-#endif

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2011 Novell Inc. http://novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,6 +22,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace System.Xaml
 {
@@ -29,58 +30,88 @@ namespace System.Xaml
 	{
 		public XamlBackgroundReader (XamlReader wrappedReader)
 		{
-			throw new NotImplementedException ();
+			if (wrappedReader == null)
+				throw new ArgumentNullException ("wrappedReader");
+			r = wrappedReader;
+			q = new XamlNodeQueue (r.SchemaContext) { LineInfoProvider = r as IXamlLineInfo };
 		}
 		
+		Thread thread;
+		XamlReader r;
+		XamlNodeQueue q;
+		bool read_all_done, do_work = true;
+		ManualResetEvent wait = new ManualResetEvent (true);
+
 		public bool HasLineInfo {
-			get { throw new NotImplementedException (); }
+			get { return ((IXamlLineInfo) q.Reader).HasLineInfo; }
 		}
+		
 		public override bool IsEof {
-			get { throw new NotImplementedException (); }
+			get { return read_all_done && q.IsEmpty; }
 		}
+		
 		public int LineNumber {
-			get { throw new NotImplementedException (); }
+			get { return ((IXamlLineInfo) q.Reader).LineNumber; }
 		}
+		
+		[MonoTODO ("always returns 0")]
 		public int LinePosition {
-			get { throw new NotImplementedException (); }
+			get { return ((IXamlLineInfo) q.Reader).LinePosition; }
 		}
+		
 		public override XamlMember Member {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.Member; }
 		}
+		
 		public override NamespaceDeclaration Namespace {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.Namespace; }
 		}
+		
 		public override XamlNodeType NodeType {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.NodeType; }
 		}
+		
 		public override XamlSchemaContext SchemaContext {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.SchemaContext; }
 		}
+		
 		public override XamlType Type {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.Type; }
 		}
+		
 		public override object Value {
-			get { throw new NotImplementedException (); }
+			get { return q.Reader.Value; }
 		}
 
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			do_work = false;
 		}
 		
 		public override bool Read ()
 		{
-			throw new NotImplementedException ();
+			if (q.IsEmpty)
+				wait.WaitOne ();
+			return q.Reader.Read ();
 		}
 		
 		public void StartThread ()
 		{
-			throw new NotImplementedException ();
+			StartThread ("XAML reader thread"); // documented name
 		}
 		
 		public void StartThread (string threadName)
 		{
-			throw new NotImplementedException ();
+			if (thread != null)
+				throw new InvalidOperationException ("Thread has already started");
+			thread = new Thread (new ParameterizedThreadStart (delegate {
+				while (do_work && r.Read ()) {
+					q.Writer.WriteNode (r);
+					wait.Set ();
+				}
+				read_all_done = true;
+			})) { Name = threadName };
+			thread.Start ();
 		}
 	}
 }

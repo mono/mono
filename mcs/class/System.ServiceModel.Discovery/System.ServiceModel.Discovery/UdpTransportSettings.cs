@@ -54,6 +54,7 @@ namespace System.ServiceModel.Discovery
 			MaxPendingMessageCount = source.MaxPendingMessageCount;
 			MaxReceivedMessageSize = source.MaxReceivedMessageSize;
 			MaxUnicastRetransmitCount = source.MaxUnicastRetransmitCount;
+			MulticastInterfaceId = source.MulticastInterfaceId;
 			SocketReceiveBufferSize = source.SocketReceiveBufferSize;
 			TimeToLive = source.TimeToLive;
 		}

@@ -1,4 +1,4 @@
-// cs1614.cs: `A' is ambiguous between `A' and `AAttribute'. Use either `@A' or `AAttribute'
+// CS1614: `A' is ambiguous between `A' and `AAttribute'. Use either `@A' or `AAttribute'
 // Line: 6
 // Bug #56456
 

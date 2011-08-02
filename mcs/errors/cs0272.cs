@@ -1,4 +1,4 @@
-// cs0272.cs: The property or indexer `P.Prop' cannot be used in this context because the set accessor is inaccessible
+// CS0272: The property or indexer `P.Prop' cannot be used in this context because the set accessor is inaccessible
 // Line: 19
 
 class P

@@ -250,6 +250,14 @@
 #endif
         }
 #       define GC_TEST_AND_SET_DEFINED
+      inline static void GC_clear(volatile unsigned int *addr) {
+#ifdef HAVE_ARMV6
+		  /* Memory barrier */
+		  __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
+#endif
+		  *(addr) = 0;
+      }
+#     define GC_CLEAR_DEFINED
 #    endif /* ARM32 */
 #    ifdef CRIS
         inline static int GC_test_and_set(volatile unsigned int *addr) {

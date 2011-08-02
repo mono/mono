@@ -23,7 +23,6 @@
 //	Alan McGovern (alan.mcgovern@gmail.com)
 //
 
-#if NET_2_0
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -131,5 +130,3 @@ namespace System.Windows.Forms
         #endregion Methods
     }
 }
-
-#endif

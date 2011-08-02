@@ -86,6 +86,12 @@ namespace Microsoft.Build.BuildEngine {
 				yield return kvp.Value;
 		}
 
+		internal IEnumerable<Target> AsIEnumerable ()
+		{
+			foreach (KeyValuePair <string, Target> kvp in targetsByName)
+				yield return kvp.Value;
+		}
+
 		public void RemoveTarget (Target targetToRemove)
 		{
 			if (targetToRemove == null)

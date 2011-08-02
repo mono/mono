@@ -1,4 +1,4 @@
-// cs0610-2.cs: Field or property cannot be of type `System.TypedReference'
+// CS0610: Field or property cannot be of type `System.TypedReference'
 // Line: 5
 
 public class Sample {

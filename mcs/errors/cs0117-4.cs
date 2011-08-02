@@ -1,4 +1,4 @@
-// cs0117: `System.Runtime.CompilerServices.IndexerNameAttribute' does not contain a definition for `errorarg'
+// CS0117: `System.Runtime.CompilerServices.IndexerNameAttribute' does not contain a definition for `errorarg'
 // Line: 
 
 using System.Runtime.CompilerServices;

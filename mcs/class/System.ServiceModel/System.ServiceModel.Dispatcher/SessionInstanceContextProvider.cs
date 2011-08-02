@@ -36,7 +36,7 @@ namespace System.ServiceModel.Dispatcher
 	internal class SessionInstanceContextProvider : IInstanceContextProvider
 	{
 		ServiceHostBase host;
-		Dictionary<UniqueId,InstanceContext> pool = new Dictionary<UniqueId,InstanceContext> ();
+		Dictionary<string,InstanceContext> pool = new Dictionary<string,InstanceContext> ();
 
 		public SessionInstanceContextProvider (ServiceHostBase host)
 		{
@@ -46,15 +46,18 @@ namespace System.ServiceModel.Dispatcher
 		public InstanceContext GetExistingInstanceContext (Message message, IContextChannel channel)
 		{
 			InstanceContext ctx;
-			var key = message.Headers.RelatesTo;
-			return key != null && pool.TryGetValue (key, out ctx) ? ctx : null;
+			var key = channel.SessionId ?? String.Empty;
+			return pool.TryGetValue (key, out ctx) ? ctx : null;
 		}
 
 		public void InitializeInstanceContext (InstanceContext instanceContext, Message message, IContextChannel channel)
 		{
-			var key = message.Headers.MessageId;
-			if (key != null)
-				pool [key] = instanceContext;
+			var key = channel.SessionId ?? String.Empty;
+			pool [key] = instanceContext;
+			channel.Closed += delegate {
+				pool.Remove (key);
+				instanceContext.Close (); // FIXME: timeout?
+			};
 		}
 
 		public bool IsIdle (InstanceContext instanceContext)

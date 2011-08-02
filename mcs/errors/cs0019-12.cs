@@ -1,4 +1,4 @@
-// cs0019.cs: Operator `*' cannot be applied to operands of type `E' and `E'
+// CS0019: Operator `*' cannot be applied to operands of type `E' and `E'
 // Line : 10
 
 enum E: byte {

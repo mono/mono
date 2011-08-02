@@ -1,4 +1,4 @@
-// cs1654-2.cs: Cannot assign to members of `q' because it is a `foreach iteration variable'
+// CS1654: Cannot assign to members of `q' because it is a `foreach iteration variable'
 // Line: 22
 
 using System.Collections;

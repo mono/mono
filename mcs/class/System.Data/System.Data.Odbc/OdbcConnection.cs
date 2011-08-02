@@ -82,6 +82,14 @@ namespace System.Data.Odbc
 			get { return hdbc; }
 		}
 
+		internal object Generation {
+			// We use the linkedCommands array as a generation indicator for statement
+			// handles allocated in our subsiduary OdbcCommands.  The rule is that the
+			// statement handles are only valid if the generation matches the one
+			// returned when the command was linked to the connection.
+			get { return linkedCommands; }
+		}
+
 		[OdbcCategoryAttribute ("DataCategory_Data")]
 		[DefaultValue ("")]
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]
@@ -261,21 +269,31 @@ namespace System.Data.Odbc
 		{
 			OdbcReturn ret = OdbcReturn.Error;
 			if (State == ConnectionState.Open) {
-				// close any associated commands
-				if (linkedCommands != null) {
-					for (int i = 0; i < linkedCommands.Count; i++) {
-						WeakReference wr = (WeakReference) linkedCommands [i];
-						if (wr == null)
-							continue;
-						OdbcCommand c = (OdbcCommand) wr.Target;
-						if (c != null)
-							c.Unlink ();
+				lock(this) {
+					// close any associated commands
+					// NOTE: we may 'miss' some if the garbage collector has
+					// already started to destroy them.
+					if (linkedCommands != null) {
+						for (int i = 0; i < linkedCommands.Count; i++) {
+							WeakReference wr = (WeakReference) linkedCommands [i];
+							if (wr == null)
+								continue;
+							OdbcCommand c = (OdbcCommand) wr.Target;
+							if (c != null)
+								c.Unlink ();
+						}
+						linkedCommands = null;
 					}
-					linkedCommands = null;
-				}
 
-				// disconnect
-				ret = libodbc.SQLDisconnect (hdbc);
+					// disconnect
+					ret = libodbc.SQLDisconnect (hdbc);
+
+				}
+				// There could be OdbcCommands outstanding (see NOTE above); their
+				// hstmts will have been freed and therefore will be invalid.
+				// However, they will find that their definition of Generation
+				// does not match the connection's, so they won't try and free
+				// those hstmt.
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 					throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 
@@ -580,27 +598,33 @@ namespace System.Data.Odbc
 			return value.TrimEnd ('\0');
 		}
 
-		internal void Link (OdbcCommand cmd)
+		internal object Link (OdbcCommand cmd)
 		{
-			if (linkedCommands == null)
-				linkedCommands = new ArrayList ();
-			linkedCommands.Add (new WeakReference (cmd));
+			lock(this) {
+				if (linkedCommands == null)
+					linkedCommands = new ArrayList ();
+				linkedCommands.Add (new WeakReference (cmd));
+				return linkedCommands;
+			}
 		}
 
-		internal void Unlink (OdbcCommand cmd)
+		internal object Unlink (OdbcCommand cmd)
 		{
-			if (linkedCommands == null)
-				return;
+			lock(this) {
+				if (linkedCommands == null)
+					return null;
 
-			for (int i = 0; i < linkedCommands.Count; i++) {
-				WeakReference wr = (WeakReference) linkedCommands [i];
-				if (wr == null)
-					continue;
-				OdbcCommand c = (OdbcCommand) wr.Target;
-				if (c == cmd) {
-					linkedCommands [i] = null;
-					break;
+				for (int i = 0; i < linkedCommands.Count; i++) {
+					WeakReference wr = (WeakReference) linkedCommands [i];
+					if (wr == null)
+						continue;
+					OdbcCommand c = (OdbcCommand) wr.Target;
+					if (c == cmd) {
+						linkedCommands [i] = null;
+						break;
+					}
 				}
+				return linkedCommands;
 			}
 		}
 

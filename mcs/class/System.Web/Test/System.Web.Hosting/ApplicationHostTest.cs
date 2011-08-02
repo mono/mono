@@ -162,7 +162,7 @@ namespace MonoTests.System.Web.Hosting {
 			// IGNORE this test. We are setting CachePath to DynamicBase by now.
 			// Assert.AreEqual (null, setup.CachePath, "D2");
 
-			Assert.AreEqual (tb + Path.DirectorySeparatorChar + "Web.Config", setup.ConfigurationFile, "D3");
+			Assert.AreEqual (0, String.Compare (tb + Path.DirectorySeparatorChar + "Web.Config", setup.ConfigurationFile, StringComparison.OrdinalIgnoreCase), "D3");
 			Assert.AreEqual (false, setup.DisallowBindingRedirects, "D4");
 			Assert.AreEqual (true, setup.DisallowCodeDownload, "D5");
 			Assert.AreEqual (false, setup.DisallowPublisherPolicy, "D6");

@@ -25,7 +25,6 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-#if NET_2_0
 
 using System.Drawing;
 using System.Collections;
@@ -106,6 +105,9 @@ namespace System.Windows.Forms
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+			
+			if (Contains (value))
+				return IndexOf (value);
 
 			value.InternalOwner = owner;
 				
@@ -380,4 +382,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

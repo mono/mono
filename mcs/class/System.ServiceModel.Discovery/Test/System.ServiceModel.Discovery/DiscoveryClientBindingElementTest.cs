@@ -70,7 +70,8 @@ namespace MonoTests.System.ServiceModel.Discovery
 			// could be either IPv4 or IPv6
 			Assert.AreEqual (new UdpDiscoveryEndpoint ().MulticastAddress, die.ListenUri, "#7");
 			Assert.AreEqual (ListenUriMode.Explicit, die.ListenUriMode, "#8");
-			Assert.AreEqual (5, die.Behaviors.Count, "#9");
+			// FIXME: enable (but the number should not matter; the functionality should rather matter. Those behaviors are internal in .NET)
+			// Assert.AreEqual (5, die.Behaviors.Count, "#9");
 
 			// default constructor
 			be = new DiscoveryClientBindingElement ();
@@ -144,19 +145,40 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress, ch.RemoteAddress, "#1");
 		}
 
-		// This test takes a while, so I in face don't want to enable it ...
+		class MyDiscoveryEndpointProvider2 : DiscoveryEndpointProvider
+		{
+			public MyDiscoveryEndpointProvider2 (DiscoveryEndpoint endpoint)
+			{
+				this.endpoint = endpoint;
+			}
+			
+			DiscoveryEndpoint endpoint;
+
+			public override DiscoveryEndpoint GetDiscoveryEndpoint ()
+			{
+				return endpoint;
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (EndpointNotFoundException))]
 		public void RequestChannelOpenFails ()
 		{
 			var be = new DiscoveryClientBindingElement ();
+			// Note that this explicitly sets shorter timeout than open timeout for the channel.
+			// If it is longer, then TimeoutException will occur instgead,
+			// as the client doesn't expect longer than FindCriteria.Duration.
+			be.FindCriteria.Duration = TimeSpan.FromSeconds (3);
+
 			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
 			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
 			cf.Open ();
 			Assert.IsNull (cf.GetProperty<DiscoveryEndpoint> (), "#1");
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
 			Assert.IsNull (ch.GetProperty<DiscoveryEndpoint> (), "#2");
-			ch.Open ();
+			DateTime start = DateTime.Now;
+			ch.Open (TimeSpan.FromSeconds (5));
+			Assert.IsTrue (DateTime.Now - start < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
 		}
 
 		[Test]
@@ -164,11 +186,16 @@ namespace MonoTests.System.ServiceModel.Discovery
 		public void RequestChannelOpenFails2 ()
 		{
 			var be = new DiscoveryClientBindingElement ();
+			// (The comment on RequestChannelOpenFails() applies here too.)
+			be.FindCriteria.Duration = TimeSpan.FromSeconds (3);
+
 			var bc = new BindingContext (new CustomBinding (be, new TcpTransportBindingElement ()), new BindingParameterCollection ());
 			var cf = be.BuildChannelFactory<IDuplexSessionChannel> (bc);
 			cf.Open ();
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
-			ch.Open ();
+			DateTime start = DateTime.Now;
+			ch.Open (TimeSpan.FromSeconds (5));
+			Assert.IsTrue (DateTime.Now - start < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
 		}
 
 		[Test]

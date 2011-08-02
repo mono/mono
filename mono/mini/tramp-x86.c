@@ -783,7 +783,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 	owner_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (owner_offset);
 	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
 
-	tramp_size = NACL_SIZE (64, 128);
+	tramp_size = NACL_SIZE (96, 128);
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -1040,7 +1040,7 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 static void
 handler_block_trampoline_helper (gpointer *ptr)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	*ptr = jit_tls->handler_block_return_address;
 }
 

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using NDesk.Options;
+using Mono.Options;
 
 class FooConverter : TypeConverter {
 	public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)

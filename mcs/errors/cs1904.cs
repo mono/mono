@@ -1,4 +1,4 @@
-// cs1904.cs: `-1' is not a valid warning number
+// CS1904: `-1' is not a valid warning number
 // Line: 0
 // Compiler options: -nowarn:1,-1
 

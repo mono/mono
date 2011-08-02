@@ -413,15 +413,15 @@ namespace System.Text.RegularExpressions {
 			return CreateMachine ().Scan (this, input, startat, input.Length);
 		}
 
-		public Match Match (string input, int startat, int length)
+		public Match Match (string input, int beginning, int length)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
-			if (startat < 0 || startat > input.Length)
-				throw new ArgumentOutOfRangeException ("startat");
-			if (length < 0 || length > input.Length - startat)
+			if (beginning < 0 || beginning > input.Length)
+				throw new ArgumentOutOfRangeException ("beginning");
+			if (length < 0 || length > input.Length - beginning)
 				throw new ArgumentOutOfRangeException ("length");
-			return CreateMachine ().Scan (this, input, startat, startat + length);
+			return CreateMachine ().Scan (this, input, beginning, beginning + length);
 		}
 
 		public MatchCollection Matches (string input)

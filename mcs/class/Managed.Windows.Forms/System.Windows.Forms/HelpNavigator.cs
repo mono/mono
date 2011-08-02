@@ -34,8 +34,6 @@ namespace System.Windows.Forms {
 		Find		= -2147483644,
 		AssociateIndex	= -2147483643,
 		KeywordIndex	= -2147483642,
-#if NET_2_0
 		TopicId		= -2147483641
-#endif
 	}
 }

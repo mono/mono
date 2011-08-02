@@ -44,10 +44,8 @@ namespace System.Windows.Forms.Layout
 				Control child = controls[i];
 				Size child_size = child.Size;
 
-#if NET_2_0
 				if (child.AutoSize)
 					child_size = GetPreferredControlSize (child);
-#endif
 
 				if (!child.VisibleInternal
 				    || child.ControlLayoutType == Control.LayoutType.Anchor)
@@ -158,7 +156,6 @@ namespace System.Windows.Forms.Layout
 			}
 		}
 		
-#if NET_2_0
 		void LayoutAutoSizedChildren (Control parent, Control[] controls)
 		{
 			for (int i = 0; i < controls.Length; i++) {
@@ -228,7 +225,6 @@ namespace System.Windows.Forms.Layout
 
 			container.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
 		}
-#endif
 
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
@@ -238,15 +234,12 @@ namespace System.Windows.Forms.Layout
 
 			LayoutDockedChildren (parent, controls);
 			LayoutAnchoredChildren (parent, controls);
-#if NET_2_0
 			LayoutAutoSizedChildren (parent, controls);
 			if (parent is Form) LayoutAutoSizeContainer (parent);
-#endif
 
 			return false;
 		}
 
-#if NET_2_0
 		private Size GetPreferredControlSize (Control child)
 		{
 			int width;
@@ -280,6 +273,5 @@ namespace System.Windows.Forms.Layout
 				
 			return new Size (width, height);
 		}
-#endif
 	}
 }

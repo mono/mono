@@ -61,7 +61,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			set { base [discovery_mode] = value; }
 		}
 
-		protected override Type EndpointType {
+		protected internal override Type EndpointType {
 			get { return typeof (UdpDiscoveryEndpoint); }
 		}
 
@@ -87,7 +87,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return properties; }
 		}
 		
-		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
+		protected internal override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
 			if (contractDescription == null)
 				throw new ArgumentNullException ("contractDescription");
@@ -109,7 +109,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			return ret;
 		}
 
-		protected override void InitializeFrom (ServiceEndpoint endpoint)
+		protected internal override void InitializeFrom (ServiceEndpoint endpoint)
 		{
 			if (endpoint == null)
 				throw new ArgumentNullException ("endpoint");

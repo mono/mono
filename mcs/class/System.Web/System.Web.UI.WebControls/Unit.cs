@@ -82,6 +82,7 @@ namespace System.Web.UI.WebControls {
 			if (input == null || input == String.Empty){
 				type = (UnitType) 0;
 				value = 0.0;
+				valueSet = false;
 				return;
 			}
 

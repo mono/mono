@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public class PowerStatus
@@ -71,4 +70,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

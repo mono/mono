@@ -170,6 +170,11 @@ namespace IKVM.Reflection
 			return parameterRequiredCustomModifiers == null ? Type.EmptyTypes : parameterRequiredCustomModifiers[parameter];
 		}
 
+		internal CallingConventions CallingConvention
+		{
+			get { return callingConvention; }
+		}
+
 		internal static PropertySignature ReadSig(ModuleReader module, ByteReader br, IGenericContext context)
 		{
 			byte flags = br.ReadByte();

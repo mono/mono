@@ -2,10 +2,8 @@ thisdir = tools
 
 per_profile_dirs = \
 	al		\
-	compiler-tester	\
 	linker		\
 	tuner		\
-	csharp		\
 	culevel		\
 	genxs		\
 	mkbundle	\
@@ -13,12 +11,15 @@ per_profile_dirs = \
 	mono-service	\
 	mono-xsd	\
 	resgen		\
+	gacutil		\
 	wsdl		\
 	xbuild
 
 net_4_0_dirs := \
 	$(per_profile_dirs) \
+	csharp		\
 	corcompare	\
+	compiler-tester	\
 	mono-xmltool	\
 	mono-shlib-cop	\
 	sgen		\
@@ -41,24 +42,19 @@ net_4_0_dirs := \
 	installvst	\
 	lc		\
 	mono-configuration-crypto \
-	ccrewrite
+	ccrewrite	\
+	security
 
 net_2_0_dirs := \
 	$(per_profile_dirs) \
 	monodoc		\
-	mdoc		\
-	compiler-tester
+	mdoc
 
-moonlight_dirs := \
-	compiler-tester
-
-basic_SUBDIRS = gacutil resgen security culevel
+build_SUBDIRS = gacutil security culevel
 net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
-moonlight_raw_SUBDIRS := $(moonlight_dirs)
-moonlight_SUBDIRS := $(moonlight_dirs)
 net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
 
-SUBDIRS = $(basic_SUBDIRS) $(net_2_0_SUBDIRS) $(moonlight_SUBDIRS)
+SUBDIRS = $(basic_SUBDIRS) $(net_2_0_SUBDIRS)
 DIST_SUBDIRS = $(SUBDIRS) $(net_4_0_dirs)
 
 include ../build/rules.make

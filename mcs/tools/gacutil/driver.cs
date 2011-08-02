@@ -299,6 +299,14 @@ namespace Mono.Tools {
 			string full_path = Path.Combine (Path.Combine (gacdir, an.Name), version_token);
 			string asmb_file = Path.GetFileName (name);
 			string asmb_path = Path.Combine (full_path, asmb_file);
+			string asmb_name = assembly.GetName ().Name;
+			
+			if (Path.GetFileNameWithoutExtension (asmb_file) != asmb_name) {
+				WriteLine (string.Format (failure_msg, name) +
+				    string.Format ("the filename \"{0}\" doesn't match the assembly name \"{1}\"",
+				    	asmb_file, asmb_name));
+				return false;
+			}
 
 			try {
 				if (Directory.Exists (full_path)) {

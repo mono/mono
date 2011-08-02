@@ -32,11 +32,7 @@ using System.Globalization;
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-	public
-#if !NET_2_0
-	sealed
-#endif
-	class DefaultValueAttribute : Attribute
+	public class DefaultValueAttribute : Attribute
 	{
 
 		private object DefaultValue;
@@ -108,20 +104,14 @@ namespace System.ComponentModel
 			} catch { }
 		}
 
-#if NET_2_0
 		public virtual object Value {
-#else
-		public object Value {
-#endif
 			get { return DefaultValue; }
 		}
 
-#if NET_2_0
 		protected void SetValue (object value)
 		{
 			DefaultValue = value;
 		}
-#endif
 
 		public override bool Equals (object obj)
 		{

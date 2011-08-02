@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 
 public interface I<out T>

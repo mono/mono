@@ -33,9 +33,7 @@ namespace System.Windows.Forms {
 	public sealed class LayoutEventArgs : EventArgs {
 		private Control	affected_control;
 		private string	affected_property;
-#if NET_2_0
 		private IComponent affected_component;
-#endif
 
 		#region Public Constructors
 		public LayoutEventArgs(Control affectedControl, string affectedProperty) {
@@ -43,21 +41,17 @@ namespace System.Windows.Forms {
 			this.affected_property = affectedProperty;
 		}
 
-#if NET_2_0
 		public LayoutEventArgs (IComponent affectedComponent, string affectedProperty)
 		{
 			this.affected_component = affectedComponent;
 			this.affected_property = affectedProperty;
 		}
-#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if NET_2_0
 		public IComponent AffectedComponent {
 			get { return this.affected_component; }
 		}
-#endif
 
 		public Control AffectedControl {
 			get {

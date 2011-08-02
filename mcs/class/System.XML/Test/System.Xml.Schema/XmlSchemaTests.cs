@@ -627,5 +627,12 @@ namespace MonoTests.System.Xml
 			while (reader.Read()) {}
 		}
 #endif
+
+		[Test]
+		public void TestImportSchemaThatIncludesAnother ()
+		{
+			XmlSchema xs = GetSchema ("Test/XmlFiles/xsd/importNamespaceTest2.xsd");
+			xs.Compile (null);
+		}
 	}
 }

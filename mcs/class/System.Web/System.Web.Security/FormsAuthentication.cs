@@ -172,6 +172,10 @@ namespace System.Web.Security
 						"index.html",
 						"index.htm" };
 #if NET_4_0
+		public static TimeSpan Timeout {
+			get; private set;
+		}
+		
 		public static void EnableFormsAuthentication (NameValueCollection configurationData)
 		{
 			BuildManager.AssertPreStartMethodsRunning ();
@@ -420,6 +424,9 @@ namespace System.Web.Security
 				FormsAuthenticationConfiguration config = section.Forms;
 
 				cookieName = config.Name;
+#if NET_4_0
+				Timeout = config.Timeout;
+#endif
 				timeout = (int)config.Timeout.TotalMinutes;
 				cookiePath = config.Path;
 				protection = config.Protection;

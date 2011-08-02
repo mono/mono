@@ -207,6 +207,13 @@ typedef struct _MonoThunkFreeList {
 
 typedef struct _MonoJitCodeHash MonoJitCodeHash;
 
+typedef struct _MonoTlsDataRecord MonoTlsDataRecord;
+struct _MonoTlsDataRecord {
+	MonoTlsDataRecord *next;
+	guint32 tls_offset;
+	guint32 size;
+};
+
 struct _MonoDomain {
 	/*
 	 * This lock must never be taken before the loader lock,
@@ -277,6 +284,7 @@ struct _MonoDomain {
 	MonoMethod         *private_invoke_method;
 	/* Used to store offsets of thread and context static fields */
 	GHashTable         *special_static_fields;
+	MonoTlsDataRecord  *tlsrec_list;
 	/* 
 	 * This must be a GHashTable, since these objects can't be finalized
 	 * if the hashtable contains a GC visible reference to them.
@@ -298,6 +306,8 @@ struct _MonoDomain {
 
 	GHashTable	   *generic_virtual_cases;
 	MonoThunkFreeList **thunk_free_lists;
+
+	GHashTable     *generic_virtual_thunks;
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
@@ -332,6 +342,10 @@ struct _MonoDomain {
 	MonoClass *socket_class;
 	MonoClass *ad_unloaded_ex_class;
 	MonoClass *process_class;
+
+	/* Cache function pointers for architectures  */
+	/* that require wrappers */
+	GHashTable *ftnptrs_hash;
 };
 
 typedef struct  {

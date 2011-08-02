@@ -51,12 +51,13 @@ namespace System.IO.IsolatedStorage {
 	// FIXME: Further limit the assertion when imperative Assert is implemented
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
-
+#if !MOBILE
 		private bool _resolved;
 		private ulong _maxSize;
+#endif
 		private Evidence _fullEvidences;
 		private static Mutex mutex = new Mutex ();
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		private bool closed;
 		private bool disposed;
 #endif
@@ -93,6 +94,7 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("assemblyEvidence");
 
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			if (domain) {
 				if (domainEvidenceType == null) {
 					storageFile._domainIdentity = GetDomainIdentityFromEvidence (domainEvidence);
@@ -114,7 +116,7 @@ namespace System.IO.IsolatedStorage {
 				if (storageFile._assemblyIdentity == null)
 					throw new IsolatedStorageException (Locale.GetText ("Couldn't find assembly identity."));
 			}
-
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -131,8 +133,10 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("assemblyIdentity");
 
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			if (assembly)
 				storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+#endif
 			storageFile._domainIdentity = domainIdentity;
 			storageFile._assemblyIdentity = assemblyIdentity;
 			storageFile.PostInit ();
@@ -143,6 +147,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			Demand (scope);
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			if ((scope & IsolatedStorageScope.Domain) != 0) {
 				if (domainEvidenceType == null)
 					domainEvidenceType = typeof (Url);
@@ -159,6 +164,7 @@ namespace System.IO.IsolatedStorage {
 					storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 				}
 			}
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -170,7 +176,9 @@ namespace System.IO.IsolatedStorage {
 
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._applicationIdentity = applicationIdentity;
+#if !MOBILE
 			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -180,7 +188,9 @@ namespace System.IO.IsolatedStorage {
 			Demand (scope);
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, applicationEvidenceType);
+#if !MOBILE
 			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -191,7 +201,9 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Application;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, null);
+#if !MOBILE
 			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -201,9 +213,11 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -213,10 +227,12 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -227,7 +243,9 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, null);
+#if !MOBILE
 			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -237,9 +255,11 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -249,15 +269,17 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+#if !MOBILE
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
+#endif
 			storageFile.PostInit ();
 			return storageFile;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
@@ -310,11 +332,13 @@ namespace System.IO.IsolatedStorage {
 
 		private static void Demand (IsolatedStorageScope scope)
 		{
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.None);
 				isfp.UsageAllowed = ScopeToContainment (scope);
 				isfp.Demand ();
 			}
+#endif
 		}
 
 		private static IsolatedStorageContainment ScopeToContainment (IsolatedStorageScope scope)
@@ -407,7 +431,9 @@ namespace System.IO.IsolatedStorage {
 			if (!directory.Exists) {
 				try {
 					directory.Create ();
+#if !MOBILE
 					SaveIdentities (root);
+#endif
 				}
 				catch (IOException) {
 				}
@@ -415,7 +441,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public override ulong CurrentSize {
@@ -423,12 +449,16 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Obsolete]
 #endif
 		public override ulong MaximumSize {
 			// return an ulong but default is signed long
 			get {
+#if MOBILE
+				// no security manager is active so the rest of the code is useless
+				return Int64.MaxValue;
+#else
 				if (!SecurityManager.SecurityEnabled)
 					return Int64.MaxValue;
 
@@ -466,6 +496,7 @@ namespace System.IO.IsolatedStorage {
 				}
 				_resolved = true;
 				return _maxSize;
+#endif
 			}
 		}
 
@@ -473,7 +504,7 @@ namespace System.IO.IsolatedStorage {
 			get { return directory.FullName; }
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public override long AvailableFreeSpace {
 			get {
@@ -529,7 +560,7 @@ namespace System.IO.IsolatedStorage {
 
 		public void Close ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			closed = true;
 #endif
 		}
@@ -541,7 +572,7 @@ namespace System.IO.IsolatedStorage {
 
 			if (dir.IndexOfAny (Path.PathSeparatorChars) < 0) {
 				if (directory.GetFiles (dir).Length > 0)
-#if NET_4_0
+#if NET_4_0 || MOBILE
 					throw new IsolatedStorageException ("Unable to create directory.");
 #else
 					throw new IOException (Locale.GetText ("Directory name already exists as a file."));
@@ -553,7 +584,7 @@ namespace System.IO.IsolatedStorage {
 
 				for (int i = 0; i < dirs.Length; i++) {
 					if (dinfo.GetFiles (dirs [i]).Length > 0)
-#if NET_4_0
+#if NET_4_0 || MOBILE
 						throw new IsolatedStorageException ("Unable to create directory.");
 #else
 						throw new IOException (Locale.GetText (
@@ -564,7 +595,7 @@ namespace System.IO.IsolatedStorage {
 			}
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public void CopyFile (string sourceFileName, string destinationFileName)
 		{
@@ -643,7 +674,7 @@ namespace System.IO.IsolatedStorage {
 
 		public void Dispose ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			// Dispose may be calling Close, but we are not sure
 			disposed = true;
 #endif
@@ -651,7 +682,7 @@ namespace System.IO.IsolatedStorage {
 			GC.SuppressFinalize (this);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public bool DirectoryExists (string path)
 		{
@@ -738,7 +769,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			if (searchPattern.Contains (".."))
 				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
 #endif
@@ -765,7 +796,7 @@ namespace System.IO.IsolatedStorage {
 			return GetNames (adi);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public string [] GetDirectoryNames ()
 		{
@@ -785,7 +816,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			if (searchPattern.Contains (".."))
 				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
 #endif
@@ -812,7 +843,7 @@ namespace System.IO.IsolatedStorage {
 			return GetNames (afi);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ComVisible (false)]
 		public string [] GetFileNames ()
 		{
@@ -915,7 +946,7 @@ namespace System.IO.IsolatedStorage {
 
 		public override void Remove ()
 		{
-#if NET_4_0
+#if NET_4_0 || MOBILE
 			CheckOpen (false);
 #endif
 			try {
@@ -937,7 +968,7 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// internal stuff
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		void CheckOpen ()
 		{
 			CheckOpen (true);
@@ -958,7 +989,8 @@ namespace System.IO.IsolatedStorage {
 			return Path.GetFullPath (path).StartsWith (directory.FullName);
 		}
 #endif
-
+		
+#if !MOBILE
 		private string GetNameFromIdentity (object identity)
 		{
 			// Note: Default evidences return an XML string with ToString
@@ -1052,6 +1084,7 @@ namespace System.IO.IsolatedStorage {
 				mutex.ReleaseMutex ();
 			}
 		}
+#endif
 	}
 }
 #endif

@@ -1,4 +1,4 @@
-// cs0577-2.cs: Conditional not valid on `MainClass.~MainClass()' because it is a constructor, destructor, operator or explicit interface implementation
+// CS0577: Conditional not valid on `MainClass.~MainClass()' because it is a constructor, destructor, operator or explicit interface implementation
 // Line: 5
 
 class MainClass {

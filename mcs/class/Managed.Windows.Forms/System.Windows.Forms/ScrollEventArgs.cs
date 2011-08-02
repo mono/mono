@@ -44,33 +44,18 @@ namespace System.Windows.Forms {
 		{
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		ScrollEventArgs (ScrollEventType type, int oldValue, int newValue) :
+		public ScrollEventArgs (ScrollEventType type, int oldValue, int newValue) :
 			this (type, oldValue, newValue, ScrollOrientation.HorizontalScroll)
 		{
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		ScrollEventArgs (ScrollEventType type, int newValue, ScrollOrientation scroll) :
+		public ScrollEventArgs (ScrollEventType type, int newValue, ScrollOrientation scroll) :
 			this (type, -1, newValue, scroll)
 		{
 		}
 
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		ScrollEventArgs (ScrollEventType type, int oldValue, int newValue, ScrollOrientation scroll)
+		public ScrollEventArgs (ScrollEventType type, int oldValue, int newValue, ScrollOrientation scroll)
 		{
 			this.new_value = newValue;
 			this.old_value = oldValue;
@@ -91,21 +76,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		int OldValue {
+		public int OldValue {
 			get { return old_value; }
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		ScrollOrientation ScrollOrientation {
+		public ScrollOrientation ScrollOrientation {
 			get { return scroll_orientation; }
 		}
 		

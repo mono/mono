@@ -73,7 +73,7 @@ namespace MonoTests.System.Web {
 			return root;
 		}
 
-		protected override SiteMapNode GetRootNodeCore ()
+		protected internal override SiteMapNode GetRootNodeCore ()
 		{
 			return BuildSiteMap ();
 		}

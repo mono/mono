@@ -1,4 +1,4 @@
-// cs1587-3.cs: XML comment is not placed on a valid language element
+// CS1587: XML comment is not placed on a valid language element
 // Line: 7
 // Compiler options: -doc:dummy.xml -warnaserror -warn:2
 

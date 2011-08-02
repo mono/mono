@@ -1,4 +1,4 @@
-// cs0545.cs: `DerivedClass.Value.get': cannot override because `BaseClass.Value' does not have an overridable get accessor
+// CS0545: `DerivedClass.Value.get': cannot override because `BaseClass.Value' does not have an overridable get accessor
 // Line: 9
 
 abstract class BaseClass {

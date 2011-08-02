@@ -131,15 +131,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool IsNotRealProperty {
-			get {
-				return (state & StateFlags.IsNotRealProperty) != 0;
-			}
-			set {
-				state |= StateFlags.IsNotRealProperty;
-			}
-		}
-
 		public bool HasDifferentAccessibility {
 			get {
 				return HasGet && HasSet && 
@@ -182,6 +173,11 @@ namespace Mono.CSharp
 			ps.memberType = inflator.Inflate (memberType);
 			return ps;
 		}
+
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			return memberType.ResolveMissingDependencies ();
+		}
 	}
 
 	//
@@ -192,7 +188,7 @@ namespace Mono.CSharp
 
 		public class GetMethod : PropertyMethod
 		{
-			static string[] attribute_targets = new string [] { "method", "return" };
+			static readonly string[] attribute_targets = new string [] { "method", "return" };
 
 			internal const string Prefix = "get_";
 
@@ -238,7 +234,7 @@ namespace Mono.CSharp
 
 		public class SetMethod : PropertyMethod {
 
-			static string[] attribute_targets = new string [] { "method", "param", "return" };
+			static readonly string[] attribute_targets = new string[] { "method", "param", "return" };
 
 			internal const string Prefix = "set_";
 
@@ -286,7 +282,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return TypeManager.void_type;
+					return Parent.Compiler.BuiltinTypes.Void;
 				}
 			}
 
@@ -297,11 +293,11 @@ namespace Mono.CSharp
 			}
 		}
 
-		static string[] attribute_targets = new string [] { "property" };
+		static readonly string[] attribute_targets = new string[] { "property" };
 
 		public abstract class PropertyMethod : AbstractPropertyEventMethod
 		{
-			public const Modifiers AllowedModifiers =
+			const Modifiers AllowedModifiers =
 				Modifiers.PUBLIC |
 				Modifiers.PROTECTED |
 				Modifiers.INTERNAL |
@@ -314,7 +310,8 @@ namespace Mono.CSharp
 				: base (method, prefix, attrs, loc)
 			{
 				this.method = method;
-				this.ModFlags = modifiers | (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
+				this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, modifiers, 0, loc, Report);
+				this.ModFlags |= (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
 			}
 
 			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -351,8 +348,7 @@ namespace Mono.CSharp
 					if (container.Kind == MemberKind.Interface)
 						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
 							GetSignatureForError ());
-
-					if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
+					else if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
 						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
 					}
 
@@ -367,7 +363,7 @@ namespace Mono.CSharp
 				CheckProtectedModifier ();
 
 				if (block != null && block.IsIterator)
-					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 				return null;
 			}
@@ -430,6 +426,15 @@ namespace Mono.CSharp
 		public PropertyMethod AccessorSecond {
 			get {
 				return first == get ? set : get;
+			}
+		}
+
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return (get != null && set != null) ?
+					Variance.None : set == null ?
+					Variance.Covariant :
+					Variance.Contravariant;
 			}
 		}
 
@@ -648,11 +653,13 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (member_type == InternalType.Dynamic) {
+			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
 			} else if (member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
+
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			first.Emit (Parent);
 			if (AccessorSecond != null)
@@ -758,8 +765,8 @@ namespace Mono.CSharp
 
 			if (!IsInterface && (ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
 				AccessorSecond != null && Get.Block == null && Set.Block == null) {
-				if (RootContext.Version <= LanguageVersion.ISO_2)
-					Report.FeatureIsNotAvailable (Location, "automatically implemented properties");
+				if (Compiler.Settings.Version <= LanguageVersion.ISO_2)
+					Report.FeatureIsNotAvailable (Compiler, Location, "automatically implemented properties");
 
 				Get.ModFlags |= Modifiers.COMPILER_GENERATED;
 				Set.ModFlags |= Modifiers.COMPILER_GENERATED;
@@ -785,11 +792,6 @@ namespace Mono.CSharp
 			}
 
 			base.Emit ();
-		}
-
-		public override string GetDocCommentName (DeclSpace ds)
-		{
-			return String.Concat (DocCommentHeader, ds.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
 		}
 	}
 
@@ -867,7 +869,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected abstract MethodSpec Operation { get; }
+			protected abstract MethodSpec GetOperation (Location loc);
 
 			public override void Emit (DeclSpace parent)
 			{
@@ -881,28 +883,6 @@ namespace Mono.CSharp
 
 			void FabricateBodyStatement ()
 			{
-				var cas = TypeManager.gen_interlocked_compare_exchange;
-				if (cas == null) {
-					var t = Module.PredefinedTypes.Interlocked.Resolve (Location);
-					if (t == null)
-						return;
-
-					var p = new ParametersImported (
-						new[] {
-								new ParameterData (null, Parameter.Modifier.REF),
-								new ParameterData (null, Parameter.Modifier.NONE),
-								new ParameterData (null, Parameter.Modifier.NONE)
-							},
-						new[] {
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-							}, false);
-
-					var filter = new MemberFilter ("CompareExchange", 1, MemberKind.Method, p, null);
-					cas = TypeManager.gen_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, filter, Location);
-				}
-
 				//
 				// Delegate obj1 = backing_field
 				// do {
@@ -934,13 +914,19 @@ namespace Mono.CSharp
 				args_oper.Add (new Argument (new LocalVariableReference (obj2, Location)));
 				args_oper.Add (new Argument (block.GetParameterReference (0, Location)));
 
+				var op_method = GetOperation (Location);
+
 				var args = new Arguments (3);
 				args.Add (new Argument (f_expr, Argument.AType.Ref));
 				args.Add (new Argument (new Cast (
 					new TypeExpression (field_info.MemberType, Location),
-					new Invocation (MethodGroupExpr.CreatePredefined (Operation, Operation.DeclaringType, Location), args_oper),
+					new Invocation (MethodGroupExpr.CreatePredefined (op_method, op_method.DeclaringType, Location), args_oper),
 					Location)));
 				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
+
+				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
+				if (cas == null)
+					return;
 
 				body.AddStatement (new StatementExpression (new SimpleAssign (
 					new LocalVariableReference (obj1, Location),
@@ -955,15 +941,9 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override MethodSpec Operation {
-				get {
-					if (TypeManager.delegate_combine_delegate_delegate == null) {
-						TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-							TypeManager.delegate_type, "Combine", Location, TypeManager.delegate_type, TypeManager.delegate_type);
-					}
-
-					return TypeManager.delegate_combine_delegate_delegate;
-				}
+			protected override MethodSpec GetOperation (Location loc)
+			{
+				return Module.PredefinedMembers.DelegateCombine.Resolve (loc);
 			}
 		}
 
@@ -974,15 +954,9 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override MethodSpec Operation {
-				get {
-					if (TypeManager.delegate_remove_delegate_delegate == null) {
-						TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-							TypeManager.delegate_type, "Remove", Location, TypeManager.delegate_type, TypeManager.delegate_type);
-					}
-
-					return TypeManager.delegate_remove_delegate_delegate;
-				}
+			protected override MethodSpec GetOperation (Location loc)
+			{
+				return Module.PredefinedMembers.DelegateRemove.Resolve (loc);
 			}
 		}
 
@@ -1110,7 +1084,7 @@ namespace Mono.CSharp
 		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-			ParametersCompiled parameters;
+			readonly ParametersCompiled parameters;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -1161,7 +1135,10 @@ namespace Mono.CSharp
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
-				parameters.Resolve (this);
+				// Fill in already resolved event type to speed things up and
+				// avoid confusing duplicate errors
+				((Parameter) parameters.FixedParameters[0]).Type = method.member_type;
+				parameters.Types = new TypeSpec[] { method.member_type };
 
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
@@ -1179,7 +1156,7 @@ namespace Mono.CSharp
 
 			public override TypeSpec ReturnType {
 				get {
-					return TypeManager.void_type;
+					return Parent.Compiler.BuiltinTypes.Void;
 				}
 			}
 
@@ -1229,6 +1206,12 @@ namespace Mono.CSharp
 			set {
 				add = value;
 				Parent.AddMember (value);
+			}
+		}
+
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return Variance.Contravariant;
 			}
 		}
 
@@ -1310,6 +1293,8 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 			}
 
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
+
 			Add.Emit (Parent);
 			Remove.Emit (Parent);
 
@@ -1379,6 +1364,11 @@ namespace Mono.CSharp
 				es.backing_field = (FieldSpec) backing_field.InflateMember (inflator);
 
 			return es;
+		}
+
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			return MemberType.ResolveMissingDependencies ();
 		}
 	}
  
@@ -1474,6 +1464,22 @@ namespace Mono.CSharp
 			this.parameters = parameters;
 		}
 
+		#region Properties
+
+		AParametersCollection IParametersMember.Parameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public ParametersCompiled ParameterInfo {
+			get {
+				return parameters;
+			}
+		}
+
+		#endregion
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.IndexerName) {
@@ -1552,34 +1558,29 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
-		public override string GetDocCommentName (DeclSpace ds)
+		public override void Emit ()
 		{
-			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
+			parameters.CheckConstraints (this);
+
+			base.Emit ();
 		}
 
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
 			if (MemberName.Left != null) {
-				sb.Append ('.');
+				sb.Append (".");
 				sb.Append (MemberName.Left.GetSignatureForError ());
 			}
 
 			sb.Append (".this");
-			sb.Append (parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
+			sb.Append (parameters.GetSignatureForError ("[", "]", parameters.Count));
 			return sb.ToString ();
 		}
 
-		public AParametersCollection Parameters {
-			get {
-				return parameters;
-			}
-		}
-
-		public ParametersCompiled ParameterInfo {
-			get {
-				return parameters;
-			}
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -1610,6 +1611,11 @@ namespace Mono.CSharp
 		}
 		#endregion
 
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return DeclaringType.GetSignatureForError () + ".this" + parameters.GetSignatureForError ("[", "]", parameters.Count);
@@ -1620,6 +1626,23 @@ namespace Mono.CSharp
 			var spec = (IndexerSpec) base.InflateMember (inflator);
 			spec.parameters = parameters.Inflate (inflator);
 			return spec;
+		}
+
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			var missing = base.ResolveMissingDependencies ();
+			foreach (var pt in parameters.Types) {
+				var m = pt.GetMissingDependencies ();
+				if (m == null)
+					continue;
+
+				if (missing == null)
+					missing = new List<TypeSpec> ();
+
+				missing.AddRange (m);
+			}
+
+			return missing;
 		}
 	}
 }

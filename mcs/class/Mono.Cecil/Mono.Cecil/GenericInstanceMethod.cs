@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,12 +42,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<TypeReference> GenericArguments {
-			get {
-				if (arguments == null)
-					arguments = new Collection<TypeReference> ();
-
-				return arguments;
-			}
+			get { return arguments ?? (arguments = new Collection<TypeReference> ()); }
 		}
 
 		public override bool IsGenericInstance {
@@ -70,11 +65,11 @@ namespace Mono.Cecil {
 			get {
 				var signature = new StringBuilder ();
 				var method = this.ElementMethod;
-				signature.Append (method.ReturnType.FullName);
-				signature.Append (" ");
-				signature.Append (method.DeclaringType.FullName);
-				signature.Append ("::");
-				signature.Append (method.Name);
+				signature.Append (method.ReturnType.FullName)
+					.Append (" ")
+					.Append (method.DeclaringType.FullName)
+					.Append ("::")
+					.Append (method.Name);
 				this.GenericInstanceFullName (signature);
 				this.MethodSignatureFullName (signature);
 				return signature.ToString ();

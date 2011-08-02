@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-062</name>
+    </assembly>
+    <members>
+        <member name="T:Maybe`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Maybe`1.Method">
+            <summary>
+            
+            </summary>
+            <typeparamref name="T"></typeparamref>
+        </member>
+        <member name="T:Tuple`2">
+            <summary>
+            
+            </summary>
+            <typeparam name="T1"></typeparam>
+            <typeparam name="T2"></typeparam>
+        </member>
+        <member name="M:Tuple`2.Match``1(System.Func{`0,`1,Maybe{``0}}[])">
+            <summary>
+             Test
+             <typeparamref name="TResult" />.
+             <typeparamref name="T2" />.
+            </summary>
+        </member>
+    </members>
+</doc>

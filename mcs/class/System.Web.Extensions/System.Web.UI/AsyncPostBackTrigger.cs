@@ -38,7 +38,8 @@ namespace System.Web.UI
 	public class AsyncPostBackTrigger : UpdatePanelControlTrigger
 	{
 		static readonly MethodInfo _eventHandler = typeof (AsyncPostBackTrigger).GetMethod ("OnEvent");
-
+		static readonly char[] _controlIdSeparators = {'_', '$'};
+		
 		string _eventName;
 
 		public new string ControlID {
@@ -73,18 +74,28 @@ namespace System.Web.UI
 			string asyncPostBackElementID = Owner.ScriptManager.AsyncPostBackSourceElementID;
 			if (String.Compare (asyncPostBackElementID, ctrlUniqueID, StringComparison.Ordinal) == 0)
 				return true;
-			else if (asyncPostBackElementID.StartsWith (ctrlUniqueID + "$", StringComparison.Ordinal))
-				return true;
+			else {
+				int sep = asyncPostBackElementID.IndexOfAny (_controlIdSeparators);
+				if (sep > -1 && String.Compare (asyncPostBackElementID, 0, ctrlUniqueID, 0, ctrlUniqueID.Length, StringComparison.Ordinal) == 0)
+					return true;
+			}
 			
 			return false;
 		}
 
-		// LAME SPEC: it seems DefaultEventAttribute is never queried for the event name.
 		protected internal override void Initialize ()
 		{
 			Control c = FindTargetControl (true);
 			ScriptManager sm = Owner.ScriptManager;
 			string eventName = EventName;
+			if (String.IsNullOrEmpty (eventName)) {
+				object[] attrs = c.GetType ().GetCustomAttributes (typeof (DefaultEventAttribute), true);
+				if (attrs != null && attrs.Length > 0) {
+					var dea = attrs [0] as DefaultEventAttribute;
+					if (dea != null)
+						eventName = dea.Name;
+				}
+			}
 
 			if (!String.IsNullOrEmpty (eventName)) {
 				EventInfo evi = c.GetType ().GetEvent (eventName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);

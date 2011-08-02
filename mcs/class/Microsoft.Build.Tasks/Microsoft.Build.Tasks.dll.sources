@@ -79,6 +79,7 @@ Microsoft.Build.Tasks/GenerateTrustInfo.cs
 Microsoft.Build.Tasks/GetAssemblyIdentity.cs
 Microsoft.Build.Tasks/GetFrameworkPath.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPath.cs
+Microsoft.Build.Tasks/GetReferenceAssemblyPaths.cs
 Microsoft.Build.Tasks.Hosting/ICscHostObject.cs
 Microsoft.Build.Tasks.Hosting/IVbcHostObject.cs
 Microsoft.Build.Tasks/LC.cs
@@ -104,7 +105,6 @@ Microsoft.Build.Tasks/ToolTaskExtension.cs
 Microsoft.Build.Tasks/Touch.cs
 Microsoft.Build.Tasks/UnregisterAssembly.cs
 Microsoft.Build.Tasks/UpdateManifest.cs
-Microsoft.Build.Tasks/Utilities.cs
 Microsoft.Build.Tasks/Vbc.cs
 Microsoft.Build.Tasks/VCBuild.cs
 Microsoft.Build.Tasks/Warning.cs
@@ -113,5 +113,6 @@ Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceWriter.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceWriter.cs
+../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/UnknownToolsVersionException.cs

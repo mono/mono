@@ -1,16 +1,19 @@
-// Compiler options: /checked+
+// Compiler options: -checked
 
 using System;
 
-
 public class MonoBUG
 {
-	public static void Main (string[] args)
+	public static int Main ()
 	{
-		double B = 4.0;
-		double K = 2.0;
-		double A = - B / (K * K);
-
-		Console.WriteLine ("{0}", A);
+		long l = long.MaxValue;
+		
+		try {
+			l *= 2;
+			return 1;
+		} catch (OverflowException) {
+		}
+		
+		return 0;
 	}
 }

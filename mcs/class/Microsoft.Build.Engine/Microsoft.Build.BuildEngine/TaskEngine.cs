@@ -177,10 +177,6 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidProjectFileException ("This is not output property.");
 				
 				o = propertyInfo.GetValue (task, null);
-				// FIXME: maybe we should throw an exception here?
-				if (o == null)
-					continue;
-				
 				if (itemName != String.Empty) {
 					PublishItemGroup (propertyInfo, o, itemName);
 				} else {
@@ -198,6 +194,11 @@ namespace Microsoft.Build.BuildEngine {
 					      object o,
 					      string propertyName)
 		{
+			if (o == null) {
+				parentProject.EvaluatedProperties.RemoveProperty (propertyName);
+				return;
+			}
+
 			BuildProperty bp;
 			try {
 				bp = ChangeType.ToBuildProperty (o, propertyInfo.PropertyType, propertyName);
@@ -214,6 +215,9 @@ namespace Microsoft.Build.BuildEngine {
 					       object o,
 					       string itemName)
 		{
+			if (o == null)
+				return;
+
 			BuildItemGroup newItems;
 			try {
 				newItems = ChangeType.ToBuildItemGroup (o, propertyInfo.PropertyType, itemName);

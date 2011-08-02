@@ -1,4 +1,4 @@
-// cs0210.cs: You must provide an initializer in a fixed or using statement declaration
+// CS0210: You must provide an initializer in a fixed or using statement declaration
 // Line: 7
 // Compiler options: -unsafe
 

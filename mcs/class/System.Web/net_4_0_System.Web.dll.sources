@@ -18,10 +18,13 @@ System.Web.Compilation/FolderLevelBuildProviderAppliesTo.cs
 System.Web.Compilation/FolderLevelBuildProviderAppliesToAttribute.cs
 System.Web.Compilation/RouteUrlExpressionBuilder.cs
 System.Web.Compilation/RouteValueExpressionBuilder.cs
+System.Web.Security/MachineKey.cs
+System.Web.Security/MachineKeyProtection.cs
 System.Web.SessionState_2.0/SessionStateBehavior.cs
 System.Web.Routing/PageRouteHandler.cs
 System.Web.UI/ClientIDMode.cs
 System.Web.UI/DataKeyPropertyAttribute.cs
+System.Web.UI/FileLevelMasterPageControlBuilder.cs
 System.Web.UI/IDataKeysControl.cs
 System.Web.UI/ViewStateMode.cs
 System.Web.UI.WebControls/IDataBoundControl.cs
@@ -36,6 +39,7 @@ System.Web.UI.WebControls/RouteParameter.cs
 System.Web.UI.WebControls/StyleBlock.cs
 System.Web.UI.WebControls/WizardLayoutContainer.cs
 System.Web.UI.WebControls/WizardLayoutNavigationContainer.cs
+System.Web.Util/SimpleWebObjectFactory.cs
 System.Web.Util/RequestValidationSource.cs
 System.Web.Util/RequestValidator.cs
 

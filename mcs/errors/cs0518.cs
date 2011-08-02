@@ -1,4 +1,4 @@
-// cs0518.cs: The predefined type `System.Object' is not defined or imported
+// CS0518: The predefined type `System.Object' is not defined or imported
 // Line: 0
 // Compiler options: -nostdlib
 

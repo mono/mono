@@ -72,9 +72,13 @@ namespace System.Web.UI.HtmlControls
 		
 		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
-			EnsureTitleControl ();
-
 			base.RenderChildren (writer);
+			if (title == null) {
+				writer.RenderBeginTag (HtmlTextWriterTag.Title);
+				if (!String.IsNullOrEmpty (titleText))
+					writer.Write (titleText);
+				writer.RenderEndTag ();
+			}
 #if NET_4_0
 			if (descriptionMeta == null && descriptionText != null) {
 				writer.AddAttribute ("name", "description");
@@ -128,15 +132,6 @@ namespace System.Web.UI.HtmlControls
 				descriptionMeta = null;
 #endif
 			base.RemovedControl (control);
-		}
-		
-		void EnsureTitleControl () {
-			if (title != null)
-				return;
-
-			HtmlTitle t = new HtmlTitle ();
-			t.Text = titleText;
-			Controls.Add (t);
 		}
 #if NET_4_0
 		public string Description {

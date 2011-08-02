@@ -27,6 +27,9 @@
 #if defined (HOST_WIN32)
 #include <stdlib.h>
 #endif
+#if defined (HAVE_WCHAR_H)
+#include <wchar.h>
+#endif
 
 #include "mono/utils/mono-membar.h"
 #include <mono/metadata/object.h>
@@ -77,6 +80,7 @@
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-io-portability.h>
 
 #if defined (HOST_WIN32)
 #include <windows.h>
@@ -230,7 +234,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	}
 
 	if (!value) {
-		memset (ea, 0,  esize);
+		mono_gc_bzero (ea, esize);
 		return;
 	}
 
@@ -245,7 +249,8 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 			"value", "not a widening conversion")); \
 }G_STMT_END
 
-#define INVALID_CAST G_STMT_START{\
+#define INVALID_CAST G_STMT_START{ \
+		mono_get_runtime_callbacks ()->set_cast_details (vc, ec); \
 	mono_raise_exception (mono_get_exception_invalid_cast ()); \
 }G_STMT_END
 
@@ -292,7 +297,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 		if (ec->has_references)
 			mono_value_copy (ea, (char*)value + sizeof (MonoObject), ec);
 		else
-			memcpy (ea, (char *)value + sizeof (MonoObject), esize);
+			mono_gc_memmove (ea, (char *)value + sizeof (MonoObject), esize);
 		return;
 	}
 
@@ -676,7 +681,7 @@ static void
 ves_icall_System_Array_ClearInternal (MonoArray *arr, int idx, int length)
 {
 	int sz = mono_array_element_size (mono_object_class (arr));
-	memset (mono_array_addr_with_size (arr, sz, idx), 0, length * sz);
+	mono_gc_bzero (mono_array_addr_with_size (arr, sz, idx), length * sz);
 }
 
 static gboolean
@@ -687,7 +692,6 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 	void * source_addr;
 	MonoClass *src_class;
 	MonoClass *dest_class;
-	int i;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -711,6 +715,10 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 
 	/* Case1: object[] -> valuetype[] (ArrayList::ToArray) */
 	if (src_class == mono_defaults.object_class && dest_class->valuetype) {
+		// FIXME: This is racy
+		return FALSE;
+		/*
+		  int i;
 		int has_refs = dest_class->has_references;
 		for (i = source_idx; i < source_idx + length; ++i) {
 			MonoObject *elem = mono_array_get (source, MonoObject*, i);
@@ -731,6 +739,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 				memcpy (addr, (char *)elem + sizeof (MonoObject), element_size);
 		}
 		return TRUE;
+		*/
 	}
 
 	/* Check if we're copying a char[] <==> (u)short[] */
@@ -741,13 +750,18 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 		if (mono_class_is_subclass_of (src_class, dest_class, FALSE))
 			;
 		/* Case2: object[] -> reftype[] (ArrayList::ToArray) */
-		else if (mono_class_is_subclass_of (dest_class, src_class, FALSE))
+		else if (mono_class_is_subclass_of (dest_class, src_class, FALSE)) {
+			// FIXME: This is racy
+			return FALSE;
+			/*
+			  int i;
 			for (i = source_idx; i < source_idx + length; ++i) {
 				MonoObject *elem = mono_array_get (source, MonoObject*, i);
 				if (elem && !mono_object_isinst (elem, dest_class))
 					return FALSE;
 			}
-		else
+			*/
+		} else
 			return FALSE;
 	}
 
@@ -758,7 +772,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 			mono_value_copy_array (dest, dest_idx, source_addr, length);
 		} else {
 			dest_addr = mono_array_addr_with_size (dest, element_size, dest_idx);
-			memmove (dest_addr, source_addr, element_size * length);
+			mono_gc_memmove (dest_addr, source_addr, element_size * length);
 		}
 	} else {
 		mono_array_memcpy_refs (dest, dest_idx, source, source_idx, length);
@@ -783,7 +797,7 @@ ves_icall_System_Array_GetGenericValueImpl (MonoObject *this, guint32 pos, gpoin
 	esize = mono_array_element_size (ac);
 	ea = (gpointer*)((char*)ao->vector + (pos * esize));
 
-	memcpy (value, ea, esize);
+	mono_gc_memmove (value, ea, esize);
 }
 
 static void
@@ -812,7 +826,7 @@ ves_icall_System_Array_SetGenericValueImpl (MonoObject *this, guint32 pos, gpoin
 		if (ec->has_references)
 			mono_gc_wbarrier_value_copy (ea, value, 1, ec);
 		else
-			memcpy (ea, value, esize);
+			mono_gc_memmove (ea, value, esize);
 	}
 }
 
@@ -825,12 +839,9 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoAr
 	int align;
 	const char *field_data;
 
-	if (MONO_TYPE_IS_REFERENCE (type) ||
-			(type->type == MONO_TYPE_VALUETYPE &&
-				(!mono_type_get_class (type) ||
-				mono_type_get_class (type)->has_references))) {
+	if (MONO_TYPE_IS_REFERENCE (type) || type->type == MONO_TYPE_VALUETYPE) {
 		MonoException *exc = mono_get_exception_argument("array",
-			"Cannot initialize array containing references");
+			"Cannot initialize array of non-primitive type.");
 		mono_raise_exception (exc);
 	}
 
@@ -1898,12 +1909,18 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *this)
 	gchar *v;
 	MonoTypeEnum def_type;
 	const char *def_value;
+	MonoType *t;
+	MonoError error;
 
 	MONO_ARCH_SAVE_REGS;
 	
 	mono_class_init (field->parent);
 
-	if (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT))
+	t = mono_field_get_type_checked (field, &error);
+	if (!mono_error_ok (&error))
+		mono_error_raise_exception (&error);
+
+	if (!(t->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT))
 		mono_raise_exception (mono_get_exception_invalid_operation (NULL));
 
 	if (field->parent->image->dynamic) {
@@ -1912,6 +1929,8 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *this)
 	}
 
 	def_value = mono_class_get_field_default_value (field, &def_type);
+	if (!def_value) /*FIXME, maybe we should try to raise TLE if field->parent is broken */
+		mono_raise_exception (mono_get_exception_invalid_operation (NULL));
 
 	/*FIXME unify this with reflection.c:mono_get_object_from_blob*/
 	switch (def_type) {
@@ -6211,7 +6230,7 @@ ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, Mo
 	if (src != dest)
 		memcpy (dest_buf, src_buf, count);
 	else
-		memmove (dest_buf, src_buf, count); /* Source and dest are the same array */
+		mono_gc_memmove (dest_buf, src_buf, count); /* Source and dest are the same array */
 
 	return TRUE;
 }
@@ -6611,6 +6630,16 @@ ves_icall_System_Environment_GetLogicalDrives (void)
 }
 
 static MonoString *
+ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString *path)
+{
+	gunichar2 volume_name [MAX_PATH + 1];
+	
+	if (GetVolumeInformation (mono_string_chars (path), NULL, 0, NULL, NULL, NULL, volume_name, MAX_PATH + 1) == FALSE)
+		return NULL;
+	return mono_string_from_utf16 (volume_name);
+}
+
+static MonoString *
 ves_icall_System_Environment_InternalGetHome (void)
 {
 	MONO_ARCH_SAVE_REGS;
@@ -6818,6 +6847,9 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 	klass = mono_class_from_mono_type (type->type);
 	mono_class_init_or_throw (klass);
 
+	if (MONO_CLASS_IS_INTERFACE (klass) || (klass->flags & TYPE_ATTRIBUTE_ABSTRACT))
+		mono_raise_exception (mono_get_exception_argument ("type", "Type cannot be instantiated"));
+
 	if (klass->rank >= 1) {
 		g_assert (klass->rank == 1);
 		return (MonoObject *) mono_array_new (domain, klass->element_class, 0);
@@ -6914,7 +6946,7 @@ get_bundled_app_config (void)
 	const gchar *app_config;
 	MonoDomain *domain;
 	MonoString *file;
-	gchar *config_file;
+	gchar *config_file_name, *config_file_path;
 	gsize len;
 	gchar *module;
 
@@ -6926,15 +6958,20 @@ get_bundled_app_config (void)
 		return NULL;
 
 	// Retrieve config file and remove the extension
-	config_file = mono_string_to_utf8 (file);
-	len = strlen (config_file) - strlen (".config");
+	config_file_name = mono_string_to_utf8 (file);
+	config_file_path = mono_portability_find_file (config_file_name, TRUE);
+	if (!config_file_path)
+		config_file_path = config_file_name;
+	len = strlen (config_file_path) - strlen (".config");
 	module = g_malloc0 (len + 1);
-	memcpy (module, config_file, len);
+	memcpy (module, config_file_path, len);
 	// Get the config file from the module name
 	app_config = mono_config_string_for_assembly_file (module);
 	// Clean-up
 	g_free (module);
-	g_free (config_file);
+	if (config_file_name != config_file_path)
+		g_free (config_file_name);
+	g_free (config_file_path);
 
 	if (!app_config)
 		return NULL;
@@ -7016,6 +7053,22 @@ ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
 	return mono_debug_using_mono_debugger () || mono_is_debugger_attached ();
 }
 
+static MonoBoolean
+ves_icall_System_Diagnostics_Debugger_IsLogging (void)
+{
+	if (mono_get_runtime_callbacks ()->debug_log_is_enabled)
+		return mono_get_runtime_callbacks ()->debug_log_is_enabled ();
+	else
+		return FALSE;
+}
+
+static void
+ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *category, MonoString *message)
+{
+	if (mono_get_runtime_callbacks ()->debug_log)
+		mono_get_runtime_callbacks ()->debug_log (level, category, message);
+}
+
 static void
 ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (MonoString *message)
 {
@@ -7052,6 +7105,7 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 	MonoClass *klass, *parent;
 	MonoMethod *method = m->method;
 	MonoMethod *result = NULL;
+	int slot;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -7063,6 +7117,10 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 	    method->flags & METHOD_ATTRIBUTE_NEW_SLOT)
 		return m;
 
+	slot = mono_method_get_vtable_slot (method);
+	if (slot == -1)
+		return m;
+
 	klass = method->klass;
 	if (klass->generic_class)
 		klass = klass->generic_class->container_class;
@@ -7071,7 +7129,7 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 		/* At the end of the loop, klass points to the eldest class that has this virtual function slot. */
 		for (parent = klass->parent; parent != NULL; parent = parent->parent) {
 			mono_class_setup_vtable (parent);
-			if (parent->vtable_size <= method->slot)
+			if (parent->vtable_size <= slot)
 				break;
 			klass = parent;
 		}
@@ -7087,15 +7145,17 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 	/*This is possible if definition == FALSE.
 	 * Do it here to be really sure we don't read invalid memory.
 	 */
-	if (method->slot >= klass->vtable_size)
+	if (slot >= klass->vtable_size)
 		return m;
 
-	result = klass->vtable [method->slot];
+	mono_class_setup_vtable (klass);
+
+	result = klass->vtable [slot];
 	if (result == NULL) {
 		/* It is an abstract method */
 		gpointer iter = NULL;
 		while ((result = mono_class_get_methods (klass, &iter)))
-			if (result->slot == method->slot)
+			if (result->slot == slot)
 				break;
 	}
 
@@ -7150,8 +7210,11 @@ mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 
 	res.type = iter->sig->params [i];
 	res.klass = mono_class_from_mono_type (res.type);
-	res.value = iter->args;
 	arg_size = mono_type_stack_size (res.type, &align);
+#if defined(__arm__)
+	iter->args = (guint8*)(((gsize)iter->args + (align) - 1) & ~(align - 1));
+#endif
+	res.value = iter->args;
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	if (arg_size <= sizeof (gpointer)) {
 		int dummy;
@@ -7185,8 +7248,11 @@ mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type)
 		res.type = iter->sig->params [i];
 		res.klass = mono_class_from_mono_type (res.type);
 		/* FIXME: endianess issue... */
-		res.value = iter->args;
 		arg_size = mono_type_stack_size (res.type, &align);
+#if defined(__arm__)
+		iter->args = (guint8*)(((gsize)iter->args + (align) - 1) & ~(align - 1));
+#endif
+		res.value = iter->args;
 		iter->args = (char*)iter->args + arg_size;
 		iter->next_arg++;
 		/* g_print ("returning arg %d, type 0x%02x of size %d at %p\n", i, res.type->type, arg_size, res.value); */

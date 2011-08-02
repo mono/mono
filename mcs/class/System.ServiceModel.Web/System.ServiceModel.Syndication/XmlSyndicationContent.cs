@@ -38,24 +38,27 @@ namespace System.ServiceModel.Syndication
 {
 	public class XmlSyndicationContent : SyndicationContent
 	{
-		SyndicationElementExtension extension;
+		SyndicationElementExtension writer_extension, reader_extension;
 		string type;
 
 		public XmlSyndicationContent (XmlReader reader)
 		{
-			extension = new SyndicationElementExtension (reader);
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			this.type = reader.GetAttribute ("type");
+			reader_extension = new SyndicationElementExtension (reader);
 		}
 
 		public XmlSyndicationContent (string type, object dataContractExtension, XmlObjectSerializer dataContractSerializer)
 		{
 			this.type = type;
-			extension = new SyndicationElementExtension (dataContractExtension, dataContractSerializer);
+			writer_extension = new SyndicationElementExtension (dataContractExtension, dataContractSerializer);
 		}
 
 		public XmlSyndicationContent (string type, object xmlSerializerExtension, XmlSerializer serializer)
 		{
 			this.type = type;
-			extension = new SyndicationElementExtension (xmlSerializerExtension, serializer);
+			writer_extension = new SyndicationElementExtension (xmlSerializerExtension, serializer);
 		}
 
 		public XmlSyndicationContent (string type, SyndicationElementExtension extension)
@@ -63,7 +66,7 @@ namespace System.ServiceModel.Syndication
 			this.type = type;
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
-			this.extension = extension;
+			this.writer_extension = extension;
 		}
 
 		protected XmlSyndicationContent (XmlSyndicationContent source)
@@ -71,7 +74,8 @@ namespace System.ServiceModel.Syndication
 			if (source == null)
 				throw new ArgumentNullException ("source");
 			type = source.type;
-			extension = source.extension;
+			writer_extension = source.writer_extension;
+			reader_extension = source.reader_extension;
 		}
 
 		public override SyndicationContent Clone ()
@@ -79,12 +83,35 @@ namespace System.ServiceModel.Syndication
 			return new XmlSyndicationContent (this);
 		}
 
+		SyndicationElementExtension extension {
+			get { return writer_extension ?? reader_extension; }
+		}
+
 		public XmlDictionaryReader GetReaderAtContent ()
 		{
-			XmlReader r = extension.GetReader ();
-			if (!(r is XmlDictionaryReader))
-				r = XmlDictionaryReader.CreateDictionaryReader (r);
-			return (XmlDictionaryReader) r;
+			if (writer_extension != null) {
+				// It is messy, but it somehow returns an XmlReader that has wrapper "content" element for non-XmlReader extension...
+				XmlReader r = extension.GetReader ();
+				if (!(r is XmlDictionaryReader))
+					r = XmlDictionaryReader.CreateDictionaryReader (r);
+				var ms = new MemoryStream ();
+				var xw = XmlDictionaryWriter.CreateBinaryWriter (ms);
+				xw.WriteStartElement ("content", Namespaces.Atom10);
+				xw.WriteAttributeString ("type", "text/xml");
+				while (!r.EOF)
+					xw.WriteNode (r, false);
+				xw.WriteEndElement ();
+				xw.Close ();
+				ms.Position = 0;
+				var xr = XmlDictionaryReader.CreateBinaryReader (ms, new XmlDictionaryReaderQuotas ());
+				xr.MoveToContent ();
+				return xr;
+			} else {
+				XmlReader r = extension.GetReader ();
+				if (!(r is XmlDictionaryReader))
+					r = XmlDictionaryReader.CreateDictionaryReader (r);
+				return (XmlDictionaryReader) r;
+			}
 		}
 
 		public TContent ReadContent<TContent> ()
@@ -104,11 +131,25 @@ namespace System.ServiceModel.Syndication
 
 		protected override void WriteContentsTo (XmlWriter writer)
 		{
-			extension.WriteTo (writer);
+			if (reader_extension != null) {
+				// It is messy, but it somehow skips the wrapper element...
+				var xr = extension.GetReader ();
+				if (xr.IsEmptyElement)
+					xr.Read ();
+				else {
+					xr.ReadStartElement (); // skip it
+					while (xr.NodeType != XmlNodeType.EndElement) {
+						writer.WriteNode (xr, false);
+					}
+					xr.ReadEndElement ();
+				}
+			}
+			else
+				extension.WriteTo (writer);
 		}
 
 		public SyndicationElementExtension Extension {
-			get { return extension; }
+			get { return writer_extension; }
 		}
 
 		public override string Type {

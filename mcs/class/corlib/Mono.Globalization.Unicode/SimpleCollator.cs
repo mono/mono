@@ -139,19 +139,20 @@ namespace Mono.Globalization.Unicode
 			new SimpleCollator (CultureInfo.InvariantCulture);
 
 		readonly TextInfo textInfo; // for ToLower().
-		readonly bool frenchSort;
-		unsafe readonly byte* cjkCatTable;
-		unsafe readonly byte* cjkLv1Table;
 		readonly CodePointIndexer cjkIndexer;
-		unsafe readonly byte* cjkLv2Table;
-		readonly CodePointIndexer cjkLv2Indexer;
-		readonly int lcid;
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
-
 		// This flag marks characters as "unsafe", where the character
 		// could be used as part of a contraction (whose length > 1).
 		readonly byte [] unsafeFlags;
+
+		unsafe readonly byte* cjkCatTable;
+		unsafe readonly byte* cjkLv1Table;
+		unsafe readonly byte* cjkLv2Table;
+		readonly CodePointIndexer cjkLv2Indexer;
+		readonly int lcid;
+		readonly bool frenchSort;
+
 
 		const int UnsafeFlagLength = 0x300 / 8;
 
@@ -1431,7 +1432,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				bool no = false;
 				for (int j = 0; j < target.Length; j++) {
 					if (testedTargetPos < j) {
-						if (target [j] >= 0x80) {
+						char c = target [j];
+						if (c == 0 || c >= 0x80) {
 							testWasUnable = true;
 							return -1;
 						}
@@ -1439,7 +1441,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 							testedTargetPos = j;
 					}
 					if (testedSourcePos < i + j) {
-						if (s [i + j] >= 0x80) {
+						char c = s [i + j];
+						if (c == 0 || c >= 0x80) {
 							testWasUnable = true;
 							return -1;
 						}
@@ -1631,7 +1634,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				if (!IsIgnorable (target [tidx], opt))
 					break;
 			if (tidx == target.Length)
-				return start;
+				// FIXME: this is likely a hack. A string that is consists of \0 differs from those of other ignorable characters.
+				return IndexOfOrdinal (target, '\0', 0, target.Length) >= 0 ? IndexOfOrdinal (s, target, start, length) : start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			string replace = ct != null ? ct.Replacement : null;
 			byte* sk = replace == null ? targetSortKey : null;
@@ -1723,7 +1727,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		int LastIndexOfOrdinal (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
-				return 0;
+				return start;
 			if (s.Length < target.Length || target.Length > length)
 				return -1;
 			int end = start - length + target.Length -1;
@@ -1751,7 +1755,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		int LastIndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
-				return 0;
+				return start;
 			if (s.Length < length || target.Length > length)
 				return -1;
 			int end = start - length + target.Length - 1;
@@ -1879,7 +1883,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				if (!IsIgnorable (target [tidx], opt))
 					break;
 			if (tidx == target.Length)
-				return start;
+				// FIXME: this is likely a hack. A string that is consists of \0 differs from those of other ignorable characters.
+				return IndexOfOrdinal (target, '\0', 0, target.Length) >= 0 ? LastIndexOfOrdinal (s, target, start, length) : start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			string replace = ct != null ? ct.Replacement : null;
 			byte* sk = replace == null ? targetSortKey : null;

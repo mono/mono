@@ -1,4 +1,4 @@
-// cs0247.cs: Cannot use a negative size with stackalloc
+// CS0247: Cannot use a negative size with stackalloc
 // Line: 7
 // Compiler options: -unsafe
 

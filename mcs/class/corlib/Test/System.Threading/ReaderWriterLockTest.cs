@@ -14,9 +14,6 @@ using System.Threading;
 namespace MonoTests.System.Threading
 {
 	[TestFixture]
-	// DISABLED due to random hangs. Do not renable until you can run this
-	// a few thousand times on an SMP box.
-	[Category ("NotWorking")]
 	public class ReaderWriterLockTest
 	{
 		ReaderWriterLock rwlock;
@@ -354,5 +351,117 @@ namespace MonoTests.System.Threading
 			rwlock.ReleaseWriterLock();
 		}
 		
+
+		[Test]
+		public void TestBug_475124 ()
+		{
+			LockCookie lc1, lc2;
+
+			rwlock = new ReaderWriterLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "A1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "A2");
+
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+
+			Assert.IsTrue (rwlock.IsReaderLockHeld, "B1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "B2");
+
+			lc1 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "C1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "C2");
+
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "D1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "D2");
+
+			lc2 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "E1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "E2");
+
+			rwlock.DowngradeFromWriterLock (ref lc2);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "F1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "F2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "G1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "G2");
+
+			rwlock.DowngradeFromWriterLock (ref lc1);
+
+			Assert.IsTrue (rwlock.IsReaderLockHeld, "H1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "H2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "I1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "I2");
+		}
+
+		// this tests how downgrade works when multiple writer locks
+		// are acquired - as long as the LockCookie referes to an
+		// upgrade where there was already a writer lock, downgrade
+		// behaves like a non-blocking ReleaseWriterLock
+		[Test]
+		public void DowngradeTest ()
+		{
+			LockCookie lc1, lc2, lc3, lc4;
+
+			rwlock = new ReaderWriterLock ();
+
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			lc1 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			lc2 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			lc3 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			lc4 = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+
+			rwlock.DowngradeFromWriterLock (ref lc2);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "A1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "A2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "B1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "B2");
+
+			rwlock.DowngradeFromWriterLock (ref lc4);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "C1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "C2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "D1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "D2");
+
+			rwlock.DowngradeFromWriterLock (ref lc3);
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "E1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "E2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "F1");
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "F2");
+
+			rwlock.DowngradeFromWriterLock (ref lc1);
+
+			Assert.IsTrue (rwlock.IsReaderLockHeld, "G1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "G2");
+
+			rwlock.ReleaseReaderLock ();
+
+			Assert.IsFalse (rwlock.IsReaderLockHeld, "H1");
+			Assert.IsFalse (rwlock.IsWriterLockHeld, "H2");
+		}
 	}
 }

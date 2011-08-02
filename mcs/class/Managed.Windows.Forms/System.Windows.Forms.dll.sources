@@ -383,7 +383,6 @@ System.Windows.Forms/IDataGridEditingService.cs
 System.Windows.Forms/IDataGridViewEditingCell.cs
 System.Windows.Forms/IDataGridViewEditingControl.cs
 System.Windows.Forms/IDataObject.cs
-System.Windows.Forms/IDeviceContext.cs
 System.Windows.Forms/IDropTarget.cs
 System.Windows.Forms/IFeatureSupport.cs
 System.Windows.Forms/IFileReaderService.cs

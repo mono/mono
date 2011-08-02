@@ -42,9 +42,18 @@ void
 mono_mach_arch_thread_state_to_mcontext (thread_state_t state, mcontext_t context)
 {
 	x86_thread_state64_t *arch_state = (x86_thread_state64_t *) state;
-	struct __darwin_mcontext64 *ctx = (struct __darwin_mcontex64 *) context;
+	struct __darwin_mcontext64 *ctx = (struct __darwin_mcontext64 *) context;
 
 	ctx->__ss = *arch_state;
+}
+
+void
+mono_mach_arch_mcontext_to_thread_state (mcontext_t context, thread_state_t state)
+{
+	x86_thread_state64_t *arch_state = (x86_thread_state64_t *) state;
+	struct __darwin_mcontext64 *ctx = (struct __darwin_mcontext64 *) context;
+
+	*arch_state = ctx->__ss;
 }
 
 int
@@ -66,15 +75,21 @@ mono_mach_arch_get_thread_state (thread_port_t thread, thread_state_t state, mac
 	return ret;
 }
 
+kern_return_t
+mono_mach_arch_set_thread_state (thread_port_t thread, thread_state_t state, mach_msg_type_number_t count)
+{
+	return thread_set_state (thread, x86_THREAD_STATE64, state, count);
+}
+
 void *
-mono_mach_arch_get_tls_value_from_thread (thread_port_t thread, guint32 key)
+mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
 {
 	/* OSX stores TLS values in a hidden array inside the pthread_t structure
 	 * They are keyed off a giant array offset 0x60 into the pointer.  This value
 	 * is baked into their pthread_getspecific implementation
 	 */
-	intptr_t *p = (intptr_t *) pthread_from_mach_thread_np (thread);
-	intptr_t **tsd = (intptr_t **) (p + 0x60);
+	intptr_t *p = (intptr_t *)thread;
+	intptr_t **tsd = (intptr_t **) ((char*)p + 0x60);
 
 	return (void *) tsd [key];
 }

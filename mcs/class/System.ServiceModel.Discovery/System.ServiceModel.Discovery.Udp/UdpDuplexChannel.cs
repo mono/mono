@@ -120,10 +120,12 @@ namespace System.ServiceModel.Discovery.Udp
 
 		void SendCore (UdpClient cli, Message message, TimeSpan timeout)
 		{
+			Logger.LogMessage (MessageLogSourceKind.TransportSend, ref message, int.MaxValue);
+
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
 			// It seems .NET sends the same Message a couple of times so that the receivers don't miss it. So, do the same hack.
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 3; i++) {
 				// FIXME: use MaxAnnouncementDelay. It is fixed now.
 				Thread.Sleep (rnd.Next (50, 500));
 				cli.Send (ms.GetBuffer (), (int) ms.Length);
@@ -159,19 +161,23 @@ namespace System.ServiceModel.Discovery.Udp
 
 			byte [] bytes = null;
 			IPEndPoint ip = new IPEndPoint (IPAddress.Any, 0);
+			ManualResetEvent wait = new ManualResetEvent (false);
 			var ar = client.BeginReceive (delegate (IAsyncResult result) {
-if (result == null) throw new ArgumentNullException ("result");
-				UdpClient cli = (UdpClient) result.AsyncState;
 				try {
-					bytes = cli.EndReceive (result, ref ip);
-				} catch (ObjectDisposedException) {
-					if (State == CommunicationState.Opened)
-						throw;
-					// Otherwise, called during shutdown. Ignore it.
+					UdpClient cli = (UdpClient) result.AsyncState;
+					try {
+						bytes = cli.EndReceive (result, ref ip);
+					} catch (ObjectDisposedException) {
+						if (State == CommunicationState.Opened)
+							throw;
+						// Otherwise, called during shutdown. Ignore it.
+					}
+				} finally {
+					wait.Set ();
 				}
 			}, client);
 
-			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (timeout))
+			if (!ar.IsCompleted && !wait.WaitOne (timeout))
 				return false;
 			if (bytes == null || bytes.Length == 0)
 				return false;
@@ -191,6 +197,9 @@ if (result == null) throw new ArgumentNullException ("result");
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add ("Encoder", message_encoder);
 			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ip.Address.ToString (), ip.Port));
+
+			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref msg, binding_element.MaxReceivedMessageSize);
+
 			return true;
 		}
 
@@ -261,6 +270,9 @@ if (result == null) throw new ArgumentNullException ("result");
 			client.EnableBroadcast = true;
 
 			// FIXME: apply UdpTransportSetting here.
+			var settings = binding_element.TransportSettings;
+			if (settings.MulticastInterfaceId != null)
+				client.Client.SetSocketOption (SocketOptionLevel.Udp, SocketOptionName.MulticastInterface, settings.MulticastInterfaceId);
 		}
 		
 		Func<TimeSpan,Message> receive_delegate;

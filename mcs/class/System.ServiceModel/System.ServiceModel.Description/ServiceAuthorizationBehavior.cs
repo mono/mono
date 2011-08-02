@@ -91,11 +91,14 @@ namespace System.ServiceModel.Description
 					continue;
 				foreach (var ed in cd.Endpoints) {
 					var dr = ed.DispatchRuntime;
-					dr.ExternalAuthorizationPolicies = ExternalAuthorizationPolicies;
+					if (ExternalAuthorizationPolicies !=null)
+						dr.ExternalAuthorizationPolicies = ExternalAuthorizationPolicies;
 					dr.ImpersonateCallerForAllOperations = ImpersonateCallerForAllOperations;
 					dr.PrincipalPermissionMode = PrincipalPermissionMode;
-					dr.RoleProvider = RoleProvider;
-					dr.ServiceAuthorizationManager = ServiceAuthorizationManager;
+					if (RoleProvider != null)
+						dr.RoleProvider = RoleProvider;
+					if (ServiceAuthorizationManager != null)
+						dr.ServiceAuthorizationManager = ServiceAuthorizationManager;
 				}
 			}
 		}

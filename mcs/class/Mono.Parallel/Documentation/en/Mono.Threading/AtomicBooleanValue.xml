@@ -1,0 +1,227 @@
+<Type Name="AtomicBooleanValue" FullName="Mono.Threading.AtomicBooleanValue">
+  <TypeSignature Language="C#" Value="public struct AtomicBooleanValue" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit AtomicBooleanValue extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Provide a volatile bool value type and a set of Interlocked method to modify it.</summary>
+    <remarks>This type is not safe to pass around.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CompareAndExchange">
+      <MemberSignature Language="C#" Value="public bool CompareAndExchange (bool expected, bool newVal);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CompareAndExchange(bool expected, bool newVal) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expected" Type="System.Boolean" />
+        <Parameter Name="newVal" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="expected">To be added.</param>
+        <param name="newVal">To be added.</param>
+        <summary>Same behavior than <see cref="M:System.Threading.Interlocked.CompareExchange(System.Int32@,System.Int32,System.Int32)" /></summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (Mono.Threading.AtomicBooleanValue rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(valuetype Mono.Threading.AtomicBooleanValue rhs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rhs" Type="Mono.Threading.AtomicBooleanValue" />
+      </Parameters>
+      <Docs>
+        <param name="rhs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object rhs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rhs" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="rhs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Exchange">
+      <MemberSignature Language="C#" Value="public bool Exchange (bool newVal);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Exchange(bool newVal) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="newVal" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="newVal">To be added.</param>
+        <summary>Same behavior than <see cref="M:System.Threading.Interlocked.Exchange(System.Int32@,System.Int32)" /></summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromValue">
+      <MemberSignature Language="C#" Value="public static Mono.Threading.AtomicBooleanValue FromValue (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Threading.AtomicBooleanValue FromValue(bool value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.AtomicBooleanValue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>Provide a static facility method for creating new AtomicBoolean value initialized with specific boolean.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static bool op_Explicit (Mono.Threading.AtomicBooleanValue rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Explicit(valuetype Mono.Threading.AtomicBooleanValue rhs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rhs" Type="Mono.Threading.AtomicBooleanValue" />
+      </Parameters>
+      <Docs>
+        <param name="rhs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static Mono.Threading.AtomicBooleanValue op_Implicit (bool rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype Mono.Threading.AtomicBooleanValue op_Implicit(bool rhs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.AtomicBooleanValue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rhs" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="rhs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryRelaxedSet">
+      <MemberSignature Language="C#" Value="public bool TryRelaxedSet ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryRelaxedSet() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Try to atomically change the value from false to true.</summary>
+        <returns>To be added.</returns>
+        <remarks>This method is lighter than <see cref="M:Mono.Threading.AtomicBoolean.TrySet()" /> in the case the AtomicBoolean is already set to true because it first uses a normal read to check the value.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TrySet">
+      <MemberSignature Language="C#" Value="public bool TrySet ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySet() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Try to atomically change the value from false to true.</summary>
+        <returns>To be added.</returns>
+        <remarks>This method is essentially a shortand for `!AtomicBoolean.Exchange (true)'</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public bool Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Value" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The boolean value represented by this instance.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

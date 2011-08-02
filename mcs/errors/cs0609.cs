@@ -1,4 +1,4 @@
-// cs0609.cs: Cannot set the `IndexerName' attribute on an indexer marked override
+// CS0609: Cannot set the `IndexerName' attribute on an indexer marked override
 // Line: 15
 
 using System.Runtime.CompilerServices;

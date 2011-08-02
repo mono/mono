@@ -1,4 +1,4 @@
-// cs1678.cs: Parameter `1' is declared as type `long' but should be `int'
+// CS1678: Parameter `1' is declared as type `long' but should be `int'
 // Line: 11
 //
 // Signature mismatch.

@@ -1,4 +1,4 @@
-// cs0177.cs: The out parameter `display' must be assigned to before control leaves the current method
+// CS0177: The out parameter `display' must be assigned to before control leaves the current method
 // Line: 5
 
 class ClassMain {

@@ -1,4 +1,4 @@
-// cs1656-2.cs: Cannot assign to `p' because it is a `fixed variable'
+// CS1656: Cannot assign to `p' because it is a `fixed variable'
 // Line: 10
 // Compiler options: -unsafe
 

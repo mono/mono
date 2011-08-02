@@ -217,6 +217,25 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void ReverseArrays ()
+		{
+			int[] source = { 1, 2, 3 };
+
+			var query = source.Reverse ();
+			using (var enumerator = query.GetEnumerator ()) {
+				enumerator.MoveNext ();
+				Assert.AreEqual (3, enumerator.Current);
+
+				source [1] = 42;
+				enumerator.MoveNext ();
+				Assert.AreEqual (2, enumerator.Current);
+
+				enumerator.MoveNext ();
+				Assert.AreEqual (1, enumerator.Current);
+			}
+		}
+
+		[Test]
 		public void TestSum ()
 		{
 			int [] data = {1, 2, 3, 4};
@@ -362,8 +381,30 @@ namespace MonoTests.System.Linq {
 		public void TestRange ()
 		{
 			AssertAreSame (new [] {1, 2, 3, 4}, Enumerable.Range (1, 4));
-
 			AssertAreSame (new [] {0, 1, 2, 3}, Enumerable.Range (0, 4));
+		}
+
+		[Test]
+		public void SingleValueOfMaxInt32 ()
+		{
+			AssertAreSame (new [] { int.MaxValue }, Enumerable.Range(int.MaxValue, 1));
+		}
+
+		[Test]
+		public void EmptyRangeStartingAtMinInt32 ()
+		{
+			AssertAreSame (new int [0], Enumerable.Range(int.MinValue, 0));
+		}
+
+		static void AssertThrows<T> (Action action) where T : Exception
+		{
+			try {
+				action ();
+				Assert.Fail ();
+			} catch (T) {
+			} catch {
+				Assert.Fail ();
+			}
 		}
 
 		[Test]

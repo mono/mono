@@ -36,11 +36,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[DefaultBindingProperty ("Value")]
 	[ComVisible (true)]
-#endif
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
 	[Designer("System.Windows.Forms.Design.DateTimePickerDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -49,15 +47,12 @@ namespace System.Windows.Forms {
 		#region Public variables
 		
 		// this class has to have the specified hour, minute and second, as it says in msdn
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-#endif
 		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 0, 0, 0);
-#if NET_2_0
+
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-#endif
 		public static readonly DateTime MinDateTime = new DateTime (1753, 1, 1);
 
 		internal const int check_box_size = 13;
@@ -82,9 +77,8 @@ namespace System.Windows.Forms {
 		bool							show_check_box;
 		bool							show_up_down;
 		DateTime						date_value;
-#if NET_2_0
 		bool							right_to_left_layout;
-#endif
+
 		// variables used for drawing and such
 		internal const int					up_down_width = check_box_size;
 		internal bool 					is_drop_down_visible;
@@ -118,7 +112,6 @@ namespace System.Windows.Forms {
 			#endregion	// DateTimePickerAccessibleObject Constructors
 
 			#region DateTimePickerAccessibleObject Properties
-#if NET_2_0
 			public override string KeyboardShortcut {
 				get {
 					return base.KeyboardShortcut;
@@ -130,7 +123,7 @@ namespace System.Windows.Forms {
 					return base.Role;
 				}
 			}
-#endif
+
 			public override AccessibleStates State {
 				get {
 					AccessibleStates	retval;
@@ -237,7 +230,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
@@ -248,7 +240,6 @@ namespace System.Windows.Forms {
 				base.BackgroundImageLayout = value;
 			}
 		}
-#endif
 
 		[AmbientValue(null)]
 		[Localizable(true)]
@@ -318,10 +309,8 @@ namespace System.Windows.Forms {
 						for (int i = 0; i < part_data.Length; i++)
 							part_data [i].Selected = false;
 						Invalidate (date_area_rect);
-#if NET_2_0
 						OnUIAChecked ();
 						OnUIASelectionChanged ();
-#endif
 					}
 				}
 			}
@@ -331,9 +320,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// the custom format string to format this control with
-#if NET_2_0
 		[Localizable (true)]
-#endif
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public string CustomFormat {
@@ -350,7 +337,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get {
@@ -360,7 +346,6 @@ namespace System.Windows.Forms {
 				base.DoubleBuffered = value;
 			}
 		}
-#endif
 
 		// which side the drop down is to be aligned on
 		[DefaultValue(LeftRightAlignment.Left)]
@@ -412,21 +397,13 @@ namespace System.Windows.Forms {
 						"'{0}' is not a valid value for 'MaxDate'. 'MaxDate' "
 						+ "must be greater than or equal to MinDate.",
 						value.ToString ("G"));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MaxDate", msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 				if (value > MaxDateTime) {
 					string msg = string.Format (CultureInfo.CurrentCulture,
 						"DateTimePicker does not support dates after {0}.",
 						MaxDateTime.ToString ("G", CultureInfo.CurrentCulture));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MaxDate", msg);
-#else
-					throw new ArgumentException (msg, "value");
-#endif
 				}
 				if (max_date != value) {
 					max_date = value;
@@ -435,9 +412,7 @@ namespace System.Windows.Forms {
 						// invalidate the value inside this control
 						this.Invalidate (date_area_rect);
 					}
-#if NET_2_0
 					OnUIAMaximumChanged ();
-#endif
 				}
 			}
 			get {
@@ -445,13 +420,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		public static DateTime MaximumDateTime {
 			get {
 				return MaxDateTime;
 			}
 		}
-#endif
 		
 		public DateTime MinDate {
 			set {
@@ -460,31 +433,18 @@ namespace System.Windows.Forms {
 				if (value == DateTime.MinValue)
 					value = MinDateTime;
 					
-#if NET_2_0
 				if (value > MaxDate) {
-#else
-				if (value >= MaxDate) {
-#endif
 					string msg = string.Format (CultureInfo.CurrentCulture,
 						"'{0}' is not a valid value for 'MinDate'. 'MinDate' "
 						+ "must be less than MaxDate.",
 						value.ToString ("G"));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MinDate", msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 				if (value < MinDateTime) {
 					string msg = string.Format (CultureInfo.CurrentCulture,
 						"DateTimePicker does not support dates before {0}.",
 						MinDateTime.ToString ("G", CultureInfo.CurrentCulture));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MinDate", msg);
-#else
-					throw new ArgumentException (msg, "value");
-#endif
-
 				}
 				if (min_date != value) {
 					min_date = value;
@@ -493,23 +453,20 @@ namespace System.Windows.Forms {
 						// invalidate the value inside this control
 						this.Invalidate (date_area_rect);
 					}
-#if NET_2_0
 					OnUIAMinimumChanged ();
-#endif
 				}
 			}
 			get {
 				return min_date;
 			}
 		}
-#if NET_2_0
+
 		public static DateTime MinimumDateTime {
 			get {
 				return MinDateTime;
 			}
 		}
-#endif
-#if NET_2_0
+
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -517,7 +474,6 @@ namespace System.Windows.Forms {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
-#endif
 
 		// the prefered height to draw this control using current font
 		[Browsable(false)]
@@ -529,7 +485,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[Localizable (true)]
 		public virtual bool RightToLeftLayout {
@@ -543,7 +498,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		// whether or not the check box is shown
 		[DefaultValue(false)]
@@ -553,9 +507,7 @@ namespace System.Windows.Forms {
 					show_check_box = value;
 					// invalidate the value inside this control
 					this.Invalidate (date_area_rect);
-#if NET_2_0
 					OnUIAShowCheckBoxChanged ();
-#endif
 				}
 			}
 			get {
@@ -571,9 +523,7 @@ namespace System.Windows.Forms {
 					show_up_down = value;
 					// need to invalidate the whole control
 					this.Invalidate ();
-#if NET_2_0
 					OnUIAShowUpDownChanged ();
-#endif
 				}
 			}
 			get {
@@ -631,11 +581,7 @@ namespace System.Windows.Forms {
 			set {
 				if (date_value != value) {
 					if (value < MinDate || value > MaxDate)
-#if NET_2_0
 						throw new ArgumentOutOfRangeException ("value", "value must be between MinDate and MaxDate");
-#else
-						throw new ArgumentException ("value", "value must be between MinDate and MaxDate");
-#endif
 
 					date_value = value;
 					this.OnValueChanged (EventArgs.Empty);
@@ -663,9 +609,7 @@ namespace System.Windows.Forms {
 		static object DropDownEvent = new object ();
 		static object FormatChangedEvent = new object ();
 		static object ValueChangedEvent = new object ();
-#if NET_2_0
 		static object RightToLeftLayoutChangedEvent = new object ();
-#endif
 
 		// raised when the monthcalendar is closed
 		public event EventHandler CloseUp {
@@ -714,7 +658,7 @@ namespace System.Windows.Forms {
 				base.BackgroundImageChanged -= value;
 			}
 		}
-#if NET_2_0
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
@@ -750,7 +694,6 @@ namespace System.Windows.Forms {
 				base.DoubleClick -= value;
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -763,7 +706,7 @@ namespace System.Windows.Forms {
 				base.ForeColorChanged -= value;
 			}
 		}
-#if NET_2_0
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseClick {
@@ -798,7 +741,6 @@ namespace System.Windows.Forms {
 				base.PaddingChanged -= value;
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -811,7 +753,7 @@ namespace System.Windows.Forms {
 				base.Paint -= value;
 			}
 		}
-#if NET_2_0
+
 		public event EventHandler RightToLeftLayoutChanged {
 			add {
 				Events.AddHandler (RightToLeftLayoutChangedEvent, value);
@@ -820,7 +762,6 @@ namespace System.Windows.Forms {
 				Events.RemoveHandler (RightToLeftLayoutChangedEvent, value);
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -871,14 +812,6 @@ namespace System.Windows.Forms {
 			base.DestroyHandle ();
 		}
 
-#if !NET_2_0
-		// not sure why we're overriding this one
-		protected override void Dispose (bool disposing) {
-			updown_timer.Dispose ();
-			base.Dispose (disposing);
-		}
-#endif
-
 		// find out if this key is an input key for us, depends on which date part is focused
 		protected override bool IsInputKey (Keys keyData) {
 			switch (keyData)
@@ -920,7 +853,7 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#if NET_2_0
+
 		protected override void  OnHandleCreated (EventArgs e) {
 			 base.OnHandleCreated(e);
 		}
@@ -934,7 +867,7 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
+
 		// not sure why we're overriding this one 
 		protected override void OnSystemColorsChanged (EventArgs e) {
 			base.OnSystemColorsChanged (e);
@@ -947,19 +880,12 @@ namespace System.Windows.Forms {
 				eh (this, eventargs);
 		}
 
-#if !NET_2_0
-		// overridden to set the bounds of this control properly
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			base.SetBoundsCore (x, y, width, DefaultSize.Height, specified);
-		}
-#else
 		// SetBoundsCore was removed from the 2.0 public API, so
 		// I had to do this hack instead.  :/
 		internal override int OverrideHeight (int height)
 		{
 			return DefaultSize.Height;
 		}
-#endif
 
 		// not sure why we're overriding this
 		protected override void WndProc (ref Message m) {
@@ -1349,9 +1275,7 @@ namespace System.Windows.Forms {
 			}
 
 			Invalidate ();
-#if NET_2_0
 			OnUIASelectionChanged ();
-#endif
 		}
 
 		internal void SelectNextPart()
@@ -1404,9 +1328,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-#if NET_2_0
 			OnUIASelectionChanged ();
-#endif
 		}
 
 		internal void SelectPreviousPart()
@@ -1462,9 +1384,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-#if NET_2_0
 			OnUIASelectionChanged ();
-#endif
 		}
 
 		// raised by key down events.
@@ -1685,9 +1605,7 @@ namespace System.Windows.Forms {
 			if (ShowCheckBox) {
 				is_checkbox_selected = true;
 				Invalidate (CheckBoxRect);
-#if NET_2_0
 				OnUIASelectionChanged ();
-#endif
 			}
 		}
 
@@ -1701,17 +1619,13 @@ namespace System.Windows.Forms {
 				Rectangle invalidate_rect = Rectangle.Ceiling (part_data [selected_index].drawing_rectangle);
 				invalidate_rect.Inflate (2, 2);
 				Invalidate (invalidate_rect);
-#if NET_2_0
 				OnUIASelectionChanged ();
-#endif
 			}
 			else if (is_checkbox_selected)
 			{
 				is_checkbox_selected = false;
 				Invalidate (CheckBoxRect);
-#if NET_2_0
 				OnUIASelectionChanged ();
-#endif
 			}
 		}
 
@@ -1765,9 +1679,7 @@ namespace System.Windows.Forms {
 			{
 				is_checkbox_selected = true;
 				Checked = !Checked;
-#if NET_2_0
 				OnUIASelectionChanged ();
-#endif
 				return;
 			}
 
@@ -1775,9 +1687,7 @@ namespace System.Windows.Forms {
 			// *and* the other parts are enabled (Checked as true)
 			if (Checked) {
 				is_checkbox_selected = false;
-#if NET_2_0
 				OnUIASelectionChanged ();
-#endif
 			}
 
 			if (ShowUpDown && drop_down_arrow_rect.Contains (e.X, e.Y))
@@ -1824,9 +1734,7 @@ namespace System.Windows.Forms {
 					}
 					if (invalidate_afterwards) {
 						Invalidate ();
-#if NET_2_0
 						OnUIASelectionChanged ();
-#endif
 					}
 				}
 				
@@ -2019,7 +1927,6 @@ namespace System.Windows.Forms {
 		
 		#endregion		
 
-#if NET_2_0
 		#region UIA Framework: Methods, Properties and Events
 
 		internal bool UIAIsCheckBoxSelected {
@@ -2106,6 +2013,5 @@ namespace System.Windows.Forms {
 		}
 		
 		#endregion
-#endif
 	}
 }

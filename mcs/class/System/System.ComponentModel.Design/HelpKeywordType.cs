@@ -30,9 +30,6 @@
 
 namespace System.ComponentModel.Design
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum HelpKeywordType
 	{
 		F1Keyword = 0,

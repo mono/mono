@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Runtime.Remoting</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\BinaryClientFormatterSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\BinaryClientFormatterSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\BinaryCore.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\BinaryServerFormatterSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\BinaryServerFormatterSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\ChannelCore.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\CommonTransportKeys.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\IAuthorizeRemotingConnection.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\RemotingThreadPool.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapClientFormatterSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapCore.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapServerFormatterSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapClientFormatterSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapServerFormatterSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SoapMessageFormatter.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels\SocketCachePolicy.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc\IpcChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc\IpcClientChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc\IpcServerChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\IpcTransport.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\IpcChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\IpcChannelHelper.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\IpcClientChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\IpcServerChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeClient.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeException.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeHelper.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeListener.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeSocket.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Win32\NamedPipeStream.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Unix\IpcChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Unix\IpcClientChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Unix\IpcServerChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Ipc.Unix\UnixChannelLoader.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpClientChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpMessageIO.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpServerChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpServerTransportSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpClientTransportSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpClientTransportSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Tcp\TcpConnectionPool.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\AggregateDictionary.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpClientChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpClientTransportSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpClientTransportSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpRemotingHandler.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpRemotingHandlerFactory.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpServerChannel.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\HttpServerTransportSink.cs" />
+   <Compile Include="System.Runtime.Remoting.Channels.Http\RemotingHttpListener.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\MetaData.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\MetaDataExporter.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\MetaDataCodeGenerator.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\SdlChannelSinkProvider.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\ServiceType.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSParserException.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\SdlChannelSink.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\SdlType.cs" />
+   <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSGeneratorException.cs" />
+   <Compile Include="System.Runtime.Remoting.Services\RemotingClientProxy.cs" />
+   <Compile Include="System.Runtime.Remoting.Services\RemotingService.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Runtime.Serialization.Formatters.Soap.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

@@ -1,4 +1,4 @@
-// cs1540-6.cs: Cannot access protected member `A.A(A)' via a qualifier of type `A'. The qualifier must be of type `B' or derived from it
+// CS1540: Cannot access protected member `A.A(A)' via a qualifier of type `A'. The qualifier must be of type `B' or derived from it
 // Line: 25
 
 public class A {

@@ -127,7 +127,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public bool SetBitCalledFlag = false;
 		public int SetBitCalledValue = 0;
-		protected override void SetBit (int bit) {
+		protected internal override void SetBit (int bit) {
 			SetBitCalledFlag = true;
 			SetBitCalledValue = bit;
 			base.SetBit (bit);

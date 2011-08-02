@@ -111,7 +111,7 @@ namespace System.Configuration
 					// ignore, it can fail - we deserialize only in order to get
 					// the configSource attribute
 				}
-				XmlDocument doc = new XmlDocument ();
+				XmlDocument doc = new ConfigurationXmlDocument ();
 				doc.LoadXml (RawXml);
 				return SectionHandler.Create (parent, ConfigContext, doc.DocumentElement);
 			}
@@ -159,7 +159,7 @@ namespace System.Configuration
 			{
 				if (protection_provider != null) {
 					ProtectedConfigurationProvider prov = ProtectedConfiguration.GetProvider (protection_provider, true);
-					XmlDocument doc = new XmlDocument ();
+					XmlDocument doc = new ConfigurationXmlDocument ();
 
 					reader.MoveToElement ();
 

@@ -35,6 +35,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace System.Diagnostics
 {
@@ -102,7 +103,6 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			params object [] data)
 		{
-			// FIXME: what is the correct level?
 			TraceCore (eventCache, source, eventType, id, false,
 				   Guid.Empty, 2, true, data);
 		}
@@ -112,8 +112,7 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			string message)
 		{
-			// FIXME: what is the correct level?
-			TraceCore (eventCache, source, TraceEventType.Transfer,
+			TraceCore (eventCache, source, eventType,
 				   id, false, Guid.Empty, 2, true, message);
 		}
 
@@ -122,8 +121,7 @@ namespace System.Diagnostics
 			string source, TraceEventType eventType, int id,
 			string format, params object [] args)
 		{
-			// FIXME: what is the correct level?
-			TraceCore (eventCache, source, TraceEventType.Transfer,
+			TraceCore (eventCache, source, eventType,
 				   id, false, Guid.Empty, 2, true, String.Format (format, args));
 		}
 
@@ -205,17 +203,37 @@ namespace System.Diagnostics
 
 			// <ApplicationData>
 			w.WriteStartElement ("ApplicationData", e2e_ns);
+			w.WriteStartElement ("TraceData", e2e_ns);
 			foreach (object o in data) {
 				if (wrapData)
-					w.WriteStartElement ("TraceData", e2e_ns);
-				if (o != null)
+					w.WriteStartElement ("DataItem", e2e_ns);
+				if (o is XPathNavigator)
+					// the output ignores xmlns difference between the parent (E2ETraceEvent and the content node).
+					// To clone such behavior, I took this approach.
+					w.WriteRaw (XPathNavigatorToString ((XPathNavigator) o));
+				else if (o != null)
 					w.WriteString (o.ToString ());
 				if (wrapData)
 					w.WriteEndElement ();
 			}
 			w.WriteEndElement ();
+			w.WriteEndElement ();
 
 			w.WriteEndElement ();
+
+			w.Flush (); // for XmlWriter
+			Flush (); // for TextWriter
+		}
+
+		static readonly XmlWriterSettings xml_writer_settings = new XmlWriterSettings () { OmitXmlDeclaration = true };
+
+		// I avoided OuterXml which includes indentation.
+		string XPathNavigatorToString (XPathNavigator nav)
+		{
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw, xml_writer_settings))
+				nav.WriteSubtree (xw);
+			return sw.ToString ();
 		}
 	}
 }

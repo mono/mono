@@ -3,39 +3,30 @@ SUBDIRS :=
 include ../build/rules.make
 
 EXTRA_DISTFILES = \
-	*mcs.csproj		\
+	mcs.csproj		\
 	compiler.doc		\
-	*mcs.sln		\
+	mcs.sln		\
 	cs-parser.jay		\
-	*.sources		\
+	mcs.exe.sources		\
 	NOTES			\
 	TODO			\
-	*mcs.exe.config		\
 	ikvm.cs
 
 ifeq (basic, $(PROFILE))
-LOCAL_MCS_FLAGS += -d:STATIC
-COMPILER_NAME = mcs
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/basic.exe
+sourcefile = mcs.exe.sources
+else
+PROGRAM = $(topdir)/class/lib/build/mcs.exe
+LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build
 endif
 
-ifeq (net_2_0, $(PROFILE))
-COMPILER_NAME = gmcs
-endif
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER
 
-ifeq (2.1, $(FRAMEWORK_VERSION))
-LOCAL_MCS_FLAGS += -d:SMCS_SOURCE
-COMPILER_NAME = smcs
-endif
-
-ifeq (4.0, $(FRAMEWORK_VERSION))
-COMPILER_NAME = dmcs
-endif
-
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
-
-BUILT_SOURCES = cs-parser.cs
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.0
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
+
+BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
 
@@ -50,14 +41,14 @@ include ../build/executable.make
 
 csproj-local:
 	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
-	echo $(thisdir):$$config_file >> $(topdir)/../mono/msvc/scripts/order; \
+	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(BOOTSTRAP_MCS);	\
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES); \
 	echo $(PROGRAM); \
-	echo $(response)) > $(topdir)/../mono/msvc/scripts/inputs/$$config_file
+	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 #
 # Below this line we have local targets used for testing and development
@@ -81,10 +72,6 @@ mcs3.exe: mcs2.exe
 
 wc:
 	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`
-
-ctest: 
-	rm -f mcs2.exe mcs3.exe
-	$(MAKE) USE_MCS_FLAGS="-d:NET_1_1 -d:ONLY_1_1" btest
 
 # we need this because bash tries to use its own crappy timer
 FRIENDLY_TIME = $(shell which time) -f'%U seconds'

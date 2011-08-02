@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>Microsoft.Build.Tasks.v4.0</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AL.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AppDomainIsolatedTaskExtension.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AspNetCompiler.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AssemblyResolver.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AssignCulture.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AssignProjectConfiguration.cs" />
+   <Compile Include="Microsoft.Build.Tasks\AssignTargetPath.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CallTarget.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CombinePath.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CommandLineBuilderExtension.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Copy.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateCSharpManifestResourceName.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateItem.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateManifestResourceName.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateProperty.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateTemporaryVCProject.cs" />
+   <Compile Include="Microsoft.Build.Tasks\CreateVisualBasicManifestResourceName.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Csc.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Delete.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\BootstrapperBuilder.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\BuildMessage.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\BuildMessageSeverity.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\BuildResults.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\BuildSettings.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\ComponentsLocation.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IBootstrapperBuilder.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IBuildMessage.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IBuildResults.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IBuildSettings.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IProductBuilderCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IProductBuilder.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IProductCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\IProduct.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\ProductBuilderCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\ProductBuilder.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\ProductCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.Bootstrapper\Product.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ApplicationIdentity.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ApplicationManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\AssemblyIdentity.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\AssemblyManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\AssemblyReferenceCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\AssemblyReference.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\AssemblyReferenceType.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\BaseReference.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ComClass.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\DeployManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\FileReferenceCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\FileReference.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\Manifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ManifestReader.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ManifestWriter.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\OutputMessageCollection.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\OutputMessage.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\OutputMessageType.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\ProxyStub.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\SecurityUtilities.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\TrustInfo.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\TypeLib.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\UpdateMode.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\UpdateUnit.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\WindowClass.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Error.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Exec.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ExtractedClassName.cs" />
+   <Compile Include="Microsoft.Build.Tasks\FindAppConfigFile.cs" />
+   <Compile Include="Microsoft.Build.Tasks\FindUnderPath.cs" />
+   <Compile Include="Microsoft.Build.Tasks\FormatUrl.cs" />
+   <Compile Include="Microsoft.Build.Tasks\FormatVersion.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateApplicationManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateBootstrapper.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateDeploymentManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateManifestBase.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateResource.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GenerateTrustInfo.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GetAssemblyIdentity.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GetFrameworkPath.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GetFrameworkSdkPath.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Hosting\ICscHostObject.cs" />
+   <Compile Include="Microsoft.Build.Tasks.Hosting\IVbcHostObject.cs" />
+   <Compile Include="Microsoft.Build.Tasks\LC.cs" />
+   <Compile Include="Microsoft.Build.Tasks\MakeDir.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ManagedCompiler.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Message.cs" />
+   <Compile Include="Microsoft.Build.Tasks\MSBuild.cs" />
+   <Compile Include="Microsoft.Build.Tasks\PcFileCache.cs" />
+   <Compile Include="Microsoft.Build.Tasks\LibraryPcFileCache.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ReadLinesFromFile.cs" />
+   <Compile Include="Microsoft.Build.Tasks\RegisterAssembly.cs" />
+   <Compile Include="Microsoft.Build.Tasks\RemoveDir.cs" />
+   <Compile Include="Microsoft.Build.Tasks\RemoveDuplicates.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ResolveAssemblyReference.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ResolvedReference.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ResolveManifestFiles.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ResolveProjectBase.cs" />
+   <Compile Include="Microsoft.Build.Tasks\SGen.cs" />
+   <Compile Include="Microsoft.Build.Tasks\SignFile.cs" />
+   <Compile Include="Microsoft.Build.Tasks\TaskExtension.cs" />
+   <Compile Include="Microsoft.Build.Tasks\TaskLoggingHelperExtension.cs" />
+   <Compile Include="Microsoft.Build.Tasks\ToolTaskExtension.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Touch.cs" />
+   <Compile Include="Microsoft.Build.Tasks\UnregisterAssembly.cs" />
+   <Compile Include="Microsoft.Build.Tasks\UpdateManifest.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Vbc.cs" />
+   <Compile Include="Microsoft.Build.Tasks\VCBuild.cs" />
+   <Compile Include="Microsoft.Build.Tasks\Warning.cs" />
+   <Compile Include="Microsoft.Build.Tasks\WriteLinesToFile.cs" />
+   <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceReader.cs" />
+   <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceWriter.cs" />
+   <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceReader.cs" />
+   <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceWriter.cs" />
+   <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs" />
+   <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
+   <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Microsoft.Build.Utilities.v4.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Engine.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Microsoft.Build.Engine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

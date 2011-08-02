@@ -1,4 +1,4 @@
-// cs1009.cs: Unrecognized escape sequence `\i'
+// CS1009: Unrecognized escape sequence `\i'
 // Line : 6
 
 class X

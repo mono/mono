@@ -12,11 +12,18 @@
 #include <mono/metadata/gc-internal.h>
 
 //#if 0
-#if defined(HAVE_SGEN_GC) && defined(MONO_ARCH_GC_MAPS_SUPPORTED)
+#if defined(MONO_ARCH_GC_MAPS_SUPPORTED)
 
-#include <mono/metadata/sgen-gc.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-counters.h>
+
+#if SIZEOF_VOID_P == 4
+typedef guint32 mword;
+#else
+typedef guint64 mword;
+#endif
+
+#define GC_BITS_PER_WORD (sizeof (mword) * 8)
 
 /* Contains state needed by the GC Map construction code */
 typedef struct {
@@ -558,7 +565,7 @@ thread_suspend_func (gpointer user_data, void *sigctx)
 	} else {
 		tls->has_context = FALSE;
 	}
-	tls->jit_tls = TlsGetValue (mono_jit_tls_id);
+	tls->jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 }
 
 #define DEAD_REF ((gpointer)(gssize)0x2a2a2a2a2a2a2a2aULL)
@@ -1117,7 +1124,10 @@ mini_gc_init_gc_map (MonoCompile *cfg)
 	if (COMPILE_LLVM (cfg))
 		return;
 
-	if (!cfg->compile_aot && conservative_stack_mark)
+	if (!mono_gc_is_moving ())
+		return;
+
+	if (!cfg->compile_aot && !mono_gc_precise_stack_mark_enabled ())
 		return;
 
 #if 1
@@ -1483,7 +1493,7 @@ process_variables (MonoCompile *cfg)
 			if (byref)
 				slot_type = SLOT_PIN;
 			else
-				slot_type = MONO_TYPE_IS_REFERENCE (t) ? SLOT_REF : SLOT_NOREF;
+				slot_type = mini_type_is_reference (cfg, t) ? SLOT_REF : SLOT_NOREF;
 
 			if (slot_type == SLOT_PIN) {
 				/* These have no live interval, be conservative */
@@ -1641,7 +1651,7 @@ process_variables (MonoCompile *cfg)
 
 		t = mini_type_get_underlying_type (NULL, t);
 
-		if (!MONO_TYPE_IS_REFERENCE (t)) {
+		if (!mini_type_is_reference (cfg, t)) {
 			set_slot_everywhere (gcfg, pos, SLOT_NOREF);
 			if (cfg->verbose_level > 1)
 				printf ("\tnoref at %s0x%x(fp) (R%d, slot = %d): %s\n", ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
@@ -1702,12 +1712,12 @@ sp_offset_to_fp_offset (MonoCompile *cfg, int sp_offset)
 }
 
 static GCSlotType
-type_to_gc_slot_type (MonoType *t)
+type_to_gc_slot_type (MonoCompile *cfg, MonoType *t)
 {
 	if (t->byref)
 		return SLOT_PIN;
 	t = mini_type_get_underlying_type (NULL, t);
-	if (MONO_TYPE_IS_REFERENCE (t))
+	if (mini_type_is_reference (cfg, t))
 		return SLOT_REF;
 	else {
 		if (MONO_TYPE_ISSTRUCT (t)) {
@@ -1771,7 +1781,7 @@ process_param_area_slots (MonoCompile *cfg)
 			int sp_offset = def->inst_offset;
 			int fp_offset = sp_offset_to_fp_offset (cfg, sp_offset);
 			int slot = fp_offset_to_slot (cfg, fp_offset);
-			GCSlotType type = type_to_gc_slot_type (t);
+			GCSlotType type = type_to_gc_slot_type (cfg, t);
 
 			/* The slot is live between the def instruction and the call */
 			set_slot_in_range (gcfg, slot, def->backend.pc_offset, callsite->pc_offset + 1, type);
@@ -2310,7 +2320,7 @@ mini_gc_init (void)
 	cb.thread_mark_func = thread_mark_func;
 	mono_gc_set_gc_callbacks (&cb);
 
-	logfile = mono_sgen_get_logfile ();
+	logfile = mono_gc_get_logfile ();
 
 	parse_debug_options ();
 

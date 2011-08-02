@@ -1,4 +1,4 @@
-// cs0619-47.cs: `A.Field' is obsolete: `!!!'
+// CS0619-47: `A.Field' is obsolete: `!!!'
 // Line: 11
 
 class A: System.Attribute

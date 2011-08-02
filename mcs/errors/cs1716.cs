@@ -1,4 +1,4 @@
-// cs1716.cs: Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead
+// CS1716: Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead
 // Line: 6
 
 public class C

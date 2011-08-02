@@ -1,4 +1,4 @@
-// cs1692.cs: Invalid number
+// CS1692: Invalid number
 // Line: 5
 // Compiler options: -warnaserror
 

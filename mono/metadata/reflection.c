@@ -6,6 +6,7 @@
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Copyright 2011 Rodrigo Kumpera
  *
  */
 #include <config.h>
@@ -2669,11 +2670,13 @@ mono_image_get_ctorbuilder_token (MonoDynamicImage *assembly, MonoReflectionCtor
 	if (token)
 		return token;
 
-	g_assert (tb->generic_params);
-
 	reflection_methodbuilder_from_ctor_builder (&rmb, mb);
 
-	parent = create_generic_typespec (assembly, tb);
+	if (tb->generic_params)
+		parent = create_generic_typespec (assembly, tb);
+	else
+		parent = mono_image_typedef_or_ref (assembly, mono_reflection_type_get_handle ((MonoReflectionType*)tb));
+	
 	name = mono_string_to_utf8 (rmb.name);
 	sig = method_builder_encode_signature (assembly, &rmb);
 
@@ -2743,7 +2746,7 @@ mono_image_get_fieldref_token (MonoDynamicImage *assembly, MonoObject *f, MonoCl
 		if (is_field_on_inst (field))
 			type = get_field_on_inst_generic_type (field);
 		else
-			type = field->type;
+			type = mono_field_get_type (field);
 	}
 	token = mono_image_get_memberref_token (assembly, &field->parent->byval_arg,
 											mono_field_get_name (field),
@@ -4941,8 +4944,12 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 			type = mono_reflection_type_get_handle ((MonoReflectionType *)obj);
 			token = mono_image_typedef_or_ref_full (assembly, type, TRUE);
 			token = mono_metadata_token_from_dor (token);
-		} else {
+		} else if (tb->module->dynamic_image == assembly) {
 			token = tb->table_idx | MONO_TOKEN_TYPE_DEF;
+		} else {
+			MonoType *type;
+			type = mono_reflection_type_get_handle ((MonoReflectionType *)obj);
+			token = mono_metadata_token_from_dor (mono_image_typedef_or_ref (assembly, type));
 		}
 	} else if (strcmp (klass->name, "MonoType") == 0) {
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType *)obj);
@@ -6861,6 +6868,10 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 	unsigned char format, flags;
 	int i;
 
+	/* for compatibility with .net */
+    if (method->dynamic)
+        mono_raise_exception (mono_get_exception_invalid_operation (NULL));
+
 	if (!System_Reflection_MethodBody)
 		System_Reflection_MethodBody = mono_class_from_name (mono_defaults.corlib, "System.Reflection", "MethodBody");
 	if (!System_Reflection_LocalVariableInfo)
@@ -7854,12 +7865,16 @@ handle_type:
 			int etype = *p;
 			p ++;
 
-			if (etype == 0x51)
-				/* See Partition II, Appendix B3 */
-				etype = MONO_TYPE_OBJECT;
 			type = MONO_TYPE_SZARRAY;
-			simple_type.type = etype;
-			tklass = mono_class_from_mono_type (&simple_type);
+			if (etype == 0x50) {
+				tklass = mono_defaults.systemtype_class;
+			} else {
+				if (etype == 0x51)
+					/* See Partition II, Appendix B3 */
+					etype = MONO_TYPE_OBJECT;
+				simple_type.type = etype;
+				tklass = mono_class_from_mono_type (&simple_type);
+			}
 			goto handle_enum;
 		} else if (subt == 0x55) {
 			char *n;
@@ -7883,7 +7898,7 @@ handle_type:
 		val = load_cattr_value (image, &subc->byval_arg, p, end);
 		obj = mono_object_new (mono_domain_get (), subc);
 		g_assert (!subc->has_references);
-		memcpy ((char*)obj + sizeof (MonoObject), val, mono_class_value_size (subc, NULL));
+		mono_gc_memmove ((char*)obj + sizeof (MonoObject), val, mono_class_value_size (subc, NULL));
 		g_free (val);
 		return obj;
 	}
@@ -10055,8 +10070,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 	m->slot = -1;
 	m->flags = rmb->attrs;
 	m->iflags = rmb->iattrs;
-	m->name = mono_string_to_utf8_image (image, rmb->name, &error);
-	g_assert (mono_error_ok (&error));
+	m->name = mono_string_to_utf8_image_ignore (image, rmb->name);
 	m->klass = klass;
 	m->signature = sig;
 	m->sre_method = TRUE;
@@ -10605,27 +10619,11 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
 	gklass = gclass->container_class;
 	mono_class_init (gklass);
 
-	dgclass->count_methods = methods ? mono_array_length (methods) : 0;
-	dgclass->count_ctors = ctors ? mono_array_length (ctors) : 0;
 	dgclass->count_fields = fields ? mono_array_length (fields) : 0;
 
-	dgclass->methods = mono_image_set_new0 (gclass->owner, MonoMethod *, dgclass->count_methods);
-	dgclass->ctors = mono_image_set_new0 (gclass->owner, MonoMethod *, dgclass->count_ctors);
 	dgclass->fields = mono_image_set_new0 (gclass->owner, MonoClassField, dgclass->count_fields);
 	dgclass->field_objects = mono_image_set_new0 (gclass->owner, MonoObject*, dgclass->count_fields);
 	dgclass->field_generic_types = mono_image_set_new0 (gclass->owner, MonoType*, dgclass->count_fields);
-
-	for (i = 0; i < dgclass->count_methods; i++) {
-		MonoObject *obj = mono_array_get (methods, gpointer, i);
-
-		dgclass->methods [i] = inflate_method ((MonoReflectionType*)type, obj);
-	}
-
-	for (i = 0; i < dgclass->count_ctors; i++) {
-		MonoObject *obj = mono_array_get (ctors, gpointer, i);
-
-		dgclass->ctors [i] = inflate_method ((MonoReflectionType*)type, obj);
-	}
 
 	for (i = 0; i < dgclass->count_fields; i++) {
 		MonoObject *obj = mono_array_get (fields, gpointer, i);
@@ -10952,6 +10950,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	klass->size_inited = 1;
 
 	for (i = 0; i < klass->field.count; ++i) {
+		MonoArray *rva_data;
 		fb = mono_array_get (tb->fields, gpointer, i);
 		field = &klass->fields [i];
 		field->name = mono_string_to_utf8_image (image, fb->name, error);
@@ -10963,8 +10962,14 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		} else {
 			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type);
 		}
-		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && fb->rva_data)
-			klass->ext->field_def_values [i].data = mono_array_addr (fb->rva_data, char, 0);
+
+		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
+			char *base = mono_array_addr (rva_data, char, 0);
+			size_t size = mono_array_length (rva_data);
+			char *data = mono_image_alloc (klass->image, size);
+			memcpy (data, base, size);
+			klass->ext->field_def_values [i].data = data;
+		}
 		if (fb->offset != -1)
 			field->offset = fb->offset;
 		field->parent = klass;
@@ -11234,6 +11239,7 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	klass->flags = tb->attrs;
 	klass->has_cctor = 1;
 	klass->has_finalize = 1;
+	klass->has_finalize_inited = 1;
 
 	/* fool mono_class_setup_parent */
 	klass->supertypes = NULL;
@@ -11436,14 +11442,46 @@ mono_reflection_sighelper_get_signature_field (MonoReflectionSigHelper *sig)
 	return result;
 }
 
+typedef struct {
+	MonoMethod *handle;
+	MonoDomain *domain;
+} DynamicMethodReleaseData;
+
+/*
+ * The runtime automatically clean up those after finalization.
+*/	
+static MonoReferenceQueue *dynamic_method_queue;
+
+static void
+free_dynamic_method (void *dynamic_method)
+{
+	DynamicMethodReleaseData *data = dynamic_method;
+
+	mono_runtime_free_method (data->domain, data->handle);
+	g_free (data);
+}
+
 void 
 mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 {
+	MonoReferenceQueue *queue;
+	MonoMethod *handle;
+	DynamicMethodReleaseData *release_data;
 	ReflectionMethodBuilder rmb;
 	MonoMethodSignature *sig;
 	MonoClass *klass;
 	GSList *l;
 	int i;
+
+	if (mono_runtime_is_shutting_down ())
+		mono_raise_exception (mono_get_exception_invalid_operation (""));
+
+	if (!(queue = dynamic_method_queue)) {
+		mono_loader_lock ();
+		if (!(queue = dynamic_method_queue))
+			queue = dynamic_method_queue = mono_gc_reference_queue_new (free_dynamic_method);
+		mono_loader_unlock ();
+	}
 
 	sig = dynamic_method_to_signature (mb);
 
@@ -11502,7 +11540,12 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 
 	klass = mb->owner ? mono_class_from_mono_type (mono_reflection_type_get_handle ((MonoReflectionType*)mb->owner)) : mono_defaults.object_class;
 
-	mb->mhandle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig);
+	mb->mhandle = handle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig);
+	release_data = g_new (DynamicMethodReleaseData, 1);
+	release_data->handle = handle;
+	release_data->domain = mono_object_get_domain ((MonoObject*)mb);
+	if (!mono_gc_reference_queue_add (queue, (MonoObject*)mb, release_data))
+		g_free (release_data);
 
 	/* Fix up refs entries pointing at us */
 	for (l = mb->referenced_by; l; l = l->next) {
@@ -11527,16 +11570,6 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 }
 
 #endif /* DISABLE_REFLECTION_EMIT */
-
-void
-mono_reflection_destroy_dynamic_method (MonoReflectionDynamicMethod *mb)
-{
-	g_assert (mb);
-
-	if (mb->mhandle)
-		mono_runtime_free_method (
-			mono_object_get_domain ((MonoObject*)mb), mb->mhandle);
-}
 
 /**
  * 

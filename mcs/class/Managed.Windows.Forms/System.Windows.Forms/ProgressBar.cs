@@ -34,16 +34,10 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Value")]
-#if NET_2_0
 	[DefaultBindingProperty ("Value")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
-	public
-#if !NET_2_0
-	sealed
-#endif
-	class ProgressBar : Control
+	public class ProgressBar : Control
 	{
 		#region Local Variables
 		private int maximum;
@@ -52,31 +46,14 @@ namespace System.Windows.Forms
 		internal int val;
 		internal DateTime start = DateTime.Now;
 		internal Rectangle client_area = new Rectangle ();
-#if NET_2_0
 		internal ProgressBarStyle style;
 		Timer marquee_timer;
 		bool right_to_left_layout;
-#endif
-
-#if NET_2_0
 		private static readonly Color defaultForeColor = SystemColors.Highlight;
-#endif
 		#endregion	// Local Variables
 
 		#region events
-
-#if NET_2_0
 		static object RightToLeftLayoutChangedEvent = new object ();
-#endif
-			
-#if ONLY_1_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackColorChanged {
-			add { base.BackColorChanged += value; }
-			remove { base.BackColorChanged -= value; }
-		}
-#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -85,15 +62,13 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 		
-#if NET_2_0
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add	{ base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
-			
+		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler CausesValidationChanged {
@@ -121,15 +96,6 @@ namespace System.Windows.Forms
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
 		}
-		
-#if ONLY_1_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged {
-			add { base.ForeColorChanged += value; }
-			remove { base.ForeColorChanged -= value; }
-		}
-#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -165,23 +131,21 @@ namespace System.Windows.Forms
 			add { base.Leave += value; }
 			remove { base.Leave -= value; }
 		}
-
-#if NET_2_0
+		
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
 		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-			
+		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
-			
+		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint {
@@ -189,20 +153,10 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 		
-#if ONLY_1_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler RightToLeftChanged {
-			add { base.RightToLeftChanged += value; }
-			remove { base.RightToLeftChanged -= value; }
-		}
-#endif
-#if NET_2_0
 		public event EventHandler RightToLeftLayoutChanged {
 			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
-#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -232,17 +186,13 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.UserPaint | 
 				ControlStyles.Selectable | 
 				ControlStyles.ResizeRedraw | 
-				ControlStyles.Opaque
-#if NET_2_0
-				| ControlStyles.UseTextForAccessibility
-#endif
+				ControlStyles.Opaque |
+				ControlStyles.UseTextForAccessibility
 				, false);
 
 			force_double_buffer = true;
 			
-#if NET_2_0
 			ForeColor = defaultForeColor;
-#endif
 		}
 		#endregion	// Public Constructors
 
@@ -258,18 +208,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if ONLY_1_1
-		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fire a BackColorChanged event
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override Color BackColor
-		{
-			get { return base.BackColor; }
-			set { base.BackColor = value; }
-		}
-#endif
-
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a BackgroundImageChanged event
 		[Browsable (false)]
@@ -280,14 +218,13 @@ namespace System.Windows.Forms
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 				get	{ return base.BackgroundImageLayout; }
 				set { base.BackgroundImageLayout = value; }
 		}
-#endif
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool CausesValidation
@@ -311,13 +248,12 @@ namespace System.Windows.Forms
 			get { return ThemeEngine.Current.ProgressBarDefaultSize; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 				get { return base.DoubleBuffered; }
 				set { base.DoubleBuffered = value; }
 		}
-#endif
+
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a FontChanged event
 		[Browsable (false)]
@@ -327,18 +263,6 @@ namespace System.Windows.Forms
 			get { return base.Font; }
 			set { base.Font = value; }
 		}
-
-#if ONLY_1_1
-		// Setting this property in MS .Net 1.1 does not have any visual effect and it
-		// does not fire a FontChanged event
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override Color ForeColor
-		{
-			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
-		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -357,11 +281,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Maximum", 
-#else
-					throw new ArgumentException(
-#endif
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
 
 				maximum = value;
@@ -379,11 +299,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Minimum", 
-#else
-					throw new ArgumentException(
-#endif
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
 
 				minimum = value;
@@ -393,7 +309,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -414,17 +329,6 @@ namespace System.Windows.Forms
 					}
 				}		
 		}
-#endif
-			
-#if ONLY_1_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override RightToLeft RightToLeft
-		{
-			get { return base.RightToLeft; }
-			set { base.RightToLeft = value; }
-		}
-#endif
 
 		[DefaultValue (10)]
 		public int Step
@@ -436,7 +340,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[DefaultValue (ProgressBarStyle.Blocks)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
@@ -485,7 +388,6 @@ namespace System.Windows.Forms
 				marquee_animation_speed = value;
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -513,11 +415,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < Minimum || value > Maximum)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Value", string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-#else
-					throw new ArgumentException(string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-#endif
 				val = value;
 				Refresh ();
 			}
@@ -535,10 +433,9 @@ namespace System.Windows.Forms
 
 		public void Increment (int value)
 		{
-#if NET_2_0
 			if (Style == ProgressBarStyle.Marquee)
 				throw new InvalidOperationException ("Increment should not be called if the style is Marquee.");
-#endif
+
 			int newValue = Value + value;
 
 			if (newValue < Minimum)
@@ -558,7 +455,6 @@ namespace System.Windows.Forms
 			UpdateAreas ();
 		}
 
-#if NET_2_0
 		protected override void OnBackColorChanged (EventArgs e)
 		{
 			base.OnBackColorChanged (e);
@@ -577,28 +473,24 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftLayoutChanged(EventArgs e)
 		{
-				EventHandler eh = (EventHandler) Events [RightToLeftLayoutChangedEvent];
-				if (eh != null)
-					eh (this, e);
+			EventHandler eh = (EventHandler) Events [RightToLeftLayoutChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
-#endif
 			
 		public void PerformStep ()
 		{
-#if NET_2_0
 			if (Style == ProgressBarStyle.Marquee)
 				throw new InvalidOperationException ("PerformStep should not be called if the style is Marquee.");
-#endif
+
 			Increment (Step);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void ResetForeColor ()
 		{
 			ForeColor = defaultForeColor;
 		}
-#endif
 
 		public override string ToString()
 		{

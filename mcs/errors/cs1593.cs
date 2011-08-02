@@ -1,4 +1,4 @@
-// cs1593.cs: Delegate `Blah.MyDelegate' does not take `1' arguments
+// CS1593: Delegate `Blah.MyDelegate' does not take `1' arguments
 // Line : 21
 
 using System;

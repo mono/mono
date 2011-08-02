@@ -22,6 +22,7 @@
 //
 
 
+#if !MONOTOUCH
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -114,3 +115,4 @@ namespace Mono.CodeGeneration
 		}
 	}
 }
+#endif

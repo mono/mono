@@ -41,7 +41,7 @@ typedef struct {
 #define mono_ptr_array_append(ARRAY, VALUE) do { \
 	if ((ARRAY).size >= (ARRAY).capacity) {\
 	void *__tmp = mono_gc_alloc_fixed (sizeof (void*) * (ARRAY).capacity * 2, mono_gc_make_root_descr_all_refs ((ARRAY).capacity * 2)); \
-		memcpy (__tmp, (ARRAY).data, (ARRAY).capacity * sizeof (void*)); \
+		mono_gc_memmove (__tmp, (ARRAY).data, (ARRAY).capacity * sizeof (void*)); \
 		if ((ARRAY).capacity > MONO_PTR_ARRAY_MAX_ON_STACK)	\
 			mono_gc_free_fixed ((ARRAY).data);	\
 		(ARRAY).data = __tmp;	\
@@ -61,5 +61,14 @@ typedef struct {
 #define mono_ptr_array_get(ARRAY, IDX) ((ARRAY).data [(IDX)])
 
 #define mono_ptr_array_size(ARRAY) ((ARRAY).size)
+
+#define mono_ptr_array_reset(ARRAY) do { \
+	(ARRAY).size = 0; \
+} while (0)
+
+#define mono_ptr_array_clear(ARRAY) do { \
+	(ARRAY).size = 0; \
+	mono_gc_bzero ((ARRAY).data, (ARRAY).capacity * sizeof (void*)); \
+} while (0)
 
 #endif

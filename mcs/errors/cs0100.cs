@@ -1,4 +1,4 @@
-// cs0100.cs: The parameter name `a' is a duplicate
+// CS0100: The parameter name `a' is a duplicate
 // Line: 6
 //
 // Author: 

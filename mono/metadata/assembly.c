@@ -32,6 +32,7 @@
 #include <mono/utils/mono-path.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/coree.h>
+#include <mono/utils/mono-io-portability.h>
 
 #ifndef HOST_WIN32
 #include <sys/types.h>
@@ -65,6 +66,9 @@ static char **extra_gac_paths = NULL;
 #ifndef DISABLE_ASSEMBLY_REMAPPING
 /* The list of system assemblies what will be remapped to the running
  * runtime version. WARNING: this list must be sorted.
+ * The integer number is an index in the MonoRuntimeInfo structure, whose
+ * values can be found in domain.c - supported_runtimes. Look there
+ * to understand what remapping will be made.
  */
 static const AssemblyVersionMap framework_assemblies [] = {
 	{"Accessibility", 0},
@@ -112,7 +116,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Runtime.Serialization.Formatters.Soap", 0},
 	{"System.Security", 0},
 	{"System.ServiceProcess", 0},
-	{"System.Transactions", 2},
+	{"System.Transactions", 0},
 	{"System.Web", 0},
 	{"System.Web.Abstractions", 2},
 	{"System.Web.Mobile", 0},
@@ -197,26 +201,24 @@ mono_public_tokens_are_equal (const unsigned char *pubt1, const unsigned char *p
 	return memcmp (pubt1, pubt2, 16) == 0;
 }
 
-/* Native Client can't get this info from an environment variable so */
-/* it's passed in to the runtime, or set manually by embedding code. */
-#ifdef __native_client__
-char* nacl_mono_path = NULL;
-#endif
-
-static void
-check_path_env (void)
+/**
+ * mono_set_assemblies_path:
+ * @path: list of paths that contain directories where Mono will look for assemblies
+ *
+ * Use this method to override the standard assembly lookup system and
+ * override any assemblies coming from the GAC.  This is the method
+ * that supports the MONO_PATH variable.
+ *
+ * Notice that MONO_PATH and this method are really a very bad idea as
+ * it prevents the GAC from working and it prevents the standard
+ * resolution mechanisms from working.  Nonetheless, for some debugging
+ * situations and bootstrapping setups, this is useful to have. 
+ */
+void
+mono_set_assemblies_path (const char* path)
 {
-	const char *path;
 	char **splitted, **dest;
 	
-#ifdef __native_client__
-	path = nacl_mono_path;
-#else
-	path = g_getenv ("MONO_PATH");
-#endif
-	if (!path)
-		return;
-
 	splitted = g_strsplit (path, G_SEARCHPATH_SEPARATOR_S, 1000);
 	if (assemblies_path)
 		g_strfreev (assemblies_path);
@@ -238,6 +240,27 @@ check_path_env (void)
 
 		splitted++;
 	}
+}
+
+/* Native Client can't get this info from an environment variable so */
+/* it's passed in to the runtime, or set manually by embedding code. */
+#ifdef __native_client__
+char* nacl_mono_path = NULL;
+#endif
+
+static void
+check_path_env (void)
+{
+	const char* path;
+#ifdef __native_client__
+	path = nacl_mono_path;
+#else
+	path = g_getenv ("MONO_PATH");
+#endif
+	if (!path || assemblies_path != NULL)
+		return;
+
+	mono_set_assemblies_path(path);
 }
 
 static void
@@ -1649,7 +1672,7 @@ mono_assembly_name_free (MonoAssemblyName *aname)
 }
 
 static gboolean
-parse_public_key (const gchar *key, gchar** pubkey)
+parse_public_key (const gchar *key, gchar** pubkey, gboolean *is_ecma)
 {
 	const gchar *pkey;
 	gchar header [16], val, *arr;
@@ -1662,11 +1685,12 @@ parse_public_key (const gchar *key, gchar** pubkey)
 	/* allow the ECMA standard key */
 	if (strcmp (key, "00000000000000000400000000000000") == 0) {
 		if (pubkey) {
-			arr = g_strdup ("b77a5c561934e089");
-			*pubkey = arr;
+			*pubkey = g_strdup (key);
+			*is_ecma = TRUE;
 		}
 		return TRUE;
 	}
+	*is_ecma = FALSE;
 	val = g_ascii_xdigit_value (key [0]) << 4;
 	val |= g_ascii_xdigit_value (key [1]);
 	switch (val) {
@@ -1789,9 +1813,19 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	}
 
 	if (key) {
-		if (strcmp (key, "null") == 0 || !parse_public_key (key, &pkey)) {
+		gboolean is_ecma;
+		if (strcmp (key, "null") == 0 || !parse_public_key (key, &pkey, &is_ecma)) {
 			mono_assembly_name_free (aname);
 			return FALSE;
+		}
+
+		if (is_ecma) {
+			if (save_public_key)
+				aname->public_key = (guint8*)pkey;
+			else
+				g_free (pkey);
+			g_strlcpy ((gchar*)aname->public_key_token, "b77a5c561934e089", MONO_PUBLIC_KEY_TOKEN_LENGTH);
+			return TRUE;
 		}
 		
 		len = mono_metadata_decode_blob_size ((const gchar *) pkey, (const gchar **) &pkeyptr);
@@ -1843,7 +1877,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 	gboolean version_defined;
 	gboolean token_defined;
 	guint32 flags = 0;
-	guint32 arch = PROCESSOR_ARCHITECTURE_NONE;
+	guint32 arch = MONO_PROCESSOR_ARCHITECTURE_NONE;
 
 	if (!is_version_defined)
 		is_version_defined = &version_defined;
@@ -1919,15 +1953,15 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		if (!g_ascii_strncasecmp (value, "ProcessorArchitecture=", 22)) {
 			char *s = g_strstrip (value + 22);
 			if (!g_ascii_strcasecmp (s, "None"))
-				arch = PROCESSOR_ARCHITECTURE_NONE;
+				arch = MONO_PROCESSOR_ARCHITECTURE_NONE;
 			else if (!g_ascii_strcasecmp (s, "MSIL"))
-				arch = PROCESSOR_ARCHITECTURE_MSIL;
+				arch = MONO_PROCESSOR_ARCHITECTURE_MSIL;
 			else if (!g_ascii_strcasecmp (s, "X86"))
-				arch = PROCESSOR_ARCHITECTURE_X86;
+				arch = MONO_PROCESSOR_ARCHITECTURE_X86;
 			else if (!g_ascii_strcasecmp (s, "IA64"))
-				arch = PROCESSOR_ARCHITECTURE_IA64;
+				arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
 			else if (!g_ascii_strcasecmp (s, "AMD64"))
-				arch = PROCESSOR_ARCHITECTURE_AMD64;
+				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
 			else
 				goto cleanup_and_fail;
 			tmp++;
@@ -2454,11 +2488,17 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 	if (domain && domain->setup && domain->setup->configuration_file) {
 		mono_domain_lock (domain);
 		if (!domain->assembly_bindings_parsed) {
-			gchar *domain_config_file = mono_string_to_utf8 (domain->setup->configuration_file);
+			gchar *domain_config_file_name = mono_string_to_utf8 (domain->setup->configuration_file);
+			gchar *domain_config_file_path = mono_portability_find_file (domain_config_file_name, TRUE);
 
-			mono_config_parse_assembly_bindings (domain_config_file, aname->major, aname->minor, domain, assembly_binding_info_parsed);
+			if (!domain_config_file_path)
+				domain_config_file_path = domain_config_file_name;
+			
+			mono_config_parse_assembly_bindings (domain_config_file_path, aname->major, aname->minor, domain, assembly_binding_info_parsed);
 			domain->assembly_bindings_parsed = TRUE;
-			g_free (domain_config_file);
+			if (domain_config_file_name != domain_config_file_path)
+				g_free (domain_config_file_name);
+			g_free (domain_config_file_path);
 		}
 		mono_domain_unlock (domain);
 

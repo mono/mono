@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace cs0636 {
+namespace CS0636 {
 	class GValue {
 		[FieldOffset (4)] 
                 public const int value = 2;

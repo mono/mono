@@ -1,4 +1,4 @@
-// cs0619-37.cs: `ObsoleteEnum.value_B' is obsolete: `It's obsolete'
+// CS0619-37: `ObsoleteEnum.value_B' is obsolete: `It's obsolete'
 // Line: 16
 
 using System;

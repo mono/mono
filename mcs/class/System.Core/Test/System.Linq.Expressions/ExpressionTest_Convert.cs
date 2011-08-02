@@ -185,7 +185,9 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNull (c.Method);
 		}
 
-		enum EineEnum { }
+		enum EineEnum {
+			EineValue,
+		}
 
 		[Test]
 		public void ConvertEnumToInt32 ()
@@ -583,6 +585,17 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Constant ((int?) 0),
 				typeof (string),
 				typeof (Convert).GetMethod ("ToString", new [] { typeof (object) }));
+		}
+
+		[Test] // #678897
+		public void ConvertEnumValueToEnum ()
+		{
+			var node = Expression.Convert (
+				Expression.Constant (EineEnum.EineValue, typeof (EineEnum)),
+				typeof (Enum));
+
+			Assert.IsNotNull (node);
+			Assert.AreEqual (typeof (Enum), node.Type);
 		}
 	}
 }

@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	class VisualStyleElement
+	public class VisualStyleElement
 	{
 		#region Private Variables
 		#region Class name/part/state constants

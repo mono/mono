@@ -66,18 +66,10 @@ namespace Mono.Messaging
 			return Instance.provider;
 		}
 		
-#if NET_2_1 || NET_3_0 || NET_3_5 || NET_4_0
 		private string GetProviderClassName ()
 		{
-			string className = System.Configuration.ConfigurationManager.AppSettings[MESSAGING_PROVIDER_KEY];
-			return className != null ? className : System.Environment.GetEnvironmentVariable(MESSAGING_PROVIDER_KEY);
+			return System.Configuration.ConfigurationManager.AppSettings[MESSAGING_PROVIDER_KEY];
 		}
-#else
-		private string GetProviderClassName ()
-		{
-			return System.Environment.GetEnvironmentVariable(MESSAGING_PROVIDER_KEY);
-		}
-#endif
 		
 		private IMessagingProvider CreateProvider (string className)
 		{
@@ -90,7 +82,7 @@ namespace Mono.Messaging
 			                                       new Type[0],
 			                                       new ParameterModifier[0]);
 			if (ci == null)
-				throw new MonoMessagingException ("Can't find constructor");
+				throw new MonoMessagingException ("Can't find constructor for: " + className);
 			
 			return (IMessagingProvider) ci.Invoke (new object[0]);
 		}

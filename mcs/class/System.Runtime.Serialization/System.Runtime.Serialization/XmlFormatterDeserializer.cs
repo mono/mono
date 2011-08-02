@@ -104,17 +104,39 @@ namespace System.Runtime.Serialization
 			get { return references; }
 		}
 
+#if !MOONLIGHT
+		XmlDocument document;
+		
+		XmlDocument XmlDocument {
+			get { return (document = document ?? new XmlDocument ()); }
+		}
+#endif
+
 		// This method handles z:Ref, xsi:nil and primitive types, and then delegates to DeserializeByMap() for anything else.
+
 		public object Deserialize (Type type, XmlReader reader)
 		{
+#if !MOONLIGHT
+			if (type == typeof (XmlElement))
+				return XmlDocument.ReadNode (reader);
+			else if (type == typeof (XmlNode [])) {
+				reader.ReadStartElement ();
+				var l = new List<XmlNode> ();
+				for(; !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ())
+					l.Add (XmlDocument.ReadNode (reader));
+				reader.ReadEndElement ();
+				return l.ToArray ();
+			}
+#endif
+
 			QName graph_qname = types.GetQName (type);
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (itype != null) {
-				string[] parts = itype.Split (':');
+				string [] parts = itype.Split (':');
 				if (parts.Length > 1)
-					graph_qname = new QName (parts [1], reader.LookupNamespace (reader.NameTable.Get (parts[0])));
+					graph_qname = new QName (parts [1], reader.LookupNamespace (reader.NameTable.Get (parts [0])));
 				else
-					graph_qname = new QName (itype, reader.NamespaceURI);
+					graph_qname = new QName (itype, reader.LookupNamespace (String.Empty));
 			}
 
 			string label = reader.GetAttribute ("Ref", KnownTypeCollection.MSSimpleNamespace);
@@ -130,7 +152,7 @@ namespace System.Runtime.Serialization
 
 			if (isNil) {
 				reader.Skip ();
-				if (!type.IsValueType)
+				if (!type.IsValueType || type == typeof (void))
 					return null;
 				else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
 					return null;
@@ -149,21 +171,11 @@ namespace System.Runtime.Serialization
 				}
 			}
 
-			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname) != null) {
 				string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
 
-				string value;
-				if (reader.IsEmptyElement) {
-					reader.Read (); // advance
-					if (type.IsValueType)
-						return Activator.CreateInstance (type);
-					else
-						// FIXME: Workaround for creating empty objects of the correct type.
-						value = String.Empty;
-				}
-				else
-					value = reader.ReadElementContentAsString ();
-				object ret = KnownTypeCollection.PredefinedTypeStringToObject (value, graph_qname.Name, reader);
+				object ret = DeserializePrimitive (type, reader, graph_qname);
+
 				if (id != null) {
 					if (references.ContainsKey (id))
 						throw new InvalidOperationException (String.Format ("Object with Id '{0}' already exists as '{1}'", id, references [id]));
@@ -173,6 +185,37 @@ namespace System.Runtime.Serialization
 			}
 
 			return DeserializeByMap (graph_qname, type, reader);
+		}
+
+		object DeserializePrimitive (Type type, XmlReader reader, QName qname)
+		{
+			// It is the only exceptional type that does not serialize to string but serializes into complex element.
+			if (type == typeof (DateTimeOffset)) {
+				if (reader.IsEmptyElement) {
+					reader.Read ();
+					return default (DateTimeOffset);
+				}
+				reader.ReadStartElement ();
+				reader.MoveToContent ();
+				var date = reader.ReadElementContentAsDateTime ("DateTime", KnownTypeCollection.DefaultClrNamespaceSystem);
+				var off = TimeSpan.FromMinutes (reader.ReadElementContentAsInt ("OffsetMinutes", KnownTypeCollection.DefaultClrNamespaceSystem));
+				reader.MoveToContent ();
+				reader.ReadEndElement ();
+				return new DateTimeOffset (DateTime.SpecifyKind (date.ToUniversalTime () + off, DateTimeKind.Unspecified), off);
+			}
+
+			string value;
+			if (reader.IsEmptyElement) {
+				reader.Read (); // advance
+				if (type.IsValueType)
+					return Activator.CreateInstance (type);
+				else
+					// FIXME: Workaround for creating empty objects of the correct type.
+					value = String.Empty;
+			}
+			else
+				value = reader.ReadElementContentAsString ();
+			return KnownTypeCollection.PredefinedTypeStringToObject (value, qname.Name, reader);
 		}
 
 		object DeserializeByMap (QName name, Type type, XmlReader reader)
@@ -193,7 +236,7 @@ namespace System.Runtime.Serialization
 
 		Type GetTypeFromNamePair (string name, string ns)
 		{
-			Type p = KnownTypeCollection.GetPrimitiveTypeFromName (name); // FIXME: namespace?
+			Type p = KnownTypeCollection.GetPrimitiveTypeFromName (new QName (name, ns));
 			if (p != null)
 				return p;
 			bool makeArray = false;

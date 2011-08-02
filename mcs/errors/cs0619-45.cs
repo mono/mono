@@ -1,4 +1,4 @@
-// cs0619-45.cs: `A' is obsolete: `!!!'
+// CS0619-45: `A' is obsolete: `!!!'
 // Line: 9
 
 [System.Obsolete("!!!", true)]

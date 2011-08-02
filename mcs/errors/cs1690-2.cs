@@ -1,4 +1,4 @@
-// cs1690-2.cs: Cannot call methods, properties, or indexers on `A.point' because it is a value type member of a marshal-by-reference class
+// CS1690: Cannot call methods, properties, or indexers on `A.point' because it is a value type member of a marshal-by-reference class
 // Line: 22
 // Compiler options: -warn:1 -warnaserror
 

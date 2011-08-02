@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		// Internal members available to the event handler sub-system
 		internal static IntPtr FocusWindow;
 		internal static IntPtr ActiveWindow;
+		internal static IntPtr UnactiveWindow;
 		internal static IntPtr ReverseWindow;
 		internal static IntPtr CaretWindow;
 
@@ -785,6 +786,7 @@ namespace System.Windows.Forms {
 
 		internal override void Activate(IntPtr handle) {
 			if (ActiveWindow != IntPtr.Zero) {
+				UnactiveWindow = ActiveWindow;
 				ActivateWindow (HIViewGetWindow (ActiveWindow), false);
 			}
 			ActivateWindow (HIViewGetWindow (handle), true);

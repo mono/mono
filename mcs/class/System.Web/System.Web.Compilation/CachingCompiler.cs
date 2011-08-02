@@ -31,6 +31,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
@@ -91,9 +92,9 @@ namespace System.Web.Compilation
 				CompilerParameters options = compiler.CompilerParameters;
 				GetExtraAssemblies (options);
 				results = comp.CompileAssemblyFromDom (options, compiler.CompileUnit);
-				ArrayList dependencies = compiler.Parser.Dependencies;
+				List <string> dependencies = compiler.Parser.Dependencies;
 				if (dependencies != null && dependencies.Count > 0) {
-					string [] deps = (string []) dependencies.ToArray (typeof (string));
+					string [] deps = dependencies.ToArray ();
 					HttpContext ctx = HttpContext.Current;
 					HttpRequest req = ctx != null ? ctx.Request : null;
 

@@ -39,16 +39,6 @@ namespace System.ServiceModel.Description
 	{
 		public static WebAttributeInfo GetWebAttributeInfo (this OperationDescription od)
 		{
-#if NET_2_1
-			var mi = od.BeginMethod ?? od.SyncMethod;
-			var atts = mi.GetCustomAttributes (typeof (WebGetAttribute), true);
-			if (atts.Length == 1)
-				return ((WebGetAttribute) atts [0]).Info;
-			atts = mi.GetCustomAttributes (typeof (WebInvokeAttribute), true);
-			if (atts.Length == 1)
-				return ((WebInvokeAttribute) atts [0]).Info;
-			return null;
-#else
 			foreach (IOperationBehavior ob in od.Behaviors) {
 				WebAttributeInfo info = null;
 				var wg = ob as WebGetAttribute;
@@ -59,14 +49,10 @@ namespace System.ServiceModel.Description
 					return wi.Info;
 			}
 			return new WebGetAttribute ().Info; // blank one
-#endif
 		}
 	}
 
-	public class WebHttpBehavior
-#if !NET_2_1
-	 : IEndpointBehavior
-#endif
+	public class WebHttpBehavior : IEndpointBehavior
 	{
 		public WebHttpBehavior ()
 		{
@@ -110,20 +96,18 @@ namespace System.ServiceModel.Description
 		public virtual void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 			AddClientErrorInspector (endpoint, clientRuntime);
-#if MOONLIGHT
-			throw new NotSupportedException ("Due to the lack of ClientRuntime.Operations, Silverlight cannot support this binding.");
-#else
 			foreach (ClientOperation oper in clientRuntime.Operations) {
 				var req = GetRequestClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
 				var res = GetReplyClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
 				oper.Formatter = new ClientPairFormatter (req, res);
 			}
-#endif
 		}
 
-#if !NET_2_1
 		public virtual void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
+#if NET_2_1
+			throw new NotImplementedException ();
+#else
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
 			// FIXME: get HostNameComparisonMode from WebHttpBinding by some means.
 			endpointDispatcher.FilterPriority = 1; // It is to take higher priority than that of ServiceMetadataExtension (whose URL likely conflicts with this one).
@@ -140,8 +124,8 @@ namespace System.ServiceModel.Description
 				Invoker = new EndpointNotFoundOperationInvoker (),
 				DeserializeRequest = false,
 				SerializeReply = false};
-		}
 #endif
+		}
 
 		internal class ClientPairFormatter : IClientMessageFormatter
 		{

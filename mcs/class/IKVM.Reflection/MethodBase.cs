@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class MethodBase : MemberInfo
 	{
+		// prevent external subclasses
+		internal MethodBase()
+		{
+		}
+
 		internal abstract MethodSignature MethodSignature { get; }
 		internal abstract int ParameterCount { get; }
 		public abstract ParameterInfo[] GetParameters();
@@ -126,6 +131,11 @@ namespace IKVM.Reflection
 		public virtual bool ContainsGenericParameters
 		{
 			get { return IsGenericMethodDefinition; }
+		}
+
+		public virtual MethodBase __GetMethodOnTypeDefinition()
+		{
+			return this;
 		}
 
 		// This goes to the (uninstantiated) MethodInfo on the (uninstantiated) Type. For constructors

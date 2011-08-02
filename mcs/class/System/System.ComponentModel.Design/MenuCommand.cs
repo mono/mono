@@ -45,9 +45,7 @@ namespace System.ComponentModel.Design
 		private bool enabled = true;
 		private bool issupported = true;
 		private bool visible = true;
-#if NET_2_0
 		private Hashtable properties;
-#endif
 
 		public MenuCommand (EventHandler handler, CommandID command)
 		{
@@ -95,7 +93,6 @@ namespace System.ComponentModel.Design
 			}		
 		}
 
-#if NET_2_0
 		public virtual IDictionary Properties {
 			get {
 				if (properties == null)
@@ -103,7 +100,6 @@ namespace System.ComponentModel.Design
 				return properties;
 			}
 		}
-#endif
 
 		public virtual bool Supported {
 			get {
@@ -132,12 +128,10 @@ namespace System.ComponentModel.Design
 				handler (this, EventArgs.Empty);
 		}
 		
-#if NET_2_0
 		public virtual void Invoke (object arg)
 		{
 			this.Invoke ();
 		}
-#endif
 
 		protected virtual void OnCommandChanged (EventArgs e)
 		{

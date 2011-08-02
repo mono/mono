@@ -23,9 +23,7 @@
 //	Jonathan Pobst	monkey@jpobst.com
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public delegate void HtmlElementErrorEventHandler (object sender, HtmlElementErrorEventArgs e);
 }
-#endif

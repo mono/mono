@@ -1,4 +1,4 @@
-// cs1624-2.cs: The body of `X.this[int].set' cannot be an iterator block because `void' is not an iterator interface type
+// CS1624: The body of `X.this[int].set' cannot be an iterator block because `void' is not an iterator interface type
 // Line: 15
 using System;
 using System.Collections;

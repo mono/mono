@@ -393,5 +393,11 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			return data;
 		}
+#if NET_4_0
+		protected static string FormatDate (DateTime date)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

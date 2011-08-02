@@ -3155,6 +3155,155 @@ public class SimdTests {
 		return 0;
 	}
 
+	public static int test_0_shuffle_with_two_args_pd () {
+		Vector2d a = new Vector2d (1,2);
+		Vector2d b = new Vector2d (5,6);
+
+		Vector2d c = a.Shuffle (b, 0x2);
+		if (c.X != 1)
+			return 1;
+		if (c.Y != 6)
+			return 2;
+		return 0;
+	}
+
+	public static int test_0_shuffle_with_two_args_ps () {
+		Vector4f a = new Vector4f (1, 2, 3, 4);
+		Vector4f b = new Vector4f (5, 6, 7, 8);
+
+		Vector4f c = a.Shuffle (b, ShuffleSel.ExpandY);
+		if (c.X != 2)
+			return 1;
+		if (c.Y != 2)
+			return 2;
+		if (c.Z != 6)
+			return 3;
+		if (c.W != 6)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_i_to_d () {
+		var a = new Vector4i (1, 2, 3, 4);
+		var b = a.ConvertToDouble ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		return 0;
+	}
+
+	public static int test_0_i_to_f () {
+		var a = new Vector4i (1, 2, 3, 4);
+		var b = a.ConvertToFloat ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		if (b.Z != 3)
+			return 3;
+		if (b.W != 4)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_d_to_i () {
+		var a = new Vector2d (1.4, 2.6);
+		var b = a.ConvertToInt ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 3)
+			return 2;
+		if (b.Z != 0)
+			return 3;
+		if (b.W != 0)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_d_to_f () {
+		var a = new Vector2d (1, 2);
+		var b = a.ConvertToFloat ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		if (b.Z != 0)
+			return 3;
+		if (b.W != 0)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_f_to_i () {
+		var a = new Vector4f (1.1f, 2.2f, 3.5f, 4.6f);
+		var b = a.ConvertToInt ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		if (b.Z != 4)
+			return 3;
+		if (b.W != 5)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_f_to_d () {
+		var a = new Vector4f (1,2,3,4);
+		var b = a.ConvertToDouble ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		return 0;
+	}
+
+	public static int test_0_d_to_i_trunc () {
+		var a = new Vector2d (1.4, 2.6);
+		var b = a.ConvertToIntTruncated ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		if (b.Z != 0)
+			return 3;
+		if (b.W != 0)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_f_to_i_trunc () {
+		var a = new Vector4f (1.1f, 2.2f, 3.5f, 4.6f);
+		var b = a.ConvertToIntTruncated ();
+		if (b.X != 1)
+			return 1;
+		if (b.Y != 2)
+			return 2;
+		if (b.Z != 3)
+			return 3;
+		if (b.W != 4)
+			return 4;
+		return 0;
+	}
+
+	class BoxedVector2d
+	{
+	    public Vector2d v;
+	}
+
+	public static int test_0_vector2d_set_x () {
+		var bv = new BoxedVector2d ();
+		var xy = new Vector2d ();
+		xy.X = bv.v.X;
+
+		if (xy.X != 0)
+			return 1;
+		if (xy.Y != 0)
+			return 2;
+		return 0;
+	}
+
 	public static int Main (String[] args) {
 		return TestDriver.RunTests (typeof (SimdTests), args);
 	}

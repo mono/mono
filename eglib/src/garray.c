@@ -39,30 +39,28 @@ typedef struct {
 	gboolean clear_;
 	guint element_size;
 	gboolean zero_terminated;
-	gint capacity;
+	guint capacity;
 } GArrayPriv;
 
 static void
-ensure_capacity (GArrayPriv *priv,
-		 int capacity)
+ensure_capacity (GArrayPriv *priv, guint capacity)
 {
-	int new_capacity = MAX (priv->capacity, INITIAL_CAPACITY);
-
-	if (capacity < priv->capacity)
+	guint new_capacity;
+	
+	if (capacity <= priv->capacity)
 		return;
-
-	while (new_capacity < capacity) {
-		new_capacity <<= 1;
-	}
-	capacity = new_capacity;
-	priv->array.data = (gchar*)g_realloc (priv->array.data, element_length (priv, capacity));
-
+	
+	new_capacity = (capacity + 63) & ~63;
+	
+	priv->array.data = g_realloc (priv->array.data, element_length (priv, new_capacity));
+	
 	if (priv->clear_) {
 		memset (element_offset (priv, priv->capacity),
 			0,
-			element_length (priv, capacity - priv->capacity));
+			element_length (priv, new_capacity - priv->capacity));
 	}
-	priv->capacity = capacity;
+	
+	priv->capacity = new_capacity;
 }
 
 GArray *
@@ -76,6 +74,22 @@ g_array_new (gboolean zero_terminated,
 	rv->element_size = element_size;
 
 	ensure_capacity (rv, INITIAL_CAPACITY);
+
+	return (GArray*)rv;
+}
+
+GArray *
+g_array_sized_new (gboolean zero_terminated,
+	     gboolean clear_,
+	     guint element_size,
+		 guint reserved_size)
+{
+	GArrayPriv *rv = g_new0 (GArrayPriv, 1);
+	rv->zero_terminated = zero_terminated;
+	rv->clear_ = clear_;
+	rv->element_size = element_size;
+
+	ensure_capacity (rv, reserved_size);
 
 	return (GArray*)rv;
 }
@@ -204,3 +218,21 @@ g_array_remove_index_fast (GArray *array,
 	return array;
 }
 
+void
+g_array_set_size (GArray *array, gint length)
+{
+	GArrayPriv *priv = (GArrayPriv*)array;
+
+	g_return_if_fail (array != NULL);
+	g_return_if_fail (length >= 0);
+
+	if (length == priv->capacity)
+		return; // nothing to be done
+
+	if (length > priv->capacity) {
+		// grow the array
+		ensure_capacity (priv, length);
+	}
+
+	array->len = length;
+}

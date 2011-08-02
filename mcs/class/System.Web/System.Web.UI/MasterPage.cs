@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Util;
 using System.Web.UI.WebControls;
 using System.IO;
@@ -111,6 +112,9 @@ namespace System.Web.UI
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
 		{
+			var req = context.Request;
+			if (req != null)
+				masterPageFile = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (req.CurrentExecutionFilePath, masterPageFile);
 #if TARGET_JVM
 			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
 											    owner.Page.MapPath (masterPageFile),
@@ -145,17 +149,21 @@ namespace System.Web.UI
 			return masterPage;
 		}
 
-		internal static void ApplyMasterPageRecursive (MasterPage master, List <string> appliedMasterPageFiles)
+		internal static void ApplyMasterPageRecursive (string currentFilePath, VirtualPathProvider vpp, MasterPage master, Dictionary <string, bool> appliedMasterPageFiles)
 		{
 			/* XXX need to use virtual paths here? */
-			if (master.MasterPageFile != null) {
-				if (appliedMasterPageFiles.Contains (master.MasterPageFile))
+			string mpFile = master.MasterPageFile;
+			if (!String.IsNullOrEmpty (mpFile)) {
+				mpFile = vpp.CombineVirtualPaths (currentFilePath, mpFile);
+				if (appliedMasterPageFiles.ContainsKey (mpFile))
 					throw new HttpException ("circular dependency in master page files detected");
-				if (master.Master != null) {
+
+				MasterPage innerMaster = master.Master;
+				if (innerMaster != null) {
 					master.Controls.Clear ();
-					master.Controls.Add (master.Master);
-					appliedMasterPageFiles.Add (master.MasterPageFile);
-					MasterPage.ApplyMasterPageRecursive (master.Master, appliedMasterPageFiles);
+					master.Controls.Add (innerMaster);
+					appliedMasterPageFiles.Add (mpFile, true);
+					MasterPage.ApplyMasterPageRecursive (currentFilePath, vpp, innerMaster, appliedMasterPageFiles);
 				}
 			}
 		}

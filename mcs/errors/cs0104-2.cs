@@ -1,4 +1,4 @@
-// cs0104-2.cs: `Graphics' is an ambiguous reference between `Gdk.Graphics' and `System.Drawing.Graphics'
+// CS0104: `Graphics' is an ambiguous reference between `Gdk.Graphics' and `System.Drawing.Graphics'
 // Line: 16
 
 using Gdk;

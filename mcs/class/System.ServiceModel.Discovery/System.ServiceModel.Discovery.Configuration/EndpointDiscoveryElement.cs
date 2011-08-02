@@ -83,7 +83,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return properties; }
 		}
 		
-		protected override object CreateBehavior ()
+		protected internal override object CreateBehavior ()
 		{
 			var ret = new EndpointDiscoveryBehavior () { Enabled = this.Enabled };
 			foreach (ContractTypeNameElement ctn in ContractTypeNames)

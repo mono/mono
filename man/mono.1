@@ -1,11 +1,11 @@
 .\" 
 .\" mono manual page.
 .\" Copyright 2003 Ximian, Inc. 
-.\" Copyright 2004-2009 Novell, Inc. 
+.\" Copyright 2004-2011 Novell, Inc. 
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
-.TH Mono "Mono 2.5"
+.TH Mono "Mono 2.11"
 .SH NAME
 mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
@@ -163,11 +163,11 @@ hardware configurations like the cell phones and video gaming
 consoles). 
 .TP
 .I static
-Create an ELF object file (.o) which can be statically linked into an executable
-when embedding the mono runtime. When this option is used, the object file needs to
-be registered with the embedded runtime using the mono_aot_register_module function
-which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global symbol 
-from the object file:
+Create an ELF object file (.o) or .s file which can be statically linked into an
+executable when embedding the mono runtime. When this option is used, the object file
+needs to be registered with the embedded runtime using the mono_aot_register_module
+function which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global
+symbol from the object file:
 
 .nf
 extern void *mono_aot_module_hello_info;
@@ -175,6 +175,36 @@ extern void *mono_aot_module_hello_info;
 mono_aot_register_module (mono_aot_module_hello_info);
 .fi
 .ne
+.TP
+.I mtriple=<TRIPLE>
+Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
+--mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
+only supported by the ARM backend. In LLVM mode, this triple is passed on to the LLVM
+llc compiler.
+.TP
+.I tool-prefix=<PREFIX>
+Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. For
+example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
+'arm-linux-gnueabi-as' instead of 'as'.
+.TP
+.I llvm-path=<PREFIX>
+Same for the llvm tools 'opt' and 'llc'.
+.TP
+.I stats
+Print various stats collected during AOT compilation.
+.TP
+.I readonly-value=namespace.typename.fieldname=type/value
+Override the value of a static readonly field. Usually, during JIT
+compilation, the static constructor is ran eagerly, so the value of
+a static readonly field is known at compilation time and the compiler
+can do a number of optimizations based on it. During AOT, instead, the static
+constructor can't be ran, so this option can be used to set the value of such
+a field and enable the same set of optimizations.
+Type can be any of i1, i2, i4 for integers of the respective sizes (in bytes).
+Note that signed/unsigned numbers do not matter here, just the storage size.
+This option can be specified multiple times and it doesn't prevent the static
+constructor for the type defining the field to execute with the usual rules
+at runtime (hence possibly computing a different value for the field).
 
 .PP
 For more information about AOT, see: http://www.mono-project.com/AOT
@@ -227,6 +257,12 @@ host/port configured with the \fBaddress\fR option.  If you set it to 'y', it
 instructs the Mono runtime to start debugging in server mode, where Mono
 actively waits for the debugger front end to connect to the Mono process.  
 Mono will print out to stdout the IP address and port where it is listening.
+.TP
+.I suspend=[y/n]
+Defaults to yes, with the default option Mono will suspend the vm on startup 
+until it connects successfully to a debugger front end.  If you set it to 'n', in 
+conjunction with \fBserver=y\fR, it instructs the Mono runtime to run as normal, 
+while caching metadata to send to the debugger front end on connection.
 .ne
 .RE
 .TP
@@ -998,6 +1034,11 @@ for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
 `k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
 The default is 512 megabytes.
 .TP
+\fBsoft-heap-limit=\fIsize\fR
+Once the heap size gets larger than this size, ignore what the default
+major collection trigger metric says and only allow four nursery size's
+of major heap growth between major collections.
+.TP
 \fBwbarrier=\fIwbarrier\fR
 Specifies which write barrier to use.  Options are `cardtable' and
 `remset'.  The card table barrier is faster but less precise, and only
@@ -1021,6 +1062,16 @@ Enables or disables concurrent sweep for the Mark&Sweep collector.  If
 enabled, the sweep phase of the garbage collection is done in a thread
 concurrently with the application.  Concurrent sweep is disabled by
 default.
+.TP
+\fBstack-mark=\fImark-mode\fR
+Specifies how application threads should be scanned. Options are
+`precise` and `conservative`. Precise marking allow the collector
+to know what values on stack are references and what are not.
+Conservative marking threats all values as potentially references
+and leave them untouched. Precise marking reduces floating garbage
+and can speed up nursery collection and allocation rate, it has
+the downside of requiring a significant extra memory per compiled
+method. The right option, unfortunately, requires experimentation.
 .ne
 .RE
 .TP
@@ -1028,12 +1079,18 @@ default.
 When using Mono with the SGen garbage collector this environment
 variable can be used to turn on various debugging features of the
 collector.  The value of this variable is a comma separated list of
-words.
+words.  Do not use these options in production.
 .RS
 .ne 8
 .TP
 \fInumber\fR
 Sets the debug level to the specified number.
+.TP
+\fBprint-allowance\fR
+After each major collection prints memory consumption for before and
+after the collection and the allowance for the minor collector, i.e. how
+much the heap is allowed to grow from minor collections before the next
+major collection is triggered.
 .TP
 \fBcollect-before-allocs\fR
 .TP
@@ -1052,6 +1109,13 @@ unloaded AppDomain.
 This clears the nursery at GC time instead of doing it when the thread
 local allocation buffer (TLAB) is created.  The default is to clear
 the nursery at TLAB creation time.
+.TP
+\fBdisable-minor\fR
+Don't do minor collections.  If the nursery is full, a major collection
+is triggered instead, unless it, too, is disabled.
+.TP
+\fBdisable-major\fR
+Don't do major collections.
 .TP
 \fBconservative-stack-mark\fR
 Forces the GC to scan the stack conservatively, even if precise
@@ -1393,6 +1457,9 @@ be used when writing messages like this: Console.Error:MyProgramName.
 See the System.Diagnostics.DefaultTraceListener documentation for more
 information.
 .TP
+\fBMONO_WCF_TRACE\fR
+This eases WCF diagnostics functionality by simply outputs all log messages from WCF engine to "stdout", "stderr" or any file passed to this environment variable. The log format is the same as usual diagnostic output.
+.TP
 \fBMONO_XEXCEPTIONS\fR
 This throws an exception when a X11 error is encountered; by default a
 message is displayed but execution continues
@@ -1548,7 +1615,7 @@ http://www.mono-project.com
 .SH SEE ALSO
 .PP
 certmgr(1), csharp(1), mcs(1), mdb(1), monocov(1), monodis(1),
-mono-config(5), mozroots(1), pdb2mdb(1), xsp(1), mod_mono(8).
+mono-config(5), mozroots(1), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
 .PP
 For more information on AOT:
 http://www.mono-project.com/AOT

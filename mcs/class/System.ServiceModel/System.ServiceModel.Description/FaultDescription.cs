@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -35,6 +36,7 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}, Action={action}, DetailType={detailType}")]
 	public class FaultDescription
 	{
 		string action, name, ns;
@@ -79,5 +81,12 @@ namespace System.ServiceModel.Description
 				has_protection_level = true;
 			}
 		}
+#if MOONLIGHT
+		// introduced for silverlight sdk compatibility
+		internal XmlName ElementName {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 	}
 }

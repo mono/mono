@@ -62,7 +62,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException), "Generating Clipboard content is not supported when the ClipboardCopyMode property is Disable.")]
+		[ExpectedException (typeof (InvalidOperationException), ExpectedMessage = "Generating Clipboard content is not supported when the ClipboardCopyMode property is Disable.")]
 		public void GetClipboardContentsDisabled ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {

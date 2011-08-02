@@ -94,6 +94,14 @@ namespace System.ServiceModel.Configuration
 				return _properties;
 			}
 		}
+		
+#if NET_4_0		
+		internal ConfigurationPropertyCollection PropertiesInternal {
+			get {
+				return Properties;
+			}
+		}
+#endif
 
 		public static StandardEndpointsSection GetSection (System.Configuration.Configuration config) {
 			ServiceModelSectionGroup sm = ServiceModelSectionGroup.GetSectionGroup (config);

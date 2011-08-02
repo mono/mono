@@ -1097,6 +1097,19 @@ namespace MonoTests.System
 				this.GetType ().GetMethod ("Banga"));
 		}
 
+		[Test] // #664205
+		public void DynamicInvokeNullTarget ()
+		{
+			var method = new DynamicMethod ("test", typeof (int), new [] { typeof (object) }, true);
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldc_I4, 42);
+			il.Emit (OpCodes.Ret);
+
+			var @delegate = method.CreateDelegate (typeof (Func<int>), null);
+
+			Assert.AreEqual (42, (int) @delegate.DynamicInvoke ());
+		}
+
 #endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
@@ -1231,6 +1244,69 @@ namespace MonoTests.System
 	
 			int a = (int) t.GetMethod ("test").Invoke (obj, null);
 			Assert.AreEqual (3, a, "#1");
+		}
+
+		public static int MethodWithIntParam (int x) {
+			return 10;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void CantBindValueTypeToFirstArg () {
+			try {
+				Delegate.CreateDelegate (typeof (Delegate695978_2), 10, typeof (DelegateTest).GetMethod ("MethodWithIntParam"));
+				Assert.Fail ("create delegate must fail");
+			} catch (ArgumentException) {}
+		}
+
+		struct Struct695978 {
+			public int value;
+			public int test() { return value + 10; }
+			public static int test2 (ref Struct695978 foo) { return foo.value + 20; }
+		}
+
+		delegate int Delegate695978_1 (ref Struct695978 _this);
+		delegate int Delegate695978_2 ();
+		delegate int Delegate695978_3 (Struct695978 _this);
+
+		[Test] //tests for #695978
+		[Category ("NotWorking")]
+		public void DelegateWithValueTypeArguments ()
+		{
+			Struct695978 es = new Struct695978 ();
+			es.value = 100;
+
+			var ar1 = (Delegate695978_1)Delegate.CreateDelegate(typeof (Delegate695978_1), typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar1);
+			Assert.AreEqual (110, ar1 (ref es));
+
+			var ar2 = (Delegate695978_2)Delegate.CreateDelegate(typeof (Delegate695978_2), null, typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar2);
+			Assert.AreEqual (110, ar2 ());
+
+			ar1 = (Delegate695978_1) Delegate.CreateDelegate(typeof (Delegate695978_1), typeof (Struct695978).GetMethod("test2"));
+			Assert.IsNotNull (ar1);
+			Assert.AreEqual (120, ar1 (ref es));
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_2), null, typeof (Struct695978).GetMethod("test2"));
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+
+
+			ar2 = (Delegate695978_2) Delegate.CreateDelegate(typeof (Delegate695978_2), new Struct695978 (), typeof (Struct695978).GetMethod("test"));
+			Assert.IsNotNull (ar2);
+			Assert.AreEqual (120, ar2 ());
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_2), new Struct695978 (), typeof (Struct695978).GetMethod("test2"));
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {}
+
+			try {
+				Delegate.CreateDelegate(typeof (Delegate695978_3), typeof (Struct695978).GetMethod("test"));
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {}
 		}
 
 		public class B {

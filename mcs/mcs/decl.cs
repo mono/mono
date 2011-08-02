@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -33,6 +34,7 @@ namespace Mono.CSharp {
 	//
 	// Better name would be DottenName
 	//
+	[DebuggerDisplay ("{GetSignatureForError()}")]
 	public class MemberName {
 		public readonly string Name;
 		public TypeArguments TypeArguments;
@@ -385,7 +387,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0 && !(Parent is Delegate)) {
-					if (RootContext.Version >= LanguageVersion.V_3) {
+					if (Compiler.Settings.Version >= LanguageVersion.V_3) {
 						Property.PropertyMethod pm = this as Property.PropertyMethod;
 						if (pm is Indexer.GetIndexerMethod || pm is Indexer.SetIndexerMethod)
 							pm = null;
@@ -459,7 +461,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit ()
 		{
-			if (!RootContext.VerifyClsCompliance)
+			if (!Compiler.Settings.VerifyClsCompliance)
 				return;
 
 			VerifyClsCompliance ();
@@ -684,9 +686,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		public virtual ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
+			return Parent.LookupExtensionMethod (extensionType, name, arity);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
@@ -694,35 +696,40 @@ namespace Mono.CSharp {
 			return Parent.NamespaceEntry.LookupNamespaceAlias (name);
 		}
 
-		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
-			return Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return Parent.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		/// <summary>
 		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
 		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
 		/// </summary>
-		public bool IsNotCLSCompliant ()
-		{
-			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
-				return (caching_flags & Flags.ClsCompliantAttributeFalse) != 0;
+		public bool? CLSAttributeValue {
+			get {
+				if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0) {
+					if ((caching_flags & Flags.HasClsCompliantAttribute) == 0)
+						return null;
 
-			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
-
-			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.Search (Module.PredefinedAttributes.CLSCompliant);
-				if (cls_attribute != null) {
-					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue ())
-						return false;
-
-					caching_flags |= Flags.ClsCompliantAttributeFalse;
-					return true;
+					return (caching_flags & Flags.ClsCompliantAttributeFalse) == 0;
 				}
-			}
 
-			return false;
+				caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
+
+				if (OptAttributes != null) {
+					Attribute cls_attribute = OptAttributes.Search (Module.PredefinedAttributes.CLSCompliant);
+					if (cls_attribute != null) {
+						caching_flags |= Flags.HasClsCompliantAttribute;
+						if (cls_attribute.GetClsCompliantAttributeValue ())
+							return true;
+
+						caching_flags |= Flags.ClsCompliantAttributeFalse;
+						return false;
+					}
+				}
+
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -730,10 +737,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool HasClsCompliantAttribute {
 			get {
-				if ((caching_flags & Flags.HasCompliantAttribute_Undetected) != 0)
-					IsNotCLSCompliant ();
-				
-				return (caching_flags & Flags.HasClsCompliantAttribute) != 0;
+				return CLSAttributeValue.HasValue;
 			}
 		}
 
@@ -806,33 +810,30 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		internal virtual void OnGenerateDocComment (XmlElement intermediateNode)
-		{
-		}
-
-		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public virtual string GetDocCommentName (DeclSpace ds)
-		{
-			if (ds == null || this is DeclSpace)
-				return DocCommentHeader + Name;
-			else
-				return String.Concat (DocCommentHeader, ds.Name, ".", Name);
-		}
+		public abstract string GetSignatureForDocumentation ();
 
 		//
 		// Generates xml doc comments (if any), and if required,
 		// handle warning report.
 		//
-		internal virtual void GenerateDocComment (DeclSpace ds)
+		internal virtual void GenerateDocComment (DocumentationBuilder builder)
 		{
+			if (DocComment == null) {
+				if (IsExposedFromAssembly ()) {
+					Constructor c = this as Constructor;
+					if (c == null || !c.IsDefault ())
+						Report.Warning (1591, 4, Location,
+							"Missing XML comment for publicly visible type or member `{0}'", GetSignatureForError ());
+				}
+
+				return;
+			}
+
 			try {
-				DocUtil.GenerateDocComment (this, ds, Report);
+				builder.GenerateDocumentationForMember (this);
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
@@ -854,10 +855,6 @@ namespace Mono.CSharp {
 
 		public virtual TypeParameter[] CurrentTypeParameters {
 			get { return null; }
-		}
-
-		public virtual bool HasUnresolvedConstraints {
-			get { return false; }
 		}
 
 		public bool IsObsolete {
@@ -903,6 +900,7 @@ namespace Mono.CSharp {
 			MissingDependency_Undetected = 1 << 4,
 			MissingDependency = 1 << 5,
 			HasDynamicElement = 1 << 6,
+			ConstraintsChecked = 1 << 7,
 
 			IsAccessor = 1 << 9,		// Method is an accessor
 			IsGeneric = 1 << 10,		// Member contains type arguments
@@ -912,7 +910,12 @@ namespace Mono.CSharp {
 			PendingMemberCacheMembers = 1 << 14,
 			PendingBaseTypeInflate = 1 << 15,
 			InterfacesExpanded = 1 << 16,
-			IsNotRealProperty = 1 << 17,
+			IsNotCSharpCompatible = 1 << 17,
+			SpecialRuntimeType = 1 << 18,
+			InflatedExpressionType = 1 << 19,
+			InflatedNullableType = 1 << 20,
+			GenericIterateInterface = 1 << 21,
+			GenericTask = 1 << 22
 		}
 
 		protected Modifiers modifiers;
@@ -1000,6 +1003,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Returns true for imported members which are not compatible with C# language
+		//
+		public bool IsNotCSharpCompatible {
+			get {
+				return (state & StateFlags.IsNotCSharpCompatible) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.IsNotCSharpCompatible : state & ~StateFlags.IsNotCSharpCompatible;
+			}
+		}
+
 		public bool IsPrivate {
 			get { return (modifiers & Modifiers.PRIVATE) != 0; }
 		}
@@ -1035,7 +1050,7 @@ namespace Mono.CSharp {
 		// will contain types only but it can have numerous values for members
 		// like methods where both return type and all parameters are checked
 		//
-		public List<MissingType> GetMissingDependencies ()
+		public List<TypeSpec> GetMissingDependencies ()
 		{
 			if ((state & (StateFlags.MissingDependency | StateFlags.MissingDependency_Undetected)) == 0)
 				return null;
@@ -1043,9 +1058,9 @@ namespace Mono.CSharp {
 			state &= ~StateFlags.MissingDependency_Undetected;
 
 			var imported = definition as ImportedDefinition;
-			List<MissingType> missing;
+			List<TypeSpec> missing;
 			if (imported != null) {
-				missing = imported.ResolveMissingDependencies ();
+				missing = ResolveMissingDependencies ();
 			} else if (this is ElementTypeSpec) {
 				missing = ((ElementTypeSpec) this).Element.GetMissingDependencies ();
 			} else {
@@ -1059,9 +1074,18 @@ namespace Mono.CSharp {
 			return missing;
 		}
 
-		protected virtual bool IsNotCLSCompliant ()
+		public abstract List<TypeSpec> ResolveMissingDependencies ();
+
+		protected virtual bool IsNotCLSCompliant (out bool attrValue)
 		{
-			return MemberDefinition.IsNotCLSCompliant ();
+			var cls = MemberDefinition.CLSAttributeValue;
+			attrValue = cls ?? false;
+			return cls == false;
+		}
+
+		public virtual string GetSignatureForDocumentation ()
+		{
+			return DeclaringType.GetSignatureForDocumentation () + "." + Name;
 		}
 
 		public virtual string GetSignatureForError ()
@@ -1084,32 +1108,32 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Is this member accessible from invocationType
+		// Is this member accessible from invocation context
 		//
-		public bool IsAccessible (TypeSpec invocationType)
+		public bool IsAccessible (IMemberContext ctx)
 		{
 			var ma = Modifiers & Modifiers.AccessibilityMask;
 			if (ma == Modifiers.PUBLIC)
 				return true;
 
 			var parentType = /* this as TypeSpec ?? */ DeclaringType;
+			var ctype = ctx.CurrentType;
 
-			// It's null for module context
-			if (invocationType == null)
-				invocationType = InternalType.FakeInternalType;
-		
-			//
-			// If only accessible to the current class or children
-			//
-			if (ma == Modifiers.PRIVATE)
-				return invocationType.MemberDefinition == parentType.MemberDefinition ||
-					TypeManager.IsNestedChildOf (invocationType, parentType.MemberDefinition);
+			if (ma == Modifiers.PRIVATE) {
+				if (ctype == null)
+					return false;
+				//
+				// It's only accessible to the current class or children
+				//
+				if (parentType.MemberDefinition == ctype.MemberDefinition)
+					return true;
+
+				return TypeManager.IsNestedChildOf (ctype, parentType.MemberDefinition);
+			}
 
 			if ((ma & Modifiers.INTERNAL) != 0) {
 				bool b;
-				var assembly = invocationType == InternalType.FakeInternalType ?
-					RootContext.ToplevelTypes.DeclaringAssembly :
-					invocationType.MemberDefinition.DeclaringAssembly;
+				var assembly = ctype == null ? ctx.Module.DeclaringAssembly : ctype.MemberDefinition.DeclaringAssembly;
 
 				if (parentType == null) {
 					b = ((ITypeDefinition) MemberDefinition).IsInternalAsPublic (assembly);
@@ -1121,11 +1145,18 @@ namespace Mono.CSharp {
 					return b;
 			}
 
-			// PROTECTED
-			if (!TypeManager.IsNestedFamilyAccessible (invocationType, parentType))
-				return false;
+			//
+			// Checks whether `ctype' is a subclass or nested child of `parentType'.
+			//
+			while (ctype != null) {
+				if (TypeManager.IsFamilyAccessible (ctype, parentType))
+					return true;
 
-			return true;
+				// Handle nested types.
+				ctype = ctype.DeclaringType;	// TODO: Untested ???
+			}
+
+			return false;
 		}
 
 		//
@@ -1136,14 +1167,16 @@ namespace Mono.CSharp {
 			if ((state & StateFlags.CLSCompliant_Undetected) != 0) {
 				state &= ~StateFlags.CLSCompliant_Undetected;
 
-				if (IsNotCLSCompliant ())
+				bool compliant;
+				if (IsNotCLSCompliant (out compliant))
 					return false;
 
-				bool compliant;
-				if (DeclaringType != null) {
-					compliant = DeclaringType.IsCLSCompliant ();
-				} else {
-					compliant = ((ITypeDefinition) MemberDefinition).DeclaringAssembly.IsCLSCompliant;
+				if (!compliant) {
+					if (DeclaringType != null) {
+						compliant = DeclaringType.IsCLSCompliant ();
+					} else {
+						compliant = ((ITypeDefinition) MemberDefinition).DeclaringAssembly.IsCLSCompliant;
+					}
 				}
 
 				if (compliant)
@@ -1153,7 +1186,7 @@ namespace Mono.CSharp {
 			return (state & StateFlags.CLSCompliant) != 0;
 		}
 
-		public bool IsConditionallyExcluded (Location loc)
+		public bool IsConditionallyExcluded (CompilerContext ctx, Location loc)
 		{
 			if ((Kind & (MemberKind.Class | MemberKind.Method)) == 0)
 				return false;
@@ -1163,7 +1196,7 @@ namespace Mono.CSharp {
 				return false;
 
 			foreach (var condition in conditions) {
-				if (loc.CompilationUnit.IsConditionalDefined (condition))
+				if (loc.CompilationUnit.IsConditionalDefined (ctx, condition))
 					return false;
 			}
 
@@ -1182,12 +1215,12 @@ namespace Mono.CSharp {
 	//
 	public interface IMemberDefinition
 	{
+		bool? CLSAttributeValue { get; }
 		string Name { get; }
 		bool IsImported { get; }
 
 		string[] ConditionalConditions ();
 		ObsoleteAttribute GetAttributeObsolete ();
-		bool IsNotCLSCompliant ();
 		void SetIsAssigned ();
 		void SetIsUsed ();
 	}
@@ -1218,7 +1251,7 @@ namespace Mono.CSharp {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		public NamespaceEntry NamespaceEntry;
+		public NamespaceContainer NamespaceEntry;
 
 		public readonly string Basename;
 		
@@ -1245,9 +1278,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static string[] attribute_targets = new string [] { "type" };
+		static readonly string[] attribute_targets = new string [] { "type" };
 
-		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public DeclSpace (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)
 			: base (parent, name, attrs)
 		{
@@ -1290,17 +1323,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (this is ModuleContainer) {
-				Report.Error (101, symbol.Location, 
-					"The namespace `{0}' already contains a definition for `{1}'",
-					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
-			} else if (symbol is TypeParameter) {
+			if (symbol is TypeParameter) {
 				Report.Error (692, symbol.Location,
 					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
-					      "The type `{0}' already contains a definition for `{1}'",
-					      GetSignatureForError (), symbol.MemberName.Name);
+					"The type `{0}' already contains a definition for `{1}'",
+					GetSignatureForError (), symbol.MemberName.Name);
 			}
 
 			return false;
@@ -1337,9 +1366,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected virtual TypeAttributes TypeAttr {
-			get { return Module.DefaultCharSetType; }
-		}
+		protected abstract TypeAttributes TypeAttr { get; }
 
 		/// <remarks>
 		///  Should be overriten by the appropriate declaration space
@@ -1351,6 +1378,11 @@ namespace Mono.CSharp {
 			Report.Error (260, type.Location,
 				"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
 				type.GetSignatureForError ());
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return Name;
 		}
 
 		public override string GetSignatureForError ()

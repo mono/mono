@@ -4,6 +4,7 @@ man_MANS = \
 	certmgr.1             \
 	chktrust.1            \
 	cilc.1                \
+	crlupdate.1           \
 	csharp.1              \
 	disco.1               \
 	dtd2xsd.1             \

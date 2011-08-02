@@ -39,9 +39,7 @@ namespace Mono.Security.Protocol.Tls
 		
 		#region Fields
 
-		static ManualResetEvent record_processing = new ManualResetEvent (true);
-
-		private const int WaitTimeOut = 5 * 60 * 1000;
+		static ManualResetEvent record_processing = new ManualResetEvent (true);	
 
 		internal Stream innerStream;
 		internal MemoryStream inputBuffer;
@@ -875,7 +873,7 @@ namespace Mono.Security.Protocol.Tls
 			// Always wait until the read is complete
 			if (!asyncResult.IsCompleted)
 			{
-				if (!asyncResult.AsyncWaitHandle.WaitOne (WaitTimeOut, false))
+				if (!asyncResult.AsyncWaitHandle.WaitOne ())
 					throw new TlsException (AlertDescription.InternalError, "Couldn't complete EndRead");
 			}
 
@@ -900,7 +898,7 @@ namespace Mono.Security.Protocol.Tls
 
 			if (!asyncResult.IsCompleted)
 			{
-				if (!internalResult.AsyncWaitHandle.WaitOne (WaitTimeOut, false))
+				if (!internalResult.AsyncWaitHandle.WaitOne ())
 					throw new TlsException (AlertDescription.InternalError, "Couldn't complete EndWrite");
 			}
 

@@ -28,6 +28,8 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -65,6 +67,10 @@ namespace System.ServiceModel.Configuration
 			get { return (BehaviorsSection) GetSection ("system.serviceModel/behaviors"); }
 		}
 
+		public static DiagnosticSection DiagnosticSection {
+			get { return (DiagnosticSection) GetSection ("system.serviceModel/diagnostics"); }
+		}
+
 		public static ExtensionsSection ExtensionsSection {
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
@@ -97,8 +103,85 @@ namespace System.ServiceModel.Configuration
 
 			return b;
 		}
+		
+		static readonly List<Assembly> cached_assemblies = new List<Assembly> ();
+		static readonly List<NamedConfigType> cached_named_config_types = new List<NamedConfigType> ();
+
+		public static Type GetTypeFromConfigString (string name, NamedConfigCategory category)
+		{
+			Type type = Type.GetType (name);
+			if (type != null)
+				return type;
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+				var cache = cached_named_config_types.FirstOrDefault (c => c.Name == name && c.Category == category);
+				if (cache != null)
+					return cache.Type;
+
+				if ((type = ass.GetType (name)) != null)
+					return type;
+
+				if (cached_assemblies.Contains (ass))
+					continue;
+#if NET_4_0
+				if (!ass.IsDynamic)
+#endif
+					cached_assemblies.Add (ass);
+
+				foreach (var t in ass.GetTypes ()) {
+					if (cached_named_config_types.Any (ct => ct.Type == t))
+						continue;
+
+					NamedConfigType c = null;
+					var sca = t.GetCustomAttribute<ServiceContractAttribute> (false);
+					if (sca != null && !String.IsNullOrEmpty (sca.ConfigurationName)) {
+						c = new NamedConfigType () { Category = NamedConfigCategory.Contract, Name = sca.ConfigurationName, Type = t };
+						cached_named_config_types.Add (c);
+					}
+
+					// If we need more category, add to here.
+
+					if (c != null && c.Name == name && c.Category == category)
+						cache = c; // do not break and continue caching (as the assembly is being cached)
+				}
+				if (cache != null)
+					return cache.Type;
+			}
+			return null;
+		}
 
 #if NET_4_0
+		public static Binding GetBindingByProtocolMapping (Uri address)
+		{
+			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
+			if (el == null)
+				return null;
+			return ConfigUtil.CreateBinding (el.Binding, el.BindingConfiguration);
+		}
+
+		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ChannelEndpointElement element)
+		{
+			string kind = element.Kind;
+			string endpointConfiguration = element.EndpointConfiguration;
+
+			EndpointCollectionElement section = ConfigUtil.StandardEndpointsSection [kind];
+			if (section == null)
+				throw new ArgumentException (String.Format ("standard endpoint section for '{0}' was not found.", kind));
+
+			StandardEndpointElement e = section.GetDefaultStandardEndpointElement ();
+
+			ServiceEndpoint inst = e.CreateServiceEndpoint (cd);
+
+			foreach (StandardEndpointElement el in section.ConfiguredEndpoints) {
+				if (el.Name == endpointConfiguration) {
+					el.InitializeAndValidate (element);
+					el.ApplyConfiguration (inst, element);
+					break;
+				}
+			}
+			
+			return inst;
+		}
+
 		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ServiceEndpointElement element)
 		{
 			string kind = element.Kind;
@@ -220,4 +303,18 @@ namespace System.ServiceModel.Configuration
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);
 		}
 	}
+
+	enum NamedConfigCategory
+	{
+		None,
+		Contract
+	}
+
+	class NamedConfigType
+	{
+		public NamedConfigCategory Category { get; set; }
+		public string Name { get; set; }
+		public Type Type { get; set; }
+	}
+
 }

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -84,11 +84,6 @@ namespace IKVM.Reflection.Emit
 		public override string Namespace
 		{
 			get { return DeclaringType.Namespace; }
-		}
-
-		public override Type UnderlyingSystemType
-		{
-			get { return this; }
 		}
 
 		public override string Name
@@ -226,45 +221,32 @@ namespace IKVM.Reflection.Emit
 		private readonly ITypeOwner owner;
 		private readonly int token;
 		private int extends;
-		private Type baseType;
+		private Type lazyBaseType;		// (lazyBaseType == null && attribs & TypeAttributes.Interface) == 0) => BaseType == System.Object
 		private readonly int typeName;
 		private readonly int typeNameSpace;
-		private readonly string nameOrFullName;
+		private readonly string ns;
+		private readonly string name;
 		private readonly List<MethodBuilder> methods = new List<MethodBuilder>();
 		private readonly List<FieldBuilder> fields = new List<FieldBuilder>();
 		private List<PropertyBuilder> properties;
 		private List<EventBuilder> events;
 		private TypeAttributes attribs;
-		private TypeFlags typeFlags;
 		private GenericTypeParameterBuilder[] gtpb;
 		private List<CustomAttributeBuilder> declarativeSecurity;
 		private List<Type> interfaces;
+		private int size;
+		private short pack;
+		private bool hasLayout;
 
-		[Flags]
-		private enum TypeFlags
-		{
-			IsGenericTypeDefinition = 1,
-			HasNestedTypes = 2,
-			Baked = 4,
-		}
-
-		internal TypeBuilder(ITypeOwner owner, string name, Type baseType, TypeAttributes attribs)
+		internal TypeBuilder(ITypeOwner owner, string ns, string name)
 		{
 			this.owner = owner;
 			this.token = this.ModuleBuilder.TypeDef.AllocToken();
-			this.nameOrFullName = TypeNameParser.Escape(name);
-			SetParent(baseType);
-			this.attribs = attribs;
-			if (!this.IsNested)
-			{
-				int lastdot = name.LastIndexOf('.');
-				if (lastdot > 0)
-				{
-					this.typeNameSpace = this.ModuleBuilder.Strings.Add(name.Substring(0, lastdot));
-					name = name.Substring(lastdot + 1);
-				}
-			}
+			this.ns = ns;
+			this.name = name;
+			this.typeNameSpace = ns == null ? 0 : this.ModuleBuilder.Strings.Add(ns);
 			this.typeName = this.ModuleBuilder.Strings.Add(name);
+			MarkEnumOrValueType(ns, name);
 		}
 
 		public ConstructorBuilder DefineDefaultConstructor(MethodAttributes attributes)
@@ -272,7 +254,7 @@ namespace IKVM.Reflection.Emit
 			ConstructorBuilder cb = DefineConstructor(attributes, CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ilgen = cb.GetILGenerator();
 			ilgen.Emit(OpCodes.Ldarg_0);
-			ilgen.Emit(OpCodes.Call, baseType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
+			ilgen.Emit(OpCodes.Call, BaseType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
 			ilgen.Emit(OpCodes.Ret);
 			return cb;
 		}
@@ -442,25 +424,52 @@ namespace IKVM.Reflection.Emit
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent)
 		{
-			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, PackingSize.Unspecified, 0);
+			return DefineNestedType(name, attr, parent, 0);
 		}
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, int typeSize)
 		{
-			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, PackingSize.Unspecified, typeSize);
+			return DefineNestedType(name, attr, parent, PackingSize.Unspecified, typeSize);
 		}
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize)
 		{
+			return DefineNestedType(name, attr, parent, packSize, 0);
+		}
+
+		private TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize, int typeSize)
+		{
+			string ns = null;
+			int lastdot = name.LastIndexOf('.');
+			if (lastdot > 0)
+			{
+				ns = name.Substring(0, lastdot);
+				name = name.Substring(lastdot + 1);
+			}
+			TypeBuilder typeBuilder = __DefineNestedType(ns, name);
+			typeBuilder.__SetAttributes(attr);
+			typeBuilder.SetParent(parent);
+			if (packSize != PackingSize.Unspecified || typeSize != 0)
+			{
+				typeBuilder.__SetLayout((int)packSize, typeSize);
+			}
+			return typeBuilder;
+		}
+
+		public TypeBuilder __DefineNestedType(string ns, string name)
+		{
 			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, packSize, 0);
+			TypeBuilder typeBuilder = this.ModuleBuilder.DefineType(this, ns, name);
+			NestedClassTable.Record rec = new NestedClassTable.Record();
+			rec.NestedClass = typeBuilder.MetadataToken;
+			rec.EnclosingClass = this.MetadataToken;
+			this.ModuleBuilder.NestedClass.AddRecord(rec);
+			return typeBuilder;
 		}
 
 		public void SetParent(Type parent)
 		{
-			baseType = parent;
+			lazyBaseType = parent;
 		}
 
 		public void AddInterfaceImplementation(Type interfaceType)
@@ -474,32 +483,26 @@ namespace IKVM.Reflection.Emit
 
 		public int Size
 		{
-			get
-			{
-				for (int i = 0; i < this.ModuleBuilder.ClassLayout.records.Length; i++)
-				{
-					if (this.ModuleBuilder.ClassLayout.records[i].Parent == token)
-					{
-						return this.ModuleBuilder.ClassLayout.records[i].ClassSize;
-					}
-				}
-				return 0;
-			}
+			get { return size; }
 		}
 
 		public PackingSize PackingSize
 		{
-			get
-			{
-				for (int i = 0; i < this.ModuleBuilder.ClassLayout.records.Length; i++)
-				{
-					if (this.ModuleBuilder.ClassLayout.records[i].Parent == token)
-					{
-						return (PackingSize)this.ModuleBuilder.ClassLayout.records[i].PackingSize;
-					}
-				}
-				return PackingSize.Unspecified;
-			}
+			get { return (PackingSize)pack; }
+		}
+
+		public override bool __GetLayout(out int packingSize, out int typeSize)
+		{
+			packingSize = this.pack;
+			typeSize = this.size;
+			return hasLayout;
+		}
+
+		public void __SetLayout(int packingSize, int typesize)
+		{
+			this.pack = (short)packingSize;
+			this.size = typesize;
+			this.hasLayout = true;
 		}
 
 		private void SetStructLayoutPseudoCustomAttribute(CustomAttributeBuilder customBuilder)
@@ -514,18 +517,12 @@ namespace IKVM.Reflection.Emit
 			{
 				layout = (LayoutKind)val;
 			}
-			int? pack = (int?)customBuilder.GetFieldValue("Pack");
-			int? size = (int?)customBuilder.GetFieldValue("Size");
-			if (pack.HasValue || size.HasValue)
-			{
-				ClassLayoutTable.Record rec = new ClassLayoutTable.Record();
-				rec.PackingSize = (short)(pack ?? 0);
-				rec.ClassSize = size ?? 0;
-				rec.Parent = token;
-				this.ModuleBuilder.ClassLayout.AddOrReplaceRecord(rec);
-			}
+			StructLayoutAttribute attr = new StructLayoutAttribute(layout);
+			attr.Pack = (int?)customBuilder.GetFieldValue("Pack") ?? 0;
+			attr.Size = (int?)customBuilder.GetFieldValue("Size") ?? 0;
+			attr.CharSet = customBuilder.GetFieldValue<CharSet>("CharSet") ?? CharSet.None;
 			attribs &= ~TypeAttributes.LayoutMask;
-			switch (layout)
+			switch (attr.Value)
 			{
 				case LayoutKind.Auto:
 					attribs |= TypeAttributes.AutoLayout;
@@ -537,9 +534,8 @@ namespace IKVM.Reflection.Emit
 					attribs |= TypeAttributes.SequentialLayout;
 					break;
 			}
-			CharSet? charSet = customBuilder.GetFieldValue<CharSet>("CharSet");
 			attribs &= ~TypeAttributes.StringFormatMask;
-			switch (charSet ?? CharSet.None)
+			switch (attr.CharSet)
 			{
 				case CharSet.None:
 				case CharSet.Ansi:
@@ -552,6 +548,9 @@ namespace IKVM.Reflection.Emit
 					attribs |= TypeAttributes.UnicodeClass;
 					break;
 			}
+			pack = (short)attr.Pack;
+			size = attr.Size;
+			hasLayout = pack != 0 || size != 0;
 		}
 
 		public void SetCustomAttribute(ConstructorInfo con, byte[] binaryAttribute)
@@ -654,6 +653,14 @@ namespace IKVM.Reflection.Emit
 				throw new NotImplementedException();
 			}
 			typeFlags |= TypeFlags.Baked;
+			if (hasLayout)
+			{
+				ClassLayoutTable.Record rec = new ClassLayoutTable.Record();
+				rec.PackingSize = pack;
+				rec.ClassSize = size;
+				rec.Parent = token;
+				this.ModuleBuilder.ClassLayout.AddRecord(rec);
+			}
 			foreach (MethodBuilder mb in methods)
 			{
 				mb.Bake();
@@ -662,9 +669,13 @@ namespace IKVM.Reflection.Emit
 			{
 				this.ModuleBuilder.AddDeclarativeSecurity(token, declarativeSecurity);
 			}
-			if (baseType != null)
+			if (!IsModulePseudoType)
 			{
-				extends = this.ModuleBuilder.GetTypeToken(baseType).Token;
+				Type baseType = this.BaseType;
+				if (baseType != null)
+				{
+					extends = this.ModuleBuilder.GetTypeToken(baseType).Token;
+				}
 			}
 			if (interfaces != null)
 			{
@@ -707,7 +718,18 @@ namespace IKVM.Reflection.Emit
 
 		public override Type BaseType
 		{
-			get { return baseType; }
+			get
+			{
+				if (lazyBaseType == null && !IsInterface)
+				{
+					Type obj = Module.universe.System_Object;
+					if (this != obj)
+					{
+						lazyBaseType = obj;
+					}
+				}
+				return lazyBaseType;
+			}
 		}
 
 		public override string FullName
@@ -716,28 +738,33 @@ namespace IKVM.Reflection.Emit
 			{
 				if (this.IsNested)
 				{
-					return this.DeclaringType.FullName + "+" + nameOrFullName;
+					return this.DeclaringType.FullName + "+" + TypeNameParser.Escape(name);
+				}
+				if (ns == null)
+				{
+					return TypeNameParser.Escape(name);
 				}
 				else
 				{
-					return nameOrFullName;
+					return TypeNameParser.Escape(ns) + "." + TypeNameParser.Escape(name);
 				}
 			}
 		}
 
+		public override string __Name
+		{
+			get { return name; }
+		}
+
+		public override string __Namespace
+		{
+			get { return ns; }
+		}
+
 		public override string Name
 		{
-			get
-			{
-				if (this.IsNested)
-				{
-					return nameOrFullName;
-				}
-				else
-				{
-					return base.Name;
-				}
-			}
+			// FXBUG for a TypeBuilder the name is not escaped
+			get { return name; }
 		}
 
 		public override string Namespace
@@ -745,15 +772,9 @@ namespace IKVM.Reflection.Emit
 			get
 			{
 				// for some reason, TypeBuilder doesn't return null (and mcs depends on this)
-				return base.Namespace ?? "";
+				// note also that we don't return the declaring type namespace for nested types
+				return ns ?? "";
 			}
-		}
-
-		internal string GetBakedNamespace()
-		{
-			// if you refer to the TypeBuilder via its baked Type, Namespace will return null
-			// for the empty namespace (instead of "" like TypeBuilder.Namespace above does)
-			return base.Namespace;
 		}
 
 		public override TypeAttributes Attributes
@@ -793,20 +814,22 @@ namespace IKVM.Reflection.Emit
 		{
 			get
 			{
-				StructLayoutAttribute attr;
-				if ((attribs & TypeAttributes.ExplicitLayout) != 0)
+				LayoutKind layout;
+				switch (attribs & TypeAttributes.LayoutMask)
 				{
-					attr = new StructLayoutAttribute(LayoutKind.Explicit);
-					attr.Pack = 8;
-					attr.Size = 0;
-					this.ModuleBuilder.ClassLayout.GetLayout(token, ref attr.Pack, ref attr.Size);
+					case TypeAttributes.ExplicitLayout:
+						layout = LayoutKind.Explicit;
+						break;
+					case TypeAttributes.SequentialLayout:
+						layout = LayoutKind.Sequential;
+						break;
+					default:
+						layout = LayoutKind.Auto;
+						break;
 				}
-				else
-				{
-					attr = new StructLayoutAttribute((attribs & TypeAttributes.SequentialLayout) != 0 ? LayoutKind.Sequential : LayoutKind.Auto);
-					attr.Pack = 8;
-					attr.Size = 0;
-				}
+				StructLayoutAttribute attr = new StructLayoutAttribute(layout);
+				attr.Pack = (ushort)pack;
+				attr.Size = size;
 				switch (attribs & TypeAttributes.StringFormatMask)
 				{
 					case TypeAttributes.AutoClass:
@@ -817,6 +840,9 @@ namespace IKVM.Reflection.Emit
 						break;
 					case TypeAttributes.AnsiClass:
 						attr.CharSet = CharSet.Ansi;
+						break;
+					default:
+						attr.CharSet = CharSet.None;
 						break;
 				}
 				return attr;
@@ -1022,142 +1048,140 @@ namespace IKVM.Reflection.Emit
 
 	sealed class BakedType : Type
 	{
-		private readonly TypeBuilder typeBuilder;
-
 		internal BakedType(TypeBuilder typeBuilder)
+			: base(typeBuilder)
 		{
-			this.typeBuilder = typeBuilder;
 		}
 
 		public override string AssemblyQualifiedName
 		{
-			get { return typeBuilder.AssemblyQualifiedName; }
+			get { return underlyingType.AssemblyQualifiedName; }
 		}
 
 		public override Type BaseType
 		{
-			get { return typeBuilder.BaseType; }
+			get { return underlyingType.BaseType; }
+		}
+
+		public override string __Name
+		{
+			get { return underlyingType.__Name; }
+		}
+
+		public override string __Namespace
+		{
+			get { return underlyingType.__Namespace; }
 		}
 
 		public override string Name
 		{
-			get { return typeBuilder.Name; }
-		}
-
-		public override string Namespace
-		{
-			get { return typeBuilder.GetBakedNamespace(); }
+			// we need to escape here, because TypeBuilder.Name does not escape
+			get { return TypeNameParser.Escape(underlyingType.__Name); }
 		}
 
 		public override string FullName
 		{
-			get { return typeBuilder.FullName; }
+			get { return GetFullName(); }
 		}
 
 		public override TypeAttributes Attributes
 		{
-			get { return typeBuilder.Attributes; }
+			get { return underlyingType.Attributes; }
 		}
 
 		public override Type[] __GetDeclaredInterfaces()
 		{
-			return typeBuilder.__GetDeclaredInterfaces();
+			return underlyingType.__GetDeclaredInterfaces();
 		}
 
 		public override MethodBase[] __GetDeclaredMethods()
 		{
-			return typeBuilder.__GetDeclaredMethods();
+			return underlyingType.__GetDeclaredMethods();
 		}
 
 		public override __MethodImplMap __GetMethodImplMap()
 		{
-			return typeBuilder.__GetMethodImplMap();
+			return underlyingType.__GetMethodImplMap();
 		}
 
 		public override FieldInfo[] __GetDeclaredFields()
 		{
-			return typeBuilder.__GetDeclaredFields();
+			return underlyingType.__GetDeclaredFields();
 		}
 
 		public override EventInfo[] __GetDeclaredEvents()
 		{
-			return typeBuilder.__GetDeclaredEvents();
+			return underlyingType.__GetDeclaredEvents();
 		}
 
 		public override PropertyInfo[] __GetDeclaredProperties()
 		{
-			return typeBuilder.__GetDeclaredProperties();
+			return underlyingType.__GetDeclaredProperties();
 		}
 
 		public override Type[] __GetDeclaredTypes()
 		{
-			return typeBuilder.__GetDeclaredTypes();
+			return underlyingType.__GetDeclaredTypes();
 		}
 
 		public override Type DeclaringType
 		{
-			get { return typeBuilder.DeclaringType; }
+			get { return underlyingType.DeclaringType; }
 		}
 
 		public override StructLayoutAttribute StructLayoutAttribute
 		{
-			get { return typeBuilder.StructLayoutAttribute; }
-		}
-
-		public override Type UnderlyingSystemType
-		{
-			// Type.Equals/GetHashCode relies on this
-			get { return typeBuilder; }
+			get { return underlyingType.StructLayoutAttribute; }
 		}
 
 		public override Type[] GetGenericArguments()
 		{
-			return typeBuilder.GetGenericArguments();
+			return underlyingType.GetGenericArguments();
 		}
 
 		internal override Type GetGenericTypeArgument(int index)
 		{
-			return typeBuilder.GetGenericTypeArgument(index);
+			return underlyingType.GetGenericTypeArgument(index);
 		}
 
 		public override Type[][] __GetGenericArgumentsOptionalCustomModifiers()
 		{
-			return typeBuilder.__GetGenericArgumentsOptionalCustomModifiers();
+			return underlyingType.__GetGenericArgumentsOptionalCustomModifiers();
 		}
 
 		public override Type[][] __GetGenericArgumentsRequiredCustomModifiers()
 		{
-			return typeBuilder.__GetGenericArgumentsRequiredCustomModifiers();
+			return underlyingType.__GetGenericArgumentsRequiredCustomModifiers();
 		}
 
 		public override bool IsGenericType
 		{
-			get { return typeBuilder.IsGenericType; }
+			get { return underlyingType.IsGenericType; }
 		}
 
 		public override bool IsGenericTypeDefinition
 		{
-			get { return typeBuilder.IsGenericTypeDefinition; }
+			get { return underlyingType.IsGenericTypeDefinition; }
 		}
 
 		public override bool ContainsGenericParameters
 		{
-			get { return typeBuilder.ContainsGenericParameters; }
+			get { return underlyingType.ContainsGenericParameters; }
 		}
 
 		public override int MetadataToken
 		{
-			get { return typeBuilder.MetadataToken; }
+			get { return underlyingType.MetadataToken; }
 		}
 
 		public override Module Module
 		{
-			get { return typeBuilder.Module; }
+			get { return underlyingType.Module; }
 		}
 
 		internal override int GetModuleBuilderToken()
 		{
-			return typeBuilder.GetModuleBuilderToken();
+			return underlyingType.GetModuleBuilderToken();
 		}
 	}
 }

@@ -66,7 +66,7 @@ namespace System.Web.Configuration
 			}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return props; }
 		}
 

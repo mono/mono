@@ -575,7 +575,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				Assert.Fail ("Build failed");
 			}
 
-			logger.DumpMessages ();
 			logger.CheckLoggedMessageHead ("Prop2: File1", "A1");
 			logger.CheckLoggedMessageHead ("Files: File1", "A1");
 			logger.CheckLoggedMessageHead ("Files: File1", "A1");
@@ -710,7 +709,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				Assert.Fail ("Build failed");
 			}
 
-			logger.DumpMessages ();
 			logger.CheckLoggedMessageHead ("Item1: Item1OldVal", "A1");
 			logger.CheckLoggedMessageHead ("Item1: Val", "A2");
 			logger.CheckLoggedMessageHead ("Item2: Item2OldVal", "A3");
@@ -787,7 +785,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				Assert.Fail ("Build failed");
 			}
 
-			logger.DumpMessages ();
 			logger.CheckLoggedMessageHead ("output1: property: null ## array: null", "A1");
 			logger.CheckLoggedMessageHead ("output2: property:    ## array: null", "A2");
 			logger.CheckLoggedMessageHead ("output3: property: null ## array: null", "A3");
@@ -1494,7 +1491,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				logger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
-			logger.DumpMessages ();
 
 			logger.CheckLoggedMessageHead ("file1: " + Path.Combine ("bar", "foo.dll"), "A1");
 
