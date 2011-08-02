@@ -54,7 +54,6 @@ namespace Mono.Data.Tds.Protocol {
 		byte[] outBuffer;
 		int outBufferLength;
 		int nextOutBufferIndex = 0;
-		bool lsb;
 
 		byte[] inBuffer;
 		int inBufferLength;
@@ -65,7 +64,7 @@ namespace Mono.Data.Tds.Protocol {
 		byte[] tmpBuf = new byte[8];
 		byte[] resBuffer = new byte[256];
 
-		int packetsSent;
+		int packetsSent = 0;
 		int packetsReceived = 0;
 
 		Socket socket;
@@ -87,8 +86,6 @@ namespace Mono.Data.Tds.Protocol {
 			outBufferLength = packetSize;
 			inBufferLength = packetSize;
 
-			lsb = true;
-			
 			IPEndPoint endPoint;
 			bool have_exception = false;
 			
@@ -152,7 +149,6 @@ namespace Mono.Data.Tds.Protocol {
 			}
 			if (!socket.Connected)
 				throw new TdsInternalException ("Server does not exist or connection refused.", null);
-			packetsSent = 1;
 		}
 		
 		#endregion // Constructors
@@ -174,10 +170,6 @@ namespace Mono.Data.Tds.Protocol {
 			set { packetSize = value; }
 		}
 		
-		public bool TdsByteOrder {
-			get { return !lsb; }
-			set { lsb = !value; }
-		}
 		#endregion // Properties
 		
 		#region Methods
@@ -198,13 +190,6 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public void SendIfFull (int reserve) 
-		{
-			if (nextOutBufferIndex+reserve > outBufferLength) {
-				SendPhysicalPacket (false);
-				nextOutBufferIndex = headerLength;
-			}
-		}
 
 		public void Append (object o)
 		{
@@ -212,7 +197,6 @@ namespace Mono.Data.Tds.Protocol {
 				Append ((byte)0);
 				return ;
 			}
-
 			switch (Type.GetTypeCode (o.GetType ())) {
 			case TypeCode.Byte :
 				Append ((byte) o);
@@ -266,37 +250,19 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			DateTime epoch = new DateTime (1900,1,1);
 			
-			TimeSpan span = t - epoch; //new TimeSpan (t.Ticks - epoch.Ticks);
-			int days, hours, minutes, secs;
-			long msecs;
+			TimeSpan span = t - epoch;
+			int days = span.Days ;
 			int val = 0;	
 
-			days = span.Days;
-			hours = span.Hours;
-			minutes = span.Minutes;
-			secs = span.Seconds;
-			msecs = span.Milliseconds;
-			
-			if (epoch > t) {
-				// If t.Hour/Min/Sec/MSec is > 0, days points to the next day and hence, 
-				// we move it back by a day - otherwise, no change
-				days = (t.Hour > 0 || t.Minute > 0 || t.Second > 0 || t.Millisecond > 0) ? days-1: days;
-				hours = t.Hour;
-				minutes = t.Minute;
-				secs = t.Second;
-				msecs = t.Millisecond;
-			}
-
-			SendIfFull (bytes);
 			if (bytes == 8) {
-				long ms = (hours * 3600 + minutes * 60 + secs)*1000L + (long)msecs;
+				long ms = (span.Hours * 3600 + span.Minutes * 60 + span.Seconds)*1000L + (long)span.Milliseconds;
 				val = (int) ((ms*300)/1000);
-				AppendInternal ((int) days);
-				AppendInternal ((int) val);
+				Append ((int) days);
+				Append ((int) val);
 			} else if (bytes ==4) {
 				val = span.Hours * 60 + span.Minutes;
-				AppendInternal ((short) days);
-				AppendInternal ((short) val);
+				Append ((ushort) days);
+				Append ((short) val);
 			} else {
 				throw new Exception ("Invalid No of bytes");
 			}
@@ -346,75 +312,40 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		private void AppendInternal (short s)
-		{
-			if (!lsb) {
-				outBuffer[nextOutBufferIndex++] = (byte) (((byte) (s >> 8)) & 0xff);
-				outBuffer[nextOutBufferIndex++] = (byte) ((byte) (s & 0xff));
-			} else {
-				outBuffer[nextOutBufferIndex++] = (byte) ((byte) (s & 0xff));
-				outBuffer[nextOutBufferIndex++] = (byte) (((byte) (s >> 8)) & 0xff);
-			}
-		}
-
 		public void Append (short s)
 		{
-			SendIfFull (sizeof (short));
-			AppendInternal (s);
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
+			else 
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (ushort s)
 		{
-			SendIfFull (sizeof (short));
-			AppendInternal ((short) s);
-		}
-
-		private void AppendInternal (int i)
-		{
-			if (!lsb) {
-				AppendInternal ((short) (((short) (i >> 16)) & 0xffff));
-				AppendInternal ((short) ((short) (i & 0xffff)));
-			} else {
-				AppendInternal ((short) ((short) (i & 0xffff)));
-				AppendInternal ((short) (((short) (i >> 16)) & 0xffff));
-			}				
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
+			else 
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (int i)
 		{
-			SendIfFull (sizeof (int));
-			AppendInternal (i);
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(i)), sizeof(int), (byte)0);
+			else
+				Append (BitConverter.GetBytes (i), sizeof(int), (byte)0);
 		}
 
 		public void Append (string s)
 		{
-			if (tdsVersion < TdsVersion.tds70) { 
+			if (tdsVersion < TdsVersion.tds70) 
 				Append (encoder.GetBytes (s));
-			} else {
-				int cindex = 0, index;
-				int ssize = sizeof (short);
-				int lenToWrite = s.Length * ssize;
-				// if nextOutBufferLength points to the last buffer in outBuffer, 
-				// we would get a DivisionByZero while calculating remBufLen
-				if (outBufferLength - nextOutBufferIndex < ssize)
-					SendIfFull (ssize);
-				
-				int remBufLen = outBufferLength - nextOutBufferIndex;
-				int count = lenToWrite/remBufLen;
-				
-				if (lenToWrite % remBufLen > 0)
-					count++;
-			
-				for (int i = 0; i < count; i++) {
-					index = System.Math.Min (remBufLen/ssize, lenToWrite/ssize);
-					for (int j = 0; j < index*ssize; j+=2, cindex++)
-						AppendInternal ((short)s[cindex]);
-					
-					lenToWrite -= index*ssize;
-					// Just make sure to flush the buffer
-					SendIfFull ((lenToWrite+1)*ssize);
-				}
-			}
+			else 
+				foreach (char c in s)
+					if(!BitConverter.IsLittleEndian)
+						Append (Swap (BitConverter.GetBytes (c)));
+					else
+						Append (BitConverter.GetBytes (c));
 		}	
 
 		// Appends with padding
@@ -430,7 +361,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (double value)
 		{
-			if (!lsb)
+			if (!BitConverter.IsLittleEndian)
 				Append (Swap (BitConverter.GetBytes (value)), sizeof(double), (byte)0);
 			else
 				Append (BitConverter.GetBytes (value), sizeof(double), (byte)0);
@@ -438,7 +369,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (float value)
 		{
-			if (!lsb)
+			if (!BitConverter.IsLittleEndian)
 				Append (Swap (BitConverter.GetBytes (value)), sizeof(float), (byte)0);
 			else
 				Append (BitConverter.GetBytes (value), sizeof(float), (byte)0);
@@ -446,26 +377,21 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (long l)
 		{
-			SendIfFull (sizeof (long));
-			if (!lsb) {
-				AppendInternal ((int) (((int) (l >> 32)) & 0xffffffff));
-				AppendInternal ((int) ((int) (l & 0xffffffff)));
-			} else {
-				AppendInternal ((int) ((int) (l & 0xffffffff)));
-				AppendInternal ((int) (((int) (l >> 32)) & 0xffffffff));
-			}				
+			if (!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes (l)), sizeof(long), (byte)0);
+			else
+				Append (BitConverter.GetBytes (l), sizeof(long), (byte)0);
 		}
 
 		public void Append (decimal d, int bytes)
 		{
 			int[] arr = Decimal.GetBits (d);
 			byte sign =  (d > 0 ? (byte)1 : (byte)0);
-			SendIfFull (bytes);
 			Append (sign) ;
-			AppendInternal (arr[0]);
-			AppendInternal (arr[1]);
-			AppendInternal (arr[2]);
-			AppendInternal ((int)0);
+			Append (arr[0]);
+			Append (arr[1]);
+			Append (arr[2]);
+			Append ((int)0);
 		}
 
 		public void Close ()
@@ -758,7 +684,6 @@ namespace Mono.Data.Tds.Protocol {
 			// Reset connection-reset flag to false - as any exception would anyway close 
 			// the whole connection
 			connReset = false;
-			packetsSent = 1;
 		}
 		
 		private void SendPhysicalPacket (bool isLastSegment)
@@ -771,10 +696,7 @@ namespace Mono.Data.Tds.Protocol {
 				Store (2, (short) nextOutBufferIndex );
 				Store (4, (byte) 0);
 				Store (5, (byte) 0);
-				if (tdsVersion >= TdsVersion.tds70)
-					Store (6, (byte) packetsSent);
-				else	
-					Store (6, (byte) 0);
+				Store (6, (byte) (tdsVersion == TdsVersion.tds70 ? 0x1 : 0x0));
 				Store (7, (byte) 0);
 
 				stream.Write (outBuffer, 0, nextOutBufferIndex);
