@@ -352,13 +352,17 @@ namespace System.Xml.Serialization {
 			bool? isOrderExplicit = null;
 			foreach (XmlReflectionMember rmember in members)
 			{
+				int? order = rmember.XmlAttributes.Order;
 				if (isOrderExplicit == null)
-					isOrderExplicit = rmember.XmlAttributes.Order >= 0;
-				else if (isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
+				{
+					if (order != null)
+						isOrderExplicit = (int) order >= 0;
+				}
+				else if (order != null && isOrderExplicit != ((int) order >= 0))
 					throw new InvalidOperationException ("Inconsistent XML sequence was detected. If there are XmlElement/XmlArray/XmlAnyElement attributes with explicit Order, then every other member must have an explicit order too.");
 			}
 			if (isOrderExplicit == true)
-				members.Sort ((m1, m2) => m1.XmlAttributes.Order - m2.XmlAttributes.Order);
+				members.Sort ((m1, m2) => (int) m1.XmlAttributes.SortableOrder - (int) m2.XmlAttributes.SortableOrder);
 
 			foreach (XmlReflectionMember rmember in members)
 			{
