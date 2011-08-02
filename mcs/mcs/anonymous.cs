@@ -1205,12 +1205,13 @@ namespace Mono.CSharp {
 			if (!DoResolveParameters (ec))
 				return null;
 
+#if !STATIC
 			// FIXME: The emitted code isn't very careful about reachability
 			// so, ensure we have a 'ret' at the end
 			BlockContext bc = ec as BlockContext;
 			if (bc != null && bc.CurrentBranching != null && bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				bc.NeedReturnLabel ();
-
+#endif
 			return this;
 		}
 
@@ -1290,11 +1291,6 @@ namespace Mono.CSharp {
 			{
 				EmitContext ec = new EmitContext (this, ig, ReturnType);
 				ec.CurrentAnonymousMethod = AnonymousMethod;
-				if (AnonymousMethod.return_label != null) {
-					ec.HasReturnLabel = true;
-					ec.ReturnLabel = (Label) AnonymousMethod.return_label;
-				}
-
 				return ec;
 			}
 
@@ -1339,8 +1335,6 @@ namespace Mono.CSharp {
 		protected ParametersBlock block;
 
 		public TypeSpec ReturnType;
-
-		object return_label;
 
 		protected AnonymousExpression (ParametersBlock block, TypeSpec return_type, Location loc)
 		{
@@ -1389,9 +1383,6 @@ namespace Mono.CSharp {
 			var errors = ec.Report.Errors;
 
 			bool res = Block.Resolve (ec.CurrentBranching, aec, null);
-
-			if (aec.HasReturnLabel)
-				return_label = aec.ReturnLabel;
 
 			if (am != null && am.ReturnTypeInference != null) {
 				am.ReturnTypeInference.FixAllTypes (ec);

@@ -51,16 +51,6 @@ namespace Mono.CSharp
 		/// </summary>
 		public LocalBuilder return_value;
 
-		/// <summary>
-		///   The location where return has to jump to return the
-		///   value
-		/// </summary>
-		public Label ReturnLabel;
-
-		/// <summary>
-		///   If we already defined the ReturnLabel
-		/// </summary>
-		public bool HasReturnLabel;
 
 		/// <summary>
 		///   Current loop begin and end labels.
@@ -86,6 +76,8 @@ namespace Mono.CSharp
 		readonly IMemberContext member_context;
 
 		DynamicSiteClass dynamic_site_container;
+
+		Label? return_label;
 
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
@@ -127,6 +119,12 @@ namespace Mono.CSharp
 			get { return member_context.CurrentMemberDefinition; }
 		}
 
+		public bool HasReturnLabel {
+			get {
+				return return_label.HasValue;
+			}
+		}
+
 		public bool IsStatic {
 			get { return member_context.IsStatic; }
 		}
@@ -162,6 +160,15 @@ namespace Mono.CSharp
 		public TypeSpec ReturnType {
 			get {
 				return return_type;
+			}
+		}
+
+		//
+		// The label where we have to jump before leaving the context
+		//
+		public Label ReturnLabel {
+			get {
+				return return_label.Value;
 			}
 		}
 
@@ -244,6 +251,14 @@ namespace Mono.CSharp
 			}
 
 			return dynamic_site_container;
+		}
+
+		public Label CreateReturnLabel ()
+		{
+			if (!return_label.HasValue)
+				return_label = DefineLabel ();
+
+			return return_label.Value;
 		}
 
 		public LocalBuilder DeclareLocal (TypeSpec type, bool pinned)
@@ -815,10 +830,6 @@ namespace Mono.CSharp
 		{
 			if (return_value == null){
 				return_value = DeclareLocal (return_type, false);
-				if (!HasReturnLabel){
-					ReturnLabel = DefineLabel ();
-					HasReturnLabel = true;
-				}
 			}
 
 			return return_value;

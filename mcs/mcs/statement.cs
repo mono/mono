@@ -684,8 +684,6 @@ namespace Mono.CSharp {
 				return false;
 
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
-			if (unwind_protect)
-				ec.NeedReturnLabel ();
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
@@ -841,7 +839,7 @@ namespace Mono.CSharp {
 			}
 
 			if (unwind_protect)
-				ec.Emit (OpCodes.Leave, ec.ReturnLabel);
+				ec.Emit (OpCodes.Leave, ec.CreateReturnLabel ());
 			else
 				ec.Emit (OpCodes.Ret);
 		}
@@ -3018,8 +3016,6 @@ namespace Mono.CSharp {
 #if PRODUCTION
 			try {
 #endif
-			if (ec.HasReturnLabel)
-				ec.ReturnLabel = ec.DefineLabel ();
 
 			base.Emit (ec);
 
@@ -3960,7 +3956,9 @@ namespace Mono.CSharp {
 	// Base class for statements that are implemented in terms of try...finally
 	public abstract class ExceptionStatement : ResumableStatement
 	{
+#if !STATIC
 		bool code_follows;
+#endif
 		Iterator iter;
 		List<ResumableStatement> resume_points;
 		int first_resume_pc;
@@ -4033,16 +4031,19 @@ namespace Mono.CSharp {
 
 		public void SomeCodeFollows ()
 		{
+#if !STATIC
 			code_follows = true;
+#endif
 		}
 
 		public override bool Resolve (BlockContext ec)
 		{
+#if !STATIC
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
 			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				ec.NeedReturnLabel ();
-
+#endif
 			iter = ec.CurrentIterator;
 			return true;
 		}
@@ -4833,7 +4834,10 @@ namespace Mono.CSharp {
 		public Block Block;
 		public List<Catch> Specific;
 		public Catch General;
-		bool inside_try_finally, code_follows;
+		bool inside_try_finally;
+#if !STATIC
+		bool code_follows;
+#endif
 
 		public TryCatch (Block block, List<Catch> catch_clauses, Location l, bool inside_try_finally)
 		{
@@ -4905,17 +4909,21 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 
+#if !STATIC
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try/catch clause
 			// So, ensure there's some IL code after this statement
 			if (!inside_try_finally && !code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				ec.NeedReturnLabel ();
+#endif
 
 			return ok;
 		}
 
 		public void SomeCodeFollows ()
 		{
+#if !STATIC
 			code_follows = true;
+#endif
 		}
 		
 		protected override void DoEmit (EmitContext ec)
