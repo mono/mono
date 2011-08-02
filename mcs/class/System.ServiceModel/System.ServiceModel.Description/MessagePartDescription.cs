@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.Serialization;
 using System.Reflection;
@@ -35,6 +36,7 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}, Namespace={ns}, Type={Type}, Index={index}}")]
 	public class MessagePartDescription
 	{
 		int index;
@@ -105,6 +107,10 @@ namespace System.ServiceModel.Description
 #endif
 
 		#region internals required for moonlight compatibility
+
+		internal XmlName XmlName {
+			get; private set;
+		}
 
 		ICustomAttributeProvider additional_att_provider;
 
