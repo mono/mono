@@ -105,6 +105,7 @@ System.ServiceModel.Configuration/StandardBindingElementCollectionTest.cs
 System.ServiceModel.Configuration/StandardBindingElementTest.cs
 System.ServiceModel.Configuration/StandardEndpointsSectionTest.cs
 System.ServiceModel.Configuration/UserBinding.cs
+System.ServiceModel.Description/BugX41.cs
 System.ServiceModel.Description/ClientCredentialsTest.cs
 System.ServiceModel.Description/ContractDescriptionTest.cs
 System.ServiceModel.Description/FaultDescriptionTest.cs

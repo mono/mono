@@ -48,6 +48,13 @@ namespace System.ServiceModel.Description
 				return att;
 			return null;
 		}
+
+		public static T GetCustomAttribute<T> (this ParameterInfo pi, bool inherit) where T : Attribute
+		{
+			foreach (T att in pi.GetCustomAttributes (typeof (T), inherit))
+				return att;
+			return null;
+		}
 	}
 
 	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
