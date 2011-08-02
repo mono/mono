@@ -181,23 +181,10 @@ namespace System.ServiceModel
 			CreateBindingElements ()
 		{
 			var list = new List<BindingElement> ();
-			switch (Security.Mode) {
-#if !NET_2_1
-			case BasicHttpSecurityMode.Message:
-				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
-					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
-				goto case BasicHttpSecurityMode.TransportWithMessageCredential;
-			case BasicHttpSecurityMode.TransportWithMessageCredential:
-				SecurityBindingElement sec;
-				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
-					// FIXME: pass proper security token parameters.
-					sec = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
-				else
-					sec = new AsymmetricSecurityBindingElement ();
-				list.Add (sec);
-				break;
-#endif
-			}
+			
+			var security = CreateSecurityBindingElement ();
+			if (security != null)
+				list.Add (security);
 
 #if NET_2_1
 			if (EnableHttpCookieContainer)
@@ -208,6 +195,35 @@ namespace System.ServiceModel
 			list.Add (GetTransport ());
 
 			return new BindingElementCollection (list.ToArray ());
+		}
+		
+		SecurityBindingElement CreateSecurityBindingElement () 
+		{
+            SecurityBindingElement element;
+			switch (Security.Mode) {
+#if !NET_2_1
+			case BasicHttpSecurityMode.Message:
+				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
+					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
+				element = SecurityBindingElement.CreateMutualCertificateBindingElement (
+				    MessageSecurityVersion.WSSecurity10WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10);
+                break;
+
+			case BasicHttpSecurityMode.TransportWithMessageCredential:
+                if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
+                    // FIXME: pass proper security token parameters.
+                    element = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
+                else
+                    element = new AsymmetricSecurityBindingElement ();
+                break;
+#endif
+			default: 
+				return null;
+			}
+
+            element.SetKeyDerivation (false);
+            element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
+            return element;
 		}
 
 		MessageEncodingBindingElement BuildMessageEncodingBindingElement ()
