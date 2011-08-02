@@ -300,7 +300,10 @@ namespace System.ServiceModel.Dispatcher
 						((PropertyInfo) mi).SetValue (msgObject, pair.Value, null);
 				}
 
-			foreach (MessagePartDescription partDesc in md.Body.Parts)
+			var l = new List<MessagePartDescription> (md.Body.Parts);
+			if (md.Body.ReturnValue != null)
+				l.Add (md.Body.ReturnValue);
+			foreach (MessagePartDescription partDesc in l)
 				if (partDesc.MemberInfo is FieldInfo)
 					((FieldInfo) partDesc.MemberInfo).SetValue (msgObject, parts [partDesc.Index]);
 				else
@@ -317,7 +320,10 @@ namespace System.ServiceModel.Dispatcher
 					headers [headDesc] = ((PropertyInfo) mi).GetValue (msgObject, null);
 			}
 
-			foreach (MessagePartDescription partDesc in md.Body.Parts)
+			var l = new List<MessagePartDescription> (md.Body.Parts);
+			if (md.Body.ReturnValue != null)
+				l.Add (md.Body.ReturnValue);
+			foreach (MessagePartDescription partDesc in l)
 				if (partDesc.MemberInfo is FieldInfo)
 					parts [partDesc.Index] = ((FieldInfo) partDesc.MemberInfo).GetValue (msgObject);
 				else
