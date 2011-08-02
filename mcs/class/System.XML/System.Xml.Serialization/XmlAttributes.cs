@@ -288,17 +288,21 @@ namespace System.Xml.Serialization
 			sb.Append ("|");
 		}
 
-		public int Order {
+		internal int? Order {
 			get {
-				int order = -1;
-				if (XmlElements != null)
+				int? order = null;
+				if (XmlElements.Count > 0)
 					order = XmlElements.Order;
-				if (order < 0 && XmlArray != null)
+				else if (XmlArray != null)
 					order = XmlArray.Order;
-				if (order < 0 && XmlAnyElements != null)
+				else if (XmlAnyElements.Count > 0)
 					order = XmlAnyElements.Order;
 				return order;
 			}
+		}
+		
+		internal int SortableOrder {
+			get { return Order != null ? (int) Order : int.MinValue; }
 		}
 	}
 }

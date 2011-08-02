@@ -190,7 +190,11 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+<<<<<<< HEAD
 		public void ExplicitlyOrderedMembers4()
+=======
+		public void ExplicitlyOrderedMembers4 ()
+>>>>>>> upstream/master
 		{
 			var xs = new XmlSerializer (typeof (ExplicitlyOrderedMembersType4));
 			//Would result in an Inconsistent XML sequence error , see Bug 707434
