@@ -544,6 +544,17 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsNotNull (xb, "#1");
 		}
 
+		[Test]
+		public void MessageParameterDescriptionInUse ()
+		{
+			// bug #41
+			var cd = ContractDescription.GetContract (typeof (Dealerinfo.wsvDealerinfo.WSVDealerInfoServices));
+			foreach (var od in cd.Operations)
+				foreach (var md in od.Messages)
+					if (md.Action == "*") // return
+						Assert.IsNotNull (md.Body.ReturnValue, od.Name);
+		}
+
 		// It is for testing attribute search in interfaces.
 		public class Foo : IFoo
 		{

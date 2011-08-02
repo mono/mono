@@ -50,8 +50,8 @@ namespace System.ServiceModel.Description
 		
 		public MessagePartDescription (string name, string ns)
 		{
-			this.name = name;
 			this.ns = ns;
+			this.Name = name;
 		}
 
 		public int Index {
@@ -66,6 +66,10 @@ namespace System.ServiceModel.Description
 
 		public string Name {
 			get { return name; }
+			internal set {
+				name = value;
+				XmlName = new XmlName (value);
+			}
 		}
 
 		public string Namespace {
