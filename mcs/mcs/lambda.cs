@@ -194,7 +194,11 @@ namespace Mono.CSharp {
 		{
 			if (statement != null) {
 				statement.EmitStatement (ec);
-				ec.Emit (OpCodes.Ret);
+				if (unwind_protect)
+					ec.Emit (OpCodes.Leave, ec.ReturnLabel);
+				else {
+					ec.Emit (OpCodes.Ret);
+				}
 				return;
 			}
 

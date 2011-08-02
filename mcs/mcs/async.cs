@@ -572,6 +572,7 @@ namespace Mono.CSharp
 		Field builder, continuation;
 		readonly TypeSpec return_type;
 		MethodSpec set_result;
+		MethodSpec set_exception;
 		PropertySpec task;
 		LocalVariable hoisted_return;
 		int locals_captured;
@@ -643,6 +644,7 @@ namespace Mono.CSharp
 			PredefinedType builder_type;
 			PredefinedMember<MethodSpec> bf;
 			PredefinedMember<MethodSpec> sr;
+			PredefinedMember<MethodSpec> se;
 			bool has_task_return_type = false;
 			var pred_members = Module.PredefinedMembers;
 
@@ -650,23 +652,27 @@ namespace Mono.CSharp
 				builder_type = Module.PredefinedTypes.AsyncVoidMethodBuilder;
 				bf = pred_members.AsyncVoidMethodBuilderCreate;
 				sr = pred_members.AsyncVoidMethodBuilderSetResult;
+				se = pred_members.AsyncVoidMethodBuilderSetException;
 			} else if (return_type == Module.PredefinedTypes.Task.TypeSpec) {
 				builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilder;
 				bf = pred_members.AsyncTaskMethodBuilderCreate;
 				sr = pred_members.AsyncTaskMethodBuilderSetResult;
+				se = pred_members.AsyncTaskMethodBuilderSetException;
 				task = pred_members.AsyncTaskMethodBuilderTask.Resolve (Location);
 			} else {
 				builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilderGeneric;
 				bf = pred_members.AsyncTaskMethodBuilderGenericCreate;
 				sr = pred_members.AsyncTaskMethodBuilderGenericSetResult;
+				se = pred_members.AsyncTaskMethodBuilderGenericSetException;
 				task = pred_members.AsyncTaskMethodBuilderGenericTask.Resolve (Location);
 				has_task_return_type = true;
 			}
 
 			set_result = sr.Resolve (Location);
+			set_exception = se.Resolve (Location);
 			var builder_factory = bf.Resolve (Location);
 			var bt = builder_type.Resolve ();
-			if (bt == null || set_result == null || builder_factory == null)
+			if (bt == null || set_result == null || builder_factory == null || set_exception == null)
 				return false;
 
 			//
@@ -680,6 +686,7 @@ namespace Mono.CSharp
 				bt = bt.MakeGenericType (Module, task_return_type);
 				builder_factory = MemberCache.GetMember<MethodSpec> (bt, builder_factory);
 				set_result = MemberCache.GetMember<MethodSpec> (bt, set_result);
+				set_exception = MemberCache.GetMember<MethodSpec> (bt, set_exception);
 
 				if (task != null)
 					task = MemberCache.GetMember<PropertySpec> (bt, task);
@@ -722,6 +729,22 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		public void EmitSetException (EmitContext ec, LocalVariableReference exceptionVariable)
+		{
+			//
+			// $builder.SetException (Exception)
+			//
+			var mg = MethodGroupExpr.CreatePredefined (set_exception, set_exception.DeclaringType, Location);
+			mg.InstanceExpression = new FieldExpr (Builder, Location) {
+				InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, Location)
+			};
+
+			Arguments args = new Arguments (1);
+			args.Add (new Argument (exceptionVariable));
+
+			mg.EmitCall (ec, args);
 		}
 
 		public void EmitSetResult (EmitContext ec)
