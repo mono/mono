@@ -346,7 +346,7 @@ doc.PreserveWhitespace = true;
 			SupportingTokenParameters supp;
 			string action = GetAction ();
             if (action == null)
-                throw new ArgumentException("SOAP action could not be retrieved from the message to decrypt.");
+                throw new ArgumentException ("SOAP action could not be retrieved from the message to decrypt.");
 
 			ValidateTokensByParameters (security.Element.EndpointSupportingTokenParameters, tokens, false);
 			if (security.Element.OperationSupportingTokenParameters.TryGetValue (action, out supp))
