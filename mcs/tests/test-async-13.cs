@@ -657,7 +657,6 @@ class Tester : Base
 	async Task<bool> NewArrayInitTest_6 ()
 	{
 		var a = new int[] { 2, 3, 2, 3, 5, 6, 7, 2, 4, await Task.Factory.StartNew (() => 5), 11, 23, 45 };
-		Console.WriteLine (a.Length);
 		return a.Length == 13;
 	}
 	

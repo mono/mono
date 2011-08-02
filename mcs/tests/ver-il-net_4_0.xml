@@ -53508,7 +53508,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async35">
       <method name="Void MoveNext()">
-        <size>265</size>
+        <size>252</size>
       </method>
       <method name="Int32 &lt;&gt;m__72()">
         <size>2</size>

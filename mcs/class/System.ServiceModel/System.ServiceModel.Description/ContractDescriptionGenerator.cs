@@ -294,8 +294,21 @@ namespace System.ServiceModel.Description
 					od.Behaviors.Add (new DataContractSerializerOperationBehavior (od, dfa));
 
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
-				if (!od.IsOneWay)
-					od.Messages.Add (GetMessage (od, mi, oca, false, isCallback, asyncReturnType));
+				if (!od.IsOneWay) {
+					var md = GetMessage (od, mi, oca, false, isCallback, asyncReturnType);
+					od.Messages.Add (md);
+					var mpa = mi.ReturnParameter.GetCustomAttribute<MessageParameterAttribute> (true);
+					if (mpa != null) {
+						var mpd = md.Body.Parts.FirstOrDefault (pd => pd.Name == mpa.Name);
+						if (mpd != null) {
+							md.Body.Parts.Remove (mpd);
+							md.Body.ReturnValue = mpd;
+							mpd.Name = mpa.Name;
+						}
+						else if (md.Body.ReturnValue == null)
+							throw new InvalidOperationException (String.Format ("Specified message part '{0}' in MessageParameterAttribute on the return value, was not found", mpa.Name));
+					}
+				}
 				var knownTypeAtts =
 						    cd.ContractType.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false).Union (
 						    mi.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false)).Union (

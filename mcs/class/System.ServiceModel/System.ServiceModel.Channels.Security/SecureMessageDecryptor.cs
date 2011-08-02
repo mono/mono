@@ -132,7 +132,7 @@ namespace System.ServiceModel.Channels.Security
 
 			// FIXME: use proper max buffer
 			buf = source.CreateBufferedCopy (int.MaxValue);
-Console.WriteLine ("####### " + buf.CreateMessage ());
+			//Console.WriteLine ("####### " + buf.CreateMessage ());
 
 			doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
@@ -162,10 +162,7 @@ Console.WriteLine ("####### " + buf.CreateMessage ());
 			if (srcmsg.Version.Envelope == EnvelopeVersion.None)
 				throw new ArgumentException ("The message to decrypt is not an expected SOAP envelope.");
 
-			string action = GetAction ();
-			if (action == null)
-				throw new ArgumentException ("SOAP action could not be retrieved from the message to decrypt.");
-
+			
 			XPathNavigator nav = doc.CreateNavigator ();
 			using (XmlWriter writer = nav.AppendChild ()) {
 				buf.CreateMessage ().WriteMessage (writer);
@@ -348,6 +345,9 @@ doc.PreserveWhitespace = true;
 			// and check if any of them can validate it.
 			SupportingTokenParameters supp;
 			string action = GetAction ();
+            if (action == null)
+                throw new ArgumentException ("SOAP action could not be retrieved from the message to decrypt.");
+
 			ValidateTokensByParameters (security.Element.EndpointSupportingTokenParameters, tokens, false);
 			if (security.Element.OperationSupportingTokenParameters.TryGetValue (action, out supp))
 				ValidateTokensByParameters (supp, tokens, false);
@@ -441,7 +441,7 @@ doc.PreserveWhitespace = true;
 			string ret = source_message.Headers.Action;
 			if (ret == null) {
 				HttpRequestMessageProperty reqprop =
-					source_message.Properties ["Action"] as HttpRequestMessageProperty;
+                    source_message.Properties[HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
 				if (reqprop != null)
 					ret = reqprop.Headers ["Action"];
 			}
