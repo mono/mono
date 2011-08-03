@@ -425,11 +425,17 @@ namespace System.Web
 		
 		public override SiteMapNode FindSiteMapNode (string rawUrl)
 		{
-			string url = base.MapUrl (rawUrl);
-			SiteMapNode node = base.FindSiteMapNode (url);
+			SiteMapNode node = base.FindSiteMapNode (rawUrl);
 			if (node != null)
 				return node;
 
+			node = RootNode;
+			string url = MapUrl (rawUrl);
+			if (node != null) {
+				if (String.Compare (url, node.Url, RuntimeHelpers.StringComparison) == 0)
+					return node;
+			}
+			
 			foreach (SiteMapProvider smp in ChildProviders) {
 				node = smp.FindSiteMapNode (url);
 				if (node != null)

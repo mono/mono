@@ -1,4 +1,4 @@
-// cs0269.cs: Use of unassigned out parameter `a'
+// CS0269: Use of unassigned out parameter `a'
 // Line: 23
 
 struct A

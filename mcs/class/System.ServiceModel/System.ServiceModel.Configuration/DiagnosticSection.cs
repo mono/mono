@@ -54,33 +54,44 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class DiagnosticSection
 		 : ConfigurationSection
 	{
 		// Static Fields
 		static ConfigurationPropertyCollection properties;
+#if NET_4_0
+		static ConfigurationProperty end_to_end_tracing;
+		static ConfigurationProperty etw_provider_id;
+#endif
 		static ConfigurationProperty message_logging;
 		static ConfigurationProperty performance_counters;
+		static ConfigurationProperty performance_counter_enabled;
 		static ConfigurationProperty wmi_provider_enabled;
 
 		static DiagnosticSection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
-			message_logging = new ConfigurationProperty ("messageLogging",
-				typeof (MessageLoggingElement), null, null/* FIXME: get converter for MessageLoggingElement*/, null,
-				ConfigurationPropertyOptions.None);
+#if NET_4_0
+			end_to_end_tracing = new ConfigurationProperty ("endToEndTracing", typeof (EndToEndTracingElement), null, null, null, ConfigurationPropertyOptions.None);
 
-			performance_counters = new ConfigurationProperty ("performanceCounters",
-				typeof (PerformanceCounterScope), "Off", null/* FIXME: get converter for PerformanceCounterScope*/, null,
-				ConfigurationPropertyOptions.None);
+			etw_provider_id = new ConfigurationProperty ("etwProviderId", typeof (string), null, null, null, ConfigurationPropertyOptions.None);
+#endif
+			message_logging = new ConfigurationProperty ("messageLogging", typeof (MessageLoggingElement), null, null, null, ConfigurationPropertyOptions.None);
+
+			performance_counters = new ConfigurationProperty ("performanceCounters", typeof (PerformanceCounterScope), "Off", null, null, ConfigurationPropertyOptions.None);
+
+			performance_counter_enabled = new ConfigurationProperty ("performanceCounterEnabled", typeof (bool), false, null, null, ConfigurationPropertyOptions.None);
 
 			wmi_provider_enabled = new ConfigurationProperty ("wmiProviderEnabled",
-				typeof (bool), "false", new BooleanConverter (), null,
-				ConfigurationPropertyOptions.None);
+				typeof (bool), "false", new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
+#if NET_4_0
+			properties.Add (end_to_end_tracing);
+			properties.Add (etw_provider_id);
+#endif
 			properties.Add (message_logging);
 			properties.Add (performance_counters);
+			properties.Add (performance_counter_enabled);
 			properties.Add (wmi_provider_enabled);
 		}
 
@@ -90,6 +101,20 @@ namespace System.ServiceModel.Configuration
 
 
 		// Properties
+
+#if NET_4_0
+		[ConfigurationProperty ("endToEndTracing", Options = ConfigurationPropertyOptions.None)]
+		public EndToEndTracingElement EndToEndTracing {
+			get { return (EndToEndTracingElement) base [end_to_end_tracing]; }
+		}
+
+		[ConfigurationProperty ("etwProviderId", DefaultValue = "{c651f5f6-1c0d-492e-8ae1-b4efd7c9d503}")]
+		[StringValidator (MinLength = 0)]
+		public string EtwProviderId {
+			get { return (string) base [etw_provider_id]; }
+			set { base [etw_provider_id] = value; }
+		}
+#endif
 
 		[ConfigurationProperty ("messageLogging",
 			 Options = ConfigurationPropertyOptions.None)]
@@ -103,6 +128,14 @@ namespace System.ServiceModel.Configuration
 		public PerformanceCounterScope PerformanceCounters {
 			get { return (PerformanceCounterScope) base [performance_counters]; }
 			set { base [performance_counters] = value; }
+		}
+
+		[ConfigurationProperty ("performanceCounterEnabled",
+			 Options = ConfigurationPropertyOptions.None,
+			 DefaultValue = false)]
+		public bool PerformanceCounterEnabled {
+			get { return (bool) base [performance_counter_enabled]; }
+			set { base [performance_counter_enabled] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

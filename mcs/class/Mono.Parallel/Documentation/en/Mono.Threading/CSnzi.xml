@@ -1,0 +1,118 @@
+<Type Name="CSnzi" FullName="Mono.Threading.CSnzi">
+  <TypeSignature Language="C#" Value="public class CSnzi" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CSnzi extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Implementation of a closable scalable non-zero indicator. It has the same API than <see cref="T:System.Theading.Snzi" /> but also allow to temporarily disable state change.</summary>
+    <remarks />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CSnzi ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>Initialize Snzi object with a zero value.</summary>
+        <remarks />
+      </Docs>
+    </Member>
+    <Member MemberName="Arrive">
+      <MemberSignature Language="C#" Value="public Mono.Threading.CSnziNode Arrive ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Threading.CSnziNode Arrive() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.CSnziNode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Increment the state of the CSnzi object.</summary>
+        <returns>Returns the internal node where the increment action occured. Returns null if CSnzi is closed.</returns>
+        <remarks>To undo an Arrive, you must call <see cref="M:Mono.Threading.CSnzi.Depart()" /> using the returned node object as an argument.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public bool Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Close the CSnzi object to subsequent Arrive or Depart action until <see cref="M:Mono.Threading.CSnzi.Open()" /> is called.</summary>
+        <returns>True if the state of the CSnzi was zero or if it was already closed, <see langword="false" /> otherwise.</returns>
+        <remarks />
+      </Docs>
+    </Member>
+    <Member MemberName="Depart">
+      <MemberSignature Language="C#" Value="public bool Depart (Mono.Threading.CSnziNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Depart(class Mono.Threading.CSnziNode node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="Mono.Threading.CSnziNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">The node to execute the decrement operation on.</param>
+        <summary>Decrement the state of the CSnzi object.</summary>
+        <returns>True if the CSnzi is open and its state is zero, <see langword="false" /> otherwise.</returns>
+        <remarks>Node argument must have been returned by a prior <see cref="M:Mono.Threading.CSnzi.Arrive()" /> call.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public void Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Open() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Query">
+      <MemberSignature Language="C#" Value="public Tuple&lt;bool,Mono.Threading.CSnziState&gt; Query ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;bool, valuetype Mono.Threading.CSnziState&gt; Query() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;System.Boolean,Mono.Threading.CSnziState&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the current state of the CSnzi object.</summary>
+        <returns>A <see cref="T:System.Threading.QueryReturn" /> object with CSnzi current state informations.</returns>
+        <remarks />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

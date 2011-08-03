@@ -44,6 +44,7 @@ namespace System
 
 		string template;
 		ReadOnlyCollection<string> path, query;
+		string wild_path_name;
 		Dictionary<string,string> query_params = new Dictionary<string,string> ();
 
 		public UriTemplate (string template)
@@ -106,7 +107,7 @@ namespace System
 
 		// Bind
 
-#if !NET_2_1
+#if !MOONLIGHT
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
@@ -128,13 +129,18 @@ namespace System
 			return BindByNameCommon (baseAddress, null, parameters, omitDefaults);
 		}
 
-		string TrimRenderedUri (StringBuilder sb)
+		string SuffixEndRenderedUri (string s)
+		{
+			return s.Length > 0 && s [s.Length - 1] == '/' ? s : s + '/';
+		}
+
+		string TrimStartRenderedUri (StringBuilder sb)
 		{
 			if (sb.Length == 0)
 				return String.Empty;
 			
 			if (sb [0] == '/')
-				sb.Remove (0, 1);
+				return sb.ToString (1, sb.Length - 1);
 
 			return sb.ToString ();
 		}
@@ -152,7 +158,7 @@ namespace System
 			BindByName (ref src, sb, path, nvc, dic, omitDefaults, false);
 			BindByName (ref src, sb, query, nvc, dic, omitDefaults, true);
 			sb.Append (template.Substring (src));
-			return new Uri (baseAddress.ToString () + TrimRenderedUri (sb));
+			return new Uri (SuffixEndRenderedUri (baseAddress.ToString ()) + TrimStartRenderedUri (sb));
 		}
 
 		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults, bool query)
@@ -195,7 +201,7 @@ namespace System
 			BindByPosition (ref src, sb, path, values, ref index);
 			BindByPosition (ref src, sb, query, values, ref index);
 			sb.Append (template.Substring (src));
-			return new Uri (baseAddress.ToString () + TrimRenderedUri (sb));
+			return new Uri (SuffixEndRenderedUri (baseAddress.ToString ()) + TrimStartRenderedUri (sb));
 		}
 
 		void BindByPosition (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, string [] values, ref int index)
@@ -240,9 +246,6 @@ namespace System
 					candidate = new Uri(candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
 			}
 
-			if (Uri.Compare (baseAddress, candidate, UriComponents.StrongAuthority, UriFormat.SafeUnescaped, StringComparison.Ordinal) != 0)
-				return null;
-
 			int i = 0, c = 0;
 			UriTemplateMatch m = new UriTemplateMatch ();
 			m.BaseUri = baseAddress;
@@ -250,7 +253,7 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (candidate).ToString ());
+			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (new Uri (baseAddress, candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped))).ToString ());
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
@@ -264,6 +267,10 @@ namespace System
 				c++;
 
 			foreach (string name in path) {
+				if (name == wild_path_name) {
+					vc [name] = cp.Substring (c); // all remaining paths.
+					continue;
+				}
 				int n = StringIndexOf (template, '{' + name + '}', i);
 				if (String.CompareOrdinal (cp, c, template, i, n - i) != 0)
 					return null; // doesn't match before current template part.
@@ -280,11 +287,12 @@ namespace System
 				c += value.Length;
 			}
 			int tEnd = template.IndexOf ('?');
+			int wildIdx = template.IndexOf ('*');
+			bool wild = wildIdx >= 0;
 			if (tEnd < 0)
 				tEnd = template.Length;
-			bool wild = (template [tEnd - 1] == '*');
 			if (wild)
-				tEnd--;
+				tEnd = wildIdx - 1;
 			if (!wild && (cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match
@@ -332,8 +340,9 @@ namespace System
 		ReadOnlyCollection<string> ParsePathTemplate (string template, int index, int end)
 		{
 			int widx = template.IndexOf ('*', index, end);
-			if (widx >= 0 && widx != end - 1)
-				throw new FormatException (String.Format ("Wildcard in UriTemplate is valid only if it is placed at the last part of the path: '{0}'", template));
+			if (widx >= 0)
+				if (widx != end - 1 && template.IndexOf ('}', widx) != end - 1)
+					throw new FormatException (String.Format ("Wildcard in UriTemplate is valid only if it is placed at the last part of the path: '{0}'", template));
 			List<string> list = null;
 			int prevEnd = -2;
 			for (int i = index; i <= end; ) {
@@ -351,6 +360,8 @@ namespace System
 				i++;
 				string name = template.Substring (i, e - i);
 				string uname = name.ToUpper (CultureInfo.InvariantCulture);
+				if (uname [0] == '*')
+					uname = wild_path_name = uname.Substring (1);
 				if (list.Contains (uname) || (path != null && path.Contains (uname)))
 					throw new InvalidOperationException (String.Format ("The URI template string contains duplicate template item {{'{0}'}}", name));
 				list.Add (uname);

@@ -436,6 +436,22 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (otherToolStrip, buttonD.Owner, "#F5");
 			Assert.IsNull (buttonD.ParentToolStrip, "#F6");
 		}
+		
+		[Test]
+		public void AddToolStripInstanceMultipleTimes ()
+		{
+			ToolStrip toolStrip = CreateToolStrip ();
+			ToolStripItemCollection items = null;
+					
+			items = new ToolStripItemCollection (toolStrip, new ToolStripItem [0]);
+			
+			var item = new ToolStripButton ("test");
+			toolStrip.Items.Add (item);
+			Assert.AreEqual(1, toolStrip.Items.Count, "A1");
+			
+			toolStrip.Items.Add (item);
+			Assert.AreEqual(1, toolStrip.Items.Count, "A2");
+		}
 
 		void ToolStrip_ItemAdded (object sender, ToolStripItemEventArgs e)
 		{

@@ -1,4 +1,4 @@
-// cs0076.cs: An item in an enumeration cannot have an identifier `value__'
+// CS0076: An item in an enumeration cannot have an identifier `value__'
 // Line: 8
 
 using System;

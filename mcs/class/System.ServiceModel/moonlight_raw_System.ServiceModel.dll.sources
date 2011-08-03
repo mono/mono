@@ -70,6 +70,7 @@ System.ServiceModel.Channels/ChannelManagerBase.cs
 System.ServiceModel.Channels/ChannelParameterCollection.cs
 System.ServiceModel.Channels/ChannelPoolSettings.cs
 System.ServiceModel.Channels/CommunicationObject.cs
+System.ServiceModel.Channels/ContentType.cs
 System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HtmlizedException.cs
@@ -132,8 +133,10 @@ System.ServiceModel.Channels/XmlReaderBodyWriter.cs
 System.ServiceModel.Description/ClientCredentials.cs
 System.ServiceModel.Description/ContractDescription.cs
 System.ServiceModel.Description/ContractDescriptionGenerator.cs
+System.ServiceModel.Description/DataContractSerializerOperationBehavior.cs
 System.ServiceModel.Description/FaultDescription.cs
 System.ServiceModel.Description/FaultDescriptionCollection.cs
+System.ServiceModel.Description/IContractBehavior.cs
 System.ServiceModel.Description/IEndpointBehavior.cs
 System.ServiceModel.Description/IOperationBehavior.cs
 System.ServiceModel.Description/MessageBodyDescription.cs
@@ -149,9 +152,13 @@ System.ServiceModel.Description/OperationDescription.cs
 System.ServiceModel.Description/OperationDescriptionCollection.cs
 System.ServiceModel.Description/ServiceEndpoint.cs
 System.ServiceModel.Description/XmlName.cs
+System.ServiceModel.Diagnostics/MessageLoggingSettings.cs
+System.ServiceModel.Diagnostics/MessageLogTraceRecord.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
 System.ServiceModel.Dispatcher/ClientOperation.cs
 System.ServiceModel.Dispatcher/ClientRuntime.cs
+System.ServiceModel.Dispatcher/DispatchRuntime.cs
+System.ServiceModel.Dispatcher/DispatchOperation.cs
 System.ServiceModel.Dispatcher/FaultContractInfo.cs
 System.ServiceModel.Dispatcher/IChannelInitializer.cs
 System.ServiceModel.Dispatcher/IClientMessageFormatter.cs
@@ -171,6 +178,7 @@ System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
 System.ServiceModel/ClientBase.cs
 System.ServiceModel/ClientProxyGenerator.cs
+System.ServiceModel/ClientRealProxy.cs
 System.ServiceModel/ClientRuntimeChannel.cs
 System.ServiceModel/CommunicationException.cs
 System.ServiceModel/CommunicationObjectAbortedException.cs
@@ -200,6 +208,7 @@ System.ServiceModel/IExtensibleObject.cs
 System.ServiceModel/IExtension.cs
 System.ServiceModel/IExtensionCollection.cs
 System.ServiceModel/InvalidMessageContractException.cs
+System.ServiceModel/Logger.cs
 System.ServiceModel/MessageBodyAttribute.cs
 System.ServiceModel/MessageContractAttribute.cs
 System.ServiceModel/MessageContractMemberAttribute.cs

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Runtime.Caching</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="..\System.Web\System.Web.Configuration_2.0\NullableStringValidator.cs" />
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryRemovedArguments.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryRemovedCallback.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryRemovedReason.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryUpdateArguments.cs" />
+   <Compile Include="System.Runtime.Caching\CacheEntryUpdateCallback.cs" />
+   <Compile Include="System.Runtime.Caching\CacheItem.cs" />
+   <Compile Include="System.Runtime.Caching\CacheItemPolicy.cs" />
+   <Compile Include="System.Runtime.Caching\CacheItemPriority.cs" />
+   <Compile Include="System.Runtime.Caching\ChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching\DefaultCacheCapabilities.cs" />
+   <Compile Include="System.Runtime.Caching\FileChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching\FileChangeNotificationSystem.cs" />
+   <Compile Include="System.Runtime.Caching\FileChangeNotificationSystemEntry.cs" />
+   <Compile Include="System.Runtime.Caching\Helpers.cs" />
+   <Compile Include="System.Runtime.Caching\HostFileChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCache.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCacheContainer.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCacheEntry.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCacheEntryChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCacheLRU.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCachePerformanceCounters.cs" />
+   <Compile Include="System.Runtime.Caching\MemoryCacheEntryPriorityQueue.cs" />
+   <Compile Include="System.Runtime.Caching\ObjectCache.cs" />
+   <Compile Include="System.Runtime.Caching\OnChangedCallback.cs" />
+   <Compile Include="System.Runtime.Caching\SqlChangeMonitor.cs" />
+   <Compile Include="System.Runtime.Caching.Configuration\CachingSectionGroup.cs" />
+   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSection.cs" />
+   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSettingsCollection.cs" />
+   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheElement.cs" />
+   <Compile Include="System.Runtime.Caching.Hosting\IApplicationIdentifier.cs" />
+   <Compile Include="System.Runtime.Caching.Hosting\IFileChangeNotificationSystem.cs" />
+   <Compile Include="System.Runtime.Caching.Hosting\IMemoryCacheManager.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

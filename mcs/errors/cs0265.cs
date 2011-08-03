@@ -1,4 +1,4 @@
-// gcs0265.cs: Partial declarations of `Partial<T>' have inconsistent constraints for type parameter `T'
+// CS0265: Partial declarations of `Partial<T>' have inconsistent constraints for type parameter `T'
 // Line: 4
 
 partial class Partial<T> where T: class, new()

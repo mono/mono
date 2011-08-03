@@ -33,12 +33,15 @@ typedef int pid_t;
 #define GINT_TO_POINTER(v)     ((gpointer)(intptr_t) (v))
 #define GUINT_TO_POINTER(v)    ((gpointer)(intptr_t) (v))
 
+/* VS 2010 and later have stdint.h */
+#if defined(_MSC_VER) && _MSC_VER < 1600
 #define INT32_MAX 2147483647
 #define INT32_MIN (~ INT32_MAX)
 #define INT64_MAX 9223372036854775807i64
 #define INT64_MIN (~INT64_MAX)
 #define UINT32_MAX 0xffffffffU
 #define UINT64_MAX 0xffffffffffffffffULL
+#endif
 
 #define STDOUT_FILENO (int)(intptr_t)stdout
 #define STDERR_FILENO (int)(intptr_t)stderr
@@ -62,8 +65,6 @@ typedef int pid_t;
 #undef G_HAVE_STRNDUP
 #define G_HAVE_GETOPT_H 1
 
-int vasprintf(char **ret, const char *fmt, va_list ap);
-
 /* disable the following warnings 
  * C4100: The formal parameter is not referenced in the body of the function. The unreferenced parameter is ignored. 
  * C4127: conditional expression is constant
@@ -71,4 +72,5 @@ int vasprintf(char **ret, const char *fmt, va_list ap);
 #pragma warning(disable:4100 4127)
 #endif
 
+typedef void * GPid;
 #endif

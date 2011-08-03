@@ -51,10 +51,12 @@ namespace Moonlight.Build.Tasks {
 		[Output]
 		public string FrameworkPath {
 			get {
-				if (SilverlightVersion == "3.0")
+				if (string.IsNullOrEmpty (SilverlightVersion))
 					return FrameworkVersion30Path;
-				else
-					return FrameworkVersion20Path;
+
+				return SI.Path.GetFullPath (
+						PathCombine (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20),
+						"..", "..", "moonlight", SilverlightVersion));
 			}
 		}
 

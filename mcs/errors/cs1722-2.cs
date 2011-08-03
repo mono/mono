@@ -1,4 +1,4 @@
-// cs1722-2.cs: `B': Base class `A1' must be specified as first
+// CS1722: `B': Base class `A1' must be specified as first
 // Line: 9
 class A1 {
 }

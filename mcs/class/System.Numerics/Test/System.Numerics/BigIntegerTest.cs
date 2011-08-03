@@ -911,5 +911,15 @@ namespace MonoTests.System.Numerics
 				Thread.CurrentThread.CurrentCulture = old;
 			}
 		}
+
+		[Test]
+		public void CompareToLongToWithBigNumber () {
+			var a = BigInteger.Parse ("123456789123456789"); 
+			var b = BigInteger.Parse ("-123456789123456789");
+			Assert.AreEqual (1, a.CompareTo (2000));
+			Assert.AreEqual (1, a.CompareTo (-2000));
+			Assert.AreEqual (-1, b.CompareTo (2000));
+			Assert.AreEqual (-1, b.CompareTo (-2000));
+		}
 	}
 }

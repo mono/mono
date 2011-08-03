@@ -1,4 +1,4 @@
-// cs0619-51.cs: `A.comparer' is obsolete: `Please use ...'
+// CS0619-51: `A.comparer' is obsolete: `Please use ...'
 // Line: 16
 // Compiler options: -reference:CS0619-51-lib.dll
 

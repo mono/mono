@@ -39,14 +39,16 @@ static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
-static LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
+LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
+guint64 mono_win_chained_exception_filter_result;
+gboolean mono_win_chained_exception_filter_didrun;
 
 #ifndef PROCESS_CALLBACK_FILTER_ENABLED
 #	define PROCESS_CALLBACK_FILTER_ENABLED 1
 #endif
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, er, sctx)
+	if (_ex##_handler) _ex##_handler(0, ep, sctx)
 
 /*
  * mono_win32_get_handle_stackoverflow (void):
@@ -116,7 +118,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	DWORD page_size;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo rji;
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoLMF *lmf = jit_tls->lmf;		
 	MonoContext initial_ctx;
 	MonoContext ctx;
@@ -176,6 +178,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 	struct sigcontext* sctx;
 	LONG res;
 
+	mono_win_chained_exception_filter_didrun = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -228,6 +231,9 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 
 	g_free (sctx);
 
+	if (mono_win_chained_exception_filter_didrun)
+		res = mono_win_chained_exception_filter_result;
+
 	return res;
 }
 
@@ -237,12 +243,12 @@ void win32_seh_init()
 	if (!restore_stack)
 		restore_stack = mono_win32_get_handle_stackoverflow ();
 
-	old_handler = SetUnhandledExceptionFilter(seh_handler);
+	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
 }
 
 void win32_seh_cleanup()
 {
-	if (old_handler) SetUnhandledExceptionFilter(old_handler);
+	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
@@ -749,7 +755,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
-	frame->managed = FALSE;
 
 	*new_ctx = *ctx;
 
@@ -760,9 +765,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint8 *unwind_info;
 
 		frame->type = FRAME_TYPE_MANAGED;
-
-		if (!ji->method->wrapper_type || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD)
-			frame->managed = TRUE;
 
 		if (ji->from_aot)
 			unwind_info = mono_aot_get_unwind_info (ji, &unwind_info_len);
@@ -893,94 +895,17 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	return FALSE;
 }
 
-#ifdef __sun
-#define REG_EAX EAX
-#define REG_EBX EBX
-#define REG_ECX ECX
-#define REG_EDX EDX
-#define REG_EBP EBP
-#define REG_ESP ESP
-#define REG_ESI ESI
-#define REG_EDI EDI
-#define REG_EIP EIP
-#endif
-
 void
 mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
-#if defined (__native_client__)
-	printf("WARNING: mono_arch_sigctx_to_monoctx() called!\n");
-	mctx->eax = 0xDEADBEEF;
-	mctx->ebx = 0xDEADBEEF;
-	mctx->ecx = 0xDEADBEEF;
-	mctx->edx = 0xDEADBEEF;
-	mctx->ebp = 0xDEADBEEF;
-	mctx->esp = 0xDEADBEEF;
-	mctx->esi = 0xDEADBEEF;
-	mctx->edi = 0xDEADBEEF;
-	mctx->eip = 0xDEADBEEF;
-#else
-#ifdef MONO_ARCH_USE_SIGACTION
-	ucontext_t *ctx = (ucontext_t*)sigctx;
-	
-	mctx->eax = UCONTEXT_REG_EAX (ctx);
-	mctx->ebx = UCONTEXT_REG_EBX (ctx);
-	mctx->ecx = UCONTEXT_REG_ECX (ctx);
-	mctx->edx = UCONTEXT_REG_EDX (ctx);
-	mctx->ebp = UCONTEXT_REG_EBP (ctx);
-	mctx->esp = UCONTEXT_REG_ESP (ctx);
-	mctx->esi = UCONTEXT_REG_ESI (ctx);
-	mctx->edi = UCONTEXT_REG_EDI (ctx);
-	mctx->eip = UCONTEXT_REG_EIP (ctx);
-#else	
-	struct sigcontext *ctx = (struct sigcontext *)sigctx;
-
-	mctx->eax = ctx->SC_EAX;
-	mctx->ebx = ctx->SC_EBX;
-	mctx->ecx = ctx->SC_ECX;
-	mctx->edx = ctx->SC_EDX;
-	mctx->ebp = ctx->SC_EBP;
-	mctx->esp = ctx->SC_ESP;
-	mctx->esi = ctx->SC_ESI;
-	mctx->edi = ctx->SC_EDI;
-	mctx->eip = ctx->SC_EIP;
-#endif
-#endif /* if defined(__native_client__) */
+	mono_sigctx_to_monoctx (sigctx, mctx);
 }
 
 void
 mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
-#if defined(__native_client__)
-	printf("WARNING: mono_arch_monoctx_to_sigctx() called!\n");
-#else
-#ifdef MONO_ARCH_USE_SIGACTION
-	ucontext_t *ctx = (ucontext_t*)sigctx;
-
-	UCONTEXT_REG_EAX (ctx) = mctx->eax;
-	UCONTEXT_REG_EBX (ctx) = mctx->ebx;
-	UCONTEXT_REG_ECX (ctx) = mctx->ecx;
-	UCONTEXT_REG_EDX (ctx) = mctx->edx;
-	UCONTEXT_REG_EBP (ctx) = mctx->ebp;
-	UCONTEXT_REG_ESP (ctx) = mctx->esp;
-	UCONTEXT_REG_ESI (ctx) = mctx->esi;
-	UCONTEXT_REG_EDI (ctx) = mctx->edi;
-	UCONTEXT_REG_EIP (ctx) = mctx->eip;
-#else
-	struct sigcontext *ctx = (struct sigcontext *)sigctx;
-
-	ctx->SC_EAX = mctx->eax;
-	ctx->SC_EBX = mctx->ebx;
-	ctx->SC_ECX = mctx->ecx;
-	ctx->SC_EDX = mctx->edx;
-	ctx->SC_EBP = mctx->ebp;
-	ctx->SC_ESP = mctx->esp;
-	ctx->SC_ESI = mctx->esi;
-	ctx->SC_EDI = mctx->edi;
-	ctx->SC_EIP = mctx->eip;
-#endif
-#endif /* __native_client__ */
-}	
+	mono_monoctx_to_sigctx (mctx, sigctx);
+}
 
 gpointer
 mono_arch_ip_from_context (void *sigctx)
@@ -1007,7 +932,7 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
 	static void (*restore_context) (MonoContext *);
 
@@ -1071,10 +996,30 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 	return start;
 }
 
+
+void
+mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
+{
+	/*
+	 * Can't pass the obj on the stack, since we are executing on the
+	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
+	 * So put it into a register, and branch to a trampoline which
+	 * pushes it.
+	 */
+	ctx->eax = (mgreg_t)user_data;
+	ctx->ecx = ctx->eip;
+	ctx->edx = (mgreg_t)async_cb;
+
+	/*align the stack*/
+	ctx->esp = (ctx->esp - 16) & ~15;
+	ctx->eip = (mgreg_t)signal_exception_trampoline;
+}
+
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
+	MonoContext mctx;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
 	/*
@@ -1082,54 +1027,28 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
-	guint64 sp = UCONTEXT_REG_ESP (ctx);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
 	/* Pass the ctx parameter in TLS */
 	mono_arch_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
-	/*
-	 * Can't pass the obj on the stack, since we are executing on the
-	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
-	 * So put it into a register, and branch to a trampoline which
-	 * pushes it.
-	 */
+
 	g_assert (!test_only);
-	UCONTEXT_REG_EAX (ctx) = (gsize)obj;
-	UCONTEXT_REG_ECX (ctx) = UCONTEXT_REG_EIP (ctx);
-	UCONTEXT_REG_EDX (ctx) = (gsize)handle_signal_exception;
-
-	/* Allocate a stack frame, align it to 16 bytes which is needed on apple */
-	sp -= 16;
-	sp &= ~15;
-	UCONTEXT_REG_ESP (ctx) = sp;
-
-	UCONTEXT_REG_EIP (ctx) = (gsize)signal_exception_trampoline;
+	mctx = jit_tls->ex_ctx;
+	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #elif defined (TARGET_WIN32)
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoContext mctx;
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	struct sigcontext *ctx = (struct sigcontext *)sigctx;
-	guint64 sp = ctx->SC_ESP;
 
 	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
-	/*
-	 * Can't pass the obj on the stack, since we are executing on the
-	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
-	 * So put it into a register, and branch to a trampoline which
-	 * pushes it.
-	 */
 	g_assert (!test_only);
-	ctx->SC_EAX = (gsize)obj;
-	ctx->SC_ECX = ctx->SC_EIP;
-	ctx->SC_EDX = (gsize)handle_signal_exception;
-
-	/* Allocate a stack frame, align it to 16 bytes which is needed on apple */
-	sp -= 16;
-	sp &= ~15;
-	ctx->SC_ESP = sp;
-
-	ctx->SC_EIP = (gsize)signal_exception_trampoline;
+	mctx = jit_tls->ex_ctx;
+	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #else
@@ -1151,7 +1070,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 static void
 restore_soft_guard_pages (void)
 {
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
 }
@@ -1175,13 +1094,13 @@ prepare_for_guard_pages (MonoContext *mctx)
 }
 
 static void
-altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
+altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
 	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
 	restore_context = mono_get_restore_context ();
-	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mctx = *ctx;
 
 	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj)) {
 		if (stack_ovf)
@@ -1230,7 +1149,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	 *   ctx arg
 	 *   return ip
 	 */
-	frame_size = sizeof (ucontext_t) + sizeof (gpointer) * 4;
+ 	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4;
 	frame_size += 15;
 	frame_size &= ~15;
 	sp = (gpointer)(UCONTEXT_REG_ESP (ctx) & ~15);
@@ -1242,8 +1161,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	sp [0] = sp + 4;
 	sp [1] = exc;
 	sp [2] = (gpointer)stack_ovf;
-	/* may need to adjust pointers in the new struct copy, depending on the OS */
-	memcpy (sp + 4, ctx, sizeof (ucontext_t));
+	mono_sigctx_to_monoctx (sigctx, (MonoContext*)(sp + 4));
 	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_EIP (ctx) = (unsigned long)altstack_handle_and_restore;
 	UCONTEXT_REG_ESP (ctx) = (unsigned long)(sp - 1);
@@ -1295,3 +1213,18 @@ mono_tasklets_arch_restore (void)
 }
 #endif
 
+/*
+ * mono_arch_setup_resume_sighandler_ctx:
+ *
+ *   Setup CTX so execution continues at FUNC.
+ */
+void
+mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
+{
+	int align = (((gint32)MONO_CONTEXT_GET_SP (ctx)) % MONO_ARCH_FRAME_ALIGNMENT + 4);
+
+	if (align != 0)
+		MONO_CONTEXT_SET_SP (ctx, (gsize)MONO_CONTEXT_GET_SP (ctx) - align);
+
+	MONO_CONTEXT_SET_IP (ctx, func);
+}

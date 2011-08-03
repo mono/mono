@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum EnumProperty
+	public enum EnumProperty
 	{
 		BackgroundType = 4001,
 		BorderType = 4002,

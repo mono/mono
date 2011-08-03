@@ -1,6 +1,5 @@
 // CS0122: The call is ambiguous between the following methods or properties: `Test.Foo(IIn<string>)' and `Test.Foo(IIn<Test>)'
-// Line: 23
-// Compiler options: -langversion:future
+// Line: 22
 
 interface IIn<in T>
 {

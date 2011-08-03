@@ -22,25 +22,20 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 
 namespace System.Threading
 {
-	internal class Watch
+	internal struct Watch
 	{
-		public Watch ()
-		{
-			startTicks = TicksNow ();
-		}
-		
 		long startTicks;
 		
 		public static Watch StartNew ()
 		{
-			Watch temp = new Watch ();
-			temp.Start ();
-			return temp;
+			Watch watch = new Watch ();
+			watch.Start ();
+			return watch;
 		}
 		
 		public void Start ()

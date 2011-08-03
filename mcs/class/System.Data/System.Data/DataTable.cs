@@ -996,7 +996,8 @@ namespace System.Data {
 				if (copyTable == null)
 					copyTable = Clone ();
 				DataRow newRow = copyTable.NewNotInitializedRow ();
-				row.CopyValuesToRow (newRow);
+				// Don't check for ReadOnly, when cloning data to new uninitialized row.
+				row.CopyValuesToRow (newRow, false);
 #if NET_2_0
 				newRow.XmlRowID = row.XmlRowID;
 #endif

@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum ToolStripItemDisplayStyle
@@ -38,4 +37,3 @@ namespace System.Windows.Forms
 		ImageAndText = 3
 	}
 }
-#endif

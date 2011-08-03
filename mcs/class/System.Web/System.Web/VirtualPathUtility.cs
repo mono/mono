@@ -253,7 +253,7 @@ namespace System.Web {
 			if (virtualPath.Length == 1 && virtualPath [0] == '~')
 				return apppath;
 
-			return ToAbsolute (virtualPath,apppath);
+			return ToAbsolute (virtualPath, apppath, normalize);
 		}
 
 		// If virtualPath is: 

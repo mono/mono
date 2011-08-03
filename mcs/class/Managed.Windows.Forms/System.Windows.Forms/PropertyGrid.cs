@@ -41,10 +41,8 @@ using System.Windows.Forms.PropertyGridInternal;
 namespace System.Windows.Forms 
 {
 	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser 
 	{
 		#region Private Members
@@ -89,11 +87,9 @@ namespace System.Windows.Forms
 		private MenuItem description_menuitem;
 
 		private Color category_fore_color;
-#if NET_2_0
 		private Color commands_active_link_color;
 		private Color commands_disabled_link_color;
 		private Color commands_link_color;
-#endif
 		#endregion	// Private Members
 		
 		#region Contructors
@@ -168,7 +164,7 @@ namespace System.Windows.Forms
 			toolbar.ShowToolTips = true;
 			toolbar.Size = new System.Drawing.Size(256, 27);
 			toolbar.TabIndex = 0;
-#if NET_2_0
+
 			toolbar.Items.AddRange (new ToolStripItem [] {categorized_toolbarbutton,
 								      alphabetic_toolbarbutton,
 								      new PropertyToolBarSeparator (),
@@ -177,14 +173,6 @@ namespace System.Windows.Forms
 			categorized_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
 			alphabetic_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
 			propertypages_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
-#else
-			toolbar.Buttons.AddRange(new ToolBarButton [] {categorized_toolbarbutton,
-								      alphabetic_toolbarbutton,
-								      new PropertyToolBarSeparator (),
-								      propertypages_toolbarbutton});
-			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
-			toolbar.ButtonClick += new ToolBarButtonClickEventHandler(toolbar_ButtonClick);
-#endif
 
 			categorized_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			categorized_toolbarbutton.ToolTipText = Locale.GetText ("Categorized");
@@ -280,14 +268,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[BrowsableAttribute(false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
@@ -296,13 +282,9 @@ namespace System.Windows.Forms
 				return can_show_commands;
 			}
 		}
-#if NET_2_0
+
 		[DefaultValue(typeof(Color), "ControlText")]
-		public
-#else
-		internal
-#endif
-		Color CategoryForeColor {
+		public Color CategoryForeColor {
 			get {
 				return category_fore_color;
 			}
@@ -339,7 +321,7 @@ namespace System.Windows.Forms
 				commands_fore_color = value;
 			}
 		}
-#if NET_2_0
+
 		public Color CommandsActiveLinkColor {
 			get {
 				return commands_active_link_color;
@@ -366,7 +348,6 @@ namespace System.Windows.Forms
 				commands_link_color = value;
 			}
 		}
-#endif
 
 		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
@@ -377,11 +358,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (true)]
-#else
-		[DefaultValue (false)]
-#endif
 		public virtual bool CommandsVisibleIfAvailable {
 			get {
 				return commands_visible_if_available;
@@ -424,9 +401,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [Control]")]
-#endif
 		public Color HelpBackColor {
 			get {
 				return help_panel.BackColor;
@@ -436,9 +411,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [ControlText]")]
-#endif
 		public Color HelpForeColor {
 			get {
 				return help_panel.ForeColor;
@@ -462,9 +435,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
-#endif
 		public bool LargeButtons {
 			get {
 				return large_buttons;
@@ -479,9 +450,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [InactiveBorder]")]
-#endif
 		public Color LineColor {
 			get {
 				return line_color;
@@ -496,7 +465,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -504,7 +472,6 @@ namespace System.Windows.Forms
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
-#endif
 		
 		[DefaultValue(PropertySort.CategorizedAlphabetical)]
 		public PropertySort PropertySort {
@@ -513,10 +480,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-#if NET_2_0
 				if (!Enum.IsDefined (typeof (PropertySort), value))
 					throw new InvalidEnumArgumentException ("value", (int) value, typeof (PropertySort));
-#endif
 				if (property_sort == value)
 					return;
 
@@ -538,11 +503,9 @@ namespace System.Windows.Forms
 					}
 					property_grid_view.UpdateView ();
 
-#if NET_2_0
 					EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
 					if (eh != null)
 						eh (this, EventArgs.Empty);
-#endif
 				}
 				UpdatePropertySortButtonsState ();
 			}
@@ -684,14 +647,12 @@ namespace System.Windows.Forms
 			set { base.Site = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
- #endif
 
 		[DefaultValue(true)]
 		public virtual bool ToolbarVisible {
@@ -705,7 +666,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		protected ToolStripRenderer ToolStripRenderer {
 			get {
 				if (toolbar != null) {
@@ -719,12 +679,8 @@ namespace System.Windows.Forms
 				}
 			}
 		}
- 
-#endif
 
-#if NET_2_0
 		[DefaultValue ("Color [Window]")]
-#endif
 		public Color ViewBackColor {
 			get { return property_grid_view.BackColor; }
 			set {
@@ -736,9 +692,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [WindowText]")]
-#endif
 		public Color ViewForeColor {
 			get { return property_grid_view.ForeColor; }
 			set {
@@ -749,7 +703,6 @@ namespace System.Windows.Forms
 				property_grid_view.ForeColor = value;
 			}
 		}
-#if NET_2_0
 
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
@@ -763,7 +716,6 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		#endregion	// Public Instance Properties
 
@@ -889,12 +841,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		private void toolbarbutton_clicked (object o, EventArgs args)
 		{
 			toolbar_Clicked (o as PropertyToolBarButton);
 		}
-#endif
 
 		private void SelectPropertyTab (PropertyTab propertyTab)
 		{
@@ -1083,12 +1033,9 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected override void OnEnabledChanged (EventArgs e) {
 			base.OnEnabledChanged (e);
 		}
-
-#endif
 		
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
@@ -1128,13 +1075,11 @@ namespace System.Windows.Forms
 			base.OnPaint (pevent);
 		}
 
-#if NET_2_0
 		protected virtual void OnPropertySortChanged(EventArgs e) {
 			EventHandler eh = (EventHandler) Events [PropertySortChangedEvent];
 			if (eh != null)
 				eh (this, e);
-		}		
-#endif
+		}
 		
 		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) 
 		{
@@ -1177,9 +1122,7 @@ namespace System.Windows.Forms
 			return base.ProcessDialogKey (keyData);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		protected override void ScaleCore (float dx, float dy) {
 			base.ScaleCore (dx, dy);
 		}
@@ -1229,14 +1172,12 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -1244,7 +1185,7 @@ namespace System.Windows.Forms
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
-#if NET_2_0
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		public new event KeyEventHandler KeyDown {
@@ -1313,7 +1254,6 @@ namespace System.Windows.Forms
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
-#endif
 		#endregion
 
 		#region Com2Interop.IComPropertyBrowser Interface
@@ -1558,13 +1498,6 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-#if !NET_2_0
-		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e)
-		{
-			toolbar_Clicked (e.Button as PropertyToolBarButton);
-		}
-#endif
-
 		private void OnResetPropertyClick (object sender, EventArgs e)
 		{
 			ResetSelectedProperty();
@@ -1682,27 +1615,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private class PropertyToolBarSeparator : 
-#if NET_2_0
-		ToolStripSeparator
-#else
-		ToolBarButton
-#endif
+		private class PropertyToolBarSeparator : ToolStripSeparator
 		{
 			public PropertyToolBarSeparator ()
 			{
-#if !NET_2_0
-				this.Style = ToolBarButtonStyle.Separator;
-#endif
 			}
 		}
 
-		private class PropertyToolBarButton :
-#if NET_2_0
-		ToolStripButton
-#else
-		ToolBarButton
-#endif
+		private class PropertyToolBarButton : ToolStripButton
 		{
 			private PropertyTab property_tab;
 
@@ -1721,7 +1641,6 @@ namespace System.Windows.Forms
 				get { return property_tab; }
 			}
 
-#if NET_2_0
 			public bool Pushed {
 				get { return base.Checked; }
 				set { base.Checked = value; }
@@ -1731,38 +1650,21 @@ namespace System.Windows.Forms
 				get { return ToolBarButtonStyle.PushButton; }
 				set { }
 			}
-#endif
 		}
 		
 		// needed! this little helper makes it possible to draw a different toolbar border
 		// and toolbar backcolor in ThemeWin32Classic
-		internal class PropertyToolBar : 
-#if NET_2_0
-		ToolStrip
-#else
-		ToolBar 
-#endif
+		internal class PropertyToolBar : ToolStrip
 		{
-		
-#if NET_2_0
 			ToolBarAppearance appearance;
-#endif
+
 			public PropertyToolBar ()
 			{
 				SetStyle (ControlStyles.ResizeRedraw, true);
-#if NET_2_0
 				GripStyle = ToolStripGripStyle.Hidden;
 				appearance = ToolBarAppearance.Normal;
-#endif
 			}
 
-#if !NET_2_0
-			public IList Items {
-				get { return base.Buttons; }
-			}
-#endif
-
-#if NET_2_0
 			public bool ShowToolTips {
 				get { return base.ShowItemToolTips; }
 				set { base.ShowItemToolTips = value; }
@@ -1788,7 +1690,6 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-#endif
 		}
 
 

@@ -524,6 +524,7 @@ typedef union {
 
 #define x86_rdtsc(inst) \
 	do {	\
+		x86_codegen_pre(&(inst), 2); \
 		*(inst)++ = 0x0f;	\
 		*(inst)++ = 0x31;	\
 	} while (0)
@@ -584,7 +585,7 @@ typedef union {
 
 #define x86_xadd_reg_reg(inst,dreg,reg,size)	\
 	do {	\
-		x86_codegen_pre(&(inst), 4); \
+		x86_codegen_pre(&(inst), 3); \
 		*(inst)++ = (unsigned char)0x0F;     \
 		if ((size) == 1)	\
 			*(inst)++ = (unsigned char)0xC0;	\
@@ -670,14 +671,14 @@ typedef union {
 
 #define x86_neg_mem(inst,mem)	\
 	do {	\
-		x86_codegen_pre(&(inst), 2); \
+		x86_codegen_pre(&(inst), 6); \
 		*(inst)++ = (unsigned char)0xf7;	\
 		x86_mem_emit ((inst), 3, (mem));	\
 	} while (0)
 
 #define x86_neg_membase(inst,basereg,disp)	\
 	do {	\
-		x86_codegen_pre(&(inst), 6); \
+		x86_codegen_pre(&(inst), 1 + kMaxMembaseEmitPadding); \
 		*(inst)++ = (unsigned char)0xf7;	\
 		x86_membase_emit ((inst), 3, (basereg), (disp));	\
 	} while (0)
@@ -881,11 +882,11 @@ typedef union {
 #define x86_shift_membase_imm(inst,opc,basereg,disp,imm)	\
 	do {	\
 		if ((imm) == 1) {	\
-			x86_codegen_pre(&(inst), 6); \
+			x86_codegen_pre(&(inst), 1 + kMaxMembaseEmitPadding); \
 			*(inst)++ = (unsigned char)0xd1;	\
 			x86_membase_emit ((inst), (opc), (basereg), (disp));	\
 		} else {	\
-			x86_codegen_pre(&(inst), 7); \
+			x86_codegen_pre(&(inst), 2 + kMaxMembaseEmitPadding); \
 			*(inst)++ = (unsigned char)0xc1;	\
 			x86_membase_emit ((inst), (opc), (basereg), (disp));	\
 			x86_imm_emit8 ((inst), (imm));	\
@@ -2382,7 +2383,15 @@ typedef enum {
 	X86_SSE_PEXTRD = 0x16,/*sse41*/
 
 	X86_SSE_SHUFP = 0xC6,	
-	
+
+	X86_SSE_CVTDQ2PD = 0xE6,
+	X86_SSE_CVTDQ2PS = 0x5B,
+	X86_SSE_CVTPD2DQ = 0xE6,
+	X86_SSE_CVTPD2PS = 0x5A,
+	X86_SSE_CVTPS2DQ = 0x5B,
+	X86_SSE_CVTPS2PD = 0x5A,
+	X86_SSE_CVTTPD2DQ = 0xE6,
+	X86_SSE_CVTTPS2DQ = 0x5B,
 } X86_SSE_Opcode;
 
 

@@ -1,5 +1,6 @@
 // created on 28/08/2004 at 17:30
 
+#if !MONOTOUCH
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -90,3 +91,4 @@ namespace Mono.CodeGeneration
 		}
 	}
 }
+#endif

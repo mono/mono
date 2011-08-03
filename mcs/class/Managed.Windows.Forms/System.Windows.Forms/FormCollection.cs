@@ -31,10 +31,7 @@ using System.Text;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	class FormCollection : ReadOnlyCollectionBase
+	public class FormCollection : ReadOnlyCollectionBase
 	{
 		public FormCollection () : base ()
 		{

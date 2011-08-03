@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		public static bool IsPresent (SystemParameter enumVal)
 		{
 #pragma warning disable 219			
@@ -117,7 +116,6 @@ namespace System.Windows.Forms {
 			
 			return false;
 		}
-#endif
 		#endregion	// Public Static Properties
 
 		#region Public Instance Methods

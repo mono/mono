@@ -296,7 +296,7 @@ namespace System.Xml.Serialization {
 				case "duration": return value;
 				default: 
 					if (type.Type != null)
-						return Convert.ChangeType (value, type.Type);
+						return Convert.ChangeType (value, type.Type, null);
 					else
 						return value;
 			}

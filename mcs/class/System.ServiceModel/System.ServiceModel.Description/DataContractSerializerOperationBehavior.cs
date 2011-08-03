@@ -67,16 +67,26 @@ namespace System.ServiceModel.Description
 
 		public int MaxItemsInObjectGraph { get; set; }
 
+#if !NET_2_1
 		public IDataContractSurrogate DataContractSurrogate { get; set; }
+#endif
 
 		public virtual XmlObjectSerializer CreateSerializer (Type type, string name, string ns, IList<Type> knownTypes)
 		{
+#if NET_2_1
+			return new DataContractSerializer (type, name, ns, knownTypes);
+#else
 			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+#endif
 		}
 
 		public virtual XmlObjectSerializer CreateSerializer (Type type, XmlDictionaryString name, XmlDictionaryString ns, IList<Type> knownTypes)
 		{
+#if NET_2_1
+			return new DataContractSerializer (type, name, ns, knownTypes);
+#else
 			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+#endif
 		}
 
 		void IOperationBehavior.AddBindingParameters (
@@ -89,22 +99,22 @@ namespace System.ServiceModel.Description
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
-			throw new NotImplementedException ();
+			dispatch.Formatter = new DataContractMessagesFormatter (description, format);
 		}
 
 		void IOperationBehavior.ApplyClientBehavior (
 			OperationDescription description,
 			ClientOperation proxy)
 		{
-			throw new NotImplementedException ();
+			proxy.Formatter = new DataContractMessagesFormatter (description, format);
 		}
 
 		void IOperationBehavior.Validate (
 			OperationDescription description)
 		{
-			throw new NotImplementedException ();
 		}
 		
+#if !NET_2_1
 		//IWsdlExportExtension
 
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
@@ -116,5 +126,6 @@ namespace System.ServiceModel.Description
 			WsdlEndpointConversionContext context)
 		{
 		}
+#endif
 	}
 }

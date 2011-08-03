@@ -48,13 +48,20 @@ namespace System.Xaml
 			this.member = member;
 		}
 		
-		public XamlNodeInfo (string value)
+		public XamlNodeInfo (object value)
 		{
 			node_type = XamlNodeType.Value;
 			this.value = value;
 			member = default (XamlNodeMember);
 		}
 		
+		public XamlNodeInfo (NamespaceDeclaration ns)
+		{
+			node_type = XamlNodeType.NamespaceDeclaration;
+			this.value = ns;
+			member = default (XamlNodeMember);
+		}
+
 		XamlNodeType node_type;
 		object value;
 		XamlNodeMember member;
@@ -70,6 +77,18 @@ namespace System.Xaml
 		}
 		public object Value {
 			get { return value; }
+		}
+	}
+
+	internal struct XamlNodeLineInfo
+	{
+		public readonly XamlNodeInfo Node;
+		public readonly int LineNumber, LinePosition;
+		public XamlNodeLineInfo (XamlNodeInfo node, int line, int column)
+		{
+			Node = node;
+			LineNumber = line;
+			LinePosition = column;
 		}
 	}
 	
@@ -183,8 +202,14 @@ namespace System.Xaml
 				// do not read constructor arguments twice (they are written inside Arguments).
 				if (args != null && args.Contains (m))
 					continue;
-				// do not return non-public members. Not sure why .NET filters out them though.
+				// do not return non-public members (of non-collection/xdata). Not sure why .NET filters out them though.
 				if (!m.IsReadPublic)
+					continue;
+				if (!m.IsWritePublic &&
+				    !m.Type.IsXData &&
+				    !m.Type.IsArray &&
+				    !m.Type.IsCollection &&
+				    !m.Type.IsDictionary)
 					continue;
 
 				yield return m;

@@ -25,9 +25,7 @@
 //
 // COMPLETE
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public delegate void DrawListViewSubItemEventHandler (object sender, DrawListViewSubItemEventArgs e);
 }
-#endif

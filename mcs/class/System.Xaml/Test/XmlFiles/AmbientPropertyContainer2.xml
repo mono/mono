@@ -1,0 +1,4 @@
+<ResourcesDict xmlns="http://www.domain.com/path" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<TestObject x:Key="TestDictItem" />
+	<TestObject x:Key="okay" TestProperty="{Resource TestDictItem}" />
+</ResourcesDict>

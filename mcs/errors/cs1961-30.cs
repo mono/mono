@@ -1,6 +1,5 @@
 // CS1961: The covariant type parameter `U' must be contravariantly valid on `D<U>()'
-// Line: 7
-// Compiler options: -langversion:future
+// Line: 6
 
 interface IContravariant<in T> { }
 

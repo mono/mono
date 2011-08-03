@@ -26,9 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.ComponentModel;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
+#if !NET_2_1
+using System.Configuration;
+using System.ServiceModel.Configuration;
+#endif
 
 namespace System.ServiceModel
 {
@@ -40,11 +46,34 @@ namespace System.ServiceModel
 #endif
 	{
 		public WebHttpBinding ()
-			: this (WebHttpSecurityMode.None)
+			: this (String.Empty)
 		{
 		}
 
 		public WebHttpBinding (WebHttpSecurityMode mode)
+		{
+			Initialize (mode);
+		}
+
+		public WebHttpBinding (string configurationName)
+		{
+#if !NET_2_1
+			BindingsSection bindingsSection = ConfigUtil.BindingsSection;
+			WebHttpBindingElement el = (WebHttpBindingElement) bindingsSection ["webHttpBinding"].ConfiguredBindings.FirstOrDefault (c => c.Name == configurationName);
+			if (el != null) {
+				Initialize (el.Security.Mode); // to initialize Transport correctly.
+				el.ApplyConfiguration (this);
+			}
+			else if (!String.IsNullOrEmpty (configurationName))
+				throw new ConfigurationException (String.Format ("Specified webHttpBinding configuration '{0}' was not found", configurationName));
+			else
+				Initialize (WebHttpSecurityMode.None);
+#else
+			Initialize (WebHttpSecurityMode.None);
+#endif
+		}
+
+		void Initialize (WebHttpSecurityMode mode)
 		{
 			security.Mode = mode;
 			// MSDN says that this security mode can be set only
@@ -52,12 +81,6 @@ namespace System.ServiceModel
 			// this value here.
 			t = mode == WebHttpSecurityMode.Transport ? new HttpsTransportBindingElement () : new HttpTransportBindingElement ();
 			t.ManualAddressing = true;
-		}
-
-		[MonoTODO]
-		public WebHttpBinding (string configurationName)
-		{
-			throw new NotImplementedException ();
 		}
 
 		WebHttpSecurity security = new WebHttpSecurity ();
@@ -71,11 +94,17 @@ namespace System.ServiceModel
 		}
 
 #if !NET_2_1
+#if NET_4_0
+		[DefaultValue (false)]
+#endif
 		public bool AllowCookies {
 			get { return t.AllowCookies; }
 			set { t.AllowCookies = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (false)]
+#endif
 		public bool BypassProxyOnLocal {
 			get { return t.BypassProxyOnLocal; }
 			set { t.BypassProxyOnLocal = value; }
@@ -91,48 +120,67 @@ namespace System.ServiceModel
 		}
 #endif
 
+#if NET_4_0
+		[DefaultValue (HostNameComparisonMode.StrongWildcard)]
+#endif
 		public HostNameComparisonMode HostNameComparisonMode {
 			get { return t.HostNameComparisonMode; }
 			set { t.HostNameComparisonMode = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (0x10000)]
+#endif
 		public long MaxBufferPoolSize {
 			get { return t.MaxBufferPoolSize; }
 			set { t.MaxBufferPoolSize = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (TransferMode.Buffered)]
+#endif
 		public TransferMode TransferMode {
 			get { return t.TransferMode; }
 			set { t.TransferMode = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (true)]
+#endif
 		public bool UseDefaultWebProxy {
 			get { return t.UseDefaultWebProxy; }
 			set { t.UseDefaultWebProxy = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (null)]
+#endif
 		public Uri ProxyAddress {
 			get { return t.ProxyAddress; }
 			set { t.ProxyAddress = value; }
 		}
 #endif
 
+#if NET_4_0
+		[DefaultValue (0x80000)]
+#endif
 		public int MaxBufferSize {
 			get { return t.MaxBufferSize; }
 			set { t.MaxBufferSize = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (0x10000)]
+#endif
 		public long MaxReceivedMessageSize {
 			get { return t.MaxReceivedMessageSize; }
 			set { t.MaxReceivedMessageSize = value; }
 		}
 
-#if !NET_2_1
 		public XmlDictionaryReaderQuotas ReaderQuotas {
 			get { return msgenc.ReaderQuotas; }
 			set { msgenc.ReaderQuotas = value; }
 		}
-#endif
 
 		public override string Scheme {
 			get { return Security.Mode != WebHttpSecurityMode.None ? Uri.UriSchemeHttps : Uri.UriSchemeHttp; }
@@ -140,6 +188,13 @@ namespace System.ServiceModel
 
 		public WebHttpSecurity Security {
 			get { return security; }
+#if NET_4_0
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				security = value;
+			}
+#endif
 		}
 
 		public Encoding WriteEncoding {
@@ -159,6 +214,26 @@ namespace System.ServiceModel
 #if !NET_2_1
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
 			get { return receive_synchronously; }
+		}
+#endif
+
+#if NET_4_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public bool ShouldSerializeReaderQuotas ()
+		{
+			return false;
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public bool ShouldSerializeSecurity ()
+		{
+			return false;
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public bool ShouldSerializeWriteEncoding ()
+		{
+			return false;
 		}
 #endif
 	}

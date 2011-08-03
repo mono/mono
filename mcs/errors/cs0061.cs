@@ -1,4 +1,4 @@
-// cs0061.cs: Inconsistent accessibility: base interface `IFoo' is less accessible than interface `IBar'
+// CS0061: Inconsistent accessibility: base interface `IFoo' is less accessible than interface `IBar'
 // Line: 9
 
 using System;

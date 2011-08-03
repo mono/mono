@@ -1,4 +1,4 @@
-// cs0128.cs: A local variable named `x' is already defined in this scope
+// CS0128: A local variable named `x' is already defined in this scope
 // Line:
 
 class x {

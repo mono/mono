@@ -25,7 +25,6 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-#if NET_2_0
 
 using System.Drawing;
 using System.ComponentModel;
@@ -44,7 +43,6 @@ namespace System.Windows.Forms
 		private Color visited_link_color;
 
 		#region UIA FrameWork Events
-#if NET_2_0
 		static object UIAIsLinkChangedEvent = new object ();
 
 		internal event EventHandler UIAIsLinkChanged {
@@ -58,7 +56,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Public Constructors
@@ -121,10 +118,9 @@ namespace System.Windows.Forms
 			set {
 				this.is_link = value; 
 				this.Invalidate ();
-#if NET_2_0
+
 				// UIA Framework Event: IsLink Changed
 				OnUIAIsLinkChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -289,4 +285,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

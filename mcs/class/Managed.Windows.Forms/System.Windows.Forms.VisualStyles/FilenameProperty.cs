@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum FilenameProperty
+	public enum FilenameProperty
 	{
 		ImageFile = 3001,
 		ImageFile1 = 3002,

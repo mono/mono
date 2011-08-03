@@ -42,9 +42,7 @@ namespace System.Windows.Forms
 		Alt8		= 0x040038,
 		Alt9		= 0x040039,
 		AltBksp		= 0x040008,
-#if NET_2_0
 		AltDownArrow	= 0x040028,
-#endif
 		AltF1		= 0x040070,
 		AltF10		= 0x040079,
 		AltF11		= 0x04007A,
@@ -57,11 +55,9 @@ namespace System.Windows.Forms
 		AltF7		= 0x040076,
 		AltF8		= 0x040077,
 		AltF9		= 0x040078,
-#if NET_2_0
 		AltLeftArrow	= 0x040025,
 		AltRightArrow	= 0x040027,
 		AltUpArrow	= 0x040026,
-#endif
 		Ctrl0		= 0x020030,
 		Ctrl1		= 0x020031,
 		Ctrl2		= 0x020032,

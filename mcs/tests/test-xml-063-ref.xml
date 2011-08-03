@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-063</name>
+    </assembly>
+    <members>
+        <member name="T:A">
+            Test A
+        </member>
+        <member name="T:Test">
+            <seealso cref="M:Test.op_Explicit(Test)~System.Int64"/>
+            <seealso cref="M:Test.op_Explicit(Test)~A"/>
+            <seealso cref="M:Test.op_Implicit(System.Int32)~Test"/>
+            <seealso cref="M:Test.op_Implicit(System.Boolean)~Test"/>
+            <seealso cref="M:Test.op_LogicalNot(Test)"/>
+            <seealso cref="M:Test.#ctor"/>
+        </member>
+        <member name="M:Test.#ctor">
+            Start
+        </member>
+        <member name="M:Test.op_Explicit(Test)~A">
+            Comment
+        </member>
+        <member name="M:Test.op_Explicit(Test)~System.Int64">
+            Comment 2
+        </member>
+        <member name="M:Test.op_Implicit(System.Int32)~Test">
+            Comment 3
+        </member>
+        <member name="M:Test.op_Implicit(System.Boolean)~Test">
+            Comment 4
+        </member>
+        <member name="M:Test.op_LogicalNot(Test)">
+            Comment 5
+        </member>
+    </members>
+</doc>

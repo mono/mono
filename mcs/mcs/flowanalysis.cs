@@ -636,8 +636,9 @@ namespace Mono.CSharp
 
 	public class FlowBranchingIterator : FlowBranchingBlock
 	{
-		Iterator iterator;
-		public FlowBranchingIterator (FlowBranching parent, Iterator iterator)
+		readonly StateMachineInitializer iterator;
+
+		public FlowBranchingIterator (FlowBranching parent, StateMachineInitializer iterator)
 			: base (parent, BranchingType.Iterator, SiblingType.Block, iterator.Block, iterator.Location)
 		{
 			this.iterator = iterator;
@@ -1124,6 +1125,10 @@ namespace Mono.CSharp
 			for (int i = 0; i < struct_info.Count; i++) {
 				var field = struct_info.Fields [i];
 
+				// Fixed size buffers are not subject to definite assignment checking
+				if (field is FixedFieldSpec)
+					continue;
+
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,
@@ -1260,7 +1265,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type)
 			{
-				if (!type.IsStruct || TypeManager.IsBuiltinType (type))
+				if (!type.IsStruct || type.BuiltinType > 0)
 					return null;
 
 				StructInfo info;

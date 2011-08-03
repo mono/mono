@@ -33,12 +33,9 @@ namespace System.Windows.Forms
 {
 	public abstract class GridItem
 	{
-
 		#region	Fields
 		private bool expanded;
-#if NET_2_0
 		private object tag;
-#endif
 		#endregion Fields
 
 		#region	Constructors
@@ -94,7 +91,6 @@ namespace System.Windows.Forms
 			get;
 		}
 
-#if NET_2_0
 		[Localizable (false)]
 		[Bindable (true)]
 		[DefaultValue (null)]
@@ -103,7 +99,6 @@ namespace System.Windows.Forms
 			get { return this.tag; }
 			set { this.tag = value; }
 		}
-#endif
 
 		public abstract object Value
 		{

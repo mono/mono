@@ -377,6 +377,7 @@ mips_patch (guint32 *code, guint32 target)
 		mono_arch_flush_icache ((guint8 *)code, 4);
 		break;
 	case 0x0f: /* LUI / ADDIU pair */
+		g_assert ((code[1] >> 26) == 0x9);
 		patch_lui_addiu (code, target);
 		mono_arch_flush_icache ((guint8 *)code, 8);
 		break;
@@ -1040,6 +1041,10 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 #if MIPS_PASS_STRUCTS_BY_VALUE
 			/* Need to do alignment if struct contains long or double */
 			if (alignment > 4) {
+				/* Drop onto stack *before* looking at
+				   stack_size, if required. */
+				if (!cinfo->on_stack && cinfo->gr > MIPS_LAST_ARG_REG)
+					args_onto_stack (cinfo);
 				if (cinfo->stack_size & (alignment - 1)) {
 					add_int32_arg (cinfo, &dummy_arg);
 				}
@@ -1323,6 +1328,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	 * args or return vals.  Extra stack space avoids this in a lot of cases.
 	 */
 	offset += EXTRA_STACK_SPACE;
+	offset += SIZEOF_REGISTER - 1;
+	offset &= ~(SIZEOF_REGISTER - 1);
 
 	/* Space for saved registers */
 	cfg->arch.iregs_offset = offset;
@@ -2620,21 +2627,8 @@ loop_start:
 			ins->opcode = OP_LOCALLOC;
 			break;
 
-		case OP_LOAD_MEMBASE:
-		case OP_LOADI4_MEMBASE:
-		case OP_LOADU4_MEMBASE:
-		case OP_LOADI2_MEMBASE:
-		case OP_LOADU2_MEMBASE:
-		case OP_LOADI1_MEMBASE:
-		case OP_LOADU1_MEMBASE:
 		case OP_LOADR4_MEMBASE:
-		case OP_LOADR8_MEMBASE:
-		case OP_STORE_MEMBASE_REG:
-		case OP_STOREI4_MEMBASE_REG:
-		case OP_STOREI2_MEMBASE_REG:
-		case OP_STOREI1_MEMBASE_REG:
 		case OP_STORER4_MEMBASE_REG:
-		case OP_STORER8_MEMBASE_REG:
 			/* we can do two things: load the immed in a register
 			 * and use an indexed load, or see if the immed can be
 			 * represented as an ad_imm + a load with a smaller offset
@@ -3422,18 +3416,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IDIV:
 		case OP_IREM: {
 			guint32 *divisor_is_m1;
+			guint32 *dividend_is_minvalue;
 			guint32 *divisor_is_zero;
 
-			/* */
-			mips_addiu (code, mips_at, mips_zero, 0xffff);
+			mips_load_const (code, mips_at, -1);
 			divisor_is_m1 = (guint32 *)(void *)code;
 			mips_bne (code, ins->sreg2, mips_at, 0);
+			mips_lui (code, mips_at, mips_zero, 0x8000);
+			dividend_is_minvalue = (guint32 *)(void *)code;
+			mips_bne (code, ins->sreg1, mips_at, 0);
 			mips_nop (code);
 
-			/* Divide by -1 -- throw exception */
-			EMIT_SYSTEM_EXCEPTION_NAME("ArithmeticException");
+			/* Divide Int32.MinValue by -1 -- throw exception */
+			EMIT_SYSTEM_EXCEPTION_NAME("OverflowException");
 
 			mips_patch (divisor_is_m1, (guint32)code);
+			mips_patch (dividend_is_minvalue, (guint32)code);
 
 			/* Put divide in branch delay slot (NOT YET) */
 			divisor_is_zero = (guint32 *)(void *)code;
@@ -3740,12 +3738,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			case OP_CALL:
 				if (ins->flags & MONO_INST_HAS_METHOD) {
 					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
-					mips_call (code, mips_t9, call->method);
+					mips_load (code, mips_t9, call->method);
 				}
 				else {
 					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, call->fptr);
-					mips_call (code, mips_t9, call->fptr);
+					mips_load (code, mips_t9, call->fptr);
 				}
+				mips_jalr (code, mips_t9, mips_ra);
+				mips_nop (code);
 				break;
 			case OP_FCALL_REG:
 			case OP_LCALL_REG:
@@ -4003,9 +4003,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 
 			case OP_MIPS_COND_EXC_LE_UN:
-				mips_subu (code, mips_at, ins->sreg1, ins->sreg2);
+				mips_sltu (code, mips_at, ins->sreg2, ins->sreg1);
 				throw = (guint32 *)(void *)code;
-				mips_blez (code, mips_at, 0);
+				mips_beq (code, mips_at, mips_zero, 0);
 				mips_nop (code);
 				break;
 
@@ -4385,7 +4385,7 @@ mono_arch_register_lowlevel_calls (void)
 }
 
 void
-mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
+mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
 
@@ -4574,15 +4574,31 @@ mips_adjust_stackframe(MonoCompile *cfg)
 			if (cfg->verbose_level > 2) {
 				mono_print_ins_index (ins_cnt, ins);
 			}
-			if (MONO_IS_LOAD_MEMBASE(ins) && (ins->inst_basereg == mips_fp))
-				adj_c0 = 1;
-			if (MONO_IS_STORE_MEMBASE(ins) && (ins->dreg == mips_fp))
-				adj_c0 = 1;
-			/* The following two catch FP spills */
-			if (MONO_IS_LOAD_MEMBASE(ins) && (ins->inst_basereg == mips_sp))
-				adj_c0 = 1;
-			if (MONO_IS_STORE_MEMBASE(ins) && (ins->dreg == mips_sp))
-				adj_c0 = 1;
+			/* The == mips_sp tests catch FP spills */
+			if (MONO_IS_LOAD_MEMBASE(ins) && ((ins->inst_basereg == mips_fp) ||
+							  (ins->inst_basereg == mips_sp))) {
+				switch (ins->opcode) {
+				case OP_LOADI8_MEMBASE:
+				case OP_LOADR8_MEMBASE:
+					adj_c0 = 8;
+					break;
+				default:
+					adj_c0 = 4;
+					break;
+				}
+			} else if (MONO_IS_STORE_MEMBASE(ins) && ((ins->dreg == mips_fp) ||
+								  (ins->dreg == mips_sp))) {
+				switch (ins->opcode) {
+				case OP_STOREI8_MEMBASE_REG:
+				case OP_STORER8_MEMBASE_REG:
+				case OP_STOREI8_MEMBASE_IMM:
+					adj_c0 = 8;
+					break;
+				default:
+					adj_c0 = 4;
+					break;
+				}
+			}
 			if (((ins->opcode == OP_ADD_IMM) || (ins->opcode == OP_IADD_IMM)) && (ins->sreg1 == mips_fp))
 				adj_imm = 1;
 			if (adj_c0) {
@@ -4594,7 +4610,8 @@ mips_adjust_stackframe(MonoCompile *cfg)
 					}
 				}
 				else if (ins->inst_c0 < 0) {
-					ins->inst_c0 = - ins->inst_c0 - 4;
+                                        /* Adj_c0 holds the size of the datatype. */
+					ins->inst_c0 = - ins->inst_c0 - adj_c0;
 					if (cfg->verbose_level > 2) {
 						g_print ("spill");
 						mono_print_ins_index (ins_cnt, ins);
@@ -4732,7 +4749,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* save used registers in own stack frame (at pos) */
 		for (i = MONO_MAX_IREGS-1; i >= 0; --i) {
 			if (iregs_to_save & (1 << i)) {
-				g_assert (pos < cfg->stack_usage - sizeof(gpointer));
+				g_assert (pos < (int)(cfg->stack_usage - sizeof(gpointer)));
 				g_assert (mips_is_imm16(pos));
 				MIPS_SW (code, i, mips_sp, pos);
 				pos += SIZEOF_REGISTER;
@@ -4837,28 +4854,32 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		} else {
 			/* Argument ends up on the stack */
 			if (ainfo->regtype == RegTypeGeneral) {
+				int basereg_offset;
 				/* Incoming parameters should be above this frame */
 				if (cfg->verbose_level > 2)
-					g_print ("stack slot at %d of %d\n", inst->inst_offset, alloc_size);
+					g_print ("stack slot at %d of %d+%d\n",
+						 inst->inst_offset, alloc_size, alloc2_size);
 				/* g_assert (inst->inst_offset >= alloc_size); */
-				g_assert (mips_is_imm16 (inst->inst_offset));
+				g_assert (inst->inst_basereg == mips_fp);
+				basereg_offset = inst->inst_offset - alloc2_size;
+				g_assert (mips_is_imm16 (basereg_offset));
 				switch (ainfo->size) {
 				case 1:
-					mips_sb (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					mips_sb (code, ainfo->reg, inst->inst_basereg, basereg_offset);
 					break;
 				case 2:
-					mips_sh (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					mips_sh (code, ainfo->reg, inst->inst_basereg, basereg_offset);
 					break;
 				case 0: /* XXX */
 				case 4:
-					mips_sw (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					mips_sw (code, ainfo->reg, inst->inst_basereg, basereg_offset);
 					break;
 				case 8:
 #if (SIZEOF_REGISTER == 4)
-					mips_sw (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					mips_sw (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
+					mips_sw (code, ainfo->reg, inst->inst_basereg, basereg_offset);
+					mips_sw (code, ainfo->reg + 1, inst->inst_basereg, basereg_offset + 4);
 #elif (SIZEOF_REGISTER == 8)
-					mips_sd (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					mips_sd (code, ainfo->reg, inst->inst_basereg, basereg_offset);
 #endif
 					break;
 				default:
@@ -5136,7 +5157,7 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg, guint8 *code)
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
 		cfg->code_size *= 2;
 		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		mono_jit_stats.code_reallocs++;
+		cfg->stat_code_reallocs++;
 	}
 
 	/*
@@ -5304,7 +5325,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
 		cfg->code_size *= 2;
 		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		mono_jit_stats.code_reallocs++;
+		cfg->stat_code_reallocs++;
 	}
 
 	code = cfg->native_code + cfg->code_len;
@@ -5449,15 +5470,11 @@ setup_tls_access (void)
 	}
 	if (monodomain_key == -1) {
 		ptk = mono_domain_get_tls_key ();
-		if (ptk < 1024) {
-			ptk = mono_pthread_key_for_tls (ptk);
-			if (ptk < 1024) {
-				monodomain_key = ptk;
-			}
-		}
+		if (ptk < 1024)
+			monodomain_key = ptk;
 	}
 	if (lmf_pthread_key == -1) {
-		ptk = mono_pthread_key_for_tls (mono_jit_tls_id);
+		ptk = mono_jit_tls_id;
 		if (ptk < 1024) {
 			/*g_print ("MonoLMF at: %d\n", ptk);*/
 			/*if (!try_offset_access (mono_get_lmf_addr (), ptk)) {
@@ -5470,11 +5487,8 @@ setup_tls_access (void)
 	if (monothread_key == -1) {
 		ptk = mono_thread_get_tls_key ();
 		if (ptk < 1024) {
-			ptk = mono_pthread_key_for_tls (ptk);
-			if (ptk < 1024) {
-				monothread_key = ptk;
-				/*g_print ("thread inited: %d\n", ptk);*/
-			}
+			monothread_key = ptk;
+			/*g_print ("thread inited: %d\n", ptk);*/
 		} else {
 			/*g_print ("thread not inited yet %d\n", ptk);*/
 		}
@@ -5555,7 +5569,7 @@ MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 	return ins;
 }
 
-gpointer
+mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	/* FIXME: implement */
@@ -5589,30 +5603,34 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
 
-		item->chunk_size += LOAD_CONST_SIZE;
 		if (item->is_equals) {
 			if (item->check_target_idx) {
-				item->chunk_size += BR_SIZE + LOAD_CONST_SIZE + JUMP_JR_SIZE;
+				item->chunk_size += LOAD_CONST_SIZE + BR_SIZE + JUMP_JR_SIZE;
+				if (item->has_target_code)
+					item->chunk_size += LOAD_CONST_SIZE;
+				else
+					item->chunk_size += LOADSTORE_SIZE;
 			} else {
 				if (fail_tramp) {
-					item->chunk_size += BR_SIZE + JUMP_IMM32_SIZE * 2;
+					item->chunk_size += LOAD_CONST_SIZE + BR_SIZE + JUMP_IMM32_SIZE +
+						LOADSTORE_SIZE + JUMP_IMM32_SIZE;
 					if (!item->has_target_code)
 						item->chunk_size += LOADSTORE_SIZE;
 				} else {
-					item->chunk_size += LOADSTORE_SIZE + JUMP_IMM_SIZE;
+					item->chunk_size += LOADSTORE_SIZE + JUMP_JR_SIZE;
 #if ENABLE_WRONG_METHOD_CHECK
 					item->chunk_size += CMP_SIZE + BR_SIZE + 4;
 #endif
 				}
 			}
 		} else {
-			item->chunk_size += BR_SIZE;
+			item->chunk_size += CMP_SIZE + BR_SIZE;
 			imt_entries [item->check_target_idx]->compare_done = TRUE;
 		}
 		size += item->chunk_size;
 	}
 	/* the initial load of the vtable address */
-	size += MIPS_LOAD_SEQUENCE_LENGTH + LOADSTORE_SIZE;
+	size += MIPS_LOAD_SEQUENCE_LENGTH;
 	if (fail_tramp) {
 		code = mono_method_alloc_generic_virtual_thunk (domain, size);
 	} else {
@@ -5639,9 +5657,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 		MonoIMTCheckItem *item = imt_entries [i];
 
 		item->code_target = code;
-		mips_load_const (code, mips_temp, (gsize)item->key);
 		if (item->is_equals) {
 			if (item->check_target_idx) {
+				mips_load_const (code, mips_temp, (gsize)item->key);
 				item->jmp_code = code;
 				mips_bne (code, mips_temp, MONO_ARCH_IMT_REG, 0);
 				mips_nop (code);
@@ -5657,6 +5675,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				mips_nop (code);
 			} else {
 				if (fail_tramp) {
+					mips_load_const (code, mips_temp, (gsize)item->key);
 					patch = code;
 					mips_bne (code, mips_temp, MONO_ARCH_IMT_REG, 0);
 					mips_nop (code);
@@ -5697,10 +5716,10 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 			}
 		} else {
 			mips_load_const (code, mips_temp, (gulong)item->key);
-			mips_slt (code, mips_temp, mips_temp, MONO_ARCH_IMT_REG);
+			mips_slt (code, mips_temp, MONO_ARCH_IMT_REG, mips_temp);
 
 			item->jmp_code = code;
-			mips_bne (code, mips_temp, mips_zero, 0);
+			mips_beq (code, mips_temp, mips_zero, 0);
 			mips_nop (code);
 		}
 	}

@@ -1,0 +1,95 @@
+<Type Name="IConcurrentDeque&lt;T&gt;" FullName="Mono.Threading.Tasks.IConcurrentDeque&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IConcurrentDeque&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConcurrentDeque`1&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>Define a common interface for ABP-type deque data structure used in work-stealing algorithm.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetEnumerable">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;T&gt; GetEnumerable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;!T&gt; GetEnumerable() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns an <see cref="T:System.Collections.Generic.IEnumerable&lt;T&gt;" /> equivalent of the deque to allow enumeration. </summary>
+        <returns>An <see cref="T:System.Collections.Generic.IEnumerable&lt;T&gt;" /> representation of the elements in the deque (can be the object itself). </returns>
+        <remarks>Implementation can return <see langword="null" /> if the operation is not supported.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PopBottom">
+      <MemberSignature Language="C#" Value="public Mono.Threading.Tasks.PopResult PopBottom (out T obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype Mono.Threading.Tasks.PopResult PopBottom(!T obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.Tasks.PopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="T&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>Retrieve an element from one end of the deque.</summary>
+        <returns>The result of the operation.</returns>
+        <remarks>The implementation of this method is NOT supposed to be thread-safe.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PopTop">
+      <MemberSignature Language="C#" Value="public Mono.Threading.Tasks.PopResult PopTop (out T obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype Mono.Threading.Tasks.PopResult PopTop(!T obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.Tasks.PopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="T&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The eventually retrieved object.</param>
+        <summary>Retrieve an element from the other end of the deque.</summary>
+        <returns>Result of the operation.</returns>
+        <remarks>The implementation of this method is supposed thread-safe.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PushBottom">
+      <MemberSignature Language="C#" Value="public void PushBottom (T obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void PushBottom(!T obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>Push an element at one end of the deque.</summary>
+        <remarks>The implementation of this method is NOT supposed to be thread-safe.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

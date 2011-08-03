@@ -1,4 +1,4 @@
-// cs0234-2.cs: The type or namespace name `Enum' does not exist in the namespace `A.B.System'. Are you missing an assembly reference?
+// CS0234: The type or namespace name `Enum' does not exist in the namespace `A.B.System'. Are you missing an assembly reference?
 // Line: 8
 
 using System;

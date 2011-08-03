@@ -176,7 +176,7 @@ namespace System.Web.Configuration {
 			get { return (ProviderSettingsCollection) base [providersProp]; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

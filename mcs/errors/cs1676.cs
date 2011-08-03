@@ -1,4 +1,4 @@
-// cs1676.cs: Parameter `1' must be declared with the `ref' keyword
+// CS1676: Parameter `1' must be declared with the `ref' keyword
 // Line: 11
 //
 // The delegate has an explicit signature, so it can not be assigned.

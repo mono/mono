@@ -120,6 +120,38 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#2");
 			Assert.IsTrue (result);
 		}
+
+		[Test]
+		public void FaultedFutureTest ()
+		{
+			var thrown = new ApplicationException ();
+			var source = new TaskCompletionSource<int> ();
+			source.TrySetException (thrown);
+			var f = source.Task;
+			AggregateException ex = null;
+			try {
+				f.Wait ();
+			} catch (AggregateException e) {
+				ex = e;
+			}
+
+			Assert.IsNotNull (ex);
+			Assert.AreEqual (thrown, ex.InnerException);
+			Assert.AreEqual (thrown, f.Exception.InnerException);
+			Assert.AreEqual (TaskStatus.Faulted, f.Status);
+
+			ex = null;
+			try {
+				var result = f.Result;
+			} catch (AggregateException e) {
+				ex = e;
+			}
+
+			Assert.IsNotNull (ex);
+			Assert.AreEqual (TaskStatus.Faulted, f.Status);
+			Assert.AreEqual (thrown, f.Exception.InnerException);
+			Assert.AreEqual (thrown, ex.InnerException);
+		}
 	}
 }
 #endif

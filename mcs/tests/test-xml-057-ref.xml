@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-057</name>
+    </assembly>
+    <members>
+        <member name="T:Test.FirstTestDelegate`1">
+            <summary>Documentation Text</summary>
+        </member>
+        <member name="T:Test.TestInterface">
+            <summary>test</summary>
+        </member>
+    </members>
+</doc>

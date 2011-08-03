@@ -774,6 +774,119 @@ namespace MonoTests.System.Xaml
 			var x = apl.First (ap => ap.Name == "X");
 			Assert.IsTrue (x.IsEvent, "#6");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AttachablePropertySetValueNullObject ()
+		{
+			var xt = new XamlType (typeof (Attachable), sctx);
+			var apl = xt.GetAllAttachableMembers ();
+			var foo = apl.First (ap => ap.Name == "Foo");
+			Assert.IsTrue (foo.IsAttachable, "#7");
+			foo.Invoker.SetValue (null, "xxx");
+		}
+
+		[Test]
+		public void AttachablePropertySetValueSuccess ()
+		{
+			var xt = new XamlType (typeof (Attachable), sctx);
+			var apl = xt.GetAllAttachableMembers ();
+			var foo = apl.First (ap => ap.Name == "Foo");
+			Assert.IsTrue (foo.IsAttachable, "#7");
+			var obj = new object ();
+			foo.Invoker.SetValue (obj, "xxx"); // obj is non-null, so valid.
+			// FIXME: this line should be unnecessary.
+			AttachablePropertyServices.RemoveProperty (obj, new AttachableMemberIdentifier (foo.Type.UnderlyingType, foo.Name));
+		}
+
+		[Test]
+		public void ReadOnlyPropertyContainer ()
+		{
+			var xt = new XamlType (typeof (ReadOnlyPropertyContainer), sctx);
+			var xm = xt.GetMember ("Bar");
+			Assert.IsNotNull (xm, "#1");
+			Assert.IsFalse (xm.IsWritePublic, "#2");
+		}
+
+		[Test]
+		public void UnknownType ()
+		{
+			var xt = new XamlType ("urn:foo", "MyUnknown", null, sctx);
+			Assert.IsTrue (xt.IsUnknown, "#1");
+			Assert.IsNotNull (xt.BaseType, "#2");
+			Assert.IsFalse (xt.BaseType.IsUnknown, "#3");
+			Assert.AreEqual (typeof (object), xt.BaseType.UnderlyingType, "#4");
+		}
+
+		[Test] // wrt bug #680385
+		public void DerivedListMembers ()
+		{
+			var xt = sctx.GetXamlType (typeof (XamlTest.Configurations));
+			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Active"), "#1"); // make sure that the member name is Active, not Configurations.Active ...
+		}
+
+		[Test]
+		public void EnumType ()
+		{
+			var xt = sctx.GetXamlType (typeof (EnumValueType));
+			Assert.IsTrue (xt.IsConstructible, "#1");
+			Assert.IsFalse (xt.IsNullable, "#2");
+			Assert.IsFalse (xt.IsUnknown, "#3");
+			Assert.IsFalse (xt.IsUsableDuringInitialization, "#4");
+			Assert.IsNotNull (xt.TypeConverter, "#5");
+		}
+
+		[Test]
+		public void CollectionContentProperty ()
+		{
+			var xt = sctx.GetXamlType (typeof (CollectionContentProperty));
+			var p = xt.ContentProperty;
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual ("ListOfItems", p.Name, "#2");
+		}
+
+		[Test]
+		public void AmbientPropertyContainer ()
+		{
+			var xt = sctx.GetXamlType (typeof (SecondTest.ResourcesDict));
+			Assert.IsTrue (xt.IsAmbient, "#1");
+			var l = xt.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#2");
+			// FIXME: enable when string representation difference become compatible
+			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Keys", l [0].ToString (), "#3");
+			// Assert.AreEqual ("System.Collections.Generic.Dictionary(System.Object, System.Object).Values", l [1].ToString (), "#4");
+		}
+
+		[Test]
+		public void NullableContainer ()
+		{
+			var xt = sctx.GetXamlType (typeof (NullableContainer));
+			Assert.IsFalse (xt.IsGeneric, "#1");
+			Assert.IsTrue (xt.IsNullable, "#2");
+			var xm = xt.GetMember ("TestProp");
+			Assert.IsTrue (xm.Type.IsGeneric, "#3");
+			Assert.IsTrue (xm.Type.IsNullable, "#4");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", xm.Type.PreferredXamlNamespace, "#5");
+			Assert.AreEqual (1, xm.Type.TypeArguments.Count, "#6");
+			Assert.AreEqual (XamlLanguage.Int32, xm.Type.TypeArguments [0], "#7");
+			Assert.IsNotNull (xm.Type.TypeConverter, "#8");
+			Assert.IsNotNull (xm.Type.TypeConverter.ConverterInstance, "#9");
+
+			var obj = new NullableContainer ();
+			xm.Invoker.SetValue (obj, 5);
+			xm.Invoker.SetValue (obj, null);
+		}
+
+		[Test]
+		public void DerivedCollectionAndDictionary ()
+		{
+			var xt = sctx.GetXamlType (typeof (IList<int>));
+			Assert.IsTrue (xt.IsCollection, "#1");
+			Assert.IsFalse (xt.IsDictionary, "#2");
+			xt = sctx.GetXamlType (typeof (IDictionary<EnumValueType,int>));
+			Assert.IsTrue (xt.IsDictionary, "#3");
+			Assert.IsFalse (xt.IsCollection, "#4");
+		}
 	}
 
 	class MyXamlType : XamlType

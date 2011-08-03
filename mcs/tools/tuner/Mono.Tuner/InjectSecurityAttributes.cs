@@ -36,6 +36,7 @@ using Mono.Linker;
 using Mono.Linker.Steps;
 
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Mono.Tuner {
 
@@ -53,6 +54,7 @@ namespace Mono.Tuner {
 
 		const string _safe_critical = "System.Security.SecuritySafeCriticalAttribute";
 		const string _critical = "System.Security.SecurityCriticalAttribute";
+		const string _system_void = "System.Void";
 
 		const string sec_attr_folder = "secattrs";
 
@@ -60,6 +62,7 @@ namespace Mono.Tuner {
 
 		MethodDefinition _safe_critical_ctor;
 		MethodDefinition _critical_ctor;
+		TypeDefinition _void_type;
 
 		string data_folder;
 
@@ -100,33 +103,38 @@ namespace Mono.Tuner {
 		protected void RemoveSecurityAttributes ()
 		{
 			foreach (TypeDefinition type in _assembly.MainModule.Types) {
-				RemoveSecurityAttributes (type);
+				if (RemoveSecurityAttributes (type))
+					type.HasSecurity = false;
 
-				if (type.HasMethods)
-					foreach (MethodDefinition method in type.Methods)
-						RemoveSecurityAttributes (method);
+				if (type.HasMethods) {
+					foreach (MethodDefinition method in type.Methods) {
+						if (RemoveSecurityAttributes (method))
+							method.HasSecurity = false;
+					}
+				}
 			}
 		}
 
-		static void RemoveSecurityDeclarations (ISecurityDeclarationProvider provider)
+		static bool RemoveSecurityDeclarations (ISecurityDeclarationProvider provider)
 		{
 			// also remove already existing CAS security declarations
 
 			if (provider == null)
-				return;
+				return false;
 
 			if (!provider.HasSecurityDeclarations)
-				return;
+				return false;
 
 			provider.SecurityDeclarations.Clear ();
+			return true;
 		}
 
-		static void RemoveSecurityAttributes (ICustomAttributeProvider provider)
+		static bool RemoveSecurityAttributes (ICustomAttributeProvider provider)
 		{
-			RemoveSecurityDeclarations (provider as ISecurityDeclarationProvider);
+			bool result = RemoveSecurityDeclarations (provider as ISecurityDeclarationProvider);
 
 			if (!provider.HasCustomAttributes)
-				return;
+				return result;
 
 			var attributes = provider.CustomAttributes;
 			for (int i = 0; i < attributes.Count; i++) {
@@ -138,6 +146,7 @@ namespace Mono.Tuner {
 					break;
 				}
 			}
+			return result;
 		}
 
 		void ProcessSecurityAttributeFile (string file)
@@ -151,7 +160,7 @@ namespace Mono.Tuner {
 
 		void ProcessLine (string line)
 		{
-			if (line == null || line.Length < 6)
+			if (line == null || line.Length < 6 || line [0] == '#')
 				return;
 
 			int sep = line.IndexOf (": ");
@@ -189,11 +198,75 @@ namespace Mono.Tuner {
 			}
 		}
 
+		public static bool NeedsDefaultConstructor (TypeDefinition type)
+		{
+			if (type.IsInterface)
+				return false;
+
+			TypeReference base_type = type.BaseType;
+			if ((base_type == null) || (base_type.Namespace != "System"))
+				return true;
+
+			return ((base_type.Name != "Delegate") && (base_type.Name != "MulticastDelegate"));
+		}
+
 		void ProcessSecurityAttributeEntry (AttributeType type, TargetKind kind, string target)
 		{
 			ICustomAttributeProvider provider = GetTarget (kind, target);
-			if (provider == null)
+			if (provider == null) {
+				Console.Error.WriteLine ("Warning: entry '{0}' could not be found", target);
 				return;
+			}
+
+			// we need to be smarter when applying the attributes (mostly SC) to types
+			if (kind == TargetKind.Type) {
+				TypeDefinition td = (provider as TypeDefinition);
+				// ensure [SecurityCritical] types (well most) have a default constructor
+				if ((type == AttributeType.Critical) && NeedsDefaultConstructor (td)) {
+					if (GetDefaultConstructor (td) == null) {
+						// Console.Error.WriteLine ("Info: adding default ctor for '{0}'", td);
+						td.Methods.Add (CreateDefaultConstructor ());
+					}
+				}
+
+				// it's easier for some tools (e.g. less false positives in fxcop) 
+				// and also quicker for the runtime (one less lookup) if all methods gets decorated
+				foreach (MethodDefinition method in td.Methods) {
+					bool skip = false;
+
+					AttributeType mtype = type;
+					// there are cases where an SC cannot be applied to some methods
+					switch (method.Name) {
+					// e.g. everything we override from System.Object (which is transparent)
+					case "Equals":
+						skip = method.Parameters.Count == 1 && method.Parameters [0].ParameterType.FullName == "System.Object";
+						break;
+					case "Finalize":
+					case "GetHashCode":
+					case "ToString":
+						skip = !method.HasParameters;
+						break;
+					// e.g. some transparent interfaces, like IDisposable (implicit or explicit)
+					// downgrade some SC into SSC to respect the override/inheritance rules
+					case "System.IDisposable.Dispose":
+					case "Dispose":
+						skip = !method.HasParameters;
+						break;
+					}
+
+					if (skip)
+						continue;
+
+					switch (mtype) {
+					case AttributeType.Critical:
+						AddCriticalAttribute (method);
+						break;
+					case AttributeType.SafeCritical:
+						AddSafeCriticalAttribute (method);
+						break;
+					}
+				}
+			}
 
 			switch (type) {
 			case AttributeType.Critical:
@@ -356,7 +429,7 @@ namespace Mono.Tuner {
 		static MethodDefinition GetDefaultConstructor (TypeDefinition type)
 		{
 			foreach (MethodDefinition ctor in type.Methods.Where (m => m.IsConstructor))
-				if (ctor.Parameters.Count == 0)
+				if (!ctor.IsStatic && !ctor.HasParameters)
 					return ctor;
 
 			return null;
@@ -388,6 +461,18 @@ namespace Mono.Tuner {
 			return _critical_ctor;
 		}
 
+		TypeDefinition GetSystemVoid ()
+		{
+			if (_void_type != null)
+				return _void_type;
+
+			_void_type = Context.GetType (_system_void);
+			if (_void_type == null)
+				throw new InvalidOperationException (String.Format ("{0} type not found", _system_void));
+
+			return _void_type;
+		}
+
 		MethodReference Import (MethodDefinition method)
 		{
 			return _assembly.MainModule.Import (method);
@@ -401,6 +486,15 @@ namespace Mono.Tuner {
 		CustomAttribute CreateCriticalAttribute ()
 		{
 			return new CustomAttribute (Import (GetCriticalCtor ()));
+		}
+
+		MethodDefinition CreateDefaultConstructor ()
+		{
+			MethodDefinition method = new MethodDefinition (".ctor", 
+				MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, 
+				GetSystemVoid ());
+			method.Body.Instructions.Add (Instruction.Create (OpCodes.Ret));
+			return method;
 		}
 	}
 }

@@ -45,35 +45,26 @@ namespace System.CodeDom
 		private bool isInterface;
 		//bool needsFixup;
 
-#if NET_2_0
 		CodeTypeReferenceCollection typeArguments;
 		CodeTypeReferenceOptions referenceOptions;
-#endif
 
 		//
 		// Constructors
 		//
 
-#if NET_2_0
 		public CodeTypeReference ()
 		{
 		}
-#endif
 
-#if NET_2_0
 		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
-#endif
 		public CodeTypeReference (string baseType)
 		{
 			Parse (baseType);
 		}
 
-#if NET_2_0
 		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
-#endif
 		public CodeTypeReference (Type baseType)
 		{
-#if NET_2_0
 			if (baseType == null) {
 				throw new ArgumentNullException ("baseType");
 			}
@@ -93,9 +84,7 @@ namespace System.CodeDom
 						TypeArguments.Add (new CodeTypeReference (arg));
 				}
 			}
-			else
-#endif
-			if (baseType.IsArray) {
+			else if (baseType.IsArray) {
 				this.arrayRank = baseType.GetArrayRank ();
 				this.arrayElementType = new CodeTypeReference (baseType.GetElementType ());
 				this.baseType = arrayElementType.BaseType;
@@ -112,15 +101,12 @@ namespace System.CodeDom
 			this.arrayElementType = arrayElementType;
 		}
 
-#if NET_2_0
 		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
-#endif
 		public CodeTypeReference( string baseType, int arrayRank )
 			: this (new CodeTypeReference (baseType), arrayRank)
 		{
 		}
 
-#if NET_2_0
 		public CodeTypeReference( CodeTypeParameter typeParameter ) :
 			this (typeParameter.Name)
 		{
@@ -146,7 +132,6 @@ namespace System.CodeDom
 			if (this.baseType.IndexOf ('`') < 0)
 				this.baseType += "`" + TypeArguments.Count;
 		}
-#endif
 
 		//
 		// Properties
@@ -198,7 +183,6 @@ namespace System.CodeDom
 				return;
 			}
 
-#if NET_2_0
 			int array_start = baseType.IndexOf ('[');
 			if (array_start == -1) {
 				this.baseType = baseType;
@@ -271,38 +255,8 @@ namespace System.CodeDom
 				arrayElementType = new CodeTypeReference (baseType.Substring (0, array_start));
 				arrayRank = args.Length;
 			}
-#else
-			int array_start = baseType.LastIndexOf ('[');
-			if (array_start == -1) {
-				this.baseType = baseType;
-				return;
-			}
-
-			int array_end = baseType.LastIndexOf (']');
-			if (array_end < array_start) {
-				this.baseType = baseType;
-				return;
-			}
-
-			string[] args = baseType.Substring (array_start + 1, array_end - array_start - 1).Split (',');
-
-			bool isArray = true;
-			foreach (string arg in args) {
-				if (arg.Length != 0) {
-					isArray = false;
-					break;
-				}
-			}
-			if (isArray) {
-				arrayElementType = new CodeTypeReference (baseType.Substring (0, array_start));
-				arrayRank = args.Length;
-			} else {
-				this.baseType = baseType;
-			}
-#endif
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public CodeTypeReferenceOptions Options {
 			get {
@@ -321,7 +275,5 @@ namespace System.CodeDom
 				return typeArguments;
 			}
 		}
-#endif
-
 	}
 }

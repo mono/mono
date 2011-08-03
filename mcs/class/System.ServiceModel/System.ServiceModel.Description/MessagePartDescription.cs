@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.Serialization;
 using System.Reflection;
@@ -35,6 +36,7 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Description
 {
+	[DebuggerDisplay ("Name={name}, Namespace={ns}, Type={Type}, Index={index}}")]
 	public class MessagePartDescription
 	{
 		int index;
@@ -50,8 +52,8 @@ namespace System.ServiceModel.Description
 		
 		public MessagePartDescription (string name, string ns)
 		{
-			this.name = name;
 			this.ns = ns;
+			this.Name = name;
 		}
 
 		public int Index {
@@ -66,6 +68,10 @@ namespace System.ServiceModel.Description
 
 		public string Name {
 			get { return name; }
+			internal set {
+				name = value;
+				XmlName = new XmlName (value);
+			}
 		}
 
 		public string Namespace {
@@ -95,11 +101,16 @@ namespace System.ServiceModel.Description
 		}
 
 #if !NET_2_1
-		internal XsdDataContractImporter Importer { get; set; }
+		internal XsdDataContractImporter DataContractImporter { get; set; }
+		internal XmlSerializerMessageContractImporterInternal XmlSerializationImporter { get; set; }
 		internal System.CodeDom.CodeTypeReference CodeTypeReference { get; set; }
 #endif
 
 		#region internals required for moonlight compatibility
+
+		internal XmlName XmlName {
+			get; private set;
+		}
 
 		ICustomAttributeProvider additional_att_provider;
 

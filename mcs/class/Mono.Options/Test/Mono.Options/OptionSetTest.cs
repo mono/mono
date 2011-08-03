@@ -356,6 +356,9 @@ namespace Tests.Mono.Options
 			Utils.AssertException (typeof(ArgumentNullException),
 					"Argument cannot be null.\nParameter name: option",
 					p, v => { v.Add ((Option) null); });
+			Utils.AssertException (typeof(ArgumentNullException),
+					"Argument cannot be null.\nParameter name: header",
+					p, v => { v.Add ((string) null); });
 
 			// bad type
 			Utils.AssertException (typeof(OptionException),
@@ -382,6 +385,7 @@ namespace Tests.Mono.Options
 		public void WriteOptionDescriptions ()
 		{
 			var p = new OptionSet () {
+				"\n:Category 1:",
 				{ "p|indicator-style=", "append / indicator to directories",    v => {} },
 				{ "color:",             "controls color info",                  v => {} },
 				{ "color2:",            "set {color}",                          v => {} },
@@ -407,10 +411,14 @@ namespace Tests.Mono.Options
 				{ "long-desc5",
 					"Lots of spaces in the middle - . - . - . - . - . - . - . - and more until the end.",
 					v => {} },
+				"",
+				"==This is a really long category name which will involve line wrapping, just because...==",
 				{ "o|out=",
 					"The {DIRECTORY} to place the generated files and directories.\n\n" +
 					"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
 					v => {} },
+				"",
+				"Category 3:",
 				{ "h|?|help",           "show help text",                       v => {} },
 				{ "version",            "output version information and exit",  v => {} },
 				{ "<>", v => {} },
@@ -418,6 +426,8 @@ namespace Tests.Mono.Options
 			};
 
 			StringWriter expected = new StringWriter ();
+			expected.WriteLine ("");
+			expected.WriteLine (":Category 1:");
 			expected.WriteLine ("  -p, --indicator-style=VALUE");
 			expected.WriteLine ("                             append / indicator to directories");
 			expected.WriteLine ("      --color[=VALUE]        controls color info");
@@ -441,11 +451,16 @@ namespace Tests.Mono.Options
 			expected.WriteLine ("                               2 3 4 5 and more until the end.");
 			expected.WriteLine ("      --long-desc5           Lots of spaces in the middle - . - . - . - . - . -");
 			expected.WriteLine ("                               . - . - and more until the end.");
+			expected.WriteLine ("");
+			expected.WriteLine ("==This is a really long category name which will involve line wrapping, just");
+			expected.WriteLine ("because...==");
  			expected.WriteLine ("  -o, --out=DIRECTORY        The DIRECTORY to place the generated files and");
 			expected.WriteLine ("                               directories.");
  			expected.WriteLine ("                               ");
 			expected.WriteLine ("                               If not specified, defaults to");
  			expected.WriteLine ("                               `dirname FILE`/cache/`basename FILE .tree`.");
+			expected.WriteLine ("");
+			expected.WriteLine ("Category 3:");
 			expected.WriteLine ("  -h, -?, --help             show help text");
 			expected.WriteLine ("      --version              output version information and exit");
 			expected.WriteLine ("  @s1, @s2                   Read Response File for More Options");

@@ -177,7 +177,7 @@ namespace System.Threading
 			}
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
 

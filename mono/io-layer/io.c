@@ -17,9 +17,11 @@
 #include <sys/stat.h>
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
-#elif defined(HAVE_SYS_STATFS_H)
+#endif
+#if defined(HAVE_SYS_STATFS_H)
 #include <sys/statfs.h>
-#elif defined(HAVE_SYS_PARAM_H) && defined(HAVE_SYS_MOUNT_H)
+#endif
+#if defined(HAVE_SYS_PARAM_H) && defined(HAVE_SYS_MOUNT_H)
 #include <sys/param.h>
 #include <sys/mount.h>
 #endif
@@ -31,6 +33,7 @@
 #ifdef __linux__
 #include <sys/ioctl.h>
 #include <linux/fs.h>
+#include <mono/utils/linux_magic.h>
 #endif
 
 #include <mono/io-layer/wapi.h>
@@ -64,6 +67,7 @@ static gboolean file_setfiletime(gpointer handle,
 				 const WapiFileTime *create_time,
 				 const WapiFileTime *last_access,
 				 const WapiFileTime *last_write);
+static guint32 GetDriveTypeFromPath (const gchar *utf8_root_path_name);
 
 /* File handle is only signalled for overlapped IO */
 struct _WapiHandleOps _wapi_file_ops = {
@@ -3587,6 +3591,42 @@ guint32 GetTempPath (guint32 len, gunichar2 *buf)
 	return(ret);
 }
 
+#ifdef HAVE_GETFSSTAT
+/* Darwin has getfsstat */
+gint32 GetLogicalDriveStrings (guint32 len, gunichar2 *buf)
+{
+	struct statfs *stats;
+	int size, n, i;
+	gunichar2 *dir;
+	glong length, total = 0;
+	
+	n = getfsstat (NULL, 0, MNT_NOWAIT);
+	if (n == -1)
+		return 0;
+	size = n * sizeof (struct statfs);
+	stats = (struct statfs *) g_malloc (size);
+	if (stats == NULL)
+		return 0;
+	if (getfsstat (stats, size, MNT_NOWAIT) == -1){
+		g_free (stats);
+		return 0;
+	}
+	for (i = 0; i < n; i++){
+		dir = g_utf8_to_utf16 (stats [i].f_mntonname, -1, NULL, &length, NULL);
+		if (total + length < len){
+			memcpy (buf + total, dir, sizeof (gunichar2) * length);
+			buf [total+length] = 0;
+		} 
+		g_free (dir);
+		total += length + 1;
+	}
+	if (total < len)
+		buf [total] = 0;
+	total++;
+	g_free (stats);
+	return total;
+}
+#else
 /* In-place octal sequence replacement */
 static void
 unescape_octal (gchar *str)
@@ -3614,9 +3654,297 @@ unescape_octal (gchar *str)
 	}
 	*wptr = '\0';
 }
+static gint32 GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf);
 
+#if __linux__
+#define GET_LOGICAL_DRIVE_STRINGS_BUFFER 512
+#define GET_LOGICAL_DRIVE_STRINGS_MOUNTPOINT_BUFFER 512
+#define GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER 64
+
+typedef struct 
+{
+	glong total;
+	guint32 buffer_index;
+	guint32 mountpoint_index;
+	guint32 field_number;
+	guint32 allocated_size;
+	guint32 fsname_index;
+	guint32 fstype_index;
+	gchar mountpoint [GET_LOGICAL_DRIVE_STRINGS_MOUNTPOINT_BUFFER + 1];
+	gchar *mountpoint_allocated;
+	gchar buffer [GET_LOGICAL_DRIVE_STRINGS_BUFFER];
+	gchar fsname [GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER + 1];
+	gchar fstype [GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER + 1];
+	ssize_t nbytes;
+	gchar delimiter;
+	gboolean check_mount_source;
+} LinuxMountInfoParseState;
+
+static gboolean GetLogicalDriveStrings_Mounts (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state);
+static gboolean GetLogicalDriveStrings_MountInfo (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state);
+static void append_to_mountpoint (LinuxMountInfoParseState *state);
+static gboolean add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state);
+
+gint32 GetLogicalDriveStrings (guint32 len, gunichar2 *buf)
+{
+	int fd;
+	gint32 ret = 0;
+	LinuxMountInfoParseState state;
+	gboolean (*parser)(guint32, gunichar2*, LinuxMountInfoParseState*) = NULL;
+
+	memset (buf, 0, len * sizeof (gunichar2));
+	fd = open ("/proc/self/mountinfo", O_RDONLY);
+	if (fd != -1)
+		parser = GetLogicalDriveStrings_MountInfo;
+	else {
+		fd = open ("/proc/mounts", O_RDONLY);
+		if (fd != -1)
+			parser = GetLogicalDriveStrings_Mounts;
+	}
+
+	if (!parser) {
+		ret = GetLogicalDriveStrings_Mtab (len, buf);
+		goto done_and_out;
+	}
+
+	memset (&state, 0, sizeof (LinuxMountInfoParseState));
+	state.field_number = 1;
+	state.delimiter = ' ';
+
+	while ((state.nbytes = read (fd, state.buffer, GET_LOGICAL_DRIVE_STRINGS_BUFFER)) > 0) {
+		state.buffer_index = 0;
+
+		while ((*parser)(len, buf, &state)) {
+			if (state.buffer [state.buffer_index] == '\n') {
+				gboolean quit = add_drive_string (len, buf, &state);
+				state.field_number = 1;
+				state.buffer_index++;
+				if (state.mountpoint_allocated) {
+					g_free (state.mountpoint_allocated);
+					state.mountpoint_allocated = NULL;
+				}
+				if (quit) {
+					ret = state.total;
+					goto done_and_out;
+				}
+			}
+		}
+	};
+	ret = state.total;
+
+  done_and_out:
+	if (fd != -1)
+		close (fd);
+	return ret;
+}
+
+static gboolean GetLogicalDriveStrings_Mounts (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
+{
+	gchar *ptr;
+
+	if (state->field_number == 1)
+		state->check_mount_source = TRUE;
+
+	while (state->buffer_index < (guint32)state->nbytes) {
+		if (state->buffer [state->buffer_index] == state->delimiter) {
+			state->field_number++;
+			switch (state->field_number) {
+				case 2:
+					state->mountpoint_index = 0;
+					break;
+
+				case 3:
+					if (state->mountpoint_allocated)
+						state->mountpoint_allocated [state->mountpoint_index] = 0;
+					else
+						state->mountpoint [state->mountpoint_index] = 0;
+					break;
+
+				default:
+					ptr = (gchar*)memchr (state->buffer + state->buffer_index, '\n', GET_LOGICAL_DRIVE_STRINGS_BUFFER - state->buffer_index);
+					if (ptr)
+						state->buffer_index = (ptr - (gchar*)state->buffer) - 1;
+					else
+						state->buffer_index = state->nbytes;
+					return TRUE;
+			}
+			state->buffer_index++;
+			continue;
+		} else if (state->buffer [state->buffer_index] == '\n')
+			return TRUE;
+
+		switch (state->field_number) {
+			case 1:
+				if (state->check_mount_source) {
+					if (state->fsname_index == 0 && state->buffer [state->buffer_index] == '/') {
+						/* We can ignore the rest, it's a device
+						 * path */
+						state->check_mount_source = FALSE;
+						state->fsname [state->fsname_index++] = '/';
+						break;
+					}
+					if (state->fsname_index < GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER)
+						state->fsname [state->fsname_index++] = state->buffer [state->buffer_index];
+				}
+				break;
+
+			case 2:
+				append_to_mountpoint (state);
+				break;
+
+			case 3:
+				if (state->fstype_index < GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER)
+					state->fstype [state->fstype_index++] = state->buffer [state->buffer_index];
+				break;
+		}
+
+		state->buffer_index++;
+	}
+
+	return FALSE;
+}
+
+static gboolean GetLogicalDriveStrings_MountInfo (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
+{
+	while (state->buffer_index < (guint32)state->nbytes) {
+		if (state->buffer [state->buffer_index] == state->delimiter) {
+			state->field_number++;
+			switch (state->field_number) {
+				case 5:
+					state->mountpoint_index = 0;
+					break;
+
+				case 6:
+					if (state->mountpoint_allocated)
+						state->mountpoint_allocated [state->mountpoint_index] = 0;
+					else
+						state->mountpoint [state->mountpoint_index] = 0;
+					break;
+
+				case 7:
+					state->delimiter = '-';
+					break;
+
+				case 8:
+					state->delimiter = ' ';
+					break;
+
+				case 10:
+					state->check_mount_source = TRUE;
+					break;
+			}
+			state->buffer_index++;
+			continue;
+		} else if (state->buffer [state->buffer_index] == '\n')
+			return TRUE;
+
+		switch (state->field_number) {
+			case 5:
+				append_to_mountpoint (state);
+				break;
+
+			case 9:
+				if (state->fstype_index < GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER)
+					state->fstype [state->fstype_index++] = state->buffer [state->buffer_index];
+				break;
+
+			case 10:
+				if (state->check_mount_source) {
+					if (state->fsname_index == 0 && state->buffer [state->buffer_index] == '/') {
+						/* We can ignore the rest, it's a device
+						 * path */
+						state->check_mount_source = FALSE;
+						state->fsname [state->fsname_index++] = '/';
+						break;
+					}
+					if (state->fsname_index < GET_LOGICAL_DRIVE_STRINGS_FSNAME_BUFFER)
+						state->fsname [state->fsname_index++] = state->buffer [state->buffer_index];
+				}
+				break;
+		}
+
+		state->buffer_index++;
+	}
+
+	return FALSE;
+}
+
+static void
+append_to_mountpoint (LinuxMountInfoParseState *state)
+{
+	gchar ch = state->buffer [state->buffer_index];
+	if (state->mountpoint_allocated) {
+		if (state->mountpoint_index >= state->allocated_size) {
+			guint32 newsize = (state->allocated_size << 1) + 1;
+			gchar *newbuf = g_malloc0 (newsize * sizeof (gchar));
+
+			memcpy (newbuf, state->mountpoint_allocated, state->mountpoint_index);
+			g_free (state->mountpoint_allocated);
+			state->mountpoint_allocated = newbuf;
+			state->allocated_size = newsize;
+		}
+		state->mountpoint_allocated [state->mountpoint_index++] = ch;
+	} else {
+		if (state->mountpoint_index >= GET_LOGICAL_DRIVE_STRINGS_MOUNTPOINT_BUFFER) {
+			state->allocated_size = (state->mountpoint_index << 1) + 1;
+			state->mountpoint_allocated = g_malloc0 (state->allocated_size * sizeof (gchar));
+			memcpy (state->mountpoint_allocated, state->mountpoint, state->mountpoint_index);
+			state->mountpoint_allocated [state->mountpoint_index++] = ch;
+		} else
+			state->mountpoint [state->mountpoint_index++] = ch;
+	}
+}
+
+static gboolean
+add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
+{
+	gboolean quit = FALSE;
+	gboolean ignore_entry;
+
+	if (state->fsname_index == 1 && state->fsname [0] == '/')
+		ignore_entry = FALSE;
+	else if (state->fsname_index == 0 || memcmp ("none", state->fsname, state->fsname_index) == 0)
+		ignore_entry = TRUE;
+	else if (state->fstype_index >= 5 && memcmp ("fuse.", state->fstype, 5) == 0) {
+		/* Ignore GNOME's gvfs */
+		if (state->fstype_index == 21 && memcmp ("fuse.gvfs-fuse-daemon", state->fstype, state->fstype_index) == 0)
+			ignore_entry = TRUE;
+		else
+			ignore_entry = FALSE;
+	} else
+		ignore_entry = TRUE;
+
+	if (!ignore_entry) {
+		gunichar2 *dir;
+		glong length;
+		gchar *mountpoint = state->mountpoint_allocated ? state->mountpoint_allocated : state->mountpoint;
+
+		unescape_octal (mountpoint);
+		dir = g_utf8_to_utf16 (mountpoint, -1, NULL, &length, NULL);
+		if (state->total + length + 1 > len) {
+			quit = TRUE;
+			state->total = len * 2;
+		} else {
+			length++;
+			memcpy (buf + state->total, dir, sizeof (gunichar2) * length);
+			state->total += length;
+		}
+		g_free (dir);
+	}
+	state->fsname_index = 0;
+	state->fstype_index = 0;
+
+	return quit;
+}
+#else
 gint32
 GetLogicalDriveStrings (guint32 len, gunichar2 *buf)
+{
+	return GetLogicalDriveStrings_Mtab (len, buf);
+}
+#endif
+static gint32
+GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 {
 	FILE *fp;
 	gunichar2 *ptr, *dir;
@@ -3700,6 +4028,7 @@ GetLogicalDriveStrings (guint32 len, gunichar2 *buf)
 }
 #endif
 }
+#endif
 
 #if (defined(HAVE_STATVFS) || defined(HAVE_STATFS)) && !defined(PLATFORM_ANDROID)
 gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_bytes_avail,
@@ -3805,12 +4134,109 @@ gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_
 }
 #endif
 
+/*
+ * General Unix support
+ */
 typedef struct {
 	guint32 drive_type;
+#if __linux__
+	const long fstypeid;
+#endif
 	const gchar* fstype;
 } _wapi_drive_type;
 
 static _wapi_drive_type _wapi_drive_types[] = {
+#if PLATFORM_MACOSX
+	{ DRIVE_REMOTE, "afp" },
+	{ DRIVE_REMOTE, "autofs" },
+	{ DRIVE_CDROM, "cddafs" },
+	{ DRIVE_CDROM, "cd9660" },
+	{ DRIVE_RAMDISK, "devfs" },
+	{ DRIVE_FIXED, "exfat" },
+	{ DRIVE_RAMDISK, "fdesc" },
+	{ DRIVE_REMOTE, "ftp" },
+	{ DRIVE_FIXED, "hfs" },
+	{ DRIVE_FIXED, "msdos" },
+	{ DRIVE_REMOTE, "nfs" },
+	{ DRIVE_FIXED, "ntfs" },
+	{ DRIVE_REMOTE, "smbfs" },
+	{ DRIVE_FIXED, "udf" },
+	{ DRIVE_REMOTE, "webdav" },
+	{ DRIVE_UNKNOWN, NULL }
+#elif __linux__
+	{ DRIVE_FIXED, ADFS_SUPER_MAGIC, "adfs"},
+	{ DRIVE_FIXED, AFFS_SUPER_MAGIC, "affs"},
+	{ DRIVE_REMOTE, AFS_SUPER_MAGIC, "afs"},
+	{ DRIVE_RAMDISK, AUTOFS_SUPER_MAGIC, "autofs"},
+	{ DRIVE_RAMDISK, AUTOFS_SBI_MAGIC, "autofs4"},
+	{ DRIVE_REMOTE, CODA_SUPER_MAGIC, "coda" },
+	{ DRIVE_RAMDISK, CRAMFS_MAGIC, "cramfs"},
+	{ DRIVE_RAMDISK, CRAMFS_MAGIC_WEND, "cramfs"},
+	{ DRIVE_REMOTE, CIFS_MAGIC_NUMBER, "cifs"},
+	{ DRIVE_RAMDISK, DEBUGFS_MAGIC, "debugfs"},
+	{ DRIVE_RAMDISK, SYSFS_MAGIC, "sysfs"},
+	{ DRIVE_RAMDISK, SECURITYFS_MAGIC, "securityfs"},
+	{ DRIVE_RAMDISK, SELINUX_MAGIC, "selinuxfs"},
+	{ DRIVE_RAMDISK, RAMFS_MAGIC, "ramfs"},
+	{ DRIVE_FIXED, SQUASHFS_MAGIC, "squashfs"},
+	{ DRIVE_FIXED, EFS_SUPER_MAGIC, "efs"},
+	{ DRIVE_FIXED, EXT2_SUPER_MAGIC, "ext"},
+	{ DRIVE_FIXED, EXT3_SUPER_MAGIC, "ext"},
+	{ DRIVE_FIXED, EXT4_SUPER_MAGIC, "ext"},
+	{ DRIVE_REMOTE, XENFS_SUPER_MAGIC, "xenfs"},
+	{ DRIVE_FIXED, BTRFS_SUPER_MAGIC, "btrfs"},
+	{ DRIVE_FIXED, HFS_SUPER_MAGIC, "hfs"},
+	{ DRIVE_FIXED, HFSPLUS_SUPER_MAGIC, "hfsplus"},
+	{ DRIVE_FIXED, HPFS_SUPER_MAGIC, "hpfs"},
+	{ DRIVE_RAMDISK, HUGETLBFS_MAGIC, "hugetlbfs"},
+	{ DRIVE_CDROM, ISOFS_SUPER_MAGIC, "iso"},
+	{ DRIVE_FIXED, JFFS2_SUPER_MAGIC, "jffs2"},
+	{ DRIVE_RAMDISK, ANON_INODE_FS_MAGIC, "anon_inode"},
+	{ DRIVE_FIXED, JFS_SUPER_MAGIC, "jfs"},
+	{ DRIVE_FIXED, MINIX_SUPER_MAGIC, "minix"},
+	{ DRIVE_FIXED, MINIX_SUPER_MAGIC2, "minix v2"},
+	{ DRIVE_FIXED, MINIX2_SUPER_MAGIC, "minix2"},
+	{ DRIVE_FIXED, MINIX2_SUPER_MAGIC2, "minix2 v2"},
+	{ DRIVE_FIXED, MINIX3_SUPER_MAGIC, "minix3"},
+	{ DRIVE_FIXED, MSDOS_SUPER_MAGIC, "msdos"},
+	{ DRIVE_REMOTE, NCP_SUPER_MAGIC, "ncp"},
+	{ DRIVE_REMOTE, NFS_SUPER_MAGIC, "nfs"},
+	{ DRIVE_FIXED, NTFS_SB_MAGIC, "ntfs"},
+	{ DRIVE_RAMDISK, OPENPROM_SUPER_MAGIC, "openpromfs"},
+	{ DRIVE_RAMDISK, PROC_SUPER_MAGIC, "proc"},
+	{ DRIVE_FIXED, QNX4_SUPER_MAGIC, "qnx4"},
+	{ DRIVE_FIXED, REISERFS_SUPER_MAGIC, "reiserfs"},
+	{ DRIVE_RAMDISK, ROMFS_MAGIC, "romfs"},
+	{ DRIVE_REMOTE, SMB_SUPER_MAGIC, "samba"},
+	{ DRIVE_RAMDISK, CGROUP_SUPER_MAGIC, "cgroupfs"},
+	{ DRIVE_RAMDISK, FUTEXFS_SUPER_MAGIC, "futexfs"},
+	{ DRIVE_FIXED, SYSV2_SUPER_MAGIC, "sysv2"},
+	{ DRIVE_FIXED, SYSV4_SUPER_MAGIC, "sysv4"},
+	{ DRIVE_RAMDISK, TMPFS_MAGIC, "tmpfs"},
+	{ DRIVE_RAMDISK, DEVPTS_SUPER_MAGIC, "devpts"},
+	{ DRIVE_CDROM, UDF_SUPER_MAGIC, "udf"},
+	{ DRIVE_FIXED, UFS_MAGIC, "ufs"},
+	{ DRIVE_FIXED, UFS_MAGIC_BW, "ufs"},
+	{ DRIVE_FIXED, UFS2_MAGIC, "ufs2"},
+	{ DRIVE_FIXED, UFS_CIGAM, "ufs"},
+	{ DRIVE_RAMDISK, USBDEVICE_SUPER_MAGIC, "usbdev"},
+	{ DRIVE_FIXED, XENIX_SUPER_MAGIC, "xenix"},
+	{ DRIVE_FIXED, XFS_SB_MAGIC, "xfs"},
+	{ DRIVE_RAMDISK, FUSE_SUPER_MAGIC, "fuse"},
+	{ DRIVE_FIXED, V9FS_MAGIC, "9p"},
+	{ DRIVE_REMOTE, CEPH_SUPER_MAGIC, "ceph"},
+	{ DRIVE_RAMDISK, CONFIGFS_MAGIC, "configfs"},
+	{ DRIVE_RAMDISK, ECRYPTFS_SUPER_MAGIC, "eCryptfs"},
+	{ DRIVE_FIXED, EXOFS_SUPER_MAGIC, "exofs"},
+	{ DRIVE_FIXED, VXFS_SUPER_MAGIC, "vxfs"},
+	{ DRIVE_FIXED, VXFS_OLT_MAGIC, "vxfs_olt"},
+	{ DRIVE_REMOTE, GFS2_MAGIC, "gfs2"},
+	{ DRIVE_FIXED, LOGFS_MAGIC_U32, "logfs"},
+	{ DRIVE_FIXED, OCFS2_SUPER_MAGIC, "ocfs2"},
+	{ DRIVE_FIXED, OMFS_MAGIC, "omfs"},
+	{ DRIVE_FIXED, UBIFS_SUPER_MAGIC, "ubifs"},
+	{ DRIVE_UNKNOWN, 0, NULL}
+#else
 	{ DRIVE_RAMDISK, "ramfs"      },
 	{ DRIVE_RAMDISK, "tmpfs"      },
 	{ DRIVE_RAMDISK, "proc"       },
@@ -3842,8 +4268,24 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_REMOTE,  "coda"       },
 	{ DRIVE_REMOTE,  "afs"        },
 	{ DRIVE_UNKNOWN, NULL         }
+#endif
 };
 
+#if __linux__
+static guint32 _wapi_get_drive_type(long f_type)
+{
+	_wapi_drive_type *current;
+
+	current = &_wapi_drive_types[0];
+	while (current->drive_type != DRIVE_UNKNOWN) {
+		if (current->fstypeid == f_type)
+			return current->drive_type;
+		current++;
+	}
+
+	return DRIVE_UNKNOWN;
+}
+#else
 static guint32 _wapi_get_drive_type(const gchar* fstype)
 {
 	_wapi_drive_type *current;
@@ -3858,43 +4300,36 @@ static guint32 _wapi_get_drive_type(const gchar* fstype)
 	
 	return current->drive_type;
 }
+#endif
 
-guint32 GetDriveType(const gunichar2 *root_path_name)
+#if defined (PLATFORM_MACOSX) || defined (__linux__)
+static guint32
+GetDriveTypeFromPath (const char *utf8_root_path_name)
 {
+	struct statfs buf;
+	
+	if (statfs (utf8_root_path_name, &buf) == -1)
+		return DRIVE_UNKNOWN;
+#if PLATFORM_MACOSX
+	return _wapi_get_drive_type (buf.f_fstypename);
+#else
+	return _wapi_get_drive_type (buf.f_type);
+#endif
+}
+#else
+static guint32
+GetDriveTypeFromPath (const gchar *utf8_root_path_name)
+{
+	guint32 drive_type;
 	FILE *fp;
 	gchar buffer [512];
 	gchar **splitted;
-	gchar *utf8_root_path_name;
-	guint32 drive_type;
-
-	if (root_path_name == NULL) {
-		utf8_root_path_name = g_strdup (g_get_current_dir());
-		if (utf8_root_path_name == NULL) {
-			return(DRIVE_NO_ROOT_DIR);
-		}
-	}
-	else {
-		utf8_root_path_name = mono_unicode_to_external (root_path_name);
-		if (utf8_root_path_name == NULL) {
-#ifdef DEBUG
-			g_message("%s: unicode conversion returned NULL", __func__);
-#endif
-			return(DRIVE_NO_ROOT_DIR);
-		}
-		
-		/* strip trailing slash for compare below */
-		if (g_str_has_suffix(utf8_root_path_name, "/")) {
-			utf8_root_path_name[strlen(utf8_root_path_name) - 1] = 0;
-		}
-	}
 
 	fp = fopen ("/etc/mtab", "rt");
 	if (fp == NULL) {
 		fp = fopen ("/etc/mnttab", "rt");
-		if (fp == NULL) {
-			g_free (utf8_root_path_name);
+		if (fp == NULL) 
 			return(DRIVE_UNKNOWN);
-		}
 	}
 
 	drive_type = DRIVE_NO_ROOT_DIR;
@@ -3918,8 +4353,93 @@ guint32 GetDriveType(const gunichar2 *root_path_name)
 	}
 
 	fclose (fp);
+	return drive_type;
+}
+#endif
+
+guint32 GetDriveType(const gunichar2 *root_path_name)
+{
+	gchar *utf8_root_path_name;
+	guint32 drive_type;
+
+	if (root_path_name == NULL) {
+		utf8_root_path_name = g_strdup (g_get_current_dir());
+		if (utf8_root_path_name == NULL) {
+			return(DRIVE_NO_ROOT_DIR);
+		}
+	}
+	else {
+		utf8_root_path_name = mono_unicode_to_external (root_path_name);
+		if (utf8_root_path_name == NULL) {
+#ifdef DEBUG
+			g_message("%s: unicode conversion returned NULL", __func__);
+#endif
+			return(DRIVE_NO_ROOT_DIR);
+		}
+		
+		/* strip trailing slash for compare below */
+		if (g_str_has_suffix(utf8_root_path_name, "/") && utf8_root_path_name [1] != 0) {
+			utf8_root_path_name[strlen(utf8_root_path_name) - 1] = 0;
+		}
+	}
+	drive_type = GetDriveTypeFromPath (utf8_root_path_name);
 	g_free (utf8_root_path_name);
 
 	return (drive_type);
 }
 
+static const gchar*
+get_fstypename (gchar *utfpath)
+{
+#if defined (PLATFORM_MACOSX) || defined (__linux__)
+	struct statfs stat;
+#if __linux__
+	_wapi_drive_type *current;
+#endif
+	if (statfs (utfpath, &stat) == -1)
+		return NULL;
+#if PLATFORM_MACOSX
+	return stat.f_fstypename;
+#else
+	current = &_wapi_drive_types[0];
+	while (current->drive_type != DRIVE_UNKNOWN) {
+		if (stat.f_type == current->fstypeid)
+			return current->fstype;
+		current++;
+	}
+	return NULL;
+#endif
+#else
+	return NULL;
+#endif
+}
+
+/* Linux has struct statfs which has a different layout */
+#if defined (PLATFORM_MACOSX) || defined (__linux__) || defined(PLATFORM_BSD) || defined(__native_client__)
+gboolean
+GetVolumeInformation (const gunichar2 *path, gunichar2 *volumename, int volumesize, int *outserial, int *maxcomp, int *fsflags, gunichar2 *fsbuffer, int fsbuffersize)
+{
+	gchar *utfpath;
+	const gchar *fstypename;
+	gboolean status = FALSE;
+	glong len;
+	
+	// We only support getting the file system type
+	if (fsbuffer == NULL)
+		return 0;
+	
+	utfpath = mono_unicode_to_external (path);
+	if ((fstypename = get_fstypename (utfpath)) != NULL){
+		gunichar2 *ret = g_utf8_to_utf16 (fstypename, -1, NULL, &len, NULL);
+		if (ret != NULL && len < fsbuffersize){
+			memcpy (fsbuffer, ret, len * sizeof (gunichar2));
+			fsbuffer [len] = 0;
+			status = TRUE;
+		}
+		if (ret != NULL)
+			g_free (ret);
+	}
+	g_free (utfpath);
+	return status;
+}
+#endif

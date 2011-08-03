@@ -33,13 +33,11 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaObjectTable
 	{
-//		private Hashtable table;
-		private HybridDictionary table;
+		private ListDictionary table;
 
 		internal XmlSchemaObjectTable ()
 		{
-//			table = new Hashtable(); 
-			table = new HybridDictionary (); 
+			table = new ListDictionary (); 
 		}
 		public int Count 
 		{

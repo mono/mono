@@ -331,5 +331,43 @@ pthread_t mono_gc_get_mach_exception_thread (void) MONO_INTERNAL;
 
 gboolean mono_gc_parse_environment_string_extract_number (const char *str, glong *out) MONO_INTERNAL;
 
+gboolean mono_gc_precise_stack_mark_enabled (void) MONO_INTERNAL;
+
+FILE *mono_gc_get_logfile (void) MONO_INTERNAL;
+
+typedef void (*mono_reference_queue_callback) (void *user_data);
+
+typedef struct _MonoReferenceQueue MonoReferenceQueue;
+typedef struct _RefQueueEntry RefQueueEntry;
+
+struct _RefQueueEntry {
+#ifdef HAVE_SGEN_GC
+	void *dis_link;
+#else
+	guint32 gchandle;
+#endif
+	void *user_data;
+	RefQueueEntry *next;
+};
+
+struct _MonoReferenceQueue {
+	RefQueueEntry *queue;
+	mono_reference_queue_callback callback;
+	MonoReferenceQueue *next;
+	gboolean should_be_deleted;
+};
+
+MonoReferenceQueue* mono_gc_reference_queue_new (mono_reference_queue_callback callback) MONO_INTERNAL;
+void mono_gc_reference_queue_free (MonoReferenceQueue *queue) MONO_INTERNAL;
+gboolean mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data) MONO_INTERNAL;
+
+#ifdef HOST_WIN32
+BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved) MONO_INTERNAL;
+#endif
+
+void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
+void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
+
+
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
 

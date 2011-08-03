@@ -4,6 +4,7 @@
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -48,6 +49,7 @@
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -65,6 +67,7 @@
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -89,6 +92,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
@@ -128,6 +132,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -182,6 +187,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
@@ -215,6 +221,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>

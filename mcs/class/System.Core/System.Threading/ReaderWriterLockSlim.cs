@@ -124,6 +124,12 @@ namespace System.Threading {
 
 		public bool TryEnterReadLock (int millisecondsTimeout)
 		{
+			bool dummy = false;
+			return TryEnterReadLock (millisecondsTimeout, ref dummy);
+		}
+
+		public bool TryEnterReadLock (int millisecondsTimeout, ref bool success)
+		{
 			ThreadLockState ctstate = CurrentThreadState;
 
 			if (CheckState (ctstate, millisecondsTimeout, LockState.Read)) {
@@ -152,7 +158,6 @@ namespace System.Threading {
 			++numReadWaiters;
 			int val = 0;
 			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
-			bool success = false;
 
 			do {
 				/* Check if a writer is present (RwWrite) or if there is someone waiting to
@@ -361,34 +366,51 @@ namespace System.Threading {
 
 			++numUpgradeWaiters;
 			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
+			bool taken = false;
+			bool success = false;
 
 			// We first try to obtain the upgradeable right
-			while (!upgradableEvent.IsSet () || !upgradableTaken.TryRelaxedSet ()) {
-				if (millisecondsTimeout != -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout) {
-					--numUpgradeWaiters;
-					return false;
+			try {
+				while (!upgradableEvent.IsSet () || !taken) {
+					try {}
+					finally {
+						taken = upgradableTaken.TryRelaxedSet ();
+					}
+					if (taken)
+						break;
+					if (millisecondsTimeout != -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout) {
+						--numUpgradeWaiters;
+						return false;
+					}
+
+					upgradableEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 				}
 
-				upgradableEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
-			}
+				upgradableEvent.Reset ();
 
-			upgradableEvent.Reset ();
+				RuntimeHelpers.PrepareConstrainedRegions ();
+				try {
+					// Then it's a simple reader lock acquiring
+					TryEnterReadLock (ComputeTimeout (millisecondsTimeout, start), ref success);
+				} finally {
+					if (success) {
+						ctstate.LockState = LockState.Upgradable;
+						--ctstate.ReaderRecursiveCount;
+						++ctstate.UpgradeableRecursiveCount;
+					} else {
+						upgradableTaken.Value = false;
+						upgradableEvent.Set ();
+					}
+				}
 
-			// Then it's a simple reader lock acquiring
-			if (TryEnterReadLock (ComputeTimeout (millisecondsTimeout, start))) {
-				ctstate.LockState = LockState.Upgradable;
 				--numUpgradeWaiters;
-				--ctstate.ReaderRecursiveCount;
-				++ctstate.UpgradeableRecursiveCount;
-				return true;
+			} catch {
+				// An async exception occured, if we had taken the upgradable mode, release it
+				if (taken && !success)
+					upgradableTaken.Value = false;
 			}
 
-			upgradableTaken.Value = false;
-			upgradableEvent.Set ();
-
-			--numUpgradeWaiters;
-
-			return false;
+			return success;
 		}
 
 		public bool TryEnterUpgradeableReadLock (TimeSpan timeout)

@@ -155,7 +155,7 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if MOONLIGHT || NET_4_0
+#if MOONLIGHT || MOBILE || NET_4_0
 		public
 #else
 		internal

@@ -53,7 +53,7 @@ namespace MonoTests.System.Web.UI {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected override HttpContext Context {
+		protected internal override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (null);
@@ -96,7 +96,7 @@ namespace MonoTests.System.Web.UI {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected override HttpContext Context {
+		protected internal override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (
@@ -1263,7 +1263,7 @@ namespace MonoTests.System.Web.UI {
 
 		class CustomPostBackDataHandler : WebControl, IPostBackDataHandler
 		{
-			protected override void OnInit (EventArgs e)
+			protected internal override void OnInit (EventArgs e)
 			{
 				base.OnInit (e);
 				Page.RegisterRequiresPostBack (this);
@@ -1410,7 +1410,7 @@ namespace MonoTests.System.Web.UI {
 			return persister;
 		}
 
-		protected override string GetPostBackFormReference (string formId)
+		protected internal override string GetPostBackFormReference (string formId)
 		{
 			return String.Format("/* testFormReference */{0}", 
 				base.GetPostBackFormReference (formId));

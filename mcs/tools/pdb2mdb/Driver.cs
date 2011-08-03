@@ -21,17 +21,30 @@ using Mono.CompilerServices.SymbolWriter;
 
 namespace Pdb2Mdb {
 
-	class Converter {
+	public class Converter {
 
 		MonoSymbolWriter mdb;
 		Dictionary<string, SourceFile> files = new Dictionary<string, SourceFile> ();
 
-		public Converter (MonoSymbolWriter mdb)
+		public static void Convert (string filename)
+		{
+			var asm = AssemblyDefinition.ReadAssembly (filename);
+
+			var pdb = asm.Name.Name + ".pdb";
+			pdb = Path.Combine (Path.GetDirectoryName (filename), pdb);
+
+			using (var stream = File.OpenRead (pdb)) {
+				var funcs = PdbFile.LoadFunctions (stream, true);
+				Converter.Convert (asm, funcs, new MonoSymbolWriter (filename));
+			}
+		}
+
+		internal Converter (MonoSymbolWriter mdb)
 		{
 			this.mdb = mdb;
 		}
 
-		public static void Convert (AssemblyDefinition assembly, IEnumerable<PdbFunction> functions, MonoSymbolWriter mdb)
+		internal static void Convert (AssemblyDefinition assembly, IEnumerable<PdbFunction> functions, MonoSymbolWriter mdb)
 		{
 			var converter = new Converter (mdb);
 
@@ -43,6 +56,9 @@ namespace Pdb2Mdb {
 
 		void ConvertFunction (PdbFunction function)
 		{
+			if (function.lines == null)
+				return;
+
 			var method = new SourceMethod { Name = function.name, Token = (int) function.token };
 
 			var file = GetSourceFile (mdb, function);
@@ -58,9 +74,6 @@ namespace Pdb2Mdb {
 
 		void ConvertSequencePoints (PdbFunction function, SourceFile file, SourceMethodBuilder builder)
 		{
-			if (function.lines == null)
-				return;
-
 			foreach (var line in function.lines.SelectMany (lines => lines.lines))
 				builder.MarkSequencePoint (
 					(int) line.offset,
@@ -149,6 +162,7 @@ namespace Pdb2Mdb {
 			var assembly = AssemblyDefinition.ReadAssembly (asm);
 
 			var pdb = assembly.Name.Name + ".pdb";
+			pdb = Path.Combine (Path.GetDirectoryName (asm), pdb);
 
 			if (!File.Exists (pdb))
 				Usage ();

@@ -41,7 +41,7 @@ namespace System.Net {
 			get { throw NotImplemented (); }
 		}
 		
-		public virtual EndPoint Create (SocketAddress address)
+		public virtual EndPoint Create (SocketAddress socketAddress)
 		{
 			throw NotImplemented ();
 		}

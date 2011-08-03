@@ -1,4 +1,4 @@
-// cs0108-4.cs: `Derived.Prop' hides inherited member `Base.Prop(int)'. Use the new keyword if hiding was intended
+// CS0108: `Derived.Prop' hides inherited member `Base.Prop(int)'. Use the new keyword if hiding was intended
 // Line: 10
 // Compiler options: -warnaserror -warn:2
 

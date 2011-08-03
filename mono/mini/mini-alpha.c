@@ -1745,7 +1745,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
     {
       cfg->code_size *= 2;
       cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-      mono_jit_stats.code_reallocs++;
+      cfg->stat_code_reallocs++;
     }
   
   code = (unsigned int *)(cfg->native_code + cfg->code_len);
@@ -1845,7 +1845,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
     {
       cfg->code_size *= 2;
       cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-      mono_jit_stats.code_reallocs++;
+      cfg->stat_code_reallocs++;
     }
   
   code = (unsigned int *)((char *)cfg->native_code + cfg->code_len);
@@ -2189,7 +2189,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	   cfg->code_size *= 2;
 	   cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 	   code = (unsigned int *)(cfg->native_code + offset);
-	   mono_jit_stats.code_reallocs++;
+	   cfg->stat_code_reallocs++;
 	 }
 	  
        mono_debug_record_line_number (cfg, ins, offset);
@@ -4035,7 +4035,7 @@ mono_arch_fregname (int reg) {
 
 void
 mono_arch_patch_code (MonoMethod *method, MonoDomain *domain,
-                      guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
+                      guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors)
 {
   MonoJumpInfo *patch_info;
   gboolean compile_aot = !run_cctors;
@@ -5544,7 +5544,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
      }
    
    /* Allocate locals */
-   offsets = mono_allocate_stack_slots_full (cfg,
+   offsets = mono_allocate_stack_slots (cfg,
 					     /*cfg->arch.omit_fp ? FALSE:*/ TRUE, 
 					     &locals_stack_size,
 					     &locals_stack_align);

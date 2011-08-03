@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Collections.Generic;
 
@@ -46,6 +46,13 @@ namespace System.Threading
 		object syncRoot = new object ();
 		
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
+		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
+
+		static CancellationTokenSource ()
+		{
+			CanceledSource.processed = true;
+			CanceledSource.canceled = true;
+		}
 		
 		public void Cancel ()
 		{
@@ -167,7 +174,7 @@ namespace System.Threading
 		
 		CancellationToken CreateToken ()
 		{
-			CancellationToken tk = new CancellationToken (canceled);
+			CancellationToken tk = new CancellationToken (true);
 			tk.Source = this;
 			
 			return tk;

@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 
 	public class Const : FieldBase
 	{
-		public const Modifiers AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 
 			FieldAttributes field_attr = FieldAttributes.Static | ModifiersExtensions.FieldAttr (ModFlags);
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
-			if (member_type == TypeManager.decimal_type) {
+			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 				field_attr |= FieldAttributes.InitOnly;
 			} else {
 				field_attr |= FieldAttributes.Literal;
@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			var c = ((ConstSpec) spec).Value as Constant;
-			if (c.Type == TypeManager.decimal_type) {
+			if (c.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 				Module.PredefinedAttributes.DecimalConstant.EmitAttribute (FieldBuilder, (decimal) c.GetValue (), c.Location);
 			} else {
 				FieldBuilder.SetConstant (c.GetValue ());
@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 					c = field.ConvertInitializer (rc, c);
 
 				if (c == null) {
-					if (TypeManager.IsReferenceType (field.MemberType))
+					if (TypeSpec.IsReferenceType (field.MemberType))
 						Error_ConstantCanBeInitializedWithNullOnly (rc, field.MemberType, expr.Location, GetSignatureForError ());
 					else if (!(expr is Constant))
 						Error_ExpressionMustBeConstant (rc, expr.Location, GetSignatureForError ());

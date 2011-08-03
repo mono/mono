@@ -1003,6 +1003,31 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		// Used by DynamicILGenerator
+		internal void SetCode (byte[] code, int max_stack) {
+			// Make a copy to avoid possible security problems
+			this.code = (byte[])code.Clone ();
+			this.code_len = code.Length;
+			this.max_stack = max_stack;
+			this.cur_stack = 0;
+		}
+
+		internal unsafe void SetCode (byte *code, int code_size, int max_stack) {
+			// Make a copy to avoid possible security problems
+			this.code = new byte [code_size];
+			for (int i = 0; i < code_size; ++i)
+				this.code [i] = code [i];
+			this.code_len = code_size;
+			this.max_stack = max_stack;
+			this.cur_stack = 0;
+		}
+
+		internal TokenGenerator TokenGenerator {
+			get {
+				return token_gen;
+			}
+		}
+
 		// Still used by symbolwriter
 		[Obsolete ("Use ILOffset", true)]
 		internal static int Mono_GetCurrentOffset (ILGenerator ig)

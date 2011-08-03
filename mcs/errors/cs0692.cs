@@ -1,4 +1,4 @@
-// gcs0692.cs: Duplicate type parameter `A'
+// CS0692: Duplicate type parameter `A'
 // Line: 4
 
 class X <A,A> {

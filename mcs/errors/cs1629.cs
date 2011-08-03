@@ -1,4 +1,4 @@
-// cs1629.cs: Unsafe code may not appear in iterators
+// CS1629: Unsafe code may not appear in iterators
 // Line: 8
 // Compiler options: -unsafe
 

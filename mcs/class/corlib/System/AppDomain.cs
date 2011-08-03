@@ -57,12 +57,14 @@ using System.Text;
 namespace System {
 
 	[ComVisible (true)]
-#if !NET_2_1
+#if !NET_2_1 || MOONLIGHT
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
-#if NET_2_1
-	public sealed class AppDomain : MarshalByRefObject {
+#if MOONLIGHT
+	public sealed class AppDomain : _AppDomain {
+#elif NET_2_1
+	public sealed class AppDomain : MarshalByRefObject, _AppDomain {
 #else
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
@@ -125,10 +127,12 @@ namespace System {
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
@@ -136,10 +140,12 @@ namespace System {
 		public string RelativeSearchPath {
 			get {
 				string path = SetupInformationNoCopy.PrivateBinPath;
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
@@ -151,10 +157,12 @@ namespace System {
 					return null;
 
 				string path = Path.Combine (setup.DynamicBase, setup.ApplicationName);
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
@@ -679,10 +687,12 @@ namespace System {
 			return base.GetType ();
 		}
 
+#if !MOONLIGHT
 		public override object InitializeLifetimeService ()
 		{
 			return null;
 		}
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly);
@@ -739,14 +749,14 @@ namespace System {
 			if (assemblyRef.Name != aname.Name)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
-			if (assemblyRef.Version != new Version () && assemblyRef.Version != aname.Version)
+			if (assemblyRef.Version != null && assemblyRef.Version != new Version (0, 0, 0, 0) && assemblyRef.Version != aname.Version)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			if (assemblyRef.CultureInfo != null && assemblyRef.CultureInfo.Equals (aname))
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			byte [] pt = assemblyRef.GetPublicKeyToken ();
-			if (pt != null) {
+			if (pt != null && pt.Length != 0) {
 				byte [] loaded_pt = aname.GetPublicKeyToken ();
 				if (loaded_pt == null || (pt.Length != loaded_pt.Length))
 					throw new FileNotFoundException (null, assemblyRef.Name);
@@ -1536,7 +1546,7 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		List<string> compatibility_switch;
 
 		public bool? IsCompatibilitySwitchSet (string value)

@@ -63,7 +63,7 @@ namespace System.ServiceModel.Configuration
 
 		public string EndpointName {
 			get {
-				foreach (ExtensionElement el in ConfigUtil.StandardEndpointsSection.Properties)
+				foreach (ExtensionElement el in ConfigUtil.StandardEndpointsSection.PropertiesInternal)
 					if (EndpointType.FullName == el.Type)
 						return el.Name;
 				throw new InvalidOperationException (String.Format ("This EndpointCollectionElement '{0}' is not found in the configuration", GetType ()));

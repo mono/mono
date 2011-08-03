@@ -998,7 +998,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[Category("NotWorking")]
 		[Test]
-		[ExpectedException(typeof(ArgumentException), "Cannot add a top level control to a control.")]
+		[ExpectedException(typeof(ArgumentException), ExpectedMessage = "Cannot add a top level control to a control.")]
 		public void AddToControlsTest ()
 		{
 			SetUp (false, true);

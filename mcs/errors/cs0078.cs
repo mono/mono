@@ -1,4 +1,4 @@
-// cs0078.cs: The `l' suffix is easily confused with the digit `1' (use `L' for clarity)
+// CS0078: The `l' suffix is easily confused with the digit `1' (use `L' for clarity)
 // Line: 12
 // Compiler options: -warnaserror -warn:4
 

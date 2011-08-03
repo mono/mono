@@ -314,5 +314,21 @@ namespace IKVM.Reflection.Reader
 			}
 			throw new BadImageFormatException();
 		}
+
+		internal bool GetSectionInfo(int rva, out string name, out int characteristics)
+		{
+			for (int i = 0; i < sections.Length; i++)
+			{
+				if (rva >= sections[i].VirtualAddress && rva < sections[i].VirtualAddress + sections[i].VirtualSize)
+				{
+					name = sections[i].Name;
+					characteristics = (int)sections[i].Characteristics;
+					return true;
+				}
+			}
+			name = null;
+			characteristics = 0;
+			return false;
+		}
 	}
 }

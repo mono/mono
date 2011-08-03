@@ -35,11 +35,9 @@ namespace System.Windows.Forms {
 	[DefaultProperty("BorderStyle")]
 	[DefaultEvent("Paint")]
 	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[Docking (DockingBehavior.Ask)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class Panel : ScrollableControl {
 		#region	Constructors & Destructors
 		public Panel () {
@@ -50,7 +48,6 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors & Destructors
 
 		#region Public Instance Properties
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -66,7 +63,6 @@ namespace System.Windows.Forms {
 			get { return base.GetAutoSizeMode (); }
 			set { base.SetAutoSizeMode (value); }
 		}
-#endif
 
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
@@ -127,14 +123,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -166,7 +160,6 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Internal Methods
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			Size retsize = Size.Empty;
@@ -187,7 +180,6 @@ namespace System.Windows.Forms {
 
 			return retsize;
 		}
-#endif
 		#endregion
 	}
 }

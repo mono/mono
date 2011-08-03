@@ -68,6 +68,14 @@ RESOURCE_FILES_2 = \
 	resources/transparent.gif \
 	resources/webform.js \
 	resources/WebUIValidation_2.0.js \
+	resources/ErrorTemplateCommon_Top.html \
+	resources/DefaultErrorTemplate_CustomErrorDefault.html \
+	resources/ErrorTemplateCommon_Bottom.html \
+	resources/DefaultErrorTemplate_StandardPage.html \
+	resources/HtmlizedExceptionPage_Top.html \
+	resources/HtmlizedExceptionPage_FileLongSource.html \
+	resources/HtmlizedExceptionPage_FileShortSource.html \
+	resources/HtmlizedExceptionPage_CompilerOutput.html \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
 	System.Web.UI.WebControls/TreeView.js \
@@ -234,7 +242,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/GridView_Bug595567.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug600415.aspx \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx \
-	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs
+	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs \
+	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
@@ -387,7 +396,10 @@ STANDALONE_TEST_COMPILABLE_TESTS = \
 endif
 
 STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe
-RUN_STANDALONE = $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER) --output=StandaloneTestResult-$(PROFILE).log 
+ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
+RUN_STANDALONE = MONO_TESTS_IN_PROGRESS=yes
+endif
+RUN_STANDALONE += $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER) --output=StandaloneTestResult-$(PROFILE).log 
 ifdef TESTNAME
 RUN_STANDALONE += --test=$(TESTNAME)
 endif
@@ -401,7 +413,7 @@ $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
 System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
-	$(TEST_RUNTIME) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/culevel.exe -o $@ $^
+	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/culevel.exe -o $@ $^
 
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \

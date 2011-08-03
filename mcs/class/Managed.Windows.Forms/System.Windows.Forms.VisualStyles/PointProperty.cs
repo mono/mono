@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum PointProperty
+	public enum PointProperty
 	{
 		Offset = 3401,
 		TextShadowOffset = 3402,

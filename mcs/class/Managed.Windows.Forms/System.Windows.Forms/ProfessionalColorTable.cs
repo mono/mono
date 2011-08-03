@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System.Drawing;
 using System.Windows.Forms.VisualStyles;
 
@@ -653,4 +652,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

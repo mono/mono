@@ -667,7 +667,7 @@ namespace System {
 			return !( a.Equals (b) );
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static Guid Parse (string input)
 		{
 			Guid guid;

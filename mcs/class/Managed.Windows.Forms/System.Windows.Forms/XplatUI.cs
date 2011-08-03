@@ -43,7 +43,7 @@ namespace System.Windows.Forms {
 	internal class XplatUI {
 		#region Local Variables
 		static XplatUIDriver		driver;
-		static String			default_class_name;
+//		static String			default_class_name;
 		internal static ArrayList key_filters = new ArrayList ();
 		#endregion	// Local Variables
 
@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 			// Compose name with current domain id because on Win32 we register class name
 			// and name must be unique to process. If we load MWF into multiple appdomains
 			// and try to register same class name we fail.
-			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID ().ToString ();
+//			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID ().ToString ();
 
 			if (RunningOnUnix) {
 				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {

@@ -128,7 +128,8 @@ namespace C5
 #if DEBUG
     const uint randomhashfactor = 1529784659;
 #else
-    uint randomhashfactor = (2 * (uint)(new Random()).Next() + 1) * 1529784659;
+    private static readonly Random random = new Random();
+    uint randomhashfactor = (2 * (uint)random.Next() + 1) * 1529784659;
 #endif
 #endif
 

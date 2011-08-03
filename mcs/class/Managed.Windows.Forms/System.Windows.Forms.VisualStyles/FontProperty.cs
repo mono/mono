@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum FontProperty
+	public enum FontProperty
 	{
 		GlyphFont = 2601
 	}

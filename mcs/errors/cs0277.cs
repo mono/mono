@@ -1,4 +1,4 @@
-// cs0277.cs: Accessor `C.Prop.set' must be declared public to implement interface member `I.Prop.set'
+// CS0277: Accessor `C.Prop.set' must be declared public to implement interface member `I.Prop.set'
 // Line: 10
 
 interface I {

@@ -688,7 +688,7 @@ namespace MonoTests.System.Web.UI.WebControls
 #if NET_2_0
 		class MyControlAdapter : ControlAdapter
 		{
-			protected override void Render (HtmlTextWriter w)
+			protected internal override void Render (HtmlTextWriter w)
 			{
 				w.WriteLine("MyControlAdapter.Render");
 			}

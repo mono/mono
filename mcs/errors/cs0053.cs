@@ -1,4 +1,4 @@
-// cs0053.cs: Inconsistent accessibility: property type `ErrorCS0053' is less accessible than property `Foo.Property'
+// CS0053: Inconsistent accessibility: property type `ErrorCS0053' is less accessible than property `Foo.Property'
 // Line: 11
 
 using System;

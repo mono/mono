@@ -1,4 +1,4 @@
-// cs0029-2.cs: Cannot implicitly convert type `string' to `double'
+// CS0029: Cannot implicitly convert type `string' to `double'
 // Line: 11
 
 using System;

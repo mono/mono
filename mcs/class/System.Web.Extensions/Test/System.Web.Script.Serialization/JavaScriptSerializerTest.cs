@@ -1327,5 +1327,16 @@ namespace MonoTests.System.Web.Script.Serialization
 			object input = jss.Deserialize<IDictionary>(json);
 			IDictionary <int, object> o = jss.ConvertToType<IDictionary <int, object>>(input);
 		}
+
+		[Test (Description="Bug #655474")]
+		public void TestRelativeUri()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer();
+			Uri testUri = new Uri("/lala/123", UriKind.Relative);
+			StringBuilder sb = new StringBuilder();
+
+			ser.Serialize(testUri, sb);
+			Assert.AreEqual ("\"/lala/123\"", sb.ToString ());
+		}
 	}
 }

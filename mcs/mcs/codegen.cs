@@ -31,13 +31,13 @@ namespace Mono.CSharp
 	public class EmitContext : BuilderContext
 	{
 		// TODO: Has to be private
-		public ILGenerator ig;
+		public readonly ILGenerator ig;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		TypeSpec return_type;
+		readonly TypeSpec return_type;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
@@ -51,16 +51,6 @@ namespace Mono.CSharp
 		/// </summary>
 		public LocalBuilder return_value;
 
-		/// <summary>
-		///   The location where return has to jump to return the
-		///   value
-		/// </summary>
-		public Label ReturnLabel;
-
-		/// <summary>
-		///   If we already defined the ReturnLabel
-		/// </summary>
-		public bool HasReturnLabel;
 
 		/// <summary>
 		///   Current loop begin and end labels.
@@ -83,17 +73,20 @@ namespace Mono.CSharp
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
-		public readonly IMemberContext MemberContext;
+		readonly IMemberContext member_context;
 
 		DynamicSiteClass dynamic_site_container;
 
-		// TODO: Replace IMemberContext with MemberCore
+		Label? return_label;
+
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
-			this.MemberContext = rc;
+			this.member_context = rc;
 			this.ig = ig;
-
 			this.return_type = return_type;
+
+			if (rc.Module.Compiler.Settings.Checked)
+				flags |= Options.CheckedScope;
 
 #if STATIC
 			ig.__CleverExceptionBlockAssistance ();
@@ -102,23 +95,41 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		internal AsyncTaskStorey AsyncTaskStorey {
+			get {
+				return CurrentAnonymousMethod.Storey as AsyncTaskStorey;
+			}
+		}
+
+		public BuiltinTypes BuiltinTypes {
+			get {
+				return MemberContext.Module.Compiler.BuiltinTypes;
+			}
+		}
+
 		public TypeSpec CurrentType {
-			get { return MemberContext.CurrentType; }
+			get { return member_context.CurrentType; }
 		}
 
 		public TypeParameter[] CurrentTypeParameters {
-			get { return MemberContext.CurrentTypeParameters; }
+			get { return member_context.CurrentTypeParameters; }
 		}
 
 		public MemberCore CurrentTypeDefinition {
-			get { return MemberContext.CurrentMemberDefinition; }
+			get { return member_context.CurrentMemberDefinition; }
+		}
+
+		public bool HasReturnLabel {
+			get {
+				return return_label.HasValue;
+			}
 		}
 
 		public bool IsStatic {
-			get { return MemberContext.IsStatic; }
+			get { return member_context.IsStatic; }
 		}
 
-		bool IsAnonymousStoreyMutateRequired {
+		public bool IsAnonymousStoreyMutateRequired {
 			get {
 				return CurrentAnonymousMethod != null &&
 					CurrentAnonymousMethod.Storey != null &&
@@ -126,9 +137,24 @@ namespace Mono.CSharp
 			}
 		}
 
-		// Has to be used for emitter errors only
+		public IMemberContext MemberContext {
+			get {
+				return member_context;
+			}
+		}
+
+		public ModuleContainer Module {
+			get {
+				return member_context.Module;
+			}
+		}
+
+		// Has to be used for specific emitter errors only any
+		// possible resolver errors have to be reported during Resolve
 		public Report Report {
-			get { return MemberContext.Compiler.Report; }
+			get {
+				return member_context.Module.Compiler.Report;
+			}
 		}
 
 		public TypeSpec ReturnType {
@@ -136,7 +162,26 @@ namespace Mono.CSharp
 				return return_type;
 			}
 		}
+
+		//
+		// The label where we have to jump before leaving the context
+		//
+		public Label ReturnLabel {
+			get {
+				return return_label.Value;
+			}
+		}
+
 		#endregion
+
+		public void AssertEmptyStack ()
+		{
+#if STATIC
+			if (ig.__StackHeight != 0)
+				throw new InternalErrorException ("Await yields with non-empty stack in `{0}",
+					member_context.GetSignatureForError ());
+#endif
+		}
 
 		/// <summary>
 		///   This is called immediately before emitting an IL opcode to tell the symbol
@@ -188,10 +233,10 @@ namespace Mono.CSharp
 		//
 		// Creates a nested container in this context for all dynamic compiler generated stuff
 		//
-		public DynamicSiteClass CreateDynamicSite ()
+		internal DynamicSiteClass CreateDynamicSite ()
 		{
 			if (dynamic_site_container == null) {
-				var mc = MemberContext.CurrentMemberDefinition as MemberBase;
+				var mc = member_context.CurrentMemberDefinition as MemberBase;
 				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
 
 				CurrentTypeDefinition.Module.AddCompilerGeneratedClass (dynamic_site_container);
@@ -199,9 +244,21 @@ namespace Mono.CSharp
 				dynamic_site_container.DefineType ();
 				dynamic_site_container.ResolveTypeParameters ();
 				dynamic_site_container.Define ();
+
+				var inflator = new TypeParameterInflator (Module, CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				var inflated = dynamic_site_container.CurrentType.InflateMember (inflator);
+				CurrentType.MemberCache.AddMember (inflated);
 			}
 
 			return dynamic_site_container;
+		}
+
+		public Label CreateReturnLabel ()
+		{
+			if (!return_label.HasValue)
+				return_label = DefineLabel ();
+
+			return return_label.Value;
 		}
 
 		public LocalBuilder DeclareLocal (TypeSpec type, bool pinned)
@@ -215,6 +272,17 @@ namespace Mono.CSharp
 		public Label DefineLabel ()
 		{
 			return ig.DefineLabel ();
+		}
+
+		//
+		// Creates temporary field in current async storey
+		//
+		public FieldExpr GetTemporaryField (TypeSpec type)
+		{
+			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
+			var fexpr = new FieldExpr (f, Location.Null);
+			fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null);
+			return fexpr;
 		}
 
 		public void MarkLabel (Label label)
@@ -243,16 +311,6 @@ namespace Mono.CSharp
 		}
 
 		public void Emit (OpCode opcode, float arg)
-		{
-			ig.Emit (opcode, arg);
-		}
-
-		public void Emit (OpCode opcode, int arg)
-		{
-			ig.Emit (opcode, arg);
-		}
-
-		public void Emit (OpCode opcode, byte arg)
 		{
 			ig.Emit (opcode, arg);
 		}
@@ -309,7 +367,11 @@ namespace Mono.CSharp
 		public void EmitArrayNew (ArrayContainer ac)
 		{
 			if (ac.Rank == 1) {
-				Emit (OpCodes.Newarr, ac.Element);
+				var type = IsAnonymousStoreyMutateRequired ?
+					CurrentAnonymousMethod.Storey.Mutator.Mutate (ac.Element) :
+					ac.Element;
+
+				ig.Emit (OpCodes.Newarr, type.GetMetaInfo ());
 			} else {
 				if (IsAnonymousStoreyMutateRequired)
 					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
@@ -320,16 +382,17 @@ namespace Mono.CSharp
 
 		public void EmitArrayAddress (ArrayContainer ac)
 		{
-			if (ac.Element.IsGenericParameter)
-				ig.Emit (OpCodes.Readonly);
-
 			if (ac.Rank > 1) {
 				if (IsAnonymousStoreyMutateRequired)
 					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
 
 				ig.Emit (OpCodes.Call, ac.GetAddressMethod ());
 			} else {
-				Emit (OpCodes.Ldelema, ac.Element);
+				var type = IsAnonymousStoreyMutateRequired ?
+					CurrentAnonymousMethod.Storey.Mutator.Mutate (ac.Element) :
+					ac.Element;
+
+				ig.Emit (OpCodes.Ldelema, type.GetMetaInfo ());
 			}
 		}
 
@@ -346,41 +409,69 @@ namespace Mono.CSharp
 				return;
 			}
 
+
 			var type = ac.Element;
-			if (TypeManager.IsEnumType (type))
+			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
-				Emit (OpCodes.Ldelem_U1);
-			else if (type == TypeManager.sbyte_type)
-				Emit (OpCodes.Ldelem_I1);
-			else if (type == TypeManager.short_type)
-				Emit (OpCodes.Ldelem_I2);
-			else if (type == TypeManager.ushort_type || type == TypeManager.char_type)
-				Emit (OpCodes.Ldelem_U2);
-			else if (type == TypeManager.int32_type)
-				Emit (OpCodes.Ldelem_I4);
-			else if (type == TypeManager.uint32_type)
-				Emit (OpCodes.Ldelem_U4);
-			else if (type == TypeManager.uint64_type)
-				Emit (OpCodes.Ldelem_I8);
-			else if (type == TypeManager.int64_type)
-				Emit (OpCodes.Ldelem_I8);
-			else if (type == TypeManager.float_type)
-				Emit (OpCodes.Ldelem_R4);
-			else if (type == TypeManager.double_type)
-				Emit (OpCodes.Ldelem_R8);
-			else if (type == TypeManager.intptr_type)
-				Emit (OpCodes.Ldelem_I);
-			else if (TypeManager.IsStruct (type)) {
-				Emit (OpCodes.Ldelema, type);
-				Emit (OpCodes.Ldobj, type);
-			} else if (type.IsGenericParameter) {
-				Emit (OpCodes.Ldelem, type);
-			} else if (type.IsPointer)
-				Emit (OpCodes.Ldelem_I);
-			else
-				Emit (OpCodes.Ldelem_Ref);
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.Bool:
+				ig.Emit (OpCodes.Ldelem_U1);
+				break;
+			case BuiltinTypeSpec.Type.SByte:
+				ig.Emit (OpCodes.Ldelem_I1);
+				break;
+			case BuiltinTypeSpec.Type.Short:
+				ig.Emit (OpCodes.Ldelem_I2);
+				break;
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
+				ig.Emit (OpCodes.Ldelem_U2);
+				break;
+			case BuiltinTypeSpec.Type.Int:
+				ig.Emit (OpCodes.Ldelem_I4);
+				break;
+			case BuiltinTypeSpec.Type.UInt:
+				ig.Emit (OpCodes.Ldelem_U4);
+				break;
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
+				ig.Emit (OpCodes.Ldelem_I8);
+				break;
+			case BuiltinTypeSpec.Type.Float:
+				ig.Emit (OpCodes.Ldelem_R4);
+				break;
+			case BuiltinTypeSpec.Type.Double:
+				ig.Emit (OpCodes.Ldelem_R8);
+				break;
+			case BuiltinTypeSpec.Type.IntPtr:
+				ig.Emit (OpCodes.Ldelem_I);
+				break;
+			default:
+				switch (type.Kind) {
+				case MemberKind.Struct:
+					if (IsAnonymousStoreyMutateRequired)
+						type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+					ig.Emit (OpCodes.Ldelema, type.GetMetaInfo ());
+					ig.Emit (OpCodes.Ldobj, type.GetMetaInfo ());
+					break;
+				case MemberKind.TypeParameter:
+					if (IsAnonymousStoreyMutateRequired)
+						type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+					ig.Emit (OpCodes.Ldelem, type.GetMetaInfo ());
+					break;
+				case MemberKind.PointerType:
+					ig.Emit (OpCodes.Ldelem_I);
+					break;
+				default:
+					ig.Emit (OpCodes.Ldelem_Ref);
+					break;
+				}
+				break;
+			}
 		}
 
 		//
@@ -398,34 +489,58 @@ namespace Mono.CSharp
 
 			var type = ac.Element;
 
-			if (type.IsEnum)
+			if (type.Kind == MemberKind.Enum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.byte_type || type == TypeManager.sbyte_type || type == TypeManager.bool_type)
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				Emit (OpCodes.Stelem_I1);
-			else if (type == TypeManager.short_type || type == TypeManager.ushort_type || type == TypeManager.char_type)
+				return;
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
 				Emit (OpCodes.Stelem_I2);
-			else if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				return;
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
 				Emit (OpCodes.Stelem_I4);
-			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				return;
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
 				Emit (OpCodes.Stelem_I8);
-			else if (type == TypeManager.float_type)
+				return;
+			case BuiltinTypeSpec.Type.Float:
 				Emit (OpCodes.Stelem_R4);
-			else if (type == TypeManager.double_type)
+				return;
+			case BuiltinTypeSpec.Type.Double:
 				Emit (OpCodes.Stelem_R8);
-			else if (type == TypeManager.intptr_type)
+				return;
+			}
+
+			switch (type.Kind) {
+			case MemberKind.Struct:
 				Emit (OpCodes.Stobj, type);
-			else if (TypeManager.IsStruct (type))
-				Emit (OpCodes.Stobj, type);
-			else if (type.IsGenericParameter)
+				break;
+			case MemberKind.TypeParameter:
 				Emit (OpCodes.Stelem, type);
-			else if (type.IsPointer)
+				break;
+			case MemberKind.PointerType:
 				Emit (OpCodes.Stelem_I);
-			else
+				break;
+			default:
 				Emit (OpCodes.Stelem_Ref);
+				break;
+			}
 		}
 
 		public void EmitInt (int i)
+		{
+			EmitIntConstant (i);
+		}
+
+		void EmitIntConstant (int i)
 		{
 			switch (i) {
 			case -1:
@@ -480,62 +595,122 @@ namespace Mono.CSharp
 		public void EmitLong (long l)
 		{
 			if (l >= int.MinValue && l <= int.MaxValue) {
-				EmitInt (unchecked ((int) l));
+				EmitIntConstant (unchecked ((int) l));
 				ig.Emit (OpCodes.Conv_I8);
-				return;
-			}
-
-			if (l >= 0 && l <= uint.MaxValue) {
-				EmitInt (unchecked ((int) l));
+			} else if (l >= 0 && l <= uint.MaxValue) {
+				EmitIntConstant (unchecked ((int) l));
 				ig.Emit (OpCodes.Conv_U8);
-				return;
+			} else {
+				ig.Emit (OpCodes.Ldc_I8, l);
 			}
-
-			ig.Emit (OpCodes.Ldc_I8, l);
 		}
 
 		//
 		// Load the object from the pointer.  
 		//
-		public void EmitLoadFromPtr (TypeSpec t)
+		public void EmitLoadFromPtr (TypeSpec type)
 		{
-			if (t == TypeManager.int32_type)
+			if (type.Kind == MemberKind.Enum)
+				type = EnumSpec.GetUnderlyingType (type);
+
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
 				ig.Emit (OpCodes.Ldind_I4);
-			else if (t == TypeManager.uint32_type)
+				break;
+			case BuiltinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Ldind_U4);
-			else if (t == TypeManager.short_type)
+				break;
+			case BuiltinTypeSpec.Type.Short:
 				ig.Emit (OpCodes.Ldind_I2);
-			else if (t == TypeManager.ushort_type)
+				break;
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.Char:
 				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.char_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.byte_type)
+				break;
+			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldind_U1);
-			else if (t == TypeManager.sbyte_type)
+				break;
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.uint64_type)
+				break;
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Long:
 				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.int64_type)
-				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.float_type)
+				break;
+			case BuiltinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Ldind_R4);
-			else if (t == TypeManager.double_type)
+				break;
+			case BuiltinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Ldind_R8);
-			else if (t == TypeManager.bool_type)
-				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.intptr_type)
+				break;
+			case BuiltinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Ldind_I);
-			else if (t.IsEnum) {
-				if (t == TypeManager.enum_type)
+				break;
+			default:
+				switch (type.Kind) {
+				case MemberKind.Struct:
+				case MemberKind.TypeParameter:
+					if (IsAnonymousStoreyMutateRequired)
+						type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+					ig.Emit (OpCodes.Ldobj, type.GetMetaInfo ());
+					break;
+				case MemberKind.PointerType:
+					ig.Emit (OpCodes.Ldind_I);
+					break;
+				default:
 					ig.Emit (OpCodes.Ldind_Ref);
-				else
-					EmitLoadFromPtr (EnumSpec.GetUnderlyingType (t));
-			} else if (TypeManager.IsStruct (t) || TypeManager.IsGenericParameter (t))
-				Emit (OpCodes.Ldobj, t);
-			else if (t.IsPointer)
-				ig.Emit (OpCodes.Ldind_I);
+					break;
+				}
+				break;
+			}
+		}
+
+		public void EmitNull ()
+		{
+			ig.Emit (OpCodes.Ldnull);
+		}
+
+		public void EmitArgumentAddress (int pos)
+		{
+			if (!IsStatic)
+				++pos;
+
+			if (pos > byte.MaxValue)
+				ig.Emit (OpCodes.Ldarga, pos);
 			else
-				ig.Emit (OpCodes.Ldind_Ref);
+				ig.Emit (OpCodes.Ldarga_S, (byte) pos);
+		}
+
+		public void EmitArgumentLoad (int pos)
+		{
+			if (!IsStatic)
+				++pos;
+
+			switch (pos) {
+			case 0: ig.Emit (OpCodes.Ldarg_0); break;
+			case 1: ig.Emit (OpCodes.Ldarg_1); break;
+			case 2: ig.Emit (OpCodes.Ldarg_2); break;
+			case 3: ig.Emit (OpCodes.Ldarg_3); break;
+			default:
+				if (pos > byte.MaxValue)
+					ig.Emit (OpCodes.Ldarg, pos);
+				else
+					ig.Emit (OpCodes.Ldarg_S, (byte) pos);
+				break;
+			}
+		}
+
+		public void EmitArgumentStore (int pos)
+		{
+			if (!IsStatic)
+				++pos;
+
+			if (pos > byte.MaxValue)
+				ig.Emit (OpCodes.Starg, pos);
+			else
+				ig.Emit (OpCodes.Starg_S, (byte) pos);
 		}
 
 		//
@@ -546,26 +721,53 @@ namespace Mono.CSharp
 			if (type.IsEnum)
 				type = EnumSpec.GetUnderlyingType (type);
 
-			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
 				ig.Emit (OpCodes.Stind_I4);
-			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				return;
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.ULong:
 				ig.Emit (OpCodes.Stind_I8);
-			else if (type == TypeManager.char_type || type == TypeManager.short_type ||
-				 type == TypeManager.ushort_type)
+				return;
+			case BuiltinTypeSpec.Type.Char:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
 				ig.Emit (OpCodes.Stind_I2);
-			else if (type == TypeManager.float_type)
+				return;
+			case BuiltinTypeSpec.Type.Float:
 				ig.Emit (OpCodes.Stind_R4);
-			else if (type == TypeManager.double_type)
+				return;
+			case BuiltinTypeSpec.Type.Double:
 				ig.Emit (OpCodes.Stind_R8);
-			else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
-				 type == TypeManager.bool_type)
+				return;
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Stind_I1);
-			else if (type == TypeManager.intptr_type)
+				return;
+			case BuiltinTypeSpec.Type.IntPtr:
 				ig.Emit (OpCodes.Stind_I);
-			else if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+				return;
+			}
+
+			switch (type.Kind) {
+			case MemberKind.Struct:
+			case MemberKind.TypeParameter:
+				if (IsAnonymousStoreyMutateRequired)
+					type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
 				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
-			else
+				break;
+			default:
 				ig.Emit (OpCodes.Stind_Ref);
+				break;
+			}
+		}
+
+		public void EmitThis ()
+		{
+			ig.Emit (OpCodes.Ldarg_0);
 		}
 
 		/// <summary>
@@ -628,13 +830,203 @@ namespace Mono.CSharp
 		{
 			if (return_value == null){
 				return_value = DeclareLocal (return_type, false);
-				if (!HasReturnLabel){
-					ReturnLabel = DefineLabel ();
-					HasReturnLabel = true;
-				}
 			}
 
 			return return_value;
+		}
+	}
+
+	struct CallEmitter
+	{
+		public Expression InstanceExpression;
+
+		//
+		// When set leaves an extra copy of all arguments on the stack
+		//
+		public bool DuplicateArguments;
+
+		//
+		// Does not emit InstanceExpression load when InstanceExpressionOnStack
+		// is set. Used by compound assignments.
+		//
+		public bool InstanceExpressionOnStack;
+
+		//
+		// Any of arguments contains await expression
+		//
+		public bool HasAwaitArguments;
+
+		//
+		// When dealing with await arguments the original arguments are converted
+		// into a new set with hoisted stack results
+		//
+		public Arguments EmittedArguments;
+
+		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
+		{
+			// Speed up the check by not doing it on not allowed targets
+			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.Module.Compiler, loc))
+				return;
+
+			EmitPredefined (ec, method, Arguments);
+		}
+
+		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments)
+		{
+			Expression instance_copy = null;
+
+			if (!HasAwaitArguments && ec.HasSet (BuilderContext.Options.AsyncBody)) {
+				HasAwaitArguments = Arguments != null && Arguments.ContainsEmitWithAwait ();
+				if (HasAwaitArguments && InstanceExpressionOnStack) {
+					throw new NotSupportedException ();
+				}
+			}
+
+			OpCode call_op;
+			LocalTemporary lt = null;
+
+			if (method.IsStatic) {
+				call_op = OpCodes.Call;
+			} else {
+				if (IsVirtualCallRequired (InstanceExpression, method)) {
+					call_op = OpCodes.Callvirt;
+				} else {
+					call_op = OpCodes.Call;
+				}
+
+				if (HasAwaitArguments) {
+					instance_copy = InstanceExpression.EmitToField (ec);
+					if (Arguments == null)
+						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+				} else if (!InstanceExpressionOnStack) {
+					var instance_on_stack_type = EmitCallInstance (ec, InstanceExpression, method.DeclaringType, call_op);
+
+					if (DuplicateArguments) {
+						ec.Emit (OpCodes.Dup);
+						if (Arguments != null && Arguments.Count != 0) {
+							lt = new LocalTemporary (instance_on_stack_type);
+							lt.Store (ec);
+							instance_copy = lt;
+						}
+					}
+				}
+			}
+
+			if (Arguments != null && !InstanceExpressionOnStack) {
+				EmittedArguments = Arguments.Emit (ec, DuplicateArguments, HasAwaitArguments);
+				if (EmittedArguments != null) {
+					if (instance_copy != null) {
+						EmitCallInstance (ec, instance_copy, method.DeclaringType, call_op);
+
+						if (lt != null)
+							lt.Release (ec);
+					}
+
+					EmittedArguments.Emit (ec);
+				}
+			}
+
+			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStruct)) {
+				ec.Emit (OpCodes.Constrained, InstanceExpression.Type);
+			}
+
+			//
+			// Set instance expression to actual result expression. When it contains await it can be
+			// picked up by caller
+			//
+			InstanceExpression = instance_copy;
+
+			if (method.Parameters.HasArglist) {
+				var varargs_types = GetVarargsTypes (method, Arguments);
+				ec.Emit (call_op, method, varargs_types);
+				return;
+			}
+
+			//
+			// If you have:
+			// this.DoFoo ();
+			// and DoFoo is not virtual, you can omit the callvirt,
+			// because you don't need the null checking behavior.
+			//
+			ec.Emit (call_op, method);
+		}
+
+		static TypeSpec EmitCallInstance (EmitContext ec, Expression instance, TypeSpec declaringType, OpCode callOpcode)
+		{
+			var instance_type = instance.Type;
+
+			//
+			// Push the instance expression
+			//
+			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType == instance_type))) ||
+				instance_type.IsGenericParameter || declaringType.IsNullableType) {
+				//
+				// If the expression implements IMemoryLocation, then
+				// we can optimize and use AddressOf on the
+				// return.
+				//
+				// If not we have to use some temporary storage for
+				// it.
+				var iml = instance as IMemoryLocation;
+				if (iml != null) {
+					iml.AddressOf (ec, AddressOp.Load);
+				} else {
+					LocalTemporary temp = new LocalTemporary (instance_type);
+					instance.Emit (ec);
+					temp.Store (ec);
+					temp.AddressOf (ec, AddressOp.Load);
+					temp.Release (ec);
+				}
+
+				return ReferenceContainer.MakeType (ec.Module, instance_type);
+			}
+
+			if (instance_type.IsEnum || instance_type.IsStruct) {
+				instance.Emit (ec);
+				ec.Emit (OpCodes.Box, instance_type);
+				return ec.BuiltinTypes.Object;
+			}
+
+			instance.Emit (ec);
+			return instance_type;
+		}
+
+		static MetaType[] GetVarargsTypes (MethodSpec method, Arguments arguments)
+		{
+			AParametersCollection pd = method.Parameters;
+
+			Argument a = arguments[pd.Count - 1];
+			Arglist list = (Arglist) a.Expr;
+
+			return list.ArgumentTypes;
+		}
+
+		//
+		// Used to decide whether call or callvirt is needed
+		//
+		static bool IsVirtualCallRequired (Expression instance, MethodSpec method)
+		{
+			//
+			// There are 2 scenarious where we emit callvirt
+			//
+			// Case 1: A method is virtual and it's not used to call base
+			// Case 2: A method instance expression can be null. In this casen callvirt ensures
+			// correct NRE exception when the method is called
+			//
+			var decl_type = method.DeclaringType;
+			if (decl_type.IsStruct || decl_type.IsEnum)
+				return false;
+
+			if (instance is BaseThis)
+				return false;
+
+			//
+			// It's non-virtual and will never be null
+			//
+			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation))
+				return false;
+
+			return true;
 		}
 	}
 }

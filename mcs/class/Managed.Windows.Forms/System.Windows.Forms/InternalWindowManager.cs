@@ -431,10 +431,8 @@ namespace System.Windows.Forms {
 
 		public bool ShowIcon {
 			get {
-#if NET_2_0
 				if (!Form.ShowIcon)
 					return false;
-#endif
 				if (!HasBorders)
 					return false;
 				if (IsMinimized)

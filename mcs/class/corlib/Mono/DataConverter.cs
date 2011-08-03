@@ -582,7 +582,7 @@ namespace Mono {
 				
 				case 'f':
 					if (Prepare (buffer, ref idx, 4, ref align)){
-						result.Add (conv.GetDouble (buffer, idx));
+						result.Add (conv.GetFloat (buffer, idx));
 						idx += 4;
 					}
 					break;
@@ -1194,7 +1194,7 @@ namespace Mono {
 				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < 8; i++)
 						target [i] = source [7-i];
 				}
 			}

@@ -862,6 +862,7 @@ namespace System.Xml
 		{
 			if (ReadState != ReadState.Interactive)
 				return false;
+			MoveToElement ();
 			int depth = Depth;
 			Skip ();
 			for (; !EOF && depth <= Depth; Skip ())

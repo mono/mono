@@ -1,4 +1,4 @@
-// cs1611.cs: The params parameter cannot be declared as ref or out
+// CS1611: The params parameter cannot be declared as ref or out
 // Line: 6
 
 class Test

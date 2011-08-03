@@ -79,7 +79,11 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		void System.IDisposable.Dispose () 
+#if NET_4_0
+		public void Dispose ()
+#else
+		void IDisposable.Dispose () 
+#endif
 		{
 			_st.Clear ();
 		}

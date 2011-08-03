@@ -79,7 +79,7 @@ namespace System.Web.Configuration {
 			internal set { base [userAgentProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

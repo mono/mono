@@ -64,7 +64,9 @@ namespace System.Web.DynamicData
 		}
 
 		public virtual string DataField {
-			get { return ViewState.GetString ("_DataField", String.Empty); }
+			get {
+				return (string) ViewState ["_DataField"] ?? String.Empty;
+			}
 			set {
 				ViewState ["_DataField"] = value;
 				OnFieldChanged ();
@@ -77,7 +79,7 @@ namespace System.Web.DynamicData
 
 		public override string HeaderText {
 			get {
-				string s = ViewState.GetString ("headerText", null);
+				string s = (string) ViewState ["headerText"];
 				if (s != null)
 					return s;
 
@@ -118,7 +120,7 @@ namespace System.Web.DynamicData
 
 		public override string SortExpression {
 			get {
-				string s = ViewState.GetString ("sortExpression", null);
+				string s = (string) ViewState ["sortExpression"];
 				if (s != null)
 					return s;
 
@@ -134,10 +136,7 @@ namespace System.Web.DynamicData
 
 		public virtual string UIHint {
 			get {
-				string s = ViewState.GetString ("uiHint", null);
-				if (s == null)
-					return String.Empty;
-				return s;
+				return (string) ViewState ["uiHint"] ?? String.Empty;
 			}
 			
 			set {

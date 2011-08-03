@@ -87,10 +87,8 @@ namespace System.ComponentModel.Design
 		public static readonly CommandID VertSpaceIncrease;
 		public static readonly CommandID VertSpaceMakeEqual;
 		public static readonly CommandID ViewGrid;
-#if NET_2_0
 		public static readonly CommandID DocumentOutline;
 		public static readonly CommandID ViewCode;
-#endif
 
 		static StandardCommands()
 		{
@@ -175,10 +173,8 @@ namespace System.ComponentModel.Design
 
 			ViewGrid = new CommandID (guidA, 125);
 
-#if NET_2_0
 			DocumentOutline = new CommandID (guidA, 239);
 			ViewCode = new CommandID (guidA, 333);
-#endif
 		}
 
 		public StandardCommands()

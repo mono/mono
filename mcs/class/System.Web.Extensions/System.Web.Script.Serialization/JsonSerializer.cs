@@ -448,7 +448,7 @@ namespace System.Web.Script.Serialization
 		
 		void WriteValue (StringBuilder output, Uri value)
 		{
-			WriteValue (output, value.GetComponents (UriComponents.AbsoluteUri, UriFormat.UriEscaped));
+			WriteValue (output, value.OriginalString);
 		}
 		
 		void WriteValue (StringBuilder output, DateTime value)

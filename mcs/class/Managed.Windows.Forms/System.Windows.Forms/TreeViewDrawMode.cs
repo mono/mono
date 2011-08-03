@@ -29,10 +29,7 @@
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public 
-#endif
-	enum TreeViewDrawMode
+	public enum TreeViewDrawMode
 	{
 		Normal = 0,
 		OwnerDrawText = 1,

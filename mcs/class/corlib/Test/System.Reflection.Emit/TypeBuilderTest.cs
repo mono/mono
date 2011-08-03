@@ -24,7 +24,6 @@ using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using System.Runtime.CompilerServices;
-
 using System.Collections.Generic;
 
 namespace MonoTests.System.Reflection.Emit
@@ -2099,12 +2098,14 @@ namespace MonoTests.System.Reflection.Emit
 			ig = mb.GetILGenerator ();
 
 			ConstructorInfo ci = TypeBuilder.GetConstructor (t, cb);
-
+			
 			ig.Emit (OpCodes.Newobj, ci);
 			ig.Emit (OpCodes.Ret);
 
 			// Finish the ctorbuilder
 			ig = cb.GetILGenerator ();
+			ig.Emit(OpCodes.Ldarg_0);
+			ig.Emit(OpCodes.Call, tb.BaseType.GetConstructor(Type.EmptyTypes));		
 			ig.Emit (OpCodes.Ret);
 
 			Type t2 = tb.CreateType ();
@@ -10417,6 +10418,10 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb2 = module.DefineType("Bar");
 			ConstructorBuilder cb = tb2.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ilgen = cb.GetILGenerator();
+			
+			ilgen.Emit(OpCodes.Ldarg_0);
+			ilgen.Emit(OpCodes.Call, tb2.BaseType.GetConstructor(Type.EmptyTypes));
+
 			ilgen.Emit(OpCodes.Ldsfld, field);
 			ilgen.Emit(OpCodes.Pop);
 			ilgen.Emit(OpCodes.Ret);
@@ -10944,5 +10949,40 @@ namespace MonoTests.System.Reflection.Emit
 				//OK
 			}
 		}
+
+		[Test]
+		public void TypeWithFieldRVAWorksUnderSgen () {
+	        AssemblyName an = new AssemblyName("MAIN");
+	        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an,
+	            AssemblyBuilderAccess.Run, ".");
+	        ModuleBuilder mob = ab.DefineDynamicModule("MAIN");
+	        TypeBuilder tb = mob.DefineType("MAIN", TypeAttributes.Public |
+	            TypeAttributes.Sealed | TypeAttributes.Abstract |
+	            TypeAttributes.Class | TypeAttributes.BeforeFieldInit);
+
+	        byte[] source = new byte[] { 42 };
+	        FieldBuilder fb = tb.DefineInitializedData("A0", source, 0);
+
+	        MethodBuilder mb = tb.DefineMethod("EVAL", MethodAttributes.Static |
+	            MethodAttributes.Public, typeof(byte[]), new Type[] { });
+	        ILGenerator il = mb.GetILGenerator();
+
+	        il.Emit(OpCodes.Ldc_I4_1);
+	        il.Emit(OpCodes.Newarr, typeof(byte));
+	        il.Emit(OpCodes.Dup);
+	        il.Emit(OpCodes.Ldtoken, fb);
+	        il.Emit(OpCodes.Call, typeof(RuntimeHelpers).GetMethod("InitializeArray"));
+	        il.Emit(OpCodes.Ret);
+
+	        Type t = tb.CreateType();
+
+	        GC.Collect();
+
+	        byte[] res = (byte[]) t.InvokeMember("EVAL", BindingFlags.Public |
+	            BindingFlags.Static | BindingFlags.InvokeMethod, null, null,
+	            new object[] { });
+
+	        Assert.AreEqual (42, res[0]);
+	    }
 	}
 }

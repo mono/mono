@@ -1,4 +1,4 @@
-// cs1502-7.cs: The best overloaded method match for `TestCase.TestS(ref object)' has some invalid arguments
+// CS1502: The best overloaded method match for `TestCase.TestS(ref object)' has some invalid arguments
 // Line: 21
 
 using System;

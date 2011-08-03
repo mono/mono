@@ -295,5 +295,69 @@ namespace MonoTests.System.ServiceModel
 			void ShowMessage (string message);
 		}
 		#endregion
+
+		#region ConcurrencyMode testing
+
+		ManualResetEvent wait_handle = new ManualResetEvent (false);
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConcurrencyModeSingleAndCallbackInsideServiceMethod ()
+		{
+			var host = new ServiceHost (typeof (TestService));
+			var binding = new NetTcpBinding ();
+			binding.Security.Mode = SecurityMode.None;
+			host.AddServiceEndpoint (typeof (ITestService), binding, new Uri ("net.tcp://localhost:18080"));
+			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = true;
+			host.Open ();
+
+			try {
+				var cf = new DuplexChannelFactory<ITestService> (new TestCallback (), binding, new EndpointAddress ("net.tcp://localhost:18080"));
+				var ch = cf.CreateChannel ();
+				ch.DoWork ("test");
+
+				wait_handle.WaitOne (10000);
+				Assert.Fail ("should fail");
+			} catch (FaultException) {
+				// expected.
+			} finally {
+				Thread.Sleep (1000);
+			}
+
+			host.Close ();
+		}
+
+		[ServiceContract (CallbackContract = typeof (ITestCallback))]
+		public interface ITestService
+		{
+			[OperationContract (IsOneWay = false)] // ConcurrencyMode error as long as IsOneWay == false.
+			void DoWork (string name);
+		}
+
+		public interface ITestCallback
+		{
+			[OperationContract (IsOneWay = false)]
+			void Report (string result);
+		}
+
+		public class TestService : ITestService
+		{
+			public void DoWork (string name)
+			{
+				var cb = OperationContext.Current.GetCallbackChannel<ITestCallback> ();
+				cb.Report ("OK");
+				Assert.Fail ("callback should have failed");
+			}
+		}
+
+		public class TestCallback : ITestCallback
+		{
+			public void Report (string result)
+			{
+				Assert.Fail ("should not reach here");
+			}
+		}
+
+		#endregion
 	}
 }

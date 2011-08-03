@@ -1026,6 +1026,16 @@ namespace System.Xml.Schema
 					dt = st.Datatype;
 				} else {
 					ComplexType ct = Context.ActualType as ComplexType;
+					var ctsm = ct.ContentModel as XmlSchemaSimpleContent;
+					if (ctsm != null) {
+						var scr = ctsm.Content as XmlSchemaSimpleContentRestriction;
+						if (scr != null)
+							st = FindSimpleBaseType (scr.BaseType ?? FindType (scr.BaseTypeName));
+						var sce = ctsm.Content as XmlSchemaSimpleContentExtension;
+						if (sce != null)
+							st = FindSimpleBaseType (FindType (sce.BaseTypeName));
+					}
+
 					dt = ct.Datatype;
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
@@ -1067,6 +1077,16 @@ namespace System.Xml.Schema
 			}
 
 			return ret;
+		}
+
+		SimpleType FindSimpleBaseType (XmlSchemaType xt)
+		{
+			var st = xt as SimpleType;
+			if (st != null)
+				return st;
+			if (xt == null)
+				return null;
+			return FindSimpleBaseType (xt.BaseXmlSchemaType);
 		}
 
 		// 3.14.4 String Valid 

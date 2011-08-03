@@ -35,12 +35,15 @@ namespace System.ServiceModel.Discovery
 {
 	internal class DiscoveryViaUriBehavior : IEndpointBehavior
 	{
-		public DiscoveryViaUriBehavior (Uri via)
+		public DiscoveryViaUriBehavior (DiscoveryVersion version, Uri via)
 		{
-			Via = via;
+			this.version = version;
+			this.via = via;
 		}
 		
-		Uri Via { get; set; }
+		DiscoveryVersion version;
+
+		Uri via;
 		
 		public void AddBindingParameters (ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{
@@ -53,7 +56,30 @@ namespace System.ServiceModel.Discovery
 			if (clientRuntime == null)
 				throw new ArgumentNullException ("clientRuntime");
 
-			clientRuntime.Via = Via;
+			clientRuntime.Via = via;
+			clientRuntime.MessageInspectors.Add (new ClientMessageInspector (version));
+		}
+
+		class ClientMessageInspector : IClientMessageInspector
+		{
+			public ClientMessageInspector (DiscoveryVersion version)
+			{
+				this.version = version;
+			}
+			
+			DiscoveryVersion version;
+			
+			public object BeforeSendRequest (ref Message request, IClientChannel channel)
+			{
+				// overwrite To header with version-specific URN.
+				request.Headers.To = version.AdhocAddress;
+				return null;
+			}
+
+			public void AfterReceiveReply (ref Message reply, object correlationState)
+			{
+				// do nothing
+			}
 		}
 
 		public void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)

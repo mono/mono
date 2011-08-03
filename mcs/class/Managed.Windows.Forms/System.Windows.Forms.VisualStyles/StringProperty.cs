@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum StringProperty
+	public enum StringProperty
 	{
 		Text = 3201
 	}

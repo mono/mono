@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 interface IFoo<out T>
 {
 	T Bar { get; }

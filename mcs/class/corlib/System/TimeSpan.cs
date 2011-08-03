@@ -39,7 +39,7 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable <TimeSpan>
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 				 , IFormattable
 #endif
 	{
@@ -359,7 +359,7 @@ namespace System
 			return p.Execute (true, out result);
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static TimeSpan Parse (string input, IFormatProvider formatProvider)
 		{
 			if (input == null)
@@ -526,7 +526,7 @@ namespace System
 			return sb.ToString ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public string ToString (string format)
 		{
 			return ToString (format, null);
@@ -719,7 +719,7 @@ namespace System
 			private int _cur = 0;
 			private int _length;
 			ParseError parse_error;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			bool parsed_ticks;
 			NumberFormatInfo number_format;
 			int parsed_numbers_count;
@@ -735,12 +735,12 @@ namespace System
 			{
 				_src = src;
 				_length = _src.Length;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 				number_format = GetNumberFormatInfo (null);
 #endif
 			}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			// Reset state data, so we can execute another parse over the input.
 			void Reset ()
 			{
@@ -806,7 +806,7 @@ namespace System
 				return res;
 			}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			// Used for custom formats parsing, where we may need to declare how
 			// many digits we expect, as well as the maximum allowed.
 			private int ParseIntExact (int digit_count, int max_digit_count)
@@ -855,7 +855,7 @@ namespace System
 
 				if (!optional && (count == 0))
 					SetParseError (ParseError.Format);
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 				if (count > 0)
 					parsed_numbers_count++;
 #endif
@@ -876,7 +876,7 @@ namespace System
 				return false;
 			}	
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			// This behaves pretty much like ParseOptDot, but we need to have it
 			// as a separated routine for both days and decimal separators.
 			private bool ParseOptDaysSeparator ()
@@ -963,7 +963,7 @@ namespace System
 
 				if (!digitseen)
 					SetParseError (ParseError.Format);
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 				else if (!AtEnd && Char.IsDigit (_src, _cur))
 					SetParseError (ParseError.Overflow);
 
@@ -973,7 +973,7 @@ namespace System
 				return res;
 			}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			// Used by custom formats parsing
 			// digits_count = 0 for digits up to max_digits_count (optional), and other value to
 			// force a precise number of digits.
@@ -1007,7 +1007,7 @@ namespace System
 				parse_error = error;
 			}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			bool CheckParseSuccess (bool tryParse)
 #else
 			bool CheckParseSuccess (int hours, int minutes, int seconds, bool tryParse)
@@ -1015,7 +1015,7 @@ namespace System
 			{
 				// We always report the first error, but for 2.0 we need to give a higher
 				// precence to per-element overflow (as opposed to int32 overflow).
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 				if (parse_error == ParseError.Overflow) {
 #else
 				if (parse_error == ParseError.Overflow || hours > 23 || minutes > 59 || seconds > 59) {
@@ -1036,7 +1036,7 @@ namespace System
 				return true;
 			}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			// We are using a different parse approach in 4.0, due to some changes in the behaviour
 			// of the parse routines.
 			// The input string is documented as:
@@ -1220,7 +1220,7 @@ namespace System
 			}
 #endif
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			public bool ExecuteWithFormat (string format, TimeSpanStyles style, bool tryParse, out TimeSpan result)
 			{
 				int days, hours, minutes, seconds;
@@ -1327,7 +1327,7 @@ namespace System
 			}
 #endif
 		}
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		enum FormatElementType 
 		{
 			Days,

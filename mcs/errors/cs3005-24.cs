@@ -1,4 +1,4 @@
-// cs3005-24.cs: Identifier `ClsClass' differing only in case is not CLS-compliant
+// CS3005: Identifier `ClsClass' differing only in case is not CLS-compliant
 // Line: 9
 // Compiler options: -warnaserror
 

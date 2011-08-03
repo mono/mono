@@ -60,6 +60,11 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 			return new XmlQualifiedName ("AppSequenceType", version.Namespace);
 		}
 
+		// for deserialization
+		DiscoveryMessageSequenceApril2005 ()
+		{
+		}
+		
 		internal DiscoveryMessageSequenceApril2005 (DiscoveryMessageSequence source)
 		{
 			this.source = source;

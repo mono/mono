@@ -276,5 +276,26 @@ namespace MonoTests.System.Xaml.Schema
 
 			public ArrayExtension ArrayMember { get; set; }
 		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void UnknownInvokerGetValue ()
+		{
+			XamlMemberInvoker.UnknownInvoker.GetValue (new object ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void UnknownInvokerSetValue ()
+		{
+			XamlMemberInvoker.UnknownInvoker.SetValue (new object (), new object ());
+		}
+
+		[Test]
+		public void UnknownInvoker ()
+		{
+			Assert.IsNull (XamlMemberInvoker.UnknownInvoker.UnderlyingGetter, "#1");
+			Assert.IsNull (XamlMemberInvoker.UnknownInvoker.UnderlyingSetter, "#2");
+		}
 	}
 }

@@ -35,25 +35,44 @@ using System.Xml.Schema;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class XmlSerializerMessageContractImporter
 		: IWsdlImportExtension
 	{
+		MessageContractImporterInternal impl = new XmlSerializerMessageContractImporterInternal ();
+		bool enabled = true;
+
+		public bool Enabled {
+			get { return enabled; }
+			set { enabled = value; }
+		}
+
 		void IWsdlImportExtension.BeforeImport (
 			ServiceDescriptionCollection wsdlDocuments,
 			XmlSchemaSet xmlSchemas,
 			ICollection<XmlElement> policy)
 		{
+			if (!Enabled)
+				return;
+
+			impl.BeforeImport (wsdlDocuments, xmlSchemas, policy);
 		}
 
 		void IWsdlImportExtension.ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
+			if (!Enabled)
+				return;
+
+			impl.ImportContract (importer, context);
 		}
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
 			WsdlEndpointConversionContext context)
 		{
+			if (!Enabled)
+				return;
+
+			impl.ImportEndpoint (importer, context);
 		}
 	}
 }

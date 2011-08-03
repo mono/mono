@@ -98,7 +98,14 @@ namespace Mono.ServiceContractTool
 				//WsdlImporter importer = new WsdlImporter (metadata, null, list);
 				WsdlImporter importer = new WsdlImporter (metadata);
 				ServiceEndpointCollection endpoints = importer.ImportAllEndpoints ();
-				Collection<ContractDescription> contracts = new Collection<ContractDescription> ((from se in endpoints select se.Contract).ToArray ());
+				Collection<ContractDescription> contracts = new Collection<ContractDescription> ();
+				if (endpoints.Count > 0) {
+					foreach (var se in endpoints)
+						contracts.Add (se.Contract);
+				} else {
+					foreach (var cd in importer.ImportAllContracts ())
+						contracts.Add (cd);
+				}
 
 				Console.WriteLine ("Generating files..");
 

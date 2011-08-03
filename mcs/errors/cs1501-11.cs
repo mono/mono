@@ -1,4 +1,4 @@
-// cs1501-11.cs: No overload for method `XCreateIC' takes `1' arguments
+// CS1501: No overload for method `XCreateIC' takes `1' arguments
 // Line: 16
 
 using System;

@@ -123,6 +123,9 @@ namespace System.Net
 		static bool useNagle;
 #endif
 		static RemoteCertificateValidationCallback server_cert_cb;
+		static bool tcp_keepalive;
+		static int tcp_keepalive_time;
+		static int tcp_keepalive_interval;
 
 		// Fields
 		
@@ -279,7 +282,20 @@ namespace System.Net
 		}
 #endif
 		// Methods
-		
+		public static void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval)
+		{
+			if (enabled) {
+				if (keepAliveTime <= 0)
+					throw new ArgumentOutOfRangeException ("keepAliveTime", "Must be greater than 0");
+				if (keepAliveInterval <= 0)
+					throw new ArgumentOutOfRangeException ("keepAliveInterval", "Must be greater than 0");
+			}
+
+			tcp_keepalive = enabled;
+			tcp_keepalive_time = keepAliveTime;
+			tcp_keepalive_interval = keepAliveInterval;
+		}
+
 		public static ServicePoint FindServicePoint (Uri address) 
 		{
 			return FindServicePoint (address, GlobalProxySelection.Select);
@@ -329,12 +345,11 @@ namespace System.Net
 				int limit = (int) manager.GetMaxConnections (addr);
 #endif
 				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
-#if NET_1_1
 				sp.Expect100Continue = expectContinue;
 				sp.UseNagleAlgorithm = useNagle;
-#endif
 				sp.UsesProxy = usesProxy;
 				sp.UseConnect = useConnect;
+				sp.SetTcpKeepAlive (tcp_keepalive, tcp_keepalive_time, tcp_keepalive_interval);
 				servicePoints.Add (key, sp);
 			}
 			
@@ -623,8 +638,8 @@ namespace System.Net
 					if (cert.Version < 3)
 						return true;
 
-					X509KeyUsageExtension kux = (X509KeyUsageExtension) cert.Extensions ["2.5.29.15"];
-					X509EnhancedKeyUsageExtension eku = (X509EnhancedKeyUsageExtension) cert.Extensions ["2.5.29.37"];
+					X509KeyUsageExtension kux = (cert.Extensions ["2.5.29.15"] as X509KeyUsageExtension);
+					X509EnhancedKeyUsageExtension eku = (cert.Extensions ["2.5.29.37"] as X509EnhancedKeyUsageExtension);
 					if (kux != null && eku != null) {
 						// RFC3280 states that when both KeyUsageExtension and 
 						// ExtendedKeyUsageExtension are present then BOTH should

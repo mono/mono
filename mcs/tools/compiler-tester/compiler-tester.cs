@@ -726,13 +726,13 @@ namespace TestRunner {
 					return true;
 
 				if (md.ILSize > il_size) {
-					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
+					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size);
 					md.ILSize = il_size;
 					return true;
 				}
 
 				checker.HandleFailure (test.FileName, PositiveChecker.TestResult.ILError,
-					string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+					string.Format ("{0} (code size {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size));
 
 				md.ILSize = il_size;
 
@@ -1153,8 +1153,13 @@ namespace TestRunner {
 						if (check_msg) {
 							int first = line.IndexOf (':');
 							int second = line.IndexOf (':', first + 1);
-							if (second == -1 || !check_error_line)
+							if (line.IndexOf ("Warning as Error: ", first, StringComparison.Ordinal) > 0) {
+								if (check_error_line) {
+									second = line.IndexOf (':', second + 1);
+								}
+							} else if (second == -1 || !check_error_line) {
 								second = first;
+							}
 
 							string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
 							if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {

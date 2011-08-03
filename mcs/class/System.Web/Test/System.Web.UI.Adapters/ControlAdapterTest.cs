@@ -227,43 +227,43 @@ namespace MonoTests.System.Web.UI.Adapters
 		class MyControl : Control
 		{
 			internal bool create_child_controls_called;
-			protected override void CreateChildControls ()
+			protected internal override void CreateChildControls ()
 			{
 				create_child_controls_called = true;
 			}
 			
 			internal bool render_called = false;
-			protected override void Render (HtmlTextWriter w)
+			protected internal override void Render (HtmlTextWriter w)
 			{
 				render_called = true;
 			}
 			
 			internal bool render_children_called = false;
-			protected override void RenderChildren (HtmlTextWriter w)
+			protected internal override void RenderChildren (HtmlTextWriter w)
 			{
 				render_children_called = true;
 			}
 
 			internal EventArgs on_init_arg = null;
-			protected override void OnInit (EventArgs e)
+			protected internal override void OnInit (EventArgs e)
 			{
 				on_init_arg = e;
 			}
 
 			internal EventArgs on_load_arg = null;
-			protected override void OnLoad (EventArgs e)
+			protected internal override void OnLoad (EventArgs e)
 			{
 				on_load_arg = e;
 			}
 			
 			internal EventArgs on_pre_render_arg = null;
-			protected override void OnPreRender (EventArgs e)
+			protected internal override void OnPreRender (EventArgs e)
 			{
 				on_pre_render_arg = e;
 			}
 
 			internal EventArgs on_unload_arg = null;
-			protected override void OnUnload (EventArgs e)
+			protected internal override void OnUnload (EventArgs e)
 			{
 				on_unload_arg = e;
 			}

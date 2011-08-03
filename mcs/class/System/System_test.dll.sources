@@ -26,6 +26,7 @@ System/LdapStyleUriParserTest.cs
 System/NetPipeStyleUriParserTest.cs
 System/NetTcpStyleUriParserTest.cs
 System/NewsStyleUriParserTest.cs
+System/Platform.cs
 System/UriBuilderTest.cs
 System/UriParserTest.cs
 System/UriTest.cs

@@ -237,9 +237,9 @@ namespace System.Net {
 			}
 		}
 
-		public override bool Equals (Object obj) 
+		public override bool Equals (Object comparand) 
 		{
-			System.Net.Cookie c = obj as System.Net.Cookie;			
+			System.Net.Cookie c = comparand as System.Net.Cookie;			
 			
 			return c != null &&
 			       String.Compare (this.name, c.name, true, CultureInfo.InvariantCulture) == 0 &&

@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum VisualStyleState
+	public enum VisualStyleState
 	{
 		NoneEnabled = 0,
 		NonClientAreaEnabled = 1,

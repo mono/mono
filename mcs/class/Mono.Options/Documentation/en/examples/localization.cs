@@ -4,8 +4,8 @@
 //   gmcs -r:Mono.Posix.dll -r:NDesk.Options.dll code-localization.cs
 using System;
 using System.IO;
+using Mono.Options;
 using Mono.Unix;
-using NDesk.Options;
 
 class LocalizationDemo {
 	public static void Main (string[] args)

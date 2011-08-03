@@ -1,5 +1,6 @@
-// cs0657-13.cs: `type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `property'
-// Line: 13
+// CS0657: `type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `property'. All attributes in this section will be ignored
+// Line: 14
+// Compiler options: -warnaserror
 
 using System;
 

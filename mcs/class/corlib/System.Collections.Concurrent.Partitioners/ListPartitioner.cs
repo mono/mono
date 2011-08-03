@@ -24,10 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
+using System.Threading;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Collections.Concurrent.Partitioners
 {
@@ -35,7 +37,6 @@ namespace System.Collections.Concurrent.Partitioners
 	internal class ListPartitioner<T> : OrderablePartitioner<T>
 	{
 		IList<T> source;
-		readonly bool chunking = Environment.GetEnvironmentVariable ("PLINQ_PARTITIONING_HINT") == "chunking";
 		
 		public ListPartitioner (IList<T> source) : base (true, true, true)
 		{
@@ -51,39 +52,52 @@ namespace System.Collections.Concurrent.Partitioners
 				= new IEnumerator<KeyValuePair<long, T>>[partitionCount];
 			
 			int count = source.Count / partitionCount;
-			if (count <= 1)
+			int extra = 0;
+
+			if (source.Count < partitionCount) {
 				count = 1;
+			} else {
+				extra = source.Count % partitionCount;
+				if (extra > 0)
+					++count;
+			}
+
+			int currentIndex = 0;
+
+			Range[] ranges = new Range[enumerators.Length];
+			for (int i = 0; i < ranges.Length; i++) {
+				ranges[i] = new Range (currentIndex,
+				                       currentIndex + count);
+				currentIndex += count;
+				if (--extra == 0)
+					--count;
+			}
 			
 			for (int i = 0; i < enumerators.Length; i++) {
-				if (chunking) {
-					const int step = 64;
-					enumerators[i] = GetEnumeratorForRange (i * step, enumerators.Length, source.Count, step);
-					continue;
-				}
-
-				if (i != enumerators.Length - 1)
-					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
-				else
-					enumerators[i] = GetEnumeratorForRange (i * count, source.Count);
+				enumerators[i] = GetEnumeratorForRange (ranges, i);
 			}
 			
 			return enumerators;
 		}
-		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int lastIndex)
+
+		class Range
 		{
-			if (startIndex >= source.Count)
-			  return GetEmpty ();
-			
-			return GetEnumeratorForRangeInternal (startIndex, lastIndex);
+			public int Actual;
+			public readonly int LastIndex;
+
+			public Range (int frm, int lastIndex)
+			{
+				Actual = frm;
+				LastIndex = lastIndex;
+			}
 		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int stride, int count, int step)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (Range[] ranges, int workerIndex)
 		{
-			if (startIndex >= source.Count)
+			if (ranges[workerIndex].Actual >= source.Count)
 			  return GetEmpty ();
 			
-			return GetEnumeratorForRangeInternal (startIndex, stride, count, step);
+			return GetEnumeratorForRangeInternal (ranges, workerIndex);
 		}
 
 		IEnumerator<KeyValuePair<long, T>> GetEmpty ()
@@ -91,19 +105,14 @@ namespace System.Collections.Concurrent.Partitioners
 			yield break;
 		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int lastIndex)
-		{	
-			for (int i = startIndex; i < lastIndex; i++) {
-				yield return new KeyValuePair<long, T> (i, source[i]);
-			}
-		}
-
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int stride, int count, int step)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (Range[] ranges, int workerIndex)
 		{
-			for (int i = startIndex; i < count; i += stride * step) {
-				for (int j = i; j < i + step && j < count; j++) {
-					yield return new KeyValuePair<long, T> (j, source[j]);
-				}
+			Range range = ranges[workerIndex];
+			int lastIndex = range.LastIndex;
+			int index = range.Actual;
+
+			for (int i = index; i < lastIndex; i = ++range.Actual) {
+				yield return new KeyValuePair<long, T> (i, source[i]);
 			}
 		}
 	}

@@ -103,8 +103,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Message msg = c.ToMessage (t1);
 			var t2 = (Test2) c.FromMessage (msg);
 			Assert.AreEqual ("test", t2.Body.msg, "#01");
-			// FIXME: enable it (not working yet)
-			//Assert.AreEqual (uid, t2.Id, "#02");
+			Assert.AreEqual (uid, t2.Id, "#02");
 		}
 
 		[Test]

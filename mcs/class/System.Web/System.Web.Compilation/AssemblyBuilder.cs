@@ -740,7 +740,6 @@ namespace System.Web.Compilation
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
-
 			options.TempFiles = temp_files;
 			if (options.OutputAssembly == null)
 				options.OutputAssembly = OutputAssemblyName;
@@ -761,8 +760,8 @@ namespace System.Web.Compilation
 			if (units.Length == 0 && files.Count == 0 && resources.Count == 0 && options.EmbeddedResources.Count == 0)
 				return null;
 
+			string compilerOptions = options.CompilerOptions;
 			if (options.IncludeDebugInformation) {
-				string compilerOptions = options.CompilerOptions;
 				if (String.IsNullOrEmpty (compilerOptions))
 					compilerOptions = "/d:DEBUG";
 				else if (compilerOptions.IndexOf ("d:DEBUG", StringComparison.OrdinalIgnoreCase) == -1)
@@ -770,6 +769,12 @@ namespace System.Web.Compilation
 				
 				options.CompilerOptions = compilerOptions;
 			}
+
+			if (String.IsNullOrEmpty (compilerOptions))
+				compilerOptions = "/noconfig";
+			else if (compilerOptions.IndexOf ("noconfig", StringComparison.OrdinalIgnoreCase) == -1)
+				compilerOptions += " /noconfig";
+			options.CompilerOptions = compilerOptions;
 			
 			string filename;
 			StreamWriter sw = null;
@@ -797,18 +802,30 @@ namespace System.Web.Compilation
 				options.EmbeddedResources.Add (de.Value);
 
 			AddAssemblyReference (BuildManager.GetReferencedAssemblies ());
+			List <Assembly> referencedAssemblies = ReferencedAssemblies;
+			StringCollection optRefAsm = options.ReferencedAssemblies;
+			Type appType = HttpApplicationFactory.AppType;
+			if (appType != null && !referencedAssemblies.Contains (appType.Assembly))
+				referencedAssemblies.Add (appType.Assembly);
+
 			foreach (Assembly refasm in ReferencedAssemblies) {
 				string path = new Uri (refasm.CodeBase).LocalPath;
-				options.ReferencedAssemblies.Add (path);
+				string originalPath = refasm.Location;
+				if (!optRefAsm.Contains (path) && !optRefAsm.Contains (originalPath))
+					optRefAsm.Add (path);
 			}
+
+			
 			
 			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
 
 			if (results.NativeCompilerReturnValue != 0) {
 				string fileText = null;
+				CompilerErrorCollection errors = results.Errors;
 				try {
-					using (StreamReader sr = File.OpenText (results.Errors [0].FileName)) {
-						fileText = sr.ReadToEnd ();
+					if (errors != null && errors.Count > 0) {
+						using (StreamReader sr = File.OpenText (results.Errors [0].FileName))
+							fileText = sr.ReadToEnd ();
 					}
 				} catch (Exception) {}
 				
@@ -821,11 +838,16 @@ namespace System.Web.Compilation
 				Console.WriteLine ("\nErrors:");
 				foreach (CompilerError err in results.Errors)
 					Console.WriteLine (err);
-				Console.WriteLine ("File name: {0}", results.Errors [0].FileName);
-				Console.WriteLine ("File text:\n{0}\n", fileText);
+				if (errors != null && errors.Count > 0)
+					Console.WriteLine ("File name: {0}", results.Errors [0].FileName);
+				else
+					Console.WriteLine ("File name not available");
+				if (!String.IsNullOrEmpty (fileText))
+					Console.WriteLine ("File text:\n{0}\n", fileText);
+				else
+					Console.WriteLine ("No file text available");
 				Console.WriteLine ("********************************************************************");
 #endif
-				
 				throw new CompilationException (virtualPath != null ? virtualPath.Original : String.Empty, results, fileText);
 			}
 			

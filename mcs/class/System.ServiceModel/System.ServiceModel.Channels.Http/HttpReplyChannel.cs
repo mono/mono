@@ -28,9 +28,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IdentityModel.Selectors;
+using System.IdentityModel.Tokens;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Security;
 using System.Text;
 using System.Threading;
 
@@ -40,11 +43,22 @@ namespace System.ServiceModel.Channels.Http
 	{
 		HttpChannelListener<IReplyChannel> source;
 		RequestContext reqctx;
+		SecurityTokenAuthenticator security_token_authenticator;
+		SecurityTokenResolver security_token_resolver;
 
 		public HttpReplyChannel (HttpChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.source = listener;
+
+			if (listener.SecurityTokenManager != null) {
+				var str = new SecurityTokenRequirement () { TokenType = SecurityTokenTypes.UserName };
+				security_token_authenticator = listener.SecurityTokenManager.CreateSecurityTokenAuthenticator (str, out security_token_resolver);
+			}
+		}
+
+		internal HttpChannelListener<IReplyChannel> Source {
+			get { return source; }
 		}
 
 		public MessageEncoder Encoder {
@@ -139,6 +153,19 @@ namespace System.ServiceModel.Channels.Http
 			if (ctxi == null)
 				return true; // returning true, yet context is null. This happens at closing phase.
 
+			if (source.Source.AuthenticationScheme != AuthenticationSchemes.Anonymous) {
+				if (security_token_authenticator != null)
+					// FIXME: use return value?
+					try {
+						security_token_authenticator.ValidateToken (new UserNameSecurityToken (ctxi.User, ctxi.Password));
+					} catch (Exception) {
+						ctxi.ReturnUnauthorized ();
+					}
+				else {
+					ctxi.ReturnUnauthorized ();
+				}
+			}
+
 			Message msg = null;
 
 			if (ctxi.Request.HttpMethod == "POST") {
@@ -152,6 +179,8 @@ namespace System.ServiceModel.Channels.Http
 				msg.Headers.To = ctxi.Request.Url;
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctxi));
+
+			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref msg, source.Source.MaxReceivedMessageSize);
 
 			context = new HttpRequestContext (this, ctxi, msg);
 			reqctx = context;
@@ -210,6 +239,7 @@ namespace System.ServiceModel.Channels.Http
 					msg.Headers.Action = action;
 				}
 			}
+			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ctxi.Request.ClientIPAddress, ctxi.Request.ClientPort));
 
 			return msg;
 		}

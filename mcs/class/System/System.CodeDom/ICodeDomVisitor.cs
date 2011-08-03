@@ -35,9 +35,7 @@ namespace System.CodeDom {
 		void Visit (CodeBaseReferenceExpression o);
 		void Visit (CodeBinaryOperatorExpression o);
 		void Visit (CodeCastExpression o);
-#if NET_2_0
 		void Visit (CodeDefaultValueExpression o);
-#endif
 		void Visit (CodeDelegateCreateExpression o);
 		void Visit (CodeDelegateInvokeExpression o);
 		void Visit (CodeDirectionExpression o);

@@ -26,16 +26,10 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if MOONLIGHT
 moon-do-basic: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic
+	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw
 
 moon-do-basic-clean:
-	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic clean
+	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
 endif
 
 if ONLY_MOONLIGHT
@@ -106,7 +100,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2 $(tmpinst)/bin/al
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/mcs $(tmpinst)/bin/gmcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2 $(tmpinst)/bin/al
 
 # now a misnomer, but it'll go away soon enough.
 if ENABLE_NUNIT_TESTS
@@ -178,16 +172,22 @@ $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
 
+$(tmpinst)/bin/mcs: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe"'" "$$@"' >> $@ ; \
+	chmod +x $@
+
 $(tmpinst)/bin/gmcs: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_2_0/gmcs.exe"'" "$$@"' >> $@ ; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe -sdk:2"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 $(tmpinst)/bin/dmcs: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_4_0/dmcs.exe"'" "$$@"' >> $@ ; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe -sdk:4"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 $(tmpinst)/bin/ilasm: $(tmpinst)/bin/mono Makefile

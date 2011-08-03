@@ -1,4 +1,4 @@
-// cs0619-49.cs: `A.A(string[])' is obsolete: `!!!'
+// CS0619-49: `A.A(string[])' is obsolete: `!!!'
 // Line: 12
 
 class A: System.Attribute

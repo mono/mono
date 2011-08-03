@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 
 interface IContravariant<in T>

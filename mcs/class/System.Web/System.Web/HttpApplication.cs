@@ -211,11 +211,14 @@ namespace System.Web
 				if (modcoll != null)
 					return;
 
+				bool mustNullContext = context == null;
 				try {
 					HttpModulesSection modules;
 					modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
 					HttpContext saved = HttpContext.Current;
 					HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
+					if (context == null)
+						context = HttpContext.Current;
 					HttpModuleCollection coll = modules.LoadModules (this);
 					Interlocked.CompareExchange (ref modcoll, coll, null);
 					HttpContext.Current = saved;
@@ -227,6 +230,9 @@ namespace System.Web
 					}
 				} catch (Exception e) {
 					initialization_exception = e;
+				} finally {
+					if (mustNullContext)
+						context = null;
 				}
 			}
 		}
@@ -956,7 +962,13 @@ namespace System.Web
 				stop_processing = true;
 				PipelineDone ();
 			} catch (Exception e) {
-				ProcessError (e);
+				ThreadAbortException inner = e.InnerException as ThreadAbortException;
+				if (inner != null && FlagEnd.Value == inner.ExceptionState && !HttpRuntime.DomainUnloading) {
+					context.ClearError ();
+					Thread.ResetAbort ();
+				} else {
+					ProcessError (e);
+				}
 				stop_processing = true;
 				PipelineDone ();
 			}
@@ -1717,29 +1729,34 @@ namespace System.Web
 		bool RedirectCustomError (ref HttpException httpEx)
 		{
 			try {
-			if (!context.IsCustomErrorEnabledUnsafe)
-				return false;
+				if (!context.IsCustomErrorEnabledUnsafe)
+					return false;
 			
-			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");			
-			if (config == null) {
-				if (context.ErrorPage != null)
-					return RedirectErrorPage (context.ErrorPage);
+				CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");			
+				if (config == null) {
+					if (context.ErrorPage != null)
+						return RedirectErrorPage (context.ErrorPage);
 				
-				return false;
-			}
+					return false;
+				}
 			
-			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
-			string redirect = err == null ? null : err.Redirect;
-			if (redirect == null) {
-				redirect = context.ErrorPage;
+				CustomError err = config.Errors [context.Response.StatusCode.ToString()];
+				string redirect = err == null ? null : err.Redirect;
+				if (redirect == null) {
+					redirect = context.ErrorPage;
+					if (redirect == null)
+						redirect = config.DefaultRedirect;
+				}
+			
 				if (redirect == null)
-					redirect = config.DefaultRedirect;
-			}
-			
-			if (redirect == null)
-				return false;
-			
-			return RedirectErrorPage (redirect);
+					return false;
+
+				if (config.RedirectMode == CustomErrorsRedirectMode.ResponseRewrite) {
+					context.Server.Execute (redirect);
+					return true;
+				}
+				
+				return RedirectErrorPage (redirect);
 			}
 			catch (Exception ex) {
 				httpEx = HttpException.NewWithCode (500, String.Empty, ex, WebEventCodes.WebErrorOtherError);

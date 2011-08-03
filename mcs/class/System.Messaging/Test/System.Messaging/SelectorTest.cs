@@ -36,6 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Messaging
 {
 	[TestFixture]
+	// [Ignore]
 	public class SelectorTest
 	{
 		

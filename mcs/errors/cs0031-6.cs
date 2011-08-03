@@ -1,4 +1,4 @@
-// cs0031-6.cs: Constant value `999999999999999' cannot be converted to a `int'
+// CS0031: Constant value `999999999999999' cannot be converted to a `int'
 // Line: 9
 
 class X

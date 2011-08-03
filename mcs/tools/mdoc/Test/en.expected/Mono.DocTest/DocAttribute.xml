@@ -82,7 +82,7 @@
       </Docs>
     </Member>
     <Member MemberName="Property">
-      <MemberSignature Language="C#" Value="public Type Property { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type Property { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Type Property" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>

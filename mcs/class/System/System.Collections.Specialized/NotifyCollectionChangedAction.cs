@@ -22,12 +22,14 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized
 {
+#if !MOBILE
 	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+#endif
 	public enum NotifyCollectionChangedAction
 	{
 		Add,

@@ -30,10 +30,7 @@
 namespace System.Windows.Forms
 {
 	[Flags]
-#if NET_2_0
-	public 
-#endif
-	enum GetChildAtPointSkip
+	public enum GetChildAtPointSkip
 	{
 		None = 0,
 		Invisible = 1,

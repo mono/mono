@@ -176,7 +176,10 @@ namespace System.Web.UI.HtmlControls
 
 		public override string UniqueID {
 			get {
-				return base.UniqueID;
+				Control container = NamingContainer;
+				if (container == Page)
+					return ID;
+				return "aspnetForm";
 			}
 		}
 
@@ -236,22 +239,19 @@ namespace System.Web.UI.HtmlControls
 		{
 			/* Need to always render: method, action and id
 			 */
-			/* The name attribute is rendered _only_ if we're not in
-			   2.0 mode or if the xhtml conformance mode is set to
-			   Legacy for 2.0 according to http://msdn2.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlform.name.aspx
-			*/
 			
 			string action;
 			string customAction = Attributes ["action"];
 			Page page = Page;
-			HttpRequest req = page != null ? page.Request : null;
-			if (req == null)
-				throw new HttpException ("No current request, cannot continue rendering.");
+			HttpRequest req = page != null ? page.RequestInternal : null;
 #if !TARGET_J2EE
 			if (String.IsNullOrEmpty (customAction)) {
-				string file_path = req.ClientFilePath;
-				string current_path = req.CurrentExecutionFilePath;
-				if (file_path == current_path) {
+				string file_path = req != null ? req.ClientFilePath : null;
+				string current_path = req != null ? req.CurrentExecutionFilePath : null;
+
+				if (file_path == null)
+					action = Action;
+				else if (file_path == current_path) {
 					// Just the filename will do
 					action = UrlUtils.GetFile (file_path);
 				} else {
@@ -280,7 +280,8 @@ namespace System.Web.UI.HtmlControls
 				}
 			} else
 				action = customAction;
-			action += req.QueryStringRaw;
+			if (req != null)
+				action += req.QueryStringRaw;
 #else
 			// Allow the page to transform action to a portlet action url
 			if (String.IsNullOrEmpty (customAction)) {
@@ -292,13 +293,17 @@ namespace System.Web.UI.HtmlControls
 				action = customAction;
 
 #endif
-
-			XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as
-				XhtmlConformanceSection;
+			if (req != null) {
+				XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as XhtmlConformanceSection;
+				if (xhtml == null || xhtml.Mode != XhtmlConformanceMode.Strict)
+#if NET_4_0
+					if (RenderingCompatibilityLessThan40)
+#endif
+						// LAMESPEC: MSDN says the 'name' attribute is rendered only in
+						// Legacy mode, this is not true.
+						w.WriteAttribute ("name", Name);
+			}
 			
-			if (xhtml != null && xhtml.Mode == XhtmlConformanceMode.Legacy)
-				w.WriteAttribute ("name", Name);
-
 			w.WriteAttribute ("method", Method);
 			if (String.IsNullOrEmpty (customAction))
 				w.WriteAttribute ("action", action, true);

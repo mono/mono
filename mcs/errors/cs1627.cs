@@ -1,4 +1,4 @@
-// cs01627.cs: Expression expected after yield return
+// CS01627: Expression expected after yield return
 // Line: 10
 
 using System.Collections;

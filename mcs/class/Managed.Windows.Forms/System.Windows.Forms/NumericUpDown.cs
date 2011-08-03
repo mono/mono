@@ -38,11 +38,9 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
-#if NET_2_0
 	[DefaultBindingProperty ("Value")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class NumericUpDown : UpDownBase, ISupportInitialize {
 		#region Local Variables
 		private bool	suppress_validation;
@@ -55,15 +53,12 @@ namespace System.Windows.Forms {
 		private decimal	dvalue;
 		
 
-#if NET_2_0
 		NumericUpDownAccelerationCollection accelerations;
 //		private long buttonPressedTicks;
 		//private bool isSpinning;
-#endif
 		#endregion	// Local Variables
 
 		#region UIA FrameWork Events
-#if NET_2_0
 		static object UIAMinimumChangedEvent = new object ();
 
 		internal event EventHandler UIAMinimumChanged {
@@ -105,7 +100,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Public Constructors
@@ -122,87 +116,8 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
-		#region Private Methods
-		void wide_number_multiply_by_10(int[] number) {
-			long carry = 0;
-
-			for (int i=0; i < number.Length; i++) {
-				long multiplication = unchecked(carry + 10 * (long)(uint)number[i]);
-
-				carry = multiplication >> 32;
-
-				number[i] = unchecked((int)multiplication);
-			}
-		}
-
-		void wide_number_multiply_by_16(int[] number) {
-			int carry = 0;
-
-			for (int i=0; i < number.Length; i++) {
-				int multiplication = unchecked(carry | (number[i] << 4));
-
-				carry = (number[i] >> 28) & 0x0F;
-
-				number[i] = multiplication;
-			}
-		}
-
-		void wide_number_divide_by_16(int[] number) {
-			int carry = 0;
-
-			for (int i=number.Length - 1; i >= 0; i--) {
-				int division = unchecked(carry | ((number[i] >> 4) & 0x0FFFFFFF));
-
-				carry = (number[i] << 28);
-
-				number[i] = division;
-			}
-		}
-
-		bool wide_number_less_than(int[] left, int[] right) {
-			unchecked {
-				for (int i=left.Length - 1; i >= 0; i--) {
-					uint leftvalue = (uint)left[i];
-					uint rightvalue = (uint)right[i];
-
-					if (leftvalue > rightvalue)
-						return false;
-					if (leftvalue < rightvalue)
-						return true;
-				}
-			}
-
-			// equal
-			return false;
-		}
-
-		void wide_number_subtract(int[] subtrahend, int[] minuend) {
-			long carry = 0;
-
-			unchecked {
-				for (int i=0; i < subtrahend.Length; i++) {
-					long subtrahendvalue = (uint)subtrahend[i];
-					long minuendvalue = (uint)minuend[i];
-
-					long result = subtrahendvalue - minuendvalue + carry;
-
-					if (result < 0) {
-						carry = -1;
-						result -= int.MinValue;
-						result -= int.MinValue;
-					}
-					else
-						carry = 0;
-
-					subtrahend[i] = unchecked((int)result);
-				}
-			}
-		}
-		#endregion	// Private Methods
-
 		#region Public Instance Properties
 
-#if NET_2_0	
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public NumericUpDownAccelerationCollection Accelerations {
@@ -212,7 +127,6 @@ namespace System.Windows.Forms {
 				return accelerations;
 			}
 		}
-#endif
 
 		[DefaultValue(0)]
 		public int DecimalPlaces {
@@ -251,10 +165,8 @@ namespace System.Windows.Forms {
 
 				increment = value;
 
-#if NET_2_0
 				// UIA Framework Event: SmallChange Changed
 				OnUIASmallChangeChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -273,10 +185,8 @@ namespace System.Windows.Forms {
 				if (dvalue > maximum)
 					Value = maximum;
 
-#if NET_2_0
 				// UIA Framework Event: Maximum Changed
 				OnUIAMaximumChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -295,14 +205,11 @@ namespace System.Windows.Forms {
 				if (dvalue < minimum)
 					Value = minimum;
 
-#if NET_2_0
 				// UIA Framework Event: Minimum Changed
 				OnUIAMinimumChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -310,7 +217,6 @@ namespace System.Windows.Forms {
 			get { return Padding.Empty; }
 			set { }
 		}
-#endif
 
 		[Bindable(false)]
 		[Browsable(false)]
@@ -350,11 +256,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != dvalue) {
 					if (!suppress_validation && ((value < minimum) || (value > maximum))) {
-#if NET_2_0
 						throw new ArgumentOutOfRangeException ("value", "NumericUpDown.Value must be within the specified Minimum and Maximum values");
-#else
-						throw new ArgumentException ("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");						
-#endif
 					}
 
 					dvalue = value;
@@ -387,10 +289,8 @@ namespace System.Windows.Forms {
 
 			Value = Math.Max (minimum, unchecked (dvalue - increment));
 
-#if NET_2_0
 			// UIA Framework Event: DownButton Click
 			OnUIADownButtonClick (EventArgs.Empty);
-#endif
 		}
 
 		public override void UpButton() {
@@ -400,10 +300,8 @@ namespace System.Windows.Forms {
 
 			Value = Math.Min (maximum, unchecked (dvalue + increment));
 
-#if NET_2_0
 			// UIA Framework Event: UpButton Click
 			OnUIAUpButtonClick (EventArgs.Empty);
-#endif
 		}
 		#endregion	// Public Instance Methods
 
@@ -449,11 +347,7 @@ namespace System.Windows.Forms {
 				if (!hexadecimal) {
 					Value = Check (decimal.Parse (Text, CultureInfo.CurrentCulture));
 				} else {
-#if !NET_2_0
 					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 16)));
-#else
-					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 10)));
-#endif
 				}
 			}
 			catch { }
@@ -502,59 +396,10 @@ namespace System.Windows.Forms {
 				Text = dvalue.ToString (format_string, CultureInfo.CurrentCulture);
 
 			} else {
-				// Decimal.ToString doesn't know the "X" formatter, and
-				// converting it to an int is narrowing, so do it
-				// manually...
-
-				int[] bits = decimal.GetBits (dvalue);
-
-				bool negative = (bits[3] < 0);
-
-				int scale = (bits[3] >> 16) & 0x1F;
-
-				bits[3] = 0;
-
-				int[] radix = new int[4];
-
-				radix[0] = 1;
-
-				for (int i = 0; i < scale; i++)
-					wide_number_multiply_by_10 (radix);
-
-				int num_chars = 0;
-
-				while (!wide_number_less_than (bits, radix)) {
-					num_chars++;
-					wide_number_multiply_by_16 (radix);
-				}
-
-				if (num_chars == 0) {
-					Text = "0";
-				}
-
-				StringBuilder chars = new StringBuilder ();
-
-				if (negative)
-					chars.Append ('-');
-
-				for (int i = 0; i < num_chars; i++) {
-					int digit = 0;
-
-					wide_number_divide_by_16 (radix);
-
-					while (!wide_number_less_than (bits, radix)) { // greater than or equals
-						digit++;
-						wide_number_subtract (bits, radix);
-					}
-
-					if (digit < 10) {
-						chars.Append ((char) ('0' + digit));
-					} else {
-						chars.Append ((char) ('A' + digit - 10));
-					}
-				}
-
-				Text = chars.ToString ();
+				// Cast to Int64 to be able to use the "X" formatter.
+				// If the value is below Int64.MinValue or above Int64.MaxValue,
+				// then an OverflowException will be thrown, as with .NET.
+				Text = ((Int64)dvalue).ToString("X", CultureInfo.CurrentCulture);
 			}
 		}
 
@@ -564,7 +409,6 @@ namespace System.Windows.Forms {
 			UpdateEditText ();
 		}
 
-#if NET_2_0
 		protected override void OnLostFocus(EventArgs e) {
 			base.OnLostFocus(e);
 			if (UserEdit)
@@ -583,18 +427,15 @@ namespace System.Windows.Forms {
 //			isSpinning = true;
 			base.OnKeyDown (e);
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 
 		static object ValueChangedEvent = new object ();
 

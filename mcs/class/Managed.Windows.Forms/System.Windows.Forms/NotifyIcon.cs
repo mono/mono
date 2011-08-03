@@ -32,11 +32,7 @@ using System.Drawing.Text;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Text")]
-#if NET_2_0
 	[DefaultEvent("MouseDoubleClick")]
-#else
-	[DefaultEvent("MouseDown")]
-#endif
 	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class NotifyIcon : Component {
@@ -50,13 +46,11 @@ namespace System.Windows.Forms {
 		private bool			systray_active;
 		private ToolTip			tooltip;
 		private bool			double_click;
-#if NET_2_0
 		private string balloon_text;
 		private string balloon_title;
 		private ToolTipIcon balloon_icon;
 		private ContextMenuStrip	context_menu_strip;
 		private object			tag;
-#endif
 		#endregion	// Local Variables
 
 		#region NotifyIconWindow Class
@@ -81,9 +75,7 @@ namespace System.Windows.Forms {
 				MouseUp +=new MouseEventHandler(HandleMouseUp);
 				MouseMove +=new MouseEventHandler(HandleMouseMove);
 				ContextMenu = owner.context_menu;
-#if NET_2_0
 				ContextMenuStrip = owner.context_menu_strip;
-#endif
 			}
 
 			protected override CreateParams CreateParams {
@@ -125,9 +117,7 @@ namespace System.Windows.Forms {
 
 							case Msg.WM_LBUTTONDBLCLK: {
 								owner.OnDoubleClick (EventArgs.Empty);
-#if NET_2_0
 								owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 								return;
 							}
 
@@ -148,12 +138,10 @@ namespace System.Windows.Forms {
 
 							case Msg.WM_RBUTTONDBLCLK: {
 								owner.OnDoubleClick (EventArgs.Empty);
-#if NET_2_0
 								owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 								return;
 							}
-#if NET_2_0							
+
 							case Msg.NIN_BALLOONUSERCLICK: {
 								owner.OnBalloonTipClicked (EventArgs.Empty);
 								return;
@@ -169,7 +157,6 @@ namespace System.Windows.Forms {
 								owner.OnBalloonTipClosed (EventArgs.Empty);
 								return;
 							}
-#endif
 						}
 						return;
 					}
@@ -219,9 +206,7 @@ namespace System.Windows.Forms {
 			private void HandleDoubleClick (object sender, EventArgs e)
 			{
 				owner.OnDoubleClick (e);
-#if NET_2_0
 				owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 			}
 
 			private void HandleMouseDown (object sender, MouseEventArgs e)
@@ -242,7 +227,6 @@ namespace System.Windows.Forms {
 		#endregion	// NotifyIconWindow Class
 		
 		#region NotifyIconBalloonWindow Class
-#if NET_2_0
 		internal class BalloonWindow : Form 
 		{
 			private IntPtr owner;
@@ -398,7 +382,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 		#endregion  // NotifyIconBalloonWindow Class
 
 		#region Public Constructors
@@ -406,10 +389,8 @@ namespace System.Windows.Forms {
 			window = new NotifyIconWindow(this);
 			systray_active = false;
 
-#if NET_2_0			
 			balloon_title = "";
 			balloon_text = "";
-#endif
 		}
 
 		public NotifyIcon(System.ComponentModel.IContainer container) : this() {
@@ -417,7 +398,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Methods
-#if NET_2_0
 		public void ShowBalloonTip (int timeout)
 		{
 			ShowBalloonTip(timeout, balloon_title, balloon_text, balloon_icon);
@@ -427,11 +407,9 @@ namespace System.Windows.Forms {
 		{
 			XplatUI.SystrayBalloon(window.Handle, timeout, tipTitle, tipText, tipIcon);
 		}
-#endif
 		#endregion Public Methods
 		
 		#region Private Methods
-#if NET_2_0
 		private void OnBalloonTipClicked (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [BalloonTipClickedEvent]);
@@ -452,7 +430,7 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
+
 		private void OnClick (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ClickEvent]);
@@ -468,7 +446,6 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-#if NET_2_0
 		private void OnMouseClick (MouseEventArgs e)
 		{
 			MouseEventHandler eh = (MouseEventHandler)(Events[MouseClickEvent]);
@@ -482,7 +459,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		private void OnMouseDown (MouseEventArgs e)
 		{
@@ -497,13 +473,11 @@ namespace System.Windows.Forms {
 				if (context_menu != null) {
 					XplatUI.SetForegroundWindow (window.Handle);
 					context_menu.Show (window, new Point(e.X, e.Y));
-				} 
-#if NET_2_0
+				}
 				else if (context_menu_strip != null) {
 					XplatUI.SetForegroundWindow (window.Handle);
 					context_menu_strip.Show (window, new Point (e.X, e.Y), ToolStripDropDownDirection.AboveLeft);
 				}
-#endif
 			}
 
 			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
@@ -512,9 +486,7 @@ namespace System.Windows.Forms {
 
 			if (!double_click) {
 				OnClick (EventArgs.Empty);
-#if NET_2_0
 				OnMouseClick (e);
-#endif
 				double_click = false;
 			}
 		}
@@ -578,7 +550,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
-#if NET_2_0
 		[DefaultValue ("None")]
 		public ToolTipIcon BalloonTipIcon {
 			get { return this.balloon_icon; }
@@ -615,12 +586,9 @@ namespace System.Windows.Forms {
 				this.balloon_title = value;
 			}
 		}
-#endif
 		
 		[DefaultValue(null)]
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public ContextMenu ContextMenu {
 			get {
 				return context_menu;
@@ -634,7 +602,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (null)]
 		public ContextMenuStrip ContextMenuStrip {
 			get { return this.context_menu_strip; }
@@ -645,7 +612,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[Localizable(true)]
 		[DefaultValue(null)]
@@ -662,7 +628,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Localizable (false)]
 		[Bindable (true)]
 		[TypeConverter (typeof (StringConverter))]
@@ -675,7 +640,6 @@ namespace System.Windows.Forms {
 		[DefaultValue ("")]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 		[Localizable (true)]
 		public string Text {
 			get {
@@ -740,8 +704,6 @@ namespace System.Windows.Forms {
 		static object MouseDownEvent = new object ();
 		static object MouseMoveEvent = new object ();
 		static object MouseUpEvent = new object ();
-
-#if NET_2_0
 		static object BalloonTipClickedEvent = new object ();
 		static object BalloonTipClosedEvent = new object ();
 		static object BalloonTipShownEvent = new object ();
@@ -777,23 +739,14 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (MouseDoubleClickEvent, value); }
 			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
 		}
-#endif
 
-#if NET_2_0
 		[MWFCategory("Action")]
-#else
-		[Category("Action")]
-#endif
 		public event EventHandler Click {
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
 
-#if NET_2_0
 		[MWFCategory("Action")]
-#else
-		[Category("Action")]
-#endif
 		public event EventHandler DoubleClick {
 			add { Events.AddHandler (DoubleClickEvent, value); }
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }

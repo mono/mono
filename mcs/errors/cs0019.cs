@@ -1,4 +1,4 @@
-// cs0019.cs: Operator `+' cannot be applied to operands of type `Foo' and `int'
+// CS0019: Operator `+' cannot be applied to operands of type `Foo' and `int'
 // Line : 11
 
 public class Foo {

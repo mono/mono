@@ -36,17 +36,11 @@ using System.Collections;
 
 namespace System.ComponentModel.Design
 {
-#if NET_2_0
 	public class ServiceContainer : IServiceContainer, IServiceProvider, IDisposable
-#else
-	public sealed class ServiceContainer : IServiceContainer, IServiceProvider
-#endif
 	{
 		private IServiceProvider parentProvider;
 		private Hashtable services;
-#if NET_2_0
 		private bool _disposed;
-#endif
 		
 		public ServiceContainer()
 			: this (null)
@@ -76,12 +70,7 @@ namespace System.ComponentModel.Design
 			AddService (serviceType, callback, false);
 		}
 
-#if NET_2_0
-		public virtual
-#else
-		public
-#endif
-		void AddService (Type serviceType,
+		public virtual void AddService (Type serviceType,
 					object serviceInstance,
 					bool promote)
 		{
@@ -103,11 +92,7 @@ namespace System.ComponentModel.Design
 			Services.Add (serviceType, serviceInstance);
 		}
 
-#if NET_2_0
 		public virtual
-#else
-		public
-#endif
 		void AddService (Type serviceType,
 					ServiceCreatorCallback callback,
 					bool promote)
@@ -135,11 +120,7 @@ namespace System.ComponentModel.Design
 			RemoveService (serviceType, false);
 		}
 
-#if NET_2_0
 		public virtual void RemoveService (Type serviceType, bool promote)
-#else
-		public void RemoveService (Type serviceType, bool promote)
-#endif
 		{
 			if (promote && parentProvider != null) {
 				IServiceContainer container = (IServiceContainer)
@@ -153,11 +134,7 @@ namespace System.ComponentModel.Design
 			Services.Remove (serviceType);
 		}
 
-#if NET_2_0
 		public virtual
-#else
-		public
-#endif
 		object GetService (Type serviceType)
 		{
 			object result = null;
@@ -184,20 +161,13 @@ namespace System.ComponentModel.Design
 			return result;
 		}
 
-#if NET_2_0
 		protected virtual
-#endif
 		Type [] DefaultServices {
 			get {
-#if NET_2_0
 				return new Type [] { typeof (IServiceContainer), typeof (ServiceContainer)};
-#else
-				return new Type [] { typeof (IServiceContainer) };
-#endif
 			}
 		}
 
-#if NET_2_0
 		public void Dispose ()
 		{
 			this.Dispose (true);
@@ -220,6 +190,5 @@ namespace System.ComponentModel.Design
 				_disposed = true;
 			}
 		}
-#endif
 	}
 }

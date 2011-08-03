@@ -503,7 +503,7 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public StringBuilder Clear ()
 		{
 			_length = 0;

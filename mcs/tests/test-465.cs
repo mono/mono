@@ -1,4 +1,4 @@
-// Compiler options: -res:test-465.cs
+// Compiler options: -res:test-465.cs,
 
 using System.Reflection;
 using System;

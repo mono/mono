@@ -388,9 +388,17 @@ namespace Mono.Options
 				throw new ArgumentOutOfRangeException ("maxValueCount");
 
 			this.prototype   = prototype;
-			this.names       = prototype.Split ('|');
 			this.description = description;
 			this.count       = maxValueCount;
+			this.names       = (this is OptionSet.Category)
+				// append GetHashCode() so that "duplicate" categories have distinct
+				// names, e.g. adding multiple "" categories should be valid.
+				? new[]{prototype + this.GetHashCode ()}
+				: prototype.Split ('|');
+
+			if (this is OptionSet.Category)
+				return;
+
 			this.type        = ParsePrototype ();
 
 			if (this.count == 0 && type != OptionValueType.None)
@@ -762,6 +770,31 @@ namespace Mono.Options
 			}
 		}
 
+		public OptionSet Add (string header)
+		{
+			if (header == null)
+				throw new ArgumentNullException ("header");
+			Add (new Category (header));
+			return this;
+		}
+
+		internal sealed class Category : Option {
+
+			// Prototype starts with '=' because this is an invalid prototype
+			// (see Option.ParsePrototype(), and thus it'll prevent Category
+			// instances from being accidentally used as normal options.
+			public Category (string description)
+				: base ("=:Category:= " + description, description)
+			{
+			}
+
+			protected override void OnParseComplete (OptionContext c)
+			{
+				throw new NotSupportedException ("Category.OnParseComplete should not be invoked.");
+			}
+		}
+
+
 		public new OptionSet Add (Option option)
 		{
 			base.Add (option);
@@ -1109,11 +1142,20 @@ namespace Mono.Options
 		}
 
 		private const int OptionWidth = 29;
+		private const int Description_FirstWidth  = 80 - OptionWidth;
+		private const int Description_RemWidth    = 80 - OptionWidth - 2;
 
 		public void WriteOptionDescriptions (TextWriter o)
 		{
 			foreach (Option p in this) {
 				int written = 0;
+
+				Category c = p as Category;
+				if (c != null) {
+					WriteDescription (o, p.Description, "", 80, 80);
+					continue;
+				}
+
 				if (!WriteOptionPrototype (o, p, ref written))
 					continue;
 
@@ -1124,14 +1166,8 @@ namespace Mono.Options
 					o.Write (new string (' ', OptionWidth));
 				}
 
-				bool indent = false;
-				string prefix = new string (' ', OptionWidth+2);
-				foreach (string line in GetLines (localizer (GetDescription (p.Description)))) {
-					if (indent) 
-						o.Write (prefix);
-					o.WriteLine (line);
-					indent = true;
-				}
+				WriteDescription (o, p.Description, new string (' ', OptionWidth+2),
+						Description_FirstWidth, Description_RemWidth);
 			}
 
 			foreach (ArgumentSource s in sources) {
@@ -1155,14 +1191,19 @@ namespace Mono.Options
 					o.Write (new string (' ', OptionWidth));
 				}
 
-				bool indent = false;
-				string prefix = new string (' ', OptionWidth+2);
-				foreach (string line in GetLines (localizer (GetDescription (s.Description)))) {
-					if (indent) 
-						o.Write (prefix);
-					o.WriteLine (line);
-					indent = true;
-				}
+				WriteDescription (o, s.Description, new string (' ', OptionWidth+2),
+						Description_FirstWidth, Description_RemWidth);
+			}
+		}
+
+		void WriteDescription (TextWriter o, string value, string prefix, int firstWidth, int remWidth)
+		{
+			bool indent = false;
+			foreach (string line in GetLines (localizer (GetDescription (value)), firstWidth, remWidth)) {
+				if (indent)
+					o.Write (prefix);
+				o.WriteLine (line);
+				indent = true;
 			}
 		}
 
@@ -1289,11 +1330,9 @@ namespace Mono.Options
 			return sb.ToString ();
 		}
 
-		private static IEnumerable<string> GetLines (string description)
+		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth)
 		{
-			return StringCoda.WrappedLines (description, 
-					80 - OptionWidth, 
-					80 - OptionWidth - 2);
+			return StringCoda.WrappedLines (description, firstWidth, remWidth);
 		}
 	}
 }

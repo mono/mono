@@ -1,4 +1,4 @@
-// cs0229.cs: Ambiguity between `IList.Count' and `ICounter.Count'
+// CS0229: Ambiguity between `IList.Count' and `ICounter.Count'
 // Line: 24
 
 using System;

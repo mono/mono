@@ -57,6 +57,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			new WebHttpDispatchOperationSelector (se);
 		}
 
+		#region SelectOperation
+
 		[Test]
 		public void SelectOperation ()
 		{
@@ -64,14 +66,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void SelectOperation2 ()
 		{
 			SelectOperationCore (Create2 ());
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void SelectOperation3 ()
 		{
 			ContractDescription cd = ContractDescription.GetContract (typeof (MyService2));
@@ -135,12 +135,17 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void SelectOperationCheckExistingProperty ()
 		{
 			var d = Create ();
-			var msg = Message.CreateMessage (MessageVersion.None, "http://temuri.org/MyService/Echo");
+			var msg = Message.CreateMessage (MessageVersion.None, "http://temuri.org/MyService/Echo"); // heh, I mistyped it and turned to prove that Action does not matter.
+			msg.Headers.To = new Uri ("http://localhost:8080/Echo");
+
+			// LAMESPEC: .NET does returns String.Empty, while we return the name of the operation (as IOperationSelector.SelectOperation is expected to do!)
+			// Assert.AreEqual (String.Empty, d.SelectOperation (ref msg), "#1");
 			d.SelectOperation (ref msg);
+
+			// The second invocation should raise the expected exception
 			d.SelectOperation (ref msg);
 		}
 
@@ -209,5 +214,63 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			//se.Contract.Operations [0].Behaviors.Add (new WebGetAttribute ());
 			return new MySelector (se);
 		}
+
+		#endregion
+
+		#region "bug #656020"
+
+		[DataContract]
+		public class User
+		{
+			[DataMember]
+			public string Name { get; set; }
+		}
+
+		[ServiceContract]
+		interface IHello
+		{
+			[WebGet(UriTemplate = "{name}?age={age}&blah={blah}")]
+			[OperationContract]
+			string SayHi (string name, int age, string blah);
+
+			[WebInvoke(UriTemplate = "blah")]
+			[OperationContract]
+			string SayHi2 (User user);
+		}
+
+		class Hello : IHello
+		{
+			public string SayHi (string name, int age, string blah)
+			{
+				return string.Format ("Hi {0}: {1}, {2}", name, age, blah == null);
+			}
+		
+			public string SayHi2 (User user)
+			{
+				return string.Format ("Hi {0}.", user.Name);
+			}
+		}
+
+		[Test]
+		public void WebMessageFormats ()
+		{
+			var host = new WebServiceHost (typeof (Hello));
+			host.AddServiceEndpoint (typeof (IHello), new WebHttpBinding (), "http://localhost:37564/");
+			host.Open ();
+			try {
+				// run client
+				using (ChannelFactory<IHello> factory = new ChannelFactory<IHello> (new WebHttpBinding (), "http://localhost:37564/"))
+				{
+					factory.Endpoint.Behaviors.Add (new WebHttpBehavior ());
+					IHello h = factory.CreateChannel ();
+					//Console.WriteLine(h.SayHi("Joe", 42, null));
+					Assert.AreEqual ("Hi Joe.", h.SayHi2 (new User { Name = "Joe" }), "#1");
+				}
+			} finally {
+				host.Close ();
+			}
+		}
+		
+		#endregion
 	}
 }

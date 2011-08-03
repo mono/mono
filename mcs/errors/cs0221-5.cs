@@ -1,4 +1,4 @@
-// cs0221.cs: Constant value `-1' cannot be converted to a `byte' (use `unchecked' syntax to override)
+// CS0221: Constant value `-1' cannot be converted to a `byte' (use `unchecked' syntax to override)
 // Line: 11
 
 using System;

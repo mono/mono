@@ -535,27 +535,20 @@ namespace System.IO
 
 		int ReadInternal (byte [] dest, int offset, int count)
 		{
-			int copied = 0;
-
 			int n = ReadSegment (dest, offset, count);
-			copied += n;
-			count -= n;
-			
-			if (count == 0) {
-				/* If there was already enough
-				 * buffered, no need to read
-				 * more from the file.
-				 */
-				return (copied);
+			if (n == count) {
+				return count;
 			}
-
+			
+			int copied = n;
+			count -= n;
 			if (count > buf_size) {
 				/* Read as much as we can, up
 				 * to count bytes
 				 */
 				FlushBuffer();
 				n = ReadData (handle, dest,
-					      offset+copied,
+					      offset+n,
 					      count);
 			
 				/* Make the next buffer read
@@ -569,9 +562,7 @@ namespace System.IO
 						 count);
 			}
 
-			copied += n;
-
-			return copied;
+			return copied + n;
 		}
 
 		delegate int ReadDelegate (byte [] buffer, int offset, int count);
@@ -845,7 +836,7 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();
@@ -971,18 +962,15 @@ namespace System.IO
 
 		private int ReadSegment (byte [] dest, int dest_offset, int count)
 		{
-			if (count > buf_length - buf_offset) {
-				count = buf_length - buf_offset;
-			}
+			count = Math.Min (count, buf_length - buf_offset);
 			
 			if (count > 0) {
-				Buffer.BlockCopy (buf, buf_offset,
-						  dest, dest_offset,
-						  count);
+				// Use the fastest method, all range checks has been done
+				Buffer.BlockCopyInternal (buf, buf_offset, dest, dest_offset, count);
 				buf_offset += count;
 			}
 			
-			return(count);
+			return count;
 		}
 
 		private int WriteSegment (byte [] src, int src_offset,
@@ -1141,23 +1129,25 @@ namespace System.IO
 		static byte[] buf_recycle;
 		static readonly object buf_recycle_lock = new object ();
 
+		private byte [] buf;			// the buffer
+		private string name = "[Unknown]";	// name of file.
+
+		SafeFileHandle safeHandle;              // set only when using one of the
+							// constructors taking SafeFileHandle
+
+		private long append_startpos;
+		IntPtr handle;				// handle to underlying file
+
 		private FileAccess access;
 		private bool owner;
 		private bool async;
 		private bool canseek;
-		private long append_startpos;
 		private bool anonymous;
+		private bool buf_dirty;			// true if buffer has been written to
 
-		private byte [] buf;			// the buffer
 		private int buf_size;			// capacity in bytes
 		private int buf_length;			// number of valid bytes in buffer
 		private int buf_offset;			// position of next byte
-		private bool buf_dirty;			// true if buffer has been written to
 		private long buf_start;			// location of buffer in file
-		private string name = "[Unknown]";	// name of file.
-
-		IntPtr handle;				// handle to underlying file
-		SafeFileHandle safeHandle;              // set only when using one of the
-							// constructors taking SafeFileHandle
 	}
 }

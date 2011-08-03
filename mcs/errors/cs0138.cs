@@ -8,6 +8,6 @@ class A
 {
 	static void Main ()
 	{
-		Console.WriteLine ("Test cs0138");
+		Console.WriteLine ("Test CS0138");
 	}
 }

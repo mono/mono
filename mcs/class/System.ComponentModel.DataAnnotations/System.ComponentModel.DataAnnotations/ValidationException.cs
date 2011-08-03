@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2011 Novell Inc. http://novell.com
 //
 
 //
@@ -63,8 +63,12 @@ namespace System.ComponentModel.DataAnnotations
 		}
 #if NET_4_0
 		public ValidationException (ValidationResult validationResult, ValidationAttribute validatingAttribute, object value)
+			: this (validationResult != null ? validationResult.ErrorMessage : null, validatingAttribute, value)
 		{
+			this.ValidationResult = validationResult;
 		}
+
+		public ValidationResult ValidationResult { get; private set; }
 #endif
 		public ValidationAttribute ValidationAttribute { get; private set; }
 		public object Value { get; private set; }

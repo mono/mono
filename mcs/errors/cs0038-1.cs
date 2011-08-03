@@ -1,4 +1,4 @@
-// cs0038-1.cs: Cannot access a nonstatic member of outer type `A' via nested type `C.N'
+// CS0038: Cannot access a nonstatic member of outer type `A' via nested type `C.N'
 // Line: 12
 
 class A {

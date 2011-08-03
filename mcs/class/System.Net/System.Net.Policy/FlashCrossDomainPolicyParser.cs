@@ -167,8 +167,11 @@ namespace System.Net.Policy {
 				while (!reader.EOF) {
 					reader.ReadStartElement ("cross-domain-policy", String.Empty);
 					for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-						if (reader.NodeType != XmlNodeType.Element)
-							throw new XmlException (String.Format ("Unexpected cross-domain-policy content: {0}", reader.NodeType));
+						if (reader.NodeType != XmlNodeType.Element) {
+							reader.Skip ();
+							continue;
+						}
+
 						switch (reader.LocalName) {
 						case "site-control":
 							cdp.SiteControl = GetSiteControl (reader);

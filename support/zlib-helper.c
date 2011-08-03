@@ -42,6 +42,7 @@ gint CloseZStream (ZStream *zstream);
 gint Flush (ZStream *stream);
 gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
 gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
+static gint flush_internal (ZStream *stream, gboolean is_final);
 
 static void *
 z_alloc (void *opaque, gsize nitems, gsize item_size)
@@ -106,7 +107,7 @@ CloseZStream (ZStream *zstream)
 		if (zstream->stream->total_in > 0) {
 			do {
 				status = deflate (zstream->stream, Z_FINISH);
-				flush_status = Flush (zstream);
+				flush_status = flush_internal (zstream, TRUE);
 			} while (status == Z_OK); /* We want Z_STREAM_END or error here here */
 			if (status == Z_STREAM_END)
 				status = flush_status;
@@ -132,20 +133,33 @@ write_to_managed (ZStream *stream)
 	if (zs->avail_out != BUFFER_SIZE) {
 		n = stream->func (stream->buffer, BUFFER_SIZE - zs->avail_out, stream->gchandle);
 		zs->next_out = stream->buffer;
-		zs->avail_out =  BUFFER_SIZE;
+		zs->avail_out = BUFFER_SIZE;
 		if (n < 0)
 			return IO_ERROR;
 	}
 	return 0;
 }
 
-gint
-Flush (ZStream *stream)
+static gint
+flush_internal (ZStream *stream, gboolean is_final)
 {
+	gint status;
+
 	if (!stream->compress)
 		return 0;
 
+	if (!is_final) {
+		status = deflate (stream->stream, Z_PARTIAL_FLUSH);
+		if (status != Z_OK && status != Z_STREAM_END)
+			return status;
+	}
 	return write_to_managed (stream);
+}
+
+gint
+Flush (ZStream *stream)
+{
+	return flush_internal (stream, FALSE);
 }
 
 gint

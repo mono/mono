@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-061</name>
+    </assembly>
+    <members>
+        <member name="T:Interface">
+            <summary>summary</summary>
+        </member>
+        <member name="P:Interface.Item(System.Int32)">
+            <summary>Problem!</summary>
+        </member>
+    </members>
+</doc>

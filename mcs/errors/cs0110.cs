@@ -1,4 +1,4 @@
-// cs0110.cs: The evaluation of the constant value for `A.B.C.X' involves a circular definition
+// CS0110: The evaluation of the constant value for `A.B.C.X' involves a circular definition
 // Line: 9
 
 class A {

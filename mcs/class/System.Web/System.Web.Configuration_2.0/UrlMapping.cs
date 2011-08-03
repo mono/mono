@@ -90,7 +90,7 @@ namespace System.Web.Configuration {
 			internal set { base [urlProp] = value;}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

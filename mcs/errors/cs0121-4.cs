@@ -1,4 +1,4 @@
-// cs0121-4.cs: The call is ambiguous between the following methods or properties: `X.Add(float, float, float)' and `X.Add(params decimal[])'
+// CS0121: The call is ambiguous between the following methods or properties: `X.Add(float, float, float)' and `X.Add(params decimal[])'
 // Line: 7
 
 class X {

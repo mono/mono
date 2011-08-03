@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Xml.Schema;
@@ -150,19 +151,24 @@ namespace System.Xml.Serialization {
 		{
 //			Reset ();	Disabled. See ChangeLog
 
-			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
+			ArrayList mapping = new ArrayList ();
 			for (int n=0; n<members.Length; n++)
 			{
+				if (members[n].XmlAttributes.XmlIgnore) continue;
 				XmlTypeMapMember mapMem = CreateMapMember (null, members[n], ns);
-				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, false);
+				mapMem.GlobalIndex = n;
+				mapMem.CheckOptionalValueType (members);
+				mapping.Add (new XmlMemberMapping (members[n].MemberName, ns, mapMem, false));
 			}
 			elementName = XmlConvert.EncodeLocalName (elementName);
-			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, mapping);
+			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, (XmlMemberMapping[])mapping.ToArray (typeof(XmlMemberMapping)));
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+#if !NET_2_1
 			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, extraTypes);
 			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
+#endif
 			return mps;
 		}
 
@@ -230,8 +236,10 @@ namespace System.Xml.Serialization {
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
+#if !NET_2_1
 				map.Source = new XmlTypeSerializationSource (typeData.Type, root, attributeOverrides, defaultNamespace, extraTypes);
 				if (allowPrivateTypes) map.Source.CanBeGenerated = false;
+#endif
 				return map;
 			} catch (InvalidOperationException ex) {
 				throw new InvalidOperationException (string.Format (CultureInfo.InvariantCulture,
@@ -340,7 +348,18 @@ namespace System.Xml.Serialization {
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
 
-			ICollection members = GetReflectionMembers (type);
+			var members = GetReflectionMembers (type);
+			bool? isOrderExplicit = null;
+			foreach (XmlReflectionMember rmember in members)
+			{
+				if (isOrderExplicit == null)
+					isOrderExplicit = rmember.XmlAttributes.Order >= 0;
+				else if (isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
+					throw new InvalidOperationException ("Inconsistent XML sequence was detected. If there are XmlElement/XmlArray/XmlAnyElement attributes with explicit Order, then every other member must have an explicit order too.");
+			}
+			if (isOrderExplicit == true)
+				members.Sort ((m1, m2) => m1.XmlAttributes.Order - m2.XmlAttributes.Order);
+
 			foreach (XmlReflectionMember rmember in members)
 			{
 				string ns = map.XmlTypeNamespace;
@@ -397,8 +416,10 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mem = classMap.XmlTextCollector;
 				if (mem.TypeData.Type != typeof(string) && 
 				   mem.TypeData.Type != typeof(string[]) && 
-				   mem.TypeData.Type != typeof(object[]) && 
-				   mem.TypeData.Type != typeof(XmlNode[]))
+#if !MOONLIGHT
+				   mem.TypeData.Type != typeof(XmlNode[]) && 
+#endif
+				   mem.TypeData.Type != typeof(object[]))
 				   
 					throw new InvalidOperationException (String.Format (errSimple2, map.TypeData.TypeName, mem.Name, mem.TypeData.TypeName));
 			}
@@ -609,7 +630,16 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;
 		}
-
+#if MOONLIGHT
+		// Enum.GetNames is not available in SL API
+		public static System.Collections.Generic.IEnumerable<string> GetEnumNames (Type type)
+		{
+			System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string> ();
+			foreach (FieldInfo fi in type.GetFields (BindingFlags.Static | BindingFlags.Public))
+				names.Add (fi.Name);
+			return names;
+		}
+#endif
 		XmlTypeMapping ImportEnumMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
 			Type type = typeData.Type;
@@ -623,10 +653,13 @@ namespace System.Xml.Serialization {
 			map.IsNullable = false;
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
-			string [] names = Enum.GetNames (type);
 			ArrayList members = new ArrayList();
-			foreach (string name in names)
-			{
+#if MOONLIGHT
+			foreach (string name in GetEnumNames (type)) {
+#else
+			string [] names = Enum.GetNames (type);
+			foreach (string name in names) {
+#endif
 				FieldInfo field = type.GetField (name);
 				string xmlName = null;
 				if (field.IsDefined(typeof(XmlIgnoreAttribute), false))
@@ -668,7 +701,7 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		ICollection GetReflectionMembers (Type type)
+		List<XmlReflectionMember> GetReflectionMembers (Type type)
 		{
 			// First we want to find the inheritance hierarchy in reverse order.
 			Type currentType = type;
@@ -736,7 +769,7 @@ namespace System.Xml.Serialization {
 				propList.Insert(currentIndex++, prop);
 			}
 #endif
-			ArrayList members = new ArrayList();
+			var members = new List<XmlReflectionMember>();
 			int fieldIndex=0;
 			int propIndex=0;
 			// We now step through the type hierarchy from the base (object) through
@@ -771,7 +804,10 @@ namespace System.Xml.Serialization {
 						XmlAttributes atts = attributeOverrides[type, prop.Name];
 						if (atts == null) atts = new XmlAttributes (prop);
 						if (atts.XmlIgnore) continue;
-						if (!prop.CanWrite && (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray)) continue;
+						if (!prop.CanWrite) {
+							if (prop.PropertyType.IsGenericType && TypeData.GetGenericListItemType (prop.PropertyType) == null) continue; // check this before calling GetTypeData() which raises error for missing Add(). See bug #704813.
+							if (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray) continue;
+						}
 						XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
 						member.DeclaringType = prop.DeclaringType;
 						members.Add(member);
@@ -779,7 +815,8 @@ namespace System.Xml.Serialization {
 					else break;
 				}
 			}
-			return members;		
+			
+			return members;
 		}
 		
 		private XmlTypeMapMember CreateMapMember (Type declaringType, XmlReflectionMember rmember, string defaultNamespace)
@@ -796,6 +833,7 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("XmlArrayAttribute can be applied to members of array or collection type.");
 			}
 
+#if !MOONLIGHT
 			if (atts.XmlAnyAttribute != null)
 			{
 				if ( (rmember.MemberType.FullName == "System.Xml.XmlAttribute[]") ||
@@ -806,7 +844,9 @@ namespace System.Xml.Serialization {
 				else
 					throw new InvalidOperationException ("XmlAnyAttributeAttribute can only be applied to members of type XmlAttribute[] or XmlNode[]");
 			}
-			else if (atts.XmlAnyElements != null && atts.XmlAnyElements.Count > 0)
+			else
+#endif
+			if (atts.XmlAnyElements != null && atts.XmlAnyElements.Count > 0)
 			{
 				// no XmlNode type check is done here (seealso: bug #553032).
 				XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement();
@@ -892,6 +932,7 @@ namespace System.Xml.Serialization {
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
 					elem.Form = (atts.XmlArray != null) ? atts.XmlArray.Form : XmlSchemaForm.Qualified;
+					elem.ExplicitOrder = (atts.XmlArray != null) ? atts.XmlArray.Order : -1;
 					// This is a bit tricky, but is done
 					// after filling descendant members, so
 					// that array items could be serialized
@@ -974,6 +1015,7 @@ namespace System.Xml.Serialization {
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.IsNullable = att.IsNullable;
+				elem.ExplicitOrder = att.Order;
 
 				if (elem.IsNullable && !elem.TypeData.IsNullable)
 					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName + " in member '" + defaultName + "'");
@@ -1009,7 +1051,7 @@ namespace System.Xml.Serialization {
 							+ " enumeration value '{1}' for element '{1} from"
 							+ " namespace '{2}'.", choiceEnumType, elem.ElementName,
 							elem.Namespace));
-					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname);
+					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname, false);
 				}
 					
 				list.Add (elem);
@@ -1023,6 +1065,7 @@ namespace System.Xml.Serialization {
 
 			ImportTextElementInfo (list, rmember.MemberType, member, atts, defaultNamespace);
 
+#if !MOONLIGHT // no practical anyElement support
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
@@ -1038,8 +1081,10 @@ namespace System.Xml.Serialization {
 					if (att.Namespace != null) 
 						throw new InvalidOperationException ("The element " + rmember.MemberName + " has been attributed with an XmlAnyElementAttribute and a namespace '" + att.Namespace + "', but no name. When a namespace is supplied, a name is also required. Supply a name or remove the namespace.");
 				}
+				elem.ExplicitOrder = att.Order;
 				list.Add (elem);
 			}
+#endif
 			return list;
 		}
 
@@ -1055,7 +1100,9 @@ namespace System.Xml.Serialization {
 					}
 					defaultType = atts.XmlText.Type;
 				}
+#if !MOONLIGHT
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
+#endif
 
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
 
@@ -1113,11 +1160,15 @@ namespace System.Xml.Serialization {
 			if (defaultValue == DBNull.Value || typeData.SchemaType != SchemaTypes.Enum)
 				return defaultValue;
 
+#if MOONLIGHT
+			string namedValue = (defaultValue as Enum).ToString ("g");
+			string decimalValue = (defaultValue as Enum).ToString ("d");
+#else
 			// get string representation of enum value
 			string namedValue = Enum.Format (typeData.Type, defaultValue, "g");
 			// get decimal representation of enum value
 			string decimalValue = Enum.Format (typeData.Type, defaultValue, "d");
-
+#endif
 			// if decimal representation matches string representation, then
 			// the value is not defined in the enum type (as the "g" format
 			// will return the decimal equivalent of the value if the value

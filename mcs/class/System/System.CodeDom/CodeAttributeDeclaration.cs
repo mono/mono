@@ -40,9 +40,7 @@ namespace System.CodeDom
 	{
 		private string name;
 		private CodeAttributeArgumentCollection arguments;
-#if NET_2_0
 		private CodeTypeReference attribute;
-#endif
 
 		//
 		// Constructors
@@ -62,7 +60,6 @@ namespace System.CodeDom
 			Arguments.AddRange (arguments);
 		}
 
-#if NET_2_0
 		public CodeAttributeDeclaration (CodeTypeReference attributeType)
 		{
 			attribute = attributeType;
@@ -79,7 +76,6 @@ namespace System.CodeDom
 			}
 			Arguments.AddRange (arguments);
 		}
-#endif
 
 		//
 		// Properties
@@ -103,16 +99,12 @@ namespace System.CodeDom
 			}
 			set {
 				name = value;
-#if NET_2_0
 				attribute = new CodeTypeReference (name);
-#endif
 			}
 		}
 
-#if NET_2_0
 		public CodeTypeReference AttributeType {
 			get { return attribute; }
 		}
-#endif
 	}
 }

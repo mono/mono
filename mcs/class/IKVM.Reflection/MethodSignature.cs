@@ -38,7 +38,7 @@ namespace IKVM.Reflection
 		private readonly CallingConventions callingConvention;
 		private readonly int genericParamCount;
 
-		private MethodSignature(Type returnType, Type[] parameterTypes, Type[][][] modifiers, CallingConventions callingConvention, int genericParamCount)
+		internal MethodSignature(Type returnType, Type[] parameterTypes, Type[][][] modifiers, CallingConventions callingConvention, int genericParamCount)
 		{
 			this.returnType = returnType;
 			this.parameterTypes = parameterTypes;
@@ -255,6 +255,11 @@ namespace IKVM.Reflection
 		internal CallingConventions CallingConvention
 		{
 			get { return callingConvention; }
+		}
+
+		internal int GenericParameterCount
+		{
+			get { return genericParamCount; }
 		}
 
 		private sealed class Binder : IGenericBinder

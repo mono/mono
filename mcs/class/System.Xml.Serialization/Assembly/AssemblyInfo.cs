@@ -55,7 +55,7 @@ using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../silverlight.pub")]
+[assembly: AssemblyKeyFile ("../winfx.pub")]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]

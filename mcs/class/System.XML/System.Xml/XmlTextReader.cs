@@ -2925,11 +2925,6 @@ namespace System.Xml
 				case -1:
 					throw NotWFError ("Unexpected end of xml.");
 				case '<':
-					if (i + 1 == length)
-						// if it does not end here,
-						// it cannot store another
-						// character, so stop here.
-						return i;
 					Advance (c);
 					if (PeekChar () != '/') {
 						nestLevel++;

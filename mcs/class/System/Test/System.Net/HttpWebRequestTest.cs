@@ -2112,6 +2112,20 @@ namespace MonoTests.System.Net
 			Assert.AreEqual(data64KB, received);
 		}
 
+		/*
+		Invalid test: it does not work on linux.
+		[pid 30973] send(9, "POST / HTTP/1.1\r\nContent-Length:"..., 89, 0) = 89
+		Abort set
+		[pid 30970] send(16, "HTTP/1.1 200 OK\r\nServer: Mono-HT"..., 133, 0) = 133
+		Calling abort
+		[pid 30970] close(16)                   = 0
+		Closing!!!
+		[pid 30980] send(9, "\213t\326\350\312u\36n\234\351\225L\r\243a\200\226\371\350F\271~oZ\32\270\24\226z4\211\345"..., 65536, 0) = 65536
+		Writing...
+		[pid 30966] close(4)                    = 0
+		OK
+		 *
+		 The server sideis closed (FD 16) and the send on the client side (FD 9) succeeds.
 		[Test]
 		[Category("NotWorking")]
 		public void WriteServerAborts ()
@@ -2139,6 +2153,7 @@ namespace MonoTests.System.Net
 				c.Response.Abort();
 			});
 		}
+		**/
 
 		[Test]
 		public void Read ()
@@ -2312,6 +2327,104 @@ namespace MonoTests.System.Net
 			}
 		}
 
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = null;
+		}
+
+		[Test]
+		public void NoHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			Assert.AreEqual (req.Host, "go-mono.com");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void EmptyHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "";
+		}
+
+		[Test]
+		public void HostAndPort ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:80");
+			Assert.AreEqual ("go-mono.com", req.Host, "#01");
+			req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:9000");
+			Assert.AreEqual ("go-mono.com:9000", req.Host, "#02");
+		}
+
+		[Test]
+		public void PortRange ()
+		{
+			for (int i = 0; i < 65536; i++) {
+				if (i == 80)
+					continue;
+				string s = i.ToString ();
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:" + s);
+				Assert.AreEqual ("go-mono.com:" + s, req.Host, "#" + s);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void PortBelow ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "go-mono.com:-1";
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void PortAbove ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "go-mono.com:65536";
+		}
+
+		[Test]
+		public void InvalidNamesThatWork ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "-";
+			req.Host = "-.-";
+			req.Host = "á";
+			req.Host = new string ('a', 64); // Should fail. Max. is 63.
+			string s = new string ('a', 100);
+			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
+		}
+
+		[Test]
+		public void NoDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			Assert.AreEqual (DateTime.MinValue, req.Date);
+		}
+
+		[Test]
+		public void UtcDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Date = DateTime.UtcNow;
+			DateTime date = req.Date;
+			Assert.AreEqual (DateTimeKind.Local, date.Kind);
+		}
+
+		[Test]
+		public void AddAndRemoveDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Date = DateTime.UtcNow;
+			req.Date = DateTime.MinValue;
+			Assert.AreEqual (DateTime.MinValue, req.Date);
+		}
+#endif
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;
 			public HttpListener listener;

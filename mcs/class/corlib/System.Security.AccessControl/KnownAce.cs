@@ -4,6 +4,7 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Kenneth Bell
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
@@ -27,17 +28,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Security.Principal;
+using System.Text;
 
 namespace System.Security.AccessControl
 {
 	public abstract class KnownAce : GenericAce
 	{
-		int access_mask;
-		SecurityIdentifier identifier;
+		private int access_mask;
+		private SecurityIdentifier identifier;
 
-		internal KnownAce (InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags)
-			: base (inheritanceFlags, propagationFlags)
+		internal KnownAce (AceType type, AceFlags flags)
+			: base (type, flags)
+		{
+		}
+		
+		internal KnownAce (byte[] binaryForm, int offset)
+			: base (binaryForm, offset)
 		{
 		}
 
@@ -49,6 +57,30 @@ namespace System.Security.AccessControl
 		public SecurityIdentifier SecurityIdentifier {
 			get { return identifier; }
 			set { identifier = value; }
+		}
+		
+		internal static string GetSddlAccessRights (int accessMask)
+		{
+			string ret = GetSddlAliasRights(accessMask);
+			if (!string.IsNullOrEmpty(ret))
+				return ret;
+			
+			return string.Format (CultureInfo.InvariantCulture,
+			                      "0x{0:x}", accessMask);
+		}
+		
+		private static string GetSddlAliasRights(int accessMask)
+		{
+			SddlAccessRight[] rights = SddlAccessRight.Decompose(accessMask);
+			if (rights == null)
+				return null;
+			
+			StringBuilder ret = new StringBuilder();
+			foreach (var right in rights) {
+				ret.Append(right.Name);
+			}
+			
+			return ret.ToString();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// cs0122-6.cs: `Test.Foo.IBar' is inaccessible due to its protection level
+// CS0122: `Test.Foo.IBar' is inaccessible due to its protection level
 // Line: 11
 
 public class Test

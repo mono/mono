@@ -141,15 +141,14 @@ namespace System.ServiceModel.Description
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint,
 			EndpointDispatcher dispatcher)
 		{
 			// documented as to have no effect.
 		}
-#endif
 
-#if !MOONLIGHT
 		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint,
 			BindingParameterCollection parameters)
 		{
@@ -172,6 +171,5 @@ namespace System.ServiceModel.Description
 		{
 			// documented as reserved for future use.
 		}
-#endif
 	}
 }

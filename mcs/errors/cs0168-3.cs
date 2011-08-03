@@ -1,4 +1,4 @@
-// cs0168-3.cs: The variable `y2' is declared but never used
+// CS0168: The variable `y2' is declared but never used
 // Line: 9
 // Compiler options: -warn:3 -warnaserror
 

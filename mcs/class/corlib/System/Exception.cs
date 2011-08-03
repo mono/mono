@@ -62,16 +62,7 @@ namespace System
 		string source;
 		IDictionary _data;
 		#endregion
-#pragma warning restore 169, 649		
-
-#if NET_4_0
-		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState {
-			[MonoTODO]
-			add { throw new NotImplementedException (); }
-			[MonoTODO]
-			remove { throw new NotImplementedException (); }
-		}
-#endif
+#pragma warning restore 169, 649
 
 		public Exception ()
 		{
@@ -151,6 +142,16 @@ namespace System
 				return message;
 			}
 		}
+		
+#if NET_4_0
+		[MonoTODO]
+		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState {
+			add {
+			}
+			remove {
+			}
+		}
+#endif
 
 		public virtual string Source {
 			get {

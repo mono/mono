@@ -1,4 +1,4 @@
-// gcs0729.cs: Cannot forward type `C' because it is defined in this assembly
+// CS0729: Cannot forward type `C' because it is defined in this assembly
 // Line: 7
 
 using System;

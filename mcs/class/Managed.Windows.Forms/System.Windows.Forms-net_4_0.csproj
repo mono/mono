@@ -1,0 +1,1179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,618,612,809</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,618,612,809</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,618,612,809</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="Assembly\Locale.cs" />
+   <Compile Include="System.Resources\ResXDataNode.cs" />
+   <Compile Include="System.Resources\ResXFileRef.cs" />
+   <Compile Include="System.Resources\ResXNullRef.cs" />
+   <Compile Include="System.Resources\ResXResourceReader.cs" />
+   <Compile Include="System.Resources\ResXResourceSet.cs" />
+   <Compile Include="System.Resources\ResXResourceWriter.cs" />
+   <Compile Include="System.Windows.Forms.Design\ComponentEditorForm.cs" />
+   <Compile Include="System.Windows.Forms.Design\ComponentEditorPage.cs" />
+   <Compile Include="System.Windows.Forms.Design\EventsTab.cs" />
+   <Compile Include="System.Windows.Forms.Design\IUIService.cs" />
+   <Compile Include="System.Windows.Forms.Design\IWindowsFormsEditorService.cs" />
+   <Compile Include="System.Windows.Forms.Design\PropertyTab.cs" />
+   <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs" />
+   <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs" />
+   <Compile Include="System.Windows.Forms.Design\WindowsFormsComponentEditor.cs" />
+   <Compile Include="System.Windows.Forms.Internal\Accessor.cs" />
+   <Compile Include="System.Windows.Forms.Internal\DebugHelper.cs" />
+   <Compile Include="System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Charcode.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Charset.cs" />
+   <Compile Include="System.Windows.Forms.RTF\CharsetFlags.cs" />
+   <Compile Include="System.Windows.Forms.RTF\CharsetType.cs" />
+   <Compile Include="System.Windows.Forms.RTF\ClassDelegate.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Color.cs" />
+   <Compile Include="System.Windows.Forms.RTF\DestinationDelegate.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Font.cs" />
+   <Compile Include="System.Windows.Forms.RTF\KeyStruct.cs" />
+   <Compile Include="System.Windows.Forms.RTF\KeysInit.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Major.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Minor.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Picture.cs" />
+   <Compile Include="System.Windows.Forms.RTF\RTF.cs" />
+   <Compile Include="System.Windows.Forms.RTF\RTFException.cs" />
+   <Compile Include="System.Windows.Forms.RTF\StandardCharCode.cs" />
+   <Compile Include="System.Windows.Forms.RTF\StandardCharName.cs" />
+   <Compile Include="System.Windows.Forms.RTF\Style.cs" />
+   <Compile Include="System.Windows.Forms.RTF\StyleElement.cs" />
+   <Compile Include="System.Windows.Forms.RTF\StyleType.cs" />
+   <Compile Include="System.Windows.Forms.RTF\TextMap.cs" />
+   <Compile Include="System.Windows.Forms.RTF\TokenClass.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\LabelPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\LinkLabelPainter.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleEvents.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleNavigation.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleObject.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleRole.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleSelection.cs" />
+   <Compile Include="System.Windows.Forms\AccessibleStates.cs" />
+   <Compile Include="System.Windows.Forms\AmbientProperties.cs" />
+   <Compile Include="System.Windows.Forms\AnchorStyles.cs" />
+   <Compile Include="System.Windows.Forms\Appearance.cs" />
+   <Compile Include="System.Windows.Forms\Application.cs" />
+   <Compile Include="System.Windows.Forms\ApplicationContext.cs" />
+   <Compile Include="System.Windows.Forms\ArrangeDirection.cs" />
+   <Compile Include="System.Windows.Forms\ArrangeStartingPosition.cs" />
+   <Compile Include="System.Windows.Forms\ArrowDirection.cs" />
+   <Compile Include="System.Windows.Forms\AsyncMethodData.cs" />
+   <Compile Include="System.Windows.Forms\AsyncMethodResult.cs" />
+   <Compile Include="System.Windows.Forms\AutoCompleteMode.cs" />
+   <Compile Include="System.Windows.Forms\AutoCompleteSource.cs" />
+   <Compile Include="System.Windows.Forms\AutoCompleteStringCollection.cs" />
+   <Compile Include="System.Windows.Forms\AutoScaleMode.cs" />
+   <Compile Include="System.Windows.Forms\AutoSizeMode.cs" />
+   <Compile Include="System.Windows.Forms\AutoValidate.cs" />
+   <Compile Include="System.Windows.Forms\AxHost.cs" />
+   <Compile Include="System.Windows.Forms\BaseCollection.cs" />
+   <Compile Include="System.Windows.Forms\BatteryChargeStatus.cs" />
+   <Compile Include="System.Windows.Forms\Binding.cs" />
+   <Compile Include="System.Windows.Forms\BindingCompleteContext.cs" />
+   <Compile Include="System.Windows.Forms\BindingCompleteEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\BindingCompleteEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\BindingCompleteState.cs" />
+   <Compile Include="System.Windows.Forms\BindingContext.cs" />
+   <Compile Include="System.Windows.Forms\BindingManagerBase.cs" />
+   <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\BindingMemberInfo.cs" />
+   <Compile Include="System.Windows.Forms\BindingNavigator.cs" />
+   <Compile Include="System.Windows.Forms\BindingSource.cs" />
+   <Compile Include="System.Windows.Forms\BindingsCollection.cs" />
+   <Compile Include="System.Windows.Forms\BootMode.cs" />
+   <Compile Include="System.Windows.Forms\Border3DSide.cs" />
+   <Compile Include="System.Windows.Forms\Border3DStyle.cs" />
+   <Compile Include="System.Windows.Forms\BorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\BoundsSpecified.cs" />
+   <Compile Include="System.Windows.Forms\Button.cs" />
+   <Compile Include="System.Windows.Forms\ButtonBase.cs" />
+   <Compile Include="System.Windows.Forms\ButtonBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\ButtonRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ButtonState.cs" />
+   <Compile Include="System.Windows.Forms\CacheVirtualItemsEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\CacheVirtualItemsEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\CaptionButton.cs" />
+   <Compile Include="System.Windows.Forms\CategoryGridEntry.cs" />
+   <Compile Include="System.Windows.Forms\CharacterCasing.cs" />
+   <Compile Include="System.Windows.Forms\CheckBox.cs" />
+   <Compile Include="System.Windows.Forms\CheckBoxRenderer.cs" />
+   <Compile Include="System.Windows.Forms\CheckState.cs" />
+   <Compile Include="System.Windows.Forms\CheckedListBox.cs" />
+   <Compile Include="System.Windows.Forms\Clipboard.cs" />
+   <Compile Include="System.Windows.Forms\CloseReason.cs" />
+   <Compile Include="System.Windows.Forms\ColorDepth.cs" />
+   <Compile Include="System.Windows.Forms\ColorDialog.cs" />
+   <Compile Include="System.Windows.Forms\ColumnClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ColumnClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ColumnHeader.cs" />
+   <Compile Include="System.Windows.Forms\ColumnHeaderAutoResizeStyle.cs" />
+   <Compile Include="System.Windows.Forms\ColumnHeaderConverter.cs" />
+   <Compile Include="System.Windows.Forms\ColumnHeaderStyle.cs" />
+   <Compile Include="System.Windows.Forms\ColumnReorderedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ColumnReorderedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ColumnStyle.cs" />
+   <Compile Include="System.Windows.Forms\ColumnWidthChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ColumnWidthChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ColumnWidthChangingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ColumnWidthChangingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ComboBox.cs" />
+   <Compile Include="System.Windows.Forms\ComboBoxRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ComboBoxStyle.cs" />
+   <Compile Include="System.Windows.Forms\CommonDialog.cs" />
+   <Compile Include="System.Windows.Forms\ComponentModel.cs" />
+   <Compile Include="System.Windows.Forms\ContainerControl.cs" />
+   <Compile Include="System.Windows.Forms\ContentsResizedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ContentsResizedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ContextMenu.cs" />
+   <Compile Include="System.Windows.Forms\ContextMenuStrip.cs" />
+   <Compile Include="System.Windows.Forms\Control.cs" />
+   <Compile Include="System.Windows.Forms\ControlBindingsCollection.cs" />
+   <Compile Include="System.Windows.Forms\ControlEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ControlEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ControlPaint.cs" />
+   <Compile Include="System.Windows.Forms\ControlStyles.cs" />
+   <Compile Include="System.Windows.Forms\ControlUpdateMode.cs" />
+   <Compile Include="System.Windows.Forms\ConvertEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ConvertEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\CreateParams.cs" />
+   <Compile Include="System.Windows.Forms\CurrencyManager.cs" />
+   <Compile Include="System.Windows.Forms\Cursor.cs" />
+   <Compile Include="System.Windows.Forms\CursorConverter.cs" />
+   <Compile Include="System.Windows.Forms\Cursors.cs" />
+   <Compile Include="System.Windows.Forms\DataFormats.cs" />
+   <Compile Include="System.Windows.Forms\DataGrid.cs" />
+   <Compile Include="System.Windows.Forms\DataGridBoolColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridColumnStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridLineStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridParentRowsLabelStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridPreferredColumnWidthTypeConverter.cs" />
+   <Compile Include="System.Windows.Forms\DataGridTableStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridTextBox.cs" />
+   <Compile Include="System.Windows.Forms\DataGridTextBoxColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridView.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAdvancedBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAdvancedCellBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnModeEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnModeEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnsMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnsModeEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeColumnsModeEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeModeEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeModeEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeRowMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewAutoSizeRowsMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewBand.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewBindingCompleteEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewBindingCompleteEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewButtonCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewButtonColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellCancelEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellCancelEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellContextMenuStripNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellContextMenuStripNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellErrorTextNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellErrorTextNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellFormattingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellFormattingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellMouseEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellMouseEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellPaintingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellPaintingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellParsingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellParsingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStateChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStateChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStyleContentChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStyleContentChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStyleConverter.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellStyleScopes.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellToolTipTextNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellToolTipTextNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellValidatingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellValidatingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellValueEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCellValueEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCheckBoxCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewCheckBoxColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewClipboardCopyMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnDesignTimeVisibleAttribute.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnDividerDoubleClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnDividerDoubleClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnHeaderCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnHeadersHeightSizeMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnSortMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnStateChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewColumnStateChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewComboBoxCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewComboBoxColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewComboBoxDisplayStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewComboBoxEditingControl.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewContentAlignment.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewDataErrorContexts.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewDataErrorEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewDataErrorEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewEditMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewEditingControlShowingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewEditingControlShowingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewElement.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewElementStates.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewHeaderBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewHeaderCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewHitTestType.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewImageCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewImageCellLayout.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewImageColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewLinkCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewLinkColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewPaintParts.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRow.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowCancelEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowCancelEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowContextMenuStripNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowContextMenuStripNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowDividerDoubleClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowDividerDoubleClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowErrorTextNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowErrorTextNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeaderCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeadersWidthSizeMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeightInfoNeededEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeightInfoNeededEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeightInfoPushedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowHeightInfoPushedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowPostPaintEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowPostPaintEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowPrePaintEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowPrePaintEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSelectedCellCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSelectedColumnCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSelectedRowCollection.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSelectionMode.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSortCompareEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewSortCompareEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewTextBoxCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewTextBoxColumn.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewTextBoxEditingControl.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewTopLeftHeaderCell.cs" />
+   <Compile Include="System.Windows.Forms\DataGridViewTriState.cs" />
+   <Compile Include="System.Windows.Forms\DataObject.cs" />
+   <Compile Include="System.Windows.Forms\DataSourceUpdateMode.cs" />
+   <Compile Include="System.Windows.Forms\DateBoldEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DateBoldEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DateRangeEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DateRangeEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DateTimePicker.cs" />
+   <Compile Include="System.Windows.Forms\DateTimePickerFormat.cs" />
+   <Compile Include="System.Windows.Forms\Day.cs" />
+   <Compile Include="System.Windows.Forms\DialogResult.cs" />
+   <Compile Include="System.Windows.Forms\DockingAttribute.cs" />
+   <Compile Include="System.Windows.Forms\DockStyle.cs" />
+   <Compile Include="System.Windows.Forms\DockingBehavior.cs" />
+   <Compile Include="System.Windows.Forms\DomainUpDown.cs" />
+   <Compile Include="System.Windows.Forms\DragAction.cs" />
+   <Compile Include="System.Windows.Forms\DragDropEffects.cs" />
+   <Compile Include="System.Windows.Forms\DragEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DragEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawItemState.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewColumnHeaderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewColumnHeaderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewSubItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawListViewSubItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawMode.cs" />
+   <Compile Include="System.Windows.Forms\DrawToolTipEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawToolTipEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\DrawTreeNodeEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\DrawTreeNodeEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ErrorBlinkStyle.cs" />
+   <Compile Include="System.Windows.Forms\ErrorIconAlignment.cs" />
+   <Compile Include="System.Windows.Forms\ErrorProvider.cs" />
+   <Compile Include="System.Windows.Forms\FeatureSupport.cs" />
+   <Compile Include="System.Windows.Forms\FileDialog.cs" />
+   <Compile Include="System.Windows.Forms\FileDialogCustomPlace.cs" />
+   <Compile Include="System.Windows.Forms\FileDialogCustomPlacesCollection.cs" />
+   <Compile Include="System.Windows.Forms\FixedPanel.cs" />
+   <Compile Include="System.Windows.Forms\FixedSizeTextBox.cs" />
+   <Compile Include="System.Windows.Forms\FlatButtonAppearance.cs" />
+   <Compile Include="System.Windows.Forms\FlatStyle.cs" />
+   <Compile Include="System.Windows.Forms\FlowDirection.cs" />
+   <Compile Include="System.Windows.Forms\FlowLayoutPanel.cs" />
+   <Compile Include="System.Windows.Forms\FlowLayoutSettings.cs" />
+   <Compile Include="System.Windows.Forms\FolderBrowserDialog.cs" />
+   <Compile Include="System.Windows.Forms\FontDialog.cs" />
+   <Compile Include="System.Windows.Forms\Form.cs" />
+   <Compile Include="System.Windows.Forms\FormBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\FormClosedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\FormClosedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\FormClosingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\FormClosingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\FormCollection.cs" />
+   <Compile Include="System.Windows.Forms\FormStartPosition.cs" />
+   <Compile Include="System.Windows.Forms\FormWindowManager.cs" />
+   <Compile Include="System.Windows.Forms\FormWindowState.cs" />
+   <Compile Include="System.Windows.Forms\FrameStyle.cs" />
+   <Compile Include="System.Windows.Forms\GetChildAtPointSkip.cs" />
+   <Compile Include="System.Windows.Forms\GiveFeedbackEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\GiveFeedbackEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\GridColumnStylesCollection.cs" />
+   <Compile Include="System.Windows.Forms\GridEntry.cs" />
+   <Compile Include="System.Windows.Forms\GridItem.cs" />
+   <Compile Include="System.Windows.Forms\GridItemCollection.cs" />
+   <Compile Include="System.Windows.Forms\GridItemType.cs" />
+   <Compile Include="System.Windows.Forms\GridTableStylesCollection.cs" />
+   <Compile Include="System.Windows.Forms\GridTablesFactory.cs" />
+   <Compile Include="System.Windows.Forms\GroupBox.cs" />
+   <Compile Include="System.Windows.Forms\GroupBoxRenderer.cs" />
+   <Compile Include="System.Windows.Forms\HScrollBar.cs" />
+   <Compile Include="System.Windows.Forms\HandledMouseEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\Help.cs" />
+   <Compile Include="System.Windows.Forms\HelpEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\HelpEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\HelpNavigator.cs" />
+   <Compile Include="System.Windows.Forms\HelpProvider.cs" />
+   <Compile Include="System.Windows.Forms\HorizontalAlignment.cs" />
+   <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
+   <Compile Include="System.Windows.Forms\HtmlDocument.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElement.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementCollection.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementErrorEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementErrorEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\HtmlElementInsertionOrientation.cs" />
+   <Compile Include="System.Windows.Forms\HtmlHistory.cs" />
+   <Compile Include="System.Windows.Forms\HtmlWindow.cs" />
+   <Compile Include="System.Windows.Forms\HtmlWindowCollection.cs" />
+   <Compile Include="System.Windows.Forms\Hwnd.cs" />
+   <Compile Include="System.Windows.Forms\IButtonControl.cs" />
+   <Compile Include="System.Windows.Forms\IBindableComponent.cs" />
+   <Compile Include="System.Windows.Forms\IBounds.cs" />
+   <Compile Include="System.Windows.Forms\ICommandExecutor.cs" />
+   <Compile Include="System.Windows.Forms\IComponentEditorPageSite.cs" />
+   <Compile Include="System.Windows.Forms\IContainerControl.cs" />
+   <Compile Include="System.Windows.Forms\ICurrencyManagerProvider.cs" />
+   <Compile Include="System.Windows.Forms\IDataGridColumnStyleEditingNotificationService.cs" />
+   <Compile Include="System.Windows.Forms\IDataGridEditingService.cs" />
+   <Compile Include="System.Windows.Forms\IDataGridViewEditingCell.cs" />
+   <Compile Include="System.Windows.Forms\IDataGridViewEditingControl.cs" />
+   <Compile Include="System.Windows.Forms\IDataObject.cs" />
+   <Compile Include="System.Windows.Forms\IDropTarget.cs" />
+   <Compile Include="System.Windows.Forms\IFeatureSupport.cs" />
+   <Compile Include="System.Windows.Forms\IFileReaderService.cs" />
+   <Compile Include="System.Windows.Forms\IKeyFilter.cs" />
+   <Compile Include="System.Windows.Forms\IMessageFilter.cs" />
+   <Compile Include="System.Windows.Forms\IRootGridEntry.cs" />
+   <Compile Include="System.Windows.Forms\IWin32Window.cs" />
+   <Compile Include="System.Windows.Forms\IWindowTarget.cs" />
+   <Compile Include="System.Windows.Forms\ImageIndexConverter.cs" />
+   <Compile Include="System.Windows.Forms\ImageKeyConverter.cs" />
+   <Compile Include="System.Windows.Forms\ImageLayout.cs" />
+   <Compile Include="System.Windows.Forms\ImageList.cs" />
+   <Compile Include="System.Windows.Forms\ImageListConverter.cs" />
+   <Compile Include="System.Windows.Forms\ImageListStreamer.cs" />
+   <Compile Include="System.Windows.Forms\ImeMode.cs" />
+   <Compile Include="System.Windows.Forms\ImplicitHScrollBar.cs" />
+   <Compile Include="System.Windows.Forms\ImplicitVScrollBar.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguage.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguageChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguageChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguageChangingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguageChangingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\InputLanguageCollection.cs" />
+   <Compile Include="System.Windows.Forms\InsertKeyMode.cs" />
+   <Compile Include="System.Windows.Forms\InternalWindowManager.cs" />
+   <Compile Include="System.Windows.Forms\InvalidateEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\InvalidateEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ItemActivation.cs" />
+   <Compile Include="System.Windows.Forms\ItemBoundsPortion.cs" />
+   <Compile Include="System.Windows.Forms\ItemChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ItemChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ItemCheckEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ItemCheckEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ItemCheckedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ItemCheckedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ItemDragEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ItemDragEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\IToolStripData.cs" />
+   <Compile Include="System.Windows.Forms\KeyEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\KeyEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\KeyPressEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\KeyPressEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\KeyboardLayouts.cs" />
+   <Compile Include="System.Windows.Forms\Keys.cs" />
+   <Compile Include="System.Windows.Forms\KeysConverter.cs" />
+   <Compile Include="System.Windows.Forms\Label.cs" />
+   <Compile Include="System.Windows.Forms\LabelEditEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\LabelEditEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\LabelEditTextBox.cs" />
+   <Compile Include="System.Windows.Forms\LayoutEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\LayoutEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\LayoutSettings.cs" />
+   <Compile Include="System.Windows.Forms\LeftRightAlignment.cs" />
+   <Compile Include="System.Windows.Forms\Line.cs" />
+   <Compile Include="System.Windows.Forms\LineTag.cs" />
+   <Compile Include="System.Windows.Forms\LinkArea.cs" />
+   <Compile Include="System.Windows.Forms\LinkBehavior.cs" />
+   <Compile Include="System.Windows.Forms\LinkClickedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\LinkClickedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\LinkConverter.cs" />
+   <Compile Include="System.Windows.Forms\LinkLabel.cs" />
+   <Compile Include="System.Windows.Forms\LinkLabelLinkClickedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\LinkLabelLinkClickedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\LinkState.cs" />
+   <Compile Include="System.Windows.Forms\ListBindingConverter.cs" />
+   <Compile Include="System.Windows.Forms\ListBindingHelper.cs" />
+   <Compile Include="System.Windows.Forms\ListBox.cs" />
+   <Compile Include="System.Windows.Forms\ListControl.cs" />
+   <Compile Include="System.Windows.Forms\ListControlConvertEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ListControlConvertEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ListView.cs" />
+   <Compile Include="System.Windows.Forms\ListViewAlignment.cs" />
+   <Compile Include="System.Windows.Forms\ListViewGroup.cs" />
+   <Compile Include="System.Windows.Forms\ListViewGroupCollection.cs" />
+   <Compile Include="System.Windows.Forms\ListViewHitTestInfo.cs" />
+   <Compile Include="System.Windows.Forms\ListViewHitTestLocations.cs" />
+   <Compile Include="System.Windows.Forms\ListViewInsertionMark.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItem.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemConverter.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemMouseHoverEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemMouseHoverEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemSelectionChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemSelectionChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ListViewItemStates.cs" />
+   <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\MWFCategoryAttribute.cs" />
+   <Compile Include="System.Windows.Forms\MWFDescriptionAttribute.cs" />
+   <Compile Include="System.Windows.Forms\MainMenu.cs" />
+   <Compile Include="System.Windows.Forms\MaskFormat.cs" />
+   <Compile Include="System.Windows.Forms\MaskInputRejectedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\MaskInputRejectedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\MaskedTextBox.cs" />
+   <Compile Include="System.Windows.Forms\MdiClient.cs" />
+   <Compile Include="System.Windows.Forms\MdiControlStrip.cs" />
+   <Compile Include="System.Windows.Forms\MdiLayout.cs" />
+   <Compile Include="System.Windows.Forms\MdiWindowManager.cs" />
+   <Compile Include="System.Windows.Forms\MeasureItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\MeasureItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\Menu.cs" />
+   <Compile Include="System.Windows.Forms\MenuAPI.cs" />
+   <Compile Include="System.Windows.Forms\MenuGlyph.cs" />
+   <Compile Include="System.Windows.Forms\MenuItem.cs" />
+   <Compile Include="System.Windows.Forms\MenuMerge.cs" />
+   <Compile Include="System.Windows.Forms\MenuStrip.cs" />
+   <Compile Include="System.Windows.Forms\MergeAction.cs" />
+   <Compile Include="System.Windows.Forms\Message.cs" />
+   <Compile Include="System.Windows.Forms\MessageBox.cs" />
+   <Compile Include="System.Windows.Forms\MessageBoxButtons.cs" />
+   <Compile Include="System.Windows.Forms\MessageBoxDefaultButton.cs" />
+   <Compile Include="System.Windows.Forms\MessageBoxIcon.cs" />
+   <Compile Include="System.Windows.Forms\MessageBoxOptions.cs" />
+   <Compile Include="System.Windows.Forms\MethodInvoker.cs" />
+   <Compile Include="System.Windows.Forms\Mime.cs" />
+   <Compile Include="System.Windows.Forms\MimeIcon.cs" />
+   <Compile Include="System.Windows.Forms\MonthCalendar.cs" />
+   <Compile Include="System.Windows.Forms\MouseButtons.cs" />
+   <Compile Include="System.Windows.Forms\MouseEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\MouseEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\NativeWindow.cs" />
+   <Compile Include="System.Windows.Forms\NavigateEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\NavigateEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\NodeLabelEditEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\NodeLabelEditEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\NotifyIcon.cs" />
+   <Compile Include="System.Windows.Forms\NumericTextBox.cs" />
+   <Compile Include="System.Windows.Forms\NumericUpDown.cs" />
+   <Compile Include="System.Windows.Forms\NumericUpDownAcceleration.cs" />
+   <Compile Include="System.Windows.Forms\NumericUpDownAccelerationCollection.cs" />
+   <Compile Include="System.Windows.Forms\OSFeature.cs" />
+   <Compile Include="System.Windows.Forms\OpacityConverter.cs" />
+   <Compile Include="System.Windows.Forms\OpenFileDialog.cs" />
+   <Compile Include="System.Windows.Forms\OpenTreeNodeEnumerator.cs" />
+   <Compile Include="System.Windows.Forms\Orientation.cs" />
+   <Compile Include="System.Windows.Forms\OwnerDrawPropertyBag.cs" />
+   <Compile Include="System.Windows.Forms\Padding.cs" />
+   <Compile Include="System.Windows.Forms\PaddingConverter.cs" />
+   <Compile Include="System.Windows.Forms\PageSetupDialog.cs" />
+   <Compile Include="System.Windows.Forms\PaintEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\PaintEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\Panel.cs" />
+   <Compile Include="System.Windows.Forms\PictureBox.cs" />
+   <Compile Include="System.Windows.Forms\PictureBoxSizeMode.cs" />
+   <Compile Include="System.Windows.Forms\PopupEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\PopupEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\PowerLineStatus.cs" />
+   <Compile Include="System.Windows.Forms\PowerState.cs" />
+   <Compile Include="System.Windows.Forms\PowerStatus.cs" />
+   <Compile Include="System.Windows.Forms\PreProcessControlState.cs" />
+   <Compile Include="System.Windows.Forms\PreviewKeyDownEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\PreviewKeyDownEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\PrintControllerWithStatusDialog.cs" />
+   <Compile Include="System.Windows.Forms\PrintDialog.cs" />
+   <Compile Include="System.Windows.Forms\PrintPreviewControl.cs" />
+   <Compile Include="System.Windows.Forms\PrintPreviewDialog.cs" />
+   <Compile Include="System.Windows.Forms\ProfessionalColors.cs" />
+   <Compile Include="System.Windows.Forms\ProfessionalColorTable.cs" />
+   <Compile Include="System.Windows.Forms\ProgressBar.cs" />
+   <Compile Include="System.Windows.Forms\ProgressBarRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ProgressBarStyle.cs" />
+   <Compile Include="System.Windows.Forms\PropertyGrid.cs" />
+   <Compile Include="System.Windows.Forms\PropertyGridCommands.cs" />
+   <Compile Include="System.Windows.Forms\PropertyGridTextBox.cs" />
+   <Compile Include="System.Windows.Forms\PropertyGridView.cs" />
+   <Compile Include="System.Windows.Forms\PropertyManager.cs" />
+   <Compile Include="System.Windows.Forms\PropertySort.cs" />
+   <Compile Include="System.Windows.Forms\PropertyTabChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\PropertyTabChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\PropertyValueChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\PropertyValueChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\QueryAccessibilityHelpEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\QueryAccessibilityHelpEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\QueryContinueDragEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\QueryContinueDragEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\QuestionEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\QuestionEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\RadioButton.cs" />
+   <Compile Include="System.Windows.Forms\RadioButtonRenderer.cs" />
+   <Compile Include="System.Windows.Forms\RelatedCurrencyManager.cs" />
+   <Compile Include="System.Windows.Forms\RelatedImageListAttribute.cs" />
+   <Compile Include="System.Windows.Forms\RelatedPropertyManager.cs" />
+   <Compile Include="System.Windows.Forms\RetrieveVirtualItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\RetrieveVirtualItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBox.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxFinds.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxLanguageOptions.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxScrollBars.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxSelectionAttribute.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxSelectionTypes.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxStreamType.cs" />
+   <Compile Include="System.Windows.Forms\RichTextBoxWordPunctuations.cs" />
+   <Compile Include="System.Windows.Forms\RightToLeft.cs" />
+   <Compile Include="System.Windows.Forms\RootGridEntry.cs" />
+   <Compile Include="System.Windows.Forms\RowStyle.cs" />
+   <Compile Include="System.Windows.Forms\SaveFileDialog.cs" />
+   <Compile Include="System.Windows.Forms\Screen.cs" />
+   <Compile Include="System.Windows.Forms\ScreenOrientation.cs" />
+   <Compile Include="System.Windows.Forms\ScrollBar.cs" />
+   <Compile Include="System.Windows.Forms\ScrollBarRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ScrollBars.cs" />
+   <Compile Include="System.Windows.Forms\ScrollButton.cs" />
+   <Compile Include="System.Windows.Forms\ScrollEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ScrollEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ScrollEventType.cs" />
+   <Compile Include="System.Windows.Forms\ScrollOrientation.cs" />
+   <Compile Include="System.Windows.Forms\ScrollProperties.cs" />
+   <Compile Include="System.Windows.Forms\ScrollableControl.cs" />
+   <Compile Include="System.Windows.Forms\SearchDirectionHint.cs" />
+   <Compile Include="System.Windows.Forms\SearchForVirtualItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\SearchForVirtualItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\SecurityIDType.cs" />
+   <Compile Include="System.Windows.Forms\SelectedGridItemChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\SelectedGridItemChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\SelectionMode.cs" />
+   <Compile Include="System.Windows.Forms\SelectionRange.cs" />
+   <Compile Include="System.Windows.Forms\SelectionRangeConverter.cs" />
+   <Compile Include="System.Windows.Forms\SendKeys.cs" />
+   <Compile Include="System.Windows.Forms\Shortcut.cs" />
+   <Compile Include="System.Windows.Forms\SizeGrip.cs" />
+   <Compile Include="System.Windows.Forms\SizeGripStyle.cs" />
+   <Compile Include="System.Windows.Forms\SizeType.cs" />
+   <Compile Include="System.Windows.Forms\SortOrder.cs" />
+   <Compile Include="System.Windows.Forms\SplitContainer.cs" />
+   <Compile Include="System.Windows.Forms\Splitter.cs" />
+   <Compile Include="System.Windows.Forms\SplitterCancelEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\SplitterCancelEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\SplitterEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\SplitterEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\SplitterPanel.cs" />
+   <Compile Include="System.Windows.Forms\StatusBar.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarDrawItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarDrawItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanel.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanelAutoSize.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanelBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanelClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanelClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\StatusBarPanelStyle.cs" />
+   <Compile Include="System.Windows.Forms\StatusStrip.cs" />
+   <Compile Include="System.Windows.Forms\StructFormat.cs" />
+   <Compile Include="System.Windows.Forms\SystemInformation.cs" />
+   <Compile Include="System.Windows.Forms\SystemParameter.cs" />
+   <Compile Include="System.Windows.Forms\TabAlignment.cs" />
+   <Compile Include="System.Windows.Forms\TabAppearance.cs" />
+   <Compile Include="System.Windows.Forms\TabControl.cs" />
+   <Compile Include="System.Windows.Forms\TabControlAction.cs" />
+   <Compile Include="System.Windows.Forms\TabControlCancelEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TabControlCancelEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TabControlEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TabControlEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TabDrawMode.cs" />
+   <Compile Include="System.Windows.Forms\TabPage.cs" />
+   <Compile Include="System.Windows.Forms\TabRenderer.cs" />
+   <Compile Include="System.Windows.Forms\TabSizeMode.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutColumnStyleCollection.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutControlCollection.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutPanel.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutPanelCellBorderStyle.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutPanelCellPosition.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutPanelGrowStyle.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutRowStyleCollection.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
+   <Compile Include="System.Windows.Forms\TableLayoutStyleCollection.cs" />
+   <Compile Include="System.Windows.Forms\TextBox.cs" />
+   <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
+   <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />
+   <Compile Include="System.Windows.Forms\TextBoxTextRenderer.cs" />
+   <Compile Include="System.Windows.Forms\TextControl.cs" />
+   <Compile Include="System.Windows.Forms\TextDataFormat.cs" />
+   <Compile Include="System.Windows.Forms\TextFormatFlags.cs" />
+   <Compile Include="System.Windows.Forms\TextImageRelation.cs" />
+   <Compile Include="System.Windows.Forms\TextRenderer.cs" />
+   <Compile Include="System.Windows.Forms\Theme.cs" />
+   <Compile Include="System.Windows.Forms\ThemeEngine.cs" />
+   <Compile Include="System.Windows.Forms\ThemeVisualStyles.cs" />
+   <Compile Include="System.Windows.Forms\ThemeWin32Classic.cs" />
+   <Compile Include="System.Windows.Forms\ThreadExceptionDialog.cs" />
+   <Compile Include="System.Windows.Forms\TickStyle.cs" />
+   <Compile Include="System.Windows.Forms\Timer.cs" />
+   <Compile Include="System.Windows.Forms\ToolBar.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarAppearance.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarButton.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarButtonClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarButtonClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarButtonStyle.cs" />
+   <Compile Include="System.Windows.Forms\ToolBarTextAlign.cs" />
+   <Compile Include="System.Windows.Forms\ToolStrip.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripArrowRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripArrowRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripButton.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripComboBox.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripContainer.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripContentPanel.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripContentPanelRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripContentPanelRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripControlHost.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDown.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownButton.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownCloseReason.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownClosedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownClosedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownClosingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownClosingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownDirection.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownItem.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownItemAccessibleObject.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripDropDownMenu.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripGripDisplayStyle.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripGripRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripGripRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripGripStyle.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItem.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemAlignment.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemClickedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemClickedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemCollection.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemDisplayStyle.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemEventType.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemImageRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemImageRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemImageScaling.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemOverflow.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemPlacement.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemTextRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripItemTextRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripLabel.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripLayoutStyle.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripManager.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripManagerRenderMode.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripMenuItem.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripOverflow.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripOverflowButton.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripPanel.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripPanelRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripPanelRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripPanelRow.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripProfessionalRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripProgressBar.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripRenderMode.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSeparator.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSeparatorRenderEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSeparatorRenderEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSplitButton.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSplitStackLayout.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripStatusLabel.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripStatusLabelBorderSides.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripSystemRenderer.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripTextBox.cs" />
+   <Compile Include="System.Windows.Forms\ToolStripTextDirection.cs" />
+   <Compile Include="System.Windows.Forms\ToolTip.cs" />
+   <Compile Include="System.Windows.Forms\ToolTipIcon.cs" />
+   <Compile Include="System.Windows.Forms\ToolWindowManager.cs" />
+   <Compile Include="System.Windows.Forms\TrackBar.cs" />
+   <Compile Include="System.Windows.Forms\TrackBarRenderer.cs" />
+   <Compile Include="System.Windows.Forms\TreeNode.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeCollection.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeConverter.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeMouseClickEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeMouseClickEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeMouseHoverEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeMouseHoverEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TreeNodeStates.cs" />
+   <Compile Include="System.Windows.Forms\TreeView.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewAction.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewCancelEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewCancelEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewDrawMode.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewHitTestInfo.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewHitTestLocations.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewImageIndexConverter.cs" />
+   <Compile Include="System.Windows.Forms\TreeViewImageKeyConverter.cs" />
+   <Compile Include="System.Windows.Forms\TypeValidationEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\TypeValidationEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\UICues.cs" />
+   <Compile Include="System.Windows.Forms\UICuesEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\UICuesEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\UnhandledExceptionMode.cs" />
+   <Compile Include="System.Windows.Forms\UpDownBase.cs" />
+   <Compile Include="System.Windows.Forms\UpDownEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\UpDownEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\UserControl.cs" />
+   <Compile Include="System.Windows.Forms\VScrollBar.cs" />
+   <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
+   <Compile Include="System.Windows.Forms\View.cs" />
+   <Compile Include="System.Windows.Forms\VScrollProperties.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowser.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserBase.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserEncryptionLevel.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserNavigatedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserNavigatedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserNavigatingEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserNavigatingEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserProgressChangedEventArgs.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserProgressChangedEventHandler.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserReadyState.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserRefreshOption.cs" />
+   <Compile Include="System.Windows.Forms\WebBrowserSiteBase.cs" />
+   <Compile Include="System.Windows.Forms\Win32DnD.cs" />
+   <Compile Include="System.Windows.Forms\WindowsFormsSection.cs" />
+   <Compile Include="System.Windows.Forms\WindowsFormsSynchronizationContext.cs" />
+   <Compile Include="System.Windows.Forms\X11Clipboard.cs" />
+   <Compile Include="System.Windows.Forms\X11DesktopColors.cs" />
+   <Compile Include="System.Windows.Forms\X11Dnd.cs" />
+   <Compile Include="System.Windows.Forms\X11Keyboard.cs" />
+   <Compile Include="System.Windows.Forms\X11Structs.cs" />
+   <Compile Include="System.Windows.Forms\XEventQueue.cs" />
+   <Compile Include="System.Windows.Forms\XplatUI.cs" />
+   <Compile Include="System.Windows.Forms\XplatUICarbon.cs" />
+   <Compile Include="System.Windows.Forms\XplatUIDriver.cs" />
+   <Compile Include="System.Windows.Forms\XplatUIStructs.cs" />
+   <Compile Include="System.Windows.Forms\XplatUIWin32.cs" />
+   <Compile Include="System.Windows.Forms\XplatUIX11.cs" />
+   <Compile Include="System.Windows.Forms.Layout\ArrangedElementCollection.cs" />
+   <Compile Include="System.Windows.Forms.Layout\DefaultLayout.cs" />
+   <Compile Include="System.Windows.Forms.Layout\FlowLayout.cs" />
+   <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
+   <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
+   <Compile Include="System.Windows.Forms.Layout\LayoutEngine.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\ApplicationHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\ControlHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\Cursor.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\Dnd.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\EventHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\EventHandlerBase.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\Enums.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\HIObjectHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\IEventHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\KeyboardHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\MouseHandler.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\Pasteboard.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\Structs.cs" />
+   <Compile Include="System.Windows.Forms.CarbonInternal\WindowHandler.cs" />
+   <Compile Include="System.Windows.Forms.Theming\ThemeElements.cs" />
+   <Compile Include="System.Windows.Forms.Theming\ThemeElementsDefault.cs" />
+   <Compile Include="System.Windows.Forms.Theming\ThemeElementsVisualStyles.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\CheckBoxPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\RadioButtonPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\Default\ToolStripPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\VisualStyles\CheckBoxPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\VisualStyles\RadioButtonPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\VisualStyles\TabControlPainter.cs" />
+   <Compile Include="System.Windows.Forms.Theming\VisualStyles\ToolStripPainter.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\CheckBoxState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ColorProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ComboBoxState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ContentAlignment.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\EdgeEffects.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\Edges.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\EdgeStyle.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\EnumProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\FilenameProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\FillType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\FontProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\GlyphFontSizingType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\GlyphType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\GroupBoxState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\GtkPlus.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\HitTestCode.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\HitTestOptions.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\HorizontalAlign.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\IconEffect.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ImageOrientation.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ImageSelectType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\IntegerProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\IVisualStyles.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\MarginProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\OffsetType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\PointProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\PushButtonState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\RadioButtonState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ScrollBarArrowButtonState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ScrollBarSizeBoxState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ScrollBarState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\SizingType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\StringProperty.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TabItemState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TextBoxState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TextMetrics.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TextMetricsCharacterSet.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TextMetricsPitchAndFamilyValues.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TextShadowType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ThemeSizeType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\ToolBarState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TrackBarThumbState.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\TrueSizeScalingType.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\UXTheme.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VerticalAlignment.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleElement.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleInformation.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleRenderer.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesEngine.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesGtkPlus.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesNative.cs" />
+   <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleState.cs" />
+   <Compile Include="System.Windows.Forms.WebBrowserDialogs\AlertCheck.cs" />
+   <Compile Include="System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs" />
+   <Compile Include="System.Windows.Forms.WebBrowserDialogs\Generic.cs" />
+   <Compile Include="System.Windows.Forms.WebBrowserDialogs\Prompt.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Accessibility.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Accessibility.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.WebBrowser">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.WebBrowser</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="resources/SplitterNS.cur">
+       <LogicalName>System.Windows.Forms.SplitterNS.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/SplitterWE.cur">
+       <LogicalName>System.Windows.Forms.SplitterWE.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/NESW.cur">
+       <LogicalName>System.Windows.Forms.NESW.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/NWSE.cur">
+       <LogicalName>System.Windows.Forms.NWSE.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDNo.cur">
+       <LogicalName>System.Windows.Forms.DnDNo.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDCopy.cur">
+       <LogicalName>System.Windows.Forms.DnDCopy.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDLink.cur">
+       <LogicalName>System.Windows.Forms.DnDLink.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDMove.cur">
+       <LogicalName>System.Windows.Forms.DnDMove.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/keyboards.resources">
+       <LogicalName>keyboards.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_computer.png">
+       <LogicalName>16_computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_computer.png">
+       <LogicalName>32_computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/computer.png">
+       <LogicalName>computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_document-open.png">
+       <LogicalName>16_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_document-open.png">
+       <LogicalName>32_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/document-open.png">
+       <LogicalName>document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder.png">
+       <LogicalName>16_folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-new.png">
+       <LogicalName>folder-new.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder.png">
+       <LogicalName>folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder-remote.png">
+       <LogicalName>16_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_folder-remote.png">
+       <LogicalName>32_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-remote.png">
+       <LogicalName>folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-previous.png">
+       <LogicalName>go-previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-top.png">
+       <LogicalName>go-top.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/22_page-magnifier.png">
+       <LogicalName>22_page-magnifier.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/preferences-system-windows.png">
+       <LogicalName>preferences-system-windows.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_printer.png">
+       <LogicalName>16_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_printer.png">
+       <LogicalName>32_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/text-x-generic.png">
+       <LogicalName>text-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-desktop.png">
+       <LogicalName>16_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-desktop.png">
+       <LogicalName>32_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-desktop.png">
+       <LogicalName>user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-home.png">
+       <LogicalName>16_user-home.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-home.png">
+       <LogicalName>32_user-home.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-home.png">
+       <LogicalName>user-home.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-error.png">
+       <LogicalName>16_dialog-error.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-information.png">
+       <LogicalName>16_dialog-information.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-warning.png">
+       <LogicalName>16_dialog-warning.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/1-up.png">
+       <LogicalName>1-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/2-up.png">
+       <LogicalName>2-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/3-up.png">
+       <LogicalName>3-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/4-up.png">
+       <LogicalName>4-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/6-up.png">
+       <LogicalName>6-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_delete.png">
+       <LogicalName>nav_delete.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_end.png">
+       <LogicalName>nav_end.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_first.png">
+       <LogicalName>nav_first.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_next.png">
+       <LogicalName>nav_next.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_plus.png">
+       <LogicalName>nav_plus.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_previous.png">
+       <LogicalName>nav_previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-missing.png">
+       <LogicalName>image-missing.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-x-generic.png">
+       <LogicalName>image-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-alphabetical.png">
+       <LogicalName>System.Windows.Forms.propertygrid-alphabetical.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-categorized.png">
+       <LogicalName>System.Windows.Forms.propertygrid-categorized.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-propertypages.png">
+       <LogicalName>System.Windows.Forms.propertygrid-propertypages.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/EventsTab.bmp">
+       <LogicalName>System.Windows.Forms.Design.EventsTab.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/PropertiesTab.bmp">
+       <LogicalName>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/mono.ico">
+       <LogicalName>mono.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/errorProvider.ico">
+       <LogicalName>errorProvider.ico</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

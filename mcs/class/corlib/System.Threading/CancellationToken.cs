@@ -27,17 +27,23 @@
 using System;
 using System.Threading;
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplay ("IsCancellationRequested = {IsCancellationRequested}")]
 	public struct CancellationToken
 	{
+		bool canBeCanceled;
+		bool initialized;
+		CancellationTokenSource source;
+
 		public CancellationToken (bool canceled)
 			: this ()
 		{
-			// dummy, this is actually set by CancellationTokenSource when the token is created
-			Source = null;
+			initialized = true;
+			canBeCanceled = canceled;
+			// This is correctly set later if token originates from a Source
+			source = canceled ? CancellationTokenSource.CanceledSource : CancellationTokenSource.NoneSource;
 		}
 
 		public static CancellationToken None {
@@ -74,7 +80,7 @@ namespace System.Threading
 
 		public void ThrowIfCancellationRequested ()
 		{
-			if (Source.IsCancellationRequested)
+			if (initialized && Source.IsCancellationRequested)
 				throw new OperationCanceledException (this);
 		}
 
@@ -105,13 +111,13 @@ namespace System.Threading
 
 		public bool CanBeCanceled {
 			get {
-				return true;
+				return canBeCanceled;
 			}
 		}
 
 		public bool IsCancellationRequested {
 			get {
-				return Source.IsCancellationRequested;
+				return initialized && Source.IsCancellationRequested;
 			}
 		}
 
@@ -122,8 +128,20 @@ namespace System.Threading
 		}
 
 		internal CancellationTokenSource Source {
-			get;
-			set;
+			get {
+				if (!initialized)
+					CorrectlyInitialize ();
+				return source;
+			}
+			set {
+				source = value;
+			}
+		}
+
+		void CorrectlyInitialize ()
+		{
+			Source = CancellationTokenSource.NoneSource;
+			initialized = true;
 		}
 	}
 }

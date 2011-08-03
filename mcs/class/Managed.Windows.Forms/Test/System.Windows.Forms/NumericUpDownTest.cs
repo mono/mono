@@ -91,6 +91,9 @@ namespace MonoTests.System.Windows.Forms
 			nud.Hexadecimal = true;
 			Assert.AreEqual ("DDD5", nud.Text, "#A1");
 			Assert.AreEqual (56789, nud.Value, "#A2");
+			nud.Value = 0; // bug 661750
+			Assert.AreEqual ("0", nud.Text, "#A3");
+			Assert.AreEqual (0, nud.Value, "#A4");
 			f.Dispose ();
 		}
 
@@ -141,6 +144,28 @@ namespace MonoTests.System.Windows.Forms
 			nud.EndInit ();
 			nud.Value = 4;
 			nud.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TestHexadecimalMaximum ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			nud.Hexadecimal = true;
+			nud.Maximum = Decimal.MaxValue;
+			nud.Value = Int64.MaxValue;
+			nud.Value++;
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TestHexadecimalMinimum ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			nud.Hexadecimal = true;
+			nud.Minimum = Decimal.MinValue;
+			nud.Value = Int64.MinValue;
+			nud.Value--;
 		}
 	}
 }

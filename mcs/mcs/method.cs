@@ -54,6 +54,12 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
+		public override Variance ExpectedMemberTypeVariance {
+			get {
+				return Variance.Covariant;
+			}
+		}
+
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//
@@ -121,32 +127,20 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns a string that represents the signature for this 
-		// member which should be used in XML documentation.
-		//
-		public override string GetDocCommentName (DeclSpace ds)
-		{
-			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
-		}
-
-		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		// FIXME: with a few effort, it could be done with XmlReader,
-		// that means removal of DOM use.
-		//
-		internal override void OnGenerateDocComment (XmlElement el)
-		{
-			DocUtil.OnMethodGenerateDocComment (this, el, Report);
-		}
-
-		//
 		//   Represents header string for documentation comment.
 		//
 		public override string DocCommentHeader 
 		{
 			get { return "M:"; }
+		}
+
+		public override void Emit ()
+		{
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				parameters.CheckConstraints (this);
+			}
+
+			base.Emit ();
 		}
 
 		public override bool EnableOverloadChecks (MemberCore overload)
@@ -160,6 +154,15 @@ namespace Mono.CSharp {
 				return true;
 
 			return base.EnableOverloadChecks (overload);
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			string s = base.GetSignatureForDocumentation ();
+			if (MemberName.Arity > 0)
+				s += "``" + MemberName.Arity.ToString ();
+
+			return s + parameters.GetSignatureForDocumentation ();
 		}
 
 		public MethodSpec Spec {
@@ -343,6 +346,36 @@ namespace Mono.CSharp {
 			return inflatedMetaInfo;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			string name;
+			switch (Kind) {
+			case MemberKind.Constructor:
+				name = "#ctor";
+				break;
+			case MemberKind.Method:
+				if (Arity > 0)
+					name = Name + "``" + Arity.ToString ();
+				else
+					name = Name;
+
+				break;
+			default:
+				name = Name;
+				break;
+			}
+
+			name = DeclaringType.GetSignatureForDocumentation () + "." + name + parameters.GetSignatureForDocumentation ();
+			if (Kind == MemberKind.Operator) {
+				var op = Operator.GetType (Name).Value;
+				if (op == Operator.OpType.Explicit || op == Operator.OpType.Implicit) {
+					name += "~" + ReturnType.GetSignatureForDocumentation ();
+				}
+			}
+
+			return name;
+		}
+
 		public override string GetSignatureForError ()
 		{
 			string name;
@@ -392,7 +425,7 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
-		public MethodSpec MakeGenericMethod (params TypeSpec[] targs)
+		public MethodSpec MakeGenericMethod (IMemberContext context, params TypeSpec[] targs)
 		{
 			if (targs == null)
 				throw new ArgumentNullException ();
@@ -403,7 +436,7 @@ namespace Mono.CSharp {
 			//if (generic_intances == null)
 			//    generic_intances = new Dictionary<TypeSpec[], Method> (TypeSpecArrayComparer.Default);
 
-			var inflator = new TypeParameterInflator (DeclaringType, GenericDefinition.TypeParameters, targs);
+			var inflator = new TypeParameterInflator (context, DeclaringType, GenericDefinition.TypeParameters, targs);
 
 			var inflated = (MethodSpec) MemberwiseClone ();
 			inflated.declaringType = inflator.TypeInstance;
@@ -449,6 +482,23 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			var missing = returnType.ResolveMissingDependencies ();
+			foreach (var pt in parameters.Types) {
+				var m = pt.GetMissingDependencies ();
+				if (m == null)
+					continue;
+
+				if (missing == null)
+					missing = new List<TypeSpec> ();
+
+				missing.AddRange (m);
+			}
+
+			return missing;			
+		}
+
 		public void SetMetaInfo (MethodInfo info)
 		{
 			if (this.metaInfo != null)
@@ -465,7 +515,7 @@ namespace Mono.CSharp {
 		SecurityType declarative_security;
 		protected MethodData MethodData;
 
-		static string[] attribute_targets = new string [] { "method", "return" };
+		static readonly string[] attribute_targets = new string [] { "method", "return" };
 
 		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, Modifiers mod,
 				Modifiers allowed_mod, MemberName name,
@@ -547,6 +597,13 @@ namespace Mono.CSharp {
 //					MethodBase mb = new PartialMethodDefinitionInfo (this);
 
 					spec = new MethodSpec (kind, Parent.Definition, this, ReturnType, null, parameters, ModFlags);
+					if (MemberName.Arity > 0) {
+						spec.IsGeneric = true;
+
+						// TODO: Have to move DefineMethod after Define (ideally to Emit)
+						throw new NotImplementedException ("Generic partial methods");
+					}
+
 					Parent.MemberCache.AddMember (spec);
 				}
 
@@ -606,7 +663,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
 
-			if (ReturnType == InternalType.Dynamic) {
+			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
@@ -627,10 +684,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (MethodData != null)
-				MethodData.Emit (Parent);
+			if (type_expr != null)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
+
+			if (MethodData != null)
+				MethodData.Emit (Parent);
 
 			Block = null;
 			MethodData = null;
@@ -662,6 +722,12 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
+
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
+		}
 
 		public TypeSpec ReturnType {
 			get {
@@ -794,8 +860,8 @@ namespace Mono.CSharp {
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
-				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
-				AllowedModifiersClass,
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct | Modifiers.ASYNC :
+				AllowedModifiersClass | Modifiers.ASYNC,
 				name, attrs, parameters)
 		{
 		}
@@ -814,23 +880,6 @@ namespace Mono.CSharp {
 					return GenericMethod.CurrentTypeParameters;
 
 				return null;
-			}
-		}
-
-		public override bool HasUnresolvedConstraints {
-			get {
-				if (CurrentTypeParameters == null)
-					return false;
-
-				// When overriding base method constraints are fetched from
-				// base method but to find it we have to resolve parameters
-				// to find exact base method match
-				if (IsExplicitImpl || (ModFlags & Modifiers.OVERRIDE) != 0)
-					return base_method == null;
-
-				// Even for non-override generic method constraints check has to be
-				// delayed after all constraints are resolved
-				return true;
 			}
 		}
 
@@ -863,8 +912,7 @@ namespace Mono.CSharp {
 
 		bool IsEntryPoint ()
 		{
-			if (ReturnType != TypeManager.void_type &&
-				ReturnType != TypeManager.int32_type)
+			if (ReturnType.Kind != MemberKind.Void && ReturnType.BuiltinType != BuiltinTypeSpec.Type.Int)
 				return false;
 
 			if (parameters.IsEmpty)
@@ -874,11 +922,11 @@ namespace Mono.CSharp {
 				return false;
 
 			var ac = parameters.Types [0] as ArrayContainer;
-			return ac != null && ac.Rank == 1 && ac.Element == TypeManager.string_type &&
+			return ac != null && ac.Rank == 1 && ac.Element.BuiltinType == BuiltinTypeSpec.Type.String &&
 					(parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			if (arity == 0) {
 				TypeParameter[] tp = CurrentTypeParameters;
@@ -889,7 +937,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return base.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return base.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -905,7 +953,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (ReturnType != TypeManager.void_type) {
+				if (ReturnType.Kind != MemberKind.Void) {
 					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
 					return;
 				}
@@ -1014,7 +1062,7 @@ namespace Mono.CSharp {
 					var local_tparam = tp.Type;
 					local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
 
-					var inflator = new TypeParameterInflator (CurrentType, base_decl_tparams, base_targs);
+					var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
 					base_tparam.InflateConstraints (inflator, local_tparam);
 
 					//
@@ -1042,7 +1090,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (MethodData.implementing != null) {
+				if (MethodData != null && MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
 					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
 						Report.SymbolRelatedToPreviousError (MethodData.implementing);
@@ -1059,24 +1107,25 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
-			if (type_expr.Type == TypeManager.void_type && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
-				Report.Warning (465, 1, Location, "Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
-			}
-
 			if (!base.Define ())
 				return false;
+
+			if (member_type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
+				Report.Warning (465, 1, Location,
+					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
+			}
 
 			if (partialMethodImplementation != null && IsPartialDefinition)
 				MethodBuilder = partialMethodImplementation.MethodBuilder;
 
-			if (RootContext.StdLib && TypeManager.IsSpecialType (ReturnType)) {
+			if (Compiler.Settings.StdLib && ReturnType.IsSpecialRuntimeType) {
 				Error1599 (Location, ReturnType, Report);
 				return false;
 			}
 
 			if (CurrentTypeParameters == null) {
 				if (base_method != null) {
-					if (parameters.Count == 1 && ParameterTypes[0] == TypeManager.object_type && Name == "Equals")
+					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && Name == "Equals")
 						Parent.PartialContainer.Mark_HasEquals ();
 					else if (parameters.IsEmpty && Name == "GetHashCode")
 						Parent.PartialContainer.Mark_HasGetHashCode ();
@@ -1086,13 +1135,19 @@ namespace Mono.CSharp {
 				DefineTypeParameters ();
 			}
 
-			if (block != null && block.IsIterator) {
-				//
-				// Current method is turned into automatically generated
-				// wrapper which creates an instance of iterator
-				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
-				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			if (block != null) {
+				if (block.IsIterator) {
+					//
+					// Current method is turned into automatically generated
+					// wrapper which creates an instance of iterator
+					//
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				}
+
+				if ((ModFlags & Modifiers.ASYNC) != 0) {
+					AsyncInitializer.Create (this, block, parameters, Parent.PartialContainer, ReturnType, Location);
+				}
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0)
@@ -1124,12 +1179,9 @@ namespace Mono.CSharp {
 			//
 			// This is used to track the Entry Point,
 			//
-			if (RootContext.NeedsEntryPoint &&
-				Name == "Main" &&
-				(RootContext.MainClass == null ||
-				RootContext.MainClass == Parent.TypeBuilder.FullName)){
+			var settings = Compiler.Settings;
+			if (settings.NeedsEntryPoint && Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
-
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
@@ -1174,19 +1226,9 @@ namespace Mono.CSharp {
 				}
 
 				if (CurrentTypeParameters != null) {
-					var ge = type_expr as GenericTypeExpr;
-					if (ge != null)
-						ge.CheckConstraints (this);
-
-					foreach (Parameter p in parameters.FixedParameters) {
-						ge = p.TypeExpression as GenericTypeExpr;
-						if (ge != null)
-							ge.CheckConstraints (this);
-					}
-
 					for (int i = 0; i < CurrentTypeParameters.Length; ++i) {
 						var tp = CurrentTypeParameters [i];
-						tp.CheckGenericConstraints ();
+						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
 				}
@@ -1269,6 +1311,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
@@ -1315,7 +1362,7 @@ namespace Mono.CSharp {
 					//
 					// struct D { public D (int a) : this () {}
 					//
-					if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
+					if (ec.CurrentType.IsStruct && argument_list == null)
 						return this;
 				}
 
@@ -1339,7 +1386,9 @@ namespace Mono.CSharp {
 			
 			ec.Mark (loc);
 
-			Invocation.EmitCall (ec, new CompilerGeneratedThis (type, loc), base_ctor, argument_list, loc);
+			var call = new CallEmitter ();
+			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
+			call.EmitPredefined (ec, base_ctor, argument_list);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -1409,7 +1458,15 @@ namespace Mono.CSharp {
 		}
 
 		public override AttributeTargets AttributeTargets {
-			get { return AttributeTargets.Constructor; }
+			get {
+				return AttributeTargets.Constructor;
+			}
+		}
+
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
 		}
 
 		//
@@ -1497,14 +1554,14 @@ namespace Mono.CSharp {
 				ca, CallingConventions,
 				parameters.GetMetaInfo ());
 
-			spec = new MethodSpec (MemberKind.Constructor, Parent.Definition, this, TypeManager.void_type, ConstructorBuilder, parameters, ModFlags);
+			spec = new MethodSpec (MemberKind.Constructor, Parent.Definition, this, Compiler.BuiltinTypes.Void, ConstructorBuilder, parameters, ModFlags);
 			
 			Parent.MemberCache.AddMember (spec);
 			
 			// It's here only to report an error
 			if (block != null && block.IsIterator) {
-				member_type = TypeManager.void_type;
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+				member_type = Compiler.BuiltinTypes.Void;
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 			}
 
 			return true;
@@ -1534,6 +1591,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			base.Emit ();
+			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			//
 			// If we use a "this (...)" constructor initializer, then
@@ -1542,7 +1600,7 @@ namespace Mono.CSharp {
 			bool emit_field_initializers = ((ModFlags & Modifiers.STATIC) != 0) ||
 				!(Initializer is ConstructorThisInitializer);
 
-			BlockContext bc = new BlockContext (this, block, TypeManager.void_type);
+			BlockContext bc = new BlockContext (this, block, Compiler.BuiltinTypes.Void);
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (emit_field_initializers)
@@ -1565,19 +1623,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			parameters.ApplyAttributes (this, ConstructorBuilder);
-
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
 			if (block != null) {
 				if (block.Resolve (null, bc, this)) {
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType);
 					ec.With (EmitContext.Options.ConstructorScope, true);
-
-					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
-						ec.ReturnLabel = bc.ReturnLabel;
-						ec.HasReturnLabel = true;
-					}
 
 					block.Emit (ec);
 				}
@@ -1599,11 +1650,16 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Is never override
 			bestCandidate = null;
 			return null;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return Parent.GetSignatureForDocumentation () + ".#ctor" + parameters.GetSignatureForDocumentation ();
 		}
 
 		public override string GetSignatureForError()
@@ -1674,7 +1730,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Interface for MethodData class. Holds links to parent members to avoid member duplication.
 	/// </summary>
-	public interface IMethodData
+	public interface IMethodData : IMemberContext
 	{
 		CallingConventions CallingConventions { get; }
 		Location Location { get; }
@@ -1683,20 +1739,24 @@ namespace Mono.CSharp {
 		GenericMethod GenericMethod { get; }
 		ParametersCompiled ParameterInfo { get; }
 		MethodSpec Spec { get; }
+		bool IsAccessor { get; }
 
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
 
 		EmitContext CreateEmitContext (ILGenerator ig);
-		string GetSignatureForError ();
 		void EmitExtraSymbolInfo (SourceMethod source);
 	}
 
 	//
 	// Encapsulates most of the Method's state
 	//
-	public class MethodData {
+	public class MethodData
+	{
+#if !STATIC
 		static FieldInfo methodbuilder_attrs_field;
+#endif
+
 		public readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;
@@ -1754,24 +1814,25 @@ namespace Mono.CSharp {
 			TypeContainer container = parent.PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
-			if (pending != null){
-				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this);
+			MethodSpec ambig_iface_method;
+			if (pending != null) {
+				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this, out ambig_iface_method);
 
-				if (member.InterfaceType != null){
-					if (implementing == null){
+				if (member.InterfaceType != null) {
+					if (implementing == null) {
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "`{0}' is an accessor not found in interface member `{1}{2}'",
-								      method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
-								      member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
+									  method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
+									  member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
 							Report.Error (539, method.Location,
-								      "`{0}.{1}' in explicit interface declaration is not a member of interface",
-								      TypeManager.CSharpName (member.InterfaceType), member.ShortName);
+									  "`{0}.{1}' in explicit interface declaration is not a member of interface",
+									  TypeManager.CSharpName (member.InterfaceType), member.ShortName);
 						}
 						return false;
 					}
-					if (implementing.IsAccessor && !(method is AbstractPropertyEventMethod)) {
+					if (implementing.IsAccessor && !method.IsAccessor) {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (683, method.Location, "`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
@@ -1779,8 +1840,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					if (implementing != null) {
-						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
-						if (prop_method == null) {
+						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (470, method.Location, "Method `{0}' cannot implement interface accessor `{1}'",
@@ -1792,7 +1852,7 @@ namespace Mono.CSharp {
 								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
 							} else {
-								PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
+								PropertyBase.PropertyMethod pm = method as PropertyBase.PropertyMethod;
 								if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
 									Report.SymbolRelatedToPreviousError (implementing);
 									Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
@@ -1802,6 +1862,8 @@ namespace Mono.CSharp {
 						}
 					}
 				}
+			} else {
+				ambig_iface_method = null;
 			}
 
 			//
@@ -1822,6 +1884,15 @@ namespace Mono.CSharp {
 						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
 							method.GetSignatureForError ());
 					}
+
+					if (ambig_iface_method != null) {
+						Report.SymbolRelatedToPreviousError (ambig_iface_method);
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Warning (473, 2, method.Location,
+							"Explicit interface implementation `{0}' matches more than one interface member. Consider using a non-explicit implementation instead",
+							method.GetSignatureForError ());
+					}
+
 				} else {
 					if (implementing.DeclaringType.IsInterface) {
 						//
@@ -1875,7 +1946,7 @@ namespace Mono.CSharp {
 				// clear the pending implementation flag (requires explicit methods to be defined first)
 				//
 				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
-					member.InterfaceType, this, member.IsExplicitImpl);
+					member.InterfaceType, this, member.IsExplicitImpl, out ambig_iface_method);
 
 				//
 				// Update indexer accessor name to match implementing abstract accessor
@@ -1957,10 +2028,6 @@ namespace Mono.CSharp {
 				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
-					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
-						ec.ReturnLabel = bc.ReturnLabel;
-						ec.HasReturnLabel = true;
-					}
 
 					block.Emit (ec);
 				}
@@ -2044,7 +2111,7 @@ namespace Mono.CSharp {
 
 		protected override bool ResolveMemberType ()
 		{
-			member_type = TypeManager.void_type;
+			member_type = Compiler.BuiltinTypes.Void;
 			return true;
 		}
 
@@ -2103,6 +2170,12 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (this, ig, ReturnType);
+		}
+
+		public bool IsAccessor {
+			get {
+				return true;
+			}
 		}
 
 		public bool IsExcluded ()
@@ -2183,7 +2256,7 @@ namespace Mono.CSharp {
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
-			if (ReturnType == InternalType.Dynamic) {
+			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
@@ -2220,6 +2293,12 @@ namespace Mono.CSharp {
 				return true;
 
 			return false;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			// should not be called
+			throw new NotSupportedException ();
 		}
 
 		public override bool IsClsComplianceRequired()
@@ -2359,7 +2438,7 @@ namespace Mono.CSharp {
 				// Current method is turned into automatically generated
 				// wrapper which creates an instance of iterator
 				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			}
 
@@ -2374,12 +2453,12 @@ namespace Mono.CSharp {
 			TypeSpec first_arg_type = ParameterTypes [0];
 			
 			TypeSpec first_arg_type_unwrap = first_arg_type;
-			if (TypeManager.IsNullableType (first_arg_type))
-				first_arg_type_unwrap = TypeManager.GetTypeArguments (first_arg_type) [0];
+			if (first_arg_type.IsNullableType)
+				first_arg_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (first_arg_type);
 			
 			TypeSpec return_type_unwrap = return_type;
-			if (TypeManager.IsNullableType (return_type))
-				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];
+			if (return_type.IsNullableType)
+				return_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (return_type);
 
 			//
 			// Rules for conversion operators
@@ -2402,7 +2481,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (conv_type == InternalType.Dynamic) {
+				if (conv_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					Report.Error (1964, Location,
 						"User-defined conversion `{0}' cannot convert to or from the dynamic type",
 						GetSignatureForError ());
@@ -2430,7 +2509,7 @@ namespace Mono.CSharp {
 					}
 				}
 			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
-				if (first_arg_type != declaring_type || parameters.Types[1] != TypeManager.int32_type) {
+				if (first_arg_type != declaring_type || parameters.Types[1].BuiltinType != BuiltinTypeSpec.Type.Int) {
 					Report.Error (564, Location, "Overloaded shift operator must have the type of the first operand be the containing type, and the type of the second operand must be int");
 					return false;
 				}
@@ -2457,7 +2536,7 @@ namespace Mono.CSharp {
 				}
 
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
-					if (return_type != TypeManager.bool_type) {
+					if (return_type.BuiltinType != BuiltinTypeSpec.Type.Bool) {
 						Report.Error (
 							215, Location,
 							"The return type of operator True or False " +
@@ -2470,8 +2549,8 @@ namespace Mono.CSharp {
 				// Checks for Binary operators
 
 				var second_arg_type = ParameterTypes[1];
-				if (TypeManager.IsNullableType (second_arg_type))
-					second_arg_type = TypeManager.GetTypeArguments (second_arg_type)[0];
+				if (second_arg_type.IsNullableType)
+					second_arg_type = Nullable.NullableInfo.GetUnderlyingType (second_arg_type);
 
 				if (second_arg_type != declaring_type) {
 					Report.Error (563, Location,
@@ -2492,7 +2571,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Operator cannot be override
 			bestCandidate = null;
@@ -2561,12 +2640,23 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			string s = base.GetSignatureForDocumentation ();
+			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
+				s = s + "~" + ReturnType.GetSignatureForDocumentation ();
+			}
+
+			return s;
+		}
+
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				sb.AppendFormat ("{0}.{1} operator {2}",
-					Parent.GetSignatureForError (), GetName (OperatorType), type_expr.GetSignatureForError ());
+					Parent.GetSignatureForError (), GetName (OperatorType),
+					member_type == null ? type_expr.GetSignatureForError () : member_type.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));

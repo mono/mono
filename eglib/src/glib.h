@@ -11,12 +11,12 @@
 
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
+#endif
+
+/* VS 2010 and later have stdint.h */
+#if defined(_MSC_VER) && _MSC_VER < 1600
 #else
 #include <stdint.h>
-/* For pid_t */
-#ifndef WIN32
-#include <unistd.h>
-#endif
 #endif
 
 #include <eglib-config.h>
@@ -26,6 +26,11 @@
 
 #ifdef G_HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
+
+#ifdef WIN32
+/* For alloca */
+#include <malloc.h>
 #endif
 
 #ifndef offsetof
@@ -44,6 +49,12 @@
 
 G_BEGIN_DECLS
 
+#ifdef G_OS_WIN32
+/* MSC and Cross-compilatin will use this */
+int vasprintf (char **strp, const char *fmt, va_list ap);
+#endif
+
+
 /*
  * Basic data types
  */
@@ -59,19 +70,19 @@ typedef char           gchar;
 typedef unsigned char  guchar;
 
 #if !G_TYPES_DEFINED
-#ifdef _MSC_VER
-typedef __int8				gint8;
+/* VS 2010 and later have stdint.h */
+#if defined(_MSC_VER) && _MSC_VER < 1600
+typedef __int8			gint8;
 typedef unsigned __int8		guint8;
-typedef __int16				gint16;
+typedef __int16			gint16;
 typedef unsigned __int16	guint16;
-typedef __int32				gint32;
+typedef __int32			gint32;
 typedef unsigned __int32	guint32;
-typedef __int64				gint64;
+typedef __int64			gint64;
 typedef unsigned __int64	guint64;
-typedef float				gfloat;
-typedef double				gdouble;
-typedef unsigned __int16	gunichar2;
-typedef int                 gboolean;
+typedef float			gfloat;
+typedef double			gdouble;
+typedef int			gboolean;
 #else
 /* Types defined in terms of the stdint.h */
 typedef int8_t         gint8;
@@ -84,10 +95,12 @@ typedef int64_t        gint64;
 typedef uint64_t       guint64;
 typedef float          gfloat;
 typedef double         gdouble;
-typedef uint16_t       gunichar2;
 typedef int32_t        gboolean;
 #endif
 #endif
+
+typedef guint16 gunichar2;
+typedef guint32 gunichar;
 
 /*
  * Macros
@@ -97,9 +110,13 @@ typedef int32_t        gboolean;
 #define FALSE                0
 #define TRUE                 1
 
+#define G_MINSHORT           SHRT_MIN
+#define G_MAXSHORT           SHRT_MAX
+#define G_MAXUSHORT          USHRT_MAX
 #define G_MAXINT             INT_MAX
 #define G_MININT             INT_MIN
 #define G_MAXINT32           INT32_MAX
+#define G_MAXUINT32          UINT32_MAX
 #define G_MININT32           INT32_MIN
 #define G_MININT64           INT64_MIN
 #define G_MAXINT64	     INT64_MAX
@@ -174,64 +191,9 @@ gchar*           g_win32_getlocale(void);
 /*
  * Precondition macros
  */
+#define g_warn_if_fail(x)  G_STMT_START { if (!(x)) { g_warning ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); } } G_STMT_END
 #define g_return_if_fail(x)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return; } } G_STMT_END
 #define g_return_val_if_fail(x,e)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return (e); } } G_STMT_END
-
-/*
- * Hashtables
- */
-typedef struct _GHashTable GHashTable;
-typedef struct _GHashTableIter GHashTableIter;
-
-/* Private, but needed for stack allocation */
-struct _GHashTableIter
-{
-	gpointer dummy [8];
-};
-
-typedef void     (*GFunc)          (gpointer data, gpointer user_data);
-typedef gint     (*GCompareFunc)   (gconstpointer a, gconstpointer b);
-typedef gint     (*GCompareDataFunc) (gconstpointer a, gconstpointer b, gpointer user_data);
-typedef void     (*GHFunc)         (gpointer key, gpointer value, gpointer user_data);
-typedef gboolean (*GHRFunc)        (gpointer key, gpointer value, gpointer user_data);
-typedef void     (*GDestroyNotify) (gpointer data);
-typedef guint    (*GHashFunc)      (gconstpointer key);
-typedef gboolean (*GEqualFunc)     (gconstpointer a, gconstpointer b);
-typedef void     (*GFreeFunc)      (gpointer       data);
-
-GHashTable     *g_hash_table_new             (GHashFunc hash_func, GEqualFunc key_equal_func);
-GHashTable     *g_hash_table_new_full        (GHashFunc hash_func, GEqualFunc key_equal_func,
-					      GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func);
-void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gpointer value, gboolean replace);
-guint           g_hash_table_size            (GHashTable *hash);
-gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
-gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
-void            g_hash_table_foreach         (GHashTable *hash, GHFunc func, gpointer user_data);
-gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicate, gpointer user_data);
-gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
-void            g_hash_table_remove_all      (GHashTable *hash);
-guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
-guint           g_hash_table_foreach_steal   (GHashTable *hash, GHRFunc func, gpointer user_data);
-void            g_hash_table_destroy         (GHashTable *hash);
-void            g_hash_table_print_stats     (GHashTable *table);
-
-void            g_hash_table_iter_init       (GHashTableIter *iter, GHashTable *hash_table);
-gboolean        g_hash_table_iter_next       (GHashTableIter *iter, gpointer *key, gpointer *value);
-
-guint           g_spaced_primes_closest      (guint x);
-
-#define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
-#define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
-
-gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
-guint    g_direct_hash  (gconstpointer v1);
-gboolean g_int_equal    (gconstpointer v1, gconstpointer v2);
-guint    g_int_hash     (gconstpointer v1);
-gboolean g_str_equal    (gconstpointer v1, gconstpointer v2);
-guint    g_str_hash     (gconstpointer v1);
-
-#define  g_assert(x)     G_STMT_START { if (!(x)) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x);  } G_STMT_END
-#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); } G_STMT_END
 
 /*
  * Errors
@@ -288,11 +250,16 @@ gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ..
 #define g_vsnprintf vsnprintf
 #define g_vasprintf vasprintf
 
-gsize       g_strlcpy          (gchar *dest, const gchar *src, gsize dest_size);
+gsize   g_strlcpy            (gchar *dest, const gchar *src, gsize dest_size);
+gchar  *g_stpcpy             (gchar *dest, const char *src);
+
 
 gchar   g_ascii_tolower      (gchar c);
+gchar   g_ascii_toupper      (gchar c);
 gchar  *g_ascii_strdown      (const gchar *str, gssize len);
+gchar  *g_ascii_strup        (const gchar *str, gssize len);
 gint    g_ascii_strncasecmp  (const gchar *s1, const gchar *s2, gsize n);
+gint    g_ascii_strcasecmp   (const gchar *s1, const gchar *s2);
 gint    g_ascii_xdigit_value (gchar c);
 #define g_ascii_isspace(c)   (isspace (c) != 0)
 #define g_ascii_isalpha(c)   (isalpha (c) != 0)
@@ -302,16 +269,15 @@ gint    g_ascii_xdigit_value (gchar c);
 /* FIXME: g_strcasecmp supports utf8 unicode stuff */
 #ifdef _MSC_VER
 #define g_strcasecmp stricmp
-#define g_ascii_strcasecmp stricmp
 #define g_strncasecmp strnicmp
 #define g_strstrip(a) g_strchug (g_strchomp (a))
 #else
 #define g_strcasecmp strcasecmp
-#define g_ascii_strcasecmp strcasecmp
 #define g_ascii_strtoull strtoull
 #define g_strncasecmp strncasecmp
 #define g_strstrip(a) g_strchug (g_strchomp (a))
 #endif
+#define g_ascii_strdup strdup
 
 
 #define	G_STR_DELIMITERS "_-|> <."
@@ -332,13 +298,28 @@ gchar       *g_string_free          (GString *string, gboolean free_segment);
 GString     *g_string_append        (GString *string, const gchar *val);
 void         g_string_printf        (GString *string, const gchar *format, ...);
 void         g_string_append_printf (GString *string, const gchar *format, ...);
+void         g_string_append_vprintf (GString *string, const gchar *format, va_list args);
+GString     *g_string_append_unichar (GString *string, gunichar c);
 GString     *g_string_append_c      (GString *string, gchar c);
 GString     *g_string_append        (GString *string, const gchar *val);
 GString     *g_string_append_len    (GString *string, const gchar *val, gssize len);
 GString     *g_string_truncate      (GString *string, gsize len);
 GString     *g_string_prepend       (GString *string, const gchar *val);
+GString     *g_string_insert        (GString *string, gssize pos, const gchar *val);
+GString     *g_string_set_size      (GString *string, gsize len);
+GString     *g_string_erase         (GString *string, gssize pos, gssize len);
 
 #define g_string_sprintfa g_string_append_printf
+
+typedef void     (*GFunc)          (gpointer data, gpointer user_data);
+typedef gint     (*GCompareFunc)   (gconstpointer a, gconstpointer b);
+typedef gint     (*GCompareDataFunc) (gconstpointer a, gconstpointer b, gpointer user_data);
+typedef void     (*GHFunc)         (gpointer key, gpointer value, gpointer user_data);
+typedef gboolean (*GHRFunc)        (gpointer key, gpointer value, gpointer user_data);
+typedef void     (*GDestroyNotify) (gpointer data);
+typedef guint    (*GHashFunc)      (gconstpointer key);
+typedef gboolean (*GEqualFunc)     (gconstpointer a, gconstpointer b);
+typedef void     (*GFreeFunc)      (gpointer       data);
 
 /*
  * Lists
@@ -435,6 +416,8 @@ GList *g_list_find_custom   (GList	   *list,
 			     GCompareFunc   func);
 GList *g_list_remove        (GList         *list,
 			     gconstpointer  data);
+GList *g_list_remove_all    (GList         *list,
+			     gconstpointer  data);
 GList *g_list_reverse       (GList         *list);
 GList *g_list_remove_link   (GList         *list,
 			     GList         *link);
@@ -448,6 +431,52 @@ GList *g_list_insert_before (GList         *list,
 			     gpointer       data);
 GList *g_list_sort          (GList         *sort,
 			     GCompareFunc   func);
+
+/*
+ * Hashtables
+ */
+typedef struct _GHashTable GHashTable;
+typedef struct _GHashTableIter GHashTableIter;
+
+/* Private, but needed for stack allocation */
+struct _GHashTableIter
+{
+	gpointer dummy [8];
+};
+
+GHashTable     *g_hash_table_new             (GHashFunc hash_func, GEqualFunc key_equal_func);
+GHashTable     *g_hash_table_new_full        (GHashFunc hash_func, GEqualFunc key_equal_func,
+					      GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func);
+void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gpointer value, gboolean replace);
+guint           g_hash_table_size            (GHashTable *hash);
+GList          *g_hash_table_get_keys        (GHashTable *hash);
+GList          *g_hash_table_get_values      (GHashTable *hash);
+gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
+gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
+void            g_hash_table_foreach         (GHashTable *hash, GHFunc func, gpointer user_data);
+gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicate, gpointer user_data);
+gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
+gboolean        g_hash_table_steal           (GHashTable *hash, gconstpointer key);
+void            g_hash_table_remove_all      (GHashTable *hash);
+guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
+guint           g_hash_table_foreach_steal   (GHashTable *hash, GHRFunc func, gpointer user_data);
+void            g_hash_table_destroy         (GHashTable *hash);
+void            g_hash_table_print_stats     (GHashTable *table);
+
+void            g_hash_table_iter_init       (GHashTableIter *iter, GHashTable *hash_table);
+gboolean        g_hash_table_iter_next       (GHashTableIter *iter, gpointer *key, gpointer *value);
+
+guint           g_spaced_primes_closest      (guint x);
+
+#define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
+#define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
+
+gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
+guint    g_direct_hash  (gconstpointer v1);
+gboolean g_int_equal    (gconstpointer v1, gconstpointer v2);
+guint    g_int_hash     (gconstpointer v1);
+gboolean g_str_equal    (gconstpointer v1, gconstpointer v2);
+guint    g_str_hash     (gconstpointer v1);
 
 /*
  * ByteArray
@@ -474,15 +503,23 @@ struct _GArray {
 };
 
 GArray *g_array_new               (gboolean zero_terminated, gboolean clear_, guint element_size);
+GArray *g_array_sized_new         (gboolean zero_terminated, gboolean clear_, guint element_size, guint reserved_size);
 gchar*  g_array_free              (GArray *array, gboolean free_segment);
 GArray *g_array_append_vals       (GArray *array, gconstpointer data, guint len);
 GArray* g_array_insert_vals       (GArray *array, guint index_, gconstpointer data, guint len);
 GArray* g_array_remove_index      (GArray *array, guint index_);
 GArray* g_array_remove_index_fast (GArray *array, guint index_);
+void    g_array_set_size          (GArray *array, gint length);
 
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+
+/*
+ * QSort
+*/
+
+void g_qsort_with_data (gpointer base, size_t nmemb, size_t size, GCompareDataFunc compare, gpointer user_data);
 
 /*
  * Pointer Array
@@ -586,7 +623,6 @@ gpointer g_convert_error_quark(void);
  * only used if the old collation code is activated, so this is only the
  * bare minimum to build.
  */
-typedef guint32 gunichar;
 
 typedef enum {
 	G_UNICODE_CONTROL,
@@ -621,12 +657,53 @@ typedef enum {
 	G_UNICODE_SPACE_SEPARATOR
 } GUnicodeType;
 
+typedef enum {
+	G_UNICODE_BREAK_MANDATORY,
+	G_UNICODE_BREAK_CARRIAGE_RETURN,
+	G_UNICODE_BREAK_LINE_FEED,
+	G_UNICODE_BREAK_COMBINING_MARK,
+	G_UNICODE_BREAK_SURROGATE,
+	G_UNICODE_BREAK_ZERO_WIDTH_SPACE,
+	G_UNICODE_BREAK_INSEPARABLE,
+	G_UNICODE_BREAK_NON_BREAKING_GLUE,
+	G_UNICODE_BREAK_CONTINGENT,
+	G_UNICODE_BREAK_SPACE,
+	G_UNICODE_BREAK_AFTER,
+	G_UNICODE_BREAK_BEFORE,
+	G_UNICODE_BREAK_BEFORE_AND_AFTER,
+	G_UNICODE_BREAK_HYPHEN,
+	G_UNICODE_BREAK_NON_STARTER,
+	G_UNICODE_BREAK_OPEN_PUNCTUATION,
+	G_UNICODE_BREAK_CLOSE_PUNCTUATION,
+	G_UNICODE_BREAK_QUOTATION,
+	G_UNICODE_BREAK_EXCLAMATION,
+	G_UNICODE_BREAK_IDEOGRAPHIC,
+	G_UNICODE_BREAK_NUMERIC,
+	G_UNICODE_BREAK_INFIX_SEPARATOR,
+	G_UNICODE_BREAK_SYMBOL,
+	G_UNICODE_BREAK_ALPHABETIC,
+	G_UNICODE_BREAK_PREFIX,
+	G_UNICODE_BREAK_POSTFIX,
+	G_UNICODE_BREAK_COMPLEX_CONTEXT,
+	G_UNICODE_BREAK_AMBIGUOUS,
+	G_UNICODE_BREAK_UNKNOWN,
+	G_UNICODE_BREAK_NEXT_LINE,
+	G_UNICODE_BREAK_WORD_JOINER,
+	G_UNICODE_BREAK_HANGUL_L_JAMO,
+	G_UNICODE_BREAK_HANGUL_V_JAMO,
+	G_UNICODE_BREAK_HANGUL_T_JAMO,
+	G_UNICODE_BREAK_HANGUL_LV_SYLLABLE,
+	G_UNICODE_BREAK_HANGUL_LVT_SYLLABLE
+} GUnicodeBreakType;
+
 gunichar       g_unichar_toupper (gunichar c);
 gunichar       g_unichar_tolower (gunichar c);
 gunichar       g_unichar_totitle (gunichar c);
 GUnicodeType   g_unichar_type    (gunichar c);
+gboolean       g_unichar_isspace (gunichar c);
 gboolean       g_unichar_isxdigit (gunichar c);
 gint           g_unichar_xdigit_value (gunichar c);
+GUnicodeBreakType   g_unichar_break_type (gunichar c);
 
 #ifndef MAX
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
@@ -648,6 +725,9 @@ gint           g_unichar_xdigit_value (gunichar c);
 #define G_UNLIKELY(x) (x)
 #endif
 
+#define  g_assert(x)     G_STMT_START { if (G_UNLIKELY (!(x))) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x);  } G_STMT_END
+#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); } G_STMT_END
+
 /*
  * Unicode conversion
  */
@@ -663,17 +743,21 @@ typedef enum {
 	G_CONVERT_ERROR_NOT_ABSOLUTE_PATH
 } GConvertError;
 
-gchar* g_utf8_strup (const gchar *str, gssize len);
-gchar* g_utf8_strdown (const gchar *str, gssize len);
-gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **error);
-gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **error);
-gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **error);
-gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **error);
+gchar     *g_utf8_strup (const gchar *str, gssize len);
+gchar     *g_utf8_strdown (const gchar *str, gssize len);
+gint       g_unichar_to_utf8 (gunichar c, gchar *outbuf);
+gunichar  *g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written);
+gunichar  *g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
+gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
+gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
+gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 
 #define u8to16(str) g_utf8_to_utf16(str, (glong)strlen(str), NULL, NULL, NULL)
 
 #ifdef G_OS_WIN32
-#define u16to8(str) g_utf16_to_utf8(str, (glong)wcslen(str), NULL, NULL, NULL)
+#define u16to8(str) g_utf16_to_utf8((gunichar2 *) (str), (glong)wcslen((wchar_t *) (str)), NULL, NULL, NULL)
 #else
 #define u16to8(str) g_utf16_to_utf8(str, (glong)strlen(str), NULL, NULL, NULL)
 #endif
@@ -716,8 +800,6 @@ typedef enum {
 	G_SPAWN_FILE_AND_ARGV_ZERO     = 1 << 6
 } GSpawnFlags;
 
-typedef pid_t GPid;
-
 typedef void (*GSpawnChildSetupFunc) (gpointer user_data);
 
 gboolean g_spawn_command_line_sync (const gchar *command_line, gchar **standard_output, gchar **standard_error, gint *exit_status, GError **error);
@@ -750,6 +832,10 @@ void g_usleep (gulong microseconds);
 /*
  * File
  */
+
+gpointer g_file_error_quark (void);
+
+#define G_FILE_ERROR g_file_error_quark ()
 
 typedef enum {
 	G_FILE_ERROR_EXIST,
@@ -788,10 +874,23 @@ typedef enum {
 } GFileTest;
 
 
+gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **error);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **error);
 GFileError g_file_error_from_errno (gint err_no);
 gint       g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **error);
 gboolean   g_file_test (const gchar *filename, GFileTest test);
+
+#define g_open open
+#define g_rename rename
+#define g_stat stat
+#define g_unlink unlink
+#define g_fopen fopen
+#define g_lstat lstat
+#define g_rmdir rmdir
+#define g_mkstemp mkstemp
+#define g_ascii_isdigit isdigit
+#define g_ascii_strtod strtod
+#define g_ascii_isalnum isalnum
 
 /*
  * Pattern matching
@@ -809,6 +908,8 @@ GDir        *g_dir_open (const gchar *path, guint flags, GError **error);
 const gchar *g_dir_read_name (GDir *dir);
 void         g_dir_rewind (GDir *dir);
 void         g_dir_close (GDir *dir);
+
+int          g_mkdir_with_parents (const gchar *pathname, int mode);
 #define g_mkdir mkdir
 
 /*
@@ -865,14 +966,11 @@ gboolean         g_markup_parse_context_end_parse (GMarkupParseContext *context,
 /*
  * Character set conversion
  */
-/*
-* Index into the table below with the first byte of a UTF-8 sequence to
-* get the number of trailing bytes that are supposed to follow it.
-* Note that *legal* UTF-8 values can't have 4 or 5-bytes. The table is
-* left as-is for anyone who may want to do such conversion, which was
-* allowed in earlier algorithms.
-*/
-extern const gchar g_trailingBytesForUTF8[256];
+typedef struct _GIConv *GIConv;
+
+gsize g_iconv (GIConv cd, gchar **inbytes, gsize *inbytesleft, gchar **outbytes, gsize *outbytesleft);
+GIConv g_iconv_open (const gchar *to_charset, const gchar *from_charset);
+int g_iconv_close (GIConv cd);
 
 gboolean  g_get_charset        (G_CONST_RETURN char **charset);
 gchar    *g_locale_to_utf8     (const gchar *opsysstring, gssize len,
@@ -885,10 +983,27 @@ gchar    *g_filename_from_utf8 (const gchar *utf8string, gssize len, gsize *byte
 gchar    *g_convert            (const gchar *str, gssize len,
 				const gchar *to_codeset, const gchar *from_codeset,
 				gsize *bytes_read, gsize *bytes_written, GError **error);
+
+/*
+ * Unicode manipulation
+ */
+extern const guchar g_utf8_jump_table[256];
+
 gboolean  g_utf8_validate      (const gchar *str, gssize max_len, const gchar **end);
+gunichar  g_utf8_get_char_validated (const gchar *str, gssize max_len);
+gchar    *g_utf8_find_prev_char (const char *str, const char *p);
+gchar    *g_utf8_prev_char     (const char *str);
+#define   g_utf8_next_char(p)  ((p) + g_utf8_jump_table[(guchar)(*p)])
 gunichar  g_utf8_get_char      (const gchar *src);
 glong     g_utf8_strlen        (const gchar *str, gssize max);
-#define   g_utf8_next_char(p) p + (g_trailingBytesForUTF8[(guchar)(*p)] + 1)
+gchar    *g_utf8_offset_to_pointer (const gchar *str, glong offset);
+glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
+
+/*
+ * priorities
+ */
+#define G_PRIORITY_DEFAULT 0
+#define G_PRIORITY_DEFAULT_IDLE 200
 
 /*
  * Empty thread functions, not used by eglib
@@ -918,39 +1033,47 @@ glong     g_utf8_strlen        (const gchar *str, gssize max);
 				  
  
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#   define GUINT32_TO_LE(x) (x)
-#   define GUINT64_TO_LE(x) (x)
-#   define GUINT16_TO_LE(x) (x)
-#   define GUINT_TO_LE(x)   (x)
-#   define GUINT32_TO_BE(x) GUINT32_SWAP_LE_BE(x)
-#   define GUINT16_FROM_BE(x) GUINT16_SWAP_LE_BE(x)
-#   define GUINT32_FROM_BE(x) GUINT32_SWAP_LE_BE(x)
 #   define GUINT64_FROM_BE(x) GUINT64_SWAP_LE_BE(x)
-#   define GINT16_FROM_BE(x) GUINT16_SWAP_LE_BE(x)
-#   define GINT32_FROM_BE(x) GUINT32_SWAP_LE_BE(x)
-#   define GINT64_FROM_BE(x) GUINT64_SWAP_LE_BE(x)
+#   define GUINT32_FROM_BE(x) GUINT32_SWAP_LE_BE(x)
+#   define GUINT16_FROM_BE(x) GUINT16_SWAP_LE_BE(x)
+#   define GUINT_FROM_BE(x)   GUINT32_SWAP_LE_BE(x)
+#   define GUINT64_FROM_LE(x) (x)
+#   define GUINT32_FROM_LE(x) (x)
+#   define GUINT16_FROM_LE(x) (x)
+#   define GUINT_FROM_LE(x)   (x)
+#   define GUINT64_TO_BE(x)   GUINT64_SWAP_LE_BE(x)
+#   define GUINT32_TO_BE(x)   GUINT32_SWAP_LE_BE(x)
+#   define GUINT16_TO_BE(x)   GUINT16_SWAP_LE_BE(x)
+#   define GUINT_TO_BE(x)     GUINT32_SWAP_LE_BE(x)
+#   define GUINT64_TO_LE(x)   (x)
+#   define GUINT32_TO_LE(x)   (x)
+#   define GUINT16_TO_LE(x)   (x)
+#   define GUINT_TO_LE(x)     (x)
 #else
-#   define GUINT32_TO_LE(x) GUINT32_SWAP_LE_BE(x)
-#   define GUINT64_TO_LE(x) GUINT64_SWAP_LE_BE(x)
-#   define GUINT16_TO_LE(x) GUINT16_SWAP_LE_BE(x)
-#   define GUINT_TO_LE(x)   GUINT32_SWAP_LE_BE(x)
-#   define GUINT32_TO_BE(x) (x)
-#   define GUINT16_FROM_BE(x) (x)
-#   define GUINT32_FROM_BE(x) (x)
 #   define GUINT64_FROM_BE(x) (x)
-#   define GINT16_FROM_BE(x) (x)
-#   define GINT32_FROM_BE(x) (x)
-#   define GINT64_FROM_BE(x) (x)
+#   define GUINT32_FROM_BE(x) (x)
+#   define GUINT16_FROM_BE(x) (x)
+#   define GUINT_FROM_BE(x)   (x)
+#   define GUINT64_FROM_LE(x) GUINT64_SWAP_LE_BE(x)
+#   define GUINT32_FROM_LE(x) GUINT32_SWAP_LE_BE(x)
+#   define GUINT16_FROM_LE(x) GUINT16_SWAP_LE_BE(x)
+#   define GUINT_FROM_LE(x)   GUINT32_SWAP_LE_BE(x)
+#   define GUINT64_TO_BE(x)   (x)
+#   define GUINT32_TO_BE(x)   (x)
+#   define GUINT16_TO_BE(x)   (x)
+#   define GUINT_TO_BE(x)     (x)
+#   define GUINT64_TO_LE(x)   GUINT64_SWAP_LE_BE(x)
+#   define GUINT32_TO_LE(x)   GUINT32_SWAP_LE_BE(x)
+#   define GUINT16_TO_LE(x)   GUINT16_SWAP_LE_BE(x)
+#   define GUINT_TO_LE(x)     GUINT32_SWAP_LE_BE(x)
 #endif
 
+#define GINT64_FROM_BE(x)   (GUINT64_TO_BE (x))
+#define GINT32_FROM_BE(x)   (GUINT32_TO_BE (x))
+#define GINT16_FROM_BE(x)   (GUINT16_TO_BE (x))
 #define GINT64_FROM_LE(x)   (GUINT64_TO_LE (x))
 #define GINT32_FROM_LE(x)   (GUINT32_TO_LE (x))
 #define GINT16_FROM_LE(x)   (GUINT16_TO_LE (x))
-
-#define GUINT32_FROM_LE(x)  (GUINT32_TO_LE (x))
-#define GUINT64_FROM_LE(x)  (GUINT64_TO_LE (x))
-#define GUINT16_FROM_LE(x)  (GUINT16_TO_LE (x))
-#define GUINT_FROM_LE(x)    (GUINT_TO_LE (x))
 
 #define _EGLIB_MAJOR  2
 #define _EGLIB_MIDDLE 4

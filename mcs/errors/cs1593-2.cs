@@ -1,4 +1,4 @@
-// cs1593-2.cs: Delegate `D' does not take `0' arguments
+// CS1593: Delegate `D' does not take `0' arguments
 // Line: 11
 //
 // The delegate has an explicit signature with 0 arguments, so it 

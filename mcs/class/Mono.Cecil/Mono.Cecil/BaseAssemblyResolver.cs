@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -46,6 +46,21 @@ namespace Mono.Cecil {
 		}
 
 		public AssemblyResolveEventArgs (AssemblyNameReference reference)
+		{
+			this.reference = reference;
+		}
+	}
+
+	public class AssemblyResolutionException : FileNotFoundException {
+
+		readonly AssemblyNameReference reference;
+
+		public AssemblyNameReference AssemblyReference {
+			get { return reference; }
+		}
+
+		public AssemblyResolutionException (AssemblyNameReference reference)
+			: base (string.Format ("Failed to resolve assembly: '{0}'", reference))
 		{
 			this.reference = reference;
 		}
@@ -152,7 +167,7 @@ namespace Mono.Cecil {
 					return assembly;
 			}
 
-			throw new FileNotFoundException ("Could not resolve: " + name);
+			throw new AssemblyResolutionException (name);
 		}
 
 		AssemblyDefinition SearchDirectory (AssemblyNameReference name, IEnumerable<string> directories, ReaderParameters parameters)
@@ -318,10 +333,11 @@ namespace Mono.Cecil {
 
 		static string GetAssemblyFile (AssemblyNameReference reference, string prefix, string gac)
 		{
-			var gac_folder = new StringBuilder ();
-			gac_folder.Append (prefix);
-			gac_folder.Append (reference.Version);
-			gac_folder.Append ("__");
+			var gac_folder = new StringBuilder ()
+				.Append (prefix)
+				.Append (reference.Version)
+				.Append ("__");
+
 			for (int i = 0; i < reference.PublicKeyToken.Length; i++)
 				gac_folder.Append (reference.PublicKeyToken [i].ToString ("x2"));
 

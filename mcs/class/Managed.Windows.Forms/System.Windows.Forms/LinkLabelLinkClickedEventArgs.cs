@@ -31,20 +31,15 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public class LinkLabelLinkClickedEventArgs : EventArgs 
 	{
-#if NET_2_0
 		private MouseButtons button;
-#endif
 		private LinkLabel.Link link;
 
 		public LinkLabelLinkClickedEventArgs (LinkLabel.Link link)
 		{
-#if NET_2_0
 			this.button = MouseButtons.Left;
-#endif
 			this.link = link;
 		}
 
-#if NET_2_0
 		public LinkLabelLinkClickedEventArgs (LinkLabel.Link link, MouseButtons button)
 		{
 			this.button = button;
@@ -54,7 +49,6 @@ namespace System.Windows.Forms
 		public MouseButtons Button {
 			get { return this.button; }
 		}
-#endif
 
 		public LinkLabel.Link Link {
 			get { return link; }

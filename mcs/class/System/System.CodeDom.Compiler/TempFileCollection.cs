@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.CodeDom.Compiler {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public class TempFileCollection:ICollection, IEnumerable, IDisposable
 	{

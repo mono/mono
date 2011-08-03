@@ -1,4 +1,4 @@
-// cs0573.cs: `A.a': Structs cannot have instance field initializers
+// CS0573: `A.a': Structs cannot have instance field initializers
 // Line: 5
 struct A {
 	int a = 1;

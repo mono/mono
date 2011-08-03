@@ -106,12 +106,6 @@ namespace System.Security.Cryptography {
 			Close ();
 		}
 
-		// LAMESPEC: A CryptoStream can be close in read mode
-		public override void Close () 
-		{
-			base.Close ();
-		}
-
 		public override int Read ([In,Out] byte[] buffer, int offset, int count)
 		{
 			if (_mode != CryptoStreamMode.Read) {
@@ -363,5 +357,10 @@ namespace System.Security.Cryptography {
 				}
 			}
 		}
+#if NET_4_0
+		public bool HasFlushedFinalBlock {
+			get { return _flushedFinalBlock; }
+		}
+#endif
 	}
 }

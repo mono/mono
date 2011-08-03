@@ -1183,7 +1183,7 @@ namespace System.Linq.Expressions {
 		static bool IsConvertiblePrimitive (Type type)
 		{
 			var t = type.GetNotNullableType ();
-
+	
 			if (t == typeof (bool))
 				return false;
 
@@ -1219,6 +1219,9 @@ namespace System.Linq.Expressions {
 				return true;
 
 			if (type.IsInterface || target.IsInterface)
+				return true;
+
+			if (type.IsEnum && target == typeof (Enum))
 				return true;
 
 			if (type.IsValueType || target.IsValueType)

@@ -124,6 +124,8 @@ namespace System.Runtime.Serialization
 
 		public QName XmlName { get; set; }
 
+		public abstract bool IsContractAllowedType { get; }
+
 		protected void HandleId (XmlReader reader, XmlFormatterDeserializer deserializer, object instance)
 		{
 			HandleId (reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace), deserializer, instance);
@@ -264,7 +266,7 @@ namespace System.Runtime.Serialization
 			reader.MoveToContent ();
 			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
-			else if (!isEmpty && reader.NodeType != XmlNodeType.None) {
+			else if (!isEmpty && !reader.EOF && reader.NodeType != XmlNodeType.EndElement) {
 				var li = reader as IXmlLineInfo;
 				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.{4}",
 					reader.NodeType,
@@ -300,36 +302,48 @@ namespace System.Runtime.Serialization
 
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
+			bool [] nsmatched = new bool [Members.Count];
 			int memberInd = -1, ordered = -1;
 			while (!empty && reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
 				int i = 0;
+				bool nsmatchedOne = false;
 				for (; i < Members.Count; i++) { // unordered
 					if (Members [i].Order >= 0)
 						break;
-					if (reader.LocalName == Members [i].XmlName &&
-						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
+					if (reader.LocalName == Members [i].XmlName) {
 						memberInd = i;
 						dmi = Members [i];
-						break;
+						nsmatchedOne = (dmi.XmlRootNamespace == null || reader.NamespaceURI == dmi.XmlRootNamespace);
+						if (nsmatchedOne)
+							break;
 					}
 				}
 				for (i = Math.Max (i, ordered); i < Members.Count; i++) { // ordered
 					if (dmi != null)
 						break;
-					if (reader.LocalName == Members [i].XmlName &&
-						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
-						memberInd = i;
+					if (reader.LocalName == Members [i].XmlName) {
 						ordered = i;
+						memberInd = i;
 						dmi = Members [i];
-						break;
+						nsmatchedOne = (dmi.XmlRootNamespace == null || reader.NamespaceURI == dmi.XmlRootNamespace);
+						if (nsmatchedOne)
+							break;
 					}
 				}
-
+				
 				if (dmi == null) {
 					reader.Skip ();
+					reader.MoveToContent ();
 					continue;
 				}
+				if (filled [memberInd] && nsmatched [memberInd]) {
+					// The strictly-corresponding member (i.e. that matches namespace URI too, not only local name) already exists, so skip this element.
+					reader.Skip ();
+					reader.MoveToContent ();
+					continue;
+				}
+				nsmatched [memberInd] = nsmatchedOne;
 				SetValue (dmi, instance, deserializer.Deserialize (dmi.MemberType, reader));
 				filled [memberInd] = true;
 				reader.MoveToContent ();
@@ -372,7 +386,7 @@ namespace System.Runtime.Serialization
 			KnownTypes.Add (memberType);
 			QName qname = KnownTypes.GetQName (memberType);
 			
-			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name) != null)
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname) != null)
 				return new DataMemberInfo (mi, dma, ownerNamespace, null);
 			else
 				return new DataMemberInfo (mi, dma, ownerNamespace, qname.Namespace);
@@ -381,6 +395,8 @@ namespace System.Runtime.Serialization
 
 	internal partial class XmlSerializableMap : SerializationMap
 	{
+		public override bool IsContractAllowedType { get { return true; } }
+
 		public XmlSerializableMap (Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
@@ -419,18 +435,18 @@ namespace System.Runtime.Serialization
 		{
 		}
 
+		public override bool IsContractAllowedType { get { return true; } }
+
 		internal void Initialize ()
 		{
 			Type type = RuntimeType;
-			List <DataMemberInfo> members = new List <DataMemberInfo> ();
+			List <DataMemberInfo> members;
 			object [] atts = type.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
 			while (type != null) {
-				QName qname = KnownTypes.GetQName (type);
-					
-				members = GetMembers (type, qname, true);
+				members = GetMembers (type);
 				members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 				Members.InsertRange (0, members);
 				members.Clear ();
@@ -439,12 +455,10 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
+		List<DataMemberInfo> GetMembers (Type type)
 		{
 			List<DataMemberInfo> data_members = new List<DataMemberInfo> ();
-			BindingFlags flags = AllInstanceFlags;
-			if (declared_only)
-				flags |= BindingFlags.DeclaredOnly;
+			BindingFlags flags = AllInstanceFlags | BindingFlags.DeclaredOnly;
 
 			foreach (PropertyInfo pi in type.GetProperties (flags)) {
 				DataMemberAttribute dma =
@@ -456,7 +470,7 @@ namespace System.Runtime.Serialization
 				if (!pi.CanRead || (!pi.CanWrite && !(map is ICollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (
 							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
-				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType, qname.Namespace));
+				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType, KnownTypeCollection.GetStaticQName (pi.DeclaringType).Namespace));
 			}
 
 			foreach (FieldInfo fi in type.GetFields (flags)) {
@@ -464,7 +478,7 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (fi);
 				if (dma == null)
 					continue;
-				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
+				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, KnownTypeCollection.GetStaticQName (fi.DeclaringType).Namespace));
 			}
 
 			return data_members;
@@ -482,6 +496,8 @@ namespace System.Runtime.Serialization
 			: base (type, KnownTypeCollection.GetStaticQName (type), knownTypes)
 		{
 		}
+
+		public override bool IsContractAllowedType { get { return false; } }
 
 		internal void Initialize ()
 		{
@@ -502,7 +518,8 @@ namespace System.Runtime.Serialization
 					continue;
 				if (mi.GetCustomAttributes (typeof (IgnoreDataMemberAttribute), false).Length != 0)
 					continue;
-				l.Add (CreateDataMemberInfo (new DataMemberAttribute (), mi, mt, XmlName.Namespace));
+				string ns = KnownTypeCollection.GetStaticQName (mi.DeclaringType).Namespace;
+				l.Add (CreateDataMemberInfo (new DataMemberAttribute (), mi, mt, ns));
 			}
 			l.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 			return l;
@@ -529,6 +546,8 @@ namespace System.Runtime.Serialization
 		internal override string CurrentNamespace {
 			get { return XmlName.Namespace; }
 		}
+
+		public override bool IsContractAllowedType { get { return true; } }
 	}
 
 	internal interface ICollectionTypeMap
@@ -567,12 +586,14 @@ namespace System.Runtime.Serialization
 
 		static Type GetGenericCollectionInterface (Type type)
 		{
-			foreach (var iface in type.GetInterfaces ())
-				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>))
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IEnumerable<>))
 					return iface;
 
 			return null;
 		}
+
+		public override bool IsContractAllowedType { get { return false; } }
 
 		public override bool OutputXsiType {
 			get { return false; }
@@ -590,6 +611,9 @@ namespace System.Runtime.Serialization
 		public override void SerializeNonReference (object graph,
 			XmlFormatterSerializer serializer)
 		{
+			// output item xmlns in advance so that it does not result in excessive xmlns overwrites.
+			if (XmlName.Namespace != element_qname.Namespace && element_qname.Namespace != KnownTypeCollection.MSSimpleNamespace)
+				serializer.Writer.WriteXmlnsAttribute (null, element_qname.Namespace);
 
 			foreach (object o in (IEnumerable) graph) {
 				serializer.WriteStartElement (element_qname.Name, XmlName.Namespace, CurrentNamespace);
@@ -706,7 +730,7 @@ namespace System.Runtime.Serialization
 
 		static Type GetGenericDictionaryInterface (Type type)
 		{
-			foreach (var iface in type.GetInterfaces ())
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
 				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>))
 					return iface;
 
@@ -716,6 +740,8 @@ namespace System.Runtime.Serialization
 		string ContractNamespace {
 			get { return a != null && !String.IsNullOrEmpty (a.Namespace) ? a.Namespace : KnownTypeCollection.MSArraysNamespace; }
 		}
+
+		public override bool IsContractAllowedType { get { return a != null; } }
 
 		public Type KeyType { get { return key_type; } }
 		public Type ValueType { get { return value_type; } }
@@ -831,7 +857,7 @@ namespace System.Runtime.Serialization
 			return DeserializeContent (reader, deserializer, id);
 		}
 
-		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer, string id)
+		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			object instance = CreateInstance ();
 			HandleId (id, deserializer, instance);
@@ -845,7 +871,9 @@ namespace System.Runtime.Serialization
 				object key = deserializer.Deserialize (key_type, reader);
 				reader.MoveToContent ();
 				object val = deserializer.Deserialize (value_type, reader);
+				reader.MoveToContent ();
 				reader.ReadEndElement (); // of pair
+				reader.MoveToContent ();
 
 				if (instance is IDictionary)
 					((IDictionary)instance).Add (key, val);
@@ -872,6 +900,8 @@ namespace System.Runtime.Serialization
 		{
 		}
 
+		public override bool IsContractAllowedType { get { return true; } }
+
 		public void Initialize ()
 		{
 			Members = GetMembers (RuntimeType, XmlName, false);
@@ -892,7 +922,7 @@ namespace System.Runtime.Serialization
 					if (fi.IsInitOnly)
 						throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
 					DataMemberAttribute dma = new DataMemberAttribute ();
-					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
+					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, KnownTypeCollection.GetStaticQName (fi.DeclaringType).Namespace));
 				}
 			}
 
@@ -943,6 +973,8 @@ namespace System.Runtime.Serialization
 				enum_members.Add (new EnumMemberInfo (name, fi.GetValue (null)));
 			}
 		}
+
+		public override bool IsContractAllowedType { get { return false; } }
 
 		private EnumMemberAttribute GetEnumMemberAttribute (
 			MemberInfo mi)
@@ -997,7 +1029,7 @@ namespace System.Runtime.Serialization
 
 			if (value != String.Empty) {
 				if (flag_attr && value.IndexOf (' ') != -1) {
-					long flags = 0l;
+					long flags = 0L;
 					foreach (string flag in value.Split (' ')) {
 						foreach (EnumMemberInfo emi in enum_members) {
 							if (emi.XmlName == flag) {

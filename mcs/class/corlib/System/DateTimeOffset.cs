@@ -296,11 +296,15 @@ namespace System
 			DateTime d;
 			DateTimeOffset dto;
 			Exception exception = null;
-			if (!DateTime.CoreParse (input, formatProvider, styles, out d, out dto, true, ref exception))
-				throw exception;
+			try {
+				if (!DateTime.CoreParse (input, formatProvider, styles, out d, out dto, true, ref exception))
+					throw exception;
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new FormatException ("The UTC representation falls outside the 1-9999 year range", ex);
+			}
 
 			if (d.Ticks != 0 && dto.Ticks == 0)
-				throw new ArgumentOutOfRangeException ("The UTC representation falls outside the 1-9999 year range");
+				throw new FormatException ("The UTC representation falls outside the 1-9999 year range");
 
 			return dto;
 		}

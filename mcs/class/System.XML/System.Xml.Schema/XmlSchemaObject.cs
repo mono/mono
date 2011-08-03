@@ -45,7 +45,7 @@ namespace System.Xml.Schema
 		internal ArrayList unhandledAttributeList ;
 		internal bool isCompiled = false;
 		internal int errorCount = 0;
-		internal Guid CompilationId;
+		internal Guid compilation_id;
 		internal Guid ValidationId;
 		internal bool isRedefineChild;
 		internal bool isRedefinedComponent;
@@ -58,7 +58,16 @@ namespace System.Xml.Schema
 		{
 			namespaces = new XmlSerializerNamespaces();
 			unhandledAttributeList = null;
-			CompilationId = Guid.Empty;
+			compilation_id = Guid.Empty;
+		}
+		
+		internal Guid CompilationId {
+			get { return compilation_id; }
+			set {
+				if (value.Equals (Guid.Empty))
+					throw new ArgumentException ("value must not be empty");
+				compilation_id = value;
+			}
 		}
 
 		[XmlIgnore]

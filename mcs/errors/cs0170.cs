@@ -3,7 +3,7 @@
 
 using System;
 
-namespace cs0170
+namespace CS0170
 {
 	public struct Foo {
 		public int a;

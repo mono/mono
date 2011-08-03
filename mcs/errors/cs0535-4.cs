@@ -1,4 +1,4 @@
-// cs0535-4.cs: `B' does not implement interface member `ITest2.GetName(string)'
+// CS0535: `B' does not implement interface member `ITest2.GetName(string)'
 // Line: 17
 
 public interface ITest1 {

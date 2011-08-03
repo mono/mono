@@ -1869,7 +1869,7 @@ namespace System.Numerics {
 				return 0;
 
 			if (data.Length > 2)
-				return -sign;
+				return sign;
 
 			if (other < 0)
 				other = -other;

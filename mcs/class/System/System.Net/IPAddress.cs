@@ -127,9 +127,9 @@ namespace System.Net {
 		///   Constructor from a 32-bit constant with the address bytes in
 		///   little-endian order (the lower order bytes contain the netid)
 		/// </summary>
-		public IPAddress (long addr)
+		public IPAddress (long newAddress)
 		{
-			m_Address = addr;
+			m_Address = newAddress;
 			m_Family = AddressFamily.InterNetwork;
 		}
 
@@ -161,7 +161,7 @@ namespace System.Net {
 			}
 		}
 
-		public IPAddress(byte[] address, long scopeId)
+		public IPAddress(byte[] address, long scopeid)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
@@ -177,7 +177,7 @@ namespace System.Net {
 			m_Numbers = new ushort [8];
 			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
 			m_Family = AddressFamily.InterNetworkV6;
-			m_ScopeId = scopeId;
+			m_ScopeId = scopeid;
 		}
 
 		internal IPAddress(ushort[] address, long scopeId)
@@ -409,22 +409,22 @@ namespace System.Net {
 		/// </summary>
 		/// <param name="addr">Address to compare</param>
 		/// <returns></returns>
-		public static bool IsLoopback (IPAddress addr)
+		public static bool IsLoopback (IPAddress address)
 		{
 #if MOONLIGHT
 			// even 4.0 throws an NRE
-			if (addr == null)
-				throw new ArgumentNullException ("addr");
+			if (address == null)
+				throw new ArgumentNullException ("address");
 #endif
-			if(addr.m_Family == AddressFamily.InterNetwork)
-				return (addr.m_Address & 0xFF) == 127;
+			if(address.m_Family == AddressFamily.InterNetwork)
+				return (address.m_Address & 0xFF) == 127;
 			else {
 				for(int i=0; i<6; i++) {
-					if(addr.m_Numbers[i] != 0)
+					if(address.m_Numbers[i] != 0)
 						return false;
 				}
 
-				return NetworkToHostOrder((short)addr.m_Numbers[7]) == 1;
+				return NetworkToHostOrder((short)address.m_Numbers[7]) == 1;
 			}
 		}
 
@@ -464,9 +464,9 @@ namespace System.Net {
 		/// <returns>
 		///   Whether both objects are equal.
 		/// </returns>
-		public override bool Equals (object other)
+		public override bool Equals (object comparand)
 		{
-			IPAddress otherAddr = other as IPAddress;
+			IPAddress otherAddr = comparand as IPAddress;
 			if (otherAddr != null){
 				if(AddressFamily != otherAddr.AddressFamily)
 					return false;

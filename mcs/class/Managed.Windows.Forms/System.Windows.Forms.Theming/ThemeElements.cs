@@ -105,7 +105,6 @@ namespace System.Windows.Forms.Theming
 			get { return theme.TabControlPainter; }
 		}
 
-#if NET_2_0
 		public virtual Default.CheckBoxPainter CheckBoxPainter {
 			get { return theme.CheckBoxPainter; }
 		}
@@ -117,7 +116,6 @@ namespace System.Windows.Forms.Theming
 		public virtual Default.ToolStripPainter ToolStripPainter {
 			get { return theme.ToolStripPainter; }
 		}
-#endif
 
 		#endregion
 	}

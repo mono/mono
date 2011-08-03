@@ -223,15 +223,26 @@ namespace System.Runtime.Serialization
 					known_types.Add (t);
 			}
 
+			RegisterTypeAsKnown (type);
+		}
+
+		void RegisterTypeAsKnown (Type type)
+		{
+			if (known_types.Contains (type))
+				return;
+
 			Type elementType = type;
 			if (type.HasElementType)
 				elementType = type.GetElementType ();
+
+			known_types.Add (elementType);
 
 			/* Get all KnownTypeAttribute-s, including inherited ones */
 			object [] attrs = elementType.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i ++) {
 				KnownTypeAttribute kt = (KnownTypeAttribute) attrs [i];
-				known_types.Add (kt.Type);
+				foreach (var t in kt.GetTypes (elementType))
+					RegisterTypeAsKnown (t);
 			}
 		}
 
@@ -386,7 +397,7 @@ namespace System.Runtime.Serialization
 		}
 #endif
 
-		[MonoTODO ("support arrays; support Serializable; support SharedType; use DataContractSurrogate")]
+		[MonoTODO ("use DataContractSurrogate")]
 		/*
 			when writeContentOnly is true, then the input XmlWriter
 			must be at element state. This is to write possible
@@ -457,8 +468,7 @@ namespace System.Runtime.Serialization
 
 			if (rootQName == null &&
 			    graph.GetType () != type &&
-			    !known_types.Contains (graph.GetType ()) &&
-			    KnownTypeCollection.GetPrimitiveTypeName (graph.GetType ()) == QName.Empty)
+			    IsUnknownType (graph.GetType ()))
 				throw new SerializationException (String.Format ("Type '{0}' is unexpected. The type should either be registered as a known type, or DataContractResolver should be used.", graph.GetType ()));
 
 			QName instName = rootQName;
@@ -501,6 +511,16 @@ namespace System.Runtime.Serialization
 			writer.WriteQualifiedName (instName.Name, instName.Namespace);
 			writer.WriteEndAttribute ();
 */
+		}
+		
+		bool IsUnknownType (Type type)
+		{
+			if (known_types.Contains (type) ||
+			    KnownTypeCollection.GetPrimitiveTypeName (type) != QName.Empty)
+				return false;
+			if (type.IsArray)
+				return IsUnknownType (type.GetElementType ());
+			return true;
 		}
 
 		public override void WriteEndObject (XmlDictionaryWriter writer)

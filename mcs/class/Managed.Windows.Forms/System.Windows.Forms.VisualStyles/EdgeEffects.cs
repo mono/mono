@@ -29,10 +29,7 @@
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum EdgeEffects
+	public enum EdgeEffects
 	{
 		None = 0,
 		FillInterior = 2048,

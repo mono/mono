@@ -1,4 +1,4 @@
-// cs0535-3.cs: `Test' does not implement interface member `X.Hola(ref string)'
+// CS0535: `Test' does not implement interface member `X.Hola(ref string)'
 // Line: 9
 
 using System;

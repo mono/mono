@@ -18,6 +18,13 @@ class Test
 		if (fbas.Length != 32)
 			return 1;
 
+		var fixed_type = typeof (Foo).GetNestedTypes ()[0];
+		if (fixed_type.StructLayoutAttribute.Pack != 8)
+			return 2;
+
+		if (fixed_type.StructLayoutAttribute.Size != 256)
+			return 3;
+
 		return 0;
 	}
 }

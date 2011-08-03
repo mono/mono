@@ -60,22 +60,22 @@ namespace System.ServiceModel.Discovery
 		}
 
 		// might be different value
-		protected override TimeSpan DefaultOpenTimeout {
+		protected internal override TimeSpan DefaultOpenTimeout {
 			get { return client.Endpoint.Binding.OpenTimeout; }
 		}
 
 		// might be different value
-		protected override TimeSpan DefaultCloseTimeout {
+		protected internal override TimeSpan DefaultCloseTimeout {
 			get { return client.Endpoint.Binding.CloseTimeout; }
 		}
 
-		protected override void Attach (ServiceHostBase host)
+		protected internal override void Attach (ServiceHostBase host)
 		{
 			base.Attach (host);
 			this.host = host;
 		}
 
-		protected override void Detach (ServiceHostBase host)
+		protected internal override void Detach (ServiceHostBase host)
 		{
 			base.Detach (host);
 			this.host = null;

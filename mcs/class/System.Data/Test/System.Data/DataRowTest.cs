@@ -484,6 +484,7 @@ namespace MonoTests.System.Data
                         Fail("#A54, InvalidConstraintException expected but got none.");
                 }
 
+		 [Category ("NotWorking")] //Mismatch in Exception namespace/class reference
                 [Test]
                 public void ParentChildRowVersionTest ()
                 {

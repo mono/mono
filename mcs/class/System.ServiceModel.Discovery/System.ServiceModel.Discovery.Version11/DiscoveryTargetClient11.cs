@@ -80,7 +80,8 @@ namespace System.ServiceModel.Discovery.Version11
 				Channel.EndFind (result);
 			}, null);
 			
-			if (!reply_find_handle.WaitOne (InnerChannel.OperationTimeout))
+			var timeout = InnerChannel.OperationTimeout < criteria.Duration ? InnerChannel.OperationTimeout : criteria.Duration;
+			if (!reply_find_handle.WaitOne (timeout))
 				throw new EndpointNotFoundException ("The discovery client could not receive Find operation response within the operation timeout.");
 			try {
 				var ir = find_completed ();
@@ -118,7 +119,8 @@ namespace System.ServiceModel.Discovery.Version11
 				Channel.EndResolve (result);
 			}, null);
 
-			if (!reply_resolve_handle.WaitOne (InnerChannel.OperationTimeout))
+			var timeout = InnerChannel.OperationTimeout < criteria.Duration ? InnerChannel.OperationTimeout : criteria.Duration;
+			if (!reply_find_handle.WaitOne (timeout))
 				throw new TimeoutException ();
 			try {
 				var ir = resolve_completed ();

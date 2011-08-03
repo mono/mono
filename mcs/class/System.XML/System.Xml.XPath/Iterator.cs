@@ -491,26 +491,15 @@ namespace System.Xml.XPath
 			navigators = new ArrayList ();
 
 			XPathNavigator ancestors = startPosition.Clone ();
-			if (!ancestors.MoveToParent ())
-				return;
-			while (ancestors.NodeType != XPathNodeType.Root) {
+			while (ancestors.NodeType != XPathNodeType.Root && ancestors.MoveToParent ())
 				navigators.Add (ancestors.Clone ());
-				ancestors.MoveToParent ();
-			}
 			currentPosition = navigators.Count;
 		}
 
 		public override bool MoveNextCore ()
 		{
-			if (navigators == null) {
+			if (navigators == null)
 				CollectResults ();
-				if (startPosition.NodeType != XPathNodeType.Root) {
-					// First time it returns Root
-					_nav.MoveToRoot ();
-//					Current.MoveTo (_nav);
-					return true;
-				}
-			}
 			if (currentPosition == -1)
 				return false;
 			if (currentPosition-- == 0) {

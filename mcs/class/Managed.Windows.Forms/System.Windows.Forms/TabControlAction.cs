@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum TabControlAction
@@ -38,4 +37,3 @@ namespace System.Windows.Forms
 		Deselected = 3
 	}
 }
-#endif

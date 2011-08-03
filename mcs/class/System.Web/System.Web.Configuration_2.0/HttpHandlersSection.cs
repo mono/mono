@@ -61,7 +61,7 @@ namespace System.Web.Configuration
 			get { return (HttpHandlerActionCollection) base[handlersProp]; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

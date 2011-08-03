@@ -16,7 +16,7 @@ namespace Mono.CSharp.Linq
 	public class QueryExpression : AQueryClause
 	{
 		public QueryExpression (AQueryClause start)
-			: base (null, null, Location.Null)
+			: base (null, null, start.Location)
 		{
 			this.next = start;
 		}
@@ -116,7 +116,7 @@ namespace Mono.CSharp.Linq
 						TypeInferenceContext tic = new TypeInferenceContext (source_type.TypeArguments);
 						tic.OutputTypeInference (rc, a.Expr, source_type);
 						if (tic.FixAllTypes (rc)) {
-							source_type = source_type.GetDefinition ().MakeGenericType (tic.InferredTypeArguments);
+							source_type = source_type.GetDefinition ().MakeGenericType (rc, tic.InferredTypeArguments);
 						}
 					}
 
@@ -349,8 +349,6 @@ namespace Mono.CSharp.Linq
 
 		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
 		{
-			Expression expr = null;
-
 			// 
 			// We know the variable name is somewhere in the scope. This generates
 			// an access expression from current block
@@ -363,6 +361,7 @@ namespace Mono.CSharp.Linq
 						if (p.Name == Name)
 							return pb.GetParameterReference (i, loc);
 
+						Expression expr = null;
 						var tp = p as QueryBlock.TransparentParameter;
 						while (tp != null) {
 							if (expr == null)
@@ -379,8 +378,6 @@ namespace Mono.CSharp.Linq
 							tp = tp.Parent as QueryBlock.TransparentParameter;
 						}
 					}
-
-					expr = null;
 				}
 
 				if (pb == block)
@@ -626,7 +623,7 @@ namespace Mono.CSharp.Linq
 			} else {
 				result_selector_expr = CreateRangeVariableType (ec, parameter, target, new SimpleName (target.Name, target.Location));
 
-				result_block = new QueryBlock (ec.Compiler, block.Parent, block.StartLocation);
+				result_block = new QueryBlock (block.Parent, block.StartLocation);
 				result_block.SetParameters (parameter, target_param);
 			}
 
@@ -644,7 +641,7 @@ namespace Mono.CSharp.Linq
 
 	public class Where : AQueryClause
 	{
-		public Where (QueryBlock block, BooleanExpression expr, Location loc)
+		public Where (QueryBlock block, Expression expr, Location loc)
 			: base (block, expr, loc)
 		{
 		}
@@ -726,13 +723,13 @@ namespace Mono.CSharp.Linq
 				Identifier = identifier.Name;
 			}
 
-			public new static void Reset ()
+			public static void Reset ()
 			{
 				Counter = 0;
 			}
 		}
 
-		public QueryBlock (CompilerContext ctx, Block parent, Location start)
+		public QueryBlock (Block parent, Location start)
 			: base (parent, ParametersCompiled.EmptyReadOnlyParameters, start)
 		{
 			flags |= Flags.CompilerGenerated;

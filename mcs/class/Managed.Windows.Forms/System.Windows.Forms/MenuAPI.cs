@@ -439,10 +439,8 @@ namespace System.Windows.Forms {
 			}
 			menu.Wnd = null;
 
-#if NET_2_0
 			if ((topmenu != null) && (topmenu is MainMenu))
 				((MainMenu) topmenu).OnCollapse (EventArgs.Empty);
-#endif
 		}
 
 		MenuItem FindSubItemByCoord (Menu menu, Point pnt)

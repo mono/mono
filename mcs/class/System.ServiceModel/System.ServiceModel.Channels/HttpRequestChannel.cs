@@ -56,6 +56,15 @@ namespace System.ServiceModel.Channels
 			get { return source.MessageEncoder; }
 		}
 
+#if NET_2_1
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (IHttpCookieContainerManager))
+				return source.GetProperty<T> ();
+			return base.GetProperty<T> ();
+		}
+#endif
+
 		// Request
 
 		public override Message Request (Message message, TimeSpan timeout)
@@ -141,18 +150,19 @@ namespace System.ServiceModel.Channels
 
 			// apply HttpRequestMessageProperty if exists.
 			bool suppressEntityBody = false;
-#if !NET_2_1
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
-				web_request.Headers.Clear ();
-				web_request.Headers.Add (hp.Headers);
+#if !NET_2_1 // FIXME: how can this be done?
+				foreach (var key in hp.Headers.AllKeys)
+					if (!WebHeaderCollection.IsRestricted (key))
+						web_request.Headers [key] = hp.Headers [key];
+#endif
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
-#endif
 
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				MemoryStream buffer = new MemoryStream ();
@@ -228,7 +238,7 @@ namespace System.ServiceModel.Channels
 				// TODO: unit test to make sure an empty response never throws
 				// an exception at this level
 				if (hrr.ContentLength == 0) {
-					ret = Message.CreateMessage (MessageVersion.Default, String.Empty);
+					ret = Message.CreateMessage (Encoder.MessageVersion, String.Empty);
 				} else {
 
 					using (var responseStream = resstr) {
@@ -294,7 +304,7 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
-			foreach (var web_request in web_requests)
+			foreach (var web_request in web_requests.ToArray ())
 				web_request.Abort ();
 			web_requests.Clear ();
 		}

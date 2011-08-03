@@ -564,6 +564,33 @@ namespace C5UnitTests.support
           Assert.IsFalse(CollectionBase<double>.StaticEquals(arr, null, eqc));
           Assert.IsFalse(CollectionBase<double>.StaticEquals(null, arr, eqc));
       }
+
+      private class EveryThingIsEqual : SCG.IEqualityComparer<Object>
+      {
+        public new bool Equals(Object o1, Object o2)
+        {
+          return true;
+        }
+
+        public new int GetHashCode(Object o)
+        {
+          return 1;
+        }
+      }
+
+      [Test]
+      public void UnsequencedCollectionComparerEquality()
+      {
+        // Repro for bug20101103
+        SCG.IEqualityComparer<Object> eqc = new EveryThingIsEqual();
+        Object o1 = new Object(), o2 = new Object();
+        C5.ICollection<Object> coll1 = new ArrayList<Object>(eqc),
+          coll2 = new ArrayList<Object>(eqc);
+        coll1.Add(o1);
+        coll2.Add(o2);
+        Assert.IsFalse(o1.Equals(o2));
+        Assert.IsTrue(coll1.UnsequencedEquals(coll2));
+      }
     }
   }
 }

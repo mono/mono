@@ -1,5 +1,5 @@
-// cs1570-5.cs: XML comment on `T:Testing.EnumTest2' has non-well-formed XML ('summary' is expected  Line 3, position 4.)
-// Line: 17
+// CS1570: XML documentation comment on `Testing.EnumTest2' is not well-formed XML markup ('summary' is expected  Line 3, position 4.)
+// Line: 12
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 
 using System;

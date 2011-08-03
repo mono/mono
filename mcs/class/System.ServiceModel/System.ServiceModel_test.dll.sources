@@ -1,3 +1,4 @@
+NUnitMoonHelper.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
 FeatureBased/Features.Client/DataContractTesterProxy.cs
@@ -41,6 +42,7 @@ System.ServiceModel.Channels/BindingElementTest.cs
 System.ServiceModel.Channels/BindingTest.cs
 System.ServiceModel.Channels/CalcSampleProxy.cs
 System.ServiceModel.Channels/CommunicationObjectTest.cs
+System.ServiceModel.Channels/CommunicationObjectSyncTest.cs
 System.ServiceModel.Channels/ConnectionOrientedTransportBindingElementTest.cs
 System.ServiceModel.Channels/CustomBindingTest.cs
 System.ServiceModel.Channels/CustomPolicyConversionContext.cs
@@ -103,11 +105,13 @@ System.ServiceModel.Configuration/StandardBindingElementCollectionTest.cs
 System.ServiceModel.Configuration/StandardBindingElementTest.cs
 System.ServiceModel.Configuration/StandardEndpointsSectionTest.cs
 System.ServiceModel.Configuration/UserBinding.cs
+System.ServiceModel.Description/BugX41.cs
 System.ServiceModel.Description/ClientCredentialsTest.cs
 System.ServiceModel.Description/ContractDescriptionTest.cs
 System.ServiceModel.Description/FaultDescriptionTest.cs
 System.ServiceModel.Description/MetadataExchangeBindingsTest.cs
 System.ServiceModel.Description/MetadataResolverTest.cs
+System.ServiceModel.Description/MetadataSetTest.cs
 System.ServiceModel.Description/OperationDescriptionTest.cs
 System.ServiceModel.Description/ServiceAuthorizationBehaviorTest.cs
 System.ServiceModel.Description/ServiceContractGeneratorTest.cs
@@ -121,6 +125,8 @@ System.ServiceModel.Description/TypedMessageConverterTest.cs
 System.ServiceModel.Description/WsdlExporterTest.cs
 System.ServiceModel.Description/WsdlImporterTest.cs
 System.ServiceModel.Dispatcher/ActionFilterTest.cs
+System.ServiceModel.Dispatcher/Bug652331Test.cs
+System.ServiceModel.Dispatcher/Bug652331_2Test.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherTest.cs
 System.ServiceModel.Dispatcher/DispatchOperationTest.cs
 System.ServiceModel.Dispatcher/DispatchRuntimeTest.cs
@@ -188,6 +194,7 @@ System.ServiceModel/ServiceEndpointCollectionTest.cs
 System.ServiceModel/ServiceEndpointTest.cs
 System.ServiceModel/ServiceHostBaseTest.cs
 System.ServiceModel/ServiceHostTest.cs
+System.ServiceModel/ServiceKnownTypeAttributeTest.cs
 System.ServiceModel/SynchronizedReadOnlyCollectionTest.cs
 System.ServiceModel/TransactionProtocolTest.cs
 System.ServiceModel/UriSchemeKeyedCollectionTest.cs

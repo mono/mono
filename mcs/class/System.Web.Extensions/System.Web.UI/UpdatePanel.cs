@@ -234,15 +234,13 @@ namespace System.Web.UI
 
 		protected internal virtual void Initialize ()
 		{
-			int tcount = _triggers != null ? _triggers.Count : 0;
-			if (tcount == 0 || !ScriptManager.SupportsPartialRendering)
+			if (_triggers == null || _triggers.Count == 0 || !ScriptManager.SupportsPartialRendering)
 				return;
-			
-			for (int i = 0; i < tcount; i++)
-				_triggers [i].Initialize ();
+
+			_triggers.Initialize ();
 		}
 
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			ScriptManager.RegisterUpdatePanel (this);
@@ -253,24 +251,24 @@ namespace System.Web.UI
 				ContentTemplate.InstantiateIn (ContentTemplateContainer);
 		}
 
-		protected override void OnLoad (EventArgs e) {
+		protected internal override void OnLoad (EventArgs e) {
 			base.OnLoad (e);
 
 			Initialize ();
 		}
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			if (UpdateMode == UpdatePanelUpdateMode.Always && !ChildrenAsTriggers)
 				throw new InvalidOperationException (String.Format ("ChildrenAsTriggers cannot be set to false when UpdateMode is set to Always on UpdatePanel '{0}'", ID));
 		}
 
-		protected override void OnUnload (EventArgs e) {
+		protected internal override void OnUnload (EventArgs e) {
 			base.OnUnload (e);
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 			if (RenderMode == UpdatePanelRenderMode.Block)
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
@@ -294,7 +292,7 @@ namespace System.Web.UI
 			return null;
 		}
 		
-		protected override void RenderChildren (HtmlTextWriter writer)
+		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
 			RenderChildrenWriter = null;
 			
@@ -320,13 +318,11 @@ namespace System.Web.UI
 					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 					base.RenderChildren (w);
 					w.Flush ();
-					if (sb.Length > 0) {
-						UpdatePanel parent = ParentPanel;
-						if (parent != null && parent.ChildrenAsTriggers)
-							writer.Write (sb.ToString ());
-						else
-							ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
-					}
+					UpdatePanel parent = ParentPanel;
+					if (parent != null && parent.ChildrenAsTriggers)
+						writer.Write (sb.ToString ());
+					else
+						ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
 				} finally {
 					RenderChildrenWriter = null;
 				}

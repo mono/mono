@@ -108,7 +108,7 @@ namespace NpgsqlTests
 			
 			NpgsqlDataReader reader = command.ExecuteReader();
 			
-			Assertion.AssertNotNull(reader);
+			Assert.IsNotNull(reader);
 			//reader.FieldCount
 			
 		}

@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum FillType
@@ -38,4 +37,3 @@ namespace System.Windows.Forms.VisualStyles
 		TileImage = 4
 	}
 }
-#endif

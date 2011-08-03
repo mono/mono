@@ -1,4 +1,4 @@
-// cs0541.cs: `Interface.ICloneable.Clone()': explicit interface declaration can only be declared in a class or struct
+// CS0541: `Interface.ICloneable.Clone()': explicit interface declaration can only be declared in a class or struct
 // Line: 7
 
 using System;

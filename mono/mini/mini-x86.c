@@ -24,6 +24,7 @@
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-memory-model.h>
 
 #include "trace.h"
 #include "mini-x86.h"
@@ -1129,7 +1130,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	}
 
 	/* Allocate locals */
-	offsets = mono_allocate_stack_slots (cfg, &locals_stack_size, &locals_stack_align);
+	offsets = mono_allocate_stack_slots (cfg, TRUE, &locals_stack_size, &locals_stack_align);
 	if (locals_stack_size > MONO_ARCH_MAX_FRAME_SIZE) {
 		char *mname = mono_method_full_name (cfg->method, TRUE);
 		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
@@ -1803,6 +1804,29 @@ if (ins->inst_true_bb->native_offset) { \
 static guint8*
 emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
+	gboolean needs_paddings = TRUE;
+	guint32 pad_size;
+
+	if (cfg->abs_patches && g_hash_table_lookup (cfg->abs_patches, data)) {
+	} else {
+		MonoJitICallInfo *info = mono_find_jit_icall_by_addr (data);
+		if (info) {
+			if ((cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) && strstr (cfg->method->name, info->name))
+				needs_paddings = FALSE; /* A call to the wrapped function */
+		}
+	}
+
+	if (cfg->compile_aot)
+		needs_paddings = FALSE;
+	/*The address must be 4 bytes aligned to avoid spanning multiple cache lines.
+	This is required for code patching to be safe on SMP machines.
+	*/
+	pad_size = (guint32)(code + 1 - cfg->native_code) & 0x3;
+#ifndef __native_client_codegen__
+	if (needs_paddings && pad_size)
+		x86_padding (code, pad_size);
+#endif
+
 	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 	x86_call_code (code, 0);
 
@@ -2178,18 +2202,33 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	return code;
 }
 
+#ifdef __APPLE__
+static int tls_gs_offset;
+#endif
+
 gboolean
 mono_x86_have_tls_get (void)
 {
 #ifdef __APPLE__
+	static gboolean have_tls_get = FALSE;
+	static gboolean inited = FALSE;
+
+	if (inited)
+		return have_tls_get;
+
 	guint32 *ins = (guint32*)pthread_getspecific;
 	/*
 	 * We're looking for these two instructions:
 	 *
 	 * mov    0x4(%esp),%eax
-	 * mov    %gs:0x48(,%eax,4),%eax
+	 * mov    %gs:[offset](,%eax,4),%eax
 	 */
-	return ins [0] == 0x0424448b && ins [1] == 0x85048b65 && ins [2] == 0x00000048;
+	have_tls_get = ins [0] == 0x0424448b && ins [1] == 0x85048b65;
+	tls_gs_offset = ins [2];
+
+	inited = TRUE;
+
+	return have_tls_get;
 #else
 	return TRUE;
 #endif
@@ -2212,7 +2251,7 @@ mono_x86_emit_tls_get (guint8* code, int dreg, int tls_offset)
 {
 #if defined(__APPLE__)
 	x86_prefix (code, X86_GS_PREFIX);
-	x86_mov_reg_mem (code, dreg, 0x48 + tls_offset * 4, 4);
+	x86_mov_reg_mem (code, dreg, tls_gs_offset + (tls_offset * 4), 4);
 #elif defined(TARGET_WIN32)
 	/* 
 	 * See the Under the Hood article in the May 1996 issue of Microsoft Systems 
@@ -2390,7 +2429,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			cfg->code_size *= 2;
 			cfg->native_code = mono_realloc_native_code(cfg);
 			code = cfg->native_code + offset;
-			mono_jit_stats.code_reallocs++;
+			cfg->stat_code_reallocs++;
 		}
 
 		if (cfg->debug_info)
@@ -3966,9 +4005,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_MEMORY_BARRIER: {
-			/* http://blogs.sun.com/dave/resource/NHM-Pipeline-Blog-V2.txt */
-			x86_prefix (code, X86_LOCK_PREFIX);
-			x86_alu_membase_imm (code, X86_ADD, X86_ESP, 0, 0);
+			/* x86 only needs barrier for StoreLoad and FullBarrier */
+			switch (ins->backend.memory_barrier_kind) {
+			case StoreLoadBarrier:
+			case FullBarrier:
+				/* http://blogs.sun.com/dave/resource/NHM-Pipeline-Blog-V2.txt */
+				x86_prefix (code, X86_LOCK_PREFIX);
+				x86_alu_membase_imm (code, X86_ADD, X86_ESP, 0, 0);
+				break;
+			}
 			break;
 		}
 		case OP_ATOMIC_ADD_I4: {
@@ -4587,10 +4632,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_INSERTX_R8_SLOW:
 			x86_fst_membase (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, TRUE, TRUE);
+			if (cfg->verbose_level)
+				printf ("CONVERTING a OP_INSERTX_R8_SLOW %d offset %x\n", ins->inst_c0, offset);
 			if (ins->inst_c0)
 				x86_sse_alu_pd_reg_membase (code, X86_SSE_MOVHPD_REG_MEMBASE, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset);
 			else
-				x86_sse_alu_pd_reg_membase (code, X86_SSE_MOVSD_REG_MEMBASE, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset);
+				x86_movsd_reg_membase (code, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset);
 			break;
 
 		case OP_STOREX_MEMBASE_REG:
@@ -4676,6 +4723,32 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_movsd_reg_membase (code, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset);
 			x86_sse_shift_reg_imm (code, X86_SSE_PSHUFD, ins->dreg, ins->dreg, 0x44);
 			break;
+
+		case OP_CVTDQ2PD:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_CVTDQ2PD, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTDQ2PS:
+			x86_sse_alu_ps_reg_reg (code, X86_SSE_CVTDQ2PS, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTPD2DQ:
+			x86_sse_alu_sd_reg_reg (code, X86_SSE_CVTPD2DQ, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTPD2PS:
+			x86_sse_alu_pd_reg_reg (code, X86_SSE_CVTPD2PS, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTPS2DQ:
+			x86_sse_alu_pd_reg_reg (code, X86_SSE_CVTPS2DQ, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTPS2PD:
+			x86_sse_alu_ps_reg_reg (code, X86_SSE_CVTPS2PD, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTTPD2DQ:
+			x86_sse_alu_pd_reg_reg (code, X86_SSE_CVTTPD2DQ, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTTPS2DQ:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_CVTTPS2DQ, ins->dreg, ins->sreg1);
+			break;
+
 #endif
 		case OP_LIVERANGE_START: {
 			if (cfg->verbose_level > 1)
@@ -4731,7 +4804,7 @@ mono_arch_register_lowlevel_calls (void)
 }
 
 void
-mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
+mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
 	gboolean compile_aot = !run_cctors;
@@ -5044,7 +5117,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				cfg->code_size *= 2;
 			cfg->native_code = mono_realloc_native_code(cfg);
 			code = cfg->native_code + offset;
-			mono_jit_stats.code_reallocs++;
+			cfg->stat_code_reallocs++;
 		}
 		while (remaining_size >= 0x1000) {
 			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x1000);
@@ -5160,7 +5233,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
 		cfg->code_size *= 2;
 		cfg->native_code = mono_realloc_native_code(cfg);
-		mono_jit_stats.code_reallocs++;
+		cfg->stat_code_reallocs++;
 	}
 
 	code = cfg->native_code + cfg->code_len;
@@ -5341,7 +5414,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 	while (cfg->code_len + code_size > (cfg->code_size - 16)) {
 		cfg->code_size *= 2;
 		cfg->native_code = mono_realloc_native_code(cfg);
-		mono_jit_stats.code_reallocs++;
+		cfg->stat_code_reallocs++;
 	}
 
 	code = cfg->native_code + cfg->code_len;
@@ -6032,19 +6105,52 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 	return start;
 }
 
-gpointer
+mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	switch (reg) {
-	case X86_EAX: return (gpointer)ctx->eax;
-	case X86_EBX: return (gpointer)ctx->ebx;
-	case X86_ECX: return (gpointer)ctx->ecx;
-	case X86_EDX: return (gpointer)ctx->edx;
-	case X86_ESP: return (gpointer)ctx->esp;
-	case X86_EBP: return (gpointer)ctx->ebp;
-	case X86_ESI: return (gpointer)ctx->esi;
-	case X86_EDI: return (gpointer)ctx->edi;
+	case X86_EAX: return ctx->eax;
+	case X86_EBX: return ctx->ebx;
+	case X86_ECX: return ctx->ecx;
+	case X86_EDX: return ctx->edx;
+	case X86_ESP: return ctx->esp;
+	case X86_EBP: return ctx->ebp;
+	case X86_ESI: return ctx->esi;
+	case X86_EDI: return ctx->edi;
 	default: g_assert_not_reached ();
+	}
+}
+
+void
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+{
+	switch (reg) {
+	case X86_EAX:
+		ctx->eax = val;
+		break;
+	case X86_EBX:
+		ctx->ebx = val;
+		break;
+	case X86_ECX:
+		ctx->ecx = val;
+		break;
+	case X86_EDX:
+		ctx->edx = val;
+		break;
+	case X86_ESP:
+		ctx->esp = val;
+		break;
+	case X86_EBP:
+		ctx->ebp = val;
+		break;
+	case X86_ESI:
+		ctx->esi = val;
+		break;
+	case X86_EDI:
+		ctx->edi = val;
+		break;
+	default:
+		g_assert_not_reached ();
 	}
 }
 
@@ -6396,7 +6502,8 @@ gboolean
 mono_arch_is_single_step_event (void *info, void *sigctx)
 {
 #ifdef TARGET_WIN32
-	EXCEPTION_RECORD* einfo = (EXCEPTION_RECORD*)info;	/* Sometimes the address is off by 4 */
+	EXCEPTION_RECORD* einfo = ((EXCEPTION_POINTERS*)info)->ExceptionRecord;	/* Sometimes the address is off by 4 */
+
 	if ((einfo->ExceptionInformation[1] >= ss_trigger_page && (guint8*)einfo->ExceptionInformation[1] <= (guint8*)ss_trigger_page + 128))
 		return TRUE;
 	else
@@ -6415,7 +6522,7 @@ gboolean
 mono_arch_is_breakpoint_event (void *info, void *sigctx)
 {
 #ifdef TARGET_WIN32
-	EXCEPTION_RECORD* einfo = (EXCEPTION_RECORD*)info;	/* Sometimes the address is off by 4 */
+	EXCEPTION_RECORD* einfo = ((EXCEPTION_POINTERS*)info)->ExceptionRecord;	/* Sometimes the address is off by 4 */
 	if ((einfo->ExceptionInformation[1] >= bp_trigger_page && (guint8*)einfo->ExceptionInformation[1] <= (guint8*)bp_trigger_page + 128))
 		return TRUE;
 	else

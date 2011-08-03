@@ -181,7 +181,7 @@ namespace System.Xml.Serialization
 				XmlTypeMapMemberAnyElement mapMem = new XmlTypeMapMemberAnyElement ();
 				mapMem.Name = typeName.Name;
 				mapMem.TypeData = TypeTranslator.GetTypeData(typeof(XmlNode));
-				mapMem.ElementInfo.Add (CreateElementInfo (typeName.Namespace, mapMem, typeName.Name, mapMem.TypeData, true, XmlSchemaForm.None));
+				mapMem.ElementInfo.Add (CreateElementInfo (typeName.Namespace, mapMem, typeName.Name, mapMem.TypeData, true, XmlSchemaForm.None, -1));
 				
 				XmlMemberMapping[] mm = new XmlMemberMapping [1];
 				mm[0] = new XmlMemberMapping (typeName.Name, typeName.Namespace, mapMem, encodedFormat);
@@ -342,7 +342,7 @@ namespace System.Xml.Serialization
 				XmlTypeMapping tmap;
 				TypeData td = GetElementTypeData (typeQName, elem, names[n], out tmap);
 				
-				mapping[n] = ImportMemberMapping (elem.Name, typeQName.Namespace, elem.IsNillable, td, tmap);
+				mapping[n] = ImportMemberMapping (elem.Name, typeQName.Namespace, elem.IsNillable, td, tmap, n);
 			}
 			BuildPendingMaps ();
 			return new XmlMembersMapping (mapping);
@@ -382,7 +382,7 @@ namespace System.Xml.Serialization
 			{
 				TypeData td = GetTypeData (members[n].MemberType, null, false); // FIXME: isNullable could be true?
 				XmlTypeMapping tmap = GetTypeMapping (td);
-				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, true, td, tmap);
+				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, true, td, tmap, n);
 			}
 			BuildPendingMaps ();
 			return new XmlMembersMapping (name, ns, hasWrapperElement, false, mapping);
@@ -421,7 +421,7 @@ namespace System.Xml.Serialization
 			return mapping;
 		}
 		
-		XmlMemberMapping ImportMemberMapping (string name, string ns, bool isNullable, TypeData type, XmlTypeMapping emap)
+		XmlMemberMapping ImportMemberMapping (string name, string ns, bool isNullable, TypeData type, XmlTypeMapping emap, int order)
 		{
 			XmlTypeMapMemberElement mapMem;
 			
@@ -432,7 +432,7 @@ namespace System.Xml.Serialization
 			
 			mapMem.Name = name;
 			mapMem.TypeData = type;
-			mapMem.ElementInfo.Add (CreateElementInfo (ns, mapMem, name, type, isNullable, XmlSchemaForm.None, emap));
+			mapMem.ElementInfo.Add (CreateElementInfo (ns, mapMem, name, type, isNullable, XmlSchemaForm.None, emap, order));
 			return new XmlMemberMapping (name, ns, mapMem, encodedFormat);
 		}
 		
@@ -602,10 +602,6 @@ namespace System.Xml.Serialization
 			// the class map is registered before parsing the children. We can't do the same
 			// with the array type because to register the array map we need the type of the array.
 
-			Type anyType = GetAnyElementType (stype);
-			if (anyType != null)
-				return GetTypeMapping (TypeTranslator.GetTypeData(anyType));
-				
 			if (CanBeArray (typeQName, stype))
 			{
 				TypeData typeData;
@@ -638,8 +634,14 @@ namespace System.Xml.Serialization
 			return map;
 		}
 
+		ArrayList fixup_registered_types = new ArrayList ();
+
 		void RegisterMapFixup (XmlTypeMapping map, XmlQualifiedName typeQName, XmlSchemaComplexType stype)
 		{
+			// This check is introduced for bug #650117, but might be too wide to catch erroneous cases...
+			if (fixup_registered_types.Contains (stype))
+				throw new InvalidOperationException (String.Format ("Circular dependency for schema type {0} in namespace {1}", map.ElementName, map.Namespace));
+			fixup_registered_types.Add (stype);
 			MapFixup fixup = new MapFixup ();
 			fixup.Map = map;
 			fixup.SchemaType = stype;
@@ -851,7 +853,7 @@ namespace System.Xml.Serialization
 			arrayTypeData = itemTypeData.ListTypeData;
 			
 			map.ItemInfo = new XmlTypeMapElementInfoList();
-			map.ItemInfo.Add (CreateElementInfo ("", null, "Item", itemTypeData, true, XmlSchemaForm.None));
+			map.ItemInfo.Add (CreateElementInfo ("", null, "Item", itemTypeData, true, XmlSchemaForm.None, -1));
 			return map;
 		}
 		
@@ -958,7 +960,7 @@ namespace System.Xml.Serialization
 						member.Name = classIds.AddUnique(CodeIdentifier.MakeValid(refElem.Name), member);
 						member.Documentation = GetDocumentation (elem);
 						member.TypeData = typeData;
-						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap));
+						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap, items.IndexOf (item)));
 						cmap.AddMember (member);
 					}
 					else
@@ -968,7 +970,7 @@ namespace System.Xml.Serialization
 						member.Name = classIds.AddUnique(CodeIdentifier.MakeValid(refElem.Name), member);
 						member.Documentation = GetDocumentation (elem);
 						member.TypeData = typeData.ListTypeData;
-						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap));
+						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap, items.IndexOf (item)));
 						member.ListMap.ItemInfo = member.ElementInfo;
 						cmap.AddMember (member);
 					}
@@ -1061,7 +1063,7 @@ namespace System.Xml.Serialization
 				// than to crash. It's the best we can do, and btw it works
 				// better than in MS.NET.
 				
-				if (cmap.GetElement (einfo.ElementName, einfo.Namespace) != null ||
+				if (cmap.GetElement (einfo.ElementName, einfo.Namespace, einfo.ExplicitOrder) != null ||
 					choices.IndexOfElement (einfo.ElementName, einfo.Namespace) != n)
 				{
 					choices.RemoveAt (n);
@@ -1118,7 +1120,7 @@ namespace System.Xml.Serialization
 				enumMap.ObjectMap = new EnumMap (members, false);
 
 				choiceMember.TypeData = multiValue ? enumMap.TypeData.ListTypeData : enumMap.TypeData;
-				choiceMember.ElementInfo.Add (CreateElementInfo (typeQName.Namespace, choiceMember, choiceMember.Name, choiceMember.TypeData, false, XmlSchemaForm.None));
+				choiceMember.ElementInfo.Add (CreateElementInfo (typeQName.Namespace, choiceMember, choiceMember.Name, choiceMember.TypeData, false, XmlSchemaForm.None, -1));
 				cmap.AddMember (choiceMember);
 			}
 			
@@ -1150,7 +1152,7 @@ namespace System.Xml.Serialization
 					XmlTypeMapping emap;
 					TypeData typeData = GetElementTypeData (typeQName, elem, null, out emap);
 					XmlSchemaElement refElem = GetRefElement (typeQName, elem, out ns);
-					choices.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap));
+					choices.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap, -1));
 					if (elem.MaxOccurs > 1) multiValue = true;
 				}
 				else if (item is XmlSchemaAny)
@@ -1364,7 +1366,7 @@ namespace System.Xml.Serialization
 				ListMap listMap = new ListMap ();
 
 				listMap.ItemInfo = new XmlTypeMapElementInfoList ();
-				listMap.ItemInfo.Add (CreateElementInfo (typeQName.Namespace, null, "Item", arrayTypeData.ListItemTypeData, false, XmlSchemaForm.None));
+				listMap.ItemInfo.Add (CreateElementInfo (typeQName.Namespace, null, "Item", arrayTypeData.ListItemTypeData, false, XmlSchemaForm.None, -1));
 
 				XmlTypeMapping map = CreateArrayTypeMapping (typeQName, arrayTypeData);
 				map.ObjectMap = listMap;
@@ -1565,15 +1567,15 @@ namespace System.Xml.Serialization
 			return map;
 		}
 		
-		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form)
+		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form, int order)
 		{
 			if (typeData.IsComplexType)
-				return CreateElementInfo (ns, member, name, typeData, isNillable, form, GetTypeMapping (typeData));
+				return CreateElementInfo (ns, member, name, typeData, isNillable, form, GetTypeMapping (typeData), order);
 			else
-				return CreateElementInfo (ns, member, name, typeData, isNillable, form, null);
+				return CreateElementInfo (ns, member, name, typeData, isNillable, form, null, order);
 		}
 		
-		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form, XmlTypeMapping emap)
+		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form, XmlTypeMapping emap, int order)
 		{
 			XmlTypeMapElementInfo einfo = new XmlTypeMapElementInfo (member, typeData);
 			einfo.ElementName = name;
@@ -1582,6 +1584,7 @@ namespace System.Xml.Serialization
 			einfo.Form = form;
 			if (typeData.IsComplexType)
 				einfo.MappedType = emap;
+			einfo.ExplicitOrder = order;
 			return einfo;
 		}
 
@@ -1767,7 +1770,7 @@ namespace System.Xml.Serialization
 
 				ListMap listMap = new ListMap ();
 				listMap.ItemInfo = new XmlTypeMapElementInfoList();
-				listMap.ItemInfo.Add (CreateElementInfo (itemMap.Namespace, null, typeData.ListItemTypeData.XmlType, typeData.ListItemTypeData, false, XmlSchemaForm.None));
+				listMap.ItemInfo.Add (CreateElementInfo (itemMap.Namespace, null, typeData.ListItemTypeData.XmlType, typeData.ListItemTypeData, false, XmlSchemaForm.None, -1));
 				map.ObjectMap = listMap;
 				
 				RegisterTypeMapping (new XmlQualifiedName(map.ElementName, map.Namespace), typeData, map);

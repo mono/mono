@@ -1,4 +1,4 @@
-// cs0642-8.cs : Possible mistaken empty statement
+// CS0642: Possible mistaken empty statement
 // Line: 13
 // Compiler options: /warnaserror /warn:3
 using System;

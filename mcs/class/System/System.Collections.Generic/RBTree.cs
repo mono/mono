@@ -30,7 +30,6 @@
 
 #define ONE_MEMBER_CACHE
 
-#if NET_2_0
 using System;
 using System.Collections;
 
@@ -948,4 +947,3 @@ namespace Mono.ValidationTest {
 }
 #endif
 
-#endif

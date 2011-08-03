@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
@@ -60,6 +61,8 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection items ;
 		private XmlSchemaObjectTable notations ;
 		private XmlSchemaObjectTable schemaTypes ;
+		private XmlSchemaObjectTable named_identities;
+		private Hashtable ids;
 		private string targetNamespace ;
 		private XmlAttribute[] unhandledAttributes ;
 		private string version;
@@ -92,6 +95,9 @@ namespace System.Xml.Schema
 			groups = new XmlSchemaObjectTable();
 			notations = new XmlSchemaObjectTable();
 			schemaTypes = new XmlSchemaObjectTable();
+			named_identities = new XmlSchemaObjectTable ();
+			ids = new Hashtable ();
+			compilationItems = new XmlSchemaObjectCollection ();
 		}
 
 		#region Properties
@@ -230,9 +236,8 @@ namespace System.Xml.Schema
 			get{ return notations; }
 		}
 
-		internal XmlSchemaObjectTable NamedIdentities
-		{
-			get { return schemas.NamedIdentities; }
+		internal XmlSchemaObjectTable NamedIdentities {
+			get { return named_identities; }
 		}
 
 		internal XmlSchemaSet Schemas
@@ -240,9 +245,8 @@ namespace System.Xml.Schema
 			get { return schemas; }
 		}
 
-		internal Hashtable IDCollection
-		{
-			get { return schemas.IDCollection; }
+		internal Hashtable IDCollection {
+			get { return ids; }
 		}
 		#endregion
 
@@ -290,19 +294,28 @@ namespace System.Xml.Schema
 		// It is used by XmlSchemaCollection.Add() and XmlSchemaSet.Remove().
 		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
 		{
-			Hashtable handledUris = new Hashtable ();
+			var handledUris = new List<CompiledSchemaMemo> ();
 			CompileSubset (handler, col, resolver, handledUris);
 		}
 
 		// It is used by XmlSchemaSet.Compile().
-		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver, Hashtable handledUris)
+		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver, List<CompiledSchemaMemo> handledUris)
 		{
 			if (SourceUri != null && SourceUri.Length > 0) {
-				if (handledUris.Contains (SourceUri))
+				// if it has line info and are the same as one of existing info, then skip it.
+				if (Contains (handledUris))
 					return;
-				handledUris.Add (SourceUri, SourceUri);
+				handledUris.Add (new CompiledSchemaMemo () {  SourceUri = this.SourceUri, LineNumber = this.LineNumber, LinePosition = this.LinePosition});
 			}
 			DoCompile (handler, handledUris, col, resolver);
+		}
+
+		bool Contains (List<CompiledSchemaMemo> handledUris)
+		{
+			foreach (var i in handledUris)
+				if (i.SourceUri.Equals (SourceUri) && i.LineNumber != 0 && i.LineNumber == LineNumber && i.LinePosition == LinePosition)
+					return true;
+			return false;
 		}
 
 		void SetParent ()
@@ -313,7 +326,7 @@ namespace System.Xml.Schema
 				Includes [i].SetParent (this);
 		}
 
-		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
+		void DoCompile (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlSchemaSet col, XmlResolver resolver)
 		{
 			SetParent ();
 			CompilationId = col.CompilationId;
@@ -327,6 +340,9 @@ namespace System.Xml.Schema
 			groups.Clear ();
 			notations.Clear ();
 			schemaTypes.Clear ();
+			named_identities.Clear ();
+			ids.Clear ();
+			compilationItems.Clear ();
 
 			//1. Union and List are not allowed in block default
 			if (BlockDefault != XmlSchemaDerivationMethod.All) {
@@ -343,7 +359,7 @@ namespace System.Xml.Schema
 			}
 
 			//3. id must be of type ID
-			XmlSchemaUtil.CompileID(Id, this, col.IDCollection, handler);
+			XmlSchemaUtil.CompileID(Id, this, IDCollection, handler);
 
 			//4. targetNamespace should be of type anyURI or absent
 			if (TargetNamespace != null) {
@@ -360,7 +376,6 @@ namespace System.Xml.Schema
 
 			// Compile the content of this schema
 
-			compilationItems = new XmlSchemaObjectCollection ();
 			for (int i = 0; i < Items.Count; i++) {
 				compilationItems.Add (Items [i]);
 			}
@@ -476,7 +491,7 @@ namespace System.Xml.Schema
 #endif
 		}
 
-		void ProcessExternal (ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
+		void ProcessExternal (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
 		{
 			if (ext == null) {
 				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
@@ -495,10 +510,11 @@ namespace System.Xml.Schema
 				string url = null;
 				if (resolver != null) {
 					url = GetResolvedUri (resolver, ext.SchemaLocation);
-					if (handledUris.Contains (url))
-						// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
-						return;
-					handledUris.Add (url, url);
+					foreach (var i in handledUris)
+						if (i.SourceUri.Equals (url))
+							// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
+							return;
+					handledUris.Add (new CompiledSchemaMemo () { SourceUri = url });
 					try {
 						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
 					} catch (Exception) {
@@ -574,7 +590,7 @@ namespace System.Xml.Schema
 			} else if (includedSchema != null) {
 				if (TargetNamespace == null && 
 					includedSchema.TargetNamespace != null) {
-					error (handler, "Target namespace is required to include a schema which has its own target namespace");
+					includedSchema.error (handler, String.Format ("On {0} element, targetNamespace is required to include a schema which has its own target namespace", ext.GetType ().Name));
 					return;
 				}
 				else if (TargetNamespace != null && 
@@ -588,14 +604,16 @@ namespace System.Xml.Schema
 		}
 
 
-		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaSet col)
+		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaSet col)
 		{
 			foreach (XmlSchemaExternal ext in s.Includes)
-				ProcessExternal (handler, handledUris, resolver, ext, col);
-//				if (ext.Schema != null)
-//					AddExternalComponentsTo (ext.Schema, items);
-			foreach (XmlSchemaObject obj in s.Items)
+				s.ProcessExternal (handler, handledUris, resolver, ext, col);
+			foreach (XmlSchemaObject obj in s.compilationItems)
 				items.Add (obj);
+			// Items might be already resolved (recursive schema imports), or might not be (other cases), so we add items only when appropriate here. (duplicate check is anyways done elsewhere)
+			foreach (XmlSchemaObject obj in s.Items)
+				if (!items.Contains (obj))
+					items.Add (obj);
 		}
 
 		internal bool IsNamespaceAbsent (string ns)
@@ -988,5 +1006,12 @@ namespace System.Xml.Schema
 		{
 			return new XmlSchemaSerializationWriter ();
 		}
+	}
+	
+	class CompiledSchemaMemo
+	{
+		public string SourceUri;
+		public int LineNumber;
+		public int LinePosition;
 	}
 }

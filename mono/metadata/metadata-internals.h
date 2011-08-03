@@ -39,11 +39,11 @@ struct _MonoType {
 
 #define MONO_PUBLIC_KEY_TOKEN_LENGTH	17
 
-#define PROCESSOR_ARCHITECTURE_NONE 0
-#define PROCESSOR_ARCHITECTURE_MSIL 1
-#define PROCESSOR_ARCHITECTURE_X86 2
-#define PROCESSOR_ARCHITECTURE_IA64 3
-#define PROCESSOR_ARCHITECTURE_AMD64 4
+#define MONO_PROCESSOR_ARCHITECTURE_NONE 0
+#define MONO_PROCESSOR_ARCHITECTURE_MSIL 1
+#define MONO_PROCESSOR_ARCHITECTURE_X86 2
+#define MONO_PROCESSOR_ARCHITECTURE_IA64 3
+#define MONO_PROCESSOR_ARCHITECTURE_AMD64 4
 
 struct _MonoAssemblyName {
 	const char *name;
@@ -278,6 +278,7 @@ struct _MonoImage {
 	GHashTable *cominterop_invoke_cache;
 	GHashTable *cominterop_wrapper_cache; /* LOCKING: marshal lock */
 	GHashTable *thunk_invoke_cache;
+	GHashTable *wrapper_param_names;
 
 	/*
 	 * indexed by MonoClass pointers
@@ -313,6 +314,12 @@ struct _MonoImage {
 
 	/* List of image sets containing this image */
 	GSList *image_sets;
+
+	/* Caches for MonoClass-es representing anon generic params */
+	MonoClass **var_cache_fast;
+	MonoClass **mvar_cache_fast;
+	GHashTable *var_cache_slow;
+	GHashTable *mvar_cache_slow;
 
 	/*
 	 * No other runtime locks must be taken while holding this lock.
@@ -724,6 +731,8 @@ MonoException *mono_get_exception_field_access_msg (const char *msg) MONO_INTERN
 MonoException *mono_get_exception_method_access_msg (const char *msg) MONO_INTERNAL;
 
 MonoMethod* method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGenericContext *context) MONO_INTERNAL;
+
+MonoMethod *mono_get_method_constrained_with_method (MonoImage *image, MonoMethod *method, MonoClass *constrained_class, MonoGenericContext *context) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

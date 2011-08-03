@@ -1,4 +1,4 @@
-// cs0662.cs: Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither
+// CS0662: Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither
 // Line: 8
 
 using System.Runtime.InteropServices;

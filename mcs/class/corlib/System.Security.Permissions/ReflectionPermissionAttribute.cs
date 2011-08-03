@@ -73,6 +73,7 @@ namespace System.Security.Permissions {
 			}
 		}
 		
+		[Obsolete]
 		public bool ReflectionEmit
 		{
 			get { return reflectionEmit; }

@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Channels.NetTcp;
 using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels

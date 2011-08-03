@@ -70,7 +70,7 @@ namespace C5
       T currentitem = heap[cell].first;
       Handle currenthandle = heap[cell].firsthandle;
 
-      if (i > 0)
+      // bug20080222.txt
       {
         T other = heap[cell].last;
         if (2 * cell + 1 < size && comparer.Compare(currentitem, other) > 0)
@@ -132,10 +132,10 @@ namespace C5
       T currentitem = heap[cell].last;
       Handle currenthandle = heap[cell].lasthandle;
 
-      if (i > 0)
+      // bug20080222.txt
       {
         T other = heap[cell].first;
-        if (comparer.Compare(currentitem, other) < 0)
+        if (2 * cell + 1 < size && comparer.Compare(currentitem, other) < 0)
         {
           swappedroot = true;
           Handle otherhandle = heap[cell].firsthandle;

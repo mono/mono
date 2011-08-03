@@ -54,12 +54,12 @@ namespace System.Collections.Generic
 			_array = new T [0];
 		}
 		
-		public Queue (int count)
+		public Queue (int capacity)
 		{
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 
-			_array = new T [count];
+			_array = new T [capacity];
 		}
 		
 		public Queue (IEnumerable <T> collection)
@@ -99,12 +99,12 @@ namespace System.Collections.Generic
 			return false;
 		}
 		
-		public void CopyTo (T [] array, int idx)
+		public void CopyTo (T [] array, int arrayIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException ();
 
-			((ICollection) this).CopyTo (array, idx);
+			((ICollection) this).CopyTo (array, arrayIndex);
 		}
 		
 		void ICollection.CopyTo (Array array, int idx)

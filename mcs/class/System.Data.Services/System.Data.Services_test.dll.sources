@@ -1,3 +1,5 @@
+../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
+
 ./IgnorePropertiesAttributeTests.cs
 ./QueryInterceptorAttributeTests.cs
 ./DataServiceTests.cs
@@ -7,3 +9,6 @@
 ./MimeTypeAttributeTests.cs
 ./DataServiceExceptionTests.cs
 ./ETagAttributeTests.cs
+
+./System.Data.Services.Providers/DataServiceProviderMethodsTest.cs
+./System.Data.Services.Providers/ResourceTypeTest.cs

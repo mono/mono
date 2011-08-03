@@ -34,7 +34,11 @@ using System.ServiceModel.Channels;
 namespace System.Data.Services {
 	[ServiceBehavior (InstanceContextMode = InstanceContextMode.PerCall)]
 	[AspNetCompatibilityRequirements (RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-	public class DataService<T> : IRequestHandler {
+	public class DataService<T> : IRequestHandler
+	{
+#if NET_4_0
+		DataServiceProcessingPipeline processingPipeline;
+#endif
 		public void AttachHost (IDataServiceHost host)
 		{
 			if (host == null)
@@ -59,7 +63,15 @@ namespace System.Data.Services {
 		protected T CurrentDataSource {
 			get; private set;
 		}
-
+#if NET_4_0
+		public DataServiceProcessingPipeline ProcessingPipeline {
+			get {
+				if (processingPipeline == null)
+					processingPipeline = new DataServiceProcessingPipeline ();
+				return processingPipeline;
+			}
+		}
+#endif
 		protected virtual T CreateDataSource()
 		{
 			throw new NotImplementedException();

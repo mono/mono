@@ -66,11 +66,10 @@ namespace System.Net {
 			}
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object comparand)
 		{
-			if (other is DnsEndPoint)
-				return Equals (other as DnsEndPoint);
-			return false;
+			DnsEndPoint dep = (comparand as DnsEndPoint);
+			return (comparand != null) && Equals (dep);
 		}
 
 		private bool Equals (DnsEndPoint other)

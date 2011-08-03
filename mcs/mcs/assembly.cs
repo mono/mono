@@ -37,9 +37,11 @@ namespace Mono.CSharp
 		string FullName { get; }
 		bool HasExtensionMethod { get; }
 		bool IsCLSCompliant { get; }
+		bool IsMissing { get; }
 		string Name { get; }
 
 		byte[] GetPublicKeyToken ();
+		bool IsFriendAssemblyTo (IAssemblyDefinition assembly);
 	}
                 
 	public abstract class AssemblyDefinition : IAssemblyDefinition
@@ -79,15 +81,15 @@ namespace Mono.CSharp
 
 			wrap_non_exception_throws = true;
 
-			delay_sign = RootContext.StrongNameDelaySign;
+			delay_sign = Compiler.Settings.StrongNameDelaySign;
 
 			//
 			// Load strong name key early enough for assembly importer to be able to
 			// use the keys for InternalsVisibleTo
 			// This should go somewhere close to ReferencesLoading but don't have the place yet
 			//
-			if (RootContext.StrongNameKeyFile != null || RootContext.StrongNameKeyContainer != null) {
-				LoadPublicKey (RootContext.StrongNameKeyFile, RootContext.StrongNameKeyContainer);
+			if (Compiler.Settings.HasKeyFileOrContainer) {
+				LoadPublicKey (Compiler.Settings.StrongNameKeyFile, Compiler.Settings.StrongNameKeyContainer);
 			}
 		}
 
@@ -143,12 +145,18 @@ namespace Mono.CSharp
 
 		// TODO: This should not exist here but will require more changes
 		public MetadataImporter Importer {
-			get ; set;
+		    get; set;
 		}
 
 		public bool IsCLSCompliant {
 			get {
 				return is_cls_compliant;
+			}
+		}
+
+		bool IAssemblyDefinition.IsMissing {
+			get {
+				return false;
 			}
 		}
 
@@ -192,7 +200,7 @@ namespace Mono.CSharp
 				if (value == null || value.Length == 0)
 					return;
 
-				if (RootContext.Target == Target.Exe) {
+				if (Compiler.Settings.Target == Target.Exe) {
 					a.Error_AttributeEmitError ("The executables cannot be satelite assemblies, remove the attribute or keep it empty");
 					return;
 				}
@@ -200,7 +208,7 @@ namespace Mono.CSharp
 				if (value == "neutral")
 					value = "";
 
-				if (RootContext.Target == Target.Module) {
+				if (Compiler.Settings.Target == Target.Module) {
 					SetCustomAttribute (ctor, cdata);
 				} else {
 					builder_extra.SetCulture (value, a.Location);
@@ -214,13 +222,13 @@ namespace Mono.CSharp
 				if (value == null || value.Length == 0)
 					return;
 
-				var vinfo = IsValidAssemblyVersion (value);
+				var vinfo = IsValidAssemblyVersion (value, true);
 				if (vinfo == null) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
 				}
 
-				if (RootContext.Target == Target.Module) {
+				if (Compiler.Settings.Target == Target.Module) {
 					SetCustomAttribute (ctor, cdata);
 				} else {
 					builder_extra.SetVersion (vinfo, a.Location);
@@ -236,7 +244,7 @@ namespace Mono.CSharp
 				alg |= ((uint) cdata [pos + 2]) << 16;
 				alg |= ((uint) cdata [pos + 3]) << 24;
 
-				if (RootContext.Target == Target.Module) {
+				if (Compiler.Settings.Target == Target.Module) {
 					SetCustomAttribute (ctor, cdata);
 				} else {
 					builder_extra.SetAlgorithmId (alg, a.Location);
@@ -256,7 +264,7 @@ namespace Mono.CSharp
 				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && public_key == null)
 					flags &= ~(uint) AssemblyNameFlags.PublicKey;
 
-				if (RootContext.Target == Target.Module) {
+				if (Compiler.Settings.Target == Target.Module) {
 					SetCustomAttribute (ctor, cdata);
 				} else {
 					builder_extra.SetFlags (flags, a.Location);
@@ -336,7 +344,15 @@ namespace Mono.CSharp
 				}
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
+			} else if (a.Type == pa.AssemblyFileVersion) {
+				string value = a.GetString ();
+				if (string.IsNullOrEmpty (value) || IsValidAssemblyVersion (value, false) == null) {
+					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
+						value, a.Name);
+					return;
+				}
 			}
+
 
 			SetCustomAttribute (ctor, cdata);
 		}
@@ -350,10 +366,20 @@ namespace Mono.CSharp
 		{
 			// TODO: It should check only references assemblies but there is
 			// no working SRE API
-			foreach (var a in Importer.Assemblies) {
+			foreach (var entry in Importer.Assemblies) {
+				var a = entry as ImportedAssemblyDefinition;
+				if (a == null)
+					continue;
+
 				if (public_key != null && !a.HasStrongName) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
 						a.FullName);
+				}
+
+				var ci = a.Assembly.GetName ().CultureInfo;
+				if (!ci.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
+					Report.Warning (1607, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
+						a.Name, ci.Name);
 				}
 
 				if (!a.IsFriendAssemblyTo (this))
@@ -365,6 +391,7 @@ namespace Mono.CSharp
 				if (ArrayComparer.IsEqual (GetPublicKeyToken (), atoken))
 					continue;
 
+				Report.SymbolRelatedToPreviousError (a.Location);
 				Report.Error (281,
 					"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
 					attr.FullName, FullName);
@@ -375,7 +402,7 @@ namespace Mono.CSharp
 		{
 			var an = new AssemblyName (name);
 
-			if (public_key != null && RootContext.Target != Target.Module) {
+			if (public_key != null && Compiler.Settings.Target != Target.Module) {
 				if (delay_sign) {
 					an.SetPublicKey (public_key);
 				} else {
@@ -406,9 +433,9 @@ namespace Mono.CSharp
 			return Builder.DefineDynamicModule (module_name, module_name, false);
 		}
 
-		public void Emit ()
+		public virtual void Emit ()
 		{
-			if (RootContext.Target == Target.Module) {
+			if (Compiler.Settings.Target == Target.Module) {
 				module_target_attrs = new AssemblyAttributesPlaceholder (module, name);
 				module_target_attrs.CreateType ();
 				module_target_attrs.DefineType ();
@@ -418,11 +445,15 @@ namespace Mono.CSharp
 				ReadModulesAssemblyAttributes ();
 			}
 
-			if (RootContext.GenerateDebugInfo) {
+			if (Compiler.Settings.GenerateDebugInfo) {
 				symbol_writer = new MonoSymbolWriter (file_name);
 
+				// Register all source files with symbol writer
+				foreach (var source in Compiler.SourceFiles) {
+					source.DefineSymbolInfo (symbol_writer);
+				}
+
 				// TODO: global variables
-				Location.DefineSymbolDocuments (symbol_writer);
 				SymbolWriter.symwriter = symbol_writer;
 			}
 
@@ -438,10 +469,10 @@ namespace Mono.CSharp
 			if (!wrap_non_exception_throws_custom) {
 				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
 				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = pa.GetProperty ("WrapNonExceptionThrows", TypeManager.bool_type, Location.Null);
+					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
 					if (prop != null) {
-						AttributeEncoder encoder = new AttributeEncoder (false);
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (true, Location.Null));
+						AttributeEncoder encoder = new AttributeEncoder ();
+						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
 						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
 					}
 				}
@@ -475,7 +506,7 @@ namespace Mono.CSharp
 			byte[] hash = ha.ComputeHash (public_key);
 			// we need the last 8 bytes in reverse order
 			public_key_token = new byte[8];
-			Array.Copy (hash, (hash.Length - 8), public_key_token, 0, 8);
+			Buffer.BlockCopy (hash, hash.Length - 8, public_key_token, 0, 8);
 			Array.Reverse (public_key_token, 0, 8);
 			return public_key_token;
 		}
@@ -502,7 +533,7 @@ namespace Mono.CSharp
 			// For attribute based KeyFile do additional lookup
 			// in output assembly path
 			//
-			if (!key_file_exists && RootContext.StrongNameKeyFile == null) {
+			if (!key_file_exists && Compiler.Settings.StrongNameKeyFile == null) {
 				//
 				// The key file can be relative to output assembly
 				//
@@ -534,11 +565,19 @@ namespace Mono.CSharp
 					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 
 					// AssemblyName.SetPublicKey requires an additional header
-					byte[] publicKeyHeader = new byte[12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+					byte[] publicKeyHeader = new byte[8] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00 };
 
 					// Encode public key
 					public_key = new byte[12 + publickey.Length];
-					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, 12);
+					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, publicKeyHeader.Length);
+
+					// Length of Public Key (in bytes)
+					int lastPart = public_key.Length - 12;
+					public_key[8] = (byte) (lastPart & 0xFF);
+					public_key[9] = (byte) ((lastPart >> 8) & 0xFF);
+					public_key[10] = (byte) ((lastPart >> 16) & 0xFF);
+					public_key[11] = (byte) ((lastPart >> 24) & 0xFF);
+
 					Buffer.BlockCopy (publickey, 0, public_key, 12, publickey.Length);
 				} catch {
 					Error_AssemblySigning ("The specified key file `" + keyFile + "' has incorrect format");
@@ -569,7 +608,7 @@ namespace Mono.CSharp
 
 		public void Resolve ()
 		{
-			if (RootContext.Unsafe && module.PredefinedTypes.SecurityAction.Define ()) {
+			if (Compiler.Settings.Unsafe && module.PredefinedTypes.SecurityAction.Define ()) {
 				//
 				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
 				// when -unsafe option was specified
@@ -579,15 +618,15 @@ namespace Mono.CSharp
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
-				var req_min = (ConstSpec) module.PredefinedTypes.SecurityAction.GetField ("RequestMinimum", module.PredefinedTypes.SecurityAction.TypeSpec, loc);
+				var req_min = module.PredefinedMembers.SecurityActionRequestMinimum.Resolve (loc);
 
 				Arguments pos = new Arguments (1);
 				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
-				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
+				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (Compiler.BuiltinTypes, true, loc)));
 
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (module, null, null, null), "assembly",
+				Attribute g = new Attribute ("assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (module, module);
@@ -610,7 +649,7 @@ namespace Mono.CSharp
 				is_cls_compliant = cls_attribute.GetClsCompliantAttributeValue ();
 			}
 
-			if (added_modules != null && RootContext.VerifyClsCompliance && is_cls_compliant) {
+			if (added_modules != null && Compiler.Settings.VerifyClsCompliance && is_cls_compliant) {
 				foreach (var m in added_modules) {
 					if (!m.IsCLSCompliant) {
 						Report.Error (3013,
@@ -647,7 +686,7 @@ namespace Mono.CSharp
 					case "AssemblyKeyFile":
 					case "AssemblyKeyFileAttribute":
 					case "System.Reflection.AssemblyKeyFileAttribute":
-						if (RootContext.StrongNameKeyFile != null) {
+						if (Compiler.Settings.StrongNameKeyFile != null) {
 							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
 							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
@@ -662,7 +701,7 @@ namespace Mono.CSharp
 					case "AssemblyKeyName":
 					case "AssemblyKeyNameAttribute":
 					case "System.Reflection.AssemblyKeyNameAttribute":
-						if (RootContext.StrongNameKeyContainer != null) {
+						if (Compiler.Settings.StrongNameKeyContainer != null) {
 							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
 							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
@@ -708,22 +747,22 @@ namespace Mono.CSharp
 			//
 			// Add Win32 resources
 			//
-			if (RootContext.Win32ResourceFile != null) {
-				Builder.DefineUnmanagedResource (RootContext.Win32ResourceFile);
+			if (Compiler.Settings.Win32ResourceFile != null) {
+				Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
 			} else {
 				Builder.DefineVersionInfoResource ();
 			}
 
-			if (RootContext.Win32IconFile != null) {
-				builder_extra.DefineWin32IconResource (RootContext.Win32IconFile);
+			if (Compiler.Settings.Win32IconFile != null) {
+				builder_extra.DefineWin32IconResource (Compiler.Settings.Win32IconFile);
 			}
 
-			if (RootContext.Resources != null) {
-				if (RootContext.Target == Target.Module) {
+			if (Compiler.Settings.Resources != null) {
+				if (Compiler.Settings.Target == Target.Module) {
 					Report.Error (1507, "Cannot link resource file when building a module");
 				} else {
 					int counter = 0;
-					foreach (var res in RootContext.Resources) {
+					foreach (var res in Compiler.Settings.Resources) {
 						if (!File.Exists (res.FileName)) {
 							Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
 							continue;
@@ -754,7 +793,7 @@ namespace Mono.CSharp
 			PortableExecutableKinds pekind;
 			ImageFileMachine machine;
 
-			switch (RootContext.Platform) {
+			switch (Compiler.Settings.Platform) {
 			case Platform.X86:
 				pekind = PortableExecutableKinds.Required32Bit | PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.I386;
@@ -774,8 +813,9 @@ namespace Mono.CSharp
 				break;
 			}
 
+			Compiler.TimeReporter.Start (TimeReporter.TimerType.OutputSave);
 			try {
-				if (RootContext.Target == Target.Module) {
+				if (Compiler.Settings.Target == Target.Module) {
 					SaveModule (pekind, machine);
 				} else {
 					Builder.Save (module.Builder.ScopeName, pekind, machine);
@@ -783,11 +823,14 @@ namespace Mono.CSharp
 			} catch (Exception e) {
 				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
 			}
+			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
 			// Save debug symbols file
 			if (symbol_writer != null) {
 				// TODO: it should run in parallel
+				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
 				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
+				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
 			}
 		}
 
@@ -806,8 +849,8 @@ namespace Mono.CSharp
 
 		void SetEntryPoint ()
 		{
-			if (!RootContext.NeedsEntryPoint) {
-				if (RootContext.MainClass != null)
+			if (!Compiler.Settings.NeedsEntryPoint) {
+				if (Compiler.Settings.MainClass != null)
 					Report.Error (2017, "Cannot specify -main if building a module or library");
 
 				return;
@@ -815,7 +858,7 @@ namespace Mono.CSharp
 
 			PEFileKinds file_kind;
 
-			switch (RootContext.Target) {
+			switch (Compiler.Settings.Target) {
 			case Target.Library:
 			case Target.Module:
 				file_kind = PEFileKinds.Dll;
@@ -829,26 +872,24 @@ namespace Mono.CSharp
 			}
 
 			if (entry_point == null) {
-				if (RootContext.MainClass != null) {
-					// TODO: Should use MemberCache
-					DeclSpace main_cont = module.GetDefinition (RootContext.MainClass) as DeclSpace;
-					if (main_cont == null) {
-						Report.Error (1555, "Could not find `{0}' specified for Main method", RootContext.MainClass);
+				string main_class = Compiler.Settings.MainClass;
+				if (main_class != null) {
+					// TODO: Handle dotted names
+					var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, LookupMode.Probing, Location.Null);
+					if (texpr == null) {
+						Report.Error (1555, "Could not find `{0}' specified for Main method", main_class);
 						return;
 					}
 
-					if (!(main_cont is ClassOrStruct)) {
-						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
+					var mtype = texpr.Type.MemberDefinition as ClassOrStruct;
+					if (mtype == null) {
+						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
 						return;
 					}
 
-					Report.Error (1558, main_cont.Location, "`{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
-					return;
-				}
-
-				if (Report.Errors == 0) {
+					Report.Error (1558, mtype.Location, "`{0}' does not have a suitable static Main method", mtype.GetSignatureForError ());
+				} else {
 					string pname = file_name == null ? name : Path.GetFileName (file_name);
-
 					Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
 						pname);
 				}
@@ -871,7 +912,12 @@ namespace Mono.CSharp
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
-		static Version IsValidAssemblyVersion (string version)
+		public bool IsFriendAssemblyTo (IAssemblyDefinition assembly)
+		{
+			return false;
+		}
+
+		static Version IsValidAssemblyVersion (string version, bool allowGenerated)
 		{
 			string[] parts = version.Split ('.');
 			if (parts.Length < 1 || parts.Length > 4)
@@ -880,7 +926,7 @@ namespace Mono.CSharp
 			var values = new int[4];
 			for (int i = 0; i < parts.Length; ++i) {
 				if (!int.TryParse (parts[i], out values[i])) {
-					if (parts[i].Length == 1 && parts[i][0] == '*') {
+					if (parts[i].Length == 1 && parts[i][0] == '*' && allowGenerated) {
 						if (i == 2) {
 							// Nothing can follow *
 							if (parts.Length > 3)
@@ -953,7 +999,7 @@ namespace Mono.CSharp
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
 			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
 		{
-			assembly = new Field (this, new TypeExpression (TypeManager.object_type, Location), Modifiers.PUBLIC | Modifiers.STATIC,
+			assembly = new Field (this, new TypeExpression (parent.Compiler.BuiltinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);
 
 			AddField (assembly);
@@ -1031,19 +1077,13 @@ namespace Mono.CSharp
 		protected readonly CompilerContext compiler;
 
 		protected readonly List<string> paths;
-		readonly string[] default_references;
 
 		public AssemblyReferencesLoader (CompilerContext compiler)
 		{
 			this.compiler = compiler;
 
-			if (RootContext.LoadDefaultReferences)
-				default_references = GetDefaultReferences ();
-			else
-				default_references = new string[0];
-
 			paths = new List<string> ();
-			paths.AddRange (RootContext.ReferencesLookupPaths);
+			paths.AddRange (compiler.Settings.ReferencesLookupPaths);
 			paths.Add (Directory.GetCurrentDirectory ());
 		}
 
@@ -1079,25 +1119,21 @@ namespace Mono.CSharp
 
 		protected void LoadReferencesCore (ModuleContainer module, out T corlib_assembly, out List<Tuple<RootNamespace, T>> loaded)
 		{
+			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesLoading);
+
 			loaded = new List<Tuple<RootNamespace, T>> ();
 
 			//
 			// Load mscorlib.dll as the first
 			//
-			if (RootContext.StdLib) {
+			if (module.Compiler.Settings.StdLib) {
 				corlib_assembly = LoadAssemblyDefault ("mscorlib.dll");
 			} else {
 				corlib_assembly = default (T);
 			}
 
 			T a;
-			foreach (string r in default_references) {
-				a = LoadAssemblyDefault (r);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
-			foreach (string r in RootContext.AssemblyReferences) {
+			foreach (string r in module.Compiler.Settings.AssemblyReferences) {
 				a = LoadAssemblyFile (r);
 				if (a == null || EqualityComparer<T>.Default.Equals (a, corlib_assembly))
 					continue;
@@ -1115,7 +1151,7 @@ namespace Mono.CSharp
 				loaded.Add (key);
 			}
 
-			foreach (var entry in RootContext.AssemblyReferencesAliases) {
+			foreach (var entry in module.Compiler.Settings.AssemblyReferencesAliases) {
 				a = LoadAssemblyFile (entry.Item2);
 				if (a == null)
 					continue;
@@ -1126,6 +1162,22 @@ namespace Mono.CSharp
 
 				loaded.Add (key);
 			}
+
+			if (compiler.Settings.LoadDefaultReferences) {
+				foreach (string r in GetDefaultReferences ()) {
+					a = LoadAssemblyDefault (r);
+					if (a == null)
+						continue;
+
+					var key = Tuple.Create (module.GlobalRootNamespace, a);
+					if (loaded.Contains (key))
+						continue;
+
+					loaded.Add (key);
+				}
+			}
+
+			compiler.TimeReporter.Stop (TimeReporter.TimerType.ReferencesLoading);
 		}
 	}
 }

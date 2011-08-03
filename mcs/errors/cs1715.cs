@@ -1,4 +1,4 @@
-// cs1715.cs: `DerivedClass.Prop': type must be `bool' to match overridden member `BaseClass.Prop'
+// CS1715: `DerivedClass.Prop': type must be `bool' to match overridden member `BaseClass.Prop'
 // Line: 9
 
 class BaseClass {

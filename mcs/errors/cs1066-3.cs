@@ -1,6 +1,6 @@
 // CS1066: The default value specified for optional parameter `x' will never be used
 // Line: 12
-// Compiler options: -warnaserror -langversion:future
+// Compiler options: -warnaserror
 
 interface I
 {

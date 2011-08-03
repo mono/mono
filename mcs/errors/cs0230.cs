@@ -1,4 +1,4 @@
-// CS0230.cs: Type and identifier are both required in a foreach statement
+// CS0230: Type and identifier are both required in a foreach statement
 // Line: 12
 
 using System;

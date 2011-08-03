@@ -23,7 +23,6 @@
 //	Jackson Harper (jackson@ximian.com)
 //
 
-#if NET_2_0
 
 using System;
 
@@ -32,6 +31,3 @@ namespace System.Windows.Forms {
 	public delegate void DrawTreeNodeEventHandler (object sender, DrawTreeNodeEventArgs e);
 
 }
-
-
-#endif

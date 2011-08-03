@@ -52,14 +52,18 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void ConstructorXmlObjectSerializerNull ()
 		{
 			// null XmlObjectSerializer is allowed.
-			new SyndicationElementExtension (5, (XmlObjectSerializer) null);
+			var x = new SyndicationElementExtension (5, (XmlObjectSerializer) null);
+			Assert.AreEqual ("int", x.OuterName, "#1");
+			Assert.AreEqual ("http://schemas.microsoft.com/2003/10/Serialization/", x.OuterNamespace, "#2");
 		}
 
 		[Test]
 		public void ConstructorOuterNameNull ()
 		{
 			// null name strings are allowed.
-			new SyndicationElementExtension (null, null, 5, null);
+			var x = new SyndicationElementExtension (null, null, 5, null);
+			Assert.AreEqual ("int", x.OuterName, "#1");
+			Assert.AreEqual ("http://schemas.microsoft.com/2003/10/Serialization/", x.OuterNamespace, "#2");
 		}
 
 		[Test]
@@ -73,7 +77,6 @@ namespace MonoTests.System.ServiceModel.Syndication
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ConstructorXmlSerializerNonSerializable ()
 		{
-			// null XmlSerializer is allowed.
 			new SyndicationElementExtension (new NonXmlSerializable (null), (XmlSerializer) null);
 		}
 

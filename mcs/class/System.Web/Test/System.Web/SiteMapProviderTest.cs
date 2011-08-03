@@ -69,7 +69,7 @@ namespace MonoTests.System.Web {
 			throw new NotImplementedException ();
 		}
 
-		protected override SiteMapNode GetRootNodeCore ()
+		protected internal override SiteMapNode GetRootNodeCore ()
 		{
 			return new SiteMapNode (this, "rootKey", "rootUrl");
 		}

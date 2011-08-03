@@ -36,10 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultPropertyAttribute("Document")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class PrintPreviewControl : Control {
 		#region Local variables
 		bool autozoom;
@@ -112,14 +110,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[AmbientValue (RightToLeft.Inherit)]
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set { base.RightToLeft = value; }
 		}
-#endif
 
 		[DefaultValue(1)]
 		public int Rows {
@@ -165,9 +161,7 @@ namespace System.Windows.Forms {
 			set { controller.UseAntiAlias = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue (0.3)]
-#endif
 		public double Zoom {
 			get { return zoom; }
 			set {
@@ -304,7 +298,6 @@ namespace System.Windows.Forms {
 		internal int hbar_value;
 
 		#region UIA Framework Property
-#if NET_2_0
 		internal ScrollBar UIAVScrollBar {
 			get { return vbar; }
 		}
@@ -312,7 +305,6 @@ namespace System.Windows.Forms {
 		internal ScrollBar UIAHScrollBar {
 			get { return hbar; }
 		}
-#endif
 		#endregion
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)

@@ -57,11 +57,12 @@ namespace MonoTests.System.Xml
 			fragment.AppendChild (document.CreateElement ("div"));
 
 			// appending fragment to element
-			body.AppendChild (fragment);
+			XmlNode ret = body.AppendChild (fragment);
 			Assert.IsNotNull (body.FirstChild, "#AppendFragmentToElement.Exist");
 			Assert.AreEqual (XmlNodeType.Element, body.FirstChild.NodeType, "#AppendFragmentToElement.ChildIsElement");
 			Assert.AreEqual ("p", body.FirstChild.Name, "#AppendFragmentToElement.FirstChild");
 			Assert.AreEqual ("div", body.LastChild.Name, "#AppendFragmentToElement.LastChild");
+			Assert.AreEqual ("p", ret.LocalName, "#AppendFragmentToElement.ReturnValue");
 		}
 
 		[Test]

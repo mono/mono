@@ -166,6 +166,8 @@ class MonoClassPrinter:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
+        if klass ["generic_class"].cast (gdb.lookup_type ("guint64")) != 0:
+            class_name = "%s<%s>" % (class_name, str (klass ["generic_class"]["context"]["class_inst"]))
         if add_quotes:
             return "\"%s\"" % (class_name)
         else:
@@ -188,6 +190,8 @@ class MonoGenericInstPrinter:
         self.val = val
 
     def to_string(self):
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
+            return "0x0"
         inst = self.val.dereference ()
         inst_len = inst ["type_argc"]
         inst_args = inst ["type_argv"]
@@ -280,6 +284,19 @@ class MonoMethodRgctxPrinter:
             inst_str = inst_str + type_printer.to_string ()
         return "MRGCTX[%s, [%s]]" % (klass_printer.to_string(), inst_str)
 
+class MonoVTablePrinter:
+    "Print a MonoVTable structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        vtable = self.val.dereference ()
+        klass = vtable ["klass"]
+        klass_printer = MonoClassPrinter (klass)
+
+        return "vtable(%s)" % (klass_printer.to_string ())
+
 def lookup_pretty_printer(val):
     t = str (val.type)
     if t == "object":
@@ -287,6 +304,8 @@ def lookup_pretty_printer(val):
     if t[0:5] == "class" and t[-1] == "&":
         return ObjectPrinter (val)    
     if t == "string":
+        return StringPrinter (val)
+    if t == "MonoString *":
         return StringPrinter (val)
     if t == "MonoMethod *":
         return MonoMethodPrinter (val)
@@ -300,6 +319,8 @@ def lookup_pretty_printer(val):
         return MonoGenericClassPrinter (val)
     if t == "MonoMethodRuntimeGenericContext *":
         return MonoMethodRgctxPrinter (val)
+    if t == "MonoVTable *":
+        return MonoVTablePrinter (val)
     return None
 
 def register_csharp_printers(obj):

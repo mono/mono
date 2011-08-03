@@ -236,6 +236,7 @@ namespace System.Web.Security {
 
 		public static bool Enabled {
 			get { return config.Enabled; }
+			set { config.Enabled = value; }
 		}
 
 		public static int MaxCachedResults {

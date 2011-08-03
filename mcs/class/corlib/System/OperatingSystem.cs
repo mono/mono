@@ -48,6 +48,12 @@ namespace System {
 
 			_platform = platform;
 			_version = version;
+
+			if (platform == PlatformID.Win32NT) {
+				// The service pack is encoded in the upper bits of the revision
+				if (version.Revision != 0)
+					_servicePack = "Service Pack " + (version.Revision >> 16);
+			}
 		}
 
 		public PlatformID Platform {
@@ -118,7 +124,11 @@ namespace System {
 				break;
 			}
 
-			return str + " " + _version.ToString();
+			string sstr = "";
+			if (ServicePack != String.Empty)
+				sstr = " " + ServicePack;
+
+			return str + " " + _version.ToString() + sstr;
 		}
 	}
 }

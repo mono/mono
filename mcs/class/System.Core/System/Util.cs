@@ -1,14 +1,13 @@
-namespace System {
-
-	internal static class MonoUtil {
-		static public bool IsUnix {
-			get {
-				int platform = (int) Environment.OSVersion.Platform;
-
-				return (platform == 4 || platform == 128 || platform == 6);
-			}
-		}
-
+namespace System
+{
+	internal static class MonoUtil
+	{
+		public readonly static bool IsUnix;
 		
+		static MonoUtil ()
+		{
+			int platform = (int) Environment.OSVersion.Platform;
+			IsUnix = platform == 4 || platform == 128 || platform == 6;
+		}
 	}
 }

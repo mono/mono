@@ -43,15 +43,9 @@
 /* FIXME */
 #  define CODESET 1
 #  include <windows.h>
-#  ifdef _MSC_VER
-       typedef int iconv_t;
-#  endif
 #else
 #    ifdef HAVE_LANGINFO_H
 #       include <langinfo.h>
-#    endif
-#    ifdef HAVE_ICONV_H
-#       include <iconv.h>
 #    endif
 #    ifdef HAVE_LOCALCHARSET_H
 #       include <localcharset.h>
@@ -64,36 +58,11 @@ static gboolean is_utf8;
 /*
  * Character set conversion
  */
-/*
-* Index into the table below with the first byte of a UTF-8 sequence to
-* get the number of trailing bytes that are supposed to follow it.
-* Note that *legal* UTF-8 values can't have 4 or 5-bytes. The table is
-* left as-is for anyone who may want to do such conversion, which was
-* allowed in earlier algorithms.
-*/
-const gchar g_trailingBytesForUTF8 [256] = {
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,0,0
-};
-
-/*
-* Magic values subtracted from a buffer value during UTF8 conversion.
-* This table contains as many values as there might be trailing bytes
-* in a UTF-8 sequence.
-*/
-static const gulong offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL,
-0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 
 GUnicodeType 
 g_unichar_type (gunichar c)
 {
-int i;
+	int i;
 
 	guint16 cp = (guint16) c;
 	for (i = 0; i < unicode_category_ranges_count; i++) {
@@ -128,6 +97,13 @@ int i;
 
 	/* It should match any of above */
 	return 0;
+}
+
+GUnicodeBreakType
+g_unichar_break_type (gunichar c)
+{
+	// MOONLIGHT_FIXME
+	return G_UNICODE_BREAK_UNKNOWN;
 }
 
 gunichar
@@ -203,83 +179,18 @@ g_unichar_xdigit_value (gunichar c)
 	return -1;
 }
 
-gchar *
-g_convert (const gchar *str, gssize len,
-	   const gchar *to_codeset, const gchar *from_codeset,
-	   gsize *bytes_read, gsize *bytes_written, GError **error)
+gboolean
+g_unichar_isspace (gunichar c)
 {
-	char *result = NULL;
-#ifdef G_OS_WIN32
-#elif HAVE_ICONV_H
-	iconv_t convertor;
-	char *buffer, *output;
-	const char *strptr = (const char *) str;
-	size_t str_len = len == -1 ? strlen (str) : len;
-	size_t buffer_size;
-	size_t left, out_left;
-	
-	convertor = iconv_open (to_codeset, from_codeset);
-	if (convertor == (iconv_t) -1){
-		if (bytes_written)
-			*bytes_written = 0;
-		if (bytes_read)
-			*bytes_read = 0;
-		return NULL;
-	}
+	GUnicodeType type = g_unichar_type (c);
+	if (type == G_UNICODE_LINE_SEPARATOR ||
+	    type == G_UNICODE_PARAGRAPH_SEPARATOR ||
+	    type == G_UNICODE_SPACE_SEPARATOR)
+		return TRUE;
 
-	buffer_size = str_len + 1 + 8;
-	buffer = g_malloc (buffer_size);
-	out_left = str_len;
-	output = buffer;
-	left = str_len;
-	while (left > 0){
-		int res = iconv (convertor, (char **) &strptr, &left, &output, &out_left);
-		if (res == (size_t) -1){
-			if (errno == E2BIG){
-				char *n;
-				size_t extra_space = 8 + left;
-				size_t output_used = output - buffer;
-				
-				buffer_size += extra_space;
-				
-				n = g_realloc (buffer, buffer_size);
-				
-				if (n == NULL){
-					if (error != NULL)
-						*error = g_error_new (NULL, G_CONVERT_ERROR_FAILED, "No memory left");
-					g_free (buffer);
-					result = NULL;
-					goto leave;
-				}
-				buffer = n;
-				out_left += extra_space;
-				output = buffer + output_used;
-			} else if (errno == EILSEQ){
-				if (error != NULL)
-					*error = g_error_new (NULL, G_CONVERT_ERROR_ILLEGAL_SEQUENCE, "Invalid multi-byte sequence on input");
-				result = NULL;
-				g_free (buffer);
-				goto leave;
-			} else if (errno == EINVAL){
-				if (error != NULL)
-					*error = g_error_new (NULL, G_CONVERT_ERROR_PARTIAL_INPUT, "Partial character sequence");
-				result = NULL;
-				g_free (buffer);
-				goto leave;
-			}
-		} 
-	}
-	if (bytes_read != NULL)
-		*bytes_read = strptr - str;
-	if (bytes_written != NULL)
-		*bytes_written = output - buffer;
-	*output = 0;
-	result = buffer;
- leave:
-	iconv_close (convertor);
-#endif
-	return result;
+	return FALSE;
 }
+
 
 /*
  * This is broken, and assumes an UTF8 system, but will do for eglib's first user
@@ -300,13 +211,13 @@ g_filename_from_utf8 (const gchar *utf8string, gssize len, gsize *bytes_read, gs
 gboolean
 g_get_charset (G_CONST_RETURN char **charset)
 {
+	if (my_charset == NULL) {
 #ifdef G_OS_WIN32
-	static char buf[14];
-	sprintf (buf, "CP%u", GetACP ());
-	*charset = buf;
-	is_utf8 = FALSE;
+		static char buf [14];
+		sprintf (buf, "CP%u", GetACP ());
+		my_charset = buf;
+		is_utf8 = FALSE;
 #else
-	if (my_charset == NULL){
 		/* These shouldn't be heap allocated */
 #if HAVE_LOCALCHARSET_H
 		my_charset = locale_charset ();
@@ -316,12 +227,12 @@ g_get_charset (G_CONST_RETURN char **charset)
 		my_charset = "UTF-8";
 #endif
 		is_utf8 = strcmp (my_charset, "UTF-8") == 0;
+#endif
 	}
 	
 	if (charset != NULL)
 		*charset = my_charset;
 
-#endif
 	return is_utf8;
 }
 
@@ -339,120 +250,4 @@ g_locale_from_utf8 (const gchar *utf8string, gssize len, gsize *bytes_read, gsiz
 	g_get_charset (NULL);
 
 	return g_convert (utf8string, len, my_charset, "UTF-8", bytes_read, bytes_written, error);
-}
-/**
- * g_utf8_validate
- * @utf: Pointer to putative UTF-8 encoded string.
- *
- * Checks @utf for being valid UTF-8. @utf is assumed to be
- * null-terminated. This function is not super-strict, as it will
- * allow longer UTF-8 sequences than necessary. Note that Java is
- * capable of producing these sequences if provoked. Also note, this
- * routine checks for the 4-byte maximum size, but does not check for
- * 0x10ffff maximum value.
- *
- * Return value: true if @utf is valid.
- **/
-gboolean
-g_utf8_validate (const gchar *str, gssize max_len, const gchar **end)
-{
-	gssize byteCount = 0;
-	gboolean retVal = TRUE;
-	gboolean lastRet = TRUE;
-	guchar* ptr = (guchar*) str;
-	guint length;
-	guchar a;
-	guchar* srcPtr;
-	if (max_len == 0)
-		return 0;
-	else if (max_len < 0)
-		byteCount = max_len;
-	while (*ptr != 0 && byteCount <= max_len) {
-		length = g_trailingBytesForUTF8 [*ptr] + 1;
-		srcPtr = (guchar*) ptr + length;
-		switch (length) {
-		default: retVal = FALSE;
-		/* Everything else falls through when "TRUE"... */
-		case 4: if ((a = (*--srcPtr)) < (guchar) 0x80 || a > (guchar) 0xBF) retVal = FALSE;
-				if ((a == (guchar) 0xBF || a == (guchar) 0xBE) && *(srcPtr-1) == (guchar) 0xBF) {
-				if (*(srcPtr-2) == (guchar) 0x8F || *(srcPtr-2) == (guchar) 0x9F ||
-					*(srcPtr-2) == (guchar) 0xAF || *(srcPtr-2) == (guchar) 0xBF)
-					retVal = FALSE;
-				}
-		case 3: if ((a = (*--srcPtr)) < (guchar) 0x80 || a > (guchar) 0xBF) retVal = FALSE;
-		case 2: if ((a = (*--srcPtr)) < (guchar) 0x80 || a > (guchar) 0xBF) retVal = FALSE;
-
-		switch (*ptr) {
-		/* no fall-through in this inner switch */
-		case 0xE0: if (a < (guchar) 0xA0) retVal = FALSE; break;
-		case 0xED: if (a > (guchar) 0x9F) retVal = FALSE; break;
-		case 0xEF: if (a == (guchar)0xB7 && (*(srcPtr+1) > (guchar) 0x8F && *(srcPtr+1) < 0xB0)) retVal = FALSE;
-				   if (a == (guchar)0xBF && (*(srcPtr+1) == (guchar) 0xBE || *(srcPtr+1) == 0xBF)) retVal = FALSE; break;
-		case 0xF0: if (a < (guchar) 0x90) retVal = FALSE; break;
-		case 0xF4: if (a > (guchar) 0x8F) retVal = FALSE; break;
-		default:   if (a < (guchar) 0x80) retVal = FALSE;
-		}
-
-		case 1: if (*ptr >= (guchar ) 0x80 && *ptr < (guchar) 0xC2) retVal = FALSE;
-		}
-		if (*ptr > (guchar) 0xF4)
-			retVal = FALSE;
-		//If the string is invalid, set the end to the invalid byte.
-		if (!retVal && lastRet) {
-			if (end != NULL)
-				*end = (gchar*) ptr;
-			lastRet = FALSE;
-		}
-		ptr += length;
-		if(max_len > 0)
-			byteCount += length;
-	}
-	if (retVal && end != NULL)
-		*end = (gchar*) ptr;
-	return retVal;
-}
-/**
- * g_utf8_get_char
- * @src: Pointer to UTF-8 encoded character.
- *
- * Return value: UTF-16 value of @src
- **/
-gunichar
-g_utf8_get_char (const gchar *src)
-{
-	gunichar ch = 0;
-	guchar* ptr = (guchar*) src;
-	gushort extraBytesToRead = g_trailingBytesForUTF8 [*ptr];
-
-	switch (extraBytesToRead) {
-	case 5: ch += *ptr++; ch <<= 6; // remember, illegal UTF-8
-	case 4: ch += *ptr++; ch <<= 6; // remember, illegal UTF-8
-	case 3: ch += *ptr++; ch <<= 6;
-	case 2: ch += *ptr++; ch <<= 6;
-	case 1: ch += *ptr++; ch <<= 6;
-	case 0: ch += *ptr;
-	}
-	ch -= offsetsFromUTF8 [extraBytesToRead];
-	return ch;
-}
-glong
-g_utf8_strlen (const gchar *str, gssize max)
-{
-	gssize byteCount = 0;
-	guchar* ptr = (guchar*) str;
-	glong length = 0;
-	if (max == 0)
-		return 0;
-	else if (max < 0)
-		byteCount = max;
-	while (*ptr != 0 && byteCount <= max) {
-		gssize cLen = g_trailingBytesForUTF8 [*ptr] + 1;
-		if (max > 0 && (byteCount + cLen) > max)
-			return length;
-		ptr += cLen;
-		length++;
-		if (max > 0)
-			byteCount += cLen;
-	}
-	return length;
 }

@@ -244,6 +244,64 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void ReadEventStore ()
+		{
+			var r = GetReader ("EventStore2.xml");
+
+			var xt = r.SchemaContext.GetXamlType (typeof (EventStore));
+			var xm = xt.GetMember ("Event1");
+			Assert.IsNotNull (xt, "premise#1");
+			Assert.IsNotNull (xm, "premise#2");
+			Assert.IsTrue (xm.IsEvent, "premise#3");
+			while (true) {
+				r.Read ();
+				if (r.Member != null && r.Member.IsEvent)
+					break;
+				if (r.IsEof)
+					Assert.Fail ("Items did not appear");
+			}
+
+			Assert.AreEqual (xm, r.Member, "#x1");
+			Assert.AreEqual ("Event1", r.Member.Name, "#x2");
+
+			Assert.IsTrue (r.Read (), "#x11");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x12");
+			Assert.AreEqual ("Method1", r.Value, "#x13");
+
+			Assert.IsTrue (r.Read (), "#x21");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x22");
+
+			xm = xt.GetMember ("Event2");
+			Assert.IsTrue (r.Read (), "#x31");
+			Assert.AreEqual (xm, r.Member, "#x32");
+			Assert.AreEqual ("Event2", r.Member.Name, "#x33");
+
+			Assert.IsTrue (r.Read (), "#x41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x42");
+			Assert.AreEqual ("Method2", r.Value, "#x43");
+
+			Assert.IsTrue (r.Read (), "#x51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x52");
+
+			Assert.IsTrue (r.Read (), "#x61");
+			Assert.AreEqual ("Event1", r.Member.Name, "#x62");
+
+			Assert.IsTrue (r.Read (), "#x71");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x72");
+			Assert.AreEqual ("Method3", r.Value, "#x73"); // nonexistent, but no need to raise an error.
+
+			Assert.IsTrue (r.Read (), "#x81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x82");
+
+			while (!r.IsEof)
+				r.Read ();
+
+			r.Close ();
+		}
+
+		// common XamlReader tests.
+
+		[Test]
 		public void Read_String ()
 		{
 			var r = GetReader ("String.xml");
@@ -546,5 +604,124 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("AttachedProperty.xml");
 			Read_AttachedProperty (r);
 		}
+
+		[Test]
+		public void Read_AbstractWrapper ()
+		{
+			var r = GetReader ("AbstractContainer.xml");
+			while (!r.IsEof)
+				r.Read ();
+		}
+
+		[Test]
+		public void Read_ReadOnlyPropertyContainer ()
+		{
+			var r = GetReader ("ReadOnlyPropertyContainer.xml");
+			while (!r.IsEof)
+				r.Read ();
+		}
+
+		[Test]
+		public void Read_TypeConverterOnListMember ()
+		{
+			var r = GetReader ("TypeConverterOnListMember.xml");
+			Read_TypeConverterOnListMember (r);
+		}
+
+		[Test]
+		public void Read_EnumContainer ()
+		{
+			var r = GetReader ("EnumContainer.xml");
+			Read_EnumContainer (r);
+		}
+
+		[Test]
+		public void Read_CollectionContentProperty ()
+		{
+			var r = GetReader ("CollectionContentProperty.xml");
+			Read_CollectionContentProperty (r, false);
+		}
+
+		[Test]
+		public void Read_CollectionContentProperty2 ()
+		{
+			// bug #681835
+			var r = GetReader ("CollectionContentProperty2.xml");
+			Read_CollectionContentProperty (r, true);
+		}
+
+		[Test]
+		public void Read_CollectionContentPropertyX ()
+		{
+			var r = GetReader ("CollectionContentPropertyX.xml");
+			Read_CollectionContentPropertyX (r, false);
+		}
+
+		[Test]
+		public void Read_CollectionContentPropertyX2 ()
+		{
+			var r = GetReader ("CollectionContentPropertyX2.xml");
+			Read_CollectionContentPropertyX (r, true);
+		}
+
+		[Test]
+		public void Read_AmbientPropertyContainer ()
+		{
+			var r = GetReader ("AmbientPropertyContainer.xml");
+			Read_AmbientPropertyContainer (r, false);
+		}
+
+		[Test]
+		public void Read_AmbientPropertyContainer2 ()
+		{
+			var r = GetReader ("AmbientPropertyContainer2.xml");
+			Read_AmbientPropertyContainer (r, true);
+		}
+
+		[Test]
+		public void Read_NullableContainer ()
+		{
+			var r = GetReader ("NullableContainer.xml");
+			Read_NullableContainer (r);
+		}
+
+		// It is not really a common test; it just makes use of base helper methods.
+		[Test]
+		public void Read_DirectListContainer ()
+		{
+			var r = GetReader ("DirectListContainer.xml");
+			Read_DirectListContainer (r);
+		}
+
+		// It is not really a common test; it just makes use of base helper methods.
+		[Test]
+		public void Read_DirectDictionaryContainer ()
+		{
+			var r = GetReader ("DirectDictionaryContainer.xml");
+			Read_DirectDictionaryContainer (r);
+		}
+
+		// It is not really a common test; it just makes use of base helper methods.
+		[Test]
+		public void Read_DirectDictionaryContainer2 ()
+		{
+			var r = GetReader ("DirectDictionaryContainer2.xml");
+			Read_DirectDictionaryContainer2 (r);
+		}
+		
+		[Test]
+		public void Read_ContentPropertyContainer ()
+		{
+			var r = GetReader ("ContentPropertyContainer.xml");
+			Read_ContentPropertyContainer (r);
+		}
+
+		#region non-common tests
+		[Test]
+		public void Bug680385 ()
+		{
+			XamlServices.Load ("Test/XmlFiles/CurrentVersion.xaml");
+		}
+		#endregion
 	}
 }

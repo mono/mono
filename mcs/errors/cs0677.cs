@@ -1,4 +1,4 @@
-// cs0677.cs: `X.a': A volatile field cannot be of the type `A'
+// CS0677: `X.a': A volatile field cannot be of the type `A'
 // Line: 8
 using System;
 

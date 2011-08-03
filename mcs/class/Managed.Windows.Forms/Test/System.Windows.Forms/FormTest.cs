@@ -2444,7 +2444,37 @@ namespace MonoTests.System.Windows.Forms
 		{
 			((Form)sender).Visible = false;
 		}
-		
+
+		[Test]
+		public void Bug686486 ()
+		{
+			using (Form f = new Bug686486Form ())
+			{
+				try
+				{
+					f.ShowDialog ();
+				}
+				catch (StackOverflowException)
+				{
+					Assert.Fail ("Setting DialogResult in FormClosing Event causes endless loop: StackOverflowException");
+				}
+			}
+		}
+
+		private class Bug686486Form : Form
+		{
+			public Bug686486Form ()
+			{
+				this.FormClosing += SetDialogResultOK;
+				this.Load += SetDialogResultOK;
+			}
+
+			private void SetDialogResultOK (object sender, EventArgs e)
+			{
+				this.DialogResult = DialogResult.OK;
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		public void AutoSizeGrowOnly ()

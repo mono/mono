@@ -26,7 +26,7 @@
 //
 // (C) 2004 Novell, Inc.
 //
-#if NET_2_0
+
 namespace System.Windows.Forms 
 {
 	public class RowStyle : TableLayoutStyle 
@@ -68,4 +68,3 @@ namespace System.Windows.Forms
 		}		
 	}
 }
-#endif

@@ -1,4 +1,4 @@
-// cs0466.cs:  `Base.I.M(params int[])': the explicit interface implementation cannot introduce the params modifier
+// CS0466:  `Base.I.M(params int[])': the explicit interface implementation cannot introduce the params modifier
 // Line: 10
 
 interface I

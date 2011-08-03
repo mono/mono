@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
@@ -78,8 +79,8 @@ namespace System.Web.UI {
 		string inputFile;
 		string text;
 		IDictionary mainAttributes;
-		ArrayList dependencies;
-		ArrayList assemblies;
+		List <string> dependencies;
+		List <string> assemblies;
 		IDictionary anames;
 		string[] binDirAssemblies;
 		Dictionary <string, bool> namespacesCache;
@@ -131,7 +132,7 @@ namespace System.Web.UI {
 		{
 			imports = new Dictionary <string, bool> (StringComparer.Ordinal);
 			LoadConfigDefaults ();
-			assemblies = new ArrayList ();
+			assemblies = new List <string> ();
 			CompilationSection compConfig = CompilationConfig;
 			foreach (AssemblyInfo info in compConfig.Assemblies) {
 				if (info.Assembly != "*")
@@ -155,7 +156,8 @@ namespace System.Web.UI {
                                         // controls registered from Web.Config
 			string location = Context.ApplicationInstance.AssemblyLocation;
 			if (location != typeof (TemplateParser).Assembly.Location) {
-				appAssemblyIndex = assemblies.Add (location);
+				 assemblies.Add (location);
+				 appAssemblyIndex = assemblies.Count - 1;
 			}
 		}
 
@@ -198,7 +200,7 @@ namespace System.Web.UI {
 			VirtualFile vf = null;
 			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 			VirtualPath vp = new VirtualPath (src, BaseVirtualDir);
-			string vpAbsolute = vp.Absolute;
+			string vpAbsolute = vpp.CombineVirtualPaths (VirtualPath.Absolute, vp.Absolute);
 			
 			if (vpp.FileExists (vpAbsolute)) {
 				fileExists = true;
@@ -210,7 +212,7 @@ namespace System.Web.UI {
 			if (!fileExists)
 				ThrowParseFileNotFound (src);
 
-			if (String.Compare (realpath, inputFile, false, Helpers.InvariantCulture) == 0)
+			if (String.Compare (realpath, inputFile, StringComparison.Ordinal) == 0)
                                 return;
 			
 			string vpath = vf.VirtualPath;
@@ -540,11 +542,19 @@ namespace System.Web.UI {
 
 		internal virtual void AddDependency (string filename)
 		{
-			if (filename == null || filename == String.Empty)
+			AddDependency (filename, true);
+		}
+		
+		internal virtual void AddDependency (string filename, bool combinePaths)
+		{
+			if (String.IsNullOrEmpty (filename))
 				return;
 
 			if (dependencies == null)
-				dependencies = new ArrayList ();
+				dependencies = new List <string> ();
+
+			if (combinePaths)
+				filename = HostingEnvironment.VirtualPathProvider.CombineVirtualPaths (VirtualPath.Absolute, filename);
 
 			if (!dependencies.Contains (filename))
 				dependencies.Add (filename);
@@ -662,8 +672,9 @@ namespace System.Web.UI {
 				ThrowParseException ("The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute");
 
 			string legacySrc = GetString (atts, "Src", null);
+			var vpp = HostingEnvironment.VirtualPathProvider;
 			if (legacySrc != null) {
-				legacySrc = UrlUtils.Combine (BaseVirtualDir, legacySrc);
+				legacySrc = vpp.CombineVirtualPaths (BaseVirtualDir, legacySrc);
 				GetAssemblyFromSource (legacySrc);
 
 				if (src == null) {
@@ -677,15 +688,15 @@ namespace System.Web.UI {
 				} else 
 					legacySrc = MapPath (legacySrc, false);				
 
-				AddDependency (legacySrc);
+				AddDependency (legacySrc, false);
 			}
 			
 			if (!srcIsLegacy && src != null && inherits != null) {
 				// Make sure the source exists
-				src = UrlUtils.Combine (BaseVirtualDir, src);
+				src = vpp.CombineVirtualPaths (BaseVirtualDir, src);
 				srcRealPath = MapPath (src, false);
 
-				if (!HostingEnvironment.VirtualPathProvider.FileExists (src))
+				if (!vpp.FileExists (src))
 					ThrowParseException ("File " + src + " not found");
 
 				// We are going to create a partial class that shares
@@ -717,7 +728,7 @@ namespace System.Web.UI {
 			if (src != null) {
 				if (VirtualPathUtility.IsAbsolute (src))
 					src = VirtualPathUtility.ToAppRelative (src);
-				AddDependency (src);
+				AddDependency (src, false);
 			}
 			
 			className = GetString (atts, "ClassName", null);
@@ -1157,10 +1168,10 @@ namespace System.Web.UI {
 			get { return interfaces; }
 		}
 		
-		internal ArrayList Assemblies {
+		internal List <string> Assemblies {
 			get {
 				if (appAssemblyIndex != -1) {
-					object o = assemblies [appAssemblyIndex];
+					string o = assemblies [appAssemblyIndex];
 					assemblies.RemoveAt (appAssemblyIndex);
 					assemblies.Add (o);
 					appAssemblyIndex = -1;
@@ -1183,7 +1194,7 @@ namespace System.Web.UI {
 			set { rootBuilder = value; }
 		}
 
-		internal ArrayList Dependencies {
+		internal List <string> Dependencies {
 			get { return dependencies; }
 			set { dependencies = value; }
 		}

@@ -21,7 +21,6 @@
 //	Olivier Dufour  olivier.duff@free.fr
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public class VScrollProperties : ScrollProperties
@@ -32,4 +31,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

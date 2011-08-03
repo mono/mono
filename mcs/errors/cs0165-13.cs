@@ -1,4 +1,4 @@
-// cs0165-13.cs: Use of unassigned local variable `foo'
+// CS0165: Use of unassigned local variable `foo'
 // Line: 9
 
 struct Rectangle { int x; public int X { set { } } }

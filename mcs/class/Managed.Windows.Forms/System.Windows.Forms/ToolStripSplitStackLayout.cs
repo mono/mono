@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Drawing;
 using System.Windows.Forms.Layout;
@@ -254,4 +253,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

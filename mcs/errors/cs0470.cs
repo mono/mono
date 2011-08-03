@@ -1,4 +1,4 @@
-// cs0470.cs: Method `C.get_P()' cannot implement interface accessor `I.P.get'
+// CS0470: Method `C.get_P()' cannot implement interface accessor `I.P.get'
 // Line: 11
 
 interface I

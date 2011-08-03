@@ -23,9 +23,7 @@
 //	Andreia Gaita	avidigal@novell.com
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public delegate void HtmlElementEventHandler (object sender, HtmlElementEventArgs e);
 }
-#endif

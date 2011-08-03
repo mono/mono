@@ -1,4 +1,4 @@
-// cs0664-3.cs: Literal of type double cannot be implicitly converted to type `float'. Add suffix `f' to create a literal of this type
+// CS0664: Literal of type double cannot be implicitly converted to type `float'. Add suffix `f' to create a literal of this type
 // Line: 13
 
 using System;

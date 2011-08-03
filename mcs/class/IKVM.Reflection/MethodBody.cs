@@ -56,6 +56,7 @@ namespace IKVM.Reflection
 			{
 				initLocals = true;
 				body = br.ReadBytes(b >> 2);
+				maxStack = 8;
 			}
 			else if ((b & 3) == CorILMethod_FatFormat)
 			{

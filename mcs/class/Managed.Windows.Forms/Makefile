@@ -21,6 +21,8 @@ endif
 
 RESX_RESOURCES = \
 	resources/keyboards.resources
+	
+CLEAN_FILES += $(RESX_RESOURCES)
 
 CUR_RESOURCES = resources/NWSE.cur resources/NESW.cur \
 	resources/SplitterNS.cur \

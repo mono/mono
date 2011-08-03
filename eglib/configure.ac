@@ -1,15 +1,19 @@
-AC_INIT(README)
-AC_CANONICAL_SYSTEM
+AC_INIT(eglib, [0.3],
+        [http://bugzilla.novell.com/enter_bug.cgi?product=mono])
 
-AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(eglib,0.3)
+AC_CONFIG_SRCDIR([README])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CANONICAL_SYSTEM
+AC_CANONICAL_HOST
+
+AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign])
+AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
 AM_PROG_LIBTOOL
 # Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
 DOLT
-CFLAGS="$CFLAGS -O0"
 GNUC_PRETTY=
 GNUC_UNUSED=
 BREAKPOINT="G_STMT_START { raise (SIGTRAP); } G_STMT_END"
@@ -40,23 +44,34 @@ AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
 AC_C_BIGENDIAN([ORDER=G_BIG_ENDIAN],[ORDER=G_LITTLE_ENDIAN])
 
 platform_darwin=no
+platform_android=no
 
 case $host in
 *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
     PATHSEP='\\'
     SEARCHSEP=';'
     OS="WIN32"
+    PIDTYPE='void *'
     ;;
 *-*darwin*)
     platform_darwin=yes
     PATHSEP='/'
     SEARCHSEP=':'
     OS="UNIX"
+    PIDTYPE='int'
+    ;;
+*-*-linux-android*)
+    platform_android=yes
+    PATHSEP='/'
+    SEARCHSEP=':'
+    OS="UNIX"
+    PIDTYPE='int'
     ;;
 *)
     PATHSEP='/'
     SEARCHSEP=':'
     OS="UNIX"
+    PIDTYPE='int'
     ;;
 esac
 
@@ -84,20 +99,19 @@ AC_SUBST(CFLAGS)
 AC_SUBST(PATHSEP)
 AC_SUBST(SEARCHSEP)
 AC_SUBST(OS)
+AC_SUBST(PIDTYPE)
 AM_CONDITIONAL(HOST_WIN32, test x$OS = xWIN32)
 AM_CONDITIONAL(TARGET_WIN32, test x$OS = xWIN32)
 AM_CONDITIONAL(PLATFORM_DARWIN, test x$platform_darwin = xyes)
+AM_CONDITIONAL(PLATFORM_ANDROID, test x$platform_android = xyes)
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)
-AC_CHECK_FUNCS(strndup strlcpy getpwuid_r strtok_r rewinddir vasprintf)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long long)
+AC_CHECK_FUNCS(strndup strlcpy stpcpy getpwuid_r strtok_r rewinddir vasprintf)
 AM_CONDITIONAL(NEED_VASPRINTF, test x$have_vasprintf = x )
-AC_CHECK_LIB(iconv, iconv_open, LIBS="$LIBS -liconv")
-AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
-AC_CHECK_LIB(iconv, iconv_open, ICONV_LIBS="-liconv")
-AC_CHECK_LIB(iconv, libiconv_open, ICONV_LIBS="-liconv")
-AC_SUBST(ICONV_LIBS)
-LIBS="$LIBS $ICONV_LIBS"
+AM_ICONV()
 AC_SEARCH_LIBS(sqrtf, m)
 
 # nanosleep may not be part of libc, also search it in other libraries
@@ -126,20 +140,11 @@ if test "x$have_iso_varargs" = "xyes"; then
 fi
 AC_SUBST(G_HAVE_ISO_VARARGS)
 
-AC_CHECK_HEADERS(getopt.h sys/time.h sys/wait.h pwd.h langinfo.h iconv.h localcharset.h)
+AC_CHECK_HEADERS(getopt.h sys/time.h sys/wait.h pwd.h langinfo.h iconv.h localcharset.h sys/types.h)
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 
-if test $ac_cv_sizeof_void_p != $ac_cv_sizeof_int; then
-   GPOINTER_TO_INT="((gint)(long) (ptr))"
-   GPOINTER_TO_UINT="((guint)(long) (ptr))"
-   GINT_TO_POINTER="((gpointer)(glong) (v))"
-   GUINT_TO_POINTER="((gpointer)(gulong) (v))"
-   GSIZE="long"
-   GSIZE_FORMAT='"lu"'
-   G_GUINT64_FORMAT='"lu"'
-   G_GINT64_FORMAT='"ld"'
-else
+if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_int; then
    GPOINTER_TO_INT="((gint) (ptr))"
    GPOINTER_TO_UINT="((guint) (ptr))"
    GINT_TO_POINTER="((gpointer) (v))"
@@ -148,6 +153,32 @@ else
    GSIZE_FORMAT='"u"'
    G_GUINT64_FORMAT='"llu"'
    G_GINT64_FORMAT='"lld"'
+   G_GUINT32_FORMAT='"lu"'
+   G_GINT32_FORMAT='"ld"'
+elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long; then
+   GPOINTER_TO_INT="((gint)(long) (ptr))"
+   GPOINTER_TO_UINT="((guint)(long) (ptr))"
+   GINT_TO_POINTER="((gpointer)(glong) (v))"
+   GUINT_TO_POINTER="((gpointer)(gulong) (v))"
+   GSIZE="long"
+   GSIZE_FORMAT='"lu"'
+   G_GUINT64_FORMAT='"lu"'
+   G_GINT64_FORMAT='"ld"'
+   G_GUINT32_FORMAT='"u"'
+   G_GINT32_FORMAT='"d"'
+elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long_long; then
+   GPOINTER_TO_INT="((gint)(long long) (ptr))"
+   GPOINTER_TO_UINT="((guint)(unsigned long long) (ptr))"
+   GINT_TO_POINTER="((gpointer)(long long) (v))"
+   GUINT_TO_POINTER="((gpointer)(unsigned long long) (v))"
+   GSIZE="long long"
+   GSIZE_FORMAT='"I64u"'
+   G_GUINT64_FORMAT='"I64u"'
+   G_GINT64_FORMAT='"I64i"'
+   G_GUINT32_FORMAT='"I32u"'
+   G_GINT32_FORMAT='"I32i"'
+else
+   AC_MSG_ERROR([unsupported pointer size])
 fi
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
@@ -187,6 +218,8 @@ AC_SUBST(GSIZE)
 AC_SUBST(GSIZE_FORMAT)
 AC_SUBST(G_GUINT64_FORMAT)
 AC_SUBST(G_GINT64_FORMAT)
+AC_SUBST(G_GUINT32_FORMAT)
+AC_SUBST(G_GINT32_FORMAT)
 
 if test x$enable_quiet_build = xyes; then
    AC_CONFIG_COMMANDS([quiet], [for i in `find src test -name Makefile.in | sed -e 's/Makefile.in/Makefile/g'`; do if test -f $i; then $srcdir/../scripts/patch-quiet.sh $i; fi; done], [shell=$SHELL])
@@ -195,6 +228,7 @@ fi
 
 AC_OUTPUT([
 Makefile
+m4/Makefile
 src/Makefile
 src/eglib-config.h
 test/Makefile

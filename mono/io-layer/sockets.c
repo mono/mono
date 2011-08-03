@@ -54,6 +54,7 @@
 #undef DEBUG
 
 static guint32 startup_count=0;
+static guint32 in_cleanup = 0;
 
 static void socket_close (gpointer handle, gpointer data);
 
@@ -82,7 +83,7 @@ static void socket_close (gpointer handle, gpointer data)
 	g_message ("%s: closing socket handle %p", __func__, handle);
 #endif
 
-	if (startup_count == 0) {
+	if (startup_count == 0 && !in_cleanup) {
 		WSASetLastError (WSANOTINITIALISED);
 		return;
 	}
@@ -103,10 +104,12 @@ static void socket_close (gpointer handle, gpointer data)
 		g_message ("%s: close error: %s", __func__, strerror (errno));
 #endif
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		if (!in_cleanup)
+			WSASetLastError (errnum);
 	}
 
-	socket_handle->saved_error = 0;
+	if (!in_cleanup)
+		socket_handle->saved_error = 0;
 }
 
 int WSAStartup(guint32 requested, WapiWSAData *data)
@@ -156,7 +159,9 @@ int WSACleanup(void)
 		return(0);
 	}
 
+	in_cleanup = 1;
 	_wapi_handle_foreach (WAPI_HANDLE_SOCKET, cleanup_close, NULL);
+	in_cleanup = 0;
 	return(0);
 }
 
@@ -1312,6 +1317,55 @@ WSAIoctl (guint32 fd, gint32 command,
 		
 		WSASetLastError (WSAEINVAL);
 		return(SOCKET_ERROR);
+	}
+
+	if (command == SIO_KEEPALIVE_VALS) {
+		uint32_t onoff;
+		uint32_t keepalivetime;
+		uint32_t keepaliveinterval;
+
+		if (i_len < (3 * sizeof (uint32_t))) {
+			WSASetLastError (WSAEINVAL);
+			return SOCKET_ERROR;
+		}
+		memcpy (&onoff, input, sizeof (uint32_t));
+		memcpy (&keepalivetime, input + sizeof (uint32_t), sizeof (uint32_t));
+		memcpy (&keepaliveinterval, input + 2 * sizeof (uint32_t), sizeof (uint32_t));
+		ret = setsockopt (fd, SOL_SOCKET, SO_KEEPALIVE, &onoff, sizeof (uint32_t));
+		if (ret < 0) {
+			gint errnum = errno;
+			errnum = errno_to_WSA (errnum, __func__);
+			WSASetLastError (errnum);
+			return SOCKET_ERROR;
+		}
+		if (onoff != 0) {
+#if defined(TCP_KEEPIDLE) && defined(TCP_KEEPINTVL)
+			/* Values are in ms, but we need s */
+			uint32_t rem;
+
+			/* keepalivetime and keepaliveinterval are > 0 (checked in managed code) */
+			rem = keepalivetime % 1000;
+			keepalivetime /= 1000;
+			if (keepalivetime == 0 || rem >= 500)
+				keepalivetime++;
+			ret = setsockopt (fd, SOL_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (uint32_t));
+			if (ret == 0) {
+				rem = keepaliveinterval % 1000;
+				keepaliveinterval /= 1000;
+				if (keepaliveinterval == 0 || rem >= 500)
+					keepaliveinterval++;
+				ret = setsockopt (fd, SOL_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (uint32_t));
+			}
+			if (ret != 0) {
+				gint errnum = errno;
+				errnum = errno_to_WSA (errnum, __func__);
+				WSASetLastError (errnum);
+				return SOCKET_ERROR;
+			}
+			return 0;
+#endif
+		}
+		return 0;
 	}
 
 	if (i_len > 0) {

@@ -58,6 +58,7 @@ namespace System.Security.Permissions {
 		{
 			SetFlags (flags);
 			if (accessList != null) {
+				_accessEntries = new KeyContainerPermissionAccessEntryCollection ();
 				foreach (KeyContainerPermissionAccessEntry kcpae in accessList) {
 					_accessEntries.Add (kcpae);
 				}

@@ -3,6 +3,7 @@
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
+//	Kenneth Bell
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -26,68 +27,172 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Security.Principal;
+using System.Text;
 
 namespace System.Security.AccessControl {
-	public abstract class GenericSecurityDescriptor
-	{
-//		bool isContainer;
-//		bool isDS;
-//		ControlFlags flags;
-//		SecurityIdentifier owner;
-//		SecurityIdentifier group;
-//		SystemAcl systemAcl;
-//		DiscretionaryAcl discretionaryAcl;
-		
+	public abstract class GenericSecurityDescriptor {
+
 		protected GenericSecurityDescriptor ()
 		{
 		}
 
-		public int BinaryLength
-		{
+		public int BinaryLength {
 			get {
-				throw new NotImplementedException ();
+				int len = 0x14;
+				if (Owner != null)
+					len += Owner.BinaryLength;
+				if (Group != null)
+					len += Group.BinaryLength;
+				if (DaclPresent)
+					len += InternalDacl.BinaryLength;
+				if (SaclPresent)
+					len += InternalSacl.BinaryLength;
+				return len;
 			}
-		}
-		
-		public abstract ControlFlags ControlFlags
-		{
-			get;
-		}
-		
-		public abstract SecurityIdentifier Group
-		{
-			get;
-			set;
-		}
-		
-		public abstract SecurityIdentifier Owner
-		{
-			get;
-			set;
 		}
 
-		public static byte Revision
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public abstract ControlFlags ControlFlags { get; }
+
+		public abstract SecurityIdentifier Group { get; set; }
+
+		public abstract SecurityIdentifier Owner { get; set; }
+
+		public static byte Revision {
+			get { return 1; }
+		}
+
+		internal virtual GenericAcl InternalDacl {
+			get { return null; }
+		}
+
+		internal virtual GenericAcl InternalSacl {
+			get { return null; }
+		}
+
+		internal virtual byte InternalReservedField {
+			get { return 0; }
 		}
 
 		public void GetBinaryForm (byte[] binaryForm, int offset)
 		{
-			throw new NotImplementedException ();
+			ControlFlags controlFlags = ControlFlags;
+			binaryForm[offset + 0x00] = Revision;
+			binaryForm[offset + 0x01] = InternalReservedField;
+			WriteUShort ((ushort)controlFlags, binaryForm,
+			             offset + 0x02);
+			
+			// Skip 'offset' fields (will fill later)
+			int pos = 0x14;
+			
+			if (Owner != null) {
+				WriteInt (pos, binaryForm, offset + 0x04);
+				Owner.GetBinaryForm (binaryForm, offset + pos);
+				pos += Owner.BinaryLength;
+			} else {
+				WriteInt (0, binaryForm, offset + 0x04);
+			}
+			
+			if (Group != null) {
+				WriteInt (pos, binaryForm, offset + 0x08);
+				Group.GetBinaryForm (binaryForm, offset + pos);
+				pos += Group.BinaryLength;
+			} else {
+				WriteInt (0, binaryForm, offset + 0x08);
+			}
+			
+			GenericAcl sysAcl = InternalSacl;
+			if (SaclPresent) {
+				WriteInt (pos, binaryForm, offset + 0x0C);
+				sysAcl.GetBinaryForm (binaryForm, offset + pos);
+				pos += InternalSacl.BinaryLength;
+			} else {
+				WriteInt (0, binaryForm, offset + 0x0C);
+			}
+			
+			GenericAcl discAcl = InternalDacl;
+			if (DaclPresent) {
+				WriteInt (pos, binaryForm, offset + 0x10);
+				discAcl.GetBinaryForm (binaryForm, offset + pos);
+				pos += InternalDacl.BinaryLength;
+			} else {
+				WriteInt (0, binaryForm, offset + 0x10);
+			}
 		}
-		
+
 		public string GetSddlForm (AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			StringBuilder result = new StringBuilder ();
+			
+			if ((includeSections & AccessControlSections.Owner) != 0
+			    && Owner != null) {
+				result.AppendFormat (
+					CultureInfo.InvariantCulture,
+					"O:{0}", Owner.GetSddlForm ());
+			}
+			
+			if ((includeSections & AccessControlSections.Group) != 0
+			    && Group != null) {
+				result.AppendFormat (
+					CultureInfo.InvariantCulture,
+					"G:{0}", Group.GetSddlForm ());
+			}
+			
+			if ((includeSections & AccessControlSections.Access) != 0
+			    && InternalDacl != null) {
+				result.AppendFormat (
+					CultureInfo.InvariantCulture,
+					"D:{0}",
+					InternalDacl.GetSddlForm (ControlFlags,
+				                                  true));
+			}
+			
+			if ((includeSections & AccessControlSections.Audit) != 0
+			    && InternalSacl != null) {
+				result.AppendFormat (
+					CultureInfo.InvariantCulture,
+					"S:{0}",
+					InternalSacl.GetSddlForm (ControlFlags,
+				                                  false));
+			}
+			
+			return result.ToString ();
 		}
 
 		public static bool IsSddlConversionSupported ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
+		
+		private bool DaclPresent {
+			get {
+				return InternalDacl != null
+				    && (ControlFlags & ControlFlags.DiscretionaryAclPresent) != 0;
+			}
+		}
+
+		private bool SaclPresent {
+			get {
+				return InternalSacl != null
+				    && (ControlFlags & ControlFlags.SystemAclPresent) != 0;
+			}
+		}
+
+		private void WriteUShort (ushort val, byte[] buffer, int offset)
+		{
+			buffer[offset] = (byte)val;
+			buffer[offset + 1] = (byte)(val >> 8);
+		}
+
+		private void WriteInt (int val, byte[] buffer, int offset)
+		{
+			buffer[offset] = (byte)val;
+			buffer[offset + 1] = (byte)(val >> 8);
+			buffer[offset + 2] = (byte)(val >> 16);
+			buffer[offset + 3] = (byte)(val >> 24);
+		}
+		
 	}
 }
 

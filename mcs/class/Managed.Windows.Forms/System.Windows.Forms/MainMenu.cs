@@ -47,31 +47,25 @@ namespace System.Windows.Forms
 			
 		}
 
-#if NET_2_0
 		public MainMenu (IContainer container) : this ()
 		{
 			container.Add (this);
 		}
-#endif
 
 		#region Events
 
-#if NET_2_0
 		static object CollapseEvent = new object ();
 
 		public event EventHandler Collapse {
 			add { Events.AddHandler (CollapseEvent, value); }
 			remove { Events.RemoveHandler (CollapseEvent, value); }
 		}
-#endif
 		
 		#endregion Events
 
 		#region Public Properties
 		[Localizable(true)]
-#if NET_2_0
 		[AmbientValue (RightToLeft.Inherit)]
-#endif
 		public virtual RightToLeft RightToLeft {
 			get { return right_to_left;}
 			set { right_to_left = value; }
@@ -108,14 +102,12 @@ namespace System.Windows.Forms
 			return base.ToString () + ", GetForm: " + form;
 		}
 
-#if NET_2_0
 		protected internal virtual void OnCollapse (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [CollapseEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		#endregion Public Methods
 		

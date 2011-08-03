@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	[Flags]
@@ -42,4 +41,3 @@ namespace System.Windows.Forms
 		DualFont = 128
 	}
 }
-#endif

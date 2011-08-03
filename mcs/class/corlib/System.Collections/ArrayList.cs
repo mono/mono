@@ -30,28 +30,25 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
+	[Serializable]
+#if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-	[Serializable]
-#if INSIDE_CORLIB
-	public
+	public class ArrayList : IList, ICloneable, ICollection, IEnumerable {
 #else
-	internal
+	internal class ArrayList : IList {
 #endif
-	class ArrayList
-		: IList, ICloneable, ICollection, IEnumerable 
-	{
 		#region Enumerator
 
 		private sealed class ArrayListEnumerator
 			: IEnumerator, ICloneable 
 		{			
+			private object m_Current;
+			private ArrayList m_List;
 			private int m_Pos;
 			private int m_Index;
 			private int m_Count;
-			private object m_Current;
-			private ArrayList m_List;
 			private int m_ExpectedStateChanges;
 
 			public ArrayListEnumerator(ArrayList list)
@@ -115,9 +112,9 @@ namespace System.Collections
 		sealed class SimpleEnumerator : IEnumerator, ICloneable
 		{
 			ArrayList list;
+			object currentElement;
 			int index;
 			int version;
-			object currentElement;
 			static object endFlag = new object ();
 							
 			public SimpleEnumerator (ArrayList list)
@@ -2497,17 +2494,17 @@ namespace System.Collections
 		#region Fields
 
 		private const int DefaultInitialCapacity = 4;
-		
-		/// <summary>
-		/// Number of items in the list.
-		/// </summary>
-		private int _size;
 
 		/// <summary>
 		/// Array to store the items.
 		/// </summary>
 		private object[] _items;
-		
+				
+		/// <summary>
+		/// Number of items in the list.
+		/// </summary>
+		private int _size;
+
 		/// <summary>
 		/// Total number of state changes.
 		/// </summary>

@@ -32,6 +32,8 @@ MPH_UNIX_SOURCE =				\
 	fstab.c					\
 	grp.c					\
 	macros.c				\
+	nl.c					\
+	nl.h					\
 	old-map.c				\
 	old-map.h				\
 	pwd.c					\
@@ -52,10 +54,10 @@ MPH_UNIX_SOURCE =				\
 
 if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS)
+MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS)
+MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
 endif
 
 MINIZIP_SOURCE = \
@@ -118,7 +120,7 @@ libMonoSupportW_la_SOURCES =			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
-		$(GLIB_LIBS)
+		$(GLIB_LIBS) $(LIBICONV)
 
 # 
 # Use this target to refresh the values in map.[ch]

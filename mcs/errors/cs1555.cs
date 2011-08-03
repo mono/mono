@@ -1,4 +1,4 @@
-// cs1555.cs: Could not find `DoesNotExist' specified for Main method
+// CS1555: Could not find `DoesNotExist' specified for Main method
 // Line: 0
 // Compiler options: -main:DoesNotExist
 

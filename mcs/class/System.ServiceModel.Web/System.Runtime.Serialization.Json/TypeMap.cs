@@ -89,19 +89,26 @@ namespace System.Runtime.Serialization.Json
 				if (!fi.IsStatic)
 					l.Add (new TypeMapField (fi, null));
 			foreach (var pi in type.GetProperties ())
-				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic)
+				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic && pi.GetIndexParameters ().Length == 0)
 					l.Add (new TypeMapProperty (pi, null));
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
 		}
 
-		static bool IsCollection (Type type)
+		internal static bool IsDictionary (Type type)
 		{
-			if (type.GetInterface ("System.Collections.IList", false) != null)
+			if (type.GetInterface ("System.Collections.IDictionary", false) != null)
 				return true;
-			if (type.GetInterface ("System.Collections.Generic.IList`1", false) != null)
+			if (type.GetInterface ("System.Collections.Generic.IDictionary`2", false) != null)
 				return true;
-			if (type.GetInterface ("System.Collections.Generic.ICollection`1", false) != null)
+			return false;
+		}
+
+		internal static bool IsCollection (Type type)
+		{
+			if (IsPrimitiveType (type) || IsDictionary (type))
+				return false;
+			if (type.GetInterface ("System.Collections.IEnumerable", false) != null)
 				return true;
 			return false;
 		}
@@ -185,12 +192,29 @@ namespace System.Runtime.Serialization.Json
 			}
 		}
 
+		internal static object CreateInstance (Type type)
+		{
+			if (TypeMap.IsDictionary (type)) {
+				if (type.IsGenericType)
+					return Activator.CreateInstance (typeof (Dictionary<,>).MakeGenericType (type.GetGenericArguments ()));
+				else
+					return new Hashtable ();
+			} else if (TypeMap.IsCollection (type)) {
+				if (type.IsGenericType)
+					return Activator.CreateInstance (typeof (List<>).MakeGenericType (type.GetGenericArguments ()));
+				else
+					return new ArrayList ();
+			}
+			else
+				return FormatterServices.GetUninitializedObject (type);
+		}
+
 		public virtual object Deserialize (JsonSerializationReader jsr)
 		{
 			XmlReader reader = jsr.Reader;
 			bool isNull = reader.GetAttribute ("type") == "null";
 
-			object ret = isNull ? null : FormatterServices.GetUninitializedObject (type);
+			object ret = isNull ? null : CreateInstance (type);
 			if (ret != null && OnDeserializing != null)
 				OnDeserializing.Invoke (ret, new object [] {new StreamingContext (StreamingContextStates.All)});
 			Dictionary<TypeMapMember,bool> filled = new Dictionary<TypeMapMember,bool> ();

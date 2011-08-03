@@ -1,0 +1,5 @@
+<Configurations xmlns="http://www.domain.com/path">
+	<Configurations.Active>
+		<Configuration Version="10.0.0.0" Path="./Config" />
+	</Configurations.Active>
+</Configurations>

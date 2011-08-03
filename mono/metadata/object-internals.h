@@ -10,6 +10,8 @@
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
+#include "mono/utils/mono-stack-unwinding.h"
+#include "mono/utils/mono-tls.h"
 
 /* 
  * We should find a better place for this stuff. We can't put it in mono-compiler.h,
@@ -382,10 +384,10 @@ struct _MonoInternalThread {
 	gpointer stack_ptr;
 	gpointer *static_data;
 	gpointer jit_data;
-	gpointer lock_data;
+	void *thread_info; /*This is MonoThreadInfo*, but to simplify dependencies, let's make it a void* here. */
 	MonoAppContext *current_appcontext;
 	int stack_size;
-	GSList *appdomain_refs;
+	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
 	gint32 interruption_requested;
 	gpointer suspend_event;
@@ -397,19 +399,19 @@ struct _MonoInternalThread {
 	MonoBoolean thread_interrupt_requested;
 	guint8	apartment_state;
 	gint32 critical_region_level;
-	guint32 small_id; /* A small, unique id, used for the hazard pointer table. */
+	guint32 unused0;	
 	MonoThreadManageCallback manage_callback;
 	MonoException *pending_exception;
 	MonoThread *root_domain_thread;
 	gpointer interrupt_on_stop;
 	gsize    flags;
 	gpointer android_tid;
+	gpointer thread_pinning_ref;
+	gint32 managed_id;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to the unmanaged MonoThread structure.
 	 */
-	gpointer unused5;
-	gpointer unused6;
 };
 
 struct _MonoThread {
@@ -568,7 +570,21 @@ typedef struct {
 	char*    (*get_runtime_build_info) (void);
 	gpointer (*get_vtable_trampoline) (int slot_index);
 	gpointer (*get_imt_trampoline) (int imt_slot_index);
+	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
+	void     (*debug_log) (int level, MonoString *category, MonoString *message);
+	gboolean (*debug_log_is_enabled) (void);
 } MonoRuntimeCallbacks;
+
+typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
+
+typedef struct {
+	void (*mono_walk_stack_with_ctx) (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwindOptions options, void *user_data);
+	void (*mono_walk_stack_with_state) (MonoInternalStackWalk func, MonoThreadUnwindState *state, MonoUnwindOptions options, void *user_data);
+	void (*mono_raise_exception) (MonoException *ex);
+	void (*mono_raise_exception_with_ctx) (MonoException *ex, MonoContext *ctx);
+	gboolean (*mono_install_handler_block_guard) (MonoThreadUnwindState *unwind_state);
+} MonoRuntimeExceptionHandlingCallbacks;
+
 
 /* used to free a dynamic method */
 typedef void        (*MonoFreeMethodFunc)	 (MonoDomain *domain, MonoMethod *method);
@@ -621,12 +637,6 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 void
 mono_runtime_free_method    (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
 
-/* runtime initialization functions */
-typedef void (*MonoExceptionFunc) (MonoException *ex);
-
-void
-mono_install_handler	    (MonoExceptionFunc func) MONO_INTERNAL;
-
 void	    
 mono_install_runtime_invoke (MonoInvokeFunc func) MONO_INTERNAL;
 
@@ -643,6 +653,15 @@ MonoRuntimeCallbacks*
 mono_get_runtime_callbacks (void) MONO_INTERNAL;
 
 void
+mono_install_eh_callbacks (MonoRuntimeExceptionHandlingCallbacks *cbs) MONO_INTERNAL;
+
+MonoRuntimeExceptionHandlingCallbacks *
+mono_get_eh_callbacks (void) MONO_INTERNAL;
+
+void
+mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx) MONO_INTERNAL;
+
+void
 mono_type_initialization_init (void) MONO_INTERNAL;
 
 void
@@ -651,13 +670,13 @@ mono_type_initialization_cleanup (void) MONO_INTERNAL;
 int
 mono_thread_kill           (MonoInternalThread *thread, int signal) MONO_INTERNAL;
 
-guint32
+MonoNativeTlsKey
 mono_thread_get_tls_key    (void) MONO_INTERNAL;
 
 gint32
 mono_thread_get_tls_offset (void) MONO_INTERNAL;
 
-guint32
+MonoNativeTlsKey
 mono_domain_get_tls_key    (void) MONO_INTERNAL;
 
 gint32
@@ -1515,6 +1534,9 @@ mono_method_clear_object (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
 void
 mono_class_compute_gc_descriptor (MonoClass *class) MONO_INTERNAL;
 
+gsize*
+mono_class_compute_bitmap (MonoClass *class, gsize *bitmap, int size, int offset, int *max_set, gboolean static_fields) MONO_INTERNAL;
+
 MonoObject*
 mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, MonoObject **exc) MONO_INTERNAL;
 
@@ -1538,6 +1560,22 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass) MONO_INTERNAL;
 
 void
 mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *vt, MonoClassField *field, void *value) MONO_INTERNAL;
+
+/* exported, used by the debugger */
+void *
+mono_vtable_get_static_field_data (MonoVTable *vt);
+
+char *
+mono_string_to_utf8_ignore (MonoString *s) MONO_INTERNAL;
+
+char *
+mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s) MONO_INTERNAL;
+
+char *
+mono_string_to_utf8_mp_ignore (MonoMemPool *mp, MonoString *s) MONO_INTERNAL;
+
+gboolean
+mono_monitor_is_il_fastpath_wrapper (MonoMethod *method) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

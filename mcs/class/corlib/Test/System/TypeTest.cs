@@ -260,7 +260,10 @@ namespace MonoTests.System
 		{
 		}
 
-		private void GenericMethod<Q> (Q q)
+		public interface IFace {
+		}
+
+		private void GenericMethod<Q, T1> (Q q, T1 t) where T1 : IFace
 		{
 		}
 
@@ -333,6 +336,10 @@ namespace MonoTests.System
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (mi.GetParameters ()[0].ParameterType));
 			Assert.IsFalse (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (typeof (int)));
+
+			// Tests for parameters with generic constraints
+			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
+			Assert.IsTrue (typeof (IFace).IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
 		}
 
 		[Test]
@@ -1574,7 +1581,7 @@ namespace MonoTests.System
 			i.GetInterfaces ();
 		}
 
-		public static void GenericMethod<T> (T[] arr) where T: IComparable<T> {
+		public static void GenericMethod<T, T2> (T[] arr) where T: IComparable<T> {
 		}
 
 		public int AField;
@@ -3885,6 +3892,13 @@ PublicKeyToken=b77a5c561934e089"));
 			MustFNFE (string.Format ("{0}, ZZZ{1}", typeof (MyRealEnum).FullName, aqn));
 			MustTLE (string.Format ("{0}ZZZZ", typeof (MyRealEnum).FullName));
 			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
+		}
+
+	   	delegate void MyAction<in T>(T ag);
+
+		[Test] //bug #668506
+		public void IsAssignableFromWithVariantDelegate () {
+			Assert.IsFalse (typeof(MyAction<string>).IsAssignableFrom(typeof(MyAction<>)), "#1");
 		}
 
 #endif

@@ -53,8 +53,6 @@ namespace System.ServiceModel.Discovery
 		public Collection<Uri> Scopes { get; private set; }
 		public int Version { get; set; }
 
-		const string addrNS = "http://www.w3.org/2005/08/addressing";
-
 		internal static EndpointDiscoveryMetadata ReadXml (XmlReader reader, DiscoveryVersion version)
 		{
 			if (reader == null)
@@ -69,7 +67,11 @@ namespace System.ServiceModel.Discovery
 
 			// standard members
 			reader.MoveToContent ();
-			ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader, "EndpointReference", addrNS);
+
+			// it is possible due to InternalVisibleToAttribute...
+			string addrNS = version.MessageVersion.Addressing.Namespace;
+
+			ret.Address = EndpointAddress.ReadFrom (version.MessageVersion.Addressing, reader, "EndpointReference", addrNS);
 
 			reader.MoveToContent ();
 			if (reader.IsStartElement ("Types", version.Namespace))
@@ -101,7 +103,7 @@ namespace System.ServiceModel.Discovery
 
 			// standard members
 			if (Address != null)
-				Address.WriteTo (AddressingVersion.WSAddressing10, writer);
+				Address.WriteTo (version.MessageVersion.Addressing, writer);
 
 			writer.WriteStartElement ("d", "Types", version.Namespace);
 			int p = 0;

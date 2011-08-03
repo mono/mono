@@ -1,4 +1,4 @@
-// cs0037-2.cs: Cannot convert null to `char' because it is a value type
+// CS0037: Cannot convert null to `char' because it is a value type
 // Line: 8
 
 class Test

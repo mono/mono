@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006,2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,9 +51,6 @@ public class RSACryptoServiceProviderTest : Assertion {
 		sha1OID = CryptoConfig.MapNameToOID ("SHA1");
 		disposed = new RSACryptoServiceProvider (minKeySize);
 		disposed.FromXmlString ("<RSAKeyValue><Modulus>vtXAf62+o50prNCTiVGTMzdhm4sMjK0QVDkKQLFGu2fJQCULt9NZBab14PiWfG1t</Modulus><Exponent>AQAB</Exponent><P>5y2AHOzIhTChIFzLsgZQAGfy3U8OPwFh</P><Q>01NUVJJv+hhIsnbFiSi24FLRrfr/qYuN</Q><DP>HKLAOdUCyazKaK3V9Yleo448wTkntJpB</DP><DQ>AH5MTxo8arAN02TVlzliG+n1lVtlp2at</DQ><InverseQ>ZpgJwTxSYpT81sQCuVUvX0AYrvSziNIw</InverseQ><D>CStiJYBmsZvincAj5qw5w3M8yGmE/9ls4yv7wenozzC4kZshpI2MuON0d2Z8f4aB</D></RSAKeyValue>");
-		// FX 2.0 beta 1 bug - we must use the key before clearing it
-		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=1bc807eb-c4ca-4c2d-8499-9f0470b71a29
-		int ks = disposed.KeySize;
 		disposed.Clear ();
 	}
 
@@ -213,11 +210,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 	// LAMESPEC/BUG: Disposed object can still be used (but original keypair seems lost)
-#if NET_1_1
 	[ExpectedException (typeof (ObjectDisposedException))]	// in MS.NET v.1.1
-#else
-	[ExpectedException (typeof (CryptographicException))]	// in MS.NET v.1.0
-#endif
 	public void DecryptDisposed () 
 	{
 		byte[] encdata = { 0x4C, 0xBF, 0xFD, 0xD9, 0xAD, 0xDB, 0x65, 0x15, 0xB3, 0xE8, 0xE6, 0xD3, 0x22, 0x99, 0x69, 0x56, 0xD3, 0x1F, 0x1D, 0x2A, 0x66, 0x07, 0x00, 0xBB, 0x77, 0x47, 0xB6, 0x6F, 0x8E, 0x3A, 0xBA, 0x37, 0xA3, 0x0F, 0x0A, 0xC8, 0x8D, 0x1F, 0x8D, 0xAB, 0xAC, 0xFD, 0x82, 0x6F, 0x7F, 0x88, 0x3B, 0xA1, 0x0F, 0x9B, 0x4B, 0x8A, 0x27, 0x3B, 0xEC, 0xFF, 0x69, 0x20, 0x57, 0x64, 0xE1, 0xD8, 0x9E, 0x96, 0x7A, 0x53, 0x6A, 0x80, 0x63, 0xB0, 0xEE, 0x84, 0xA7, 0x67, 0x38, 0xA5, 0x30, 0x06, 0xA8, 0xBB, 0x16, 0x77, 0x49, 0x67, 0x0F, 0x90, 0x67, 0xD5, 0xC5, 0x12, 0x92, 0x5A, 0xDA, 0xC3, 0xFD, 0xC4, 0x8A, 0x89, 0x77, 0x79, 0x11, 0xEC, 0x95, 0xF6, 0x6A, 0x3B, 0xAD, 0xA8, 0xDF, 0xA1, 0xB0, 0x51, 0x34, 0xE8, 0xC1, 0x05, 0xB9, 0x09, 0x23, 0x33, 0x2A, 0x3E, 0xE7, 0x6A, 0x77, 0x6F, 0xBD, 0x21 };
@@ -252,11 +245,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
-#if NET_1_1
 	[ExpectedException (typeof (ArgumentNullException))]
-#else
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void SignDataByteArrayNull () 
 	{
 		rsa = new RSACryptoServiceProvider (minKeySize);
@@ -282,7 +271,6 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa.SignHash (null, "1.3.14.3.2.26"); // SHA-1
 	}
 
-#if NET_2_0
 	[Test]
 	public void SignHashNullOID ()
 	{
@@ -292,26 +280,58 @@ public class RSACryptoServiceProviderTest : Assertion {
 		Assert ("Null OID == SHA1", rsa.VerifyHash (hash, "1.3.14.3.2.26", signature));
 		Assert ("Null OID", rsa.VerifyHash (hash, null, signature));
 	}
-#else
-	[Test]
-	[ExpectedException (typeof (CryptographicException))]
-	public void SignHashNullOID () 
+
+	void SignHash (string name, int size)
 	{
-		byte[] hash = new byte [20];
-		rsa = new RSACryptoServiceProvider (minKeySize);
-		rsa.SignHash (hash, null);
+		string oid = CryptoConfig.MapNameToOID (name);
+		byte [] hash = new byte [size];
+		rsa = new RSACryptoServiceProvider (1024);
+		byte [] signature = rsa.SignHash (hash, oid);
+		Assert (name, rsa.VerifyHash (hash, oid, signature));
+		Assert ("OID", rsa.VerifyHash (hash, oid, signature));
 	}
 
 	[Test]
-	[ExpectedException (typeof (CryptographicException))]
-	public void VerifyHashNullOID () 
+	public void SignHashMD5 ()
 	{
-		byte[] sign = new byte [(minKeySize << 3)];
-		byte[] hash = new byte [20];
-		rsa = new RSACryptoServiceProvider (minKeySize);
-		rsa.VerifyHash (hash, null, sign);
+		SignHash ("MD5", 16);
 	}
-#endif
+
+	[Test]
+	public void SignHashSHA1 ()
+	{
+		SignHash ("SHA1", 20);
+	}
+
+	[Test]
+	public void SignHashSHA256 ()
+	{
+		SignHash ("SHA256", 32);
+	}
+
+	[Test]
+	public void SignHashSHA384 ()
+	{
+		SignHash ("SHA384", 48);
+	}
+
+	[Test]
+	public void SignHashSHA512 ()
+	{
+		SignHash ("SHA512", 64);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void SignHashRIPEMD160 ()
+	{
+		string oid = CryptoConfig.MapNameToOID ("RIPEMD160");
+		AssertNotNull (oid);
+		byte [] hash = new byte [20];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		// OID not supported
+		rsa.SignHash (hash, oid);
+	}
 
 	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]
@@ -340,11 +360,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
-#if NET_1_1
 	[ExpectedException (typeof (ArgumentNullException))]
-#else
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void VerifyDataNullData () 
 	{
 		byte[] sign = new byte [(minKeySize << 3)];
@@ -1149,8 +1165,6 @@ public class RSACryptoServiceProviderTest : Assertion {
 		AssertEquals ("KeyNumber", KeyNumber.Exchange, info.KeyNumber);
 		Assert ("MachineKeyStore", !info.MachineKeyStore);
 		Assert ("Protected", !info.Protected);
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 1, info.ProviderType);
 		Assert ("RandomlyGenerated", info.RandomlyGenerated);
 		Assert ("Removable", !info.Removable);
 		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
@@ -1172,8 +1186,6 @@ public class RSACryptoServiceProviderTest : Assertion {
 		AssertEquals ("KeyNumber", KeyNumber.Exchange, info.KeyNumber);
 		Assert ("MachineKeyStore", !info.MachineKeyStore);
 		Assert ("Protected", !info.Protected);
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 1, info.ProviderType);
 		Assert ("RandomlyGenerated", info.RandomlyGenerated);
 		Assert ("Removable", !info.Removable);
 		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
@@ -1196,8 +1208,6 @@ public class RSACryptoServiceProviderTest : Assertion {
 		AssertEquals ("KeyNumber", KeyNumber.Exchange, info.KeyNumber);
 		Assert ("MachineKeyStore", !info.MachineKeyStore);
 		// info.Protected throws a CryptographicException at this stage
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 1, info.ProviderType);
 		Assert ("RandomlyGenerated", info.RandomlyGenerated);
 		Assert ("Removable", !info.Removable);
 		// info.UniqueKeyContainerName throws a CryptographicException at this stage

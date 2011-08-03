@@ -20,6 +20,8 @@
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/hazard-pointer.h>
+#include <mono/utils/mono-tls.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
@@ -43,37 +45,23 @@
  * or the other (we used to do it because tls slots were GC-tracked,
  * but we can't depend on this).
  */
-static guint32 appdomain_thread_id = -1;
+static MonoNativeTlsKey appdomain_thread_id;
 
-/* 
- * Avoid calling TlsSetValue () if possible, since in the io-layer, it acquires
- * a global lock (!) so it is a contention point.
- */
-#if (defined(__i386__) || defined(__x86_64__)) && !defined(HOST_WIN32)
-#define NO_TLS_SET_VALUE
-#endif
- 
-#ifdef HAVE_KW_THREAD
+#ifdef MONO_HAVE_FAST_TLS
 
-static __thread MonoDomain * tls_appdomain MONO_TLS_FAST;
+MONO_FAST_TLS_DECLARE(tls_appdomain);
 
-#define GET_APPDOMAIN() tls_appdomain
+#define GET_APPDOMAIN() ((MonoDomain*)MONO_FAST_TLS_GET(tls_appdomain))
 
-#ifdef NO_TLS_SET_VALUE
 #define SET_APPDOMAIN(x) do { \
-	tls_appdomain = x; \
+	MONO_FAST_TLS_SET (tls_appdomain,x); \
+	mono_native_tls_set_value (appdomain_thread_id, x); \
 } while (FALSE)
-#else
-#define SET_APPDOMAIN(x) do { \
-	tls_appdomain = x; \
-	TlsSetValue (appdomain_thread_id, x); \
-} while (FALSE)
-#endif
 
-#else /* !HAVE_KW_THREAD */
+#else /* !MONO_HAVE_FAST_TLS */
 
-#define GET_APPDOMAIN() ((MonoDomain *)TlsGetValue (appdomain_thread_id))
-#define SET_APPDOMAIN(x) TlsSetValue (appdomain_thread_id, x);
+#define GET_APPDOMAIN() ((MonoDomain *)mono_native_tls_get_value (appdomain_thread_id))
+#define SET_APPDOMAIN(x) mono_native_tls_set_value (appdomain_thread_id, x);
 
 #endif
 
@@ -156,7 +144,7 @@ get_runtime_by_version (const char *version);
 static MonoImage*
 mono_jit_info_find_aot_module (guint8* addr);
 
-guint32
+MonoNativeTlsKey
 mono_domain_get_tls_key (void)
 {
 	return appdomain_thread_id;
@@ -272,36 +260,6 @@ jit_info_table_free (MonoJitInfoTable *table)
 	mono_domain_unlock (domain);
 
 	g_free (table);
-}
-
-/* Can be called with hp==NULL, in which case it acts as an ordinary
-   pointer fetch.  It's used that way indirectly from
-   mono_jit_info_table_add(), which doesn't have to care about hazards
-   because it holds the respective domain lock. */
-static gpointer
-get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
-{
-	gpointer p;
-
-	for (;;) {
-		/* Get the pointer */
-		p = *pp;
-		/* If we don't have hazard pointers just return the
-		   pointer. */
-		if (!hp)
-			return p;
-		/* Make it hazardous */
-		mono_hazard_pointer_set (hp, hazard_index, p);
-		/* Check that it's still the same.  If not, try
-		   again. */
-		if (*pp != p) {
-			mono_hazard_pointer_clear (hp, hazard_index);
-			continue;
-		}
-		break;
-	}
-
-	return p;
 }
 
 /* The jit_info_table is sorted in ascending order by the end
@@ -1218,6 +1176,7 @@ mono_domain_create (void)
 	domain->jit_info_free_queue = NULL;
 	domain->finalizable_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	domain->track_resurrection_handles_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	domain->ftnptrs_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	InitializeCriticalSection (&domain->lock);
 	InitializeCriticalSection (&domain->assemblies_lock);
@@ -1271,8 +1230,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 #ifdef HOST_WIN32
 	/* Avoid system error message boxes. */
 	SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
-
-	mono_load_coree (exe_filename);
 #endif
 
 	mono_perfcounters_init ();
@@ -1283,7 +1240,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_gc_base_init ();
 
-	appdomain_thread_id = TlsAlloc ();
+	MONO_FAST_TLS_INIT (tls_appdomain);
+	mono_native_tls_alloc (appdomain_thread_id, NULL);
 
 	InitializeCriticalSection (&appdomains_mutex);
 
@@ -1748,13 +1706,9 @@ mono_cleanup (void)
 	mono_debug_cleanup ();
 	mono_metadata_cleanup ();
 
-	TlsFree (appdomain_thread_id);
+	mono_native_tls_free (appdomain_thread_id);
 	DeleteCriticalSection (&appdomains_mutex);
 
-	/*
-	 * This should be called last as TlsGetValue ()/TlsSetValue () can be called during
-	 * shutdown.
-	 */
 #ifndef HOST_WIN32
 	_wapi_cleanup ();
 #endif
@@ -1953,6 +1907,11 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	mono_g_hash_table_destroy (domain->env);
 	domain->env = NULL;
 
+	if (domain->tlsrec_list) {
+		mono_thread_destroy_domain_tls (domain);
+		domain->tlsrec_list = NULL;
+	}
+
 	mono_reflection_cleanup_domain (domain);
 
 	if (domain->type_hash) {
@@ -2066,6 +2025,14 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (domain->generic_virtual_cases) {
 		g_hash_table_destroy (domain->generic_virtual_cases);
 		domain->generic_virtual_cases = NULL;
+	}
+	if (domain->generic_virtual_thunks) {
+		g_hash_table_destroy (domain->generic_virtual_thunks);
+		domain->generic_virtual_thunks = NULL;
+	}
+	if (domain->ftnptrs_hash) {
+		g_hash_table_destroy (domain->ftnptrs_hash);
+		domain->ftnptrs_hash = NULL;
 	}
 
 	DeleteCriticalSection (&domain->finalizable_objects_hash_lock);
@@ -2292,7 +2259,7 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		if (next >= size) {
 			/* 'data' is allocated by alloc_fixed */
 			gpointer *new_array = mono_gc_alloc_fixed (sizeof (gpointer) * (size * 2), MONO_GC_ROOT_DESCR_FOR_FIXED (size * 2));
-			memcpy (new_array, domain->static_data_array, sizeof (gpointer) * size);
+			mono_gc_memmove (new_array, domain->static_data_array, sizeof (gpointer) * size);
 			size *= 2;
 			new_array [1] = GINT_TO_POINTER (size);
 			mono_gc_free_fixed (domain->static_data_array);
@@ -2577,7 +2544,7 @@ get_runtime_by_version (const char *version)
 		do_partial_match = FALSE;
 
 	for (n=0; n<max; n++) {
-		if (do_partial_match && strncmp (version, supported_runtimes[n].runtime_version, vlen) == 0)
+		if (do_partial_match && strncmp (version, supported_runtimes[n].runtime_version, 4) == 0)
 			return &supported_runtimes[n];
 		if (strcmp (version, supported_runtimes[n].runtime_version) == 0)
 			return &supported_runtimes[n];

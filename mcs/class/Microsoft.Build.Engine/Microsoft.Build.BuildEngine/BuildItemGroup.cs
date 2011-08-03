@@ -76,6 +76,9 @@ namespace Microsoft.Build.BuildEngine {
 				buildItems.Add (bi);
 				project.LastItemGroupContaining [bi.Name] = this;
 			}
+
+			DefinedInFileName = importedProject != null ? importedProject.FullFileName :
+						project != null ? project.FullFileName : null;
 		}
 
 		public BuildItem AddNewItem (string itemName,
@@ -302,6 +305,8 @@ namespace Microsoft.Build.BuildEngine {
 				parentProject = value;
 			}
 		}
+
+		internal string DefinedInFileName { get; private set; }
 
 		internal bool FromXml {
 			get {

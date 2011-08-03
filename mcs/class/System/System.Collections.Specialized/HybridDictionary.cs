@@ -123,12 +123,7 @@ namespace System.Collections.Specialized {
 
 		public bool Contains (object key)
 		{
-#if NET_2_0
 			return inner.Contains (key);
-#else
-			// if the dictionary is empty, 'Contains (null)' doesn't throw an ArgumentNullException
-			return Count != 0 && inner.Contains (key);
-#endif
 		}
 
 		public void CopyTo (Array array, int index)

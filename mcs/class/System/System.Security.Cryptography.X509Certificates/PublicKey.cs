@@ -47,6 +47,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		private AsnEncodedData _params;
 		private Oid _oid;
 
+		static byte[] Empty = new byte [0];
+
 		public PublicKey (Oid oid, AsnEncodedData parameters, AsnEncodedData keyValue)
 		{
 			if (oid == null)
@@ -108,7 +110,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			_oid = new Oid (certificate.KeyAlgorithm);
 			_keyValue = new AsnEncodedData (_oid, certificate.PublicKey);
-			_params = new AsnEncodedData (_oid, certificate.KeyAlgorithmParameters);
+			_params = new AsnEncodedData (_oid, certificate.KeyAlgorithmParameters ?? Empty);
 		}
 
 		// properties

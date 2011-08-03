@@ -1,4 +1,4 @@
-// cs1574-8.cs: XML comment on `Test' has cref attribute `Format()' that could not be resolved
+// CS1574: XML comment on `Test' has cref attribute `Format()' that could not be resolved
 // Line: 5
 // Compiler options: -doc:dummy.xml -warnaserror
 /// <summary>

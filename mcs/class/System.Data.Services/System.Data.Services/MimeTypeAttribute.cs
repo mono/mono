@@ -28,7 +28,7 @@
 
 namespace System.Data.Services {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-	public class MimeTypeAttribute : Attribute {
+	public sealed class MimeTypeAttribute : Attribute {
 		public MimeTypeAttribute (string memberName, string mimeType)
 		{
 			this.MemberName = memberName;

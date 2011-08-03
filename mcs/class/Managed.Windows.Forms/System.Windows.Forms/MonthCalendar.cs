@@ -35,11 +35,9 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[DefaultBindingProperty("SelectionRange")]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-#endif
 	[DefaultProperty("SelectionRange")]
 	[DefaultEvent("DateChanged")]
 	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -74,10 +72,7 @@ namespace System.Windows.Forms {
 		private bool		is_mouse_moving_year;
 		private int		year_moving_count;
 		private bool 		date_selected_event_pending;
-
-#if NET_2_0
 		bool			right_to_left_layout;
-#endif
 
 		// internal variables used
 		internal bool			show_year_updown;
@@ -239,7 +234,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public override ImageLayout BackgroundImageLayout {
@@ -250,7 +244,6 @@ namespace System.Windows.Forms {
 				base.BackgroundImageLayout = value;
 			}
 		}
-#endif
 
 		// the back color for the main part of the calendar
 		public override Color BackColor {
@@ -326,7 +319,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get {
@@ -336,7 +328,6 @@ namespace System.Windows.Forms {
 				base.DoubleBuffered = value;
 			}
 		}
-#endif
 
 		// the first day of the week to display
 		[Localizable (true)]
@@ -378,12 +369,8 @@ namespace System.Windows.Forms {
 						"Value of '{0}' is not valid for 'MaxDate'. 'MaxDate' " +
 						"must be greater than or equal to MinDate.",
 						value.ToString ("d", CultureInfo.CurrentCulture));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MaxDate",
 						msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 
 				if (max_date == value)
@@ -411,12 +398,8 @@ namespace System.Windows.Forms {
 						"Value of '{0}' is not valid for 'MaxSelectionCount'. " +
 						"'MaxSelectionCount' must be greater than or equal to {1}.",
 						value, 1);
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MaxSelectionCount",
 						msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 		
 				// can't set selectioncount less than already selected dates
@@ -445,12 +428,8 @@ namespace System.Windows.Forms {
 						"must be greater than or equal to {1}.",
 						value.ToString ("d", CultureInfo.CurrentCulture),
 						absoluteMinDate.ToString ("d", CultureInfo.CurrentCulture));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MinDate",
 						msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 
 				if (value > MaxDate) {
@@ -458,12 +437,8 @@ namespace System.Windows.Forms {
 						"Value of '{0}' is not valid for 'MinDate'. 'MinDate' " +
 						"must be less than MaxDate.",
 						value.ToString ("d", CultureInfo.CurrentCulture));
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("MinDate",
 						msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 
 				if (min_date == value)
@@ -505,7 +480,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -529,7 +503,6 @@ namespace System.Windows.Forms {
 				right_to_left_layout = value;
 			}
 		}
-#endif
 
 		// the ammount by which to scroll this calendar by
 		[DefaultValue (0)]
@@ -577,9 +550,8 @@ namespace System.Windows.Forms {
 				return SelectionRange.End;
 			}
 		}
-#if NET_2_0
+
 		[Bindable(true)]
-#endif
 		// the range of selected dates
 		public SelectionRange SelectionRange {
 			set {
@@ -745,7 +717,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Localizable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Size Size {
@@ -756,7 +727,6 @@ namespace System.Windows.Forms {
 				base.Size = value;
 			}
 		}
-#endif
 
 		[Bindable(false)]
 		[Browsable(false)]
@@ -864,13 +834,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		protected override Padding DefaultMargin {
 			get {
 				return new Padding (9);
 			}			
 		}
-#endif
 
 		protected override Size DefaultSize {
 			get {
@@ -1110,7 +1078,6 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
-#if NET_2_0
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
 			base.OnHandleDestroyed (e);
@@ -1122,7 +1089,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		
 		// i think this is overriden to not allow the control to be changed to an arbitrary size
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
@@ -1157,9 +1123,7 @@ namespace System.Windows.Forms {
 		#region public events
 		static object DateChangedEvent = new object ();
 		static object DateSelectedEvent = new object ();
-#if NET_2_0
 		static object RightToLeftLayoutChangedEvent = new object ();
-#endif
 
 		// fired when the date is changed (either explicitely or implicitely)
 		// when navigating the month selector
@@ -1181,7 +1145,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -1189,7 +1152,6 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageLayoutChanged += value;}
 			remove { base.BackgroundImageLayoutChanged += value;}
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1212,7 +1174,6 @@ namespace System.Windows.Forms {
 			remove { base.ImeModeChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseClick {
@@ -1233,18 +1194,17 @@ namespace System.Windows.Forms {
 			add {base.PaddingChanged += value;}
 			remove {base.PaddingChanged -= value;}
 		}
-#endif
+
 		// XXX check this out
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
 
-#if NET_2_0
 		public event EventHandler RightToLeftLayoutChanged {
 			add {Events.AddHandler (RightToLeftLayoutChangedEvent, value);}
 			remove {Events.RemoveHandler (RightToLeftLayoutChangedEvent, value);}
 		}
-#endif
+
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -41,6 +42,54 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (ctx.MainForm, "2");
 			f1.Dispose ();
 		}
+
+		[Test]
+		public void Bug694908 ()
+		{
+			Application.ThreadException += CrashingForm.HandleThreadException;
+
+			using (var form = new CrashingForm ())
+			{
+				form.Show ();
+				Application.DoEvents ();
+			}
+			// with bug 694908 we don't come here. Instead NUnit exits.
+			Assert.IsTrue (CrashingForm.HasHandledException);
+		}
+
+		class CrashingForm: Form
+		{
+			private static Form _thisForm;
+
+			public CrashingForm ()
+			{
+				_thisForm = this;
+				var btn = new Button ();
+				SuspendLayout ();
+
+				btn.Paint += OnButtonPaint;
+				Controls.Add (btn);
+
+				ResumeLayout (false);
+				PerformLayout ();
+			}
+
+			private void OnButtonPaint (object sender, PaintEventArgs e)
+			{
+				throw new ArgumentException ();
+			}
+
+			public static bool HasHandledException { get; private set; }
+
+			public static void HandleThreadException (object sender, ThreadExceptionEventArgs args)
+			{
+				_thisForm.Refresh ();
+				Application.DoEvents ();
+				HasHandledException = true;
+				_thisForm.Close ();
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]

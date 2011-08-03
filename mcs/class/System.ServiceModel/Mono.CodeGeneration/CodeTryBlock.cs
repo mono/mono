@@ -21,6 +21,7 @@
 // Copyright (C) 2009 Novell, Inc
 //
 
+#if !MONOTOUCH
 using System;
 using System.Collections;
 #if NET_2_0
@@ -123,3 +124,4 @@ namespace Mono.CodeGeneration
 		}
 	}
 }
+#endif

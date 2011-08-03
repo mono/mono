@@ -22,7 +22,6 @@
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
 
-#if NET_2_0
 
 using System;
 using System.Collections.Generic;
@@ -190,4 +189,3 @@ namespace System.Windows.Forms.WebBrowserDialogs
 		}
 	}
 }
-#endif

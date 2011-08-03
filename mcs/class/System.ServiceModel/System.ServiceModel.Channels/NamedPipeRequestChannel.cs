@@ -32,6 +32,7 @@ using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel;
+using System.ServiceModel.Channels.NetTcp;
 using System.ServiceModel.Description;
 using System.Threading;
 using System.Xml;
@@ -70,8 +71,7 @@ namespace System.ServiceModel.Channels
 			stream.Connect ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, stream, false) {
 				Encoder = this.Encoder,
-				Via = this.Via,
-				EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
+				Via = this.Via };
 			frame.ProcessPreambleInitiator ();
 			frame.ProcessPreambleAckInitiator ();
 		}

@@ -19,6 +19,7 @@
 <manpage name="soapsuds" page="soapsuds.1" />
 <manpage name="setreg" page="setreg.1" />
 <manpage name="certmgr" page="certmgr.1" />
+<manpage name="crlupdate" page="crlupdate.1" />
 <manpage name="xsd" page="xsd.1" />
 <manpage name="caspol" page="caspol.1" />
 <manpage name="al" page="al.1" />

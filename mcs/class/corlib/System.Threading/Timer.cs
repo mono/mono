@@ -34,7 +34,12 @@ using System.Collections;
 namespace System.Threading
 {
 	[ComVisible (true)]
-	public sealed class Timer : MarshalByRefObject, IDisposable
+	public sealed class Timer
+#if MOONLIGHT
+		: IDisposable
+#else
+		: MarshalByRefObject, IDisposable
+#endif
 	{
 		static Scheduler scheduler = Scheduler.Instance;
 #region Timer instance fields
@@ -309,6 +314,15 @@ namespace System.Threading
 				return idx;
 			}
 
+			static WaitCallback TimerCaller = new WaitCallback (TimerCB);
+			static void TimerCB (object o)
+			{
+				Timer timer = (Timer) o;
+				try {
+					timer.callback (timer.state);
+				} catch {}
+			}
+
 			void SchedulerThread ()
 			{
 				Thread.CurrentThread.Name = "Timer-Scheduler";
@@ -329,11 +343,11 @@ namespace System.Threading
 							list.RemoveAt (i);
 							count--;
 							i--;
-							ThreadPool.QueueUserWorkItem (new WaitCallback (data => {
-								try {
-									timer.callback (data);
-								} catch {}
-								}), timer.state);
+#if MOONLIGHT
+							ThreadPool.QueueUserWorkItem (TimerCaller, timer);
+#else
+							ThreadPool.UnsafeQueueUserWorkItem (TimerCaller, timer);
+#endif
 							long period = timer.period_ms;
 							long due_time = timer.due_time_ms;
 							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));

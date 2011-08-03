@@ -11,6 +11,8 @@
 #ifdef WIN32
 #include <windows.h>
 #include "initguid.h"
+#else
+#include <pthread.h>
 #endif
 
 #ifdef WIN32
@@ -50,6 +52,17 @@ static void* marshal_alloc (gsize size)
 	return CoTaskMemAlloc (size);
 #else
 	return g_malloc (size);
+#endif
+}
+
+static void* marshal_alloc0 (gsize size)
+{
+#ifdef WIN32
+	void* ptr = CoTaskMemAlloc (size);
+	memset(ptr, 0, size);
+	return ptr;
+#else
+	return g_malloc0 (size);
 #endif
 }
 
@@ -96,6 +109,8 @@ static gunichar2* marshal_bstr_alloc(const gchar* str)
 	return (gunichar2*)(ret + 4);
 #endif
 }
+
+#define marshal_new0(type,size)       ((type *) marshal_alloc0 (sizeof (type)* (size)))
 
 LIBTEST_API int STDCALL
 mono_cominterop_is_supported (void)
@@ -707,7 +722,7 @@ mono_test_marshal_class (int i, int j, int k, simplestruct2 *ss, int l)
 		   ss->e == 99 && ss->f == 1.5 && ss->g == 42 && ss->h == (guint64)123))
 		return NULL;
 
-	res = g_new0 (simplestruct2, 1);
+	res = marshal_new0 (simplestruct2, 1);
 	memcpy (res, ss, sizeof (simplestruct2));
 	res->d = marshal_strdup ("TEST");
 	return res;
@@ -724,7 +739,7 @@ mono_test_marshal_byref_class (simplestruct2 **ssp)
 		   ss->e == 99 && ss->f == 1.5 && ss->g == 42 && ss->h == (guint64)123))
 		return 1;
 
-	res = g_new0 (simplestruct2, 1);
+	res = marshal_new0 (simplestruct2, 1);
 	memcpy (res, ss, sizeof (simplestruct2));
 	res->d = marshal_strdup ("TEST-RES");
 
@@ -1421,10 +1436,10 @@ TestBlittableClass (BlittableClass *vl)
 		vl->a++;
 		vl->b++;
 
-		res = g_new0 (BlittableClass, 1);
+		res = marshal_new0 (BlittableClass, 1);
 		memcpy (res, vl, sizeof (BlittableClass));
 	} else {
-		res = g_new0 (BlittableClass, 1);
+		res = marshal_new0 (BlittableClass, 1);
 		res->a = 42;
 		res->b = 43;
 	}
@@ -3139,8 +3154,8 @@ get_ITest(MonoComObject* pUnk, MonoComObject* *ppUnk)
 
 static void create_com_object (MonoComObject** pOut)
 {
-	*pOut = g_new0 (MonoComObject, 1);
-	(*pOut)->vtbl = g_new0 (MonoIUnknown, 1);
+	*pOut = marshal_new0 (MonoComObject, 1);
+	(*pOut)->vtbl = marshal_new0 (MonoIUnknown, 1);
 
 	(*pOut)->m_ref = 1;
 	(*pOut)->vtbl->QueryInterface = MonoQueryInterface;
@@ -5018,4 +5033,29 @@ mono_test_marshal_safearray_mixed(
 
 #endif
 
+static int call_managed_res;
 
+static void
+call_managed (gpointer arg)
+{
+	SimpleDelegate del = arg;
+
+	call_managed_res = del (42);
+}
+
+LIBTEST_API int STDCALL 
+mono_test_marshal_thread_attach (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t;
+
+	res = pthread_create (&t, NULL, (gpointer)call_managed, del);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+
+	return call_managed_res;
+#endif
+}

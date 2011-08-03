@@ -1,4 +1,4 @@
-// gcs0102.cs: The type `X<T>' already contains a definition for `T'
+// CS0102: The type `X<T>' already contains a definition for `T'
 // Line: 11
 
 class X <T> {

@@ -76,7 +76,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 		{
 			internal IEnumerable data;
 			
-			protected override void PerformDataBinding (IEnumerable data)
+			protected internal override void PerformDataBinding (IEnumerable data)
 			{
 				this.data = data;
 			}

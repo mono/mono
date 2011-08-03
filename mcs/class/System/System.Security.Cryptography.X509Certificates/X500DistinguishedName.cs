@@ -179,10 +179,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private static string Canonize (string s)
 		{
-			int i = s.IndexOf ('=');
-			StringBuilder r = new StringBuilder (s.Substring (0, i + 1));
+			int i = s.IndexOf ('=') + 1;
+			StringBuilder r = new StringBuilder (s.Substring (0, i));
 			// skip any white space starting the value
-			while (Char.IsWhiteSpace (s, ++i));
+			while (i < s.Length && Char.IsWhiteSpace (s, i))
+				i++;
 			// ensure we skip white spaces at the end of the value
 			s = s.TrimEnd ();
 			// keep track of internal multiple spaces

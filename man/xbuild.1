@@ -41,8 +41,32 @@ Validate the project file against the schema
 .B \//validate:<schema>
 Validate the project file against the specified schema
 .TP
-.B \//consoleloggerparameters:<params>
-Parameters for the console logger : PerfomanceSummary, NoSummary, NoItemAndPropertyList
+.B \//consoleloggerparameters:<params> , /clp:<params>
+Parameters for the console logger : PerfomanceSummary, Summary, NoSummary, NoItemAndPropertyList, Verbosity
+.TP
+.B \//filelogger[n] , /fl[n]
+Logs the output to a file, named 'msbuild.log' by default. If the optional number 'n' is
+specified, then it logs to 'msbuild[n].log' . Parameters for this logger, including
+the log file name can be specified via a corresponding /flp[n] option. Default verbosity
+for file loggers is 'detailed. 'n' can be between 1-9.
+.TP
+.B \//fileloggerparameters[n]:<params> , /flp[n]:<params>
+Parameters for a file logger. This implies a corresponding /fl[n]. 'n' can be between
+1-9, and is used to add upto 10 file loggers. Parameters can be, besides the ones available
+for console logger:
+.RS
+.TP
+.I LogFile=<file>
+File to which the build log will be written.
+.TP
+.I Append
+If this is used, then the log file is appended to, else a new one will be created.
+.TP
+.I Encoding=<encoding>
+Encoding to use for the log file, eg. UTF-8, ASCII.
+.TP
+Eg: xbuild foo.csproj /flp:Verbosity=normal "/flp1:LogFile=build.log;Append;Encoding=ASCII"
+.RE
 .TP
 .B \//nologo
 Don't show the initial xbuild banner
@@ -74,13 +98,57 @@ to $prefix/lib/mono/xbuild . When used in Import, like:
 xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
 
   1. Paths specified in the environment variable $MSBuildExtensionsPath.
-  2. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
-  3. $prefix/lib/mono/xbuild (default location)
+  2. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
+  3. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
+  4. $prefix/lib/mono/xbuild (default location)
 
 Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve to the default
 location. This is a xbuild-only feature.
 This is also applicable for the properties $(MSBuildExtensionsPath32) and $(MSBuildExtensionsPath64),
 and the environment variables have the corresponding names - MSBuildExtensionsPath32/64 .
+.TP
+.I "XBUILD_FRAMEWORK_FOLDERS_PATH"
+With ToolsVersion 4.0, projects can target arbitrary frameworks referenced by TargetFrameworkMoniker,
+which is of the format:
+
+  Identifier,Version=<version>[,Profile=<profile>]
+
+Eg. ".NETFramework,Version=v4.0"
+
+The 3 parts of the moniker are given by the msbuild properties:
+
+  $(TargetFrameworkIdentifier), $(TargetFrameworkVersion) and $(TargetFrameworkProfile)
+
+This moniker maps to a framework description file on disk:
+
+  <framework_root>/Identifier/Version/[Profile]/RedistList/FrameworkList.xml
+
+This file is used to determine the path where to find the framework assemblies for this particular framework.
+
+Framework root here is configurable and is resolved in the following order:
+
+.nf
+  1. Paths specified in the environment variable $XBUILD_FRAMEWORK_FOLDERS_PATH
+  2. /Library/Frameworks/Mono.framework/External/xbuild-frameworks on Mac OSX.
+  3. MSBuild property $(TargetFrameworkRoot)
+  4. $prefix/lib/mono/xbuild-frameworks (default location)
+.fi
+
+XBuild tries the paths given above, in order, till it finds a FrameworkList.xml for the moniker.
+Running with /v:detailed or higher verbosity will show the various paths that it tries.
+
+The FrameworkList.xml itself just has a root element like:
+
+  <FileList  Name=".NET Framework 3.5" TargetFrameworkDirectory="..\\..\\..\\..\\3.5" IncludeFramework="v3.0">
+  </FileList>
+
+Here the TargetFrameworkDirectory attribute specifies the directory where the assemblies for
+this particular framework can be found. If this is not set, then the parent of the folder
+containing the xml file is taken as the framework directory.
+
+IncludeFramework attribute specifies the version of a framework (under the *same* $(TargetFrameworkIdentifier))
+which should be included in the final list of Target framework directories.
+
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form
@@ -111,10 +179,14 @@ For example, you could set this variable from your shell:
 You can disable the built-in color scheme by setting this variable to
 "disable".
 
+.SH NOTES
+On Mac OSX, for locating pkg-config (.pc) files, xbuild additionally
+looks in "/Library/Frameworks/Mono.framework/External/pkgconfig" .
+
 .SH SEE ALSO
 .BR mono(1), mcs(1)
 .SH COPYRIGHT
-Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+Copyright (C) 2011 Novell, Inc (http://www.novell.com)
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
 .SH WEB SITE

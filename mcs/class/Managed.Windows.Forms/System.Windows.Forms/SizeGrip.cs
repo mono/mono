@@ -260,11 +260,7 @@ namespace System.Windows.Forms {
 			base.OnPaint (pe);
 		}
 
-#if NET_2_0
 		protected override void OnMouseCaptureChanged (EventArgs e)
-#else
-		internal override void OnMouseCaptureChanged (EventArgs e)
-#endif
 		{
 			base.OnMouseCaptureChanged (e);
 			HandleMouseCaptureChanged (this, e);

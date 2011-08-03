@@ -33,9 +33,7 @@
 namespace System.ComponentModel.Design.Serialization
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-#if NET_2_0
 	[Obsolete ("Use DesignerSerializerAttribute instead")]
-#endif
 	public sealed class RootDesignerSerializerAttribute : Attribute
 	{
 		private string serializer;

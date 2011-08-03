@@ -42,10 +42,8 @@ namespace System.CodeDom
 	{
 		private CodeLinePragma linePragma;
 
-#if NET_2_0
 		CodeDirectiveCollection endDirectives;
 		CodeDirectiveCollection startDirectives;
-#endif
 		
 		//
 		// Constructors
@@ -66,7 +64,6 @@ namespace System.CodeDom
 			}
 		}
 
-#if NET_2_0
 		public CodeDirectiveCollection EndDirectives {
 			get {
 				if (endDirectives == null)
@@ -83,6 +80,5 @@ namespace System.CodeDom
 			}
 		}
 
-#endif
 	}
 }

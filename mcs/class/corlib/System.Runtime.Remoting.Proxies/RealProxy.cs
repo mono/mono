@@ -162,7 +162,11 @@ namespace System.Runtime.Remoting.Proxies
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext (true);
 			CallType call_type = mMsg.CallType;
+#if MOONLIGHT
+			bool is_remproxy = false;
+#else
 			bool is_remproxy = (rp is RemotingProxy);
+#endif
 
 			out_args = null;
 			IMethodReturnMessage res_msg = null;
@@ -177,9 +181,11 @@ namespace System.Runtime.Remoting.Proxies
 			// Check for constructor msg
 			if (mMsg.MethodBase.IsConstructor) 
 			{
+#if !MOONLIGHT
 				if (is_remproxy) 
 					res_msg = (IMethodReturnMessage) (rp as RemotingProxy).ActivateRemoteObject ((IMethodMessage) msg);
 				else 
+#endif
 					msg = new ConstructionCall (rp.GetProxiedType ());
 			}
 				

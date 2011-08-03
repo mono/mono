@@ -39,11 +39,11 @@ namespace System
 	[ComVisible (true)]
 	public struct TypedReference 
 	{
-#pragma warning disable 169
+#pragma warning disable 169, 649
 		RuntimeTypeHandle type;
 		IntPtr value;
 		IntPtr klass;
-#pragma warning restore 169
+#pragma warning restore 169, 649
 
 		public override bool Equals (object o)
 		{

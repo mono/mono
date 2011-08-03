@@ -27,7 +27,7 @@ using System.Text;
 
 namespace IKVM.Reflection
 {
-	public class StrongNameKeyPair
+	public sealed class StrongNameKeyPair
 	{
 		internal readonly System.Reflection.StrongNameKeyPair keyPair;
 

@@ -54,7 +54,7 @@ namespace System.Runtime.Remoting.Activation
 				return _constructionActivator;
 			}
 		}
-
+#if !MOONLIGHT
 		public static IMessage Activate (RemotingProxy proxy, ConstructionCall ctorCall)
 		{
 			IMessage response;
@@ -73,7 +73,7 @@ namespace System.Runtime.Remoting.Activation
 
 			return response;
 		}
-
+#endif
 		public static IMessage RemoteActivate (IConstructionCallMessage ctorCall)
 		{
 			try 
@@ -182,6 +182,7 @@ namespace System.Runtime.Remoting.Activation
 			identity.AttachServerObject ((MarshalByRefObject) obj, Threading.Thread.CurrentContext);
 
 			ConstructionCall call = ctorCall as ConstructionCall;
+#if !MOONLIGHT
 			if (ctorCall.ActivationType.IsContextful && call != null && call.SourceProxy != null)
 			{
 				call.SourceProxy.AttachIdentity (identity);
@@ -189,6 +190,7 @@ namespace System.Runtime.Remoting.Activation
 				RemotingServices.InternalExecuteMessage (target, ctorCall);
 			}
 			else
+#endif
 				ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
 
 			return new ConstructionResponse (obj, null, ctorCall);

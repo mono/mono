@@ -23,8 +23,13 @@ namespace Mono.CSharp {
 		//    A list of Parameters (explicitly typed parameters)
 		//    An ImplicitLambdaParameter
 		//
+		public LambdaExpression (bool isAsync, Location loc)
+			: base (isAsync, loc)
+		{
+		}
+
 		public LambdaExpression (Location loc)
-			: base (loc)
+			: this (false, loc)
 		{
 		}
 
@@ -33,7 +38,7 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return this;
 
-			BlockContext bc = new BlockContext (ec.MemberContext, ec.ConstructorBlock, TypeManager.void_type) {
+			BlockContext bc = new BlockContext (ec.MemberContext, ec.ConstructorBlock, ec.BuiltinTypes.Void) {
 				CurrentAnonymousMethod = ec.CurrentAnonymousMethod
 			};
 
@@ -61,7 +66,7 @@ namespace Mono.CSharp {
 			if (!delegateType.IsDelegate)
 				return null;
 
-			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegateType);
+			AParametersCollection d_params = Delegate.GetParameters (delegateType);
 
 			if (HasExplicitParameters) {
 				if (!VerifyExplicitParameters (ec, delegateType, d_params))
@@ -89,7 +94,7 @@ namespace Mono.CSharp {
 				// When type inference context exists try to apply inferred type arguments
 				//
 				if (tic != null) {
-					d_param = tic.InflateGenericArgument (d_param);
+					d_param = tic.InflateGenericArgument (ec, d_param);
 				}
 
 				ptypes [i] = d_param;
@@ -189,7 +194,11 @@ namespace Mono.CSharp {
 		{
 			if (statement != null) {
 				statement.EmitStatement (ec);
-				ec.Emit (OpCodes.Ret);
+				if (unwind_protect)
+					ec.Emit (OpCodes.Leave, ec.CreateReturnLabel ());
+				else {
+					ec.Emit (OpCodes.Ret);
+				}
 				return;
 			}
 
@@ -201,7 +210,7 @@ namespace Mono.CSharp {
 			//
 			// When delegate returns void, only expression statements can be used
 			//
-			if (ec.ReturnType == TypeManager.void_type) {
+			if (ec.ReturnType.Kind == MemberKind.Void) {
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;

@@ -283,7 +283,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.PerformDataBinding (data);
 		}
 
-		protected override void PrepareControlHierarchy ()
+		protected internal override void PrepareControlHierarchy ()
 		{
 			base.PrepareControlHierarchy ();
 			controlHierarchy = true;

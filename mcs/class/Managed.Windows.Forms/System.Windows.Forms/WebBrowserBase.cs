@@ -22,8 +22,6 @@
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
 
-#if NET_2_0
-
 #undef debug
 
 using System;
@@ -755,5 +753,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-
-#endif

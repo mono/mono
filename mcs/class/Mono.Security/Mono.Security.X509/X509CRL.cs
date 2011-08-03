@@ -317,19 +317,24 @@ namespace Mono.Security.X509 {
 
 			// 1. x509 certificate must be a CA certificate (unknown for v1 or v2 certs)
 			if (x509.Version >= 3) {
-				// 1.1. Check for "cRLSign" bit in KeyUsage extension
-				X509Extension ext = x509.Extensions ["2.5.29.15"];
-				if (ext != null) {
-					KeyUsageExtension keyUsage = new KeyUsageExtension (ext);
-					if (!keyUsage.Support (KeyUsages.cRLSign))
-						return false;
-				}
+				BasicConstraintsExtension basicConstraints = null;
 				// 1.2. Check for ca = true in BasicConstraint
-				ext = x509.Extensions ["2.5.29.19"];
+				X509Extension ext = x509.Extensions ["2.5.29.19"];
 				if (ext != null) {
-					BasicConstraintsExtension basicConstraints = new BasicConstraintsExtension (ext);
+					basicConstraints = new BasicConstraintsExtension (ext);
 					if (!basicConstraints.CertificateAuthority)
 						return false;
+				}
+				// 1.1. Check for "cRLSign" bit in KeyUsage extension
+				ext = x509.Extensions ["2.5.29.15"];
+				if (ext != null) {
+					KeyUsageExtension keyUsage = new KeyUsageExtension (ext);
+					if (!keyUsage.Support (KeyUsages.cRLSign)) {
+						// 2nd chance if basicConstraints is CertificateAuthority
+						// and KeyUsage support digitalSignature
+						if ((basicConstraints == null) || !keyUsage.Support (KeyUsages.digitalSignature))
+							return false;
+					}
 				}
 			}
 			// 2. CRL issuer must match CA subject name

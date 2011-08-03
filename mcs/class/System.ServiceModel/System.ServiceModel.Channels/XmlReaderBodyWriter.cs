@@ -58,6 +58,8 @@ namespace System.ServiceModel.Channels
 			: base (false)
 		{
 			reader.MoveToContent ();
+			if (reader.NodeType != XmlNodeType.Element)
+				throw new InvalidOperationException ("Argument XmlReader is expected to be positioned at element");
 			this.reader = reader;
 		}
 
@@ -71,7 +73,12 @@ namespace System.ServiceModel.Channels
 				var sw = new StringWriter ();
 				var xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw));
 				xw.WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-				xw.WriteAttributes (reader, false);
+				for (int i = 0; i < reader.AttributeCount; i++) {
+					reader.MoveToAttribute (i);
+					if (reader.NamespaceURI != "http://www.w3.org/2000/xmlns/" || xw.LookupPrefix (reader.Value) == null)
+						xw.WriteAttributeString (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
+				}
+				reader.MoveToElement ();
 
 				var inr = reader as IXmlNamespaceResolver;
 				if (inr != null)

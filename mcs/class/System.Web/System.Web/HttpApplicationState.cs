@@ -53,35 +53,53 @@ namespace System.Web
 			_Lock = new ReaderWriterLockSlim ();
 		}
 
+		bool IsLockHeld {
+			get { return _Lock.IsReadLockHeld || _Lock.IsWriteLockHeld; }
+		}
+		
 		public void Add (string name, object value)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterWriteLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterWriteLock ();
+					acquired = true;
+				}
 				BaseAdd (name, value);
 			} finally {
-				_Lock.ExitWriteLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitWriteLock ();
 			}
 		}
 
 		public void Clear ()
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterWriteLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterWriteLock ();
+					acquired = true;
+				}
 				BaseClear ();
 			} finally {
-				_Lock.ExitWriteLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitWriteLock ();
 			}
 		} 
 
 		public object Get (string name)
 		{
 			object ret = null;
-
+			bool acquired = false;
 			try {
-				_Lock.EnterReadLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterReadLock ();
+					acquired = true;
+				}
 				ret = BaseGet (name);
 			}  finally {
-				_Lock.ExitReadLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitReadLock ();
 			}
 
 			return ret;
@@ -89,36 +107,52 @@ namespace System.Web
 
 		public object Get (int index)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterReadLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterReadLock ();
+					acquired = true;
+				}
 				return BaseGet (index);
 			} finally {
-				_Lock.ExitReadLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitReadLock ();
 			}
 		}   
 
 		public string GetKey (int index)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterReadLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterReadLock ();
+					acquired = true;
+				}
 				return BaseGetKey (index);
 			} finally {
-				_Lock.ExitReadLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitReadLock ();
 			}
 		}      
 
 		public void Lock ()
 		{
-			_Lock.EnterWriteLock ();
+			if (!_Lock.IsWriteLockHeld)
+				_Lock.EnterWriteLock ();
 		}
 
 		public void Remove (string name)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterWriteLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterWriteLock ();
+					acquired = true;
+				}
 				BaseRemove (name);
 			} finally  {
-				_Lock.ExitWriteLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitWriteLock ();
 			}      
 		}
 
@@ -129,36 +163,52 @@ namespace System.Web
 
 		public void RemoveAt (int index)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterWriteLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterWriteLock ();
+					acquired = true;
+				}
 				BaseRemoveAt (index);
 			} finally  {
-				_Lock.ExitWriteLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitWriteLock ();
 			}      
 		}
 
 		public void Set (string name, object value)
 		{
+			bool acquired = false;
 			try {
-				_Lock.EnterWriteLock ();
+				if (!IsLockHeld) {
+					_Lock.EnterWriteLock ();
+					acquired = true;
+				}
 				BaseSet (name, value);
 			} finally  {
-				_Lock.ExitWriteLock ();
+				if (acquired && IsLockHeld)
+					_Lock.ExitWriteLock ();
 			}      
 		}   
 
 		public void UnLock ()
 		{
-			_Lock.ExitWriteLock ();
+			if (_Lock.IsWriteLockHeld)
+				_Lock.ExitWriteLock ();
 		}
 
 		public string [] AllKeys {
 			get {
+				bool acquired = false;
 				try {
-					_Lock.EnterReadLock ();
+					if (!IsLockHeld) {
+						_Lock.EnterReadLock ();
+						acquired = true;
+					}
 					return BaseGetAllKeys ();
 				} finally  {
-					_Lock.ExitReadLock ();
+					if (acquired && IsLockHeld)
+						_Lock.ExitReadLock ();
 				}
 			}
 		}
@@ -169,11 +219,16 @@ namespace System.Web
 
 		public override int Count {
 			get {
+				bool acquired = false;
 				try {
-					_Lock.EnterReadLock ();
+					if (!IsLockHeld) {
+						_Lock.EnterReadLock ();
+						acquired = true;
+					}
 					return base.Count;
 				} finally  {
-					_Lock.ExitReadLock ();
+					if (acquired && IsLockHeld)
+						_Lock.ExitReadLock ();
 				}     
 			}
 		}   

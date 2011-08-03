@@ -142,7 +142,7 @@ namespace System.Web.Services.Description
 
 		public override void Check (ConformanceCheckContext ctx, BindingCollection value) {
 			foreach (Binding b in value)
-				foreach (ServiceDescriptionFormatExtension ext in b.Extensions)
+				foreach (object ext in b.Extensions)
 					if (ext.GetType () == typeof (SoapBinding))
 						return;
 

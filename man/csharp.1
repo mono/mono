@@ -6,7 +6,7 @@
 .SH NAME 
 csharp, gsharp \- Interactive C# Shell 
 .SH SYNOPSIS
-.B csharp [--attach PID] [file1 [file2]]
+.B csharp [--attach PID] [-e EXPRESSION] [file1 [file2]]
 [options] 
 .P
 .B gsharp [file1 [file2]]
@@ -29,7 +29,22 @@ target process.
 .PP
 Files specified in the command line will be loaded and executed as
 scripts.
+.PP
+Starting with Mono 2.10, the 
+.I csharp
+command can be used as an interpreter executed by executables flagged
+with the Unix execute attribute.   To do this, make the first line of
+your C# source code look like this:
+.nf
+"#!/usr/bin/csharp" 
+Console.WriteLine ("Hello, World");
+.fi
 .SH OPTIONS
+The commands accept all of the commands that are available to the 
+.I mcs
+command, so you can reference assemblies, specify paths, language
+level and so on from the command line.   In addition, the following
+command line options are supported:
 .TP 
 .I "\-\-attach"
 This is an advanced option and should only be used if you have a deep
@@ -42,6 +57,9 @@ special measures to avoid crashing the target application while using
 it.  For example, you might have to take the proper locks before
 issuing any commands that might affect the target process state, or
 sending commands through a method dispatcher.     
+.TP 
+.I "\-e" EXPRESSION
+This will evaluate the specified C# EXPRESSION and exit
 .SH OPERATION
 Once you launch the csharp command, you will be greeted with the
 interactive prompt:

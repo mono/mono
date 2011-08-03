@@ -1,4 +1,4 @@
-// cs0019-2.cs: Operator `+' cannot be applied to operands of type `int' and `Test.Zub'
+// CS0019: Operator `+' cannot be applied to operands of type `int' and `Test.Zub'
 // Line : 11
 using System;
 

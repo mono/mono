@@ -133,6 +133,8 @@ namespace System.ServiceModel.Channels.Http
 			if (msg == null)
 				throw new ArgumentNullException ("msg");
 
+			Logger.LogMessage (MessageLogSourceKind.TransportSend, ref msg, Channel.Source.Source.MaxReceivedMessageSize);
+
 			MemoryStream ms = new MemoryStream ();
 			Channel.Encoder.WriteMessage (msg, ms);
 			Context.Response.ContentType = Channel.Encoder.ContentType;

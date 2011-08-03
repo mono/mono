@@ -24,69 +24,95 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
+using System.Threading;
+using System.Reflection;
 
 namespace System.Threading.Tasks
 {
-	
-	internal class SchedulerProxy : IScheduler
+	internal class SchedulerProxy
 	{
 		TaskScheduler scheduler;
-		
+
+		Action<Task> participateUntil1;
+		Func<Task, ManualResetEventSlim, int, bool> participateUntil2;
+
 		public SchedulerProxy (TaskScheduler scheduler)
 		{
 			this.scheduler = scheduler;
+			FindMonoSpecificImpl ();
 		}
-		
-		#region IScheduler implementation
-		public void AddWork (Task t)
+
+		void FindMonoSpecificImpl ()
 		{
-			scheduler.QueueTask (t);
+			// participateUntil1
+			FetchMethod<Action<Task>> ("MonoParticipateUntil",
+			                           new[] { typeof(Task) },
+			                           ref participateUntil1);
+			// participateUntil2
+			FetchMethod<Func<Task, ManualResetEventSlim, int, bool>> ("MonoParticipateUntil",
+			                                                          new[] { typeof(Task), typeof(ManualResetEventSlim), typeof(int) },
+			                                                          ref participateUntil2);
 		}
-		
+
+		void FetchMethod<TDelegate> (string name, Type[] types, ref TDelegate field) where TDelegate : class
+		{
+			var method = scheduler.GetType ().GetMethod (name,
+			                                             BindingFlags.Instance | BindingFlags.Public,
+			                                             null,
+			                                             types,
+			                                             null);
+			if (method == null)
+				return;
+			field = Delegate.CreateDelegate (typeof(TDelegate), scheduler, method) as TDelegate;
+			Console.WriteLine ("Created delegate for " + name);
+		}
+
 		public void ParticipateUntil (Task task)
 		{
-			ParticipateUntil (() => task.IsCompleted);
+			if (participateUntil1 != null) {
+				participateUntil1 (task);
+				return;
+			}
+
+			if (task.Status == TaskStatus.WaitingToRun)
+				task.Execute (null);
+
+			if (task.IsCompleted)
+				return;
+
+			ManualResetEventSlim evt = new ManualResetEventSlim (false);
+			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
+
+			ParticipateUntil (evt, -1);
 		}
 		
-		public bool ParticipateUntil (Task task, Func<bool> predicate)
+		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
-			bool fromPredicate = false;
-			
-			ParticipateUntil (() => {
-				if (predicate ()) {
-					fromPredicate = true;
-					return true;
-				}
-				
-				return task.IsCompleted;
-			});
-			
+			if (task.IsCompleted)
+				return false;
+
+			if (participateUntil2 != null)
+				return participateUntil2 (task, evt, millisecondsTimeout);
+
+			bool fromPredicate = true;
+			task.ContinueWith (_ => { fromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
+
+			ParticipateUntil (evt, millisecondsTimeout);
+
 			return fromPredicate;
 		}
-		
-		public void ParticipateUntil (Func<bool> predicate)
+
+		void ParticipateUntil (ManualResetEventSlim evt, int millisecondsTimeout)
 		{
-			SpinWait sw = new SpinWait ();
-			
-			while (!predicate ())
-				sw.SpinOnce ();
+			evt.Wait (millisecondsTimeout);
 		}
-		
+
 		public void PulseAll ()
 		{
 			
 		}
-		#endregion
-
-		#region IDisposable implementation
-		public void Dispose ()
-		{
-			scheduler = null;
-		}
-		#endregion
-
 	}
 }
 #endif

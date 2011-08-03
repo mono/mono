@@ -15,7 +15,7 @@
 /libtool
 /ltconfig
 /ltmain.sh
-/mono-*.tar.gz
+/mono-*.tar.*
 /*.pc
 /mono.spec
 /mono-core.spec
@@ -35,3 +35,4 @@
 /ltsugar.m4
 /lt~obsolete.m4
 /ltversion.m4
+*~

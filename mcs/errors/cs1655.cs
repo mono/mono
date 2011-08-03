@@ -1,4 +1,4 @@
-// cs1655.cs: Cannot pass members of `q' as ref or out arguments because it is a `foreach iteration variable'
+// CS1655: Cannot pass members of `q' as ref or out arguments because it is a `foreach iteration variable'
 // Line: 23
 
 using System.Collections;

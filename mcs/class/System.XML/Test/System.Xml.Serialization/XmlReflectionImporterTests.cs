@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -1626,6 +1627,13 @@ namespace MonoTests.System.XmlSerialization
 		public void ImportGenericICollectionWrapped ()
 		{
 			new XmlSerializer (typeof (MyCollection));
+		}
+
+		[Test]
+		public void Bug704813Type ()
+		{
+			var xs = new XmlSerializer (typeof (Bug704813Type));
+			xs.Serialize (TextWriter.Null, new Bug704813Type ());
 		}
 #endif
 

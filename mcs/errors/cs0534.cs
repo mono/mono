@@ -1,4 +1,4 @@
-// cs0534.cs: `Y' does not implement inherited abstract member `X.myAbstract()'
+// CS0534: `Y' does not implement inherited abstract member `X.myAbstract()'
 // Line: 5
 
 abstract class X {

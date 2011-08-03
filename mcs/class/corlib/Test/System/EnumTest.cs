@@ -1101,13 +1101,13 @@ namespace MonoTests.System
 			Assert.AreEqual ("ulong_Cc", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000000)));
 			Assert.AreEqual ("ulong_Cc", r.GetValue (0).ToString ());
 			Assert.AreEqual ("ulong_Cc", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000000)));
-			Assert.AreEqual ("ulong_Cc", r.GetValue (1).ToString ());
+			Assert.AreEqual ("ulong_Aa", r.GetValue (1).ToString ());
 			Assert.AreEqual ("ulong_Aa", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000005)));
-			Assert.AreEqual ("ulong_Aa", r.GetValue (2).ToString ());
+			Assert.AreEqual ("ulong_Ff", r.GetValue (2).ToString ());
 			Assert.AreEqual ("ulong_Ff", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000064)));
-			Assert.AreEqual ("ulong_Ff", r.GetValue (3).ToString ());
+			Assert.AreEqual ("ulong_Ee", r.GetValue (3).ToString ());
 			Assert.AreEqual ("ulong_Ee", Enum.GetName (typeof (EnumULong), (EnumULong)(0x7FFFFFFFFFFFFFFF)));
-			Assert.AreEqual ("ulong_Ee", r.GetValue (4).ToString ());
+			Assert.AreEqual ("ulong_Bb", r.GetValue (4).ToString ());
 			
 			r = Enum.GetValues (typeof (EnumLong));
 			Assert.AreEqual (6, r.Length);
@@ -1124,7 +1124,22 @@ namespace MonoTests.System
 			Assert.AreEqual ("long_Dd", Enum.GetName (typeof (EnumLong), unchecked ((EnumLong)(0xFFFFFFFFFFFFFFFF))));
 			Assert.AreEqual ("long_Dd", r.GetValue (5).ToString ());
 		}
-		
+
+		[Flags]
+		enum Foo {
+			negative = -1
+		}
+
+#if NET_4_0
+		// Our first implementation used to crash
+		[Test]
+		public void HasFlagTest ()
+		{
+			Foo f = Foo.negative;
+			bool has = f.HasFlag (Foo.negative);
+		}
+#endif
+
 		[Flags]
 		enum SomeEnum
 		{
@@ -1375,7 +1390,7 @@ namespace MonoTests.System
 		enum EnumULong : ulong
 		{
 		  ulong_Aa = 5,
-		  ulong_Bb = unchecked((int)0xffffFFFF00000000),
+		  ulong_Bb = unchecked((ulong)0xffffFFFF00000000),
 		  ulong_Cc = 0,
 		  ulong_Ee = 0x7FFFFFFFffffffff,
 		  ulong_Ff = 100

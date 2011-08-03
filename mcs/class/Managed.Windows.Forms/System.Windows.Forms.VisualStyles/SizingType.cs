@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum SizingType
@@ -36,4 +35,3 @@ namespace System.Windows.Forms.VisualStyles
 		Tile = 2
 	}
 }
-#endif

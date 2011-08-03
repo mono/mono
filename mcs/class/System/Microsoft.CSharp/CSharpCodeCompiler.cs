@@ -42,21 +42,16 @@ namespace Mono.CSharp
 	using System.Collections.Specialized;
 	using System.Diagnostics;
 	using System.Text.RegularExpressions;
-	
-#if NET_2_0
 	using System.Threading;
 	using System.Collections.Generic;
-#endif
 	
 	internal class CSharpCodeCompiler : CSharpCodeGenerator, ICodeCompiler
 	{
 		static string windowsMcsPath;
 		static string windowsMonoPath;
 
-#if NET_2_0
 		Mutex mcsOutMutex;
 		StringCollection mcsOutput;
-#endif
 		
 		static CSharpCodeCompiler ()
 		{
@@ -82,33 +77,11 @@ namespace Mono.CSharp
 						"mono\\mono\\mini\\mono.exe");
 				if (!File.Exists (windowsMonoPath))
 					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
-#if NET_4_0
-				windowsMcsPath =
-					Path.Combine (p, "4.0\\dmcs.exe");
-#elif NET_2_0
-				windowsMcsPath =
-					Path.Combine (p, "2.0\\gmcs.exe");
-#else
-				windowsMcsPath =
-					Path.Combine (p, "1.0\\mcs.exe");
-#endif
+
+				windowsMcsPath = Path.Combine (p, "4.0\\mcs.exe");
 				if (!File.Exists (windowsMcsPath))
-#if NET_4_0
-					windowsMcsPath =
-						Path.Combine(
-							Path.GetDirectoryName (p),
-							"lib\\net_4_0\\dmcs.exe");
-#elif NET_2_0
-					windowsMcsPath = 
-						Path.Combine(
-							Path.GetDirectoryName (p),
-							"lib\\net_2_0\\gmcs.exe");
-#else
-					windowsMcsPath = 
-						Path.Combine(
-							Path.GetDirectoryName (p),
-							"lib\\default\\mcs.exe");
-#endif
+					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\build\\mcs.exe");
+				
 				if (!File.Exists (windowsMcsPath))
 					throw new FileNotFoundException ("Windows mcs path not found: " + windowsMcsPath);
 			}
@@ -121,12 +94,10 @@ namespace Mono.CSharp
 		{
 		}
 
-#if NET_2_0
 		public CSharpCodeCompiler (IDictionary <string, string> providerOptions) :
 			base (providerOptions)
 		{
 		}
-#endif
 		
 		//
 		// Methods
@@ -195,45 +166,44 @@ namespace Mono.CSharp
 			CompilerResults results=new CompilerResults(options.TempFiles);
 			Process mcs=new Process();
 
-#if !NET_2_0
-			string mcs_output;
-			string mcs_stdout;
-			string[] mcsOutput;
-#endif
-			
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = windowsMonoPath;
 				mcs.StartInfo.Arguments = "\"" + windowsMcsPath + "\" " +
-#if NET_2_0
 					BuildArgs (options, fileNames, ProviderOptions);
-#else
-					BuildArgs (options, fileNames);
-#endif
 			} else {
-#if NET_2_0
-				// FIXME: This is a temporary hack to make code genaration work in 2.0+
-#if NET_4_0
-				mcs.StartInfo.FileName="dmcs";
-#else
-				mcs.StartInfo.FileName="gmcs";
-#endif
-				mcs.StartInfo.Arguments=BuildArgs(options, fileNames, ProviderOptions);
-#else
 				mcs.StartInfo.FileName="mcs";
-				mcs.StartInfo.Arguments=BuildArgs(options, fileNames);
-#endif
+				mcs.StartInfo.Arguments=BuildArgs(options, fileNames, ProviderOptions);
 			}
 
-#if NET_2_0
 			mcsOutput = new StringCollection ();
 			mcsOutMutex = new Mutex ();
+#if !NET_4_0
+			/*
+			 * !:. KLUDGE WARNING .:!
+			 *
+			 * When running the 2.0 test suite some assemblies will invoke mcs via
+			 * CodeDOM and the new mcs process will find the MONO_PATH variable in its
+			 * environment pointing to the net_2_0 library which will cause the runtime
+			 * to attempt to load the 2.0 corlib into 4.0 process and thus mcs will
+			 * fail. At the same time, we must not touch MONO_PATH when running outside
+			 * the test suite, thus the kludge.
+			 *
+			 * !:. KLUDGE WARNING .:!
+			 */
+			if (Environment.GetEnvironmentVariable ("MONO_TESTS_IN_PROGRESS") != null) {
+				string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
+				if (!String.IsNullOrEmpty (monoPath)) {
+					monoPath = monoPath.Replace ("/class/lib/net_2_0", "/class/lib/net_4_0");
+					mcs.StartInfo.EnvironmentVariables ["MONO_PATH"] = monoPath;
+				}
+			}
 #endif
-
+/*		       
 			string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
-			if (monoPath == null)
+			if (monoPath != null)
 				monoPath = String.Empty;
-			
+
 			string privateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
 			if (privateBinPath != null && privateBinPath.Length > 0)
 				monoPath = String.Format ("{0}:{1}", privateBinPath, monoPath);
@@ -245,14 +215,18 @@ namespace Mono.CSharp
 				else
 					dict.Add ("MONO_PATH", monoPath);
 			}
-			
+*/
+			/*
+			 * reset MONO_GC_PARAMS - we are invoking compiler possibly with another GC that
+			 * may not handle some of the options causing compilation failure
+			 */
+			mcs.StartInfo.EnvironmentVariables ["MONO_GC_PARAMS"] = String.Empty;
+
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
-#if NET_2_0
 			mcs.ErrorDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
-#endif
 			
 			try {
 				mcs.Start();
@@ -266,38 +240,21 @@ namespace Mono.CSharp
 			}
 
 			try {
-#if NET_2_0
 				mcs.BeginOutputReadLine ();
 				mcs.BeginErrorReadLine ();
-#else
-				// If there are a few kB in stdout, we might lock
-				mcs_output=mcs.StandardError.ReadToEnd();
-				mcs_stdout=mcs.StandardOutput.ReadToEnd ();
-#endif
 				mcs.WaitForExit();
 				
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
-#if NET_2_0
 				mcs.CancelErrorRead ();
 				mcs.CancelOutputRead ();
-#endif
-
 				mcs.Close();
 			}
 
-#if NET_2_0
 			StringCollection sc = mcsOutput;
-#else
-			mcsOutput = mcs_output.Split (System.Environment.NewLine.ToCharArray ());
-			StringCollection sc = new StringCollection ();
-#endif
 		       
  			bool loadIt=true;
 			foreach (string error_line in mcsOutput) {
-#if !NET_2_0
-				sc.Add (error_line);
-#endif
 				CompilerError error = CreateErrorFromString (error_line);
 				if (error != null) {
 					results.Errors.Add (error);
@@ -338,7 +295,6 @@ namespace Mono.CSharp
 			return results;
 		}
 
-#if NET_2_0
 		void McsStderrDataReceived (object sender, DataReceivedEventArgs args)
 		{
 			if (args.Data != null) {
@@ -349,9 +305,6 @@ namespace Mono.CSharp
 		}		
 
 		private static string BuildArgs(CompilerParameters options,string[] fileNames, IDictionary <string, string> providerOptions)
-#else
-		private static string BuildArgs(CompilerParameters options,string[] fileNames)
-#endif
 		{
 			StringBuilder args=new StringBuilder();
 			if (options.GenerateExecutable)
@@ -397,7 +350,6 @@ namespace Mono.CSharp
 				args.Append (" ");
 			}
 
-#if NET_2_0
 			foreach (string embeddedResource in options.EmbeddedResources) {
 				args.AppendFormat("/resource:\"{0}\" ", embeddedResource);
 			}
@@ -421,7 +373,7 @@ namespace Mono.CSharp
 
 				switch (langver) {
 					case "2.0":
-						args.Append ("/langversion:ISO-2");
+						args.Append ("/langversion:ISO-2 ");
 						break;
 
 					case "3.5":
@@ -429,6 +381,11 @@ namespace Mono.CSharp
 						break;
 				}
 			}
+			
+#if NET_4_0
+			args.Append("/sdk:4");
+#else
+			args.Append("/sdk:2");
 #endif
 
 			args.Append (" -- ");
@@ -438,10 +395,9 @@ namespace Mono.CSharp
 		}
 		private static CompilerError CreateErrorFromString(string error_string)
 		{
-#if NET_2_0
 			if (error_string.StartsWith ("BETA"))
 				return null;
-#endif
+
 			if (error_string == null || error_string == "")
 				return null;
 

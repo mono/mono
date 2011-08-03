@@ -329,7 +329,58 @@ namespace MonoTests.System.Xml
 			AssertNode (XmlNodeType.Text, "a", "", "", 2, reader, "#4");
 			Assert.IsFalse (reader.ReadAttributeValue (), "#5");
 		}
+		
+		[Test]
+		public void AttributeWithLocalDictQNameIndex ()
+		{
+			XmlDictionary dic = new XmlDictionary ();
+			dic.Add ("xmlns");
+			dic.Add ("http://www.w3.org/2000/xmlns/");
+			dic.Add ("DictionaryValue");
+			dic.Add ("SomeDictionaryString");
+			dic.Add ("AdditionalDictionaryString");
+			
+			// <d a="QNameIndex(0,8)"></d>
+			byte [] bytes = new byte [] { 0x40, 0x01, 0x64, 0x04, 0x01, 0x61, 0xbc, 0x00, 0x08, 0x01 };
 
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (
+							new MemoryStream (bytes), dic, new XmlDictionaryReaderQuotas ());
+			Assert.IsTrue (reader.Read (), "#1");
+			AssertNode (XmlNodeType.Element, "d", "", "", 0, reader, "#2");
+			reader.MoveToAttribute (0);
+			if (reader.LocalName != "a")
+				reader.MoveToAttribute (1);
+			AssertNode (XmlNodeType.Attribute, "a", "", "a:AdditionalDictionaryString", 1, reader, "#3");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#4");
+			AssertNode (XmlNodeType.Text, "a", "", "a:AdditionalDictionaryString", 2, reader, "#5");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#6");
+		}
+		
+		[Test]
+		public void AttributeWithSessionQNameIndex ()
+		{
+			XmlDictionaryString ds;
+			XmlDictionary dic = new XmlDictionary ();
+			XmlBinaryReaderSession ses = new XmlBinaryReaderSession();
+			ses.Add(0, "SessionLookupValue");
+			
+			// <d a="QNameIndex(0x18,1)"></d>
+			byte [] bytes = new byte [] { 0x40, 0x01, 0x64, 0x04, 0x01, 0x61, 0xbc, 0x18, 0x01, 0x01 };
+
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (
+							new MemoryStream (bytes), dic, new XmlDictionaryReaderQuotas (), ses);
+			Assert.IsTrue (reader.Read (), "#1");
+			AssertNode (XmlNodeType.Element, "d", "", "", 0, reader, "#2");
+			reader.MoveToAttribute (0);
+			if (reader.LocalName != "a")
+				reader.MoveToAttribute (1);
+			AssertNode (XmlNodeType.Attribute, "a", "", "y:SessionLookupValue", 1, reader, "#3");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#4");
+			AssertNode (XmlNodeType.Text, "a", "", "y:SessionLookupValue", 2, reader, "#5");
+			reader.MoveToContent ();
+			Assert.IsFalse (reader.ReadAttributeValue (), "#6");
+		}
+		
 		[Test]
 		public void ReadTypedValues ()
 		{

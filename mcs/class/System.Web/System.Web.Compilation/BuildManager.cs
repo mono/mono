@@ -117,6 +117,10 @@ namespace System.Web.Compilation
 		}
 
 #if NET_4_0
+		internal static bool CompilingTopLevelAssemblies {
+			get; set;
+		}
+		
 		internal static bool PreStartMethodsRunning {
 			get { return preStartMethodsRunning; }
 		}
@@ -217,6 +221,7 @@ namespace System.Web.Compilation
 			
 			string [] parts;
 			int skip = -1;
+			string appVirtualRoot = VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath);
 			foreach (string vpath in precompiled.Keys) {
 				parts = vpath.Split ('/');
 				for (int i = 0; i < parts.Length; i++) {
@@ -225,7 +230,7 @@ namespace System.Web.Compilation
 					// The path must be rooted, otherwise PhysicalPath returned
 					// below will be relative to the current request path and
 					// File.Exists will return a false negative. See bug #546053
-					string test_path = "/" + String.Join ("/", parts, i, parts.Length - i);
+					string test_path = appVirtualRoot + String.Join ("/", parts, i, parts.Length - i);
 					VirtualPath result = GetAbsoluteVirtualPath (test_path);
 					if (result != null && File.Exists (result.PhysicalPath)) {
 						skip = i - 1;
@@ -624,8 +629,8 @@ namespace System.Web.Compilation
 		public static Type GetGlobalAsaxType ()
 		{
 			Type ret = HttpApplicationFactory.AppType;
-			if (!preStartMethodsRunning)
-				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+			if (ret == null)
+				return typeof (HttpApplication);
 			
 			return ret;
 		}
@@ -667,10 +672,39 @@ namespace System.Web.Compilation
 				dynamicallyRegisteredAssemblies.Add (assembly);
 		}
 
-		[MonoTODO ("A no-op until we use IWebObjectFactory internally. Always returns null.")]
+		[MonoDocumentationNote ("Not used by Mono internally. Needed for MVC3")]
 		public static IWebObjectFactory GetObjectFactory (string virtualPath, bool throwIfNotFound)
 		{
-			return null;
+			if (CompilingTopLevelAssemblies)
+				throw new HttpException ("Method must not be called while compiling the top level assemblies.");
+
+			Type type;
+			if (is_precompiled) {
+				type = GetPrecompiledType (virtualPath);
+				if (type == null) {
+					if (throwIfNotFound)
+						throw new HttpException (String.Format ("Virtual path '{0}' not found in precompiled application type cache.", virtualPath));
+					else
+						return null;
+				}
+				return new SimpleWebObjectFactory (type);
+			}
+
+			Exception compileException = null;
+			try {
+				type = GetCompiledType (virtualPath);
+			} catch (Exception ex) {
+				compileException = ex;
+				type = null;
+			}
+			
+			if (type == null) {
+				if (throwIfNotFound)
+					throw new HttpException (String.Format ("Virtual path '{0}' does not exist.", virtualPath), compileException);
+				return null;
+			}
+			
+			return new SimpleWebObjectFactory (type);
 		}
 #endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
@@ -920,14 +954,18 @@ namespace System.Web.Compilation
 
 		static Type GetPrecompiledType (string virtualPath)
 		{
+			if (precompiled == null || precompiled.Count == 0)
+				return null;
+
 			PreCompilationData pc_data;
-			if (precompiled != null && precompiled.TryGetValue (virtualPath, out pc_data)) {
-				if (pc_data.Type == null) {
-					pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
-				}
-				return pc_data.Type;
-			}
-			return null;
+			var vp = new VirtualPath (virtualPath);
+			if (!precompiled.TryGetValue (vp.Absolute, out pc_data))
+				if (!precompiled.TryGetValue (virtualPath, out pc_data))
+					return null;
+				
+			if (pc_data.Type == null)
+				pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
+			return pc_data.Type;
 		}
 
 		internal static Type GetPrecompiledApplicationType ()
@@ -935,9 +973,10 @@ namespace System.Web.Compilation
 			if (!is_precompiled)
 				return null;
 
-			Type apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath, "Global.asax"));
+			string appVp = VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath);
+			Type apptype = GetPrecompiledType (VirtualPathUtility.Combine (appVp, "global.asax"));
 			if (apptype == null)
-				apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath , "global.asax"));
+				apptype = GetPrecompiledType (VirtualPathUtility.Combine (appVp, "Global.asax"));
 			return apptype;
 		}
 
@@ -1114,20 +1153,61 @@ namespace System.Web.Compilation
 		{
 			return GetType (typeName, throwOnError, false);
 		}
-
+		
 		public static Type GetType (string typeName, bool throwOnError, bool ignoreCase)
 		{
+			if (String.IsNullOrEmpty (typeName))
+				throw new HttpException ("Type name must not be empty.");
+			
 			Type ret = null;
+			Exception ex = null;
 			try {
-				foreach (Assembly asm in TopLevel_Assemblies) {
-					ret = asm.GetType (typeName, throwOnError, ignoreCase);
-					if (ret != null)
-						break;
+				string wantedAsmName;
+				string wantedTypeName;
+				int comma = typeName.IndexOf (',');
+
+				if (comma > 0 && comma < typeName.Length - 1) {
+					var aname = new AssemblyName (typeName.Substring (comma + 1));
+					wantedAsmName = aname.ToString ();
+					wantedTypeName = typeName.Substring (0, comma);
+				} else {
+					wantedAsmName = null;
+					wantedTypeName = typeName;
 				}
-			} catch (Exception ex) {
-				throw new HttpException ("Failed to find the specified type.", ex);
+
+				var assemblies = new List <Assembly> ();
+				assemblies.AddRange (BuildManager.GetReferencedAssemblies () as List <Assembly>);
+				assemblies.AddRange (TopLevel_Assemblies);
+				Type appType = HttpApplicationFactory.AppType;
+				if (appType != null)
+					assemblies.Add (appType.Assembly);
+				
+				foreach (Assembly asm in assemblies) {
+					if (asm == null)
+						continue;
+
+					if (wantedAsmName != null) {
+						// So dumb...
+						if (String.Compare (wantedAsmName, asm.GetName ().ToString (), StringComparison.Ordinal) == 0) {
+							ret = asm.GetType (wantedTypeName, throwOnError, ignoreCase);
+							if (ret != null)
+								return ret;
+						}
+						continue;
+					}
+					
+					ret = asm.GetType (wantedTypeName, false, ignoreCase);
+					if (ret != null)
+						return ret;
+				}
+			} catch (Exception e) {
+				ex = e;
 			}
-			return ret;
+
+			if (throwOnError)
+				throw new HttpException ("Failed to find the specified type.", ex);
+
+			return null;
 		}
 
 		public static ICollection GetVirtualPathDependencies (string virtualPath)
@@ -1389,11 +1469,11 @@ namespace System.Web.Compilation
 			if (suppressDebugModeMessages)
 				return;
 			
-			Console.WriteLine ();
-			Console.WriteLine ("******* DEBUG MODE MESSAGE *******");
-			Console.WriteLine (msg);
-			Console.WriteLine ("******* DEBUG MODE MESSAGE *******");
-			Console.WriteLine ();
+			Console.Error.WriteLine ();
+			Console.Error.WriteLine ("******* DEBUG MODE MESSAGE *******");
+			Console.Error.WriteLine (msg);
+			Console.Error.WriteLine ("******* DEBUG MODE MESSAGE *******");
+			Console.Error.WriteLine ();
 		}
 
 		static void StoreInCache (BuildProvider bp, Assembly compiledAssembly, CompilerResults results)

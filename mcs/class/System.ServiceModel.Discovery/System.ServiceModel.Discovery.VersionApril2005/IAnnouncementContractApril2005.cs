@@ -41,7 +41,7 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 
 		void EndOnlineAnnouncement (IAsyncResult result);
 
-		[OperationContract (Name = "Bye", Action = MessageContractsApril2005.HelloAction, IsOneWay = true, AsyncPattern = true)]
+		[OperationContract (Name = "Bye", Action = MessageContractsApril2005.ByeAction, IsOneWay = true, AsyncPattern = true)]
 		IAsyncResult BeginOfflineAnnouncement (MessageContractsApril2005.OfflineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOfflineAnnouncement (IAsyncResult result);

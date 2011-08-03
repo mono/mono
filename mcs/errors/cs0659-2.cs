@@ -1,4 +1,4 @@
-// cs0659-2.cs: `Test.Test' overrides Object.Equals(object) but does not override Object.GetHashCode()
+// CS0659: `Test.Test' overrides Object.Equals(object) but does not override Object.GetHashCode()
 // Line: 7
 // Compiler options: -warnaserror -warn:3
 

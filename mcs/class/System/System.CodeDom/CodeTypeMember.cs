@@ -45,11 +45,8 @@ namespace System.CodeDom
 		private CodeCommentStatementCollection comments;
 		private CodeAttributeDeclarationCollection customAttributes;
 		private CodeLinePragma linePragma;
-
-#if NET_2_0
 		CodeDirectiveCollection endDirectives;
 		CodeDirectiveCollection startDirectives;
-#endif
 
 		//
 		// Constructors
@@ -111,7 +108,6 @@ namespace System.CodeDom
 			}
 		}
 
-#if NET_2_0
 		public CodeDirectiveCollection EndDirectives {
 			get {
 				if (endDirectives == null)
@@ -127,6 +123,5 @@ namespace System.CodeDom
 				return startDirectives;
 			}
 		}
-#endif
 	}
 }

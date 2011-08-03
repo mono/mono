@@ -27,8 +27,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public class TreeViewHitTestInfo {
@@ -51,6 +49,3 @@ namespace System.Windows.Forms {
 		}
 	}
 }
-
-#endif
-

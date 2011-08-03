@@ -1,4 +1,4 @@
-// cs0117-5.cs: `System.Reflection.BindingFlags' does not contain a definition for `Private'
+// CS0117: `System.Reflection.BindingFlags' does not contain a definition for `Private'
 // Line: 8
 
 using System;

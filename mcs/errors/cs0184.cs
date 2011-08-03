@@ -1,4 +1,4 @@
-// cs0184.cs: The given expression is never of the provided (`byte') type
+// CS0184: The given expression is never of the provided (`byte') type
 // Line:
 // Compiler options: -warnaserror -warn:1
 

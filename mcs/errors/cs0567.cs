@@ -1,4 +1,4 @@
-// cs0567.cs: Interfaces cannot contain operators
+// CS0567: Interfaces cannot contain operators
 // Line: 5
 
 interface Interface {

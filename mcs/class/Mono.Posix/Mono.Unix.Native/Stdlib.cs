@@ -443,14 +443,6 @@ namespace Mono.Unix.Native {
 		[CLSCompliant (false)]
 		public static readonly SignalHandler SIG_IGN = new SignalHandler (_IgnoreHandler);
 
-		private static readonly SignalHandler[] registered_signals;
-
-		static Stdlib ()
-		{
-			Array signals = Enum.GetValues(typeof(Signum));
-			registered_signals = new SignalHandler [(int) signals.GetValue (signals.Length-1)];
-		}
-
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="signal")]
 		private static extern IntPtr sys_signal (int signum, SignalHandler handler);
@@ -469,10 +461,6 @@ namespace Mono.Unix.Native {
 			Delegate[] handlers = handler.GetInvocationList ();
 			for (int i = 0; i < handlers.Length; ++i) {
 				Marshal.Prelink (handlers [i].Method);
-			}
-
-			lock (registered_signals) {
-				registered_signals [(int) signum] = handler;
 			}
 
 			IntPtr r;

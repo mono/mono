@@ -1,0 +1,8 @@
+<DirectDictionaryContainer xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <DirectDictionaryContainer.Items>
+    <x:Int32 x:Key="one">20</x:Int32>
+    <x:Int32 x:Key="two">30</x:Int32>
+    <x:Int32 x:Key="three">40</x:Int32>
+  </DirectDictionaryContainer.Items>
+</DirectDictionaryContainer>
+

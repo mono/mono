@@ -11,6 +11,7 @@
 // 
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -1564,5 +1565,22 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsTrue (ex.Message.IndexOf ("SomeType") != -1, "#5");
 		}
 #endif
+
+		[Test]
+		public void WriteCharacter ()
+		{
+			// mostly from bug #673019
+			var SerializerObj = new XmlSerializer (typeof (ToBeSerialized));
+			StringWriter writer = new StringWriter ();
+			SerializerObj.Serialize (writer, new ToBeSerialized ());
+			Assert.IsTrue (writer.ToString ().IndexOf ("<character>39</character>") > 0, "#1");
+		}
+
+		[Serializable]
+		public class ToBeSerialized
+		{
+			[DefaultValue ('a')]
+			public char character = '\'';
+		}
 	}
 }

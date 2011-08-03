@@ -28,10 +28,7 @@ using System.ComponentModel.Design.Serialization; // e.g. InstanceDescriptor
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	class PaddingConverter : TypeConverter
+	public class PaddingConverter : TypeConverter
 	{
 		public PaddingConverter ()
 		{

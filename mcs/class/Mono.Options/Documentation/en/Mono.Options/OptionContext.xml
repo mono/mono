@@ -6,6 +6,7 @@
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
     <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -30,6 +31,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="set" Type="Mono.Options.OptionSet" />
@@ -49,13 +51,14 @@
       </Docs>
     </Member>
     <Member MemberName="Option">
-      <MemberSignature Language="C#" Value="public Mono.Options.Option Option { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Options.Option Option { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.Option Option" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.Option</ReturnType>
@@ -68,13 +71,14 @@
       </Docs>
     </Member>
     <Member MemberName="OptionIndex">
-      <MemberSignature Language="C#" Value="public int OptionIndex { set; get; }" />
+      <MemberSignature Language="C#" Value="public int OptionIndex { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 OptionIndex" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -95,13 +99,14 @@
       </Docs>
     </Member>
     <Member MemberName="OptionName">
-      <MemberSignature Language="C#" Value="public string OptionName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string OptionName { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string OptionName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -125,6 +130,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -155,6 +161,7 @@
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueCollection</ReturnType>

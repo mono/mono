@@ -2,7 +2,19 @@ thisdir = class
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security Mono.CompilerServices.SymbolWriter System.Core aot-compiler
+basic_SUBDIRS := corlib System System.XML System Mono.Security System.Core 
+
+# resgen is corlib specific so we need to wait until corlib is build
+# and build it just a step before first dll needs it
+resgen_dir = ../tools/resgen
+
+build_SUBDIRS :=  \
+	corlib \
+	System \
+	System.XML \
+	System Mono.Security \
+	Mono.Posix \
+	System.Core
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
@@ -27,6 +39,7 @@ common_dirs := \
 	System				\
 	System.XML			\
 	I18N				\
+	$(resgen_dir)			\
 	System.Drawing			\
 	System.Transactions		\
 	System.EnterpriseServices	\
@@ -102,17 +115,17 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
-	WindowsBase			\
-	System.Data.Services	\
-	System.Data.Services.Client \
 	System.Net
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
 	System.Web.Extensions.Design_1.0	\
-	Compat.ICSharpCode.SharpZipLib
+	Compat.ICSharpCode.SharpZipLib	\
+	WindowsBase			\
+	System.Data.Services.Client	\
+	System.Data.Services
 
-moonlight_dirs := \
+moonlight_raw_dirs := \
 	corlib			\
 	System			\
 	Mono.CompilerServices.SymbolWriter \
@@ -144,7 +157,8 @@ mobile_dirs := \
 	System.Transactions	\
 	System.Data	\
 	Mono.Cairo	\
-	Mono.Data.Sqlite
+	Mono.Data.Sqlite	\
+	System.Data.Services.Client
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
@@ -156,25 +170,33 @@ net_4_0_dirs := \
 	System.Dynamic		\
 	System.Numerics		\
 	Microsoft.CSharp	\
+	Microsoft.Build		\
 	System.Windows.Forms.DataVisualization	\
 	System.ComponentModel.Composition \
 	System.Xaml \
+	WindowsBase \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing \
-	Mono.CodeContracts
+	Mono.Async \
+	Mono.CodeContracts \
+	Mono.Parallel \
+	Microsoft.Web.Infrastructure \
+	WebMatrix.Data \
+	System.Data.Services.Client	\
+	System.Data.Services
 
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
-moonlight_raw_SUBDIRS := $(moonlight_dirs)
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
+moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
 monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_dirs) $(mobile_dirs) $(net_4_0_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_raw_dirs) $(mobile_dirs) $(net_4_0_dirs)
 
 DIST_ONLY_SUBDIRS = dlr IKVM.Reflection aot-compiler
 
@@ -203,7 +225,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 # Files needed to bootstrap C# compiler
-basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll
+basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:
@@ -214,7 +236,7 @@ $(monolite_files): lib/monolite/%: lib/basic/%
 	cp -p $< $@
 
 $(basic_files:%=lib/basic/%):
-	cd $(topdir) && $(MAKE) profile-do--basic--all SKIP_AOT=1
+	cd $(topdir) && $(MAKE) profile-do--basic--all NO_DIR_CHECK=1 SKIP_AOT=1
 
 dist-default: $(monolite_files)
 dist-local: dist-default

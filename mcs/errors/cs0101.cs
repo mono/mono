@@ -1,4 +1,4 @@
-// cs0101.cs: The namespace `global::' already contains a definition for `SomeEnum'
+// CS0101: The namespace `global::' already contains a definition for `SomeEnum'
 // Line: 10
 using System;
 

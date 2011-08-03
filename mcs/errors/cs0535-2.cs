@@ -1,4 +1,4 @@
-// cs0535-2.cs: `Stack' does not implement interface member `IStack.Insert(int, object)'
+// CS0535: `Stack' does not implement interface member `IStack.Insert(int, object)'
 // Line: 11
  
 using System; 

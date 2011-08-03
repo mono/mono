@@ -1,3 +1,9 @@
+2011-05-05  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes #681916
+	* Tds70.cs (WriteParameterInfo): Handle null value for Image 
+	or varbinary(max) parameters as well. 
+	
 2010-09-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes failed test for smallmoney

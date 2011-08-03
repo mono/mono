@@ -258,5 +258,4 @@ System.Linq.Parallel/QueryCheckerVisitor.cs
 System.Linq.Parallel/QueryIsOrderedVisitor.cs
 System.Linq.Parallel/QueryOptions.cs
 ../corlib/System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
-../corlib/System.Collections.Concurrent/ConcurrentSkipList.cs
 ../corlib/System.Threading/AtomicBoolean.cs

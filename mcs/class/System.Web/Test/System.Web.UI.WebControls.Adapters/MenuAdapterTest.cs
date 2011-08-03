@@ -138,21 +138,21 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 		{
 		
 			internal EventArgs on_init_arg;
-			protected override void OnInit (EventArgs e)
+			protected internal override void OnInit (EventArgs e)
 			{
 				on_init_arg = e;
 				base.OnInit (e);
 			}
 
 			internal EventArgs on_pre_render_arg;
-			protected override void OnPreRender (EventArgs e)
+			protected internal override void OnPreRender (EventArgs e)
 			{
 				on_pre_render_arg = e;
 				base.OnPreRender (e);
 			}
 
 			internal string raise_post_back_event_arg;
-			protected override void RaisePostBackEvent (string eventArgument)
+			protected internal override void RaisePostBackEvent (string eventArgument)
 			{
 				raise_post_back_event_arg = eventArgument;
 			}
@@ -162,7 +162,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 				w.WriteLine("RenderBeginTag");
 			}
 
-			protected override void RenderContents (HtmlTextWriter w)
+			protected internal override void RenderContents (HtmlTextWriter w)
 			{
 				w.WriteLine("RenderContents");
 			}

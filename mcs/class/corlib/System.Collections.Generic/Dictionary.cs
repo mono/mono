@@ -100,6 +100,10 @@ namespace System.Collections.Generic {
 		TKey [] keySlots;
 		TValue [] valueSlots;
 
+		//Leave those 2 fields here to improve heap layout.
+		IEqualityComparer<TKey> hcp;
+		SerializationInfo serialization_info;
+
 		// The number of slots in "linkSlots" and "keySlots"/"valueSlots" that
 		// are in use (i.e. filled with data) or have been used and marked as
 		// "empty" later on.
@@ -117,9 +121,6 @@ namespace System.Collections.Generic {
 		// The number of (key,value) pairs the dictionary can hold without
 		// resizing the hash table and the slots arrays.
 		int threshold;
-
-		IEqualityComparer<TKey> hcp;
-		SerializationInfo serialization_info;
 
 		// The number of changes made to this dictionary. Used by enumerators
 		// to detect changes and invalidate themselves.

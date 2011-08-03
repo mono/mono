@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
@@ -111,6 +112,51 @@ namespace MonoTests.System.Collections.Specialized {
 			Assert.AreEqual ("mono!", c [null], "mono!");
 		}
 
+		[Test]
+		public void Add_Calls ()
+		{
+			var nvc1 = new MyNVC ();
+			var nvc2 = new MyNVC ();
+			nvc1.Add ("one", "1");
+			nvc1.Add ("one", "one");
+			nvc1.Add ("two", null);
+			nvc2.Add (nvc1);
+
+			string[] values;
+			Assert.AreEqual (8, nvc1.Log.Count, "#A1-1");
+			Assert.AreEqual ("Add (string, string)", nvc1.Log [0], "#A1-2");
+			Assert.AreEqual ("Add (string, string)", nvc1.Log [1], "#A1-3");
+			Assert.AreEqual ("Add (string, string)", nvc1.Log [2], "#A1-4");
+			Assert.AreEqual ("get_Count", nvc1.Log [3], "#A1-5");
+			Assert.AreEqual ("GetKey (int)", nvc1.Log [4], "#A1-6");
+			Assert.AreEqual ("GetValues (int)", nvc1.Log [5], "#A1-7");
+			Assert.AreEqual ("GetKey (int)", nvc1.Log [6], "#A1-8");
+			Assert.AreEqual ("GetValues (int)", nvc1.Log [7], "#A1-9");
+
+			Assert.AreEqual (2, nvc1.Count, "#A2-1");
+			values = nvc1.GetValues (0);
+			Assert.AreEqual ("one", nvc1.GetKey (0), "#A2-2");
+			Assert.AreEqual ("1", values [0], "#A2-3");
+			Assert.AreEqual ("one", values [1], "#A2-4");
+			values = nvc1.GetValues (1);
+			Assert.AreEqual ("two", nvc1.GetKey (1), "#A2-5");
+			Assert.IsTrue (values == null, "#A2-6");
+
+			Assert.AreEqual (3, nvc2.Log.Count, "#B1-1");
+			Assert.AreEqual ("Add (string, string)", nvc2.Log [0], "#B1-2");
+			Assert.AreEqual ("Add (string, string)", nvc2.Log [1], "#B1-3");
+			Assert.AreEqual ("Add (string, string)", nvc2.Log [2], "#B1-4");
+
+			Assert.AreEqual (2, nvc2.Count, "#B2-1");
+			values = nvc2.GetValues (0);
+			Assert.AreEqual ("one", nvc2.GetKey (0), "#B2-2");
+			Assert.AreEqual ("1", values [0], "#B2-3");
+			Assert.AreEqual ("one", values [1], "#B2-4");
+			values = nvc2.GetValues (1);
+			Assert.AreEqual ("two", nvc2.GetKey (1), "#B2-5");
+			Assert.IsTrue (values == null, "#B2-6");
+		}
+		
 		[Test]
 		public void Add_Multiples ()
 		{
@@ -403,5 +449,80 @@ namespace MonoTests.System.Collections.Specialized {
 			c2.Remove ("key");
 		}
 #endif
+		class MyNVC : NameValueCollection
+		{
+			List<string> log;
+
+			public List<string> Log {
+				get {
+					if (log == null)
+						log = new List<string> ();
+					return log;
+				}
+			}
+
+			public override KeysCollection Keys {
+				get {
+					Log.Add ("get_Keys");
+					return base.Keys;
+				}
+			}
+
+			public override int Count {
+				get {
+					Log.Add ("get_Count");
+					return base.Count;
+				}
+			}
+
+			public override string[] AllKeys {
+				get {
+					Log.Add ("get_AllKeys");
+					return base.AllKeys;
+				}
+			}
+			
+			public override string Get (int index)
+			{
+				Log.Add ("Get (int)");
+				return base.Get (index);
+			}
+
+			public override string Get (string name)
+			{
+				Log.Add ("Get (string)");
+				return base.Get (name);
+			}
+
+			public override string GetKey (int index)
+			{
+				Log.Add ("GetKey (int)");
+				return base.GetKey (index);
+			}
+
+			public override string[] GetValues (int index)
+			{
+				Log.Add ("GetValues (int)");
+				return base.GetValues (index);
+			}
+
+			public override string[] GetValues (string name)
+			{
+				Log.Add ("GetValues (string)");
+				return base.GetValues (name);
+			}
+
+			public override void Add (string name, string value)
+			{
+				Log.Add ("Add (string, string)");
+				base.Add (name, value);
+			}
+
+			public override void Set (string name, string value)
+			{
+				Log.Add ("Set (string, string)");
+				base.Set (name, value);
+			}
+		}
 	}
 }

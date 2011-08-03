@@ -1,4 +1,4 @@
-// cs0144-3.cs: Cannot create an instance of the abstract class or interface `ITest'
+// CS0144: Cannot create an instance of the abstract class or interface `ITest'
 // Line: 9
 // Compiler options: -r:CS0144-3-lib.dll
 

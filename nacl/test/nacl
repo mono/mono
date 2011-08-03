@@ -66,8 +66,8 @@ ${MONO_NORMAL_BASE}/bin/gmcs --version
 ${MONO} --version
 
 # add MONO_PATH so mono can crank on local directory
-export MONO_PATH=$(pwd)
-echo ${MONO_PATH}
+#export MONO_PATH=$(pwd)
+#echo ${MONO_PATH}
 
 #-----
 # enable the appropriate set of AOT options below.
@@ -76,10 +76,10 @@ readonly AOT_OPTIONS=full,static,nodebug,ntrampolines=4096
 #-----
 
 # make a temp copy of mscorlib.dll in this directory
-cp ${MONO_NORMAL_BASE}/lib/mono/2.0/mscorlib.dll .
+cp ${MONO_NORMAL_BASE}/lib/mono/4.0/mscorlib.dll .
 
 # compile c-sharp file with gmcs
-MONO_PATH=. ../normal-mono/bin/gmcs -lib:. -warn:0 hw.cs
+../normal-mono/bin/gmcs -lib:. -warn:0 hw.cs
 
 # convert .exe to .exe.o assembly files
 # convert mscorlib to a .dll.o file
@@ -107,7 +107,7 @@ if [ $MODE = "regression" ]; then
    cp $fsatests generics-variant-types.dll TestDriver.dll $DIR/fsa-tmp
   cd -
  
-  CLASS=${MONO_NORMAL_BASE}/lib/mono/2.0
+  CLASS=${MONO_NORMAL_BASE}/lib/mono/4.0
   cp $CLASS/System.Core.dll $CLASS/System.dll $CLASS/Mono.Posix.dll $CLASS/System.Configuration.dll $CLASS/System.Security.dll $CLASS/System.Xml.dll $CLASS/Mono.Security.dll $CLASS/Mono.Simd.dll fsa-tmp
   cp mscorlib.dll fsa-tmp
 

@@ -50,7 +50,25 @@ namespace IKVM.Reflection
 		public abstract ManifestResourceInfo GetManifestResourceInfo(string resourceName);
 		public abstract System.IO.Stream GetManifestResourceStream(string resourceName);
 
-		internal abstract Type GetTypeImpl(string typeName);
+		internal Type GetTypeImpl(string typeName)
+		{
+			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(typeName)));
+			if (type == null && __IsMissing)
+			{
+				throw new MissingAssemblyException((MissingAssembly)this);
+			}
+			return type;
+		}
+
+		internal abstract Type FindType(TypeName name);
+
+		// The differences between ResolveType and FindType are:
+		// - ResolveType is only used when a type is assumed to exist (because another module's metadata claims it)
+		// - ResolveType can return a MissingType
+		internal Type ResolveType(TypeName typeName)
+		{
+			return FindType(typeName) ?? universe.GetMissingTypeOrThrow(this.ManifestModule, null, typeName);
+		}
 
 		public Module[] GetModules()
 		{
@@ -108,7 +126,7 @@ namespace IKVM.Reflection
 					return null;
 				}
 			}
-			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this, throwOnError, typeName);
+			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this, throwOnError, typeName, false);
 		}
 
 		public virtual Module LoadModule(string moduleName, byte[] rawModule)
@@ -152,6 +170,16 @@ namespace IKVM.Reflection
 				}
 				return "file://" + path;
 			}
+		}
+
+		public virtual bool __IsMissing
+		{
+			get { return false; }
+		}
+
+		public virtual AssemblyNameFlags __AssemblyFlags
+		{
+			get { return GetName().Flags; }
 		}
 
 		internal abstract IList<CustomAttributeData> GetCustomAttributesData(Type attributeType);

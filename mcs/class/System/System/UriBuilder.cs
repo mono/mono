@@ -86,9 +86,9 @@ namespace System
 			Initialize (schemeName, hostName, -1, String.Empty, String.Empty);
 		}
 
-		public UriBuilder (string scheme, string hostName, int portNumber) 
+		public UriBuilder (string scheme, string host, int portNumber) 
 		{
-			Initialize (scheme, hostName, portNumber, String.Empty, String.Empty);
+			Initialize (scheme, host, portNumber, String.Empty, String.Empty);
 		}
 		
 		public UriBuilder (string scheme, string host, int port, string pathValue)
@@ -96,9 +96,9 @@ namespace System
 			Initialize (scheme, host, port, pathValue, String.Empty);
 		}
 
-		public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue)
+		public UriBuilder (string scheme, string host, int port, string path, string extraValue)
 		{
-			Initialize (scheme, host, port, pathValue, extraValue);
+			Initialize (scheme, host, port, path, extraValue);
 		}
 
 		private void Initialize (Uri uri)

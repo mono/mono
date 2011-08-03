@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -727,6 +726,10 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
+
+				// Event Handler must be stopped before disposing Items.
+				Events.Dispose();
+
 				CloseToolTip (null);
 				// ToolStripItem.Dispose modifes the collection,
 				// so we iterate it in reverse order
@@ -1786,4 +1789,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

@@ -1,7 +1,7 @@
-// cs0140.cs: The label `L1' is a duplicate
+// CS0140: The label `L1' is a duplicate
 // Line: 11 
 
-namespace cs0140Test
+namespace CS0140Test
 {
 	public class A
 	{

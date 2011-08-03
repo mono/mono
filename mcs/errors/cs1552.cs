@@ -1,4 +1,4 @@
-// cs1552.cs: Array type specifier, [], must appear before parameter name
+// CS1552: Array type specifier, [], must appear before parameter name
 // Line: 6
 
 class T {

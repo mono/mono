@@ -1,4 +1,4 @@
-// cs0019-7.cs: Operator `+' cannot be applied to operands of type `string' and `float*'
+// CS0019: Operator `+' cannot be applied to operands of type `string' and `float*'
 // Line: 12
 // Compiler options: -unsafe
 using System;

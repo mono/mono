@@ -1,4 +1,4 @@
-// cs1522.cs: Empty switch block
+// CS1522: Empty switch block
 // Line: 9
 // Compiler options: -warnaserror
 

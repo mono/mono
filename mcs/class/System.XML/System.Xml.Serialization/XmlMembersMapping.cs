@@ -84,12 +84,12 @@ namespace System.Xml.Serialization {
 
 		public string TypeName {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return null; } // when does it return non-null string?
 		}
 
 		public string TypeNamespace {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return null; } // when does it return non-null string?
 		}
 
 		internal bool HasWrapperElement {

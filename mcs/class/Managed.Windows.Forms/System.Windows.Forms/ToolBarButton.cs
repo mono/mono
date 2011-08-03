@@ -52,10 +52,8 @@ namespace System.Windows.Forms
 		private string text = "";
 		private string tooltip = "";
 		private bool visible = true;
-#if NET_2_0
 		private string image_key = string.Empty;
 		private string name;
-#endif
 		#endregion
 
 		#region constructors
@@ -80,10 +78,8 @@ namespace System.Windows.Forms
 				if (ImageIndex > -1 && ImageIndex < list.Images.Count)
 					return list.Images [ImageIndex];
 
-#if NET_2_0
 				if (!string.IsNullOrEmpty (image_key))
 					return list.Images [image_key];
-#endif
 
 				return null;
 			}
@@ -103,9 +99,8 @@ namespace System.Windows.Forms
 					menu = (ContextMenu) value;
 				else
 					throw new ArgumentException ("DropDownMenu must be of type ContextMenu.");
-#if NET_2_0
+
 				OnUIADropDownMenuChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -120,15 +115,11 @@ namespace System.Windows.Forms
 				enabled = value;
 				Invalidate ();
 				
-#if NET_2_0
 				OnUIAEnabledChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		[DefaultValue (-1)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
@@ -145,9 +136,7 @@ namespace System.Windows.Forms
 				bool layout = (Parent != null) && ((value == -1) || (image_index == -1));
 				
 				image_index = value;
-#if NET_2_0
 				image_key = string.Empty;
-#endif
 
 				if (layout)
 					Parent.Redraw (true);
@@ -156,7 +145,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -192,7 +180,6 @@ namespace System.Windows.Forms
 				name = value;
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		public ToolBar Parent {
@@ -247,9 +234,7 @@ namespace System.Windows.Forms
 				if (parent != null)
 					parent.Redraw (true);
 				
-#if NET_2_0
 				OnUIAStyleChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -274,9 +259,7 @@ namespace System.Windows.Forms
 
 				text = value;
 
-#if NET_2_0
 				OnUIATextChanged (EventArgs.Empty);
-#endif
 				
 				if (Parent != null)
 					Parent.Redraw (true);
@@ -328,7 +311,6 @@ namespace System.Windows.Forms
 				Parent.Invalidate (Rectangle);
 		}
 		
-#if NET_2_0
 		bool uiaHasFocus = false;
 		internal bool UIAHasFocus {
 			get { return uiaHasFocus; }
@@ -405,7 +387,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		
 		#endregion Internal Methods
 

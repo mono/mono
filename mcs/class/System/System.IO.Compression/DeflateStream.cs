@@ -416,7 +416,7 @@ namespace System.IO.Compression {
 			set { throw new NotSupportedException(); }
 		}
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 		const string LIBNAME = "__Internal";
 #else
 		const string LIBNAME = "MonoPosixHelper";

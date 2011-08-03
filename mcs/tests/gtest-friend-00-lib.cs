@@ -1,4 +1,4 @@
-// Compiler options: -keyfile:InternalsVisibleTest.snk -t:library
+// Compiler options: -keyfile:key.snk -t:library
 using System;
 using System.Runtime.CompilerServices;
 

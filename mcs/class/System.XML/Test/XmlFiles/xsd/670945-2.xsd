@@ -1,0 +1,17 @@
+    <xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="GetSystemDateAndTime">
+        <xs:complexType>
+          <xs:sequence/>
+
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetSystemDateAndTimeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SystemDateAndTime" type="tt:SystemDateTime" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+

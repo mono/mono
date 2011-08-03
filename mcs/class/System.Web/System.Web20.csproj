@@ -1091,6 +1091,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web\HttpModuleCollection.cs" />
+    <Compile Include="System.Web\HttpNotFoundHandler.cs" />
+    <Compile Include="System.Web\HttpNotImplementedHandler.cs" />
     <Compile Include="System.Web\HttpParseException.cs" />
     <Compile Include="System.Web\HttpPostedFile.cs" />
     <Compile Include="System.Web\HttpRequest.cs" />

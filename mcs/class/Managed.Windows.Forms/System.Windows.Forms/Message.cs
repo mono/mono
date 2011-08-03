@@ -76,7 +76,6 @@ namespace System.Windows.Forms {
 			return new_message;
 		}
 		
-#if NET_2_0
 		public static bool operator == (Message a, Message b)
 		{
 			return (a.hwnd == b.hwnd) && (a.lParam == b.lParam) && (a.msg == b.msg) && (a.result == b.result) && (a.wParam == b.wParam);
@@ -86,7 +85,6 @@ namespace System.Windows.Forms {
 		{
 			return !(a == b);
 		}
-#endif
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods

@@ -38,7 +38,7 @@
 #include <llvm/CodeGen/MachineFunctionPass.h>
 #include <llvm/CodeGen/MachineFunction.h>
 #include <llvm/CodeGen/MachineFrameInfo.h>
-#include <llvm/Support/StandardPasses.h>
+#include <llvm/Support/PassManagerBuilder.h>
 //#include <llvm/LinkAllPasses.h>
 
 #include "llvm-c/Core.h"
@@ -76,14 +76,6 @@ public:
 		return mm->getGOTBase ();
     }
 
-#if LLVM_MAJOR_VERSION == 2 && LLVM_MINOR_VERSION < 7
-    void *getDlsymTable() const {
-		return mm->getDlsymTable ();
-    }
-
-	void SetDlsymTable(void *ptr);
-#endif
-
 	void setPoisonMemory(bool) {
 	}
 
@@ -109,20 +101,15 @@ public:
 						   unsigned char *TableEnd, 
 						   unsigned char* FrameRegister);
 
-#if LLVM_MAJOR_VERSION == 2 && LLVM_MINOR_VERSION >= 7
 	virtual void deallocateFunctionBody(void*) {
 	}
 
 	virtual void deallocateExceptionTable(void*) {
 	}
-#endif
 };
 
 MonoJITMemoryManager::MonoJITMemoryManager ()
 {
-#if LLVM_MAJOR_VERSION == 2 && LLVM_MINOR_VERSION <= 7
-	SizeRequired = true;
-#endif
 	mm = JITMemoryManager::CreateDefaultMemManager ();
 }
 
@@ -146,14 +133,6 @@ MonoJITMemoryManager::AllocateGOT()
 {
 	mm->AllocateGOT ();
 }
-
-#if LLVM_MAJOR_VERSION == 2 && LLVM_MINOR_VERSION < 7  
-void
-MonoJITMemoryManager::SetDlsymTable(void *ptr)
-{
-	mm->SetDlsymTable (ptr);
-}
-#endif
 
 unsigned char *
 MonoJITMemoryManager::startFunctionBody(const Function *F, 
@@ -303,6 +282,18 @@ mono_llvm_build_store (LLVMBuilderRef builder, LLVMValueRef Val, LLVMValueRef Po
 	return wrap(unwrap(builder)->CreateStore(unwrap(Val), unwrap(PointerVal), is_volatile));
 }
 
+LLVMValueRef 
+mono_llvm_build_aligned_store (LLVMBuilderRef builder, LLVMValueRef Val, LLVMValueRef PointerVal,
+							   gboolean is_volatile, int alignment)
+{
+	StoreInst *ins;
+
+	ins = unwrap(builder)->CreateStore(unwrap(Val), unwrap(PointerVal), is_volatile);
+	ins->setAlignment (alignment);
+
+	return wrap (ins);
+}
+
 void
 mono_llvm_replace_uses_of (LLVMValueRef var, LLVMValueRef v)
 {
@@ -371,7 +362,6 @@ force_pass_linking (void)
       (void) llvm::createLCSSAPass();
       (void) llvm::createLICMPass();
       (void) llvm::createLazyValueInfoPass();
-      (void) llvm::createLiveValuesPass();
       (void) llvm::createLoopDependenceAnalysisPass();
 	  /*
       (void) llvm::createLoopExtractorPass();
@@ -406,7 +396,6 @@ force_pass_linking (void)
       (void) llvm::createSCCPPass();
       (void) llvm::createScalarReplAggregatesPass();
       (void) llvm::createSimplifyLibCallsPass();
-      (void) llvm::createSimplifyHalfPowrLibCallsPass();
 	  /*
       (void) llvm::createSingleLoopExtractorPass();
       (void) llvm::createStripSymbolsPass();
@@ -456,11 +445,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   mono_mm = new MonoJITMemoryManager ();
   mono_mm->alloc_cb = alloc_cb;
 
-#if LLVM_MAJOR_VERSION == 2 && LLVM_MINOR_VERSION < 8
-   DwarfExceptionHandling = true;
-#else
-   JITExceptionHandling = true;
-#endif
+  JITExceptionHandling = true;
   // PrettyStackTrace installs signal handlers which trip up libgc
   DisablePrettyStackTrace = true;
 
@@ -477,7 +462,6 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 
   fpm->add(new TargetData(*EE->getTargetData()));
 
-#if LLVM_CHECK_VERSION(2, 9)
   PassRegistry &Registry = *PassRegistry::getPassRegistry();
   initializeCore(Registry);
   initializeScalarOpts(Registry);
@@ -488,7 +472,6 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   initializeInstCombine(Registry);
   //initializeInstrumentation(Registry);
   initializeTarget(Registry);
-#endif
 
   llvm::cl::ParseEnvironmentOptions("mono", "MONO_LLVM", "", false);
 
@@ -505,7 +488,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 	  }
   } else {
 	  /* Use the same passes used by 'opt' by default, without the ipo passes */
-	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -basiccg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loopsimplify -domfrontier -loopsimplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loopsimplify -lcssa -iv-users -indvars -loop-deletion -loopsimplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg -preverify -domtree -verify";
+	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -basiccg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg -preverify -domtree -verify";
 	  char **args;
 	  int i;
 

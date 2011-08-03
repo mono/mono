@@ -26,7 +26,6 @@ namespace System.Windows.Forms.Theming
 {
 	class ThemeElementsVisualStyles : ThemeElementsDefault
 	{
-#if NET_2_0
 		public override Default.CheckBoxPainter CheckBoxPainter {
 			get {
 				if (checkBoxPainter == null)
@@ -48,7 +47,6 @@ namespace System.Windows.Forms.Theming
 				return toolStripPainter;
 			}
 		}
-#endif
 		public override Default.TabControlPainter TabControlPainter {
 			get {
 				if (tabControlPainter == null)

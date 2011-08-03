@@ -1,4 +1,4 @@
-// cs0190.cs: The __arglist construct is valid only within a variable argument method
+// CS0190: The __arglist construct is valid only within a variable argument method
 // Line: 8
 
 public class Test

@@ -124,11 +124,14 @@ namespace System.Web.Compilation
 						firstError = err;
 						break;
 					};
-					
-					errmsg = firstError.ToString ();
-					int idx = errmsg.IndexOf (" : error ");
-					if (idx > -1)
-						errmsg = errmsg.Substring (idx + 9);
+
+					if (firstError != null) {
+						errmsg = firstError.ToString ();
+						int idx = errmsg.IndexOf (" : error ");
+						if (idx > -1)
+							errmsg = errmsg.Substring (idx + 9);
+					} else
+						errmsg = String.Empty;
 				}
 
 				return errmsg;

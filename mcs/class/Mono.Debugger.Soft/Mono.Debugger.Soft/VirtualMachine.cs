@@ -74,6 +74,11 @@ namespace Mono.Debugger.Soft
 		EventSet current_es;
 		int current_es_index;
 
+		/*
+		 * It is impossible to determine when to resume when using this method, since
+		 * the debuggee is suspended only once per event-set, not event.
+		 */
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public Event GetNextEvent () {
 			lock (queue_monitor) {
 				if (current_es == null || current_es_index == current_es.Events.Length) {
@@ -102,6 +107,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public T GetNextEvent<T> () where T : Event {
 			return GetNextEvent () as T;
 		}
@@ -152,6 +158,16 @@ namespace Mono.Debugger.Soft
 
 		public EnumMirror CreateEnumMirror (TypeMirror type, PrimitiveValue value) {
 			return new EnumMirror (this, type, value);
+		}
+
+		//
+		// Enable send and receive timeouts on the connection and send a keepalive event
+		// every 'keepalive_interval' milliseconds.
+		//
+
+		public void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
+		{
+			conn.SetSocketTimeouts (send_timeout, receive_timeout, keepalive_interval);
 		}
 
 		//
@@ -211,7 +227,11 @@ namespace Mono.Debugger.Soft
 		public void ClearAllBreakpoints () {
 			conn.ClearAllBreakpoints ();
 		}
-
+		
+		public void Disconnect () {
+			conn.Close ();
+		}
+		
 		internal void queue_event_set (EventSet es) {
 			lock (queue_monitor) {
 				queue.Enqueue (es);
@@ -577,6 +597,12 @@ namespace Mono.Debugger.Soft
 					break;
 				case EventType.AppDomainUnload:
 					l.Add (new AppDomainUnloadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.UserBreak:
+					l.Add (new UserBreakEvent (vm, req_id, thread_id));
+					break;
+				case EventType.UserLog:
+					l.Add (new UserLogEvent (vm, req_id, thread_id, ei.Level, ei.Category, ei.Message));
 					break;
 				default:
 					break;

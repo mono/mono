@@ -32,10 +32,7 @@ namespace System.Windows.Forms {
 
 	[Serializable]
 	[TypeConverter(typeof(PaddingConverter))]
-#if NET_2_0
-	public
-#endif
-	struct Padding {
+	public struct Padding {
 
 		//NOTE: "_var" field name is required by serialization.
 		private int _bottom;

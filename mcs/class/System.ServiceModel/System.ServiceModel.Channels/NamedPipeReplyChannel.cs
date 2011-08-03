@@ -32,6 +32,7 @@ using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel;
+using System.ServiceModel.Channels.NetTcp;
 using System.Text;
 using System.Threading;
 
@@ -128,7 +129,7 @@ namespace System.ServiceModel.Channels
 			DateTime start = DateTime.Now;
 
 			// FIXME: use timeout
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, server, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, server, true) { Encoder = this.Encoder };
 			frame.ProcessPreambleRecipient ();
 			frame.ProcessPreambleAckRecipient ();
 		}

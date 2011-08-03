@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 
@@ -33,7 +33,7 @@ namespace System.Threading.Tasks
 
 	internal class SimpleConcurrentBag<T>
 	{
-		readonly IDequeOperations<T>[] deques;
+		readonly IConcurrentDeque<T>[] deques;
 		readonly bool unique;
 		int index = -1;
 		

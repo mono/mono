@@ -18,6 +18,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if !MONOTOUCH
 using System;
 using System.IO;
 using System.Collections;
@@ -145,3 +146,4 @@ namespace Mono.CodeGeneration
 		}
 	}
 }
+#endif

@@ -1,4 +1,4 @@
-// gcs1058.cs: A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'
+// CS1058: A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'
 // Line: 15
 // Compiler options: -warnaserror -warn:4
 

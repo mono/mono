@@ -1,4 +1,4 @@
-// cs0647-9.cs: Error during emitting `System.Security.Permissions.PrincipalPermissionAttribute' attribute. The reason is `SecurityAction is out of range'
+// CS0647: Error during emitting `System.Security.Permissions.PrincipalPermissionAttribute' attribute. The reason is `SecurityAction is out of range'
 // Line : 10
 
 using System;

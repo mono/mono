@@ -111,7 +111,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				Assert.AreEqual (false, project.IsDirty, "A4");
 				Assert.AreEqual (false, project.IsValidated, "A5");
 				Assert.AreEqual (engine, project.ParentEngine, "A6");
-				Console.WriteLine ("time: {0} p.t: {1}", time, project.TimeOfLastDirty);
+				//Console.WriteLine ("time: {0} p.t: {1}", time, project.TimeOfLastDirty);
 				Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
 				Assert.IsTrue (String.Empty != project.Xml, "A8");
 				return;
@@ -1487,7 +1487,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail ("A1: Build failed");
 			}
-			logger.DumpMessages ();
 			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
 			Assert.AreEqual (3, include.Count, "A2");
 		}
@@ -1831,6 +1830,97 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
+		[Test]
+		public void TestMSBuildThisProperties ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string base_dir = Path.GetFullPath (Path.Combine ("Test", "resources")) + Path.DirectorySeparatorChar;
+			string tmp_dir = Path.GetFullPath (Path.Combine (base_dir, "tmp")) + Path.DirectorySeparatorChar;
+
+			string first_project = Path.Combine (base_dir, "first.proj");
+			string second_project = Path.Combine (tmp_dir, "second.proj");
+			string third_project = Path.Combine (tmp_dir, "third.proj");
+
+			string first = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
+				<PropertyGroup>
+					<FooInMain>$(MSBuildThisFileDirectory)</FooInMain>
+				</PropertyGroup>
+				<ItemGroup>
+					<ItemInMain Include=""$(MSBuildThisFileFullPath)"" />
+				</ItemGroup>
+				<Import Project=""tmp\second.proj""/>
+			</Project>";
+
+			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
+				<PropertyGroup>
+					<FooInImport1>$(MSBuildThisFileDirectory)</FooInImport1>
+				</PropertyGroup>
+				<PropertyGroup>
+					<FooInImport2>$(MSBuildThisFileDirectory)</FooInImport2>
+				</PropertyGroup>
+				<ItemGroup>
+					<ItemInImport1 Include=""$(MSBuildThisFileFullPath)"" />
+				</ItemGroup>
+
+				<Import Project=""third.proj""/>
+			</Project>";
+
+			string third = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
+				<PropertyGroup>
+					<FooInTwo>$(MSBuildThisFileFullPath)</FooInTwo>
+				</PropertyGroup>
+				<ItemGroup>
+					<ItemInTwo Include=""$(MSBuildThisFileFullPath)"" />
+				</ItemGroup>
+
+				<Target Name=""TargetInTwo"">
+					<Message Text=""FooInMain: $(FooInMain)""/>
+					<Message Text=""FooInImport1: $(FooInImport1)""/>
+					<Message Text=""FooInImport2: $(FooInImport2)""/>
+					<Message Text=""FooInTwo: $(FooInTwo)""/>
+
+					<Message Text=""ItemInMain: %(ItemInMain.Identity)""/>
+					<Message Text=""ItemInImport1: %(ItemInImport1.Identity)""/>
+					<Message Text=""ItemInTwo: %(ItemInTwo.Identity)""/>
+					<Message Text=""Full path: $(MSBuildThisFileFullPath)""/>
+				</Target>
+			</Project>";
+
+			File.WriteAllText (first_project, first);
+
+			Directory.CreateDirectory (Path.Combine (base_dir, "tmp"));
+			File.WriteAllText (second_project, second);
+			File.WriteAllText (third_project, third);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.Load (first_project);
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("FooInMain: " + base_dir, "A1");
+				logger.CheckLoggedMessageHead ("FooInImport1: " + tmp_dir, "A2");
+				logger.CheckLoggedMessageHead ("FooInImport2: " + tmp_dir, "A3");
+				logger.CheckLoggedMessageHead ("FooInTwo: " + third_project, "A4");
+				logger.CheckLoggedMessageHead ("ItemInMain: " + first_project, "A5");
+				logger.CheckLoggedMessageHead ("ItemInImport1: " + second_project, "A6");
+				logger.CheckLoggedMessageHead ("ItemInTwo: " + third_project, "A7");
+				logger.CheckLoggedMessageHead ("Full path: " + third_project, "A8");
+
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			} finally {
+				File.Delete (first_project);
+				File.Delete (second_project);
+				File.Delete (third_project);
+			}
+		}
 
 		[Test]
 		public void TestRequiredTask_String1 ()
@@ -2013,7 +2103,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail ("A1: Build failed");
 			}
-			logger.DumpMessages ();
 
 			logger.CheckLoggedMessageHead ("Full item: foo;FOO;hmm;bar", "#A2");
 			logger.CheckLoggedMessageHead ("metadata1 :md1 metadata2: md2", "#A3");
@@ -2174,7 +2263,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					logger.CheckLoggedMessageHead (expected_output_msg, "A");
 					Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected messages found");
 				}
-			} finally {
+			} catch {
 				logger.DumpMessages ();
 			}
 			return project;

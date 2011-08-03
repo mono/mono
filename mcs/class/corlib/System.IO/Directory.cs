@@ -93,7 +93,7 @@ namespace System.IO
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
-#if !MOONLIGHT
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, path).Demand ();
 			}
@@ -243,7 +243,7 @@ namespace System.IO
 			string result = MonoIO.GetCurrentDirectory (out error);
 			if (error != MonoIOError.ERROR_SUCCESS)
 				throw MonoIO.GetException (error);
-#if !MOONLIGHT
+#if !NET_2_1
 			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
 			}
@@ -461,11 +461,9 @@ namespace System.IO
 			MonoIOError error;
 			if (!MonoIO.ExistsDirectory (wildpath, out error)) {
 				if (error == MonoIOError.ERROR_SUCCESS) {
-					MonoIOError file_error;
-					if (MonoIO.ExistsFile (wildpath, out file_error)) {
-						stop = true;
-						return wildpath;
-					}
+				 	MonoIOError file_error;
+				 	if (MonoIO.ExistsFile (wildpath, out file_error))
+						throw new IOException ("The directory name is invalid.");
 				}
 
 				if (error != MonoIOError.ERROR_PATH_NOT_FOUND)
@@ -503,7 +501,7 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:

@@ -1,4 +1,4 @@
-// cs0441-2.cs : `Foo': a class cannot be both static and sealed
+// CS0441: `Foo': a class cannot be both static and sealed
 // Line: 3
 public sealed partial class Foo
 {

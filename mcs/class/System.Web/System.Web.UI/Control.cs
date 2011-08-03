@@ -1092,7 +1092,7 @@ namespace System.Web.UI
 				namingContainer = NamingContainer;
 				if (namingContainer == null)
 					return null;
-				
+
 				return namingContainer.FindControl (id, pathOffset);
 			}
 
@@ -1101,16 +1101,22 @@ namespace System.Web.UI
 			
 			int separatorIdx = id.IndexOf (IdSeparator, pathOffset);
 			if (separatorIdx == -1) {
+				// If there are no separators in the id, we must first check whether
+				// any direct descendant control with that id exists before
+				// attempting to look in our naming container
+				Control ctl = LookForControlByName (pathOffset > 0 ? id.Substring (pathOffset) : id);
+				if (ctl != null)
+					return ctl;
+				
 				if (pathOffset == 0) {
 					namingContainer = NamingContainer;
 					if (namingContainer != null) {
-						Control ctl = namingContainer.FindControl (id);
+						ctl = namingContainer.FindControl (id);
 						if (ctl != null)
 							return ctl;
 					}
 				}
-
-				return LookForControlByName (pathOffset > 0 ? id.Substring (pathOffset) : id);
+				return null;
 			}
 
 			string idfound = id.Substring (pathOffset, separatorIdx - pathOffset);

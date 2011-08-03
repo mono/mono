@@ -69,6 +69,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 			set { task_finished = value; }
 		}
 
+		public int WarningsCount { get; set; }
+		public int ErrorsCount { get; set; }
+
 		public int Count
 		{
 			get { return messages.Count; }
@@ -81,14 +84,19 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void Initialize (IEventSource eventSource)
 		{
 			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
+
 			eventSource.ErrorRaised += new BuildErrorEventHandler (AllMessagesHandler);
+			eventSource.ErrorRaised += (e,o) => ErrorsCount ++;
+
 			eventSource.WarningRaised += new BuildWarningEventHandler(AllMessagesHandler);
+			eventSource.WarningRaised += (e,o) => WarningsCount ++;
+
 			eventSource.TargetStarted += delegate { target_started++; };
 			eventSource.TargetFinished += delegate { target_finished++; };
 			eventSource.TaskStarted += delegate { task_started++; };
 			eventSource.TaskFinished += delegate { task_finished++; };
-			eventSource.ProjectStarted += delegate(object sender, ProjectStartedEventArgs args) { project_started++; Console.WriteLine ("Project started: {0}", args.ProjectFile); };
-			eventSource.ProjectFinished += delegate (object sender, ProjectFinishedEventArgs args) { project_finished++; Console.WriteLine ("Project finished: {0}", args.ProjectFile); };
+			eventSource.ProjectStarted += delegate(object sender, ProjectStartedEventArgs args) { project_started++; };
+			eventSource.ProjectFinished += delegate (object sender, ProjectFinishedEventArgs args) { project_finished++; };
 			eventSource.BuildStarted += delegate { build_started ++; };
 			eventSource.BuildFinished += delegate { build_finished++; };
 		}

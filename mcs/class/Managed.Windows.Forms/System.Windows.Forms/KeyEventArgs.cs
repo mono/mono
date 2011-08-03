@@ -34,10 +34,7 @@ namespace System.Windows.Forms {
 	public class KeyEventArgs : EventArgs {
 		private Keys	key_data;
 		private bool	event_handled;
-
-#if NET_2_0
 		private bool	supress_key_press;
-#endif
 
 		#region Public Constructors
 		public KeyEventArgs(Keys keyData) {
@@ -111,7 +108,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		public bool SuppressKeyPress {
 			get {
 				return supress_key_press;
@@ -121,7 +117,6 @@ namespace System.Windows.Forms {
 				event_handled = value;
 			}
 		}
-#endif
 		#endregion	// Public Instance Properties
 	}
 }

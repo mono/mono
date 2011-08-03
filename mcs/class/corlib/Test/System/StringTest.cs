@@ -200,6 +200,7 @@ public class StringTest
 	}
 
 	[Test] // ctor (SByte*)
+	[Category ("NotDotNet")] // this crashes nunit 2.4 and 2.6
 	public unsafe void Constructor3_Value_Invalid ()
 	{
 		try {

@@ -69,13 +69,10 @@ namespace System.Windows.Forms
 		private bool showHelp;
 		private string title;
 		private bool validateNames = true;
-#if NET_2_0
 		private bool auto_upgrade_enable = true;
 		private FileDialogCustomPlacesCollection custom_places;
 		private bool supportMultiDottedExtensions;
 		private bool checkForIllegalChars = true;
-#endif
-		
 		private Button cancelButton;
 		private ToolBarButton upToolBarButton;
 		private PopupButtonPanel popupButtonPanel;
@@ -372,12 +369,8 @@ namespace System.Windows.Forms
 			popupButtonPanel.DirectoryChanged += new EventHandler (OnDirectoryChangedPopupButtonPanel);
 
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
-#if NET_2_0
 			form.FormClosed += new FormClosedEventHandler (OnFileDialogFormClosed);
 			custom_places = new FileDialogCustomPlacesCollection ();
-#else
-			form.Closed += new EventHandler (OnFileDialogFormClosed);
-#endif
 		}
 		
 		[DefaultValue(true)]
@@ -391,14 +384,12 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[MonoTODO ("Stub, value not respected")]
 		[DefaultValue (true)]
 		public bool AutoUpgradeEnabled {
 			get { return auto_upgrade_enable; }
 			set { auto_upgrade_enable = value; }
 		}
-#endif
 
 		[DefaultValue(false)]
 		public virtual bool CheckFileExists {
@@ -422,14 +413,12 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[MonoTODO ("Stub, collection not used")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public FileDialogCustomPlacesCollection CustomPlaces {
 			get { return custom_places; }
 		}
-#endif
 
 		[DefaultValue("")]
 		public string DefaultExt {
@@ -472,12 +461,10 @@ namespace System.Windows.Forms
 				if (fileNames [0].Length == 0)
 					return string.Empty;
 
-#if NET_2_0
 				// skip check for illegal characters if the filename was set
 				// through FileDialog API
 				if (!checkForIllegalChars)
 					return fileNames [0];
-#endif
 
 				// ensure filename contains only valid characters
 				Path.GetFullPath (fileNames [0]);
@@ -493,11 +480,9 @@ namespace System.Windows.Forms
 					fileNames = new string [0];
 				}
 
-#if NET_2_0
 				// skip check for illegal characters if the filename was set
 				// through FileDialog API
 				checkForIllegalChars = false;
-#endif
 			}
 		}
 		
@@ -512,12 +497,10 @@ namespace System.Windows.Forms
 				string[] new_filenames = new string [fileNames.Length];
 				fileNames.CopyTo (new_filenames, 0);
 
-#if NET_2_0
 				// skip check for illegal characters if the filename was set
 				// through FileDialog API
 				if (!checkForIllegalChars)
 					return new_filenames;
-#endif
 
 				foreach (string fileName in new_filenames) {
 					// ensure filename contains only valid characters
@@ -603,7 +586,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[DefaultValue(false)]
 		public bool SupportMultiDottedExtensions {
 			get {
@@ -614,7 +596,6 @@ namespace System.Windows.Forms
 				supportMultiDottedExtensions = value;
 			}
 		}
-#endif
 
 		[DefaultValue("")]
 		[Localizable(true)]
@@ -663,9 +644,7 @@ namespace System.Windows.Forms
 			FilterIndex = 1;
 			InitialDirectory = null;
 			restoreDirectory = false;
-#if NET_2_0
 			SupportMultiDottedExtensions = false;
-#endif
 			ShowHelp = false;
 			Title = null;
 			validateNames = true;
@@ -853,11 +832,9 @@ namespace System.Windows.Forms
 		
 		void OnClickOpenSaveButton (object sender, EventArgs e)
 		{
-#if NET_2_0
 			// for filenames typed or selected by user, enable check for 
 			// illegal characters in filename(s)
 			checkForIllegalChars = true;
-#endif
 
 			if (fileDialogType == FileDialogType.OpenFileDialog) {
 				ListView.SelectedListViewItemCollection sl = mwfFileView.SelectedItems;
@@ -1082,18 +1059,14 @@ namespace System.Windows.Forms
 				if (extension.IndexOf ('*') != -1)
 					continue;
 
-#if NET_2_0
 				if (!supportMultiDottedExtensions) {
-#endif
 					int lastdot = extension.LastIndexOf('.');
 					if (lastdot > 0) {
 						if (extension.LastIndexOf('.', lastdot - 1) != -1) {
 							extension = extension.Remove(0, lastdot);
 						}
 					}
-#if NET_2_0
 				}
-#endif
 
 				if (!checkFileExists) {
 					filter_extension = extension;
@@ -1203,17 +1176,10 @@ namespace System.Windows.Forms
 			ReadOnlyChecked = readonlyCheckBox.Checked;
 		}
 
-#if NET_2_0		
 		void OnFileDialogFormClosed (object sender, FormClosedEventArgs e)
 		{
 			HandleFormClosedEvent (sender);
 		}
-#else
-		void OnFileDialogFormClosed (object sender, EventArgs e)
-		{
-			HandleFormClosedEvent (sender);
-		}
-#endif
 
 		private void OnColumnClickFileView (object sender, ColumnClickEventArgs e)
 		{
@@ -1485,14 +1451,14 @@ namespace System.Windows.Forms
 					return popupButtonState;
 				}
 			}
-#if NET_2_0
+
 			#region UIA Framework Members
 			internal void PerformClick ()
 			{
 				OnClick (EventArgs.Empty);
 			}
 			#endregion
-#endif
+
 			protected override void OnPaint (PaintEventArgs pe)
 			{
 				Draw (pe);
@@ -1676,7 +1642,6 @@ namespace System.Windows.Forms
 				eh (this, EventArgs.Empty);
 		}
 		
-#if NET_2_0
 		static object UIAFocusedItemChangedEvent = new object ();
 
 		internal event EventHandler UIAFocusedItemChanged {
@@ -1696,7 +1661,6 @@ namespace System.Windows.Forms
 				return focusButton;
 			}
 		}
-#endif
 
 		public string CurrentFolder {
 			set {
@@ -1833,9 +1797,7 @@ namespace System.Windows.Forms
 			return;
 
 			focusButton = button;
-#if NET_2_0
 				OnUIAFocusedItemChanged ();
-#endif
 		}
 	}
 	#endregion
@@ -1894,14 +1856,12 @@ namespace System.Windows.Forms
 					return imageList;
 				}
 			}
-#if NET_2_0
 			#region UIA Framework Members
 			public override string ToString ()
 			{
 				return name;
 			}
 			#endregion
-#endif
 		}
 		#endregion
 		
@@ -2791,7 +2751,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		#region UIA Framework Members
 		internal void PerformClick ()
 		{
@@ -2803,7 +2762,7 @@ namespace System.Windows.Forms
 			OnDoubleClick (EventArgs.Empty);
 		}
 		#endregion
-#endif
+
 		protected override void OnClick (EventArgs e)
 		{
 			if (!MultiSelect) {
@@ -2947,11 +2906,7 @@ namespace System.Windows.Forms
 					View = View.SmallIcon;
 					break;
 				case 1:
-#if NET_2_0
 					View = View.Tile;
-#else
-					View = View.LargeIcon;
-#endif
 					break;
 				case 2:
 					View = View.LargeIcon;

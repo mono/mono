@@ -27,7 +27,7 @@ using IKVM.Reflection.Metadata;
 
 namespace IKVM.Reflection
 {
-	public class ManifestResourceInfo
+	public sealed class ManifestResourceInfo
 	{
 		private readonly ModuleReader module;
 		private readonly int index;
@@ -36,6 +36,11 @@ namespace IKVM.Reflection
 		{
 			this.module = module;
 			this.index = index;
+		}
+
+		public ResourceAttributes __ResourceAttributes
+		{
+			get { return (ResourceAttributes)module.ManifestResource.records[index].Flags; }
 		}
 
 		public ResourceLocation ResourceLocation

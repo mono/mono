@@ -30,22 +30,51 @@ namespace System.Xaml
 {
 	public class XamlNodeQueue
 	{
+		Queue<XamlNodeLineInfo> queue = new Queue<XamlNodeLineInfo> ();
+		XamlSchemaContext ctx;
+		XamlReader reader;
+		XamlWriter writer;
+
 		public XamlNodeQueue (XamlSchemaContext schemaContext)
 		{
-			throw new NotImplementedException ();
+			if (schemaContext == null)
+				throw new ArgumentNullException ("schemaContext");
+			this.ctx = schemaContext;
+			reader = new XamlNodeQueueReader (this);
+			writer = new XamlNodeQueueWriter (this);
+		}
+		
+		internal IXamlLineInfo LineInfoProvider { get; set; }
+
+		internal XamlSchemaContext SchemaContext {
+			get { return ctx; }
 		}
 
 		public int Count {
-			get {throw new NotImplementedException (); }
+			get { return queue.Count; }
 		}
+
 		public bool IsEmpty {
-			get {throw new NotImplementedException (); }
+			get { return queue.Count == 0; }
 		}
+
 		public XamlReader Reader {
-			get {throw new NotImplementedException (); }
+			get { return reader; }
 		}
+
 		public XamlWriter Writer {
-			get {throw new NotImplementedException (); }
+			get { return writer; }
+		}
+
+		internal XamlNodeLineInfo Dequeue ()
+		{
+			return queue.Dequeue ();
+		}
+
+		internal void Enqueue (XamlNodeInfo info)
+		{
+			var nli = (LineInfoProvider != null && LineInfoProvider.HasLineInfo) ? new XamlNodeLineInfo (info, LineInfoProvider.LineNumber, LineInfoProvider.LinePosition) : new XamlNodeLineInfo (info, 0, 0);
+			queue.Enqueue (nli);
 		}
 	}
 }

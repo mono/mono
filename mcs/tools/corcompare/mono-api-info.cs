@@ -130,8 +130,12 @@ namespace CorCompare
 		AssemblyDefinition LoadAssembly (string assembly)
 		{
 			try {
+				if (File.Exists (assembly))
+					return TypeHelper.Resolver.ResolveFile (assembly);
+
 				return TypeHelper.Resolver.Resolve (assembly);
-			} catch {
+			} catch (Exception e) {
+				Console.WriteLine (e);
 				return null;
 			}
 		}

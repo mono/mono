@@ -70,7 +70,7 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         // Implementation for abstract members
-        protected override string MarkupName
+        protected internal override string MarkupName
         {
             get { return (""); }
         }

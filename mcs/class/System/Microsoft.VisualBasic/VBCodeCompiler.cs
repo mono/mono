@@ -49,9 +49,7 @@ namespace Microsoft.VisualBasic
 	internal class VBCodeCompiler : VBCodeGenerator, ICodeCompiler
 	{
 		static string windowsMonoPath;
-#if NET_2_0
 		static string windowsvbncPath;
-#endif
 
 		static VBCodeCompiler ()
 		{
@@ -69,10 +67,8 @@ namespace Microsoft.VisualBasic
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (p)),
 						"bin\\mono.exe");
-#if NET_2_0
 				windowsvbncPath =
 					Path.Combine (p, "2.0\\vbnc.exe");
-#endif
 			}
 		}
 
@@ -130,7 +126,6 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-#if NET_2_0
 		static string BuildArgs (CompilerParameters options, string[] fileNames)
 		{
 			StringBuilder args = new StringBuilder ();
@@ -221,7 +216,6 @@ namespace Microsoft.VisualBasic
 		{
 			return temp_files.AddExtension (extension, keepFile);
 		}
-#endif
 
 		private static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
 		{
@@ -231,12 +225,6 @@ namespace Microsoft.VisualBasic
 		private CompilerResults CompileFromFileBatch (CompilerParameters options, string[] fileNames)
 		{
 			
-#if !NET_2_0
-			throw new NotSupportedException (
-@"Compilation of Visual Basic code is not supported for v1.0/v1.1 assemblies, please use the v2.0 assemblies.
-- If this is a web application, use xsp2/mod_mono_server2 instead of xsp/mono_mono_server (see http://www.mono-project.com/Mod_mono#ASP.NET_2_apps_do_not_work).
-- If this is a desktop application, use gmcs to compile your application instead of mcs.");	                                 
-#else
 			if (options == null) {
 				throw new ArgumentNullException ("options");
 			}
@@ -319,7 +307,6 @@ namespace Microsoft.VisualBasic
 			}
 
 			return results;
-#endif
 		}
 
 		private CompilerResults CompileFromDomBatch (CompilerParameters options, CodeCompileUnit[] ea)

@@ -609,7 +609,7 @@ namespace System.IO
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
-#if MOONLIGHT || NET_4_0
+#if MOONLIGHT || NET_4_0 || MOBILE
 		public static IEnumerable<string> ReadLines (string path)
 		{
 			return ReadLines (File.OpenText (path));
@@ -640,7 +640,7 @@ namespace System.IO
 
 			using (TextWriter w = new StreamWriter (path, true)) {
 				foreach (var line in contents)
-					w.Write (line);
+					w.WriteLine (line);
 			}
 		}
 
@@ -653,7 +653,7 @@ namespace System.IO
 
 			using (TextWriter w = new StreamWriter (path, true, encoding)) {
 				foreach (var line in contents)
-					w.Write (line);
+					w.WriteLine (line);
 			}
 		}
 
@@ -666,7 +666,7 @@ namespace System.IO
 
 			using (TextWriter w = new StreamWriter (path, false)) {
 				foreach (var line in contents)
-					w.Write (line);
+					w.WriteLine (line);
 			}
 		}
 
@@ -679,7 +679,7 @@ namespace System.IO
 
 			using (TextWriter w = new StreamWriter (path, false, encoding)) {
 				foreach (var line in contents)
-					w.Write (line);
+					w.WriteLine (line);
 			}
 		}
 #endif

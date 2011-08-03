@@ -1,4 +1,4 @@
-// cs0579-10.cs: The attribute `SimpleAttribute' cannot be applied multiple times
+// CS0579: The attribute `SimpleAttribute' cannot be applied multiple times
 // Line : 18
 
 using System;

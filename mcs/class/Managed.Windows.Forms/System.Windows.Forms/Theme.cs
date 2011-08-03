@@ -196,11 +196,7 @@ namespace System.Windows.Forms
 
 		protected Theme ()
 		{
-#if NET_2_0
 			default_font = SystemFonts.DefaultFont;
-#else
-			default_font = new Font (FontFamily.GenericSansSerif, 8.25f);
-#endif
 			syscolors = null;
 		}
 
@@ -706,9 +702,7 @@ namespace System.Windows.Forms
 		#endregion	// OwnerDraw Support
 
 		#region Button
-#if NET_2_0
 		public abstract Size CalculateButtonAutoSize (Button button);
-#endif
 		public abstract void CalculateButtonTextAndImageLayout (ButtonBase b, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		public abstract void DrawFlatButton (Graphics g, ButtonBase b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
@@ -724,11 +718,9 @@ namespace System.Windows.Forms
 		#endregion	// ButtonBase
 
 		#region CheckBox
-#if NET_2_0
 		public abstract Size CalculateCheckBoxAutoSize (CheckBox checkBox);
 		public abstract void CalculateCheckBoxTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawCheckBox (Graphics g, CheckBox cb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
-#endif
 		public abstract void DrawCheckBox (Graphics dc, Rectangle clip_area, CheckBox checkbox);
 
 		#endregion	// CheckBox
@@ -790,7 +782,6 @@ namespace System.Windows.Forms
 		
 		#endregion // Datagrid
 
-#if NET_2_0
 		#region DataGridView
 		#region DataGridViewHeaderCell
 		#region DataGridViewRowHeaderCell
@@ -806,7 +797,6 @@ namespace System.Windows.Forms
 		public abstract bool DataGridViewHeaderCellHasHotStyle (DataGridView dataGridView);
 		#endregion
 		#endregion
-#endif
 
 		#region DateTimePicker
 		public abstract void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp);
@@ -897,11 +887,9 @@ namespace System.Windows.Forms
 
 		#region RadioButton
 		// Drawing
-#if NET_2_0
 		public abstract Size CalculateRadioButtonAutoSize (RadioButton rb);
 		public abstract void CalculateRadioButtonTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawRadioButton (Graphics g, RadioButton rb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
-#endif
 		public abstract void DrawRadioButton (Graphics dc, Rectangle clip_rectangle, RadioButton radio_button);
 
 		// Sizing
@@ -981,12 +969,10 @@ namespace System.Windows.Forms
 		#endregion	// ToolTip
 		
 		#region BalloonWindow
-#if NET_2_0
 		public abstract void ShowBalloonWindow (IntPtr handle, int timeout, string title, string text, ToolTipIcon icon);
 		public abstract void HideBalloonWindow (IntPtr handle);
 		public abstract void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control);
 		public abstract Rectangle BalloonWindowRect (NotifyIcon.BalloonWindow control);
-#endif
 		#endregion	// BalloonWindow
 
 		#region TrackBar
@@ -1064,10 +1050,8 @@ namespace System.Windows.Forms
 		public abstract void CPDrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds);
 		public abstract void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format);
-#if NET_2_0
 		public abstract void CPDrawStringDisabled (IDeviceContext dc, string s, Font font, Color color, Rectangle layoutRectangle, TextFormatFlags format);
 		public abstract void CPDrawVisualStyleBorder (Graphics graphics, Rectangle bounds);
-#endif
 		public abstract void CPDrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style);
 		#endregion	// ControlPaint Methods
 	}

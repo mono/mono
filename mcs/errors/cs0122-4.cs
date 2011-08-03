@@ -1,4 +1,4 @@
-// cs0122-4.cs: `FooAttribute.Foo' is inaccessible due to its protection level
+// CS0122: `FooAttribute.Foo' is inaccessible due to its protection level
 // Line: 11
 // This is bug #55970
 

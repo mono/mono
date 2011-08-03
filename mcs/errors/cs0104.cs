@@ -1,4 +1,4 @@
-// cs0104.cs: `X' is an ambiguous reference between `A.X' and `B.X'
+// CS0104: `X' is an ambiguous reference between `A.X' and `B.X'
 // Line: 16
 namespace A {
 	class X {

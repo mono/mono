@@ -33,9 +33,7 @@
 namespace System.ComponentModel.Design.Serialization
 {
 	// This class is merely an interface with no implementation needed
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public abstract class DesignerLoader
 	{
 

@@ -1,4 +1,4 @@
-// cs0442.cs: `C.Prop.get': abstract properties cannot have private accessors
+// CS0442: `C.Prop.get': abstract properties cannot have private accessors
 // Line: 7
 
 abstract class C {

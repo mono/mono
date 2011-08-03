@@ -99,6 +99,8 @@ namespace Microsoft.Build.Tasks {
 				// nothing to resolve
 				return true;
 
+			LogTaskParameters ();
+
 			assembly_resolver.Log = Log;
 			tempResolvedFiles = new List<ITaskItem> ();
 			tempCopyLocalFiles = new Dictionary<string, ITaskItem> ();
@@ -212,8 +214,8 @@ namespace Microsoft.Build.Tasks {
 					resolved = assembly_resolver.ResolveGacReference (item, specific_version);
 				} else if (String.Compare (spath, "{RawFileName}") == 0) {
 					//FIXME: identify assembly names, as extract the name, and try with that?
-					AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
-					if (aname != null)
+					AssemblyName aname;
+					if (assembly_resolver.TryGetAssemblyNameFromFile (item.ItemSpec, out aname))
 						resolved = assembly_resolver.GetResolvedReference (item, item.ItemSpec, aname, true,
 								SearchPath.RawFileName);
 				} else if (String.Compare (spath, "{CandidateAssemblyFiles}") == 0) {
@@ -280,8 +282,8 @@ namespace Microsoft.Build.Tasks {
 				LogWithPrecedingNewLine (MessageImportance.Low, "Primary Reference from AssemblyFiles {0}", item.ItemSpec);
 				string copy_local;
 
-				AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
-				if (aname == null) {
+				AssemblyName aname;
+				if (!assembly_resolver.TryGetAssemblyNameFromFile (item.ItemSpec, out aname)) {
 					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
 					assembly_resolver.LogSearchLoggerMessages (MessageImportance.Normal);
 					continue;
@@ -523,6 +525,19 @@ namespace Microsoft.Build.Tasks {
 				rr.FoundInSearchPath == SearchPath.TargetFrameworkDirectory;
 		}
 
+		void LogTaskParameters ()
+		{
+			Log.LogMessage (MessageImportance.Low, "TargetFrameworkDirectories:");
+			if (TargetFrameworkDirectories != null)
+				foreach (string dir in TargetFrameworkDirectories)
+					Log.LogMessage (MessageImportance.Low, "\t{0}", dir);
+
+			Log.LogMessage (MessageImportance.Low, "SearchPaths:");
+			if (SearchPaths != null)
+				foreach (string path in SearchPaths)
+					Log.LogMessage (MessageImportance.Low, "\t{0}", path);
+		}
+
 		public bool AutoUnify {
 			get { return autoUnify; }
 			set { autoUnify = value; }
@@ -644,7 +659,15 @@ namespace Microsoft.Build.Tasks {
 		public ITaskItem[] SuggestedRedirects {
 			get { return suggestedRedirects; }
 		}
-		
+
+#if NET_4_0
+		public string TargetFrameworkMoniker { get; set; }
+
+		public string TargetFrameworkMonikerDisplayName { get; set; }
+#endif
+
+		public string TargetFrameworkVersion { get; set; }
+
 		public string[] TargetFrameworkDirectories {
 			get { return targetFrameworkDirectories; }
 			set { targetFrameworkDirectories = value; }
@@ -654,6 +677,7 @@ namespace Microsoft.Build.Tasks {
 			get { return targetProcessorArchitecture; }
 			set { targetProcessorArchitecture = value; }
 		}
+
 
                 static Dictionary<string, string> cultureNamesTable;
                 static Dictionary<string, string> CultureNamesTable {

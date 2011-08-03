@@ -78,23 +78,6 @@ gboolean mono_arch_handle_exception (void     *ctx,
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_has_unwind_info                         */
-/*                                                                  */
-/* Function	- Tests if a function has a DWARF exception table   */
-/*		  that is able to restore all caller saved registers*/
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-gboolean
-mono_arch_has_unwind_info (gconstpointer addr)
-{
-	return FALSE;
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
 /* Name		- mono_arch_get_call_filter                         */
 /*                                                                  */
 /* Function	- Return a pointer to a method which calls an       */
@@ -449,7 +432,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
-	frame->managed = FALSE;
 
 	*new_ctx = *ctx;
 
@@ -457,9 +439,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		gint32 address;
 
 		frame->type = FRAME_TYPE_MANAGED;
-
-		if (!ji->method->wrapper_type || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD)
-			frame->managed = TRUE;
 
 		if (*lmf && (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->ebp)) {
 			/* remove any unused lmf */

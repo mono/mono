@@ -148,6 +148,7 @@ System.Reflection.Emit/ConstructorOnTypeBuilderInstTest.cs
 System.Reflection.Emit/CustomAttributeBuilderTest.cs
 System.Reflection.Emit/DerivedTypesTest.cs
 System.Reflection.Emit/DynamicMethodTest.cs
+System.Reflection.Emit/DynamicILInfoTest.cs
 System.Reflection.Emit/EnumBuilderTest.cs
 System.Reflection.Emit/EventBuilderTest.cs
 System.Reflection.Emit/FieldBuilderTest.cs
@@ -198,6 +199,9 @@ System.Runtime.Versioning/TargetFrameworkAttributeTest.cs
 System.Runtime.Versioning/VersioningHelperTest.cs
 System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs
+System.Security.AccessControl/CommonAceTest.cs
+System.Security.AccessControl/RawAclTest.cs
+System.Security.AccessControl/RawSecurityDescriptorTest.cs
 System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/CipherModeTest.cs
@@ -331,6 +335,8 @@ System.Security.Policy/ZoneTest.cs
 System.Security.Policy/ZoneMembershipConditionTest.cs
 System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
+System.Security.Principal/NTAccountTest.cs
+System.Security.Principal/SecurityIdentifierTest.cs
 System.Security.Principal/WindowsIdentityTest.cs
 System.Security.Principal/WindowsPrincipalTest.cs
 System.Security/SecureStringTest.cs
@@ -438,9 +444,7 @@ System.Threading.Tasks/TaskCompletionSourceTests.cs
 System.Threading.Tasks/ParallelTestHelper.cs
 System.Threading.Tasks/ParallelTests.cs
 System.Collections.Concurrent/ParallelConcurrentStackTests.cs
-System.Collections.Concurrent/ConcurrentSkipListTests.cs
 System.Collections.Concurrent/PartitionerTests.cs
-../System.Collections.Concurrent/ConcurrentSkipList.cs
 System.Collections.Concurrent/ConcurrentQueueTests.cs
 System.Collections.Concurrent/ConcurrentBagTests.cs
 System.Collections.Concurrent/ConcurrentStackTests.cs

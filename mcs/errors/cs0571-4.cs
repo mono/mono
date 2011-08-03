@@ -1,4 +1,4 @@
-// cs0571-4.cs: `MainClass.this[int, bool, string].get': cannot explicitly call operator or accessor
+// CS0571: `MainClass.this[int, bool, string].get': cannot explicitly call operator or accessor
 // Line: 15
 
 using System.Runtime.CompilerServices;

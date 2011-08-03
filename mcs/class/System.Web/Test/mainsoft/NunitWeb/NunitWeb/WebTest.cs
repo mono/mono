@@ -544,7 +544,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		private static void CopyAssembly (Assembly ass, string dir)
 		{
-			if (ass.GlobalAssemblyCache)
+			if (ass.GlobalAssemblyCache || ass.FullName.StartsWith ("mscorlib"))
 				return;
 			string oldfn = ass.Location;
 			if (oldfn.EndsWith (".exe"))

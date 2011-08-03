@@ -232,7 +232,8 @@ namespace Mono.Security.X509 {
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
-			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
 
 			if (!kpp.Load ())
@@ -314,7 +315,7 @@ namespace Mono.Security.X509 {
 			}
 			return list;
 		}
-#if !INSIDE_CORLIB
+#if !NET_2_1
 		private void ImportPrivateKey (X509Certificate certificate, CspParameters cspParams)
 		{
 			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;

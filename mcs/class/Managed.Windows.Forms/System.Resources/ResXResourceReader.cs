@@ -56,13 +56,10 @@ namespace System.Resources
 		private Hashtable hasht;
 		private ITypeResolutionService typeresolver;
 		private XmlTextReader xmlReader;
-
-#if NET_2_0
 		private string basepath;
 		private bool useResXDataNodes;
 		private AssemblyName [] assemblyNames;
 		private Hashtable hashtm;
-#endif
 		#endregion	// Local Variables
 
 		#region Constructors & Destructor
@@ -105,8 +102,6 @@ namespace System.Resources
 			this.typeresolver = typeResolver;
 		}
 
-#if NET_2_0
-
 		public ResXResourceReader (Stream stream, AssemblyName [] assemblyNames)
 			: this (stream)
 		{
@@ -125,15 +120,12 @@ namespace System.Resources
 			this.assemblyNames = assemblyNames;
 		}
 
-
-#endif
 		~ResXResourceReader ()
 		{
 			Dispose (false);
 		}
 		#endregion	// Constructors & Destructor
 
-#if NET_2_0
 		public string BasePath {
 			get { return basepath; }
 			set { basepath = value; }
@@ -147,15 +139,12 @@ namespace System.Resources
 				useResXDataNodes = value; 
 			}
 		}
-#endif
 
 		#region Private Methods
 		private void LoadData ()
 		{
 			hasht = new Hashtable ();
-#if NET_2_0
 			hashtm = new Hashtable ();
-#endif
 			if (fileName != null) {
 				stream = File.OpenRead (fileName);
 			}
@@ -187,14 +176,11 @@ namespace System.Resources
 						case "data":
 							ParseDataNode (false);
 							break;
-#if NET_2_0
 						case "metadata":
 							ParseDataNode (true);
 							break;
-#endif
 						}
 					}
-#if NET_2_0
 				} catch (XmlException ex) {
 					throw new ArgumentException ("Invalid ResX input.", ex);
 				} catch (Exception ex) {
@@ -202,11 +188,6 @@ namespace System.Resources
 						xmlReader.LineNumber, xmlReader.LinePosition);
 					throw new ArgumentException ("Invalid ResX input.", xex);
 				}
-#else
-				} catch (Exception ex) {
-					throw new ArgumentException ("Invalid ResX input.", ex);
-				}
-#endif
 				header.Verify ();
 			} finally {
 				if (fileName != null) {
@@ -266,7 +247,6 @@ namespace System.Resources
 		{
 			string value = null;
 			comment = null;
-#if NET_2_0
 			while (xmlReader.Read ()) {
 				if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.LocalName == (meta ? "metadata" : "data"))
 					break;
@@ -287,32 +267,16 @@ namespace System.Resources
 				else
 					value = xmlReader.Value.Trim ();
 			}
-#else
-			xmlReader.Read ();
-			if (xmlReader.NodeType == XmlNodeType.Element) {
-				value = xmlReader.ReadElementString ();
-			} else {
-				value = xmlReader.Value.Trim ();
-			}
-
-			if (value == null)
-				value = string.Empty;
-#endif
 			return value;
 		}
 
 		private void ParseDataNode (bool meta)
 		{
-#if NET_2_0
 			Hashtable hashtable = ((meta && ! useResXDataNodes) ? hashtm : hasht);
 			Point pos = new Point (xmlReader.LineNumber, xmlReader.LinePosition);
-#else
-			Hashtable hashtable = hasht;
-#endif
 			string name = GetAttribute ("name");
 			string type_name = GetAttribute ("type");
 			string mime_type = GetAttribute ("mimetype");
-
 
 			Type type = type_name == null ? null : ResolveType (type_name);
 
@@ -322,11 +286,9 @@ namespace System.Resources
 
 			if (type == typeof (ResXNullRef)) {
 				
-#if NET_2_0
 				if (useResXDataNodes)
 					hashtable [name] = new ResXDataNode (name, null, pos);
 				else
-#endif
 					hashtable [name] = null;
 				return;
 			}
@@ -355,7 +317,6 @@ namespace System.Resources
 				} else {
 					TypeConverter c = TypeDescriptor.GetConverter (type);
 					if (c.CanConvertFrom (typeof (string))) {
-#if NET_2_0
 						if (BasePath != null && type == typeof (ResXFileRef)) {
 							string [] parts = ResXFileRef.Parse (value);
 							parts [0] = Path.Combine (BasePath, parts [0]);
@@ -363,25 +324,16 @@ namespace System.Resources
 						} else {
 							obj = c.ConvertFromInvariantString (value);
 						}
-#else
-						obj = c.ConvertFromInvariantString (value);
-#endif
 					}
 				}
 			} else {
 				obj = value;
 			}
 
-#if ONLY_1_1
-			if (obj == null)
-				obj = value;
-#endif
-
 			if (name == null)
 				throw new ArgumentException (string.Format (CultureInfo.CurrentCulture,
 					"Could not find a name for a resource. The resource value "
 					+ "was '{0}'.", obj));
-#if NET_2_0
 			if (useResXDataNodes)
 			{
 				ResXDataNode dataNode = new ResXDataNode(name, obj, pos);
@@ -390,7 +342,6 @@ namespace System.Resources
 				
 			}
 			else
-#endif
 			hashtable [name] = obj;
 		}
 
@@ -399,7 +350,6 @@ namespace System.Resources
 			if (typeresolver != null) {
 				return typeresolver.GetType (type);
 			} 
-#if NET_2_0
 			if (assemblyNames != null) {
 				Type result;
 				foreach (AssemblyName assem in assemblyNames) {
@@ -412,7 +362,6 @@ namespace System.Resources
 				//if type not found on assembly list we return null or we get from current assembly?
 				//=> unit test needed
 			}
-#endif
 			return Type.GetType (type);
 
 		}
@@ -462,7 +411,7 @@ namespace System.Resources
 		{
 			return new ResXResourceReader (new StringReader (fileContents), typeResolver);
 		}
-#if NET_2_0
+
 		public static ResXResourceReader FromFileContents (string fileContents, AssemblyName [] assemblyNames)
 		{
 			return new ResXResourceReader (new StringReader (fileContents), assemblyNames);
@@ -474,7 +423,7 @@ namespace System.Resources
 				LoadData ();
 			return hashtm.GetEnumerator ();
 		}
-#endif
+
 		#endregion	// Public Methods
 
 		#region Internal Classes

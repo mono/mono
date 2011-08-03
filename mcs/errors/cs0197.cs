@@ -1,4 +1,4 @@
-// cs0197.cs: Passing `T.bar' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class
+// CS0197: Passing `T.bar' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class
 // Line: 15
 // Compiler options: -warnaserror -warn:1
 

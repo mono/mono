@@ -31,11 +31,7 @@ using System.Security.Permissions;
 
 namespace System.CodeDom.Compiler {
 
-#if NET_2_0
 	[Serializable]
-#else
-	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-#endif
 	public class CompilerError {
 		string fileName;
 		int line;

@@ -29,10 +29,7 @@
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public 
-#endif
-	enum TextImageRelation
+	public enum TextImageRelation
 	{
 		Overlay = 0,
 		ImageAboveText = 1,

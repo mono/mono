@@ -1,4 +1,4 @@
-// cs1530-2.cs: Keyword `new' is not allowed on namespace elements
+// CS1530: Keyword `new' is not allowed on namespace elements
 // Line: 8
 
 class Base

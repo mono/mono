@@ -1,4 +1,6 @@
 #include System.ComponentModel.DataAnnotations.dll.sources
 
+System.ComponentModel.DataAnnotations/ValidationAttributeCollectionExtensions.cs
 System.ComponentModel.DataAnnotations/ValidationContext.cs
 System.ComponentModel.DataAnnotations/ValidationResult.cs
+System.ComponentModel.DataAnnotations/Validator.cs

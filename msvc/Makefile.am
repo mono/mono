@@ -14,7 +14,18 @@ VCPROJS =					\
 	test_eglib.vcproj			\
 	teste.vcproj
 
-EXTRA_DIST = create-windef.pl mono.def README mono.sln winsetup.bat $(VCPROJS)
+VCXPROJS = $(wildcard *.vcxproj)
+
+EXTRA_DIST = \
+	     $(VCPROJS) \
+	     $(VCXPROJS) \
+	     README \
+	     create-windef.pl \
+	     mono.def \
+	     mono.sln \
+	     monoposixhelper.def \
+	     runmdesc.bat \
+	     winsetup.bat
 
 update-def:
 	perl create-windef.pl mono.def

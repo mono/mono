@@ -1,4 +1,4 @@
-// cs1654.cs: Cannot assign to members of `p' because it is a `foreach iteration variable'
+// CS1654: Cannot assign to members of `p' because it is a `foreach iteration variable'
 // Line: 18
 
 using System.Collections;

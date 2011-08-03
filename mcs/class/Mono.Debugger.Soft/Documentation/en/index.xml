@@ -85,5 +85,5 @@
       <Type Name="VMStartEvent" Kind="Class" />
     </Namespace>
   </Types>
-  <Title>Mono.Debugger</Title>
+  <Title>Mono.Debugger.Soft</Title>
 </Overview>

@@ -1468,6 +1468,10 @@ public class AssemblyNameTest {
 		try {
 			new AssemblyName (assemblyName + ", Culture=aa-AA");
 			Assert.Fail ("#1");
+#if NET_4_0
+		} catch (CultureNotFoundException ex) {
+		}
+#else
 		} catch (ArgumentException ex) {
 			// Culture name 'aa-aa' is not supported
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1476,6 +1480,7 @@ public class AssemblyNameTest {
 			Assert.IsNotNull (ex.ParamName, "#5");
 			Assert.AreEqual ("name", ex.ParamName, "#6");
 		}
+#endif
 	}
 
 	[Test] // ctor (String)

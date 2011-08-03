@@ -950,6 +950,12 @@ public class HijriCalendar : Calendar {
 			return Max;
 		}
 	}
+	
+	[MonoTODO ()]
+	public int HijriAdjustment {
+		get { throw new NotImplementedException (); }
+		set { throw new NotImplementedException (); }
+	}
 } // class HijriCalendar
 	
 } // namespace System.Globalization

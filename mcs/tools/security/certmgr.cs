@@ -41,13 +41,14 @@ namespace Mono.Tools {
 			Console.WriteLine ("   or: certmgr -list object-type [options] store");
 			Console.WriteLine ("   or: certmgr -del object-type [options] store certhash");
 			Console.WriteLine ("   or: certmgr -ssl [options] url");
+			Console.WriteLine ("   or: certmgr -put object-type [options] store certfile");
 			Console.WriteLine ("   or: certmgr -importKey [options] store pkcs12file");
 			Console.WriteLine ();
 			Console.WriteLine ("actions");
 			Console.WriteLine ("\t-add\t\tAdd a certificate, CRL or CTL to specified store");
 			Console.WriteLine ("\t-del\t\tRemove a certificate, CRL or CTL to specified store");
 			Console.WriteLine ("\t-put\t\tCopy a certificate, CRL or CTL from a store to a file");
-			Console.WriteLine ("\t-list\t\tList certificates, CRL ot CTL in the specified store.");
+			Console.WriteLine ("\t-list\t\tList certificates, CRL or CTL in the specified store.");
 			Console.WriteLine ("\t-ssl\t\tDownload and add certificates from an SSL session");
 			Console.WriteLine ("\t-importKey\tImport PKCS12 privateKey to keypair store.");
 			Console.WriteLine ("object types");
@@ -58,6 +59,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("\t-m\t\tuse the machine certificate store (default to user)");
 			Console.WriteLine ("\t-v\t\tverbose mode (display status for every steps)");
 			Console.WriteLine ("\t-p [password]\tPassword used to decrypt PKCS12");
+			Console.WriteLine ("\t-pem\t\tPut certificate in Base-64 encoded format (default DER encoded)");
 			Console.WriteLine ("\t-?\t\th[elp]\tDisplay this help message");
 			Console.WriteLine ();
 		}
@@ -174,6 +176,28 @@ namespace Mono.Tools {
 			int end = pem.IndexOf (footer, start);
 			string base64 = pem.Substring (start, (end - start));
 			return Convert.FromBase64String (base64);
+		}
+		
+		static byte[] ToPEM (string type, byte[] data)
+		{
+			string header = String.Format ("-----BEGIN {0}-----", type);
+			string footer = String.Format ("-----END {0}-----", type);
+			
+			string encodedString = Convert.ToBase64String (data);
+
+			StringBuilder sb = new StringBuilder ();
+			int remaining = encodedString.Length;
+			sb.AppendLine (header);
+			for (int i = 0; i <= encodedString.Length; i += 64) {
+				if (remaining >= 64) {
+					sb.AppendLine (encodedString.Substring (i, 64));
+				} else {
+					sb.AppendLine (encodedString.Substring (i, remaining));
+				}
+				remaining -= 64;
+			}
+			sb.AppendLine (footer);
+			return Encoding.ASCII.GetBytes (sb.ToString ());
 		}
 
 		static X509CertificateCollection LoadCertificates (string filename, string password, bool verbose) 
@@ -308,18 +332,44 @@ namespace Mono.Tools {
 			}
 		}
 
-		static void Put (ObjectType type, X509Store store, string file, string password, bool verbose) 
+		static void Put (ObjectType type, X509Store store, string file, bool machine, bool pem, bool verbose) 
 		{
-			throw new NotImplementedException ("Put not yet supported");
-/*			switch (type) {
-				case ObjectType.Certificate:
-					break;
-				case ObjectType.CRL:
-					// TODO
-					break;
-				default:
-					throw new NotSupportedException (type.ToString ());
-			}*/
+			if (String.IsNullOrEmpty (file)) {
+				Console.Error.WriteLine("error: no filename provided to put the certificate.");
+				Help();
+				return;
+			}
+
+			switch (type) {
+			case ObjectType.Certificate:
+				for(int i = 0; i < store.Certificates.Count; i++) {
+					Console.WriteLine ("==============Certificate # {0} ==========", i + 1);
+					DisplayCertificate (store.Certificates[i], machine, verbose);
+				}
+				int selection;
+				Console.Write("Enter cert # from the above list to put-->");
+				if (!int.TryParse(Console.ReadLine(), out selection) || selection > store.Certificates.Count) {
+					Console.Error.WriteLine ("error: invalid selection.");
+					return;
+				}
+			
+				SSCX.X509Certificate2 cert = new SSCX.X509Certificate2 (store.Certificates[selection-1].RawData);
+				byte[] data = null;
+				if(pem) {
+					data = ToPEM ("CERTIFICATE", cert.Export (SSCX.X509ContentType.Cert));
+				} else {
+					data = cert.Export (SSCX.X509ContentType.Cert);
+				}
+				
+				using (FileStream fs = File.Create (file)) {
+					fs.Write(data, 0, data.Length);
+				}
+				
+				Console.WriteLine ("Certificate put to {0}.", file);
+				break;
+			default:
+				throw new NotSupportedException ("Put " + type + " not supported yet");
+			}
 		}
 
 		static void DisplayCertificate (X509Certificate x509, bool machine, bool verbose)
@@ -353,6 +403,24 @@ namespace Mono.Tools {
 			Console.WriteLine ();
 		}
 
+		static void DisplayCrl (X509Crl crl, bool machine, bool verbose)
+		{
+			Console.WriteLine ("X.509 v{0} CRL", crl.Version);
+			Console.WriteLine ("  Issuer Name:   {0}", crl.IssuerName);
+			Console.WriteLine ("  This Update:   {0}", crl.ThisUpdate);
+			Console.WriteLine ("  Next Update:   {0} {1}", crl.NextUpdate, crl.IsCurrent ? String.Empty : "update overdue!");
+			Console.WriteLine ("  Unique Hash:   {0}", CryptoConvert.ToHex (crl.Hash));
+			if (verbose) {
+				Console.WriteLine ("  Signature Algorithm:  {0}", crl.SignatureAlgorithm);
+				Console.WriteLine ("  Signature:            {0}", CryptoConvert.ToHex (crl.Signature));
+				int n = 0;
+				foreach (X509Crl.X509CrlEntry entry in crl.Entries) {
+					Console.WriteLine ("    #{0}: Serial: {1} revoked on {2}",
+						++n, CryptoConvert.ToHex (entry.SerialNumber), entry.RevocationDate);
+				}
+			}
+		}
+
 		static void List (ObjectType type, X509Store store, bool machine, string file, bool verbose) 
 		{
 			switch (type) {
@@ -362,7 +430,9 @@ namespace Mono.Tools {
 					}
 					break;
 				case ObjectType.CRL:
-					// TODO
+					foreach (X509Crl crl in store.Crls) {
+						DisplayCrl (crl, machine, verbose);
+					}
 					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
@@ -543,6 +613,9 @@ namespace Mono.Tools {
 		static void Main (string[] args)
 		{
 			string password = null;
+			bool verbose = false;
+			bool pem = false;
+			bool machine = false;
 
 			Header ();
 			if (args.Length < 2) {
@@ -560,19 +633,27 @@ namespace Mono.Tools {
 					n++;
 			}
 			
-			bool verbose = (GetCommand (args [n]) == "V");
-			if (verbose)
-				n++;
-			bool machine = (GetCommand (args [n]) == "M");
-			if (machine)
-				n++;
-
-			if (GetCommand (args [n]) == "P")
-			{
-				n++;
-				password = args[n++];
+			for (int i = n; i < args.Length; i++) {
+				switch (GetCommand (args[i])) {
+				case "V":
+					verbose = true;
+					n++;
+					break;
+				case "M":
+					machine = true;
+					n++;
+					break;
+				case "P":
+					password = args[++n];
+					n++;
+					break;
+				case "PEM":
+					pem = true;
+					n++;
+					break;
+				}
 			}
-
+			
 			X509Store store = null;
 			string storeName = null;
 			if (action != Action.Ssl) {
@@ -611,7 +692,7 @@ namespace Mono.Tools {
 					Delete (type, store, file, verbose);
 					break;
 				case Action.Put:
-					Put (type, store, file, password, verbose);
+					Put (type, store, file, machine, pem, verbose);
 					break;
 				case Action.List:
 					List (type, store, machine, file, verbose);

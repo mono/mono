@@ -29,18 +29,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
+#if !NET_2_1
 using System.IdentityModel.Policy;
-using System.ServiceModel.Channels;
+using System.Web.Security;
+#endif
 using System.Text;
 using System.Threading;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.Web.Security;
 
 namespace System.ServiceModel.Dispatcher
 {
 	public sealed class DispatchRuntime
 	{
+#if NET_2_1
+		internal DispatchRuntime (EndpointDispatcher dispatcher, ClientRuntime callbackClientRuntime)
+		{
+			UnhandledDispatchOperation = new DispatchOperation (
+				this, "*", "*", "*");
+		}
+#else
 		DispatchOperation.DispatchOperationCollection operations =
 			new DispatchOperation.DispatchOperationCollection ();
 
@@ -137,8 +146,9 @@ namespace System.ServiceModel.Dispatcher
 
 		public Type Type { get; set; }
 
-		public DispatchOperation UnhandledDispatchOperation { get; set; }
-
 		public bool ValidateMustUnderstand { get; set; }
+#endif
+
+		public DispatchOperation UnhandledDispatchOperation { get; set; }
 	}
 }

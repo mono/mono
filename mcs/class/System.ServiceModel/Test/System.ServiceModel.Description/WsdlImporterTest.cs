@@ -577,5 +577,24 @@ namespace MonoTests.System.ServiceModel.Description
 			// sort of hacky test
 			Assert.IsTrue (sw.ToString ().IndexOf ("int[] GetSearchData") > 0, "#1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportXmlTypes ()
+		{
+			// part of bug #670945
+			var mset = new MetadataSet ();
+			WSServiceDescription sd = null;
+
+			sd = WSServiceDescription.Read (XmlReader.Create ("670945.wsdl"));
+			mset.MetadataSections.Add (new MetadataSection () {
+				Dialect = MetadataSection.ServiceDescriptionDialect,
+				Metadata = sd });
+
+			var imp = new WsdlImporter (mset);
+			var sec = imp.ImportAllContracts ();
+			
+			// FIXME: examine resulting operations.
+		}
 	}
 }

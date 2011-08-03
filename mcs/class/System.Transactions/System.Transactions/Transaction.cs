@@ -30,14 +30,14 @@ namespace System.Transactions
 		ArrayList dependents = new ArrayList ();
 
 		/* Volatile enlistments */
-		List <IEnlistmentNotification> volatiles = new List <IEnlistmentNotification> ();
+		List <IEnlistmentNotification> volatiles;
 
 		/* Durable enlistments 
 		   Durable RMs can also have 2 Phase commit but
 		   not in LTM, and that is what we are supporting
 		   right now   
 		 */
-		List <ISinglePhaseNotification> durables = new List <ISinglePhaseNotification> ();
+		List <ISinglePhaseNotification> durables;
 
 		delegate void AsyncCommit ();
 		
@@ -48,7 +48,24 @@ namespace System.Transactions
 		TransactionScope scope = null;
 		
 		Exception innerException;
+		Guid tag = Guid.NewGuid ();
 
+		List <IEnlistmentNotification> Volatiles {
+			get {
+				if (volatiles == null)
+					volatiles = new List <IEnlistmentNotification> ();
+				return volatiles;
+			}
+		}
+
+		List <ISinglePhaseNotification> Durables {
+			get {
+				if (durables == null)
+					durables = new List <ISinglePhaseNotification> ();
+				return durables;
+			}
+		}
+		
 		internal Transaction ()
 		{
 			info = new TransactionInformation ();
@@ -60,6 +77,8 @@ namespace System.Transactions
 			level = other.level;
 			info = other.info;
 			dependents = other.dependents;
+			volatiles = other.Volatiles;
+			durables = other.Durables;
 		}
 
 		[MonoTODO]
@@ -137,6 +156,7 @@ namespace System.Transactions
 			ISinglePhaseNotification notification,
 			EnlistmentOptions options)
 		{
+			var durables = Durables;
 			if (durables.Count == 1)
 				throw new NotImplementedException ("Only LTM supported. Cannot have more than 1 durable resource per transaction.");
 
@@ -181,7 +201,7 @@ namespace System.Transactions
 		{
 			EnsureIncompleteCurrentScope (); 
 			/* FIXME: Handle options.EnlistDuringPrepareRequired */
-			volatiles.Add (notification);
+			Volatiles.Add (notification);
 
 			/* FIXME: Enlistment.. ? */
 			return new Enlistment ();
@@ -245,10 +265,11 @@ namespace System.Transactions
 
 			innerException = ex;
 			Enlistment e = new Enlistment ();
-			foreach (IEnlistmentNotification prep in volatiles)
+			foreach (IEnlistmentNotification prep in Volatiles)
 				if (prep != enlisted)
 					prep.Rollback (e);
 
+			var durables = Durables;
 			if (durables.Count > 0 && durables [0] != enlisted)
 				durables [0].Rollback (e);
 
@@ -316,6 +337,8 @@ namespace System.Transactions
 				CheckAborted ();
 			}
 
+			var volatiles = Volatiles;
+			var durables = Durables;
 			if (volatiles.Count == 1 && durables.Count == 0)
 			{
 				/* Special case */
@@ -336,7 +359,7 @@ namespace System.Transactions
 
 			if (volatiles.Count > 0)
 				DoCommitPhase();
-
+			
 			Complete();
 		}
 
@@ -372,7 +395,7 @@ namespace System.Transactions
 		void DoPreparePhase ()
 		{
 			// Call prepare on all volatile managers.
-			foreach (IEnlistmentNotification enlist in volatiles)
+			foreach (IEnlistmentNotification enlist in Volatiles)
 			{
 				PreparingEnlistment pe = new PreparingEnlistment (this, enlist);
 				ThreadPool.QueueUserWorkItem (new WaitCallback(PrepareCallbackWrapper), pe);
@@ -403,7 +426,7 @@ namespace System.Transactions
 
 		void DoCommitPhase ()
 		{
-			foreach (IEnlistmentNotification enlisted in volatiles) {
+			foreach (IEnlistmentNotification enlisted in Volatiles) {
 				Enlistment e = new Enlistment ();
 				enlisted.Commit (e);
 				/* Note: e.Done doesn't matter for volatile RMs */

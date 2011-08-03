@@ -34,11 +34,8 @@ using System.Globalization;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[TypeConverter (typeof (FlatButtonAppearanceConverter))]
-	public 
-#endif
-	class FlatButtonAppearance
+	public class FlatButtonAppearance
 	{
 		private Color borderColor = Color.Empty;
 		private int borderSize = 1;
@@ -149,7 +146,6 @@ namespace System.Windows.Forms
 		}
 	}
 	
-#if NET_2_0
 	internal class FlatButtonAppearanceConverter : ExpandableObjectConverter
 	{
 		public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
@@ -166,5 +162,4 @@ namespace System.Windows.Forms
 			return base.CanConvertTo (context, destinationType);
 		}
 	}
-#endif
 }

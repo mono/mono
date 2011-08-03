@@ -1,4 +1,4 @@
-// cs1534.cs: Overloaded binary operator `*' takes two parameters
+// CS1534: Overloaded binary operator `*' takes two parameters
 // Line: 6
 
 class C

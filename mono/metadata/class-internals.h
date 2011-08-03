@@ -17,8 +17,6 @@
 
 extern gboolean mono_print_vtable;
 
-typedef void     (*MonoStackWalkImpl) (MonoStackWalk func, gboolean do_il_offset, gpointer user_data);
-
 typedef struct _MonoMethodWrapper MonoMethodWrapper;
 typedef struct _MonoMethodInflated MonoMethodInflated;
 typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
@@ -350,6 +348,8 @@ struct _MonoClass {
 	guint simd_type : 1; /* class is a simd intrinsic type */
 	guint is_generic : 1; /* class is a generic type definition */
 	guint is_inflated : 1; /* class is a generic instance */
+	/* next byte */
+	guint has_finalize_inited    : 1; /* has_finalize is initialized */
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 
@@ -458,7 +458,6 @@ struct MonoVTable {
 	 */
 	void *gc_descr; 	
 	MonoDomain *domain;  /* each object/vtable belongs to exactly one domain */
-        gpointer    data; /* to store static class data */
         gpointer    type; /* System.Type type for klass */
 	guint8     *interface_bitmap;
 	guint16     max_interface_id;
@@ -466,9 +465,12 @@ struct MonoVTable {
 	guint remote          : 1; /* class is remotely activated */
 	guint initialized     : 1; /* cctor has been run */
 	guint init_failed     : 1; /* cctor execution failed */
+	guint has_static_fields : 1; /* pointer to the data stored at the end of the vtable array */
 	guint32     imt_collisions_bitmap;
 	MonoRuntimeGenericContext *runtime_generic_context;
 	/* do not add any fields after vtable, the structure is dynamically extended */
+	/* vtable contains function pointers to methods or their trampolines, at the
+	 end there may be a slot containing the pointer to the static fields */
 	gpointer    vtable [MONO_ZERO_LEN_ARRAY];	
 };
 
@@ -547,10 +549,6 @@ struct _MonoGenericClass {
  */
 struct _MonoDynamicGenericClass {
 	MonoGenericClass generic_class;
-	int count_methods;
-	MonoMethod **methods;
-	int count_ctors;
-	MonoMethod **ctors;
 	int count_fields;
 	MonoClassField *fields;
 	guint initialized;
@@ -1150,9 +1148,6 @@ mono_icall_cleanup         (void) MONO_INTERNAL;
 gpointer
 mono_method_get_wrapper_data (MonoMethod *method, guint32 id) MONO_INTERNAL;
 
-void
-mono_install_stack_walk (MonoStackWalkImpl func) MONO_INTERNAL;
-
 gboolean
 mono_metadata_has_generic_params (MonoImage *image, guint32 token) MONO_INTERNAL;
 
@@ -1230,9 +1225,6 @@ gboolean
 mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass) MONO_INTERNAL;
 
 MonoMethod*
-mono_method_get_declaring_generic_method (MonoMethod *method) MONO_INTERNAL;
-
-MonoMethod*
 mono_class_get_method_generic (MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
 
 MonoType*
@@ -1286,6 +1278,9 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate) MON
 gboolean
 mono_class_has_variant_generic_params (MonoClass *klass) MONO_INTERNAL;
 
+gboolean
+mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv) MONO_INTERNAL;
+
 gboolean mono_is_corlib_image (MonoImage *image) MONO_INTERNAL;
 
 MonoType*
@@ -1296,5 +1291,11 @@ mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter) MONO_INTERNAL;
 
 gboolean
 mono_class_check_vtable_constraints (MonoClass *class, GList *in_setup) MONO_INTERNAL;
+
+gboolean
+mono_class_has_finalizer (MonoClass *klass) MONO_INTERNAL;
+
+void
+mono_unload_interface_id (MonoClass *class) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */

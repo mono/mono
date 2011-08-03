@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -44,6 +44,37 @@ namespace IKVM.Reflection
 	public abstract class Type : MemberInfo, IGenericContext, IGenericBinder
 	{
 		public static readonly Type[] EmptyTypes = Empty<Type>.Array;
+		protected readonly Type underlyingType;
+		protected TypeFlags typeFlags;
+
+		[Flags]
+		protected enum TypeFlags
+		{
+			// for use by TypeBuilder
+			IsGenericTypeDefinition = 1,
+			HasNestedTypes = 2,
+			Baked = 4,
+
+			// for use by MissingType
+			ValueType = 8,
+			NotValueType = 16,
+
+			// for use by TypeDef, TypeBuilder or MissingType
+			EnumOrValueType = 32,
+		}
+
+		// prevent subclassing by outsiders
+		internal Type()
+		{
+			this.underlyingType = this;
+		}
+
+		internal Type(Type underlyingType)
+		{
+			System.Diagnostics.Debug.Assert(underlyingType.underlyingType == underlyingType);
+			this.underlyingType = underlyingType;
+			this.typeFlags = underlyingType.typeFlags;
+		}
 
 		public static Binder DefaultBinder
 		{
@@ -155,8 +186,9 @@ namespace IKVM.Reflection
 			get
 			{
 				Type baseType = this.BaseType;
-				return baseType == this.Module.universe.System_Enum
-					|| (baseType == this.Module.universe.System_ValueType && this != this.Module.universe.System_Enum);
+				return baseType != null
+					&& (baseType.typeFlags & TypeFlags.EnumOrValueType) != 0
+					&& (typeFlags & TypeFlags.EnumOrValueType) == 0;
 			}
 		}
 
@@ -175,9 +207,9 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
-		public virtual Type UnderlyingSystemType
+		public Type UnderlyingSystemType
 		{
-			get { return this; }
+			get { return underlyingType; }
 		}
 
 		public override Type DeclaringType
@@ -185,13 +217,19 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
-		public override string Name
+		public virtual string __Name
 		{
-			get
-			{
-				string fullname = FullName;
-				return fullname.Substring(fullname.LastIndexOf('.') + 1);
-			}
+			get { throw new InvalidOperationException(); }
+		}
+
+		public virtual string __Namespace
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public abstract override string Name
+		{
+			get;
 		}
 
 		public virtual string Namespace
@@ -200,11 +238,9 @@ namespace IKVM.Reflection
 			{
 				if (IsNested)
 				{
-					return null;
+					return DeclaringType.Namespace;
 				}
-				string fullname = FullName;
-				int index = fullname.LastIndexOf('.');
-				return index < 0 ? null : fullname.Substring(0, index);
+				return __Namespace;
 			}
 		}
 
@@ -213,9 +249,23 @@ namespace IKVM.Reflection
 			throw new InvalidOperationException();
 		}
 
+		public static bool operator ==(Type t1, Type t2)
+		{
+			// Casting to object results in smaller code than calling ReferenceEquals and makes
+			// this method more likely to be inlined.
+			// On CLR v2 x86, microbenchmarks show this to be faster than calling ReferenceEquals.
+			return (object)t1 == (object)t2
+				|| ((object)t1 != null && (object)t2 != null && (object)t1.underlyingType == (object)t2.underlyingType);
+		}
+
+		public static bool operator !=(Type t1, Type t2)
+		{
+			return !(t1 == t2);
+		}
+
 		public bool Equals(Type type)
 		{
-			return !ReferenceEquals(type, null) && ReferenceEquals(type.UnderlyingSystemType, this.UnderlyingSystemType);
+			return this == type;
 		}
 
 		public override bool Equals(object obj)
@@ -254,12 +304,24 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
+		public virtual bool __GetLayout(out int packingSize, out int typeSize)
+		{
+			packingSize = 0;
+			typeSize = 0;
+			return false;
+		}
+
 		public virtual bool IsGenericType
 		{
 			get { return false; }
 		}
 
 		public virtual bool IsGenericTypeDefinition
+		{
+			get { return false; }
+		}
+
+		internal virtual bool IsGenericTypeInstance
 		{
 			get { return false; }
 		}
@@ -298,6 +360,16 @@ namespace IKVM.Reflection
 			throw new NotSupportedException();
 		}
 
+		public virtual int[] __GetArraySizes()
+		{
+			throw new NotSupportedException();
+		}
+
+		public virtual int[] __GetArrayLowerBounds()
+		{
+			throw new NotSupportedException();
+		}
+
 		// .NET 4.0 API
 		public virtual Type GetEnumUnderlyingType()
 		{
@@ -327,33 +399,35 @@ namespace IKVM.Reflection
 			return FullName;
 		}
 
-		public virtual string FullName
+		public abstract string FullName
 		{
-			get
+			get;
+		}
+
+		protected string GetFullName()
+		{
+			string ns = TypeNameParser.Escape(this.__Namespace);
+			Type decl = this.DeclaringType;
+			if (decl == null)
 			{
-				Type decl = this.DeclaringType;
-				string ns = this.Namespace;
 				if (ns == null)
 				{
-					if (decl == null)
-					{
-						return this.Name;
-					}
-					else
-					{
-						return decl.FullName + "+" + this.Name;
-					}
+					return this.Name;
 				}
 				else
 				{
-					if (decl == null)
-					{
-						return ns + "." + this.Name;
-					}
-					else
-					{
-						return decl.FullName + "+" + ns + "." + this.Name;
-					}
+					return ns + "." + this.Name;
+				}
+			}
+			else
+			{
+				if (ns == null)
+				{
+					return decl.FullName + "+" + this.Name;
+				}
+				else
+				{
+					return decl.FullName + "+" + ns + "." + this.Name;
 				}
 			}
 		}
@@ -736,6 +810,24 @@ namespace IKVM.Reflection
 			return GetConstructor(bindingAttr, binder, types, modifiers);
 		}
 
+		internal Type ResolveNestedType(TypeName typeName)
+		{
+			return FindNestedType(typeName) ?? Module.universe.GetMissingTypeOrThrow(Module, this, typeName);
+		}
+
+		// unlike the public API, this takes the namespace and name into account
+		internal virtual Type FindNestedType(TypeName name)
+		{
+			foreach (Type type in __GetDeclaredTypes())
+			{
+				if (type.__Namespace == name.Namespace && type.__Name == name.Name)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
 		public Type GetNestedType(string name)
 		{
 			return GetNestedType(name, BindingFlags.Public);
@@ -745,7 +837,8 @@ namespace IKVM.Reflection
 		{
 			foreach (Type type in GetNestedTypes(bindingAttr))
 			{
-				if (type.Name == name)
+				// FXBUG the namespace is ignored
+				if (type.__Name == name)
 				{
 					return type;
 				}
@@ -966,7 +1059,13 @@ namespace IKVM.Reflection
 
 		public bool IsEnum
 		{
-			get { return this.BaseType == this.Module.universe.System_Enum; }
+			get
+			{
+				Type baseType = this.BaseType;
+				return baseType != null
+					&& (baseType.typeFlags & TypeFlags.EnumOrValueType) != 0
+					&& baseType.__Name[0] == 'E';
+			}
 		}
 
 		public bool IsSealed
@@ -1106,6 +1205,25 @@ namespace IKVM.Reflection
 			get { return this.DeclaringType != null; }
 		}
 
+		public virtual bool __ContainsMissingType
+		{
+			get
+			{
+				if (this.__IsMissing)
+				{
+					return true;
+				}
+				foreach (Type arg in this.GetGenericArguments())
+				{
+					if (arg.__ContainsMissingType)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
 		public Type MakeArrayType()
 		{
 			return ArrayType.Make(this, null, null);
@@ -1118,12 +1236,17 @@ namespace IKVM.Reflection
 
 		public Type MakeArrayType(int rank)
 		{
-			return MultiArrayType.Make(this, rank, null, null);
+			return MultiArrayType.Make(this, rank, Empty<int>.Array, new int[rank], null, null);
 		}
 
 		public Type __MakeArrayType(int rank, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
 		{
-			return MultiArrayType.Make(this, rank, Util.Copy(requiredCustomModifiers), Util.Copy(optionalCustomModifiers));
+			return MultiArrayType.Make(this, rank, Empty<int>.Array, new int[rank], Util.Copy(requiredCustomModifiers), Util.Copy(optionalCustomModifiers));
+		}
+
+		public Type __MakeArrayType(int rank, int[] sizes, int[] lobounds, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		{
+			return MultiArrayType.Make(this, rank, sizes ?? Empty<int>.Array, lobounds ?? Empty<int>.Array, Util.Copy(requiredCustomModifiers), Util.Copy(optionalCustomModifiers));
 		}
 
 		public Type MakeByRefType()
@@ -1153,7 +1276,7 @@ namespace IKVM.Reflection
 
 		public Type __MakeGenericType(Type[] typeArguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
-			if (!this.IsGenericTypeDefinition)
+			if (!this.__IsMissing && !this.IsGenericTypeDefinition)
 			{
 				throw new InvalidOperationException();
 			}
@@ -1211,7 +1334,7 @@ namespace IKVM.Reflection
 			{
 				return TypeCode.Empty;
 			}
-			if (type.IsEnum)
+			if (!type.__IsMissing && type.IsEnum)
 			{
 				type = type.GetEnumUnderlyingType();
 			}
@@ -1279,6 +1402,10 @@ namespace IKVM.Reflection
 			else if (type == u.System_String)
 			{
 				return TypeCode.String;
+			}
+			else if (type.__IsMissing)
+			{
+				throw new MissingMemberException(type);
 			}
 			else
 			{
@@ -1471,7 +1598,7 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal MethodBase FindMethod(string name, MethodSignature signature)
+		internal virtual MethodBase FindMethod(string name, MethodSignature signature)
 		{
 			foreach (MethodBase method in __GetDeclaredMethods())
 			{
@@ -1483,7 +1610,7 @@ namespace IKVM.Reflection
 			return null;
 		}
 
-		internal FieldInfo FindField(string name, FieldSignature signature)
+		internal virtual FieldInfo FindField(string name, FieldSignature signature)
 		{
 			foreach (FieldInfo field in __GetDeclaredFields())
 			{
@@ -1535,6 +1662,66 @@ namespace IKVM.Reflection
 					;
 			}
 		}
+
+		internal Type MarkNotValueType()
+		{
+			typeFlags |= TypeFlags.NotValueType;
+			return this;
+		}
+
+		internal Type MarkValueType()
+		{
+			typeFlags |= TypeFlags.ValueType;
+			return this;
+		}
+
+		internal ConstructorInfo GetPseudoCustomAttributeConstructor(params Type[] parameterTypes)
+		{
+			Universe u = this.Module.universe;
+			MethodSignature methodSig = MethodSignature.MakeFromBuilder(u.System_Void, parameterTypes, null, CallingConventions.Standard | CallingConventions.HasThis, 0);
+			MethodBase mb =
+				FindMethod(".ctor", methodSig) ??
+				u.GetMissingMethodOrThrow(this, ".ctor", methodSig);
+			return (ConstructorInfo)mb;
+		}
+
+		public MethodBase __CreateMissingMethod(string name, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
+			MethodSignature sig = new MethodSignature(
+				returnType ?? this.Module.universe.System_Void,
+				Util.Copy(parameterTypes),
+				PackedCustomModifiers.CreateFromExternal(returnTypeOptionalCustomModifiers, returnTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers, parameterTypeRequiredCustomModifiers, parameterTypes.Length),
+				callingConvention,
+				0);
+			MethodInfo method = new MissingMethod(this, name, sig);
+			if (name == ".ctor" || name == ".cctor")
+			{
+				return new ConstructorInfoImpl(method);
+			}
+			return method;
+		}
+
+		public FieldInfo __CreateMissingField(string name, Type fieldType, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		{
+			return new MissingField(this, name, FieldSignature.Create(fieldType, optionalCustomModifiers, requiredCustomModifiers));
+		}
+
+		internal virtual Type SetMetadataTokenForMissing(int token)
+		{
+			return this;
+		}
+
+		protected void MarkEnumOrValueType(string typeNamespace, string typeName)
+		{
+			// we don't assume that mscorlib won't have nested types with these names,
+			// so we don't check that we're not a nested type
+			if (typeNamespace == "System"
+				&& (typeName == "Enum" || typeName == "ValueType")
+				&& this.Assembly.GetName().Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))
+			{
+				typeFlags |= TypeFlags.EnumOrValueType;
+			}
+		}
 	}
 
 	abstract class ElementHolderType : Type
@@ -1572,6 +1759,11 @@ namespace IKVM.Reflection
 		public sealed override string Name
 		{
 			get { return elementType.Name + GetSuffix(); }
+		}
+
+		public sealed override string Namespace
+		{
+			get { return elementType.Namespace; }
 		}
 
 		public sealed override string FullName
@@ -1621,6 +1813,19 @@ namespace IKVM.Reflection
 			}
 		}
 
+		public sealed override bool __ContainsMissingType
+		{
+			get
+			{
+				Type type = elementType;
+				while (type.HasElementType)
+				{
+					type = type.GetElementType();
+				}
+				return type.__ContainsMissingType;
+			}
+		}
+
 		internal sealed override Type BindTypeParameters(IGenericBinder binder)
 		{
 			Type type = elementType.BindTypeParameters(binder);
@@ -1667,7 +1872,7 @@ namespace IKVM.Reflection
 			return CustomAttributeData.EmptyList;
 		}
 
-		protected abstract string GetSuffix();
+		internal abstract string GetSuffix();
 
 		protected abstract Type Wrap(Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers);
 	}
@@ -1745,7 +1950,7 @@ namespace IKVM.Reflection
 			return elementType.GetHashCode() * 5;
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "[]";
 		}
@@ -1759,16 +1964,20 @@ namespace IKVM.Reflection
 	sealed class MultiArrayType : ElementHolderType
 	{
 		private readonly int rank;
+		private readonly int[] sizes;
+		private readonly int[] lobounds;
 
-		internal static Type Make(Type type, int rank, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		internal static Type Make(Type type, int rank, int[] sizes, int[] lobounds, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
 		{
-			return type.Module.CanonicalizeType(new MultiArrayType(type, rank, requiredCustomModifiers, optionalCustomModifiers));
+			return type.Module.CanonicalizeType(new MultiArrayType(type, rank, sizes, lobounds, requiredCustomModifiers, optionalCustomModifiers));
 		}
 
-		private MultiArrayType(Type type, int rank, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		private MultiArrayType(Type type, int rank, int[] sizes, int[] lobounds, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
 			: base(type, requiredCustomModifiers, optionalCustomModifiers)
 		{
 			this.rank = rank;
+			this.sizes = sizes;
+			this.lobounds = lobounds;
 		}
 
 		public override Type BaseType
@@ -1814,10 +2023,39 @@ namespace IKVM.Reflection
 			return rank;
 		}
 
+		public override int[] __GetArraySizes()
+		{
+			return Util.Copy(sizes);
+		}
+
+		public override int[] __GetArrayLowerBounds()
+		{
+			return Util.Copy(lobounds);
+		}
+
 		public override bool Equals(object o)
 		{
 			MultiArrayType at = o as MultiArrayType;
-			return EqualsHelper(at) && at.rank == rank;
+			return EqualsHelper(at)
+				&& at.rank == rank
+				&& ArrayEquals(at.sizes, sizes)
+				&& ArrayEquals(at.lobounds, lobounds);
+		}
+
+		private static bool ArrayEquals(int[] i1, int[] i2)
+		{
+			if (i1.Length == i2.Length)
+			{
+				for (int i = 0; i < i1.Length; i++)
+				{
+					if (i1[i] != i2[i])
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public override int GetHashCode()
@@ -1825,7 +2063,7 @@ namespace IKVM.Reflection
 			return elementType.GetHashCode() * 9 + rank;
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			if (rank == 1)
 			{
@@ -1839,7 +2077,7 @@ namespace IKVM.Reflection
 
 		protected override Type Wrap(Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
 		{
-			return Make(type, rank, requiredCustomModifiers, optionalCustomModifiers);
+			return Make(type, rank, sizes, lobounds, requiredCustomModifiers, optionalCustomModifiers);
 		}
 	}
 
@@ -1987,7 +2225,7 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "&";
 		}
@@ -2035,7 +2273,7 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		protected override string GetSuffix()
+		internal override string GetSuffix()
 		{
 			return "*";
 		}
@@ -2058,7 +2296,7 @@ namespace IKVM.Reflection
 		internal static Type Make(Type type, Type[] typeArguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			bool identity = true;
-			if (type is TypeBuilder || type is BakedType)
+			if (type is TypeBuilder || type is BakedType || type.__IsMissing)
 			{
 				// a TypeBuiler identity must be instantiated
 				identity = false;
@@ -2262,11 +2500,6 @@ namespace IKVM.Reflection
 			get { return type.Namespace; }
 		}
 
-		public override Type UnderlyingSystemType
-		{
-			get { return this; }
-		}
-
 		public override string Name
 		{
 			get { return type.Name; }
@@ -2276,15 +2509,17 @@ namespace IKVM.Reflection
 		{
 			get
 			{
-				if (this.ContainsGenericParameters)
+				if (!this.__ContainsMissingType && this.ContainsGenericParameters)
 				{
 					return null;
 				}
-				StringBuilder sb = new StringBuilder(base.FullName);
+				StringBuilder sb = new StringBuilder(this.type.FullName);
 				sb.Append('[');
+				string sep = "";
 				foreach (Type type in args)
 				{
-					sb.Append('[').Append(type.AssemblyQualifiedName.Replace("]", "\\]")).Append(']');
+					sb.Append(sep).Append('[').Append(type.FullName).Append(", ").Append(type.Assembly.FullName.Replace("]", "\\]")).Append(']');
+					sep = ",";
 				}
 				sb.Append(']');
 				return sb.ToString();
@@ -2312,6 +2547,11 @@ namespace IKVM.Reflection
 		}
 
 		public override bool IsGenericType
+		{
+			get { return true; }
+		}
+
+		internal override bool IsGenericTypeInstance
 		{
 			get { return true; }
 		}
@@ -2353,6 +2593,21 @@ namespace IKVM.Reflection
 					}
 				}
 				return false;
+			}
+		}
+
+		public override bool __ContainsMissingType
+		{
+			get
+			{
+				foreach (Type type in args)
+				{
+					if (type.__ContainsMissingType)
+					{
+						return true;
+					}
+				}
+				return this.type.__IsMissing;
 			}
 		}
 

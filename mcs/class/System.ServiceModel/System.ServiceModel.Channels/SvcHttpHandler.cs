@@ -75,9 +75,9 @@ namespace System.ServiceModel.Channels
 			EnsureServiceHost ();
 
 			var table = HttpListenerManagerTable.GetOrCreate (host);
-			var manager = table.GetOrCreateManager (context.Request.Url);
+			var manager = table.GetOrCreateManager (context.Request.Url, null);
 			if (manager == null)
-				manager = table.GetOrCreateManager (host.BaseAddresses [0]);
+				manager = table.GetOrCreateManager (host.BaseAddresses [0], null);
 			var wait = new ManualResetEvent (false);
 			wcf_wait_handles [context] = wait;
 			manager.ProcessNewContext (new System.ServiceModel.Channels.Http.AspNetHttpContextInfo (this, context));
@@ -128,10 +128,10 @@ namespace System.ServiceModel.Channels
 
 			//ServiceHost for this not created yet
 			var baseUri = new Uri (new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Authority)), path);
-			if (factory_type != null) {
-				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
-			}
-			else
+//			if (factory_type != null) {
+//				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
+//			}
+//			else
 				host = new ServiceHost (type, baseUri);
 			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 

@@ -53,5 +53,12 @@ namespace MonoTests {
 			Assert.AreEqual(1, (byte) unpacked[0]);
 			Assert.AreEqual(TEST_STRING, new string((char[]) unpacked[1]));
 		}
+
+		[Test]
+		public void UnpackTests ()
+		{
+			float f = (float)DataConverter.Unpack ("%f", DataConverter.Pack ("f", 3.14), 0) [0];
+			Assert.IsTrue ((f - 3.14f) < Single.Epsilon);
+		}
 	}
 }

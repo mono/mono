@@ -35,7 +35,7 @@ namespace Mono.XBuild.CommandLine {
 		static string[] version = {
 			String.Format ("XBuild Engine Version {0}", Consts.MonoVersion),
 			String.Format ("Mono, Version {0}", Consts.MonoVersion),
-			"Copyright (C) Marek Sieradzki 2005-2008, Novell 2008-2009.",
+			"Copyright (C) Marek Sieradzki 2005-2008, Novell 2008-2011.",
 		};
 
 		
@@ -90,7 +90,11 @@ namespace Mono.XBuild.CommandLine {
 				"    /validate		Validate the project file against the schema\n" +
 				"    /validate:<schema>	Validate the project file against the specified schema\n" +
 				"    /consoleloggerparameters:<params>\n" +
+				"    /clp:<params>\n" +
 				"			Parameters for the console logger\n" +
+				"    /fileloggerparameters[n]:<params>\n" +
+				"    /flp[n]:<params>\n" +
+				"		        Parameters for the file logger, eg. LogFile=foo.log\n" +
 				"    /nologo		Don't show the initial banner\n" +
 				"    /help		Show this help\n"
 				);

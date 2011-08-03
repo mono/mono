@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -59,24 +60,46 @@ namespace System.ServiceModel.Description
 		public MessageDescription GetMessageDescription (
 			OperationMessage operationMessage)
 		{
-			throw new NotImplementedException ();
+			if (operationMessage == null)
+				throw new ArgumentNullException ("operationMessage");
+			var od = GetOperationDescription (operationMessage.Operation);
+			if (od == null)
+				throw new ArgumentException (String.Format ("Operation {0} for the argument OperationMessage was not found", operationMessage.Operation.Name));
+			return od.Messages.FirstOrDefault (md => md.Direction == MessageDirection.Input && operationMessage is OperationInput || md.Direction == MessageDirection.Output && operationMessage is OperationOutput);
 		}
 
 		public Operation GetOperation (OperationDescription operation)
 		{
-			throw new NotImplementedException ();
+			if (operation == null)
+				throw new ArgumentNullException ("operation");
+			foreach (Operation o in WsdlPortType.Operations)
+				if (o.Name == operation.Name)
+					return o;
+			return null;
 		}
 
 		public OperationDescription GetOperationDescription (
 			Operation operation)
 		{
-			throw new NotImplementedException ();
+			if (operation == null)
+				throw new ArgumentNullException ("operation");
+			return Contract.Operations.FirstOrDefault (od => od.Name == operation.Name);
 		}
 
 		public OperationMessage GetOperationMessage (
 			MessageDescription message)
 		{
-			throw new NotImplementedException ();
+			if (message == null)
+				throw new ArgumentNullException ("message");
+			var od = Contract.Operations.FirstOrDefault (o => o.Messages.Contains (message));
+			if (od == null)
+				throw new ArgumentException (String.Format ("MessageDescription for {0} direction and {1} action was not in current ContractDescription", message.Direction, message.Action));
+			var op = GetOperation (od);
+			foreach (OperationMessage om in op.Messages)
+				if (om is OperationInput && message.Direction == MessageDirection.Input ||
+				    om is OperationOutput && message.Direction == MessageDirection.Output)
+					return om;
+			return null;
 		}
 	}
 }

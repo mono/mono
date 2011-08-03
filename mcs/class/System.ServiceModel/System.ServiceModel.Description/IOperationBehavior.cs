@@ -37,11 +37,9 @@ namespace System.ServiceModel.Description
 			OperationDescription description,
 			BindingParameterCollection parameters);
 
-#if !NET_2_1
 		void ApplyDispatchBehavior (
 			OperationDescription description,
 			DispatchOperation dispatch);
-#endif
 
 		void ApplyClientBehavior (
 			OperationDescription description,

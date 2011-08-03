@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -36,8 +38,11 @@ using System.Xml;
 
 namespace System.ServiceModel.MonoInternal
 {
+#if DISABLE_REAL_PROXY
 	// FIXME: This is a quick workaround for bug #571907
-	public class DuplexClientRuntimeChannel
+	public
+#endif
+	class DuplexClientRuntimeChannel
 		: ClientRuntimeChannel, IDuplexContextChannel
 	{
 		public DuplexClientRuntimeChannel (ServiceEndpoint endpoint,
@@ -93,6 +98,7 @@ namespace System.ServiceModel.MonoInternal
 		IAsyncResult loop_result;
 		AutoResetEvent loop_handle = new AutoResetEvent (false);
 		AutoResetEvent finish_handle = new AutoResetEvent (false);
+		AutoResetEvent receive_reply_handle = new AutoResetEvent (false);
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
@@ -152,12 +158,37 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
-		void ProcessInput (IInputChannel input, Message message)
+		void ProcessInputCore (IInputChannel input, Message message)
 		{
-			try {
+				bool isReply = message != null && Contract.Operations.Any (od => (od.DeclaringContract.CallbackContractType == od.DeclaringContract.ContractType || !od.InCallbackContract) && od.Messages.Any (md => md.Action == message.Headers.Action));
+				if (isReply) {
+					if (ReplyHandlerQueue.Count > 0) {
+						if (isReply) {
+							var h = ReplyHandlerQueue.Dequeue ();
+							h (message);
+							return;
+						}
+					}
+				}
+				
+				if (message.IsFault) {
+					Exception ex;
+					var mf = MessageFault.CreateFault (message, 0x10000);
+					if (FaultConverter.GetDefaultFaultConverter (message.Version).TryCreateException (message, mf, out ex)) // FIXME: get maxMessageSize somehow
+						throw ex;
+					else
+						throw new FaultException (mf);
+				}
+				
 				if (!MessageMatchesEndpointDispatcher (message, Runtime.CallbackDispatchRuntime.EndpointDispatcher))
 					throw new EndpointNotFoundException (String.Format ("The request message has the target '{0}' with action '{1}' which is not reachable in this service contract", message.Headers.To, message.Headers.Action));
 				new InputOrReplyRequestProcessor (Runtime.CallbackDispatchRuntime, input).ProcessInput (message);
+		}
+
+		void ProcessInput (IInputChannel input, Message message)
+		{
+			try {
+				ProcessInputCore (input, message);
 			} catch (Exception ex) {
 				// FIXME: log it.
 				Console.WriteLine (ex);
@@ -174,5 +205,23 @@ namespace System.ServiceModel.MonoInternal
 
 			return endpoint.ContractFilter.Match (req);
 		}
+		
+		internal override Message RequestCorrelated (Message msg, TimeSpan timeout, IOutputChannel channel)
+		{
+			DateTime startTime = DateTime.Now;
+			Message ret = null;
+			ManualResetEvent wait = new ManualResetEvent (false);
+			Action<Message> handler = delegate (Message reply) {
+				ret = reply;
+				wait.Set ();
+			};
+			ReplyHandlerQueue.Enqueue (handler);
+			channel.Send (msg, timeout);
+			if (ret == null && !wait.WaitOne (timeout - (DateTime.Now - startTime)))
+				throw new TimeoutException ();
+			return ret;
+		}
+		
+		internal Queue<Action<Message>> ReplyHandlerQueue = new Queue<Action<Message>> ();
 	}
 }

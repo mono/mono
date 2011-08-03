@@ -48,7 +48,7 @@ generate-cache-pq-tests: cache-pq-test-generator.exe
 	for f in $(patsubst %.seq.gz,%.seq,$(CACHE_PQ_TEST_PACKED_SEQUENCES)); do \
 		gunzip -c $$f.gz > $$f ; \
 	done ;
-	$(RUNTIME) --debug cache-pq-test-generator.exe ./CachePQTestGenerator/Sequences/ > ../System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
+	$(RUNTIME) --debug cache-pq-test-generator.exe ./CachePQTestGenerator/Sequences/ ../System.Web.Caching/CacheItemPriorityQueueTestData/ > ../System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
 
 deps:
 ifndef STANDALONE_SUPPORT_BUILT

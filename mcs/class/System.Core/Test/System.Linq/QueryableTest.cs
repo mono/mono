@@ -40,6 +40,20 @@ namespace MonoTests.System.Linq {
 	[TestFixture]
 	public class QueryableTest {
 
+		[Test] // #701187
+		public void ConcatCastedQueryables ()
+		{
+			var bs = new List<B> { new B (), new B () }.AsQueryable ();
+			var cs = new List<C> { new C (), new C () }.AsQueryable ();
+
+			var concat = abs.Cast<A> ().Concat (acs.Cast<A> ());
+			Assert.AreEqual (4, concat.Count ());
+		}
+
+		class A { }
+		class B : A { }
+		class C : A { }
+
 		[Test]
 		public void TestElementType ()
 		{

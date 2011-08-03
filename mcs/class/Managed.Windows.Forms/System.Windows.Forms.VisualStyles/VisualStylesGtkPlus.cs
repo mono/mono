@@ -48,9 +48,7 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		enum ThemeHandle {
 			BUTTON = 1,
-#if NET_2_0
 			COMBOBOX,
-#endif
 			EDIT,
 			HEADER,
 			PROGRESS,
@@ -233,7 +231,6 @@ namespace System.Windows.Forms.VisualStyles
 				}
 			#endregion
 			#region COMBOBOX
-#if NET_2_0
 			case ThemeHandle.COMBOBOX:
 				switch ((COMBOBOXPARTS)part) {
 				#region CP_DROPDOWNBUTTON
@@ -262,7 +259,6 @@ namespace System.Windows.Forms.VisualStyles
 				#endregion
 				default: return false;
 				}
-#endif
 			#endregion
 			#region EDIT
 			case ThemeHandle.EDIT:
@@ -958,7 +954,6 @@ namespace System.Windows.Forms.VisualStyles
 				}
 			#endregion
 			#region COMBOBOX
-#if NET_2_0
 			case ThemeHandle.COMBOBOX:
 				switch ((COMBOBOXPARTS)iPartId) {
 				case COMBOBOXPARTS.CP_DROPDOWNBUTTON:
@@ -966,7 +961,6 @@ namespace System.Windows.Forms.VisualStyles
 					return true;
 				default: return false;
 				}
-#endif
 			#endregion
 			#region EDIT
 			case ThemeHandle.EDIT:

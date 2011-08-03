@@ -60,5 +60,41 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.AreEqual (MessageVersion.None, v, "#4");
 
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void InvalidCombinationThrowsException ()
+		{
+			MessageVersion.CreateVersion (EnvelopeVersion.None, AddressingVersion.WSAddressing10);
+		}
+
+		[Test]
+		public void CreateVersionReturnsSameObjectReference ()
+		{
+			Assert.AreSame (
+				MessageVersion.CreateVersion (EnvelopeVersion.None, AddressingVersion.None),
+				MessageVersion.CreateVersion (EnvelopeVersion.None, AddressingVersion.None)
+			, "#1");
+
+			Assert.AreSame (
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.None),
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.None)
+			, "#2");
+
+			Assert.AreSame (
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10),
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10)
+			, "#3");
+
+			Assert.AreSame (
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressing10),
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressing10)
+			, "#4");
+
+			Assert.AreSame (
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.None),
+				MessageVersion.CreateVersion (EnvelopeVersion.Soap12, AddressingVersion.None)
+			, "#5");
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// cs0622.cs: Can only use array initializer expressions to assign to array types. Try using a new expression instead
+// CS0622: Can only use array initializer expressions to assign to array types. Try using a new expression instead
 // Line: 7
 
 class X {

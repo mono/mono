@@ -28,20 +28,12 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
-
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Windows.Forms
 {
 
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	static class ListBindingHelper 
+	public static class ListBindingHelper 
 	{
 		public static object GetList (object list)
 		{
@@ -61,14 +53,13 @@ namespace System.Windows.Forms
 				throw new ArgumentException ("dataMember");
 
 			object item = null;
-#if NET_2_0
+
 			ICurrencyManagerProvider currencyManagerProvider = dataSource as ICurrencyManagerProvider;
 			if (currencyManagerProvider != null && currencyManagerProvider.CurrencyManager != null) {
 				CurrencyManager currencyManager = currencyManagerProvider.CurrencyManager;
 				if (currencyManager != null && currencyManager.Count > 0 && currencyManager.Current != null)
 					item = currencyManager.Current;
 			}
-#endif
 
 			if (item == null) {
 				if (dataSource is IEnumerable) {
@@ -117,11 +108,7 @@ namespace System.Windows.Forms
 				if (enumerator.MoveNext () && enumerator.Current != null)
 					return enumerator.Current.GetType ();
 
-				if (dataSource is IList
-#if NET_2_0
- 					|| dataSource.GetType () == typeof (IList<>)
-#endif
-					) {
+				if (dataSource is IList || dataSource.GetType () == typeof (IList<>)) {
 					PropertyInfo property = GetPropertyByReflection (dataSource.GetType (), "Item");
 					if (property != null) // `Item' could be interface-explicit, and thus private
 						return property.PropertyType;
@@ -157,11 +144,7 @@ namespace System.Windows.Forms
 
 			// Take into account only the first property
 			Type property_type = listAccessors [0].PropertyType;
-			if (typeof (IList).IsAssignableFrom (property_type)
-#if NET_2_0
-				|| typeof (IList<>).IsAssignableFrom (property_type)
-#endif
-				) {
+			if (typeof (IList).IsAssignableFrom (property_type) || typeof (IList<>).IsAssignableFrom (property_type)) {
 
 				PropertyInfo property = GetPropertyByReflection (property_type, "Item");
 				return TypeDescriptor.GetProperties (property.PropertyType);

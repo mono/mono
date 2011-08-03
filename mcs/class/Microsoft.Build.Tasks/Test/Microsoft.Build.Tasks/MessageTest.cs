@@ -95,7 +95,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Assert.Fail ("Build should have failed");
 			}
 			
-			testLogger.DumpMessages ();
 			Assert.AreEqual (0, testLogger.CheckAny ("Text1", MessageImportance.Low), "A1");
 			Assert.AreEqual (0, testLogger.CheckAny ("Text2", MessageImportance.Normal), "A2");
 			Assert.AreEqual (0, testLogger.CheckAny ("Text3", MessageImportance.High), "A3");
@@ -104,7 +103,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (0, testLogger.CheckAny ("Text6", MessageImportance.High), "A6");
 			Assert.AreEqual (0, testLogger.CheckAny ("Text7", MessageImportance.Normal), "A7");
 			Assert.AreEqual (1, testLogger.CheckAny ("Text8", MessageImportance.Normal), "A8");
-			
 		}
 	}
 }	

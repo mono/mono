@@ -66,7 +66,7 @@ namespace System.Xaml
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 			} else {
 				Name = GetXamlName (type);
-				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+				PreferredXamlNamespace = schemaContext.GetXamlNamespace (type.Namespace) ?? String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
 			}
 			if (type.IsGenericType) {
 				TypeArguments = new List<XamlType> ();
@@ -466,9 +466,12 @@ namespace System.Xaml
 
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			foreach (var pi in UnderlyingType.GetProperties (bf))
+			foreach (var pi in UnderlyingType.GetProperties (bf)) {
+				if (pi.Name.Contains ('.')) // exclude explicit interface implementations.
+					continue;
 				if (pi.CanRead && (pi.CanWrite || IsCollectionType (pi.PropertyType) || typeof (IXmlSerializable).IsAssignableFrom (pi.PropertyType)) && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
+			}
 			foreach (var ei in UnderlyingType.GetEvents (bf))
 				yield return new XamlMember (ei, SchemaContext);
 		}
@@ -508,21 +511,19 @@ namespace System.Xaml
 			return GetAllAttachableMembers ().FirstOrDefault (m => m.Name == name);
 		}
 
-		[MonoTODO]
 		protected virtual XamlType LookupBaseType ()
 		{
 			if (base_type == null) {
 				if (UnderlyingType == null)
-					// FIXME: probably something advanced is needed here.
-					base_type = new XamlType (typeof (object), SchemaContext, Invoker);
+					base_type = SchemaContext.GetXamlType (typeof (object));
 				else
-					base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : new XamlType (type.BaseType, SchemaContext, Invoker);
+					base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : SchemaContext.GetXamlType (type.BaseType);
 			}
 			return base_type;
 		}
 
 		// This implementation is not verified. (No place to use.)
-		protected virtual XamlCollectionKind LookupCollectionKind ()
+		protected internal virtual XamlCollectionKind LookupCollectionKind ()
 		{
 			if (UnderlyingType == null)
 				return BaseType != null ? BaseType.LookupCollectionKind () : XamlCollectionKind.None;
@@ -635,7 +636,7 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsNullable ()
 		{
-			return !type.IsValueType || type.ImplementsInterface (typeof (Nullable<>));
+			return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 
 		protected virtual bool LookupIsPublic ()

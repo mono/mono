@@ -235,6 +235,10 @@ namespace System.Reflection.Emit
 			return parameters.Length;
 		}
 
+		internal override Type GetParameterType (int pos) {
+			return parameters [pos];
+		}
+
 		public Module GetModule ()
 		{
 			return type.Module;
@@ -651,5 +655,11 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0 || MOONLIGHT
+		public override ParameterInfo ReturnParameter {
+			get { return base.ReturnParameter; }
+		}
+#endif
 	}
 }

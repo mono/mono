@@ -10,7 +10,9 @@ else
 runtime_lib=../interpreter/libmint.la
 endif
 
+if SUPPORT_BOEHM
 bin_PROGRAMS = monodis
+endif
 
 noinst_LIBRARIES = libmonodis.a
 
@@ -34,7 +36,8 @@ monodis_LDADD = 			\
 	libmonodis.a			\
 	$(runtime_lib)			\
 	$(LLVM_LIBS)			\
-	$(GLIB_LIBS) 
+	$(GLIB_LIBS)			\
+	$(LIBICONV)
 
 if PLATFORM_DARWIN
 monodis_LDFLAGS=-framework CoreFoundation

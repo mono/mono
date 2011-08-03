@@ -108,6 +108,9 @@ namespace System.Web
 		static readonly UrlMappingCollection urlMappings;
 		readonly static char [] queryTrimChars = {'?'};
 #if NET_4_0
+		bool lazyFormValidation;
+		bool lazyQueryStringValidation;
+		bool inputValidationEnabled;
 		RequestContext requestContext;
 		
 		static bool validateRequestNewMode;
@@ -115,6 +118,10 @@ namespace System.Web
 			get { return validateRequestNewMode; }
 		}
 
+		internal bool InputValidationEnabled {
+			get { return inputValidationEnabled; }
+		}
+		
 		private static char[] RequestPathInvalidCharacters {
 			get; set;
 		}
@@ -686,8 +693,8 @@ namespace System.Web
 
 			return String.Compare (ContentType, ct, true, Helpers.InvariantCulture) == 0;
 		}
-		
-		public NameValueCollection Form {
+
+		internal WebROCollection FormUnvalidated {
 			get {
 				if (form == null){
 					form = new WebROCollection ();
@@ -702,12 +709,21 @@ namespace System.Web
 					form.Protect ();
 				}
 
+				return form;
+			}
+		}
+		
+		public NameValueCollection Form {
+			get {
+				NameValueCollection form = FormUnvalidated;
 #if NET_4_0
 				if (validateRequestNewMode && !checked_form) {
-					// Setting this before calling the validator prevents
-					// possible endless recursion
-					checked_form = true;
-					ValidateNameValueCollection ("Form", query_string_nvc, RequestValidationSource.Form);
+					if (!lazyFormValidation) {
+						// Setting this before calling the validator prevents
+						// possible endless recursion
+						checked_form = true;
+						ValidateNameValueCollection ("Form", form, RequestValidationSource.Form);
+					}
 				} else
 #endif
 					if (validate_form && !checked_form){
@@ -1123,7 +1139,7 @@ namespace System.Web
 			}
 		}
 
-		public NameValueCollection QueryString {
+		internal WebROCollection QueryStringUnvalidated {
 			get {
 				if (query_string_nvc == null) {
 					query_string_nvc = new WebROCollection ();
@@ -1137,12 +1153,22 @@ namespace System.Web
 					
 					query_string_nvc.Protect();
 				}
+
+				return query_string_nvc;
+			}
+		}
+		
+		public NameValueCollection QueryString {
+			get {
+				NameValueCollection query_string_nvc = QueryStringUnvalidated;
 #if NET_4_0
 				if (validateRequestNewMode && !checked_query_string) {
-					// Setting this before calling the validator prevents
-					// possible endless recursion
-					checked_query_string = true;
-					ValidateNameValueCollection ("QueryString", query_string_nvc, RequestValidationSource.QueryString);
+					if (!lazyQueryStringValidation) {
+						// Setting this before calling the validator prevents
+						// possible endless recursion
+						checked_query_string = true;
+						ValidateNameValueCollection ("QueryString", query_string_nvc, RequestValidationSource.QueryString);
+					}
 				} else
 #endif
 					if (validate_query_string && !checked_query_string) {
@@ -1361,9 +1387,9 @@ namespace System.Web
 					baseVirtualDir = appVirtualPath;
 				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
 				if (!VirtualPathUtility.IsAbsolute (virtualPath))
-					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 			} else if (!VirtualPathUtility.IsAbsolute (virtualPath))
-				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 
 			bool isAppVirtualPath = String.Compare (virtualPath, appVirtualPath, RuntimeHelpers.StringComparison) == 0;
 			appVirtualPath = VirtualPathUtility.AppendTrailingSlash (appVirtualPath);
@@ -1437,6 +1463,9 @@ namespace System.Web
 			validate_cookies = true;
 			validate_query_string = true;
 			validate_form = true;
+#if NET_4_0
+			inputValidationEnabled = true;
+#endif
 		}
 #if NET_4_0
 		internal void Validate ()
@@ -1462,6 +1491,9 @@ namespace System.Web
 						);
 				}
 			}
+
+			if (validateRequestNewMode)
+				ValidateInput ();
 		}
 #endif
 #region internal routines
@@ -1526,7 +1558,23 @@ namespace System.Web
 			string path = UrlComponents.Path;
 			UrlComponents.Path = path + PathInfo;
 		}
+#if NET_4_0
+		internal void SetFormCollection (WebROCollection coll, bool lazyValidation)
+		{
+			if (coll == null)
+				return;
+			form = coll;
+			lazyFormValidation = lazyValidation;
+		}
 
+		internal void SetQueryStringCollection (WebROCollection coll, bool lazyValidation)
+		{
+			if (coll == null)
+				return;
+			query_string_nvc = coll;
+			lazyQueryStringValidation = lazyValidation;
+		}
+#endif
 		// Headers is ReadOnly, so we need this hack for cookie-less sessions.
 		internal void SetHeader (string name, string value)
 		{
@@ -1667,12 +1715,23 @@ namespace System.Web
 		
 			throw new HttpRequestValidationException (msg);
 		}
-
-
+#if NET_4_0
+		internal static void ValidateString (string key, string value, RequestValidationSource source)
+		{
+			if (String.IsNullOrEmpty (value))
+				return;
+#pragma warning disable 219
+			int ignore;
+#pragma warning restore 219
+			if (IsInvalidString (value, out ignore))
+				ThrowValidationException (source.ToString (), key, value);
+		}
+#endif
 		internal static bool IsInvalidString (string val)
 		{
+#pragma warning disable 219
 			int validationFailureIndex;
-
+#pragma warning restore 219
 			return IsInvalidString (val, out validationFailureIndex);
 		}
 

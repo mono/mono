@@ -28,8 +28,5 @@
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	delegate void PopupEventHandler (object sender, PopupEventArgs e);
+	public delegate void PopupEventHandler (object sender, PopupEventArgs e);
 }

@@ -32,10 +32,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-#endif
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
 	public sealed class MdiClient : Control {
@@ -58,9 +56,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Public Classes
-#if NET_2_0
 		[ComVisible (false)]
-#endif
 		public new class ControlCollection : Control.ControlCollection {
 
 			private MdiClient owner;
@@ -195,7 +191,7 @@ namespace System.Windows.Forms {
 			SizeScrollBars ();
 			ArrangeWindows ();
 		}
-#if NET_2_0
+
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
 			// Never change the MdiClient's location
@@ -205,7 +201,6 @@ namespace System.Windows.Forms {
 		}
 		
 		[System.ComponentModel.EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		protected override void ScaleCore (float dx, float dy)
 		{
 			base.ScaleCore (dx, dy);
@@ -227,7 +222,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public override ImageLayout BackgroundImageLayout {
@@ -238,7 +232,6 @@ namespace System.Windows.Forms {
 				base.BackgroundImageLayout = value;
 			}
 		}
-#endif
 
 		public Form [] MdiChildren {
 			get {
@@ -644,7 +637,6 @@ namespace System.Windows.Forms {
 				XplatUI.RequestNCRecalc (Parent.Handle);
 				ParentForm.PerformLayout ();
 
-#if NET_2_0
 				// If we closed the last child, unmerge the menus.
 				// If it's not the last child, the menu will be unmerged
 				// when another child takes focus.
@@ -653,7 +645,6 @@ namespace System.Windows.Forms {
 				if (parent_menu != null)
 					if (parent_menu.IsCurrentlyMerged)
 						ToolStripManager.RevertMerge (parent_menu);
-#endif
 			}
 			SizeScrollBars ();
 			SetParentText (false);
@@ -823,7 +814,6 @@ namespace System.Windows.Forms {
 
 			setting_windowstates = false;
 
-#if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)
 				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
 
@@ -869,12 +859,10 @@ namespace System.Windows.Forms {
 				if (child_menu != null)
 					ToolStripManager.Merge (child_menu, parent_menu);
 			}
-#endif
 
 			return maximize_this;
 		}
 
-#if NET_2_0
 		private MenuStrip LookForChildMenu (Control parent)
 		{
 			foreach (Control c in parent.Controls) {
@@ -914,7 +902,6 @@ namespace System.Windows.Forms {
 				parent_menu.ResumeLayout ();
 			}
 		}
-#endif
 
 		internal void SetWindowState (Form form, FormWindowState old_window_state, FormWindowState new_window_state, bool is_activating_child)
 		{
@@ -969,10 +956,9 @@ namespace System.Windows.Forms {
 
 		internal Form ActiveMdiChild {
 			get {
-#if NET_2_0
 				if (ParentForm != null && !ParentForm.Visible)
 					return null;
-#endif
+
 				if (Controls.Count < 1)
 					return null;
 					

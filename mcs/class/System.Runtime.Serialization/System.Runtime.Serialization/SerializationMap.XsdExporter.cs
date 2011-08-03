@@ -62,7 +62,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportStandardComplexType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), RuntimeType, Members);
+			exporter.ExportStandardComplexType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), this, Members);
 		}
 	}
 	
@@ -70,7 +70,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportStandardComplexType (null, RuntimeType, Members);
+			exporter.ExportStandardComplexType (null, this, Members);
 		}
 	}
 	
@@ -78,7 +78,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportListContractType (a, RuntimeType);
+			exporter.ExportListContractType (a, this);
 		}
 	}
 	
@@ -86,7 +86,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportListContractType (null, RuntimeType);
+			exporter.ExportListContractType (null, this);
 		}
 	}
 	
@@ -94,7 +94,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportDictionaryContractType (a, RuntimeType, GetGenericDictionaryInterface (RuntimeType));
+			exporter.ExportDictionaryContractType (a, this, GetGenericDictionaryInterface (RuntimeType));
 		}
 	}
 	
@@ -102,7 +102,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportStandardComplexType (null, RuntimeType, Members);
+			exporter.ExportStandardComplexType (null, this, Members);
 		}
 	}
 	
@@ -110,7 +110,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportEnumContractType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), RuntimeType);
+			exporter.ExportEnumContractType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), this);
 		}
 	}
 }

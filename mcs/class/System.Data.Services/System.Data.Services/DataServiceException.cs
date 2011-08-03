@@ -26,12 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Security;
 
-namespace System.Data.Services {
+namespace System.Data.Services
+{
+	[DebuggerDisplay ("{statusCode}: {Message}")]
 	[Serializable]
-	public class DataServiceException : InvalidOperationException {
+	public sealed class DataServiceException : InvalidOperationException
+	{
 		public DataServiceException()
 		{
 		}

@@ -9,6 +9,7 @@
  * (C) 2005 Novell Inc
  */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Mono.Unix;
@@ -20,6 +21,7 @@ using System.Runtime.InteropServices;
 class MonoServiceRunner : MarshalByRefObject
 {
 	string assembly, name, logname;
+	string[] args;
 	
 	static void info (string prefix, string format, params object [] args)
 	{
@@ -55,6 +57,7 @@ class MonoServiceRunner : MarshalByRefObject
 		string lockfile = null;
 		string name = null;
 		string logname = null;
+		var assebmlyArgs = new List<string>();
 
 		foreach (string s in args){
 			if (s.Length > 3 && s [0] == '-' && s [2] == ':'){
@@ -69,9 +72,13 @@ class MonoServiceRunner : MarshalByRefObject
 				}
 			} else {
 				if (assembly != null)
-					Usage ();
-				
-				assembly = s;
+				{
+					assebmlyArgs.Add(s);
+				}
+				else
+				{
+					assembly = s;
+				}
 			}
 		}
 
@@ -131,7 +138,7 @@ class MonoServiceRunner : MarshalByRefObject
 				true,
 				BindingFlags.Default,
 				null,
-				new object [] {assembly, name, logname},
+				new object [] {assembly, name, logname, assebmlyArgs.ToArray()},
 				null, null, null) as MonoServiceRunner;
 				
 			if (rnr == null) {
@@ -147,11 +154,12 @@ class MonoServiceRunner : MarshalByRefObject
 		}
 	}
 	
-	public MonoServiceRunner (string assembly, string name, string logname)
+	public MonoServiceRunner (string assembly, string name, string logname, string[] args)
 	{
 		this.assembly = assembly;
 		this.name = name;
 		this.logname = logname;
+		this.args = args;
 	}
 	
 	public int StartService ()
@@ -196,7 +204,7 @@ class MonoServiceRunner : MarshalByRefObject
 			
 			// And run its Main. Our RunService handler is invoked from 
 			// ServiceBase.Run.
-			return AppDomain.CurrentDomain.ExecuteAssembly (assembly, AppDomain.CurrentDomain.Evidence);
+			return AppDomain.CurrentDomain.ExecuteAssembly (assembly, AppDomain.CurrentDomain.Evidence, args);
 			
 		} catch ( Exception ex ) {
 			for (Exception e = ex; e != null; e = e.InnerException) {

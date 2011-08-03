@@ -34,16 +34,14 @@ namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
 	[Serializable]
-  [Flags]
-  public enum AssemblyBuilderAccess
-  {
-    Run = 1,
-    Save = 2,
-    RunAndSave = 3,
-    ReflectionOnly = 6
+	[Flags]
+	public enum AssemblyBuilderAccess {
+		Run = 1,
+		Save = 2,
+		RunAndSave = 3,
+		ReflectionOnly = 6,
 #if NET_4_0
-	,
-	RunAndCollect = 9
+		RunAndCollect = 9
 #endif
   }
 }

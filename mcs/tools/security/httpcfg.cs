@@ -30,16 +30,14 @@ namespace Mono.Tools {
 		static Action action;
 		static string pvkfile;
 		static string certfile;
-		/*
 		static string p12file;
 		static string passwd;
-		*/
 		static ushort port;
 
 		static void Help (bool exit)
 		{
 			Console.WriteLine ("Usage is:\n" + 
-					   "\thttpcfg -add -port NN -cert CERT -pvk PVK\n" +
+					   "\thttpcfg -add -port NN [-cert CERT -pvk PVK] [-p12 P12 -pwd PASSWORD]\n" +
 					   "\thttpcfg -del -port NN\n" +
 					   "\thttpcfg -list");
 			if (exit)
@@ -89,7 +87,7 @@ namespace Mono.Tools {
 						Help (true);
 					}
 					break;
-				/*
+				
 				case "-p12":
 					if (p12file != null) {
 						Console.Error.WriteLine ("error: more than one p12 file specified.");
@@ -102,19 +100,18 @@ namespace Mono.Tools {
 					}
 					p12file = args [++i];
 					break;
-				*/
+				
 				case "-pvk":
 					if (pvkfile != null) {
 						Console.Error.WriteLine ("error: more than one PVK file specified.");
 						Help (true);
 					}
-
-					/*
+					
 					if (p12file != null) {
 						Console.Error.WriteLine ("error: use either -p12 or -pvk and -cert.");
 						Help (true);
 					}
-					*/
+					
 					pvkfile = args [++i];
 					break;
 				case "-cert":
@@ -122,24 +119,23 @@ namespace Mono.Tools {
 						Console.Error.WriteLine ("error: more than one CER file specified.");
 						Help (true);
 					}
-
-					/*
+					
 					if (p12file != null) {
 						Console.Error.WriteLine ("error: use either -p12 or -pvk and -cert.");
 						Help (true);
 					}
-					*/
+					
 					certfile = args [++i];
 					break;
-				/*
-				case "-passwd":
+				
+				case "-pwd":
 					if (passwd != null) {
 						Console.Error.WriteLine ("error: more than one password specified.");
 						Help (true);
 					}
 					passwd = args [++i];
 					break;
-				*/
+				
 				default:
 					Console.Error.WriteLine ("error: Unknown argument: {0}", arg);
 					Help (true);
@@ -162,14 +158,14 @@ namespace Mono.Tools {
 				Help (true);
 			}
 
-			//if (action == Action.Delete && (pvkfile != null || certfile != null || p12file != null)) {
-			if (action == Action.Delete && (pvkfile != null || certfile != null)) {
+			if (action == Action.Delete && (pvkfile != null || certfile != null || p12file != null)) {
+			//if (action == Action.Delete && (pvkfile != null || certfile != null)) {
 				Console.Error.WriteLine ("error: -delete only expects a -port option.");
 				Help (true);
 			}
 		}
 
-		/*
+		
 		static void AddP12 (string path, string filename, string password, ushort port)
 		{
 			X509Certificate2 x509 = null;
@@ -195,10 +191,12 @@ namespace Mono.Tools {
 				byte [] raw = x509.RawData;
 				cer.Write (raw, 0, raw.Length);
 			}
-
-			x509.PrivateKey.Save (target_pvk);
+			
+			PrivateKey pvk = new PrivateKey();
+			pvk.RSA = x509.PrivateKey as RSA;
+			pvk.Save(target_pvk);			
 		}
-		*/
+		
 
 		static void AddCertPvk (string path, string cert, string pvk, ushort port)
 		{
@@ -275,11 +273,9 @@ namespace Mono.Tools {
 
 			switch (action) {
 			case Action.Add:
-				/*
 				if (p12file != null)
 					AddP12 (path, p12file, passwd, port);
 				else
-				*/
 					AddCertPvk (path, certfile, pvkfile, port);
 				break;
 			case Action.Delete:

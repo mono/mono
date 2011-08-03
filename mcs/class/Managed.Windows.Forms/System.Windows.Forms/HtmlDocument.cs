@@ -22,7 +22,6 @@
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
 
-#if NET_2_0
 
 using System;
 using System.Drawing;
@@ -537,5 +536,3 @@ namespace System.Windows.Forms
 	}
 		
 }
-
-#endif

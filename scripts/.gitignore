@@ -8,6 +8,7 @@
 /ccrewrite
 /chktrust
 /cilc
+/crlupdate
 /csharp
 /csharp2
 /disco
@@ -89,3 +90,4 @@
 /xbuild
 /xsd
 /xsd2
+/*.bat

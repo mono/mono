@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008, 2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -112,7 +112,12 @@ namespace IKVM.Reflection
 						blob.ReadCompressedInt();
 						marshalType = ReadString(blob);
 						marshalCookie = ReadString(blob);
-						marshalTypeRef = module.Assembly.GetType(marshalType) ?? module.universe.GetType(marshalType);
+
+						TypeNameParser parser = TypeNameParser.Parse(marshalType, false);
+						if (!parser.Error)
+						{
+							marshalTypeRef = parser.GetType(module.universe, module.Assembly, false, marshalType, false);
+						}
 					}
 
 					Type typeofMarshalAs = module.universe.System_Runtime_InteropServices_MarshalAsAttribute;
@@ -122,45 +127,55 @@ namespace IKVM.Reflection
 					List<CustomAttributeNamedArgument> named = new List<CustomAttributeNamedArgument>();
 					if (arraySubType != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("ArraySubType"), new CustomAttributeTypedArgument(typeofUnmanagedType, arraySubType.Value)));
+						AddNamedArgument(named, typeofMarshalAs, "ArraySubType", typeofUnmanagedType, arraySubType.Value);
 					}
 					if (sizeParamIndex != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("SizeParamIndex"), new CustomAttributeTypedArgument(module.universe.System_Int16, sizeParamIndex.Value)));
+						AddNamedArgument(named, typeofMarshalAs, "SizeParamIndex", module.universe.System_Int16, sizeParamIndex.Value);
 					}
 					if (sizeConst != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("SizeConst"), new CustomAttributeTypedArgument(module.universe.System_Int32, sizeConst.Value)));
+						AddNamedArgument(named, typeofMarshalAs, "SizeConst", module.universe.System_Int32, sizeConst.Value);
 					}
 					if (safeArraySubType != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("SafeArraySubType"), new CustomAttributeTypedArgument(typeofVarEnum, safeArraySubType.Value)));
+						AddNamedArgument(named, typeofMarshalAs, "SafeArraySubType", typeofVarEnum, safeArraySubType.Value);
 					}
 					if (safeArrayUserDefinedSubType != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("SafeArrayUserDefinedSubType"), new CustomAttributeTypedArgument(typeofType, safeArrayUserDefinedSubType)));
+						AddNamedArgument(named, typeofMarshalAs, "SafeArrayUserDefinedSubType", typeofType, safeArrayUserDefinedSubType);
 					}
 					if (iidParameterIndex != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("IidParameterIndex"), new CustomAttributeTypedArgument(module.universe.System_Int32, iidParameterIndex.Value)));
+						AddNamedArgument(named, typeofMarshalAs, "IidParameterIndex", module.universe.System_Int32, iidParameterIndex.Value);
 					}
 					if (marshalType != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("MarshalType"), new CustomAttributeTypedArgument(module.universe.System_String, marshalType)));
+						AddNamedArgument(named, typeofMarshalAs, "MarshalType", module.universe.System_String, marshalType);
 					}
 					if (marshalTypeRef != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("MarshalTypeRef"), new CustomAttributeTypedArgument(module.universe.System_Type, marshalTypeRef)));
+						AddNamedArgument(named, typeofMarshalAs, "MarshalTypeRef", module.universe.System_Type, marshalTypeRef);
 					}
 					if (marshalCookie != null)
 					{
-						named.Add(new CustomAttributeNamedArgument(typeofMarshalAs.GetField("MarshalCookie"), new CustomAttributeTypedArgument(module.universe.System_String, marshalCookie)));
+						AddNamedArgument(named, typeofMarshalAs, "MarshalCookie", module.universe.System_String, marshalCookie);
 					}
-					ConstructorInfo constructor = typeofMarshalAs.GetConstructor(new Type[] { typeofUnmanagedType });
-					return new CustomAttributeData(constructor, new object[] { unmanagedType }, named);
+					ConstructorInfo constructor = typeofMarshalAs.GetPseudoCustomAttributeConstructor(typeofUnmanagedType);
+					return new CustomAttributeData(module, constructor, new object[] { unmanagedType }, named);
 				}
 			}
 			throw new BadImageFormatException();
+		}
+
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
+		{
+			// some fields are not available on the .NET Compact Framework version of MarshalAsAttribute
+			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, null, null));
+			if (field != null)
+			{
+				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));
+			}
 		}
 
 		internal static void SetMarshalAsAttribute(ModuleBuilder module, int token, CustomAttributeBuilder attribute)

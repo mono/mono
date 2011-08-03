@@ -1,4 +1,4 @@
-// cs1590-2.cs: Invalid XML `include' element. Missing `path' attribute
+// CS1590: Invalid XML `include' element. Missing `path' attribute
 // Line: 11
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

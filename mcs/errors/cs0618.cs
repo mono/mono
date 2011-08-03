@@ -1,4 +1,4 @@
-// cs0618.cs: `Name.Feat.Feat(string, string, int, params object[])' is obsolete: `AaA'
+// CS0618: `Name.Feat.Feat(string, string, int, params object[])' is obsolete: `AaA'
 // Line: 22
 // Compiler options: -warnaserror
 

@@ -124,7 +124,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public int ActiveStepIndex_Before_Init;
 		public int ActiveStepIndex_After_Init;
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			ActiveStepIndex_Before_Init = ActiveStepIndex;
 			base.OnInit (e);
 			ActiveStepIndex_After_Init = ActiveStepIndex;

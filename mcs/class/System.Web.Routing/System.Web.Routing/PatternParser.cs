@@ -445,7 +445,7 @@ namespace System.Web.Routing
 				bool invalidConstraint;
 				
 				foreach (var de in constraints) {
-					if (!Route.ProcessConstraintInternal (context, route, de.Value, de.Key, userValues, RouteDirection.UrlGeneration, out invalidConstraint) ||
+					if (!Route.ProcessConstraintInternal (context, route, de.Value, de.Key, userValues, RouteDirection.UrlGeneration, requestContext, out invalidConstraint) ||
 					    invalidConstraint)
 						return false; // constraint not met => no match
 				}

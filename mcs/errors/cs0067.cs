@@ -1,4 +1,4 @@
-// cs0067: The event `Foo.OnFoo' is never used
+// CS0067: The event `Foo.OnFoo' is never used
 // Line: 12
 // Compiler options: -warnaserror -warn:4
 

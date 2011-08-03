@@ -147,7 +147,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendFileNamesIfNotNull1 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -181,7 +181,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendFileNamesIfNotNull3 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -256,7 +256,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitch2 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -273,7 +273,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull1 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -299,7 +299,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull3 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -324,7 +324,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull5 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -333,7 +333,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull6 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -360,7 +360,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull8 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -369,7 +369,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendSwitchIfNotNull9 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -419,7 +419,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull1 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -445,7 +445,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull3 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -470,7 +470,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull5 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -479,7 +479,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull6 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -505,7 +505,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"switchName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"switchName\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull8 ()
 		{
 			clb = new CommandLineBuilder ();
@@ -514,7 +514,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException), "Parameter \"delimiter\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException), ExpectedMessage = "Parameter \"delimiter\" cannot be null.")]
 		public void TestAppendSwitchUnquotedIfNotNull9 ()
 		{
 			clb = new CommandLineBuilder ();

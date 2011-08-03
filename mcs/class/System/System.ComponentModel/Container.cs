@@ -33,9 +33,7 @@
 //
 
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.ComponentModel {
 
@@ -47,12 +45,7 @@ namespace System.ComponentModel {
 	//   
 	// </remarks>
 	public class Container : IContainer, IDisposable {
-
-#if NET_2_0
 		private List<IComponent> c = new List<IComponent> ();
-#else
-		private ArrayList c = new ArrayList ();
-#endif
 
 		// <summary>
 		//   Auxiliary class to support the default behaviour of CreateSite
@@ -117,11 +110,7 @@ namespace System.ComponentModel {
 
 		public virtual ComponentCollection Components {
 			get {
-#if NET_2_0
 				IComponent [] a = c.ToArray ();
-#else
-				IComponent [] a = (IComponent []) c.ToArray (typeof (IComponent));
-#endif
 				return new ComponentCollection (a);
 			}
 		}
@@ -144,9 +133,7 @@ namespace System.ComponentModel {
 			}
 		}
 
-#if NET_2_0
 		protected virtual
-#endif
 		void ValidateName (IComponent component, string name)
 		{
 			if (component == null)
@@ -177,11 +164,7 @@ namespace System.ComponentModel {
 			if (disposing) {
 				while (c.Count > 0) {
 					int index = c.Count - 1;
-#if NET_2_0
 					var component = c [index];
-#else
-					IComponent component = c [index] as IComponent;
-#endif
 					Remove (component);
 					component.Dispose ();
 				}
@@ -216,12 +199,10 @@ namespace System.ComponentModel {
 			}
 		}
 
-#if NET_2_0
 		protected void RemoveWithoutUnsiting (IComponent component)
 		{
 			Remove (component, false);
 		}
-#endif
 	}
 	
 }

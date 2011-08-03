@@ -41,20 +41,10 @@ namespace System.ServiceModel.Discovery.VersionCD1
 
 		void EndFind (IAsyncResult result);
 
-		[OperationContract (Name = "ProbeMatchesCD1", Action = MessageContractsCD1.ProbeMatchAction, AsyncPattern = true, IsOneWay = true)]
-		IAsyncResult BeginReplyFind (MessageContractsCD1.FindResponse message, AsyncCallback callback, object state);
-
-		void EndReplyFind (IAsyncResult result);
-
 		[OperationContract (Name = "ResolveCD1", Action = MessageContractsCD1.ResolveAction, AsyncPattern = true, IsOneWay = true)]
 		IAsyncResult BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state);
 
 		void EndResolve (IAsyncResult result);
-
-		[OperationContract (Name = "ResolveMatchesCD1", Action = MessageContractsCD1.ResolveMatchAction, AsyncPattern = true, IsOneWay = true)]
-		IAsyncResult BeginReplyResolve (MessageContractsCD1.ResolveResponse message, AsyncCallback callback, object state);
-
-		void EndReplyResolve (IAsyncResult result);
 
 		[OperationContract (Name = "HelloCD1", Action = MessageContractsCD1.HelloAction, IsOneWay = true, AsyncPattern = true)]
 		IAsyncResult BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement message, AsyncCallback callback, object state);

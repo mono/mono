@@ -1,4 +1,4 @@
-// cs0154-2.cs: The property or indexer `B.Foo' cannot be used in this context because it lacks the `get' accessor
+// CS0154: The property or indexer `B.Foo' cannot be used in this context because it lacks the `get' accessor
 // Line: 13
 // this is bug 55780.
 

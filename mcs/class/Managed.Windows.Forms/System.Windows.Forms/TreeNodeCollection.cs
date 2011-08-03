@@ -27,10 +27,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
-
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Windows.Forms {
 	[Editor("System.Windows.Forms.Design.TreeNodeCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
@@ -52,9 +49,6 @@ namespace System.Windows.Forms {
 			nodes = new TreeNode [OrigSize];
 		}
 
-#if !NET_2_0
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#endif
 		[Browsable(false)]
 		public int Count {
 			get { return count; }
@@ -101,7 +95,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		public virtual TreeNode this [string key] {
 			get {
 				for (int i = 0; i < count; i++)
@@ -111,7 +104,6 @@ namespace System.Windows.Forms {
 				return null;
 			}
 		}
-#endif
 
 		bool UsingSorting {
 			get {
@@ -149,15 +141,13 @@ namespace System.Windows.Forms {
 			}
 
 			SetupNode (node);
-#if NET_2_0
+
 			// UIA Framework Event: Collection Changed
 			if (tree_view != null)
 				tree_view.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (CollectionChangeAction.Add, node));
-#endif
 			return index;
 		}
 
-#if NET_2_0
 		public virtual TreeNode Add (string key, string text)
 		{
 			TreeNode node = new TreeNode (text);
@@ -197,9 +187,6 @@ namespace System.Windows.Forms {
 			return node;
 		}
 
-
-#endif
-
 		public virtual void AddRange (TreeNode [] nodes)
 		{
 			if (nodes == null)
@@ -234,7 +221,7 @@ namespace System.Windows.Forms {
 		{
 			return Array.IndexOf (nodes, node, 0, count) != -1;
 		}
-#if NET_2_0
+
 		public virtual bool ContainsKey (string key)
 		{
 			for (int i = 0; i < count; i++) {
@@ -243,7 +230,6 @@ namespace System.Windows.Forms {
 			}
 			return false;
 		}
-#endif
 
 		public void CopyTo (Array dest, int index)
 		{
@@ -260,7 +246,6 @@ namespace System.Windows.Forms {
 			return Array.IndexOf (nodes, node);
 		}
 
-#if NET_2_0
 		public virtual int IndexOfKey (string key)
 		{
 			for (int i = 0; i < count; i++) {
@@ -276,7 +261,6 @@ namespace System.Windows.Forms {
 			Insert (index, node);
 			return node;
 		}
-#endif
 
 		public virtual void Insert (int index, TreeNode node)
 		{
@@ -294,7 +278,6 @@ namespace System.Windows.Forms {
 			SetupNode (node);
 		}
 
-#if NET_2_0
 		public virtual TreeNode Insert (int index, string key, string text)
 		{
 			TreeNode node = new TreeNode (text);
@@ -338,7 +321,6 @@ namespace System.Windows.Forms {
 			Insert (index, node);
 			return node;
 		}
-#endif
 
 		public void Remove (TreeNode node)
 		{
@@ -348,10 +330,6 @@ namespace System.Windows.Forms {
 			int index = IndexOf (node);
 			if (index != -1)
 				RemoveAt (index);
-#if ONLY_1_1
-			else
-				throw new NullReferenceException ();
-#endif
 		}
 
 		public virtual void RemoveAt (int index)
@@ -407,14 +385,12 @@ namespace System.Windows.Forms {
 				tree_view.UpdateScrollBars (false);
 				tree_view.UpdateBelow (parent);
 			}
-#if NET_2_0
+
 			// UIA Framework Event: Collection Changed
 			if (tree_view != null)
 				tree_view.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
-#endif
 		}
 
-#if NET_2_0
 		public virtual void RemoveByKey (string key)
 		{
 			TreeNode node = this[key];
@@ -422,7 +398,6 @@ namespace System.Windows.Forms {
 			if (node != null)
 				Remove (node);
 		}
-#endif
 
 		private TreeNode GetPrevNode (TreeNode node)
 		{
@@ -550,7 +525,6 @@ namespace System.Windows.Forms {
 			nodes = nn;
 		}
 
-#if NET_2_0
 		public TreeNode[] Find (string key, bool searchAllChildren)
 		{
 			List<TreeNode> results = new List<TreeNode> (0);
@@ -579,7 +553,7 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
+
 		internal class TreeNodeEnumerator : IEnumerator {
 
 			private TreeNodeCollection collection;

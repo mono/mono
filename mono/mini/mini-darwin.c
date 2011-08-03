@@ -66,6 +66,13 @@
 #include <mach/task.h>
 #include <pthread.h>
 #include <dlfcn.h>
+#include <AvailabilityMacros.h>
+
+#if (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_5) && !defined (TARGET_ARM)
+#define NEEDS_EXCEPTION_THREAD
+#endif
+
+#ifdef NEEDS_EXCEPTION_THREAD
 
 /*
  * This code disables the CrashReporter of MacOS X by installing
@@ -184,13 +191,17 @@ macosx_register_exception_handler ()
 	mono_gc_register_mach_exception_thread (thread);
 }
 
+#endif
+
 /* This is #define'd by Boehm GC to _GC_dlopen. */
 #undef dlopen
 
 void
 mono_runtime_install_handlers (void)
 {
+#ifdef NEEDS_EXCEPTION_THREAD
 	macosx_register_exception_handler ();
+#endif
 	mono_runtime_posix_install_handlers ();
 
 	/* Snow Leopard has a horrible bug: http://openradar.appspot.com/7209349
@@ -245,6 +256,48 @@ mono_gdb_render_native_backtraces ()
 
 		unlink (gdb_template);
 	}
+
+	return TRUE;
+}
+
+gboolean
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThreadId thread_id, MonoNativeThreadHandle thread_handle)
+{
+	kern_return_t ret;
+	mach_msg_type_number_t num_state;
+	thread_state_t state;
+	ucontext_t ctx;
+	mcontext_t mctx;
+	guint32 domain_key, jit_key;
+	MonoJitTlsData *jit_tls;
+	void *domain;
+
+	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
+	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
+
+	ret = mono_mach_arch_get_thread_state (thread_handle, state, &num_state);
+	if (ret != KERN_SUCCESS)
+		return FALSE;
+
+	mono_mach_arch_thread_state_to_mcontext (state, mctx);
+	ctx.uc_mcontext = mctx;
+
+	mono_sigctx_to_monoctx (&ctx, &tctx->ctx);
+
+	domain_key = mono_domain_get_tls_offset ();
+	jit_key = mono_get_jit_tls_key ();
+	jit_tls = mono_mach_arch_get_tls_value_from_thread (thread_id, jit_key);
+	domain = mono_mach_arch_get_tls_value_from_thread (thread_id, domain_key);
+
+	/*Thread already started to cleanup, can no longer capture unwind state*/
+	if (!jit_tls)
+		return FALSE;
+	g_assert (domain);
+
+	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = domain;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = jit_tls ? jit_tls->lmf : NULL;
+	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = jit_tls;
+	tctx->valid = TRUE;
 
 	return TRUE;
 }

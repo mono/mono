@@ -339,11 +339,14 @@ namespace System.Xml
 
 	class XmlInputStream : Stream
 	{
-		public static readonly Encoding StrictUTF8;
+		internal static readonly Encoding StrictUTF8, Strict1234UTF32, StrictBigEndianUTF16, StrictUTF16;
 
 		static XmlInputStream ()
 		{
 			StrictUTF8 = new UTF8Encoding (false, true);
+			Strict1234UTF32 = new UTF32Encoding (true, false, true);
+			StrictBigEndianUTF16 = new UnicodeEncoding (true, false, true);
+			StrictUTF16 = new UnicodeEncoding (false, false, true);
 		}
 
 		Encoding enc;
@@ -422,9 +425,23 @@ namespace System.Xml
 					buffer [--bufPos] = 0xEF;
 				}
 				break;
+			case 0:
+				// It could still be 1234/2143/3412 variants of UTF32, but only 1234 version is available on .NET.
+				c = ReadByteSpecial ();
+				if (c == 0)
+					enc = Strict1234UTF32;
+				else
+					enc = StrictBigEndianUTF16;
+				break;
 			case '<':
-				// try to get encoding name from XMLDecl.
-				if (bufLength >= 5 && GetStringFromBytes (1, 4) == "?xml") {
+				c = ReadByteSpecial ();
+				if (c == 0) {
+					if (ReadByteSpecial () == 0)
+						enc = Encoding.UTF32; // little endian UTF32
+					else
+						enc = Encoding.Unicode; // little endian UTF16
+				} else if (bufLength >= 4 && GetStringFromBytes (1, 4) == "?xml") {
+					// try to get encoding name from XMLDecl.
 					bufPos += 4;
 					c = SkipWhitespace ();
 
@@ -474,6 +491,8 @@ namespace System.Xml
 				bufPos = 0;
 				break;
 			default:
+				if (c == 0)
+					enc = StrictUTF16;
 				bufPos = 0;
 				break;
 			}
