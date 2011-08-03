@@ -53695,7 +53695,7 @@
         <size>27</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)">
-        <size>175</size>
+        <size>213</size>
       </method>
       <method name="Int32 Main()">
         <size>179</size>

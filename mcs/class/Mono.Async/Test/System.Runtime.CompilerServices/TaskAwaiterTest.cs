@@ -1,10 +1,10 @@
 //
-// TaskAwaiter.cs
+// TaskAwaiterTest_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,49 +26,67 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using NUnit.Framework;
+using System.Runtime.CompilerServices;
 
-namespace System.Runtime.CompilerServices
+namespace MonoTests.System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	[TestFixture]
+	public class TaskAwaiterTest_T
 	{
-		readonly Task task;
+		Task<int> task;
 
-		internal TaskAwaiter (Task task)
+		[Test]
+		public void GetResultFaulted ()
 		{
-			this.task = task;
-		}
+			TaskAwaiter<int> awaiter;
 
-		public bool IsCompleted {
-			get {
-				return task.IsCompleted;
+			task = new Task<int> (() => { throw new ApplicationException (); });
+			awaiter = task.GetAwaiter ();
+			task.RunSynchronously (TaskScheduler.Current);
+
+
+			Assert.IsTrue (awaiter.IsCompleted);
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (ApplicationException) {
 			}
 		}
 
-		public void GetResult ()
+		[Test]
+		public void GetResultNotCompleted ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw HandleUnexpectedTaskResult (task);
-		}
+			TaskAwaiter<int> awaiter;
 
-		internal static Exception HandleUnexpectedTaskResult (Task task)
-		{
-			switch (task.Status) {
-			case TaskStatus.Canceled:
-				return new TaskCanceledException (task);
-			case TaskStatus.Faulted:
-				return task.Exception.InnerException;
-			default:
-				return new InvalidOperationException ("The task has not finished yet");
+			task = new Task<int> (() => 1);
+			awaiter = task.GetAwaiter ();
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
 			}
 		}
 
-		public void OnCompleted (Action continuation)
+		[Test]
+		public void GetResultCanceled ()
 		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
+			TaskAwaiter<int> awaiter;
 
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+			var token = new CancellationToken (true);
+			task = new Task<int> (() => 2, token);
+			awaiter = task.GetAwaiter ();
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (TaskCanceledException) {
+			}
 		}
 	}
 }

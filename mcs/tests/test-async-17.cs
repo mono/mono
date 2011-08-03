@@ -51,12 +51,12 @@ class Tester
 				Console.WriteLine ("FAILED (Status={0})", t.Status);
 				return false;
 			}
-			/*
+			
 			if (!(t.Exception.InnerException is ApplicationException)) {
 				Console.WriteLine ("FAILED with wrong exception");
 				return false;
 			}
-			*/
+			
 			Console.WriteLine ("OK");
 			return true;
 		} catch (Exception e) {

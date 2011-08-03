@@ -1,5 +1,5 @@
 //
-// TaskAwaiter.cs
+// TaskAwaiter_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,11 +30,11 @@ using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	public struct TaskAwaiter<TResult>
 	{
-		readonly Task task;
+		readonly Task<TResult> task;
 
-		internal TaskAwaiter (Task task)
+		internal TaskAwaiter (Task<TResult> task)
 		{
 			this.task = task;
 		}
@@ -45,22 +45,12 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
-		public void GetResult ()
+		public TResult GetResult ()
 		{
 			if (task.Status != TaskStatus.RanToCompletion)
-				throw HandleUnexpectedTaskResult (task);
-		}
+				throw TaskAwaiter.HandleUnexpectedTaskResult (task);
 
-		internal static Exception HandleUnexpectedTaskResult (Task task)
-		{
-			switch (task.Status) {
-			case TaskStatus.Canceled:
-				return new TaskCanceledException (task);
-			case TaskStatus.Faulted:
-				return task.Exception.InnerException;
-			default:
-				return new InvalidOperationException ("The task has not finished yet");
-			}
+			return task.Result;
 		}
 
 		public void OnCompleted (Action continuation)
