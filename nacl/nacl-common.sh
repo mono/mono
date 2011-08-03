@@ -1,6 +1,6 @@
 
 CopyNormalMonoLibs() {
-  NORMAL_MSCORLIB_DLL=$MONO_TRUNK_NACL/normal-mono/lib/mono/2.0/mscorlib.dll
+  NORMAL_MSCORLIB_DLL=$MONO_TRUNK_NACL/normal-mono/lib/mono/4.0/mscorlib.dll
   if [ ! -f ${NORMAL_MSCORLIB_DLL} ]
   then
     Banner "Normal mscorlib.dll not found, building normal mono"
