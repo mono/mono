@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
 	<dates>
+		<symbols>
+			<dateSeparator>-</dateSeparator>
+		</symbols>
 		<calendars>
 			<calendar type="gregorian">
 				<dateFormats>

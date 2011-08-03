@@ -12,6 +12,9 @@
 		<language type="pl" /> 
 	</identity>
 	<dates>
+		<symbols>
+			<dateSeparator>-</dateSeparator>
+		</symbols>
 		<calendars>
 			<calendar type="gregorian">
 				<dateFormats>

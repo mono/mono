@@ -10,6 +10,9 @@
 		</decimalFormats>
 	</numbers>
 	<dates>
+		<symbols>
+			<dateSeparator>.</dateSeparator>
+		</symbols>
 		<calendars>
 			<calendar type="gregorian">
 				<dateFormats>
