@@ -1808,7 +1808,7 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	*/
 	guint32 pad_size = (guint32)(code + 1 - cfg->native_code) & 0x3;
 	if (pad_size)
-		x86_padding (code, pad_size);
+		x86_padding (code, 4 - pad_size);
 
 	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 	x86_call_code (code, 0);
