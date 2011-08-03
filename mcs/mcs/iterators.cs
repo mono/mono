@@ -58,7 +58,7 @@ namespace Mono.CSharp
 			machine_initializer = bc.CurrentAnonymousMethod as T;
 
 			if (!bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				unwind_protect = bc.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
+				unwind_protect = bc.CurrentBranching.AddResumePoint (this, out resume_pc);
 
 			return true;
 		}
@@ -609,7 +609,8 @@ namespace Mono.CSharp
 		Label move_next_ok;
 		Label iterator_body_end;
 		protected Label move_next_error;
-		protected LocalBuilder skip_finally, current_pc;
+		LocalBuilder skip_finally;
+		LocalBuilder current_pc;
 		List<ResumableStatement> resume_points;
 
 		protected StateMachineInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
@@ -618,9 +619,24 @@ namespace Mono.CSharp
 			this.Host = host;
 		}
 
+		#region Properties
+
 		public Label BodyEnd {
 			get {
 				return iterator_body_end;
+			}
+		}
+
+		public LocalBuilder CurrentPC
+		{
+			get {
+				return current_pc;
+			}
+		}
+
+		public LocalBuilder SkipFinally {
+			get {
+				return skip_finally;
 			}
 		}
 
@@ -629,6 +645,8 @@ namespace Mono.CSharp
 				return storey;
 			}
 		}
+
+		#endregion
 
 		public int AddResumePoint (ResumableStatement stmt)
 		{
@@ -657,7 +675,6 @@ namespace Mono.CSharp
 
 			var ctx = CreateBlockContext (ec);
 
-			ctx.StartFlowBranching (this, ec.CurrentBranching);
 			Block.Resolve (ctx);
 
 			//
@@ -774,7 +791,7 @@ namespace Mono.CSharp
 				EmitMoveNext_NoResumePoints (ec, block);
 				return;
 			}
-
+			
 			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
@@ -801,11 +818,15 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 
+			var async_init = this as AsyncInitializer;
+			if (async_init != null)
+				ec.BeginExceptionBlock ();
+
 			SymbolWriter.StartIteratorDispatcher (ec);
 			ec.Emit (OpCodes.Ldloc, current_pc);
 			ec.Emit (OpCodes.Switch, labels);
 
-			ec.Emit (OpCodes.Br, move_next_error);
+			ec.Emit (async_init != null ? OpCodes.Leave : OpCodes.Br, move_next_error);
 			SymbolWriter.EndIteratorDispatcher (ec);
 
 			ec.MarkLabel (labels[0]);
@@ -820,6 +841,16 @@ namespace Mono.CSharp
 
 			ec.MarkLabel (iterator_body_end);
 
+			if (async_init != null) {
+				var catch_value = LocalVariable.CreateCompilerGenerated (ec.Module.Compiler.BuiltinTypes.Exception, block, Location);
+
+				ec.BeginCatchBlock (catch_value.Type);
+				catch_value.EmitAssign (ec);
+
+				((AsyncTaskStorey) async_init.Storey).EmitSetException (ec, new LocalVariableReference (catch_value, Location));
+				ec.EndExceptionBlock ();
+			}
+
 			ec.EmitThis ();
 			ec.EmitInt ((int) IteratorStorey.State.After);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
@@ -827,7 +858,7 @@ namespace Mono.CSharp
 			EmitMoveNextEpilogue (ec);
 
 			ec.MarkLabel (move_next_error);
-
+			
 			if (ReturnType.Kind != MemberKind.Void) {
 				ec.EmitInt (0);
 				ec.Emit (OpCodes.Ret);
@@ -900,14 +931,6 @@ namespace Mono.CSharp
 			this.type = method.ReturnType;
 		}
 
-		public LocalBuilder SkipFinally {
-			get { return skip_finally; }
-		}
-
-		public LocalBuilder CurrentPC {
-		    get { return current_pc; }
-		}
-
 		public Block Container {
 			get { return OriginalMethod.Block; }
 		}
@@ -974,6 +997,13 @@ namespace Mono.CSharp
 			EmitLeave (ec, unwind_protect);
 
 			ec.MarkLabel (resume_point);
+		}
+
+		protected override BlockContext CreateBlockContext (ResolveContext rc)
+		{
+			var bc = base.CreateBlockContext (rc);
+			bc.StartFlowBranching (this, rc.CurrentBranching);
+			return bc;
 		}
 
 		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)

@@ -825,10 +825,7 @@ namespace Mono.CSharp {
 					if (async_return != null) {
 						async_return.EmitAssign (ec);
 
-						if (unwind_protect)
-							throw new NotImplementedException ();
-
-						ec.Emit (OpCodes.Br, async_body.BodyEnd);
+						ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					}
 
 					return;
@@ -3959,7 +3956,6 @@ namespace Mono.CSharp {
 #if !STATIC
 		bool code_follows;
 #endif
-		Iterator iter;
 		List<ResumableStatement> resume_points;
 		int first_resume_pc;
 		protected Statement stmt;
@@ -3990,9 +3986,12 @@ namespace Mono.CSharp {
 		{
 			EmitPreTryBody (ec);
 
+			StateMachineInitializer state_machine = null;
 			if (resume_points != null) {
+				state_machine = (StateMachineInitializer) ec.CurrentAnonymousMethod;
+
 				ec.EmitInt ((int) IteratorStorey.State.Running);
-				ec.Emit (OpCodes.Stloc, iter.CurrentPC);
+				ec.Emit (OpCodes.Stloc, state_machine.CurrentPC);
 			}
 
 			ec.BeginExceptionBlock ();
@@ -4002,7 +4001,7 @@ namespace Mono.CSharp {
 
 				// For normal control flow, we want to fall-through the Switch
 				// So, we use CurrentPC rather than the $PC field, and initialize it to an outside value above
-				ec.Emit (OpCodes.Ldloc, iter.CurrentPC);
+				ec.Emit (OpCodes.Ldloc, state_machine.CurrentPC);
 				ec.EmitInt (first_resume_pc);
 				ec.Emit (OpCodes.Sub);
 
@@ -4018,7 +4017,7 @@ namespace Mono.CSharp {
 
 			Label start_finally = ec.DefineLabel ();
 			if (resume_points != null) {
-				ec.Emit (OpCodes.Ldloc, iter.SkipFinally);
+				ec.Emit (OpCodes.Ldloc, state_machine.SkipFinally);
 				ec.Emit (OpCodes.Brfalse_S, start_finally);
 				ec.Emit (OpCodes.Endfinally);
 			}
@@ -4044,7 +4043,6 @@ namespace Mono.CSharp {
 			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				ec.NeedReturnLabel ();
 #endif
-			iter = ec.CurrentIterator;
 			return true;
 		}
 

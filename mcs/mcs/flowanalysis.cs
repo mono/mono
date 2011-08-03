@@ -415,9 +415,9 @@ namespace Mono.CSharp
 			return Parent.CheckRethrow (loc);
 		}
 
-		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		public virtual bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
-			return Parent.AddResumePoint (stmt, loc, out pc);
+			return Parent.AddResumePoint (stmt, out pc);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
@@ -636,15 +636,15 @@ namespace Mono.CSharp
 
 	public class FlowBranchingIterator : FlowBranchingBlock
 	{
-		readonly StateMachineInitializer iterator;
+		readonly Iterator iterator;
 
-		public FlowBranchingIterator (FlowBranching parent, StateMachineInitializer iterator)
+		public FlowBranchingIterator (FlowBranching parent, Iterator iterator)
 			: base (parent, BranchingType.Iterator, SiblingType.Block, iterator.Block, iterator.Location)
 		{
 			this.iterator = iterator;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
 			pc = iterator.AddResumePoint (stmt);
 			return false;
@@ -666,7 +666,7 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
 			throw new InternalErrorException ("A yield in a non-iterator block");
 		}
@@ -731,6 +731,7 @@ namespace Mono.CSharp
 	public class FlowBranchingTryCatch : FlowBranchingBlock
 	{
 		TryCatch stmt;
+
 		public FlowBranchingTryCatch (FlowBranching parent, TryCatch stmt)
 			: base (parent, BranchingType.Block, SiblingType.Try, null, stmt.loc)
 		{
@@ -742,16 +743,23 @@ namespace Mono.CSharp
 			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
 			int errors = Report.Errors;
-			Parent.AddResumePoint (stmt, loc, out pc);
+			Parent.AddResumePoint (stmt, out pc);
 			if (errors == Report.Errors) {
-				if (CurrentUsageVector.Next == null)
-					Report.Error (1626, loc, "Cannot yield a value in the body of a try block with a catch clause");
-				else
-					Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
+				if (stmt is AwaitStatement) {
+					if (CurrentUsageVector.Next != null) {
+						Report.Error (1985, stmt.loc, "The `await' operator cannot be used in the body of a catch clause");
+					}
+				} else {
+					if (CurrentUsageVector.Next == null)
+						Report.Error (1626, stmt.loc, "Cannot yield a value in the body of a try block with a catch clause");
+					else
+						Report.Error (1631, stmt.loc, "Cannot yield a value in the body of a catch clause");
+				}
 			}
+
 			return true;
 		}
 
@@ -773,6 +781,52 @@ namespace Mono.CSharp
 		{
 			Parent.AddReturnOrigin (vector, exit_stmt);
 			stmt.SomeCodeFollows ();
+			return true;
+		}
+
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
+		{
+			Parent.AddGotoOrigin (vector, goto_stmt);
+			return true;
+		}
+	}
+
+	public  class FlowBranchingAsync : FlowBranchingBlock
+	{
+		readonly AsyncInitializer async_init;
+
+		public FlowBranchingAsync (FlowBranching parent, AsyncInitializer async_init)
+			: base (parent, BranchingType.Block, SiblingType.Try, null, async_init.Location)
+		{
+			this.async_init = async_init;
+		}
+/*
+		public override bool CheckRethrow (Location loc)
+		{
+			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
+		}
+*/
+		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		{
+			pc = async_init.AddResumePoint (stmt);
+			return true;
+		}
+
+		public override bool AddBreakOrigin (UsageVector vector, Location loc)
+		{
+			Parent.AddBreakOrigin (vector, loc);
+			return true;
+		}
+
+		public override bool AddContinueOrigin (UsageVector vector, Location loc)
+		{
+			Parent.AddContinueOrigin (vector, loc);
+			return true;
+		}
+
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement exit_stmt)
+		{
+			Parent.AddReturnOrigin (vector, exit_stmt);
 			return true;
 		}
 
@@ -906,15 +960,20 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
 			int errors = Report.Errors;
-			Parent.AddResumePoint (this.stmt, loc, out pc);
+			Parent.AddResumePoint (this.stmt, out pc);
 			if (errors == Report.Errors) {
 				if (finally_vector == null)
 					this.stmt.AddResumePoint (stmt, pc);
-				else
-					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
+				else {
+					if (stmt is AwaitStatement) {
+						Report.Error (1984, stmt.loc, "The `await' operator cannot be used in the body of a finally clause");
+					} else {
+						Report.Error (1625, stmt.loc, "Cannot yield in the body of a finally clause");
+					}
+				}
 			}
 			return true;
 		}
