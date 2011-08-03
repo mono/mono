@@ -371,6 +371,8 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 #		define GC_MACH_THREAD_STATE_FLAVOR PPC_THREAD_STATE
 #	elif defined(I386)
 #		define GC_MACH_THREAD_STATE_FLAVOR i386_THREAD_STATE
+#	elif defined(X86_64)
+#		define GC_MACH_THREAD_STATE_FLAVOR x86_THREAD_STATE64
 #	else
 #		define GC_MACH_THREAD_STATE_FLAVOR MACHINE_THREAD_STATE
 #	endif
