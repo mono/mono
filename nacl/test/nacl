@@ -66,8 +66,8 @@ ${MONO_NORMAL_BASE}/bin/gmcs --version
 ${MONO} --version
 
 # add MONO_PATH so mono can crank on local directory
-export MONO_PATH=$(pwd)
-echo ${MONO_PATH}
+#export MONO_PATH=$(pwd)
+#echo ${MONO_PATH}
 
 #-----
 # enable the appropriate set of AOT options below.
@@ -79,7 +79,7 @@ readonly AOT_OPTIONS=full,static,nodebug,ntrampolines=4096
 cp ${MONO_NORMAL_BASE}/lib/mono/2.0/mscorlib.dll .
 
 # compile c-sharp file with gmcs
-MONO_PATH=. ../normal-mono/bin/gmcs -lib:. -warn:0 hw.cs
+../normal-mono/bin/gmcs -lib:. -warn:0 hw.cs
 
 # convert .exe to .exe.o assembly files
 # convert mscorlib to a .dll.o file
