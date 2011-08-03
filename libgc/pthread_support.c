@@ -729,7 +729,7 @@ void nacl_shutdown_gc_thread()
 /* Caller holds allocation lock.					*/
 GC_thread GC_new_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     GC_thread result;
     static GC_bool first_thread_used = FALSE;
     
@@ -760,7 +760,7 @@ GC_thread GC_new_thread(pthread_t id)
 /* Caller holds allocation lock.				*/
 void GC_delete_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
     
@@ -796,7 +796,7 @@ void GC_delete_thread(pthread_t id)
 /* This is OK, but we need a way to delete a specific one.	*/
 void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
 
@@ -825,7 +825,7 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 /* return the most recent one.					*/
 GC_thread GC_lookup_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     
     while (p != 0 && !pthread_equal(p -> id, id)) p = p -> next;
