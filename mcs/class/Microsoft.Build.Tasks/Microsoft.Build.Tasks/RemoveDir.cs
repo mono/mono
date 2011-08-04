@@ -52,11 +52,11 @@ namespace Microsoft.Build.Tasks {
 			
 			foreach (ITaskItem directory in directories) {
 				try {
-					Directory.Delete (directory.GetMetadata ("FullPath"), true);
-					temporaryRemovedDirectories.Add (directory);
-				}
-				catch (DirectoryNotFoundException ex) {
-					Log.LogErrorFromException (ex);
+					string fullpath = directory.GetMetadata ("FullPath");
+					if (Directory.Exists (fullpath)) {
+						Directory.Delete (fullpath, true);
+						temporaryRemovedDirectories.Add (directory);
+					}
 				}
 				catch (PathTooLongException ex) {
 					Log.LogErrorFromException (ex);
