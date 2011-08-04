@@ -444,7 +444,7 @@ namespace System.Xml.Serialization
 #if NET_2_0
 		internal static Type GetGenericListItemType (Type type)
 		{
-			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IEnumerable<>)) {
+			if (type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type.GetGenericTypeDefinition ())) {
 				Type [] gatypes = type.GetGenericArguments ();
 				if (type.GetMethod ("Add", gatypes) != null)
 					return gatypes [0];
