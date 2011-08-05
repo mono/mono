@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System.Runtime.CompilerServices\AsyncVoidMethodBuilderTest.cs" />
     <Compile Include="System.Runtime.CompilerServices\TaskAwaiterTest.cs" />
     <Compile Include="System.Runtime.CompilerServices\TaskAwaiterTest_T.cs" />
   </ItemGroup>
