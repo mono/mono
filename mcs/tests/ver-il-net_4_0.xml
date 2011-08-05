@@ -23452,6 +23452,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-41.cs">
+    <type name="TT">
+      <method name="Void Method[T](IEnumerable`1, System.Func`2[T,System.Boolean])">
+        <size>1</size>
+      </method>
+      <method name="Void Test[U](U)">
+        <size>24</size>
+      </method>
+      <method name="Boolean &lt;Test`1&gt;m__0[U](System.String)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()">

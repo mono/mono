@@ -198,7 +198,7 @@ namespace Mono.CSharp {
 			return ImplicitReferenceConversionExists (expr_type, target_type, true);
 		}
 
-		static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type, bool refOnlyTypeParameter)
+		public static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type, bool refOnlyTypeParameter)
 		{
 			// It's here only to speed things up
 			if (target_type.IsStruct)
