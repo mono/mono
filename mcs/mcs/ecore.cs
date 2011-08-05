@@ -4188,7 +4188,7 @@ namespace Mono.CSharp {
 						//
 						// Indentity, implicit reference or boxing conversion must exist for the extension parameter
 						//
-						// LAMESPEC: os implicit type parameter conversion
+						// LAMESPEC: or implicit type parameter conversion
 						//
 						var at = a.Type;
 						if (at == pt || TypeSpecComparer.IsEqual (at, pt) ||
