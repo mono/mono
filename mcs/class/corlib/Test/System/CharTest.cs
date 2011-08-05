@@ -215,6 +215,35 @@ public class CharTest
 	}
 
 	[Test]
+	public void TestGetUnicodeCategoryStringIndex ()
+	{
+		Assert.AreEqual (Char.GetUnicodeCategory ("\uD800\uDF80", 0), UnicodeCategory.OtherLetter, "#C01");
+		Assert.AreEqual (Char.GetUnicodeCategory ("\uD800\uDF80", 1), UnicodeCategory.Surrogate, "#C02");
+		Assert.AreEqual (Char.GetUnicodeCategory ("\uD800", 0), UnicodeCategory.Surrogate, "#C03");
+		Assert.AreEqual (Char.GetUnicodeCategory ("\uD800!", 0), UnicodeCategory.Surrogate, "#C04");
+		Assert.AreEqual (Char.GetUnicodeCategory ("!", 0), UnicodeCategory.OtherPunctuation, "#C05");
+		Assert.AreEqual (Char.GetUnicodeCategory ("!\uD800", 1), UnicodeCategory.Surrogate, "#C06");
+		Assert.AreEqual (Char.GetUnicodeCategory ("!\uD800\uDF80", 1), UnicodeCategory.OtherLetter, "#C07");
+	}
+
+	[Test]
+	public void TestGetUnicodeCategoryAstralPlanes ()
+	{
+		const int up_to = 0x10ffff;
+		// const int increment = 1;
+		const int increment = 0x1000 + 17;
+
+		for (int codepoint = 0x10000; codepoint < up_to; codepoint += increment) {
+			string combined = Char.ConvertFromUtf32 (codepoint);
+
+			Assert.AreEqual (combined.Length, 2, "#D01");
+			Assert.AreEqual (Char.GetUnicodeCategory (combined [0]), UnicodeCategory.Surrogate, "#D02");
+			Assert.AreEqual (Char.GetUnicodeCategory (combined [1]), UnicodeCategory.Surrogate, "#D03");
+			Assert.AreNotEqual (Char.GetUnicodeCategory (combined, 0), UnicodeCategory.Surrogate, "#D04");
+		}
+	}
+
+	[Test]
 	public void TestIsControl()
 	{
 		// control is 0000-001F, 007F-009F
@@ -429,49 +458,6 @@ public class CharTest
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 1), "whitespace1-2");
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 2), "whitespace2-2");
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 3), "whitespace3-2");
-	}
-
-	[Test]
-	public void IsWhiteSpace_Complete ()
-	{
-		for (int i=0; i < UInt16.MaxValue; i++) {
-			Char c = Convert.ToChar (i);
-			switch (i) {
-			case 0x0009:
-			case 0x000A:
-			case 0x000B:
-			case 0x000C:
-			case 0x000D:
-			case 0x0020:
-			case 0x0085:
-			case 0x00A0:
-			case 0x1680:
-			case 0x2000:
-			case 0x2001:
-			case 0x2002:
-			case 0x2003:
-			case 0x2004:
-			case 0x2005:
-			case 0x2006:
-			case 0x2007:
-			case 0x2008:
-			case 0x2009:
-			case 0x200A:
-			case 0x200B:
-			case 0x2028:
-			case 0x2029:
-			case 0x202F:
-#if NET_2_0
-			case 0x205F:
-#endif
-			case 0x3000:
-				Assert.IsTrue (Char.IsWhiteSpace (c), i.ToString ());
-				break;
-			default:
-				Assert.IsTrue (!Char.IsWhiteSpace (c), i.ToString ());
-				break;
-			}
-		}
 	}
 
 	[Test]
