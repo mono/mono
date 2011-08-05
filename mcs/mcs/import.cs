@@ -1894,6 +1894,15 @@ namespace Mono.CSharp
 				}
 			}
 
+			//
+			// Load base interfaces first to minic behaviour of compiled members
+			//
+			if (declaringType.IsInterface && declaringType.Interfaces != null) {
+				foreach (var iface in declaringType.Interfaces) {
+					cache.AddInterface (iface);
+				}
+			}
+
 			if (!onlyTypes) {
 				//
 				// The logic here requires methods to be returned first which seems to work for both Mono and .NET
@@ -2022,12 +2031,6 @@ namespace Mono.CSharp
 					}
 
 					cache.AddMemberImported (imported);
-				}
-			}
-
-			if (declaringType.IsInterface && declaringType.Interfaces != null) {
-				foreach (var iface in declaringType.Interfaces) {
-					cache.AddInterface (iface);
 				}
 			}
 		}

@@ -47053,6 +47053,27 @@
       </method>
     </type>
   </test>
+  <test name="test-824.cs">
+    <type name="Context">
+      <method name="Void Foo(IBBB)">
+        <size>1</size>
+      </method>
+      <method name="Void Foo(IAAA)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">
