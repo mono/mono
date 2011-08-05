@@ -26,23 +26,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Threading;
+
 namespace System.Runtime.CompilerServices
 {
 	public struct AsyncVoidMethodBuilder
 	{
+		static readonly SynchronizationContext null_context = new SynchronizationContext ();
+
+		readonly SynchronizationContext context;
+
+		private AsyncVoidMethodBuilder (SynchronizationContext context)
+		{
+			this.context = context;
+		}
+
 		public static AsyncVoidMethodBuilder Create ()
 		{
-			return new AsyncVoidMethodBuilder ();
+			var ctx = SynchronizationContext.Current ?? null_context;
+			ctx.OperationStarted ();
+
+			return new AsyncVoidMethodBuilder (ctx);
 		}
 
 		public void SetException (Exception exception)
 		{
 			if (exception == null)
 				throw new ArgumentNullException ("exception");
+
+			try {
+				context.Post (l => { throw (Exception) l; }, exception);
+			} finally {
+				SetResult ();
+			}
 		}
 
 		public void SetResult ()
 		{
+			context.OperationCompleted ();
 		}
 	}
 }

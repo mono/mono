@@ -58,14 +58,18 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			public override void Post (SendOrPostCallback d, object state)
 			{
-				++PostCounter;
-				base.Post (d, state);
+				if (state is Exception) {
+					++PostCounter;
+					base.Post (d, state);
+				}
 			}
 
 			public override void Send (SendOrPostCallback d, object state)
 			{
-				++SendCounter;
-				base.Send (d, state);
+				if (state is Exception) {
+					++SendCounter;
+					base.Send (d, state);
+				}
 			}
 		}
 
@@ -99,7 +103,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 				awaiter.SetResult ();
 
 				Assert.AreEqual (1, context.Started, "#9");
-				Assert.AreEqual (1, context.Completed, "#10");
+				Assert.AreEqual (2, context.Completed, "#10");
 				Assert.AreEqual (0, context.SendCounter, "#11");
 				Assert.AreEqual (1, context.PostCounter, "#12");
 			} finally {
