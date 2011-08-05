@@ -108,7 +108,7 @@ namespace System.Threading.Tasks
 			this.action              = action == null ? EmptyFunc : action;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
-			this.status              = TaskStatus.Created;
+			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
 			this.token               = cancellationToken;
 
 			// Process taskCreationOptions

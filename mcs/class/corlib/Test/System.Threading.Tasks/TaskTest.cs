@@ -117,6 +117,15 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (1, aggr.InnerExceptions.Count, "#4");
 			Assert.IsInstanceOfType (typeof (OperationCanceledException), aggr.InnerExceptions[0], "#5");
 		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CreationWhileInitiallyCanceled ()
+		{
+			var token = new CancellationToken (true);
+			var task = new Task (() => { }, token);
+			Assert.AreEqual (TaskStatus.Canceled, task.Status);
+			task.Start ();
+		}
 		
 		[Test]
 		public void ContinueWithOnAnyTestCase()
