@@ -222,6 +222,8 @@ namespace System.Security.AccessControl {
 				} else {
 					throw new ArgumentException("Invalid SDDL string.", "sddlForm");
 				}
+				
+				ch = Char.ToUpperInvariant(sddlForm[pos]);
 			}
 			
 		}
