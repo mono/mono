@@ -86,8 +86,12 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this (null, null, cancellationToken, creationOptions)
+			: this (null, null, cancellationToken, creationOptions, current)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			if (creationOptions > TaskCreationOptions.AttachedToParent || creationOptions < TaskCreationOptions.None)
+				throw new ArgumentOutOfRangeException ("creationOptions");
 			this.simpleAction = action;
 		}
 		
@@ -108,7 +112,10 @@ namespace System.Threading.Tasks
 		public Task (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
 			: this (action, state, cancellationToken, creationOptions, current)
 		{
-
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			if (creationOptions > TaskCreationOptions.AttachedToParent || creationOptions < TaskCreationOptions.None)
+				throw new ArgumentOutOfRangeException ("creationOptions");
 		}
 
 		internal Task (Action<object> action,

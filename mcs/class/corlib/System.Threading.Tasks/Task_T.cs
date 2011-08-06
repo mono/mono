@@ -34,6 +34,7 @@ namespace System.Threading.Tasks
 	{
 		TResult value;
 		static TaskFactory<TResult> factory = new TaskFactory<TResult> ();
+		static readonly Action<object> emptyAction = delegate {};
 		
 		Func<object, TResult> function;
 		object state;
@@ -99,7 +100,7 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (null, state, cancellationToken, creationOptions)
+			: base (emptyAction, state, cancellationToken, creationOptions)
 		{
 			this.function = function;
 			this.state = state;
