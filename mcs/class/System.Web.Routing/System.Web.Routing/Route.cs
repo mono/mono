@@ -188,22 +188,22 @@ namespace System.Web.Routing
 			return false;
 		}
 
-		static bool MatchConstraintRegex (string rx, string constraint)
+		static bool MatchConstraintRegex (string value, string constraint)
 		{
-			int rxlen = rx.Length;
-			if (rxlen > 0) {
+			int len = constraint.Length;
+			if (len > 0) {
 				// Bug #651966 - regexp constraints must be treated
 				// as absolute expressions
-				if (rx [0] != '^') {
-					rx = "^" + rx;
-					rxlen++;
+				if (constraint [0] != '^') {
+					constraint = "^" + constraint;
+					len++;
 				}
 
-				if (rx [rxlen - 1] != '$')
-					rx += "$";
+				if (constraint [len - 1] != '$')
+					constraint += "$";
 			}
 
-			return Regex.Match (rx, constraint).Success;
+			return Regex.Match (value, constraint).Success;
 		}
 		
 		protected virtual bool ProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
