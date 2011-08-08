@@ -232,7 +232,6 @@ namespace System.IO {
 			int i = 0;
 			foreach (string s in drives) {
 				infos [i++] = new DriveInfo (s, GetDriveFormat (s));
-				Console.WriteLine (infos [i-1].path);
 			}
 
 			return infos;
