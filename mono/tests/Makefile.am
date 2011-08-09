@@ -864,6 +864,8 @@ test-generic-sharing-managed: test-runner.exe $(GSHARED_TESTS)
 test-generic-sharing:
 	@if test x$(M) != x; then $(MAKE) test-generic-sharing-managed; else $(MAKE) test-generic-sharing-normal; fi
 
+EXTRA_DIST += delegate2.exe.config
+
 EXTRA_DIST += async-exceptions.cs
 async-exceptions.exe : async-exceptions.cs
 	$(MCS) -out:async-exceptions.exe $(srcdir)/async-exceptions.cs
