@@ -688,14 +688,9 @@ extern pthread_mutex_t nacl_thread_alloc_lock;
 extern __thread int nacl_thread_idx;
 extern __thread GC_thread nacl_gc_thread_self;
 
-extern void nacl_pre_syscall_hook();
-extern void nacl_post_syscall_hook();
-extern void nacl_register_gc_hooks(void (*pre)(), void (*post)());
-
 void nacl_initialize_gc_thread()
 {
     int i;
-    nacl_register_gc_hooks(nacl_pre_syscall_hook, nacl_post_syscall_hook);
     pthread_mutex_lock(&nacl_thread_alloc_lock);
     if (!nacl_thread_parking_inited)
     {
