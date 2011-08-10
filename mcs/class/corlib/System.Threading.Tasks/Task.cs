@@ -264,7 +264,7 @@ namespace System.Threading.Tasks
 		
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			ContinueWithCore (continuation, continuationOptions, scheduler, () => true);
+			ContinueWithCore (continuation, continuationOptions, scheduler, null);
 		}
 		
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind,
@@ -278,7 +278,7 @@ namespace System.Threading.Tasks
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
 				if (launched.TryRelaxedSet ()) {
-					if (!predicate ())
+					if (predicate != null && !predicate ())
 						return;
 
 					if (!ContinuationStatusCheck (kind)) {
