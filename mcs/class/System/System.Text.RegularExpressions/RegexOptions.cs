@@ -35,7 +35,7 @@ namespace System.Text.RegularExpressions {
 		IgnoreCase			= 0x001,
 		Multiline			= 0x002,
 		ExplicitCapture			= 0x004,
-#if !NET_2_1
+#if MOBILE || !NET_2_1
 		Compiled			= 0x008,
 #endif
 		Singleline			= 0x010,
