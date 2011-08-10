@@ -224,7 +224,7 @@ namespace System.Text.RegularExpressions {
 				RegexOptions.IgnoreCase |
 				RegexOptions.Multiline |
 				RegexOptions.ExplicitCapture |
-#if !NET_2_1
+#if MOBILE || !NET_2_1
 				RegexOptions.Compiled |
 #endif
 				RegexOptions.Singleline |
@@ -236,7 +236,7 @@ namespace System.Text.RegularExpressions {
 			const RegexOptions ecmaopts =
 				RegexOptions.IgnoreCase |
 				RegexOptions.Multiline |
-#if !NET_2_1
+#if MOBILE || !NET_2_1
 				RegexOptions.Compiled |
 #endif
 				RegexOptions.ECMAScript;
