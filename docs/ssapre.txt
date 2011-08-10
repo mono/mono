@@ -1,4 +1,3 @@
-
 SSAPRE stands for "SSA based Partial Redundancy Elimination".
 
 The algorithm is explained in this paper:
@@ -242,7 +241,7 @@ Otherwise, the implementation is complete.
 Other interesting issues are:
 - SSAPRE has the assumption that:
   - each SSA variable is related to one "original" (not SSA) variable, and
-  - no more than one version of each originsl variable is live at the same time
+  - no more than one version of each original variable is live at the same time
     in the CFG.
   It would be better to relax these assumptions.
 - SSAPRE operates on "syntactic" redundancies, not on "values".
