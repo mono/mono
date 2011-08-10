@@ -34,6 +34,33 @@ class Tester
 		}
 	}
 	
+	async Task<int> TestException_5 ()
+	{
+		int state = 0;
+		try {
+			await Task.Factory.StartNew (() => { throw new ArgumentException (); });
+			state = 1;
+		} catch (ArgumentException) {
+			state = 2;
+		} finally {
+			if (state == 2)
+				throw new ApplicationException ();	
+		}
+		
+		return 1;
+	}
+	
+	async Task<int> TestException_6 ()
+	{
+		try {
+			await Task.Factory.StartNew (() => { throw new ArgumentException (); });
+		} catch (ArgumentException) {
+			throw new ApplicationException ();	
+		}
+		
+		return 1;
+	}
+	
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);

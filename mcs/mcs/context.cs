@@ -132,9 +132,9 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
+		public FlowBranchingTryFinally StartFlowBranching (TryFinallyBlock stmt)
 		{
-			FlowBranchingException branching = new FlowBranchingException (CurrentBranching, stmt);
+			FlowBranchingTryFinally branching = new FlowBranchingTryFinally (CurrentBranching, stmt);
 			current_flow_branching = branching;
 			return branching;
 		}

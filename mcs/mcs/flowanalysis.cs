@@ -730,12 +730,12 @@ namespace Mono.CSharp
 
 	public class FlowBranchingTryCatch : FlowBranchingBlock
 	{
-		TryCatch stmt;
+		readonly TryCatch tc;
 
 		public FlowBranchingTryCatch (FlowBranching parent, TryCatch stmt)
 			: base (parent, BranchingType.Block, SiblingType.Try, null, stmt.loc)
 		{
-			this.stmt = stmt;
+			this.tc = stmt;
 		}
 
 		public override bool CheckRethrow (Location loc)
@@ -746,11 +746,13 @@ namespace Mono.CSharp
 		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
 		{
 			int errors = Report.Errors;
-			Parent.AddResumePoint (stmt, out pc);
+			Parent.AddResumePoint (tc.IsTryCatchFinally ? stmt : tc, out pc);
 			if (errors == Report.Errors) {
 				if (stmt is AwaitStatement) {
 					if (CurrentUsageVector.Next != null) {
 						Report.Error (1985, stmt.loc, "The `await' operator cannot be used in the body of a catch clause");
+					} else {
+						this.tc.AddResumePoint (stmt, pc);
 					}
 				} else {
 					if (CurrentUsageVector.Next == null)
@@ -766,21 +768,21 @@ namespace Mono.CSharp
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			Parent.AddBreakOrigin (vector, loc);
-			stmt.SomeCodeFollows ();
+			tc.SomeCodeFollows ();
 			return true;
 		}
 
 		public override bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
 			Parent.AddContinueOrigin (vector, loc);
-			stmt.SomeCodeFollows ();
+			tc.SomeCodeFollows ();
 			return true;
 		}
 
 		public override bool AddReturnOrigin (UsageVector vector, ExitStatement exit_stmt)
 		{
 			Parent.AddReturnOrigin (vector, exit_stmt);
-			stmt.SomeCodeFollows ();
+			tc.SomeCodeFollows ();
 			return true;
 		}
 
@@ -837,7 +839,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class FlowBranchingException : FlowBranching
+	public class FlowBranchingTryFinally : FlowBranching
 	{
 		ExceptionStatement stmt;
 		UsageVector current_vector;
@@ -923,7 +925,7 @@ namespace Mono.CSharp
 
 		SavedOrigin saved_origins;
 
-		public FlowBranchingException (FlowBranching parent,
+		public FlowBranchingTryFinally (FlowBranching parent,
 					       ExceptionStatement stmt)
 			: base (parent, BranchingType.Exception, SiblingType.Try,
 				null, stmt.loc)

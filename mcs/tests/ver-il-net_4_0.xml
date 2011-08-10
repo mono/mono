@@ -53807,7 +53807,37 @@
         <size>36</size>
       </method>
     </type>
-    <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async4">
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_5()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_6()">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;TestException_5&gt;c__async4">
+      <method name="Void MoveNext()">
+        <size>279</size>
+      </method>
+      <method name="Void &lt;&gt;m__9()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;TestException_6&gt;c__async5">
+      <method name="Void MoveNext()">
+        <size>236</size>
+      </method>
+      <method name="Void &lt;&gt;m__A()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
       <method name="Void MoveNext()">
         <size>195</size>
       </method>
