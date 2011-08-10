@@ -3,6 +3,7 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
+System.Threading.Tasks.Dataflow/ExecutingMessageBox.cs
 System.Threading.Tasks.Dataflow/DataflowBlockOptions.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeader.cs
 System.Threading.Tasks.Dataflow/DataflowMessageStatus.cs
@@ -13,3 +14,10 @@ System.Threading.Tasks.Dataflow/IPropagatorBlock.cs
 System.Threading.Tasks.Dataflow/IReceivableSourceBlock.cs
 System.Threading.Tasks.Dataflow/ISourceBlock.cs
 System.Threading.Tasks.Dataflow/ITargetBlock.cs
+System.Threading.Tasks.Dataflow/CompletionHelper.cs
+System.Threading.Tasks.Dataflow/MessageBox.cs
+System.Threading.Tasks.Dataflow/MessageOutgoingQueue.cs
+System.Threading.Tasks.Dataflow/MessageVault.cs
+System.Threading.Tasks.Dataflow/PassingMessageBox.cs
+System.Threading.Tasks.Dataflow/TargetBuffer.cs
+../corlib/System.Threading/AtomicBoolean.cs

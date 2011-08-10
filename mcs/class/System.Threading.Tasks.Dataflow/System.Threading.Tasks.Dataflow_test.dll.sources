@@ -1,2 +1,5 @@
 System.Threading.Tasks/ConcurrentExclusiveSchedulerPairTest.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeaderTest.cs
+System.Threading.Tasks.Dataflow/CompletionHelperTest.cs
+../System.Threading.Tasks.Dataflow/CompletionHelper.cs
+
