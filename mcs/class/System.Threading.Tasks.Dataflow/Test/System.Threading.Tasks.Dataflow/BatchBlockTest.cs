@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // BatchBlockTest.cs
 //  
@@ -129,4 +128,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

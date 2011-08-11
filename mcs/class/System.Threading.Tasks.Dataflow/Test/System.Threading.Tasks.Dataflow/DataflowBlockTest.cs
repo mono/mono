@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // DataflowBlockTest.cs
 //  
@@ -142,4 +141,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

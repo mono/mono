@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading.Tasks;
@@ -115,4 +114,3 @@ namespace System.Threading.Tasks.Dataflow
 	}
 }
 
-#endif

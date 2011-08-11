@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // BufferBlockTest.cs
 //  
@@ -94,4 +93,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

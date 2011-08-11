@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // JoinBlockTest.cs
 //  
@@ -67,4 +66,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

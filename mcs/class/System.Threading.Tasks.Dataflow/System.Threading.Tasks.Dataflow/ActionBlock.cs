@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading;
@@ -59,11 +58,13 @@ namespace System.Threading.Tasks.Dataflow
 			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue, compHelper, () => true, ProcessQueue, dataflowBlockOptions);
 		}
 
+		[MonoTODO]
 		public ActionBlock (Func<TInput, Task> action) : this (action, defaultOptions)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public ActionBlock (Func<TInput, Task> action, ExecutionDataflowBlockOptions dataflowBlockOptions)
 		{
 			throw new NotImplementedException ();
@@ -108,4 +109,3 @@ namespace System.Threading.Tasks.Dataflow
 	}
 }
 
-#endif

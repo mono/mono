@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // CompletionTest.cs
 //  
@@ -102,4 +101,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

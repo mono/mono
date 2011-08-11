@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // TransformManyBlockTest.cs
 //  
@@ -76,4 +75,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

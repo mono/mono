@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // WriteOnceBlockTest.cs
 //  
@@ -130,4 +129,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif

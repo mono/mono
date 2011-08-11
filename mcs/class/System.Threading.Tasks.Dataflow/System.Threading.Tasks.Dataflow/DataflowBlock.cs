@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading.Tasks;
@@ -129,6 +128,7 @@ namespace System.Threading.Tasks.Dataflow
 			return source.LinkTo (target, false);
 		}
 
+		[MonoTODO]
 		public static Task<bool> OutputAvailableAsync<TOutput> (this ISourceBlock<TOutput> source)
 		{
 			throw new NotImplementedException ();
@@ -211,6 +211,7 @@ namespace System.Threading.Tasks.Dataflow
 			return source.TryReceive (null, out item);
 		}
 
+		[MonoTODO]
 		public static Task<bool> SendAsync<TInput> (this ITargetBlock<TInput> target, TInput item)
 		{
 			throw new NotImplementedException ();
@@ -218,4 +219,3 @@ namespace System.Threading.Tasks.Dataflow
 	}
 }
 
-#endif

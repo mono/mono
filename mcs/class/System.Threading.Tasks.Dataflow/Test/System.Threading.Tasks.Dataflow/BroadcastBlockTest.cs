@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // BroadcastBlockTest.cs
 //  
@@ -84,4 +83,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif
