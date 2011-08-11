@@ -160,7 +160,7 @@ namespace System.Net
 			if (rnd == null)
 				rnd = new Random ();
 
-			int idx = (count > 1) ? rnd.Next (0, count - 1) : 0;
+			int idx = (count > 1) ? rnd.Next (0, count) : 0;
 			cncRef = (WeakReference) connections [idx];
 			cnc = cncRef.Target as WebConnection;
 			if (cnc == null) {
