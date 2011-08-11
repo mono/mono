@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // DataflowMessageHeaderTest.cs
 //  
@@ -64,4 +63,3 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 	}
 }
-#endif
