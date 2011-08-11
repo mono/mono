@@ -680,10 +680,14 @@ static void pthread_start_world()
       GC_printf0("World started\n");
     #endif
 #else /* NACL */
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_PRE_START_WORLD);
 #   if DEBUG_THREADS
     GC_printf0("World starting\n");
 #   endif
     nacl_park_threads_now = 0;
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_POST_START_WORLD);
 #endif /* NACL */
 }
 
