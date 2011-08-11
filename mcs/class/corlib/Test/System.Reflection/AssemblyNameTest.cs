@@ -1997,6 +1997,16 @@ public class AssemblyNameTest {
 			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
+
+	[Test (Description="Xamarin bug #99 - whitespaces in key=value")]
+	public void WhiteSpaceInKeyValue ()
+	{
+		string nameWithSpaces = String.Format ("MySql.Data.Tests, PublicKey      = \t  {0},  Culture   =\tneutral, Version=\t1.2.3.4", GetTokenString (publicKey1));
+		string fullName = "MySql.Data.Tests, Version=1.2.3.4, Culture=neutral, PublicKeyToken=ce5276d8687ec6dc";
+		var an = new AssemblyName (nameWithSpaces);
+
+		Assert.AreEqual (fullName, an.FullName);
+	}
 #endif
 }
 
