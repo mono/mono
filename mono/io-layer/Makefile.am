@@ -4,7 +4,6 @@ noinst_LTLIBRARIES = libwapi.la
 INCLUDES = \
 	$(GLIB_CFLAGS)		\
 	$(LIBGC_CFLAGS)		\
-        $(BOEHM_DEFINES)	\
 	-DMONO_BINDIR=\""$(bindir)"\"	\
 	-I$(top_srcdir)	
 
