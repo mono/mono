@@ -55,7 +55,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 96;
+		private const int mono_corlib_version = 97;
 #pragma warning restore 169
 
 		[ComVisible (true)]
