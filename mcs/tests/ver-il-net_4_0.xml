@@ -51801,7 +51801,7 @@
     </type>
     <type name="Program+&lt;TestAsync&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>217</size>
+        <size>209</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51840,7 +51840,7 @@
     </type>
     <type name="C+&lt;TestTask&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>167</size>
+        <size>159</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51848,7 +51848,7 @@
     </type>
     <type name="C+&lt;TestTask2&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>167</size>
+        <size>159</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51856,7 +51856,7 @@
     </type>
     <type name="C+&lt;TestTaskGeneric&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>174</size>
+        <size>166</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51897,7 +51897,7 @@
     </type>
     <type name="A+&lt;Test1&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>245</size>
+        <size>229</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51905,7 +51905,7 @@
     </type>
     <type name="A+&lt;Test2&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>166</size>
+        <size>158</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51913,7 +51913,7 @@
     </type>
     <type name="A+&lt;Test3&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>158</size>
+        <size>150</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -51934,7 +51934,7 @@
     </type>
     <type name="C+&lt;TestTaskGeneric&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>187</size>
+        <size>179</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>41</size>
@@ -51996,7 +51996,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>216</size>
+        <size>208</size>
       </method>
       <method name="Void &lt;&gt;m__5()">
         <size>38</size>
@@ -52007,7 +52007,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>216</size>
+        <size>208</size>
       </method>
       <method name="Void &lt;&gt;m__6()">
         <size>38</size>
@@ -52018,7 +52018,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>197</size>
+        <size>189</size>
       </method>
       <method name="System.String &lt;&gt;m__7()">
         <size>44</size>
@@ -52029,7 +52029,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>197</size>
+        <size>189</size>
       </method>
       <method name="Decimal &lt;&gt;m__8()">
         <size>44</size>
@@ -52075,7 +52075,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>185</size>
+        <size>177</size>
       </method>
       <method name="System.String &lt;&gt;m__4()">
         <size>44</size>
@@ -52086,7 +52086,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>178</size>
+        <size>170</size>
       </method>
       <method name="Void &lt;&gt;m__5()">
         <size>38</size>
@@ -52097,7 +52097,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>183</size>
+        <size>175</size>
       </method>
       <method name="Void &lt;&gt;m__6()">
         <size>55</size>
@@ -52139,7 +52139,7 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>202</size>
+        <size>194</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()">
         <size>2</size>
@@ -52150,7 +52150,7 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async5">
       <method name="Void MoveNext()">
-        <size>202</size>
+        <size>194</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()">
         <size>2</size>
@@ -52161,7 +52161,7 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async8">
       <method name="Void MoveNext()">
-        <size>161</size>
+        <size>153</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -52238,7 +52238,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_1&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>330</size>
+        <size>314</size>
       </method>
       <method name="System.String &lt;&gt;m__1()">
         <size>13</size>
@@ -52252,7 +52252,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_2&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>246</size>
+        <size>238</size>
       </method>
       <method name="System.String &lt;&gt;m__3()">
         <size>6</size>
@@ -52263,7 +52263,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_3&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>318</size>
+        <size>302</size>
       </method>
       <method name="Byte &lt;&gt;m__4()">
         <size>2</size>
@@ -52274,7 +52274,7 @@
     </type>
     <type name="C+&lt;TestCompositionPair_1&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>204</size>
+        <size>196</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()">
         <size>2</size>
@@ -52285,7 +52285,7 @@
     </type>
     <type name="C+&lt;TestCompositionPair_2&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>321</size>
+        <size>305</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()">
         <size>9</size>
@@ -52299,7 +52299,7 @@
     </type>
     <type name="C+&lt;TestCompositionPair_3&gt;c__async5">
       <method name="Void MoveNext()">
-        <size>205</size>
+        <size>197</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()">
         <size>2</size>
@@ -52310,7 +52310,7 @@
     </type>
     <type name="C+&lt;TestCompositionPair_4&gt;c__async6">
       <method name="Void MoveNext()">
-        <size>456</size>
+        <size>432</size>
       </method>
       <method name="Int32 &lt;&gt;m__9()">
         <size>2</size>
@@ -52381,7 +52381,7 @@
     </type>
     <type name="G`1+&lt;TestStack_1&gt;c__async0[T]">
       <method name="Void MoveNext()">
-        <size>262</size>
+        <size>254</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>2</size>
@@ -52392,7 +52392,7 @@
     </type>
     <type name="C+&lt;TestStack_1&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>309</size>
+        <size>301</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()">
         <size>2</size>
@@ -52403,7 +52403,7 @@
     </type>
     <type name="C+&lt;TestStack_2&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>291</size>
+        <size>283</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()">
         <size>2</size>
@@ -52414,7 +52414,7 @@
     </type>
     <type name="C+&lt;TestStack_3&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>464</size>
+        <size>456</size>
       </method>
       <method name="Int32 &lt;&gt;m__3()">
         <size>2</size>
@@ -52425,7 +52425,7 @@
     </type>
     <type name="C+&lt;TestStack_4&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>319</size>
+        <size>311</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()">
         <size>2</size>
@@ -52436,7 +52436,7 @@
     </type>
     <type name="C+&lt;TestStack_5&gt;c__async5">
       <method name="Void MoveNext()">
-        <size>297</size>
+        <size>289</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()">
         <size>35</size>
@@ -52463,7 +52463,7 @@
     </type>
     <type name="C+&lt;TestNested_1&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>443</size>
+        <size>419</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>9</size>
@@ -52796,7 +52796,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>347</size>
+        <size>331</size>
       </method>
       <method name="Boolean &lt;&gt;m__4()">
         <size>2</size>
@@ -52810,7 +52810,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_2&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>768</size>
+        <size>736</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()">
         <size>2</size>
@@ -52830,7 +52830,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_3&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>1111</size>
+        <size>1071</size>
       </method>
       <method name="Int32 &lt;&gt;m__A()">
         <size>2</size>
@@ -52853,7 +52853,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_4&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>421</size>
+        <size>405</size>
       </method>
       <method name="Int32 &lt;&gt;m__F()">
         <size>2</size>
@@ -52867,7 +52867,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>421</size>
+        <size>405</size>
       </method>
       <method name="Int32 &lt;&gt;m__11()">
         <size>2</size>
@@ -52881,7 +52881,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_6&gt;c__async5">
       <method name="Void MoveNext()">
-        <size>264</size>
+        <size>256</size>
       </method>
       <method name="Int64 &lt;&gt;m__13()">
         <size>3</size>
@@ -52892,7 +52892,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_7&gt;c__async6">
       <method name="Void MoveNext()">
-        <size>392</size>
+        <size>384</size>
       </method>
       <method name="Int32 &lt;&gt;m__14()">
         <size>2</size>
@@ -52903,7 +52903,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_8&gt;c__async7">
       <method name="Void MoveNext()">
-        <size>684</size>
+        <size>668</size>
       </method>
       <method name="Int32 &lt;&gt;m__15()">
         <size>2</size>
@@ -52917,7 +52917,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_9&gt;c__async8">
       <method name="Void MoveNext()">
-        <size>1230</size>
+        <size>1174</size>
       </method>
       <method name="Int32 &lt;&gt;m__17()">
         <size>2</size>
@@ -52946,7 +52946,7 @@
     </type>
     <type name="Tester+&lt;AssignTest_1&gt;c__async9">
       <method name="Void MoveNext()">
-        <size>228</size>
+        <size>220</size>
       </method>
       <method name="Int32 &lt;&gt;m__1E()">
         <size>2</size>
@@ -52957,7 +52957,7 @@
     </type>
     <type name="Tester+&lt;AssignTest_2&gt;c__asyncA">
       <method name="Void MoveNext()">
-        <size>280</size>
+        <size>272</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__1F()">
         <size>10</size>
@@ -52968,7 +52968,7 @@
     </type>
     <type name="Tester+&lt;AssignTest_3&gt;c__asyncB">
       <method name="Void MoveNext()">
-        <size>376</size>
+        <size>360</size>
       </method>
       <method name="Int32 &lt;&gt;m__20()">
         <size>2</size>
@@ -52982,7 +52982,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_1&gt;c__asyncC">
       <method name="Void MoveNext()">
-        <size>456</size>
+        <size>432</size>
       </method>
       <method name="Int32 &lt;&gt;m__22()">
         <size>9</size>
@@ -52999,7 +52999,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_2&gt;c__asyncD">
       <method name="Void MoveNext()">
-        <size>487</size>
+        <size>463</size>
       </method>
       <method name="Boolean &lt;&gt;m__25()">
         <size>16</size>
@@ -53016,7 +53016,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_3&gt;c__asyncE">
       <method name="Void MoveNext()">
-        <size>1124</size>
+        <size>1076</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__28()">
         <size>7</size>
@@ -53042,7 +53042,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_4&gt;c__asyncF">
       <method name="Void MoveNext()">
-        <size>837</size>
+        <size>805</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2E()">
         <size>7</size>
@@ -53062,7 +53062,7 @@
     </type>
     <type name="Tester+&lt;CallTest_1&gt;c__async10">
       <method name="Void MoveNext()">
-        <size>449</size>
+        <size>425</size>
       </method>
       <method name="Int32 &lt;&gt;m__32()">
         <size>9</size>
@@ -53079,7 +53079,7 @@
     </type>
     <type name="Tester+&lt;CallTest_2&gt;c__async11">
       <method name="Void MoveNext()">
-        <size>274</size>
+        <size>266</size>
       </method>
       <method name="Int32 &lt;&gt;m__35()">
         <size>9</size>
@@ -53090,7 +53090,7 @@
     </type>
     <type name="Tester+&lt;CallTest_3&gt;c__async12">
       <method name="Void MoveNext()">
-        <size>244</size>
+        <size>236</size>
       </method>
       <method name="Int32 &lt;&gt;m__36()">
         <size>3</size>
@@ -53101,7 +53101,7 @@
     </type>
     <type name="Tester+&lt;CallTest_4&gt;c__async13">
       <method name="Void MoveNext()">
-        <size>234</size>
+        <size>226</size>
       </method>
       <method name="E &lt;&gt;m__37()">
         <size>2</size>
@@ -53112,7 +53112,7 @@
     </type>
     <type name="Tester+&lt;CallTest_5&gt;c__async14">
       <method name="Void MoveNext()">
-        <size>298</size>
+        <size>282</size>
       </method>
       <method name="Int32 &lt;&gt;m__38()">
         <size>18</size>
@@ -53123,7 +53123,7 @@
     </type>
     <type name="Tester+&lt;CastTest_1&gt;c__async15">
       <method name="Void MoveNext()">
-        <size>253</size>
+        <size>245</size>
       </method>
       <method name="Decimal &lt;&gt;m__39()">
         <size>8</size>
@@ -53134,7 +53134,7 @@
     </type>
     <type name="Tester+&lt;CastTest_2&gt;c__async16">
       <method name="Void MoveNext()">
-        <size>235</size>
+        <size>227</size>
       </method>
       <method name="Tester &lt;&gt;m__3A()">
         <size>7</size>
@@ -53145,7 +53145,7 @@
     </type>
     <type name="Tester+&lt;CoalescingTest_1&gt;c__async17">
       <method name="Void MoveNext()">
-        <size>365</size>
+        <size>349</size>
       </method>
       <method name="System.String &lt;&gt;m__3B()">
         <size>2</size>
@@ -53159,7 +53159,7 @@
     </type>
     <type name="Tester+&lt;CoalescingTest_2&gt;c__async18">
       <method name="Void MoveNext()">
-        <size>378</size>
+        <size>362</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__3D()">
         <size>10</size>
@@ -53181,7 +53181,7 @@
     </type>
     <type name="Tester+&lt;ConditionalTest_2&gt;c__async1A">
       <method name="Void MoveNext()">
-        <size>341</size>
+        <size>325</size>
       </method>
       <method name="Int32 &lt;&gt;m__3F()">
         <size>2</size>
@@ -53195,7 +53195,7 @@
     </type>
     <type name="Tester+&lt;ConditionalTest_3&gt;c__async1B">
       <method name="Void MoveNext()">
-        <size>361</size>
+        <size>345</size>
       </method>
       <method name="Boolean &lt;&gt;m__41()">
         <size>2</size>
@@ -53209,7 +53209,7 @@
     </type>
     <type name="Tester+&lt;ConditionalTest_4&gt;c__async1C">
       <method name="Void MoveNext()">
-        <size>250</size>
+        <size>242</size>
       </method>
       <method name="Int32 &lt;&gt;m__43()">
         <size>2</size>
@@ -53220,7 +53220,7 @@
     </type>
     <type name="Tester+&lt;DelegateInvoke_4&gt;c__async1D">
       <method name="Void MoveNext()">
-        <size>278</size>
+        <size>270</size>
       </method>
       <method name="Int32 &lt;&gt;m__44(Int32)">
         <size>4</size>
@@ -53234,7 +53234,7 @@
     </type>
     <type name="Tester+&lt;EventInvoke_1&gt;c__async1E">
       <method name="Void MoveNext()">
-        <size>222</size>
+        <size>214</size>
       </method>
       <method name="System.Action &lt;&gt;m__46()">
         <size>15</size>
@@ -53248,7 +53248,7 @@
     </type>
     <type name="Tester+&lt;FieldTest_1&gt;c__async1F">
       <method name="Void MoveNext()">
-        <size>549</size>
+        <size>533</size>
       </method>
       <method name="Int32 &lt;&gt;m__48()">
         <size>2</size>
@@ -53262,7 +53262,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_1&gt;c__async20">
       <method name="Void MoveNext()">
-        <size>230</size>
+        <size>222</size>
       </method>
       <method name="Int32 &lt;&gt;m__4A()">
         <size>2</size>
@@ -53273,7 +53273,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_2&gt;c__async21">
       <method name="Void MoveNext()">
-        <size>347</size>
+        <size>331</size>
       </method>
       <method name="Int32 &lt;&gt;m__4B()">
         <size>2</size>
@@ -53287,7 +53287,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_3&gt;c__async22">
       <method name="Void MoveNext()">
-        <size>378</size>
+        <size>362</size>
       </method>
       <method name="Int32 &lt;&gt;m__4D()">
         <size>18</size>
@@ -53301,7 +53301,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_4&gt;c__async23">
       <method name="Void MoveNext()">
-        <size>406</size>
+        <size>390</size>
       </method>
       <method name="Int32 &lt;&gt;m__4F()">
         <size>18</size>
@@ -53315,7 +53315,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_5&gt;c__async24">
       <method name="Void MoveNext()">
-        <size>510</size>
+        <size>494</size>
       </method>
       <method name="Int32 &lt;&gt;m__51()">
         <size>18</size>
@@ -53329,7 +53329,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_6&gt;c__async25">
       <method name="Void MoveNext()">
-        <size>565</size>
+        <size>541</size>
       </method>
       <method name="Int32 &lt;&gt;m__53()">
         <size>3</size>
@@ -53346,7 +53346,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_7&gt;c__async26">
       <method name="Void MoveNext()">
-        <size>264</size>
+        <size>256</size>
       </method>
       <method name="Int32 &lt;&gt;m__56()">
         <size>18</size>
@@ -53357,7 +53357,7 @@
     </type>
     <type name="Tester+&lt;IsTest_1&gt;c__async27">
       <method name="Void MoveNext()">
-        <size>247</size>
+        <size>239</size>
       </method>
       <method name="Tester &lt;&gt;m__57()">
         <size>6</size>
@@ -53368,7 +53368,7 @@
     </type>
     <type name="Tester+&lt;IsTest_2&gt;c__async28">
       <method name="Void MoveNext()">
-        <size>240</size>
+        <size>232</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__58()">
         <size>7</size>
@@ -53379,7 +53379,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async29">
       <method name="Void MoveNext()">
-        <size>398</size>
+        <size>382</size>
       </method>
       <method name="Base &lt;&gt;m__59()">
         <size>6</size>
@@ -53393,7 +53393,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2A">
       <method name="Void MoveNext()">
-        <size>299</size>
+        <size>291</size>
       </method>
       <method name="Base &lt;&gt;m__5B()">
         <size>6</size>
@@ -53404,7 +53404,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2B">
       <method name="Void MoveNext()">
-        <size>397</size>
+        <size>381</size>
       </method>
       <method name="Base &lt;&gt;m__5C()">
         <size>6</size>
@@ -53418,7 +53418,7 @@
     </type>
     <type name="Tester+&lt;NewTest_1&gt;c__async2C">
       <method name="Void MoveNext()">
-        <size>260</size>
+        <size>252</size>
       </method>
       <method name="Int32 &lt;&gt;m__5E()">
         <size>3</size>
@@ -53429,7 +53429,7 @@
     </type>
     <type name="Tester+&lt;NewTest_2&gt;c__async2D">
       <method name="Void MoveNext()">
-        <size>362</size>
+        <size>346</size>
       </method>
       <method name="Int32 &lt;&gt;m__5F()">
         <size>3</size>
@@ -53443,7 +53443,7 @@
     </type>
     <type name="Tester+&lt;NewInitTest_1&gt;c__async2E">
       <method name="Void MoveNext()">
-        <size>1047</size>
+        <size>999</size>
       </method>
       <method name="Int32 &lt;&gt;m__61()">
         <size>3</size>
@@ -53469,7 +53469,7 @@
     </type>
     <type name="Tester+&lt;NewInitTest_2&gt;c__async2F">
       <method name="Void MoveNext()">
-        <size>767</size>
+        <size>735</size>
       </method>
       <method name="System.String &lt;&gt;m__67()">
         <size>6</size>
@@ -53489,7 +53489,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async30">
       <method name="Void MoveNext()">
-        <size>240</size>
+        <size>232</size>
       </method>
       <method name="Int32 &lt;&gt;m__6B()">
         <size>2</size>
@@ -53500,7 +53500,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async31">
       <method name="Void MoveNext()">
-        <size>362</size>
+        <size>346</size>
       </method>
       <method name="Int32 &lt;&gt;m__6C()">
         <size>2</size>
@@ -53514,7 +53514,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async32">
       <method name="Void MoveNext()">
-        <size>260</size>
+        <size>252</size>
       </method>
       <method name="Byte &lt;&gt;m__6E()">
         <size>2</size>
@@ -53525,7 +53525,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async33">
       <method name="Void MoveNext()">
-        <size>448</size>
+        <size>432</size>
       </method>
       <method name="UInt16 &lt;&gt;m__6F()">
         <size>2</size>
@@ -53539,7 +53539,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async34">
       <method name="Void MoveNext()">
-        <size>278</size>
+        <size>270</size>
       </method>
       <method name="S &lt;&gt;m__71()">
         <size>18</size>
@@ -53550,7 +53550,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async35">
       <method name="Void MoveNext()">
-        <size>280</size>
+        <size>272</size>
       </method>
       <method name="Int32 &lt;&gt;m__72()">
         <size>2</size>
@@ -53561,7 +53561,7 @@
     </type>
     <type name="Tester+&lt;PropertyTest_1&gt;c__async36">
       <method name="Void MoveNext()">
-        <size>227</size>
+        <size>219</size>
       </method>
       <method name="Int32 &lt;&gt;m__73()">
         <size>2</size>
@@ -53572,7 +53572,7 @@
     </type>
     <type name="Tester+&lt;PropertyTest_2&gt;c__async37">
       <method name="Void MoveNext()">
-        <size>295</size>
+        <size>287</size>
       </method>
       <method name="Int32 &lt;&gt;m__74()">
         <size>2</size>
@@ -53583,7 +53583,7 @@
     </type>
     <type name="Tester+&lt;PropertyTest_3&gt;c__async38">
       <method name="Void MoveNext()">
-        <size>659</size>
+        <size>635</size>
       </method>
       <method name="Int32 &lt;&gt;m__75()">
         <size>3</size>
@@ -53600,7 +53600,7 @@
     </type>
     <type name="Tester+&lt;StringConcatTest_1&gt;c__async39">
       <method name="Void MoveNext()">
-        <size>469</size>
+        <size>445</size>
       </method>
       <method name="System.String &lt;&gt;m__78()">
         <size>6</size>
@@ -53617,7 +53617,7 @@
     </type>
     <type name="Tester+&lt;UnaryTest_1&gt;c__async3A">
       <method name="Void MoveNext()">
-        <size>240</size>
+        <size>232</size>
       </method>
       <method name="Int32 &lt;&gt;m__7B()">
         <size>2</size>
@@ -53628,7 +53628,7 @@
     </type>
     <type name="Tester+&lt;UnaryTest_2&gt;c__async3B">
       <method name="Void MoveNext()">
-        <size>340</size>
+        <size>332</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__7C()">
         <size>7</size>
@@ -53639,7 +53639,7 @@
     </type>
     <type name="Tester+&lt;UnaryTest_3&gt;c__async3C">
       <method name="Void MoveNext()">
-        <size>376</size>
+        <size>368</size>
       </method>
       <method name="Int32 &lt;&gt;m__7D()">
         <size>2</size>
@@ -53666,7 +53666,7 @@
     </type>
     <type name="C+&lt;TestResult&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>217</size>
+        <size>209</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()">
         <size>2</size>
@@ -53677,7 +53677,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>228</size>
+        <size>220</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()">
         <size>2</size>
@@ -53715,7 +53715,7 @@
     </type>
     <type name="Tester+&lt;NewInitTestGen&gt;c__async0`1[T]">
       <method name="Void MoveNext()">
-        <size>301</size>
+        <size>293</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>3</size>
@@ -53760,7 +53760,7 @@
     </type>
     <type name="Tester+&lt;TestException_1&gt;c__async0">
       <method name="Void MoveNext()">
-        <size>203</size>
+        <size>195</size>
       </method>
       <method name="Void &lt;&gt;m__4()">
         <size>6</size>
@@ -53771,7 +53771,7 @@
     </type>
     <type name="Tester+&lt;TestException_2&gt;c__async1">
       <method name="Void MoveNext()">
-        <size>195</size>
+        <size>187</size>
       </method>
       <method name="Void &lt;&gt;m__5()">
         <size>6</size>
@@ -53782,7 +53782,7 @@
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>202</size>
+        <size>194</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;&gt;m__6()">
         <size>27</size>
@@ -53798,7 +53798,7 @@
     </type>
     <type name="Tester+&lt;TestException_4&gt;c__async3">
       <method name="Void MoveNext()">
-        <size>233</size>
+        <size>225</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()">
         <size>2</size>
@@ -53817,7 +53817,7 @@
     </type>
     <type name="Tester+&lt;TestException_5&gt;c__async4">
       <method name="Void MoveNext()">
-        <size>279</size>
+        <size>271</size>
       </method>
       <method name="Void &lt;&gt;m__9()">
         <size>6</size>
@@ -53828,7 +53828,7 @@
     </type>
     <type name="Tester+&lt;TestException_6&gt;c__async5">
       <method name="Void MoveNext()">
-        <size>236</size>
+        <size>228</size>
       </method>
       <method name="Void &lt;&gt;m__A()">
         <size>6</size>
@@ -53839,7 +53839,7 @@
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
       <method name="Void MoveNext()">
-        <size>195</size>
+        <size>187</size>
       </method>
       <method name="Void &lt;&gt;m__7()">
         <size>6</size>

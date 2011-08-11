@@ -142,7 +142,6 @@ namespace Mono.CSharp
 			Start = 0
 		}
 
-		Field disposing_field;
 		Field pc_field;
 		int local_name_idx;
 		StateMachineMethod method;
@@ -153,12 +152,6 @@ namespace Mono.CSharp
 		}
 
 		#region Properties
-
-		public Field DisposingField {
-			get {
-				return disposing_field;
-			}
-		}
 
 		public StateMachineMethod StateMachineMethod {
 			get {
@@ -186,7 +179,6 @@ namespace Mono.CSharp
 		protected override bool DoDefineMembers ()
 		{
 			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
-			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
 			return base.DoDefineMembers ();
 		}
@@ -382,6 +374,7 @@ namespace Mono.CSharp
 
 		TypeExpr iterator_type_expr;
 		Field current_field;
+		Field disposing_field;
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
@@ -397,7 +390,15 @@ namespace Mono.CSharp
 		}
 
 		public Field CurrentField {
-			get { return current_field; }
+			get {
+				return current_field;
+			}
+		}
+
+		public Field DisposingField {
+			get {
+				return disposing_field;
+			}
 		}
 
 		public IList<HoistedParameter> HoistedParameters {
@@ -443,6 +444,7 @@ namespace Mono.CSharp
 		protected override bool DoDefineMembers ()
 		{
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
+			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
 			if (hoisted_params != null) {
 				//
@@ -610,8 +612,8 @@ namespace Mono.CSharp
 		Label iterator_body_end;
 		protected Label move_next_error;
 		LocalBuilder skip_finally;
-		LocalBuilder current_pc;
-		List<ResumableStatement> resume_points;
+		protected LocalBuilder current_pc;
+		protected List<ResumableStatement> resume_points;
 
 		protected StateMachineInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
 			: base (block, returnType, block.StartLocation)
@@ -702,54 +704,6 @@ namespace Mono.CSharp
 			// Load Iterator storey instance
 			//
 			storey.Instance.Emit (ec);
-		}
-
-		public void EmitDispose (EmitContext ec)
-		{
-			Label end = ec.DefineLabel ();
-
-			Label[] labels = null;
-			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
-			for (int i = 0; i < n_resume_points; ++i) {
-				ResumableStatement s = resume_points[i];
-				Label ret = s.PrepareForDispose (ec, end);
-				if (ret.Equals (end) && labels == null)
-					continue;
-				if (labels == null) {
-					labels = new Label[resume_points.Count + 1];
-					for (int j = 0; j <= i; ++j)
-						labels[j] = end;
-				}
-
-				labels[i + 1] = ret;
-			}
-
-			if (labels != null) {
-				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
-				ec.EmitThis ();
-				ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
-				ec.Emit (OpCodes.Stloc, current_pc);
-			}
-
-			ec.EmitThis ();
-			ec.EmitInt (1);
-			ec.Emit (OpCodes.Stfld, storey.DisposingField.Spec);
-
-			ec.EmitThis ();
-			ec.EmitInt ((int) IteratorStorey.State.After);
-			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
-
-			if (labels != null) {
-				//SymbolWriter.StartIteratorDispatcher (ec.ig);
-				ec.Emit (OpCodes.Ldloc, current_pc);
-				ec.Emit (OpCodes.Switch, labels);
-				//SymbolWriter.EndIteratorDispatcher (ec.ig);
-
-				foreach (ResumableStatement s in resume_points)
-					s.EmitForDispose (ec, current_pc, end, true);
-			}
-
-			ec.MarkLabel (end);
 		}
 
 		void EmitMoveNext_NoResumePoints (EmitContext ec, Block original_block)
@@ -893,9 +847,12 @@ namespace Mono.CSharp
 			// Guard against being disposed meantime
 			//
 			Label disposed = ec.DefineLabel ();
-			ec.EmitThis ();
-			ec.Emit (OpCodes.Ldfld, storey.DisposingField.Spec);
-			ec.Emit (OpCodes.Brtrue_S, disposed);
+			var iterator = storey as IteratorStorey;
+			if (iterator != null) {
+				ec.EmitThis ();
+				ec.Emit (OpCodes.Ldfld, iterator.DisposingField.Spec);
+				ec.Emit (OpCodes.Brtrue_S, disposed);
+			}
 
 			//
 			// store resume program-counter
@@ -903,7 +860,10 @@ namespace Mono.CSharp
 			ec.EmitThis ();
 			ec.EmitInt (resume_pc);
 			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
-			ec.MarkLabel (disposed);
+
+			if (iterator != null) {
+				ec.MarkLabel (disposed);
+			}
 
 			// mark finally blocks as disabled
 			if (unwind_protect && skip_finally != null) {
@@ -978,6 +938,54 @@ namespace Mono.CSharp
 
 				ec.Emit (OpCodes.Stfld, field);
 			}
+		}
+
+		public void EmitDispose (EmitContext ec)
+		{
+			Label end = ec.DefineLabel ();
+
+			Label[] labels = null;
+			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
+			for (int i = 0; i < n_resume_points; ++i) {
+				ResumableStatement s = resume_points[i];
+				Label ret = s.PrepareForDispose (ec, end);
+				if (ret.Equals (end) && labels == null)
+					continue;
+				if (labels == null) {
+					labels = new Label[resume_points.Count + 1];
+					for (int j = 0; j <= i; ++j)
+						labels[j] = end;
+				}
+
+				labels[i + 1] = ret;
+			}
+
+			if (labels != null) {
+				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
+				ec.EmitThis ();
+				ec.Emit (OpCodes.Ldfld, storey.PC.Spec);
+				ec.Emit (OpCodes.Stloc, current_pc);
+			}
+
+			ec.EmitThis ();
+			ec.EmitInt (1);
+			ec.Emit (OpCodes.Stfld, ((IteratorStorey) storey).DisposingField.Spec);
+
+			ec.EmitThis ();
+			ec.EmitInt ((int) IteratorStorey.State.After);
+			ec.Emit (OpCodes.Stfld, storey.PC.Spec);
+
+			if (labels != null) {
+				//SymbolWriter.StartIteratorDispatcher (ec.ig);
+				ec.Emit (OpCodes.Ldloc, current_pc);
+				ec.Emit (OpCodes.Switch, labels);
+				//SymbolWriter.EndIteratorDispatcher (ec.ig);
+
+				foreach (ResumableStatement s in resume_points)
+					s.EmitForDispose (ec, current_pc, end, true);
+			}
+
+			ec.MarkLabel (end);
 		}
 
 		public override void EmitStatement (EmitContext ec)
