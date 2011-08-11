@@ -3463,8 +3463,8 @@ clear_cached_culture (gpointer key, gpointer value, gpointer user_data)
 	MonoDomain *domain = (MonoDomain*)user_data;
 	int i;
 
-	/* No locking needed here */
-	/* FIXME: why no locking? writes to the cache are protected with synch_cs above */
+	ensure_synch_cs_set (thread);
+	EnterCriticalSection (thread->synch_cs);
 
 	if (thread->cached_culture_info) {
 		for (i = 0; i < NUM_CACHED_CULTURES * 2; ++i) {
@@ -3473,6 +3473,8 @@ clear_cached_culture (gpointer key, gpointer value, gpointer user_data)
 				mono_array_set (thread->cached_culture_info, MonoObject*, i, NULL);
 		}
 	}
+
+	LeaveCriticalSection (thread->synch_cs);
 }
 	
 /*

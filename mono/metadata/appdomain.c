@@ -2242,10 +2242,10 @@ unload_thread_main (void *arg)
 #ifdef HAVE_SGEN_GC
 	deregister_reflection_info_roots (domain);
 #endif
+	mono_threads_clear_cached_culture (domain);
+
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
-
-	mono_threads_clear_cached_culture (domain);
 
 	domain->state = MONO_APPDOMAIN_UNLOADED;
 
