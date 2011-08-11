@@ -22,8 +22,6 @@
 //
 //
 
-#if NET_4_0 || MOBILE
-
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -79,6 +77,7 @@ namespace System.Threading.Tasks
 				return true;
 			}
 
+			[MonoTODO ("Only useful for debugger support")]
 			protected override IEnumerable<Task> GetScheduledTasks ()
 			{
 				throw new NotImplementedException ();
@@ -119,6 +118,7 @@ namespace System.Threading.Tasks
 				TryExecuteTask (t);
 			}
 
+			[MonoTODO ("Only useful for debugger support")]
 			protected override IEnumerable<Task> GetScheduledTasks ()
 			{
 				throw new NotImplementedException ();
@@ -177,6 +177,7 @@ namespace System.Threading.Tasks
 			Dispose (true);
 		}
 
+		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
@@ -255,5 +256,3 @@ namespace System.Threading.Tasks
 		}
 	}
 }
-
-#endif

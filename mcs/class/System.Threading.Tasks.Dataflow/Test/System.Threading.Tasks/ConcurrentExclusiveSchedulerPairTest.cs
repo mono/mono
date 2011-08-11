@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -176,4 +175,3 @@ namespace MonoTests.System.Threading.Tasks
 	}
 }
 
-#endif
