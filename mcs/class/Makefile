@@ -185,7 +185,8 @@ net_4_0_dirs := \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
-	System.Data.Services
+	System.Data.Services	\
+	System.Json
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
