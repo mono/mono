@@ -3046,15 +3046,21 @@ thread_end (MonoProfiler *prof, gsize tid)
 
 	mono_loader_lock ();
 	thread = mono_g_hash_table_lookup (tid_to_thread, (gpointer)tid);
-	if (thread) {
-		mono_g_hash_table_remove (tid_to_thread_obj, (gpointer)tid);
+	if (thread) {		
 		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 		if (tls) {
-			/* FIXME: Maybe we need to free this instead, but some code can't handle that */
 			tls->terminated = TRUE;
-			/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
+			/* Cleanup - Unity */
+			/* ?OBSOLETE? Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
+			mono_g_hash_table_remove (tid_to_thread, (gpointer)tid);
+			mono_g_hash_table_remove (thread_to_tls, thread);
+			mono_g_hash_table_remove (tid_to_thread_obj, (gpointer)tid);
 			MONO_GC_UNREGISTER_ROOT (tls->thread);
 			tls->thread = NULL;
+
+			/* FIXME Unity: Safe to free this? */
+			TlsSetValue (debugger_tls_id, NULL);
+			g_free(tls);
 		}
 	}
 	mono_loader_unlock ();
