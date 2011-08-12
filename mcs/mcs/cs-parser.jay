@@ -4831,6 +4831,17 @@ opt_variable_declarators
 	| variable_declarators
 	;
 	
+opt_using_or_fixed_variable_declarators
+	: /* empty */
+	| variable_declarators
+	  {
+		foreach (var d in current_variable.Declarators) {
+			if (d.Initializer == null)
+				Error_MissingInitializer (d.Variable.Location);
+		}
+	  }
+	;	
+	
 variable_declarators
 	: variable_declarator
 	| variable_declarators variable_declarator
@@ -5441,7 +5452,7 @@ fixed_statement
 		current_block.AddLocalName (li);
 		current_variable = new Fixed.VariableDeclaration ((FullNamedExpression) $3, li);
 	  }
-	  using_or_fixed_variable_initializer opt_variable_declarators CLOSE_PARENS
+	  using_or_fixed_variable_initializer opt_using_or_fixed_variable_declarators CLOSE_PARENS
 	  {
 		$$ = current_variable;
 		current_variable = null;
@@ -5468,7 +5479,7 @@ using_statement
 		current_block.AddLocalName (li);
 		current_variable = new Using.VariableDeclaration ((FullNamedExpression) $3, li);
 	  }
-	  using_or_fixed_variable_initializer opt_variable_declarators CLOSE_PARENS
+	  using_or_fixed_variable_initializer opt_using_or_fixed_variable_declarators CLOSE_PARENS
 	  {
 		$$ = current_variable;	  
 		current_variable = null;
@@ -5496,7 +5507,7 @@ using_statement
 using_or_fixed_variable_initializer
 	: /* empty */
 	  {
-		report.Error (210, lexer.Location, "You must provide an initializer in a fixed or using statement declaration");
+		Error_MissingInitializer (lexer.Location);
 	  }
 	| ASSIGN variable_initializer
 	  {
@@ -6234,6 +6245,11 @@ void Warning_EmptyStatement (Location loc)
 void Error_NamedArgumentExpected (NamedArgument a)
 {
 	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments");
+}
+
+void Error_MissingInitializer (Location loc)
+{
+	report.Error (210, loc, "You must provide an initializer in a fixed or using statement declaration");
 }
 
 void push_current_class (TypeContainer tc, object partial_token)
