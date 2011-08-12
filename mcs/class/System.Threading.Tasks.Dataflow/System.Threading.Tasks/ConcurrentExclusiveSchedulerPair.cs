@@ -43,18 +43,21 @@ namespace System.Threading.Tasks
 
 		readonly ReaderWriterLockSlim rwl = new ReaderWriterLockSlim ();
 		readonly TaskCompletionSource<object> completion = new TaskCompletionSource<object> ();
-		readonly ConcurrentTaskScheduler concurrent;
-		readonly ExclusiveTaskScheduler exclusive;
+		readonly InnerTaskScheduler concurrent;
+		readonly InnerTaskScheduler exclusive;
 
 		int numTask;
 
-		class ExclusiveTaskScheduler : TaskScheduler
+		class InnerTaskScheduler : TaskScheduler
 		{
-			ConcurrentExclusiveSchedulerPair scheduler;
+			readonly ConcurrentExclusiveSchedulerPair scheduler;
+			readonly ConcurrentQueue<Task> queue;
 
-			public ExclusiveTaskScheduler (ConcurrentExclusiveSchedulerPair scheduler)
+			public InnerTaskScheduler (ConcurrentExclusiveSchedulerPair scheduler,
+			                               ConcurrentQueue<Task> queue)
 			{
 				this.scheduler = scheduler;
+				this.queue = queue;
 			}
 
 			public override int MaximumConcurrencyLevel {
@@ -65,43 +68,7 @@ namespace System.Threading.Tasks
 
 			protected override void QueueTask (Task t)
 			{
-				scheduler.QueueExclusive (t);
-			}
-
-			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
-			{
-				if (task.Status != TaskStatus.Created)
-					return false;
-
-				task.RunSynchronously (scheduler.target);
-				return true;
-			}
-
-			[MonoTODO ("Only useful for debugger support")]
-			protected override IEnumerable<Task> GetScheduledTasks ()
-			{
-				throw new NotImplementedException ();
-			}
-		}
-
-		class ConcurrentTaskScheduler : TaskScheduler
-		{
-			ConcurrentExclusiveSchedulerPair scheduler;
-
-			public ConcurrentTaskScheduler (ConcurrentExclusiveSchedulerPair scheduler)
-			{
-				this.scheduler = scheduler;
-			}
-
-			public override int MaximumConcurrencyLevel {
-				get {
-					return scheduler.maxConcurrencyLevel;
-				}
-			}
-
-			protected override void QueueTask (Task t)
-			{
-				scheduler.QueueConcurrent (t);
+				scheduler.DoQueue (t, queue);
 			}
 
 			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
@@ -145,8 +112,8 @@ namespace System.Threading.Tasks
 			this.maxItemsPerTask = maxItemsPerTask;
 			this.factory = new TaskFactory (taskScheduler);
 			this.taskHandler = InternalTaskProcesser;
-			this.concurrent = new ConcurrentTaskScheduler (this);
-			this.exclusive = new ExclusiveTaskScheduler (this);
+			this.concurrent = new InnerTaskScheduler (this, concurrentTasks);
+			this.exclusive = new InnerTaskScheduler (this, exclusiveTasks);
 		}
 
 		public void Complete ()
@@ -180,18 +147,11 @@ namespace System.Threading.Tasks
 		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
 		}
 
-		void QueueExclusive (Task task)
+		void DoQueue (Task task, ConcurrentQueue<Task> queue)
 		{
-			exclusiveTasks.Enqueue (task);
-			SpinUpTasks ();
-		}
-
-		void QueueConcurrent (Task task)
-		{
-			concurrentTasks.Enqueue (task);
+			queue.Enqueue (task);
 			SpinUpTasks ();
 		}
 
