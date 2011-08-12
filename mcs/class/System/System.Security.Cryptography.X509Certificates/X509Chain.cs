@@ -601,7 +601,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			// TODO 6.1.4.g-j
 
 			// 6.1.4.k - Verify that the certificate is a CA certificate
-			X509BasicConstraintsExtension bce = (X509BasicConstraintsExtension) certificate.Extensions["2.5.29.19"];
+			X509BasicConstraintsExtension bce = (certificate.Extensions["2.5.29.19"] as X509BasicConstraintsExtension);
 			if (bce != null) {
 				if (!bce.CertificateAuthority) {
 					element.StatusFlags |= X509ChainStatusFlags.InvalidBasicConstraints;
@@ -636,7 +636,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 
 			// 6.1.4.n - if key usage extension is present...
-			X509KeyUsageExtension kue = (X509KeyUsageExtension) certificate.Extensions["2.5.29.15"];
+			X509KeyUsageExtension kue = (certificate.Extensions["2.5.29.15"] as X509KeyUsageExtension);
 			if (kue != null) {
 				// ... verify keyCertSign is set
 				X509KeyUsageFlags success = X509KeyUsageFlags.KeyCertSign;
@@ -703,7 +703,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private string GetSubjectKeyIdentifier (X509Certificate2 certificate)
 		{
-			X509SubjectKeyIdentifierExtension ski = (X509SubjectKeyIdentifierExtension) certificate.Extensions["2.5.29.14"];
+			X509SubjectKeyIdentifierExtension ski = (certificate.Extensions["2.5.29.14"] as X509SubjectKeyIdentifierExtension);
 			return (ski == null) ? String.Empty : ski.SubjectKeyIdentifier;
 		}
 
@@ -816,7 +816,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		private X509ChainStatusFlags CheckRevocation (X509Certificate2 certificate, X509Certificate2 ca_cert, bool online)
 		{
 			// change this if/when we support OCSP
-			X509KeyUsageExtension kue = (X509KeyUsageExtension) ca_cert.Extensions["2.5.29.15"];
+			X509KeyUsageExtension kue = (ca_cert.Extensions["2.5.29.15"] as X509KeyUsageExtension);
 			if (kue != null) {
 				// ... verify CrlSign is set
 				X509KeyUsageFlags success = X509KeyUsageFlags.CrlSign;
@@ -834,7 +834,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				// crl = FindCrl (ca_cert, ref valid, ref out_of_date);
 
 				// We need to get the subjectAltName and an URI from there (or use OCSP)	
-				// X509KeyUsageExtension subjectAltName = (X509KeyUsageExtension) ca_cert.Extensions["2.5.29.17"];
+				// X509KeyUsageExtension subjectAltName = (ca_cert.Extensions["2.5.29.17"] as X509KeyUsageExtension);
 			}
 
 			if (crl != null) {
@@ -894,7 +894,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
-				result = (UserCAStore.Store == null) ? null : CheckCrls (subject, ski, UserCAStore.Store.Crls);
+				result = CheckCrls (subject, ski, UserCAStore.Store.Crls);
 				if (result != null)
 					return result;
 			}
