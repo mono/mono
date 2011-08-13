@@ -394,7 +394,9 @@ namespace System.Security.AccessControl {
 
 		private static int ParseSddlAccessRights (string accessMask)
 		{
-			if (accessMask.StartsWith ("0X")) {
+			if (accessMask.Length == 0) {
+				return 0;
+			} else if (accessMask.StartsWith ("0X")) {
 				return int.Parse (accessMask.Substring (2),
 				                  NumberStyles.HexNumber,
 				                  CultureInfo.InvariantCulture);

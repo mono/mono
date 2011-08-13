@@ -285,6 +285,7 @@ namespace MonoTests.System.Security.AccessControl {
 			CheckRoundTrip ("O:SYG:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)");
 			CheckRoundTrip ("O:SYG:BAD:(A;OICINPIOID;0x12019f;;;SY)");
 			CheckRoundTrip ("O:SYG:BAS:(AU;SAFA;0x12019f;;;SY)");
+			CheckRoundTrip ("O:SYG:BAD:(A;;;;;SY)");
 		}
 	}
 }
