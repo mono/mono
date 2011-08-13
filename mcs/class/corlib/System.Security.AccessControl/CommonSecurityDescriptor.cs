@@ -41,17 +41,17 @@ namespace System.Security.AccessControl {
 		
 		public CommonSecurityDescriptor (bool isContainer, bool isDS, RawSecurityDescriptor rawSecurityDescriptor)
 		{
-			throw new NotImplementedException ();
+			Init(isContainer, isDS, rawSecurityDescriptor);
 		}
 		
 		public CommonSecurityDescriptor (bool isContainer, bool isDS, string sddlForm)
 		{
-			throw new NotImplementedException ();
+			Init(isContainer, isDS, new RawSecurityDescriptor(sddlForm));
 		}
 		
 		public CommonSecurityDescriptor (bool isContainer, bool isDS, byte[] binaryForm, int offset) 
 		{
-			throw new NotImplementedException ();
+			Init(isContainer, isDS, new RawSecurityDescriptor(binaryForm, offset));
 		}
 		
 		public CommonSecurityDescriptor (bool isContainer, bool isDS,
@@ -68,8 +68,6 @@ namespace System.Security.AccessControl {
 			this.group = group;
 			this.systemAcl = systemAcl;
 			this.discretionaryAcl = discretionaryAcl;
-			
-			throw new NotImplementedException ();
 		}
 		
 		public override ControlFlags ControlFlags
@@ -171,6 +169,30 @@ namespace System.Security.AccessControl {
 						    bool preserveInheritance)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal override GenericAcl InternalDacl {
+			get { return discretionaryAcl; }
+		}
+
+		internal override GenericAcl InternalSacl {
+			get { return systemAcl; }
+		}
+
+		internal void SetControlFlags(ControlFlags value)
+		{
+			flags = value;
+		}
+
+		private void Init(bool isContainer, bool isDS, RawSecurityDescriptor rawSecurityDescriptor)
+		{
+			this.isContainer = isContainer;
+			this.isDS = isDS;
+			this.flags = rawSecurityDescriptor.ControlFlags;
+			this.owner = rawSecurityDescriptor.Owner;
+			this.group = rawSecurityDescriptor.Group;
+			this.systemAcl = new SystemAcl(isContainer, isDS, rawSecurityDescriptor.SystemAcl);
+			this.discretionaryAcl = new DiscretionaryAcl(isContainer, isDS, rawSecurityDescriptor.DiscretionaryAcl);
 		}
 	}
 }

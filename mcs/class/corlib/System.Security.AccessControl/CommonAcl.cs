@@ -47,24 +47,23 @@ namespace System.Security.AccessControl {
 		{
 			this.is_container = isContainer;
 			this.is_ds = isDS;
-			this.revision = revision;
-			list = new List<GenericAce> (capacity);
+			this.rev = revision;
+			raw_acl = new RawAcl(revision, capacity);
 		}
 
 		bool is_container, is_ds;
-		byte revision;
-		List<GenericAce> list;
+		byte rev;
+		RawAcl raw_acl;
 
-		[MonoTODO]
 		public override sealed int BinaryLength
 		{
 			get {
-				throw new NotImplementedException ();
+				return raw_acl.BinaryLength;
 			}
 		}
 
 		public override sealed int Count {
-			get { return list.Count; }
+			get { return raw_acl.Count; }
 		}
 
 		[MonoTODO]
@@ -85,19 +84,18 @@ namespace System.Security.AccessControl {
 
 		public override sealed GenericAce this[int index]
 		{
-			get { return list [index]; }
-			set { list [index] = value; }
+			get { return raw_acl [index]; }
+			set { raw_acl [index] = value; }
 		}
 		
 		public override sealed byte Revision {
-			get { return revision; }
+			get { return rev; }
 		}
 		
-		[MonoTODO]
 		public override sealed void GetBinaryForm (byte[] binaryForm,
 							   int offset)
 		{
-			throw new NotImplementedException ();
+			raw_acl.GetBinaryForm(binaryForm, offset);
 		}
 		
 		[MonoTODO]
@@ -111,10 +109,15 @@ namespace System.Security.AccessControl {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal RawAcl RawAcl
+		{
+			get { return raw_acl; }
+		}
 		
 		internal override string GetSddlForm(ControlFlags sdFlags, bool isDacl)
 		{
-			throw new NotImplementedException();
+			return raw_acl.GetSddlForm(sdFlags, isDacl);
 		}
 	}
 }
