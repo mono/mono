@@ -1320,6 +1320,11 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext bc)
 		{
+			return Resolve (bc, true);
+		}
+
+		public bool Resolve (BlockContext bc, bool resolveDeclaratorInitializers)
+		{
 			if (li.Type == null) {
 				TypeSpec type = null;
 				var vexpr = type_expr as VarExpr;
@@ -1396,10 +1401,10 @@ namespace Mono.CSharp {
 						d.Variable.PrepareForFlowAnalysis (bc);
 					}
 
-					if (d.Initializer != null) {
+					if (d.Initializer != null && resolveDeclaratorInitializers) {
 						d.Initializer = ResolveInitializer (bc, d.Variable, d.Initializer);
 						// d.Variable.DefinitelyAssigned 
-					}
+					} 
 				}
 			}
 
@@ -2193,8 +2198,8 @@ namespace Mono.CSharp {
 			//
 			// An iterator has only 1 storey block
 			//
-			if (ec.CurrentIterator != null)
-			    return ec.CurrentIterator.Storey;
+			if (ec.CurrentAnonymousMethod.IsIterator)
+			    return ec.CurrentAnonymousMethod.Storey;
 
 			//
 			// When referencing a variable in iterator storey from children anonymous method
@@ -4999,7 +5004,7 @@ namespace Mono.CSharp {
 				if (IsNested)
 					return true;
 
-				return base.Resolve (bc);
+				return base.Resolve (bc, false);
 			}
 
 			public Expression ResolveExpression (BlockContext bc)
@@ -5085,7 +5090,12 @@ namespace Mono.CSharp {
 				return dispose;
 			}
 
-			public Statement RewriteForDeclarators (BlockContext bc, Statement stmt)
+			public void ResolveDeclaratorInitializer (BlockContext bc)
+			{
+				Initializer = base.ResolveInitializer (bc, Variable, Initializer);
+			}
+
+			public Statement RewriteUsingDeclarators (BlockContext bc, Statement stmt)
 			{
 				for (int i = declarators.Count - 1; i >= 0; --i) {
 					var d = declarators [i];
@@ -5162,11 +5172,15 @@ namespace Mono.CSharp {
 						vr.IsLockedByStatement = true;
 					}
 				} else {
-					if (!decl.Resolve (ec))
-						return false;
+					if (decl.IsNested) {
+						decl.ResolveDeclaratorInitializer (ec);
+					} else {
+						if (!decl.Resolve (ec))
+							return false;
 
-					if (decl.Declarators != null) {
-						stmt = decl.RewriteForDeclarators (ec, stmt);
+						if (decl.Declarators != null) {
+							stmt = decl.RewriteUsingDeclarators (ec, stmt);
+						}
 					}
 
 					vr = null;
