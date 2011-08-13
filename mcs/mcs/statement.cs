@@ -1674,7 +1674,7 @@ namespace Mono.CSharp {
 
 		public static LocalVariable CreateCompilerGenerated (TypeSpec type, Block block, Location loc)
 		{
-			LocalVariable li = new LocalVariable (block, "<$$>", Flags.CompilerGenerated | Flags.Used, loc);
+			LocalVariable li = new LocalVariable (block, GetCompilerGeneratedName (block), Flags.CompilerGenerated | Flags.Used, loc);
 			li.Type = type;
 			return li;
 		}
@@ -1708,6 +1708,11 @@ namespace Mono.CSharp {
 		public void EmitAddressOf (EmitContext ec)
 		{
 			ec.Emit (OpCodes.Ldloca, builder);
+		}
+
+		public static string GetCompilerGeneratedName (Block block)
+		{
+			return "$locvar" + block.ParametersBlock.TemporaryLocalsCount++.ToString ("X");
 		}
 
 		public string GetReadOnlyContext ()
@@ -2505,6 +2510,8 @@ namespace Mono.CSharp {
 				return resolved;
 			}
 		}
+
+		public int TemporaryLocalsCount { get; set; }
 
 		#endregion
 
@@ -4203,14 +4210,14 @@ namespace Mono.CSharp {
 			// Have to keep original lock value around to unlock same location
 			// in the case the original has changed or is null
 			//
-			expr_copy = TemporaryVariableReference.Create (ec.BuiltinTypes.Object, ec.CurrentBlock.Parent, loc);
+			expr_copy = TemporaryVariableReference.Create (ec.BuiltinTypes.Object, ec.CurrentBlock, loc);
 			expr_copy.Resolve (ec);
 
 			//
 			// Ensure Monitor methods are available
 			//
 			if (ResolvePredefinedMethods (ec) > 1) {
-				lock_taken = TemporaryVariableReference.Create (ec.BuiltinTypes.Bool, ec.CurrentBlock.Parent, loc);
+				lock_taken = TemporaryVariableReference.Create (ec.BuiltinTypes.Bool, ec.CurrentBlock, loc);
 				lock_taken.Resolve (ec);
 			}
 

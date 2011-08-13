@@ -6106,20 +6106,15 @@ namespace Mono.CSharp {
 			return new TemporaryVariableReference (li, loc);
 		}
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
-		}
-
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
 
 			//
 			// Don't capture temporary variables except when using
-			// iterator redirection
+			// state machine redirection
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.IsIterator && ec.IsVariableCapturingRequired) {
+			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod is StateMachineInitializer && ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
 				storey.CaptureLocalVariable (ec, li);
 			}
@@ -6173,7 +6168,7 @@ namespace Mono.CSharp {
 		}
 
 		public override VariableInfo VariableInfo {
-			get { throw new NotImplementedException (); }
+			get { return null; }
 		}
 	}
 

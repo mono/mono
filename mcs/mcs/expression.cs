@@ -4596,6 +4596,17 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null)
+				return hv.CreateExpressionTree ();
+
+			Arguments arg = new Arguments (1);
+			arg.Add (new Argument (this));
+			return CreateExpressionFactoryCall (ec, "Constant", arg);
+		}
+
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			if (IsLockedByStatement) {
@@ -4792,17 +4803,6 @@ namespace Mono.CSharp
 		public override void SetHasAddressTaken ()
 		{
 			local_info.AddressTaken = true;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			HoistedVariable hv = GetHoistedVariable (ec);
-			if (hv != null)
-				return hv.CreateExpressionTree ();
-
-			Arguments arg = new Arguments (1);
-			arg.Add (new Argument (this));
-			return CreateExpressionFactoryCall (ec, "Constant", arg);
 		}
 
 		void DoResolveBase (ResolveContext ec)
@@ -6830,16 +6830,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (this));
-			
-			// Use typeless constant for ldarg.0 to save some
-			// space and avoid problems with anonymous stories
-			return CreateExpressionFactoryCall (ec, "Constant", args);
-		}
-		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			ResolveBase (ec);

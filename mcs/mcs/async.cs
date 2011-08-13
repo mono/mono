@@ -610,7 +610,7 @@ namespace Mono.CSharp
 
 		public Field AddAwaiter (TypeSpec type, Location loc)
 		{
-			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc));
+			return AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, loc), true);
 		}
 
 		public Field AddCapturedLocalVariable (TypeSpec type)
@@ -618,7 +618,7 @@ namespace Mono.CSharp
 			if (mutator != null)
 				type = mutator.Mutate (type);
 
-			var field = AddCompilerGeneratedField ("<s>$" + locals_captured++.ToString ("X"), new TypeExpression (type, Location));
+			var field = AddCompilerGeneratedField ("<s>$" + locals_captured++.ToString ("X"), new TypeExpression (type, Location), true);
 			field.Define ();
 
 			return field;
@@ -628,7 +628,7 @@ namespace Mono.CSharp
 		{
 			var action = Module.PredefinedTypes.Action.Resolve ();
 			if (action != null) {
-				continuation = AddCompilerGeneratedField ("$continuation", new TypeExpression (action, Location));
+				continuation = AddCompilerGeneratedField ("$continuation", new TypeExpression (action, Location), true);
 				continuation.ModFlags |= Modifiers.READONLY;
 			}
 

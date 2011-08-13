@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 		protected HoistedThis hoisted_this;
 
 		// Local variable which holds this storey instance
-		public LocalTemporary Instance;
+		public Expression Instance;
 
 		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, TypeParameter[] tparams, string name)
 			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
@@ -236,7 +236,12 @@ namespace Mono.CSharp {
 
 		protected Field AddCompilerGeneratedField (string name, FullNamedExpression type)
 		{
-			const Modifiers mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
+			return AddCompilerGeneratedField (name, type, false);
+		}
+
+		protected Field AddCompilerGeneratedField (string name, FullNamedExpression type, bool privateAccess)
+		{
+			Modifiers mod = Modifiers.COMPILER_GENERATED | (privateAccess ? Modifiers.PRIVATE : Modifiers.INTERNAL);
 			Field f = new Field (this, type, mod, new MemberName (name, Location), null);
 			AddField (f);
 			return f;
@@ -391,21 +396,47 @@ namespace Mono.CSharp {
 			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
 			//
-			// Create an instance of a storey
+			// Create an instance of this storey
 			//
-			var storey_type_expr = CreateStoreyTypeExpression (ec);
-
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
 			rc.CurrentBlock = block;
-			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
-			e.Emit (ec);
 
-			Instance = new LocalTemporary (storey_type_expr.Type);
-			Instance.Store (ec);
+			var storey_type_expr = CreateStoreyTypeExpression (ec);
+			var source = new New (storey_type_expr, null, Location).Resolve (rc);
+
+			//
+			// When the current context is async (or iterator) lift local storey
+			// instantiation to the currect storey
+			//
+			if (ec.CurrentAnonymousMethod is StateMachineInitializer) {
+				//
+				// Unfortunately, normal capture mechanism could not be used because we are
+				// too late in the pipeline and standart assign cannot be used either due to
+				// recursive nature of GetStoreyInstanceExpression
+				//
+				var field = ec.CurrentAnonymousMethod.Storey.AddCompilerGeneratedField (
+					LocalVariable.GetCompilerGeneratedName (block), storey_type_expr, true);
+
+				field.Define ();
+				field.Emit ();
+
+				var fexpr = new FieldExpr (field, Location);
+				fexpr.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, Location);
+				fexpr.EmitAssign (ec, source, false, false);
+
+				Instance = fexpr;
+			} else {
+				var local = TemporaryVariableReference.Create (source.Type, block, Location);
+				local.EmitAssign (ec, source);
+
+				Instance = local;
+			}
 
 			EmitHoistedFieldsInitialization (rc, ec);
 
-			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
+			// TODO: Implement properly
+			//SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
+
 			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
@@ -526,10 +557,11 @@ namespace Mono.CSharp {
 			if (f == null) {
 				if (am.Storey == this) {
 					//
-					// Access inside of same storey (S -> S)
+					// Access from inside of same storey (S -> S)
 					//
 					return new CompilerGeneratedThis (CurrentType, Location);
 				}
+
 				//
 				// External field access
 				//
@@ -770,10 +802,18 @@ namespace Mono.CSharp {
 	{
 		readonly string name;
 
-		public HoistedLocalVariable (AnonymousMethodStorey scope, LocalVariable local, string name)
-			: base (scope, name, local.Type)
+		public HoistedLocalVariable (AnonymousMethodStorey storey, LocalVariable local, string name)
+			: base (storey, name, local.Type)
 		{
 			this.name = local.Name;
+		}
+
+		//
+		// For compiler generated local variables
+		//
+		public HoistedLocalVariable (AnonymousMethodStorey storey, Field field)
+			: base (storey, field)
+		{
 		}
 
 		public override void EmitSymbolInfo ()

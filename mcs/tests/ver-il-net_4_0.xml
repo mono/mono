@@ -53725,6 +53725,81 @@
       </method>
     </type>
   </test>
+  <test name="test-async-16.cs">
+    <type name="Base">
+      <method name="Void Dispose()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] SwitchTest_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Using_1()">
+        <size>27</size>
+      </method>
+      <method name="Boolean RunTest(System.Reflection.MethodInfo)">
+        <size>235</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>179</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SwitchTest_1&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>380</size>
+      </method>
+      <method name="System.String &lt;&gt;m__4()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Using_1&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>831</size>
+      </method>
+      <method name="Base &lt;&gt;m__5()">
+        <size>6</size>
+      </method>
+      <method name="Tester &lt;&gt;m__6()">
+        <size>6</size>
+      </method>
+      <method name="Base &lt;&gt;m__7()">
+        <size>6</size>
+      </method>
+      <method name="Base &lt;&gt;m__8()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Using_1&gt;c__async1+&lt;Using_1&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-async-17.cs">
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_1()">
@@ -53846,6 +53921,73 @@
       </method>
       <method name="Void .ctor()">
         <size>36</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-18.cs">
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_2()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_3[T]()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>165</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_1&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>290</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_2&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>290</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_3&gt;c__async2`1[T]">
+      <method name="Void MoveNext()">
+        <size>290</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_1&gt;c__async0+&lt;Lambda_1&gt;c__AnonStorey3">
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_2&gt;c__async1+&lt;Lambda_2&gt;c__AnonStorey4">
+      <method name="Int32 &lt;&gt;m__1()">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_3&gt;c__async2`1+&lt;Lambda_3&gt;c__AnonStorey5`1[T]">
+      <method name="Int32 &lt;&gt;m__2()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
