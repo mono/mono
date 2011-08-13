@@ -269,6 +269,10 @@ namespace MonoTests.System.Security.AccessControl {
 			
 			sd.SetFlags (sd.ControlFlags | ControlFlags.ServerSecurity | ControlFlags.DiscretionaryAclDefaulted);
 			Assert.AreEqual ("O:BUG:BAD:PARAI(A;;0x7fffffff;;;BA)S:AI", sd.GetSddlForm (AccessControlSections.All));
+
+			// Check ControlFlags is honoured when generating SDDL, even though DACL & SACL may be present
+			sd.SetFlags (sd.ControlFlags & ~(ControlFlags.DiscretionaryAclPresent | ControlFlags.SystemAclPresent));
+			Assert.AreEqual ("O:BUG:BA", sd.GetSddlForm (AccessControlSections.All));
 		}
 
 		[Test]
