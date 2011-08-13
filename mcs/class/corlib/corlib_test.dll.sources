@@ -208,6 +208,7 @@ System.Security/CodeAccessPermissionTest.cs
 System.Security.AccessControl/CommonAceTest.cs
 System.Security.AccessControl/RawAclTest.cs
 System.Security.AccessControl/RawSecurityDescriptorTest.cs
+System.Security.AccessControl/RegistrySecurityTest.cs
 System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/CipherModeTest.cs
