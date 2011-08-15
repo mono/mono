@@ -180,7 +180,6 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, mgreg_t *regs, guint8 *cod
 
 		if (interface_offset < 0) {
 			g_print ("%s doesn't implement interface %s\n", mono_type_get_name_full (&vt->klass->byval_arg, 0), mono_type_get_name_full (&imt_method->klass->byval_arg, 0));
-			return NULL;
 			g_assert_not_reached ();
 		}
 		mono_vtable_build_imt_slot (vt, mono_method_get_imt_slot (imt_method));
@@ -248,7 +247,7 @@ gpointer
 mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 {
 	gpointer addr, compiled_method;
-	gpointer *vtable_slot, *tmp;
+	gpointer *vtable_slot;
 	gboolean generic_shared = FALSE;
 	MonoMethod *m;
 	MonoMethod *declaring = NULL;
@@ -322,28 +321,24 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 		gsctx = mono_get_generic_context_from_code (code);
 		this_arg = mono_arch_find_this_argument (regs, m, gsctx);
 
-		if (this_arg->vtable->klass != mono_defaults.transparent_proxy_class) {
-			vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, &impl_method, &need_rgctx_tramp);
-			if (vtable_slot) {
-				/* mono_convert_imt_slot_to_vtable_slot () also gives us the method that is supposed
-				 * to be called, so we compile it and go ahead as usual.
-				 */
-				/*g_print ("imt found method %p (%s) at %p\n", impl_method, impl_method->name, code);*/
-				if (m->is_inflated && ((MonoMethodInflated*)m)->context.method_inst) {
-					/* Generic virtual method */
-					generic_virtual = m;
-					m = impl_method;
-					need_rgctx_tramp = TRUE;
-				} else {
-					m = impl_method;
-				}
-			}
-		}
-
-		if (!vtable_slot || this_arg->vtable->klass == mono_defaults.transparent_proxy_class) {
-			/* Use the slow path */
+		if (this_arg->vtable->klass == mono_defaults.transparent_proxy_class) {
+			/* Use the slow path for now */
 			proxy = TRUE;
 		    m = mono_object_get_virtual_method (this_arg, m);
+		} else {
+			vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, &impl_method, &need_rgctx_tramp);
+			/* mono_convert_imt_slot_to_vtable_slot () also gives us the method that is supposed
+			 * to be called, so we compile it and go ahead as usual.
+			 */
+			/*g_print ("imt found method %p (%s) at %p\n", impl_method, impl_method->name, code);*/
+			if (m->is_inflated && ((MonoMethodInflated*)m)->context.method_inst) {
+				/* Generic virtual method */
+				generic_virtual = m;
+				m = impl_method;
+				need_rgctx_tramp = TRUE;
+			} else {
+				m = impl_method;
+			}
 		}
 	}
 #endif
@@ -541,11 +536,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 
 		if (!proxy && (mono_aot_is_got_entry (code, (guint8*)vtable_slot) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))) {
 #ifdef MONO_ARCH_HAVE_IMT
-			tmp = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, NULL, &need_rgctx_tramp);
-			if (tmp)
-			{
-				vtable_slot = tmp;
-			}
+			vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, NULL, &need_rgctx_tramp);
 #endif
 			*vtable_slot = mono_get_addr_from_ftnptr (addr);
 		}
@@ -639,11 +630,7 @@ mono_llvm_vcall_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8 *
 
 	if (!proxy && (mono_aot_is_got_entry (code, (guint8*)vtable_slot) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))) {
 #ifdef MONO_ARCH_HAVE_IMT
-		tmp = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, NULL, &need_rgctx_tramp);
-		if (tmp)
-		{
-			vtable_slot = tmp;
-		}
+		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, m, NULL, &need_rgctx_tramp);
 #endif
 		*vtable_slot = mono_get_addr_from_ftnptr (addr);
 	  }
