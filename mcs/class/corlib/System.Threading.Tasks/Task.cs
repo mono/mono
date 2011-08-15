@@ -70,6 +70,9 @@ namespace System.Threading.Tasks
 
 		CancellationToken token;
 
+		const TaskCreationOptions maxTaskCreationOptions =
+			TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent;
+
 		public Task (Action action) : this (action, TaskCreationOptions.None)
 		{
 			
@@ -90,7 +93,7 @@ namespace System.Threading.Tasks
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
-			if (creationOptions > TaskCreationOptions.AttachedToParent || creationOptions < TaskCreationOptions.None)
+			if (creationOptions > maxTaskCreationOptions || creationOptions < TaskCreationOptions.None)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 			this.simpleAction = action;
 		}
@@ -114,7 +117,7 @@ namespace System.Threading.Tasks
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
-			if (creationOptions > TaskCreationOptions.AttachedToParent || creationOptions < TaskCreationOptions.None)
+			if (creationOptions > maxTaskCreationOptions || creationOptions < TaskCreationOptions.None)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 		}
 
