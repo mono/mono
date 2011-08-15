@@ -267,6 +267,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return arguments.ContainsEmitWithAwait ();
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			ec.Report.Error (1963, loc, "An expression tree cannot contain a dynamic operation");
@@ -719,7 +724,7 @@ namespace Mono.CSharp
 
 	class DynamicInvocation : DynamicExpressionStatement, IDynamicBinder
 	{
-		ATypeNameExpression member;
+		readonly ATypeNameExpression member;
 
 		public DynamicInvocation (ATypeNameExpression member, Arguments args, Location loc)
 			: base (null, args, loc)

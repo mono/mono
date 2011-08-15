@@ -5524,6 +5524,14 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public static PropertyExpr CreatePredefined (PropertySpec spec, Location loc)
+		{
+			return new PropertyExpr (spec, loc) {
+				Getter = spec.Get,
+				Setter = spec.Set
+			};
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args;

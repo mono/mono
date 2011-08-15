@@ -53794,7 +53794,28 @@
         <size>36</size>
       </method>
     </type>
-    <type name="Tester+&lt;Using_1&gt;c__async1+&lt;Using_1&gt;c__AnonStorey2">
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foreach_1()">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Foreach_1&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>369</size>
+      </method>
+      <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__9()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Using_1&gt;c__async1+&lt;Using_1&gt;c__AnonStorey3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Foreach_1&gt;c__async2+&lt;Foreach_1&gt;c__AnonStorey4">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -53988,6 +54009,122 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-19.cs">
+    <type name="C">
+      <method name="Void Test(System.Threading.ManualResetEvent)">
+        <size>20</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>92</size>
+      </method>
+      <method name="Void CurrentDomain_UnhandledException(System.Object, System.UnhandledExceptionEventArgs)">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>182</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-20.cs">
+    <type name="Base">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Add_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] AssignCompound_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Convert_1()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Invocation_1()">
+        <size>27</size>
+      </method>
+      <method name="Boolean RunTest(System.Reflection.MethodInfo)">
+        <size>176</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>179</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Add_1&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>456</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>1178</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__5()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Convert_1&gt;c__async2">
+      <method name="Void MoveNext()">
+        <size>322</size>
+      </method>
+      <method name="System.Object &lt;&gt;m__6()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Invocation_1&gt;c__async3">
+      <method name="Void MoveNext()">
+        <size>574</size>
+      </method>
+      <method name="System.Object &lt;&gt;m__7()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
       </method>
     </type>
   </test>
