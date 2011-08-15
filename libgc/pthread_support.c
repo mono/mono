@@ -911,6 +911,7 @@ int GC_segment_is_thread_stack(ptr_t lo, ptr_t hi)
 /* Return the number of processors, or i<= 0 if it can't be determined.	*/
 int GC_get_nprocs()
 {
+#ifndef NACL
     /* Should be "return sysconf(_SC_NPROCESSORS_ONLN);" but that	*/
     /* appears to be buggy in many cases.				*/
     /* We look for lines "cpu<n>" in /proc/stat.			*/
@@ -940,6 +941,9 @@ int GC_get_nprocs()
     }
     close(f);
     return result;
+#else /* NACL */
+    return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
 }
 #endif /* GC_LINUX_THREADS */
 
