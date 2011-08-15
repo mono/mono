@@ -2069,7 +2069,7 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 				 * get_last_frame () doesn't need it, the last frame cannot be a ginst
 				 * since we are not in a JITted method.
 				 */
-				mono_walk_stack (get_last_frame, mono_domain_get (), &ctx, MONO_UNWIND_DENONE, tls->thread, mono_get_lmf (), &data);
+				mono_walk_stack (get_last_frame, mono_domain_get (), &ctx, MONO_UNWIND_NONE, tls->thread, mono_get_lmf (), &data);
 			}
 			if (data.last_frame_set) {
 				memcpy (&tls->async_last_frame, &data.last_frame, sizeof (StackFrameInfo));
