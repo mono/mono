@@ -58,6 +58,7 @@ case $host in
     ;;
 *-*-linux-android*)
     platform_android=yes
+	AC_DEFINE(PLATFORM_ANDROID,1,[Targeting the Android platform])
     PATHSEP='/'
     SEARCHSEP=':'
     OS="UNIX"
