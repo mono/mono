@@ -263,15 +263,10 @@ namespace System.Data.OracleClient.Oci {
 			rsize = rsizep.ToUInt64 ();
 			
 			//rsize = Encoding.UTF8.GetMaxByteCount (commandText.Length+1);
-			Console.WriteLine ("OCIStatementHandle:Prepare: CmdText:{0}, rsize:{1} ",
-			                   commandText, rsize);
 
 			// Fill buffer
 			buffer = new byte[rsize];
 
-			Console.WriteLine ("OCIStatementHandle:Prepare: buffer.Length:{0}, this.columnCount:{1}", 
-			                   buffer.Length, this.ColumnCount);
-			
 			OciCalls.OCIUnicodeToCharSet (Parent, buffer, commandText, ref rsizep);
 
 			// Execute statement
