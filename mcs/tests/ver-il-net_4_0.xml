@@ -56168,6 +56168,19 @@
       </method>
     </type>
   </test>
+  <test name="test-named-07.cs">
+    <type name="C">
+      <method name="Int32 Foo(System.Object, Boolean, Boolean, Boolean, System.Object)">
+        <size>64</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()">

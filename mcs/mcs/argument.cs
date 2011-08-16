@@ -548,6 +548,12 @@ namespace Mono.CSharp
 					if (la == a)
 						break;
 
+					//
+					// When the argument is filled later by default expression
+					//
+					if (la == null)
+						continue;
+
 					var ma = la as MovableArgument;
 					if (ma == null) {
 						ma = new MovableArgument (la);
