@@ -3,3 +3,13 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
+System.Threading.Tasks.Dataflow/DataflowBlockOptions.cs
+System.Threading.Tasks.Dataflow/DataflowMessageHeader.cs
+System.Threading.Tasks.Dataflow/DataflowMessageStatus.cs
+System.Threading.Tasks.Dataflow/ExecutionDataflowBlockOptions.cs
+System.Threading.Tasks.Dataflow/GroupingDataflowBlockOptions.cs
+System.Threading.Tasks.Dataflow/IDataflowBlock.cs
+System.Threading.Tasks.Dataflow/IPropagatorBlock.cs
+System.Threading.Tasks.Dataflow/IReceivableSourceBlock.cs
+System.Threading.Tasks.Dataflow/ISourceBlock.cs
+System.Threading.Tasks.Dataflow/ITargetBlock.cs
