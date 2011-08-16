@@ -158,6 +158,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		bool IsDynamic {
+			get {
+				return is_completed == null;
+			}
+		}
+
 		public TypeSpec Type {
 			get {
 				return type;
@@ -177,7 +183,7 @@ namespace Mono.CSharp
 			GetResultExpression (ec).Emit (ec);
 		}
 
-		public Invocation GetResultExpression (EmitContext ec)
+		public Expression GetResultExpression (EmitContext ec)
 		{
 			var fe_awaiter = new FieldExpr (awaiter, loc);
 			fe_awaiter.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
@@ -185,10 +191,15 @@ namespace Mono.CSharp
 			//
 			// result = awaiter.GetResult ();
 			//
-			var mg_result = MethodGroupExpr.CreatePredefined (get_result, fe_awaiter.Type, loc);
-			mg_result.InstanceExpression = fe_awaiter;
+			if (IsDynamic) {
+				var rc = new ResolveContext (ec.MemberContext);
+				return new Invocation (new MemberAccess (fe_awaiter, "GetResult"), new Arguments (0)).Resolve (rc);
+			} else {
+				var mg_result = MethodGroupExpr.CreatePredefined (get_result, fe_awaiter.Type, loc);
+				mg_result.InstanceExpression = fe_awaiter;
 
-			return new GetResultInvocation (mg_result, new Arguments (0));
+				return new GetResultInvocation (mg_result, new Arguments (0));
+			}
 		}
 
 		public void EmitPrologue (EmitContext ec)
@@ -203,9 +214,20 @@ namespace Mono.CSharp
 
 			Label skip_continuation = ec.DefineLabel ();
 
-			var pe_completed = PropertyExpr.CreatePredefined (is_completed, loc);
-			pe_completed.InstanceExpression = fe_awaiter;
-			pe_completed.EmitBranchable (ec, skip_continuation, true);
+			Expression completed_expr;
+			if (IsDynamic) {
+				var rc = new ResolveContext (ec.MemberContext);
+
+				Arguments dargs = new Arguments (1);
+				dargs.Add (new Argument (fe_awaiter));
+				completed_expr = new DynamicMemberBinder ("IsCompleted", dargs, loc).Resolve (rc);
+			} else {
+				var pe = PropertyExpr.CreatePredefined (is_completed, loc);
+				pe.InstanceExpression = fe_awaiter;
+				completed_expr = pe;
+			}
+
+			completed_expr.EmitBranchable (ec, skip_continuation, true);
 
 			base.DoEmit (ec);
 
@@ -220,9 +242,6 @@ namespace Mono.CSharp
 			//
 			ec.AssertEmptyStack ();
 
-			var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
-			mg_completed.InstanceExpression = fe_awaiter;
-
 			var args = new Arguments (1);
 			var storey = (AsyncTaskStorey) machine_initializer.Storey;
 			var fe_cont = new FieldExpr (storey.Continuation, loc);
@@ -230,10 +249,21 @@ namespace Mono.CSharp
 
 			args.Add (new Argument (fe_cont));
 
-			//
-			// awaiter.OnCompleted (continuation);
-			//
-			mg_completed.EmitCall (ec, args);
+			if (IsDynamic) {
+				var rc = new ResolveContext (ec.MemberContext);
+				var mg_expr = new Invocation (new MemberAccess (fe_awaiter, "OnCompleted"), args).Resolve (rc);
+
+				ExpressionStatement es = (ExpressionStatement) mg_expr;
+				es.EmitStatement (ec);
+			} else {
+				var mg_completed = MethodGroupExpr.CreatePredefined (on_completed, fe_awaiter.Type, loc);
+				mg_completed.InstanceExpression = fe_awaiter;
+
+				//
+				// awaiter.OnCompleted (continuation);
+				//
+				mg_completed.EmitCall (ec, args);
+			}
 
 			// Return ok
 			machine_initializer.EmitLeave (ec, unwind_protect);
@@ -275,7 +305,21 @@ namespace Mono.CSharp
 			if (!base.Resolve (bc))
 				return false;
 
+			Arguments args = new Arguments (0);
+
 			type = expr.Type;
+
+			//
+			// The await expression is of dynamic type
+			//
+			if (type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+				result_type = type;
+
+				awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (type, loc);
+
+				expr = new Invocation (new MemberAccess (expr, "GetAwaiter"), args).Resolve (bc);
+				return true;
+			}
 
 			//
 			// Check whether the expression is awaitable
@@ -284,75 +328,61 @@ namespace Mono.CSharp
 			if (ama == null)
 				return false;
 
-			Arguments args = new Arguments (0);
-
 			var errors_printer = new SessionReportPrinter ();
 			var old = bc.Report.SetPrinter (errors_printer);
 			ama = new Invocation (ama, args).Resolve (bc);
-			var awaiter_type = ama.Type;
-
 			bc.Report.SetPrinter (old);
 
-			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (awaiter_type)) {
+			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (ama.Type)) {
+				Error_WrongGetAwaiter (bc, expr.Location, expr.Type);
+				return false;
+			}
+
+			var awaiter_type = ama.Type;
+			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (awaiter_type, loc);
+
+			expr = ama;
+
+			//
+			// Predefined: bool IsCompleted { get; } 
+			//
+			is_completed = MemberCache.FindMember (awaiter_type, MemberFilter.Property ("IsCompleted", bc.Module.Compiler.BuiltinTypes.Bool),
+				BindingRestriction.InstanceOnly) as PropertySpec;
+
+			if (is_completed == null || !is_completed.HasGet) {
 				Error_WrongAwaiterPattern (bc, awaiter_type);
 				return false;
 			}
 
-			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (awaiter_type, loc);
-			expr = ama;
-
 			//
-			// The task result is of dynamic type
+			// Predefined: OnCompleted (Action)
 			//
-			if (awaiter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				result_type = awaiter_type;
-
-				//Arguments dargs = new Arguments (1);
-				//dargs.Add (new Argument (fe_awaiter));
-				//var pe_completed = new DynamicMemberBinder ("IsCompleted", dargs, loc);
-				throw new NotImplementedException ("dynamic awaiter");
-			} else {
-				//
-				// Predefined: bool IsCompleted { get; } 
-				//
-				is_completed = MemberCache.FindMember (awaiter_type, MemberFilter.Property ("IsCompleted", bc.Module.Compiler.BuiltinTypes.Bool),
-					BindingRestriction.InstanceOnly) as PropertySpec;
-
-				if (is_completed == null || !is_completed.HasGet) {
-					Error_WrongAwaiterPattern (bc, awaiter_type);
-					return false;
-				}
-
-				//
-				// Predefined: OnCompleted (Action)
-				//
-				if (bc.Module.PredefinedTypes.Action.Define ()) {
-					on_completed = MemberCache.FindMember (awaiter_type, MemberFilter.Method ("OnCompleted", 0,
-						ParametersCompiled.CreateFullyResolved (bc.Module.PredefinedTypes.Action.TypeSpec), bc.Module.Compiler.BuiltinTypes.Void),
-						BindingRestriction.InstanceOnly) as MethodSpec;
-
-					if (on_completed == null) {
-						Error_WrongAwaiterPattern (bc, awaiter_type);
-						return false;
-					}
-				}
-
-				//
-				// Predefined: GetResult ()
-				//
-				// The method return type is also result type of await expression
-				//
-				get_result = MemberCache.FindMember (awaiter_type, MemberFilter.Method ("GetResult", 0,
-					ParametersCompiled.EmptyReadOnlyParameters, null),
+			if (bc.Module.PredefinedTypes.Action.Define ()) {
+				on_completed = MemberCache.FindMember (awaiter_type, MemberFilter.Method ("OnCompleted", 0,
+					ParametersCompiled.CreateFullyResolved (bc.Module.PredefinedTypes.Action.TypeSpec), bc.Module.Compiler.BuiltinTypes.Void),
 					BindingRestriction.InstanceOnly) as MethodSpec;
 
-				if (get_result == null) {
+				if (on_completed == null) {
 					Error_WrongAwaiterPattern (bc, awaiter_type);
 					return false;
 				}
-
-				result_type = get_result.ReturnType;
 			}
+
+			//
+			// Predefined: GetResult ()
+			//
+			// The method return type is also result type of await expression
+			//
+			get_result = MemberCache.FindMember (awaiter_type, MemberFilter.Method ("GetResult", 0,
+				ParametersCompiled.EmptyReadOnlyParameters, null),
+				BindingRestriction.InstanceOnly) as MethodSpec;
+
+			if (get_result == null) {
+				Error_WrongAwaiterPattern (bc, awaiter_type);
+				return false;
+			}
+
+			result_type = get_result.ReturnType;
 
 			return true;
 		}

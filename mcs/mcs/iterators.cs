@@ -801,7 +801,13 @@ namespace Mono.CSharp
 				ec.BeginCatchBlock (catch_value.Type);
 				catch_value.EmitAssign (ec);
 
+				ec.EmitThis ();
+				ec.EmitInt ((int) IteratorStorey.State.After);
+				ec.Emit (OpCodes.Stfld, storey.PC.Spec);
+
 				((AsyncTaskStorey) async_init.Storey).EmitSetException (ec, new LocalVariableReference (catch_value, Location));
+
+				ec.Emit (OpCodes.Leave, move_next_ok);
 				ec.EndExceptionBlock ();
 			}
 
