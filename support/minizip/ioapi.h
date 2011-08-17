@@ -120,17 +120,17 @@ extern "C" {
 #define ZLIB_FILEFUNC_MODE_EXISTING (4)
 #define ZLIB_FILEFUNC_MODE_CREATE   (8)
 
-
 #ifndef ZCALLBACK
- #if (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
-   #define ZCALLBACK CALLBACK
- #else
-   #define ZCALLBACK
- #endif
+// Nothing defines 'CALLBACK' anyway so to avoid accidentally changing
+// the calling convention by including a header which defines this, just
+// define ZCALLBACK as empty so we always get cdecl and our P/Invokes don't break.
+#define ZCALLBACK
+//#if (defined(WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
+//#define ZCALLBACK CALLBACK
+//#else
+//#define ZCALLBACK
+//#endif
 #endif
-
-
-
 
 typedef voidpf   (ZCALLBACK *open_file_func)      OF((voidpf opaque, const char* filename, int mode));
 typedef uLong    (ZCALLBACK *read_file_func)      OF((voidpf opaque, voidpf stream, void* buf, uLong size));
