@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 //
