@@ -28817,6 +28817,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-21.cs">
+    <type name="C">
+      <method name="Boolean M[T]()">
+        <size>9</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-3.cs">
     <type name="Test">
       <method name="Int32 Main()">
