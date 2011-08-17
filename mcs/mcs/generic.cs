@@ -9,7 +9,9 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -2773,7 +2775,7 @@ namespace Mono.CSharp {
 			// Some types cannot be used as type arguments
 			//
 			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
-				bound.Type == InternalType.MethodGroup)
+				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod)
 				return;
 
 			var a = bounds [index];
