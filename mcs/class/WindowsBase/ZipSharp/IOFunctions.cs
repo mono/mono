@@ -17,15 +17,25 @@ namespace zipsharp
 		AddInZip = 2
 	}
 	
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate IntPtr OpenFileFunc (IntPtr opaque, string filename, int mode);
 
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate /* ulong */ IntPtr ReadFileFunc (IntPtr opaque, IntPtr stream, IntPtr buffer, /* ulong */ IntPtr size);
+
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate /* ulong */ IntPtr WriteFileFunc (IntPtr opaque, IntPtr stream, IntPtr buffer, /* ulong */ IntPtr size);
 
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate /* long */ IntPtr TellFileFunc (IntPtr opaque, IntPtr stream);
+
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate /* long */ IntPtr SeekFileFunc (IntPtr opaque, IntPtr stream, /* ulong */ IntPtr offset, int origin);
 
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate int CloseFileFunc (IntPtr opaque, IntPtr stream);
+
+	[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
 	internal delegate int TestErrorFileFunc (IntPtr opaque, IntPtr stream);
 
 	[StructLayout (LayoutKind.Sequential)]
@@ -38,6 +48,6 @@ namespace zipsharp
 		[MarshalAs (UnmanagedType.FunctionPtr)] public SeekFileFunc      zseek_file;
 		[MarshalAs (UnmanagedType.FunctionPtr)] public CloseFileFunc     zclose_file;
 		[MarshalAs (UnmanagedType.FunctionPtr)] public TestErrorFileFunc zerror_file;
-		[MarshalAs (UnmanagedType.FunctionPtr)] public IntPtr            opaque;
+		public IntPtr            opaque;
 	}
 }
