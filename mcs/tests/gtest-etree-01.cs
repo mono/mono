@@ -239,6 +239,8 @@ class MemberAccessData
 			return "alo";
 		}
 	}
+	
+	public object SetOnly { set { } }
 }
 
 enum MyEnum : byte
@@ -1753,6 +1755,14 @@ class Tester
 		var r = e.Compile ().Invoke ();
 		Assert (0, r);
 	}	
+
+	void MemberInitTest_5 ()
+	{
+		Expression<Func<MemberAccessData>> e = () => new MemberAccessData { SetOnly = new object { } };
+
+		AssertNodeType (e, ExpressionType.MemberInit);
+		e.Compile () ();
+	}
 
 	void ModuloTest ()
 	{

@@ -22107,6 +22107,16 @@
         <size>80</size>
       </method>
     </type>
+    <type name="MemberAccessData">
+      <method name="Void set_SetOnly(System.Object)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void MemberInitTest_5()">
+        <size>118</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
