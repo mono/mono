@@ -55,6 +55,11 @@ namespace Mono.Cecil {
 			set { Parameter.MetadataToken = value; }
 		}
 
+		public ParameterAttributes Attributes {
+			get { return Parameter.Attributes; }
+			set { Parameter.Attributes = value; }
+		}
+
 		public bool HasCustomAttributes {
 			get { return parameter != null && parameter.HasCustomAttributes; }
 		}

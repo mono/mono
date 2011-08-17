@@ -85,6 +85,9 @@ namespace Mono.Cecil {
 			if (parameters.AssemblyResolver != null)
 				module.assembly_resolver = parameters.AssemblyResolver;
 
+			if (parameters.MetadataResolver != null)
+				module.metadata_resolver = parameters.MetadataResolver;
+
 			return module;
 		}
 
@@ -1795,11 +1798,11 @@ namespace Mono.Cecil {
 			Range range;
 			if (!metadata.TryGetGenericParameterRange (provider, out range)
 				|| !MoveTo (Table.GenericParam, range.Start))
-				return new Collection<GenericParameter> ();
+				return new GenericParameterCollection (provider);
 
 			metadata.RemoveGenericParameterRange (provider);
 
-			var generic_parameters = new Collection<GenericParameter> ((int) range.Length);
+			var generic_parameters = new GenericParameterCollection (provider, (int) range.Length);
 
 			for (uint i = 0; i < range.Length; i++) {
 				ReadUInt16 (); // index
@@ -2644,9 +2647,10 @@ namespace Mono.Cecil {
 		GenericParameter GetGenericParameter (GenericParameterType type, uint var)
 		{
 			var context = reader.context;
+			int index = (int) var;
 
 			if (context == null)
-				throw new NotSupportedException ();
+				return GetUnboundGenericParameter (type, index);
 
 			IGenericParameterProvider provider;
 
@@ -2661,12 +2665,18 @@ namespace Mono.Cecil {
 				throw new NotSupportedException ();
 			}
 
-			int index = (int) var;
-
 			if (!context.IsDefinition)
 				CheckGenericContext (provider, index);
 
+			if (index >= provider.GenericParameters.Count)
+				return GetUnboundGenericParameter (type, index);
+
 			return provider.GenericParameters [index];
+		}
+
+		static GenericParameter GetUnboundGenericParameter (GenericParameterType type, int index)
+		{
+			return new GenericParameter (index, type);
 		}
 
 		static void CheckGenericContext (IGenericParameterProvider owner, int index)
