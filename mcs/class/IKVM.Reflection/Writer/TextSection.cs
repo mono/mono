@@ -311,22 +311,22 @@ namespace IKVM.Reflection.Writer
 
 			// CLI Header
 			AssertRVA(mw, ComDescriptorRVA);
-			cliHeader.MetaDataRVA = MetadataRVA;
-			cliHeader.MetaDataSize = MetadataLength;
+			cliHeader.MetaData.VirtualAddress = MetadataRVA;
+			cliHeader.MetaData.Size = MetadataLength;
 			if (ResourcesLength != 0)
 			{
-				cliHeader.ResourcesRVA = ResourcesRVA;
-				cliHeader.ResourcesSize = ResourcesLength;
+				cliHeader.Resources.VirtualAddress = ResourcesRVA;
+				cliHeader.Resources.Size = ResourcesLength;
 			}
 			if (StrongNameSignatureLength != 0)
 			{
-				cliHeader.StrongNameSignatureRVA = StrongNameSignatureRVA;
-				cliHeader.StrongNameSignatureSize = StrongNameSignatureLength;
+				cliHeader.StrongNameSignature.VirtualAddress = StrongNameSignatureRVA;
+				cliHeader.StrongNameSignature.Size = StrongNameSignatureLength;
 			}
 			if (VTableFixupsLength != 0)
 			{
-				cliHeader.VTableFixupsRVA = VTableFixupsRVA;
-				cliHeader.VTableFixupsSize = VTableFixupsLength;
+				cliHeader.VTableFixups.VirtualAddress = VTableFixupsRVA;
+				cliHeader.VTableFixups.Size = VTableFixupsLength;
 			}
 			cliHeader.Write(mw);
 

@@ -27,6 +27,7 @@ using BYTE = System.Byte;
 using WORD = System.UInt16;
 using DWORD = System.UInt32;
 using ULONGLONG = System.UInt64;
+using IMAGE_DATA_DIRECTORY = IKVM.Reflection.Reader.IMAGE_DATA_DIRECTORY;
 
 namespace IKVM.Reflection.Writer
 {
@@ -270,12 +271,6 @@ namespace IKVM.Reflection.Writer
 				bw.Write(DataDirectory[i].Size);
 			}
 		}
-	}
-
-	struct IMAGE_DATA_DIRECTORY
-	{
-		public DWORD VirtualAddress;
-		public DWORD Size;
 	}
 
 	class SectionHeader

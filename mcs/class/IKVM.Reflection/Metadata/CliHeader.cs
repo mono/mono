@@ -22,6 +22,7 @@
   
 */
 using System.IO;
+using IMAGE_DATA_DIRECTORY = IKVM.Reflection.Reader.IMAGE_DATA_DIRECTORY;
 
 namespace IKVM.Reflection.Metadata
 {
@@ -35,38 +36,30 @@ namespace IKVM.Reflection.Metadata
 		internal uint Cb = 0x48;
 		internal ushort MajorRuntimeVersion;
 		internal ushort MinorRuntimeVersion;
-		internal uint MetaDataRVA;
-		internal uint MetaDataSize;
+		internal IMAGE_DATA_DIRECTORY MetaData;
 		internal uint Flags;
 		internal uint EntryPointToken;
-		internal uint ResourcesRVA;
-		internal uint ResourcesSize;
-		internal uint StrongNameSignatureRVA;
-		internal uint StrongNameSignatureSize;
-		internal ulong CodeManagerTable;
-		internal uint VTableFixupsRVA;
-		internal uint VTableFixupsSize;
-		internal ulong ExportAddressTableJumps;
-		internal ulong ManagedNativeHeader;
+		internal IMAGE_DATA_DIRECTORY Resources;
+		internal IMAGE_DATA_DIRECTORY StrongNameSignature;
+		internal IMAGE_DATA_DIRECTORY CodeManagerTable;
+		internal IMAGE_DATA_DIRECTORY VTableFixups;
+		internal IMAGE_DATA_DIRECTORY ExportAddressTableJumps;
+		internal IMAGE_DATA_DIRECTORY ManagedNativeHeader;
 
 		internal void Read(BinaryReader br)
 		{
 			Cb = br.ReadUInt32();
 			MajorRuntimeVersion = br.ReadUInt16();
 			MinorRuntimeVersion = br.ReadUInt16();
-			MetaDataRVA = br.ReadUInt32();
-			MetaDataSize = br.ReadUInt32();
+			MetaData.Read(br);
 			Flags = br.ReadUInt32();
 			EntryPointToken = br.ReadUInt32();
-			ResourcesRVA = br.ReadUInt32();
-			ResourcesSize = br.ReadUInt32();
-			StrongNameSignatureRVA = br.ReadUInt32();
-			StrongNameSignatureSize = br.ReadUInt32();
-			CodeManagerTable = br.ReadUInt32();
-			VTableFixupsRVA = br.ReadUInt32();
-			VTableFixupsSize = br.ReadUInt32();
-			ExportAddressTableJumps = br.ReadUInt32();
-			ManagedNativeHeader = br.ReadUInt32();
+			Resources.Read(br);
+			StrongNameSignature.Read(br);
+			CodeManagerTable.Read(br);
+			VTableFixups.Read(br);
+			ExportAddressTableJumps.Read(br);
+			ManagedNativeHeader.Read(br);
 		}
 
 		internal void Write(IKVM.Reflection.Writer.MetadataWriter mw)
@@ -74,19 +67,15 @@ namespace IKVM.Reflection.Metadata
 			mw.Write(Cb);
 			mw.Write(MajorRuntimeVersion);
 			mw.Write(MinorRuntimeVersion);
-			mw.Write(MetaDataRVA);
-			mw.Write(MetaDataSize);
+			MetaData.Write(mw);
 			mw.Write(Flags);
 			mw.Write(EntryPointToken);
-			mw.Write(ResourcesRVA);
-			mw.Write(ResourcesSize);
-			mw.Write(StrongNameSignatureRVA);
-			mw.Write(StrongNameSignatureSize);
-			mw.Write(CodeManagerTable);
-			mw.Write(VTableFixupsRVA);
-			mw.Write(VTableFixupsSize);
-			mw.Write(ExportAddressTableJumps);
-			mw.Write(ManagedNativeHeader);
+			Resources.Write(mw);
+			StrongNameSignature.Write(mw);
+			CodeManagerTable.Write(mw);
+			VTableFixups.Write(mw);
+			ExportAddressTableJumps.Write(mw);
+			ManagedNativeHeader.Write(mw);
 		}
 	}
 }

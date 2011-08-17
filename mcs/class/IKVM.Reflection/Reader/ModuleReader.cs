@@ -121,7 +121,7 @@ namespace IKVM.Reflection.Reader
 			peFile.Read(br);
 			stream.Seek(peFile.RvaToFileOffset(peFile.GetComDescriptorVirtualAddress()), SeekOrigin.Begin);
 			cliHeader.Read(br);
-			stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaDataRVA), SeekOrigin.Begin);
+			stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaData.VirtualAddress), SeekOrigin.Begin);
 			foreach (StreamHeader sh in ReadStreamHeaders(br, out imageRuntimeVersion))
 			{
 				switch (sh.Name)
@@ -140,7 +140,7 @@ namespace IKVM.Reflection.Reader
 						break;
 					case "#~":
 					case "#-":
-						stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaDataRVA + sh.Offset), SeekOrigin.Begin);
+						stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaData.VirtualAddress + sh.Offset), SeekOrigin.Begin);
 						ReadTables(br);
 						break;
 					default:
@@ -217,7 +217,7 @@ namespace IKVM.Reflection.Reader
 		private byte[] ReadHeap(Stream stream, StreamHeader sh)
 		{
 			byte[] buf = new byte[sh.Size];
-			stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaDataRVA + sh.Offset), SeekOrigin.Begin);
+			stream.Seek(peFile.RvaToFileOffset(cliHeader.MetaData.VirtualAddress + sh.Offset), SeekOrigin.Begin);
 			for (int pos = 0; pos < buf.Length; )
 			{
 				int read = stream.Read(buf, pos, buf.Length - pos);
@@ -915,7 +915,7 @@ namespace IKVM.Reflection.Reader
 					{
 						throw new NotImplementedException();
 					}
-					SeekRVA((int)cliHeader.ResourcesRVA + ManifestResource.records[i].Offset);
+					SeekRVA((int)cliHeader.Resources.VirtualAddress + ManifestResource.records[i].Offset);
 					BinaryReader br = new BinaryReader(stream);
 					int length = br.ReadInt32();
 					return new MemoryStream(br.ReadBytes(length));

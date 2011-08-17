@@ -415,9 +415,12 @@ namespace IKVM.Reflection.Emit
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, Type[] interfaces)
 		{
 			TypeBuilder tb = DefineNestedType(name, attr, parent);
-			foreach (Type iface in interfaces)
+			if (interfaces != null)
 			{
-				tb.AddInterfaceImplementation(iface);
+				foreach (Type iface in interfaces)
+				{
+					tb.AddInterfaceImplementation(iface);
+				}
 			}
 			return tb;
 		}

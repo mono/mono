@@ -207,6 +207,12 @@ namespace IKVM.Reflection.Reader
 			VirtualAddress = br.ReadUInt32();
 			Size = br.ReadUInt32();
 		}
+
+		internal void Write(IKVM.Reflection.Writer.MetadataWriter mw)
+		{
+			mw.Write(VirtualAddress);
+			mw.Write(Size);
+		}
 	}
 
 	class SectionHeader
