@@ -184,9 +184,8 @@ namespace System.Collections.Generic
 		
 		public void Clear ()
 		{
-			count = 0;
-			first = null;
-			version++;
+			while (first != null)
+				RemoveLast();
 		}
 		
 		public bool Contains (T value)
