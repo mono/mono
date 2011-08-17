@@ -2,14 +2,15 @@
 //
 // cs-parser.jay: The Parser for the C# compiler
 //
-// Authors: Miguel de Icaza (miguel@gnu.org)
+// Authors: Miguel de Icaza (miguel@gnome.org)
 //          Ravi Pratap     (ravi@ximian.com)
-//          Marek Safar		(marek.safar@gmail.com)
+//          Marek Safar	    (marek.safar@gmail.com)
 //
 // Dual Licensed under the terms of the GNU GPL and the MIT X11 license
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
-// (C) 2004 Novell, Inc
+// (C) 2004-2011 Novell, Inc
+// Copyright 2011 Xamarin Inc.
 //
 // TODO:
 //   (1) Figure out why error productions dont work.  `type-declaration' is a
