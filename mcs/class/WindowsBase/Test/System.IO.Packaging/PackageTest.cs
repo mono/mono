@@ -141,6 +141,32 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+        public void OpenPackageMultipleTimes ()
+        {
+            var filename = Path.GetTempFileName ();
+            try {
+                using (var file = File.Open (filename, FileMode.OpenOrCreate)) {
+                    var package = Package.Open (file, FileMode.OpenOrCreate);
+                    var part = package.CreatePart (new Uri ("/test", UriKind.Relative), "test/type");
+                    using (var stream = part.GetStream ())
+                        stream.Write (new byte [1024 * 1024], 0, 1024 * 1024);
+                    package.Close ();
+                }
+                
+                for (int i = 0; i < 10; i++) {
+                    using (var file = File.Open (filename, FileMode.OpenOrCreate))
+                    using (var package = Package.Open (file)) {
+                        package.GetParts ();
+                        package.GetRelationships ();
+                    }
+                }
+            } finally {
+                if (File.Exists (filename))
+                    File.Delete (filename);
+            }
+        }
+        
+        [Test]
         public void OpenPathReadonly ()
         {
             package = Package.Open (path, FileMode.Create);
