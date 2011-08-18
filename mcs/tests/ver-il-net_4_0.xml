@@ -54216,7 +54216,7 @@
     </type>
     <type name="async">
       <method name="Void .ctor(async)">
-        <size>7</size>
+        <size>9</size>
       </method>
     </type>
     <type name="asyncAttribute">
@@ -54252,6 +54252,11 @@
       </method>
       <method name="Void .ctor()">
         <size>36</size>
+      </method>
+    </type>
+    <type name="await">
+      <method name="Void .ctor(await)">
+        <size>7</size>
       </method>
     </type>
   </test>

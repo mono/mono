@@ -1185,13 +1185,16 @@ method_declaration
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 
-		// Add it early in the case of body being eof for full aot
-		current_container.AddMethod ((Method) $1);
+		// Add it early in the case of body being eof for full ast
+		Method m = (Method) $1;
+		lexer.async_block = (m.ModFlags & Modifiers.ASYNC) != 0;
+		current_container.AddMethod (m);
 	  }
 	  method_body
 	  {
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
+		lexer.async_block = false;
 		
 		if (method.Block == null) {
 			method.ParameterInfo.CheckParameters (method);
@@ -3761,10 +3764,10 @@ cast_expression
 	
 await_expression
 	: AWAIT unary_expression
-	 {
+	  {
 		current_block.ParametersBlock.IsAsync = true;
 		$$ = new Await ((Expression) $2, GetLocation ($1));
-	 }
+	  }
 	;
 
 	//
@@ -6476,6 +6479,7 @@ void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
 	oob_stack.Push (current_variable);
+	oob_stack.Push (lexer.async_block);
 
 	current_local_parameters = parameters;
 	if (isLambda) {
@@ -6490,6 +6494,7 @@ void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync
 		current_anonymous_method = new AnonymousMethodExpression (isAsync, loc);
 	}
 
+	lexer.async_block = isAsync;
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;
 }
@@ -6505,6 +6510,7 @@ AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 	current_anonymous_method.Block = anon_block;
 	retval = current_anonymous_method;
 
+	lexer.async_block = (bool) oob_stack.Pop ();
 	current_variable = (BlockVariableDeclaration) oob_stack.Pop ();
 	current_local_parameters = (ParametersCompiled) oob_stack.Pop ();
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();

@@ -38,6 +38,14 @@ class async
 {
 	async (async arg)
 	{
+		int await = 0;
+	}
+}
+
+class await
+{
+	await (await arg)
+	{
 	}
 }
 

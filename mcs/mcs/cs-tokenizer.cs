@@ -3,13 +3,13 @@
 //                  This also implements the preprocessor
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
-//         Marek Safar (marek.safar@seznam.cz)
+//         Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001, 2002 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
-//
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -210,6 +210,8 @@ namespace Mono.CSharp
 		public bool parsing_attribute_section;
 
 		public bool parsing_modifiers;
+
+		public bool async_block;
 
 		//
 		// The special characters to inject on streams to run the unit parser
@@ -833,11 +835,9 @@ namespace Mono.CSharp
 				
 				break;
 
-			// TODO: async, it's async block context only
 			case Token.AWAIT:
-				if (context.Settings.Version != LanguageVersion.Future) {
+				if (!async_block)
 					res = -1;
-				}
 
 				break;
 			}
