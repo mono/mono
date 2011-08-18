@@ -1,4 +1,4 @@
-﻿//
+//
 // async.cs: Asynchronous functions
 //
 // Author:
