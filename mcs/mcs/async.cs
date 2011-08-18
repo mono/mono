@@ -458,9 +458,10 @@ namespace Mono.CSharp
 				}
 			}
 
-			// TODO: Warning
-			//if (!block.HasAwait) {
-			//}
+			if (!block.IsAsync) {
+				host.Compiler.Report.Warning (1998, 1, loc,
+					"Async block lacks `await' operator and will run synchronously");
+			}
 
 			block.WrapIntoAsyncTask (context, host, returnType);
 		}

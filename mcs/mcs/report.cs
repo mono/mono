@@ -2,9 +2,10 @@
 // report.cs: report errors and warnings.
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
-//         Marek Safar (marek.safar@seznam.cz)         
+//         Marek Safar (marek.safar@gmail.com)         
 //
 // Copyright 2001 Ximian, Inc. (http://www.ximian.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -62,7 +63,7 @@ namespace Mono.CSharp {
 			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
 			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699,
 			1700, 1701, 1702, 1709, 1711, 1717, 1718, 1720, 1735,
-			1901, 1956, 1981,
+			1901, 1956, 1981, 1998,
 			2002, 2023, 2029,
 			3000, 3001, 3002, 3003, 3005, 3006, 3007, 3008, 3009,
 			3010, 3011, 3012, 3013, 3014, 3015, 3016, 3017, 3018, 3019,
@@ -102,6 +103,9 @@ namespace Mono.CSharp {
 				break;
 			case LanguageVersion.V_3:
 				version = "3.0";
+				break;
+			case LanguageVersion.V_4:
+				version = "4.0";
 				break;
 			default:
 				throw new InternalErrorException ("Invalid feature version", compiler.Settings.Version);
