@@ -855,8 +855,13 @@ opt_class_member_declarations
 
 class_member_declarations
 	: class_member_declaration
-	| class_member_declarations 
-	  class_member_declaration
+	  {
+		lexer.parsing_modifiers = true;
+	  }
+	| class_member_declarations class_member_declaration
+	  {
+		lexer.parsing_modifiers = true;
+	  }
 	;
 	
 class_member_declaration
@@ -903,62 +908,29 @@ struct_declaration
 			current_container.DocComment = Lexer.consume_doc_comment ();
 
 		lbag.AddMember (current_class, mod_locations, GetLocation ($4));
+		
+		lexer.parsing_modifiers = true;
 	  }
-	  struct_body
+	  OPEN_BRACE
 	  {
-		--lexer.parsing_declaration;	  
+		if (doc_support)
+			Lexer.doc_state = XmlCommentState.Allowed;
+	  }
+	  opt_class_member_declarations CLOSE_BRACE
+	  {
+		--lexer.parsing_declaration;
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_semicolon
 	  {
-		lbag.AppendToMember (current_class, GetLocation ($13));
+		lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($14), GetLocation ($16));
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial STRUCT error
 	  {
 		Error_SyntaxError (yyToken);
 	  }
-	;
-
-struct_body
-	: OPEN_BRACE
-	  {
-		if (doc_support)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	  opt_struct_member_declarations CLOSE_BRACE
-	  {
-		lbag.AppendToMember (current_class, GetLocation ($1), GetLocation ($4));
-	  }
-	;
-
-opt_struct_member_declarations
-	: /* empty */
-	| struct_member_declarations
-	;
-
-struct_member_declarations
-	: struct_member_declaration
-	| struct_member_declarations struct_member_declaration
-	;
-
-struct_member_declaration
-	: constant_declaration
-	| field_declaration
-	| method_declaration
-	| property_declaration
-	| event_declaration
-	| indexer_declaration
-	| operator_declaration
-	| constructor_declaration
-	| type_declaration
-
-	/*
-	 * This is only included so we can flag error 575: 
-	 * destructors only allowed on class types
-	 */
-	| destructor_declaration 
 	;
 	
 constant_declaration
@@ -1899,6 +1871,8 @@ interface_declaration
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
+		
+		lexer.parsing_modifiers = true;
 	  }
 	  OPEN_BRACE opt_interface_member_declarations CLOSE_BRACE
 	  {
@@ -1924,7 +1898,13 @@ opt_interface_member_declarations
 
 interface_member_declarations
 	: interface_member_declaration
+	  {
+		lexer.parsing_modifiers = true;
+	  }
 	| interface_member_declarations interface_member_declaration
+	  {
+		lexer.parsing_modifiers = true;
+	  }
 	;
 
 interface_member_declaration
@@ -4243,6 +4223,8 @@ class_declaration
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
+		
+		lexer.parsing_modifiers = true;
 	  }
 	  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
 	  {
@@ -4269,8 +4251,12 @@ opt_modifiers
 	  {
 	    mod_locations = null;
 		$$ = ModifierNone;
+		lexer.parsing_modifiers = false;
 	  }
 	| modifiers
+	  {
+		lexer.parsing_modifiers = false;		
+	  }
 	;
 
 modifiers

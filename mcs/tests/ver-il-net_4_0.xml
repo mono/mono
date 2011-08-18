@@ -54189,6 +54189,72 @@
       </method>
     </type>
   </test>
+  <test name="test-async-22.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] async()">
+        <size>27</size>
+      </method>
+      <method name="System.Threading.Tasks.Task async(Int32)">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+async">
+      <method name="Void .ctor(async)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="async">
+      <method name="Void .ctor(async)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="asyncAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="asyncAttribute+async">
+      <method name="asyncAttribute+async Invoke(asyncAttribute+async)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(asyncAttribute+async, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="asyncAttribute+async EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="A+&lt;async&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="A+&lt;async&gt;c__async1">
+      <method name="Void MoveNext()">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">

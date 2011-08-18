@@ -209,6 +209,8 @@ namespace Mono.CSharp
 
 		public bool parsing_attribute_section;
 
+		public bool parsing_modifiers;
+
 		//
 		// The special characters to inject on streams to run the unit parser
 		// in the special expression mode. Using private characters from
@@ -793,11 +795,42 @@ namespace Mono.CSharp
 				res = -1;
 				break;
 
-			// TODO: async, it's modifiers context only
 			case Token.ASYNC:
-				if (context.Settings.Version != LanguageVersion.Future) {
+				if (parsing_modifiers) {
+					//
+					// Skip attributes section or constructor called async
+					//
+					if (parsing_attribute_section || peek_token () == Token.OPEN_PARENS) {
+						res = -1;
+					} else {
+						// async is keyword
+					}
+				} else if (parsing_block > 0) {
+					switch (peek_token ()) {
+					case Token.DELEGATE:
+					case Token.OPEN_PARENS_LAMBDA:
+						// async is keyword
+						break;
+					case Token.IDENTIFIER:
+						PushPosition ();
+						xtoken ();
+						if (xtoken () != Token.ARROW)
+							res = -1;
+
+						PopPosition ();
+						break;
+					default:
+						res = -1;
+						break;
+					}
+				} else {
 					res = -1;
 				}
+
+				if (res == Token.ASYNC && context.Settings.Version <= LanguageVersion.V_4) {
+					Report.FeatureIsNotAvailable (context, Location, "asynchronous functions");
+				}
+				
 				break;
 
 			// TODO: async, it's async block context only
