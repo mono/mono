@@ -183,7 +183,7 @@ namespace System.Collections.Generic
 		public void Clear ()
 		{
 			while (first != null)
-				RemoveLast();
+				Remove (first);
 		}
 		
 		public bool Contains (T value)
