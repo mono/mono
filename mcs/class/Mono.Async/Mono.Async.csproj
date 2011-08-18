@@ -44,6 +44,7 @@
     <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder.cs" />
     <Compile Include="System.Runtime.CompilerServices\AsyncVoidMethodBuilder.cs" />
     <Compile Include="System.Runtime.CompilerServices\TaskAwaiter.cs" />
+    <Compile Include="System.Runtime.CompilerServices\TaskAwaiter_T.cs" />
     <Compile Include="TaskEx.cs" />
   </ItemGroup>
   <ItemGroup />

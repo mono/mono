@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
@@ -64,12 +65,21 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
+		internal static void HandleOnCompleted (Task task, Action continuation)
+		{
+			var scontext = SynchronizationContext.Current;
+			if (scontext != null)
+				task.ContinueWith (l => scontext.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
+			else
+				task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+		}
+
 		public void OnCompleted (Action continuation)
 		{
 			if (continuation == null)
 				throw new ArgumentNullException ("continuation");
 
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+			HandleOnCompleted (task, continuation);
 		}
 	}
 }

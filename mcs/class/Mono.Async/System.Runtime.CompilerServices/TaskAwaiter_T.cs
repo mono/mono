@@ -5,6 +5,7 @@
 //	Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2011 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,7 +59,7 @@ namespace System.Runtime.CompilerServices
 			if (continuation == null)
 				throw new ArgumentNullException ("continuation");
 
-			task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+			TaskAwaiter.HandleOnCompleted (task, continuation);
 		}
 	}
 }

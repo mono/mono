@@ -54260,6 +54260,47 @@
       </method>
     </type>
   </test>
+  <test name="test-async-23.cs">
+    <type name="MyContext">
+      <method name="Void OperationStarted()">
+        <size>21</size>
+      </method>
+      <method name="Void OperationCompleted()">
+        <size>21</size>
+      </method>
+      <method name="Void Post(System.Threading.SendOrPostCallback, System.Object)">
+        <size>23</size>
+      </method>
+      <method name="Void Send(System.Threading.SendOrPostCallback, System.Object)">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestPostContext">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Test()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>106</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestPostContext+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>201</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
