@@ -2391,7 +2391,7 @@ mono_unload_interface_ids (MonoBitSet *bitset)
 void
 mono_unload_interface_id (MonoClass *class)
 {
-	if (class->interface_id && class->interface_id < mono_bitset_size (global_interface_bitset)) {
+	if (global_interface_bitset && class->interface_id) {
 		mono_loader_lock ();
 		mono_bitset_clear (global_interface_bitset, class->interface_id);
 		mono_loader_unlock ();
@@ -8182,6 +8182,7 @@ mono_classes_cleanup (void)
 {
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
+	global_interface_bitset = NULL;
 }
 
 /**
