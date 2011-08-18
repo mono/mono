@@ -36,7 +36,31 @@
 #include "metadata/sgen-archdep.h"
 #include "metadata/object-internals.h"
 
+#if defined(PLATFORM_ANDROID)
+#include <errno.h>
+
+extern int tkill (pid_t tid, int signal);
+#endif
+
 #if !defined(__MACH__) && !MONO_MACH_ARCH_SUPPORTED
+int
+mono_sgen_pthread_kill (SgenThreadInfo *info, int signum)
+{
+#if defined(PLATFORM_ANDROID)
+	int  ret;
+	int  old_errno = errno;
+
+	ret = tkill ((pid_t) info->android_tid, signum);
+	if (ret < 0) {
+		ret = errno;
+		errno = old_errno;
+	}
+	return ret;
+#else
+	return pthread_kill (info->id, signum);
+#endif
+}
+
 int
 mono_sgen_thread_handshake (int signum)
 {
@@ -54,7 +78,7 @@ mono_sgen_thread_handshake (int signum)
 			}
 			/*if (signum == suspend_signal_num && info->stop_count == global_stop_count)
 				continue;*/
-			result = pthread_kill (info->id, signum);
+			result = mono_sgen_pthread_kill (info, signum);
 			if (result == 0) {
 				count++;
 			} else {
