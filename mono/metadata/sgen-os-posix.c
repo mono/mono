@@ -36,13 +36,18 @@
 #include "metadata/sgen-archdep.h"
 #include "metadata/object-internals.h"
 
+#if defined(__MACH__)
+#include "utils/mach-support.h"
+#endif
+
 #if defined(PLATFORM_ANDROID)
 #include <errno.h>
 
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if !defined(__MACH__) && !MONO_MACH_ARCH_SUPPORTED
+#if !(defined(__MACH__) && defined (MONO_MACH_ARCH_SUPPORTED))
+
 int
 mono_sgen_pthread_kill (SgenThreadInfo *info, int signum)
 {
