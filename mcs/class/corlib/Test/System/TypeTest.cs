@@ -3901,6 +3901,10 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof(MyAction<string>).IsAssignableFrom(typeof(MyAction<>)), "#1");
 		}
 
+		[Test] //bug #124
+		public void IsAssignableFromWithNullable () {
+            Console.WriteLine(typeof(IEnumerable<int?>).IsAssignableFrom(typeof(IEnumerable<int>)));
+		}
 #endif
 
 		public abstract class Stream : IDisposable
