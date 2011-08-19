@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // TaskCompletionSourceTests.cs
 //  
@@ -24,6 +23,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -95,6 +96,24 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#6");
 			Assert.IsFalse (completionSource.TrySetCanceled (), "#8");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#9");
+		}
+
+		[Test]
+		public void SetExceptionInvalid ()
+		{
+			try {
+				completionSource.TrySetException (new ApplicationException[0]);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				completionSource.TrySetException (new [] { new ApplicationException (), null });
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			Assert.AreEqual (TaskStatus.WaitingForActivation, completionSource.Task.Status, "r1");
 		}
 		
 		[Test, ExpectedException (typeof (InvalidOperationException))]

@@ -6,6 +6,7 @@
 //       Marek Safar <marek.safar@gmail.com>
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -75,10 +76,7 @@ namespace System.Threading.Tasks
 		
 		public void SetException (IEnumerable<Exception> exceptions)
 		{
-			if (exceptions == null)
-				throw new ArgumentNullException ("exceptions");
-			
-			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
+			if (!TrySetException (exceptions))
 				ThrowInvalidException ();
 		}
 		
@@ -110,8 +108,12 @@ namespace System.Threading.Tasks
 		{
 			if (exceptions == null)
 				throw new ArgumentNullException ("exceptions");
+
+			var aggregate = new AggregateException (exceptions);
+			if (aggregate.InnerExceptions.Count == 0)
+				throw new ArgumentNullException ("exceptions");
 			
-			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
+			return ApplyOperation (() => source.HandleGenericException (aggregate));
 		}
 		
 		public bool TrySetResult (TResult result)
