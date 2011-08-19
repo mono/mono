@@ -7262,7 +7262,7 @@ mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass)
 		MonoClass *param1_class = mono_class_from_mono_type (klass_argv [j]);
 		MonoClass *param2_class = mono_class_from_mono_type (oklass_argv [j]);
 
-		if (param1_class->valuetype != param2_class->valuetype)
+		if (param1_class->valuetype != param2_class->valuetype || (param1_class->valuetype && param1_class != param2_class))
 			return FALSE;
 
 		/*

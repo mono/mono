@@ -3894,6 +3894,10 @@ PublicKeyToken=b77a5c561934e089"));
 			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
 		}
 
+		[Test] //bug #124
+		public void IsAssignableFromWithNullable () {
+            Console.WriteLine(typeof(IEnumerable<int?>).IsAssignableFrom(typeof(IEnumerable<int>)));
+		}
 #endif
 
 		public abstract class Stream : IDisposable
