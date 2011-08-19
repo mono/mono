@@ -1532,6 +1532,7 @@ System/Predicate.cs
 System.Collections.Generic/Comparer.cs
 
 System.Threading.Tasks/TaskFactory.cs
+System.Threading.Tasks/TaskFactory_T.cs
 System.Threading.Tasks/TaskStatus.cs
 System.Threading.Tasks/TaskCreationOptions.cs
 System.Threading.Tasks/ThreadWorker.cs
