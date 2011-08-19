@@ -1092,6 +1092,11 @@ after the collection and the allowance for the minor collector, i.e. how
 much the heap is allowed to grow from minor collections before the next
 major collection is triggered.
 .TP
+\fBprint-pinning\fR
+Gathers statistics on the classes whose objects are pinned in the
+nursery and for which global remset entries are added.  Prints those
+statistics when shutting down.
+.TP
 \fBcollect-before-allocs\fR
 .TP
 \fBcheck-at-minor-collections\fR
