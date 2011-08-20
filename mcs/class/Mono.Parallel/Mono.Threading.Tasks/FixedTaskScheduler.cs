@@ -24,23 +24,25 @@
 
 #if NET_4_0 || MOBILE
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks
+namespace Mono.Threading.Tasks
 {
-	internal class Scheduler: TaskScheduler
+	public class FixedTaskScheduler: TaskScheduler, IMonoTaskScheduler
 	{
 		readonly IProducerConsumerCollection<Task> workQueue;
 		readonly ThreadWorker[]        workers;
 		readonly ManualResetEvent      pulseHandle = new ManualResetEvent (false);
 
-		public Scheduler ()
+		public FixedTaskScheduler ()
 			: this (Environment.ProcessorCount, ThreadPriority.Normal)
 		{
 			
 		}
 		
-		public Scheduler (int maxWorker, ThreadPriority priority)
+		public FixedTaskScheduler (int maxWorker, ThreadPriority priority)
 		{
 			workQueue = new ConcurrentQueue<Task> ();
 			workers = new ThreadWorker [maxWorker];
@@ -51,7 +53,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		protected internal override void QueueTask (Task t)
+		protected override void QueueTask (Task t)
 		{
 			// Add to the shared work pool
 			workQueue.TryAdd (t);
@@ -59,7 +61,7 @@ namespace System.Threading.Tasks
 			PulseAll ();
 		}
 
-		internal override void ParticipateUntil (Task task)
+		public void MonoParticipateUntil (Task task)
 		{
 			if (task.IsCompleted)
 				return;
@@ -72,7 +74,7 @@ namespace System.Threading.Tasks
 			ParticipateUntilInternal (task, evt, -1);
 		}
 		
-		internal override bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
+		public bool MonoParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
@@ -88,9 +90,9 @@ namespace System.Threading.Tasks
 			return isFromPredicate;
 		}
 		
-		internal void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
+		public void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
-			ThreadWorker.ParticipativeWorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
+			ThreadWorker.ParticipativeWorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle, (a, b) => true);
 		}
 
 		static bool TaskCompletedPredicate (Task self)
@@ -98,7 +100,7 @@ namespace System.Threading.Tasks
 			return self.IsCompleted;
 		}
 		
-		internal override void PulseAll ()
+		public void PulseAll ()
 		{
 			pulseHandle.Set ();
 		}
@@ -108,13 +110,14 @@ namespace System.Threading.Tasks
 			foreach (ThreadWorker w in workers)
 				w.Dispose ();
 		}
+
 		#region Scheduler dummy stubs
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{
 			throw new System.NotImplementedException();
 		}
 
-		protected internal override bool TryDequeue (Task task)
+		protected override bool TryDequeue (Task task)
 		{
 			throw new System.NotImplementedException();
 		}
