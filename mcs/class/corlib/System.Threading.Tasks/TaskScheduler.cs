@@ -35,7 +35,8 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
 	public abstract class TaskScheduler
 	{
-		static TaskScheduler defaultScheduler = new TpScheduler ();
+		static TaskScheduler defaultScheduler =
+			Environment.GetEnvironmentVariable ("USE_OLD_TASK_SCHED") != null ? (TaskScheduler)new Scheduler () : (TaskScheduler)new TpScheduler ();
 		SchedulerProxy proxy;
 		
 		[ThreadStatic]
