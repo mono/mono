@@ -32,7 +32,8 @@ namespace System.Threading.Tasks
 {
 	public class TaskCompletionSource<TResult>
 	{
-		Task<TResult> source;
+		readonly Task<TResult> source;
+		SpinLock opLock = new SpinLock (false);
 
 		public TaskCompletionSource ()
 		{
@@ -108,17 +109,24 @@ namespace System.Threading.Tasks
 				
 		bool ApplyOperation (Action action)
 		{
-			if (CheckInvalidState ())
-				return false;
+			bool taken = false;
+			try {
+				opLock.Enter (ref taken);
+				if (CheckInvalidState ())
+					return false;
 			
-			source.Status = TaskStatus.Running;
+				source.Status = TaskStatus.Running;
 
-			if (action != null)
-				action ();
+				if (action != null)
+					action ();
 
-			source.Finish ();
+				source.Finish ();
 			
-			return true;
+				return true;
+			} finally {
+				if (taken)
+					opLock.Exit ();
+			}
 		}
 		
 		bool CheckInvalidState ()
