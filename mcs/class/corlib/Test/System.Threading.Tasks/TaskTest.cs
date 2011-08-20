@@ -312,6 +312,13 @@ namespace MonoTests.System.Threading.Tasks
 
 			t.Start ();
 		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void DisposeUnstartedTest ()
+		{
+			var t = new Task (() => { });
+			t.Dispose ();
+		}
 	}
 }
 #endif
