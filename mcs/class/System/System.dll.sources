@@ -1044,6 +1044,8 @@ System.Collections.Concurrent/BlockingCollection.cs
 System.Collections.Concurrent/ConcurrentBag.cs
 
 ../corlib/System.Threading.Tasks/CyclicDeque.cs
+../corlib/System.Threading.Tasks/PopResult.cs
+../corlib/System.Threading.Tasks/IConcurrentDeque.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 
 ../corlib/System.Collections/CollectionDebuggerView.cs
