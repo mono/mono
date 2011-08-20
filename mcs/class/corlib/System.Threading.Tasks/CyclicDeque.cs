@@ -39,26 +39,6 @@ namespace System.Threading.Tasks
 #if INSIDE_MONO_PARALLEL
 	public
 #endif
-	enum PopResult	{
-		Succeed,
-		Empty,
-		Abort
-	}
-
-#if INSIDE_MONO_PARALLEL
-	public
-#endif
-	interface IConcurrentDeque<T>
-	{
-		void PushBottom (T obj);
-		PopResult PopBottom (out T obj);
-		PopResult PopTop (out T obj);
-		IEnumerable<T> GetEnumerable ();
-	}
-
-#if INSIDE_MONO_PARALLEL
-	public
-#endif
 	class CyclicDeque<T> : IConcurrentDeque<T>
 	{
 		const int BaseSize = 11;

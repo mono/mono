@@ -9,6 +9,8 @@ Mono.Threading/ReaderWriterLockSlimmer.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 ../corlib/System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../corlib/System.Threading.Tasks/CyclicDeque.cs
+../corlib/System.Threading.Tasks/IConcurrentDeque.cs
+../corlib/System.Threading.Tasks/PopResult.cs
 Mono.Threading.Tasks/ThreadWorker.cs
 Mono.Threading.Tasks/MonoTaskExtensions.cs
 Mono.Threading.Tasks/MonoTaskScheduler.cs
