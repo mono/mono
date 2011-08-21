@@ -751,13 +751,15 @@ mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean a
  *
  * if (obj) {
  * 	if (obj->synchronisation) {
- * 		if (obj->synchronisation->owner == 0) {
- * 			if (cmpxch (&obj->synchronisation->owner, TID, 0) == 0)
+ * 		if ((obj->synchronization & LOCK_WORD_BITS) == 0) {
+ * 			if (cmpxch (&obj->synchronisation, TID << LOCK_WORD_OWNER_SHIFT, 0) == 0)
  * 				return;
- * 		}
- * 		if (obj->synchronisation->owner == TID) {
- * 			++obj->synchronisation->nest;
- * 			return;
+ * 		} else if ((obj->synchronisation & LOCK_WORD_INFLATED) == 0 &&
+						  (obj->synchronisation & TID_MASK) == (TID << LOCK_WORD_OWNER_SHIFT) &&
+						  (obj->synchronisation & LOCK_WORD_NEST_MASK) != LOCK_WORD_NEST_MASK) {
+ *					obj->synchronisation += 1 << LOCK_WORD_NEST_SHIFT;
+ * 				return;
+ *				}
  * 		}
  * 	}
  * }
@@ -769,24 +771,17 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_MONITOR_ENTER);
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_sync_null, *jump_other_owner, *jump_cmpxchg_failed, *jump_tid, *jump_sync_thin_hash = NULL;
+	guint8 *jump_obj_null, *jump_thread_info_null, *jump_not_free, *jump_other_owner,
+			 *jump_cmpxchg_failed, *jump_inflated, *jump_max_nest;
 	int tramp_size;
-	int owner_offset, nest_offset, dummy;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
 
 	g_assert (MONO_ARCH_MONITOR_OBJECT_REG == X86_EAX);
 
-	mono_monitor_threads_sync_members_offset (&owner_offset, &nest_offset, &dummy);
-	g_assert (MONO_THREADS_SYNC_MEMBER_SIZE (owner_offset) == sizeof (gpointer));
-	g_assert (MONO_THREADS_SYNC_MEMBER_SIZE (nest_offset) == sizeof (guint32));
-	owner_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (owner_offset);
-	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
+	tramp_size = NACL_SIZE (128, 160);
 
-	tramp_size = NACL_SIZE (96, 128);
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
+	code = buf = mono_global_codeman_reserve (tramp_size);	
 	if (mono_thread_get_tls_offset () != -1) {
 		/* MonoObject* obj is in EAX */
 		/* is obj null? */
@@ -795,92 +790,97 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		jump_obj_null = code;
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 
+		/* load MonoInternalThread* into EDX */
+		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		/* load MonoThreadInfo into EDX */
+		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, thread_info), 4);
+		/* check if we have the MonoThreadInfo */
+		x86_test_reg_reg (code, X86_EDX, X86_EDX);
+		jump_thread_info_null = code;
+		x86_branch8 (code, X86_CC_Z, -1, 1);
+		/* load small_id into EDX */
+		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoThreadInfo, small_id), 4);
+		/* shift EDX by LOCK_WORD_OWNER_SHIFT */
+		x86_alu_reg_imm (code, X86_SHL, X86_EDX, 10);
+
 		/* load obj->synchronization to ECX */
 		x86_mov_reg_membase (code, X86_ECX, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 4);
 
-		if (mono_gc_is_moving ()) {
-			/*if bit zero is set it's a thin hash*/
-			/*FIXME use testb encoding*/
-			x86_test_reg_imm (code, X86_ECX, 0x01);
-			jump_sync_thin_hash = code;
-			x86_branch8 (code, X86_CC_NE, -1, 1);
+		x86_push_reg (code, X86_EAX);
 
-			/*clear bits used by the gc*/
-			x86_alu_reg_imm (code, X86_AND, X86_ECX, ~0x3);
-		}
-
-		/* is synchronization null? */
+		/* check if the lock word is free */
+				
 		x86_test_reg_reg (code, X86_ECX, X86_ECX);
-
-		/* if yes, jump to actual trampoline */
-		jump_sync_null = code;
-		x86_branch8 (code, X86_CC_Z, -1, 1);
-
-		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
-		/* load TID into EDX */
-		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
-
-		/* is synchronization->owner null? */
-		x86_alu_membase_imm (code, X86_CMP, X86_ECX, owner_offset, 0);
-		/* if not, jump to next case */
-		jump_tid = code;
+		jump_not_free = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* if yes, try a compare-exchange with the TID */
-		/* free up register EAX, needed for the zero */
-		x86_push_reg (code, X86_EAX);
+		/* move MonoObject * to ECX */
+		x86_mov_reg_reg (code, X86_ECX, X86_EAX, 4);
 		/* zero EAX */
 		x86_alu_reg_reg (code, X86_XOR, X86_EAX, X86_EAX);
 		/* compare and exchange */
 		x86_prefix (code, X86_LOCK_PREFIX);
-		x86_cmpxchg_membase_reg (code, X86_ECX, owner_offset, X86_EDX);
+		x86_cmpxchg_membase_reg (code, X86_ECX, G_STRUCT_OFFSET (MonoObject, synchronisation), X86_EDX);
 		/* if not successful, jump to actual trampoline */
 		jump_cmpxchg_failed = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
-		/* if successful, pop and return */
+		/* if successful, return */
 		x86_pop_reg (code, X86_EAX);
 		x86_ret (code);
 
-		/* next case: synchronization->owner is not null */
-		x86_patch (jump_tid, code);
-		/* is synchronization->owner == TID? */
-		x86_alu_membase_reg (code, X86_CMP, X86_ECX, owner_offset, X86_EDX);
-		/* if not, jump to actual trampoline */
+		/* next case: the lock word is not zero */
+	
+		x86_patch (jump_not_free, code);
+
+		/* check whether the lock is inflated or the lock word contains the hash code */
+
+		x86_test_reg_imm (code, X86_ECX, 0x3);
+		jump_inflated = code;
+		x86_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* mask the lock word and compare with TID */		
+		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
+		x86_alu_reg_imm (code, X86_AND, X86_EAX, ~((1 << 10) - 1));
+		x86_alu_reg_reg (code, X86_CMP, X86_EAX, X86_EDX);
 		jump_other_owner = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
-		/* if yes, increment nest */
-		x86_inc_membase (code, X86_ECX, nest_offset);
-		/* return */
+		
+		/* check if we can increment the nest count */				
+		x86_alu_reg_imm (code, X86_AND, X86_ECX, ((1 << 8) - 1) << 2);
+		x86_alu_reg_imm (code, X86_CMP, X86_ECX, ((1 << 8) - 1) << 2);		
+		/* if we reached the max nest, jump to actual trampoline */		
+		jump_max_nest = code;
+		x86_branch8 (code, X86_CC_Z, -1, 1);
+		
+		/* add to the nest count and return */
+		x86_pop_reg (code, X86_EAX);
+		x86_alu_membase_imm (code, X86_ADD, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 1 << 2); 
 		x86_ret (code);
 
 		/* push obj */
 		x86_patch (jump_obj_null, code);
-		if (jump_sync_thin_hash)
-			x86_patch (jump_sync_thin_hash, code);
-		x86_patch (jump_sync_null, code);
-		x86_patch (jump_other_owner, code);
+		x86_patch (jump_thread_info_null, code);
+		
 		x86_push_reg (code, X86_EAX);
-		/* jump to the actual trampoline */
+		
 		x86_patch (jump_cmpxchg_failed, code);
-		if (aot) {
-			/* We are calling the generic trampoline directly, the argument is pushed
-			 * on the stack just like a specific trampoline.
-			 */
-			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "generic_trampoline_monitor_enter");
-			x86_jump_reg (code, X86_EAX);
-		} else {
-			x86_jump_code (code, tramp);
-		}
-	} else {
-		/* push obj and jump to the actual trampoline */
+		x86_patch (jump_inflated, code);
+		x86_patch (jump_other_owner, code);
+		x86_patch (jump_max_nest, code);
+	} else  {	
 		x86_push_reg (code, X86_EAX);
-		if (aot) {
-			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "generic_trampoline_monitor_enter");
-			x86_jump_reg (code, X86_EAX);
-		} else {
-			x86_jump_code (code, tramp);
-		}
+	}
+
+	/* jump to the actual trampoline */		
+	if (aot) {
+		/* We are calling the generic trampoline directly, the argument is pushed
+		 * on the stack just like a specific trampoline.
+		 */
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "generic_trampoline_monitor_enter");
+		x86_jump_reg (code, X86_EAX);
+	} else {
+		x86_jump_code (code, tramp);
 	}
 
 	mono_arch_flush_icache (buf, code - buf);
@@ -899,24 +899,14 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_MONITOR_EXIT);
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_have_waiters, *jump_sync_null, *jump_not_owned, *jump_sync_thin_hash = NULL;
-	guint8 *jump_next;
+	guint8 *jump_obj_null, *jump_thread_info_null, *jump_inflated, *jump_other_owner, *jump_release;
 	int tramp_size;
-	int owner_offset, nest_offset, entry_count_offset;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
 
 	g_assert (MONO_ARCH_MONITOR_OBJECT_REG == X86_EAX);
 
-	mono_monitor_threads_sync_members_offset (&owner_offset, &nest_offset, &entry_count_offset);
-	g_assert (MONO_THREADS_SYNC_MEMBER_SIZE (owner_offset) == sizeof (gpointer));
-	g_assert (MONO_THREADS_SYNC_MEMBER_SIZE (nest_offset) == sizeof (guint32));
-	g_assert (MONO_THREADS_SYNC_MEMBER_SIZE (entry_count_offset) == sizeof (gint32));
-	owner_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (owner_offset);
-	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
-	entry_count_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (entry_count_offset);
-
-	tramp_size = NACL_SIZE (96, 128);
+	tramp_size = NACL_SIZE (128, 192);
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -928,69 +918,62 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		jump_obj_null = code;
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 
+		/* load MonoInternalThread* into EDX */
+		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		/* load MonoThreadInfo into EDX */
+		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, thread_info), 4);
+		/* check if we have the MonoThreadInfo */
+		x86_test_reg_reg (code, X86_EDX, X86_EDX);
+		jump_thread_info_null = code;
+		x86_branch8 (code, X86_CC_Z, -1, 1);
+		/* load small_id into EDX */
+		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoThreadInfo, small_id), 4);
+
 		/* load obj->synchronization to ECX */
 		x86_mov_reg_membase (code, X86_ECX, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 4);
 
-		if (mono_gc_is_moving ()) {
-			/*if bit zero is set it's a thin hash*/
-			/*FIXME use testb encoding*/
-			x86_test_reg_imm (code, X86_ECX, 0x01);
-			jump_sync_thin_hash = code;
-			x86_branch8 (code, X86_CC_NE, -1, 1);
+		x86_push_reg (code, X86_EAX);
 
-			/*clear bits used by the gc*/
-			x86_alu_reg_imm (code, X86_AND, X86_ECX, ~0x3);
-		}
+		/* check if the lock is inflated or the lock word contains the hash code */
+		x86_test_reg_imm (code, X86_ECX, 0x3);
+		jump_inflated = code;
+		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
-		/* is synchronization null? */
-		x86_test_reg_reg (code, X86_ECX, X86_ECX);
-		/* if yes, jump to actual trampoline */
-		jump_sync_null = code;
+		/* shift the lock word and compare with TID */
+		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
+		x86_alu_reg_imm (code, X86_SHR, X86_EAX, 10);
+		x86_alu_reg_reg (code, X86_CMP, X86_EAX, X86_EDX);
+		/* if not, jump to actual trampoline */
+		jump_other_owner = code;
+		x86_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* check if we have nested acquires */
+		x86_alu_reg_imm (code, X86_AND, X86_ECX, ((1 << 8) - 1) << 2);
+		x86_pop_reg (code, X86_EAX);
+		jump_release = code;
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 
-		/* next case: synchronization is not null */
-		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
-		/* load TID into EDX */
-		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
-		/* is synchronization->owner == TID */
-		x86_alu_membase_reg (code, X86_CMP, X86_ECX, owner_offset, X86_EDX);
-		/* if no, jump to actual trampoline */
-		jump_not_owned = code;
-		x86_branch8 (code, X86_CC_NZ, -1, 1);
-
-		/* next case: synchronization->owner == TID */
-		/* is synchronization->nest == 1 */
-		x86_alu_membase_imm (code, X86_CMP, X86_ECX, nest_offset, 1);
-		/* if not, jump to next case */
-		jump_next = code;
-		x86_branch8 (code, X86_CC_NZ, -1, 1);
-		/* if yes, is synchronization->entry_count zero? */
-		x86_alu_membase_imm (code, X86_CMP, X86_ECX, entry_count_offset, 0);
-		/* if not, jump to actual trampoline */
-		jump_have_waiters = code;
-		x86_branch8 (code, X86_CC_NZ, -1 , 1);
-		/* if yes, set synchronization->owner to null and return */
-		x86_mov_membase_imm (code, X86_ECX, owner_offset, 0, 4);
+		/* decrement the nested acquires count */
+		x86_alu_membase_imm (code, X86_SUB, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 1 << 2); 
 		x86_ret (code);
 
-		/* next case: synchronization->nest is not 1 */
-		x86_patch (jump_next, code);
-		/* decrease synchronization->nest and return */
-		x86_dec_membase (code, X86_ECX, nest_offset);
+		/* unlock */
+		x86_patch (jump_release, code);
+		x86_mov_membase_imm (code, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 0, 4);
 		x86_ret (code);
 
-		/* push obj and jump to the actual trampoline */
+		/* push obj */
 		x86_patch (jump_obj_null, code);
-		if (jump_sync_thin_hash)
-			x86_patch (jump_sync_thin_hash, code);
-		x86_patch (jump_have_waiters, code);
-		x86_patch (jump_not_owned, code);
-		x86_patch (jump_sync_null, code);
-	}
+		x86_patch (jump_thread_info_null, code);
+		
+		x86_push_reg (code, X86_EAX);
 
-	/* push obj and jump to the actual trampoline */
-	x86_push_reg (code, X86_EAX);
+		x86_patch (jump_inflated, code);
+		x86_patch (jump_other_owner, code);
+	} else {
+		x86_push_reg (code, X86_EAX);
+	} 
+
 	if (aot) {
 		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "generic_trampoline_monitor_exit");
 		x86_jump_reg (code, X86_EAX);
@@ -1008,7 +991,6 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	return buf;
 }
-
 #else
 
 gpointer
