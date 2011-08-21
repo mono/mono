@@ -62,16 +62,9 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Monitor_pulse(object obj);
 
-		// Checks whether object 'obj' is currently synchronised
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Monitor_test_synchronised(object obj);
-
 		public static void Pulse(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("obj");
-			}
-			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			Monitor_pulse(obj);
@@ -85,9 +78,6 @@ namespace System.Threading
 		public static void PulseAll(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("obj");
-			}
-			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			Monitor_pulse_all(obj);
@@ -110,7 +100,7 @@ namespace System.Threading
 
 			if (millisecondsTimeout < 0)
 				throw new ArgumentException ("negative value for millisecondsTimeout", "millisecondsTimeout");
-			
+
 			return Monitor_try_enter (obj, millisecondsTimeout);
 		}
 
@@ -119,7 +109,7 @@ namespace System.Threading
 			long ms = (long) timeout.TotalMilliseconds;
 			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-			
+
 			return TryEnter (obj, (int) ms);
 		}
 
@@ -141,9 +131,6 @@ namespace System.Threading
 
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "timeout out of range");
-
-			if (!Monitor_test_synchronised (obj))
-				throw new SynchronizationLockException ("Object is not synchronized");
 
 			return Monitor_wait (obj, millisecondsTimeout);
 		}
