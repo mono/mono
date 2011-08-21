@@ -967,7 +967,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		/* check if the lock word is free */
 		amd64_test_reg_reg (code, AMD64_RCX, AMD64_RCX);
 		jump_not_free = code;
-		amd64_branch8 (code, X86_CC_Z, -1, 1);
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* if yes, try a compare-exchange with the TID */
 		/* zero RAX */
@@ -985,8 +985,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		x86_patch (jump_not_free, code);
 
 		/* check whether the lock is inflated or the lock word contains the hash code */
-		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_RCX, 8);
-		amd64_test_reg_imm (code, AMD64_RAX, 0x3);
+		amd64_test_reg_imm (code, AMD64_RCX, 0x3);
 		jump_inflated = code;
 		amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
@@ -1085,8 +1084,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RDI, G_STRUCT_OFFSET (MonoObject, synchronisation), 8);		
 
 		/* check if the lock is inflated or the lock word contains the hash code */
-		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_RCX, 8);
-		amd64_test_reg_imm (code, AMD64_RAX, 0x3);
+		amd64_test_reg_imm (code, AMD64_RCX, 0x3);
 		jump_inflated = code;
 		amd64_branch8 (code, X86_CC_NZ, -1, 1);
 

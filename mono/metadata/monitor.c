@@ -256,6 +256,7 @@ mon_finalize (MonoThreadsSync *mon)
 	mon->entry_count = 0;
 	/* owner and nest are set in mon_new, no need to zero them out */
 
+	mono_gc_weak_link_remove (&mon->data);
 	mon->data = monitor_freelist;
 	monitor_freelist = mon;
 	mono_perfcounters->gc_sync_blocks--;
@@ -557,25 +558,36 @@ retry:
 	return ret == WAIT_IO_COMPLETION ? -1 : 0;
 }
 
+static inline void
+fail_inflation (MonoObject *obj, MonoThreadsSync *mon)
+{
+	if (--mon->nest == 0) {
+		g_hash_table_remove (monitor_table, obj);
+		mon_finalize (mon);
+	}
+}
+
 /*
  * Returns with the monitor lock held.
  */
-static inline gint32 
+static gint32 
 mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interruption)
 {
 	LockWord lw;
 	MonoThreadsSync *mon;
 	gboolean locked;
-	gboolean monitor_removed;
 	guint32 then;
 	guint32 ret;
 
 	LOCK_DEBUG (g_message ("%s: (%d) Inflating lock object %p", __func__, mono_thread_info_get_small_id (), obj));
 
+	then = ms != INFINITE ? mono_msec_ticks () : 0;
+
 	/*
 	 * Allocate a lock record and register the object in the monitor table.
 	 */
 
+retry:
 	mono_monitor_allocator_lock ();		
 	if ((locked = ((mon = (MonoThreadsSync *)g_hash_table_lookup (monitor_table, obj)) == NULL))) {
 		mon = mon_new (id);
@@ -585,6 +597,10 @@ mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interr
 		mon->nest += 1;
 	}
 	mono_monitor_allocator_unlock ();
+
+	if (locked) {
+		mono_gc_weak_link_add (&mon->data, obj, FALSE);
+	}
 
 	/*
 	 * Check if the monitor is already inflated and if we hold the correct one.
@@ -596,32 +612,37 @@ mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interr
 		lw.lock_word &= ~LOCK_WORD_STATUS_BITS;
 		if (lw.sync != mon) {
 			mono_monitor_allocator_lock ();
-			if (--mon->nest == 0) {
-				monitor_removed = g_hash_table_remove (monitor_table, obj);
-				g_assert (monitor_removed);
-				mon_finalize (mon);
-			}
+			fail_inflation (obj, mon);
 			mono_monitor_allocator_unlock ();
 		}
 
 		return mono_monitor_try_enter_inflated (obj, lw.sync, id, ms, allow_interruption);
 	}
 
-	/*
-	 * Wait for the lock to be released.
-	 */
-
-	then = ms != INFINITE ? mono_msec_ticks () : 0;
-
 	if (!locked) {
 		if ((ret = mono_monitor_try_enter_inflated (obj, mon, id, ms, allow_interruption)) != 1) {
-			goto fail;
+			mono_monitor_allocator_lock ();
+
+			lw.sync = obj->synchronisation;
+	
+			if ((lw.lock_word & LOCK_WORD_INFLATED) == 0) {
+				fail_inflation (obj, mon);
+			}
+
+			mono_monitor_allocator_unlock ();
+			LOCK_DEBUG (g_message ("%s: (%d) Failed to inflated lock object %p", __func__, mono_thread_info_get_small_id (), obj));
+			return ret;
 		}
+
 		lw.sync = obj->synchronisation;
 		if (lw.lock_word & LOCK_WORD_INFLATED) {
 			return 1;
 		}
 	}
+
+	/*
+	 * Wait for the lock to be released.
+	 */
 
 	do {
 
@@ -647,12 +668,9 @@ mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interr
 				 * The lock is inflated. Now we can remove the object from the monitor table.
 				 */
 
-				mono_gc_weak_link_add (&mon->data, obj, FALSE);
-
 				mono_monitor_allocator_lock ();
 				mon->nest = 0;
-				monitor_removed = g_hash_table_remove (monitor_table, obj);
-				g_assert (monitor_removed);
+				g_hash_table_remove (monitor_table, obj);
 				mono_monitor_allocator_unlock ();
 
 				LOCK_DEBUG (g_message ("%s: (%d) Inflated lock object %p to mon %p (%d)", __func__, mono_thread_info_get_small_id (), obj, mon, mon->owner));
@@ -671,8 +689,11 @@ mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interr
 			int elapsed = now == then ? 1 : now - then;
 			if (ms <= elapsed) {
 				mono_monitor_exit_inflated (obj, mon);
-				ret = 0;
-				goto fail;
+				mono_monitor_allocator_lock ();
+				fail_inflation (obj, mon);
+				mono_monitor_allocator_unlock ();
+				LOCK_DEBUG (g_message ("%s: (%d) Inflation of lock object %p timed out", __func__, mono_thread_info_get_small_id (), obj));
+				return 0;
 			} else {
 				ms -= elapsed;
 			}
@@ -680,23 +701,18 @@ mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interr
 			then = now;
 		}
 
+		if (mono_thread_interruption_requested ()) {
+			mono_monitor_exit_inflated (obj, mon);
+			mono_monitor_allocator_lock ();
+			fail_inflation (obj, mon);
+			mono_monitor_allocator_unlock ();
+
+			mono_thread_force_interruption_checkpoint ();
+			goto retry;
+		}
+
 		lw.sync = obj->synchronisation;
 	} while (TRUE);
-	
-fail:
-	mono_monitor_allocator_lock ();
-	
-	lw.sync = obj->synchronisation;
-	
-	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0 && --mon->nest == 0) {
-		monitor_removed = g_hash_table_remove (monitor_table, obj);
-		g_assert (monitor_removed);
-	}
-
-	mono_monitor_allocator_unlock ();
-
-	LOCK_DEBUG (g_message ("%s: (%d) Failed to inflated lock object %p", __func__, mono_thread_info_get_small_id (), obj));
-	return ret;
 }
 
 static inline gboolean

@@ -781,7 +781,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	tramp_size = NACL_SIZE (128, 160);
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = mono_global_codeman_reserve (tramp_size);	
 	if (mono_thread_get_tls_offset () != -1) {
 		/* MonoObject* obj is in EAX */
 		/* is obj null? */
@@ -806,10 +806,13 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		/* load obj->synchronization to ECX */
 		x86_mov_reg_membase (code, X86_ECX, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 4);
 
+		x86_push_reg (code, X86_EAX);
+
 		/* check if the lock word is free */
+				
 		x86_test_reg_reg (code, X86_ECX, X86_ECX);
 		jump_not_free = code;
-		x86_branch8 (code, X86_CC_Z, -1, 1);
+		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* if yes, try a compare-exchange with the TID */
 		/* move MonoObject * to ECX */
@@ -819,36 +822,34 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		/* compare and exchange */
 		x86_prefix (code, X86_LOCK_PREFIX);
 		x86_cmpxchg_membase_reg (code, X86_ECX, G_STRUCT_OFFSET (MonoObject, synchronisation), X86_EDX);
-		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);
 		/* if not successful, jump to actual trampoline */
 		jump_cmpxchg_failed = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
 		/* if successful, return */
+		x86_pop_reg (code, X86_EAX);
 		x86_ret (code);
 
 		/* next case: the lock word is not zero */
+	
 		x86_patch (jump_not_free, code);
 
-		x86_push_reg (code, X86_EAX);
-		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
-
 		/* check whether the lock is inflated or the lock word contains the hash code */
+
 		x86_test_reg_imm (code, X86_ECX, 0x3);
 		jump_inflated = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
-		/* mask the lock word and compare with TID */
-		x86_mov_reg_reg (code, X86_ECX, X86_EAX, 4);	
-		x86_alu_reg_imm (code, X86_AND, X86_ECX, ~((1 << 10) - 1));
-		x86_alu_reg_reg (code, X86_CMP, X86_ECX, X86_EDX);
-		/* if not, jump to actual trampoline */
+		/* mask the lock word and compare with TID */		
+		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
+		x86_alu_reg_imm (code, X86_AND, X86_EAX, ~((1 << 10) - 1));
+		x86_alu_reg_reg (code, X86_CMP, X86_EAX, X86_EDX);
 		jump_other_owner = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
-
-		/* check if we can increment the nest count */		
-		x86_alu_reg_imm (code, X86_AND, X86_EAX, ((1 << 8) - 1) << 2);
-		x86_alu_reg_imm (code, X86_CMP, X86_EAX, ((1 << 8) - 1) << 2);
-		/* if we reached the max nest, jump to actual trampoline */
+		
+		/* check if we can increment the nest count */				
+		x86_alu_reg_imm (code, X86_AND, X86_ECX, ((1 << 8) - 1) << 2);
+		x86_alu_reg_imm (code, X86_CMP, X86_ECX, ((1 << 8) - 1) << 2);		
+		/* if we reached the max nest, jump to actual trampoline */		
 		jump_max_nest = code;
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 		
@@ -860,10 +861,10 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		/* push obj */
 		x86_patch (jump_obj_null, code);
 		x86_patch (jump_thread_info_null, code);
-		x86_patch (jump_cmpxchg_failed, code);
 		
 		x86_push_reg (code, X86_EAX);
-
+		
+		x86_patch (jump_cmpxchg_failed, code);
 		x86_patch (jump_inflated, code);
 		x86_patch (jump_other_owner, code);
 		x86_patch (jump_max_nest, code);
@@ -932,7 +933,6 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		x86_mov_reg_membase (code, X86_ECX, X86_EAX, G_STRUCT_OFFSET (MonoObject, synchronisation), 4);
 
 		x86_push_reg (code, X86_EAX);
-		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
 
 		/* check if the lock is inflated or the lock word contains the hash code */
 		x86_test_reg_imm (code, X86_ECX, 0x3);
@@ -940,15 +940,15 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* shift the lock word and compare with TID */
-		x86_mov_reg_reg (code, X86_ECX, X86_EAX, 4);	
-		x86_alu_reg_imm (code, X86_SHR, X86_ECX, 10);
-		x86_alu_reg_reg (code, X86_CMP, X86_ECX, X86_EDX);
+		x86_mov_reg_reg (code, X86_EAX, X86_ECX, 4);	
+		x86_alu_reg_imm (code, X86_SHR, X86_EAX, 10);
+		x86_alu_reg_reg (code, X86_CMP, X86_EAX, X86_EDX);
 		/* if not, jump to actual trampoline */
 		jump_other_owner = code;
 		x86_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* check if we have nested acquires */
-		x86_alu_reg_imm (code, X86_AND, X86_EAX, ((1 << 8) - 1) << 2);
+		x86_alu_reg_imm (code, X86_AND, X86_ECX, ((1 << 8) - 1) << 2);
 		x86_pop_reg (code, X86_EAX);
 		jump_release = code;
 		x86_branch8 (code, X86_CC_Z, -1, 1);
