@@ -2,7 +2,8 @@
  * monitor.c:  Monitor locking functions
  *
  * Author:
- *	Dick Porter (dick@ximian.com)
+ *		Dick Porter (dick@ximian.com)
+ *  	Duarte Nunes (duarte.m.nunes@gmail.com)
  *
  * Copyright 2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
@@ -12,11 +13,11 @@
 #include <glib.h>
 #include <string.h>
 
+#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/threads.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/gc-internal.h>
@@ -26,6 +27,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-time.h>
+#include <mono/utils/mono-threads.h>
 
 /*
  * Pull the list of opcodes
@@ -39,47 +41,74 @@ enum {
 };
 #undef OPDEF
 
-/*#define LOCK_DEBUG(a) do { a; } while (0)*/
+/* #define LOCK_DEBUG(a) do { a; } while (0) */
 #define LOCK_DEBUG(a)
 
 /*
  * The monitor implementation here is based on
- * http://www.usenix.org/events/jvm01/full_papers/dice/dice.pdf and
- * http://www.research.ibm.com/people/d/dfb/papers/Bacon98Thin.ps
- *
- * The Dice paper describes a technique for saving lock record space
- * by returning records to a free list when they become unused.  That
- * sounds like unnecessary complexity to me, though if it becomes
- * clear that unused lock records are taking up lots of space or we
- * need to shave more time off by avoiding a malloc then we can always
- * implement the free list idea later.  The timeout parameter to
- * try_enter voids some of the assumptions about the reference count
- * field in Dice's implementation too.  In his version, the thread
- * attempting to lock a contended object will block until it succeeds,
- * so the reference count will never be decremented while an object is
- * locked.
- *
+ * http://www.research.ibm.com/people/d/dfb/papers/Bacon98Thin.ps and
+ * http://www.research.ibm.com/trl/projects/jit/paper/oopsla99_onodera.pdf
+ * 
  * Bacon's thin locks have a fast path that doesn't need a lock record
- * for the common case of locking an unlocked or shallow-nested
- * object, but the technique relies on encoding the thread ID in 15
- * bits (to avoid too much per-object space overhead.)  Unfortunately
- * I don't think it's possible to reliably encode a pthread_t into 15
- * bits. (The JVM implementation used seems to have a 15-bit
- * per-thread identifier available.)
+ * for the common case of locking an unlocked or shallow-nested object.
+ * When the fast path fails it means there is contention (or the header
+ * contains the object's hash code) and so the thread must inflate the
+ * monitor by creating a lock record and placing its address in the
+ * synchronization header of the object once the lock is free.
  *
- * This implementation then combines Dice's basic lock model with
- * Bacon's simplification of keeping a lock record for the lifetime of
- * an object.
+ * To inflate the monitor we use a temporary mapping from the MonoObject,
+ * which is pinned, to the MonoThreadsSync that the object will point to.
+ * This table is only required during inflation and allows the acquiring 
+ * threads to block waiting for the lock to be released.
  */
+
+/*
+ * Lock word format:
+ *
+ * 32-bit
+ *		LOCK_WORD_FLAT:			[owner:22 | nest:8 | status:2]
+ *    LOCK_WORD_THIN_HASH:	   [      hash:30     | status:2]
+ *		LOCK_WORD_INFLATED:		[    sync_ptr:30   | status:2]
+ *
+ * 64-bit
+ *		LOCK_WORD_FLAT:			[unused:22 | owner:32 | nest:8 | status:2]
+ *    LOCK_WORD_THIN_HASH:	   [            hash:62           | status:2]
+ *		LOCK_WORD_INFLATED:		[          sync_ptr:62         | status:2]
+ *
+ * We assume that the two least significant bits of a MonoThreadsSync * are always zero.
+ */
+
+typedef union {
+	gsize lock_word;
+	volatile MonoThreadsSync *sync; /* *volatile* qualifier used just to remove some warnings. */
+} LockWord;
+
+enum {
+	LOCK_WORD_FLAT = 0,
+	LOCK_WORD_THIN_HASH = 1,
+	LOCK_WORD_INFLATED = 2,
+	LOCK_WORD_FAT_HASH = 3,
+	
+	LOCK_WORD_STATUS_BITS = 2,
+	LOCK_WORD_BITS_MASK = (1 << LOCK_WORD_STATUS_BITS) - 1,
+	
+	LOCK_WORD_NEST_BITS = 8,
+	LOCK_WORD_NEST_SHIFT = LOCK_WORD_STATUS_BITS,
+   LOCK_WORD_NEST_MASK = ((1 << LOCK_WORD_NEST_BITS) - 1) << LOCK_WORD_NEST_SHIFT,
+	
+	LOCK_WORD_OWNER_SHIFT = LOCK_WORD_NEST_SHIFT + LOCK_WORD_NEST_BITS,
+
+	LOCK_WORD_HASH_SHIFT = LOCK_WORD_STATUS_BITS
+};
 
 struct _MonoThreadsSync
 {
-	gsize owner;			/* thread ID */
+	int owner;			/* thread ID */
 	guint32 nest;
 #ifdef HAVE_MOVING_COLLECTOR
 	gint32 hash_code;
 #endif
-	volatile gint32 entry_count;
+	volatile guint32 entry_count;
 	HANDLE entry_sem;
 	GSList *wait_list;
 	void *data;
@@ -96,30 +125,18 @@ struct _MonitorArray {
 #define mono_monitor_allocator_lock() EnterCriticalSection (&monitor_mutex)
 #define mono_monitor_allocator_unlock() LeaveCriticalSection (&monitor_mutex)
 static CRITICAL_SECTION monitor_mutex;
+static GHashTable *monitor_table;
 static MonoThreadsSync *monitor_freelist;
 static MonitorArray *monitor_allocated;
 static int array_size = 16;
 
-#ifdef HAVE_KW_THREAD
-static __thread gsize tls_pthread_self MONO_TLS_FAST;
-#endif
-
-#ifndef HOST_WIN32
-#ifdef HAVE_KW_THREAD
-#define GetCurrentThreadId() tls_pthread_self
-#else
-/* 
- * The usual problem: we can't replace GetCurrentThreadId () with a macro because
- * it is in a public header.
- */
-#define GetCurrentThreadId() ((gsize)pthread_self ())
-#endif
-#endif
+#define MONO_OBJECT_ALIGNMENT_SHIFT	3
 
 void
 mono_monitor_init (void)
 {
 	InitializeCriticalSection (&monitor_mutex);
+	monitor_table = g_hash_table_new (NULL, NULL);
 }
  
 void
@@ -129,6 +146,8 @@ mono_monitor_cleanup (void)
 	/* MonitorArray *marray, *next = NULL; */
 
 	/*DeleteCriticalSection (&monitor_mutex);*/
+
+	/*g_hash_table_destroy (monitor_table);*/
 
 	/* The monitors on the freelist don't have weak links - mark them */
 	for (mon = monitor_freelist; mon; mon = mon->data)
@@ -158,11 +177,7 @@ mono_monitor_cleanup (void)
  */
 void
 mono_monitor_init_tls (void)
-{
-#if !defined(HOST_WIN32) && defined(HAVE_KW_THREAD)
-	tls_pthread_self = pthread_self ();
-#endif
-}
+{ }
 
 static int
 monitor_is_on_freelist (MonoThreadsSync *mon)
@@ -202,7 +217,7 @@ mono_locks_dump (gboolean include_untaken)
 				if (i < marray->num_monitors - 1)
 					to_recycle++;
 			} else {
-				if (!monitor_is_on_freelist (mon->data)) {
+				if (!monitor_is_on_freelist ((MonoThreadsSync *) mon->data)) {
 					MonoObject *holder = mono_gc_weak_link_get (&mon->data);
 					if (mon->owner) {
 						g_print ("Lock %p in object %p held by thread %p, nest level: %d\n",
@@ -247,7 +262,7 @@ mon_finalize (MonoThreadsSync *mon)
 
 /* LOCKING: this is called with monitor_mutex held */
 static MonoThreadsSync *
-mon_new (gsize id)
+mon_new (int id)
 {
 	MonoThreadsSync *new;
 
@@ -263,12 +278,12 @@ mon_new (gsize id)
 					if (new->wait_list) {
 						/* Orphaned events left by aborted threads */
 						while (new->wait_list) {
-							LOCK_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": (%d): Closing orphaned event %d", GetCurrentThreadId (), new->wait_list->data));
+							LOCK_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": (%d): Closing orphaned event %d", mono_thread_info_get_small_id (), new->wait_list->data));
 							CloseHandle (new->wait_list->data);
 							new->wait_list = g_slist_remove (new->wait_list, new->wait_list->data);
 						}
 					}
-					mono_gc_weak_link_remove (&new->data);
+					/*mono_gc_weak_link_remove (&new->data);*/
 					new->data = monitor_freelist;
 					monitor_freelist = new;
 				}
@@ -308,299 +323,166 @@ mon_new (gsize id)
 	monitor_freelist = new->data;
 
 	new->owner = id;
-	new->nest = 1;
+	new->entry_count = 0;
 	
 	mono_perfcounters->gc_sync_blocks++;
 	return new;
 }
 
-/*
- * Format of the lock word:
- * thinhash | fathash | data
- *
- * thinhash is the lower bit: if set data is the shifted hashcode of the object.
- * fathash is another bit: if set the hash code is stored in the MonoThreadsSync
- *   struct pointed to by data
- * if neither bit is set and data is non-NULL, data is a MonoThreadsSync
- */
-typedef union {
-	gsize lock_word;
-	MonoThreadsSync *sync;
-} LockWord;
-
-enum {
-	LOCK_WORD_THIN_HASH = 1,
-	LOCK_WORD_FAT_HASH = 1 << 1,
-	LOCK_WORD_BITS_MASK = 0x3,
-	LOCK_WORD_HASH_SHIFT = 2
-};
-
-#define MONO_OBJECT_ALIGNMENT_SHIFT	3
-
-/*
- * mono_object_hash:
- * @obj: an object
- *
- * Calculate a hash code for @obj that is constant while @obj is alive.
- */
-int
-mono_object_hash (MonoObject* obj)
+static inline void
+mono_monitor_ensure_synchronized (LockWord lw, guint32 id)
 {
-#ifdef HAVE_MOVING_COLLECTOR
-	LockWord lw;
-	unsigned int hash;
-	if (!obj)
-		return 0;
-	lw.sync = obj->synchronisation;
-	if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-		/*g_print ("fast thin hash %d for obj %p store\n", (unsigned int)lw.lock_word >> LOCK_WORD_HASH_SHIFT, obj);*/
-		return (unsigned int)lw.lock_word >> LOCK_WORD_HASH_SHIFT;
-	}
-	if (lw.lock_word & LOCK_WORD_FAT_HASH) {
+	if ((lw.lock_word & LOCK_WORD_BITS_MASK) == 0) {
+		if ((((unsigned int)lw.lock_word) >> LOCK_WORD_OWNER_SHIFT) == id) {
+			return;
+		}
+	} else if (lw.lock_word & LOCK_WORD_INFLATED) {
 		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		/*g_print ("fast fat hash %d for obj %p store\n", lw.sync->hash_code, obj);*/
-		return lw.sync->hash_code;
+		if (lw.sync->owner == id) {
+			return;
+		}
 	}
-	/*
-	 * while we are inside this function, the GC will keep this object pinned,
-	 * since we are in the unmanaged stack. Thanks to this and to the hash
-	 * function that depends only on the address, we can ignore the races if
-	 * another thread computes the hash at the same time, because it'll end up
-	 * with the same value.
-	 */
-	hash = (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
-	/* clear the top bits as they can be discarded */
-	hash &= ~(LOCK_WORD_BITS_MASK << 30);
-	/* no hash flags were set, so it must be a MonoThreadsSync pointer if not NULL */
-	if (lw.sync) {
-		lw.sync->hash_code = hash;
-		/*g_print ("storing hash code %d for obj %p in sync %p\n", hash, obj, lw.sync);*/
-		lw.lock_word |= LOCK_WORD_FAT_HASH;
-		/* this is safe since we don't deflate locks */
-		obj->synchronisation = lw.sync;
-	} else {
-		/*g_print ("storing thin hash code %d for obj %p\n", hash, obj);*/
-		lw.lock_word = LOCK_WORD_THIN_HASH | (hash << LOCK_WORD_HASH_SHIFT);
-		if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, lw.sync, NULL) == NULL)
-			return hash;
-		/*g_print ("failed store\n");*/
-		/* someone set the hash flag or someone inflated the object */
-		lw.sync = obj->synchronisation;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH)
-			return hash;
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		lw.sync->hash_code = hash;
-		lw.lock_word |= LOCK_WORD_FAT_HASH;
-		/* this is safe since we don't deflate locks */
-		obj->synchronisation = lw.sync;
-	}
-	return hash;
-#else
-/*
- * Wang's address-based hash function:
- *   http://www.concentric.net/~Ttwang/tech/addrhash.htm
- */
-	return (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
-#endif
+
+	LOCK_DEBUG (g_message ("%s: (%d) Synchronization error with lock word %p", __func__, mono_thread_info_get_small_id (), lw.sync));
+		
+	mono_raise_exception (mono_get_exception_synchronization_lock ("Object synchronization method was called from an unsynchronized block of code."));	
 }
 
-/* If allow_interruption==TRUE, the method will be interrumped if abort or suspend
- * is requested. In this case it returns -1.
- */ 
-static inline gint32 
-mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_interruption)
+/*
+ * When this function is called it has already been established that the
+ * current thread owns the monitor.
+ */
+static inline void
+mono_monitor_exit_inflated (MonoObject *obj, MonoThreadsSync *mon)
 {
-	MonoThreadsSync *mon;
-	gsize id = GetCurrentThreadId ();
-	HANDLE sem;
-	guint32 then = 0, now, delta;
-	guint32 waitms;
-	guint32 ret;
-	MonoInternalThread *thread;
+	if (G_LIKELY (mon->nest == 0)) {
+		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now unlocked", __func__, mono_thread_info_get_small_id (), obj));
+	
+		mon->owner = 0;
 
-	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
+		/* Do the wakeup stuff. It's possible that the last
+		 * blocking thread gave up waiting just before we
+		 * release the semaphore resulting in a futile wakeup
+		 * next time there's contention for this object, but
+		 * it means we don't have to waste time locking the
+		 * struct.
+		 */
+		if (mon->entry_count > 0) {
+			ReleaseSemaphore (mon->entry_sem, 1, NULL);
+		}
+	} else {
+		mon->nest -= 1;
+		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now locked %d times", __func__, mono_thread_info_get_small_id (), obj, mon->nest + 1));		
+	}
+}
+
+/*
+ * When this function is called it has already been established that the
+ * current thread owns the monitor.
+ */
+static inline void
+mono_monitor_exit_flat (MonoObject *obj, LockWord lw)
+{
+	if (G_UNLIKELY (lw.lock_word & LOCK_WORD_NEST_MASK)) {
+		lw.lock_word -= 1 << LOCK_WORD_NEST_SHIFT;
+		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now locked %d times", __func__, mono_thread_info_get_small_id (), obj, ((lw.lock_word & LOCK_WORD_NEST_MASK) >> LOCK_WORD_NEST_SHIFT) + 1));		
+	} else {
+		lw.lock_word = 0;
+		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now unlocked", __func__, mono_thread_info_get_small_id (), obj));
+	}
+	obj->synchronisation = lw.sync;
+}
+
+void
+mono_monitor_exit (MonoObject *obj)
+{
+	guint32 id;
+	LockWord lw;
+	
+	LOCK_DEBUG (g_message ("%s: (%d) Unlocking %p", __func__, mono_thread_info_get_small_id (), obj));
 
 	if (G_UNLIKELY (!obj)) {
 		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-		return FALSE;
+		return;
 	}
 
-retry:
-	mon = obj->synchronisation;
+	id = mono_thread_info_get_small_id ();
+	lw.sync = obj->synchronisation;
 
-	/* If the object has never been locked... */
-	if (G_UNLIKELY (mon == NULL)) {
-		mono_monitor_allocator_lock ();
-		mon = mon_new (id);
-		if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, mon, NULL) == NULL) {
-			mono_gc_weak_link_add (&mon->data, obj, FALSE);
-			mono_monitor_allocator_unlock ();
-			/* Successfully locked */
-			return 1;
-		} else {
-#ifdef HAVE_MOVING_COLLECTOR
-			LockWord lw;
-			lw.sync = obj->synchronisation;
-			if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-				MonoThreadsSync *oldlw = lw.sync;
-				/* move the already calculated hash */
-				mon->hash_code = lw.lock_word >> LOCK_WORD_HASH_SHIFT;
-				lw.sync = mon;
-				lw.lock_word |= LOCK_WORD_FAT_HASH;
-				if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, lw.sync, oldlw) == oldlw) {
-					mono_gc_weak_link_add (&mon->data, obj, FALSE);
-					mono_monitor_allocator_unlock ();
-					/* Successfully locked */
-					return 1;
-				} else {
-					mon_finalize (mon);
-					mono_monitor_allocator_unlock ();
-					goto retry;
-				}
-			} else if (lw.lock_word & LOCK_WORD_FAT_HASH) {
-				mon_finalize (mon);
-				mono_monitor_allocator_unlock ();
-				/* get the old lock without the fat hash bit */
-				lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-				mon = lw.sync;
-			} else {
-				mon_finalize (mon);
-				mono_monitor_allocator_unlock ();
-				mon = obj->synchronisation;
-			}
-#else
-			mon_finalize (mon);
-			mono_monitor_allocator_unlock ();
-			mon = obj->synchronisation;
-#endif
-		}
-	} else {
-#ifdef HAVE_MOVING_COLLECTOR
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-			MonoThreadsSync *oldlw = lw.sync;
-			mono_monitor_allocator_lock ();
-			mon = mon_new (id);
-			/* move the already calculated hash */
-			mon->hash_code = lw.lock_word >> LOCK_WORD_HASH_SHIFT;
-			lw.sync = mon;
-			lw.lock_word |= LOCK_WORD_FAT_HASH;
-			if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, lw.sync, oldlw) == oldlw) {
-				mono_gc_weak_link_add (&mon->data, obj, TRUE);
-				mono_monitor_allocator_unlock ();
-				/* Successfully locked */
-				return 1;
-			} else {
-				mon_finalize (mon);
-				mono_monitor_allocator_unlock ();
-				goto retry;
-			}
-		}
-#endif
-	}
+	mono_monitor_ensure_synchronized (lw, id);
 
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
+	if (G_UNLIKELY (lw.lock_word & LOCK_WORD_INFLATED)) {
 		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
+		mono_monitor_exit_inflated (obj, lw.sync);
+	} else {
+		mono_monitor_exit_flat (obj, lw);
 	}
-#endif
+}
 
-	/* If the object has previously been locked but isn't now... */
+/* 
+ * If allow_interruption == TRUE, the method will be interrupted if abort or suspend
+ * is requested. In this case it returns -1.
+ */
+static inline gint32 
+mono_monitor_try_enter_inflated (MonoObject *obj, MonoThreadsSync *mon, guint32 id, 
+											guint32 ms, gboolean allow_interruption)
+{	
+	MonoInternalThread *thread;
+	HANDLE sem;
+	guint32 then;
+	guint32 waitms;	
+	guint32 ret;
 
-	/* This case differs from Dice's case 3 because we don't
-	 * deflate locks or cache unused lock records
-	 */
-	if (G_LIKELY (mon->owner == 0)) {
-		/* Try to install our ID in the owner field, nest
-		 * should have been left at 1 by the previous unlock
-		 * operation
-		 */
-		if (G_LIKELY (InterlockedCompareExchangePointer ((gpointer *)&mon->owner, (gpointer)id, 0) == 0)) {
-			/* Success */
-			g_assert (mon->nest == 1);
-			return 1;
-		} else {
-			/* Trumped again! */
-			goto retry;
-		}
-	}
-
-	/* If the object is currently locked by this thread... */
-	if (mon->owner == id) {
-		mon->nest++;
+	if (G_LIKELY (mon->owner == 0 && InterlockedCompareExchange (&mon->owner, id, 0) == 0)) {
 		return 1;
 	}
-
-	/* The object must be locked by someone else... */
+	
+	if (mon->owner == id) {
+		mon->nest += 1;
+		return 1;
+	}
+	
 	mono_perfcounters->thread_contentions++;
-
-	/* If ms is 0 we don't block, but just fail straight away */
-	if (ms == 0) {
-		LOCK_DEBUG (g_message ("%s: (%d) timed out, returning FALSE", __func__, id));
+		
+	if (G_UNLIKELY (ms == 0)) {
+		LOCK_DEBUG (g_message ("%s: (%d) timed out, returning FALSE", __func__, mono_thread_info_get_small_id ()));
 		return 0;
 	}
 
 	mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_CONTENTION);
-
-	/* The slow path begins here. */
-retry_contended:
-	/* a small amount of duplicated code, but it allows us to insert the profiler
-	 * callbacks without impacting the fast path: from here on we don't need to go back to the
-	 * retry label, but to retry_contended. At this point mon is already installed in the object
-	 * header.
+	
+	/*
+	 * Create the semaphore if necessary.
 	 */
-	/* This case differs from Dice's case 3 because we don't
-	 * deflate locks or cache unused lock records
-	 */
-	if (G_LIKELY (mon->owner == 0)) {
-		/* Try to install our ID in the owner field, nest
-		* should have been left at 1 by the previous unlock
-		* operation
-		*/
-		if (G_LIKELY (InterlockedCompareExchangePointer ((gpointer *)&mon->owner, (gpointer)id, 0) == 0)) {
-			/* Success */
-			g_assert (mon->nest == 1);
-			mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
-			return 1;
-		}
-	}
 
-	/* If the object is currently locked by this thread... */
-	if (mon->owner == id) {
-		mon->nest++;
-		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
-		return 1;
-	}
-
-	/* We need to make sure there's a semaphore handle (creating it if
-	 * necessary), and block on it
-	 */
 	if (mon->entry_sem == NULL) {
-		/* Create the semaphore */
 		sem = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
 		g_assert (sem != NULL);
 		if (InterlockedCompareExchangePointer ((gpointer*)&mon->entry_sem, sem, NULL) != NULL) {
-			/* Someone else just put a handle here */
 			CloseHandle (sem);
 		}
 	}
+
+	then = mono_msec_ticks ();
+
+retry:
+	if (G_LIKELY (mon->owner == 0 && InterlockedCompareExchange (&mon->owner, id, 0) == 0)) {
+		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+		return 1;
+	} 
 	
 	/* If we need to time out, record a timestamp and adjust ms,
-	 * because WaitForSingleObject doesn't tell us how long it
-	 * waited for.
-	 *
-	 * Don't block forever here, because theres a chance the owner
-	 * thread released the lock while we were creating the
-	 * semaphore: we would not get the wakeup.  Using the event
-	 * handle technique from pulse/wait would involve locking the
-	 * lock struct and therefore slowing down the fast path.
-	 */
+		* because WaitForSingleObject doesn't tell us how long it
+		* waited for.
+		*
+		* Don't block forever here, because theres a chance the owner
+		* thread released the lock while we were creating the
+		* semaphore: we would not get the wakeup.  Using the event
+		* handle technique from pulse/wait would involve locking the
+		* lock struct and therefore slowing down the fast path.
+		*/
+
 	if (ms != INFINITE) {
-		then = mono_msec_ticks ();
 		if (ms < 100) {
 			waitms = ms;
 		} else {
@@ -609,53 +491,46 @@ retry_contended:
 	} else {
 		waitms = 100;
 	}
-	
+
 	InterlockedIncrement (&mon->entry_count);
 
 	mono_perfcounters->thread_queue_len++;
 	mono_perfcounters->thread_queue_max++;
-	thread = mono_thread_internal_current ();
 
+	thread = mono_thread_current ();
+		
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
 	/*
 	 * We pass TRUE instead of allow_interruption since we have to check for the
 	 * StopRequested case below.
 	 */
+		
 	ret = WaitForSingleObjectEx (mon->entry_sem, waitms, TRUE);
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	InterlockedDecrement (&mon->entry_count);
+		
 	mono_perfcounters->thread_queue_len--;
 
 	if (ms != INFINITE) {
-		now = mono_msec_ticks ();
-		
-		if (now < then) {
-			/* The counter must have wrapped around */
-			LOCK_DEBUG (g_message ("%s: wrapped around! now=0x%x then=0x%x", __func__, now, then));
-			
-			now += (0xffffffff - then);
-			then = 0;
+      guint32 now = mono_msec_ticks ();
+      guint32 elapsed = now == then ? 1 : now - then;
+		if (ms <= elapsed) {
+         ms = 0;
+    } else {
+         ms -= elapsed;
+		}
 
-			LOCK_DEBUG (g_message ("%s: wrap rejig: now=0x%x then=0x%x delta=0x%x", __func__, now, then, now-then));
-		}
-		
-		delta = now - then;
-		if (delta >= ms) {
-			ms = 0;
-		} else {
-			ms -= delta;
-		}
+		then = now;
 
 		if ((ret == WAIT_TIMEOUT || (ret == WAIT_IO_COMPLETION && !allow_interruption)) && ms > 0) {
-			/* More time left */
-			goto retry_contended;
+			goto retry;
 		}
 	} else {
 		if (ret == WAIT_TIMEOUT || (ret == WAIT_IO_COMPLETION && !allow_interruption)) {
-			if (ret == WAIT_IO_COMPLETION && (mono_thread_test_state (mono_thread_internal_current (), (ThreadState_StopRequested|ThreadState_SuspendRequested)))) {
+			if (ret == WAIT_IO_COMPLETION && (mono_thread_test_state (thread, (ThreadState_StopRequested|ThreadState_SuspendRequested)))) {
 				/* 
 				 * We have to obey a stop/suspend request even if 
 				 * allow_interruption is FALSE to avoid hangs at shutdown.
@@ -664,24 +539,248 @@ retry_contended:
 				return -1;
 			}
 			/* Infinite wait, so just try again */
-			goto retry_contended;
+			goto retry;
 		}
 	}
 	
 	if (ret == WAIT_OBJECT_0) {
-		/* retry from the top */
-		goto retry_contended;
+		goto retry;
 	}
 
 	/* We must have timed out */
-	LOCK_DEBUG (g_message ("%s: (%d) timed out waiting, returning FALSE", __func__, id));
+	LOCK_DEBUG (g_message ("%s: (%d) timed out waiting, returning FALSE", __func__, mono_thread_info_get_small_id ()));
 
 	mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_FAIL);
 
-	if (ret == WAIT_IO_COMPLETION)
-		return -1;
-	else 
-		return 0;
+	return ret == WAIT_IO_COMPLETION ? -1 : 0;
+}
+
+/*
+ * Returns with the monitor lock held.
+ */
+static inline gint32 
+mono_monitor_inflate (MonoObject *obj, int id, guint32 ms, gboolean allow_interruption)
+{
+	LockWord lw;
+	MonoThreadsSync *mon;
+	gboolean locked;
+	gboolean monitor_removed;
+	guint32 then;
+	guint32 ret;
+
+	LOCK_DEBUG (g_message ("%s: (%d) Inflating lock object %p", __func__, mono_thread_info_get_small_id (), obj));
+
+	/*
+	 * Allocate a lock record and register the object in the monitor table.
+	 */
+
+	mono_monitor_allocator_lock ();		
+	if ((locked = ((mon = (MonoThreadsSync *)g_hash_table_lookup (monitor_table, obj)) == NULL))) {
+		mon = mon_new (id);
+		g_hash_table_insert (monitor_table, obj, mon); 
+		mon->nest = 1;
+	} else {
+		mon->nest += 1;
+	}
+	mono_monitor_allocator_unlock ();
+
+	/*
+	 * Check if the monitor is already inflated and if we hold the correct one.
+	 */
+
+	lw.sync = obj->synchronisation;
+	
+	if (lw.lock_word & LOCK_WORD_INFLATED) {
+		lw.lock_word &= ~LOCK_WORD_STATUS_BITS;
+		if (lw.sync != mon) {
+			mono_monitor_allocator_lock ();
+			if (--mon->nest == 0) {
+				monitor_removed = g_hash_table_remove (monitor_table, obj);
+				g_assert (monitor_removed);
+				mon_finalize (mon);
+			}
+			mono_monitor_allocator_unlock ();
+		}
+
+		return mono_monitor_try_enter_inflated (obj, lw.sync, id, ms, allow_interruption);
+	}
+
+	/*
+	 * Wait for the lock to be released.
+	 */
+
+	then = ms != INFINITE ? mono_msec_ticks () : 0;
+
+	if (!locked) {
+		if ((ret = mono_monitor_try_enter_inflated (obj, mon, id, ms, allow_interruption)) != 1) {
+			goto fail;
+		}
+		lw.sync = obj->synchronisation;
+		if (lw.lock_word & LOCK_WORD_INFLATED) {
+			return 1;
+		}
+	}
+
+	do {
+
+		/*
+		 * Check if the lock can be acquired and build the new lock word. We do
+		 * the latter inside the loop as a kind of backoff.
+		 */
+
+		if (lw.lock_word == 0 || (lw.lock_word & LOCK_WORD_THIN_HASH) != 0) {
+			LockWord nlw;
+			nlw.sync = mon;
+			nlw.lock_word |= LOCK_WORD_INFLATED;
+			
+#ifdef HAVE_MOVING_COLLECTOR
+			if (lw.lock_word & LOCK_WORD_THIN_HASH) {
+				nlw.lock_word |= LOCK_WORD_THIN_HASH;
+				mon->hash_code = (unsigned int)lw.lock_word >> LOCK_WORD_HASH_SHIFT;
+			}
+#endif
+			if (InterlockedCompareExchangePointer ((gpointer *)&obj->synchronisation, nlw.sync, lw.sync) == lw.sync) {
+
+				/*
+				 * The lock is inflated. Now we can remove the object from the monitor table.
+				 */
+
+				mono_gc_weak_link_add (&mon->data, obj, FALSE);
+
+				mono_monitor_allocator_lock ();
+				mon->nest = 0;
+				monitor_removed = g_hash_table_remove (monitor_table, obj);
+				g_assert (monitor_removed);
+				mono_monitor_allocator_unlock ();
+
+				LOCK_DEBUG (g_message ("%s: (%d) Inflated lock object %p to mon %p (%d)", __func__, mono_thread_info_get_small_id (), obj, mon, mon->owner));
+				return 1;
+			}
+		}
+
+#ifdef HOST_WIN32
+		SwitchToThread ();
+#else
+		sched_yield ();
+#endif
+
+		if (ms != INFINITE) {
+			int now = mono_msec_ticks ();
+			int elapsed = now == then ? 1 : now - then;
+			if (ms <= elapsed) {
+				mono_monitor_exit_inflated (obj, mon);
+				ret = 0;
+				goto fail;
+			} else {
+				ms -= elapsed;
+			}
+
+			then = now;
+		}
+
+		lw.sync = obj->synchronisation;
+	} while (TRUE);
+	
+fail:
+	mono_monitor_allocator_lock ();
+	
+	lw.sync = obj->synchronisation;
+	
+	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0 && --mon->nest == 0) {
+		monitor_removed = g_hash_table_remove (monitor_table, obj);
+		g_assert (monitor_removed);
+	}
+
+	mono_monitor_allocator_unlock ();
+
+	LOCK_DEBUG (g_message ("%s: (%d) Failed to inflated lock object %p", __func__, mono_thread_info_get_small_id (), obj));
+	return ret;
+}
+
+static inline gboolean
+mono_monitor_inflate_owned (MonoObject *obj, int id)
+{
+	LockWord lw;
+	guint32 nest;
+	guint32 ret;
+
+	LOCK_DEBUG (g_message("%s: (%d) Inflating lock %p owned by the current thread", __func__, id, obj));
+
+	lw.sync = obj->synchronisation;
+	nest = (lw.lock_word & LOCK_WORD_NEST_MASK) >> LOCK_WORD_NEST_SHIFT;
+	
+	obj->synchronisation = 0;
+
+	/*
+	 * We must ensure that we regain ownership of the monitor.
+	 */
+	
+	while ((ret = mono_monitor_inflate (obj, id, INFINITE, FALSE)) == -1) {
+		if (mono_threads_is_shutting_down ()) {
+			return FALSE;
+		}
+	}
+
+	lw.sync = obj->synchronisation;
+	lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+	lw.sync->nest = nest;
+
+	LOCK_DEBUG (g_message("%s: (%d) Regained ownership of lock %p (%d)", __func__, mono_thread_info_get_small_id (), obj, lw.sync->owner));
+
+	if (ret == -1) {
+		mono_thread_interruption_checkpoint ();
+	}
+
+	return TRUE;
+}
+
+static inline gint32 
+mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_interruption)
+{
+	LockWord lw;
+	int id;
+
+	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, mono_thread_info_get_small_id (), obj, ms));
+
+	if (G_UNLIKELY (!obj)) {
+		mono_raise_exception (mono_get_exception_argument_null ("obj"));
+	}
+
+	lw.sync = obj->synchronisation;
+	id = mono_thread_info_get_small_id ();
+
+	if (G_LIKELY (lw.lock_word == 0)) {
+		LockWord nlw;
+		nlw.lock_word = id << LOCK_WORD_OWNER_SHIFT;
+			
+		if (InterlockedCompareExchangePointer ((gpointer *)&obj->synchronisation, nlw.sync, NULL) == NULL) {
+			return 1;
+		}
+		lw.sync = obj->synchronisation;
+	} else if ((lw.lock_word & LOCK_WORD_BITS_MASK) == 0 && ((unsigned int)lw.lock_word >> LOCK_WORD_OWNER_SHIFT) == id) {
+		if ((lw.lock_word & LOCK_WORD_NEST_MASK) == LOCK_WORD_NEST_MASK) {
+			mono_monitor_inflate_owned (obj, id);
+			lw.sync = obj->synchronisation;
+			lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+			lw.sync->nest += 1;
+		} else {
+			lw.lock_word += 1 << LOCK_WORD_NEST_SHIFT;
+			obj->synchronisation = lw.sync;
+		}
+		return 1;
+	} 
+
+	if (lw.lock_word & LOCK_WORD_INFLATED) {
+		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+		return mono_monitor_try_enter_inflated (obj, lw.sync, id, ms, allow_interruption);
+	}
+
+	/*
+	 * Either there's contention for the lock or the lock word contains the hash
+	 * code. Either way, inflate the monitor.
+	 */
+
+	return mono_monitor_inflate (obj, id, ms, allow_interruption);
 }
 
 gboolean 
@@ -696,145 +795,196 @@ mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 	return mono_monitor_try_enter_internal (obj, ms, FALSE) == 1;
 }
 
-void
-mono_monitor_exit (MonoObject *obj)
+/*
+ * mono_object_hash:
+ * @obj: an object
+ *
+ * Calculate a hash code for @obj that is constant while @obj is alive.
+ */
+int
+mono_object_hash (MonoObject* obj)
 {
-	MonoThreadsSync *mon;
-	guint32 nest;
-	
-	LOCK_DEBUG (g_message ("%s: (%d) Unlocking %p", __func__, GetCurrentThreadId (), obj));
-
-	if (G_UNLIKELY (!obj)) {
-		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-		return;
-	}
-
-	mon = obj->synchronisation;
-
 #ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH)
-			return;
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
-	}
-#endif
-	if (G_UNLIKELY (mon == NULL)) {
-		/* No one ever used Enter. Just ignore the Exit request as MS does */
-		return;
-	}
-	if (G_UNLIKELY (mon->owner != GetCurrentThreadId ())) {
-		return;
-	}
-	
-	nest = mon->nest - 1;
-	if (nest == 0) {
-		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now unlocked", __func__, GetCurrentThreadId (), obj));
-	
-		/* object is now unlocked, leave nest==1 so we don't
-		 * need to set it when the lock is reacquired
-		 */
-		mon->owner = 0;
+	LockWord lw;
+	unsigned int hash;
 
-		/* Do the wakeup stuff.  It's possible that the last
-		 * blocking thread gave up waiting just before we
-		 * release the semaphore resulting in a futile wakeup
-		 * next time there's contention for this object, but
-		 * it means we don't have to waste time locking the
-		 * struct.
-		 */
-		if (mon->entry_count > 0) {
-			ReleaseSemaphore (mon->entry_sem, 1, NULL);
-		}
-	} else {
-		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now locked %d times", __func__, GetCurrentThreadId (), obj, nest));
-		mon->nest = nest;
+	if (!obj) {
+		return 0;
 	}
+
+	lw.sync = obj->synchronisation;
+	
+	if (lw.lock_word & LOCK_WORD_THIN_HASH) {
+		/*g_print ("fast thin hash %d for obj %p store\n", (unsigned int)lw.lock_word >> LOCK_WORD_HASH_SHIFT, obj);*/
+		return (unsigned int)lw.lock_word >> LOCK_WORD_HASH_SHIFT;
+	}
+
+	if (lw.lock_word & LOCK_WORD_FAT_HASH) {
+		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+		/*g_print ("fast fat hash %d for obj %p store\n", lw.sync->hash_code, obj);*/
+		return lw.sync->hash_code;
+	}
+
+	/*
+	 * Compute the 30-bit hash.
+	 */
+
+	hash = (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
+	hash &= ~(LOCK_WORD_BITS_MASK << 30);
+
+	/*
+	 * While we are inside this function, the GC will keep this object pinned,
+	 * since we are in the unmanaged stack. Thanks to this and to the hash
+	 * function that depends only on the address, we can ignore the races if
+	 * another thread computes the hash at the same time, because it'll end up
+	 * with the same value.
+	 */	
+	
+	if (lw.lock_word == 0) {
+		/*g_print ("storing thin hash code %d for obj %p\n", hash, obj);*/
+			
+		lw.lock_word = LOCK_WORD_THIN_HASH | (hash << LOCK_WORD_HASH_SHIFT);
+		if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, lw.sync, NULL) == NULL) {
+			return hash;
+		}
+
+		/*g_print ("failed store\n");*/
+			
+		lw.sync = obj->synchronisation;
+
+		if (lw.lock_word & LOCK_WORD_THIN_HASH) {
+			return hash;
+		}
+
+		/* 
+		 * Someone acquired or inflated the lock.
+		 */
+	}	
+	 
+	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0) {
+	
+		/*
+		 * The lock is owned by some thread, so we must inflate it. Note that it's
+		 * not common to both lock an object and ask for its hash code.
+		 */
+
+		gboolean locked;
+		int id = mono_thread_info_get_small_id ();
+
+		if ((locked = ((unsigned int)lw.lock_word >> LOCK_WORD_OWNER_SHIFT) == id)) {
+			if (!mono_monitor_inflate_owned (obj, id)) {
+				return 0;
+			}
+		} else {
+			while (mono_monitor_inflate (obj, id, INFINITE, FALSE) == -1) {
+				/* 
+				 * FIXME: Don't raise a ThreadInterruptedException ?
+				 */
+				 
+				mono_thread_interruption_checkpoint ();
+			}
+		}
+
+		lw.sync = obj->synchronisation;
+		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+
+		if (!locked) {
+			mono_monitor_exit_inflated (obj, lw.sync);
+		}		
+	}
+
+	/*g_print ("storing hash code %d for obj %p in sync %p\n", hash, obj, lw.sync);*/
+
+	lw.sync->hash_code = hash;
+	lw.lock_word |= LOCK_WORD_FAT_HASH;
+
+	/* 
+	 * This is safe while we don't deflate locks. 
+	 */
+			
+	obj->synchronisation = lw.sync;
+	return hash;
+#else
+	/*
+    * Wang's address-based hash function:
+	 *   http://www.concentric.net/~Ttwang/tech/addrhash.htm
+	 */
+	return (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
+#endif
 }
 
 void**
 mono_monitor_get_object_monitor_weak_link (MonoObject *object)
 {
 	LockWord lw;
-	MonoThreadsSync *sync = NULL;
 
 	lw.sync = object->synchronisation;
-	if (lw.lock_word & LOCK_WORD_FAT_HASH) {
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		sync = lw.sync;
-	} else if (!(lw.lock_word & LOCK_WORD_THIN_HASH)) {
-		sync = lw.sync;
-	}
 
-	if (sync && sync->data)
-		return &sync->data;
+	if (lw.lock_word & LOCK_WORD_INFLATED) {
+		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+		return (void **)&lw.sync->data;
+	} 
+
 	return NULL;
 }
 
 static void
-emit_obj_syncp_check (MonoMethodBuilder *mb, int syncp_loc, int *obj_null_branch, int *true_locktaken_branch, int *syncp_true_false_branch,
-	int *thin_hash_branch, gboolean branch_on_true)
+emit_obj_syncp_check (MonoMethodBuilder *mb, int thread_tls_offset, int syncp_add_loc, 
+							 int syncp_loc, int tid_loc, int *obj_null_branch, int *thread_info_null_branch)
 {
 	/*
-	  ldarg		0							obj
-	  brfalse.s	obj_null
+		ldarg				0															obj
+		brfalse.s		obj_null
 	*/
 
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
 	*obj_null_branch = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 
 	/*
-	  ldarg.1
-	  ldind.i1
-	  brtrue.s true_locktaken
-	*/
-	if (true_locktaken_branch) {
-		mono_mb_emit_byte (mb, CEE_LDARG_1);
-		mono_mb_emit_byte (mb, CEE_LDIND_I1);
-		*true_locktaken_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
-	}
-
-	/*
-	  ldarg		0							obj
-	  conv.i								objp
-	  ldc.i4	G_STRUCT_OFFSET(MonoObject, synchronisation)		objp off
-	  add									&syncp
-	  ldind.i								syncp
-	  stloc		syncp
-	  ldloc		syncp							syncp
-	  brtrue/false.s	syncp_true_false
-	*/
+	 	ldarg				0															obj
+		conv.i																		objp
+		ldc.i4			G_STRUCT_OFFSET(MonoObject, synchronisation)	objp off
+		add																			&syncp
+		stloc				&syncp
+		ldloc				&syncp													&syncp
+		ldind.i																		syncp
+		stloc				syncp
+	 */
 
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
 	mono_mb_emit_byte (mb, CEE_CONV_I);
 	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoObject, synchronisation));
 	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_stloc (mb, syncp_add_loc);
+	mono_mb_emit_ldloc (mb, syncp_add_loc);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);
 	mono_mb_emit_stloc (mb, syncp_loc);
 
-	
-	if (mono_gc_is_moving ()) {
-		/*check for a thin hash*/
-		mono_mb_emit_ldloc (mb, syncp_loc);
-		mono_mb_emit_icon (mb, 0x01);
-		mono_mb_emit_byte (mb, CEE_CONV_I);
-		mono_mb_emit_byte (mb, CEE_AND);
-		*thin_hash_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	/*
+	 	mono.tls			thread_tls_offset										threadp
+		ldc.i4			G_STRUCT_OFFSET(MonoInternalThread, thread_info) threadp off
+		add																			&thread_info
+		ldind.i																		thread_info
+		dup																			thread_info thread_info
+		brfalse.s		thread_info_null										thread_info
+		ldc.i4			G_STRUCT_OFFSET(MonoThreadInfo, small_id)		thread_info off
+		add																			&tid
+		ldind.i4																		tid
+		stloc				tid
+	 */
 
-		/*clear gc bits*/
-		mono_mb_emit_ldloc (mb, syncp_loc);
-		mono_mb_emit_icon (mb, ~0x3);
-		mono_mb_emit_byte (mb, CEE_CONV_I);
-		mono_mb_emit_byte (mb, CEE_AND);
-		mono_mb_emit_stloc (mb, syncp_loc);
-	} else {
-		*thin_hash_branch = 0;
-	}
-
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	*syncp_true_false_branch = mono_mb_emit_short_branch (mb, branch_on_true ? CEE_BRTRUE_S : CEE_BRFALSE_S);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_TLS);
+	mono_mb_emit_i4 (mb, thread_tls_offset);
+	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoInternalThread, thread_info));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_byte (mb, CEE_DUP);
+	*thread_info_null_branch = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S); 
+	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadInfo, small_id));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_stloc (mb, tid_loc);
 }
 
 static MonoMethod* monitor_il_fastpaths[3];
@@ -856,7 +1006,6 @@ enum {
 	FASTPATH_EXIT
 };
 
-
 static MonoMethod*
 register_fastpath (MonoMethod *method, int idx)
 {
@@ -869,20 +1018,23 @@ static MonoMethod*
 mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 {
 	MonoMethodBuilder *mb;
-	MonoMethod *res;
+	MonoMethod *ret;
 	static MonoMethod *compare_exchange_method;
-	int obj_null_branch, true_locktaken_branch, syncp_null_branch, has_owner_branch, other_owner_branch, tid_branch, thin_hash_branch;
-	int tid_loc, syncp_loc, owner_loc;
+	int true_locktaken_branch, obj_null_branch, thread_info_null_branch, not_free_branch,
+		 contention_branch, inflated_branch, other_owner_branch, max_nest_branch;
+	int syncp_add_loc, syncp_loc, tid_loc;
 	int thread_tls_offset;
 	gboolean is_v4 = mono_method_signature (monitor_enter_method)->param_count == 2;
 	int fast_path_idx = is_v4 ? FASTPATH_ENTERV4 : FASTPATH_ENTER;
 
 	thread_tls_offset = mono_thread_get_tls_offset ();
-	if (thread_tls_offset == -1)
+	if (thread_tls_offset == -1) {
 		return NULL;
+	}
 
-	if (monitor_il_fastpaths [fast_path_idx])
+	if (monitor_il_fastpaths [fast_path_idx]) {
 		return monitor_il_fastpaths [fast_path_idx];
+	}
 
 	if (!compare_exchange_method) {
 		MonoMethodDesc *desc;
@@ -893,70 +1045,57 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 		compare_exchange_method = mono_method_desc_search_in_class (desc, class);
 		mono_method_desc_free (desc);
 
-		if (!compare_exchange_method)
+		if (!compare_exchange_method) {
 			return NULL;
+		}
 	}
 
 	mb = mono_mb_new (mono_defaults.monitor_class, is_v4 ? "FastMonitorEnterV4" : "FastMonitorEnter", MONO_WRAPPER_UNKNOWN);
 
 	mb->method->slot = -1;
 	mb->method->flags = METHOD_ATTRIBUTE_PUBLIC | METHOD_ATTRIBUTE_STATIC |
-		METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
+							  METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
 
-	tid_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	syncp_add_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	syncp_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	owner_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-
-	emit_obj_syncp_check (mb, syncp_loc, &obj_null_branch, &true_locktaken_branch, &syncp_null_branch, &thin_hash_branch, FALSE);
+	tid_loc = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 
 	/*
-	  mono. tls	thread_tls_offset					threadp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThread, tid)			threadp off
-	  add									&tid
-	  ldind.i								tid
-	  stloc		tid
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, owner)			syncp off
-	  add									&owner
-	  ldind.i								owner
-	  stloc		owner
-	  ldloc		owner							owner
-	  brtrue.s	tid
-	*/
+	  	ldarg.1																		&lockTaken
+		ldind.i1																		lockTaken
+		brtrue.s	 		true_locktaken			
+	 */
 
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_TLS);
-	mono_mb_emit_i4 (mb, thread_tls_offset);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoInternalThread, tid));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_LDIND_I);
-	mono_mb_emit_stloc (mb, tid_loc);
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, owner));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_LDIND_I);
-	mono_mb_emit_stloc (mb, owner_loc);
-	mono_mb_emit_ldloc (mb, owner_loc);
-	tid_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	if (is_v4) {
+		mono_mb_emit_byte (mb, CEE_LDARG_1);
+		mono_mb_emit_byte (mb, CEE_LDIND_I1);
+		true_locktaken_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	}
+	
+	emit_obj_syncp_check (mb, thread_tls_offset, syncp_add_loc, syncp_loc, tid_loc, &obj_null_branch, &thread_info_null_branch);
 
 	/*
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, owner)			syncp off
-	  add									&owner
-	  ldloc		tid							&owner tid
-	  ldc.i4	0							&owner tid 0
-	  call		System.Threading.Interlocked.CompareExchange		oldowner
-	  brtrue.s	has_owner
-	  ret
-	*/
+	 	ldloc				syncp														syncp
+		brtrue.s			not_free 
+		ldloc				&syncp													&syncp			
+		ldloc				tid														&syncp tid
+		ldc.i4.s 		LOCK_WORD_OWNER_SHIFT								&syncp tid LOCK_WORD_OWNER_SHIFT
+		shl 																			&syncp (tid << LOCK_WORD_OWNER_SHIFT)
+		ldc.i4			0															&syncp (tid << LOCK_WORD_OWNER_SHIFT) 0
+		call				System.Threading.Interlocked.CompareExchange	owner
+		brtrue.s			contention
+		ret
+	 */
 
 	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, owner));
-	mono_mb_emit_byte (mb, CEE_ADD);
+	not_free_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	mono_mb_emit_ldloc (mb, syncp_add_loc);
 	mono_mb_emit_ldloc (mb, tid_loc);
+	mono_mb_emit_icon (mb, LOCK_WORD_OWNER_SHIFT);
+	mono_mb_emit_byte (mb, CEE_SHL);
 	mono_mb_emit_byte (mb, CEE_LDC_I4_0);
 	mono_mb_emit_managed_call (mb, compare_exchange_method, NULL);
-	has_owner_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	contention_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
 	if (is_v4) {
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
@@ -966,34 +1105,50 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	mono_mb_emit_byte (mb, CEE_RET);
 
 	/*
-	 tid:
-	  ldloc		owner							owner
-	  ldloc		tid							owner tid
-	  brne.s	other_owner
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, nest)			syncp off
-	  add									&nest
-	  dup									&nest &nest
-	  ldind.i4								&nest nest
-	  ldc.i4	1							&nest nest 1
-	  add									&nest nest+
-	  stind.i4
-	  ret
-	*/
+	not_free:
+		ldloc				syncp														syncp													
+		ldc.i4.s			LOCK_WORD_BITS_MASK									syncp LOCK_WORD_BITS_MASK
+		and																			(syncp & LOCK_WORD_BITS_MASK)
+		brtrue.s			inflated
+		ldloc				syncp														syncp													
+		ldc.i4.s			LOCK_WORD_OWNER_SHIFT								syncp LOCK_WORD_OWNER_SHIFT
+		shr.un																		(syncp >> LOCK_WORD_OWNER_SHIFT)
+		ldloc				tid														(syncp >> LOCK_WORD_OWNER_SHIFT) tid
+		bne.un.s			other_owner																		
+		ldc.i4.s 		LOCK_WORD_NEST_MASK									LOCK_WORD_NEST_MASK
+		dup																			LOCK_WORD_NEST_MASK LOCK_WORD_NEST_MASK
+		ldloc				syncp														LOCK_WORD_NEST_MASK LOCK_WORD_NEST_MASK syncp		
+		and																			LOCK_WORD_NEST_MASK (syncp & LOCK_WORD_NEST_MASK)
+		beq.s 			max_nest																			
+		ldloc				&syncp													&syncp																			
+		ldloc				syncp														&syncp syncp
+		ldc.i4 			1 << LOCK_WORD_NEST_SHIFT                    &syncp syncp (1 << LOCK_WORD_NEST_SHIFT)
+		add 																			&syncp (syncp + (1 << LOCK_WORD_NEST_SHIFT))
+		stind.i
+		ret
+	 */
 
-	mono_mb_patch_short_branch (mb, tid_branch);
-	mono_mb_emit_ldloc (mb, owner_loc);
+	mono_mb_patch_short_branch (mb, not_free_branch);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, LOCK_WORD_BITS_MASK);
+	mono_mb_emit_byte (mb, CEE_AND);
+	inflated_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, LOCK_WORD_OWNER_SHIFT);
+	mono_mb_emit_byte (mb, CEE_SHR_UN);
 	mono_mb_emit_ldloc (mb, tid_loc);
 	other_owner_branch = mono_mb_emit_short_branch (mb, CEE_BNE_UN_S);
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, nest));
-	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_icon (mb, LOCK_WORD_NEST_MASK);
 	mono_mb_emit_byte (mb, CEE_DUP);
-	mono_mb_emit_byte (mb, CEE_LDIND_I4);
-	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_byte (mb, CEE_AND);
+	max_nest_branch = mono_mb_emit_short_branch (mb, CEE_BEQ_S);
+	mono_mb_emit_ldloc (mb, syncp_add_loc);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, 1 << LOCK_WORD_NEST_SHIFT);
 	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_STIND_I4);
-
+	mono_mb_emit_byte (mb, CEE_STIND_I);
+	
 	if (is_v4) {
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
 		mono_mb_emit_byte (mb, CEE_LDC_I4_1);
@@ -1003,182 +1158,142 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	mono_mb_emit_byte (mb, CEE_RET);
 
 	/*
-	 obj_null, syncp_null, has_owner, other_owner:
-	  ldarg		0							obj
-	  call		System.Threading.Monitor.Enter
+	thread_info_null:
+	  pop
+	true_locktaken, obj_null,  contention, inflated_branch, other_owner, max_nest:
+	  ldarg				0															obj
+	  call				System.Threading.Monitor.Enter
 	  ret
 	*/
 
-	if (thin_hash_branch)
-		mono_mb_patch_short_branch (mb, thin_hash_branch);
+	mono_mb_patch_short_branch (mb, thread_info_null_branch);
+	mono_mb_emit_byte (mb, CEE_POP);
+
+	if (is_v4) {
+		mono_mb_patch_short_branch (mb, true_locktaken_branch);
+	}
 	mono_mb_patch_short_branch (mb, obj_null_branch);
-	mono_mb_patch_short_branch (mb, syncp_null_branch);
-	mono_mb_patch_short_branch (mb, has_owner_branch);
+	mono_mb_patch_short_branch (mb, contention_branch);
+	mono_mb_patch_short_branch (mb, inflated_branch);
 	mono_mb_patch_short_branch (mb, other_owner_branch);
+	mono_mb_patch_short_branch (mb, max_nest_branch);
+
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
-	if (is_v4)
+	if (is_v4) {
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
+	}
 	mono_mb_emit_managed_call (mb, monitor_enter_method, NULL);
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_enter_method), 5), fast_path_idx);
+	ret = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_enter_method), 5), fast_path_idx);
 	mono_mb_free (mb);
-	return res;
+	return ret;
 }
 
 static MonoMethod*
 mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 {
 	MonoMethodBuilder *mb;
-	MonoMethod *res;
-	int obj_null_branch, has_waiting_branch, has_syncp_branch, owned_branch, nested_branch, thin_hash_branch;
+	MonoMethod *ret;
+	int obj_null_branch, thread_info_null_branch, inflated_branch, other_owner_branch, nested_branch, success_branch;
 	int thread_tls_offset;
-	int syncp_loc;
+	int syncp_add_loc, syncp_loc, tid_loc;
 
 	thread_tls_offset = mono_thread_get_tls_offset ();
-	if (thread_tls_offset == -1)
+	if (thread_tls_offset == -1) {
 		return NULL;
+	}
 
-	if (monitor_il_fastpaths [FASTPATH_EXIT])
+	if (monitor_il_fastpaths [FASTPATH_EXIT]) {
 		return monitor_il_fastpaths [FASTPATH_EXIT];
+	}
 
 	mb = mono_mb_new (mono_defaults.monitor_class, "FastMonitorExit", MONO_WRAPPER_UNKNOWN);
 
 	mb->method->slot = -1;
 	mb->method->flags = METHOD_ATTRIBUTE_PUBLIC | METHOD_ATTRIBUTE_STATIC |
-		METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
+							  METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
 
+	syncp_add_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	syncp_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-
-	emit_obj_syncp_check (mb, syncp_loc, &obj_null_branch, NULL, &has_syncp_branch, &thin_hash_branch, TRUE);
-
-	/*
-	  ret
-	*/
-
-	mono_mb_emit_byte (mb, CEE_RET);
+	tid_loc = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+	
+	emit_obj_syncp_check (mb, thread_tls_offset, syncp_add_loc, syncp_loc, tid_loc, &obj_null_branch, &thread_info_null_branch);
 
 	/*
-	 has_syncp:
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, owner)			syncp off
-	  add									&owner
-	  ldind.i								owner
-	  mono. tls	thread_tls_offset					owner threadp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThread, tid)			owner threadp off
-	  add									owner &tid
-	  ldind.i								owner tid
-	  beq.s		owned
-	*/
-
-	mono_mb_patch_short_branch (mb, has_syncp_branch);
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, owner));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_LDIND_I);
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_TLS);
-	mono_mb_emit_i4 (mb, thread_tls_offset);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoInternalThread, tid));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_LDIND_I);
-	owned_branch = mono_mb_emit_short_branch (mb, CEE_BEQ_S);
-
-	/*
-	  ret
-	*/
-
-	mono_mb_emit_byte (mb, CEE_RET);
-
-	/*
-	 owned:
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, nest)			syncp off
-	  add									&nest
-	  dup									&nest &nest
-	  ldind.i4								&nest nest
-	  dup									&nest nest nest
-	  ldc.i4	1							&nest nest nest 1
-	  bgt.un.s	nested							&nest nest
-	*/
-
-	mono_mb_patch_short_branch (mb, owned_branch);
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, nest));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_DUP);
-	mono_mb_emit_byte (mb, CEE_LDIND_I4);
-	mono_mb_emit_byte (mb, CEE_DUP);
-	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
-	nested_branch = mono_mb_emit_short_branch (mb, CEE_BGT_UN_S);
-
-	/*
-	  pop									&nest
-	  pop
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, entry_count)		syncp off
-	  add									&count
-	  ldind.i4								count
-	  brtrue.s	has_waiting
-	*/
-
-	mono_mb_emit_byte (mb, CEE_POP);
-	mono_mb_emit_byte (mb, CEE_POP);
-	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, entry_count));
-	mono_mb_emit_byte (mb, CEE_ADD);
-	mono_mb_emit_byte (mb, CEE_LDIND_I4);
-	has_waiting_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
-
-	/*
-	  ldloc		syncp							syncp
-	  ldc.i4	G_STRUCT_OFFSET(MonoThreadsSync, owner)			syncp off
-	  add									&owner
-	  ldnull								&owner 0
-	  stind.i
-	  ret
-	*/
+		ldloc				syncp														syncp													
+		ldc.i4.s			LOCK_WORD_BITS_MASK									syncp LOCK_WORD_BITS_MASK
+		and																			(syncp & LOCK_WORD_BITS_MASK)
+		brtrue.s			inflated
+		ldloc				syncp														syncp													
+		ldc.i4.s			LOCK_WORD_OWNER_SHIFT								syncp LOCK_WORD_OWNER_SHIFT
+		shr.un																		(syncp >> LOCK_WORD_OWNER_SHIFT)
+		ldloc				tid														(syncp >> LOCK_WORD_OWNER_SHIFT) tid
+		bne.un.s			other_owner	
+		ldloc				&syncp													&syncp	
+		ldloc				syncp														&syncp syncp		
+		ldc.i4.s 		LOCK_WORD_NEST_MASK									&syncp syncp LOCK_WORD_NEST_MASK
+		and																			&syncp (syncp & LOCK_WORD_NEST_MASK)
+		brtrue.s 		nested													&syncp				
+		ldc.i4			0															&syncp 0
+		br.s				success													&syncp 0
+	nested_branch:
+		ldloc				syncp														&syncp syncp
+		ldc.i4 			1 << LOCK_WORD_NEST_SHIFT                    &syncp syncp (1 << LOCK_WORD_NEST_SHIFT)
+		sub 																			&syncp (syncp - (1 << LOCK_WORD_NEST_SHIFT))
+	success_branch:
+		stind.i																		&syncp [0 | (syncp - (1 << LOCK_WORD_NEST_SHIFT))]
+		ret
+	 */
 
 	mono_mb_emit_ldloc (mb, syncp_loc);
-	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoThreadsSync, owner));
-	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_icon (mb, LOCK_WORD_BITS_MASK);
+	mono_mb_emit_byte (mb, CEE_AND);
+	inflated_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, LOCK_WORD_OWNER_SHIFT);
+	mono_mb_emit_byte (mb, CEE_SHR_UN);
+	mono_mb_emit_ldloc (mb, tid_loc);
+	other_owner_branch = mono_mb_emit_short_branch (mb, CEE_BNE_UN_S);
+	mono_mb_emit_ldloc (mb, syncp_add_loc);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, LOCK_WORD_NEST_MASK);
+	mono_mb_emit_byte (mb, CEE_AND);
+	nested_branch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 	mono_mb_emit_byte (mb, CEE_LDNULL);
+	success_branch = mono_mb_emit_short_branch (mb, CEE_BR_S);
+	mono_mb_patch_short_branch (mb, nested_branch);
+	mono_mb_emit_ldloc (mb, syncp_loc);
+	mono_mb_emit_icon (mb, 1 << LOCK_WORD_NEST_SHIFT);
+	mono_mb_emit_byte (mb, CEE_SUB);
+	mono_mb_patch_short_branch (mb, success_branch);
 	mono_mb_emit_byte (mb, CEE_STIND_I);
 	mono_mb_emit_byte (mb, CEE_RET);
-
+	
 	/*
-	 nested:
-	  ldc.i4	1							&nest nest 1
-	  sub									&nest nest-
-	  stind.i4
-	  ret
-	*/
-
-	mono_mb_patch_short_branch (mb, nested_branch);
-	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
-	mono_mb_emit_byte (mb, CEE_SUB);
-	mono_mb_emit_byte (mb, CEE_STIND_I4);
-	mono_mb_emit_byte (mb, CEE_RET);
-
-	/*
-	 obj_null, has_waiting:
-	  ldarg		0							obj
-	  call		System.Threading.Monitor.Exit
+	thread_info_null:
+	  pop
+	obj_null_branch, inflated_branch, other_owner_branch:
+	  ldarg				0															obj
+	  call				System.Threading.Monitor.Exit
 	  ret
 	 */
 
-	if (thin_hash_branch)
-		mono_mb_patch_short_branch (mb, thin_hash_branch);
+	mono_mb_patch_short_branch (mb, thread_info_null_branch);
+	mono_mb_emit_byte (mb, CEE_POP);
+
 	mono_mb_patch_short_branch (mb, obj_null_branch);
-	mono_mb_patch_short_branch (mb, has_waiting_branch);
+	mono_mb_patch_short_branch (mb, inflated_branch);
+	mono_mb_patch_short_branch (mb, other_owner_branch);
+
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
 	mono_mb_emit_managed_call (mb, monitor_exit_method, NULL);
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_exit_method), 5), FASTPATH_EXIT);
+	ret = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_exit_method), 5), FASTPATH_EXIT);
 	mono_mb_free (mb);
 
-	return res;
+	return ret;
 }
 
 MonoMethod*
@@ -1192,230 +1307,134 @@ mono_monitor_get_fast_path (MonoMethod *enter_or_exit)
 	return NULL;
 }
 
-/*
- * mono_monitor_threads_sync_member_offset:
- * @owner_offset: returns size and offset of the "owner" member
- * @nest_offset: returns size and offset of the "nest" member
- * @entry_count_offset: returns size and offset of the "entry_count" member
- *
- * Returns the offsets and sizes of three members of the
- * MonoThreadsSync struct.  The Monitor ASM fastpaths need this.
- */
-void
-mono_monitor_threads_sync_members_offset (int *owner_offset, int *nest_offset, int *entry_count_offset)
-{
-	MonoThreadsSync ts;
-
-#define ENCODE_OFF_SIZE(o,s)	(((o) << 8) | ((s) & 0xff))
-
-	*owner_offset = ENCODE_OFF_SIZE (G_STRUCT_OFFSET (MonoThreadsSync, owner), sizeof (ts.owner));
-	*nest_offset = ENCODE_OFF_SIZE (G_STRUCT_OFFSET (MonoThreadsSync, nest), sizeof (ts.nest));
-	*entry_count_offset = ENCODE_OFF_SIZE (G_STRUCT_OFFSET (MonoThreadsSync, entry_count), sizeof (ts.entry_count));
-}
-
 gboolean 
 ves_icall_System_Threading_Monitor_Monitor_try_enter (MonoObject *obj, guint32 ms)
 {
-	gint32 res;
+	gint32 ret;
 
 	do {
-		res = mono_monitor_try_enter_internal (obj, ms, TRUE);
-		if (res == -1)
+		ret = mono_monitor_try_enter_internal (obj, ms, TRUE);
+		if (ret == -1)
 			mono_thread_interruption_checkpoint ();
-	} while (res == -1);
+	} while (ret == -1);
 	
-	return res == 1;
+	return ret == 1;
 }
 
 void
 ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, char *lockTaken)
 {
-	gint32 res;
+	gint32 ret;
 	do {
-		res = mono_monitor_try_enter_internal (obj, ms, TRUE);
+		ret = mono_monitor_try_enter_internal (obj, ms, TRUE);
 		/*This means we got interrupted during the wait and didn't got the monitor.*/
-		if (res == -1)
+		if (ret == -1)
 			mono_thread_interruption_checkpoint ();
-	} while (res == -1);
+	} while (ret == -1);
 	/*It's safe to do it from here since interruption would happen only on the wrapper.*/
-	*lockTaken = res == 1;
+	*lockTaken = ret == 1;
 }
 
-gboolean 
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj)
-{
-	MonoThreadsSync *mon;
-	
-	LOCK_DEBUG (g_message ("%s: Testing if %p is owned by thread %d", __func__, obj, GetCurrentThreadId()));
-
-	mon = obj->synchronisation;
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH)
-			return FALSE;
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
-	}
-#endif
-	if (mon == NULL) {
-		return FALSE;
-	}
-	
-	if(mon->owner==GetCurrentThreadId ()) {
-		return(TRUE);
-	}
-	
-	return(FALSE);
-}
-
-gboolean 
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
-{
-	MonoThreadsSync *mon;
-
-	LOCK_DEBUG (g_message("%s: (%d) Testing if %p is owned by any thread", __func__, GetCurrentThreadId (), obj));
-	
-	mon = obj->synchronisation;
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH)
-			return FALSE;
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
-	}
-#endif
-	if (mon == NULL) {
-		return FALSE;
-	}
-	
-	if (mon->owner != 0) {
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-
-/* All wait list manipulation in the pulse, pulseall and wait
+/* 
+ * All wait list manipulation in the pulse, pulseall and wait
  * functions happens while the monitor lock is held, so we don't need
  * any extra struct locking
  */
-
 void
 ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 {
-	MonoThreadsSync *mon;
+	int id;
+	LockWord lw;
 	
-	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", __func__, GetCurrentThreadId (), obj));
+	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", __func__, mono_thread_info_get_small_id (), obj));
 	
-	mon = obj->synchronisation;
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-			mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-			return;
-		}
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
-	}
-#endif
-	if (mon == NULL) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-		return;
-	}
-	if (mon->owner != GetCurrentThreadId ()) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked by this thread"));
-		return;
+	id = mono_thread_info_get_small_id ();
+	lw.sync = obj->synchronisation;
+
+	mono_monitor_ensure_synchronized (lw, id);
+
+	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0) {
+		
+		/*
+		 * We assume that we're racing with a waiter, so we preemptively
+		 * inflate the monitor.
+		 */
+
+		mono_monitor_inflate_owned (obj, id);
+		lw.sync = obj->synchronisation;
 	}
 
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, GetCurrentThreadId (), g_slist_length (mon->wait_list)));
+	lw.lock_word &= ~LOCK_WORD_BITS_MASK;
 	
-	if (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, GetCurrentThreadId (), mon->wait_list->data));
+	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (lw.sync->wait_list)));
 	
-		SetEvent (mon->wait_list->data);
-		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
+	if (lw.sync->wait_list != NULL) {
+		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), lw.sync->wait_list->data));
+	
+		SetEvent (lw.sync->wait_list->data);
+		lw.sync->wait_list = g_slist_remove (lw.sync->wait_list, lw.sync->wait_list->data);
 	}
 }
 
 void
 ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
 {
-	MonoThreadsSync *mon;
+	int id;
+	LockWord lw;
 	
-	LOCK_DEBUG (g_message("%s: (%d) Pulsing all %p", __func__, GetCurrentThreadId (), obj));
+	LOCK_DEBUG (g_message("%s: (%d) Pulsing all %p", __func__, mono_thread_info_get_small_id (), obj));
 
-	mon = obj->synchronisation;
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-			mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-			return;
-		}
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
-	}
-#endif
-	if (mon == NULL) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-		return;
-	}
-	if (mon->owner != GetCurrentThreadId ()) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked by this thread"));
-		return;
-	}
+	id = mono_thread_info_get_small_id ();
+	lw.sync = obj->synchronisation;
 
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, GetCurrentThreadId (), g_slist_length (mon->wait_list)));
+	mono_monitor_ensure_synchronized (lw, id);
 
-	while (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, GetCurrentThreadId (), mon->wait_list->data));
+	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0) {
+		
+		/*
+		 * We assume that we're racing with a waiter, so we preemptively
+		 * inflate the monitor.
+		 */
+
+		mono_monitor_inflate_owned (obj, id);
+		lw.sync = obj->synchronisation;
+	}
 	
-		SetEvent (mon->wait_list->data);
-		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
+	lw.lock_word &= ~LOCK_WORD_BITS_MASK;
+
+	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (lw.sync->wait_list)));
+
+	while (lw.sync->wait_list != NULL) {
+		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), lw.sync->wait_list->data));
+	
+		SetEvent (lw.sync->wait_list->data);
+		lw.sync->wait_list = g_slist_remove (lw.sync->wait_list, lw.sync->wait_list->data);
 	}
 }
 
 gboolean
 ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 {
-	MonoThreadsSync *mon;
+	MonoInternalThread *thread;
+	int id;
+	LockWord lw;
 	HANDLE event;
 	guint32 nest;
 	guint32 ret;
-	gboolean success = FALSE;
-	gint32 regain;
-	MonoInternalThread *thread = mono_thread_internal_current ();
 
-	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, GetCurrentThreadId (), obj, ms));
+	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, mono_thread_info_get_small_id (), obj, ms));
 	
-	mon = obj->synchronisation;
-#ifdef HAVE_MOVING_COLLECTOR
-	{
-		LockWord lw;
-		lw.sync = mon;
-		if (lw.lock_word & LOCK_WORD_THIN_HASH) {
-			mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-			return FALSE;
-		}
-		lw.lock_word &= ~LOCK_WORD_BITS_MASK;
-		mon = lw.sync;
+	id = mono_thread_info_get_small_id ();
+	lw.sync = obj->synchronisation;
+
+	mono_monitor_ensure_synchronized (lw, id);
+
+	if ((lw.lock_word & LOCK_WORD_INFLATED) == 0) {
+		mono_monitor_inflate_owned (obj, id);
+		lw.sync = obj->synchronisation;
 	}
-#endif
-	if (mon == NULL) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-		return FALSE;
-	}
-	if (mon->owner != GetCurrentThreadId ()) {
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked by this thread"));
-		return FALSE;
-	}
+
+	lw.lock_word &= ~LOCK_WORD_BITS_MASK;
 
 	/* Do this WaitSleepJoin check before creating the event handle */
 	mono_thread_current_check_pending_interrupt ();
@@ -1426,26 +1445,27 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		return FALSE;
 	}
 	
-	LOCK_DEBUG (g_message ("%s: (%d) queuing handle %p", __func__, GetCurrentThreadId (), event));
-
-	mono_thread_current_check_pending_interrupt ();
+	LOCK_DEBUG (g_message ("%s: (%d) queuing handle %p", __func__, mono_thread_info_get_small_id (), event));
 	
+	thread = mono_thread_internal_current ();
+
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
-	mon->wait_list = g_slist_append (mon->wait_list, event);
+	lw.sync->wait_list = g_slist_append (lw.sync->wait_list, event);
 	
 	/* Save the nest count, and release the lock */
-	nest = mon->nest;
-	mon->nest = 1;
-	mono_monitor_exit (obj);
+	nest = lw.sync->nest;
+	lw.sync->nest = 0;
+	mono_monitor_exit_inflated (obj, lw.sync);
 
-	LOCK_DEBUG (g_message ("%s: (%d) Unlocked %p lock %p", __func__, GetCurrentThreadId (), obj, mon));
+	LOCK_DEBUG (g_message ("%s: (%d) Unlocked %p lock %p", __func__, mono_thread_info_get_small_id (), obj, lw.sync));
 
-	/* There's no race between unlocking mon and waiting for the
-	 * event, because auto reset events are sticky, and this event
+	/* There's no race between unlocking the monitor and waiting for 
+	 * the event, because auto reset events are sticky, and this event
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
+	
 	ret = WaitForSingleObjectEx (event, ms, TRUE);
 
 	/* Reset the thread state fairly early, so we don't have to worry
@@ -1453,46 +1473,30 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 */
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
-	if (mono_thread_interruption_requested ()) {
-		/* 
-		 * Can't remove the event from wait_list, since the monitor is not locked by
-		 * us. So leave it there, mon_new () will delete it when the mon structure
-		 * is placed on the free list.
-		 * FIXME: The caller expects to hold the lock after the wait returns, but it
-		 * doesn't happen in this case:
-		 * http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=97268
-		 */
-		return FALSE;
-	}
-
 	/* Regain the lock with the previous nest count */
-	do {
-		regain = mono_monitor_try_enter_internal (obj, INFINITE, TRUE);
-		if (regain == -1) 
+	
+	while (mono_monitor_try_enter_inflated (obj, lw.sync, id, INFINITE, FALSE) == -1) {
+		ret = -1;
+		if (mono_threads_is_shutting_down ()) {
 			mono_thread_interruption_checkpoint ();
-	} while (regain == -1);
-
-	if (regain == 0) {
-		/* Something went wrong, so throw a
-		 * SynchronizationLockException
-		 */
-		CloseHandle (event);
-		mono_raise_exception (mono_get_exception_synchronization_lock ("Failed to regain lock"));
-		return FALSE;
+			return ret;
+		}
 	}
 
-	mon->nest = nest;
+	lw.sync->nest = nest;
 
-	LOCK_DEBUG (g_message ("%s: (%d) Regained %p lock %p", __func__, GetCurrentThreadId (), obj, mon));
+	LOCK_DEBUG (g_message ("%s: (%d) Regained %p lock %p", __func__, mono_thread_info_get_small_id (), obj, lw.sync));
 
 	if (ret == WAIT_TIMEOUT) {
-		/* Poll the event again, just in case it was signalled
+		/* 
+		 * Poll the event again, just in case it was signalled
 		 * while we were trying to regain the monitor lock
 		 */
 		ret = WaitForSingleObjectEx (event, 0, FALSE);
 	}
 
-	/* Pulse will have popped our event from the queue if it signalled
+	/* 
+	 * Pulse will have popped our event from the queue if it signalled
 	 * us, so we only do it here if the wait timed out.
 	 *
 	 * This avoids a race condition where the thread holding the
@@ -1503,17 +1507,23 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 */
 	
 	if (ret == WAIT_OBJECT_0) {
-		LOCK_DEBUG (g_message ("%s: (%d) Success", __func__, GetCurrentThreadId ()));
-		success = TRUE;
-	} else {
-		LOCK_DEBUG (g_message ("%s: (%d) Wait failed, dequeuing handle %p", __func__, GetCurrentThreadId (), event));
-		/* No pulse, so we have to remove ourself from the
-		 * wait queue
-		 */
-		mon->wait_list = g_slist_remove (mon->wait_list, event);
+		LOCK_DEBUG (g_message ("%s: (%d) Success", __func__, mono_thread_info_get_small_id ()));
+		CloseHandle (event);
+		return 1;
 	}
-	CloseHandle (event);
 	
-	return success;
-}
+	LOCK_DEBUG (g_message ("%s: (%d) Wait failed, dequeuing handle %p", __func__, mono_thread_info_get_small_id (), event));
+	
+	/*
+	 * No pulse, so we have to remove ourself from the wait queue.
+	 */
 
+	lw.sync->wait_list = g_slist_remove (lw.sync->wait_list, event);
+	CloseHandle (event);
+
+	if (ret == -1) {
+		mono_thread_interruption_checkpoint ();
+	}
+	
+	return 0;
+}

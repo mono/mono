@@ -378,6 +378,8 @@ BASE_TEST_CS_SRC=		\
 	delegate-invoke.cs	\
 	bug-696593.cs	\
 	bug-705140.cs
+	monitor-thin.cs	\
+	monitor-thin-stress.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
