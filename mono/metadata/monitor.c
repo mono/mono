@@ -28,6 +28,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-memory-model.h>
 
 /*
  * Pull the list of opcodes
