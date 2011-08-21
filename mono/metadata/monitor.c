@@ -391,6 +391,7 @@ mono_monitor_exit_flat (MonoObject *obj, LockWord lw)
 		LOCK_DEBUG (g_message ("%s: (%d) Object %p is now unlocked", __func__, mono_thread_info_get_small_id (), obj));
 	}
 	obj->synchronisation = lw.sync;
+	UNLOCK_FENCE;
 }
 
 void
@@ -1242,7 +1243,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 		ldc.i4 			1 << LOCK_WORD_NEST_SHIFT                    &syncp syncp (1 << LOCK_WORD_NEST_SHIFT)
 		sub 																			&syncp (syncp - (1 << LOCK_WORD_NEST_SHIFT))
 	success_branch:
-		stind.i																		&syncp [0 | (syncp - (1 << LOCK_WORD_NEST_SHIFT))]
+		volatile.stind.i													&syncp [0 | (syncp - (1 << LOCK_WORD_NEST_SHIFT))]
 		ret
 	 */
 
@@ -1267,6 +1268,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 	mono_mb_emit_icon (mb, 1 << LOCK_WORD_NEST_SHIFT);
 	mono_mb_emit_byte (mb, CEE_SUB);
 	mono_mb_patch_short_branch (mb, success_branch);
+	mono_mb_emit_byte (mb, CEE_VOLATILE_);
 	mono_mb_emit_byte (mb, CEE_STIND_I);
 	mono_mb_emit_byte (mb, CEE_RET);
 	
