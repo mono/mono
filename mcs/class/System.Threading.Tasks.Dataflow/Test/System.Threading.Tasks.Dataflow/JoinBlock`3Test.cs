@@ -41,24 +41,25 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			Tuple<int, int, int> tuple = null;
+			var evt = new ManualResetEventSlim (false);
 
-			var ablock = new ActionBlock<Tuple<int, int, int>> (t => tuple = t);
+			var ablock = new ActionBlock<Tuple<int, int, int>> (t => { tuple = t; evt.Set (); });
 			var block = new JoinBlock<int, int, int> ();
 			block.LinkTo (ablock);
 
 			block.Target1.Post (42);
 
-			Thread.Sleep (1600);
+			evt.Wait (500);
 			Assert.IsNull (tuple);
 
 			block.Target2.Post (24);
 
-			Thread.Sleep (1600);
+			evt.Wait (500);
 			Assert.IsNull (tuple);
 
 			block.Target3.Post (44);
 
-			Thread.Sleep (1600);
+			evt.Wait ();
 			Assert.IsNotNull (tuple);
 			Assert.AreEqual (42, tuple.Item1);
 			Assert.AreEqual (24, tuple.Item2);

@@ -42,15 +42,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		{
 			int insIndex = -1;
 			int[] array = new int[5 + 3];
+			var evt = new CountdownEvent (array.Length);
 
-			var block = new ActionBlock<int> (i => array[Interlocked.Increment (ref insIndex)] = i);
+			var block = new ActionBlock<int> (i => { array[Interlocked.Increment (ref insIndex)] = i; evt.Signal (); });
 			var trsm = new TransformManyBlock<int, int> (i => Enumerable.Range (0, i));
 			trsm.LinkTo (block);
 
 			trsm.Post (5);
 			trsm.Post (3);
 
-			Thread.Sleep (1600);
+			evt.Wait ();
 			
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 0, 1, 2 }, array);
 		}
@@ -60,16 +61,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		{
 			int insIndex = -1;
 			int[] array = new int[5 + 3];
+			var evt = new CountdownEvent (array.Length);
 
-			var block = new ActionBlock<int> (i => array[Interlocked.Increment (ref insIndex)] = i);
+			var block = new ActionBlock<int> (i => { array[Interlocked.Increment (ref insIndex)] = i; evt.Signal (); });
 			var trsm = new TransformManyBlock<int, int> (i => Enumerable.Range (0, i));
 
 			trsm.Post (5);
 			trsm.Post (3);
 
-			Thread.Sleep (1600);
 			trsm.LinkTo (block);
-			Thread.Sleep (500);
+			evt.Wait ();
 
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 0, 1, 2 }, array);
 		}

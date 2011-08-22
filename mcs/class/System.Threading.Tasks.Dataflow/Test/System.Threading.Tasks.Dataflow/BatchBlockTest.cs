@@ -41,20 +41,21 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			int[] array = null;
+			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => array = i);
+			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
 			buffer.LinkTo<int[]>(block);
 			
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
-			Thread.Sleep (1600);
+			evt.Wait (1600);
 
 			Assert.IsNull (array);
 
 			Assert.IsTrue (buffer.Post (42));
-			Thread.Sleep (1600);
+			evt.Wait ();
 
 			Assert.IsNotNull (array);
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 42 }, array);
@@ -64,21 +65,21 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void TriggerBatchTest ()
 		{
 			int[] array = null;
+			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => array = i);
+			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
 			buffer.LinkTo(block);
 			
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
 			buffer.TriggerBatch ();
-			Thread.Sleep (1600);
+			evt.Wait ();
 
 			Assert.IsNotNull (array);
-
 			Assert.IsTrue (buffer.Post (42));
-			Thread.Sleep (1600);
+			evt.Wait (1600);
 
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);
 		}
@@ -87,22 +88,19 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void TriggerBatchLateBinding ()
 		{
 			int[] array = null;
+			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => array = i);
+			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
 			
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
 			buffer.TriggerBatch ();
-			buffer.LinkTo(block);
+			buffer.LinkTo (block);
 
-			Thread.Sleep (1600);
-
+			evt.Wait ();
 			Assert.IsNotNull (array);
-
-			Assert.IsTrue (buffer.Post (42));
-			Thread.Sleep (1600);
 
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);
 		}
@@ -111,17 +109,18 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void LateTriggerBatchKeepCountTest ()
 		{
 			int[] array = null;
+			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (15);
-			var block = new ActionBlock<int[]> (i => array = i);
+			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
 			
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 			buffer.TriggerBatch ();
 			Assert.IsTrue (buffer.Post (42));
-			buffer.LinkTo(block);
+			buffer.LinkTo (block);
 
-			Thread.Sleep (1600);
+			evt.Wait ();
 
 			Assert.IsNotNull (array);
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);			

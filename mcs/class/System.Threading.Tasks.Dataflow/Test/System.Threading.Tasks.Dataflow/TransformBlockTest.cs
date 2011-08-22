@@ -41,14 +41,15 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			int[] array = new int[10];
-			ActionBlock<int> action = new ActionBlock<int> ((i) => array[Math.Abs (i)] = i);
+			var evt = new ManualResetEventSlim (false);
+			ActionBlock<int> action = new ActionBlock<int> ((i) => { array[Math.Abs (i)] = i; evt.Set (); });
 			TransformBlock<int, int> block = new TransformBlock<int, int> (i => -i);
 			block.LinkTo (action);
 
 			for (int i = 0; i < array.Length; ++i)
 				Assert.IsTrue (block.Post (i), "Not accepted");
 
-			Thread.Sleep (1300);
+			evt.Wait ();
 
 			CollectionAssert.AreEqual (new int[] { 0, -1, -2, -3, -4, -5, -6, -7, -8, -9 }, array);
 		}
@@ -57,6 +58,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void DeferredUsageTest ()
 		{
 			int[] array = new int[10];
+			var evt = new ManualResetEventSlim (false);
 			ActionBlock<int> action = new ActionBlock<int> ((i) => array[Math.Abs (i)] = i);
 			TransformBlock<int, int> block = new TransformBlock<int, int> (i => -i);
 

@@ -41,12 +41,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			int data = -1;
+			var evt = new ManualResetEventSlim (false);
 			BufferBlock<int> buffer = new BufferBlock<int> ();
-			ActionBlock<int> action = new ActionBlock<int> ((i) => data = i);
+			ActionBlock<int> action = new ActionBlock<int> ((i) => { data = i; evt.Set (); });
 			buffer.LinkTo (action);
 
 			Assert.IsTrue (buffer.Post (42));
-			Thread.Sleep (600);
+			evt.Wait ();
 			Assert.AreEqual (42, data);	
 		}
 
@@ -54,40 +55,41 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void LateBindingTest ()
 		{
 			BufferBlock<int> buffer = new BufferBlock<int> ();
+			var evt = new CountdownEvent (10);
 
 			for (int i = 0; i < 10; i++)
 				Assert.IsTrue (buffer.Post (i));
-			int count = 0;
 				
-			ActionBlock<int> block = new ActionBlock<int> ((i) => Interlocked.Increment (ref count));
+			ActionBlock<int> block = new ActionBlock<int> ((i) => evt.Signal ());
 			buffer.LinkTo (block);
 			
-			Thread.Sleep (600);
-
-			Assert.AreEqual (10, count);
+			evt.Wait ();
 		}
 
 		[Test]
 		public void MultipleBindingTest ()
 		{
 			BufferBlock<int> buffer = new BufferBlock<int> ();
+			var evt = new CountdownEvent (10);
 
 			int count = 0;
 				
-			ActionBlock<int> block = new ActionBlock<int> ((i) => Interlocked.Decrement (ref count));
+			ActionBlock<int> block = new ActionBlock<int> ((i) => { Interlocked.Decrement (ref count); evt.Signal (); });
 			IDisposable bridge = buffer.LinkTo (block);
 			for (int i = 0; i < 10; i++)
 				Assert.IsTrue (buffer.Post (i));
-			Thread.Sleep (600);
+			evt.Wait ();
 
+			Assert.AreEqual (-10, count);
 			count = 0;
+			evt.Reset ();
 			bridge.Dispose ();
 
-			ActionBlock<int> block2 = new ActionBlock<int> ((i) => Interlocked.Increment (ref count));
+			ActionBlock<int> block2 = new ActionBlock<int> ((i) => { Interlocked.Increment (ref count); evt.Signal (); });
 			buffer.LinkTo (block2);
 			for (int i = 0; i < 10; i++)
 				Assert.IsTrue (buffer.Post (i));
-			Thread.Sleep (600);
+			evt.Wait ();
 
 			Assert.AreEqual (10, count);
 		}

@@ -41,13 +41,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void WithNoElements ()
 		{
 			var block = new BufferBlock<int> ();
-			//var block2 = new BufferBlock<int> ();
-			//block.LinkTo (block2);
 			block.Post (42);
-			Thread.Sleep (600);
-			//((IDataflowBlock)block2).Fault (new Exception ());
 			block.Complete ();
-			Thread.Sleep (600);
 			Console.WriteLine (block.Completion.IsCompleted);
 			Console.WriteLine (block.Completion.Status);
 			block.Receive ();
@@ -59,13 +54,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void WithElementsStillLingering ()
 		{
 			var block = new BufferBlock<int> ();
-			//var block2 = new BufferBlock<int> ();
-			//block.LinkTo (block2);
 			block.Post (42);
-			Thread.Sleep (600);
-			//((IDataflowBlock)block2).Fault (new Exception ());
 			block.Complete ();
-			Thread.Sleep (600);
 			Console.WriteLine (block.Completion.IsCompleted);
 			Console.WriteLine (block.Completion.Status);
 			block.Receive ();
@@ -78,9 +68,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		{
 			var block = new BufferBlock<int> ();
 			block.Post (42);
-			Thread.Sleep (600);
 			block.Complete ();
-			Thread.Sleep (600);
 			Assert.IsFalse (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, block.Completion.Status);
 			block.Receive ();
@@ -93,9 +81,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		{
 			var block = new BufferBlock<int> ();
 			block.Post (42);
-			Thread.Sleep (600);
 			((IDataflowBlock)block).Fault (new Exception ());
-			Thread.Sleep (600);
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
 		}

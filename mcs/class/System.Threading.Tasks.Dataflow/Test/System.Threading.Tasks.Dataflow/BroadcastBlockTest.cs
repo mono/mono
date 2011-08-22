@@ -41,17 +41,18 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			bool act1 = false, act2 = false;
+			var evt = new CountdownEvent (2);
 
 			var broadcast = new BroadcastBlock<int> (null);
-			var action1 = new ActionBlock<int> (i => act1 = i == 42);
-			var action2 = new ActionBlock<int> (i => act2 = i == 42);
+			var action1 = new ActionBlock<int> (i => { act1 = i == 42; evt.Signal (); });
+			var action2 = new ActionBlock<int> (i => { act2 = i == 42; evt.Signal (); });
 
 			broadcast.LinkTo (action1);
 			broadcast.LinkTo (action2);
 
 			Assert.IsTrue (broadcast.Post (42));
 
-			Thread.Sleep (1600);
+			evt.Wait ();
 
 			Assert.IsTrue (act1);
 			Assert.IsTrue (act2);
@@ -61,18 +62,19 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void CloningTest ()
 		{
 			object act1 = null, act2 = null;
+			var evt = new CountdownEvent (2);
 
 			object source = new object ();
 			var broadcast = new BroadcastBlock<object> (o => new object ());
-			var action1 = new ActionBlock<object> (i => act1 = i);
-			var action2 = new ActionBlock<object> (i => act2 = i);
+			var action1 = new ActionBlock<object> (i => { act1 = i; evt.Signal (); });
+			var action2 = new ActionBlock<object> (i => { act2 = i; evt.Signal (); });
 
 			broadcast.LinkTo (action1);
 			broadcast.LinkTo (action2);
 
 			Assert.IsTrue (broadcast.Post (source));
 
-			Thread.Sleep (1600);
+			evt.Wait ();
 
 			Assert.IsNotNull (act1);
 			Assert.IsNotNull (act2);

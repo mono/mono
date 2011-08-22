@@ -41,13 +41,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			bool[] array = new bool[3];
-			ActionBlock<int> block = new ActionBlock<int> ((i) => array[i] = true);
+			CountdownEvent evt = new CountdownEvent (array.Length);
+			ActionBlock<int> block = new ActionBlock<int> ((i) => { array[i] = true; evt.Signal (); });
 
 			for (int i = 0; i < array.Length; ++i)
 				Assert.IsTrue (block.Post (i), "Not accepted");
 
-			// TODO: use a more sensible approach here based on Completion
-			Thread.Sleep (1300);
+			evt.Wait ();
 			
 			Assert.IsTrue (array.All (b => b), "Some false");
 		}
