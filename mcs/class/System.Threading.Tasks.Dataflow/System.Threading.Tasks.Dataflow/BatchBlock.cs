@@ -1,4 +1,4 @@
-// B.cs
+// BatchBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
 //

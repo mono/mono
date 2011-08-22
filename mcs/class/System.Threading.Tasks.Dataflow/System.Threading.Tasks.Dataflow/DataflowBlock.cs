@@ -1,4 +1,4 @@
-// IPropagatorBlock.cs
+// DataflowBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
 //
