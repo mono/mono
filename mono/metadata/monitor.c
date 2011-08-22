@@ -325,6 +325,7 @@ mon_new (int id)
 	monitor_freelist = new->data;
 
 	new->owner = id;
+	new->nest = 0;
 	new->entry_count = 0;
 	
 	mono_perfcounters->gc_sync_blocks++;
@@ -561,7 +562,9 @@ retry:
 static inline void
 fail_inflation (MonoObject *obj, MonoThreadsSync *mon)
 {
-	if (--mon->nest == 0) {
+	guint32 nv = (gsize)mon->wait_list - 1;
+	mon->wait_list = (GSList *)nv;
+	if (nv == 0) {
 		g_hash_table_remove (monitor_table, obj);
 		mon_finalize (mon);
 	}
@@ -591,10 +594,10 @@ retry:
 	mono_monitor_allocator_lock ();		
 	if ((locked = ((mon = (MonoThreadsSync *)g_hash_table_lookup (monitor_table, obj)) == NULL))) {
 		mon = mon_new (id);
+		mon->wait_list = (gsize)1;
 		g_hash_table_insert (monitor_table, obj, mon); 
-		mon->nest = 1;
 	} else {
-		mon->nest += 1;
+		mon->wait_list = (GSList *)((gsize)mon->wait_list + 1);
 	}
 	mono_monitor_allocator_unlock ();
 
@@ -669,7 +672,7 @@ retry:
 				 */
 
 				mono_monitor_allocator_lock ();
-				mon->nest = 0;
+				mon->wait_list = NULL;
 				g_hash_table_remove (monitor_table, obj);
 				mono_monitor_allocator_unlock ();
 
