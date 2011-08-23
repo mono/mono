@@ -29,6 +29,21 @@ public enum AnEnum {
 	B= 1
 }
 
+public sealed class Tests3 {
+	public static void M1 () {
+	}
+
+	static void M2 () {
+	}
+
+	public void M3 () {
+	}
+
+	void M4 () {
+	}
+
+}
+
 [DebuggerDisplay ("Tests", Name="FOO", Target=typeof (int))]
 [DebuggerTypeProxy (typeof (Tests))]
 public class Tests2 {

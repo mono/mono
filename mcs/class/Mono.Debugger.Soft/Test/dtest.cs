@@ -2664,4 +2664,49 @@ public class DebuggerTests
 		Assert.AreEqual ("A", le.Category);
 		Assert.AreEqual ("B", le.Message);
 	}
+
+	[Test]
+	public void TypeGetMethodsByNameFlags () {
+		MethodMirror[] mm;
+		var assembly = entry_point.DeclaringType.Assembly;
+		var type = assembly.GetType ("Tests3");
+
+		Assert.IsNotNull (type);
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Static | BindingFlags.Public, false);
+		Assert.AreEqual (1, mm.Length, "#1");
+		Assert.AreEqual ("M1", mm[0].Name, "#2");
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Static | BindingFlags.NonPublic, false);
+		Assert.AreEqual (1, mm.Length, "#3");
+		Assert.AreEqual ("M2", mm[0].Name, "#4");
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Instance | BindingFlags.Public, false);
+		Assert.AreEqual (5, mm.Length, "#5"); //M3 plus Equals, GetHashCode, GetType, ToString
+		Assert.AreEqual ("M3", mm[0].Name, "#6");
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, false);
+		Assert.AreEqual (1, mm.Length, "#7");
+		Assert.AreEqual ("M3", mm[0].Name, "#8");
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly, false);
+		Assert.AreEqual (1, mm.Length, "#9");
+		Assert.AreEqual ("M4", mm[0].Name, "#10");
+
+		mm = type.GetMethodsByNameFlags (null, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly, false);
+		Assert.AreEqual (4, mm.Length, "#11");
+
+		//Now with name
+		mm = type.GetMethodsByNameFlags ("M1", BindingFlags.Static | BindingFlags.Public, false);
+		Assert.AreEqual (1, mm.Length, "#12");
+		Assert.AreEqual ("M1", mm[0].Name, "#13");
+
+		mm = type.GetMethodsByNameFlags ("m1", BindingFlags.Static | BindingFlags.Public, true);
+		Assert.AreEqual (1, mm.Length, "#14");
+		Assert.AreEqual ("M1", mm[0].Name, "#15");
+
+		mm = type.GetMethodsByNameFlags ("M1", BindingFlags.Static  | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, false);
+		Assert.AreEqual (1, mm.Length, "#16");
+		Assert.AreEqual ("M1", mm[0].Name, "#17");
+	}
 }
