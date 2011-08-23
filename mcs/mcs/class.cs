@@ -2788,7 +2788,10 @@ namespace Mono.CSharp
 					}
 				}
 
-				if ((field.IsStatic && (!ftype.IsGeneric || ftype == CurrentType)))
+				//
+				// Static fields of exactly same type are allowed
+				//
+				if (field.IsStatic && ftype == s.CurrentType)
 					continue;
 
 				if (!CheckFieldTypeCycle (ftype)) {
