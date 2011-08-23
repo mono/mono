@@ -2,4 +2,14 @@ System.Threading.Tasks/ConcurrentExclusiveSchedulerPairTest.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeaderTest.cs
 System.Threading.Tasks.Dataflow/CompletionHelperTest.cs
 ../System.Threading.Tasks.Dataflow/CompletionHelper.cs
-
+System.Threading.Tasks.Dataflow/ActionBlockTest.cs
+System.Threading.Tasks.Dataflow/BatchBlockTest.cs
+System.Threading.Tasks.Dataflow/BroadcastBlockTest.cs
+System.Threading.Tasks.Dataflow/BufferBlockTest.cs
+System.Threading.Tasks.Dataflow/CompletionTest.cs
+System.Threading.Tasks.Dataflow/DataflowBlockTest.cs
+System.Threading.Tasks.Dataflow/JoinBlockTest.cs
+System.Threading.Tasks.Dataflow/JoinBlock`3Test.cs
+System.Threading.Tasks.Dataflow/TransformBlockTest.cs
+System.Threading.Tasks.Dataflow/TransformManyBlockTest.cs
+System.Threading.Tasks.Dataflow/WriteOnceBlockTest.cs

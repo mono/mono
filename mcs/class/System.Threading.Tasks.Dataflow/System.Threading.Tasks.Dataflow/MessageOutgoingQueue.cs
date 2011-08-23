@@ -70,6 +70,8 @@ namespace System.Threading.Tasks.Dataflow
 
 			foreach (var output in GetNonBlockingConsumingEnumerable ())
 				target.OfferMessage (headers.Increment (), output, source, consumeToAccept);
+
+			VerifyCompleteness ();
 		}
 
 		public bool TryReceive (Predicate<T> filter, out T item)
