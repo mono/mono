@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2008,2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin, Inc (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,6 +46,24 @@ using XmlObjectSerializer = System.Object;
 
 namespace System.ServiceModel.Dispatcher
 {
+	// This set of classes is to work as message formatters for 
+	// WebHttpBehavior. There are couple of aspects to differentiate
+	// implementations:
+	// - request/reply and client/server
+	//   by WebMessageFormatter hierarchy
+	//   - WebClientMessageFormatter - for client
+	//     - RequestClientFormatter - for request
+	//     - ReplyClientFormatter - for response
+	//   - WebDispatchMessageFormatter - for server
+	//     - RequestDispatchFormatter - for request
+	//     - ReplyDispatchFormatter - for response
+	//
+	// FIXME: below items need more work
+	// - HTTP method differences
+	//  - GET (WebGet)
+	//  - POST (other way)
+	// - output format: Stream, JSON, XML ...
+
 	internal abstract class WebMessageFormatter
 	{
 		OperationDescription operation;
@@ -307,7 +326,7 @@ namespace System.ServiceModel.Dispatcher
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
 
 				if (parameters.Length != md.Body.Parts.Count)
-					throw new ArgumentException ("Parameter array length does not match the number of message body parts");
+					throw new ArgumentException (String.Format ("Parameter array length does not match the number of message '{0}' body parts: {1} expected, got {2}", Operation.Name, md.Body.Parts.Count, parameters.Length));
 
 				object msgpart = null;
 
@@ -546,11 +565,8 @@ namespace System.ServiceModel.Dispatcher
 				var fmt = wp != null ? wp.Format : WebContentFormat.Xml;
 
 				Uri to = message.Headers.To;
-				UriTemplateMatch match = UriTemplate.Match (Endpoint.Address.Uri, to);
-				if (match == null)
-					// not sure if it could happen
-					throw new SystemException (String.Format ("INTERNAL ERROR: UriTemplate does not match with the request: {0} / {1}", UriTemplate, to));
-				if (iwc != null)
+				UriTemplateMatch match = to == null ? null : UriTemplate.Match (Endpoint.Address.Uri, to);
+				if (match != null && iwc != null)
 					iwc.UriTemplateMatch = match;
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
@@ -558,15 +574,17 @@ namespace System.ServiceModel.Dispatcher
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
 					string name = p.Name.ToUpperInvariant ();
-					var str = match.BoundVariables [name];
-					if (str != null)
-						parameters [i] = Converter.ConvertStringToValue (str, p.Type);
-					else if (fmt == WebContentFormat.Raw && p.Type == typeof (Stream)) {
+					if (fmt == WebContentFormat.Raw && p.Type == typeof (Stream)) {
 						var rmsg = (RawMessage) message;
 						parameters [i] = rmsg.Stream;
 					} else {
-						var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
-						parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+						var str = match.BoundVariables [name];
+						if (str != null)
+							parameters [i] = Converter.ConvertStringToValue (str, p.Type);
+						else {
+							var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
+							parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+						}
 					}
 				}
 			}
