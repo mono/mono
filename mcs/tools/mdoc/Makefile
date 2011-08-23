@@ -131,6 +131,26 @@ check-monodocer-since: $(PROGRAM)
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.since Test/en.actual
 
+check-monodocer-delete-update: $(PROGRAM)
+	find Test/en.expected.delete -type f -exec rm "{}" \;
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.expected.delete Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v2
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.expected.delete Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update -fno-assembly-versions --delete --exceptions=all \
+		-o Test/en.expected.delete Test/DocTest.dll
+
+check-monodocer-delete: $(PROGRAM)
+	rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v2
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update -fno-assembly-versions --delete --exceptions=all -o Test/en.actual Test/DocTest.dll
+	diff --exclude=.svn -rup Test/en.expected.delete Test/en.actual
+
 check-monodocer-importslashdoc-update: $(PROGRAM)
 	find Test/en.expected.importslashdoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
@@ -227,6 +247,7 @@ check-doc-tools: check-monodocer-since \
 	check-monodocer-importecmadoc \
 	check-monodocer-importslashdoc \
 	check-monodocer \
+	check-monodocer-delete \
 	check-mdoc-export-html \
 	check-mdoc-export-html-with-version \
 	check-mdoc-export-msxdoc \
@@ -236,6 +257,7 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
+	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
 	check-mdoc-validate-update

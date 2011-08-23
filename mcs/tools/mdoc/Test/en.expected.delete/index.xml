@@ -1,0 +1,185 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="DocTest" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="">
+      <Type Name="NoNamespace" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.DocTest">
+      <Type Name="Color" Kind="Enumeration" />
+      <Type Name="DocAttribute" Kind="Class" />
+      <Type Name="DocValueType" Kind="Structure" />
+      <Type Name="IProcess" Kind="Interface" />
+      <Type Name="UseLists" Kind="Class" />
+      <Type Name="Widget" Kind="Class" />
+      <Type Name="Widget+Del" Kind="Delegate" />
+      <Type Name="Widget+Direction" Kind="Enumeration" />
+      <Type Name="Widget+IMenuItem" Kind="Interface" />
+      <Type Name="Widget+NestedClass" Kind="Class" />
+      <Type Name="Widget+NestedClass`1" DisplayName="Widget+NestedClass&lt;T&gt;" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double+Triple" Kind="Class" />
+      <Type Name="Widget+NestedClass+Double+Triple+Quadruple" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.DocTest.Generic">
+      <Type Name="Extensions" Kind="Class" />
+      <Type Name="Func`2" DisplayName="Func&lt;TArg,TRet&gt;" Kind="Delegate" />
+      <Type Name="GenericBase`1" DisplayName="GenericBase&lt;U&gt;" Kind="Class" />
+      <Type Name="GenericBase`1+FooEventArgs" DisplayName="GenericBase&lt;U&gt;+FooEventArgs" Kind="Class" />
+      <Type Name="GenericBase`1+NestedCollection" DisplayName="GenericBase&lt;U&gt;+NestedCollection" Kind="Class" />
+      <Type Name="GenericBase`1+NestedCollection+Enumerator" DisplayName="GenericBase&lt;U&gt;+NestedCollection+Enumerator" Kind="Structure" />
+      <Type Name="IFoo`1" DisplayName="IFoo&lt;T&gt;" Kind="Interface" />
+      <Type Name="MyList`1" DisplayName="MyList&lt;T&gt;" Kind="Class" />
+      <Type Name="MyList`1+Helper`2" DisplayName="MyList&lt;T&gt;+Helper&lt;U,V&gt;" Kind="Class" />
+      <Type Name="MyList`2" DisplayName="MyList&lt;A,B&gt;" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System">
+      <Type Name="Action`1" DisplayName="Action&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Array" Kind="Class" />
+      <Type Name="AsyncCallback" Kind="Delegate" />
+      <Type Name="Environment" Kind="Class" />
+      <Type Name="Environment+SpecialFolder" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>DocTest</Title>
+  <ExtensionMethods>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:Mono.DocTest.Generic.IFoo`1" />
+      </Targets>
+      <Member MemberName="Bar&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static void Bar&lt;T&gt; (this Mono.DocTest.Generic.IFoo&lt;T&gt; self, string s);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Bar&lt;T&gt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt; self, string s) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="self" Type="Mono.DocTest.Generic.IFoo&lt;T&gt;" RefType="this" />
+          <Parameter Name="s" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="self">To be added.</param>
+          <param name="s">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.DocTest.Generic.Extensions" Member="M:Mono.DocTest.Generic.Extensions.Bar``1(Mono.DocTest.Generic.IFoo{``0},System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Collections.Generic.IEnumerable`1" />
+      </Targets>
+      <Member MemberName="ForEach&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (this System.Collections.Generic.IEnumerable&lt;T&gt; self, Action&lt;T&gt; a);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ForEach&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; self, class System.Action`1&lt;!!T&gt; a) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="self" Type="System.Collections.Generic.IEnumerable&lt;T&gt;" RefType="this" />
+          <Parameter Name="a" Type="System.Action&lt;T&gt;" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="self">To be added.</param>
+          <param name="a">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.DocTest.Generic.Extensions" Member="M:Mono.DocTest.Generic.Extensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Collections.Generic.IEnumerable`1" />
+      </Targets>
+      <Member MemberName="ToDouble">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;double&gt; ToDouble (this System.Collections.Generic.IEnumerable&lt;int&gt; list);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;float64&gt; ToDouble(class System.Collections.Generic.IEnumerable`1&lt;int32&gt; list) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Double&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="list" Type="System.Collections.Generic.IEnumerable&lt;System.Int32&gt;" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="list">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.DocTest.Generic.Extensions" Member="M:Mono.DocTest.Generic.Extensions.ToDouble(System.Collections.Generic.IEnumerable{System.Int32})" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:Mono.DocTest.Generic.IFoo`1" />
+      </Targets>
+      <Member MemberName="ToDouble&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static double ToDouble&lt;T&gt; (this T val) where T : Mono.DocTest.Generic.IFoo&lt;T&gt;;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 ToDouble&lt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt;) T&gt;(!!T val) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Double</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <InterfaceName>Mono.DocTest.Generic.IFoo&lt;T&gt;</InterfaceName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="val" Type="T" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="val">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.DocTest.Generic.Extensions" Member="M:Mono.DocTest.Generic.Extensions.ToDouble``1(``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="System.Object" />
+      </Targets>
+      <Member MemberName="ToEnumerable&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; ToEnumerable&lt;T&gt; (this T self);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; ToEnumerable&lt;T&gt;(!!T self) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="self" Type="T" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="self">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.DocTest.Generic.Extensions" Member="M:Mono.DocTest.Generic.Extensions.ToEnumerable``1(``0)" />
+      </Member>
+    </ExtensionMethod>
+  </ExtensionMethods>
+</Overview>

@@ -1,0 +1,41 @@
+<Type Name="IFoo&lt;T&gt;" FullName="Mono.DocTest.Generic.IFoo&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IFoo&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFoo`1&lt;T&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Method&lt;U&gt;">
+      <MemberSignature Language="C#" Value="public T Method&lt;U&gt; (T t, U u);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !T Method&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="U" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="t" Type="T" />
+        <Parameter Name="u" Type="U" />
+      </Parameters>
+      <Docs>
+        <typeparam name="U">To be added.</typeparam>
+        <param name="t">To be added.</param>
+        <param name="u">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

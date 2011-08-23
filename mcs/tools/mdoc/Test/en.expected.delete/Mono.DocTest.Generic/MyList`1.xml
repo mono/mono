@@ -1,0 +1,174 @@
+<Type Name="MyList&lt;T&gt;" FullName="Mono.DocTest.Generic.MyList&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public class MyList&lt;T&gt; : Mono.DocTest.Generic.GenericBase&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;int[]&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyList`1&lt;T&gt; extends Mono.DocTest.Generic.GenericBase`1&lt;!T&gt; implements class System.Collections.Generic.IEnumerable`1&lt;int32[]&gt;, class System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Type Parameter!")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>Mono.DocTest.Generic.GenericBase&lt;T&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="U">T</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.Int32[]&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MyList ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;int[]&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;int32[]&gt; GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;System.Int32[]&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHelper&lt;U,V&gt;">
+      <MemberSignature Language="C#" Value="public Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; GetHelper&lt;U,V&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!T, !!U, !!V&gt; GetHelper&lt;U, V&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="U" />
+        <TypeParameter Name="V" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <typeparam name="U">To be added.</typeparam>
+        <typeparam name="V">To be added.</typeparam>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Method&lt;U&gt;">
+      <MemberSignature Language="C#" Value="public void Method&lt;U&gt; (T t, U u);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Method&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="U" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="t" Type="T" />
+        <Parameter Name="u" Type="U" />
+      </Parameters>
+      <Docs>
+        <typeparam name="U">To be added.</typeparam>
+        <param name="t">To be added.</param>
+        <param name="u">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RefMethod&lt;U&gt;">
+      <MemberSignature Language="C#" Value="public void RefMethod&lt;U&gt; (ref T t, ref U u);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RefMethod&lt;U&gt;(!T t, !!U u) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="U" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="t" Type="T&amp;" RefType="ref" />
+        <Parameter Name="u" Type="U&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="U">To be added.</typeparam>
+        <param name="t">To be added.</param>
+        <param name="u">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Test">
+      <MemberSignature Language="C#" Value="public void Test (T t);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Test(!T t) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="t">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UseHelper&lt;U,V&gt;">
+      <MemberSignature Language="C#" Value="public void UseHelper&lt;U,V&gt; (Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; helper);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseHelper&lt;U, V&gt;(class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!T, !!U, !!V&gt; helper) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="U" />
+        <TypeParameter Name="V" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="helper" Type="Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="U">To be added.</typeparam>
+        <typeparam name="V">To be added.</typeparam>
+        <param name="helper">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

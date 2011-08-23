@@ -1,0 +1,21 @@
+<Type Name="Widget+Del" FullName="Mono.DocTest.Widget+Del">
+  <TypeSignature Language="C#" Value="public delegate void Widget.Del(int i);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Widget/Del extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="i" Type="System.Int32" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="i">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>
