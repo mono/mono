@@ -839,6 +839,9 @@ namespace Mono.Debugger.Soft
 			}
 
 			public PacketWriter WriteString (string s) {
+				if (s == null)
+					return WriteInt (-1);
+
 				encode_int (data, s.Length, ref offset);
 				byte[] b = Encoding.UTF8.GetBytes (s);
 				MakeRoom (b.Length);
