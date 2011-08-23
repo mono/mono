@@ -17349,6 +17349,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-559.cs">
+    <type name="B`1[TContext]">
+      <method name="Void Test[U2]()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">

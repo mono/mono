@@ -964,10 +964,13 @@ namespace Mono.CSharp {
 
 			// Check interfaces implementation -> definition
 			if (InterfacesDefined != null) {
-				foreach (var iface in InterfacesDefined) {
+				//
+				// Iterate over inflated interfaces
+				//
+				foreach (var iface in Interfaces) {
 					found = false;
 					if (other.InterfacesDefined != null) {
-						foreach (var oiface in other.InterfacesDefined) {
+						foreach (var oiface in other.Interfaces) {
 							if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
 								found = true;
 								break;
@@ -997,9 +1000,12 @@ namespace Mono.CSharp {
 				if (InterfacesDefined == null)
 					return false;
 
-				foreach (var oiface in other.InterfacesDefined) {
+				//
+				// Iterate over inflated interfaces
+				//
+				foreach (var oiface in other.Interfaces) {
 					found = false;
-					foreach (var iface in InterfacesDefined) {
+					foreach (var iface in Interfaces) {
 						if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
 							found = true;
 							break;
