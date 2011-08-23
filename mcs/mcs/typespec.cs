@@ -537,6 +537,7 @@ namespace Mono.CSharp
 				return ((TypeParameterSpec) t).IsReferenceType;
 			case MemberKind.Struct:
 			case MemberKind.Enum:
+			case MemberKind.Void:
 				return false;
 			case MemberKind.InternalCompilerType:
 				//
