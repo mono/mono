@@ -54,7 +54,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Match ()
 		{
 			PrefixEndpointAddressMessageFilter f =

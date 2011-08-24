@@ -68,8 +68,12 @@ namespace System.ServiceModel.Dispatcher
 		public override bool Match (Message message)
 		{
 			Uri to = message.Headers.To;
-			bool path = ((CultureInfo.InvariantCulture.CompareInfo.IsPrefix (to.AbsolutePath, address.Uri.AbsolutePath, CompareOptions.Ordinal)) && 
-					(to.Port == address.Uri.Port));
+			if (to == null)
+				return false;
+			if (to.ToString () == Constants.WsaAnonymousUri || to.Equals (EndpointAddress.AnonymousUri) || to.Equals (EndpointAddress.NoneUri))
+				return true;
+
+			bool path = CultureInfo.InvariantCulture.CompareInfo.IsPrefix (to.AbsolutePath, address.Uri.AbsolutePath, CompareOptions.Ordinal);
 			bool host = IncludeHostNameInComparison
 					? (String.CompareOrdinal (to.Host, address.Uri.Host) == 0)
 					: true;
