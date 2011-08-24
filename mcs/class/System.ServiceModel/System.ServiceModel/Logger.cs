@@ -183,7 +183,9 @@ namespace System.ServiceModel
 			xw.WriteEndAttribute ();
 			xw.WriteAttributeString ("Source", log.Source.ToString ());
 			xw.WriteAttributeString ("Type", log.Type.FullName);
-			log.Message.CreateMessage ().WriteMessage (xw);
+			var msg = log.Message.CreateMessage ();
+			if (!msg.IsEmpty)
+				msg.WriteMessage (xw);
 			xw.WriteEndElement ();
 			xw.Close ();
 
