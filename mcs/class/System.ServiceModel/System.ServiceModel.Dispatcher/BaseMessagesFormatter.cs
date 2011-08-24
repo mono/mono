@@ -306,8 +306,9 @@ namespace System.ServiceModel.Dispatcher
 			foreach (MessagePartDescription partDesc in l)
 				if (partDesc.MemberInfo is FieldInfo)
 					((FieldInfo) partDesc.MemberInfo).SetValue (msgObject, parts [partDesc.Index]);
-				else
+				else if (partDesc.MemberInfo is PropertyInfo)
 					((PropertyInfo) partDesc.MemberInfo).SetValue (msgObject, parts [partDesc.Index], null);
+				// otherwise, it could be null (in case of undefined return value in MessageContract)
 		}
 
 		void MessageObjectToParts (MessageDescription md, object msgObject, Dictionary<MessageHeaderDescription,object> headers, object [] parts)
