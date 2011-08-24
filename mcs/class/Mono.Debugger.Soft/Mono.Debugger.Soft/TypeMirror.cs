@@ -525,8 +525,18 @@ namespace Mono.Debugger.Soft
 			return GetSourceFiles (false);
 		}
 
+		string[] source_files;
+		string[] source_files_full_path;
 		public string[] GetSourceFiles (bool return_full_paths) {
-			return vm.conn.Type_GetSourceFiles (id, return_full_paths);
+			string[] res = return_full_paths ? source_files_full_path : source_files;
+			if (res == null) {
+				res = vm.conn.Type_GetSourceFiles (id, return_full_paths);
+				if (return_full_paths)
+					source_files_full_path = res;
+				else
+					source_files = res;
+			}
+			return res;
 		}
 
 		public C.TypeDefinition Metadata {
