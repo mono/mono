@@ -439,6 +439,7 @@ System.Threading/ThreadCas.cs
 System.Threading/WaitHandleCas.cs
 System.Threading.Tasks/TaskTest.cs
 System.Threading.Tasks/TaskFactoryTest.cs
+System.Threading.Tasks/TaskFactoryTest_T.cs
 System.Threading.Tasks/FutureTests.cs
 System.Threading.Tasks/TaskCompletionSourceTests.cs
 System.Threading.Tasks/ParallelTestHelper.cs

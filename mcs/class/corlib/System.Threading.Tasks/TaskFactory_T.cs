@@ -68,6 +68,8 @@ namespace System.Threading.Tasks
 			this.scheduler = scheduler;
 			this.creationOptions = creationOptions;
 			this.continuationOptions = continuationOptions;
+
+			TaskFactory.CheckContinuationOptions (continuationOptions);
 			
 			this.parent = new TaskFactory (cancellationToken, creationOptions, continuationOptions, scheduler);
 		}

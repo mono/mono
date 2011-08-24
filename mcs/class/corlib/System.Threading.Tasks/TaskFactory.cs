@@ -67,8 +67,20 @@ namespace System.Threading.Tasks
 			this.scheduler = scheduler;
 			this.creationOptions = creationOptions;
 			this.continuationOptions = continuationOptions;
+
+			CheckContinuationOptions (continuationOptions);
 		}
 		#endregion
+
+		internal static void CheckContinuationOptions (TaskContinuationOptions continuationOptions)
+		{
+			if ((continuationOptions & (TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.NotOnRanToCompletion)) != 0)
+				throw new ArgumentOutOfRangeException ("continuationOptions", "msg");
+
+			const TaskContinuationOptions long_running = TaskContinuationOptions.LongRunning | TaskContinuationOptions.ExecuteSynchronously;
+			if ((continuationOptions & long_running) == long_running)
+				throw new ArgumentOutOfRangeException ("continuationOptions", "Synchronous continuations cannot be long running");
+		}
 		
 		#region StartNew for Task
 		public Task StartNew (Action action)
