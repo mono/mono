@@ -6,19 +6,30 @@ using System.Threading;
 namespace Mono.Debugger.Soft
 {
 	public class ObjectMirror : Value {
+		TypeMirror type;
+		AppDomainMirror domain;
 	
 		internal ObjectMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 	
+		internal ObjectMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id) {
+			this.type = type;
+			this.domain = domain;
+		}
+
 		public TypeMirror Type {
 			get {
-				return vm.GetType (vm.conn.Object_GetType (id));
+				if (type == null)
+				 	type = vm.GetType (vm.conn.Object_GetType (id));
+				return type;
 			}
 		}
 
 		public AppDomainMirror Domain {
 			get {
-				return vm.GetDomain (vm.conn.Object_GetDomain (id));
+				if (domain == null)
+				 	domain = vm.GetDomain (vm.conn.Object_GetDomain (id));
+				return domain;
 			}
 		}
 
