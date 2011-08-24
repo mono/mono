@@ -10,6 +10,9 @@ namespace Mono.Debugger.Soft
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 
+		internal ThreadMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id, type, domain) {
+		}
+
 		// FIXME: Cache, invalidate when the thread/runtime is resumed
 		public StackFrame[] GetFrames () {
 			FrameInfo[] frame_info = vm.conn.Thread_GetFrameInfo (id, 0, -1);

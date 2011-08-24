@@ -437,13 +437,13 @@ namespace Mono.Debugger.Soft
 					TypeMirror t = GetType (type_id);
 
 					if (t.Assembly == d.Corlib && t.Namespace == "System.Threading" && t.Name == "Thread")
-						obj = new ThreadMirror (this, id);
+						obj = new ThreadMirror (this, id, t, d);
 					else if (t.Assembly == d.Corlib && t.Namespace == "System" && t.Name == "String")
-						obj = new StringMirror (this, id);
+						obj = new StringMirror (this, id, t, d);
 					else if (typeof (T) == typeof (ArrayMirror))
-						obj = new ArrayMirror (this, id);
+						obj = new ArrayMirror (this, id, t, d);
 					else
-						obj = new ObjectMirror (this, id);
+						obj = new ObjectMirror (this, id, t, d);
 					objects [id] = obj;
 				}
 				return (T)obj;
