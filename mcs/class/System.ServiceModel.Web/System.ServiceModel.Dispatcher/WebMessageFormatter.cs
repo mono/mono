@@ -3,6 +3,7 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@xamarin.com>
 //
 // Copyright (C) 2008,2009 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2011 Xamarin, Inc (http://xamarin.com)
@@ -201,6 +202,9 @@ namespace System.ServiceModel.Dispatcher
 
 		protected XmlObjectSerializer GetSerializer (WebContentFormat msgfmt, bool isWrapped, MessagePartDescription part)
 		{
+			if (part.Type == typeof (void))
+				return null; // no serialization should be done.
+
 			switch (msgfmt) {
 			case WebContentFormat.Xml:
 				if (xml_serializer == null)
@@ -227,6 +231,9 @@ namespace System.ServiceModel.Dispatcher
 			// FIXME: handle ref/out parameters
 
 			var reader = message.GetReaderAtBodyContents ();
+			reader.MoveToContent ();
+
+			bool wasEmptyElement = reader.IsEmptyElement;
 
 			if (isWrapped) {
 				if (fmt == WebContentFormat.Json)
@@ -235,9 +242,9 @@ namespace System.ServiceModel.Dispatcher
 					reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
 			}
 
-			var ret = ReadObjectBody (serializer, reader);
+			var ret = (serializer == null) ? null : ReadObjectBody (serializer, reader);
 
-			if (isWrapped)
+			if (isWrapped && !wasEmptyElement)
 				reader.ReadEndElement ();
 
 			return ret;

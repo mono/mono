@@ -256,6 +256,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			var host = new WebServiceHost (typeof (Hello));
 			host.AddServiceEndpoint (typeof (IHello), new WebHttpBinding (), "http://localhost:37564/");
+			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = true;
 			host.Open ();
 			try {
 				// run client
