@@ -54,8 +54,7 @@ namespace System.Security.AccessControl
 					   InheritanceFlags inheritanceFlags,
 					   PropagationFlags propagationFlags,
 					   AccessControlType type)
-			// FIXME: accessMask=0 likely causes an error
-			: base (identity.Translate(typeof(SecurityIdentifier)), 0, false, inheritanceFlags, propagationFlags, type)
+			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, type)
 		{
 			this.rights = registryRights;
 		}
