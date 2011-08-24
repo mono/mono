@@ -5,6 +5,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2011 Xamarin, Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -555,6 +556,24 @@ namespace MonoTests.System.ServiceModel.Description
 						Assert.IsNotNull (md.Body.ReturnValue, od.Name);
 		}
 
+		[Test]
+		public void BugX206Contract ()
+		{
+			var cd = ContractDescription.GetContract (typeof (BugX206Service));
+			bool examined = false;
+			foreach (var md in cd.Operations.First ().Messages) {
+				if (md.Direction == MessageDirection.Input)
+					continue;
+				var pd = md.Body.ReturnValue;
+				Assert.IsNotNull (pd, "#1");
+				Assert.AreEqual ("DoWorkResult", pd.Name, "#2");
+				Assert.IsNull (pd.MemberInfo, "#3");
+				Assert.AreEqual (typeof (void), pd.Type, "#4");
+				examined = true;
+			}
+			Assert.IsTrue (examined, "end");
+		}
+
 		// It is for testing attribute search in interfaces.
 		public class Foo : IFoo
 		{
@@ -916,5 +935,18 @@ namespace MonoTests.System.ServiceModel.Description
 			[XmlSerializerFormat]
 			string Echo (string input);
 		}
+
+		[ServiceContract]
+		public interface BugX206Service
+		{
+			[OperationContract]
+			BugX206Response DoWork ();
+		}
+
+		[MessageContract (IsWrapped = true)]
+		public partial class BugX206Response
+		{
+		}
+
 	}
 }
