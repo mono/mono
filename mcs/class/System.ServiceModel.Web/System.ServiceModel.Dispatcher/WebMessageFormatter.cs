@@ -310,6 +310,8 @@ namespace System.ServiceModel.Dispatcher
 
 		internal abstract class WebClientMessageFormatter : WebMessageFormatter, IClientMessageFormatter
 		{
+			IClientMessageFormatter default_formatter;
+
 			protected WebClientMessageFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
 				: base (operation, endpoint, converter, behavior)
 			{
@@ -325,29 +327,36 @@ namespace System.ServiceModel.Dispatcher
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
 
-				if (parameters.Length != md.Body.Parts.Count)
-					throw new ArgumentException (String.Format ("Parameter array length does not match the number of message '{0}' body parts: {1} expected, got {2}", Operation.Name, md.Body.Parts.Count, parameters.Length));
-
+				Message ret;
+				Uri to;
 				object msgpart = null;
 
-				for (int i = 0; i < parameters.Length; i++) {
-					var p = md.Body.Parts [i];
-					string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
-					if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
-					    UriTemplate.QueryValueVariableNames.Contains (name))
-						c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
-					else {
-						// FIXME: bind as a message part
-						if (msgpart == null)
-							msgpart = parameters [i];
-						else
-							throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
+				if (info.Method == "GET") {
+					if (parameters.Length != md.Body.Parts.Count)
+						throw new ArgumentException (String.Format ("Parameter array length does not match the number of message '{0}' body parts: {1} expected, got {2}", Operation.Name, md.Body.Parts.Count, parameters.Length));
+
+					for (int i = 0; i < parameters.Length; i++) {
+						var p = md.Body.Parts [i];
+						string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
+						if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
+						    UriTemplate.QueryValueVariableNames.Contains (name))
+							c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
+						else {
+							// FIXME: bind as a message part
+							if (msgpart == null)
+								msgpart = parameters [i];
+							else
+								throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
+						}
 					}
+					ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
+				} else {
+					if (default_formatter == null)
+						default_formatter = BaseMessagesFormatter.Create (Operation);
+					ret = default_formatter.SerializeRequest (messageVersion, parameters);
 				}
 
-				Uri to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
-
-				Message ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
+				to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
 				ret.Headers.To = to;
 
 				var hp = new HttpRequestMessageProperty ();
