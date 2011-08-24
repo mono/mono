@@ -229,6 +229,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void BindByName3 ()
+		{
+			var t = new UriTemplate ("Login?clientLoginData={clientLoginData}&credentials={credentials}");
+			var n = new NameValueCollection ();
+			var u = t.BindByName (new Uri ("http://localhost"), n);
+			Assert.AreEqual ("http://localhost/Login", u.ToString (), "#1");
+		}
+
+		[Test]
 		public void BindByNameManySlashes ()
 		{
 			var t = new UriTemplate ("////{foo}/{bar}/");

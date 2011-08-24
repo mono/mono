@@ -163,6 +163,15 @@ namespace System
 
 		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults, bool query)
 		{
+			if (query) {
+				int idx = template.IndexOf ('?', src);
+				if (idx > 0) {
+					sb.Append (template.Substring (src, idx - src));
+					src = idx;
+					// note that it doesn't append '?'. It is added only when there is actual parameter binding.
+				}
+			}
+
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
@@ -173,18 +182,19 @@ namespace System
 #endif
 				if (dic != null)
 					dic.TryGetValue (name, out value);
+
 				if (query) {
 					if (value != null || (!omitDefaults && Defaults.TryGetValue (name, out value))) {
 						sb.Append (template.Substring (src, s - src));
 						sb.Append (value);
 					}
-				} else
-					if (value == null && (omitDefaults || !Defaults.TryGetValue(name, out value)))
-						throw new ArgumentException(string.Format("The argument name value collection does not contain non-nul vaalue for '{0}'", name), "parameters");
-					else {
-						sb.Append (template.Substring (src, s - src));
-						sb.Append (value);
-					}
+				} else {
+					if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
+						throw new ArgumentException (string.Format("The argument name value collection does not contain non-null value for '{0}'", name), "parameters");
+
+					sb.Append (template.Substring (src, s - src));
+					sb.Append (value);
+				}
 				src = e + 1;
 			}
 		}
