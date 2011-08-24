@@ -598,8 +598,11 @@ namespace System.ServiceModel.Dispatcher
 						if (str != null)
 							parameters [i] = Converter.ConvertStringToValue (str, p.Type);
 						else {
-							var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
-							parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+							if (info.Method != "GET") {
+								var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
+								parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+							}
+							// for GET Uri template parameters, there is no <anyType xsi:nil='true' />. So just skip the member.
 						}
 					}
 				}
