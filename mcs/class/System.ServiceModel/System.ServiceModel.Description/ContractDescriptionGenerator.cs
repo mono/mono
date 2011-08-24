@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Atsushi Enomoto <atsushi@xamarin.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2011 Xamarin, Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -413,9 +415,21 @@ namespace System.ServiceModel.Description
 					cd.Namespace.Length == 0 ? "urn:" : cd.Namespace.EndsWith ("/") ? "" : "/", cd.Name, "/",
 					od.Name, isRequest ? String.Empty : "Response");
 
+			MessageDescription md;
 			if (mca != null)
-				return CreateMessageDescription (messageType, cd.Namespace, action, isRequest, isCallback, mca);
-			return CreateMessageDescription (oca, plist, od.Name, cd.Namespace, action, isRequest, isCallback, retType, mi.ReturnTypeCustomAttributes);
+				md = CreateMessageDescription (messageType, cd.Namespace, action, isRequest, isCallback, mca);
+			else
+				md = CreateMessageDescription (oca, plist, od.Name, cd.Namespace, action, isRequest, isCallback, retType);
+
+			// ReturnValue
+			if (!isRequest) {
+				MessagePartDescription mp = CreatePartCore (GetMessageParameterAttribute (mi.ReturnTypeCustomAttributes), od.Name + "Result", md.Body.WrapperNamespace);
+				mp.Index = 0;
+				mp.Type = mca != null ? typeof (void) : retType;
+				md.Body.ReturnValue = mp;
+			}
+
+			return md;
 		}
 
 		public static MessageDescription CreateMessageDescription (
@@ -456,6 +470,13 @@ namespace System.ServiceModel.Description
 					pd.MemberInfo = bmi;
 					md.Headers.Add (pd);
 				}
+				var mpa = bmi.GetCustomAttribute<MessagePropertyAttribute> (false);
+				if (mpa != null) {
+					var pd = new MessagePropertyDescription (mpa.Name ?? mname);
+					pd.Type = MessageFilterOutByRef (mtype);
+					pd.MemberInfo = bmi;
+					md.Properties.Add (pd);
+				}
 				var mba = GetMessageBodyMemberAttribute (bmi);
 				if (mba != null) {
 					var pd = CreatePartCore (mba, mname, defaultNamespace);
@@ -467,12 +488,11 @@ namespace System.ServiceModel.Description
 				}
 			}
 
-			// FIXME: fill headers and properties.
 			return md;
 		}
 
 		public static MessageDescription CreateMessageDescription (
-			OperationContractAttribute oca, ParameterInfo[] plist, string name, string defaultNamespace, string action, bool isRequest, bool isCallback, Type retType, ICustomAttributeProvider retTypeAttributes)
+			OperationContractAttribute oca, ParameterInfo[] plist, string name, string defaultNamespace, string action, bool isRequest, bool isCallback, Type retType)
 		{
 			var dir = isRequest ^ isCallback ? MessageDirection.Input : MessageDirection.Output;
 			MessageDescription md = new MessageDescription (action, dir) { IsRequest = isRequest };
@@ -504,16 +524,6 @@ namespace System.ServiceModel.Description
 				pd.Type = MessageFilterOutByRef (pi.ParameterType);
 				mb.Parts.Add (pd);			
 			}
-
-			// ReturnValue
-			if (!isRequest) {
-				MessagePartDescription mp = CreatePartCore (GetMessageParameterAttribute (retTypeAttributes), name + "Result", mb.WrapperNamespace);
-				mp.Index = 0;
-				mp.Type = retType;
-				mb.ReturnValue = mp;
-			}
-
-			// FIXME: fill properties.
 
 			return md;
 		}
