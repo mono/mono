@@ -338,30 +338,22 @@ namespace System.ServiceModel.Dispatcher
 				Uri to;
 				object msgpart = null;
 
-				if (info.Method == "GET") {
-					if (parameters.Length != md.Body.Parts.Count)
-						throw new ArgumentException (String.Format ("Parameter array length does not match the number of message '{0}' body parts: {1} expected, got {2}", Operation.Name, md.Body.Parts.Count, parameters.Length));
 
-					for (int i = 0; i < parameters.Length; i++) {
-						var p = md.Body.Parts [i];
-						string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
-						if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
-						    UriTemplate.QueryValueVariableNames.Contains (name))
-							c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
-						else {
-							// FIXME: bind as a message part
-							if (msgpart == null)
-								msgpart = parameters [i];
-							else
-								throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
-						}
+				for (int i = 0; i < parameters.Length; i++) {
+					var p = md.Body.Parts [i];
+					string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
+					if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
+					    UriTemplate.QueryValueVariableNames.Contains (name))
+						c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
+					else {
+						// FIXME: bind as a message part
+						if (msgpart == null)
+							msgpart = parameters [i];
+						else
+							throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
 					}
-					ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
-				} else {
-					if (default_formatter == null)
-						default_formatter = BaseMessagesFormatter.Create (Operation);
-					ret = default_formatter.SerializeRequest (messageVersion, parameters);
 				}
+				ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
 
 				to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
 				ret.Headers.To = to;
