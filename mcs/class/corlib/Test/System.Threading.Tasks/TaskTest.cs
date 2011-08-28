@@ -319,6 +319,18 @@ namespace MonoTests.System.Threading.Tasks
 			var t = new Task (() => { });
 			t.Dispose ();
 		}
+
+		[Test]
+		public void ThrowingUnrelatedCanceledExceptionTest ()
+		{
+			Task t = new Task (() => {
+				throw new TaskCanceledException ();
+			});
+
+			t.RunSynchronously ();
+			Assert.IsTrue (t.IsFaulted);
+			Assert.IsFalse (t.IsCanceled);
+		}
 	}
 }
 #endif
