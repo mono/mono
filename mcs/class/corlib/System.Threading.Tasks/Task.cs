@@ -410,7 +410,7 @@ namespace System.Threading.Tasks
 				try {
 					InnerInvoke ();
 				} catch (OperationCanceledException oce) {
-					if (oce.CancellationToken == token)
+					if (token != CancellationToken.None && oce.CancellationToken == token)
 						CancelReal ();
 					else
 						HandleGenericException (oce);
