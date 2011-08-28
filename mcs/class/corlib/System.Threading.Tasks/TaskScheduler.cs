@@ -127,7 +127,12 @@ namespace System.Threading.Tasks
 
 		internal bool RunInline (Task task)
 		{
-			return TryExecuteTaskInline (task, false);
+			if (!TryExecuteTaskInline (task, false))
+				return false;
+
+			if (!task.IsCompleted)
+				throw new InvalidOperationException ("The TryExecuteTaskInline call to the underlying scheduler succeeded, but the task body was not invoked");
+			return true;
 		}
 
 		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)

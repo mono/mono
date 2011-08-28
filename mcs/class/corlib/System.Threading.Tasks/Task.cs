@@ -185,8 +185,12 @@ namespace System.Threading.Tasks
 			SetupScheduler (scheduler);
 			status = TaskStatus.WaitingToRun;
 
-			if (scheduler.RunInline (this))
-				return;
+			try {
+				if (scheduler.RunInline (this))
+					return;
+			} catch (Exception inner) {
+				throw new TaskSchedulerException (inner);
+			}
 
 			Start (scheduler);
 			Wait ();
