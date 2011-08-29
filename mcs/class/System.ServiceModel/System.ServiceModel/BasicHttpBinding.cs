@@ -273,43 +273,26 @@ namespace System.ServiceModel
 			h.ExtendedProtectionPolicy = Security.Transport.ExtendedProtectionPolicy;
 #endif
 
-#if !NET_2_1
-			switch (Security.Mode) {
-			case BasicHttpSecurityMode.Transport:
-				switch (Security.Transport.ClientCredentialType) {
-				case HttpClientCredentialType.Basic:
-					h.AuthenticationScheme = AuthenticationSchemes.Basic;
-					break;
-				case HttpClientCredentialType.Ntlm:
-					h.AuthenticationScheme = AuthenticationSchemes.Ntlm;
-					break;
-				case HttpClientCredentialType.Windows:
-					h.AuthenticationScheme = AuthenticationSchemes.Negotiate;
-					break;
-				case HttpClientCredentialType.Digest:
-					h.AuthenticationScheme = AuthenticationSchemes.Digest;
-					break;
-				case HttpClientCredentialType.Certificate:
-					var https = (HttpsTransportBindingElement) h;
-					https.RequireClientCertificate = true;
-					break;
-				}
+#if !NET_2_1 || MOBILE
+			switch (Security.Transport.ClientCredentialType) {
+			case HttpClientCredentialType.Basic:
+				h.AuthenticationScheme = AuthenticationSchemes.Basic;
 				break;
-			case BasicHttpSecurityMode.TransportCredentialOnly:
-				switch (Security.Transport.ClientCredentialType) {
-				case HttpClientCredentialType.Basic:
-					h.AuthenticationScheme = AuthenticationSchemes.Basic;
+			case HttpClientCredentialType.Ntlm:
+				h.AuthenticationScheme = AuthenticationSchemes.Ntlm;
+				break;
+			case HttpClientCredentialType.Windows:
+				h.AuthenticationScheme = AuthenticationSchemes.Negotiate;
+				break;
+			case HttpClientCredentialType.Digest:
+				h.AuthenticationScheme = AuthenticationSchemes.Digest;
+				break;
+			case HttpClientCredentialType.Certificate:
+				switch (Security.Mode) {
+				case BasicHttpSecurityMode.Transport:
+					(h as HttpsTransportBindingElement).RequireClientCertificate = true;
 					break;
-				case HttpClientCredentialType.Ntlm:
-					h.AuthenticationScheme = AuthenticationSchemes.Ntlm;
-					break;
-				case HttpClientCredentialType.Windows:
-					h.AuthenticationScheme = AuthenticationSchemes.Negotiate;
-					break;
-				case HttpClientCredentialType.Digest:
-					h.AuthenticationScheme = AuthenticationSchemes.Digest;
-					break;
-				case HttpClientCredentialType.Certificate:
+				case BasicHttpSecurityMode.TransportCredentialOnly:
 					throw new InvalidOperationException ("Certificate-based client authentication is not supported by 'TransportCredentialOnly' mode.");
 				}
 				break;

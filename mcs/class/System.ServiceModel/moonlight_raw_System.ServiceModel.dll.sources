@@ -173,7 +173,8 @@ System.ServiceModel.Security/UserNamePasswordClientCredential.cs
 System.ServiceModel/ActionNotSupportedException.cs
 System.ServiceModel/AllEnums.cs
 System.ServiceModel/BasicHttpBinding.cs
-System.ServiceModel/BasicHttpSecurity_2_1.cs
+System.ServiceModel/BasicHttpSecurity.cs
+System.ServiceModel/BasicHttpMessageSecurity.cs
 System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
 System.ServiceModel/ClientBase.cs
@@ -200,6 +201,7 @@ System.ServiceModel/FaultException.cs
 System.ServiceModel/FaultException_1.cs
 System.ServiceModel/FaultReason.cs
 System.ServiceModel/FaultReasonText.cs
+System.ServiceModel/HttpTransportSecurity.cs
 System.ServiceModel/IClientChannel.cs
 System.ServiceModel/ICommunicationObject.cs
 System.ServiceModel/IContextChannel.cs
