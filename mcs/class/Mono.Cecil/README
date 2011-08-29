@@ -1,5 +1,4 @@
-This copy of Mono.Cecil is a snapshot of the upstream Mono.Cecil,
-currently located at:
+This copy of Mono.Cecil is a snapshot of the upstream Mono.Cecil located at:
 
 	http://github.com/jbevain/cecil
 
@@ -7,7 +6,8 @@ To update the snapshot, simply run:
 
 	ruby update.rb
 
-in mono/mcs/class/Mono.Cecil. You may have to update
+in mono/mcs/class/Mono.Cecil. You need to have an updated clone of the upstream
+cecil in a sibling folder of your mono clone. You may have to update
 
 	mono/data/cecil.pc.in
 
