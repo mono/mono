@@ -25,6 +25,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if !MOONLIGHT
+
 using System;
 using System.Net.Security;
 using System.ServiceModel.Security;
@@ -37,14 +40,16 @@ namespace System.ServiceModel
 		internal BasicHttpMessageSecurity ()
 		{
 		}
-
+		
+#if !MOBILE
 		SecurityAlgorithmSuite alg = SecurityAlgorithmSuite.Default;
-		BasicHttpMessageCredentialType ctype;
 
 		public SecurityAlgorithmSuite AlgorithmSuite {
 			get { return alg; }
 			set { alg = value; }
 		}
+#endif
+		BasicHttpMessageCredentialType ctype;
 
 		public BasicHttpMessageCredentialType ClientCredentialType {
 			get { return ctype; }
@@ -52,3 +57,5 @@ namespace System.ServiceModel
 		}
 	}
 }
+
+#endif
