@@ -110,7 +110,7 @@ namespace Mono.Cecil {
 		}
 
 		public override ModuleDefinition Module {
-			get { return owner != null ? owner.Module : null; }
+			get { return module ?? owner.Module; }
 		}
 
 		public override string Name {
@@ -194,12 +194,16 @@ namespace Mono.Cecil {
 			this.etype = ConvertGenericParameterType (this.type);
 		}
 
-		public GenericParameter (int position, GenericParameterType type)
+		public GenericParameter (int position, GenericParameterType type, ModuleDefinition module)
 			: base (string.Empty, string.Empty)
 		{
+			if (module == null)
+				throw new ArgumentNullException ();
+
 			this.position = position;
 			this.type = type;
 			this.etype = ConvertGenericParameterType (type);
+			this.module = module;
 		}
 
 		static ElementType ConvertGenericParameterType (GenericParameterType type)
