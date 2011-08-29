@@ -322,6 +322,17 @@ namespace MonoTests.System.Threading {
 			Monitor.Enter (o, ref taken);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Enter_bool_argcheck_fastpath ()
+		{
+			object o = new object ();
+			bool taken = false;
+			Monitor.Enter (o, ref taken);
+			taken = true;
+			Monitor.Enter (o, ref taken);
+		}
+
 #endif
 
 	}
