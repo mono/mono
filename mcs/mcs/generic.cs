@@ -713,8 +713,8 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if (ifaces_defined == null && ifaces != null)
-						ifaces_defined = ifaces.ToArray ();
+					if (ifaces_defined == null)
+						ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 
 					state |= StateFlags.InterfacesExpanded;
 				}
@@ -728,13 +728,19 @@ namespace Mono.CSharp {
 		//
 		public TypeSpec[] InterfacesDefined {
 			get {
-				if (ifaces_defined == null && ifaces != null)
-					ifaces_defined = ifaces.ToArray ();
+				if (ifaces_defined == null) {
+					if (ifaces == null)
+						return null;
 
-				return ifaces_defined;
+					ifaces_defined = ifaces.ToArray ();
+				}
+
+				return ifaces_defined.Length == 0 ? null : ifaces_defined;
 			}
 			set {
-				ifaces = ifaces_defined = value;
+				ifaces_defined = value;
+				if (value != null && value.Length != 0)
+					ifaces = value;
 			}
 		}
 

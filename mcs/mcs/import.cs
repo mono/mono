@@ -963,6 +963,15 @@ namespace Mono.CSharp
 			if (spec.BaseType != null) {
 				var bifaces = spec.BaseType.Interfaces;
 				if (bifaces != null) {
+					//
+					// Before adding base class interfaces close defined interfaces
+					// on type parameter
+					//
+					var tp = spec as TypeParameterSpec;
+					if (tp != null && tp.InterfacesDefined == null) {
+						tp.InterfacesDefined = TypeSpec.EmptyTypes;
+					}
+
 					foreach (var iface in bifaces)
 						spec.AddInterface (iface);
 				}

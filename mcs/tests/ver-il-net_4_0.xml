@@ -17376,6 +17376,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-561.cs">
+    <type name="C">
+      <method name="Void Foo[T](System.Collections.Generic.List`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -53692,6 +53705,25 @@
         <size>375</size>
       </method>
       <method name="Int32 &lt;&gt;m__7D()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] VariableInitializer_1()">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;VariableInitializer_1&gt;c__async3D">
+      <method name="Void MoveNext()">
+        <size>351</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__7E()">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__7F()">
         <size>2</size>
       </method>
       <method name="Void .ctor()">
