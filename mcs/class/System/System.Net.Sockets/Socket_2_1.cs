@@ -714,6 +714,7 @@ namespace System.Net.Sockets {
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
+					send_so_far = 0;
 				}
 				result.Complete ();
 			}
@@ -735,6 +736,7 @@ namespace System.Net.Sockets {
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
+					send_so_far = 0;
 				} catch (Exception e) {
 					result.Complete (e);
 					return;
