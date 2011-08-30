@@ -100,5 +100,7 @@ namespace Mono.Xml.XPath
 		public int NextNamespace;
 		public int Name;
 		public int Namespace;
+		public int LineNumber;
+		public int LinePosition;
 	}
 }

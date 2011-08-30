@@ -118,14 +118,16 @@ namespace Mono.Xml.XPath
 		int IXmlLineInfo.LineNumber {
 			get {
 				return currentIsAttr ? attributes [currentAttr].LineNumber :
-					nodes [currentNode].LineNumber;
+					currentIsNode ? nodes [currentNode].LineNumber :
+					namespaces [currentNs].LineNumber;
 			}
 		}
 
 		int IXmlLineInfo.LinePosition {
 			get {
 				return currentIsAttr ? attributes [currentAttr].LinePosition :
-					nodes [currentNode].LinePosition;
+					currentIsNode ? nodes [currentNode].LinePosition :
+					namespaces [currentNs].LinePosition;
 			}
 		}
 
