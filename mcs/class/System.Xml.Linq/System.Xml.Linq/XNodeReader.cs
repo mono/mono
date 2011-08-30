@@ -31,7 +31,7 @@ using XPI = System.Xml.Linq.XProcessingInstruction;
 
 namespace System.Xml.Linq
 {
-	internal class XNodeReader : XmlReader
+	internal class XNodeReader : XmlReader, IXmlLineInfo
 	{
 		ReadState state = ReadState.Initial;
 		XNode node, start;
@@ -46,6 +46,24 @@ namespace System.Xml.Linq
 			start = node;
 		}
 
+		int IXmlLineInfo.LineNumber {
+			get {
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? o.LineNumber : 0;
+			}
+		}
+		int IXmlLineInfo.LinePosition {
+			get {
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? o.LinePosition : 0;
+			}
+		}
+		bool IXmlLineInfo.HasLineInfo ()
+		{
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? ((IXmlLineInfo) o).HasLineInfo () : false;
+		}
+	
 		public override int AttributeCount {
 			get {
 				if (state != ReadState.Interactive || end_element)
