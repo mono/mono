@@ -721,6 +721,12 @@ class Tester : Base
 		return r == 5;
 	}
 	
+	async Task<bool> VariableInitializer_1 ()
+	{
+		int a = 2, b = await Task.Factory.StartNew (() => 1), c = await Task.Factory.StartNew (() => 1);
+		return a == (b + c);
+	}
+
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);
