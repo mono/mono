@@ -738,6 +738,7 @@ namespace System.Net.Sockets {
 					result.Total = send_so_far;
 					send_so_far = 0;
 				} catch (Exception e) {
+					send_so_far = 0;
 					result.Complete (e);
 					return;
 				}
