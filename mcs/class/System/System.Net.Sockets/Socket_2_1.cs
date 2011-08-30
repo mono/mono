@@ -63,7 +63,7 @@ namespace System.Net.Sockets {
 
 		// Used by the runtime
 		internal enum SocketOperation {
-			Accept = 0,
+			Accept,
 			Connect,
 			Receive,
 			ReceiveFrom,
@@ -684,9 +684,12 @@ namespace System.Net.Sockets {
 				result.Complete (total);
 			}
 
+			int send_so_far;
+
 			void UpdateSendValues (int last_sent)
 			{
 				if (result.error == 0) {
+					send_so_far += last_sent;
 					result.Offset += last_sent;
 					result.Size -= last_sent;
 				}
@@ -710,6 +713,7 @@ namespace System.Net.Sockets {
 						Socket.socket_pool_queue (Worker.Dispatcher, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
+					result.Total = send_so_far;
 				}
 				result.Complete ();
 			}
@@ -730,7 +734,7 @@ namespace System.Net.Sockets {
 						Socket.socket_pool_queue (Worker.Dispatcher, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
-					result.Total = total;
+					result.Total = send_so_far;
 				} catch (Exception e) {
 					result.Complete (e);
 					return;
