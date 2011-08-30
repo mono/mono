@@ -578,6 +578,10 @@ namespace Mono.Xml.XPath
 			namespaces [nsIndex].Name = name;
 			namespaces [nsIndex].Namespace = ns;
 			namespaces [nsIndex].NextNamespace = nextNs;
+			if (lineInfo != null && lineInfo.HasLineInfo ()) {
+				namespaces [nsIndex].LineNumber = lineInfo.LineNumber;
+				namespaces [nsIndex].LinePosition = lineInfo.LinePosition;
+			}
 		}
 	}
 }
