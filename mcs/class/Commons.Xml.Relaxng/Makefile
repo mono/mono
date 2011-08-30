@@ -22,7 +22,7 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES)
 
 Commons.Xml.Relaxng.Rnc/RncParser.cs: Commons.Xml.Relaxng.Rnc/RncParser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs
+	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $(CURDIR)/Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs
 
 BUILT_SOURCES = Commons.Xml.Relaxng.Rnc/RncParser.cs
 
