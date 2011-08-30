@@ -77,14 +77,14 @@ EXTRA_DISTFILES = \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
+	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $(CURDIR)/$< >$@
 
 Mono.Xml.Xsl/PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	sed "s/\%start Expr/\%start Pattern/" $< >$@
 
 Mono.Xml.Xsl/PatternParser.cs: Mono.Xml.Xsl/PatternParser.jay $(topdir)/jay/skeleton.cs
 	echo "#define XSLT_PATTERN" > $@
-	$(topdir)/jay/jay -ct $< < $(topdir)/jay/skeleton.cs >>$@
+	$(topdir)/jay/jay -ct $(CURDIR)/$< < $(topdir)/jay/skeleton.cs >>$@
 
 Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
