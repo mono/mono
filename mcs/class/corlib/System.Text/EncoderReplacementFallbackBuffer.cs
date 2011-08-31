@@ -94,6 +94,7 @@ namespace System.Text
 
 		public override void Reset ()
 		{
+			fallback_assigned = false;
 			current = 0;
 		}
 	}
