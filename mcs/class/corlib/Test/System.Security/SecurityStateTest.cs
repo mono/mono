@@ -33,7 +33,7 @@ using System.Security;
 
 using NUnit.Framework;
 
-namespace MonoTest.System.Security {
+namespace MonoTests.System.Security {
 
 	[TestFixture]
 	public class SecurityStateTest {
