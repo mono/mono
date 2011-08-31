@@ -256,6 +256,11 @@ namespace System.IO {
 				throw new ArgumentException ("An empty file name is not valid.");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path.");
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException ("path");
+			}
 		}
 
 		internal MonoIOStat stat;
