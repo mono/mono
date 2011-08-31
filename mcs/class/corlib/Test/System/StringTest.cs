@@ -200,7 +200,7 @@ public class StringTest
 	}
 
 	[Test] // ctor (SByte*)
-	[Category ("NotDotNet")] // this crashes nunit 2.4 and 2.6
+	[Ignore ("invalid test")]
 	public unsafe void Constructor3_Value_Invalid ()
 	{
 		try {
@@ -275,6 +275,7 @@ public class StringTest
 	}
 
 	[Test] // ctor (SByte*, Int32, Int32)
+	[Ignore ("invalid test")]
 	public unsafe void Constructor7_Value_Invalid ()
 	{
 		try {
@@ -441,6 +442,7 @@ public class StringTest
 	}
 
 	[Test] // ctor (SByte*, Int32, Int32, Encoding)
+	[Ignore ("invalid test")]
 	public unsafe void Constructor8_Value_Invalid ()
 	{
 		try {
