@@ -832,6 +832,11 @@ namespace System.IO {
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException (parameterName);
+			}
 #if MOONLIGHT
 			// On Moonlight (SL4+) there are some limitations in "Elevated Trust"
 			if (SecurityManager.HasElevatedPermissions) {
