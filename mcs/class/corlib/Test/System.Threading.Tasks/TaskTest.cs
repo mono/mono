@@ -1,4 +1,4 @@
-#if NET_4_0
+//
 // TaskTest.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -22,6 +22,8 @@
 // THE SOFTWARE.
 //
 //
+
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -284,6 +286,17 @@ namespace MonoTests.System.Threading.Tasks
 			t.RunSynchronously ();
 
 			Assert.AreEqual (1, val);
+		}
+
+		[Test]
+		public void RunSynchronouslyArgumentChecks ()
+		{
+			Task t = new Task (() => { });
+			try {
+				t.RunSynchronously (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
 		}
 
 		[Test]

@@ -26,7 +26,7 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading;
@@ -39,6 +39,57 @@ namespace MonoTests.System.Threading.Tasks
 	[TestFixture]
 	public class TaskFactory_T_Tests
 	{
+		class CompletedAsyncResult : IAsyncResult
+		{
+			public object AsyncState
+			{
+				get { throw new NotImplementedException (); }
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool IsCompleted
+			{
+				get { return true; }
+			}
+		}
+
+		class TestAsyncResult : IAsyncResult
+		{
+			WaitHandle wh = new ManualResetEvent (true);
+
+			public object AsyncState
+			{
+				get { throw new NotImplementedException (); }
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get
+				{
+					return wh;
+				}
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool IsCompleted
+			{
+				get { return false; }
+			}
+		}
+
 		[SetUp]
 		public void Setup ()
 		{
@@ -64,6 +115,68 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.Fail ("#3");
 			} catch (ArgumentOutOfRangeException) {
 			}
+		}
+
+		[Test]
+		public void NoDefaultScheduler ()
+		{
+			var tf = new TaskFactory<object> ();
+			Assert.IsNull (tf.Scheduler, "#1");
+		}
+
+		[Test]
+		public void FromAsync_ArgumentsCheck ()
+		{
+			var factory = new TaskFactory<object> ();
+
+			var result = new CompletedAsyncResult ();
+			try {
+				factory.FromAsync (null, l => 1);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				factory.FromAsync (result, null);
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				factory.FromAsync (result, l => 1, TaskCreationOptions.LongRunning);
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				factory.FromAsync (result, l => 1, TaskCreationOptions.PreferFairness);
+				Assert.Fail ("#4");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				factory.FromAsync (result, l => 1, TaskCreationOptions.None, null);
+				Assert.Fail ("#5");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				factory.FromAsync (null, l => 1, null, TaskCreationOptions.None);
+				Assert.Fail ("#6");
+			} catch (ArgumentNullException) {
+			}
+		}
+
+		[Test]
+		public void FromAsync_SimpleAsyncResult ()
+		{
+			var result = new TestAsyncResult ();
+
+			var factory = new TaskFactory<int> ();
+			var task = factory.FromAsync (result, l => 5);
+
+			Assert.IsTrue (task.Wait (1000), "#1");
+			Assert.AreEqual (5, task.Result, "#2");
 		}
 	}
 }
