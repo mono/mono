@@ -816,6 +816,25 @@ typedef SgenGrayQueue GrayQueue;
 typedef void (*CopyOrMarkObjectFunc) (void**, GrayQueue*);
 typedef char* (*ScanObjectFunc) (char*, GrayQueue*);
 
+
+static inline MonoObject*
+finalize_entry_get_object (FinalizeEntry *entry)
+{
+	return (MonoObject*)(((mword)entry->object) & ~(mword)0x1);
+}
+
+static inline gboolean
+finalize_entry_get_bridge_bit (FinalizeEntry *entry)
+{
+	return (((mword)entry->object) & 0x1);
+}
+
+static inline void
+finalize_entry_set_object (FinalizeEntry *entry, MonoObject *object, gboolean bridge_bit)
+{
+	entry->object = (MonoObject*)((mword)object | (mword)bridge_bit);
+}
+
 /* forward declarations */
 static int stop_world (int generation);
 static int restart_world (int generation);
@@ -827,6 +846,7 @@ static void report_finalizer_roots (void);
 static void report_registered_roots (void);
 static void find_pinning_ref_from_thread (char *obj, size_t size);
 static void update_current_thread_stack (void *start);
+static void collect_bridge_objects (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, GrayQueue *queue);
 static void finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, GrayQueue *queue);
 static void add_or_remove_disappearing_link (MonoObject *obj, void **link, gboolean track, int generation);
 static void null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, gboolean before_finalization, GrayQueue *queue);
@@ -2280,9 +2300,10 @@ report_finalizer_roots_list (FinalizeEntry *list)
 
 	report.count = 0;
 	for (fin = list; fin; fin = fin->next) {
-		if (!fin->object)
+		MonoObject *object = finalize_entry_get_object (fin);
+		if (!object)
 			continue;
-		add_profile_gc_root (&report, fin->object, MONO_PROFILE_GC_ROOT_FINALIZER, 0);
+		add_profile_gc_root (&report, object, MONO_PROFILE_GC_ROOT_FINALIZER, 0);
 	}
 	notify_gc_roots (&report);
 }
@@ -2378,10 +2399,14 @@ scan_finalizer_entries (CopyOrMarkObjectFunc copy_func, FinalizeEntry *list, Gra
 	FinalizeEntry *fin;
 
 	for (fin = list; fin; fin = fin->next) {
-		if (!fin->object)
+		void *object = finalize_entry_get_object (fin);
+		gboolean bridge_bit = finalize_entry_get_bridge_bit (fin);
+		if (!object)
 			continue;
-		DEBUG (5, fprintf (gc_debug_file, "Scan of fin ready object: %p (%s)\n", fin->object, safe_name (fin->object)));
-		copy_func (&fin->object, queue);
+		DEBUG (5, fprintf (gc_debug_file, "Scan of fin ready object: %p (%s)\n", object, safe_name (object)));
+		copy_func (&object, queue);
+
+		finalize_entry_set_object (fin, object, bridge_bit);
 	}
 }
 
@@ -2532,6 +2557,12 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 			drain_gray_stack (queue);
 			++ephemeron_rounds;
 		} while (!done_with_ephemerons);
+
+		if (mono_sgen_need_bridge_processing ()) {
+			collect_bridge_objects (copy_func, start_addr, end_addr, generation, queue);
+			if (generation == GENERATION_OLD)
+				collect_bridge_objects (copy_func, nursery_start, nursery_real_end, GENERATION_NURSERY, queue);
+		}
 
 		fin_ready = num_ready_finalizers;
 		finalize_in_range (copy_func, start_addr, end_addr, generation, queue);
@@ -4037,7 +4068,7 @@ is_critical_finalizer (FinalizeEntry *entry)
 	if (!mono_defaults.critical_finalizer_object)
 		return FALSE;
 
-	obj = entry->object;
+	obj = finalize_entry_get_object (entry);
 	class = ((MonoVTable*)LOAD_VTABLE (obj))->klass;
 
 	return mono_class_has_parent (class, mono_defaults.critical_finalizer_object);
@@ -4069,7 +4100,7 @@ rehash_fin_table (FinalizeEntryHashTable *hash_table)
 	new_hash = mono_sgen_alloc_internal_dynamic (new_size * sizeof (FinalizeEntry*), INTERNAL_MEM_FIN_TABLE);
 	for (i = 0; i < finalizable_hash_size; ++i) {
 		for (entry = finalizable_hash [i]; entry; entry = next) {
-			hash = mono_object_hash (entry->object) % new_size;
+			hash = mono_object_hash (finalize_entry_get_object (entry)) % new_size;
 			next = entry->next;
 			entry->next = new_hash [hash];
 			new_hash [hash] = entry;
@@ -4088,6 +4119,101 @@ rehash_fin_table_if_necessary (FinalizeEntryHashTable *hash_table)
 		rehash_fin_table (hash_table);
 }
 
+
+
+/* LOCKING: requires that the GC lock is held */
+void
+mono_sgen_mark_bridge_object (MonoObject *obj)
+{
+	FinalizeEntryHashTable *hash_table = get_finalize_entry_hash_table (ptr_in_nursery (obj) ? GENERATION_NURSERY : GENERATION_OLD);
+	FinalizeEntry **finalizable_hash = hash_table->table;
+	FinalizeEntry *entry;
+	unsigned int hash;
+
+	hash = mono_object_hash (obj);
+	hash %= hash_table->size;
+
+	for (entry = finalizable_hash [hash]; entry; entry = entry->next) {
+		if (finalize_entry_get_object (entry) == obj)
+			finalize_entry_set_object (entry, obj, TRUE);
+	}
+}
+
+/* LOCKING: requires that the GC lock is held */
+static void
+collect_bridge_objects (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, GrayQueue *queue)
+{
+	FinalizeEntryHashTable *hash_table = get_finalize_entry_hash_table (generation);
+	FinalizeEntry *entry, *prev;
+	int i;
+	FinalizeEntry **finalizable_hash = hash_table->table;
+	mword finalizable_hash_size = hash_table->size;
+
+	if (no_finalize)
+		return;
+
+	for (i = 0; i < finalizable_hash_size; ++i) {
+		prev = NULL;
+		for (entry = finalizable_hash [i]; entry;) {
+			MonoObject *object = finalize_entry_get_object (entry);
+			gboolean ignore_obj = finalize_entry_get_bridge_bit (entry);
+			char *copy;
+
+			/* Bridge code told us to ignore this one */
+			if (ignore_obj)
+				goto next_step;
+
+			/* Object is a bridge object and major heap says it's dead  */
+			if (!((char*)object >= start && (char*)object < end && !major_collector.is_object_live ((char*)object)))
+				goto next_step;
+
+			/* Nursery says the object is dead. */
+			if (!object_is_fin_ready (object))
+				goto next_step;
+
+			if (!mono_sgen_is_bridge_object (object))
+				goto next_step;
+
+			copy = (char*)object;
+			copy_func ((void**)&copy, queue);
+
+			bridge_register_finalized_object ((MonoObject*)copy);
+
+			if (hash_table == &minor_finalizable_hash && !ptr_in_nursery (copy)) {
+				FinalizeEntry *next = entry->next;
+				unsigned int major_hash;
+				/* remove from the list */
+				if (prev)
+					prev->next = entry->next;
+				else
+					finalizable_hash [i] = entry->next;
+				hash_table->num_registered--;
+
+				finalize_entry_set_object (entry, (MonoObject*)copy, ignore_obj);
+
+				/* insert it into the major hash */
+				rehash_fin_table_if_necessary (&major_finalizable_hash);
+				major_hash = mono_object_hash ((MonoObject*) copy) %
+					major_finalizable_hash.size;
+				entry->next = major_finalizable_hash.table [major_hash];
+				major_finalizable_hash.table [major_hash] = entry;
+				major_finalizable_hash.num_registered++;
+
+				entry = next;
+				continue;
+			} else {
+				/* update pointer */
+				finalize_entry_set_object (entry, (MonoObject*)copy, ignore_obj);
+			}
+next_step:
+			prev = entry;
+			entry = entry->next;
+		}
+	}
+
+	drain_gray_stack (queue);
+}
+
 /* LOCKING: requires that the GC lock is held */
 static void
 finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, GrayQueue *queue)
@@ -4103,16 +4229,19 @@ finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int g
 	for (i = 0; i < finalizable_hash_size; ++i) {
 		prev = NULL;
 		for (entry = finalizable_hash [i]; entry;) {
-			if ((char*)entry->object >= start && (char*)entry->object < end && !major_collector.is_object_live (entry->object)) {
-				gboolean is_fin_ready = object_is_fin_ready (entry->object);
-				char *copy = entry->object;
+			MonoObject *object = finalize_entry_get_object (entry);
+			gboolean bridge_bit = finalize_entry_get_bridge_bit (entry);
+
+			if ((char*)object >= start && (char*)object < end && !major_collector.is_object_live ((char*)object)) {
+				gboolean is_fin_ready = object_is_fin_ready (object);
+				char *copy = (char*)object;
 				copy_func ((void**)&copy, queue);
 				if (is_fin_ready) {
 					char *from;
 					FinalizeEntry *next;
 					/* Make it survive */
-					from = entry->object;
-					entry->object = copy;
+					from = (char*)object;
+					finalize_entry_set_object (entry, (MonoObject*)copy, bridge_bit);
 					/* remove and put in fin_ready_list */
 					if (prev)
 						prev->next = entry->next;
@@ -4122,12 +4251,11 @@ finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int g
 					num_ready_finalizers++;
 					hash_table->num_registered--;
 					queue_finalization_entry (entry);
-					bridge_register_finalized_object ((MonoObject*)copy);
-					DEBUG (5, fprintf (gc_debug_file, "Queueing object for finalization: %p (%s) (was at %p) (%d/%d)\n", entry->object, safe_name (entry->object), from, num_ready_finalizers, hash_table->num_registered));
+					DEBUG (5, fprintf (gc_debug_file, "Queueing object for finalization: %p (%s) (was at %p) (%d/%d)\n", object, safe_name (object), from, num_ready_finalizers, hash_table->num_registered));
 					entry = next;
 					continue;
 				} else {
-					char *from = entry->object;
+					char *from = (char*)object;
 					if (hash_table == &minor_finalizable_hash && !ptr_in_nursery (copy)) {
 						FinalizeEntry *next = entry->next;
 						unsigned int major_hash;
@@ -4138,7 +4266,7 @@ finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int g
 							finalizable_hash [i] = entry->next;
 						hash_table->num_registered--;
 
-						entry->object = copy;
+						finalize_entry_set_object (entry, (MonoObject*)copy, bridge_bit);
 
 						/* insert it into the major hash */
 						rehash_fin_table_if_necessary (&major_finalizable_hash);
@@ -4154,8 +4282,8 @@ finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int g
 						continue;
 					} else {
 						/* update pointer */
-						DEBUG (5, fprintf (gc_debug_file, "Updating object for finalization: %p (%s) (was at %p)\n", entry->object, safe_name (entry->object), from));
-						entry->object = copy;
+						DEBUG (5, fprintf (gc_debug_file, "Updating object for finalization: %p (%s) (was at %p)\n", object, safe_name (object), from));
+						finalize_entry_set_object (entry, (MonoObject*)copy, bridge_bit);
 					}
 				}
 			}
@@ -4486,7 +4614,8 @@ finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size,
 	for (i = 0; i < finalizable_hash_size; ++i) {
 		prev = NULL;
 		for (entry = finalizable_hash [i]; entry;) {
-			if (mono_object_domain (entry->object) == domain) {
+			MonoObject *object = finalize_entry_get_object (entry);
+			if (mono_object_domain (object) == domain) {
 				FinalizeEntry *next;
 				/* remove and put in out_array */
 				if (prev)
@@ -4495,8 +4624,8 @@ finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size,
 					finalizable_hash [i] = entry->next;
 				next = entry->next;
 				hash_table->num_registered--;
-				out_array [count ++] = entry->object;
-				DEBUG (5, fprintf (gc_debug_file, "Collecting object for finalization: %p (%s) (%d/%d)\n", entry->object, safe_name (entry->object), num_ready_finalizers, hash_table->num_registered));
+				out_array [count ++] = object;
+				DEBUG (5, fprintf (gc_debug_file, "Collecting object for finalization: %p (%s) (%d/%d)\n", object, safe_name (object), num_ready_finalizers, hash_table->num_registered));
 				entry = next;
 				if (count == out_size)
 					return count;
@@ -4557,7 +4686,7 @@ register_for_finalization (MonoObject *obj, void *user_data, int generation)
 	hash %= finalizable_hash_size;
 	prev = NULL;
 	for (entry = finalizable_hash [hash]; entry; entry = entry->next) {
-		if (entry->object == obj) {
+		if (finalize_entry_get_object (entry) == obj) {
 			if (!user_data) {
 				/* remove from the list */
 				if (prev)
@@ -4579,7 +4708,7 @@ register_for_finalization (MonoObject *obj, void *user_data, int generation)
 		return;
 	}
 	entry = mono_sgen_alloc_internal (INTERNAL_MEM_FINALIZE_ENTRY);
-	entry->object = obj;
+	finalize_entry_set_object (entry, obj, FALSE);
 	entry->next = finalizable_hash [hash];
 	finalizable_hash [hash] = entry;
 	hash_table->num_registered++;
@@ -4716,21 +4845,21 @@ mono_gc_invoke_finalizers (void)
 		}
 
 		/* Now look for the first non-null entry. */
-		for (entry = fin_ready_list; entry && !entry->object; entry = entry->next)
+		for (entry = fin_ready_list; entry && !finalize_entry_get_object (entry); entry = entry->next)
 			;
 		if (entry) {
 			entry_is_critical = FALSE;
 		} else {
 			entry_is_critical = TRUE;
-			for (entry = critical_fin_list; entry && !entry->object; entry = entry->next)
+			for (entry = critical_fin_list; entry && !finalize_entry_get_object (entry); entry = entry->next)
 				;
 		}
 
 		if (entry) {
-			g_assert (entry->object);
+			obj = finalize_entry_get_object (entry);
+			g_assert (obj);
 			num_ready_finalizers--;
-			obj = entry->object;
-			entry->object = NULL;
+			finalize_entry_set_object (entry, NULL, FALSE);
 			DEBUG (7, fprintf (gc_debug_file, "Finalizing object %p (%s)\n", obj, safe_name (obj)));
 		}
 
@@ -4739,7 +4868,7 @@ mono_gc_invoke_finalizers (void)
 		if (!entry)
 			break;
 
-		g_assert (entry->object == NULL);
+		g_assert (finalize_entry_get_object (entry) == NULL);
 		count++;
 		/* the object is on the stack so it is pinned */
 		/*g_print ("Calling finalizer for object: %p (%s)\n", entry->object, safe_name (entry->object));*/

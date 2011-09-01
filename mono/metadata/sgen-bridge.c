@@ -493,6 +493,12 @@ compare_hash_entries (const void *ep1, const void *ep2)
 	return e2->finishing_time - e1->finishing_time;
 }
 
+gboolean
+mono_sgen_is_bridge_object (MonoObject *obj)
+{
+	return bridge_callbacks.is_bridge_object (obj);
+}
+
 void
 mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 {
@@ -658,6 +664,14 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 	/* callback */
 
 	bridge_callbacks.cross_references (num_sccs, api_sccs, num_xrefs, api_xrefs);
+
+	/*Release for finalization those objects we no longer care. */
+	for (i = 0; i < num_sccs; ++i) {
+		if (!api_sccs [i]->objs [0])
+			continue;
+		for (j = 0; j < api_sccs [i]->num_objs; ++j)
+			mono_sgen_mark_bridge_object (api_sccs [i]->objs [j]);
+	}
 
 	/* free callback data */
 
