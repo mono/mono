@@ -988,6 +988,13 @@ namespace Mono.CSharp
 			}
 		}
 
+		/// <summary>
+		///   Same as quit - useful in script scenerios
+		/// </summary>
+		static public void Quit () {
+			QuitRequested = true;
+		}
+
 #if !NET_2_1
 		/// <summary>
 		///   Describes an object or a type.
