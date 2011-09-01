@@ -351,6 +351,7 @@ namespace System.Data {
 
 		DataTable GetTable (string name)
 		{
+			name = XmlConvert.DecodeName (name);
 			if (DSet != null) 
 				return DSet.Tables [name];
 			else if (name == table.TableName) 

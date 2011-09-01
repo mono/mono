@@ -2571,6 +2571,30 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, dsLoad.Tables[2].Columns.Count, "T3-Columns");
 		}
 
+		[Test]
+		public void ReadDiff ()
+		{
+			DataSet dsTest = new DataSet ("MonoTouchTest");
+			var dt = new DataTable ("123");
+			dt.Columns.Add (new DataColumn ("Value1"));
+			dt.Columns.Add (new DataColumn ("Value2"));
+			dsTest.Tables.Add (dt);
+			dsTest.ReadXml (new StringReader (@"
+<diffgr:diffgram
+   xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'
+   xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1'>
+  <MonoTouchTest>
+    <_x0031_23 diffgr:id='1231' msdata:rowOrder='0'>
+      <Value1>Row1Value1</Value1>
+      <Value2>Row1Value2</Value2>
+    </_x0031_23>
+  </MonoTouchTest>
+</diffgr:diffgram>
+"));
+			Assert.AreEqual ("123", dsTest.Tables [0].TableName, "#1");
+			Assert.AreEqual (1, dsTest.Tables [0].Rows.Count, "#2");
+		}
+
 		private void CompareTables (DataSet dsLoad) {
 			Assert.AreEqual (ds.Tables.Count, dsLoad.Tables.Count, "NumTables");
 			for (int tc = 0; tc < dsLoad.Tables.Count; tc++) {
