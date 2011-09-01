@@ -101,7 +101,7 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				new TaskFactory<int> (TaskCreationOptions.None, TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.LongRunning);
 				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 
 			try {

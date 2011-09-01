@@ -333,6 +333,19 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void FromAsync_CompletedCanceled ()
+		{
+			var completed = new CompletedAsyncResult ();
+
+			Action<IAsyncResult> end = l => {
+				throw new OperationCanceledException ();
+			};
+			Task task = factory.FromAsync (completed, end);
+			Assert.AreEqual (TaskStatus.Canceled, task.Status, "#1");
+			Assert.IsNull (task.Exception, "#2");
+		}
+
+		[Test]
 		public void FromAsync_SimpleAsyncResult ()
 		{
 			var result = new TestAsyncResult ();
