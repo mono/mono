@@ -1544,6 +1544,7 @@ System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
 System.Threading.Tasks/Task_T.cs
 System.Threading.Tasks/Task.cs
+System.Threading.Tasks/TaskDebuggerView.cs
 System.Threading.Tasks/TaskCompletionSource.cs
 System.Threading.Tasks/TaskSchedulerException.cs
 System.Collections.Concurrent/OrderablePartitioner.cs

@@ -30,8 +30,8 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DisplayActionMethod}")]
-//	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
 	public class Task : IDisposable, IAsyncResult
 	{
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
@@ -179,6 +179,9 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
 			if (Status > TaskStatus.WaitingForActivation)
 				throw new InvalidOperationException ("The task is not in a valid state to be started");
 
@@ -891,7 +894,7 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		string DisplayActionMethod {
+		internal string DisplayActionMethod {
 			get {
 				Delegate d = simpleAction ?? (Delegate) action;
 				return d == null ? "<none>" : d.Method.ToString ();

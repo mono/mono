@@ -28,15 +28,15 @@ using System;
 
 namespace System.Threading.Tasks
 {
-	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}, Result = {DebuggerDisplayResultDescription}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_FutureDebugView`1")]
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Result = {ResultAsString}")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
 	public class Task<TResult>: Task
 	{
 		TResult value;
 		static TaskFactory<TResult> factory = new TaskFactory<TResult> ();
 		static readonly Action<object> emptyAction = delegate {};
 		
-		Func<object, TResult> function;
+		internal Func<object, TResult> function;
 		object state;
 		
 		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -50,6 +50,15 @@ namespace System.Threading.Tasks
 			}
 			internal set {
 				this.value = value;
+			}
+		}
+
+		string ResultAsString {
+			get {
+				if ((Status & (TaskStatus.RanToCompletion)) != 0)
+					return "" + value;
+				
+				return "<value not available>";
 			}
 		}
 		
