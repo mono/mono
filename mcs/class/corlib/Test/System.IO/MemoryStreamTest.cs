@@ -155,28 +155,24 @@ namespace MonoTests.System.IO
 				testStreamData [51] = saved;
 			}
 			ms.Position = 100;
-			bool gotException = false;
+
 			try {
 				ms.WriteByte (23);
+				Assert.Fail ("#05");
 			} catch (NotSupportedException) {
-				gotException = true;
 			}
 
-			if (!gotException)
-				Assert.Fail ("#05");
-
-			ms.Capacity = 100; // Allowed. It's the same as the one in the ms.
-					   // This is lame, as the length is 50!!!
+			try {
+				ms.Capacity = 100;
+				Assert.Fail ("#06");
+			} catch (NotSupportedException) {
+			}
 					   
-			gotException = false;
 			try {
 				ms.Capacity = 51;
-			} catch (NotSupportedException) {
-				gotException = true;
-			}
-
-			if (!gotException)
 				Assert.Fail ("#07");
+			} catch (NotSupportedException) {
+			}
 
 			AssertEquals ("#08", 50, ms.ToArray ().Length);
 		}
@@ -316,26 +312,18 @@ namespace MonoTests.System.IO
 			if (!thrown)
 				Assert.Fail ("#02");
 
-			// The first exception thrown is ObjectDisposed, not ArgumentNull
-			thrown = false;
 			try {
 				ms.Read (null, 0, 1);
-			} catch (ObjectDisposedException) {
-				thrown = true;
+				Assert.Fail ("#03");
+			} catch (ArgumentNullException) {
 			}
 
-			if (!thrown)
-				Assert.Fail ("#03");
-
-			thrown = false;
 			try {
 				ms.Write (null, 0, 1);
-			} catch (ObjectDisposedException) {
+				Assert.Fail ("#04");
+			} catch (ArgumentNullException) {
 				thrown = true;
 			}
-
-			if (!thrown)
-				Assert.Fail ("#03");
 		}
 
 		[Test]

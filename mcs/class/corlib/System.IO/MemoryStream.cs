@@ -153,8 +153,6 @@ namespace System.IO
 
 			set {
 				CheckIfClosedThrowDisposed ();
-				if (value == capacity)
-					return; // LAMENESS: see MemoryStreamTest.ConstructorFive
 
 				if (!expandable)
 					throw new NotSupportedException ("Cannot expand this MemoryStream");
@@ -234,8 +232,6 @@ namespace System.IO
 
 		public override int Read ([In,Out] byte [] buffer, int offset, int count)
 		{
-			CheckIfClosedThrowDisposed ();
-
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -245,6 +241,8 @@ namespace System.IO
 			if (buffer.Length - offset < count )
 				throw new ArgumentException ("offset+count",
 							      "The size of the buffer is less than offset + count.");
+
+			CheckIfClosedThrowDisposed ();
 
 			if (position >= length || count == 0)
 				return 0;
@@ -372,8 +370,6 @@ namespace System.IO
 
 		public override void Write (byte [] buffer, int offset, int count)
 		{
-			CheckIfClosedThrowDisposed ();
-
 			if (!canWrite)
 				throw new NotSupportedException ("Cannot write to this stream.");
 
@@ -386,6 +382,8 @@ namespace System.IO
 			if (buffer.Length - offset < count)
 				throw new ArgumentException ("offset+count",
 							     "The size of the buffer is less than offset + count.");
+
+			CheckIfClosedThrowDisposed ();
 
 			// reordered to avoid possible integer overflow
 			if (position > length - count)
