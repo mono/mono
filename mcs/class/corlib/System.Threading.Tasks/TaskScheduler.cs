@@ -52,6 +52,10 @@ namespace System.Threading.Tasks
 			this.proxy = new SchedulerProxy (this);
 		}
 
+		~TaskScheduler ()
+		{
+		}
+		
 		public static TaskScheduler FromCurrentSynchronizationContext ()
 		{
 			var syncCtx = SynchronizationContext.Current;
