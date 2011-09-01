@@ -34,3 +34,4 @@ Microsoft.Win32
 +System.Security.SecurityCriticalAttribute
 +System.Security.SecuritySafeCriticalAttribute
 +System\.Runtime\.InteropServices\.\w*Attribute
++System\.Security\.Permissions\.ReflectionPermissionAttribute
