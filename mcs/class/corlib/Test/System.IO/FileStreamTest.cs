@@ -324,14 +324,8 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if NET_2_0
 		// FileShare.Inheritable is ignored, but file does not exist
 		[ExpectedException (typeof (FileNotFoundException))]
-#else
-		// share: Enum value was out of legal range.
-		// (FileShare.Inheritable is not valid)
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
 		public void CtorArgumentOutOfRangeException3 ()
 		{
 			string path = TempFolder + DSC + "CtorArgumentOutOfRangeException1";
@@ -406,14 +400,8 @@ namespace MonoTests.System.IO
 
 
 		[Test]
-#if NET_2_0
 		// FileShare.Inheritable is ignored, but file does not exist
 		[ExpectedException (typeof (FileNotFoundException))]
-#else
-		// share: Enum value was out of legal range.
-		// (FileShare.Inheritable is not valid)
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
 		public void CtorArgumentOutOfRangeException5 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
@@ -821,7 +809,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
 		[Test] // bug #79250
 		public void FileShare_Delete ()
 		{
@@ -852,7 +839,6 @@ namespace MonoTests.System.IO
 				File.Delete (fn);
 			}
 		}
-#endif
 
 		[Test]
 		public void Write ()
@@ -1586,7 +1572,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
 		[Category("TargetJvmNotSupported")] // FileOptions.DeleteOnClose not supported for TARGET_JVM
 		[Test]
 		public void DeleteOnClose ()
@@ -1600,6 +1585,5 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (false, File.Exists (path), "DOC#2");
 			
 		}
-#endif
 	}
 }
