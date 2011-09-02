@@ -5,13 +5,11 @@
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 // (c) 2004 Novell, Inc. (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,6 +46,10 @@ namespace System.IO
 #endif
 	{
 		public static readonly Stream Null = new NullStream ();
+
+		Func<byte[], int, int, int> async_read;
+		Action<byte[], int, int> async_write;
+		AutoResetEvent async_event;
 
 		protected Stream ()
 		{
@@ -87,21 +89,19 @@ namespace System.IO
 		}
 
 
-		// 2.0 version of Dispose.
 		public void Dispose ()
 		{
 			Close ();
 		}
 
-		// 2.0 version of Dispose.
 		protected virtual void Dispose (bool disposing)
 		{
-			// nothing.
+			if (async_event != null && disposing) {
+				async_event.Close ();
+				async_event = null;
+			}
 		}
 
-		//
-		// 2.0 version of Close (): calls Dispose (true)
-		//
 		public virtual void Close ()
 		{
 			Dispose (true);
@@ -168,62 +168,38 @@ namespace System.IO
 			Write (buffer, 0, 1);
 		}
 
-		public virtual IAsyncResult
-		BeginRead (byte [] buffer, int offset, int count, AsyncCallback callback, object state)
+		public virtual IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
-			// Creating a class derived from Stream that doesn't override BeginRead
-			// shows that it actually calls Read and does everything synchronously.
-			// Just put this in the Read override:
-			//	Console.WriteLine ("Read");
-			// 	Console.WriteLine (Environment.StackTrace);
-			//	Thread.Sleep (10000);
-			//	return 10;
-
-			StreamAsyncResult result = new StreamAsyncResult (state);
-			try {
-				int nbytes = Read (buffer, offset, count);
-				result.SetComplete (null, nbytes);
-			} catch (Exception e) {
-				result.SetComplete (e, 0);
+			if (async_event == null) {
+				lock (this) {
+					if (async_event == null)
+						async_event = new AutoResetEvent (true);
+				}
 			}
 
-			if (callback != null)
-				callback (result);
-
-			return result;
+			async_event.WaitOne ();
+			async_read = Read;
+			return async_read.BeginInvoke (buffer, offset, count, callback, state);
 		}
 
-//		delegate void WriteDelegate (byte [] buffer, int offset, int count);
-
-		public virtual IAsyncResult
-		BeginWrite (byte [] buffer, int offset, int count, AsyncCallback callback, object state)
+		public virtual IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
 			if (!CanWrite)
 				throw new NotSupportedException ("This stream does not support writing");
-	
-			// Creating a class derived from Stream that doesn't override BeginWrite
-			// shows that it actually calls Write and does everything synchronously except
-			// when invoking the callback, which is done from the ThreadPool.
-			// Just put this in the Write override:
-			// 	Console.WriteLine ("Write");
-			// 	Console.WriteLine (Environment.StackTrace);
-			//	Thread.Sleep (10000);
 
-			StreamAsyncResult result = new StreamAsyncResult (state);
-			try {
-				Write (buffer, offset, count);
-				result.SetComplete (null);
-			} catch (Exception e) {
-				result.SetComplete (e);
+			if (async_event == null) {
+				lock (this) {
+					if (async_event == null)
+						async_event = new AutoResetEvent (true);
+				}
 			}
 
-			if (callback != null)
-				callback.BeginInvoke (result, null, null);
-
-			return result;
+			async_event.WaitOne ();
+			async_write = Write;
+			return async_write.BeginInvoke (buffer, offset, count, callback, state);
 		}
 		
 		public virtual int EndRead (IAsyncResult asyncResult)
@@ -231,18 +207,15 @@ namespace System.IO
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-			StreamAsyncResult result = asyncResult as StreamAsyncResult;
-			if (result == null || result.NBytes == -1)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+			if (async_read == null)
+				throw new ArgumentException ("EndRead cannot be called multiple times");
 
-			if (result.Done)
-				throw new InvalidOperationException ("EndRead already called.");
-
-			result.Done = true;
-			if (result.Exception != null)
-				throw result.Exception;
-
-			return result.NBytes;
+			try {
+				return async_read.EndInvoke (asyncResult);
+			} finally {
+				async_read = null;
+				async_event.Set ();
+			}
 		}
 
 		public virtual void EndWrite (IAsyncResult asyncResult)
@@ -250,16 +223,15 @@ namespace System.IO
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-			StreamAsyncResult result = asyncResult as StreamAsyncResult;
-			if (result == null || result.NBytes != -1)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+			if (async_write == null)
+				throw new ArgumentException ("EndWrite cannot be called multiple times");
 
-			if (result.Done)
-				throw new InvalidOperationException ("EndWrite already called.");
-
-			result.Done = true;
-			if (result.Exception != null)
-				throw result.Exception;
+			try {
+				async_write.EndInvoke (asyncResult);
+			} finally {
+				async_write = null;
+				async_event.Set ();
+			}
 		}
 
 #if MOONLIGHT || NET_4_0 || MOBILE

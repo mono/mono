@@ -5,15 +5,18 @@
 // 	Marcin Szczepanski (marcins@zipworld.com.au)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -22,6 +25,27 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class MemoryStreamTest
 	{
+		class SignaledMemoryStream : MemoryStream
+		{
+			WaitHandle w;
+
+			public SignaledMemoryStream (byte[] buffer, WaitHandle w)
+				: base (buffer)
+			{
+				this.w = w;
+			}
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				if (!w.WaitOne (2000))
+					return -1;
+
+				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread, "IsThreadPoolThread");
+				return base.Read (buffer, offset, count);
+			}
+		}
+
+
 		MemoryStream testStream;
 		byte [] testStreamData;
 
@@ -209,7 +233,240 @@ namespace MonoTests.System.IO
 			int readByte = testStream.ReadByte();
 			Assert.AreEqual (-1, readByte, "R4");
 		}
+		
+		[Test]
+		public void BeginRead ()
+		{
+			byte [] readBytes = new byte [5];
 
+			var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			Assert.AreEqual (5, testStream.EndRead (res), "#2");
+		}
+
+		[Test]
+		public void BeginRead_WithState ()
+		{
+			byte [] readBytes = new byte [5];
+			string async_state = null;
+			var wh = new ManualResetEvent (false);
+
+			var res = testStream.BeginRead (readBytes, 0, 5, l => {
+				async_state = l.AsyncState as string;
+				wh.Set ();
+			}, "state");
+
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			Assert.AreEqual ("state", res.AsyncState, "#2");
+			Assert.IsTrue (res.IsCompleted, "#3");
+			Assert.AreEqual (5, testStream.EndRead (res), "#4");
+
+			wh.WaitOne (1000);
+			Assert.AreEqual ("state", async_state, "#5");
+			wh.Dispose ();
+		}
+		
+		[Test]
+		public void BeginReadAsync ()
+		{
+			byte[] readBytes = new byte[5];
+			var wh = new ManualResetEvent (false);
+			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
+				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+				Assert.IsFalse (res.IsCompleted, "#1");
+				Assert.IsFalse (res.CompletedSynchronously, "#2");
+				wh.Set ();
+				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
+				Assert.IsTrue (res.IsCompleted, "#4");
+				Assert.AreEqual (5, testStream.EndRead (res), "#5");
+			}
+
+			wh.Dispose ();
+		}
+		
+		[Test]
+		public void BeginReadIsBlockingNextRead ()
+		{
+			byte[] readBytes = new byte[5];
+			byte[] readBytes2 = new byte[3];
+			var wh = new ManualResetEvent (false);
+			var end = new ManualResetEvent (false);
+
+			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
+				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+
+				bool blocking = true;
+				ThreadPool.QueueUserWorkItem (l => {
+					var res2 = testStream.BeginRead (readBytes2, 0, 3, null, null);
+					blocking = false;
+					Assert.IsTrue (res2.AsyncWaitHandle.WaitOne (2000), "#10");
+					Assert.IsTrue (res2.IsCompleted, "#11");
+					Assert.AreEqual (3, testStream.EndRead (res2), "#12");
+					Assert.AreEqual (95, readBytes2[0], "#13");
+					end.Set ();
+				});
+
+				Assert.IsFalse (res.IsCompleted, "#1");
+				Thread.Sleep (500);	// Lame but don't know how to wait for another BeginRead which does not return
+				Assert.IsTrue (blocking, "#2");
+
+				wh.Set ();
+				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
+				Assert.IsTrue (res.IsCompleted, "#4");
+				Assert.AreEqual (5, testStream.EndRead (res), "#5");
+				Assert.IsTrue (end.WaitOne (2000), "#6");
+				Assert.AreEqual (100, readBytes[0], "#7");
+			}
+		}
+
+		[Test]
+		public void BeginRead_Read ()
+		{
+			byte[] readBytes = new byte[5];
+			var wh = new ManualResetEvent (false);
+			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
+				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+				Assert.AreEqual (100, testStream.ReadByte (), "#0");
+				Assert.IsFalse (res.IsCompleted, "#1");
+				Assert.IsFalse (res.CompletedSynchronously, "#2");
+				wh.Set ();
+				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
+				Assert.IsTrue (res.IsCompleted, "#4");
+				Assert.AreEqual (5, testStream.EndRead (res), "#5");
+				Assert.AreEqual (99, readBytes [0], "#6");
+			}
+
+			wh.Dispose ();
+		}
+
+		[Test]
+		public void BeginRead_BeginWrite ()
+		{
+			byte[] readBytes = new byte[5];
+			byte[] readBytes2 = new byte[3] { 1, 2, 3 };
+			var wh = new ManualResetEvent (false);
+			var end = new ManualResetEvent (false);
+
+			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
+				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+
+				bool blocking = true;
+				ThreadPool.QueueUserWorkItem (l => {
+					var res2 = testStream.BeginWrite (readBytes2, 0, 3, null, null);
+					blocking = false;
+					Assert.IsTrue (res2.AsyncWaitHandle.WaitOne (2000), "#10");
+					Assert.IsTrue (res2.IsCompleted, "#11");
+					testStream.EndWrite (res2);
+					end.Set ();
+				});
+
+				Assert.IsFalse (res.IsCompleted, "#1");
+				Thread.Sleep (500);	// Lame but don't know how to wait for another BeginWrite which does not return
+				Assert.IsTrue (blocking, "#2");
+
+				wh.Set ();
+				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
+				Assert.IsTrue (res.IsCompleted, "#4");
+				Assert.AreEqual (5, testStream.EndRead (res), "#5");
+				Assert.IsTrue (end.WaitOne (2000), "#6");
+			}
+		}
+		
+		[Test]
+		public void BeginWrite ()
+		{
+			var writeBytes = new byte [5] { 2, 3, 4, 10, 12 };
+
+			var res = testStream.BeginWrite (writeBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			testStream.EndWrite (res);
+		}
+
+		[Test]
+		public void BeginWrite_WithState ()
+		{
+			var writeBytes = new byte[5] { 2, 3, 4, 10, 12 };
+			string async_state = null;
+			var wh = new ManualResetEvent (false);
+
+			var res = testStream.BeginWrite (writeBytes, 0, 5, l => {
+				async_state = l.AsyncState as string;
+				wh.Set ();
+			}, "state");
+
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			Assert.IsTrue (res.IsCompleted, "#2");
+			Assert.AreEqual ("state", res.AsyncState, "#3");
+			testStream.EndWrite (res);
+
+			wh.WaitOne (1000);
+			Assert.AreEqual ("state", async_state, "#4");
+			wh.Dispose ();
+		}
+		
+		[Test]
+		public void EndRead_Twice ()
+		{
+			byte[] readBytes = new byte[5];
+
+			var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			Assert.AreEqual (5, testStream.EndRead (res), "#2");
+
+			try {
+				testStream.EndRead (res);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+				return;
+			}
+		}
+
+		[Test]
+		public void EndRead_Disposed ()
+		{
+			byte[] readBytes = new byte[5];
+
+			var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			testStream.Dispose ();
+			Assert.AreEqual (5, testStream.EndRead (res), "#2");
+		}
+		
+		[Test]
+		public void EndWrite_OnBeginRead ()
+		{
+			byte[] readBytes = new byte[5];
+
+			var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+
+			try {
+				testStream.EndWrite (res);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			testStream.EndRead (res);
+		}
+
+		[Test]
+		public void EndWrite_Twice ()
+		{
+			var wBytes = new byte[5];
+
+			var res = testStream.BeginWrite (wBytes, 0, 5, null, null);
+			Assert.IsTrue (res.AsyncWaitHandle.WaitOne (1000), "#1");
+			testStream.EndWrite (res);
+
+			try {
+				testStream.EndWrite (res);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+				return;
+			}
+		}
+
+		
 		[Test]
 		public void WriteBytes ()
 		{

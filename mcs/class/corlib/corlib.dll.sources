@@ -433,7 +433,6 @@ System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
 System.IO/Stream.cs
-System.IO/StreamAsyncResult.cs
 System.IO/StreamReader.cs
 System.IO/StreamWriter.cs
 System.IO/StringReader.cs
