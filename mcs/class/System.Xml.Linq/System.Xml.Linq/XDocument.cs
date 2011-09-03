@@ -156,6 +156,7 @@ namespace System.Xml.Linq
 		{
 			if (reader.ReadState == ReadState.Initial)
 				reader.Read ();
+			this.FillLineInfoAndBaseUri (reader, options);
 			if (reader.NodeType == XmlNodeType.XmlDeclaration) {
 				Declaration = new XDeclaration (
 					reader.GetAttribute ("version"),
