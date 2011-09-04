@@ -291,6 +291,8 @@ class MonoVTablePrinter:
         self.val = val
 
     def to_string(self):
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
+            return "0x0"
         vtable = self.val.dereference ()
         klass = vtable ["klass"]
         klass_printer = MonoClassPrinter (klass)
