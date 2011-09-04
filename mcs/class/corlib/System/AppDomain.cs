@@ -1326,6 +1326,25 @@ namespace System {
 			}
 		}
 
+		internal Assembly DoResourceResolve (string name, Assembly requesting) {
+			if (ResourceResolve == null)
+				return null;
+
+			Delegate[] invocation_list = ResourceResolve.GetInvocationList ();
+
+			foreach (Delegate eh in invocation_list) {
+				ResolveEventHandler handler = (ResolveEventHandler) eh;
+#if NET_4_0
+				Assembly assembly = handler (this, new ResolveEventArgs (name, requesting));
+#else
+				Assembly assembly = handler (this, new ResolveEventArgs (name));
+#endif
+				if (assembly != null)
+					return assembly;
+			}
+			return null;
+		}
+
 		private void DoDomainUnload ()
 		{
 			if (DomainUnload != null)

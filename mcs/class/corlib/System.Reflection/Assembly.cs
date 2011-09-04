@@ -284,8 +284,13 @@ namespace System.Reflection {
 					"name");
 
 			ManifestResourceInfo info = GetManifestResourceInfo (name);
-			if (info == null)
-				return null;
+			if (info == null) {
+				Assembly a = AppDomain.CurrentDomain.DoResourceResolve (name, this);
+				if (a != null && a != this)
+					return a.GetManifestResourceStream (name);
+				else
+					return null;
+			}
 
 			if (info.ReferencedAssembly != null)
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
