@@ -3237,6 +3237,21 @@ namespace MonoTests.System
 			asm.GetTypes();
 		}
 
+        [Test]
+		public void ResourceResolve ()
+		{
+			bool called = false;
+
+			ResolveEventHandler del = delegate (object sender, ResolveEventArgs args) { 
+					called = true; 
+					return null;
+			};
+			AppDomain.CurrentDomain.ResourceResolve += del;
+			Stream st = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("NOT_EXISTING");
+			Assert.IsTrue (called);
+			AppDomain.CurrentDomain.ResourceResolve -= del;
+		}			
+
 		private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
 		{
 			return Assembly.ReflectionOnlyLoad(args.Name);
