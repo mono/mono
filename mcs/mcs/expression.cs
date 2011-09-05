@@ -5846,7 +5846,7 @@ namespace Mono.CSharp
 		{
 			var current_field = rc.CurrentMemberDefinition as FieldBase;
 			TypeExpression type;
-			if (current_field != null) {
+			if (current_field != null && rc.CurrentAnonymousMethod == null) {
 				type = new TypeExpression (current_field.MemberType, current_field.Location);
 			} else if (variable != null) {
 				if (variable.TypeExpression is VarExpr) {

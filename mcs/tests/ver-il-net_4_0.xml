@@ -47137,6 +47137,16 @@
       </method>
     </type>
   </test>
+  <test name="test-825.cs">
+    <type name="Test">
+      <method name="Void WriteLine(System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">
@@ -47860,6 +47870,22 @@
     <type name="S+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()">
         <size>76</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-100.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;f&gt;m__0()">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>35</size>
       </method>
     </type>
   </test>
