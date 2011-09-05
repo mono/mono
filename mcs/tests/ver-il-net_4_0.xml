@@ -17389,2828 +17389,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-anon-1.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U](U)">
-        <size>1</size>
-      </method>
-      <method name="Void Test[T](T)">
-        <size>64</size>
-      </method>
-      <method name="Void Main()">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-10.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerable`1 Test[T](T, T)">
-        <size>44</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>97</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__Iterator0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>124</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>15</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>52</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-11.cs">
-    <type name="Test`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void World[S,T](S, T)">
-        <size>1</size>
-      </method>
-      <method name="Void Hello[U,V](U, V)">
-        <size>47</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>21</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test`1+&lt;Hello&gt;c__AnonStorey0`2[R,U,V]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>24</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-12.cs">
-    <type name="World`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U](U)">
-        <size>1</size>
-      </method>
-      <method name="Void Test(T)">
-        <size>46</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>18</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="World`1+&lt;Test&gt;c__AnonStorey0[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-13.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="X+ModuleBinder`1[TDelegate] CreateMethodUnscoped[TDelegate]()">
-        <size>13</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="X+ModuleBinder`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="T Invoke(System.Object)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="T EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="TDelegate &lt;CreateMethodUnscoped`1&gt;m__0[TDelegate](System.Object)">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-14.cs">
-    <type name="T">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void SomeMethod(System.Converter`2[System.Int32,System.Int32])">
-        <size>1</size>
-      </method>
-      <method name="Void SomeCaller()">
-        <size>36</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Int32 &lt;SomeCaller&gt;m__0(Int32)">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-15.cs">
-    <type name="Test`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[S](T, S)">
-        <size>42</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>16</size>
-      </method>
-    </type>
-    <type name="Foo`1[V]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(V)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(V, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Bar`1[W]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(W)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(W, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1[T,S]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(Int64)">
-        <size>57</size>
-      </method>
-    </type>
-    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1+&lt;Hello&gt;c__AnonStorey0`1[T,S]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1(T)">
-        <size>65</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-16.cs">
-    <type name="A">
-      <method name="Void .ctor(TestFunc`1)">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="TestClass">
-      <method name="Void .ctor()">
-        <size>47</size>
-      </method>
-      <method name="Void Func[T](TestFunc`1[T])">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="TestFunc`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(T)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="TestClass">
-      <method name="Void &lt;a&gt;m__0(Int32)">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-17.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test[T,U](C+Func`1[T], U)">
-        <size>1</size>
-      </method>
-      <method name="Void Main()">
-        <size>75</size>
-      </method>
-    </type>
-    <type name="C+Func`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="T Invoke(T)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="T EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Int32 &lt;Main&gt;m__0(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1(Int32)">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-18.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="TR Test[TR,TA](C+Func`2[TR,TA])">
-        <size>10</size>
-      </method>
-      <method name="TR Test[TR,TA,TB](C+Func`2[TR,TA], C+Func`2[TR,TB])">
-        <size>10</size>
-      </method>
-      <method name="Void Test2[T]()">
-        <size>19</size>
-      </method>
-      <method name="Void Main()">
-        <size>100</size>
-      </method>
-    </type>
-    <type name="C+Func`2[TR,TA]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="TR Invoke(TA)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(TA, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="TR EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Int32 &lt;Main&gt;m__1(Int32)">
-        <size>16</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__2(Int32)">
-        <size>6</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__3(Int32)">
-        <size>6</size>
-      </method>
-      <method name="T &lt;Test2`1&gt;m__0[T](T)">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-19.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void TestNaturalSort()">
-        <size>31</size>
-      </method>
-      <method name="Void Main()">
-        <size>6</size>
-      </method>
-    </type>
-    <type name="Test+&lt;TestNaturalSort&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.String &lt;&gt;m__1(System.Text.RegularExpressions.Match)">
-        <size>113</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Int32 &lt;TestNaturalSort&gt;m__0(System.String, System.String)">
-        <size>106</size>
-      </method>
-    </type>
-    <type name="Test+&lt;TestNaturalSort&gt;c__AnonStorey0">
-      <method name="System.String &lt;&gt;m__2(System.Text.RegularExpressions.Match)">
-        <size>113</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-2.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U](U)">
-        <size>1</size>
-      </method>
-      <method name="Void Test[T](T)">
-        <size>71</size>
-      </method>
-      <method name="Void Main()">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="Simple">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Simple Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Simple EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Simple &lt;&gt;m__0()">
-        <size>55</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1()">
-        <size>50</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-20.cs">
-    <type name="C`1[T]">
-      <method name="Void Foo[U](U)">
-        <size>20</size>
-      </method>
-      <method name="Void Run()">
-        <size>1</size>
-      </method>
-      <method name="Void &lt;Foo`1&gt;m__0[U]()">
-        <size>6</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="A">
-      <method name="Void Main()">
-        <size>8</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-21.cs">
-    <type name="BaseObject">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Collections.Generic.List`1[T] Query[T](Nullable`1 ByRef)">
-        <size>53</size>
-      </method>
-      <method name="T MakeSomething[T]()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>10</size>
-      </method>
-      <method name="Void Closure(EmptyDelegate)">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="EmptyDelegate">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="BaseObject+&lt;Query&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>17</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-22.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Foo(D1)">
-        <size>2</size>
-      </method>
-      <method name="Int32 Foo(D2)">
-        <size>2</size>
-      </method>
-      <method name="Int32 FooE(System.Linq.Expressions.Expression`1[D1])">
-        <size>2</size>
-      </method>
-      <method name="Int32 FooE(System.Linq.Expressions.Expression`1[D2])">
-        <size>2</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>82</size>
-      </method>
-    </type>
-    <type name="D1">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Int32 Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Int32 EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="D2">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Int64 Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Int64 EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Int32 &lt;Main&gt;m__0()">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-23.cs">
-    <type name="MemberAccessData">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void set_MyTypeProperty(Nullable`1)">
-        <size>8</size>
-      </method>
-      <method name="Nullable`1 get_MyTypeProperty()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test(C+D)">
-        <size>1</size>
-      </method>
-      <method name="Void Main()">
-        <size>246</size>
-      </method>
-    </type>
-    <type name="C+D">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="C+&lt;Main&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1()">
-        <size>38</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void &lt;Main&gt;m__3()">
-        <size>16</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__4()">
-        <size>16</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__5()">
-        <size>61</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void BaseM()">
-        <size>1</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void InstanceTests()">
-        <size>18</size>
-      </method>
-      <method name="Void &lt;InstanceTests&gt;m__0()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__6()">
-        <size>53</size>
-      </method>
-    </type>
-    <type name="C+&lt;Main&gt;c__AnonStorey0">
-      <method name="Void &lt;&gt;m__2()">
-        <size>32</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void &lt;BaseM&gt;__BaseCallProxy0()">
-        <size>7</size>
-      </method>
-      <method name="Void Test(System.Action`1[E])">
-        <size>8</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__7(E)">
-        <size>36</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-24.cs">
-    <type name="Disposable`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[T[]] For[T](System.Collections.Generic.List`1[T])">
-        <size>38</size>
-      </method>
-      <method name="System.Func`1[T] Throw[T](T)">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[T] Do[T](T)">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[T] Lock[T](T)">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[T] Catch[T](T)">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[T] Finally[T](T)">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[T] Using[T](T)">
-        <size>52</size>
-      </method>
-      <method name="System.Func`1[T] Switch[T](T)">
-        <size>38</size>
-      </method>
-      <method name="System.Func`1[System.Collections.Generic.List`1[T]] ForForeach[T](T[])">
-        <size>26</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>576</size>
-      </method>
-    </type>
-    <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T[] &lt;&gt;m__0()">
-        <size>56</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Throw&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__1()">
-        <size>23</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void ArrayMutate[T](T[])">
-        <size>27</size>
-      </method>
-      <method name="System.Func`1[T[][]] ArrayMultiMutate[T](T[][])">
-        <size>26</size>
-      </method>
-      <method name="System.Func`1[System.Type] TypeOf[T](T)">
-        <size>38</size>
-      </method>
-    </type>
-    <type name="Test+&lt;TypeOf&gt;c__AnonStorey2`1[T]">
-      <method name="System.Type &lt;&gt;m__2()">
-        <size>56</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Do&gt;c__AnonStorey3`1[T]">
-      <method name="T &lt;&gt;m__3()">
-        <size>28</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Lock&gt;c__AnonStorey4`1[T]">
-      <method name="T &lt;&gt;m__4()">
-        <size>67</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Catch&gt;c__AnonStorey5`1[T]">
-      <method name="T &lt;&gt;m__5()">
-        <size>38</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Finally&gt;c__AnonStorey6`1[T]">
-      <method name="T &lt;&gt;m__6()">
-        <size>50</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Using&gt;c__AnonStorey7`1[T]">
-      <method name="T &lt;&gt;m__7()">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Switch&gt;c__AnonStorey8`1[T]">
-      <method name="T &lt;&gt;m__8()">
-        <size>35</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;ForForeach&gt;c__AnonStorey9`1[T]">
-      <method name="System.Collections.Generic.List`1[T] &lt;&gt;m__9()">
-        <size>56</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;ArrayMutate&gt;c__AnonStoreyA`1[T]">
-      <method name="Void &lt;&gt;m__A(Int32)">
-        <size>36</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyB`1[T]">
-      <method name="T[][] &lt;&gt;m__B()">
-        <size>48</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="CA`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="System.Func`1[T[]] NestedTypeMutate[T]()">
-        <size>34</size>
-      </method>
-      <method name="System.Func`1[System.Int32] ArrayMultiMutate[T](T[,])">
-        <size>26</size>
-      </method>
-    </type>
-    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyC`1[T]">
-      <method name="Int32 &lt;&gt;m__C()">
-        <size>27</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;NestedTypeMutate&gt;c__AnonStoreyD`1[T]">
-      <method name="T[] &lt;&gt;m__D()">
-        <size>37</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-25.cs">
-    <type name="HS`1[T]">
-      <method name="Void .ctor(IEqualityComparer`1)">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Foo[T](IEqualityComparer`1)">
-        <size>27</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>8</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="HS`1[T] &lt;&gt;m__0()">
-        <size>12</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-26.cs">
-    <type name="MonoBugs.BrokenGenericCast">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Converter`2[TSource,TDest] GetUpcaster[TSource,TDest]()">
-        <size>13</size>
-      </method>
-      <method name="System.Converter`2[TSource,TDest] GetDowncaster[TSource,TDest]()">
-        <size>13</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="TDest &lt;GetUpcaster`2&gt;m__0[TSource,TDest](TSource)">
-        <size>12</size>
-      </method>
-      <method name="TDest &lt;GetDowncaster`2&gt;m__1[TSource,TDest](TSource)">
-        <size>12</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-27.cs">
-    <type name="BaseDataObjectFactory">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T GetBusinessQueryObjectFromReader[T]()">
-        <size>8</size>
-      </method>
-      <method name="T[] GetQueryObjects[T](System.String)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="BusinessQueryObject">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="MySqlDataObjectFactory">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T[] GetQueryObjects[T](System.String)">
-        <size>63</size>
-      </method>
-      <method name="Void ExecuteReader(Int32, MySqlDataObjectFactory+PerformActionWithReader)">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="MySqlDataObjectFactory+PerformActionWithReader">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="MySqlDataObjectFactory+&lt;GetQueryObjects&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>17</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-28.cs">
-    <type name="A">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Foo[T]()">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Foo[T]()">
-        <size>14</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="B+Del">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void &lt;Foo`1&gt;m__0[T]()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-29.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Boolean TryAction[T](Test+Creator`1[T], T ByRef)">
-        <size>17</size>
-      </method>
-      <method name="Boolean Func1[T](IList`1, Boolean, T ByRef)">
-        <size>32</size>
-      </method>
-      <method name="T Item[T](IList`1)">
-        <size>7</size>
-      </method>
-      <method name="T GetSingleItem[T](IList`1)">
-        <size>10</size>
-      </method>
-      <method name="Void Main()">
-        <size>15</size>
-      </method>
-    </type>
-    <type name="Test+Creator`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="T Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="T EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Func1&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__0()">
-        <size>12</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-3.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U](U)">
-        <size>1</size>
-      </method>
-      <method name="Void Test[T](T)">
-        <size>28</size>
-      </method>
-      <method name="Void Main()">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="Foo`1[S]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(S)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(S, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="Void &lt;Test`1&gt;m__0[T](T)">
-        <size>8</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-30.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U](U)">
-        <size>1</size>
-      </method>
-      <method name="Void Test[T](T)">
-        <size>46</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="Simple">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Simple Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Simple EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Simple &lt;&gt;m__0()">
-        <size>55</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1()">
-        <size>50</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-31.cs">
-    <type name="A">
-      <method name="Void Fail[X]()">
-        <size>25</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="A+&lt;Fail&gt;c__AnonStorey0`1[X]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(System.Object, System.EventArgs)">
-        <size>36</size>
-      </method>
-      <method name="Void &lt;&gt;m__1(System.Object, System.EventArgs)">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-32.cs">
-    <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Foo[T](IList`1)">
-        <size>31</size>
-      </method>
-      <method name="Void Assert(System.Action`1[System.Int32])">
-        <size>9</size>
-      </method>
-      <method name="Void Main(System.String[])">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Foo&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(Int32)">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-33.cs">
-    <type name="IEnumerableRocks">
-      <method name="System.String Implode[TSource,TResult](IEnumerable`1, System.String, System.Func`2[TSource,TResult])">
-        <size>33</size>
-      </method>
-      <method name="System.String Implode[TSource](IEnumerable`1, System.String, System.Action`2[System.Text.StringBuilder,TSource])">
-        <size>125</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>67</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__1(System.String)">
-        <size>17</size>
-      </method>
-    </type>
-    <type name="IEnumerableRocks+&lt;Implode&gt;c__AnonStorey0`2[TSource,TResult]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(System.Text.StringBuilder, TSource)">
-        <size>34</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-34.cs">
-    <type name="MyClass">
-      <method name="Void .ctor()">
-        <size>18</size>
-      </method>
-      <method name="Int32 get_Answer()">
-        <size>7</size>
-      </method>
-      <method name="Void set_Answer(Int32)">
-        <size>8</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>82</size>
-      </method>
-    </type>
-    <type name="Test+D">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Main&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>33</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-35.cs">
-    <type name="C`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[T] XX()">
-        <size>32</size>
-      </method>
-      <method name="T &lt;XX&gt;m__0()">
-        <size>10</size>
-      </method>
-    </type>
-    <type name="C2`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[C`1[T]] XX()">
-        <size>32</size>
-      </method>
-      <method name="C`1[T] &lt;XX&gt;m__1()">
-        <size>2</size>
-      </method>
-    </type>
-    <type name="N1">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[T] XX[T]()">
-        <size>15</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>98</size>
-      </method>
-    </type>
-    <type name="N1">
-      <method name="T &lt;XX`1&gt;m__2[T]()">
-        <size>10</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-36.cs">
-    <type name="Foo`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void add_handler(Handler`1[T])">
-        <size>47</size>
-      </method>
-      <method name="Void remove_handler(Handler`1[T])">
-        <size>47</size>
-      </method>
-      <method name="Void add_Handler(Handler`1[T])">
-        <size>48</size>
-      </method>
-      <method name="Void remove_Handler(Handler`1[T])">
-        <size>8</size>
-      </method>
-      <method name="Void &lt;add_Handler&gt;m__0(System.Object)">
-        <size>18</size>
-      </method>
-    </type>
-    <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>15</size>
-      </method>
-    </type>
-    <type name="Handler`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(System.Object)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-37.cs">
-    <type name="Wrap`1[U]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Run[T](Wrap`1[T])">
-        <size>56</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>16</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Run&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>17</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-38.cs">
-    <type name="Foo`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>40</size>
-      </method>
-      <method name="Boolean Contains(T)">
-        <size>2</size>
-      </method>
-    </type>
-    <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>42</size>
-      </method>
-    </type>
-    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1[T,U]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__0()">
-        <size>201</size>
-      </method>
-    </type>
-    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-39.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test_1[T](T)">
-        <size>33</size>
-      </method>
-      <method name="Void Test_2[T](Nullable`1)">
-        <size>33</size>
-      </method>
-      <method name="Void Main()">
-        <size>39</size>
-      </method>
-    </type>
-    <type name="Test+D">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Test_1&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>24</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Test_2&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1()">
-        <size>85</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="T Test_3[T](System.Object)">
-        <size>51</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Test_3&gt;c__AnonStorey2`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__2()">
-        <size>23</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-4.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>59</size>
-      </method>
-      <method name="Int32 GetItem()">
-        <size>50</size>
-      </method>
-      <method name="IEnumerable`1 GetItems()">
-        <size>16</size>
-      </method>
-    </type>
-    <type name="Test+&lt;GetItems&gt;c__Iterator0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>75</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>15</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>26</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-40.cs">
-    <type name="RunTests">
-      <method name="Int32 Main()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test1.X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test1[R](R, Int32)">
-        <size>150</size>
-      </method>
-      <method name="Void Run()">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Test1.Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Int32 Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Int32 EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey1`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()">
-        <size>71</size>
-      </method>
-    </type>
-    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey0`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey2`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-41.cs">
-    <type name="C">
-      <method name="Decimal Average[TSource](IEnumerable`1, System.Func`2[TSource,System.Decimal])">
-        <size>37</size>
-      </method>
-      <method name="TResult Average[TElement,TAggregate,TResult](IEnumerable`1, System.Func`3[TAggregate,TElement,TAggregate], System.Func`3[TAggregate,TElement,TResult])">
-        <size>6</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Decimal &lt;Average`1&gt;m__0[TSource](Decimal, Decimal)">
-        <size>8</size>
-      </method>
-      <method name="Decimal &lt;Average`1&gt;m__1[TSource](Decimal, Decimal)">
-        <size>8</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-42.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test_3[T]()">
-        <size>20</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="Test+D">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void &lt;Test_3`1&gt;m__0[T]()">
-        <size>11</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-43.cs">
-    <type name="TestC">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[System.Type] Test[T]()">
-        <size>13</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>76</size>
-      </method>
-      <method name="System.Type &lt;Test`1&gt;m__0[T]()">
-        <size>11</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-44.cs">
-    <type name="UiaAtkBridgeTest.Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Invoke(System.EventHandler)">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="UiaAtkBridgeTest.GailTester">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void ThisCausesACrash[I]()">
-        <size>18</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void &lt;ThisCausesACrash`1&gt;m__0[I](System.Object, System.EventArgs)">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-45.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void AnyMethod[T]()">
-        <size>20</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="C+&lt;AnyMethod&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__1(System.String)">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void &lt;AnyMethod`1&gt;m__0[T]()">
-        <size>31</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-46.cs">
-    <type name="TheClass">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Foo[T](T, System.Func`2[T,T])">
-        <size>41</size>
-      </method>
-      <method name="Void Main()">
-        <size>8</size>
-      </method>
-    </type>
-    <type name="TheClass+&lt;Foo&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Func`1[T] &lt;&gt;m__0()">
-        <size>31</size>
-      </method>
-      <method name="T &lt;&gt;m__1()">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-47.cs">
-    <type name="C">
-      <method name="System.Func`2[T1,System.Func`2[T2,System.Action`1[T3]]] Curry[T1,T2,T3](System.Action`3[T1,T2,T3])">
-        <size>26</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Int32 Main()">
-        <size>59</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__3(Int32, Int32, Int32)">
-        <size>23</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3[T1,T2,T3]">
-      <method name="System.Func`2[T2,System.Action`1[T3]] &lt;&gt;m__0(T1)">
-        <size>33</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
-      <method name="System.Action`1[T3] &lt;&gt;m__1(T2)">
-        <size>45</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
-      <method name="Void &lt;&gt;m__2(T3)">
-        <size>35</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-48.cs">
-    <type name="GeneratorEnumerable`1[T]">
-      <method name="Void .ctor(Func`1)">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="GeneratorExpression">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="GeneratorInvoker">
-      <method name="Void .ctor(GeneratorExpression)">
-        <size>7</size>
-      </method>
-      <method name="Void Invoke[T](T ByRef)">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="Interpreter">
-      <method name="System.Object InterpretGenerator[T](GeneratorExpression)">
-        <size>31</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Func`1[TResult]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="TResult Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="TResult EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="GeneratorNext`1[T]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(T ByRef)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(T ByRef, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(T ByRef, IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Interpreter+&lt;InterpretGenerator&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="GeneratorNext`1[T] &lt;&gt;m__0()">
-        <size>23</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-49.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void DetermineLinkedCells()">
-        <size>74</size>
-      </method>
-    </type>
-    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey1">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__1(System.Object)">
-        <size>13</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__0(System.Object)">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-5.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>80</size>
-      </method>
-    </type>
-    <type name="Hello">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Foo+&lt;Test&gt;c__Iterator0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>112</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>15</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Int32)">
-        <size>8</size>
-      </method>
-      <method name="IEnumerable`1 Test(Foo)">
-        <size>42</size>
-      </method>
-      <method name="Void Hello(Int32)">
-        <size>19</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>22</size>
-      </method>
-    </type>
-    <type name="Foo+&lt;Test&gt;c__Iterator0">
-      <method name="Foo System.Collections.Generic.IEnumerator&lt;Foo&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Foo&gt;.GetEnumerator()">
-        <size>52</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-50.cs">
-    <type name="M">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="SomeGenericClass`1[SomeType]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Invoke(SomeGenericClass`1+SomeHandlerType[SomeType])">
-        <size>7</size>
-      </method>
-      <method name="Void FailsToCompile()">
-        <size>19</size>
-      </method>
-    </type>
-    <type name="SomeGenericClass`1+SomeHandlerType[SomeType]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="SomeGenericClass`1[SomeType]">
-      <method name="Void &lt;FailsToCompile&gt;m__0()">
-        <size>44</size>
-      </method>
-    </type>
-    <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
-      <method name="Void &lt;&gt;m__1()">
-        <size>18</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-51.cs">
-    <type name="Driver">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
-      </method>
-      <method name="Void P(Int32, Int32)">
-        <size>1</size>
-      </method>
-      <method name="Void Repro()">
-        <size>100</size>
-      </method>
-    </type>
-    <type name="Bla">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Driver+&lt;Repro&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>35</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-52.cs">
-    <type name="A`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="A`1+B[T]">
-      <method name="Void .ctor()">
-        <size>18</size>
-      </method>
-      <method name="Void W[R](System.String, System.Func`2[T,R])">
-        <size>39</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="A`1+B+&lt;W&gt;c__AnonStorey0`1[T,R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(T[])">
-        <size>55</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-53.cs">
-    <type name="TestComp.Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main(System.String[])">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="TestComp.Program+MyClass">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void MyTemplate(TestComp.Program+MyClass+MyDelegate)">
-        <size>1</size>
-      </method>
-      <method name="Void UseATemplate()">
-        <size>36</size>
-      </method>
-      <method name="Void &lt;UseATemplate&gt;m__0(System.Collections.Generic.List`1[System.Int32] ByRef)">
-        <size>16</size>
-      </method>
-    </type>
-    <type name="TestComp.Program+MyClass+MyDelegate">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(System.Collections.Generic.List`1[System.Int32] ByRef)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-54.cs">
-    <type name="Class">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.String get_Property()">
-        <size>6</size>
-      </method>
-      <method name="System.String Method()">
-        <size>44</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>39</size>
-      </method>
-    </type>
-    <type name="Class+&lt;Method&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.String &lt;&gt;m__0()">
-        <size>56</size>
-      </method>
-    </type>
-    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.String &lt;&gt;m__1(System.String)">
-        <size>52</size>
-      </method>
-    </type>
-    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2+&lt;Method&gt;c__AnonStorey1">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.String &lt;&gt;m__2()">
-        <size>39</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-55.cs">
-    <type name="Thing`1[TFirst]">
-      <method name="Void .ctor(Action`1)">
-        <size>14</size>
-      </method>
-      <method name="Thing`1[TFirst] Create[TSecond](System.Func`2[TFirst,TSecond])">
-        <size>31</size>
-      </method>
-      <method name="Void SomeAction()">
-        <size>18</size>
-      </method>
-    </type>
-    <type name="Program">
-      <method name="Void Main()">
-        <size>42</size>
-      </method>
-      <method name="System.Object &lt;Main&gt;m__1(System.Object)">
-        <size>2</size>
-      </method>
-    </type>
-    <type name="Thing`1+&lt;Create&gt;c__AnonStorey0`1[TFirst,TSecond]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(TFirst)">
-        <size>47</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-56.cs">
-    <type name="G`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T def()">
-        <size>10</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void foo(System.Object)">
-        <size>1</size>
-      </method>
-      <method name="Void cf[T]()">
-        <size>35</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>17</size>
-      </method>
-    </type>
-    <type name="C+DF">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="C+&lt;cf&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>22</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-57.cs">
-    <type name="X`1[T]">
-      <method name="Void IFoo&lt;T&gt;.Test()">
-        <size>37</size>
-      </method>
-      <method name="Void &lt;Test&gt;m__0()">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="M">
-      <method name="Void Main()">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-58.cs">
-    <type name="Test">
-      <method name="X Foo[X](Boolean)">
-        <size>45</size>
-      </method>
-      <method name="X FooNested[X](Boolean)">
-        <size>66</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>36</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[X]">
-      <method name="X &lt;&gt;m__0()">
-        <size>12</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;FooNested&gt;c__AnonStorey1`1[X]">
-      <method name="Call`1[X] &lt;&gt;m__1()">
-        <size>12</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-59.cs">
-    <type name="TestGenericsSubtypeMatching.Sender`1[T]">
-      <method name="Void DoSend[TMessage](System.Action`1[T])">
-        <size>83</size>
-      </method>
-      <method name="Void Send(System.Action`1[T])">
-        <size>1</size>
-      </method>
-      <method name="Void ActionOnObject(System.Object)">
-        <size>8</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>11</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.C">
-      <method name="Void Main()">
-        <size>40</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__1(System.String)">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey0`1[T,TMessage]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey1`1[T,TMessage]">
-      <method name="Void &lt;&gt;m__0(T)">
-        <size>35</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-6.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Hello[U,V](U, V)">
-        <size>1</size>
-      </method>
-      <method name="Void Test[A,B,C](A, B, C)">
-        <size>49</size>
-      </method>
-      <method name="Void Main()">
-        <size>28</size>
-      </method>
-    </type>
-    <type name="Foo`2[R,S]">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke(R, S)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(R, S, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`3[A,B,C]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(A, Int32)">
-        <size>32</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-60.cs">
-    <type name="TestGenericsSubtypeMatching.Sender`1[T]">
-      <method name="Void DoSend[TMessage](System.Action`1[T])">
-        <size>83</size>
-      </method>
-      <method name="Void Send(System.Action`1[T])">
-        <size>1</size>
-      </method>
-      <method name="Void ActionOnObject(System.Object)">
-        <size>8</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>11</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.C">
-      <method name="Int32 Main()">
-        <size>41</size>
-      </method>
-      <method name="Void &lt;Main&gt;m__1(Int32)">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey0`1[T,TMessage]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey1`1[T,TMessage]">
-      <method name="Void &lt;&gt;m__0(T)">
-        <size>35</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-61.cs">
-    <type name="TestCase">
-      <method name="Void Main()">
-        <size>32</size>
-      </method>
-      <method name="Void Test[T](IList`1)">
-        <size>33</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestCase+&lt;Test&gt;c__AnonStorey0`1[T]">
-      <method name="Void &lt;&gt;m__0()">
-        <size>46</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__1(IList`1)">
-        <size>2</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-62.cs">
-    <type name="D">
-      <method name="Void Invoke(System.Object)">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="T">
-      <method name="Void Assert(System.Object)">
-        <size>1</size>
-      </method>
-      <method name="Void Execute(System.Action)">
-        <size>1</size>
-      </method>
-      <method name="D GetD[T](System.Object)">
-        <size>33</size>
-      </method>
-      <method name="Void Main()">
-        <size>24</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="T+&lt;GetD&gt;c__AnonStorey2`1[T]">
-      <method name="Void &lt;&gt;m__0(System.Object)">
-        <size>77</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey1`1[T]">
-      <method name="Void &lt;&gt;m__1()">
-        <size>51</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-63.cs">
-    <type name="A">
-      <method name="Void Foo[T](T, System.String[])">
-        <size>1</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void Test(Int32)">
-        <size>40</size>
-      </method>
-      <method name="Void Test2[T](T)">
-        <size>34</size>
-      </method>
-      <method name="Void &lt;Foo&gt;__BaseCallProxy0[T](T, System.String[])">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void Main()">
-        <size>27</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="B+&lt;Test&gt;c__AnonStorey0">
-      <method name="Void &lt;&gt;m__0()">
-        <size>32</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="B+&lt;Test2&gt;c__AnonStorey1`1[T]">
-      <method name="Void &lt;&gt;m__1()">
-        <size>40</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="A">
-      <method name="Void Foo2[T]()">
-        <size>1</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void Test3()">
-        <size>59</size>
-      </method>
-      <method name="Void &lt;Foo2&gt;__BaseCallProxy1[T]()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="B+&lt;Test3&gt;c__AnonStorey2">
-      <method name="Void &lt;&gt;m__2()">
-        <size>19</size>
-      </method>
-      <method name="Void &lt;&gt;m__3()">
-        <size>19</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-64.cs">
-    <type name="C`1[T]">
-      <method name="Void Foo[U](U)">
-        <size>81</size>
-      </method>
-      <method name="Void Run(T)">
-        <size>1</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="D">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="E">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="A">
-      <method name="Int32 Main()">
-        <size>12</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C`1+&lt;Foo&gt;c__AnonStorey0`1[T,U]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C`1+&lt;Foo&gt;c__AnonStorey1`1[T,U]">
-      <method name="U &lt;&gt;m__0()">
-        <size>12</size>
-      </method>
-      <method name="Void &lt;&gt;m__1()">
-        <size>12</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-65.cs">
-    <type name="C">
-      <method name="Void Foo[T]()">
-        <size>27</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>14</size>
-      </method>
-      <method name="T &lt;Foo`1&gt;m__0[T](T)">
-        <size>67</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Foo&gt;c__AnonStorey0`1[T]">
-      <method name="T &lt;&gt;m__1()">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-66.cs">
-    <type name="A">
-      <method name="Void Test[T,U]()">
-        <size>20</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>14</size>
-      </method>
-      <method name="Void &lt;Test`2&gt;m__0[T,U]()">
-        <size>38</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="A+&lt;Test&gt;c__AnonStorey0`2[T,U]">
-      <method name="Void &lt;&gt;m__1()">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-7.cs">
-    <type name="MyDisposable">
-      <method name="Void .ctor()">
-        <size>26</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>1</size>
-      </method>
-      <method name="Int32 get_ID()">
-        <size>7</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>28</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerable`1 Test(Int32)">
-        <size>30</size>
-      </method>
-      <method name="Void Main()">
-        <size>60</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__Iterator0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>194</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>73</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>40</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-8.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Test[R](R, Int32)">
-        <size>88</size>
-      </method>
-      <method name="Void Main()">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Int32 Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Int32 EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey1`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()">
-        <size>34</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1[R]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-9.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerable`1 get_Foo()">
-        <size>16</size>
-      </method>
-      <method name="Void set_Foo(IEnumerable`1)">
-        <size>11</size>
-      </method>
-      <method name="Void Main()">
-        <size>80</size>
-      </method>
-      <method name="Foo op_Implicit(Test)">
-        <size>30</size>
-      </method>
-      <method name="IEnumerable`1 op_Addition(Test, Test)">
-        <size>44</size>
-      </method>
-    </type>
-    <type name="Foo">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-      <method name="Void Invoke()">
-        <size>0</size>
-      </method>
-      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
-        <size>0</size>
-      </method>
-      <method name="Void EndInvoke(IAsyncResult)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void &lt;op_Implicit&gt;m__0()">
-        <size>11</size>
-      </method>
-    </type>
-    <type name="Test+&lt;&gt;c__Iterator0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>71</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>15</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-    </type>
-    <type name="Test+&lt;op_Addition&gt;c__Iterator1">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>7</size>
-      </method>
-      <method name="Boolean MoveNext()">
-        <size>112</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>15</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-    </type>
-    <type name="Test+&lt;&gt;c__Iterator0">
-      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>26</size>
-      </method>
-    </type>
-    <type name="Test+&lt;op_Addition&gt;c__Iterator1">
-      <method name="Test System.Collections.Generic.IEnumerator&lt;Test&gt;.get_Current()">
-        <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test&gt;.GetEnumerator()">
-        <size>52</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-anon-type-12.cs">
     <type name="C">
       <method name="Int32 Main()">
@@ -47889,6 +45067,465 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-101.cs">
+    <type name="Foo">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Hello[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[T](T)">
+        <size>64</size>
+      </method>
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-102.cs">
+    <type name="Simple">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Simple Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Simple EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Hello[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[T](T)">
+        <size>71</size>
+      </method>
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
+      <method name="Simple &lt;&gt;m__0()">
+        <size>55</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>50</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-103.cs">
+    <type name="Foo`1[S]">
+      <method name="Void Invoke(S)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(S, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Hello[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[T](T)">
+        <size>28</size>
+      </method>
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+      <method name="Void &lt;Test`1&gt;m__0[T](T)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-104.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>59</size>
+      </method>
+      <method name="Int32 GetItem()">
+        <size>50</size>
+      </method>
+      <method name="IEnumerable`1 GetItems()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;GetItems&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>75</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-105.cs">
+    <type name="Hello">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="IEnumerable`1 Test(Foo)">
+        <size>42</size>
+      </method>
+      <method name="Void Hello(Int32)">
+        <size>19</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()">
+        <size>80</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo+&lt;Test&gt;c__Iterator0">
+      <method name="Foo System.Collections.Generic.IEnumerator&lt;Foo&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Foo&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>112</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-106.cs">
+    <type name="Foo`2[R,S]">
+      <method name="Void Invoke(R, S)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(R, S, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Hello[U,V](U, V)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[A,B,C](A, B, C)">
+        <size>49</size>
+      </method>
+      <method name="Void Main()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`3[A,B,C]">
+      <method name="Void &lt;&gt;m__0(A, Int32)">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-107.cs">
+    <type name="MyDisposable">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Int32 get_ID()">
+        <size>7</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="IEnumerable`1 Test(Int32)">
+        <size>30</size>
+      </method>
+      <method name="Void Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>194</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>73</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-108.cs">
+    <type name="Foo">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void Test[R](R, Int32)">
+        <size>88</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey1`1[R]">
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-109.cs">
+    <type name="Foo">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="IEnumerable`1 get_Foo()">
+        <size>16</size>
+      </method>
+      <method name="Void set_Foo(IEnumerable`1)">
+        <size>11</size>
+      </method>
+      <method name="Void Main()">
+        <size>80</size>
+      </method>
+      <method name="Foo op_Implicit(Test)">
+        <size>30</size>
+      </method>
+      <method name="IEnumerable`1 op_Addition(Test, Test)">
+        <size>44</size>
+      </method>
+      <method name="Void &lt;op_Implicit&gt;m__0()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;op_Addition&gt;c__Iterator1">
+      <method name="Test System.Collections.Generic.IEnumerator&lt;Test&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>112</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>71</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-11.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -47955,6 +45592,382 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-110.cs">
+    <type name="X">
+      <method name="IEnumerable`1 Test[T](T, T)">
+        <size>44</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>97</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__Iterator0`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>124</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-111.cs">
+    <type name="Foo">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test`1[R]">
+      <method name="Void World[S,T](S, T)">
+        <size>1</size>
+      </method>
+      <method name="Void Hello[U,V](U, V)">
+        <size>47</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test`1+&lt;Hello&gt;c__AnonStorey0`2[R,U,V]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-112.cs">
+    <type name="Foo">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="World`1[T]">
+      <method name="Void Hello[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void Test(T)">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="World`1+&lt;Test&gt;c__AnonStorey0[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-113.cs">
+    <type name="X">
+      <method name="X+ModuleBinder`1[TDelegate] CreateMethodUnscoped[TDelegate]()">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="TDelegate &lt;CreateMethodUnscoped`1&gt;m__0[TDelegate](System.Object)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+ModuleBinder`1[T]">
+      <method name="T Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-114.cs">
+    <type name="T">
+      <method name="Void SomeMethod(System.Converter`2[System.Int32,System.Int32])">
+        <size>1</size>
+      </method>
+      <method name="Void SomeCaller()">
+        <size>36</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Int32 &lt;SomeCaller&gt;m__0(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-115.cs">
+    <type name="Foo`1[V]">
+      <method name="Void Invoke(V)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(V, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Bar`1[W]">
+      <method name="Void Invoke(W)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(W, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test`1[T]">
+      <method name="Void Hello[S](T, S)">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1[T,S]">
+      <method name="Void &lt;&gt;m__0(Int64)">
+        <size>57</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1+&lt;Hello&gt;c__AnonStorey0`1[T,S]">
+      <method name="Void &lt;&gt;m__1(T)">
+        <size>65</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-116.cs">
+    <type name="TestFunc`1[T]">
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor(TestFunc`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass">
+      <method name="Void Func[T](TestFunc`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;a&gt;m__0(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>47</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-117.cs">
+    <type name="C">
+      <method name="Void Test[T,U](C+Func`1[T], U)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>75</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+Func`1[T]">
+      <method name="T Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-118.cs">
+    <type name="C">
+      <method name="TR Test[TR,TA](C+Func`2[TR,TA])">
+        <size>10</size>
+      </method>
+      <method name="TR Test[TR,TA,TB](C+Func`2[TR,TA], C+Func`2[TR,TB])">
+        <size>10</size>
+      </method>
+      <method name="Void Test2[T]()">
+        <size>19</size>
+      </method>
+      <method name="Void Main()">
+        <size>100</size>
+      </method>
+      <method name="T &lt;Test2`1&gt;m__0[T](T)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1(Int32)">
+        <size>16</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__2(Int32)">
+        <size>6</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__3(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+Func`2[TR,TA]">
+      <method name="TR Invoke(TA)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(TA, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="TR EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-119.cs">
+    <type name="Test">
+      <method name="Void TestNaturalSort()">
+        <size>31</size>
+      </method>
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+      <method name="Int32 &lt;TestNaturalSort&gt;m__0(System.String, System.String)">
+        <size>106</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestNaturalSort&gt;c__AnonStorey0">
+      <method name="System.String &lt;&gt;m__1(System.Text.RegularExpressions.Match)">
+        <size>113</size>
+      </method>
+      <method name="System.String &lt;&gt;m__2(System.Text.RegularExpressions.Match)">
+        <size>113</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-12.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -47984,6 +45997,574 @@
     <type name="X">
       <method name="Boolean &lt;Main&gt;m__0(System.Object)">
         <size>12</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-120.cs">
+    <type name="C`1[T]">
+      <method name="Void Foo[U](U)">
+        <size>20</size>
+      </method>
+      <method name="Void Run()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;Foo`1&gt;m__0[U]()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-121.cs">
+    <type name="EmptyDelegate">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="BaseObject">
+      <method name="Int32 Main()">
+        <size>10</size>
+      </method>
+      <method name="Void Closure(EmptyDelegate)">
+        <size>1</size>
+      </method>
+      <method name="System.Collections.Generic.List`1[T] Query[T](Nullable`1 ByRef)">
+        <size>53</size>
+      </method>
+      <method name="T MakeSomething[T]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseObject+&lt;Query&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-122.cs">
+    <type name="D1">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="D2">
+      <method name="Int64 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int64 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Foo(D1)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(D2)">
+        <size>2</size>
+      </method>
+      <method name="Int32 FooE(System.Linq.Expressions.Expression`1[D1])">
+        <size>2</size>
+      </method>
+      <method name="Int32 FooE(System.Linq.Expressions.Expression`1[D2])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>82</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-123.cs">
+    <type name="MemberAccessData">
+      <method name="Void set_MyTypeProperty(Nullable`1)">
+        <size>8</size>
+      </method>
+      <method name="Nullable`1 get_MyTypeProperty()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void BaseM()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Test(C+D)">
+        <size>1</size>
+      </method>
+      <method name="Void Test(System.Action`1[E])">
+        <size>8</size>
+      </method>
+      <method name="Void InstanceTests()">
+        <size>18</size>
+      </method>
+      <method name="Void Main()">
+        <size>246</size>
+      </method>
+      <method name="Void &lt;BaseM&gt;__BaseCallProxy0()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;InstanceTests&gt;m__0()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__3()">
+        <size>16</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__4()">
+        <size>16</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__5()">
+        <size>61</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__6()">
+        <size>53</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__7(E)">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__1()">
+        <size>38</size>
+      </method>
+      <method name="Void &lt;&gt;m__2()">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-124.cs">
+    <type name="Disposable`1[T]">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CA`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="System.Func`1[T[]] For[T](System.Collections.Generic.List`1[T])">
+        <size>38</size>
+      </method>
+      <method name="System.Func`1[T] Throw[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[System.Type] TypeOf[T](T)">
+        <size>38</size>
+      </method>
+      <method name="System.Func`1[T] Do[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[T] Lock[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[T] Catch[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[T] Finally[T](T)">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[T] Using[T](T)">
+        <size>52</size>
+      </method>
+      <method name="System.Func`1[T] Switch[T](T)">
+        <size>38</size>
+      </method>
+      <method name="System.Func`1[System.Collections.Generic.List`1[T]] ForForeach[T](T[])">
+        <size>26</size>
+      </method>
+      <method name="Void ArrayMutate[T](T[])">
+        <size>27</size>
+      </method>
+      <method name="System.Func`1[T[][]] ArrayMultiMutate[T](T[][])">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[System.Int32] ArrayMultiMutate[T](T[,])">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[T[]] NestedTypeMutate[T]()">
+        <size>34</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>576</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
+      <method name="T[] &lt;&gt;m__0()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Throw&gt;c__AnonStorey1`1[T]">
+      <method name="T &lt;&gt;m__1()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TypeOf&gt;c__AnonStorey2`1[T]">
+      <method name="System.Type &lt;&gt;m__2()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Do&gt;c__AnonStorey3`1[T]">
+      <method name="T &lt;&gt;m__3()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Lock&gt;c__AnonStorey4`1[T]">
+      <method name="T &lt;&gt;m__4()">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Catch&gt;c__AnonStorey5`1[T]">
+      <method name="T &lt;&gt;m__5()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Finally&gt;c__AnonStorey6`1[T]">
+      <method name="T &lt;&gt;m__6()">
+        <size>50</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Using&gt;c__AnonStorey7`1[T]">
+      <method name="T &lt;&gt;m__7()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Switch&gt;c__AnonStorey8`1[T]">
+      <method name="T &lt;&gt;m__8()">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ForForeach&gt;c__AnonStorey9`1[T]">
+      <method name="System.Collections.Generic.List`1[T] &lt;&gt;m__9()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMutate&gt;c__AnonStoreyA`1[T]">
+      <method name="Void &lt;&gt;m__A(Int32)">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyB`1[T]">
+      <method name="T[][] &lt;&gt;m__B()">
+        <size>48</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyC`1[T]">
+      <method name="Int32 &lt;&gt;m__C()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;NestedTypeMutate&gt;c__AnonStoreyD`1[T]">
+      <method name="T[] &lt;&gt;m__D()">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-125.cs">
+    <type name="HS`1[T]">
+      <method name="Void .ctor(IEqualityComparer`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Foo[T](IEqualityComparer`1)">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="HS`1[T] &lt;&gt;m__0()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-126.cs">
+    <type name="MonoBugs.BrokenGenericCast">
+      <method name="System.Converter`2[TSource,TDest] GetUpcaster[TSource,TDest]()">
+        <size>13</size>
+      </method>
+      <method name="System.Converter`2[TSource,TDest] GetDowncaster[TSource,TDest]()">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="TDest &lt;GetUpcaster`2&gt;m__0[TSource,TDest](TSource)">
+        <size>12</size>
+      </method>
+      <method name="TDest &lt;GetDowncaster`2&gt;m__1[TSource,TDest](TSource)">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-127.cs">
+    <type name="BaseDataObjectFactory">
+      <method name="T GetBusinessQueryObjectFromReader[T]()">
+        <size>8</size>
+      </method>
+      <method name="T[] GetQueryObjects[T](System.String)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BusinessQueryObject">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MySqlDataObjectFactory">
+      <method name="T[] GetQueryObjects[T](System.String)">
+        <size>63</size>
+      </method>
+      <method name="Void ExecuteReader(Int32, MySqlDataObjectFactory+PerformActionWithReader)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MySqlDataObjectFactory+PerformActionWithReader">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MySqlDataObjectFactory+&lt;GetQueryObjects&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-128.cs">
+    <type name="A">
+      <method name="Void Foo[T]()">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo[T]()">
+        <size>14</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;Foo`1&gt;m__0[T]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+Del">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-129.cs">
+    <type name="Test">
+      <method name="Boolean TryAction[T](Test+Creator`1[T], T ByRef)">
+        <size>17</size>
+      </method>
+      <method name="Boolean Func1[T](IList`1, Boolean, T ByRef)">
+        <size>32</size>
+      </method>
+      <method name="T Item[T](IList`1)">
+        <size>7</size>
+      </method>
+      <method name="T GetSingleItem[T](IList`1)">
+        <size>10</size>
+      </method>
+      <method name="Void Main()">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+Creator`1[T]">
+      <method name="T Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Func1&gt;c__AnonStorey0`1[T]">
+      <method name="T &lt;&gt;m__0()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -48022,6 +46603,387 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-130.cs">
+    <type name="Simple">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Simple Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Simple EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Hello[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[T](T)">
+        <size>46</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
+      <method name="Simple &lt;&gt;m__0()">
+        <size>55</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>50</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-131.cs">
+    <type name="A">
+      <method name="Void Fail[X]()">
+        <size>25</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="A+&lt;Fail&gt;c__AnonStorey0`1[X]">
+      <method name="Void &lt;&gt;m__0(System.Object, System.EventArgs)">
+        <size>36</size>
+      </method>
+      <method name="Void &lt;&gt;m__1(System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-132.cs">
+    <type name="Program">
+      <method name="Void Assert(System.Action`1[System.Int32])">
+        <size>9</size>
+      </method>
+      <method name="Void Foo[T](IList`1)">
+        <size>31</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0(Int32)">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-133.cs">
+    <type name="IEnumerableRocks">
+      <method name="System.String Implode[TSource,TResult](IEnumerable`1, System.String, System.Func`2[TSource,TResult])">
+        <size>33</size>
+      </method>
+      <method name="System.String Implode[TSource](IEnumerable`1, System.String, System.Action`2[System.Text.StringBuilder,TSource])">
+        <size>125</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>67</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(System.String)">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="IEnumerableRocks+&lt;Implode&gt;c__AnonStorey0`2[TSource,TResult]">
+      <method name="Void &lt;&gt;m__0(System.Text.StringBuilder, TSource)">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-134.cs">
+    <type name="MyClass">
+      <method name="Int32 get_Answer()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Answer(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>82</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-135.cs">
+    <type name="C`1[T]">
+      <method name="System.Func`1[T] XX()">
+        <size>32</size>
+      </method>
+      <method name="T &lt;XX&gt;m__0()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C2`1[T]">
+      <method name="System.Func`1[C`1[T]] XX()">
+        <size>32</size>
+      </method>
+      <method name="C`1[T] &lt;XX&gt;m__1()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N1">
+      <method name="System.Func`1[T] XX[T]()">
+        <size>15</size>
+      </method>
+      <method name="T &lt;XX`1&gt;m__2[T]()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>98</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-136.cs">
+    <type name="Handler`1[T]">
+      <method name="Void Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo`1[T]">
+      <method name="Void add_handler(Handler`1[T])">
+        <size>47</size>
+      </method>
+      <method name="Void remove_handler(Handler`1[T])">
+        <size>47</size>
+      </method>
+      <method name="Void add_Handler(Handler`1[T])">
+        <size>48</size>
+      </method>
+      <method name="Void remove_Handler(Handler`1[T])">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;add_Handler&gt;m__0(System.Object)">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-137.cs">
+    <type name="Wrap`1[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Run[T](Wrap`1[T])">
+        <size>56</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Run&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-138.cs">
+    <type name="Foo`1[T]">
+      <method name="Boolean ContainsAll[U](IEnumerable`1)">
+        <size>40</size>
+      </method>
+      <method name="Boolean Contains(T)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1[T,U]">
+      <method name="Boolean &lt;&gt;m__0()">
+        <size>201</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-139.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>39</size>
+      </method>
+      <method name="Void Test_1[T](T)">
+        <size>33</size>
+      </method>
+      <method name="Void Test_2[T](Nullable`1)">
+        <size>33</size>
+      </method>
+      <method name="T Test_3[T](System.Object)">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Test_1&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Test_2&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>85</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Test_3&gt;c__AnonStorey2`1[T]">
+      <method name="Void &lt;&gt;m__2()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-14.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -48052,6 +47014,328 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-140.cs">
+    <type name="RunTests">
+      <method name="Int32 Main()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.Foo">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test1.X">
+      <method name="Void Test1[R](R, Int32)">
+        <size>150</size>
+      </method>
+      <method name="Void Run()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey2`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey0`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey1`1[R]">
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>71</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-141.cs">
+    <type name="C">
+      <method name="Decimal Average[TSource](IEnumerable`1, System.Func`2[TSource,System.Decimal])">
+        <size>37</size>
+      </method>
+      <method name="TResult Average[TElement,TAggregate,TResult](IEnumerable`1, System.Func`3[TAggregate,TElement,TAggregate], System.Func`3[TAggregate,TElement,TResult])">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Decimal &lt;Average`1&gt;m__0[TSource](Decimal, Decimal)">
+        <size>8</size>
+      </method>
+      <method name="Decimal &lt;Average`1&gt;m__1[TSource](Decimal, Decimal)">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-142.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void Test_3[T]()">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Test_3`1&gt;m__0[T]()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-143.cs">
+    <type name="TestC">
+      <method name="Int32 Main()">
+        <size>76</size>
+      </method>
+      <method name="System.Func`1[System.Type] Test[T]()">
+        <size>13</size>
+      </method>
+      <method name="System.Type &lt;Test`1&gt;m__0[T]()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-144.cs">
+    <type name="UiaAtkBridgeTest.Test">
+      <method name="Void Invoke(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="UiaAtkBridgeTest.GailTester">
+      <method name="Void ThisCausesACrash[I]()">
+        <size>18</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;ThisCausesACrash`1&gt;m__0[I](System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-145.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void AnyMethod[T]()">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;AnyMethod`1&gt;m__0[T]()">
+        <size>31</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;AnyMethod&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__1(System.String)">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-146.cs">
+    <type name="TheClass">
+      <method name="Void Foo[T](T, System.Func`2[T,T])">
+        <size>41</size>
+      </method>
+      <method name="Void Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TheClass+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="System.Func`1[T] &lt;&gt;m__0()">
+        <size>31</size>
+      </method>
+      <method name="T &lt;&gt;m__1()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-147.cs">
+    <type name="C">
+      <method name="System.Func`2[T1,System.Func`2[T2,System.Action`1[T3]]] Curry[T1,T2,T3](System.Action`3[T1,T2,T3])">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__3(Int32, Int32, Int32)">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3[T1,T2,T3]">
+      <method name="System.Func`2[T2,System.Action`1[T3]] &lt;&gt;m__0(T1)">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
+      <method name="System.Action`1[T3] &lt;&gt;m__1(T2)">
+        <size>45</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
+      <method name="Void &lt;&gt;m__2(T3)">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-148.cs">
+    <type name="Func`1[TResult]">
+      <method name="TResult Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="TResult EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="GeneratorNext`1[T]">
+      <method name="Void Invoke(T ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(T ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="GeneratorEnumerable`1[T]">
+      <method name="Void .ctor(Func`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="GeneratorExpression">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="GeneratorInvoker">
+      <method name="Void Invoke[T](T ByRef)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor(GeneratorExpression)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Interpreter">
+      <method name="System.Object InterpretGenerator[T](GeneratorExpression)">
+        <size>31</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Interpreter+&lt;InterpretGenerator&gt;c__AnonStorey0`1[T]">
+      <method name="GeneratorNext`1[T] &lt;&gt;m__0()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-149.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void DetermineLinkedCells()">
+        <size>74</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey1">
+      <method name="Boolean &lt;&gt;m__0(System.Object)">
+        <size>18</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1(System.Object)">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -48089,6 +47373,384 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-150.cs">
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="SomeGenericClass`1[SomeType]">
+      <method name="Void Invoke(SomeGenericClass`1+SomeHandlerType[SomeType])">
+        <size>7</size>
+      </method>
+      <method name="Void FailsToCompile()">
+        <size>19</size>
+      </method>
+      <method name="Void &lt;FailsToCompile&gt;m__0()">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="SomeGenericClass`1+SomeHandlerType[SomeType]">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-151.cs">
+    <type name="Bla">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Driver">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void P(Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Repro()">
+        <size>100</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Driver+&lt;Repro&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-152.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+B[T]">
+      <method name="Void W[R](System.String, System.Func`2[T,R])">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+B+&lt;W&gt;c__AnonStorey0`1[T,R]">
+      <method name="Void &lt;&gt;m__0(T[])">
+        <size>55</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-153.cs">
+    <type name="TestComp.Program">
+      <method name="Void Main(System.String[])">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestComp.Program+MyClass">
+      <method name="Void MyTemplate(TestComp.Program+MyClass+MyDelegate)">
+        <size>1</size>
+      </method>
+      <method name="Void UseATemplate()">
+        <size>36</size>
+      </method>
+      <method name="Void &lt;UseATemplate&gt;m__0(System.Collections.Generic.List`1[System.Int32] ByRef)">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestComp.Program+MyClass+MyDelegate">
+      <method name="Void Invoke(System.Collections.Generic.List`1[System.Int32] ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-154.cs">
+    <type name="Class">
+      <method name="System.String get_Property()">
+        <size>6</size>
+      </method>
+      <method name="System.String Method()">
+        <size>44</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0">
+      <method name="System.String &lt;&gt;m__0()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2">
+      <method name="System.String &lt;&gt;m__1(System.String)">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2+&lt;Method&gt;c__AnonStorey1">
+      <method name="System.String &lt;&gt;m__2()">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-155.cs">
+    <type name="Thing`1[TFirst]">
+      <method name="Thing`1[TFirst] Create[TSecond](System.Func`2[TFirst,TSecond])">
+        <size>31</size>
+      </method>
+      <method name="Void SomeAction()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor(Action`1)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()">
+        <size>42</size>
+      </method>
+      <method name="System.Object &lt;Main&gt;m__1(System.Object)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Thing`1+&lt;Create&gt;c__AnonStorey0`1[TFirst,TSecond]">
+      <method name="Void &lt;&gt;m__0(TFirst)">
+        <size>47</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-156.cs">
+    <type name="G`1[T]">
+      <method name="T def()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void foo(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void cf[T]()">
+        <size>35</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+DF">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;cf&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-157.cs">
+    <type name="Foo">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X`1[T]">
+      <method name="Void IFoo&lt;T&gt;.Test()">
+        <size>37</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-158.cs">
+    <type name="Test">
+      <method name="X Foo[X](Boolean)">
+        <size>45</size>
+      </method>
+      <method name="X FooNested[X](Boolean)">
+        <size>66</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[X]">
+      <method name="X &lt;&gt;m__0()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;FooNested&gt;c__AnonStorey1`1[X]">
+      <method name="Call`1[X] &lt;&gt;m__1()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-159.cs">
+    <type name="TestGenericsSubtypeMatching.Sender`1[T]">
+      <method name="Void DoSend[TMessage](System.Action`1[T])">
+        <size>83</size>
+      </method>
+      <method name="Void Send(System.Action`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Void ActionOnObject(System.Object)">
+        <size>8</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.C">
+      <method name="Void Main()">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__1(System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey0`1[T,TMessage]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey1`1[T,TMessage]">
+      <method name="Void &lt;&gt;m__0(T)">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-16.cs">
     <type name="X">
       <method name="Void .ctor(Int32)">
@@ -48118,6 +47780,290 @@
     <type name="X">
       <method name="Void &lt;T&gt;m__0()">
         <size>27</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-160.cs">
+    <type name="TestGenericsSubtypeMatching.Sender`1[T]">
+      <method name="Void DoSend[TMessage](System.Action`1[T])">
+        <size>83</size>
+      </method>
+      <method name="Void Send(System.Action`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Void ActionOnObject(System.Object)">
+        <size>8</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.C">
+      <method name="Int32 Main()">
+        <size>41</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__1(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey0`1[T,TMessage]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey1`1[T,TMessage]">
+      <method name="Void &lt;&gt;m__0(T)">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-161.cs">
+    <type name="TestCase">
+      <method name="Void Main()">
+        <size>32</size>
+      </method>
+      <method name="Void Test[T](IList`1)">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestCase+&lt;Test&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>46</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1(IList`1)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-162.cs">
+    <type name="D">
+      <method name="Void Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="T">
+      <method name="Void Assert(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void Execute(System.Action)">
+        <size>1</size>
+      </method>
+      <method name="D GetD[T](System.Object)">
+        <size>33</size>
+      </method>
+      <method name="Void Main()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T+&lt;GetD&gt;c__AnonStorey2`1[T]">
+      <method name="Void &lt;&gt;m__0(System.Object)">
+        <size>77</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-163.cs">
+    <type name="A">
+      <method name="Void Foo[T](T, System.String[])">
+        <size>1</size>
+      </method>
+      <method name="Void Foo2[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Test(Int32)">
+        <size>40</size>
+      </method>
+      <method name="Void Test2[T](T)">
+        <size>34</size>
+      </method>
+      <method name="Void Test3()">
+        <size>59</size>
+      </method>
+      <method name="Void &lt;Foo&gt;__BaseCallProxy0[T](T, System.String[])">
+        <size>9</size>
+      </method>
+      <method name="Void &lt;Foo2&gt;__BaseCallProxy1[T]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Test2&gt;c__AnonStorey1`1[T]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Test3&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__2()">
+        <size>19</size>
+      </method>
+      <method name="Void &lt;&gt;m__3()">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-164.cs">
+    <type name="C`1[T]">
+      <method name="Void Foo[U](U)">
+        <size>81</size>
+      </method>
+      <method name="Void Run(T)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+&lt;Foo&gt;c__AnonStorey0`1[T,U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+&lt;Foo&gt;c__AnonStorey1`1[T,U]">
+      <method name="U &lt;&gt;m__0()">
+        <size>12</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-165.cs">
+    <type name="C">
+      <method name="Void Foo[T]()">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="T &lt;Foo`1&gt;m__0[T](T)">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="T &lt;&gt;m__1()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-166.cs">
+    <type name="A">
+      <method name="Void Test[T,U]()">
+        <size>20</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void &lt;Test`2&gt;m__0[T,U]()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+&lt;Test&gt;c__AnonStorey0`2[T,U]">
+      <method name="Void &lt;&gt;m__1()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

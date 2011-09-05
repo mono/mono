@@ -1,4 +1,4 @@
-// Compiler options: -r:gtest-anon-58-lib.dll
+// Compiler options: -r:test-anon-158-lib.dll
 
 using System;
 
