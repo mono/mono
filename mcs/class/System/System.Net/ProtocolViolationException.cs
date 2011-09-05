@@ -44,9 +44,9 @@ namespace System.Net
 		{
 		}
 
-		protected ProtocolViolationException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{			
+		protected ProtocolViolationException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
+		{
 		}
 
 		// Methods
@@ -57,13 +57,10 @@ namespace System.Net
 		}
 #endif
 
-#if NET_2_0
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			base.GetObjectData (serializationInfo,
-					    streamingContext);
+			base.GetObjectData (serializationInfo, streamingContext);
 		}
-#endif
 	}
 }
 	

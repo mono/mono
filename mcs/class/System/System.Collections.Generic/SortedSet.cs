@@ -542,12 +542,7 @@ namespace System.Collections.Generic {
 		{
 			Add (item);
 		}
-
-		void ICollection<T>.CopyTo (T [] array, int index)
-		{
-			CopyTo (array, index, Count);
-		}
-
+		
 		bool ICollection<T>.IsReadOnly {
 			get { return false; }
 		}

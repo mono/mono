@@ -48,8 +48,8 @@ namespace System.Net
 		{
 		}
 
-		protected CookieException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
+		protected CookieException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{			
 		}
 
@@ -61,13 +61,10 @@ namespace System.Net
 		}
 #endif
 
-#if NET_2_0
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			base.GetObjectData (serializationInfo,
-					    streamingContext);
+			base.GetObjectData (serializationInfo, streamingContext);
 		}
-#endif
 	}
 }
 	

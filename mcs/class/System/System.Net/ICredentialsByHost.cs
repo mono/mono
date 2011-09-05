@@ -27,13 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.Net {
 	public interface ICredentialsByHost
 	{
-		NetworkCredential GetCredential (string host, int port, string authType);
+		NetworkCredential GetCredential (string host, int port, string authenticationType);
 	}
 }
-
-#endif

@@ -27,9 +27,11 @@
 #if NET_4_0
 
 using System;
+using System.Diagnostics;
 
 namespace System.Threading
 {
+	[DebuggerDisplay ("Participant Count={ParticipantCount},Participants Remaining={ParticipantsRemaining}")]
 	public class Barrier : IDisposable
 	{
 		const int MaxParticipants = 32767;
@@ -41,16 +43,17 @@ namespace System.Threading
 		ManualResetEventSlim postPhaseEvt = new ManualResetEventSlim ();
 		long phase;
 		
-		public Barrier (int participants) : this (participants, null)
+		public Barrier (int participantCount)
+			: this (participantCount, null)
 		{
 		}
 		
-		public Barrier (int participants, Action<Barrier> postPhaseAction)
+		public Barrier (int participantCount, Action<Barrier> postPhaseAction)
 		{
-			if (participants < 0 || participants > MaxParticipants)
-				throw new ArgumentOutOfRangeException ("participants");
+			if (participantCount < 0 || participantCount > MaxParticipants)
+				throw new ArgumentOutOfRangeException ("participantCount");
 			
-			this.participants = participants;
+			this.participants = participantCount;
 			this.postPhaseAction = postPhaseAction;
 			
 			InitCountdownEvent ();
@@ -133,39 +136,39 @@ namespace System.Threading
 			SignalAndWait ((c) => { c.Wait (); return true; });
 		}
 		
-		public void SignalAndWait (CancellationToken token)
+		public void SignalAndWait (CancellationToken cancellationToken)
 		{
 			if (cleaned)
 				throw GetDisposed ();
-			SignalAndWait ((c) => { c.Wait (token); return true; });
+			SignalAndWait ((c) => { c.Wait (cancellationToken); return true; });
 		}
 
-		public bool SignalAndWait (int millisecondTimeout)
+		public bool SignalAndWait (int millisecondsTimeout)
 		{
 			if (cleaned)
 				throw GetDisposed ();
-			return SignalAndWait ((c) => c.Wait (millisecondTimeout));
+			return SignalAndWait ((c) => c.Wait (millisecondsTimeout));
 		}
 
-		public bool SignalAndWait (TimeSpan ts)
+		public bool SignalAndWait (TimeSpan timeout)
 		{
 			if (cleaned)
 				throw GetDisposed ();
-			return SignalAndWait ((c) => c.Wait (ts));
+			return SignalAndWait ((c) => c.Wait (timeout));
 		}
 		
-		public bool SignalAndWait (int millisecondTimeout, CancellationToken token)
+		public bool SignalAndWait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (cleaned)
 				throw GetDisposed ();
-			return SignalAndWait ((c) => c.Wait (millisecondTimeout, token));
+			return SignalAndWait ((c) => c.Wait (millisecondsTimeout, cancellationToken));
 		}
 		
-		public bool SignalAndWait (TimeSpan ts, CancellationToken token)
+		public bool SignalAndWait (TimeSpan timeout, CancellationToken cancellationToken)
 		{
 			if (cleaned)
 				throw GetDisposed ();
-			return SignalAndWait ((c) => c.Wait (ts, token));
+			return SignalAndWait ((c) => c.Wait (timeout, cancellationToken));
 		}
 		
 		bool SignalAndWait (Func<CountdownEvent, bool> associate)
@@ -219,6 +222,13 @@ namespace System.Threading
 		public int ParticipantCount  {
 			get {
 				return participants;
+			}
+		}
+		
+		[MonoTODO]
+		public int ParticipantsRemaining {
+			get {
+				return -1;
 			}
 		}
 	}

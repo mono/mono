@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System.Threading
 {
-	[SerializableAttribute]
+	[Serializable]
 	public class BarrierPostPhaseException : Exception
 	{
 		const string DefaultMessage = "An exception has occured during the postphase action";
@@ -41,7 +41,8 @@ namespace System.Threading
 
 		}
 		
-		public BarrierPostPhaseException (Exception ex) : this (DefaultMessage, ex)
+		public BarrierPostPhaseException (Exception innerException)
+			: this (DefaultMessage, innerException)
 		{
 
 		}
@@ -51,14 +52,14 @@ namespace System.Threading
 
 		}
 
-		public BarrierPostPhaseException (string message, Exception ex) : base (message, ex)
+		public BarrierPostPhaseException (string message, Exception innerException)
+			: base (message, innerException)
 		{
-
 		}
 
-		protected BarrierPostPhaseException (SerializationInfo infos, StreamingContext context) : base (infos, context)
+		protected BarrierPostPhaseException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
-
 		}
 	}
 }

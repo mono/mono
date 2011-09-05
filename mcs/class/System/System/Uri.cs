@@ -1087,13 +1087,13 @@ namespace System {
 			return cachedToString;
 		}
 
-		protected void GetObjectData (SerializationInfo info, StreamingContext context)
+		protected void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			if (this.isAbsoluteUri) {
-				info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+				serializationInfo.AddValue ("AbsoluteUri", this.AbsoluteUri);
 			} else {
-				info.AddValue("AbsoluteUri", String.Empty);
-				info.AddValue("RelativeUri", this.OriginalString);
+				serializationInfo.AddValue("AbsoluteUri", String.Empty);
+				serializationInfo.AddValue("RelativeUri", this.OriginalString);
 			}
 		}
 
@@ -1213,13 +1213,13 @@ namespace System {
 		}
 
 #if MOONLIGHT
-		string Unescape (string str)
+		string Unescape (string path)
 #else
 		[Obsolete]
-		protected virtual string Unescape (string str)
+		protected virtual string Unescape (string path)
 #endif
 		{
-			return Unescape (str, false, false);
+			return Unescape (path, false, false);
 		}
 
 		internal static string Unescape (string str, bool excludeSpecial)
@@ -1894,10 +1894,10 @@ namespace System {
 		}
 
 		[Obsolete]
-		protected virtual bool IsBadFileSystemCharacter (char ch)
+		protected virtual bool IsBadFileSystemCharacter (char character)
 		{
 			// It does not always overlap with InvalidPathChars.
-			int chInt = (int) ch;
+			int chInt = (int) character;
 			if (chInt < 32 || (chInt < 64 && chInt > 57))
 				return true;
 			switch (chInt) {
@@ -1917,15 +1917,15 @@ namespace System {
 		}
 
 		[Obsolete]
-		protected static bool IsExcludedCharacter (char ch)
+		protected static bool IsExcludedCharacter (char character)
 		{
-			if (ch <= 32 || ch >= 127)
+			if (character <= 32 || character >= 127)
 				return true;
 			
-			if (ch == '"' || ch == '#' || ch == '%' || ch == '<' ||
-			    ch == '>' || ch == '[' || ch == '\\' || ch == ']' ||
-			    ch == '^' || ch == '`' || ch == '{' || ch == '|' ||
-			    ch == '}')
+			if (character == '"' || character == '#' || character == '%' || character == '<' ||
+			    character == '>' || character == '[' || character == '\\' || character == ']' ||
+			    character == '^' || character == '`' || character == '{' || character == '|' ||
+			    character == '}')
 				return true;
 			return false;
 		}
@@ -1979,11 +1979,11 @@ namespace System {
 		}
 
 		[Obsolete]
-		protected virtual bool IsReservedCharacter (char ch)
+		protected virtual bool IsReservedCharacter (char character)
 		{
-			if (ch == '$' || ch == '&' || ch == '+' || ch == ',' ||
-			    ch == '/' || ch == ':' || ch == ';' || ch == '=' ||
-			    ch == '@')
+			if (character == '$' || character == '&' || character == '+' || character == ',' ||
+			    character == '/' || character == ':' || character == ';' || character == '=' ||
+			    character == '@')
 				return true;
 			return false;
 		}

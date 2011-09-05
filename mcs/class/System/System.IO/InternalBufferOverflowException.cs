@@ -52,8 +52,8 @@ namespace System.IO {
 		{
 		}
 
-		public InternalBufferOverflowException (string message, Exception innerException)
-			: base (message, innerException)
+		public InternalBufferOverflowException (string message, Exception inner)
+			: base (message, inner)
 		{
 		}
 

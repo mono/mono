@@ -27,12 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 namespace System.Net {
 	public interface IWebProxyScript {
 		void Close ();
-		bool Load (Uri scriptLocation, string Script, Type helperType);
+		bool Load (Uri scriptLocation, string script, Type helperType);
 		string Run (string url, string host);
 	}
 }
-#endif

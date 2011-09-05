@@ -119,15 +119,16 @@ namespace System.Collections.Generic
 			tree = new RBTree (hlp);
 		}
 
-		public SortedDictionary (IDictionary<TKey,TValue> dic) : this (dic, null)
+		public SortedDictionary (IDictionary<TKey,TValue> dictionary) : this (dictionary, null)
 		{
 		}
 
-		public SortedDictionary (IDictionary<TKey,TValue> dic, IComparer<TKey> comparer) : this (comparer)
+		public SortedDictionary (IDictionary<TKey,TValue> dictionary, IComparer<TKey> comparer) : this (comparer)
 		{
-			if (dic == null)
-				throw new ArgumentNullException ();
-			foreach (KeyValuePair<TKey, TValue> entry in dic)
+			if (dictionary == null)
+				throw new ArgumentNullException ("dictionary");
+			
+			foreach (KeyValuePair<TKey, TValue> entry in dictionary)
 				Add (entry.Key, entry.Value);
 		}
 
@@ -208,19 +209,19 @@ namespace System.Collections.Generic
 			return false;
 		}
 
-		public void CopyTo (KeyValuePair<TKey,TValue>[] array, int arrayIndex)
+		public void CopyTo (KeyValuePair<TKey,TValue>[] array, int index)
 		{
 			if (Count == 0)
 				return;
 			if (array == null)
 				throw new ArgumentNullException ();
-			if (arrayIndex < 0 || array.Length <= arrayIndex)
+			if (index < 0 || array.Length <= index)
 				throw new ArgumentOutOfRangeException ();
-			if (array.Length - arrayIndex < Count)
+			if (array.Length - index < Count)
 				throw new ArgumentException ();
 
 			foreach (Node n in tree)
-				array [arrayIndex ++] = n.AsKV ();
+				array [index ++] = n.AsKV ();
 		}
 		
 		public Enumerator GetEnumerator ()
@@ -411,9 +412,9 @@ namespace System.Collections.Generic
 		{
 			SortedDictionary<TKey,TValue> _dic;
 
-			public ValueCollection (SortedDictionary<TKey,TValue> dic)
+			public ValueCollection (SortedDictionary<TKey,TValue> dictionary)
 			{
-				_dic = dic;
+				_dic = dictionary;
 			}
 
 			void ICollection<TValue>.Add (TValue item)
@@ -431,18 +432,18 @@ namespace System.Collections.Generic
 				return _dic.ContainsValue (item);
 			}
 
-			public void CopyTo (TValue [] array, int arrayIndex)
+			public void CopyTo (TValue [] array, int index)
 			{
 				if (Count == 0)
 					return;
 				if (array == null)
 					throw new ArgumentNullException ();
-				if (arrayIndex < 0 || array.Length <= arrayIndex)
+				if (index < 0 || array.Length <= index)
 					throw new ArgumentOutOfRangeException ();
-				if (array.Length - arrayIndex < Count)
+				if (array.Length - index < Count)
 					throw new ArgumentException ();
 				foreach (Node n in _dic.tree)
-					array [arrayIndex++] = n.value;
+					array [index++] = n.value;
 			}
 
 			public int Count {
@@ -501,10 +502,10 @@ namespace System.Collections.Generic
 
 				TValue current;
 
-				internal Enumerator (SortedDictionary<TKey,TValue> dic)
+				internal Enumerator (SortedDictionary<TKey,TValue> dictionary)
 					: this ()
 				{
-					host = dic.tree.GetEnumerator ();
+					host = dictionary.tree.GetEnumerator ();
 				}
 
 				public TValue Current {
@@ -546,9 +547,9 @@ namespace System.Collections.Generic
 		{
 			SortedDictionary<TKey,TValue> _dic;
 
-			public KeyCollection (SortedDictionary<TKey,TValue> dic)
+			public KeyCollection (SortedDictionary<TKey,TValue> dictionary)
 			{
-				_dic = dic;
+				_dic = dictionary;
 			}
 
 			void ICollection<TKey>.Add (TKey item)
@@ -571,18 +572,18 @@ namespace System.Collections.Generic
 				return GetEnumerator ();
 			}
 
-			public void CopyTo (TKey [] array, int arrayIndex)
+			public void CopyTo (TKey [] array, int index)
 			{
 				if (Count == 0)
 					return;
 				if (array == null)
 					throw new ArgumentNullException ();
-				if (arrayIndex < 0 || array.Length <= arrayIndex)
+				if (index < 0 || array.Length <= index)
 					throw new ArgumentOutOfRangeException ();
-				if (array.Length - arrayIndex < Count)
+				if (array.Length - index < Count)
 					throw new ArgumentException ();
 				foreach (Node n in _dic.tree)
-					array [arrayIndex++] = n.key;
+					array [index++] = n.key;
 			}
 
 			public int Count {

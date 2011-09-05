@@ -154,7 +154,7 @@ namespace System.Collections.Specialized{
 		/// </code>
 		/// nvc.Get ("LAZY") will be "BASTARD,BASTARD" instead of "BASTARD"
 
-		public virtual void Add (string name, string val)
+		public virtual void Add (string name, string value)
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("Collection is read-only");
@@ -163,13 +163,13 @@ namespace System.Collections.Specialized{
 			ArrayList values = (ArrayList)BaseGet (name);
 			if (values == null){
 				values = new ArrayList ();
-				if (val != null)
-					values.Add (val);
+				if (value != null)
+					values.Add (value);
 				BaseAdd (name, values);
 			}
 			else {
-				if (val != null)
-					values.Add (val);
+				if (value != null)
+					values.Add (value);
 			}
 
 		}
