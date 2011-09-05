@@ -405,10 +405,7 @@ class Tester : Base
 	
 	async Task<int> ConditionalTest_1 ()
 	{
-		// TODO: problem with Resumable point setup when the expression never emitted
-		//bool b = true;
-		//return true ? await Task.Factory.StartNew (() => 0) : await Task.Factory.StartNew (() => 1);
-		return 0;
+		return true ? await Task.Factory.StartNew (() => 0) : await Task.Factory.StartNew (() => 1);
 	}
 	
 	async Task<int> ConditionalTest_2 ()

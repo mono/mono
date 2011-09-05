@@ -4478,8 +4478,32 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
-			true_expr = true_expr.Resolve (ec);
-			false_expr = false_expr.Resolve (ec);
+
+			//
+			// Unreachable code needs different resolve path. For instance for await
+			// expression to not generate unreachable resumable statement
+			//
+			Constant c = expr as Constant;
+			if (c != null && ec.CurrentBranching != null) {
+				bool unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+
+				if (c.IsDefaultValue) {
+					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = true;
+					true_expr = true_expr.Resolve (ec);
+					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = unreachable;
+
+					false_expr = false_expr.Resolve (ec);
+				} else {
+					true_expr = true_expr.Resolve (ec);
+
+					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = true;
+					false_expr = false_expr.Resolve (ec);
+					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = unreachable;
+				}
+			} else {
+				true_expr = true_expr.Resolve (ec);
+				false_expr = false_expr.Resolve (ec);
+			}
 
 			if (true_expr == null || false_expr == null || expr == null)
 				return null;
@@ -4519,11 +4543,17 @@ namespace Mono.CSharp
 				}
 			}			
 
-			// Dead code optimalization
-			Constant c = expr as Constant;
-			if (c != null){
+			if (c != null) {
 				bool is_false = c.IsDefaultValue;
-				ec.Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location, "Unreachable expression code detected");
+
+				//
+				// Don't issue the warning for constant expressions
+				//
+				if (!(is_false ? true_expr is Constant : false_expr is Constant)) {
+					ec.Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location,
+						"Unreachable expression code detected");
+				}
+
 				return ReducedExpression.Create (
 					is_false ? false_expr : true_expr, this,
 					false_expr is Constant && true_expr is Constant).Resolve (ec);

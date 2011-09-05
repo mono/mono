@@ -251,7 +251,12 @@ namespace Mono.CSharp
 			}
 
 			public bool IsUnreachable {
-				get { return is_unreachable; }
+				get {
+					return is_unreachable;
+				}
+				set {
+					is_unreachable = value;
+				}
 			}
 
 			public void ResetBarrier ()

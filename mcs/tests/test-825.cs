@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror
+
 using System.Diagnostics;
 
 static class Test
