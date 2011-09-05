@@ -1857,6 +1857,17 @@ namespace Mono.CSharp {
 					c = new ReducedConstantExpression (c, orig_expr);
 				return c;
 			}
+
+			public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+			{
+				//
+				// LAMESPEC: Reduced conditional expression is allowed as an attribute argument
+				//
+				if (orig_expr is Conditional)
+					child.EncodeAttributeValue (rc, enc, targetType);
+				else
+					base.EncodeAttributeValue (rc, enc, targetType);
+			}
 		}
 
 		sealed class ReducedExpressionStatement : ExpressionStatement
