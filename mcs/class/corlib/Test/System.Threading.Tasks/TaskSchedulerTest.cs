@@ -51,6 +51,11 @@ namespace MonoTests.System.Threading.Tasks
 
 		class LazyCatScheduler : TaskScheduler
 		{
+			public TaskStatus ExecuteInlineStatus {
+				get;
+				set;
+			}
+
 			protected override void QueueTask (Task task)
 			{
 				throw new NotImplementedException ();
@@ -63,6 +68,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 			{
+				ExecuteInlineStatus = task.Status;
 				return true;
 			}
 
@@ -89,6 +95,18 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsNotNull (ex);
 			Assert.IsNotNull (ex.InnerException);
 			Assert.IsInstanceOfType (typeof (InvalidOperationException), ex.InnerException);
+		}
+
+		[Test]
+		public void RunSynchronouslyTaskStatusTest ()
+		{
+			var ts = new LazyCatScheduler ();
+			var t = new Task (() => { });
+
+			try {
+				t.RunSynchronously (ts);
+			} catch {}
+			Assert.AreEqual (TaskStatus.WaitingToRun, ts.ExecuteInlineStatus);
 		}
 	}
 }

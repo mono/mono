@@ -186,6 +186,8 @@ namespace System.Threading.Tasks
 				throw new InvalidOperationException ("The task is not in a valid state to be started");
 
 			SetupScheduler (scheduler);
+			var saveStatus = status;
+			status = TaskStatus.WaitingToRun;
 
 			try {
 				if (scheduler.RunInline (this))
@@ -194,6 +196,7 @@ namespace System.Threading.Tasks
 				throw new TaskSchedulerException (inner);
 			}
 
+			status = saveStatus;
 			Start (scheduler);
 			Wait ();
 		}
