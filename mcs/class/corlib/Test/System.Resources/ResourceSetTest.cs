@@ -213,21 +213,12 @@ namespace MonoTests.System.Resources {
 			try {
 				rs.GetEnumerator ();
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// Cannot access a closed resource set
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Resource table is closed
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			}
-#endif
 		}
 
 		[Test]
@@ -247,21 +238,12 @@ namespace MonoTests.System.Resources {
 			try {
 				rs.GetObject ("doesnotexists");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// Cannot access a closed resource set
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Resource table is closed
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			}
-#endif
 		}
 
 		[Test]
@@ -300,21 +282,12 @@ namespace MonoTests.System.Resources {
 			try {
 				rs.GetString ("doesnotexists");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// Cannot access a closed resource set
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Resource table is closed
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			}
-#endif
 		}
 	}
 }
