@@ -216,6 +216,7 @@
 #include "utils/mono-semaphore.h"
 #include "utils/mono-counters.h"
 #include "utils/mono-proclib.h"
+#include "utils/mono-logger-internal.h"
 
 #include <mono/utils/memcheck.h>
 
@@ -520,6 +521,12 @@ static mword total_alloc = 0;
 static mword memory_pressure = 0;
 static mword minor_collection_allowance;
 static int minor_collection_sections_alloced = 0;
+
+
+/* GC Logging stats */
+static int last_major_num_sections = 0;
+static int last_los_memory_usage = 0;
+static gboolean major_collection_hapenned = FALSE;
 
 static GCMemSection *nursery_section = NULL;
 static mword lowest_heap_address = ~(mword)0;
@@ -3434,6 +3441,7 @@ major_collection (const char *reason)
 		return;
 	}
 
+	major_collection_hapenned = TRUE;
 	current_collection_generation = GENERATION_OLD;
 	major_do_collection (reason);
 	current_collection_generation = -1;
@@ -5330,6 +5338,10 @@ stop_world (int generation)
 	g_assert (count >= 0);
 	DEBUG (3, fprintf (gc_debug_file, "world stopped %d thread(s)\n", count));
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_STOP_WORLD, generation);
+
+	last_major_num_sections = major_collector.get_num_major_sections ();
+	last_los_memory_usage = los_memory_usage;
+	major_collection_hapenned = FALSE;
 	return count;
 }
 
@@ -5337,10 +5349,11 @@ stop_world (int generation)
 static int
 restart_world (int generation)
 {
-	int count, i;
+	int count, i, num_major_sections;
 	SgenThreadInfo *info;
 	TV_DECLARE (end_sw);
-	unsigned long usec;
+	TV_DECLARE (end_bridge);
+	unsigned long usec, bridge_usec;
 
 	/* notify the profiler of the leftovers */
 	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_GC_MOVES)) {
@@ -5365,6 +5378,26 @@ restart_world (int generation)
 	max_pause_usec = MAX (usec, max_pause_usec);
 	DEBUG (2, fprintf (gc_debug_file, "restarted %d thread(s) (pause time: %d usec, max: %d)\n", count, (int)usec, (int)max_pause_usec));
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD, generation);
+
+	TV_GETTIME (end_bridge);
+	bridge_usec = TV_ELAPSED (end_sw, end_bridge);
+
+	num_major_sections = major_collector.get_num_major_sections ();
+	if (major_collection_hapenned)
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR: %s pause %.2fms, bridge %.2fms major %dK/%dK los %dK/%dK",
+			generation ? "" : "(minor overflow)",
+			(int)usec / 1000.0f, (int)bridge_usec / 1000.0f,
+			major_collector.section_size * num_major_sections / 1024,
+			major_collector.section_size * last_major_num_sections / 1024,
+			los_memory_usage / 1024,
+			last_los_memory_usage / 1024);
+	else
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR: pause %.2fms, bridge %.2fms promoted %dK major %dK los %dK",
+			(int)usec / 1000.0f, (int)bridge_usec / 1000.0f,
+			(num_major_sections - last_major_num_sections) * major_collector.section_size / 1024,
+			major_collector.section_size * num_major_sections / 1024,
+			los_memory_usage / 1024);
+
 	return count;
 }
 
