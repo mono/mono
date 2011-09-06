@@ -3371,6 +3371,10 @@ namespace Mono.CSharp
 
 		int TokenizeBackslash ()
 		{
+#if FULL_AST
+			int read_start = reader.Position;
+#endif
+
 			int c = get_char ();
 			tokens_seen = true;
 			if (c == '\'') {
@@ -3391,7 +3395,8 @@ namespace Mono.CSharp
 			if (d != 0)
 				throw new NotImplementedException ();
 
-			val = new CharLiteral (context.BuiltinTypes, (char) c, Location);
+			ILiteralConstant res = new CharLiteral (context.BuiltinTypes, (char) c, Location);
+			val = res;
 			c = get_char ();
 
 			if (c != '\'') {
@@ -3403,6 +3408,10 @@ namespace Mono.CSharp
 						break;
 				}
 			}
+
+#if FULL_AST
+			res.ParsedValue = reader.ReadChars (read_start - 1, reader.Position);
+#endif
 
 			return Token.LITERAL;
 		}
