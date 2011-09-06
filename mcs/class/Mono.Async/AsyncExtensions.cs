@@ -28,9 +28,36 @@
 
 using System.IO;
 using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Net;
 
 public static class AsyncExtensions
 {
+	public static Task<Socket> AcceptSocketAsync (this TcpListener source)
+	{
+		return Task<Socket>.Factory.FromAsync (source.BeginAcceptSocket, source.EndAcceptSocket, null);
+	}
+
+	public static Task<TcpClient> AcceptTcpClientAsync(this TcpListener source)
+	{
+		return Task<TcpClient>.Factory.FromAsync (source.BeginAcceptTcpClient, source.EndAcceptTcpClient, null);
+	}
+
+	public static Task ConnectAsync (this TcpClient source, IPAddress address, int port)
+	{
+		return Task.Factory.FromAsync (source.BeginConnect, source.EndConnect, address, port, null);
+	}
+
+	public static Task ConnectAsync (this TcpClient source, IPAddress[] ipAddresses, int port)
+	{
+		return Task.Factory.FromAsync (source.BeginConnect, source.EndConnect, ipAddresses, port, null);
+	}
+
+	public static Task ConnectAsync (this TcpClient source, string hostname, int port)
+	{
+		return Task.Factory.FromAsync (source.BeginConnect, source.EndConnect, hostname, port, null);
+	}
+
 	public static Task<int> ReadAsync (this Stream stream, byte[] buffer, int offset, int count)
 	{
 		return Task<int>.Factory.FromAsync (stream.BeginRead, stream.EndRead, buffer, offset, count, null);
