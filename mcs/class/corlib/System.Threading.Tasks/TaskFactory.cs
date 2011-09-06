@@ -232,15 +232,16 @@ namespace System.Threading.Tasks
 		{
 			var ourTasks = (Task[])tasks.Clone ();
 			AtomicBoolean trigger = new AtomicBoolean ();
-			Task commonContinuation = new Task (null);
+			var commonContinuation = new TaskCompletionSource<object> ();
+			Action<Task> continuationFunc = t => commonContinuation.SetResult (null);
 			
 			foreach (Task t in ourTasks) {
 				Task cont = new Task ((o) => continuationAction ((Task)o), t, cancellationToken, creationOptions, t);
 				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
-				cont.ContinueWithCore (commonContinuation, TaskContinuationOptions.None, scheduler);
+				cont.ContinueWith (continuationFunc);
 			}
 			
-			return commonContinuation;
+			return commonContinuation.Task;
 		}
 		
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks,
