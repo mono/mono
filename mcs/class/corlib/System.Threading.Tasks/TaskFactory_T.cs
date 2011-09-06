@@ -296,27 +296,24 @@ namespace System.Threading.Tasks
 			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
-			var tcs = new TaskCompletionSource<TResult> (creationOptions);
-			tcs.Task.function = l => endMethod (asyncResult);
-
-			var task = tcs.Task;
+			var source = new CancellationTokenSource ();
+			var task = new Task<TResult> (l => {
+				try {
+					return endMethod (asyncResult);
+				} catch (OperationCanceledException) {
+					source.Cancel ();
+					source.Token.ThrowIfCancellationRequested ();
+				}
+				return default (TResult);
+			}, null, source.Token, creationOptions);
 
 			// Take quick path for completed operations
 			if (asyncResult.IsCompleted) {
-				try {
-					task.RunSynchronously (scheduler);
-				} catch (Exception e) {
-					tcs.TrySetException (e);
-				}
+				task.RunSynchronously (scheduler);
 			} else {
 				ThreadPool.RegisterWaitForSingleObject (asyncResult.AsyncWaitHandle,
-					delegate {
-						try {
-							task.RunSynchronously (scheduler);
-						} catch (Exception e) {
-							tcs.TrySetException (e);
-						}
-					}, null, Timeout.Infinite, true);
+				                                        (s, t) => task.RunSynchronously (scheduler),
+				                                        null, Timeout.Infinite, true);
 			}
 
 			return task;
@@ -335,7 +332,7 @@ namespace System.Threading.Tasks
 		}
 
 		internal static Task<TResult> FromAsyncBeginEnd (Func<AsyncCallback, object, IAsyncResult> beginMethod, Func<IAsyncResult, TResult> endMethod,
-										  object state, TaskCreationOptions creationOptions)
+		                                                 object state, TaskCreationOptions creationOptions)
 		{
 			if (beginMethod == null)
 				throw new ArgumentNullException ("beginMethod");
@@ -347,13 +344,7 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (l => {
-				try {
-					tcs.SetResult (endMethod (l));
-				} catch (Exception e) {
-					tcs.SetException (e);
-				}
-			}, state);
+			beginMethod (l => InnerInvoke (tcs, endMethod, l), state);
 
 			return tcs.Task;
 		}
@@ -370,8 +361,9 @@ namespace System.Threading.Tasks
 			return FromAsyncBeginEnd (beginMethod, endMethod, arg1, state, creationOptions);
 		}
 
-		internal static Task<TResult> FromAsyncBeginEnd<TArg1> (Func<TArg1, AsyncCallback, object, IAsyncResult> beginMethod, Func<IAsyncResult, TResult> endMethod,
-										  TArg1 arg1, object state, TaskCreationOptions creationOptions)
+		internal static Task<TResult> FromAsyncBeginEnd<TArg1> (Func<TArg1, AsyncCallback, object, IAsyncResult> beginMethod,
+		                                                        Func<IAsyncResult, TResult> endMethod,
+		                                                        TArg1 arg1, object state, TaskCreationOptions creationOptions)
 		{
 			if (beginMethod == null)
 				throw new ArgumentNullException ("beginMethod");
@@ -383,13 +375,7 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, l => {
-				try {
-					tcs.SetResult (endMethod (l));
-				} catch (Exception e) {
-					tcs.SetException (e);
-				}
-			}, state);
+			beginMethod (arg1, l => InnerInvoke (tcs, endMethod, l), state);
 
 			return tcs.Task;
 		}
@@ -419,13 +405,7 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, arg2, l => {
-				try {
-					tcs.SetResult (endMethod (l));
-				} catch (Exception e) {
-					tcs.SetException (e);
-				}
-			}, state);
+			beginMethod (arg1, arg2, l => InnerInvoke (tcs, endMethod, l), state);
 
 			return tcs.Task;
 		}
@@ -456,13 +436,7 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, arg2, arg3, l => {
-				try {
-					tcs.SetResult (endMethod (l));
-				} catch (Exception e) {
-					tcs.SetException (e);
-				}
-			}, state);
+			beginMethod (arg1, arg2, arg3, l => InnerInvoke (tcs, endMethod, l), state);
 
 			return tcs.Task;
 		}
@@ -472,6 +446,17 @@ namespace System.Threading.Tasks
 		TaskScheduler GetScheduler ()
 		{
 			return scheduler ?? TaskScheduler.Current;
+		}
+
+		static void InnerInvoke (TaskCompletionSource<TResult> tcs, Func<IAsyncResult, TResult> endMethod, IAsyncResult l)
+		{
+			try {
+				tcs.SetResult (endMethod (l));
+			} catch (OperationCanceledException) {
+				tcs.SetCanceled ();
+			} catch (Exception e) {
+				tcs.SetException (e);
+			}
 		}
 	}
 }
