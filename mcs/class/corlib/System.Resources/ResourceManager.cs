@@ -335,6 +335,8 @@ namespace System.Resources
 			/* if we already have this resource set, return it */
 			set = (ResourceSet) ResourceSets [culture];
 			if (set != null) {
+				return set;
+/*				
 				try {
 					if (!set.IsDisposed)
 						return set;
@@ -346,6 +348,7 @@ namespace System.Resources
 				if (NonExistent.Contains (culture))
 					NonExistent.Remove (culture);
 				set = null;
+*/
 			}
 			
 			if (NonExistent.Contains (culture))
