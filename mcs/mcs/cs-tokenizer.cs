@@ -3374,17 +3374,17 @@ namespace Mono.CSharp
 #if FULL_AST
 			int read_start = reader.Position;
 #endif
-
+			Location start_location = Location;
 			int c = get_char ();
 			tokens_seen = true;
 			if (c == '\'') {
-				val = new CharLiteral (context.BuiltinTypes, (char) c, Location);
-				Report.Error (1011, Location, "Empty character literal");
+				val = new CharLiteral (context.BuiltinTypes, (char) c, start_location);
+				Report.Error (1011, start_location, "Empty character literal");
 				return Token.LITERAL;
 			}
 
-			if (c == '\n') {
-				Report.Error (1010, Location, "Newline in constant");
+			if (c == '\r') {
+				Report.Error (1010, start_location, "Newline in constant");
 				return Token.ERROR;
 			}
 
@@ -3395,12 +3395,12 @@ namespace Mono.CSharp
 			if (d != 0)
 				throw new NotImplementedException ();
 
-			ILiteralConstant res = new CharLiteral (context.BuiltinTypes, (char) c, Location);
+			ILiteralConstant res = new CharLiteral (context.BuiltinTypes, (char) c, start_location);
 			val = res;
 			c = get_char ();
 
 			if (c != '\'') {
-				Report.Error (1012, Location, "Too many characters in character literal");
+				Report.Error (1012, start_location, "Too many characters in character literal");
 
 				// Try to recover, read until newline or next "'"
 				while ((c = get_char ()) != -1) {
