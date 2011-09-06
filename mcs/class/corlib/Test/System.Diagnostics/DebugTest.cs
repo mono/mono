@@ -11,10 +11,8 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Diagnostics
 {
-	public class DebugTest
-	{
 		[TestFixture]
-		private class DebugTest1
+		public class DebugTest2
 		{
 			[SetUp]
 			protected void SetUp()
@@ -66,5 +64,4 @@ namespace MonoTests.System.Diagnostics
 				Debug.WriteLineIf(false, "Testing WriteLineIf", "Passed false");
 			}
 		}
-	}
 }
