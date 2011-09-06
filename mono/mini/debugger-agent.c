@@ -2125,6 +2125,7 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 	MonoInternalThread *thread = key;
 	DebuggerTlsData *tls = value;
 	gsize tid = thread->tid;
+	int res;
 
 	if (GetCurrentThreadId () == tid || tls->terminated)
 		return;
@@ -2153,7 +2154,12 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 #ifdef HOST_WIN32
 	QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
-	mono_thread_kill (thread, mono_thread_get_abort_signal ());
+	res = mono_thread_kill (thread, mono_thread_get_abort_signal ());
+	if (res)
+		/* 
+		 * Attached thread which died without detaching.
+		 */
+		tls->terminated = TRUE;
 #endif
 }
 
