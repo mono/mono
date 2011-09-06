@@ -306,6 +306,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec[] Interfaces {
+			get {
+				return iface_exprs;
+			}
+		}
+
 		#endregion
 
 		public abstract void Accept (StructuralVisitor visitor);

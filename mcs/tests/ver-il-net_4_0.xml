@@ -44325,6 +44325,40 @@
       </method>
     </type>
   </test>
+  <test name="test-826.cs">
+    <type name="A">
+      <method name="Int32 I.Foo()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AA">
+      <method name="Int32 Foo()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Foo()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>97</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">

@@ -205,7 +205,7 @@ namespace Mono.CSharp
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
+				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
 				Spec.SetMetaInfo (method_data.MethodBuilder);
@@ -272,7 +272,7 @@ namespace Mono.CSharp
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
+				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
 				Spec.SetMetaInfo (method_data.MethodBuilder);
@@ -1143,7 +1143,7 @@ namespace Mono.CSharp
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
-				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
+				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;

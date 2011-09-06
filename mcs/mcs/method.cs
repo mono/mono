@@ -613,7 +613,7 @@ namespace Mono.CSharp {
 			MethodData = new MethodData (
 				this, ModFlags, flags, this, MethodBuilder, GenericMethod, base_method);
 
-			if (!MethodData.Define (Parent.PartialContainer, GetFullName (MemberName), Report))
+			if (!MethodData.Define (Parent.PartialContainer, GetFullName (MemberName)))
 				return false;
 					
 			MethodBuilder = MethodData.MethodBuilder;
@@ -1809,32 +1809,34 @@ namespace Mono.CSharp {
 			this.parent_method = parent_method;
 		}
 
-		public bool Define (DeclSpace parent, string method_full_name, Report Report)
+		public bool Define (TypeContainer container, string method_full_name)
 		{
-			TypeContainer container = parent.PartialContainer;
-
 			PendingImplementation pending = container.PendingImplementations;
 			MethodSpec ambig_iface_method;
+			bool optional = false;
+
 			if (pending != null) {
-				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this, out ambig_iface_method);
+				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this, out ambig_iface_method, ref optional);
 
 				if (member.InterfaceType != null) {
 					if (implementing == null) {
 						if (member is PropertyBase) {
-							Report.Error (550, method.Location, "`{0}' is an accessor not found in interface member `{1}{2}'",
+							container.Compiler.Report.Error (550, method.Location,
+								"`{0}' is an accessor not found in interface member `{1}{2}'",
 									  method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
 									  member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
-							Report.Error (539, method.Location,
+							container.Compiler.Report.Error (539, method.Location,
 									  "`{0}.{1}' in explicit interface declaration is not a member of interface",
 									  TypeManager.CSharpName (member.InterfaceType), member.ShortName);
 						}
 						return false;
 					}
 					if (implementing.IsAccessor && !method.IsAccessor) {
-						Report.SymbolRelatedToPreviousError (implementing);
-						Report.Error (683, method.Location, "`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
+						container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+						container.Compiler.Report.Error (683, method.Location,
+							"`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
 						return false;
 					}
@@ -1842,20 +1844,23 @@ namespace Mono.CSharp {
 					if (implementing != null) {
 						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
-								Report.SymbolRelatedToPreviousError (implementing);
-								Report.Error (470, method.Location, "Method `{0}' cannot implement interface accessor `{1}'",
+								container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+								container.Compiler.Report.Error (470, method.Location,
+									"Method `{0}' cannot implement interface accessor `{1}'",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
 							}
 						} else if (implementing.DeclaringType.IsInterface) {
 							if (!implementing.IsAccessor) {
-								Report.SymbolRelatedToPreviousError (implementing);
-								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
+								container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+								container.Compiler.Report.Error (686, method.Location,
+									"Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
 							} else {
 								PropertyBase.PropertyMethod pm = method as PropertyBase.PropertyMethod;
 								if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
-									Report.SymbolRelatedToPreviousError (implementing);
-									Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
+									container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+									container.Compiler.Report.Error (277, method.Location,
+										"Accessor `{0}' must be declared public to implement interface member `{1}'",
 										method.GetSignatureForError (), implementing.GetSignatureForError ());
 								}
 							}
@@ -1871,43 +1876,44 @@ namespace Mono.CSharp {
 			// explicit implementations, make sure we are private.
 			//
 			if (implementing != null){
-				//
-				// Setting null inside this block will trigger a more
-				// verbose error reporting for missing interface implementations
-				//
-				// The "candidate" function has been flagged already
-				// but it wont get cleared
-				//
-				if (member.IsExplicitImpl){
+				if (member.IsExplicitImpl) {
 					if (method.ParameterInfo.HasParams && !implementing.Parameters.HasParams) {
-						Report.SymbolRelatedToPreviousError (implementing);
-						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
+						container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+						container.Compiler.Report.Error (466, method.Location,
+							"`{0}': the explicit interface implementation cannot introduce the params modifier",
 							method.GetSignatureForError ());
 					}
 
 					if (ambig_iface_method != null) {
-						Report.SymbolRelatedToPreviousError (ambig_iface_method);
-						Report.SymbolRelatedToPreviousError (implementing);
-						Report.Warning (473, 2, method.Location,
+						container.Compiler.Report.SymbolRelatedToPreviousError (ambig_iface_method);
+						container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
+						container.Compiler.Report.Warning (473, 2, method.Location,
 							"Explicit interface implementation `{0}' matches more than one interface member. Consider using a non-explicit implementation instead",
 							method.GetSignatureForError ());
 					}
-
 				} else {
+					//
+					// Setting implementin to null inside this block will trigger a more
+					// verbose error reporting for missing interface implementations
+					//
 					if (implementing.DeclaringType.IsInterface) {
 						//
 						// If this is an interface method implementation,
 						// check for public accessibility
 						//
-						if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public)
-						{
+						if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public) {
+							implementing = null;
+						} else if (optional && (container.Interfaces == null || Array.IndexOf (container.Interfaces, implementing.DeclaringType) < 0)) {
+							//
+							// We are not implementing interface when base class already implemented it
+							//
 							implementing = null;
 						}
-					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private){
+					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private) {
 						// We may never be private.
 						implementing = null;
 
-					} else if ((modifiers & Modifiers.OVERRIDE) == 0){
+					} else if ((modifiers & Modifiers.OVERRIDE) == 0) {
 						//
 						// We may be protected if we're overriding something.
 						//
@@ -1931,9 +1937,8 @@ namespace Mono.CSharp {
 				// When implementing interface methods, set NewSlot
 				// unless, we are overwriting a method.
 				//
-				if (implementing.DeclaringType.IsInterface){
-					if ((modifiers & Modifiers.OVERRIDE) == 0)
-						flags |= MethodAttributes.NewSlot;
+				if ((modifiers & Modifiers.OVERRIDE) == 0 && implementing.DeclaringType.IsInterface) {
+					flags |= MethodAttributes.NewSlot;
 				}
 
 				flags |= MethodAttributes.Virtual | MethodAttributes.HideBySig;
@@ -1945,8 +1950,8 @@ namespace Mono.CSharp {
 				//
 				// clear the pending implementation flag (requires explicit methods to be defined first)
 				//
-				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
-					member.InterfaceType, this, member.IsExplicitImpl, out ambig_iface_method);
+				pending.ImplementMethod (method.MethodName,
+					member.InterfaceType, this, member.IsExplicitImpl, out ambig_iface_method, ref optional);
 
 				//
 				// Update indexer accessor name to match implementing abstract accessor

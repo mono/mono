@@ -345,14 +345,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodSpec IsInterfaceMethod (MemberName name, TypeSpec ifaceType, MethodData method, out MethodSpec ambiguousCandidate)
+		public MethodSpec IsInterfaceMethod (MemberName name, TypeSpec ifaceType, MethodData method, out MethodSpec ambiguousCandidate, ref bool optional)
 		{
-			return InterfaceMethod (name, ifaceType, method, Operation.Lookup, out ambiguousCandidate);
+			return InterfaceMethod (name, ifaceType, method, Operation.Lookup, out ambiguousCandidate, ref optional);
 		}
 
-		public void ImplementMethod (MemberName name, TypeSpec ifaceType, MethodData method, bool clear_one, out MethodSpec ambiguousCandidate)
+		public void ImplementMethod (MemberName name, TypeSpec ifaceType, MethodData method, bool clear_one, out MethodSpec ambiguousCandidate, ref bool optional)
 		{
-			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll, out ambiguousCandidate);
+			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll, out ambiguousCandidate, ref optional);
 		}
 
 		/// <remarks>
@@ -372,7 +372,7 @@ namespace Mono.CSharp {
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
-		public MethodSpec InterfaceMethod (MemberName name, TypeSpec iType, MethodData method, Operation op, out MethodSpec ambiguousCandidate)
+		public MethodSpec InterfaceMethod (MemberName name, TypeSpec iType, MethodData method, Operation op, out MethodSpec ambiguousCandidate, ref bool optional)
 		{
 			ambiguousCandidate = null;
 
@@ -439,6 +439,7 @@ namespace Mono.CSharp {
 						}
 					} else {
 						tm.found [i] = method;
+						optional = tm.optional;
 					}
 
 					if (op == Operation.Lookup && name.Left != null && ambiguousCandidate == null) {
