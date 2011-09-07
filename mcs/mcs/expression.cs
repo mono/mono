@@ -7738,6 +7738,16 @@ namespace Mono.CSharp
 								emg.SetTypeArguments (rc, targs);
 							}
 
+							//
+							// Run defined assigned checks on expressions resolved with
+							// disabled flow-analysis
+							//
+							if (sn != null && !errorMode) {
+								var vr = expr as VariableReference;
+								if (vr != null)
+									vr.VerifyAssigned (rc);
+							}
+
 							// TODO: it should really skip the checks bellow
 							return emg.Resolve (rc);
 						}
