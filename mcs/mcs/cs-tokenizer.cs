@@ -3383,7 +3383,7 @@ namespace Mono.CSharp
 				return Token.LITERAL;
 			}
 
-			if (c == '\r') {
+			if (c == '\n') {
 				Report.Error (1010, start_location, "Newline in constant");
 				return Token.ERROR;
 			}
