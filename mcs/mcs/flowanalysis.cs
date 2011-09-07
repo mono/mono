@@ -1192,10 +1192,6 @@ namespace Mono.CSharp
 			for (int i = 0; i < struct_info.Count; i++) {
 				var field = struct_info.Fields [i];
 
-				// Fixed size buffers are not subject to definite assignment checking
-				if (field is FixedFieldSpec)
-					continue;
-
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,
@@ -1256,6 +1252,13 @@ namespace Mono.CSharp
 						foreach (FieldBase field in fields) {
 							if ((field.ModFlags & Modifiers.STATIC) != 0)
 								continue;
+
+							//
+							// Fixed size buffers are not subject to definite assignment checking
+							//
+							if (field is FixedField)
+								continue;
+
 							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
 								public_fields.Add (field.Spec);
 							else
@@ -1445,7 +1448,7 @@ namespace Mono.CSharp
 				return true;
 
 			ec.Report.Error (165, loc,
-				      "Use of unassigned local variable `" + Name + "'");
+				"Use of unassigned local variable `{0}'", Name);
 			ec.CurrentBranching.SetAssigned (this);
 			return false;
 		}

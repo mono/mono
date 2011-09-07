@@ -20824,6 +20824,9 @@
       <method name="Void .ctor(String)">
         <size>1</size>
       </method>
+      <method name="TestStruct get_Default()">
+        <size>2</size>
+      </method>
     </type>
   </test>
   <test name="gtest-friend-01.cs">
@@ -56270,6 +56273,59 @@
     <type name="X+&lt;Main&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0(System.Object)">
         <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-iter-25.cs">
+    <type name="D">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor(String)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="UploadAction">
+      <method name="Void RunOnThread(System.Action)">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 TagsError()">
+        <size>16</size>
+      </method>
+      <method name="Void Main()">
+        <size>64</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="UploadAction+&lt;TagsError&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>53</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>41</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
