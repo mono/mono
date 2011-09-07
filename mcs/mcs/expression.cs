@@ -7708,6 +7708,16 @@ namespace Mono.CSharp
 				if (me != null)
 					me.ResolveInstanceExpression (rc, null);
 
+				//
+				// Run defined assigned checks on expressions resolved with
+				// disabled flow-analysis
+				//
+				if (sn != null) {
+					var vr = expr as VariableReference;
+					if (vr != null)
+						vr.VerifyAssigned (rc);
+				}
+
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
 				return new DynamicMemberBinder (Name, args, loc);

@@ -1,5 +1,5 @@
 // CS0165: Use of unassigned local variable `errors'
-// Line: 8
+// Line: 9
 
 class T
 {
