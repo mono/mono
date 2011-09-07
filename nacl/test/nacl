@@ -45,6 +45,17 @@ fi
 readonly MONO_NORMAL_BASE=../normal-mono
 readonly NCVAL=ncval_x86_${TARGET_BITSIZE}
 
+readonly IRT=${NACL_BIN_PATH}/../runtime/irt_core_x86_${TARGET_BITSIZE}.nexe
+
+if [ $NACL_NEWLIB = "1" ]; then
+  readonly SEL_LDR_ARGS=
+  readonly LD_FLAGS="-static"
+else
+  readonly SEL_LDR_ARGS="${NACL_BIN_PATH}/../x86_64-nacl/lib${TARGET_BITSIZE}/runnable-ld.so --list --library-path ${NACL_BIN_PATH}/../x86_64-nacl/lib${TARGET_BITSIZE}"
+  readonly LD_FLAGS="-ldl -lrt"
+  RELOCATE_RODATA=
+fi
+
 # add nacl-gcc to path (from NaCl SDK)
 export PATH=${NACL_BIN_PATH}:$PATH
 
@@ -94,7 +105,7 @@ fi
 if [ $MODE = "normal" ]; then
   $CC -g -static my.c ${CC_DEFINES} ${AOT_OBJS} -o hw-test -lmono-2.0 -lpthread -lm -ldl -lrt -I${MONO_RUNTIME_BASE}/include -I${MONO_RUNTIME_BASE}/include/mono-2.0 -L${MONO_RUNTIME_BASE}/lib
 elif [ $MODE = "nacl" ]; then
-  $CC -static my.c -finstrument-for-thread-suspension ${CC_DEFINES} ${AOT_OBJS} -o hw-test.nexe -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -I${MONO_RUNTIME_BASE}/include -I${MONO_RUNTIME_BASE}/include/mono-2.0 -L${MONO_RUNTIME_BASE}/lib ${RELOCATE_RODATA}
+  $CC my.c -finstrument-for-thread-suspension ${CC_DEFINES} ${AOT_OBJS} -o hw-test.nexe -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -I${MONO_RUNTIME_BASE}/include -I${MONO_RUNTIME_BASE}/include/mono-2.0 -L${MONO_RUNTIME_BASE}/lib ${RELOCATE_RODATA} ${LD_FLAGS}
 fi
 
 readonly fsatests="basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe devirtualization.exe basic-simd.exe gc-stress.exe imt_big_iface_test.exe generics.exe iltests.exe nacl.exe"
@@ -129,9 +140,9 @@ fi
 if [ $MODE = "regression" ]; then
   cd fsa-tmp
   ${NCVAL} --local_cpuid fsacheck.nexe 2> validator_out || echo "fsacheck.nexe invalid: continuing anyway"
-  nacl${TARGET_BIT_PREFIX}-objdump -d fsacheck.nexe > fsacheck.disasm
+  ${NACL_CROSS_PREFIX_DASH}objdump -d fsacheck.nexe > fsacheck.disasm
   for t in $fsatests; do
-    ${SEL_LDR} -S -a -c fsacheck.nexe $t || true
+    ${SEL_LDR} -S -a -c -B ${IRT} ${SEL_LDR_ARGS} ./fsacheck.nexe $t || true
   done
 else
   export MONO_PATH=$(pwd)
@@ -140,8 +151,8 @@ else
     ./hw-test
   else
     ${NCVAL} --local_cpuid hw-test.nexe 2> validator_out || echo "hw-test.nexe invalid: continuing anyway"
-    nacl${TARGET_BIT_PREFIX}-objdump -d hw-test.nexe > hw-test.disasm
-    ${SEL_LDR} -S -a -c hw-test.nexe
+    ${NACL_CROSS_PREFIX_DASH}objdump -d hw-test.nexe > hw-test.disasm
+    ${SEL_LDR} -S -a -c -B ${IRT} ${SEL_LDR_ARGS} ./hw-test.nexe
   fi
 fi
 

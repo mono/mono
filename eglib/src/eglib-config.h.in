@@ -39,7 +39,9 @@ typedef signed   @GSIZE@ gssize;
 #if defined (__native_client__)
 #define sem_trywait(x) sem_wait(x)
 #define sem_timedwait(x,y) sem_wait(x)
+#if defined (NACL_NEWLIB)
 #define getdtablesize() (32768)
+#endif
 #undef G_BREAKPOINT
 #define G_BREAKPOINT()
 #endif

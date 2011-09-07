@@ -31,19 +31,26 @@ CustomConfigureStep() {
   make distclean
   cd ${MONO_TRUNK_NACL}
   set -e
+  if [ $NACL_NEWLIB = "1" ]; then
+    NACL_NEWLIB_DEFINE=-DNACL_NEWLIB
+    SHARED_FLAG="--disable-shared"
+  else
+    NACL_NEWLIB_DEFINE=
+    SHARED_FLAG="--enable-shared"
+  fi
   cp config-nacl-runtime${TARGET_BIT_PREFIX}.cache config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp
   Remove ${PACKAGE_NAME}
   MakeDir ${PACKAGE_NAME}
   cd ${PACKAGE_NAME}
   CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig \
   PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lg -lnosys -lnacl_dyncode" \
-  CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256" ../../configure \
+  CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256 ${NACL_NEWLIB_DEFINE}" ../../configure \
     --host=nacl${TARGET_BIT_PREFIX} \
     --exec-prefix=${INSTALL_PATH} \
     --libdir=${INSTALL_PATH}/lib \
     --prefix=${INSTALL_PATH} \
     --oldincludedir=${INSTALL_PATH}/include \
-    --disable-shared \
+    ${SHARED_FLAG} \
     --disable-mcs-build \
     --with-glib=embedded \
     --with-tls=pthread \
@@ -64,7 +71,9 @@ CustomConfigureStep() {
   echo "extern int daylight;" >> config.h
   echo "#define sem_trywait(x) sem_wait(x)" >> config.h
   echo "#define sem_timedwait(x,y) sem_wait(x)" >> config.h
+if [ $NACL_NEWLIB = "1" ]; then
   echo "#define getdtablesize() (32768)" >> config.h
+fi 
   echo "// --- Native Client runtime below" >> eglib/src/eglib-config.h
   echo "#undef G_BREAKPOINT" >> eglib/src/eglib-config.h
   echo "#define G_BREAKPOINT() G_STMT_START { __asm__ (\"hlt\"); } G_STMT_END" >> eglib/src/eglib-config.h

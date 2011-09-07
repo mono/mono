@@ -1,4 +1,4 @@
-# Copyright (c) 2009 The Native Client Authors. All rights reserved.
+# Copyright (c) 2011 The Native Client Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that be
 # found in the LICENSE file.
 #
@@ -34,8 +34,10 @@ fi
 
 if [ $TARGET_BITSIZE == "64" ]; then
   readonly TARGET_BIT_PREFIX="64"
+  readonly CROSS_ID=x86_64
 else
   readonly TARGET_BIT_PREFIX=""
+  readonly CROSS_ID=i686
 fi
 # we might want to override the detected host platform (e.g. on OSX 10.6)
 if [ $HOST_BITSIZE == "64" ]; then
@@ -44,21 +46,30 @@ else
   readonly HOST_BIT_PREFIX=""
 fi
 
-readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86
+export NACL_CROSS_PREFIX=${CROSS_ID}-nacl
+export NACL_CROSS_PREFIX_DASH=${NACL_CROSS_PREFIX}-
+
+readonly NACL_NEWLIB=${NACL_NEWLIB:-"0"}
+
+if [ $NACL_NEWLIB = "1" ]; then
+  readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86_newlib
+else
+  readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86
+fi
 
 readonly NACL_BIN_PATH=${NACL_SDK_BASE}/bin
-readonly NACLCC=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-gcc
-readonly NACLCXX=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-g++
-readonly NACLAR=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-ar
-readonly NACLRANLIB=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-ranlib
-readonly NACLLD=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-ld
-readonly NACLAS=${NACL_SDK_BASE}/bin/nacl${TARGET_BIT_PREFIX}-as
+export NACLCC=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}gcc
+export NACLCXX=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}g++
+export NACLAR=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}ar
+export NACLRANLIB=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}ranlib
+export NACLLD=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}ld
+export NACLAS=${NACL_BIN_PATH}/${NACL_CROSS_PREFIX_DASH}as
 
 # NACL_SDK_GCC_SPECS_PATH is where nacl-gcc 'specs' file will be installed
-readonly NACL_SDK_GCC_SPECS_PATH=${NACL_SDK_BASE}/lib/gcc/nacl64/4.4.3
+readonly NACL_SDK_GCC_SPECS_PATH=${NACL_SDK_BASE}/lib/gcc/x86_64-nacl/4.4.3
 
 # NACL_SDK_USR is where the headers, libraries, etc. will be installed
-readonly NACL_SDK_USR=${NACL_SDK_BASE}/nacl${TARGET_BIT_PREFIX}/usr
+readonly NACL_SDK_USR=${NACL_SDK_BASE}/${NACL_CROSS_PREFIX}/usr
 readonly NACL_SDK_USR_INCLUDE=${NACL_SDK_USR}/include
 readonly NACL_SDK_USR_LIB=${NACL_SDK_USR}/lib
 
@@ -124,7 +135,7 @@ PatchSpecFile() {
   local SED_SAFE_SPACES_USR_INCLUDE=${NACL_SDK_USR_INCLUDE/ /\ /}
   local SED_SAFE_SPACES_USR_LIB=${NACL_SDK_USR_LIB/ /\ /}
   # have nacl-gcc dump specs file & add include & lib search paths
-  ${NACL_SDK_BASE}/bin/nacl-gcc -dumpspecs |\
+  ${NACL_SDK_BASE}/bin/x86_64-nacl-gcc -dumpspecs |\
     sed "/*cpp:/{
       N
       s|$| -I${SED_SAFE_SPACES_USR_INCLUDE}|
