@@ -5221,8 +5221,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implementation of the foreach C# statement
 	/// </summary>
-	public class Foreach : Statement {
-
+	public class Foreach : Statement
+	{
 		sealed class ArrayForeach : Statement
 		{
 			readonly Foreach for_each;
@@ -5243,7 +5243,6 @@ namespace Mono.CSharp {
 				for_each = @foreach;
 				statement = for_each.statement;
 				loc = @foreach.loc;
-				variable = new LocalVariableReference (for_each.variable, loc);
 
 				counter = new StatementExpression[rank];
 				variables = new TemporaryVariableReference[rank];
@@ -5264,7 +5263,7 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (BlockContext ec)
 			{
-				Block variables_block = variable.local_info.Block;
+				Block variables_block = for_each.variable.Block;
 				copy = TemporaryVariableReference.Create (for_each.expr.Type, variables_block, loc);
 				copy.Resolve (ec);
 
@@ -5314,7 +5313,8 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				variable.local_info.Type = conv.Type;
+				for_each.variable.Type = conv.Type;
+				variable = new LocalVariableReference (for_each.variable, loc);
 				variable.Resolve (ec);
 
 				ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
