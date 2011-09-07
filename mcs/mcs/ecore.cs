@@ -6190,6 +6190,11 @@ namespace Mono.CSharp {
 		public override VariableInfo VariableInfo {
 			get { return null; }
 		}
+
+		public override bool VerifyAssigned (ResolveContext rc)
+		{
+			return true;
+		}
 	}
 
 	/// 
