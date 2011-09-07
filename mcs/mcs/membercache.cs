@@ -684,6 +684,44 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (member.GetType ().ToString ());
 		}
 
+		public static List<FieldSpec> GetAllFieldsForDefiniteAssignment (TypeSpec container)
+		{
+			List<FieldSpec> fields = null;
+			foreach (var entry in container.MemberCache.member_hash) {
+				foreach (var name_entry in entry.Value) {
+					if (name_entry.Kind != MemberKind.Field)
+						continue;
+
+					if ((name_entry.Modifiers & Modifiers.STATIC) != 0)
+						continue;
+
+					//
+					// Fixed size buffers are not subject to definite assignment checking
+					//
+					if (name_entry is FixedFieldSpec || name_entry is ConstSpec)
+						continue;
+
+					var fs = (FieldSpec) name_entry;
+
+					//
+					// LAMESPEC: Very bizzare hack, definitive assignment is not done
+					// for imported non-public reference fields except array. No idea what the
+					// actual csc rule is
+					//
+					if (!fs.IsPublic && container.MemberDefinition.IsImported && (!fs.MemberType.IsArray && TypeSpec.IsReferenceType (fs.MemberType)))
+						continue;
+
+					if (fields == null)
+						fields = new List<FieldSpec> ();
+
+					fields.Add (fs);
+					break;
+				}
+			}
+
+			return fields ?? new List<FieldSpec> (0);
+		}
+
 		public static IList<MemberSpec> GetCompletitionMembers (IMemberContext ctx, TypeSpec container, string name)
 		{
 			var matches = new List<MemberSpec> ();

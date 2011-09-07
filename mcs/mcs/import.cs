@@ -169,7 +169,8 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
+					if ((IgnorePrivateMembers && !declaringType.IsStruct) ||
+						HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;

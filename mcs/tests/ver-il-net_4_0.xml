@@ -24932,7 +24932,7 @@
   <test name="gtest-linq-22.cs">
     <type name="Test.MainClass">
       <method name="Void Main()">
-        <size>47</size>
+        <size>58</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44356,6 +44356,16 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>97</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-827.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>8</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

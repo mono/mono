@@ -611,8 +611,11 @@ namespace Mono.CSharp
 
 			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
-			// Don't cache inaccessible fields
-			if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
+			//
+			// Don't cache inaccessible fields except for struct where we
+			// need them for definitive assignment checks
+			//
+			if ((ModFlags & Modifiers.BACKING_FIELD) == 0 || Parent.Kind == MemberKind.Struct) {
 				Parent.MemberCache.AddMember (spec);
 			}
 
@@ -633,10 +636,6 @@ namespace Mono.CSharp
 				}
 			}
 
-/*
-			if ((ModFlags & (Modifiers.STATIC | Modifiers.READONLY | Modifiers.COMPILER_GENERATED)) == Modifiers.STATIC)
-				Console.WriteLine ("{0}: {1}", Location.ToString (), GetSignatureForError ());
-*/
 			return true;
 		}
 

@@ -1215,22 +1215,19 @@ namespace Mono.CSharp
 					      Type, Offset, Length, TotalLength);
 		}
 
-		class StructInfo {
+		class StructInfo
+		{
 			public readonly TypeSpec Type;
-			public readonly FieldSpec[] Fields;
+			readonly List<FieldSpec> fields;
 			public readonly TypeInfo[] StructFields;
-			public readonly int Count;
-			public readonly int CountPublic;
-			public readonly int CountNonPublic;
 			public readonly int Length;
 			public readonly int TotalLength;
-			public readonly bool HasStructFields;
 
 			public static Dictionary<TypeSpec, StructInfo> field_type_hash;
 			private Dictionary<string, TypeInfo> struct_field_hash;
 			private Dictionary<string, int> field_hash;
 
-			protected bool InTransit = false;
+			protected bool InTransit;
 
 			// Private constructor.  To save memory usage, we only need to create one instance
 			// of this class per struct type.
@@ -1240,52 +1237,18 @@ namespace Mono.CSharp
 
 				field_type_hash.Add (type, this);
 
-				TypeContainer tc = type.MemberDefinition as TypeContainer;
-
-				var public_fields = new List<FieldSpec> ();
-				var non_public_fields = new List<FieldSpec> ();
-
-				if (tc != null) {
-					var fields = tc.Fields;
-
-					if (fields != null) {
-						foreach (FieldBase field in fields) {
-							if ((field.ModFlags & Modifiers.STATIC) != 0)
-								continue;
-
-							//
-							// Fixed size buffers are not subject to definite assignment checking
-							//
-							if (field is FixedField)
-								continue;
-
-							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-								public_fields.Add (field.Spec);
-							else
-								non_public_fields.Add (field.Spec);
-						}
-					}
-				}
-
-				CountPublic = public_fields.Count;
-				CountNonPublic = non_public_fields.Count;
-				Count = CountPublic + CountNonPublic;
-
-				Fields = new FieldSpec[Count];
-				public_fields.CopyTo (Fields, 0);
-				non_public_fields.CopyTo (Fields, CountPublic);
+				fields = MemberCache.GetAllFieldsForDefiniteAssignment (type);
 
 				struct_field_hash = new Dictionary<string, TypeInfo> ();
-				field_hash = new Dictionary<string, int> ();
+				field_hash = new Dictionary<string, int> (fields.Count);
 
-				Length = 0;
-				StructFields = new TypeInfo [Count];
-				StructInfo[] sinfo = new StructInfo [Count];
+				StructFields = new TypeInfo[fields.Count];
+				StructInfo[] sinfo = new StructInfo[fields.Count];
 
 				InTransit = true;
 
-				for (int i = 0; i < Count; i++) {
-					var field = Fields [i];
+				for (int i = 0; i < fields.Count; i++) {
+					var field = fields [i];
 
 					sinfo [i] = GetStructInfo (field.MemberType);
 					if (sinfo [i] == null)
@@ -1299,18 +1262,29 @@ namespace Mono.CSharp
 				InTransit = false;
 
 				TotalLength = Length + 1;
-				for (int i = 0; i < Count; i++) {
-					var field = Fields [i];
+				for (int i = 0; i < fields.Count; i++) {
+					var field = fields [i];
 
 					if (sinfo [i] == null)
 						continue;
 
 					field_hash.Add (field.Name, TotalLength);
 
-					HasStructFields = true;
 					StructFields [i] = new TypeInfo (sinfo [i], TotalLength);
 					struct_field_hash.Add (field.Name, StructFields [i]);
 					TotalLength += sinfo [i].TotalLength;
+				}
+			}
+
+			public int Count {
+				get {
+					return fields.Count;
+				}
+			}
+
+			public List<FieldSpec> Fields {
+				get {
+					return fields;
 				}
 			}
 
