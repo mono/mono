@@ -361,6 +361,7 @@ namespace System.Web.Handlers
 				if (DateTime.TryParseExact (modif_since, "r", null, 0, out modified))
 					return true;
 			} catch {
+				modified = DateTime.MinValue;
 			}
 
 			return false;
