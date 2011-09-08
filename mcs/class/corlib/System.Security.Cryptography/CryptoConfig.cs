@@ -8,6 +8,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
 // Copyright (C) 2004-2007,2011 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin Inc. http://www.xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -489,6 +490,8 @@ public partial      class CryptoConfig {
 			if (algo == null)
 				algo = name;
 			algoClass = Type.GetType (algo);
+			if (algoClass == null)
+				return null;
 			// call the constructor for the type
 			return Activator.CreateInstance (algoClass, args);
 		}
