@@ -648,17 +648,6 @@ namespace Mono.CSharp
 			IVariableReference vr = Expr as IVariableReference;
 			bool is_fixed;
 			if (vr != null) {
-				VariableInfo vi = vr.VariableInfo;
-				if (vi != null) {
-					if (vi.LocalInfo != null)
-						vi.LocalInfo.SetIsUsed ();
-
-					//
-					// A variable is considered definitely assigned if you take its address.
-					//
-					vi.SetAssigned (ec);
-				}
-
 				is_fixed = vr.IsFixed;
 				vr.SetHasAddressTaken ();
 
@@ -4592,14 +4581,14 @@ namespace Mono.CSharp
 
 		#region Abstract
 		public abstract HoistedVariable GetHoistedVariable (AnonymousExpression ae);
-		public abstract bool VerifyAssigned (ResolveContext rc);
+		public abstract void SetHasAddressTaken ();
+		public abstract void VerifyAssigned (ResolveContext rc);
 
 		public abstract bool IsLockedByStatement { get; set; }
 
 		public abstract bool IsFixed { get; }
 		public abstract bool IsRef { get; }
 		public abstract string Name { get; }
-		public abstract void SetHasAddressTaken ();
 
 		//
 		// Variable IL data, it has to be protected to encapsulate hoisted variables
@@ -4826,19 +4815,30 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public override bool VerifyAssigned (ResolveContext rc)
+		public override void VerifyAssigned (ResolveContext rc)
 		{
 			VariableInfo variable_info = local_info.VariableInfo;
-			return variable_info == null || variable_info.IsAssigned (rc, loc);
+			if (variable_info == null)
+				return;
+
+			if (variable_info.IsAssigned (rc))
+				return;
+
+			rc.Report.Error (165, loc,
+				"Use of unassigned local variable `{0}'", Name);
+			variable_info.SetAssigned (rc);
 		}
 
 		public override void SetHasAddressTaken ()
 		{
-			local_info.AddressTaken = true;
+			local_info.SetHasAddressTaken ();
 		}
 
 		void DoResolveBase (ResolveContext ec)
 		{
+			if (eclass != ExprClass.Unresolved)
+				return;
+
 			VerifyAssigned (ec);
 
 			//
@@ -5109,22 +5109,16 @@ namespace Mono.CSharp
 			return base.DoResolveLValue (ec, right_side);
 		}
 
-		public override bool VerifyAssigned (ResolveContext rc)
+		public override void VerifyAssigned (ResolveContext rc)
 		{
 			// HACK: Variables are not captured in probing mode
 			if (rc.IsInProbingMode)
-				return true;
+				return;
 
 			if (HasOutModifier && rc.DoFlowAnalysis && (!rc.OmitStructFlowAnalysis || !VariableInfo.TypeInfo.IsStruct)) {
-
-				if (rc.CurrentBranching.IsAssigned (VariableInfo))
-					return true;
-
-				rc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
-				return false;
+				if (!rc.CurrentBranching.IsAssigned (VariableInfo))
+					rc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
 			}
-
-			return true;
 		}
 	}
 	
@@ -6914,9 +6908,8 @@ namespace Mono.CSharp
 			// Nothing
 		}
 
-		public override bool VerifyAssigned (ResolveContext rc)
+		public override void VerifyAssigned (ResolveContext rc)
 		{
-			return true;
 		}
 	}
 

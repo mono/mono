@@ -5084,8 +5084,9 @@ namespace Mono.CSharp {
 		public void SetHasAddressTaken ()
 		{
 			IVariableReference vr = InstanceExpression as IVariableReference;
-			if (vr != null)
+			if (vr != null) {
 				vr.SetHasAddressTaken ();
+			}
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -6194,9 +6195,8 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
-		public override bool VerifyAssigned (ResolveContext rc)
+		public override void VerifyAssigned (ResolveContext rc)
 		{
-			return true;
 		}
 	}
 

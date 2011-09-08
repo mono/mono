@@ -1,9 +1,10 @@
 //
 // flowanalyis.cs: The control flow analysis code
 //
-// Author:
+// Authors:
 //   Martin Baulig (martin@ximian.com)
 //   Raja R Harinath (rharinath@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
@@ -720,10 +721,10 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			for (UsageVector origin = return_origins; origin != null; origin = origin.Next)
-				Block.ParametersBlock.CheckOutParameters (origin, origin.Location);
+				Block.ParametersBlock.CheckOutParameters (origin);
 
 			UsageVector vector = base.Merge ();
-			Block.ParametersBlock.CheckOutParameters (vector, Block.loc);
+			Block.ParametersBlock.CheckOutParameters (vector);
 			// Note: we _do_not_ merge in the return origins
 			return vector;
 		}
@@ -1328,13 +1329,13 @@ namespace Mono.CSharp
 	//   it has been assigned or not, but for structs, we need this information for each of its fields.
 	// </summary>
 	public class VariableInfo {
-		public readonly string Name;
+		readonly string Name;
 		public readonly TypeInfo TypeInfo;
 
 		// <summary>
 		//   The bit offset of this variable in the flow vector.
 		// </summary>
-		public readonly int Offset;
+		readonly int Offset;
 
 		// <summary>
 		//   The number of bits this variable needs in the flow vector.
@@ -1347,8 +1348,6 @@ namespace Mono.CSharp
 		//   If this is a parameter of local variable.
 		// </summary>
 		public readonly bool IsParameter;
-
-		public readonly LocalVariable LocalInfo;
 
 		readonly VariableInfo Parent;
 		VariableInfo[] sub_info;
@@ -1378,7 +1377,6 @@ namespace Mono.CSharp
 			this.Length = type.TotalLength;
 
 			this.IsParameter = parent.IsParameter;
-			this.LocalInfo = parent.LocalInfo;
 
 			Initialize ();
 		}
@@ -1399,7 +1397,6 @@ namespace Mono.CSharp
 		public VariableInfo (LocalVariable local_info, int offset)
 			: this (local_info.Name, local_info.Type, offset)
 		{
-			this.LocalInfo = local_info;
 			this.IsParameter = false;
 		}
 
@@ -1414,17 +1411,6 @@ namespace Mono.CSharp
 			return !ec.DoFlowAnalysis ||
 				(ec.OmitStructFlowAnalysis && TypeInfo.Type.IsStruct) ||
 				ec.CurrentBranching.IsAssigned (this);
-		}
-
-		public bool IsAssigned (ResolveContext ec, Location loc)
-		{
-			if (IsAssigned (ec))
-				return true;
-
-			ec.Report.Error (165, loc,
-				"Use of unassigned local variable `{0}'", Name);
-			ec.CurrentBranching.SetAssigned (this);
-			return false;
 		}
 
 		public bool IsAssigned (MyBitVector vector)

@@ -1547,8 +1547,9 @@ namespace Mono.CSharp {
 		#region Properties
 
 		public bool AddressTaken {
-			get { return (flags & Flags.AddressTaken) != 0; }
-			set { flags |= Flags.AddressTaken; }
+			get {
+				return (flags & Flags.AddressTaken) != 0;
+			}
 		}
 
 		public Block Block {
@@ -1767,6 +1768,11 @@ namespace Mono.CSharp {
 		public void SetIsUsed ()
 		{
 			flags |= Flags.Used;
+		}
+
+		public void SetHasAddressTaken ()
+		{
+			flags |= (Flags.AddressTaken | Flags.Used);
 		}
 
 		public override string ToString ()
@@ -2519,7 +2525,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Check whether all `out' parameters have been assigned.
 		// </summary>
-		public void CheckOutParameters (FlowBranching.UsageVector vector, Location loc)
+		public void CheckOutParameters (FlowBranching.UsageVector vector)
 		{
 			if (vector.IsUnreachable)
 				return;
@@ -2535,8 +2541,10 @@ namespace Mono.CSharp {
 				if (vector.IsAssigned (var, false))
 					continue;
 
-				TopBlock.Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
-					var.Name);
+				var p = parameter_info[i].Parameter;
+				TopBlock.Report.Error (177, p.Location,
+					"The out parameter `{0}' must be assigned to before control leaves the current method",
+					p.Name);
 			}
 		}
 
