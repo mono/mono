@@ -48114,6 +48114,66 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-167.cs">
+    <type name="Foo">
+      <method name="Void Bar(System.Threading.ThreadStart)">
+        <size>1</size>
+      </method>
+      <method name="Void Baz(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>35</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>137</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-168.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>112</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>40</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1(Int32)">
+        <size>35</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__2(Int32)">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Run(Test+RunDelegate)">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+RunDelegate">
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-17.cs">
     <type name="Button">
       <method name="Void .ctor()">
