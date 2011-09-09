@@ -55,6 +55,9 @@ namespace MonoTests.System.Runtime.InteropServices {
 		}
 
 		[Test]
+#if NET_2_1
+		[Ignore ("There's no GAC for the NET_2_1 based profiles (Moonlight, MonoTouch and Mono for Android")]
+#endif
 		public void FromGlobalAccessCache ()
 		{
 			Assembly corlib = typeof (int).Assembly;

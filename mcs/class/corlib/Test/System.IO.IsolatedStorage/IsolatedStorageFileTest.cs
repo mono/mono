@@ -127,12 +127,14 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
 			string codebase = Assembly.GetExecutingAssembly ().CodeBase.ToUpper ().Substring (8);
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -160,6 +162,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForDomain ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
@@ -170,6 +173,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			// so we're using the first parameter to GetCommandLineArgs
 			string exe = Environment.GetCommandLineArgs ()[0].Replace ("\\", "/").ToUpper ();
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().ToUpper ().IndexOf (exe) > 0), exe + "\n" + isf.DomainIdentity.ToString ().ToUpper ()); //"Url - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -196,12 +200,15 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
+#if !NET_2_1
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf (Assembly.GetExecutingAssembly ().CodeBase) > 0), "Url");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
-
+		
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
 		public void GetUserStoreForApplication_AssemblyIdentity ()
@@ -217,6 +224,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			object o = isf.DomainIdentity;
 		}
+#endif
 #endif
 
 #if NET_4_0
@@ -235,11 +243,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (Zone), typeof (Zone));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
+#if !NET_2_1
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("MyComputer") > 0), "Zone - Assembly");
 			Assert.IsTrue ((isf.DomainIdentity is Zone), "DomainIdentity");
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("MyComputer") > 0), "Zone - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -258,12 +268,14 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (StrongName), typeof (Url));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (scope, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
 			string codebase = Assembly.GetExecutingAssembly ().CodeBase.ToUpper ().Substring (8);
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
 			// DomainIdentity throws a InvalidOperationException
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -348,10 +360,12 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 
 			// Maximum size for Internet isn't (by default) Int64.MaxValue
 			Assert.AreEqual (scope, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("Intranet") > 0), "Zone - Assembly");
 			Assert.IsTrue ((isf.DomainIdentity is Zone), "DomainIdentity");
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("Internet") > 0), isf.DomainIdentity.ToString ()); //"Zone - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -439,7 +453,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				try {
 					isf.CreateDirectory (path);
 				}
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 				catch (IsolatedStorageException ex) {
 					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
 					Assert.IsNull (ex.InnerException, "InnerException");
@@ -480,7 +494,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		[ExpectedException (typeof (ArgumentException))]
 #else
 		[ExpectedException (typeof (SecurityException))]
@@ -580,8 +594,10 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null);
+#if !NET_2_1
 			Assert.AreEqual (typeof (Url), isf.AssemblyIdentity.GetType (), "AssemblyIdentity");
 			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
+#endif
 		}
 
 		[Test]

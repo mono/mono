@@ -73,7 +73,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public enum ParamEnum {
 			None = 0,
 			Foo = 1,
