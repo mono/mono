@@ -220,7 +220,7 @@ namespace System.IO
 			}
 
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite) {
-#if NET_2_1
+#if MOONLIGHT
 				if (anonymous)
 					throw new IsolatedStorageException ("Enum value for FileAccess was out of legal range.");
 				else
@@ -229,7 +229,7 @@ namespace System.IO
 			}
 
 			if (share < FileShare.None || share > (FileShare.ReadWrite | FileShare.Delete)) {
-#if NET_2_1
+#if MOONLIGHT
 				if (anonymous)
 					throw new IsolatedStorageException ("Enum value for FileShare was out of legal range.");
 				else
@@ -275,7 +275,7 @@ namespace System.IO
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
-#if NET_2_1
+#if MOONLIGHT
 					// don't use GetSecureFileName for the directory name
 					throw new IsolatedStorageException (String.Format (msg, fname));
 #else
@@ -289,7 +289,7 @@ namespace System.IO
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
 				string fname = GetSecureFileName (path);
-#if NET_2_1
+#if MOONLIGHT
 				throw new IsolatedStorageException (String.Format (msg, fname));
 #else
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
