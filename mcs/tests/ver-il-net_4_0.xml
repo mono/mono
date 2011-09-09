@@ -18053,6 +18053,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-07.cs">
+    <type name="Foo">
+      <method name="System.Object get_NewValue()">
+        <size>7</size>
+      </method>
+      <method name="Void set_NewValue(System.Object)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void .ctor()">

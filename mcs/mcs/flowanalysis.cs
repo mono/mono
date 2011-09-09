@@ -1408,9 +1408,7 @@ namespace Mono.CSharp
 
 		public bool IsAssigned (ResolveContext ec)
 		{
-			return !ec.DoFlowAnalysis ||
-				(ec.OmitStructFlowAnalysis && TypeInfo.Type.IsStruct) ||
-				ec.CurrentBranching.IsAssigned (this);
+			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (this);
 		}
 
 		public bool IsAssigned (MyBitVector vector)
@@ -1449,7 +1447,7 @@ namespace Mono.CSharp
 				if (!sinfo.IsAssigned (vector))
 					return false;
 			}
-
+			
 			vector [Offset] = true;
 			is_ever_assigned = true;
 			return true;

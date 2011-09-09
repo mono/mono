@@ -4824,8 +4824,7 @@ namespace Mono.CSharp
 			if (variable_info.IsAssigned (rc))
 				return;
 
-			rc.Report.Error (165, loc,
-				"Use of unassigned local variable `{0}'", Name);
+			rc.Report.Error (165, loc, "Use of unassigned local variable `{0}'", Name);
 			variable_info.SetAssigned (rc);
 		}
 
@@ -4836,11 +4835,6 @@ namespace Mono.CSharp
 
 		void DoResolveBase (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Unresolved)
-				return;
-
-			VerifyAssigned (ec);
-
 			//
 			// If we are referencing a variable from the external block
 			// flag it for capturing
@@ -4867,6 +4861,8 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			local_info.SetIsUsed ();
+
+			VerifyAssigned (ec);
 
 			DoResolveBase (ec);
 			return this;
@@ -4897,7 +4893,8 @@ namespace Mono.CSharp
 				VariableInfo.SetAssigned (ec);
 			}
 
-			DoResolveBase (ec);
+			if (eclass == ExprClass.Unresolved)
+				DoResolveBase (ec);
 
 			return base.DoResolveLValue (ec, right_side);
 		}
@@ -5115,9 +5112,8 @@ namespace Mono.CSharp
 			if (rc.IsInProbingMode)
 				return;
 
-			if (HasOutModifier && rc.DoFlowAnalysis && (!rc.OmitStructFlowAnalysis || !VariableInfo.TypeInfo.IsStruct)) {
-				if (!rc.CurrentBranching.IsAssigned (VariableInfo))
-					rc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
+			if (HasOutModifier && !VariableInfo.IsAssigned (rc)) {
+				rc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
 			}
 		}
 	}
@@ -6782,7 +6778,17 @@ namespace Mono.CSharp
 
 		public void CheckStructThisDefiniteAssignment (ResolveContext rc)
 		{
-			if (variable_info != null && !variable_info.IsAssigned (rc)) {
+			//
+			// It's null for all cases when we don't need to check this
+			// definitive assignment
+			//
+			if (variable_info == null)
+				return;
+
+			if (rc.HasSet (ResolveContext.Options.OmitStructFlowAnalysis))
+				return;
+
+			if (!variable_info.IsAssigned (rc)) {
 				rc.Report.Error (188, loc,
 					"The `this' object cannot be used before all of its fields are assigned to");
 			}
@@ -6858,16 +6864,15 @@ namespace Mono.CSharp
 		{
 			ResolveBase (ec);
 
-			if (variable_info != null && type.IsStruct) {
-				CheckStructThisDefiniteAssignment (ec);
-			}
+			CheckStructThisDefiniteAssignment (ec);
 
 			return this;
 		}
 
-		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			ResolveBase (ec);
+			if (eclass == ExprClass.Unresolved)
+				ResolveBase (ec);
 
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
@@ -8675,7 +8680,12 @@ namespace Mono.CSharp
 				return new DynamicIndexBinder (args, loc);
 			}
 
-			ResolveInstanceExpression (rc, right_side);
+			//
+			// Try to avoid resolving left expression again
+			//
+			if (right_side != null)
+				ResolveInstanceExpression (rc, right_side);
+
 			CheckProtectedMemberAccess (rc, best_candidate);
 			return this;
 		}

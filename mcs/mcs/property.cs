@@ -743,7 +743,7 @@ namespace Mono.CSharp
 
 			FieldExpr fe = new FieldExpr (field, Location);
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
-				fe.InstanceExpression = new CompilerGeneratedThis (fe.Type, Location);
+				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			// Create get block
 			Get.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);

@@ -3010,15 +3010,14 @@ namespace Mono.CSharp {
 		//   analysis code to ensure that it's been fully initialized before control
 		//   leaves the constructor.
 		// </summary>
-		public LocalVariable AddThisVariable (BlockContext bc, TypeContainer ds, Location l)
+		public void AddThisVariable (BlockContext bc)
 		{
-			if (this_variable == null) {
-				this_variable = new LocalVariable (this, "this", LocalVariable.Flags.IsThis | LocalVariable.Flags.Used, l);
-				this_variable.Type = ds.CurrentType;
-				this_variable.PrepareForFlowAnalysis (bc);
-			}
+			if (this_variable != null)
+				throw new InternalErrorException (StartLocation.ToString ());
 
-			return this_variable;
+			this_variable = new LocalVariable (this, "this", LocalVariable.Flags.IsThis | LocalVariable.Flags.Used, StartLocation);
+			this_variable.Type = bc.CurrentType;
+			this_variable.PrepareForFlowAnalysis (bc);
 		}
 
 		public bool IsThisAssigned (BlockContext ec)

@@ -2901,7 +2901,7 @@ namespace Mono.CSharp {
 				}
 
 				InstanceExpression = new This (loc);
-				if (this is FieldExpr && rc.CurrentType.IsStruct) {
+				if (this is FieldExpr && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
 					using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
 						InstanceExpression = InstanceExpression.Resolve (rc);
 					}
@@ -2932,7 +2932,7 @@ namespace Mono.CSharp {
 			// the expression is not field expression which is the only
 			// expression which can use uninitialized this
 			//
-			if (InstanceExpression is This && !(this is FieldExpr) && rc.CurrentType.IsStruct) {
+			if (InstanceExpression is This && !(this is FieldExpr) && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
 				((This)InstanceExpression).CheckStructThisDefiniteAssignment (rc);
 			}
 

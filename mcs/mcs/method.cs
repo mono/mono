@@ -1611,9 +1611,9 @@ namespace Mono.CSharp {
 				// initializer, it must initialize all of the struct's fields.
 				if ((Parent.PartialContainer.Kind == MemberKind.Struct) &&
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-					block.AddThisVariable (bc, Parent, Location);
+					block.AddThisVariable (bc);
 
-				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
+				if ((ModFlags & Modifiers.STATIC) == 0){
 					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
 						Initializer = new GeneratedBaseInitializer (Location);
 
