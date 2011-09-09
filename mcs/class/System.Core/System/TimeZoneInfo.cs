@@ -328,6 +328,9 @@ namespace System
 #if MONODROID
 			return ZoneInfoDB.GetTimeZone (id);
 #elif LIBC
+			// Local requires special logic that already exists in the Local property (bug #326)
+			if (id == "Local")
+				return Local;
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
 #else
