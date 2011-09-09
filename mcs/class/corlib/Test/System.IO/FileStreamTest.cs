@@ -12,6 +12,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MonoTests.System.IO
@@ -21,6 +22,10 @@ namespace MonoTests.System.IO
 	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 		static readonly char DSC = Path.DirectorySeparatorChar;
+		static bool MacOSX = false;
+
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
 
 		[TearDown]
 		public void TearDown ()
@@ -36,6 +41,12 @@ namespace MonoTests.System.IO
 				Directory.Delete (TempFolder, true);
 
 			Directory.CreateDirectory (TempFolder);
+			
+			// from XplatUI.cs
+			IntPtr buf = Marshal.AllocHGlobal (8192);
+			if (uname (buf) == 0)
+				MacOSX = Marshal.PtrToStringAnsi (buf) == "Darwin";
+			Marshal.FreeHGlobal (buf);
 		}
 
 		public void TestCtr ()
@@ -102,6 +113,9 @@ namespace MonoTests.System.IO
 				Assert.Fail ("#B1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
+				// under OSX 'var' is a symlink to 'private/var'
+				if (MacOSX)
+					path = "/private" + path;
 				Assert.AreEqual (path, ex.FileName, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
@@ -147,6 +161,9 @@ namespace MonoTests.System.IO
 				Assert.Fail ("#B1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
+				// under OSX 'var' is a symlink to 'private/var'
+				if (MacOSX)
+					path = "/private" + path;
 				Assert.AreEqual (path, ex.FileName, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
