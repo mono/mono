@@ -540,6 +540,20 @@ namespace MonoTests.System
 				TimeZoneInfo vatican = TimeZoneInfo.FindSystemTimeZoneById ("Europe/Vatican");
 				Assert.IsTrue (rome.HasSameRules (vatican));
 			}
+
+			[Test]
+			public void FindSystemTimeZoneById_Local_Roundtrip ()
+			{
+				Assert.AreEqual (TimeZoneInfo.Local.Id, TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfo.Local.Id).Id);
+			}
+
+			[Test]
+			public void Test326 ()
+			{
+				DateTime utc = DateTime.UtcNow;
+			        DateTime local = TimeZoneInfo.ConvertTime (utc, TimeZoneInfo.Utc, TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfo.Local.Id));
+				Assert.AreEqual (local, utc + TimeZoneInfo.Local.GetUtcOffset (utc), "ConvertTime/Local");
+			}
 		
 		#if SLOW_TESTS
 			[Test]
