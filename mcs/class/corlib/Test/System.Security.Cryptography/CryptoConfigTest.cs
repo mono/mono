@@ -136,6 +136,9 @@ public class CryptoConfigTest {
 	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
 	// URL taken from http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/
 	[Test]
+#if NET_2_1
+	[Ignore ("System.Security.dll is not part of Moonlight, MonoTouch and Mono for Android")]
+#endif
 	public void CreateFromURL () 
 	{
 		// URL used in SignatureMethod element

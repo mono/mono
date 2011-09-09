@@ -40,7 +40,7 @@ namespace MonoTests.System.Collections.Generic
 	public class ComparerTest
 	{
 
-#if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
+#if !NET_4_0 && !NET_2_1 // FIXME: the blob contains the 2.0 mscorlib version
 
 		[Test] // bug #80929
 		public void SerializeDefault ()

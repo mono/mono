@@ -26,7 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+// NET_2_1 profile lacks some (of the few) CAS features required to execute those tests
+#if NET_2_0 && !NET_2_1
 
 using NUnit.Framework;
 using System;
