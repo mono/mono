@@ -84,7 +84,7 @@ namespace System.IO
 			// FIXME: add more exception mappings here
 			case MonoIOError.ERROR_FILE_NOT_FOUND:
 				message = String.Format ("Could not find file \"{0}\"", path);
-#if NET_2_1
+#if MOONLIGHT
 				return new IsolatedStorageException (message);
 #else
 				return new FileNotFoundException (message, path);
@@ -95,7 +95,7 @@ namespace System.IO
 				
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
-#if NET_2_1
+#if MOONLIGHT
 				return new IsolatedStorageException (message);
 #else
 				return new DirectoryNotFoundException (message);
