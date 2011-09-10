@@ -55,42 +55,6 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 
-	internal class ConcatFunction : StringFunction
-	{
-		readonly IExpression _add;
-		public ConcatFunction (IExpression e, IExpression add)
-			: base (e)
-		{
-			_add = add;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (!base.Equals (obj))
-				return false;
-
-			if (!(obj is ConcatFunction))
-				return false;
-
-			ConcatFunction other = (ConcatFunction) obj;
-			return _add.Equals (other._add);
-		}
-
-		public override int GetHashCode()
-		{
-			int hashCode = base.GetHashCode ();
-			hashCode ^= _add.GetHashCode ();
-			return hashCode;
-		}
-
-		override public object Eval (DataRow row) {
-			string str = (string) base.Eval (row);
-			string x = (string) _add.Eval (row);
-
-			return str + x;
-		}
-	}
-	
 	internal class SubstringFunction : StringFunction {
 		IExpression start;
 		IExpression len;

@@ -63,7 +63,7 @@ EXTRA_DISTFILES = \
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
 Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $(CURDIR)/$< >$@
+	$(topdir)/jay/jay -vct < $(topdir)/jay/skeleton.cs $(CURDIR)/$< >$@
 
 include ../../build/library.make
 
