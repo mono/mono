@@ -10,9 +10,10 @@
 // (C) Copyright 2002 Rodrigo Moya
 // (C) Copyright 2003 Daniel Morgan
 // (C) Copyright 2003 Martin Willemoes Hansen
-//
+// (C) Copyright 2011 Xamarin Inc
 
 //
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -913,5 +914,46 @@ namespace MonoTests.System.Data
 				Assert.Fail ("SetOrdinalTest failed");
 			}
 		}
+
+		[Test]
+		public void Xamarin665 ()
+		{
+			var t = new DataTable() ;
+			var c1 = t.Columns.Add ("c1");
+			var c2 = t.Columns.Add ("c2");
+			c2.Expression = "TRIM(ISNULL(c1,' '))";
+			c2.Expression = "SUBSTRING(ISNULL(c1,' '), 1, 10)";
+		}
+
+		DataColumn MakeColumn (string col, string test)
+		{
+			return new DataColumn () {
+				ColumnName = col,
+				Expression = test
+			};
+		}
+
+#if false
+// Check Windows output for the row [0] value
+		[Test]
+		public void NullStrings ()
+		{
+			var a = MakeColumn ("nullbar", "null+'bar'");
+			var b = MakeColumn ("barnull", "'bar'+null");
+			var c = MakeColumn ("foobar", "'foo'+'bar'");
+
+		        var table = new DataTable();
+		        
+		        table.Columns.Add(a);
+		        table.Columns.Add(b);
+		        table.Columns.Add(c);
+		
+		        var row = table.NewRow();
+		        table.Rows.Add(row);
+			Assert.AreEqual (row [0], DBNull.Value, "#1");
+			Assert.AreEqual (row [1], DBNull.Value, "#2");
+			Assert.AreEqual (row [2], "foobar", "#3");
+		}
+#endif
 	}
 }
