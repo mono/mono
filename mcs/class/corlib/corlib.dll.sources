@@ -1531,6 +1531,7 @@ System/Predicate.cs
 System.Collections.Generic/Comparer.cs
 
 System.Threading.Tasks/TaskFactory.cs
+System.Threading.Tasks/TaskFactory_T.cs
 System.Threading.Tasks/TaskStatus.cs
 System.Threading.Tasks/TaskCreationOptions.cs
 System.Threading.Tasks/ThreadWorker.cs
@@ -1540,8 +1541,9 @@ System.Threading.Tasks/CyclicDeque.cs
 System.Threading.Tasks/TaskScheduler.cs
 System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
-System.Threading.Tasks/Future.cs
+System.Threading.Tasks/Task_T.cs
 System.Threading.Tasks/Task.cs
+System.Threading.Tasks/TaskDebuggerView.cs
 System.Threading.Tasks/TaskCompletionSource.cs
 System.Threading.Tasks/TaskSchedulerException.cs
 System.Collections.Concurrent/OrderablePartitioner.cs

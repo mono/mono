@@ -31,14 +31,15 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
-	public class SynchronizationContextScheduler : TaskScheduler
+	sealed class SynchronizationContextScheduler : TaskScheduler
 	{
 		readonly SynchronizationContext ctx;
-		static readonly SendOrPostCallback callback = TaskLaunchWrapper;
+		readonly SendOrPostCallback callback;
 
 		public SynchronizationContextScheduler (SynchronizationContext ctx)
 		{
 			this.ctx = ctx;
+			this.callback = TaskLaunchWrapper;
 		}
 
 		protected internal override void QueueTask (Task task)
@@ -46,9 +47,9 @@ namespace System.Threading.Tasks
 			ctx.Post (callback, task);
 		}
 
-		static void TaskLaunchWrapper (object obj)
+		void TaskLaunchWrapper (object obj)
 		{
-			((Task)obj).Execute (null);
+			TryExecuteTask ((Task)obj);
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
@@ -63,15 +64,8 @@ namespace System.Threading.Tasks
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			if (task.IsCompleted)
-				return false;
-
-			if (task.Status == TaskStatus.WaitingToRun) {
-				task.Execute (null);
-				return true;
-			}
-
-			return false;
+			ctx.Send (callback, task);
+			return true;
 		}
 
 		public override int MaximumConcurrencyLevel {

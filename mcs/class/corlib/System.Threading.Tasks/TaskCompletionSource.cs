@@ -1,10 +1,12 @@
 // 
 // TaskCompletionSource.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar <marek.safar@gmail.com>
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,15 +66,18 @@ namespace System.Threading.Tasks
 			if (!ApplyOperation (source.CancelReal))
 				ThrowInvalidException ();
 		}
-		
+
 		public void SetException (Exception exception)
 		{
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
+
 			SetException (new Exception[] { exception });
 		}
-		
+
 		public void SetException (IEnumerable<Exception> exceptions)
 		{
-			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
+			if (!TrySetException (exceptions))
 				ThrowInvalidException ();
 		}
 		
@@ -82,7 +87,7 @@ namespace System.Threading.Tasks
 				ThrowInvalidException ();
 		}
 				
-		void ThrowInvalidException ()
+		static void ThrowInvalidException ()
 		{
 			throw new InvalidOperationException ("The underlying Task is already in one of the three final states: RanToCompletion, Faulted, or Canceled.");
 		}
@@ -94,12 +99,22 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetException (Exception exception)
 		{
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
+
 			return TrySetException (new Exception[] { exception });
 		}
 		
 		public bool TrySetException (IEnumerable<Exception> exceptions)
 		{
-			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
+			if (exceptions == null)
+				throw new ArgumentNullException ("exceptions");
+
+			var aggregate = new AggregateException (exceptions);
+			if (aggregate.InnerExceptions.Count == 0)
+				throw new ArgumentNullException ("exceptions");
+
+			return ApplyOperation (() => source.HandleGenericException (aggregate));
 		}
 		
 		public bool TrySetResult (TResult result)

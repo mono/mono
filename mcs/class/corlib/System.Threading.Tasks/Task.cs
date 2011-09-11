@@ -30,8 +30,8 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
 	public class Task : IDisposable, IAsyncResult
 	{
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
@@ -57,14 +57,16 @@ namespace System.Threading.Tasks
 		
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
+		ConcurrentQueue<AggregateException> childExceptions;
 
 		TaskStatus          status;
 		
 		Action<object> action;
+		Action         simpleAction;
 		object         state;
 		AtomicBooleanValue executing;
 
-		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
+		ConcurrentQueue<EventHandler> completed;
 
 		CancellationToken token;
 
@@ -87,8 +89,13 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this ((o) => { if (action != null) action (); }, null, cancellationToken, creationOptions)
+			: this (null, null, cancellationToken, creationOptions, current)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			if (creationOptions > MaxTaskCreationOptions || creationOptions < TaskCreationOptions.None)
+				throw new ArgumentOutOfRangeException ("creationOptions");
+			this.simpleAction = action;
 		}
 		
 		public Task (Action<object> action, object state) : this (action, state, TaskCreationOptions.None)
@@ -104,27 +111,35 @@ namespace System.Threading.Tasks
 			: this (action, state, cancellationToken, TaskCreationOptions.None)
 		{	
 		}
-		
+
 		public Task (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
+			: this (action, state, cancellationToken, creationOptions, current)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
 			if (creationOptions > MaxTaskCreationOptions || creationOptions < TaskCreationOptions.None)
 				throw new ArgumentOutOfRangeException ("creationOptions");
+		}
 
+		internal Task (Action<object> action,
+		               object state,
+		               CancellationToken cancellationToken,
+		               TaskCreationOptions creationOptions,
+		               Task parent)
+		{
 			this.taskCreationOptions = creationOptions;
-			this.action              = action == null ? EmptyFunc : action;
+			this.action              = action;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
 			this.token               = cancellationToken;
+			this.parent              = parent;
 
 			// Process taskCreationOptions
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent)) {
-				parent = current;
-				if (parent != null)
-					parent.AddChild ();
-			}
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+				parent.AddChild ();
 		}
-		
+
 		~Task ()
 		{
 			if (exception != null && !exceptionObserved)
@@ -134,10 +149,6 @@ namespace System.Threading.Tasks
 		bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
 		{
 			return (opt & member) == member;
-		}
-
-		static void EmptyFunc (object o)
-		{
 		}
 
 		#region Start
@@ -168,9 +179,24 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
-			if (scheduler.TryExecuteTask (this))
-				return;
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
 
+			if (Status > TaskStatus.WaitingForActivation)
+				throw new InvalidOperationException ("The task is not in a valid state to be started");
+
+			SetupScheduler (scheduler);
+			var saveStatus = status;
+			status = TaskStatus.WaitingToRun;
+
+			try {
+				if (scheduler.RunInline (this))
+					return;
+			} catch (Exception inner) {
+				throw new TaskSchedulerException (inner);
+			}
+
+			status = saveStatus;
 			Start (scheduler);
 			Wait ();
 		}
@@ -199,7 +225,11 @@ namespace System.Threading.Tasks
 		
 		public Task ContinueWith (Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task continuation = new Task ((o) => continuationAction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			Task continuation = new Task ((o) => continuationAction ((Task)o),
+			                              this,
+			                              cancellationToken,
+			                              GetCreationOptions (continuationOptions),
+			                              this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -233,7 +263,11 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o),
+			                                     this,
+			                                     cancellationToken,
+			                                     GetCreationOptions (continuationOptions),
+			                                     this);
 			
 			ContinueWithCore (t, continuationOptions, scheduler);
 			
@@ -275,6 +309,8 @@ namespace System.Threading.Tasks
 				return;
 			}
 			
+			if (completed == null)
+				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<EventHandler> (), null);
 			completed.Enqueue (action);
 			
 			// Retry in case completion was achieved but event adding was too late
@@ -327,7 +363,7 @@ namespace System.Threading.Tasks
 		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
 		{
 			if ((options & TaskContinuationOptions.ExecuteSynchronously) > 0)
-				continuation.ThreadStart ();
+				continuation.RunSynchronously (scheduler);
 			else
 				continuation.Start (scheduler);
 		}
@@ -348,7 +384,7 @@ namespace System.Threading.Tasks
 		
 		#region Internal and protected thingies
 		internal void Schedule ()
-		{	
+		{
 			status = TaskStatus.WaitingToRun;
 			
 			// If worker is null it means it is a local one, revert to the old behavior
@@ -408,23 +444,31 @@ namespace System.Threading.Tasks
 			childTasks.AddCount ();
 		}
 
-		internal void ChildCompleted ()
+		internal void ChildCompleted (AggregateException childEx)
 		{
-			childTasks.Signal ();
-			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete) {
+			if (childEx != null) {
+				if (childExceptions == null)
+					Interlocked.CompareExchange (ref childExceptions, new ConcurrentQueue<AggregateException> (), null);
+				childExceptions.Enqueue (childEx);
+			}
+
+			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
-				
+				ProcessChildExceptions ();
 				ProcessCompleteDelegates ();
 			}
 		}
 
 		internal virtual void InnerInvoke ()
 		{
-			if (action != null)
+			if (action == null && simpleAction != null)
+				simpleAction ();
+			else if (action != null)
 				action (state);
 			// Set action to null so that the GC can collect the delegate and thus
 			// any big object references that the user might have captured in an anonymous method
 			action = null;
+			simpleAction = null;
 			state = null;
 		}
 		
@@ -449,16 +493,32 @@ namespace System.Threading.Tasks
 			TaskScheduler.Current = null;
 			
 			// Tell parent that we are finished
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null){
-				parent.ChildCompleted ();
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
+				parent.ChildCompleted (this.Exception);
 			}
 		}
 
 		void ProcessCompleteDelegates ()
 		{
+			if (completed == null)
+				return;
+
 			EventHandler handler;
 			while (completed.TryDequeue (out handler))
 				handler (this, EventArgs.Empty);
+		}
+
+		void ProcessChildExceptions ()
+		{
+			if (childExceptions == null)
+				return;
+
+			if (exception == null)
+				exception = new AggregateException ();
+
+			AggregateException childEx;
+			while (childExceptions.TryDequeue (out childEx))
+				exception.AddChildException (childEx);
 		}
 		#endregion
 		
@@ -477,6 +537,7 @@ namespace System.Threading.Tasks
 		internal void HandleGenericException (AggregateException e)
 		{
 			exception = e;
+			Thread.MemoryBarrier ();
 			status = TaskStatus.Faulted;
 			if (scheduler != null && scheduler.FireUnobservedEvent (exception).Observed)
 				exceptionObserved = true;
@@ -835,6 +896,14 @@ namespace System.Threading.Tasks
 				return parent;
 			}
 		}
+
+		internal string DisplayActionMethod {
+			get {
+				Delegate d = simpleAction ?? (Delegate) action;
+				return d == null ? "<none>" : d.Method.ToString ();
+			}
+		}
+
 		#endregion
 	}
 }

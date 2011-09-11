@@ -35,8 +35,7 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
 	public abstract class TaskScheduler
 	{
-		static TaskScheduler defaultScheduler =
-			Environment.GetEnvironmentVariable ("USE_OLD_TASK_SCHED") != null ? (TaskScheduler)new Scheduler () : (TaskScheduler)new TpScheduler ();
+		static TaskScheduler defaultScheduler = new TpScheduler ();
 		SchedulerProxy proxy;
 		
 		[ThreadStatic]
@@ -51,6 +50,10 @@ namespace System.Threading.Tasks
 		{
 			this.id = Interlocked.Increment (ref lastId);
 			this.proxy = new SchedulerProxy (this);
+		}
+
+		~TaskScheduler ()
+		{
 		}
 
 		public static TaskScheduler FromCurrentSynchronizationContext ()
@@ -125,7 +128,17 @@ namespace System.Threading.Tasks
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
-		
+
+		internal bool RunInline (Task task)
+		{
+			if (!TryExecuteTaskInline (task, false))
+				return false;
+
+			if (!task.IsCompleted)
+				throw new InvalidOperationException ("The TryExecuteTaskInline call to the underlying scheduler succeeded, but the task body was not invoked");
+			return true;
+		}
+
 		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)
 		{
 			UnobservedTaskExceptionEventArgs args = new UnobservedTaskExceptionEventArgs (e);
