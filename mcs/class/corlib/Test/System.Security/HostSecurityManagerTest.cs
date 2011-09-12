@@ -5,6 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

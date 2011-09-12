@@ -4,6 +4,7 @@
 // Rodrigo Kumpera <rkumpera@novell.com>
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 using System;

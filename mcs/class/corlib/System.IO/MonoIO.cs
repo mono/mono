@@ -5,6 +5,7 @@
 //   Dick Porter (dick@ximian.com)
 //
 // (C) 2002
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 //

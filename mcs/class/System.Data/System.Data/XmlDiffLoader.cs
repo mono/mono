@@ -12,6 +12,7 @@
 //     Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (c)copyright 2003 Ville Palo
+// Copyright 2011 Xamarin Inc.
 //
 
 //

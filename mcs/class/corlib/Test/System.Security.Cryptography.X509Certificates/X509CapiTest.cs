@@ -6,6 +6,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 #if !TARGET_JVM
 using NUnit.Framework;

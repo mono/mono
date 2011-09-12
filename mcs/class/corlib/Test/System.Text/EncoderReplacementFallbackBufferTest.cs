@@ -6,6 +6,7 @@
 //
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
 // Copyright (C) 2011 Xamain, Inc.  http://xamarin.com
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 #if NET_2_0

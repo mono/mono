@@ -9,7 +9,7 @@
 // (C) Copyright 2002 Ville Palo
 // (C) Copyright 2003 Martin Willemoes Hansen
 // (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
-
+// Copyright 2011 Xamarin Inc.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //

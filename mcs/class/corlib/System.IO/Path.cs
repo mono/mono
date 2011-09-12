@@ -5,6 +5,7 @@
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // Copyright (C) 2002 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2003 Ben Maurer
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
 //                 Dan Lewis (dihlewis@yahoo.co.uk)

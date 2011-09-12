@@ -4,6 +4,7 @@
 // Zoltan Varga (vargaz@freemail.hu)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 //
 

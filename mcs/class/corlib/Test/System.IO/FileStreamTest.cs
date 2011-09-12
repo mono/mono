@@ -7,6 +7,7 @@
 // 
 // (C) Ville Palo
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 // 
 
 using NUnit.Framework;

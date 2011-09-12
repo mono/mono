@@ -5,6 +5,7 @@
 //   Juraj Skripsky (juraj@hotfeet.ch)
 //
 // (C) 2004 HotFeet GmbH (http://www.hotfeet.ch)
+// Copyright 2011 Xamarin Inc.
 //
 
 //

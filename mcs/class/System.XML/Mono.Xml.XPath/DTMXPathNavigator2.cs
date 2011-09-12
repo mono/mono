@@ -5,6 +5,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2004 Novell Inc.
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 //

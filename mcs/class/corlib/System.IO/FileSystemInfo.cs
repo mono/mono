@@ -3,6 +3,7 @@
 // System.IO.FileSystemInfo.cs 
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
 //                 Dan Lewis (dihlewis@yahoo.co.uk)
