@@ -658,7 +658,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual ("FOO", ((ObsoleteAttribute) attrs [0]).Message, "#B3");
 			}
 		}
-
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddDeclarativeSecurityAlreadyCreated ()
@@ -717,7 +717,7 @@ namespace MonoTests.System.Reflection.Emit
 			mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 			mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 		}
-
+#endif
 		[AttributeUsage (AttributeTargets.Parameter)]
 		class ParamAttribute : Attribute
 		{

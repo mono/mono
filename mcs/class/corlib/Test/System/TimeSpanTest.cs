@@ -794,7 +794,7 @@ public class TimeSpanTest {
 		ParseHelper (" 13:45:15 ",false, false, "13:45:15");
 		ParseHelper (" -1:2:3 ", false, false, "-01:02:03");
 
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		// In 4.0 when the first part is out of range, it parses it as day.
 		ParseHelper (" 25:11:12 ", false, false, "25.11:12:00");
 		ParseHelper (" 24:11:12 ", false, false, "24.11:12:00");
@@ -811,14 +811,14 @@ public class TimeSpanTest {
 		ParseHelper ("24:60:60", false, true, "dontcare");
 		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
 
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		// In 4.0 when a section has more than 7 digits an OverflowException is thrown.
 		ParseHelper (" 1:2:3:12345678 ", false, true, "dontcare");
 #else
 		ParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
 #endif
 
-#if NET_4_0		
+#if NET_4_0	|| NET_2_1
 		ParseHelper ("10:11:12:13", false, false, "10.11:12:13"); // Days using : instead of . as separator
 		ParseHelper ("10.11", true, false, "dontcare"); // days+hours is invalid
 
@@ -894,7 +894,7 @@ public class TimeSpanTest {
 	{
 		// hours should be between 0 and 23 but format is also invalid (too many dots)
 		// In 2.0 overflow as precedence over format, but not in 4.0
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		try {
 			TimeSpan.Parse ("0.99.99.0");
 			Assert.Fail ("#A1");
