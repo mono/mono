@@ -162,7 +162,7 @@ namespace System.Globalization {
 		public string CultureName {
 			get {
 				if (customCultureName == null)
-					customCultureName = ci.Name;
+					customCultureName = ci == null ? String.Empty : ci.Name;
 				return customCultureName;
 			}
 		}
