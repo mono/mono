@@ -959,6 +959,8 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
 
 #endif /* defined(GC_WIN32_THREADS)  && !cygwin */
 
+#define UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS 1
+
  /*
   * Fully portable code should call GC_INIT() from the main program
   * before making any other GC_ calls.  On most platforms this is a

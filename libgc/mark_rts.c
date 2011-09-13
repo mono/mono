@@ -32,6 +32,7 @@ struct roots {
 struct roots GC_static_roots[MAX_ROOT_SETS];
 */
 
+
 int GC_no_dls = 0;	/* Register dynamic library data segments.	*/
 
 static int n_root_sets = 0;
@@ -87,7 +88,7 @@ ptr_t p;
     return(FALSE);
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE)
+#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 /* 
 #   define LOG_RT_SIZE 6
 #   define RT_SIZE (1 << LOG_RT_SIZE)  -- Power of 2, may be != MAX_ROOT_SETS
@@ -175,7 +176,7 @@ GC_bool tmp;
 {
     struct roots * old;
     
-#   if defined(MSWIN32) || defined(MSWINCE)
+#   if defined(MSWIN32) || defined(MSWINCE) && !UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
       /* Spend the time to ensure that there are no overlapping	*/
       /* or adjacent intervals.					*/
       /* This could be done faster with e.g. a			*/
@@ -222,7 +223,7 @@ GC_bool tmp;
                   GC_root_size -= (other -> r_end - other -> r_start);
                   other -> r_start = GC_static_roots[n_root_sets-1].r_start;
                   other -> r_end = GC_static_roots[n_root_sets-1].r_end;
-                                  n_root_sets--;
+                  n_root_sets--;
               }
             }
           return;
@@ -285,7 +286,7 @@ int i;
     n_root_sets--;
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE)
+#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 static void GC_rebuild_root_index()
 {
     register int i;
@@ -313,7 +314,7 @@ void GC_remove_tmp_roots()
     #endif
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE)
+#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 void GC_remove_roots(b, e)
 char * b; char * e;
 {
