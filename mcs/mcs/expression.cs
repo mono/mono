@@ -6779,7 +6779,7 @@ namespace Mono.CSharp
 		public void CheckStructThisDefiniteAssignment (ResolveContext rc)
 		{
 			//
-			// It's null for all cases when we don't need to check this
+			// It's null for all cases when we don't need to check `this'
 			// definitive assignment
 			//
 			if (variable_info == null)
@@ -7602,14 +7602,33 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			return DoResolveName (ec, null);
+			var e = DoResolveName (rc, null);
+
+			if (!rc.OmitStructFlowAnalysis) {
+				var fe = e as FieldExpr;
+				if (fe != null) {
+					fe.VerifyAssignedStructField (rc, null);
+				}
+			}
+
+			return e;
 		}
 
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext rc, Expression rhs)
 		{
-			return DoResolveName (ec, right_side);
+			var e = DoResolveName (rc, rhs);
+
+			if (!rc.OmitStructFlowAnalysis) {
+				var fe = e as FieldExpr;
+				if (fe != null && fe.InstanceExpression is FieldExpr) {
+					fe = (FieldExpr) fe.InstanceExpression;
+					fe.VerifyAssignedStructField (rc, rhs);
+				}
+			}
+
+			return e;
 		}
 
 		Expression DoResolveName (ResolveContext rc, Expression right_side)

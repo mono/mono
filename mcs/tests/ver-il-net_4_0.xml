@@ -44393,6 +44393,21 @@
       </method>
     </type>
   </test>
+  <test name="test-828.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">

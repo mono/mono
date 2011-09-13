@@ -237,18 +237,18 @@ namespace Mono.CSharp
 
 			public bool IsFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && IsUnreachable)
+				if (/*!var.IsParameter &&*/ IsUnreachable)
 					return true;
 
-				return var.IsFieldAssigned (locals, name);
+				return var.IsStructFieldAssigned (locals, name);
 			}
 
 			public void SetFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && IsUnreachable)
+				if (/*!var.IsParameter &&*/ IsUnreachable)
 					return;
 
-				var.SetFieldAssigned (locals, name);
+				var.SetStructFieldAssigned (locals, name);
 			}
 
 			public bool IsUnreachable {
@@ -456,7 +456,7 @@ namespace Mono.CSharp
 			return CurrentUsageVector.IsAssigned (vi, false);
 		}
 
-		public bool IsFieldAssigned (VariableInfo vi, string field_name)
+		public bool IsStructFieldAssigned (VariableInfo vi, string field_name)
 		{
 			return CurrentUsageVector.IsAssigned (vi, false) || CurrentUsageVector.IsFieldAssigned (vi, field_name);
 		}
@@ -1067,8 +1067,7 @@ namespace Mono.CSharp
 	}
 
 	// <summary>
-	//   This is used by the flow analysis code to keep track of the type of local variables
-	//   and variables.
+	//   This is used by the flow analysis code to keep track of the type of local variables.
 	//
 	//   The flow code uses a BitVector to keep track of whether a variable has been assigned
 	//   or not.  This is easy for fundamental types (int, char etc.) or reference types since
@@ -1082,8 +1081,6 @@ namespace Mono.CSharp
 	// </summary>
 	public class TypeInfo
 	{
-		public readonly TypeSpec Type;
-
 		// <summary>
 		//   Total number of bits a variable of this type consumes in the flow vector.
 		// </summary>
@@ -1103,7 +1100,7 @@ namespace Mono.CSharp
 		// <summary>
 		//   If this is a struct.
 		// </summary>
-		public readonly bool IsStruct;	     
+		public readonly bool IsStruct;
 
 		// <summary>
 		//   If this is a struct, all fields which are structs theirselves.
@@ -1112,6 +1109,8 @@ namespace Mono.CSharp
 
 		readonly StructInfo struct_info;
 		private static Dictionary<TypeSpec, TypeInfo> type_hash;
+
+		static readonly TypeInfo simple_type = new TypeInfo (1);
 		
 		static TypeInfo ()
 		{
@@ -1124,34 +1123,11 @@ namespace Mono.CSharp
 			StructInfo.field_type_hash = new Dictionary<TypeSpec, StructInfo> ();
 		}
 
-		public static TypeInfo GetTypeInfo (TypeSpec type)
+		TypeInfo (int totalLength)
 		{
-			TypeInfo info;
-			if (type_hash.TryGetValue (type, out info))
-				return info;
-
-			info = new TypeInfo (type);
-			type_hash.Add (type, info);
-			return info;
+			this.TotalLength = totalLength;
 		}
-
-		private TypeInfo (TypeSpec type)
-		{
-			this.Type = type;
-
-			struct_info = StructInfo.GetStructInfo (type);
-			if (struct_info != null) {
-				Length = struct_info.Length;
-				TotalLength = struct_info.TotalLength;
-				SubStructInfo = struct_info.StructFields;
-				IsStruct = true;
-			} else {
-				Length = 0;
-				TotalLength = 1;
-				IsStruct = false;
-			}
-		}
-
+		
 		TypeInfo (StructInfo struct_info, int offset)
 		{
 			this.struct_info = struct_info;
@@ -1159,10 +1135,9 @@ namespace Mono.CSharp
 			this.Length = struct_info.Length;
 			this.TotalLength = struct_info.TotalLength;
 			this.SubStructInfo = struct_info.StructFields;
-			this.Type = struct_info.Type;
 			this.IsStruct = true;
 		}
-
+		
 		public int GetFieldIndex (string name)
 		{
 			if (struct_info == null)
@@ -1171,12 +1146,32 @@ namespace Mono.CSharp
 			return struct_info [name];
 		}
 
-		public TypeInfo GetSubStruct (string name)
+		public TypeInfo GetStructField (string name)
 		{
 			if (struct_info == null)
 				return null;
 
 			return struct_info.GetStructField (name);
+		}
+
+		public static TypeInfo GetTypeInfo (TypeSpec type)
+		{
+			if (!type.IsStruct)
+				return simple_type;
+
+			TypeInfo info;
+			if (type_hash.TryGetValue (type, out info))
+				return info;
+
+			var struct_info = StructInfo.GetStructInfo (type);
+			if (struct_info != null) {
+				info = new TypeInfo (struct_info, 0);
+			} else {
+				info = simple_type;
+			}
+
+			type_hash.Add (type, info);
+			return info;
 		}
 
 		// <summary>
@@ -1193,7 +1188,7 @@ namespace Mono.CSharp
 			for (int i = 0; i < struct_info.Count; i++) {
 				var field = struct_info.Fields [i];
 
-				if (!branching.IsFieldAssigned (vi, field.Name)) {
+				if (!branching.IsStructFieldAssigned (vi, field.Name)) {
 					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling the default struct contructor from a constructor initializer",
@@ -1212,8 +1207,8 @@ namespace Mono.CSharp
 
 		public override string ToString ()
 		{
-			return String.Format ("TypeInfo ({0}:{1}:{2}:{3})",
-					      Type, Offset, Length, TotalLength);
+			return String.Format ("TypeInfo ({0}:{1}:{2})",
+					      Offset, Length, TotalLength);
 		}
 
 		class StructInfo
@@ -1251,7 +1246,9 @@ namespace Mono.CSharp
 				for (int i = 0; i < fields.Count; i++) {
 					var field = fields [i];
 
-					sinfo [i] = GetStructInfo (field.MemberType);
+					if (field.MemberType.IsStruct)
+						sinfo [i] = GetStructInfo (field.MemberType);
+
 					if (sinfo [i] == null)
 						field_hash.Add (field.Name, ++Length);
 					else if (sinfo [i].InTransit) {
@@ -1310,7 +1307,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type)
 			{
-				if (!type.IsStruct || type.BuiltinType > 0)
+				if (type.BuiltinType > 0)
 					return null;
 
 				StructInfo info;
@@ -1465,23 +1462,16 @@ namespace Mono.CSharp
 				vector [Offset] = true;
 			else
 				vector.SetRange (Offset, Length);
+
 			is_ever_assigned = true;
 		}
 
-		public bool IsFieldAssigned (ResolveContext ec, string name, Location loc)
+		public bool IsStructFieldAssigned (ResolveContext ec, string name)
 		{
-			if (!ec.DoFlowAnalysis ||
-				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
-				ec.CurrentBranching.IsFieldAssigned (this, name))
-				return true;
-
-			ec.Report.Error (170, loc,
-				      "Use of possibly unassigned field `" + name + "'");
-			ec.CurrentBranching.SetFieldAssigned (this, name);
-			return false;
+			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsStructFieldAssigned (this, name);
 		}
 
-		public bool IsFieldAssigned (MyBitVector vector, string field_name)
+		public bool IsStructFieldAssigned (MyBitVector vector, string field_name)
 		{
 			int field_idx = TypeInfo.GetFieldIndex (field_name);
 
@@ -1491,13 +1481,13 @@ namespace Mono.CSharp
 			return vector [Offset + field_idx];
 		}
 
-		public void SetFieldAssigned (ResolveContext ec, string name)
+		public void SetStructFieldAssigned (ResolveContext ec, string name)
 		{
 			if (ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetFieldAssigned (this, name);
 		}
 
-		public void SetFieldAssigned (MyBitVector vector, string field_name)
+		public void SetStructFieldAssigned (MyBitVector vector, string field_name)
 		{
 			int field_idx = TypeInfo.GetFieldIndex (field_name);
 
@@ -1508,9 +1498,9 @@ namespace Mono.CSharp
 			is_ever_assigned = true;
 		}
 
-		public VariableInfo GetSubStruct (string name)
+		public VariableInfo GetStructFieldInfo (string fieldName)
 		{
-			TypeInfo type = TypeInfo.GetSubStruct (name);
+			TypeInfo type = TypeInfo.GetStructField (fieldName);
 
 			if (type == null)
 				return null;
