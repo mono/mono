@@ -1058,6 +1058,30 @@ namespace MonoTests.System.Data
 		}
 	
 		[Test]
+		[ExpectedException (typeof (EvaluateException))]
+		public void CloneExtendedProperties1 ()
+		{
+			// Xamarin bug 666
+			DataTable table1 = new DataTable("Table1") ;
+
+			DataColumn c1 = table1.Columns.Add("c1", typeof(string), "'hello ' + c2") ; /* Should cause an exception */
+		}
+
+		[Test]
+		public void CloneExtendedProperties2 ()
+		{
+			// Xamarin bug 666
+			DataTable table1 = new 	DataTable("Table1") ;
+
+			DataColumn c1 = table1.Columns.Add("c1") ;
+			DataColumn c2 = table1.Columns.Add("c2") ;
+
+			c1.Expression = "'hello ' + c2";
+
+			DataTable t2 = table1.Clone(); // this should not cause an exception
+		}
+
+		[Test]
 		public void LoadDataException ()
 		{
 			DataTable table = new DataTable ();
