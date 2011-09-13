@@ -42,6 +42,9 @@
 
 #include "sgen-gc.h"
 #include "sgen-bridge.h"
+#include "utils/mono-logger-internal.h"
+#include "utils/mono-time.h"
+
 
 typedef struct {
 	int size;
@@ -375,6 +378,9 @@ object_is_live (MonoObject **objp)
 
 static DynArray dfs_stack;
 
+static int dsf1_passes, dsf2_passes;
+
+
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {					\
 		MonoObject *dst = (MonoObject*)*(ptr);			\
@@ -395,6 +401,7 @@ dfs1 (HashEntry *obj_entry, HashEntry *src)
 	do {
 		MonoObject *obj;
 		char *start;
+		++dsf1_passes;
 
 		obj_entry = dyn_array_ptr_pop (&dfs_stack);
 		if (obj_entry) {
@@ -471,6 +478,7 @@ dfs2 (HashEntry *entry)
 
 	do {
 		entry = dyn_array_ptr_pop (&dfs_stack);
+		++dsf2_passes;
 
 		if (entry->scc_index >= 0) {
 			if (entry->scc_index != current_scc->index)
@@ -509,6 +517,15 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 	int i;
 	MonoGCBridgeSCC **api_sccs;
 	MonoGCBridgeXRef *api_xrefs;
+	SGEN_TV_DECLARE (atv);
+	SGEN_TV_DECLARE (btv);
+	int hash_table_size, sccs_size;
+	unsigned long step_1, step_2, step_3, step_4, step_5, step_6, step_7, step_8;
+	int fist_pass_links = 0, second_pass_links = 0, sccs_links = 0;
+	int max_sccs_links = 0;
+
+	dsf1_passes = dsf2_passes = 0;
+	SGEN_TV_GETTIME (atv);
 
 	g_assert (mono_sgen_need_bridge_processing ());
 
@@ -526,6 +543,9 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 	}
 	num_objs = j;
 
+	SGEN_TV_GETTIME (btv);
+	step_1 = SGEN_TV_ELAPSED (atv, btv);
+
 	//g_print ("%d bridge objects\n", num_objs);
 
 	/* first DFS pass */
@@ -535,6 +555,9 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 	current_time = 0;
 	for (i = 0; i < num_objs; ++i)
 		dfs1 (get_hash_entry (objs [i]), NULL);
+
+	SGEN_TV_GETTIME (atv);
+	step_2 = SGEN_TV_ELAPSED (btv, atv);
 
 	//g_print ("%d entries - hash size %d\n", num_hash_entries, hash_size);
 
@@ -551,17 +574,22 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 			g_assert (entry->finishing_time >= 0);
 			all_entries [j++] = entry;
 			++length;
+			fist_pass_links += entry->srcs.size;
 		}
 		if (length > max_entries)
 			max_entries = length;
 	}
 	g_assert (j == num_hash_entries);
+	hash_table_size = num_hash_entries;
 
 	//g_print ("max hash bucket length %d\n", max_entries);
 
 	/* sort array according to decreasing finishing time */
 
 	qsort (all_entries, num_hash_entries, sizeof (HashEntry*), compare_hash_entries);
+
+	SGEN_TV_GETTIME (btv);
+	step_3 = SGEN_TV_ELAPSED (atv, btv);
 
 	/* second DFS pass */
 
@@ -580,6 +608,16 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 		}
 	}
 
+	sccs_size = sccs.size;
+
+	for (i = 0; i < num_hash_entries; ++i) {
+		HashEntry *entry = all_entries [i];
+		second_pass_links += entry->srcs.size;
+	}
+
+	SGEN_TV_GETTIME (atv);
+	step_4 = SGEN_TV_ELAPSED (btv, atv);
+
 	//g_print ("%d sccs\n", sccs.size);
 
 	dyn_array_uninit (&dfs_stack);
@@ -592,6 +630,8 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 		g_assert (scc->index == i);
 		if (scc->num_bridge_entries)
 			++num_sccs;
+		sccs_links += scc->xrefs.size;
+		max_sccs_links = MAX (max_sccs_links, scc->xrefs.size);
 	}
 
 	api_sccs = mono_sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeSCC*) * num_sccs, INTERNAL_MEM_BRIDGE_DATA);
@@ -638,6 +678,9 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 		}
 	}
 
+	SGEN_TV_GETTIME (btv);
+	step_5 = SGEN_TV_ELAPSED (atv, btv);
+
 	/* free data */
 
 	j = 0;
@@ -659,11 +702,17 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 
 	free_data ();
 
+	SGEN_TV_GETTIME (atv);
+	step_6 = SGEN_TV_ELAPSED (btv, atv);
+
 	//g_print ("%d sccs containing bridges - %d max bridge objects - %d max xrefs\n", j, max_entries, max_xrefs);
 
 	/* callback */
 
 	bridge_callbacks.cross_references (num_sccs, api_sccs, num_xrefs, api_xrefs);
+
+	SGEN_TV_GETTIME (btv);
+	step_7 = SGEN_TV_ELAPSED (atv, btv);
 
 	/*Release for finalization those objects we no longer care. */
 	for (i = 0; i < num_sccs; ++i) {
@@ -683,6 +732,23 @@ mono_sgen_bridge_processing (int num_objs, MonoObject **objs)
 	mono_sgen_free_internal_dynamic (api_sccs, sizeof (MonoGCBridgeSCC*) * num_sccs, INTERNAL_MEM_BRIDGE_DATA);
 
 	mono_sgen_free_internal_dynamic (api_xrefs, sizeof (MonoGCBridgeXRef) * num_xrefs, INTERNAL_MEM_BRIDGE_DATA);
+
+	SGEN_TV_GETTIME (atv);
+	step_8 = SGEN_TV_ELAPSED (btv, atv);
+
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_BRIDGE num-objects %d num_hash_entries %d sccs size %d init %.2fms df1 %.2fms sort %.2fms dfs2 %.2fms setup-cb %.2fms free-data %.2fms user-cb %.2fms clenanup %.2fms links %d/%d/%d/%d dfs passes %d/%d",
+		num_objs, hash_table_size, sccs.size,
+		step_1 / 1000.0f,
+		step_2 / 1000.0f,
+		step_3 / 1000.0f,
+		step_4 / 1000.0f,
+		step_5 / 1000.0f,
+		step_6 / 1000.0f,
+		step_7 / 1000.0f,
+		step_8 / 1000.f,
+		fist_pass_links, second_pass_links, sccs_links, max_sccs_links,
+		dsf1_passes, dsf2_passes);
+
 }
 
 static gboolean
