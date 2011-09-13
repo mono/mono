@@ -111,13 +111,13 @@ namespace System.Xml
 
 		public XmlTextReader (string url, XmlNameTable nt)
 		{
-			string uriString;
-			Stream stream = GetStreamFromUrl (url, out uriString);
+			reader_uri = resolver.ResolveUri (null, url);
+			string uriString = (reader_uri == null) ? String.Empty : reader_uri.ToString ();
 			XmlParserContext ctx = new XmlParserContext (nt,
 				new XmlNamespaceManager (nt),
 				String.Empty,
 				XmlSpace.None);
-			this.InitializeContext (uriString, ctx, new XmlStreamReader (stream), XmlNodeType.Document);
+			this.InitializeContext (uriString, ctx, null, XmlNodeType.Document);
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)
@@ -138,6 +138,7 @@ namespace System.Xml
 			}
 			this.XmlResolver = resolver;
 			string uriString;
+
 			Stream stream = GetStreamFromUrl (url, out uriString);
 			this.InitializeContext (uriString, context, new XmlStreamReader (stream), fragType);
 		}
@@ -180,7 +181,12 @@ namespace System.Xml
 			InitializeContext (url, context, fragment, fragType);
 		}
 
-		private Stream GetStreamFromUrl (string url, out string absoluteUriString)
+		Uri ResolveUri (string url)
+		{
+			return resolver.ResolveUri (null, url);
+		}
+
+		Stream GetStreamFromUrl (string url, out string absoluteUriString)
 		{
 #if NET_2_1
 			if (url == null)
@@ -188,7 +194,7 @@ namespace System.Xml
 			if (url.Length == 0)
 				throw new ArgumentException ("url");
 #endif
-			Uri uri = resolver.ResolveUri (null, url);
+			Uri uri = ResolveUri (url);
 			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
 			return resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
 		}
@@ -928,6 +934,7 @@ namespace System.Xml
 
 		private StringBuilder valueBuffer;
 
+		Uri reader_uri;
 		private TextReader reader;
 		private char [] peekChars;
 		private int peekCharsIndex;
@@ -1239,6 +1246,12 @@ namespace System.Xml
 
 		private bool ReadTextReader (int remained)
 		{
+			if (reader == null && reader_uri != null) {
+				Uri uri = reader_uri;
+				reader_uri = null;
+				string uriString;
+				reader = new XmlStreamReader (GetStreamFromUrl (uri.ToString (), out uriString));
+			}
 			if (peekCharsLength < 0) {	// initialized buffer
 				peekCharsLength = reader.Read (peekChars, 0, peekChars.Length);
 				return peekCharsLength > 0;
