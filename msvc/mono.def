@@ -777,6 +777,6 @@ mono_verify_corlib
 mono_vfree
 mono_vtable_get_static_field_data
 mono_walk_stack
-
 mono_runtime_unhandled_exception_policy_get
 mono_runtime_unhandled_exception_policy_set
+set_vprintf_func

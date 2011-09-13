@@ -31,6 +31,24 @@
 /* The current fatal levels, error is always fatal */
 static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 
+
+
+typedef void (*vprintf_func)(const char* msg, va_list args);
+static vprintf_func our_vprintf = vprintf;
+
+void set_vprintf_func(vprintf_func func)
+{
+	our_vprintf = func;
+}
+
+static void our_printf(const char* msg, ...)
+{
+	va_list args;
+	va_start (args, msg);
+	our_vprintf (msg, args);
+	va_end (args);
+}
+
 #if PLATFORM_ANDROID
 #include <android/log.h>
 
@@ -70,7 +88,7 @@ g_print (const gchar *format, ...)
 
 	va_start (args, format);
 
-	out_vfprintf (stdout, format, args);
+	our_vprintf(format, args);
 
 	va_end (args);
 }
@@ -109,6 +127,8 @@ g_log_set_fatal_mask (const gchar *log_domain, GLogLevelFlags fatal_mask)
 }
 
 void
+
+
 g_logv (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, va_list args)
 {
 	char *msg;
@@ -122,7 +142,7 @@ g_logv (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, 
 		log_domain != NULL ? ": " : "",
 		msg);
 #else
-	printf ("%s%s%s\n",
+	our_printf ("%s%s%s\n",
 		log_domain != NULL ? log_domain : "",
 		log_domain != NULL ? ": " : "",
 		msg);
