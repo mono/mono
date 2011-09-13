@@ -880,6 +880,8 @@ namespace System.Data {
 				if (isEmpty || !Copy.Columns.Contains (column.ColumnName))
 					Copy.Columns.Add (column.Clone ());
 			}
+			foreach (DataColumn column in Copy.Columns)
+				column.CompileExpression ();
 
 			CopyConstraints (Copy);
 			// add primary key to the copy
