@@ -17,6 +17,7 @@
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -704,13 +705,8 @@ namespace System.Data {
 			// Use the property to set the expression as it updates compiledExpression, if any.
 			copy.Expression = _expression;
 			//Copy.ExtendedProperties
-			if (_extendedProperties.Count > 0) {
-				Array extPropArray = Array.CreateInstance (typeof (object), _extendedProperties.Count);
-				_extendedProperties.CopyTo (extPropArray, 0);
-				for (var i = 0; i < _extendedProperties.Count; i++)
-					copy.ExtendedProperties.Add (extPropArray.GetValue(i), 
-					                             ExtendedProperties[extPropArray.GetValue(i)]);
-			}
+			foreach (object key in _extendedProperties.Keys)
+				copy.ExtendedProperties.Add (key, ExtendedProperties[key]);
 			copy._maxLength = _maxLength;
 			copy._nameSpace = _nameSpace;
 			copy._prefix = _prefix;
