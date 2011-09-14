@@ -147,8 +147,6 @@ namespace System.Web.Compilation
 				return LoadTypeFromBin (_compiler, Parser);
 			
 			Type type = null;
-			// This is not called if compilation failed.
-			// Returning null makes the caller throw an InvalidCastException
 			Assembly assembly = results != null ? results.CompiledAssembly : null;
 			if (assembly != null) {
 				type = assembly.GetType (GetClassType (_compiler, Parser));
