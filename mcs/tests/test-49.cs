@@ -326,6 +326,19 @@ class X {
 
 		return 1;
 	}
+	
+	static int tests2 (string s)
+	{
+		switch (s){
+		case "one":
+			goto case null;
+		case "two":
+			goto default;
+		case null:
+		default:
+			return 3;
+		}
+	}
 
 	static int testn (string s)
 	{
@@ -693,6 +706,13 @@ class X {
 		if (!bug_78860 ())
 			return 60;
 		
+		if (tests2 ("a") != 3)
+			return 71;
+		if (tests2 ("one") != 3)
+			return 72;
+		if (tests2 ("two") != 3)
+			return 73;
+
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
