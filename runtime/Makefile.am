@@ -68,6 +68,10 @@ if INSTALL_MONOTOUCH
 build_profiles += monotouch
 endif
 
+if INSTALL_MOBILE
+build_profiles += mobile
+endif
+
 endif
 
 if BUILD_MCS

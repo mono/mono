@@ -10,6 +10,7 @@ net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors
 moonlight_raw_SUBDIRS := build class
 monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class
+mobile_SUBDIRS := build class
 net_3_5_SUBDIRS := build class tools/xbuild
 net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 
@@ -107,6 +108,7 @@ $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           
 $(_boot_:%=profile-do--moonlight--%):         profile-do--moonlight--%:         profile-do--moonlight_raw--%
 $(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--build--%
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%
+$(_boot_:%=profile-do--mobile--%):            profile-do--mobile--%:         profile-do--build--%
 $(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:     profile-do--build--%
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%

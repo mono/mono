@@ -27,7 +27,7 @@ ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 PROFILE_2_OR_4 := $(filter net_2_0 net_4_0, $(PROFILE))
-NOT_SL := $(filter net_2_0 net_4_0 monotouch monodroid, $(PROFILE))
+NOT_SL := $(filter net_2_0 net_4_0 monotouch monodroid mobile, $(PROFILE))
 endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
