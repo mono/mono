@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 struct S
 {
@@ -762,7 +763,7 @@ class Tester : Base
 	public static int Main ()
 	{
 		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-					where test.GetParameters ().Length == 0
+					where test.GetParameters ().Length == 0 && !test.IsDefined (typeof (CompilerGeneratedAttribute), false)
 					orderby test.Name
 					select RunTest (test);
 
