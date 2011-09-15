@@ -356,10 +356,10 @@ namespace System.IO {
 					canonicalize = start > 0;
 					
 					var cwd = Directory.GetCurrentDirectory();
-                    if (cwd.EndsWith(DirectorySeparatorStr))
-                        path = cwd + path;
-                    else
-                        path = cwd + DirectorySeparatorChar + path;
+					if (cwd.EndsWith(DirectorySeparatorStr))
+						path = cwd + path;
+					else
+						path = cwd + DirectorySeparatorChar + path;
 				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
 					IsDsc (path [0]) &&
