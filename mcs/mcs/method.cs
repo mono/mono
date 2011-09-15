@@ -1222,6 +1222,9 @@ namespace Mono.CSharp {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
+						} else if ((ModFlags & Modifiers.ASYNC) != 0) {
+							Report.Error (4009, Location, "`{0}': an entry point cannot be async method",
+								GetSignatureForError ());
 						} else {
 							SetIsUsed ();
 							Parent.DeclaringAssembly.EntryPoint = this;

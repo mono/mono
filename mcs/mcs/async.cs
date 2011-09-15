@@ -64,8 +64,7 @@ namespace Mono.CSharp
 			}
 
 			if (rc.IsUnsafe) {
-				// TODO: New error code
-				rc.Report.Error (-1900, loc,
+				rc.Report.Error (4004, loc,
 					"The `await' operator cannot be used in an unsafe context");
 			}
 
@@ -443,17 +442,15 @@ namespace Mono.CSharp
 					return;
 				}
 
-				// TODO:
 				if (p is ArglistParameter) {
-					host.Compiler.Report.Error (1636, p.Location,
-						"__arglist is not allowed in parameter list of iterators");
+					host.Compiler.Report.Error (4006, p.Location,
+						"__arglist is not allowed in parameter list of async methods");
 					return;
 				}
 
-				// TODO:
 				if (parameters.Types[i].IsPointer) {
-					host.Compiler.Report.Error (1637, p.Location,
-						"Iterators cannot have unsafe parameters or yield types");
+					host.Compiler.Report.Error (4005, p.Location,
+						"Async methods cannot have unsafe parameters");
 					return;
 				}
 			}
