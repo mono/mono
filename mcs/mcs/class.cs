@@ -2575,12 +2575,6 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				Method method = m as Method;
-				if (method != null && method.ParameterInfo.HasExtensionMethodType) {
-					Report.Error (1105, m.Location, "`{0}': Extension methods must be declared static", m.GetSignatureForError ());
-					continue;
-				}
-
 				Report.Error (708, m.Location, "`{0}': cannot declare instance members in a static class", m.GetSignatureForError ());
 			}
 

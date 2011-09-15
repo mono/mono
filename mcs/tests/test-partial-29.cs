@@ -11,3 +11,15 @@ static partial class C
 	{
 	}
 }
+
+partial class D
+{
+	static partial void Method(this int a);
+}
+
+static partial class D
+{
+	static partial void Method(this int a)
+	{
+	}
+}

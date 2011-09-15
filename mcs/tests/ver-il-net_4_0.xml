@@ -57342,6 +57342,11 @@
         <size>1</size>
       </method>
     </type>
+    <type name="D">
+      <method name="Void Method(Int32)">
+        <size>1</size>
+      </method>
+    </type>
   </test>
   <test name="test-var-01.cs">
     <type name="Test">

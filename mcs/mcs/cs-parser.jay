@@ -1247,15 +1247,9 @@ method_header
 				"Constraints are not allowed on non-generic declarations");
 		}
 
-		Method method = new Method (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
-				     name, current_local_parameters, (Attributes) $1);
+		var method = Method.Create (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
+				     name, current_local_parameters, (Attributes) $1, $10 != null);
 				     
-		if ($10 != null && ((method.ModFlags & Modifiers.OVERRIDE) != 0 || method.IsExplicitImpl)) {
-			report.Error (460, method.Location,
-				"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
-				method.GetSignatureForError ());
-		}
-
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
@@ -1291,7 +1285,6 @@ method_header
 			report.Error (80, lexer.Location,
 				      "Constraints are not allowed on non-generic declarations");
 
-		Method method;
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
@@ -1302,25 +1295,10 @@ method_header
 		}
 
 		var modifiers = (Modifiers) $2;
+		modifiers |= Modifiers.PARTIAL;
 
-		const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |
-			Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
-
-		if ((modifiers & invalid_partial_mod) != 0) {
-			report.Error (750, name.Location, "A partial method cannot define access modifier or " +
-       			"any of abstract, extern, new, override, sealed, or virtual modifiers");
-			modifiers &= ~invalid_partial_mod;
-		}
-
-		if ((current_class.ModFlags & Modifiers.PARTIAL) == 0) {
-			report.Error (751, name.Location, "A partial method must be declared within a " +
-       			"partial class or partial struct");
-		}
-		
-		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
-		
-		method = new Method (current_class, generic, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
-				     modifiers, name, current_local_parameters, (Attributes) $1);
+		var method = Method.Create (current_class, generic, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
+				     modifiers, name, current_local_parameters, (Attributes) $1, $11 != null);
 
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1338,8 +1316,8 @@ method_header
 		report.Error (1585, name.Location, 
 			"Member modifier `{0}' must precede the member type and name", ModifiersExtensions.Name ((Modifiers) $4));
 
-		Method method = new Method (current_class, null, (FullNamedExpression) $3,
-					    0, name, (ParametersCompiled) $7, (Attributes) $1);
+		var method = Method.Create (current_class, null, (FullNamedExpression) $3,
+					    0, name, (ParametersCompiled) $7, (Attributes) $1, false);
 
 		current_local_parameters = (ParametersCompiled) $7;
 
