@@ -26,6 +26,8 @@ PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
 PLATFORM_PATH_SEPARATOR = ;
 
+override CURDIR:=$(shell cygpath -m $(CURDIR))
+
 ## not so simple :-)
 #PLATFORM_AOT_SUFFIX = .dll
 
