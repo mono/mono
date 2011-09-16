@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+Mono.Data.Sqlite_2.0/MonoPInvokeCallbackAttribute.cs
 Mono.Data.Sqlite_2.0/SQLite3.cs
 Mono.Data.Sqlite_2.0/SQLite3_UTF16.cs
 Mono.Data.Sqlite_2.0/SQLiteBase.cs
