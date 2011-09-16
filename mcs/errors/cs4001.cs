@@ -1,4 +1,4 @@
-// CS1991: Cannot await `void' expression
+// CS4001: Cannot await `void' expression
 // Line: 10
 // Compiler options: -langversion:future
 

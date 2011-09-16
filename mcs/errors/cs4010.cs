@@ -1,4 +1,4 @@
-// CS1983: The return type of an async method must be void, Task, or Task<T>
+// CS4010: Cannot convert async lambda expression to delegate type `System.Func<bool>'
 // Line: 16
 // Compiler options: -langversion:future
 

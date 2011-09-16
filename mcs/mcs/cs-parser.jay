@@ -6707,6 +6707,8 @@ static string GetTokenName (int token)
 		return "add";
 	case Token.ASYNC:
 		return "async";
+	case Token.AWAIT:
+		return "await";		
 	case Token.BASE:
 		return "base";
 	case Token.BREAK:

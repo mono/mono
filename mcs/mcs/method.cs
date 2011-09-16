@@ -1182,6 +1182,12 @@ namespace Mono.CSharp {
 				}
 
 				if ((ModFlags & Modifiers.ASYNC) != 0) {
+					if (ReturnType.Kind != MemberKind.Void &&
+						ReturnType != Module.PredefinedTypes.Task.TypeSpec &&
+						!ReturnType.IsGenericTask) {
+						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
+					}
+
 					AsyncInitializer.Create (this, block, parameters, Parent.PartialContainer, ReturnType, Location);
 				}
 			}

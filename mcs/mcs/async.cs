@@ -120,12 +120,12 @@ namespace Mono.CSharp
 
 			protected override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
 			{
-				Error_WrongGetAwaiter (rc, loc, type);
+				Error_OperatorCannotBeApplied (rc, type);
 			}
 
 			protected override void Error_OperatorCannotBeApplied (ResolveContext rc, TypeSpec type)
 			{
-				rc.Report.Error (1991, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
+				rc.Report.Error (4001, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
 			}
 		}
 
@@ -287,16 +287,9 @@ namespace Mono.CSharp
 			}
 		}
 
-		static void Error_WrongGetAwaiter (ResolveContext rc, Location loc, TypeSpec type)
-		{
-			rc.Report.Error (1986, loc,
-				"The `await' operand type `{0}' must have suitable GetAwaiter method",
-				type.GetSignatureForError ());
-		}
-
 		void Error_WrongAwaiterPattern (ResolveContext rc, TypeSpec awaiter)
 		{
-			rc.Report.Error (1999, loc, "The awaiter type `{0}' must have suitable IsCompleted, OnCompleted, and GetResult members",
+			rc.Report.Error (4011, loc, "The awaiter type `{0}' must have suitable IsCompleted, OnCompleted, and GetResult members",
 				awaiter.GetSignatureForError ());
 		}
 
@@ -334,7 +327,10 @@ namespace Mono.CSharp
 			bc.Report.SetPrinter (old);
 
 			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (ama.Type)) {
-				Error_WrongGetAwaiter (bc, expr.Location, expr.Type);
+				bc.Report.Error (1986, expr.Location,
+					"The `await' operand type `{0}' must have suitable GetAwaiter method",
+					expr.Type.GetSignatureForError ());
+
 				return false;
 			}
 
@@ -427,12 +423,6 @@ namespace Mono.CSharp
 
 		public static void Create (IMemberContext context, ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
 		{
-			if (returnType != null && returnType.Kind != MemberKind.Void &&
-				returnType != host.Module.PredefinedTypes.Task.TypeSpec &&
-				!returnType.IsGenericTask) {
-				host.Compiler.Report.Error (1983, loc, "The return type of an async method must be void, Task, or Task<T>");
-			}
-
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters[i];
 				Parameter.Modifier mod = p.ModFlags;

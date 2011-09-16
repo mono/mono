@@ -1157,7 +1157,15 @@ namespace Mono.CSharp {
 					}
 				} else {
 					if (is_async) {
-						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, body.ReturnType, loc);
+						var rt = body.ReturnType;
+						if (rt.Kind != MemberKind.Void &&
+							rt != ec.Module.PredefinedTypes.Task.TypeSpec &&
+							!rt.IsGenericTask) {
+							ec.Report.Error (4010, loc, "Cannot convert async {0} to delegate type `{1}'",
+								GetSignatureForError (), type.GetSignatureForError ());
+						}
+
+						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, rt, loc);
 					}
 
 					am = body.Compatible (ec);
