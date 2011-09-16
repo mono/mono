@@ -3567,13 +3567,22 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected bool IsTypePermitted ()
+		protected void IsTypePermitted ()
 		{
 			if (MemberType.IsSpecialRuntimeType) {
-				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
-				return false;
+				if (Parent is StateMachine) {
+					Report.Error (4012, Location,
+						"Parameters or local variables of type `{0}' cannot be declared in async methods or iterators",
+						MemberType.GetSignatureForError ());
+				} else if (Parent is HoistedStoreyClass) {
+					Report.Error (4013, Location,
+						"Local variables of type `{0}' cannot be used inside anonymous methods, lambda expressions or query expressions",
+						MemberType.GetSignatureForError ());
+				} else {
+					Report.Error (610, Location, 
+						"Field or property cannot be of type `{0}'", MemberType.GetSignatureForError ());
+				}
 			}
-			return true;
 		}
 
 		protected virtual bool CheckBase ()
