@@ -1352,13 +1352,12 @@ namespace System {
 				DomainUnload(this, null);
 		}
 
-#if !NET_2_1
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
 			return CADSerializer.SerializeObject (oref).GetBuffer();
 		}
-#endif
+
 		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg,
 		                                      out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
 		{
