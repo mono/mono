@@ -6832,7 +6832,7 @@ namespace Mono.CSharp
 			if (ignoreAnonymous || ec.CurrentAnonymousMethod == null)
 				return true;
 
-			if (ec.CurrentType.IsStruct && ec.CurrentIterator == null)
+			if (ec.CurrentType.IsStruct && !(ec.CurrentAnonymousMethod is StateMachineInitializer))
 				return false;
 
 			return true;

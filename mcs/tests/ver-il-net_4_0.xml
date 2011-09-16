@@ -54560,6 +54560,35 @@
       </method>
     </type>
   </test>
+  <test name="test-async-24.cs">
+    <type name="Struct">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] AsyncMethod()">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>62</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Struct+&lt;AsyncMethod&gt;c__async0">
+      <method name="Void MoveNext()">
+        <size>279</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>3</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
