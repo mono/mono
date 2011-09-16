@@ -29,6 +29,9 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     private bool _buildingSchema = false;
 #endif
+#if MONOTOUCH
+    GCHandle gch;
+#endif
     /// <summary>
     /// The user-defined functions registered on this connection
     /// </summary>
@@ -37,12 +40,19 @@ namespace Mono.Data.Sqlite
     internal SQLite3(SQLiteDateFormats fmt)
       : base(fmt)
     {
+#if MONOTOUCH
+      gch = GCHandle.Alloc (this);
+#endif
     }
 
     protected override void Dispose(bool bDisposing)
     {
       if (bDisposing)
         Close();
+#if MONOTOUCH
+      if (gch.IsAllocated)
+        gch.Free ();
+#endif
     }
 
     // It isn't necessary to cleanup any functions we've registered.  If the connection
@@ -866,7 +876,60 @@ namespace Mono.Data.Sqlite
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
+		
+#if MONOTOUCH
+    SQLiteUpdateCallback update_callback;
+    SQLiteCommitCallback commit_callback;
+    SQLiteRollbackCallback rollback_callback;
+		
+    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteUpdateCallback))]
+    static void update (IntPtr puser, int type, IntPtr database, IntPtr table, Int64 rowid)
+    {
+      SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
+      instance.update_callback (puser, type, database, table, rowid);
+    }
+			
+    internal override void SetUpdateHook (SQLiteUpdateCallback func)
+    {
+      update_callback = func;
+      if (func == null)
+        UnsafeNativeMethods.sqlite3_update_hook (_sql, null, IntPtr.Zero);
+      else
+        UnsafeNativeMethods.sqlite3_update_hook (_sql, update, GCHandle.ToIntPtr (gch));
+    }
 
+    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCommitCallback))]
+    static int commit (IntPtr puser)
+    {
+      SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
+      return instance.commit_callback (puser);
+    }
+		
+    internal override void SetCommitHook (SQLiteCommitCallback func)
+    {
+      commit_callback = func;
+      if (func == null)
+        UnsafeNativeMethods.sqlite3_commit_hook (_sql, null, IntPtr.Zero);
+      else
+        UnsafeNativeMethods.sqlite3_commit_hook (_sql, commit, GCHandle.ToIntPtr (gch));
+    }
+
+    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteRollbackCallback))]
+    static void rollback (IntPtr puser)
+    {
+      SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
+      instance.rollback_callback (puser);
+    }
+
+    internal override void SetRollbackHook (SQLiteRollbackCallback func)
+    {
+      rollback_callback = func;
+      if (func == null)
+        UnsafeNativeMethods.sqlite3_rollback_hook (_sql, null, IntPtr.Zero);
+      else
+        UnsafeNativeMethods.sqlite3_rollback_hook (_sql, rollback, GCHandle.ToIntPtr (gch));
+    }
+#else
     internal override void SetUpdateHook(SQLiteUpdateCallback func)
     {
       UnsafeNativeMethods.sqlite3_update_hook(_sql, func, IntPtr.Zero);
@@ -881,7 +944,7 @@ namespace Mono.Data.Sqlite
     {
       UnsafeNativeMethods.sqlite3_rollback_hook(_sql, func, IntPtr.Zero);
     }
-
+#endif
     /// <summary>
     /// Helper function to retrieve a column of data from an active statement.
     /// </summary>
