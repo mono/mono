@@ -1920,7 +1920,7 @@ class MDocUpdater : MDocCommand
 		NormalizeWhitespace(e);
 	}
 
-	private static string MakeAttributesValueString (object v, TypeReference valueType)
+	public static string MakeAttributesValueString (object v, TypeReference valueType)
 	{
 		if (v == null)
 			return "null";
@@ -1928,6 +1928,8 @@ class MDocUpdater : MDocCommand
 			return "typeof(" + v.ToString () + ")";
 		if (valueType.FullName == "System.String")
 			return "\"" + v.ToString () + "\"";
+		if (valueType.FullName == "System.Char")
+			return "'" + v.ToString () + "'";
 		if (v is Boolean)
 			return (bool)v ? "true" : "false";
 		TypeDefinition valueDef = valueType.Resolve ();
@@ -4469,7 +4471,11 @@ class CSharpFullMemberFormatter : MemberFormatter {
 				buf.Append ("ref ");
 		}
 		buf.Append (GetTypeName (parameter, () => parameter.ParameterType)).Append (" ");
-		return buf.Append (parameter.Name);
+		buf.Append (parameter.Name);
+		if (parameter.HasDefault && parameter.IsOptional && parameter.HasConstant) {
+			buf.AppendFormat (" = {0}", MDocUpdater.MakeAttributesValueString (parameter.Constant, parameter.ParameterType));
+		}
+		return buf;
 	}
 
 	protected override string GetPropertyDeclaration (PropertyDefinition property)
