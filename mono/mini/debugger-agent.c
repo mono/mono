@@ -5355,7 +5355,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		MonoInternalThread *thread;
 		DebuggerTlsData *tls;
 		MonoClass *env_class;
-		MonoMethod *exit_method;
+		MonoMethod *exit_method = NULL;
 		gpointer *args;
 		int exit_code;
 
