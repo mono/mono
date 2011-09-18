@@ -328,7 +328,7 @@ namespace System.Xml.Linq
 			get { return name; }
 			set {
 				if (name == null)
-					throw new ArgumentNullException ("value");
+					throw new ArgumentNullException ("name");
 				name = value;
 			}
 		}
