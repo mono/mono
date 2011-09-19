@@ -61,7 +61,10 @@ namespace Mono.Debugger.Soft
 
 		public EndPoint EndPoint {
 			get {
-				return conn.EndPoint;
+				var tcpConn = conn as TcpConnection;
+				if (tcpConn != null)
+					return tcpConn.EndPoint;
+				return null;
 			}
 		}
 
