@@ -116,6 +116,9 @@ namespace System.Threading.Tasks
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
 			: base (delegate { }, state, cancellationToken, creationOptions)
 		{
+			if (function == null)
+				throw new ArgumentNullException ("function");
+
 			this.function = function;
 			this.state = state;
 		}
