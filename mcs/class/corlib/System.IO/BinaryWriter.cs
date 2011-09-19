@@ -1,12 +1,14 @@
 //
 // System.IO.BinaryWriter
 //
-// Author:
+// Authors:
 //   Matt Kimball (matt@kimball.net)
+//   Marek Safar (marek.safar@gmail.com)
 //
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,15 +49,31 @@ namespace System.IO {
 		private byte [] buffer;
 		byte [] stringBuffer;
 		int maxCharsPerRound;
-		private bool disposed = false;
+		bool disposed;
 
-		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe) {
+		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe)
+		{
 		}
 
-		public BinaryWriter(Stream output) : this(output, Encoding.UTF8UnmarkedUnsafe) {
+		public BinaryWriter(Stream output) : this(output, Encoding.UTF8UnmarkedUnsafe)
+		{
 		}
-
-		public BinaryWriter(Stream output, Encoding encoding) {
+		
+#if NET_4_5
+		readonly bool leave_open;
+		
+		public BinaryWriter(Stream output, Encoding encoding)
+			: this (output, encoding, false)
+		{
+		}
+		
+		public BinaryWriter(Stream output, Encoding encoding, bool leaveOpen)
+#else
+		const bool leave_open = false;
+		
+		public BinaryWriter(Stream output, Encoding encoding)
+#endif
+		{
 			if (output == null) 
 				throw new ArgumentNullException("output");
 			if (encoding == null) 
@@ -63,6 +81,9 @@ namespace System.IO {
 			if (!output.CanWrite)
 				throw new ArgumentException(Locale.GetText ("Stream does not support writing or already closed."));
 
+#if NET_4_5
+			leave_open = leaveOpen;
+#endif
 			OutStream = output;
 			m_encoding = encoding;
 			buffer = new byte [16];
@@ -90,7 +111,7 @@ namespace System.IO {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing && OutStream != null)
+			if (disposing && OutStream != null && !leave_open)
 				OutStream.Close();
 			
 			buffer = null;

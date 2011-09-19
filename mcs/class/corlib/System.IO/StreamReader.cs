@@ -8,10 +8,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -137,9 +134,25 @@ namespace System.IO {
 
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)
 			: this (stream, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
-		
+
+#if NET_4_5
+		readonly bool leave_open;
+
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
+			: this (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, false)
 		{
+		}
+
+		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize, bool leaveOpen)
+#else
+		const bool leave_open = false;
+
+		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
+#endif
+		{
+#if NET_4_5
+			leave_open = leaveOpen;
+#endif
 			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
 
@@ -259,7 +272,7 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && base_stream != null)
+			if (disposing && base_stream != null && !leave_open)
 				base_stream.Close ();
 			
 			if (input_buffer != null && input_buffer.Length == DefaultBufferSize && input_buffer_recycle == null) {

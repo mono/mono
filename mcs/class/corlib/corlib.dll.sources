@@ -182,6 +182,7 @@ System/InvalidCastException.cs
 System/InvalidOperationException.cs
 System/InvalidProgramException.cs
 System/InvalidTimeZoneException.cs
+System/IProgress.cs
 System/IServiceProvider.cs
 System/KnownTerminals.cs
 System/Lazy.cs
@@ -618,6 +619,7 @@ System.Runtime.CompilerServices/CompilerGeneratedAttribute.cs
 System.Runtime.CompilerServices/CompilerGlobalScopeAttribute.cs
 System.Runtime.CompilerServices/CompilerMarshalOverride.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
+System.Runtime.CompilerServices/ContractHelper.cs
 System.Runtime.CompilerServices/CustomConstantAttribute.cs
 System.Runtime.CompilerServices/DateTimeConstantAttribute.cs
 System.Runtime.CompilerServices/DecimalConstantAttribute.cs

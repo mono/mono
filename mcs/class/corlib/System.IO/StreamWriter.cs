@@ -4,12 +4,11 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Paolo Molaro (lupus@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -79,7 +78,21 @@ namespace System.IO {
 				preamble_done = true;
 		}
 
-		public StreamWriter (Stream stream, Encoding encoding, int bufferSize) {
+#if NET_4_5
+		readonly bool leave_open;
+
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
+			: this (stream, encoding, bufferSize, false)
+		{
+		}
+		
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize, bool leaveOpen)
+#else
+		const bool leave_open = false;
+
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
+#endif
+		{
 			if (null == stream)
 				throw new ArgumentNullException("stream");
 			if (null == encoding)
@@ -89,6 +102,9 @@ namespace System.IO {
 			if (!stream.CanWrite)
 				throw new ArgumentException ("Can not write to stream");
 
+#if NET_4_5
+			leave_open = leaveOpen;
+#endif
 			internalStream = stream;
 
 			Initialize(encoding, bufferSize);
@@ -102,8 +118,9 @@ namespace System.IO {
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, DefaultFileBufferSize) {}
-		
-		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize) {
+
+		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize)
+		{
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
 			if (bufferSize <= 0)
@@ -152,7 +169,7 @@ namespace System.IO {
 		protected override void Dispose (bool disposing) 
 		{
 			Exception exc = null;
-			if (!DisposedAlready && disposing && internalStream != null) {
+			if (!DisposedAlready && disposing && internalStream != null && !leave_open) {
 				try {
 					Flush();
 				} catch (Exception e) {

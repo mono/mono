@@ -260,6 +260,9 @@ namespace System.IO
 				destination.Write (buffer, 0, nread);
 		}
 
+#if NET_4_5
+		[ObsoleteAttribute("Do not call or override this method")]
+#endif
 		protected virtual void ObjectInvariant ()
 		{
 		}

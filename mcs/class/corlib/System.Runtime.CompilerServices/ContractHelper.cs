@@ -1,5 +1,5 @@
 //
-// System.Diagnostics.Contracts.Internal.ContractHelper.cs
+// ContractHelper.cs
 //
 // Authors:
 //    Chris Bacon (chrisbacon76@gmail.com)
@@ -26,16 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_5
 
 using System;
 using System.Text;
 using System.Reflection;
 using System.Runtime.ConstrainedExecution;
+using System.Diagnostics.Contracts;
+using System.Diagnostics;
 
-namespace System.Diagnostics.Contracts.Internal
+namespace System.Runtime.CompilerServices
 {
-	[Obsolete ("Type has been moved to System.Runtime.CompilerServices")]
 	public static class ContractHelper
 	{
 #if MOONLIGHT

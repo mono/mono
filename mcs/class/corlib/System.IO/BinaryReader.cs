@@ -9,6 +9,7 @@
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,11 +56,27 @@ namespace System.IO {
 
 		
 		private bool m_disposed;
-
-		public BinaryReader(Stream input) : this(input, Encoding.UTF8UnmarkedUnsafe) {
+		
+		public BinaryReader(Stream input) 
+			: this(input, Encoding.UTF8UnmarkedUnsafe)
+		{
 		}
-
-		public BinaryReader(Stream input, Encoding encoding) {
+		
+#if NET_4_5
+		readonly bool leave_open;
+		
+		public BinaryReader(Stream input, Encoding encoding)
+			: this (input, encoding, false)
+		{
+		}
+		
+		public BinaryReader(Stream input, Encoding encoding, bool leaveOpen)
+#else
+		const bool leave_open = false;
+		
+		public BinaryReader(Stream input, Encoding encoding)
+#endif
+		{
 			if (input == null || encoding == null) 
 				throw new ArgumentNullException(Locale.GetText ("Input or Encoding is a null reference."));
 			if (!input.CanRead)
@@ -67,6 +84,9 @@ namespace System.IO {
 
 			m_stream = input;
 			m_encoding = encoding;
+#if NET_4_5
+			leave_open = leaveOpen;
+#endif
 			decoder = encoding.GetDecoder ();
 			
 			// internal buffer size is documented to be between 16 and the value
@@ -87,7 +107,7 @@ namespace System.IO {
 		
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing && m_stream != null)
+			if (disposing && m_stream != null && !leave_open)
 				m_stream.Close ();
 
 			m_disposed = true;
