@@ -1,5 +1,5 @@
 //
-// AsyncVoidMethodBuilder.cs
+// AsyncTaskMethodBuilder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,44 +27,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Threading;
+#if NET_4_0
+
+using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct AsyncVoidMethodBuilder
+	public struct AsyncTaskMethodBuilder
 	{
-		static readonly SynchronizationContext null_context = new SynchronizationContext ();
+		readonly TaskCompletionSource<object> tcs;
 
-		readonly SynchronizationContext context;
-
-		private AsyncVoidMethodBuilder (SynchronizationContext context)
+		private AsyncTaskMethodBuilder (TaskCompletionSource<object> tcs)
 		{
-			this.context = context;
+			this.tcs = tcs;
 		}
 
-		public static AsyncVoidMethodBuilder Create ()
+		public Task Task {
+			get {
+				return tcs.Task;
+			}
+		}
+		
+		public static AsyncTaskMethodBuilder Create ()
 		{
-			var ctx = SynchronizationContext.Current ?? null_context;
-			ctx.OperationStarted ();
-
-			return new AsyncVoidMethodBuilder (ctx);
+			return new AsyncTaskMethodBuilder (new TaskCompletionSource<object> ());
 		}
 
 		public void SetException (Exception exception)
 		{
-			if (exception == null)
-				throw new ArgumentNullException ("exception");
-
-			try {
-				context.Post (l => { throw (Exception) l; }, exception);
-			} finally {
-				SetResult ();
-			}
+			if (!tcs.TrySetException (exception))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 
 		public void SetResult ()
 		{
-			context.OperationCompleted ();
+			if (!tcs.TrySetResult (null))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 	}
 }
+
+#endif

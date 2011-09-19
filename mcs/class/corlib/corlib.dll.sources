@@ -604,6 +604,9 @@ System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime/TargetedPatchingOptOutAttribute.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
+System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs
+System.Runtime.CompilerServices/AsyncTaskMethodBuilder.cs
+System.Runtime.CompilerServices/AsyncTaskMethodBuilder_T.cs
 System.Runtime.CompilerServices/ReferenceAssemblyAttribute.cs
 System.Runtime.CompilerServices/CallConvCdecl.cs
 System.Runtime.CompilerServices/CallConvFastcall.cs
@@ -654,6 +657,8 @@ System.Runtime.CompilerServices/ScopelessEnumAttribute.cs
 System.Runtime.CompilerServices/SuppressIldasmAttribute.cs
 System.Runtime.CompilerServices/StringFreezingAttribute.cs 
 System.Runtime.CompilerServices/UnsafeValueTypeAttribute.cs
+System.Runtime.CompilerServices/TaskAwaiter.cs
+System.Runtime.CompilerServices/TaskAwaiter_T.cs
 System.Runtime.CompilerServices/TypeForwardedFromAttribute.cs
 System.Runtime.CompilerServices/TypeForwardedToAttribute.cs
 System.Runtime.ConstrainedExecution/CriticialFinalizerObject.cs

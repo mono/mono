@@ -10715,9 +10715,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.CreateType ();
 			} catch {
 			}
-
+/* this is mono only
 			try {
-				/* This is mono only */
 				UnmanagedMarshal m = UnmanagedMarshal.DefineCustom (t, "foo", "bar", Guid.Empty);
 				TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (object));
 				FieldBuilder fb = tb.DefineField ("Foo", typeof (int), FieldAttributes.Public);
@@ -10725,7 +10724,7 @@ namespace MonoTests.System.Reflection.Emit
 				tb.CreateType ();
 			} catch {
 			}
-
+*/
 			try {
 				/* Properties */
 				TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (object));

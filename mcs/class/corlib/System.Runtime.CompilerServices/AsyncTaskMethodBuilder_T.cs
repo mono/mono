@@ -1,5 +1,5 @@
 //
-// TaskAwaiter.cs
+// AsyncTaskMethodBuilder_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,59 +27,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Threading;
+#if NET_4_5
+
 using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	public struct AsyncTaskMethodBuilder<TResult>
 	{
-		readonly Task task;
+		readonly TaskCompletionSource<TResult> tcs;
 
-		internal TaskAwaiter (Task task)
+		private AsyncTaskMethodBuilder (TaskCompletionSource<TResult> tcs)
 		{
-			this.task = task;
+			this.tcs = tcs;
 		}
 
-		public bool IsCompleted {
+		public Task<TResult> Task {
 			get {
-				return task.IsCompleted;
+				return tcs.Task;
 			}
 		}
-
-		public void GetResult ()
+		
+		public static AsyncTaskMethodBuilder<TResult> Create ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw HandleUnexpectedTaskResult (task);
+			return new AsyncTaskMethodBuilder<TResult> (new TaskCompletionSource<TResult> ());
 		}
 
-		internal static Exception HandleUnexpectedTaskResult (Task task)
+		public void SetException (Exception exception)
 		{
-			switch (task.Status) {
-			case TaskStatus.Canceled:
-				return new TaskCanceledException (task);
-			case TaskStatus.Faulted:
-				return task.Exception.InnerException;
-			default:
-				return new InvalidOperationException ("The task has not finished yet");
-			}
+			if (!tcs.TrySetException (exception))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 
-		internal static void HandleOnCompleted (Task task, Action continuation)
+		public void SetResult (TResult result)
 		{
-			var scontext = SynchronizationContext.Current;
-			if (scontext != null)
-				task.ContinueWith (l => scontext.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
-			else
-				task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
-		}
-
-		public void OnCompleted (Action continuation)
-		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
-
-			HandleOnCompleted (task, continuation);
+			if (!tcs.TrySetResult (result))
+				throw new InvalidOperationException ("The task has already completed");
 		}
 	}
 }
+
+#endif

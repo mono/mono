@@ -1,10 +1,9 @@
 //
-// TaskAwaiter_T.cs
+// TaskAwaiterTest_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,39 +26,71 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
+
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using NUnit.Framework;
+using System.Runtime.CompilerServices;
 
-namespace System.Runtime.CompilerServices
+namespace MonoTests.System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter<TResult>
+	[TestFixture]
+	public class TaskAwaiterTest_T
 	{
-		readonly Task<TResult> task;
+		Task<int> task;
 
-		internal TaskAwaiter (Task<TResult> task)
+		[Test]
+		public void GetResultFaulted ()
 		{
-			this.task = task;
-		}
+			TaskAwaiter<int> awaiter;
 
-		public bool IsCompleted {
-			get {
-				return task.IsCompleted;
+			task = new Task<int> (() => { throw new ApplicationException (); });
+			awaiter = task.GetAwaiter ();
+			task.RunSynchronously (TaskScheduler.Current);
+
+
+			Assert.IsTrue (awaiter.IsCompleted);
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (ApplicationException) {
 			}
 		}
 
-		public TResult GetResult ()
+		[Test]
+		public void GetResultNotCompleted ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw TaskAwaiter.HandleUnexpectedTaskResult (task);
+			TaskAwaiter<int> awaiter;
 
-			return task.Result;
+			task = new Task<int> (() => 1);
+			awaiter = task.GetAwaiter ();
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
+			}
 		}
 
-		public void OnCompleted (Action continuation)
+		[Test]
+		public void GetResultCanceled ()
 		{
-			if (continuation == null)
-				throw new ArgumentNullException ("continuation");
+			TaskAwaiter<int> awaiter;
 
-			TaskAwaiter.HandleOnCompleted (task, continuation);
+			var token = new CancellationToken (true);
+			task = new Task<int> (() => 2, token);
+			awaiter = task.GetAwaiter ();
+
+			try {
+				awaiter.GetResult ();
+				Assert.Fail ();
+			} catch (TaskCanceledException) {
+			}
 		}
 	}
 }
+
+#endif

@@ -1,4 +1,8 @@
+//
 // Task.cs
+//
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
@@ -28,6 +32,7 @@
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
 {
@@ -808,6 +813,14 @@ namespace System.Threading.Tasks
 			}
 		}
 		#endregion
+		
+#if NET_4_5
+
+		public TaskAwaiter GetAwaiter ()
+		{
+			return new TaskAwaiter (this);
+		}
+#endif
 		
 		#region Properties
 		public static TaskFactory Factory {

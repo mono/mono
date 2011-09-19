@@ -1,5 +1,5 @@
 //
-// AsyncTaskMethodBuilder_T.cs
+// TaskAwaiter_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,40 +27,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
+
 using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct AsyncTaskMethodBuilder<TResult>
+	public struct TaskAwaiter<TResult>
 	{
-		readonly TaskCompletionSource<TResult> tcs;
+		readonly Task<TResult> task;
 
-		private AsyncTaskMethodBuilder (TaskCompletionSource<TResult> tcs)
+		internal TaskAwaiter (Task<TResult> task)
 		{
-			this.tcs = tcs;
+			this.task = task;
 		}
 
-		public Task<TResult> Task {
+		public bool IsCompleted {
 			get {
-				return tcs.Task;
+				return task.IsCompleted;
 			}
 		}
-		
-		public static AsyncTaskMethodBuilder<TResult> Create ()
+
+		public TResult GetResult ()
 		{
-			return new AsyncTaskMethodBuilder<TResult> (new TaskCompletionSource<TResult> ());
+			if (task.Status != TaskStatus.RanToCompletion)
+				throw TaskAwaiter.HandleUnexpectedTaskResult (task);
+
+			return task.Result;
 		}
 
-		public void SetException (Exception exception)
+		public void OnCompleted (Action continuation)
 		{
-			if (!tcs.TrySetException (exception))
-				throw new InvalidOperationException ("The task has already completed");
-		}
+			if (continuation == null)
+				throw new ArgumentNullException ("continuation");
 
-		public void SetResult (TResult result)
-		{
-			if (!tcs.TrySetResult (result))
-				throw new InvalidOperationException ("The task has already completed");
+			TaskAwaiter.HandleOnCompleted (task, continuation);
 		}
 	}
 }
+
+#endif

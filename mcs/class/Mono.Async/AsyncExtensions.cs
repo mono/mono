@@ -58,13 +58,4 @@ public static class AsyncExtensions
 		return Task.Factory.FromAsync (source.BeginConnect, source.EndConnect, hostname, port, null);
 	}
 
-	public static Task<int> ReadAsync (this Stream stream, byte[] buffer, int offset, int count)
-	{
-		return Task<int>.Factory.FromAsync (stream.BeginRead, stream.EndRead, buffer, offset, count, null);
-	}
-
-	public static Task WriteAsync (this Stream stream, byte[] buffer, int offset, int count)
-	{
-		return Task.Factory.FromAsync (stream.BeginWrite, stream.EndWrite, buffer, offset, count, null);
-	}
 }

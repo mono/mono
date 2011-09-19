@@ -1,5 +1,5 @@
 //
-// AsyncTaskMethodBuilder.cs
+// TaskAwaiter.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,40 +27,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
+
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct AsyncTaskMethodBuilder
+	public struct TaskAwaiter
 	{
-		readonly TaskCompletionSource<object> tcs;
+		readonly Task task;
 
-		private AsyncTaskMethodBuilder (TaskCompletionSource<object> tcs)
+		internal TaskAwaiter (Task task)
 		{
-			this.tcs = tcs;
+			this.task = task;
 		}
 
-		public Task Task {
+		public bool IsCompleted {
 			get {
-				return tcs.Task;
+				return task.IsCompleted;
 			}
 		}
-		
-		public static AsyncTaskMethodBuilder Create ()
+
+		public void GetResult ()
 		{
-			return new AsyncTaskMethodBuilder (new TaskCompletionSource<object> ());
+			if (task.Status != TaskStatus.RanToCompletion)
+				throw HandleUnexpectedTaskResult (task);
 		}
 
-		public void SetException (Exception exception)
+		internal static Exception HandleUnexpectedTaskResult (Task task)
 		{
-			if (!tcs.TrySetException (exception))
-				throw new InvalidOperationException ("The task has already completed");
+			switch (task.Status) {
+			case TaskStatus.Canceled:
+				return new TaskCanceledException (task);
+			case TaskStatus.Faulted:
+				return task.Exception.InnerException;
+			default:
+				return new InvalidOperationException ("The task has not finished yet");
+			}
 		}
 
-		public void SetResult ()
+		internal static void HandleOnCompleted (Task task, Action continuation)
 		{
-			if (!tcs.TrySetResult (null))
-				throw new InvalidOperationException ("The task has already completed");
+			var scontext = SynchronizationContext.Current;
+			if (scontext != null)
+				task.ContinueWith (l => scontext.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
+			else
+				task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+		}
+
+		public void OnCompleted (Action continuation)
+		{
+			if (continuation == null)
+				throw new ArgumentNullException ("continuation");
+
+			HandleOnCompleted (task, continuation);
 		}
 	}
 }
+
+#endif

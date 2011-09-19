@@ -34,6 +34,9 @@
 using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO
 {
@@ -259,6 +262,18 @@ namespace System.IO
 
 		protected virtual void ObjectInvariant ()
 		{
+		}
+#endif
+		
+#if NET_4_5
+		public Task<int> ReadAsync (byte[] buffer, int offset, int count)
+		{
+			return Task<int>.Factory.FromAsync (BeginRead, EndRead, buffer, offset, count, null);
+		}
+
+		public Task WriteAsync (byte[] buffer, int offset, int count)
+		{
+			return Task.Factory.FromAsync (BeginWrite, EndWrite, buffer, offset, count, null);
 		}
 #endif
 	}

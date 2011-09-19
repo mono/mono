@@ -1,9 +1,10 @@
 //
-// TaskAwaiterTest_T.cs
+// AsyncVoidMethodBuilder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
+// Copyright (C) 2011 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -26,67 +27,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+#if NET_4_5
+
 using System.Threading;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using System.Runtime.CompilerServices;
 
-namespace MonoTests.System.Runtime.CompilerServices
+namespace System.Runtime.CompilerServices
 {
-	[TestFixture]
-	public class TaskAwaiterTest_T
+	public struct AsyncVoidMethodBuilder
 	{
-		Task<int> task;
+		static readonly SynchronizationContext null_context = new SynchronizationContext ();
 
-		[Test]
-		public void GetResultFaulted ()
+		readonly SynchronizationContext context;
+
+		private AsyncVoidMethodBuilder (SynchronizationContext context)
 		{
-			TaskAwaiter<int> awaiter;
+			this.context = context;
+		}
 
-			task = new Task<int> (() => { throw new ApplicationException (); });
-			awaiter = task.GetAwaiter ();
-			task.RunSynchronously (TaskScheduler.Current);
+		public static AsyncVoidMethodBuilder Create ()
+		{
+			var ctx = SynchronizationContext.Current ?? null_context;
+			ctx.OperationStarted ();
 
+			return new AsyncVoidMethodBuilder (ctx);
+		}
 
-			Assert.IsTrue (awaiter.IsCompleted);
+		public void SetException (Exception exception)
+		{
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
 
 			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (ApplicationException) {
+				context.Post (l => { throw (Exception) l; }, exception);
+			} finally {
+				SetResult ();
 			}
 		}
 
-		[Test]
-		public void GetResultNotCompleted ()
+		public void SetResult ()
 		{
-			TaskAwaiter<int> awaiter;
-
-			task = new Task<int> (() => 1);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
-			}
-		}
-
-		[Test]
-		public void GetResultCanceled ()
-		{
-			TaskAwaiter<int> awaiter;
-
-			var token = new CancellationToken (true);
-			task = new Task<int> (() => 2, token);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (TaskCanceledException) {
-			}
+			context.OperationCompleted ();
 		}
 	}
 }
+
+#endif

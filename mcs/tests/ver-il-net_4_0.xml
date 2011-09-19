@@ -52444,7 +52444,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_3&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>309</size>
+        <size>293</size>
       </method>
       <method name="Byte &lt;&gt;m__4()">
         <size>2</size>

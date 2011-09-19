@@ -1,7 +1,11 @@
 //
 // Task_T.cs
 //
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +29,7 @@
 
 #if NET_4_0 || MOBILE
 using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
 {
@@ -207,6 +212,13 @@ namespace System.Threading.Tasks
 			
 			return t;
 		}
+		
+#if NET_4_5
+		public new TaskAwaiter<TResult> GetAwaiter ()
+		{
+			return new TaskAwaiter<TResult> (this);
+		}
+#endif
 	}
 }
 #endif
