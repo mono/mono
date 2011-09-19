@@ -47,9 +47,9 @@ namespace System.Threading.Tasks
 		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
 		public TResult Result {
 			get {
-				if (function != null)
+				if (!IsCompleted)
 					Wait ();
-				else if (Exception != null)
+				if (Exception != null)
 					throw Exception;
 				return value;
 			}

@@ -171,6 +171,16 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (thrown, f.Exception.InnerException);
 			Assert.AreEqual (thrown, ex.InnerException);
 		}
+
+		[Test]
+		public void WaitingTest ()
+		{
+			var tcs = new TaskCompletionSource<int> ();
+			var task = tcs.Task;
+			bool result = task.Wait (50);
+
+			Assert.IsFalse (result);
+		}
 	}
 }
 #endif
