@@ -123,7 +123,7 @@ namespace System.Threading.Tasks
 		               CancellationToken cancellationToken,
 		               TaskCreationOptions creationOptions,
 		               Task parent)
-			: base (null, state, cancellationToken, creationOptions, parent)
+			: base (emptyAction, state, cancellationToken, creationOptions, parent)
 		{
 			this.function = function;
 			this.state = state;
@@ -162,7 +162,7 @@ namespace System.Threading.Tasks
 		                          TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
 			if (continuationAction == null)
-				throw new ArgumentNullException ("continuationFunction");
+				throw new ArgumentNullException ("continuationAction");
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
@@ -201,6 +201,11 @@ namespace System.Threading.Tasks
 		                                                  TaskContinuationOptions continuationOptions,
 		                                                  TaskScheduler scheduler)
 		{
+			if (continuationFunction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
 			Task<TNewResult> t = new Task<TNewResult> ((o) => continuationFunction ((Task<TResult>)o),
 			                                           this,
 			                                           cancellationToken,
