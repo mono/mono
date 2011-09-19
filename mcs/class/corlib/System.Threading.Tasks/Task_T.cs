@@ -111,6 +111,9 @@ namespace System.Threading.Tasks
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
 			: base (emptyAction, state, cancellationToken, creationOptions)
 		{
+			if (function == null)
+				throw new ArgumentNullException ("function");
+
 			this.function = function;
 			this.state = state;
 		}
@@ -120,7 +123,7 @@ namespace System.Threading.Tasks
 		               CancellationToken cancellationToken,
 		               TaskCreationOptions creationOptions,
 		               Task parent)
-		: base (null, state, cancellationToken, creationOptions, parent)
+			: base (null, state, cancellationToken, creationOptions, parent)
 		{
 			this.function = function;
 			this.state = state;
