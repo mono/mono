@@ -1521,6 +1521,8 @@ System.Collections.Generic/IList.cs
 System.Collections.Generic/IComparer.cs
 System.Collections.Generic/IEqualityComparer.cs
 System.Collections.Generic/IDictionary.cs
+System.Collections.Generic/IReadOnlyList.cs
+System.Collections.Generic/IReadOnlyDictionary.cs
 System.Collections.Generic/KeyValuePair.cs
 System.Collections.Generic/EqualityComparer.cs
 System.Collections.Generic/KeyNotFoundException.cs

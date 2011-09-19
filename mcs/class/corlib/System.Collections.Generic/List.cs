@@ -6,9 +6,11 @@
 //    Martin Baulig (martin@ximian.com)
 //    Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //    David Waite (mass@akuma.org)
+//    Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite
+// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,7 +40,11 @@ namespace System.Collections.Generic {
 	[Serializable]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
-	public class List <T> : IList <T>, IList, ICollection {
+	public class List<T> : IList<T>, IList
+#if NET_4_5
+		, IReadOnlyList<T>
+#endif
+	{
 		T [] _items;
 		int _size;
 		int _version;
