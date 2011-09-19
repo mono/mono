@@ -104,10 +104,11 @@ namespace System.Diagnostics
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void Log(int level, string category, string message);
 
+#if NET_4_0
 		[Obsolete]
+#endif
 		public Debugger()
 		{
 		}
-
 	}
 }

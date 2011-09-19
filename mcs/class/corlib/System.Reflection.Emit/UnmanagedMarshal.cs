@@ -104,8 +104,7 @@ namespace System.Reflection.Emit {
 			return new UnmanagedMarshal (unmanagedType, unmanagedType);
 		}
 
-		/* this one is missing from the MS implementation */
-		public static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
+		internal static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.CustomMarshaler, UnmanagedType.CustomMarshaler);
 			res.mcookie = cookie;
 			res.marshaltype = mtype;
@@ -116,7 +115,7 @@ namespace System.Reflection.Emit {
 				res.guid = id.ToString ();
 			return res;
 		}
-
+		
 		// sizeConst and sizeParamIndex can be -1 meaning they are not specified
 		internal static UnmanagedMarshal DefineLPArrayInternal (UnmanagedType elemType, int sizeConst, int sizeParamIndex) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
