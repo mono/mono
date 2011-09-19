@@ -645,22 +645,26 @@ namespace Mono.CSharp
 				bf = pred_members.AsyncTaskMethodBuilderCreate;
 				sr = pred_members.AsyncTaskMethodBuilderSetResult;
 				se = pred_members.AsyncTaskMethodBuilderSetException;
-				task = pred_members.AsyncTaskMethodBuilderTask.Resolve (Location);
+				task = pred_members.AsyncTaskMethodBuilderTask.Get ();
 			} else {
 				builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilderGeneric;
 				bf = pred_members.AsyncTaskMethodBuilderGenericCreate;
 				sr = pred_members.AsyncTaskMethodBuilderGenericSetResult;
 				se = pred_members.AsyncTaskMethodBuilderGenericSetException;
-				task = pred_members.AsyncTaskMethodBuilderGenericTask.Resolve (Location);
+				task = pred_members.AsyncTaskMethodBuilderGenericTask.Get ();
 				has_task_return_type = true;
 			}
 
-			set_result = sr.Resolve (Location);
-			set_exception = se.Resolve (Location);
-			var builder_factory = bf.Resolve (Location);
-			var bt = builder_type.Resolve ();
-			if (bt == null || set_result == null || builder_factory == null || set_exception == null)
-				return false;
+			set_result = sr.Get ();
+			set_exception = se.Get ();
+			var builder_factory = bf.Get ();
+			if (!builder_type.Define () || set_result == null || builder_factory == null || set_exception == null) {
+				Report.Error (1993, Location,
+					"Cannot find compiler required types for asynchronous functions support. Are you targeting the wrong framework version?");
+				return base.DoDefineMembers ();
+			}
+
+			var bt = builder_type.TypeSpec;
 
 			//
 			// Inflate generic Task types
