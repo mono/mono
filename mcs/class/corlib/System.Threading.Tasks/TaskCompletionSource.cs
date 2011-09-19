@@ -34,30 +34,32 @@ namespace System.Threading.Tasks
 {
 	public class TaskCompletionSource<TResult>
 	{
+		static readonly Func<TResult> emptyFunction = () => default (TResult);
+		static readonly Func<object, TResult> emptyParamFunction = (_) => default (TResult);
 		readonly Task<TResult> source;
 		SpinLock opLock = new SpinLock (false);
 
 		public TaskCompletionSource ()
 		{
-			source = new Task<TResult> (null);
+			source = new Task<TResult> (emptyFunction);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state)
 		{
-			source = new Task<TResult> (null, state);
+			source = new Task<TResult> (emptyParamFunction, state);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, creationOptions);
+			source = new Task<TResult> (emptyFunction, creationOptions);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state, TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, state, creationOptions);
+			source = new Task<TResult> (emptyParamFunction, state, creationOptions);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
