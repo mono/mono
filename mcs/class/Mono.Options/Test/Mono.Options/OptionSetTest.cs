@@ -400,7 +400,7 @@ namespace Tests.Mono.Options
 						"  item 2",
 					v => {} },
 				{ "long-desc2",
-					"IWantThisDescriptionToBreakInsideAWordGeneratingAutoWordHyphenation.",
+					"IWantThisDescriptionToBreakInsideAWordGeneratingAutoWordHyphenation. ",
 					v => {} },
 				{ "long-desc3",
 					"OnlyOnePeriod.AndNoWhitespaceShouldBeSupportedEvenWithLongDescriptions",
