@@ -128,7 +128,7 @@ namespace System.Threading.Tasks
 		               CancellationToken cancellationToken,
 		               TaskCreationOptions creationOptions,
 		               Task parent)
-			: base (null, state, cancellationToken, creationOptions, parent)
+			: base (emptyAction, state, cancellationToken, creationOptions, parent)
 		{
 			this.function = function;
 			this.state = state;
