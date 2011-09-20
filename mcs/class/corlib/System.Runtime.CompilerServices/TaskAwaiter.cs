@@ -67,13 +67,12 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
-		internal static void HandleOnCompleted (Task task, Action continuation)
+		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext)
 		{
-			var scontext = SynchronizationContext.Current;
-			if (scontext != null)
-				task.ContinueWith (l => scontext.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
+			if (continueOnSourceContext && SynchronizationContext.Current != null)
+				task.ContinueWith (l => SynchronizationContext.Current.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
 			else
-				task.ContinueWith (l => continuation (), TaskContinuationOptions.ExecuteSynchronously);
+				task.ContinueWith ((l, cont) => ((Action) cont) (), continuation, TaskContinuationOptions.ExecuteSynchronously);
 		}
 
 		public void OnCompleted (Action continuation)
@@ -81,7 +80,7 @@ namespace System.Runtime.CompilerServices
 			if (continuation == null)
 				throw new ArgumentNullException ("continuation");
 
-			HandleOnCompleted (task, continuation);
+			HandleOnCompleted (task, continuation, true);
 		}
 	}
 }

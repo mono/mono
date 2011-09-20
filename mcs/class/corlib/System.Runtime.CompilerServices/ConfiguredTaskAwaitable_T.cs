@@ -1,5 +1,5 @@
 //
-// TaskAwaiterTest_T.cs
+// ConfiguredTaskAwaitable_T.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,67 +28,56 @@
 
 #if NET_4_5
 
-using System;
-using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
-using System.Runtime.CompilerServices;
 
-namespace MonoTests.System.Runtime.CompilerServices
+namespace System.Runtime.CompilerServices
 {
-	[TestFixture]
-	public class TaskAwaiterTest_T
+	public struct ConfiguredTaskAwaitable<TResult>
 	{
-		Task<int> task;
-
-		[Test]
-		public void GetResultFaulted ()
+		public struct ConfiguredTaskAwaiter
 		{
-			TaskAwaiter<int> awaiter;
+			readonly Task<TResult> task;
+			readonly bool continueOnSourceContext;
 
-			task = new Task<int> (() => { throw new ApplicationException (); });
-			awaiter = task.GetAwaiter ();
-			task.RunSynchronously (TaskScheduler.Current);
+			internal ConfiguredTaskAwaiter (Task<TResult> task, bool continueOnSourceContext)
+			{
+				this.task = task;
+				this.continueOnSourceContext = continueOnSourceContext;
+			}
 
+			public bool IsCompleted {
+				get {
+					return task.IsCompleted;
+				}
+			}
 
-			Assert.IsTrue (awaiter.IsCompleted);
+			public TResult GetResult ()
+			{
+				if (task.Status != TaskStatus.RanToCompletion)
+					throw TaskAwaiter.HandleUnexpectedTaskResult (task);
 
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (ApplicationException) {
+				return task.Result;
+			}
+
+			public void OnCompleted (Action continuation)
+			{
+				if (continuation == null)
+					throw new ArgumentNullException ("continuation");
+
+				TaskAwaiter.HandleOnCompleted (task, continuation, continueOnSourceContext);
 			}
 		}
-
-		[Test]
-		public void GetResultNotCompleted ()
+		
+		readonly ConfiguredTaskAwaiter awaiter;
+		
+		internal ConfiguredTaskAwaitable (Task<TResult> task, bool continueOnSourceContext)
 		{
-			TaskAwaiter<int> awaiter;
-
-			task = new Task<int> (() => 1);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
-			}
+			awaiter = new ConfiguredTaskAwaiter (task, continueOnSourceContext);
 		}
-
-		[Test]
-		public void GetResultCanceled ()
+		
+		public ConfiguredTaskAwaiter GetAwaiter()
 		{
-			TaskAwaiter<int> awaiter;
-
-			var token = new CancellationToken (true);
-			task = new Task<int> (() => 2, token);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (TaskCanceledException) {
-			}
+			return awaiter;
 		}
 	}
 }

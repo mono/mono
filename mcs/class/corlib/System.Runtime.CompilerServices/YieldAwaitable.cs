@@ -1,9 +1,10 @@
 //
-// TaskAwaiterTest_T.cs
+// YieldAwaitable.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
+// Copyright (C) 2011 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -17,7 +18,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,)
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -28,67 +29,45 @@
 
 #if NET_4_5
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
-using System.Runtime.CompilerServices;
 
-namespace MonoTests.System.Runtime.CompilerServices
+namespace System.Runtime.CompilerServices
 {
-	[TestFixture]
-	public class TaskAwaiterTest_T
+	public struct YieldAwaitable
 	{
-		Task<int> task;
-
-		[Test]
-		public void GetResultFaulted ()
+		public struct YieldAwaiter
 		{
-			TaskAwaiter<int> awaiter;
+			public bool IsCompleted {
+				get {
+					return false;
+				}
+			}
 
-			task = new Task<int> (() => { throw new ApplicationException (); });
-			awaiter = task.GetAwaiter ();
-			task.RunSynchronously (TaskScheduler.Current);
+			public void OnCompleted (Action continuation)
+			{
+				if (continuation == null)
+					throw new ArgumentNullException ("continuation");
 
+				if (TaskScheduler.Current == TaskScheduler.Default) {
+					//
+					// Pass continuation as an argument to avoid allocating
+					// hoisting class
+					//
+					ThreadPool.QueueUserWorkItem (l => ((Action) l) (), continuation);
+				} else {
+					new Task (continuation).Start (TaskScheduler.Current);
+				}
+			}
 
-			Assert.IsTrue (awaiter.IsCompleted);
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (ApplicationException) {
+			public void GetResult ()
+			{
 			}
 		}
 
-		[Test]
-		public void GetResultNotCompleted ()
+		public YieldAwaitable.YieldAwaiter GetAwaiter ()
 		{
-			TaskAwaiter<int> awaiter;
-
-			task = new Task<int> (() => 1);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
-			}
-		}
-
-		[Test]
-		public void GetResultCanceled ()
-		{
-			TaskAwaiter<int> awaiter;
-
-			var token = new CancellationToken (true);
-			task = new Task<int> (() => 2, token);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (TaskCanceledException) {
-			}
+			return new YieldAwaiter ();
 		}
 	}
 }

@@ -619,6 +619,8 @@ System.Runtime.CompilerServices/CompilerGeneratedAttribute.cs
 System.Runtime.CompilerServices/CompilerGlobalScopeAttribute.cs
 System.Runtime.CompilerServices/CompilerMarshalOverride.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
+System.Runtime.CompilerServices/ConfiguredTaskAwaitable.cs
+System.Runtime.CompilerServices/ConfiguredTaskAwaitable_T.cs
 System.Runtime.CompilerServices/ContractHelper.cs
 System.Runtime.CompilerServices/CustomConstantAttribute.cs
 System.Runtime.CompilerServices/DateTimeConstantAttribute.cs
@@ -663,6 +665,7 @@ System.Runtime.CompilerServices/TaskAwaiter.cs
 System.Runtime.CompilerServices/TaskAwaiter_T.cs
 System.Runtime.CompilerServices/TypeForwardedFromAttribute.cs
 System.Runtime.CompilerServices/TypeForwardedToAttribute.cs
+System.Runtime.CompilerServices/YieldAwaitable.cs
 System.Runtime.ConstrainedExecution/CriticialFinalizerObject.cs
 System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs

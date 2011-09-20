@@ -61,7 +61,7 @@ namespace System.Runtime.CompilerServices
 			if (continuation == null)
 				throw new ArgumentNullException ("continuation");
 
-			TaskAwaiter.HandleOnCompleted (task, continuation);
+			TaskAwaiter.HandleOnCompleted (task, continuation, true);
 		}
 	}
 }

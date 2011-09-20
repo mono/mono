@@ -1,5 +1,5 @@
 //
-// TaskAwaiterTest_T.cs
+// TaskAwaiterTest.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -37,16 +37,16 @@ using System.Runtime.CompilerServices;
 namespace MonoTests.System.Runtime.CompilerServices
 {
 	[TestFixture]
-	public class TaskAwaiterTest_T
+	public class TaskAwaiterTest
 	{
-		Task<int> task;
+		Task task;
 
 		[Test]
 		public void GetResultFaulted ()
 		{
-			TaskAwaiter<int> awaiter;
+			TaskAwaiter awaiter;
 
-			task = new Task<int> (() => { throw new ApplicationException (); });
+			task = new Task (() => { throw new ApplicationException (); });
 			awaiter = task.GetAwaiter ();
 			task.RunSynchronously (TaskScheduler.Current);
 
@@ -63,9 +63,9 @@ namespace MonoTests.System.Runtime.CompilerServices
 		[Test]
 		public void GetResultNotCompleted ()
 		{
-			TaskAwaiter<int> awaiter;
+			TaskAwaiter awaiter;
 
-			task = new Task<int> (() => 1);
+			task = new Task (() => { });
 			awaiter = task.GetAwaiter ();
 
 			try {
@@ -78,10 +78,10 @@ namespace MonoTests.System.Runtime.CompilerServices
 		[Test]
 		public void GetResultCanceled ()
 		{
-			TaskAwaiter<int> awaiter;
+			TaskAwaiter awaiter;
 
 			var token = new CancellationToken (true);
-			task = new Task<int> (() => 2, token);
+			task = new Task (() => { }, token);
 			awaiter = task.GetAwaiter ();
 
 			try {

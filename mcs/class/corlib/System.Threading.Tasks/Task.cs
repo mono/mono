@@ -231,7 +231,12 @@ namespace System.Threading.Tasks
 		
 		public Task ContinueWith (Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task continuation = new Task ((o) => continuationAction ((Task)o),
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			Task continuation = new Task (l => continuationAction ((Task)l),
 			                              this,
 			                              cancellationToken,
 			                              GetCreationOptions (continuationOptions),
@@ -279,7 +284,7 @@ namespace System.Threading.Tasks
 			
 			return t;
 		}
-		
+	
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
 			ContinueWithCore (continuation, continuationOptions, scheduler, null);
@@ -816,12 +821,98 @@ namespace System.Threading.Tasks
 		
 #if NET_4_5
 
+		public ConfiguredTaskAwaitable ConfigureAwait (bool continueOnCapturedContext)
+		{
+			return new ConfiguredTaskAwaitable (this, continueOnCapturedContext);
+		}
+
+		public Task ContinueWith (Action<Task, object> continuationAction, object state)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task, object> continuationAction, object state, CancellationToken cancellationToken)
+		{
+			return ContinueWith (continuationAction, state, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task, object> continuationAction, object state, TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, continuationOptions, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task, object> continuationAction, object state, TaskScheduler scheduler)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+		}
+
+		public Task ContinueWith (Action<Task, object> continuationAction, object state, CancellationToken cancellationToken,
+								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			Task continuation = new Task (l => continuationAction (this, l), state,
+										  cancellationToken,
+										  GetCreationOptions (continuationOptions),
+										  this);
+			ContinueWithCore (continuation, continuationOptions, scheduler);
+
+			return continuation;
+		}
+
+		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state)
+		{
+			return ContinueWith<TResult> (continuationFunction, state, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state, TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWith<TResult> (continuationFunction, state, CancellationToken.None, continuationOptions, TaskScheduler.Current);
+		}
+
+		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state, CancellationToken cancellationToken)
+		{
+			return ContinueWith<TResult> (continuationFunction, state, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state, TaskScheduler scheduler)
+		{
+			return ContinueWith<TResult> (continuationFunction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+		}
+
+		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state, CancellationToken cancellationToken,
+													TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (continuationFunction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			var t = new Task<TResult> (l => continuationFunction (this, l),
+												 state,
+												 cancellationToken,
+												 GetCreationOptions (continuationOptions),
+												 this);
+
+			ContinueWithCore (t, continuationOptions, scheduler);
+
+			return t;
+		}
+
 		public TaskAwaiter GetAwaiter ()
 		{
 			return new TaskAwaiter (this);
 		}
-#endif
 		
+		public static YieldAwaitable Yield ()
+		{
+			return new YieldAwaitable ();
+		}
+#endif
+
 		#region Properties
 		public static TaskFactory Factory {
 			get {
