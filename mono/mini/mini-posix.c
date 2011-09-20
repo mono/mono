@@ -99,7 +99,18 @@ mono_runtime_cleanup_handlers (void)
 {
 }
 
+pid_t
+mono_runtime_syscall_fork (void)
+{
+  g_assert_not_reached();
+  return 0;
+}
 
+gboolean
+mono_gdb_render_native_backtraces (void)
+{
+  return FALSE;
+}
 
 #else
 

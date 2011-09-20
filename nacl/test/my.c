@@ -99,7 +99,7 @@ void try_mono() {
   mono_aot_register_module(mono_aot_module_hw_info);
 #endif
 
-  domain = mini_init("hw.exe", "v2.0.50727");
+  domain = mono_jit_init("hw.exe", "v2.0.50727");
   printf("mono domain: %p\n", domain);
 
   ma = mono_domain_assembly_open(domain, "hw.exe");

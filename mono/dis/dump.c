@@ -29,6 +29,10 @@ extern int isinf (double);
 
 #endif
 
+#ifndef NACL_NEWLIB
+void __nacl_suspend_thread_if_needed() {}
+#endif
+
 void
 dump_table_assembly (MonoImage *m)
 {

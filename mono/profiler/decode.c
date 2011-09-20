@@ -27,6 +27,8 @@
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
 
+void __nacl_suspend_thread_if_needed() {}
+
 static int debug = 0;
 static int collect_traces = 0;
 static int show_traces = 0;

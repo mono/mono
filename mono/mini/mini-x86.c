@@ -665,6 +665,7 @@ mono_x86_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignatu
 	return res;
 }
 
+#if defined(__native_client__)
 static const guchar cpuid_impl [] = {
 	0x55,                   	/* push   %ebp */
 	0x89, 0xe5,                	/* mov    %esp,%ebp */
@@ -685,6 +686,28 @@ static const guchar cpuid_impl [] = {
 	0xc9,                   	/* leave   */
 	0xc3,                   	/* ret     */
 };
+#else
+static const guchar cpuid_impl [] = {
+	0x55,                   		/* push   %ebp */
+	0x89, 0xe5,                		/* mov    %esp,%ebp */
+	0x53,                   		/* push   %ebx */
+	0x8b, 0x45, 0x08,             		/* mov    0x8(%ebp),%eax */
+	0x0f, 0xa2,                		/* cpuid   */
+	0x50,                   		/* push   %eax */
+	0x8b, 0x45, 0x10,             		/* mov    0x10(%ebp),%eax */
+	0x89, 0x18,                		/* mov    %ebx,(%eax) */
+	0x8b, 0x45, 0x14,             		/* mov    0x14(%ebp),%eax */
+	0x89, 0x08,                		/* mov    %ecx,(%eax) */
+	0x8b, 0x45, 0x18,             		/* mov    0x18(%ebp),%eax */
+	0x89, 0x10,                		/* mov    %edx,(%eax) */
+	0x58,                   		/* pop    %eax */
+	0x8b, 0x55, 0x0c,             		/* mov    0xc(%ebp),%edx */
+	0x89, 0x02,                		/* mov    %eax,(%edx) */
+	0x5b,                   		/* pop    %ebx */
+	0xc9,                   		/* leave   */
+	0x59, 0x83, 0xe1, 0xe0, 0xff, 0xe1	/* naclret */
+};
+#endif
 
 typedef void (*CpuidFunc) (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx);
 
@@ -692,12 +715,16 @@ static int
 cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 {
 #if defined(__native_client__)
-	/* Taken from below, the bug listed in the comment is */
-	/* only valid for non-static cases.                   */
-	__asm__ __volatile__ ("cpuid"
-		: "=a" (*p_eax), "=b" (*p_ebx), "=c" (*p_ecx), "=d" (*p_edx)
-		: "a" (id));
-	return 1;
+	static CpuidFunc func = NULL;
+	void *ptr, *end_ptr;
+	if (!func) {
+		ptr = mono_global_codeman_reserve (sizeof (cpuid_impl));
+		memcpy(ptr, cpuid_impl, sizeof(cpuid_impl));
+		end_ptr = ptr + sizeof(cpuid_impl);
+		nacl_global_codeman_validate (&ptr, sizeof(cpuid_impl), &end_ptr);
+		func = (CpuidFunc)ptr;
+	}
+	func (id, p_eax, p_ebx, p_ecx, p_edx);
 #else
 	int have_cpuid = 0;
 #ifndef _MSC_VER

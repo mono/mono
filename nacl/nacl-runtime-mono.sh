@@ -33,24 +33,32 @@ CustomConfigureStep() {
   set -e
   if [ $NACL_NEWLIB = "1" ]; then
     NACL_NEWLIB_DEFINE=-DNACL_NEWLIB
-    SHARED_FLAG="--disable-shared"
+    CONFIG_OPTS="--host=nacl${TARGET_BIT_PREFIX} --disable-shared --cache-file=../config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp"
   else
     NACL_NEWLIB_DEFINE=
-    SHARED_FLAG="--enable-shared"
+    CONFIG_OPTS="--enable-shared"
+    if [ $TARGET_BITSIZE == '32' ]; then
+      CONFIG_OPTS="--host=i386-pc-linux --build=i386-pc-linux --target=i386-pc-linux ${CONFIG_OPTS}"
+    else
+      CONFIG_OPTS="--host=x86_64-pc-linux --build=x86_64-pc-linux --target=x86_64-pc-linux ${CONFIG_OPTS}"
+    fi
+    # UGLY hack to allow dynamic linking
+    sed -i -e s/elf_i386/elf_nacl/ -e s/elf_x86_64/elf64_nacl/ ../configure
+    sed -i -e s/elf_i386/elf_nacl/ -e s/elf_x86_64/elf64_nacl/ ../libgc/configure
+    sed -i -e s/elf_i386/elf_nacl/ -e s/elf_x86_64/elf64_nacl/ ../eglib/configure
   fi
   cp config-nacl-runtime${TARGET_BIT_PREFIX}.cache config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp
   Remove ${PACKAGE_NAME}
   MakeDir ${PACKAGE_NAME}
   cd ${PACKAGE_NAME}
-  CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig \
-  PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lg -lnosys -lnacl_dyncode" \
+  CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig LD="${NACLLD}" \
+  PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lnacl_dyncode -lc -lg -lnosys -lnacl" \
   CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256 ${NACL_NEWLIB_DEFINE}" ../../configure \
-    --host=nacl${TARGET_BIT_PREFIX} \
+    ${CONFIG_OPTS} \
     --exec-prefix=${INSTALL_PATH} \
     --libdir=${INSTALL_PATH}/lib \
     --prefix=${INSTALL_PATH} \
     --oldincludedir=${INSTALL_PATH}/include \
-    ${SHARED_FLAG} \
     --disable-mcs-build \
     --with-glib=embedded \
     --with-tls=pthread \
@@ -58,10 +66,10 @@ CustomConfigureStep() {
     --without-sigaltstack \
     --without-mmap \
     --with-gc=included \
+    --with-sgen=no \
     --enable-nacl-gc \
     --enable-nls=no \
-    --enable-nacl-codegen \
-    --cache-file=../config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp
+    --enable-nacl-codegen
   echo "// --- Native Client runtime below" >> config.h
   echo "#define pthread_cleanup_push(x, y)" >> config.h
   echo "#define pthread_cleanup_pop(x)" >> config.h
@@ -90,7 +98,6 @@ CustomPackageInstall() {
   DefaultBuildStep
   CustomInstallStep
 }
-
 
 CustomPackageInstall
 exit 0

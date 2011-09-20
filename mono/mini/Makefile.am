@@ -585,7 +585,11 @@ endif !NACL_CODEGEN
 if CROSS_COMPILING
 GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
 else !CROSS_COMPILING
+if NACL_CODEGEN
+GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
+else !NACL_CODEGEN
 GENMDESC_PRG=./genmdesc $(GENMDESC_OPTS)
+endif !NACL_CODEGEN
 endif !CROSS_COMPILING
 
 cpu-x86.h: cpu-x86.md genmdesc$(EXEEXT)
