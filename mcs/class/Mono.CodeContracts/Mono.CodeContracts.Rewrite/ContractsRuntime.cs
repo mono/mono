@@ -196,7 +196,7 @@ namespace Mono.CodeContracts.Rewrite {
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
 				TypeReference typeException = this.module.Import (typeof (Exception));
-				MethodReference mRaiseContractFailedEvent = this.module.Import (typeof (ContractHelper).GetMethod ("RaiseContractFailedEvent"));
+				MethodReference mRaiseContractFailedEvent = this.module.Import (typeof (System.Runtime.CompilerServices.ContractHelper).GetMethod ("RaiseContractFailedEvent"));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("ReportFailure",
 					MethodAttributes.Assembly | MethodAttributes.Static, typeVoid);
