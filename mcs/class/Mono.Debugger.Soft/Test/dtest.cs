@@ -1186,7 +1186,7 @@ public class DebuggerTests
 		ObjectMirror o = frame.GetThis () as ObjectMirror;
 		ObjectMirror child = o.GetValue (o.Type.GetField ("child")) as ObjectMirror;
 
-		Assert.IsTrue (child.Address > 0);
+		Assert.IsTrue (child.Address != 0);
 
 		// Check that object references are internalized correctly
 		Assert.AreEqual (o, frame.GetThis ());
