@@ -83,7 +83,7 @@ namespace System.Security.Cryptography {
 		public override byte[] Key { 
 			get { return (byte[]) base.Key.Clone (); }
 			set { 
-				if ((value != null) && (value.Length > 64))
+				if ((value != null) && (value.Length > BlockSizeValue))
 					base.Key = _algo.ComputeHash (value);
 				else
 					base.Key = (byte[]) value.Clone();
