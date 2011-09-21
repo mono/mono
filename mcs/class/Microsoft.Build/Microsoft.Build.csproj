@@ -90,6 +90,12 @@
     <Compile Include="Microsoft.Build.Construction\ProjectCommentElement.cs" />
     <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
     <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\ITargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\ITaskItem.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResultCode.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResultCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
