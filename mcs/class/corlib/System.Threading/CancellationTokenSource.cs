@@ -174,10 +174,7 @@ namespace System.Threading
 		
 		CancellationToken CreateToken ()
 		{
-			CancellationToken tk = new CancellationToken (true);
-			tk.Source = this;
-			
-			return tk;
+			return new CancellationToken (this);
 		}
 	}
 }
