@@ -33,7 +33,6 @@ using System.Text;
 using Mono.Cecil;
 using System.Diagnostics.Contracts;
 using Mono.Cecil.Cil;
-using System.Diagnostics.Contracts.Internal;
 using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.CompilerServices;
@@ -196,7 +195,12 @@ namespace Mono.CodeContracts.Rewrite {
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
 				TypeReference typeException = this.module.Import (typeof (Exception));
-				MethodReference mRaiseContractFailedEvent = this.module.Import (typeof (System.Runtime.CompilerServices.ContractHelper).GetMethod ("RaiseContractFailedEvent"));
+#if NET_4_5
+				var helper = typeof (ContractHelper);
+#else
+				var helper = typeof (System.Diagnostics.Contracts.Internal.ContractHelper);
+#endif
+				MethodReference mRaiseContractFailedEvent = this.module.Import (helper.GetMethod ("RaiseContractFailedEvent"));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("ReportFailure",
 					MethodAttributes.Assembly | MethodAttributes.Static, typeVoid);
