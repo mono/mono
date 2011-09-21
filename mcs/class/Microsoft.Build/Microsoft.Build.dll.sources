@@ -31,6 +31,12 @@ Microsoft.Build.Evaluation/ProjectCollection.cs
 Microsoft.Build.Evaluation/ProjectItem.cs
 Microsoft.Build.Evaluation/ProjectLoadSettings.cs
 Microsoft.Build.Exceptions/InvalidProjectFileException.cs
+Microsoft.Build.Execution/BuildResult.cs
+Microsoft.Build.Execution/BuildResultCode.cs
+Microsoft.Build.Execution/ITargetResult.cs
+Microsoft.Build.Execution/ITaskItem.cs
+Microsoft.Build.Execution/TargetResult.cs
+Microsoft.Build.Execution/TargetResultCode.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
 Microsoft.Build.Internal/FilteredEnumerable.cs
 Microsoft.Build.Internal/ReverseEnumerable.cs
