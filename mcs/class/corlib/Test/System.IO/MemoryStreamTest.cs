@@ -1058,5 +1058,57 @@ namespace MonoTests.System.IO
 			ms.Close ();
 			Assert.IsTrue (ms.DisposedCalled, "After");
 		}
+
+#if NET_4_5
+		[Test]
+		public void ReadAsync ()
+		{
+			var buffer = new byte[3];
+			var t = testStream.ReadAsync (buffer, 0, buffer.Length);
+			Assert.AreEqual (t.Result, 3, "#1");
+			Assert.AreEqual (99, buffer [1], "#2");
+
+			testStream.Seek (99, SeekOrigin.Begin);
+			t = testStream.ReadAsync (buffer, 0, 1);
+			Assert.AreEqual (t.Result, 1, "#3");
+			Assert.AreEqual (1, buffer[0], "#4");
+		}
+
+		[Test]
+		public void ReadAsync_Canceled ()
+		{
+			var buffer = new byte[3];
+			var t = testStream.ReadAsync (buffer, 0, buffer.Length, new CancellationToken (true));
+			Assert.IsTrue (t.IsCanceled);
+
+			t = testStream.ReadAsync (buffer, 0, buffer.Length);
+			Assert.AreEqual (t.Result, 3, "#1");
+			Assert.AreEqual (99, buffer[1], "#2");
+		}
+
+		[Test]
+		public void WriteAsync ()
+		{
+			var buffer = new byte[3] { 3, 5, 9 };
+
+			var ms = new MemoryStream ();
+			var t = ms.WriteAsync (buffer, 0, buffer.Length);
+			Assert.IsTrue (t.IsCompleted, "#1");
+
+			ms.Seek (0, SeekOrigin.Begin);
+			Assert.AreEqual (3, ms.ReadByte (), "#2");
+		}
+
+		[Test]
+		public void WriteAsync_Canceled ()
+		{
+			var buffer = new byte[3] { 1, 2, 3 };
+			var t = testStream.WriteAsync (buffer, 0, buffer.Length, new CancellationToken (true));
+			Assert.IsTrue (t.IsCanceled);
+
+			t = testStream.WriteAsync (buffer, 0, buffer.Length);
+			Assert.IsTrue (t.IsCompleted, "#1");
+		}
+#endif
 	}
 }

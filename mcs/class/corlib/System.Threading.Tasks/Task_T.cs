@@ -35,12 +35,12 @@ namespace System.Threading.Tasks
 {
 	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Result = {ResultAsString}")]
 	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
-	public class Task<TResult>: Task
+	public class Task<TResult> : Task
 	{
+		internal static new readonly Task<TResult> Canceled = new Task<TResult> (TaskStatus.Canceled);
+		static readonly TaskFactory<TResult> factory = new TaskFactory<TResult> ();
+
 		TResult value;
-		static TaskFactory<TResult> factory = new TaskFactory<TResult> ();
-		static readonly Action<object> emptyAction = delegate {};
-		
 		internal Func<object, TResult> function;
 		object state;
 		
@@ -114,7 +114,7 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (emptyAction, state, cancellationToken, creationOptions)
+			: base (delegate { }, state, cancellationToken, creationOptions)
 		{
 			this.function = function;
 			this.state = state;
@@ -125,10 +125,16 @@ namespace System.Threading.Tasks
 		               CancellationToken cancellationToken,
 		               TaskCreationOptions creationOptions,
 		               Task parent)
-		: base (null, state, cancellationToken, creationOptions, parent)
+			: base (null, state, cancellationToken, creationOptions, parent)
 		{
 			this.function = function;
 			this.state = state;
+		}
+
+
+		internal Task (TaskStatus status)
+			: base (status)
+		{
 		}
 		
 		internal override void InnerInvoke ()

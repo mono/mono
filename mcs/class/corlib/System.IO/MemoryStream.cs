@@ -4,14 +4,12 @@
 // Authors:	Marcin Szczepanski (marcins@zipworld.com.au)
 //		Patrik Torstensson
 //		Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//		Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2001,2002 Marcin Szczepanski, Patrik Torstensson
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +33,10 @@
 
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Threading;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO
 {
@@ -53,6 +55,9 @@ namespace System.IO
 		bool streamClosed;
 		int position;
 		int dirty_bytes;
+#if NET_4_5
+		Task<int> read_task;
+#endif
 
 		public MemoryStream () : this (0)
 		{
@@ -418,5 +423,40 @@ namespace System.IO
 
 			stream.Write (internalBuffer, initialIndex, length - initialIndex);
 		}
+
+#if NET_4_5
+
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return Task<int>.Canceled;
+
+			Flush ();
+			return Task.Finished;
+		}
+
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return Task<int>.Canceled;
+
+			count = Read (buffer, offset, count);
+
+			// Try not to allocate a new task for every buffer read
+			if (read_task == null || read_task.Result != count)
+				read_task = Task<int>.FromResult (count);
+
+			return read_task;
+		}
+
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return Task<int>.Canceled;
+
+			Write (buffer, offset, count);
+			return Task.Finished;
+		}
+#endif
 	}               
 }

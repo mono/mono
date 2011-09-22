@@ -269,12 +269,40 @@ namespace System.IO
 #endif
 		
 #if NET_4_5
+		public Task FlushAsync ()
+		{
+			return FlushAsync (CancellationToken.None);
+		}
+
+		public virtual Task FlushAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return Task.Canceled;
+
+			var t = new Task (() => Flush (), cancellationToken);
+			t.Start ();
+			return t;
+		}
+
 		public Task<int> ReadAsync (byte[] buffer, int offset, int count)
 		{
+			return ReadAsync (buffer, offset, count, CancellationToken.None);
+		}
+
+		public virtual Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return Task<int>.Canceled;
+
 			return Task<int>.Factory.FromAsync (BeginRead, EndRead, buffer, offset, count, null);
 		}
 
 		public Task WriteAsync (byte[] buffer, int offset, int count)
+		{
+			return WriteAsync (buffer, offset, count, CancellationToken.None);
+		}
+
+		public virtual Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			return Task.Factory.FromAsync (BeginWrite, EndWrite, buffer, offset, count, null);
 		}

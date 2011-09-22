@@ -103,6 +103,7 @@ System.IO/FileSystemInfoTest.cs
 System.IO/FileTest.cs
 System.IO/MemoryStreamTest.cs
 System.IO/PathTest.cs
+System.IO/StreamTest.cs
 System.IO/StreamHelperTest.cs
 System.IO/StreamReaderTest.cs
 System.IO/StreamWriterTest.cs
