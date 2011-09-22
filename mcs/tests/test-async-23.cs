@@ -50,7 +50,8 @@ public class TestPostContext
 		try {
 			SynchronizationContext.SetSynchronizationContext (context);
 			var t = Test ();
-			Task.WaitAll (t);
+			if (!t.Wait (1000))
+				return 3;
 		} finally {
 			SynchronizationContext.SetSynchronizationContext (null);
 		}
