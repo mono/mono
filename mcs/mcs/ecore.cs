@@ -4176,7 +4176,7 @@ namespace Mono.CSharp {
 					// if the type matches
 					//
 					Expression e = pd.FixedParameters[i].DefaultValue;
-					if (!(e is Constant) || e.Type.IsGenericOrParentIsGeneric) {
+					if (!(e is Constant) || e.Type.IsGenericOrParentIsGeneric || e.Type.IsGenericParameter) {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
