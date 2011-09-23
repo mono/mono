@@ -18,10 +18,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2011 Xamarin Inc. (http://www.xamarin.com)
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //	Alan McGovern (amcgovern@novell.com)
+//	Rolf Bjarne Kvinge (rolf@xamarin.com)
 //
 
 using System;
@@ -337,7 +339,7 @@ namespace System.IO.Packaging {
 		string NextId ()
 		{
 			while (true) {
-				string s = RelationshipId.ToString ();
+				string s = "Re" + RelationshipId.ToString ();
 				if (!Relationships.ContainsKey (s))
 					return s;
 				
