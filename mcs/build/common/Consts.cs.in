@@ -39,7 +39,13 @@ static class Consts
 	public const string MonoProduct = "Mono Common Language Infrastructure";
 	public const string MonoCopyright = "(c) Various Mono authors";
 
-#if NET_4_0
+#if NET_4_5
+	public const string FxVersion = "4.0.0.0";
+	public const string FxFileVersion = "4.0.30319.17020";
+	
+	public const string VsVersion = "0.0.0.0"; // Useless ?
+	public const string VsFileVersion = "11.0.0.0"; // TODO:
+#elif NET_4_0
 	public const string FxVersion = "4.0.0.0";
 	public const string FxFileVersion = "4.0.30319.1";
 	

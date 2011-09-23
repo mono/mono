@@ -113,6 +113,7 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets       		\
+	System.Dynamic			\
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
 	System.Net
@@ -167,7 +168,6 @@ net_3_5_only_dirs := \
 	Microsoft.Build.Tasks
 
 net_4_0_dirs := \
-	System.Dynamic		\
 	System.Numerics		\
 	Microsoft.CSharp	\
 	Microsoft.Build		\
@@ -195,6 +195,7 @@ monotouch_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
+net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
 
 include ../build/rules.make
 

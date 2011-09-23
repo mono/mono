@@ -103,7 +103,7 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-PROFILE = net_4_0
+PROFILE = $(DEFAULT_PROFILE)
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make

@@ -56,7 +56,7 @@ moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
 endif
 
 if INSTALL_4_0
-build_profiles += net_4_0
+build_profiles += net_4_0 net_4_5
 #test_profiles += net_4_0
 endif
 

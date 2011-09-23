@@ -184,7 +184,7 @@ endif
 EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))
 
 # This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.DynamicData.dll
 NO_INSTALL = yes
