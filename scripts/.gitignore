@@ -5,6 +5,7 @@
 /caspol
 /cert2spc
 /certmgr
+/cccheck
 /ccrewrite
 /chktrust
 /cilc
