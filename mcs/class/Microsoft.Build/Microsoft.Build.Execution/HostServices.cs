@@ -1,4 +1,5 @@
-// ITargetResult.cs
+//
+// HostServices.cs
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
@@ -15,7 +16,7 @@
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,15 +27,41 @@
 //
 
 using Microsoft.Build.Framework;
-
 using System;
 
 namespace Microsoft.Build.Execution
 {
-        public interface ITargetResult
+        public class HostServices
         {
-                Exception Exception { get; }
-                ITaskItem[] Items { get; }
-                TargetResultCode ResultCode { get; }
+                public ITaskHost GetHostObject (string projectFile, string targetName, string taskName)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public NodeAffinity GetNodeAffinity (string projectFile)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void OnRenameProject (string oldFullPath, string newFullPath)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void RegisterHostObject (string projectFile, string targetName, string taskName, ITaskHost hostObject)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void SetNodeAffinity (string projectFile, NodeAffinity nodeAffinity)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void UnregisterProject (string projectFullPath)
+                {
+                        throw new NotImplementedException ();
+                }
         }
 }
+

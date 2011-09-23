@@ -1,4 +1,4 @@
-// ITargetResult.cs
+// Toolset.cs
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
@@ -12,10 +12,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,16 +25,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.Build.Framework;
-
 using System;
+using System.Collections.Generic;
 
-namespace Microsoft.Build.Execution
+using Microsoft.Build.Execution;
+
+namespace Microsoft.Build.Evaluation
 {
-        public interface ITargetResult
+        public class Toolset
         {
-                Exception Exception { get; }
-                ITaskItem[] Items { get; }
-                TargetResultCode ResultCode { get; }
+                public Toolset (string toolsVersion, string toolsPath,
+                                ProjectCollection projectCollection, string msbuildOverrideTasksPath)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public Toolset (string toolsVersion, string toolsPath,
+                                IDictionary<string, string> buildProperties, ProjectCollection projectCollection,
+                                string msbuildOverrideTasksPath)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public IDictionary<string, ProjectPropertyInstance> Properties {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public string ToolsPath {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public string ToolsVersion {
+                        get { throw new NotImplementedException (); }
+                }
         }
 }
+

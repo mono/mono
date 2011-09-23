@@ -1,4 +1,4 @@
-// ITargetResult.cs
+// ToolsetDefinitionLocations.cs
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
@@ -25,16 +25,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.Build.Framework;
-
 using System;
 
-namespace Microsoft.Build.Execution
+namespace Microsoft.Build.Evaluation
 {
-        public interface ITargetResult
+        [Flags ()]
+        public enum ToolsetDefinitionLocations
         {
-                Exception Exception { get; }
-                ITaskItem[] Items { get; }
-                TargetResultCode ResultCode { get; }
+                None,
+                ConfigurationFile,
+                Registry,
         }
 }
+
