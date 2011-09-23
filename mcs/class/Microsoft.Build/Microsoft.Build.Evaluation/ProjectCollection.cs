@@ -3,8 +3,10 @@
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
+//   Rolf Bjarne Kvinge (rolf@xamarin.com)
 //
 // (C) 2011 Leszek Ciesielski
+// Copyright (C) 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
+
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -34,6 +40,30 @@ namespace Microsoft.Build.Evaluation
         {
                 public ProjectCollection ()
                 {
+                }
+
+                public ProjectCollection (IDictionary<string, string> globalProperties)
+                        : this (globalProperties, null, ToolsetDefinitionLocations.Registry | ToolsetDefinitionLocations.ConfigurationFile)
+                {
+                }
+
+                public ProjectCollection (ToolsetDefinitionLocations toolsetDefinitionLocations)
+                        : this (null, null, toolsetDefinitionLocations)
+                {
+                }
+
+                public ProjectCollection (IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers,
+                                ToolsetDefinitionLocations toolsetDefinitionLocations)
+                        : this (globalProperties, loggers, null, toolsetDefinitionLocations, 1, false)
+                {
+                }
+
+                public ProjectCollection (IDictionary<string, string> globalProperties,
+                                IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers,
+                                ToolsetDefinitionLocations toolsetDefinitionLocations,
+                                int maxNodeCount, bool onlyLogCriticalEvents)
+                {
+                        throw new NotImplementedException ();
                 }
 
                 public static string Escape (string unescapedString)
@@ -58,5 +88,14 @@ namespace Microsoft.Build.Evaluation
                 }
 
                 static ProjectCollection globalProjectCollection = new ProjectCollection ();
+
+                public ICollection<Project> GetLoadedProjects (string fullPath)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public ToolsetDefinitionLocations ToolsetLocations {
+                        get { throw new NotImplementedException (); }
+                }
         }
 }

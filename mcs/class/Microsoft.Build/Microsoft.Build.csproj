@@ -92,10 +92,34 @@
     <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
     <Compile Include="Microsoft.Build.Execution\BuildResult.cs" />
     <Compile Include="Microsoft.Build.Execution\ITargetResult.cs" />
-    <Compile Include="Microsoft.Build.Execution\ITaskItem.cs" />
     <Compile Include="Microsoft.Build.Execution\TargetResultCode.cs" />
     <Compile Include="Microsoft.Build.Execution\TargetResult.cs" />
     <Compile Include="Microsoft.Build.Execution\BuildResultCode.cs" />
+    <Compile Include="Microsoft.Build.Logging\FileLogger.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectProperty.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ToolsetDefinitionLocations.cs" />
+    <Compile Include="Microsoft.Build.Logging\ForwardingLoggerRecord.cs" />
+    <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestData.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestDataFlags.cs" />
+    <Compile Include="Microsoft.Build.Execution\HostServices.cs" />
+    <Compile Include="Microsoft.Build.Execution\NodeAffinity.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectPropertyInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectMetadataInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildParameters.cs" />
+    <Compile Include="Microsoft.Build.Logging\ConsoleLogger.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorResetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorSetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Toolset.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectMetadata.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTargetInstance.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItemDefinition.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ResolvedImport.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildManager.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildSubmission.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

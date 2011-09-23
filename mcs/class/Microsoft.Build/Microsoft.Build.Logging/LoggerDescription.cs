@@ -1,4 +1,4 @@
-// ITargetResult.cs
+// LoggerDescription.cs
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
@@ -12,10 +12,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,16 +25,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using Microsoft.Build.Framework;
 
-using System;
-
-namespace Microsoft.Build.Execution
+namespace Microsoft.Build.Logging
 {
-        public interface ITargetResult
+        public class LoggerDescription
         {
-                Exception Exception { get; }
-                ITaskItem[] Items { get; }
-                TargetResultCode ResultCode { get; }
+                public LoggerDescription (string loggerClassName, string loggerAssemblyName,
+                        string loggerAssemblyFile, string loggerSwitchParameters,
+                        LoggerVerbosity verbosity)
+                {
+                        throw new NotImplementedException ();
+                }
         }
 }
+

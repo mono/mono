@@ -1,11 +1,8 @@
-//
-// ProjectItem.cs
+// Toolset.cs
 //
 // Author:
-//   Leszek Ciesielski (skolima@gmail.com)
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
 //
-// (C) 2011 Leszek Ciesielski
 // Copyright (C) 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -15,10 +12,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,61 +25,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
 using Microsoft.Build.Construction;
+
+using System;
 
 namespace Microsoft.Build.Evaluation
 {
-        [DebuggerDisplay("{ItemType}={EvaluatedInclude} [{UnevaluatedInclude}] #DirectMetadata={DirectMetadataCount}")]
-        public class ProjectItem
+        public class ProjectMetadata
         {
-                internal ProjectItem (ProjectItemElement xml)
-                {
-                        Xml = xml;
-                }
-
-                public ProjectMetadata GetMetadata (string name)
+                private ProjectMetadata ()
                 {
                         throw new NotImplementedException ();
                 }
 
-                public string GetMetadataValue (string name)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public bool HasMetadata (string name)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public bool RemoveMetadata (string name)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public void Rename (string name)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public void SetMetadataValue (string name, string unevaluatedValue)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public IEnumerable<ProjectMetadata> DirectMetadata {
-                        get { throw new NotImplementedException (); }
-                }
-
-                public int DirectMetadataCount {
-                        get { throw new NotImplementedException (); }
-                }
-
-                public string EvaluatedInclude {
+                public string EvaluatedValue {
                         get { throw new NotImplementedException (); }
                 }
 
@@ -94,11 +50,11 @@ namespace Microsoft.Build.Evaluation
                         get { throw new NotImplementedException (); }
                 }
 
-                public ICollection<ProjectMetadata> Metadata {
+                public string Name {
                         get { throw new NotImplementedException (); }
                 }
 
-                public int MetadataCount {
+                public ProjectMetadata Predecessor {
                         get { throw new NotImplementedException (); }
                 }
 
@@ -106,11 +62,13 @@ namespace Microsoft.Build.Evaluation
                         get { throw new NotImplementedException (); }
                 }
 
-                public string UnevaluatedInclude {
+                public string UnevaluatedValue {
                         get { throw new NotImplementedException (); }
                 }
 
-                public ProjectItemElement Xml { get; private set; }
-
+                public ProjectMetadataElement Xml {
+                        get { throw new NotImplementedException (); }
+                }
         }
 }
+
