@@ -1,6 +1,8 @@
 *.mdb
 *.exe
 *.dll
+*.pidb
+*.userprefs
 *_test_*.dll.config
 *_test_*.xml
 *.o
