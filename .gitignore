@@ -20,6 +20,7 @@
 /mono.spec
 /mono-core.spec
 /semantic.cache
+/mono.h
 /stamp-h
 /stamp-h.in
 /stamp-h1
