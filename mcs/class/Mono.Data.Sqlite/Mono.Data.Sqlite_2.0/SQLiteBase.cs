@@ -253,4 +253,11 @@ namespace Mono.Data.Sqlite
     SharedCache = 0x01000000,
     Default = 0x06,
   }
+
+  // subset of the options available in http://www.sqlite.org/c3ref/c_config_getmalloc.html
+  public enum SQLiteConfig {
+    SingleThread = 1,
+    MultiThread = 2,
+    Serialized = 3,
+  }
 }

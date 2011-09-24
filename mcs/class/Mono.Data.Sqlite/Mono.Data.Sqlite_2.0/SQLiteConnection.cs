@@ -2287,6 +2287,13 @@ namespace Mono.Data.Sqlite
     {
       _rollbackHandler(this, EventArgs.Empty);
     }
+
+    // http://www.sqlite.org/c3ref/config.html
+    public static void SetConfig (SQLiteConfig config)
+    {
+      int n = UnsafeNativeMethods.sqlite3_config (config);
+      if (n > 0) throw new SqliteException (n, null);
+    }
   }
 
   /// <summary>
