@@ -129,7 +129,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void WeakHandleWorksOnNonRootDomain ()
 		{
-			Console.WriteLine("current app domain: " + AppDomain.CurrentDomain.Id);
+			//Console.WriteLine("current app domain: " + AppDomain.CurrentDomain.Id);
 			AppDomain domain = AppDomain.CreateDomain("testdomain");
 
 			Assembly ea = Assembly.GetExecutingAssembly ();

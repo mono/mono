@@ -3,6 +3,8 @@ using System;
 
 using NUnit.Framework;
 
+namespace MonoTests.System
+{
 [TestFixture]
 public class IntegerTryParse {
 	[Test]
@@ -60,5 +62,6 @@ public class IntegerTryParse {
 		Assert.IsFalse(ulong.TryParse("18446744073709551616", out i));
 		Assert.IsFalse(ulong.TryParse("-1", out i));
 	}
+}
 }
 #endif

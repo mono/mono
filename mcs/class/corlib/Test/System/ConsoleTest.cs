@@ -321,6 +321,12 @@ public class ConsoleTest
 	[Test]
 	public void TestWriteLine_Params()
 	{
+		Stream s = new MemoryStream();
+		TextWriter w = new StreamWriter(s);
+		((StreamWriter)w).AutoFlush = true;
+		TextReader r = new StreamReader(s);
+		Console.SetOut(w);
+
 		Console.WriteLine ("text {0}", (object[]) null);
 	}
 
