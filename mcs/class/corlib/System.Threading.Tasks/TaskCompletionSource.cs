@@ -36,6 +36,11 @@ namespace System.Threading.Tasks
 	{
 		static readonly Func<TResult> emptyFunction = () => default (TResult);
 		static readonly Func<object, TResult> emptyParamFunction = (_) => default (TResult);
+
+		static readonly Action<Task<TResult>, TResult> setResultAction = SetResultAction;
+		static readonly Action<Task<TResult>, AggregateException> setExceptionAction = SetExceptionAction;
+		static readonly Action<Task<TResult>, object> setCanceledAction = SetCanceledAction;
+
 		readonly Task<TResult> source;
 		SpinLock opLock = new SpinLock (false);
 
@@ -65,7 +70,7 @@ namespace System.Threading.Tasks
 		
 		public void SetCanceled ()
 		{
-			if (!ApplyOperation (source.CancelReal))
+			if (!TrySetCanceled ())
 				ThrowInvalidException ();
 		}
 		
@@ -85,7 +90,7 @@ namespace System.Threading.Tasks
 		
 		public void SetResult (TResult result)
 		{
-			if (!ApplyOperation (() => source.Result = result))
+			if (!TrySetResult (result))
 				ThrowInvalidException ();
 		}
 				
@@ -96,7 +101,7 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetCanceled ()
 		{
-			return ApplyOperation (source.CancelReal);
+			return ApplyOperation (setCanceledAction, null);
 		}
 		
 		public bool TrySetException (Exception exception)
@@ -116,15 +121,15 @@ namespace System.Threading.Tasks
 			if (aggregate.InnerExceptions.Count == 0)
 				throw new ArgumentNullException ("exceptions");
 			
-			return ApplyOperation (() => source.HandleGenericException (aggregate));
+			return ApplyOperation (setExceptionAction, aggregate);
 		}
 		
 		public bool TrySetResult (TResult result)
 		{
-			return ApplyOperation (() => source.Result = result);
+			return ApplyOperation (setResultAction, result);
 		}
 				
-		bool ApplyOperation (Action action)
+		bool ApplyOperation<TState> (Action<Task<TResult>, TState> action, TState state)
 		{
 			bool taken = false;
 			try {
@@ -135,7 +140,7 @@ namespace System.Threading.Tasks
 				source.Status = TaskStatus.Running;
 
 				if (action != null)
-					action ();
+					action (source, state);
 
 				source.Finish ();
 			
@@ -151,9 +156,23 @@ namespace System.Threading.Tasks
 			return source.Status == TaskStatus.RanToCompletion ||
 				   source.Status == TaskStatus.Faulted || 
 				   source.Status == TaskStatus.Canceled;
-					
 		}
-		
+
+		static void SetResultAction (Task<TResult> source, TResult result)
+		{
+			source.Result = result;
+		}
+
+		static void SetExceptionAction (Task<TResult> source, AggregateException aggregate)
+		{
+			source.HandleGenericException (aggregate);
+		}
+
+		static void SetCanceledAction (Task<TResult> source, object unused)
+		{
+			source.CancelReal ();
+		}
+
 		public Task<TResult> Task {
 			get {
 				return source;
