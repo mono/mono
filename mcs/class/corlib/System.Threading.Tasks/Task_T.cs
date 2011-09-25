@@ -39,6 +39,7 @@ namespace System.Threading.Tasks
 	{
 		internal static new readonly Task<TResult> Canceled = new Task<TResult> (TaskStatus.Canceled);
 		static readonly TaskFactory<TResult> factory = new TaskFactory<TResult> ();
+		static readonly Action<object> emptyAction = delegate (object o) {};
 
 		TResult value;
 		internal Func<object, TResult> function;
@@ -114,7 +115,7 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (delegate { }, state, cancellationToken, creationOptions)
+			: base (emptyAction, state, cancellationToken, creationOptions)
 		{
 			if (function == null)
 				throw new ArgumentNullException ("function");
