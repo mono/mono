@@ -277,7 +277,7 @@ namespace System.IO
 		public virtual Task FlushAsync (CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return Task.Canceled;
+				return TaskConstants.Canceled;
 
 			var t = new Task (() => Flush (), cancellationToken);
 			t.Start ();
@@ -292,7 +292,7 @@ namespace System.IO
 		public virtual Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return Task<int>.Canceled;
+				return TaskConstants<int>.Canceled;
 
 			return Task<int>.Factory.FromAsync (BeginRead, EndRead, buffer, offset, count, null);
 		}

@@ -429,16 +429,16 @@ namespace System.IO
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return Task<int>.Canceled;
+				return TaskConstants<int>.Canceled;
 
 			Flush ();
-			return Task.Finished;
+			return TaskConstants.Finished;
 		}
 
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return Task<int>.Canceled;
+				return TaskConstants<int>.Canceled;
 
 			count = Read (buffer, offset, count);
 
@@ -452,10 +452,10 @@ namespace System.IO
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return Task<int>.Canceled;
+				return TaskConstants<int>.Canceled;
 
 			Write (buffer, offset, count);
-			return Task.Finished;
+			return TaskConstants.Finished;
 		}
 #endif
 	}               

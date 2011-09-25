@@ -51,8 +51,6 @@ namespace System.Threading.Tasks
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
-		internal static readonly Task Finished = new Task (TaskStatus.RanToCompletion);
-		internal static readonly Task Canceled = new Task (TaskStatus.Canceled);
 		
 		CountdownEvent childTasks;
 		
@@ -148,11 +146,6 @@ namespace System.Threading.Tasks
 			// Process taskCreationOptions
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 				parent.AddChild ();
-		}
-
-		internal Task (TaskStatus status)
-		{
-			this.status = status;
 		}
 
 		~Task ()
@@ -915,9 +908,9 @@ namespace System.Threading.Tasks
 
 		public static Task<TResult> FromResult<TResult> (TResult result)
 		{
-			var t = new Task<TResult> (TaskStatus.RanToCompletion);
-			t.Result = result;
-			return t;
+			var tcs = new TaskCompletionSource<TResult> ();
+			tcs.SetResult (result);
+			return tcs.Task;
 		}
 
 		public TaskAwaiter GetAwaiter ()

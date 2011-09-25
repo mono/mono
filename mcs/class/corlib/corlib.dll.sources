@@ -1560,6 +1560,8 @@ System.Threading.Tasks/CompletionSlot.cs
 System.Threading.Tasks/TaskDebuggerView.cs
 System.Threading.Tasks/TaskCompletionSource.cs
 System.Threading.Tasks/TaskSchedulerException.cs
+System.Threading.Tasks/TaskConstants.cs
+System.Threading.Tasks/TaskConstants_T.cs
 System.Collections.Concurrent/OrderablePartitioner.cs
 System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
