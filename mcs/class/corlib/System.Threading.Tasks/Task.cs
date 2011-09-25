@@ -54,7 +54,7 @@ namespace System.Threading.Tasks
 		internal static readonly Task Finished = new Task (TaskStatus.RanToCompletion);
 		internal static readonly Task Canceled = new Task (TaskStatus.Canceled);
 		
-		CountdownEvent childTasks = new CountdownEvent (1);
+		CountdownEvent childTasks;
 		
 		int                 taskId;
 		TaskCreationOptions taskCreationOptions;
@@ -457,6 +457,8 @@ namespace System.Threading.Tasks
 		
 		internal void AddChild ()
 		{
+			if (childTasks == null)
+				Interlocked.CompareExchange (ref childTasks, new CountdownEvent (1), null);
 			childTasks.AddCount ();
 		}
 
@@ -490,12 +492,13 @@ namespace System.Threading.Tasks
 		
 		internal void Finish ()
 		{
-			// If there wasn't any child created in the task we set the CountdownEvent
-			childTasks.Signal ();
+			// If there was children created and they all finished, we set the countdown
+			if (childTasks != null)
+				childTasks.Signal ();
 			
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
-				if (childTasks.IsSet)
+				if (childTasks == null || childTasks.IsSet)
 					status = TaskStatus.RanToCompletion;
 				else
 					status = TaskStatus.WaitingForChildrenToComplete;
