@@ -43,6 +43,7 @@ namespace System.Threading.Tasks
 
 		TResult value;
 		internal Func<object, TResult> function;
+		Func<TResult> simpleFunction;
 		object state;
 		
 		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -80,21 +81,25 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, TaskCreationOptions.None)
+			: this (function, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, TaskCreationOptions creationOptions)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, CancellationToken.None, creationOptions)
+			: this (function, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, creationOptions)
+			: base (emptyAction, null, cancellationToken, creationOptions)
 		{
-			
+			if (function == null)
+				throw new ArgumentNullException ("function");
+
+			this.simpleFunction = function;
+			this.state = null;
 		}
 		
 		public Task (Func<object, TResult> function, object state) : this (function, state, TaskCreationOptions.None)
@@ -145,8 +150,11 @@ namespace System.Threading.Tasks
 		{
 			if (function != null)
 				value = function (state);
+			else if (simpleFunction != null)
+				value = simpleFunction ();
 			
 			function = null;
+			simpleFunction = null;
 			state = null;
 		}
 		
