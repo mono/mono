@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Threading;
 using MonoTests.System.Threading.Tasks;
 using System.Collections.Generic;
@@ -259,6 +260,21 @@ namespace MonoTests.System.Collections.Concurrent
 
 			Assert.AreEqual ("class1", classMap[class1], "class 1 check");
 			Assert.AreEqual ("class2", classMap[class2], "class 2 check");
+		}
+
+		[Test]
+		public void InitWithEnumerableTest ()
+		{
+			int[] data = {1,2,3,4,5,6,7,8,9,10};
+			var ndic = data.ToDictionary (x => x);
+			var cdic = new ConcurrentDictionary<int, int> (ndic);
+
+			foreach (var index in data) {
+				Assert.IsTrue (cdic.ContainsKey (index));
+				int val;
+				Assert.IsTrue (cdic.TryGetValue (index, out val));
+				Assert.AreEqual (index, val);
+			}
 		}
 	}
 }

@@ -50,8 +50,6 @@ namespace System.Collections.Concurrent
 		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> collection)
 			: this (collection, EqualityComparer<TKey>.Default)
 		{
-			foreach (KeyValuePair<TKey, TValue> pair in collection)
-				Add (pair.Key, pair.Value);
 		}
 
 		public ConcurrentDictionary (IEqualityComparer<TKey> comparer)
