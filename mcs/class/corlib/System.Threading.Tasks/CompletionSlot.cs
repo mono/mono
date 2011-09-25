@@ -1,5 +1,5 @@
 //
-// CompletionContainer.cs
+// CompletionSlot.cs
 //
 // Authors:
 //    Jérémie Laval <jeremie dot laval at xamarin dot com>
@@ -30,39 +30,19 @@
 
 using System;
 using System.Threading;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal struct CompletionContainer
+	internal struct CompletionSlot
 	{
-		Task single;
-		ConcurrentQueue<Task> completed;
+		public AtomicBooleanValue Launched;
+		public Func<bool> Predicate;
+		public TaskContinuationOptions Kind;
 
-		public void Add (Task continuation)
+		public void Init (TaskContinuationOptions kind, Func<bool> predicate)
 		{
-			if (single == null && Interlocked.CompareExchange (ref single, continuation, null) == null)
-				return;
-			if (completed == null)
-				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<Task> (), null);
-			completed.Enqueue (continuation);
-		}
-
-		public bool HasElements {
-			get {
-				return single != null;
-			}
-		}
-
-		public bool TryGetNextCompletion (out Task continuation)
-		{
-			continuation = null;
-
-			if (single != null && (continuation = Interlocked.Exchange (ref single, null)) != null)
-				return true;
-
-			return completed != null && completed.TryDequeue (out continuation);
+			Predicate = predicate;
+			Kind = kind;
 		}
 	}
 }

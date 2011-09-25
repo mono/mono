@@ -75,6 +75,8 @@ namespace System.Threading.Tasks
 		AtomicBooleanValue executing;
 
 		CompletionContainer completed;
+		// If this task is a continuation, this stuff gets filled
+		CompletionSlot Slot;
 
 		CancellationToken token;
 
@@ -304,34 +306,18 @@ namespace System.Threading.Tasks
 			continuation.scheduler = scheduler;
 			continuation.schedWait.Set ();
 			continuation.status = TaskStatus.WaitingForActivation;
-			
-			AtomicBoolean launched = new AtomicBoolean ();
-			EventHandler action = delegate (object sender, EventArgs e) {
-				if (launched.TryRelaxedSet ()) {
-					if (predicate != null && !predicate ())
-						return;
+			continuation.Slot.Init (kind, predicate);
 
-					if (!ContinuationStatusCheck (kind)) {
-						continuation.CancelReal ();
-						continuation.Dispose ();
-						
-						return;
-					}
-					
-					CheckAndSchedule (continuation, kind, scheduler, sender == null);
-				}
-			};
-			
 			if (IsCompleted) {
-				action (null, EventArgs.Empty);
+				CompletionExecutor (continuation);
 				return;
 			}
 			
-			completed.Add (action);
+			completed.Add (continuation);
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
-				action (null, EventArgs.Empty);
+				CompletionExecutor (continuation);
 		}
 
 		
@@ -517,13 +503,31 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		void CompletionExecutor (Task cont)
+		{
+			if (!cont.Slot.Launched.TryRelaxedSet ())
+				return;
+
+			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
+				return;
+
+			if (!ContinuationStatusCheck (cont.Slot.Kind)) {
+				cont.CancelReal ();
+				cont.Dispose ();
+
+				return;
+			}
+			CheckAndSchedule (cont, cont.Slot.Kind, cont.scheduler, false);
+		}
+
 		void ProcessCompleteDelegates ()
 		{
 			if (!completed.HasElements)
 				return;
 
-			foreach (var handler in completed.GetCompletions ())
-				handler (this, null);
+			Task continuation;
+			while (completed.TryGetNextCompletion (out continuation))
+				CompletionExecutor (continuation);
 		}
 
 		void ProcessChildExceptions ()
@@ -626,7 +630,7 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			
+
 			foreach (var t in tasks) {
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
