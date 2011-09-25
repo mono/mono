@@ -34,14 +34,12 @@ namespace System.Threading.Tasks
 
 		protected internal override void QueueTask (Task task)
 		{
-			ThreadPool.QueueUserWorkItem (callback, task);
+			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
 		}
 
 		static void TaskExecuterCallback (object obj)
 		{
-			Task task = obj as Task;
-			if (task == null)
-				return;
+			Task task = (Task)obj;
 			task.Execute (null);
 		}
 
