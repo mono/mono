@@ -31,62 +31,67 @@
 //
 
 using System.Text;
-
 using System.Runtime.InteropServices;
 
-namespace System.IO {
+namespace System.IO
+{
 
 	[Serializable]
 	[ComVisible (true)]
 #if NET_2_1
 	public abstract class TextWriter : IDisposable {
 #else
-	public abstract class TextWriter : MarshalByRefObject, IDisposable {
+	public abstract class TextWriter : MarshalByRefObject, IDisposable
+	{
 #endif
-                
-                protected TextWriter() {
+
+		protected TextWriter ()
+		{
 			CoreNewLine = System.Environment.NewLine.ToCharArray ();
 		}
-                
-                protected TextWriter( IFormatProvider formatProvider ) {
+
+		protected TextWriter (IFormatProvider formatProvider)
+		{
 			CoreNewLine = System.Environment.NewLine.ToCharArray ();
-                        internalFormatProvider = formatProvider;
-                }
+			internalFormatProvider = formatProvider;
+		}
 
-                protected char[] CoreNewLine;
+		protected char[] CoreNewLine;
 
-                internal IFormatProvider internalFormatProvider;
+		internal IFormatProvider internalFormatProvider;
 
-                public static readonly TextWriter Null = new NullTextWriter ();
+		public static readonly TextWriter Null = new NullTextWriter ();
 
-                public abstract Encoding Encoding { get; }
+		public abstract Encoding Encoding { get; }
 
-                public virtual IFormatProvider FormatProvider { 
-                        get {
-                                return internalFormatProvider;
-                        } 
-                }
+		public virtual IFormatProvider FormatProvider {
+			get {
+				return internalFormatProvider;
+			}
+		}
 
-                public virtual string NewLine { 
-                        get {
-                                return new string(CoreNewLine);
-                        }
-                        
-                        set {
+		public virtual string NewLine {
+			get
+			{
+				return new string (CoreNewLine);
+			}
+
+			set {
 				if (value == null)
 					value = Environment.NewLine;
 
-				CoreNewLine = value.ToCharArray();
-                        }
-                }
+				CoreNewLine = value.ToCharArray ();
+			}
+		}
 
-                public virtual void Close () { 
-                        Dispose (true);
-                }
-
-                protected virtual void Dispose (bool disposing)
+		public virtual void Close ()
 		{
-			if (disposing){
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing) {
 				// If we are explicitly disposed, we can avoid finalization.
 				GC.SuppressFinalize (this);
 			}
@@ -99,104 +104,104 @@ namespace System.IO {
 			GC.SuppressFinalize (this);
 		}
 
-                public virtual void Flush()
+		public virtual void Flush ()
 		{
 			// do nothing
 		}
 
-                public static TextWriter Synchronized (TextWriter writer)
+		public static TextWriter Synchronized (TextWriter writer)
 		{
 			return Synchronized (writer, false);
-                }
+		}
 
-                internal static TextWriter Synchronized (TextWriter writer, bool neverClose)
+		internal static TextWriter Synchronized (TextWriter writer, bool neverClose)
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer is null");
 
 			if (writer is SynchronizedWriter)
 				return writer;
-			
-			return new SynchronizedWriter (writer, neverClose);
-                }
 
-                public virtual void Write (bool value)
+			return new SynchronizedWriter (writer, neverClose);
+		}
+
+		public virtual void Write (bool value)
 		{
 			Write (value.ToString ());
 		}
-		
-                public virtual void Write (char value)
+
+		public virtual void Write (char value)
 		{
 			// Do nothing
 		}
 
-                public virtual void Write (char[] buffer)
+		public virtual void Write (char[] buffer)
 		{
 			if (buffer == null)
 				return;
 			Write (buffer, 0, buffer.Length);
 		}
-		
-                public virtual void Write (decimal value)
-		{
-			Write (value.ToString (internalFormatProvider));
-		}
-		
-                public virtual void Write (double value)
+
+		public virtual void Write (decimal value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
 
-                public virtual void Write (int value)
+		public virtual void Write (double value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
-		
-                public virtual void Write (long value)
+
+		public virtual void Write (int value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
-		
-                public virtual void Write (object value)
+
+		public virtual void Write (long value)
+		{
+			Write (value.ToString (internalFormatProvider));
+		}
+
+		public virtual void Write (object value)
 		{
 			if (value != null)
 				Write (value.ToString ());
 		}
-		
-                public virtual void Write (float value)
+
+		public virtual void Write (float value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
-		
-                public virtual void Write (string value)
+
+		public virtual void Write (string value)
 		{
 			if (value != null)
 				Write (value.ToCharArray ());
 		}
-		
-		[CLSCompliant(false)]
-                public virtual void Write (uint value)
+
+		[CLSCompliant (false)]
+		public virtual void Write (uint value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
-		
-		[CLSCompliant(false)]
-                public virtual void Write (ulong value)
+
+		[CLSCompliant (false)]
+		public virtual void Write (ulong value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
-		
-                public virtual void Write (string format, object arg0)
+
+		public virtual void Write (string format, object arg0)
 		{
 			Write (String.Format (format, arg0));
 		}
-		
-                public virtual void Write (string format, params object[] arg)
+
+		public virtual void Write (string format, params object[] arg)
 		{
 			Write (String.Format (format, arg));
 		}
-		
-                public virtual void Write (char[] buffer, int index, int count)
+
+		public virtual void Write (char[] buffer, int index, int count)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -207,139 +212,140 @@ namespace System.IO {
 				throw new ArgumentOutOfRangeException ("count");
 
 			for (; count > 0; --count, ++index) {
-				Write (buffer [index]);
+				Write (buffer[index]);
 			}
 		}
-		
-                public virtual void Write (string format, object arg0, object arg1)
+
+		public virtual void Write (string format, object arg0, object arg1)
 		{
 			Write (String.Format (format, arg0, arg1));
 		}
-		
-                public virtual void Write (string format, object arg0, object arg1, object arg2 )
+
+		public virtual void Write (string format, object arg0, object arg1, object arg2)
 		{
 			Write (String.Format (format, arg0, arg1, arg2));
 		}
-                
-                public virtual void WriteLine ()
+
+		public virtual void WriteLine ()
 		{
 			Write (CoreNewLine);
 		}
-		
-                public virtual void WriteLine (bool value)
+
+		public virtual void WriteLine (bool value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (char value)
+
+		public virtual void WriteLine (char value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (char[] buffer)
+
+		public virtual void WriteLine (char[] buffer)
 		{
 			Write (buffer);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (decimal value)
+
+		public virtual void WriteLine (decimal value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (double value)
+
+		public virtual void WriteLine (double value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (int value)
+
+		public virtual void WriteLine (int value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (long value)
+
+		public virtual void WriteLine (long value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (object value)
+
+		public virtual void WriteLine (object value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (float value)
+
+		public virtual void WriteLine (float value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (string value)
+
+		public virtual void WriteLine (string value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-		[CLSCompliant(false)]
-                public virtual void WriteLine (uint value)
+
+		[CLSCompliant (false)]
+		public virtual void WriteLine (uint value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-		[CLSCompliant(false)]
-                public virtual void WriteLine (ulong value)
+
+		[CLSCompliant (false)]
+		public virtual void WriteLine (ulong value)
 		{
 			Write (value);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (string format, object arg0)
+
+		public virtual void WriteLine (string format, object arg0)
 		{
 			Write (format, arg0);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (string format, params object[] arg)
+
+		public virtual void WriteLine (string format, params object[] arg)
 		{
 			Write (format, arg);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (char[] buffer, int index, int count)
+
+		public virtual void WriteLine (char[] buffer, int index, int count)
 		{
 			Write (buffer, index, count);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (string format, object arg0, object arg1)
+
+		public virtual void WriteLine (string format, object arg0, object arg1)
 		{
 			Write (format, arg0, arg1);
-			WriteLine();
+			WriteLine ();
 		}
-		
-                public virtual void WriteLine (string format, object arg0, object arg1, object arg2)
+
+		public virtual void WriteLine (string format, object arg0, object arg1, object arg2)
 		{
 			Write (format, arg0, arg1, arg2);
-			WriteLine();
+			WriteLine ();
 		}
 
 		//
 		// Null version of the TextWriter, for the `Null' instance variable
 		//
-		sealed class NullTextWriter : TextWriter {
+		sealed class NullTextWriter : TextWriter
+		{
 			public override Encoding Encoding {
 				get {
 					return Encoding.Default;
 				}
 			}
-			
+
 			public override void Write (string s)
 			{
 			}
@@ -350,13 +356,14 @@ namespace System.IO {
 			{
 			}
 		}
-        }
+	}
 
 	//
 	// Sychronized version of the TextWriter.
 	//
 	[Serializable]
-	internal class SynchronizedWriter : TextWriter {
+	internal class SynchronizedWriter : TextWriter
+	{
 		private TextWriter writer;
 		private bool neverClose;
 
@@ -375,262 +382,262 @@ namespace System.IO {
 		{
 			if (neverClose)
 				return;
-			lock (this){
+			lock (this) {
 				writer.Close ();
 			}
 		}
 
 		public override void Flush ()
 		{
-			lock (this){
+			lock (this) {
 				writer.Flush ();
 			}
 		}
 
-#region Write methods
+		#region Write methods
 		public override void Write (bool value)
 		{
-			lock (this){
-				writer.Write (value);
-			}
-		}
-		
-		public override void Write (char value)
-		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
 
-		public override void Write (char [] value)
+		public override void Write (char value)
 		{
-			lock (this){
+			lock (this) {
+				writer.Write (value);
+			}
+		}
+
+		public override void Write (char[] value)
+		{
+			lock (this) {
 				writer.Write (value);
 			}
 		}
 
 		public override void Write (Decimal value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
 
 		public override void Write (int value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
 
 		public override void Write (long value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
-		
+
 		public override void Write (object value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
 
 		public override void Write (float value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
-		
+
 		public override void Write (string value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
-		
+
 		public override void Write (uint value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
-		
+
 		public override void Write (ulong value)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (value);
 			}
 		}
-		
+
 		public override void Write (string format, object value)
 		{
-			lock (this){
-				writer.Write (format, value);
-			}
-		}
-		
-		public override void Write (string format, object [] value)
-		{
-			lock (this){
+			lock (this) {
 				writer.Write (format, value);
 			}
 		}
 
-		public override void Write (char [] buffer, int index, int count)
+		public override void Write (string format, object[] value)
 		{
-			lock (this){
+			lock (this) {
+				writer.Write (format, value);
+			}
+		}
+
+		public override void Write (char[] buffer, int index, int count)
+		{
+			lock (this) {
 				writer.Write (buffer, index, count);
 			}
 		}
-		
+
 		public override void Write (string format, object arg0, object arg1)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (format, arg0, arg1);
 			}
 		}
-		
+
 		public override void Write (string format, object arg0, object arg1, object arg2)
 		{
-			lock (this){
+			lock (this) {
 				writer.Write (format, arg0, arg1, arg2);
 			}
 		}
-#endregion
-#region WriteLine methods
+		#endregion
+		#region WriteLine methods
 		public override void WriteLine ()
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine ();
 			}
 		}
 
 		public override void WriteLine (bool value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (char value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
-		public override void WriteLine (char [] value)
+		public override void WriteLine (char[] value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (Decimal value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (double value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (int value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (long value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (object value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (float value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (string value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (uint value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (ulong value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (value);
 			}
 		}
 
 		public override void WriteLine (string format, object value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (format, value);
 			}
 		}
 
-		public override void WriteLine (string format, object [] value)
+		public override void WriteLine (string format, object[] value)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (format, value);
 			}
 		}
 
-		public override void WriteLine (char [] buffer, int index, int count)
+		public override void WriteLine (char[] buffer, int index, int count)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (buffer, index, count);
 			}
 		}
-		
+
 		public override void WriteLine (string format, object arg0, object arg1)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (format, arg0, arg1);
 			}
 		}
 
 		public override void WriteLine (string format, object arg0, object arg1, object arg2)
 		{
-			lock (this){
+			lock (this) {
 				writer.WriteLine (format, arg0, arg1, arg2);
 			}
 		}
-#endregion
-		
+		#endregion
+
 		public override Encoding Encoding {
 			get {
-				lock (this){
+				lock (this) {
 					return writer.Encoding;
 				}
 			}
@@ -638,7 +645,7 @@ namespace System.IO {
 
 		public override IFormatProvider FormatProvider {
 			get {
-				lock (this){
+				lock (this) {
 					return writer.FormatProvider;
 				}
 			}
@@ -646,13 +653,13 @@ namespace System.IO {
 
 		public override string NewLine {
 			get {
-				lock (this){
+				lock (this) {
 					return writer.NewLine;
 				}
 			}
 
 			set {
-				lock (this){
+				lock (this) {
 					writer.NewLine = value;
 				}
 			}

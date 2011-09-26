@@ -5,9 +5,6 @@
 //	Marcin Szczepanski (marcins@zipworld.com.au)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -35,31 +32,32 @@ using System.Globalization;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace System.IO {
-
+namespace System.IO
+{
 	[Serializable]
 	[ComVisible (true)]
 	[MonoLimitation ("Serialization format not compatible with .NET")]
-	public class StringWriter : TextWriter {
-                
-                private StringBuilder internalString;
-		private bool disposed = false;
+	public class StringWriter : TextWriter
+	{
+		private StringBuilder internalString;
+		private bool disposed;
 
-                public StringWriter () : this (new StringBuilder ())
+		public StringWriter ()
+			: this (new StringBuilder ())
 		{
 		}
 
-                public StringWriter (IFormatProvider formatProvider) :
-			this (new StringBuilder (), formatProvider)
+		public StringWriter (IFormatProvider formatProvider)
+			: this (new StringBuilder (), formatProvider)
 		{
 		}
 
-                public StringWriter (StringBuilder sb) :
-			this (sb, null)
+		public StringWriter (StringBuilder sb)
+			: this (sb, null)
 		{
 		}
 
-                public StringWriter (StringBuilder sb, IFormatProvider formatProvider)
+		public StringWriter (StringBuilder sb, IFormatProvider formatProvider)
 		{
 			if (sb == null)
 				throw new ArgumentNullException ("sb");
@@ -68,19 +66,19 @@ namespace System.IO {
 			internalFormatProvider = formatProvider;
 		}
 
-                public override System.Text.Encoding Encoding {
-                        get {
-                                return System.Text.Encoding.Unicode;
-                        }
+		public override Encoding Encoding {
+			get {
+				return Encoding.Unicode;
+			}
 		}
 
-                public override void Close ()
+		public override void Close ()
 		{
 			Dispose (true);
 			disposed = true;
-                }
+		}
 
-                protected override void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			// MS.NET doesn't clear internal buffer.
 			// internalString = null;
@@ -88,40 +86,40 @@ namespace System.IO {
 			disposed = true;
 		}
 
-                public virtual StringBuilder GetStringBuilder ()
+		public virtual StringBuilder GetStringBuilder ()
 		{
 			return internalString;
 		}
 
-                public override string ToString ()
+		public override string ToString ()
 		{
 			return internalString.ToString ();
-                }
-
-                public override void Write (char value)
-		{
-			if (disposed) {
-				throw new ObjectDisposedException ("StringReader", 
-					Locale.GetText ("Cannot write to a closed StringWriter"));
-			}
-
-                        internalString.Append (value);
 		}
 
-                public override void Write (string value)
+		public override void Write (char value)
 		{
 			if (disposed) {
-				throw new ObjectDisposedException ("StringReader", 
+				throw new ObjectDisposedException ("StringReader",
 					Locale.GetText ("Cannot write to a closed StringWriter"));
 			}
 
 			internalString.Append (value);
 		}
 
-                public override void Write (char[] buffer, int index, int count)
+		public override void Write (string value)
 		{
 			if (disposed) {
-				throw new ObjectDisposedException ("StringReader", 
+				throw new ObjectDisposedException ("StringReader",
+					Locale.GetText ("Cannot write to a closed StringWriter"));
+			}
+
+			internalString.Append (value);
+		}
+
+		public override void Write (char[] buffer, int index, int count)
+		{
+			if (disposed) {
+				throw new ObjectDisposedException ("StringReader",
 					Locale.GetText ("Cannot write to a closed StringWriter"));
 			}
 			if (buffer == null)
@@ -131,11 +129,10 @@ namespace System.IO {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			// re-ordered to avoid possible integer overflow
-                        if (index > buffer.Length - count)
+			if (index > buffer.Length - count)
 				throw new ArgumentException ("index + count > buffer.Length");
 
 			internalString.Append (buffer, index, count);
 		}
 	}
 }
-              
