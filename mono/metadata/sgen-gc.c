@@ -2519,7 +2519,7 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 	int fin_ready;
-	int ephemeron_rounds = 0;
+	int done_with_ephemerons, ephemeron_rounds = 0;
 	int num_loops;
 	CopyOrMarkObjectFunc copy_func = current_collection_generation == GENERATION_NURSERY ? major_collector.copy_object : major_collector.copy_or_mark_object;
 
@@ -2539,6 +2539,18 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	drain_gray_stack (queue);
 	TV_GETTIME (atv);
 	DEBUG (2, fprintf (gc_debug_file, "%s generation done\n", generation_name (generation)));
+
+	/*
+	 * Walk the ephemeron tables marking all values with reachable keys. This must be completely done
+	 * before processing finalizable objects or non-tracking weak hamdle to avoid finalizing/clearing
+	 * objects that are in fact reachable.
+	 */
+	done_with_ephemerons = 0;
+	do {
+		done_with_ephemerons = mark_ephemerons_in_range (copy_func, start_addr, end_addr, queue);
+		drain_gray_stack (queue);
+		++ephemeron_rounds;
+	} while (!done_with_ephemerons);
 
 	/*
 	We must clear weak links that don't track resurrection before processing object ready for
@@ -2563,20 +2575,6 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	 */
 	num_loops = 0;
 	do {
-		/*
-		 * Walk the ephemeron tables marking all values with reachable keys. This must be completely done
-		 * before processing finalizable objects to avoid finalizing reachable values.
-		 *
-		 * It must be done inside the finalizaters loop since objects must not be removed from CWT tables
-		 * while they are been finalized.
-		 */
-		int done_with_ephemerons = 0;
-		do {
-			done_with_ephemerons = mark_ephemerons_in_range (copy_func, start_addr, end_addr, queue);
-			drain_gray_stack (queue);
-			++ephemeron_rounds;
-		} while (!done_with_ephemerons);
-
 		if (mono_sgen_need_bridge_processing ()) {
 			collect_bridge_objects (copy_func, start_addr, end_addr, generation, queue);
 			if (generation == GENERATION_OLD)
@@ -2598,6 +2596,16 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 
 	if (mono_sgen_need_bridge_processing ())
 		g_assert (num_loops <= 1);
+
+	/*
+	 * This must be done again after processing finalizable objects since CWL slots are cleared only after the key is finalized.
+	 */
+	done_with_ephemerons = 0;
+	do {
+		done_with_ephemerons = mark_ephemerons_in_range (copy_func, start_addr, end_addr, queue);
+		drain_gray_stack (queue);
+		++ephemeron_rounds;
+	} while (!done_with_ephemerons);
 
 	/*
 	 * Clear ephemeron pairs with unreachable keys.
