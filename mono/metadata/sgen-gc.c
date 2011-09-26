@@ -2508,7 +2508,7 @@ bridge_process (void)
 		return;
 
 	g_assert (mono_sgen_need_bridge_processing ());
-	mono_sgen_bridge_processing (finalized_array_entries, finalized_array);
+	mono_sgen_bridge_processing_finish (finalized_array_entries, finalized_array);
 
 	finalized_array_entries = 0;
 }
@@ -2552,6 +2552,22 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 		++ephemeron_rounds;
 	} while (!done_with_ephemerons);
 
+	if (mono_sgen_need_bridge_processing ()) {
+		if (finalized_array == NULL) {
+			finalized_array_capacity = 32;
+			finalized_array = mono_sgen_alloc_internal_dynamic (sizeof (MonoObject*) * finalized_array_capacity, INTERNAL_MEM_BRIDGE_DATA);
+		}
+		finalized_array_entries = 0;		
+
+		collect_bridge_objects (copy_func, start_addr, end_addr, generation, queue);
+		if (generation == GENERATION_OLD)
+			collect_bridge_objects (copy_func, nursery_start, nursery_real_end, GENERATION_NURSERY, queue);
+
+		if (finalized_array_entries > 0)
+			mono_sgen_bridge_processing_start (finalized_array_entries, finalized_array);
+		drain_gray_stack (queue);
+	}
+
 	/*
 	We must clear weak links that don't track resurrection before processing object ready for
 	finalization so they can be cleared before that.
@@ -2560,11 +2576,6 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	if (generation == GENERATION_OLD)
 		null_link_in_range (copy_func, start_addr, end_addr, GENERATION_NURSERY, TRUE, queue);
 
-	if (finalized_array == NULL && mono_sgen_need_bridge_processing ()) {
-		finalized_array_capacity = 32;
-		finalized_array = mono_sgen_alloc_internal_dynamic (sizeof (MonoObject*) * finalized_array_capacity, INTERNAL_MEM_BRIDGE_DATA);
-	}
-	finalized_array_entries = 0;
 
 	/* walk the finalization queue and move also the objects that need to be
 	 * finalized: use the finalized objects as new roots so the objects they depend
@@ -2575,12 +2586,6 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	 */
 	num_loops = 0;
 	do {
-		if (mono_sgen_need_bridge_processing ()) {
-			collect_bridge_objects (copy_func, start_addr, end_addr, generation, queue);
-			if (generation == GENERATION_OLD)
-				collect_bridge_objects (copy_func, nursery_start, nursery_real_end, GENERATION_NURSERY, queue);
-		}
-
 		fin_ready = num_ready_finalizers;
 		finalize_in_range (copy_func, start_addr, end_addr, generation, queue);
 		if (generation == GENERATION_OLD)
@@ -4235,8 +4240,6 @@ next_step:
 			entry = entry->next;
 		}
 	}
-
-	drain_gray_stack (queue);
 }
 
 /* LOCKING: requires that the GC lock is held */
