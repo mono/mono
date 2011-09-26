@@ -109,9 +109,9 @@ check-monodocer-update: $(PROGRAM)
 check-monodocer: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MONO) $(PROGRAM) update --debug --exceptions=all -o Test/en.actual Test/DocTest.dll
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll 
+	$(MONO) $(PROGRAM) update --debug --exceptions=all -o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
 
 check-monodocer-since-update: $(PROGRAM)
@@ -125,9 +125,9 @@ check-monodocer-since-update: $(PROGRAM)
 check-monodocer-since: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll 
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll 
 	$(MAKE) Test/DocTest.dll-v2
-	$(MONO) $(PROGRAM) update --exceptions=all --since="Version 2.0" \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all --since="Version 2.0" \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.since Test/en.actual
 
@@ -144,30 +144,30 @@ check-monodocer-delete-update: $(PROGRAM)
 check-monodocer-delete: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll
 	$(MAKE) Test/DocTest.dll-v2
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update -fno-assembly-versions --delete --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MONO) $(PROGRAM) --debug update -fno-assembly-versions --delete --exceptions=all -o Test/en.actual Test/DocTest.dll
 	diff --exclude=.svn -rup Test/en.expected.delete Test/en.actual
 
 check-monodocer-importslashdoc-update: $(PROGRAM)
 	find Test/en.expected.importslashdoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/DocTest.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/DocTest.xml \
 		-o Test/en.expected.importslashdoc Test/DocTest.dll 
 
 check-monodocer-importslashdoc: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/DocTest.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/DocTest.xml \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.importslashdoc Test/en.actual
 
 check-monodocer-importecmadoc-update: $(PROGRAM)
 	find Test/en.expected.importecmadoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/TestEcmaDocs.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.expected.importecmadoc Test/DocTest.dll 
@@ -175,7 +175,7 @@ check-monodocer-importecmadoc-update: $(PROGRAM)
 check-monodocer-importecmadoc: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/TestEcmaDocs.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.actual Test/DocTest.dll 
