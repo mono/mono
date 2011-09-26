@@ -66,7 +66,7 @@ include ../../build/executable.make
 $(PROGRAM) : Makefile
 
 MONO = \
-	MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
 	$(RUNTIME) $(RUNTIME_FLAGS)
 
 dist-local: dist-default dist-tests
