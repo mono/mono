@@ -185,7 +185,9 @@ net_4_0_dirs := \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
 	System.Data.Services	\
-	System.Json \
+	System.Json
+
+net_4_5_dirs := \
 	System.Threading.Tasks.Dataflow
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
@@ -194,8 +196,8 @@ monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
-net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
+net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) aot-compiler
 
 include ../build/rules.make
 

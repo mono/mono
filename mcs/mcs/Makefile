@@ -22,7 +22,7 @@ endif
 
 LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER
 
-PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.0
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 

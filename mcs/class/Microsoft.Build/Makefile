@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.Build.dll
 
-ifneq (4.0, $(FRAMEWORK_VERSION))
+ifneq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIBRARY_NAME = dummy-Microsoft.Build.dll
 NO_INSTALL = yes
 NO_TEST = yes

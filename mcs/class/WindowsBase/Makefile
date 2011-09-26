@@ -9,8 +9,8 @@ TEST_MCS_FLAGS = -unsafe -r:WindowsBase.dll
 ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_0
 endif
-ifeq (4.0, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:NET_4_0 -r:System.Xaml.dll
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+LIB_MCS_FLAGS += -r:System.Xaml.dll
 TEST_MCS_FLAGS += -r:System.Xaml.dll
 endif
 

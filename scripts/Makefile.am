@@ -190,7 +190,7 @@ REWRITE_DEBUG = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp) --debug,g
 REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
 REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
 if INSTALL_4_0
-REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
+REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 else
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
 endif

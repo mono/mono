@@ -12,8 +12,8 @@ monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class
 mobile_SUBDIRS := build class
 net_3_5_SUBDIRS := build class tools/xbuild
-net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
-net_4_5_SUBDIRS := build class
+net_4_0_SUBDIRS := build class
+net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 
 # List of test subdirs that should pass 100%
 centum_tests := \

@@ -14,12 +14,12 @@ ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40 -d:SILVERLIGHT
 endif
 
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
 ifneq (basic, $(PROFILE))
-CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
+CLR_PROFILE := $(filter 2.0 4.0 4.5, $(FRAMEWORK_VERSION))
 endif
 
 ifdef CLR_PROFILE
@@ -29,7 +29,7 @@ endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET 2.0+ only assembly
-VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
+VALID_PROFILE := $(filter 2.0 2.1 4.0 4.5, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Core.dll
 NO_INSTALL = yes
