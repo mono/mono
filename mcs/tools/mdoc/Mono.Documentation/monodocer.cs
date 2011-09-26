@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -3261,6 +3262,25 @@ class DocumentationMember {
 	}
 }
 
+public class DynamicParserContext {
+	public ReadOnlyCollection<bool> TransformFlags;
+	public int TransformIndex;
+
+	public DynamicParserContext (ICustomAttributeProvider provider)
+	{
+		CustomAttribute da;
+		if (provider.HasCustomAttributes &&
+				(da = (provider.CustomAttributes.Cast<CustomAttribute>()
+					.SingleOrDefault (ca => ca.GetDeclaringType() == "System.Runtime.CompilerServices.DynamicAttribute"))) != null) {
+			CustomAttributeArgument[] values = da.ConstructorArguments.Count == 0
+				? new CustomAttributeArgument [0]
+				: (CustomAttributeArgument[]) da.ConstructorArguments [0].Value;
+
+			TransformFlags = new ReadOnlyCollection<bool> (values.Select (t => (bool) t.Value).ToArray());
+		}
+	}
+}
+
 public enum MemberFormatterState {
 	None,
 	WithinGenericTypeParameters,
@@ -3272,11 +3292,16 @@ public abstract class MemberFormatter {
 		get {return "";}
 	}
 
-	public virtual string GetName (MemberReference member)
+	public string GetName (MemberReference member)
+	{
+		return GetName (member, null);
+	}
+
+	public virtual string GetName (MemberReference member, DynamicParserContext context)
 	{
 		TypeReference type = member as TypeReference;
 		if (type != null)
-			return GetTypeName (type);
+			return GetTypeName (type, context);
 		MethodReference method  = member as MethodReference;
 		if (method != null && method.Name == ".ctor") // method.IsConstructor
 			return GetConstructorName (method);
@@ -3297,9 +3322,14 @@ public abstract class MemberFormatter {
 
 	protected virtual string GetTypeName (TypeReference type)
 	{
+		return GetTypeName (type, null);
+	}
+
+	protected virtual string GetTypeName (TypeReference type, DynamicParserContext context)
+	{
 		if (type == null)
 			throw new ArgumentNullException ("type");
-		return _AppendTypeName (new StringBuilder (type.Name.Length), type).ToString ();
+		return _AppendTypeName (new StringBuilder (type.Name.Length), type, context).ToString ();
 	}
 
 	protected virtual char[] ArrayDelimeters {
@@ -3308,29 +3338,29 @@ public abstract class MemberFormatter {
 
 	protected virtual MemberFormatterState MemberFormatterState { get; set; }
 
-	protected StringBuilder _AppendTypeName (StringBuilder buf, TypeReference type)
+	protected StringBuilder _AppendTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		if (type is ArrayType) {
 			TypeSpecification spec = type as TypeSpecification;
-			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ());
+			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType (), context);
 			return AppendArrayModifiers (buf, (ArrayType) type);
 		}
 		if (type is ByReferenceType) {
-			return AppendRefTypeName (buf, type);
+			return AppendRefTypeName (buf, type, context);
 		}
 		if (type is PointerType) {
-			return AppendPointerTypeName (buf, type);
+			return AppendPointerTypeName (buf, type, context);
 		}
 		AppendNamespace (buf, type);
 		if (type is GenericParameter) {
-			return AppendTypeName (buf, type);
+			return AppendTypeName (buf, type, context);
 		}
 		GenericInstanceType genInst = type as GenericInstanceType;
 		if (type.GenericParameters.Count == 0 &&
 				(genInst == null ? true : genInst.GenericArguments.Count == 0)) {
-			return AppendFullTypeName (buf, type);
+			return AppendFullTypeName (buf, type, context);
 		}
-		return AppendGenericType (buf, type);
+		return AppendGenericType (buf, type, context);
 	}
 
 	protected virtual StringBuilder AppendNamespace (StringBuilder buf, TypeReference type)
@@ -3341,15 +3371,17 @@ public abstract class MemberFormatter {
 		return buf;
 	}
 
-	protected virtual StringBuilder AppendFullTypeName (StringBuilder buf, TypeReference type)
+	protected virtual StringBuilder AppendFullTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		if (type.DeclaringType != null)
-			AppendFullTypeName (buf, type.DeclaringType).Append (NestedTypeSeparator);
-		return AppendTypeName (buf, type);
+			AppendFullTypeName (buf, type.DeclaringType, context).Append (NestedTypeSeparator);
+		return AppendTypeName (buf, type, context);
 	}
 
-	protected virtual StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
+	protected virtual StringBuilder AppendTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
+		if (context != null)
+			context.TransformIndex++;
 		return AppendTypeName (buf, type.Name);
 	}
 
@@ -3374,10 +3406,10 @@ public abstract class MemberFormatter {
 		get {return "@";}
 	}
 
-	protected virtual StringBuilder AppendRefTypeName (StringBuilder buf, TypeReference type)
+	protected virtual StringBuilder AppendRefTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		TypeSpecification spec = type as TypeSpecification;
-		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
+		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType (), context)
 				.Append (RefTypeModifier);
 	}
 
@@ -3385,10 +3417,10 @@ public abstract class MemberFormatter {
 		get {return "*";}
 	}
 
-	protected virtual StringBuilder AppendPointerTypeName (StringBuilder buf, TypeReference type)
+	protected virtual StringBuilder AppendPointerTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		TypeSpecification spec = type as TypeSpecification;
-		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
+		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType (), context)
 				.Append (PointerModifier);
 	}
 
@@ -3400,7 +3432,7 @@ public abstract class MemberFormatter {
 		get {return '.';}
 	}
 
-	protected virtual StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)
+	protected virtual StringBuilder AppendGenericType (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		List<TypeReference> decls = DocUtils.GetDeclaringTypes (
 				type is GenericInstanceType ? type.GetElementType () : type);
@@ -3414,7 +3446,7 @@ public abstract class MemberFormatter {
 				buf.Append (NestedTypeSeparator);
 			}
 			insertNested = true;
-			AppendTypeName (buf, declDef);
+			AppendTypeName (buf, declDef, context);
 			int ac = DocUtils.GetGenericArgumentCount (declDef);
 			int c = ac - prev;
 			prev = ac;
@@ -3422,9 +3454,10 @@ public abstract class MemberFormatter {
 				buf.Append (GenericTypeContainer [0]);
 				var origState = MemberFormatterState;
 				MemberFormatterState = MemberFormatterState.WithinGenericTypeParameters;
-				_AppendTypeName (buf, genArgs [argIdx++]);
-				for (int i = 1; i < c; ++i)
-					_AppendTypeName (buf.Append (","), genArgs [argIdx++]);
+				_AppendTypeName (buf, genArgs [argIdx++], context);
+				for (int i = 1; i < c; ++i) {
+					_AppendTypeName (buf.Append (","), genArgs [argIdx++], context);
+				}
 				MemberFormatterState = origState;
 				buf.Append (GenericTypeContainer [1]);
 			}
@@ -3502,7 +3535,7 @@ public abstract class MemberFormatter {
 		if (type == null)
 			throw new ArgumentNullException ("type");
 		StringBuilder buf = new StringBuilder (type.Name.Length);
-		_AppendTypeName (buf, type);
+		_AppendTypeName (buf, type, null);
 		AppendGenericTypeConstraints (buf, type);
 		return buf.ToString ();
 	}
@@ -3533,18 +3566,13 @@ public abstract class MemberFormatter {
 
 		if (buf.Length != 0)
 			buf.Append (" ");
-		buf.Append (GetTypeName (method.MethodReturnType)).Append (" ");
+		buf.Append (GetTypeName (method.ReturnType, new DynamicParserContext (method.MethodReturnType))).Append (" ");
 
 		AppendMethodName (buf, method);
 		AppendGenericMethod (buf, method).Append (" ");
 		AppendParameters (buf, method, method.Parameters);
 		AppendGenericMethodConstraints (buf, method);
 		return buf.ToString ();
-	}
-
-	protected virtual string GetTypeName (MethodReturnType returnType)
-	{
-		return GetName (returnType.ReturnType);
 	}
 
 	protected virtual StringBuilder AppendMethodName (StringBuilder buf, MethodDefinition method)
@@ -3656,15 +3684,18 @@ class ILFullMemberFormatter : MemberFormatter {
 		return buf.Append (typename);
 	}
 
-	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
+	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
-		if (type is GenericParameter)
-			return AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
+		if (type is GenericParameter) {
+			AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
+			return buf;
+		}
 
 		string s = GetBuiltinType (type.FullName);
-		if (s != null)
+		if (s != null) {
 			return buf.Append (s);
-		return base.AppendTypeName (buf, type);
+		}
+		return base.AppendTypeName (buf, type, context);
 	}
 
 	private StringBuilder AppendGenericParameterConstraints (StringBuilder buf, GenericParameter type)
@@ -3755,7 +3786,7 @@ class ILFullMemberFormatter : MemberFormatter {
 		return buf.ToString ();
 	}
 
-	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)
+	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		List<TypeReference> decls = DocUtils.GetDeclaringTypes (
 				type is GenericInstanceType ? type.GetElementType () : type);
@@ -3766,7 +3797,7 @@ class ILFullMemberFormatter : MemberFormatter {
 				buf.Append (NestedTypeSeparator);
 			}
 			first = false;
-			AppendTypeName (buf, declDef);
+			AppendTypeName (buf, declDef, context);
 		}
 		buf.Append ('<');
 		first = true;
@@ -3774,7 +3805,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			if (!first)
 				buf.Append (", ");
 			first = false;
-			_AppendTypeName (buf, arg);
+			_AppendTypeName (buf, arg, context);
 		}
 		buf.Append ('>');
 		return buf;
@@ -3848,7 +3879,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			buf.Append ("virtual ");
 		if (!method.IsStatic)
 			buf.Append ("instance ");
-		_AppendTypeName (buf, method.ReturnType);
+		_AppendTypeName (buf, method.ReturnType, new DynamicParserContext (method.MethodReturnType));
 		buf.Append (' ')
 			.Append (method.Name);
 		if (method.IsGenericMethod ()) {
@@ -3857,9 +3888,9 @@ class ILFullMemberFormatter : MemberFormatter {
 			IList<GenericParameter> args = method.GenericParameters;
 			if (args.Count > 0) {
 				buf.Append ("<");
-				_AppendTypeName (buf, args [0]);
+				_AppendTypeName (buf, args [0], null);
 				for (int i = 1; i < args.Count; ++i)
-					_AppendTypeName (buf.Append (", "), args [i]);
+					_AppendTypeName (buf.Append (", "), args [i], null);
 				buf.Append (">");
 			}
 			MemberFormatterState = state;
@@ -3871,7 +3902,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			if (!first)
 				buf.Append (", ");
 			first = false;
-			_AppendTypeName (buf, method.Parameters [i].ParameterType);
+			_AppendTypeName (buf, method.Parameters [i].ParameterType, new DynamicParserContext (method.Parameters [i]));
 			buf.Append (' ');
 			buf.Append (method.Parameters [i].Name);
 		}
@@ -4003,7 +4034,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			.Append (".property ");
 		if (!(gm ?? sm).IsStatic)
 			buf.Append ("instance ");
-		_AppendTypeName (buf, property.PropertyType);
+		_AppendTypeName (buf, property.PropertyType, new DynamicParserContext (property));
 		buf.Append (' ').Append (property.Name);
 		if (!property.HasParameters || property.Parameters.Count == 0)
 			return buf.ToString ();
@@ -4014,7 +4045,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			if (!first)
 				buf.Append (", ");
 			first = false;
-			_AppendTypeName (buf, p.ParameterType);
+			_AppendTypeName (buf, p.ParameterType, new DynamicParserContext (p));
 		}
 		buf.Append (')');
 
@@ -4040,7 +4071,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			buf.Append ("initonly ");
 		if (field.IsLiteral)
 			buf.Append ("literal ");
-		_AppendTypeName (buf, field.FieldType);
+		_AppendTypeName (buf, field.FieldType, new DynamicParserContext (field));
 		buf.Append (' ').Append (field.Name);
 		AppendFieldValue (buf, field);
 
@@ -4158,23 +4189,32 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		return null;
 	}
 
-	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
+	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
+		if (context != null && context.TransformFlags != null &&
+				(context.TransformFlags.Count == 0 || context.TransformFlags [context.TransformIndex])) {
+			context.TransformIndex++;
+			return buf.Append ("dynamic");
+		}
+
 		if (type is GenericParameter)
-			return AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
+			return AppendGenericParameterConstraints (buf, (GenericParameter) type, context).Append (type.Name);
 		string t = type.FullName;
 		if (!t.StartsWith ("System.")) {
-			return base.AppendTypeName (buf, type);
+			return base.AppendTypeName (buf, type, context);
 		}
 
 		string s = GetCSharpType (t);
-		if (s != null)
+		if (s != null) {
+			if (context != null)
+				context.TransformIndex++;
 			return buf.Append (s);
+		}
 		
-		return base.AppendTypeName (buf, type);
+		return base.AppendTypeName (buf, type, context);
 	}
 
-	private StringBuilder AppendGenericParameterConstraints (StringBuilder buf, GenericParameter type)
+	private StringBuilder AppendGenericParameterConstraints (StringBuilder buf, GenericParameter type, DynamicParserContext context)
 	{
 		if (MemberFormatterState != MemberFormatterState.WithinGenericTypeParameters)
 			return buf;
@@ -4204,7 +4244,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		if (DocUtils.IsDelegate (type)) {
 			buf.Append("delegate ");
 			MethodDefinition invoke = type.GetMethod ("Invoke");
-			buf.Append (full.GetName (invoke.ReturnType)).Append (" ");
+			buf.Append (full.GetName (invoke.ReturnType, new DynamicParserContext (invoke.MethodReturnType))).Append (" ");
 			buf.Append (GetName (type));
 			AppendParameters (buf, invoke, invoke.Parameters);
 			AppendGenericTypeConstraints (buf, type);
@@ -4354,21 +4394,6 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		return null;
 	}
 
-	protected override string GetTypeName (MethodReturnType returnType)
-	{
-		return GetTypeName (returnType, () => returnType.ReturnType);
-	}
-
-	string GetTypeName (ICustomAttributeProvider provider, Func<TypeReference> selector)
-	{
-		string type = GetName (selector ());
-		if (type == "object" && provider.HasCustomAttributes &&
-				provider.CustomAttributes.Cast<CustomAttribute>()
-				.Any (ca => ca.GetDeclaringType() == "System.Runtime.CompilerServices.DynamicAttribute"))
-			return "dynamic";
-		return type;
-	}
-
 	protected override StringBuilder AppendMethodName (StringBuilder buf, MethodDefinition method)
 	{
 		if (DocUtils.IsExplicitlyImplemented (method)) {
@@ -4470,7 +4495,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			else
 				buf.Append ("ref ");
 		}
-		buf.Append (GetTypeName (parameter, () => parameter.ParameterType)).Append (" ");
+		buf.Append (GetTypeName (parameter.ParameterType, new DynamicParserContext (parameter))).Append (" ");
 		buf.Append (parameter.Name);
 		if (parameter.HasDefault && parameter.IsOptional && parameter.HasConstant) {
 			buf.AppendFormat (" = {0}", MDocUpdater.MakeAttributesValueString (parameter.Constant, parameter.ParameterType));
@@ -4527,7 +4552,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			modifiers = "";
 		buf.Append (modifiers).Append (' ');
 
-		buf.Append (GetName (property.PropertyType)).Append (' ');
+		buf.Append (GetTypeName (property.PropertyType, new DynamicParserContext (property))).Append (' ');
 
 		IEnumerable<MemberReference> defs = property.DeclaringType.GetDefaultMembers ();
 		string name = property.Name;
@@ -4580,7 +4605,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		if (field.IsLiteral)
 			buf.Append (" const");
 
-		buf.Append (' ').Append (GetName (field.FieldType)).Append (' ');
+		buf.Append (' ').Append (GetTypeName (field.FieldType, new DynamicParserContext (field))).Append (' ');
 		buf.Append (field.Name);
 		AppendFieldValue (buf, field);
 		buf.Append (';');
@@ -4634,7 +4659,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		AppendModifiers (buf, e.AddMethod);
 
 		buf.Append (" event ");
-		buf.Append (GetName (e.EventType)).Append (' ');
+		buf.Append (GetTypeName (e.EventType, new DynamicParserContext (e.AddMethod.Parameters [0]))).Append (' ');
 		buf.Append (e.Name).Append (';');
 
 		return buf.ToString ();
@@ -4674,7 +4699,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 	private TypeReference genDeclType;
 	private MethodReference genDeclMethod;
 
-	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
+	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		if (type is GenericParameter) {
 			int l = buf.Length;
@@ -4713,7 +4738,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 			}
 		}
 		else {
-			base.AppendTypeName (buf, type);
+			base.AppendTypeName (buf, type, context);
 			if (AddTypeCount) {
 				int numArgs = type.GenericParameters.Count;
 				if (type.DeclaringType != null)
@@ -4739,16 +4764,16 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf.Append (ArrayDelimeters [1]);
 	}
 
-	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)
+	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		if (!AddTypeCount)
-			base.AppendGenericType (buf, type);
+			base.AppendGenericType (buf, type, context);
 		else
-			AppendType (buf, type);
+			AppendType (buf, type, context);
 		return buf;
 	}
 
-	private StringBuilder AppendType (StringBuilder buf, TypeReference type)
+	private StringBuilder AppendType (StringBuilder buf, TypeReference type, DynamicParserContext context)
 	{
 		List<TypeReference> decls = DocUtils.GetDeclaringTypes (type);
 		bool insertNested = false;
@@ -4757,7 +4782,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 			if (insertNested)
 				buf.Append (NestedTypeSeparator);
 			insertNested = true;
-			base.AppendTypeName (buf, decl);
+			base.AppendTypeName (buf, decl, context);
 			int argCount = DocUtils.GetGenericArgumentCount (decl);
 			int numArgs = argCount - prevParamCount;
 			prevParamCount = argCount;
