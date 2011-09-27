@@ -165,7 +165,7 @@ namespace MonoTests.System.Threading.Tasks
 			foreach (Task t in tasks)
 				t.Start ();
 
-			cont.Wait ();
+			Assert.IsTrue (cont.Wait (1000), "#0");
 
 			Assert.IsTrue (r1, "#1");
 			Assert.IsTrue (r2, "#2");
