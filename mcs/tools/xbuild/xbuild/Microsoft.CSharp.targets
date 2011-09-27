@@ -1,5 +1,4 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<UsingTask TaskName="Microsoft.Build.Tasks.CreateCSharpManifestResourceName" AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
 		<Language>C#</Language>
