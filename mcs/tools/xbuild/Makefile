@@ -5,6 +5,7 @@ HAS_NUNIT_TEST = yes
 
 BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
 BUILD_ENGINE = Microsoft.Build.Engine.dll
+INSTALL_FRAMEWORK_VERSION = $(FRAMEWORK_VERSION)
 
 ifeq (3.5, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v3.5
@@ -15,6 +16,7 @@ else
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
 ASSEMBLY_VERSION = 4.0.0.0
+INSTALL_FRAMEWORK_VERSION = 4.0
 endif
 endif
 
@@ -34,7 +36,7 @@ install-local:	install-extras
 
 WEBAPP_DIR = Microsoft/VisualStudio/v9.0/WebApplications
 SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
-EXTRAS_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)

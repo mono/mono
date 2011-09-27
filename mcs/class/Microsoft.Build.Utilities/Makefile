@@ -9,7 +9,7 @@ ifeq (3.5, $(FRAMEWORK_VERSION))
 LIBRARY_NAME = Microsoft.Build.Utilities.v3.5.dll
 BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
 else
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIBRARY_NAME = Microsoft.Build.Utilities.v4.0.dll
 endif
 endif
