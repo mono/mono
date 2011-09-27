@@ -11,7 +11,7 @@ NAME_SUFFIX = .v3.5
 BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
 BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
 else
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
 endif
 endif
