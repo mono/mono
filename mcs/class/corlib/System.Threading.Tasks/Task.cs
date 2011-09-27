@@ -498,10 +498,10 @@ namespace System.Threading.Tasks
 
 		void CompletionExecutor (Task cont)
 		{
-			if (!cont.Slot.Launched.TryRelaxedSet ())
+			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
 				return;
 
-			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
+			if (!cont.Slot.Launched.TryRelaxedSet ())
 				return;
 
 			if (!ContinuationStatusCheck (cont.Slot.Kind)) {
