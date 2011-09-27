@@ -6,7 +6,7 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
 
 basic_SUBDIRS := build jay mcs class
 build_SUBDIRS := build class mcs class/aot-compiler tools
-net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors
+net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors docs
 moonlight_raw_SUBDIRS := build class
 monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class

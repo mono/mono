@@ -32,11 +32,13 @@ MONODOC_SOURCES_INSTALL_FILES = \
 
 CLEAN_FILES += $(ASSEMBLED_DOCS)
 
-ifeq (net_4_0, $(PROFILE))
-all-local: build-documentation
+ifndef DISABLE_MCS_DOCS
+ifneq ($(PROFILE), $(DEFAULT_PROFILE))
+DISABLE_MCS_DOCS = yes
+endif
 endif
 
-all-local csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
+csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
 
 clean-local:
 	-rm -f $(CLEAN_FILES)
@@ -47,11 +49,15 @@ dist-local: dist-default
 MONODOC_INSTALL_DIR = $(DESTDIR)$(mono_libdir)/monodoc
 
 ifdef DISABLE_MCS_DOCS
+all-local:
+
 install-local:
 
 uninstall-local:
 
 else
+all-local: $(ASSEMBLED_DOCS)
+
 install-local:
 	$(MKINSTALLDIRS) $(MONODOC_INSTALL_DIR) $(MONODOC_INSTALL_DIR)/sources
 	$(INSTALL_DATA) $(MONODOC_SOURCES_INSTALL_FILES) $(MONODOC_INSTALL_DIR)/sources
@@ -107,12 +113,6 @@ NUNIT_DIRS = \
 	$(topdir)/nunit20/framework/$(doc_en)  \
 	$(topdir)/nunit20/mocks/$(doc_en)      \
 	$(topdir)/nunit20/util/$(doc_en)
-
-ifdef DISABLE_MCS_DOCS
-build-documentation:
-else
-build-documentation: $(ASSEMBLED_DOCS)
-endif
 
 # To support `make -jN`, we can't mention multiple targets in the same rule;
 # DO NOT DO THIS:
