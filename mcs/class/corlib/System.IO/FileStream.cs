@@ -39,12 +39,16 @@ using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Security.Permissions;
 using System.Threading;
-
 using Microsoft.Win32.SafeHandles;
+
 #if NET_2_1
 using System.IO.IsolatedStorage;
 #else
 using System.Security.AccessControl;
+#endif
+
+#if NET_4_5
+using System.Threading.Tasks;
 #endif
 
 namespace System.IO
@@ -951,6 +955,23 @@ namespace System.IO
 		public void SetAccessControl (FileSecurity fileSecurity)
 		{
 			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_4_5
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return base.FlushAsync (cancellationToken);
+		}
+
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return base.ReadAsync (buffer, offset, count, cancellationToken);
+		}
+
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return base.WriteAsync (buffer, offset, count, cancellationToken);
 		}
 #endif
 

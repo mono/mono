@@ -31,9 +31,10 @@
 //
 
 using System.Text;
-using System;
-
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO {
 	
@@ -58,6 +59,11 @@ namespace System.IO {
 		private bool DisposedAlready;
 		private bool preamble_done;
 
+#if NET_4_5
+		readonly bool leave_open;
+		Task async_task;
+#endif
+
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
 
 		public StreamWriter (Stream stream)
@@ -79,8 +85,6 @@ namespace System.IO {
 		}
 
 #if NET_4_5
-		readonly bool leave_open;
-
 		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
 			: this (stream, encoding, bufferSize, false)
 		{
@@ -194,8 +198,7 @@ namespace System.IO {
 
 		public override void Flush ()
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			Decode ();
 			if (byte_pos > 0) {
@@ -235,8 +238,6 @@ namespace System.IO {
 		
 		public override void Write (char[] buffer, int index, int count) 
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (index < 0)
@@ -246,6 +247,8 @@ namespace System.IO {
 			// re-ordered to avoid possible integer overflow
 			if (index > buffer.Length - count)
 				throw new ArgumentException ("index + count > buffer.Length");
+
+			CheckState ();
 
 			LowLevelWrite (buffer, index, count);
 			if (iflush)
@@ -293,8 +296,7 @@ namespace System.IO {
 
 		public override void Write (char value)
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			// the size of decode_buf is always > 0 and
 			// we check for overflow right away
@@ -307,8 +309,7 @@ namespace System.IO {
 
 		public override void Write (char[] buffer)
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException ("StreamWriter");
+			CheckState ();
 
 			if (buffer != null)
 				LowLevelWrite (buffer, 0, buffer.Length);
@@ -318,8 +319,7 @@ namespace System.IO {
 
 		public override void Write (string value) 
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			if (value != null)
 				LowLevelWrite (value);
@@ -337,5 +337,66 @@ namespace System.IO {
 		{
 			Dispose(false);
 		}
+
+		void CheckState ()
+		{
+			if (DisposedAlready)
+				throw new ObjectDisposedException ("StreamWriter");
+
+#if NET_4_5
+			if (async_task != null && async_task.IsCompleted)
+				throw new InvalidOperationException ();
+#endif
+		}
+
+#if NET_4_5
+		public override Task FlushAsync ()
+		{
+			CheckState ();
+			return async_task = base.FlushAsync ();
+		}
+
+		public override Task WriteAsync (char value)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (value);
+		}
+
+		public override Task WriteAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (buffer, index, count);
+		}
+
+		public override Task WriteAsync (string value)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (value);
+		}
+
+		public override Task WriteLineAsync ()
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync ();
+		}
+
+		public override Task WriteLineAsync (char value)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (value);
+		}
+
+		public override Task WriteLineAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (buffer, index, count);
+		}
+
+		public override Task WriteLineAsync (string value)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (value);
+		}
+#endif
 	}
 }

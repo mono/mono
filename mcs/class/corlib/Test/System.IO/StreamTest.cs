@@ -41,7 +41,7 @@ namespace MonoTests.System.IO
 			bool canRead, canSeek, canWrite;
 			public event Action OnFlush;
 			public event Func<byte[], int, int, int> OnRead;
-			public Action<byte[], int, int> OnWrite;
+			public event Action<byte[], int, int> OnWrite;
 
 			public MockStream (bool canRead, bool canSeek, bool canWrite)
 			{
@@ -113,6 +113,16 @@ namespace MonoTests.System.IO
 		}
 
 #if NET_4_5
+		[Test]
+		public void CopyAsync ()
+		{
+			var ms = new MockStream (true, false, true);
+			int counter = 4;
+			ms.OnRead += delegate { return --counter; };
+			var memory = new MemoryStream ();
+			Assert.IsTrue (ms.CopyToAsync (ms).Wait (1000));
+		}
+
 		[Test]
 		public void FlushAsync ()
 		{

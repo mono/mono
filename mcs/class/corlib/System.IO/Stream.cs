@@ -269,6 +269,41 @@ namespace System.IO
 #endif
 		
 #if NET_4_5
+
+		public Task CopyToAsync (Stream destination)
+		{
+			return CopyToAsync (destination, 16 * 1024, CancellationToken.None);
+		}
+
+		public Task CopyToAsync (Stream destination, int bufferSize)
+		{
+			return CopyToAsync (destination, bufferSize, CancellationToken.None);
+		}
+
+		public Task CopyToAsync (Stream destination, int bufferSize, CancellationToken cancellationToken)
+		{
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if (!CanRead)
+				throw new NotSupportedException ("This stream does not support reading");
+			if (!destination.CanWrite)
+				throw new NotSupportedException ("This destination stream does not support writing");
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize");
+
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			return CopyToAsync (destination, new byte[bufferSize], cancellationToken);
+		}
+
+		async Task CopyToAsync (Stream destination, byte[] buffer, CancellationToken cancellationToken)
+		{
+			int nread;
+			while ((nread = await ReadAsync (buffer, 0, buffer.Length).ConfigureAwait (false)) != 0)
+				await destination.WriteAsync (buffer, 0, nread, cancellationToken).ConfigureAwait (false);
+		}
+
 		public Task FlushAsync ()
 		{
 			return FlushAsync (CancellationToken.None);
@@ -279,9 +314,7 @@ namespace System.IO
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants.Canceled;
 
-			var t = new Task (() => Flush (), cancellationToken);
-			t.Start ();
-			return t;
+			return Task.Factory.StartNew (l => ((Stream) l).Flush (), this, cancellationToken);
 		}
 
 		public Task<int> ReadAsync (byte[] buffer, int offset, int count)

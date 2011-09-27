@@ -9,13 +9,92 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace MonoTests.System.IO
 {
+	[TestFixture]
+	public class StreamWriterTest
+	{
+		class MockStream : Stream
+		{
+			bool canRead, canSeek, canWrite;
+			public event Action OnFlush;
+			public event Func<byte[], int, int, int> OnRead;
+			public event Action<byte[], int, int> OnWrite;
+			long length;
 
-[TestFixture]
-public class StreamWriterTest
-{
+			public MockStream (bool canRead, bool canSeek, bool canWrite)
+			{
+				this.canRead = canRead;
+				this.canSeek = canSeek;
+				this.canWrite = canWrite;
+			}
+
+			public override bool CanRead {
+				get {
+					return canRead;
+				}
+			}
+
+			public override bool CanSeek {
+				get {
+					return canSeek;
+				}
+			}
+
+			public override bool CanWrite {
+				get {
+					return canWrite;
+				}
+			}
+
+			public override void Flush ()
+			{
+				if (OnFlush != null)
+					OnFlush ();
+			}
+
+			public override long Length {
+				get {
+					return length;
+				}
+			}
+
+			public override long Position {
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				if (OnRead != null)
+					return OnRead (buffer, offset, count);
+
+				return -1;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void SetLength (long value)
+			{
+				this.length = value;
+			}
+
+			public override void Write (byte[] buffer, int offset, int count)
+			{
+				if (OnWrite != null)
+					OnWrite (buffer, offset, count);
+			}
+		}
+
 	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 	private string _thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
@@ -388,9 +467,7 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
-#endif
 		}
 
 		try {
@@ -401,9 +478,7 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
-#endif
 		}
 	}
 
@@ -642,9 +717,7 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
-#endif
 		}
 
 		try {
@@ -655,9 +728,7 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
-#endif
 		}
 	}
 
@@ -979,7 +1050,22 @@ public class StreamWriterTest
 		w = new StreamWriter (ms, Encoding.UTF8);
 		Assert.AreEqual (5, ms.Position, "#2");
 	}
-	
+
+#if NET_4_5
+		[Test]
+		public void FlushAsync ()
+		{
+			ManualResetEvent mre = new ManualResetEvent (false);
+			var m = new MockStream(true, false, true);
+			var w = new StreamWriter (m);
+			w.Write(1);
+			Assert.AreEqual (0L, m.Length, "#1");
+			var t = w.WriteLineAsync ();
+			Assert.IsTrue (t.Wait (1000), "#2");
+		}
+
+#endif
+
 	// TODO - Write - test errors, functionality tested in TestFlush.
 }
 }

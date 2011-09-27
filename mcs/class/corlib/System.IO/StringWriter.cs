@@ -4,9 +4,11 @@
 // Authors
 //	Marcin Szczepanski (marcins@zipworld.com.au)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Marek Safar (marek.safar@gmail.com)
 //
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +33,9 @@
 using System.Globalization;
 using System.Text;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO
 {
@@ -134,5 +139,53 @@ namespace System.IO
 
 			internalString.Append (buffer, index, count);
 		}
+
+#if NET_4_5
+		public override Task FlushAsync ()
+		{
+			// it appears to do nothing
+			return TaskConstants.Finished;
+		}
+
+		//
+		// All async methods return finished task with a result as it's faster
+		// than setting up async call
+		//
+		public override Task WriteAsync (char value)
+		{
+			Write (value);
+			return TaskConstants.Finished;
+		}
+
+		public override Task WriteAsync (char[] buffer, int index, int count)
+		{
+			Write (buffer, index, count);
+			return TaskConstants.Finished;
+		}
+
+		public override Task WriteAsync (string value)
+		{
+			Write (value);
+			return TaskConstants.Finished;
+		}
+
+		public override Task WriteLineAsync (char value)
+		{
+			WriteLine (value);
+			return TaskConstants.Finished;
+		}
+
+		public override Task WriteLineAsync (char[] buffer, int index, int count)
+		{
+			WriteLine (buffer, index, count);
+			return TaskConstants.Finished;
+		}
+
+		public override Task WriteLineAsync (string value)
+		{
+			WriteLine (value);
+			return TaskConstants.Finished;
+		}
+#endif
 	}
 }

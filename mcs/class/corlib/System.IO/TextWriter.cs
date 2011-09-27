@@ -5,10 +5,11 @@
 //   Marcin Szczepanski (marcins@zipworld.com.au)
 //   Miguel de Icaza (miguel@gnome.org)
 //   Paolo Molaro (lupus@ximian.com)
-//
+//   Marek Safar (marek.safar@gmail.com)
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +33,9 @@
 
 using System.Text;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO
 {
@@ -44,6 +48,29 @@ namespace System.IO
 	public abstract class TextWriter : MarshalByRefObject, IDisposable
 	{
 #endif
+		//
+		// Null version of the TextWriter, for the `Null' instance variable
+		//
+		sealed class NullTextWriter : TextWriter
+		{
+			public override Encoding Encoding
+			{
+				get
+				{
+					return Encoding.Default;
+				}
+			}
+
+			public override void Write (string s)
+			{
+			}
+			public override void Write (char value)
+			{
+			}
+			public override void Write (char[] value, int index, int count)
+			{
+			}
+		}
 
 		protected TextWriter ()
 		{
@@ -71,8 +98,7 @@ namespace System.IO
 		}
 
 		public virtual string NewLine {
-			get
-			{
+			get {
 				return new string (CoreNewLine);
 			}
 
@@ -335,34 +361,92 @@ namespace System.IO
 			WriteLine ();
 		}
 
-		//
-		// Null version of the TextWriter, for the `Null' instance variable
-		//
-		sealed class NullTextWriter : TextWriter
+#if NET_4_5
+		public virtual Task FlushAsync ()
 		{
-			public override Encoding Encoding {
-				get {
-					return Encoding.Default;
-				}
-			}
-
-			public override void Write (string s)
-			{
-			}
-			public override void Write (char value)
-			{
-			}
-			public override void Write (char[] value, int index, int count)
-			{
-			}
+			return Task.Factory.StartNew (l => ((TextWriter)l).Flush (), this);
 		}
+
+		//
+		// Use tuple to pack the arguments because it's faster than
+		// setting up anonymous method container with an instance delegate
+		//
+		public virtual Task WriteAsync (char value)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char>) l;
+				t.Item1.Write (t.Item2);
+			}, Tuple.Create (this, value));
+		}
+
+		public Task WriteAsync (char[] buffer)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char[]>) l;
+				t.Item1.Write (t.Item2);
+			}, Tuple.Create (this, buffer));
+		}
+
+		public virtual Task WriteAsync (char[] buffer, int index, int count)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char[], int, int>) l;
+				t.Item1.Write (t.Item2, t.Item3, t.Item4);
+			}, Tuple.Create (this, buffer, index, count));
+		}
+
+		public virtual Task WriteAsync (string value)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, string>) l;
+				t.Item1.Write (t.Item2);
+			}, Tuple.Create (this, value));
+		}
+
+		public virtual Task WriteLineAsync ()
+		{
+			return WriteAsync (CoreNewLine);
+		}
+
+		public virtual Task WriteLineAsync (char value)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char>) l;
+				t.Item1.WriteLine (t.Item2);
+			}, Tuple.Create (this, value));
+		}
+
+		public Task WriteLineAsync (char[] buffer)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char[]>) l;
+				t.Item1.WriteLine (t.Item2);
+			}, Tuple.Create (this, buffer));
+		}
+
+		public virtual Task WriteLineAsync (char[] buffer, int index, int count)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, char[], int, int>) l;
+				t.Item1.WriteLine (t.Item2, t.Item3, t.Item4);
+			}, Tuple.Create (this, buffer, index, count));
+		}
+
+		public virtual Task WriteLineAsync (string value)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextWriter, string>) l;
+				t.Item1.WriteLine (t.Item2);
+			}, Tuple.Create (this, value));
+		}
+#endif
 	}
 
 	//
 	// Sychronized version of the TextWriter.
 	//
 	[Serializable]
-	internal class SynchronizedWriter : TextWriter
+	sealed class SynchronizedWriter : TextWriter
 	{
 		private TextWriter writer;
 		private bool neverClose;
@@ -635,6 +719,63 @@ namespace System.IO
 		}
 		#endregion
 
+#if NET_4_5
+		public override Task FlushAsync ()
+		{
+			lock (this) {
+				return writer.FlushAsync ();
+			}
+		}
+
+		public override Task WriteAsync (char value)
+		{
+			lock (this) {
+				return writer.WriteAsync (value);
+			}
+		}
+
+		public override Task WriteAsync (char[] buffer, int index, int count)
+		{
+			lock (this) {
+				return writer.WriteAsync (buffer, index, count);
+			}
+		}
+
+		public override Task WriteAsync (string value)
+		{
+			lock (this) {
+				return writer.WriteAsync (value);
+			}
+		}
+
+		public override Task WriteLineAsync ()
+		{
+			lock (this) {
+				return writer.WriteLineAsync ();
+			}
+		}
+
+		public override Task WriteLineAsync (char value)
+		{
+			lock (this) {
+				return writer.WriteLineAsync (value);
+			}
+		}
+
+		public override Task WriteLineAsync (char[] buffer, int index, int count)
+		{
+			lock (this) {
+				return writer.WriteLineAsync (buffer, index, count);
+			}
+		}
+
+		public override Task WriteLineAsync (string value)
+		{
+			lock (this) {
+				return writer.WriteLineAsync (value);
+			}
+		}
+#endif
 		public override Encoding Encoding {
 			get {
 				lock (this) {

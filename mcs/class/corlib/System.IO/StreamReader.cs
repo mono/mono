@@ -1,7 +1,7 @@
 //
 // System.IO.StreamReader.cs
 //
-// Author:
+// Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com) 
 //   Marek Safar (marek.safar@gmail.com)
@@ -33,11 +33,50 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO {
 	[Serializable]
 	[ComVisible (true)]
-	public class StreamReader : TextReader {
+	public class StreamReader : TextReader
+	{
+		sealed class NullStreamReader : StreamReader
+		{
+			public override int Peek ()
+			{
+				return -1;
+			}
+
+			public override int Read ()
+			{
+				return -1;
+			}
+
+			public override int Read ([In, Out] char[] buffer, int index, int count)
+			{
+				return 0;
+			}
+
+			public override string ReadLine ()
+			{
+				return null;
+			}
+
+			public override string ReadToEnd ()
+			{
+				return String.Empty;
+			}
+
+			public override Stream BaseStream {
+				get { return Stream.Null; }
+			}
+
+			public override Encoding CurrentEncoding {
+				get { return Encoding.Unicode; }
+			}
+		}
 
 		const int DefaultBufferSize = 1024;
 		const int DefaultFileBufferSize = 4096;
@@ -82,46 +121,14 @@ namespace System.IO {
 		
 		bool mayBlock;
 
-		private class NullStreamReader : StreamReader {
-			public override int Peek ()
-			{
-				return -1;
-			}
-
-			public override int Read ()
-			{
-				return -1;
-			}
-
-			public override int Read ([In, Out] char[] buffer, int index, int count)
-			{
-				return 0;
-			}
-
-			public override string ReadLine ()
-			{
-				return null;
-			}
-
-			public override string ReadToEnd ()
-			{
-				return String.Empty;
-			}
-
-			public override Stream BaseStream
-			{
-				get { return Stream.Null; }
-			}
-
-			public override Encoding CurrentEncoding
-			{
-				get { return Encoding.Unicode; }
-			}
-		}
+#if NET_4_5
+		Task async_task;
+		readonly bool leave_open;
+#endif
 
 		public new static readonly StreamReader Null =  new NullStreamReader ();
 		
-		internal StreamReader() {}
+		private StreamReader() {}
 
 		public StreamReader(Stream stream)
 			: this (stream, Encoding.UTF8Unmarked, true, DefaultBufferSize) { }
@@ -136,8 +143,6 @@ namespace System.IO {
 			: this (stream, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
 
 #if NET_4_5
-		readonly bool leave_open;
-
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 			: this (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, false)
 		{
@@ -245,15 +250,13 @@ namespace System.IO {
 			pos = 0;
 		}
 
-		public virtual Stream BaseStream
-		{
+		public virtual Stream BaseStream {
 			get {
 				return base_stream;
 			}
 		}
 
-		public virtual Encoding CurrentEncoding
-		{
+		public virtual Encoding CurrentEncoding {
 			get {
 				if (encoding == null)
 					throw new Exception ();
@@ -369,6 +372,8 @@ namespace System.IO {
 
 		public void DiscardBufferedData ()
 		{
+			CheckState ();
+
 			pos = decoded_count = 0;
 			mayBlock = false;
 			// Discard internal state of the decoder too.
@@ -419,8 +424,8 @@ namespace System.IO {
 		//
 		public override int Peek ()
 		{
-			if (base_stream == null)
-				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			CheckState ();
+
 			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
@@ -438,8 +443,8 @@ namespace System.IO {
 		
 		public override int Read ()
 		{
-			if (base_stream == null)
-				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			CheckState ();
+
 			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
@@ -448,8 +453,6 @@ namespace System.IO {
 
 		public override int Read ([In, Out] char[] buffer, int index, int count)
 		{
-			if (base_stream == null)
-				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (index < 0)
@@ -459,6 +462,8 @@ namespace System.IO {
 			// re-ordered to avoid possible integer overflow
 			if (index > buffer.Length - count)
 				throw new ArgumentException ("index + count > buffer.Length");
+
+			CheckState ();
 
 			int chars_read = 0;
 			while (count > 0)
@@ -509,8 +514,7 @@ namespace System.IO {
 
 		public override string ReadLine()
 		{
-			if (base_stream == null)
-				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			CheckState ();
 
 			if (pos >= decoded_count && ReadBuffer () == 0)
 				return null;
@@ -558,8 +562,7 @@ namespace System.IO {
 
 		public override string ReadToEnd()
 		{
-			if (base_stream == null)
-				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			CheckState ();
 
 			StringBuilder text = new StringBuilder ();
 
@@ -572,5 +575,72 @@ namespace System.IO {
 
 			return text.ToString ();
 		}
+
+		void CheckState ()
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+
+#if NET_4_5
+			if (async_task != null && async_task.IsCompleted)
+				throw new InvalidOperationException ();
+#endif
+		}
+
+#if NET_4_5
+		public override int ReadBlock ([In, Out] char[] buffer, int index, int count)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > buffer.Length - count)
+				throw new ArgumentException ("index + count > buffer.Length");
+
+			CheckState ();
+
+			return base.ReadBlock (buffer, index, count);
+		}
+
+		public override Task<int> ReadAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+
+			Task<int> res;
+			async_task = res = base.ReadAsync (buffer, index, count);
+			return res;
+		}
+
+		public override Task<int> ReadBlockAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+
+			Task<int> res;
+			async_task = res = base.ReadBlockAsync (buffer, index, count);
+			return res;
+		}
+
+		public override Task<string> ReadLineAsync ()
+		{
+			CheckState ();
+
+			Task<string> res;
+			async_task = res = base.ReadLineAsync ();
+			return res;
+		}
+
+		public override Task<string> ReadToEndAsync ()
+		{
+			CheckState ();
+
+			Task<string> res;
+			async_task = res = base.ReadToEndAsync ();
+			return res;
+		}
+
+#endif
 	}
 }
