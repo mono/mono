@@ -93,13 +93,9 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void CancelTestCase()
 		{
-			bool result = false;
-			
 			CancellationTokenSource src = new CancellationTokenSource ();
 			
-			Task t = new Task (delegate {
-				result = true;
-			}, src.Token);
+			Task t = new Task (delegate { }, src.Token);
 			src.Cancel ();
 			
 			t.Start ();
@@ -212,12 +208,16 @@ namespace MonoTests.System.Threading.Tasks
 			ParallelTestHelper.Repeat (delegate {
 			    bool result = false;
 
-			    var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => Thread.Sleep (100), TaskCreationOptions.AttachedToParent));
-			    t.ContinueWith (_ => result = true);
-			    while (!t.IsCompleted)
-				    Thread.Sleep (200);
+			    var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => {}, TaskCreationOptions.AttachedToParent));
 
-			    Assert.IsTrue (result);
+				var mre = new ManualResetEvent (false);
+			    t.ContinueWith (l => {
+					result = true;
+					mre.Set ();
+				});
+
+				Assert.IsTrue (mre.WaitOne (1000), "#1");
+			    Assert.IsTrue (result, "#2");
 			}, 2);
 		}
 
