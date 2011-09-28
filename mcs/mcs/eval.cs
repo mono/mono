@@ -1074,7 +1074,7 @@ namespace Mono.CSharp
 					ec.Report.SetPrinter (old_printer);
 				}
 
-				if (tclone != null) {
+				if (tclone is TypeExpr) {
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
 					return new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
