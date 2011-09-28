@@ -1002,9 +1002,6 @@ namespace Mono.CSharp
 		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
 		{
 			switch (attributes & MemberAttributes.ScopeMask) {
-				case MemberAttributes.Final:
-					Output.Write ("readonly ");
-					break;
 				case MemberAttributes.Static:
 					Output.Write ("static ");
 					break;
