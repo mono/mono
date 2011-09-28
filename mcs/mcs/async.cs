@@ -520,41 +520,6 @@ namespace Mono.CSharp
 
 	class AsyncTaskStorey : StateMachine
 	{
-		sealed class ParametersLoadStatement : Statement
-		{
-			readonly FieldSpec[] fields;
-			readonly TypeSpec[] parametersTypes;
-			readonly int thisParameterIndex;
-
-			public ParametersLoadStatement (FieldSpec[] fields, TypeSpec[] parametersTypes, int thisParameterIndex)
-			{
-				this.fields = fields;
-				this.parametersTypes = parametersTypes;
-				this.thisParameterIndex = thisParameterIndex;
-			}
-
-			protected override void CloneTo (CloneContext clonectx, Statement target)
-			{
-				throw new NotImplementedException ();
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				for (int i = 0; i < fields.Length; ++i) {
-					var field = fields[i];
-					if (field == null)
-						continue;
-
-					ec.EmitArgumentLoad (thisParameterIndex);
-					ec.EmitArgumentLoad (i);
-					if (parametersTypes[i] is ReferenceContainer)
-						ec.EmitLoadFromPtr (field.MemberType);
-
-					ec.Emit (OpCodes.Stfld, field);
-				}
-			}
-		}
-
 		int awaiters;
 		Field builder, continuation;
 		readonly TypeSpec return_type;
