@@ -41,7 +41,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5, $(PROFILE))
 ifdef VALID_PROFILE
 
 qcheck: run-mcs-tests 
@@ -55,13 +55,11 @@ test-local:
 run-test-local: clean-local
 	$(MAKE) run-mcs-tests
 
-TEST_PATTERN = 'v2'
-
 # Required to test parser correctly
 # -compiler-options:-v
 
 TEST_PATTERN = 'v4'
-TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0 -sdk:4"
+TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0;NET_4_5"
 
 COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
