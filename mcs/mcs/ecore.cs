@@ -3669,16 +3669,16 @@ namespace Mono.CSharp {
 				// better conversion is performed between underlying types Y1 and Y2
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
-					if (p.IsGenericTask != q.IsGenericTask) {
-						return 0;
-					}
-
 					var async_am = a.Expr as AnonymousMethodExpression;
-					if (async_am == null || !async_am.IsAsync)
-						return 0;
+					if (async_am != null && async_am.IsAsync) {
 
-					q = q.TypeArguments[0];
-					p = p.TypeArguments[0];
+						if (p.IsGenericTask != q.IsGenericTask) {
+							return 0;
+						}
+
+						q = q.TypeArguments[0];
+						p = p.TypeArguments[0];
+					}
 				}
 
 				//
