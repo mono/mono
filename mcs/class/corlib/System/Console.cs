@@ -93,6 +93,12 @@ namespace System
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
+#if NET_4_5
+		static TextWriter console_stdout;
+		static TextWriter console_stderr;
+		static TextReader console_stdin;
+#endif
+
 		static Console ()
 		{
 #if NET_2_1
@@ -159,6 +165,12 @@ namespace System
 			}
 #endif
 
+#if NET_4_5
+			console_stderr = stderr;
+			console_stdout = stdout;
+			console_stdin = stdin;
+#endif
+
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
 			GC.SuppressFinalize (stdin);
@@ -181,6 +193,26 @@ namespace System
 				return stdin;
 			}
 		}
+
+#if NET_4_5
+		public static bool IsErrorRedirected {
+			get {
+				return stderr != console_stderr;
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return stdout != console_stdout;
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return stdin != console_stdin;
+			}
+		}
+#endif
 
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
