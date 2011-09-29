@@ -137,6 +137,11 @@ namespace Mono.CSharp
 		public bool DescribeTypeExpressions;
 
 		/// <summary>
+		///   Whether the evaluator will use terse syntax, and the semicolons at the end are optional
+		/// </summary>
+		public bool Terse = true;
+
+		/// <summary>
 		///   The base class for the classes that host the user generated code
 		/// </summary>
 		/// <remarks>
@@ -202,7 +207,7 @@ namespace Mono.CSharp
 		///   compiled parameter will be set to the delegate
 		///   that can be invoked to execute the code.
 		///
-	    /// </remarks>
+		/// </remarks>
 		public string Compile (string input, out CompiledMethod compiled)
 		{
 			if (input == null || input.Length == 0){
@@ -220,6 +225,10 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
+				if (parser == null && Terse && partial_input){
+					bool ignore;
+					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
+				}
 				if (parser == null){
 					compiled = null;
 					if (partial_input)
