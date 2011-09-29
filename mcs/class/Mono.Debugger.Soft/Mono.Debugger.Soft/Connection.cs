@@ -102,6 +102,11 @@ namespace Mono.Debugger.Soft
 		public bool is_thread_pool;
 	}
 
+	struct ObjectRefInfo {
+		public long type_id;
+		public long domain_id;
+	}
+
 	enum ValueTypeId {
 		VALUE_TYPE_ID_NULL = 0xf0,
 		VALUE_TYPE_ID_TYPE = 0xf1
@@ -330,7 +335,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 3;
+		internal const int MINOR_VERSION = 5;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -492,7 +497,8 @@ namespace Mono.Debugger.Soft
 			IS_COLLECTED = 3,
 			GET_ADDRESS = 4,
 			GET_DOMAIN = 5,
-			SET_VALUES = 6
+			SET_VALUES = 6,
+			GET_INFO = 7,
 		}
 
 		class Header {
@@ -1927,6 +1933,15 @@ namespace Mono.Debugger.Soft
 		internal long Object_GetAddress (long id) {
 			return SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_ADDRESS, new PacketWriter ().WriteId (id)).ReadLong ();
 		}			
+
+		internal ObjectRefInfo Object_GetInfo (long id) {
+			ObjectRefInfo res = new ObjectRefInfo ();
+			PacketReader r = SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_INFO, new PacketWriter ().WriteId (id));
+
+			res.type_id = r.ReadId ();
+			res.domain_id = r.ReadId ();
+			return res;
+		}
 
 	}
 	

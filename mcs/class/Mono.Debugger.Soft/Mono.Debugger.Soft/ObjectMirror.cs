@@ -17,18 +17,32 @@ namespace Mono.Debugger.Soft
 			this.domain = domain;
 		}
 
+		void GetInfo () {
+			var info = vm.conn.Object_GetInfo (id);
+			type = vm.GetType (info.type_id);
+			domain = vm.GetDomain (info.domain_id);
+		}
+
 		public TypeMirror Type {
 			get {
-				if (type == null)
-				 	type = vm.GetType (vm.conn.Object_GetType (id));
+				if (type == null) {
+					if (vm.conn.Version.AtLeast (2, 5))
+						GetInfo ();
+					else
+				 		type = vm.GetType (vm.conn.Object_GetType (id));
+				}
 				return type;
 			}
 		}
 
 		public AppDomainMirror Domain {
 			get {
-				if (domain == null)
-				 	domain = vm.GetDomain (vm.conn.Object_GetDomain (id));
+				if (domain == null) {
+					if (vm.conn.Version.AtLeast (2, 5))
+						GetInfo ();
+					else
+						domain = vm.GetDomain (vm.conn.Object_GetDomain (id));
+				}
 				return domain;
 			}
 		}
