@@ -1196,9 +1196,14 @@ public class DebuggerTests
 		// child should be gc'd now
 		Assert.IsTrue (child.IsCollected);
 
+		/*
+		 * No longer works since Type is read eagerly
+		 */
+		/*
 		AssertThrows<ObjectCollectedException> (delegate () {
 			TypeMirror t = child.Type;
 			});
+		*/
 
 		AssertThrows<ObjectCollectedException> (delegate () {
 				long addr = child.Address;
