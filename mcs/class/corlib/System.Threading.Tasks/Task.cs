@@ -79,6 +79,9 @@ namespace System.Threading.Tasks
 		CancellationToken token;
 
 		const TaskCreationOptions MaxTaskCreationOptions =
+#if NET_4_5
+			TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler |
+#endif
 			TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent;
 
 		public Task (Action action) : this (action, TaskCreationOptions.None)
@@ -916,6 +919,72 @@ namespace System.Threading.Tasks
 		public TaskAwaiter GetAwaiter ()
 		{
 			return new TaskAwaiter (this);
+		}
+
+		public static Task Run (Action action)
+		{
+			return Run (action, CancellationToken.None);
+		}
+
+		public static Task Run (Action action, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			var t = new Task (action, cancellationToken, TaskCreationOptions.DenyChildAttach);
+			t.Start ();
+			return t;
+		}
+
+		public static Task Run (Func<Task> function)
+		{
+			return Run (function, CancellationToken.None);
+		}
+
+		public static Task Run (Func<Task> function, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			var t = new Task<Task> (function, cancellationToken);
+			t.Start ();
+			return t;
+		}
+
+		public static Task<TResult> Run<TResult> (Func<TResult> function)
+		{
+			return Run (function, CancellationToken.None);
+		}
+
+		public static Task<TResult> Run<TResult> (Func<TResult> function, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants<TResult>.Canceled;
+
+			var t = new Task<TResult> (function, cancellationToken, TaskCreationOptions.DenyChildAttach);
+			t.Start ();
+			return t;
+		}
+
+		public static Task<TResult> Run<TResult> (Func<Task<TResult>> function)
+		{
+			return Run (function, CancellationToken.None);
+		}
+
+		public static Task<TResult> Run<TResult> (Func<Task<TResult>> function, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants<TResult>.Canceled;
+
+			var t = Task<Task<TResult>>.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+			return GetTaskResult (t);
+		}
+
+		/*async*/ static Task<TResult> GetTaskResult<TResult> (Task<Task<TResult>> task)
+		{
+			throw new NotImplementedException ();
+			// Requires compiler fix
+			// return await task.ConfigureAwait (false).Result;
 		}
 		
 		public static YieldAwaitable Yield ()

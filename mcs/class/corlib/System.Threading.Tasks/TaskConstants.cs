@@ -27,28 +27,23 @@
 //
 
 #if NET_4_5
-using System;
-using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
 {
-	internal class TaskConstants
+	static class TaskConstants
 	{
-		internal static readonly Task Finished = InitCompleted ();
-		internal static readonly Task Canceled = InitCanceled ();
+		public static readonly Task Finished;
+		public static readonly Task Canceled;
 
-		static Task InitCompleted ()
+		static TaskConstants ()
 		{
 			var tcs = new TaskCompletionSource<object> ();
 			tcs.SetResult (null);
-			return tcs.Task;
-		}
+			Finished = tcs.Task;
 
-		static Task InitCanceled ()
-		{
-			var tcs = new TaskCompletionSource<object> ();
+			tcs = new TaskCompletionSource<object> ();
 			tcs.SetCanceled ();
-			return tcs.Task;
+			Canceled = tcs.Task;
 		}
 	}
 }

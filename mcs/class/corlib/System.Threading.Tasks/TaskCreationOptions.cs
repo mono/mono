@@ -1,6 +1,11 @@
+//
 // TaskCreationOptions.cs
 //
+// Authors:
+//   Marek Safar (marek.safar@gmail.com)
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +28,20 @@
 //
 
 #if NET_4_0 || MOBILE
-using System;
 
 namespace System.Threading.Tasks
 {
-	[FlagsAttribute, System.SerializableAttribute]
+	[FlagsAttribute, SerializableAttribute]
 	public enum TaskCreationOptions
 	{
 		None             = 0x0,
 		PreferFairness   = 0x1,
 		LongRunning      = 0x2,
-		AttachedToParent = 0x4
+		AttachedToParent = 0x4,
+#if NET_4_5
+		DenyChildAttach  = 0x8,
+		HideScheduler    = 0x10
+#endif
 	}
 }
 #endif

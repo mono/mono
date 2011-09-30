@@ -344,6 +344,59 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (t.IsFaulted);
 			Assert.IsFalse (t.IsCanceled);
 		}
+
+#if NET_4_5
+		[Test]
+		public void FromResult ()
+		{
+			var t = Task.FromResult<object> (null);
+			Assert.IsTrue (t.IsCompleted, "#1");
+			Assert.AreEqual (null, t.Result, "#2");
+			t.Dispose ();
+			t.Dispose ();
+		}
+
+		[Test]
+		public void Run_ArgumentCheck ()
+		{
+			try {
+				Task.Run (null as Action);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+		}
+
+		[Test]
+		public void Run ()
+		{
+			var t = Task.Run (delegate { });
+			Assert.AreEqual (TaskCreationOptions.DenyChildAttach, t.CreationOptions, "#1");
+			t.Wait ();
+		}
+
+		[Test]
+		public void Run_Cancel ()
+		{
+			var t = Task.Run (() => 1, new CancellationToken (true));
+			try {
+				var r = t.Result;
+				Assert.Fail ("#1");
+			} catch (AggregateException) {
+			}
+
+			Assert.IsTrue (t.IsCanceled, "#2");
+		}
+
+		[Test]
+		public void Run_ExistingTask ()
+		{
+			var t = new Task<int> (() => 5);
+			var t2 = Task.Run (() => { t.Start (); return t; });
+
+			Assert.IsTrue (t2.Wait (1000), "#1");
+			Assert.AreEqual (5, t2.Result, "#2");
+		}
+#endif
 	}
 }
 #endif
