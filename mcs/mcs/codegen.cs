@@ -958,7 +958,7 @@ namespace Mono.CSharp
 			//
 			// Push the instance expression
 			//
-			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType == instance_type))) ||
+			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
 				instance_type.IsGenericParameter || declaringType.IsNullableType) {
 				//
 				// If the expression implements IMemoryLocation, then
