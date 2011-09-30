@@ -212,17 +212,13 @@ namespace Mono {
 
 		void InitTerminal (bool show_banner)
 		{
-#if ON_DOTNET
-			is_unix = false;
-			isatty = true;
-#else
 			int p = (int) Environment.OSVersion.Platform;
 			is_unix = (p == 4) || (p == 128);
 
-			if (is_unix)
-				isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
-			else
-				isatty = true;
+#if NET_4_5
+			isatty = !Console.IsInputRedirected && !Console.IsOutputRedirected;
+#else
+			isatty = true;
 #endif
 
 			// Work around, since Console is not accounting for
