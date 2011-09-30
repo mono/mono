@@ -177,6 +177,24 @@ namespace System {
 			set { driver.WindowWidth = value; }
 		}
 
+		public static bool IsErrorRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleError);
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleOutput);
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleInput);
+			}
+		}
+
 		public static void Beep (int frequency, int duration)
 		{
 			driver.Beep (frequency, duration);

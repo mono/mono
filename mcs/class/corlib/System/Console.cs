@@ -89,9 +89,16 @@ namespace System
 			}
 		}
 #endif
+
 		internal static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
+
+#if NET_4_5
+		static TextWriter console_stdout;
+		static TextWriter console_stderr;
+		static TextReader console_stdin;
+#endif
 
 		static Console ()
 		{
@@ -159,6 +166,12 @@ namespace System
 			}
 #endif
 
+#if NET_4_5
+			console_stderr = stderr;
+			console_stdout = stdout;
+			console_stdin = stdin;
+#endif
+
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
 			GC.SuppressFinalize (stdin);
@@ -181,6 +194,26 @@ namespace System
 				return stdin;
 			}
 		}
+
+#if NET_4_5
+		public static bool IsErrorRedirected {
+			get {
+				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
+			}
+		}
+#endif
 
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
