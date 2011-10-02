@@ -2234,6 +2234,10 @@ case "$host" in
 		TARGET=AMD64;
 		arch_target=amd64;
 		JIT_SUPPORTED=yes
+		if test "x$ac_cv_sizeof_void_p" = "x4"; then
+			AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
+			sizeof_register=8
+		fi
 		case $host_os in
 		  linux*)
 			sgen_supported=true

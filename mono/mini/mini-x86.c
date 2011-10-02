@@ -665,7 +665,7 @@ mono_x86_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignatu
 	return res;
 }
 
-#if defined(__native_client__)
+#if !defined(__native_client__)
 static const guchar cpuid_impl [] = {
 	0x55,                   	/* push   %ebp */
 	0x89, 0xe5,                	/* mov    %esp,%ebp */

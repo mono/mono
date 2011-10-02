@@ -692,10 +692,20 @@ extern void nacl_pre_syscall_hook();
 extern void nacl_post_syscall_hook();
 extern void nacl_register_gc_hooks(void (*pre)(), void (*post)());
 
+#include <stdio.h>
+
+struct nacl_irt_blockhook {
+  int (*register_block_hooks)(void (*pre)(void), void (*post)(void));
+};
+
+extern size_t nacl_interface_query(const char *interface_ident,
+                            void *table, size_t tablesize);
+
 void nacl_initialize_gc_thread()
 {
     int i;
-    nacl_register_gc_hooks(nacl_pre_syscall_hook, nacl_post_syscall_hook);
+    static struct nacl_irt_blockhook gc_hook;
+    
     pthread_mutex_lock(&nacl_thread_alloc_lock);
     if (!nacl_thread_parking_inited)
     {
@@ -703,6 +713,10 @@ void nacl_initialize_gc_thread()
             nacl_thread_used[i] = 0;
             nacl_thread_parked[i] = 0;
         }
+        // TODO: replace with public 'register hook' function when
+        // available from glibc
+        nacl_interface_query("nacl-irt-blockhook-0.1", &gc_hook, sizeof(gc_hook));
+        gc_hook.register_block_hooks(nacl_pre_syscall_hook, nacl_post_syscall_hook);
         nacl_thread_parking_inited = 1;
     }
     GC_ASSERT(nacl_num_gc_threads <= MAX_NACL_GC_THREADS);

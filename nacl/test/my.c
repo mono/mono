@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#if defined(__GLIBC__)
+#define __USE_GNU
+#include <link.h>
+#include <malloc.h>
+#endif
 
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-debug.h>
 
 extern void* mono_aot_module_mscorlib_info;
 
@@ -28,7 +34,6 @@ void my_c_func(int arg, const char *str, double d) {
   printf("*** my_c_func(%d, '%s', %1.4f) received\n", arg, str, (float)d);
 }
 
-
 void my_c_pass(int x) {
   char *msg = "undefined";
   switch(x) {
@@ -41,8 +46,6 @@ void my_c_pass(int x) {
   }
   printf("*** my_c_pass(%d): %s\n", x, msg);
 }
-
-
 
 void try_mono() {
   MonoDomain *domain;
@@ -99,7 +102,9 @@ void try_mono() {
   mono_aot_register_module(mono_aot_module_hw_info);
 #endif
 
+  mono_debug_init(MONO_DEBUG_FORMAT_MONO);
   domain = mono_jit_init("hw.exe", "v2.0.50727");
+
   printf("mono domain: %p\n", domain);
 
   ma = mono_domain_assembly_open(domain, "hw.exe");
@@ -122,15 +127,34 @@ void try_mono() {
   mono_add_internal_call("Test.c_code::my_c_pass", (void *) my_c_pass);
 
   mo = mono_runtime_invoke(mm, NULL, args, NULL);
+
   printf("mono object: %p\n", mo);
   if (NULL != corlib_data) free(corlib_data);
 }
 
+#if defined(__GLIBC__)
+int dl_printer(struct dl_phdr_info *info, size_t size, void *data) {
+    int j;
+    printf("DL name=%s (%d segments)\n", info->dlpi_name,
+        info->dlpi_phnum);
+    for (j = 0; j < info->dlpi_phnum; j++) {
+        if (info->dlpi_phdr[j].p_type == PT_LOAD)
+         printf("\t\t header %2d: address=%10p\n", j,
+             (void *) (info->dlpi_addr + info->dlpi_phdr[j].p_vaddr));
+    }
+    return 0;
+}
+#endif
 
 int main() {
   int i;
+  setvbuf(stdout, NULL, _IONBF, 0);
   printf("address of main(): %p\n", main);
   printf("address of stack : %p\n", &i);
+#if defined(__GLIBC__)
+  mallopt(M_TRIM_THRESHOLD, -1);
+  dl_iterate_phdr(dl_printer, NULL);
+#endif
   printf("\nProgram a.out output:\n");
   printf("==========================\n");
   try_mono();

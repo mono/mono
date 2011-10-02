@@ -36,7 +36,7 @@ CustomConfigureStep() {
     CONFIG_OPTS="--host=nacl${TARGET_BIT_PREFIX} --disable-shared --cache-file=../config-nacl-runtime${TARGET_BIT_PREFIX}.cache.temp"
   else
     NACL_NEWLIB_DEFINE=
-    CONFIG_OPTS="--enable-shared"
+    CONFIG_OPTS="--enable-shared --disable-parallel-mark"
     if [ $TARGET_BITSIZE == '32' ]; then
       CONFIG_OPTS="--host=i386-pc-linux --build=i386-pc-linux --target=i386-pc-linux ${CONFIG_OPTS}"
     else
@@ -66,8 +66,8 @@ CustomConfigureStep() {
     --without-sigaltstack \
     --without-mmap \
     --with-gc=included \
-    --with-sgen=no \
     --enable-nacl-gc \
+    --with-sgen=no \
     --enable-nls=no \
     --enable-nacl-codegen
   echo "// --- Native Client runtime below" >> config.h

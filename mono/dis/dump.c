@@ -29,7 +29,7 @@ extern int isinf (double);
 
 #endif
 
-#ifndef NACL_NEWLIB
+#if defined(__native_client__) && defined(__GLIBC__)
 void __nacl_suspend_thread_if_needed() {}
 #endif
 

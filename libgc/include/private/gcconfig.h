@@ -1201,9 +1201,10 @@
 #   endif /* DGUX */
 #   ifdef NACL
 #	define OS_TYPE "NACL"
-	extern int etext[];
-//#	define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
-#       define DATASTART ((ptr_t)0x10000000)
+#       if defined(__GLIBC__)
+#         define DYNAMIC_LOADING
+#       endif
+#       define DATASTART ((ptr_t)0x10020000)
 	extern int _end[];
 #	define DATAEND (_end)
 #	ifdef STACK_GRAN

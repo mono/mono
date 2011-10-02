@@ -388,7 +388,15 @@ mono_mprotect (void *addr, size_t length, int flags)
 #endif
 #endif
 	}
+#if defined(__native_client__)
+	{
+		void *new_addr = mmap(addr, length, prot, MAP_PRIVATE | MAP_FIXED | MAP_ANONYMOUS, -1, 0);
+		if (new_addr == addr) return 0;
+		return -1;
+	}
+#else
 	return mprotect (addr, length, prot);
+#endif
 }
 
 #else

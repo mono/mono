@@ -225,10 +225,14 @@ mono_code_manager_new (void)
 	if (next_dynamic_code_addr == NULL) {
 		const guint kPageMask = 0xFFFF; /* 64K pages */
 		next_dynamic_code_addr = (uintptr_t)(etext + kPageMask) & ~kPageMask;
+#if defined (__GLIBC__)
+		/* TODO: For now, just jump 64MB ahead to avoid dynamic libraries. */
+		next_dynamic_code_addr += (uintptr_t)0x4000000;
+#else
 		/* Workaround bug in service runtime, unable to allocate */
 		/* from the first page in the dynamic code section.    */
-		/* TODO: remove */
 		next_dynamic_code_addr += (uintptr_t)0x10000;
+#endif
 	}
 	cman->hash =  mono_g_hash_table_new (NULL, NULL);
 	/* Keep the hash table from being collected */
