@@ -39,7 +39,7 @@ SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList
-	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
