@@ -102,6 +102,11 @@ namespace IKVM.Reflection.Writer
 					writer.Headers.FileHeader.Characteristics |= IMAGE_FILE_HEADER.IMAGE_FILE_32BIT_MACHINE;
 					writer.Headers.OptionalHeader.SizeOfStackReserve = moduleBuilder.GetStackReserve(0x100000);
 					break;
+				case ImageFileMachine.ARM:
+					writer.Headers.FileHeader.Machine = IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_ARM;
+					writer.Headers.FileHeader.Characteristics |= IMAGE_FILE_HEADER.IMAGE_FILE_32BIT_MACHINE;
+					writer.Headers.OptionalHeader.SizeOfStackReserve = moduleBuilder.GetStackReserve(0x100000);
+					break;
 				case ImageFileMachine.AMD64:
 					writer.Headers.FileHeader.Machine = IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64;
 					writer.Headers.FileHeader.Characteristics |= IMAGE_FILE_HEADER.IMAGE_FILE_LARGE_ADDRESS_AWARE;
@@ -181,12 +186,18 @@ namespace IKVM.Reflection.Writer
 			}
 
 			// Import Directory
-			writer.Headers.OptionalHeader.DataDirectory[1].VirtualAddress = code.ImportDirectoryRVA;
-			writer.Headers.OptionalHeader.DataDirectory[1].Size = code.ImportDirectoryLength;
+			if (code.ImportDirectoryLength != 0)
+			{
+				writer.Headers.OptionalHeader.DataDirectory[1].VirtualAddress = code.ImportDirectoryRVA;
+				writer.Headers.OptionalHeader.DataDirectory[1].Size = code.ImportDirectoryLength;
+			}
 
 			// Import Address Table Directory
-			writer.Headers.OptionalHeader.DataDirectory[12].VirtualAddress = code.ImportAddressTableRVA;
-			writer.Headers.OptionalHeader.DataDirectory[12].Size = code.ImportAddressTableLength;
+			if (code.ImportAddressTableLength != 0)
+			{
+				writer.Headers.OptionalHeader.DataDirectory[12].VirtualAddress = code.ImportAddressTableRVA;
+				writer.Headers.OptionalHeader.DataDirectory[12].Size = code.ImportAddressTableLength;
+			}
 
 			// COM Descriptor Directory
 			writer.Headers.OptionalHeader.DataDirectory[14].VirtualAddress = code.ComDescriptorRVA;
@@ -199,15 +210,24 @@ namespace IKVM.Reflection.Writer
 				writer.Headers.OptionalHeader.DataDirectory[6].Size = code.DebugDirectoryLength;
 			}
 
-			writer.Headers.FileHeader.NumberOfSections = 2;
+			// we need to start by computing the number of sections, because code.PointerToRawData depends on that
+			writer.Headers.FileHeader.NumberOfSections = 1;
 
 			if (moduleBuilder.initializedData.Length != 0)
 			{
+				// .sdata
 				writer.Headers.FileHeader.NumberOfSections++;
 			}
 
-			if (resources != null && resources.Length != 0)
+			if (resources != null)
 			{
+				// .rsrc
+				writer.Headers.FileHeader.NumberOfSections++;
+			}
+
+			if (imageFileMachine != ImageFileMachine.ARM)
+			{
+				// .reloc
 				writer.Headers.FileHeader.NumberOfSections++;
 			}
 
@@ -245,14 +265,20 @@ namespace IKVM.Reflection.Writer
 			SectionHeader reloc = new SectionHeader();
 			reloc.Name = ".reloc";
 			reloc.VirtualAddress = rsrc.VirtualAddress + writer.ToSectionAlignment(rsrc.VirtualSize);
-			reloc.VirtualSize = ((uint)moduleBuilder.unmanagedExports.Count + 1) * 12;
+			if (imageFileMachine != ImageFileMachine.ARM)
+			{
+				reloc.VirtualSize = ((uint)moduleBuilder.unmanagedExports.Count + 1) * 12;
+			}
 			reloc.PointerToRawData = rsrc.PointerToRawData + rsrc.SizeOfRawData;
 			reloc.SizeOfRawData = writer.ToFileAlignment(reloc.VirtualSize);
 			reloc.Characteristics = SectionHeader.IMAGE_SCN_MEM_READ | SectionHeader.IMAGE_SCN_CNT_INITIALIZED_DATA | SectionHeader.IMAGE_SCN_MEM_DISCARDABLE;
 
-			// Base Relocation Directory
-			writer.Headers.OptionalHeader.DataDirectory[5].VirtualAddress = reloc.VirtualAddress;
-			writer.Headers.OptionalHeader.DataDirectory[5].Size = reloc.VirtualSize;
+			if (reloc.SizeOfRawData != 0)
+			{
+				// Base Relocation Directory
+				writer.Headers.OptionalHeader.DataDirectory[5].VirtualAddress = reloc.VirtualAddress;
+				writer.Headers.OptionalHeader.DataDirectory[5].Size = reloc.VirtualSize;
+			}
 
 			writer.Headers.OptionalHeader.SizeOfCode = text.SizeOfRawData;
 			writer.Headers.OptionalHeader.SizeOfInitializedData = sdata.SizeOfRawData + rsrc.SizeOfRawData + reloc.SizeOfRawData;
@@ -269,7 +295,7 @@ namespace IKVM.Reflection.Writer
 				// (i.e. there is an additional layer of indirection), so we add the offset to the pointer
 				writer.Headers.OptionalHeader.AddressOfEntryPoint = code.StartupStubRVA + 0x20;
 			}
-			else
+			else if (imageFileMachine != ImageFileMachine.ARM)
 			{
 				writer.Headers.OptionalHeader.AddressOfEntryPoint = code.StartupStubRVA;
 			}
@@ -284,13 +310,19 @@ namespace IKVM.Reflection.Writer
 			{
 				writer.WriteSectionHeader(rsrc);
 			}
-			writer.WriteSectionHeader(reloc);
+			if (reloc.SizeOfRawData != 0)
+			{
+				writer.WriteSectionHeader(reloc);
+			}
 
 			stream.Seek(text.PointerToRawData, SeekOrigin.Begin);
 			code.Write(mw, sdata.VirtualAddress);
 
-			stream.Seek(sdata.PointerToRawData, SeekOrigin.Begin);
-			mw.Write(moduleBuilder.initializedData);
+			if (sdata.SizeOfRawData != 0)
+			{
+				stream.Seek(sdata.PointerToRawData, SeekOrigin.Begin);
+				mw.Write(moduleBuilder.initializedData);
+			}
 
 			if (rsrc.SizeOfRawData != 0)
 			{
@@ -298,12 +330,14 @@ namespace IKVM.Reflection.Writer
 				resources.Write(mw, rsrc.VirtualAddress);
 			}
 
-			stream.Seek(reloc.PointerToRawData, SeekOrigin.Begin);
-			// .reloc section
-			code.WriteRelocations(mw);
+			if (reloc.SizeOfRawData != 0)
+			{
+				stream.Seek(reloc.PointerToRawData, SeekOrigin.Begin);
+				code.WriteRelocations(mw);
+			}
 
 			// file alignment
-			mw.Write(new byte[writer.Headers.OptionalHeader.FileAlignment - (reloc.VirtualSize & (writer.Headers.OptionalHeader.FileAlignment - 1))]);
+			stream.SetLength(reloc.PointerToRawData + reloc.SizeOfRawData);
 
 			// do the strong naming
 			if (keyPair != null)

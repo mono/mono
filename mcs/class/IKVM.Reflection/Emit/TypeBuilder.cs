@@ -484,6 +484,11 @@ namespace IKVM.Reflection.Emit
 			interfaces.Add(interfaceType);
 		}
 
+		public void __SetInterfaceImplementationCustomAttribute(Type interfaceType, CustomAttributeBuilder cab)
+		{
+			this.ModuleBuilder.SetInterfaceImplementationCustomAttribute(this, interfaceType, cab);
+		}
+
 		public int Size
 		{
 			get { return size; }

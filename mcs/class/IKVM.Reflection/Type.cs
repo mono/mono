@@ -1722,6 +1722,11 @@ namespace IKVM.Reflection
 				typeFlags |= TypeFlags.EnumOrValueType;
 			}
 		}
+
+		internal virtual IList<CustomAttributeData> GetInterfaceImplCustomAttributes(Type interfaceType, Type attributeType)
+		{
+			throw new NotSupportedException();
+		}
 	}
 
 	abstract class ElementHolderType : Type

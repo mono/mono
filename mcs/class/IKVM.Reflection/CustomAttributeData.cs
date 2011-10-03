@@ -721,6 +721,11 @@ namespace IKVM.Reflection
 			}
 		}
 
+		public static IList<CustomAttributeData> __GetCustomAttributes(Type type, Type interfaceType, Type attributeType, bool inherit)
+		{
+			return type.GetInterfaceImplCustomAttributes(interfaceType, attributeType);
+		}
+
 		public static IList<CustomAttributeData> __GetDeclarativeSecurity(Assembly assembly)
 		{
 			if (assembly.__IsMissing)

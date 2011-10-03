@@ -164,5 +164,10 @@ namespace IKVM.Reflection
 		{
 			return new GenericPropertyInfo(this.DeclaringType.BindTypeParameters(type), this);
 		}
+
+		public override string ToString()
+		{
+			return this.DeclaringType.ToString() + " " + Name;
+		}
 	}
 }

@@ -442,5 +442,20 @@ namespace IKVM.Reflection.Reader
 		{
 			get { return index == 0; }
 		}
+
+		internal override IList<CustomAttributeData> GetInterfaceImplCustomAttributes(Type interfaceType, Type attributeType)
+		{
+			int token = this.MetadataToken;
+			// TODO use binary search?
+			for (int i = 0; i < module.InterfaceImpl.records.Length; i++)
+			{
+				if (module.InterfaceImpl.records[i].Class == token
+					&& module.ResolveType(module.InterfaceImpl.records[i].Interface, this) == interfaceType)
+				{
+					return module.GetCustomAttributes((InterfaceImplTable.Index << 24) | (i + 1), attributeType);
+				}
+			}
+			return Empty<CustomAttributeData>.Array;
+		}
 	}
 }

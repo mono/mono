@@ -67,6 +67,7 @@ namespace IKVM.Reflection.Emit
 		internal readonly BlobHeap Blobs = new BlobHeap();
 		internal readonly List<VTableFixups> vtablefixups = new List<VTableFixups>();
 		internal readonly List<UnmanagedExport> unmanagedExports = new List<UnmanagedExport>();
+		private List<InterfaceImplCustomAttribute> interfaceImplCustomAttributes;
 
 		internal struct VTableFixups
 		{
@@ -78,6 +79,13 @@ namespace IKVM.Reflection.Emit
 			{
 				get { return (type & 0x02) == 0 ? 4 : 8; }
 			}
+		}
+
+		struct InterfaceImplCustomAttribute
+		{
+			internal int type;
+			internal int interfaceType;
+			internal int pseudoToken;
 		}
 
 		struct MemberRefKey : IEquatable<MemberRefKey>
@@ -714,7 +722,7 @@ namespace IKVM.Reflection.Emit
 			rec.MinorVersion = (ushort)ver.Minor;
 			rec.BuildNumber = (ushort)ver.Build;
 			rec.RevisionNumber = (ushort)ver.Revision;
-			rec.Flags = (int)(name.Flags & AssemblyNameFlags.Retargetable);
+			rec.Flags = (int)(name.Flags & ~AssemblyNameFlags.PublicKey);
 			byte[] publicKeyOrToken = null;
 			if (usePublicKeyAssemblyReference)
 			{
@@ -1484,6 +1492,55 @@ namespace IKVM.Reflection.Emit
 			export.mb = methodBuilder;
 			export.rva = rva;
 			unmanagedExports.Add(export);
+		}
+
+		internal void SetInterfaceImplementationCustomAttribute(TypeBuilder typeBuilder, Type interfaceType, CustomAttributeBuilder cab)
+		{
+			// NOTE since interfaceimpls are extremely common and custom attributes on them are extremely rare,
+			// we store (and resolve) the custom attributes in such away as to avoid impacting the common case performance
+			if (interfaceImplCustomAttributes == null)
+			{
+				interfaceImplCustomAttributes = new List<InterfaceImplCustomAttribute>();
+			}
+			InterfaceImplCustomAttribute rec;
+			rec.type = typeBuilder.MetadataToken;
+			int token = GetTypeToken(interfaceType).Token;
+			switch (token >> 24)
+			{
+				case TypeDefTable.Index:
+					token = (token & 0xFFFFFF) << 2 | 0;
+					break;
+				case TypeRefTable.Index:
+					token = (token & 0xFFFFFF) << 2 | 1;
+					break;
+				case TypeSpecTable.Index:
+					token = (token & 0xFFFFFF) << 2 | 2;
+					break;
+				default:
+					throw new InvalidOperationException();
+			}
+			rec.interfaceType = token;
+			rec.pseudoToken = AllocPseudoToken();
+			interfaceImplCustomAttributes.Add(rec);
+			SetCustomAttribute(rec.pseudoToken, cab);
+		}
+
+		internal void ResolveInterfaceImplPseudoTokens()
+		{
+			if (interfaceImplCustomAttributes != null)
+			{
+				foreach (InterfaceImplCustomAttribute rec in interfaceImplCustomAttributes)
+				{
+					for (int i = 0; i < InterfaceImpl.records.Length; i++)
+					{
+						if (InterfaceImpl.records[i].Class == rec.type && InterfaceImpl.records[i].Interface == rec.interfaceType)
+						{
+							RegisterTokenFixup(rec.pseudoToken, (InterfaceImplTable.Index << 24) | (i + 1));
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 

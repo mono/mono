@@ -71,13 +71,14 @@ namespace IKVM.Reflection.Writer
 		{
 			get
 			{
-				if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386)
+				switch (peWriter.Headers.FileHeader.Machine)
 				{
-					return 8;
-				}
-				else
-				{
-					return 16;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
+						return 8;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_ARM:
+						return 0;
+					default:
+						return 16;
 				}
 			}
 		}
@@ -106,13 +107,13 @@ namespace IKVM.Reflection.Writer
 		{
 			get
 			{
-				if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386)
+				switch (peWriter.Headers.FileHeader.Machine)
 				{
-					return (MethodBodiesRVA + MethodBodiesLength + 3) & ~3U;
-				}
-				else
-				{
-					return (MethodBodiesRVA + MethodBodiesLength + 15) & ~15U;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_ARM:
+						return (MethodBodiesRVA + MethodBodiesLength + 3) & ~3U;
+					default:
+						return (MethodBodiesRVA + MethodBodiesLength + 15) & ~15U;
 				}
 			}
 		}
@@ -219,7 +220,16 @@ namespace IKVM.Reflection.Writer
 
 		internal uint ImportDirectoryLength
 		{
-			get { return (ImportHintNameTableRVA - ImportDirectoryRVA) + 27; }
+			get
+			{
+				switch (peWriter.Headers.FileHeader.Machine)
+				{
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_ARM:
+						return 0;
+					default:
+						return (ImportHintNameTableRVA - ImportDirectoryRVA) + 27;
+				}
+			}
 		}
 
 		private uint ImportHintNameTableRVA
@@ -258,30 +268,31 @@ namespace IKVM.Reflection.Writer
 		{
 			get
 			{
-				if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64)
+				switch (peWriter.Headers.FileHeader.Machine)
 				{
-					return 12;
-				}
-				else if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_IA64)
-				{
-					return 48;
-				}
-				else
-				{
-					return 6;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
+						return 6;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64:
+						return 12;
+					case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_IA64:
+						return 48;
+					default:
+						return 0;
 				}
 			}
 		}
 
 		private void WriteRVA(MetadataWriter mw, uint rva)
 		{
-			if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386)
+			switch (peWriter.Headers.FileHeader.Machine)
 			{
-				mw.Write(rva);
-			}
-			else
-			{
-				mw.Write((ulong)rva);
+				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
+				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_ARM:
+					mw.Write(rva);
+					break;
+				default:
+					mw.Write((ulong)rva);
+					break;
 			}
 		}
 
@@ -292,6 +303,7 @@ namespace IKVM.Reflection.Writer
 			moduleBuilder.MethodImpl.Fixup(moduleBuilder);
 			moduleBuilder.MethodSemantics.Fixup(moduleBuilder);
 			moduleBuilder.InterfaceImpl.Fixup();
+			moduleBuilder.ResolveInterfaceImplPseudoTokens();
 			moduleBuilder.MemberRef.Fixup(moduleBuilder);
 			moduleBuilder.Constant.Fixup(moduleBuilder);
 			moduleBuilder.FieldMarshal.Fixup(moduleBuilder);
@@ -306,8 +318,11 @@ namespace IKVM.Reflection.Writer
 
 			// Import Address Table
 			AssertRVA(mw, ImportAddressTableRVA);
-			WriteRVA(mw, ImportHintNameTableRVA);
-			WriteRVA(mw, 0);
+			if (ImportAddressTableLength != 0)
+			{
+				WriteRVA(mw, ImportHintNameTableRVA);
+				WriteRVA(mw, 0);
+			}
 
 			// CLI Header
 			AssertRVA(mw, ComDescriptorRVA);
@@ -397,7 +412,10 @@ namespace IKVM.Reflection.Writer
 
 			// Import Directory
 			AssertRVA(mw, ImportDirectoryRVA);
-			WriteImportDirectory(mw);
+			if (ImportDirectoryLength != 0)
+			{
+				WriteImportDirectory(mw);
+			}
 
 			// alignment padding
 			for (int i = (int)(StartupStubRVA - (ImportDirectoryRVA + ImportDirectoryLength)); i > 0; i--)
@@ -426,7 +444,7 @@ namespace IKVM.Reflection.Writer
 				mw.Write(peWriter.Headers.OptionalHeader.ImageBase + StartupStubRVA);
 				mw.Write(peWriter.Headers.OptionalHeader.ImageBase + BaseRVA);
 			}
-			else
+			else if (peWriter.Headers.FileHeader.Machine == IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386)
 			{
 				mw.Write((ushort)0x25FF);
 				mw.Write((uint)peWriter.Headers.OptionalHeader.ImageBase + ImportAddressTableRVA);

@@ -75,5 +75,10 @@ namespace IKVM.Reflection
 		{
 			return new GenericEventInfo(this.DeclaringType.BindTypeParameters(type), this);
 		}
+
+		public override string ToString()
+		{
+			return this.DeclaringType.ToString() + " " + Name;
+		}
 	}
 }
