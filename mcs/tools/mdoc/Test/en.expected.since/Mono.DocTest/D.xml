@@ -1,0 +1,24 @@
+<Type Name="D" FullName="Mono.DocTest.D">
+  <TypeSignature Language="C#" Value="public delegate dynamic D(Func&lt;string,dynamic,object&gt; value);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed D extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="value" Type="System.Func&lt;System.String,System.Object,System.Object&gt;" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Object</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="value">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

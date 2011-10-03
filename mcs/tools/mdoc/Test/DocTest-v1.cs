@@ -149,6 +149,9 @@ namespace Mono.DocTest {
 		}
 	}
 
+	/// <remarks><c>T:Mono.DocTest.D</c></remarks>
+	public delegate dynamic D (Func<string, dynamic, object> value);
+
 	/// <remarks><c>T:Mono.DocTest.Widget</c>.</remarks>
 	/// <seealso cref="P:Mono.DocTest.Widget.Item(System.Int32)" />
 	/// <extra>Some extra tag value</extra>
@@ -374,6 +377,43 @@ namespace Mono.DocTest {
 		/// <remarks><c>M:Mono.DocTest.Widget.op_Implicit(Mono.DocTest.Widget)~System.Int64</c>.</remarks>
 		/// <returns>A <see cref="T:System.Int64" /> instance.</returns>
 		public static implicit operator long (Widget x) {return 0;}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Default(System.Int32,System.Int32)</c></remarks>
+		public void Default (int a = 1, int b = 2) {}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Default(System.String,System.Char)</c></remarks>
+		public void Default (string a = "a", char b = 'b') {}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Dynamic0(System.Object,System.Object)</c></remarks>
+		public dynamic Dynamic0 (dynamic a, dynamic b) {return a + b;}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Dynamic1(System.Collections.Generic.Dictionary{System.Object,System.Object})</c></remarks>
+		public Dictionary<dynamic, string> Dynamic1 (Dictionary<dynamic, string> value) {return value;}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Dynamic2(System.Func{System.String,System.Object})</c></remarks>
+		public Func<string, dynamic> Dynamic2 (Func<string, dynamic> value) {return value;}
+
+		/// <remarks><c>M:Mono.DocTest.Widget.Dynamic3(System.Func{System.Func{System.String,System.Object},System.Func{System.Object,System.String}})</c></remarks>
+		public Func<Func<string, dynamic>, Func<dynamic, string>> Dynamic3 (
+				Func<Func<string, dynamic>, Func<dynamic, string>> value) {return value;}
+
+		/// <remarks><c>P:Mono.DocTest.Widget.DynamicP</c></remarks>
+		public Func<Func<string, dynamic, string>, Func<dynamic, Func<dynamic>, string>> DynamicP {
+			get {return null;}
+		}
+
+		/// <remarks><c>F:Mono.DocTest.Widget.DynamicF</c></remarks>
+		public Func<Func<string, dynamic, string>, Func<dynamic, Func<dynamic>, string>> DynamicF;
+
+		/// <remarks><c>E:Mono.DocTest.Widget.DynamicE1</c></remarks>
+		[Obsolete ("why not")]
+		public event Func<dynamic> DynamicE1;
+
+		/// <remarks><c>E:Mono.DocTest.Widget.DynamicE2</c></remarks>
+		public event Func<dynamic> DynamicE2 {
+			add {}
+			remove {}
+		}
 	}
 
 	/// <remarks><c>T:Mono.DocTest.UseLists</c>.</remarks>
