@@ -449,7 +449,7 @@ namespace Mono.DocTest.Generic {
 	/// <remarks><c>T:Mono.DocTest.Generic.Func`2</c>.</remarks>
 	[Doc ("method")]
 	[return:Doc ("return", Field=false)]
-	public delegate TRet Func<[Doc ("arg!")] TArg, [Doc ("ret!")] TRet> (
+	public delegate TRet Func<[Doc ("arg!")] in TArg, [Doc ("ret!")] out TRet> (
 			[Doc ("arg-actual")] TArg a
 	) where TArg : Exception;
 }
