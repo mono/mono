@@ -649,7 +649,6 @@ namespace Mono.CSharp
 			}
 
 			builder = AddCompilerGeneratedField ("$builder", new TypeExpression (bt, Location));
-			builder.ModFlags |= Modifiers.READONLY;
 
 			if (!base.DoDefineMembers ())
 				return false;
