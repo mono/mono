@@ -69,10 +69,13 @@ namespace System.Runtime.CompilerServices
 
 		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext)
 		{
-			if (continueOnSourceContext && SynchronizationContext.Current != null)
-				task.ContinueWith (l => SynchronizationContext.Current.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
-			else
+			if (continueOnSourceContext && SynchronizationContext.Current != null) {
+				// Capture source context
+				var ctx = SynchronizationContext.Current;
+				task.ContinueWith (l => ctx.Post (cont => ((Action) cont) (), continuation), TaskContinuationOptions.ExecuteSynchronously);
+			} else {
 				task.ContinueWith ((l, cont) => ((Action) cont) (), continuation, TaskContinuationOptions.ExecuteSynchronously);
+			}
 		}
 
 		public void OnCompleted (Action continuation)

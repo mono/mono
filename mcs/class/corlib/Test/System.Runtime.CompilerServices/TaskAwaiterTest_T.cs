@@ -39,6 +39,32 @@ namespace MonoTests.System.Runtime.CompilerServices
 	[TestFixture]
 	public class TaskAwaiterTest_T
 	{
+		class MyContext : SynchronizationContext
+		{
+			public int PostCounter;
+
+			public override void OperationStarted ()
+			{
+				base.OperationStarted ();
+			}
+
+			public override void OperationCompleted ()
+			{
+				base.OperationCompleted ();
+			}
+
+			public override void Post (SendOrPostCallback d, object state)
+			{
+				++PostCounter;
+				base.Post (d, state);
+			}
+
+			public override void Send (SendOrPostCallback d, object state)
+			{
+				base.Send (d, state);
+			}
+		}
+
 		Task<int> task;
 
 		[Test]
@@ -89,6 +115,26 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Assert.Fail ();
 			} catch (TaskCanceledException) {
 			}
+		}
+
+		[Test]
+		public void ContextTest ()
+		{
+			var context = new MyContext ();
+
+			var old = SynchronizationContext.Current;
+			SynchronizationContext.SetSynchronizationContext (context);
+			try {
+				var t = new Task (delegate { });
+				var a = t.GetAwaiter ();
+				a.OnCompleted (delegate { });
+				t.Start ();
+				Assert.IsTrue (t.Wait (1000), "#1");
+			} finally {
+				SynchronizationContext.SetSynchronizationContext (old);
+			}
+
+			Assert.AreEqual (1, context.PostCounter, "#2");
 		}
 	}
 }
