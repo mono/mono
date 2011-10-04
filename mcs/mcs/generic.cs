@@ -3111,6 +3111,13 @@ namespace Mono.CSharp {
 				return gt.GetDefinition ().MakeGenericType (context, inflated_targs);
 			}
 
+			var ac = parameter as ArrayContainer;
+			if (ac != null) {
+				var inflated = InflateGenericArgument (context, ac.Element);
+				if (inflated != ac.Element)
+					return ArrayContainer.MakeType (context.Module, inflated);
+			}
+
 			return parameter;
 		}
 		

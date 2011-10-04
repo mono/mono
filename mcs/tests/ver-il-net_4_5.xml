@@ -23353,6 +23353,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-28.cs">
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="G`1[TResult] M[T,TResult](G`1[T][], System.Func`2[G`1[T][],TResult])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>45</size>
+      </method>
+      <method name="G`1[System.Int32][] &lt;Main&gt;m__0(G`1[System.Int32][])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void .ctor()">
@@ -25693,6 +25714,25 @@
       </method>
       <method name="Int32 Main()">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-19.cs">
+    <type name="MainClass">
+      <method name="Void Main()">
+        <size>71</size>
+      </method>
+      <method name="Void Wrap[T](System.Func`2[IPackageRepository,T], T)">
+        <size>1</size>
+      </method>
+      <method name="IPackage &lt;Main&gt;m__0(IPackageRepository)">
+        <size>7</size>
+      </method>
+      <method name="IPackage &lt;Main&gt;m__1(IPackageRepository)">
+        <size>7</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44411,6 +44451,19 @@
       </method>
     </type>
   </test>
+  <test name="test-829.cs">
+    <type name="C">
+      <method name="Void Test(Boolean, S ByRef)">
+        <size>65</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-83.cs">
     <type name="PersonArrivedArgs">
       <method name="Void .ctor(String)">
@@ -54519,47 +54572,6 @@
       </method>
     </type>
   </test>
-  <test name="test-async-23.cs">
-    <type name="MyContext">
-      <method name="Void OperationStarted()">
-        <size>21</size>
-      </method>
-      <method name="Void OperationCompleted()">
-        <size>21</size>
-      </method>
-      <method name="Void Post(System.Threading.SendOrPostCallback, System.Object)">
-        <size>23</size>
-      </method>
-      <method name="Void Send(System.Threading.SendOrPostCallback, System.Object)">
-        <size>23</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestPostContext">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] Test()">
-        <size>27</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>106</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="TestPostContext+&lt;Test&gt;c__async0">
-      <method name="Void MoveNext()">
-        <size>201</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()">
-        <size>2</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>36</size>
-      </method>
-    </type>
-  </test>
   <test name="test-async-24.cs">
     <type name="Struct">
       <method name="System.Threading.Tasks.Task`1[System.Boolean] AsyncMethod()">
@@ -54583,6 +54595,60 @@
       </method>
       <method name="Int32 &lt;&gt;m__0()">
         <size>3</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-25.cs">
+    <type name="Program">
+      <method name="Void CompilationTestOnly()">
+        <size>65</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Int32 &lt;CompilationTestOnly&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;CompilationTestOnly&gt;c__AnonStorey0">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;&gt;m__1()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-26.cs">
+    <type name="ConsoleApplication1.Program">
+      <method name="System.Threading.Tasks.Task`1[TResult] Run[TResult](System.Func`1[System.Threading.Tasks.Task`1[TResult]])">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[TResult] GetTaskResult[TResult](System.Threading.Tasks.Task`1[System.Threading.Tasks.Task`1[TResult]])">
+        <size>34</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>81</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()">
+        <size>40</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConsoleApplication1.Program+&lt;GetTaskResult&gt;c__async0`1[TResult]">
+      <method name="Void MoveNext()">
+        <size>173</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
