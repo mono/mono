@@ -4096,7 +4096,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COMPARE_IMM:
 		case OP_LCOMPARE_IMM:
 			g_assert (amd64_is_imm32 (ins->inst_imm));
+#if defined(__native_client_codegen__)
+			// This could be a compare of a pointer, and if that's the case
+			// it will fail if the pointer is sign extended negative.
+			amd64_alu_reg_imm_size (code, X86_CMP, ins->sreg1, ins->inst_imm, 4);
+#else
 			amd64_alu_reg_imm (code, X86_CMP, ins->sreg1, ins->inst_imm);
+#endif
 			break;
 		case OP_X86_COMPARE_REG_MEMBASE:
 			amd64_alu_reg_membase (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset);

@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#if defined(__GLIBC__)
+#define __USE_GNU
+#include <malloc.h>
+#endif
 
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/assembly.h>
@@ -250,6 +254,10 @@ int main(int argc, char *argv[]) {
    MonoDomain *domain;
    int failures = 0;
 
+  setvbuf(stdout, NULL, _IONBF, 0);
+#if defined(__GLIBC__)
+  mallopt(M_TRIM_THRESHOLD, -1);
+#endif
   if (argc < 2) {
     printf("no test specified; running basic.exe\n");
     printf("================================\n");

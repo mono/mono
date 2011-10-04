@@ -112,7 +112,7 @@ elif [ $MODE = "nacl" ]; then
   $CC my.c ${CC_DEFINES} ${AOT_OBJS} -finstrument-for-thread-suspension -o hw-test.nexe -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -I${MONO_RUNTIME_BASE}/include -I${MONO_RUNTIME_BASE}/include/mono-2.0 -L${MONO_RUNTIME_BASE}/lib ${RELOCATE_RODATA} ${LD_FLAGS}
 fi
 
-readonly fsatests="basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe devirtualization.exe basic-simd.exe gc-stress.exe imt_big_iface_test.exe generics.exe iltests.exe nacl.exe"
+readonly fsatests="basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe devirtualization.exe basic-simd.exe gc-test.exe generics.exe iltests.exe nacl.exe"
 if [ $MODE = "regression" ]; then
   #rm -rf fsa-tmp
   mkdir -p fsa-tmp
@@ -138,7 +138,7 @@ if [ $MODE = "regression" ]; then
     done  
   fi
 
-  $CC -o fsa-tmp/fsacheck.nexe -finstrument-for-thread-suspension -g -static ../../mono/mini/fsacheck.c ${CC_DEFINES} ${AOT_OBJS} -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -L${MONO_RUNTIME_BASE}/lib -I${MONO_RUNTIME_BASE}/include/mono-2.0  -I${MONO_RUNTIME_BASE}/include ${RELOCATE_RODATA}
+  $CC -o fsa-tmp/fsacheck.nexe -finstrument-for-thread-suspension -g ../../mono/mini/fsacheck.c ${CC_DEFINES} ${AOT_OBJS} -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -L${MONO_RUNTIME_BASE}/lib -I${MONO_RUNTIME_BASE}/include/mono-2.0  -I${MONO_RUNTIME_BASE}/include ${RELOCATE_RODATA} ${LD_FLAGS}
 fi
 
 if [ $MODE = "regression" ]; then
@@ -146,7 +146,7 @@ if [ $MODE = "regression" ]; then
   ${NCVAL} --local_cpuid fsacheck.nexe 2> validator_out || echo "fsacheck.nexe invalid: continuing anyway"
   ${NACL_CROSS_PREFIX_DASH}objdump -d fsacheck.nexe > fsacheck.disasm
   for t in $fsatests; do
-    ${SEL_LDR} -S -a -c -B ${IRT} ${SEL_LDR_ARGS} ./fsacheck.nexe $t || true
+    ${SEL_LDR} -S -a -B ${IRT} ${SEL_LDR_ARGS} ./fsacheck.nexe $t || true
   done
 else
   export MONO_PATH=$(pwd)

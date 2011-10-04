@@ -278,11 +278,7 @@ typedef union {
 
 #endif /*__native_client_codegen__*/
 
-#if defined(__native_client_codegen__)
-#define amd64_alu_reg_imm(inst,opc,reg,imm) amd64_alu_reg_imm_size((inst),(opc),(reg),(imm),4)
-#else
 #define amd64_alu_reg_imm(inst,opc,reg,imm) amd64_alu_reg_imm_size((inst),(opc),(reg),(imm),8)
-#endif
 
 #define amd64_alu_reg_reg(inst,opc,dreg,reg) amd64_alu_reg_reg_size ((inst),(opc),(dreg),(reg),8)
 
