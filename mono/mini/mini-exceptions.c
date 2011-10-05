@@ -1329,8 +1329,17 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 							MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 							*(mono_get_lmf_addr ()) = lmf;
 							mono_perfcounters->exceptions_depth += frame_count;
-							if (obj == domain->stack_overflow_ex)
+							if (obj == domain->stack_overflow_ex) {
 								jit_tls->handling_stack_ovf = FALSE;
+#ifdef PLATFORM_WIN32
+								/* 
+								 Need to call this to restore guard page at end of stack. Without this, the next
+								 stack overflow exception will result in an access violation. 
+								 See: http://msdn.microsoft.com/en-us/library/89f73td2%28v=vs.80%29.aspx	
+								 */
+								_resetstkoflw ();
+#endif
+							}
 
 							return 0;
 						}
