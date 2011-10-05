@@ -55,7 +55,9 @@ namespace Mono.CSharp
 		static object evaluator_lock = new object ();
 		static volatile bool invoking;
 		
+#if !STATIC
 		static int count;
+#endif
 		static Thread invoke_thread;
 
 		readonly Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields;
@@ -604,11 +606,12 @@ namespace Mono.CSharp
 
 		CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
-			string current_debug_name = "eval-" + count + ".dll";
-			++count;
 #if STATIC
 			throw new NotSupportedException ();
 #else
+			string current_debug_name = "eval-" + count + ".dll";
+			++count;
+
 			AssemblyDefinitionDynamic assembly;
 			AssemblyBuilderAccess access;
 
