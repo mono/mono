@@ -339,7 +339,13 @@ namespace System.ServiceModel
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
 #if NET_2_1
-			writer.WriteString (Uri.AbsoluteUri);
+			if (addressingVersion == AddressingVersion.None) {
+				writer.WriteString (Uri.AbsoluteUri);
+			} else {
+				writer.WriteStartElement ("Address", addressingVersion.Namespace);
+				writer.WriteString (Uri.AbsoluteUri);
+				writer.WriteEndElement ();
+			}
 #else
 			if (addressingVersion == AddressingVersion.None)
 				writer.WriteString (Uri.AbsoluteUri);
