@@ -4,10 +4,8 @@
 // Name: Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,15 +27,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Class |
 			 AttributeTargets.Interface, Inherited=false)]
 	[ComVisible (true)]
-	public sealed class ComImportAttribute : Attribute
-	{
+#if MONOTOUCH
+	// code with [ComImport] will assert when running on device (AOT)
+	// the linker removes the attribute but it's not used, by default, on 
+	// user code. ref: assistly #2357
+	internal
+#else
+	public 
+#endif
+	sealed class ComImportAttribute : Attribute {
+
 		public ComImportAttribute ()
 		{
 		}
