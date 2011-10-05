@@ -88,7 +88,7 @@ ptr_t p;
     return(FALSE);
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 /* 
 #   define LOG_RT_SIZE 6
 #   define RT_SIZE (1 << LOG_RT_SIZE)  -- Power of 2, may be != MAX_ROOT_SETS
@@ -176,7 +176,7 @@ GC_bool tmp;
 {
     struct roots * old;
     
-#   if defined(MSWIN32) || defined(MSWINCE) && !UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#   if (defined(MSWIN32) || defined(MSWINCE)) && !UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
       /* Spend the time to ensure that there are no overlapping	*/
       /* or adjacent intervals.					*/
       /* This could be done faster with e.g. a			*/
@@ -286,7 +286,7 @@ int i;
     n_root_sets--;
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 static void GC_rebuild_root_index()
 {
     register int i;
@@ -314,7 +314,7 @@ void GC_remove_tmp_roots()
     #endif
 }
 
-#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 void GC_remove_roots(b, e)
 char * b; char * e;
 {

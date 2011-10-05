@@ -797,14 +797,14 @@ struct exclusion {
 struct roots {
 	ptr_t r_start;
 	ptr_t r_end;
-#	if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#	if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
 	  struct roots * r_next;
 #	endif
 	GC_bool r_tmp;
 	  	/* Delete before registering new dynamic libraries */
 };
 
-#if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+#if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
     /* Size of hash table index to roots.	*/
 #   define LOG_RT_SIZE 6
 #   define RT_SIZE (1 << LOG_RT_SIZE) /* Power of 2, may be != MAX_ROOT_SETS */
@@ -997,7 +997,7 @@ struct _GC_arrays {
     		/* Commited lengths of memory regions obtained from kernel. */
 # endif
   struct roots _static_roots[MAX_ROOT_SETS];
-# if !defined(MSWIN32) && !defined(MSWINCE) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
+# if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
     struct roots * _root_index[RT_SIZE];
 # endif
   struct exclusion _excl_table[MAX_EXCLUSIONS];

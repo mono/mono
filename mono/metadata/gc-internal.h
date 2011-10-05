@@ -18,7 +18,7 @@
 
 #define MONO_GC_REGISTER_ROOT(x) mono_gc_register_root ((char*)&(x), sizeof(x), NULL)
 
-#define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root ((char*)&(x))
+#define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root_size ((char*)&(x), sizeof(x))
 
 void   mono_object_register_finalizer               (MonoObject  *obj) MONO_INTERNAL;
 void   ves_icall_System_GC_InternalCollect          (int          generation) MONO_INTERNAL;
@@ -117,6 +117,7 @@ void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data) MONO_
 void  mono_gc_add_memory_pressure (gint64 value) MONO_INTERNAL;
 int   mono_gc_register_root (char *start, size_t size, void *descr) MONO_INTERNAL;
 void  mono_gc_deregister_root (char* addr) MONO_INTERNAL;
+void  mono_gc_deregister_root_size (char* addr, size_t size) MONO_INTERNAL;
 int   mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size) MONO_INTERNAL;
 void  mono_gc_run_finalize (void *obj, void *data) MONO_INTERNAL;
 void  mono_gc_clear_domain (MonoDomain * domain) MONO_INTERNAL;
