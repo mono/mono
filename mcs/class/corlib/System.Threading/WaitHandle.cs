@@ -120,7 +120,13 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
 			try {
-				if (exitContext) SynchronizationAttribute.ExitContext ();
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
+					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
 			}
 			finally {
@@ -139,7 +145,13 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("timeout");
 
 			try {
-				if (exitContext) SynchronizationAttribute.ExitContext ();
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
+					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				return (WaitAll_internal (waitHandles, (int) ms, exitContext));
 			}
 			finally {
@@ -169,7 +181,13 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
 			try {
-				if (exitContext) SynchronizationAttribute.ExitContext ();
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
+					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
 			}
 			finally {
@@ -200,7 +218,13 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("timeout");
 
 			try {
-				if (exitContext) SynchronizationAttribute.ExitContext ();
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
+					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				return (WaitAny_internal(waitHandles, (int) ms, exitContext));
 			}
 			finally {
@@ -346,8 +370,13 @@ namespace System.Threading
 
 			bool release = false;
 			try {
-				if (exitContext)
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
 					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				safe_wait_handle.DangerousAddRef (ref release);
 				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), millisecondsTimeout, exitContext));
 			} finally {
@@ -377,8 +406,13 @@ namespace System.Threading
 
 			bool release = false;
 			try {
-				if (exitContext)
+				if (exitContext) {
+#if MONOTOUCH
+					throw new NotSupportedException ("exitContext == true is not supported");
+#else
 					SynchronizationAttribute.ExitContext ();
+#endif
+				}
 				safe_wait_handle.DangerousAddRef (ref release);
 				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), (int) ms, exitContext));
 			}
