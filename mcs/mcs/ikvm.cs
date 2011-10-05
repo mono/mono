@@ -213,28 +213,31 @@ namespace Mono.CSharp
 
 			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
 			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
-			string sdk_path = null;
 
-			string sdk_version = compiler.Settings.SdkVersion ?? (compiler.Settings.Version >= LanguageVersion.V_5 ? "4.5" : "4");
-			string[] sdk_sub_dirs;
+			if (compiler.Settings.StdLib) {
+				string sdk_path = null;
 
-			if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
-				sdk_sub_dirs = new string[] { sdk_version };
+				string sdk_version = compiler.Settings.SdkVersion ?? "4.5";
+				string[] sdk_sub_dirs;
 
-			foreach (var dir in sdk_sub_dirs) {
-				sdk_path = Path.Combine (fx_path, dir);
-				if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
-					break;
+				if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
+					sdk_sub_dirs = new string[] { sdk_version };
 
-				sdk_path = null;
+				foreach (var dir in sdk_sub_dirs) {
+					sdk_path = Path.Combine (fx_path, dir);
+					if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
+						break;
+
+					sdk_path = null;
+				}
+
+				if (sdk_path == null) {
+					compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
+					sdk_path = corlib_path;
+				}
+
+				paths.Add (sdk_path);
 			}
-
-			if (sdk_path == null) {
-				compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
-				sdk_path = corlib_path;
-			}
-
-			paths.Add (sdk_path);
 		}
 
 		#region Properties
