@@ -980,11 +980,10 @@ namespace System.Threading.Tasks
 			return GetTaskResult (t);
 		}
 
-		/*async*/ static Task<TResult> GetTaskResult<TResult> (Task<Task<TResult>> task)
+		async static Task<TResult> GetTaskResult<TResult> (Task<Task<TResult>> task)
 		{
-			throw new NotImplementedException ();
-			// Requires compiler fix
-			// return await task.ConfigureAwait (false).Result;
+			var r = await task.ConfigureAwait (false);
+			return r.Result;
 		}
 		
 		public static YieldAwaitable Yield ()
