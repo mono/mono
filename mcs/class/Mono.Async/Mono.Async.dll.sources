@@ -1,9 +1,0 @@
-../../build/common/Consts.cs
-Assembly/AssemblyInfo.cs
-AsyncExtensions.cs
-TaskEx.cs
-System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs
-System.Runtime.CompilerServices/AsyncTaskMethodBuilder.cs
-System.Runtime.CompilerServices/AsyncTaskMethodBuilder_T.cs
-System.Runtime.CompilerServices/TaskAwaiter.cs
-System.Runtime.CompilerServices/TaskAwaiter_T.cs
