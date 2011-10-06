@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 
-
 using System;
 using System.IO;
 using System.Net;
@@ -56,8 +54,8 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public NegotiateStream (Stream innerStream, bool leaveStreamOpen)
-			: base (innerStream, leaveStreamOpen)
+		public NegotiateStream (Stream innerStream, bool leaveInnerStreamOpen)
+			: base (innerStream, leaveInnerStreamOpen)
 		{
 		}
 
@@ -141,7 +139,7 @@ namespace System.Net.Security
 		#region Methods
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginAuthenticateAsClient (AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -165,7 +163,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginAuthenticateAsServer (AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -195,7 +193,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void AuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
+		public virtual void AuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel)
 		{
 			throw new NotImplementedException ();
 		}
@@ -277,5 +275,3 @@ namespace System.Net.Security
 		#endregion // Methods
 	}
 }
-
-#endif
