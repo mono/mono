@@ -792,16 +792,6 @@ namespace Mono.CSharp
 			}
 
 			if (filter_builder != null) {
-				var types = filter_builder ();
-
-				if (filter.Kind == MemberKind.Field)
-					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, null, types[0]);
-				else
-					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind,
-						ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
-			}
-
-			if (filter_builder != null) {
 				filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind,
 					ParametersCompiled.CreateFullyResolved (filter_builder ()), filter.MemberType);
 			}
