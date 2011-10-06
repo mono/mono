@@ -4,9 +4,11 @@
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) Tim Coleman, 2004
 // (c) 2004,2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -54,6 +56,10 @@ using MonoCipherAlgorithmType = Mono.Security.Protocol.Tls.CipherAlgorithmType;
 using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
+
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Security 
 {
@@ -574,6 +580,38 @@ namespace System.Net.Security
 			if (!IsAuthenticated)
 				throw new InvalidOperationException ("This operation is invalid until it is successfully authenticated");
 		}
+
+#if NET_4_5
+		public virtual Task AuthenticateAsClientAsync (string targetHost)
+		{
+			return Task.Factory.FromAsync (BeginAuthenticateAsClient, EndAuthenticateAsClient, targetHost, null);
+		}
+
+		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			var t = Tuple.Create (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, this);
+
+			return Task.Factory.FromAsync ((callback, state) => {
+				var d = (Tuple<string, X509CertificateCollection, SslProtocols, bool, SslStream>) state;
+				return d.Item5.BeginAuthenticateAsClient (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
+			}, EndAuthenticateAsClient, t);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
+		{
+			return Task.Factory.FromAsync (BeginAuthenticateAsServer, EndAuthenticateAsServer, serverCertificate, null);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			var t = Tuple.Create (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, this);
+
+			return Task.Factory.FromAsync ((callback, state) => {
+				var d = (Tuple<X509Certificate, bool, SslProtocols, bool, SslStream>) state;
+				return d.Item5.BeginAuthenticateAsServer (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
+			}, EndAuthenticateAsServer, t);
+		}
+#endif
 
 		#endregion // Methods
 	}
