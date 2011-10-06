@@ -1302,22 +1302,22 @@ namespace System.Net
 
 		//    UploadValuesAsync
 
-		public void UploadValuesAsync (Uri address, NameValueCollection values)
+		public void UploadValuesAsync (Uri address, NameValueCollection data)
 		{
-			UploadValuesAsync (address, null, values);
+			UploadValuesAsync (address, null, data);
 		}
 
-		public void UploadValuesAsync (Uri address, string method, NameValueCollection values)
+		public void UploadValuesAsync (Uri address, string method, NameValueCollection data)
 		{
-			UploadValuesAsync (address, method, values, null);
+			UploadValuesAsync (address, method, data, null);
 		}
 
-		public void UploadValuesAsync (Uri address, string method, NameValueCollection values, object userToken)
+		public void UploadValuesAsync (Uri address, string method, NameValueCollection data, object userToken)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
-			if (values == null)
-				throw new ArgumentNullException ("values");
+			if (data == null)
+				throw new ArgumentNullException ("data");
 
 			lock (this) {
 				CheckBusy ();
@@ -1326,9 +1326,9 @@ namespace System.Net
 				async_thread = new Thread (delegate (object state) {
 					object [] args = (object []) state;
 					try {
-						byte [] data = UploadValuesCore ((Uri) args [0], (string) args [1], (NameValueCollection) args [2], args [3]);
+						byte [] values = UploadValuesCore ((Uri) args [0], (string) args [1], (NameValueCollection) args [2], args [3]);
 						OnUploadValuesCompleted (
-							new UploadValuesCompletedEventArgs (data, null, false, args [3]));
+							new UploadValuesCompletedEventArgs (values, null, false, args [3]));
 					} catch (ThreadInterruptedException){
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (null, null, true, args [3]));
@@ -1336,23 +1336,23 @@ namespace System.Net
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] {address, method, values,  userToken};
+				object [] cb_args = new object [] {address, method, data,  userToken};
 				async_thread.Start (cb_args);
 			}
 		}
 
-		protected virtual void OnDownloadDataCompleted (DownloadDataCompletedEventArgs args)
+		protected virtual void OnDownloadDataCompleted (DownloadDataCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (DownloadDataCompleted != null)
-				DownloadDataCompleted (this, args);
+				DownloadDataCompleted (this, e);
 		}
 
-		protected virtual void OnDownloadFileCompleted (AsyncCompletedEventArgs args)
+		protected virtual void OnDownloadFileCompleted (AsyncCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (DownloadFileCompleted != null)
-				DownloadFileCompleted (this, args);
+				DownloadFileCompleted (this, e);
 		}
 
 		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
@@ -1361,39 +1361,39 @@ namespace System.Net
 				DownloadProgressChanged (this, e);
 		}
 
-		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
+		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (DownloadStringCompleted != null)
-				DownloadStringCompleted (this, args);
+				DownloadStringCompleted (this, e);
 		}
 
-		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
+		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (OpenReadCompleted != null)
-				OpenReadCompleted (this, args);
+				OpenReadCompleted (this, e);
 		}
 
-		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
+		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (OpenWriteCompleted != null)
-				OpenWriteCompleted (this, args);
+				OpenWriteCompleted (this, e);
 		}
 
-		protected virtual void OnUploadDataCompleted (UploadDataCompletedEventArgs args)
+		protected virtual void OnUploadDataCompleted (UploadDataCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (UploadDataCompleted != null)
-				UploadDataCompleted (this, args);
+				UploadDataCompleted (this, e);
 		}
 
-		protected virtual void OnUploadFileCompleted (UploadFileCompletedEventArgs args)
+		protected virtual void OnUploadFileCompleted (UploadFileCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (UploadFileCompleted != null)
-				UploadFileCompleted (this, args);
+				UploadFileCompleted (this, e);
 		}
 
 		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
@@ -1402,18 +1402,18 @@ namespace System.Net
 				UploadProgressChanged (this, e);
 		}
 
-		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
+		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (UploadStringCompleted != null)
-				UploadStringCompleted (this, args);
+				UploadStringCompleted (this, e);
 		}
 
-		protected virtual void OnUploadValuesCompleted (UploadValuesCompletedEventArgs args)
+		protected virtual void OnUploadValuesCompleted (UploadValuesCompletedEventArgs e)
 		{
 			CompleteAsync ();
 			if (UploadValuesCompleted != null)
-				UploadValuesCompleted (this, args);
+				UploadValuesCompleted (this, e);
 		}
 
 		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)

@@ -519,16 +519,16 @@ namespace System.Net
 				throw new InvalidOperationException ();
 			}
 		}
-		
-		
-		public string this[HttpRequestHeader hrh]
+
+
+		public string this[HttpRequestHeader header]
 		{
 			get {
-				return Get (RequestHeaderToString (hrh));
+				return Get (RequestHeaderToString (header));
 			}
 			
 			set {
-				Add (RequestHeaderToString (hrh), value);
+				Add (RequestHeaderToString (header), value);
 			}
 		}
 
@@ -599,16 +599,16 @@ namespace System.Net
 				throw new InvalidOperationException ();
 			}
 		}
-		public string this[HttpResponseHeader hrh]
+		public string this[HttpResponseHeader header]
 		{
 			get
 			{
-				return Get (ResponseHeaderToString (hrh));
+				return Get (ResponseHeaderToString (header));
 			}
 
 			set
 			{
-				Add (ResponseHeaderToString (hrh), value);
+				Add (ResponseHeaderToString (header), value);
 			}
 		}
 
