@@ -2,9 +2,10 @@
 // System.Net.WebRequest
 //
 // Authors:
-//   Lawrence Pit (loz@cable.a2000.nl)
+//  Lawrence Pit (loz@cable.a2000.nl)
+//	Marek Safar (marek.safar@gmail.com)
 //
-
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +39,9 @@ using System.Net.Configuration;
 using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
@@ -427,5 +431,18 @@ namespace System.Net
 			object o = Activator.CreateInstance (type, true);
 			prefixes [prefix] = o;
 		}
+
+#if NET_4_5
+		public virtual Task<Stream> GetRequestStreamAsync ()
+		{
+			return Task<Stream>.Factory.FromAsync (BeginGetRequestStream, EndGetRequestStream, null);
+		}
+
+		public virtual Task<WebResponse> GetResponseAsync ()
+		{
+			return Task<WebResponse>.Factory.FromAsync (BeginGetResponse, EndGetResponse, null);
+		}
+#endif
+
 	}
 }

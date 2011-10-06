@@ -1,9 +1,13 @@
 // System.Net.Dns.cs
 //
-// Author: Mads Pultz (mpultz@diku.dk)
-// Author: Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+//	Mads Pultz (mpultz@diku.dk)
+//	Lawrence Pit (loz@cable.a2000.nl)
+//	Marek Safar (marek.safar@gmail.com)
+
 //
 // (C) Mads Pultz, 2001
+// Copyright 2011 Xamarin Inc.
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,6 +37,9 @@ using System.Collections;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net {
 	public static class Dns {
@@ -369,6 +376,23 @@ namespace System.Net {
 
 			return ret;
 		}
+
+#if NET_4_5
+		public static Task<IPAddress[]> GetHostAddressesAsync (string hostNameOrAddress)
+		{
+			return Task<IPAddress[]>.Factory.FromAsync (BeginGetHostAddresses, EndGetHostAddresses, hostNameOrAddress, null);
+		}
+
+		public static Task<IPHostEntry> GetHostEntryAsync (IPAddress address)
+		{
+			return Task<IPHostEntry>.Factory.FromAsync (BeginGetHostEntry, EndGetHostEntry, address, null);
+		}
+
+		public static Task<IPHostEntry> GetHostEntryAsync (string hostNameOrAddress)
+		{
+			return Task<IPHostEntry>.Factory.FromAsync (BeginGetHostEntry, EndGetHostEntry, hostNameOrAddress, null);
+		}
+#endif
 	}
 }
 

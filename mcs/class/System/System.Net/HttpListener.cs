@@ -1,10 +1,12 @@
 //
 // System.Net.HttpListener
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +32,10 @@
 
 using System.Collections;
 using System.Threading;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
+
 //TODO: logging
 namespace System.Net {
 	public sealed class HttpListener : IDisposable {
@@ -281,6 +287,13 @@ namespace System.Net {
 			Close (true); //TODO: Should we force here or not?
 			disposed = true;
 		}
+
+#if NET_4_5
+		public Task<HttpListenerContext> GetContextAsync ()
+		{
+			return Task<HttpListenerContext>.Factory.FromAsync (BeginGetContext, EndGetContext, null);
+		}
+#endif
 
 		internal void CheckDisposed ()
 		{

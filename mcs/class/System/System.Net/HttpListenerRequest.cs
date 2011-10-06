@@ -1,10 +1,12 @@
 //
 // System.Net.HttpListenerRequest
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +36,10 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
+
 namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
@@ -460,15 +466,16 @@ namespace System.Net {
 			get { return user_languages; }
 		}
 
-		public IAsyncResult BeginGetClientCertificate (AsyncCallback requestCallback, Object state)
+		[MonoTODO]
+		public IAsyncResult BeginGetClientCertificate (AsyncCallback requestCallback, object state)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public X509Certificate2 EndGetClientCertificate (IAsyncResult asyncResult)
 		{
-			return null;
-			// set no_client_certificate once done.
+			throw new NotImplementedException ();
 		}
 
 		public X509Certificate2 GetClientCertificate ()
@@ -478,6 +485,13 @@ namespace System.Net {
 			// InvalidOp if call in progress.
 			return null;
 		}
+
+#if NET_4_5
+		public Task<X509Certificate2> GetClientCertificateAsync ()
+		{
+			return Task<X509Certificate2>.Factory.FromAsync (BeginGetClientCertificate, EndGetClientCertificate, null);
+		}
+#endif
 	}
 }
 #endif
