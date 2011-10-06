@@ -5,6 +5,8 @@
 //    Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	  Patrik Torstensson
 //    Sridhar Kulkarni (sridharkulkarni@gmail.com)
+//    Marek Safar (marek.safar@gmail.com)
+
 //
 // Copyright (C) 2001, Phillip Pearson http://www.myelin.co.nz
 //
@@ -36,6 +38,9 @@
 
 using System;
 using System.Net;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Sockets
 {
@@ -305,5 +310,16 @@ namespace System.Net.Sockets
 			Init (AddressFamily.InterNetwork, savedEP);
 		}
 
+#if NET_4_5
+		public Task<Socket> AcceptSocketAsync ()
+		{
+			return Task<Socket>.Factory.FromAsync (BeginAcceptSocket, EndAcceptSocket, null);
+		}
+
+		public Task<TcpClient> AcceptTcpClientAsync ()
+		{
+			return Task<TcpClient>.Factory.FromAsync (BeginAcceptTcpClient, EndAcceptTcpClient, null);
+		}
+#endif
 	}
 }

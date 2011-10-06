@@ -4,6 +4,7 @@
 // 	Phillip Pearson (pp@myelin.co.nz)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Sridhar Kulkarni (sridharkulkarni@gmail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2001, Phillip Pearson http://www.myelin.co.nz
 // Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
@@ -33,6 +34,9 @@
 
 using System;
 using System.Net;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Sockets
 {
@@ -435,7 +439,23 @@ namespace System.Net.Sockets
 			}
 			finally { CheckDisposed (); }
 		}
-		
+
+#if NET_4_5
+		public Task ConnectAsync (IPAddress address, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, address, port, null);
+		}
+
+		public Task ConnectAsync (IPAddress[] addresses, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, addresses, port, null);
+		}
+
+		public Task ConnectAsync (string host, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, host, port, null);
+		}
+#endif
 		private void CheckDisposed ()
 		{
 			if (disposed)

@@ -4,6 +4,7 @@
 // Author:
 //    Gonzalo Paniagua Javier <gonzalo@ximian.com>
 //    Sridhar Kulkarni (sridharkulkarni@gmail.com)
+//    Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) Ximian, Inc. http://www.ximian.com
 // Copyright 2011 Xamarin Inc.
@@ -32,6 +33,9 @@
 
 using System;
 using System.Net;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Sockets
 {
@@ -123,7 +127,6 @@ namespace System.Net.Sockets
 				socket.Bind (localEP);
 		}
 
-#region Public methods
 #region Close
 		public void Close ()
 		{
@@ -469,8 +472,7 @@ namespace System.Net.Sockets
 							requestCallback, state));
 		}
 		
-		public byte[] EndReceive (IAsyncResult asyncResult,
-					  ref IPEndPoint remoteEP)
+		public byte[] EndReceive (IAsyncResult asyncResult, ref IPEndPoint remoteEP)
 		{
 			CheckDisposed ();
 			
@@ -616,7 +618,38 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType().FullName);
 		}		
 #endregion
-#endregion
+
+#if NET_4_5
+		
+		public Task<UdpReceiveResult> ReceiveAsync ()
+		{
+			return Task<UdpReceiveResult>.Factory.FromAsync (BeginReceive, r => {
+				IPEndPoint remoteEndPoint = null;
+				return new UdpReceiveResult (EndReceive (r, ref remoteEndPoint), remoteEndPoint);
+			}, null);
+		}
+
+		public Task<int> SendAsync (byte[] datagram, int bytes)
+		{
+			return Task<int>.Factory.FromAsync (BeginSend, EndSend, datagram, bytes, null);
+		}
+
+		public Task<int> SendAsync (byte[] datagram, int bytes, IPEndPoint endPoint)
+		{
+			return Task<int>.Factory.FromAsync (BeginSend, EndSend, datagram, bytes, endPoint, null);
+		}
+
+		public Task<int> SendAsync (byte[] datagram, int bytes, string hostname, int port)
+		{
+			var t = Tuple.Create (datagram, bytes, hostname, port, this);
+
+			return Task<int>.Factory.FromAsync ((callback, state) => {
+				var d = (Tuple<byte[], int, string, int, UdpClient>) state;
+				return d.Item5.BeginSend (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
+			}, EndSend, t);
+ 
+		}
+#endif
 	}
 }
 
