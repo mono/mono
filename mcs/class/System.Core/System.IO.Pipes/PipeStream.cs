@@ -35,6 +35,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
+using System.Runtime.InteropServices;
 
 namespace System.IO.Pipes
 {
@@ -250,7 +251,7 @@ namespace System.IO.Pipes
 		}
 
 		[MonoTODO]
-		public override int Read (byte [] buffer, int offset, int count)
+		public override int Read ([In] byte [] buffer, int offset, int count)
 		{
 			CheckReadOperations ();
 

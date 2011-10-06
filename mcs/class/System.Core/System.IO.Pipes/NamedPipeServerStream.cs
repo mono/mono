@@ -42,8 +42,7 @@ namespace System.IO.Pipes
 	[HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public sealed class NamedPipeServerStream : PipeStream
 	{
-		[MonoTODO]
-		public const int MaxAllowedServerInstances = 1;
+		public const int MaxAllowedServerInstances = -1;
 
 		public NamedPipeServerStream (string pipeName)
 			: this (pipeName, PipeDirection.InOut)

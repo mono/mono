@@ -207,7 +207,7 @@ namespace System.IO.MemoryMappedFiles
 		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix; options and memoryMappedFileSecurity are ignored")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
 							  MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity,
-							  HandleInheritability handleInheritability)
+							  HandleInheritability inheritability)
 		{
 			return CreateFromFile (mapName, FileMode.CreateNew, mapName, capacity, access);
 		}
@@ -225,7 +225,7 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 		[MonoTODO]
-		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability handleInheritability)
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability inheritability)
 		{
 			throw new NotImplementedException ();
 		}
