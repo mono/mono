@@ -1,4 +1,4 @@
-// System.Net.Sockets.TcpListener.cs
+// TcpListener.cs
 //
 // Authors:
 //    Phillip Pearson (pp@myelin.co.nz)
@@ -6,11 +6,11 @@
 //	  Patrik Torstensson
 //    Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //
-// Copyright (C) 2001, Phillip Pearson
-//    http://www.myelin.co.nz
+// Copyright (C) 2001, Phillip Pearson http://www.myelin.co.nz
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // (c) 2004-2006 Novell, Inc.
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -68,9 +68,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		/// <param name="port">The port to listen on, e.g. 80 if you 
 		/// are a web server</param>
-#if NET_1_1
 		[Obsolete ("Use TcpListener (IPAddress address, int port) instead")]
-#endif
 		public TcpListener (int port)
 		{
 			if (port < 0 || port > 65535)
@@ -83,12 +81,12 @@ namespace System.Net.Sockets
 		/// Constructs a new TcpListener with a specified local endpoint
 		/// </summary>
 		/// <param name="local_end_point">The endpoint</param>
-		public TcpListener (IPEndPoint local_end_point)
+		public TcpListener (IPEndPoint localEP)
 		{
-			if (local_end_point == null)
-				throw new ArgumentNullException ("local_end_point");
+			if (localEP == null)
+				throw new ArgumentNullException ("localEP");
 
-			Init (local_end_point.AddressFamily, local_end_point);
+			Init (localEP.AddressFamily, localEP);
 		}
 		
 		/// <summary>
@@ -97,15 +95,15 @@ namespace System.Net.Sockets
 		/// </summary>
 		/// <param name="listen_ip">The IP to listen on</param>
 		/// <param name="port">The port to listen on</param>
-		public TcpListener (IPAddress listen_ip, int port)
+		public TcpListener (IPAddress localaddr, int port)
 		{
-			if (listen_ip == null)
-				throw new ArgumentNullException ("listen_ip");
+			if (localaddr == null)
+				throw new ArgumentNullException ("localaddr");
 
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
 
-			Init (listen_ip.AddressFamily, new IPEndPoint(listen_ip, port));
+			Init (localaddr.AddressFamily, new IPEndPoint (localaddr, port));
 		}
 
 
@@ -136,17 +134,11 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The listening socket
 		/// </summary>
-#if NET_2_0
-		public
-#else
-		protected
-#endif
-		Socket Server
+		public Socket Server
 		{
 			get { return server; }
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// Specifies whether the TcpListener allows only one
 		/// underlying socket to listen to a specific port
@@ -177,7 +169,6 @@ namespace System.Net.Sockets
 				server.ExclusiveAddressUse = value;
 			}
 		}
-#endif
 		
 		// methods
 
@@ -251,12 +242,7 @@ namespace System.Net.Sockets
 		/// of pending connections.
 		/// </summary>
 
-#if NET_2_0
-		public
-#else
-		private
-#endif
-		void Start (int backlog)
+		public void Start (int backlog)
 		{
 			if (active) {
 				return;
@@ -270,7 +256,6 @@ namespace System.Net.Sockets
 			active = true;
 		}
 
-#if NET_2_0		
 		public IAsyncResult BeginAcceptSocket (AsyncCallback callback,
 						       object state)
 		{
@@ -304,7 +289,6 @@ namespace System.Net.Sockets
 			
 			return(client);
 		}
-#endif
 		
 		/// <summary>
 		/// Tells the TcpListener to stop listening and dispose

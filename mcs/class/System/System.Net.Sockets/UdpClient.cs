@@ -6,6 +6,7 @@
 //    Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //
 // Copyright (C) Ximian, Inc. http://www.ximian.com
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -40,29 +41,20 @@ namespace System.Net.Sockets
 		private bool active = false;
 		private Socket socket;
 		private AddressFamily family = AddressFamily.InterNetwork;
-#if NET_2_0
 		private byte[] recvbuffer;
-#endif
 	
-#region Constructors
 		public UdpClient () : this(AddressFamily.InterNetwork)
 		{
 		}
 
-#if NET_1_1
 		public UdpClient(AddressFamily family)
 		{
 			if(family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
-#if NET_2_0
 				throw new ArgumentException ("Family must be InterNetwork or InterNetworkV6", "family");
-#else
-				throw new ArgumentException ("family");
-#endif
 
 			this.family = family;
 			InitSocket (null);
 		}
-#endif
 
 		public UdpClient (int port)
 		{
@@ -85,15 +77,10 @@ namespace System.Net.Sockets
 			InitSocket (localEP);
 		}
 
-#if NET_1_1
 		public UdpClient (int port, AddressFamily family)
 		{
 			if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
-#if NET_2_0
 				throw new ArgumentException ("Family must be InterNetwork or InterNetworkV6", "family");
-#else
-				throw new ArgumentException ("family");
-#endif
 
 			if (port < IPEndPoint.MinPort ||
 			    port > IPEndPoint.MaxPort) {
@@ -110,7 +97,6 @@ namespace System.Net.Sockets
 				localEP = new IPEndPoint (IPAddress.IPv6Any, port);
 			InitSocket (localEP);
 		}
-#endif
 
 		public UdpClient (string hostname, int port)
 		{
@@ -137,7 +123,6 @@ namespace System.Net.Sockets
 				socket.Bind (localEP);
 		}
 
-#endregion // Constructors
 #region Public methods
 #region Close
 		public void Close ()
@@ -221,14 +206,11 @@ namespace System.Net.Sockets
 			if(family == AddressFamily.InterNetwork)
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
 					new MulticastOption (multicastAddr));
-#if NET_1_1
 			else
 				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership,
 					new IPv6MulticastOption (multicastAddr));
-#endif
 		}
 
-#if NET_1_1
 		public void DropMulticastGroup (IPAddress multicastAddr,
 						int ifindex)
 		{
@@ -250,30 +232,22 @@ namespace System.Net.Sockets
 				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership, new IPv6MulticastOption (multicastAddr, ifindex));
 			}
 		}
-#endif
 		
 		public void JoinMulticastGroup (IPAddress multicastAddr)
 		{
 			CheckDisposed ();
 
 			if (multicastAddr == null)
-#if NET_2_0
 				throw new ArgumentNullException ("multicastAddr");
-#else
-				throw new NullReferenceException ();
-#endif
 
 			if(family == AddressFamily.InterNetwork)
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
 					new MulticastOption (multicastAddr));
-#if NET_1_1
 			else
 				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
 					new IPv6MulticastOption (multicastAddr));
-#endif
 		}
 
-#if NET_1_1
 		public void JoinMulticastGroup (int ifindex,
 						IPAddress multicastAddr)
 		{
@@ -287,7 +261,6 @@ namespace System.Net.Sockets
 			else
 				throw new SocketException ((int) SocketError.OperationNotSupported);
 		}
-#endif
 
 		public void JoinMulticastGroup (IPAddress multicastAddr, int timeToLive)
 		{
@@ -301,14 +274,11 @@ namespace System.Net.Sockets
 			if(family == AddressFamily.InterNetwork)
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
 					timeToLive);
-#if NET_1_1
 			else
 				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastTimeToLive,
 					timeToLive);
-#endif
 		}
 
-#if NET_2_0
 		public void JoinMulticastGroup (IPAddress multicastAddr,
 						IPAddress localAddress)
 		{
@@ -319,7 +289,6 @@ namespace System.Net.Sockets
 			else
 				throw new SocketException ((int) SocketError.OperationNotSupported);
 		}
-#endif
 
 		#endregion
 		#region Data I/O
@@ -410,7 +379,6 @@ namespace System.Net.Sockets
 		}
 #endregion
 
-#if NET_2_0
 		IAsyncResult DoBeginSend (byte[] datagram, int bytes,
 					  IPEndPoint endPoint,
 					  AsyncCallback requestCallback,
@@ -480,9 +448,8 @@ namespace System.Net.Sockets
 			
 			return(socket.EndSend (asyncResult));
 		}
-		
-		public IAsyncResult BeginReceive (AsyncCallback callback,
-						  object state)
+
+		public IAsyncResult BeginReceive (AsyncCallback requestCallback, object state)
 		{
 			CheckDisposed ();
 
@@ -499,7 +466,7 @@ namespace System.Net.Sockets
 			return(socket.BeginReceiveFrom (recvbuffer, 0, 8192,
 							SocketFlags.None,
 							ref ep,
-							callback, state));
+							requestCallback, state));
 		}
 		
 		public byte[] EndReceive (IAsyncResult asyncResult,
@@ -532,7 +499,6 @@ namespace System.Net.Sockets
 			
 			return(buf);
 		}
-#endif
 				
 #region Properties
 		protected bool Active {
@@ -540,17 +506,11 @@ namespace System.Net.Sockets
 			set { active = value; }
 		}
 
-#if NET_2_0
-		public
-#else
-		protected
-#endif
-		Socket Client {
+		public Socket Client {
 			get { return socket; }
 			set { socket = value; }
 		}
 
-#if NET_2_0
 		public int Available
 		{
 			get {
@@ -622,7 +582,6 @@ namespace System.Net.Sockets
 				socket.Ttl = value;
 			}
 		}
-#endif
 
 #endregion
 #region Disposing
@@ -632,10 +591,7 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;

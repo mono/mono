@@ -42,10 +42,10 @@ namespace System.Net.Sockets
 		private bool	enabled;
 		private int	seconds;
 
-		public LingerOption (bool enable, int secs)
+		public LingerOption (bool enable, int seconds)
 		{
 			enabled = enable;
-			seconds = secs;
+			this.seconds = seconds;
 		}
 
 		public bool Enabled
