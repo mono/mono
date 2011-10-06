@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -464,7 +464,7 @@ namespace System.Net {
 		{
 			return null;
 		}
-#if SECURITY_DEP
+
 		public X509Certificate2 EndGetClientCertificate (IAsyncResult asyncResult)
 		{
 			return null;
@@ -478,7 +478,6 @@ namespace System.Net {
 			// InvalidOp if call in progress.
 			return null;
 		}
-#endif
 	}
 }
 #endif
