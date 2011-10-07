@@ -421,7 +421,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_plattest" };
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_plattest" };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
