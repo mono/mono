@@ -149,6 +149,10 @@ namespace System.Threading.Tasks
 			// Process taskCreationOptions
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 				parent.AddChild ();
+
+			if (token.CanBeCanceled) {
+				token.Register (l => ((Task) l).CancelReal (), this);
+			}
 		}
 
 		~Task ()

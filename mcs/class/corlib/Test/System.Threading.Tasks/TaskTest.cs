@@ -89,31 +89,37 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.AreEqual(max, achieved, "#1");
 			});
 		}
-		
+
 		[Test]
-		public void CancelTestCase()
+		public void CancelBeforeStart ()
 		{
-			CancellationTokenSource src = new CancellationTokenSource ();
-			
+			var src = new CancellationTokenSource ();
+
 			Task t = new Task (delegate { }, src.Token);
 			src.Cancel ();
-			
-			t.Start ();
-			Exception ex = null;
-			
+			Assert.AreEqual (TaskStatus.Canceled, t.Status, "#1");
+
 			try {
-				t.Wait ();
-			} catch (Exception e) {
-				ex = e;
+				t.Start ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
 			}
-			
-			Assert.IsNotNull (ex, "#1");
-			Assert.IsInstanceOfType (typeof(AggregateException), ex, "#2");
-			Assert.IsNull (t.Exception, "#3");
-			
-			AggregateException aggr = (AggregateException)ex;
-			Assert.AreEqual (1, aggr.InnerExceptions.Count, "#4");
-			Assert.IsInstanceOfType (typeof (OperationCanceledException), aggr.InnerExceptions[0], "#5");
+		}
+
+		[Test]
+		public void CancelBeforeWait ()
+		{
+			var src = new CancellationTokenSource ();
+
+			Task t = new Task (delegate { }, src.Token);
+			src.Cancel ();
+
+			try {
+				Assert.IsTrue (t.Wait (1000));
+				Assert.Fail ();
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (TaskCanceledException), e.InnerException);
+			}
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]
@@ -149,8 +155,8 @@ namespace MonoTests.System.Threading.Tasks
 				
 				Task t = Task.Factory.StartNew(delegate { });
 				Task cont = t.ContinueWith(delegate { result = true; }, TaskContinuationOptions.OnlyOnRanToCompletion);
-				t.Wait();
-				cont.Wait();
+				Assert.IsTrue (t.Wait(1000), "#4");
+				Assert.IsTrue (cont.Wait(1000), "#5");
 				
 				Assert.IsNull(cont.Exception, "#1");
 				Assert.IsNotNull(cont, "#2");
@@ -161,28 +167,32 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void ContinueWithOnAbortedTestCase()
 		{
-			ParallelTestHelper.Repeat (delegate {
-				bool result = false;
-				bool taskResult = false;
-				
-				CancellationTokenSource src = new CancellationTokenSource ();
-				Task t = new Task(delegate { taskResult = true; }, src.Token);
-				src.Cancel ();
-				
-				Task cont = t.ContinueWith (delegate { result = true; },
-				                            TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
+			bool result = false;
+			bool taskResult = false;
 
-				t.Start();
-				cont.Wait();
-				
-				Assert.IsFalse (taskResult, "#-1");
-				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#0");
-				Assert.IsTrue (t.IsCanceled, "#0bis");
-				
-				Assert.IsNull(cont.Exception, "#1");
-				Assert.IsNotNull(cont, "#2");
-				Assert.IsTrue(result, "#3");
-			});
+			CancellationTokenSource src = new CancellationTokenSource ();
+			Task t = new Task (delegate { taskResult = true; }, src.Token);
+
+			Task cont = t.ContinueWith (delegate { result = true; },
+										TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
+
+			src.Cancel ();
+
+			Assert.AreEqual (TaskStatus.Canceled, t.Status, "#1");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			Assert.IsTrue (cont.Wait (1000), "#30");
+
+			Assert.IsFalse (taskResult, "#3");
+
+			Assert.IsNull (cont.Exception, "#4");
+			Assert.IsTrue (result, "#5");
+			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status, "#6");
 		}
 		
 		[Test]
