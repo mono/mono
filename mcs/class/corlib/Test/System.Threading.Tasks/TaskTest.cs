@@ -194,12 +194,23 @@ namespace MonoTests.System.Threading.Tasks
 				Task t = Task.Factory.StartNew(delegate { throw new Exception("foo"); });	
 				Task cont = t.ContinueWith(delegate { result = true; }, TaskContinuationOptions.OnlyOnFaulted);
 			
-				cont.Wait();
-				
+				Assert.IsTrue (cont.Wait(1000), "#0");
 				Assert.IsNotNull (t.Exception, "#1");
 				Assert.IsNotNull (cont, "#2");
 				Assert.IsTrue (result, "#3");
 			});
+		}
+
+		[Test]
+		public void ContinueWithWithStart ()
+		{
+			Task t = new Task<int> (() => 1);
+			t = t.ContinueWith (l => { });
+			try {
+				t.Start ();
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]
@@ -324,6 +335,17 @@ namespace MonoTests.System.Threading.Tasks
 			t.Wait ();
 
 			t.Start ();
+		}
+
+		[Test]
+		public void Start_NullArgument ()
+		{
+			var t = Task.Factory.StartNew (delegate () { });
+			try {
+				t.Start (null);
+				Assert.Fail ();
+			} catch (ArgumentNullException) {
+			}
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]

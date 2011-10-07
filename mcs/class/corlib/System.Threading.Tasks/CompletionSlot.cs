@@ -28,21 +28,20 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-using System.Threading;
-
 namespace System.Threading.Tasks
 {
-	internal struct CompletionSlot
+	struct CompletionSlot
 	{
 		public AtomicBooleanValue Launched;
-		public Func<bool> Predicate;
-		public TaskContinuationOptions Kind;
+		public readonly Func<bool> Predicate;
+		public readonly TaskContinuationOptions Kind;
+		public readonly bool Initialized;
 
-		public void Init (TaskContinuationOptions kind, Func<bool> predicate)
+		public CompletionSlot (TaskContinuationOptions kind, Func<bool> predicate)
 		{
 			Predicate = predicate;
 			Kind = kind;
+			Initialized = true;
 		}
 	}
 }

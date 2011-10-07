@@ -170,8 +170,15 @@ namespace System.Threading.Tasks
 		
 		public void Start (TaskScheduler scheduler)
 		{
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
 			if (status >= TaskStatus.WaitingToRun)
 				throw new InvalidOperationException ("The Task is not in a valid state to be started.");
+
+			if (Slot.Initialized)
+				throw new InvalidOperationException ("Start may not be called on a continuation task");
+
 			SetupScheduler (scheduler);
 			Schedule ();
 		}
@@ -302,7 +309,7 @@ namespace System.Threading.Tasks
 			continuation.scheduler = scheduler;
 			continuation.schedWait.Set ();
 			continuation.status = TaskStatus.WaitingForActivation;
-			continuation.Slot.Init (kind, predicate);
+			continuation.Slot = new CompletionSlot (kind, predicate);
 
 			if (IsCompleted) {
 				CompletionExecutor (continuation);
@@ -357,16 +364,8 @@ namespace System.Threading.Tasks
 			
 			return true;
 		}
-		
-		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
-		{
-			if ((options & TaskContinuationOptions.ExecuteSynchronously) > 0)
-				continuation.RunSynchronously (scheduler);
-			else
-				continuation.Start (scheduler);
-		}
-		
-		internal TaskCreationOptions GetCreationOptions (TaskContinuationOptions kind)
+			
+		static internal TaskCreationOptions GetCreationOptions (TaskContinuationOptions kind)
 		{
 			TaskCreationOptions options = TaskCreationOptions.None;
 			if ((kind & TaskContinuationOptions.AttachedToParent) > 0)
@@ -513,7 +512,11 @@ namespace System.Threading.Tasks
 
 				return;
 			}
-			CheckAndSchedule (cont, cont.Slot.Kind, cont.scheduler, false);
+			
+			if ((cont.Slot.Kind & TaskContinuationOptions.ExecuteSynchronously) != 0)
+				cont.RunSynchronously (cont.scheduler);
+			else
+				cont.Schedule ();
 		}
 
 		void ProcessCompleteDelegates ()
