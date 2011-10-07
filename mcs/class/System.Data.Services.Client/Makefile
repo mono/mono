@@ -11,7 +11,10 @@ LIB_MCS_FLAGS = \
 	-r:System.Xml.Linq.dll \
 	-r:System.Data.dll \
 	-r:System.Xml.dll \
-	-r:WindowsBase.dll \
 	-warn:2
+
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -r:WindowsBase
+endif
 
 include ../../build/library.make
