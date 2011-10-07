@@ -399,8 +399,13 @@ namespace Mono.CSharp
 
 		public new void Define ()
 		{
-			foreach (TypeContainer tc in types)
-				tc.DefineType ();
+			foreach (TypeContainer tc in types) {
+				try {
+					tc.DefineType ();
+				} catch (Exception e) {
+					throw new InternalErrorException (tc, e);
+				}
+			}
 
 			foreach (TypeContainer tc in types)
 				tc.ResolveTypeParameters ();
