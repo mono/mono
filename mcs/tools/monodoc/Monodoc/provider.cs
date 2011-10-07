@@ -906,6 +906,7 @@ public class RootTree : Tree {
 				docTree.Load (defTree);
 		}
 
+
 		sourceFiles = sourceFiles ?? new string [0];
 
 		//
@@ -930,8 +931,9 @@ public class RootTree : Tree {
 		//
 		// Load the sources
 		//
-		foreach (var sourceFile in sourceFiles)
+		foreach (var sourceFile in sourceFiles){
 			root.AddSourceFile (sourceFile);
+		}
 		
 		foreach (string path in UncompiledHelpSources) {
 			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
@@ -965,8 +967,13 @@ public class RootTree : Tree {
 		}
 	}
 
+	Dictionary<string,string> loadedSourceFiles = new Dictionary<string,string> ();
+	
 	public void AddSourceFile (string sourceFile)
 	{
+		if (loadedSourceFiles.ContainsKey (sourceFile))
+			return;
+		
 		Node third_party = LookupEntryPoint ("various") ?? this;
 
 		XmlDocument doc = new XmlDocument ();
@@ -987,6 +994,7 @@ public class RootTree : Tree {
 			Console.Error.WriteLine ("Error: No <source> section found in the {0} file", sourceFile);
 			return;
 		}
+		loadedSourceFiles [sourceFile] = sourceFile;
 		foreach (XmlNode source in sources){
 			XmlAttribute a = source.Attributes ["provider"];
 			if (a == null){
