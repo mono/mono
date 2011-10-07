@@ -1253,7 +1253,7 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (!TypeManager.IsDelegateType (MemberType)) {
+			if (!MemberType.IsDelegate) {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
 			}
 

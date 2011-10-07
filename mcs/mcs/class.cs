@@ -3124,13 +3124,13 @@ namespace Mono.CSharp
 					if (OptAttributes == null || !OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));
+							GetSignatureForError (), base_member.GetSignatureForError ());
 					}
 				} else {
 					if (OptAttributes != null && OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));
+							GetSignatureForError (), base_member.GetSignatureForError ());
 					}
 				}
 

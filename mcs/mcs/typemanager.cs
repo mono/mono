@@ -842,18 +842,6 @@ namespace Mono.CSharp
 		return mb.GetSignatureForError ();
 	}
 
-	// Obsolete
-	public static bool IsDelegateType (TypeSpec t)
-	{
-		return t.IsDelegate;
-	}
-	
-	// Obsolete
-	public static bool IsEnumType (TypeSpec t)
-	{
-		return t.IsEnum;
-	}
-
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//

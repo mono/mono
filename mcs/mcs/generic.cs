@@ -2674,7 +2674,7 @@ namespace Mono.CSharp {
 				// Align params arguments
 				TypeSpec t_i = methodParameters [i >= methodParameters.Length ? methodParameters.Length - 1: i];
 				
-				if (!TypeManager.IsDelegateType (t_i)) {
+				if (!t_i.IsDelegate) {
 					if (!t_i.IsExpressionTreeType)
 						continue;
 
@@ -2904,7 +2904,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < methodParameters.Length; ++i) {
 				TypeSpec t = methodParameters[i];
 
-				if (!TypeManager.IsDelegateType (t)) {
+				if (!t.IsDelegate) {
 					if (!t.IsExpressionTreeType)
 						continue;
 
@@ -3134,7 +3134,7 @@ namespace Mono.CSharp {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
-				if (TypeManager.IsDelegateType (returnType)) {
+				if (returnType.IsDelegate) {
 					invoke = Delegate.GetInvokeMethod (returnType);
 					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
 				}
@@ -3338,7 +3338,7 @@ namespace Mono.CSharp {
 			// then a lower-bound inference is made from U for Tb.
 			//
 			if (e is MethodGroupExpr) {
-				if (!TypeManager.IsDelegateType (t)) {
+				if (!t.IsDelegate) {
 					if (!t.IsExpressionTreeType)
 						return 0;
 

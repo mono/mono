@@ -5077,7 +5077,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.GetFullNameSignature (spec);
+			return spec.GetSignatureForError ();
 		}
 
 		public bool IsMarshalByRefAccess (ResolveContext rc)
