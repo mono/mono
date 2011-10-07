@@ -2377,6 +2377,7 @@ x86_pop_reg (code, X86_EAX);
 #ifndef DISABLE_JIT
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
+extern int nacl_park_threads_now;
 void
 mono_nacl_gc()
 {
@@ -4790,8 +4791,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_NACL_GC_SAFE_POINT: {
-#if defined(__native_client_codegen__)
-			code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc);
+#if defined(__native_client_codegen__) && defined(__native_client_gc__)
+			if (cfg->compile_aot)
+				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc);
+			else {
+				guint8 *br [1];
+
+				x86_test_mem_imm8 (code, (gpointer)&nacl_park_threads_now, 0xFFFFFFFF);
+				br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc);
+				x86_patch (br[0], code);
+			}
 #endif
 			break;
 		}

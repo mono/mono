@@ -3847,6 +3847,7 @@ amd64_pop_reg (code, AMD64_RAX);
 #ifndef DISABLE_JIT
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
+extern int nacl_park_threads_now;
 void mono_nacl_gc()
 {
 #ifdef __native_client_gc__
@@ -6395,8 +6396,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_NACL_GC_SAFE_POINT: {
-#if defined(__native_client_codegen__)
-			code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc, TRUE);
+#if defined(__native_client_codegen__) && defined(__native_client_gc__)
+			if (cfg->compile_aot)
+				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc, TRUE);
+			else {
+				guint8 *br [1];
+
+				amd64_mov_reg_imm_size (code, AMD64_R11, (gpointer)&nacl_park_threads_now, 4);
+				amd64_test_membase_imm_size (code, AMD64_R11, 0, 0xFFFFFFFF, 4);
+				br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc, TRUE);
+				amd64_patch (br[0], code);
+			}
 #endif
 			break;
 		}
