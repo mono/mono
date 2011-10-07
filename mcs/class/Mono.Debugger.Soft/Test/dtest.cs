@@ -2634,6 +2634,8 @@ public class DebuggerTests
 
 		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
+
+		req.Disable ();
 	}
 
 	[Test]
