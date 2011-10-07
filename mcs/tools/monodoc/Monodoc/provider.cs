@@ -854,6 +854,8 @@ public class RootTree : Tree {
 	{
 		return LoadTree (null);
 	}
+
+	const string MacMonoDocDir = "/Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc";
 	
 	//
 	// Loads the tree layout
@@ -871,8 +873,15 @@ public class RootTree : Tree {
 				d.Load (cfgFile);
 				basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
 			}
-			//basedir = "/Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/";
+			// Temporary workaround for developers distributing a monodoc.dll themselves on Mac
+			if (Directory.Exists (MacMonoDocDir)){
+				Console.WriteLine ("MacDir exists");
+				if (!File.Exists (Path.Combine (basedir, "monodoc.xml"))){
+					basedir = MacMonoDocDir;
+				}
+			}
 		}
+		Console.WriteLine ("Basedir={0}", basedir);
 
 		//
 		// Load the layout
