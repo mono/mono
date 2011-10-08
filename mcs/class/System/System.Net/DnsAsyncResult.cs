@@ -2,9 +2,9 @@
 // System.Net.DnsAsyncResult
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2011 Gonzalo Paniagua Javier
 //
 
 //
@@ -30,7 +30,7 @@
 
 using System.IO;
 using System.Threading;
-using Mono.Dns;
+using Mono.Net.Dns;
 
 namespace System.Net
 {

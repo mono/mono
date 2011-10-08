@@ -45,7 +45,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 #endif
 
-using Mono.Dns;
+using Mono.Net.Dns;
 
 namespace System.Net {
 	public static class Dns {

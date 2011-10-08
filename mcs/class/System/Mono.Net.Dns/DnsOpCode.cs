@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsResourceRecordIPAddress
+// Mono.Net.Dns.DnsOpCode
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -19,31 +19,13 @@
 // limitations under the License.
 //
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace Mono.Dns {
-	abstract class DnsResourceRecordIPAddress : DnsResourceRecord {
-		IPAddress address;
-
-		internal DnsResourceRecordIPAddress (DnsResourceRecord rr, int address_size)
-		{
-			CopyFrom (rr);
-			ArraySegment<byte> segment = rr.Data;
-			byte [] bytes = new byte [address_size];
-			Buffer.BlockCopy (segment.Array, segment.Offset, bytes, 0, address_size);
-			address = new IPAddress (bytes);
-		}
-
-		public override string ToString ()
-		{
-			return base.ToString() + " Address: " + address;
-		}
-
-		public IPAddress Address {
-			get { return address; }
-		}
+namespace Mono.Net.Dns {
+	enum DnsOpCode : byte {
+		Query = 0,
+		[Obsolete] IQuery = 1,
+		Status = 2,
+		Notify = 4,
+		Update = 5,
 	}
 }
 

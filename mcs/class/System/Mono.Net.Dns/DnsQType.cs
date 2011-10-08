@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsQType
+// Mono.Net.Dns.DnsQType
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -19,7 +19,7 @@
 // limitations under the License.
 //
 using System;
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	enum DnsQType : ushort {
 		A             =         1,
 		NS            =         2,

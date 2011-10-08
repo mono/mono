@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsPacket
+// Mono.Net.Dns.DnsPacket
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	abstract class DnsPacket {
 		protected byte [] packet;
 		protected int position;

@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsResponse
+// Mono.Net.Dns.DnsResponse
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -24,7 +24,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	class DnsResponse : DnsPacket {
 		static readonly ReadOnlyCollection<DnsResourceRecord> EmptyRR = new ReadOnlyCollection<DnsResourceRecord> (new DnsResourceRecord [0]);
 		static readonly ReadOnlyCollection<DnsQuestion> EmptyQS = new ReadOnlyCollection<DnsQuestion> (new DnsQuestion [0]);

@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsResourceRecordPTR
+// Mono.Net.Dns.DnsQuery
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -20,25 +20,31 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
-namespace Mono.Dns {
-	class DnsResourceRecordPTR : DnsResourceRecord {
-		string dname;
-
-		internal DnsResourceRecordPTR (DnsResourceRecord rr)
+namespace Mono.Net.Dns {
+	class DnsQuery : DnsPacket {
+		public DnsQuery (string name, DnsQType qtype, DnsQClass qclass)
 		{
-			CopyFrom (rr);
-			int offset = rr.Data.Offset;
-			dname = DnsPacket.ReadName (rr.Data.Array, ref offset);
-		}
+			if (String.IsNullOrEmpty (name))
+				throw new ArgumentNullException ("name");
 
-		public string DName {
-			get { return dname; }
-		}
+			int length = DnsUtil.GetEncodedLength (name);
+			if (length == -1)
+				throw new ArgumentException ("Invalid DNS name", "name");
 
-		public override string ToString() {
-			return base.ToString () + " DNAME: " + dname.ToString ();
+			length += 12 + 2 + 2; // Header + qtype + qclass
+			packet = new byte [length];
+			header = new DnsHeader (packet, 0);
+			position = 12;
+			WriteDnsName (name);
+			WriteUInt16 ((ushort) qtype);
+			WriteUInt16 ((ushort) qclass);
+			Header.QuestionCount = 1;
+			Header.IsQuery = true;
+			Header.RecursionDesired = true;
 		}
 	}
 }
+

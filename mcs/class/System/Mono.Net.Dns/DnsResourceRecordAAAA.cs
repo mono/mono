@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsResourceRecordAAAA
+// Mono.Net.Dns.DnsResourceRecordAAAA
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	class DnsResourceRecordAAAA : DnsResourceRecordIPAddress {
 		internal DnsResourceRecordAAAA (DnsResourceRecord rr)
 			: base (rr, 16)

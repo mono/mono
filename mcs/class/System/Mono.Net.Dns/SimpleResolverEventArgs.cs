@@ -1,5 +1,5 @@
 //
-// Mono.Dns.SimpleResolverEventArgs
+// Mono.Net.Dns.SimpleResolverEventArgs
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -22,7 +22,7 @@ using System;
 using System.Net;
 using System.Threading;
 
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	class SimpleResolverEventArgs : EventArgs {
 		public event EventHandler<SimpleResolverEventArgs> Completed;
 

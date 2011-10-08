@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsHeader
+// Mono.Net.Dns.DnsHeader
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mono.Dns {
+namespace Mono.Net.Dns {
 	class DnsHeader {
 		public const int DnsHeaderLength = 12;
 		ArraySegment<byte> bytes;

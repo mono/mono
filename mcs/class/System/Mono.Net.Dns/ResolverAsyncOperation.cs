@@ -1,5 +1,5 @@
 //
-// Mono.Dns.DnsResourceRecordCName
+// Mono.Net.Dns.ResolverAsyncOperation
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
@@ -18,28 +18,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Mono.Dns {
-	class DnsResourceRecordCName : DnsResourceRecord {
-		string cname;
-
-		internal DnsResourceRecordCName (DnsResourceRecord rr)
-		{
-			CopyFrom (rr);
-			int offset = rr.Data.Offset;
-			cname = DnsPacket.ReadName (rr.Data.Array, ref offset);
-		}
-
-		public string CName {
-			get { return cname; }
-		}
-
-		public override string ToString ()
-		{
-			return base.ToString () + " CNAME: " + cname.ToString ();
-		}
+namespace Mono.Net.Dns {
+	enum ResolverAsyncOperation {
+		None,
+		GetHostEntry,
+		GetHostAddresses,
 	}
 }
+
