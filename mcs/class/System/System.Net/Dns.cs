@@ -11,6 +11,7 @@
 //
 // (C) Mads Pultz, 2001
 // Copyright (c) 2011 Novell, Inc.
+// Copyright (c) 2011 Xamarin, Inc.
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
