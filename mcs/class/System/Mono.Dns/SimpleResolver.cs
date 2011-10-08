@@ -29,9 +29,6 @@ using System.Text;
 using System.Threading;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	sealed class SimpleResolver : IDisposable {
 		static string [] EmptyStrings = new string [0];
 		static IPAddress [] EmptyAddresses = new IPAddress [0];

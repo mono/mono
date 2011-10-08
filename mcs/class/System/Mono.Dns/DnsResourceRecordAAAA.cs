@@ -24,9 +24,6 @@ using System.Net;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class DnsResourceRecordAAAA : DnsResourceRecordIPAddress {
 		internal DnsResourceRecordAAAA (DnsResourceRecord rr)
 			: base (rr, 16)

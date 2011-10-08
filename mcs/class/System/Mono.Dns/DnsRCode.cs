@@ -19,9 +19,6 @@
 // limitations under the License.
 //
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	enum DnsRCode : ushort {
 		NoError = 0,
 		FormErr = 1,

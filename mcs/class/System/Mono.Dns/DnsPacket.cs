@@ -24,9 +24,6 @@ using System.Text;
 using System.IO;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	abstract class DnsPacket {
 		protected byte [] packet;
 		protected int position;

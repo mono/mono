@@ -23,9 +23,6 @@ using System.Net;
 using System.Threading;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class SimpleResolverEventArgs : EventArgs {
 		public event EventHandler<SimpleResolverEventArgs> Completed;
 

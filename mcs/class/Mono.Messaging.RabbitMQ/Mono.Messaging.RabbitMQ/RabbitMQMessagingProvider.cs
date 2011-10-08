@@ -55,8 +55,8 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private static uint GetLocalIP ()
 		{
-			String strHostName = Dns.GetHostName ();
-			IPHostEntry ipEntry = Dns.GetHostByName (strHostName);
+			String strHostName = System.Net.Dns.GetHostName ();
+			IPHostEntry ipEntry = System.Net.Dns.GetHostByName (strHostName);
 			foreach (IPAddress ip in ipEntry.AddressList) {
 				if (AddressFamily.InterNetwork == ip.AddressFamily) {
 					byte[] addr = ip.GetAddressBytes ();

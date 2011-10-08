@@ -24,9 +24,6 @@ using System.IO;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class DnsResourceRecord {
 		string name;
 		DnsType type;

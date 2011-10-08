@@ -25,9 +25,6 @@ using System.IO;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class DnsResponse : DnsPacket {
 		static readonly ReadOnlyCollection<DnsResourceRecord> EmptyRR = new ReadOnlyCollection<DnsResourceRecord> (new DnsResourceRecord [0]);
 		static readonly ReadOnlyCollection<DnsQuestion> EmptyQS = new ReadOnlyCollection<DnsQuestion> (new DnsQuestion [0]);

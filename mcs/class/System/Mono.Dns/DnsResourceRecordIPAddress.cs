@@ -24,9 +24,6 @@ using System.Net;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	abstract class DnsResourceRecordIPAddress : DnsResourceRecord {
 		IPAddress address;
 

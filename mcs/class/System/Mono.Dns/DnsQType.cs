@@ -20,9 +20,6 @@
 //
 using System;
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	enum DnsQType : ushort {
 		A             =         1,
 		NS            =         2,

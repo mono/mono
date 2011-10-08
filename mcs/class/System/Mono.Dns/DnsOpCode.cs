@@ -20,9 +20,6 @@
 //
 using System;
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	enum DnsOpCode : byte {
 		Query = 0,
 		[Obsolete] IQuery = 1,

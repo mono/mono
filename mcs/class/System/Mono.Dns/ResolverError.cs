@@ -18,9 +18,6 @@
 // limitations under the License.
 //
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	enum ResolverError {
 		NoError,		// From DNS server
 		FormatError,		//

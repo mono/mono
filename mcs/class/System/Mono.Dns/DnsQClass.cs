@@ -19,9 +19,6 @@
 // limitations under the License.
 //
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	enum DnsQClass : ushort {
 		Internet = 1,
 		IN = 1,

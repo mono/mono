@@ -23,9 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	static class DnsUtil {
 		// RFC 2181 - Section 11
 		public static bool IsValidDnsName (string name)

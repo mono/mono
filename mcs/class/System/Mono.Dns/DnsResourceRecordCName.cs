@@ -23,9 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class DnsResourceRecordCName : DnsResourceRecord {
 		string cname;
 

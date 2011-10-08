@@ -24,9 +24,6 @@ using System.IO;
 using System.Text;
 
 namespace Mono.Dns {
-#if !NET_2_0
-	public
-#endif
 	class DnsQuery : DnsPacket {
 		public DnsQuery (string name, DnsQType qtype, DnsQClass qclass)
 		{
