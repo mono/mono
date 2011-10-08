@@ -497,6 +497,9 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof(UnauthorizedAccessException))]
 		public void Delete_File_ReadOnly ()
 		{
+			if (RunningOnUnix)
+				Assert.Ignore ("ReadOnly files can be deleted on unix since fdef50957f508627928c7876a905d5584da45748.");
+
 			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteReadOnly";
 			DeleteFile (path);
 			try {
