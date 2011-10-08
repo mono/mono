@@ -98,11 +98,11 @@ namespace Mono.Data.Tds.Protocol {
 				if(IPAddress.TryParse(this.dataSource, out ip)) {
 					endPoint = new IPEndPoint(ip, port);
 				} else {
-					IPHostEntry hostEntry = Dns.GetHostEntry (this.dataSource);
+					IPHostEntry hostEntry = System.Net.Dns.GetHostEntry (this.dataSource);
 					endPoint = new IPEndPoint(hostEntry.AddressList [0], port);
 				}
 #else
-				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
+				IPHostEntry hostEntry = System.Net.Dns.Resolve (this.dataSource);
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 #endif
 			} catch (SocketException e) {
