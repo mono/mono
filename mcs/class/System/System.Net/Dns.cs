@@ -162,7 +162,7 @@ namespace System.Net {
 				return BeginAsyncCallAddresses (hostNameOrAddress, requestCallback, stateObject);
 
 			GetHostAddressesCallback c = new GetHostAddressesCallback (GetHostAddresses);
-			return c.BeginInvoke (hostNameOrAddress, requestCallback, state);
+			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
 		}
 
 		public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject)
