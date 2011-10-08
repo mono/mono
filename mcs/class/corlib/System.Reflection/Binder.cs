@@ -163,9 +163,48 @@ namespace System.Reflection
 							types [i] = args [i].GetType ();
 					}
 				}
-				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers, true);
+
+				MethodBase selected = null;
+				if (names != null) {
+					foreach (var m in match) {
+						var parameters = m.GetParameters ();
+						int i;
+
+						/*
+						 * Find the corresponding parameter for each parameter name,
+						 * reorder types/modifiers array during the search.
+						 */
+						Type[] newTypes = (Type[])types.Clone ();
+						ParameterModifier[] newModifiers = modifiers != null ? (ParameterModifier[])modifiers.Clone () : null;
+						for (i = 0; i < names.Length; ++i) {
+							/* Find the corresponding parameter */
+							int nindex = -1;
+							for (int j = 0; j < parameters.Length; ++j) {
+								if (parameters [j].Name == names [i]) {
+									nindex = j;
+									break;
+								}
+							}
+							if (nindex == -1)
+								break;
+							if (i < newTypes.Length && nindex < types.Length)
+								newTypes [i] = types [nindex];
+							if (modifiers != null && i < newModifiers.Length && nindex < modifiers.Length)
+								newModifiers [i] = modifiers [nindex];
+						}
+						if (i < names.Length)
+							continue;
+
+						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true);
+						if (selected != null)
+							break;
+					}
+				} else {
+					selected = SelectMethod (bindingAttr, match, types, modifiers, true);
+				}
+
 				state = null;
-				if (names != null)
+				if (selected != null && names != null)
 					ReorderParameters (names, ref args, selected);
 
 				if (selected != null) {
