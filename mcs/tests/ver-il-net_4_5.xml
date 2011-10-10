@@ -17389,6 +17389,55 @@
       </method>
     </type>
   </test>
+  <test name="gtest-562.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`1[U]">
+      <method name="Void Test()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1[U]">
+      <method name="Void Test()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+N[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D`1[U]">
+      <method name="Void Test()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Application">
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+    </type>
+    <type name="E`1[U]">
+      <method name="Void Test(U)">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-type-12.cs">
     <type name="C">
       <method name="Int32 Main()">

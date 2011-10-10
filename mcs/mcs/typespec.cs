@@ -340,6 +340,34 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		//
+		// Special version used during type definition
+		//
+		public bool AddInterfaceDefined (TypeSpec iface)
+		{
+			if (!AddInterface (iface))
+				return false;
+
+			//
+			// We can get into a situation where a type is inflated before
+			// its interfaces are resoved. Consider this situation
+			//
+			// class A<T> : X<A<int>>, IFoo {}
+			//
+			// When resolving base class of X`1 we inflate context type A`1
+			// All this happens before we even hit IFoo resolve. Without
+			// additional expansion any inside usage of A<T> would miss IFoo
+			// interface because it comes from early inflated TypeSpec
+			//
+			if (inflated_instances != null) {
+				foreach (var inflated in inflated_instances) {
+					inflated.Value.AddInterface (iface);
+				}
+			}
+
+			return true;
+		}
+
 		public AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa)
 		{
 			if (Kind != MemberKind.Class)
