@@ -325,11 +325,9 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [ExpectedException (typeof (ArgumentException))]
-        [Ignore ("Proper validation of the Uris is not performed")]
         public void CheckContentTypes ()
         {
-            package.PartExists(new Uri ("/[Content_Types].xml", UriKind.Relative));
+	        Assert.IsFalse (package.PartExists(new Uri ("[Content_Types].xml", UriKind.Relative)));
         }
     }
 }

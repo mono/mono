@@ -157,6 +157,9 @@ namespace System.IO.Packaging {
 
 					// The file names in the zip archive are not prepended with '/'
 					foreach (string file in archive.GetFiles ()) {
+						if (file.Equals (ContentUri, StringComparison.Ordinal))
+							continue;
+
 						XmlNode node;
 						CompressionOption compression = archive.GetCompressionLevel (file);
 
