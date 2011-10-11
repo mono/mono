@@ -77,6 +77,7 @@ namespace System.Threading.Tasks
 		CompletionSlot Slot;
 
 		CancellationToken token;
+		CancellationTokenRegistration? cancelation_registration;
 
 		const TaskCreationOptions MaxTaskCreationOptions =
 #if NET_4_5
@@ -151,7 +152,7 @@ namespace System.Threading.Tasks
 				parent.AddChild ();
 
 			if (token.CanBeCanceled) {
-				token.Register (l => ((Task) l).CancelReal (), this);
+				cancelation_registration = token.Register (l => ((Task) l).CancelReal (), this);
 			}
 		}
 
@@ -491,10 +492,13 @@ namespace System.Threading.Tasks
 		
 			if (status != TaskStatus.WaitingForChildrenToComplete)
 				ProcessCompleteDelegates ();
-			
+
 			// Reset the current thingies
 			current = null;
 			TaskScheduler.Current = null;
+
+			if (cancelation_registration.HasValue)
+				cancelation_registration.Value.Dispose ();
 			
 			// Tell parent that we are finished
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
@@ -571,20 +575,12 @@ namespace System.Threading.Tasks
 		
 		public void Wait ()
 		{
-			if (scheduler == null)
-				schedWait.Wait ();
-			
-			if (!IsCompleted)
-				scheduler.ParticipateUntil (this);
-			if (exception != null)
-				throw exception;
-			if (IsCanceled)
-				throw new AggregateException (new TaskCanceledException (this));
+			Wait (Timeout.Infinite, CancellationToken.None);
 		}
 
 		public void Wait (CancellationToken cancellationToken)
 		{
-			Wait (-1, cancellationToken);
+			Wait (Timeout.Infinite, cancellationToken);
 		}
 		
 		public bool Wait (TimeSpan timeout)
@@ -602,32 +598,41 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			if (millisecondsTimeout == -1 && token == CancellationToken.None) {
-				Wait ();
-				return true;
+			bool result = IsCompleted;
+			if (!result) {
+				if (scheduler == null) {
+					Watch watch = Watch.StartNew ();
+
+					schedWait.Wait (millisecondsTimeout, cancellationToken);
+					millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
+				}
+
+				var wait_event = new ManualResetEventSlim (false);
+				CancellationTokenRegistration? registration = null;
+
+				try {
+					if (cancellationToken.CanBeCanceled) {
+						registration = cancellationToken.Register (wait_event.Set);
+					}
+
+					// FIXME: The implementation is wrong and slow
+					// It adds a continuation to the task which is then
+					// returned to parent causing all sort of problems when
+					// timeout is reached before task is finished
+					result = !scheduler.ParticipateUntil (this, wait_event, millisecondsTimeout);
+				} finally {
+					if (registration.HasValue)
+						registration.Value.Dispose ();
+				}
 			}
 
-			Watch watch = Watch.StartNew ();
-
-			if (scheduler == null) {
-				schedWait.Wait (millisecondsTimeout, cancellationToken);
-				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
-			}
-
-			ManualResetEventSlim predicateEvt = new ManualResetEventSlim (false);
-			if (cancellationToken != CancellationToken.None) {
-				cancellationToken.Register (predicateEvt.Set);
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
-
-			bool result = scheduler.ParticipateUntil (this, predicateEvt, millisecondsTimeout);
+			if (IsCanceled)
+				exception = new AggregateException (new TaskCanceledException (this));
 
 			if (exception != null)
 				throw exception;
-			if (IsCanceled)
-				throw new AggregateException (new TaskCanceledException (this));
-			
-			return !result;
+
+			return result;
 		}
 		
 		public static void WaitAll (params Task[] tasks)

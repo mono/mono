@@ -115,10 +115,19 @@ namespace MonoTests.System.Threading.Tasks
 			src.Cancel ();
 
 			try {
-				Assert.IsTrue (t.Wait (1000));
-				Assert.Fail ();
+				t.Wait (1000);
+				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsInstanceOfType (typeof (TaskCanceledException), e.InnerException);
+				var details = (TaskCanceledException) e.InnerException;
+				Assert.AreEqual (t, details.Task, "#1e");
+			}
+
+			try {
+				t.Wait ();
+				Assert.Fail ("#2");
+			} catch (AggregateException e) {
+				var details = (TaskCanceledException) e.InnerException;
+				Assert.AreEqual (t, details.Task, "#2e");
 			}
 		}
 
@@ -243,8 +252,8 @@ namespace MonoTests.System.Threading.Tasks
 			}, 2);
 		}
 
-		[TestAttribute]
-		public void MultipleTaskTestCase()
+		[Test]
+		public void MultipleTasks()
 		{
 			ParallelTestHelper.Repeat (delegate {
 				bool r1 = false, r2 = false, r3 = false;
@@ -259,9 +268,9 @@ namespace MonoTests.System.Threading.Tasks
 					r3 = true;
 				});
 				
-				t1.Wait();
-				t2.Wait();
-				t3.Wait();
+				t1.Wait(2000);
+				t2.Wait(2000);
+				t3.Wait(2000);
 				
 				Assert.IsTrue(r1, "#1");
 				Assert.IsTrue(r2, "#2");
@@ -292,7 +301,7 @@ namespace MonoTests.System.Threading.Tasks
 					}, TaskCreationOptions.AttachedToParent);
 				});
 				
-				t.Wait();
+				Assert.IsTrue (t.Wait(2000), "#0");
 				Assert.IsTrue(r2, "#1");
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
