@@ -49,7 +49,7 @@ namespace System.Net.Configuration
 
 		static BypassElement ()
 		{
-			addressProp = new ConfigurationProperty ("Address", typeof (string),
+			addressProp = new ConfigurationProperty ("address", typeof (string),
 								 null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
 			properties = new ConfigurationPropertyCollection ();
