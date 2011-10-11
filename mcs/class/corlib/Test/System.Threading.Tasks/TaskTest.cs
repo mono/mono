@@ -174,11 +174,13 @@ namespace MonoTests.System.Threading.Tasks
 			Task t = new Task (delegate { taskResult = true; }, src.Token);
 
 			Task cont = t.ContinueWith (delegate { result = true; },
-										TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
+				TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
 
 			src.Cancel ();
 
-			Assert.AreEqual (TaskStatus.Canceled, t.Status, "#1");
+			Assert.AreEqual (TaskStatus.Canceled, t.Status, "#1a");
+			Assert.IsTrue (cont.IsCompleted, "#1b");
+			Assert.IsTrue (result, "#1c");
 
 			try {
 				t.Start ();
@@ -186,12 +188,11 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (InvalidOperationException) {
 			}
 
-			Assert.IsTrue (cont.Wait (1000), "#30");
+			Assert.IsTrue (cont.Wait (1000), "#3");
 
-			Assert.IsFalse (taskResult, "#3");
+			Assert.IsFalse (taskResult, "#4");
 
-			Assert.IsNull (cont.Exception, "#4");
-			Assert.IsTrue (result, "#5");
+			Assert.IsNull (cont.Exception, "#5");
 			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status, "#6");
 		}
 		

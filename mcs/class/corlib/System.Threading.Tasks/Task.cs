@@ -552,6 +552,7 @@ namespace System.Threading.Tasks
 		internal void CancelReal ()
 		{
 			status = TaskStatus.Canceled;
+			ProcessCompleteDelegates ();
 		}
 
 		internal void HandleGenericException (Exception e)
