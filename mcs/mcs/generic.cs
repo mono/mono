@@ -1773,6 +1773,16 @@ namespace Mono.CSharp {
 					BaseType = inflator.Inflate (open_type.BaseType);
 				}
 			} else if ((state & StateFlags.PendingBaseTypeInflate) != 0) {
+				//
+				// It can happen when resolving base type without being defined
+				// which is not allowed to happen and will always lead to an error
+				//
+				// class B { class N {} }
+				// class A<T> : A<B.Foo> {}
+				//
+				if (open_type.BaseType == null)
+					return;
+
 				BaseType = inflator.Inflate (open_type.BaseType);
 				state &= ~StateFlags.PendingBaseTypeInflate;
 			}
