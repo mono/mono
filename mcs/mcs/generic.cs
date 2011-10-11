@@ -1778,7 +1778,7 @@ namespace Mono.CSharp {
 				// which is not allowed to happen and will always lead to an error
 				//
 				// class B { class N {} }
-				// class A<T> : A<B.Foo> {}
+				// class A<T> : A<B.N> {}
 				//
 				if (open_type.BaseType == null)
 					return;
