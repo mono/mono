@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0 || MOBILE || true
 
 using System;
 using System.Threading;
@@ -121,6 +121,19 @@ namespace System.Threading.Tasks
 		{
 			return StartNew (action, cancellationToken, creationOptions, GetScheduler ());
 		}
+
+		public Task StartNew (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions, TaskScheduler scheduler)
+		{
+			Task t = new Task (action, cancellationToken, creationOptions);
+
+			//
+			// Don't start cancelled task it would throw an exception
+			//
+			if (!t.IsCompleted)
+				t.Start (scheduler);
+
+			return t;
+		}
 		
 		public Task StartNew (Action<object> action, object state)
 		{
@@ -137,19 +150,16 @@ namespace System.Threading.Tasks
 			return StartNew (action, state, cancellationToken, creationOptions, GetScheduler ());
 		}
 		
-		public Task StartNew (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions, TaskScheduler scheduler)
-		{
-			Task t = new Task (action, cancellationToken, creationOptions);
-			t.Start (scheduler);
-
-			return t;
-		}
-		
 		public Task StartNew (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions,
 		                      TaskScheduler scheduler)
 		{
 			Task t = new Task (action, state, cancellationToken, creationOptions);
-			t.Start (scheduler);
+
+			//
+			// Don't start cancelled task it would throw an exception
+			//
+			if (!t.IsCompleted)
+				t.Start (scheduler);
 			
 			return t;
 		}

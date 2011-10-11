@@ -460,6 +460,21 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (called, "#4");
 			Assert.IsTrue (called2, "#5");
 		}
+
+		[Test]
+		public void StartNewCancelled ()
+		{
+			var cts = new CancellationTokenSource ();
+			cts.Cancel ();
+
+			var task = factory.StartNew (() => Assert.Fail ("Should never be called"), cts.Token);
+			try {
+				task.Start ();
+			} catch (InvalidOperationException) {
+			}
+
+			Assert.IsTrue (task.IsCanceled, "#2");
+		}
 	}
 }
 #endif
