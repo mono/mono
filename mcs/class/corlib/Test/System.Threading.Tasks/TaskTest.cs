@@ -128,6 +128,7 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (AggregateException e) {
 				var details = (TaskCanceledException) e.InnerException;
 				Assert.AreEqual (t, details.Task, "#2e");
+				Assert.IsNull (details.Task.Exception, "#2e2");
 			}
 		}
 

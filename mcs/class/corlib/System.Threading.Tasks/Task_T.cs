@@ -50,6 +50,8 @@ namespace System.Threading.Tasks
 			get {
 				if (!IsCompleted)
 					Wait ();
+				if (IsCanceled)
+					throw new AggregateException (new TaskCanceledException (this));
 				if (Exception != null)
 					throw Exception;
 				return value;

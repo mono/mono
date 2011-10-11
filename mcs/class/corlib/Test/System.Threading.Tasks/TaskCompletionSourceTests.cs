@@ -44,14 +44,30 @@ namespace MonoTests.System.Threading.Tasks
 		public void Setup ()
 		{
 			state = new object ();
-			completionSource = new TaskCompletionSource<int> (state, TaskCreationOptions.LongRunning);
+			completionSource = new TaskCompletionSource<int> (state, TaskCreationOptions.None);
 		}
 		
 		[Test]
 		public void CreationCheckTest ()
 		{
 			Assert.IsNotNull (completionSource.Task, "#1");
-			Assert.AreEqual (TaskCreationOptions.LongRunning, completionSource.Task.CreationOptions, "#2");
+			Assert.AreEqual (TaskCreationOptions.None, completionSource.Task.CreationOptions, "#2");
+		}
+
+		[Test]
+		public void CtorInvalidOptions ()
+		{
+			try {
+				new TaskCompletionSource<long> (TaskCreationOptions.LongRunning);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				new TaskCompletionSource<long> (TaskCreationOptions.PreferFairness);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 		
 		[Test]
@@ -76,8 +92,17 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Canceled, completionSource.Task.Status, "#3");
 			Assert.IsFalse (completionSource.TrySetResult (42), "#4");
 			Assert.AreEqual (TaskStatus.Canceled, completionSource.Task.Status, "#5");
+
+			try {
+				Console.WriteLine (completionSource.Task.Result);
+				Assert.Fail ("#6");
+			} catch (AggregateException e) {
+				var details = (TaskCanceledException) e.InnerException;
+				Assert.AreEqual (completionSource.Task, details.Task, "#6e");
+				Assert.IsNull (details.Task.Exception, "#6e2");
+			}
 		}
-		
+
 		[Test]
 		public void SetExceptionTest ()
 		{

@@ -42,8 +42,6 @@ namespace System.Threading.Tasks
 		
 		TaskFactory parent;
 
-		const TaskCreationOptions FromAsyncOptionsNotSupported = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
-		
 		public TaskFactory ()
 			: this (CancellationToken.None)
 		{	
@@ -293,7 +291,7 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
+			if ((creationOptions & Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var source = new CancellationTokenSource ();
@@ -340,7 +338,7 @@ namespace System.Threading.Tasks
 			if (endMethod == null)
 				throw new ArgumentNullException ("endMethod");
 
-			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
+			if ((creationOptions & Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
@@ -371,7 +369,7 @@ namespace System.Threading.Tasks
 			if (endMethod == null)
 				throw new ArgumentNullException ("endMethod");
 
-			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
+			if ((creationOptions & Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
@@ -401,7 +399,7 @@ namespace System.Threading.Tasks
 			if (endMethod == null)
 				throw new ArgumentNullException ("endMethod");
 
-			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
+			if ((creationOptions & Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
@@ -432,7 +430,7 @@ namespace System.Threading.Tasks
 			if (endMethod == null)
 				throw new ArgumentNullException ("endMethod");
 
-			if ((creationOptions & FromAsyncOptionsNotSupported) != 0)
+			if ((creationOptions & Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);

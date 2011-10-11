@@ -1,5 +1,4 @@
-#if NET_4_0
-// TaskTests.cs
+// Task_T_Tests.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
 //
@@ -23,6 +22,8 @@
 //
 //
 
+#if NET_4_0
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
-	public class FutureTests
+	public class Task_T_Tests
 	{
 		Task<int> InitTestTask()
 		{
@@ -73,6 +74,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void NestedFutureTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {

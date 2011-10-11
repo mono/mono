@@ -79,6 +79,8 @@ namespace System.Threading.Tasks
 		CancellationToken token;
 		CancellationTokenRegistration? cancelation_registration;
 
+		internal const TaskCreationOptions WorkerTaskNotSupportedOptions = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
+
 		const TaskCreationOptions MaxTaskCreationOptions =
 #if NET_4_5
 			TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler |
@@ -627,7 +629,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (IsCanceled)
-				exception = new AggregateException (new TaskCanceledException (this));
+				throw new AggregateException (new TaskCanceledException (this));
 
 			if (exception != null)
 				throw exception;

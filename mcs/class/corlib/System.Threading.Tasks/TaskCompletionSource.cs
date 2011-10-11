@@ -57,13 +57,15 @@ namespace System.Threading.Tasks
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions creationOptions)
+			: this (null, creationOptions)
 		{
-			source = new Task<TResult> (emptyFunction, creationOptions);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state, TaskCreationOptions creationOptions)
 		{
+			if ((creationOptions & System.Threading.Tasks.Task.WorkerTaskNotSupportedOptions) != 0)
+				throw new ArgumentOutOfRangeException ("creationOptions");
+
 			source = new Task<TResult> (emptyParamFunction, state, creationOptions);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
