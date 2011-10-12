@@ -256,6 +256,9 @@ namespace System.Net
 			
 			if (pe.BypassOnLocal != ProxyElement.BypassOnLocalValues.Unspecified)
 				p.BypassProxyOnLocal = (pe.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
+				
+			foreach(BypassElement elem in sec.BypassList)
+				p.BypassArrayList.Add(elem.Address);
 			
 			return p;
 #else
