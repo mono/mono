@@ -36,8 +36,8 @@ namespace MonoTests.System.Threading.Tasks
 	[TestFixture]
 	public class TaskTests
 	{
-		Task[]      tasks;
-		static readonly int max = 3 * Environment.ProcessorCount;
+		Task[] tasks;
+		const int max = 6;
 		
 		[SetUp]
 		public void Setup()
@@ -79,7 +79,7 @@ namespace MonoTests.System.Threading.Tasks
 			});
 		}
 		
-		[TestAttribute]
+		[Test]
 		public void WaitAllTest()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -88,6 +88,68 @@ namespace MonoTests.System.Threading.Tasks
 				Task.WaitAll(tasks);
 				Assert.AreEqual(max, achieved, "#1");
 			});
+		}
+
+		[Test]
+		public void WaitAllWithExceptions ()
+		{
+			InitWithDelegate (delegate { throw new ApplicationException (); });
+
+			try {
+				Task.WaitAll (tasks);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.AreEqual (6, e.InnerExceptions.Count, "#2");
+			}
+
+			Assert.IsNotNull (tasks[0].Exception, "#3");
+		}
+
+		[Test]
+		public void WaitAllCancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { cancelation.Cancel (); }),
+				new Task (delegate { }, cancelation.Token)
+			};
+
+			tasks[0].Start ();
+
+			try {
+				Task.WaitAll (tasks);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				var inner = (TaskCanceledException) e.InnerException;
+				Assert.AreEqual (tasks[1], inner.Task, "#2");
+			}
+
+			Assert.IsTrue (tasks[0].IsCompleted, "#3");
+			Assert.IsTrue (tasks[1].IsCanceled, "#4");
+		}
+
+		[Test]
+		public void WaitAllExceptionThenCancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { cancelation.Cancel (); throw new ApplicationException (); }),
+				new Task (delegate { }, cancelation.Token)
+			};
+
+			tasks[0].Start ();
+
+			try {
+				Task.WaitAll (tasks);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (ApplicationException), e.InnerException, "#2");
+				var inner = (TaskCanceledException) e.InnerExceptions[1];
+				Assert.AreEqual (tasks[1], inner.Task, "#3");
+			}
+
+			Assert.IsTrue (tasks[0].IsCompleted, "#4");
+			Assert.IsTrue (tasks[1].IsCanceled, "#5");
 		}
 
 		[Test]

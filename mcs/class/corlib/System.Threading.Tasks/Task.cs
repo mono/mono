@@ -32,6 +32,7 @@
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
@@ -639,57 +640,22 @@ namespace System.Threading.Tasks
 		
 		public static void WaitAll (params Task[] tasks)
 		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-
-			foreach (var t in tasks) {
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
-				t.Wait ();
-			}
+			WaitAll (tasks, Timeout.Infinite, CancellationToken.None);
 		}
 
 		public static void WaitAll (Task[] tasks, CancellationToken cancellationToken)
 		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-			
-			foreach (var t in tasks) {
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
-
-				t.Wait (cancellationToken);
-			}
+			WaitAll (tasks, Timeout.Infinite, cancellationToken);
 		}
 		
 		public static bool WaitAll (Task[] tasks, TimeSpan timeout)
 		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-			
-			bool result = true;
-			foreach (var t in tasks) {
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
-
-				result &= t.Wait (timeout);
-			}
-			return result;
+			return WaitAll (tasks, CheckTimeout (timeout), CancellationToken.None);
 		}
 		
 		public static bool WaitAll (Task[] tasks, int millisecondsTimeout)
 		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-			
-			bool result = true;
-			foreach (var t in tasks) {
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
-
-				result &= t.Wait (millisecondsTimeout);
-			}
-			return result;
+			return WaitAll (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 		
 		public static bool WaitAll (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
@@ -698,12 +664,42 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("tasks");
 			
 			bool result = true;
+			bool simple_run = millisecondsTimeout == Timeout.Infinite || tasks.Length == 1;
+			List<Exception> exceptions = null;
+
 			foreach (var t in tasks) {
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 
-				result &= t.Wait (millisecondsTimeout, cancellationToken);
+				if (simple_run) {
+					try {
+						result &= t.Wait (millisecondsTimeout, cancellationToken);
+					} catch (AggregateException e) {
+						if (exceptions == null)
+							exceptions = new List<Exception> ();
+
+						exceptions.AddRange (e.InnerExceptions);
+					}
+				}
 			}
+
+			// FIXME: Wrong implementation, millisecondsTimeout is total time not time per task
+			if (!simple_run) {
+				foreach (var t in tasks) {
+					try {
+						result &= t.Wait (millisecondsTimeout, cancellationToken);
+					} catch (AggregateException e) {
+						if (exceptions == null)
+							exceptions = new List<Exception> ();
+
+						exceptions.AddRange (e.InnerExceptions);
+					}
+				}
+			}
+
+			if (exceptions != null)
+				throw new AggregateException (exceptions);
+
 			return result;
 		}
 		

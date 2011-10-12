@@ -88,8 +88,8 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void ParallelForNestedTest ()
 		{
-			bool[] launched = new bool[100 * 20 * 10];
-			Parallel.For (0, 100, delegate (int i) {
+			bool[] launched = new bool[6 * 20 * 10];
+			Parallel.For (0, 6, delegate (int i) {
 				Parallel.For (0, 20, delegate (int j) {
 					Parallel.For (0, 10, delegate (int k) {
 							launched[i * 20 * 10 + j * 10 + k] = true;
