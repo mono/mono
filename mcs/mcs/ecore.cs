@@ -2976,11 +2976,12 @@ namespace Mono.CSharp {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.Load);
 				} else {
+					// Cannot release the temporary variable when its address
+					// is required to be on stack for any parent
 					LocalTemporary t = new LocalTemporary (instance_type);
 					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
-					t.Release (ec);
 				}
 			} else {
 				InstanceExpression.Emit (ec);

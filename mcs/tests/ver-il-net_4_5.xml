@@ -13796,7 +13796,7 @@
         <size>12</size>
       </method>
       <method name="Int32 Main()">
-        <size>137</size>
+        <size>138</size>
       </method>
     </type>
     <type name="Foo">
@@ -31578,7 +31578,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>359</size>
+        <size>361</size>
       </method>
       <method name="Int32 AddABunchOfInts(...)">
         <size>63</size>
@@ -35005,7 +35005,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>343</size>
+        <size>345</size>
       </method>
       <method name="Void F(RuntimeArgumentHandle)">
         <size>1</size>
@@ -44561,6 +44561,16 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-830.cs">
+    <type name="MC">
+      <method name="Int32 Main()">
+        <size>141</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
