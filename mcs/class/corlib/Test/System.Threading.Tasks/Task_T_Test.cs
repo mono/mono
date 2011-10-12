@@ -74,7 +74,6 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NestedFutureTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
