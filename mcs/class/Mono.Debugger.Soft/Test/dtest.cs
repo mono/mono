@@ -1935,15 +1935,15 @@ public class DebuggerTests
 			vm.Resume ();
 		}
 
-		// Check that the invoke frames are no longer valid
-		AssertThrows<InvalidStackFrameException> (delegate {
-				invoke_frame.GetThis ();
-			});
-
 		lock (wait) {
 			if (!finished)
 				Monitor.Wait (wait);
 		}
+
+		// Check that the invoke frames are no longer valid
+		AssertThrows<InvalidStackFrameException> (delegate {
+				invoke_frame.GetThis ();
+			});
 
 		// Check InvokeOptions.DisableBreakpoints flag
 		o.InvokeMethod (e.Thread, m, null, InvokeOptions.DisableBreakpoints);
