@@ -30,8 +30,10 @@ using System.Collections.Generic;
 
 namespace System.Threading
 {
-	
-	public sealed class CancellationTokenSource : IDisposable
+#if !NET_4_5
+	sealed
+#endif
+	public class CancellationTokenSource : IDisposable
 	{
 		bool canceled;
 		bool processed;
