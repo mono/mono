@@ -52,7 +52,8 @@ namespace System.Threading.Tasks
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
-		
+		static readonly Watch watch = Watch.StartNew ();
+
 		CountdownEvent childTasks;
 		
 		int                 taskId;
@@ -676,7 +677,7 @@ namespace System.Threading.Tasks
 
 			bool result = true;
 			List<Exception> exceptions = null;
-			Watch watch = Watch.StartNew ();
+			long start = watch.ElapsedMilliseconds;
 
 			foreach (var t in tasks) {
 				try {
@@ -690,7 +691,7 @@ namespace System.Threading.Tasks
 					else
 						exceptions.AddRange (e.InnerExceptions);
 				}
-				if (!ComputeTimeout (ref millisecondsTimeout, watch))
+				if (!ComputeTimeout (ref millisecondsTimeout, start, watch))
 					result = false;
 				if (!result)
 					break;
@@ -768,12 +769,12 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		static bool ComputeTimeout (ref int millisecondsTimeout, Watch watch)
+		static bool ComputeTimeout (ref int millisecondsTimeout, long start, Watch watch)
 		{
 			if (millisecondsTimeout == -1)
 				return true;
 
-			return (millisecondsTimeout = millisecondsTimeout - (int)watch.ElapsedMilliseconds) >= 1;
+			return (millisecondsTimeout = millisecondsTimeout - (int)(watch.ElapsedMilliseconds - start)) >= 1;
 		}
 
 		#endregion
