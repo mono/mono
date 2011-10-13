@@ -1,5 +1,5 @@
 //
-// CompletionContainer.cs
+// TaskCompletionQueue.cs
 //
 // Authors:
 //    Jérémie Laval <jeremie dot laval at xamarin dot com>
@@ -35,18 +35,30 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal struct CompletionContainer
+	struct TaskCompletionQueue
 	{
-		Task single;
-		ConcurrentQueue<Task> completed;
+		object single;
+		ConcurrentQueue<object> completed;
 
 		public void Add (Task continuation)
 		{
-			if (single == null && Interlocked.CompareExchange (ref single, continuation, null) == null)
+			AddAction (continuation);
+		}
+
+		public void Add (ManualResetEventSlim resetEvent)
+		{
+			AddAction (resetEvent);
+		}
+
+		void AddAction (object action)
+		{
+			if (single == null && Interlocked.CompareExchange (ref single, action, null) == null)
 				return;
+
 			if (completed == null)
-				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<Task> (), null);
-			completed.Enqueue (continuation);
+				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<object> (), null);
+
+			completed.Enqueue (action);
 		}
 
 		public bool HasElements {
@@ -55,14 +67,28 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		public bool TryGetNextCompletion (out Task continuation)
+		public bool TryGetNext (out object value)
 		{
-			continuation = null;
-
-			if (single != null && (continuation = Interlocked.Exchange (ref single, null)) != null)
+			if (single != null && (value = Interlocked.Exchange (ref single, null)) != null)
 				return true;
 
-			return completed != null && completed.TryDequeue (out continuation);
+			if (completed != null)
+				return completed.TryDequeue (out value);
+
+			value = null;
+			return false;
+		}
+
+		public void TryRemove (object value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (single != null && (Interlocked.CompareExchange (ref single, null, value) != single))
+				return;
+
+			if (completed != null)
+				completed.TryDequeue (out value);
 		}
 	}
 }

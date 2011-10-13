@@ -73,7 +73,7 @@ namespace System.Threading.Tasks
 		object         state;
 		AtomicBooleanValue executing;
 
-		CompletionContainer completed;
+		TaskCompletionQueue completed;
 		// If this task is a continuation, this stuff gets filled
 		CompletionSlot Slot;
 
@@ -320,7 +320,7 @@ namespace System.Threading.Tasks
 			continuation.Slot = new CompletionSlot (kind, predicate);
 
 			if (IsCompleted) {
-				CompletionExecutor (continuation);
+				CompletionTaskExecutor (continuation);
 				return;
 			}
 			
@@ -328,7 +328,7 @@ namespace System.Threading.Tasks
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
-				CompletionExecutor (continuation);
+				CompletionTaskExecutor (continuation);
 		}
 
 		
@@ -509,7 +509,30 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		void CompletionExecutor (Task cont)
+		void ProcessCompleteDelegates ()
+		{
+			if (!completed.HasElements)
+				return;
+
+			object value;
+			while (completed.TryGetNext (out value)) {
+				var t = value as Task;
+				if (t != null) {
+					CompletionTaskExecutor (t);
+					continue;
+				}
+
+				var mre = value as ManualResetEventSlim;
+				if (mre != null) {
+					mre.Set ();
+					continue;
+				}
+
+				throw new NotImplementedException ("Unknown completition type " + t.GetType ());
+			}
+		}
+
+		void CompletionTaskExecutor (Task cont)
 		{
 			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
 				return;
@@ -528,16 +551,6 @@ namespace System.Threading.Tasks
 				cont.RunSynchronously (cont.scheduler);
 			else
 				cont.Schedule ();
-		}
-
-		void ProcessCompleteDelegates ()
-		{
-			if (!completed.HasElements)
-				return;
-
-			Task continuation;
-			while (completed.TryGetNextCompletion (out continuation))
-				CompletionExecutor (continuation);
 		}
 
 		void ProcessChildExceptions ()
@@ -603,29 +616,32 @@ namespace System.Threading.Tasks
 
 			bool result = IsCompleted;
 			if (!result) {
-				if (scheduler == null) {
-					Watch watch = Watch.StartNew ();
-
-					schedWait.Wait (millisecondsTimeout, cancellationToken);
-					millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
-				}
-
-				var wait_event = new ManualResetEventSlim (false);
 				CancellationTokenRegistration? registration = null;
+				var completed_event =  new ManualResetEventSlim (false);
 
 				try {
 					if (cancellationToken.CanBeCanceled) {
-						registration = cancellationToken.Register (wait_event.Set);
+						registration = cancellationToken.Register (completed_event.Set);
 					}
 
-					// FIXME: The implementation is wrong and slow
-					// It adds a continuation to the task which is then
-					// returned to parent causing all sort of problems when
-					// timeout is reached before task is finished
-					result = !scheduler.ParticipateUntil (this, wait_event, millisecondsTimeout);
+					completed.Add (completed_event);
+
+					// Task could complete while we were setting things up
+					if (IsCompleted) {
+						// Don't bother removing completed_event, GC can handle it
+						result = true;
+					} else {
+						result = completed_event.Wait (millisecondsTimeout);
+					}
 				} finally {
 					if (registration.HasValue)
 						registration.Value.Dispose ();
+
+					// Try to remove completition event when timeout expired
+					if (!result)
+						completed.TryRemove (completed_event);
+
+					completed_event.Dispose ();
 				}
 			}
 
@@ -662,6 +678,9 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
+
+			if (millisecondsTimeout < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 			
 			bool result = true;
 			bool simple_run = millisecondsTimeout == Timeout.Infinite || tasks.Length == 1;
@@ -705,7 +724,7 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (params Task[] tasks)
 		{
-			return WaitAny (tasks, -1, CancellationToken.None);
+			return WaitAny (tasks, Timeout.Infinite, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, TimeSpan timeout)
@@ -715,90 +734,51 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout)
 		{
-			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			if (millisecondsTimeout == -1)
-				return WaitAny (tasks);
-
 			return WaitAny (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, CancellationToken cancellationToken)
 		{
-			return WaitAny (tasks, -1, cancellationToken);
+			return WaitAny (tasks, Timeout.Infinite, cancellationToken);
 		}
 
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
-			if (tasks.Length == 1) {
-				tasks[0].Wait (millisecondsTimeout, cancellationToken);
-				return 0;
+
+			int first_finished = -1;
+			for (int i = 0; i < tasks.Length; ++i) {
+				var t = tasks [i];
+
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+
+				if (first_finished < 0 && t.IsCompleted)
+					first_finished = i;
 			}
-			
-			int numFinished = 0;
-			int indexFirstFinished = -1;
-			int index = 0;
-			TaskScheduler sched = null;
-			Task task = null;
-			Watch watch = Watch.StartNew ();
-			ManualResetEventSlim predicateEvt = new ManualResetEventSlim (false);
 
-			foreach (Task t in tasks) {
-				int indexResult = index++;
-				t.ContinueWith (delegate {
-					if (numFinished >= 1)
-						return;
-					int result = Interlocked.Increment (ref numFinished);
+			if (first_finished >= 0 || tasks.Length == 0)
+				return first_finished;
 
-					// Check if we are the first to have finished
-					if (result == 1)
-						indexFirstFinished = indexResult;
+			using (var completed_event = new ManualResetEventSlim (false)) {
 
-					// Stop waiting
-					predicateEvt.Set ();
-				}, TaskContinuationOptions.ExecuteSynchronously);
+				foreach (var t in tasks) {
+					t.completed.Add (completed_event);
+				}
 
-				if (sched == null && t.scheduler != null) {
-					task = t;
-					sched = t.scheduler;
+				completed_event.Wait (millisecondsTimeout, cancellationToken);
+
+				for (int i = 0; i < tasks.Length; ++i) {
+					var t = tasks[i];
+					if (first_finished < 0 && t.IsCompleted)
+						first_finished = i;
+
+					t.completed.TryRemove (completed_event);
 				}
 			}
 
-			// If none of task have a scheduler we are forced to wait for at least one to start
-			if (sched == null) {
-				var handles = Array.ConvertAll (tasks, t => t.schedWait.WaitHandle);
-				int shandle = -1;
-				if ((shandle = WaitHandle.WaitAny (handles, millisecondsTimeout)) == WaitHandle.WaitTimeout)
-					return -1;
-				sched = tasks[shandle].scheduler;
-				task = tasks[shandle];
-				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
-			}
-
-			// One task already finished
-			if (indexFirstFinished != -1)
-				return indexFirstFinished;
-
-			if (cancellationToken != CancellationToken.None) {
-				cancellationToken.Register (predicateEvt.Set);
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
-
-			sched.ParticipateUntil (task, predicateEvt, millisecondsTimeout);
-
-			// Index update is still not done
-			if (indexFirstFinished == -1) {
-				SpinWait wait = new SpinWait ();
-				while (indexFirstFinished == -1)
-					wait.SpinOnce ();
-			}
-
-			return indexFirstFinished;
+			return first_finished;
 		}
 
 		static int CheckTimeout (TimeSpan timeout)

@@ -52,7 +52,7 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 		
-		[TestAttribute]
+		[Test]
 		public void WaitAnyTest()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -69,14 +69,93 @@ namespace MonoTests.System.Threading.Tasks
 					}
 				});
 				
-				int index = Task.WaitAny(tasks);
+				int index = Task.WaitAny(tasks, 1000);
 				
 				Assert.AreNotEqual (-1, index, "#3");
 				Assert.AreEqual (1, flag, "#1");
 				Assert.AreEqual (1, finished, "#2");
-				
-				Task.WaitAll (tasks);
 			});
+		}
+
+		[Test]
+		public void WaitAny_Empty ()
+		{
+			Assert.AreEqual (-1, Task.WaitAny (new Task[0]));
+		}
+
+		[Test]
+		public void WaitAny_Zero ()
+		{
+			Assert.AreEqual (-1, Task.WaitAny (new Task[1] { new Task (delegate { })}, 0), "#1");
+			Assert.AreEqual (-1, Task.WaitAny (new Task[1] { new Task (delegate { }) }, 20), "#1");
+		}
+
+		[Test]
+		public void WaitAny_WithNull ()
+		{
+			var tasks = new [] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WaitAny (tasks);
+				Assert.Fail ();
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void WaitAny_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				new Task (delegate { }, cancelation.Token)
+			};
+
+			cancelation.Cancel ();
+
+			Assert.AreEqual (1, Task.WaitAny (tasks, 1000), "#1");
+			Assert.IsTrue (tasks[1].IsCompleted, "#2");
+			Assert.IsTrue (tasks[1].IsCanceled, "#3");
+		}
+
+		[Test]
+		public void WaitAny_CancelledWithoutExecution ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				new Task (delegate { })
+			};
+
+			int res = 0;
+			var mre = new ManualResetEventSlim (false);
+			ThreadPool.QueueUserWorkItem (delegate {
+				res = Task.WaitAny (tasks, 20);
+				mre.Set ();
+			});
+
+			cancelation.Cancel ();
+			Assert.IsTrue (mre.Wait (1000), "#1");
+			Assert.AreEqual (-1, res);
+		}
+
+		[Test]
+		public void WaitAny_OneException ()
+		{
+			var mre = new ManualResetEventSlim (false);
+			var tasks = new Task[] {
+				Task.Factory.StartNew (delegate { mre.Wait (1000); }),
+				Task.Factory.StartNew (delegate { throw new ApplicationException (); })
+			};
+
+			Assert.AreEqual (1, Task.WaitAny (tasks, 1000), "#1");
+			Assert.IsFalse (tasks[0].IsCompleted, "#2");
+			Assert.IsTrue (tasks[1].IsFaulted, "#3");
+
+			mre.Set ();
 		}
 		
 		[Test]
@@ -88,6 +167,13 @@ namespace MonoTests.System.Threading.Tasks
 				Task.WaitAll(tasks);
 				Assert.AreEqual(max, achieved, "#1");
 			});
+		}
+
+		[Test]
+		public void WaitAll_Zero ()
+		{
+			Assert.IsFalse (Task.WaitAll (new Task[1] { new Task (delegate { }) }, 0), "#0");
+			Assert.IsFalse (Task.WaitAll (new Task[1] { new Task (delegate { }) }, 10), "#1");
 		}
 
 		[Test]
@@ -153,6 +239,20 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void WaitAll_StartedUnderWait ()
+		{
+			var task1 = new Task (delegate { });
+
+			ThreadPool.QueueUserWorkItem (delegate {
+				// Sleep little to let task to start and hit internal wait
+				Thread.Sleep (20);
+				task1.Start ();
+			});
+
+			Assert.IsTrue (Task.WaitAll (new [] { task1 }, 1000), "#1");
+		}
+
+		[Test]
 		public void CancelBeforeStart ()
 		{
 			var src = new CancellationTokenSource ();
@@ -169,7 +269,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void CancelBeforeWait ()
+		public void Wait_CancelledTask ()
 		{
 			var src = new CancellationTokenSource ();
 
@@ -346,19 +446,20 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			ParallelTestHelper.Repeat (delegate {
 				bool r1 = false, r2 = false, r3 = false;
+				var mre = new ManualResetEvent (false);
 				
 				Task t = Task.Factory.StartNew(delegate {
 					Task.Factory.StartNew(delegate {
-						Thread.Sleep(50);
 						r1 = true;
+						mre.Set ();
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Thread.Sleep(300);
+						Assert.IsTrue (mre.WaitOne (1000), "#0");
 						
 						r2 = true;
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Thread.Sleep(150);
+						Assert.IsTrue (mre.WaitOne (1000), "#0");
 						
 						r3 = true;
 					}, TaskCreationOptions.AttachedToParent);
