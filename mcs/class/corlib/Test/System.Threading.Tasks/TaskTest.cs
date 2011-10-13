@@ -164,8 +164,6 @@ namespace MonoTests.System.Threading.Tasks
 			ParallelTestHelper.Repeat (delegate {
 				int achieved = 0;
 				InitWithDelegate(delegate { Interlocked.Increment(ref achieved); });
-				/*foreach (var t in tasks)
-					t.Wait ();*/
 				Task.WaitAll(tasks);
 				Assert.AreEqual(max, achieved, "#1");
 			});

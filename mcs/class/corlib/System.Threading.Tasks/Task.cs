@@ -704,7 +704,7 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (params Task[] tasks)
 		{
-			return WaitAny (tasks, -1, CancellationToken.None);
+			return WaitAny (tasks, Timeout.Infinite, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, TimeSpan timeout)
@@ -714,18 +714,12 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout)
 		{
-			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			if (millisecondsTimeout == -1)
-				return WaitAny (tasks);
-
 			return WaitAny (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, CancellationToken cancellationToken)
 		{
-			return WaitAny (tasks, -1, cancellationToken);
+			return WaitAny (tasks, Timeout.Infinite, cancellationToken);
 		}
 
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
@@ -734,12 +728,13 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("tasks");
 			if (tasks.Length == 0)
 				return -1;
-			if (tasks.Length == 1)
-				return tasks[0].Wait (millisecondsTimeout, cancellationToken) ? 0 : -1;
-
+			if (millisecondsTimeout < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 			foreach (var t in tasks)
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+			if (tasks.Length == 1)
+				return tasks[0].Wait (millisecondsTimeout, cancellationToken) ? 0 : -1;
 
 			ManualResetEventSlim evt = new ManualResetEventSlim ();
 			for (int i = 0; i < tasks.Length; i++) {
