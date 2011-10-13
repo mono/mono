@@ -763,11 +763,21 @@ namespace System.Threading.Tasks
 
 			using (var completed_event = new ManualResetEventSlim (false)) {
 
-				foreach (var t in tasks) {
+				for (int i = 0; i < tasks.Length; ++i) {
+					var t = tasks[i];
 					t.completed.Add (completed_event);
+
+					// completed.Add could happen while task was finishing and 
+					// we could miss continuation execution where completed_event is set
+					if (t.IsCompleted) {
+						first_finished = i;
+						break;
+					}
 				}
 
-				completed_event.Wait (millisecondsTimeout, cancellationToken);
+				if (first_finished < 0) {
+					completed_event.Wait (millisecondsTimeout, cancellationToken);
+				}
 
 				for (int i = 0; i < tasks.Length; ++i) {
 					var t = tasks[i];
