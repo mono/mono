@@ -51,6 +51,13 @@ namespace MonoTests.System.Threading.Tasks
 				tasks[i] = Task.Factory.StartNew(action);
 			}
 		}
+
+		static Task<TResult> TaskFromResult<TResult> (TResult result)
+		{
+			var tcs = new TaskCompletionSource<TResult> ();
+			tcs.SetResult (result);
+			return tcs.Task;
+		}
 		
 		[Test]
 		public void WaitAnyTest()
@@ -94,7 +101,7 @@ namespace MonoTests.System.Threading.Tasks
 		public void WaitAny_WithNull ()
 		{
 			var tasks = new [] {
-				Task.FromResult (2),
+				TaskFromResult (2),
 				null
 			};
 
