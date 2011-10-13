@@ -35,30 +35,18 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	struct TaskCompletionQueue
+	internal struct TaskCompletionQueue<TCompletion> where TCompletion : class
 	{
-		object single;
-		ConcurrentQueue<object> completed;
+		TCompletion single;
+		ConcurrentQueue<TCompletion> completed;
 
-		public void Add (Task continuation)
+		public void Add (TCompletion continuation)
 		{
-			AddAction (continuation);
-		}
-
-		public void Add (ManualResetEventSlim resetEvent)
-		{
-			AddAction (resetEvent);
-		}
-
-		void AddAction (object action)
-		{
-			if (single == null && Interlocked.CompareExchange (ref single, action, null) == null)
+			if (single == null && Interlocked.CompareExchange (ref single, continuation, null) == null)
 				return;
-
 			if (completed == null)
-				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<object> (), null);
-
-			completed.Enqueue (action);
+				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<TCompletion> (), null);
+			completed.Enqueue (continuation);
 		}
 
 		public bool HasElements {
@@ -67,28 +55,14 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		public bool TryGetNext (out object value)
+		public bool TryGetNextCompletion (out TCompletion continuation)
 		{
-			if (single != null && (value = Interlocked.Exchange (ref single, null)) != null)
+			continuation = null;
+
+			if (single != null && (continuation = Interlocked.Exchange (ref single, null)) != null)
 				return true;
 
-			if (completed != null)
-				return completed.TryDequeue (out value);
-
-			value = null;
-			return false;
-		}
-
-		public void TryRemove (object value)
-		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
-
-			if (single != null && (Interlocked.CompareExchange (ref single, null, value) != single))
-				return;
-
-			if (completed != null)
-				completed.TryDequeue (out value);
+			return completed != null && completed.TryDequeue (out continuation);
 		}
 	}
 }

@@ -73,12 +73,13 @@ namespace System.Threading.Tasks
 		object         state;
 		AtomicBooleanValue executing;
 
-		TaskCompletionQueue completed;
+		TaskCompletionQueue<Task> completed;
+		TaskCompletionQueue<ManualResetEventSlim> registeredEvts;
 		// If this task is a continuation, this stuff gets filled
 		CompletionSlot Slot;
 
 		CancellationToken token;
-		CancellationTokenRegistration? cancelation_registration;
+		CancellationTokenRegistration? cancellationRegistration;
 
 		internal const TaskCreationOptions WorkerTaskNotSupportedOptions = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
 
@@ -154,9 +155,8 @@ namespace System.Threading.Tasks
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 				parent.AddChild ();
 
-			if (token.CanBeCanceled) {
-				cancelation_registration = token.Register (l => ((Task) l).CancelReal (), this);
-			}
+			if (token.CanBeCanceled)
+				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
 		}
 
 		~Task ()
@@ -320,7 +320,7 @@ namespace System.Threading.Tasks
 			continuation.Slot = new CompletionSlot (kind, predicate);
 
 			if (IsCompleted) {
-				CompletionTaskExecutor (continuation);
+				CompletionExecutor (continuation);
 				return;
 			}
 			
@@ -328,10 +328,9 @@ namespace System.Threading.Tasks
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
-				CompletionTaskExecutor (continuation);
+				CompletionExecutor (continuation);
 		}
 
-		
 		bool ContinuationStatusCheck (TaskContinuationOptions kind)
 		{
 			if (kind == TaskContinuationOptions.None)
@@ -385,6 +384,18 @@ namespace System.Threading.Tasks
 			
 			return options;
 		}
+
+		internal void RegisterWaitEvent (ManualResetEventSlim evt)
+		{
+			if (IsCompleted) {
+				evt.Set ();
+				return;
+			}
+
+			registeredEvts.Add (evt);
+			if (IsCompleted)
+				evt.Set ();
+		}
 		#endregion
 		
 		#region Internal and protected thingies
@@ -414,6 +425,11 @@ namespace System.Threading.Tasks
 			if (!executing.TryRelaxedSet ())
 				return;
 
+			// Disable CancellationToken direct cancellation
+			if (cancellationRegistration != null) {
+				cancellationRegistration.Value.Dispose ();
+				cancellationRegistration = null;
+			}
 			current = this;
 			TaskScheduler.Current = scheduler;
 			
@@ -500,8 +516,8 @@ namespace System.Threading.Tasks
 			current = null;
 			TaskScheduler.Current = null;
 
-			if (cancelation_registration.HasValue)
-				cancelation_registration.Value.Dispose ();
+			if (cancellationRegistration.HasValue)
+				cancellationRegistration.Value.Dispose ();
 			
 			// Tell parent that we are finished
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
@@ -509,30 +525,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		void ProcessCompleteDelegates ()
-		{
-			if (!completed.HasElements)
-				return;
-
-			object value;
-			while (completed.TryGetNext (out value)) {
-				var t = value as Task;
-				if (t != null) {
-					CompletionTaskExecutor (t);
-					continue;
-				}
-
-				var mre = value as ManualResetEventSlim;
-				if (mre != null) {
-					mre.Set ();
-					continue;
-				}
-
-				throw new NotImplementedException ("Unknown completition type " + t.GetType ());
-			}
-		}
-
-		void CompletionTaskExecutor (Task cont)
+		void CompletionExecutor (Task cont)
 		{
 			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
 				return;
@@ -551,6 +544,20 @@ namespace System.Threading.Tasks
 				cont.RunSynchronously (cont.scheduler);
 			else
 				cont.Schedule ();
+		}
+
+		void ProcessCompleteDelegates ()
+		{
+			if (completed.HasElements) {
+				Task continuation;
+				while (completed.TryGetNextCompletion (out continuation))
+					CompletionExecutor (continuation);
+			}
+			if (registeredEvts.HasElements) {
+				ManualResetEventSlim evt;
+				while (registeredEvts.TryGetNextCompletion (out evt))
+					evt.Set ();
+			}
 		}
 
 		void ProcessChildExceptions ()
@@ -614,34 +621,17 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			bool result = IsCompleted;
-			if (!result) {
-				CancellationTokenRegistration? registration = null;
-				var completed_event =  new ManualResetEventSlim (false);
+			bool result = true;
 
-				try {
-					if (cancellationToken.CanBeCanceled) {
-						registration = cancellationToken.Register (completed_event.Set);
-					}
+			if (!IsCompleted) {
+				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == -1 && scheduler != null)
+					Execute (null);
 
-					completed.Add (completed_event);
+				if (!IsCompleted) {
+					ManualResetEventSlim evt = new ManualResetEventSlim (false);
+					RegisterWaitEvent (evt);
 
-					// Task could complete while we were setting things up
-					if (IsCompleted) {
-						// Don't bother removing completed_event, GC can handle it
-						result = true;
-					} else {
-						result = completed_event.Wait (millisecondsTimeout);
-					}
-				} finally {
-					if (registration.HasValue)
-						registration.Value.Dispose ();
-
-					// Try to remove completition event when timeout expired
-					if (!result)
-						completed.TryRemove (completed_event);
-
-					completed_event.Dispose ();
+					result = evt.Wait (millisecondsTimeout, cancellationToken);
 				}
 			}
 
@@ -678,42 +668,32 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-
-			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			
-			bool result = true;
-			bool simple_run = millisecondsTimeout == Timeout.Infinite || tasks.Length == 1;
-			List<Exception> exceptions = null;
-
-			foreach (var t in tasks) {
+			if (tasks.Length == 0)
+				return true;
+			foreach (var t in tasks)
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 
-				if (simple_run) {
-					try {
-						result &= t.Wait (millisecondsTimeout, cancellationToken);
-					} catch (AggregateException e) {
-						if (exceptions == null)
-							exceptions = new List<Exception> ();
+			bool result = true;
+			List<Exception> exceptions = null;
+			Watch watch = Watch.StartNew ();
 
+			foreach (var t in tasks) {
+				try {
+					result &= t.Wait (millisecondsTimeout, cancellationToken);
+				} catch (AggregateException e) {
+					if (exceptions == null)
+						exceptions = new List<Exception> ();
+
+					if (t.IsCanceled)
+						exceptions.Add (new TaskCanceledException (t));
+					else
 						exceptions.AddRange (e.InnerExceptions);
-					}
 				}
-			}
-
-			// FIXME: Wrong implementation, millisecondsTimeout is total time not time per task
-			if (!simple_run) {
-				foreach (var t in tasks) {
-					try {
-						result &= t.Wait (millisecondsTimeout, cancellationToken);
-					} catch (AggregateException e) {
-						if (exceptions == null)
-							exceptions = new List<Exception> ();
-
-						exceptions.AddRange (e.InnerExceptions);
-					}
-				}
+				if (!ComputeTimeout (ref millisecondsTimeout, watch))
+					result = false;
+				if (!result)
+					break;
 			}
 
 			if (exceptions != null)
@@ -724,7 +704,7 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (params Task[] tasks)
 		{
-			return WaitAny (tasks, Timeout.Infinite, CancellationToken.None);
+			return WaitAny (tasks, -1, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, TimeSpan timeout)
@@ -734,61 +714,54 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout)
 		{
+			if (millisecondsTimeout < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
+			if (millisecondsTimeout == -1)
+				return WaitAny (tasks);
+
 			return WaitAny (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 
 		public static int WaitAny (Task[] tasks, CancellationToken cancellationToken)
 		{
-			return WaitAny (tasks, Timeout.Infinite, cancellationToken);
+			return WaitAny (tasks, -1, cancellationToken);
 		}
 
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
+			if (tasks.Length == 0)
+				return -1;
+			if (tasks.Length == 1)
+				return tasks[0].Wait (millisecondsTimeout, cancellationToken) ? 0 : -1;
 
-			int first_finished = -1;
-			for (int i = 0; i < tasks.Length; ++i) {
-				var t = tasks [i];
-
+			foreach (var t in tasks)
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 
-				if (first_finished < 0 && t.IsCompleted)
-					first_finished = i;
+			ManualResetEventSlim evt = new ManualResetEventSlim ();
+			for (int i = 0; i < tasks.Length; i++) {
+				var t = tasks[i];
+				if (t.IsCompleted)
+					return i;
+				t.RegisterWaitEvent (evt);
 			}
 
-			if (first_finished >= 0 || tasks.Length == 0)
-				return first_finished;
+			if (!evt.Wait (millisecondsTimeout, cancellationToken))
+				return -1;
 
-			using (var completed_event = new ManualResetEventSlim (false)) {
-
-				for (int i = 0; i < tasks.Length; ++i) {
-					var t = tasks[i];
-					t.completed.Add (completed_event);
-
-					// completed.Add could happen while task was finishing and 
-					// we could miss continuation execution where completed_event is set
-					if (t.IsCompleted) {
-						first_finished = i;
-						break;
-					}
-				}
-
-				if (first_finished < 0) {
-					completed_event.Wait (millisecondsTimeout, cancellationToken);
-				}
-
-				for (int i = 0; i < tasks.Length; ++i) {
-					var t = tasks[i];
-					if (first_finished < 0 && t.IsCompleted)
-						first_finished = i;
-
-					t.completed.TryRemove (completed_event);
+			int firstFinished = -1;
+			for (int i = 0; i < tasks.Length; i++) {
+				var t = tasks[i];
+				if (t.IsCompleted) {
+					firstFinished = i;
+					break;
 				}
 			}
 
-			return first_finished;
+			return firstFinished;
 		}
 
 		static int CheckTimeout (TimeSpan timeout)
@@ -800,9 +773,12 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		static int ComputeTimeout (int millisecondsTimeout, Watch watch)
+		static bool ComputeTimeout (ref int millisecondsTimeout, Watch watch)
 		{
-			return millisecondsTimeout == -1 ? -1 : (int)Math.Max (watch.ElapsedMilliseconds - millisecondsTimeout, 1);
+			if (millisecondsTimeout == -1)
+				return true;
+
+			return (millisecondsTimeout = millisecondsTimeout - (int)watch.ElapsedMilliseconds) >= 1;
 		}
 
 		#endregion
@@ -823,6 +799,8 @@ namespace System.Threading.Tasks
 			if (disposing) {
 				action = null;
 				state = null;
+				if (cancellationRegistration != null)
+					cancellationRegistration.Value.Dispose ();
 			}
 		}
 		#endregion

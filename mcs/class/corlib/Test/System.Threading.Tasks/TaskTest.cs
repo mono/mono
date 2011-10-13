@@ -86,8 +86,8 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void WaitAny_Zero ()
 		{
-			Assert.AreEqual (-1, Task.WaitAny (new Task[1] { new Task (delegate { })}, 0), "#1");
-			Assert.AreEqual (-1, Task.WaitAny (new Task[1] { new Task (delegate { }) }, 20), "#1");
+			Assert.AreEqual (-1, Task.WaitAny (new[] { new Task (delegate { })}, 0), "#1");
+			Assert.AreEqual (-1, Task.WaitAny (new[] { new Task (delegate { }) }, 20), "#1");
 		}
 
 		[Test]
@@ -164,6 +164,8 @@ namespace MonoTests.System.Threading.Tasks
 			ParallelTestHelper.Repeat (delegate {
 				int achieved = 0;
 				InitWithDelegate(delegate { Interlocked.Increment(ref achieved); });
+				/*foreach (var t in tasks)
+					t.Wait ();*/
 				Task.WaitAll(tasks);
 				Assert.AreEqual(max, achieved, "#1");
 			});
@@ -438,7 +440,7 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsTrue(r1, "#1");
 				Assert.IsTrue(r2, "#2");
 				Assert.IsTrue(r3, "#3");
-			});
+			}, 100);
 		}
 		
 		[Test]

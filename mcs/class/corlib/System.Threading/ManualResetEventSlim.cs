@@ -127,8 +127,13 @@ namespace System.Threading
 					WaitHandle handle = WaitHandle;
 					if (state == isSet)
 						return true;
-					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
-						return true;
+
+					if (cancellationToken.CanBeCanceled)
+						if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
+							return true;
+					else
+						if (handle.WaitOne (waitTime, false))
+							return true;
 				}
 			}
 
