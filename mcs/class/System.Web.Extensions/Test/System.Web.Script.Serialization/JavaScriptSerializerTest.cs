@@ -4,6 +4,9 @@
 // Author:
 //   Konstantin Triger <kostat@mainsoft.com>
 //
+//   Array deserialization test:
+//   Piotr Zierhoffer
+//
 // (C) 2007 Mainsoft, Inc.  http://www.mainsoft.com
 //
 //
@@ -1337,6 +1340,20 @@ namespace MonoTests.System.Web.Script.Serialization
 
 			ser.Serialize(testUri, sb);
 			Assert.AreEqual ("\"/lala/123\"", sb.ToString ());
+		}
+
+		[Test]
+		public void ShouldProperlyHandleArrayInDictionary()
+		{
+			var one = new Dictionary<string, object>();
+			var two = new ArrayList();
+			var three = new Dictionary<string,object>();
+			three.Add("foo", "bar");
+			two.Add(three);
+			one.Add("baz", two);
+			var jss = new JavaScriptSerializer();
+			var result = jss.Serialize(one);
+			var next = jss.Deserialize<IDictionary<string,object>>(result);
 		}
 	}
 }
