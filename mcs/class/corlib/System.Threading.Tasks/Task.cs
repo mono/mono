@@ -682,10 +682,7 @@ namespace System.Threading.Tasks
 					if (exceptions == null)
 						exceptions = new List<Exception> ();
 
-					if (t.IsCanceled)
-						exceptions.Add (new TaskCanceledException (t));
-					else
-						exceptions.AddRange (e.InnerExceptions);
+					exceptions.AddRange (e.InnerExceptions);
 				}
 				if (!ComputeTimeout (ref millisecondsTimeout, start, watch))
 					result = false;
