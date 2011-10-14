@@ -999,8 +999,7 @@ namespace System.Threading.Tasks
 
 		public bool IsCompleted {
 			get {
-				return status == TaskStatus.RanToCompletion ||
-					status == TaskStatus.Canceled || status == TaskStatus.Faulted;
+				return status >= TaskStatus.RanToCompletion;
 			}
 		}
 		
