@@ -186,18 +186,16 @@ namespace System.Threading
 			}
 		}
 
-		#region IDisposable implementation 
-		
 		public void Dispose ()
 		{
-			
+			Dispose (true);
 		}
 		
 		protected virtual void Dispose (bool disposing)
 		{
-			
+			if (disposing)
+				evt.Dispose ();
 		}
-		#endregion 	
 	}
 }
 #endif
