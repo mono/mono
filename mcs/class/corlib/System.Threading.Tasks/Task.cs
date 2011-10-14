@@ -734,8 +734,6 @@ namespace System.Threading.Tasks
 			foreach (var t in tasks)
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
-			if (tasks.Length == 1)
-				return tasks[0].Wait (millisecondsTimeout, cancellationToken) ? 0 : -1;
 
 			ManualResetEventSlim evt = new ManualResetEventSlim ();
 			for (int i = 0; i < tasks.Length; i++) {

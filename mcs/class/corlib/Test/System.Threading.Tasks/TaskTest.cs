@@ -164,6 +164,14 @@ namespace MonoTests.System.Threading.Tasks
 
 			mre.Set ();
 		}
+
+		[Test]
+		public void WaitAny_SingleCanceled ()
+		{
+			var src = new CancellationTokenSource ();
+			var t = Task.Factory.StartNew (() => { Thread.Sleep (200); src.Cancel (); src.Token.ThrowIfCancellationRequested (); }, src.Token);
+			Assert.AreEqual (0, Task.WaitAny (new [] { t }));
+		}
 		
 		[Test]
 		public void WaitAllTest()
