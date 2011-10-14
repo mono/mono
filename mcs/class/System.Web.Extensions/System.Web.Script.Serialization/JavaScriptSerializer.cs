@@ -239,8 +239,10 @@ namespace System.Web.Script.Serialization
 
 			IList list;
 			if (type == null || type.IsArray || typeofObject == type || typeof (ArrayList).IsAssignableFrom (type))
+            {
+                elementType = typeof (object);
 				list = new ArrayList ();
-			else if (ReflectionUtils.IsInstantiatableType (type))
+			} else if (ReflectionUtils.IsInstantiatableType (type))
 				// non-generic typed list
 				list = (IList) Activator.CreateInstance (type, true);
 			else if (ReflectionUtils.IsAssignable (type, typeofGenList)) {
@@ -249,8 +251,10 @@ namespace System.Web.Script.Serialization
 					elementType = genArgs [0];
 					// generic list
 					list = (IList) Activator.CreateInstance (typeofGenList.MakeGenericType (genArgs));
-				} else
+				} else {
+                    elementType = typeof (object); // non-generic list
 					list = new ArrayList ();
+                }
 			} else
 				throw new InvalidOperationException (String.Format ("Deserializing list type '{0}' not supported.", type.GetType ().Name));
 
