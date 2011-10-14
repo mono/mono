@@ -51,13 +51,6 @@ namespace MonoTests.System.Threading.Tasks
 				tasks[i] = Task.Factory.StartNew(action);
 			}
 		}
-
-		static Task<TResult> TaskFromResult<TResult> (TResult result)
-		{
-			var tcs = new TaskCompletionSource<TResult> ();
-			tcs.SetResult (result);
-			return tcs.Task;
-		}
 		
 		[Test]
 		public void WaitAnyTest()
@@ -95,21 +88,6 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			Assert.AreEqual (-1, Task.WaitAny (new[] { new Task (delegate { })}, 0), "#1");
 			Assert.AreEqual (-1, Task.WaitAny (new[] { new Task (delegate { }) }, 20), "#1");
-		}
-
-		[Test]
-		public void WaitAny_WithNull ()
-		{
-			var tasks = new [] {
-				TaskFromResult (2),
-				null
-			};
-
-			try {
-				Task.WaitAny (tasks);
-				Assert.Fail ();
-			} catch (ArgumentException) {
-			}
 		}
 
 		[Test]
@@ -172,6 +150,41 @@ namespace MonoTests.System.Threading.Tasks
 			var t = Task.Factory.StartNew (() => { Thread.Sleep (200); src.Cancel (); src.Token.ThrowIfCancellationRequested (); }, src.Token);
 			Assert.AreEqual (0, Task.WaitAny (new [] { t }));
 		}
+
+		public void WaitAny_ManyExceptions ()
+		{
+			CountdownEvent cde = new CountdownEvent (3);
+			var tasks = new [] {
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
+			};
+
+			Assert.IsTrue (cde.Wait (1000), "#1");
+
+			try {
+				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#2");
+			} catch (AggregateException e) {
+				Assert.AreEqual (3, e.InnerExceptions.Count, "#3");
+			}
+		}
+
+		[Test]
+		public void WaitAny_ManyCanceled ()
+		{
+			var cancellation = new CancellationToken (true);
+			var tasks = new[] {
+				Task.Factory.StartNew (delegate { }, cancellation),
+				Task.Factory.StartNew (delegate { }, cancellation),
+				Task.Factory.StartNew (delegate { }, cancellation)
+			};
+
+			try {
+				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#1");
+			} catch (AggregateException e) {
+				Assert.AreEqual (3, e.InnerExceptions.Count, "#2");
+			}
+		}
 		
 		[Test]
 		public void WaitAllTest()
@@ -192,7 +205,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void WaitAllWithExceptions ()
+		public void WaitAll_WithExceptions ()
 		{
 			InitWithDelegate (delegate { throw new ApplicationException (); });
 
@@ -207,7 +220,55 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void WaitAllCancelled ()
+		public void WaitAll_TimeoutWithExceptionsAfter ()
+		{
+			CountdownEvent cde = new CountdownEvent (2);
+			var mre = new ManualResetEvent (false);
+			var tasks = new[] {
+				Task.Factory.StartNew (delegate { mre.WaitOne (); }),
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
+			};
+
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
+
+			mre.Set ();
+
+			try {
+				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#3");
+				Assert.Fail ("#4");
+			} catch (AggregateException e) {
+				Assert.AreEqual (2, e.InnerExceptions.Count, "#5");
+			}
+		}
+
+		[Test]
+		public void WaitAll_TimeoutWithExceptionsBefore ()
+		{
+			CountdownEvent cde = new CountdownEvent (2);
+			var mre = new ManualResetEvent (false);
+			var tasks = new[] {
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
+				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
+				Task.Factory.StartNew (delegate { mre.WaitOne (); })
+			};
+
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
+
+			mre.Set ();
+
+			try {
+				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#3");
+				Assert.Fail ("#4");
+			} catch (AggregateException e) {
+				Assert.AreEqual (2, e.InnerExceptions.Count, "#5");
+			}
+		}
+
+		[Test]
+		public void WaitAll_Cancelled ()
 		{
 			var cancelation = new CancellationTokenSource ();
 			var tasks = new Task[] {
@@ -317,7 +378,36 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Canceled, task.Status);
 			task.Start ();
 		}
-		
+
+		[Test]
+		public void ContinueWithInvalidArguments ()
+		{
+			var task = new Task (() => { });
+			try {
+				task.ContinueWith (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				task.ContinueWith (delegate { }, null);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.NotOnCanceled);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.NotOnRanToCompletion);
+				Assert.Fail ("#4");
+			} catch (ArgumentException) {
+			}
+		}
+
 		[Test]
 		public void ContinueWithOnAnyTestCase()
 		{
@@ -567,6 +657,21 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 #if NET_4_5
+		[Test]
+		public void WaitAny_WithNull ()
+		{
+			var tasks = new [] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WaitAny (tasks);
+				Assert.Fail ();
+			} catch (ArgumentException) {
+			}
+		}
+
 		[Test]
 		public void FromResult ()
 		{
