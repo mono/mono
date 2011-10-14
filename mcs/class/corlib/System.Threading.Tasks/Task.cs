@@ -669,11 +669,7 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				return true;
-			foreach (var t in tasks)
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+			CheckForNullTasks (tasks);
 
 			bool result = true;
 			List<Exception> exceptions = null;
@@ -731,9 +727,7 @@ namespace System.Threading.Tasks
 				return -1;
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			foreach (var t in tasks)
-				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+			CheckForNullTasks (tasks);
 
 			ManualResetEventSlim evt = new ManualResetEventSlim ();
 			for (int i = 0; i < tasks.Length; i++) {
@@ -773,6 +767,13 @@ namespace System.Threading.Tasks
 				return true;
 
 			return (millisecondsTimeout = millisecondsTimeout - (int)(watch.ElapsedMilliseconds - start)) >= 1;
+		}
+
+		static void CheckForNullTasks (Task[] tasks)
+		{
+			foreach (var t in tasks)
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 		}
 
 		#endregion
