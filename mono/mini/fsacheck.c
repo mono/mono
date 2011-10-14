@@ -190,7 +190,7 @@ int try_one(char *mname, MonoDomain *domain) {
   MonoString *monostring_arg;
   MonoArray *arg_array;
   int *failures = NULL;
-  const int kUseTestDriver = 1;
+  const int kUseTestDriver = 0;
   int test_count = 0;
   void *args [1];
   char *cstr_arg = "--timing";
@@ -223,8 +223,11 @@ int try_one(char *mname, MonoDomain *domain) {
   if (!kUseTestDriver) {
     mc = mono_class_from_name(mi, "", "Tests");
     if (NULL == mc) {
-      printf("could not open Tests class\n");
-      exit(-1);
+      mc = mono_class_from_name(mi, "", "SimdTests");
+      if (NULL == mc) {
+        printf("could not open Tests class\n");
+        exit(-1);
+      }
     }
     test_count = run_all_test_methods(mc);
   }
@@ -253,7 +256,10 @@ int try_one(char *mname, MonoDomain *domain) {
 int main(int argc, char *argv[]) {
    MonoDomain *domain;
    int failures = 0;
-
+  const int kExplicitNullChecks = 1;
+  if (kExplicitNullChecks) {
+    setenv("MONO_DEBUG", "explicit-null-checks", 1);
+  }
   setvbuf(stdout, NULL, _IONBF, 0);
 #if defined(__GLIBC__)
   mallopt(M_TRIM_THRESHOLD, -1);
