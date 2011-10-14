@@ -39,6 +39,7 @@ namespace System.Threading
 		readonly int spinCount;
 
 		ManualResetEvent handle;
+		bool disposed;
 
 		readonly static Watch sw = Watch.StartNew ();
 
@@ -97,12 +98,12 @@ namespace System.Threading
 
 		public bool Wait (TimeSpan timeout)
 		{
-			return Wait ((int)timeout.TotalMilliseconds, CancellationToken.None);
+			return Wait (CheckTimeout (timeout), CancellationToken.None);
 		}
 
 		public void Wait (CancellationToken cancellationToken)
 		{
-			Wait (-1, cancellationToken);
+			Wait (Timeout.Infinite, cancellationToken);
 		}
 
 		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
@@ -110,6 +111,7 @@ namespace System.Threading
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
+			ThrowIfDisposed ();
 
 			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 			SpinWait wait = new SpinWait ();
@@ -124,9 +126,11 @@ namespace System.Threading
 					wait.SpinOnce ();
 				} else {
 					int waitTime = millisecondsTimeout == -1 ? -1 : Math.Max (millisecondsTimeout - (int)(sw.ElapsedMilliseconds - start) , 1);
+					ThrowIfDisposed ();
 					WaitHandle handle = WaitHandle;
 					if (state == isSet)
 						return true;
+					ThrowIfDisposed ();
 
 					if (cancellationToken.CanBeCanceled)
 						if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
@@ -142,7 +146,7 @@ namespace System.Threading
 
 		public bool Wait (TimeSpan timeout, CancellationToken cancellationToken)
 		{
-			return Wait ((int)timeout.TotalMilliseconds, cancellationToken);
+			return Wait (CheckTimeout (timeout), cancellationToken);
 		}
 
 		public WaitHandle WaitHandle {
@@ -163,18 +167,35 @@ namespace System.Threading
 			}
 		}
 
-		#region IDisposable implementation
 		public void Dispose ()
 		{
-			Dispose(true);
+			Dispose (true);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-
+			disposed = true;
+			Thread.MemoryBarrier ();
+			if (handle != null) {
+				handle.Dispose ();
+				handle = null;
+			}
 		}
-		#endregion
 
+		void ThrowIfDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException ("ManualResetEventSlim");
+		}
+
+		static int CheckTimeout (TimeSpan timeout)
+		{
+			try {
+				return checked ((int)timeout.TotalMilliseconds);
+			} catch (System.OverflowException) {
+				throw new ArgumentOutOfRangeException ("timeout");
+			}
+		}
 	}
 }
 #endif
