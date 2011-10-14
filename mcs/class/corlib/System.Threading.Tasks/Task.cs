@@ -625,14 +625,17 @@ namespace System.Threading.Tasks
 			bool result = true;
 
 			if (!IsCompleted) {
+				// If the task is ready to be run and we were supposed to wait on it indefinitely, just run it
 				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == -1 && scheduler != null)
 					Execute (null);
 
 				if (!IsCompleted) {
-					ManualResetEventSlim evt = new ManualResetEventSlim (false);
-					RegisterWaitEvent (evt);
-
-					result = evt.Wait (millisecondsTimeout, cancellationToken);
+					// Free heavy ressources used by the event automatically but without removing
+					// it from the queue since Set () doesn't trigger ObjectDisposedException
+					using (var evt = new ManualResetEventSlim ()) {
+						RegisterWaitEvent (evt);
+						result = evt.Wait (millisecondsTimeout, cancellationToken);
+					}
 				}
 			}
 
@@ -720,22 +723,23 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				return -1;
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 			CheckForNullTasks (tasks);
 
-			ManualResetEventSlim evt = new ManualResetEventSlim ();
-			for (int i = 0; i < tasks.Length; i++) {
-				var t = tasks[i];
-				if (t.IsCompleted)
-					return i;
-				t.RegisterWaitEvent (evt);
-			}
+			if (tasks.Length > 0) {
+				using (var evt = new ManualResetEventSlim ()) {
+					for (int i = 0; i < tasks.Length; i++) {
+						var t = tasks[i];
+						if (t.IsCompleted)
+							return i;
+						t.RegisterWaitEvent (evt);
+					}
 
-			if (!evt.Wait (millisecondsTimeout, cancellationToken))
-				return -1;
+					if (!evt.Wait (millisecondsTimeout, cancellationToken))
+						return -1;
+				}
+			}
 
 			int firstFinished = -1;
 			for (int i = 0; i < tasks.Length; i++) {
@@ -772,7 +776,6 @@ namespace System.Threading.Tasks
 				if (t == null)
 					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 		}
-
 		#endregion
 		
 		#region Dispose
