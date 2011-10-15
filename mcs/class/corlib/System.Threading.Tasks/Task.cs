@@ -311,6 +311,8 @@ namespace System.Threading.Tasks
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind,
 		                                TaskScheduler scheduler, Func<bool> predicate)
 		{
+			CheckTaskCompletionCompatibility (kind);
+
 			// Already set the scheduler so that user can call Wait and that sort of stuff
 			continuation.scheduler = scheduler;
 			continuation.status = TaskStatus.WaitingForActivation;
@@ -368,7 +370,22 @@ namespace System.Threading.Tasks
 			
 			return true;
 		}
-			
+
+		static internal void CheckTaskCompletionCompatibility (TaskContinuationOptions options)
+		{
+			if (options == TaskContinuationOptions.None)
+				return;
+
+			const TaskContinuationOptions wrongRan = TaskContinuationOptions.NotOnRanToCompletion | TaskContinuationOptions.OnlyOnRanToCompletion;
+			const TaskContinuationOptions wrongCanceled = TaskContinuationOptions.NotOnCanceled | TaskContinuationOptions.OnlyOnCanceled;
+			const TaskContinuationOptions wrongFaulted = TaskContinuationOptions.NotOnFaulted | TaskContinuationOptions.OnlyOnFaulted;
+
+			if (((options & wrongRan) == wrongRan)
+			    || ((options & wrongCanceled) == wrongCanceled)
+			    || ((options & wrongFaulted) == wrongFaulted))
+				throw new ArgumentException ("continuationOptions", "Some options are mutually exclusive");
+		}
+
 		static internal TaskCreationOptions GetCreationOptions (TaskContinuationOptions kind)
 		{
 			TaskCreationOptions options = TaskCreationOptions.None;
