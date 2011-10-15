@@ -246,7 +246,7 @@ namespace System.Collections.Concurrent
 
 		bool ListPop (out T data)
 		{
-			Node rightNode = null, rightNodeNext = null, leftNode = null;
+			Node rightNode = null, rightNodeNext = null, leftNode = head;
 			data = default (T);
 
 			do {
