@@ -38,15 +38,25 @@ namespace System.Threading.Tasks
 	internal struct TaskCompletionQueue<TCompletion> where TCompletion : class
 	{
 		TCompletion single;
-		ConcurrentQueue<TCompletion> completed;
+		ConcurrentOrderedList<TCompletion> completed;
 
 		public void Add (TCompletion continuation)
 		{
 			if (single == null && Interlocked.CompareExchange (ref single, continuation, null) == null)
 				return;
 			if (completed == null)
-				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<TCompletion> (), null);
-			completed.Enqueue (continuation);
+				Interlocked.CompareExchange (ref completed, new ConcurrentOrderedList<TCompletion> (), null);
+			completed.TryAdd (continuation);
+		}
+
+		public bool Remove (TCompletion continuation)
+		{
+			TCompletion temp = single;
+			if (temp != null && temp == continuation && Interlocked.CompareExchange (ref single, null, continuation) == continuation)
+				return true;
+			else if (completed != null)
+				return completed.TryRemove (continuation);
+			return false;
 		}
 
 		public bool HasElements {
@@ -62,7 +72,7 @@ namespace System.Threading.Tasks
 			if (single != null && (continuation = Interlocked.Exchange (ref single, null)) != null)
 				return true;
 
-			return completed != null && completed.TryDequeue (out continuation);
+			return completed != null && completed.TryPop (out continuation);
 		}
 	}
 }
