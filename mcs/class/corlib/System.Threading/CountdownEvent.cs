@@ -51,14 +51,9 @@ namespace System.Threading
 		{
 			if (signalCount <= 0)
 				throw new ArgumentOutOfRangeException ("signalCount");
-			
-			Action<int> check = delegate (int value) {
-				if (value < 0)
-				throw new InvalidOperationException ("the specified initialCount is larger that CurrentCount");
-			};
-			
+
 			int newValue;
-			if (!ApplyOperation (-signalCount, check, out newValue))
+			if (!ApplyOperation (-signalCount, out newValue))
 				throw new InvalidOperationException ("The event is already set");
 			
 			if (newValue == 0) {
@@ -93,16 +88,16 @@ namespace System.Threading
 			if (signalCount < 0)
 				throw new ArgumentOutOfRangeException ("signalCount");
 			
-			return ApplyOperation (signalCount, null);
+			return ApplyOperation (signalCount);
 		}
 		
-		bool ApplyOperation (int num, Action<int> doCheck)
+		bool ApplyOperation (int num)
 		{
 			int temp;
-			return ApplyOperation (num, doCheck, out temp);
+			return ApplyOperation (num, out temp);
 		}
 			
-		bool ApplyOperation (int num, Action<int> doCheck, out int newValue)
+		bool ApplyOperation (int num, out int newValue)
 		{
 			int oldCount;
 			newValue = 0;
@@ -113,9 +108,9 @@ namespace System.Threading
 					return false;
 				
 				newValue = oldCount + num;
-				
-				if (doCheck != null)
-					doCheck (newValue);
+
+				if (newValue < 0)
+					throw new InvalidOperationException ("signalCount is greater than CurrentCount");
 			} while (Interlocked.CompareExchange (ref initialCount, newValue, oldCount) != oldCount);
 			
 			return true;
