@@ -61,8 +61,6 @@ namespace System.Threading.Tasks
 		
 		TaskScheduler       scheduler;
 
-		ManualResetEventSlim schedWait = new ManualResetEventSlim (false);
-		
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
 		ConcurrentQueue<AggregateException> childExceptions;
@@ -196,7 +194,6 @@ namespace System.Threading.Tasks
 		{
 			this.scheduler = scheduler;
 			status = TaskStatus.WaitingForActivation;
-			schedWait.Set ();
 		}
 		
 		public void RunSynchronously ()
@@ -316,7 +313,6 @@ namespace System.Threading.Tasks
 		{
 			// Already set the scheduler so that user can call Wait and that sort of stuff
 			continuation.scheduler = scheduler;
-			continuation.schedWait.Set ();
 			continuation.status = TaskStatus.WaitingForActivation;
 			continuation.Slot = new CompletionSlot (kind, predicate);
 
