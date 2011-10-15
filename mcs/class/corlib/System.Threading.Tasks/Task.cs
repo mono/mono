@@ -52,7 +52,6 @@ namespace System.Threading.Tasks
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
-		static readonly Watch watch = Watch.StartNew ();
 
 		CountdownEvent childTasks;
 		
@@ -73,7 +72,7 @@ namespace System.Threading.Tasks
 		AtomicBooleanValue executing;
 
 		TaskCompletionQueue<Task> completed;
-		TaskCompletionQueue<ManualResetEventSlim> registeredEvts;
+		TaskCompletionQueue<IEventSlot> registeredEvts;
 		// If this task is a continuation, this stuff gets filled
 		CompletionSlot Slot;
 
@@ -399,21 +398,21 @@ namespace System.Threading.Tasks
 			return options;
 		}
 
-		void RegisterWaitEvent (ManualResetEventSlim evt)
+		void RegisterWaitEvent (IEventSlot slot)
 		{
 			if (IsCompleted) {
-				evt.Set ();
+				slot.Set ();
 				return;
 			}
 
-			registeredEvts.Add (evt);
-			if (IsCompleted)
-				evt.Set ();
+			registeredEvts.Add (slot);
+			if (IsCompleted && registeredEvts.Remove (slot))
+				slot.Set ();
 		}
 
-		void UnregisterWaitEvent (ManualResetEventSlim evt)
+		void UnregisterWaitEvent (IEventSlot slot)
 		{
-			registeredEvts.Remove (evt);
+			registeredEvts.Remove (slot);
 		}
 		#endregion
 		
@@ -573,7 +572,7 @@ namespace System.Threading.Tasks
 					CompletionExecutor (continuation);
 			}
 			if (registeredEvts.HasElements) {
-				ManualResetEventSlim evt;
+				IEventSlot evt;
 				while (registeredEvts.TryGetNextCompletion (out evt))
 					evt.Set ();
 			}
@@ -649,12 +648,13 @@ namespace System.Threading.Tasks
 
 				if (!IsCompleted) {
 					var evt = new ManualResetEventSlim ();
+					var slot = new ManualEventSlot (evt);
 					try {
-						RegisterWaitEvent (evt);
+						RegisterWaitEvent (slot);
 						result = evt.Wait (millisecondsTimeout, cancellationToken);
 					} finally {
 						if (!result)
-							UnregisterWaitEvent (evt);
+							UnregisterWaitEvent (slot);
 						evt.Dispose ();
 					}
 				}
@@ -697,21 +697,33 @@ namespace System.Threading.Tasks
 
 			bool result = true;
 			List<Exception> exceptions = null;
-			long start = watch.ElapsedMilliseconds;
 
-			foreach (var t in tasks) {
+			if (tasks.Length > 0) {
+				var evt = new CountdownEvent (tasks.Length);
+				var slot = new CountdownEventSlot (evt);
 				try {
-					result &= t.Wait (millisecondsTimeout, cancellationToken);
-				} catch (AggregateException e) {
-					if (exceptions == null)
-						exceptions = new List<Exception> ();
+					foreach (var t in tasks)
+						t.RegisterWaitEvent (slot);
 
-					exceptions.AddRange (e.InnerExceptions);
+					result = evt.Wait (millisecondsTimeout, cancellationToken);
+				} finally {
+					foreach (var t in tasks) {
+						if (result) {
+							if (t.Status == TaskStatus.RanToCompletion)
+								continue;
+							if (exceptions == null)
+								exceptions = new List<Exception> ();
+							if (t.Exception != null)
+								exceptions.AddRange (t.Exception.InnerExceptions);
+							else
+								exceptions.Add (new TaskCanceledException (t));
+						} else {
+							t.UnregisterWaitEvent (slot);
+						}
+					}
+
+					evt.Dispose ();
 				}
-				if (!ComputeTimeout (ref millisecondsTimeout, start, watch))
-					result = false;
-				if (!result)
-					break;
 			}
 
 			if (exceptions != null)
@@ -750,13 +762,14 @@ namespace System.Threading.Tasks
 
 			if (tasks.Length > 0) {
 				var evt = new ManualResetEventSlim ();
+				var slot = new ManualEventSlot (evt);
 				bool result = false;
 				try {
 					for (int i = 0; i < tasks.Length; i++) {
 						var t = tasks[i];
 						if (t.IsCompleted)
 							return i;
-						t.RegisterWaitEvent (evt);
+						t.RegisterWaitEvent (slot);
 					}
 
 					if (!(result = evt.Wait (millisecondsTimeout, cancellationToken)))
@@ -764,7 +777,7 @@ namespace System.Threading.Tasks
 				} finally {
 					if (!result)
 						foreach (var t in tasks)
-							t.UnregisterWaitEvent (evt);
+							t.UnregisterWaitEvent (slot);
 					evt.Dispose ();
 				}
 			}
@@ -788,14 +801,6 @@ namespace System.Threading.Tasks
 			} catch (System.OverflowException) {
 				throw new ArgumentOutOfRangeException ("timeout");
 			}
-		}
-
-		static bool ComputeTimeout (ref int millisecondsTimeout, long start, Watch watch)
-		{
-			if (millisecondsTimeout == -1)
-				return true;
-
-			return (millisecondsTimeout = millisecondsTimeout - (int)(watch.ElapsedMilliseconds - start)) >= 1;
 		}
 
 		static void CheckForNullTasks (Task[] tasks)
@@ -1089,6 +1094,41 @@ namespace System.Threading.Tasks
 			}
 		}
 		
+		#endregion
+
+		#region Private EventSlot definition
+		interface IEventSlot
+		{
+			void Set ();
+		}
+
+		class ManualEventSlot : IEventSlot
+		{
+			ManualResetEventSlim evt;
+			public ManualEventSlot (ManualResetEventSlim evt)
+			{
+				this.evt = evt;
+			}
+
+			public void Set ()
+			{
+				evt.Set ();
+			}
+		}
+
+		class CountdownEventSlot : IEventSlot
+		{
+			CountdownEvent evt;
+			public CountdownEventSlot (CountdownEvent evt)
+			{
+				this.evt = evt;
+			}
+
+			public void Set ()
+			{
+				evt.Signal ();
+			}
+		}
 		#endregion
 	}
 }
