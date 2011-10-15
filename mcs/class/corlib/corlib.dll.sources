@@ -1554,7 +1554,9 @@ System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
 System.Threading.Tasks/Task_T.cs
 System.Threading.Tasks/Task.cs
-System.Threading.Tasks/CompletionContainer.cs
+System.Threading.Tasks/TaskCompletionQueue.cs
+System.Threading.Tasks/IEventSlot.cs
+System.Threading.Tasks/EventSlots.cs
 System.Threading.Tasks/CompletionSlot.cs
 System.Threading.Tasks/TaskDebuggerView.cs
 System.Threading.Tasks/TaskCompletionSource.cs

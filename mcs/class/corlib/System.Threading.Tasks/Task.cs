@@ -3,6 +3,7 @@
 //
 // Authors:
 //    Marek Safar  <marek.safar@gmail.com>
+//    Jérémie Laval <jeremie dot laval at xamarin dot com>
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
@@ -1094,41 +1095,6 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		#endregion
-
-		#region Private EventSlot definition
-		interface IEventSlot
-		{
-			void Set ();
-		}
-
-		class ManualEventSlot : IEventSlot
-		{
-			ManualResetEventSlim evt;
-			public ManualEventSlot (ManualResetEventSlim evt)
-			{
-				this.evt = evt;
-			}
-
-			public void Set ()
-			{
-				evt.Set ();
-			}
-		}
-
-		class CountdownEventSlot : IEventSlot
-		{
-			CountdownEvent evt;
-			public CountdownEventSlot (CountdownEvent evt)
-			{
-				this.evt = evt;
-			}
-
-			public void Set ()
-			{
-				evt.Signal ();
-			}
-		}
 		#endregion
 	}
 }
