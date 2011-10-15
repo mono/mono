@@ -579,6 +579,24 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void DoubleWaitTest ()
+		{
+			var evt = new ManualResetEventSlim ();
+			var t = Task.Factory.StartNew (() => evt.Wait (3000));
+			var cntd = new CountdownEvent (2);
+
+			bool r1 = false, r2 = false;
+			ThreadPool.QueueUserWorkItem (delegate { t.Wait (2000); r1 = true; cntd.Signal (); });
+			ThreadPool.QueueUserWorkItem (delegate { t.Wait (2000); r2 = true; cntd.Signal (); });
+
+			Thread.Sleep (100);
+			evt.Set ();
+			cntd.Wait (1000);
+			Assert.IsTrue (r1);
+			Assert.IsTrue (r2);
+		}
+
+		[Test]
 		public void ExecuteSynchronouslyTest ()
 		{
 			var val = 0;
