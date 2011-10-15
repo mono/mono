@@ -78,6 +78,52 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue(s, "#1");
 			Assert.IsTrue(mre.IsSet, "#2");
 		}
+
+		[Test, ExpectedException (typeof (ObjectDisposedException))]
+		public void WaitAfterDisposeTest ()
+		{
+			mre.Dispose ();
+			mre.Wait ();
+		}
+
+		[Test]
+		public void SetAfterDisposeTest ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+				Exception disp = null, setting = null;
+
+				CountdownEvent evt = new CountdownEvent (2);
+				CountdownEvent evtFinish = new CountdownEvent (2);
+
+				ThreadPool.QueueUserWorkItem (delegate {
+					try {
+						evt.Signal ();
+						evt.Wait (1000);
+						mre.Dispose ();
+					} catch (Exception e) {
+						disp = e;
+					}
+					evtFinish.Signal ();
+				});
+				ThreadPool.QueueUserWorkItem (delegate {
+					try {
+						evt.Signal ();
+						evt.Wait (1000);
+						mre.Set ();
+					} catch (Exception e) {
+						setting = e;
+					}
+					evtFinish.Signal ();
+				});
+
+				evtFinish.Wait (1000);
+				Assert.IsNull (disp, "#1");
+				Assert.IsNull (setting, "#2");
+
+				evt.Dispose ();
+				evtFinish.Dispose ();
+			});
+		}
 	}
 }
 #endif

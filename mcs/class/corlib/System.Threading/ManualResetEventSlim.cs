@@ -39,7 +39,8 @@ namespace System.Threading
 		readonly int spinCount;
 
 		ManualResetEvent handle;
-		bool disposed;
+		AtomicBooleanValue disposed;
+		bool used;
 
 		readonly static Watch sw = Watch.StartNew ();
 
@@ -75,15 +76,29 @@ namespace System.Threading
 		public void Reset ()
 		{
 			state = isNotSet;
-			if (handle != null)
-				handle.Reset ();
+			if (handle != null) {
+				used = true;
+				Thread.MemoryBarrier ();
+				var tmpHandle = handle;
+				if (tmpHandle != null)
+					tmpHandle.Reset ();
+				Thread.MemoryBarrier ();
+				used = false;
+			}
 		}
 
 		public void Set ()
 		{
 			state = isSet;
-			if (handle != null)
-				handle.Set ();
+			if (handle != null) {
+				used = true;
+				Thread.MemoryBarrier ();
+				var tmpHandle = handle;
+				if (tmpHandle != null)
+					tmpHandle.Set ();
+				Thread.MemoryBarrier ();
+				used = false;
+			}
 		}
 
 		public void Wait ()
@@ -174,17 +189,23 @@ namespace System.Threading
 
 		protected virtual void Dispose (bool disposing)
 		{
-			disposed = true;
-			Thread.MemoryBarrier ();
+			if (!disposed.TryRelaxedSet ())
+				return;
 			if (handle != null) {
-				handle.Dispose ();
-				handle = null;
+				var tmpHandle = Interlocked.Exchange (ref handle, null);
+				if (used) {
+					// A tiny wait (just a few cycles normally) before releasing
+					SpinWait wait = new SpinWait ();
+					while (used)
+						wait.SpinOnce ();
+				}
+				tmpHandle.Dispose ();
 			}
 		}
 
 		void ThrowIfDisposed ()
 		{
-			if (disposed)
+			if (disposed.Value)
 				throw new ObjectDisposedException ("ManualResetEventSlim");
 		}
 
