@@ -399,7 +399,7 @@ namespace System.Threading.Tasks
 			return options;
 		}
 
-		internal void RegisterWaitEvent (ManualResetEventSlim evt)
+		void RegisterWaitEvent (ManualResetEventSlim evt)
 		{
 			if (IsCompleted) {
 				evt.Set ();
@@ -409,6 +409,11 @@ namespace System.Threading.Tasks
 			registeredEvts.Add (evt);
 			if (IsCompleted)
 				evt.Set ();
+		}
+
+		void UnregisterWaitEvent (ManualResetEventSlim evt)
+		{
+			registeredEvts.Remove (evt);
 		}
 		#endregion
 		
@@ -643,11 +648,11 @@ namespace System.Threading.Tasks
 					Execute (null);
 
 				if (!IsCompleted) {
-					// Free heavy ressources used by the event automatically but without removing
-					// it from the queue since Set () doesn't trigger ObjectDisposedException
 					using (var evt = new ManualResetEventSlim ()) {
 						RegisterWaitEvent (evt);
 						result = evt.Wait (millisecondsTimeout, cancellationToken);
+						if (!result)
+							UnregisterWaitEvent (evt);
 					}
 				}
 			}
@@ -749,8 +754,12 @@ namespace System.Threading.Tasks
 						t.RegisterWaitEvent (evt);
 					}
 
-					if (!evt.Wait (millisecondsTimeout, cancellationToken))
+					if (!evt.Wait (millisecondsTimeout, cancellationToken)) {
+						foreach (var t in tasks)
+							t.UnregisterWaitEvent (evt);
+
 						return -1;
+					}
 				}
 			}
 
