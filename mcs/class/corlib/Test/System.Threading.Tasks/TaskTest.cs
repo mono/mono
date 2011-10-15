@@ -581,35 +581,37 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void DoubleWaitTest ()
 		{
-			var evt = new ManualResetEventSlim ();
-			var t = Task.Factory.StartNew (() => evt.Wait (3000));
-			var cntd = new CountdownEvent (2);
+			ParallelTestHelper.Repeat (delegate {
+				Console.WriteLine ("run");
+				var evt = new ManualResetEventSlim ();
+				var t = Task.Factory.StartNew (() => evt.Wait (2000));
+				var cntd = new CountdownEvent (2);
 
-			bool r1 = false, r2 = false;
-			ThreadPool.QueueUserWorkItem (delegate { t.Wait (2000); r1 = true; cntd.Signal (); });
-			ThreadPool.QueueUserWorkItem (delegate { t.Wait (2000); r2 = true; cntd.Signal (); });
+				bool r1 = false, r2 = false;
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000); Console.WriteLine ("out 1 {0}", r1); cntd.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000); Console.WriteLine ("out 2 {0}", r2); cntd.Signal (); });
 
-			Thread.Sleep (100);
-			evt.Set ();
-			cntd.Wait (1000);
-			Assert.IsTrue (r1);
-			Assert.IsTrue (r2);
+				cntd.Wait (2000);
+				cntd.Reset ();
+				evt.Set ();
+				cntd.Wait (2000);
+				Assert.IsTrue (r1);
+				Assert.IsTrue (r2);
+			}, 5);
 		}
 
 		[Test]
 		public void DoubleTimeoutedWaitTest ()
 		{
 			var evt = new ManualResetEventSlim ();
-			var t = Task.Factory.StartNew (() => evt.Wait (3000));
+			var t = new Task (delegate { });
 			var cntd = new CountdownEvent (2);
 
 			bool r1 = false, r2 = false;
-			ThreadPool.QueueUserWorkItem (delegate { r1 = !t.Wait (200); cntd.Signal (); });
-			ThreadPool.QueueUserWorkItem (delegate { r2 = !t.Wait (200); cntd.Signal (); });
+			ThreadPool.QueueUserWorkItem (delegate { r1 = !t.Wait (500); cntd.Signal (); });
+			ThreadPool.QueueUserWorkItem (delegate { r2 = !t.Wait (500); cntd.Signal (); });
 
-			Thread.Sleep (100);
-			cntd.Wait (1000);
-			evt.Set ();
+			cntd.Wait (2000);
 			Assert.IsTrue (r1);
 			Assert.IsTrue (r2);
 		}
