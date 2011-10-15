@@ -648,11 +648,14 @@ namespace System.Threading.Tasks
 					Execute (null);
 
 				if (!IsCompleted) {
-					using (var evt = new ManualResetEventSlim ()) {
+					var evt = new ManualResetEventSlim ();
+					try {
 						RegisterWaitEvent (evt);
 						result = evt.Wait (millisecondsTimeout, cancellationToken);
+					} finally {
 						if (!result)
 							UnregisterWaitEvent (evt);
+						evt.Dispose ();
 					}
 				}
 			}
@@ -746,7 +749,9 @@ namespace System.Threading.Tasks
 			CheckForNullTasks (tasks);
 
 			if (tasks.Length > 0) {
-				using (var evt = new ManualResetEventSlim ()) {
+				var evt = new ManualResetEventSlim ();
+				bool result = false;
+				try {
 					for (int i = 0; i < tasks.Length; i++) {
 						var t = tasks[i];
 						if (t.IsCompleted)
@@ -754,12 +759,13 @@ namespace System.Threading.Tasks
 						t.RegisterWaitEvent (evt);
 					}
 
-					if (!evt.Wait (millisecondsTimeout, cancellationToken)) {
+					if (!(result = evt.Wait (millisecondsTimeout, cancellationToken)))
+						return -1;
+				} finally {
+					if (!result)
 						foreach (var t in tasks)
 							t.UnregisterWaitEvent (evt);
-
-						return -1;
-					}
+					evt.Dispose ();
 				}
 			}
 
