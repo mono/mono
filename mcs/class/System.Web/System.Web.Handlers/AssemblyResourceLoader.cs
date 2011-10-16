@@ -324,7 +324,7 @@ namespace System.Web.Handlers
 					atime = QueryParamSeparator + "t=" + DateTime.UtcNow.Ticks;
 			}
 #endif
-			string d = assemblyNameHash + "_" + resourceNameHash +  (debug ? "_t" : "_f");
+			string d = HttpUtility.UrlEncode (assemblyNameHash + "_" + resourceNameHash +  (debug ? "_t" : "_f"));
 			string href = HandlerFileName + "?d=" + d + atime + extra;
 			HttpContext ctx = HttpContext.Current;
 			HttpRequest req = ctx != null ? ctx.Request : null;
