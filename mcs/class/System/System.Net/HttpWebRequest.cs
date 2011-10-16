@@ -747,12 +747,14 @@ namespace System.Net
 
 		void CheckIfForceWrite ()
 		{
-			if (writeStream == null || writeStream.RequestWritten|| contentLength < 0 || !InternalAllowBuffering)
+			if (writeStream == null || writeStream.RequestWritten || (contentLength < 0 && writeStream.CanWrite == true) || !InternalAllowBuffering)
 				return;
 
 			// This will write the POST/PUT if the write stream already has the expected
-			// amount of bytes in it (ContentLength) (bug #77753).
-			if (writeStream.WriteBufferLength == contentLength)
+			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream
+			// contains data and it has been closed already (xamarin bug #1512).
+
+			if (writeStream.WriteBufferLength == contentLength || (contentLength == -1 && writeStream.CanWrite == false))
 				writeStream.WriteRequest ();
 		}
 

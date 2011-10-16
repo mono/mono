@@ -776,7 +776,8 @@ namespace System.Net
 				throw new WebException ("Request was cancelled.", io, WebExceptionStatus.RequestCanceled);
 			}
 
-			WriteRequest ();
+			// Commented out the next line to fix xamarin bug #1512
+			//WriteRequest ();
 			disposed = true;
 		}
 
