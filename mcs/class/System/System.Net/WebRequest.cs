@@ -360,6 +360,7 @@ namespace System.Net
 				}
 			} else {
 				string address = Environment.GetEnvironmentVariable ("http_proxy");
+
 				if (address == null)
 					address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
 				
