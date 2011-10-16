@@ -349,18 +349,23 @@ namespace System.Net
 						}
 					}
 					
+					bool bBypassOnLocal=false;
 					string[] bypassList=null;
-				        string bypass = Environment.GetEnvironmentVariable ("no_proxy");
-				
-				        if (bypass == null)
-				        	bypass = Environment.GetEnvironmentVariable ("NO_PROXY");
-				
-				        if (bypass != null) {
-				                bypass = bypass.Remove (bypass.IndexOf("*.local"), 7);
-				                bypassList = bypass.Split (new char[]{','}, StringSplitOptions.RemoveEmptyEntries);
-				            }
-				
-				        return new WebProxy (uri, false, bypassList);
+					ArrayList al=new ArrayList();					
+			        	string bypass = Environment.GetEnvironmentVariable ("no_proxy");
+
+			        	if (bypass == null)
+			        		bypass = Environment.GetEnvironmentVariable ("NO_PROXY");			
+
+					bypassList = bypass.Split (new char[]{','}, StringSplitOptions.RemoveEmptyEntries);					
+
+					foreach(string str in bypassList)
+					{
+						if(str!="*.local")al.Add(str);
+							else bBypassOnLocal=true;
+					}
+
+			        	return new WebProxy (uri, bBypassOnLocal, al.ToArray(typeof(string)) as string[]);
 				} catch (UriFormatException) { }
 			}
 			
