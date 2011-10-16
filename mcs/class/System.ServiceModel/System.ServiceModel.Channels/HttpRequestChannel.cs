@@ -1,5 +1,5 @@
 //
-// HttpRequestChannel.cs
+// HttpRequestChannel.cs 
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
