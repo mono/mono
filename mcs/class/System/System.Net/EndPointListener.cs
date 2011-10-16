@@ -65,7 +65,7 @@ namespace System.Net {
 			args.Completed += OnAccept;
 			sock.AcceptAsync (args);
 			prefixes = new Hashtable ();
-			unregistered = Hashtable.Synchronized (new Hashtable ());
+			unregistered = new Hashtable ();
 		}
 
 		void LoadCertificateAndKey (IPAddress addr, int port)
@@ -114,13 +114,17 @@ namespace System.Net {
 				return;
 			}
 			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
-			epl.unregistered [conn] = conn;
+			lock (epl.unregistered) {
+				epl.unregistered [conn] = conn;
+			}
 			conn.BeginReadRequest ();
 		}
 
 		internal void RemoveConnection (HttpConnection conn)
 		{
-			unregistered.Remove (conn);
+			lock (unregistered) {
+				unregistered.Remove (conn);
+			}
 		}
 
 		public bool BindContext (HttpListenerContext context)
@@ -266,7 +270,7 @@ namespace System.Net {
 		public void Close ()
 		{
 			sock.Close ();
-			lock (unregistered.SyncRoot) {
+			lock (unregistered) {
 				foreach (HttpConnection c in unregistered.Keys)
 					c.Close (true);
 				unregistered.Clear ();
