@@ -9,7 +9,7 @@ etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_0
-symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config
 endif
 
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
@@ -18,6 +18,8 @@ etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
 etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
 etc/mono/4.0/machine.config: $(top_srcdir)/data/net_4_0/machine.config
 etc/mono/4.0/web.config: $(top_srcdir)/data/net_4_0/web.config
+etc/mono/4.5/machine.config: $(top_srcdir)/data/net_4_5/machine.config
+etc/mono/4.5/web.config: $(top_srcdir)/data/net_4_5/web.config
 
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -57,7 +59,10 @@ endif
 
 if INSTALL_4_0
 build_profiles += net_4_0 net_4_5
+al_profile = net_4_5
 #test_profiles += net_4_0
+else
+al_profile = net_2_0
 endif
 
 if INSTALL_MONODROID
@@ -209,7 +214,7 @@ $(tmpinst)/bin/al2: $(tmpinst)/bin/mono Makefile
 $(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_4_0/al.exe"'" "$$@"' >> $@ ; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/$(al_profile)/al.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 test-support-files: $(TEST_SUPPORT_FILES)

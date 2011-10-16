@@ -2,10 +2,10 @@
 // System.Web.Compilation.AppResourceAseemblyBuilder
 //
 // Authors:
-//   Marek Habersack (mhabersack@novell.com)
+//   Marek Habersack <grendel@twistedcode.net>
 //
 // (C) 2007-2009 Novell, Inc (http://novell.com/)
-//
+// (C) 2011 Xamarin, Inc (http://xamarin.com/)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -47,6 +47,16 @@ namespace System.Web.Compilation
 {
 	class AppResourcesAssemblyBuilder
 	{
+#if NET_4_5
+		static string framework_version = "4.5";
+		static string profile_path = "net_4_5";
+#elif NET_4_0
+		static string framework_version = "4.0";
+		static string profile_path = "net_4_0";
+#else
+		static string framework_version = "2.0";
+		static string profile_path = "net_2_0";
+#endif
 		CompilationSection config;
 		CompilerInfo ci;
 		CodeDomProvider _provider;
@@ -245,18 +255,10 @@ namespace System.Web.Compilation
 							throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
 					}
 				}
-
-#if NET_4_0
-                                alPath = Path.Combine (p, "4.0\\al.exe");
-#else
-                                alPath = Path.Combine (p, "2.0\\al.exe");
-#endif
+				alPath = Path.Combine (p, framework_version + "\\al.exe");
+				
                                 if (!File.Exists (alPath)) {
-#if NET_4_0
-                                        alPath = Path.Combine(Path.GetDirectoryName (p), "lib\\net_4_0\\al.exe");
-#else
-                                        alPath = Path.Combine(Path.GetDirectoryName (p), "lib\\net_2_0\\al.exe");
-#endif
+					alPath = Path.Combine (Path.GetDirectoryName (p), "lib\\" + profile_path + "\\al.exe");
 					if (!File.Exists (alPath))
 						throw new FileNotFoundException ("Windows al path not found: " + alPath);
 				}
