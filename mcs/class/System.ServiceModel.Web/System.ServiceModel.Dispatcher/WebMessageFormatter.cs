@@ -386,6 +386,11 @@ namespace System.ServiceModel.Dispatcher
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (message.Version);
 
+				if (OperationContext.Current != null) {
+					// Set response in the context
+					OperationContext.Current.IncomingMessage = message;
+				}
+
 				if (message.IsEmpty)
 					return null; // empty message, could be returned by HttpReplyChannel.
 
