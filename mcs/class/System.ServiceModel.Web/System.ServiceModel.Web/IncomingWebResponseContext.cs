@@ -34,14 +34,20 @@ namespace System.ServiceModel.Web
 {
 	public class IncomingWebResponseContext
 	{
-		HttpResponseMessageProperty hp;
+		OperationContext ctx;
+
+		HttpResponseMessageProperty hp {
+			get {
+				if (ctx.IncomingMessageProperties != null)
+					return (HttpResponseMessageProperty) ctx.IncomingMessageProperties [HttpResponseMessageProperty.Name];
+				else
+					return new HttpResponseMessageProperty ();
+			}
+		}
 
 		internal IncomingWebResponseContext (OperationContext context)
 		{
-			if (context.IncomingMessageProperties != null)
-				hp = (HttpResponseMessageProperty) context.IncomingMessageProperties [HttpResponseMessageProperty.Name];
-			else
-				hp = new HttpResponseMessageProperty ();
+			ctx = context;
 		}
 
 		public long ContentLength {
