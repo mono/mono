@@ -285,7 +285,7 @@ my_g_bit_nth_lsf (gsize mask, gint nth_bit)
 	if ((mask == 0) || (nth_bit == BITS_PER_CHUNK))
 		return -1;
 
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(__i386__) || defined (__native_client__)) && defined(__GNUC__)
  {
 	 int r;
 	 /* This depends on mask != 0 */
@@ -817,4 +817,3 @@ main() {
 }
 
 #endif
-
