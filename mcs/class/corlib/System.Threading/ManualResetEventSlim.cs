@@ -39,7 +39,7 @@ namespace System.Threading
 		readonly int spinCount;
 
 		ManualResetEvent handle;
-		AtomicBooleanValue disposed;
+		internal AtomicBooleanValue disposed;
 		bool used;
 
 		readonly static Watch sw = Watch.StartNew ();
