@@ -119,16 +119,21 @@ namespace System.Threading
 #endif
 		public bool Reset ()
 		{
-			CheckDisposed ();
+			/* This needs locking since another thread could dispose the handle */
+			lock (this) {
+				CheckDisposed ();
 			
-			return (NativeEventCalls.ResetEvent_internal (Handle));
+				return (NativeEventCalls.ResetEvent_internal (Handle));
+			}
 		}
 		
 		public bool Set ()
 		{
-			CheckDisposed ();
+			lock (this) {
+				CheckDisposed ();
 			
-			return (NativeEventCalls.SetEvent_internal (Handle));
+				return (NativeEventCalls.SetEvent_internal (Handle));
+			}
 		}
 #if !NET_2_1
 		[MonoTODO]

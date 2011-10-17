@@ -280,7 +280,6 @@ namespace System.Threading
 		protected virtual void Dispose (bool explicitDisposing)
 		{
 			if (!disposed){
-				disposed = true;
 
 				//
 				// This is only the case if the handle was never properly initialized
@@ -290,6 +289,10 @@ namespace System.Threading
 					return;
 
 				lock (this){
+					if (disposed)
+						return;
+
+					disposed = true;
 					if (safe_wait_handle != null)
 						safe_wait_handle.Dispose ();
 				}
