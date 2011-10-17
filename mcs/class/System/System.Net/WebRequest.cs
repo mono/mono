@@ -356,7 +356,7 @@ namespace System.Net
 							else bBypassOnLocal = true;
 					}
 					
-					return new WebProxy (strProxyServer, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
+					return new WebProxy (strHttpProxy, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
 				}
 			} else {
 				string address = Environment.GetEnvironmentVariable ("http_proxy");
