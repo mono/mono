@@ -115,7 +115,45 @@ namespace System.IO.Packaging.Tests {
             package.Close ();
             package = Package.Open (path);
         }
-
+		
+		[Test]
+		public void Close_FileStreamNotClosed ()
+		{
+			using (var stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType);
+				package.Close ();
+				stream.Read (new byte [1024], 0, 1024);
+			}
+		}
+		
+		[Test]
+		public void Close_MemoryStreamNotClosed ()
+		{
+			using (var stream = new MemoryStream ()) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType);
+				package.Close ();
+				stream.Read (new byte [1024], 0, 1024);
+			}
+		}
+		
+		[Test]
+		public void Close_Twice ()
+		{
+			var package = Package.Open (new MemoryStream (), FileMode.OpenOrCreate);
+			package.Close ();
+			package.Close ();
+		}
+		
+		[Test]
+		public void Dispose_Twice ()
+		{
+			var package = Package.Open (new MemoryStream (), FileMode.OpenOrCreate);
+			((IDisposable) package).Dispose ();
+			((IDisposable) package).Dispose ();
+		}
+		
         [Test]
         public void CreatePath ()
         {

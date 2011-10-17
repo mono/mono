@@ -49,6 +49,10 @@ namespace System.IO.Packaging {
 		private const string ContentNamespace = "http://schemas.openxmlformats.org/package/2006/content-types";
 		private const string ContentUri = "[Content_Types].xml";
 		
+		bool OwnsStream {
+			get; set;
+		}
+		
 		Dictionary<Uri, ZipPackagePart> parts;
 		internal Dictionary<Uri, MemoryStream> PartStreams = new Dictionary<Uri, MemoryStream> (new  UriComparer());
 
@@ -62,15 +66,17 @@ namespace System.IO.Packaging {
 			}
 		}
 		
-		internal ZipPackage (FileAccess access, Stream stream)
+		internal ZipPackage (FileAccess access, bool ownsStream, Stream stream)
 			: base (access)
 		{
+			OwnsStream = ownsStream;
 			PackageStream = stream;
 		}
 
-		internal ZipPackage (FileAccess access, Stream stream, bool streaming)
+		internal ZipPackage (FileAccess access, bool ownsStream, Stream stream, bool streaming)
 			: base (access, streaming)
 		{
+			OwnsStream = ownsStream;
 			PackageStream = stream;
 		}
 		
@@ -79,7 +85,10 @@ namespace System.IO.Packaging {
 			foreach (Stream s in PartStreams.Values)
 				s.Close ();
 			
-			PackageStream.Close ();
+			base.Dispose (disposing);
+			
+			if (OwnsStream)
+				PackageStream.Close ();
 		}
 
 		protected override void FlushCore ()
