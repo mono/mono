@@ -326,7 +326,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_OVF_U4:
 	case OP_ICONV_TO_OVF_I4_UN:
-#if SIZEOF_REGISTER == 4
+#if SIZEOF_VOID_P == 4
 	case OP_ICONV_TO_OVF_U:
 	case OP_ICONV_TO_OVF_I_UN:
 #endif
@@ -339,7 +339,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	case OP_ICONV_TO_U4:
 	case OP_ICONV_TO_OVF_I4:
 	case OP_ICONV_TO_OVF_U4_UN:
-#if SIZEOF_REGISTER == 4
+#if SIZEOF_VOID_P == 4
 	case OP_ICONV_TO_OVF_I:
 	case OP_ICONV_TO_OVF_U_UN:
 #endif
