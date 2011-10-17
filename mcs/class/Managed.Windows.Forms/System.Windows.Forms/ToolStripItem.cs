@@ -1804,6 +1804,8 @@ namespace System.Windows.Forms
 		
 		internal virtual void HandleClick (int mouse_clicks, EventArgs e)
 		{
+			if (Parent == null)
+				return;
 			this.Parent.HandleItemClick (this);
 			if (mouse_clicks == 2 && double_click_enabled)
 				this.OnDoubleClick (e);
