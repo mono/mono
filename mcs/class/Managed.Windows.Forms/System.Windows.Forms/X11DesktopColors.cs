@@ -115,6 +115,14 @@ namespace System.Windows.Forms {
 						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light(ColorFromGdkColor (style.light[0]));
 						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark(ColorFromGdkColor (style.dark[0]));
 
+						// We don't want ControlLight and ControlLightLight to disappear on a white background!
+						Color white = Color.FromArgb(255, 255, 255, 255);
+						if (ThemeEngine.Current.ColorControlLight.ToArgb() == white.ToArgb()) {
+							ThemeEngine.Current.ColorControlLight = Color.FromArgb (255, 190, 190, 190);
+						}
+						if (ThemeEngine.Current.ColorControlLightLight.ToArgb() == white.ToArgb()) {
+							ThemeEngine.Current.ColorControlLightLight = Color.FromArgb (255, 220, 220, 220);
+						}
 						widget = gtk_menu_new ();
 						gtk_widget_ensure_style (widget);
 						style_ptr = gtk_widget_get_style (widget);
