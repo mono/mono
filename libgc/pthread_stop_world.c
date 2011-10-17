@@ -509,29 +509,28 @@ static void pthread_stop_world()
 
 #define NACL_STORE_REGS()  \
     do {                  \
-	asm("push %rbx");\
-	asm("push %rbp");\
-	asm("push %r12");\
-	asm("push %r13");\
-	asm("push %r14");\
-	asm("push %r15");\
-	asm("mov %%esp, %0" : "=m" (nacl_gc_thread_self->stop_info.stack_ptr));\
+	__asm__ __volatile__ ("push %rbx");\
+	__asm__ __volatile__ ("push %rbp");\
+	__asm__ __volatile__ ("push %r12");\
+	__asm__ __volatile__ ("push %r13");\
+	__asm__ __volatile__ ("push %r14");\
+	__asm__ __volatile__ ("push %r15");\
+	__asm__ __volatile__ ("mov %%esp, %0" : "=m" (nacl_gc_thread_self->stop_info.stack_ptr));\
         memcpy(nacl_gc_thread_self->stop_info.reg_storage, nacl_gc_thread_self->stop_info.stack_ptr, NACL_GC_REG_STORAGE_SIZE * sizeof(ptr_t));\
-	asm("add $48, %esp");\
-        asm("add %r15, %rsp");\
+        __asm__ __volatile__ ("naclasp $48, %r15");\
     } while (0)
 
 #elif __i386__
 
 #define NACL_STORE_REGS()  \
     do {                  \
-	asm("push %ebx");\
-	asm("push %ebp");\
-	asm("push %esi");\
-	asm("push %edi");\
-	asm("mov %%esp, %0" : "=m" (nacl_gc_thread_self->stop_info.stack_ptr));\
+	__asm__ __volatile__ ("push %ebx");\
+	__asm__ __volatile__ ("push %ebp");\
+	__asm__ __volatile__ ("push %esi");\
+	__asm__ __volatile__ ("push %edi");\
+	__asm__ __volatile__ ("mov %%esp, %0" : "=m" (nacl_gc_thread_self->stop_info.stack_ptr));\
         memcpy(nacl_gc_thread_self->stop_info.reg_storage, nacl_gc_thread_self->stop_info.stack_ptr, NACL_GC_REG_STORAGE_SIZE * sizeof(ptr_t));\
-	asm("add $16, %esp");\
+	__asm__ __volatile__ ("add $16, %esp");\
     } while (0)
 
 #endif

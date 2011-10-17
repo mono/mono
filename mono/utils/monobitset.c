@@ -315,7 +315,7 @@ static inline gint
 my_g_bit_nth_lsf_nomask (gsize mask)
 {
 	/* Mask is expected to be != 0 */
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(__i386__) || defined(__native_client__)) && defined(__GNUC__)
 	int r;
 
 	__asm__("bsfl %1,%0\n\t"

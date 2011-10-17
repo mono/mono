@@ -53,7 +53,7 @@ CustomConfigureStep() {
   cd ${PACKAGE_NAME}
   CC=${NACLCC} CXX=${NACLCXX} AR=${NACLAR} RANLIB=${NACLRANLIB} PKG_CONFIG_PATH=${NACL_SDK_USR_LIB}/pkgconfig LD="${NACLLD}" \
   PKG_CONFIG_LIBDIR=${NACL_SDK_USR_LIB} PATH=${NACL_BIN_PATH}:${PATH} LIBS="-lnacl_dyncode -lc -lg -lnosys -lnacl" \
-  CFLAGS="-g -D_POSIX_PATH_MAX=256 -DPATH_MAX=256 ${NACL_NEWLIB_DEFINE}" ../../configure \
+  CFLAGS="-g -O2 -D_POSIX_PATH_MAX=256 -DPATH_MAX=256 ${NACL_NEWLIB_DEFINE}" ../../configure \
     ${CONFIG_OPTS} \
     --exec-prefix=${INSTALL_PATH} \
     --libdir=${INSTALL_PATH}/lib \
