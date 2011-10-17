@@ -2524,8 +2524,12 @@ namespace System.Windows.Forms {
 		}
 
 		public Rectangle GetCellDisplayRectangle (int columnIndex, int rowIndex, bool cutOverflow) {
-			if (columnIndex < 0 || columnIndex >= columns.Count) {
-				throw new ArgumentOutOfRangeException("Column index is out of range.");
+			// Allow the column and row headers (index == -1).
+			if (columnIndex < -1 || columnIndex >= columns.Count) {
+				throw new ArgumentOutOfRangeException ("Column index is out of range.");
+			}
+			if (rowIndex < -1 || (rowIndex > 0 && rowIndex >= rows.Count)) {
+				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 			}
 			
 			int x = 0, y = 0, w = 0, h = 0;
@@ -2539,20 +2543,31 @@ namespace System.Windows.Forms {
 			if (RowHeadersVisible)
 				x += RowHeadersWidth;
 
-			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
+			// Handle the top left cell when both column and row headers are showing.
+			if (columnIndex == -1 && rowIndex == -1)
+				return new Rectangle (BorderWidth, BorderWidth, RowHeadersWidth, ColumnHeadersHeight);
 
-			for (int i = first_col_index; i < cols.Count; i++) {
-				if (!cols[i].Visible)
-					continue;
-					
-				if (cols[i].Index == columnIndex) {
-					w = cols[i].Width;
-					break;
+			if (columnIndex >= 0)
+			{
+				List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
+	
+				for (int i = first_col_index; i < cols.Count; i++) {
+					if (!cols[i].Visible)
+						continue;
+						
+					if (cols[i].Index == columnIndex) {
+						w = cols[i].Width;
+						break;
+					}
+	
+					x += cols[i].Width;
 				}
-
-				x += cols[i].Width;
 			}
 			
+			// Handle a cell in the header row.
+			if (rowIndex == -1)
+				return new Rectangle (x, BorderWidth, w, ColumnHeadersHeight);
+
 			for (int i = first_row_index; i < Rows.Count; i++) {
 				if (!rows[i].Visible)
 					continue;
@@ -2565,6 +2580,10 @@ namespace System.Windows.Forms {
 				y += rows [i].Height;
 			}
 			
+			// Handle a cell in the header column.
+			if (columnIndex == -1)
+				return new Rectangle (BorderWidth, y, RowHeadersWidth, h);
+
 			return new Rectangle (x, y, w, h);
 		}
 
@@ -2915,10 +2934,12 @@ namespace System.Windows.Forms {
 
 		public void InvalidateCell (int columnIndex, int rowIndex)
 		{
-			if (columnIndex < 0 || columnIndex >= columns.Count)
+			// Allow the header column (columnIndex == -1).
+			if (columnIndex < -1 || columnIndex >= columns.Count)
 				throw new ArgumentOutOfRangeException ("Column index is out of range.");
 
-			if (rowIndex < 0 || rowIndex >= rows.Count)
+			// Allow the header row (rowIndex == -1).
+			if (rowIndex < -1 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
 			if (!is_binding)
@@ -3777,7 +3798,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		protected virtual void OnCellValuePushed (DataGridViewCellValueEventArgs e)
+		protected internal virtual void OnCellValuePushed (DataGridViewCellValueEventArgs e)
 		{
 			DataGridViewCellValueEventHandler eh = (DataGridViewCellValueEventHandler)(Events [CellValuePushedEvent]);
 			if (eh != null)
