@@ -694,12 +694,16 @@ namespace System.Threading.Tasks
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
-			CheckForNullTasks (tasks);
 
 			bool result = true;
-			List<Exception> exceptions = null;
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
 
-			if (tasks.Length > 0) {
+				result &= t.Status == TaskStatus.RanToCompletion;
+			}
+
+			if (!result) {
 				var evt = new CountdownEvent (tasks.Length);
 				var slot = new CountdownEventSlot (evt);
 				try {
@@ -708,6 +712,8 @@ namespace System.Threading.Tasks
 
 					result = evt.Wait (millisecondsTimeout, cancellationToken);
 				} finally {
+					List<Exception> exceptions = null;
+
 					foreach (var t in tasks) {
 						if (result) {
 							if (t.Status == TaskStatus.RanToCompletion)
@@ -724,11 +730,11 @@ namespace System.Threading.Tasks
 					}
 
 					evt.Dispose ();
+
+					if (exceptions != null)
+						throw new AggregateException (exceptions);
 				}
 			}
-
-			if (exceptions != null)
-				throw new AggregateException (exceptions);
 
 			return result;
 		}
