@@ -44,6 +44,9 @@ namespace System.IO.Packaging {
 		PackageRelationshipCollection relationshipsCollection = new PackageRelationshipCollection ();
 		Uri Uri = new Uri ("/", UriKind.Relative);
 		
+		bool Disposed {
+			get; set;
+		}
 
 		public FileAccess FileOpenAccess {
 			get; private set;
@@ -113,8 +116,7 @@ namespace System.IO.Packaging {
 		public void Close ()
 		{
 			// FIXME: Ensure that Flush is actually called before dispose
-			Flush ();
-			Dispose (true);
+			((IDisposable) this).Dispose ();
 		}
 
 		public PackagePart CreatePart (Uri partUri, string contentType)
@@ -221,8 +223,11 @@ namespace System.IO.Packaging {
 		
 		void IDisposable.Dispose ()
 		{
-			Flush ();
-			Dispose (true);
+			if (!Disposed) {
+				Flush ();
+				Dispose (true);
+				Disposed = true;
+			}
 		}
 
 		protected virtual void Dispose (bool disposing)
@@ -370,7 +375,12 @@ namespace System.IO.Packaging {
 
 		public static Package Open (Stream stream, FileMode packageMode, FileAccess packageAccess)
 		{
-			return OpenCore (stream, packageMode, packageAccess);
+			return Open (stream, packageMode, packageAccess, false);
+		}
+		
+		static Package Open (Stream stream, FileMode packageMode, FileAccess packageAccess, bool ownsStream)
+		{
+			return OpenCore (stream, packageMode, packageAccess, ownsStream);
 		}
 
 		public static Package Open (string path, FileMode packageMode, FileAccess packageAccess)
@@ -394,10 +404,10 @@ namespace System.IO.Packaging {
 				throw new FileFormatException ("Stream length cannot be zero with FileMode.Open");
 
 			Stream s = File.Open (path, packageMode, packageAccess, packageShare);
-			return Open (s, packageMode, packageAccess);
+			return Open (s, packageMode, packageAccess, true);
 		}
 
-		static Package OpenCore (Stream stream, FileMode packageMode, FileAccess packageAccess)
+		static Package OpenCore (Stream stream, FileMode packageMode, FileAccess packageAccess, bool ownsStream)
 		{
 			if ((packageAccess & FileAccess.Read) == FileAccess.Read && !stream.CanRead)
 				throw new IOException ("Stream does not support reading");
@@ -432,7 +442,7 @@ namespace System.IO.Packaging {
 				}
 			}
 			
-			return new ZipPackage (packageAccess, stream);
+			return new ZipPackage (packageAccess, ownsStream, stream);
 		}
 		
 		public virtual bool PartExists (Uri partUri)
