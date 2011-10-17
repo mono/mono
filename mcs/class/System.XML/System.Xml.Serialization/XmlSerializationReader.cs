@@ -1188,10 +1188,9 @@ namespace System.Xml.Serialization
 			set { throw new NotImplementedException(); }
 		}
 
-		[MonoTODO]
 		protected string CollapseWhitespace (string value)
 		{
-			throw new NotImplementedException ();
+			return value == null ? null : value.Trim ();
 		}
 				
 		[MonoTODO]
