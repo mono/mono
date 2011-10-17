@@ -178,7 +178,7 @@ namespace System.Net
 		}
 
 		public int ChunkLeft {
-			get { return chunkSize - chunkRead; }
+			get { return Math.Max( chunkSize - chunkRead, 0 ); }
 		}
 		
 		State ReadBody (byte [] buffer, ref int offset, int size)
