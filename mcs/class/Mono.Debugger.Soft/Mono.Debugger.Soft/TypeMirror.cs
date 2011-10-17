@@ -642,6 +642,25 @@ namespace Mono.Debugger.Soft
 			return res.ToArray ();
 		}
 
+		public MethodMirror[] GetMethodsByNameFlags (string name, BindingFlags flags, bool ignoreCase) {
+			if (vm.conn.Version.AtLeast (2, 6)) {
+				long[] ids = vm.conn.Type_GetMethodsByNameFlags (id, name, (int)flags, ignoreCase);
+				MethodMirror[] m = new MethodMirror [ids.Length];
+				for (int i = 0; i < ids.Length; ++i)
+					m [i] = vm.GetMethod (ids [i]);
+				return m;
+			} else {
+				if (flags != (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.NonPublic))
+					throw new NotImplementedException ();
+				var res = new List<MethodMirror> ();
+				foreach (MethodMirror m in GetMethods ()) {
+					if ((!ignoreCase && m.Name == name) || (ignoreCase && m.Name.Equals (name, StringComparison.CurrentCultureIgnoreCase)))
+						res.Add (m);
+				}
+				return res.ToArray ();
+			}
+		}
+
 		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);
 		}
