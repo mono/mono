@@ -32,7 +32,7 @@ CustomConfigureStep() {
   cp ../nacl64-mono-config-cache ../nacl64-mono-config-cache.temp
   if [ $HOST_BITSIZE = "64" ]; then
     ../../configure \
-      CFLAGS="-O0" CXXFLAGS="-O0" CC='cc -m32' CXX='g++ -m32' \
+      CC='cc -m32' CXX='g++ -m32' \
       --host=i386-pc-linux \
       --build=amd64-pc-linux \
       --target=nacl64 \
