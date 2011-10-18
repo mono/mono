@@ -205,6 +205,8 @@ namespace System.IO.Packaging {
 		{
 			XmlDocument doc = new XmlDocument ();
 			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
+			Dictionary<string, string> mimes = new Dictionary<string, string> ();
+			
 			manager.AddNamespace ("content", ContentNamespace);
 
 			doc.AppendChild(doc.CreateNode (XmlNodeType.XmlDeclaration, "", ""));
@@ -213,19 +215,35 @@ namespace System.IO.Packaging {
 			doc.AppendChild (root);
 			foreach (ZipPackagePart part in Parts.Values)
 			{
-				XmlNode node = doc.CreateNode (XmlNodeType.Element, "Override", ContentNamespace);
+				XmlNode node = null;
+				string existingMimeType;
+									
+				var extension = Path.GetExtension (part.Uri.OriginalString);
+				if (extension.Length > 0)
+					extension = extension.Substring (1);
 				
-				XmlAttribute contentType = doc.CreateAttribute ("ContentType");
-				contentType.Value = part.ContentType;
+				if (!mimes.TryGetValue (extension, out existingMimeType)) {
+					node = doc.CreateNode (XmlNodeType.Element, "Default", ContentNamespace);
+					
+					XmlAttribute ext = doc.CreateAttribute ("Extension");
+					ext.Value = extension;
+					node.Attributes.Append (ext);
+					mimes [extension] = part.ContentType;
+				} else if (part.ContentType != existingMimeType) {
+					node = doc.CreateNode (XmlNodeType.Element, "Override", ContentNamespace);
+					
+					XmlAttribute name = doc.CreateAttribute ("PartName");
+					name.Value = part.Uri.ToString ();
+					node.Attributes.Append (name);
+				}
 				
-				XmlAttribute name = doc.CreateAttribute ("PartName");
-				name.Value = part.Uri.ToString ();
-				
-
-				node.Attributes.Append (contentType);
-				node.Attributes.Append (name);
-
-				root.AppendChild (node);				
+				if (node != null) {
+					XmlAttribute contentType = doc.CreateAttribute ("ContentType");
+					contentType.Value = part.ContentType;
+					node.Attributes.Prepend (contentType);
+	
+					root.AppendChild (node);
+				}
 			}
 
 			using (XmlTextWriter writer = new XmlTextWriter (s, System.Text.Encoding.UTF8))
