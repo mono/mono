@@ -346,14 +346,14 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I:
-#if SIZEOF_REGISTER == 8
+#if SIZEOF_VOID_P == 8
 		ins->opcode = OP_SEXT_I4;
 #else
 		ins->opcode = OP_MOVE;
 #endif
 		break;
 	case OP_ICONV_TO_U:
-#if SIZEOF_REGISTER == 8
+#if SIZEOF_VOID_P == 8
 		ins->opcode = OP_ZEXT_I4;
 #else
 		ins->opcode = OP_MOVE;
