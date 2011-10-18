@@ -119,7 +119,45 @@ namespace System.IO.Packaging.Tests {
             Assert.AreEqual (package, part.Package, "Wrong package3");
             Assert.AreEqual ("/third", part.Uri.ToString (), "Wrong package selected3");
         }
-
+		
+		[Test]
+		public void SameExtensionDifferentContentTypeTest ()
+		{
+			// FIXME: Ideally we should be opening the zip and checking
+			// exactly what was written to verify it's correct
+			using (var stream = new MemoryStream ()) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType + "1");
+				package.CreatePart (uris [1], contentType + "2");
+				package.CreatePart (uris [2], contentType + "2");
+				package.Close ();
+				
+				package = Package.Open (new MemoryStream (stream.ToArray ()));
+				Assert.AreEqual (contentType + "1", package.GetPart (uris [0]).ContentType, "#1");
+				Assert.AreEqual (contentType + "2", package.GetPart (uris [1]).ContentType, "#2");
+				Assert.AreEqual (contentType + "2", package.GetPart (uris [2]).ContentType, "#3");
+			}
+		}
+		
+		[Test]
+		public void SameExtensionSameContentTypeTest ()
+		{
+			// FIXME: Ideally we should be opening the zip and checking
+			// exactly what was written to verify it's correct
+			using (var stream = new MemoryStream ()) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType);
+				package.CreatePart (uris [1], contentType);
+				package.CreatePart (uris [2], contentType);
+				package.Close ();
+				
+				package = Package.Open (new MemoryStream (stream.ToArray ()));
+				Assert.AreEqual (contentType, package.GetPart (uris [0]).ContentType, "#1");
+				Assert.AreEqual (contentType, package.GetPart (uris [1]).ContentType, "#2");
+				Assert.AreEqual (contentType, package.GetPart (uris [2]).ContentType, "#3");
+			}
+		}
+		
         [Test]
         public void CheckPartRelationships ()
         {
