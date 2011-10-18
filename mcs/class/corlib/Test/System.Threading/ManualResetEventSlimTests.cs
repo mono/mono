@@ -43,6 +43,29 @@ namespace MonoTests.System.Threading
 		{
 			mre = new ManualResetEventSlim();
 		}
+
+		[Test]
+		public void Constructor_Defaults ()
+		{
+			Assert.IsFalse (mre.IsSet, "#1");
+			Assert.AreEqual (10, mre.SpinCount, "#2");
+		}
+
+		[Test]
+		public void Constructor_Invalid ()
+		{
+			try {
+				new ManualResetEventSlim (true, -1);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				new ManualResetEventSlim (true, 2048);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+		}
 		
 		[Test]
 		public void IsSetTestCase()
@@ -77,6 +100,49 @@ namespace MonoTests.System.Threading
 			
 			Assert.IsTrue(s, "#1");
 			Assert.IsTrue(mre.IsSet, "#2");
+		}
+
+		[Test]
+		public void Wait_SetConcurrent ()
+		{
+			for (int i = 0; i < 10000; ++i) {
+				var mre = new ManualResetEventSlim ();
+				bool b = true;
+
+				ThreadPool.QueueUserWorkItem (delegate {
+					mre.Set ();
+				});
+
+				ThreadPool.QueueUserWorkItem (delegate {
+					b &= mre.Wait (1000);
+				});
+
+				Assert.IsTrue (mre.Wait (1000), i.ToString ());
+				Assert.IsTrue (b, i.ToString ());
+			}
+		}
+
+		[Test]
+		public void Wait_DisposeWithCancel ()
+		{
+			var token = new CancellationTokenSource ();
+			ThreadPool.QueueUserWorkItem (delegate {
+				Thread.Sleep (10);
+				mre.Dispose ();
+				token.Cancel ();
+			});
+
+			try {
+				mre.Wait (10000, token.Token);
+				Assert.Fail ("#0");
+			} catch (OperationCanceledException e) {
+			}
+		}
+
+		[Test]
+		public void Wait_Expired ()
+		{
+			Assert.IsFalse (mre.Wait (10));
 		}
 
 		[Test, ExpectedException (typeof (ObjectDisposedException))]
@@ -116,13 +182,72 @@ namespace MonoTests.System.Threading
 					evtFinish.Signal ();
 				});
 
-				evtFinish.Wait (1000);
+				bool bb = evtFinish.Wait (1000);
+				if (!bb)
+					Assert.AreEqual (true, evtFinish.IsSet);
+
+				Assert.IsTrue (bb, "#0");
 				Assert.IsNull (disp, "#1");
 				Assert.IsNull (setting, "#2");
 
 				evt.Dispose ();
 				evtFinish.Dispose ();
 			});
+		}
+
+		[Test]
+		public void WaitHandle_Initialized ()
+		{
+			var mre = new ManualResetEventSlim (true);
+			Assert.IsTrue (mre.WaitHandle.WaitOne (0), "#1");
+			mre.Reset ();
+			Assert.IsFalse (mre.WaitHandle.WaitOne (0), "#2");
+			Assert.AreEqual (mre.WaitHandle, mre.WaitHandle, "#3");
+		}
+
+		[Test]
+		public void WaitHandle_NotInitialized ()
+		{
+			var mre = new ManualResetEventSlim (false);
+			Assert.IsFalse (mre.WaitHandle.WaitOne (0), "#1");
+			mre.Set ();
+			Assert.IsTrue (mre.WaitHandle.WaitOne (0), "#2");
+		}
+
+		[Test]
+		public void Dispose ()
+		{
+			var mre = new ManualResetEventSlim (false);
+			mre.Dispose ();
+			Assert.IsFalse (mre.IsSet, "#0a");
+
+			try {
+			    mre.Reset ();
+			    Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			mre.Set ();
+
+			try {
+				mre.Wait (0);
+				Assert.Fail ("#3");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				var v = mre.WaitHandle;
+				Assert.Fail ("#4");
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_Double ()
+		{
+			var mre = new ManualResetEventSlim ();
+			mre.Dispose ();
+			mre.Dispose ();
 		}
 	}
 }

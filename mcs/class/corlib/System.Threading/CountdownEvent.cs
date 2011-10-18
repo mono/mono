@@ -66,7 +66,6 @@ namespace System.Threading
 		
 		public WaitHandle WaitHandle {
 			get {
-				CheckDisposed ();
 				return evt.WaitHandle;
 			}
 		}

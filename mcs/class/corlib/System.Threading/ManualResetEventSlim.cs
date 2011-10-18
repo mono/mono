@@ -1,6 +1,10 @@
-// ManuelResetEventSlim.cs
+// ManualResetEventSlim.cs
+//
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,46 +28,40 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplayAttribute ("Set = {IsSet}")]
 	public class ManualResetEventSlim : IDisposable
 	{
-		const int isSet    = 1;
-		const int isNotSet = 0;
-		const int defaultSpinCount = 100;
-
-		int state;
 		readonly int spinCount;
 
 		ManualResetEvent handle;
 		internal AtomicBooleanValue disposed;
 		bool used;
+		bool set;
 
-		readonly static Watch sw = Watch.StartNew ();
-
-		public ManualResetEventSlim () : this (false, defaultSpinCount)
+		public ManualResetEventSlim ()
+			: this (false, 10)
 		{
 		}
 
-		public ManualResetEventSlim (bool initialState) : this (initialState, defaultSpinCount)
+		public ManualResetEventSlim (bool initialState)
+			: this (initialState, 10)
 		{
 		}
 
 		public ManualResetEventSlim (bool initialState, int spinCount)
 		{
-			if (spinCount < 0)
-				throw new ArgumentOutOfRangeException ("spinCount is less than 0", "spinCount");
+			if (spinCount < 0 || spinCount > 2047)
+				throw new ArgumentOutOfRangeException ("spinCount");
 
-			this.state = initialState ? isSet : isNotSet;
+			this.set = initialState;
 			this.spinCount = spinCount;
 		}
 
 		public bool IsSet {
 			get {
-				return state == isSet;
+				return set;
 			}
 		}
 
@@ -75,7 +73,10 @@ namespace System.Threading
 
 		public void Reset ()
 		{
-			state = isNotSet;
+			ThrowIfDisposed ();
+
+			set = false;
+			Thread.MemoryBarrier ();
 			if (handle != null) {
 				used = true;
 				Thread.MemoryBarrier ();
@@ -89,7 +90,8 @@ namespace System.Threading
 
 		public void Set ()
 		{
-			state = isSet;
+			set = true;
+			Thread.MemoryBarrier ();
 			if (handle != null) {
 				used = true;
 				Thread.MemoryBarrier ();
@@ -124,35 +126,37 @@ namespace System.Threading
 		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
-				                                       "millisecondsTimeout is a negative number other than -1");
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
 			ThrowIfDisposed ();
 
-			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
-			SpinWait wait = new SpinWait ();
+			if (!set) {
+				SpinWait wait = new SpinWait ();
 
-			while (state == isNotSet) {
-				cancellationToken.ThrowIfCancellationRequested ();
+				while (!set) {
+					cancellationToken.ThrowIfCancellationRequested ();
 
-				if (millisecondsTimeout > -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout)
-					return false;
+					if (wait.Count < spinCount) {
+						wait.SpinOnce ();
+						continue;
+					}
 
-				if (wait.Count < spinCount) {
-					wait.SpinOnce ();
+					break;
+				}
+
+				if (set)
+					return true;
+
+				WaitHandle handle = WaitHandle;
+
+				if (cancellationToken.CanBeCanceled) {
+					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false) == 0)
+						return false;
+
+					cancellationToken.ThrowIfCancellationRequested ();
 				} else {
-					int waitTime = millisecondsTimeout == -1 ? -1 : Math.Max (millisecondsTimeout - (int)(sw.ElapsedMilliseconds - start) , 1);
-					ThrowIfDisposed ();
-					WaitHandle handle = WaitHandle;
-					if (state == isSet)
-						return true;
-					ThrowIfDisposed ();
-
-					if (cancellationToken.CanBeCanceled)
-						if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
-							return true;
-					else
-						if (handle.WaitOne (waitTime, false))
-							return true;
+					if (!handle.WaitOne (millisecondsTimeout, false))
+						return false;
 				}
 			}
 
@@ -166,19 +170,32 @@ namespace System.Threading
 
 		public WaitHandle WaitHandle {
 			get {
-				if (handle != null) {
-					if (state == isSet)
-						handle.Set ();
+				ThrowIfDisposed ();
 
+				if (handle != null)
 					return handle;
+
+				var isSet = set;
+				var mre = new ManualResetEvent (isSet);
+				if (Interlocked.CompareExchange (ref handle, mre, null) == null) {
+					//
+					// Ensure the Set has not ran meantime
+					//
+					if (isSet != set) {
+						if (set) {
+							mre.Set ();
+						} else {
+							mre.Reset ();
+						}
+					}
+				} else {
+					//
+					// Release the event when other thread was faster
+					//
+					mre.Dispose ();
 				}
 
-				var result = LazyInitializer.EnsureInitialized (ref handle,
-				                                                () => new ManualResetEvent (state == isSet ? true : false));
-				if (state == isSet)
-					result.Set ();
-
-				return result;
+				return handle;
 			}
 		}
 
@@ -191,6 +208,7 @@ namespace System.Threading
 		{
 			if (!disposed.TryRelaxedSet ())
 				return;
+
 			if (handle != null) {
 				var tmpHandle = Interlocked.Exchange (ref handle, null);
 				if (used) {
