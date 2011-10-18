@@ -24,7 +24,9 @@
 #endif
 
 #ifdef NACL
-int nacl_park_threads_now = 0;
+volatile int __nacl_thread_suspension_needed = 0;
+extern volatile int nacl_park_threads_now
+    __attribute__ ((alias ("__nacl_thread_suspension_needed")));
 pthread_t nacl_thread_parker = -1;
 
 int nacl_thread_parked[MAX_NACL_GC_THREADS];

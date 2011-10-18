@@ -27,6 +27,7 @@
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
 
+int __nacl_thread_suspension_needed = 0;
 void __nacl_suspend_thread_if_needed() {}
 
 static int debug = 0;
@@ -2704,4 +2705,3 @@ main (int argc, char *argv[])
 	print_reports (ctx, reports, 0);
 	return 0;
 }
-
