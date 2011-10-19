@@ -54,14 +54,15 @@ namespace System.Threading.Tasks
 			TCompletion temp = single;
 			if (temp != null && temp == continuation && Interlocked.CompareExchange (ref single, null, continuation) == continuation)
 				return true;
-			else if (completed != null)
+			if (completed != null)
 				return completed.TryRemove (continuation);
 			return false;
 		}
 
 		public bool HasElements {
 			get {
-				return single != null;
+				Thread.MemoryBarrier ();
+				return single != null || (completed != null && completed.Count != 0);
 			}
 		}
 

@@ -293,6 +293,22 @@ namespace MonoTests.System.Threading
 				Assert.AreEqual (0, ev.CurrentCount, "#2a");
 			}
 		}
+
+		[Test]
+		public void Signal_Concurrent ()
+		{
+			for (int r = 0; r < 100; ++r) {
+				using (var ce = new CountdownEvent (500)) {
+					for (int i = 0; i < ce.InitialCount; ++i) {
+						ThreadPool.QueueUserWorkItem (delegate {
+							ce.Signal ();
+						});
+					}
+
+					Assert.IsTrue (ce.Wait (1000), "#1");
+				}
+			}
+		}
 		
 		[Test]
 		public void TryAddCountTestCase()

@@ -198,6 +198,20 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void WaitAll_ManyTasks ()
+		{
+			for (int r = 0; r < 2000; ++r) {
+				var tasks = new Task[60];
+
+				for (int i = 0; i < tasks.Length; i++) {
+					tasks[i] = Task.Factory.StartNew (delegate { Thread.Sleep (0); });
+				}
+
+				Assert.IsTrue (Task.WaitAll (tasks, 2000));
+			}
+		}
+
+		[Test]
 		public void WaitAll_Zero ()
 		{
 			Assert.IsFalse (Task.WaitAll (new Task[1] { new Task (delegate { }) }, 0), "#0");
@@ -230,8 +244,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
 			};
 
-			Assert.IsTrue (cde.Wait (1000), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
+			Assert.IsTrue (cde.Wait (100), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
 
 			mre.Set ();
 
@@ -254,8 +268,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { mre.WaitOne (); })
 			};
 
-			Assert.IsTrue (cde.Wait (1000), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
+			Assert.IsTrue (cde.Wait (100), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
 
 			mre.Set ();
 
@@ -608,8 +622,8 @@ namespace MonoTests.System.Threading.Tasks
 			var cntd = new CountdownEvent (2);
 
 			bool r1 = false, r2 = false;
-			ThreadPool.QueueUserWorkItem (delegate { r1 = !t.Wait (500); cntd.Signal (); });
-			ThreadPool.QueueUserWorkItem (delegate { r2 = !t.Wait (500); cntd.Signal (); });
+			ThreadPool.QueueUserWorkItem (delegate { r1 = !t.Wait (100); cntd.Signal (); });
+			ThreadPool.QueueUserWorkItem (delegate { r2 = !t.Wait (100); cntd.Signal (); });
 
 			cntd.Wait (2000);
 			Assert.IsTrue (r1);
