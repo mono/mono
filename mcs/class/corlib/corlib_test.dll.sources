@@ -382,6 +382,7 @@ System.Threading/ReaderWriterLockTest.cs
 System.Threading/TimerTest.cs
 System.Threading/InterlockedTest.cs
 System.Threading/WaitHandleTest.cs
+System.Threading/VolatileTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
 System/TypeTest.cs

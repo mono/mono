@@ -1513,6 +1513,7 @@ System.Threading/ThreadStateException.cs
 System.Threading/Timeout.cs
 System.Threading/Timer.cs
 System.Threading/TimerCallback.cs
+System.Threading/Volatile.cs
 System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
 System.Threading/WaitHandleCannotBeOpenedException.cs
