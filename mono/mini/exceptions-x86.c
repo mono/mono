@@ -1345,7 +1345,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	sp [0] = sp + 4;
 	sp [1] = exc;
 	sp [2] = (gpointer)stack_ovf;
-	mono_sigctx_to_monoctx (sigctx, (MonoContext*)(sp + 4));
+	mono_arch_sigctx_to_monoctx (sigctx, (MonoContext*)(sp + 4));
 	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_EIP (ctx) = (unsigned long)altstack_handle_and_restore;
 	UCONTEXT_REG_ESP (ctx) = (unsigned long)(sp - 1);
