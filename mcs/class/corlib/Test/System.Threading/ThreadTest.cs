@@ -1114,6 +1114,17 @@ namespace MonoTests.System.Threading
 			}
 			Assert.IsTrue (exception_occured, "Thread1 Started Invalid Exception Occured");
 		}
+
+		[Test]
+		public void Volatile () {
+			double v3 = 55667;
+			Thread.VolatileWrite (ref v3, double.MaxValue);
+			Assert.AreEqual (v3, double.MaxValue);
+
+			float v4 = 1;
+			Thread.VolatileWrite (ref v4, float.MaxValue);
+			Assert.AreEqual (v4, float.MaxValue);
+		}
 	}
 
 	public class TestUtil
