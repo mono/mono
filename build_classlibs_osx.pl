@@ -24,7 +24,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	# Force mono 2.6 for 1.1 profile bootstrapping
 	my $external_MONO_PREFIX='/Library/Frameworks/Mono.framework/Versions/2.6.7';
 	my $external_GNOME_PREFIX=$external_MONO_PREFIX;
-	$ENV{'DYLD_FALLBACK_LIBRARY_PATH'}="$external_MONO_PREFIX/lib";
+	$ENV{'DYLD_FALLBACK_LIBRARY_PATH'}="$external_MONO_PREFIX/lib:/lib:/usr/lib";
 	$ENV{'LD_LIBRARY_PATH'}="$external_MONO_PREFIX/lib";
 	$ENV{'C_INCLUDE_PATH'}="$external_MONO_PREFIX/include:$external_GNOME_PREFIX/include";
 	$ENV{'ACLOCAL_PATH'}="$external_MONO_PREFIX/share/aclocal";
