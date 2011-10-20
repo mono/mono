@@ -526,6 +526,7 @@ namespace System.Threading.Tasks
 					status = TaskStatus.RanToCompletion;
 				else
 					status = TaskStatus.WaitingForChildrenToComplete;
+				Thread.MemoryBarrier ();
 			}
 		
 			if (status != TaskStatus.WaitingForChildrenToComplete)

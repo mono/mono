@@ -61,7 +61,6 @@ namespace System.Threading.Tasks
 
 		public bool HasElements {
 			get {
-				Thread.MemoryBarrier ();
 				return single != null || (completed != null && completed.Count != 0);
 			}
 		}
