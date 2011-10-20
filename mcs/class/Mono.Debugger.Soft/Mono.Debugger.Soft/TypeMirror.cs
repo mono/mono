@@ -630,6 +630,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+
 			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
