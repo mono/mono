@@ -193,7 +193,7 @@ namespace System.Threading.Tasks
 		internal void SetupScheduler (TaskScheduler scheduler)
 		{
 			this.scheduler = scheduler;
-			status = TaskStatus.WaitingForActivation;
+			Status = TaskStatus.WaitingForActivation;
 		}
 		
 		public void RunSynchronously ()
@@ -211,7 +211,7 @@ namespace System.Threading.Tasks
 
 			SetupScheduler (scheduler);
 			var saveStatus = status;
-			status = TaskStatus.WaitingToRun;
+			Status = TaskStatus.WaitingToRun;
 
 			try {
 				if (scheduler.RunInline (this))
@@ -220,7 +220,7 @@ namespace System.Threading.Tasks
 				throw new TaskSchedulerException (inner);
 			}
 
-			status = saveStatus;
+			Status = saveStatus;
 			Start (scheduler);
 			Wait ();
 		}
@@ -315,7 +315,7 @@ namespace System.Threading.Tasks
 
 			// Already set the scheduler so that user can call Wait and that sort of stuff
 			continuation.scheduler = scheduler;
-			continuation.status = TaskStatus.WaitingForActivation;
+			continuation.Status = TaskStatus.WaitingForActivation;
 			continuation.Slot = new CompletionSlot (kind, predicate);
 
 			if (IsCompleted) {
@@ -420,7 +420,7 @@ namespace System.Threading.Tasks
 		#region Internal and protected thingies
 		internal void Schedule ()
 		{
-			status = TaskStatus.WaitingToRun;
+			Status = TaskStatus.WaitingToRun;
 			
 			// If worker is null it means it is a local one, revert to the old behavior
 			// If TaskScheduler.Current is not being used, the scheduler was explicitly provided, so we must use that
@@ -495,7 +495,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
-				status = TaskStatus.RanToCompletion;
+				Status = TaskStatus.RanToCompletion;
 				ProcessChildExceptions ();
 				ProcessCompleteDelegates ();
 			}
@@ -523,13 +523,13 @@ namespace System.Threading.Tasks
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
 				if (childTasks == null || childTasks.IsSet)
-					status = TaskStatus.RanToCompletion;
+					Status = TaskStatus.RanToCompletion;
 				else
-					status = TaskStatus.WaitingForChildrenToComplete;
-				Thread.MemoryBarrier ();
+					Status = TaskStatus.WaitingForChildrenToComplete;
 			}
 		
-			if (status != TaskStatus.WaitingForChildrenToComplete)
+			// Completions are already processed when task is canceled
+			if (status == TaskStatus.RanToCompletion || status == TaskStatus.Faulted)
 				ProcessCompleteDelegates ();
 
 			// Reset the current thingies
@@ -598,7 +598,7 @@ namespace System.Threading.Tasks
 		
 		internal void CancelReal ()
 		{
-			status = TaskStatus.Canceled;
+			Status = TaskStatus.Canceled;
 			ProcessCompleteDelegates ();
 		}
 
@@ -611,7 +611,7 @@ namespace System.Threading.Tasks
 		{
 			exception = e;
 			Thread.MemoryBarrier ();
-			status = TaskStatus.Faulted;
+			Status = TaskStatus.Faulted;
 			if (scheduler != null && scheduler.FireUnobservedEvent (exception).Observed)
 				exceptionObserved = true;
 		}
@@ -1062,6 +1062,7 @@ namespace System.Threading.Tasks
 			}
 			internal set {
 				status = value;
+				Thread.MemoryBarrier ();
 			}
 		}
 
