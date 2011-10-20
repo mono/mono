@@ -3501,7 +3501,7 @@ namespace Mono.CSharp {
 		{
 			Label lbl_default = default_target;
 
-			if (labels.Count > 0) {
+			if (labels != null && labels.Count > 0) {
 				List<LabelsRange> ranges;
 				if (string_labels != null) {
 					// We have done all hard work for string already

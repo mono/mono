@@ -573,6 +573,13 @@ class X {
 		return false;
 	}
 	
+	static void test_1597 ()
+	{
+		var a = "";
+		switch (a) {
+		}
+	}
+	
 	static int Main ()
 	{
 		byte b;
@@ -713,6 +720,8 @@ class X {
 		if (tests2 ("two") != 3)
 			return 73;
 
+		test_1597 ();
+		
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}

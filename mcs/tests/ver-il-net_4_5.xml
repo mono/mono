@@ -36900,10 +36900,13 @@
         <size>72</size>
       </method>
       <method name="Int32 Main()">
-        <size>1094</size>
+        <size>1099</size>
       </method>
       <method name="Int32 tests2(System.String)">
         <size>44</size>
+      </method>
+      <method name="Void test_1597()">
+        <size>7</size>
       </method>
     </type>
   </test>
