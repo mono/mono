@@ -20,6 +20,16 @@ my $dependencyBranchToUse = "unity3.0";
 if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
+
+	# Force mono 2.6 for 1.1 profile bootstrapping
+	my $external_MONO_PREFIX='/Library/Frameworks/Mono.framework/Versions/2.6.7';
+	my $external_GNOME_PREFIX=$external_MONO_PREFIX;
+	$ENV{'DYLD_FALLBACK_LIBRARY_PATH'}="$external_MONO_PREFIX/lib";
+	$ENV{'LD_LIBRARY_PATH'}="$external_MONO_PREFIX/lib";
+	$ENV{'C_INCLUDE_PATH'}="$external_MONO_PREFIX/include:$external_GNOME_PREFIX/include";
+	$ENV{'ACLOCAL_PATH'}="$external_MONO_PREFIX/share/aclocal";
+	$ENV{'PKG_CONFIG_PATH'}="$external_MONO_PREFIX/lib/pkgconfig:$external_GNOME_PREFIX/lib/pkgconfig";
+	$ENV{'PATH'}="$external_MONO_PREFIX/bin:$ENV{'PATH'}";
 } else {
 	print "not rmtree-ing $root/builds, as we're not on a buildmachine\n";
 }
