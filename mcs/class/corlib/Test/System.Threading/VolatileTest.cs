@@ -49,8 +49,8 @@ namespace MonoTests.System.Threading
 			double v3 = double.MaxValue;
 			Assert.AreEqual (double.MaxValue, Volatile.Read (ref v3), "#v3");
 
-			//float v4 = float.MaxValue; // float.Epsilon;
-			//Assert.AreEqual (float.MaxValue, Volatile.Read (ref v4), "#v4");
+			float v4 = float.Epsilon;
+			Assert.AreEqual (float.Epsilon, Volatile.Read (ref v4), "#v4");
 
 			int v5 = int.MinValue;
 			Assert.AreEqual (int.MinValue, Volatile.Read (ref v5), "#v5");
@@ -91,13 +91,13 @@ namespace MonoTests.System.Threading
 			Volatile.Write (ref v2, 4);
 			Assert.AreEqual (4, v2, "#v2");
 
-			//double v3 = 55667;
-			//Volatile.Write (ref v3, double.MaxValue);
-			//Assert.AreEqual (double.MaxValue, v3, "#v3");
+			double v3 = 55667;
+			Volatile.Write (ref v3, double.MaxValue);
+			Assert.AreEqual (double.MaxValue, v3, "#v3");
 
-			//float v4 = 1;
-			//Volatile.Write (ref v4, float.MaxValue);
-			//Assert.AreEqual (float.MaxValue, v4, "#v4");
+			float v4 = 1;
+			Volatile.Write (ref v4, float.MaxValue);
+			Assert.AreEqual (float.MaxValue, v4, "#v4");
 
 			int v5 = 0;
 			Volatile.Write (ref v5, int.MinValue);
@@ -135,6 +135,7 @@ namespace MonoTests.System.Threading
 			Volatile.Write (ref v13, ushort.MaxValue);
 			Assert.AreEqual (ushort.MaxValue, v13, "#v13");
 		}
+
 	}
 }
 
