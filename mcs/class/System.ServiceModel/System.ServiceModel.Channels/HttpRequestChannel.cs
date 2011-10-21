@@ -163,9 +163,10 @@ namespace System.ServiceModel.Channels
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
-
+#if !NET_2_1
 			if (source.ClientCredentials.ClientCertificate.Certificate != null) 
 				((HttpWebRequest)web_request).ClientCertificates.Add (source.ClientCredentials.ClientCertificate.Certificate);
+#endif
 
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				MemoryStream buffer = new MemoryStream ();
