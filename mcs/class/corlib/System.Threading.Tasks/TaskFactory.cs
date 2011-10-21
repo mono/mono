@@ -244,6 +244,8 @@ namespace System.Threading.Tasks
 		                             TaskContinuationOptions continuationOptions,
 		                             TaskScheduler scheduler)
 		{
+			throw new NotImplementedException ();
+/*
 			var ourTasks = (Task[])tasks.Clone ();
 			AtomicBoolean trigger = new AtomicBoolean ();
 			var commonContinuation = new TaskCompletionSource<object> ();
@@ -256,6 +258,7 @@ namespace System.Threading.Tasks
 			}
 			
 			return commonContinuation.Task;
+*/ 
 		}
 		
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks,
@@ -314,6 +317,8 @@ namespace System.Threading.Tasks
 		                                               TaskContinuationOptions continuationOptions,
 		                                               TaskScheduler scheduler)
 		{
+			throw new NotImplementedException ();
+/*
 			var ourTasks = (Task[])tasks.Clone ();
 			AtomicBoolean trigger = new AtomicBoolean ();
 			TaskCompletionSource<TResult> source = new TaskCompletionSource<TResult> ();
@@ -324,6 +329,7 @@ namespace System.Threading.Tasks
 			}
 
 			return source.Task;
+*/ 
 		}
 
 		public Task<TResult> ContinueWhenAny<TAntecedentResult, TResult> (Task<TAntecedentResult>[] tasks,
@@ -378,6 +384,8 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAll (Task[] tasks, Action<Task[]> continuationAction, CancellationToken cancellationToken,
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
+			throw new NotImplementedException ();
+/*
 			var ourTasks = (Task[])tasks.Clone ();
 			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
 			Task cont = new Task ((o) => continuationAction ((Task[])o), ourTasks, cancellationToken, creationOptions);
@@ -386,6 +394,7 @@ namespace System.Threading.Tasks
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
+*/ 
 		}
 		
 		public Task ContinueWhenAll<TAntecedentResult> (Task<TAntecedentResult>[] tasks,
@@ -436,6 +445,8 @@ namespace System.Threading.Tasks
 		                                               CancellationToken cancellationToken,
 		                                               TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
+			throw new NotImplementedException ();
+/*
 			var ourTasks = (Task[])tasks.Clone ();
 			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
 			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction ((Task[])o), ourTasks, cancellationToken, creationOptions);
@@ -444,6 +455,7 @@ namespace System.Threading.Tasks
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
+*/ 
 		}
 		
 		public Task<TResult> ContinueWhenAll<TAntecedentResult, TResult> (Task<TAntecedentResult>[] tasks,

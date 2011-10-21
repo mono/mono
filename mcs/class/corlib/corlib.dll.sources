@@ -1558,10 +1558,10 @@ System.Threading.Tasks/Task.cs
 System.Threading.Tasks/TaskCompletionQueue.cs
 System.Threading.Tasks/IEventSlot.cs
 System.Threading.Tasks/EventSlots.cs
-System.Threading.Tasks/CompletionSlot.cs
 System.Threading.Tasks/TaskActionInvoker.cs
 System.Threading.Tasks/TaskDebuggerView.cs
 System.Threading.Tasks/TaskCompletionSource.cs
+System.Threading.Tasks/TaskContinuation.cs
 System.Threading.Tasks/TaskSchedulerException.cs
 System.Threading.Tasks/TaskConstants.cs
 System.Threading.Tasks/TaskConstants_T.cs

@@ -42,6 +42,8 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
 	public class Task : IDisposable, IAsyncResult
 	{
+		const TaskCreationOptions TaskCreationOptionsContinuation = (TaskCreationOptions) (1 << 10);
+
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.
 		[System.ThreadStatic]
@@ -59,7 +61,7 @@ namespace System.Threading.Tasks
 		int                 taskId;
 		TaskCreationOptions taskCreationOptions;
 		
-		TaskScheduler       scheduler;
+		internal TaskScheduler       scheduler;
 
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
@@ -71,10 +73,8 @@ namespace System.Threading.Tasks
 		object         state;
 		AtomicBooleanValue executing;
 
-		TaskCompletionQueue<Task> completed;
+		TaskCompletionQueue<IContinuation> continuations;
 		TaskCompletionQueue<IEventSlot> registeredEvts;
-		// If this task is a continuation, this stuff gets filled
-		CompletionSlot Slot;
 
 		CancellationToken token;
 		CancellationTokenRegistration? cancellationRegistration;
@@ -302,87 +302,35 @@ namespace System.Threading.Tasks
 			return t;
 		}
 	
-		internal void ContinueWithCore (Task continuation, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		internal void ContinueWithCore (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler)
 		{
-			ContinueWithCore (continuation, continuationOptions, scheduler, null);
-		}
-		
-		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind,
-		                                TaskScheduler scheduler, Func<bool> predicate)
-		{
-			CheckTaskCompletionCompatibility (kind);
-
-			// Already set the scheduler so that user can call Wait and that sort of stuff
-			continuation.scheduler = scheduler;
-			continuation.Status = TaskStatus.WaitingForActivation;
-			continuation.Slot = new CompletionSlot (kind, predicate);
-
-			if (IsCompleted) {
-				CompletionExecutor (continuation);
-				return;
-			}
-			
-			completed.Add (continuation);
-			
-			// Retry in case completion was achieved but event adding was too late
-			if (IsCompleted)
-				CompletionExecutor (continuation);
-		}
-
-		bool ContinuationStatusCheck (TaskContinuationOptions kind)
-		{
-			if (kind == TaskContinuationOptions.None)
-				return true;
-			
-			int kindCode = (int)kind;
-			
-			if (kindCode >= ((int)TaskContinuationOptions.NotOnRanToCompletion)) {
-				// Remove other options
-				kind &= ~(TaskContinuationOptions.PreferFairness
-				          | TaskContinuationOptions.LongRunning
-				          | TaskContinuationOptions.AttachedToParent
-				          | TaskContinuationOptions.ExecuteSynchronously);
-
-				if (status == TaskStatus.Canceled) {
-					if (kind == TaskContinuationOptions.NotOnCanceled)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
-						return false;
-				} else if (status == TaskStatus.Faulted) {
-					if (kind == TaskContinuationOptions.NotOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnRanToCompletion)
-						return false;
-				} else if (status == TaskStatus.RanToCompletion) {
-					if (kind == TaskContinuationOptions.NotOnRanToCompletion)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnFaulted)
-						return false;
-					if (kind == TaskContinuationOptions.OnlyOnCanceled)
-						return false;
-				}
-			}
-			
-			return true;
-		}
-
-		static internal void CheckTaskCompletionCompatibility (TaskContinuationOptions options)
-		{
-			if (options == TaskContinuationOptions.None)
-				return;
-
 			const TaskContinuationOptions wrongRan = TaskContinuationOptions.NotOnRanToCompletion | TaskContinuationOptions.OnlyOnRanToCompletion;
 			const TaskContinuationOptions wrongCanceled = TaskContinuationOptions.NotOnCanceled | TaskContinuationOptions.OnlyOnCanceled;
 			const TaskContinuationOptions wrongFaulted = TaskContinuationOptions.NotOnFaulted | TaskContinuationOptions.OnlyOnFaulted;
 
-			if (((options & wrongRan) == wrongRan)
-			    || ((options & wrongCanceled) == wrongCanceled)
-			    || ((options & wrongFaulted) == wrongFaulted))
+			if (((options & wrongRan) == wrongRan) || ((options & wrongCanceled) == wrongCanceled) || ((options & wrongFaulted) == wrongFaulted))
 				throw new ArgumentException ("continuationOptions", "Some options are mutually exclusive");
+
+			// Already set the scheduler so that user can call Wait and that sort of stuff
+			continuation.scheduler = scheduler;
+			continuation.Status = TaskStatus.WaitingForActivation;
+			continuation.taskCreationOptions |= TaskCreationOptionsContinuation;
+
+			ContinueWith (new TaskContinuation (continuation, options));
+		}
+		
+		internal void ContinueWith (IContinuation continuation)
+		{
+			if (IsCompleted) {
+				continuation.Execute ();
+				return;
+			}
+			
+			continuations.Add (continuation);
+			
+			// Retry in case completion was achieved but event adding was too late
+			if (IsCompleted)
+				continuation.Execute ();
 		}
 
 		static internal TaskCreationOptions GetCreationOptions (TaskContinuationOptions kind)
@@ -540,33 +488,12 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		void CompletionExecutor (Task cont)
-		{
-			if (cont.Slot.Predicate != null && !cont.Slot.Predicate ())
-				return;
-
-			if (!cont.Slot.Launched.TryRelaxedSet ())
-				return;
-
-			if (!ContinuationStatusCheck (cont.Slot.Kind)) {
-				cont.CancelReal ();
-				cont.Dispose ();
-
-				return;
-			}
-			
-			if ((cont.Slot.Kind & TaskContinuationOptions.ExecuteSynchronously) != 0)
-				cont.RunSynchronously (cont.scheduler);
-			else
-				cont.Schedule ();
-		}
-
 		void ProcessCompleteDelegates ()
 		{
-			if (completed.HasElements) {
-				Task continuation;
-				while (completed.TryGetNextCompletion (out continuation))
-					CompletionExecutor (continuation);
+			if (continuations.HasElements) {
+				IContinuation continuation;
+				while (continuations.TryGetNextCompletion (out continuation))
+					continuation.Execute ();
 			}
 			if (registeredEvts.HasElements) {
 				IEventSlot evt;
@@ -1047,7 +974,7 @@ namespace System.Threading.Tasks
 
 		public TaskCreationOptions CreationOptions {
 			get {
-				return taskCreationOptions;
+				return taskCreationOptions & MaxTaskCreationOptions;
 			}
 		}
 		
@@ -1087,7 +1014,7 @@ namespace System.Threading.Tasks
 
 		bool IsContinuation {
 			get {
-				return Slot.Initialized;
+				return (taskCreationOptions & TaskCreationOptionsContinuation) != 0;
 			}
 		}
 
