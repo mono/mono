@@ -238,6 +238,19 @@ namespace Mono.Debugger.Soft
 		public void Disconnect () {
 			conn.Close ();
 		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types which reference the
+		// source file FNAME. Might return false positives.
+		// Since protocol version 2.7.
+		//
+		public IList<TypeMirror> GetTypesForSourceFile (string fname, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypesForSourceFile (fname, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
 		
 		internal void queue_event_set (EventSet es) {
 			lock (queue_monitor) {

@@ -347,7 +347,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 7;
+		internal const int MINOR_VERSION = 8;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -411,7 +411,8 @@ namespace Mono.Debugger.Soft
 			INVOKE_METHOD = 7,
 			SET_PROTOCOL_VERSION = 8,
 			ABORT_INVOKE = 9,
-			SET_KEEPALIVE = 10
+			SET_KEEPALIVE = 10,
+			GET_TYPES_FOR_SOURCE_FILE = 11
 		}
 
 		enum CmdEvent {
@@ -1528,6 +1529,15 @@ namespace Mono.Debugger.Soft
 		{
 			TransportSetTimeouts (send_timeout, receive_timeout);
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
+		}
+
+		internal long[] VM_GetTypesForSourceFile (string fname, bool ignoreCase) {
+			var res = SendReceive (CommandSet.VM, (int)CmdVM.GET_TYPES_FOR_SOURCE_FILE, new PacketWriter ().WriteString (fname).WriteBool (ignoreCase));
+			int count = res.ReadInt ();
+			long[] types = new long [count];
+			for (int i = 0; i < count; ++i)
+				types [i] = res.ReadId ();
+			return types;
 		}
 
 		/*

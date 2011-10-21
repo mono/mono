@@ -2711,7 +2711,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only6")]
 	public void TypeLoadSourceFileFilter () {
 		Event e = run_until ("type_load");
 
@@ -2728,5 +2727,14 @@ public class DebuggerTests
 		e = GetNextEvent ();
 		Assert.IsTrue (e is TypeLoadEvent);
 		Assert.AreEqual ("TypeLoadClass", (e as TypeLoadEvent).Type.FullName);
+	}
+
+	[Test]
+	public void GetTypesForSourceFile () {
+		run_until ("user");
+
+		var types = vm.GetTypesForSourceFile ("dtest-app.cs", false);
+		Assert.IsTrue (types.Any (t => t.FullName == "Tests"));
+		Assert.IsFalse (types.Any (t => t.FullName == "System.Int32"));
 	}
 }
