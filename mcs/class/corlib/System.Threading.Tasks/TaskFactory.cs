@@ -28,12 +28,8 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-using System.Threading;
-
 namespace System.Threading.Tasks
 {
-	
 	public class TaskFactory
 	{
 		readonly TaskScheduler scheduler;
@@ -187,7 +183,15 @@ namespace System.Threading.Tasks
 		                                        TaskCreationOptions creationOptions,
 		                                        TaskScheduler scheduler)
 		{
-			return StartNew<TResult> ((o) => function (), null, cancellationToken, creationOptions, scheduler);
+			var t = new Task<TResult> (function, cancellationToken, creationOptions);
+
+			//
+			// Don't start cancelled task it would throw an exception
+			//
+			if (!t.IsCompleted)
+				t.Start (scheduler);
+
+			return t;
 		}
 		
 		public Task<TResult> StartNew<TResult> (Func<object, TResult> function, object state)
