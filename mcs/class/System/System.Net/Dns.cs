@@ -45,27 +45,37 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 #endif
 
+#if !MOBILE
 using Mono.Net.Dns;
+#endif
 
 namespace System.Net {
 	public static class Dns {
+#if !MOBILE
 		static bool use_mono_dns;
 		static SimpleResolver resolver;
+#endif
 
 		static Dns ()
 		{
 			System.Net.Sockets.Socket.CheckProtocolSupport();
+
+#if !MOBILE
 			if (Environment.GetEnvironmentVariable ("MONO_DNS") != null) {
 				resolver = new SimpleResolver ();
 				use_mono_dns = true;
 			}
+#endif
 		}
 
+#if !MOBILE
 		internal static bool UseMonoDns {
 			get { return use_mono_dns; }
 		}
+#endif
 
 #if !MOONLIGHT // global remove of async methods
+
 
 		private delegate IPHostEntry GetHostByNameCallback (string hostName);
 		private delegate IPHostEntry ResolveCallback (string hostName);
@@ -73,6 +83,7 @@ namespace System.Net {
 		private delegate IPHostEntry GetHostEntryIPCallback (IPAddress hostAddress);
 		private delegate IPAddress [] GetHostAddressesCallback (string hostName);
 
+#if !MOBILE
 		static void OnCompleted (object sender, SimpleResolverEventArgs e)
 		{
 			DnsAsyncResult ares = (DnsAsyncResult) e.UserToken;
@@ -121,6 +132,7 @@ namespace System.Net {
 				throw new SocketException(11001);
 			return entry;
 		}
+#endif
 
 		[Obsolete ("Use BeginGetHostEntry instead")]
 		public static IAsyncResult BeginGetHostByName (string hostName, AsyncCallback requestCallback, object stateObject)
@@ -128,8 +140,10 @@ namespace System.Net {
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return BeginAsyncCall (hostName, requestCallback, stateObject);
+#endif
 
 			GetHostByNameCallback c = new GetHostByNameCallback (GetHostByName);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
@@ -141,8 +155,10 @@ namespace System.Net {
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return BeginAsyncCall (hostName, requestCallback, stateObject);
+#endif
 
 			ResolveCallback c = new ResolveCallback (Resolve);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
@@ -158,8 +174,10 @@ namespace System.Net {
 					"cannot use them as target address.",
 					"hostNameOrAddress");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return BeginAsyncCallAddresses (hostNameOrAddress, requestCallback, stateObject);
+#endif
 
 			GetHostAddressesCallback c = new GetHostAddressesCallback (GetHostAddresses);
 			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
@@ -175,8 +193,10 @@ namespace System.Net {
 					"cannot use them as target address.",
 					"hostNameOrAddress");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return BeginAsyncCall (hostNameOrAddress, requestCallback, stateObject);
+#endif
 
 			GetHostEntryNameCallback c = new GetHostEntryNameCallback (GetHostEntry);
 			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
@@ -187,8 +207,10 @@ namespace System.Net {
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return BeginAsyncCall (address.ToString (), requestCallback, stateObject);
+#endif
 
 			GetHostEntryIPCallback c = new GetHostEntryIPCallback (GetHostEntry);
 			return c.BeginInvoke (address, requestCallback, stateObject);
@@ -200,8 +222,10 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
+#endif
 
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetHostByNameCallback cb = (GetHostByNameCallback) async.AsyncDelegate;
@@ -214,8 +238,10 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
+#endif
 
 			AsyncResult async = (AsyncResult) asyncResult;
 			ResolveCallback cb = (ResolveCallback) async.AsyncDelegate;
@@ -227,12 +253,14 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
+#if !MOBILE
 			if (use_mono_dns) {
 				IPHostEntry entry = EndAsyncCall (asyncResult as DnsAsyncResult);
 				if (entry == null)
 					return null;
 				return entry.AddressList;
 			}
+#endif
 
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetHostAddressesCallback cb = (GetHostAddressesCallback) async.AsyncDelegate;
@@ -244,8 +272,10 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
+#if !MOBILE
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
+#endif
 
 			AsyncResult async = (AsyncResult) asyncResult;
 			if (async.AsyncDelegate is GetHostEntryIPCallback)
