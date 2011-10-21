@@ -725,6 +725,61 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWith_StateValue ()
+		{
+			var t = Task.Factory.StartNew (l => {
+				Assert.AreEqual (1, l, "a-1");
+			}, 1);
+
+			var c = t.ContinueWith ((a, b) => {
+				Assert.AreEqual (t, a, "c-1");
+				Assert.AreEqual (2, b, "c-2");
+			}, 2);
+
+			var d = t.ContinueWith ((a, b) => {
+				Assert.AreEqual (t, a, "d-1");
+				Assert.AreEqual (3, b, "d-2");
+				return 77;
+			}, 3);
+
+			Assert.IsTrue (d.Wait (1000), "#1");
+
+			Assert.AreEqual (1, t.AsyncState, "#2");
+			Assert.AreEqual (2, c.AsyncState, "#3");
+			Assert.AreEqual (3, d.AsyncState, "#4");
+		}
+
+		[Test]
+		public void ContinueWith_StateValueGeneric ()
+		{
+			var t = Task<int>.Factory.StartNew (l => {
+				Assert.AreEqual (1, l, "a-1");
+				return 80;
+			}, 1);
+
+			var c = t.ContinueWith ((a, b) => {
+				Assert.AreEqual (t, a, "c-1");
+				Assert.AreEqual (2, b, "c-2");
+				return "c";
+			}, 2);
+
+			var d = t.ContinueWith ((a, b) => {
+				Assert.AreEqual (t, a, "d-1");
+				Assert.AreEqual (3, b, "d-2");
+				return 'd';
+			}, 3);
+
+			Assert.IsTrue (d.Wait (1000), "#1");
+
+			Assert.AreEqual (1, t.AsyncState, "#2");
+			Assert.AreEqual (80, t.Result, "#2r");
+			Assert.AreEqual (2, c.AsyncState, "#3");
+			Assert.AreEqual ("c", c.Result, "#3r");
+			Assert.AreEqual (3, d.AsyncState, "#4");
+			Assert.AreEqual ('d', d.Result, "#3r");
+		}
+
+		[Test]
 		public void FromResult ()
 		{
 			var t = Task.FromResult<object> (null);

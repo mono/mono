@@ -28,9 +28,6 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-using System.Threading;
-
 namespace System.Threading.Tasks
 {
 	public class TaskFactory<TResult>

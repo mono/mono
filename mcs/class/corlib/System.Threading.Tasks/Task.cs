@@ -66,9 +66,8 @@ namespace System.Threading.Tasks
 		ConcurrentQueue<AggregateException> childExceptions;
 
 		TaskStatus          status;
-		
-		Action<object> action;
-		Action         simpleAction;
+
+		TaskActionInvoker invoker;
 		object         state;
 		AtomicBooleanValue executing;
 
@@ -88,32 +87,35 @@ namespace System.Threading.Tasks
 #endif
 			TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent;
 
-		public Task (Action action) : this (action, TaskCreationOptions.None)
+		public Task (Action action)
+			: this (action, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Action action, TaskCreationOptions creationOptions) : this (action, CancellationToken.None, creationOptions)
+		public Task (Action action, TaskCreationOptions creationOptions)
+			: this (action, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
-		public Task (Action action, CancellationToken cancellationToken) : this (action, cancellationToken, TaskCreationOptions.None)
+		public Task (Action action, CancellationToken cancellationToken)
+			: this (action, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
 		public Task (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this (null, null, cancellationToken, creationOptions, current)
+			: this (TaskActionInvoker.Create (action), null, cancellationToken, creationOptions, current)
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
 			if (creationOptions > MaxTaskCreationOptions || creationOptions < TaskCreationOptions.None)
 				throw new ArgumentOutOfRangeException ("creationOptions");
-			this.simpleAction = action;
 		}
 		
-		public Task (Action<object> action, object state) : this (action, state, TaskCreationOptions.None)
+		public Task (Action<object> action, object state)
+			: this (action, state, TaskCreationOptions.None)
 		{	
 		}
 		
@@ -128,7 +130,7 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this (action, state, cancellationToken, creationOptions, current)
+			: this (TaskActionInvoker.Create (action), state, cancellationToken, creationOptions, current)
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
@@ -136,14 +138,11 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 		}
 
-		internal Task (Action<object> action,
-		               object state,
-		               CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions,
-		               Task parent)
+		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken,
+		               TaskCreationOptions creationOptions, Task parent)
 		{
+			this.invoker = invoker;
 			this.taskCreationOptions = creationOptions;
-			this.action              = action;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
@@ -183,7 +182,7 @@ namespace System.Threading.Tasks
 			if (status >= TaskStatus.WaitingToRun)
 				throw new InvalidOperationException ("The Task is not in a valid state to be started.");
 
-			if (Slot.Initialized)
+			if (IsContinuation)
 				throw new InvalidOperationException ("Start may not be called on a continuation task");
 
 			SetupScheduler (scheduler);
@@ -254,8 +253,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task continuation = new Task (l => continuationAction ((Task)l),
-			                              this,
+			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
+			                              null,
 			                              cancellationToken,
 			                              GetCreationOptions (continuationOptions),
 			                              this);
@@ -292,8 +291,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o),
-			                                     this,
+			var t = new Task<TResult> (TaskActionInvoker.Create (continuationFunction),
+			                                     null,
 			                                     cancellationToken,
 			                                     GetCreationOptions (continuationOptions),
 			                                     this);
@@ -501,17 +500,13 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		internal virtual void InnerInvoke ()
+		void InnerInvoke ()
 		{
-			if (action == null && simpleAction != null)
-				simpleAction ();
-			else if (action != null)
-				action (state);
-			// Set action to null so that the GC can collect the delegate and thus
-			// any big object references that the user might have captured in an anonymous method
-			action = null;
-			simpleAction = null;
-			state = null;
+			if (IsContinuation) {
+				invoker.Invoke (parent, state, this);
+			} else {
+				invoker.Invoke (this, state, this);
+			}
 		}
 		
 		internal void Finish ()
@@ -833,7 +828,7 @@ namespace System.Threading.Tasks
 			// Set action to null so that the GC can collect the delegate and thus
 			// any big object references that the user might have captured in a anonymous method
 			if (disposing) {
-				action = null;
+				invoker = null;
 				state = null;
 				if (cancellationRegistration != null)
 					cancellationRegistration.Value.Dispose ();
@@ -876,8 +871,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task continuation = new Task (l => continuationAction (this, l), state,
-										  cancellationToken,
+			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
+										  state, cancellationToken,
 										  GetCreationOptions (continuationOptions),
 										  this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
@@ -913,7 +908,7 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			var t = new Task<TResult> (l => continuationFunction (this, l),
+			var t = new Task<TResult> (TaskActionInvoker.Create (continuationFunction),
 												 state,
 												 cancellationToken,
 												 GetCreationOptions (continuationOptions),
@@ -1090,6 +1085,12 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		bool IsContinuation {
+			get {
+				return Slot.Initialized;
+			}
+		}
+
 		internal Task Parent {
 			get {
 				return parent;
@@ -1098,7 +1099,7 @@ namespace System.Threading.Tasks
 		
 		internal string DisplayActionMethod {
 			get {
-				Delegate d = simpleAction ?? (Delegate) action;
+				Delegate d = invoker.Action;
 				return d == null ? "<none>" : d.Method.ToString ();
 			}
 		}
