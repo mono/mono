@@ -238,27 +238,32 @@ namespace System.Threading.Tasks
 			return ContinueWhenAny (tasks, continuationAction, cancellationToken, continuationOptions, GetScheduler ());
 		}
 
-		public Task ContinueWhenAny (Task[] tasks,
-		                             Action<Task> continuationAction,
-		                             CancellationToken cancellationToken,
-		                             TaskContinuationOptions continuationOptions,
-		                             TaskScheduler scheduler)
+		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			throw new NotImplementedException ();
-/*
-			var ourTasks = (Task[])tasks.Clone ();
-			AtomicBoolean trigger = new AtomicBoolean ();
-			var commonContinuation = new TaskCompletionSource<object> ();
-			Action<Task> continuationFunc = t => commonContinuation.SetResult (null);
-			
-			foreach (Task t in ourTasks) {
-				Task cont = new Task (TaskActionInvoker.Create (continuationAction), null, cancellationToken, creationOptions, t);
-				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
-				cont.ContinueWith (continuationFunc);
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			if (tasks.Length == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			foreach (var ta in tasks) {
+				if (ta == null)
+					throw new ArgumentException ("The tasks argument constains a null value", "tasks");
 			}
-			
-			return commonContinuation.Task;
-*/ 
+
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+
+			var t = new Task<int> (l => {
+				var data = (Tuple<Task[], CancellationToken>) l;
+				return Task.WaitAny (data.Item1, data.Item2);
+			}, Tuple.Create (tasks, cancellationToken));
+
+			var cont = t.ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
+
+			t.Start (scheduler);
+
+			return cont;
 		}
 		
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks,
@@ -317,19 +322,16 @@ namespace System.Threading.Tasks
 		                                               TaskContinuationOptions continuationOptions,
 		                                               TaskScheduler scheduler)
 		{
-			throw new NotImplementedException ();
-/*
-			var ourTasks = (Task[])tasks.Clone ();
-			AtomicBoolean trigger = new AtomicBoolean ();
-			TaskCompletionSource<TResult> source = new TaskCompletionSource<TResult> ();
+			var t = new Task<int> (l => {
+				var data = (Tuple<Task[], CancellationToken>) l;
+				return Task.WaitAny (data.Item1, data.Item2);
+			}, Tuple.Create (tasks, cancellationToken));
 
-			foreach (Task t in ourTasks) {
-				var cont = new Task (TaskActionInvoker.Create (continuationFunction), null, cancellationToken, creationOptions, t);
-				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
-			}
+			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
 
-			return source.Task;
-*/ 
+			t.Start (scheduler);
+
+			return cont;
 		}
 
 		public Task<TResult> ContinueWhenAny<TAntecedentResult, TResult> (Task<TAntecedentResult>[] tasks,
@@ -384,17 +386,16 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAll (Task[] tasks, Action<Task[]> continuationAction, CancellationToken cancellationToken,
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			throw new NotImplementedException ();
-/*
-			var ourTasks = (Task[])tasks.Clone ();
-			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
-			Task cont = new Task ((o) => continuationAction ((Task[])o), ourTasks, cancellationToken, creationOptions);
-			
-			foreach (Task t in ourTasks)
-				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
-			
+			var t = new Task (l => {
+				var data = (Tuple<Task[], CancellationToken>) l;
+				Task.WaitAll (data.Item1, data.Item2);
+			}, Tuple.Create (tasks, cancellationToken));
+
+			var cont = t.ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
+
+			t.Start (scheduler);
+
 			return cont;
-*/ 
 		}
 		
 		public Task ContinueWhenAll<TAntecedentResult> (Task<TAntecedentResult>[] tasks,
@@ -445,17 +446,16 @@ namespace System.Threading.Tasks
 		                                               CancellationToken cancellationToken,
 		                                               TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			throw new NotImplementedException ();
-/*
-			var ourTasks = (Task[])tasks.Clone ();
-			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
-			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction ((Task[])o), ourTasks, cancellationToken, creationOptions);
-			
-			foreach (Task t in ourTasks)
-				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
-			
+			var t = new Task (l => {
+				var data = (Tuple<Task[], CancellationToken>) l;
+				Task.WaitAll (data.Item1, data.Item2);
+			}, Tuple.Create (tasks, cancellationToken));
+
+			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
+
+			t.Start (scheduler);
+
 			return cont;
-*/ 
 		}
 		
 		public Task<TResult> ContinueWhenAll<TAntecedentResult, TResult> (Task<TAntecedentResult>[] tasks,

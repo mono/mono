@@ -253,11 +253,12 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
-			                              null,
-			                              cancellationToken,
-			                              GetCreationOptions (continuationOptions),
-			                              this);
+			return ContinueWith (TaskActionInvoker.Create (continuationAction), cancellationToken, continuationOptions, scheduler);
+		}
+
+		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -291,15 +292,15 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			var t = new Task<TResult> (TaskActionInvoker.Create (continuationFunction),
-			                                     null,
-			                                     cancellationToken,
-			                                     GetCreationOptions (continuationOptions),
-			                                     this);
-			
-			ContinueWithCore (t, continuationOptions, scheduler);
-			
-			return t;
+			return ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction), cancellationToken, continuationOptions, scheduler);
+		}
+
+		internal Task<TResult> ContinueWith<TResult> (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), this);
+			ContinueWithCore (continuation, continuationOptions, scheduler);
+
+			return continuation;
 		}
 	
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler)

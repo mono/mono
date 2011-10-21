@@ -95,6 +95,29 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		sealed class ActionTasksInvoke : TaskActionInvoker
+		{
+			readonly Action<Task[]> action;
+			readonly Task[] tasks;
+
+			public ActionTasksInvoke (Action<Task[]> action, Task[] tasks)
+			{
+				this.action = action;
+				this.tasks = tasks;
+			}
+
+			public override Delegate Action {
+				get {
+					return action;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				action (tasks);
+			}
+		}
+
 		sealed class ActionTaskObjectInvoke : TaskActionInvoker
 		{
 			readonly Action<Task, object> action;
@@ -158,6 +181,30 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		sealed class ActionTaskSelected : TaskActionInvoker
+		{
+			readonly Action<Task> action;
+			readonly Task[] tasks;
+
+			public ActionTaskSelected (Action<Task> action, Task[] tasks)
+			{
+				this.action = action;
+				this.tasks = tasks;
+			}
+
+			public override Delegate Action {
+				get {
+					return action;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				var result = ((Task<int>) owner).Result;
+				action (tasks [result]);
+			}
+		}
+
 		sealed class FuncInvoke<TResult> : TaskActionInvoker
 		{
 			readonly Func<TResult> action;
@@ -197,6 +244,53 @@ namespace System.Threading.Tasks
 			public override void Invoke (Task owner, object state, Task context)
 			{
 				((Task<TResult>) context).Result = action (owner);
+			}
+		}
+
+		sealed class FuncTasksInvoke<TResult> : TaskActionInvoker
+		{
+			readonly Func<Task[], TResult> action;
+			readonly Task[] tasks;
+
+			public FuncTasksInvoke (Func<Task[], TResult> action, Task[] tasks)
+			{
+				this.action = action;
+				this.tasks = tasks;
+			}
+
+			public override Delegate Action {
+				get {
+					return action;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				((Task<TResult>) context).Result = action (tasks);
+			}
+		}
+
+		sealed class FuncTaskSelected<TResult> : TaskActionInvoker
+		{
+			readonly Func<Task, TResult> action;
+			readonly Task[] tasks;
+
+			public FuncTaskSelected (Func<Task, TResult> action, Task[] tasks)
+			{
+				this.action = action;
+				this.tasks = tasks;
+			}
+
+			public override Delegate Action {
+				get {
+					return action;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				var result = ((Task<int>) owner).Result;
+				((Task<TResult>) context).Result = action (tasks[result]);
 			}
 		}
 
@@ -343,6 +437,30 @@ namespace System.Threading.Tasks
 		{
 			return new FuncTaskObjectInvoke<TResult, TNewResult> (action);
 		}
+
+		public static TaskActionInvoker Create (Action<Task[]> action, Task[] tasks)
+		{
+			return new ActionTasksInvoke (action, tasks);
+		}
+
+		public static TaskActionInvoker Create<TResult> (Func<Task[], TResult> action, Task[] tasks)
+		{
+			return new FuncTasksInvoke<TResult> (action, tasks);
+		}
+
+		#region Used by WhenAny
+
+		public static TaskActionInvoker Create (Action<Task> action, Task[] tasks)
+		{
+			return new ActionTaskSelected (action, tasks);
+		}
+
+		public static TaskActionInvoker Create<TResult> (Func<Task, TResult> action, Task[] tasks)
+		{
+			return new FuncTaskSelected<TResult> (action, tasks);
+		}
+
+		#endregion
 
 		public abstract Delegate Action { get; }
 		public abstract void Invoke (Task owner, object state, Task context);
