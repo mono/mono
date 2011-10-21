@@ -2709,4 +2709,24 @@ public class DebuggerTests
 		Assert.AreEqual (1, mm.Length, "#16");
 		Assert.AreEqual ("M1", mm[0].Name, "#17");
 	}
+
+	[Test]
+	[Category ("only6")]
+	public void TypeLoadSourceFileFilter () {
+		Event e = run_until ("type_load");
+
+		if (!vm.Version.AtLeast (2, 7))
+			return;
+
+		string srcfile = (e as BreakpointEvent).Method.DeclaringType.GetSourceFiles (true)[0];
+
+		var req = vm.CreateTypeLoadRequest ();
+		req.SourceFileFilter = new string [] { srcfile };
+		req.Enable ();
+
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is TypeLoadEvent);
+		Assert.AreEqual ("TypeLoadClass", (e as TypeLoadEvent).Type.FullName);
+	}
 }

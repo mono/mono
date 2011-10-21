@@ -251,6 +251,12 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
+	class SourceFileModifier : Modifier {
+		public string[] SourceFiles {
+			get; set;
+		}
+	}
+
 	class EventInfo {
 		public EventType EventType {
 			get; set;
@@ -341,7 +347,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 6;
+		internal const int MINOR_VERSION = 7;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -391,7 +397,8 @@ namespace Mono.Debugger.Soft
 			LOCATION_ONLY = 7,
 			EXCEPTION_ONLY = 8,
 			STEP = 10,
-			ASSEMBLY_ONLY = 11
+			ASSEMBLY_ONLY = 11,
+			SOURCE_FILE_ONLY = 12
 		}
 
 		enum CmdVM {
@@ -1930,6 +1937,12 @@ namespace Mono.Debugger.Soft
 						w.WriteInt (amod.Assemblies.Length);
 						foreach (var id in amod.Assemblies)
 							w.WriteId (id);
+					} else if (mod is SourceFileModifier) {
+						w.WriteByte ((byte)ModifierKind.SOURCE_FILE_ONLY);
+						var smod = (mod as SourceFileModifier);
+						w.WriteInt (smod.SourceFiles.Length);
+						foreach (var s in smod.SourceFiles)
+							w.WriteString (s);
 					} else {
 						throw new NotImplementedException ();
 					}

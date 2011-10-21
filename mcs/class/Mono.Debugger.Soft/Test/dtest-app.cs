@@ -192,6 +192,7 @@ public class Tests : TestsBase
 		threads ();
 		dynamic_methods ();
 		user ();
+		type_load ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -912,6 +913,22 @@ public class Tests : TestsBase
 
 		Debugger.Log (5, Debugger.IsLogging () ? "A" : "", "B");
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void type_load () {
+		type_load_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void type_load_2 () {
+		var c1 = new Dictionary<int, int> ();
+		c1.ToString ();
+		var c = new TypeLoadClass ();
+		c.ToString ();
+	}
+}
+
+class TypeLoadClass {
 }
 
 public class CrossDomain : MarshalByRefObject

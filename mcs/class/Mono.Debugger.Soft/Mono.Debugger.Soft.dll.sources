@@ -62,6 +62,7 @@ Mono.Debugger.Soft/StepEventRequest.cs
 Mono.Debugger.Soft/Connection.cs
 Mono.Debugger.Soft/ThreadMirror.cs
 Mono.Debugger.Soft/TypeLoadEvent.cs
+Mono.Debugger.Soft/TypeLoadEventRequest.cs
 Mono.Debugger.Soft/VMDisconnectEvent.cs
 Mono.Debugger.Soft/InvokeOptions.cs
 Mono.Debugger.Soft/IInvokeAsyncResult.cs
