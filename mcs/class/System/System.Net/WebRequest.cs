@@ -327,41 +327,82 @@ namespace System.Net
 		[MonoTODO("Look in other places for proxy config info")]
 		public static IWebProxy GetSystemWebProxy ()
 		{
-			string address = Environment.GetEnvironmentVariable ("http_proxy");
-			if (address == null)
-				address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
+			if (IsWindows ()) {
+				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
 
-			if (address != null) {
-				try {
-					if (!address.StartsWith ("http://"))
-						address = "http://" + address;
-					Uri uri = new Uri (address);
-					IPAddress ip;
-					if (IPAddress.TryParse (uri.Host, out ip)) {
-						if (IPAddress.Any.Equals (ip)) {
-							UriBuilder builder = new UriBuilder (uri);
-							builder.Host = "127.0.0.1";
-							uri = builder.Uri;
-						} else if (IPAddress.IPv6Any.Equals (ip)) {
-							UriBuilder builder = new UriBuilder (uri);
-							builder.Host = "[::1]";
-							uri = builder.Uri;
-						}
+				if (iProxyEnable > 0) {
+					string strHttpProxy = "";
+					string[] bypassList = null;
+					bool bBypassOnLocal = false;
+					
+					string strProxyServer = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyServer", null);
+					string strProxyOverrride = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyOverride", null);
+					
+					if (strProxyServer.Contains ("=")) {
+						foreach (string strEntry in strProxyServer.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+							if (strEntry.StartsWith ("http=")) {
+								strHttpProxy = strEntry.Substring (5);
+								break;
+							}
+					} else strHttpProxy = strProxyServer;
+					
+					if (strProxyOverrride != null)
+						bypassList = strProxyOverrride.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					
+					ArrayList al = new ArrayList ();
+					
+					foreach (string str in bypassList) {
+						if (str != "<local>")al.Add (str);
+							else bBypassOnLocal = true;
 					}
 					
-					string[] bypassList=null;
-				        string bypass = Environment.GetEnvironmentVariable ("no_proxy");
+					return new WebProxy (strHttpProxy, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
+				}
+			} else {
+				string address = Environment.GetEnvironmentVariable ("http_proxy");
+
+				if (address == null)
+					address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
 				
-				        if (bypass == null)
-				        	bypass = Environment.GetEnvironmentVariable ("NO_PROXY");
-				
-				        if (bypass != null) {
-				                bypass = bypass.Remove (bypass.IndexOf("*.local"), 7);
-				                bypassList = bypass.Split (new char[]{','}, StringSplitOptions.RemoveEmptyEntries);
-				            }
-				
-				        return new WebProxy (uri, false, bypassList);
-				} catch (UriFormatException) { }
+				if (address != null) {
+					try {
+						if (!address.StartsWith ("http://"))
+							address = "http://" + address;
+
+						Uri uri = new Uri (address);
+						IPAddress ip;
+						
+						if (IPAddress.TryParse (uri.Host, out ip)) {
+							if (IPAddress.Any.Equals (ip)) {
+								UriBuilder builder = new UriBuilder (uri);
+								builder.Host = "127.0.0.1";
+								uri = builder.Uri;
+							} else if (IPAddress.IPv6Any.Equals (ip)) {
+								UriBuilder builder = new UriBuilder (uri);
+								builder.Host = "[::1]";
+								uri = builder.Uri;
+							}
+						}
+						
+						bool bBypassOnLocal = false;
+						string[] bypassList = null;
+						ArrayList al = new ArrayList ();
+						string bypass = Environment.GetEnvironmentVariable ("no_proxy");
+						
+						if (bypass == null)
+							bypass = Environment.GetEnvironmentVariable ("NO_PROXY");
+						
+						bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+						
+						foreach (string str in bypassList) {
+							if (str != "*.local")al.Add (str);
+								else bBypassOnLocal = true;
+						}
+						
+						return new WebProxy (uri, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
+					} catch (UriFormatException) {
+					}
+				}
 			}
 			
 			if (cfGetDefaultProxy != null)
@@ -421,6 +462,11 @@ namespace System.Net
 				throw new NotSupportedException (prefix);
 				
 			return creator;
+		}
+		
+		internal static bool IsWindows ()
+		{
+			return Environment.GetEnvironmentVariable ("windir") != null;
 		}
 
 		internal static void ClearPrefixes ()
