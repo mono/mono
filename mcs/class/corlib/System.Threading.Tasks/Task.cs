@@ -74,7 +74,6 @@ namespace System.Threading.Tasks
 		AtomicBooleanValue executing;
 
 		TaskCompletionQueue<IContinuation> continuations;
-		TaskCompletionQueue<IEventSlot> registeredEvts;
 
 		CancellationToken token;
 		CancellationTokenRegistration? cancellationRegistration;
@@ -330,8 +329,13 @@ namespace System.Threading.Tasks
 			continuations.Add (continuation);
 			
 			// Retry in case completion was achieved but event adding was too late
-			if (IsCompleted)
+			if (IsCompleted && continuations.Remove (continuation))
 				continuation.Execute ();
+		}
+
+		void RemoveContinuation (IContinuation continuation)
+		{
+			continuations.Remove (continuation);
 		}
 
 		static internal TaskCreationOptions GetCreationOptions (TaskContinuationOptions kind)
@@ -345,23 +349,6 @@ namespace System.Threading.Tasks
 				options |= TaskCreationOptions.LongRunning;
 			
 			return options;
-		}
-
-		void RegisterWaitEvent (IEventSlot slot)
-		{
-			if (IsCompleted) {
-				slot.Set ();
-				return;
-			}
-
-			registeredEvts.Add (slot);
-			if (IsCompleted && registeredEvts.Remove (slot))
-				slot.Set ();
-		}
-
-		void UnregisterWaitEvent (IEventSlot slot)
-		{
-			registeredEvts.Remove (slot);
 		}
 		#endregion
 		
@@ -496,11 +483,6 @@ namespace System.Threading.Tasks
 				while (continuations.TryGetNextCompletion (out continuation))
 					continuation.Execute ();
 			}
-			if (registeredEvts.HasElements) {
-				IEventSlot evt;
-				while (registeredEvts.TryGetNextCompletion (out evt))
-					evt.Set ();
-			}
 		}
 
 		void ProcessChildExceptions ()
@@ -575,11 +557,11 @@ namespace System.Threading.Tasks
 					var evt = new ManualResetEventSlim ();
 					var slot = new ManualEventSlot (evt);
 					try {
-						RegisterWaitEvent (slot);
+						ContinueWith (slot);
 						result = evt.Wait (millisecondsTimeout, cancellationToken);
 					} finally {
 						if (!result)
-							UnregisterWaitEvent (slot);
+							RemoveContinuation (slot);
 						evt.Dispose ();
 					}
 				}
@@ -632,7 +614,7 @@ namespace System.Threading.Tasks
 				var slot = new CountdownEventSlot (evt);
 				try {
 					foreach (var t in tasks)
-						t.RegisterWaitEvent (slot);
+						t.ContinueWith (slot);
 
 					result = evt.Wait (millisecondsTimeout, cancellationToken);
 				} finally {
@@ -649,7 +631,7 @@ namespace System.Threading.Tasks
 							else
 								exceptions.Add (new TaskCanceledException (t));
 						} else {
-							t.UnregisterWaitEvent (slot);
+							t.RemoveContinuation (slot);
 						}
 					}
 
@@ -700,7 +682,7 @@ namespace System.Threading.Tasks
 						var t = tasks[i];
 						if (t.IsCompleted)
 							return i;
-						t.RegisterWaitEvent (slot);
+						t.ContinueWith (slot);
 					}
 
 					if (!(result = evt.Wait (millisecondsTimeout, cancellationToken)))
@@ -708,7 +690,7 @@ namespace System.Threading.Tasks
 				} finally {
 					if (!result)
 						foreach (var t in tasks)
-							t.UnregisterWaitEvent (slot);
+							t.RemoveContinuation (slot);
 					evt.Dispose ();
 				}
 			}

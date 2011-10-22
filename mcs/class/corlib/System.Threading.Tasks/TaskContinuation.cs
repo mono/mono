@@ -40,7 +40,6 @@ namespace System.Threading.Tasks
 	{
 		readonly Task task;
 		readonly TaskContinuationOptions continuationOptions;
-		AtomicBooleanValue Launched;
 
 		public TaskContinuation (Task task, TaskContinuationOptions continuationOptions)
 		{
@@ -92,10 +91,6 @@ namespace System.Threading.Tasks
 
 		public void Execute ()
 		{
-			// TODO: No idea what it's for
-			if (!Launched.TryRelaxedSet ())
-				return;
-
 			if (!ContinuationStatusCheck (continuationOptions)) {
 				task.CancelReal ();
 				task.Dispose ();

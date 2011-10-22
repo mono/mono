@@ -28,11 +28,9 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-
 namespace System.Threading.Tasks
 {
-	class ManualEventSlot : IEventSlot
+	class ManualEventSlot : IContinuation
 	{
 		ManualResetEventSlim evt;
 		public ManualEventSlot (ManualResetEventSlim evt)
@@ -40,13 +38,13 @@ namespace System.Threading.Tasks
 			this.evt = evt;
 		}
 
-		public void Set ()
+		public void Execute ()
 		{
 			evt.Set ();
 		}
 	}
 
-	class CountdownEventSlot : IEventSlot
+	class CountdownEventSlot : IContinuation
 	{
 		CountdownEvent evt;
 		public CountdownEventSlot (CountdownEvent evt)
@@ -54,7 +52,7 @@ namespace System.Threading.Tasks
 			this.evt = evt;
 		}
 
-		public void Set ()
+		public void Execute ()
 		{
 			evt.Signal ();
 		}
