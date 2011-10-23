@@ -466,7 +466,7 @@ namespace System.Net
 		
 		internal static bool IsWindows ()
 		{
-			return Environment.GetEnvironmentVariable ("windir") != null;
+			return (int) Environment.OSVersion.Platform < 4;
 		}
 
 		internal static void ClearPrefixes ()
