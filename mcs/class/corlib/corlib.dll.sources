@@ -499,6 +499,7 @@ System.Reflection/ImageFileMachine.cs
 System.Reflection/InterfaceMapping.cs
 System.Reflection/InvalidFilterCriteriaException.cs
 System.Reflection/IReflect.cs
+System.Reflection/IReflectableType.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/ManifestResourceInfo.cs
 System.Reflection/MemberFilter.cs
@@ -531,6 +532,7 @@ System.Reflection/PortableExecutableKinds.cs
 System.Reflection/ProcessorArchitecture.cs
 System.Reflection/PropertyAttributes.cs
 System.Reflection/PropertyInfo.cs
+System.Reflection/ReflectionContext.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/ResourceAttributes.cs
 System.Reflection/ResourceLocation.cs
@@ -541,6 +543,7 @@ System.Reflection/TargetParameterCountException.cs
 System.Reflection/TypeAttributes.cs
 System.Reflection/TypeDelegator.cs
 System.Reflection/TypeFilter.cs
+System.Reflection/TypeInfo.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
