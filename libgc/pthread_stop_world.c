@@ -29,10 +29,10 @@ extern volatile int nacl_park_threads_now
     __attribute__ ((alias ("__nacl_thread_suspension_needed")));
 pthread_t nacl_thread_parker = -1;
 
-int nacl_thread_parked[MAX_NACL_GC_THREADS];
-int nacl_thread_used[MAX_NACL_GC_THREADS];
-int nacl_thread_parking_inited = 0;
-int nacl_num_gc_threads = 0;
+volatile int nacl_thread_parked[MAX_NACL_GC_THREADS];
+volatile int nacl_thread_used[MAX_NACL_GC_THREADS];
+volatile int nacl_thread_parking_inited = 0;
+volatile int nacl_num_gc_threads = 0;
 pthread_mutex_t nacl_thread_alloc_lock = PTHREAD_MUTEX_INITIALIZER;
 __thread int nacl_thread_idx = -1;
 __thread GC_thread nacl_gc_thread_self = NULL;
