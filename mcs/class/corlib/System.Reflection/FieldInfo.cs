@@ -6,6 +6,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -277,6 +278,24 @@ namespace System.Reflection {
 			if ((object)left == null ^ (object)right == null)
 				return true;
 			return !left.Equals (right);
+		}
+		
+		public virtual bool IsSecurityCritical {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public virtual bool IsSecuritySafeCritical {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public virtual bool IsSecurityTransparent {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
