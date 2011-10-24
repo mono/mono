@@ -1955,7 +1955,7 @@ namespace System {
 		//
 		private static bool IsPredefinedScheme (string scheme)
 		{
-			if (scheme == null && scheme.Length < 3)
+			if (scheme == null || scheme.Length < 3)
 				return false;
 			
 			char c = scheme [0];

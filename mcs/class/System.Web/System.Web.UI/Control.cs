@@ -842,16 +842,16 @@ namespace System.Web.UI
 				return ret;
 
 			System.ComponentModel.AttributeCollection attrs = TypeDescriptor.GetAttributes (myType);
-			if (attrs != null || attrs.Count > 0) {
-				ret = false;
+			ret = false;
+			
+			if (attrs != null) {
 				foreach (Attribute attr in attrs) {
 					if (attr is ViewStateModeByIdAttribute) {
 						ret = true;
 						break;
 					}
 				}
-			} else
-				ret = false;
+			}
 			
 			loadViewStateByIDCache.Add (myType, ret);
 			return ret;

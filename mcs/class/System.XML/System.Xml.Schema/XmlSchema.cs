@@ -494,7 +494,7 @@ namespace System.Xml.Schema
 		void ProcessExternal (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
 		{
 			if (ext == null) {
-				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
+				error (handler, "Object is not valid in Includes Property of XmlSchema");
 				return;
 			}
 

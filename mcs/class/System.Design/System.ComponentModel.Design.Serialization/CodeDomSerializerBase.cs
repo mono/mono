@@ -254,7 +254,7 @@ namespace System.ComponentModel.Design.Serialization
 			if (converter != null && converter.CanConvertTo (typeof (InstanceDescriptor))) {
 				InstanceDescriptor descriptor = converter.ConvertTo (value, typeof (InstanceDescriptor)) as InstanceDescriptor;
 				isComplete = descriptor.IsComplete;
-				if (descriptor != null || descriptor.MemberInfo != null)
+				if (descriptor != null && descriptor.MemberInfo != null)
 					expression = this.SerializeInstanceDescriptor (manager, descriptor);
 				else
 					ReportError (manager, "Unable to serialize to InstanceDescriptor", 
