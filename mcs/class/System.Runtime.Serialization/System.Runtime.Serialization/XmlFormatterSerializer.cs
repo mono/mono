@@ -86,7 +86,7 @@ namespace System.Runtime.Serialization
 		public void Serialize (Type type, object graph)
 		{
 			if (graph == null)
-				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+				writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
 #if !MOONLIGHT
 			else if (type == typeof (XmlElement))
 				((XmlElement) graph).WriteTo (Writer);
