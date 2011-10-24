@@ -742,6 +742,12 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
+		public virtual void Error_OperatorCannotBeApplied (ResolveContext rc, Location loc, string oper, TypeSpec t)
+		{
+			rc.Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
+				oper, t.GetSignatureForError ());
+		}
+
 		protected void Error_PointerInsideExpressionTree (ResolveContext ec)
 		{
 			ec.Report.Error (1944, loc, "An expression tree cannot contain an unsafe pointer operation");

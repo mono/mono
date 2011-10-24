@@ -560,12 +560,6 @@ namespace Mono.CSharp
 			Expr.EmitSideEffect (ec);
 		}
 
-		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Location loc, string oper, TypeSpec t)
-		{
-			ec.Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
-				oper, TypeManager.CSharpName (t));
-		}
-
 		//
 		// Converts operator to System.Linq.Expressions.ExpressionType enum name
 		//
@@ -1167,7 +1161,7 @@ namespace Mono.CSharp
 					source = operation;
 
 				if (source == null) {
-					Unary.Error_OperatorCannotBeApplied (ec, loc, Operator.GetName (user_op), type);
+					expr.Error_OperatorCannotBeApplied (ec, loc, Operator.GetName (user_op), type);
 					return null;
 				}
 
@@ -2245,7 +2239,7 @@ namespace Mono.CSharp
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, string oper, Location loc)
 		{
-			if (left.Type == InternalType.FakeInternalType || right.Type == InternalType.FakeInternalType)
+			if (left.Type == InternalType.ErrorType || right.Type == InternalType.ErrorType)
 				return;
 
 			string l, r;
@@ -7656,7 +7650,7 @@ namespace Mono.CSharp
 			if (type == InternalType.NullLiteral && rc.IsRuntimeBinder)
 				rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 			else
-				Unary.Error_OperatorCannotBeApplied (rc, loc, ".", type);
+				expr.Error_OperatorCannotBeApplied (rc, loc, ".", type);
 		}
 
 		public static bool IsValidDotExpression (TypeSpec type)
@@ -8933,7 +8927,7 @@ namespace Mono.CSharp
 		public static readonly ErrorExpression Instance = new ErrorExpression ();
 
 		private ErrorExpression ()
-			: base (InternalType.FakeInternalType)
+			: base (InternalType.ErrorType)
 		{
 		}
 
@@ -8948,6 +8942,10 @@ namespace Mono.CSharp
 		}
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		{
+		}
+
+		public override void Error_OperatorCannotBeApplied (ResolveContext rc, Location loc, string oper, TypeSpec t)
 		{
 		}
 	}
