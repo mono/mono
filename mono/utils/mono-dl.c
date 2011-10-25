@@ -315,6 +315,12 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	MonoDlFallbackHandler *dl_fallback = NULL;
 	int lflags = LL_SO_TRFLAGS (flags);
 
+#if defined(__native_client__) && defined(__GLIBC__)
+	if (error_msg)
+		*error_msg = g_strdup ("No mono_dl_open for NaCl");
+	return NULL;
+#endif
+
 	if (error_msg)
 		*error_msg = NULL;
 
