@@ -2737,4 +2737,17 @@ public class DebuggerTests
 		Assert.IsTrue (types.Any (t => t.FullName == "Tests"));
 		Assert.IsFalse (types.Any (t => t.FullName == "System.Int32"));
 	}
+
+	[Test]
+	public void GetTypesNamed () {
+		run_until ("user");
+
+		var types = vm.GetTypes ("Tests", false);
+		Assert.AreEqual (1, types.Count);
+		Assert.AreEqual ("Tests", types [0].FullName);
+
+		types = vm.GetTypes ("System.Exception", false);
+		Assert.AreEqual (1, types.Count);
+		Assert.AreEqual ("System.Exception", types [0].FullName);
+	}
 }

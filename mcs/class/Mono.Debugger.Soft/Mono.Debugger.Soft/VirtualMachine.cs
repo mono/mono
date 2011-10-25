@@ -251,6 +251,19 @@ namespace Mono.Debugger.Soft
 				res [i] = GetType (ids [i]);
 			return res;
 		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types named 'NAME'.
+		// NAME should be in the the same for as with Assembly.GetType ().
+		// Since protocol version 2.9.
+		//
+		public IList<TypeMirror> GetTypes (string name, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypes (name, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
 		
 		internal void queue_event_set (EventSet es) {
 			lock (queue_monitor) {
