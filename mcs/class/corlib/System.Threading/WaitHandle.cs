@@ -237,9 +237,9 @@ namespace System.Threading
 			// FIXME
 		}
 
-		public virtual void Close() {
+		public virtual void Close ()
+		{
 			Dispose(true);
-			GC.SuppressFinalize (this);
 		}
 
 #if NET_4_0 || MOBILE || MOONLIGHT
@@ -445,9 +445,5 @@ namespace System.Threading
 		
 		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
 		bool disposed = false;
-
-		~WaitHandle() {
-			Dispose(false);
-		}
 	}
 }
