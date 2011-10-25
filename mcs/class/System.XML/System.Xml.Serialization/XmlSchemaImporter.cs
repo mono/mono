@@ -1581,11 +1581,29 @@ namespace System.Xml.Serialization
 			einfo.ElementName = name;
 			einfo.Namespace = ns;
 			einfo.IsNullable = isNillable;
-			einfo.Form = form;
+			einfo.Form = GetForm (form, ns, true);
 			if (typeData.IsComplexType)
 				einfo.MappedType = emap;
 			einfo.ExplicitOrder = order;
 			return einfo;
+		}
+		
+		XmlSchemaForm GetForm (XmlSchemaForm form, string ns, bool forElement)
+		{
+			// Returns the schema form for an element or attribute, taking
+			// into account the schema defaults. If the form has not been explicitly
+			// set and there is no default, use Unqualified as default.
+			
+			if (form != XmlSchemaForm.None)
+				return form;
+			XmlSchema s = schemas [ns];
+			if (s == null)
+				return XmlSchemaForm.Unqualified;
+			XmlSchemaForm schemaForm = forElement ? s.ElementFormDefault : s.AttributeFormDefault;
+			if (schemaForm != XmlSchemaForm.None)
+				return schemaForm;
+			else
+				return XmlSchemaForm.Unqualified;
 		}
 
 		XmlTypeMapElementInfo CreateTextElementInfo (string ns, XmlTypeMapMember member, TypeData typeData)
