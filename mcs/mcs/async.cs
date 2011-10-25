@@ -523,6 +523,7 @@ namespace Mono.CSharp
 		PropertySpec task;
 		LocalVariable hoisted_return;
 		int locals_captured;
+		Dictionary<TypeSpec, List<StackField>> stack_fields;
 
 		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
 			: base (initializer.OriginalBlock, initializer.Host,context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async")
@@ -569,13 +570,35 @@ namespace Mono.CSharp
 			return AddCapturedVariable ("$awaiter" + awaiters++.ToString ("X"), type);
 		}
 
-		public Field AddCapturedLocalVariable (TypeSpec type)
+		public StackField AddCapturedLocalVariable (TypeSpec type)
 		{
 			if (mutator != null)
 				type = mutator.Mutate (type);
 
-			var field = AddCompilerGeneratedField ("<s>$" + locals_captured++.ToString ("X"), new TypeExpression (type, Location), true);
+			List<StackField> existing_fields = null;
+			if (stack_fields == null) {
+				stack_fields = new Dictionary<TypeSpec, List<StackField>> ();
+			} else if (stack_fields.TryGetValue (type, out existing_fields)) {
+				foreach (var f in existing_fields) {
+					if (f.CanBeReused) {
+						f.CanBeReused = false;
+						return f;
+					}
+				}
+			}
+
+			const Modifiers mod = Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE;
+			var field = new StackField (this, new TypeExpression (type, Location), mod, new MemberName ("<s>$" + locals_captured++.ToString ("X"), Location));
+			AddField (field);
+
 			field.Define ();
+
+			if (existing_fields == null) {
+				existing_fields = new List<StackField> ();
+				stack_fields.Add (type, existing_fields);
+			}
+
+			existing_fields.Add (field);
 
 			return field;
 		}
@@ -717,6 +740,32 @@ namespace Mono.CSharp
 			}
 
 			mg.EmitCall (ec, args);
+		}
+	}
+
+	class StackField : Field
+	{
+		public StackField (DeclSpace parent, FullNamedExpression type, Modifiers mod, MemberName name)
+			: base (parent, type, mod, name, null)
+		{
+		}
+
+		public bool CanBeReused { get; set; }
+	}
+
+	class StackFieldExpr : FieldExpr
+	{
+		public StackFieldExpr (Field field)
+			: base (field, Location.Null)
+		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+
+			var field = (StackField) spec.MemberDefinition;
+			field.CanBeReused = true;
 		}
 	}
 }

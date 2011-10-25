@@ -529,12 +529,12 @@ namespace Mono.CSharp {
 
 			//
 			// Store the result to temporary field when we
-			// cannot load this directly
+			// cannot load `this' directly
 			//
 			var field = ec.GetTemporaryField (type);
 			if (needs_temporary) {
 				//
-				// Create temporary local (we cannot load this before Emit)
+				// Create temporary local (we cannot load `this' before Emit)
 				//
 				var temp = ec.GetTemporaryLocal (type);
 				ec.Emit (OpCodes.Stloc, temp);
@@ -5343,10 +5343,7 @@ namespace Mono.CSharp {
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			bool is_volatile = false;
-
-			if ((spec.Modifiers & Modifiers.VOLATILE) != 0)
-				is_volatile = true;
+			bool is_volatile = (spec.Modifiers & Modifiers.VOLATILE) != 0;
 
 			spec.MemberDefinition.SetIsUsed ();
 			

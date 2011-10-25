@@ -280,7 +280,7 @@ namespace Mono.CSharp
 		public FieldExpr GetTemporaryField (TypeSpec type)
 		{
 			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
-			var fexpr = new FieldExpr (f, Location.Null);
+			var fexpr = new StackFieldExpr (f);
 			fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null);
 			return fexpr;
 		}
