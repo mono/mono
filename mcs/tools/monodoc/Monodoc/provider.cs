@@ -1605,7 +1605,11 @@ public class RootTree : Tree {
 
 	public static void MakeIndex ()
 	{
-		RootTree root = LoadTree ();
+		MakeIndex (LoadTree ());
+	}
+
+	public static void MakeIndex (RootTree root)
+	{
 		if (root == null)
 			return;
 
@@ -1657,9 +1661,14 @@ public class RootTree : Tree {
 
 	public static void MakeSearchIndex ()
 	{
+		MakeSearchIndex (LoadTree ());
+	}
+
+	public static void MakeSearchIndex (RootTree root)
+	{
 		// Loads the RootTree
 		Console.WriteLine ("Loading the monodoc tree...");
-		RootTree root = LoadTree ();
+
 		if (root == null)
 			return;
 
