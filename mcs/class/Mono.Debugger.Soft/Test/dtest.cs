@@ -2730,6 +2730,20 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void TypeLoadTypeNameFilter () {
+		Event e = run_until ("type_load");
+
+		var req = vm.CreateTypeLoadRequest ();
+		req.TypeNameFilter = new string [] { "TypeLoadClass2" };
+		req.Enable ();
+
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is TypeLoadEvent);
+		Assert.AreEqual ("TypeLoadClass2", (e as TypeLoadEvent).Type.FullName);
+	}
+
+	[Test]
 	public void GetTypesForSourceFile () {
 		run_until ("user");
 

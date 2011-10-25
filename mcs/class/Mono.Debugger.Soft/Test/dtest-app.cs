@@ -925,10 +925,15 @@ public class Tests : TestsBase
 		c1.ToString ();
 		var c = new TypeLoadClass ();
 		c.ToString ();
+		var c2 = new TypeLoadClass2 ();
+		c2.ToString ();
 	}
 }
 
 class TypeLoadClass {
+}
+
+class TypeLoadClass2 {
 }
 
 public class CrossDomain : MarshalByRefObject

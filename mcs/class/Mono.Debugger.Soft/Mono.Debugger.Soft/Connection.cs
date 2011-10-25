@@ -257,6 +257,12 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
+	class TypeNameModifier : Modifier {
+		public string[] TypeNames {
+			get; set;
+		}
+	}
+
 	class EventInfo {
 		public EventType EventType {
 			get; set;
@@ -398,7 +404,8 @@ namespace Mono.Debugger.Soft
 			EXCEPTION_ONLY = 8,
 			STEP = 10,
 			ASSEMBLY_ONLY = 11,
-			SOURCE_FILE_ONLY = 12
+			SOURCE_FILE_ONLY = 12,
+			TYPE_NAME_ONLY = 13
 		}
 
 		enum CmdVM {
@@ -1962,6 +1969,12 @@ namespace Mono.Debugger.Soft
 						var smod = (mod as SourceFileModifier);
 						w.WriteInt (smod.SourceFiles.Length);
 						foreach (var s in smod.SourceFiles)
+							w.WriteString (s);
+					} else if (mod is TypeNameModifier) {
+						w.WriteByte ((byte)ModifierKind.TYPE_NAME_ONLY);
+						var tmod = (mod as TypeNameModifier);
+						w.WriteInt (tmod.TypeNames.Length);
+						foreach (var s in tmod.TypeNames)
 							w.WriteString (s);
 					} else {
 						throw new NotImplementedException ();
