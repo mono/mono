@@ -83,6 +83,7 @@ namespace System.Net
 		NameValueCollection queryString;
 		bool is_busy;
 		bool async;
+		bool m_bProxySet = false;
 		Thread async_thread;
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
@@ -190,8 +191,16 @@ namespace System.Net
 		}
 
 		public IWebProxy Proxy {
-			get { return proxy; }
-			set { proxy = value; }
+			get {
+				if(!m_bProxySet)
+					return WebRequest.DefaultWebProxy;
+
+				return proxy;
+			}
+			set {
+				proxy = value;
+				m_bProxySet = true;
+			}
 		}
 
 		public bool IsBusy {
@@ -787,7 +796,7 @@ namespace System.Net
 		WebRequest SetupRequest (Uri uri)
 		{
 			WebRequest request = GetWebRequest (uri);
-			if (Proxy != null)
+			if (m_bProxySet)
 				request.Proxy = Proxy;
 			if (credentials != null)
 				request.Credentials = credentials;
