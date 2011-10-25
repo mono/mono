@@ -2213,15 +2213,17 @@ namespace Mono.CSharp {
 		public AnonymousMethodStorey CreateAnonymousMethodStorey (ResolveContext ec)
 		{
 			//
-			// An iterator has only 1 storey block
+			// Return same story for iterator and async blocks unless we are
+			// in nested anonymous method
 			//
-			if (ec.CurrentAnonymousMethod.IsIterator)
-			    return ec.CurrentAnonymousMethod.Storey;
+			if (ec.CurrentAnonymousMethod is StateMachineInitializer && ParametersBlock.Original == ec.CurrentAnonymousMethod.Block.Original)
+				return ec.CurrentAnonymousMethod.Storey;
 
 			//
-			// When referencing a variable in iterator storey from children anonymous method
+			// When referencing a variable in parent iterator/async storey
+			// from nested anonymous method
 			//
-			if (ParametersBlock.am_storey is IteratorStorey) {
+			if (ParametersBlock.am_storey is StateMachine) {
 				return ParametersBlock.am_storey;
 			}
 
@@ -2693,6 +2695,7 @@ namespace Mono.CSharp {
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
 			pb.statements = statements;
+			pb.original = this;
 
 			var iterator = new Iterator (pb, method, host, iterator_type, is_enumerable);
 			am_storey = new IteratorStorey (iterator);
@@ -2706,6 +2709,7 @@ namespace Mono.CSharp {
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
 			pb.statements = statements;
+			pb.original = this;
 
 			var block_type = host.Module.Compiler.BuiltinTypes.Void;
 			var initializer = new AsyncInitializer (pb, host, block_type);
