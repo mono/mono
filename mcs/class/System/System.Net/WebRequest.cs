@@ -392,7 +392,8 @@ namespace System.Net
 						if (bypass == null)
 							bypass = Environment.GetEnvironmentVariable ("NO_PROXY");
 						
-						bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+						if (bypass != null)
+							bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 						
 						foreach (string str in bypassList) {
 							if (str != "*.local")al.Add (str);
