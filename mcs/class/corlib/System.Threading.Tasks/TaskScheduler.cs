@@ -49,10 +49,6 @@ namespace System.Threading.Tasks
 		{
 			this.id = Interlocked.Increment (ref lastId);
 		}
-
-		~TaskScheduler ()
-		{
-		}
 		
 		public static TaskScheduler FromCurrentSynchronizationContext ()
 		{
