@@ -3677,7 +3677,7 @@ namespace Mono.CSharp {
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
 					var async_am = a.Expr as AnonymousMethodExpression;
-					if (async_am != null && async_am.IsAsync) {
+					if (async_am != null && async_am.Block.IsAsync) {
 
 						if (p.IsGenericTask != q.IsGenericTask) {
 							return 0;

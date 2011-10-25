@@ -469,10 +469,17 @@ namespace Mono.CSharp
 			if (CurrentAnonymousMethod == null)
 				return false;
 
-			// FIXME: IsIterator is too aggressive, we should capture only if child
-			// block contains yield
-			if (CurrentAnonymousMethod.IsIterator || CurrentAnonymousMethod is AsyncInitializer)
-				return true;
+			//
+			// Capture only if this or any of child blocks contain yield
+			//
+			if (CurrentAnonymousMethod.IsIterator)
+				return CurrentBlock.Explicit.HasYield;
+
+			//
+			// Capture only if this or any of child blocks contain await
+			//
+			if (CurrentAnonymousMethod is AsyncInitializer)
+				return CurrentBlock.Explicit.HasAwait;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}

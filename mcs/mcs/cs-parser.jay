@@ -3741,7 +3741,7 @@ unary_expression
 			report.Error (1992, GetLocation ($1),
 				"The `await' operator can only be used when its containing method or lambda expression is marked with the `async' modifier");
 		} else {
-			current_block.ParametersBlock.IsAsync = true;
+			current_block.Explicit.RegisterAsyncAwait ();
 		}
 		
 		$$ = new Await ((Expression) $2, GetLocation ($1));
@@ -5270,7 +5270,7 @@ yield_statement
 			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.ParametersBlock.TopBlock.IsIterator = true;
+		current_block.Explicit.RegisterIteratorYield ();
 		$$ = new Yield ((Expression) $3, lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
@@ -5284,7 +5284,7 @@ yield_statement
 			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.ParametersBlock.TopBlock.IsIterator = true;
+		current_block.Explicit.RegisterIteratorYield ();
 		$$ = new YieldBreak (lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($3));
 	  }
@@ -6495,6 +6495,9 @@ void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync
 AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 {
 	AnonymousMethodExpression retval;
+
+	if (async_block)
+		anon_block.IsAsync = true;
 
 	current_anonymous_method.Block = anon_block;
 	retval = current_anonymous_method;

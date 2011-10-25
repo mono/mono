@@ -70,11 +70,6 @@ namespace Mono.CSharp
 
 			var bc = (BlockContext) rc;
 
-			if (!bc.CurrentBlock.ParametersBlock.IsAsync) {
-				// TODO: Should check for existence of await type but
-				// what to do with it
-			}
-
 			stmt = new AwaitStatement (expr, loc);
 			if (!stmt.Resolve (bc))
 				return null;
@@ -445,7 +440,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (!block.IsAsync) {
+			if (!block.HasAwait) {
 				host.Compiler.Report.Warning (1998, 1, loc,
 					"Async block lacks `await' operator and will run synchronously");
 			}

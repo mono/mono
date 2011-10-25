@@ -1802,13 +1802,14 @@ namespace Mono.CSharp {
 			Unchecked = 1,
 			HasRet = 8,
 			Unsafe = 16,
-			IsIterator = 32,
 			HasCapturedVariable = 64,
 			HasCapturedThis = 1 << 7,
 			IsExpressionTree = 1 << 8,
 			CompilerGenerated = 1 << 9,
-			IsAsync = 1 << 10,
-			Resolved = 1 << 11
+			HasAsyncModifier = 1 << 10,
+			Resolved = 1 << 11,
+			YieldBlock = 1 << 12,
+			AwaitBlock = 1 << 13
 		}
 
 		public Block Parent;
@@ -2191,6 +2192,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasAwait {
+			get {
+				return (flags & Flags.AwaitBlock) != 0;
+			}
+		}
+
 		public bool HasCapturedThis {
 			set { flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis; }
 			get {
@@ -2202,6 +2209,12 @@ namespace Mono.CSharp {
 			set { flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable; }
 			get {
 				return (flags & Flags.HasCapturedVariable) != 0;
+			}
+		}
+
+		public bool HasYield {
+			get {
+				return (flags & Flags.YieldBlock) != 0;
 			}
 		}
 
@@ -2308,6 +2321,32 @@ namespace Mono.CSharp {
 
 			am_storey.Define ();
 			am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+		}
+
+		public void RegisterAsyncAwait ()
+		{
+			var block = this;
+			while ((block.flags & Flags.AwaitBlock) == 0) {
+				block.flags |= Flags.AwaitBlock;
+
+				if (block.Parent == null)
+					return;
+
+				block = block.Parent.Explicit;
+			}
+		}
+
+		public void RegisterIteratorYield ()
+		{
+			var block = this;
+			while ((block.flags & Flags.YieldBlock) == 0) {
+				block.flags |= Flags.YieldBlock;
+
+				if (block.Parent == null)
+					return;
+
+				block = block.Parent.Explicit;
+			}
 		}
 
 		public void WrapIntoDestructor (TryFinally tf, ExplicitBlock tryBlock)
@@ -2446,6 +2485,8 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 			ParametersBlock = this;
 
+			flags |= (parent.ParametersBlock.flags & (Flags.YieldBlock | Flags.AwaitBlock));
+
 			this.top_block = parent.ParametersBlock.top_block;
 			ProcessParameters ();
 		}
@@ -2485,13 +2526,12 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public bool IsAsync
-		{
+		public bool IsAsync {
 			get {
-				return (flags & Flags.IsAsync) != 0;
+				return (flags & Flags.HasAsyncModifier) != 0;
 			}
 			set {
-				flags = value ? flags | Flags.IsAsync : flags & ~Flags.IsAsync;
+				flags = value ? flags | Flags.HasAsyncModifier : flags & ~Flags.HasAsyncModifier;
 			}
 		}
 
@@ -2521,7 +2561,7 @@ namespace Mono.CSharp {
 
 		public bool Resolved {
 			get {
-				return resolved;
+				return (flags & Flags.Resolved) != 0;
 			}
 		}
 
@@ -2702,6 +2742,7 @@ namespace Mono.CSharp {
 
 			statements = new List<Statement> (1);
 			AddStatement (new Return (iterator, iterator.Location));
+			flags &= ~Flags.YieldBlock;
 		}
 
 		public void WrapIntoAsyncTask (IMemberContext context, TypeContainer host, TypeSpec returnType)
@@ -2719,6 +2760,7 @@ namespace Mono.CSharp {
 
 			statements = new List<Statement> (1);
 			AddStatement (new StatementExpression (initializer));
+			flags &= ~Flags.AwaitBlock;
 		}
 	}
 
@@ -2765,13 +2807,9 @@ namespace Mono.CSharp {
 			top_block = this;
 		}
 
-		public bool IsIterator
-		{
+		public bool IsIterator {
 			get {
-				return (flags & Flags.IsIterator) != 0;
-			}
-			set {
-				flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator;
+				return HasYield;
 			}
 		}
 

@@ -7490,7 +7490,7 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>95</size>
+        <size>75</size>
       </method>
       <method name="Void Dispose()">
         <size>15</size>
@@ -22267,7 +22267,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>40</size>
+        <size>33</size>
       </method>
       <method name="Void Dispose()">
         <size>15</size>
@@ -52406,7 +52406,7 @@
   <test name="test-async-08.cs">
     <type name="AsyncTypeInference">
       <method name="Int32 Main()">
-        <size>104</size>
+        <size>138</size>
       </method>
       <method name="System.Threading.Tasks.Task TT()">
         <size>40</size>
@@ -52426,9 +52426,6 @@
       <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(Int32)">
         <size>24</size>
       </method>
-      <method name="Int32 &lt;TT&gt;m__3()">
-        <size>2</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -52436,9 +52433,6 @@
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()">
         <size>195</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4()">
-        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -52448,9 +52442,6 @@
       <method name="Void MoveNext()">
         <size>195</size>
       </method>
-      <method name="Int32 &lt;&gt;m__5()">
-        <size>2</size>
-      </method>
       <method name="Void .ctor()">
         <size>36</size>
       </method>
@@ -52458,6 +52449,32 @@
     <type name="AsyncTypeInference+&lt;Main&gt;c__async8">
       <method name="Void MoveNext()">
         <size>154</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference">
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__3(Int32)">
+        <size>24</size>
+      </method>
+      <method name="Int32 &lt;TT&gt;m__4()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
+      <method name="Int32 &lt;&gt;m__5()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;Main&gt;c__async5">
+      <method name="Int32 &lt;&gt;m__6()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="AsyncTypeInference+&lt;Main&gt;c__asyncB">
+      <method name="Void MoveNext()">
+        <size>36</size>
       </method>
       <method name="Void .ctor()">
         <size>36</size>
@@ -54193,7 +54210,7 @@
     </type>
     <type name="Tester+&lt;Foreach_1&gt;c__async2">
       <method name="Void MoveNext()">
-        <size>315</size>
+        <size>307</size>
       </method>
       <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__9()">
         <size>29</size>
@@ -56183,7 +56200,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>106</size>
+        <size>94</size>
       </method>
       <method name="Void Dispose()">
         <size>15</size>
