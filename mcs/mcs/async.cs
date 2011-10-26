@@ -237,12 +237,11 @@ namespace Mono.CSharp
 			//
 			ec.AssertEmptyStack ();
 
-			var args = new Arguments (1);
 			var storey = (AsyncTaskStorey) machine_initializer.Storey;
-			var fe_cont = new FieldExpr (storey.Continuation, loc);
-			fe_cont.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
+			var cont_field = storey.EmitContinuationInitialization (ec);
 
-			args.Add (new Argument (fe_cont));
+			var args = new Arguments (1);
+			args.Add (new Argument (cont_field));
 
 			if (IsDynamic) {
 				var rc = new ResolveContext (ec.MemberContext);
@@ -524,6 +523,7 @@ namespace Mono.CSharp
 		LocalVariable hoisted_return;
 		int locals_captured;
 		Dictionary<TypeSpec, List<StackField>> stack_fields;
+		TypeSpec action;
 
 		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
 			: base (initializer.OriginalBlock, initializer.Host,context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async")
@@ -536,12 +536,6 @@ namespace Mono.CSharp
 		public Field Builder {
 			get {
 				return builder;
-			}
-		}
-
-		public Field Continuation {
-			get {
-				return continuation;
 			}
 		}
 
@@ -605,11 +599,7 @@ namespace Mono.CSharp
 
 		protected override bool DoDefineMembers ()
 		{
-			var action = Module.PredefinedTypes.Action.Resolve ();
-			if (action != null) {
-				continuation = AddCompilerGeneratedField ("$continuation", new TypeExpression (action, Location), true);
-				continuation.ModFlags |= Modifiers.READONLY;
-			}
+			action = Module.PredefinedTypes.Action.Resolve ();
 
 			PredefinedType builder_type;
 			PredefinedMember<MethodSpec> bf;
@@ -671,30 +661,13 @@ namespace Mono.CSharp
 			if (!base.DoDefineMembers ())
 				return false;
 
-			MethodGroupExpr mg;
 			var block = instance_constructors[0].Block;
 
-			//
-			// Initialize continuation with state machine method
-			//
-			if (continuation != null) {
-				var args = new Arguments (1);
-				mg = MethodGroupExpr.CreatePredefined (StateMachineMethod.Spec, spec, Location);
-				args.Add (new Argument (mg));
-
-				block.AddStatement (
-					new StatementExpression (new SimpleAssign (
-						new FieldExpr (continuation, Location),
-						new NewDelegate (action, args, Location),
-						Location
-				)));
-			}
-
-			mg = MethodGroupExpr.CreatePredefined (builder_factory, bt, Location);
+			var mg = MethodGroupExpr.CreatePredefined (builder_factory, bt, Location);
 			block.AddStatement (
 				new StatementExpression (new SimpleAssign (
-				new FieldExpr (builder, Location),
-				new Invocation (mg, new Arguments (0)),
+					new FieldExpr (builder, Location),
+					new Invocation (mg, new Arguments (0)),
 				Location)));
 
 			if (has_task_return_type) {
@@ -702,6 +675,54 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		public Expression EmitContinuationInitialization (EmitContext ec)
+		{
+			//
+			// When more than 1 awaiter has been used in the block we
+			// introduce class scope field to cache continuation delegate
+			//
+			if (awaiters > 1) {
+				if (continuation == null) {
+					continuation = AddCompilerGeneratedField ("$continuation", new TypeExpression (action, Location), true);
+					continuation.Define ();
+				}
+
+				var fexpr = new FieldExpr (continuation, Location);
+				fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location);
+
+				//
+				// if ($continuation == null)
+				//    $continuation = new Action (MoveNext);
+				//
+				fexpr.Emit (ec);
+
+				var skip_cont_init = ec.DefineLabel ();
+				ec.Emit (OpCodes.Brtrue_S, skip_cont_init);
+
+				ec.EmitThis ();
+				EmitActionLoad (ec);
+				ec.Emit (OpCodes.Stfld, continuation.Spec);
+				ec.MarkLabel (skip_cont_init);
+
+				return fexpr;
+			}
+
+			//
+			// Otherwise simply use temporary local variable
+			//
+			var field = LocalVariable.CreateCompilerGenerated (action, OriginalSourceBlock, Location);
+			EmitActionLoad (ec);
+			field.EmitAssign (ec);
+			return new LocalVariableReference (field, Location);
+		}
+
+		void EmitActionLoad (EmitContext ec)
+		{
+			ec.EmitThis ();
+			ec.Emit (OpCodes.Ldftn, StateMachineMethod.Spec);
+			ec.Emit (OpCodes.Newobj, (MethodSpec) MemberCache.FindMember (action, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly));
 		}
 
 		public void EmitSetException (EmitContext ec, LocalVariableReference exceptionVariable)
