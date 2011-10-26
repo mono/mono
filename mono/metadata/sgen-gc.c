@@ -820,7 +820,6 @@ align_pointer (void *ptr)
 
 typedef SgenGrayQueue GrayQueue;
 
-typedef void (*CopyOrMarkObjectFunc) (void**, GrayQueue*);
 typedef char* (*ScanObjectFunc) (char*, GrayQueue*);
 
 
@@ -2551,6 +2550,10 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 		drain_gray_stack (queue);
 		++ephemeron_rounds;
 	} while (!done_with_ephemerons);
+
+	mono_sgen_scan_togglerefs (copy_func, start_addr, end_addr, queue);
+	if (generation == GENERATION_OLD)
+		mono_sgen_scan_togglerefs (copy_func, nursery_start, nursery_real_end, queue);
 
 	if (mono_sgen_need_bridge_processing ()) {
 		if (finalized_array == NULL) {
@@ -5351,6 +5354,9 @@ static int
 stop_world (int generation)
 {
 	int count;
+
+	/*XXX this is the right stop, thought might not be the nicest place to put it*/
+	mono_sgen_process_togglerefs ();
 
 	mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD, generation);
 	acquire_gc_locks ();

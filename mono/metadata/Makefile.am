@@ -199,6 +199,8 @@ libmonoruntime_la_SOURCES = \
 	sgen-protocol.c \
 	sgen-bridge.c		\
 	sgen-bridge.h		\
+	sgen-toggleref.c		\
+	sgen-toggleref.h		\
 	sgen-gc.h		\
 	sgen-archdep.h		\
 	sgen-cardtable.h	\
