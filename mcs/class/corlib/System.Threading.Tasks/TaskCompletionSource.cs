@@ -34,9 +34,6 @@ namespace System.Threading.Tasks
 {
 	public class TaskCompletionSource<TResult>
 	{
-		static readonly Func<TResult> emptyFunction = () => default (TResult);
-		static readonly Func<object, TResult> emptyParamFunction = (_) => default (TResult);
-
 		static readonly Action<Task<TResult>, TResult> setResultAction = SetResultAction;
 		static readonly Action<Task<TResult>, AggregateException> setExceptionAction = SetExceptionAction;
 		static readonly Action<Task<TResult>, object> setCanceledAction = SetCanceledAction;
@@ -45,15 +42,13 @@ namespace System.Threading.Tasks
 		SpinLock opLock = new SpinLock (false);
 
 		public TaskCompletionSource ()
+			: this (null, TaskCreationOptions.None)
 		{
-			source = new Task<TResult> (emptyFunction);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state)
+			: this (state, TaskCreationOptions.None)
 		{
-			source = new Task<TResult> (emptyParamFunction, state);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions creationOptions)
@@ -66,7 +61,7 @@ namespace System.Threading.Tasks
 			if ((creationOptions & System.Threading.Tasks.Task.WorkerTaskNotSupportedOptions) != 0)
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
-			source = new Task<TResult> (emptyParamFunction, state, creationOptions);
+			source = new Task<TResult> (TaskActionInvoker.Empty, state, CancellationToken.None, creationOptions, null);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
@@ -136,7 +131,8 @@ namespace System.Threading.Tasks
 			bool taken = false;
 			try {
 				opLock.Enter (ref taken);
-				if (CheckInvalidState ())
+				
+				if (source.IsCompleted)
 					return false;
 			
 				source.Status = TaskStatus.Running;
@@ -151,13 +147,6 @@ namespace System.Threading.Tasks
 				if (taken)
 					opLock.Exit ();
 			}
-		}
-		
-		bool CheckInvalidState ()
-		{
-			return source.Status == TaskStatus.RanToCompletion ||
-				   source.Status == TaskStatus.Faulted || 
-				   source.Status == TaskStatus.Canceled;
 		}
 
 		static void SetResultAction (Task<TResult> source, TResult result)

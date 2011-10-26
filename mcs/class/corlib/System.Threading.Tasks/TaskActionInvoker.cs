@@ -32,6 +32,21 @@ namespace System.Threading.Tasks
 {
 	abstract class TaskActionInvoker
 	{
+		public static readonly TaskActionInvoker Empty = new EmptyTaskActionInvoker ();
+		
+		sealed class EmptyTaskActionInvoker : TaskActionInvoker
+		{
+			public override Delegate Action {
+				get {
+					return null;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+			}
+		}
+
 		sealed class ActionInvoke : TaskActionInvoker
 		{
 			readonly Action action;
