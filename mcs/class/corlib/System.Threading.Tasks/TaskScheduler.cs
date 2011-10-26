@@ -118,7 +118,7 @@ namespace System.Threading.Tasks
 			return true;
 		}
 
-		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)
+		internal static UnobservedTaskExceptionEventArgs FireUnobservedEvent (Task task, AggregateException e)
 		{
 			UnobservedTaskExceptionEventArgs args = new UnobservedTaskExceptionEventArgs (e);
 			
@@ -126,7 +126,7 @@ namespace System.Threading.Tasks
 			if (temp == null)
 				return args;
 			
-			temp (this, args);
+			temp (task, args);
 			
 			return args;
 		}

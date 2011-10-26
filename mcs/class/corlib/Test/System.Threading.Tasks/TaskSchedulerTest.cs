@@ -108,6 +108,81 @@ namespace MonoTests.System.Threading.Tasks
 			} catch {}
 			Assert.AreEqual (TaskStatus.WaitingToRun, ts.ExecuteInlineStatus);
 		}
+
+		static int finalizerThreadId = -1;
+	
+		class FinalizerCatcher
+		{
+			~FinalizerCatcher ()
+			{
+				finalizerThreadId = Thread.CurrentThread.ManagedThreadId;
+			}
+		}
+
+		[Test]
+		public void UnobservedTaskExceptionOnFinalizerThreadTest ()
+		{
+			var foo = new FinalizerCatcher ();
+			foo = null;
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+			Assert.Greater (finalizerThreadId, -1, finalizerThreadId.ToString ());
+
+			int evtThreadId = -2;
+			TaskScheduler.UnobservedTaskException += delegate {
+				evtThreadId = Thread.CurrentThread.ManagedThreadId;
+			};
+			var evt = new ManualResetEventSlim ();
+			var bar = Task.Factory.StartNew (() => { evt.Set (); throw new Exception ("foo"); });
+			evt.Wait (500);
+			Thread.Sleep (100);
+			bar = null;
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+			Assert.AreEqual (finalizerThreadId, evtThreadId, "Should be ran on finalizer thread");
+		}
+
+		[Test]
+		public void UnobservedTaskExceptionArgumentTest ()
+		{
+			bool ran = false;
+			bool senderIsRight = false;
+			bool argsExceptionNotNull = false;
+			bool argsMessageRight = false;
+			bool argsObserved = false;
+			UnobservedTaskExceptionEventArgs args = null;
+
+			TaskScheduler.UnobservedTaskException += (o, a) => {
+				senderIsRight = o.GetType ().ToString () == "System.Threading.Tasks.Task";
+				args = a;
+				ran = true;
+			};
+
+			var evt = new ManualResetEventSlim ();
+			var bar = Task.Factory.StartNew (() => { evt.Set (); throw new Exception ("foo"); });
+			evt.Wait (500);
+			Thread.Sleep (100);
+			bar = null;
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+
+			// GC is too unreliable for some reason in that test, so backoff if finalizer wasn't ran
+			// it needs to be run for the above test to work though (♥)
+			if (!ran)
+				return;
+
+			if (args != null) {
+				argsExceptionNotNull = args.Exception != null;
+				if (argsExceptionNotNull)
+					argsMessageRight = args.Exception.InnerException.Message == "foo";
+				argsObserved = !args.Observed;
+			}
+
+			Assert.IsTrue (argsExceptionNotNull, "Exception not null");
+			Assert.IsTrue (argsMessageRight, "Right exception is registered");
+			Assert.IsTrue (argsObserved, "Task exception wasn't observed");
+			Assert.IsTrue (senderIsRight, "Sender is a task");
+		}
 	}
 }
 #endif

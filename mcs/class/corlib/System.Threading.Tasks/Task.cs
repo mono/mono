@@ -63,9 +63,7 @@ namespace System.Threading.Tasks
 		
 		internal TaskScheduler       scheduler;
 
-		volatile AggregateException  exception;
-		volatile bool                exceptionObserved;
-		ConcurrentQueue<AggregateException> childExceptions;
+		TaskExceptionSlot exSlot;
 
 		TaskStatus          status;
 
@@ -154,12 +152,6 @@ namespace System.Threading.Tasks
 
 			if (token.CanBeCanceled)
 				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
-		}
-
-		~Task ()
-		{
-			if (exception != null && !exceptionObserved)
-				throw exception;
 		}
 
 		bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
@@ -424,9 +416,9 @@ namespace System.Threading.Tasks
 		internal void ChildCompleted (AggregateException childEx)
 		{
 			if (childEx != null) {
-				if (childExceptions == null)
-					Interlocked.CompareExchange (ref childExceptions, new ConcurrentQueue<AggregateException> (), null);
-				childExceptions.Enqueue (childEx);
+				if (ExceptionSlot.ChildExceptions == null)
+					Interlocked.CompareExchange (ref ExceptionSlot.ChildExceptions, new ConcurrentQueue<AggregateException> (), null);
+				ExceptionSlot.ChildExceptions.Enqueue (childEx);
 			}
 
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
@@ -487,15 +479,15 @@ namespace System.Threading.Tasks
 
 		void ProcessChildExceptions ()
 		{
-			if (childExceptions == null)
+			if (exSlot == null || exSlot.ChildExceptions == null)
 				return;
 
-			if (exception == null)
-				exception = new AggregateException ();
+			if (ExceptionSlot.Exception == null)
+				exSlot.Exception = new AggregateException ();
 
 			AggregateException childEx;
-			while (childExceptions.TryDequeue (out childEx))
-				exception.AddChildException (childEx);
+			while (exSlot.ChildExceptions.TryDequeue (out childEx))
+				exSlot.Exception.AddChildException (childEx);
 		}
 		#endregion
 		
@@ -514,11 +506,9 @@ namespace System.Threading.Tasks
 
 		internal void HandleGenericException (AggregateException e)
 		{
-			exception = e;
+			ExceptionSlot.Exception = e;
 			Thread.MemoryBarrier ();
 			Status = TaskStatus.Faulted;
-			if (scheduler != null && scheduler.FireUnobservedEvent (exception).Observed)
-				exceptionObserved = true;
 		}
 		
 		public void Wait ()
@@ -570,6 +560,7 @@ namespace System.Threading.Tasks
 			if (IsCanceled)
 				throw new AggregateException (new TaskCanceledException (this));
 
+			var exception = Exception;
 			if (exception != null)
 				throw exception;
 
@@ -928,12 +919,13 @@ namespace System.Threading.Tasks
 		
 		public AggregateException Exception {
 			get {
-				exceptionObserved = true;
-				
-				return exception;	
+				if (exSlot == null)
+					return null;
+				exSlot.Observed = true;
+				return exSlot.Exception;
 			}
 			internal set {
-				exception = value;
+				ExceptionSlot.Exception = value;
 			}
 		}
 		
@@ -968,6 +960,15 @@ namespace System.Threading.Tasks
 			internal set {
 				status = value;
 				Thread.MemoryBarrier ();
+			}
+		}
+
+		TaskExceptionSlot ExceptionSlot {
+			get {
+				if (exSlot != null)
+					return exSlot;
+				Interlocked.CompareExchange (ref exSlot, new TaskExceptionSlot (this), null);
+				return exSlot;
 			}
 		}
 
