@@ -1362,6 +1362,13 @@ namespace Mono.CSharp {
 					if (Initializer != null) {
 						((VarExpr) type_expr).InferType (bc, Initializer);
 						type = type_expr.Type;
+					} else {
+						// Set error type to indicate the var was placed correctly but could
+						// not be infered
+						//
+						// var a = missing ();
+						//
+						type = InternalType.ErrorType;
 					}
 				}
 

@@ -841,7 +841,7 @@ namespace Mono.CSharp {
 			      name, was, expected);
 		}
 
-		public void Error_UnexpectedKind (ResolveContext ec, ResolveFlags flags, Location loc)
+		public virtual void Error_UnexpectedKind (ResolveContext ec, ResolveFlags flags, Location loc)
 		{
 			string [] valid = new string [4];
 			int count = 0;

@@ -5458,19 +5458,19 @@ using_statement
 		current_block.AddLocalName (li);
 		current_variable = new Using.VariableDeclaration ((FullNamedExpression) $3, li);
 	  }
-	  using_or_fixed_variable_initializer opt_using_or_fixed_variable_declarators CLOSE_PARENS
+	  using_initialization CLOSE_PARENS
 	  {
 		$$ = current_variable;	  
 		current_variable = null;
 	  }
 	  embedded_statement
 	  {
-		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
-			Warning_EmptyStatement (GetLocation ($10));
+		if ($9 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($9));
 	  
-		Using u = new Using ((Using.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
+		Using u = new Using ((Using.VariableDeclaration) $8, (Statement) $9, GetLocation ($1));
 		current_block.AddStatement (u);
-		$$ = end_block (GetLocation ($8));
+		$$ = end_block (GetLocation ($7));
 	  }
 	| USING open_parens_any expression CLOSE_PARENS embedded_statement
 	  {
@@ -5480,6 +5480,15 @@ using_statement
 		Using u = new Using ((Expression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement (u, GetLocation ($2), GetLocation ($4));
 		$$ = u;
+	  }
+	;
+	
+using_initialization
+	: using_or_fixed_variable_initializer opt_using_or_fixed_variable_declarators
+	| error
+	  {
+		// It has to be here for the parent to safely restore artificial block
+	  	Error_SyntaxError (yyToken);
 	  }
 	;
 	
