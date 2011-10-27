@@ -104,7 +104,7 @@ profiles-do--run-test:
 
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
-$(_boot_:%=profile-do--net_4_5--%):           profile-do--net_4_5--%:           profile-do--net_4_0--%
+$(_boot_:%=profile-do--net_4_5--%):           profile-do--net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           profile-do--net_2_0--%
 $(_boot_:%=profile-do--moonlight--%):         profile-do--moonlight--%:         profile-do--moonlight_raw--%
