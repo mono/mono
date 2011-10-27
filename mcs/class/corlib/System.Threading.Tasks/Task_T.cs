@@ -204,6 +204,29 @@ namespace System.Threading.Tasks
 			
 			return t;
 		}
+
+		internal bool TrySetResult (TResult result)
+		{
+			if (IsCompleted)
+				return false;
+			
+			if (!executing.TryRelaxedSet ()) {
+				var sw = new SpinWait ();
+				while (!IsCompleted)
+					sw.SpinOnce ();
+
+				return false;
+			}
+			
+			Status = TaskStatus.Running;
+
+			this.value = result;
+			Thread.MemoryBarrier ();
+
+			Finish ();
+
+			return true;
+		}
 		
 #if NET_4_5
 

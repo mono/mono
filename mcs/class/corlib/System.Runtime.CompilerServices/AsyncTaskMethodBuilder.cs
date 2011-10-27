@@ -29,39 +29,42 @@
 
 #if NET_4_5
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
 	public struct AsyncTaskMethodBuilder
 	{
-		readonly TaskCompletionSource<object> tcs;
+		readonly Task<object> task;
 
-		private AsyncTaskMethodBuilder (TaskCompletionSource<object> tcs)
+		private AsyncTaskMethodBuilder (Task<object> task)
 		{
-			this.tcs = tcs;
+			this.task = task;
 		}
 
 		public Task Task {
 			get {
-				return tcs.Task;
+				return task;
 			}
 		}
 		
 		public static AsyncTaskMethodBuilder Create ()
 		{
-			return new AsyncTaskMethodBuilder (new TaskCompletionSource<object> ());
+			var task = new Task<object> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null);
+			task.SetupScheduler (TaskScheduler.Current);
+			return new AsyncTaskMethodBuilder (task);
 		}
 
 		public void SetException (Exception exception)
 		{
-			if (!tcs.TrySetException (exception))
+			if (!task.TrySetException (new AggregateException (exception)))
 				throw new InvalidOperationException ("The task has already completed");
 		}
 
 		public void SetResult ()
 		{
-			if (!tcs.TrySetResult (null))
+			if (!task.TrySetResult (null))
 				throw new InvalidOperationException ("The task has already completed");
 		}
 	}

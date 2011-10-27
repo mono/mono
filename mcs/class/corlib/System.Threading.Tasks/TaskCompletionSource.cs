@@ -34,12 +34,7 @@ namespace System.Threading.Tasks
 {
 	public class TaskCompletionSource<TResult>
 	{
-		static readonly Action<Task<TResult>, TResult> setResultAction = SetResultAction;
-		static readonly Action<Task<TResult>, AggregateException> setExceptionAction = SetExceptionAction;
-		static readonly Action<Task<TResult>, object> setCanceledAction = SetCanceledAction;
-
 		readonly Task<TResult> source;
-		SpinLock opLock = new SpinLock (false);
 
 		public TaskCompletionSource ()
 			: this (null, TaskCreationOptions.None)
@@ -98,7 +93,7 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetCanceled ()
 		{
-			return ApplyOperation (setCanceledAction, null);
+			return source.TrySetCanceled ();
 		}
 		
 		public bool TrySetException (Exception exception)
@@ -117,51 +112,13 @@ namespace System.Threading.Tasks
 			var aggregate = new AggregateException (exceptions);
 			if (aggregate.InnerExceptions.Count == 0)
 				throw new ArgumentNullException ("exceptions");
-			
-			return ApplyOperation (setExceptionAction, aggregate);
+
+			return source.TrySetException (aggregate);
 		}
 		
 		public bool TrySetResult (TResult result)
 		{
-			return ApplyOperation (setResultAction, result);
-		}
-				
-		bool ApplyOperation<TState> (Action<Task<TResult>, TState> action, TState state)
-		{
-			bool taken = false;
-			try {
-				opLock.Enter (ref taken);
-				
-				if (source.IsCompleted)
-					return false;
-			
-				source.Status = TaskStatus.Running;
-
-				if (action != null)
-					action (source, state);
-
-				source.Finish ();
-			
-				return true;
-			} finally {
-				if (taken)
-					opLock.Exit ();
-			}
-		}
-
-		static void SetResultAction (Task<TResult> source, TResult result)
-		{
-			source.Result = result;
-		}
-
-		static void SetExceptionAction (Task<TResult> source, AggregateException aggregate)
-		{
-			source.HandleGenericException (aggregate);
-		}
-
-		static void SetCanceledAction (Task<TResult> source, object unused)
-		{
-			source.CancelReal ();
+			return source.TrySetResult (result);
 		}
 
 		public Task<TResult> Task {

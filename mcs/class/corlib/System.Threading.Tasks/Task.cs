@@ -69,7 +69,7 @@ namespace System.Threading.Tasks
 
 		TaskActionInvoker invoker;
 		object         state;
-		AtomicBooleanValue executing;
+		internal AtomicBooleanValue executing;
 
 		TaskCompletionQueue<IContinuation> continuations;
 
@@ -399,6 +399,40 @@ namespace System.Threading.Tasks
 			
 			Finish ();
 		}
+
+		internal bool TrySetCanceled ()
+		{
+			if (IsCompleted)
+				return false;
+			
+			if (!executing.TryRelaxedSet ()) {
+				var sw = new SpinWait ();
+				while (!IsCompleted)
+					sw.SpinOnce ();
+
+				return false;
+			}
+			
+			CancelReal ();
+			return true;
+		}
+
+		internal bool TrySetException (AggregateException aggregate)
+		{
+			if (IsCompleted)
+				return false;
+			
+			if (!executing.TryRelaxedSet ()) {
+				var sw = new SpinWait ();
+				while (!IsCompleted)
+					sw.SpinOnce ();
+
+				return false;
+			}
+			
+			HandleGenericException (aggregate);
+			return true;
+		}
 		
 		internal void Execute (Action<Task> childAdder)
 		{
@@ -451,8 +485,8 @@ namespace System.Threading.Tasks
 					Status = TaskStatus.WaitingForChildrenToComplete;
 			}
 		
-			// Completions are already processed when task is canceled
-			if (status == TaskStatus.RanToCompletion || status == TaskStatus.Faulted)
+			// Completions are already processed when task is canceled or faulted
+			if (status == TaskStatus.RanToCompletion)
 				ProcessCompleteDelegates ();
 
 			// Reset the current thingies
@@ -499,16 +533,17 @@ namespace System.Threading.Tasks
 			ProcessCompleteDelegates ();
 		}
 
-		internal void HandleGenericException (Exception e)
+		void HandleGenericException (Exception e)
 		{
 			HandleGenericException (new AggregateException (e));
 		}
 
-		internal void HandleGenericException (AggregateException e)
+		void HandleGenericException (AggregateException e)
 		{
 			ExceptionSlot.Exception = e;
 			Thread.MemoryBarrier ();
 			Status = TaskStatus.Faulted;
+			ProcessCompleteDelegates ();
 		}
 		
 		public void Wait ()
