@@ -1204,6 +1204,7 @@ namespace Mono.CSharp {
 		Block Block { get; }
 		Expression CreateReferenceExpression (ResolveContext rc, Location loc);
 		bool IsDeclared { get; }
+		bool IsParameter { get; }
 		Location Location { get; }
 	}
 
@@ -1616,6 +1617,12 @@ namespace Mono.CSharp {
 		public bool IsFixed {
 			get {
 				return (flags & Flags.FixedVariable) != 0;
+			}
+		}
+
+		bool INamedBlockVariable.IsParameter {
+			get {
+				return false;
 			}
 		}
 
@@ -2392,6 +2399,12 @@ namespace Mono.CSharp {
 			}
 
 			public bool IsDeclared {
+				get {
+					return true;
+				}
+			}
+
+			public bool IsParameter {
 				get {
 					return true;
 				}

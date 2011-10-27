@@ -471,12 +471,14 @@ namespace Mono.CSharp
 
 			//
 			// Capture only if this or any of child blocks contain yield
+			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod.IsIterator)
-				return CurrentBlock.Explicit.HasYield;
+				return local.IsParameter || CurrentBlock.Explicit.HasYield;
 
 			//
 			// Capture only if this or any of child blocks contain await
+			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod is AsyncInitializer)
 				return CurrentBlock.Explicit.HasAwait;
