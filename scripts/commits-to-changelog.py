@@ -52,6 +52,8 @@ def changelogs_for_file_pattern (pattern, changed_files):
 def format_paragraph (paragraph):
     lines = []
     words = paragraph.split ()
+    if len (words) == 0:
+        return lines
     current = words [0]
     for word in words [1:]:
         if len (current) + 1 + len (word) <= fill_column:
