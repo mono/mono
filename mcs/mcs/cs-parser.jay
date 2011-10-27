@@ -5109,6 +5109,16 @@ for_statement_cont
 
 		$$ = end_block (GetLocation ($2));
 	  }
+	| opt_for_initializer SEMICOLON error
+	  {
+		For f = new For ((Statement) $1, null, null, null, GetLocation ($-2));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2));
+
+		Error_SyntaxError (yyToken);
+		$$ = end_block (GetLocation ($2));
+	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
