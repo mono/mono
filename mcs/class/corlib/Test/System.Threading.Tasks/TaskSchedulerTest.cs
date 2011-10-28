@@ -119,6 +119,8 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		// This test doesn't work if the GC uses multiple finalizer thread.
+		// For now it's fine since only one thread is used
 		[Test]
 		public void UnobservedTaskExceptionOnFinalizerThreadTest ()
 		{
@@ -133,10 +135,9 @@ namespace MonoTests.System.Threading.Tasks
 				evtThreadId = Thread.CurrentThread.ManagedThreadId;
 			};
 			var evt = new ManualResetEventSlim ();
-			var bar = Task.Factory.StartNew (() => { evt.Set (); throw new Exception ("foo"); });
-			evt.Wait (500);
+			CreateAndForgetFaultedTask (evt);
+ 			evt.Wait (500);
 			Thread.Sleep (100);
-			bar = null;
 			GC.Collect ();
 			GC.WaitForPendingFinalizers ();
 			Assert.AreEqual (finalizerThreadId, evtThreadId, "Should be ran on finalizer thread");
@@ -147,9 +148,6 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			bool ran = false;
 			bool senderIsRight = false;
-			bool argsExceptionNotNull = false;
-			bool argsMessageRight = false;
-			bool argsObserved = false;
 			UnobservedTaskExceptionEventArgs args = null;
 
 			TaskScheduler.UnobservedTaskException += (o, a) => {
@@ -159,10 +157,9 @@ namespace MonoTests.System.Threading.Tasks
 			};
 
 			var evt = new ManualResetEventSlim ();
-			var bar = Task.Factory.StartNew (() => { evt.Set (); throw new Exception ("foo"); });
+			CreateAndForgetFaultedTask (evt);
 			evt.Wait (500);
 			Thread.Sleep (100);
-			bar = null;
 			GC.Collect ();
 			GC.WaitForPendingFinalizers ();
 
@@ -171,17 +168,17 @@ namespace MonoTests.System.Threading.Tasks
 			if (!ran)
 				return;
 
-			if (args != null) {
-				argsExceptionNotNull = args.Exception != null;
-				if (argsExceptionNotNull)
-					argsMessageRight = args.Exception.InnerException.Message == "foo";
-				argsObserved = !args.Observed;
-			}
-
-			Assert.IsTrue (argsExceptionNotNull, "Exception not null");
-			Assert.IsTrue (argsMessageRight, "Right exception is registered");
-			Assert.IsTrue (argsObserved, "Task exception wasn't observed");
+			Assert.IsNotNull (args.Exception);
+			Assert.IsNotNull (args.Exception.InnerException);
+			Assert.AreEqual ("foo", args.Exception.InnerException.Message);
+			Assert.IsFalse (args.Observed);
 			Assert.IsTrue (senderIsRight, "Sender is a task");
+		}
+
+		// We use this intermediary method to improve chances of GC kicking
+		static void CreateAndForgetFaultedTask (ManualResetEventSlim evt)
+		{
+			Task.Factory.StartNew (() => { evt.Set (); throw new Exception ("foo"); });
 		}
 	}
 }
