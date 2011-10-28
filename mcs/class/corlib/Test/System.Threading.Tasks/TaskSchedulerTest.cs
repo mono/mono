@@ -128,7 +128,9 @@ namespace MonoTests.System.Threading.Tasks
 			foo = null;
 			GC.Collect ();
 			GC.WaitForPendingFinalizers ();
-			Assert.Greater (finalizerThreadId, -1, finalizerThreadId.ToString ());
+			// Same than following test, if GC didn't run don't execute the rest of this test
+			if (finalizerThreadId == -1)
+				return;
 
 			int evtThreadId = -2;
 			TaskScheduler.UnobservedTaskException += delegate {
