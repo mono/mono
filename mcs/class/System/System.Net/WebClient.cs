@@ -83,7 +83,7 @@ namespace System.Net
 		NameValueCollection queryString;
 		bool is_busy;
 		bool async;
-		bool m_bProxySet = false;
+		bool proxySet = false;
 		Thread async_thread;
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
@@ -192,14 +192,14 @@ namespace System.Net
 
 		public IWebProxy Proxy {
 			get {
-				if(!m_bProxySet)
+				if (proxySet)
 					return WebRequest.DefaultWebProxy;
 
 				return proxy;
 			}
 			set {
 				proxy = value;
-				m_bProxySet = true;
+				proxySet = true;
 			}
 		}
 
@@ -796,7 +796,7 @@ namespace System.Net
 		WebRequest SetupRequest (Uri uri)
 		{
 			WebRequest request = GetWebRequest (uri);
-			if (m_bProxySet)
+			if (proxySet)
 				request.Proxy = Proxy;
 			if (credentials != null)
 				request.Credentials = credentials;
