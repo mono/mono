@@ -248,9 +248,6 @@ namespace System.Net
 			}
 			set {
 				CheckRequestStarted ();
-				if (value == null)
-					throw new ArgumentNullException ();
-
 				proxy = value;
 			}
 		}
