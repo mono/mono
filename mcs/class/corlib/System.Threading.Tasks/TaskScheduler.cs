@@ -99,7 +99,7 @@ namespace System.Threading.Tasks
 				return false;
 
 			if (task.Status == TaskStatus.WaitingToRun) {
-				task.Execute (null);
+				task.Execute ();
 				return true;
 			}
 

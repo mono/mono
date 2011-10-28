@@ -40,7 +40,7 @@ namespace System.Threading.Tasks
 		static void TaskExecuterCallback (object obj)
 		{
 			Task task = (Task)obj;
-			task.Execute (null);
+			task.Execute ();
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()

@@ -433,10 +433,15 @@ namespace System.Threading.Tasks
 			HandleGenericException (aggregate);
 			return true;
 		}
-		
+/*
 		internal void Execute (Action<Task> childAdder)
 		{
 			childWorkAdder = childAdder;
+			Execute ();
+		}
+*/		
+		internal void Execute ()
+		{
 			ThreadStart ();
 		}
 		
@@ -576,7 +581,7 @@ namespace System.Threading.Tasks
 			if (!IsCompleted) {
 				// If the task is ready to be run and we were supposed to wait on it indefinitely, just run it
 				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == -1 && scheduler != null)
-					Execute (null);
+					Execute ();
 
 				if (!IsCompleted) {
 					var evt = new ManualResetEventSlim ();
