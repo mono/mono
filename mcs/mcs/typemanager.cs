@@ -841,31 +841,6 @@ namespace Mono.CSharp
 	{
 		return mb.GetSignatureForError ();
 	}
-
-	//
-	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
-	//
-	public static bool IsUnmanagedType (TypeSpec t)
-	{
-		var ds = t.MemberDefinition as DeclSpace;
-		if (ds != null)
-			return ds.IsUnmanagedType ();
-
-		if (t.Kind == MemberKind.Void)
-			return true;
-
-		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
-		if (t.IsPointer)
-			return IsUnmanagedType (GetElementType (t));
-
-		if (!TypeSpec.IsValueType (t))
-			return false;
-
-		if (t.IsNested && t.DeclaringType.IsGenericOrParentIsGeneric)
-			return false;
-
-		return true;
-	}	
 		
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
@@ -931,11 +906,11 @@ namespace Mono.CSharp
 	/// </summary>
 	public static bool VerifyUnmanaged (ModuleContainer rc, TypeSpec t, Location loc)
 	{
-		while (t.IsPointer)
-			t = GetElementType (t);
-
-		if (IsUnmanagedType (t))
+		if (t.IsUnmanaged)
 			return true;
+
+		while (t.IsPointer)
+			t = ((ElementTypeSpec) t).Element;
 
 		rc.Compiler.Report.SymbolRelatedToPreviousError (t);
 		rc.Compiler.Report.Error (208, loc,

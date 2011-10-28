@@ -284,6 +284,28 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Whether a type is unmanaged. This is used by the unsafe code
+		//
+		public bool IsUnmanaged {
+			get {
+				if (IsPointer)
+					return ((ElementTypeSpec) this).Element.IsUnmanaged;
+
+				var ds = MemberDefinition as DeclSpace;
+				if (ds != null)
+					return ds.IsUnmanagedType ();
+
+				if (Kind == MemberKind.Void)
+					return true;
+
+				if (IsNested && DeclaringType.IsGenericOrParentIsGeneric)
+					return false;
+
+				return IsValueType (this);
+			}
+		}
+
 		public MemberCache MemberCache {
 			get {
 				if (cache == null || (state & StateFlags.PendingMemberCacheMembers) != 0)

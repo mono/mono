@@ -2825,44 +2825,41 @@ namespace Mono.CSharp
 
 		public override bool IsUnmanagedType ()
 		{
-			if (fields == null)
-				return true;
-
 			if (has_unmanaged_check_done)
 				return is_unmanaged;
 
 			if (requires_delayed_unmanagedtype_check)
 				return true;
 
-			requires_delayed_unmanagedtype_check = true;
-
-			foreach (FieldBase f in fields) {
-				if (f.IsStatic)
-					continue;
-
-				// It can happen when recursive unmanaged types are defined
-				// struct S { S* s; }
-				TypeSpec mt = f.MemberType;
-				if (mt == null) {
-					return true;
-				}
-
-				while (mt.IsPointer)
-					mt = TypeManager.GetElementType (mt);
-
-				if (mt.IsGenericOrParentIsGeneric || mt.IsGenericParameter) {
-					has_unmanaged_check_done = true;
-					return false;
-				}
-
-				if (TypeManager.IsUnmanagedType (mt))
-					continue;
-
+			if (Parent != null && Parent.IsGeneric) {
 				has_unmanaged_check_done = true;
 				return false;
 			}
 
-			has_unmanaged_check_done = true;
+			if (fields != null) {
+				requires_delayed_unmanagedtype_check = true;
+
+				foreach (FieldBase f in fields) {
+					if (f.IsStatic)
+						continue;
+
+					// It can happen when recursive unmanaged types are defined
+					// struct S { S* s; }
+					TypeSpec mt = f.MemberType;
+					if (mt == null) {
+						return true;
+					}
+
+					if (mt.IsUnmanaged)
+						continue;
+
+					has_unmanaged_check_done = true;
+					return false;
+				}
+
+				has_unmanaged_check_done = true;
+			}
+
 			is_unmanaged = true;
 			return true;
 		}
