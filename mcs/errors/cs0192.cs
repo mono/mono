@@ -19,6 +19,5 @@ class A
 	
 	static void Main ()
 	{
-		Console.WriteLine ("Test CS0192.cs");
 	}
 }

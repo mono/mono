@@ -1125,17 +1125,34 @@ namespace Mono.CSharp {
 
 					continue;
 				}
-				
-				if (MethodData != null && MethodData.implementing != null) {
-					var base_tp = MethodData.implementing.Constraints[i];
-					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
-						Report.SymbolRelatedToPreviousError (MethodData.implementing);
-						Report.Error (425, Location,
-							"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
-							tp.GetSignatureForError (), GetSignatureForError (), base_tp.GetSignatureForError (), MethodData.implementing.GetSignatureForError ());
-					}
+			}
+
+			if (base_tparams == null && MethodData != null && MethodData.implementing != null) {
+				CheckImplementingMethodConstraints (Parent, spec, MethodData.implementing);
+			}
+		}
+
+		public static bool CheckImplementingMethodConstraints (TypeContainer container, MethodSpec method, MethodSpec baseMethod)
+		{
+			var tparams = method.Constraints;
+			var base_tparams = baseMethod.Constraints;
+			for (int i = 0; i < tparams.Length; ++i) {
+				if (!tparams[i].HasSameConstraintsImplementation (base_tparams[i])) {
+					container.Compiler.Report.SymbolRelatedToPreviousError (method);
+					container.Compiler.Report.SymbolRelatedToPreviousError (baseMethod);
+
+					// Using container location because the interface can be implemented
+					// by base class
+					container.Compiler.Report.Error (425, container.Location,
+						"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
+						tparams[i].GetSignatureForError (), method.GetSignatureForError (),
+						base_tparams[i].GetSignatureForError (), baseMethod.GetSignatureForError ());
+ 
+					return false;
 				}
 			}
+
+			return true;
 		}
 
 		//
