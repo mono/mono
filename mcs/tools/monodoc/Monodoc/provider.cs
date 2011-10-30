@@ -501,6 +501,12 @@ public class HelpSource {
 		get { return trace_level; }
 		set { trace_level = value; }
 	}
+
+	public string BaseDir {
+		get {
+			return base_dir;
+		}
+	}
 	
 	ZipFile zip_file;
 	

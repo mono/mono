@@ -509,8 +509,16 @@ add masterdoc support?
         <xs:element ref="theta" />
         <xs:element ref="typeparamref" />
         <xs:element ref="whitespace" />
+        <xs:element ref="img" />
       </xs:choice>
     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="img">
+	<xs:complexType>
+	  <xs:attribute name="href" type="xs:string" use="required" />
+	  <xs:attribute name="class" type="xs:string" use="optional" />
+	</xs:complexType>
   </xs:element>
 
   <xs:element name="param">

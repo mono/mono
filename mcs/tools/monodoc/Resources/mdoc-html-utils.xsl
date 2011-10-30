@@ -31,6 +31,7 @@
 	<!-- TEMPLATE PARAMETERS -->
 	<xsl:param name="language" select="'C#'"/>
 	<xsl:param name="index" />
+	<xsl:param name="source-id"/>
 	
 	<xsl:variable name="ThisType" select="/Type"/>
 
@@ -1445,6 +1446,20 @@
 			<xsl:with-param name="language" select="@lang" />
 			<xsl:with-param name="content" select="string(descendant-or-self::text())" />
 		</xsl:call-template>
+	</xsl:template>
+	<xsl:template match="img">
+	  <p>
+		<img src="source-id:{$source-id}:{@href}">
+		  <xsl:attribute name="class">
+			<xsl:choose>
+			  <xsl:when test="count(@class)&gt;0">
+				<xsl:value-of select="@class" />
+			  </xsl:when>
+			  <xsl:otherwise>picture</xsl:otherwise>
+			</xsl:choose>
+		  </xsl:attribute>
+		</img>
+	  </p>
 	</xsl:template>
 
 	<xsl:template match="onequarter">¼</xsl:template>
