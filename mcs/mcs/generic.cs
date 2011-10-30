@@ -2240,35 +2240,25 @@ namespace Mono.CSharp {
 			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
-				if (atype.IsNullableType) {
-					if (mc == null)
-						return false;
-
-					mc.Module.Compiler.Report.Error (313, loc,
-						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
-						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
-					ok = false;
-				} else {
-					foreach (TypeSpec iface in tparam.Interfaces) {
-						var dep = iface.GetMissingDependencies ();
-						if (dep != null) {
-							if (mc == null)
-								return false;
-
-							ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
-							ok = false;
-
-							// return immediately to avoid duplicate errors because we are scanning
-							// expanded interface list
+				foreach (TypeSpec iface in tparam.Interfaces) {
+					var dep = iface.GetMissingDependencies ();
+					if (dep != null) {
+						if (mc == null)
 							return false;
-						}
 
-						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
-							if (mc == null)
-								return false;
+						ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
+						ok = false;
 
-							ok = false;
-						}
+						// return immediately to avoid duplicate errors because we are scanning
+						// expanded interface list
+						return false;
+					}
+
+					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
+						if (mc == null)
+							return false;
+
+						ok = false;
 					}
 				}
 			}
@@ -2340,11 +2330,20 @@ namespace Mono.CSharp {
 					return true;
 
 			} else if (TypeSpec.IsValueType (atype)) {
-				if (Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
-					return true;
+				if (atype.IsNullableType) {
+					//
+					// LAMESPEC: Only identity or base type ValueType or Object satisfy nullable type
+					//
+					if (TypeSpec.IsBaseClass (atype, ttype, false))
+						return true;
+				} else {
+					if (Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
+						return true;
+				}
 			} else {
 				var expr = new EmptyExpression (atype);
-				if (Convert.ImplicitStandardConversionExists (expr, ttype))
+				if (Convert.ImplicitReferenceConversionExists (atype, ttype) || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
+				//	Convert.ImplicitStandardConversionExists (expr, ttype))
 					return true;
 			}
 
@@ -2363,9 +2362,21 @@ namespace Mono.CSharp {
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (TypeSpec.IsValueType (atype)) {
-					mc.Module.Compiler.Report.Error (315, loc,
-						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
-						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+					if (atype.IsNullableType) {
+						if (ttype.IsInterface) {
+							mc.Module.Compiler.Report.Error (313, loc,
+								"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint `{3}'",
+								atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+						} else {
+							mc.Module.Compiler.Report.Error (312, loc,
+								"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' does not satisfy constraint `{3}'",
+								atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+						}
+					} else {
+						mc.Module.Compiler.Report.Error (315, loc,
+							"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
+							atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+					}
 				} else {
 					mc.Module.Compiler.Report.Error (311, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",

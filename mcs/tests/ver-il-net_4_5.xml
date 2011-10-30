@@ -17438,6 +17438,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-563.cs">
+    <type name="C`1[U]">
+      <method name="Void Foo[T](T)">
+        <size>1</size>
+      </method>
+      <method name="Void Test(Nullable`1)">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-type-12.cs">
     <type name="C">
       <method name="Int32 Main()">
