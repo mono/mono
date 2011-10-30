@@ -141,6 +141,12 @@ public static class EcmaDoc {
 		return nsxml;
 	}
 
+	internal static string GetImageFile (string dir, string img)
+	{
+		string path = Path.Combine (dir, "_images", img);
+		return File.Exists (path) ? path : null;
+	}
+
 	public static string GetCref (XmlElement member)
 	{
 		string typeName = XmlDocUtils.ToEscapedTypeName (member.SelectSingleNode("/Type/@FullName").InnerText);
@@ -366,6 +372,7 @@ public class EcmaProvider : Provider {
 		}
 		tree.HelpSource.PackXml ("mastersummary.xml", nsSummary, null);
 		AddExtensionMethods (tree);
+		AddImageFiles (hs, tree);
 	}
 
 	void AddExtensionMethods (Tree tree)
@@ -397,7 +404,22 @@ public class EcmaProvider : Provider {
 			tree.HelpSource.PackXml ("ExtensionMethods.xml", extensions, "ExtensionMethods.xml");
 		}
 	}
-	       
+
+	void AddImageFiles (HelpSource hs, Tree tree)
+	{
+		foreach (string asm in asm_dirs) {
+			string path = Path.Combine (asm, "_images");
+			Console.WriteLine ("Loulou {0}", path);
+			if (!Directory.Exists (path))
+				return;
+
+			foreach (var img in Directory.EnumerateFiles (path)) {
+				Console.WriteLine ("adding {0}", img);
+				hs.PackFile (img, Path.GetFileName (img));
+			}
+		}
+	}
+      
 	Hashtable/*<string, List<TypeInfo>>*/ class_summaries = new Hashtable ();
 	Hashtable/*<string, XmlNode>*/ namespace_summaries = new Hashtable ();
 	Hashtable/*<string, XmlNode>*/ namespace_remarks = new Hashtable ();
@@ -1277,6 +1299,8 @@ public class EcmaHelpSource : HelpSource {
 		XsltArgumentList args = new XsltArgumentList();
 
 		args.AddExtensionObject("monodoc:///extensions", ExtObject);
+
+		args.AddParam ("source-id", "", SourceID.ToString ());
 		
 		if (rest == "") {
 			args.AddParam("show", "", "typeoverview");
@@ -1783,6 +1807,13 @@ public class EcmaHelpSource : HelpSource {
 			int idx = node.URL.IndexOf ('/');
 			return node.URL[idx+1] + ":" + full + "." + node.Caption;
 		}
+	}
+
+	public override Stream GetImage (string url)
+	{
+		if (url.Contains ("/"))
+			url = url.Substring (url.LastIndexOf ('/') + 1);
+		return GetHelpStream (url);
 	}
 				
 	//
@@ -2326,6 +2357,14 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (id);
 		return doc;
+	}
+
+	public virtual Stream GetImage (string url)
+	{
+		string path = EcmaDoc.GetImageFile (basedir.FullName, url);
+		if (path == null)
+			return null;
+		return File.OpenRead (path);
 	}
 	
 	class UncompiledResolver : XmlResolver {
