@@ -2341,9 +2341,7 @@ namespace Mono.CSharp {
 						return true;
 				}
 			} else {
-				var expr = new EmptyExpression (atype);
 				if (Convert.ImplicitReferenceConversionExists (atype, ttype) || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
-				//	Convert.ImplicitStandardConversionExists (expr, ttype))
 					return true;
 			}
 
