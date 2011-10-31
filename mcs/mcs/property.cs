@@ -776,6 +776,16 @@ namespace Mono.CSharp
 			if (!DefineAccessors ())
 				return false;
 
+			if (AccessorSecond == null) {
+				PropertyMethod pm;
+				if (AccessorFirst is GetMethod)
+					pm = new SetMethod (this, 0, ParametersCompiled.EmptyReadOnlyParameters, null, Location);
+				else
+					pm = new GetMethod (this, 0, null, Location);
+
+				Parent.AddMember (pm);
+			}
+
 			if (!CheckBase ())
 				return false;
 

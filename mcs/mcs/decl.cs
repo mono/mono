@@ -1329,7 +1329,7 @@ namespace Mono.CSharp {
 			} else {
 				Report.Error (102, symbol.Location,
 					"The type `{0}' already contains a definition for `{1}'",
-					GetSignatureForError (), symbol.MemberName.Name);
+					GetSignatureForError (), name);
 			}
 
 			return false;
