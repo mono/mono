@@ -34,13 +34,13 @@ class Test
 	{
 		var m = typeof (C1).GetMethod ("Test");
 		var ta = m.GetGenericArguments ()[0].GetGenericParameterConstraints ();
-		if (ta.Length != 1)
+		if (ta.Length != 2)
 			return 1;
 		
 		m = typeof (C2).GetMethod ("Test");
 		ta = m.GetGenericArguments ()[0].GetGenericParameterConstraints ();
 		if (ta.Length != 1)
-			return 1;
+			return 2;
 
 		Console.WriteLine ("ok");
 		return 0;

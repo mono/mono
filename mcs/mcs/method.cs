@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc.
 //
 
 using System;
@@ -1139,12 +1140,6 @@ namespace Mono.CSharp {
 							}
 
 							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
-						}
-
-						// TODO: Better logic is needed to select new best base type for length > 1
-						if (!local_tparam.HasTypeConstraint && local_tparam_targs.Length == 1 && !local_tparam_targs[0].IsGenericParameter) {
-							local_tparam.TypeArguments = null;
-							local_tparam.BaseType = local_tparam_targs[0];
 						}
 					}
 

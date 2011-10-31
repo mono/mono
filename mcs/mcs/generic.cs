@@ -801,7 +801,17 @@ namespace Mono.CSharp {
 				// class A : B<int> { override void Foo<U> () {} }
 				// class B<T> { virtual void Foo<U> () where U : T {} }
 				//
-				return HasSpecialStruct || TypeSpec.IsValueType (BaseType);
+				if (HasSpecialStruct)
+					return true;
+
+				if (targs != null) {
+					foreach (var ta in targs) {
+						if (TypeSpec.IsValueType (ta))
+							return true;
+					}
+				}
+
+				return false;
 			}
 		}
 
@@ -845,21 +855,6 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
-
-		public void ChangeTypeArgumentToBaseType (int index)
-		{
-			BaseType = targs [index];
-			if (targs.Length == 1) {
-				targs = null;
-			} else {
-				var copy = new TypeSpec[targs.Length - 1];
-				if (index > 0)
-					Array.Copy (targs, copy, index);
-
-				Array.Copy (targs, index + 1, copy, index, targs.Length - index - 1);
-				targs = copy;
-			}
-		}
 
 		public string DisplayDebugInfo ()
 		{
@@ -2322,16 +2317,14 @@ namespace Mono.CSharp {
 
 			if (atype.IsGenericParameter) {
 				var tps = (TypeParameterSpec) atype;
-				if (Convert.ImplicitTypeParameterConversion (null, tps, ttype) != null)
-					return true;
+				if (tps.TypeArguments != null) {
+					foreach (var targ in tps.TypeArguments) {
+						if (TypeSpecComparer.Override.IsEqual (targ, ttype))
+							return true;
+					}
+				}
 
-				//
-				// LAMESPEC: Identity conversion with inflated type parameter
-				// It's not clear from the spec what rule should apply to inherited
-				// inflated type parameter. The specification allows only type parameter
-				// conversion but that's clearly not enough
-				//
-				if (tps.HasTypeConstraint && tps.BaseType == ttype)
+				if (Convert.ImplicitTypeParameterConversion (null, tps, ttype) != null)
 					return true;
 
 			} else if (TypeSpec.IsValueType (atype)) {
