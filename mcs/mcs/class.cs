@@ -1558,7 +1558,9 @@ namespace Mono.CSharp
 								GetSignatureForError (), iface_type.GetSignatureForError ());
 							return false;
 						}
+					}
 
+					if (iface_type.IsGenericOrParentIsGeneric) {
 						if (spec.Interfaces != null) {
 							foreach (var prev_iface in iface_exprs) {
 								if (prev_iface == iface_type)
