@@ -958,7 +958,7 @@ namespace Mono.CSharp {
 						if (j == 0) {
 							if ((Type == predefined.IndexerName || Type == predefined.Conditional) && arg_expr is Constant) {
 								string v = ((Constant) arg_expr).GetValue () as string;
-								if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
+								if (!Tokenizer.IsValidIdentifier (v) || (Type == predefined.IndexerName && Tokenizer.IsKeyword (v))) {
 									context.Module.Compiler.Report.Error (633, arg_expr.Location,
 										"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
 									return;
