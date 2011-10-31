@@ -2853,6 +2853,27 @@
       </method>
     </type>
   </test>
+  <test name="dtest-055.cs">
+    <type name="B`2[T1,T2]">
+      <method name="Void Foo[U](U)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Foo[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>58</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -17453,6 +17474,48 @@
     <type name="M">
       <method name="Void Main()">
         <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-564.cs">
+    <type name="B1`2[T1,T2]">
+      <method name="Void Test[U](U)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2`2[T1,T2]">
+      <method name="Void Test[U](U)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Void Test[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Void Test[U](U)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>104</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

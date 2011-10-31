@@ -123,10 +123,15 @@ namespace Mono.CSharp {
 			if (TypeSpec.IsBaseClass (ba, bb, false) || TypeSpec.IsBaseClass (bb, ba, false))
 				return true;
 
+			Error_ConflictingConstraints (context, spec, ba, bb, loc);
+			return false;
+		}
+
+		public static void Error_ConflictingConstraints (IMemberContext context, TypeParameterSpec tp, TypeSpec ba, TypeSpec bb, Location loc)
+		{
 			context.Module.Compiler.Report.Error (455, loc,
 				"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
-				spec.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
-			return false;
+				tp.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
 		}
 
 		public void CheckGenericConstraints (IMemberContext context, bool obsoleteCheck)

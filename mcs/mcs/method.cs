@@ -1102,7 +1102,7 @@ namespace Mono.CSharp {
 					base_tparam.InflateConstraints (inflator, local_tparam);
 
 					//
-					// Check all type argument constraints for possible collision
+					// Check all type argument constraints for possible collision or unification
 					// introduced by inflating inherited constraints in this context
 					//
 					// Conflict example:
@@ -1111,15 +1111,40 @@ namespace Mono.CSharp {
 					// class B : A<int> { override void Foo<U> {} }
 					//
 					var local_tparam_targs = local_tparam.TypeArguments;
-					if (local_tparam_targs != null) {					
+					if (local_tparam_targs != null) {
 						for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
 							var ta = local_tparam_targs [ii];
 							if (!ta.IsClass && !ta.IsStruct)
 								continue;
 
-							if (Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location)) {
-								local_tparam.ChangeTypeArgumentToBaseType (ii);
+							TypeSpec[] unique_tparams = null;
+							for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
+								//
+								// Remove any identical or unified constraint types
+								//
+								var tparam_checked = local_tparam_targs[iii];
+								if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
+									unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
+									Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
+									Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
+								} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
+									Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
+								}
 							}
+
+							if (unique_tparams != null) {
+								local_tparam_targs = unique_tparams;
+								local_tparam.TypeArguments = local_tparam_targs;
+								continue;
+							}
+
+							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
+						}
+
+						// TODO: Better logic is needed to select new best base type for length > 1
+						if (!local_tparam.HasTypeConstraint && local_tparam_targs.Length == 1 && !local_tparam_targs[0].IsGenericParameter) {
+							local_tparam.TypeArguments = null;
+							local_tparam.BaseType = local_tparam_targs[0];
 						}
 					}
 
