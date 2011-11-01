@@ -633,6 +633,44 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void RecursiveWriteUpgradeReadTest ()
+		{
+			var rwlock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+
+			rwlock.EnterWriteLock ();
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+			rwlock.EnterUpgradeableReadLock ();
+			Assert.IsTrue (rwlock.IsUpgradeableReadLockHeld);
+			rwlock.EnterReadLock ();
+			Assert.IsTrue (rwlock.IsReadLockHeld);
+			rwlock.ExitUpgradeableReadLock();
+			Assert.IsFalse (rwlock.IsUpgradeableReadLockHeld);
+			Assert.IsTrue (rwlock.IsReadLockHeld);
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+
+			rwlock.ExitReadLock ();
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+		}
+
+		[Test]
+		public void RecursiveWriteUpgradeTest ()
+		{
+			ReaderWriterLockSlim rwlock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+
+			rwlock.EnterWriteLock ();
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+			rwlock.EnterUpgradeableReadLock ();
+			Assert.IsTrue (rwlock.IsUpgradeableReadLockHeld);
+			rwlock.ExitUpgradeableReadLock ();
+			Assert.IsFalse (rwlock.IsUpgradeableReadLockHeld);
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+			rwlock.ExitWriteLock ();
+			Assert.IsFalse (rwlock.IsWriteLockHeld);
+			rwlock.EnterWriteLock ();
+			Assert.IsTrue (rwlock.IsWriteLockHeld);
+		}
+
+		[Test]
 		public void RecursiveWriteReadAcquisitionInterleaving ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
