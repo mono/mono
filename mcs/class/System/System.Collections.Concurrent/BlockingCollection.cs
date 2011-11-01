@@ -23,7 +23,7 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading;
