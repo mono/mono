@@ -2,13 +2,11 @@
 // Line: 9 
 
 using System;
-class X {
-
-public void Foo (Array bar)
+class X
 {
-  object baz = bar[0];
-}
-
-	static void Main () {}
+	public void Foo (Array bar)
+	{
+		object baz = bar[0];
+	}
 }
 

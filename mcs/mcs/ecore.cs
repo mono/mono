@@ -316,9 +316,20 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (type), name);
 		}
 
-		protected static void Error_ValueAssignment (ResolveContext ec, Location loc)
+		public void Error_ValueAssignment (ResolveContext rc, Expression rhs)
 		{
-			ec.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
+			if (rhs == EmptyExpression.LValueMemberAccess || rhs == EmptyExpression.LValueMemberOutAccess) {
+				rc.Report.SymbolRelatedToPreviousError (type);
+				if (rc.CurrentInitializerVariable != null) {
+					rc.Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
+						type.GetSignatureForError (), GetSignatureForError ());
+				} else {
+					rc.Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
+						GetSignatureForError ());
+				}
+			} else {
+				rc.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
+			}
 		}
 
 		protected void Error_VoidPointerOperation (ResolveContext rc)
@@ -432,7 +443,7 @@ namespace Mono.CSharp {
 					if (out_access)
 						ec.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 					else
-						Error_ValueAssignment (ec, loc);
+						Error_ValueAssignment (ec, right_side);
 				}
 				return null;
 			}
@@ -882,18 +893,6 @@ namespace Mono.CSharp {
 		public static void UnsafeError (Report Report, Location loc)
 		{
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
-		}
-
-		protected void Error_CannotModifyIntermediateExpressionValue (ResolveContext ec)
-		{
-			ec.Report.SymbolRelatedToPreviousError (type);
-			if (ec.CurrentInitializerVariable != null) {
-				ec.Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
-					TypeManager.CSharpName (type), GetSignatureForError ());
-			} else {
-				ec.Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
-					GetSignatureForError ());
-			}
 		}
 
 		//
@@ -2953,9 +2952,6 @@ namespace Mono.CSharp {
 			// Additional checks for l-value member access
 			//
 			if (rhs != null) {
-				//
-				// TODO: It should be recursive but that would break csc compatibility
-				//
 				if (InstanceExpression is UnboxCast) {
 					rc.Report.Error (445, InstanceExpression.Location, "Cannot modify the result of an unboxing conversion");
 				}
@@ -5823,7 +5819,7 @@ namespace Mono.CSharp {
 
 			// if the property/indexer returns a value type, and we try to set a field in it
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Error_CannotModifyIntermediateExpressionValue (ec);
+				Error_ValueAssignment (ec, right_side);
 			}
 
 			if (eclass == ExprClass.Unresolved) {

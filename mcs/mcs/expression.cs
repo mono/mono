@@ -5323,6 +5323,11 @@ namespace Mono.CSharp
 			return list.ArgumentTypes;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return mg.GetSignatureForError ();
+		}
+
 		//
 		// If a member is a method or event, or if it is a constant, field or property of either a delegate type
 		// or the type dynamic, then the member is invocable
@@ -8205,7 +8210,7 @@ namespace Mono.CSharp
 			return res.Resolve (ec);
 		}
 
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression rhs)
 		{
 			Expr = Expr.Resolve (ec);
 			if (Expr == null)
@@ -8217,7 +8222,12 @@ namespace Mono.CSharp
 			if (res == null)
 				return null;
 
-			return res.ResolveLValue (ec, right_side);
+			bool lvalue_instance = rhs != null && type.IsStruct && (Expr is Invocation || Expr is PropertyExpr);
+			if (lvalue_instance) {
+				Expr.Error_ValueAssignment (ec, EmptyExpression.LValueMemberAccess);
+			}
+
+			return res.ResolveLValue (ec, rhs);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -9969,7 +9979,7 @@ namespace Mono.CSharp
 
 			type = e.Type;
 			if (type.Kind == MemberKind.Void || type == InternalType.NullLiteral || type == InternalType.AnonymousMethod || type.IsPointer) {
-				Error_InvalidInitializer (ec, e.GetSignatureForError ());
+				Error_InvalidInitializer (ec, type.GetSignatureForError ());
 				return null;
 			}
 
