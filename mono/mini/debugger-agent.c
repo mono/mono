@@ -2849,6 +2849,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		switch (event) {
 		case EVENT_KIND_THREAD_START:
 		case EVENT_KIND_THREAD_DEATH:
+			suspend_policy = SUSPEND_POLICY_NONE;
 			break;
 		case EVENT_KIND_APPDOMAIN_CREATE:
 		case EVENT_KIND_APPDOMAIN_UNLOAD:
