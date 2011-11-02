@@ -332,6 +332,8 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.CodeAnalysis/SuppressMessageAttribute.cs
 System.Diagnostics.Contracts/Contract.cs
+System.Diagnostics.Contracts/ContractAbbreviatorAttribute.cs
+System.Diagnostics.Contracts/ContractArgumentValidatorAttribute.cs
 System.Diagnostics.Contracts/ContractClassAttribute.cs
 System.Diagnostics.Contracts/ContractClassForAttribute.cs
 System.Diagnostics.Contracts/ContractException.cs
@@ -497,6 +499,7 @@ System.Reflection/GenericParameterAttributes.cs
 System.Reflection/ICustomAttributeProvider.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/InterfaceMapping.cs
+System.Reflection/IntrospectionExtensions.cs
 System.Reflection/InvalidFilterCriteriaException.cs
 System.Reflection/IReflect.cs
 System.Reflection/IReflectableType.cs
@@ -631,6 +634,7 @@ System.Runtime.CompilerServices/DecimalConstantAttribute.cs
 System.Runtime.CompilerServices/DefaultDependencyAttribute.cs
 System.Runtime.CompilerServices/DependencyAttribute.cs
 System.Runtime.CompilerServices/DiscardableAttribute.cs
+System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/FixedAddressValueTypeAttribute.cs
 System.Runtime.CompilerServices/FixedBufferAttribute.cs
 System.Runtime.CompilerServices/HasCopySemanticsAttribute.cs
