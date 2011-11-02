@@ -44674,6 +44674,35 @@
       </method>
     </type>
   </test>
+  <test name="test-832.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>41</size>
+      </method>
+      <method name="Void Test()">
+        <size>21</size>
+      </method>
+      <method name="S get_Properties()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>20</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="C get_P2()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-84.cs">
     <type name="Ghost">
       <method name="Void .ctor()">

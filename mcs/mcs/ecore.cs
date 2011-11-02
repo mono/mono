@@ -2903,6 +2903,7 @@ namespace Mono.CSharp {
 							"An object reference is required to access non-static member `{0}'",
 							GetSignatureForError ());
 
+					InstanceExpression = new CompilerGeneratedThis (type, loc).Resolve (rc);
 					return false;
 				}
 
