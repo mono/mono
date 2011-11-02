@@ -30,6 +30,7 @@
 
 namespace System.Runtime.CompilerServices
 {
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly)]
 	public sealed class ExtensionAttribute : Attribute
 	{
