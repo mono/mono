@@ -1212,15 +1212,9 @@
 #	endif /* STACK_GRAN */
 #	define STACK_GRAN 0x10000
 #	define HEURISTIC1
-#	ifdef USE_MMAP
-#	  undef USE_MMAP
-#	endif
-#	ifdef USE_MUNMAP
-#	  undef USE_MUNMAP
-#	endif
-#	ifdef USE_MMAP_ANON
-#	  undef USE_MMAP_ANON
-#	endif
+#	define USE_MMAP
+#	define USE_MUNMAP
+#	define USE_MMAP_ANON
 #	ifdef USE_MMAP_FIXED
 #	  undef USE_MMAP_FIXED
 #	endif
