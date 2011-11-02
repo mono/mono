@@ -1508,7 +1508,7 @@ namespace Mono.CSharp
 			//
 			// Each field must be assigned
 			//
-			for (int i = Offset + 1; i <= TypeInfo.Length + Offset; i++) {
+			for (int i = Offset + 1; i <= TypeInfo.TotalLength + Offset; i++) {
 				if (!vector[i])
 					return;
 			}
