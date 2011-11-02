@@ -173,7 +173,6 @@ net_4_0_dirs := \
 	Microsoft.CSharp	\
 	Microsoft.Build		\
 	System.Windows.Forms.DataVisualization	\
-	System.ComponentModel.Composition \
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Routing \
@@ -187,9 +186,13 @@ net_4_0_dirs := \
 	System.Data.Services.Client	\
 	System.Data.Services	\
 	System.Json
+	
+net_4_0_only_dirs := \
+	System.ComponentModel.Composition
 
 net_4_5_dirs := \
-	System.Threading.Tasks.Dataflow
+	System.Threading.Tasks.Dataflow \
+	System.ComponentModel.Composition.4.5
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
@@ -197,12 +200,12 @@ monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)
 net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) aot-compiler
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_raw_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_5_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_3_5_only_dirs) $(moonlight_raw_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
 DIST_ONLY_SUBDIRS = dlr IKVM.Reflection aot-compiler
 
