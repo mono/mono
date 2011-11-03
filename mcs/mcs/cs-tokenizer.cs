@@ -434,6 +434,11 @@ namespace Mono.CSharp
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
 			//
+
+                        //
+                        // ANSWER: Because it's a Fully Qualified Identifier
+                        // both are accepted even if it's in the Mono.CSharp itself
+                        //
 			Mono.CSharp.Location.Push (file, file);
 		}
 		
