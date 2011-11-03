@@ -38,6 +38,8 @@ using System.Runtime.InteropServices;
 #if !MOBILE
 using Mono.Unix.Native;
 using Mono.Unix;
+#else
+using System.Runtime.CompilerServices;
 #endif
 
 namespace System.IO.MemoryMappedFiles
@@ -215,33 +217,210 @@ namespace System.IO.MemoryMappedFiles
 	}
 #else
 	internal static class MemoryMapImpl {
+		[DllImport ("libc")]
+		static extern int fsync (int fd);
+
+		[DllImport ("libc")]
+		static extern int close (int fd);
+
+		[DllImport ("libc")]
+		static extern int fcntl (int fd, int cmd, int arg0);
+
+		//XXX check if android off_t is 64bits or not. on iOS / darwin it is.
+		[DllImport ("libc")]
+		static extern IntPtr mmap (IntPtr addr, IntPtr len, int prot, int flags, int fd, long offset);
+
+		[DllImport ("libc")]
+		static extern int munmap (IntPtr addr, IntPtr size);
+
+		[DllImport ("libc", SetLastError=true)]
+		static extern int open (string path, int flags, int access);
+
+		[DllImport ("libc")]
+		static extern int getpagesize ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern long mono_filesize_from_path (string str);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern long mono_filesize_from_fd (int fd);
+
+		//Values valid on iOS/OSX and android ndk r6
+		const int F_GETFD = 1;
+		const int F_SETFD = 2;
+		const int FD_CLOEXEC = 1;
+		const int DEFFILEMODE = 0x666;
+
+		const int O_RDONLY = 0x0;
+		const int O_WRONLY = 0x1;
+		const int O_RDWR   = 0x2;
+
+		const int PROT_READ  = 0x1;
+		const int PROT_WRITE = 0x2;
+		const int PROT_EXEC  = 0x4;
+
+		const int MAP_PRIVATE = 0x2;
+		const int MAP_SHARED  = 0x1;
+
+		const int EINVAL = 22;
+
+#if MONODROID
+		const int O_CREAT = 0x040;
+		const int O_TRUNC = 0x080;
+		const int O_EXCL  = 0x200;
+
+		const int ENAMETOOLONG = 63;
+#else
+		/* MONOTOUCH */
+		const int O_CREAT = 0x0200;
+		const int O_TRUNC = 0x0400;
+		const int O_EXCL  = 0x0800;
+
+		const int ENAMETOOLONG = 36;
+#endif
+
+		static int ToUnixMode (FileMode mode)
+		{
+			switch (mode) {
+			case FileMode.CreateNew:
+				return O_CREAT | O_EXCL;
+				
+			case FileMode.Create:
+				return O_CREAT | O_TRUNC;
+				
+			case FileMode.OpenOrCreate:
+				return O_CREAT;
+				
+			case FileMode.Truncate:
+				return O_TRUNC;
+			default:
+			case FileMode.Open:
+				return 0;
+			}
+		}
+
+		//
+		// Turns the MemoryMappedFileAccess into the second half of open(2) flags
+		//
+		static int ToUnixMode (MemoryMappedFileAccess access)
+		{
+			switch (access) {
+			case MemoryMappedFileAccess.CopyOnWrite:
+			case MemoryMappedFileAccess.ReadWriteExecute:
+			case MemoryMappedFileAccess.ReadWrite:
+				return O_RDWR;
+				
+			case MemoryMappedFileAccess.Write:
+				return O_WRONLY;
+
+			case MemoryMappedFileAccess.ReadExecute:
+			case MemoryMappedFileAccess.Read:
+			default:
+				return O_RDONLY;
+			}
+		}
+
+		static int ToUnixProts (MemoryMappedFileAccess access)
+		{
+			switch (access){
+			case MemoryMappedFileAccess.ReadWrite:
+				return PROT_WRITE | PROT_READ;
+				
+			case MemoryMappedFileAccess.Write:
+				return PROT_WRITE;
+				
+			case MemoryMappedFileAccess.CopyOnWrite:
+				return PROT_WRITE | PROT_READ;
+				
+			case MemoryMappedFileAccess.ReadExecute:
+				return PROT_EXEC;
+				
+			case MemoryMappedFileAccess.ReadWriteExecute:
+				return PROT_WRITE | PROT_READ | PROT_EXEC;
+				
+			case MemoryMappedFileAccess.Read:
+			default:
+				return PROT_READ;
+			}
+		}
+
+		static void ThrowErrorFromErrno (int errno) 
+		{
+			switch (errno) {
+			case EINVAL:		throw new ArgumentException ();
+			case ENAMETOOLONG:	throw new PathTooLongException ();
+			default: throw new IOException ("Failed with errno " + errno);
+			}
+		}
+
 		internal static int Open (string path, FileMode mode, long capacity, MemoryMappedFileAccess access)
 		{
-			return 0;
+			long file_size = mono_filesize_from_path (path);
+			if (file_size < 0)
+				throw new FileNotFoundException (path);
+
+			if ((capacity == 0 && file_size == 0) || (capacity > file_size))
+				throw new ArgumentException ("capacity");
+
+			int fd = open (path, ToUnixMode (mode) | ToUnixMode (access), DEFFILEMODE);
+
+			if (fd == -1)
+				ThrowErrorFromErrno (Marshal.GetLastWin32Error ());
+			return fd;
 		}
 
 		internal static void CloseFD (int fd)
 		{
+			close (fd);
 		}
 
 		internal static void Flush (int fd)
 		{
+			fsync (fd);
 		}
 
 		internal static bool Unmap (IntPtr map_addr, ulong map_size)
 		{
-			return false;
+			return munmap (map_addr, (IntPtr)map_size) == 0;
 		}
+
+		static int pagesize;
 
 		internal static unsafe void Map (int file_handle, long offset, ref long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
 		{
-			map_addr = IntPtr.Zero;
-			offset_diff = 0;
+			if (pagesize == 0)
+				pagesize = getpagesize ();
+
+			long fsize = mono_filesize_from_fd (file_handle);
+			if (fsize < 0)
+				throw new FileNotFoundException ();
+
+			if (size == 0 || size > fsize)
+				size = fsize;
+			
+			// Align offset
+			long real_offset = offset & ~(pagesize - 1);
+
+			offset_diff = (int)(offset - real_offset);
+
+			map_addr = mmap (IntPtr.Zero, (IntPtr) size,
+						 ToUnixProts (access),
+						 access == MemoryMappedFileAccess.CopyOnWrite ? MAP_PRIVATE : MAP_SHARED,
+						 file_handle, real_offset);
+
+			if (map_addr == (IntPtr)(-1))
+				throw new IOException ("mmap failed for fd#" + file_handle + "(" + offset + ", " + size + ")");
 		}
 
 		internal static void ConfigureFD (IntPtr handle, HandleInheritability inheritability)
 		{
-			
+			int fd = (int)handle;
+			int flags = fcntl (fd, F_GETFD, 0);
+			if (inheritability == HandleInheritability.None)
+				flags &= ~FD_CLOEXEC;
+			else
+				flags |= FD_CLOEXEC;
+			fcntl (fd, F_SETFD, flags);
 		}
 
 	}
@@ -290,6 +469,8 @@ namespace System.IO.MemoryMappedFiles
 				throw new ArgumentException ("path");
 			if (mapName != null && mapName.Length == 0)
 				throw new ArgumentException ("mapName");
+			if (mode == FileMode.Append)
+				throw new ArgumentException ("mode");			
 
 			int fd = MemoryMapImpl.Open (path, mode, capacity, access);
 			
