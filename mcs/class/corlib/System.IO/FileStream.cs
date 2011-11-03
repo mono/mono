@@ -77,7 +77,6 @@ namespace System.IO
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
 		{
-			this.wasExposed = true;
 			this.handle = MonoIO.InvalidHandle;
 			if (handle == this.handle)
 				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
@@ -101,6 +100,7 @@ namespace System.IO
 			}
 
 			this.handle = handle;
+			ExposeHandle ();
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
@@ -201,8 +201,6 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
-			this.wasExposed = false;
-
 			if (path == null) {
 				throw new ArgumentNullException ("path");
 			}
@@ -378,7 +376,6 @@ namespace System.IO
 			}
 		}
 
-
 		public string Name {
 			get {
 #if MOONLIGHT
@@ -418,10 +415,11 @@ namespace System.IO
 				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
-				if(CanSeek == false)
+				if (CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
-			
-				if (wasExposed){
+
+				if (safeHandle != null) {
+					// If the handle was leaked outside we always ask the real handle
 					MonoIOError error;
 
 					long ret = MonoIO.Seek (handle, 0,SeekOrigin.Current,out error);
@@ -457,9 +455,9 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-        wasExposed = true;
-				FlushBuffer ();
-				InitBuffer(0, true);
+				if (safeHandle == null) {
+					ExposeHandle ();
+				}
 				return handle;
 			}
 		}
@@ -468,20 +466,21 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-				SafeFileHandle ret;
-
-				if (safeHandle != null)
-					ret = safeHandle;
-				else
-					ret = new SafeFileHandle (handle, false);
-        wasExposed = true;
-				FlushBuffer ();
-				InitBuffer (0, true);
-				return ret;
+				if (safeHandle == null) {
+					ExposeHandle ();
+				}
+				return safeHandle;
 			}
 		}
 
 		// methods
+
+	  void ExposeHandle ()
+		{
+			safeHandle = new SafeFileHandle (handle, false);
+			FlushBuffer ();
+			InitBuffer (0, true);
+		}
 
 		public override int ReadByte ()
 		{
@@ -826,7 +825,6 @@ namespace System.IO
 			return(buf_start);
 		}
 
-		
 		public override void SetLength (long value)
 		{
 			if (handle == MonoIO.InvalidHandle)
@@ -1047,7 +1045,7 @@ namespace System.IO
 			if (buf_dirty) {
 				MonoIOError error;
 
-				if (CanSeek == true && !wasExposed) {
+				if (CanSeek == true && safeHandle == null) {
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
@@ -1196,6 +1194,5 @@ namespace System.IO
 		private int buf_length;			// number of valid bytes in buffer
 		private int buf_offset;			// position of next byte
 		private long buf_start;			// location of buffer in file
-		private bool wasExposed;		// Is this handle shared
 	}
 }
