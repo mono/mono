@@ -77,6 +77,7 @@ namespace System.IO
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
 		{
+			this.wasExposed = true;
 			this.handle = MonoIO.InvalidHandle;
 			if (handle == this.handle)
 				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
@@ -110,7 +111,7 @@ namespace System.IO
 #else
 			this.anonymous = false;
 #endif
-			InitBuffer (bufferSize, isZeroSize);
+			InitBuffer (0, true);
 
 			if (canseek) {
 				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
@@ -200,6 +201,8 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
+			this.wasExposed = false;
+
 			if (path == null) {
 				throw new ArgumentNullException ("path");
 			}
@@ -375,6 +378,7 @@ namespace System.IO
 			}
 		}
 
+
 		public string Name {
 			get {
 #if MOONLIGHT
@@ -416,7 +420,20 @@ namespace System.IO
 
 				if(CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
-				
+			
+				if(wasExposed){
+					MonoIOError error;
+
+					long ret = MonoIO.Seek (handle, 0,SeekOrigin.Current,out error);
+
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						// don't leak the path information for isolated storage
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+					}
+
+					return ret;
+				}
+	
 				return(buf_start + buf_offset);
 			}
 			set {
@@ -440,6 +457,9 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
+        wasExposed = true;
+				FlushBuffer ();
+				InitBuffer(0, true);
 				return handle;
 			}
 		}
@@ -448,14 +468,15 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-				SafeFileHandle ret;
+				SafeFileHandle ret;				
 
 				if (safeHandle != null)
 					ret = safeHandle;
 				else
-					ret = new SafeFileHandle (handle, owner);
-
+					ret = new SafeFileHandle (handle, false);
+        wasExposed = true;
 				FlushBuffer ();
+				InitBuffer(0, true);
 				return ret;
 			}
 		}
@@ -487,6 +508,7 @@ namespace System.IO
 
 		public override void WriteByte (byte value)
 		{
+
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
@@ -805,6 +827,7 @@ namespace System.IO
 			return(buf_start);
 		}
 
+		
 		public override void SetLength (long value)
 		{
 			if (handle == MonoIO.InvalidHandle)
@@ -909,6 +932,9 @@ namespace System.IO
 			Exception exc = null;
 			if (handle != MonoIO.InvalidHandle) {
 				try {
+					// If the FileStream is in "exposed" status
+					// it means that we do not have a buffer(we write the data without buffering)
+					// therefor we don't and can't flush the buffer becouse we don't have one.
 					FlushBuffer ();
 				} catch (Exception e) {
 					exc = e;
@@ -1022,7 +1048,7 @@ namespace System.IO
 			if (buf_dirty) {
 				MonoIOError error;
 
-				if (CanSeek == true) {
+				if (CanSeek == true && !wasExposed) {
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
@@ -1171,5 +1197,6 @@ namespace System.IO
 		private int buf_length;			// number of valid bytes in buffer
 		private int buf_offset;			// position of next byte
 		private long buf_start;			// location of buffer in file
+		private bool wasExposed;		// Is this handle shared
 	}
 }
