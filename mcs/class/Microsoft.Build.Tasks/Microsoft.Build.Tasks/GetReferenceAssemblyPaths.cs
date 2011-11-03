@@ -227,18 +227,9 @@ namespace Microsoft.Build.Tasks
 
 		static string DefaultFrameworksBasePath {
 			get {
-				if (framework_base_path == null) {
-					// NOTE: code from mcs/tools/gacutil/driver.cs
-					PropertyInfo gac = typeof (System.Environment).GetProperty (
-							"GacPath", BindingFlags.Static | BindingFlags.NonPublic);
-
-					if (gac != null) {
-						MethodInfo get_gac = gac.GetGetMethod (true);
-						string gac_path = (string) get_gac.Invoke (null, null);
-						framework_base_path = Path.GetFullPath (Path.Combine (
-									gac_path, Path.Combine ("..", "xbuild-frameworks")));
-					}
-				}
+				if (framework_base_path == null)
+					framework_base_path = Path.Combine (Path.GetDirectoryName (typeof (object).Assembly.Location),
+								Path.Combine ("..", "xbuild-frameworks"));
 				return framework_base_path;
 			}
 		}
