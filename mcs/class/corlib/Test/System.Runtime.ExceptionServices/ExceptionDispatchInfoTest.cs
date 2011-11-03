@@ -38,14 +38,6 @@ namespace MonoTests.System.Runtime.ExceptionServices
 	[TestFixture]
 	public class ExceptionDispatchInfoTest
 	{
-		static class Helpers
-		{
-			public static void Throw ()
-			{
-				throw new ApplicationException ("test2");
-			}
-		}
-
 		[Test]
 		public void Capture_InvalidArguments ()
 		{
@@ -78,12 +70,14 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			});
 
 			var ed = t.Result;
+			var orig_stack = orig.StackTrace;
 			try {
 				ed.Throw ();
 			} catch (Exception e) {
 				var s = e.StackTrace.Split ('\n');
 				Assert.AreEqual (4, s.Length, "#1");
-				return;
+				Assert.AreEqual (orig, e, "#2");
+				Assert.AreNotEqual (orig_stack, e.StackTrace, "#3");
 			}
 		}
 
