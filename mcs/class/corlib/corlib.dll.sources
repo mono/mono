@@ -678,6 +678,7 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
+System.Runtime.ExceptionServices/ExceptionDispatchInfo.cs
 System.Runtime.ExceptionServices/FirstChanceExceptionEventArgs.cs
 System.Runtime.ExceptionServices/HandleProcessCorruptedStateExceptionsAttribute.cs
 System.Runtime.Hosting/ActivationArguments.cs
