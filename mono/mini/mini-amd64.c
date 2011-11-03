@@ -3847,7 +3847,7 @@ amd64_pop_reg (code, AMD64_RAX);
 #ifndef DISABLE_JIT
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
-extern int nacl_park_threads_now;
+extern volatile int __nacl_thread_suspension_needed;
 void mono_nacl_gc()
 {
 #ifdef __native_client_gc__
@@ -6402,7 +6402,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else {
 				guint8 *br [1];
 
-				amd64_mov_reg_imm_size (code, AMD64_R11, (gpointer)&nacl_park_threads_now, 4);
+				amd64_mov_reg_imm_size (code, AMD64_R11, (gpointer)&__nacl_thread_suspension_needed, 4);
 				amd64_test_membase_imm_size (code, AMD64_R11, 0, 0xFFFFFFFF, 4);
 				br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)mono_nacl_gc, TRUE);

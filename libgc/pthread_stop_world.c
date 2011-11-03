@@ -25,8 +25,6 @@
 
 #ifdef NACL
 volatile int __nacl_thread_suspension_needed = 0;
-extern volatile int nacl_park_threads_now
-    __attribute__ ((alias ("__nacl_thread_suspension_needed")));
 pthread_t nacl_thread_parker = -1;
 
 volatile int nacl_thread_parked[MAX_NACL_GC_THREADS];
@@ -469,7 +467,7 @@ static void pthread_stop_world()
     GC_printf1("pthread_stop_world: num_threads %d\n", nacl_num_gc_threads - 1);
     #endif
     nacl_thread_parker = pthread_self();
-    nacl_park_threads_now = 1;
+    __nacl_thread_suspension_needed = 1;
     
     while (1) {
 	#define NACL_PARK_WAIT_NANOSECONDS 100000
@@ -557,7 +555,7 @@ void nacl_post_syscall_hook()
 }
 
 void __nacl_suspend_thread_if_needed() {
-    if (nacl_park_threads_now) {
+    if (__nacl_thread_suspension_needed) {
         pthread_t self = pthread_self();
         int local_dummy = 0;
         /* Don't try to park the thread parker. */
@@ -576,7 +574,7 @@ void __nacl_suspend_thread_if_needed() {
             nacl_gc_thread_self->stop_info.stack_ptr = (ptr_t)(&local_dummy);
         }
         nacl_thread_parked[nacl_thread_idx] = 1;
-        while (nacl_park_threads_now)
+        while (__nacl_thread_suspension_needed)
             ; /* spin */
         nacl_thread_parked[nacl_thread_idx] = 0;
 
@@ -686,7 +684,7 @@ static void pthread_start_world()
 #   if DEBUG_THREADS
     GC_printf0("World starting\n");
 #   endif
-    nacl_park_threads_now = 0;
+    __nacl_thread_suspension_needed = 0;
     if (GC_notify_event)
         GC_notify_event (GC_EVENT_POST_START_WORLD);
 #endif /* NACL */
