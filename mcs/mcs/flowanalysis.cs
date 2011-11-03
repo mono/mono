@@ -1348,11 +1348,6 @@ namespace Mono.CSharp
 
 		VariableInfo[] sub_info;
 
-		bool is_ever_assigned;
-		public bool IsEverAssigned {
-			get { return is_ever_assigned; }
-		}
-
 		protected VariableInfo (string name, TypeSpec type, int offset)
 		{
 			this.Name = name;
@@ -1449,6 +1444,8 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public bool IsEverAssigned { get; set; }
+
 		public bool IsStructFieldAssigned (ResolveContext ec, string name)
 		{
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsStructFieldAssigned (this, name);
@@ -1483,7 +1480,7 @@ namespace Mono.CSharp
 			else
 				vector.SetRange (Offset, Length);
 
-			is_ever_assigned = true;
+			IsEverAssigned = true;
 		}
 
 		public void SetStructFieldAssigned (MyBitVector vector, string field_name)
@@ -1503,7 +1500,7 @@ namespace Mono.CSharp
 				vector[Offset + field_idx] = true;
 			}
 
-			is_ever_assigned = true;
+			IsEverAssigned = true;
 
 			//
 			// Each field must be assigned

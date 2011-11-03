@@ -176,20 +176,21 @@ namespace Mono.CSharp {
 
 			TypeManager.CheckTypeVariance (ret_type, Variance.Covariant, this);
 
-			InvokeBuilder = new Method (this, null, ReturnType, MethodModifiers, new MemberName (InvokeMethodName), p, null);
+			var resolved_rt = new TypeExpression (ret_type, Location);
+			InvokeBuilder = new Method (this, null, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
 			InvokeBuilder.Define ();
 
 			//
 			// Don't emit async method for compiler generated delegates (e.g. dynamic site containers)
 			//
 			if (!IsCompilerGenerated) {
-				DefineAsyncMethods (Parameters.CallingConvention);
+				DefineAsyncMethods (Parameters.CallingConvention, resolved_rt);
 			}
 
 			return true;
 		}
 
-		void DefineAsyncMethods (CallingConventions cc)
+		void DefineAsyncMethods (CallingConventions cc, TypeExpression returnType)
 		{
 			var iasync_result = Module.PredefinedTypes.IAsyncResult;
 			var async_callback = Module.PredefinedTypes.AsyncCallback;
@@ -280,7 +281,7 @@ namespace Mono.CSharp {
 			//
 			// Create method, define parameters, register parameters with type system
 			//
-			EndInvokeBuilder = new Method (this, null, ReturnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
+			EndInvokeBuilder = new Method (this, null, returnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
 			EndInvokeBuilder.Define ();
 		}
 

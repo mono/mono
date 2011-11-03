@@ -479,6 +479,16 @@ namespace Mono.CSharp {
 		{
 		}
 
+		protected override Expression DoResolve (ResolveContext ec)
+		{
+			var expr = base.DoResolve (ec);
+			var vr = target as VariableReference;
+			if (vr != null && vr.VariableInfo != null)
+				vr.VariableInfo.IsEverAssigned = false;
+
+			return expr;
+		}
+
 		public void UpdateSource (Expression source)
 		{
 			base.source = source;

@@ -402,7 +402,7 @@ namespace Mono.CSharp {
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
-				return EmptyExpression.Null;	// TODO: Add location
+				return ErrorExpression.Instance;	// TODO: Add location
 			}
 		}
 
