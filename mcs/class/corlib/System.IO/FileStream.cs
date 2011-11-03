@@ -421,7 +421,7 @@ namespace System.IO
 				if(CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
 			
-				if(wasExposed){
+				if (wasExposed){
 					MonoIOError error;
 
 					long ret = MonoIO.Seek (handle, 0,SeekOrigin.Current,out error);
@@ -468,7 +468,7 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-				SafeFileHandle ret;				
+				SafeFileHandle ret;
 
 				if (safeHandle != null)
 					ret = safeHandle;
@@ -476,7 +476,7 @@ namespace System.IO
 					ret = new SafeFileHandle (handle, false);
         wasExposed = true;
 				FlushBuffer ();
-				InitBuffer(0, true);
+				InitBuffer (0, true);
 				return ret;
 			}
 		}
@@ -508,7 +508,6 @@ namespace System.IO
 
 		public override void WriteByte (byte value)
 		{
-
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 

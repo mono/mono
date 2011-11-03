@@ -1613,22 +1613,22 @@ namespace MonoTests.System.IO
 			DeleteFile (path);
 			
 			try {
-				fs1 = new FileStream(path, FileMode.Create);
-				fs2 = new FileStream(fs1.SafeFileHandle, FileAccess.ReadWrite);
-				fs1.WriteByte(Convert.ToByte('H'));
-				fs1.WriteByte(Convert.ToByte('E'));
-				fs1.WriteByte(Convert.ToByte('L'));
-				fs2.WriteByte(Convert.ToByte('L'));
-				fs2.WriteByte(Convert.ToByte('O'));
+				fs1 = new FileStream (path, FileMode.Create);
+				fs2 = new FileStream (fs1.SafeFileHandle, FileAccess.ReadWrite);
+				fs1.WriteByte (Convert.ToByte ('H'));
+				fs1.WriteByte (Convert.ToByte ('E'));
+				fs1.WriteByte (Convert.ToByte ('L'));
+				fs2.WriteByte (Convert.ToByte ('L'));
+				fs2.WriteByte (Convert.ToByte ('O'));
 				long fs1Pos = fs1.Position;
-				fs1.Flush();
-				fs2.Flush(); 
-				fs1.Close();
-				fs2.Close();
+				fs1.Flush ();
+				fs2.Flush (); 
+				fs1.Close ();
+				fs2.Close ();
 
-				var check = Encoding.ASCII.GetString(File.ReadAllBytes(path));
-				Assert.AreEqual("HELLO", check, "EXPOSED#1");
-				Assert.AreEqual(5, fs1Pos, "EXPOSED#2");
+				var check = Encoding.ASCII.GetString (File.ReadAllBytes (path));
+				Assert.AreEqual ("HELLO", check, "EXPOSED#1");
+				Assert.AreEqual (5, fs1Pos, "EXPOSED#2");
 			} finally {
 				if (fs1 != null)
 					fs1.Close ();
