@@ -875,7 +875,7 @@ namespace Mono.CSharp
 		abstract class EventFieldAccessor : AEventAccessor
 		{
 			protected EventFieldAccessor (EventField method, string prefix)
-				: base (method, prefix, null, Location.Null)
+				: base (method, prefix, null, method.Location)
 			{
 			}
 
