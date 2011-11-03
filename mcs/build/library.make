@@ -294,7 +294,7 @@ $(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
 MDOC_UP  =$(Q_MDOC_UP) \
 		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe \
-		--delete -o Documentation/en $(the_lib)
+		update --delete -o Documentation/en $(the_lib)
 
 doc-update-local: $(the_libdir)/.doc-stamp
 
