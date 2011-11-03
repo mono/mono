@@ -430,10 +430,6 @@ namespace Mono.CSharp
 			else
 				tab_size = 8;
 
-			//
-			// FIXME: This could be `Location.Push' but we have to
-			// find out why the MS compiler allows this
-			//
 			Mono.CSharp.Location.Push (file, file);
 		}
 		
