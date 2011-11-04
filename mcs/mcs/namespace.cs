@@ -987,10 +987,8 @@ namespace Mono.CSharp {
 			if (namespace_using_table != null)
 				return namespace_using_table;
 
-			if (using_clauses == null) {
-				namespace_using_table = empty_namespaces;
-				return namespace_using_table;
-			}
+			if (using_clauses == null)
+				return empty_namespaces;
 
 			var list = new List<Namespace> (using_clauses.Count);
 
@@ -1001,6 +999,9 @@ namespace Mono.CSharp {
 
 				list.Add (using_ns);
 			}
+
+			if (Compiler.Settings.StatementMode)
+				return list.ToArray ();
 
 			namespace_using_table = list.ToArray ();
 			return namespace_using_table;

@@ -37,6 +37,19 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		public void UsingAfterError ()
+		{
+			try {
+				Evaluator.Evaluate ("File.OpenRead (\"/etc/passwd\");");
+				Assert.Fail ("#1");
+			} catch {
+			}
+
+			Evaluator.Run ("using System.IO;");
+			Evaluator.Evaluate ("File.Exists (\"/etc/passwd\");");
+		}
+
+		[Test]
 		public void WithTypeBuilders ()
 		{
 			object res;
