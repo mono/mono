@@ -61,8 +61,11 @@ namespace System
 		internal int hresult = -2146233088;
 		string source;
 		IDictionary _data;
+		StackTrace[] captured_traces;
 		#endregion
 #pragma warning restore 169, 649
+
+		/* Don't add fields here, the runtime depends on the layout of subclasses */
 
 		public Exception ()
 		{
@@ -177,47 +180,62 @@ namespace System
 			}
 		}
 
+		void AddFrames (StringBuilder sb, string newline, string unknown, StackTrace st) {
+			for (int i = 0; i < st.FrameCount; i++) {
+				StackFrame frame = st.GetFrame (i);
+				if (i == 0)
+					sb.AppendFormat ("  {0} ", Locale.GetText ("at"));
+				else
+					sb.Append (newline);
+
+				if (frame.GetMethod () == null) {
+					string internal_name = frame.GetInternalMethodName ();
+					if (internal_name != null)
+						sb.Append (internal_name);
+					else
+						sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
+				} else {
+					GetFullNameForStackTrace (sb, frame.GetMethod ());
+
+					if (frame.GetILOffset () == -1)
+						sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
+					else
+						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
+
+					sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (),
+									 frame.GetFileLineNumber ());
+				}
+			}
+		}
+
 		public virtual string StackTrace {
 			get {
-				if (stack_trace == null) {
-					if (trace_ips == null)
-						/* Not thrown yet */
-						return null;
+				if (stack_trace != null)
+					return stack_trace;
 
-					StackTrace st = new StackTrace (this, 0, true, true);
+				if (trace_ips == null)
+					/* Not thrown yet */
+					return null;
 
-					StringBuilder sb = new StringBuilder ();
+				StringBuilder sb = new StringBuilder ();
 
-					string newline = String.Format ("{0}  {1} ", Environment.NewLine, Locale.GetText ("at"));
-					string unknown = Locale.GetText ("<unknown method>");
+				string newline = String.Format ("{0}  {1} ", Environment.NewLine, Locale.GetText ("at"));
+				string unknown = Locale.GetText ("<unknown method>");
 
-					for (int i = 0; i < st.FrameCount; i++) {
-						StackFrame frame = st.GetFrame (i);
-						if (i == 0)
-							sb.AppendFormat ("  {0} ", Locale.GetText ("at"));
-						else
-							sb.Append (newline);
-
-						if (frame.GetMethod () == null) {
-							string internal_name = frame.GetInternalMethodName ();
-							if (internal_name != null)
-								sb.Append (internal_name);
-							else
-								sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
-						} else {
-							GetFullNameForStackTrace (sb, frame.GetMethod ());
-
-							if (frame.GetILOffset () == -1)
-								sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
-							else
-								sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
-
-							sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (), 
-								frame.GetFileLineNumber ());
-						}
+				// Add traces captured using ExceptionDispatchInfo
+				if (captured_traces != null) {
+					foreach (var t in captured_traces) {
+						AddFrames (sb, newline, unknown, t);
+						sb.Append (Environment.NewLine);
+						sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
+						sb.Append (Environment.NewLine);
 					}
-					stack_trace = sb.ToString ();
 				}
+
+				StackTrace st = new StackTrace (this, 0, true, true);
+				AddFrames (sb, newline, unknown, st);
+
+				stack_trace = sb.ToString ();
 
 				return stack_trace;
 			}
@@ -350,6 +368,20 @@ namespace System
 				}
 			}
 			sb.Append (")");
+		}
+
+		// For ExceptionDispatchInfo
+		internal void CaptureTrace () {
+			if (captured_traces != null) {
+				StackTrace[] new_traces = new StackTrace [captured_traces.Length + 1];
+				Array.Copy (captured_traces, new_traces, captured_traces.Length);
+				captured_traces = new_traces;
+			} else {
+				captured_traces = new StackTrace [1];
+			}
+			captured_traces [captured_traces.Length - 1] = new StackTrace (this, 0, true, true);
+
+			trace_ips = null;
 		}
 
 		//
