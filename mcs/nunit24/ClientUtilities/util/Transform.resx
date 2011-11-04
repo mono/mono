@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<!-- 
             Microsoft ResX Schema 
@@ -125,9 +125,11 @@
 &lt;xsl:if test="//test-case[failure]"&gt;&lt;xsl:text&gt;Test Case Failures:
 &lt;/xsl:text&gt;&lt;/xsl:if&gt;
 &lt;xsl:apply-templates select="//test-case[failure]"/&gt;
+&lt;!-- Comment out this seldom used output block
 &lt;xsl:if test="//test-case[@executed='False']"&gt;&lt;xsl:text&gt;Tests not run:
 &lt;/xsl:text&gt;&lt;/xsl:if&gt;
 &lt;xsl:apply-templates select="//test-case[@executed='False']"/&gt;
+--&gt;
 &lt;xsl:text disable-output-escaping='yes'&gt;&amp;#xD;&amp;#xA;&lt;/xsl:text&gt;
 &lt;/xsl:template&gt;
 
