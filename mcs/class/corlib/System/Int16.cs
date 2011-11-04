@@ -187,10 +187,14 @@ namespace System {
 		public static short Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			int tmpResult = Int32.Parse (s, style, provider);
-			if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
-				throw new OverflowException ("Value too large or too small.");
+			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
+				if (tmpResult >= 0 && tmpResult <= ushort.MaxValue)
+					return (short) tmpResult;
+			} else if (tmpResult <= MaxValue && tmpResult >= MinValue) {
+				return (short) tmpResult;
+			}
 
-			return (short) tmpResult;
+			throw new OverflowException ("Value too large or too small.");
 		}
 
 		public static short Parse (string s) 

@@ -189,10 +189,14 @@ namespace System
 		public static sbyte Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			int tmpResult = Int32.Parse (s, style, provider);
-			if (tmpResult > SByte.MaxValue || tmpResult < SByte.MinValue)
-				throw new OverflowException (Locale.GetText ("Value too large or too small."));
-
-			return (sbyte) tmpResult;
+			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
+				if (tmpResult >= 0 && tmpResult <= byte.MaxValue)
+					return (sbyte) tmpResult;
+			} else if (tmpResult <= MaxValue && tmpResult >= MinValue) {
+				return (sbyte) tmpResult;
+			}
+			
+			throw new OverflowException (Locale.GetText ("Value too large or too small."));
 		}
 
 		[CLSCompliant(false)]
