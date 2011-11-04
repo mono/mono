@@ -57,6 +57,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Ignore ("1857")]
 		public void Throw ()
 		{
 			Exception orig = null;
