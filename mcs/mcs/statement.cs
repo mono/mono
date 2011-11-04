@@ -1308,6 +1308,9 @@ namespace Mono.CSharp {
 
 		void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
 		{
+			if (bc.Report.Errors != 0)
+				return;
+
 			var container = bc.CurrentMemberDefinition.Parent;
 
 			Field f = new Field (container, new TypeExpression (li.Type, li.Location), Modifiers.PUBLIC | Modifiers.STATIC,
