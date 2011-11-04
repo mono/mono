@@ -29,6 +29,7 @@
 using System;
 using NUnit.Framework;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Linq;
 
 namespace MonoTests.System.Threading
@@ -402,6 +403,30 @@ namespace MonoTests.System.Threading
 			v.ExitUpgradeableReadLock ();
 			Assert.IsTrue (v.TryEnterWriteLock (100));
 			v.ExitWriteLock ();
+		}
+
+		[Test]
+		public void EnterWriteLockWhileInUpgradeAndOtherWaiting ()
+		{
+			var v = new ReaderWriterLockSlim ();
+
+			var task2 = new Task(() => {
+                v.EnterWriteLock();
+                v.ExitWriteLock();
+            });
+
+            var task1 = new Task(() =>
+            {
+                v.EnterUpgradeableReadLock ();
+                task2.Start ();
+                Thread.Sleep (100);
+                v.EnterWriteLock ();
+                v.ExitWriteLock ();
+                v.ExitUpgradeableReadLock ();
+            });
+            task1.Start ();
+
+            Assert.IsTrue (task1.Wait (500));
 		}
 
 		[Test]

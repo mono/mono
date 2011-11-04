@@ -259,7 +259,7 @@ namespace System.Threading {
 					}
 				}
 
-				int stateCheck = isUpgradable ? RwWaitUpgrade : RwWait;
+				int stateCheck = isUpgradable ? RwWaitUpgrade + RwWait : RwWait;
 				long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 
 				do {
