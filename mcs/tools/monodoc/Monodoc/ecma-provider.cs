@@ -1957,7 +1957,6 @@ public class EcmaHelpSource : HelpSource {
 	public override void PopulateSearchableIndex (IndexWriter writer)
 	{
 		StringBuilder text;
-		Console.WriteLine ("I'm new");
 		foreach (Node ns_node in Tree.Nodes) {
 			Message (TraceLevel.Info, "\tNamespace: {0} ({1})", ns_node.Caption, ns_node.Nodes.Count);
 			foreach (Node type_node in ns_node.Nodes) {
