@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,31 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Monodoc.Lucene.Net.Index;
-namespace Monodoc.Lucene.Net.Search
+
+using IndexReader = Mono.Lucene.Net.Index.IndexReader;
+
+namespace Mono.Lucene.Net.Search
 {
 	
 	/// <summary> Abstract base class for sorting hits returned by a Query.
 	/// 
-	/// <p>This class should only be used if the other SortField
-	/// types (SCORE, DOC, STRING, INT, FLOAT) do not provide an
-	/// adequate sorting.  It maintains an internal cache of values which
-	/// could be quite large.  The cache is an array of Comparable,
-	/// one for each document in the index.  There is a distinct
-	/// Comparable for each unique term in the Field - if
-	/// some documents have the same term in the Field, the cache
-	/// array will have entries which reference the same Comparable.
+	/// <p/>
+	/// This class should only be used if the other SortField types (SCORE, DOC,
+	/// STRING, INT, FLOAT) do not provide an adequate sorting. It maintains an
+	/// internal cache of values which could be quite large. The cache is an array of
+	/// Comparable, one for each document in the index. There is a distinct
+	/// Comparable for each unique term in the field - if some documents have the
+	/// same term in the field, the cache array will have entries which reference the
+	/// same Comparable.
 	/// 
-	/// <p>Created: Apr 21, 2004 5:08:38 PM
+	/// This class will be used as part of a key to a FieldCache value. You must
+	/// implement hashCode and equals to avoid an explosion in RAM usage if you use
+	/// instances that are not the same instance. If you are searching using the
+	/// Remote contrib, the same instance of this class on the client will be a new
+	/// instance on every call to the server, so hashCode/equals is very important in
+	/// that situation.
+	/// 
+	/// <p/>
+	/// Created: Apr 21, 2004 5:08:38 PM
+	/// 
 	/// 
 	/// </summary>
-	/// <author>   Tim Jones
-	/// </author>
-	/// <version>  $Id: SortComparator.java,v 1.2.2.1 2004/09/30 19:20:16 dnaber Exp $
+	/// <version>  $Id: SortComparator.java 800119 2009-08-02 17:59:21Z markrmiller $
 	/// </version>
-	/// <since>   1.4
+	/// <since> 1.4
 	/// </since>
+	/// <deprecated> Please use {@link FieldComparatorSource} instead.
+	/// </deprecated>
+    [Obsolete("Please use FieldComparatorSource instead.")]
 	[Serializable]
 	public abstract class SortComparator : SortComparatorSource
 	{
@@ -80,16 +94,17 @@ namespace Monodoc.Lucene.Net.Search
 		}
 		
 		// inherit javadocs
-		public virtual ScoreDocComparator NewComparator(Monodoc.Lucene.Net.Index.IndexReader reader, System.String fieldname)
+		public virtual ScoreDocComparator NewComparator(IndexReader reader, System.String fieldname)
 		{
 			System.String field = String.Intern(fieldname);
-            System.IComparable[] cachedValues = Monodoc.Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetCustom(reader, field, this);
+			System.IComparable[] cachedValues = Mono.Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetCustom(reader, field, this);
+			
 			return new AnonymousClassScoreDocComparator(cachedValues, this);
 		}
 		
 		/// <summary> Returns an object which, when sorted according to natural order,
 		/// will order the Term values in the correct order.
-		/// <p>For example, if the Terms contained integer values, this method
+		/// <p/>For example, if the Terms contained integer values, this method
 		/// would return <code>new Integer(termtext)</code>.  Note that this
 		/// might not always be the most efficient implementation - for this
 		/// particular example, a better implementation might be to make a

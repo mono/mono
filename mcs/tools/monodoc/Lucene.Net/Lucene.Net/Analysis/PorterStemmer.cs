@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -39,7 +40,7 @@ Release 3.
 optimize for fewer object creations.  ]
 */
 using System;
-namespace Monodoc.Lucene.Net.Analysis
+namespace Mono.Lucene.Net.Analysis
 {
 	
 	/// <summary> 
@@ -81,8 +82,7 @@ namespace Monodoc.Lucene.Net.Analysis
 			if (b.Length <= i + EXTRA)
 			{
 				char[] new_b = new char[b.Length + INC];
-				for (int c = 0; c < b.Length; c++)
-					new_b[c] = b[c];
+				Array.Copy(b, 0, new_b, 0, b.Length);
 				b = new_b;
 			}
 			b[i++] = ch;
@@ -185,7 +185,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		/* vowelinstem() is true <=> k0,...j contains a vowel */
 		
-		private bool vowelinstem()
+		private bool Vowelinstem()
 		{
 			int i;
 			for (i = k0; i <= j; i++)
@@ -283,7 +283,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		*/
 		
-		private void  step1()
+		private void  Step1()
 		{
 			if (b[k] == 's')
 			{
@@ -299,7 +299,7 @@ namespace Monodoc.Lucene.Net.Analysis
 				if (M() > 0)
 					k--;
 			}
-			else if ((Ends("ed") || Ends("ing")) && vowelinstem())
+			else if ((Ends("ed") || Ends("ing")) && Vowelinstem())
 			{
 				k = j;
 				if (Ends("at"))
@@ -321,9 +321,9 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		/* step2() turns terminal y to i when there is another vowel in the stem. */
 		
-		private void  step2()
+		private void  Step2()
 		{
-			if (Ends("y") && vowelinstem())
+			if (Ends("y") && Vowelinstem())
 			{
 				b[k] = 'i';
 				dirty = true;
@@ -334,7 +334,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		-ation) maps to -ize etc. note that the string before the suffix must give
 		m() > 0. */
 		
-		private void  step3()
+		private void  Step3()
 		{
 			if (k == k0)
 				return ; /* For Bug 1 */
@@ -453,7 +453,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		/* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 		
-		private void  step4()
+		private void  Step4()
 		{
 			switch (b[k])
 			{
@@ -502,7 +502,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		/* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 		
-		private void  step5()
+		private void  Step5()
 		{
 			if (k == k0)
 				return ; /* for Bug 1 */
@@ -593,7 +593,7 @@ namespace Monodoc.Lucene.Net.Analysis
 		
 		/* step6() removes a final -e if m() > 1. */
 		
-		private void  step6()
+		private void  Step6()
 		{
 			j = k;
 			if (b[k] == 'e')
@@ -640,8 +640,7 @@ namespace Monodoc.Lucene.Net.Analysis
 				char[] new_b = new char[wordLen + EXTRA];
 				b = new_b;
 			}
-			for (int j = 0; j < wordLen; j++)
-				b[j] = wordBuffer[offset + j];
+			Array.Copy(wordBuffer, offset, b, 0, wordLen);
 			i = wordLen;
 			return Stem(0);
 		}
@@ -672,7 +671,7 @@ namespace Monodoc.Lucene.Net.Analysis
 			k0 = i0;
 			if (k > k0 + 1)
 			{
-				step1(); step2(); step3(); step4(); step5(); step6();
+				Step1(); Step2(); Step3(); Step4(); Step5(); Step6();
 			}
 			// Also, a word is considered dirty if we lopped off letters
 			// Thanks to Ifigenia Vairelles for pointing this out.
@@ -695,7 +694,7 @@ namespace Monodoc.Lucene.Net.Analysis
 			{
 				try
 				{
-					System.IO.BinaryReader in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read));
+					System.IO.Stream in_Renamed = new System.IO.FileStream(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read);
 					byte[] buffer = new byte[1024];
 					int bufferLen, offset, ch;
 					
@@ -711,7 +710,7 @@ namespace Monodoc.Lucene.Net.Analysis
 						{
 							bufferLen = in_Renamed.Read(buffer, 0, buffer.Length);
 							offset = 0;
-							if (bufferLen <= 0)
+							if (bufferLen < 0)
 								ch = - 1;
 							else
 								ch = buffer[offset++];
@@ -737,7 +736,7 @@ namespace Monodoc.Lucene.Net.Analysis
 					
 					in_Renamed.Close();
 				}
-				catch (System.IO.IOException )
+				catch (System.IO.IOException e)
 				{
 					System.Console.Out.WriteLine("error reading " + args[i]);
 				}

@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,59 +14,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Monodoc.Lucene.Net.Analysis;
-namespace Monodoc.Lucene.Net.Analysis.Standard
+
+using Token = Mono.Lucene.Net.Analysis.Token;
+using TokenFilter = Mono.Lucene.Net.Analysis.TokenFilter;
+using TokenStream = Mono.Lucene.Net.Analysis.TokenStream;
+using TermAttribute = Mono.Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using TypeAttribute = Mono.Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+
+namespace Mono.Lucene.Net.Analysis.Standard
 {
 	
 	/// <summary>Normalizes tokens extracted with {@link StandardTokenizer}. </summary>
 	
-	public sealed class StandardFilter : TokenFilter
+	public sealed class StandardFilter:TokenFilter
 	{
 		
 		
 		/// <summary>Construct filtering <i>in</i>. </summary>
-		public StandardFilter(TokenStream in_Renamed) : base(in_Renamed)
+		public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
+			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+			typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
 		}
 		
-		private static readonly System.String APOSTROPHE_TYPE = Monodoc.Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage[Monodoc.Lucene.Net.Analysis.Standard.StandardTokenizerConstants.APOSTROPHE];
-		private static readonly System.String ACRONYM_TYPE = Monodoc.Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage[Monodoc.Lucene.Net.Analysis.Standard.StandardTokenizerConstants.ACRONYM];
+		private static readonly System.String APOSTROPHE_TYPE;
+		private static readonly System.String ACRONYM_TYPE;
+		
+		// this filters uses attribute type
+		private TypeAttribute typeAtt;
+		private TermAttribute termAtt;
 		
 		/// <summary>Returns the next token in the stream, or null at EOS.
-		/// <p>Removes <tt>'s</tt> from the end of words.
-		/// <p>Removes dots from acronyms.
+		/// <p/>Removes <tt>'s</tt> from the end of words.
+		/// <p/>Removes dots from acronyms.
 		/// </summary>
-		public override Monodoc.Lucene.Net.Analysis.Token Next()
+		public override bool IncrementToken()
 		{
-			Monodoc.Lucene.Net.Analysis.Token t = input.Next();
-			
-			if (t == null)
-				return null;
-			
-			System.String text = t.TermText();
-			System.String type = t.Type();
-			
-			if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && (text.EndsWith("'s") || text.EndsWith("'S")))
+			if (!input.IncrementToken())
 			{
-				return new Monodoc.Lucene.Net.Analysis.Token(text.Substring(0, (text.Length - 2) - (0)), t.StartOffset(), t.EndOffset(), type);
+				return false;
+			}
+			
+			char[] buffer = termAtt.TermBuffer();
+			int bufferLength = termAtt.TermLength();
+			System.String type = typeAtt.Type();
+			
+			if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && bufferLength >= 2 && buffer[bufferLength - 2] == '\'' && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
+			{
+				// Strip last 2 characters off
+				termAtt.SetTermLength(bufferLength - 2);
 			}
 			else if ((System.Object) type == (System.Object) ACRONYM_TYPE)
 			{
 				// remove dots
-				System.Text.StringBuilder trimmed = new System.Text.StringBuilder();
-				for (int i = 0; i < text.Length; i++)
+				int upto = 0;
+				for (int i = 0; i < bufferLength; i++)
 				{
-					char c = text[i];
+					char c = buffer[i];
 					if (c != '.')
-						trimmed.Append(c);
+						buffer[upto++] = c;
 				}
-				return new Monodoc.Lucene.Net.Analysis.Token(trimmed.ToString(), t.StartOffset(), t.EndOffset(), type);
+				termAtt.SetTermLength(upto);
 			}
-			else
-			{
-				return t;
-			}
+			
+			return true;
+		}
+		static StandardFilter()
+		{
+			APOSTROPHE_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.APOSTROPHE];
+			ACRONYM_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
 		}
 	}
 }

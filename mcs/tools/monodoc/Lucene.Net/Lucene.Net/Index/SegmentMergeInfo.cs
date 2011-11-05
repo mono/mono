@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,41 +14,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Index
+
+namespace Mono.Lucene.Net.Index
 {
 	
 	sealed class SegmentMergeInfo
 	{
 		internal Term term;
 		internal int base_Renamed;
+		internal int ord; // the position of the segment in a MultiReader
 		internal TermEnum termEnum;
-		internal Monodoc.Lucene.Net.Index.IndexReader reader;
-		internal TermPositions postings;
-		internal int[] docMap = null; // maps around deleted docs
+		internal IndexReader reader;
+		internal int delCount;
+		private TermPositions postings; // use getPositions()
+		private int[] docMap; // use getDocMap()
 		
-		internal SegmentMergeInfo(int b, TermEnum te, Monodoc.Lucene.Net.Index.IndexReader r)
+		internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
 		{
 			base_Renamed = b;
 			reader = r;
 			termEnum = te;
 			term = te.Term();
-			postings = reader.TermPositions();
-			
-			// build array which maps document numbers around deletions 
-			if (reader.HasDeletions())
+		}
+		
+		// maps around deleted docs
+		internal int[] GetDocMap()
+		{
+			if (docMap == null)
 			{
-				int maxDoc = reader.MaxDoc();
-				docMap = new int[maxDoc];
-				int j = 0;
-				for (int i = 0; i < maxDoc; i++)
+				delCount = 0;
+				// build array which maps document numbers around deletions 
+				if (reader.HasDeletions())
 				{
-					if (reader.IsDeleted(i))
-						docMap[i] = - 1;
-					else
-						docMap[i] = j++;
+					int maxDoc = reader.MaxDoc();
+					docMap = new int[maxDoc];
+					int j = 0;
+					for (int i = 0; i < maxDoc; i++)
+					{
+						if (reader.IsDeleted(i))
+						{
+							delCount++;
+							docMap[i] = - 1;
+						}
+						else
+							docMap[i] = j++;
+					}
 				}
 			}
+			return docMap;
+		}
+		
+		internal TermPositions GetPositions()
+		{
+			if (postings == null)
+			{
+				postings = reader.TermPositions();
+			}
+			return postings;
 		}
 		
 		internal bool Next()
@@ -67,7 +92,10 @@ namespace Monodoc.Lucene.Net.Index
 		internal void  Close()
 		{
 			termEnum.Close();
-			postings.Close();
+			if (postings != null)
+			{
+				postings.Close();
+			}
 		}
 	}
 }

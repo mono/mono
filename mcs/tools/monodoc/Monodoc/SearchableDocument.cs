@@ -4,7 +4,7 @@
 //
 // Author: Mario Sopena
 //
-using Monodoc.Lucene.Net.Documents;
+using Mono.Lucene.Net.Documents;
 
 namespace Monodoc {
 struct SearchableDocument {
@@ -17,13 +17,23 @@ struct SearchableDocument {
 	public Document LuceneDoc {
 		get {
 			Document doc = new Document ();
-			doc.Add (Field.UnIndexed ("title", title));
-			doc.Add (Field.UnIndexed ("url", url));
-			doc.Add (Field.UnStored ("hottext", hottext));
-			doc.Add (Field.UnStored ("text", text));
-			doc.Add (Field.UnStored ("examples", examples));
+			doc.Add (UnIndexed ("title", title));
+			doc.Add (UnIndexed ("url", url));
+			doc.Add (UnStored ("hottext", hottext));
+			doc.Add (UnStored ("text", text));
+			doc.Add (UnStored ("examples", examples));
 			return doc;
 		}
+	}
+
+	static Field UnIndexed(System.String name, System.String value_Renamed)
+	{
+		return new Field(name, value_Renamed, Field.Store.YES, Field.Index.NO);
+	}
+
+	static Field UnStored(System.String name, System.String value_Renamed)
+	{
+		return new Field(name, value_Renamed, Field.Store.NO, Field.Index.ANALYZED);
 	}
 }
 }

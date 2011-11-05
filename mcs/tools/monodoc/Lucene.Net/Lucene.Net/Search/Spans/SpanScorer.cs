@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,61 +14,121 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Explanation = Monodoc.Lucene.Net.Search.Explanation;
-using Scorer = Monodoc.Lucene.Net.Search.Scorer;
-using Similarity = Monodoc.Lucene.Net.Search.Similarity;
-using Weight = Monodoc.Lucene.Net.Search.Weight;
-namespace Monodoc.Lucene.Net.Search.Spans
+
+using Explanation = Mono.Lucene.Net.Search.Explanation;
+using Scorer = Mono.Lucene.Net.Search.Scorer;
+using Similarity = Mono.Lucene.Net.Search.Similarity;
+using Weight = Mono.Lucene.Net.Search.Weight;
+
+namespace Mono.Lucene.Net.Search.Spans
 {
 	
-	
-	class SpanScorer:Scorer
+	/// <summary> Public for extension only.</summary>
+	public class SpanScorer:Scorer
 	{
-		private Spans spans;
-		private Weight weight;
-		private byte[] norms;
-		private float value_Renamed;
+		protected internal Spans spans;
+		protected internal Weight weight;
+		protected internal byte[] norms;
+		protected internal float value_Renamed;
 		
-		private bool firstTime = true;
-		private bool more = true;
+		/// <deprecated> not needed anymore 
+		/// </deprecated>
+        [Obsolete("not needed anymore ")]
+		protected internal bool firstTime = true;
+		protected internal bool more = true;
 		
-		private int doc;
-		private float freq;
+		protected internal int doc;
+		protected internal float freq;
 		
-		internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms) : base(similarity)
+		protected internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.spans = spans;
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.Value;
+			this.value_Renamed = weight.GetValue();
+			if (this.spans.Next())
+			{
+				doc = - 1;
+			}
+			else
+			{
+				doc = NO_MORE_DOCS;
+				more = false;
+			}
 		}
 		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
+        [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
 		{
-			if (firstTime)
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		public override int NextDoc()
+		{
+			if (!SetFreqCurrentDoc())
 			{
-				more = spans.Next();
-				firstTime = false;
+				doc = NO_MORE_DOCS;
 			}
-			
+			return doc;
+		}
+		
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
+        [Obsolete("use Advance(int) instead. ")]
+		public override bool SkipTo(int target)
+		{
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		public override int Advance(int target)
+		{
 			if (!more)
+			{
+				return doc = NO_MORE_DOCS;
+			}
+			if (spans.Doc() < target)
+			{
+				// setFreqCurrentDoc() leaves spans.doc() ahead
+				more = spans.SkipTo(target);
+			}
+			if (!SetFreqCurrentDoc())
+			{
+				doc = NO_MORE_DOCS;
+			}
+			return doc;
+		}
+		
+		public /*protected internal*/ virtual bool SetFreqCurrentDoc()
+		{
+			if (!more)
+			{
 				return false;
-			
-			freq = 0.0f;
+			}
 			doc = spans.Doc();
-			
-			while (more && doc == spans.Doc())
+			freq = 0.0f;
+			do 
 			{
 				int matchLength = spans.End() - spans.Start();
 				freq += GetSimilarity().SloppyFreq(matchLength);
 				more = spans.Next();
 			}
-			
-			return more || freq != 0.0f;
+			while (more && (doc == spans.Doc()));
+			return true;
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
+        [Obsolete("use DocID() instead. ")]
 		public override int Doc()
+		{
+			return doc;
+		}
+		
+		public override int DocID()
 		{
 			return doc;
 		}
@@ -75,35 +136,16 @@ namespace Monodoc.Lucene.Net.Search.Spans
 		public override float Score()
 		{
 			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
-			return raw * Similarity.DecodeNorm(norms[doc]); // normalize
-		}
-		
-		public override bool SkipTo(int target)
-		{
-			more = spans.SkipTo(target);
-			
-			if (!more)
-				return false;
-			
-			freq = 0.0f;
-			doc = spans.Doc();
-			
-			while (more && spans.Doc() == target)
-			{
-				freq += GetSimilarity().SloppyFreq(spans.End() - spans.Start());
-				more = spans.Next();
-			}
-			
-			return more || freq != 0.0f;
+			return norms == null?raw:raw * Similarity.DecodeNorm(norms[doc]); // normalize
 		}
 		
 		public override Explanation Explain(int doc)
 		{
 			Explanation tfExplanation = new Explanation();
 			
-			SkipTo(doc);
+			int expDoc = Advance(doc);
 			
-			float phraseFreq = (Doc() == doc)?freq:0.0f;
+			float phraseFreq = (expDoc == doc)?freq:0.0f;
 			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
 			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
 			

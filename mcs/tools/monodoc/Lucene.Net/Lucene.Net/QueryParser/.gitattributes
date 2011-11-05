@@ -3,6 +3,7 @@
 /MultiFieldQueryParser.cs -crlf
 /Package.html -crlf
 /ParseException.cs -crlf
+/QueryParser.JJ -crlf
 /QueryParser.cs -crlf
 /QueryParserConstants.cs -crlf
 /QueryParserTokenManager.cs -crlf

@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Search
+
+namespace Mono.Lucene.Net.Search
 {
 	
 	/// <summary>Expert: Describes the score computation for document and query. </summary>
@@ -34,6 +37,21 @@ namespace Monodoc.Lucene.Net.Search
 			this.value_Renamed = value_Renamed;
 			this.description = description;
 		}
+		
+		/// <summary> Indicates whether or not this Explanation models a good match.
+		/// 
+		/// <p/>
+		/// By default, an Explanation represents a "match" if the value is positive.
+		/// <p/>
+		/// </summary>
+		/// <seealso cref="getValue">
+		/// </seealso>
+		public virtual bool IsMatch()
+		{
+			return (0.0f < GetValue());
+		}
+		
+		
 		
 		/// <summary>The value assigned to this explanation node. </summary>
 		public virtual float GetValue()
@@ -57,12 +75,20 @@ namespace Monodoc.Lucene.Net.Search
 			this.description = description;
 		}
 		
+		/// <summary> A short one line summary which should contain all high level
+		/// information about this Explanation, without the "Details"
+		/// </summary>
+		protected internal virtual System.String GetSummary()
+		{
+			return GetValue() + " = " + GetDescription();
+		}
+		
 		/// <summary>The sub-nodes of this explanation node. </summary>
 		public virtual Explanation[] GetDetails()
 		{
 			if (details == null)
 				return null;
-            return (Explanation[]) details.ToArray(typeof(Explanation));
+			return (Explanation[]) details.ToArray(typeof(Explanation));
 		}
 		
 		/// <summary>Adds a sub-node to this explanation node. </summary>
@@ -78,16 +104,14 @@ namespace Monodoc.Lucene.Net.Search
 		{
 			return ToString(0);
 		}
-		private System.String ToString(int depth)
+		public /*protected internal*/ virtual System.String ToString(int depth)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			for (int i = 0; i < depth; i++)
 			{
 				buffer.Append("  ");
 			}
-			buffer.Append(GetValue());
-			buffer.Append(" = ");
-			buffer.Append(GetDescription());
+			buffer.Append(GetSummary());
 			buffer.Append("\n");
 			
 			Explanation[] details = GetDetails();
@@ -110,10 +134,8 @@ namespace Monodoc.Lucene.Net.Search
 			buffer.Append("<ul>\n");
 			
 			buffer.Append("<li>");
-			buffer.Append(GetValue());
-			buffer.Append(" = ");
-			buffer.Append(GetDescription());
-			buffer.Append("</li>\n");
+			buffer.Append(GetSummary());
+			buffer.Append("<br />\n");
 			
 			Explanation[] details = GetDetails();
 			if (details != null)
@@ -124,9 +146,31 @@ namespace Monodoc.Lucene.Net.Search
 				}
 			}
 			
+			buffer.Append("</li>\n");
 			buffer.Append("</ul>\n");
 			
 			return buffer.ToString();
+		}
+		
+		/// <summary> Small Util class used to pass both an idf factor as well as an
+		/// explanation for that factor.
+		/// 
+		/// This class will likely be held on a {@link Weight}, so be aware 
+		/// before storing any large or un-serializable fields.
+		/// 
+		/// </summary>
+		[Serializable]
+		public abstract class IDFExplanation
+		{
+			/// <returns> the idf factor
+			/// </returns>
+			public abstract float GetIdf();
+			/// <summary> This should be calculated lazily if possible.
+			/// 
+			/// </summary>
+			/// <returns> the explanation for the idf factor.
+			/// </returns>
+			public abstract System.String Explain();
 		}
 	}
 }

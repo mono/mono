@@ -18,8 +18,8 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Xml;
 using System.Collections;
-using Monodoc.Lucene.Net.Index;
-using Monodoc.Lucene.Net.Documents;
+using Mono.Lucene.Net.Index;
+using Mono.Lucene.Net.Documents;
 
 public class EcmaSpecProvider : Provider {
 	string basedir;

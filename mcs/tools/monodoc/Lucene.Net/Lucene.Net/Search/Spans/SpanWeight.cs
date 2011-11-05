@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,102 +14,82 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Monodoc.Lucene.Net.Index;
-using Term = Monodoc.Lucene.Net.Index.Term;
-using Explanation = Monodoc.Lucene.Net.Search.Explanation;
-using Query = Monodoc.Lucene.Net.Search.Query;
-using Scorer = Monodoc.Lucene.Net.Search.Scorer;
-using Searcher = Monodoc.Lucene.Net.Search.Searcher;
-using Similarity = Monodoc.Lucene.Net.Search.Similarity;
-using Weight = Monodoc.Lucene.Net.Search.Weight;
-namespace Monodoc.Lucene.Net.Search.Spans
+
+using IndexReader = Mono.Lucene.Net.Index.IndexReader;
+using Mono.Lucene.Net.Search;
+using IDFExplanation = Mono.Lucene.Net.Search.Explanation.IDFExplanation;
+
+namespace Mono.Lucene.Net.Search.Spans
 {
 	
+	/// <summary> Expert-only.  Public for use by other weight implementations</summary>
 	[Serializable]
-	class SpanWeight : Weight
+	public class SpanWeight:Weight
 	{
-        virtual public Query Query
-        {
-            get
-            {
-                return query;
-            }
-			
-        }
-        virtual public float Value
-        {
-            get
-            {
-                return value_Renamed;
-            }
-			
-        }
-        private Searcher searcher;
-		private float value_Renamed;
-		private float idf;
-		private float queryNorm;
-		private float queryWeight;
+		protected internal Similarity similarity;
+		protected internal float value_Renamed;
+		protected internal float idf;
+		protected internal float queryNorm;
+		protected internal float queryWeight;
 		
-		private System.Collections.ICollection terms;
-		private SpanQuery query;
+		protected internal System.Collections.Hashtable terms;
+		protected internal SpanQuery query;
+		private IDFExplanation idfExp;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
-			this.searcher = searcher;
+			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-			this.terms = query.GetTerms();
+			terms = new System.Collections.Hashtable();
+			query.ExtractTerms(terms);
+			idfExp = similarity.idfExplain(new System.Collections.ArrayList(terms.Values), searcher);
+			idf = idfExp.GetIdf();
 		}
 		
-		public virtual float SumOfSquaredWeights()
+		public override Query GetQuery()
 		{
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
+			return query;
+		}
+		public override float GetValue()
+		{
+			return value_Renamed;
+		}
+		
+		public override float SumOfSquaredWeights()
+		{
 			queryWeight = idf * query.GetBoost(); // compute query weight
 			return queryWeight * queryWeight; // square it
 		}
 		
-		public virtual void  Normalize(float queryNorm)
+		public override void  Normalize(float queryNorm)
 		{
 			this.queryNorm = queryNorm;
 			queryWeight *= queryNorm; // normalize query weight
 			value_Renamed = queryWeight * idf; // idf for document
 		}
 		
-		public virtual Scorer Scorer(Monodoc.Lucene.Net.Index.IndexReader reader)
+		public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 		{
-			return new SpanScorer(query.GetSpans(reader), this, query.GetSimilarity(searcher), reader.Norms(query.GetField()));
+			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
 		}
 		
-		public virtual Explanation Explain(Monodoc.Lucene.Net.Index.IndexReader reader, int doc)
+		public override Explanation Explain(IndexReader reader, int doc)
 		{
 			
-			Explanation result = new Explanation();
-			result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
-			System.String field = ((SpanQuery) Query).GetField();
+			ComplexExplanation result = new ComplexExplanation();
+			result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+			System.String field = ((SpanQuery) GetQuery()).GetField();
 			
-			System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
-			System.Collections.IEnumerator i = terms.GetEnumerator();
-			while (i.MoveNext())
-			{
-				Term term = (Term) i.Current;
-				docFreqs.Append(term.Text());
-				docFreqs.Append("=");
-				docFreqs.Append(searcher.DocFreq(term));
-				
-				if (i.MoveNext())
-				{
-					docFreqs.Append(" ");
-				}
-			}
-			
-			Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + docFreqs + ")");
+			Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + idfExp.Explain() + ")");
 			
 			// explain query weight
 			Explanation queryExpl = new Explanation();
-			queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+			queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 			
-			Explanation boostExpl = new Explanation(Query.GetBoost(), "boost");
-			if (Query.GetBoost() != 1.0f)
+			Explanation boostExpl = new Explanation(GetQuery().GetBoost(), "boost");
+			if (GetQuery().GetBoost() != 1.0f)
 				queryExpl.AddDetail(boostExpl);
 			queryExpl.AddDetail(idfExpl);
 			
@@ -119,24 +100,27 @@ namespace Monodoc.Lucene.Net.Search.Spans
 			
 			result.AddDetail(queryExpl);
 			
-			// explain Field weight
-			Explanation fieldExpl = new Explanation();
+			// explain field weight
+			ComplexExplanation fieldExpl = new ComplexExplanation();
 			fieldExpl.SetDescription("fieldWeight(" + field + ":" + query.ToString(field) + " in " + doc + "), product of:");
 			
-			Explanation tfExpl = Scorer(reader).Explain(doc);
+			Explanation tfExpl = Scorer(reader, true, false).Explain(doc);
 			fieldExpl.AddDetail(tfExpl);
 			fieldExpl.AddDetail(idfExpl);
 			
 			Explanation fieldNormExpl = new Explanation();
 			byte[] fieldNorms = reader.Norms(field);
-			float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
+			float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
 			fieldNormExpl.SetValue(fieldNorm);
-			fieldNormExpl.SetDescription("fieldNorm(Field=" + field + ", doc=" + doc + ")");
+			fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 			fieldExpl.AddDetail(fieldNormExpl);
 			
+			fieldExpl.SetMatch(tfExpl.IsMatch());
 			fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
 			
 			result.AddDetail(fieldExpl);
+			System.Boolean? tempAux = fieldExpl.GetMatch();
+			result.SetMatch(tempAux);
 			
 			// combine them
 			result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());

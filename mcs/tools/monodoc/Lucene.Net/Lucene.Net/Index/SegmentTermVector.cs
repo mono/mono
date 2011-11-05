@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Index
+
+namespace Mono.Lucene.Net.Index
 {
 	
 	
@@ -32,7 +35,7 @@ namespace Monodoc.Lucene.Net.Index
 		}
 		
 		/// <summary> </summary>
-		/// <returns> The number of the Field this vector is associated with
+		/// <returns> The number of the field this vector is associated with
 		/// </returns>
 		public virtual System.String GetField()
 		{
@@ -44,13 +47,17 @@ namespace Monodoc.Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append('{');
 			sb.Append(field).Append(": ");
-			for (int i = 0; i < terms.Length; i++)
+			if (terms != null)
 			{
-				if (i > 0)
-					sb.Append(", ");
-				sb.Append(terms[i]).Append('/').Append(termFreqs[i]);
+				for (int i = 0; i < terms.Length; i++)
+				{
+					if (i > 0)
+						sb.Append(", ");
+					sb.Append(terms[i]).Append('/').Append(termFreqs[i]);
+				}
 			}
 			sb.Append('}');
+			
 			return sb.ToString();
 		}
 		
@@ -71,7 +78,9 @@ namespace Monodoc.Lucene.Net.Index
 		
 		public virtual int IndexOf(System.String termText)
 		{
-			int res = System.Array.BinarySearch(terms, termText);
+			if (terms == null)
+				return - 1;
+            int res = System.Array.BinarySearch(terms, termText, System.StringComparer.Ordinal);
 			return res >= 0?res:- 1;
 		}
 		
@@ -86,7 +95,7 @@ namespace Monodoc.Lucene.Net.Index
 			
 			for (int i = 0; i < len; i++)
 			{
-				res[i] = IndexOf(termNumbers[i]);
+				res[i] = IndexOf(termNumbers[start + i]);
 			}
 			return res;
 		}
