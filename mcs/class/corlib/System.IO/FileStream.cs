@@ -100,6 +100,7 @@ namespace System.IO
 			}
 
 			this.handle = handle;
+			ExposeHandle ();
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
@@ -110,8 +111,6 @@ namespace System.IO
 #else
 			this.anonymous = false;
 #endif
-			InitBuffer (bufferSize, isZeroSize);
-
 			if (canseek) {
 				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
@@ -414,9 +413,23 @@ namespace System.IO
 				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
-				if(CanSeek == false)
+				if (CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
-				
+
+				if (safeHandle != null) {
+					// If the handle was leaked outside we always ask the real handle
+					MonoIOError error;
+
+					long ret = MonoIO.Seek (handle, 0,SeekOrigin.Current,out error);
+
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						// don't leak the path information for isolated storage
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+					}
+
+					return ret;
+				}
+	
 				return(buf_start + buf_offset);
 			}
 			set {
@@ -440,6 +453,9 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
+				if (safeHandle == null) {
+					ExposeHandle ();
+				}
 				return handle;
 			}
 		}
@@ -448,19 +464,21 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-				SafeFileHandle ret;
-
-				if (safeHandle != null)
-					ret = safeHandle;
-				else
-					ret = new SafeFileHandle (handle, owner);
-
-				FlushBuffer ();
-				return ret;
+				if (safeHandle == null) {
+					ExposeHandle ();
+				}
+				return safeHandle;
 			}
 		}
 
 		// methods
+
+	  void ExposeHandle ()
+		{
+			safeHandle = new SafeFileHandle (handle, false);
+			FlushBuffer ();
+			InitBuffer (0, true);
+		}
 
 		public override int ReadByte ()
 		{
@@ -909,6 +927,9 @@ namespace System.IO
 			Exception exc = null;
 			if (handle != MonoIO.InvalidHandle) {
 				try {
+					// If the FileStream is in "exposed" status
+					// it means that we do not have a buffer(we write the data without buffering)
+					// therefor we don't and can't flush the buffer becouse we don't have one.
 					FlushBuffer ();
 				} catch (Exception e) {
 					exc = e;
@@ -1022,7 +1043,7 @@ namespace System.IO
 			if (buf_dirty) {
 				MonoIOError error;
 
-				if (CanSeek == true) {
+				if (CanSeek == true && safeHandle == null) {
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
