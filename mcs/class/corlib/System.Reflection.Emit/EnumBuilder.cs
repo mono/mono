@@ -62,12 +62,6 @@ namespace System.Reflection.Emit {
 			return _tb;
 		}
 
-		internal override bool IsCompilerContext {
-			get {
-				return _tb.IsCompilerContext;
-			}
-		}
-
 		internal override Type InternalResolve ()
 		{
 			return _tb.InternalResolve (); 

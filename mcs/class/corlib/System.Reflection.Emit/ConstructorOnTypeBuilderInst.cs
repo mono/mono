@@ -98,7 +98,7 @@ namespace System.Reflection.Emit
 		public override ParameterInfo[] GetParameters ()
 		{
 			/*FIXME, maybe the right thing to do when the type is creates is to retrieve from the inflated type*/
-			if (!instantiation.IsCompilerContext && !instantiation.IsCreated)
+			if (!instantiation.IsCreated)
 				throw new NotSupportedException ();
 
 			ParameterInfo [] res;
@@ -122,9 +122,7 @@ namespace System.Reflection.Emit
 
 		public override int MetadataToken {
 			get {
-				if (!instantiation.IsCompilerContext)
-					return base.MetadataToken;
-				return cb.MetadataToken;
+				return base.MetadataToken;
 			}
 		}
 

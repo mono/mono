@@ -59,7 +59,6 @@ namespace System.Reflection
 
 		Hashtable fields, ctors, methods;
 		int event_count;
-		int is_compiler_context;
 
 		internal MonoGenericClass ()
 		{
@@ -82,19 +81,6 @@ namespace System.Reflection
 			if (tb is TypeBuilder && !(tb as TypeBuilder).is_created)
 				register_with_runtime (this);
 			
-		}
-
-
-		internal override bool IsCompilerContext {
-			get {
-				if (is_compiler_context == 0) {
-					bool is_cc = generic_type.IsCompilerContext;
-					foreach (Type t in type_arguments)
-						is_cc |= t.IsCompilerContext;
-					is_compiler_context = is_cc ? 1 : -1;
-				}
-				return is_compiler_context == 1;
-			}
 		}
 
 		internal override Type InternalResolve ()
@@ -310,16 +296,7 @@ namespace System.Reflection
 
 		public override Type[] GetInterfaces ()
 		{
-			if (!IsCompilerContext) {
-				Console.WriteLine ("--FAIL {0}", this);
-				Console.WriteLine ("\tgt {0}/{1}/{2}", generic_type, generic_type.IsCompilerContext, generic_type.GetType ());
-				
-				foreach (Type t in type_arguments)
-					Console.WriteLine ("\targ {0}/{1}/{2}", t, t.IsCompilerContext, t.GetType ());
-				
-				throw new NotSupportedException ();
-			}
-			return GetInterfacesInternal ();
+			throw new NotSupportedException ();
 		}
 
 		protected override bool IsValueTypeImpl ()
@@ -361,48 +338,7 @@ namespace System.Reflection
 		
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			ArrayList l = new ArrayList ();
-
-			//
-			// Walk up our class hierarchy and retrieve methods from our
-			// parent classes.
-			//
-			if (!(generic_type is TypeBuilder)) {
-				foreach (var method in generic_type.GetMethods (bf)) {
-					var m = method;
-					if (m.DeclaringType.IsGenericTypeDefinition)
-						m = TypeBuilder.GetMethod (this, m);
-					l.Add (m);
-				}
-			} else {
-				Type current_type = this;
-				do {
-					MonoGenericClass gi = current_type as MonoGenericClass;
-					if (gi != null)
-						l.AddRange (gi.GetMethodsInternal (bf, this));
-					else if (current_type is TypeBuilder)
-						l.AddRange (current_type.GetMethods (bf));
-					else {
-						// If we encounter a `MonoType', its
-						// GetMethodsByName() will return all the methods
-						// from its parent type(s), so we can stop here.
-						MonoType mt = (MonoType) current_type;
-						l.AddRange (mt.GetMethodsByName (null, bf, false, this));
-						break;
-					}
-
-					if ((bf & BindingFlags.DeclaredOnly) != 0)
-						break;
-					current_type = current_type.BaseType;
-				} while (current_type != null);
-			}
-
-			MethodInfo[] result = new MethodInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			throw new NotSupportedException ();
 		}
 
 		MethodInfo[] GetMethodsInternal (BindingFlags bf, MonoGenericClass reftype)
@@ -456,32 +392,7 @@ namespace System.Reflection
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			ArrayList l = new ArrayList ();
-
-			Type current_type = this;
-			do {
-				MonoGenericClass gi = current_type as MonoGenericClass;
-				if (gi != null)
-					l.AddRange (gi.GetConstructorsInternal (bf, this));
-				else if (current_type is TypeBuilder)
-					l.AddRange (current_type.GetConstructors (bf));
-				else {
-					MonoType mt = (MonoType) current_type;
-					l.AddRange (mt.GetConstructors_internal (bf, this));
-					break;
-				}
-
-				if ((bf & BindingFlags.DeclaredOnly) != 0)
-					break;
-				current_type = current_type.BaseType;
-			} while (current_type != null);
-
-			ConstructorInfo[] result = new ConstructorInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			throw new NotSupportedException ();
 		}
 
 		ConstructorInfo[] GetConstructorsInternal (BindingFlags bf, MonoGenericClass reftype)
@@ -530,32 +441,7 @@ namespace System.Reflection
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			ArrayList l = new ArrayList ();
-
-			Type current_type = this;
-			do {
-				MonoGenericClass gi = current_type as MonoGenericClass;
-				if (gi != null)
-					l.AddRange (gi.GetFieldsInternal (bf, this));
-				else if (current_type is TypeBuilder)
-					l.AddRange (current_type.GetFields (bf));
-				else {
-					MonoType mt = (MonoType) current_type;
-					l.AddRange (mt.GetFields_internal (bf, this));
-					break;
-				}
-
-				if ((bf & BindingFlags.DeclaredOnly) != 0)
-					break;
-				current_type = current_type.BaseType;
-			} while (current_type != null);
-
-			FieldInfo[] result = new FieldInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			throw new NotSupportedException ();
 		}
 
 		FieldInfo[] GetFieldsInternal (BindingFlags bf, MonoGenericClass reftype)
@@ -604,32 +490,7 @@ namespace System.Reflection
 
 		public override PropertyInfo[] GetProperties (BindingFlags bf)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			ArrayList l = new ArrayList ();
-
-			Type current_type = this;
-			do {
-				MonoGenericClass gi = current_type as MonoGenericClass;
-				if (gi != null)
-					l.AddRange (gi.GetPropertiesInternal (bf, this));
-				else if (current_type is TypeBuilder)
-					l.AddRange (current_type.GetProperties (bf));
-				else {
-					MonoType mt = (MonoType) current_type;
-					l.AddRange (mt.GetPropertiesByName (null, bf, false, this));
-					break;
-				}
-
-				if ((bf & BindingFlags.DeclaredOnly) != 0)
-					break;
-				current_type = current_type.BaseType;
-			} while (current_type != null);
-
-			PropertyInfo[] result = new PropertyInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			throw new NotSupportedException ();
 		}
 
 		PropertyInfo[] GetPropertiesInternal (BindingFlags bf, MonoGenericClass reftype)
@@ -681,32 +542,7 @@ namespace System.Reflection
 
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			ArrayList l = new ArrayList ();
-
-			Type current_type = this;
-			do {
-				MonoGenericClass gi = current_type as MonoGenericClass;
-				if (gi != null)
-					l.AddRange (gi.GetEventsInternal (bf, this));
-				else if (current_type is TypeBuilder)
-					l.AddRange (current_type.GetEvents (bf));
-				else {
-					MonoType mt = (MonoType) current_type;
-					l.AddRange (mt.GetEvents (bf));
-					break;
-				}
-
-				if ((bf & BindingFlags.DeclaredOnly) != 0)
-					break;
-				current_type = current_type.BaseType;
-			} while (current_type != null);
-
-			EventInfo[] result = new EventInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			throw new NotSupportedException ();
 		}
 	
 		EventInfo[] GetEventsInternal (BindingFlags bf, MonoGenericClass reftype) {
@@ -828,7 +664,6 @@ namespace System.Reflection
 		string format_name (bool full_name, bool assembly_qualified)
 		{
 			StringBuilder sb = new StringBuilder (generic_type.FullName);
-			bool compiler_ctx = IsCompilerContext;
 
 			sb.Append ("[");
 			for (int i = 0; i < type_arguments.Length; ++i) {
@@ -845,10 +680,7 @@ namespace System.Reflection
 					name = type_arguments [i].ToString ();
 				}
 				if (name == null) {
-					if (compiler_ctx && type_arguments [i].IsGenericParameter)
-						name = type_arguments [i].Name;
-					else
-						return null;
+					return null;
 				}
 				if (full_name)
 					sb.Append ("[");
@@ -909,9 +741,7 @@ namespace System.Reflection
 
 		public override RuntimeTypeHandle TypeHandle {
 			get {
-				if (!IsCompilerContext)
-					throw new NotSupportedException ();
-				return _impl;
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -985,13 +815,7 @@ namespace System.Reflection
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			foreach (var evt in GetEvents (bindingAttr)) {
-				if (evt.Name == name)
-					return evt;
-			}
-			return null;
+			throw new NotSupportedException ();
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr)
@@ -1036,31 +860,23 @@ namespace System.Reflection
 								       Type[] types,
 								       ParameterModifier[] modifiers)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return MonoType.GetConstructorImpl (GetConstructors (bindingAttr), bindingAttr, binder, callConvention, types, modifiers);
+			throw new NotSupportedException ();
 		}
 
 		//MemberInfo
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return generic_type.IsDefined (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return generic_type.GetCustomAttributes (inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return generic_type.GetCustomAttributes (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 	}
 }

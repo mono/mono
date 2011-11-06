@@ -1346,13 +1346,6 @@ namespace System {
 			return FullName;
 		}
 
-		internal virtual bool IsCompilerContext {
-			get {
-				AssemblyBuilder builder = Assembly as AssemblyBuilder;
-				return builder != null && builder.IsCompilerContext;
-			}
-		}
-
 		internal virtual Type InternalResolve ()
 		{
 			return UnderlyingSystemType;
@@ -1425,7 +1418,6 @@ namespace System {
 				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, typeArguments.Length), "typeArguments");
 
 			bool hasUserType = false;
-			AssemblyBuilder compilerContext = null;
 
 			Type[] systemTypes = new Type[typeArguments.Length];
 			for (int i = 0; i < typeArguments.Length; ++i) {
@@ -1435,14 +1427,10 @@ namespace System {
 
 				if (!(t is MonoType))
 					hasUserType = true;
-				if (t.IsCompilerContext)
-					compilerContext = PeelAssemblyBuilder (t);
 				systemTypes [i] = t;
 			}
 
 			if (hasUserType) {
-				if (compilerContext != null)
-					return compilerContext.MakeGenericType (this, typeArguments);
 				return new MonoGenericClass (this, typeArguments);
 			}
 
