@@ -2708,8 +2708,13 @@ namespace Mono.CSharp {
 				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
-				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
-					score -= tic.OutputTypeInference (ec, arguments [i].Expr, t_i);
+				if (tic.IsReturnTypeNonDependent (ec, mi, rtype)) {
+					// It can be null for default arguments
+					if (arguments[i] == null)
+						continue;
+
+					score -= tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
+				}
 			}
 
 
