@@ -1,7 +1,11 @@
 //
 // Task_T.cs
 //
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +28,26 @@
 //
 
 #if NET_4_0 || MOBILE
-using System;
+
+using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
 {
 	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Result = {ResultAsString}")]
 	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
-	public class Task<TResult>: Task
+	public class Task<TResult> : Task
 	{
+		static readonly TaskFactory<TResult> factory = new TaskFactory<TResult> ();
+
 		TResult value;
-		static TaskFactory<TResult> factory = new TaskFactory<TResult> ();
-		static readonly Action<object> emptyAction = delegate {};
-		
-		internal Func<object, TResult> function;
-		object state;
 		
 		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
 		public TResult Result {
 			get {
 				if (!IsCompleted)
 					Wait ();
+				if (IsCanceled)
+					throw new AggregateException (new TaskCanceledException (this));
 				if (Exception != null)
 					throw Exception;
 				return value;
@@ -68,30 +72,33 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public Task (Func<TResult> function) : this (function, TaskCreationOptions.None)
+		public Task (Func<TResult> function)
+			: this (function, TaskCreationOptions.None)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, TaskCreationOptions.None)
+			: this (function, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, TaskCreationOptions creationOptions)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, CancellationToken.None, creationOptions)
+			: this (function, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this (function == null ? (Func<object, TResult>)null : (o) => function(), null, cancellationToken, creationOptions)
+			: base (TaskActionInvoker.Create (function), null, cancellationToken, creationOptions, null)
 		{
-			
+			if (function == null)
+				throw new ArgumentNullException ("function");
 		}
 		
-		public Task (Func<object, TResult> function, object state) : this (function, state, TaskCreationOptions.None)
+		public Task (Func<object, TResult> function, object state)
+			: this (function, state, TaskCreationOptions.None)
 		{
 			
 		}
@@ -109,35 +116,17 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (emptyAction, state, cancellationToken, creationOptions)
+			: base (TaskActionInvoker.Create (function), state, cancellationToken, creationOptions, null)
 		{
 			if (function == null)
 				throw new ArgumentNullException ("function");
-
-			this.function = function;
-			this.state = state;
 		}
 
-		internal Task (Func<object, TResult> function,
-		               object state,
-		               CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions,
-		               Task parent)
-			: base (emptyAction, state, cancellationToken, creationOptions, parent)
+		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions, Task parent)
+			: base (invoker, state, cancellationToken, creationOptions, parent)
 		{
-			this.function = function;
-			this.state = state;
 		}
-		
-		internal override void InnerInvoke ()
-		{
-			if (function != null)
-				value = function (state);
-			
-			function = null;
-			state = null;
-		}
-		
+
 		public Task ContinueWith (Action<Task<TResult>> continuationAction)
 		{
 			return ContinueWith (continuationAction, TaskContinuationOptions.None);
@@ -166,8 +155,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task t = new Task ((o) => continuationAction ((Task<TResult>)o),
-			                   this,
+			Task t = new Task (TaskActionInvoker.Create (continuationAction),
+			                   null,
 			                   cancellationToken,
 			                   GetCreationOptions (continuationOptions),
 			                   this);
@@ -175,10 +164,10 @@ namespace System.Threading.Tasks
 			
 			return t;
 		}
-		
+
 		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction)
 		{
-			return ContinueWith<TNewResult> (continuationFunction, TaskContinuationOptions.None);
+			return ContinueWith<TNewResult> (continuationFunction, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
 		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction, CancellationToken cancellationToken)
@@ -206,8 +195,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task<TNewResult> t = new Task<TNewResult> ((o) => continuationFunction ((Task<TResult>)o),
-			                                           this,
+			var t = new Task<TNewResult> (TaskActionInvoker.Create (continuationFunction),
+			                                           null,
 			                                           cancellationToken,
 			                                           GetCreationOptions (continuationOptions),
 			                                           this);
@@ -215,6 +204,122 @@ namespace System.Threading.Tasks
 			
 			return t;
 		}
+
+		internal bool TrySetResult (TResult result)
+		{
+			if (IsCompleted)
+				return false;
+			
+			if (!executing.TryRelaxedSet ()) {
+				var sw = new SpinWait ();
+				while (!IsCompleted)
+					sw.SpinOnce ();
+
+				return false;
+			}
+			
+			Status = TaskStatus.Running;
+
+			this.value = result;
+			Thread.MemoryBarrier ();
+
+			Finish ();
+
+			return true;
+		}
+		
+#if NET_4_5
+
+		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, CancellationToken cancellationToken)
+		{
+			return ContinueWith (continuationAction, state, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, continuationOptions, TaskScheduler.Current);
+		}
+
+		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, TaskScheduler scheduler)
+		{
+			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+		}
+
+		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, CancellationToken cancellationToken,
+								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			var t = new Task (TaskActionInvoker.Create (continuationAction),
+							   state,
+							   cancellationToken,
+							   GetCreationOptions (continuationOptions),
+							   this);
+
+			ContinueWithCore (t, continuationOptions, scheduler);
+
+			return t;
+		}
+
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state)
+		{
+			return ContinueWith<TNewResult> (continuationFunction, state, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state, CancellationToken cancellationToken)
+		{
+			return ContinueWith<TNewResult> (continuationFunction, state, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state, TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWith<TNewResult> (continuationFunction, state, CancellationToken.None, continuationOptions, TaskScheduler.Current);
+		}
+
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state, TaskScheduler scheduler)
+		{
+			return ContinueWith<TNewResult> (continuationFunction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+		}
+
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state,
+														  CancellationToken cancellationToken,
+														  TaskContinuationOptions continuationOptions,
+														  TaskScheduler scheduler)
+		{
+			if (continuationFunction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			var t = new Task<TNewResult> (TaskActionInvoker.Create (continuationFunction),
+							   state,
+							   cancellationToken,
+							   GetCreationOptions (continuationOptions),
+							   this);
+
+			ContinueWithCore (t, continuationOptions, scheduler);
+
+			return t;
+		}
+
+		public new ConfiguredTaskAwaitable<TResult> ConfigureAwait (bool continueOnCapturedContext)
+		{
+			return new ConfiguredTaskAwaitable<TResult> (this, continueOnCapturedContext);
+		}
+
+		public new TaskAwaiter<TResult> GetAwaiter ()
+		{
+			return new TaskAwaiter<TResult> (this);
+		}
+#endif
 	}
 }
 #endif

@@ -30,9 +30,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
+#if INSIDE_MONO_PARALLEL
+using System.Collections.Concurrent;
+
+namespace Mono.Collections.Concurrent
+#else
 namespace System.Collections.Concurrent
+#endif
 {
-	internal class ConcurrentOrderedList<T>
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	class ConcurrentOrderedList<T>: ICollection<T>, IEnumerable<T>
 	{
 		class Node
 		{
@@ -58,6 +67,8 @@ namespace System.Collections.Concurrent
 
 		IEqualityComparer<T> comparer;
 
+		int count;
+
 		public ConcurrentOrderedList () : this (EqualityComparer<T>.Default)
 		{
 			
@@ -65,6 +76,9 @@ namespace System.Collections.Concurrent
 
 		public ConcurrentOrderedList (IEqualityComparer<T> comparer)
 		{
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
+
 			this.comparer = comparer;
 
 			head = new Node ();
@@ -78,7 +92,12 @@ namespace System.Collections.Concurrent
 			node.Data = data;
 			node.Key = comparer.GetHashCode (data);
 
-			return ListInsert (node);
+			if (ListInsert (node)) {
+				Interlocked.Increment (ref count);
+				return true;
+			}
+
+			return false;
 		}
 
 		public bool TryRemove (T data)
@@ -89,7 +108,17 @@ namespace System.Collections.Concurrent
 
 		public bool TryRemoveHash (int key, out T data)
 		{
-			return ListDelete (key, out data);
+			if (ListDelete (key, out data)) {
+				Interlocked.Decrement (ref count);
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool TryPop (out T data)
+		{
+			return ListPop (out data);
 		}
 
 		public bool Contains (T data)
@@ -99,7 +128,7 @@ namespace System.Collections.Concurrent
 
 		public bool ContainsHash (int key)
 		{
-			Node node;			
+			Node node;
 
 			if (!ListFind (key, out node))
 				return false;
@@ -111,13 +140,47 @@ namespace System.Collections.Concurrent
 		public bool TryGetFromHash (int key, out T data)
 		{
 			data = default (T);
-			Node node;			
+			Node node;
 
 			if (!ListFind (key, out node))
 				return false;
 
 			data = node.Data;
 			return true;
+		}
+
+		public void Clear ()
+		{
+			head.Next = tail;
+		}
+
+		public void CopyTo (T[] array, int startIndex)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count > array.Length - startIndex)
+				throw new ArgumentException ("array", "The number of elements is greater than the available space from startIndex to the end of the destination array.");
+
+			foreach (T item in this) {
+				if (startIndex >= array.Length)
+					break;
+
+				array[startIndex++] = item;
+			}
+		}
+
+		public IEqualityComparer<T> Comparer {
+			get {
+				return comparer;
+			}
+		}
+
+		public int Count {
+			get {
+				return count;
+			}
 		}
 
 		Node ListSearch (int key, ref Node left)
@@ -180,6 +243,30 @@ namespace System.Collections.Concurrent
 			
 			return true;
 		}
+
+		bool ListPop (out T data)
+		{
+			Node rightNode = null, rightNodeNext = null, leftNode = head;
+			data = default (T);
+
+			do {
+				rightNode = head.Next;
+				if (rightNode == tail)
+					return false;
+
+				data = rightNode.Data;
+
+				rightNodeNext = rightNode.Next;
+				if (!rightNodeNext.Marked)
+					if (Interlocked.CompareExchange (ref rightNode.Next, new Node (rightNodeNext), rightNodeNext) == rightNodeNext)
+						break;
+			} while (true);
+
+			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
+				ListSearch (rightNode.Key, ref leftNode);
+
+			return true;
+		}
 		
 		bool ListInsert (Node newNode)
 		{
@@ -205,6 +292,47 @@ namespace System.Collections.Concurrent
 			data = rightNode = ListSearch (key, ref leftNode);
 			
 			return rightNode != tail && rightNode.Key == key;
+		}
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+		{
+			return GetEnumeratorInternal ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumeratorInternal ();
+		}
+
+		IEnumerator<T> GetEnumeratorInternal ()
+		{
+			Node node = head.Next;
+
+			while (node != tail) {
+				while (node.Marked) {
+					node = node.Next;
+					if (node == tail)
+						yield break;
+				}
+				yield return node.Data;
+				node = node.Next;
+			}
+		}
+
+		bool ICollection<T>.IsReadOnly {
+			get {
+				return false;
+			}
+		}
+
+		void ICollection<T>.Add (T item)
+		{
+			TryAdd (item);
+		}
+
+		bool ICollection<T>.Remove (T item)
+		{
+			return TryRemove (item);
 		}
 	}
 }

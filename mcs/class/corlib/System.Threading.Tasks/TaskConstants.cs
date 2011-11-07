@@ -1,6 +1,10 @@
-// TpScheduler.cs
 //
-// Copyright (c) 2011 Jérémie "Garuma" Laval
+// TaskConstants.cs
+//
+// Authors:
+//    Jérémie Laval <jeremie dot laval at xamarin dot com>
+//
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,47 +26,26 @@
 //
 //
 
-#if NET_4_0 || MOBILE
-using System;
-using System.Collections.Concurrent;
+#if NET_4_5
 
 namespace System.Threading.Tasks
 {
-	internal class TpScheduler: TaskScheduler
+	static class TaskConstants
 	{
-		static readonly WaitCallback callback = TaskExecuterCallback;
+		public static readonly Task Finished;
+		public static readonly Task Canceled;
 
-		protected internal override void QueueTask (Task task)
+		static TaskConstants ()
 		{
-			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
-		}
+			var tcs = new TaskCompletionSource<object> ();
+			tcs.SetResult (null);
+			Finished = tcs.Task;
 
-		static void TaskExecuterCallback (object obj)
-		{
-			Task task = (Task)obj;
-			task.Execute ();
-		}
-
-		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected internal override bool TryDequeue (Task task)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
-		{
-		    return TryExecuteTask(task);
-		}
-
-		public override int MaximumConcurrencyLevel {
-			get {
-				return base.MaximumConcurrencyLevel;
-			}
+			tcs = new TaskCompletionSource<object> ();
+			tcs.SetCanceled ();
+			Canceled = tcs.Task;
 		}
 	}
 }
+
 #endif

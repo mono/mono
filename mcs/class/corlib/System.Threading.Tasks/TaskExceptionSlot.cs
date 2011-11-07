@@ -1,6 +1,12 @@
-// TpScheduler.cs
 //
-// Copyright (c) 2011 Jérémie "Garuma" Laval
+// Task.cs
+//
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
+//    Jérémie Laval <jeremie dot laval at xamarin dot com>
+//
+// Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,46 +29,33 @@
 //
 
 #if NET_4_0 || MOBILE
+
 using System;
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class TpScheduler: TaskScheduler
+	internal class TaskExceptionSlot
 	{
-		static readonly WaitCallback callback = TaskExecuterCallback;
+		public volatile AggregateException  Exception;
+		public volatile bool                Observed;
+		public ConcurrentQueue<AggregateException> ChildExceptions;
 
-		protected internal override void QueueTask (Task task)
+		Task parent;
+
+		public TaskExceptionSlot (Task parent)
 		{
-			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
+			this.parent = parent;
 		}
 
-		static void TaskExecuterCallback (object obj)
+		~TaskExceptionSlot ()
 		{
-			Task task = (Task)obj;
-			task.Execute ();
-		}
-
-		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected internal override bool TryDequeue (Task task)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
-		{
-		    return TryExecuteTask(task);
-		}
-
-		public override int MaximumConcurrencyLevel {
-			get {
-				return base.MaximumConcurrencyLevel;
+			if (Exception != null && !Observed && !TaskScheduler.FireUnobservedEvent (parent, Exception).Observed) {
+				parent = null;
+				throw Exception;
 			}
 		}
 	}
 }
+
 #endif
