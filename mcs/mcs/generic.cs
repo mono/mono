@@ -888,11 +888,18 @@ namespace Mono.CSharp {
 			var types = targs;
 			if (HasTypeConstraint) {
 				Array.Resize (ref types, types.Length + 1);
+
+				for (int i = 0; i < types.Length - 1; ++i) {
+					types[i] = types[i].BaseType;
+				}
+
 				types[types.Length - 1] = BaseType;
+			} else {
+				types = types.Select (l => l.BaseType).ToArray ();
 			}
 
 			if (types != null)
-				return Convert.FindMostEncompassedType (types.Select (l => l.BaseType));
+				return Convert.FindMostEncompassedType (types);
 
 			return BaseType;
 		}
