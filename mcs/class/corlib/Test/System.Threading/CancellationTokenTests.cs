@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.Threading;
@@ -39,7 +39,7 @@ namespace MonoTests.System.Threading
 	public class CancellationTokenTests
 	{
 		[Test]
-		public void TestInitedWithFalseToken ()
+		public void InitedWithFalseToken ()
 		{
 			CancellationToken tk = new CancellationToken (false);
 			Assert.IsFalse (tk.CanBeCanceled, "#1");
@@ -47,7 +47,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestInitedWithTrueToken ()
+		public void InitedWithTrueToken ()
 		{
 			CancellationToken tk = new CancellationToken (true);
 			Assert.IsTrue (tk.CanBeCanceled, "#1");
@@ -55,7 +55,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestWithCancellationSourceNotCanceled ()
+		public void CancellationSourceNotCanceled ()
 		{
 			var src = new CancellationTokenSource ();
 			var tk = src.Token;
@@ -65,7 +65,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestWithCancellationSourceCanceled ()
+		public void CancellationSourceCanceled ()
 		{
 			var src = new CancellationTokenSource ();
 			var tk = src.Token;
@@ -76,7 +76,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestWithUninitializedToken ()
+		public void UninitializedToken ()
 		{
 			var tk = new CancellationToken ();
 			Assert.IsFalse (tk.CanBeCanceled);
