@@ -3050,7 +3050,10 @@ emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointe
 #ifdef MONO_ARCH_NOMAP32BIT
 		near_call = FALSE;
 #endif
-
+#if defined(__native_client__)
+		/* Always use near_call == TRUE for Native Client */
+		near_call = TRUE;
+#endif
 		/* The 64bit XEN kernel does not honour the MAP_32BIT flag. (#522894) */
 		if (optimize_for_xen)
 			near_call = FALSE;
