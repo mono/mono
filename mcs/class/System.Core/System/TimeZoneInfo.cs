@@ -86,6 +86,10 @@ namespace System
 				if (local == null) {
 #if MONODROID
 					local = ZoneInfoDB.Default;
+#elif MONOTOUCH
+					using (Stream stream = GetMonoTouchDefault ()) {
+						return BuildFromStream ("Local", stream);
+					}
 #elif LIBC
 					try {
 						local = FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
@@ -328,30 +332,41 @@ namespace System
 #endif
 #if MONODROID
 			return ZoneInfoDB.GetTimeZone (id);
-#elif LIBC
+#else
 			// Local requires special logic that already exists in the Local property (bug #326)
 			if (id == "Local")
 				return Local;
+#if MONOTOUCH
+			using (Stream stream = GetMonoTouchData (id)) {
+				return BuildFromStream (id, stream);
+			}
+#elif LIBC
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
-#else
+#endif
 			throw new NotImplementedException ();
 #endif
 		}
 
 #if LIBC
-		const int BUFFER_SIZE = 16384; //Big enough for any tz file (on Oct 2008, all tz files are under 10k)
 		private static TimeZoneInfo FindSystemTimeZoneByFileName (string id, string filepath)
 		{
 			if (!File.Exists (filepath))
 				throw new TimeZoneNotFoundException ();
 
-			byte [] buffer = new byte [BUFFER_SIZE];
-			int length;
 			using (FileStream stream = File.OpenRead (filepath)) {
-				length = stream.Read (buffer, 0, BUFFER_SIZE);
+				return BuildFromStream (id, stream);
 			}
-
+		}
+#endif
+#if LIBC || MONOTOUCH
+		const int BUFFER_SIZE = 16384; //Big enough for any tz file (on Oct 2008, all tz files are under 10k)
+		
+		private static TimeZoneInfo BuildFromStream (string id, Stream stream) 
+		{
+			byte [] buffer = new byte [BUFFER_SIZE];
+			int length = stream.Read (buffer, 0, BUFFER_SIZE);
+			
 			if (!ValidTZFile (buffer, length))
 				throw new InvalidTimeZoneException ("TZ file too big for the buffer");
 
@@ -540,6 +555,14 @@ namespace System
 			foreach (string id in ZoneInfoDB.GetAvailableIds ()) {
 				systemTimeZones.Add (ZoneInfoDB.GetTimeZone (id));
 			}
+#elif MONOTOUCH
+				if (systemTimeZones.Count == 0) {
+					foreach (string name in GetMonoTouchNames ()) {
+						using (Stream stream = GetMonoTouchData (name)) {
+							systemTimeZones.Add (BuildFromStream (name, stream));
+						}
+					}
+				}
 #elif LIBC
 				string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
 				foreach (string continent in continents) {
