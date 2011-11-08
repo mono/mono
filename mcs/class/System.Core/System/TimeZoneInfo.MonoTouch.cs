@@ -60,7 +60,7 @@ namespace System {
 				var m = p.GetGetMethod ();
 				return (ReadOnlyCollection<string>) m.Invoke (null, null);
 			}
-			catch (TargetInvokationException tie) {
+			catch (TargetInvocationException tie) {
 				throw tie.InnerException;
 			}
 		}
@@ -71,7 +71,7 @@ namespace System {
 				var m = NSTimeZone.GetMethod ("_GetDefault", BindingFlags.Static | BindingFlags.NonPublic);
 				return (Stream) m.Invoke (null, null);
 			}
-			catch (TargetInvokationException tie) {
+			catch (TargetInvocationException tie) {
 				throw tie.InnerException;
 			}
 		}
@@ -82,7 +82,7 @@ namespace System {
 				var m = NSTimeZone.GetMethod ("_GetData", BindingFlags.Static | BindingFlags.NonPublic);
 				return (Stream) m.Invoke (null, new object[] { name });
 			}
-			catch (TargetInvokationException tie) {
+			catch (TargetInvocationException tie) {
 				throw tie.InnerException;
 			}
 		}
