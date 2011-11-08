@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Index
+
+namespace Mono.Lucene.Net.Index
 {
 	
 	/// <summary>Abstract class for enumerating terms.
-	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
 	
@@ -36,11 +39,9 @@ namespace Monodoc.Lucene.Net.Index
 		/// <summary>Closes the enumeration to further activity, freeing resources. </summary>
 		public abstract void  Close();
 		
-		// Term Vector support
-		
 		/// <summary>Skips terms to the first beyond the current whose value is
-		/// greater or equal to <i>target</i>. <p>Returns true iff there is such
-		/// an entry.  <p>Behaves as if written: <pre>
+		/// greater or equal to <i>target</i>. <p/>Returns true iff there is such
+		/// an entry.  <p/>Behaves as if written: <pre>
 		/// public boolean skipTo(Term target) {
 		/// do {
 		/// if (!next())
@@ -49,8 +50,14 @@ namespace Monodoc.Lucene.Net.Index
 		/// return true;
 		/// }
 		/// </pre>
-		/// Some implementations are considerably more efficient than that.
+		/// Some implementations *could* be considerably more efficient than a linear scan.
+		/// Check the implementation to be sure.
 		/// </summary>
+		/// <deprecated> This method is not performant and will be removed in Lucene 3.0.
+		/// Use {@link IndexReader#Terms(Term)} to create a new TermEnum positioned at a
+		/// given term.
+		/// </deprecated>
+        [Obsolete("This method is not performant and will be removed in Lucene 3.0.Use IndexReader.Terms(Term) to create a new TermEnum positioned at a given term.")]
 		public virtual bool SkipTo(Term target)
 		{
 			do 

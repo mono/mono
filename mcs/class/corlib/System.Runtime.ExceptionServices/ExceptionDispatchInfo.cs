@@ -28,6 +28,8 @@
 
 #if NET_4_5
 
+using System.Diagnostics;
+
 namespace System.Runtime.ExceptionServices
 {
 	public sealed class ExceptionDispatchInfo
@@ -55,6 +57,8 @@ namespace System.Runtime.ExceptionServices
 
 		public void Throw ()
 		{
+			exception.CaptureTrace ();
+
 			throw exception;
 		}
 	}

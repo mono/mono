@@ -282,41 +282,32 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
 
-			if (IsUserCattrProvider (obj))
-				return obj.IsDefined (attributeType, inherit);
+			AttributeUsageAttribute usage = null;
+			do {
+				if (IsUserCattrProvider (obj))
+					return obj.IsDefined (attributeType, inherit);
 
-			if (IsDefinedInternal (obj, attributeType))
-				return true;
+				if (IsDefinedInternal (obj, attributeType))
+					return true;
 
-			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
-			if (pseudoAttrs != null) {
-				for (int i = 0; i < pseudoAttrs.Length; ++i)
-					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
-						return true;
-			}
+				object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
+				if (pseudoAttrs != null) {
+					for (int i = 0; i < pseudoAttrs.Length; ++i)
+						if (attributeType.IsAssignableFrom (pseudoAttrs[i].GetType ()))
+							return true;
+				}
 
-#if ONLY_1_1
-			if (inherit) {
-				AttributeUsageAttribute usage = RetrieveAttributeUsage (attributeType);
-				if (!usage.Inherited)
-					inherit = false;
-			}
-#endif
+				if (usage == null) {
+					if (!inherit)
+						return false;
 
-			// FIXME (bug #82431):
-			// on 2.0 profile we should always walk the inheritance
-			// chain and base the behavior on the inheritance level:
-			//
-			// 0  : return true if "attributeType" is assignable from
-			// any of the custom attributes
-			//
-			// > 0: return true if "attributeType" is assignable from
-			// any of the custom attributes and AttributeUsageAttribute
-			// .Inherited of the assignable attribute is true
+					usage = RetrieveAttributeUsage (attributeType);
+					if (!usage.Inherited)
+						return false;
+				}
 
-			ICustomAttributeProvider btype;
-			if (inherit && ((btype = GetBase (obj)) != null))
-				return IsDefined (btype, attributeType, inherit);
+				obj = GetBase (obj);
+			} while (obj != null);
 
 			return false;
 		}

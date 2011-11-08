@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Index
+
+namespace Mono.Lucene.Net.Index
 {
 	
 	/// <summary>Provides access to stored term vector of 
-	/// a document Field.
+	/// a document field.  The vector consists of the name of the field, an array of the terms tha occur in the field of the
+	/// {@link Mono.Lucene.Net.Documents.Document} and a parallel array of frequencies.  Thus, getTermFrequencies()[5] corresponds with the
+	/// frequency of getTerms()[5], assuming there are at least 5 terms in the Document.
 	/// </summary>
 	public interface TermFreqVector
 	{
-		/// <summary> </summary>
-		/// <returns> The Field this vector is associated with.
+		/// <summary> The {@link Mono.Lucene.Net.Documents.Fieldable} name. </summary>
+		/// <returns> The name of the field this vector is associated with.
 		/// 
 		/// </returns>
 		System.String GetField();
@@ -40,7 +45,7 @@ namespace Monodoc.Lucene.Net.Index
 		/// <summary>Array of term frequencies. Locations of the array correspond one to one
 		/// to the terms in the array obtained from <code>getTerms</code>
 		/// method. Each location in the array contains the number of times this
-		/// term occurs in the document or the document Field.
+		/// term occurs in the document or the document field.
 		/// </summary>
 		int[] GetTermFrequencies();
 		

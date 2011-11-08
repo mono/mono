@@ -27,8 +27,8 @@ using System.Xml;
 using System.Xml.XPath;
 using ICSharpCode.SharpZipLib.Zip;
 
-using Monodoc.Lucene.Net.Index;
-using Monodoc.Lucene.Net.Analysis.Standard;
+using Mono.Lucene.Net.Index;
+using Mono.Lucene.Net.Analysis.Standard;
 
 using Mono.Documentation;
 
@@ -1685,7 +1685,7 @@ public class RootTree : Tree {
 			if (!Directory.Exists (dir)) 
 				Directory.CreateDirectory (dir);
 
-			writer = new IndexWriter(Lucene.Net.Store.FSDirectory.GetDirectory(dir, true), new StandardAnalyzer(), true);
+			writer = new IndexWriter(Mono.Lucene.Net.Store.FSDirectory.GetDirectory(dir, true), new StandardAnalyzer(), true);
 		} catch (UnauthorizedAccessException) {
 			//try in the .config directory
 			try {
@@ -1693,7 +1693,7 @@ public class RootTree : Tree {
 				if (!Directory.Exists (dir)) 
 					Directory.CreateDirectory (dir);
 
-				writer = new IndexWriter(Lucene.Net.Store.FSDirectory.GetDirectory(dir, true), new StandardAnalyzer(), true);
+				writer = new IndexWriter(Mono.Lucene.Net.Store.FSDirectory.GetDirectory(dir, true), new StandardAnalyzer(), true);
 			} catch (UnauthorizedAccessException) {
 				Console.WriteLine ("You don't have permissions to write on " + dir);
 				return;

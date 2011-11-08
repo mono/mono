@@ -507,9 +507,16 @@ namespace System.Diagnostics {
 					throw new InvalidOperationException ("Process has not been started.");
 				
 				int error;
-				if (!SetPriorityClass (process_handle, (int) value, out error))
+				if (!SetPriorityClass (process_handle, (int) value, out error)) {
+					CheckExited ();
 					throw new Win32Exception (error);
+				}
 			}
+		}
+
+		void CheckExited () {
+			if (HasExited)
+				throw new InvalidOperationException (String.Format ("Cannot process request because the process ({0}) has exited.", Id));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

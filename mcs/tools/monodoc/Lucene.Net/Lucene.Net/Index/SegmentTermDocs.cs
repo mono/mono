@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,64 +14,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using InputStream = Monodoc.Lucene.Net.Store.InputStream;
-using BitVector = Monodoc.Lucene.Net.Util.BitVector;
-namespace Monodoc.Lucene.Net.Index
+
+using IndexInput = Mono.Lucene.Net.Store.IndexInput;
+using BitVector = Mono.Lucene.Net.Util.BitVector;
+
+namespace Mono.Lucene.Net.Index
 {
 	
 	public class SegmentTermDocs : TermDocs
 	{
 		protected internal SegmentReader parent;
-		private InputStream freqStream;
-		private int count;
-		private int df;
-		private BitVector deletedDocs;
+		protected internal IndexInput freqStream;
+		protected internal int count;
+		protected internal int df;
+		protected internal BitVector deletedDocs;
 		internal int doc = 0;
 		internal int freq;
 		
 		private int skipInterval;
-		private int numSkips;
-		private int skipCount;
-		private InputStream skipStream;
-		private int skipDoc;
-		private long freqPointer;
-		private long proxPointer;
+		private int maxSkipLevels;
+		private DefaultSkipListReader skipListReader;
+		
+		private long freqBasePointer;
+		private long proxBasePointer;
+		
 		private long skipPointer;
 		private bool haveSkipped;
 		
-		public /*internal*/ SegmentTermDocs(SegmentReader parent)
+		protected internal bool currentFieldStoresPayloads;
+		protected internal bool currentFieldOmitTermFreqAndPositions;
+		
+		public /*protected internal*/ SegmentTermDocs(SegmentReader parent)
 		{
 			this.parent = parent;
-			this.freqStream = (InputStream) parent.freqStream.Clone();
-			this.deletedDocs = parent.deletedDocs;
-			this.skipInterval = parent.tis.GetSkipInterval();
+			this.freqStream = (IndexInput) parent.core.freqStream.Clone();
+			lock (parent)
+			{
+				this.deletedDocs = parent.deletedDocs;
+			}
+			this.skipInterval = parent.core.GetTermsReader().GetSkipInterval();
+			this.maxSkipLevels = parent.core.GetTermsReader().GetMaxSkipLevels();
 		}
 		
 		public virtual void  Seek(Term term)
 		{
-			TermInfo ti = parent.tis.Get(term);
-			Seek(ti);
+			TermInfo ti = parent.core.GetTermsReader().Get(term);
+			Seek(ti, term);
 		}
 		
 		public virtual void  Seek(TermEnum termEnum)
 		{
 			TermInfo ti;
+			Term term;
 			
 			// use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.fieldInfos)
-			// optimized case
-				ti = ((SegmentTermEnum) termEnum).TermInfo();
-			// punt case
+			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.core.fieldInfos)
+			{
+				// optimized case
+				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
+				term = segmentTermEnum.Term();
+				ti = segmentTermEnum.TermInfo();
+			}
 			else
-				ti = parent.tis.Get(termEnum.Term());
+			{
+				// punt case
+				term = termEnum.Term();
+				ti = parent.core.GetTermsReader().Get(term);
+			}
 			
-			Seek(ti);
+			Seek(ti, term);
 		}
 		
-		internal virtual void  Seek(TermInfo ti)
+		internal virtual void  Seek(TermInfo ti, Term term)
 		{
 			count = 0;
+			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.field);
+			currentFieldOmitTermFreqAndPositions = (fi != null)?fi.omitTermFreqAndPositions:false;
+			currentFieldStoresPayloads = (fi != null)?fi.storePayloads:false;
 			if (ti == null)
 			{
 				df = 0;
@@ -79,13 +101,10 @@ namespace Monodoc.Lucene.Net.Index
 			{
 				df = ti.docFreq;
 				doc = 0;
-				skipDoc = 0;
-				skipCount = 0;
-				numSkips = df / skipInterval;
-				freqPointer = ti.freqPointer;
-				proxPointer = ti.proxPointer;
-				skipPointer = freqPointer + ti.skipOffset;
-				freqStream.Seek(freqPointer);
+				freqBasePointer = ti.freqPointer;
+				proxBasePointer = ti.proxPointer;
+				skipPointer = freqBasePointer + ti.skipOffset;
+				freqStream.Seek(freqBasePointer);
 				haveSkipped = false;
 			}
 		}
@@ -93,8 +112,8 @@ namespace Monodoc.Lucene.Net.Index
 		public virtual void  Close()
 		{
 			freqStream.Close();
-			if (skipStream != null)
-				skipStream.Close();
+			if (skipListReader != null)
+				skipListReader.Close();
 		}
 		
 		public int Doc()
@@ -116,15 +135,23 @@ namespace Monodoc.Lucene.Net.Index
 			{
 				if (count == df)
 					return false;
-				
 				int docCode = freqStream.ReadVInt();
-				doc += (int) (((uint) docCode) >> 1); // shift off low bit
-				if ((docCode & 1) != 0)
-				// if low bit is set
+				
+				if (currentFieldOmitTermFreqAndPositions)
+				{
+					doc += docCode;
 					freq = 1;
-				// freq is one
+				}
 				else
-					freq = freqStream.ReadVInt(); // else read freq
+				{
+					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					if ((docCode & 1) != 0)
+					// if low bit is set
+						freq = 1;
+					// freq is one
+					else
+						freq = freqStream.ReadVInt(); // else read freq
+				}
 				
 				count++;
 				
@@ -139,33 +166,61 @@ namespace Monodoc.Lucene.Net.Index
 		public virtual int Read(int[] docs, int[] freqs)
 		{
 			int length = docs.Length;
+			if (currentFieldOmitTermFreqAndPositions)
+			{
+				return ReadNoTf(docs, freqs, length);
+			}
+			else
+			{
+				int i = 0;
+				while (i < length && count < df)
+				{
+					// manually inlined call to next() for speed
+					int docCode = freqStream.ReadVInt();
+					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					if ((docCode & 1) != 0)
+					// if low bit is set
+						freq = 1;
+					// freq is one
+					else
+						freq = freqStream.ReadVInt(); // else read freq
+					count++;
+					
+					if (deletedDocs == null || !deletedDocs.Get(doc))
+					{
+						docs[i] = doc;
+						freqs[i] = freq;
+						++i;
+					}
+				}
+				return i;
+			}
+		}
+		
+		private int ReadNoTf(int[] docs, int[] freqs, int length)
+		{
 			int i = 0;
 			while (i < length && count < df)
 			{
-				
 				// manually inlined call to next() for speed
-				int docCode = freqStream.ReadVInt();
-				doc += (int) (((uint) docCode) >> 1); // shift off low bit
-				if ((docCode & 1) != 0)
-				// if low bit is set
-					freq = 1;
-				// freq is one
-				else
-					freq = freqStream.ReadVInt(); // else read freq
+				doc += freqStream.ReadVInt();
 				count++;
 				
 				if (deletedDocs == null || !deletedDocs.Get(doc))
 				{
 					docs[i] = doc;
-					freqs[i] = freq;
+					// Hardware freq to 1 when term freqs were not
+					// stored in the index
+					freqs[i] = 1;
 					++i;
 				}
 			}
 			return i;
 		}
 		
+		
 		/// <summary>Overridden by SegmentTermPositions to skip in prox stream. </summary>
-		protected internal virtual void  SkipProx(long proxPointer)
+		protected internal virtual void  SkipProx(long proxPointer, int payloadLength)
 		{
 		}
 		
@@ -175,50 +230,24 @@ namespace Monodoc.Lucene.Net.Index
 			if (df >= skipInterval)
 			{
 				// optimized case
-				
-				if (skipStream == null)
-					skipStream = (InputStream) freqStream.Clone(); // lazily clone
+				if (skipListReader == null)
+					skipListReader = new DefaultSkipListReader((IndexInput) freqStream.Clone(), maxSkipLevels, skipInterval); // lazily clone
 				
 				if (!haveSkipped)
 				{
-					// lazily seek skip stream
-					skipStream.Seek(skipPointer);
+					// lazily initialize skip stream
+					skipListReader.Init(skipPointer, freqBasePointer, proxBasePointer, df, currentFieldStoresPayloads);
 					haveSkipped = true;
 				}
 				
-				// scan skip data
-				int lastSkipDoc = skipDoc;
-				long lastFreqPointer = freqStream.GetFilePointer();
-				long lastProxPointer = - 1;
-				int numSkipped = - 1 - (count % skipInterval);
-				
-				while (target > skipDoc)
+				int newCount = skipListReader.SkipTo(target);
+				if (newCount > count)
 				{
-					lastSkipDoc = skipDoc;
-					lastFreqPointer = freqPointer;
-					lastProxPointer = proxPointer;
+					freqStream.Seek(skipListReader.GetFreqPointer());
+					SkipProx(skipListReader.GetProxPointer(), skipListReader.GetPayloadLength());
 					
-					if (skipDoc != 0 && skipDoc >= doc)
-						numSkipped += skipInterval;
-					
-					if (skipCount >= numSkips)
-						break;
-					
-					skipDoc += skipStream.ReadVInt();
-					freqPointer += skipStream.ReadVInt();
-					proxPointer += skipStream.ReadVInt();
-					
-					skipCount++;
-				}
-				
-				// if we found something to skip, then skip it
-				if (lastFreqPointer > freqStream.GetFilePointer())
-				{
-					freqStream.Seek(lastFreqPointer);
-					SkipProx(lastProxPointer);
-					
-					doc = lastSkipDoc;
-					count += numSkipped;
+					doc = skipListReader.GetDoc();
+					count = newCount;
 				}
 			}
 			
@@ -231,5 +260,11 @@ namespace Monodoc.Lucene.Net.Index
 			while (target > doc);
 			return true;
 		}
-	}
+
+        public IndexInput freqStream_ForNUnit
+        {
+            get { return freqStream; }
+            set { freqStream = value; }
+        }
+    }
 }

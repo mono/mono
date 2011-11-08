@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,27 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Directory = Monodoc.Lucene.Net.Store.Directory;
-using OutputStream = Monodoc.Lucene.Net.Store.OutputStream;
-using StringHelper = Monodoc.Lucene.Net.Util.StringHelper;
-namespace Monodoc.Lucene.Net.Index
+
+using Directory = Mono.Lucene.Net.Store.Directory;
+using IndexOutput = Mono.Lucene.Net.Store.IndexOutput;
+using UnicodeUtil = Mono.Lucene.Net.Util.UnicodeUtil;
+
+namespace Mono.Lucene.Net.Index
 {
-	
-	/// <summary>This stores a monotonically increasing set of <Term, TermInfo> pairs in a
+
+    /// <summary>This stores a monotonically increasing set of &lt;Term, TermInfo&gt; pairs in a
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
-	sealed public class TermInfosWriter
+	sealed class TermInfosWriter
 	{
 		/// <summary>The file format version, a negative number. </summary>
-		public const int FORMAT = - 2;
+		public const int FORMAT = - 3;
+		
+		// Changed strings to true utf8 with length-in-bytes not
+		// length-in-chars
+		public const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = - 4;
+		
+		// NOTE: always change this if you switch to a new format!
+		public static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
 		
 		private FieldInfos fieldInfos;
-		private OutputStream output;
-		private Term lastTerm = new Term("", "");
+		private IndexOutput output;
 		private TermInfo lastTi = new TermInfo();
-		private long size = 0;
+		private long size;
 		
 		// TODO: the default values for these two parameters should be settable from
 		// IndexWriter.  However, once that's done, folks will start setting them to
@@ -58,51 +68,118 @@ namespace Monodoc.Lucene.Net.Index
 		/// </summary>
 		internal int skipInterval = 16;
 		
-		private long lastIndexPointer = 0;
-		private bool isIndex = false;
+		/// <summary>Expert: The maximum number of skip levels. Smaller values result in 
+		/// slightly smaller indexes, but slower skipping in big posting lists.
+		/// </summary>
+		internal int maxSkipLevels = 10;
 		
-		private TermInfosWriter other = null;
+		private long lastIndexPointer;
+		private bool isIndex;
+		private byte[] lastTermBytes = new byte[10];
+		private int lastTermBytesLength = 0;
+		private int lastFieldNumber = - 1;
 		
-		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis)
+		private TermInfosWriter other;
+		private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
+		
+		internal TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
-			Initialize(directory, segment, fis, false);
-			other = new TermInfosWriter(directory, segment, fis, true);
+			Initialize(directory, segment, fis, interval, false);
+			other = new TermInfosWriter(directory, segment, fis, interval, true);
 			other.other = this;
 		}
 		
-		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, bool isIndex)
+		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval, bool isIndex)
 		{
-			Initialize(directory, segment, fis, isIndex);
+			Initialize(directory, segment, fis, interval, isIndex);
 		}
 		
-		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, bool isi)
+		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
 		{
+			indexInterval = interval;
 			fieldInfos = fis;
 			isIndex = isi;
-			output = directory.CreateFile(segment + (isIndex?".tii":".tis"));
-			output.WriteInt(FORMAT); // write format
+			output = directory.CreateOutput(segment + (isIndex?".tii":".tis"));
+			output.WriteInt(FORMAT_CURRENT); // write format
 			output.WriteLong(0); // leave space for size
 			output.WriteInt(indexInterval); // write indexInterval
 			output.WriteInt(skipInterval); // write skipInterval
+			output.WriteInt(maxSkipLevels); // write maxSkipLevels
+			System.Diagnostics.Debug.Assert(InitUTF16Results());
 		}
 		
-		/// <summary>Adds a new <Term, TermInfo> pair to the set.
+		internal void  Add(Term term, TermInfo ti)
+		{
+			UnicodeUtil.UTF16toUTF8(term.text, 0, term.text.Length, utf8Result);
+			Add(fieldInfos.FieldNumber(term.field), utf8Result.result, utf8Result.length, ti);
+		}
+		
+		// Currently used only by assert statements
+		internal UnicodeUtil.UTF16Result utf16Result1;
+		internal UnicodeUtil.UTF16Result utf16Result2;
+		
+		// Currently used only by assert statements
+		private bool InitUTF16Results()
+		{
+			utf16Result1 = new UnicodeUtil.UTF16Result();
+			utf16Result2 = new UnicodeUtil.UTF16Result();
+			return true;
+		}
+		
+		// Currently used only by assert statement
+		private int CompareToLastTerm(int fieldNumber, byte[] termBytes, int termBytesLength)
+		{
+			
+			if (lastFieldNumber != fieldNumber)
+			{
+				int cmp = String.CompareOrdinal(fieldInfos.FieldName(lastFieldNumber), fieldInfos.FieldName(fieldNumber));
+				// If there is a field named "" (empty string) then we
+				// will get 0 on this comparison, yet, it's "OK".  But
+				// it's not OK if two different field numbers map to
+				// the same name.
+				if (cmp != 0 || lastFieldNumber != - 1)
+					return cmp;
+			}
+			
+			UnicodeUtil.UTF8toUTF16(lastTermBytes, 0, lastTermBytesLength, utf16Result1);
+			UnicodeUtil.UTF8toUTF16(termBytes, 0, termBytesLength, utf16Result2);
+			int len;
+			if (utf16Result1.length < utf16Result2.length)
+				len = utf16Result1.length;
+			else
+				len = utf16Result2.length;
+			
+			for (int i = 0; i < len; i++)
+			{
+				char ch1 = utf16Result1.result[i];
+				char ch2 = utf16Result2.result[i];
+				if (ch1 != ch2)
+					return ch1 - ch2;
+			}
+			return utf16Result1.length - utf16Result2.length;
+		}
+
+        /// <summary>Adds a new &lt;fieldNumber, termBytes&gt;, TermInfo> pair to the set.
 		/// Term must be lexicographically greater than all previous Terms added.
 		/// TermInfo pointers must be positive and greater than all previous.
 		/// </summary>
-		public /*internal*/ void  Add(Term term, TermInfo ti)
+		internal void  Add(int fieldNumber, byte[] termBytes, int termBytesLength, TermInfo ti)
 		{
-			if (!isIndex && term.CompareTo(lastTerm) <= 0)
-				throw new System.IO.IOException("term out of order");
-			if (ti.freqPointer < lastTi.freqPointer)
-				throw new System.IO.IOException("freqPointer out of order");
-			if (ti.proxPointer < lastTi.proxPointer)
-				throw new System.IO.IOException("proxPointer out of order");
+			
+			System.Diagnostics.Debug.Assert(CompareToLastTerm(fieldNumber, termBytes, termBytesLength) < 0 ||
+					(isIndex && termBytesLength == 0 && lastTermBytesLength == 0), 
+				"Terms are out of order: field=" + fieldInfos.FieldName(fieldNumber) + " (number " + fieldNumber + ")" + 
+			 	" lastField=" + fieldInfos.FieldName(lastFieldNumber) + " (number " + lastFieldNumber + ")" + 
+			 	" text=" + System.Text.Encoding.UTF8.GetString(termBytes, 0, termBytesLength) + " lastText=" + System.Text.Encoding.UTF8.GetString(lastTermBytes, 0, lastTermBytesLength));
+			
+			System.Diagnostics.Debug.Assert(ti.freqPointer >= lastTi.freqPointer, "freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
+			System.Diagnostics.Debug.Assert(ti.proxPointer >= lastTi.proxPointer, "proxPointer out of order (" + ti.proxPointer + " < " + lastTi.proxPointer + ")");
 			
 			if (!isIndex && size % indexInterval == 0)
-				other.Add(lastTerm, lastTi); // add an index term
+				other.Add(lastFieldNumber, lastTermBytes, lastTermBytesLength, lastTi); // add an index term
 			
-			WriteTerm(term); // write term
+			WriteTerm(fieldNumber, termBytes, termBytesLength); // write term
+			
 			output.WriteVInt(ti.docFreq); // write doc freq
 			output.WriteVLong(ti.freqPointer - lastTi.freqPointer); // write pointers
 			output.WriteVLong(ti.proxPointer - lastTi.proxPointer);
@@ -118,28 +195,42 @@ namespace Monodoc.Lucene.Net.Index
 				lastIndexPointer = other.output.GetFilePointer(); // write pointer
 			}
 			
+			lastFieldNumber = fieldNumber;
 			lastTi.Set(ti);
 			size++;
 		}
 		
-		private void  WriteTerm(Term term)
+		private void  WriteTerm(int fieldNumber, byte[] termBytes, int termBytesLength)
 		{
-			int start = StringHelper.StringDifference(lastTerm.text, term.text);
-			int length = term.text.Length - start;
 			
+			// TODO: UTF16toUTF8 could tell us this prefix
+			// Compute prefix in common with last term:
+			int start = 0;
+			int limit = termBytesLength < lastTermBytesLength?termBytesLength:lastTermBytesLength;
+			while (start < limit)
+			{
+				if (termBytes[start] != lastTermBytes[start])
+					break;
+				start++;
+			}
+			
+			int length = termBytesLength - start;
 			output.WriteVInt(start); // write shared prefix length
 			output.WriteVInt(length); // write delta length
-			output.WriteChars(term.text, start, length); // write delta chars
-			
-			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write Field num
-			
-			lastTerm = term;
+			output.WriteBytes(termBytes, start, length); // write delta bytes
+			output.WriteVInt(fieldNumber); // write field num
+			if (lastTermBytes.Length < termBytesLength)
+			{
+				byte[] newArray = new byte[(int) (termBytesLength * 1.5)];
+				Array.Copy(lastTermBytes, 0, newArray, 0, start);
+				lastTermBytes = newArray;
+			}
+			Array.Copy(termBytes, start, lastTermBytes, start, length);
+			lastTermBytesLength = termBytesLength;
 		}
 		
-		
-		
 		/// <summary>Called to complete TermInfos creation. </summary>
-		public /*internal*/ void  Close()
+		internal void  Close()
 		{
 			output.Seek(4); // write size after format
 			output.WriteLong(size);

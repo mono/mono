@@ -114,7 +114,8 @@ LIB_MCS_FLAGS = \
 	/r:System.Core.dll                                                \
 	/r:System.Web                                                     \
 	/r:System.Web.Services                                            \
-	/r:System.Xml.dll
+	/r:System.Xml.dll                                                 \
+	/r:System.Configuration.dll
 
 include ../../build/library.make
 

@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using InputStream = Monodoc.Lucene.Net.Store.InputStream;
-namespace Monodoc.Lucene.Net.Index
+
+using IndexInput = Mono.Lucene.Net.Store.IndexInput;
+
+namespace Mono.Lucene.Net.Index
 {
 	
-	sealed public class SegmentTermEnum:TermEnum, System.ICloneable
+	public sealed class SegmentTermEnum:TermEnum, System.ICloneable
 	{
-		private InputStream input;
+		private IndexInput input;
 		internal FieldInfos fieldInfos;
 		internal long size;
 		internal long position = - 1;
 		
-		private Term term = new Term("", "");
+		private TermBuffer termBuffer = new TermBuffer();
+		private TermBuffer prevBuffer = new TermBuffer();
+		private TermBuffer scanBuffer = new TermBuffer(); // used for scanning
+		
 		private TermInfo termInfo = new TermInfo();
 		
 		private int format;
@@ -33,16 +40,15 @@ namespace Monodoc.Lucene.Net.Index
 		internal long indexPointer = 0;
 		internal int indexInterval;
 		internal int skipInterval;
+		internal int maxSkipLevels;
 		private int formatM1SkipInterval;
-		internal Term prev;
 		
-		private char[] buffer = new char[]{};
-		
-		internal SegmentTermEnum(InputStream i, FieldInfos fis, bool isi)
+		internal SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
 		{
 			input = i;
 			fieldInfos = fis;
 			isIndex = isi;
+			maxSkipLevels = 1; // use single-level skip lists for formats > -3 
 			
 			int firstInt = input.ReadInt();
 			if (firstInt >= 0)
@@ -61,8 +67,8 @@ namespace Monodoc.Lucene.Net.Index
 				format = firstInt;
 				
 				// check that it is a format we can understand
-				if (format < TermInfosWriter.FORMAT)
-					throw new System.IO.IOException("Unknown format version:" + format);
+				if (format < TermInfosWriter.FORMAT_CURRENT)
+					throw new CorruptIndexException("Unknown format version:" + format + " expected " + TermInfosWriter.FORMAT_CURRENT + " or higher");
 				
 				size = input.ReadLong(); // read the size
 				
@@ -81,7 +87,20 @@ namespace Monodoc.Lucene.Net.Index
 				{
 					indexInterval = input.ReadInt();
 					skipInterval = input.ReadInt();
+					if (format <= TermInfosWriter.FORMAT)
+					{
+						// this new format introduces multi-level skipping
+						maxSkipLevels = input.ReadInt();
+					}
 				}
+				System.Diagnostics.Debug.Assert(indexInterval > 0, "indexInterval=" + indexInterval + " is negative; must be > 0");
+				System.Diagnostics.Debug.Assert(skipInterval > 0, "skipInterval=" + skipInterval + " is negative; must be > 0");
+			}
+			if (format > TermInfosWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+			{
+				termBuffer.SetPreUTF8Strings();
+				scanBuffer.SetPreUTF8Strings();
+				prevBuffer.SetPreUTF8Strings();
 			}
 		}
 		
@@ -92,26 +111,27 @@ namespace Monodoc.Lucene.Net.Index
 			{
 				clone = (SegmentTermEnum) base.MemberwiseClone();
 			}
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 			}
 			
-			clone.input = (InputStream) input.Clone();
+			clone.input = (IndexInput) input.Clone();
 			clone.termInfo = new TermInfo(termInfo);
-			if (term != null)
-				clone.GrowBuffer(term.text.Length);
+			
+			clone.termBuffer = (TermBuffer) termBuffer.Clone();
+			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
+			clone.scanBuffer = new TermBuffer();
 			
 			return clone;
 		}
 		
-		internal void  Seek(long pointer, int p, Term t, TermInfo ti)
+		internal void  Seek(long pointer, long p, Term t, TermInfo ti)
 		{
 			input.Seek(pointer);
 			position = p;
-			term = t;
-			prev = null;
+			termBuffer.Set(t);
+			prevBuffer.Reset();
 			termInfo.Set(ti);
-			GrowBuffer(term.text.Length); // copy term text into buffer
 		}
 		
 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
@@ -119,12 +139,13 @@ namespace Monodoc.Lucene.Net.Index
 		{
 			if (position++ >= size - 1)
 			{
-				term = null;
+				prevBuffer.Set(termBuffer);
+				termBuffer.Reset();
 				return false;
 			}
 			
-			prev = term;
-			term = ReadTerm();
+			prevBuffer.Set(termBuffer);
+			termBuffer.Read(input, fieldInfos);
 			
 			termInfo.docFreq = input.ReadVInt(); // read doc freq
 			termInfo.freqPointer += input.ReadVLong(); // read freq pointer
@@ -154,24 +175,18 @@ namespace Monodoc.Lucene.Net.Index
 			return true;
 		}
 		
-		private Term ReadTerm()
+		/// <summary>Optimized scan, without allocating new terms. 
+		/// Return number of invocations to next(). 
+		/// </summary>
+		internal int ScanTo(Term term)
 		{
-			int start = input.ReadVInt();
-			int length = input.ReadVInt();
-			int totalLength = start + length;
-			if (buffer.Length < totalLength)
-				GrowBuffer(totalLength);
-			
-			input.ReadChars(buffer, start, length);
-			return new Term(fieldInfos.FieldName(input.ReadVInt()), new System.String(buffer, 0, totalLength), false);
-		}
-		
-		private void  GrowBuffer(int length)
-		{
-			buffer = new char[length];
-			for (int i = 0; i < term.text.Length; i++)
-			// copy contents
-				buffer[i] = term.text[i];
+			scanBuffer.Set(term);
+			int count = 0;
+			while (scanBuffer.CompareTo(termBuffer) > 0 && Next())
+			{
+				count++;
+			}
+			return count;
 		}
 		
 		/// <summary>Returns the current Term in the enumeration.
@@ -179,13 +194,19 @@ namespace Monodoc.Lucene.Net.Index
 		/// </summary>
 		public override Term Term()
 		{
-			return term;
+			return termBuffer.ToTerm();
+		}
+		
+		/// <summary>Returns the previous Term enumerated. Initially null.</summary>
+		public /*internal*/ Term Prev()
+		{
+			return prevBuffer.ToTerm();
 		}
 		
 		/// <summary>Returns the current TermInfo in the enumeration.
 		/// Initially invalid, valid after next() called for the first time.
 		/// </summary>
-		public /*internal*/ TermInfo TermInfo()
+		internal TermInfo TermInfo()
 		{
 			return new TermInfo(termInfo);
 		}

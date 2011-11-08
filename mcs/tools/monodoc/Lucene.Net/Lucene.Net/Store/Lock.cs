@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,30 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using IndexWriter = Monodoc.Lucene.Net.Index.IndexWriter;
-namespace Monodoc.Lucene.Net.Store
+
+namespace Mono.Lucene.Net.Store
 {
 	
 	/// <summary>An interprocess mutex lock.
-	/// <p>Typical use might look like:<pre>
+	/// <p/>Typical use might look like:<pre>
 	/// new Lock.With(directory.makeLock("my.lock")) {
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
-	/// }.Run();
+	/// }.run();
 	/// </pre>
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Id: Lock.java,v 1.12 2004/05/11 17:43:28 cutting Exp $
+	/// <version>  $Id: Lock.java 769409 2009-04-28 14:05:43Z mikemccand $
 	/// </version>
-	/// <seealso cref="Directory#MakeLock(String)">
+	/// <seealso cref="Directory.MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
+		
+		/// <summary>How long {@link #Obtain(long)} waits, in milliseconds,
+		/// in between attempts to acquire the lock. 
+		/// </summary>
 		public static long LOCK_POLL_INTERVAL = 1000;
+		
+		/// <summary>Pass this value to {@link #Obtain(long)} to try
+		/// forever to obtain the lock. 
+		/// </summary>
+		public const long LOCK_OBTAIN_WAIT_FOREVER = - 1;
 		
 		/// <summary>Attempts to obtain exclusive access and immediately return
 		/// upon success or failure.
@@ -45,25 +55,56 @@ namespace Monodoc.Lucene.Net.Store
 		/// </returns>
 		public abstract bool Obtain();
 		
-		/// <summary>Attempts to obtain an exclusive lock within amount
-		/// of time given. Currently polls once per second until
-		/// lockWaitTimeout is passed.
+		/// <summary> If a lock obtain called, this failureReason may be set
+		/// with the "root cause" Exception as to why the lock was
+		/// not obtained.
 		/// </summary>
-		/// <param name="lockWaitTimeout">length of time to wait in ms
+		protected internal System.Exception failureReason;
+		
+		/// <summary>Attempts to obtain an exclusive lock within amount of
+		/// time given. Polls once per {@link #LOCK_POLL_INTERVAL}
+		/// (currently 1000) milliseconds until lockWaitTimeout is
+		/// passed.
+		/// </summary>
+		/// <param name="lockWaitTimeout">length of time to wait in
+		/// milliseconds or {@link
+		/// #LOCK_OBTAIN_WAIT_FOREVER} to retry forever
 		/// </param>
 		/// <returns> true if lock was obtained
 		/// </returns>
-		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
+		/// <throws>  LockObtainFailedException if lock wait times out </throws>
+		/// <throws>  IllegalArgumentException if lockWaitTimeout is </throws>
+		/// <summary>         out of bounds
+		/// </summary>
+		/// <throws>  IOException if obtain() throws IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
+			failureReason = null;
 			bool locked = Obtain();
-			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
-			int sleepCount = 0;
+			if (lockWaitTimeout < 0 && lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER)
+				throw new System.ArgumentException("lockWaitTimeout should be LOCK_OBTAIN_WAIT_FOREVER or a non-negative number (got " + lockWaitTimeout + ")");
+			
+			long maxSleepCount = lockWaitTimeout / LOCK_POLL_INTERVAL;
+			long sleepCount = 0;
 			while (!locked)
 			{
-				if (++sleepCount == maxSleepCount)
+				if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount)
 				{
-					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
+					System.String reason = "Lock obtain timed out: " + this.ToString();
+					if (failureReason != null)
+					{
+						reason += (": " + failureReason);
+					}
+                    LockObtainFailedException e;
+                    if (failureReason != null)
+                    {
+                        e = new LockObtainFailedException(reason, failureReason);
+                    }
+                    else
+                    {
+                        e = new LockObtainFailedException(reason);
+                    }
+                    throw e;
 				}
 				try
 				{
@@ -71,6 +112,9 @@ namespace Monodoc.Lucene.Net.Store
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{
+					// In 3.0 we will change this to throw
+					// InterruptedException instead
+					SupportClass.ThreadClass.Current().Interrupt();
 					throw new System.IO.IOException(e.ToString());
 				}
 				locked = Obtain();
@@ -93,14 +137,6 @@ namespace Monodoc.Lucene.Net.Store
 			private Lock lock_Renamed;
 			private long lockWaitTimeout;
 			
-			/// <summary>Constructs an executor that will grab the named lock.
-			/// Defaults lockWaitTimeout to Lock.COMMIT_LOCK_TIMEOUT.
-			/// </summary>
-			/// <deprecated> Kept only to avoid breaking existing code.
-			/// </deprecated>
-			public With(Lock lock_Renamed):this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
-			{
-			}
 			
 			/// <summary>Constructs an executor that will grab the named lock. </summary>
 			public With(Lock lock_Renamed, long lockWaitTimeout)
@@ -110,14 +146,18 @@ namespace Monodoc.Lucene.Net.Store
 			}
 			
 			/// <summary>Code to execute with exclusive access. </summary>
-			public abstract System.Object DoBody();
+			protected internal abstract System.Object DoBody();
 			
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second
 			/// until it is obtained, or until it has tried ten times. Lock is released when
-			/// {@link #doBody} exits. 
+			/// {@link #doBody} exits.
 			/// </summary>
-			public virtual System.Object Run()
+			/// <throws>  LockObtainFailedException if lock could not </throws>
+			/// <summary> be obtained
+			/// </summary>
+			/// <throws>  IOException if {@link Lock#obtain} throws IOException </throws>
+			public virtual System.Object run()
 			{
 				bool locked = false;
 				try

@@ -139,6 +139,12 @@ public class SByteTest
 		catch (Exception e) {
 			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
+
+		try {
+			SByte.Parse ("1FF", NumberStyles.HexNumber);
+			Assert.Fail ("#1");
+		} catch (OverflowException) {
+		}
 	}
 
 	[Test]
@@ -146,6 +152,7 @@ public class SByteTest
 	{
 		Assert.AreEqual (SByte.MinValue, SByte.Parse ("-128"), "MinValue");
 		Assert.AreEqual (SByte.MaxValue, SByte.Parse ("127"), "MaxValue");
+		Assert.AreEqual (-1, SByte.Parse ("FF", NumberStyles.HexNumber), "MaxHex");
 	}
 
 	[Test]	

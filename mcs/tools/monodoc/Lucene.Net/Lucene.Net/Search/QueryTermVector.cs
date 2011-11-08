@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Analyzer = Monodoc.Lucene.Net.Analysis.Analyzer;
-using Token = Monodoc.Lucene.Net.Analysis.Token;
-using TokenStream = Monodoc.Lucene.Net.Analysis.TokenStream;
-using TermFreqVector = Monodoc.Lucene.Net.Index.TermFreqVector;
-namespace Monodoc.Lucene.Net.Search
+
+using Analyzer = Mono.Lucene.Net.Analysis.Analyzer;
+using TokenStream = Mono.Lucene.Net.Analysis.TokenStream;
+using TermAttribute = Mono.Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using TermFreqVector = Mono.Lucene.Net.Index.TermFreqVector;
+
+namespace Mono.Lucene.Net.Search
 {
 	
 	/// <summary> 
@@ -51,17 +55,23 @@ namespace Monodoc.Lucene.Net.Search
 				TokenStream stream = analyzer.TokenStream("", new System.IO.StringReader(queryString));
 				if (stream != null)
 				{
-					Token next = null;
 					System.Collections.ArrayList terms = new System.Collections.ArrayList();
 					try
 					{
-						while ((next = stream.Next()) != null)
+						bool hasMoreTokens = false;
+						
+						stream.Reset();
+						TermAttribute termAtt = (TermAttribute) stream.AddAttribute(typeof(TermAttribute));
+						
+						hasMoreTokens = stream.IncrementToken();
+						while (hasMoreTokens)
 						{
-							terms.Add(next.TermText());
+							terms.Add(termAtt.Term());
+							hasMoreTokens = stream.IncrementToken();
 						}
 						ProcessTerms((System.String[]) terms.ToArray(typeof(System.String)));
 					}
-					catch (System.IO.IOException)
+					catch (System.IO.IOException e)
 					{
 					}
 				}
@@ -81,8 +91,8 @@ namespace Monodoc.Lucene.Net.Search
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
 					System.String term = queryTerms[i];
-                    System.Object tmpPosition = tmpSet[term];
-					if (tmpPosition == null)
+					System.Object temp_position = tmpSet[term];
+					if (temp_position == null)
 					{
 						tmpSet[term] = (System.Int32) j++;
 						tmpList.Add(term);

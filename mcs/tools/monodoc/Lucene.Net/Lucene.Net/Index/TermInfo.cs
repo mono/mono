@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,24 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Index
+
+namespace Mono.Lucene.Net.Index
 {
-    /// <summary>A TermInfo is the record of information stored for a term.</summary>
-    sealed public class TermInfo
+	
+	/// <summary>A TermInfo is the record of information stored for a term.</summary>
+	
+	sealed class TermInfo
 	{
 		/// <summary>The number of documents which contain the term. </summary>
-		public /*internal*/ int docFreq = 0;
+		internal int docFreq = 0;
 		
-		public /*internal*/ long freqPointer = 0;
-		public /*internal*/ long proxPointer = 0;
+		internal long freqPointer = 0;
+		internal long proxPointer = 0;
 		internal int skipOffset;
 		
 		internal TermInfo()
 		{
 		}
 		
-		public /*internal*/ TermInfo(int df, long fp, long pp)
+		internal TermInfo(int df, long fp, long pp)
 		{
 			docFreq = df;
 			freqPointer = fp;

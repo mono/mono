@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		public static TypeSpec FindMostEncompassedType (IEnumerable<TypeSpec> types)
+		public static TypeSpec FindMostEncompassedType (IList<TypeSpec> types)
 		{
 			TypeSpec best = null;
 			EmptyExpression expr;

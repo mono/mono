@@ -512,6 +512,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void MetadataTokenWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -522,6 +524,8 @@ namespace MonoTests.System.Reflection.Emit
 		
 		[Test]
 		[Category ("NotDotNet")] //bug #412965
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void NullReturnTypeWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -541,6 +545,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void ReturnTypeWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -568,6 +574,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void GetParametersWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -657,6 +665,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void GenericMethodInstanceValuesUnderCompilerContext ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);

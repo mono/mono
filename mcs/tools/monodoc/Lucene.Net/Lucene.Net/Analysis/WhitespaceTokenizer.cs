@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,8 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Analysis
+
+using AttributeSource = Mono.Lucene.Net.Util.AttributeSource;
+
+namespace Mono.Lucene.Net.Analysis
 {
 	
 	/// <summary>A WhitespaceTokenizer is a tokenizer that divides text at whitespace.
@@ -25,6 +30,16 @@ namespace Monodoc.Lucene.Net.Analysis
 	{
 		/// <summary>Construct a new WhitespaceTokenizer. </summary>
 		public WhitespaceTokenizer(System.IO.TextReader in_Renamed):base(in_Renamed)
+		{
+		}
+		
+		/// <summary>Construct a new WhitespaceTokenizer using a given {@link AttributeSource}. </summary>
+		public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
+		{
+		}
+		
+		/// <summary>Construct a new WhitespaceTokenizer using a given {@link Mono.Lucene.Net.Util.AttributeSource.AttributeFactory}. </summary>
+		public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
 		{
 		}
 		

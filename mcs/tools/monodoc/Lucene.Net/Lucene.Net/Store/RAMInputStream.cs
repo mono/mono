@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,58 +14,128 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Store
+
+namespace Mono.Lucene.Net.Store
 {
-	/// <summary> A memory-resident {@link InputStream} implementation.
+	
+	/// <summary> A memory-resident {@link IndexInput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMInputStream.java,v 1.2 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: RAMInputStream.java 632120 2008-02-28 21:13:59Z mikemccand $
 	/// </version>
 	
-	class RAMInputStream:InputStream, System.ICloneable
+	public class RAMInputStream:IndexInput, System.ICloneable
 	{
-		private RAMFile file;
-		private int pointer = 0;
+		internal static readonly int BUFFER_SIZE;
 		
-		public RAMInputStream(RAMFile f)
+		private RAMFile file;
+		private long length;
+		
+		private byte[] currentBuffer;
+		private int currentBufferIndex;
+		
+		private int bufferPosition;
+		private long bufferStart;
+		private int bufferLength;
+		
+		public /*internal*/ RAMInputStream(RAMFile f)
 		{
 			file = f;
 			length = file.length;
-		}
-		
-		public override void  ReadInternal(byte[] dest, int destOffset, int len)
-		{
-			int remainder = len;
-			int start = pointer;
-			while (remainder != 0)
+			if (length / BUFFER_SIZE >= System.Int32.MaxValue)
 			{
-				int bufferNumber = start / BUFFER_SIZE;
-				int bufferOffset = start % BUFFER_SIZE;
-				int bytesInBuffer = BUFFER_SIZE - bufferOffset;
-				int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;
-				byte[] buffer = (byte[]) file.buffers[bufferNumber];
-				Array.Copy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
-				destOffset += bytesToCopy;
-				start += bytesToCopy;
-				remainder -= bytesToCopy;
+				throw new System.IO.IOException("Too large RAMFile! " + length);
 			}
-			pointer += len;
+			
+			// make sure that we switch to the
+			// first needed buffer lazily
+			currentBufferIndex = - 1;
+			currentBuffer = null;
 		}
 		
 		public override void  Close()
 		{
+			// nothing to do here
 		}
 		
-		public override void  SeekInternal(long pos)
+		public override long Length()
 		{
-			pointer = (int) pos;
+			return length;
 		}
-        /*
-		override public System.Object Clone()
+		
+		public override byte ReadByte()
 		{
-			return null;
+			if (bufferPosition >= bufferLength)
+			{
+				currentBufferIndex++;
+				SwitchCurrentBuffer(true);
+			}
+			return currentBuffer[bufferPosition++];
 		}
-        */
+		
+		public override void  ReadBytes(byte[] b, int offset, int len)
+		{
+			while (len > 0)
+			{
+				if (bufferPosition >= bufferLength)
+				{
+					currentBufferIndex++;
+					SwitchCurrentBuffer(true);
+				}
+				
+				int remainInBuffer = bufferLength - bufferPosition;
+				int bytesToCopy = len < remainInBuffer?len:remainInBuffer;
+				Array.Copy(currentBuffer, bufferPosition, b, offset, bytesToCopy);
+				offset += bytesToCopy;
+				len -= bytesToCopy;
+				bufferPosition += bytesToCopy;
+			}
+		}
+		
+		private void  SwitchCurrentBuffer(bool enforceEOF)
+		{
+			if (currentBufferIndex >= file.NumBuffers())
+			{
+				// end of file reached, no more buffers left
+				if (enforceEOF)
+					throw new System.IO.IOException("Read past EOF");
+				else
+				{
+					// Force EOF if a read takes place at this position
+					currentBufferIndex--;
+					bufferPosition = BUFFER_SIZE;
+				}
+			}
+			else
+			{
+				currentBuffer = (byte[]) file.GetBuffer(currentBufferIndex);
+				bufferPosition = 0;
+				bufferStart = (long) BUFFER_SIZE * (long) currentBufferIndex;
+				long buflen = length - bufferStart;
+				bufferLength = buflen > BUFFER_SIZE?BUFFER_SIZE:(int) buflen;
+			}
+		}
+		
+		public override long GetFilePointer()
+		{
+			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
+		}
+		
+		public override void  Seek(long pos)
+		{
+			if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
+			{
+				currentBufferIndex = (int) (pos / BUFFER_SIZE);
+				SwitchCurrentBuffer(false);
+			}
+			bufferPosition = (int) (pos % BUFFER_SIZE);
+		}
+		
+		static RAMInputStream()
+		{
+			BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
+		}
 	}
 }

@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,46 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Monodoc.Lucene.Net.Index;
-using Term = Monodoc.Lucene.Net.Index.Term;
-using TermDocs = Monodoc.Lucene.Net.Index.TermDocs;
-namespace Monodoc.Lucene.Net.Search
+
+using IndexReader = Mono.Lucene.Net.Index.IndexReader;
+using Term = Mono.Lucene.Net.Index.Term;
+using TermDocs = Mono.Lucene.Net.Index.TermDocs;
+using ToStringUtils = Mono.Lucene.Net.Util.ToStringUtils;
+using IDFExplanation = Mono.Lucene.Net.Search.Explanation.IDFExplanation;
+
+namespace Mono.Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents containing a term.
 	/// This may be combined with other terms with a {@link BooleanQuery}.
 	/// </summary>
 	[Serializable]
-	public class TermQuery : Query
+	public class TermQuery:Query
 	{
 		private Term term;
 		
 		[Serializable]
-		private class TermWeight : Weight
+		private class TermWeight:Weight
 		{
 			private void  InitBlock(TermQuery enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
 			}
 			private TermQuery enclosingInstance;
-            virtual public Query Query
-            {
-                get
-                {
-                    return Enclosing_Instance;
-                }
-				
-            }
-            virtual public float Value
-            {
-                get
-                {
-                    return value_Renamed;
-                }
-				
-            }
-            public TermQuery Enclosing_Instance
+			public TermQuery Enclosing_Instance
 			{
 				get
 				{
@@ -60,16 +50,19 @@ namespace Monodoc.Lucene.Net.Search
 				}
 				
 			}
-			private Searcher searcher;
+			private Similarity similarity;
 			private float value_Renamed;
 			private float idf;
 			private float queryNorm;
 			private float queryWeight;
+			private IDFExplanation idfExp;
 			
 			public TermWeight(TermQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				idfExp = similarity.IdfExplain(Enclosing_Instance.term, searcher);
+				idf = idfExp.GetIdf();
 			}
 			
 			public override System.String ToString()
@@ -77,73 +70,84 @@ namespace Monodoc.Lucene.Net.Search
 				return "weight(" + Enclosing_Instance + ")";
 			}
 			
-			public virtual float SumOfSquaredWeights()
+			public override Query GetQuery()
 			{
-				idf = Enclosing_Instance.GetSimilarity(searcher).Idf(Enclosing_Instance.term, searcher); // compute idf
+				return Enclosing_Instance;
+			}
+			public override float GetValue()
+			{
+				return value_Renamed;
+			}
+			
+			public override float SumOfSquaredWeights()
+			{
 				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
 				return queryWeight * queryWeight; // square it
 			}
 			
-			public virtual void  Normalize(float queryNorm)
+			public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
-				value_Renamed = queryWeight * idf; // idf for document 
+				value_Renamed = queryWeight * idf; // idf for document
 			}
 			
-			public virtual Scorer Scorer(Monodoc.Lucene.Net.Index.IndexReader reader)
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
 				TermDocs termDocs = reader.TermDocs(Enclosing_Instance.term);
 				
 				if (termDocs == null)
 					return null;
 				
-				return new TermScorer(this, termDocs, Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.term.Field()));
+				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field()));
 			}
 			
-			public virtual Explanation Explain(Monodoc.Lucene.Net.Index.IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				
-				Explanation result = new Explanation();
-				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				ComplexExplanation result = new ComplexExplanation();
+				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + searcher.DocFreq(Enclosing_Instance.term) + ")");
+				Explanation expl = new Explanation(idf, idfExp.Explain());
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
 					queryExpl.AddDetail(boostExpl);
-				queryExpl.AddDetail(idfExpl);
+				queryExpl.AddDetail(expl);
 				
 				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
 				
-				queryExpl.SetValue(boostExpl.GetValue() * idfExpl.GetValue() * queryNormExpl.GetValue());
+				queryExpl.SetValue(boostExpl.GetValue() * expl.GetValue() * queryNormExpl.GetValue());
 				
 				result.AddDetail(queryExpl);
 				
-				// explain Field weight
+				// explain field weight
 				System.String field = Enclosing_Instance.term.Field();
-				Explanation fieldExpl = new Explanation();
+				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
 				
-				Explanation tfExpl = Scorer(reader).Explain(doc);
+				Explanation tfExpl = Scorer(reader, true, false).Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
-				fieldExpl.AddDetail(idfExpl);
+				fieldExpl.AddDetail(expl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(field);
-				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):0.0f;
+				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
 				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(Field=" + field + ", doc=" + doc + ")");
+				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
-				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
+				fieldExpl.SetMatch(tfExpl.IsMatch());
+				fieldExpl.SetValue(tfExpl.GetValue() * expl.GetValue() * fieldNormExpl.GetValue());
 				
 				result.AddDetail(fieldExpl);
+				System.Boolean? tempAux = fieldExpl.GetMatch();
+				result.SetMatch(tempAux);
 				
 				// combine them
 				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
@@ -167,9 +171,14 @@ namespace Monodoc.Lucene.Net.Search
 			return term;
 		}
 		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new TermWeight(this, searcher);
+		}
+		
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			SupportClass.CollectionsHelper.AddIfNotContains(terms, GetTerm());
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
@@ -182,17 +191,7 @@ namespace Monodoc.Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			if (GetBoost() != 1.0f)
-			{
-                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-                nfi.NumberDecimalDigits = 1;
-
-                buffer.Append("^");
-                buffer.Append(GetBoost().ToString("N", nfi));
-
-				//buffer.Append("^");
-				//buffer.Append(GetBoost().ToString());
-			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
@@ -208,7 +207,7 @@ namespace Monodoc.Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
-		}
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+        }
 	}
 }

@@ -113,28 +113,16 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.IsDefined (attributeType, inherit);
 			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.GetCustomAttributes (inherit);
 			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.GetCustomAttributes (attributeType, inherit);
 			throw new NotSupportedException ();
 		}
 	}

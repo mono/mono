@@ -1,10 +1,12 @@
 // 
 // LazyInitializer.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar (marek.safar@gmail.com)
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,21 +28,24 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-
 namespace System.Threading
 {
 	public static class LazyInitializer
 	{
 		public static T EnsureInitialized<T> (ref T target) where T : class
 		{
-			return EnsureInitialized (ref target, GetDefaultCtorValue<T>);
+			return target ?? EnsureInitialized (ref target, GetDefaultCtorValue<T>);
 		}
 		
 		public static T EnsureInitialized<T> (ref T target, Func<T> valueFactory) where T : class
 		{
-			if (target == null)
-				Interlocked.CompareExchange (ref target, valueFactory (), null);
+			if (target == null) {
+				var value = valueFactory ();
+				if (value == null)
+					throw new InvalidOperationException ();
+
+				Interlocked.CompareExchange (ref target, value, null);
+			}
 			
 			return target;
 		}
@@ -52,16 +57,25 @@ namespace System.Threading
 		
 		public static T EnsureInitialized<T> (ref T target, ref bool initialized, ref object syncLock, Func<T> valueFactory)
 		{
+			if (initialized)
+				return target;
+
+			if (syncLock == null)
+				Interlocked.CompareExchange (ref syncLock, new object (), null);
+
 			lock (syncLock) {
 				if (initialized)
 					return target;
 				
 				initialized = true;
-				return target = valueFactory ();
+				Thread.MemoryBarrier ();
+				target = valueFactory ();
 			}
+
+			return target;
 		}
 		
-		internal static T GetDefaultCtorValue<T> ()
+		static T GetDefaultCtorValue<T> ()
 		{
 			try { 
 				return Activator.CreateInstance<T> ();
@@ -69,11 +83,6 @@ namespace System.Threading
 				throw new MissingMemberException ("The type being lazily initialized does not have a "
 				                                  + "public, parameterless constructor.");
 			}
-		}
-
-		internal static T GetDefaultValueFactory<T> ()
-		{
-			return default (T);
 		}
 	}
 }

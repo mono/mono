@@ -373,6 +373,7 @@ System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs
 System.Text/UTF32EncodingTest.cs
 System.Threading/AutoResetEventTest.cs
+System.Threading/CancellationTokenSourceTest.cs
 System.Threading/CompressedStackTest.cs
 System.Threading/EventWaitHandleTest.cs
 System.Threading/ExecutionContextTest.cs
@@ -382,6 +383,7 @@ System.Threading/ThreadTest.cs
 System.Threading/ReaderWriterLockTest.cs
 System.Threading/TimerTest.cs
 System.Threading/InterlockedTest.cs
+System.Threading/LazyInitializerTest.cs
 System.Threading/WaitHandleTest.cs
 System.Threading/VolatileTest.cs
 System/TimeSpanTest.cs

@@ -25,8 +25,8 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Text;
 using System.Collections;
-using Monodoc.Lucene.Net.Index;
-using Monodoc.Lucene.Net.Documents;
+using Mono.Lucene.Net.Index;
+using Mono.Lucene.Net.Documents;
 
 using Mono.Documentation;
 
@@ -1998,7 +1998,13 @@ public class EcmaHelpSource : HelpSource {
 						if (c.Element == "*")
 							continue;
 						int i = 1;
+						const float innerTypeBoost = 0.2f;
+
 						foreach (Node nc in c.Nodes) {
+							// Disable constructors indexing as it's often "polluting" search queries
+							// because it has the same hottext than standard types
+							if (c.Caption == "Constructors")
+								continue;
 							//xpath to the docs xml node
 							string xpath;
 							if (c.Caption == "Constructors")
@@ -2040,7 +2046,9 @@ public class EcmaHelpSource : HelpSource {
 							GetExamples (xmln, text);
 							doc_nod.examples = text.ToString ();
 
-							writer.AddDocument (doc_nod.LuceneDoc);
+							Document lucene_doc = doc_nod.LuceneDoc;
+							lucene_doc.SetBoost (innerTypeBoost);
+							writer.AddDocument (lucene_doc);
 						}
 					}
 				//
@@ -2091,7 +2099,7 @@ public class EcmaHelpSource : HelpSource {
 					doc.examples = text.ToString();
 
 					writer.AddDocument (doc.LuceneDoc);
-				} 
+				}
 			}
 		}
 	}

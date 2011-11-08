@@ -1,9 +1,10 @@
-/*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -13,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Monodoc.Lucene.Net.Search
+
+namespace Mono.Lucene.Net.Search
 {
 	
 	/// <summary>Expert: Returned by low-level search implementations.</summary>
@@ -27,7 +30,7 @@ namespace Monodoc.Lucene.Net.Search
 		public float score;
 		
 		/// <summary>Expert: A hit document's number.</summary>
-		/// <seealso cref="Searcher#Doc(int)">
+		/// <seealso cref="Searcher.Doc(int)">
 		/// </seealso>
 		public int doc;
 		
@@ -36,6 +39,12 @@ namespace Monodoc.Lucene.Net.Search
 		{
 			this.doc = doc;
 			this.score = score;
+		}
+		
+		// A convenience method for debugging.
+		public override System.String ToString()
+		{
+			return "doc=" + doc + " score=" + score;
 		}
 	}
 }

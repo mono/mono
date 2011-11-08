@@ -91,6 +91,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void GetMethodsWorkWithFunkyInstantiations ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -111,6 +113,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void GetEventMustWorkUnderCompilerContext ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
