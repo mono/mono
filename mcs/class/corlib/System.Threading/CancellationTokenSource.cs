@@ -76,7 +76,8 @@ namespace System.Threading
 			if (millisecondsDelay < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsDelay");
 
-			timer = new Timer (timer_callback, this, millisecondsDelay, Timeout.Infinite);
+			if (millisecondsDelay != Timeout.Infinite)
+				timer = new Timer (timer_callback, this, millisecondsDelay, Timeout.Infinite);
 		}
 
 		public CancellationTokenSource (TimeSpan delay)
@@ -161,7 +162,7 @@ namespace System.Threading
 
 			CheckDisposed ();
 
-			if (canceled)
+			if (canceled || millisecondsDelay == Timeout.Infinite)
 				return;
 
 			if (timer == null) {
@@ -177,7 +178,7 @@ namespace System.Threading
 
 		public static CancellationTokenSource CreateLinkedTokenSource (CancellationToken token1, CancellationToken token2)
 		{
-			return CreateLinkedTokenSource (token1, token2);
+			return CreateLinkedTokenSource (new [] { token1, token2 });
 		}
 		
 		public static CancellationTokenSource CreateLinkedTokenSource (params CancellationToken[] tokens)
