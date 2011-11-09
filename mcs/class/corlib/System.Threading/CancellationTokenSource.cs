@@ -1,10 +1,12 @@
 // 
 // CancellationTokenSource.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar (marek.safar@gmail.com)
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +27,6 @@
 // THE SOFTWARE.
 
 #if NET_4_0 || MOBILE
-using System;
 using System.Collections.Generic;
 
 namespace System.Threading
@@ -37,85 +38,58 @@ namespace System.Threading
 	{
 		bool canceled;
 		bool processed;
+		bool disposed;
 		
 		int currId = int.MinValue;
+
+		Dictionary<CancellationTokenRegistration, Action> callbacks;
 		
-		Dictionary<CancellationTokenRegistration, Action> callbacks
-			= new Dictionary<CancellationTokenRegistration, Action> ();
-		
-		ManualResetEvent handle = new ManualResetEvent (false);
-		
-		object syncRoot = new object ();
+		ManualResetEvent handle;
+		readonly object syncRoot = new object ();
+		Timer timer;
 		
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
 		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
+		static readonly TimerCallback timer_callback;
 
 		static CancellationTokenSource ()
 		{
 			CanceledSource.processed = true;
 			CanceledSource.canceled = true;
+
+			timer_callback = token => {
+				var cts = (CancellationTokenSource) token;
+				cts.Cancel ();
+			};
 		}
-		
-		public void Cancel ()
+
+		public CancellationTokenSource ()
 		{
-			Cancel (false);
+			callbacks = new Dictionary<CancellationTokenRegistration, Action> ();
+			handle = new ManualResetEvent (false);
 		}
-		
-		// If parameter is true we throw exception as soon as they appear otherwise we aggregate them
-		public void Cancel (bool throwOnFirstException)
+
+#if NET_4_5
+		public CancellationTokenSource (int millisecondsDelay)
+			: this ()
 		{
-			canceled = true;
-			handle.Set ();
-			
-			List<Exception> exceptions = null;
-			if (!throwOnFirstException)
-				exceptions = new List<Exception> ();
-			
-			lock (callbacks) {
-				foreach (KeyValuePair<CancellationTokenRegistration, Action> item in callbacks) {
-					if (throwOnFirstException) {
-						item.Value ();
-					} else {
-						try {
-							item.Value ();
-						} catch (Exception e) {
-							exceptions.Add (e);
-						}
-					}
-				}
-			}
-			
-			Thread.MemoryBarrier ();
-			processed = true;
-			
-			if (exceptions != null && exceptions.Count > 0)
-				throw new AggregateException (exceptions);
+			if (millisecondsDelay < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsDelay");
+
+			if (millisecondsDelay != Timeout.Infinite)
+				timer = new Timer (timer_callback, this, millisecondsDelay, Timeout.Infinite);
 		}
-		
-		public void Dispose ()
+
+		public CancellationTokenSource (TimeSpan delay)
+			: this (CheckTimeout (delay))
 		{
-			
 		}
-		
-		public static CancellationTokenSource CreateLinkedTokenSource (CancellationToken token1, CancellationToken token2)
-		{
-			return CreateLinkedTokenSource (new CancellationToken[] { token1, token2 });
-		}
-		
-		public static CancellationTokenSource CreateLinkedTokenSource (params CancellationToken[] tokens)
-		{
-			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.Cancel;
-			
-			foreach (CancellationToken token in tokens)
-				token.Register (action);
-			
-			return src;
-		}
-		
+#endif
+
 		public CancellationToken Token {
 			get {
-				return CreateToken ();
+				CheckDisposed ();
+				return new CancellationToken (this);
 			}
 		}
 		
@@ -127,13 +101,147 @@ namespace System.Threading
 		
 		internal WaitHandle WaitHandle {
 			get {
+				CheckDisposed ();
 				return handle;
+			}
+		}
+		
+		public void Cancel ()
+		{
+			Cancel (false);
+		}
+		
+		// If parameter is true we throw exception as soon as they appear otherwise we aggregate them
+		public void Cancel (bool throwOnFirstException)
+		{
+			CheckDisposed ();
+
+			canceled = true;
+			handle.Set ();
+			
+			List<Exception> exceptions = null;
+			
+			lock (callbacks) {
+				try {
+					foreach (var item in callbacks) {
+						if (throwOnFirstException) {
+							item.Value ();
+						} else {
+							try {
+								item.Value ();
+							} catch (Exception e) {
+								if (exceptions == null)
+									exceptions = new List<Exception> ();
+
+								exceptions.Add (e);
+							}
+						}
+					}
+				} finally {
+					callbacks.Clear ();
+				}
+			}
+			
+			Thread.MemoryBarrier ();
+			processed = true;
+			
+			if (exceptions != null)
+				throw new AggregateException (exceptions);
+		}
+
+#if NET_4_5
+		public void CancelAfter (TimeSpan delay)
+		{
+			CancelAfter (CheckTimeout (delay));
+		}
+
+		public void CancelAfter (int millisecondsDelay)
+		{
+			if (millisecondsDelay < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsDelay");
+
+			CheckDisposed ();
+
+			if (canceled || millisecondsDelay == Timeout.Infinite)
+				return;
+
+			if (timer == null) {
+				// Have to be carefull not to create secondary background timer
+				var t = new Timer (timer_callback, this, Timeout.Infinite, Timeout.Infinite);
+				if (Interlocked.CompareExchange (ref timer, t, null) != null)
+					t.Dispose ();
+			}
+
+			timer.Change (millisecondsDelay, Timeout.Infinite);
+		}
+#endif
+
+		public static CancellationTokenSource CreateLinkedTokenSource (CancellationToken token1, CancellationToken token2)
+		{
+			return CreateLinkedTokenSource (new [] { token1, token2 });
+		}
+		
+		public static CancellationTokenSource CreateLinkedTokenSource (params CancellationToken[] tokens)
+		{
+			if (tokens == null)
+				throw new ArgumentNullException ("tokens");
+
+			if (tokens.Length == 0)
+				throw new ArgumentException ("Empty tokens array");
+
+			CancellationTokenSource src = new CancellationTokenSource ();
+			Action action = src.Cancel;
+
+			foreach (CancellationToken token in tokens) {
+				if (token.CanBeCanceled)
+					token.Register (action);
+			}
+			
+			return src;
+		}
+
+		static int CheckTimeout (TimeSpan delay)
+		{
+			try {
+				return checked ((int) delay.TotalMilliseconds);
+			} catch (OverflowException) {
+				throw new ArgumentOutOfRangeException ("delay");
+			}
+		}
+
+		void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().Name);
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+#if NET_4_5
+		protected virtual
+#endif
+		void Dispose (bool disposing)
+		{
+			if (disposing && !disposed) {
+				disposed = true;
+
+				callbacks = null;
+				if (timer != null)
+					timer.Dispose ();
+
+				handle.Dispose ();
 			}
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)
 		{
-			CancellationTokenRegistration tokenReg = GetTokenReg ();
+			CheckDisposed ();
+
+			var tokenReg = new CancellationTokenRegistration (Interlocked.Increment (ref currId), this);
+
 			if (canceled) {
 				callback ();
 			} else {
@@ -164,19 +272,6 @@ namespace System.Threading
 			while (!processed)
 				sw.SpinOnce ();
 			
-		}
-
-		CancellationTokenRegistration GetTokenReg ()
-		{
-			CancellationTokenRegistration registration
-				= new CancellationTokenRegistration (Interlocked.Increment (ref currId), this);
-			
-			return registration;
-		}
-		
-		CancellationToken CreateToken ()
-		{
-			return new CancellationToken (this);
 		}
 	}
 }

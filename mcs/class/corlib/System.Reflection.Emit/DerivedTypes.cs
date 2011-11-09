@@ -58,12 +58,6 @@ namespace System.Reflection.Emit
 
 		internal abstract String FormatName (string elementName);
 
-		internal override bool IsCompilerContext {
-			get {
-				return elementType.IsCompilerContext;
-			}
-		}
-
 		public override Type GetInterface (string name, bool ignoreCase)
 		{
 			throw new NotSupportedException ();
@@ -361,8 +355,6 @@ namespace System.Reflection.Emit
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
-			if (IsCompilerContext)
-				return (elementType.Attributes & TypeAttributes.VisibilityMask) | TypeAttributes.Sealed | TypeAttributes.Serializable;
 			return elementType.Attributes;
 		}
 

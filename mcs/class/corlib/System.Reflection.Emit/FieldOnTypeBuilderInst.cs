@@ -72,30 +72,22 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.IsDefined (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.GetCustomAttributes (inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.GetCustomAttributes (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override string ToString ()
 		{
-			if (!instantiation.IsCompilerContext)
-				return fb.FieldType.ToString () + " " + Name;
-			return FieldType.ToString () + " " + Name;
+			return fb.FieldType.ToString () + " " + Name;
 		}
 		//
 		// FieldInfo members
@@ -115,17 +107,13 @@ namespace System.Reflection.Emit
 
 		public override int MetadataToken {
 			get {
-				if (!instantiation.IsCompilerContext)
-					throw new InvalidOperationException ();
-				return fb.MetadataToken;
+				throw new InvalidOperationException ();
 			} 
 		}
 
 		public override Type FieldType {
 			get {
-				if (!instantiation.IsCompilerContext)
-					throw new NotSupportedException ();
-				return instantiation.InflateType (fb.FieldType);
+				throw new NotSupportedException ();
 			}
 		}
 

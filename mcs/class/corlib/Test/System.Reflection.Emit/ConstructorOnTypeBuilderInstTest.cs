@@ -452,6 +452,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void MetadataTokenWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
