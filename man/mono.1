@@ -1136,6 +1136,13 @@ scanning is available.
 \fBcheck-scan-starts\fR
 If set, does a plausibility check on the scan_starts before and after each collection
 .TP
+\fBverify-nursery-at-minor-gc\fR
+If set, does a complete object walk of the nursery at the start of each minor collection.
+.TP
+\fBdump-nursery-at-minor-gc\fR
+If set, dumps the contents of the nursery at the start of each minor collection. Requires 
+verify-nursery-at-minor-gc to be set.
+.TP
 \fBheap-dump=\fIfile\fR
 Dumps the heap contents to the specified file.   To visualize the
 information, use the mono-heapviz tool.
