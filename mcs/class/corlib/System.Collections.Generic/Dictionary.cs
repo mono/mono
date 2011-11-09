@@ -12,7 +12,7 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite
 // Copyright (C) 2007 HotFeet GmbH (http://www.hotfeet.ch)
-// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
