@@ -1,0 +1,6 @@
+System.Net.Http/HttpClientTest.cs
+System.Net.Http/HttpMethodTest.cs
+System.Net.Http/HttpRequestMessageTest.cs
+System.Net.Http.Headers/HttpHeadersTest.cs
+System.Net.Http.Headers/TransferCodingHeaderValueTest.cs
+System.Net.Http.Headers/TransferCodingWithQualityHeaderValueTest.cs
