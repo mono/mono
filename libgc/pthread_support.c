@@ -692,6 +692,9 @@ GC_thread GC_new_thread(pthread_t id)
     }
     if (result == 0) return(0);
     result -> id = id;
+#ifdef PLATFORM_ANDROID
+    result -> kernel_id = gettid();
+#endif
     result -> next = GC_threads[hv];
     GC_threads[hv] = result;
     GC_ASSERT(result -> flags == 0 && result -> thread_blocked == 0);
@@ -1379,6 +1382,10 @@ int GC_thread_register_foreign (void *base_addr)
 
 void * GC_start_routine(void * arg)
 {
+#if defined(PLATFORM_ANDROID)
+	extern int prctl(int option, unsigned long arg2, unsigned long arg3 , unsigned long arg4, unsigned long arg5);
+	prctl(15/*PR_SET_NAME*/, (unsigned long)__FUNCTION__,0,0,0);
+#endif
     int dummy;
     struct start_info * si = arg;
     void * result;

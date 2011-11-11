@@ -10,6 +10,9 @@
 #include <config.h>
 #include <glib.h>
 #include <string.h>
+#if defined(PLATFORM_ANDROID)
+	#include <sys/prctl.h>
+#endif
 
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-gc.h>
@@ -1011,6 +1014,9 @@ finalize_domain_objects (DomainFinalizationReq *req)
 static guint32
 finalizer_thread (gpointer unused)
 {
+#if defined(PLATFORM_ANDROID)	
+	prctl(PR_SET_NAME, (unsigned long)"__MONO__",0,0,0);
+#endif
 	while (!finished) {
 		/* Wait to be notified that there's at least one
 		 * finaliser to run
