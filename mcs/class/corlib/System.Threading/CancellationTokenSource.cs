@@ -46,21 +46,26 @@ namespace System.Threading
 		
 		ManualResetEvent handle;
 		readonly object syncRoot = new object ();
-		Timer timer;
 		
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
 		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
+		
+#if NET_4_5
 		static readonly TimerCallback timer_callback;
+		Timer timer;
+#endif
 
 		static CancellationTokenSource ()
 		{
 			CanceledSource.processed = true;
 			CanceledSource.canceled = true;
 
+#if NET_4_5
 			timer_callback = token => {
 				var cts = (CancellationTokenSource) token;
 				cts.Cancel ();
 			};
+#endif
 		}
 
 		public CancellationTokenSource ()
@@ -229,9 +234,10 @@ namespace System.Threading
 				disposed = true;
 
 				callbacks = null;
+#if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
-
+#endif
 				handle.Dispose ();
 			}
 		}
