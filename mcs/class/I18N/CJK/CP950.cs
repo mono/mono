@@ -27,6 +27,7 @@ namespace I18N.CJK
 			return DbcsConvert.Big5;
 		}
 
+#if !DISABLE_UNSAFE
 		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetByteCountImpl (char* chars, int count)
 		{
@@ -80,7 +81,7 @@ namespace I18N.CJK
 #if NET_2_0
 					HandleFallback (ref buffer, chars,
 						ref charIndex, ref charCount,
-						bytes, ref byteIndex, ref byteCount);
+						bytes, ref byteIndex, ref byteCount, null);
 #else
 					bytes[byteIndex++] = (byte)'?';
 #endif
@@ -91,7 +92,77 @@ namespace I18N.CJK
 			}
 			return byteIndex - origIndex;
 		}
-		
+#else
+		// Get the bytes that result from encoding a character buffer.
+		public override int GetByteCount(char[] chars, int index, int count)
+		{
+			DbcsConvert convert = GetConvert();
+			int length = 0;
+
+			while (count-- > 0)
+			{
+				char c = chars[index++];
+				if (c <= 0x80 || c == 0xFF)
+				{ // ASCII
+					length++;
+					continue;
+				}
+				byte b1 = convert.u2n[((int)c) * 2 + 1];
+				byte b2 = convert.u2n[((int)c) * 2];
+				if (b1 == 0 && b2 == 0)
+				{
+#if NET_2_0
+					// FIXME: handle fallback for GetByteCountImpl().
+					length++;
+#else
+					length++;
+#endif
+				}
+				else
+					length += 2;
+			}
+			return length;
+		}
+
+		// Get the bytes that result from encoding a character buffer.
+		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+		{
+			int byteCount = bytes.Length;
+
+			DbcsConvert convert = GetConvert();
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
+
+			int origIndex = byteIndex;
+			while (charCount-- > 0)
+			{
+				char c = chars[charIndex++];
+				if (c <= 0x80 || c == 0xFF)
+				{ // ASCII
+					bytes[byteIndex++] = (byte)c;
+					continue;
+				}
+				byte b1 = convert.u2n[((int)c) * 2 + 1];
+				byte b2 = convert.u2n[((int)c) * 2];
+				if (b1 == 0 && b2 == 0)
+				{
+#if NET_2_0
+					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+						bytes, ref byteIndex, ref byteCount, null);
+#else
+					bytes[byteIndex++] = (byte)'?';
+#endif
+				}
+				else
+				{
+					bytes[byteIndex++] = b1;
+					bytes[byteIndex++] = b2;
+				}
+			}
+			return byteIndex - origIndex;
+		}
+#endif
 		// Get the characters that result from decoding a byte buffer.
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)

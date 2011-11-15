@@ -33,14 +33,34 @@ namespace I18N.Common
 		}
 
 #if NET_2_0
+		/// <summary>
+		/// GetBytes method used internally by state-full encoders/encodings.
+		/// </summary>
+		/// <param name="chars">The chars.</param>
+		/// <param name="charIndex">Index of the char.</param>
+		/// <param name="charCount">The char count.</param>
+		/// <param name="bytes">The bytes.</param>
+		/// <param name="byteIndex">Index of the byte.</param>
+		/// <param name="flush">if set to <c>true</c> [flush].</param>
+		/// <param name="encoding">The encoding class to use (or null if state-less).</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Only state-full encoders need to implement this method (ie. ISO-2022-JP)
+		/// </remarks>
+		protected unsafe virtual int GetBytesInternal(char *chars, int charCount,
+				byte *bytes, int byteCount, bool flush, object state)
+		{
+			throw new NotImplementedException("Statefull encoding is not implemented (yet?) by this encoding class.");
+		}
+
 		public unsafe void HandleFallback (ref EncoderFallbackBuffer buffer,
 			char* chars, ref int charIndex, ref int charCount,
-			byte* bytes, ref int byteIndex, ref int byteCount)
+			byte* bytes, ref int byteIndex, ref int byteCount, object state)
 		{
 			if (buffer == null)
 				buffer = EncoderFallback.CreateFallbackBuffer ();
-			if (Char.IsSurrogate (chars [charIndex]) && charCount > 0 &&
-				Char.IsSurrogate (chars [charIndex + 1])) {
+
+			if (charCount > 1 && (Char.IsSurrogate (chars [charIndex]) && Char.IsSurrogate (chars [charIndex + 1]))) {
 				buffer.Fallback (chars [charIndex], chars [charIndex + 1], charIndex);
 				charIndex++;
 				charCount--;
@@ -51,9 +71,24 @@ namespace I18N.Common
 			int idx = 0;
 			while (buffer.Remaining > 0)
 				tmp [idx++] = buffer.GetNextChar ();
+
 			fixed (char* tmparr = tmp) {
-				byteIndex += GetBytes (tmparr, tmp.Length, bytes + byteIndex, byteCount);
+				var outbytes = bytes == null ? null : bytes + byteIndex;
+				var len = state == null ?
+					GetBytes(tmparr, tmp.Length, outbytes, byteCount)
+					: GetBytesInternal(tmparr, tmp.Length, outbytes, byteCount, true, state);
+
+				byteIndex += len;
+				byteCount -= len;
 			}
+		}
+
+		public unsafe void HandleFallback (ref EncoderFallbackBuffer buffer,
+			char* chars, ref int charIndex, ref int charCount,
+			byte* bytes, ref int byteIndex, ref int byteCount)
+		{
+			HandleFallback(ref buffer, chars, ref charIndex, ref charCount,
+				bytes, ref byteIndex, ref byteCount, null);
 		}
 #endif
 
@@ -262,13 +297,21 @@ namespace I18N.Common
 
 			public unsafe void HandleFallback (
 				char* chars, ref int charIndex, ref int charCount,
-				byte* bytes, ref int byteIndex, ref int byteCount)
+				byte* bytes, ref int byteIndex, ref int byteCount, object state)
 			{
 				EncoderFallbackBuffer buffer = FallbackBuffer;
 				encoding.HandleFallback (ref buffer,
 					chars, ref charIndex, ref charCount,
-					bytes, ref byteIndex, ref byteCount);
+					bytes, ref byteIndex, ref byteCount, state);
 			}
+
+/*			public unsafe void HandleFallback(
+				char* chars, ref int charIndex, ref int charCount,
+				byte* bytes, ref int byteIndex, ref int byteCount)
+			{
+				HandleFallback(chars, ref charIndex, ref charCount,
+					bytes, ref byteIndex, ref byteCount, null);
+			}*/
 		#endif
 		}
 }

@@ -49,11 +49,30 @@ namespace I18N.CJK
 			MethodInfo mi = typeof (Assembly).GetMethod (
 				"GetManifestResourceInternal",
 				BindingFlags.NonPublic | BindingFlags.Instance);
+
 			int size = 0;
 			Module mod = null;
-			IntPtr ret = (IntPtr) mi.Invoke (
-				Assembly.GetExecutingAssembly (),
-				new object [] {"gb18030.table", size, mod});
+			IntPtr ret = IntPtr.Zero;
+
+			if (mi != null)
+			{
+				ret = (IntPtr)mi.Invoke(
+				 Assembly.GetExecutingAssembly(),
+				 new object[] { "gb18030.table", size, mod });
+			}
+			else
+			{
+				// DotNet's way ;)
+				using (var ms = Assembly.GetExecutingAssembly()
+					.GetManifestResourceStream("gb18030.table"))
+				{
+					var data = new byte[ms.Length];
+					ms.Read(data, 0, data.Length);
+
+					fixed (byte* p = data) ret = (IntPtr)p;
+				}
+			}
+
 			if (ret != IntPtr.Zero) {
 				gbx2uni = (byte*) ((void*) ret);
 				gbx2uniSize =
