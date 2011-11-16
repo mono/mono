@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Runtime.InteropServices;
 #if BUILD_GENERATOR
 using System.IO;
 using System.Xml;
@@ -43,7 +44,6 @@ namespace I18N.CJK
 		static readonly byte *gbx2uni;
 		static readonly byte *uni2gbx;
 		static readonly int gbx2uniSize, uni2gbxSize;
-		static readonly byte[] table;
 
 		static GB18030Source ()
 		{
@@ -67,11 +67,13 @@ namespace I18N.CJK
 				using (var ms = Assembly.GetExecutingAssembly()
 					.GetManifestResourceStream("gb18030.table"))
 				{
-					table = new byte[ms.Length];
-					ms.Read(table, 0, table.Length);
+					var len = (int)ms.Length;
+					byte* buf = (byte*)Marshal.AllocHGlobal(sizeof(byte) * len);
 
-					// Table is a static field, so it wont be collected by GC.
-					fixed (byte* p = table) ret = (IntPtr)p;
+					for (int i = 0; i < len; i++)
+						buf[i] = (byte)ms.ReadByte();
+					
+					ret = (IntPtr)buf;
 				}
 			}
 
