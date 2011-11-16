@@ -128,6 +128,16 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void TestSort ()
+		{
+			DataView dv = new DataView ();
+			dv.Sort = "abc";
+			dv.Sort = string.Empty;
+			dv.Sort = "abc";
+			AssertEquals ("test#01", "abc", dv.Sort);
+		}
+
+		[Test]
 		public void DataView ()
 		{
 			DataView dv1,dv2,dv3;
