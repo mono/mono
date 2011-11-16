@@ -43,6 +43,7 @@ namespace I18N.CJK
 		static readonly byte *gbx2uni;
 		static readonly byte *uni2gbx;
 		static readonly int gbx2uniSize, uni2gbxSize;
+		static readonly byte[] table;
 
 		static GB18030Source ()
 		{
@@ -66,10 +67,11 @@ namespace I18N.CJK
 				using (var ms = Assembly.GetExecutingAssembly()
 					.GetManifestResourceStream("gb18030.table"))
 				{
-					var data = new byte[ms.Length];
-					ms.Read(data, 0, data.Length);
+					table = new byte[ms.Length];
+					ms.Read(table, 0, table.Length);
 
-					fixed (byte* p = data) ret = (IntPtr)p;
+					// Table is a static field, so it wont be collected by GC.
+					fixed (byte* p = table) ret = (IntPtr)p;
 				}
 			}
 
