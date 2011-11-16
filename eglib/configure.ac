@@ -58,12 +58,19 @@ i*86-*-darwin*)
     ;;
 esac
 
+case $ANDROID_PLATFORM in
+android*)
+	needs_libgcc=yes
+	;;
+esac
+
 AC_SUBST(ORDER)
 AC_SUBST(CFLAGS)
 AC_SUBST(PATHSEP)
 AC_SUBST(SEARCHSEP)
 AC_SUBST(OS)
 AM_CONDITIONAL(PLATFORM_WIN32, test x$OS = xWIN32)
+AM_CONDITIONAL(NEEDS_LIBGCC, test x$needs_libgcc = xyes)
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)

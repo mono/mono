@@ -52,6 +52,10 @@ else
 libeglib_la_LIBADD = -lm
 endif
 
+if NEEDS_LIBGCC
+libeglib_la_LIBADD += -lm -lgcc
+endif
+
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = eglib-config.h.in $(win_files) $(unix_files)
