@@ -975,7 +975,6 @@ namespace Mono.CSharp
 					instance.Emit (ec);
 					temp.Store (ec);
 					temp.AddressOf (ec, AddressOp.Load);
-					temp.Release (ec);
 				}
 
 				return ReferenceContainer.MakeType (ec.Module, instance_type);

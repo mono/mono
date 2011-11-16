@@ -5129,7 +5129,7 @@
         <size>209</size>
       </method>
       <method name="Void TestPairLog()">
-        <size>181</size>
+        <size>184</size>
       </method>
     </type>
     <type name="Pair`2[T,U]">
@@ -6875,7 +6875,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>199</size>
+        <size>201</size>
       </method>
     </type>
     <type name="S">
@@ -44739,6 +44739,24 @@
     <type name="C">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-833.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()">
+        <size>77</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+DC">
+      <method name="Guid get_Id()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Guid)">
+        <size>8</size>
       </method>
     </type>
   </test>
