@@ -5599,8 +5599,9 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Property", args);
 		}
 
-		public Expression CreateSetterTypeOfExpression ()
+		public Expression CreateSetterTypeOfExpression (ResolveContext rc)
 		{
+			DoResolveLValue (rc, null);
 			return new TypeOfMethod (Setter, loc);
 		}
 

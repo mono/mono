@@ -20083,6 +20083,34 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-27.cs">
+    <type name="Node">
+      <method name="System.String get_Name()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Name(System.String)">
+        <size>8</size>
+      </method>
+      <method name="Node get_Parent()">
+        <size>19</size>
+      </method>
+      <method name="Void set_Parent(Node)">
+        <size>8</size>
+      </method>
+      <method name="System.Collections.Generic.List`1[System.Int32] get_Values()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Values(System.Collections.Generic.List`1[System.Int32])">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>601</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">

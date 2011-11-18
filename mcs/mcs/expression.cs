@@ -9370,12 +9370,18 @@ namespace Mono.CSharp
 			if (fe != null)
 				args.Add (new Argument (fe.CreateTypeOfExpression ()));
 			else
-				args.Add (new Argument (((PropertyExpr)target).CreateSetterTypeOfExpression ()));
+				args.Add (new Argument (((PropertyExpr) target).CreateSetterTypeOfExpression (ec)));
+
+			string mname;
+			var cinit = source as CollectionOrObjectInitializers;
+			if (cinit == null) {
+				mname = "Bind";
+			} else {
+				mname = cinit.Initializers[0] is ElementInitializer ? "MemberBind" : "ListBind";
+			}
 
 			args.Add (new Argument (source.CreateExpressionTree (ec)));
-			return CreateExpressionFactoryCall (ec,
-				source is CollectionOrObjectInitializers ? "ListBind" : "Bind",
-				args);
+			return CreateExpressionFactoryCall (ec, mname, args);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -9539,6 +9545,12 @@ namespace Mono.CSharp
 		{
 			this.initializers = initializers;
 			this.loc = loc;
+		}
+
+		public IList<Expression> Initializers {
+			get {
+				return initializers;
+			}
 		}
 		
 		public bool IsEmpty {
