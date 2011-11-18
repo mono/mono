@@ -9,8 +9,8 @@ my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
 my $iphone_simulator = 0;
-my $macversion = "10.4";
-my $sdkversion = "10.4u";
+my $macversion = "10.6";
+my $sdkversion = "10.6";
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
@@ -95,7 +95,7 @@ if (not $skipbuild)
 	}
 	
 	#this will fail on a fresh working copy, so don't die on it.
-	system("make distclean");
+	# system("make distclean");
 	#were going to tell autogen to use a specific cache file, that we purposely remove before starting.
         #that way, autogen is forced to do all its config stuff again, which should make this buildscript
         #more robust if other targetplatforms have been built from this same workincopy
@@ -104,7 +104,7 @@ if (not $skipbuild)
 	chdir("$root/eglib") eq 1 or die ("Failed chdir 1");
 	
 	#this will fail on a fresh working copy, so don't die on it.
-	system("make distclean");
+	# system("make distclean");
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
 	chdir("$root") eq 1 or die ("failed to chdir 2");
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing mono");
@@ -138,7 +138,7 @@ if (not $skipbuild)
 	system("calling ./configure",@autogenparams);
 	system("./configure", @autogenparams) eq 0 or die ("failing configuring mono");
 
-	system("make clean") eq 0 or die ("failed make cleaning");
+	# system("make clean") eq 0 or die ("failed make cleaning");
 	if ($iphone_simulator)
 	{
 		system("perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h");
