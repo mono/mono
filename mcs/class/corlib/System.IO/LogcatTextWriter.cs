@@ -9,6 +9,8 @@ namespace System.IO {
 
 	class LogcatTextWriter : TextWriter {
 
+		const string LibLog = "/system/lib/liblog.so";
+
 		TextWriter stdout;
 		readonly string appname;
 		StringBuilder line = new StringBuilder ();
@@ -58,7 +60,12 @@ namespace System.IO {
 			Silent
 		}
 
-		[DllImport ("/system/lib/liblog.so")]
+		public static bool IsRunningOnAndroid ()
+		{
+			return File.Exists (LibLog);
+		}
+
+		[DllImport (LibLog)]
 		static extern void __android_log_print (LogLevel level, string appname, string format, string args, IntPtr zero);
 
 		static void Log (LogLevel level, string appname, string log)
