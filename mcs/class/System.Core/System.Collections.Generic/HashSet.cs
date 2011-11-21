@@ -572,21 +572,50 @@ namespace System.Collections.Generic {
 			return setComparer;
 		}
 
-		[MonoTODO]
 		[SecurityPermission (SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			if (info == null) {
+				throw new ArgumentNullException("info");
+			}
+			info.AddValue("Version", generation);
+			info.AddValue("Comparer", comparer, typeof(IEqualityComparer<T>));
+			info.AddValue("Capacity", (table == null) ? 0 : table.Length);
+			if (table != null) {
+				T[] tableArray = new T[table.Length];
+				CopyTo(tableArray);
+				info.AddValue("Elements", tableArray, typeof(T[]));
+			}
 		}
 
-		[MonoTODO]
 		public virtual void OnDeserialization (object sender)
 		{
-			if (si == null)
-				return;
+			if (si != null)
+			{
+				generation = (int) si.GetValue("Version", typeof(int));
+				comparer = (IEqualityComparer<T>) si.GetValue("Comparer", 
+									      typeof(IEqualityComparer<T>));
+				int capacity = (int) si.GetValue("Capacity", typeof(int));
 
-			throw new NotImplementedException ();
+				empty_slot = NO_SLOT;
+				if (capacity > 0) {
+					table = new int[capacity];
+					slots = new T[capacity];
+
+					T[] tableArray = (T[]) si.GetValue("Elements", typeof(T[]));
+					if (tableArray == null) 
+						throw new SerializationException("Missing Elements");
+
+					for (int iElement = 0; iElement < tableArray.Length; iElement++) {
+						Add(tableArray[iElement]);
+					}
+				} else 
+					table = null;
+
+				si = null;
+			}
 		}
+
 
 		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
 		{
