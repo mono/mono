@@ -178,6 +178,11 @@ namespace System
 			console_stdin = stdin;
 #endif
 
+#if MONODROID
+			stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
+			stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
+#endif  // MONODROID
+
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
 			GC.SuppressFinalize (stdin);

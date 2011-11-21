@@ -426,6 +426,7 @@ System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/FileSystemInfo.cs
 System.IO/IOException.cs
+System.IO/LogcatTextWriter.cs
 System.IO/MemoryStream.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
