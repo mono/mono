@@ -179,8 +179,10 @@ namespace System
 #endif
 
 #if MONODROID
-			stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
-			stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
+			if (LogcatTextWriter.IsRunningOnAndroid ()) {
+				stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
+				stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
+			}
 #endif  // MONODROID
 
 			GC.SuppressFinalize (stdout);
