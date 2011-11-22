@@ -208,6 +208,7 @@ namespace Mono.CSharp
 		public readonly PredefinedType MethodBase;
 		public readonly PredefinedType MethodInfo;
 		public readonly PredefinedType ConstructorInfo;
+		public readonly PredefinedType MemberBinding;
 
 		//
 		// C# 4.0
@@ -256,6 +257,7 @@ namespace Mono.CSharp
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
+			MemberBinding = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "MemberBinding");
 			ParameterExpression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "ParameterExpression");
 			FieldInfo = new PredefinedType (module, MemberKind.Class, "System.Reflection", "FieldInfo");
 			MethodBase = new PredefinedType (module, MemberKind.Class, "System.Reflection", "MethodBase");

@@ -20104,7 +20104,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Main()">
-        <size>601</size>
+        <size>1172</size>
       </method>
       <method name="Void .ctor()">
         <size>18</size>

@@ -9373,14 +9373,17 @@ namespace Mono.CSharp
 				args.Add (new Argument (((PropertyExpr) target).CreateSetterTypeOfExpression (ec)));
 
 			string mname;
+			Expression arg_expr;
 			var cinit = source as CollectionOrObjectInitializers;
 			if (cinit == null) {
 				mname = "Bind";
+				arg_expr = source.CreateExpressionTree (ec);
 			} else {
-				mname = cinit.Initializers[0] is ElementInitializer ? "MemberBind" : "ListBind";
+				mname = cinit.IsEmpty || cinit.Initializers[0] is ElementInitializer ? "MemberBind" : "ListBind";
+				arg_expr = cinit.CreateExpressionTree (ec, !cinit.IsEmpty);
 			}
 
-			args.Add (new Argument (source.CreateExpressionTree (ec)));
+			args.Add (new Argument (arg_expr));
 			return CreateExpressionFactoryCall (ec, mname, args);
 		}
 
@@ -9586,6 +9589,11 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
+			return CreateExpressionTree (ec, false);
+		}
+
+		public Expression CreateExpressionTree (ResolveContext ec, bool inferType)
+		{
 			var expr_initializers = new ArrayInitializer (initializers.Count, loc);
 			foreach (Expression e in initializers) {
 				Expression expr = e.CreateExpressionTree (ec);
@@ -9593,7 +9601,10 @@ namespace Mono.CSharp
 					expr_initializers.Add (expr);
 			}
 
-			return new ImplicitlyTypedArrayCreation (expr_initializers, loc);
+			if (inferType)
+				return new ImplicitlyTypedArrayCreation (expr_initializers, loc);
+
+			return new ArrayCreation (new TypeExpression (ec.Module.PredefinedTypes.MemberBinding.Resolve (), loc), expr_initializers, loc); 
 		}
 		
 		protected override Expression DoResolve (ResolveContext ec)
@@ -9763,7 +9774,7 @@ namespace Mono.CSharp
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (base.CreateExpressionTree (ec)));
 			if (!initializers.IsEmpty)
-				args.Add (new Argument (initializers.CreateExpressionTree (ec)));
+				args.Add (new Argument (initializers.CreateExpressionTree (ec, initializers.IsCollectionInitializer)));
 
 			return CreateExpressionFactoryCall (ec,
 				initializers.IsCollectionInitializer ? "ListInit" : "MemberInit",

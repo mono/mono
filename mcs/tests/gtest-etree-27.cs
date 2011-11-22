@@ -47,6 +47,22 @@ public class Node
 
 		e.Compile () ();
 
+		e = () => new Node () { Values = { } };
+		mie = (MemberInitExpression) e.Body;
+		if (mie.Bindings[0].BindingType != MemberBindingType.MemberBinding)
+			return 4;
+
+		e.Compile () ();
+
+		e = () => new Node() { Parent = { Name = "Parent" }, Values = { 4, 5, 7, 8 } };
+		mie = (MemberInitExpression) e.Body;
+		if (mie.Bindings[0].BindingType != MemberBindingType.MemberBinding)
+			return 5;
+		
+		if (mie.Bindings[1].BindingType != MemberBindingType.ListBinding)
+			return 6;
+
+		e.Compile () ();
 		Console.WriteLine ("ok");
 		return 0;
 	}
