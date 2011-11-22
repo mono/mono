@@ -533,6 +533,18 @@ namespace MonoTests.System.Text {
 		Assert.AreEqual (8, sb.Length, "#3");
 		Assert.AreEqual ("Text\0\0\0\0", sb.ToString (), "#4");
 	}
+
+
+#if NET_4_0 || MOONLIGHT || MOBILE
+	[Test]
+	public void ClearMethod () {
+		StringBuilder sb = new StringBuilder ("Text");
+		sb.Clear ();
+		Assert.AreEqual (0, sb.Length, "#1");
+		Assert.AreEqual (String.Empty, sb.ToString (), "#2");
+	}
+#endif
+
 }
 
 }
