@@ -4410,8 +4410,9 @@ mark_ephemerons_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end
 		DEBUG (5, fprintf (gc_debug_file, "Ephemeron array at %p\n", object));
 
 		/*We ignore arrays in old gen during minor collections since all objects are promoted by the remset machinery.*/
-		if (object < start || object >= end)
+		/*if (object < start || object >= end)
 			continue;
+                */
 
 		/*It has to be alive*/
 		if (!object_is_reachable (object, start, end)) {
