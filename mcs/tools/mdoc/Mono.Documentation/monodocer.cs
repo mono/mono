@@ -618,7 +618,7 @@ class MDocUpdater : MDocCommand
 		index_assemblies.RemoveAll ();
 
 
-		HashSet<string> goodfiles = new HashSet<string> ();
+		HashSet<string> goodfiles = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 
 		foreach (AssemblyDefinition assm in assemblies) {
 			AddIndexAssembly (assm, index_assemblies);
