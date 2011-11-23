@@ -8678,6 +8678,7 @@ namespace Mono.CSharp
 			} else {
 				var res = new OverloadResolver (indexers, OverloadResolver.Restrictions.None, loc);
 				res.BaseMembersProvider = this;
+				res.InstanceQualifier = this;
 
 				// TODO: Do I need 2 argument sets?
 				best_candidate = res.ResolveMember<IndexerSpec> (rc, ref arguments);
@@ -8710,7 +8711,6 @@ namespace Mono.CSharp
 			if (right_side != null)
 				ResolveInstanceExpression (rc, right_side);
 
-			CheckProtectedMemberAccess (rc, best_candidate);
 			return this;
 		}
 

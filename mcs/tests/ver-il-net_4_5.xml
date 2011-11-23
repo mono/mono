@@ -44788,6 +44788,36 @@
       </method>
     </type>
   </test>
+  <test name="test-834.cs">
+    <type name="A">
+      <method name="Int32 Test(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_Item(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()">
+        <size>86</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="test-84.cs">
     <type name="Ghost">
       <method name="Void .ctor()">

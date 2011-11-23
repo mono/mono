@@ -640,15 +640,11 @@ namespace Mono.CSharp {
 			}
 
 			var r = new OverloadResolver (ctors, OverloadResolver.Restrictions.NoBaseMembers, loc);
-			var ctor = r.ResolveMember<MethodSpec> (rc, ref args);
-			if (ctor == null)
-				return null;
-
-			if ((ctor.Modifiers & Modifiers.PROTECTED) != 0 && !rc.HasSet (ResolveContext.Options.BaseInitializer)) {
-				MemberExpr.CheckProtectedMemberAccess (rc, ctor, ctor.DeclaringType, loc);
+			if (!rc.HasSet (ResolveContext.Options.BaseInitializer)) {
+				r.InstanceQualifier = new ConstructorInstanceQualifier (type);
 			}
 
-			return ctor;
+			return r.ResolveMember<MethodSpec> (rc, ref args);
 		}
 
 		[Flags]
@@ -2660,7 +2656,7 @@ namespace Mono.CSharp {
 	///   This class denotes an expression which evaluates to a member
 	///   of a struct or a class.
 	/// </summary>
-	public abstract class MemberExpr : Expression
+	public abstract class MemberExpr : Expression, OverloadResolver.IInstanceQualifier
 	{
 		//
 		// An instance expression associated with this member, if it's a
@@ -2698,6 +2694,12 @@ namespace Mono.CSharp {
 
 		protected abstract TypeSpec DeclaringType {
 			get;
+		}
+
+		TypeSpec OverloadResolver.IInstanceQualifier.InstanceType {
+			get {
+				return InstanceExpression.Type;
+			}
 		}
 
 		//
@@ -2764,32 +2766,41 @@ namespace Mono.CSharp {
 			return method;
 		}
 
-		protected void CheckProtectedMemberAccess<T> (ResolveContext rc, T member) where T : MemberSpec
+		protected void CheckProtectedMemberAccess (ResolveContext rc, MemberSpec member)
 		{
 			if (InstanceExpression == null)
 				return;
 
 			if ((member.Modifiers & Modifiers.PROTECTED) != 0 && !(InstanceExpression is This)) {
-				CheckProtectedMemberAccess (rc, member, InstanceExpression.Type, loc);
+				if (!CheckProtectedMemberAccess (rc, member, InstanceExpression.Type)) {
+					Error_ProtectedMemberAccess (rc, member, InstanceExpression.Type, loc);
+				}
 			}
 		}
 
-		public static void CheckProtectedMemberAccess<T> (ResolveContext rc, T member, TypeSpec qualifier, Location loc) where T : MemberSpec
+		bool OverloadResolver.IInstanceQualifier.CheckProtectedMemberAccess (ResolveContext rc, MemberSpec member)
+		{
+			if (InstanceExpression == null)
+				return true;
+
+			return InstanceExpression is This || CheckProtectedMemberAccess (rc, member, InstanceExpression.Type);
+		}
+
+		public static bool CheckProtectedMemberAccess<T> (ResolveContext rc, T member, TypeSpec qualifier) where T : MemberSpec
 		{
 			var ct = rc.CurrentType;
 			if (ct == qualifier)
-				return;
+				return true;
 
 			if ((member.Modifiers & Modifiers.INTERNAL) != 0 && member.DeclaringType.MemberDefinition.IsInternalAsPublic (ct.MemberDefinition.DeclaringAssembly))
-				return;
+				return true;
 
 			qualifier = qualifier.GetDefinition ();
 			if (ct != qualifier && !IsSameOrBaseQualifier (ct, qualifier)) {
-				rc.Report.SymbolRelatedToPreviousError (member);
-				rc.Report.Error (1540, loc,
-					"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
-					member.GetSignatureForError (), qualifier.GetSignatureForError (), ct.GetSignatureForError ());
+				return false;
 			}
+
+			return true;
 		}
 
 		public override bool ContainsEmitWithAwait ()
@@ -2840,6 +2851,14 @@ namespace Mono.CSharp {
 		protected virtual void Error_CannotCallAbstractBase (ResolveContext rc, string name)
 		{
 			rc.Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
+		}
+
+		public static void Error_ProtectedMemberAccess (ResolveContext rc, MemberSpec member, TypeSpec qualifier, Location loc)
+		{
+			rc.Report.SymbolRelatedToPreviousError (member);
+			rc.Report.Error (1540, loc,
+				"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
+				member.GetSignatureForError (), qualifier.GetSignatureForError (), rc.CurrentType.GetSignatureForError ());
 		}
 
 		//
@@ -3360,6 +3379,7 @@ namespace Mono.CSharp {
 			var r = new OverloadResolver (Methods, type_arguments, restr, loc);
 			if ((restr & OverloadResolver.Restrictions.NoBaseMembers) == 0) {
 				r.BaseMembersProvider = this;
+				r.InstanceQualifier = this;
 			}
 
 			if (cerrors != null)
@@ -3388,8 +3408,6 @@ namespace Mono.CSharp {
 				}
 
 				ResolveInstanceExpression (ec, null);
-				if (InstanceExpression != null)
-					CheckProtectedMemberAccess (ec, best_candidate);
 			}
 
 			var base_override = CandidateToBaseOverride (ec, best_candidate);
@@ -3455,6 +3473,22 @@ namespace Mono.CSharp {
 		#endregion
 	}
 
+	struct ConstructorInstanceQualifier : OverloadResolver.IInstanceQualifier
+	{
+		public ConstructorInstanceQualifier (TypeSpec type)
+			: this ()
+		{
+			InstanceType = type;
+		}
+
+		public TypeSpec InstanceType { get; private set; }
+
+		public bool CheckProtectedMemberAccess (ResolveContext rc, MemberSpec member)
+		{
+			return MemberExpr.CheckProtectedMemberAccess (rc, member, InstanceType);
+		}
+	}
+
 	public struct OverloadResolver
 	{
 		[Flags]
@@ -3481,6 +3515,12 @@ namespace Mono.CSharp {
 			bool ArgumentMismatch (ResolveContext rc, MemberSpec best, Argument a, int index);
 			bool NoArgumentMatch (ResolveContext rc, MemberSpec best);
 			bool TypeInferenceFailed (ResolveContext rc, MemberSpec best);
+		}
+
+		public interface IInstanceQualifier
+		{
+			TypeSpec InstanceType { get; }
+			bool CheckProtectedMemberAccess (ResolveContext rc, MemberSpec member);
 		}
 
 		sealed class NoBaseMembers : IBaseMembersProvider
@@ -3522,6 +3562,7 @@ namespace Mono.CSharp {
 		TypeArguments type_arguments;
 		IBaseMembersProvider base_provider;
 		IErrorHandler custom_errors;
+		IInstanceQualifier instance_qualifier;
 		Restrictions restrictions;
 		MethodGroupExpr best_candidate_extension_group;
 		TypeSpec best_candidate_return_type;
@@ -3596,6 +3637,15 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ("Not running in delegate mode", loc);
 
 				return members [0].DeclaringType;
+			}
+		}
+
+		public IInstanceQualifier InstanceQualifier {
+			get {
+				return instance_qualifier;
+			}
+			set {
+				instance_qualifier = value;
 			}
 		}
 
@@ -4428,6 +4478,11 @@ namespace Mono.CSharp {
 
 								if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
 									continue;
+
+								if ((member.Modifiers & (Modifiers.PROTECTED | Modifiers.STATIC)) == Modifiers.PROTECTED &&
+									instance_qualifier != null && !instance_qualifier.CheckProtectedMemberAccess (rc, member)) {
+									continue;
+								}
 							}
 
 							IParametersMember pm = member as IParametersMember;
@@ -4727,6 +4782,12 @@ namespace Mono.CSharp {
 			if (lambda_conv_msgs != null) {
 				if (lambda_conv_msgs.Merge (rc.Report.Printer))
 					return;
+			}
+
+
+			if ((best_candidate.Modifiers & (Modifiers.PROTECTED | Modifiers.STATIC)) == Modifiers.PROTECTED &&
+				InstanceQualifier != null && !InstanceQualifier.CheckProtectedMemberAccess (rc, best_candidate)) {
+				MemberExpr.Error_ProtectedMemberAccess (rc, best_candidate, InstanceQualifier.InstanceType, loc);
 			}
 
 			//
