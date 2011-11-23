@@ -4622,6 +4622,9 @@ namespace Mono.CSharp {
 				if (error_mode)
 					break;
 
+				if (lambda_conv_msgs != null && !lambda_conv_msgs.IsEmpty)
+					break;
+
 				lambda_conv_msgs = null;
 				error_mode = true;
 			}
