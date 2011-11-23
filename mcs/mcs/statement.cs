@@ -447,47 +447,52 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class For : Statement {
-		Expression Test;
-		Statement InitStatement;
-		Statement Increment;
-		public Statement Statement;
+	public class For : Statement
+	{
 		bool infinite, empty;
 		
-		public For (Statement init_statement,
-			    BooleanExpression test,
-			    Statement increment,
-			    Statement statement,
-			    Location l)
+		public For (Location l)
 		{
-			InitStatement = init_statement;
-			Test = test;
-			Increment = increment;
-			Statement = statement;
 			loc = l;
+		}
+
+		public Statement Initializer {
+			get; set;
+		}
+
+		public Expression Condition {
+			get; set;
+		}
+
+		public Statement Iterator {
+			get; set;
+		}
+
+		public Statement Statement {
+			get; set;
 		}
 
 		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
-			if (InitStatement != null){
-				if (!InitStatement.Resolve (ec))
+			if (Initializer != null) {
+				if (!Initializer.Resolve (ec))
 					ok = false;
 			}
 
-			if (Test != null){
-				Test = Test.Resolve (ec);
-				if (Test == null)
+			if (Condition != null) {
+				Condition = Condition.Resolve (ec);
+				if (Condition == null)
 					ok = false;
-				else if (Test is Constant){
-					bool value = !((Constant) Test).IsDefaultValue;
+				else if (Condition is Constant) {
+					bool value = !((Constant) Condition).IsDefaultValue;
 
 					if (value == false){
 						if (!Statement.ResolveUnreachable (ec, true))
 							return false;
-						if ((Increment != null) &&
-						    !Increment.ResolveUnreachable (ec, false))
+						if ((Iterator != null) &&
+							!Iterator.ResolveUnreachable (ec, false))
 							return false;
 						empty = true;
 						return true;
@@ -508,12 +513,12 @@ namespace Mono.CSharp {
 				ok = false;
 			ec.EndFlowBranching ();
 
-			if (Increment != null){
+			if (Iterator != null){
 				if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable) {
-					if (!Increment.ResolveUnreachable (ec, !was_unreachable))
+					if (!Iterator.ResolveUnreachable (ec, !was_unreachable))
 						ok = false;
 				} else {
-					if (!Increment.Resolve (ec))
+					if (!Iterator.Resolve (ec))
 						ok = false;
 				}
 			}
@@ -528,11 +533,11 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (InitStatement != null)
-				InitStatement.Emit (ec);
+			if (Initializer != null)
+				Initializer.Emit (ec);
 
 			if (empty) {
-				Test.EmitSideEffect (ec);
+				Condition.EmitSideEffect (ec);
 				return;
 			}
 
@@ -549,24 +554,24 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 
 			ec.MarkLabel (ec.LoopBegin);
-			Increment.Emit (ec);
+			Iterator.Emit (ec);
 
 			ec.MarkLabel (test);
 			//
 			// If test is null, there is no test, and we are just
 			// an infinite loop
 			//
-			if (Test != null){
+			if (Condition != null){
 				//
 				// The Resolve code already catches the case for
 				// Test == Constant (false) so we know that
 				// this is true
 				//
-				if (Test is Constant) {
-					Test.EmitSideEffect (ec);
+				if (Condition is Constant) {
+					Condition.EmitSideEffect (ec);
 					ec.Emit (OpCodes.Br, loop);
 				} else {
-					Test.EmitBranchable (ec, loop, true);
+					Condition.EmitBranchable (ec, loop, true);
 				}
 				
 			} else
@@ -581,12 +586,12 @@ namespace Mono.CSharp {
 		{
 			For target = (For) t;
 
-			if (InitStatement != null)
-				target.InitStatement = InitStatement.Clone (clonectx);
-			if (Test != null)
-				target.Test = Test.Clone (clonectx);
-			if (Increment != null)
-				target.Increment = Increment.Clone (clonectx);
+			if (Initializer != null)
+				target.Initializer = Initializer.Clone (clonectx);
+			if (Condition != null)
+				target.Condition = Condition.Clone (clonectx);
+			if (Iterator != null)
+				target.Iterator = Iterator.Clone (clonectx);
 			target.Statement = Statement.Clone (clonectx);
 		}
 	}

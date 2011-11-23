@@ -5093,6 +5093,9 @@ for_statement
 	  {
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
+		For f = new For (GetLocation ($1));
+		current_block.AddStatement (f);
+		$$ = f;
 	  }
 	  for_statement_cont
 	  {
@@ -5103,28 +5106,26 @@ for_statement
 // Has to use be extra rule to recover started block
 for_statement_cont
 	: opt_for_initializer SEMICOLON
+	  {
+		((For) $0).Initializer = (Statement) $1;
+	  }
 	  opt_for_condition SEMICOLON
+	  {
+		((For) $0).Condition = (BooleanExpression) $4;
+	  }
 	  opt_for_iterator CLOSE_PARENS
+	  {
+		((For) $0).Iterator = (Statement) $7;
+	  }
 	  embedded_statement
 	  {
-		if ($7 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
-			Warning_EmptyStatement (GetLocation ($7));
+		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($10));
 	  
-		For f = new For ((Statement) $1, (BooleanExpression) $3, (Statement) $5, (Statement) $7, GetLocation ($-2));
-		current_block.AddStatement (f);
-		
-		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($4), GetLocation ($6));
+		For f = ((For) $0);
+		f.Statement = (Statement) $10;
+		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($5), GetLocation ($9));
 
-		$$ = end_block (GetLocation ($2));
-	  }
-	| opt_for_initializer SEMICOLON error
-	  {
-		For f = new For ((Statement) $1, null, null, null, GetLocation ($-2));
-		current_block.AddStatement (f);
-		
-		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2));
-
-		Error_SyntaxError (yyToken);
 		$$ = end_block (GetLocation ($2));
 	  }
 	| error
