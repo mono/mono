@@ -9,6 +9,11 @@ using System.Reflection;
 using System.Text;
 using I18N.Common;
 
+#if DISABLE_UNSAFE
+using MonoEncoder = I18N.Common.MonoSafeEncoder;
+using MonoEncoding = I18N.Common.MonoSafeEncoding;
+#endif
+
 namespace I18N.CJK
 {
 	[Serializable]
@@ -72,11 +77,7 @@ namespace I18N.CJK
 			return len;
 		}
 
-		public override int GetByteCount (char [] chars, int index, int length)
-		{
-			return new GB18030Encoder (this).GetByteCount (chars, index, length, true);
-		}
-
+#if !DISABLE_UNSAFE
 		public unsafe override int GetByteCountImpl (char* chars, int count)
 		{
 			return new GB18030Encoder (this).GetByteCountImpl (chars, count, true);
@@ -86,6 +87,17 @@ namespace I18N.CJK
 		{
 			return new GB18030Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
 		}
+#else
+		public override int GetByteCount (char [] chars, int index, int length)
+		{
+			return new GB18030Encoder (this).GetByteCount (chars, index, length, true);
+		}
+
+		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+		{
+			return new GB18030Encoder (this).GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
+		}
+#endif
 
 		public override int GetCharCount (byte [] bytes, int start, int len)
 		{
@@ -286,6 +298,7 @@ namespace I18N.CJK
 		char incomplete_byte_count;
 		char incomplete_bytes;
 
+#if !DISABLE_UNSAFE
 		public unsafe override int GetByteCountImpl (char* chars, int count, bool refresh)
 		{
 			int start = 0;
@@ -374,7 +387,7 @@ namespace I18N.CJK
 #if NET_2_0
 						HandleFallback (
 							chars, ref charIndex, ref charCount,
-							bytes, ref byteIndex, ref byteCount);
+							bytes, ref byteIndex, ref byteCount, null);
 #else
 						bytes [byteIndex++] = (byte) '?';
 #endif
@@ -419,5 +432,158 @@ namespace I18N.CJK
 
 			return byteIndex - byteStart;
 		}
+#else
+
+		public override int GetByteCount(char[] chars, int index, int count, bool refresh)
+		{
+			int start = 0;
+			int end = count;
+			int ret = 0;
+			while (start < end)
+			{
+				char ch = chars[start];
+				if (ch < 0x80)
+				{
+					// ASCII
+					ret++;
+					start++;
+					continue;
+				}
+				else if (Char.IsSurrogate(ch))
+				{
+					// Surrogate
+					if (start + 1 == end)
+					{
+						incomplete_byte_count = ch;
+						start++;
+					}
+					else
+					{
+						ret += 4;
+						start += 2;
+					}
+					continue;
+				}
+
+				if (ch < 0x80 || ch == 0xFF)
+				{
+					// ASCII
+					ret++;
+					start++;
+					continue;
+				}
+
+				byte b1 = gb2312.u2n[((int)ch) * 2 + 1];
+				byte b2 = gb2312.u2n[((int)ch) * 2];
+				if (b1 != 0 && b2 != 0)
+				{
+					// GB2312
+					ret += 2;
+					start++;
+					continue;
+				}
+
+				// non-GB2312
+				long value = GB18030Source.FromUCS(ch);
+				if (value < 0)
+					ret++; // invalid(?)
+				else
+					ret += 4;
+				start++;
+			}
+
+			if (refresh)
+			{
+				if (incomplete_byte_count != char.MinValue)
+					ret++;
+				incomplete_byte_count = char.MinValue;
+			}
+			return ret;
+		}
+
+		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex, bool refresh)
+		{
+			int byteCount = bytes.Length;
+			int charEnd = charIndex + charCount;
+			int byteStart = byteIndex;
+			char ch = incomplete_bytes;
+
+			while (charIndex < charEnd)
+			{
+				if (incomplete_bytes == char.MinValue)
+					ch = chars[charIndex++];
+				else
+					incomplete_bytes = char.MinValue;
+
+				if (ch < 0x80)
+				{
+					// ASCII
+					bytes[byteIndex++] = (byte)ch;
+					continue;
+				}
+				else if (Char.IsSurrogate(ch))
+				{
+					// Surrogate
+					if (charIndex == charEnd)
+					{
+						incomplete_bytes = ch;
+						break; // incomplete
+					}
+					char ch2 = chars[charIndex++];
+					if (!Char.IsSurrogate(ch2))
+					{
+						// invalid surrogate
+#if NET_2_0
+						HandleFallback (chars, ref charIndex, ref charCount,
+							bytes, ref byteIndex, ref byteCount, null);
+#else
+						bytes [byteIndex++] = (byte) '?';
+#endif
+						continue;
+					}
+					int cp = (ch - 0xD800) * 0x400 + ch2 - 0xDC00;
+					GB18030Source.Unlinear(bytes,  byteIndex, GB18030Source.FromUCSSurrogate(cp));
+					byteIndex += 4;
+					continue;
+				}
+
+
+				if (ch <= 0x80 || ch == 0xFF)
+				{
+					// Character maps to itself
+					bytes[byteIndex++] = (byte)ch;
+					continue;
+				}
+
+				byte b1 = gb2312.u2n[((int)ch) * 2 + 1];
+				byte b2 = gb2312.u2n[((int)ch) * 2];
+				if (b1 != 0 && b2 != 0)
+				{
+					bytes[byteIndex++] = b1;
+					bytes[byteIndex++] = b2;
+					continue;
+				}
+
+				long value = GB18030Source.FromUCS(ch);
+				if (value < 0)
+					bytes[byteIndex++] = 0x3F; // invalid(?)
+				else
+				{
+					// non-GB2312
+					GB18030Source.Unlinear(bytes, byteIndex, value);
+					byteIndex += 4;
+				}
+			}
+
+			if (refresh)
+			{
+				if (incomplete_bytes != char.MinValue)
+					bytes[byteIndex++] = 0x3F; // incomplete
+				incomplete_bytes = char.MinValue;
+			}
+
+			return byteIndex - byteStart;
+		}
+#endif
 	}
 }

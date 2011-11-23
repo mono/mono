@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Runtime.InteropServices;
 #if BUILD_GENERATOR
 using System.IO;
 using System.Xml;
@@ -49,11 +50,33 @@ namespace I18N.CJK
 			MethodInfo mi = typeof (Assembly).GetMethod (
 				"GetManifestResourceInternal",
 				BindingFlags.NonPublic | BindingFlags.Instance);
+
 			int size = 0;
 			Module mod = null;
-			IntPtr ret = (IntPtr) mi.Invoke (
-				Assembly.GetExecutingAssembly (),
-				new object [] {"gb18030.table", size, mod});
+			IntPtr ret = IntPtr.Zero;
+
+			if (mi != null)
+			{
+				ret = (IntPtr)mi.Invoke(
+				 Assembly.GetExecutingAssembly(),
+				 new object[] { "gb18030.table", size, mod });
+			}
+			else
+			{
+				// DotNet's way ;)
+				using (var ms = Assembly.GetExecutingAssembly()
+					.GetManifestResourceStream("gb18030.table"))
+				{
+					var len = (int)ms.Length;
+					byte* buf = (byte*)Marshal.AllocHGlobal(sizeof(byte) * len);
+
+					for (int i = 0; i < len; i++)
+						buf[i] = (byte)ms.ReadByte();
+					
+					ret = (IntPtr)buf;
+				}
+			}
+
 			if (ret != IntPtr.Zero) {
 				gbx2uni = (byte*) ((void*) ret);
 				gbx2uniSize =
