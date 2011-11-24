@@ -1669,6 +1669,7 @@ _wapi_free_share_info (_WapiFileShare *share_info)
 		file_share_hash_lock ();
 		g_hash_table_remove (file_share_hash, share_info);
 		file_share_hash_unlock ();
+		/* The hashtable dtor frees share_info */
 	} else {
 		memset (share_info, '\0', sizeof(struct _WapiFileShare));
 	}
@@ -1841,7 +1842,7 @@ static void _wapi_handle_check_share_by_pid (struct _WapiFileShare *share_info)
 		g_message ("%s: Didn't find it, destroying entry", __func__);
 #endif
 
-		memset (share_info, '\0', sizeof(struct _WapiFileShare));
+		_wapi_free_share_info (share_info);
 	}
 }
 
@@ -1971,7 +1972,7 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 		g_message ("%s: Didn't find it, destroying entry", __func__);
 #endif
 
-		memset (share_info, '\0', sizeof(struct _WapiFileShare));
+		_wapi_free_share_info (share_info);
 	}
 
 done:
