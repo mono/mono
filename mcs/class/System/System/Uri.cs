@@ -843,7 +843,9 @@ namespace System {
 				string s = comparand as String;
 				if (s == null)
 					return false;
-				uri = new Uri (s);
+
+				if (!TryCreate (s, UriKind.RelativeOrAbsolute, out uri))
+					return false;
 			}
 
 			return InternalEquals (uri);

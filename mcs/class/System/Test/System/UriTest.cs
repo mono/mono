@@ -1028,6 +1028,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Equals4 ()
+		{
+			var uri = new Uri ("http://w3.org");
+			Assert.IsFalse (uri.Equals ("-"));
+		}
+
+		[Test]
 		public void TestEquals2 ()
 		{
 			Uri a = new Uri ("http://www.go-mono.com");
