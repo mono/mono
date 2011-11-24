@@ -32,12 +32,15 @@ using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
+	internal interface QueryHeadWorkerNode : IVisitableNode {
+		int? Count { get; }
+	}
 	/* This is the QueryNode used by Take(While) operator
 	 * it symbolize operators that are preferably working on the head elements of a query and can prematurely
 	 * stop providing elements following the one they were processing is of a greater value in a specific 
 	 * order to be defined by the instance (e.g. simple numerical order when working on indexes).
 	 */
-	internal class QueryHeadWorkerNode<TSource> : QueryStreamNode<TSource, TSource>
+	internal class QueryHeadWorkerNode<TSource> : QueryStreamNode<TSource, TSource>, QueryHeadWorkerNode
 	{
 		/* This variable will receive an index value that represent the "stop point"
 		 * when used with GetOrderedEnumerables i.e. values that are above the indexes are discarded
@@ -59,7 +62,7 @@ namespace System.Linq.Parallel.QueryNodes
 			this.predicate = predicate;
 		}
 
-		internal int? Count {
+		public int? Count {
 			get {
 				return predicate == null ? count : (int?)null;
 			}
@@ -74,7 +77,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		public override void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit (this);
+			visitor.Visit ((QueryHeadWorkerNode)this);
 		}
 
 		internal override IList<IEnumerable<TSource>> GetEnumerablesIndexed (QueryOptions options)

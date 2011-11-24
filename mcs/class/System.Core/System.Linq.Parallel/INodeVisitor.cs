@@ -32,14 +32,14 @@ namespace System.Linq.Parallel
 {
 	internal interface INodeVisitor
 	{
-		void Visit<T> (QueryBaseNode<T> node);
-		void Visit<U, V> (QueryChildNode<U, V> node);
-		void Visit<T> (QueryOptionNode<T> node);
-		void Visit<T> (QueryStartNode<T> node);
-		void Visit<T, TParent> (QueryStreamNode<T, TParent> node);
-		void Visit<T> (QueryOrderGuardNode<T> node);
-		void Visit<TFirst, TSecond, TResult> (QueryMuxNode<TFirst, TSecond, TResult> node);
-		void Visit<T> (QueryHeadWorkerNode<T> node);
+		void Visit (QueryBaseNode node);
+		void Visit (QueryChildNode node);
+		void Visit (QueryOptionNode node);
+		void Visit (QueryStartNode node);
+		void Visit (QueryStreamNode node);
+		void Visit (QueryOrderGuardNode node);
+		void Visit (QueryMuxNode node);
+		void Visit (QueryHeadWorkerNode node);
 	}
 }
 #endif

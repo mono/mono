@@ -32,7 +32,11 @@ using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal abstract class QueryStreamNode<T, TParent> : QueryChildNode<T, TParent>
+	internal interface QueryStreamNode : IVisitableNode {
+		bool IsIndexed { get; }
+	}
+
+	internal abstract class QueryStreamNode<T, TParent> : QueryChildNode<T, TParent>, QueryStreamNode
 	{
 		bool isIndexed;
 
@@ -62,7 +66,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		public override void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T, TParent> (this);
+			visitor.Visit ((QueryStreamNode)this);
 		}
 
 		public bool IsIndexed {

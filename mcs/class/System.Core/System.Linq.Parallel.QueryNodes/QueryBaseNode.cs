@@ -32,11 +32,15 @@ using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal abstract class QueryBaseNode<T> : IVisitableNode
+	internal interface QueryBaseNode : IVisitableNode
+	{
+	}
+
+	internal abstract class QueryBaseNode<T> : QueryBaseNode
 	{
 		public virtual void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T> (this);
+			visitor.Visit (this);
 		}
 
 		internal abstract IList<IEnumerable<T>> GetEnumerables (QueryOptions options);
