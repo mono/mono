@@ -3,7 +3,7 @@
 # NB! Prereq : ANDROID_NDK_ROOT=/usr/local/android-ndk-xxx or similar
 # Todo: set appropriate ARM flags for hard floats
 
-export ANDROID_PLATFORM=android-5
+export ANDROID_PLATFORM=android-9
 GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
@@ -44,8 +44,8 @@ if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 fi
 
 PATH="$TOOLCHAIN/bin:$PATH"
-CC="$TOOLCHAIN/bin/i686-android-linux-gcc -nostdlib"
-CXX="$TOOLCHAIN/bin/i686-android-linux-g++ -nostdlib"
+CC="$TOOLCHAIN/bin/i686-android-linux-gcc --sysroot=$PLATFORM_ROOT"
+CXX="$TOOLCHAIN/bin/i686-android-linux-g++ --sysroot=$PLATFORM_ROOT"
 CPP="$TOOLCHAIN/bin/i686-android-linux-cpp"
 CXXCPP="$TOOLCHAIN/bin/i686-android-linux-cpp"
 CPATH="$PLATFORM_ROOT/usr/include"
@@ -59,14 +59,12 @@ CFLAGS="\
 -DHAVE_USR_INCLUDE_MALLOC_H -DPAGE_SIZE=0x1000 \
 -D_POSIX_PATH_MAX=256 -DS_IWRITE=S_IWUSR \
 -DHAVE_PTHREAD_MUTEX_TIMEDLOCK \
--fpic -g -I$PLATFORM_ROOT/usr/include \
+-fpic -g \
 -ffunction-sections -fdata-sections"
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
 -Wl,--no-undefined \
--L$PLATFORM_ROOT/usr/lib \
--Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
--ldl -lm -llog -lc -lsupc++ -lgcc"
+-ldl -lm -llog -lc -lgcc"
 
 CONFIG_OPTS="\
 --prefix=$PREFIX \
@@ -79,11 +77,6 @@ CONFIG_OPTS="\
 --with-glib=embedded \
 --enable-nls=no \
 mono_cv_uscore=yes"
-
-if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
-        echo "Erasing builds folder to make sure we start with a clean slate"
-        rm -rf builds
-fi
 
 function clean_build
 {
@@ -112,9 +105,15 @@ function clean_build
 	cp mono/mini/.libs/libmono.so $3
 }
 
-rm -rf $OUTDIR
+if [ x$1 != x"dontclean" ]; then
+	rm -rf $OUTDIR
+fi
 
 clean_build "" "" "$OUTDIR/x86"
+
+if [ x$1 == x"dontclean" ]; then
+	exit 0
+fi
 
 NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
 if [ $NUM_LIBS_BUILT -eq 2 ]; then
