@@ -624,6 +624,32 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class StatementErrorExpression : Statement
+	{
+		readonly Expression expr;
+
+		public StatementErrorExpression (Expression expr)
+		{
+			this.expr = expr;
+		}
+
+		public Expression Expression {
+			get {
+				return expr;
+			}
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
 	//
 	// Simple version of statement list not requiring a block
 	//

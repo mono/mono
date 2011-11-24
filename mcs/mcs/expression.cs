@@ -7031,7 +7031,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RefValueExpr : ShimExpression
+	public class RefValueExpr : ShimExpression
 	{
 		FullNamedExpression texpr;
 
@@ -7067,7 +7067,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RefTypeExpr : ShimExpression
+	public class RefTypeExpr : ShimExpression
 	{
 		public RefTypeExpr (Expression expr, Location loc)
 			: base (expr)
@@ -7100,7 +7100,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class MakeRefExpr : ShimExpression
+	public class MakeRefExpr : ShimExpression
 	{
 		public MakeRefExpr (Expression expr, Location loc)
 			: base (expr)
@@ -8821,7 +8821,7 @@ namespace Mono.CSharp
 	///   This is also now used as a placeholder where a no-action expression
 	///   is needed (the `New' class).
 	/// </summary>
-	class EmptyExpression : Expression
+	public class EmptyExpression : Expression
 	{
 		sealed class OutAccessExpression : EmptyExpression
 		{
@@ -8933,7 +8933,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class ErrorExpression : EmptyExpression
+	public class ErrorExpression : EmptyExpression
 	{
 		public static readonly ErrorExpression Instance = new ErrorExpression ();
 

@@ -23,7 +23,7 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp
 {
-	class Await : ExpressionStatement
+	public class Await : ExpressionStatement
 	{
 		Expression expr;
 		AwaitStatement stmt;
