@@ -99,6 +99,9 @@ System.Collections.Generic/LinkedListTest.cs
 System.Collections.Generic/SortedDictionaryTest.cs
 System.Collections.Generic/SortedListTest.cs
 System.Collections.Generic/SortedSetTest.cs
+System.Collections.ObjectModel/ObservableCollectionTest.cs
+System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
+System.Collections.ObjectModel/CollectionChangedEventValidators.cs
 System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
