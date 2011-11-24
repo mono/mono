@@ -111,10 +111,7 @@ fi
 
 clean_build "" "" "$OUTDIR/x86"
 
-if [ x$1 == x"dontclean" ]; then
-	exit 0
-fi
-
+if [ x$1 != x"dontclean" ]; then
 NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
 if [ $NUM_LIBS_BUILT -eq 2 ]; then
 	echo "Android STATIC/SHARED libraries are found here: $OUTDIR"
@@ -122,4 +119,5 @@ else
 	echo "Build failed? Android STATIC/SHARED library cannot be found... Found $NUM_LIBS_BUILT libs under $OUTDIR"
 	ls -AlR $OUTDIR
 	exit 1
+fi
 fi

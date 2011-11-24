@@ -124,7 +124,7 @@ clean_build "$CCFLAGS_ARMv6_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv6_vfp"
 clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/armv7a"
 
 # works only with ndk-r6b and later
-#source build_runtime_android_x86.sh && exit 1
+#source build_runtime_android_x86.sh dontclean
 
 NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
 if [ $NUM_LIBS_BUILT -eq 6 ]; then
