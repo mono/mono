@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002 Ximian, Inc (http://www.ximian.com)
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;

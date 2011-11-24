@@ -8,7 +8,8 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
-// Copyright 2003-2008 Novell, Inc.
+// Copyright 2003-2011 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;

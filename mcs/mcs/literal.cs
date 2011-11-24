@@ -6,6 +6,7 @@
 //   Marek Safar (marek.safar@seznam.cz)
 //
 // Copyright 2001 Ximian, Inc.
+// Copyright 2011 Xamarin Inc
 //
 //
 // Notice that during parsing we create objects of type Literal, but the

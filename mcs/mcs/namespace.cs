@@ -7,6 +7,7 @@
 //
 // Copyright 2001 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 using System;
 using System.Collections.Generic;

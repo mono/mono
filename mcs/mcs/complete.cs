@@ -7,6 +7,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2009 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 // Completion* classes derive from ExpressionStatement as this allows
 // them to pass through the parser in many conditions that require
