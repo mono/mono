@@ -63,7 +63,22 @@ namespace MonoTests.System.Linq
 			
 			// This is not AreEquals because ParallelQuery is non-deterministic (IParallelOrderedEnumerable is)
 			// thus the order of the initial Enumerable might not be preserved
-			CollectionAssert.AreEquivalent(sync, async, "#" + count);
+			string error = "";
+
+			if (sync.Length != async.Length)
+				error = string.Format ("Expected size {0} but got {1} #{3}", sync.Length, async.Length, count);
+
+			Array.Sort (sync);
+			Array.Sort (async);
+			int i, j;
+			for (i = j = 0; i < sync.Length && j < async.Length; ++i) {
+				if (sync [i] != async [j])
+					error += "missing "  + sync [i] + "";
+				else
+					++j;
+			}
+			if (error != "")
+				Assert.Fail (error);
 		}
 		
 		void AreEquivalent<T> (IEnumerable<T> syncEnumerable, IEnumerable<T> asyncEnumerable, int count)
