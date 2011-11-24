@@ -18,10 +18,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 
 using System.Collections.ObjectModel;
@@ -36,10 +38,35 @@ using MonoTests.System.Collections.Specialized;
 namespace MonoTests.System.Collections.ObjectModel {
 
 	[TestFixture]
-	public class ObservableCollectionTest {
-
-		public ObservableCollectionTest()
+	public class ObservableCollectionTest
+	{
+		[Test]
+		public void Constructor ()
 		{
+			var list = new List<int> { 3 };
+			var col = new ObservableCollection<int> (list);
+			col.Add (5);
+			Assert.AreEqual (1, list.Count, "#1");
+
+			col = new ObservableCollection<int> ((IEnumerable<int>) list);
+			col.Add (5);
+			Assert.AreEqual (1, list.Count, "#2");
+		}
+
+		[Test]
+		public void Constructor_Invalid ()
+		{
+			try {
+				new ObservableCollection<int> ((List<int>) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				new ObservableCollection<int> ((IEnumerable<int>) null);
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
 		}
 
 		[Test]
