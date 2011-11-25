@@ -66,7 +66,7 @@ namespace MonoTests.System.Linq
 			string error = "";
 
 			if (sync.Length != async.Length)
-				error = string.Format ("Expected size {0} but got {1} #{3}", sync.Length, async.Length, count);
+				error = string.Format ("Expected size {0} but got {1} #{2}", sync.Length, async.Length, count);
 
 			Array.Sort (sync);
 			Array.Sort (async);
