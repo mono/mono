@@ -96,6 +96,19 @@ namespace MonoTests.I18N.CJK
 			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
 		}
 
+		[Test]
+		public void Bug_1531()
+		{
+			string str = @"wqk=";
+			byte[] utf8 = Convert.FromBase64String(str);
+			char[] data = Encoding.UTF8.GetChars(utf8);
+
+			var encoding = Manager.GetEncoding("GB2312");
+			var result = encoding.GetBytes(data);
+
+			Assert.AreEqual(new byte[] { 63 }, result);
+		}
+
 		// BIG5
 
 		[Test]

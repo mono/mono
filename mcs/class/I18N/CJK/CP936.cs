@@ -41,13 +41,14 @@ namespace I18N.CJK
 			DbcsConvert gb2312 = GetConvert ();
 			int charIndex = 0;
 			int byteIndex = 0;
+			int end = charCount;
 #if NET_2_0
 			EncoderFallbackBuffer buffer = null;
 #endif
 
 			int origIndex = byteIndex;
-			while (charCount-- > 0) {
-				char c = chars[charIndex++];
+			for (int i = charIndex; i < end; i++, charCount--) {
+				char c = chars[i];
 				if (c <= 0x80 || c == 0xFF) { // ASCII
 					int offset = byteIndex++;
 					if (bytes != null) bytes[offset] = (byte)c;
@@ -58,7 +59,7 @@ namespace I18N.CJK
 				if (b1 == 0 && b2 == 0) {
 #if NET_2_0
 					HandleFallback (ref buffer, chars,
-						ref charIndex, ref charCount,
+						ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
 #else
 					int offset = byteIndex++;
@@ -81,17 +82,17 @@ namespace I18N.CJK
 #else
 		protected int GetBytesInternal(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
+			int origIndex = byteIndex;
+			int end = charCount;
 			int byteCount = bytes != null ? bytes.Length : 0;
 
 			DbcsConvert gb2312 = GetConvert();
 #if NET_2_0
 			EncoderFallbackBuffer buffer = null;
 #endif
-
-			int origIndex = byteIndex;
-			while (charCount-- > 0)
+			for (int i = charIndex; i < end; i++, charCount--)
 			{
-				char c = chars[charIndex++];
+				char c = chars[i];
 				if (c <= 0x80 || c == 0xFF)
 				{ // ASCII
 					int offset = byteIndex++;
@@ -103,7 +104,7 @@ namespace I18N.CJK
 				if (b1 == 0 && b2 == 0)
 				{
 #if NET_2_0
-					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+					HandleFallback (ref buffer, chars, ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
 #else
 					int offset = byteIndex++;
