@@ -32,3 +32,6 @@
 /external
 /builds
 *.pidb
+libeglib.la
+libeglib_la-*.lo
+libeglib_la-*.o
