@@ -17548,6 +17548,76 @@
       </method>
     </type>
   </test>
+  <test name="gtest-566.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+Context`1[T,U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+Context`1+D[T,U]">
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="A`1+Context`1+D2`1[T,U,V]">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="A`1+Constructor[T]">
+      <method name="Void Before[U](A`1+Context`1+D[T,U])">
+        <size>1</size>
+      </method>
+      <method name="Void Before[U,V](A`1+Context`1+D2`1[T,U,V])">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+Constructor+Nested[T]">
+      <method name="Void Test[U](A`1+Context`1+D[T,U])">
+        <size>14</size>
+      </method>
+      <method name="Void Test[U,V](A`1+Context`1+D2`1[T,U,V])">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-type-12.cs">
     <type name="C">
       <method name="Int32 Main()">
