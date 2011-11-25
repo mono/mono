@@ -30,36 +30,13 @@ namespace I18N.CJK
 
 #if !DISABLE_UNSAFE
 		// Get the bytes that result from encoding a character buffer.
-		public unsafe override int GetByteCountImpl (
-			char* chars, int count)
+		public unsafe override int GetByteCountImpl (char* chars, int count)
 		{
-			DbcsConvert gb2312 = GetConvert ();
-			int index = 0;
-			int length = 0;
-			while (count-- > 0) {
-				char c = chars[index++];
-				if (c <= 0x80 || c == 0xFF) { // ASCII
-					length++;
-					continue;
-				}
-				byte b1 = gb2312.u2n[((int)c) * 2 + 1];
-				byte b2 = gb2312.u2n[((int)c) * 2];
-				if (b1 == 0 && b2 == 0) {
-#if NET_2_0
-					// FIXME: handle fallback for GetByteCount().
-#else
-					length++;
-#endif
-				}
-				else
-					length += 2;
-			}
-			return length;
+			return GetBytesImpl(chars, count, null, 0);
 		}
 
 		// Get the bytes that result from encoding a character buffer.
-		public unsafe override int GetBytesImpl (char* chars, int charCount,
-					     byte* bytes, int byteCount)
+		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 		{
 			DbcsConvert gb2312 = GetConvert ();
 			int charIndex = 0;
@@ -72,7 +49,8 @@ namespace I18N.CJK
 			while (charCount-- > 0) {
 				char c = chars[charIndex++];
 				if (c <= 0x80 || c == 0xFF) { // ASCII
-					bytes[byteIndex++] = (byte)c;
+					int offset = byteIndex++;
+					if (bytes != null) bytes[offset] = (byte)c;
 					continue;
 				}
 				byte b1 = gb2312.u2n[((int)c) * 2 + 1];
@@ -83,49 +61,27 @@ namespace I18N.CJK
 						ref charIndex, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
 #else
-					bytes[byteIndex++] = (byte)'?';
+					int offset = byteIndex++;
+					if (bytes != null) bytes[offset] = (byte)'?';
 #endif
 				} else {
-					bytes[byteIndex++] = b1;
-					bytes[byteIndex++] = b2;
+					if (bytes != null)
+					{
+						bytes[byteIndex++] = b1;
+						bytes[byteIndex++] = b2;
+					}
+					else
+					{
+						byteIndex += 2;
+					}
 				}
 			}
 			return byteIndex - origIndex;
 		}
 #else
-		// Get the bytes that result from encoding a character buffer.
-		public override int GetByteCount(char[] chars, int index, int count)
+		protected int GetBytesInternal(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
-			DbcsConvert gb2312 = GetConvert();
-			int length = 0;
-			while (count-- > 0)
-			{
-				char c = chars[index++];
-				if (c <= 0x80 || c == 0xFF)
-				{ // ASCII
-					length++;
-					continue;
-				}
-				byte b1 = gb2312.u2n[((int)c) * 2 + 1];
-				byte b2 = gb2312.u2n[((int)c) * 2];
-				if (b1 == 0 && b2 == 0)
-				{
-#if NET_2_0
-					// FIXME: handle fallback for GetByteCount().
-#else
-					length++;
-#endif
-				}
-				else
-					length += 2;
-			}
-			return length;
-		}
-
-		// Get the bytes that result from encoding a character buffer.
-		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
-		{
-			int byteCount = bytes.Length;
+			int byteCount = bytes != null ? bytes.Length : 0;
 
 			DbcsConvert gb2312 = GetConvert();
 #if NET_2_0
@@ -138,7 +94,8 @@ namespace I18N.CJK
 				char c = chars[charIndex++];
 				if (c <= 0x80 || c == 0xFF)
 				{ // ASCII
-					bytes[byteIndex++] = (byte)c;
+					int offset = byteIndex++;
+					if (bytes != null) bytes[offset] = (byte)c;
 					continue;
 				}
 				byte b1 = gb2312.u2n[((int)c) * 2 + 1];
@@ -149,16 +106,36 @@ namespace I18N.CJK
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
 #else
-					bytes[byteIndex++] = (byte)'?';
+					int offset = byteIndex++;
+					if (bytes != null) bytes[] = (byte)'?';
 #endif
 				}
 				else
 				{
-					bytes[byteIndex++] = b1;
-					bytes[byteIndex++] = b2;
+					if (bytes != null)
+					{
+						bytes[byteIndex++] = b1;
+						bytes[byteIndex++] = b2;
+					}
+					else
+					{
+						byteIndex += 2;
+					}
 				}
 			}
 			return byteIndex - origIndex;
+		}
+
+		// Get the bytes that result from encoding a character buffer.
+		public override int GetByteCount(char[] chars, int index, int count)
+		{
+			return GetBytes(chars, index, count, null, 0);
+		}
+
+		// Get the bytes that result from encoding a character buffer.
+		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+		{
+			return GetBytesInternal(chars, charIndex, charCount, bytes, byteIndex);
 		}
 #endif
 		// Get the characters that result from decoding a byte buffer.
