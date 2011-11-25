@@ -85,6 +85,12 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
+		public void CP936_Encode3 ()
+		{
+			AssertEncode("Test/texts/chinese3-utf8.txt", "Test/texts/chinese3-936.txt", 936);
+		}
+
+		[Test]
 		public void CP936_Decode ()
 		{
 			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
@@ -96,6 +102,12 @@ namespace MonoTests.I18N.CJK
 		public void CP950_Encode ()
 		{
 			AssertEncode ("Test/texts/chinese2-utf8.txt", "Test/texts/chinese2-950.txt", 950);
+		}
+
+		[Test]
+		public void CP950_Encode4 ()
+		{
+			AssertEncode("Test/texts/chinese4-utf8.txt", "Test/texts/chinese4-950.txt", 950);
 		}
 
 		[Test]
