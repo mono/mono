@@ -441,7 +441,7 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ("Values is null.");
 			if (dataGridView.VirtualMode || dataGridView.DataSource != null)
 				throw new InvalidOperationException ();
-			DataGridViewRow row = new DataGridViewRow ();
+			DataGridViewRow row = dataGridView.RowTemplateFull;
 			row.SetValues (values);
 			Insert (rowIndex, row);
 		}
