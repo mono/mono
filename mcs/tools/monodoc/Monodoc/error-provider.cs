@@ -15,6 +15,9 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Linq;
+using Mono.Lucene.Net.Index;
+using Mono.Lucene.Net.Documents;
 
 namespace Monodoc {
 
@@ -268,6 +271,21 @@ namespace Monodoc {
 		{
 			foreach (Node n in Tree.Nodes)
 				index_maker.Add (n.Caption, n.Caption, n.Element);
+		}
+
+		public override void PopulateSearchableIndex (IndexWriter writer) 
+		{
+			foreach (Node n in Tree.Nodes) {
+				XmlSerializer reader = new XmlSerializer (typeof (ErrorDocumentation));
+				ErrorDocumentation d = (ErrorDocumentation)reader.Deserialize (GetHelpStream (n.Element.Substring (6)));
+				SearchableDocument doc = new SearchableDocument ();
+				doc.title = d.ErrorName;
+				doc.url = n.Element;
+				doc.text = d.Details != null ? d.Details.ToString () : string.Empty;
+				doc.examples = d.Examples.Cast<string> ().Aggregate ((e1, e2) => e1 + Environment.NewLine + e2);
+				doc.hottext = d.ErrorName;
+				writer.AddDocument (doc.LuceneDoc);
+			}
 		}
 
 		public static string css_error_code = @"
