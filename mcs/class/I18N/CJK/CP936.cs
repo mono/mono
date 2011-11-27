@@ -83,7 +83,7 @@ namespace I18N.CJK
 		protected int GetBytesInternal(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
 			int origIndex = byteIndex;
-			int end = charCount;
+			int end = charIndex + charCount;
 			int byteCount = bytes != null ? bytes.Length : 0;
 
 			DbcsConvert gb2312 = GetConvert();

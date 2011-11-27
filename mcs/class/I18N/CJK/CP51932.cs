@@ -267,6 +267,7 @@ public class CP51932Encoder : MonoEncoder
 	{
 		int charIndex = 0;
 		int byteIndex = 0;
+		int end = charCount;
 
 		// Convert the characters into their byte form.
 		int posn = byteIndex;
@@ -277,8 +278,8 @@ public class CP51932Encoder : MonoEncoder
 		byte[] greekToJis = JISConvert.Convert.greekToJis;
 		byte[] extraToJis = JISConvert.Convert.extraToJis;
 
-		for (; charCount > 0; charIndex++, --charCount) {
-			ch = chars [charIndex];
+		for (int i = charIndex; i < end; i++, charCount--) {
+			ch = chars [i];
 			if (posn >= byteLength) {
 				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
 			}
@@ -313,7 +314,7 @@ public class CP51932Encoder : MonoEncoder
 			if (value == 0) {
 #if NET_2_0
 				HandleFallback (
-					chars, ref charIndex, ref charCount,
+					chars, ref i, ref charCount,
 					bytes, ref posn, ref byteCount, null);
 #else
 				bytes [posn++] = (byte) '?';
@@ -412,15 +413,16 @@ public class CP51932Encoder : MonoEncoder
 		int posn = byteIndex;
 		int byteLength = bytes.Length;
 		int byteCount = bytes.Length;
+		int end = charIndex + charCount;
 		int ch, value;
 
 		byte[] cjkToJis = JISConvert.Convert.cjkToJis;
 		byte[] greekToJis = JISConvert.Convert.greekToJis;
 		byte[] extraToJis = JISConvert.Convert.extraToJis;
 
-		for (; charCount > 0; charIndex++, --charCount)
+		for (int i = charIndex; i < end; i++, charCount--)
 		{
-			ch = chars[charIndex];
+			ch = chars[i];
 			if (posn >= byteLength)
 			{
 				throw new ArgumentException(Strings.GetString("Arg_InsufficientSpace"), "bytes");
@@ -467,7 +469,7 @@ public class CP51932Encoder : MonoEncoder
 			if (value == 0)
 			{
 #if NET_2_0
-				HandleFallback (chars, ref charIndex, ref charCount,
+				HandleFallback (chars, ref i, ref charCount,
 					bytes, ref posn, ref byteCount, null);
 #else
 				bytes [posn++] = (byte) '?';

@@ -437,11 +437,8 @@ namespace I18N.CJK
 			byte[] greekToJis = JISConvert.Convert.greekToJis;
 			byte[] extraToJis = JISConvert.Convert.extraToJis;
 
-			//while (charCount > 0)
 			for (int i = charIndex; i < end; i++, charCount--)
 			{
-				//ch = chars[charIndex++];
-				//--charCount;
 				int ch = chars[i];
 
 				if (posn >= byteLength)
