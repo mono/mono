@@ -62,7 +62,6 @@ namespace I18N.Common
 			if (buffer == null)
 				buffer = EncoderFallback.CreateFallbackBuffer();
 
-			// THIS IS WERE THE BUG IS!! (pruiz)
 			if (charCount > 1 && (Char.IsSurrogate(chars[charIndex]) && Char.IsSurrogate(chars[charIndex + 1])))
 			{
 				buffer.Fallback (chars[charIndex], chars[charIndex + 1], charIndex);

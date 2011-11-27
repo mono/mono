@@ -123,11 +123,12 @@ namespace I18N.CJK
         {
             int index = 0;
             int length = 0;
+			int end = count;
             DbcsConvert convert = GetConvert ();
 
             // 00 00 - FF FF
-            while (count-- > 0) {
-                char c = chars[index++];
+            for (int i = 0; i < end; i++, charCount--) {
+                char c = chars[i];
                 if (c <= 0x80 || c == 0xFF) { // ASCII
                     length++;
                     continue;
@@ -154,6 +155,7 @@ namespace I18N.CJK
         {
             int charIndex = 0;
             int byteIndex = 0;
+			int end = charCount;
             DbcsConvert convert = GetConvert ();
 #if NET_2_0
             EncoderFallbackBuffer buffer = null;
@@ -161,8 +163,8 @@ namespace I18N.CJK
 
             // 00 00 - FF FF
             int origIndex = byteIndex;
-            while (charCount-- > 0) {
-                char c = chars[charIndex++];
+            for (int = charIndex; i < end; i++, charCount--) {
+                char c = chars[i];
                 if (c <= 0x80 || c == 0xFF) { // ASCII
                     bytes[byteIndex++] = (byte)c;
                     continue;
@@ -171,7 +173,7 @@ namespace I18N.CJK
                 byte b2 = convert.u2n[((int)c) * 2 + 1];
                 if (b1 == 0 && b2 == 0) {
 #if NET_2_0
-                    HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+                    HandleFallback (ref buffer, chars, ref i, ref charCount,
                         bytes, ref byteIndex, ref byteCount, null);
 #else
                     bytes[byteIndex++] = (byte)'?';
@@ -220,6 +222,7 @@ namespace I18N.CJK
 		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
 			int byteCount = bytes.Length;
+			int end = charIndex + charCount;
 
 			DbcsConvert convert = GetConvert();
 #if NET_2_0
@@ -228,9 +231,9 @@ namespace I18N.CJK
 
 			// 00 00 - FF FF
 			int origIndex = byteIndex;
-			while (charCount-- > 0)
+			for (int i = charIndex; i < end; i++, charCount--)
 			{
-				char c = chars[charIndex++];
+				char c = chars[i];
 				if (c <= 0x80 || c == 0xFF)
 				{ // ASCII
 					bytes[byteIndex++] = (byte)c;
@@ -241,7 +244,7 @@ namespace I18N.CJK
 				if (b1 == 0 && b2 == 0)
 				{
 #if NET_2_0
-					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+					HandleFallback (ref buffer, chars, ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
 #else
                     bytes[byteIndex++] = (byte)'?';

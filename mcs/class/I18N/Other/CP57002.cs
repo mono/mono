@@ -95,6 +95,7 @@ public abstract class ISCIIEncoding : MonoEncoding
 				char ch;
 				char first = (char)shift;
 				char last = (char)(shift + 0x7F);
+
 				while(count-- > 0)
 				{
 					ch = chars[index++];
@@ -133,8 +134,9 @@ public abstract class ISCIIEncoding : MonoEncoding
 #if NET_2_0
 				EncoderFallbackBuffer buffer = null;
 #endif
-				int charIndex = 0;
+				//int charIndex = 0;
 				int byteIndex = 0;
+				int end = charCount;
 
 				if(chars == null)
 				{
@@ -150,9 +152,10 @@ public abstract class ISCIIEncoding : MonoEncoding
 				int posn = byteIndex;
 				char first = (char)shift;
 				char last = (char)(shift + 0x7F);
-				while(charCount-- > 0)
+
+				for (int i = 0; i < end; i++, charCount--)
 				{
-					ch = chars[charIndex++];
+					ch = chars[i];
 					if(ch < (char)0x0080)
 					{
 						// Regular ASCII subset.
@@ -171,7 +174,7 @@ public abstract class ISCIIEncoding : MonoEncoding
 					else
 					{
 #if NET_2_0
-						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref posn, ref byteCount);
+						HandleFallback (ref buffer, chars, ref i, ref charCount, bytes, ref posn, ref byteCount);
 						continue;
 #else
 						bytes[posn++] = (byte)'?';
