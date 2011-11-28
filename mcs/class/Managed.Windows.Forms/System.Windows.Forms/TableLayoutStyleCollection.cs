@@ -38,6 +38,9 @@ namespace System.Windows.Forms {
 		
 		internal TableLayoutStyleCollection (TableLayoutPanel table)
 		{
+			if (table == null)
+				throw new ArgumentNullException("table");
+			
 			this.table = table;
 		}
 		
