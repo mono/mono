@@ -30,10 +30,8 @@ BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
 
-# Use -cvt for parser debug version
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -cv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
-
+	$(topdir)/jay/jay -c < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 KEEP_OUTPUT_FILE_COPY = yes
 
@@ -97,6 +95,10 @@ do-gettext:
 
 profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
+	
+debug-parser:
+	$(topdir)/jay/jay -cvt < $(topdir)/jay/skeleton.cs cs-parser.jay > jay-tmp.out && mv jay-tmp.out cs-parser.cs
+	$(MAKE)
 
 #
 # quick hack target, to quickly develop the gmcs compiler
