@@ -3391,7 +3391,7 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 		 * info returned by CMD_METHOD_GET_DEBUG_INFO (#407).
 		 */
 		for (i = 0; i < seq_points->len; ++i) {
-			sp = &seq_points->seq_points [i];
+			SeqPoint *sp = &seq_points->seq_points [i];
 
 			if (sp->il_offset != METHOD_ENTRY_IL_OFFSET && sp->il_offset != METHOD_EXIT_IL_OFFSET && sp->il_offset + 1 == bp->il_offset)
 				break;
