@@ -1739,12 +1739,14 @@ word bytes;
 
 void GC_win32_free_heap ()
 {
-    if (GC_no_win32_dlls) {
- 	while (GC_n_heap_bases > 0) {
- 	    GlobalFree (GC_heap_bases[--GC_n_heap_bases]);
- 	    GC_heap_bases[GC_n_heap_bases] = 0;
- 	}
-    }
+	while (GC_n_heap_bases > 0) {
+		if (GLOBAL_ALLOC_TEST) {
+			GlobalFree (GC_heap_bases[--GC_n_heap_bases]);
+		} else {
+			VirtualFree (GC_heap_bases[--GC_n_heap_bases], 0, MEM_RELEASE);
+		}
+		GC_heap_bases[GC_n_heap_bases] = 0;
+	}
 }
 # endif
 
