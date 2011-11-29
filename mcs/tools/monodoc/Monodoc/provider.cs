@@ -1233,7 +1233,6 @@ public class RootTree : Tree {
 		}
 
 		if (nsidx == -1) {
-			Console.Error.WriteLine ("Did not find dot in: " + url);
 			ns = null;
 			type = null;
 			return false;
