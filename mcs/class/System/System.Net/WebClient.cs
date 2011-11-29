@@ -192,7 +192,7 @@ namespace System.Net
 
 		public IWebProxy Proxy {
 			get {
-				if (proxySet)
+				if (!proxySet)
 					return WebRequest.DefaultWebProxy;
 
 				return proxy;
