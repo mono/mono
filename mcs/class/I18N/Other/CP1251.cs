@@ -31,6 +31,10 @@ using System;
 using System.Text;
 using I18N.Common;
 
+#if DISABLE_UNSAFE
+using ByteEncoding = I18N.Common.ByteSafeEncoding;
+#endif
+
 [Serializable]
 public class CP1251 : ByteEncoding
 {
@@ -86,6 +90,7 @@ public class CP1251 : ByteEncoding
 		'\u044C', '\u044D', '\u044E', '\u044F', 
 	};
 
+#if !DISABLE_UNSAFE
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
 	{
@@ -256,15 +261,24 @@ public class CP1251 : ByteEncoding
 		}
 	}
 
-	/*
-	protected override void ToBytes(String s, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
+#else
+
+	protected override void ToBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 	{
-		int ch;
-		while(charCount > 0)
+		int byteCount = bytes.Length;
+		int end = charIndex + charCount;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
+
+		for (int i = charIndex; i < end; i++, charCount--)
 		{
-			ch = (int)(s[charIndex++]);
-			if(ch >= 128) switch(ch)
+			if (byteCount <= 0)
+				throw new ArgumentOutOfRangeException ("Insufficient byte buffer.");
+
+			int ch = (int)(chars[i]);
+
+			if (ch >= 128) switch (ch)
 			{
 				case 0x0098:
 				case 0x00A0:
@@ -402,7 +416,14 @@ public class CP1251 : ByteEncoding
 					if(ch >= 0xFF01 && ch <= 0xFF5E)
 						ch -= 0xFEE0;
 					else
+#if NET_2_0
+					{
+						HandleFallback(ref buffer, chars, ref i, ref charCount, bytes, ref byteIndex, ref byteCount, null);
+						continue;
+					}
+#else
 						ch = 0x3F;
+#endif
 				}
 				break;
 			}
@@ -410,8 +431,7 @@ public class CP1251 : ByteEncoding
 			--charCount;
 		}
 	}
-	*/
-
+#endif
 
 }; // class CP1251
 
