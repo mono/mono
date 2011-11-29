@@ -5779,6 +5779,10 @@ mini_cleanup (MonoDomain *domain)
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);
 
+#if defined(PLATFORM_WIN32) && defined(HAVE_BOEHM_GC)
+	GC_win32_free_heap ();
+#endif
+
 	TlsFree(mono_jit_tls_id);
 
 	DeleteCriticalSection (&jit_mutex);
