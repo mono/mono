@@ -40,12 +40,8 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		public void CreateDir ()
 		{
 			source_path = Path.Combine (Path.Combine ("Test", "resources"), "Copy");
-			if (Directory.Exists(source_path))
-				Directory.Delete (source_path, true);
 			Directory.CreateDirectory (source_path);
 			target_path = Path.Combine (Path.Combine ("Test", "resources"), "Target");
-			if (Directory.Exists(target_path))
-				Directory.Delete (target_path, true);
 			Directory.CreateDirectory (target_path);
 		}
 

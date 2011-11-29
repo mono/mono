@@ -199,12 +199,12 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (create_dir)
 				CreateDirectoryIfRequired (Path.GetDirectoryName (dest));
-			if(overwriteReadOnlyFiles)
-				ClearReadOnlyAttribute(dest);
+			if (overwriteReadOnlyFiles)
+				ClearReadOnlyAttribute (dest);
 			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
 			if (String.Compare (source, dest) != 0)
 				File.Copy (source, dest, true);
-			ClearReadOnlyAttribute(dest);
+			ClearReadOnlyAttribute (dest);
 		}
 
 		void ClearReadOnlyAttribute (string name)
