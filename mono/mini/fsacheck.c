@@ -253,10 +253,23 @@ int try_one(char *mname, MonoDomain *domain) {
   return failures != NULL ? failures : 1;
 }
 
+#if defined(__GLIBC__)
+__ptr_t nullmorecore(ptrdiff_t size) {
+  return NULL;
+}
+#endif
+
 int main(int argc, char *argv[]) {
    MonoDomain *domain;
    int failures = 0;
   const int kExplicitNullChecks = 1;
+
+#if defined(__GLIBC__)
+  /* This forces heap allocations to use mmap, which on NaCl uses high mem */
+  /* addresses.  This tests data pointers with the high bit set on 64-bit. */
+  __morecore = nullmorecore;
+#endif
+
   if (kExplicitNullChecks) {
     setenv("MONO_DEBUG", "explicit-null-checks", 1);
   }
