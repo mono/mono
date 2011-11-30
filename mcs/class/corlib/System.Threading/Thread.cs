@@ -633,7 +633,7 @@ namespace System.Threading {
 		}
 
 #if MOONLIGHT
-		private void StartSafe ()
+		private void StartInternal ()
 		{
 			current_thread = this;
 
@@ -670,9 +670,32 @@ namespace System.Threading {
 				}
 			}
 		}
-#endif
-
-		private void StartUnsafe ()
+#elif MONOTOUCH
+		static ConstructorInfo nsautoreleasepool_ctor;
+		
+		IDisposable GetNSAutoreleasePool ()
+		{
+			if (nsautoreleasepool_ctor == null) {
+				Type t = Type.GetType ("MonoTouch.Foundation.NSAutoreleasePool, monotouch, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+				nsautoreleasepool_ctor = t.GetConstructor (Type.EmptyTypes);
+			}
+			return (IDisposable) nsautoreleasepool_ctor.Invoke (null);
+		}
+		
+		private void StartInternal ()
+		{
+			using (var pool = GetNSAutoreleasePool ()) {
+				current_thread = this;
+			
+				if (threadstart is ThreadStart) {
+					((ThreadStart) threadstart) ();
+				} else {
+					((ParameterizedThreadStart) threadstart) (start_obj);
+				}
+			}
+		}
+#else
+		private void StartInternal ()
 		{
 			current_thread = this;
 
@@ -682,7 +705,7 @@ namespace System.Threading {
 				((ParameterizedThreadStart) threadstart) (start_obj);
 			}
 		}
-
+#endif
 		public void Start() {
 			// propagate informations from the original thread to the new thread
 			if (!ExecutionContext.IsFlowSuppressed ())
@@ -690,11 +713,7 @@ namespace System.Threading {
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
-#if MOONLIGHT
-			if (Thread_internal((ThreadStart) StartSafe) == (IntPtr) 0)
-#else
-			if (Thread_internal((ThreadStart) StartUnsafe) == (IntPtr) 0)
-#endif
+			if (Thread_internal((ThreadStart) StartInternal) == (IntPtr) 0)
 				throw new SystemException ("Thread creation failed.");
 		}
 
