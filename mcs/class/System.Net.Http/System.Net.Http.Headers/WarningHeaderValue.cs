@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// WarningHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,76 +26,65 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class WarningHeaderValue : ICloneable
 	{
-		readonly string value;
-		List<NameValueHeaderValue> parameters;
-
-		public TransferCodingHeaderValue (string value)
+		public WarningHeaderValue (int code, string agent, string text)
 		{
-			this.value = value;
+			Code = code;
+			Agent = agent;
+			Text = text;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public WarningHeaderValue (int code, string agent, string text, DateTimeOffset date)
+			: this (code, agent, text)
 		{
-			this.value = source.value;
-			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
-			}
+			Date = date;
 		}
 
-		public ICollection<NameValueHeaderValue> Parameters {
-			get {
-				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
-			}
-		}
-
-		public string Value {
-			get {
-				return value;
-			}
-		}
+		public string Agent { get; private set; }
+		public int Code { get; private set; }
+		public DateTimeOffset? Date { get; private set; }
+		public string Text { get; private set; }
 
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return MemberwiseClone ();
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as WarningHeaderValue;
+			if (source == null)
+				return false;
+
+			return Code == source.Code &&
+				string.Equals (source.Agent, Agent, StringComparison.OrdinalIgnoreCase) &&
+				Text == source.Text &&
+				Date == source.Date;
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
+			int hc = Code.GetHashCode ();
+			hc ^= Agent.ToLowerInvariant ().GetHashCode ();
+			hc ^= Text.GetHashCode ();
+			hc ^= Date.GetHashCode ();
 
 			return hc;
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static WarningHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			WarningHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
-
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		
+		public static bool TryParse (string input, out WarningHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

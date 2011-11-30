@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// NameValueWithParametersHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -31,23 +31,26 @@ using System.Linq;
 
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class NameValueWithParametersHeaderValue : NameValueHeaderValue, ICloneable
 	{
-		readonly string value;
 		List<NameValueHeaderValue> parameters;
 
-		public TransferCodingHeaderValue (string value)
+		public NameValueWithParametersHeaderValue (string name)
+			: base (name)
 		{
-			this.value = value;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public NameValueWithParametersHeaderValue (string name, string value)
+			: base (name, value)
 		{
-			this.value = source.value;
+		}
+
+		protected NameValueWithParametersHeaderValue (NameValueWithParametersHeaderValue source)
+			: base (source)
+		{
 			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
+				foreach (var item in source.parameters)
+					Parameters.Add (item);
 			}
 		}
 
@@ -57,45 +60,35 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		public string Value {
-			get {
-				return value;
-			}
-		}
-
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return new NameValueWithParametersHeaderValue (this);
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as NameValueWithParametersHeaderValue;
+			if (source == null)
+				return false;
+
+			return base.Equals (obj) && Enumerable.SequenceEqual (source.parameters, parameters);
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
-
-			return hc;
+			return base.GetHashCode () ^ HashCodeCalculator.Calculate (parameters);
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static new NameValueWithParametersHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			NameValueWithParametersHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
 
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		public static bool TryParse (string input, out NameValueWithParametersHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

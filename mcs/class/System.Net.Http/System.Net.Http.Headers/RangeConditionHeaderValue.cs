@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// RangeConditionHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,76 +26,59 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class RangeConditionHeaderValue : ICloneable
 	{
-		readonly string value;
-		List<NameValueHeaderValue> parameters;
-
-		public TransferCodingHeaderValue (string value)
+		public RangeConditionHeaderValue (DateTimeOffset date)
 		{
-			this.value = value;
+			Date = date;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public RangeConditionHeaderValue (EntityTagHeaderValue entityTag)
 		{
-			this.value = source.value;
-			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
-			}
+			EntityTag = entityTag;
 		}
 
-		public ICollection<NameValueHeaderValue> Parameters {
-			get {
-				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
-			}
+		public RangeConditionHeaderValue (string entityTag)
+			: this (new EntityTagHeaderValue (entityTag))
+		{
 		}
 
-		public string Value {
-			get {
-				return value;
-			}
-		}
+		public DateTimeOffset? Date { get; private set; }
+		public EntityTagHeaderValue EntityTag { get; private set; }
 
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return MemberwiseClone ();
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as RangeConditionHeaderValue;
+			if (source == null)
+				return false;
+
+			return EntityTag != null ?
+				EntityTag.Equals (source.EntityTag) :
+				Date == source.Date;
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
-
-			return hc;
+			return EntityTag != null ? EntityTag.GetHashCode () : Date.GetHashCode ();
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static RangeConditionHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			RangeConditionHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
 
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		public static bool TryParse (string input, out RangeConditionHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

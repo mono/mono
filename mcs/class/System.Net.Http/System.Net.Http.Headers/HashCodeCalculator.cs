@@ -1,5 +1,5 @@
 //
-// TransferCodingWithQualityHeaderValue.cs
+// HashCodeCalculator.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,44 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
-	public sealed class TransferCodingWithQualityHeaderValue : TransferCodingHeaderValue
+	static class HashCodeCalculator
 	{
-		public TransferCodingWithQualityHeaderValue (string value)
-			: base (value)
+		public static int Calculate<T> (List<T> list)
 		{
-		}
+			if (list == null)
+				return 0;
 
-		public TransferCodingWithQualityHeaderValue (string value, double quality)
-			: this (value)
-		{
-			Quality = quality;
-		}
-
-		public double? Quality {
-			get {
-				throw new NotImplementedException ();
-				// TODO: return Parameters.Get ("Quality");
+			int hash = 17;
+			foreach (var item in list) {
+				unchecked {
+					hash = hash * 29 + item.GetHashCode ();
+				}
 			}
 
-			set {
-				// TODO: Parameters.Set ("Quality", value);
-			}
-		}
-
-		public new static TransferCodingWithQualityHeaderValue Parse (string input)
-		{
-			TransferCodingWithQualityHeaderValue value;
-			if (TryParse (input, out value))
-				return value;
-
-			throw new FormatException ();
-		}
-
-		public static bool TryParse (string input, out TransferCodingWithQualityHeaderValue parsedValue)
-		{
-			throw new NotImplementedException ();
+			return hash;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// AuthenticationHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,76 +26,61 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class AuthenticationHeaderValue : ICloneable
 	{
-		readonly string value;
-		List<NameValueHeaderValue> parameters;
-
-		public TransferCodingHeaderValue (string value)
+		public AuthenticationHeaderValue (string scheme)
+			: this (scheme, null)
 		{
-			this.value = value;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public AuthenticationHeaderValue (string scheme, string parameter)
 		{
-			this.value = source.value;
-			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
-			}
+			this.Scheme = scheme;
+			this.Parameter = parameter;
 		}
 
-		public ICollection<NameValueHeaderValue> Parameters {
-			get {
-				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
-			}
-		}
-
-		public string Value {
-			get {
-				return value;
-			}
-		}
+		public string Parameter { get; private set; }
+		public string Scheme { get; private set; }
 
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return MemberwiseClone ();
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as AuthenticationHeaderValue;
+			if (source == null || !string.Equals (source.Scheme, Scheme, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			if (string.IsNullOrEmpty (Parameter))
+				return string.IsNullOrEmpty (source.Parameter);
+
+			return string.Equals (source.Parameter, Parameter, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
+			int hc = Scheme.ToLowerInvariant ().GetHashCode ();
+			if (!string.IsNullOrEmpty (Parameter)) {
+				hc ^= Parameter.ToLowerInvariant ().GetHashCode ();
+			}
 
 			return hc;
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static AuthenticationHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			AuthenticationHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
 
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		public static bool TryParse (string input, out AuthenticationHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

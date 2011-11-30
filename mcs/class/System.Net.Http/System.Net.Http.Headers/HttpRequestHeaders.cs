@@ -36,24 +36,61 @@ namespace System.Net.Http.Headers
 		{
 		}
 
-		//public HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue> Accept { get; }
-		//public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptCharset { get; }
-		//public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptEncoding { get; }
-		//public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptLanguage { get; }
-		//public AuthenticationHeaderValue Authorization { get; set; }
-		//public CacheControlHeaderValue CacheControl { get; set; }
+		public HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue> Accept {
+			get {
+				return GetValue<HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue>> ("Accept");
+			}
+		}
+
+		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptCharset {
+			get {
+				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Charset");
+			}
+		}
+
+		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptEncoding {
+			get {
+				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Encoding");
+			}
+		}
+
+		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptLanguage {
+			get {
+				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Language");
+			}
+		}
+
+		public AuthenticationHeaderValue Authorization {
+			get {
+				return GetValue<AuthenticationHeaderValue> ("Authorization");
+			}
+			set {
+				// TODO:
+			}
+		}
+
+		public CacheControlHeaderValue CacheControl {
+			get {
+				return GetValue<CacheControlHeaderValue> ("Cache-Control");
+			}
+			set {
+				// TODO:
+			}
+		}
+
 		public HttpHeaderValueCollection<string> Connection {
 			get {
-				return Connection.GetValue<HttpHeaderValueCollection<string>> ("Connection");
+				return GetValue<HttpHeaderValueCollection<string>> ("Connection");
 			}
 		}
 
 		public bool? ConnectionClose {
 			get {
-				return Connection.GetValue<bool?> ("close");
+				throw new NotImplementedException ();
+				//return Connection.GetValue<bool?> ("close");
 			}
 			set {
-				return Connection.SetValue ("close", value);
+				// TODO: return Connection.SetValue ("Connection", "close", value);
 			}
 		}
 
@@ -65,8 +102,22 @@ namespace System.Net.Http.Headers
 				SetValue ("Date", value);
 			}
 		}
-		//public HttpHeaderValueCollection<NameValueWithParametersHeaderValue> Expect { get; }
-		//public bool? ExpectContinue { get; set; }
+
+		public HttpHeaderValueCollection<NameValueWithParametersHeaderValue> Expect {
+			get {
+				return GetValue<HttpHeaderValueCollection<NameValueWithParametersHeaderValue>> ("Expect");
+			}
+		}
+
+		public bool? ExpectContinue { 
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				// TODO:
+			}
+		}
+
 		public string From {
 			get {
 				return GetValue<string> ("From");
@@ -85,11 +136,46 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		//public HttpHeaderValueCollection<EntityTagHeaderValue> IfMatch { get; }
-		public DateTimeOffset? IfModifiedSince { get; set; }
-		//public HttpHeaderValueCollection<EntityTagHeaderValue> IfNoneMatch { get; }
-		//public RangeConditionHeaderValue IfRange { get; set; }
-		//public DateTimeOffset? IfUnmodifiedSince { get; set; }
+		public HttpHeaderValueCollection<EntityTagHeaderValue> IfMatch {
+			get {
+				return GetValue<HttpHeaderValueCollection<EntityTagHeaderValue>> ("If-Match");
+			}
+		}
+
+		public DateTimeOffset? IfModifiedSince {
+			get {
+				return GetValue<DateTimeOffset?> ("If-Modified-Since");
+			}
+			set {
+				// TODO:
+			}
+		}
+
+		public HttpHeaderValueCollection<EntityTagHeaderValue> IfNoneMatch {
+			get {
+				return GetValue<HttpHeaderValueCollection<EntityTagHeaderValue>> ("If-None-Match");
+			}
+		}
+
+		public RangeConditionHeaderValue IfRange {
+			get
+			{
+				return GetValue<RangeConditionHeaderValue> ("If-Range");
+			}
+			set {
+				// TODO:
+			}
+		}
+
+		public DateTimeOffset? IfUnmodifiedSince {
+			get {
+				return GetValue<DateTimeOffset?> ("If-Unmodified-Since");
+			}
+			set {
+				// TODO:
+			}
+		}
+
 		public int? MaxForwards {
 			get {
 				return GetValue<int?> ("Max-Forwards");
@@ -99,9 +185,29 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		//public HttpHeaderValueCollection<NameValueHeaderValue> Pragma { get; }
-		//public AuthenticationHeaderValue ProxyAuthorization { get; set; }
-		//public RangeHeaderValue Range { get; set; }
+		public HttpHeaderValueCollection<NameValueHeaderValue> Pragma {
+			get {
+				return GetValue<HttpHeaderValueCollection<NameValueHeaderValue>> ("Pragma");
+			}
+		}
+
+		public AuthenticationHeaderValue ProxyAuthorization {
+			get {
+				return GetValue<AuthenticationHeaderValue> ("Proxy-Authorization");
+			}
+			set {
+				// TODO:
+			}
+		}
+
+		public RangeHeaderValue Range {
+			get {
+				return GetValue<RangeHeaderValue> ("Range");
+			}
+			set {
+				// TODO:
+			}
+		}
 
 		public Uri Referrer {
 			get {
@@ -112,21 +218,56 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		//public HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue> TE {
-		//    get {
-		//        return GetValue<HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue>> ("TE");
-		//    }
-		//}
+		public HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue> TE {
+		    get {
+		        return GetValue<HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue>> ("TE");
+		    }
+		}
+
 		public HttpHeaderValueCollection<string> Trailer {
 			get {
 				return GetValue<HttpHeaderValueCollection<string>> ("Trailer");
 			}
 		}
-		//public HttpHeaderValueCollection<TransferCodingHeaderValue> TransferEncoding { get; }
-		//public bool? TransferEncodingChunked { get; set; }
-		//public HttpHeaderValueCollection<ProductHeaderValue> Upgrade { get; }
-		//public HttpHeaderValueCollection<ProductInfoHeaderValue> UserAgent { get; }
-		//public HttpHeaderValueCollection<ViaHeaderValue> Via { get; }
-		//public HttpHeaderValueCollection<WarningHeaderValue> Warning { get; }
+
+		public HttpHeaderValueCollection<TransferCodingHeaderValue> TransferEncoding {
+			get {
+				return GetValue<HttpHeaderValueCollection<TransferCodingHeaderValue>> ("Transfer-Encoding");
+			}
+		}
+
+		public bool? TransferEncodingChunked {
+			get {
+				throw new NotImplementedException ();
+			}
+
+			set {
+				// TODO:
+			}
+		}
+
+		public HttpHeaderValueCollection<ProductHeaderValue> Upgrade {
+			get {
+				return GetValue<HttpHeaderValueCollection<ProductHeaderValue>> ("Upgrade");
+			}
+		}
+
+		public HttpHeaderValueCollection<ProductInfoHeaderValue> UserAgent {
+			get {
+				return GetValue<HttpHeaderValueCollection<ProductInfoHeaderValue>> ("User-Agent");
+			}
+		}
+
+		public HttpHeaderValueCollection<ViaHeaderValue> Via {
+			get {
+				return GetValue<HttpHeaderValueCollection<ViaHeaderValue>> ("Via");
+			}
+		}
+
+		public HttpHeaderValueCollection<WarningHeaderValue> Warning {
+			get {
+				return GetValue<HttpHeaderValueCollection<WarningHeaderValue>> ("Warning");
+			}
+		}
 	}
 }

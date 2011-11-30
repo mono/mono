@@ -1,5 +1,5 @@
 //
-// TransferCodingWithQualityHeaderValue.cs
+// RangeItemHeaderValueTest.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,44 +26,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Net.Http.Headers
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework;
+using System.Net.Http.Headers;
+
+namespace MonoTests.System.Net.Http.Headers
 {
-	public sealed class TransferCodingWithQualityHeaderValue : TransferCodingHeaderValue
+	[TestFixture]
+	public class RangeItemHeaderValueTest
 	{
-		public TransferCodingWithQualityHeaderValue (string value)
-			: base (value)
+		[Test]
+		public void Ctor_InvalidArguments ()
 		{
-		}
-
-		public TransferCodingWithQualityHeaderValue (string value, double quality)
-			: this (value)
-		{
-			Quality = quality;
-		}
-
-		public double? Quality {
-			get {
-				throw new NotImplementedException ();
-				// TODO: return Parameters.Get ("Quality");
+			try {
+				new RangeItemHeaderValue (null, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
 			}
 
-			set {
-				// TODO: Parameters.Set ("Quality", value);
+			try {
+				new RangeItemHeaderValue (5, 2);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
-		public new static TransferCodingWithQualityHeaderValue Parse (string input)
+		[Test]
+		public void Ctor ()
 		{
-			TransferCodingWithQualityHeaderValue value;
-			if (TryParse (input, out value))
-				return value;
-
-			throw new FormatException ();
+			new RangeItemHeaderValue (1, null);
 		}
 
-		public static bool TryParse (string input, out TransferCodingWithQualityHeaderValue parsedValue)
+		[Test]
+		public void Equals ()
 		{
-			throw new NotImplementedException ();
+			var value = new RangeItemHeaderValue (5, null);
+			Assert.AreEqual (value, new RangeItemHeaderValue (5, null), "#1");
+			Assert.AreNotEqual (value, new RangeItemHeaderValue (6, null), "#2");
+			Assert.AreNotEqual (value, new RangeItemHeaderValue (5, 10), "#3");
+		}
+
+		[Test]
+		public void Properties ()
+		{
+			var value = new RangeItemHeaderValue (3, 23);
+			Assert.AreEqual (3, value.From, "#1");
+			Assert.AreEqual (23, value.To, "#2");
+
+			value = new RangeItemHeaderValue (5, null);
+			Assert.AreEqual (5, value.From, "#3");
+			Assert.IsNull (value.To, "#4");
 		}
 	}
 }

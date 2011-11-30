@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// RangeHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -31,71 +31,68 @@ using System.Linq;
 
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class RangeHeaderValue : ICloneable
 	{
-		readonly string value;
-		List<NameValueHeaderValue> parameters;
+		List<RangeItemHeaderValue> ranges;
 
-		public TransferCodingHeaderValue (string value)
+		public RangeHeaderValue ()
 		{
-			this.value = value;
+			Unit = "bytes";
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public RangeHeaderValue (long? from, long? to)
+			: this ()
 		{
-			this.value = source.value;
-			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
+			Ranges.Add (new RangeItemHeaderValue (from, to));
+		}
+
+		private RangeHeaderValue (RangeHeaderValue source)
+			: this ()
+		{
+			if (source.ranges != null) {
+				foreach (var item in source.ranges)
+					Ranges.Add (item);
 			}
 		}
 
-		public ICollection<NameValueHeaderValue> Parameters {
+		public ICollection<RangeItemHeaderValue> Ranges {
 			get {
-				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
+				return ranges ?? (ranges = new List<RangeItemHeaderValue> ());
 			}
 		}
 
-		public string Value {
-			get {
-				return value;
-			}
-		}
+		public string Unit { get; set; }
 
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return new RangeHeaderValue (this);
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as RangeHeaderValue;
+			if (source == null)
+				return false;
+
+			return string.Equals (source.Unit, Unit, StringComparison.OrdinalIgnoreCase) &&
+				Enumerable.SequenceEqual (source.ranges, ranges);
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
-
-			return hc;
+			return Unit.GetHashCode () ^ HashCodeCalculator.Calculate (ranges);
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static RangeHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			RangeHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
 
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		public static bool TryParse (string input, out RangeHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

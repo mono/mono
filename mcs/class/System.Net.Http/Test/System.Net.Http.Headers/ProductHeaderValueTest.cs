@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValueTest.cs
+// ProductHeaderValueTest.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -35,14 +35,20 @@ using System.Net.Http.Headers;
 namespace MonoTests.System.Net.Http.Headers
 {
 	[TestFixture]
-	public class TransferCodingHeaderValueTest
+	public class ProductHeaderValueTest
 	{
 		[Test]
-		public void Ctor_Invalid ()
+		public void Ctor_InvalidArguments ()
 		{
 			try {
-				var tfhv = new TransferCodingHeaderValue ("my value");
+				new ProductHeaderValue (null);
 				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				new ProductHeaderValue ("x", " ");
+				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
 		}
@@ -50,73 +56,74 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Equals ()
 		{
-			var tfhv = new TransferCodingHeaderValue ("abc");
-			Assert.AreEqual (tfhv, new TransferCodingHeaderValue ("abc"), "#1");
-			Assert.AreEqual (tfhv, new TransferCodingHeaderValue ("AbC"), "#2");
+			var value = new ProductHeaderValue ("ab");
+			Assert.AreEqual (value, new ProductHeaderValue ("ab"), "#1");
+			Assert.AreEqual (value, new ProductHeaderValue ("AB"), "#2");
+			Assert.AreNotEqual (value, new ProductHeaderValue ("AA"), "#3");
 
-			tfhv.Parameters.Add (new NameValueHeaderValue ("p", "v"));
-
-			Assert.AreNotEqual (tfhv, new TransferCodingHeaderValue ("abc"), "#3");
-
-			var tfhv2 = new TransferCodingHeaderValue ("abc");
-			Assert.AreNotEqual (tfhv, tfhv2, "#4");
-
-			tfhv2.Parameters.Add (new NameValueHeaderValue ("p", "v"));
-
-			Assert.AreEqual (tfhv, tfhv2, "#5");
+			value = new ProductHeaderValue ("ab", "DD");
+			Assert.AreEqual (value, new ProductHeaderValue ("Ab", "DD"), "#4");
+			Assert.AreNotEqual (value, new ProductHeaderValue ("AB"), "#5");
+			Assert.AreEqual (value, new ProductHeaderValue ("Ab", "dd"), "#6");
 		}
 
 		[Test]
 		public void Parse ()
 		{
-			var res = TransferCodingHeaderValue.Parse ("content");
-			Assert.AreEqual ("content", res.Value, "#1");
+			var res = ProductHeaderValue.Parse ("c");
+			Assert.AreEqual ("c", res.Name, "#1");
+			Assert.IsNull (res.Version, "#2");
 		}
 
 		[Test]
 		public void Parse_Invalid ()
 		{
 			try {
-				TransferCodingHeaderValue.Parse (null);
+				ProductHeaderValue.Parse (null);
 				Assert.Fail ("#1");
 			} catch (FormatException) {
 			}
 
 			try {
-				TransferCodingHeaderValue.Parse ("  ");
+				ProductHeaderValue.Parse ("  ");
 				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
 
 			try {
-				TransferCodingHeaderValue.Parse ("a b");
+				ProductHeaderValue.Parse ("a;b");
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
 		}
 
 		[Test]
+		public void Properties ()
+		{
+			var value = new ProductHeaderValue ("s", "p");
+			Assert.AreEqual ("s", value.Name, "#1");
+			Assert.AreEqual ("p", value.Version, "#2");
+
+			value = new ProductHeaderValue ("s");
+			Assert.AreEqual ("s", value.Name, "#3");
+			Assert.IsNull (value.Version, "#4");
+		}
+
+		[Test]
 		public void TryParse ()
 		{
-			TransferCodingHeaderValue res;
-			Assert.IsTrue (TransferCodingHeaderValue.TryParse ("content", out res), "#1");
-			Assert.AreEqual ("content", res.Value, "#2");
+			ProductHeaderValue res;
+			Assert.IsTrue (ProductHeaderValue.TryParse ("a", out res), "#1");
+			Assert.AreEqual ("a", res.Name, "#2");
+			Assert.IsNull (res.Version, "#3");
 		}
 
 		[Test]
 		public void TryParse_Invalid ()
 		{
-			TransferCodingHeaderValue res;
-			Assert.IsFalse (TransferCodingHeaderValue.TryParse ("a b", out res), "#1");
+			ProductHeaderValue res;
+			Assert.IsFalse (ProductHeaderValue.TryParse ("", out res), "#1");
 			Assert.IsNull (res, "#2");
-		}
-
-		[Test]
-		public void Value ()
-		{
-			var tfhv = new TransferCodingHeaderValue ("value");
-			Assert.AreEqual ("value", tfhv.Value, "#1");
-			Assert.IsNotNull (tfhv.Parameters, "#2");
 		}
 	}
 }

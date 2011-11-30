@@ -1,5 +1,5 @@
 //
-// NameValueHeaderValue.cs
+// MediaTypeWithQualityHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,75 +28,40 @@
 
 namespace System.Net.Http.Headers
 {
-	public class NameValueHeaderValue : ICloneable
+	public sealed class MediaTypeWithQualityHeaderValue : MediaTypeHeaderValue
 	{
-		string value;
-
-		public NameValueHeaderValue (string name)
-			: this (name, null)
+		public MediaTypeWithQualityHeaderValue (string mediaType)
+			: base (mediaType)
 		{
 		}
 
-		public NameValueHeaderValue (string name, string value)
+		public MediaTypeWithQualityHeaderValue (string mediaType, double quality)
+			: this (mediaType)
 		{
-			this.Name = name;
-			this.Value = value;
+			Quality = quality;
 		}
 
-		protected internal NameValueHeaderValue (NameValueHeaderValue source)
-		{
-			this.Name = source.Name;
-			this.Value = source.Value;
-		}
-
-		public string Name { get; private set; }
-
-		public string Value {
+		public double? Quality {
 			get {
-				return value;
+				throw new NotImplementedException ();
+				// TODO: return Parameters.Get ("Quality");
 			}
+
 			set {
-				this.value = value;
+				// TODO: Parameters.Set ("Quality", value);
 			}
 		}
 
-		object ICloneable.Clone ()
+		public new static MediaTypeWithQualityHeaderValue Parse (string input)
 		{
-			return new NameValueHeaderValue (this);
-		}
-
-		public override int GetHashCode ()
-		{
-			int hc = Name.ToLowerInvariant ().GetHashCode ();
-			if (!string.IsNullOrEmpty (value)) {
-				hc ^= value.ToLowerInvariant ().GetHashCode ();
-			}
-
-			return hc;
-		}
-
-		public override bool Equals (object obj)
-		{
-			var source = obj as NameValueHeaderValue;
-			if (source == null || !string.Equals (source.Name, Name, StringComparison.OrdinalIgnoreCase))
-				return false;
-
-			if (string.IsNullOrEmpty (value))
-				return string.IsNullOrEmpty (source.value);
-
-			return string.Equals (source.value, value, StringComparison.OrdinalIgnoreCase);
-		}
-
-		public static NameValueHeaderValue Parse (string input)
-		{
-			NameValueHeaderValue value;
+			MediaTypeWithQualityHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
-			throw new FormatException (input);
+			throw new FormatException ();
 		}
 
-		public static bool TryParse (string input, out NameValueHeaderValue parsedValue)
+		public static bool TryParse (string input, out MediaTypeWithQualityHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// MediaTypeHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -31,23 +31,36 @@ using System.Linq;
 
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class MediaTypeHeaderValue : ICloneable
 	{
-		readonly string value;
 		List<NameValueHeaderValue> parameters;
+		string media_type;
 
-		public TransferCodingHeaderValue (string value)
+		public MediaTypeHeaderValue (string mediaType)
 		{
-			this.value = value;
+			MediaType = mediaType;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		protected MediaTypeHeaderValue (MediaTypeHeaderValue source)
 		{
-			this.value = source.value;
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			media_type = source.media_type;
 			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
+				foreach (var item in source.parameters)
+					Parameters.Add (new NameValueHeaderValue (item));
+			}
+		}
+
+		public string CharSet { get; set; }
+
+		public string MediaType {
+			get {
+				return media_type;
+			}
+			set {
+				media_type = value;
 			}
 		}
 
@@ -57,45 +70,36 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		public string Value {
-			get {
-				return value;
-			}
-		}
-
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return new MediaTypeHeaderValue (this);
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as MediaTypeHeaderValue;
+			if (source == null)
+				return false;
+
+			return string.Equals (source.media_type, media_type, StringComparison.OrdinalIgnoreCase) &&
+				Enumerable.SequenceEqual (source.parameters, parameters);
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
-
-			return hc;
+			return media_type.ToLowerInvariant ().GetHashCode () ^ HashCodeCalculator.Calculate (parameters);
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static MediaTypeHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			MediaTypeHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
-
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		
+		public static bool TryParse (string input, out MediaTypeHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

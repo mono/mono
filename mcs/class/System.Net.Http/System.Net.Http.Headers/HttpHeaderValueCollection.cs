@@ -27,22 +27,71 @@
 //
 
 using System.Collections.Generic;
+using System.Collections;
 
 namespace System.Net.Http.Headers
 {
-	public sealed class HttpHeaderValueCollection<T> where T : class
+	public sealed class HttpHeaderValueCollection<T> : ICollection<T> where T : class
 	{
 		internal HttpHeaderValueCollection ()
 		{
 		}
 
+		public int Count {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool IsReadOnly {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public void Add (T item)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal void Add<U> (string name, U value)
 		{
+			throw new NotImplementedException ();
+		}
+
+		public void Clear ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool Contains (T item)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void CopyTo (T[] array, int arrayIndex)
+		{
+			throw new NotImplementedException ();
 		}
 
 		internal U GetValue<U> (string name)
 		{
 			return default (U);
+		}
+
+		public bool Remove (T item)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IEnumerator<T> GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 	}
 }

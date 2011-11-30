@@ -46,7 +46,53 @@ namespace MonoTests.System.Net.Http.Headers
 		}
 
 		[Test]
-		public void Quality ()
+		public void Equals ()
+		{
+			var tfhv = new TransferCodingWithQualityHeaderValue ("abc");
+			Assert.AreEqual (tfhv, new TransferCodingWithQualityHeaderValue ("abc"), "#1");
+			Assert.AreEqual (tfhv, new TransferCodingWithQualityHeaderValue ("AbC"), "#2");
+			Assert.AreNotEqual (tfhv, new TransferCodingWithQualityHeaderValue ("ab"), "#3");
+			Assert.AreNotEqual (tfhv, new TransferCodingWithQualityHeaderValue ("ab", 1), "#3");
+
+			tfhv = new TransferCodingWithQualityHeaderValue ("abc", 0.3);
+			Assert.AreEqual (tfhv, new TransferCodingWithQualityHeaderValue ("abc", 0.3), "#4");
+			Assert.AreEqual (tfhv, new TransferCodingWithQualityHeaderValue ("AbC", 0.3), "#5");
+			Assert.AreNotEqual (tfhv, new TransferCodingWithQualityHeaderValue ("abc"), "#6");
+
+			var custom_param = new TransferCodingHeaderValue ("abc");
+			custom_param.Parameters.Add (new NameValueHeaderValue ("q", "0.3"));
+			Assert.AreEqual (tfhv, custom_param, "#7");
+		}
+
+		[Test]
+		public void Parse ()
+		{
+			var res = TransferCodingWithQualityHeaderValue.Parse ("1.1");
+			Assert.AreEqual (0, res.Parameters.Count, "#1");
+			Assert.IsNull (res.Quality, "#2");
+			Assert.AreEqual ("1.1", res.Value, "#3");
+
+			TransferCodingWithQualityHeaderValue.Parse ("a;b");
+		}
+
+		[Test]
+		public void Parse_Invalid ()
+		{
+			try {
+				TransferCodingWithQualityHeaderValue.Parse (null);
+				Assert.Fail ("#1");
+			} catch (FormatException) {
+			}
+
+			try {
+				TransferCodingWithQualityHeaderValue.Parse ("  ");
+				Assert.Fail ("#2");
+			} catch (FormatException) {
+			}
+		}
+
+		[Test]
+		public void Properties ()
 		{
 			var v = new TransferCodingWithQualityHeaderValue ("value", 0.4);
 			Assert.AreEqual ("value", v.Value, "#1");
@@ -54,7 +100,7 @@ namespace MonoTests.System.Net.Http.Headers
 		}
 
 		[Test]
-		public void Quality_Invalid ()
+		public void Properties_Invalid ()
 		{
 			try {
 				new TransferCodingWithQualityHeaderValue ("value", 4);

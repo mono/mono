@@ -1,5 +1,5 @@
 //
-// TransferCodingWithQualityHeaderValue.cs
+// RangeItemHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,42 +28,31 @@
 
 namespace System.Net.Http.Headers
 {
-	public sealed class TransferCodingWithQualityHeaderValue : TransferCodingHeaderValue
+	public class RangeItemHeaderValue : ICloneable
 	{
-		public TransferCodingWithQualityHeaderValue (string value)
-			: base (value)
+		public RangeItemHeaderValue (long? from, long? to)
 		{
+			From = from;
+			To = to;
 		}
 
-		public TransferCodingWithQualityHeaderValue (string value, double quality)
-			: this (value)
+		public long? From { get; private set; }
+		public long? To { get; private set; }
+
+		object ICloneable.Clone ()
 		{
-			Quality = quality;
+			return MemberwiseClone ();
 		}
 
-		public double? Quality {
-			get {
-				throw new NotImplementedException ();
-				// TODO: return Parameters.Get ("Quality");
-			}
-
-			set {
-				// TODO: Parameters.Set ("Quality", value);
-			}
+		public override bool Equals (object obj)
+		{
+			var source = obj as RangeItemHeaderValue;
+			return source != null && source.From == From && source.To == To;
 		}
 
-		public new static TransferCodingWithQualityHeaderValue Parse (string input)
+		public override int GetHashCode ()
 		{
-			TransferCodingWithQualityHeaderValue value;
-			if (TryParse (input, out value))
-				return value;
-
-			throw new FormatException ();
-		}
-
-		public static bool TryParse (string input, out TransferCodingWithQualityHeaderValue parsedValue)
-		{
-			throw new NotImplementedException ();
+			return From.GetHashCode () ^ To.GetHashCode ();
 		}
 	}
 }

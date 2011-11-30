@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValue.cs
+// ProductHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,76 +26,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace System.Net.Http.Headers
 {
-	public class TransferCodingHeaderValue : ICloneable
+	public class ProductHeaderValue : ICloneable
 	{
-		readonly string value;
-		List<NameValueHeaderValue> parameters;
-
-		public TransferCodingHeaderValue (string value)
+		public ProductHeaderValue (string name)
+			: this (name, null)
 		{
-			this.value = value;
 		}
 
-		protected TransferCodingHeaderValue (TransferCodingHeaderValue source)
+		public ProductHeaderValue (string name, string version)
 		{
-			this.value = source.value;
-			if (source.parameters != null) {
-				foreach (var p in source.parameters) {
-					Parameters.Add (new NameValueHeaderValue (p));
-				}
-			}
+			Name = name;
+			Version = version;
 		}
 
-		public ICollection<NameValueHeaderValue> Parameters {
-			get {
-				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
-			}
-		}
-
-		public string Value {
-			get {
-				return value;
-			}
-		}
+		public string Name { get; private set; }
+		public string Version { get; private set; }
 
 		object ICloneable.Clone ()
 		{
-			return new TransferCodingHeaderValue (this);
+			return MemberwiseClone ();
 		}
 
 		public override bool Equals (object obj)
 		{
-			var fchv = obj as TransferCodingHeaderValue;
-			return fchv != null &&
-				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+			var source = obj as ProductHeaderValue;
+			if (source == null)
+				return false;
+
+			return string.Equals (source.Name, Name, StringComparison.OrdinalIgnoreCase) &&
+				string.Equals (source.Version, Version, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override int GetHashCode ()
 		{
-			var hc = value.ToLowerInvariant ().GetHashCode ();
-			if (parameters != null)
-				hc ^= HashCodeCalculator.Calculate (parameters);
+			var hc = Name.ToLowerInvariant ().GetHashCode ();
+			if (Version != null)
+				hc ^= Version.ToLowerInvariant ().GetHashCode ();
 
 			return hc;
 		}
 
-		public static TransferCodingHeaderValue Parse (string input)
+		public static ProductHeaderValue Parse (string input)
 		{
-			TransferCodingHeaderValue value;
-
+			ProductHeaderValue value;
 			if (TryParse (input, out value))
 				return value;
 
 			throw new FormatException (input);
 		}
 
-		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
+		public static bool TryParse (string input, out ProductHeaderValue parsedValue)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,5 +1,5 @@
 //
-// TransferCodingHeaderValueTest.cs
+// AuthenticationHeaderValueTest.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -35,14 +35,20 @@ using System.Net.Http.Headers;
 namespace MonoTests.System.Net.Http.Headers
 {
 	[TestFixture]
-	public class TransferCodingHeaderValueTest
+	public class AuthenticationHeaderValueTest
 	{
 		[Test]
-		public void Ctor_Invalid ()
+		public void Ctor_InvalidArguments ()
 		{
 			try {
-				var tfhv = new TransferCodingHeaderValue ("my value");
+				new AuthenticationHeaderValue (null);
 				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				new AuthenticationHeaderValue (" ", null);
+				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
 		}
@@ -50,73 +56,74 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Equals ()
 		{
-			var tfhv = new TransferCodingHeaderValue ("abc");
-			Assert.AreEqual (tfhv, new TransferCodingHeaderValue ("abc"), "#1");
-			Assert.AreEqual (tfhv, new TransferCodingHeaderValue ("AbC"), "#2");
+			var value = new AuthenticationHeaderValue ("ab");
+			Assert.AreEqual (value, new AuthenticationHeaderValue ("ab"), "#1");
+			Assert.AreEqual (value, new AuthenticationHeaderValue ("AB"), "#2");
+			Assert.AreNotEqual (value, new AuthenticationHeaderValue ("AA"), "#3");
 
-			tfhv.Parameters.Add (new NameValueHeaderValue ("p", "v"));
-
-			Assert.AreNotEqual (tfhv, new TransferCodingHeaderValue ("abc"), "#3");
-
-			var tfhv2 = new TransferCodingHeaderValue ("abc");
-			Assert.AreNotEqual (tfhv, tfhv2, "#4");
-
-			tfhv2.Parameters.Add (new NameValueHeaderValue ("p", "v"));
-
-			Assert.AreEqual (tfhv, tfhv2, "#5");
+			value = new AuthenticationHeaderValue ("ab", "DD");
+			Assert.AreEqual (value, new AuthenticationHeaderValue ("Ab", "DD"), "#4");
+			Assert.AreNotEqual (value, new AuthenticationHeaderValue ("AB"), "#5");
+			Assert.AreNotEqual (value, new AuthenticationHeaderValue ("Ab", "dd"), "#6");
 		}
 
 		[Test]
 		public void Parse ()
 		{
-			var res = TransferCodingHeaderValue.Parse ("content");
-			Assert.AreEqual ("content", res.Value, "#1");
+			var res = AuthenticationHeaderValue.Parse ("c");
+			Assert.AreEqual ("c", res.Scheme, "#1");
+			Assert.IsNull (res.Parameter, "#2");
 		}
 
 		[Test]
 		public void Parse_Invalid ()
 		{
 			try {
-				TransferCodingHeaderValue.Parse (null);
+				AuthenticationHeaderValue.Parse (null);
 				Assert.Fail ("#1");
 			} catch (FormatException) {
 			}
 
 			try {
-				TransferCodingHeaderValue.Parse ("  ");
+				AuthenticationHeaderValue.Parse ("  ");
 				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
 
 			try {
-				TransferCodingHeaderValue.Parse ("a b");
+				AuthenticationHeaderValue.Parse ("a;b");
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
 		}
 
 		[Test]
+		public void Properties ()
+		{
+			var value = new AuthenticationHeaderValue ("s", "p");
+			Assert.AreEqual ("s", value.Scheme, "#1");
+			Assert.AreEqual ("p", value.Parameter, "#2");
+
+			value = new AuthenticationHeaderValue ("s");
+			Assert.AreEqual ("s", value.Scheme, "#3");
+			Assert.IsNull (value.Parameter, "#4");
+		}
+
+		[Test]
 		public void TryParse ()
 		{
-			TransferCodingHeaderValue res;
-			Assert.IsTrue (TransferCodingHeaderValue.TryParse ("content", out res), "#1");
-			Assert.AreEqual ("content", res.Value, "#2");
+			AuthenticationHeaderValue res;
+			Assert.IsTrue (AuthenticationHeaderValue.TryParse ("a", out res), "#1");
+			Assert.AreEqual ("a", res.Scheme, "#2");
+			Assert.IsNull (res.Parameter, "#3");
 		}
 
 		[Test]
 		public void TryParse_Invalid ()
 		{
-			TransferCodingHeaderValue res;
-			Assert.IsFalse (TransferCodingHeaderValue.TryParse ("a b", out res), "#1");
+			AuthenticationHeaderValue res;
+			Assert.IsFalse (AuthenticationHeaderValue.TryParse ("", out res), "#1");
 			Assert.IsNull (res, "#2");
-		}
-
-		[Test]
-		public void Value ()
-		{
-			var tfhv = new TransferCodingHeaderValue ("value");
-			Assert.AreEqual ("value", tfhv.Value, "#1");
-			Assert.IsNotNull (tfhv.Parameters, "#2");
 		}
 	}
 }
