@@ -2994,6 +2994,9 @@ public class ArrayTest
 		test = new object[] {null};
 		Assert.AreEqual (test.Contains (null), true, "array with null");
 
+		test = new object[] { 1, null};
+		Assert.IsTrue (test.Contains (null), "array with last null");
+		
 		test = new List<object>(test);
 		Assert.AreEqual (test.Contains (null), true, "List<object> with test");
 		
