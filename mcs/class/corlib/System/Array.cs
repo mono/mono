@@ -160,11 +160,8 @@ namespace System
 				if (item == null){
 					if (value == null)
 						return i + this.GetLowerBound (0);
-					else {
-						unchecked {
-							return this.GetLowerBound (0) - 1;
-						}
-					}
+
+					continue;
 				}
 				if (value.Equals (item))
 					// array index may not be zero-based.
