@@ -7,9 +7,11 @@
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Jeffrey Stedfast (fejj@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2011 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -103,8 +105,8 @@ namespace System
 				if (item == null){
 					if (value == null)
 						return true;
-					else
-						return false;
+
+					continue;
 				}
 				
 				if (item.Equals (value))
