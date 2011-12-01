@@ -58,9 +58,10 @@ minor_scan_object (char *start, SgenGrayQueue *queue)
  * Returns a pointer to the end of the object.
  */
 static char*
-minor_scan_vtype (char *start, mword desc, char* from_start, char* from_end, SgenGrayQueue *queue)
+minor_scan_vtype (char *start, MonoClass* klass, char* from_start, char* from_end, SgenGrayQueue *queue)
 {
 	size_t skip_size;
+	mword desc = (mword)klass->gc_descr;
 
 	/* The descriptors include info about the MonoObject header as well */
 	start -= sizeof (MonoObject);
@@ -76,9 +77,14 @@ minor_scan_vtype (char *start, mword desc, char* from_start, char* from_end, Sge
 		OBJ_BITMAP_SIZE (skip_size, desc, start);
 		return start + skip_size;
 	case DESC_TYPE_LARGE_BITMAP:
+		OBJ_LARGE_BITMAP_FOREACH_PTR (desc,start);
+		skip_size = klass->instance_size;
+		return start + skip_size;
+		break;
 	case DESC_TYPE_COMPLEX:
-		// FIXME:
-		g_assert_not_reached ();
+		OBJ_COMPLEX_FOREACH_PTR (desc,start);
+		skip_size = klass->instance_size;
+		return start + skip_size;
 		break;
 	default:
 		// The other descriptors can't happen with vtypes

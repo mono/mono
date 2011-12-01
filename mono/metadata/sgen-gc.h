@@ -415,10 +415,10 @@ enum {
 		}	\
 	} while (0)
 
-#define OBJ_LARGE_BITMAP_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_LARGE_BITMAP_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
-		gsize _bmap = (vt)->desc >> LOW_TYPE_BITS;	\
+		gsize _bmap = (desc) >> LOW_TYPE_BITS;	\
 		_objptr += OBJECT_HEADER_WORDS;	\
 		while (_bmap) {	\
 			if ((_bmap & 1)) {	\
@@ -429,18 +429,18 @@ enum {
 		}	\
 	} while (0)
 
-gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
+gsize* mono_sgen_get_complex_descriptor (mword desc) MONO_INTERNAL;
 
-#define OBJ_COMPLEX_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_COMPLEX_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
-		gsize *bitmap_data = mono_sgen_get_complex_descriptor ((vt)); \
+		gsize *bitmap_data = mono_sgen_get_complex_descriptor (desc); \
 		int bwords = (*bitmap_data) - 1;	\
 		void **start_run = _objptr;	\
 		bitmap_data++;	\
 		if (0) {	\
 			MonoObject *myobj = (MonoObject*)obj;	\
-			g_print ("found %d at %p (0x%zx): %s.%s\n", bwords, (obj), (vt)->desc, myobj->vtable->klass->name_space, myobj->vtable->klass->name);	\
+			g_print ("found %d at %p (0x%zx): %s.%s\n", bwords, (obj), desc, myobj->vtable->klass->name_space, myobj->vtable->klass->name);	\
 		}	\
 		while (bwords-- > 0) {	\
 			gsize _bmap = *bitmap_data++;	\
@@ -460,7 +460,7 @@ gsize* mono_sgen_get_complex_descriptor (GCVTable *vt) MONO_INTERNAL;
 /* this one is untested */
 #define OBJ_COMPLEX_ARR_FOREACH_PTR(vt,obj)	do {	\
 		/* there are pointers */	\
-		gsize *mbitmap_data = mono_sgen_get_complex_descriptor ((vt)); \
+		gsize *mbitmap_data = mono_sgen_get_complex_descriptor ((vt)->desc); \
 		int mbwords = (*mbitmap_data++) - 1;	\
 		int el_size = mono_array_element_size (vt->klass);	\
 		char *e_start = (char*)(obj) +  G_STRUCT_OFFSET (MonoArray, vector);	\
@@ -721,7 +721,7 @@ struct _SgenMajorCollector {
 	void* (*alloc_degraded) (MonoVTable *vtable, size_t size);
 	void (*copy_or_mark_object) (void **obj_slot, SgenGrayQueue *queue);
 	void (*minor_scan_object) (char *start, SgenGrayQueue *queue);
-	char* (*minor_scan_vtype) (char *start, mword desc, char* from_start, char* from_end, SgenGrayQueue *queue);
+	char* (*minor_scan_vtype) (char *start, MonoClass *klass, char* from_start, char* from_end, SgenGrayQueue *queue);
 	void (*major_scan_object) (char *start, SgenGrayQueue *queue);
 	void (*copy_object) (void **obj_slot, SgenGrayQueue *queue);
 	void* (*alloc_object) (int size, gboolean has_references);

@@ -424,7 +424,7 @@ enum {
 	REMSET_LOCATION, /* just a pointer to the exact location */
 	REMSET_RANGE,    /* range of pointer fields */
 	REMSET_OBJECT,   /* mark all the object for scanning */
-	REMSET_VTYPE,    /* a valuetype array described by a gc descriptor and a count */
+	REMSET_VTYPE,    /* a valuetype array described by a MonoClass pointer and a count */
 	REMSET_TYPE_MASK = 0x3
 };
 
@@ -969,9 +969,9 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 }
 
 gsize*
-mono_sgen_get_complex_descriptor (GCVTable *vt)
+mono_sgen_get_complex_descriptor (mword desc)
 {
-	return complex_descriptors + (vt->desc >> LOW_TYPE_BITS);
+	return complex_descriptors + (desc >> LOW_TYPE_BITS);
 }
 
 /*
@@ -5610,10 +5610,9 @@ handle_remset (mword *p, void *start_nursery, void *end_nursery, gboolean global
 		ptr = (void**)(*p & ~REMSET_TYPE_MASK);
 		if (((void*)ptr >= start_nursery && (void*)ptr < end_nursery))
 			return p + 3;
-		desc = p [1];
 		count = p [2];
 		while (count-- > 0)
-			ptr = (void**) major_collector.minor_scan_vtype ((char*)ptr, desc, start_nursery, end_nursery, queue);
+			ptr = (void**) major_collector.minor_scan_vtype ((char*)ptr, (MonoClass*)p [1], start_nursery, end_nursery, queue);
 		return p + 3;
 	}
 	default:
@@ -6542,7 +6541,7 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 
 		if (rs->store_next + 3 < rs->end_set) {
 			*(rs->store_next++) = (mword)dest | REMSET_VTYPE;
-			*(rs->store_next++) = (mword)klass->gc_descr;
+			*(rs->store_next++) = (mword)klass;
 			*(rs->store_next++) = (mword)count;
 			UNLOCK_GC;
 			return;
@@ -6554,7 +6553,7 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 		mono_sgen_thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 #endif
 		*(rs->store_next++) = (mword)dest | REMSET_VTYPE;
-		*(rs->store_next++) = (mword)klass->gc_descr;
+		*(rs->store_next++) = (mword)klass;
 		*(rs->store_next++) = (mword)count;
 	}
 	UNLOCK_GC;
@@ -6698,7 +6697,7 @@ find_in_remset_loc (mword *p, char *addr, gboolean *found)
 		return p + 1;
 	case REMSET_VTYPE:
 		ptr = (void**)(*p & ~REMSET_TYPE_MASK);
-		desc = p [1];
+		desc = ((MonoClass*)p [1])->gc_descr;
 		count = p [2];
 
 		switch (desc & 0x7) {

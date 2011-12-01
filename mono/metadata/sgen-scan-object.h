@@ -80,7 +80,7 @@
 #undef SCAN
 		break;
 	case DESC_TYPE_LARGE_BITMAP:
-#define SCAN OBJ_LARGE_BITMAP_FOREACH_PTR (vt,start)
+#define SCAN OBJ_LARGE_BITMAP_FOREACH_PTR (desc,start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
@@ -89,7 +89,7 @@
 		break;
 	case DESC_TYPE_COMPLEX:
 		/* this is a complex object */
-#define SCAN OBJ_COMPLEX_FOREACH_PTR (vt, start)
+#define SCAN OBJ_COMPLEX_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
