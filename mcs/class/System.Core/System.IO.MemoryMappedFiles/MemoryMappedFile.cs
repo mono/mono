@@ -482,10 +482,16 @@ namespace System.IO.MemoryMappedFiles
 			};
 		}
 
+#if MOBILE
+		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access,
+							       HandleInheritability inheritability,
+							       bool leaveOpen)
+#else
 		[MonoLimitation ("memoryMappedFileSecurity is currently ignored")]
 		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access,
 							       MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability inheritability,
 							       bool leaveOpen)
+#endif
 		{
 			if (fileStream == null)
 				throw new ArgumentNullException ("fileStream");
@@ -508,15 +514,28 @@ namespace System.IO.MemoryMappedFiles
 		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity)
 		{
+#if MOBILE
+			return CreateNew (mapName, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, 0);
+#else
 			return CreateNew (mapName, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, null, 0);
+#endif
 		}
 
 		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access) 
 		{
+#if MOBILE
+			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, 0);
+#else
 			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, 0);
+#endif
 		}
 
+#if MOBILE
+		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
+							  MemoryMappedFileOptions options, 
+							  HandleInheritability handleInheritability)
+#else
 		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix; options and memoryMappedFileSecurity are ignored")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
 							  MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity,
@@ -538,7 +557,11 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 		[MonoTODO]
+#if MOBILE
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, HandleInheritability inheritability)
+#else
 		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability inheritability)
+#endif
 		{
 			throw new NotImplementedException ();
 		}
@@ -618,6 +641,7 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
+#if !MOBILE
 		[MonoTODO]
 		public MemoryMappedFileSecurity GetAccessControl ()
 		{
@@ -629,6 +653,7 @@ namespace System.IO.MemoryMappedFiles
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
 		public SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle {
