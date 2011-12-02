@@ -353,7 +353,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 9;
+		internal const int MINOR_VERSION = 10;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -515,7 +515,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		enum CmdStringRef {
-			GET_VALUE = 1
+			GET_VALUE = 1,
+			GET_LENGTH = 2,
+			GET_CHARS = 3
 		}
 
 		enum CmdObjectRef {
@@ -2053,6 +2055,18 @@ namespace Mono.Debugger.Soft
 		 */
 		internal string String_GetValue (long id) {
 			return SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_VALUE, new PacketWriter ().WriteId (id)).ReadString ();
+		}			
+
+		internal int String_GetLength (long id) {
+			return (int)SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_LENGTH, new PacketWriter ().WriteId (id)).ReadLong ();
+		}			
+
+		internal char[] String_GetChars (long id, int index, int length) {
+			var r = SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_CHARS, new PacketWriter ().WriteId (id).WriteLong (index).WriteLong (length));
+			var res = new char [length];
+			for (int i = 0; i < length; ++i)
+				res [i] = (char)r.ReadShort ();
+			return res;
 		}			
 
 		/*

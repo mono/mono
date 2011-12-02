@@ -2761,4 +2761,29 @@ public class DebuggerTests
 		Assert.AreEqual (1, types.Count);
 		Assert.AreEqual ("System.Exception", types [0].FullName);
 	}
+
+	[Test]
+	public void String_GetChars () {
+		object val;
+
+		// Reuse this test
+		var e = run_until ("arg2");
+
+		var frame = e.Thread.GetFrames () [0];
+
+		val = frame.GetArgument (0);
+		Assert.IsTrue (val is StringMirror);
+		AssertValue ("FOO", val);
+		var s = (val as StringMirror);
+		Assert.AreEqual (3, s.Length);
+
+		var c = s.GetChars (0, 2);
+		Assert.AreEqual (2, c.Length);
+		Assert.AreEqual ('F', c [0]);
+		Assert.AreEqual ('O', c [1]);
+
+		AssertThrows<ArgumentException> (delegate () {		
+				s.GetChars (2, 2);
+			});
+	}
 }
