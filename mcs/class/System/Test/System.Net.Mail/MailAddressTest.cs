@@ -6,7 +6,7 @@
 //
 // (C) 2005 John Luke
 //
-#if NET_2_0
+
 using NUnit.Framework;
 using System;
 using System.Net.Mail;
@@ -203,6 +203,17 @@ namespace MonoTests.System.Net.Mail
 				Assert.IsNull (ex.InnerException, "#H3");
 				Assert.IsNotNull (ex.Message, "#H4");
 			}
+			
+			try {
+				new MailAddress (" ");
+				Assert.Fail ("#I1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#I2");
+				Assert.IsNull (ex.InnerException, "#I3");
+				Assert.IsNotNull (ex.Message, "#I4");
+			}
 		}
 
 		[Test]
@@ -349,4 +360,3 @@ namespace MonoTests.System.Net.Mail
 		}
 	}
 }
-#endif
