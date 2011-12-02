@@ -350,8 +350,10 @@ namespace System.Net
 						string[] bypassList = strProxyOverrride.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 					
 						foreach (string str in bypassList) {
-							if (str != "<local>")al.Add (str);
-								else bBypassOnLocal = true;
+							if (str != "<local>")
+								al.Add (str);
+							else
+								bBypassOnLocal = true;
 						}
 					}
 					
@@ -394,8 +396,10 @@ namespace System.Net
 							string[] bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 						
 							foreach (string str in bypassList) {
-								if (str != "*.local")al.Add (str);
-									else bBypassOnLocal = true;
+								if (str != "*.local")
+									al.Add (str);
+								else
+									bBypassOnLocal = true;
 							}
 						}
 						
