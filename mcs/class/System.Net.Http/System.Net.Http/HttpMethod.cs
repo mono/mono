@@ -45,6 +45,9 @@ namespace System.Net.Http
 			if (string.IsNullOrEmpty (method))
 				throw new ArgumentException ("method");
 
+			if (!Headers.Parser.Token.IsValid (method))
+				throw new FormatException (method);
+
 			this.method = method;
 		}
 

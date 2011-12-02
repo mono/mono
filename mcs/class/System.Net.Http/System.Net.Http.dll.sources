@@ -11,9 +11,12 @@ System.Net.Http/HttpResponseMessage.cs
 System.Net.Http/StreamContent.cs
 System.Net.Http.Headers/AuthenticationHeaderValue.cs
 System.Net.Http.Headers/CacheControlHeaderValue.cs
+System.Net.Http.Headers/CollectionExtensions.cs
 System.Net.Http.Headers/EntityTagHeaderValue.cs
 System.Net.Http.Headers/HashCodeCalculator.cs
+System.Net.Http.Headers/HeaderInfo.cs
 System.Net.Http.Headers/HttpContentHeaders.cs
+System.Net.Http.Headers/HttpHeaderKind.cs
 System.Net.Http.Headers/HttpHeaders.cs
 System.Net.Http.Headers/HttpHeaderValueCollection.cs
 System.Net.Http.Headers/HttpRequestHeaders.cs
@@ -22,8 +25,10 @@ System.Net.Http.Headers/MediaTypeHeaderValue.cs
 System.Net.Http.Headers/MediaTypeWithQualityHeaderValue.cs
 System.Net.Http.Headers/NameValueHeaderValue.cs
 System.Net.Http.Headers/NameValueWithParametersHeaderValue.cs
+System.Net.Http.Headers/Parser.cs
 System.Net.Http.Headers/ProductHeaderValue.cs
 System.Net.Http.Headers/ProductInfoHeaderValue.cs
+System.Net.Http.Headers/QualityValue.cs
 System.Net.Http.Headers/RangeConditionHeaderValue.cs
 System.Net.Http.Headers/RangeHeaderValue.cs
 System.Net.Http.Headers/RangeItemHeaderValue.cs

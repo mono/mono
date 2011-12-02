@@ -109,6 +109,10 @@ namespace MonoTests.System.Net.Http.Headers
 
 			value.CharSet = "chs";
 			Assert.AreEqual ("chs", value.CharSet, "#4");
+
+			value = new MediaTypeHeaderValue ("multipart/*");
+			value.Parameters.Add (new NameValueHeaderValue ("CHarSEt", "te-va"));
+			Assert.AreEqual ("te-va", value.CharSet, "#5");
 		}
 
 		[Test]

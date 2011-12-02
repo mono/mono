@@ -41,8 +41,14 @@ namespace MonoTests.System.Net.Http.Headers
 		public void Ctor_Invalid ()
 		{
 			try {
-				var tfhv = new TransferCodingHeaderValue ("my value");
+				var tfhv = new TransferCodingHeaderValue (null);
 				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				var tfhv = new TransferCodingHeaderValue ("my value");
+				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
 		}

@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Net.Http.Headers;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http.Headers
 {
@@ -70,6 +71,46 @@ namespace MonoTests.System.Net.Http.Headers
 				headers.Add ("", "value");
 				Assert.Fail ("#2");
 			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void Clear ()
+		{
+			headers.Add ("aa", "value");
+			headers.Clear ();
+		}
+
+		[Test]
+		public void GetValues ()
+		{
+			headers.Add ("aa", "v");
+			headers.Add ("aa", "v");
+
+			var r = headers.GetValues ("aa").ToList ();
+			Assert.AreEqual ("v", r[0], "#1");
+			Assert.AreEqual ("v", r[1], "#2");
+		}
+
+		[Test]
+		public void GetValues_Invalid ()
+		{
+			try {
+				headers.GetValues (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				headers.GetValues ("  ");
+				Assert.Fail ("#2");
+			} catch (FormatException) {
+			}
+
+			try {
+				headers.GetValues ("x");
+				Assert.Fail ("#3");
+			} catch (InvalidOperationException) {
 			}
 		}
 	}

@@ -33,65 +33,84 @@ namespace System.Net.Http.Headers
 {
 	public sealed class HttpHeaderValueCollection<T> : ICollection<T> where T : class
 	{
-		internal HttpHeaderValueCollection ()
+		readonly List<T> list;
+		readonly HttpHeaders headers;
+		readonly HeaderInfo headerInfo;
+
+		internal HttpHeaderValueCollection (HttpHeaders headers, HeaderInfo headerInfo)
 		{
+			list = new List<T> ();
+			this.headers = headers;
+			this.headerInfo = headerInfo;
 		}
 
 		public int Count {
 			get {
-				throw new NotImplementedException ();
+				return list.Count;
 			}
 		}
 
 		public bool IsReadOnly {
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
 		public void Add (T item)
 		{
-			throw new NotImplementedException ();
-		}
-
-		internal void Add<U> (string name, U value)
-		{
-			throw new NotImplementedException ();
+			list.Add (item);
 		}
 
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
 		}
 
 		public bool Contains (T item)
 		{
-			throw new NotImplementedException ();
+			return list.Contains (item);
 		}
 
 		public void CopyTo (T[] array, int arrayIndex)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, arrayIndex);
 		}
 
-		internal U GetValue<U> (string name)
+		public void ParseAdd (string input)
 		{
-			return default (U);
+			headers.AddValue (input, headerInfo, false);
 		}
 
 		public bool Remove (T item)
 		{
-			throw new NotImplementedException ();
+			return list.Remove (item);
+		}
+
+		public bool TryParseAdd (string input)
+		{
+			return headers.AddValue (input, headerInfo, true);
 		}
 
 		public IEnumerator<T> GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
+		}
+
+		internal T Find (Predicate<T> predicate)
+		{
+			return list.Find (predicate);
+		}
+
+		internal void Remove (Predicate<T> predicate)
+		{
+			T item = Find (predicate);
+			if (item != null)
+				Remove (item);
 		}
 	}
 }

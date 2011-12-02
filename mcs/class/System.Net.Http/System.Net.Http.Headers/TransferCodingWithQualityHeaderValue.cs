@@ -43,12 +43,10 @@ namespace System.Net.Http.Headers
 
 		public double? Quality {
 			get {
-				throw new NotImplementedException ();
-				// TODO: return Parameters.Get ("Quality");
+				return QualityValue.GetValue (parameters);
 			}
-
 			set {
-				// TODO: Parameters.Set ("Quality", value);
+				QualityValue.SetValue (ref parameters, value);
 			}
 		}
 

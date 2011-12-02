@@ -27,14 +27,13 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http.Headers
 {
 	public class TransferCodingHeaderValue : ICloneable
 	{
 		readonly string value;
-		List<NameValueHeaderValue> parameters;
+		internal List<NameValueHeaderValue> parameters;
 
 		public TransferCodingHeaderValue (string value)
 		{
@@ -73,7 +72,7 @@ namespace System.Net.Http.Headers
 			var fchv = obj as TransferCodingHeaderValue;
 			return fchv != null &&
 				string.Equals (value, fchv.value, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (parameters, fchv.parameters);
+				parameters.SequenceEqual (fchv.parameters);
 		}
 
 		public override int GetHashCode ()

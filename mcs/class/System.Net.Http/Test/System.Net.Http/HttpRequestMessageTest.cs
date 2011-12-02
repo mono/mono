@@ -102,7 +102,7 @@ namespace MonoTests.System.Net.Http
 			headers.ConnectionClose = true;
 			headers.Date = new DateTimeOffset (DateTime.Today);
 			headers.Expect.Add (new NameValueWithParametersHeaderValue ("en", "ev"));
-			headers.ExpectContinue = false;
+			headers.ExpectContinue = true;
 			headers.From = "webmaster@w3.org";
 			headers.Host = "host";
 			headers.IfMatch.Add (new EntityTagHeaderValue ("\"tag\"", true));
@@ -127,6 +127,12 @@ namespace MonoTests.System.Net.Http
 			try {
 				headers.Add ("authorization", "");
 				Assert.Fail ("Authorization");
+			} catch (FormatException) {
+			}
+
+			try {
+				headers.Add ("connection", "extra ß ");
+				Assert.Fail ("Date");
 			} catch (FormatException) {
 			}
 
@@ -251,6 +257,7 @@ namespace MonoTests.System.Net.Http
 			Assert.IsTrue (headers.Expect.SequenceEqual (
 				new [] {
 					new NameValueWithParametersHeaderValue ("en", "ev"),
+					new NameValueWithParametersHeaderValue ("100-continue"),
 					new NameValueWithParametersHeaderValue ("exp")
 				}));
 
@@ -319,28 +326,185 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Header_BaseImplementation ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			headers.Add ("a", "a-value");
+			headers.Add ("b", new List<string> { "v1", "v2" });
+			headers.Add ("c", null as string);
+			headers.Add ("d", new string[0]);
+
+			headers.AddWithoutValidation ("accept", "audio");
+
+			Assert.IsFalse (headers.Contains ("nn"), "#1a");
+			Assert.IsTrue (headers.Contains ("b"), "#1b");
+
+			var values = headers.GetValues ("b").ToList ();
+			Assert.AreEqual ("v1", values[0], "#2a");
+			Assert.AreEqual ("v2", values[1], "#2b");
+
+			Assert.IsFalse (headers.Remove ("p"), "#3a");
+			Assert.IsTrue (headers.Remove ("b"), "#3b");
+			Assert.IsFalse (headers.Contains ("b"), "#3b-c");
+
+			IEnumerable<string> values2;
+			Assert.IsTrue (headers.TryGetValues ("c", out values2));
+			values = values2.ToList ();
+			Assert.AreEqual ("", values[0], "#4a");
+
+			int counter = 0;
+			foreach (var i in headers) {
+				++counter;
+			}
+
+			Assert.AreEqual (3, counter, "#5");
+
+			headers.Clear ();
+
+			headers.Accept.Add (new MediaTypeWithQualityHeaderValue ("audio/x"));
+			headers.AddWithoutValidation ("accept", "audio");
+
+			values = headers.GetValues ("accept").ToList ();
+			Assert.AreEqual (2, values.Count, "#6");
+			Assert.AreEqual ("audio/x", values[0], "#6a");
+			Assert.AreEqual ("audio", values[1], "#6b");
+			Assert.AreEqual (1, headers.Accept.Count, "#6c");
+
+			headers.Clear ();
+
+			headers.AddWithoutValidation ("from", new[] { "a@a.com", "ssss@oo.com" });
+			values = headers.GetValues ("from").ToList ();
+
+			Assert.AreEqual (2, values.Count, "#7");
+			Assert.AreEqual ("a@a.com", values[0], "#7a");
+			Assert.AreEqual ("ssss@oo.com", values[1], "#7b");
+			Assert.AreEqual ("a@a.com", headers.From, "#7c");
+
+			headers.Clear ();
+
+			headers.AddWithoutValidation ("Date", "wrong date");
+			var value = headers.Date;
+			Assert.IsNull (headers.Date, "#8");
+		}
+
+		[Test]
 		public void Headers_Invalid ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();
 			HttpRequestHeaders headers = message.Headers;
+
 			try {
 				headers.Add ("Age", "");
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
+
+			try {
+				headers.Add (null, "");
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				headers.Add ("mm", null as IEnumerable<string>);
+				Assert.Fail ("#2b");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				headers.Add ("accept", "audio");
+				Assert.Fail ("#2c");
+			} catch (FormatException) {
+			}
+
 			try {
 				headers.AddWithoutValidation ("Age", "");
-				Assert.Fail ("#2");
+				Assert.Fail ("#3");
 			} catch (InvalidOperationException) {
+			}
+
+			try {
+				headers.AddWithoutValidation (null, "");
+				Assert.Fail ("#4");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				headers.Contains (null);
+				Assert.Fail ("#5");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				headers.GetValues (null);
+				Assert.Fail ("#6a");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				headers.GetValues ("bbbb");
+				Assert.Fail ("#6b");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				headers.Add ("from", new[] { "a@a.com", "ssss@oo.com" });
+				Assert.Fail ("#7a");
+			} catch (FormatException) {
+			}
+
+			headers.AddWithoutValidation ("from", "a@a.com");
+			try {
+				headers.Add ("from", "valid@w3.org");
+				Assert.Fail ("#7b");
+			} catch (FormatException) {
 			}
 		}
 
 		[Test]
-		public void Headers_Connection_Invalid ()
+		public void Headers_ExpectContinue ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();
 			HttpRequestHeaders headers = message.Headers;
-			//headers.
+			Assert.IsNull (headers.ExpectContinue, "#1");
+
+			headers.ExpectContinue = false;
+			Assert.IsFalse (headers.ExpectContinue.Value, "#2");
+
+			headers.Clear ();
+
+			headers.ExpectContinue = true;
+			headers.ExpectContinue = true;
+			headers.ExpectContinue = true;
+			headers.ExpectContinue = true;
+			Assert.IsTrue (headers.ExpectContinue.Value, "#3");
+			Assert.AreEqual (1, headers.GetValues ("expect").ToList ().Count, "#4");
+
+			headers.Clear ();
+			headers.Expect.Add (new NameValueWithParametersHeaderValue ("100-conTinuE"));
+			Assert.IsTrue (headers.ExpectContinue.Value, "#5");
+		}
+
+		[Test]
+		public void Headers_ConnectionClose ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+			Assert.IsNull (headers.ConnectionClose, "#1");
+
+			headers.ConnectionClose = false;
+			Assert.IsFalse (headers.ConnectionClose.Value, "#2");
+
+			headers.Clear ();
+
+			headers.ConnectionClose = true;
+			Assert.IsTrue (headers.ConnectionClose.Value, "#3");
+
+			headers.Clear ();
+			headers.Connection.Add ("Close");
+			Assert.IsTrue (headers.ConnectionClose.Value, "#4");
 		}
 
 		[Test]
@@ -360,6 +524,23 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
+		}
+
+		[Test]
+		public void Headers_TransferEncodingChunked ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+			Assert.IsNull (headers.TransferEncodingChunked, "#1");
+
+			headers.TransferEncodingChunked = false;
+			Assert.IsFalse (headers.TransferEncodingChunked.Value, "#2");
+
+			headers.Clear ();
+
+			headers.TransferEncodingChunked = true;
+			Assert.IsTrue (headers.TransferEncodingChunked.Value, "#3");
+			Assert.AreEqual (1, headers.TransferEncoding.Count, "#3b");
 		}
 
 		[Test]

@@ -27,7 +27,6 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http.Headers
 {
@@ -71,7 +70,7 @@ namespace System.Net.Http.Headers
 			if (source == null)
 				return false;
 
-			return base.Equals (obj) && Enumerable.SequenceEqual (source.parameters, parameters);
+			return base.Equals (obj) && source.parameters.SequenceEqual (parameters);
 		}
 
 		public override int GetHashCode ()

@@ -27,17 +27,19 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http.Headers
 {
 	public class MediaTypeHeaderValue : ICloneable
 	{
-		List<NameValueHeaderValue> parameters;
+		internal List<NameValueHeaderValue> parameters;
 		string media_type;
 
 		public MediaTypeHeaderValue (string mediaType)
 		{
+			if (mediaType == null)
+				throw new ArgumentNullException ("mediaType");
+
 			MediaType = mediaType;
 		}
 
@@ -53,7 +55,35 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		public string CharSet { get; set; }
+		public string CharSet {
+			get {
+				if (parameters == null)
+					return null;
+
+				var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "charset"));
+				if (found == null)
+					return null;
+
+				return found.Value;
+			}
+
+			set {
+				if (parameters == null)
+					parameters = new List<NameValueHeaderValue> ();
+
+				var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "charset"));
+				if (string.IsNullOrEmpty (value)) {
+					if (found != null)
+						parameters.Remove (found);
+				} else {
+					if (found != null) {
+						found.Value = value;
+					} else {
+						parameters.Add (new NameValueHeaderValue ("charset", value));
+					}
+				}
+			}
+		}
 
 		public string MediaType {
 			get {
@@ -82,7 +112,7 @@ namespace System.Net.Http.Headers
 				return false;
 
 			return string.Equals (source.media_type, media_type, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (source.parameters, parameters);
+				source.parameters.SequenceEqual (parameters);
 		}
 
 		public override int GetHashCode ()
@@ -97,6 +127,12 @@ namespace System.Net.Http.Headers
 				return value;
 
 			throw new FormatException (input);
+		}
+
+		public override string ToString ()
+		{
+			// TODO:
+			return media_type;
 		}
 		
 		public static bool TryParse (string input, out MediaTypeHeaderValue parsedValue)

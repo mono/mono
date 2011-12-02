@@ -32,31 +32,34 @@ namespace System.Net.Http.Headers
 {
 	public sealed class HttpRequestHeaders : HttpHeaders
 	{
+		bool? expectContinue, connectionclose, transferEncodingChunked;
+
 		internal HttpRequestHeaders ()
+			: base (HttpHeaderKind.Request)
 		{
 		}
 
 		public HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue> Accept {
 			get {
-				return GetValue<HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue>> ("Accept");
+				return GetValues<MediaTypeWithQualityHeaderValue> ("Accept");
 			}
 		}
 
 		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptCharset {
 			get {
-				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Charset");
+				return GetValues<StringWithQualityHeaderValue> ("Accept-Charset");
 			}
 		}
 
 		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptEncoding {
 			get {
-				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Encoding");
+				return GetValues<StringWithQualityHeaderValue> ("Accept-Encoding");
 			}
 		}
 
 		public HttpHeaderValueCollection<StringWithQualityHeaderValue> AcceptLanguage {
 			get {
-				return GetValue<HttpHeaderValueCollection<StringWithQualityHeaderValue>> ("Accept-Language");
+				return GetValues<StringWithQualityHeaderValue> ("Accept-Language");
 			}
 		}
 
@@ -65,7 +68,7 @@ namespace System.Net.Http.Headers
 				return GetValue<AuthenticationHeaderValue> ("Authorization");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("Authorization", value);
 			}
 		}
 
@@ -74,23 +77,32 @@ namespace System.Net.Http.Headers
 				return GetValue<CacheControlHeaderValue> ("Cache-Control");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("Cache-Control", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<string> Connection {
 			get {
-				return GetValue<HttpHeaderValueCollection<string>> ("Connection");
+				return GetValues<string> ("Connection");
 			}
 		}
 
 		public bool? ConnectionClose {
 			get {
-				throw new NotImplementedException ();
-				//return Connection.GetValue<bool?> ("close");
+				if (connectionclose == true || Connection.Contains ("close"))
+					return true;
+
+				return connectionclose;
 			}
 			set {
-				// TODO: return Connection.SetValue ("Connection", "close", value);
+				if (connectionclose == value)
+					return;
+
+				Connection.Remove ("close");
+				if (value == true)
+					Connection.Add ("close");
+
+				connectionclose = value;
 			}
 		}
 
@@ -99,22 +111,34 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("Date");
 			}
 			set {
-				SetValue ("Date", value);
+				AddOrRemove ("Date", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<NameValueWithParametersHeaderValue> Expect {
 			get {
-				return GetValue<HttpHeaderValueCollection<NameValueWithParametersHeaderValue>> ("Expect");
+				return GetValues<NameValueWithParametersHeaderValue> ("Expect");
 			}
 		}
 
 		public bool? ExpectContinue { 
 			get {
-				throw new NotImplementedException ();
+				if (expectContinue.HasValue)
+					return expectContinue;
+
+				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "100-continue"));
+				return found != null ? true : (bool?) null;
 			}
 			set {
-				// TODO:
+				if (expectContinue == value)
+					return;
+
+				Expect.Remove (l => l.Name == "100-continue");
+
+				if (value == true)
+					Expect.Add (new NameValueWithParametersHeaderValue ("100-continue"));
+
+				expectContinue = value;
 			}
 		}
 
@@ -123,7 +147,7 @@ namespace System.Net.Http.Headers
 				return GetValue<string> ("From");
 			}
 			set {
-				// TODO: error checks
+				AddOrRemove ("From", value);
 			}
 		}
 
@@ -132,13 +156,13 @@ namespace System.Net.Http.Headers
 				return GetValue<string> ("Host");
 			}
 			set {
-				// TODO: error checks
+				AddOrRemove ("Host", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<EntityTagHeaderValue> IfMatch {
 			get {
-				return GetValue<HttpHeaderValueCollection<EntityTagHeaderValue>> ("If-Match");
+				return GetValues<EntityTagHeaderValue> ("If-Match");
 			}
 		}
 
@@ -147,13 +171,13 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("If-Modified-Since");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("If-Modified-Since", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<EntityTagHeaderValue> IfNoneMatch {
 			get {
-				return GetValue<HttpHeaderValueCollection<EntityTagHeaderValue>> ("If-None-Match");
+				return GetValues<EntityTagHeaderValue> ("If-None-Match");
 			}
 		}
 
@@ -163,7 +187,7 @@ namespace System.Net.Http.Headers
 				return GetValue<RangeConditionHeaderValue> ("If-Range");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("If-Range", value);
 			}
 		}
 
@@ -172,7 +196,7 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("If-Unmodified-Since");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("If-Unmodified-Since", value);
 			}
 		}
 
@@ -181,13 +205,13 @@ namespace System.Net.Http.Headers
 				return GetValue<int?> ("Max-Forwards");
 			}
 			set {
-				SetValue ("Max-Forwards", value);
+				AddOrRemove ("Max-Forwards", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<NameValueHeaderValue> Pragma {
 			get {
-				return GetValue<HttpHeaderValueCollection<NameValueHeaderValue>> ("Pragma");
+				return GetValues<NameValueHeaderValue> ("Pragma");
 			}
 		}
 
@@ -196,7 +220,7 @@ namespace System.Net.Http.Headers
 				return GetValue<AuthenticationHeaderValue> ("Proxy-Authorization");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("Proxy-Authorization", value);
 			}
 		}
 
@@ -205,7 +229,7 @@ namespace System.Net.Http.Headers
 				return GetValue<RangeHeaderValue> ("Range");
 			}
 			set {
-				// TODO:
+				AddOrRemove ("Range", value);
 			}
 		}
 
@@ -214,59 +238,69 @@ namespace System.Net.Http.Headers
 				return GetValue<Uri> ("Referer");
 			}
 			set {
-				SetValue ("Referer", value);
+				AddOrRemove ("Referer", value);
 			}
 		}
 
 		public HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue> TE {
 		    get {
-		        return GetValue<HttpHeaderValueCollection<TransferCodingWithQualityHeaderValue>> ("TE");
+		        return GetValues<TransferCodingWithQualityHeaderValue> ("TE");
 		    }
 		}
 
 		public HttpHeaderValueCollection<string> Trailer {
 			get {
-				return GetValue<HttpHeaderValueCollection<string>> ("Trailer");
+				return GetValues<string> ("Trailer");
 			}
 		}
 
 		public HttpHeaderValueCollection<TransferCodingHeaderValue> TransferEncoding {
 			get {
-				return GetValue<HttpHeaderValueCollection<TransferCodingHeaderValue>> ("Transfer-Encoding");
+				return GetValues<TransferCodingHeaderValue> ("Transfer-Encoding");
 			}
 		}
 
 		public bool? TransferEncodingChunked {
 			get {
-				throw new NotImplementedException ();
-			}
+				if (transferEncodingChunked.HasValue)
+					return transferEncodingChunked;
 
+				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked"));
+				return found != null ? true : (bool?) null;
+			}
 			set {
-				// TODO:
+				if (value == transferEncodingChunked)
+					return;
+
+				TransferEncoding.Remove (l => l.Value == "chunked");
+				if (value == true)
+					TransferEncoding.Add (new TransferCodingHeaderValue ("chunked"));
+
+				transferEncodingChunked = value;
 			}
 		}
 
 		public HttpHeaderValueCollection<ProductHeaderValue> Upgrade {
 			get {
-				return GetValue<HttpHeaderValueCollection<ProductHeaderValue>> ("Upgrade");
+				return GetValues<ProductHeaderValue> ("Upgrade");
 			}
 		}
 
 		public HttpHeaderValueCollection<ProductInfoHeaderValue> UserAgent {
 			get {
-				return GetValue<HttpHeaderValueCollection<ProductInfoHeaderValue>> ("User-Agent");
+				return GetValues<ProductInfoHeaderValue> ("User-Agent");
 			}
 		}
 
 		public HttpHeaderValueCollection<ViaHeaderValue> Via {
 			get {
-				return GetValue<HttpHeaderValueCollection<ViaHeaderValue>> ("Via");
+				return GetValues<ViaHeaderValue> ("Via");
 			}
 		}
 
 		public HttpHeaderValueCollection<WarningHeaderValue> Warning {
 			get {
-				return GetValue<HttpHeaderValueCollection<WarningHeaderValue>> ("Warning");
+				return GetValues<WarningHeaderValue> ("Warning");
 			}
 		}
 	}

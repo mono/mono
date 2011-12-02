@@ -1,5 +1,5 @@
 //
-// HttpResponseHeaders.cs
+// CollectionExtensions.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,14 +27,18 @@
 //
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Net.Http.Headers
 {
-	public sealed class HttpResponseHeaders : HttpHeaders
+	static class CollectionExtensions
 	{
-		internal HttpResponseHeaders ()
-			: base (HttpHeaderKind.Response)
+		public static bool SequenceEqual<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
 		{
+			if (first == null || second == null)
+				return first == second;
+
+			return Enumerable.SequenceEqual (first, second);
 		}
 	}
 }

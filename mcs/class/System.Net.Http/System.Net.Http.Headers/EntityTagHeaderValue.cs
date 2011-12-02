@@ -39,6 +39,9 @@ namespace System.Net.Http.Headers
 
 		public EntityTagHeaderValue (string tag, bool isWeak)
 		{
+			if (tag == null)
+				throw new ArgumentNullException ("tag");
+
 			Tag = tag;
 			IsWeak = isWeak;
 		}

@@ -1,5 +1,5 @@
 //
-// HttpResponseHeaders.cs
+// HttpHeaderKind.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,15 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-
 namespace System.Net.Http.Headers
 {
-	public sealed class HttpResponseHeaders : HttpHeaders
+	[Flags]
+	enum HttpHeaderKind
 	{
-		internal HttpResponseHeaders ()
-			: base (HttpHeaderKind.Response)
-		{
-		}
+		Request = 1,
+		Response = 1 << 1,
+		Content = 1 << 2
 	}
 }

@@ -27,17 +27,17 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http.Headers
 {
 	public class RangeHeaderValue : ICloneable
 	{
 		List<RangeItemHeaderValue> ranges;
+		string unit;
 
 		public RangeHeaderValue ()
 		{
-			Unit = "bytes";
+			unit = "bytes";
 		}
 
 		public RangeHeaderValue (long? from, long? to)
@@ -61,7 +61,20 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		public string Unit { get; set; }
+		public string Unit {
+			get {
+				return unit;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Unit");
+
+				if (!Parser.Token.IsValid (value))
+					throw new FormatException ();
+
+				unit = value;
+			}
+		}
 
 		object ICloneable.Clone ()
 		{
@@ -75,7 +88,7 @@ namespace System.Net.Http.Headers
 				return false;
 
 			return string.Equals (source.Unit, Unit, StringComparison.OrdinalIgnoreCase) &&
-				Enumerable.SequenceEqual (source.ranges, ranges);
+				source.ranges.SequenceEqual (ranges);
 		}
 
 		public override int GetHashCode ()

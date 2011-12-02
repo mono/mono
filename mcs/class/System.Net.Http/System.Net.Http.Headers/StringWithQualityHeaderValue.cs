@@ -32,12 +32,15 @@ namespace System.Net.Http.Headers
 	{
 		public StringWithQualityHeaderValue (string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			this.Value = value;
 		}
 
 		public StringWithQualityHeaderValue (string value, double quality)
+			: this (value)
 		{
-			Value = value;
 			Quality = quality;
 		}
 

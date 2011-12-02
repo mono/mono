@@ -1,5 +1,5 @@
 //
-// HttpResponseHeaders.cs
+// QualityValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,15 +26,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace System.Net.Http.Headers
 {
-	public sealed class HttpResponseHeaders : HttpHeaders
+	static class QualityValue
 	{
-		internal HttpResponseHeaders ()
-			: base (HttpHeaderKind.Response)
+		public static double? GetValue (List<NameValueHeaderValue> parameters)
 		{
+			if (parameters == null)
+				return null;
+
+			var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "q"));
+			if (found == null)
+				return null;
+
+			double value;
+			if (!double.TryParse (found.Value, NumberStyles.Number, NumberFormatInfo.InvariantInfo, out value))
+				return null;
+
+			return value;
+		}
+
+		public static void SetValue (ref List<NameValueHeaderValue> parameters, double? value)
+		{
+			if (value < 0 || value > 1)
+				throw new ArgumentOutOfRangeException ("Quality");
+
+			if (parameters == null)
+				parameters = new List<NameValueHeaderValue> ();
+
+			var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "q"));
+
+			if (value.HasValue) {
+				string svalue = value.Value.ToString (NumberFormatInfo.InvariantInfo);
+
+				if (found == null)
+					parameters.Add (new NameValueHeaderValue (new NameValueHeaderValue ("q", svalue)));
+				else
+					found.Value = svalue;
+			} else {
+				parameters.Remove (found);
+			}
 		}
 	}
 }

@@ -33,6 +33,7 @@ namespace System.Net.Http.Headers
 	public sealed class HttpContentHeaders : HttpHeaders
 	{
 		internal HttpContentHeaders ()
+			: base (HttpHeaderKind.Content)
 		{
 		}
 		

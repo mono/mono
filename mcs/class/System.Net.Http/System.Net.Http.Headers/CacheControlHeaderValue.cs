@@ -27,7 +27,6 @@
 //
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http.Headers
 {
@@ -120,9 +119,9 @@ namespace System.Net.Http.Headers
 				SharedMaxAge != source.SharedMaxAge)
 				return false;
 
-			return Enumerable.SequenceEqual (extensions, source.extensions) &&
-				Enumerable.SequenceEqual (no_cache_headers, source.no_cache_headers) &&
-				Enumerable.SequenceEqual (private_headers, source.private_headers);
+			return extensions.SequenceEqual (source.extensions) &&
+				no_cache_headers.SequenceEqual (source.no_cache_headers) &&
+				private_headers.SequenceEqual (source.private_headers);
 		}
 
 		public override int GetHashCode ()

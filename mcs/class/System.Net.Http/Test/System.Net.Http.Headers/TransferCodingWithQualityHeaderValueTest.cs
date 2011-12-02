@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Net.Http.Headers;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http.Headers
 {
@@ -94,9 +95,21 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Properties ()
 		{
-			var v = new TransferCodingWithQualityHeaderValue ("value", 0.4);
+			var v = new TransferCodingWithQualityHeaderValue ("value", 0.412);
 			Assert.AreEqual ("value", v.Value, "#1");
-			Assert.AreEqual (0.4, v.Quality, "#2");
+			Assert.AreEqual (0.412, v.Quality, "#2");
+			Assert.AreEqual ("0.412", v.Parameters.First ().Value, "#3");
+
+			v.Parameters.Add (new NameValueHeaderValue ("q", "0.2"));
+			Assert.AreEqual (0.412, v.Quality, "#4");
+
+			v = new TransferCodingWithQualityHeaderValue ("value");
+			v.Parameters.Add (new NameValueHeaderValue ("q", "0.112"));
+			Assert.AreEqual (0.112, v.Quality, "#5");
+
+			v = new TransferCodingWithQualityHeaderValue ("value");
+			v.Parameters.Add (new NameValueHeaderValue ("q", "test"));
+			Assert.IsNull (v.Quality, "#6");
 		}
 
 		[Test]
@@ -108,8 +121,9 @@ namespace MonoTests.System.Net.Http.Headers
 			} catch (ArgumentOutOfRangeException) {
 			}
 
+			var v = new TransferCodingWithQualityHeaderValue ("value");
 			try {
-				new TransferCodingWithQualityHeaderValue ("value") { Quality = -1 };
+				v.Quality = -1;
 				Assert.Fail ("#2");
 			} catch (ArgumentOutOfRangeException) {
 			}

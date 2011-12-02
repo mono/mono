@@ -37,6 +37,12 @@ namespace System.Net.Http.Headers
 
 		public AuthenticationHeaderValue (string scheme, string parameter)
 		{
+			if (scheme == null)
+				throw new ArgumentNullException ("scheme");
+
+			if (!Parser.Token.IsValid (scheme))
+				throw new FormatException ();
+
 			this.Scheme = scheme;
 			this.Parameter = parameter;
 		}
@@ -52,13 +58,9 @@ namespace System.Net.Http.Headers
 		public override bool Equals (object obj)
 		{
 			var source = obj as AuthenticationHeaderValue;
-			if (source == null || !string.Equals (source.Scheme, Scheme, StringComparison.OrdinalIgnoreCase))
-				return false;
-
-			if (string.IsNullOrEmpty (Parameter))
-				return string.IsNullOrEmpty (source.Parameter);
-
-			return string.Equals (source.Parameter, Parameter, StringComparison.OrdinalIgnoreCase);
+			return source != null &&
+				string.Equals (source.Scheme, Scheme, StringComparison.OrdinalIgnoreCase) &&
+				source.Parameter == Parameter;
 		}
 
 		public override int GetHashCode ()

@@ -31,6 +31,8 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http.Headers
 {
@@ -38,9 +40,37 @@ namespace MonoTests.System.Net.Http.Headers
 	public class HttpHeaderValueCollectionTest
 	{
 		[Test]
-		public void TT ()
+		public void ParseAdd ()
 		{
-			//var c = new HttpHeaderValueCollection<string> ();
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			headers.TE.ParseAdd ("pp");
+			Assert.AreEqual ("pp", headers.TE.ToArray ()[0].Value, "#1");
+		}
+
+		[Test]
+		public void ParseAdd_Invalid ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			try {
+				headers.Via.ParseAdd ("pp");
+			} catch (FormatException) {
+			}
+		}
+
+		[Test]
+		public void TryParseAdd ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			Assert.IsTrue (headers.TE.TryParseAdd ("pp"), "#1");
+			Assert.AreEqual ("pp", headers.TE.ToArray ()[0].Value, "#2");
+
+			Assert.IsFalse (headers.Via.TryParseAdd ("wrong"), "#3");
 		}
 	}
 }

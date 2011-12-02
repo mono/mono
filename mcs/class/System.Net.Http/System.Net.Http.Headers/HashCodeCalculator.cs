@@ -32,7 +32,7 @@ namespace System.Net.Http.Headers
 {
 	static class HashCodeCalculator
 	{
-		public static int Calculate<T> (List<T> list)
+		public static int Calculate<T> (ICollection<T> list)
 		{
 			if (list == null)
 				return 0;

@@ -112,6 +112,8 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("audio/*", value.MediaType, "#2");
 			Assert.AreEqual ("q", value.Parameters.First ().Name, "#3");
 			Assert.AreEqual (0.3, value.Quality, "#4");
+
+			value.Parameters.Add (new NameValueHeaderValue ("q", "b"));
 		}
 
 		[Test]
