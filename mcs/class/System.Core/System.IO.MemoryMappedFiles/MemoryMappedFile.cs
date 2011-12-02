@@ -543,6 +543,7 @@ namespace System.IO.MemoryMappedFiles
 		{
 			return CreateFromFile (mapName, FileMode.CreateNew, mapName, capacity, access);
 		}
+#endif
 
 		[MonoLimitation ("CreateOrOpen requires that mapName be a file name on Unix")]
 		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity)
