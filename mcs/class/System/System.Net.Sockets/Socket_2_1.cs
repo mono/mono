@@ -1643,10 +1643,10 @@ namespace System.Net.Sockets {
 		}
 
 		bool ConnectAsyncReal (SocketAsyncEventArgs e)
-		{
-			IPAddress [] addresses = null;
+		{			
 			bool use_remoteep = true;
 #if MOONLIGHT || NET_4_0
+			IPAddress [] addresses = null;
 			use_remoteep = !GetCheckedIPs (e, out addresses);
 			bool policy_failed = (e.SocketError == SocketError.AccessDenied);
 #endif
