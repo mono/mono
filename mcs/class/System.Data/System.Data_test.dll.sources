@@ -120,6 +120,7 @@ System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
 System.Data.SqlClient/SqlDataAdapterTest.cs
 System.Data.SqlClient/SqlParameterTest.cs
+System.Data.SqlClient/SqlBulkCopyTest.cs
 Mono.Data.SqlExpressions/DataColumnExpressionTest.cs
 Mono.Data.SqlExpressions/DateComparisonTest.cs
 
