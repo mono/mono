@@ -36,6 +36,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.SqlClient {
 	[TestFixture]
 	public class SqlBulkCopyTest {
+		private const string testFailParamNameMessage = "We have to provide the same parameter name as in original .NET";
+		
 		[Test] // .ctor(SqlConnection connection)
 		[ExpectedException (typeof(ArgumentNullException))]
 		public void ConstructorNotNull1 ()
@@ -57,7 +59,7 @@ namespace MonoTests.System.Data.SqlClient {
 			try {
 				new SqlBulkCopy ((SqlConnection)null);
 			} catch (ArgumentNullException ane) {
-				Assert.AreEqual ("connection", ane.ParamName, "#001 - We have to provide the same parameter name as in original .NET");
+				Assert.AreEqual ("connection", ane.ParamName, "#001 - " + testFailParamNameMessage);
 				throw;
 			}
 		}
@@ -69,7 +71,31 @@ namespace MonoTests.System.Data.SqlClient {
 			try {
 				new SqlBulkCopy ((string)null);
 			} catch (ArgumentNullException ane) {
-				Assert.AreEqual ("connectionString", ane.ParamName, "#002 - We have to provide the same parameter name as in original .NET");
+				Assert.AreEqual ("connectionString", ane.ParamName, "#002 - " + testFailParamNameMessage);
+				throw;
+			}
+		}
+		
+		[Test] // .ctor(string connectionString)
+		[ExpectedException (typeof(ArgumentNullException))]
+		public void ConstructorNotNull5 ()
+		{
+			try {
+				new SqlBulkCopy ((string)null, SqlBulkCopyOptions.Default);
+			} catch (ArgumentNullException ane) {
+				Assert.AreEqual ("connectionString", ane.ParamName, "#003 - " + testFailParamNameMessage);
+				throw;
+			}
+		}
+		
+		[Test] // .ctor(string connectionString)
+		[ExpectedException (typeof(ArgumentNullException))]
+		public void ConstructorNotNull6 ()
+		{
+			try {
+				new SqlBulkCopy ((SqlConnection)null, SqlBulkCopyOptions.Default, null);
+			} catch (ArgumentNullException ane) {
+				Assert.AreEqual ("connection", ane.ParamName, "#004 - " + testFailParamNameMessage);
 				throw;
 			}
 		}

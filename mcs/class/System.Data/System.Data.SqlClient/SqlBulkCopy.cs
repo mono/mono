@@ -37,8 +37,14 @@ using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 
 namespace System.Data.SqlClient {
+	/// <summary>Efficient way to bulk load SQL Server table with several data rows at once</summary>
 	public sealed class SqlBulkCopy : IDisposable 
 	{
+		#region Constants
+		private const string transConflictMessage = "Must not specify SqlBulkCopyOptions.UseInternalTransaction " +
+			"and pass an external Transaction at the same time.";
+		#endregion
+		
 		#region Fields
 
 		private int _batchSize = 0;
@@ -47,22 +53,31 @@ namespace System.Data.SqlClient {
 		private SqlBulkCopyColumnMappingCollection _columnMappingCollection = new SqlBulkCopyColumnMappingCollection ();
 		private string _destinationTableName = null;
 		private bool ordinalMapping = false;
-		bool sqlRowsCopied = false;
-		bool identityInsert = false;
-		bool isLocalConnection = false;
-		SqlConnection connection;
-		SqlBulkCopyOptions copyOptions = SqlBulkCopyOptions.Default;
+		private bool sqlRowsCopied = false;
+		private bool identityInsert = false;
+		private bool isLocalConnection = false;
+		private SqlConnection connection;
+		private SqlTransaction externalTransaction;
+		private SqlBulkCopyOptions copyOptions = SqlBulkCopyOptions.Default;
 
 		#endregion
 
 		#region Constructors
 		public SqlBulkCopy (SqlConnection connection)
 		{
+			if (connection == null) {
+				throw new ArgumentNullException("connection");
+			}
+			
 			this.connection = connection;
 		}
 
 		public SqlBulkCopy (string connectionString)
 		{
+			if (connectionString == null) {
+				throw new ArgumentNullException("connectionString");
+			}
+			
 			this.connection = new SqlConnection (connectionString);
 			isLocalConnection = true;
 		}
@@ -70,18 +85,48 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
 		public SqlBulkCopy (string connectionString, SqlBulkCopyOptions copyOptions)
 		{
+			if (connectionString == null) {
+				throw new ArgumentNullException ("connectionString");
+			}
+			
 			this.connection = new SqlConnection (connectionString);
-			this.copyOptions = copyOptions;
 			isLocalConnection = true;
-			throw new NotImplementedException ();
+			
+			switch (copyOptions) {
+			case SqlBulkCopyOptions.Default:
+				this.copyOptions = copyOptions;
+				break;
+				
+			default:
+				throw new NotImplementedException ("We don't know how to process non-default copyOptions.");
+			}
 		}
 
 		[MonoTODO]
 		public SqlBulkCopy (SqlConnection connection, SqlBulkCopyOptions copyOptions, SqlTransaction externalTransaction)
 		{
+			if (connection == null) {
+				throw new ArgumentNullException ("connection");
+			}
+			
 			this.connection = connection;
 			this.copyOptions = copyOptions;
-			throw new NotImplementedException ();
+			
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction) {
+				if (externalTransaction != null)
+					throw new ArgumentException (transConflictMessage);
+			}
+			else
+				this.externalTransaction = externalTransaction;
+			
+			switch (copyOptions) {
+			case SqlBulkCopyOptions.Default:
+				this.copyOptions = copyOptions;
+				break;
+				
+			default:
+				throw new NotImplementedException ("We don't know how to process non-default copyOptions.");
+			}
 		}
 
 		#endregion
