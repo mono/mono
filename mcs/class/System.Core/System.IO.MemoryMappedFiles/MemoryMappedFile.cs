@@ -540,6 +540,7 @@ namespace System.IO.MemoryMappedFiles
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
 							  MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity,
 							  HandleInheritability inheritability)
+#endif
 		{
 			return CreateFromFile (mapName, FileMode.CreateNew, mapName, capacity, access);
 		}
