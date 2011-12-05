@@ -84,14 +84,9 @@ namespace IKVM.Reflection
 				get { throw new InvalidOperationException(); }
 			}
 
-			public override Type[] GetOptionalCustomModifiers()
+			public override CustomModifiers __GetCustomModifiers()
 			{
-				return property.PropertySignature.GetOptionalCustomModifiers(parameter);
-			}
-
-			public override Type[] GetRequiredCustomModifiers()
-			{
-				return property.PropertySignature.GetRequiredCustomModifiers(parameter);
+				return property.PropertySignature.GetParameterCustomModifiers(parameter);
 			}
 
 			public override MemberInfo Member
@@ -125,14 +120,19 @@ namespace IKVM.Reflection
 			get { return this.PropertySignature.PropertyType; }
 		}
 
+		public CustomModifiers __GetCustomModifiers()
+		{
+			return this.PropertySignature.GetCustomModifiers();
+		}
+
 		public Type[] GetRequiredCustomModifiers()
 		{
-			return this.PropertySignature.GetRequiredCustomModifiers();
+			return __GetCustomModifiers().GetRequired();
 		}
 
 		public Type[] GetOptionalCustomModifiers()
 		{
-			return this.PropertySignature.GetOptionalCustomModifiers();
+			return __GetCustomModifiers().GetOptional();
 		}
 
 		public bool IsSpecialName

@@ -102,7 +102,7 @@ namespace IKVM.Reflection
 
 		public MissingGenericMethodBuilder(Type declaringType, CallingConventions callingConvention, string name, int genericParameterCount)
 		{
-			method = new MissingMethod(declaringType, name, new MethodSignature(null, null, null, callingConvention, genericParameterCount));
+			method = new MissingMethod(declaringType, name, new MethodSignature(null, null, new PackedCustomModifiers(), callingConvention, genericParameterCount));
 		}
 
 		public Type[] GetGenericArguments()
@@ -110,6 +110,17 @@ namespace IKVM.Reflection
 			return method.GetGenericArguments();
 		}
 
+		public void SetSignature(Type returnType, CustomModifiers returnTypeCustomModifiers, Type[] parameterTypes, CustomModifiers[] parameterTypeCustomModifiers)
+		{
+			method.signature = new MethodSignature(
+				returnType ?? method.Module.universe.System_Void,
+				Util.Copy(parameterTypes),
+				PackedCustomModifiers.CreateFromExternal(returnTypeCustomModifiers, parameterTypeCustomModifiers, parameterTypes.Length),
+				method.signature.CallingConvention,
+				method.signature.GenericParameterCount);
+		}
+
+		[Obsolete("Please use SetSignature(Type, CustomModifiers, Type[], CustomModifiers[]) instead.")]
 		public void SetSignature(Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
 		{
 			method.signature = new MethodSignature(
@@ -469,12 +480,7 @@ namespace IKVM.Reflection
 			throw new MissingMemberException(this);
 		}
 
-		public override Type[] __GetRequiredCustomModifiers()
-		{
-			throw new MissingMemberException(this);
-		}
-
-		public override Type[] __GetOptionalCustomModifiers()
+		public override CustomModifiers __GetCustomModifiers()
 		{
 			throw new MissingMemberException(this);
 		}
@@ -484,12 +490,7 @@ namespace IKVM.Reflection
 			throw new MissingMemberException(this);
 		}
 
-		public override Type[][] __GetGenericArgumentsRequiredCustomModifiers()
-		{
-			throw new MissingMemberException(this);
-		}
-
-		public override Type[][] __GetGenericArgumentsOptionalCustomModifiers()
+		public override CustomModifiers[] __GetGenericArgumentsCustomModifiers()
 		{
 			throw new MissingMemberException(this);
 		}
@@ -693,22 +694,11 @@ namespace IKVM.Reflection
 				get { return Forwarder.RawDefaultValue; }
 			}
 
-			public override Type[] GetOptionalCustomModifiers()
+			public override CustomModifiers __GetCustomModifiers()
 			{
-				if (index == -1)
-				{
-					return Util.Copy(method.signature.GetReturnTypeOptionalCustomModifiers(method));
-				}
-				return Util.Copy(method.signature.GetParameterOptionalCustomModifiers(method, index));
-			}
-
-			public override Type[] GetRequiredCustomModifiers()
-			{
-				if (index == -1)
-				{
-					return Util.Copy(method.signature.GetReturnTypeRequiredCustomModifiers(method));
-				}
-				return Util.Copy(method.signature.GetParameterRequiredCustomModifiers(method, index));
+				return index == -1
+					? method.signature.GetReturnTypeCustomModifiers(method)
+					: method.signature.GetParameterCustomModifiers(method, index);
 			}
 
 			public override MemberInfo Member

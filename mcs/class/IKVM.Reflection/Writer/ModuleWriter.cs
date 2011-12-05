@@ -160,6 +160,10 @@ namespace IKVM.Reflection.Writer
 			{
 				cliHeader.Flags |= CliHeader.COMIMAGE_FLAGS_32BITREQUIRED;
 			}
+			if ((portableExecutableKind & PortableExecutableKinds.Preferred32Bit) != 0)
+			{
+				cliHeader.Flags |= CliHeader.COMIMAGE_FLAGS_32BITREQUIRED | CliHeader.COMIMAGE_FLAGS_32BITPREFERRED;
+			}
 			if (keyPair != null)
 			{
 				cliHeader.Flags |= CliHeader.COMIMAGE_FLAGS_STRONGNAMESIGNED;

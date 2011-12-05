@@ -42,7 +42,7 @@ namespace IKVM.Reflection.Emit
 		private int signature;
 		private Type returnType;
 		private Type[] parameterTypes;
-		private Type[][][] modifiers;	// see PackedCustomModifiers
+		private PackedCustomModifiers customModifiers;
 		private MethodAttributes attributes;
 		private MethodImplAttributes implFlags;
 		private ILGenerator ilgen;
@@ -339,10 +339,20 @@ namespace IKVM.Reflection.Emit
 
 		public void SetSignature(Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
 		{
+			SetSignature(returnType, parameterTypes, PackedCustomModifiers.CreateFromExternal(returnTypeOptionalCustomModifiers, returnTypeRequiredCustomModifiers,
+				parameterTypeOptionalCustomModifiers, parameterTypeRequiredCustomModifiers, Util.NullSafeLength(parameterTypes)));
+		}
+
+		public void __SetSignature(Type returnType, CustomModifiers returnTypeCustomModifiers, Type[] parameterTypes, CustomModifiers[] parameterTypeCustomModifiers)
+		{
+			SetSignature(returnType, parameterTypes, PackedCustomModifiers.CreateFromExternal(returnTypeCustomModifiers, parameterTypeCustomModifiers, Util.NullSafeLength(parameterTypes)));
+		}
+
+		private void SetSignature(Type returnType, Type[] parameterTypes, PackedCustomModifiers customModifiers)
+		{
 			this.returnType = returnType ?? this.Module.universe.System_Void;
 			this.parameterTypes = Util.Copy(parameterTypes);
-			this.modifiers = PackedCustomModifiers.CreateFromExternal(returnTypeOptionalCustomModifiers, returnTypeRequiredCustomModifiers,
-				parameterTypeOptionalCustomModifiers, parameterTypeRequiredCustomModifiers, this.parameterTypes.Length);
+			this.customModifiers = customModifiers;
 		}
 
 		public GenericTypeParameterBuilder[] DefineGenericParameters(params string[] names)
@@ -488,23 +498,9 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 
-			private Type[] GetCustomModifiers(int optOrReq)
+			public override CustomModifiers __GetCustomModifiers()
 			{
-				if (method.modifiers == null || method.modifiers[parameter + 1] == null)
-				{
-					return Type.EmptyTypes;
-				}
-				return Util.Copy(method.modifiers[parameter + 1][optOrReq]);
-			}
-
-			public override Type[] GetOptionalCustomModifiers()
-			{
-				return GetCustomModifiers(0);
-			}
-
-			public override Type[] GetRequiredCustomModifiers()
-			{
-				return GetCustomModifiers(1);
+				return method.customModifiers.GetParameterCustomModifiers(parameter);
 			}
 
 			public override MemberInfo Member
@@ -671,7 +667,7 @@ namespace IKVM.Reflection.Emit
 			{
 				if (methodSignature == null)
 				{
-					methodSignature = MethodSignature.MakeFromBuilder(returnType, parameterTypes, modifiers, callingConvention, gtpb == null ? 0 : gtpb.Length);
+					methodSignature = MethodSignature.MakeFromBuilder(returnType, parameterTypes, customModifiers, callingConvention, gtpb == null ? 0 : gtpb.Length);
 				}
 				return methodSignature;
 			}

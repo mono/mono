@@ -50,9 +50,11 @@
     <Compile Include="CustomAttributeData.cs" />
     <Compile Include="CustomAttributeNamedArgument.cs" />
     <Compile Include="CustomAttributeTypedArgument.cs" />
+    <Compile Include="CustomModifiers.cs" />
     <Compile Include="Emit\AssemblyBuilder.cs" />
     <Compile Include="Emit\ConstructorBuilder.cs" />
     <Compile Include="Emit\CustomAttributeBuilder.cs" />
+    <Compile Include="Emit\CustomModifiersBuilder.cs" />
     <Compile Include="Emit\EnumBuilder.cs" />
     <Compile Include="Emit\Enums.cs" />
     <Compile Include="Emit\EventBuilder.cs" />

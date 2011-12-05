@@ -53,6 +53,7 @@ namespace IKVM.Reflection.Impl
 #if !NO_SYMBOL_WRITER
 		private static readonly bool runningOnMono = System.Type.GetType("Mono.Runtime") != null;
 #endif
+
 		internal static ISymbolWriterImpl CreateSymbolWriterFor(ModuleBuilder moduleBuilder)
 		{
 #if NO_SYMBOL_WRITER

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,140 +25,317 @@ using System;
 using System.Globalization;
 using System.Configuration.Assemblies;
 using System.IO;
+using System.Text;
 using IKVM.Reflection.Reader;
 
 namespace IKVM.Reflection
 {
 	public sealed class AssemblyName : ICloneable
 	{
-		private readonly System.Reflection.AssemblyName name;
-		internal byte[] hash;
+		private string name;
 		private string culture;
-
-		private AssemblyName(System.Reflection.AssemblyName name, string culture)
-		{
-			this.name = name;
-			this.culture = culture;
-		}
+		private Version version;
+		private byte[] publicKeyToken;
+		private byte[] publicKey;
+		private StrongNameKeyPair keyPair;
+		private AssemblyNameFlags flags;
+		private AssemblyHashAlgorithm hashAlgorithm;
+		private AssemblyVersionCompatibility versionCompatibility = AssemblyVersionCompatibility.SameMachine;
+		private string codeBase;
+		internal byte[] hash;
 
 		public AssemblyName()
 		{
-			name = new System.Reflection.AssemblyName();
 		}
 
 		public AssemblyName(string assemblyName)
 		{
-			name = new System.Reflection.AssemblyName(assemblyName);
+			if (assemblyName == null)
+			{
+				throw new ArgumentNullException("assemblyName");
+			}
+			if (assemblyName == "")
+			{
+				throw new ArgumentException();
+			}
+			ParsedAssemblyName parsed;
+			switch (Fusion.ParseAssemblyName(assemblyName, out parsed))
+			{
+				case ParseAssemblyResult.GenericError:
+					throw new FileLoadException();
+				case ParseAssemblyResult.DuplicateKey:
+					throw new System.Runtime.InteropServices.COMException();
+			}
+			name = parsed.Name;
+			if (parsed.Culture != null)
+			{
+				if (parsed.Culture.Equals("neutral", StringComparison.InvariantCultureIgnoreCase))
+				{
+					culture = "";
+				}
+				else if (parsed.Culture == "")
+				{
+					throw new FileLoadException();
+				}
+				else
+				{
+					culture = new CultureInfo(parsed.Culture).Name;
+				}
+			}
+			if (parsed.Version != null && parsed.Version.Major != 65535 && parsed.Version.Minor != 65535)
+			{
+				// our Fusion parser returns -1 for build and revision for incomplete version numbers (and we want 65535)
+				version = new Version(parsed.Version.Major, parsed.Version.Minor, parsed.Version.Build & 0xFFFF, parsed.Version.Revision & 0xFFFF);
+			}
+			if (parsed.PublicKeyToken != null)
+			{
+				if (parsed.PublicKeyToken.Equals("null", StringComparison.InvariantCultureIgnoreCase))
+				{
+					publicKeyToken = Empty<byte>.Array;
+				}
+				else if (parsed.PublicKeyToken.Length != 16)
+				{
+					throw new FileLoadException();
+				}
+				else
+				{
+					publicKeyToken = new byte[8];
+					for (int i = 0, pos = 0; i < publicKeyToken.Length; i++, pos += 2)
+					{
+						publicKeyToken[i] = (byte)("0123456789abcdef".IndexOf(char.ToLowerInvariant(parsed.PublicKeyToken[pos])) * 16
+							+ "0123456789abcdef".IndexOf(char.ToLowerInvariant(parsed.PublicKeyToken[pos + 1])));
+					}
+				}
+			}
+			if (parsed.Retargetable.HasValue)
+			{
+				if (parsed.Culture == null || parsed.PublicKeyToken == null || parsed.Version == null || parsed.Version.Build == -1 || parsed.Version.Revision == -1)
+				{
+					throw new FileLoadException();
+				}
+				if (parsed.Retargetable.Value)
+				{
+					flags |= AssemblyNameFlags.Retargetable;
+				}
+			}
+			ProcessorArchitecture = parsed.ProcessorArchitecture;
 		}
 
 		public override string ToString()
 		{
-			string str = name.ToString();
-			if (culture != null)
-			{
-				str = str.Replace("Culture=neutral", "Culture=" + culture);
-			}
-			return str;
+			return FullName;
 		}
 
 		public string Name
 		{
-			get { return name.Name; }
-			set { name.Name = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
 		public CultureInfo CultureInfo
 		{
-			get { return name.CultureInfo; }
-			set
-			{
-				name.CultureInfo = value;
-				culture = null;
-			}
+			get { return culture == null ? null : new CultureInfo(culture); }
+			set { culture = value == null ? null : value.Name; }
 		}
 
 		internal string Culture
 		{
-			set
-			{
-				culture = value;
-				name.CultureInfo = CultureInfo.InvariantCulture;
-			}
+			get { return culture; }
+			set { culture = value; }
 		}
 
 		public Version Version
 		{
-			get { return name.Version; }
-			set { name.Version = value; }
+			get { return version; }
+			set { version = value; }
 		}
 
 		public StrongNameKeyPair KeyPair
 		{
-			get { return name.KeyPair == null ?  null : new StrongNameKeyPair(name.KeyPair); }
-			set { name.KeyPair = value == null ? null : value.keyPair; }
+			get { return keyPair; }
+			set { keyPair = value; }
 		}
 
 		public string CodeBase
 		{
-			get { return name.CodeBase; }
-			set { name.CodeBase = value; }
+			get { return codeBase; }
+			set { codeBase = value; }
+		}
+
+		public string EscapedCodeBase
+		{
+			get
+			{
+				// HACK use the real AssemblyName to escape the codebase
+				System.Reflection.AssemblyName tmp = new System.Reflection.AssemblyName();
+				tmp.CodeBase = codeBase;
+				return tmp.EscapedCodeBase;
+			}
 		}
 
 		public ProcessorArchitecture ProcessorArchitecture
 		{
-			get { return (ProcessorArchitecture)name.ProcessorArchitecture; }
-			set { name.ProcessorArchitecture = (System.Reflection.ProcessorArchitecture)value; }
+			get { return (ProcessorArchitecture)(((int)flags & 0x70) >> 4); }
+			set
+			{
+				if (value >= ProcessorArchitecture.None && value <= ProcessorArchitecture.Arm)
+				{
+					flags = (flags & ~(AssemblyNameFlags)0x70) | (AssemblyNameFlags)((int)value << 4);
+				}
+			}
 		}
 
 		public AssemblyNameFlags Flags
 		{
-			get { return (AssemblyNameFlags)name.Flags; }
-			set { name.Flags = (System.Reflection.AssemblyNameFlags)value; }
+			get { return flags & (AssemblyNameFlags)~0xF0; }
+			set { flags = (flags & (AssemblyNameFlags)0xF0) | (value & (AssemblyNameFlags)~0xF0); }
 		}
 
 		public AssemblyVersionCompatibility VersionCompatibility
 		{
-			get { return name.VersionCompatibility; }
-			set { name.VersionCompatibility = value; }
+			get { return versionCompatibility; }
+			set { versionCompatibility = value; }
 		}
 
 		public byte[] GetPublicKey()
 		{
-			return name.GetPublicKey();
+			return publicKey;
 		}
 
 		public void SetPublicKey(byte[] publicKey)
 		{
-			name.SetPublicKey(publicKey);
+			this.publicKey = publicKey;
+			flags = (flags & ~AssemblyNameFlags.PublicKey) | (publicKey == null ? 0 : AssemblyNameFlags.PublicKey);
 		}
 
 		public byte[] GetPublicKeyToken()
 		{
-			return name.GetPublicKeyToken();
+			if (publicKeyToken == null && publicKey != null)
+			{
+				// note that GetPublicKeyToken() has a side effect in this case, because we retain this token even after the public key subsequently gets changed
+				publicKeyToken = ComputePublicKeyToken(publicKey);
+			}
+			return publicKeyToken;
 		}
 
 		public void SetPublicKeyToken(byte[] publicKeyToken)
 		{
-			name.SetPublicKeyToken(publicKeyToken);
+			this.publicKeyToken = publicKeyToken;
 		}
 
 		public AssemblyHashAlgorithm HashAlgorithm
 		{
-			get { return name.HashAlgorithm; }
-			set { name.HashAlgorithm = value; }
+			get { return hashAlgorithm; }
+			set { hashAlgorithm = value; }
 		}
 
 		public string FullName
 		{
 			get
 			{
-				string str = name.FullName;
+				if (name == null)
+				{
+					return "";
+				}
+				StringBuilder sb = new StringBuilder();
+				bool doubleQuotes = name.StartsWith(" ") || name.EndsWith(" ") || name.IndexOf('\'') != -1;
+				bool singleQuotes = name.IndexOf('"') != -1;
+				if (singleQuotes)
+				{
+					sb.Append('\'');
+				}
+				else if (doubleQuotes)
+				{
+					sb.Append('"');
+				}
+				if (name.IndexOf(',') != -1 || name.IndexOf('\\') != -1 || name.IndexOf('=') != -1 || (singleQuotes && name.IndexOf('\'') != -1))
+				{
+					for (int i = 0; i < name.Length; i++)
+					{
+						char c = name[i];
+						if (c == ',' || c == '\\' || c == '=' || (singleQuotes && c == '\''))
+						{
+							sb.Append('\\');
+						}
+						sb.Append(c);
+					}
+				}
+				else
+				{
+					sb.Append(name);
+				}
+				if (singleQuotes)
+				{
+					sb.Append('\'');
+				}
+				else if (doubleQuotes)
+				{
+					sb.Append('"');
+				}
+				if (version != null)
+				{
+					if ((version.Major & 0xFFFF) != 0xFFFF)
+					{
+						sb.AppendFormat(", Version={0}", version.Major & 0xFFFF);
+						if ((version.Minor & 0xFFFF) != 0xFFFF)
+						{
+							sb.AppendFormat(".{0}", version.Minor & 0xFFFF);
+							if ((version.Build & 0xFFFF) != 0xFFFF)
+							{
+								sb.AppendFormat(".{0}", version.Build & 0xFFFF);
+								if ((version.Revision & 0xFFFF) != 0xFFFF)
+								{
+									sb.AppendFormat(".{0}", version.Revision & 0xFFFF);
+								}
+							}
+						}
+					}
+				}
 				if (culture != null)
 				{
-					str = str.Replace("Culture=neutral", "Culture=" + culture);
+					sb.Append(", Culture=").Append(culture == "" ? "neutral" : culture);
 				}
-				return str;
+				byte[] publicKeyToken = this.publicKeyToken;
+				if ((publicKeyToken == null || publicKeyToken.Length == 0) && publicKey != null)
+				{
+					publicKeyToken = ComputePublicKeyToken(publicKey);
+				}
+				if (publicKeyToken != null)
+				{
+					sb.Append(", PublicKeyToken=");
+					if (publicKeyToken.Length == 0)
+					{
+						sb.Append("null");
+					}
+					else
+					{
+						for (int i = 0; i < publicKeyToken.Length; i++)
+						{
+							sb.AppendFormat("{0:x2}", publicKeyToken[i]);
+						}
+					}
+				}
+				if ((Flags & AssemblyNameFlags.Retargetable) != 0)
+				{
+					sb.Append(", Retargetable=Yes");
+				}
+				return sb.ToString();
 			}
+		}
+
+		private static byte[] ComputePublicKeyToken(byte[] publicKey)
+		{
+			if (publicKey.Length == 0)
+			{
+				return publicKey;
+			}
+			// HACK use the real AssemblyName to convert PublicKey to PublicKeyToken
+			StringBuilder sb = new StringBuilder("Foo, PublicKey=", 20 + publicKey.Length * 2);
+			for (int i = 0; i < publicKey.Length; i++)
+			{
+				sb.AppendFormat("{0:x2}", publicKey[i]);
+			}
+			return new System.Reflection.AssemblyName(sb.ToString()).GetPublicKeyToken();
 		}
 
 		public override bool Equals(object obj)
@@ -174,12 +351,21 @@ namespace IKVM.Reflection
 
 		public object Clone()
 		{
-			return new AssemblyName((System.Reflection.AssemblyName)name.Clone(), culture);
+			AssemblyName copy = (AssemblyName)MemberwiseClone();
+			copy.publicKey = Copy(publicKey);
+			copy.publicKeyToken = Copy(publicKeyToken);
+			return copy;
+		}
+
+		private static byte[] Copy(byte[] b)
+		{
+			return b == null || b.Length == 0 ? b : (byte[])b.Clone();
 		}
 
 		public static bool ReferenceMatchesDefinition(AssemblyName reference, AssemblyName definition)
 		{
-			return System.Reflection.AssemblyName.ReferenceMatchesDefinition(reference.name, definition.name);
+			// HACK use the real AssemblyName to implement the (broken) ReferenceMatchesDefinition method
+			return System.Reflection.AssemblyName.ReferenceMatchesDefinition(new System.Reflection.AssemblyName(reference.FullName), new System.Reflection.AssemblyName(definition.FullName));
 		}
 
 		public static AssemblyName GetAssemblyName(string path)
@@ -205,6 +391,12 @@ namespace IKVM.Reflection
 			{
 				throw new FileNotFoundException(x.Message, x);
 			}
+		}
+
+		internal AssemblyNameFlags RawFlags
+		{
+			get { return flags; }
+			set { flags = value; }
 		}
 	}
 }

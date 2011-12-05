@@ -351,7 +351,7 @@ namespace IKVM.Reflection.Reader
 		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
 		{
 			// some fields are not available on the .NET Compact Framework version of DllImportAttribute
-			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, null, null));
+			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, new CustomModifiers()));
 			if (field != null)
 			{
 				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));
@@ -449,14 +449,11 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
-		public override Type[] GetRequiredCustomModifiers()
+		public override CustomModifiers __GetCustomModifiers()
 		{
-			return Util.Copy(position == -1 ? method.MethodSignature.GetReturnTypeRequiredCustomModifiers(method) : method.MethodSignature.GetParameterRequiredCustomModifiers(method, position));
-		}
-
-		public override Type[] GetOptionalCustomModifiers()
-		{
-			return Util.Copy(position == -1 ? method.MethodSignature.GetReturnTypeOptionalCustomModifiers(method) : method.MethodSignature.GetParameterOptionalCustomModifiers(method, position));
+			return position == -1
+				? method.MethodSignature.GetReturnTypeCustomModifiers(method)
+				: method.MethodSignature.GetParameterCustomModifiers(method, position);
 		}
 
 		public override MemberInfo Member

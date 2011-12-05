@@ -38,7 +38,6 @@ namespace IKVM.Reflection.Writer
 		private string description;
 		private string title;
 		internal string informationalVersion;
-		private string culture;
 		private string fileVersion;
 
 		internal void SetName(AssemblyName name)
@@ -83,10 +82,6 @@ namespace IKVM.Reflection.Writer
 			{
 				informationalVersion = (string)cab.GetConstructorArgument(0);
 			}
-			else if (culture == null && type == u.System_Reflection_AssemblyCultureAttribute)
-			{
-				culture  = (string)cab.GetConstructorArgument(0);
-			}
 			else if (fileVersion == null && type == u.System_Reflection_AssemblyFileVersionAttribute)
 			{
 				fileVersion = (string)cab.GetConstructorArgument(0);
@@ -109,13 +104,16 @@ namespace IKVM.Reflection.Writer
 
 			int codepage = 1200;	// Unicode codepage
 			int lcid = 0x7f;
-			if (name.CultureInfo != null)
+			try
 			{
-				lcid = name.CultureInfo.LCID;
+				if (name.CultureInfo != null)
+				{
+					lcid = name.CultureInfo.LCID;
+				}
 			}
-			if (culture != null)
+			catch (ArgumentException)
 			{
-				lcid = new CultureInfo(culture).LCID;
+				// AssemblyName.CultureInfo throws an ArgumentException if AssemblyBuilder.__SetAssemblyCulture() was used to specify a non-existing culture
 			}
 
 			Version filever = ParseVersionRobust(fileVersion);

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008, 2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -35,12 +35,10 @@ namespace IKVM.Reflection.Emit
 		private readonly byte type;
 		private readonly List<Type> args = new List<Type>();
 		private readonly List<LocalBuilder> locals = new List<LocalBuilder>();
-		private readonly List<Type[]> requiredCustomModifiers = new List<Type[]>();
-		private readonly List<Type[]> optionalCustomModifiers = new List<Type[]>();
+		private readonly List<CustomModifiers> customModifiers = new List<CustomModifiers>();
 		private readonly List<Type> optionalArgs = new List<Type>();
 		private Type returnType;
-		private Type[] returnTypeRequiredCustomModifiers;
-		private Type[] returnTypeOptionalCustomModifiers;
+		private CustomModifiers returnTypeCustomModifiers;
 		private CallingConventions callingConvention;
 		private CallingConvention unmanagedCallConv;
 		private bool unmanaged;
@@ -86,8 +84,6 @@ namespace IKVM.Reflection.Emit
 		{
 			SignatureHelper sig = new SignatureHelper(mod as ModuleBuilder, Signature.PROPERTY);
 			sig.returnType = returnType;
-			sig.returnTypeOptionalCustomModifiers = Type.EmptyTypes;
-			sig.returnTypeRequiredCustomModifiers = Type.EmptyTypes;
 			foreach (Type type in parameterTypes)
 			{
 				sig.AddArgument(type);
@@ -105,8 +101,7 @@ namespace IKVM.Reflection.Emit
 			SignatureHelper sig = new SignatureHelper(mod as ModuleBuilder, Signature.PROPERTY);
 			sig.callingConvention = callingConvention;
 			sig.returnType = returnType;
-			sig.returnTypeOptionalCustomModifiers = requiredReturnTypeCustomModifiers;
-			sig.returnTypeRequiredCustomModifiers = optionalReturnTypeCustomModifiers;
+			sig.returnTypeCustomModifiers = CustomModifiers.FromReqOpt(requiredReturnTypeCustomModifiers, optionalReturnTypeCustomModifiers);
 			sig.AddArguments(parameterTypes, requiredParameterTypeCustomModifiers, optionalParameterTypeCustomModifiers);
 			return sig;
 		}
@@ -167,21 +162,21 @@ namespace IKVM.Reflection.Emit
 				case 0:
 					if (unmanaged)
 					{
-						Signature.WriteStandAloneMethodSig(module, bb, unmanagedCallConv, returnType, args.ToArray());
+						Signature.WriteStandAloneMethodSig(module, bb, module.universe.MakeStandAloneMethodSig(unmanagedCallConv, returnType, returnTypeCustomModifiers, args.ToArray(), customModifiers.ToArray()));
 					}
 					else
 					{
-						Signature.WriteStandAloneMethodSig(module, bb, callingConvention, returnType, args.ToArray(), optionalArgs.ToArray());
+						Signature.WriteStandAloneMethodSig(module, bb, module.universe.MakeStandAloneMethodSig(callingConvention, returnType, returnTypeCustomModifiers, args.ToArray(), optionalArgs.ToArray(), customModifiers.ToArray()));
 					}
 					break;
 				case Signature.FIELD:
-					FieldSignature.Create(args[0], optionalCustomModifiers[0], requiredCustomModifiers[0]).WriteSig(module, bb);
+					FieldSignature.Create(args[0], customModifiers[0]).WriteSig(module, bb);
 					break;
 				case Signature.PROPERTY:
-					Signature.WritePropertySig(module, bb, callingConvention, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, args.ToArray(), requiredCustomModifiers.ToArray(), optionalCustomModifiers.ToArray());
+					Signature.WritePropertySig(module, bb, callingConvention, returnType, returnTypeCustomModifiers, args.ToArray(), customModifiers.ToArray());
 					break;
 				case Signature.LOCAL_SIG:
-					Signature.WriteLocalVarSig(module, bb, locals);
+					Signature.WriteLocalVarSig(module, bb, locals, customModifiers);
 					break;
 				default:
 					throw new InvalidOperationException();
@@ -202,15 +197,15 @@ namespace IKVM.Reflection.Emit
 
 		public void AddArgument(Type argument, bool pinned)
 		{
-			AddArgument(argument, pinned, Type.EmptyTypes, Type.EmptyTypes);
+			__AddArgument(argument, pinned, new CustomModifiers());
 		}
 
 		public void AddArgument(Type argument, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
 		{
-			AddArgument(argument, false, requiredCustomModifiers, optionalCustomModifiers);
+			__AddArgument(argument, false, CustomModifiers.FromReqOpt(requiredCustomModifiers, optionalCustomModifiers));
 		}
 
-		private void AddArgument(Type argument, bool pinned, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers)
+		public void __AddArgument(Type argument, bool pinned, CustomModifiers customModifiers)
 		{
 			if (type == Signature.LOCAL_SIG)
 			{
@@ -223,16 +218,15 @@ namespace IKVM.Reflection.Emit
 			else
 			{
 				this.args.Add(argument);
-				this.requiredCustomModifiers.Add(requiredCustomModifiers);
-				this.optionalCustomModifiers.Add(optionalCustomModifiers);
 			}
+			this.customModifiers.Add(customModifiers);
 		}
 
 		public void AddArguments(Type[] arguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			for (int i = 0; i < arguments.Length; i++)
 			{
-				AddArgument(arguments[i], false, requiredCustomModifiers[i], optionalCustomModifiers[i]);
+				__AddArgument(arguments[i], false, CustomModifiers.FromReqOpt(requiredCustomModifiers[i], optionalCustomModifiers[i]));
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -152,6 +152,7 @@ namespace IKVM.Reflection.Emit
 		private readonly ModuleBuilder moduleBuilder;
 		private readonly ByteBuffer code;
 		private readonly List<LocalBuilder> locals = new List<LocalBuilder>();
+		private List<CustomModifiers> localCustomModifiers;
 		private readonly List<int> tokenFixups = new List<int>();
 		private readonly List<int> labels = new List<int>();
 		private readonly List<int> labelStackHeight = new List<int>();
@@ -278,7 +279,10 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
-		public int __StackHeight {
+		// non-standard API
+		// returns -1 if the current position is currently unreachable
+		public int __StackHeight
+		{
 			get { return stackHeight; }
 		}
 
@@ -455,6 +459,26 @@ namespace IKVM.Reflection.Emit
 				scope.locals.Add(local);
 			}
 			return local;
+		}
+
+		public LocalBuilder __DeclareLocal(Type localType, bool pinned, CustomModifiers customModifiers)
+		{
+			if (!customModifiers.IsEmpty)
+			{
+				if (localCustomModifiers == null)
+				{
+					localCustomModifiers = new List<CustomModifiers>();
+				}
+				// we lazily fill up the list (to sync with the locals list) and we don't need to
+				// make sure that the list has the same length as the locals list, because
+				// Signature.WriteLocalVarSig() can tolerate that.
+				while (localCustomModifiers.Count < locals.Count)
+				{
+					localCustomModifiers.Add(new CustomModifiers());
+				}
+				localCustomModifiers.Add(customModifiers);
+			}
+			return DeclareLocal(localType, pinned);
 		}
 
 		public Label DefineLabel()
@@ -787,6 +811,11 @@ namespace IKVM.Reflection.Emit
 
 		public void EmitCall(OpCode opc, MethodInfo method, Type[] optionalParameterTypes)
 		{
+			__EmitCall(opc, method, optionalParameterTypes, null);
+		}
+
+		public void __EmitCall(OpCode opc, MethodInfo method, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
 			if (optionalParameterTypes == null || optionalParameterTypes.Length == 0)
 			{
 				Emit(opc, method);
@@ -796,7 +825,7 @@ namespace IKVM.Reflection.Emit
 				Emit(opc);
 				UpdateStack(opc, method.HasThis, method.ReturnType, method.ParameterCount + optionalParameterTypes.Length);
 				ByteBuffer sig = new ByteBuffer(16);
-				method.MethodSignature.WriteMethodRefSig(moduleBuilder, sig, optionalParameterTypes);
+				method.MethodSignature.WriteMethodRefSig(moduleBuilder, sig, optionalParameterTypes, customModifiers);
 				MemberRefTable.Record record = new MemberRefTable.Record();
 				if (method.Module == moduleBuilder)
 				{
@@ -817,25 +846,36 @@ namespace IKVM.Reflection.Emit
 			EmitCall(opc, constructor.GetMethodInfo(), optionalParameterTypes);
 		}
 
+		public void __EmitCall(OpCode opc, ConstructorInfo constructor, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
+			__EmitCall(opc, constructor.GetMethodInfo(), optionalParameterTypes, customModifiers);
+		}
+
 		public void EmitCalli(OpCode opc, CallingConvention callingConvention, Type returnType, Type[] parameterTypes)
 		{
-			returnType = returnType ?? moduleBuilder.universe.System_Void;
-			Emit(opc);
-			UpdateStack(opc, false, returnType, parameterTypes.Length);
-			ByteBuffer sig = new ByteBuffer(16);
-			Signature.WriteStandAloneMethodSig(moduleBuilder, sig, callingConvention, returnType, parameterTypes);
-			code.Write(0x11000000 | moduleBuilder.StandAloneSig.FindOrAddRecord(moduleBuilder.Blobs.Add(sig)));
+			__EmitCalli(opc, moduleBuilder.universe.MakeStandAloneMethodSig(callingConvention, returnType, new CustomModifiers(), parameterTypes, null));
 		}
 
 		public void EmitCalli(OpCode opc, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes)
 		{
-			returnType = returnType ?? moduleBuilder.universe.System_Void;
-			optionalParameterTypes = optionalParameterTypes ?? Type.EmptyTypes;
+			__EmitCalli(opc, moduleBuilder.universe.MakeStandAloneMethodSig(callingConvention, returnType, new CustomModifiers(), parameterTypes, optionalParameterTypes, null));
+		}
+
+		public void __EmitCalli(OpCode opc, __StandAloneMethodSig sig)
+		{
 			Emit(opc);
-			UpdateStack(opc, (callingConvention & CallingConventions.HasThis | CallingConventions.ExplicitThis) == CallingConventions.HasThis, returnType, parameterTypes.Length + optionalParameterTypes.Length);
-			ByteBuffer sig = new ByteBuffer(16);
-			Signature.WriteStandAloneMethodSig(moduleBuilder, sig, callingConvention, returnType, parameterTypes, optionalParameterTypes);
-			code.Write(0x11000000 | moduleBuilder.StandAloneSig.FindOrAddRecord(moduleBuilder.Blobs.Add(sig)));
+			if (sig.IsUnmanaged)
+			{
+				UpdateStack(opc, false, sig.ReturnType, sig.ParameterCount);
+			}
+			else
+			{
+				CallingConventions callingConvention = sig.CallingConvention;
+				UpdateStack(opc, (callingConvention & CallingConventions.HasThis | CallingConventions.ExplicitThis) == CallingConventions.HasThis, sig.ReturnType, sig.ParameterCount);
+			}
+			ByteBuffer bb = new ByteBuffer(16);
+			Signature.WriteStandAloneMethodSig(moduleBuilder, bb, sig);
+			code.Write(0x11000000 | moduleBuilder.StandAloneSig.FindOrAddRecord(moduleBuilder.Blobs.Add(bb)));
 		}
 
 		public void EmitWriteLine(string text)
@@ -1025,7 +1065,7 @@ namespace IKVM.Reflection.Emit
 			if (locals.Count != 0)
 			{
 				ByteBuffer localVarSig = new ByteBuffer(locals.Count + 2);
-				Signature.WriteLocalVarSig(moduleBuilder, localVarSig, locals);
+				Signature.WriteLocalVarSig(moduleBuilder, localVarSig, locals, localCustomModifiers);
 				localVarSigTok = 0x11000000 | moduleBuilder.StandAloneSig.FindOrAddRecord(moduleBuilder.Blobs.Add(localVarSig));
 			}
 

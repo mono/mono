@@ -175,6 +175,7 @@ namespace IKVM.Reflection
 		Synchronized		= 0x0020,
 		NoInlining			= 0x0008,
 		NoOptimization		= 0x0040,
+		AggressiveInlining  = 0x0100,
 
 		MaxMethodImplVal	= 0xffff,
 	}
@@ -203,6 +204,7 @@ namespace IKVM.Reflection
 		Required32Bit = 2,
 		PE32Plus = 4,
 		Unmanaged32Bit = 8,
+		Preferred32Bit = 16,
 	}
 
 	public enum ProcessorArchitecture
@@ -212,6 +214,8 @@ namespace IKVM.Reflection
 		X86 = 2,
 		IA64 = 3,
 		Amd64 = 4,
+		Arm = 5,
+		// if an item is added here, make sure to update AssemblyName.ProcessorArchitecture and Fusion.ParseAssemblyName as well
 	}
 
 	[Flags]
@@ -263,6 +267,7 @@ namespace IKVM.Reflection
 		RTSpecialName = 2048,
 		Import = 4096,
 		Serializable = 8192,
+		WindowsRuntime = 16384,
 		UnicodeClass = 65536,
 		AutoClass = 131072,
 		CustomFormatClass = 196608,

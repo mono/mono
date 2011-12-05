@@ -169,7 +169,7 @@ namespace IKVM.Reflection.Reader
 
 		internal static Type Make(int position)
 		{
-			return module.CanonicalizeType(new UnboundGenericMethodParameter(position));
+			return module.universe.CanonicalizeType(new UnboundGenericMethodParameter(position));
 		}
 
 		private UnboundGenericMethodParameter(int position)

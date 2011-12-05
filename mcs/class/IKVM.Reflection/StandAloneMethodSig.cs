@@ -35,8 +35,9 @@ namespace IKVM.Reflection
 		private readonly Type returnType;
 		private readonly Type[] parameterTypes;
 		private readonly Type[] optionalParameterTypes;
+		private readonly PackedCustomModifiers customModifiers;
 
-		internal __StandAloneMethodSig(bool unmanaged, CallingConvention unmanagedCallingConvention, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes)
+		internal __StandAloneMethodSig(bool unmanaged, CallingConvention unmanagedCallingConvention, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes, PackedCustomModifiers customModifiers)
 		{
 			this.unmanaged = unmanaged;
 			this.unmanagedCallingConvention = unmanagedCallingConvention;
@@ -44,6 +45,30 @@ namespace IKVM.Reflection
 			this.returnType = returnType;
 			this.parameterTypes = parameterTypes;
 			this.optionalParameterTypes = optionalParameterTypes;
+			this.customModifiers = customModifiers;
+		}
+
+		public bool Equals(__StandAloneMethodSig other)
+		{
+			return other != null
+				&& other.unmanaged == unmanaged
+				&& other.unmanagedCallingConvention == unmanagedCallingConvention
+				&& other.callingConvention == callingConvention
+				&& other.returnType == returnType
+				&& Util.ArrayEquals(other.parameterTypes, parameterTypes)
+				&& Util.ArrayEquals(other.optionalParameterTypes, optionalParameterTypes)
+				&& other.customModifiers.Equals(customModifiers);
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as __StandAloneMethodSig);
+		}
+
+		public override int GetHashCode()
+		{
+			return returnType.GetHashCode()
+				^ Util.GetHashCode(parameterTypes);
 		}
 
 		public bool IsUnmanaged
@@ -66,6 +91,11 @@ namespace IKVM.Reflection
 			get { return returnType; }
 		}
 
+		public CustomModifiers GetReturnTypeCustomModifiers()
+		{
+			return customModifiers.GetReturnTypeCustomModifiers();
+		}
+
 		public Type[] ParameterTypes
 		{
 			get { return Util.Copy(parameterTypes); }
@@ -74,6 +104,16 @@ namespace IKVM.Reflection
 		public Type[] OptionalParameterTypes
 		{
 			get { return Util.Copy(optionalParameterTypes); }
+		}
+
+		public CustomModifiers GetParameterCustomModifiers(int index)
+		{
+			return customModifiers.GetParameterCustomModifiers(index);
+		}
+
+		internal int ParameterCount
+		{
+			get { return parameterTypes.Length + optionalParameterTypes.Length; }
 		}
 	}
 }

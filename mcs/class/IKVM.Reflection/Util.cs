@@ -163,62 +163,6 @@ namespace IKVM.Reflection
 			return false;
 		}
 
-		internal static bool ArrayEquals(Type[][] t1, Type[][] t2)
-		{
-			if (t1 == t2)
-			{
-				return true;
-			}
-			if (t1 == null)
-			{
-				return t2.Length == 0;
-			}
-			else if (t2 == null)
-			{
-				return t1.Length == 0;
-			}
-			if (t1.Length == t2.Length)
-			{
-				for (int i = 0; i < t1.Length; i++)
-				{
-					if (!ArrayEquals(t1[i], t2[i]))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-
-		internal static bool ArrayEquals(Type[][][] t1, Type[][][] t2)
-		{
-			if (t1 == t2)
-			{
-				return true;
-			}
-			if (t1 == null)
-			{
-				return t2.Length == 0;
-			}
-			else if (t2 == null)
-			{
-				return t1.Length == 0;
-			}
-			if (t1.Length == t2.Length)
-			{
-				for (int i = 0; i < t1.Length; i++)
-				{
-					if (!ArrayEquals(t1[i], t2[i]))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-
 		internal static bool TypeEquals(Type t1, Type t2)
 		{
 			if (t1 == t2)
@@ -250,30 +194,47 @@ namespace IKVM.Reflection
 			return h;
 		}
 
-		internal static int GetHashCode(Type[][] types)
+		internal static bool ArrayEquals(CustomModifiers[] m1, CustomModifiers[] m2)
+		{
+			if (m1 == null || m2 == null)
+			{
+				return m1 == m2;
+			}
+			if (m1.Length != m2.Length)
+			{
+				return false;
+			}
+			for (int i = 0; i < m1.Length; i++)
+			{
+				if (!m1[i].Equals(m2[i]))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		internal static int GetHashCode(CustomModifiers[] mods)
 		{
 			int h = 0;
-			if (types != null)
+			if (mods != null)
 			{
-				foreach (Type[] array in types)
+				foreach (CustomModifiers mod in mods)
 				{
-					h ^= GetHashCode(array);
+					h ^= mod.GetHashCode();
 				}
 			}
 			return h;
 		}
 
-		internal static int GetHashCode(Type[][][] types)
+		internal static T NullSafeElementAt<T>(T[] array, int index)
 		{
-			int h = 0;
-			if (types != null)
-			{
-				foreach (Type[][] array in types)
-				{
-					h ^= GetHashCode(array);
-				}
-			}
-			return h;
+			return array == null ? default(T) : array[index];
+		}
+
+		internal static int NullSafeLength<T>(T[] array)
+		{
+			return array == null ? 0 : array.Length;
 		}
 	}
 

@@ -58,6 +58,11 @@ namespace IKVM.Reflection
 			get { return GetMethodInfo().ContainsGenericParameters; }
 		}
 
+		public ParameterInfo __ReturnParameter
+		{
+			get { return new ParameterInfoWrapper(this, GetMethodInfo().ReturnParameter); }
+		}
+
 		public sealed override ParameterInfo[] GetParameters()
 		{
 			ParameterInfo[] parameters = GetMethodInfo().GetParameters();
@@ -104,14 +109,9 @@ namespace IKVM.Reflection
 				get { return forward.RawDefaultValue; }
 			}
 
-			public override Type[] GetOptionalCustomModifiers()
+			public override CustomModifiers __GetCustomModifiers()
 			{
-				return forward.GetOptionalCustomModifiers();
-			}
-
-			public override Type[] GetRequiredCustomModifiers()
-			{
-				return forward.GetRequiredCustomModifiers();
+				return forward.__GetCustomModifiers();
 			}
 
 			public override MemberInfo Member

@@ -395,18 +395,9 @@ namespace IKVM.Reflection
 			get { return parameterInfo.RawDefaultValue; }
 		}
 
-		public override Type[] GetOptionalCustomModifiers()
+		public override CustomModifiers __GetCustomModifiers()
 		{
-			Type[] modifiers = parameterInfo.GetOptionalCustomModifiers();
-			Type.InplaceBindTypeParameters(method, modifiers);
-			return modifiers;
-		}
-
-		public override Type[] GetRequiredCustomModifiers()
-		{
-			Type[] modifiers = parameterInfo.GetRequiredCustomModifiers();
-			Type.InplaceBindTypeParameters(method, modifiers);
-			return modifiers;
+			return parameterInfo.__GetCustomModifiers().Bind(method);
 		}
 
 		public override MemberInfo Member

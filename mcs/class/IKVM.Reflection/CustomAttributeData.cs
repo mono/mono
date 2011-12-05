@@ -473,7 +473,7 @@ namespace IKVM.Reflection
 			{
 				type = org;
 			}
-			FieldSignature sig = FieldSignature.Create(fieldType, null, null);
+			FieldSignature sig = FieldSignature.Create(fieldType, new CustomModifiers());
 			return type.FindField(name, sig)
 				?? type.Module.universe.GetMissingFieldOrThrow(type, name, sig);
 		}
@@ -496,7 +496,7 @@ namespace IKVM.Reflection
 			{
 				type = org;
 			}
-			return type.Module.universe.GetMissingPropertyOrThrow(type, name, PropertySignature.Create(CallingConventions.Standard | CallingConventions.HasThis, propertyType, null, null, null, null, null));
+			return type.Module.universe.GetMissingPropertyOrThrow(type, name, PropertySignature.Create(CallingConventions.Standard | CallingConventions.HasThis, propertyType, null, new PackedCustomModifiers()));
 		}
 
 		[Obsolete("Use Constructor.DeclaringType instead.")]

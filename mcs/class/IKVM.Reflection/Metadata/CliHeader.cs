@@ -32,6 +32,7 @@ namespace IKVM.Reflection.Metadata
 		internal const uint COMIMAGE_FLAGS_32BITREQUIRED = 0x00000002;
 		internal const uint COMIMAGE_FLAGS_STRONGNAMESIGNED = 0x00000008;
 		internal const uint COMIMAGE_FLAGS_NATIVE_ENTRYPOINT = 0x00000010;
+		internal const uint COMIMAGE_FLAGS_32BITPREFERRED = 0x00020000;
 
 		internal uint Cb = 0x48;
 		internal ushort MajorRuntimeVersion;

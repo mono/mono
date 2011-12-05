@@ -708,19 +708,20 @@ namespace IKVM.Reflection.Reader
 			throw new ArgumentOutOfRangeException();
 		}
 
-		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
+		public override Type[] __ResolveOptionalParameterTypes(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments, out CustomModifiers[] customModifiers)
 		{
 			if ((metadataToken >> 24) == MemberRefTable.Index)
 			{
 				int index = (metadataToken & 0xFFFFFF) - 1;
 				int sig = MemberRef.records[index].Signature;
-				return Signature.ReadOptionalParameterTypes(this, GetBlob(sig));
+				return Signature.ReadOptionalParameterTypes(this, GetBlob(sig), new GenericContext(genericTypeArguments, genericMethodArguments), out customModifiers);
 			}
 			else if ((metadataToken >> 24) == MethodDefTable.Index)
 			{
 				// for convenience, we support passing a MethodDef token as well, because in some places
 				// it makes sense to have a vararg method that is referred to by its methoddef (e.g. ldftn).
 				// Note that MethodSpec doesn't make sense, because generic methods cannot be vararg.
+				customModifiers = Empty<CustomModifiers>.Array;
 				return Type.EmptyTypes;
 			}
 			throw new ArgumentOutOfRangeException();
@@ -951,11 +952,11 @@ namespace IKVM.Reflection.Reader
 				}
 				if (AssemblyRef.records[i].Culture != 0)
 				{
-					name.CultureInfo = new System.Globalization.CultureInfo(GetString(AssemblyRef.records[i].Culture));
+					name.Culture = GetString(AssemblyRef.records[i].Culture);
 				}
 				else
 				{
-					name.CultureInfo = System.Globalization.CultureInfo.InvariantCulture;
+					name.Culture = "";
 				}
 				if (AssemblyRef.records[i].HashValue != 0)
 				{
@@ -1085,9 +1086,18 @@ namespace IKVM.Reflection.Reader
 			{
 				peKind |= PortableExecutableKinds.ILOnly;
 			}
-			if ((cliHeader.Flags & CliHeader.COMIMAGE_FLAGS_32BITREQUIRED) != 0)
+			switch (cliHeader.Flags & (CliHeader.COMIMAGE_FLAGS_32BITREQUIRED | CliHeader.COMIMAGE_FLAGS_32BITPREFERRED))
 			{
-				peKind |= PortableExecutableKinds.Required32Bit;
+				case CliHeader.COMIMAGE_FLAGS_32BITREQUIRED:
+					peKind |= PortableExecutableKinds.Required32Bit;
+					break;
+				case CliHeader.COMIMAGE_FLAGS_32BITREQUIRED | CliHeader.COMIMAGE_FLAGS_32BITPREFERRED:
+					peKind |= PortableExecutableKinds.Preferred32Bit;
+					break;
+				default:
+					// COMIMAGE_FLAGS_32BITPREFERRED by itself is illegal, so we ignore it
+					// (not setting any flag is ok)
+					break;
 			}
 			if (peFile.OptionalHeader.Magic == IMAGE_OPTIONAL_HEADER.IMAGE_NT_OPTIONAL_HDR64_MAGIC)
 			{

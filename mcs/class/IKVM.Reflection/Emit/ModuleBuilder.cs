@@ -259,6 +259,12 @@ namespace IKVM.Reflection.Emit
 			return new EnumBuilder(tb, fb);
 		}
 
+		public FieldBuilder __DefineField(string name, Type type, CustomModifiers customModifiers, FieldAttributes attributes)
+		{
+			return moduleType.__DefineField(name, type, customModifiers, attributes);
+		}
+
+		[Obsolete("Please use __DefineField(string, Type, CustomModifiers, FieldAttributes) instead.")]
 		public FieldBuilder __DefineField(string name, Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers, FieldAttributes attributes)
 		{
 			return moduleType.DefineField(name, type, requiredCustomModifiers, optionalCustomModifiers, attributes);
@@ -723,6 +729,12 @@ namespace IKVM.Reflection.Emit
 			rec.BuildNumber = (ushort)ver.Build;
 			rec.RevisionNumber = (ushort)ver.Revision;
 			rec.Flags = (int)(name.Flags & ~AssemblyNameFlags.PublicKey);
+			const AssemblyNameFlags afPA_Specified = (AssemblyNameFlags)0x0080;
+			const AssemblyNameFlags afPA_Mask = (AssemblyNameFlags)0x0070;
+			if ((name.RawFlags & afPA_Specified) != 0)
+			{
+				rec.Flags |= (int)(name.RawFlags & afPA_Mask);
+			}
 			byte[] publicKeyOrToken = null;
 			if (usePublicKeyAssemblyReference)
 			{
@@ -739,14 +751,7 @@ namespace IKVM.Reflection.Emit
 			}
 			rec.PublicKeyOrToken = this.Blobs.Add(ByteBuffer.Wrap(publicKeyOrToken));
 			rec.Name = this.Strings.Add(name.Name);
-			if (name.CultureInfo != null)
-			{
-				rec.Culture = this.Strings.Add(name.CultureInfo.Name);
-			}
-			else
-			{
-				rec.Culture = 0;
-			}
+			rec.Culture = name.Culture == null ? 0 : this.Strings.Add(name.Culture);
 			if (name.hash != null)
 			{
 				rec.HashValue = this.Blobs.Add(ByteBuffer.Wrap(name.hash));
@@ -1179,7 +1184,7 @@ namespace IKVM.Reflection.Emit
 			mvid = guid;
 		}
 
-		public override Type[] __ResolveOptionalParameterTypes(int metadataToken)
+		public override Type[] __ResolveOptionalParameterTypes(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments, out CustomModifiers[] customModifiers)
 		{
 			throw new NotImplementedException();
 		}
@@ -1628,7 +1633,7 @@ namespace IKVM.Reflection.Emit
 			{
 				if (methodSignature == null)
 				{
-					methodSignature = MethodSignature.MakeFromBuilder(returnType, parameterTypes, null, callingConvention, 0);
+					methodSignature = MethodSignature.MakeFromBuilder(returnType, parameterTypes, new PackedCustomModifiers(), callingConvention, 0);
 				}
 				return methodSignature;
 			}

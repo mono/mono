@@ -48,14 +48,19 @@ namespace IKVM.Reflection
 			get { return this.FieldSignature.FieldType; }
 		}
 
+		public CustomModifiers __GetCustomModifiers()
+		{
+			return this.FieldSignature.GetCustomModifiers();
+		}
+
 		public Type[] GetOptionalCustomModifiers()
 		{
-			return this.FieldSignature.GetOptionalCustomModifiers();
+			return __GetCustomModifiers().GetOptional();
 		}
 
 		public Type[] GetRequiredCustomModifiers()
 		{
-			return this.FieldSignature.GetRequiredCustomModifiers();
+			return __GetCustomModifiers().GetRequired();
 		}
 
 		public bool IsStatic

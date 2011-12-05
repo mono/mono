@@ -38,13 +38,13 @@ namespace IKVM.Reflection.Emit
 		private readonly int signature;
 		private readonly FieldSignature fieldSig;
 
-		internal FieldBuilder(TypeBuilder type, string name, Type fieldType, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers, FieldAttributes attribs)
+		internal FieldBuilder(TypeBuilder type, string name, Type fieldType, CustomModifiers customModifiers, FieldAttributes attribs)
 		{
 			this.typeBuilder = type;
 			this.name = name;
 			this.pseudoToken = type.ModuleBuilder.AllocPseudoToken();
 			this.nameIndex = type.ModuleBuilder.Strings.Add(name);
-			this.fieldSig = FieldSignature.Create(fieldType, optionalCustomModifiers, requiredCustomModifiers);
+			this.fieldSig = FieldSignature.Create(fieldType, customModifiers);
 			ByteBuffer sig = new ByteBuffer(5);
 			fieldSig.WriteSig(this.typeBuilder.ModuleBuilder, sig);
 			this.signature = this.typeBuilder.ModuleBuilder.Blobs.Add(sig);

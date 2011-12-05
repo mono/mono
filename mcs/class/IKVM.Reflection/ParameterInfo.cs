@@ -58,11 +58,20 @@ namespace IKVM.Reflection
 		public abstract ParameterAttributes Attributes { get; }
 		public abstract int Position { get; }
 		public abstract object RawDefaultValue { get; }
-		public abstract Type[] GetOptionalCustomModifiers();
-		public abstract Type[] GetRequiredCustomModifiers();
+		public abstract CustomModifiers __GetCustomModifiers();
 		public abstract MemberInfo Member { get; }
 		public abstract int MetadataToken { get; }
 		internal abstract Module Module { get; }
+
+		public Type[] GetOptionalCustomModifiers()
+		{
+			return __GetCustomModifiers().GetOptional();
+		}
+
+		public Type[] GetRequiredCustomModifiers()
+		{
+			return __GetCustomModifiers().GetRequired();
+		}
 
 		public bool IsIn
 		{

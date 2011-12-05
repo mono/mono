@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,12 +30,14 @@ namespace IKVM.Reflection
 		private readonly int index;
 		private readonly Type type;
 		private readonly bool pinned;
+		private readonly CustomModifiers customModifiers;
 
-		internal LocalVariableInfo(int index, Type type, bool pinned)
+		internal LocalVariableInfo(int index, Type type, bool pinned, CustomModifiers customModifiers)
 		{
 			this.index = index;
 			this.type = type;
 			this.pinned = pinned;
+			this.customModifiers = customModifiers;
 		}
 
 		public bool IsPinned
@@ -51,6 +53,11 @@ namespace IKVM.Reflection
 		public Type LocalType
 		{
 			get { return type; }
+		}
+
+		public CustomModifiers __GetCustomModifiers()
+		{
+			return customModifiers;
 		}
 	}
 }

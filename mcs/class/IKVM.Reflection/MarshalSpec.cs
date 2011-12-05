@@ -171,7 +171,7 @@ namespace IKVM.Reflection
 		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
 		{
 			// some fields are not available on the .NET Compact Framework version of MarshalAsAttribute
-			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, null, null));
+			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, new CustomModifiers()));
 			if (field != null)
 			{
 				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));

@@ -28,6 +28,7 @@
                 <include name="CustomAttributeData.cs" />
                 <include name="CustomAttributeNamedArgument.cs" />
                 <include name="CustomAttributeTypedArgument.cs" />
+                <include name="CustomModifiers.cs" />
                 <include name="Enums.cs" />
                 <include name="EventInfo.cs" />
                 <include name="ExceptionHandlingClause.cs" />
@@ -61,6 +62,7 @@
                 <include name="Emit\AssemblyBuilder.cs" />
                 <include name="Emit\ConstructorBuilder.cs" />
                 <include name="Emit\CustomAttributeBuilder.cs" />
+                <include name="Emit\CustomModifiersBuilder.cs" />
                 <include name="Emit\EnumBuilder.cs" />
                 <include name="Emit\Enums.cs" />
                 <include name="Emit\EventBuilder.cs" />
