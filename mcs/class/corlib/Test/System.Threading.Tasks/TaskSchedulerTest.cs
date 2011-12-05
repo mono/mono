@@ -122,6 +122,9 @@ namespace MonoTests.System.Threading.Tasks
 		// This test doesn't work if the GC uses multiple finalizer thread.
 		// For now it's fine since only one thread is used
 		[Test]
+		// Depends on objects getting GCd plus installs an EH handler which catches
+		// exceptions thrown by other tasks
+		[Category ("NotWorking")]
 		public void UnobservedTaskExceptionOnFinalizerThreadTest ()
 		{
 			var foo = new FinalizerCatcher ();
@@ -146,6 +149,9 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		// Depends on objects getting GCd plus installs an EH handler which catches
+		// exceptions thrown by other tasks
+		[Category ("NotWorking")]
 		public void UnobservedTaskExceptionArgumentTest ()
 		{
 			bool ran = false;
