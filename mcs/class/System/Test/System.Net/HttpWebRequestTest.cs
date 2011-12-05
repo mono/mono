@@ -32,7 +32,6 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class HttpWebRequestTest
 	{
-#if NET_2_0
 		private Random rand = new Random ();
 		private byte [] data64KB = new byte [64 * 1024];
 
@@ -42,7 +41,6 @@ namespace MonoTests.System.Net
 				ServicePointManager.Expect100Continue = false;
 				rand.NextBytes (data64KB);
 		}
-#endif
 
 		[Test]
 #if TARGET_JVM
@@ -52,21 +50,8 @@ namespace MonoTests.System.Net
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
 			Assert.IsNotNull (req.Proxy, "#1");
-#if NET_2_0
 			req.Proxy = null;
 			Assert.IsNull (req.Proxy, "#2");
-#else
-			try {
-				req.Proxy = null;
-				Assert.Fail ("#2");
-			} catch (ArgumentNullException ex) {
-				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsNotNull (ex.ParamName, "#6");
-				Assert.AreEqual ("value", ex.ParamName, "#7");
-			}
-#endif
 		}
 
 		[Test]
@@ -260,13 +245,8 @@ namespace MonoTests.System.Net
 		public void MethodCase ()
 		{
 			ListDictionary methods = new ListDictionary ();
-#if NET_2_0
 			methods.Add ("post", "POST");
 			methods.Add ("puT", "PUT");
-#else
-			methods.Add ("post", "post");
-			methods.Add ("puT", "puT");
-#endif
 			methods.Add ("POST", "POST");
 			methods.Add ("whatever", "whatever");
 			methods.Add ("PUT", "PUT");
@@ -433,23 +413,9 @@ namespace MonoTests.System.Net
 				req.SendChunked = false;
 				req.KeepAlive = true;
 				req.AllowWriteStreamBuffering = false;
-#if NET_2_0
+
 				req.BeginGetResponse (null, null);
 				req.Abort ();
-#else
-				try {
-					req.BeginGetResponse (null, null);
-				} catch (ProtocolViolationException ex) {
-					// Either ContentLength must be set to a non-negative
-					// number, or SendChunked set to true in order to perform
-					// the write operation when AllowWriteStreamBuffering
-					// is disabled
-					Assert.IsNull (ex.InnerException, "#A2");
-					Assert.IsNotNull (ex.Message, "#A3");
-				} finally {
-					req.Abort ();
-				}
-#endif
 
 				req = (HttpWebRequest) WebRequest.Create (url);
 				req.Method = "POST";
@@ -472,69 +438,27 @@ namespace MonoTests.System.Net
 				req = (HttpWebRequest) WebRequest.Create (url);
 				req.Method = "GET";
 				req.SendChunked = true;
-#if NET_2_0
+
 				req.BeginGetResponse (null, null);
 				req.Abort ();
-#else
-				try {
-					req.BeginGetResponse (null, null);
-					Assert.Fail ("#B1");
-				} catch (ProtocolViolationException ex) {
-					// Content-Length cannot be set for a
-					// non-write operation
-					Assert.IsNull (ex.InnerException, "#B2");
-					Assert.IsNotNull (ex.Message, "#B3");
-				} finally {
-					req.Abort ();
-				}
-#endif
 
 				req = (HttpWebRequest) WebRequest.Create (url);
 				req.Method = "GET";
 				req.ContentLength = 5;
-#if NET_2_0
+
 				req.BeginGetResponse (null, null);
 				req.Abort ();
-#else
-				try {
-					req.BeginGetResponse (null, null);
-					Assert.Fail ("#C1");
-				} catch (ProtocolViolationException ex) {
-					// Content-Length cannot be set for a
-					// non-write operation
-					Assert.IsNull (ex.InnerException, "#C2");
-					Assert.IsNotNull (ex.Message, "#C3");
-				} finally {
-					req.Abort ();
-				}
-#endif
 
 				req = (HttpWebRequest) WebRequest.Create (url);
 				req.Method = "GET";
 				req.ContentLength = 0;
-#if NET_2_0
+
 				req.BeginGetResponse (null, null);
 				req.Abort ();
-#else
-				try {
-					req.BeginGetResponse (null, null);
-					Assert.Fail ("#D1");
-				} catch (ProtocolViolationException ex) {
-					// Content-Length cannot be set for a
-					// non-write operation
-					Assert.IsNull (ex.InnerException, "#D2");
-					Assert.IsNotNull (ex.Message, "#D3");
-				} finally {
-					req.Abort ();
-				}
-#endif
 			}
 		}
 
 		[Test] // bug #511851
-#if ONLY_1_1
-		[Category ("NotWorking")]
-#endif
 		public void BeginGetRequestStream_Request_Aborted ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8002);
@@ -547,7 +471,6 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.Abort ();
 
-#if NET_2_0
 				try {
 					req.BeginGetRequestStream (null, null);
 					Assert.Fail ("#1");
@@ -559,20 +482,6 @@ namespace MonoTests.System.Net
 					Assert.IsNull (ex.Response, "#5");
 					Assert.AreEqual (WebExceptionStatus.RequestCanceled, ex.Status, "#6");
 				}
-#else
-				IAsyncResult ar = req.BeginGetRequestStream (null, null);
-				try {
-					req.EndGetRequestStream (ar);
-					Assert.Fail ("#1");
-				} catch (WebException ex) {
-					// The underlying connection was closed: the request was canceled
-					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsNull (ex.Response, "#5");
-					Assert.AreEqual (WebExceptionStatus.RequestCanceled, ex.Status, "#6");
-				}
-#endif
 			}
 		}
 
@@ -1349,7 +1258,6 @@ namespace MonoTests.System.Net
 					req.GetResponse ();
 					Assert.Fail ("#A1");
 				} catch (WebException ex) {
-#if NET_2_0
 					// The underlying connection was closed:
 					// An unexpected error occurred on a
 					// receive
@@ -1376,18 +1284,6 @@ namespace MonoTests.System.Net
 
 					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
 					Assert.IsNull (webResponse, "#A11");
-#else
-					// The remote server returned an error:
-					// (500) Internal Server Error
-					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
-					Assert.IsNull (ex.InnerException, "#A3");
-					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#A4");
-
-					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
-					Assert.IsNotNull (webResponse, "#A5");
-					Assert.AreEqual ("POST", webResponse.Method, "#A6");
-					webResponse.Close ();
-#endif
 				}
 
 				responder.Stop ();
@@ -1472,11 +1368,7 @@ namespace MonoTests.System.Net
 				req.KeepAlive = false;
 				req.Timeout = 20000;
 				req.ReadWriteTimeout = 20000;
-#if NET_2_0
 				req.Headers.Add (HttpRequestHeader.IfNoneMatch, "898bbr2347056cc2e096afc66e104653");
-#else
-				req.Headers.Add ("If-None-Match", "898bbr2347056cc2e096afc66e104653");
-#endif
 				req.IfModifiedSince = new DateTime (2010, 01, 04);
 
 				DateTime start = DateTime.Now;
@@ -1514,9 +1406,7 @@ namespace MonoTests.System.Net
 			//string rawLastMod = resp.Headers ["Last-Modified"];
 			resp.Close ();
 			//Assert.AreEqual ("Tue, 15 Jan 2008 08:59:59 GMT", rawLastMod, "#1");
-#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Local, lastMod.Kind, "#2");
-#endif
 			req = (HttpWebRequest) WebRequest.Create (reqURL);
 			req.IfModifiedSince = lastMod;
 			try {
@@ -1892,7 +1782,6 @@ namespace MonoTests.System.Net
 			protected abstract void Run ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void BeginGetRequestStream ()
 		{
@@ -2473,7 +2362,6 @@ namespace MonoTests.System.Net
 				this.listener.Stop ();
 			}
 		}
-#endif
 
 #if !TARGET_JVM
 		class SslHttpServer : HttpServer {
@@ -2721,7 +2609,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // bug #324182
 #if TARGET_JVM
 		[Category ("NotWorking")]
@@ -2748,7 +2635,6 @@ namespace MonoTests.System.Net
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void CanWrite ()
@@ -2831,7 +2717,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void ReadTimeout ()
 		{
@@ -2855,7 +2740,6 @@ namespace MonoTests.System.Net
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void Seek ()
@@ -3121,7 +3005,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void WriteTimeout ()
 		{
@@ -3145,11 +3028,9 @@ namespace MonoTests.System.Net
 				}
 			}
 		}
-#endif
 	}
 
-#if NET_2_0
-	public static class StreamExtensions {
+	static class StreamExtensions {
 		public static int ReadAll(this Stream stream, byte[] buffer, int offset, int count)
 		{
 			int totalRead = 0;
@@ -3166,7 +3047,7 @@ namespace MonoTests.System.Net
 		}
 	}
 
-	public class ExceptionAssert {
+	static class ExceptionAssert {
 		/// <summary>
 		/// Asserts that the function throws an exception.
 		/// </summary>
@@ -3202,5 +3083,4 @@ namespace MonoTests.System.Net
 			return (T) actualException;
 		}
 	}
-#endif
 }
