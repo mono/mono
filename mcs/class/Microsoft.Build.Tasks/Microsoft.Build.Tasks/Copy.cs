@@ -175,6 +175,15 @@ namespace Microsoft.Build.Tasks {
 		}
 #endif
 
+		public bool OverwriteReadOnlyFiles {
+			get {
+				return overwriteReadOnlyFiles;
+			}
+			set {
+				overwriteReadOnlyFiles = value;
+			}
+		}
+
 		[Required]
 		public ITaskItem[] SourceFiles {
 			get {
