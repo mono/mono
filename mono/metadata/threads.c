@@ -43,6 +43,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-time.h>
+#include <mono/utils/mono-tls.h>
 
 #include <mono/metadata/gc-internal.h>
 
@@ -151,7 +152,7 @@ static MonoGHashTable *threads_starting_up = NULL;
 static MonoGHashTable *thread_start_args = NULL;
 
 /* The TLS key that holds the MonoObject assigned to each thread */
-static guint32 current_object_key = -1;
+static MonoNativeTlsKey current_object_key;
 
 #ifdef HAVE_KW_THREAD
 /* we need to use both the Tls* functions and __thread because
@@ -160,12 +161,12 @@ static guint32 current_object_key = -1;
 static __thread MonoInternalThread * tls_current_object MONO_TLS_FAST;
 #define SET_CURRENT_OBJECT(x) do { \
 	tls_current_object = x; \
-	TlsSetValue (current_object_key, x); \
+	mono_native_tls_set_value (current_object_key, x); \
 } while (FALSE)
 #define GET_CURRENT_OBJECT() tls_current_object
 #else
-#define SET_CURRENT_OBJECT(x) TlsSetValue (current_object_key, x)
-#define GET_CURRENT_OBJECT() (MonoThread*) TlsGetValue (current_object_key)
+#define SET_CURRENT_OBJECT(x) mono_native_tls_set_value (current_object_key, x)
+#define GET_CURRENT_OBJECT() (MonoThread*) mono_native_tls_get_value (current_object_key)
 #endif
 
 /* function called at thread start */
@@ -237,8 +238,8 @@ get_next_managed_thread_id (void)
 	return InterlockedIncrement (&managed_thread_id_counter);
 }
 
-guint32
-mono_thread_get_tls_key (void)
+MonoNativeTlsKey
+mono_thread_get_native_tls_key (void)
 {
 	return current_object_key;
 }
@@ -2649,7 +2650,7 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	mono_init_static_data_info (&thread_static_info);
 	mono_init_static_data_info (&context_static_info);
 
-	current_object_key=TlsAlloc();
+	mono_native_tls_alloc (&current_object_key, NULL);
 	THREAD_DEBUG (g_message ("%s: Allocated current_object_key %d", __func__, current_object_key));
 
 	mono_thread_start_cb = start_cb;
@@ -2699,7 +2700,7 @@ void mono_thread_cleanup (void)
 	g_array_free (delayed_free_table, TRUE);
 	delayed_free_table = NULL;
 
-	TlsFree (current_object_key);
+	mono_native_tls_free (current_object_key);
 }
 
 void

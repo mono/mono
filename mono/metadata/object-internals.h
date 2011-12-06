@@ -10,6 +10,7 @@
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
+#include "mono/utils/mono-tls.h"
 
 /* 
  * We should find a better place for this stuff. We can't put it in mono-compiler.h,
@@ -652,8 +653,8 @@ mono_type_initialization_cleanup (void) MONO_INTERNAL;
 int
 mono_thread_kill           (MonoInternalThread *thread, int signal) MONO_INTERNAL;
 
-guint32
-mono_thread_get_tls_key    (void) MONO_INTERNAL;
+MonoNativeTlsKey
+mono_thread_get_native_tls_key (void) MONO_INTERNAL;
 
 gint32
 mono_thread_get_tls_offset (void) MONO_INTERNAL;
