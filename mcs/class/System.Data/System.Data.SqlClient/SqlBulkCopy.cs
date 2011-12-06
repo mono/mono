@@ -43,6 +43,10 @@ namespace System.Data.SqlClient {
 		#region Constants
 		private const string transConflictMessage = "Must not specify SqlBulkCopyOptions.UseInternalTransaction " +
 			"and pass an external Transaction at the same time.";
+		
+		private const SqlBulkCopyOptions insertModifiers =
+			SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock |
+			SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.FireTriggers;
 		#endregion
 		
 		#region Fields
@@ -54,7 +58,6 @@ namespace System.Data.SqlClient {
 		private string _destinationTableName = null;
 		private bool ordinalMapping = false;
 		private bool sqlRowsCopied = false;
-		private bool identityInsert = false;
 		private bool isLocalConnection = false;
 		private SqlConnection connection;
 		private SqlTransaction externalTransaction;
@@ -92,14 +95,10 @@ namespace System.Data.SqlClient {
 			this.connection = new SqlConnection (connectionString);
 			isLocalConnection = true;
 			
-			switch (copyOptions) {
-			case SqlBulkCopyOptions.Default:
-				this.copyOptions = copyOptions;
-				break;
-				
-			default:
-				throw new NotImplementedException ("We don't know how to process non-default copyOptions.");
-			}
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
+				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
+			
+			this.copyOptions = copyOptions;
 		}
 
 		[MonoTODO]
@@ -119,14 +118,10 @@ namespace System.Data.SqlClient {
 			else
 				this.externalTransaction = externalTransaction;
 			
-			switch (copyOptions) {
-			case SqlBulkCopyOptions.Default:
-				this.copyOptions = copyOptions;
-				break;
-				
-			default:
-				throw new NotImplementedException ("We don't know how to process non-default copyOptions.");
-			}
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
+				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
+			
+			this.copyOptions = copyOptions;
 		}
 
 		#endregion
@@ -354,7 +349,10 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("This method should not be called on a closed connection");
 			if (_destinationTableName == null)
 				throw new ArgumentNullException ("DestinationTableName");
-			if (identityInsert) {
+			if (isLocalConnection && connection.State != ConnectionState.Open)
+				connection.Open();
+			
+			if ((copyOptions & SqlBulkCopyOptions.KeepIdentity) == SqlBulkCopyOptions.KeepIdentity) {
 				SqlCommand cmd = new SqlCommand ("set identity_insert " +
 								 table.TableName + " on",
 								 connection);
@@ -376,6 +374,44 @@ namespace System.Data.SqlClient {
 				string statement = "insert bulk " + DestinationTableName + " (";
 				statement += GenerateColumnMetaData (tmpCmd, colMetaData, tableCollations);
 				statement += ")";
+				
+				#region Check requested options and add corresponding modifiers to the statement
+				if ((copyOptions & insertModifiers) != SqlBulkCopyOptions.Default) {
+					statement += " WITH (";
+					bool commaRequired = false;
+					
+					if ((copyOptions & SqlBulkCopyOptions.CheckConstraints) == SqlBulkCopyOptions.CheckConstraints) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "CHECK_CONSTRAINTS";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.TableLock) == SqlBulkCopyOptions.TableLock) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "TABLOCK";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.KeepNulls) == SqlBulkCopyOptions.KeepNulls) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "KEEP_NULLS";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.FireTriggers) == SqlBulkCopyOptions.FireTriggers) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "FIRE_TRIGGERS";
+						commaRequired = true;
+					}
+					
+					statement += ")";
+				}
+				#endregion Check requested options and add corresponding modifiers to the statement
+				
 				blkCopy.SendColumnMetaData (statement);
 			}
 			blkCopy.BulkCopyStart (tmpCmd.Parameters.MetaParameters);
