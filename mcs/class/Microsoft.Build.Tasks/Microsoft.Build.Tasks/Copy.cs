@@ -42,6 +42,7 @@ namespace Microsoft.Build.Tasks {
 		ITaskItem	destinationFolder;
 		bool		skipUnchangedFiles;
 		ITaskItem[]	sourceFiles;
+		bool		overwriteReadOnlyFiles;
 		
 		public Copy ()
 		{
@@ -164,6 +165,17 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+#if NET_3_5 || NET_4_0
+		public bool OverwriteReadOnlyFiles {
+			get {
+				return overwriteReadOnlyFiles;
+			}
+			set {
+				overwriteReadOnlyFiles = value;
+			}
+		}
+#endif
+
 		[Required]
 		public ITaskItem[] SourceFiles {
 			get {
@@ -189,9 +201,18 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (create_dir)
 				CreateDirectoryIfRequired (Path.GetDirectoryName (dest));
+			if(overwriteReadOnlyFiles)
+				ClearReadOnlyAttribute(dest);
 			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
 			if (String.Compare (source, dest) != 0)
 				File.Copy (source, dest, true);
+			ClearReadOnlyAttribute(dest);
+		}
+
+		void ClearReadOnlyAttribute (string name)
+		{
+			if (File.Exists (name) && ((File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+				File.SetAttributes (name, FileAttributes.Normal);
 		}
 
 		bool HasFileChanged (string source, string dest)
