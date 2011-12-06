@@ -77,6 +77,7 @@ monoutils_sources = \
 	valgrind.h	\
 	mach-support.c	\
 	mach-support.h  \
+	mach-tls.h  \
 	memcheck.h
 
 arch_sources = 
