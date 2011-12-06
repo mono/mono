@@ -659,8 +659,8 @@ mono_thread_get_native_tls_key (void) MONO_INTERNAL;
 gint32
 mono_thread_get_tls_offset (void) MONO_INTERNAL;
 
-guint32
-mono_domain_get_tls_key    (void) MONO_INTERNAL;
+MonoNativeTlsKey
+mono_domain_get_native_tls_key    (void) MONO_INTERNAL;
 
 gint32
 mono_domain_get_tls_offset (void) MONO_INTERNAL;

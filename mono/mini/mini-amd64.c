@@ -7921,7 +7921,7 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 		 * We need to init this multiple times, since when we are first called, the key might not
 		 * be initialized yet.
 		 */
-		appdomain_tls_offset = mono_domain_get_tls_key ();
+		appdomain_tls_offset = mono_domain_get_native_tls_key ();
 		lmf_tls_offset = mono_get_jit_tls_key ();
 		lmf_addr_tls_offset = mono_get_jit_tls_key ();
 

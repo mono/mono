@@ -5717,12 +5717,9 @@ setup_tls_access (void)
 	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
 	   mono_domain_get_tls_offset returning -1) then use keyed access. */
 	if (monodomain_key == -1) {
-		ptk = mono_domain_get_tls_key ();
+		ptk = mono_domain_get_native_tls_key ();
 		if (ptk < 1024) {
-			ptk = mono_pthread_key_for_tls (ptk);
-			if (ptk < 1024) {
-				monodomain_key = ptk;
-			}
+			monodomain_key = ptk;
 		}
 	}
 

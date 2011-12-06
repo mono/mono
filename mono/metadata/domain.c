@@ -21,6 +21,7 @@
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-tls.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
@@ -44,7 +45,7 @@
  * or the other (we used to do it because tls slots were GC-tracked,
  * but we can't depend on this).
  */
-static guint32 appdomain_thread_id = -1;
+static MonoNativeTlsKey appdomain_thread_id;
 
 /* 
  * Avoid calling TlsSetValue () if possible, since in the io-layer, it acquires
@@ -67,14 +68,14 @@ static __thread MonoDomain * tls_appdomain MONO_TLS_FAST;
 #else
 #define SET_APPDOMAIN(x) do { \
 	tls_appdomain = x; \
-	TlsSetValue (appdomain_thread_id, x); \
+	mono_native_tls_set_value (appdomain_thread_id, x); \
 } while (FALSE)
 #endif
 
 #else /* !HAVE_KW_THREAD */
 
-#define GET_APPDOMAIN() ((MonoDomain *)TlsGetValue (appdomain_thread_id))
-#define SET_APPDOMAIN(x) TlsSetValue (appdomain_thread_id, x);
+#define GET_APPDOMAIN() ((MonoDomain *)mono_native_tls_get_value (appdomain_thread_id))
+#define SET_APPDOMAIN(x) mono_native_tls_set_value (appdomain_thread_id, x);
 
 #endif
 
@@ -157,8 +158,8 @@ get_runtime_by_version (const char *version);
 static MonoImage*
 mono_jit_info_find_aot_module (guint8* addr);
 
-guint32
-mono_domain_get_tls_key (void)
+MonoNativeTlsKey
+mono_domain_get_native_tls_key (void)
 {
 	return appdomain_thread_id;
 }
@@ -1301,7 +1302,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_gc_base_init ();
 
-	appdomain_thread_id = TlsAlloc ();
+	mono_native_tls_alloc (&appdomain_thread_id, NULL);
 
 	InitializeCriticalSection (&appdomains_mutex);
 
@@ -1766,7 +1767,7 @@ mono_cleanup (void)
 	mono_debug_cleanup ();
 	mono_metadata_cleanup ();
 
-	TlsFree (appdomain_thread_id);
+	mono_native_tls_free (appdomain_thread_id);
 	DeleteCriticalSection (&appdomains_mutex);
 
 	/*
