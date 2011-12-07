@@ -49,14 +49,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.AreEqual ("Capacity", ex.ParamName, "#A5");
-#else
-				Assert.AreEqual ("Capacity", ex.Message, "#A4");
-				Assert.IsNull (ex.ParamName, "#A5");
-#endif
 			}
 
 			// Capacity <= 0
@@ -67,14 +62,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("Capacity", ex.ParamName, "#B5");
-#else
-				Assert.AreEqual ("Capacity", ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-#endif
 			}
 		}
 
@@ -110,14 +100,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.AreEqual ("Capacity", ex.ParamName, "#A5");
-#else
-				Assert.AreEqual ("Capacity", ex.Message, "#A4");
-				Assert.IsNull (ex.ParamName, "#A5");
-#endif
 			}
 
 			// Capacity <= 0
@@ -128,14 +113,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("Capacity", ex.ParamName, "#B5");
-#else
-				Assert.AreEqual ("Capacity", ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-#endif
 			}
 		}
 
@@ -152,14 +132,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#A3");
 				Assert.AreEqual ("MaxCookieSize", ex.ParamName, "#A4");
-#else
-				Assert.AreEqual ("MaxCookieSize", ex.Message, "#A4");
-				Assert.IsNull (ex.ParamName, "#A5");
-#endif
 			}
 
 			// MaxCookieSize <= 0
@@ -170,14 +145,9 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
-#if NET_2_0
 				// The specified value must be greater than 0
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.AreEqual ("MaxCookieSize", ex.ParamName, "#B4");
-#else
-				Assert.AreEqual ("MaxCookieSize", ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-#endif
 			}
 		}
 
@@ -190,7 +160,6 @@ namespace MonoTests.System.Net {
 			try {
 				new CookieContainer (432, 0, 1000);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			}
 			catch (ArgumentOutOfRangeException ex) {
 				// 'PerDomainCapacity' has to be greater than
@@ -200,20 +169,11 @@ namespace MonoTests.System.Net {
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("perDomainCapacity", ex.ParamName, "#B5");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.AreEqual ("PerDomainCapacity", ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-			}
-#endif
 
 			// PerDomainCapacity <= 0
 			try {
 				new CookieContainer (432, -1, 1000);
 				Assert.Fail ("#C1");
-#if NET_2_0
 			}
 			catch (ArgumentOutOfRangeException ex) {
 				// 'PerDomainCapacity' has to be greater than
@@ -223,20 +183,11 @@ namespace MonoTests.System.Net {
 				Assert.IsNotNull (ex.Message, "#C4");
 				Assert.AreEqual ("perDomainCapacity", ex.ParamName, "#C5");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.AreEqual ("PerDomainCapacity", ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
-			}
-#endif
 
 			// PerDomainCapacity > Capacity (and != Int32.MaxValue)
 			try {
 				new CookieContainer (432, 433, 1000);
 				Assert.Fail ("#C1");
-#if NET_2_0
 			}
 			catch (ArgumentOutOfRangeException ex) {
 				// 'PerDomainCapacity' has to be greater than
@@ -246,14 +197,6 @@ namespace MonoTests.System.Net {
 				Assert.IsNotNull (ex.Message, "#C4");
 				Assert.AreEqual ("perDomainCapacity", ex.ParamName, "#C5");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.AreEqual ("PerDomainCapacity", ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
-			}
-#endif
 		}
 
 		[Test]
@@ -508,13 +451,8 @@ namespace MonoTests.System.Net {
 			catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
-#if NET_2_0
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreEqual ("cookie.Domain", ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("cookie.Domain", ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -1139,9 +1077,7 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual ("test.mono.com", cookie.Domain, "#C:Domain");
 			Assert.IsFalse (cookie.Expired, "#C:Expired");
 			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#C:Expires");
-#if NET_2_0
 			Assert.IsFalse (cookie.HttpOnly, "#C:HttpOnly");
-#endif
 			Assert.AreEqual ("Age", cookie.Name, "#C:Name");
 			Assert.AreEqual ("/Whatever/Do", cookie.Path, "#C:Path");
 			Assert.IsFalse (cookie.Secure, "#C:Secure");
@@ -1165,9 +1101,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("dev.test.mono.com", cookie.Domain, "#E:Domain");
 					Assert.IsFalse (cookie.Expired, "#E:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#E:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#E:HttpOnly");
-#endif
 					Assert.AreEqual ("Weight", cookie.Name, "#E:Name");
 					Assert.AreEqual ("/", cookie.Path, "#E:Path");
 					Assert.IsFalse (cookie.Secure, "#E:Secure");
@@ -1183,9 +1117,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("test.mono.com", cookie.Domain, "#F:Domain");
 					Assert.IsFalse (cookie.Expired, "#F:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#F:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#F:HttpOnly");
-#endif
 					Assert.AreEqual ("Age", cookie.Name, "#F:Name");
 					Assert.AreEqual ("/Whatever/Do", cookie.Path, "#F:Path");
 					Assert.IsFalse (cookie.Secure, "#F:Secure");
@@ -1215,9 +1147,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("dev.test.mono.com", cookie.Domain, "#H:Domain");
 					Assert.IsFalse (cookie.Expired, "#H:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#H:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#H:HttpOnly");
-#endif
 					Assert.AreEqual ("Country", cookie.Name, "#H:Name");
 					Assert.AreEqual ("/Whatever/Do/You", cookie.Path, "#H:Path");
 					Assert.IsFalse (cookie.Secure, "#H:Secure");
@@ -1233,9 +1163,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("dev.test.mono.com", cookie.Domain, "#I:Domain");
 					Assert.IsFalse (cookie.Expired, "#I:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#I:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#I:HttpOnly");
-#endif
 					Assert.AreEqual ("Weight", cookie.Name, "#I:Name");
 					Assert.AreEqual ("/", cookie.Path, "#I:Path");
 					Assert.IsFalse (cookie.Secure, "#I:Secure");
@@ -1251,9 +1179,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("test.mono.com", cookie.Domain, "#J:Domain");
 					Assert.IsFalse (cookie.Expired, "#J:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#J:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#J:HttpOnly");
-#endif
 					Assert.AreEqual ("Age", cookie.Name, "#J:Name");
 					Assert.AreEqual ("/Whatever/Do", cookie.Path, "#J:Path");
 					Assert.IsFalse (cookie.Secure, "#J:Secure");
@@ -1290,9 +1216,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("dev.test.mono.com", cookie.Domain, "#M:Domain");
 					Assert.IsFalse (cookie.Expired, "#M:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#M:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#M:HttpOnly");
-#endif
 					Assert.AreEqual ("Country", cookie.Name, "#M:Name");
 					Assert.AreEqual ("/Whatever/Do/You", cookie.Path, "#M:Path");
 					Assert.IsFalse (cookie.Secure, "#M:Secure");
@@ -1308,9 +1232,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("dev.test.mono.com", cookie.Domain, "#N:Domain");
 					Assert.IsFalse (cookie.Expired, "#N:Expired");
 					Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#N:Expires");
-#if NET_2_0
 					Assert.IsFalse (cookie.HttpOnly, "#N:HttpOnly");
-#endif
 					Assert.AreEqual ("A", cookie.Name, "#N:Name");
 					Assert.AreEqual ("/Whatever/Do/You", cookie.Path, "#N:Path");
 					Assert.IsFalse (cookie.Secure, "#N:Secure");
@@ -1423,7 +1345,6 @@ namespace MonoTests.System.Net {
 		public void SetCookies_DomainMatchesHost ()
 		{
 			CookieContainer cc = new CookieContainer ();
-#if NET_2_0
 			// domains looks identical - but "domain=test.mono.com" means "*.test.mono.com"
 			cc.SetCookies (new Uri ("http://test.mono.com/Whatever/Do"),
 				"Age=26; path=/Whatever; domain=test.mono.com");
@@ -1433,28 +1354,6 @@ namespace MonoTests.System.Net {
 			cookies = cc.GetCookies (new Uri ("http://us.test.mono.com/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#A3");
 			Assert.AreEqual (1, cookies.Count, "#A4");
-#else
-			try {
-				cc.SetCookies (new Uri ("http://test.mono.com/Whatever/Do"),
-					"Age=26; path=/Whatever; domain=test.mono.com");
-				Assert.Fail ("#A1");
-			} catch (CookieException ex) {
-				// An error has occurred when parsing Cookie
-				// header for Uri 'http://test.mono.com/Whatever/Do'
-				Assert.AreEqual (typeof (CookieException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("'http://test.mono.com/Whatever/Do'") != -1, "#A5");
-
-				// The 'Domain'='test.mono.com' part of the
-				// Cookie is invalid
-				CookieException inner = ex.InnerException as CookieException;
-				Assert.AreEqual (typeof (CookieException), inner.GetType (), "#A6");
-				Assert.IsNull (inner.InnerException, "#A7");
-				Assert.IsNotNull (inner.Message, "#A8");
-				Assert.IsTrue (inner.Message.IndexOf ("'Domain'='test.mono.com'") != -1, "#A9");
-			}
-#endif
 		}
 
 		[Test]
