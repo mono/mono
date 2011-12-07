@@ -396,6 +396,7 @@ namespace MonoTests.System.Net
 				req.SendChunked = true;
 				req.KeepAlive = false;
 				req.AllowWriteStreamBuffering = false;
+				req.GetRequestStream ().WriteByte (1);
 				req.BeginGetResponse (null, null);
 				req.Abort ();
 
@@ -405,6 +406,7 @@ namespace MonoTests.System.Net
 				req.SendChunked = false;
 				req.KeepAlive = false;
 				req.AllowWriteStreamBuffering = false;
+				req.GetRequestStream ().WriteByte (5);
 				req.BeginGetResponse (null, null);
 				req.Abort ();
 
@@ -2278,6 +2280,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HostTooLong ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			string s = new string ('a', 100);
+			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
+		}
+
+		[Test]
 		public void InvalidNamesThatWork ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2285,8 +2296,6 @@ namespace MonoTests.System.Net
 			req.Host = "-.-";
 			req.Host = "á";
 			req.Host = new string ('a', 64); // Should fail. Max. is 63.
-			string s = new string ('a', 100);
-			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
 		}
 
 		[Test]

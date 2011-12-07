@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Net;
@@ -160,21 +158,19 @@ namespace MonoTests.System.Net
 			Assert.AreEqual ("pOsT", request.HttpMethod);
 			listener.Close ();
 		}
-		
+
 		[Test]
-        	public void HttpBasicAuthScheme()
-        	{
-        		HttpListener listener = HttpListener2Test.CreateAndStartListener("http://*:9000/authTest/", AuthenticationSchemes.Basic);
-        	    	//dummy-wait for context
-            		listener.BeginGetContext(null, listener);
-            		NetworkStream ns = HttpListener2Test.CreateNS(9000);
-            		HttpListener2Test.Send(ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
-            		String response = HttpListener2Test.Receive(ns, 512);
-            		Assert.IsTrue(response.Contains("WWW-Authenticate: Basic realm"), "#A");
-            		ns.Close();
-            		listener.Close();
-        	}
+		public void HttpBasicAuthScheme ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://*:9000/authTest/", AuthenticationSchemes.Basic);
+			//dummy-wait for context
+			listener.BeginGetContext (null, listener);
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
+			String response = HttpListener2Test.Receive (ns, 512);
+			Assert.IsTrue (response.Contains ("WWW-Authenticate: Basic realm"), "#A");
+			ns.Close ();
+			listener.Close ();
+		}
 	}
 }
-
-#endif
