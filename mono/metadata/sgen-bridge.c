@@ -168,16 +168,6 @@ dyn_array_int_contains (DynArray *da, int x)
 	return FALSE;
 }
 
-static void
-dyn_array_append (DynArray *dst, DynArray *src)
-{
-	g_assert (dst->elem_size == src->elem_size);
-
-	dyn_array_ensure_capacity (dst, dst->size + src->size);
-	memcpy (DYN_ARRAY_REF (dst, dst->size), DYN_ARRAY_REF (src, 0), src->size * src->elem_size);
-	dst->size += src->size;
-}
-
 static DynArray merge_array;
 
 static void
