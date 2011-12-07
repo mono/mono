@@ -6,6 +6,7 @@
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Gert Driesen (drieseng@users.sourceforge.net)
 //   Gonzalo Paniagua Javier (gonzalo@novell.com)
+//   Marek Safar  <marek.safar@gmail.com>
 //
 // (C) 2003 Martin Willemoes Hansen
 //
@@ -80,7 +81,11 @@ namespace MonoTests.System.Net
 				col.Add ("XHost: foo" + (char) 0x7f);
 				Assert.Fail ("#10");
 			} catch (ArgumentException) {
-
+			}
+			try {
+				col.Add (":value");
+				Assert.Fail ("#100");
+			} catch (ArgumentException) {
 			}
 
 			try {
@@ -93,20 +98,49 @@ namespace MonoTests.System.Net
 			} catch (ArgumentException) {
 				Assert.Fail ("#12");
 			}
-
-			// restricted
-			/*
-			// this can only be tested in namespace System.Net
-			try {
-				WebHeaderCollection col2 = new WebHeaderCollection (true);
-				col2.Add ("Host: foo");
-				Assert.Fail ("#13: should fail according to spec");
-			} catch (ArgumentException) {}		
-			*/
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void AddRequestHeader ()
+		{
+			col.Add (HttpRequestHeader.Host, "hh");
+
+			try {
+				col.Add (HttpResponseHeader.Age, "aa");
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void AddRestrictedDisabled ()
+		{
+			col.Add ("Accept", "aa");
+			col.Add ("Content-Length", "bb");
+			col.Add ("Keep-Alive", "cc");
+			col.Add ("If-Modified-Since", "dd");
+			col.Add ("aaany", null);
+		}
+
+		[Test]
+		public void AddRestricted ()
+		{
+			col = CreateRestrictedHeaders ();
+
+			try {
+				col.Add ("Accept", "cc");
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				col.Add (HttpRequestHeader.Host, "dd");
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void GetValues ()
 		{
 			WebHeaderCollection w = new WebHeaderCollection ();
@@ -116,15 +150,16 @@ namespace MonoTests.System.Net
 
 			string [] sa = w.GetValues ("Hello");
 			Assert.AreEqual (3, sa.Length, "#1");
-			Assert.AreEqual ("H1, H2,H3,H4", w.Get ("Hello"), "#2");
+			Assert.AreEqual ("H1,H2,H3,H4", w.Get ("Hello"), "#2");
 
 			w = new WebHeaderCollection ();
 			w.Add ("Accept", "H1");
 			w.Add ("Accept", "H2");
-			w.Add ("Accept", "H3,H4");
+			w.Add ("Accept", "H3,  H4  ");
 			Assert.AreEqual (3, w.GetValues (0).Length, "#3a");
 			Assert.AreEqual (4, w.GetValues ("Accept").Length, "#3b");
-			Assert.AreEqual ("H1, H2,H3,H4", w.Get ("Accept"), "#4");
+			Assert.AreEqual ("H4", w.GetValues ("Accept")[3], "#3c");
+			Assert.AreEqual ("H1,H2,H3,  H4", w.Get ("Accept"), "#4");
 
 			w = new WebHeaderCollection ();
 			w.Add ("Allow", "H1");
@@ -132,7 +167,7 @@ namespace MonoTests.System.Net
 			w.Add ("Allow", "H3,H4");
 			sa = w.GetValues ("Allow");
 			Assert.AreEqual (4, sa.Length, "#5");
-			Assert.AreEqual ("H1, H2,H3,H4", w.Get ("Allow"), "#6");
+			Assert.AreEqual ("H1,H2,H3,H4", w.Get ("Allow"), "#6");
 
 			w = new WebHeaderCollection ();
 			w.Add ("AUTHorization", "H1, H2, H3");
@@ -157,19 +192,29 @@ namespace MonoTests.System.Net
 			} catch (ArgumentNullException) { }
 			Assert.AreEqual (null, w.GetValues (""), "#14");
 			Assert.AreEqual (null, w.GetValues ("NotExistent"), "#15");
+
+			w = new WebHeaderCollection ();
+			w.Add ("Accept", null);
+			Assert.AreEqual (1, w.GetValues ("Accept").Length, "#16");
+
+			w = new WebHeaderCollection ();
+			w.Add ("Accept", ",,,");
+			Assert.AreEqual (3, w.GetValues ("Accept").Length, "#17");
 		}
 
 		[Test]
 		public void Indexers ()
 		{
 			Assert.AreEqual ("Value1", ((NameValueCollection)col)[0], "#1.1");
-			//FIXME: test also HttpRequestHeader and HttpResponseHeader
-			//FIXME: is this enough?
 			WebHeaderCollection w = new WebHeaderCollection ();
 			w [HttpRequestHeader.CacheControl] = "Value2";
-			Assertion.AssertEquals ("#1.2", "Value2", w [HttpRequestHeader.CacheControl]);
-			w [HttpResponseHeader.Pragma] = "Value3";
-			Assertion.AssertEquals ("#1.3", "Value3", w [HttpResponseHeader.Pragma]);
+			Assert.AreEqual ("Value2", w[HttpRequestHeader.CacheControl], "#1.2");
+
+			try {
+				w[HttpResponseHeader.Pragma] = "Value3";
+				Assert.Fail ("#1.3");
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]
@@ -178,16 +223,18 @@ namespace MonoTests.System.Net
 			col.Remove ("Name1");
 			col.Remove ("NameNotExist");
 			Assert.AreEqual (1, col.Count, "#1");
+		}
 
-			/*
-			// this can only be tested in namespace System.Net
+		[Test]
+		public void RemoveRestricted ()
+		{
+			col = CreateRestrictedHeaders ();
+
 			try {
-				WebHeaderCollection col2 = new WebHeaderCollection (true);
-				col2.Add ("Host", "foo");
-				col2.Remove ("Host");
+				col.Add ("Host", "foo");
+				col.Remove ("Host");
 				Assert.Fail ("#2: should fail according to spec");
 			} catch (ArgumentException) {}
-			*/
 		}
 
 		[Test]
@@ -221,11 +268,11 @@ namespace MonoTests.System.Net
 			w = new WebHeaderCollection ();
 			w.Add (HttpResponseHeader.KeepAlive, "Value1");
 			w.Add (HttpResponseHeader.WwwAuthenticate, "Value2");
-			Assertion.AssertEquals ("#2", "Keep-Alive: Value1\r\nWWW-Authenticate: Value2\r\n\r\n", w.ToString ());
+			Assert.AreEqual ("Keep-Alive: Value1\r\nWWW-Authenticate: Value2\r\n\r\n", w.ToString (), "#2");
 			w = new WebHeaderCollection ();
 			w.Add (HttpRequestHeader.UserAgent, "Value1");
 			w.Add (HttpRequestHeader.ContentMd5, "Value2");
-			Assertion.AssertEquals ("#2", "User-Agent: Value1\r\nContent-MD5: Value2\r\n\r\n", w.ToString ());
+			Assert.AreEqual ("User-Agent: Value1\r\nContent-MD5: Value2\r\n\r\n", w.ToString (), "#3");
 		}
 
 		[Test]
@@ -333,7 +380,6 @@ namespace MonoTests.System.Net
 		}
 
 		private static readonly byte [] _serialized = new byte [] {
-#if NET_2_0
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x02, 0x00, 0x00, 0x00,
 			0x49, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2c, 0x20, 0x56, 0x65,
@@ -362,32 +408,6 @@ namespace MonoTests.System.Net
 			0x0b, 0x44, 0x69, 0x73, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f,
 			0x6e, 0x06, 0x08, 0x00, 0x00, 0x00, 0x06, 0x61, 0x74, 0x74, 0x61,
 			0x63, 0x68, 0x0b
-#else
-			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x02, 0x00, 0x00, 0x00,
-			0x4c, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2c, 0x20, 0x56, 0x65,
-			0x72, 0x73, 0x69, 0x6f, 0x6e, 0x3d, 0x31, 0x2e, 0x30, 0x2e, 0x35,
-			0x30, 0x30, 0x30, 0x2e, 0x30, 0x2c, 0x20, 0x43, 0x75, 0x6c, 0x74,
-			0x75, 0x72, 0x65, 0x3d, 0x6e, 0x65, 0x75, 0x74, 0x72, 0x61, 0x6c,
-			0x2c, 0x20, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79,
-			0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x3d, 0x62, 0x37, 0x37, 0x61, 0x35,
-			0x63, 0x35, 0x36, 0x31, 0x39, 0x33, 0x34, 0x65, 0x30, 0x38, 0x39,
-			0x05, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x53, 0x79, 0x73, 0x74, 0x65,
-			0x6d, 0x2e, 0x4e, 0x65, 0x74, 0x2e, 0x57, 0x65, 0x62, 0x48, 0x65,
-			0x61, 0x64, 0x65, 0x72, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74,
-			0x69, 0x6f, 0x6e, 0x07, 0x00, 0x00, 0x00, 0x05, 0x43, 0x6f, 0x75,
-			0x6e, 0x74, 0x01, 0x30, 0x01, 0x33, 0x01, 0x31, 0x01, 0x34, 0x01,
-			0x32, 0x01, 0x35, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x08,
-			0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x06, 0x03, 0x00,
-			0x00, 0x00, 0x0c, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2d,
-			0x54, 0x79, 0x70, 0x65, 0x06, 0x04, 0x00, 0x00, 0x00, 0x09, 0x69,
-			0x6d, 0x61, 0x67, 0x65, 0x2f, 0x70, 0x6e, 0x67, 0x06, 0x05, 0x00,
-			0x00, 0x00, 0x08, 0x4e, 0x6f, 0x2d, 0x43, 0x61, 0x63, 0x68, 0x65,
-			0x06, 0x06, 0x00, 0x00, 0x00, 0x03, 0x6f, 0x66, 0x66, 0x06, 0x07,
-			0x00, 0x00, 0x00, 0x0b, 0x44, 0x69, 0x73, 0x70, 0x6f, 0x73, 0x69,
-			0x74, 0x69, 0x6f, 0x6e, 0x06, 0x08, 0x00, 0x00, 0x00, 0x06, 0x61,
-			0x74, 0x74, 0x61, 0x63, 0x68, 0x0b
-#endif
 		};
 
 		[Test]
@@ -440,7 +460,7 @@ namespace MonoTests.System.Net
 				}
 			}
 		}
-#if NET_2_0
+
 		[Test]
 		public void IsRestricted_InvalidChars_Request_2 ()
 		{
@@ -547,27 +567,27 @@ namespace MonoTests.System.Net
 			"Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Accept-Ranges", "Authorization", 
 			"Cache-Control", "Connection", "Cookie", "Content-Length", "Content-Type", "Date", 
 			"Expect", "From", "Host", "If-Match", "If-Modified-Since", "If-None-Match", 
-			"If-Range", "If-Unmodified-Since", "Max-Forwards", "Pragma", "Proxy-Authorization", 
-			"Range", "Referer", "TE", "Upgrade", "User-Agent", "Via", "Warn" };
+			"If-Range", "If-Unmodified-Since", "Max-Forwards", "Pragma", "Proxy-Authorization", "Proxy-Connection",
+			"Range", "Referer", "TE", "Transfer-Encoding", "Upgrade", "User-Agent", "Via", "Warn" };
 
 		static string [] response_headers = new string [] {
 			"Accept-Ranges", "Age", "Allow", "Cache-Control", "Content-Encoding", "Content-Language", 
 			"Content-Length", "Content-Location", "Content-Disposition", "Content-MD5", "Content-Range", 
-			"Content-Type", "Date", "ETag", "Expires", "Last-Modified", "Location", "Pragma", 
+			"Content-Type", "Date", "ETag", "Expires", "Keep-Alive", "Last-Modified", "Location", "Pragma", 
 			"Proxy-Authenticate", "Retry-After", "Server", "Set-Cookie", "Trailer", 
 			"Transfer-Encoding", "Vary", "Via", "Warn", "WWW-Authenticate" };
 
 		static string [] restricted_request_request = new string [] {
 			"Accept", "Connection", "Content-Length", "Content-Type", "Date",
-			"Expect", "Host", "If-Modified-Since", "Range", "Referer",
-			"User-Agent" };
+			"Expect", "Host", "If-Modified-Since", "Proxy-Connection", "Range", "Referer",
+			"Transfer-Encoding", "User-Agent" };
 		static string [] restricted_response_request = new string [] {
 			"Content-Length", "Content-Type", "Date", "Transfer-Encoding" };
 
 		static string [] restricted_request_response = new string [] {
-			 "Content-Length" };
+			 "Content-Length", "Transfer-Encoding" };
 		static string [] restricted_response_response = new string [] {
-			 "Content-Length", "Transfer-Encoding", "WWW-Authenticate" };
+			 "Content-Length", "Keep-Alive", "Transfer-Encoding", "WWW-Authenticate" };
 
 		[Test]
 		public void IsRestricted_2_0_RequestRequest ()
@@ -628,7 +648,12 @@ namespace MonoTests.System.Net
 			}
 			Assert.IsTrue (count == restricted_response_response.Length, "length");
 		}
-#endif
+
+		static WebHeaderCollection CreateRestrictedHeaders ()
+		{
+			var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
+			return factory.Create (new Uri ("http://localhost")).Headers;
+		}
 	}
 }
 
