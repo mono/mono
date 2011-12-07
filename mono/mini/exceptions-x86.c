@@ -227,6 +227,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 		W32_SEH_HANDLE_EX(fpe);
 		break;
 	default:
+		res = EXCEPTION_CONTINUE_SEARCH;
 		break;
 	}
 
