@@ -114,6 +114,40 @@ public struct GStruct<T> {
 	}
 }
 
+interface ITest
+{
+	void Foo ();
+	void Bar ();
+}
+
+interface ITest<T>
+{
+	void Foo ();
+	void Bar ();
+}
+
+class TestIfaces : ITest
+{
+	void ITest.Foo () {
+	}
+
+	void ITest.Bar () {
+	}
+
+	TestIfaces<int> Baz () {
+		return null;
+	}
+}
+
+class TestIfaces<T> : ITest<T>
+{
+	void ITest<T>.Foo () {
+	}
+
+	void ITest<T>.Bar () {
+	}
+}
+
 public class Tests : TestsBase
 {
 #pragma warning disable 0414

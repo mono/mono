@@ -23,6 +23,8 @@ namespace Mono.Debugger.Soft
 		TypeMirror base_type, element_type;
 		TypeMirror[] nested;
 		CustomAttributeDataMirror[] cattrs;
+		TypeMirror[] ifaces;
+		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -691,6 +693,58 @@ namespace Mono.Debugger.Soft
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
-		}			
+		}
+
+		// Since protocol version 2.11
+		public TypeMirror[] GetInterfaces () {
+			if (ifaces == null)
+				ifaces = vm.GetTypes (vm.conn.Type_GetInterfaces (id));
+			return ifaces;
+		}
+
+		// Since protocol version 2.11
+		public InterfaceMappingMirror GetInterfaceMap (TypeMirror interfaceType) {
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
+			if (!interfaceType.IsInterface)
+				throw new ArgumentException ("Argument must be an interface.", "interfaceType");
+			if (IsInterface)
+				throw new ArgumentException ("'this' type cannot be an interface itself");
+
+			if (iface_map == null) {
+				// Query the info in bulk
+				GetInterfaces ();
+				var ids = new long [ifaces.Length];
+				for (int i = 0; i < ifaces.Length; ++i)
+					ids [i] = ifaces [i].Id;
+
+				var ifacemap = vm.conn.Type_GetInterfaceMap (id, ids);
+
+				var imap = new Dictionary<TypeMirror, InterfaceMappingMirror> ();
+				for (int i = 0; i < ifacemap.Length; ++i) {
+					IfaceMapInfo info = ifacemap [i];
+
+					MethodMirror[] imethods = new MethodMirror [info.iface_methods.Length];
+					for (int j = 0; j < info.iface_methods.Length; ++j)
+						imethods [j] = vm.GetMethod (info.iface_methods [j]);
+
+					MethodMirror[] tmethods = new MethodMirror [info.iface_methods.Length];
+					for (int j = 0; j < info.target_methods.Length; ++j)
+						tmethods [j] = vm.GetMethod (info.target_methods [j]);
+
+					InterfaceMappingMirror map = new InterfaceMappingMirror (vm, this, vm.GetType (info.iface_id), imethods, tmethods);
+
+					imap [map.InterfaceType] = map;
+				}
+
+				iface_map = imap;
+			}
+
+			InterfaceMappingMirror res;
+			if (!iface_map.TryGetValue (interfaceType, out res))
+				throw new ArgumentException ("Interface not found", "interfaceType");
+			return res;
+		}
+
     }
 }
