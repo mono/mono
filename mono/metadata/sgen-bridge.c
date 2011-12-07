@@ -615,6 +615,9 @@ mono_sgen_bridge_processing_stw_step (void)
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
 
+	if (!registered_bridges.size)
+		return;
+
 	SGEN_TV_GETTIME (btv);
 
 	/* first DFS pass */
@@ -645,6 +648,9 @@ mono_sgen_bridge_processing_finish (void)
 	MonoGCBridgeXRef *api_xrefs;
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
+
+	if (!registered_bridges.size)
+		return;
 
 	SGEN_TV_GETTIME (atv);
 
