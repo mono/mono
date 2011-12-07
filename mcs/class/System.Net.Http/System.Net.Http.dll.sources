@@ -6,6 +6,7 @@ System.Net.Http/HttpCompletionOption.cs
 System.Net.Http/HttpContent.cs
 System.Net.Http/HttpMessageHandler.cs
 System.Net.Http/HttpMethod.cs
+System.Net.Http/HttpRequestException.cs
 System.Net.Http/HttpRequestMessage.cs
 System.Net.Http/HttpResponseMessage.cs
 System.Net.Http/StreamContent.cs
@@ -32,6 +33,7 @@ System.Net.Http.Headers/QualityValue.cs
 System.Net.Http.Headers/RangeConditionHeaderValue.cs
 System.Net.Http.Headers/RangeHeaderValue.cs
 System.Net.Http.Headers/RangeItemHeaderValue.cs
+System.Net.Http.Headers/RetryConditionHeaderValue.cs
 System.Net.Http.Headers/StringWithQualityHeaderValue.cs
 System.Net.Http.Headers/TransferCodingHeaderValue.cs
 System.Net.Http.Headers/TransferCodingWithQualityHeaderValue.cs

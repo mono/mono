@@ -55,6 +55,9 @@ namespace System.Net.Http.Headers
 
 			public override void AddToStringCollection (List<string> list, object collection)
 			{
+				if (collection == null)
+					return;
+
 				var c = (HttpHeaderValueCollection<U>) collection;
 				foreach (var item in c) {
 					list.Add (item.ToString ());

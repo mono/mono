@@ -34,6 +34,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http
 {
@@ -71,6 +73,9 @@ namespace MonoTests.System.Net.Http
 				return null;
 			}
 		}
+
+		static readonly string TestHost = "localhost:810";
+		static readonly string LocalServer = string.Format ("http://{0}/", TestHost);
 
 		[Test]
 		public void Ctor_Default ()
@@ -198,7 +203,6 @@ namespace MonoTests.System.Net.Http
 
 			var client = new HttpClient (mh);
 			client.DefaultRequestHeaders.Referrer = new Uri ("http://google.com");
-			client.DefaultRequestHeaders.Add ("Referer", "xxxx");
 
 			var request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
 			var response = new HttpResponseMessage ();
@@ -210,6 +214,214 @@ namespace MonoTests.System.Net.Http
 			};
 
 			Assert.AreEqual (response, client.Send (request), "#1");
+		}
+
+		[Test]
+		public void Send_Complete_Default ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				Assert.IsNull (request.AcceptTypes, "#1");
+				Assert.AreEqual (0, request.ContentLength64, "#2");
+				Assert.IsNull (request.ContentType, "#3");
+				Assert.AreEqual (0, request.Cookies.Count, "#4");
+				Assert.IsFalse (request.HasEntityBody, "#5");
+				Assert.AreEqual (2, request.Headers.Count, "#6");
+				Assert.AreEqual ("Keep-Alive", request.Headers["Connection"], "#6a");
+				Assert.AreEqual (TestHost, request.Headers["Host"], "#6b");
+				Assert.AreEqual ("GET", request.HttpMethod, "#7");
+				Assert.IsFalse (request.IsAuthenticated, "#8");
+				Assert.IsTrue (request.IsLocal, "#9");
+				Assert.IsFalse (request.IsSecureConnection, "#10");
+				Assert.IsFalse (request.IsWebSocketRequest, "#11");
+				Assert.IsTrue (request.KeepAlive, "#12");
+				Assert.AreEqual (HttpVersion.Version11, request.ProtocolVersion, "#13");
+				Assert.IsNull (request.ServiceName, "#14");
+				Assert.IsNull (request.UrlReferrer, "#15");
+				Assert.IsNull (request.UserAgent, "#16");
+				Assert.IsNull (request.UserLanguages, "#17");
+			});
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_Version_1_0 ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				Assert.IsNull (request.AcceptTypes, "#1");
+				Assert.AreEqual (0, request.ContentLength64, "#2");
+				Assert.IsNull (request.ContentType, "#3");
+				Assert.AreEqual (0, request.Cookies.Count, "#4");
+				Assert.IsFalse (request.HasEntityBody, "#5");
+				Assert.AreEqual (1, request.Headers.Count, "#6");
+				Assert.AreEqual (TestHost, request.Headers["Host"], "#6a");
+				Assert.AreEqual ("GET", request.HttpMethod, "#7");
+				Assert.IsFalse (request.IsAuthenticated, "#8");
+				Assert.IsTrue (request.IsLocal, "#9");
+				Assert.IsFalse (request.IsSecureConnection, "#10");
+				Assert.IsFalse (request.IsWebSocketRequest, "#11");
+				Assert.IsFalse (request.KeepAlive, "#12");
+				Assert.AreEqual (HttpVersion.Version10, request.ProtocolVersion, "#13");
+				Assert.IsNull (request.ServiceName, "#14");
+				Assert.IsNull (request.UrlReferrer, "#15");
+				Assert.IsNull (request.UserAgent, "#16");
+				Assert.IsNull (request.UserLanguages, "#17");
+			});
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				request.Version = HttpVersion.Version10;
+				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_ClientHandlerSettings ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				Assert.IsNull (request.AcceptTypes, "#1");
+				Assert.AreEqual (0, request.ContentLength64, "#2");
+				Assert.IsNull (request.ContentType, "#3");
+				Assert.AreEqual (1, request.Cookies.Count, "#4");
+				Assert.AreEqual (new Cookie ("mycookie", "vv"), request.Cookies[0], "#4a");
+				Assert.IsFalse (request.HasEntityBody, "#5");
+				Assert.AreEqual (3, request.Headers.Count, "#6");
+				Assert.AreEqual (TestHost, request.Headers["Host"], "#6a");
+				Assert.AreEqual ("gzip", request.Headers["Accept-Encoding"], "#6b");
+				Assert.AreEqual ("mycookie=vv", request.Headers["Cookie"], "#6c");
+				Assert.AreEqual ("GET", request.HttpMethod, "#7");
+				Assert.IsFalse (request.IsAuthenticated, "#8");
+				Assert.IsTrue (request.IsLocal, "#9");
+				Assert.IsFalse (request.IsSecureConnection, "#10");
+				Assert.IsFalse (request.IsWebSocketRequest, "#11");
+				Assert.IsFalse (request.KeepAlive, "#12");
+				Assert.AreEqual (HttpVersion.Version10, request.ProtocolVersion, "#13");
+				Assert.IsNull (request.ServiceName, "#14");
+				Assert.IsNull (request.UrlReferrer, "#15");
+				Assert.IsNull (request.UserAgent, "#16");
+				Assert.IsNull (request.UserLanguages, "#17");
+			});
+
+			try {
+				var chandler = new HttpClientHandler ();
+				chandler.AllowAutoRedirect = true;
+				chandler.AutomaticDecompression = DecompressionMethods.GZip;
+				chandler.MaxAutomaticRedirections = 33;
+				chandler.MaxRequestContentBufferSize = 5555;
+				chandler.PreAuthenticate = true;
+				chandler.CookieContainer.Add (new Uri (LocalServer), new Cookie ( "mycookie", "vv"));
+				chandler.UseCookies = true;
+				chandler.UseDefaultCredentials = true;
+				chandler.Proxy = new WebProxy ("ee");
+				chandler.UseProxy = true;
+
+				var client = new HttpClient (chandler);
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				request.Version = HttpVersion.Version10;
+				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_CustomHeaders ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				Assert.AreEqual ("vv", request.Headers["aa"], "#1");
+				Assert.AreEqual ("bytes=3-20", request.Headers["Range"], "#2");
+				Assert.AreEqual (4, request.Headers.Count, "#3");
+
+				var response = l.Response;
+				response.Headers.Add ("rsp", "rrr");
+				response.Headers.Add ("upgrade", "vvvvaa");
+				response.Headers.Add ("date", "aa");
+				response.Headers.Add ("cache-control", "audio");
+
+				response.StatusDescription = "test description";
+				response.ProtocolVersion = HttpVersion.Version10;
+				response.SendChunked = true;
+				response.RedirectLocation = "w3.org";
+			});
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				request.Headers.AddWithoutValidation ("aa", "vv");
+				request.Headers.Range = new RangeHeaderValue (3, 20);
+				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+
+				IEnumerable<string> values;
+				Assert.IsTrue (response.Headers.TryGetValues ("rsp", out values), "#102");
+				Assert.AreEqual ("rrr", values.First (), "#102a");
+
+				Assert.IsTrue (response.Headers.TryGetValues ("Transfer-Encoding", out values), "#103");
+				Assert.AreEqual ("chunked", values.First (), "#103a");
+				Assert.AreEqual (true, response.Headers.TransferEncodingChunked, "#103b");
+
+				Assert.IsTrue (response.Headers.TryGetValues ("Date", out values), "#104");
+				Assert.AreEqual (2, values.Count (), "#104b");
+				Assert.IsNull (response.Headers.Date, "#104c");
+
+				Assert.AreEqual (new ProductHeaderValue ("vvvvaa"), response.Headers.Upgrade.First (), "#105");
+
+				Assert.AreEqual ("audio", response.Headers.CacheControl.Extensions.First ().Name, "#106");
+
+				Assert.AreEqual ("w3.org", response.Headers.Location.OriginalString, "#107");
+
+				Assert.AreEqual ("test description", response.ReasonPhrase, "#110");
+				Assert.AreEqual (HttpVersion.Version11, response.Version, "#111");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_Error ()
+		{
+			var listener = CreateListener (l => {
+				var response = l.Response;
+				response.StatusCode = 500;
+			});
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual (HttpStatusCode.InternalServerError, response.StatusCode, "#101");
+			} finally {
+				listener.Close ();
+			}
 		}
 
 		[Test]
@@ -286,6 +498,25 @@ namespace MonoTests.System.Net.Http
 				client.Send (request);
 			} catch (InvalidOperationException) {
 			}
+		}
+
+		static HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
+		{
+			var l = new HttpListener ();
+			l.Prefixes.Add ("http://+:810/");
+			l.Start ();
+			l.BeginGetContext (ar => {
+				var ctx = l.EndGetContext (ar);
+
+				try {
+					if (contextAssert != null)
+						contextAssert (ctx);
+				} finally {
+					ctx.Response.Close ();
+				}
+			}, null);
+
+			return l;
 		}
 	}
 }

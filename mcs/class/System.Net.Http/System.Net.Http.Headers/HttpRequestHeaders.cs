@@ -106,6 +106,12 @@ namespace System.Net.Http.Headers
 			}
 		}
 
+		internal bool ConnectionKeepAlive {
+			get {
+				return Connection.Find (l => string.Equals (l, "Keep-Alive", StringComparison.OrdinalIgnoreCase)) != null;
+			}
+		}
+
 		public DateTimeOffset? Date {
 			get {
 				return GetValue<DateTimeOffset?> ("Date");
@@ -182,8 +188,7 @@ namespace System.Net.Http.Headers
 		}
 
 		public RangeConditionHeaderValue IfRange {
-			get
-			{
+			get {
 				return GetValue<RangeConditionHeaderValue> ("If-Range");
 			}
 			set {

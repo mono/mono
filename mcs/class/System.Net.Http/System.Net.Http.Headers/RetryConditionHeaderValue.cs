@@ -1,5 +1,5 @@
 //
-// HttpContent.cs
+// RetryConditionHeaderValue.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,30 +26,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Http.Headers;
-
-namespace System.Net.Http
+namespace System.Net.Http.Headers
 {
-	public abstract class HttpContent : IDisposable
+	public class RetryConditionHeaderValue : ICloneable
 	{
-		public HttpContentHeaders Headers {
-			get {
-				return new HttpContentHeaders ();
-			}
-		}
-		
-		public void Dispose ()
+		public RetryConditionHeaderValue (DateTimeOffset date)
 		{
-			Dispose (true);
-		}
-		
-		protected virtual void Dispose (bool disposing)
-		{
+			Date = date;
 		}
 
-		public string ReadAsString ()
+		public RetryConditionHeaderValue (TimeSpan delta)
 		{
-			return null;
+			Delta = delta;
+		}
+
+		public DateTimeOffset? Date { get; private set; }
+		public TimeSpan? Delta { get; private set; }
+
+		object ICloneable.Clone ()
+		{
+			return MemberwiseClone ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			var source = obj as RetryConditionHeaderValue;
+			return source != null && source.Date == Date && source.Delta == Delta;
+		}
+
+		public override int GetHashCode ()
+		{
+			return Date.GetHashCode () ^ Delta.GetHashCode ();
+		}
+
+		public static RetryConditionHeaderValue Parse (string input)
+		{
+			RetryConditionHeaderValue value;
+			if (TryParse (input, out value))
+				return value;
+
+			throw new FormatException (input);
+		}
+
+		public static bool TryParse (string input, out RetryConditionHeaderValue parsedValue)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

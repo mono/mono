@@ -26,9 +26,92 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Net.Http.Headers;
+
 namespace System.Net.Http
 {
-	public class HttpResponseMessage
+	public class HttpResponseMessage : IDisposable
 	{
+		HttpResponseHeaders headers;
+		string reasonPhrase;
+		HttpStatusCode statusCode;
+		Version version;
+
+		public HttpResponseMessage ()
+			: this (HttpStatusCode.OK)
+		{
+		}
+
+		public HttpResponseMessage (HttpStatusCode statusCode)
+		{
+			StatusCode = statusCode;
+		}
+
+		public HttpContent Content { get; set; }
+
+		public HttpResponseHeaders Headers {
+			get {
+				return headers ?? (headers = new HttpResponseHeaders ());
+			}
+		}
+
+		public bool IsSuccessStatusCode {
+			get {
+				// Successful codes are 2xx
+				return statusCode >= HttpStatusCode.OK && statusCode < HttpStatusCode.MultipleChoices;
+			}
+		}
+
+		public string ReasonPhrase {
+			get {
+				return reasonPhrase; // ?? HttpListener.GetStatusDescription (statusCode);
+			}
+			set {
+				reasonPhrase = value;
+			}
+		}
+
+		public HttpRequestMessage RequestMessage { get; set; }
+
+		public HttpStatusCode StatusCode {
+			get {
+				return statusCode;
+			}
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ();
+
+				statusCode = value;
+			}
+		}
+
+		public Version Version {
+			get {
+				return version ?? HttpVersion.Version11;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Version");
+
+				version = value;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+		}
+
+		public HttpResponseMessage EnsureSuccessStatusCode ()
+		{
+			if (IsSuccessStatusCode)
+				return this;
+
+			throw new HttpRequestException (string.Format ("{0} ({1})", (int) statusCode, ReasonPhrase));
+		}
 	}
 }

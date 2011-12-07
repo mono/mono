@@ -1,5 +1,5 @@
 //
-// HttpContent.cs
+// HttpRequestException.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,30 +26,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Http.Headers;
-
 namespace System.Net.Http
 {
-	public abstract class HttpContent : IDisposable
+	[Serializable]
+	public class HttpRequestException : Exception
 	{
-		public HttpContentHeaders Headers {
-			get {
-				return new HttpContentHeaders ();
-			}
-		}
-		
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-		
-		protected virtual void Dispose (bool disposing)
+		public HttpRequestException ()
 		{
 		}
 
-		public string ReadAsString ()
+		public HttpRequestException (string message)
+			: base (message)
 		{
-			return null;
+		}
+
+		public HttpRequestException (string message, Exception inner)
+			: base (message, inner)
+		{
 		}
 	}
 }
