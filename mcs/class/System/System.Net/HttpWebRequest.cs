@@ -234,19 +234,17 @@ namespace System.Net
 			get { return webHeaders ["Connection"]; }
 			set {
 				CheckRequestStarted ();
-				string val = value;
-				if (val != null) 
-					val = val.Trim ().ToLower ();
 
-				if (val == null || val.Length == 0) {
+				if (string.IsNullOrEmpty (value)) {
 					webHeaders.RemoveInternal ("Connection");
 					return;
 				}
 
-				if (val == "keep-alive" || val == "close") 
+				string val = value.ToLowerInvariant ();
+				if (val.Contains ("keep-alive") || val.Contains ("close"))
 					throw new ArgumentException ("Keep-Alive and Close may not be set with this property");
 
-				if (keepAlive && val.IndexOf ("keep-alive", StringComparison.Ordinal) == -1)
+				if (keepAlive)
 					value = value + ", Keep-Alive";
 				
 				webHeaders.RemoveAndAdd ("Connection", value);
