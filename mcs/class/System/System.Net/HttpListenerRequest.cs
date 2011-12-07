@@ -36,15 +36,15 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Security.Authentication.ExtendedProtection;
 #if NET_4_5
 using System.Threading.Tasks;
-using System.Security.Authentication.ExtendedProtection;
 #endif
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
-#if NET_4_5
+#if NET_4_0
 		class Context : TransportContext
 		{
 			public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
@@ -497,24 +497,26 @@ namespace System.Net {
 			return null;
 		}
 
-#if NET_4_5
-		[MonoTODO]
-		public bool IsWebSocketRequest {
-			get {
-				return false;
-			}
-		}
-
+#if NET_4_0
 		[MonoTODO]
 		public string ServiceName {
 			get {
 				return null;
 			}
 		}
-
+		
 		public TransportContext TransportContext {
 			get {
 				return new Context ();
+			}
+		}
+#endif
+		
+#if NET_4_5
+		[MonoTODO]
+		public bool IsWebSocketRequest {
+			get {
+				return false;
 			}
 		}
 

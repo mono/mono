@@ -164,7 +164,7 @@ namespace System.Net {
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
 		}
 
-		public static IAsyncResult BeginGetHostAddresses (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject)
+		public static IAsyncResult BeginGetHostAddresses (string hostNameOrAddress, AsyncCallback requestCallback, object state)
 		{
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostName");
@@ -176,11 +176,11 @@ namespace System.Net {
 
 #if !MOBILE
 			if (use_mono_dns)
-				return BeginAsyncCallAddresses (hostNameOrAddress, requestCallback, stateObject);
+				return BeginAsyncCallAddresses (hostNameOrAddress, requestCallback, state);
 #endif
 
 			GetHostAddressesCallback c = new GetHostAddressesCallback (GetHostAddresses);
-			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
+			return c.BeginInvoke (hostNameOrAddress, requestCallback, state);
 		}
 
 		public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject)
