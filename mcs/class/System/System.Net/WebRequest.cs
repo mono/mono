@@ -332,9 +332,9 @@ namespace System.Net
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
 
 				if (iProxyEnable > 0) {
-					string strHttpProxy = "";
-					string[] bypassList = null;
+					string strHttpProxy = "";					
 					bool bBypassOnLocal = false;
+					ArrayList al = new ArrayList ();
 					
 					string strProxyServer = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyServer", null);
 					string strProxyOverrride = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyOverride", null);
@@ -347,14 +347,15 @@ namespace System.Net
 							}
 					} else strHttpProxy = strProxyServer;
 					
-					if (strProxyOverrride != null)
-						bypassList = strProxyOverrride.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					if (strProxyOverrride != null) {						
+						string[] bypassList = strProxyOverrride.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 					
-					ArrayList al = new ArrayList ();
-					
-					foreach (string str in bypassList) {
-						if (str != "<local>")al.Add (str);
-							else bBypassOnLocal = true;
+						foreach (string str in bypassList) {
+							if (str != "<local>")
+								al.Add (str);
+							else
+								bBypassOnLocal = true;
+						}
 					}
 					
 					return new WebProxy (strHttpProxy, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
@@ -386,20 +387,22 @@ namespace System.Net
 							}
 						}
 						
-						bool bBypassOnLocal = false;
-						string[] bypassList = null;
+						bool bBypassOnLocal = false;						
 						ArrayList al = new ArrayList ();
 						string bypass = Environment.GetEnvironmentVariable ("no_proxy");
 						
 						if (bypass == null)
 							bypass = Environment.GetEnvironmentVariable ("NO_PROXY");
 						
-						if (bypass != null)
-							bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+						if (bypass != null) {
+							string[] bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 						
-						foreach (string str in bypassList) {
-							if (str != "*.local")al.Add (str);
-								else bBypassOnLocal = true;
+							foreach (string str in bypassList) {
+								if (str != "*.local")
+									al.Add (str);
+								else
+									bBypassOnLocal = true;
+							}
 						}
 						
 						return new WebProxy (uri, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
