@@ -2786,4 +2786,36 @@ public class DebuggerTests
 				s.GetChars (2, 2);
 			});
 	}
+
+	[Test]
+	public void GetInterfaces () {
+		var e = run_until ("arg2");
+
+		var frame = e.Thread.GetFrames () [0];
+
+		var cl1 = frame.Method.DeclaringType.Assembly.GetType ("TestIfaces");
+		var ifaces = cl1.GetInterfaces ();
+		Assert.AreEqual (1, ifaces.Length);
+		Assert.AreEqual ("ITest", ifaces [0].Name);
+
+		var cl2 = cl1.GetMethod ("Baz").ReturnType;
+		var ifaces2 = cl2.GetInterfaces ();
+		Assert.AreEqual (1, ifaces2.Length);
+		Assert.AreEqual ("ITest`1", ifaces2 [0].Name);
+	}
+
+	[Test]
+	public void GetInterfaceMap () {
+		var e = run_until ("arg2");
+
+		var frame = e.Thread.GetFrames () [0];
+
+		var cl1 = frame.Method.DeclaringType.Assembly.GetType ("TestIfaces");
+		var iface = cl1.Assembly.GetType ("ITest");
+		var map = cl1.GetInterfaceMap (iface);
+		Assert.AreEqual (cl1, map.TargetType);
+		Assert.AreEqual (iface, map.InterfaceType);
+		Assert.AreEqual (2, map.InterfaceMethods.Length);
+		Assert.AreEqual (2, map.TargetMethods.Length);
+	}
 }

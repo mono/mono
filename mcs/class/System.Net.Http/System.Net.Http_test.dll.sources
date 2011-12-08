@@ -1,6 +1,8 @@
+System.Net.Http/HttpClientHandlerTest.cs
 System.Net.Http/HttpClientTest.cs
 System.Net.Http/HttpMethodTest.cs
 System.Net.Http/HttpRequestMessageTest.cs
+System.Net.Http/HttpResponseMessageTest.cs
 System.Net.Http.Headers/AuthenticationHeaderValueTest.cs
 System.Net.Http.Headers/CacheControlHeaderValueTest.cs
 System.Net.Http.Headers/EntityTagHeaderValueTest.cs
@@ -15,6 +17,7 @@ System.Net.Http.Headers/ProductInfoHeaderValueTest.cs
 System.Net.Http.Headers/RangeConditionHeaderValueTest.cs
 System.Net.Http.Headers/RangeHeaderValueTest.cs
 System.Net.Http.Headers/RangeItemHeaderValueTest.cs
+System.Net.Http.Headers/RetryConditionHeaderValueTest.cs
 System.Net.Http.Headers/StringWithQualityHeaderValueTest.cs
 System.Net.Http.Headers/TransferCodingHeaderValueTest.cs
 System.Net.Http.Headers/TransferCodingWithQualityHeaderValueTest.cs

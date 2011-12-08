@@ -1,5 +1,5 @@
 //
-// HttpContent.cs
+// TransportContext.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,30 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Net.Http.Headers;
+#if NET_4_0
 
-namespace System.Net.Http
+using System.Security.Authentication.ExtendedProtection;
+
+namespace System.Net
 {
-	public abstract class HttpContent : IDisposable
+	public abstract class TransportContext
 	{
-		public HttpContentHeaders Headers {
-			get {
-				return new HttpContentHeaders ();
-			}
-		}
-		
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-		
-		protected virtual void Dispose (bool disposing)
-		{
-		}
-
-		public string ReadAsString ()
-		{
-			return null;
-		}
+		public abstract ChannelBinding GetChannelBinding (ChannelBindingKind kind);
 	}
 }
+
+#endif

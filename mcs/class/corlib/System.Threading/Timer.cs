@@ -128,10 +128,10 @@ namespace System.Threading
 		bool Change (long dueTime, long period, bool first)
 		{
 			if (dueTime > MaxValue)
-				throw new ArgumentOutOfRangeException ("Due time too large");
+				throw new ArgumentOutOfRangeException ("dueTime", "Due time too large");
 
 			if (period > MaxValue)
-				throw new ArgumentOutOfRangeException ("Period too large");
+				throw new ArgumentOutOfRangeException ("period", "Period too large");
 
 			// Timeout.Infinite == -1, so this accept everything greater than -1
 			if (dueTime < Timeout.Infinite)

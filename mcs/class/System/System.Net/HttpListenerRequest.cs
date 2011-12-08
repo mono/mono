@@ -36,6 +36,9 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+#endif
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
@@ -43,6 +46,16 @@ using System.Threading.Tasks;
 namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
+#if NET_4_0
+		class Context : TransportContext
+		{
+			public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		string [] accept_types;
 //		int client_cert_error;
 //		bool no_get_certificate;
@@ -486,7 +499,29 @@ namespace System.Net {
 			return null;
 		}
 
+#if NET_4_0
+		[MonoTODO]
+		public string ServiceName {
+			get {
+				return null;
+			}
+		}
+		
+		public TransportContext TransportContext {
+			get {
+				return new Context ();
+			}
+		}
+#endif
+		
 #if NET_4_5
+		[MonoTODO]
+		public bool IsWebSocketRequest {
+			get {
+				return false;
+			}
+		}
+
 		public Task<X509Certificate2> GetClientCertificateAsync ()
 		{
 			return Task<X509Certificate2>.Factory.FromAsync (BeginGetClientCertificate, EndGetClientCertificate, null);

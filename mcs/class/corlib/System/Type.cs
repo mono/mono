@@ -831,11 +831,11 @@ namespace System {
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
 			if (!IsSystemType)
 				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsSystemType)
 				throw new ArgumentException ("interfaceType", "Type is an user type");
 			InterfaceMapping res;
-			if (interfaceType == null)
-				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsInterface)
 				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
 			if (IsInterface)

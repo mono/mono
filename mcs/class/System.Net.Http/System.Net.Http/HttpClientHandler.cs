@@ -28,14 +28,232 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace System.Net.Http
 {
 	public class HttpClientHandler : HttpMessageHandler
 	{
+		bool allowAutoRedirect;
+		DecompressionMethods automaticDecompression;
+		CookieContainer cookieContainer;
+		ICredentials credentials;
+		int maxAutomaticRedirections;
+		int maxRequestContentBufferSize;
+		bool preAuthenticate;
+		IWebProxy proxy;
+		bool useCookies;
+		bool useDefaultCredentials;
+		bool useProxy;
+
+		public HttpClientHandler ()
+		{
+			allowAutoRedirect = true;
+			maxAutomaticRedirections = 50;
+			maxRequestContentBufferSize = 0x10000;
+			useCookies = true;
+			useProxy = true;
+		}
+
+		public bool AllowAutoRedirect {
+			get {
+				return allowAutoRedirect;
+			}
+			set {
+				allowAutoRedirect = value;
+			}
+		}
+
+		public DecompressionMethods AutomaticDecompression {
+			get {
+				return automaticDecompression;
+			}
+			set {
+				automaticDecompression = value;
+			}
+		}
+
+		public CookieContainer CookieContainer {
+			get {
+				return cookieContainer ?? (cookieContainer = new CookieContainer ());
+			}
+			set {
+				cookieContainer = value;
+			}
+		}
+
+		public ICredentials Credentials {
+			get {
+				return credentials;
+			}
+			set {
+				credentials = value;
+			}
+		}
+
+		public int MaxAutomaticRedirections {
+			get {
+				return maxAutomaticRedirections;
+			}
+			set {
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException ();
+
+				maxAutomaticRedirections = value;
+			}
+		}
+
+		public int MaxRequestContentBufferSize {
+			get {
+				return maxRequestContentBufferSize;
+			}
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ();
+
+				maxRequestContentBufferSize = value;
+			}
+		}
+
+		public bool PreAuthenticate {
+			get {
+				return preAuthenticate;
+			}
+			set {
+				preAuthenticate = value;
+			}
+		}
+
+		public IWebProxy Proxy {
+			get {
+				return proxy;
+			}
+			set {
+				proxy = value;
+			}
+		}
+
+		public virtual bool SupportsAutomaticDecompression {
+			get {
+				return true;
+			}
+		}
+
+		public virtual bool SupportsProxy {
+			get {
+				return true;
+			}
+		}
+
+		public virtual bool SupportsRedirectConfiguration {
+			get {
+				return true;
+			}
+		}
+
+		public bool UseCookies {
+			get {
+				return useCookies;
+			}
+			set {
+				useCookies = value;
+			}
+		}
+
+		public bool UseDefaultCredentials {
+			get {
+				return useDefaultCredentials;
+			}
+			set {
+				useDefaultCredentials = value;
+			}
+		}
+
+		public bool UseProxy {
+			get {
+				return useProxy;
+			}
+			set {
+				useProxy = value;
+			}
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			// TODO: ?
+			base.Dispose (disposing);
+		}
+
+		WebRequest CreateWebRequest (HttpRequestMessage request)
+		{
+			var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
+			var wr = (HttpWebRequest) factory.Create (request.RequestUri);
+
+			wr.ConnectionGroupName = "HttpClientHandler";
+			wr.Method = request.Method.Method;
+			wr.ProtocolVersion = request.Version;
+
+			if (wr.ProtocolVersion == HttpVersion.Version10) {
+				wr.KeepAlive = request.Headers.ConnectionKeepAlive;
+			} else {
+				wr.KeepAlive = request.Headers.ConnectionClose != true;
+			}
+
+			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
+
+			if (allowAutoRedirect) {
+				wr.AllowAutoRedirect = true;
+				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
+			}
+
+			wr.AutomaticDecompression = automaticDecompression;
+			wr.PreAuthenticate = preAuthenticate;
+
+			if (useCookies) {
+				wr.CookieContainer = cookieContainer;
+			}
+
+			if (useDefaultCredentials) {
+				wr.UseDefaultCredentials = true;
+			} else {
+				wr.Credentials = credentials;
+			}
+
+			if (useProxy) {
+				wr.Proxy = proxy;
+			}
+
+			// Add all request headers
+			foreach (var header in request.Headers) {
+				foreach (var value in header.Value) {
+					wr.Headers.Add (header.Key, value);
+				}
+			}
+
+			return wr;
+		}
+
+		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr)
+		{
+			var response = new HttpResponseMessage (wr.StatusCode);
+
+
+			return response;
+		}
+
 		protected internal override HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var wrequest = CreateWebRequest (request);
+
+			if (request.Content != null) {
+				throw new NotImplementedException ();
+			} else {
+				// TODO:
+			}
+
+			var wresponse = (HttpWebResponse) wrequest.GetResponse ();
+
+			return CreateResponseMessage (wresponse);
 		}
 		
 		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)

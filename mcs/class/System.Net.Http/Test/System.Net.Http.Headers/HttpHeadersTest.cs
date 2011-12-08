@@ -82,6 +82,22 @@ namespace MonoTests.System.Net.Http.Headers
 		}
 
 		[Test]
+		public void GetEnumerator ()
+		{
+			headers.Add ("aa", "value");
+			int i = 0;
+			foreach (var entry in headers) {
+				++i;
+				Assert.AreEqual ("aa", entry.Key);
+				var values = entry.Value.ToList ();
+				Assert.AreEqual (1, values.Count);
+				Assert.AreEqual ("value", values[0]);
+			}
+
+			Assert.AreEqual (1, i, "#10");
+		}
+
+		[Test]
 		public void GetValues ()
 		{
 			headers.Add ("aa", "v");

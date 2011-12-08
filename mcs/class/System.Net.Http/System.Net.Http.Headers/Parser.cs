@@ -33,35 +33,17 @@ namespace System.Net.Http.Headers
 	{
 		public static class Token
 		{
-			static readonly bool[] map;
-
-			static Token ()
-			{
-				map = new bool[127];
-				for (int i = 0; i < map.Length; ++i)
-					map[i] = i > 32;
-
-				//
-				// separators
-				//
-				map['('] = false;
-				map[')'] = false;
-				map['|'] = false;
-				map['<'] = false;
-				map['>'] = false;
-				map['@'] = false;
-				map[','] = false;
-				map[';'] = false;
-				map[':'] = false;
-				map['"'] = false;
-				map['/'] = false;
-				map['['] = false;
-				map[']'] = false;
-				map['?'] = false;
-				map['='] = false;
-				map['{'] = false;
-				map['}'] = false;
-			}
+			static readonly bool[] allowed_chars = {
+				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+				false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
+				true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
+				false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
+				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+				false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+				false, true, false
+			};
 
 			public static bool TryParse (string input, out string result)
 			{
@@ -75,7 +57,7 @@ namespace System.Net.Http.Headers
 				//
 				for (int i = 0; i < input.Length; ++i) {
 					char s = input[i];
-					if (s > map.Length || !map[s])
+					if (s > allowed_chars.Length || !allowed_chars[s])
 						return false;
 				}
 

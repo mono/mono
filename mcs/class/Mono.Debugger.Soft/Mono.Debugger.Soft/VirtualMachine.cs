@@ -445,6 +445,13 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
+		internal TypeMirror[] GetTypes (long[] ids) {
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
+
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
 
