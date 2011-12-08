@@ -2503,9 +2503,6 @@ bridge_register_finalized_object (MonoObject *object)
 static void
 stw_bridge_process (void)
 {
-	if (finalized_array_entries <= 0)
-		return;
-
 	g_assert (mono_sgen_need_bridge_processing ());
 	mono_sgen_bridge_processing_stw_step ();
 }
@@ -2513,9 +2510,6 @@ stw_bridge_process (void)
 static void
 bridge_process (void)
 {
-	if (finalized_array_entries <= 0)
-		return;
-
 	g_assert (mono_sgen_need_bridge_processing ());
 	mono_sgen_bridge_processing_finish ();
 }
