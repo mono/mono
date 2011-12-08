@@ -36,7 +36,9 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
+#endif
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
