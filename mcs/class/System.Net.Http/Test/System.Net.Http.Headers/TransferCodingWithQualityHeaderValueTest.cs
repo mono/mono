@@ -70,10 +70,15 @@ namespace MonoTests.System.Net.Http.Headers
 		{
 			var res = TransferCodingWithQualityHeaderValue.Parse ("1.1");
 			Assert.AreEqual (0, res.Parameters.Count, "#1");
-			Assert.IsNull (res.Quality, "#2");
-			Assert.AreEqual ("1.1", res.Value, "#3");
+			Assert.IsNull (res.Quality, "#1b");
+			Assert.AreEqual ("1.1", res.Value, "#1c");
+			Assert.AreEqual ("1.1", res.ToString (), "#1d");
 
-			TransferCodingWithQualityHeaderValue.Parse ("a;b");
+			res = TransferCodingWithQualityHeaderValue.Parse ("a ;  b ");
+			Assert.AreEqual (1, res.Parameters.Count, "#2");
+			Assert.IsNull (res.Quality, "#2b");
+			Assert.AreEqual ("a", res.Value, "#2c");
+			Assert.AreEqual ("a; b", res.ToString (), "#2d");
 		}
 
 		[Test]

@@ -72,9 +72,15 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Parse ()
 		{
-			var res = MediaTypeHeaderValue.Parse ("multipart/*");
-			Assert.AreEqual ("multipart/*", res.MediaType, "#1");
-			Assert.IsNull (res.CharSet, "#2");
+			var res = MediaTypeHeaderValue.Parse ("multipart  / b*  ");
+			Assert.AreEqual ("multipart/b*", res.MediaType, "#1");
+			Assert.IsNull (res.CharSet, "#1b");
+			Assert.AreEqual ("multipart/b*", res.ToString (), "#1c");
+
+			res = MediaTypeHeaderValue.Parse ("mu / m; CHarset=jj  ");
+			Assert.AreEqual ("mu/m", res.MediaType, "#2");
+			Assert.AreEqual ("jj", res.CharSet, "#2b");
+			Assert.AreEqual ("mu/m; CHarset=jj", res.ToString (), "#2c");
 		}
 
 		[Test]

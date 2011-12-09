@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Net.Http.Headers;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http.Headers
 {
@@ -77,6 +78,23 @@ namespace MonoTests.System.Net.Http.Headers
 		{
 			var res = TransferCodingHeaderValue.Parse ("content");
 			Assert.AreEqual ("content", res.Value, "#1");
+			Assert.AreEqual ("content", res.ToString (), "#1a");
+
+			res = TransferCodingHeaderValue.Parse ("  a ;b;c  ");
+			Assert.AreEqual ("a", res.Value, "#2");
+			Assert.AreEqual ("a; b; c", res.ToString (), "#2a");
+			Assert.AreEqual ("b", res.Parameters.First ().ToString (), "#2b");
+
+			res = TransferCodingHeaderValue.Parse ("  a ; v = m ");
+			Assert.AreEqual ("a", res.Value, "#3");
+			Assert.AreEqual ("a; v=m", res.ToString (), "#3a");
+			Assert.AreEqual ("m", res.Parameters.First ().Value, "#3b");
+
+			res = TransferCodingHeaderValue.Parse ("\ta; v = \"mmm\" ");
+			Assert.AreEqual ("a", res.Value, "#4");
+			Assert.AreEqual ("a; v=\"mmm\"", res.ToString (), "#4a");
+			Assert.AreEqual ("\"mmm\"", res.Parameters.First ().Value, "#4b");
+
 		}
 
 		[Test]
@@ -97,6 +115,18 @@ namespace MonoTests.System.Net.Http.Headers
 			try {
 				TransferCodingHeaderValue.Parse ("a b");
 				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+
+			try {
+				TransferCodingHeaderValue.Parse ("a;");
+				Assert.Fail ("#4");
+			} catch (FormatException) {
+			}
+
+			try {
+				TransferCodingHeaderValue.Parse ("u;v=\"\"\"\"");
+				Assert.Fail ("#5");
 			} catch (FormatException) {
 			}
 		}

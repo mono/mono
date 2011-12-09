@@ -425,6 +425,20 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_TransferEncoding ()
+		{
+			HttpResponseMessage message = new HttpResponseMessage ();
+			HttpResponseHeaders headers = message.Headers;
+			headers.AddWithoutValidation ("Transfer-Encoding", "mmm");
+			headers.AddWithoutValidation ("Transfer-Encoding", "▀");
+			headers.AddWithoutValidation ("Transfer-Encoding", "zz");
+
+			var a = headers.TransferEncoding;
+			Assert.AreEqual (2, a.Count, "#1");
+			Assert.AreEqual ("mmm, zz, ▀", a.ToString ());
+		}
+
+		[Test]
 		public void Headers_TransferEncodingChunked ()
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();
@@ -439,6 +453,19 @@ namespace MonoTests.System.Net.Http
 			headers.TransferEncodingChunked = true;
 			Assert.IsTrue (headers.TransferEncodingChunked.Value, "#3");
 			Assert.AreEqual (1, headers.TransferEncoding.Count, "#3b");
+
+			headers.Clear (); 
+			headers.AddWithoutValidation ("Transfer-Encoding", "value");
+			Assert.AreEqual (false, headers.TransferEncodingChunked, "#4");
+
+			headers.Clear ();
+			headers.AddWithoutValidation ("Transfer-Encoding", "chunked");
+			Assert.AreEqual (true, headers.TransferEncodingChunked, "#5");
+
+			message = new HttpResponseMessage ();
+			headers = message.Headers;
+			headers.AddWithoutValidation ("Transfer-Encoding", "ß");
+			Assert.IsNull (headers.TransferEncodingChunked, "#6");
 		}
 
 		[Test]

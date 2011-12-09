@@ -53,6 +53,11 @@ namespace System.Net.Http.Headers
 			}
 		}
 
+		private NameValueWithParametersHeaderValue (NameValueHeaderValue source)
+			: base (source)
+		{
+		}
+
 		public ICollection<NameValueHeaderValue> Parameters {
 			get {
 				return parameters ?? (parameters = new List<NameValueHeaderValue> ());
@@ -87,9 +92,26 @@ namespace System.Net.Http.Headers
 			throw new FormatException (input);
 		}
 
+		public override string ToString ()
+		{
+			if (parameters == null)
+				return base.ToString ();
+
+			return base.ToString () + CollectionExtensions.ToString (parameters);
+		}
+
 		public static bool TryParse (string input, out NameValueWithParametersHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			List<NameValueHeaderValue> values;
+			if (!ParseParameters (new Lexer (input), out values)) {
+				parsedValue = null;
+				return false;
+			}
+
+			parsedValue = new NameValueWithParametersHeaderValue (values[0]);
+			values.RemoveAt (0);
+			parsedValue.parameters = values;
+			return true;
 		}
 	}
 }

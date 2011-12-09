@@ -41,6 +41,10 @@ namespace System.Net.Http.Headers
 			Quality = quality;
 		}
 
+		private TransferCodingWithQualityHeaderValue ()
+		{
+		}
+
 		public double? Quality {
 			get {
 				return QualityValue.GetValue (parameters);
@@ -61,7 +65,7 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out TransferCodingWithQualityHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			return TryParse (input, out parsedValue, () => new TransferCodingWithQualityHeaderValue ());
 		}
 	}
 }

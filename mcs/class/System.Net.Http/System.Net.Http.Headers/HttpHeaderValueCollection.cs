@@ -86,6 +86,15 @@ namespace System.Net.Http.Headers
 			return list.Remove (item);
 		}
 
+		public override string ToString ()
+		{
+			// This implementation prints different values than
+			// what .NET does when one of the values is invalid
+			// But it better represents what is actually hold by
+			// the collection
+			return string.Join (", ", list);
+		}
+
 		public bool TryParseAdd (string input)
 		{
 			return headers.AddValue (input, headerInfo, true);

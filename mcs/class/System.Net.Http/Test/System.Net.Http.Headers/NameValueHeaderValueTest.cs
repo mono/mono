@@ -73,7 +73,17 @@ namespace MonoTests.System.Net.Http.Headers
 		{
 			var res = NameValueHeaderValue.Parse ("c");
 			Assert.AreEqual ("c", res.Name, "#1");
-			Assert.IsNull (res.Value, "#2");
+			Assert.IsNull (res.Value, "#1a");
+
+			res = NameValueHeaderValue.Parse ("c = 1");
+			Assert.AreEqual ("c", res.Name, "#2");
+			Assert.AreEqual ("1", res.Value, "#2a");
+			Assert.AreEqual ("c=1", res.ToString (), "#2b");
+
+			res = NameValueHeaderValue.Parse ("c = \"1\"");
+			Assert.AreEqual ("c", res.Name, "#3");
+			Assert.AreEqual ("\"1\"", res.Value, "#3a");
+			Assert.AreEqual ("c=\"1\"", res.ToString (), "#3b");
 		}
 
 		[Test]
@@ -96,6 +106,12 @@ namespace MonoTests.System.Net.Http.Headers
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
+
+			try {
+				NameValueHeaderValue.Parse ("c = 1;");
+				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
 		}
 
 		[Test]
@@ -111,6 +127,8 @@ namespace MonoTests.System.Net.Http.Headers
 
 			value.Value = "bb";
 			Assert.AreEqual ("bb", value.Value, "#5");
+
+			value.Value = null;
 		}
 
 		[Test]

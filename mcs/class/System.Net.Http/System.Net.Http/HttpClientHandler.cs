@@ -224,19 +224,30 @@ namespace System.Net.Http
 			}
 
 			// Add all request headers
+			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
 				foreach (var value in header.Value) {
-					wr.Headers.Add (header.Key, value);
+					// TODO: Have to call simpler Add
+					headers.Add (header.Key, value);
 				}
 			}
 
 			return wr;
 		}
 
-		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr)
+		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr, HttpRequestMessage requestMessage)
 		{
 			var response = new HttpResponseMessage (wr.StatusCode);
+			response.RequestMessage = requestMessage;
+			response.ReasonPhrase = wr.StatusDescription;
 
+			var headers = wr.Headers;
+			for (int i = 0; i < headers.Count; ++i) {
+				var key = headers.GetKey(i);
+				var value = headers.GetValues (i);
+
+				response.Headers.AddWithoutValidation (key, value);
+			}
 
 			return response;
 		}
@@ -253,7 +264,7 @@ namespace System.Net.Http
 
 			var wresponse = (HttpWebResponse) wrequest.GetResponse ();
 
-			return CreateResponseMessage (wresponse);
+			return CreateResponseMessage (wresponse, request);
 		}
 		
 		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)

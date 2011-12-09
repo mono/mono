@@ -28,17 +28,37 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace System.Net.Http.Headers
 {
 	static class CollectionExtensions
 	{
-		public static bool SequenceEqual<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
+		public static bool SequenceEqual<TSource> (this List<TSource> first, List<TSource> second)
 		{
 			if (first == null || second == null)
 				return first == second;
 
 			return Enumerable.SequenceEqual (first, second);
+		}
+
+		public static string ToString<T> (this List<T> list)
+		{
+			if (list == null || list.Count == 0)
+				return null;
+
+			const string separator = "; ";
+
+			var sb = new StringBuilder ();
+			for (int i = 0; i < list.Count; ++i) {
+				if (i > 0) {
+					sb.Append (separator);
+				}
+
+				sb.Append (list [i]);
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

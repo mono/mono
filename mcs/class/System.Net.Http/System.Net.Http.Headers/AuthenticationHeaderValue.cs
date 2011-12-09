@@ -40,8 +40,7 @@ namespace System.Net.Http.Headers
 			if (scheme == null)
 				throw new ArgumentNullException ("scheme");
 
-			if (!Parser.Token.IsValid (scheme))
-				throw new FormatException ();
+			Parser.Token.Check (scheme);
 
 			this.Scheme = scheme;
 			this.Parameter = parameter;

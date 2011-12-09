@@ -32,8 +32,6 @@ namespace System.Net.Http.Headers
 {
 	public sealed class HttpResponseHeaders : HttpHeaders
 	{
-		bool? connectionclose, transferEncodingChunked;
-
 		internal HttpResponseHeaders ()
 			: base (HttpHeaderKind.Response)
 		{
@@ -71,20 +69,19 @@ namespace System.Net.Http.Headers
 
 		public bool? ConnectionClose {
 			get {
-				if (connectionclose == true || Connection.Contains ("close"))
-					return true;
+				if (!Contains ("Connection"))
+					return null;
 
-				return connectionclose;
+				var col = Connection;
+				if (col == null)
+					return null;
+
+				return Connection.Contains ("close");
 			}
 			set {
-				if (connectionclose == value)
-					return;
-
 				Connection.Remove ("close");
 				if (value == true)
 					Connection.Add ("close");
-
-				connectionclose = value;
 			}
 		}
 
@@ -156,21 +153,19 @@ namespace System.Net.Http.Headers
 
 		public bool? TransferEncodingChunked {
 			get {
-				if (transferEncodingChunked.HasValue)
-					return transferEncodingChunked;
+				if (!Contains ("Transfer-Encoding"))
+					return null;
 
-				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked"));
-				return found != null ? true : (bool?) null;
+				var col = TransferEncoding;
+				if (col == null)
+					return null;
+
+				return TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked")) != null;
 			}
 			set {
-				if (value == transferEncodingChunked)
-					return;
-
 				TransferEncoding.Remove (l => l.Value == "chunked");
 				if (value == true)
 					TransferEncoding.Add (new TransferCodingHeaderValue ("chunked"));
-
-				transferEncodingChunked = value;
 			}
 		}
 

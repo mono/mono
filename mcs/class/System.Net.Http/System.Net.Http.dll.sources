@@ -22,6 +22,7 @@ System.Net.Http.Headers/HttpHeaders.cs
 System.Net.Http.Headers/HttpHeaderValueCollection.cs
 System.Net.Http.Headers/HttpRequestHeaders.cs
 System.Net.Http.Headers/HttpResponseHeaders.cs
+System.Net.Http.Headers/Lexer.cs
 System.Net.Http.Headers/MediaTypeHeaderValue.cs
 System.Net.Http.Headers/MediaTypeWithQualityHeaderValue.cs
 System.Net.Http.Headers/NameValueHeaderValue.cs

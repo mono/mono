@@ -56,12 +56,6 @@ namespace System.Net.Http.Headers
 				}
 			}
 
-			public bool IsEmpty {
-				get {
-					return Parsed == null && (values == null || values.Count == 0);
-				}
-			}
-
 			public List<string> Values {
 				get {
 					return values ?? (values = new List<string> ());
@@ -216,8 +210,7 @@ namespace System.Net.Http.Headers
 			if (string.IsNullOrEmpty (name))
 				throw new ArgumentException ("name");
 
-			if (!Parser.Token.IsValid (name))
-				throw new FormatException ();
+			Parser.Token.Check (name);
 
 			HeaderInfo headerInfo;
 			if (known_headers.TryGetValue (name, out headerInfo) && (headerInfo.HeaderKind & HeaderKind) == 0)
@@ -242,14 +235,15 @@ namespace System.Net.Http.Headers
 		{
 			foreach (var entry in headers) {
 				var bucket = headers[entry.Key];
-				if (bucket.IsEmpty)
-					continue;
 
 				HeaderInfo headerInfo;
 				known_headers.TryGetValue (entry.Key, out headerInfo);
 
-				yield return new KeyValuePair<string, IEnumerable<string>> (
-					entry.Key, GetAllHeaderValues (bucket, headerInfo));
+				var svalues = GetAllHeaderValues (bucket, headerInfo);
+				if (svalues == null)
+					continue;
+
+				yield return new KeyValuePair<string, IEnumerable<string>> (entry.Key, svalues);
 			}
 		}
 
@@ -313,16 +307,25 @@ namespace System.Net.Http.Headers
 
 		List<string> GetAllHeaderValues (HeaderBucket bucket, HeaderInfo headerInfo)
 		{
-			List<string> string_values = new List<string> ();
+			List<string> string_values = null;
 			if (headerInfo != null && headerInfo.AllowsMany) {
-				headerInfo.AddToStringCollection (string_values, bucket.Parsed);
+				string_values = headerInfo.ToStringCollection (bucket.Parsed);
 			} else {
-				if (bucket.Parsed != null)
-					string_values.Add (bucket.Parsed.ToString ());
+				if (bucket.Parsed != null) {
+					string s = bucket.Parsed.ToString ();
+					if (!string.IsNullOrEmpty (s)) {
+						string_values = new List<string> ();
+						string_values.Add (s);
+					}
+				}
 			}
 
-			if (bucket.HasStringValues)
+			if (bucket.HasStringValues) {
+				if (string_values == null)
+					string_values = new List<string> ();
+
 				string_values.AddRange (bucket.Values);
+			}
 
 			return string_values;
 		}
@@ -348,6 +351,19 @@ namespace System.Net.Http.Headers
 			if (!headers.TryGetValue (name, out value)) {
 				value = new HeaderBucket (new HttpHeaderValueCollection<T> (this, known_headers [name]));
 				headers.Add (name, value);
+			}
+
+			if (value.HasStringValues) {
+				var hinfo = known_headers[name];
+				object pvalue;
+				for (int i = 0; i < value.Values.Count; ++i) {
+					if (!hinfo.TryParse (value.Values[i], out pvalue))
+						continue;
+
+					hinfo.AddToCollection (value, pvalue);
+					value.Values.RemoveAt (i);
+					--i;
+				}
 			}
 
 			return (HttpHeaderValueCollection<T>) value.Parsed;

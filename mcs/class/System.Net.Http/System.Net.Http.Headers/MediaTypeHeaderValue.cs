@@ -37,9 +37,6 @@ namespace System.Net.Http.Headers
 
 		public MediaTypeHeaderValue (string mediaType)
 		{
-			if (mediaType == null)
-				throw new ArgumentNullException ("mediaType");
-
 			MediaType = mediaType;
 		}
 
@@ -53,6 +50,10 @@ namespace System.Net.Http.Headers
 				foreach (var item in source.parameters)
 					Parameters.Add (new NameValueHeaderValue (item));
 			}
+		}
+
+		internal MediaTypeHeaderValue ()
+		{
 		}
 
 		public string CharSet {
@@ -90,7 +91,14 @@ namespace System.Net.Http.Headers
 				return media_type;
 			}
 			set {
-				media_type = value;
+				if (value == null)
+					throw new ArgumentNullException ("MediaType");
+
+				string temp;
+				if (TryParseMediaType (new Lexer (value), out temp) != Token.Type.End)
+					throw new FormatException ();
+
+				media_type = temp;
 			}
 		}
 
@@ -131,13 +139,91 @@ namespace System.Net.Http.Headers
 
 		public override string ToString ()
 		{
-			// TODO:
-			return media_type;
+			if (parameters == null)
+				return media_type;
+
+			return media_type + CollectionExtensions.ToString (parameters);
 		}
 		
 		public static bool TryParse (string input, out MediaTypeHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+
+			string media;
+			List<NameValueHeaderValue> parameters = null;
+			var token = TryParseMediaType (lexer, out media);
+			if (token == null)
+				return false;
+
+			switch (token.Value.Kind) {
+			case Token.Type.SeparatorSemicolon:
+				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
+					return false;
+				break;
+			case Token.Type.End:
+				break;
+			default:
+				return false;
+			}
+
+			parsedValue = new MediaTypeHeaderValue () {
+				media_type = media,
+				parameters = parameters
+			};
+
+			return true;
+		}
+
+		public static bool TryParse<T> (string input, out T parsedValue, Func<T> factory) where T : MediaTypeHeaderValue
+		{
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+
+			string media;
+			List<NameValueHeaderValue> parameters = null;
+			var token = TryParseMediaType (lexer, out media);
+			if (token == null)
+				return false;
+
+			switch (token.Value.Kind) {
+			case Token.Type.SeparatorSemicolon:
+				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
+					return false;
+				break;
+			case Token.Type.End:
+				break;
+			default:
+				return false;
+			}
+
+			parsedValue = factory ();
+			parsedValue.media_type = media;
+			parsedValue.parameters = parameters;
+
+			return true;
+		}
+
+		static Token? TryParseMediaType (Lexer lexer, out string media)
+		{
+			media = null;
+
+			var token = lexer.Scan ();
+			if (token != Token.Type.Token)
+				return null;
+
+			if (lexer.Scan () != Token.Type.SeparatorSlash)
+				return null;
+
+			var token2 = lexer.Scan ();
+			if (token2 != Token.Type.Token)
+				return null;
+
+			media = lexer.GetStringValue (token) + "/" + lexer.GetStringValue (token2);
+
+			return lexer.Scan ();
 		}
 	}
 }

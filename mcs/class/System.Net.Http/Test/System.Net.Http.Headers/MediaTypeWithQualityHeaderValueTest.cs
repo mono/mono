@@ -79,7 +79,8 @@ namespace MonoTests.System.Net.Http.Headers
 		{
 			var res = MediaTypeWithQualityHeaderValue.Parse ("audio/ aa");
 			Assert.AreEqual ("audio/aa", res.MediaType, "#1");
-			Assert.AreEqual (0, res.Parameters.Count, "#2");
+			Assert.AreEqual (0, res.Parameters.Count, "#1b");
+			Assert.AreEqual ("audio/aa", res.ToString (), "#1c");
 		}
 
 		[Test]

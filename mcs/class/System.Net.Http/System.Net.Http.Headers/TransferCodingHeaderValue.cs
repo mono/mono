@@ -32,11 +32,12 @@ namespace System.Net.Http.Headers
 {
 	public class TransferCodingHeaderValue : ICloneable
 	{
-		readonly string value;
+		string value;
 		internal List<NameValueHeaderValue> parameters;
 
 		public TransferCodingHeaderValue (string value)
 		{
+			Parser.Token.Check (value);
 			this.value = value;
 		}
 
@@ -48,6 +49,10 @@ namespace System.Net.Http.Headers
 					Parameters.Add (new NameValueHeaderValue (p));
 				}
 			}
+		}
+
+		internal TransferCodingHeaderValue ()
+		{
 		}
 
 		public ICollection<NameValueHeaderValue> Parameters {
@@ -94,9 +99,40 @@ namespace System.Net.Http.Headers
 			throw new FormatException (input);
 		}
 
+		public override string ToString ()
+		{
+			return value + CollectionExtensions.ToString (parameters);
+		}
+
 		public static bool TryParse (string input, out TransferCodingHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			return TryParse (input, out parsedValue, () => new TransferCodingHeaderValue ());
+		}
+
+		internal static bool TryParse<T> (string input, out T parsedValue, Func<T> factory) where T : TransferCodingHeaderValue
+		{
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var result = factory ();
+			result.value = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+
+			// Parameters parsing
+			if (t == Token.Type.SeparatorSemicolon) {
+				if (!NameValueHeaderValue.ParseParameters (lexer, out result.parameters))
+					return false;
+			} else if (t != Token.Type.End) {
+				return false;
+			}
+
+			parsedValue = result;
+			return true;
 		}
 	}
 }

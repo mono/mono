@@ -53,20 +53,26 @@ namespace System.Net.Http.Headers
 				c.Add ((U) value);
 			}
 
-			public override void AddToStringCollection (List<string> list, object collection)
-			{
-				if (collection == null)
-					return;
-
-				var c = (HttpHeaderValueCollection<U>) collection;
-				foreach (var item in c) {
-					list.Add (item.ToString ());
-				}
-			}
-
 			protected override object CreateCollection (HttpHeaders headers, HeaderInfo headerInfo)
 			{
 				return new HttpHeaderValueCollection<U> (headers, headerInfo);
+			}
+
+			public override List<string> ToStringCollection (object collection)
+			{
+				if (collection == null)
+					return null;
+
+				var c = (HttpHeaderValueCollection<U>) collection;
+				if (c.Count == 0)
+					return null;
+
+				var list = new List<string> ();
+				foreach (var item in c) {
+					list.Add (item.ToString ());
+				}
+
+				return list;
 			}
 
 			public override bool TryParse (string value, out object result)
@@ -106,8 +112,8 @@ namespace System.Net.Http.Headers
 		}
 
 		public abstract void AddToCollection (object collection, object value);
-		public abstract void AddToStringCollection (List<string> list, object collection);
 		protected abstract object CreateCollection (HttpHeaders headers, HeaderInfo headerInfo);
+		public abstract List<string> ToStringCollection (object collection);
 		public abstract bool TryParse (string value, out object result);
 	}
 }

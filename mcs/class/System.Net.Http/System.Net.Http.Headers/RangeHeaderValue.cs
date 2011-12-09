@@ -69,8 +69,7 @@ namespace System.Net.Http.Headers
 				if (value == null)
 					throw new ArgumentNullException ("Unit");
 
-				if (!Parser.Token.IsValid (value))
-					throw new FormatException ();
+				Parser.Token.Check (value);
 
 				unit = value;
 			}

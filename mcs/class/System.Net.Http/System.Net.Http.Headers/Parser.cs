@@ -27,44 +27,29 @@
 //
 
 using System.Net.Mail;
+
 namespace System.Net.Http.Headers
 {
 	static class Parser
 	{
 		public static class Token
 		{
-			static readonly bool[] allowed_chars = {
-				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-				false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
-				true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
-				false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
-				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				false, true, false
-			};
-
 			public static bool TryParse (string input, out string result)
 			{
 				throw new NotImplementedException ();
 			}
 
-			public static bool IsValid (string input)
+			public static void Check (string s)
 			{
-				//
-				// any CHAR except CTLs or separator
-				//
-				for (int i = 0; i < input.Length; ++i) {
-					char s = input[i];
-					if (s > allowed_chars.Length || !allowed_chars[s])
-						return false;
+				if (s == null)
+					throw new ArgumentNullException ();
+
+				if (!Lexer.IsValidToken (s)) {
+					if (s.Length == 0)
+						throw new ArgumentException ();
+
+					throw new FormatException (s);
 				}
-
-				if (input.Length == 0)
-					throw new ArgumentException ();
-
-				return true;
 			}
 		}
 

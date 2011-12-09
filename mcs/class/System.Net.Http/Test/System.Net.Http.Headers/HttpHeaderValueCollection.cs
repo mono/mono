@@ -47,6 +47,7 @@ namespace MonoTests.System.Net.Http.Headers
 
 			headers.TE.ParseAdd ("pp");
 			Assert.AreEqual ("pp", headers.TE.ToArray ()[0].Value, "#1");
+			Assert.AreEqual (1, headers.TE.Count);
 		}
 
 		[Test]
@@ -69,8 +70,26 @@ namespace MonoTests.System.Net.Http.Headers
 
 			Assert.IsTrue (headers.TE.TryParseAdd ("pp"), "#1");
 			Assert.AreEqual ("pp", headers.TE.ToArray ()[0].Value, "#2");
+			Assert.AreEqual (1, headers.TE.Count, "#3");
 
-			Assert.IsFalse (headers.Via.TryParseAdd ("wrong"), "#3");
+			Assert.IsFalse (headers.Via.TryParseAdd ("wrong"), "#4");
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			Assert.AreEqual ("", headers.Connection.ToString (), "#1");
+
+			headers.Connection.Add ("kk");
+
+			Assert.AreEqual ("kk", headers.Connection.ToString (), "#2");
+
+			headers.Connection.Add ("ttt");
+
+			Assert.AreEqual ("kk, ttt", headers.Connection.ToString (), "#3");
 		}
 	}
 }
