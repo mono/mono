@@ -509,6 +509,13 @@ mono_arch_get_this_arg_from_call (MonoGenericSharingContext *gsctx, MonoMethodSi
 void
 mono_arch_cpu_init (void)
 {
+#if defined(ARM_FPU_VFP)
+	// Unfortunatelly on some OS'es default de-normalized float mode is DAZ (denormals are zeros, it converts to zeros all the de-normalized inputs)
+	// This code switches floating point unit to FTZ mode (flush to zero, when only de-normalized result is converted to zero) 
+	__asm__ volatile("vmrs r0, fpscr\n"
+                     "bic r0, $(1 << 24)\n"
+                     "vmsr fpscr, r0" : : : "r0");
+#endif
 }
 
 /*
