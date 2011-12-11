@@ -101,10 +101,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1);
 		}
@@ -171,10 +169,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2);
@@ -252,10 +248,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -343,10 +337,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -444,10 +436,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -555,10 +545,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -676,10 +664,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6, T7>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -795,10 +781,8 @@ namespace System
 		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6, T7, TRest>;
-			if (t == null) {
-				if (other == null) return false;
-				throw new ArgumentException ();
-			}
+			if (t == null)
+				return false;
 
 			return comparer.Equals (item1, t.item1) &&
 				comparer.Equals (item2, t.item2) &&
@@ -922,10 +906,8 @@ public class TupleGen
 			Console.WriteLine ("\t\tbool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)");
 			Console.WriteLine ("\t\t{");
 			Console.WriteLine ("\t\t\tvar t = other as {0};", type_name);
-			Console.WriteLine ("\t\t\tif (t == null) {");
-			Console.WriteLine ("\t\t\t\tif (other == null) return false;");
-			Console.WriteLine ("\t\t\t\tthrow new ArgumentException ();");
-			Console.WriteLine ("\t\t\t}");
+			Console.WriteLine ("\t\t\tif (t == null)");
+			Console.WriteLine ("\t\t\t\treturn false;");
 			Console.WriteLine ();
 			Console.Write ("\t\t\treturn");
 			
