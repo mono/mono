@@ -176,7 +176,7 @@ namespace System.Net.Http.Headers
 			return true;
 		}
 
-		public static bool TryParse<T> (string input, out T parsedValue, Func<T> factory) where T : MediaTypeHeaderValue
+		internal static bool TryParse<T> (string input, out T parsedValue, Func<T> factory) where T : MediaTypeHeaderValue
 		{
 			parsedValue = null;
 
