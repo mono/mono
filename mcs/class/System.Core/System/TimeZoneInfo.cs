@@ -344,8 +344,9 @@ namespace System
 #elif LIBC
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
-#endif
+#else
 			throw new NotImplementedException ();
+#endif
 #endif
 		}
 
