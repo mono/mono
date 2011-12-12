@@ -5036,21 +5036,20 @@ namespace Mono.CSharp {
 	public class TryCatch : ExceptionStatement
 	{
 		public Block Block;
-		public List<Catch> Specific;
-		public Catch General;
+		List<Catch> clauses;
 		readonly bool inside_try_finally;
 
 		public TryCatch (Block block, List<Catch> catch_clauses, Location l, bool inside_try_finally)
 			: base (l)
 		{
 			this.Block = block;
-			this.Specific = catch_clauses;
+			this.clauses = catch_clauses;
 			this.inside_try_finally = inside_try_finally;
+		}
 
-			Catch c = catch_clauses [0];
-			if (c.IsGeneral) {
-				this.General = c;			
-				catch_clauses.RemoveAt (0);
+		public List<Catch> Clauses {
+			get {
+				return clauses;
 			}
 		}
 
@@ -5069,9 +5068,8 @@ namespace Mono.CSharp {
 			if (!Block.Resolve (ec))
 				ok = false;
 
-			TypeSpec[] prev_catches = new TypeSpec [Specific.Count];
-			int last_index = 0;
-			foreach (Catch c in Specific){
+			for (int i = 0; i < clauses.Count; ++i) {
+				var c = clauses[i];
 				ec.CurrentBranching.CreateSibling (c.Block, FlowBranching.SiblingType.Catch);
 
 				if (!c.Resolve (ec)) {
@@ -5080,37 +5078,40 @@ namespace Mono.CSharp {
 				}
 
 				TypeSpec resolved_type = c.CatchType;
-				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolved_type == prev_catches[ii] || TypeSpec.IsBaseClass (resolved_type, prev_catches[ii], true)) {
+				for (int ii = 0; ii < clauses.Count; ++ii) {
+					if (ii == i)
+						continue;
+
+					if (clauses[ii].IsGeneral) {
+						if (resolved_type.BuiltinType != BuiltinTypeSpec.Type.Exception)
+							continue;
+
+						if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
+							continue;
+
+						if (!ec.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)
+							continue;
+
+						ec.Report.Warning (1058, 1, c.loc,
+							"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
+
+						continue;
+					}
+
+					if (ii >= i)
+						continue;
+
+					var ct = clauses[ii].CatchType;
+					if (ct == null)
+						continue;
+
+					if (resolved_type == ct || TypeSpec.IsBaseClass (resolved_type, ct, true)) {
 						ec.Report.Error (160, c.loc,
 							"A previous catch clause already catches all exceptions of this or a super type `{0}'",
-							TypeManager.CSharpName (prev_catches [ii]));
+							ct.GetSignatureForError ());
 						ok = false;
 					}
 				}
-
-				prev_catches [last_index++] = resolved_type;
-			}
-
-			if (General != null) {
-				foreach (Catch c in Specific) {
-					if (c.CatchType.BuiltinType != BuiltinTypeSpec.Type.Exception)
-						continue;
-
-					if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
-						continue;
-
-					if (!ec.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)
-						continue;
-
-					ec.Report.Warning (1058, 1, c.loc,
-						"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
-				}
-
-				ec.CurrentBranching.CreateSibling (General.Block, FlowBranching.SiblingType.Catch);
-
-				if (!General.Resolve (ec))
-					ok = false;
 			}
 
 			ec.EndFlowBranching ();
@@ -5125,11 +5126,8 @@ namespace Mono.CSharp {
 
 			Block.Emit (ec);
 
-			foreach (Catch c in Specific)
+			foreach (Catch c in clauses)
 				c.Emit (ec);
-
-			if (General != null)
-				General.Emit (ec);
 
 			if (!inside_try_finally)
 				ec.EndExceptionBlock ();
@@ -5140,12 +5138,10 @@ namespace Mono.CSharp {
 			TryCatch target = (TryCatch) t;
 
 			target.Block = clonectx.LookupBlock (Block);
-			if (General != null)
-				target.General = (Catch) General.Clone (clonectx);
-			if (Specific != null){
-				target.Specific = new List<Catch> ();
-				foreach (Catch c in Specific)
-					target.Specific.Add ((Catch) c.Clone (clonectx));
+			if (clauses != null){
+				target.clauses = new List<Catch> ();
+				foreach (Catch c in clauses)
+					target.clauses.Add ((Catch) c.Clone (clonectx));
 			}
 		}
 	}

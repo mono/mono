@@ -4975,6 +4975,13 @@ if_statement
 		if ($7 is EmptyStatement)
 			Warning_EmptyStatement (GetLocation ($7));
 	  }
+	| IF open_parens_any boolean_expression error
+	  {
+		Error_SyntaxError (yyToken);
+		
+		$$ = new If ((BooleanExpression) $3, null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
+	  }
 	;
 
 switch_statement
@@ -4987,6 +4994,13 @@ switch_statement
 		$$ = new Switch ((Expression) $3, (ExplicitBlock) current_block.Explicit, (List<SwitchSection>) $7, GetLocation ($1));	
 		end_block (GetLocation ($8));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| SWITCH open_parens_any expression error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		$$ = new Switch ((Expression) $3, null, null, GetLocation ($1));	
+		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	;
 
@@ -5016,7 +5030,7 @@ switch_sections
 	  }
 	| error
 	  {
-		Error_SyntaxError (yyToken);	  
+		Error_SyntaxError (yyToken);
 		$$ = new List<SwitchSection> ();
 	  } 
 	;
@@ -5077,14 +5091,32 @@ while_statement
 		$$ = new While ((BooleanExpression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| WHILE open_parens_any boolean_expression error
+	  {
+		Error_SyntaxError (yyToken);
+		
+		$$ = new While ((BooleanExpression) $3, null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
+	  }
 	;
 
 do_statement
-	: DO embedded_statement 
-	  WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
+	: DO embedded_statement WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
 		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6), GetLocation ($7));
+	  }
+	| DO embedded_statement error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Do ((Statement) $2, null, GetLocation ($1));
+	  }
+	| DO embedded_statement WHILE open_parens_any boolean_expression error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
 
@@ -5188,10 +5220,35 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH open_parens_any type IN expression CLOSE_PARENS
+	: FOREACH open_parens_any type error
 	  {
 		report.Error (230, GetLocation ($1), "Type and identifier are both required in a foreach statement");
-		$$ = null;
+
+		start_block (GetLocation ($2));
+		current_block.IsCompilerGenerated = true;
+		
+		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, GetLocation ($2));
+		$$ = end_block (GetLocation ($4));
+	  }
+	| FOREACH open_parens_any type identifier_inside_body error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		start_block (GetLocation ($2));
+		current_block.IsCompilerGenerated = true;
+		
+		var lt = (Tokenizer.LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location);
+		current_block.AddLocalName (li);
+		
+		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, GetLocation ($2));
+		$$ = end_block (GetLocation ($5));
 	  }
 	| FOREACH open_parens_any type identifier_inside_body IN expression CLOSE_PARENS 
 	  {
@@ -5329,10 +5386,10 @@ try_statement
 		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, GetLocation ($1), true), (Block) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
-	| TRY block error 
+	| TRY block error
 	  {
-		report.Error (1524, GetLocation ($1), "Expected catch or finally");
-		$$ = null;
+		Error_SyntaxError (1524, yyToken);
+		$$ = new TryCatch ((Block) $2, null, GetLocation ($1), false);
 	  }
 	;
 
@@ -5437,6 +5494,13 @@ lock_statement
 		$$ = new Lock ((Expression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| LOCK open_parens_any expression error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Lock ((Expression) $3, null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
+	  }
 	;
 
 fixed_statement
@@ -5496,9 +5560,15 @@ using_statement
 		if ($5 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($5));
 	  
-		Using u = new Using ((Expression) $3, (Statement) $5, GetLocation ($1));
-		lbag.AddStatement (u, GetLocation ($2), GetLocation ($4));
-		$$ = u;
+		$$ = new Using ((Expression) $3, (Statement) $5, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| USING open_parens_any expression error
+	  {
+		Error_SyntaxError (yyToken);
+		
+		$$ = new Using ((Expression) $3, null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	;
 	
@@ -6540,7 +6610,12 @@ AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 
 void Error_SyntaxError (int token)
 {
-	Error_SyntaxError (0, token, "Unexpected symbol");
+	Error_SyntaxError (0, token);
+}
+
+void Error_SyntaxError (int error_code, int token)
+{
+	Error_SyntaxError (error_code, token, "Unexpected symbol");
 }
 
 void Error_SyntaxError (int error_code, int token, string msg)
