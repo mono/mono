@@ -245,7 +245,7 @@ GC_bool tmp;
     GC_static_roots[n_root_sets].r_start = (ptr_t)b;
     GC_static_roots[n_root_sets].r_end = (ptr_t)e;
     GC_static_roots[n_root_sets].r_tmp = tmp;
-#   if !defined(MSWIN32) && !defined(MSWINCE)
+#   if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
       GC_static_roots[n_root_sets].r_next = 0;
 #   endif
     add_roots_to_index(GC_static_roots + n_root_sets);
@@ -264,7 +264,7 @@ void GC_clear_roots GC_PROTO((void))
     roots_were_cleared = TRUE;
     n_root_sets = 0;
     GC_root_size = 0;
-#   if !defined(MSWIN32) && !defined(MSWINCE)
+#   if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
     {
     	register int i;
     	
@@ -309,7 +309,7 @@ void GC_remove_tmp_roots()
     	    i++;
     }
     }
-    #if !defined(MSWIN32) && !defined(MSWINCE)
+    #if (!defined(MSWIN32) && !defined(MSWINCE)) || UNITY_USE_REASONABLE_LOOKING_GCROOTS_CODEPATH_ON_WINDOWS
     GC_rebuild_root_index();
     #endif
 }

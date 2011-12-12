@@ -3358,7 +3358,7 @@ mono_thread_pop_appdomain_ref (void)
 	if (thread) {
 		/* printf ("POP REF: %"G_GSIZE_FORMAT" -> %s.\n", (gsize)thread->tid, ((MonoDomain*)(thread->appdomain_refs->data))->friendly_name); */
 		mono_threads_lock ();
-		/* FIXME: How can the list be empty ? */
+		/* Check for null, as we may unload an appdomain immediately after creating a thread and not yet havecalled mono_thread_push_appdomain_ref */
 		if (thread->appdomain_refs)
 			thread->appdomain_refs = g_slist_remove (thread->appdomain_refs, thread->appdomain_refs->data);
 		mono_threads_unlock ();
@@ -3368,9 +3368,11 @@ mono_thread_pop_appdomain_ref (void)
 gboolean
 mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain)
 {
-	gboolean res;
+	gboolean res = FALSE;
 	mono_threads_lock ();
-	res = g_slist_find (thread->appdomain_refs, domain) != NULL;
+	/* Check for null, as we may unload an appdomain immediately after creating a thread and not yet havecalled mono_thread_push_appdomain_ref */
+	if (thread->appdomain_refs)
+		res = g_slist_find (thread->appdomain_refs, domain) != NULL;
 	mono_threads_unlock ();
 	return res;
 }

@@ -9,6 +9,8 @@ GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
 
+perl PrepareAndroidSDK.pl -ndk=r7 -env=envsetup.sh && source envsetup.sh
+
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 
 if [ ! -f $NDK_ROOT/GNUmakefile ]; then
@@ -124,10 +126,10 @@ clean_build "$CCFLAGS_ARMv6_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv6_vfp"
 clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/armv7a"
 
 # works only with ndk-r6b and later
-#source build_runtime_android_x86.sh dontclean
+source build_runtime_android_x86.sh dontclean
 
 NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
-if [ $NUM_LIBS_BUILT -eq 6 ]; then
+if [ $NUM_LIBS_BUILT -eq 8 ]; then
 	echo "Android STATIC/SHARED libraries are found here: $OUTDIR"
 else
 	echo "Build failed? Android STATIC/SHARED library cannot be found... Found $NUM_LIBS_BUILT libs under $OUTDIR"
