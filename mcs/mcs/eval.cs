@@ -814,7 +814,7 @@ namespace Mono.CSharp
 		public void LoadAssembly (string file)
 		{
 			var loader = new DynamicLoader (importer, ctx);
-			var assembly = loader.LoadAssemblyFile (file);
+			var assembly = loader.LoadAssemblyFile (file, false);
 			if (assembly == null)
 				return;
 

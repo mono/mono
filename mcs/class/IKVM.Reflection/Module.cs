@@ -50,6 +50,11 @@ namespace IKVM.Reflection
 			get { return isManifestModule; }
 		}
 
+		public Guid ModuleVersionId
+		{
+			get { return module.ModuleVersionId; }
+		}
+
 		private void CheckManifestModule()
 		{
 			if (!IsManifestModule)

@@ -369,7 +369,7 @@ namespace Mono.CSharp
 			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
 		}
 
-		public override Assembly LoadAssemblyFile (string fileName)
+		public override Assembly LoadAssemblyFile (string fileName, bool isImplicitReference)
 		{
 			bool? has_extension = null;
 			foreach (var path in paths) {
@@ -406,7 +406,7 @@ namespace Mono.CSharp
 							if (an.Name != loaded_name.Name)
 								continue;
 
-							if (an.CodeBase == loaded_name.CodeBase)
+							if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
 								return entry.Item3;
 							
 							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
@@ -438,12 +438,16 @@ namespace Mono.CSharp
 						return assembly;
 					}
 				} catch {
-					Error_FileCorrupted (file);
+					if (!isImplicitReference)
+						Error_FileCorrupted (file);
+
 					return null;
 				}
 			}
 
-			Error_FileNotFound (fileName);
+			if (!isImplicitReference)
+				Error_FileNotFound (fileName);
+
 			return null;
 		}
 
@@ -470,39 +474,6 @@ namespace Mono.CSharp
 
 			Error_FileNotFound (moduleName);
 			return null;				
-		}
-
-		//
-		// Optimized default assembly loader version
-		//
-		public override Assembly LoadAssemblyDefault (string assembly)
-		{
-			foreach (var path in paths) {
-				var file = Path.Combine (path, assembly);
-
-				if (compiler.Settings.DebugFlags > 0)
-					Console.WriteLine ("Probing default assembly location `{0}'", file);
-
-				if (!File.Exists (file))
-					continue;
-
-				try {
-					if (compiler.Settings.DebugFlags > 0)
-						Console.WriteLine ("Loading default assembly `{0}'", file);
-
-					var a = domain.LoadFile (file);
-					if (a != null) {
-						loaded_names.Add (Tuple.Create (a.GetName (), file, a));
-					}
-
-					return a;
-				} catch {
-					// Default assemblies can fail to load without error
-					return null;
-				}
-			}
-
-			return null;
 		}
 
 		public override void LoadReferences (ModuleContainer module)
