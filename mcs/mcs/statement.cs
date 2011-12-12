@@ -88,6 +88,11 @@ namespace Mono.CSharp {
 			ec.Report.Error (834, loc, "A lambda expression with statement body cannot be converted to an expresion tree");
 			return null;
 		}
+		
+		public virtual object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public sealed class EmptyStatement : Statement
@@ -120,6 +125,11 @@ namespace Mono.CSharp {
 		{
 			// nothing needed.
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	public class If : Statement {
@@ -145,6 +155,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public Expression Expr {
+			get {
+				return this.expr;
+			}
+		}
+		
 		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
@@ -250,6 +266,11 @@ namespace Mono.CSharp {
 			if (FalseStatement != null)
 				target.FalseStatement = FalseStatement.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Do : Statement {
@@ -330,6 +351,11 @@ namespace Mono.CSharp {
 
 			target.EmbeddedStatement = EmbeddedStatement.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -444,6 +470,11 @@ namespace Mono.CSharp {
 
 			target.expr = expr.Clone (clonectx);
 			target.Statement = Statement.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -594,6 +625,11 @@ namespace Mono.CSharp {
 				target.Iterator = Iterator.Clone (clonectx);
 			target.Statement = Statement.Clone (clonectx);
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	public class StatementExpression : Statement
@@ -606,6 +642,12 @@ namespace Mono.CSharp {
 			loc = expr.Location;
 		}
 
+		public ExpressionStatement Expr {
+			get {
+ 				return this.expr;
+			}
+		}
+		
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			StatementExpression target = (StatementExpression) t;
@@ -622,6 +664,11 @@ namespace Mono.CSharp {
 			expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class StatementErrorExpression : Statement
@@ -633,7 +680,7 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
-		public Expression Expression {
+		public Expression Expr {
 			get {
 				return expr;
 			}
@@ -647,6 +694,11 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -697,6 +749,11 @@ namespace Mono.CSharp {
 			foreach (Statement s in statements)
 				t.statements.Add (s.Clone (clonectx));
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	// A 'return' or a 'yield break'
@@ -726,25 +783,30 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Return : ExitStatement
 	{
-		protected Expression Expr;
+		Expression expr;
 
 		public Return (Expression expr, Location l)
 		{
-			Expr = expr;
+			this.expr = expr;
 			loc = l;
 		}
 
 		#region Properties
-		public Expression Expression {
+
+		public Expression Expr {
 			get {
-				return Expr;
+				return expr;
+			}
+			protected set {
+				expr = value;
 			}
 		}
+
 		#endregion
 
 		protected override bool DoResolve (BlockContext ec)
 		{
-			if (Expr == null) {
+			if (expr == null) {
 				if (ec.ReturnType.Kind == MemberKind.Void)
 					return true;
 
@@ -758,7 +820,7 @@ namespace Mono.CSharp {
 						//
 						// Extra trick not to emit ret/leave inside awaiter body
 						//
-						Expr = EmptyExpression.Null;
+						expr = EmptyExpression.Null;
 						return true;
 					}
 				}
@@ -774,7 +836,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Expr = Expr.Resolve (ec);
+			expr = expr.Resolve (ec);
 			TypeSpec block_return_type = ec.ReturnType;
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
@@ -792,12 +854,12 @@ namespace Mono.CSharp {
 
 				var async_block = am as AsyncInitializer;
 				if (async_block != null) {
-					if (Expr != null) {
+					if (expr != null) {
 						var storey = (AsyncTaskStorey) am.Storey;
 						var async_type = storey.ReturnType;
 
 						if (async_type == null && async_block.ReturnTypeInference != null) {
-							async_block.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+							async_block.ReturnTypeInference.AddCommonTypeBound (expr.Type);
 							return true;
 						}
 
@@ -818,20 +880,20 @@ namespace Mono.CSharp {
 					}
 				} else {
 					var l = am as AnonymousMethodBody;
-					if (l != null && l.ReturnTypeInference != null && Expr != null) {
-						l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+					if (l != null && l.ReturnTypeInference != null && expr != null) {
+						l.ReturnTypeInference.AddCommonTypeBound (expr.Type);
 						return true;
 					}
 				}
 			}
 
-			if (Expr == null)
+			if (expr == null)
 				return false;
 
-			if (Expr.Type != block_return_type) {
-				Expr = Convert.ImplicitConversionRequired (ec, Expr, block_return_type, loc);
+			if (expr.Type != block_return_type) {
+				expr = Convert.ImplicitConversionRequired (ec, expr, block_return_type, loc);
 
-				if (Expr == null) {
+				if (expr == null) {
 					if (am != null && block_return_type == ec.ReturnType) {
 						ec.Report.Error (1662, loc,
 							"Cannot convert `{0}' to delegate type `{1}' because some of the return types in the block are not implicitly convertible to the delegate return type",
@@ -846,8 +908,8 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (Expr != null) {
-				Expr.Emit (ec);
+			if (expr != null) {
+				expr.Emit (ec);
 
 				var async_body = ec.CurrentAnonymousMethod as AsyncInitializer;
 				if (async_body != null) {
@@ -883,8 +945,13 @@ namespace Mono.CSharp {
 		{
 			Return target = (Return) t;
 			// It's null for simple return;
-			if (Expr != null)
-				target.Expr = Expr.Clone (clonectx);
+			if (expr != null)
+				target.expr = expr.Clone (clonectx);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -927,6 +994,11 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("goto emitted before target resolved");
 			Label l = label.LabelTarget (ec);
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -1010,6 +1082,11 @@ namespace Mono.CSharp {
 		{
 			referenced = true;
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 
@@ -1049,6 +1126,11 @@ namespace Mono.CSharp {
 		{
 			ec.Emit (OpCodes.Br, ec.Switch.DefaultLabel);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -1064,6 +1146,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public Expression Expr {
+			get {
+ 				return this.expr;
+			}
+		}
+		
 		public override bool Resolve (BlockContext ec)
 		{
 			if (ec.Switch == null){
@@ -1116,6 +1204,11 @@ namespace Mono.CSharp {
 
 			target.expr = expr.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	public class Throw : Statement {
@@ -1125,6 +1218,12 @@ namespace Mono.CSharp {
 		{
 			this.expr = expr;
 			loc = l;
+		}
+
+		public Expression Expr {
+			get {
+ 				return this.expr;
+			}
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -1167,6 +1266,11 @@ namespace Mono.CSharp {
 			if (expr != null)
 				target.expr = expr.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Break : Statement {
@@ -1194,6 +1298,11 @@ namespace Mono.CSharp {
 		{
 			// nothing needed
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Continue : Statement {
@@ -1220,6 +1329,11 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			// nothing needed.
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -1495,6 +1609,11 @@ namespace Mono.CSharp {
 					t.AddDeclarator (new Declarator (d, d.Initializer == null ? null : d.Initializer.Clone (clonectx)));
 			}
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class BlockConstantDeclaration : BlockVariableDeclaration
@@ -1528,6 +1647,11 @@ namespace Mono.CSharp {
 
 			li.ConstantValue = c;
 			return initializer;
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -1878,7 +2002,7 @@ namespace Mono.CSharp {
 
 		int? resolving_init_idx;
 
-		protected Block original;
+		Block original;
 
 #if DEBUG
 		static int id;
@@ -1925,6 +2049,9 @@ namespace Mono.CSharp {
 			get {
 				return original;
 			}
+			protected set {
+				original = value;
+			}
 		}
 
 		public bool IsCompilerGenerated {
@@ -1940,6 +2067,10 @@ namespace Mono.CSharp {
 		public bool Unsafe {
 			get { return (flags & Flags.Unsafe) != 0; }
 			set { flags |= Flags.Unsafe; }
+		}
+
+		public List<Statement> Statements {
+			get { return statements; }
 		}
 
 		#endregion
@@ -2214,6 +2345,11 @@ namespace Mono.CSharp {
 			target.statements = new List<Statement> (statements.Count);
 			foreach (Statement s in statements)
 				target.statements.Add (s.Clone (clonectx));
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -2575,7 +2711,7 @@ namespace Mono.CSharp {
 			// Overwrite original for comparison purposes when linking cross references
 			// between anonymous methods
 			//
-			original = source;
+			Original = source;
 		}
 
 		#region Properties
@@ -2789,7 +2925,7 @@ namespace Mono.CSharp {
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
 			pb.statements = statements;
-			pb.original = this;
+			pb.Original = this;
 
 			var iterator = new Iterator (pb, method, host, iterator_type, is_enumerable);
 			am_storey = new IteratorStorey (iterator);
@@ -2804,7 +2940,7 @@ namespace Mono.CSharp {
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
 			pb.statements = statements;
-			pb.original = this;
+			pb.Original = this;
 
 			var block_type = host.Module.Compiler.BuiltinTypes.Void;
 			var initializer = new AsyncInitializer (pb, host, block_type);
@@ -4114,6 +4250,11 @@ namespace Mono.CSharp {
 				target.Sections.Add (ss.Clone (clonectx));
 			}
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	// A place where execution can restart in an iterator
@@ -4347,6 +4488,12 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
+		public Expression Expr {
+			get {
+ 				return this.expr;
+			}
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
@@ -4480,6 +4627,12 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 			target.stmt = Statement.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+
 	}
 
 	public class Unchecked : Statement {
@@ -4510,6 +4663,11 @@ namespace Mono.CSharp {
 
 			target.Block = clonectx.LookupBlock (Block);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Checked : Statement {
@@ -4539,6 +4697,11 @@ namespace Mono.CSharp {
 			Checked target = (Checked) t;
 
 			target.Block = clonectx.LookupBlock (Block);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -4571,6 +4734,11 @@ namespace Mono.CSharp {
 			Unsafe target = (Unsafe) t;
 
 			target.Block = clonectx.LookupBlock (Block);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -4852,6 +5020,11 @@ namespace Mono.CSharp {
 			target.decl = (VariableDeclaration) decl.Clone (clonectx);
 			target.statement = statement.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Catch : Statement
@@ -4990,6 +5163,12 @@ namespace Mono.CSharp {
 			this.fini = fini;
 		}
 
+		public Block Finallyblock {
+			get {
+ 				return fini;
+			}
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
@@ -5030,6 +5209,11 @@ namespace Mono.CSharp {
 			target.stmt = (Statement) stmt.Clone (clonectx);
 			if (fini != null)
 				target.fini = clonectx.LookupBlock (fini);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -5143,6 +5327,11 @@ namespace Mono.CSharp {
 				foreach (Catch c in clauses)
 					target.clauses.Add ((Catch) c.Clone (clonectx));
 			}
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -5292,7 +5481,12 @@ namespace Mono.CSharp {
 
 				declarators = null;
 				return stmt;
-			}
+			}	
+
+			public override object Accept (StructuralVisitor visitor)
+			{
+				return visitor.Visit (this);
+			}	
 		}
 
 		VariableDeclaration decl;
@@ -5311,7 +5505,7 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public Expression Expression {
+		public Expression Expr {
 			get {
 				return decl.Variable == null ? decl.Initializer : null;
 			}
@@ -5389,6 +5583,11 @@ namespace Mono.CSharp {
 
 			target.decl = (VariableDeclaration) decl.Clone (clonectx);
 			target.stmt = stmt.Clone (clonectx);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -5939,9 +6138,22 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public Expression Expr {
+			get { return expr; }
+		}
+
 		public Statement Statement {
 			get { return statement; }
 		}
+
+		public Expression TypeExpression {
+			get { return type; }
+		}
+
+		public LocalVariable Variable {
+			get { return variable; }
+		}
+
 
 		public override bool Resolve (BlockContext ec)
 		{
@@ -5990,6 +6202,11 @@ namespace Mono.CSharp {
 			target.type = type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 			target.statement = statement.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 }

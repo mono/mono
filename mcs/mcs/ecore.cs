@@ -1006,6 +1006,11 @@ namespace Mono.CSharp {
 		{
 			throw new NotImplementedException ("MakeExpression for " + GetType ());
 		}
+			
+		public virtual object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -2526,6 +2531,11 @@ namespace Mono.CSharp {
 
 			//if (ec.CurrentBlock == null || ec.CurrentBlock.CheckInvariantMeaningInBlock (Name, e, Location))
 			return e;
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

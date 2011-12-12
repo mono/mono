@@ -116,6 +116,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsDoubleColon {
+			get {
+				return is_double_colon;
+			}
+		}
+
 		public bool IsGeneric {
 			get {
 				if (TypeArguments != null)
@@ -367,6 +373,11 @@ namespace Mono.CSharp {
 		{
 			member_name = new_name;
 			cached_name = null;
+		}
+
+		public virtual void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
 		}
 
 		protected bool CheckAbstractAndExtern (bool has_block)

@@ -733,6 +733,12 @@ namespace Mono.CSharp
 		{
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+		
+
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
@@ -852,6 +858,11 @@ namespace Mono.CSharp
 		{
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+		
 		public override bool Define()
 		{
 			if (!base.Define ())
@@ -988,6 +999,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		public List<FieldDeclarator> Declarators {
+			get {
+				return this.declarators;
+			}
+		}
+
 		bool HasBackingField {
 			get {
 				return !IsInterface && (ModFlags & Modifiers.ABSTRACT) == 0;
@@ -1010,6 +1027,12 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 
 		public void AddDeclarator (FieldDeclarator declarator)
 		{
@@ -1490,6 +1513,12 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{

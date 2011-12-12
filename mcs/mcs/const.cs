@@ -223,5 +223,10 @@ namespace Mono.CSharp {
 
 			return field.Parent.GetSignatureForError () + "." + Name;
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 }

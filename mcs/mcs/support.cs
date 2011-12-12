@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode (obj);
 		}
 	}
-
+#if !NET_4_0
 	public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 	{
 		public Tuple (T1 item1, T2 item2)
@@ -106,6 +106,7 @@ namespace Mono.CSharp {
 			return new Tuple<T1, T2, T3> (item1, item2, item3);
 		}
 	}
+#endif
 
 	static class ArrayComparer
 	{

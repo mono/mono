@@ -39,6 +39,10 @@ namespace Mono.CSharp
 			loc = l;
 		}
 
+		public Expression Expr {
+			get { return this.expr; }
+		}
+		
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			var target = (YieldStatement<T>) t;
@@ -100,6 +104,11 @@ namespace Mono.CSharp
 
 			return true;
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class YieldBreak : ExitStatement
@@ -130,6 +139,11 @@ namespace Mono.CSharp
 		protected override void DoEmit (EmitContext ec)
 		{
 			iterator.EmitYieldBreak (ec, unwind_protect);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

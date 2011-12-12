@@ -885,7 +885,7 @@ namespace Mono.CSharp {
 
 		public ParametersBlock Block;
 
-		public AnonymousMethodExpression (bool isAsync, Location loc)
+		public AnonymousMethodExpression (Location loc)
 		{
 			this.loc = loc;
 			this.compatibles = new Dictionary<TypeSpec, Expression> ();
@@ -1299,6 +1299,11 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression target = (AnonymousMethodExpression) t;
 
 			target.Block = (ParametersBlock) clonectx.LookupBlock (Block);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

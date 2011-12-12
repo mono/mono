@@ -110,6 +110,11 @@ namespace Mono.CSharp
 		{
 			return expr.DoResolveLValue (ec, right_side);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	//
@@ -778,6 +783,12 @@ namespace Mono.CSharp
 
 			target.Expr = Expr.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+
 	}
 
 	//
@@ -794,6 +805,12 @@ namespace Mono.CSharp
 		{
 			this.expr = expr;
 			loc = l;
+		}
+
+		public Expression Expr {
+			get {
+				return expr;
+			}
 		}
 
 		public bool IsFixed {
@@ -894,6 +911,11 @@ namespace Mono.CSharp
 
 			eclass = ExprClass.Variable;
 			return this;
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 	
@@ -1000,6 +1022,18 @@ namespace Mono.CSharp
 			mode = m;
 			this.loc = loc;
 			expr = e;
+		}
+
+		public Mode UnaryMutatorMode {
+			get {
+				return mode;
+			}
+		}
+		
+		public Expression Expr {
+			get {
+				return expr;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
@@ -1249,6 +1283,12 @@ namespace Mono.CSharp
 
 			target.expr = expr.Clone (clonectx);
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+
 	}
 
 	//
@@ -1330,6 +1370,10 @@ namespace Mono.CSharp
 		public Is (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
+		}
+
+		protected override string OperatorName {
+			get { return "is"; }
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1506,8 +1550,9 @@ namespace Mono.CSharp
 			return this;
 		}
 		
-		protected override string OperatorName {
-			get { return "is"; }
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -1520,6 +1565,10 @@ namespace Mono.CSharp
 		public As (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
+		}
+
+		protected override string OperatorName {
+			get { return "as"; }
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1600,8 +1649,9 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		protected override string OperatorName {
-			get { return "as"; }
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 	
@@ -1664,6 +1714,11 @@ namespace Mono.CSharp
 			target.target_type = target_type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class ImplicitCast : ShimExpression
@@ -1704,6 +1759,12 @@ namespace Mono.CSharp
 		{
 			this.expr = expr;
 			this.loc = loc;
+		}
+
+		public Expression Expr {
+			get {
+				return this.expr; 
+			}
 		}
 
 		public override bool IsSideEffectFree {
@@ -1771,6 +1832,11 @@ namespace Mono.CSharp
 			DefaultValueExpression target = (DefaultValueExpression) t;
 			
 			target.expr = expr.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -2155,6 +2221,18 @@ namespace Mono.CSharp
 		public Operator Oper {
 			get {
 				return oper;
+			}
+		}
+
+		public Expression Left {
+			get {
+				return this.left;
+			}
+		}
+
+		public Expression Right {
+			get {
+				return this.right;
 			}
 		}
 
@@ -3973,6 +4051,12 @@ namespace Mono.CSharp
 			
 			return CreateExpressionFactoryCall (ec, method_name, args);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+
 	}
 	
 	//
@@ -4392,6 +4476,11 @@ namespace Mono.CSharp
 			}
 
 			return converted;
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -5136,7 +5225,7 @@ namespace Mono.CSharp
 			}
 		}
 		
-		public Expression Expression {
+		public Expression Exp {
 			get {
 				return expr;
 			}
@@ -5391,6 +5480,11 @@ namespace Mono.CSharp
 			return SLE.Expression.Call (instance_expr, (MethodInfo) mi.GetMetaInfo (), Arguments.MakeExpression (args, ctx));
 #endif
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	//
@@ -5429,6 +5523,12 @@ namespace Mono.CSharp
 		public bool IsDefaultStruct {
 			get {
 				return arguments == null && type.IsStruct && GetType () == typeof (New);
+			}
+		}
+
+		public Expression TypeExpression {
+			get {
+				return RequestedType;
 			}
 		}
 
@@ -5784,6 +5884,11 @@ namespace Mono.CSharp
 			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
 #endif
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	//
@@ -5817,6 +5922,12 @@ namespace Mono.CSharp
 
 		public int Count {
 			get { return elements.Count; }
+		}
+
+		public List<Expression> Elements {
+			get {
+				return elements;
+			}
 		}
 
 		public Expression this [int index] {
@@ -5883,6 +5994,11 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new InternalErrorException ("Missing Resolve call");
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -5957,6 +6073,24 @@ namespace Mono.CSharp
 		public ArrayCreation (FullNamedExpression requested_base_type, ArrayInitializer initializers)
 			: this (requested_base_type, null, initializers, initializers.Location)
 		{
+		}
+
+		public ComposedTypeSpecifier Rank {
+			get {
+				return this.rank;
+			}
+		}
+		
+		public FullNamedExpression TypeExpression {
+			get {
+				return this.requested_base_type;
+			}
+		}
+		
+		public ArrayInitializer Initializers {
+			get {
+				return this.initializers;
+			}
 		}
 
 		bool CheckIndices (ResolveContext ec, ArrayInitializer probe, int idx, bool specified_dims, int child_bounds)
@@ -6577,6 +6711,11 @@ namespace Mono.CSharp
 			if (initializers != null)
 				target.initializers = (ArrayInitializer) initializers.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	//
@@ -6916,6 +7055,11 @@ namespace Mono.CSharp
 		public override void VerifyAssigned (ResolveContext rc)
 		{
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -6960,6 +7104,11 @@ namespace Mono.CSharp
 		{
 			ec.Emit (OpCodes.Arglist);
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -6967,7 +7116,7 @@ namespace Mono.CSharp
 	/// </summary>
 	public class Arglist : Expression
 	{
-		Arguments Arguments;
+		Arguments arguments;
 
 		public Arglist (Location loc)
 			: this (null, loc)
@@ -6976,18 +7125,24 @@ namespace Mono.CSharp
 
 		public Arglist (Arguments args, Location l)
 		{
-			Arguments = args;
+			arguments = args;
 			loc = l;
+		}
+
+		public Arguments Arguments {
+			get {
+				return arguments;
+			}
 		}
 
 		public MetaType[] ArgumentTypes {
 		    get {
-				if (Arguments == null)
+				if (arguments == null)
 					return MetaType.EmptyTypes;
 
-				var retval = new MetaType[Arguments.Count];
-		        for (int i = 0; i < retval.Length; i++)
-					retval[i] = Arguments[i].Expr.Type.GetMetaInfo ();
+				var retval = new MetaType[arguments.Count];
+				for (int i = 0; i < retval.Length; i++)
+					retval[i] = arguments[i].Expr.Type.GetMetaInfo ();
 
 		        return retval;
 		    }
@@ -7008,9 +7163,9 @@ namespace Mono.CSharp
 		{
 			eclass = ExprClass.Variable;
 			type = InternalType.Arglist;
-			if (Arguments != null) {
+			if (arguments != null) {
 				bool dynamic;	// Can be ignored as there is always only 1 overload
-				Arguments.Resolve (ec, out dynamic);
+				arguments.Resolve (ec, out dynamic);
 			}
 
 			return this;
@@ -7018,16 +7173,21 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			if (Arguments != null)
-				Arguments.Emit (ec);
+			if (arguments != null)
+				arguments.Emit (ec);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Arglist target = (Arglist) t;
 
-			if (Arguments != null)
-				target.Arguments = Arguments.Clone (clonectx);
+			if (arguments != null)
+				target.arguments = arguments.Clone (clonectx);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7040,6 +7200,12 @@ namespace Mono.CSharp
 		{
 			this.texpr = texpr;
 			this.loc = loc;
+		}
+
+		public FullNamedExpression TypeExpression {
+			get {
+				return texpr;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
@@ -7064,6 +7230,11 @@ namespace Mono.CSharp
 			expr.Emit (ec);
 			ec.Emit (OpCodes.Refanyval, type);
 			ec.EmitLoadFromPtr (type);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7098,6 +7269,11 @@ namespace Mono.CSharp
 			if (m != null)
 				ec.Emit (OpCodes.Call, m);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class MakeRefExpr : ShimExpression
@@ -7125,6 +7301,11 @@ namespace Mono.CSharp
 		{
 			((IMemoryLocation) expr).AddressOf (ec, AddressOp.Load);
 			ec.Emit (OpCodes.Mkrefany, expr.Type);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7278,6 +7459,11 @@ namespace Mono.CSharp
 			if (m != null)
 				ec.Emit (OpCodes.Call, m);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	sealed class TypeOfMethod : TypeOfMember<MethodSpec>
@@ -7412,18 +7598,24 @@ namespace Mono.CSharp
 	///   Implements the sizeof expression
 	/// </summary>
 	public class SizeOf : Expression {
-		readonly Expression QueriedType;
+		readonly Expression texpr;
 		TypeSpec type_queried;
 		
 		public SizeOf (Expression queried_type, Location l)
 		{
-			this.QueriedType = queried_type;
+			this.texpr = queried_type;
 			loc = l;
 		}
 
 		public override bool IsSideEffectFree {
 			get {
 				return true;
+			}
+		}
+
+		public Expression TypeExpression {
+			get {
+				return texpr;
 			}
 		}
 
@@ -7440,7 +7632,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			type_queried = QueriedType.ResolveAsType (ec);
+			type_queried = texpr.ResolveAsType (ec);
 			if (type_queried == null)
 				return null;
 
@@ -7475,6 +7667,11 @@ namespace Mono.CSharp
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -7501,6 +7698,12 @@ namespace Mono.CSharp
 			: base (null, identifier, arity, l)
 		{
 			this.alias = alias;
+		}
+
+		public string Alias {
+			get {
+				return alias;
+			}
 		}
 
 		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
@@ -7562,6 +7765,11 @@ namespace Mono.CSharp
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			// Nothing 
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7991,6 +8199,11 @@ namespace Mono.CSharp
 
 			target.expr = expr.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -8058,6 +8271,11 @@ namespace Mono.CSharp
 
 			target.Expr = Expr.Clone (clonectx);
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -8117,6 +8335,11 @@ namespace Mono.CSharp
 			UnCheckedExpr target = (UnCheckedExpr) t;
 
 			target.Expr = Expr.Clone (clonectx);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -8253,6 +8476,11 @@ namespace Mono.CSharp
 			target.Expr = Expr.Clone (clonectx);
 			if (Arguments != null)
 				target.Arguments = Arguments.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -8809,6 +9037,11 @@ namespace Mono.CSharp
 			base.ResolveBase (ec);
 			type = ec.CurrentType.BaseType;
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	/// <summary>
@@ -8878,6 +9111,11 @@ namespace Mono.CSharp
 		public override void EmitSideEffect (EmitContext ec)
 		{
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 	
 	sealed class EmptyAwaitExpression : EmptyExpression
@@ -8931,6 +9169,11 @@ namespace Mono.CSharp
 		{
 			// Do nothing
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class ErrorExpression : EmptyExpression
@@ -8962,6 +9205,11 @@ namespace Mono.CSharp
 
 		public override void Error_OperatorCannotBeApplied (ResolveContext rc, Location loc, string oper, TypeSpec t)
 		{
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -9164,6 +9412,11 @@ namespace Mono.CSharp
 		{
 			return left.GetSignatureForError () + spec.GetSignatureForError ();
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	class FixedBufferPtr : Expression
@@ -9277,6 +9530,18 @@ namespace Mono.CSharp
 			loc = l;
 		}
 
+		public Expression TypeExpression {
+			get {
+				return this.t;
+			}
+		}
+
+		public Expression CountExpression {
+			get {
+				return this.count;
+			}
+		}
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return false;
@@ -9341,6 +9606,11 @@ namespace Mono.CSharp
 			StackAlloc target = (StackAlloc) t;
 			target.count = count.Clone (clonectx);
 			target.t = t.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -9756,6 +10026,12 @@ namespace Mono.CSharp
 			this.initializers = initializers;
 		}
 
+		public CollectionOrObjectInitializers Initializers {
+			get {
+				return initializers;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			base.CloneTo (clonectx, t);
@@ -9851,6 +10127,11 @@ namespace Mono.CSharp
 
 			return instance;
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class NewAnonymousType : New
@@ -9866,6 +10147,12 @@ namespace Mono.CSharp
 		{
 			this.parameters = parameters;
 			this.parent = parent;
+		}
+
+		public List<AnonymousTypeParameter> Parameters {
+			get {
+				return this.parameters;
+			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression target)
@@ -9958,6 +10245,11 @@ namespace Mono.CSharp
 
 			RequestedType = new GenericTypeExpr (anonymous_type.Definition, new TypeArguments (t_args), loc);
 			return base.DoResolve (ec);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

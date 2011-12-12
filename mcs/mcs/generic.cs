@@ -88,6 +88,12 @@ namespace Mono.CSharp {
 
 		#region Properties
 
+		public List<FullNamedExpression> TypeExpressions {
+			get {
+				return constraints;
+			}
+		}
+
 		public Location Location {
 			get {
 				return loc;
@@ -376,6 +382,12 @@ namespace Mono.CSharp {
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.GenericParameter;
+			}
+		}
+
+		public Constraints Constraints {
+			get {
+				return constraints;
 			}
 		}
 
@@ -1893,6 +1905,12 @@ namespace Mono.CSharp {
 			get {
 				return false;
 			}
+		}
+
+		public List<FullNamedExpression> TypeExpressions {
+			get {
+				return this.args;
+ 			}
 		}
 
 		public string GetSignatureForError()

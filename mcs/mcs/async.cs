@@ -34,6 +34,12 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		public Expression Expr {
+			get {
+				return expr;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			var t = (Await) target;
@@ -101,6 +107,11 @@ namespace Mono.CSharp
 		public override void EmitStatement (EmitContext ec)
 		{
 			stmt.EmitStatement (ec);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

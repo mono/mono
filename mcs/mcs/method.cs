@@ -899,6 +899,11 @@ namespace Mono.CSharp {
 
 #endregion
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public static Method Create (DeclSpace parent, GenericMethod generic, FullNamedExpression returnType, Modifiers mod,
 				   MemberName name, ParametersCompiled parameters, Attributes attrs, bool hasConstraints)
 		{
@@ -1564,6 +1569,11 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
@@ -2145,6 +2155,11 @@ namespace Mono.CSharp {
 			ModFlags |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Conditional) {
@@ -2498,6 +2513,11 @@ namespace Mono.CSharp {
 		{
 			OperatorType = type;
 			Block = block;
+		}
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

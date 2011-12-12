@@ -91,6 +91,12 @@ namespace Mono.CSharp {
 			Parent.MemberCache.AddMember (spec);
 			return true;
 		}
+		
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 	}
 
 	/// <summary>

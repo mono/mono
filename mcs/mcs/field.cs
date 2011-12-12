@@ -79,6 +79,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public List<FieldDeclarator> Declarators {
+			get {
+				return this.declarators;
+			}
+		}
+
 		public Expression Initializer {
 			get {
 				return initializer;
@@ -595,6 +601,11 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+		
 		public override bool Define ()
 		{
 			if (!base.Define ())

@@ -248,6 +248,12 @@ namespace Mono.CSharp {
 
 		#region Properties
 
+		public Expression DefaultExpression {
+			get {
+				return default_expr;
+			}
+		}
+
 		public DefaultParameterValueExpression DefaultValue {
 			get {
 				return default_expr as DefaultParameterValueExpression;
@@ -273,6 +279,12 @@ namespace Mono.CSharp {
 		public Location Location {
 			get {
 				return loc;
+			}
+		}
+
+		public Modifier ParameterModifier {
+			get {
+				return modFlags;
 			}
 		}
 
@@ -1209,7 +1221,7 @@ namespace Mono.CSharp {
 
 	//
 	// Default parameter value expression. We need this wrapper to handle
-	// default parameter values of folded constants when for indexer parameters
+	// default parameter values of folded constants (e.g. indexer parameters).
 	// The expression is resolved only once but applied to two methods which
 	// both share reference to this expression and we ensure that resolving
 	// this expression always returns same instance
@@ -1274,6 +1286,11 @@ namespace Mono.CSharp {
 			rc.Report.Error (1750, Location,
 				"Optional parameter expression of type `{0}' cannot be converted to parameter type `{1}'",
 				type.GetSignatureForError (), parameter_type.GetSignatureForError ());
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 }

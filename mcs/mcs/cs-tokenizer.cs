@@ -146,7 +146,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		enum PreprocessorDirective
+		public enum PreprocessorDirective
 		{
 			Invalid = 0,
 

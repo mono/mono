@@ -821,6 +821,7 @@ named_attribute_argument
 	  	--lexer.parsing_block;
 	  	var lt = (Tokenizer.LocatedToken) $1;
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4);	  
+		lbag.AddLocation ($$, GetLocation($2));
 	  }
 	;
 	
@@ -835,6 +836,7 @@ named_argument
 			
 		var lt = (Tokenizer.LocatedToken) $1;
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, arg_mod);
+		lbag.AddLocation ($$, GetLocation($2));
 	  }
 	;
 	
@@ -2723,7 +2725,7 @@ indexer_declaration_name
 	| explicit_interface THIS
 	  {
 		lexer.parsing_generic_declaration = false;
-		$$ = new MemberName ((MemberName) $1, TypeContainer.DefaultIndexerName, null, GetLocation ($1));
+		$$ = new MemberName ((MemberName) $1, TypeContainer.DefaultIndexerName, null, GetLocation ($2));
 	  }
 	;
 
@@ -3050,6 +3052,7 @@ member_access
 		var lt2 = (Tokenizer.LocatedToken) $2;
 
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| primary_expression DOT GENERATE_COMPLETION {
 		$$ = new CompletionMemberAccess ((Expression) $1, null,GetLocation ($3));
@@ -3601,6 +3604,7 @@ unbound_type_name
 		var lt2 = (Tokenizer.LocatedToken) $2;
 
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (int) $3, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| unbound_type_name DOT identifier_inside_body
 	  {
@@ -4068,6 +4072,7 @@ lambda_expression_body_simple
 	  expression_or_error	// Have to close block when error occurs
 	  {
 		Block b = end_block (lexer.Location);
+		b.IsCompilerGenerated = true;
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
@@ -4117,7 +4122,7 @@ lambda_expression
 	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $7);
-		lbag.AddLocation ($$, GetLocation ($4), GetLocation ($5));
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($4), GetLocation ($5));
 	  }
 	| ASYNC OPEN_PARENS_LAMBDA
 	  {
@@ -4131,7 +4136,7 @@ lambda_expression
 	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $8);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($5), GetLocation ($6));
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2), GetLocation ($5), GetLocation ($6));
 	  }
 	;
 
@@ -4402,6 +4407,7 @@ type_parameter_constraints_clause
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), (List<FullNamedExpression>) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	; 
 
@@ -4651,7 +4657,7 @@ labeled_statement
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
 		LabeledStatement labeled = new LabeledStatement (lt.Value, current_block, lt.Location);
-
+		lbag.AddLocation (labeled, GetLocation ($2));
 		current_block.AddLabel (labeled);
 		current_block.AddStatement (labeled);
 	  }
@@ -4926,7 +4932,7 @@ statement_expression
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
 			Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
-			$$ = new StatementExpression (EmptyExpressionStatement.Instance);
+			$$ = new StatementErrorExpression ($1 as Expression);
 		} else {
 			$$ = new StatementExpression (s);
 		}
@@ -5156,7 +5162,7 @@ for_statement_cont
 	  
 		For f = ((For) $0);
 		f.Statement = (Statement) $10;
-		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($5), GetLocation ($9));
+		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($5), GetLocation ($8));
 
 		$$ = end_block (GetLocation ($2));
 	  }
@@ -5302,8 +5308,8 @@ goto_statement
 	: GOTO identifier_inside_body SEMICOLON 
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new Goto (lt.Value, lt.Location);
-		lbag.AddStatement ($$, GetLocation ($1), GetLocation ($3));
+		$$ = new Goto (lt.Value, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($3));
 	  }
 	| GOTO CASE constant_expression SEMICOLON
 	  {
@@ -5771,6 +5777,7 @@ select_or_group_clause
 	  BY expression
 	  {
 		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($5));
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5809,6 +5816,7 @@ let_clause
 		var lt = (Tokenizer.LocatedToken) $2;
 		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
 	  	$$ = new Linq.Let ((Linq.QueryBlock) current_block, sn, (Expression)$5, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
 	  	
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5871,6 +5879,7 @@ join_clause
 		if ($12 == null) {
 			into = sn;
 	  		$$ = new Linq.Join (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block, GetLocation ($1));
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9));
 		} else {
 			//
 			// Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions
@@ -5887,6 +5896,7 @@ join_clause
 			into = new Linq.RangeVariable (lt.Value, lt.Location);
 
 			$$ = new Linq.GroupJoin (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block, into, GetLocation ($1));	
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9), GetLocation ($12));
 		}
 
 		current_block = block.Parent;
@@ -6020,10 +6030,12 @@ order_by
 	| expression ASCENDING
 	  {
 		$$ = new Linq.OrderByAscending ((Linq.QueryBlock) current_block, (Expression)$1);	
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| expression DESCENDING
 	  {
 		$$ = new Linq.OrderByDescending ((Linq.QueryBlock) current_block, (Expression)$1);	
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -6035,10 +6047,12 @@ then_by
 	| expression ASCENDING
 	  {
 		$$ = new Linq.ThenByAscending ((Linq.QueryBlock) current_block, (Expression)$1);	
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| expression DESCENDING
 	  {
 		$$ = new Linq.ThenByDescending ((Linq.QueryBlock) current_block, (Expression)$1);	
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }	
 	;
 
@@ -6573,12 +6587,12 @@ void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync
 		if (lang_version <= LanguageVersion.ISO_2)
 			FeatureIsNotAvailable (loc, "lambda expressions");
 
-		current_anonymous_method = new LambdaExpression (isAsync, loc);
+		current_anonymous_method = new LambdaExpression (loc);
 	} else {
 		if (lang_version == LanguageVersion.ISO_1)
 			FeatureIsNotAvailable (loc, "anonymous methods");
 			
-		current_anonymous_method = new AnonymousMethodExpression (isAsync, loc);
+		current_anonymous_method = new AnonymousMethodExpression (loc);
 	}
 
 	async_block = isAsync;

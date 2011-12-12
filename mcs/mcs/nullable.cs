@@ -1007,6 +1007,18 @@ namespace Mono.CSharp.Nullable
 			this.right = right;
 			this.loc = loc;
 		}
+
+		public Expression LeftExpression {
+			get {
+ 				return left;
+ 			}
+		}
+
+		public Expression Right {
+			get {
+ 				return right;
+ 			}
+		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -1197,6 +1209,11 @@ namespace Mono.CSharp.Nullable
 
 			target.left = left.Clone (clonectx);
 			target.right = right.Clone (clonectx);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
