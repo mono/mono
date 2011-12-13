@@ -4582,8 +4582,7 @@ self_suspend_internal (MonoInternalThread *thread)
 
 		if (shutting_down) {
 			/* After we left the lock, the runtime might shut down so everything becomes invalid */
-			for (;;)
-				Sleep (1000);
+			mono_thread_exit ();
 		}
 		
 		WaitForSingleObject (thread->suspend_event, INFINITE);
