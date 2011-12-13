@@ -37,6 +37,7 @@ namespace System.Runtime.InteropServices {
 			AttributeTargets.Struct | AttributeTargets.Enum | 
 			AttributeTargets.Interface | AttributeTargets.Delegate,
 			Inherited=false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class GuidAttribute : Attribute {
 		
 		private string guidValue;

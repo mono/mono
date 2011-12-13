@@ -44,6 +44,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ConstructorBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class ConstructorBuilder : ConstructorInfo, _ConstructorBuilder {
 	
 #pragma warning disable 169, 414

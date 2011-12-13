@@ -45,6 +45,7 @@ namespace System.Reflection.Emit
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_MethodBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
 	{
 #pragma warning disable 169, 414

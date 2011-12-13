@@ -46,6 +46,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
 
 #pragma warning disable 169, 414

@@ -39,6 +39,7 @@ namespace System.Globalization
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info;

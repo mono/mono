@@ -53,6 +53,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 
 #pragma warning disable 169

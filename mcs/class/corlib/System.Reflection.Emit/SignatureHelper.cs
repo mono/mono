@@ -42,6 +42,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_SignatureHelper))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class SignatureHelper : _SignatureHelper {
 		internal enum SignatureHelperType {
 			HELPER_FIELD,

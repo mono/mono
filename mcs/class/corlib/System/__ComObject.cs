@@ -51,6 +51,7 @@ namespace System
 	// many times that obj.GetType().FullName == "System.__ComObject" and
 	// Type.GetType("System.__ComObject") may be used.
 
+	[StructLayout (LayoutKind.Sequential)]
 	internal class __ComObject : MarshalByRefObject
 	{
 #pragma warning disable 169	

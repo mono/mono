@@ -40,6 +40,7 @@ namespace System.Reflection.Emit {
 	[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
 	[ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class UnmanagedMarshal {
 #pragma warning disable 169, 414
 		private int count;

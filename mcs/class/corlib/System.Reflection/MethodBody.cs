@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public
 #if !NET_4_0
 	sealed

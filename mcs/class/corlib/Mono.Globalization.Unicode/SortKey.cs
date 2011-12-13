@@ -33,11 +33,13 @@
 using System;
 using System.IO;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public class SortKey
 	{
 		#region Static members

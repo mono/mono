@@ -40,6 +40,7 @@ using System.Runtime.ConstrainedExecution;
 namespace System.Threading
 {
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class WaitHandle
 #if MOONLIGHT
 		: IDisposable

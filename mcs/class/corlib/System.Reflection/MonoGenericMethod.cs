@@ -31,10 +31,12 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoGenericMethod : MonoMethod
 	{
 		internal MonoGenericMethod ()
@@ -50,6 +52,7 @@ namespace System.Reflection
 	}
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoGenericCMethod : MonoCMethod
 	{
 		internal MonoGenericCMethod ()

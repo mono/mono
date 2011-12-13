@@ -207,6 +207,7 @@ namespace System.Reflection.Emit
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_AssemblyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
 #pragma warning disable 169, 414, 649
 		#region Sync with object-internals.h

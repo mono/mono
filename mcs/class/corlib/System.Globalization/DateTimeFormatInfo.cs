@@ -48,6 +48,7 @@ namespace System.Globalization
 
 	[Serializable]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
 		private static readonly string MSG_READONLY = "This instance is read only";
 		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";

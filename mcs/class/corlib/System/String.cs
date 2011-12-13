@@ -55,6 +55,7 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable, IComparable<String>, IEquatable <String>, IEnumerable<char>
 	{
 		[NonSerialized] private int length;

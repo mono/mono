@@ -42,7 +42,7 @@ using System.Security;
 using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading {
-
+	[StructLayout (LayoutKind.Sequential)]
 	internal class InternalThread : CriticalFinalizerObject {
 #pragma warning disable 169, 414, 649
 		#region Sync with metadata/object-internals.h
@@ -122,6 +122,7 @@ namespace System.Threading {
 	[ClassInterface (ClassInterfaceType.None)]
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Thread))]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class Thread : CriticalFinalizerObject, _Thread {
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h

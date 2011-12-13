@@ -36,6 +36,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class EventInfo : MemberInfo, _EventInfo {
 		AddEventAdapter cached_add_event;
 

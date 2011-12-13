@@ -37,6 +37,7 @@ namespace System.Runtime.InteropServices {
 
 	[ComVisible(true)]
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class DllImportAttribute: Attribute {
 		#region Sync with reflection.h
 		public CallingConvention CallingConvention;

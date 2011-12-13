@@ -36,6 +36,7 @@ namespace System.Reflection
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
 
 		protected Type ClassImpl;

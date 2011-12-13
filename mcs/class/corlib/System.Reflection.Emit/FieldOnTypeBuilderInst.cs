@@ -30,12 +30,14 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents a field of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class FieldOnTypeBuilderInst : FieldInfo
 	{
 		#region Keep in sync with object-internals.h

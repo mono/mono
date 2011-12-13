@@ -42,6 +42,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_FieldBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
 	
 #pragma warning disable 169, 414

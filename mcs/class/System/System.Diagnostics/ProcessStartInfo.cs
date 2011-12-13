@@ -37,11 +37,13 @@ using System.IO;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics 
 {
 	[TypeConverter (typeof (ExpandableObjectConverter))]
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class ProcessStartInfo 
 	{
 		/* keep these fields in this order and in sync with metadata/process.h */

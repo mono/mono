@@ -42,6 +42,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_PropertyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
 
 // Managed version of MonoReflectionPropertyBuilder

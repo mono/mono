@@ -31,12 +31,15 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Runtime.InteropServices;
+
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents a method of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MethodOnTypeBuilderInst : MethodInfo
 	{
 		#region Keep in sync with object-internals.h

@@ -53,6 +53,7 @@ using System.Threading;
 
 namespace System.Runtime.InteropServices
 {
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class SafeHandle : CriticalFinalizerObject, IDisposable {
 		//
 		// Warning: the offset of handle is mapped inside the runtime

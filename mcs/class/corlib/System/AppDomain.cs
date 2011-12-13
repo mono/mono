@@ -62,6 +62,7 @@ namespace System {
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 #if MOONLIGHT
 	public sealed class AppDomain : _AppDomain {
 #elif NET_2_1

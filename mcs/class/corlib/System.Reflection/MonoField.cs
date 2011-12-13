@@ -42,6 +42,7 @@ using System.Runtime.Serialization;
 namespace System.Reflection {
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoField : FieldInfo, ISerializable {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;

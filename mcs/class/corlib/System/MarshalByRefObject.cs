@@ -38,6 +38,7 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MarshalByRefObject
 	{
 		[NonSerialized]

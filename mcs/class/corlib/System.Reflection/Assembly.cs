@@ -48,6 +48,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
 #elif MOONLIGHT

@@ -42,6 +42,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class DynamicMethod : MethodInfo {
 
 #pragma warning disable 169, 414, 649

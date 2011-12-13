@@ -38,6 +38,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
@@ -47,6 +48,7 @@ namespace System.Reflection
 	 * NotImplementedException for many of the methods but we can't do that as gmcs
 	 * depends on them.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoGenericClass : Type
 	{
 		#region Keep in sync with object-internals.h

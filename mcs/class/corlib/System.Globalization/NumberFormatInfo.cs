@@ -51,6 +51,7 @@ namespace System.Globalization {
 
 	[ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
 
 /* Keep in sync with object-internals.h */

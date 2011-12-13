@@ -43,6 +43,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ParameterBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ParameterBuilder : _ParameterBuilder {
 
 #pragma warning disable 169, 414

@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection
 {
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ManifestResourceInfo
 	{
 		private Assembly _assembly;

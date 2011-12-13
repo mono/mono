@@ -34,6 +34,7 @@ namespace System.Runtime.InteropServices {
 
 	[ComVisible(true)]
 	[AttributeUsage(AttributeTargets.Interface, Inherited=false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class InterfaceTypeAttribute : Attribute {
 		
 		private ComInterfaceType intType;

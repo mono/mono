@@ -34,11 +34,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MulticastDelegate : Delegate
 	{
 		private MulticastDelegate prev;

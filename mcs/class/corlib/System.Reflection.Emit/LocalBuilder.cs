@@ -45,6 +45,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_LocalBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class LocalBuilder : LocalVariableInfo, _LocalBuilder {
 
 		// Some fields are already defined in LocalVariableInfo

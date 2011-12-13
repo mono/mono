@@ -33,10 +33,12 @@
 using System;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Messaging {
 
 [System.Runtime.InteropServices.ComVisible (true)]
+[StructLayout (LayoutKind.Sequential)]
 public class AsyncResult : IAsyncResult, IMessageSink {
 
 #pragma warning disable 169, 414, 649

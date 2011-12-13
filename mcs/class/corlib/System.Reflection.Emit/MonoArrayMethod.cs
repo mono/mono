@@ -37,6 +37,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection {
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoArrayMethod: MethodInfo {
 #pragma warning disable 649
 		internal RuntimeMethodHandle mhandle;

@@ -72,6 +72,7 @@ namespace System.Reflection {
 	internal delegate R Getter<T,R> (T _this);
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoProperty : PropertyInfo, ISerializable {
 #pragma warning disable 649
 		internal IntPtr klass;

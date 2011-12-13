@@ -187,6 +187,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ILGenerator))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ILGenerator: _ILGenerator {
 		private struct LabelFixup {
 			public int offset;    // The number of bytes between pos and the

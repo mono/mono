@@ -46,6 +46,7 @@ namespace System {
 	[ClassInterface (ClassInterfaceType.None)]
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Type : MemberInfo, IReflect, _Type {
 		
 		internal RuntimeTypeHandle _impl;

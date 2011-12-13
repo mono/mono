@@ -49,6 +49,7 @@ namespace System
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		#region Sync with object-internals.h

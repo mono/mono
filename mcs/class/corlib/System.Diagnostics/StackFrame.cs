@@ -41,6 +41,7 @@ namespace System.Diagnostics {
 	[Serializable]
 	[ComVisible (true)]
 	[MonoTODO ("Serialized objects are not compatible with MS.NET")]
+	[StructLayout (LayoutKind.Sequential)]
         public class StackFrame {
 
                 public const int OFFSET_UNKNOWN = -1;

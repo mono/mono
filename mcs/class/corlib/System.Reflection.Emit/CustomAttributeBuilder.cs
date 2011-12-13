@@ -41,6 +41,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_CustomAttributeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class CustomAttributeBuilder : _CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;

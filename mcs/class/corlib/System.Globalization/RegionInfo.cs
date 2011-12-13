@@ -29,11 +29,13 @@
 //
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization
 {
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public class RegionInfo
 	{
 		static RegionInfo currentRegion;

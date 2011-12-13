@@ -111,6 +111,7 @@ namespace System.Reflection {
 	 * the .NET reflection class hierarchy is so broken.
 	 */
 	[Serializable()]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoMethod : MethodInfo, ISerializable
 	{
 #pragma warning disable 649
@@ -453,6 +454,7 @@ namespace System.Reflection {
 #endif
 	}
 	
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoCMethod : ConstructorInfo, ISerializable
 	{
 #pragma warning disable 649		

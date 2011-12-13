@@ -42,6 +42,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_EventBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class EventBuilder : _EventBuilder {
 #pragma warning disable 169, 414
 		internal string name;

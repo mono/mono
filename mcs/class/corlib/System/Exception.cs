@@ -43,6 +43,7 @@ namespace System
 	[ComVisible(true)]
 	[ComDefaultInterface (typeof (_Exception))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class Exception : ISerializable, _Exception
 	{
 #pragma warning disable 169, 649

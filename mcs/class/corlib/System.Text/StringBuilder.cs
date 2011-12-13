@@ -46,6 +46,7 @@ namespace System.Text {
 	[Serializable]
 	[ComVisible (true)]
         [MonoLimitation ("Serialization format not compatible with .NET")]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class StringBuilder : ISerializable
 	{
 		private int _length;

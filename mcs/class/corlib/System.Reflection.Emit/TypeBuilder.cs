@@ -48,6 +48,7 @@ namespace System.Reflection.Emit
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class TypeBuilder : Type, _TypeBuilder
 	{
 #pragma warning disable 169		

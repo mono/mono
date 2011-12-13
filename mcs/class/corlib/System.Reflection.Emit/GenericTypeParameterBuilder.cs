@@ -40,6 +40,7 @@ using System.Runtime.Serialization;
 namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class GenericTypeParameterBuilder : Type
 	{
 	#region Sync with reflection.h

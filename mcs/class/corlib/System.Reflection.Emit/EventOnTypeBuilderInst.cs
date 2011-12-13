@@ -31,12 +31,14 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents an event of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class EventOnTypeBuilderInst : EventInfo
 	{
 		MonoGenericClass instantiation;

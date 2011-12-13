@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Interop
 {
+	[StructLayout (LayoutKind.Sequential)]
 	internal class ComInteropProxy : RealProxy, IRemotingTypeInfo
     {
         #region Sync with object-internals.h

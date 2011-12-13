@@ -47,7 +47,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-
+	[StructLayout (LayoutKind.Sequential)]
 #if NET_4_0 || MOONLIGHT || MOBILE
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else

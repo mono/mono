@@ -44,6 +44,7 @@ namespace System.Reflection.Emit
 		ARRAY = 0x14
 	}
 
+	[StructLayout (LayoutKind.Sequential)]
 	internal abstract class DerivedType : Type
 	{
 		internal Type elementType;
@@ -317,6 +318,7 @@ namespace System.Reflection.Emit
 		}
 	}
 
+	[StructLayout (LayoutKind.Sequential)]
 	internal class ArrayType : DerivedType
 	{
 		int rank;
@@ -373,7 +375,7 @@ namespace System.Reflection.Emit
 		}
 	}
 
-
+	[StructLayout (LayoutKind.Sequential)]
 	internal class ByRefType : DerivedType
 	{
 		internal ByRefType (Type elementType) : base (elementType)
@@ -422,7 +424,7 @@ namespace System.Reflection.Emit
 		}
 	}
 
-
+	[StructLayout (LayoutKind.Sequential)]
 	internal class PointerType : DerivedType
 	{
 		internal PointerType (Type elementType) : base (elementType)

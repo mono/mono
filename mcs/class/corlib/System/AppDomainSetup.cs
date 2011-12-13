@@ -48,6 +48,7 @@ namespace System
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 #if NET_2_1
 	public sealed class AppDomainSetup
 #else

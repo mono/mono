@@ -41,6 +41,7 @@ using Mono.Globalization.Unicode;
 namespace System.Globalization
 {
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 #if !MOONLIGHT
 	[ComVisible (true)]
 	public class CompareInfo : IDeserializationCallback {

@@ -61,6 +61,7 @@ namespace System.Reflection {
 	}
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal sealed class MonoEvent: EventInfo, ISerializable
 	{
 #pragma warning disable 169
