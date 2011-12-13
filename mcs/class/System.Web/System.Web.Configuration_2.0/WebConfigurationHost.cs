@@ -385,14 +385,23 @@ namespace System.Web.Configuration
 					else
 						normalized = configPath;
 					
-					return (String.Compare (normalized, MachinePath, StringComparison.Ordinal) == 0) ||
-						(String.Compare (normalized, MachineWebPath, StringComparison.Ordinal) == 0) ||
-						(String.Compare (normalized, "/", StringComparison.Ordinal) == 0) ||
-						(String.Compare (normalized, "~", StringComparison.Ordinal) == 0) ||
-						(String.Compare (normalized, appVirtualPath) == 0);
+					if ((String.Compare (normalized, MachinePath, StringComparison.Ordinal) == 0) ||
+						(String.Compare (normalized, MachineWebPath, StringComparison.Ordinal) == 0))
+							return true;
+				
+					if ((String.Compare (normalized, appVirtualPath) != 0))
+						return IsApplication (normalized);
+				
+					return true;
 				default:
 					return true;
 			}
+		}
+		
+		[MonoTODO("Should return false in case strPath points to the root of an application.")]
+		internal bool IsApplication(string strPath)
+		{
+			return true;
 		}
 		
 		public virtual bool IsFile (string streamName)
