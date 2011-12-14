@@ -5418,15 +5418,11 @@ catch_clauses
 		var l = (List<Catch>) $1;
 		
 		Catch c = (Catch) $2;
-		if (l [0].IsGeneral) {
+		if (l [l.Count - 1].IsGeneral) {
 			report.Error (1017, c.loc, "Try statement already has an empty catch block");
-		} else {
-			if (c.IsGeneral)
-				l.Insert (0, c);
-			else
-				l.Add (c);
 		}
 		
+		l.Add (c);
 		$$ = l;
 	  }
 	;
