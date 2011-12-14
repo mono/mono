@@ -72,12 +72,12 @@ monoutils_sources = \
 	mono-membar.h	\
 	mono-path.h	\
 	mono-poll.h	\
+	mono-tls.h  	\
 	mono-uri.h	\
 	mono-stdlib.h	\
 	valgrind.h	\
 	mach-support.c	\
 	mach-support.h  \
-	mach-tls.h  \
 	memcheck.h
 
 arch_sources = 
