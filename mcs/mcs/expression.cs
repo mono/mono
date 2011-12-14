@@ -7720,31 +7720,13 @@ namespace Mono.CSharp
 					ec.Module.Compiler.Report.Error (432, loc, "Alias `{0}' not found", alias);
 				return null;
 			}
-
-			FullNamedExpression fne = base.ResolveAsTypeOrNamespace (ec);
-			if (fne == null)
-				return null;
-
-			if (expr.eclass == ExprClass.Type) {
-				ec.Module.Compiler.Report.Error (431, loc,
-					"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
-
-				return null;
-			}
-
-			return fne;
+			
+			return base.ResolveAsTypeOrNamespace (ec);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return ResolveAsTypeOrNamespace (ec);
-		}
-
-		protected override void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
-		{
-			rc.Module.Compiler.Report.Error (687, loc,
-				"A namespace alias qualifier `{0}' did not resolve to a namespace or a type",
-				GetSignatureForError ());
 		}
 
 		public override string GetSignatureForError ()
@@ -7759,6 +7741,14 @@ namespace Mono.CSharp
 
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
 		{
+			if ((restrictions & MemberLookupRestrictions.InvocableOnly) != 0) {
+				rc.Module.Compiler.Report.Error (687, loc,
+					"The namespace alias qualifier `::' cannot be used to invoke a method. Consider using `.' instead",
+					GetSignatureForError ());
+
+				return null;
+			}
+
 			return DoResolve (rc);
 		}
 
@@ -8109,6 +8099,14 @@ namespace Mono.CSharp
 				rc.Module.Compiler.Report.Error (704, loc, "A nested type cannot be specified through a type parameter `{0}'",
 					tnew_expr.GetSignatureForError ());
 				return null;
+			}
+
+			var qam = this as QualifiedAliasMember;
+			if (qam != null) {
+				rc.Module.Compiler.Report.Error (431, loc,
+					"Alias `{0}' cannot be used with `::' since it denotes a type. Consider replacing `::' with `.'",
+					qam.Alias);
+
 			}
 
 			TypeSpec nested = null;

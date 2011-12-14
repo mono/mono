@@ -3,7 +3,7 @@
 
 namespace Top
 {
-	using T = Nested.C;
+	using T = System.Exception;
 
 	namespace T
 	{

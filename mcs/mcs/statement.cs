@@ -1886,6 +1886,7 @@ namespace Mono.CSharp {
 
 		public static string GetCompilerGeneratedName (Block block)
 		{
+			// HACK: Debugger depends on the name semantics
 			return "$locvar" + block.ParametersBlock.TemporaryLocalsCount++.ToString ("X");
 		}
 

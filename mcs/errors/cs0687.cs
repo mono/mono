@@ -1,4 +1,4 @@
-// CS0687: A namespace alias qualifier `foo::WriteLine' did not resolve to a namespace or a type
+// CS0687: The namespace alias qualifier `::' cannot be used to invoke a method. Consider using `.' instead
 // Line: 9
 
 using foo = System.Console;

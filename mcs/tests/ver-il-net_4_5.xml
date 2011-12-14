@@ -44888,6 +44888,26 @@
       </method>
     </type>
   </test>
+  <test name="test-835.cs">
+    <type name="AA">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AA+D">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-84.cs">
     <type name="Ghost">
       <method name="Void .ctor()">

@@ -373,6 +373,7 @@ namespace Mono.CSharp
 
 				// Need to setup MemberCache
 				parser_result.CreateType ();
+				parser_result.NamespaceEntry.Define ();
 
 				var method = parser_result.Methods[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
@@ -768,12 +769,17 @@ namespace Mono.CSharp
 			return sb.ToString ();
 		}
 
-		internal ICollection<string> GetUsingList ()
+		internal List<string> GetUsingList ()
 		{
 			var res = new List<string> ();
 
-			foreach (var ue in source_file.NamespaceContainer.Usings)
-				res.Add (ue.Name);
+			foreach (var ue in source_file.NamespaceContainer.Usings) {
+				if (ue.Alias != null)
+					continue;
+
+				res.Add (ue.NamespaceName.Name);
+			}
+
 			return res;
 		}
 		

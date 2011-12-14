@@ -1357,9 +1357,13 @@ namespace Mono.CSharp
 
 			type_defined = true;
 
-			// TODO: Driver resolves only first level of namespace, do the rest here for now
-			if (IsTopLevel && (ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
-				NamespaceEntry.Resolve ();
+			// Nested type share same namespace
+			if (IsTopLevel && !IsCompilerGenerated) {
+				NamespaceEntry.Define ();
+				if (partial_parts != null) {
+					foreach (var part in partial_parts)
+						part.NamespaceEntry.Define ();
+				}
 			}
 
 			if (!DefineBaseTypes ()) {

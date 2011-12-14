@@ -300,7 +300,7 @@ namespace Mono.CSharp
 
 			tr.Start (TimeReporter.TimerType.UsingResolve);
 			foreach (var source_file in ctx.SourceFiles) {
-				source_file.NamespaceContainer.Resolve ();
+				source_file.NamespaceContainer.Define ();
 			}
 			tr.Stop (TimeReporter.TimerType.UsingResolve);
 

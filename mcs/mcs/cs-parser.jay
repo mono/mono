@@ -421,18 +421,26 @@ extern_alias_directive
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		string s = lt.Value;
-		if (s != "alias"){
+		if (s != "alias") {
 			syntax_error (lt.Location, "`alias' expected");
-		} else if (lang_version == LanguageVersion.ISO_1) {
-			FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
-			lt = (Tokenizer.LocatedToken) $3; 
-			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location, report);
+			if (lang_version == LanguageVersion.ISO_1)
+				FeatureIsNotAvailable (lt.Location, "external alias");
+
+			lt = (Tokenizer.LocatedToken) $3;
+			if (lt.Value == QualifiedAliasMember.GlobalAlias) {
+				RootNamespace.Error_GlobalNamespaceRedefined (report, lt.Location);
+			}
+			
+			var na = new UsingExternAlias (new MemberName (lt.Value, lt.Location), GetLocation ($1));
+			current_namespace.AddUsing (na);
+			
+			lbag.AddLocation (na, GetLocation ($2), GetLocation ($4));
 		}
 	  }
 	| EXTERN_ALIAS error
 	  {
-	  	syntax_error (GetLocation ($1), "`alias' expected");   // TODO: better
+		Error_SyntaxError (yyToken);
 	  }
 	;
  
@@ -442,20 +450,22 @@ using_directives
 	;
 
 using_directive
-	: using_alias_directive
-	  {
-		if (doc_support)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	| using_namespace_directive
+	: using_namespace
 	  {
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
-using_alias_directive
-	: USING IDENTIFIER ASSIGN namespace_or_type_name SEMICOLON
+using_namespace
+	: USING namespace_name SEMICOLON 
+	  {
+		var un = new UsingNamespace ((MemberName) $2, GetLocation ($1));
+		current_namespace.AddUsing (un);
+		
+		lbag.AddLocation (un, GetLocation ($3));
+	  }
+	| USING IDENTIFIER ASSIGN namespace_or_type_name SEMICOLON
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		if (lang_version != LanguageVersion.ISO_1 && lt.Value == "global") {
@@ -463,20 +473,16 @@ using_alias_directive
 			 "An alias named `global' will not be used when resolving `global::'. The global namespace will be used instead");
 		}
 
-		current_namespace.AddUsingAlias (lt.Value, (MemberName) $4, GetLocation ($1));
+		var un = new UsingAliasNamespace (new MemberName (lt.Value, lt.Location), (MemberName) $4, GetLocation ($1));
+		current_namespace.AddUsing (un);
+		
+		lbag.AddLocation (un, GetLocation ($3), GetLocation ($5));
 	  }
 	| USING error
 	 {
 		Error_SyntaxError (yyToken);
 		$$ = null;
-	  }
-	;
-
-using_namespace_directive
-	: USING namespace_name SEMICOLON 
-	  {
-		current_namespace.AddUsing ((MemberName) $2, GetLocation ($1));
-	  }
+	 }
 	;
 
 //
