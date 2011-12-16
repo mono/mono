@@ -30,6 +30,7 @@ RESOURCE_FILES_DIST= \
 
 NUNIT_RESOURCE_FILES= \
 	Test/resources/Web.mono.config \
+	Test/resources/profile.config.4.5 \
 	Test/resources/profile.config.4.0 \
 	Test/resources/profile.config.2.0 \
 	$(wildcard Test/resources/*.as?x) \
