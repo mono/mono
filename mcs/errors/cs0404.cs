@@ -1,4 +1,4 @@
-// CS0404: '<' unexpected: attributes cannot be generic
+// CS0404: Attributes cannot be generic
 // Line: 3
 [Test<T>]
 class X

@@ -327,7 +327,7 @@ namespace Mono.CSharp
 			escaped_identifiers.Add (loc);
 		}
 
-		public bool IsEscapedIdentifier (MemberName name)
+		public bool IsEscapedIdentifier (ATypeNameExpression name)
 		{
 			return escaped_identifiers != null && escaped_identifiers.Contains (name.Location);
 		}

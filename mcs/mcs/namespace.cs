@@ -717,10 +717,10 @@ namespace Mono.CSharp {
 			} else {
 				foreach (var entry in clauses) {
 					var a = entry as UsingAliasNamespace;
-					if (a != null && a.Alias.Equals (un.Alias)) {
+					if (a != null && a.Alias.Value == un.Alias.Value) {
 						Compiler.Report.SymbolRelatedToPreviousError (a.Location, "");
 						Compiler.Report.Error (1537, un.Location,
-							"The using alias `{0}' appeared previously in this namespace", un.Alias.GetSignatureForError ());
+							"The using alias `{0}' appeared previously in this namespace", un.Alias.Value);
 					}
 				}
 			}
@@ -921,7 +921,7 @@ namespace Mono.CSharp {
 						// TODO: Why is it needed, what to do with aliases
 						var ul = new List<string> ();
 						foreach (var c in clauses) {
-							ul.Add (c.NamespaceName.GetName ());
+							ul.Add (c.ResolvedExpression.GetSignatureForError ());
 						}
 						
 						using_list = ul.ToArray ();
@@ -1001,7 +1001,7 @@ namespace Mono.CSharp {
 						if (entry is UsingExternAlias) {
 							entry.Define (this);
 							if (entry.ResolvedExpression != null)
-								aliases.Add (entry.Alias.Name, (UsingExternAlias) entry);
+								aliases.Add (entry.Alias.Value, (UsingExternAlias) entry);
 
 							clauses.RemoveAt (i--);
 						} else {
@@ -1033,7 +1033,7 @@ namespace Mono.CSharp {
 						if (entry.Alias != null) {
 							entry.Define (this);
 							if (entry.ResolvedExpression != null) {
-								aliases.Add (entry.Alias.Name, (UsingAliasNamespace) entry);
+								aliases.Add (entry.Alias.Value, (UsingAliasNamespace) entry);
 							}
 
 							clauses.RemoveAt (i--);
@@ -1087,19 +1087,19 @@ namespace Mono.CSharp {
 
 	public class UsingNamespace
 	{
-		readonly MemberName name;
+		readonly ATypeNameExpression expr;
 		readonly Location loc;
 		protected FullNamedExpression resolved;
 
-		public UsingNamespace (MemberName name, Location loc)
+		public UsingNamespace (ATypeNameExpression expr, Location loc)
 		{
-			this.name = name;
+			this.expr = expr;
 			this.loc = loc;
 		}
 
 		#region Properties
 
-		public virtual MemberName Alias {
+		public virtual SimpleMemberName Alias {
 			get {
 				return null;
 			}
@@ -1111,9 +1111,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public MemberName NamespaceName	{
+		public ATypeNameExpression NamespaceExpression	{
 			get {
-				return name;
+				return expr;
 			}
 		}
 
@@ -1127,12 +1127,12 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			return name.GetSignatureForError ();
+			return expr.GetSignatureForError ();
 		}
 
 		public virtual void Define (NamespaceContainer ctx)
 		{
-			resolved = name.GetTypeExpression ().ResolveAsTypeOrNamespace (ctx);
+			resolved = expr.ResolveAsTypeOrNamespace (ctx);
 			var ns = resolved as Namespace;
 			if (ns == null) {
 				if (resolved != null) {
@@ -1147,25 +1147,25 @@ namespace Mono.CSharp {
 
 	public class UsingExternAlias : UsingAliasNamespace
 	{
-		public UsingExternAlias (MemberName alias, Location loc)
+		public UsingExternAlias (SimpleMemberName alias, Location loc)
 			: base (alias, null, loc)
 		{
 		}
 
 		public override void Define (NamespaceContainer ctx)
 		{
-			resolved = ctx.Module.GetRootNamespace (Alias.Name);
+			resolved = ctx.Module.GetRootNamespace (Alias.Value);
 			if (resolved == null) {
 				ctx.Module.Compiler.Report.Error (430, Location,
 					"The extern alias `{0}' was not specified in -reference option",
-					Alias.Name);
+					Alias.Value);
 			}
 		}
 	}
 
 	public class UsingAliasNamespace : UsingNamespace
 	{
-		readonly MemberName alias;
+		readonly SimpleMemberName alias;
 
 		struct AliasContext : IMemberContext
 		{
@@ -1253,13 +1253,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public UsingAliasNamespace (MemberName alias, MemberName ns, Location loc)
-			: base (ns, loc)
+		public UsingAliasNamespace (SimpleMemberName alias, ATypeNameExpression expr, Location loc)
+			: base (expr, loc)
 		{
 			this.alias = alias;
 		}
 
-		public override MemberName Alias {
+		public override SimpleMemberName Alias {
 			get {
 				return alias;
 			}
@@ -1277,7 +1277,7 @@ namespace Mono.CSharp {
 			// We achieve that by introducing alias-context which redirect any local
 			// namespace or type resolve calls to parent namespace
 			//
-			resolved = NamespaceName.GetTypeExpression ().ResolveAsTypeOrNamespace (new AliasContext (ctx));
+			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx));
 		}
 	}
 }

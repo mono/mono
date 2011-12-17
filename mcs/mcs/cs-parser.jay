@@ -432,7 +432,7 @@ extern_alias_directive
 				RootNamespace.Error_GlobalNamespaceRedefined (report, lt.Location);
 			}
 			
-			var na = new UsingExternAlias (new MemberName (lt.Value, lt.Location), GetLocation ($1));
+			var na = new UsingExternAlias (new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1));
 			current_namespace.AddUsing (na);
 			
 			lbag.AddLocation (na, GetLocation ($2), GetLocation ($4));
@@ -458,14 +458,14 @@ using_directive
 	;
 
 using_namespace
-	: USING namespace_name SEMICOLON 
+	: USING namespace_or_type_expr SEMICOLON 
 	  {
-		var un = new UsingNamespace ((MemberName) $2, GetLocation ($1));
+		var un = new UsingNamespace ((ATypeNameExpression) $2, GetLocation ($1));
 		current_namespace.AddUsing (un);
 		
 		lbag.AddLocation (un, GetLocation ($3));
 	  }
-	| USING IDENTIFIER ASSIGN namespace_or_type_name SEMICOLON
+	| USING IDENTIFIER ASSIGN namespace_or_type_expr SEMICOLON
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		if (lang_version != LanguageVersion.ISO_1 && lt.Value == "global") {
@@ -473,7 +473,7 @@ using_namespace
 			 "An alias named `global' will not be used when resolving `global::'. The global namespace will be used instead");
 		}
 
-		var un = new UsingAliasNamespace (new MemberName (lt.Value, lt.Location), (MemberName) $4, GetLocation ($1));
+		var un = new UsingAliasNamespace (new SimpleMemberName (lt.Value, lt.Location), (ATypeNameExpression) $4, GetLocation ($1));
 		current_namespace.AddUsing (un);
 		
 		lbag.AddLocation (un, GetLocation ($3), GetLocation ($5));
@@ -564,18 +564,6 @@ opt_semicolon
 opt_comma
 	: /* empty */
 	| COMMA
-	;
-
-namespace_name
-	: namespace_or_type_name
-	 {
-		MemberName name = (MemberName) $1;
-
-		if (name.TypeArguments != null)
-			syntax_error (lexer.Location, "namespace name expected");
-
-		$$ = name;
-	  }
 	;
 
 opt_using_directives
@@ -745,20 +733,18 @@ attribute
 	  opt_attribute_arguments
 	  {
 		--lexer.parsing_block;
-		MemberName mname = (MemberName) $1;
-		if (mname.IsGeneric) {
-			report.Error (404, lexer.Location,
-				      "'<' unexpected: attributes cannot be generic");
+		
+		var tne = (ATypeNameExpression) $1;
+		if (tne.HasTypeArguments) {
+			report.Error (404, tne.Location, "Attributes cannot be generic");
 		}
 
-		Arguments [] arguments = (Arguments []) $3;
-		ATypeNameExpression expr = mname.GetTypeExpression ();
-		$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+		$$ = new Attribute (current_attr_target, tne, (Arguments[]) $3, GetLocation ($1), lexer.IsEscapedIdentifier (tne));
 	  }
 	;
 
 attribute_name
-	: namespace_or_type_name
+	: namespace_or_type_expr
 	;
 
 opt_attribute_arguments
@@ -2623,32 +2609,33 @@ opt_nullable
 	  }
 	;
 
-namespace_or_type_name
+namespace_or_type_expr
 	: member_name
 	| qualified_alias_member IDENTIFIER opt_type_argument_list
 	  {
 		var lt1 = (Tokenizer.LocatedToken) $1;
 		var lt2 = (Tokenizer.LocatedToken) $2;
 		
-		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
 member_name
-	: type_name
-	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list
+	: simple_name_expr
+	| namespace_or_type_expr DOT IDENTIFIER opt_type_argument_list
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
-		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
-		lbag.AddLocation ($$, GetLocation ($2));		
+		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
-type_name
+simple_name_expr
 	: IDENTIFIER opt_type_argument_list
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments)$2, lt.Location);	  
+		$$ = new SimpleName (lt.Value, (TypeArguments)$2, lt.Location);
 	  }
 	;
 	
@@ -2860,22 +2847,21 @@ type_expression_or_array
 	;
 	
 type_expression
-	: namespace_or_type_name opt_nullable
+	: namespace_or_type_expr opt_nullable
 	  {
-		MemberName name = (MemberName) $1;
-
 		if ($2 != null) {
-			$$ = new ComposedCast (name.GetTypeExpression (), (ComposedTypeSpecifier) $2);
+			$$ = new ComposedCast ((ATypeNameExpression) $1, (ComposedTypeSpecifier) $2);
 		} else {
-			if (name.Left == null && name.Name == "var")
-				$$ = new VarExpr (name.Location);
+			var sn = $1 as SimpleName;
+			if (sn != null && sn.Name == "var")
+				$$ = new VarExpr (sn.Location);
 			else
-				$$ = name.GetTypeExpression ();
+				$$ = $1;
 		}
 	  }
-	| namespace_or_type_name pointer_stars
+	| namespace_or_type_expr pointer_stars
 	  {
-		$$ = new ComposedCast (((MemberName) $1).GetTypeExpression (), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast ((ATypeNameExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
 	| builtin_types opt_nullable
 	  {
@@ -3624,14 +3610,14 @@ unbound_type_name
 		
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (int) $4, lt.Location);		
 	  }
-	| namespace_or_type_name DOT identifier_inside_body generic_dimension
+	| namespace_or_type_expr DOT identifier_inside_body generic_dimension
 	  {
-		var te = ((MemberName) $1).GetTypeExpression ();
-		if (te.HasTypeArguments)
+		var tne = (ATypeNameExpression) $1;
+		if (tne.HasTypeArguments)
 			Error_TypeExpected (GetLocation ($4));
 
 		var lt = (Tokenizer.LocatedToken) $3;
-		$$ = new MemberAccess (te, lt.Value, (int) $4, lt.Location);		
+		$$ = new MemberAccess (tne, lt.Value, (int) $4, lt.Location);		
 	  }
 	;
 
