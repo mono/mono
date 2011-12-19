@@ -229,6 +229,7 @@ mono_runtime_syscall_fork ()
 gboolean
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
+	return FALSE; // disable for now due to #2548.
 	const char *argv [5];
 	char gdb_template [] = "/tmp/mono-gdb-commands.XXXXXX";
 
