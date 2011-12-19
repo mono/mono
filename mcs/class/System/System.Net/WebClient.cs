@@ -881,7 +881,7 @@ namespace System.Net
 			if (nolength)
 				ms = new MemoryStream ();
 
-//			long total = 0;
+			long total = 0;
 			int nread = 0;
 			int offset = 0;
 			byte [] buffer = new byte [size];
@@ -893,8 +893,8 @@ namespace System.Net
 					size -= nread;
 				}
 				if (async){
-//					total += nread;
-					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (nread, length, userToken));
+					total += nread;
+					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (total, length, userToken));
 				}
 			}
 
