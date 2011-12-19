@@ -529,6 +529,11 @@ static void thread_cleanup (MonoThread *thread)
 	thread->abort_exc = NULL;
 	thread->current_appcontext = NULL;
 
+	/* if the thread is not in the hash it has been removed already */
+	if (!handle_remove (thread))
+		return;
+
+	EnterCriticalSection (thread->synch_cs);
 	/*
 	 * This is necessary because otherwise we might have
 	 * cross-domain references which will not get cleaned up when
@@ -538,11 +543,12 @@ static void thread_cleanup (MonoThread *thread)
 		int i;
 		for (i = 0; i < NUM_CACHED_CULTURES * 2; ++i)
 			mono_array_set (thread->cached_culture_info, MonoObject*, i, NULL);
+
+		thread->cached_culture_info = NULL;
 	}
 
-	/* if the thread is not in the hash it has been removed already */
-	if (!handle_remove (thread))
-		return;
+	LeaveCriticalSection (thread->synch_cs);
+
 	mono_release_type_locks (thread);
 
 	EnterCriticalSection (thread->synch_cs);
@@ -564,8 +570,6 @@ static void thread_cleanup (MonoThread *thread)
 		g_free (thread->serialized_ui_culture_info);
 
 	g_free (thread->name);
-
-	thread->cached_culture_info = NULL;
 
 	mono_gc_free_fixed (thread->static_data);
 	thread->static_data = NULL;
@@ -3886,8 +3890,7 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread)
 
 		if (shutting_down) {
 			/* After we left the lock, the runtime might shut down so everything becomes invalid */
-			for (;;)
-				Sleep (1000);
+			mono_thread_exit ();
 		}
 		
 		WaitForSingleObject (thread->suspend_event, INFINITE);
