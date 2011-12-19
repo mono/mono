@@ -467,6 +467,8 @@ namespace System.Collections.Generic {
 
 		public int LastIndexOf (T item)
 		{
+			if (_size == 0)
+				return -1;
 			return Array.LastIndexOf<T> (_items, item, _size - 1, _size);
 		}
 		

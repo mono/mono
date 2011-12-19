@@ -1307,6 +1307,12 @@ namespace MonoTests.System.Collections.Generic {
 				Assert.IsTrue (e is ArgumentException, "#10");
 			}
 		}
+
+		[Test]
+		public void LastIndexOfEmpty_2558 () {
+			var l = new List<int> ();
+			Assert.AreEqual (-1, l.IndexOf (-1));
+		}
 	}
 }
 #endif
