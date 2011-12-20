@@ -13,9 +13,6 @@ my $teamcity = 0;
 
 if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	$teamcity = 1;
-	print "Hello build machine\n"
-} else {
-	print "Hello user machine\n"
 }
 
 #do build
