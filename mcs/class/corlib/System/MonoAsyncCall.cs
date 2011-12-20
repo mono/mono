@@ -32,11 +32,13 @@
 //
 // This is the managed counterpart of the ASyncCall structure used by the threadpools.
 //
+using System.Runtime.InteropServices;
 
 namespace System {
 
 #pragma warning disable 169
 
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoAsyncCall {
 		#region Sync with the unmanaged ASyncCall structure
 		object     msg;
