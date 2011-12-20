@@ -58,21 +58,6 @@ namespace Microsoft.Build.Tasks {
 						temporaryRemovedDirectories.Add (directory);
 					}
 				}
-				catch (PathTooLongException ex) {
-					Log.LogErrorFromException (ex);
-				}
-				catch (ArgumentNullException ex) {
-					Log.LogErrorFromException (ex);
-				}
-				catch (ArgumentException ex) {
-					Log.LogErrorFromException (ex);
-				}
-				catch (IOException ex) {
-					Log.LogErrorFromException (ex);
-				}
-				catch (SecurityException ex) {
-					Log.LogErrorFromException (ex);
-				}
 				catch (Exception ex) {
 					Log.LogErrorFromException (ex);
 				}
