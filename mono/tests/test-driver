@@ -6,11 +6,16 @@ my $disabled_tests = shift;
 my $output = $test;
 my $stdout = $test.'.stdout';
 my $stderr = $test.'.stderr';
-
+my $teamcity = $ENV{UNITY_THISISABUILDMACHINE};
 $output =~ s/\.exe$/.output/;
 
 $| = 0;
-print "Testing $test... ";
+if ($teamcity) {
+	print "##teamcity[testStarted name='$test']\n";
+}
+else {
+	print "Testing $test... ";
+}
 
 foreach $disabled (split (/ /, $disabled_tests)) {
 	if ($disabled eq $test) {
@@ -41,8 +46,24 @@ if (!defined ($cpid)) {
 	$res = $? >> 8;
 }
 
+if ($teamcity && -f $stdout) {
+	$text = read_file ($stdout);
+	print "##teamcity[testStdOut name='$test' out='$text']\n";	
+} 
+
+if ($teamcity && -f $stderr) {
+	$text = read_file ($stderr);
+	print "##teamcity[testStdErr name='$test' out='$text']\n";	
+} 
+
 if ($res) {
-	printf ("failed $? (%d) signal (%d).\n", $? >> 8, $? & 127);
+	$failedText = sprintf ("failed $? (%d) signal (%d).", $? >> 8, $? & 127);
+	if ($teamcity) {
+		print ("##teamcity[testFailed name='$test' message='$failedText' details='message and stack trace']\n");
+		print "##teamcity[testFinished name='$test']\n";
+	} else {
+		print "$failedText\n";
+	}
 	if (($? & 127) == 2) {
 		exit (2);
 	} else {
@@ -54,7 +75,13 @@ if (-f $output && (read_file ($output) ne read_file ($stdout))) {
 	exit (1);
 }
 
-print "pass.\n";
+if ($teamcity) {
+	print "##teamcity[testFinished name='$test']\n";
+}
+else {
+	print "pass.\n";
+}
+
 unlink ($stderr);
 exit (0);
 
