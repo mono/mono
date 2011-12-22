@@ -506,7 +506,7 @@ namespace Mono.Terminal {
 				return -1;
 
 			int i = p;
-			if (Char.IsPunctuation (text [p]) || Char.IsWhiteSpace (text[p])){
+			if (Char.IsPunctuation (text [p]) || Char.IsSymbol (text [p]) || Char.IsWhiteSpace (text[p])){
 				for (; i < text.Length; i++){
 					if (Char.IsLetterOrDigit (text [i]))
 					    break;
