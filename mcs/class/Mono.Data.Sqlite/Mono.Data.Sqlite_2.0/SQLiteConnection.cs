@@ -865,14 +865,14 @@ namespace Mono.Data.Sqlite
 
         SQLiteOpenFlagsEnum flags = SQLiteOpenFlagsEnum.None;
 
-        if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
-          flags |= SQLiteOpenFlagsEnum.Create;
-
         if (SqliteConvert.ToBoolean(FindKey(opts, "Read Only", Boolean.FalseString)) == true)
           flags |= SQLiteOpenFlagsEnum.ReadOnly;
-        else
+        else {
           flags |= SQLiteOpenFlagsEnum.ReadWrite;
-
+          if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
+            flags |= SQLiteOpenFlagsEnum.Create;
+        }
+				
         _sql.Open(fileName, flags, maxPoolSize, usePooling);
 
         _binaryGuid = (SqliteConvert.ToBoolean(FindKey(opts, "BinaryGUID", Boolean.TrueString)) == true);
