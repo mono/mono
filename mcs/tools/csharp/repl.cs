@@ -402,6 +402,24 @@ namespace Mono {
 				break;
 			}
 		}
+
+		// Some types (System.Json.JsonPrimitive) implement
+		// IEnumerator and yet, throw an exception when we
+		// try to use them, helper function to check for that
+		// condition
+		static internal bool WorksAsEnumerable (object obj)
+		{
+			IEnumerable enumerable = obj as IEnumerable;
+			if (enumerable != null){
+				try {
+					enumerable.GetEnumerator ();
+					return true;
+				} catch {
+					// nothing, we return false below
+				}
+			}
+			return false;
+		}
 		
 		internal static void PrettyPrint (TextWriter output, object result)
 		{
@@ -445,7 +463,7 @@ namespace Mono {
 						p (output, " }");
 				}
 				p (output, "}");
-			} else if (result is IEnumerable) {
+			} else if (WorksAsEnumerable (result)) {
 				int i = 0;
 				p (output, "{ ");
 				foreach (object item in (IEnumerable) result) {
