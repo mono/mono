@@ -206,7 +206,7 @@ namespace System.Configuration
 			if (!File.Exists (path)) {
 				RawXml = null;
 				SectionInformation.SetRawXml (null);
-				return;
+				throw new ConfigurationErrorsException (string.Format ("Unable to open configSource file '{0}'.", path));
 			}
 			
 			RawXml = File.ReadAllText (path);
