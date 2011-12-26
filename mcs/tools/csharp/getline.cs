@@ -944,13 +944,14 @@ namespace Mono.Terminal {
 			//
 			public void Append (string s)
 			{
-				//Console.WriteLine ("APPENDING {0} {1}", s, Environment.StackTrace);
+				//Console.WriteLine ("APPENDING {0} head={1} tail={2}", s, head, tail);
 				history [head] = s;
 				head = (head+1) % history.Length;
 				if (head == tail)
 					tail = (tail+1 % history.Length);
 				if (count != history.Length)
 					count++;
+				//Console.WriteLine ("DONE: head={1} tail={2}", s, head, tail);
 			}
 
 			//
@@ -982,7 +983,13 @@ namespace Mono.Terminal {
 			public bool PreviousAvailable ()
 			{
 				//Console.WriteLine ("h={0} t={1} cursor={2}", head, tail, cursor);
-				if (count == 0 || cursor == tail)
+				if (count == 0)
+					return false;
+				int next = cursor-1;
+				if (next < 0)
+					next = count-1;
+
+				if (next == head)
 					return false;
 
 				return true;
@@ -990,10 +997,11 @@ namespace Mono.Terminal {
 
 			public bool NextAvailable ()
 			{
-				int next = (cursor + 1) % history.Length;
-				if (count == 0 || next >= head)
+				if (count == 0)
 					return false;
-
+				int next = (cursor + 1) % history.Length;
+				if (next == head)
+					return false;
 				return true;
 			}
 			
