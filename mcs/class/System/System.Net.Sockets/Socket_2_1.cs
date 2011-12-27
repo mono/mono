@@ -1606,7 +1606,6 @@ namespace System.Net.Sockets {
 			DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
-				IPEndPoint endpoint;
 #if MOONLIGHT && !INSIDE_SYSTEM
 				if (!e.PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
 					List<IPAddress> valid = new List<IPAddress> ();
