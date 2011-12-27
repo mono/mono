@@ -97,7 +97,6 @@ namespace Mono.Mozilla {
 #endif
 
 			bool _start = (state & (uint) StateFlags.Start) != 0;
-			bool _negotiating = (state & (uint) StateFlags.Negotiating) != 0;
 			bool _transferring = (state & (uint) StateFlags.Transferring) != 0;
 			bool _redirecting = (state & (uint) StateFlags.Redirecting) != 0;
 			bool _stop = (state & (uint) StateFlags.Stop) != 0;
