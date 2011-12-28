@@ -351,7 +351,7 @@
   <Target  Name="Build" DependsOnTargets="Compile">
   </Target>
 	<Target Name="RunTest" Inputs="@(TestFile)" Outputs="%(Identity).foo" DependsOnTargets="Build">
-		<Exec Timeout="30000" IgnoreExitCode="true" Command="mono-test-wrapper.bat perl test-driver $(JITTEST_PROG_RUN) %(TestFile.Filename).exe '$(DISABLED_TESTS)' $(RUNTIME_ARGS)"/>
+		<Exec Timeout="20000" IgnoreExitCode="true" Command="mono-test-wrapper.bat perl test-driver $(JITTEST_PROG_RUN) %(TestFile.Filename).exe '$(DISABLED_TESTS)' $(RUNTIME_ARGS)"/>
 	</Target>
   <Target  Name="Test" DependsOnTargets="RunTest">
 	</Target>
