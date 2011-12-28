@@ -37,10 +37,6 @@ if (!defined ($cpid)) {
 	alarm ($timeout);
 	$SIG{ALRM} = sub {
 		print "failed after $timeout seconds timeout.\n";
-		if ($teamcity) {
-			print ("##teamcity[testFailed name='$test' message='failed after $timeout seconds timeout.' details='message and stack trace']\n");
-			print "##teamcity[testFinished name='$test']\n";
-		}
 		# process group kill
 		kill (-9, $cpid);
 		exit (3);
