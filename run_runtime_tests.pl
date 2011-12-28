@@ -1,9 +1,5 @@
-#se lib ('.', "perl_lib");
 use Cwd;
-#use File::Path;
-#use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
-#use File::Basename;
 
 system("source","~/.profile");
 print "My Path: $ENV{PATH}\n";
@@ -20,7 +16,12 @@ chdir("$root/mono/tests") eq 1 or die("failed to chdir tests");
 if ($teamcity) {
 	print("##teamcity[testSuiteStarted name='mono runtime tests']\n");
 }
-my $result = system("make test");
+my $result = 0;
+if($^O eq 'MSWin32') {
+	$result = system("msbuild build.proj /t:Test");
+} else {
+	$result = system("make test");
+}
 if ($teamcity) {
 	print("##teamcity[testSuiteFinished name='mono runtime tests']\n");
 }
