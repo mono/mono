@@ -275,7 +275,7 @@
     <TestFile Include="bug-335131.2.cs"/>
     <TestFile Include="bug-322722_patch_bx.2.cs"/>
 		
-    <!--<TestFile Include="bug-348522.2.cs"/>
+    <!--<TestFile Include="bug-348522.2.cs"/>-->
     <TestFile Include="bug-340662_bug.cs"/>
     <TestFile Include="bug-322722_dyn_method_throw.2.cs"/>
     <TestFile Include="bug-389886-2.cs"/>
@@ -285,12 +285,12 @@
     <TestFile Include="bug-349190.2.cs"/>
     <TestFile Include="nullable_boxing.2.cs"/>
     <TestFile Include="valuetype-equals.cs"/>
-    <TestFile Include="custom-modifiers.2.cs"/>
-    <TestFile Include="bug-382986.cs"/>
-    <TestFile Include="test-inline-call-stack.cs"/>
-    <TestFile Include="bug-324535.cs"/>
+    <!--<TestFile Include="custom-modifiers.2.cs"/>-->
+    <!--<TestFile Include="bug-382986.cs"/>-->
+    <!--<TestFile Include="test-inline-call-stack.cs"/>-->
+    <!--<TestFile Include="bug-324535.cs"/>-->
     <TestFile Include="modules.cs"/>
-    <TestFile Include="bug-81673.cs"/>
+    <!--<TestFile Include="bug-81673.cs"/>-->
     <TestFile Include="bug-81691.cs"/>
     <TestFile Include="bug-80307.cs"/>
     <TestFile Include="bug-415577.cs"/>
@@ -318,7 +318,8 @@
     <TestFile Include="w32message.cs"/>
     <TestFile Include="bug-544446.cs"/>
     <TestFile Include="gc-altstack.cs"/>
-    <TestFile Include="bug-599469.cs"/>-->
+    <TestFile Include="bug-599469.cs"/>
+		<!--<TestFile Include="generics-sharing.2.cs"/>-->
   </ItemGroup>
 	<PropertyGroup>
 		<mono_build_root>$(MSBuildProjectDirectory)\..\..</mono_build_root>
@@ -350,7 +351,7 @@
   <Target  Name="Build" DependsOnTargets="Compile">
   </Target>
 	<Target Name="RunTest" Inputs="@(TestFile)" Outputs="%(Identity).foo" DependsOnTargets="Build">
-		<Exec Timeout="20000" IgnoreExitCode="true" Command="mono-test-wrapper.bat perl test-driver $(JITTEST_PROG_RUN) %(TestFile.Filename).exe '$(DISABLED_TESTS)' $(RUNTIME_ARGS)"/>
+		<Exec Timeout="30000" IgnoreExitCode="true" Command="mono-test-wrapper.bat perl test-driver $(JITTEST_PROG_RUN) %(TestFile.Filename).exe '$(DISABLED_TESTS)' $(RUNTIME_ARGS)"/>
 	</Target>
   <Target  Name="Test" DependsOnTargets="RunTest">
 	</Target>

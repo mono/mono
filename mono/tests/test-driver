@@ -32,11 +32,15 @@ if (!defined ($cpid)) {
 	exec ("$interpreter @ARGV $test 2>$stderr 1>$stdout") || die "Cannot exec: $!";
 } else {
 	# in the parent, setup the alarm
-	# test must complete in 2 minutes or it is considered buggy
-	my $timeout = 2*60;
+	# test must complete in 20 seconds or it is considered buggy
+	my $timeout = 20;
 	alarm ($timeout);
 	$SIG{ALRM} = sub {
 		print "failed after $timeout seconds timeout.\n";
+		if ($teamcity) {
+			print ("##teamcity[testFailed name='$test' message='failed after $timeout seconds timeout.' details='message and stack trace']\n");
+			print "##teamcity[testFinished name='$test']\n";
+		}
 		# process group kill
 		kill (-9, $cpid);
 		exit (3);
