@@ -169,7 +169,7 @@ namespace System.Runtime.Remoting.Channels
 				try {
 					work ();
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 #if DEBUG
 					Console.WriteLine("The exception was caught during RemotingThreadPool.PoolThread - work: {0}, {1}", ex.GetType(), ex.Message);
