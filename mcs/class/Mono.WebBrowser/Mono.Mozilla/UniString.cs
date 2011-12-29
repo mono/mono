@@ -49,6 +49,7 @@ namespace Mono.Mozilla
 			IntPtr p = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (nsStringContainer)));
 			Marshal.StructureToPtr (unmanagedContainer, p, false);
 			handle = new HandleRef (typeof (nsStringContainer), p);
+			Base.gluezilla_StringContainerInit (handle);
 			String = value;
 		}
 		
