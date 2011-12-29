@@ -312,8 +312,8 @@
     <TestFile Include="gchandles.cs"/>
     <TestFile Include="interlocked-3.cs"/>
     <TestFile Include="interlocked-4.2.cs"/>
-    <!--<TestFile Include="finalizer-wait.cs"/>
-    <TestFile Include="critical-finalizers.cs"/>-->
+    <TestFile Include="finalizer-wait.cs"/>
+    <TestFile Include="critical-finalizers.cs"/>
     <TestFile Include="appdomain-thread-abort.cs"/>
     <TestFile Include="w32message.cs"/>
     <TestFile Include="bug-544446.cs"/>
@@ -351,27 +351,25 @@
   <Target  Name="Build" DependsOnTargets="Compile">
   </Target>
 	<Target Name="RunTest" Inputs="@(TestFile)" Outputs="%(Identity).foo" DependsOnTargets="Build">
-		<Exec Timeout="20000" IgnoreExitCode="true" Command="mono-test-wrapper.bat perl test-driver $(JITTEST_PROG_RUN) %(TestFile.Filename).exe '$(DISABLED_TESTS)' $(RUNTIME_ARGS)"/>
-	</Target>
-	<Target Name="RunTest2" Inputs="@(TestFile)" Outputs="%(Identity).foo" DependsOnTargets="Build">
-		<Message Text="Testing... @(TestFile)" Condition="'$(UNITY_THISISABUILDMACHINE)' == ''"/>
-		<Message Text="##teamcity[testStarted name='@(TestFile)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="Testing... %(TestFile.Filename)" Condition="'$(UNITY_THISISABUILDMACHINE)' == ''"/>
+		<Message Text="##teamcity[testStarted name='%(TestFile.Filename)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
 		<Exec Timeout="20000" IgnoreExitCode="true" Command="mono-test-wrapper.bat $(JITTEST_PROG_RUN) $(RUNTIME_ARGS) %(TestFile.Filename).exe 1> %(TestFile.Filename).stdout 2> %(TestFile.Filename).stderr">
 			<Output PropertyName="CommandExitCode" TaskParameter="ExitCode"/>
 		</Exec>
+		<!-- output needs escaped for TeamCity
 		<ReadLinesFromFile File="%(TestFile.Filename).stdout" Condition="$(CommandExitCode) != -1" >
 			<Output TaskParameter="Lines" ItemName="StdOutText"/>
 		</ReadLinesFromFile>
 		<ReadLinesFromFile File="%(TestFile.Filename).stderr" Condition="$(CommandExitCode) != -1" >
 			<Output TaskParameter="Lines" ItemName="StdErrText"/>
 		</ReadLinesFromFile>
-		<Message Text="##teamcity[testStdOut name='@(TestFile)' out='$(StdOutText)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
-		<Message Text="##teamcity[testStdErr name='@(TestFile)' out='$(StdErrText)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testStdOut name='%(TestFile.Filename)' out='@(StdOutText->'%(Identity)', '%0a%0d')']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testStdErr name='%(TestFile.Filename)' out='@(StdErrText->'%(Identity)', '%0a%0d')']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>-->
 		<Message Text="pass." Condition="$(CommandExitCode) == 0 And '$(UNITY_THISISABUILDMACHINE)' == ''"/>
 		<Message Text="failed." Condition="$(CommandExitCode) != 0 And '$(UNITY_THISISABUILDMACHINE)' == ''"/>
-		<Message Text="##teamcity[testFailed name='@(TestFile)' message='failed with exit code $(CommandExitCode)']]" Condition="$(CommandExitCode) != 0 And '$(UNITY_THISISABUILDMACHINE)' != ''"/>
-		<Message Text="##teamcity[testFinished name='@(TestFile)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testFailed name='%(TestFile.Filename)' message='failed with exit code $(CommandExitCode)']]" Condition="$(CommandExitCode) != 0 And '$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testFinished name='%(TestFile.Filename)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
 	</Target>
-  <Target  Name="Test" DependsOnTargets="RunTest2">
+  <Target  Name="Test" DependsOnTargets="RunTest">
 	</Target>
 </Project>
