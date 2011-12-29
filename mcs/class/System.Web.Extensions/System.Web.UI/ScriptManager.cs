@@ -1602,8 +1602,6 @@ namespace System.Web.UI
 		{
 			public delegate void TextParserHiddenFieldParsedEventHandler (TextParser sender, TextParserHiddenFieldParsedEventArgs args);
 
-			static object textParserHiddenFieldParsedEvent = new object ();
-			
 			int _state;
 			char _charState = (char) 255;
 			const char nullCharState = (char) 255;
