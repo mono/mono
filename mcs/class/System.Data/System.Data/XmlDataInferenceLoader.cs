@@ -392,6 +392,12 @@ namespace System.Data
 					continue;
 
 				hasAttributes = true;
+				GetMappedColumn (table,
+					XmlHelper.Decode (attr.LocalName),
+					attr.Prefix,
+				        attr.NamespaceURI,
+          				MappingType.Attribute,
+          				null); 
 			}
 
 			foreach (XmlNode n in el.ChildNodes) {
