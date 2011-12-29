@@ -68,6 +68,8 @@ namespace System.Runtime.Serialization.Json
 				}
 				while (true) {
 					SkipSpaces ();
+					if (PeekChar () == '}')
+						break;
 					string name = ReadStringLiteral ();
 					SkipSpaces ();
 					Expect (':');
