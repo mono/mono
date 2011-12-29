@@ -22,7 +22,7 @@ if($^O eq 'MSWin32') {
 }
 
 if ($teamcity) {
-	print("##teamcity[importData type='nunit' path='mcs/class/corlib/classTestResult-net_2_0.xml']\n");
+	print("##teamcity[importData type='nunit' path='mcs/class/corlib/TestResult-net_2_0.xml']\n");
 }
 
 $result eq 0 or die ("Failed running mono classlib tests");
