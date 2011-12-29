@@ -130,8 +130,6 @@ sgen_card_table_mark_address (mword address)
 }
 
 
-#elif
-
 #else
 
 void
