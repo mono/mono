@@ -834,6 +834,7 @@ namespace System.Data.Odbc
 				case OdbcType.Binary :
 					bufsize = col.MaxLength;
 					buffer = new byte [bufsize];
+					GetBytes (i, 0, buffer, 0, bufsize);
 					ret = OdbcReturn.Success;
 					DataValue = buffer;
 					break;
