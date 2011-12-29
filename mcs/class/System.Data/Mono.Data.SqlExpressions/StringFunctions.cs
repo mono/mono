@@ -94,6 +94,7 @@ namespace Mono.Data.SqlExpressions {
 		override public object Eval (DataRow row)
 		{
 			string str = (string)base.Eval (row);
+			start.Eval (row);
 			int istart = Convert.ToInt32 (start.Eval (row));
 			int ilen = Convert.ToInt32 (len.Eval (row));
 			
