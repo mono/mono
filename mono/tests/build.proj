@@ -6,7 +6,7 @@
     <TestFile Include="array-init.cs"/>
     <TestFile Include="arraylist.cs"/>
     <TestFile Include="assemblyresolve_event.cs"/>
-    <TestFile Include="assemblyresolve_event3.cs"/>
+    <!--<TestFile Include="assemblyresolve_event3.cs"/>-->
     <TestFile Include="checked.cs"/>
     <TestFile Include="char-isnumber.cs"/>
     <TestFile Include="create-instance.cs"/>
@@ -45,8 +45,8 @@
     <TestFile Include="typeof-ptr.cs"/>
     <TestFile Include="static-constructor.cs"/>
     <TestFile Include="pinvoke.cs"/>
-    <TestFile Include="pinvoke2.cs"/>
-    <TestFile Include="pinvoke3.cs"/>
+    <!--<TestFile Include="pinvoke2.cs"/>
+    <TestFile Include="pinvoke3.cs"/>-->
     <TestFile Include="pinvoke11.cs"/>
     <TestFile Include="pinvoke13.cs"/>
     <TestFile Include="pinvoke17.cs"/>
@@ -145,7 +145,7 @@
     <TestFile Include="marshal1.cs"/>
     <TestFile Include="marshal2.cs"/>
     <TestFile Include="marshal3.cs"/>
-    <TestFile Include="marshal5.cs"/>
+    <!--<TestFile Include="marshal5.cs"/>-->
     <TestFile Include="marshal6.cs"/>
     <TestFile Include="marshal7.cs"/>
     <TestFile Include="marshal8.cs"/>
@@ -154,7 +154,7 @@
     <TestFile Include="marshal-valuetypes.cs"/>
     <TestFile Include="test-byval-in-struct.cs"/>
     <TestFile Include="thread.cs"/>
-    <TestFile Include="thread5.cs"/>
+    <!--<TestFile Include="thread5.cs"/>-->
     <TestFile Include="thread6.cs"/>
     <TestFile Include="thread-static.cs"/>
     <TestFile Include="thread-static-init.cs"/>
@@ -189,9 +189,9 @@
 		<TestFile Include="delegate-async-exit.cs"/>
     <TestFile Include="delegate-delegate-exit.cs"/>
     <TestFile Include="delegate-exit.cs"/>
-    <TestFile Include="finalizer-abort.cs"/>-->
+    <TestFile Include="finalizer-abort.cs"/>
     <TestFile Include="finalizer-exception.cs"/>
-    <TestFile Include="finalizer-exit.cs"/>
+    <TestFile Include="finalizer-exit.cs"/>-->
     <TestFile Include="main-exit.cs"/>
     <TestFile Include="main-returns-abort-resetabort.cs"/>
     <TestFile Include="main-returns-background-abort-resetabort.cs"/>
@@ -290,7 +290,7 @@
     <TestFile Include="test-inline-call-stack.cs"/>
     <TestFile Include="bug-324535.cs"/>
     <TestFile Include="modules.cs"/>
-    <TestFile Include="bug-81673.cs"/>-->
+    <TestFile Include="bug-81673.cs"/>
     <TestFile Include="bug-81691.cs"/>-->
     <TestFile Include="bug-80307.cs"/>
     <TestFile Include="bug-415577.cs"/>
