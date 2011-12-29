@@ -5334,6 +5334,7 @@ namespace PEAPI {
 
 		internal void WriteTildeStream(FileImage output) 
 		{
+			output.Seek(0,SeekOrigin.Current);
 			output.Write((uint)0); // Reserved
 #if NET_2_0
 			output.Write((byte)2); // MajorVersion
@@ -5346,13 +5347,15 @@ namespace PEAPI {
 			output.Write((byte)1); // Reserved
 			output.Write(valid);
 			output.Write(sorted);
+			
 			for (int i=0; i < numMetaDataTables; i++) {
 				if (metaDataTables[i] != null) {
 					uint count = (uint)metaDataTables[i].Count;
 					output.Write(count);
 				}
 			}
-
+			
+			output.Seek(0,SeekOrigin.Current);
 			// Console.WriteLine("Starting metaData tables at " + tabStart);
 			for (int i=0; i < numMetaDataTables; i++) {
 				if (metaDataTables[i] != null) {
