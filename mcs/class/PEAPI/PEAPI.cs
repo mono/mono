@@ -590,8 +590,6 @@ namespace PEAPI {
 		private static readonly string mscorlibName = "mscorlib";
 		private Module thisMod;
 		private ClassDef moduleClass;
-		private ArrayList classRefList = new ArrayList();
-		private ArrayList classDefList = new ArrayList();
 		private ArrayList resources = new ArrayList ();
 		private Assembly thisAssembly;
 		private static bool isMSCorlib;
