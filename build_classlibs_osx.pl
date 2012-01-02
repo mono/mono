@@ -385,7 +385,7 @@ if($ENV{UNITY_THISISABUILDMACHINE})
 		'cecil' => $cecilCheckout
 	);
 
-	system("echo '' > $root/builds/versions.txt")
+	system("echo '' > $root/builds/versions.txt");
 	for my $key (keys %checkouts) {
 		my $version = DependencyVersion::GetCurrentVersion($checkouts{$key});
 		system("echo \"$key = $version\" >> $root/builds/versions.txt");
