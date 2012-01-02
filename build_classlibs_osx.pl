@@ -4,7 +4,6 @@ use File::Path;
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
-use DependencyVersion;
 
 system("source","~/.profile");
 print "My Path: $ENV{PATH}\n";
@@ -379,16 +378,15 @@ CopyIgnoringHiddenFiles("add_to_build_results/", "$root/builds/");
 if($ENV{UNITY_THISISABUILDMACHINE})
 {
 	my %checkouts = (
-		'mono-classlibs' => $root,
-		'boo' => $booCheckout,
-		'unityscript' => $usCheckout,
-		'cecil' => $cecilCheckout
+		'mono-classlibs' => 'BUILD_VCS_NUMBER_Mono____Mono2_6_x_Unity3_x',
+		'boo' => 'BUILD_VCS_NUMBER_Boo',
+		'unityscript' => 'BUILD_VCS_NUMBER_UnityScript',
+		'cecil' => 'BUILD_VCS_NUMBER_Cecil'
 	);
 
 	system("echo '' > $root/builds/versions.txt");
 	for my $key (keys %checkouts) {
-		my $version = DependencyVersion::GetCurrentVersion($checkouts{$key});
-		system("echo \"$key = $version\" >> $root/builds/versions.txt");
+		system("echo \"$key = $ENV{$checkouts{key}}\" >> $root/builds/versions.txt");
 	}
 }
 

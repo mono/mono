@@ -3,7 +3,6 @@ use File::Spec;
 use File::Basename;
 use File::Copy;
 use File::Path;
-use DependencyVersion;
 my $root = File::Spec->rel2abs( dirname($0) );
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
@@ -29,8 +28,7 @@ copy("$root/builds/embedruntimes/win32/mono.pdb","$root/builds/monodistribution/
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
-	my $version = DependencyVersion::GetCurrentVersion($root);
-	system("echo mono-runtime-win32 = $version > $root\\builds\\versions.txt");
+	system("echo mono-runtime-win32 = $ENV{'BUILD_VCS_NUMBER'} > $root\\builds\\versions.txt");
 }
 
 sub CompileVCProj
