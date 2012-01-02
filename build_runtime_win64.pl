@@ -3,6 +3,7 @@ use File::Spec;
 use File::Basename;
 use File::Copy;
 use File::Path;
+use DependencyVersion;
 my $root = File::Spec->rel2abs( dirname($0) );
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
@@ -25,6 +26,12 @@ if (-e $remove)
 #have a duplicate for now...
 copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution/bin/mono.dll");
 copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution/bin/mono.pdb");
+
+if ($ENV{UNITY_THISISABUILDMACHINE})
+{
+	my $version = DependencyVersion::GetCurrentVersion($root);
+	system("echo mono-runtime-win64 = $version > $root\\builds\\versions.txt");
+}
 
 sub CompileVCProj
 {

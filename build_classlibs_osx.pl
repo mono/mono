@@ -4,6 +4,7 @@ use File::Path;
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
+use DependencyVersion;
 
 system("source","~/.profile");
 print "My Path: $ENV{PATH}\n";
@@ -16,6 +17,10 @@ my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 
 my $dependencyBranchToUse = "unity3.0";
+
+my $booCheckout = "external/boo";
+my $cecilCheckout = "mcs/class/Mono.Cecil";
+my $usCheckout = "external/unityscript";
 
 if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
@@ -210,8 +215,6 @@ sub UnityBooc
 
 sub BuildUnityScriptForUnity
 {
-	my $booCheckout = "external/boo";
-	
 	# TeamCity is handling this
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
@@ -228,7 +231,6 @@ sub BuildUnityScriptForUnity
 	UnityXBuild("$booCheckout/src/Boo.Lang/Boo.Lang.csproj", "Micro-Release");
 	cp("$booCheckout/src/Boo.Lang/bin/Micro-Release/Boo.Lang.dll $monodistroLibMono/micro/");
 	
-	my $usCheckout = "external/unityscript";
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
 	}
@@ -289,7 +291,6 @@ sub BuildCecilForUnity
 {
 	my $useCecilLight = 0;
 	
-	my $cecilCheckout = "mcs/class/Mono.Cecil";
 	
 	if ($useCecilLight) {
 		
@@ -374,6 +375,22 @@ if ($unity)
 
 #Overlaying files
 CopyIgnoringHiddenFiles("add_to_build_results/", "$root/builds/");
+
+if($ENV{UNITY_THISISABUILDMACHINE})
+{
+	my %checkouts = (
+		'mono-classlibs' => $root,
+		'boo' => $booCheckout,
+		'unityscript' => $usCheckout,
+		'cecil' => $cecilCheckout,
+	);
+
+	system("echo '' > $root/builds/versions.txt")
+	for my $key (keys %checkouts) {
+		my $version = DependencyVersion::GetCurrentVersion($checkouts{$key});
+		system("echo \"$key = $version\" >> $root/builds/versions.txt");
+	}
+}
 
 #zip up the results for teamcity
 chdir("$root/builds");

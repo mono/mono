@@ -3,6 +3,7 @@ use Cwd;
 use File::Path;
 use Getopt::Long;
 use Tools qw(InstallNameTool);
+use DependencyVersion;
 
 my $root = getcwd();
 my $skipbuild=0;
@@ -170,11 +171,13 @@ if (!$iphone_simulator)
 		system("ln","-fs", "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("failed symlinking libmono.0.dylib.dSYM");
 	}
  
-#if ($ENV{"UNITY_THISISABUILDMACHINE"})
-#{
+if ($ENV{"UNITY_THISISABUILDMACHINE"})
+{
 #	system("strip $libtarget/libmono.0.dylib") eq 0 or die("failed to strip libmono");
 #	system("strip $libtarget/MonoBundleBinary") eq 0 or die ("failed to strip MonoBundleBinary");
-#}
+	my $version = DependencyVersion::GetCurrentVersion($root);
+	system("echo \"mono-runtime-osx = $version\" > $root/builds/versions.txt");
+}
 
 InstallNameTool("$libtarget/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib");
 
