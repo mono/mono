@@ -382,7 +382,7 @@ if($ENV{UNITY_THISISABUILDMACHINE})
 		'mono-classlibs' => $root,
 		'boo' => $booCheckout,
 		'unityscript' => $usCheckout,
-		'cecil' => $cecilCheckout,
+		'cecil' => $cecilCheckout
 	);
 
 	system("echo '' > $root/builds/versions.txt")
