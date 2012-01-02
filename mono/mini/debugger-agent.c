@@ -3015,8 +3015,10 @@ thread_startup (MonoProfiler *prof, gsize tid)
 	}
 
 	tls = TlsGetValue (debugger_tls_id);
-	g_assert (!tls);
-	// FIXME: Free this somewhere
+	if (tls) {
+		MONO_GC_UNREGISTER_ROOT (tls->thread);
+		g_free (tls);
+	}
 	tls = g_new0 (DebuggerTlsData, 1);
 	tls->resume_event = CreateEvent (NULL, FALSE, FALSE, NULL);
 	MONO_GC_REGISTER_ROOT (tls->thread);
