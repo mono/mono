@@ -386,7 +386,7 @@ if($ENV{UNITY_THISISABUILDMACHINE})
 
 	system("echo '' > $root/builds/versions.txt");
 	for my $key (keys %checkouts) {
-		system("echo \"$key = $ENV{$checkouts{key}}\" >> $root/builds/versions.txt");
+		system("echo \"$key = $ENV{$checkouts{$key}}\" >> $root/builds/versions.txt");
 	}
 }
 
