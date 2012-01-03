@@ -2717,7 +2717,7 @@ public class DebuggerTests
 		string srcfile = (e as BreakpointEvent).Method.DeclaringType.GetSourceFiles (true)[0];
 
 		var req = vm.CreateTypeLoadRequest ();
-		req.SourceFileFilter = new string [] { srcfile };
+		req.SourceFileFilter = new string [] { srcfile.ToUpper () };
 		req.Enable ();
 
 		vm.Resume ();
@@ -2745,6 +2745,10 @@ public class DebuggerTests
 		run_until ("user");
 
 		var types = vm.GetTypesForSourceFile ("dtest-app.cs", false);
+		Assert.IsTrue (types.Any (t => t.FullName == "Tests"));
+		Assert.IsFalse (types.Any (t => t.FullName == "System.Int32"));
+
+		types = vm.GetTypesForSourceFile ("DTEST-app.cs", true);
 		Assert.IsTrue (types.Any (t => t.FullName == "Tests"));
 		Assert.IsFalse (types.Any (t => t.FullName == "System.Int32"));
 	}
