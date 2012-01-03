@@ -1,5 +1,5 @@
 use lib ('./perl_lib');
-use File::Copy::Recursive qw(dircopy);
+use File::Copy::Recursive qw(dircopy rmove);
 use File::Path;
 use Tools qw(InstallNameTool);
 
@@ -13,6 +13,9 @@ opendir(DIR, $path) or die "cant find $path: $!";
 while (defined(my $file = readdir(DIR))) {
 	next if $file =~ /^\.\.?$/;
 	if (-d "$path$file"){
+		if (-f "$path$file/versions.txt") {
+			system("cat $path$file/versions.txt >> collectedbuilds/versions-aggregated.txt");
+		}
 		dircopy("$path$file","collectedbuilds/") or die ("failed copying $path$file");
 		push @folders,"$path$file";
 	}
@@ -31,6 +34,8 @@ system("lipo -create incomingbuilds/osx-i386/embedruntimes/osx/libmono.a incomin
 InstallNameTool("collectedbuilds/embedruntimes/osx/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib");
 
 chdir("collectedbuilds");
+
+rmove('versions-aggregated.txt', 'versions.txt');
 
 open(MYFILE,">built_by_teamcity.txt");
 print MYFILE "These builds were created by teamcity from svn revision $ENV{BUILD_VCS_NUMBER}\n";
