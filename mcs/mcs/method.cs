@@ -2243,7 +2243,7 @@ namespace Mono.CSharp {
 
 		static MemberName SetupName (string prefix, InterfaceMemberBase member, Location loc)
 		{
-			return new MemberName (member.MemberName.Left, prefix + member.ShortName, loc);
+			return new MemberName (member.MemberName.Left, prefix + member.ShortName, member.MemberName.ExplicitInterface, loc);
 		}
 
 		public void UpdateName (InterfaceMemberBase member)

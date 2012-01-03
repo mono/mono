@@ -36,72 +36,59 @@ namespace Mono.CSharp {
 	// Better name would be DottenName
 	//
 	[DebuggerDisplay ("{GetSignatureForError()}")]
-	public class MemberName {
-		public readonly string Name;
-		public TypeArguments TypeArguments;
-
-		public readonly MemberName Left;
-		public readonly Location Location;
-
+	public class MemberName
+	{
 		public static readonly MemberName Null = new MemberName ("");
 
-		bool is_double_colon;
+		public readonly string Name;
+		public TypeArguments TypeArguments;
+		public readonly FullNamedExpression ExplicitInterface;
+		public readonly Location Location;
 
-		private MemberName (MemberName left, string name, bool is_double_colon,
-				    Location loc)
-		{
-			this.Name = name;
-			this.Location = loc;
-			this.is_double_colon = is_double_colon;
-			this.Left = left;
-		}
-
-		private MemberName (MemberName left, string name, bool is_double_colon,
-				    TypeArguments args, Location loc)
-			: this (left, name, is_double_colon, loc)
-		{
-			if (args != null && args.Count > 0)
-				this.TypeArguments = args;
-		}
+		public readonly MemberName Left;
 
 		public MemberName (string name)
 			: this (name, Location.Null)
 		{ }
 
 		public MemberName (string name, Location loc)
-			: this (null, name, false, loc)
+			: this (null, name, loc)
 		{ }
 
 		public MemberName (string name, TypeArguments args, Location loc)
-			: this (null, name, false, args, loc)
-		{ }
+		{
+			this.Name = name;
+			this.Location = loc;
 
-		public MemberName (MemberName left, string name)
-			: this (left, name, left != null ? left.Location : Location.Null)
-		{ }
+			if (args != null && args.Count > 0)
+				this.TypeArguments = args;
+		}
+
+		public MemberName (string name, TypeArguments args, FullNamedExpression explicitInterface, Location loc)
+			: this (name, args, loc)
+		{
+			this.ExplicitInterface = explicitInterface;
+		}
 
 		public MemberName (MemberName left, string name, Location loc)
-			: this (left, name, false, loc)
-		{ }
+		{
+			this.Name = name;
+			this.Location = loc;
+			this.Left = left;
+		}
 
-		public MemberName (MemberName left, string name, TypeArguments args, Location loc)
-			: this (left, name, false, args, loc)
-		{ }
-
-		public MemberName (string alias, string name, TypeArguments args, Location loc)
-			: this (new MemberName (alias, loc), name, true, args, loc)
-		{ }
+		public MemberName (MemberName left, string name, FullNamedExpression explicitInterface, Location loc)
+			: this (left, name, loc)
+		{
+			this.ExplicitInterface = explicitInterface;
+		}
 
 		public MemberName (MemberName left, MemberName right)
-			: this (left, right, right.Location)
-		{ }
-
-		public MemberName (MemberName left, MemberName right, Location loc)
-			: this (null, right.Name, false, right.TypeArguments, loc)
 		{
-			if (right.is_double_colon)
-				throw new InternalErrorException ("Cannot append double_colon member name");
-			this.Left = (right.Left == null) ? left : new MemberName (left, right.Left);
+			this.Name = right.Name;
+			this.Location = right.Location;
+			this.TypeArguments = right.TypeArguments;
+			this.Left = left;
 		}
 
 		// TODO: Remove
@@ -113,12 +100,6 @@ namespace Mono.CSharp {
 		public int Arity {
 			get {
 				return TypeArguments == null ? 0 : TypeArguments.Count;
-			}
-		}
-
-		public bool IsDoubleColon {
-			get {
-				return is_double_colon;
 			}
 		}
 
@@ -137,34 +118,9 @@ namespace Mono.CSharp {
 		{
 			string name = is_generic ? Basename : Name;
 			if (Left != null)
-				return Left.GetName (is_generic) + (is_double_colon ? "::" : ".") + name;
+				return Left.GetName (is_generic) + "." + name;
 
 			return name;
-		}
-
-		public ATypeNameExpression GetTypeExpression ()
-		{
-			if (Left == null) {
-				if (TypeArguments != null)
-					return new SimpleName (Name, TypeArguments, Location);
-				
-				return new SimpleName (Name, Location);
-			}
-
-			if (is_double_colon) {
-				if (Left.Left != null)
-					throw new InternalErrorException ("The left side of a :: should be an identifier");
-				return new QualifiedAliasMember (Left.Name, Name, TypeArguments, Location);
-			}
-
-			Expression lexpr = Left.GetTypeExpression ();
-			return new MemberAccess (lexpr, Name, TypeArguments, Location);
-		}
-
-		public MemberName Clone ()
-		{
-			MemberName left_clone = Left == null ? null : Left.Clone ();
-			return new MemberName (left_clone, Name, is_double_colon, TypeArguments, Location);
 		}
 
 		public string Basename {
@@ -177,11 +133,16 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			string append = TypeArguments == null ? "" : "<" + TypeArguments.GetSignatureForError () + ">";
+			string s = TypeArguments == null ? null : "<" + TypeArguments.GetSignatureForError () + ">";
+			s = Name + s;
+
+			if (ExplicitInterface != null)
+				s = ExplicitInterface.GetSignatureForError () + "." + s;
+
 			if (Left == null)
-				return Name + append;
-			string connect = is_double_colon ? "::" : ".";
-			return Left.GetSignatureForError () + connect + Name + append;
+				return s;
+
+			return Left.GetSignatureForError () + "." + s;
 		}
 
 		public override bool Equals (object other)
@@ -194,8 +155,6 @@ namespace Mono.CSharp {
 			if (this == other)
 				return true;
 			if (other == null || Name != other.Name)
-				return false;
-			if (is_double_colon != other.is_double_colon)
 				return false;
 
 			if ((TypeArguments != null) &&
@@ -216,8 +175,6 @@ namespace Mono.CSharp {
 			int hash = Name.GetHashCode ();
 			for (MemberName n = Left; n != null; n = n.Left)
 				hash ^= n.Name.GetHashCode ();
-			if (is_double_colon)
-				hash ^= 0xbadc01d;
 
 			if (TypeArguments != null)
 				hash ^= TypeArguments.Count << 5;

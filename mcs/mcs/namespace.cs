@@ -122,11 +122,11 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Namespace has a null fullname");
 
 			if (parent != null && parent.MemberName != MemberName.Null)
-				MemberName = new MemberName (parent.MemberName, name);
+				MemberName = new MemberName (parent.MemberName, name, Location.Null);
 			else if (name.Length == 0)
 				MemberName = MemberName.Null;
 			else
-				MemberName = new MemberName (name);
+				MemberName = new MemberName (name, Location.Null);
 
 			namespaces = new Dictionary<string, Namespace> ();
 			cached_types = new Dictionary<string, TypeExpr> ();
@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 		readonly ModuleContainer module;
 		readonly NamespaceContainer parent;
 		readonly CompilationSourceFile file;
-		readonly Location loc;
+		readonly MemberName name;
 
 		NamespaceContainer implicit_parent;
 		int symfile_id;
@@ -614,7 +614,7 @@ namespace Mono.CSharp {
 			this.module = module;
 			this.parent = parent;
 			this.file = sourceFile;
-			this.loc = name == null ? Location.Null : name.Location;
+			this.name = name ?? MemberName.Null;
 
 			if (parent != null)
 				ns = parent.NS.GetNamespace (name.GetName (), true);
@@ -640,13 +640,13 @@ namespace Mono.CSharp {
 
 		public Location Location {
 			get {
-				return loc;
+				return name.Location;
 			}
 		}
 
 		public MemberName MemberName {
 			get {
-				return ns.MemberName;
+				return name;
 			}
 		}
 
@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 				if (parent == null)
 					return null;
 				if (implicit_parent == null) {
-					implicit_parent = (parent.NS == ns.Parent)
+					implicit_parent = (parent.ns == ns.Parent)
 						? parent
 						: new NamespaceContainer (module, parent, file, ns.Parent, false);
 				}

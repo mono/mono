@@ -478,17 +478,14 @@ namespace Mono.CSharp
 			Define_Reset ();
 
 			if (Iterator.IsEnumerable) {
-				MemberName name = new MemberName (QualifiedAliasMember.GlobalAlias, "System", null, Location);
-				name = new MemberName (name, "Collections", Location);
-				name = new MemberName (name, "IEnumerable", Location);
-				name = new MemberName (name, "GetEnumerator", Location);
+				FullNamedExpression explicit_iface = new TypeExpression (Compiler.BuiltinTypes.IEnumerable, Location);
+				var name = new MemberName ("GetEnumerator", null, explicit_iface, Location);
 
 				if (generic_enumerator_type != null) {
 					Method get_enumerator = new StateMachineMethod (this, null, enumerator_type, 0, name);
 
-					name = new MemberName (name.Left.Left, "Generic", Location);
-					name = new MemberName (name, "IEnumerable", generic_args, Location);
-					name = new MemberName (name, "GetEnumerator", Location);
+					explicit_iface = new GenericTypeExpr (Module.PredefinedTypes.IEnumerableGeneric.Resolve (), generic_args, Location);
+					name = new MemberName ("GetEnumerator", null, explicit_iface, Location);
 					Method gget_enumerator = new GetEnumeratorMethod (this, generic_enumerator_type, name);
 
 					//
@@ -510,20 +507,17 @@ namespace Mono.CSharp
 		void Define_Current (bool is_generic)
 		{
 			TypeExpr type;
-
-			MemberName name = new MemberName (QualifiedAliasMember.GlobalAlias, "System", null, Location);
-			name = new MemberName (name, "Collections", Location);
+			FullNamedExpression explicit_iface;
 
 			if (is_generic) {
-				name = new MemberName (name, "Generic", Location);
-				name = new MemberName (name, "IEnumerator", generic_args, Location);
+				explicit_iface = new GenericTypeExpr (Module.PredefinedTypes.IEnumeratorGeneric.Resolve (), generic_args, Location);
 				type = iterator_type_expr;
 			} else {
-				name = new MemberName (name, "IEnumerator");
+				explicit_iface = new TypeExpression (Module.Compiler.BuiltinTypes.IEnumerator, Location);
 				type = new TypeExpression (Compiler.BuiltinTypes.Object, Location);
 			}
 
-			name = new MemberName (name, "Current", Location);
+			var name = new MemberName ("Current", null, explicit_iface, Location);
 
 			ToplevelBlock get_block = new ToplevelBlock (Compiler, Location);
 			get_block.AddStatement (new Return (new DynamicFieldExpr (CurrentField, Location), Location));

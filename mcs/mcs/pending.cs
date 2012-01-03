@@ -443,7 +443,7 @@ namespace Mono.CSharp {
 						optional = tm.optional;
 					}
 
-					if (op == Operation.Lookup && name.Left != null && ambiguousCandidate == null) {
+					if (op == Operation.Lookup && name.ExplicitInterface != null && ambiguousCandidate == null) {
 						ambiguousCandidate = m;
 						continue;
 					}

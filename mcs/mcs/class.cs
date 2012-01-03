@@ -442,14 +442,14 @@ namespace Mono.CSharp
 			AddTypeContainer (d);
 		}
 
-		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
+		private void AddMemberToList (InterfaceMemberBase mc, List<MemberCore> alist)
 		{
 			if (ordered_explicit_member_list == null)  {
 				ordered_explicit_member_list = new List<MemberCore> ();
 				ordered_member_list = new List<MemberCore> ();
 			}
 
-			if (isexplicit) {
+			if (mc.IsExplicitImpl) {
 				if (Kind == MemberKind.Interface) {
 					Report.Error (541, mc.Location,
 						"`{0}': explicit interface declaration can only be declared in a class or struct",
@@ -473,10 +473,7 @@ namespace Mono.CSharp
 			if (methods == null)
 				methods = new List<MemberCore> ();
 
-			if (method.MemberName.Left != null) 
-				AddMemberToList (method, methods, true);
-			else 
-				AddMemberToList (method, methods, false);
+			AddMemberToList (method, methods);
 		}
 
 		public void AddConstructor (Constructor c)
@@ -541,10 +538,7 @@ namespace Mono.CSharp
 			if (properties == null)
 				properties = new List<MemberCore> ();
 
-			if (prop.MemberName.Left != null)
-				AddMemberToList (prop, properties, true);
-			else 
-				AddMemberToList (prop, properties, false);
+			AddMemberToList (prop, properties);
 		}
 
 		public void AddEvent (Event e)
@@ -566,10 +560,7 @@ namespace Mono.CSharp
 			if (indexers == null)
 				indexers = new List<MemberCore> ();
 
-			if (i.IsExplicitImpl)
-				AddMemberToList (i, indexers, true);
-			else 
-				AddMemberToList (i, indexers, false);
+			AddMemberToList (i, indexers);
 		}
 
 		public void AddOperator (Operator op)
@@ -3062,7 +3053,7 @@ namespace Mono.CSharp
 				name, attrs)
 		{
 			IsInterface = parent.PartialContainer.Kind == MemberKind.Interface;
-			IsExplicitImpl = (MemberName.Left != null);
+			IsExplicitImpl = (MemberName.ExplicitInterface != null);
 			explicit_mod_flags = mod;
 		}
 
@@ -3285,7 +3276,7 @@ namespace Mono.CSharp
 			}
 
 			if (IsExplicitImpl) {
-				InterfaceType = MemberName.Left.GetTypeExpression ().ResolveAsType (Parent);
+				InterfaceType = MemberName.ExplicitInterface.ResolveAsType (Parent);
 				if (InterfaceType == null)
 					return false;
 
@@ -3422,7 +3413,6 @@ namespace Mono.CSharp
 		//
 		public string ShortName {
 			get { return MemberName.Name; }
-			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
 		
 		//

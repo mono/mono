@@ -491,10 +491,10 @@ using_namespace
 // detach them
 // 
 namespace_declaration
-	: opt_attributes NAMESPACE qualified_identifier
+	: opt_attributes NAMESPACE namespace_name
 	  {
 		Attributes attrs = (Attributes) $1;
-		MemberName name = (MemberName) $3;
+		var name = (MemberName) $3;
 		if (attrs != null) {
 			bool valid_global_attrs = true;
 			if ((current_namespace.DeclarationFound || current_namespace != file.NamespaceContainer)) {
@@ -538,13 +538,13 @@ namespace_declaration
 	  }
 	;
 
-qualified_identifier
+namespace_name
 	: IDENTIFIER
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
 		$$ = new MemberName (lt.Value, lt.Location);
 	  }
-	| qualified_identifier DOT IDENTIFIER
+	| namespace_name DOT IDENTIFIER
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		$$ = new MemberName ((MemberName) $1, lt.Value, lt.Location);		
@@ -2234,7 +2234,7 @@ event_declaration
 		current_event_field = new EventField (current_class, (FullNamedExpression) $4, (Modifiers) $2, (MemberName) $5, (Attributes) $1);
 		current_container.AddEvent (current_event_field);
 		
-		if (current_event_field.MemberName.Left != null) {
+		if (current_event_field.MemberName.ExplicitInterface != null) {
 			report.Error (71, current_event_field.Location, "`{0}': An explicit interface implementation of an event must use property syntax",
 			current_event_field.GetSignatureForError ());
 		}
@@ -2705,7 +2705,7 @@ method_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;	  
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $3, lt.Location);
+		$$ = new MemberName (lt.Value, (TypeArguments) $3, (ATypeNameExpression) $1, lt.Location);
 	  }
 	;
 	
@@ -2718,7 +2718,7 @@ indexer_declaration_name
 	| explicit_interface THIS
 	  {
 		lexer.parsing_generic_declaration = false;
-		$$ = new MemberName ((MemberName) $1, TypeContainer.DefaultIndexerName, null, GetLocation ($2));
+		$$ = new MemberName (TypeContainer.DefaultIndexerName, null, (ATypeNameExpression) $1, GetLocation ($2));
 	  }
 	;
 
@@ -2726,21 +2726,21 @@ explicit_interface
 	: IDENTIFIER opt_type_argument_list DOT
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
+		$$ = new SimpleName (lt.Value, (TypeArguments) $2, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	| qualified_alias_member IDENTIFIER opt_type_argument_list DOT
 	  {
 		var lt1 = (Tokenizer.LocatedToken) $1;
 		var lt2 = (Tokenizer.LocatedToken) $2;
-		
-		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	| explicit_interface IDENTIFIER opt_type_argument_list DOT
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $3, lt.Location);
+		$$ = new MemberAccess ((ATypeNameExpression) $1, lt.Value, (TypeArguments) $3, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	;
@@ -6178,7 +6178,7 @@ doc_cref
 	  }
 	| doc_type_declaration_name DOT THIS
 	  {
-		$$ = new MemberName ((MemberName) $1, new MemberName (MemberCache.IndexerNameAlias));
+		$$ = new MemberName ((MemberName) $1, MemberCache.IndexerNameAlias, Location.Null);
 	  }
 	| doc_type_declaration_name DOT THIS OPEN_BRACKET
 	  {
@@ -6187,7 +6187,7 @@ doc_cref
 	  opt_doc_parameters CLOSE_BRACKET
 	  {
 		module.DocumentationBuilder.ParsedParameters = (List<DocumentationParameter>)$6;
-		$$ = new MemberName ((MemberName) $1, new MemberName (MemberCache.IndexerNameAlias));
+		$$ = new MemberName ((MemberName) $1, MemberCache.IndexerNameAlias, Location.Null);
 	  }
 	| EXPLICIT OPERATOR type opt_doc_method_sig
 	  {
@@ -6366,11 +6366,9 @@ DeclSpace pop_current_class ()
 MemberName
 MakeName (MemberName class_name)
 {
-	Namespace ns = current_namespace.NS;
-
 	if (current_container == module) {
-		if (ns.Name.Length != 0)
-			return new MemberName (ns.MemberName, class_name);
+		if (current_namespace.MemberName != MemberName.Null)
+			return new MemberName (current_namespace.NS.MemberName, class_name);
 		else
 			return class_name;
 	} else {

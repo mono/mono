@@ -1311,7 +1311,7 @@ namespace Mono.CSharp
 
 			spec = new EventSpec (Parent.Definition, this, MemberType, ModFlags, Add.Spec, remove.Spec);
 
-			Parent.MemberCache.AddMember (this, Name, spec);
+			Parent.MemberCache.AddMember (this, GetFullName (MemberName), spec);
 			Parent.MemberCache.AddMember (this, AddBuilder.Name, Add.Spec);
 			Parent.MemberCache.AddMember (this, RemoveBuilder.Name, remove.Spec);
 
@@ -1523,12 +1523,6 @@ namespace Mono.CSharp
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.IndexerName) {
-				if (IsExplicitImpl) {
-					Report.Error (415, a.Location,
-						"The `{0}' attribute is valid only on an indexer that is not an explicit interface member declaration",
-						TypeManager.CSharpName (a.Type));
-				}
-
 				// Attribute was copied to container
 				return;
 			}
@@ -1556,21 +1550,28 @@ namespace Mono.CSharp
 					if (compiling != null)
 						compiling.Define ();
 
-					string name = indexer_attr.GetIndexerAttributeValue ();
-					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+					if (IsExplicitImpl) {
+						Report.Error (415, indexer_attr.Location,
+							"The `{0}' attribute is valid only on an indexer that is not an explicit interface member declaration",
+							indexer_attr.Type.GetSignatureForError ());
+					} else if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
 							"Cannot set the `IndexerName' attribute on an indexer marked override");
-					}
+					} else {
+						string name = indexer_attr.GetIndexerAttributeValue ();
 
-					if (!string.IsNullOrEmpty (name))
-						ShortName = name;
+						if (!string.IsNullOrEmpty (name)) {
+							SetMemberName (new MemberName (MemberName.Left, name, Location));
+						}
+					}
 				}
 			}
 
 			if (InterfaceType != null) {
 				string base_IndexerName = InterfaceType.MemberDefinition.GetAttributeDefaultMember ();
-				if (base_IndexerName != Name)
-					ShortName = base_IndexerName;
+				if (base_IndexerName != ShortName) {
+					SetMemberName (new MemberName (MemberName.Left, base_IndexerName, new TypeExpression (InterfaceType, Location), Location));
+				}
 			}
 
 			if (!Parent.PartialContainer.AddMember (this))
@@ -1608,9 +1609,9 @@ namespace Mono.CSharp
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
-			if (MemberName.Left != null) {
+			if (MemberName.ExplicitInterface != null) {
 				sb.Append (".");
-				sb.Append (MemberName.Left.GetSignatureForError ());
+				sb.Append (MemberName.ExplicitInterface.GetSignatureForError ());
 			}
 
 			sb.Append (".this");
