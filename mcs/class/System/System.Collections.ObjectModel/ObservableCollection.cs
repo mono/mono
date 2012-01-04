@@ -18,11 +18,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Authors:
 //	Chris Toshok (toshok@novell.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
+
 #if NET_4_0 || MOBILE
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -62,17 +65,21 @@ namespace System.Collections.ObjectModel
 
 		private Reentrant reentrant = new Reentrant ();
 
-		public ObservableCollection()
+		public ObservableCollection ()
 		{
 		}
 
-		public ObservableCollection(IEnumerable<T> collection)
+		public ObservableCollection (IEnumerable<T> collection)
 		{
-			throw new NotImplementedException ();
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+
+			foreach (var item in collection)
+				Add (item);
 		}
 
-		public ObservableCollection(List<T> list)
-			: base (list)
+		public ObservableCollection (List<T> list)
+			: base (list != null ? new List<T> (list) : null)
 		{
 		}
 
