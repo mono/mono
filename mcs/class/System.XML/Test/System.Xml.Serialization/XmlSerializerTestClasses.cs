@@ -1032,5 +1032,20 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlAttribute]
 		public string Child3;
 	}
+
+	[XmlRoot ("root")]
+	public class NullableDatesAndTimes {
+		[XmlElementAttribute ("MyTime", DataType = "time", IsNullable = false)]
+		public DateTime MyTime;
+			
+		[XmlElementAttribute ("MyTimeNullable", DataType = "time", IsNullable = true)]
+		public DateTime? MyTimeNullable;
+		
+		[XmlElementAttribute ("MyDate", DataType = "date", IsNullable = false)]
+		public DateTime MyDate;
+		
+		[XmlElementAttribute ("MyDateNullable", DataType = "date", IsNullable = true)]
+		public DateTime? MyDateNullable;
+	}
 }
 

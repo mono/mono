@@ -172,7 +172,39 @@ namespace System.Xml.Serialization
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
 				nullableOverride = true;
 				type = type.GetGenericArguments () [0];
+			}
 
+
+			if ((xmlDataType != null) && (xmlDataType.Length != 0)) {
+				// If the type is an array, xmlDataType specifies the type for the array elements,
+				// not for the whole array. The exception is base64Binary, since it is a byte[],
+				// that's why the following check is needed.
+				TypeData at = GetPrimitiveTypeData (xmlDataType);
+				if (type.IsArray && type != at.Type) {
+						TypeData tt = (TypeData) primitiveArrayTypes [xmlDataType];
+						if (tt != null)
+							return tt;
+						if (at.Type == type.GetElementType ()) {
+							tt = new TypeData (type, GetArrayName (at.XmlType), false);
+							primitiveArrayTypes [xmlDataType] = tt;
+							return tt;
+						}
+						else
+							throw new InvalidOperationException ("Cannot convert values of type '" + type.GetElementType () + "' to '" + xmlDataType + "'");
+				}
+				if (nullableOverride){
+					TypeData tt = (TypeData) nullableTypes [at.XmlType];
+					if (tt == null){
+						tt = new TypeData (type, at.XmlType, false);
+						tt.IsNullable = true;
+						nullableTypes [at.XmlType] = tt;
+					}
+					return tt;
+				}
+				return at;
+			}
+
+			if (nullableOverride){
 				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
 				if (pt != null) {
 						TypeData tt = (TypeData) nullableTypes [pt.XmlType];
@@ -193,27 +225,7 @@ namespace System.Xml.Serialization
 				}
 			}
 #endif
-
-			if ((xmlDataType != null) && (xmlDataType.Length != 0)) {
-				// If the type is an array, xmlDataType specifies the type for the array elements,
-				// not for the whole array. The exception is base64Binary, since it is a byte[],
-				// that's why the following check is needed.
-				TypeData at = GetPrimitiveTypeData (xmlDataType);
-				if (type.IsArray && type != at.Type) {
-						TypeData tt = (TypeData) primitiveArrayTypes [xmlDataType];
-						if (tt != null)
-							return tt;
-						if (at.Type == type.GetElementType ()) {
-							tt = new TypeData (type, GetArrayName (at.XmlType), false);
-							primitiveArrayTypes [xmlDataType] = tt;
-							return tt;
-						}
-						else
-							throw new InvalidOperationException ("Cannot convert values of type '" + type.GetElementType () + "' to '" + xmlDataType + "'");
-				}
-				return at;
-			}
-
+			
 				TypeData typeData = nameCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 
