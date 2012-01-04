@@ -900,10 +900,10 @@
     </type>
     <type name="Tester">
       <method name="Void add_ev_assign(System.Action)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ev_assign(System.Action)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Assert[T](T, T, System.String)">
         <size>78</size>
@@ -1438,10 +1438,10 @@
     </type>
     <type name="Tester">
       <method name="Void add_e(System.Func`1[System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(System.Func`1[System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Assert[T](T, T, System.String)">
         <size>78</size>
@@ -1523,10 +1523,10 @@
     </type>
     <type name="EventClass">
       <method name="Void add_OutEvent(System.Func`1[System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OutEvent(System.Func`1[System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 CallEvent()">
         <size>12</size>
@@ -2370,10 +2370,10 @@
   <test name="dtest-036.cs">
     <type name="C">
       <method name="Void add_E(System.Func`2[System.Int32,System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(System.Func`2[System.Int32,System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 Main()">
         <size>314</size>
@@ -2635,10 +2635,10 @@
   <test name="dtest-047.cs">
     <type name="C`1[T]">
       <method name="Void add_E(System.Func`2[System.Int32,System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(System.Func`2[System.Int32,System.Int32])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 Test(Int32)">
         <size>163</size>
@@ -4291,10 +4291,10 @@
         <size>7</size>
       </method>
       <method name="Void add_MyEvent(Test`1[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyEvent(Test`1[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Hello(T)">
         <size>24</size>
@@ -6768,10 +6768,10 @@
         <size>7</size>
       </method>
       <method name="Void add__changed(A`1+Changed[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove__changed(A`1+Changed[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Register(A`1+Changed[T])">
         <size>20</size>
@@ -8168,10 +8168,10 @@
         <size>201</size>
       </method>
       <method name="Void add_DoSomething(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_DoSomething(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Main()">
         <size>21</size>
@@ -11107,10 +11107,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Ev1(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Ev1(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="Consts">
@@ -11150,10 +11150,10 @@
         <size>7</size>
       </method>
       <method name="Void add_TestEvent(GenericEventHandler`2[GenericEventNotUsedTest`1[T],T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(GenericEventHandler`2[GenericEventNotUsedTest`1[T],T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void RaiseTestEvent(T)">
         <size>14</size>
@@ -11980,10 +11980,10 @@
         <size>19</size>
       </method>
       <method name="Void add_D(A)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_D(A)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void C()">
         <size>36</size>
@@ -13959,10 +13959,10 @@
         <size>7</size>
       </method>
       <method name="Void add_doSomething(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_doSomething(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="Test.Class2`1[T]">
@@ -16455,10 +16455,10 @@
     </type>
     <type name="E`1+I[T]">
       <method name="Void add_E(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -18367,10 +18367,10 @@
         <size>16</size>
       </method>
       <method name="Void add_EventField(System.Func`1[System.Boolean])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_EventField(System.Func`1[System.Boolean])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="System.Linq.Expressions.Expression`1[System.Func`1[System.Func`1[System.Boolean]]] GetEvent()">
         <size>33</size>
@@ -20463,10 +20463,10 @@
         <size>7</size>
       </method>
       <method name="Void add_e(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="System.String get_Item(Int32)">
         <size>6</size>
@@ -26123,10 +26123,10 @@
   <test name="gtest-variance-12.cs">
     <type name="D">
       <method name="Void add_field(D`1[System.String])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_field(D`1[System.String])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 Main()">
         <size>56</size>
@@ -27874,10 +27874,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Blah(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Blah(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
   </test>
@@ -28119,16 +28119,16 @@
         <size>1</size>
       </method>
       <method name="Void add_Foo(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Foo(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_TestEvent(MyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(MyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 Test()">
         <size>134</size>
@@ -28148,10 +28148,10 @@
         <size>7</size>
       </method>
       <method name="Void add_BuildStarted(Z+SomeEventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_BuildStarted(Z+SomeEventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Int32 a()">
         <size>2</size>
@@ -28165,10 +28165,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Test(System.EventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Test(System.EventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void Fire()">
         <size>23</size>
@@ -30402,10 +30402,10 @@
         <size>7</size>
       </method>
       <method name="Void add_OnWhatever(OnWhateverDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OnWhatever(OnWhateverDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void CallMyDel(System.String)">
         <size>13</size>
@@ -31368,10 +31368,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Bar(Foo)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Bar(Foo)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void m1()">
         <size>1</size>
@@ -31448,16 +31448,16 @@
         <size>7</size>
       </method>
       <method name="Void add_e_1(test_delegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e_1(test_delegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_e_2(test_delegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e_2(test_delegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="Test_4">
@@ -31994,10 +31994,10 @@
     </type>
     <type name="S">
       <method name="Void add_MyEvent(DelType)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyEvent(DelType)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="DelType">
@@ -32010,10 +32010,10 @@
     </type>
     <type name="S">
       <method name="Void add_MyEventStatic(DelType)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_MyEventStatic(DelType)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Int32 RunInstance()">
         <size>12</size>
@@ -32037,10 +32037,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Elapsed(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Elapsed(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="EntryPoint">
@@ -32400,10 +32400,10 @@
         <size>7</size>
       </method>
       <method name="Void add_FooEvent(EntryPoint+EventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_FooEvent(EntryPoint+EventHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void bar_f(System.Object)">
         <size>1</size>
@@ -33782,10 +33782,10 @@
         <size>7</size>
       </method>
       <method name="Void add_y(Y)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_y(Y)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>13</size>
@@ -33918,10 +33918,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Ev1(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Ev1(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="X">
@@ -33932,16 +33932,16 @@
         <size>1</size>
       </method>
       <method name="Void add_Ev1(D)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Ev1(D)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void add_Ev2(D)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Ev2(D)">
-        <size>45</size>
+        <size>40</size>
       </method>
     </type>
     <type name="X2">
@@ -34266,10 +34266,10 @@
         <size>7</size>
       </method>
       <method name="Void add_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="X+Foo">
@@ -35505,10 +35505,10 @@
         <size>7</size>
       </method>
       <method name="Void add_DoSomething(blah.MyFunnyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_DoSomething(blah.MyFunnyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void DoSomethingFunny()">
         <size>46</size>
@@ -36782,10 +36782,10 @@
         <size>24</size>
       </method>
       <method name="Void add_e(MyDelegate)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_e(MyDelegate)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void Test(Int32)">
         <size>17</size>
@@ -37554,10 +37554,10 @@
         <size>7</size>
       </method>
       <method name="Void add_OnEvent(DelegateHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OnEvent(DelegateHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="ExtendingClass">
@@ -38025,10 +38025,10 @@
   <test name="test-536.cs">
     <type name="Test">
       <method name="Void add_Foo(FooHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Foo(FooHandler)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void OnFooTest()">
         <size>1</size>
@@ -38555,10 +38555,10 @@
         <size>7</size>
       </method>
       <method name="Void add_TestEvent(B+TestDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(B+TestDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -38788,10 +38788,10 @@
         <size>7</size>
       </method>
       <method name="Void add_e(preservesig_test.TestClass+D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(preservesig_test.TestClass+D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 DoFoo()">
         <size>2</size>
@@ -39985,10 +39985,10 @@
         <size>1</size>
       </method>
       <method name="Void add_Foo(MyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Foo(MyDelegate)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 X.get_Prop()">
         <size>2</size>
@@ -41278,10 +41278,10 @@
         <size>7</size>
       </method>
       <method name="Void add_E(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Run()">
         <size>12</size>
@@ -41826,10 +41826,10 @@
         <size>49</size>
       </method>
       <method name="Void add_Finished(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Finished(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void TestB(System.Object, System.EventArgs)">
         <size>25</size>
@@ -42253,10 +42253,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Example(N.Parent+ExampleHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Example(N.Parent+ExampleHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void OnExample()">
         <size>23</size>
@@ -42572,10 +42572,10 @@
   <test name="test-736.cs">
     <type name="TestGeneric`1[T]">
       <method name="Void add_Event(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()">
         <size>18</size>
@@ -42586,10 +42586,10 @@
     </type>
     <type name="TestGeneric2`1[T]">
       <method name="Void add_Event(TestGeneric2`1+GenericHandler[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(TestGeneric2`1+GenericHandler[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()">
         <size>21</size>
@@ -42600,10 +42600,10 @@
     </type>
     <type name="Test">
       <method name="Void add_Event(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()">
         <size>18</size>
@@ -43370,10 +43370,10 @@
     </type>
     <type name="MyClass+A">
       <method name="Void add_MouseClick(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MouseClick(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -43381,10 +43381,10 @@
     </type>
     <type name="MyClass+B">
       <method name="Void add_MouseClick(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MouseClick(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -43757,10 +43757,10 @@
     </type>
     <type name="E">
       <method name="Void add_temp(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_temp(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44756,10 +44756,10 @@
         <size>14</size>
       </method>
       <method name="Void add_PersonArrived(PersonArrivedHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_PersonArrived(PersonArrivedHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void AddPerson(System.String)">
         <size>14</size>
@@ -47382,10 +47382,10 @@
     </type>
     <type name="Foo`1[T]">
       <method name="Void add_handler(Handler`1[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_handler(Handler`1[T])">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_Handler(Handler`1[T])">
         <size>48</size>
@@ -47532,10 +47532,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Click(X+T)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Click(X+T)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void Method()">
         <size>1</size>
@@ -48675,10 +48675,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Clicked(ClickEvent)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Clicked(ClickEvent)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void DoClick()">
         <size>12</size>
@@ -49111,10 +49111,10 @@
         <size>7</size>
       </method>
       <method name="Void add_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
     <type name="DelegateTest">
@@ -49194,10 +49194,10 @@
     </type>
     <type name="Program">
       <method name="Void add_E(Program+D)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void remove_E(Program+D)">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void Main()">
         <size>38</size>
@@ -50768,16 +50768,16 @@
         <size>7</size>
       </method>
       <method name="Void add_ChildSourceAdded(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ChildSourceAdded(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_ChildSourceRemoved(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ChildSourceRemoved(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Source FindSource(Source)">
         <size>2</size>
@@ -50846,10 +50846,10 @@
         <size>7</size>
       </method>
       <method name="Void add_testEvent(Test+TestEventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_testEvent(Test+TestEventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_TestEvent(Test+TestEventHandler)">
         <size>33</size>
@@ -51405,10 +51405,10 @@
         <size>7</size>
       </method>
       <method name="Void add_E(Test+D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(Test+D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void add_Changed(Test+D)">
         <size>30</size>
@@ -51687,10 +51687,10 @@
   <test name="test-anon-83.cs">
     <type name="C">
       <method name="Void add_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void DoSomething(Boolean)">
         <size>8</size>
@@ -52217,10 +52217,10 @@
     </type>
     <type name="B">
       <method name="Void add_Event(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(D)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 Run()">
         <size>12</size>
@@ -53190,10 +53190,10 @@
     </type>
     <type name="Base">
       <method name="Void add_Event(System.Action)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.Action)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Int32 get_PropertyInt()">
         <size>9</size>
@@ -56411,10 +56411,10 @@
         <size>7</size>
       </method>
       <method name="Void add_Hook(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Hook(System.EventHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="IEnumerator Pipeline()">
         <size>15</size>
@@ -57785,10 +57785,10 @@
         <size>7</size>
       </method>
       <method name="Void add_ContactsEventHandler(Mono.Sms.Contacts+ContactsHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ContactsEventHandler(Mono.Sms.Contacts+ContactsHandler)">
-        <size>47</size>
+        <size>42</size>
       </method>
       <method name="Void Test()">
         <size>12</size>

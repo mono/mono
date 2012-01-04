@@ -909,8 +909,8 @@ namespace Mono.CSharp
 				// Delegate obj1 = backing_field
 				// do {
 				//   Delegate obj2 = obj1;
-				//   obj1 =	Interlocked.CompareExchange (ref backing_field, Delegate.Combine|Remove(obj2, value), obj1);
-				// } while (obj1 != obj2)
+				//   obj1 = Interlocked.CompareExchange (ref backing_field, Delegate.Combine|Remove(obj2, value), obj1);
+				// } while ((object)obj1 != (object)obj2)
 				//
 
 				var field_info = ((EventField) method).backing_field;
@@ -924,7 +924,9 @@ namespace Mono.CSharp
 				block.AddStatement (new StatementExpression (new SimpleAssign (new LocalVariableReference (obj1, Location), f_expr)));
 
 				var cond = new BooleanExpression (new Binary (Binary.Operator.Inequality,
-					new LocalVariableReference (obj1, Location), new LocalVariableReference (obj2, Location), Location));
+					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj1, Location), Location),
+					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj2, Location), Location),
+					Location));
 
 				var body = new ExplicitBlock (block, Location, Location);
 				block.AddStatement (new Do (body, cond, Location));
