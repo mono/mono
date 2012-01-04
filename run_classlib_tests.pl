@@ -12,17 +12,23 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 }
 
 #do build
-chdir("$root/mcs/class/corlib") eq 1 or die("failed to chdir corlib");
 
-my $result = 0;
-if($^O eq 'MSWin32') {
-	$result = system("msbuild build.proj /t:Test");
-} else {
-	$result = system("make run-test-local");
+@testdirs = ('corlib','System', 'System.Xml', 'System.Core');
+
+foreach (@testdirs)
+{
+	chdir("$root/mcs/class/" . $_) eq 1 or die("failed to chdir " . $_);
+
+	my $result = 0;
+	if($^O eq 'MSWin32') {
+		$result = system("msbuild build.proj /t:Test");
+	} else {
+		$result = system("make run-test-local");
+	}
+
+	if ($teamcity) {
+		print("##teamcity[importData type='nunit' path='mcs/class/". $_ . "/TestResult-net_2_0.xml']\n");
+	}
 }
+#$result eq 0 or die ("Failed running mono classlib tests");
 
-if ($teamcity) {
-	print("##teamcity[importData type='nunit' path='mcs/class/corlib/TestResult-net_2_0.xml']\n");
-}
-
-$result eq 0 or die ("Failed running mono classlib tests");
