@@ -540,7 +540,7 @@ namespace Mono.CSharp
 			}
 
 			string ns = mn.Left != null ? mn.Left.GetSignatureForError () : Module.GlobalRootNamespace.GetSignatureForError ();
-			mn = new MemberName (mn.Name, mn.TypeArguments, mn.Location);
+			mn = new MemberName (mn.Name, mn.TypeParameters, mn.Location);
 
 			Report.SymbolRelatedToPreviousError (found.Location, "");
 			Report.Error (101, container.Location,

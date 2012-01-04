@@ -40,9 +40,9 @@ namespace Mono.CSharp {
 		{
 			string host_name = host == null ? null : host is InterfaceMemberBase ? ((InterfaceMemberBase)host).GetFullName (host.MemberName) : host.Name;
 			string tname = MakeName (host_name, "c", name, unique_id);
-			TypeArguments args = null;
+			TypeParameters args = null;
 			if (tparams != null) {
-				args = new TypeArguments ();
+				args = new TypeParameters ();
 				foreach (TypeParameter tparam in tparams)
 					args.Add (new TypeParameterName (tparam.Name, null, loc));
 			}
@@ -350,7 +350,7 @@ namespace Mono.CSharp {
 			type_params = null;
 			spec.IsGeneric = false;
 			spec.DeclaringType = parentStorey.CurrentType;
-			MemberName.TypeArguments = null;
+			MemberName.TypeParameters = null;
 		}
 
 		protected override bool DoResolveTypeParameters ()
@@ -1583,8 +1583,8 @@ namespace Mono.CSharp {
 
 			MemberName member_name;
 			GenericMethod generic_method;
-			if (storey == null && mc.MemberName.TypeArguments != null) {
-				member_name = new MemberName (name, mc.MemberName.TypeArguments.Clone (), Location);
+			if (storey == null && mc.MemberName.TypeParameters != null) {
+				member_name = new MemberName (name, mc.MemberName.TypeParameters.Clone (), Location);
 
 				var hoisted_tparams = ec.CurrentTypeParameters;
 				var type_params = new TypeParameter[hoisted_tparams.Length];
@@ -1777,16 +1777,15 @@ namespace Mono.CSharp {
 			string name = ClassNamePrefix + types_counter++;
 
 			ParametersCompiled all_parameters;
-			TypeParameterName[] t_params;
+			TypeParameters tparams = null;
 			SimpleName[] t_args;
 
 			if (parameters.Count == 0) {
 				all_parameters = ParametersCompiled.EmptyReadOnlyParameters;
-				t_params = new TypeParameterName[0];
 				t_args = null;
 			} else {
 				t_args = new SimpleName[parameters.Count];
-				t_params = new TypeParameterName[parameters.Count];
+				tparams = new TypeParameters ();
 				Parameter[] ctor_params = new Parameter[parameters.Count];
 				for (int i = 0; i < parameters.Count; ++i) {
 					AnonymousTypeParameter p = parameters[i];
@@ -1803,7 +1802,7 @@ namespace Mono.CSharp {
 					}
 
 					t_args[i] = new SimpleName ("<" + p.Name + ">__T", p.Location);
-					t_params[i] = new TypeParameterName (t_args[i].Name, null, p.Location);
+					tparams.Add (new TypeParameterName (t_args[i].Name, null, p.Location));
 					ctor_params[i] = new Parameter (t_args[i], p.Name, Parameter.Modifier.NONE, null, p.Location);
 				}
 
@@ -1815,7 +1814,7 @@ namespace Mono.CSharp {
 			// named upon properties names
 			//
 			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
-				new MemberName (name, new TypeArguments (t_params), loc), parameters, loc);
+				new MemberName (name, tparams, loc), parameters, loc);
 
 			if (parameters.Count > 0)
 				a_type.SetParameterInfo (null);

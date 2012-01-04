@@ -1144,16 +1144,20 @@ namespace Mono.CSharp
 					//
 					var hoisted_tparams = method.GenericDefinition.TypeParameters;
 					var type_params = new TypeParameter[hoisted_tparams.Length];
+					var tparams = new TypeParameters ();
+
 					targs = new TypeArguments ();
 					targs.Arguments = new TypeSpec[type_params.Length];
 					for (int i = 0; i < type_params.Length; ++i) {
 						var tp = hoisted_tparams[i];
-						targs.Add (new TypeParameterName (tp.Name, null, Location));
+						tparams.Add (new TypeParameterName (tp.Name, null, Location));
+
+						targs.Add (new SimpleName (tp.Name, Location));
 						targs.Arguments[i] = tp;
 						type_params[i] = new TypeParameter (tp, this, null, new MemberName (tp.Name), null);
 					}
 
-					member_name = new MemberName (name, targs, Location);
+					member_name = new MemberName (name, tparams, Location);
 					generic_method = new GenericMethod (NamespaceEntry, this, member_name, type_params,
 						new TypeExpression (method.ReturnType, Location), cloned_params);
 				} else {

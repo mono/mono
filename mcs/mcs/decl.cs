@@ -41,7 +41,7 @@ namespace Mono.CSharp {
 		public static readonly MemberName Null = new MemberName ("");
 
 		public readonly string Name;
-		public TypeArguments TypeArguments;
+		public TypeParameters TypeParameters;
 		public readonly FullNamedExpression ExplicitInterface;
 		public readonly Location Location;
 
@@ -55,17 +55,16 @@ namespace Mono.CSharp {
 			: this (null, name, loc)
 		{ }
 
-		public MemberName (string name, TypeArguments args, Location loc)
+		public MemberName (string name, TypeParameters tparams, Location loc)
 		{
 			this.Name = name;
 			this.Location = loc;
 
-			if (args != null && args.Count > 0)
-				this.TypeArguments = args;
+			this.TypeParameters = tparams;
 		}
 
-		public MemberName (string name, TypeArguments args, FullNamedExpression explicitInterface, Location loc)
-			: this (name, args, loc)
+		public MemberName (string name, TypeParameters tparams, FullNamedExpression explicitInterface, Location loc)
+			: this (name, tparams, loc)
 		{
 			this.ExplicitInterface = explicitInterface;
 		}
@@ -87,7 +86,7 @@ namespace Mono.CSharp {
 		{
 			this.Name = right.Name;
 			this.Location = right.Location;
-			this.TypeArguments = right.TypeArguments;
+			this.TypeParameters = right.TypeParameters;
 			this.Left = left;
 		}
 
@@ -99,13 +98,13 @@ namespace Mono.CSharp {
 
 		public int Arity {
 			get {
-				return TypeArguments == null ? 0 : TypeArguments.Count;
+				return TypeParameters == null ? 0 : TypeParameters.Count;
 			}
 		}
 
 		public bool IsGeneric {
 			get {
-				if (TypeArguments != null)
+				if (TypeParameters != null)
 					return true;
 				else if (Left != null)
 					return Left.IsGeneric;
@@ -125,15 +124,15 @@ namespace Mono.CSharp {
 
 		public string Basename {
 			get {
-				if (TypeArguments != null)
-					return MakeName (Name, TypeArguments);
+				if (TypeParameters != null)
+					return MakeName (Name, TypeParameters);
 				return Name;
 			}
 		}
 
 		public string GetSignatureForError ()
 		{
-			string s = TypeArguments == null ? null : "<" + TypeArguments.GetSignatureForError () + ">";
+			string s = TypeParameters == null ? null : "<" + TypeParameters.GetSignatureForError () + ">";
 			s = Name + s;
 
 			if (ExplicitInterface != null)
@@ -157,11 +156,11 @@ namespace Mono.CSharp {
 			if (other == null || Name != other.Name)
 				return false;
 
-			if ((TypeArguments != null) &&
-			    (other.TypeArguments == null || TypeArguments.Count != other.TypeArguments.Count))
+			if ((TypeParameters != null) &&
+			    (other.TypeParameters == null || TypeParameters.Count != other.TypeParameters.Count))
 				return false;
 
-			if ((TypeArguments == null) && (other.TypeArguments != null))
+			if ((TypeParameters == null) && (other.TypeParameters != null))
 				return false;
 
 			if (Left == null)
@@ -176,24 +175,13 @@ namespace Mono.CSharp {
 			for (MemberName n = Left; n != null; n = n.Left)
 				hash ^= n.Name.GetHashCode ();
 
-			if (TypeArguments != null)
-				hash ^= TypeArguments.Count << 5;
+			if (TypeParameters != null)
+				hash ^= TypeParameters.Count << 5;
 
 			return hash & 0x7FFFFFFF;
 		}
 
-		public int CountTypeArguments {
-			get {
-				if (TypeArguments != null)
-					return TypeArguments.Count;
-				else if (Left != null)
-					return Left.CountTypeArguments; 
-				else
-					return 0;
-			}
-		}
-
-		public static string MakeName (string name, TypeArguments args)
+		public static string MakeName (string name, TypeParameters args)
 		{
 			if (args == null)
 				return name;
@@ -1257,9 +1245,9 @@ namespace Mono.CSharp {
 			Basename = name.Basename;
 			defined_names = new Dictionary<string, MemberCore> ();
 			PartialContainer = null;
-			if (name.TypeArguments != null) {
+			if (name.TypeParameters != null) {
 				is_generic = true;
-				count_type_params = name.TypeArguments.Count;
+				count_type_params = name.TypeParameters.Count;
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
@@ -1409,27 +1397,26 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
-			type_params = new TypeParameter [names.Length];
+			type_params = new TypeParameter [MemberName.Arity];
 
 			//
 			// Register all the names
 			//
 			for (int i = 0; i < type_params.Length; i++) {
-				TypeParameterName name = names [i];
+				TypeParameterName name = MemberName.TypeParameters [i];
 
 				Constraints constraints = null;
 				if (constraints_list != null) {
 					int total = constraints_list.Count;
 					for (int ii = 0; ii < total; ++ii) {
-						Constraints constraints_at = (Constraints)constraints_list[ii];
+						Constraints constraints_at = constraints_list[ii];
 						// TODO: it is used by iterators only
 						if (constraints_at == null) {
 							constraints_list.RemoveAt (ii);
 							--total;
 							continue;
 						}
-						if (constraints_at.TypeParameter.Value == name.Name) {
+						if (constraints_at.TypeParameter.Value == name.Value) {
 							constraints = constraints_at;
 							constraints_list.RemoveAt(ii);
 							break;
@@ -1444,9 +1431,9 @@ namespace Mono.CSharp {
 				}
 
 				type_params [i] = new TypeParameter (
-					Parent, i, new MemberName (name.Name, Location), constraints, name.OptAttributes, variance);
+					Parent, i, new MemberName (name.Value, Location), constraints, name.OptAttributes, variance);
 
-				AddToContainer (type_params [i], name.Name);
+				AddToContainer (type_params [i], name.Value);
 			}
 
 			if (constraints_list != null && constraints_list.Count > 0) {

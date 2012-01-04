@@ -1233,7 +1233,7 @@ method_header
 		current_local_parameters = (ParametersCompiled) $7;
 
 		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
+		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
 						     (FullNamedExpression) $3, current_local_parameters);
 
@@ -1277,12 +1277,12 @@ method_header
 		MemberName name = (MemberName) $6;
 		current_local_parameters = (ParametersCompiled) $9;
 
-		if ($11 != null && name.TypeArguments == null)
+		if ($11 != null && name.TypeParameters == null)
 			report.Error (80, lexer.Location,
 				      "Constraints are not allowed on non-generic declarations");
 
 		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
+		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
 				new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				current_local_parameters);
@@ -2685,7 +2685,7 @@ type_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments)$3, lt.Location);
+		$$ = new MemberName (lt.Value, (TypeParameters)$3, lt.Location);
 	  }
 	;
 
@@ -2693,7 +2693,7 @@ member_declaration_name
 	: method_declaration_name
 	  {
 	  	MemberName mn = (MemberName)$1;
-	  	if (mn.TypeArguments != null)
+	  	if (mn.TypeParameters != null)
 	  		syntax_error (mn.Location, string.Format ("Member `{0}' cannot declare type arguments",
 	  			mn.GetSignatureForError ()));
 	  }
@@ -2705,7 +2705,7 @@ method_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;	  
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new MemberName (lt.Value, (TypeArguments) $3, (ATypeNameExpression) $1, lt.Location);
+		$$ = new MemberName (lt.Value, (TypeParameters) $3, (ATypeNameExpression) $1, lt.Location);
 	  }
 	;
 	
@@ -2760,15 +2760,15 @@ opt_type_parameter_list
 type_parameters
 	: type_parameter
 	  {
-		TypeArguments type_args = new TypeArguments ();
-		type_args.Add ((FullNamedExpression)$1);
-		$$ = type_args;
+		var tparams = new TypeParameters ();
+		tparams.Add ((TypeParameterName)$1);
+		$$ = tparams;
 	  }
 	| type_parameters COMMA type_parameter
 	  {
-		TypeArguments type_args = (TypeArguments) $1;
-		type_args.Add ((FullNamedExpression)$3);
-		$$ = type_args;
+		var tparams = (TypeParameters) $1;
+		tparams.Add ((TypeParameterName)$3);
+		$$ = tparams;
 		lbag.AddLocation ($3, GetLocation ($3));
 	  }	  
 	;

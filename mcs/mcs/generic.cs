@@ -1875,12 +1875,6 @@ namespace Mono.CSharp {
 			args.Add (type);
 		}
 
-		// TODO: Kill this monster
-		public TypeParameterName[] GetDeclarations ()
-		{
-			return args.ConvertAll (i => (TypeParameterName) i).ToArray ();
-		}
-
 		/// <summary>
 		///   We may only be used after Resolve() is called and return the fully
 		///   resolved types.
@@ -2000,7 +1994,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class TypeParameterName : SimpleName
+	public class TypeParameterName : SimpleMemberName
 	{
 		Attributes attributes;
 		Variance variance;
@@ -2027,6 +2021,65 @@ namespace Mono.CSharp {
 			get {
 				return variance;
 			}
+		}
+
+		public string GetSignatureForError ()
+		{
+			return Value;
+		}
+	}
+
+	public class TypeParameters
+	{
+		List<TypeParameterName> names;
+
+		public TypeParameters ()
+		{
+			names = new List<TypeParameterName> ();
+		}
+
+		public int Count {
+			get {
+				return names.Count;
+			}
+		}
+
+		public void Add (TypeParameterName tparam)
+		{
+			names.Add (tparam);
+		}
+
+		public TypeParameterName this [int index] {
+			get {
+				return names [index];
+			
+			}
+		}
+
+		public TypeParameters Clone ()
+		{
+			var clone = new TypeParameters ();
+			for (int i = 0; i < Count; ++i) {
+				var n = names[i];
+				clone.Add (new TypeParameterName (n.Value, null, n.Variance, n.Location));
+			}
+
+			return clone;
+		}
+
+		public string GetSignatureForError ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < Count; ++i) {
+				if (i > 0)
+					sb.Append (',');
+
+				var name = names[i];
+				if (name != null)
+					sb.Append (name.GetSignatureForError ());
+			}
+
+			return sb.ToString ();
 		}
 	}
 
@@ -2485,11 +2538,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool Define (MethodOrOperator m)
 		{
-			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
-			string[] snames = new string [names.Length];
+			string[] snames = new string[MemberName.Arity];
 			var block = m.Block;
-			for (int i = 0; i < names.Length; i++) {
-				string type_argument_name = names[i].Name;
+			for (int i = 0; i < snames.Length; i++) {
+				string type_argument_name = MemberName.TypeParameters[i].Value;
 
 				if (block == null) {
 					int idx = parameters.GetParameterIndexByName (type_argument_name);
