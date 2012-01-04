@@ -1385,6 +1385,17 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			DateTest t = serializer.ReadObject(inputStream) as DateTest;
 			Assert.AreEqual (634129344000000000, t.ShouldHaveValue.Value.Ticks, "#1");
 		}
+
+		[Test]
+		public void NullableFieldsShouldSupportNullValue ()
+		{
+			string json = @"{""should_have_value"":null}";
+			var inputStream = new MemoryStream (Encoding.UTF8.GetBytes (json));
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DateTest));
+			Console.WriteLine ("# serializer assembly: {0}", serializer.GetType ().Assembly.Location);
+			DateTest t = serializer.ReadObject (inputStream) as DateTest;
+			Assert.AreEqual (false, t.ShouldHaveValue.HasValue, "#2");
+		}
 		
 		[Test]
 		public void DeserializeNullMember ()
