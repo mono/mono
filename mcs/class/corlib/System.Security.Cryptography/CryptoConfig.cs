@@ -33,6 +33,7 @@
 #if !MOONLIGHT
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -46,37 +47,38 @@ using Mono.Xml;
 namespace System.Security.Cryptography {
 
 [ComVisible (true)]
-public partial      class CryptoConfig {
+public partial class CryptoConfig {
 
 	static private object lockObject;
-	static private Hashtable algorithms;
-	static private Hashtable oid;
+	static private Dictionary<string,Type> algorithms;
+	static private Dictionary<string,string> unresolved_algorithms;
+	static private Dictionary<string,string> oids;
 
 	private const string defaultNamespace = "System.Security.Cryptography.";
-	private const string defaultSHA1 = defaultNamespace + "SHA1CryptoServiceProvider";
-	private const string defaultMD5 = defaultNamespace + "MD5CryptoServiceProvider";
-	private const string defaultSHA256 = defaultNamespace + "SHA256Managed";
-	private const string defaultSHA384 = defaultNamespace + "SHA384Managed";
-	private const string defaultSHA512 = defaultNamespace + "SHA512Managed";
-	private const string defaultRSA = defaultNamespace + "RSACryptoServiceProvider";
-	private const string defaultDSA = defaultNamespace + "DSACryptoServiceProvider";
-	private const string defaultDES = defaultNamespace + "DESCryptoServiceProvider";
-	private const string default3DES = defaultNamespace + "TripleDESCryptoServiceProvider";
-	private const string defaultRC2 = defaultNamespace + "RC2CryptoServiceProvider";
-	private const string defaultAES = defaultNamespace + "RijndaelManaged";
+	static Type defaultSHA1 = typeof (SHA1CryptoServiceProvider);
+	static Type defaultMD5 = typeof (MD5CryptoServiceProvider);
+	static Type defaultSHA256 = typeof (SHA256Managed);
+	static Type defaultSHA384 = typeof (SHA384Managed);
+	static Type defaultSHA512 = typeof (SHA512Managed);
+	static Type defaultRSA = typeof (RSACryptoServiceProvider);
+	static Type defaultDSA = typeof (DSACryptoServiceProvider);
+	static Type defaultDES = typeof (DESCryptoServiceProvider);
+	static Type default3DES = typeof (TripleDESCryptoServiceProvider);
+	static Type defaultRC2 = typeof (RC2CryptoServiceProvider);
+	static Type defaultAES = typeof (RijndaelManaged);
 	// LAMESPEC: undocumented names in CryptoConfig
-	private const string defaultRNG = defaultNamespace + "RNGCryptoServiceProvider";
-	private const string defaultHMAC = defaultNamespace + "HMACSHA1";
-	private const string defaultMAC3DES = defaultNamespace + "MACTripleDES";
+	static Type defaultRNG = typeof (RNGCryptoServiceProvider);
+	static Type defaultHMAC = typeof (HMACSHA1);
+	static Type defaultMAC3DES = typeof (MACTripleDES);
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
-	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
-	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
-	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
-	private const string defaultHMACMD5 = defaultNamespace + "HMACMD5";
-	private const string defaultHMACRIPEMD160 = defaultNamespace + "HMACRIPEMD160";
-	private const string defaultHMACSHA256 = defaultNamespace + "HMACSHA256";
-	private const string defaultHMACSHA384 = defaultNamespace + "HMACSHA384";
-	private const string defaultHMACSHA512 = defaultNamespace + "HMACSHA512";
+	static Type defaultDSASigDesc = typeof (DSASignatureDescription);
+	static Type defaultRSASigDesc = typeof (RSAPKCS1SHA1SignatureDescription);
+	static Type defaultRIPEMD160 = typeof (RIPEMD160Managed);
+	static Type defaultHMACMD5 = typeof (HMACMD5);
+	static Type defaultHMACRIPEMD160 = typeof (HMACRIPEMD160);
+	static Type defaultHMACSHA256 = typeof (HMACSHA256);
+	static Type defaultHMACSHA384 = typeof (HMACSHA384);
+	static Type defaultHMACSHA512 = typeof (HMACSHA512);
 
 	// LAMESPEC: undocumented names in CryptoConfig
 	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform, " + Consts.AssemblySystem_Security;
@@ -115,18 +117,23 @@ public partial      class CryptoConfig {
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string oid3DESKeyWrap = "1.2.840.113549.1.9.16.3.6";
 
+	private const string nameSHA1 = "System.Security.Cryptography.SHA1CryptoServiceProvider";
 	private const string nameSHA1a = "SHA";
 	private const string nameSHA1b = "SHA1";
 	private const string nameSHA1c = "System.Security.Cryptography.SHA1";
 	private const string nameSHA1d = "System.Security.Cryptography.HashAlgorithm";
+	private const string nameMD5 = "System.Security.Cryptography.MD5CryptoServiceProvider";
 	private const string nameMD5a = "MD5";
 	private const string nameMD5b = "System.Security.Cryptography.MD5";
+	private const string nameSHA256 = "System.Security.Cryptography.SHA256Managed";
 	private const string nameSHA256a = "SHA256";
 	private const string nameSHA256b = "SHA-256";
 	private const string nameSHA256c = "System.Security.Cryptography.SHA256";
+	private const string nameSHA384 = "System.Security.Cryptography.SHA384Managed";
 	private const string nameSHA384a = "SHA384";
 	private const string nameSHA384b = "SHA-384";
 	private const string nameSHA384c = "System.Security.Cryptography.SHA384";
+	private const string nameSHA512 = "System.Security.Cryptography.SHA512Managed";
 	private const string nameSHA512a = "SHA512";
 	private const string nameSHA512b = "SHA-512";
 	private const string nameSHA512c = "System.Security.Cryptography.SHA512";
@@ -156,6 +163,7 @@ public partial      class CryptoConfig {
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string name3DESKeyWrap = "TripleDESKeyWrap";
+	private const string nameRIPEMD160 = "System.Security.Cryptography.RIPEMD160Managed";
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
 	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
@@ -275,7 +283,7 @@ public partial      class CryptoConfig {
 
 	private static void Initialize () 
 	{
-		Hashtable algorithms = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+		Dictionary<string,Type> algorithms = new Dictionary<string, Type> (StringComparer.OrdinalIgnoreCase);
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
 		// frlrfSystemSecurityCryptographyCryptoConfigClassTopic.asp
 		algorithms.Add (nameSHA1a, defaultSHA1);
@@ -344,22 +352,26 @@ public partial      class CryptoConfig {
 		algorithms.Add (nameHMACSHA384b, defaultHMACSHA384);
 		algorithms.Add (nameHMACSHA512a, defaultHMACSHA512);
 		algorithms.Add (nameHMACSHA512b, defaultHMACSHA512);
-
+			
+		// we do not want to load the types (and assemblies) unless we really need them
+		// so we keep those names as strings
+		Dictionary<string,string> unresolved_algorithms = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+			
 		// LAMESPEC These URLs aren't documented but (hint) installing the WSDK
 		// add some of the XMLDSIG urls into machine.config (and they make a LOT
 		// of sense for implementing XMLDSIG in System.Security.Cryptography.Xml)
 		algorithms.Add (urlDSASHA1, defaultDSASigDesc); 
 		algorithms.Add (urlRSASHA1, defaultRSASigDesc);
 		algorithms.Add (urlSHA1, defaultSHA1);
-		algorithms.Add (urlC14N, defaultC14N);
-		algorithms.Add (urlC14NWithComments, defaultC14NWithComments);
-		algorithms.Add (urlBase64, defaultBase64);
-		algorithms.Add (urlXPath, defaultXPath);
-		algorithms.Add (urlXslt, defaultXslt);
-		algorithms.Add (urlEnveloped, defaultEnveloped);
-		algorithms.Add (urlExcC14N, defaultExcC14N);
-		algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
-		algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
+		unresolved_algorithms.Add (urlC14N, defaultC14N);
+		unresolved_algorithms.Add (urlC14NWithComments, defaultC14NWithComments);
+		unresolved_algorithms.Add (urlBase64, defaultBase64);
+		unresolved_algorithms.Add (urlXPath, defaultXPath);
+		unresolved_algorithms.Add (urlXslt, defaultXslt);
+		unresolved_algorithms.Add (urlEnveloped, defaultEnveloped);
+		unresolved_algorithms.Add (urlExcC14N, defaultExcC14N);
+		unresolved_algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
+		unresolved_algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
 		algorithms.Add (urlSHA256, defaultSHA256);
 		// xmlenc does not include a definition for SHA384
 		algorithms.Add (urlSHA512, defaultSHA512);
@@ -368,68 +380,68 @@ public partial      class CryptoConfig {
 		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
 		algorithms.Add (urlHMACRIPEMD160, defaultHMACRIPEMD160);
 		// LAMESPEC: only documentated in ".NET Framework Security" book
-		algorithms.Add (urlX509Data, defaultX509Data);
-		algorithms.Add (urlKeyName, defaultKeyName);
-		algorithms.Add (urlKeyValueDSA, defaultKeyValueDSA);
-		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
-		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
+		unresolved_algorithms.Add (urlX509Data, defaultX509Data);
+		unresolved_algorithms.Add (urlKeyName, defaultKeyName);
+		unresolved_algorithms.Add (urlKeyValueDSA, defaultKeyValueDSA);
+		unresolved_algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
+		unresolved_algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
 
 		// note: X.509 extensions aren't part of OID but names
-		algorithms.Add (oidX509SubjectKeyIdentifier, nameX509SubjectKeyIdentifier);
-		algorithms.Add (oidX509KeyUsage, nameX509KeyUsage);
-		algorithms.Add (oidX509BasicConstraints, nameX509BasicConstraints);
-		algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
+		unresolved_algorithms.Add (oidX509SubjectKeyIdentifier, nameX509SubjectKeyIdentifier);
+		unresolved_algorithms.Add (oidX509KeyUsage, nameX509KeyUsage);
+		unresolved_algorithms.Add (oidX509BasicConstraints, nameX509BasicConstraints);
+		unresolved_algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
 		// note: the default X.509Chain can also be created this way
-		algorithms.Add (nameX509Chain, defaultX509Chain);
+		unresolved_algorithms.Add (nameX509Chain, defaultX509Chain);
 #if NET_4_0
-		algorithms.Add (nameAES_1, defaultAES_1);
-		algorithms.Add (nameAES_2, defaultAES_1);
-		algorithms.Add (nameAESManaged_1, defaultAESManaged);
-		algorithms.Add (nameAESManaged_2, defaultAESManaged);
+		unresolved_algorithms.Add (nameAES_1, defaultAES_1);
+		unresolved_algorithms.Add (nameAES_2, defaultAES_1);
+		unresolved_algorithms.Add (nameAESManaged_1, defaultAESManaged);
+		unresolved_algorithms.Add (nameAESManaged_2, defaultAESManaged);
 
-		algorithms.Add (nameECDiffieHellman_1, defaultECDiffieHellman);
-		algorithms.Add (nameECDiffieHellman_2, defaultECDiffieHellman);
-		algorithms.Add (nameECDiffieHellman_3, defaultECDiffieHellman);
-		algorithms.Add (nameECDiffieHellman_4, defaultECDiffieHellman);
+		unresolved_algorithms.Add (nameECDiffieHellman_1, defaultECDiffieHellman);
+		unresolved_algorithms.Add (nameECDiffieHellman_2, defaultECDiffieHellman);
+		unresolved_algorithms.Add (nameECDiffieHellman_3, defaultECDiffieHellman);
+		unresolved_algorithms.Add (nameECDiffieHellman_4, defaultECDiffieHellman);
 
-		algorithms.Add (nameECDsa_1, defaultECDsa);
-		algorithms.Add (nameECDsa_2, defaultECDsa);
-		algorithms.Add (nameECDsa_3, defaultECDsa);
+		unresolved_algorithms.Add (nameECDsa_1, defaultECDsa);
+		unresolved_algorithms.Add (nameECDsa_2, defaultECDsa);
+		unresolved_algorithms.Add (nameECDsa_3, defaultECDsa);
 
-		algorithms.Add (nameSHA1Cng, defaultSHA1Cng);
-		algorithms.Add (nameSHA256Cng, defaultSHA256Cng);
-		algorithms.Add (nameSHA256Provider, defaultSHA256Provider);
-		algorithms.Add (nameSHA384Cng, defaultSHA384Cng);
-		algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
-		algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
-		algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
+		unresolved_algorithms.Add (nameSHA1Cng, defaultSHA1Cng);
+		unresolved_algorithms.Add (nameSHA256Cng, defaultSHA256Cng);
+		unresolved_algorithms.Add (nameSHA256Provider, defaultSHA256Provider);
+		unresolved_algorithms.Add (nameSHA384Cng, defaultSHA384Cng);
+		unresolved_algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
+		unresolved_algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
+		unresolved_algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
 #endif
-		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+		Dictionary<string,string> oid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
-		oid.Add (defaultSHA1, oidSHA1);
+		oid.Add (nameSHA1, oidSHA1);
 		oid.Add (managedSHA1, oidSHA1);
 		oid.Add (nameSHA1b, oidSHA1);
 		oid.Add (nameSHA1c, oidSHA1);
 
-		oid.Add (defaultMD5, oidMD5);
+		oid.Add (nameMD5, oidMD5);
 		oid.Add (nameMD5a, oidMD5);
 		oid.Add (nameMD5b, oidMD5);
 
-		oid.Add (defaultSHA256, oidSHA256);
+		oid.Add (nameSHA256, oidSHA256);
 		oid.Add (nameSHA256a, oidSHA256);
 		oid.Add (nameSHA256c, oidSHA256);
 
-		oid.Add (defaultSHA384, oidSHA384);
+		oid.Add (nameSHA384, oidSHA384);
 		oid.Add (nameSHA384a, oidSHA384);
 		oid.Add (nameSHA384c, oidSHA384);
 
-		oid.Add (defaultSHA512, oidSHA512);
+		oid.Add (nameSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);
 
-		oid.Add (defaultRIPEMD160, oidRIPEMD160);
+		oid.Add (nameRIPEMD160, oidRIPEMD160);
 		oid.Add (nameRIPEMD160a, oidRIPEMD160);
 		oid.Add (nameRIPEMD160c, oidRIPEMD160);
 
@@ -446,11 +458,12 @@ public partial      class CryptoConfig {
 
 		// update
 		CryptoConfig.algorithms = algorithms;
-		CryptoConfig.oid = oid;
+		CryptoConfig.unresolved_algorithms = unresolved_algorithms;
+		CryptoConfig.oids = oid;
 	}
 
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
-	private static void LoadConfig (string filename, Hashtable algorithms, Hashtable oid)
+	private static void LoadConfig (string filename, IDictionary<string,Type> algorithms, IDictionary<string,string> oid)
 	{
 		if (!File.Exists (filename))
 			return;
@@ -485,11 +498,12 @@ public partial      class CryptoConfig {
 	
 		try {
 			Type algoClass = null;
-			string algo = (string) algorithms [name];
-			// do we have an entry
-			if (algo == null)
-				algo = name;
-			algoClass = Type.GetType (algo);
+			if (!algorithms.TryGetValue (name, out algoClass)) {
+				string algo = null;
+				if (!unresolved_algorithms.TryGetValue (name, out algo))
+						algo = name;
+				algoClass = Type.GetType (algo);
+			}
 			if (algoClass == null)
 				return null;
 			// call the constructor for the type
@@ -507,29 +521,66 @@ public partial      class CryptoConfig {
 			throw new ArgumentNullException ("name");
 
 		lock (lockObject) {
-			if (oid == null) {
+			if (oids == null) {
 				Initialize ();
 			}
 		}
-
-		return (string)oid [name];
+			
+		string result = null;
+		oids.TryGetValue (name, out result);
+		return result;
 	}
+
+#if NET_4_0
+	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
+	public static bool AllowOnlyFipsAlgorithms {
+		get { return false; }
+	}
+
+	public static void AddAlgorithm (Type algorithm, params string[] names)
+	{
+		if (algorithm == null)
+				throw new ArgumentNullException ("algorithm");
+		if (names  == null)
+				throw new ArgumentNullException ("names");
+			
+		foreach (string name in names) {
+				if (String.IsNullOrWhiteSpace (name))
+					throw new ArithmeticException ("names");
+				algorithms [name] = algorithm;
+		}
+	}
+
+	public static void AddOID (string oid, params string[] names)
+	{
+		if (oid == null)
+				throw new ArgumentNullException ("oid");
+		if (names  == null)
+				throw new ArgumentNullException ("names");
+			
+		foreach (string name in names) {
+				if (String.IsNullOrWhiteSpace (name))
+					throw new ArithmeticException ("names");
+				oids [oid] = name;
+		}
+	}
+#endif
 
 	class CryptoHandler: SmallXmlParser.IContentHandler {
 
-		private Hashtable algorithms;
-		private Hashtable oid;
-		private Hashtable names;
-		private Hashtable classnames;
+		IDictionary<string,Type> algorithms;
+		IDictionary<string,string> oid;
+		Dictionary<string,string> names;
+		Dictionary<string,string> classnames;
 		int level;
 
-		public CryptoHandler (Hashtable algorithms, Hashtable oid)
+		public CryptoHandler (IDictionary<string,Type> algorithms, IDictionary<string,string> oid)
 		{
 			this.algorithms = algorithms;
 			this.oid = oid;
 			// temporary tables to reconstruct algorithms
-			names = new Hashtable ();
-			classnames = new Hashtable ();
+			names = new Dictionary<string,string> ();
+			classnames = new Dictionary<string,string> ();
 		}
 
 		public void OnStartParsing (SmallXmlParser parser)
@@ -539,9 +590,9 @@ public partial      class CryptoConfig {
 
 		public void OnEndParsing (SmallXmlParser parser)
 		{
-			foreach (DictionaryEntry de in names) {
+			foreach (var kpv in names) {
 				try {
-					algorithms.Add (de.Key, classnames[de.Value]);
+					algorithms [kpv.Key] = Type.GetType (classnames [kpv.Value]);
 				}
 				catch {
 				}
@@ -583,16 +634,16 @@ public partial      class CryptoConfig {
 				break;
 			case 4:
 				if (name == "oidEntry") {
-					oid.Add (Get (attrs, "name"), Get (attrs, "OID"));
+					oid [Get (attrs, "name")] = Get (attrs, "OID");
 				} else if (name == "nameEntry") {
-					names.Add (Get (attrs, "name"), Get (attrs, "class"));
+					names [Get (attrs, "name")] = Get (attrs, "class");
 				} else if (name == "cryptoClasses") {
 					level++;
 				}
 				break;
 			case 5:
 				if (name == "cryptoClass")
-					classnames.Add (attrs.Names[0], attrs.Values[0]);
+					classnames [attrs.Names[0]] = attrs.Values[0];
 				break;
 			}
 		}
