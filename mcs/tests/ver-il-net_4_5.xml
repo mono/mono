@@ -43942,7 +43942,15 @@
     </type>
     <type name="Program">
       <method name="Int32 Main()">
-        <size>372</size>
+        <size>390</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="F">
+      <method name="Boolean op_Implicit(F)">
+        <size>6</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

@@ -45,6 +45,14 @@ public struct E
 	}
 }
 
+public class F
+{
+	public static implicit operator bool (F f)
+	{
+		throw new ApplicationException ();
+	}
+}
+
 class Program
 {	
 	public static int Main ()
@@ -76,6 +84,9 @@ class Program
 
 		if (new E () != new E ()  || E.Counter != 2)
 			return 31;
+
+		if (new F () == new F ())
+			return 40;
 		
 		Console.WriteLine ("ok");
 		return 0;

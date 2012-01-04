@@ -3389,6 +3389,8 @@ namespace Mono.CSharp
 				return this;
 			}
 
+			bool no_arg_conv = false;
+
 			//
 			// LAMESPEC: method groups can be compared when they convert to other side delegate
 			//
@@ -3410,6 +3412,8 @@ namespace Mono.CSharp
 
 				left = result;
 				l = r;
+			} else {
+				no_arg_conv = l == r && !l.IsStruct;
 			}
 
 			//
@@ -3422,11 +3426,12 @@ namespace Mono.CSharp
 			// bool operator != (bool a, bool b)
 			// bool operator == (bool a, bool b)
 			//
-			// LAMESPEC: Reference equality comparison can apply to value types when
-			// they implement an implicit conversion to any of types above.
+			// LAMESPEC: Reference equality comparison can apply to value/reference types when
+			// they implement an implicit conversion to any of types above. This does
+			// not apply when both operands are of same reference type
 			//
 			if (r.BuiltinType != BuiltinTypeSpec.Type.Object && l.BuiltinType != BuiltinTypeSpec.Type.Object) {
-				result = ResolveOperatorPredefined (ec, ec.BuiltinTypes.OperatorsBinaryEquality, false, null);
+				result = ResolveOperatorPredefined (ec, ec.BuiltinTypes.OperatorsBinaryEquality, no_arg_conv, null);
 				if (result != null)
 					return result;
 			}
