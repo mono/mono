@@ -1166,7 +1166,7 @@ namespace System.IO
 
 		// fields
 
-		internal const int DefaultBufferSize = 8192;
+		internal const int DefaultBufferSize = 4096;
 
 		// Input buffer ready for recycling				
 		static byte[] buf_recycle;
