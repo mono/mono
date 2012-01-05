@@ -7,6 +7,8 @@
 //
 // (C) 2002, 2003 Ximian, Inc.
 // (C) 2003 Joshua Tauberer.
+// Copyright 2003-2011 Novell
+// Copyright 2011 Xamarin Inc
 //
 // TODO:
 //   Should cluster together constructors

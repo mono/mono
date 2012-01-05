@@ -5,6 +5,8 @@
 //   Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
+// Copyright 2003-2011 Novell
+// Copyright 2011 Xamarin Inc
 //
 
 using System;

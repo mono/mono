@@ -5,6 +5,8 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) 2002, Ximian, Inc.
+// Copyright 2003-2011 Novell
+// Copyright 2011 Xamarin Inc
 //
 // TODO:
 //   Each node should have a provider link
