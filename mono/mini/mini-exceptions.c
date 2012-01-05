@@ -2142,7 +2142,7 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	if (jit_tls && mono_thread_internal_current ()) {
 		fprintf (stderr, "Stacktrace:\n\n");
 
-		mono_jit_walk_stack (print_stack_frame, TRUE, stderr);
+		mono_jit_walk_stack (print_stack_frame, FALSE, stderr);
 
 		fflush (stderr);
 	}
