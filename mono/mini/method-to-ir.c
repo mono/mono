@@ -3567,7 +3567,7 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 			inline_limit = INLINE_LENGTH_LIMIT;
 		inline_limit_inited = TRUE;
 	}
-	if (header.code_size >= inline_limit)
+	if (header.code_size >= inline_limit && !(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
 		return FALSE;
 
 	/*
