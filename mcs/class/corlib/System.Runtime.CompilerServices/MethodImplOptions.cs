@@ -73,8 +73,10 @@ namespace System.Runtime.CompilerServices {
 		/// </summary>
 		PreserveSig = 128,
 		
-#if NET_2_0
-		NoOptimization = 64
+		NoOptimization = 64,
+
+#if NET_4_5
+		AggressiveInlining  = 256,
 #endif
 	} // MethodImplOptions
 

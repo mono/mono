@@ -3157,3 +3157,4 @@ cant_print_generic_param_name (MonoGenericParam *gparam)
 }
 
 
+	{ METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING,  "agressive-inlining" },
