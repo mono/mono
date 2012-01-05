@@ -329,6 +329,11 @@ mono_gc_get_nursery (int *shift_bits, size_t *size)
 	return NULL;
 }
 
+void
+mono_gc_set_stack_end (void *stack_end)
+{
+}
+
 #ifndef HOST_WIN32
 
 int
