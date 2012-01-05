@@ -2,7 +2,7 @@ thisdir = tools/mono-service
 SUBDIRS = 
 include ../../build/rules.make
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/mono-service.exe
+PROGRAM = mono-service.exe
 
 include ../../build/executable.make
 
@@ -30,7 +30,7 @@ install-local: install-extras
 uninstall-local: uninstall-extras
 
 install-extras: $(gacutil)
-	$(GACUTIL) /i $(PROGRAM) /f $(gacdir_flag) /root $(GACROOT)
+	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT)
 
 uninstall-extras: $(gacutil)
-	-$(GACUTIL) /u $(PROGRAM:.exe=) $(gacdir_flag) /root $(GACROOT)
+	-$(GACUTIL) /u $(the_lib:.exe=) $(gacdir_flag) /root $(GACROOT)

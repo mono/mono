@@ -2,7 +2,7 @@ thisdir = nunit24/ConsoleRunner/nunit-console-exe
 SUBDIRS = 
 include ../../../build/rules.make
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/nunit-console.exe
+PROGRAM = nunit-console.exe
 LOCAL_MCS_FLAGS = \
 	/r:nunit.framework.dll /r:nunit.util.dll /r:nunit.core.dll \
 	/r:nunit-console-runner.dll

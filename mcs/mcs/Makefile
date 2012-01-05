@@ -13,10 +13,11 @@ EXTRA_DISTFILES = \
 	ikvm.cs
 
 ifeq (basic, $(PROFILE))
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/basic.exe
+PROGRAM = basic.exe
 sourcefile = mcs.exe.sources
 else
-PROGRAM = $(topdir)/class/lib/build/mcs.exe
+PROGRAM_USE_INTERMEDIATE_FILE = true
+PROGRAM = mcs.exe
 LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build
 endif
 
