@@ -21,7 +21,7 @@ endif
 endif
 
 LOCAL_MCS_FLAGS = -r:$(BUILD_FRAMEWORK) -r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll -r:$(BUILD_ENGINE)
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/xbuild.exe
+PROGRAM = xbuild.exe
 
 include ../../build/executable.make
 

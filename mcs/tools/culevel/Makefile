@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/culevel.exe
+PROGRAM = culevel.exe
 
 CLEAN_FILES = culevel.exe culevel.exe.mdb
 

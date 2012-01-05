@@ -2,7 +2,7 @@ thisdir = ilasm
 SUBDIRS =
 include ../build/rules.make
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/ilasm.exe
+PROGRAM = ilasm.exe
 BUILT_SOURCES = ILParser.cs
 LOCAL_MCS_FLAGS = /lib:../class/lib/$(PROFILE) /r:../class/lib/$(PROFILE)/PEAPI.dll /r:Mono.CompilerServices.SymbolWriter.dll /r:Mono.Security.dll
 

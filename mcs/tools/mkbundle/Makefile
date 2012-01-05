@@ -2,7 +2,7 @@ thisdir = tools/mkbundle
 SUBDIRS = 
 include ../../build/rules.make
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
+PROGRAM = mkbundle.exe
 
 OTHER_RES = template.c template_z.c template_main.c
 

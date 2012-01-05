@@ -2,7 +2,7 @@ thisdir = tools/compiler-tester
 SUBDIRS = 
 include ../../build/rules.make
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
+PROGRAM = compiler-tester.exe
 NO_INSTALL = yes
 
 ifeq (moonlight, $(PROFILE))
