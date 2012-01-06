@@ -132,6 +132,11 @@ namespace System
 				if (!argType.IsValueType && argType.IsAssignableFrom (delArgType))
 					match = true;
 			}
+			// enum basetypes
+			if (!match) {
+				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
+					match = true;
+			}
 
 			return match;
 		}
