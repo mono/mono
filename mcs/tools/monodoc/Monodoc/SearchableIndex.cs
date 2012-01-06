@@ -136,6 +136,12 @@ public class SearchableIndex
 			return d == null ? string.Empty : d.Get ("url");
 		}
 
+		public string GetFullTitle (int i)
+		{
+			Document d = this[i];
+			return d == null ? string.Empty : d.Get ("fulltitle");
+		}
+
 		public float Score (int i)
 		{
 			return docs[i].score;

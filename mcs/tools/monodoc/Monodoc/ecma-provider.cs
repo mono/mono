@@ -1980,6 +1980,7 @@ public class EcmaHelpSource : HelpSource {
 					doc.title = type_node.Caption;
 					doc.hottext = typename;
 					doc.url = url;
+					doc.fulltitle = full;
 					
 					XmlNode node_sel = xdoc.SelectSingleNode ("/Type/Docs");
 					text  = new StringBuilder ();
@@ -2039,6 +2040,7 @@ public class EcmaHelpSource : HelpSource {
 							default:
 								break;
 							}
+							doc_nod.fulltitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, nc.Caption);
 							//dont add the parameters to the hottext
 							int ppos = nc.Caption.IndexOf ('(');
 							if (ppos != -1)

@@ -10,6 +10,7 @@ namespace Monodoc {
 struct SearchableDocument {
 	public string title;
 	public string url;
+	public string fulltitle;
 	public string hottext;
 	public string text;
 	public string examples;
@@ -19,6 +20,7 @@ struct SearchableDocument {
 			Document doc = new Document ();
 			doc.Add (UnIndexed ("title", title));
 			doc.Add (UnIndexed ("url", url));
+			doc.Add (UnIndexed ("fulltitle", fulltitle ?? string.Empty));
 			doc.Add (UnStored ("hottext", hottext));
 			doc.Add (UnStored ("text", text));
 			doc.Add (UnStored ("examples", examples));
