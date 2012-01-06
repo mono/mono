@@ -2023,6 +2023,22 @@ public class EcmaHelpSource : HelpSource {
 							//create the doc
 							SearchableDocument doc_nod = new SearchableDocument ();
 							doc_nod.title = LargeName (nc);
+							switch (c.Caption[0]) {
+							case 'M':
+								doc_nod.title += " Method";
+								break;
+							case 'P':
+								doc_nod.title += " Property";
+								break;
+							case 'E':
+								doc_nod.title += " Event";
+								break;
+							case 'O':
+								doc_nod.title += " Operator";
+								break;
+							default:
+								break;
+							}
 							//dont add the parameters to the hottext
 							int ppos = nc.Caption.IndexOf ('(');
 							if (ppos != -1)
