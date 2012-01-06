@@ -10179,15 +10179,15 @@ namespace Mono.CSharp
 			if (type == null)
 				return null;
 
+			int errors = ec.Report.Errors;
 			type.CreateType ();
 			type.DefineType ();
 			type.ResolveTypeParameters ();
 			type.Define ();
-			type.EmitType ();
-			if (ec.Report.Errors == 0)
-				type.CloseType ();
+			if ((ec.Report.Errors - errors) == 0) {
+				parent.Module.AddAnonymousType (type);
+			}
 
-			parent.Module.AddAnonymousType (type);
 			return type;
 		}
 
@@ -10229,7 +10229,7 @@ namespace Mono.CSharp
 			arguments = new Arguments (parameters.Count);
 			TypeExpression [] t_args = new TypeExpression [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
-				Expression e = ((AnonymousTypeParameter) parameters [i]).Resolve (ec);
+				Expression e = parameters [i].Resolve (ec);
 				if (e == null) {
 					error = true;
 					continue;

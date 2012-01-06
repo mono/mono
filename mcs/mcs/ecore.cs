@@ -244,7 +244,7 @@ namespace Mono.CSharp {
 		protected void Error_ValueCannotBeConvertedCore (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			// The error was already reported as CS1660
-			if (type == InternalType.AnonymousMethod)
+			if (type == InternalType.AnonymousMethod || type == InternalType.ErrorType)
 				return;
 
 			string from_type = type.GetSignatureForError ();

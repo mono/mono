@@ -351,6 +351,12 @@ namespace Mono.CSharp
 				tc.CloseType ();
 			}
 
+			if (anonymous_types != null) {
+				foreach (var atypes in anonymous_types)
+					foreach (var at in atypes.Value)
+						at.CloseType ();
+			}
+
 			if (compiler_generated != null)
 				foreach (CompilerGeneratedClass c in compiler_generated)
 					c.CloseType ();
@@ -444,6 +450,12 @@ namespace Mono.CSharp
 
 			foreach (TypeContainer tc in types)
 				tc.VerifyMembers ();
+
+			if (anonymous_types != null) {
+				foreach (var atypes in anonymous_types)
+					foreach (var at in atypes.Value)
+						at.EmitType ();
+			}
 
 			if (compiler_generated != null)
 				foreach (var c in compiler_generated)

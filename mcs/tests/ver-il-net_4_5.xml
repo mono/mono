@@ -17618,33 +17618,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-anon-type-12.cs">
-    <type name="C">
-      <method name="Int32 Main()">
-        <size>23</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="&lt;&gt;__AnonType0`1[&lt;ToString&gt;__T]">
-      <method name="&lt;ToString&gt;__T get_ToString()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>39</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>63</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>67</size>
-      </method>
-      <method name="Void .ctor(&lt;ToString&gt;__T)">
-        <size>14</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -18091,6 +18064,103 @@
       </method>
       <method name="System.String ToString()">
         <size>142</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anontype-12.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;ToString&gt;__T]">
+      <method name="&lt;ToString&gt;__T get_ToString()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;ToString&gt;__T)">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anontype-13.cs">
+    <type name="Test">
+      <method name="IEnumerable`1 Select[T](System.Array, System.Func`2[System.Object,T])">
+        <size>44</size>
+      </method>
+      <method name="Void Main()">
+        <size>174</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__2(&lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Select&gt;c__Iterator0`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>207</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>83</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;n&gt;__T,&lt;p&gt;__T]">
+      <method name="&lt;n&gt;__T get_n()">
+        <size>7</size>
+      </method>
+      <method name="&lt;p&gt;__T get_p()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;n&gt;__T, &lt;p&gt;__T)">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__AnonStorey1">
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo] &lt;&gt;m__0(System.String)">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
