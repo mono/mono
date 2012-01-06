@@ -2414,9 +2414,8 @@ namespace Mono.CSharp
 			}
 
 			Constructor c = new Constructor (this, MemberName.Name, mods,
-				null, ParametersCompiled.EmptyReadOnlyParameters,
-				new GeneratedBaseInitializer (Location),
-				Location);
+				null, ParametersCompiled.EmptyReadOnlyParameters, Location);
+			c.Initializer = new GeneratedBaseInitializer (Location);
 			
 			AddConstructor (c);
 			c.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);

@@ -2118,23 +2118,12 @@ constructor_declarator
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		valid_param_mod = 0;
-		current_local_parameters = (ParametersCompiled) $6;  
+		current_local_parameters = (ParametersCompiled) $6;
 		
-		//
-		// start block here, so possible anonymous methods inside
-		// constructor initializer can get correct parent block
-		//
-	  	start_block (lexer.Location);
-	  }
-	  opt_constructor_initializer
-	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		var mods = (Modifiers) $2;
-		ConstructorInitializer ci = (ConstructorInitializer) $9;
+		var c = new Constructor (current_class, lt.Value, mods, (Attributes) $1, current_local_parameters, lt.Location);
 
-		Constructor c = new Constructor (current_class, lt.Value, mods,
-			(Attributes) $1, current_local_parameters, ci, lt.Location);
-		
 		if (lt.Value != current_container.MemberName.Name) {
 			report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 		} else if ((mods & Modifiers.STATIC) != 0) {
@@ -2143,16 +2132,31 @@ constructor_declarator
 					"`{0}': static constructor cannot have an access modifier",
 					c.GetSignatureForError ());
 			}
-			if (ci != null) {
+		}
+
+		lbag.AddMember (c, mod_locations, GetLocation ($5), GetLocation ($7));
+		$$ = c;
+
+		//
+		// start block here, so possible anonymous methods inside
+		// constructor initializer can get correct parent block
+		//
+	  	start_block (lexer.Location);
+	  }
+	  opt_constructor_initializer
+	  {
+		if ($9 != null) {
+			var c = (Constructor) $8;
+			c.Initializer = (ConstructorInitializer) $9;
+			
+			if (c.IsStatic) {
 				report.Error (514, c.Location,
 					"`{0}': static constructor cannot have an explicit `this' or `base' constructor call",
 					c.GetSignatureForError ());
-			
 			}
 		}
-		
-		lbag.AddMember (c, mod_locations, GetLocation ($5), GetLocation ($7));
-		$$ = c;
+
+		$$ = $8;
 	  }
 	;
 

@@ -1528,20 +1528,16 @@ namespace Mono.CSharp {
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";
 
-		//
-		// The spec claims that static is not permitted, but
-		// my very own code has static constructors.
-		//
-		public Constructor (DeclSpace parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args,
-				    ConstructorInitializer init, Location loc)
+		public Constructor (DeclSpace parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args, Location loc)
 			: base (parent, null, null, mod, AllowedModifiers,
 				new MemberName (name, loc), attrs, args)
 		{
-			Initializer = init;
 		}
 
 		public bool HasCompliantArgs {
-			get { return has_compliant_args; }
+			get {
+				return has_compliant_args;
+			}
 		}
 
 		public override AttributeTargets AttributeTargets {

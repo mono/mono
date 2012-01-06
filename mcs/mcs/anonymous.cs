@@ -1820,7 +1820,7 @@ namespace Mono.CSharp {
 				a_type.SetParameterInfo (null);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
-				null, all_parameters, null, loc);
+				null, all_parameters, loc);
 			c.Block = new ToplevelBlock (parent.Module.Compiler, c.ParameterInfo, loc);
 
 			// 
