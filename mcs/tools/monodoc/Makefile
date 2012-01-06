@@ -4,6 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
+# Remove a bunch of "obsolete"-type warning for Lucene.NET
+LOCAL_MCS_FLAGS = /nowarn:618,612,672,809
 
 IMAGES = \
 	Resources/images/bc_bg.png		\
