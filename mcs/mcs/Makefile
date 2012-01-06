@@ -18,6 +18,7 @@ sourcefile = mcs.exe.sources
 else
 PROGRAM_USE_INTERMEDIATE_FILE = true
 PROGRAM = mcs.exe
+the_libdir = $(topdir)/class/lib/build/
 LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build
 endif
 

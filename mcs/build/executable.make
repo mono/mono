@@ -20,11 +20,13 @@ response = $(depsdir)/$(sourcefile).response
 executable_CLEAN_FILES += $(response)
 endif
 
+ifndef the_libdir
 the_libdir = $(topdir)/class/lib/$(PROFILE)/
 ifdef PROGRAM_USE_INTERMEDIATE_FILE
 build_libdir = $(the_libdir)tmp/
 else
 build_libdir = $(the_libdir)
+endif
 endif
 
 ifdef base_prog_config
