@@ -497,6 +497,10 @@ namespace MonoTests.System.Numerics
 			} catch (ArgumentNullException) {}
 
 			Assert.AreEqual (0, (int)new BigInteger (new byte [0]), "#2");
+
+			Assert.AreEqual (0, (int)new BigInteger (new byte [1]), "#3");
+
+			Assert.AreEqual (0, (int)new BigInteger (new byte [2]), "#4");
 		}
 
 		[Test]
