@@ -770,7 +770,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	/* Allocate a stack frame below the red zone */
 	sp -= 128;
 	/* The stack should be unaligned */
-	if (sp % 8 == 0)
+	if (sp % 16 == 0)
 		sp -= 8;
 	UCONTEXT_REG_RSP (ctx) = sp;
 
