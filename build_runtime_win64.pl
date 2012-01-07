@@ -26,6 +26,11 @@ if (-e $remove)
 copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution/bin/mono.dll");
 copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution/bin/mono.pdb");
 
+if ($ENV{UNITY_THISISABUILDMACHINE})
+{
+	system("echo mono-runtime-win64 = $ENV{'BUILD_VCS_NUMBER'} > $root\\builds\\versions.txt");
+}
+
 sub CompileVCProj
 {
 	my $sln = shift(@_);

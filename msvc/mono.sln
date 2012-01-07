@@ -244,6 +244,7 @@ Global
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Debug|Win32.Build.0 = Debug|Win32
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Debug|x64.ActiveCfg = Debug|Win32
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Release_eglib|Win32.ActiveCfg = Release_eglib|Win32
+		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Release_eglib|Win32.Build.0 = Release_eglib|Win32
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Release_eglib|x64.ActiveCfg = Release_eglib|x64
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Release|Win32.ActiveCfg = Release|Win32
 		{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}.Release|Win32.Build.0 = Release|Win32

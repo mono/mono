@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <TestFile Include="enum.cs"/>
+    <TestFile Include="enum2.cs"/>
+    <TestFile Include="array-init.cs"/>
+    <TestFile Include="arraylist.cs"/>
+    <TestFile Include="assemblyresolve_event.cs"/>
+    <!--<TestFile Include="assemblyresolve_event3.cs"/>-->
+    <TestFile Include="checked.cs"/>
+    <TestFile Include="char-isnumber.cs"/>
+    <TestFile Include="create-instance.cs"/>
+    <TestFile Include="field-layout.cs"/>
+    <TestFile Include="pack-layout.cs"/>
+    <TestFile Include="pack-bug.cs"/>
+    <TestFile Include="hash-table.cs"/>
+    <TestFile Include="test-ops.cs"/>
+    <TestFile Include="obj.cs"/>
+    <TestFile Include="test-dup-mp.cs"/>
+    <TestFile Include="string.cs"/>
+    <TestFile Include="stringbuilder.cs"/>
+    <TestFile Include="switch.cs"/>
+    <TestFile Include="outparm.cs"/>
+    <TestFile Include="delegate.cs"/>
+    <TestFile Include="bitconverter.cs"/>
+    <TestFile Include="exception.cs"/>
+    <TestFile Include="exception2.cs"/>
+    <TestFile Include="exception3.cs"/>
+    <TestFile Include="exception4.cs"/>
+    <TestFile Include="exception5.cs"/>
+    <TestFile Include="exception6.cs"/>
+    <TestFile Include="exception7.cs"/>
+    <TestFile Include="exception8.cs"/>
+    <TestFile Include="exception10.cs"/>
+    <TestFile Include="exception11.cs"/>
+    <TestFile Include="exception12.cs"/>
+    <TestFile Include="exception13.cs"/>
+    <TestFile Include="exception14.cs"/>
+    <TestFile Include="exception15.cs"/>
+    <TestFile Include="exception16.cs"/>
+    <TestFile Include="exception17.cs"/>
+    <TestFile Include="typeload-unaligned.cs"/>
+    <TestFile Include="struct.cs"/>
+    <TestFile Include="valuetype-gettype.cs"/>
+    <TestFile Include="typeof-ptr.cs"/>
+    <TestFile Include="static-constructor.cs"/>
+    <TestFile Include="pinvoke.cs"/>
+    <TestFile Include="pinvoke2.cs"/>
+    <TestFile Include="pinvoke3.cs"/>
+    <TestFile Include="pinvoke11.cs"/>
+    <TestFile Include="pinvoke13.cs"/>
+    <TestFile Include="pinvoke17.cs"/>
+    <TestFile Include="invoke.cs"/>
+    <TestFile Include="invoke2.cs"/>
+    <TestFile Include="runtime-invoke.cs"/>
+    <TestFile Include="invoke-string-ctors.cs"/>
+    <TestFile Include="reinit.cs"/>
+    <TestFile Include="box.cs"/>
+    <TestFile Include="array.cs"/>
+    <TestFile Include="enum.cs"/>
+    <TestFile Include="enum2.cs"/>
+    <TestFile Include="property.cs"/>
+    <TestFile Include="enumcast.cs"/>
+    <TestFile Include="assignable-tests.cs"/>
+    <TestFile Include="array-cast.cs"/>
+    <TestFile Include="array-subtype-attr.cs"/>
+    <TestFile Include="cattr-compile.cs"/>
+    <TestFile Include="cattr-field.cs"/>
+    <TestFile Include="cattr-object.cs"/>
+    <TestFile Include="custom-attr.cs"/>
+    <TestFile Include="double-cast.cs"/>
+    <TestFile Include="newobj-valuetype.cs"/>
+    <TestFile Include="arraylist-clone.cs"/>
+    <TestFile Include="setenv.cs"/>
+    <TestFile Include="vtype.cs"/>
+    <TestFile Include="isvaluetype.cs"/>
+    <TestFile Include="iface6.cs"/>
+    <TestFile Include="iface7.cs"/>
+    <TestFile Include="ipaddress.cs"/>
+    <TestFile Include="array-vt.cs"/>
+    <TestFile Include="interface1.cs"/>
+    <TestFile Include="reflection-enum.cs"/>
+    <TestFile Include="reflection-prop.cs"/>
+    <TestFile Include="reflection4.cs"/>
+    <TestFile Include="reflection5.cs"/>
+    <TestFile Include="reflection-const-field.cs"/>
+    <TestFile Include="many-locals.cs"/>
+    <TestFile Include="string-compare.cs"/>
+    <TestFile Include="test-prime.cs"/>
+    <TestFile Include="params.cs"/>
+    <TestFile Include="reflection.cs"/>
+    <TestFile Include="interface.cs"/>
+    <TestFile Include="iface.cs"/>
+    <TestFile Include="iface2.cs"/>
+    <TestFile Include="iface3.cs"/>
+    <TestFile Include="iface4.cs"/>
+    <TestFile Include="iface-large.cs"/>
+    <TestFile Include="virtual-method.cs"/>
+    <TestFile Include="intptrcast.cs"/>
+    <TestFile Include="indexer.cs"/>
+    <TestFile Include="stream.cs"/>
+    <TestFile Include="console.cs"/>
+    <TestFile Include="shift.cs"/>
+    <TestFile Include="jit-int.cs"/>
+    <TestFile Include="jit-uint.cs"/>
+    <TestFile Include="jit-long.cs"/>
+    <TestFile Include="long.cs"/>
+    <TestFile Include="jit-ulong.cs"/>
+    <TestFile Include="jit-float.cs"/>
+    <TestFile Include="pop.cs"/>
+    <TestFile Include="time.cs"/>
+    <TestFile Include="appdomain.cs"/>
+    <TestFile Include="appdomain1.cs"/>
+    <TestFile Include="appdomain2.cs"/>
+    <TestFile Include="appdomain-client.cs"/>
+    <TestFile Include="appdomain-unload.cs"/>
+    <TestFile Include="appdomain-async-invoke.cs"/>
+    <TestFile Include="loader.cs"/>
+    <TestFile Include="pointer.cs"/>
+    <TestFile Include="hashcode.cs"/>
+    <TestFile Include="delegate1.cs"/>
+    <TestFile Include="delegate2.cs"/>
+    <TestFile Include="delegate3.cs"/>
+    <TestFile Include="delegate5.cs"/>
+    <TestFile Include="delegate6.cs"/>
+    <TestFile Include="delegate7.cs"/>
+    <TestFile Include="delegate8.cs"/>
+    <TestFile Include="delegate9.cs"/>
+    <TestFile Include="remoting1.cs"/>
+    <TestFile Include="remoting2.cs"/>
+    <TestFile Include="remoting3.cs"/>
+    <TestFile Include="remoting4.cs"/>
+    <TestFile Include="remoting5.cs"/>
+    <TestFile Include="largeexp.cs"/>
+    <TestFile Include="largeexp2.cs"/>
+    <TestFile Include="marshalbyref1.cs"/>
+    <TestFile Include="static-ctor.cs"/>
+    <TestFile Include="inctest.cs"/>
+    <TestFile Include="bound.cs"/>
+    <TestFile Include="array-invoke.cs"/>
+    <TestFile Include="test-arr.cs"/>
+    <TestFile Include="decimal.cs"/>
+    <TestFile Include="decimal-array.cs"/>
+    <TestFile Include="marshal.cs"/>
+    <TestFile Include="marshal1.cs"/>
+    <TestFile Include="marshal2.cs"/>
+    <TestFile Include="marshal3.cs"/>
+    <TestFile Include="marshal5.cs"/>
+    <TestFile Include="marshal6.cs"/>
+    <TestFile Include="marshal7.cs"/>
+    <TestFile Include="marshal8.cs"/>
+    <TestFile Include="marshal9.cs"/>
+    <TestFile Include="marshalbool.cs"/>
+    <TestFile Include="marshal-valuetypes.cs"/>
+    <TestFile Include="test-byval-in-struct.cs"/>
+    <TestFile Include="thread.cs"/>
+    <TestFile Include="thread5.cs"/>
+    <TestFile Include="thread6.cs"/>
+    <TestFile Include="thread-static.cs"/>
+    <TestFile Include="thread-static-init.cs"/>
+    <TestFile Include="context-static.cs"/>
+    <TestFile Include="float-pop.cs"/>
+    <TestFile Include="interfacecast.cs"/>
+    <TestFile Include="array3.cs"/>
+    <TestFile Include="classinit.cs"/>
+    <TestFile Include="classinit2.cs"/>
+    <TestFile Include="synchronized.cs"/>
+    <TestFile Include="async_read.cs"/>
+    <TestFile Include="threadpool.cs"/>
+    <TestFile Include="threadpool1.cs"/>
+    <TestFile Include="base-definition.cs"/>
+    <TestFile Include="bug-27420.cs"/>
+    <TestFile Include="bug-47295.cs"/>
+    <TestFile Include="bug-46781.cs"/>
+    <TestFile Include="bug-48015.cs"/>
+    <TestFile Include="bug-42136.cs"/>
+    <TestFile Include="bug-59286.cs"/>
+    <TestFile Include="bug-70561.cs"/>
+    <TestFile Include="bug-78311.cs"/>
+    <TestFile Include="bug-78653.cs"/>
+    <TestFile Include="bug-78656.cs"/>
+    <TestFile Include="bug-77127.cs"/>
+    <TestFile Include="bug-323114.cs"/>
+    <TestFile Include="bug-331958.cs"/>
+    <TestFile Include="interlocked.cs"/>
+    <TestFile Include="cross-domain.cs"/>
+    <TestFile Include="appdomain-exit.cs"/>
+		<!-- these consume a ton of memory, and crash. FIXME
+		<TestFile Include="delegate-async-exit.cs"/>
+    <TestFile Include="delegate-delegate-exit.cs"/>
+    <TestFile Include="delegate-exit.cs"/>
+    <TestFile Include="finalizer-abort.cs"/>
+    <TestFile Include="finalizer-exception.cs"/>
+    <TestFile Include="finalizer-exit.cs"/>-->
+    <TestFile Include="main-exit.cs"/>
+    <TestFile Include="main-returns-abort-resetabort.cs"/>
+    <TestFile Include="main-returns-background-abort-resetabort.cs"/>
+    <TestFile Include="main-returns-background-resetabort.cs"/>
+    <TestFile Include="main-returns-background.cs"/>
+    <TestFile Include="main-returns-background-change.cs"/>
+    <TestFile Include="main-returns.cs"/>
+    <TestFile Include="subthread-exit.cs"/>
+    <TestFile Include="desweak.cs"/>
+    <TestFile Include="cominterop.cs"/>
+    <TestFile Include="exists.cs"/>
+    <TestFile Include="handleref.cs"/>
+    <TestFile Include="transparentproxy.cs"/>
+    <!--<TestFile Include="imt_big_iface_test.cs"/>-->
+    <TestFile Include="dbnull-missing.cs"/>
+    <TestFile Include="test-type-ctor.cs"/>
+    <TestFile Include="soft-float-tests.cs"/>
+    <!--<TestFile Include="thread-exit.cs"/>-->
+    <TestFile Include="finalize-parent.cs"/>
+    <TestFile Include="assemblyresolve_event2.2.cs"/>
+    <TestFile Include="interlocked-2.2.cs"/>
+    <TestFile Include="pinvoke-2.2.cs"/>
+    <TestFile Include="bug-78431.2.cs"/>
+    <TestFile Include="bug-79684.2.cs"/>
+    <TestFile Include="catch-generics.2.cs"/>
+    <!--<TestFile Include="event-get.2.cs"/>-->
+    <TestFile Include="safehandle.2.cs"/>
+    <!--<TestFile Include="stackframes-async.2.cs"/>-->
+    <!--<TestFile Include="module-cctor-loader.2.cs"/>-->
+    <TestFile Include="generics-invoke-byref.2.cs"/>
+    <TestFile Include="generic-signature-compare.2.cs"/>
+    <TestFile Include="generics-sharing.2.cs"/>
+    <TestFile Include="shared-generic-methods.2.cs"/>
+    <TestFile Include="shared-generic-synchronized.2.cs"/>
+    <TestFile Include="generic-inlining.2.cs"/>
+    <TestFile Include="generic-initobj.2.cs"/>
+    <TestFile Include="generic-delegate.2.cs"/>
+    <TestFile Include="generic-sizeof.2.cs"/>
+    <TestFile Include="generic-virtual.2.cs"/>
+    <TestFile Include="generic-interface-methods.2.cs"/>
+    <TestFile Include="generic-array-type.2.cs"/>
+    <TestFile Include="generic-method-patching.2.cs"/>
+    <TestFile Include="generic-static-methods.2.cs"/>
+    <TestFile Include="generic-null-call.2.cs"/>
+    <TestFile Include="generic-special.2.cs"/>
+    <TestFile Include="generic-exceptions.2.cs"/>
+    <TestFile Include="generic-virtual2.2.cs"/>
+    <TestFile Include="generic-valuetype-interface.2.cs"/>
+    <TestFile Include="generic-getgenericarguments.2.cs"/>
+    <TestFile Include="generic-type-builder.2.cs"/>
+    <TestFile Include="generic-synchronized.2.cs"/>
+    <TestFile Include="generic-delegate-ctor.2.cs"/>
+    <TestFile Include="generic-array-iface-set.2.cs"/>
+    <TestFile Include="generic-typedef.2.cs"/>
+    <TestFile Include="generic-marshalbyref.2.cs"/>
+    <TestFile Include="generic-xdomain.2.cs"/>
+    <TestFile Include="bug-431413.2.cs"/>
+    <TestFile Include="bug-459285.2.cs"/>
+    <TestFile Include="generic-virtual-invoke.2.cs"/>
+    <TestFile Include="bug-461198.2.cs"/>
+    <TestFile Include="generic-sealed-virtual.2.cs"/>
+    <TestFile Include="generic-system-arrays.2.cs"/>
+    <TestFile Include="generic-stack-traces.2.cs"/>
+    <TestFile Include="generic-stack-traces2.2.cs"/>
+    <TestFile Include="bug-472600.2.cs"/>
+    <TestFile Include="recursive-generics.2.cs"/>
+    <TestFile Include="bug-473482.2.cs"/>
+    <TestFile Include="bug-473999.2.cs"/>
+    <TestFile Include="bug-479763.2.cs"/>
+    <TestFile Include="bug-80392.2.cs"/>
+    <TestFile Include="dynamic-method-access.2.cs"/>
+    <TestFile Include="dynamic-method-finalize.2.cs"/>
+    <TestFile Include="bug-82194.2.cs"/>
+    <TestFile Include="anonarray.2.cs"/>
+    <TestFile Include="ienumerator-interfaces.2.cs"/>
+    <TestFile Include="array-enumerator-ifaces.2.cs"/>
+    <TestFile Include="generic_type_definition_encoding.2.cs"/>
+    <TestFile Include="generic_type_definition.2.cs"/>
+    <TestFile Include="bug-333798.2.cs"/>
+    <TestFile Include="bug-333798-tb.2.cs"/>
+    <TestFile Include="bug-335131.2.cs"/>
+    <TestFile Include="bug-322722_patch_bx.2.cs"/>
+		
+    <!--<TestFile Include="bug-348522.2.cs"/>-->
+    <TestFile Include="bug-340662_bug.cs"/>
+    <TestFile Include="bug-322722_dyn_method_throw.2.cs"/>
+    <TestFile Include="bug-389886-2.cs"/>
+    <TestFile Include="bug-325283.2.cs"/>
+    <!--<TestFile Include="thunks.cs"/>-->
+    <TestFile Include="winx64structs.cs"/>
+    <TestFile Include="bug-349190.2.cs"/>
+    <TestFile Include="nullable_boxing.2.cs"/>
+    <TestFile Include="valuetype-equals.cs"/>
+    <!--<TestFile Include="custom-modifiers.2.cs"/>
+    <TestFile Include="bug-382986.cs"/>
+    <TestFile Include="test-inline-call-stack.cs"/>
+    <TestFile Include="bug-324535.cs"/>
+    <TestFile Include="modules.cs"/>
+    <TestFile Include="bug-81673.cs"/>
+    <TestFile Include="bug-81691.cs"/>-->
+    <TestFile Include="bug-80307.cs"/>
+    <TestFile Include="bug-415577.cs"/>
+    <TestFile Include="filter-stack.cs"/>
+    <TestFile Include="vararg2.cs"/>
+    <TestFile Include="bug-389886-sre-generic-interface-instances.cs"/>
+    <TestFile Include="bug-461867.cs"/>
+    <TestFile Include="bug-461941.cs"/>
+    <TestFile Include="bug-461261.cs"/>
+    <TestFile Include="bug-400716.cs"/>
+    <TestFile Include="bug-462592.cs"/>
+    <TestFile Include="bug-459094.cs"/>
+    <TestFile Include="generic-unloading.2.cs"/>
+    <TestFile Include="generic-unloading-sub.2.cs"/>
+    <TestFile Include="bug-467456.cs"/>
+    <TestFile Include="appdomain-unload-callback.cs"/>
+    <TestFile Include="bug-508538.cs"/>
+    <TestFile Include="bug-472692.2.cs"/>
+    <TestFile Include="gchandles.cs"/>
+    <TestFile Include="interlocked-3.cs"/>
+    <TestFile Include="interlocked-4.2.cs"/>
+    <TestFile Include="finalizer-wait.cs"/>
+    <TestFile Include="critical-finalizers.cs"/>
+    <TestFile Include="appdomain-thread-abort.cs"/>
+    <TestFile Include="w32message.cs"/>
+    <TestFile Include="bug-544446.cs"/>
+    <TestFile Include="gc-altstack.cs"/>
+    <TestFile Include="bug-599469.cs"/>
+		<!--<TestFile Include="generics-sharing.2.cs"/>-->
+  </ItemGroup>
+	<PropertyGroup>
+		<mono_build_root>$(MSBuildProjectDirectory)\..\..</mono_build_root>
+		<JITTEST_PROG_RUN>$(mono_build_root)\builds\monodistribution\bin\mono.exe</JITTEST_PROG_RUN>
+		<JITTEST_PROG_RUN1>mono-test-wrapper.bat</JITTEST_PROG_RUN1>
+		<RUNTIME_ARGS>--config tests-config --optimize=all --debug</RUNTIME_ARGS>
+	</PropertyGroup>
+  <Target  Name="Compile" 
+					 Inputs="@(TestFile)"
+					 Outputs="@(TestFile -> '%(RootDir)%(Directory)%(Filename).exe')"
+					 DependsOnTargets="BuildTestDriver">
+    <CSC
+     Sources="%(Identity)"
+     OutputAssembly="%(TestFile.Filename).exe"
+     References="TestDriver.dll"
+     EmitDebugInformation="false"
+     DisabledWarnings="0162,0168,0219"
+     AllowUnsafeBlocks="true"/>
+  </Target>
+  <Target  Name="BuildTestDriver">
+    <CSC
+     Sources="$(MSBuildProjectDirectory)\..\mini\TestDriver.cs"
+     TargetType="library"
+     OutputAssembly="TestDriver.dll"
+     EmitDebugInformation="false"
+     DisabledWarnings="0162,0168,0219"
+     AllowUnsafeBlocks="true"/>
+  </Target>
+  <Target  Name="Build" DependsOnTargets="Compile">
+  </Target>
+	<Target Name="RunTest" Inputs="@(TestFile)" Outputs="%(Identity).foo" DependsOnTargets="Build">
+		<Message Text="Testing... %(TestFile.Filename)" Condition="'$(UNITY_THISISABUILDMACHINE)' == ''"/>
+		<Message Text="##teamcity[testStarted name='%(TestFile.Filename)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Exec Timeout="20000" IgnoreExitCode="true" Command="mono-test-wrapper.bat $(JITTEST_PROG_RUN) $(RUNTIME_ARGS) %(TestFile.Filename).exe 1> %(TestFile.Filename).stdout 2> %(TestFile.Filename).stderr">
+			<Output PropertyName="CommandExitCode" TaskParameter="ExitCode"/>
+		</Exec>
+		<!-- output needs escaped for TeamCity
+		<ReadLinesFromFile File="%(TestFile.Filename).stdout" Condition="$(CommandExitCode) != -1" >
+			<Output TaskParameter="Lines" ItemName="StdOutText"/>
+		</ReadLinesFromFile>
+		<ReadLinesFromFile File="%(TestFile.Filename).stderr" Condition="$(CommandExitCode) != -1" >
+			<Output TaskParameter="Lines" ItemName="StdErrText"/>
+		</ReadLinesFromFile>
+		<Message Text="##teamcity[testStdOut name='%(TestFile.Filename)' out='@(StdOutText->'%(Identity)', '%0a%0d')']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testStdErr name='%(TestFile.Filename)' out='@(StdErrText->'%(Identity)', '%0a%0d')']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>-->
+		<Message Text="pass." Condition="$(CommandExitCode) == 0 And '$(UNITY_THISISABUILDMACHINE)' == ''"/>
+		<Message Text="failed." Condition="$(CommandExitCode) != 0 And '$(UNITY_THISISABUILDMACHINE)' == ''"/>
+		<Message Text="##teamcity[testFailed name='%(TestFile.Filename)' message='failed with exit code $(CommandExitCode)']]" Condition="$(CommandExitCode) != 0 And '$(UNITY_THISISABUILDMACHINE)' != ''"/>
+		<Message Text="##teamcity[testFinished name='%(TestFile.Filename)']" Condition="'$(UNITY_THISISABUILDMACHINE)' != ''"/>
+	</Target>
+  <Target  Name="Test" DependsOnTargets="RunTest">
+	</Target>
+</Project>
