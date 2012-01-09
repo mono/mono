@@ -810,7 +810,7 @@ namespace Mono.CSharp {
 			get { return this; }
 		}
 
-		public virtual TypeParameter[] CurrentTypeParameters {
+		public virtual TypeParameters CurrentTypeParameters {
 			get { return null; }
 		}
 
@@ -1214,12 +1214,9 @@ namespace Mono.CSharp {
 		
 		protected Dictionary<string, MemberCore> defined_names;
 
-		public TypeContainer PartialContainer;		
+		public TypeContainer PartialContainer;
 
 		protected readonly bool is_generic;
-		readonly int count_type_params;
-		protected TypeParameter[] type_params;
-		TypeParameter[] type_param_list;
 
 		//
 		// Whether we are Generic
@@ -1247,10 +1244,7 @@ namespace Mono.CSharp {
 			PartialContainer = null;
 			if (name.TypeParameters != null) {
 				is_generic = true;
-				count_type_params = name.TypeParameters.Count;
 			}
-			if (parent != null)
-				count_type_params += parent.count_type_params;
 		}
 
 		/// <summary>
@@ -1346,44 +1340,6 @@ namespace Mono.CSharp {
 		{
 			return MemberName.GetSignatureForError ();
 		}
-		
-		TypeParameter[] initialize_type_params ()
-		{
-			if (type_param_list != null)
-				return type_param_list;
-
-			DeclSpace the_parent = Parent;
-			if (this is GenericMethod)
-				the_parent = null;
-
-			var list = new List<TypeParameter> ();
-			if (the_parent != null && the_parent.IsGeneric) {
-				// FIXME: move generics info out of DeclSpace
-				TypeParameter[] parent_params = the_parent.TypeParameters;
-				list.AddRange (parent_params);
-			}
- 
-			int count = type_params != null ? type_params.Length : 0;
-			for (int i = 0; i < count; i++) {
-				TypeParameter param = type_params [i];
-				list.Add (param);
-				if (Parent.CurrentTypeParameters != null) {
-					foreach (TypeParameter tp in Parent.CurrentTypeParameters) {
-						if (tp.Name != param.Name)				
-							continue;
-
-						Report.SymbolRelatedToPreviousError (tp.Location, null);
-						Report.Warning (693, 3, param.Location,
-							"Type parameter `{0}' has the same name as the type parameter from outer type `{1}'",
-							param.Name, Parent.GetSignatureForError ());
-					}
-				}
-			}
-
-			type_param_list = new TypeParameter [list.Count];
-			list.CopyTo (type_param_list, 0);
-			return type_param_list;
-		}
 
 		public virtual void SetParameterInfo (List<Constraints> constraints_list)
 		{
@@ -1397,13 +1353,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			type_params = new TypeParameter [MemberName.Arity];
-
 			//
 			// Register all the names
 			//
-			for (int i = 0; i < type_params.Length; i++) {
-				TypeParameterName name = MemberName.TypeParameters [i];
+			for (int i = 0; i < MemberName.TypeParameters.Count; i++) {
+				var name = MemberName.TypeParameters [i];
 
 				Constraints constraints = null;
 				if (constraints_list != null) {
@@ -1416,7 +1370,7 @@ namespace Mono.CSharp {
 							--total;
 							continue;
 						}
-						if (constraints_at.TypeParameter.Value == name.Value) {
+						if (constraints_at.TypeParameter.Value == name.MemberName.Name) {
 							constraints = constraints_at;
 							constraints_list.RemoveAt(ii);
 							break;
@@ -1424,16 +1378,13 @@ namespace Mono.CSharp {
 					}
 				}
 
-				Variance variance = name.Variance;
 				if (name.Variance != Variance.None && !(this is Delegate || this is Interface)) {
 					Report.Error (1960, name.Location, "Variant type parameters can only be used with interfaces and delegates");
-					variance = Variance.None;
 				}
 
-				type_params [i] = new TypeParameter (
-					Parent, i, new MemberName (name.Value, Location), constraints, name.OptAttributes, variance);
-
-				AddToContainer (type_params [i], name.Value);
+				MemberName.TypeParameters[i].Constraints = constraints;
+				if (name.MemberName != null)
+					AddToContainer (name, name.MemberName.Name);
 			}
 
 			if (constraints_list != null && constraints_list.Count > 0) {
@@ -1441,25 +1392,6 @@ namespace Mono.CSharp {
 					Report.Error(699, constraint.Location, "`{0}': A constraint references nonexistent type parameter `{1}'", 
 						GetSignatureForError (), constraint.TypeParameter.Value);
 				}
-			}
-		}
-
-		protected TypeParameter[] TypeParameters {
-			get {
-				if (!IsGeneric)
-					throw new InvalidOperationException ();
-				if ((PartialContainer != null) && (PartialContainer != this))
-					return PartialContainer.TypeParameters;
-				if (type_param_list == null)
-					initialize_type_params ();
-
-				return type_param_list;
-			}
-		}
-
-		public int CountTypeParameters {
-			get {
-				return count_type_params;
 			}
 		}
 
@@ -1473,10 +1405,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (type_params != null) {
-				foreach (TypeParameter tp in type_params) {
-					tp.VerifyClsCompliance ();
-				}
+			if (CurrentTypeParameters != null) {
+				CurrentTypeParameters.VerifyClsCompliance ();
 			}
 
 			return true;

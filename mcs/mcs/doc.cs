@@ -244,10 +244,8 @@ namespace Mono.CSharp
 
 			string tp_name = node.GetAttribute ("name");
 			if (mc.CurrentTypeParameters != null) {
-				foreach (var tp in mc.CurrentTypeParameters) {
-					if (tp.Name == tp_name)
-						return;
-				}
+				if (mc.CurrentTypeParameters.Find (tp_name) != null)
+					return;
 			}
 			
 			// TODO: CS1710, CS1712
@@ -269,10 +267,8 @@ namespace Mono.CSharp
 			var member = mc;
 			do {
 				if (member.CurrentTypeParameters != null) {
-					foreach (var tp in member.CurrentTypeParameters) {
-						if (tp.Name == tp_name)
-							return;
-					}
+					if (member.CurrentTypeParameters.Find (tp_name) != null)
+						return;
 				}
 
 				member = member.Parent;

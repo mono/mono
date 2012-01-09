@@ -253,7 +253,7 @@ namespace Mono.CSharp
 		protected CSharpBinderFlags flags;
 
 		TypeSpec binder_type;
-		TypeParameter[] context_mvars;
+		TypeParameters context_mvars;
 
 		public DynamicExpressionStatement (IDynamicBinder binder, Arguments args, Location loc)
 		{
@@ -349,7 +349,7 @@ namespace Mono.CSharp
 			var site_container = ec.CreateDynamicSite ();
 
 			if (context_mvars != null) {
-				TypeParameter[] tparam;
+				TypeParameters tparam;
 				TypeContainer sc = site_container;
 				do {
 					tparam = sc.CurrentTypeParameters;
@@ -466,7 +466,7 @@ namespace Mono.CSharp
 				return;
 
 			if (del_type_instance_access == null) {
-				var dt = d.CurrentType.DeclaringType.MakeGenericType (module, context_mvars.Select (l => l.Type).ToArray ());
+				var dt = d.CurrentType.DeclaringType.MakeGenericType (module, context_mvars.Types);
 				del_type_instance_access = new TypeExpression (MemberCache.GetMember (dt, d.CurrentType), loc);
 			}
 
@@ -482,7 +482,7 @@ namespace Mono.CSharp
 			if (inflate_using_mvar || context_mvars == null) {
 				gt = site_container.CurrentType;
 			} else {
-				gt = site_container.CurrentType.MakeGenericType (module, context_mvars.Select (l => l.Type).ToArray ());
+				gt = site_container.CurrentType.MakeGenericType (module, context_mvars.Types);
 			}
 
 			// When site container already exists the inflated version has to be
@@ -957,7 +957,7 @@ namespace Mono.CSharp
 
 	sealed class DynamicSiteClass : HoistedStoreyClass
 	{
-		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameter[] tparams)
+		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameters tparams)
 			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
 		{
 			parent.DynamicSitesCounter++;

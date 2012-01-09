@@ -112,8 +112,8 @@ namespace Mono.CSharp
 			get { return member_context.CurrentType; }
 		}
 
-		public TypeParameter[] CurrentTypeParameters {
-			get { return member_context.CurrentTypeParameters; }
+		public TypeParameters CurrentTypeParameters {
+		    get { return member_context.CurrentTypeParameters; }
 		}
 
 		public MemberCore CurrentTypeDefinition {
@@ -238,7 +238,7 @@ namespace Mono.CSharp
 		{
 			if (dynamic_site_container == null) {
 				var mc = member_context.CurrentMemberDefinition as MemberBase;
-				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
+				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, member_context.CurrentTypeParameters);
 
 				CurrentTypeDefinition.Module.AddCompilerGeneratedClass (dynamic_site_container);
 				dynamic_site_container.CreateType ();

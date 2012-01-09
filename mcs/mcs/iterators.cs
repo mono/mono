@@ -160,7 +160,7 @@ namespace Mono.CSharp
 		Field pc_field;
 		StateMachineMethod method;
 
-		protected StateMachine (Block block, TypeContainer parent, MemberBase host, TypeParameter[] tparams, string name)
+		protected StateMachine (Block block, TypeContainer parent, MemberBase host, TypeParameters tparams, string name)
 			: base (block, parent, host, tparams, name)
 		{
 		}

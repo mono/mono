@@ -2452,13 +2452,11 @@ namespace Mono.CSharp {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
 					} else {
 						if (Arity > 0) {
-							TypeParameter[] tparams = rc.CurrentTypeParameters;
+							var tparams = rc.CurrentTypeParameters;
 							if (tparams != null) {
-								foreach (var ctp in tparams) {
-									if (ctp.Name == Name) {
-										Error_TypeArgumentsCannotBeUsed (rc, "type parameter", Name, loc);
-										return null;
-									}
+								if (tparams.Find (Name) != null) {
+									Error_TypeArgumentsCannotBeUsed (rc, "type parameter", Name, loc);
+									return null;
 								}
 							}
 

@@ -67,7 +67,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeParameter[] CurrentTypeParameters {
+		public TypeParameters CurrentTypeParameters {
 			get {
 				throw new NotImplementedException ();
 			}

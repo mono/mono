@@ -1062,7 +1062,7 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.CurrentMemberDefinition; }
 		}
 
-		public TypeParameter[] CurrentTypeParameters {
+		public TypeParameters CurrentTypeParameters {
 			get { return SlaveDeclSpace.CurrentTypeParameters; }
 		}
 
@@ -1182,7 +1182,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public TypeParameter[] CurrentTypeParameters {
+			public TypeParameters CurrentTypeParameters {
 				get {
 					return null;
 				}

@@ -2765,13 +2765,13 @@ type_parameters
 	: type_parameter
 	  {
 		var tparams = new TypeParameters ();
-		tparams.Add ((TypeParameterName)$1);
+		tparams.Add ((TypeParameter)$1);
 		$$ = tparams;
 	  }
 	| type_parameters COMMA type_parameter
 	  {
 		var tparams = (TypeParameters) $1;
-		tparams.Add ((TypeParameterName)$3);
+		tparams.Add ((TypeParameter)$3);
 		$$ = tparams;
 		lbag.AddLocation ($3, GetLocation ($3));
 	  }	  
@@ -2781,7 +2781,7 @@ type_parameter
 	: opt_attributes opt_type_parameter_variance IDENTIFIER
 	  {
 		var lt = (Tokenizer.LocatedToken)$3;
-		$$ = new TypeParameterName (lt.Value, (Attributes)$1, (Variance) $2, lt.Location);
+		$$ = new TypeParameter (new MemberName (lt.Value, lt.Location), (Attributes)$1, (Variance) $2);
   	  }
   	| error
   	  {
@@ -2790,7 +2790,7 @@ type_parameter
 		else
 			Error_SyntaxError (yyToken);
 			
-  	  	$$ = new TypeParameterName ("", null, lexer.Location);
+  	  	$$ = new TypeParameter (MemberName.Null, null, Variance.None);
   	  }
  	;
 
