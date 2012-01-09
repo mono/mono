@@ -2516,15 +2516,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override TypeAttributes TypeAttr {
+		public override string[] ValidAttributeTargets {
 			get {
-				throw new NotSupportedException ();
+				throw new NotImplementedException ();
 			}
-		}
-
-		public override void DefineType ()
-		{
-			throw new Exception ();
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

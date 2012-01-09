@@ -235,6 +235,8 @@ namespace Mono.CSharp
 
 		public int DynamicSitesCounter;
 
+		static readonly string[] attribute_targets = new string[] { "type" };
+
 		/// <remarks>
 		///  The pending methods that need to be implemented
 		//   (interfaces or abstract methods)
@@ -263,7 +265,7 @@ namespace Mono.CSharp
 		public override TypeSpec CurrentType {
 			get {
 				if (current_type == null) {
-					if (IsGeneric) {
+					if (IsGenericOrParentIsGeneric) {
 						//
 						// Switch to inflated version as it's used by all expressions
 						//
@@ -324,9 +326,27 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsGenericOrParentIsGeneric {
+			get {
+				return all_type_parameters != null;
+			}
+		}
+
+		string ITypeDefinition.Namespace {
+			get {
+				return NamespaceEntry.NS.MemberName.GetSignatureForError ();
+			}
+		}
+
 		public TypeParameters TypeParametersAll {
 			get {
 				return all_type_parameters;
+			}
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
 			}
 		}
 
@@ -676,7 +696,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected override TypeAttributes TypeAttr {
+		protected virtual TypeAttributes TypeAttr {
 			get {
 				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel);
 			}
@@ -705,12 +725,6 @@ namespace Mono.CSharp
 					return false;
 
 				return OptAttributes.Contains (Module.PredefinedAttributes.ComImport);
-			}
-		}
-
-		string ITypeDefinition.Namespace {
-			get {
-				return NamespaceEntry.NS.MemberName.GetSignatureForError ();
 			}
 		}
 
@@ -1096,7 +1110,7 @@ namespace Mono.CSharp
 			if (!IsTopLevel)
 				Parent.MemberCache.AddMember (spec);
 
-			if (IsGeneric) {
+			if (MemberName.TypeParameters != null || Parent.IsGenericOrParentIsGeneric) {
 				var tparam_names = CreateTypeParameters ();
 
 				all_tp_builders = TypeBuilder.DefineGenericParameters (tparam_names);
@@ -1396,7 +1410,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override void DefineType ()
+		public void DefineType ()
 		{
 			if (error)
 				return;
@@ -1651,7 +1665,7 @@ namespace Mono.CSharp
 					if (obsolete_attr != null && !IsObsolete)
 						AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), base_type_expr.Location, Report);
 
-					if (IsGeneric && base_type.IsAttribute) {
+					if (IsGenericOrParentIsGeneric && base_type.IsAttribute) {
 						Report.Error (698, base_type_expr.Location,
 							"A generic type cannot derive from `{0}' because it is an attribute class",
 							base_type.GetSignatureForError ());
@@ -2896,7 +2910,7 @@ namespace Mono.CSharp
 			if (requires_delayed_unmanagedtype_check)
 				return true;
 
-			if (Parent != null && Parent.IsGeneric) {
+			if (Parent != null && Parent.IsGenericOrParentIsGeneric) {
 				has_unmanaged_check_done = true;
 				return false;
 			}

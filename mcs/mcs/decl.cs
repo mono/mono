@@ -1216,24 +1216,6 @@ namespace Mono.CSharp {
 
 		public TypeContainer PartialContainer;
 
-		protected readonly bool is_generic;
-
-		//
-		// Whether we are Generic
-		//
-		public bool IsGeneric {
-			get {
-				if (is_generic)
-					return true;
-				else if (Parent != null)
-					return Parent.IsGeneric;
-				else
-					return false;
-			}
-		}
-
-		static readonly string[] attribute_targets = new string [] { "type" };
-
 		public DeclSpace (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)
 			: base (parent, name, attrs)
@@ -1242,9 +1224,6 @@ namespace Mono.CSharp {
 			Basename = name.Basename;
 			defined_names = new Dictionary<string, MemberCore> ();
 			PartialContainer = null;
-			if (name.TypeParameters != null) {
-				is_generic = true;
-			}
 		}
 
 		/// <summary>
@@ -1317,13 +1296,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected abstract TypeAttributes TypeAttr { get; }
-
-		/// <remarks>
-		///  Should be overriten by the appropriate declaration space
-		/// </remarks>
-		public abstract void DefineType ();
-
 		protected void Error_MissingPartialModifier (MemberCore type)
 		{
 			Report.Error (260, type.Location,
@@ -1343,7 +1315,7 @@ namespace Mono.CSharp {
 
 		public virtual void SetParameterInfo (List<Constraints> constraints_list)
 		{
-			if (!is_generic) {
+			if (MemberName.TypeParameters == null) {
 				if (constraints_list != null) {
 					Report.Error (
 						80, Location, "Constraints are not allowed " +
@@ -1393,10 +1365,6 @@ namespace Mono.CSharp {
 						GetSignatureForError (), constraint.TypeParameter.Value);
 				}
 			}
-		}
-
-		public override string[] ValidAttributeTargets {
-			get { return attribute_targets; }
 		}
 
 		protected override bool VerifyClsCompliance ()

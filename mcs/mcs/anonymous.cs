@@ -230,7 +230,7 @@ namespace Mono.CSharp {
 			CheckMembersDefined ();
 
 			FullNamedExpression field_type = new TypeExpression (type, Location);
-			if (!IsGeneric)
+			if (!spec.IsGenericOrParentIsGeneric)
 				return AddCompilerGeneratedField (name, field_type);
 
 			const Modifiers mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
@@ -717,7 +717,7 @@ namespace Mono.CSharp {
 			}
 
 			if (inner_access == null) {
-				if (field.Parent.IsGeneric) {
+				if (field.Parent.IsGenericOrParentIsGeneric) {
 					var fs = MemberCache.GetMember (field.Parent.CurrentType, field.Spec);
 					inner_access = new FieldExpr (fs, field.Location);
 				} else {

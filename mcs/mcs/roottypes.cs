@@ -605,11 +605,6 @@ namespace Mono.CSharp
 			get { throw new InternalErrorException ("should not be called"); }
 		}
 
-		public override void DefineType ()
-		{
-			throw new InternalErrorException ("should not be called");
-		}
-
 		public override ModuleContainer Module {
 			get {
 				return PartialContainer.Module;

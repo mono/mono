@@ -1237,7 +1237,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (parameters.HasExtensionMethodType) {
-				if (Parent.PartialContainer.IsStatic && !Parent.IsGeneric) {
+				if (Parent.PartialContainer.IsStatic && !Parent.IsGenericOrParentIsGeneric) {
 					if (!Parent.IsTopLevel)
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
@@ -1266,7 +1266,7 @@ namespace Mono.CSharp {
 			if (settings.NeedsEntryPoint && Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
-						if (Parent.IsGeneric || MemberName.IsGeneric) {
+						if (Parent.IsGenericOrParentIsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
 						} else if ((ModFlags & Modifiers.ASYNC) != 0) {
