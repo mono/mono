@@ -436,7 +436,7 @@ if (typeof({0}) === 'undefined') {{", className);
 						if (ptype == typeof (System.Object))
 							pp [i] = value;
 						else
-							pp [i] = AsmxLogicalTypeInfo.JSSerializer.ConvertToType (ptype, value);
+							pp [i] = AsmxLogicalTypeInfo.JSSerializer.ConvertToType (value, ptype);
 					}
 				}
 
