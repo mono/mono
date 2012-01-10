@@ -47,10 +47,9 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected MethodSpec spec;
 
-		public MethodCore (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
+		public MethodCore (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
-			: base (parent, generic, type, mod, allowed_mod, name, attrs)
+			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 			this.parameters = parameters;
 		}
@@ -518,10 +517,10 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "method", "return" };
 
-		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, Modifiers mod,
+		protected MethodOrOperator (DeclSpace parent, FullNamedExpression type, Modifiers mod,
 				Modifiers allowed_mod, MemberName name,
 				Attributes attrs, ParametersCompiled parameters)
-			: base (parent, generic, type, mod, allowed_mod, name,
+			: base (parent, type, mod, allowed_mod, name,
 					attrs, parameters)
 		{
 		}
@@ -612,7 +611,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodData = new MethodData (
-				this, ModFlags, flags, this, MethodBuilder, GenericMethod, base_method);
+				this, ModFlags, flags, this, MethodBuilder, base_method);
 
 			if (!MethodData.Define (Parent.PartialContainer, GetFullName (MemberName)))
 				return false;
@@ -777,12 +776,6 @@ namespace Mono.CSharp {
 			return conditions;
 		}
 
-		GenericMethod IMethodData.GenericMethod {
-			get {
-				return GenericMethod;
-			}
-		}
-
 		public virtual void EmitExtraSymbolInfo (SourceMethod source)
 		{ }
 
@@ -856,10 +849,8 @@ namespace Mono.CSharp {
 	{
 		Method partialMethodImplementation;
 
-		public Method (DeclSpace parent, GenericMethod generic,
-			       FullNamedExpression return_type, Modifiers mod,
-			       MemberName name, ParametersCompiled parameters, Attributes attrs)
-			: base (parent, generic, return_type, mod,
+		public Method (DeclSpace parent, FullNamedExpression return_type, Modifiers mod, MemberName name, ParametersCompiled parameters, Attributes attrs)
+			: base (parent, return_type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct | Modifiers.ASYNC :
 				AllowedModifiersClass | Modifiers.ASYNC,
@@ -869,7 +860,7 @@ namespace Mono.CSharp {
 
 		protected Method (DeclSpace parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod,
 					MemberName name, ParametersCompiled parameters, Attributes attrs)
-			: base (parent, null, return_type, mod, amod, name, attrs, parameters)
+			: base (parent, return_type, mod, amod, name, attrs, parameters)
 		{
 		}
 
@@ -877,10 +868,7 @@ namespace Mono.CSharp {
 
 		public override TypeParameters CurrentTypeParameters {
 			get {
-				if (GenericMethod != null)
-					return GenericMethod.CurrentTypeParameters;
-
-				return null;
+				return MemberName.TypeParameters;
 			}
 		}
 
@@ -903,10 +891,10 @@ namespace Mono.CSharp {
 			visitor.Visit (this);
 		}
 
-		public static Method Create (DeclSpace parent, GenericMethod generic, FullNamedExpression returnType, Modifiers mod,
+		public static Method Create (DeclSpace parent, FullNamedExpression returnType, Modifiers mod,
 				   MemberName name, ParametersCompiled parameters, Attributes attrs, bool hasConstraints)
 		{
-			var m = new Method (parent, generic, returnType, mod, name, parameters, attrs);
+			var m = new Method (parent, returnType, mod, name, parameters, attrs);
 
 			if (hasConstraints && ((mod & Modifiers.OVERRIDE) != 0 || m.IsExplicitImpl)) {
 				m.Report.Error (460, m.Location,
@@ -1025,6 +1013,45 @@ namespace Mono.CSharp {
 			}
 
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+		}
+
+		void CreateTypeParameters ()
+		{
+			var tparams = MemberName.TypeParameters;
+			string[] snames = new string[MemberName.Arity];
+			var parent_tparams = Parent.TypeParametersAll;
+
+			for (int i = 0; i < snames.Length; i++) {
+				string type_argument_name = tparams[i].MemberName.Name;
+
+				if (block == null) {
+					int idx = parameters.GetParameterIndexByName (type_argument_name);
+					if (idx >= 0) {
+						var b = block;
+						if (b == null)
+							b = new ToplevelBlock (Compiler, Location);
+
+						b.Error_AlreadyDeclaredTypeParameter (type_argument_name, parameters[i].Location);
+					}
+				} else {
+					INamedBlockVariable variable = null;
+					block.GetLocalName (type_argument_name, block, ref variable);
+					if (variable != null)
+						variable.Block.Error_AlreadyDeclaredTypeParameter (type_argument_name, variable.Location);
+				}
+
+				if (parent_tparams != null) {
+					var tp = parent_tparams.Find (type_argument_name);
+					if (tp != null) {
+						tparams[i].WarningParentNameConflict (tp);
+					}
+				}
+
+				snames[i] = type_argument_name;
+			}
+
+			GenericTypeParameterBuilder[] gen_params = MethodBuilder.DefineGenericParameters (snames);
+			tparams.Define (gen_params, null, 0, Parent);
 		}
 
 		protected virtual void DefineTypeParameters ()
@@ -1349,10 +1376,9 @@ namespace Mono.CSharp {
 
 		protected override bool ResolveMemberType ()
 		{
-			if (GenericMethod != null) {
+			if (CurrentTypeParameters != null) {
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags);
-				if (!GenericMethod.Define (this))
-					return false;
+				CreateTypeParameters ();
 			}
 
 			return base.ResolveMemberType ();
@@ -1528,8 +1554,7 @@ namespace Mono.CSharp {
 		public static readonly string TypeConstructorName = ".cctor";
 
 		public Constructor (DeclSpace parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args, Location loc)
-			: base (parent, null, null, mod, AllowedModifiers,
-				new MemberName (name, loc), attrs, args)
+			: base (parent, null, mod, AllowedModifiers, new MemberName (name, loc), attrs, args)
 		{
 		}
 
@@ -1802,12 +1827,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		GenericMethod IMethodData.GenericMethod {
-			get {
-				return null;
-			}
-		}
-
 		void IMethodData.EmitExtraSymbolInfo (SourceMethod source)
 		{ }
 
@@ -1823,7 +1842,6 @@ namespace Mono.CSharp {
 		Location Location { get; }
 		MemberName MethodName { get; }
 		TypeSpec ReturnType { get; }
-		GenericMethod GenericMethod { get; }
 		ParametersCompiled ParameterInfo { get; }
 		MethodSpec Spec { get; }
 		bool IsAccessor { get; }
@@ -1845,8 +1863,6 @@ namespace Mono.CSharp {
 #endif
 
 		public readonly IMethodData method;
-
-		public readonly GenericMethod GenericMethod;
 
 		//
 		// Are we implementing an interface ?
@@ -1888,11 +1904,12 @@ namespace Mono.CSharp {
 		public MethodData (InterfaceMemberBase member,
 				   Modifiers modifiers, MethodAttributes flags, 
 				   IMethodData method, MethodBuilder builder,
-				   GenericMethod generic, MethodSpec parent_method)
+				   //GenericMethod generic, 
+				   MethodSpec parent_method)
 			: this (member, modifiers, flags, method)
 		{
 			this.builder = builder;
-			this.GenericMethod = generic;
+			//this.GenericMethod = generic;
 			this.parent_method = parent_method;
 		}
 
@@ -2106,9 +2123,6 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (DeclSpace parent)
 		{
-			if (GenericMethod != null)
-				GenericMethod.EmitAttributes ();
-
 			var mc = (IMemberContext) method;
 
 			method.ParameterInfo.ApplyAttributes (mc, MethodBuilder);
@@ -2143,8 +2157,7 @@ namespace Mono.CSharp {
 		public static readonly string MetadataName = "Finalize";
 
 		public Destructor (DeclSpace parent, Modifiers mod, ParametersCompiled parameters, Attributes attrs, Location l)
-			: base (parent, null, null, mod, AllowedModifiers,
-				new MemberName (MetadataName, l), attrs, parameters)
+			: base (parent, null, mod, AllowedModifiers, new MemberName (MetadataName, l), attrs, parameters)
 		{
 			ModFlags &= ~Modifiers.PRIVATE;
 			ModFlags |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
@@ -2278,12 +2291,6 @@ namespace Mono.CSharp {
 		public bool IsExcluded ()
 		{
 			return false;
-		}
-
-		GenericMethod IMethodData.GenericMethod {
-			get {
-				return null;
-			}
 		}
 
 		public MemberName MethodName {
@@ -2503,7 +2510,7 @@ namespace Mono.CSharp {
 		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
 				 Modifiers mod_flags, ParametersCompiled parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
-			: base (parent, null, ret_type, mod_flags, AllowedModifiers,
+			: base (parent, ret_type, mod_flags, AllowedModifiers,
 				new MemberName (GetMetadataName (type), loc), attrs, parameters)
 		{
 			OperatorType = type;

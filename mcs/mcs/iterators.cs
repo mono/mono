@@ -394,7 +394,7 @@ namespace Mono.CSharp
 
 		public IteratorStorey (Iterator iterator)
 			: base (iterator.Container.ParametersBlock, iterator.Host,
-			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod == null ? null : iterator.GenericMethod.CurrentTypeParameters, "Iterator")
+			  iterator.OriginalMethod as MemberBase, iterator.OriginalMethod.CurrentTypeParameters, "Iterator")
 		{
 			this.Iterator = iterator;
 		}
@@ -532,7 +532,7 @@ namespace Mono.CSharp
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
+				this, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -564,7 +564,7 @@ namespace Mono.CSharp
 		readonly StateMachineInitializer expr;
 
 		public StateMachineMethod (StateMachine host, StateMachineInitializer expr, FullNamedExpression returnType, Modifiers mod, MemberName name)
-			: base (host, null, returnType, mod | Modifiers.COMPILER_GENERATED,
+			: base (host, returnType, mod | Modifiers.COMPILER_GENERATED,
 			  name, ParametersCompiled.EmptyReadOnlyParameters, null)
 		{
 			this.expr = expr;
@@ -908,10 +908,6 @@ namespace Mono.CSharp
 
 		public Block Container {
 			get { return OriginalMethod.Block; }
-		}
-
-		public GenericMethod GenericMethod {
-			get { return OriginalMethod.GenericMethod; }
 		}
 
 		public override string ContainerType {

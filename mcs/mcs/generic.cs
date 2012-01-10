@@ -2053,9 +2053,15 @@ namespace Mono.CSharp {
 		{
 			types = new TypeParameterSpec[Count];
 			for (int i = 0; i < types.Length; ++i) {
-				names[i].Define (buiders[i + parentOffset], declaringType, parent);
-				types[i] = names[i].Type;
+				var tp = names[i];
+
+				tp.Define (buiders[i + parentOffset], declaringType, parent);
+				types[i] = tp.Type;
 				types[i].DeclaredPosition = i + parentOffset;
+
+				if (tp.Variance != Variance.None && !(declaringType != null && (declaringType.Kind == MemberKind.Interface || declaringType.Kind == MemberKind.Delegate))) {
+					parent.Compiler.Report.Error (1960, tp.Location, "Variant type parameters can only be used with interfaces and delegates");
+				}
 			}
 		}
 
@@ -2499,115 +2505,6 @@ namespace Mono.CSharp {
 				BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);
 
 			return found != null && (found.Modifiers & Modifiers.PUBLIC) != 0;
-		}
-	}
-
-	/// <summary>
-	///   A generic method definition.
-	/// </summary>
-	public class GenericMethod : DeclSpace
-	{
-		ParametersCompiled parameters;
-
-		public GenericMethod (NamespaceContainer ns, DeclSpace parent, MemberName name,
-				      FullNamedExpression return_type, ParametersCompiled parameters)
-			: base (ns, parent, name, null)
-		{
-			this.parameters = parameters;
-		}
-
-		public override TypeParameters CurrentTypeParameters {
-			get {
-				return MemberName.TypeParameters;
-			}
-		}
-
-		public override string[] ValidAttributeTargets {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override bool Define ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		/// <summary>
-		///   Define and resolve the type parameters.
-		///   We're called from Method.Define().
-		/// </summary>
-		public bool Define (MethodOrOperator m)
-		{
-			var tparams = MemberName.TypeParameters;
-			string[] snames = new string[MemberName.Arity];
-			var block = m.Block;
-			var parent_tparams = Parent.TypeParametersAll;
-
-			for (int i = 0; i < snames.Length; i++) {
-				string type_argument_name = tparams[i].MemberName.Name;
-
-				if (block == null) {
-					int idx = parameters.GetParameterIndexByName (type_argument_name);
-					if (idx >= 0) {
-						var b = m.Block;
-						if (b == null)
-							b = new ToplevelBlock (Compiler, Location);
-
-						b.Error_AlreadyDeclaredTypeParameter (type_argument_name, parameters[i].Location);
-					}
-				} else {
-					INamedBlockVariable variable = null;
-					block.GetLocalName (type_argument_name, m.Block, ref variable);
-					if (variable != null)
-						variable.Block.Error_AlreadyDeclaredTypeParameter (type_argument_name, variable.Location);
-				}
-
-				if (parent_tparams != null) {
-					var tp = parent_tparams.Find (type_argument_name);
-					if (tp != null) {
-						tparams[i].WarningParentNameConflict (tp);
-					}
-				}
-
-				snames[i] = type_argument_name;
-			}
-
-			GenericTypeParameterBuilder[] gen_params = m.MethodBuilder.DefineGenericParameters (snames);
-			tparams.Define (gen_params, null, 0, Parent);
-
-			return true;
-		}
-
-		public void EmitAttributes ()
-		{
-			if (OptAttributes != null)
-				OptAttributes.Emit ();
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return base.GetSignatureForError () + parameters.GetSignatureForError ();
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Method | AttributeTargets.ReturnValue;
-			}
-		}
-
-		public override string DocCommentHeader {
-			get { return "M:"; }
-		}
-
-		public new void VerifyClsCompliance ()
-		{
-			MemberName.TypeParameters.VerifyClsCompliance ();
 		}
 	}
 

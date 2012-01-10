@@ -1014,7 +1014,7 @@ namespace Mono.CSharp.Nullable
  			}
 		}
 
-		public Expression Right {
+		public Expression RightExpression {
 			get {
  				return right;
  			}

@@ -446,6 +446,26 @@ namespace Mono.CSharp {
 			caching_flags |= Flags.IsAssigned;
 		}
 
+		public void SetConstraints (List<Constraints> constraints_list)
+		{
+			var tparams = member_name.TypeParameters;
+			if (tparams == null) {
+				Report.Error (80, Location, "Constraints are not allowed on non-generic declarations");
+				return;
+			}
+
+			foreach (var c in constraints_list) {
+				var tp = tparams.Find (c.TypeParameter.Value);
+				if (tp == null) {
+					Report.Error (699, c.Location, "`{0}': A constraint references nonexistent type parameter `{1}'",
+						GetSignatureForError (), c.TypeParameter.Value);
+					continue;
+				}
+
+				tp.Constraints = c;
+			}
+		}
+
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute for this MemberCore
 		/// </summary>
@@ -747,6 +767,9 @@ namespace Mono.CSharp {
 			if (member_name.Name [0] == '_') {
 				Report.Warning (3008, 1, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
 			}
+
+			if (member_name.TypeParameters != null)
+				member_name.TypeParameters.VerifyClsCompliance ();
 
 			return true;
 		}
@@ -1302,73 +1325,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return MemberName.GetSignatureForError ();
-		}
-
-		public virtual void SetParameterInfo (List<Constraints> constraints_list)
-		{
-			if (MemberName.TypeParameters == null) {
-				if (constraints_list != null) {
-					Report.Error (
-						80, Location, "Constraints are not allowed " +
-						"on non-generic declarations");
-				}
-
-				return;
-			}
-
-			//
-			// Register all the names
-			//
-			for (int i = 0; i < MemberName.TypeParameters.Count; i++) {
-				var name = MemberName.TypeParameters [i];
-
-				Constraints constraints = null;
-				if (constraints_list != null) {
-					int total = constraints_list.Count;
-					for (int ii = 0; ii < total; ++ii) {
-						Constraints constraints_at = constraints_list[ii];
-						// TODO: it is used by iterators only
-						if (constraints_at == null) {
-							constraints_list.RemoveAt (ii);
-							--total;
-							continue;
-						}
-						if (constraints_at.TypeParameter.Value == name.MemberName.Name) {
-							constraints = constraints_at;
-							constraints_list.RemoveAt(ii);
-							break;
-						}
-					}
-				}
-
-				if (name.Variance != Variance.None && !(this is Delegate || this is Interface)) {
-					Report.Error (1960, name.Location, "Variant type parameters can only be used with interfaces and delegates");
-				}
-
-				MemberName.TypeParameters[i].Constraints = constraints;
-				if (name.MemberName != null)
-					AddToContainer (name, name.MemberName.Name);
-			}
-
-			if (constraints_list != null && constraints_list.Count > 0) {
-				foreach (Constraints constraint in constraints_list) {
-					Report.Error(699, constraint.Location, "`{0}': A constraint references nonexistent type parameter `{1}'", 
-						GetSignatureForError (), constraint.TypeParameter.Value);
-				}
-			}
-		}
-
-		protected override bool VerifyClsCompliance ()
-		{
-			if (!base.VerifyClsCompliance ()) {
-				return false;
-			}
-
-			if (CurrentTypeParameters != null) {
-				CurrentTypeParameters.VerifyClsCompliance ();
-			}
-
-			return true;
 		}
 	}
 }

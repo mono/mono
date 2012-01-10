@@ -185,7 +185,7 @@ namespace Mono.CSharp {
 			TypeManager.CheckTypeVariance (ret_type, Variance.Covariant, this);
 
 			var resolved_rt = new TypeExpression (ret_type, Location);
-			InvokeBuilder = new Method (this, null, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
+			InvokeBuilder = new Method (this, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
 			InvokeBuilder.Define ();
 
 			//
@@ -239,7 +239,7 @@ namespace Mono.CSharp {
 				}
 			);
 
-			BeginInvokeBuilder = new Method (this, null,
+			BeginInvokeBuilder = new Method (this,
 				new TypeExpression (iasync_result.TypeSpec, Location), MethodModifiers,
 				new MemberName ("BeginInvoke"), async_parameters, null);
 			BeginInvokeBuilder.Define ();
@@ -289,7 +289,7 @@ namespace Mono.CSharp {
 			//
 			// Create method, define parameters, register parameters with type system
 			//
-			EndInvokeBuilder = new Method (this, null, returnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
+			EndInvokeBuilder = new Method (this, returnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
 			EndInvokeBuilder.Define ();
 		}
 

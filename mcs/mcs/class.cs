@@ -393,6 +393,17 @@ namespace Mono.CSharp
 			if (!AddMemberType (tc))
 				return tc;
 
+			var tparams = tc.MemberName.TypeParameters;
+			if (tparams != null) {
+				for (int i = 0; i < tparams.Count; ++i) {
+					var tp = tparams[i];
+					if (tp.MemberName == null)
+						continue;
+
+					tc.AddMember (tp, tp.Name);
+				}
+			}
+
 			if (types == null)
 				types = new List<TypeContainer> ();
 
@@ -431,6 +442,26 @@ namespace Mono.CSharp
 				Report.Error (262, next_part.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
 					next_part.GetSignatureForError ());
+			}
+
+			var tc_names = tc.CurrentTypeParameters;
+			if (tc_names != null) {
+				for (int i = 0; i < tc_names.Count; ++i) {
+					var tp = next_part.MemberName.TypeParameters[i];
+					if (tc_names[i].MemberName.Name != tp.MemberName.Name) {
+						Report.SymbolRelatedToPreviousError (tc.Location, "");
+						Report.Error (264, next_part.Location, "Partial declarations of `{0}' must have the same type parameter names in the same order",
+							next_part.GetSignatureForError ());
+						break;
+					}
+
+					if (tc_names[i].Variance != tp.Variance) {
+						Report.SymbolRelatedToPreviousError (tc.Location, "");
+						Report.Error (1067, next_part.Location, "Partial declarations of `{0}' must have the same type parameter variance modifiers",
+							next_part.GetSignatureForError ());
+						break;
+					}
+				}
 			}
 
 			if (tc.partial_parts == null)
@@ -1202,7 +1233,6 @@ namespace Mono.CSharp
 					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
 				}
 
-				GenericMethod generic_method;
 				MemberName member_name;
 				TypeArguments targs = null;
 				if (method.IsGeneric) {
@@ -1223,15 +1253,12 @@ namespace Mono.CSharp
 					}
 
 					member_name = new MemberName (name, tparams, Location);
-					generic_method = new GenericMethod (NamespaceEntry, this, member_name,
-						new TypeExpression (method.ReturnType, Location), cloned_params);
 				} else {
 					member_name = new MemberName (name);
-					generic_method = null;
 				}
 
 				// Compiler generated proxy
-				proxy_method = new Method (this, generic_method, new TypeExpression (method.ReturnType, Location),
+				proxy_method = new Method (this, new TypeExpression (method.ReturnType, Location),
 					Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
 					member_name, cloned_params, null);
 
@@ -1436,32 +1463,6 @@ namespace Mono.CSharp
 			if (!DefineNestedTypes ()) {
 				error = true;
 				return;
-			}
-		}
-
-		public override void SetParameterInfo (List<Constraints> constraints_list)
-		{
-			base.SetParameterInfo (constraints_list);
-
-			if (PartialContainer.CurrentTypeParameters == null || PartialContainer == this)
-				return;
-
-			var tc_names = PartialContainer.CurrentTypeParameters;
-			for (int i = 0; i < tc_names.Count; ++i) {
-				var tp = MemberName.TypeParameters[i];
-				if (tc_names[i].MemberName.Name != tp.MemberName.Name) {
-					Report.SymbolRelatedToPreviousError (PartialContainer.Location, "");
-					Report.Error (264, Location, "Partial declarations of `{0}' must have the same type parameter names in the same order",
-						GetSignatureForError ());
-					break;
-				}
-
-				if (tc_names[i].Variance != tp.Variance) {
-					Report.SymbolRelatedToPreviousError (PartialContainer.Location, "");
-					Report.Error (1067, Location, "Partial declarations of `{0}' must have the same type parameter variance modifiers",
-						GetSignatureForError ());
-					break;
-				}
 			}
 		}
 
@@ -3120,11 +3121,8 @@ namespace Mono.CSharp
 		readonly Modifiers explicit_mod_flags;
 		public MethodAttributes flags;
 
-		public InterfaceMemberBase (DeclSpace parent, GenericMethod generic,
-				   FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
-				   MemberName name, Attributes attrs)
-			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
-				name, attrs)
+		public InterfaceMemberBase (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs)
 		{
 			IsInterface = parent.PartialContainer.Kind == MemberKind.Interface;
 			IsExplicitImpl = (MemberName.ExplicitInterface != null);
@@ -3521,18 +3519,6 @@ namespace Mono.CSharp
 			return Parent.GetSignatureForDocumentation () + "." + ShortName;
 		}
 
-		protected override bool VerifyClsCompliance ()
-		{
-			if (!base.VerifyClsCompliance ()) {
-				return false;
-			}
-
-			if (GenericMethod != null)
-				GenericMethod.VerifyClsCompliance ();
-
-			return true;
-		}
-
 		public override bool IsUsed 
 		{
 			get { return IsExplicitImpl || base.IsUsed; }
@@ -3546,19 +3532,13 @@ namespace Mono.CSharp
 		protected TypeSpec member_type;
 
 		public readonly DeclSpace ds;
-		public readonly GenericMethod GenericMethod;
 
-		protected MemberBase (DeclSpace parent, GenericMethod generic,
-				      FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod,
-				      MemberName name, Attributes attrs)
+		protected MemberBase (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod, MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
-			this.ds = generic != null ? generic : (DeclSpace) parent;
+			this.ds = parent;
 			this.type_expr = type;
 			ModFlags = ModifiersExtensions.Check (allowed_mod, mod, def_mod, Location, Report);
-			GenericMethod = generic;
-			if (GenericMethod != null)
-				GenericMethod.ModFlags = ModFlags;
 		}
 
 		#region Properties

@@ -64,8 +64,7 @@ namespace Mono.CSharp
 
 		protected FieldBase (DeclSpace parent, FullNamedExpression type, Modifiers mod,
 				     Modifiers allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, null, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE,
-				name, attrs)
+			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE, name, attrs)
 		{
 			if ((mod & Modifiers.ABSTRACT) != 0)
 				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");

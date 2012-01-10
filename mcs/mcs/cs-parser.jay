@@ -898,7 +898,8 @@ struct_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((List<Constraints>) $9);
+		if ($9 != null)
+			current_class.SetConstraints ((List<Constraints>) $9);
 
 		if (doc_support)
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -1232,19 +1233,11 @@ method_header
 		MemberName name = (MemberName) $4;
 		current_local_parameters = (ParametersCompiled) $7;
 
-		GenericMethod generic = null;
-		if (name.TypeParameters != null) {
-			generic = new GenericMethod (current_namespace, current_class, name,
-						     (FullNamedExpression) $3, current_local_parameters);
-
-			generic.SetParameterInfo ((List<Constraints>) $10);
-		} else if ($10 != null) {
-			report.Error (80, GetLocation ($10),
-				"Constraints are not allowed on non-generic declarations");
-		}
-
-		var method = Method.Create (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
+		var method = Method.Create (current_class, (FullNamedExpression) $3, (Modifiers) $2,
 				     name, current_local_parameters, (Attributes) $1, $10 != null);
+
+		if ($10 != null)
+			method.SetConstraints ((List<Constraints>) $10);
 				     
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1277,24 +1270,14 @@ method_header
 		MemberName name = (MemberName) $6;
 		current_local_parameters = (ParametersCompiled) $9;
 
-		if ($11 != null && name.TypeParameters == null)
-			report.Error (80, lexer.Location,
-				      "Constraints are not allowed on non-generic declarations");
-
-		GenericMethod generic = null;
-		if (name.TypeParameters != null) {
-			generic = new GenericMethod (current_namespace, current_class, name,
-				new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
-				current_local_parameters);
-
-			generic.SetParameterInfo ((List<Constraints>) $11);
-		}
-
 		var modifiers = (Modifiers) $2;
 		modifiers |= Modifiers.PARTIAL;
 
-		var method = Method.Create (current_class, generic, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
+		var method = Method.Create (current_class, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				     modifiers, name, current_local_parameters, (Attributes) $1, $11 != null);
+
+		if ($11 != null)
+			method.SetConstraints ((List<Constraints>) $11);
 
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1312,7 +1295,7 @@ method_header
 		report.Error (1585, name.Location, 
 			"Member modifier `{0}' must precede the member type and name", ModifiersExtensions.Name ((Modifiers) $4));
 
-		var method = Method.Create (current_class, null, (FullNamedExpression) $3,
+		var method = Method.Create (current_class, (FullNamedExpression) $3,
 					    0, name, (ParametersCompiled) $7, (Attributes) $1, false);
 
 		current_local_parameters = (ParametersCompiled) $7;
@@ -1842,7 +1825,8 @@ interface_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((List<Constraints>) $9);
+		if ($9 != null)
+			current_class.SetConstraints ((List<Constraints>) $9);
 
 		if (doc_support) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -2593,7 +2577,8 @@ delegate_declaration
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  
-		current_delegate.SetParameterInfo ((List<Constraints>) $11);
+		if ($11 != null)
+			current_delegate.SetConstraints ((List<Constraints>) $11);
 		lbag.AddMember (current_delegate, mod_locations, GetLocation ($3), GetLocation ($6), GetLocation ($9), GetLocation ($13));
 
 		$$ = current_delegate;
@@ -4206,7 +4191,8 @@ class_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((List<Constraints>) $9);
+		if ($9 != null)
+			current_class.SetConstraints ((List<Constraints>) $9);
 		lbag.AddMember (current_class, mod_locations, GetLocation ($4));
 
 		if (doc_support) {
@@ -4471,7 +4457,7 @@ opt_type_parameter_variance
 	  {
 		if (lang_version <= LanguageVersion.V_3)
 			FeatureIsNotAvailable (lexer.Location, "generic type variance");
-
+		
 		$$ = $1;
 	  }
 	;
@@ -6111,7 +6097,6 @@ interactive_parsing
 		current_local_parameters = pars;
 		Method method = new Method (
 			current_class,
-			null, // generic
 			new TypeExpression (compiler.BuiltinTypes.Void, Location.Null),
 			mods,
 			new MemberName ("Host"),

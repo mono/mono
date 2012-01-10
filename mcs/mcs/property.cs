@@ -34,10 +34,8 @@ namespace Mono.CSharp
 	// This includes properties, indexers, and events
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
-		public PropertyBasedMember (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
-			MemberName name, Attributes attrs)
-			: base (parent, generic, type, mod, allowed_mod, name, attrs)
+		public PropertyBasedMember (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 		}
 
@@ -406,7 +404,7 @@ namespace Mono.CSharp
 
 		public PropertyBase (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags,
 				     Modifiers allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, null, type, mod_flags, allowed_mod, name, attrs)
+			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
 
@@ -1219,7 +1217,7 @@ namespace Mono.CSharp
 		protected EventSpec spec;
 
 		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
-			: base (parent, null, type, mod_flags,
+			: base (parent, type, mod_flags,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
 				AllowedModifiersClass,
