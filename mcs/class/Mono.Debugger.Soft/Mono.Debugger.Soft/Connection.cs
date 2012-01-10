@@ -875,6 +875,7 @@ namespace Mono.Debugger.Soft
 				if (s == null)
 					return WriteInt (-1);
 
+				MakeRoom (4);
 				encode_int (data, s.Length, ref offset);
 				byte[] b = Encoding.UTF8.GetBytes (s);
 				MakeRoom (b.Length);
