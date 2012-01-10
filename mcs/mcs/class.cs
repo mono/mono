@@ -1095,7 +1095,7 @@ namespace Mono.CSharp
 			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null ? 1 : 0;
 
 			if (IsTopLevel) {
-				TypeBuilder = Module.CreateBuilder (Name, TypeAttr, type_size);
+				TypeBuilder = Module.CreateBuilder (MemberName.GetName (true), TypeAttr, type_size);
 			} else {
 				TypeBuilder = Parent.TypeBuilder.DefineNestedType (Basename, TypeAttr, null, type_size);
 			}
@@ -2580,7 +2580,8 @@ namespace Mono.CSharp
 
 		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
 		{
-			if (part.Name == "System.Object")
+			var pmn = part.MemberName;
+			if (pmn.Name == "Object" && pmn.Left != null && pmn.Left.Name == "System" && pmn.TypeParameters == null)
 				Report.Error (537, part.Location,
 					"The class System.Object cannot have a base class or implement an interface.");
 			base.AddBasesForPart (part, bases);
@@ -3670,7 +3671,7 @@ namespace Mono.CSharp
 
 		public override string GetSignatureForDocumentation ()
 		{
-			return Parent.Name + "." + Name;
+			return Parent.GetSignatureForDocumentation () + "." + MemberName.Basename;
 		}
 
 		protected virtual bool ResolveMemberType ()

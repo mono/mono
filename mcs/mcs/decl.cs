@@ -214,20 +214,6 @@ namespace Mono.CSharp {
 	[System.Diagnostics.DebuggerDisplay ("{GetSignatureForError()}")]
 	public abstract class MemberCore : Attributable, IMemberContext, IMemberDefinition
 	{
-		/// <summary>
-		///   Public name
-		/// </summary>
-
-		protected string cached_name;
-		// TODO: Remove in favor of MemberName
-		public string Name {
-			get {
-				if (cached_name == null)
-					cached_name = MemberName.GetName (!(this is GenericMethod) && !(this is Method));
-				return cached_name;
-			}
-		}
-
 		string IMemberDefinition.Name {
 			get {
 				return member_name.Name;
@@ -317,7 +303,6 @@ namespace Mono.CSharp {
 		protected virtual void SetMemberName (MemberName new_name)
 		{
 			member_name = new_name;
-			cached_name = null;
 		}
 
 		public virtual void Accept (StructuralVisitor visitor)
@@ -1048,7 +1033,13 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError ()
 		{
 			var bf = MemberDefinition as Property.BackingField;
-			var name = bf == null ? Name : bf.OriginalName;
+			string name;
+			if (bf == null) {
+				name = Name;
+			} else {
+				name = bf.OriginalProperty.MemberName.Name;
+			}
+
 			return DeclaringType.GetSignatureForError () + "." + name;
 		}
 
@@ -1305,7 +1296,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForDocumentation ()
 		{
-			return Name;
+			return MemberName.GetName (true);
 		}
 
 		public override string GetSignatureForError ()

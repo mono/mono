@@ -422,6 +422,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public string Name {
+			get {
+				return MemberName.Name;
+			}
+		}
+
 		public string Namespace {
 			get {
 				return null;

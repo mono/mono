@@ -1201,10 +1201,10 @@ namespace Mono.CSharp {
 			}
 
 			if (CurrentTypeParameters == null) {
-				if (base_method != null) {
-					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && Name == "Equals")
+				if (base_method != null && !IsExplicitImpl) {
+					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && MemberName.Name == "Equals")
 						Parent.PartialContainer.Mark_HasEquals ();
-					else if (parameters.IsEmpty && Name == "GetHashCode")
+					else if (parameters.IsEmpty && MemberName.Name == "GetHashCode")
 						Parent.PartialContainer.Mark_HasGetHashCode ();
 				}
 					
@@ -1263,7 +1263,7 @@ namespace Mono.CSharp {
 			// This is used to track the Entry Point,
 			//
 			var settings = Compiler.Settings;
-			if (settings.NeedsEntryPoint && Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
+			if (settings.NeedsEntryPoint && MemberName.Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGenericOrParentIsGeneric || MemberName.IsGeneric) {

@@ -301,7 +301,7 @@ namespace Mono.CSharp
 
 		public override TypeContainer AddPartial (TypeContainer nextPart)
 		{
-			return AddPartial (nextPart, nextPart.Name);
+			return AddPartial (nextPart, nextPart.MemberName.GetName (true));
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -516,7 +516,7 @@ namespace Mono.CSharp
 		{
 			if (AddTypesContainer (tc)) {
 				if ((tc.ModFlags & Modifiers.PARTIAL) != 0)
-					defined_names.Add (tc.Name, tc);
+					defined_names.Add (tc.MemberName.GetName (true), tc);
 
 				tc.NamespaceEntry.NS.AddType (this, tc.Definition);
 				return true;

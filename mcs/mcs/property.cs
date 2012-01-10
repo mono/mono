@@ -711,9 +711,9 @@ namespace Mono.CSharp
 				this.property = p;
 			}
 
-			public string OriginalName {
+			public Property OriginalProperty {
 				get {
-					return property.Name;
+					return property;
 				}
 			}
 

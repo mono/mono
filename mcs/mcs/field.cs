@@ -94,6 +94,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public string Name {
+			get {
+				return MemberName.Name;
+			}
+		}
+
 		public FieldSpec Spec {
 			get {
 				return spec;

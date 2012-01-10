@@ -38,7 +38,7 @@ namespace Mono.CSharp {
 
 		protected static MemberName MakeMemberName (MemberBase host, string name, int unique_id, TypeParameters tparams, Location loc)
 		{
-			string host_name = host == null ? null : host is InterfaceMemberBase ? ((InterfaceMemberBase)host).GetFullName (host.MemberName) : host.Name;
+			string host_name = host == null ? null : host is InterfaceMemberBase ? ((InterfaceMemberBase)host).GetFullName (host.MemberName) : host.MemberName.Name;
 			string tname = MakeName (host_name, "c", name, unique_id);
 			TypeParameters args = null;
 			if (tparams != null) {

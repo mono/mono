@@ -695,7 +695,7 @@ namespace Mono.CSharp
 			// work from MethodBuilders.   Retarded, I know.
 			//
 			var tt = assembly.Builder.GetType (host.TypeBuilder.Name);
-			var mi = tt.GetMethod (expression_method.Name);
+			var mi = tt.GetMethod (expression_method.MemberName.Name);
 
 			if (host.Fields != null) {
 				//
