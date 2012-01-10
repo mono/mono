@@ -360,7 +360,7 @@ namespace System.Web.Configuration
 #endif
 		public virtual bool IsAboveApplication (string configPath)
 		{
-			throw new NotImplementedException ();
+			return !configPath.Contains (HttpRuntime.AppDomainAppPath);
 		}
 		
 		public virtual bool IsConfigRecordRequired (string configPath)
@@ -443,9 +443,9 @@ namespace System.Web.Configuration
 
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
 		{
-			string rootConfigPath = GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
-			if (String.Compare (streamName, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0)
+			if (!IsAboveApplication (streamName))
 				WebConfigurationManager.SuppressAppReload (true);
+
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
 		}
 
@@ -503,8 +503,8 @@ namespace System.Web.Configuration
 			// FileSystemWatcher monitor might have already delivered the
 			// notification. If the stream has been open using OpenStreamForWrite then
 			// we're safe, though.
-			string rootConfigPath = GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
-			if (String.Compare (streamName, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0)
+
+			if (!IsAboveApplication (streamName))
 				WebConfigurationManager.SuppressAppReload (true);
 		}
 
