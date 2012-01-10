@@ -2524,12 +2524,14 @@ namespace System.Windows.Forms
 						vscrollbar_ctrl.Value = hli;
 					}
 				}
-				
-				Size = new Size (width, height);
-				textarea_drawable = ClientRectangle;
-				textarea_drawable.Width = width;
-				textarea_drawable.Height = height;
-				
+
+				var borderWidth = Hwnd.GetBorderWidth (CreateParams);
+				var borderAdjustment = dropdown_style == ComboBoxStyle.Simple ? new Size (0, 0) :
+					new Size (borderWidth.top + borderWidth.bottom, borderWidth.left + borderWidth.right);
+				Size = new Size (width, height + borderAdjustment.Height);
+				textarea_drawable = new Rectangle (ClientRectangle.Location,
+					new Size (width - borderAdjustment.Width, height));
+
 				if (vscrollbar_ctrl != null && show_scrollbar)
 					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
