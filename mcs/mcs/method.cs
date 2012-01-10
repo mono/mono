@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected MethodSpec spec;
 
-		public MethodCore (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
+		public MethodCore (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
@@ -517,11 +517,9 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "method", "return" };
 
-		protected MethodOrOperator (DeclSpace parent, FullNamedExpression type, Modifiers mod,
-				Modifiers allowed_mod, MemberName name,
+		protected MethodOrOperator (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name,
 				Attributes attrs, ParametersCompiled parameters)
-			: base (parent, type, mod, allowed_mod, name,
-					attrs, parameters)
+			: base (parent, type, mod, allowed_mod, name, attrs, parameters)
 		{
 		}
 
@@ -788,7 +786,7 @@ namespace Mono.CSharp {
 		MethodBase method;
 		SourceMethodBuilder builder;
 
-		protected SourceMethod (DeclSpace parent, MethodBase method, ICompileUnit file)
+		protected SourceMethod (TypeContainer parent, MethodBase method, ICompileUnit file)
 		{
 			this.method = method;
 			
@@ -826,7 +824,7 @@ namespace Mono.CSharp {
 				builder.SetRealMethodName (name);
 		}
 
-		public static SourceMethod Create (DeclSpace parent, MethodBase method, Block block)
+		public static SourceMethod Create (TypeContainer parent, MethodBase method, Block block)
 		{
 			if (!SymbolWriter.HasSymbolWriter)
 				return null;
@@ -849,7 +847,7 @@ namespace Mono.CSharp {
 	{
 		Method partialMethodImplementation;
 
-		public Method (DeclSpace parent, FullNamedExpression return_type, Modifiers mod, MemberName name, ParametersCompiled parameters, Attributes attrs)
+		public Method (TypeContainer parent, FullNamedExpression return_type, Modifiers mod, MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, return_type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct | Modifiers.ASYNC :
@@ -858,7 +856,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected Method (DeclSpace parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod,
+		protected Method (TypeContainer parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod,
 					MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, return_type, mod, amod, name, attrs, parameters)
 		{
@@ -891,7 +889,7 @@ namespace Mono.CSharp {
 			visitor.Visit (this);
 		}
 
-		public static Method Create (DeclSpace parent, FullNamedExpression returnType, Modifiers mod,
+		public static Method Create (TypeContainer parent, FullNamedExpression returnType, Modifiers mod,
 				   MemberName name, ParametersCompiled parameters, Attributes attrs, bool hasConstraints)
 		{
 			var m = new Method (parent, returnType, mod, name, parameters, attrs);
@@ -1553,7 +1551,7 @@ namespace Mono.CSharp {
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";
 
-		public Constructor (DeclSpace parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args, Location loc)
+		public Constructor (TypeContainer parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args, Location loc)
 			: base (parent, null, mod, AllowedModifiers, new MemberName (name, loc), attrs, args)
 		{
 		}
@@ -2121,7 +2119,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (DeclSpace parent)
+		public void Emit (TypeContainer parent)
 		{
 			var mc = (IMemberContext) method;
 
@@ -2156,7 +2154,7 @@ namespace Mono.CSharp {
 
 		public static readonly string MetadataName = "Finalize";
 
-		public Destructor (DeclSpace parent, Modifiers mod, ParametersCompiled parameters, Attributes attrs, Location l)
+		public Destructor (TypeContainer parent, Modifiers mod, ParametersCompiled parameters, Attributes attrs, Location l)
 			: base (parent, null, mod, AllowedModifiers, new MemberName (MetadataName, l), attrs, parameters)
 		{
 			ModFlags &= ~Modifiers.PRIVATE;
@@ -2351,7 +2349,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public virtual void Emit (DeclSpace parent)
+		public virtual void Emit (TypeContainer parent)
 		{
 			method_data.Emit (parent);
 
@@ -2507,11 +2505,9 @@ namespace Mono.CSharp {
 			names [(int) OpType.Explicit] = new string [] { "explicit", "op_Explicit" };
 		}
 		
-		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
-				 Modifiers mod_flags, ParametersCompiled parameters,
+		public Operator (TypeContainer parent, OpType type, FullNamedExpression ret_type, Modifiers mod_flags, ParametersCompiled parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
-			: base (parent, ret_type, mod_flags, AllowedModifiers,
-				new MemberName (GetMetadataName (type), loc), attrs, parameters)
+			: base (parent, ret_type, mod_flags, AllowedModifiers, new MemberName (GetMetadataName (type), loc), attrs, parameters)
 		{
 			OperatorType = type;
 			Block = block;

@@ -34,7 +34,7 @@ namespace Mono.CSharp
 	// This includes properties, indexers, and events
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
-		public PropertyBasedMember (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		public PropertyBasedMember (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 		}
@@ -196,7 +196,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			public override MethodBuilder Define (DeclSpace parent)
+			public override MethodBuilder Define (TypeContainer parent)
 			{
 				base.Define (parent);
 
@@ -261,7 +261,7 @@ namespace Mono.CSharp
 			    }
 			}
 
-			public override MethodBuilder Define (DeclSpace parent)
+			public override MethodBuilder Define (TypeContainer parent)
 			{
 				parameters.Resolve (this);
 				
@@ -333,7 +333,7 @@ namespace Mono.CSharp
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (DeclSpace parent)
+			public virtual MethodBuilder Define (TypeContainer parent)
 			{
 				TypeContainer container = parent.PartialContainer;
 
@@ -402,8 +402,7 @@ namespace Mono.CSharp
 		PropertyMethod get, set, first;
 		PropertyBuilder PropertyBuilder;
 
-		public PropertyBase (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags,
-				     Modifiers allowed_mod, MemberName name, Attributes attrs)
+		public PropertyBase (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
@@ -721,7 +720,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Property (DeclSpace parent, FullNamedExpression type, Modifiers mod,
+		public Property (TypeContainer parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
@@ -821,7 +820,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			public override MethodBuilder Define (DeclSpace ds)
+			public override MethodBuilder Define (TypeContainer ds)
 			{
 				CheckAbstractAndExtern (block != null);
 				return base.Define (ds);
@@ -851,7 +850,7 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_targets = new string [] { "event" };
 
-		public EventProperty (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public EventProperty (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
 		{
 		}
@@ -891,7 +890,7 @@ namespace Mono.CSharp
 
 			protected abstract MethodSpec GetOperation (Location loc);
 
-			public override void Emit (DeclSpace parent)
+			public override void Emit (TypeContainer parent)
 			{
 				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location);
@@ -990,7 +989,7 @@ namespace Mono.CSharp
 		Field backing_field;
 		List<FieldDeclarator> declarators;
 
-		public EventField (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public EventField (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
 		{
 			Add = new AddDelegateMethod (this);
@@ -1167,7 +1166,7 @@ namespace Mono.CSharp
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (DeclSpace parent)
+			public virtual MethodBuilder Define (TypeContainer parent)
 			{
 				// Fill in already resolved event type to speed things up and
 				// avoid confusing duplicate errors
@@ -1216,7 +1215,7 @@ namespace Mono.CSharp
 		EventBuilder EventBuilder;
 		protected EventSpec spec;
 
-		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		protected Event (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
@@ -1418,7 +1417,7 @@ namespace Mono.CSharp
 				this.parameters = parameters;
 			}
 
-			public override MethodBuilder Define (DeclSpace parent)
+			public override MethodBuilder Define (TypeContainer parent)
 			{
 				parameters.Resolve (this);
 				return base.Define (parent);
@@ -1489,8 +1488,7 @@ namespace Mono.CSharp
 
 		readonly ParametersCompiled parameters;
 
-		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, Modifiers mod,
-				ParametersCompiled parameters, Attributes attrs)
+		public Indexer (TypeContainer parent, FullNamedExpression type, MemberName name, Modifiers mod, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs)

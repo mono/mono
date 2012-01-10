@@ -292,9 +292,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
+		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
 		{
-			this.Parent = parent as TypeContainer;
+			this.Parent = parent;
 			member_name = name;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 			AddAttributes (attrs, this);
@@ -639,7 +639,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 				return false;
 			
-			DeclSpace parentContainer = Parent.PartialContainer;
+			var parentContainer = Parent.PartialContainer;
 			while (parentContainer != null && parentContainer.ModFlags != 0) {
 				if ((parentContainer.ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 					return false;
@@ -1204,127 +1204,5 @@ namespace Mono.CSharp {
 	public interface IInterfaceMemberSpec
 	{
 		TypeSpec MemberType { get; }
-	}
-
-	//
-	// Base type container declaration. It exists to handle partial types
-	// which share same definition (PartialContainer) but have different
-	// resolve scopes
-	//
-	public abstract class DeclSpace : MemberCore {
-		/// <summary>
-		///   This points to the actual definition that is being
-		///   created with System.Reflection.Emit
-		/// </summary>
-		public TypeBuilder TypeBuilder;
-
-		//
-		// This is the namespace in which this typecontainer
-		// was declared.  We use this to resolve names.
-		//
-		public NamespaceContainer NamespaceEntry;
-
-		public readonly string Basename;
-		
-		protected Dictionary<string, MemberCore> defined_names;
-
-		public TypeContainer PartialContainer;
-
-		public DeclSpace (NamespaceContainer ns, DeclSpace parent, MemberName name,
-				  Attributes attrs)
-			: base (parent, name, attrs)
-		{
-			NamespaceEntry = ns;
-			Basename = name.Basename;
-			defined_names = new Dictionary<string, MemberCore> ();
-			PartialContainer = null;
-		}
-
-		/// <summary>
-		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
-		/// </summary>
-		protected virtual bool AddToContainer (MemberCore symbol, string name)
-		{
-			MemberCore mc;
-			if (!defined_names.TryGetValue (name, out mc)) {
-				defined_names.Add (name, symbol);
-				return true;
-			}
-
-			if (((mc.ModFlags | symbol.ModFlags) & Modifiers.COMPILER_GENERATED) != 0)
-				return true;
-
-			if (symbol.EnableOverloadChecks (mc))
-				return true;
-
-			InterfaceMemberBase im = mc as InterfaceMemberBase;
-			if (im != null && im.IsExplicitImpl)
-				return true;
-
-			Report.SymbolRelatedToPreviousError (mc);
-			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {
-				Error_MissingPartialModifier (symbol);
-				return false;
-			}
-
-			if (symbol is TypeParameter) {
-				Report.Error (692, symbol.Location,
-					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
-			} else {
-				Report.Error (102, symbol.Location,
-					"The type `{0}' already contains a definition for `{1}'",
-					GetSignatureForError (), name);
-			}
-
-			return false;
-		}
-
-		protected void RemoveFromContainer (string name)
-		{
-			defined_names.Remove (name);
-		}
-		
-		/// <summary>
-		///   Returns the MemberCore associated with a given name in the declaration
-		///   space. It doesn't return method based symbols !!
-		/// </summary>
-		/// 
-		public MemberCore GetDefinition (string name)
-		{
-			MemberCore mc = null;
-			defined_names.TryGetValue (name, out mc);
-			return mc;
-		}
-	
-		// 
-		// root_types contains all the types.  All TopLevel types
-		// hence have a parent that points to `root_types', that is
-		// why there is a non-obvious test down here.
-		//
-		public bool IsTopLevel {
-			get { return (Parent != null && Parent.Parent == null); }
-		}
-
-		public virtual bool IsUnmanagedType ()
-		{
-			return false;
-		}
-
-		protected void Error_MissingPartialModifier (MemberCore type)
-		{
-			Report.Error (260, type.Location,
-				"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
-				type.GetSignatureForError ());
-		}
-
-		public override string GetSignatureForDocumentation ()
-		{
-			return MemberName.GetName (true);
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return MemberName.GetSignatureForError ();
-		}
 	}
 }

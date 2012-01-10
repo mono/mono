@@ -45,7 +45,7 @@ namespace Mono.CSharp
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public abstract class TypeContainer : DeclSpace, ITypeDefinition, ITypesContainer
+	public abstract class TypeContainer : MemberCore, ITypeDefinition, ITypesContainer
 	{
 		//
 		// Different context is needed when resolving type container base
@@ -180,6 +180,7 @@ namespace Mono.CSharp
 
 		Dictionary<MethodSpec, Method> hoisted_base_call_proxies;
 
+		protected Dictionary<string, MemberCore> defined_names;
 		Dictionary<string, FullNamedExpression> Cache = new Dictionary<string, FullNamedExpression> ();
 
 		//
@@ -211,7 +212,9 @@ namespace Mono.CSharp
 		bool type_defined;
 
 		TypeContainer InTransit;
+		public TypeContainer PartialContainer;
 
+		public TypeBuilder TypeBuilder;
 		GenericTypeParameterBuilder[] all_tp_builders;
 		//
 		// All recursive type parameters put together sharing same
@@ -219,6 +222,13 @@ namespace Mono.CSharp
 		//
 		TypeParameters all_type_parameters;
 
+		//
+		// This is the namespace in which this typecontainer
+		// was declared.  We use this to resolve names.
+		//
+		public NamespaceContainer NamespaceEntry;
+
+		public readonly string Basename;
 		public const string DefaultIndexerName = "Item";
 
 		private bool seen_normal_indexers = false;
@@ -243,15 +253,18 @@ namespace Mono.CSharp
 		/// </remarks>
 		PendingImplementation pending;
 
-		public TypeContainer (NamespaceContainer ns, DeclSpace parent, MemberName name,
-				      Attributes attrs, MemberKind kind)
-			: base (ns, parent, name, attrs)
+		public TypeContainer (NamespaceContainer ns, TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
+			: base (parent, name, attrs)
 		{
 			if (parent != null && parent.NamespaceEntry != ns)
 				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
 
 			this.Kind = kind;
 			this.PartialContainer = this;
+			this.Basename = name.Basename;
+			this.NamespaceEntry = ns;
+
+			defined_names = new Dictionary<string, MemberCore> ();
 		}
 
 		#region Properties
@@ -332,6 +345,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		// 
+		// root_types contains all the types.  All TopLevel types
+		// hence have a parent that points to `root_types', that is
+		// why there is a non-obvious test down here.
+		//
+		public bool IsTopLevel {
+			get {
+				return Parent != null && Parent.Parent == null;
+			}
+		}
+
 		string ITypeDefinition.Namespace {
 			get {
 				return NamespaceEntry.NS.MemberName.GetSignatureForError ();
@@ -374,7 +398,7 @@ namespace Mono.CSharp
 
 		protected virtual void RemoveMemberType (TypeContainer ds)
 		{
-			RemoveFromContainer (ds.Basename);
+			defined_names.Remove (ds.Basename);
 		}
 
 		public void AddConstant (Const constant)
@@ -386,6 +410,45 @@ namespace Mono.CSharp
 				constants = new List<MemberCore> ();
 			
 			constants.Add (constant);
+		}
+
+		//
+		// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
+		//
+		protected virtual bool AddToContainer (MemberCore symbol, string name)
+		{
+			MemberCore mc;
+			if (!defined_names.TryGetValue (name, out mc)) {
+				defined_names.Add (name, symbol);
+				return true;
+			}
+
+			if (((mc.ModFlags | symbol.ModFlags) & Modifiers.COMPILER_GENERATED) != 0)
+				return true;
+
+			if (symbol.EnableOverloadChecks (mc))
+				return true;
+
+			InterfaceMemberBase im = mc as InterfaceMemberBase;
+			if (im != null && im.IsExplicitImpl)
+				return true;
+
+			Report.SymbolRelatedToPreviousError (mc);
+			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {
+				Error_MissingPartialModifier (symbol);
+				return false;
+			}
+
+			if (symbol is TypeParameter) {
+				Report.Error (692, symbol.Location,
+					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
+			} else {
+				Report.Error (102, symbol.Location,
+					"The type `{0}' already contains a definition for `{1}'",
+					GetSignatureForError (), name);
+			}
+
+			return false;
 		}
 
 		public TypeContainer AddTypeContainer (TypeContainer tc)
@@ -927,11 +990,9 @@ namespace Mono.CSharp
 			return a.GetAttributeUsageAttribute ();
 		}
 
-		public virtual void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
+		public virtual void AddBasesForPart (TypeContainer part, List<FullNamedExpression> bases)
 		{
-			// FIXME: get rid of partial_parts and store lists of bases of each part here
-			// assumed, not verified: 'part' is in 'partial_parts' 
-			((TypeContainer) part).type_bases = bases;
+			part.type_bases = bases;
 		}
 
 		/// <summary>
@@ -1009,6 +1070,19 @@ namespace Mono.CSharp
 			return ifaces;
 		}
 
+		//
+		// Returns the MemberCore associated with a given name in the declaration
+		// space. It doesn't return method based symbols !!
+		//
+		// TODO: protected or private
+		//
+		public MemberCore GetDefinition (string name)
+		{
+			MemberCore mc = null;
+			defined_names.TryGetValue (name, out mc);
+			return mc;
+		}
+
 		TypeSpec[] GetNormalPartialBases ()
 		{
 			var ifaces = new List<TypeSpec> (0);
@@ -1045,6 +1119,16 @@ namespace Mono.CSharp
 				return null;
 
 			return ifaces.ToArray ();
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return MemberName.GetName (true);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return MemberName.GetSignatureForError ();
 		}
 
 		//
@@ -1246,7 +1330,7 @@ namespace Mono.CSharp
 					targs.Arguments = new TypeSpec[hoisted_tparams.Length];
 					for (int i = 0; i < hoisted_tparams.Length; ++i) {
 						var tp = hoisted_tparams[i];
-						tparams.Add (new TypeParameter (tp, this, null, new MemberName (tp.Name, Location), null));
+						tparams.Add (new TypeParameter (tp, null, new MemberName (tp.Name, Location), null));
 
 						targs.Add (new SimpleName (tp.Name, Location));
 						targs.Arguments[i] = tp;
@@ -2077,6 +2161,13 @@ namespace Mono.CSharp
 			}
 		}
 
+		protected void Error_MissingPartialModifier (MemberCore type)
+		{
+			Report.Error (260, type.Location,
+				"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
+				type.GetSignatureForError ());
+		}
+
 		public virtual void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
@@ -2278,6 +2369,11 @@ namespace Mono.CSharp
 			return Module.DeclaringAssembly == assembly;
 		}
 
+		public virtual bool IsUnmanagedType ()
+		{
+			return false;
+		}
+
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition " + GetSignatureForError ());
@@ -2400,8 +2496,7 @@ namespace Mono.CSharp
 	{
 		SecurityType declarative_security;
 
-		public ClassOrStruct (NamespaceContainer ns, DeclSpace parent,
-				      MemberName name, Attributes attrs, MemberKind kind)
+		public ClassOrStruct (NamespaceContainer ns, TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
 			: base (ns, parent, name, attrs, kind)
 		{
 		}
@@ -2526,8 +2621,7 @@ namespace Mono.CSharp
 
 		public override ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			DeclSpace top_level = Parent;
-			if (top_level != null) {
+			if (Parent != null) {
 				var methods = NamespaceEntry.NS.LookupExtensionMethod (this, extensionType, name, arity);
 				if (methods != null) {
 					return new ExtensionMethodCandidates (methods, NamespaceEntry, NamespaceEntry.NS) {
@@ -2565,8 +2659,7 @@ namespace Mono.CSharp
 
 		public const TypeAttributes StaticClassAttribute = TypeAttributes.Abstract | TypeAttributes.Sealed;
 
-		public Class (NamespaceContainer ns, DeclSpace parent, MemberName name, Modifiers mod,
-			      Attributes attrs)
+		public Class (NamespaceContainer ns, TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Class)
 		{
 			var accmods = (Parent == null || Parent.Parent == null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
@@ -2579,7 +2672,7 @@ namespace Mono.CSharp
 			visitor.Visit (this);
 		}
 
-		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
+		public override void AddBasesForPart (TypeContainer part, List<FullNamedExpression> bases)
 		{
 			var pmn = part.MemberName;
 			if (pmn.Name == "Object" && pmn.Left != null && pmn.Left.Name == "System" && pmn.TypeParameters == null)
@@ -2800,8 +2893,7 @@ namespace Mono.CSharp
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceContainer ns, DeclSpace parent, MemberName name,
-			       Modifiers mod, Attributes attrs)
+		public Struct (NamespaceContainer ns, TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Struct)
 		{
 			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;			
@@ -2990,8 +3082,7 @@ namespace Mono.CSharp
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceContainer ns, DeclSpace parent, MemberName name, Modifiers mod,
-				  Attributes attrs)
+		public Interface (NamespaceContainer ns, TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Interface)
 		{
 			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
@@ -3121,7 +3212,7 @@ namespace Mono.CSharp
 		readonly Modifiers explicit_mod_flags;
 		public MethodAttributes flags;
 
-		public InterfaceMemberBase (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		public InterfaceMemberBase (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs)
 		{
 			IsInterface = parent.PartialContainer.Kind == MemberKind.Interface;
@@ -3531,12 +3622,9 @@ namespace Mono.CSharp
 		protected FullNamedExpression type_expr;
 		protected TypeSpec member_type;
 
-		public readonly DeclSpace ds;
-
-		protected MemberBase (DeclSpace parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod, MemberName name, Attributes attrs)
+		protected MemberBase (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod, MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
-			this.ds = parent;
 			this.type_expr = type;
 			ModFlags = ModifiersExtensions.Check (allowed_mod, mod, def_mod, Location, Report);
 		}

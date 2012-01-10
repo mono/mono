@@ -164,8 +164,7 @@ namespace Mono.CSharp {
 
 		readonly TypeExpr underlying_type_expr;
 
-		public Enum (NamespaceContainer ns, DeclSpace parent, TypeExpression type,
-			     Modifiers mod_flags, MemberName name, Attributes attrs)
+		public Enum (NamespaceContainer ns, TypeContainer parent, TypeExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Enum)
 		{
 			underlying_type_expr = type;

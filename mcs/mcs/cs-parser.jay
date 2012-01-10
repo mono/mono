@@ -47,7 +47,7 @@ namespace Mono.CSharp
 	
 		NamespaceContainer  current_namespace;
 		TypeContainer   current_container;
-		DeclSpace	current_class;
+		TypeContainer	current_class;
 		PropertyBase current_property;
 		EventProperty current_event;
 		EventField current_event_field;
@@ -6338,9 +6338,9 @@ void push_current_class (TypeContainer tc, object partial_token)
 	current_class = tc;
 }
 
-DeclSpace pop_current_class ()
+TypeContainer pop_current_class ()
 {
-	DeclSpace retval = current_class;
+	var retval = current_class;
 
 	current_class = current_class.Parent;
 	current_container = current_class.PartialContainer;

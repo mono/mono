@@ -55,8 +55,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
- 		public Delegate (NamespaceContainer ns, DeclSpace parent, FullNamedExpression type,
-				 Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
+ 		public Delegate (NamespaceContainer ns, TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Delegate)
 

@@ -94,7 +94,7 @@ namespace Mono.CSharp {
 				var dst = new TypeParameterSpec[tparams.Count];
 
 				for (int i = 0; i < tparams.Count; ++i) {
-					type_params[i] = tparams[i].CreateHoistedCopy (this, spec);
+					type_params[i] = tparams[i].CreateHoistedCopy (spec);
 
 					src[i] = tparams[i].Type;
 					dst[i] = type_params[i].Type;
@@ -126,7 +126,7 @@ namespace Mono.CSharp {
 
 		public HoistedStoreyClass GetGenericStorey ()
 		{
-			DeclSpace storey = this;
+			TypeContainer storey = this;
 			while (storey != null && storey.CurrentTypeParameters == null)
 				storey = storey.Parent;
 
@@ -1321,7 +1321,7 @@ namespace Mono.CSharp {
 			public readonly AnonymousMethodStorey Storey;
 			readonly string RealName;
 
-			public AnonymousMethodMethod (DeclSpace parent, AnonymousExpression am, AnonymousMethodStorey storey,
+			public AnonymousMethodMethod (TypeContainer parent, AnonymousExpression am, AnonymousMethodStorey storey,
 							  TypeExpr return_type,
 							  Modifiers mod, string real_name, MemberName name,
 							  ParametersCompiled parameters)
@@ -1590,7 +1590,7 @@ namespace Mono.CSharp {
 				var hoisted_tparams = ec.CurrentTypeParameters;
 				var type_params = new TypeParameters (hoisted_tparams.Count);
 				for (int i = 0; i < hoisted_tparams.Count; ++i) {
-				    type_params.Add (hoisted_tparams[i].CreateHoistedCopy (parent, null));
+				    type_params.Add (hoisted_tparams[i].CreateHoistedCopy (null));
 				}
 
 				member_name = new MemberName (name, type_params, Location);

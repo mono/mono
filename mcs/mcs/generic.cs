@@ -376,7 +376,7 @@ namespace Mono.CSharp {
 			this.spec = new TypeParameterSpec (null, -1, this, SpecialConstraint.None, variance, null);
 		}
 
-		public TypeParameter (TypeParameterSpec spec, DeclSpace parent, TypeSpec parentSpec, MemberName name, Attributes attrs)
+		public TypeParameter (TypeParameterSpec spec, TypeSpec parentSpec, MemberName name, Attributes attrs)
 			: base (null, name, attrs)
 		{
 			this.spec = new TypeParameterSpec (parentSpec, spec.DeclaredPosition, spec.MemberDefinition, spec.SpecialConstraint, spec.Variance, null) {
@@ -511,9 +511,9 @@ namespace Mono.CSharp {
 				constraints.CheckGenericConstraints (this, obsoleteCheck);
 		}
 
-		public TypeParameter CreateHoistedCopy (TypeContainer declaringType, TypeSpec declaringSpec)
+		public TypeParameter CreateHoistedCopy (TypeSpec declaringSpec)
 		{
-			return new TypeParameter (spec, declaringType, declaringSpec, MemberName, null);
+			return new TypeParameter (spec, declaringSpec, MemberName, null);
 		}
 
 		public override bool Define ()
