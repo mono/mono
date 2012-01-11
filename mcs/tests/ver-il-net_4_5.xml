@@ -44996,6 +44996,21 @@
       </method>
     </type>
   </test>
+  <test name="test-837.cs">
+    <type name="TT.GG">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TT.A.X.Y.X">
+      <method name="Void Main()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-84.cs">
     <type name="Ghost">
       <method name="Void .ctor()">

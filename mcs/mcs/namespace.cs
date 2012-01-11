@@ -593,7 +593,6 @@ namespace Mono.CSharp {
 		readonly CompilationSourceFile file;
 		readonly MemberName name;
 
-		NamespaceContainer implicit_parent;
 		int symfile_id;
 
 		List<UsingNamespace> clauses;
@@ -603,7 +602,6 @@ namespace Mono.CSharp {
 
 		bool resolved;
 
-		public readonly bool IsImplicit;
 		public readonly TypeContainer SlaveDeclSpace;
 
 		Namespace[] namespace_using_table;
@@ -626,16 +624,6 @@ namespace Mono.CSharp {
 			SlaveDeclSpace = new RootDeclSpace (module, this);
 		}
 
-		private NamespaceContainer (ModuleContainer module, NamespaceContainer parent, CompilationSourceFile file, Namespace ns, bool slave)
-		{
-			this.module = module;
-			this.parent = parent;
-			this.file = file;
-			this.IsImplicit = true;
-			this.ns = ns;
-			this.SlaveDeclSpace = slave ? new RootDeclSpace (module, this) : null;
-		}
-
 		#region Properties
 
 		public Location Location {
@@ -647,6 +635,12 @@ namespace Mono.CSharp {
 		public MemberName MemberName {
 			get {
 				return name;
+			}
+		}
+
+		public Namespace NS {
+			get {
+				return ns;
 			}
 		}
 
@@ -669,23 +663,6 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
-
-		public Namespace NS {
-			get { return ns; }
-		}
-
-		public NamespaceContainer ImplicitParent {
-			get {
-				if (parent == null)
-					return null;
-				if (implicit_parent == null) {
-					implicit_parent = (parent.ns == ns.Parent)
-						? parent
-						: new NamespaceContainer (module, parent, file, ns.Parent, false);
-				}
-				return implicit_parent;
-			}
-		}
 
 		public void AddUsing (UsingNamespace un)
 		{
@@ -767,21 +744,35 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
-			// Precondition: Only simple names (no dots) will be looked up with this function.
-			FullNamedExpression resolved = null;
-			for (NamespaceContainer curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
-				if ((resolved = curr_ns.Lookup (name, arity, mode, loc)) != null)
-					break;
+			//
+			// Only simple names (no dots) will be looked up with this function
+			//
+			FullNamedExpression resolved;
+			for (NamespaceContainer container = this; container != null; container = container.parent) {
+				resolved = container.Lookup (name, arity, mode, loc);
+				if (resolved != null)
+					return resolved;
+
+				var container_ns = container.ns.Parent;
+				var mn = container.MemberName.Left;
+				while (mn != null) {
+					resolved = container_ns.LookupTypeOrNamespace (this, name, arity, mode, loc);
+					if (resolved != null)
+						return resolved;
+
+					mn = mn.Left;
+					container_ns = container_ns.Parent;
+				}
 			}
 
-			return resolved;
+			return null;
 		}
 
 		public IList<string> CompletionGetTypesStartingWith (string prefix)
 		{
 			IEnumerable<string> all = Enumerable.Empty<string> ();
 			
-			for (NamespaceContainer curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent){
+			for (NamespaceContainer curr_ns = this; curr_ns != null; curr_ns = curr_ns.parent){
 				foreach (Namespace using_ns in namespace_using_table){
 					if (prefix.StartsWith (using_ns.Name)){
 						int ld = prefix.LastIndexOf ('.');
@@ -819,7 +810,7 @@ namespace Mono.CSharp {
 		//
 		public FullNamedExpression LookupNamespaceAlias (string name)
 		{
-			for (NamespaceContainer n = this; n != null; n = n.ImplicitParent) {
+			for (NamespaceContainer n = this; n != null; n = n.parent) {
 				if (n.aliases == null)
 					continue;
 
@@ -859,9 +850,6 @@ namespace Mono.CSharp {
 
 			if (fne != null)
 				return fne;
-
-			if (IsImplicit)
-				return null;
 
 			//
 			// Check using entries.
@@ -1241,8 +1229,19 @@ namespace Mono.CSharp {
 				if (fne != null)
 					return fne;
 
-				if (ns.ImplicitParent != null)
-					return ns.ImplicitParent.LookupNamespaceOrType (name, arity, mode, loc);
+				var container_ns = ns.NS.Parent;
+				var mn = ns.MemberName.Left;
+				while (mn != null) {
+					fne = container_ns.LookupTypeOrNamespace (this, name, arity, mode, loc);
+					if (fne != null)
+						return fne;
+
+					mn = mn.Left;
+					container_ns = container_ns.Parent;
+				}
+
+				if (ns.Parent != null)
+					return ns.Parent.LookupNamespaceOrType (name, arity, mode, loc);
 
 				return null;
 			}
