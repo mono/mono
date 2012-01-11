@@ -284,7 +284,8 @@ namespace System.Configuration
 			list.RemoveAt (index);
 			
 			if (IsAlternate)
-				inheritedLimitIndex--;
+				if (inheritedLimitIndex > 0)
+					inheritedLimitIndex--;
 			
 			modified = true;
 		}
