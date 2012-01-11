@@ -58,10 +58,10 @@ namespace System.Xml
 				return String.Empty;
 			try {
 				return writer.LookupPrefix (ns);
-			} catch (NotSupportedException ex) {
+			} catch (NotSupportedException) {
 				supports_lookup = false;
 				return String.Empty;
-			} catch (Exception ex) {
+			} catch (Exception) {
 				throw;
 			}
 		}
