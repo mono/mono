@@ -140,8 +140,6 @@ namespace System.Web.Services.Protocols
 			Reader.ReadStartElement();
 			Reader.MoveToContent();
 
-			bool b5=false, b6=false;
-
 			System.Xml.XmlElement[] o8;
 			o8 = null;
 			int n7=0;
@@ -344,8 +342,6 @@ namespace System.Web.Services.Protocols
 
 			Reader.ReadStartElement();
 			Reader.MoveToContent();
-
-			bool b14=false;
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
 			{

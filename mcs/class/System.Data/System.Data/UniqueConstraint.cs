@@ -418,7 +418,6 @@ namespace System.Data {
 				Columns [0].Unique = false;
 
 			_belongsToCollection = false;
-			Index index = Index;
 			Index = null;
 		}
 

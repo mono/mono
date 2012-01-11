@@ -1329,7 +1329,6 @@ namespace System.Data
 
 			SplitColumns (table, out atts, out elements, out simple);
 			//sort out the namespacing
-			int relationCount = table.ParentRelations.Count;
 
 			foreach (DataRow row in rows) {
 				if (skipIfNested) {

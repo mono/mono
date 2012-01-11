@@ -61,7 +61,6 @@ namespace System.Web.Caching
 		internal static OutputCacheProvider DefaultProvider {
 			get {
 				if (defaultProvider == null) {
-					string providerName = DefaultProviderName;
 					lock (defaultProviderInitLock) {
 						if (defaultProvider == null)
 							defaultProvider = new InMemoryOutputCacheProvider ();

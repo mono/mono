@@ -939,7 +939,6 @@ namespace System.Windows.Forms
 				return;
 			
 			// Ensure Submenu loes keyboard capture when closing.
-			ToolStrip parent_strip = this.OwnerItem.Parent;
 			ToolStripManager.SetActiveToolStrip (null, false);			
 		}
 

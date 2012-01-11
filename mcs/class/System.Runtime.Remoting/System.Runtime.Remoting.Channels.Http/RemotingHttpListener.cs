@@ -72,7 +72,7 @@ namespace System.Runtime.Remoting.Channels.Http
 					listener.Start ();
 					local_port = port;
 					break;
-				} catch (Exception e) {
+				} catch (Exception) {
 					if (!find_port)
 						throw;
 					listener.Prefixes.Clear ();

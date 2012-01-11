@@ -750,7 +750,6 @@ namespace System.Data.SqlClient
 		{
 			TdsDataColumn column;
 			TdsColumnType ctype;
-			string datatypeName;
 			int csize;
 			short precision;
 			short scale;
@@ -1277,11 +1276,6 @@ namespace System.Data.SqlClient
 #endif
 		object GetSqlValue (int i)
 		{
-			int csize;
-			short precision, scale;
-			TdsColumnType ctype;
-			TdsDataColumn column;
-
 			object value = GetValue (i);
 			//Console.WriteLine ("Type of value: {0}", value.GetType ());
 			
