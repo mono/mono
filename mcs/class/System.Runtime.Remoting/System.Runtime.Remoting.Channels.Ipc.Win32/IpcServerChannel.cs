@@ -375,7 +375,7 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
                         break;
                 }
             }
-            catch (Exception ex) 
+            catch (Exception)
             {
                 // Console.WriteLine(ex);
             }

@@ -252,7 +252,7 @@ namespace Mono.Mozilla
 
 					try {
 						errorService = (nsIErrorService)Marshal.GetObjectForIUnknown (errorServicePtr);
-					} catch (System.Exception ex) {
+				} catch (System.Exception) {
 						return null;
 					}
 				}

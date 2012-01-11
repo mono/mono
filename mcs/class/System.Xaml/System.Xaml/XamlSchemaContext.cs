@@ -336,7 +336,6 @@ namespace System.Xaml
 
 			Type [] genArgs = null;
 			if (typeArguments != null && typeArguments.Count > 0) {
-				var xtns = typeArguments;
 				genArgs = (from t in typeArguments select t.UnderlyingType).ToArray ();
 				if (genArgs.Any (t => t == null))
 					return null;

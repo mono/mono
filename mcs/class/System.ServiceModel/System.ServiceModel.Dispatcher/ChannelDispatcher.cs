@@ -444,7 +444,7 @@ namespace System.ServiceModel.Dispatcher
 			{
 				channels.Remove (ch); // zonbie, if exists
 				var ich = ch as ISessionChannel<IInputSession>;
-				List<IChannel> l;
+				
 				if (ich != null && ich.Session != null)
 					sessions.Remove (ich.Session);
 			}

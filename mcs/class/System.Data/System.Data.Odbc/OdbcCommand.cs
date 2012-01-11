@@ -462,7 +462,7 @@ namespace System.Data.Odbc
 			    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
 			    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
 				int numrows = 0;
-				OdbcReturn ret = libodbc.SQLRowCount (hstmt, ref numrows);
+				libodbc.SQLRowCount (hstmt, ref numrows);
 				records = numrows;
 			} else
 				records = -1;

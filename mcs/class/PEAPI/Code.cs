@@ -284,7 +284,6 @@ namespace PEAPI {
 	internal class BranchInstr : Instr {
 		CILLabel dest;
 		private bool shortVer = true;
-		private static readonly byte longInstrOffset = 13;
 		private int target = 0;
 
 		internal BranchInstr(int inst, CILLabel dst) : base(inst) 
@@ -359,7 +358,6 @@ namespace PEAPI {
 		private static readonly ushort MoreSects = 0x8;
 		private static readonly ushort InitLocals = 0x10;
 		private static readonly uint FatSize = 12;
-		private static readonly uint FatWords = FatSize/4;
 		private static readonly byte FatExceptTable = 0x41;
 		private static readonly byte SmlExceptTable = 0x01; 
 

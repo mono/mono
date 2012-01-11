@@ -215,7 +215,7 @@ namespace System.Web.Caching
 			int left = startIndex + 1;
 			int right = startIndex + 2;
 			CacheItem item = heap [index], tmpItem;
-			int maxIndex = heapCount - 1;
+
 			int selected = (right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt) ? 2 : 1;
 
 			do {

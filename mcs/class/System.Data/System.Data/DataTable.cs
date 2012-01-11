@@ -77,7 +77,6 @@ namespace System.Data {
 
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
-		private bool _hasErrors;
 		private CultureInfo _locale;
 		private int _minimumCapacity;
 		private string _nameSpace;
@@ -88,12 +87,9 @@ namespace System.Data {
 		private DataRowCollection _rows;
 		private ISite _site;
 		private string _tableName;
-		private bool _containsListCollection;
-		private string _encodedTableName;
 		internal bool _duringDataLoad;
 		internal bool _nullConstraintViolationDuringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
-		private bool dataTablePrevEnforceConstraints;
 		private bool enforceConstraints = true;
 		private DataRowBuilder _rowBuilder;
 		private ArrayList _indexes;

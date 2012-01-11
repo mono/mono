@@ -302,7 +302,6 @@ namespace System.Web.Script.Serialization
 		JsonType jsonType;
 		
 		bool escaped;
-		bool negated;
 		int state;
 		Stack <string> currentKey;
 		StringBuilder buffer;

@@ -52,7 +52,6 @@ namespace System.ComponentModel.DataAnnotations
 			if (!Object.ReferenceEquals (instance, validationContext.ObjectInstance))
 				throw new ArgumentException ("The instance provided must match the ObjectInstance on the ValidationContext supplied.", "instance");
 
-			ValidationResult result;
 			bool valid = true;
 			Type instanceType = instance.GetType ();
 			TypeDescriptor.GetAttributes (instanceType).Validate <ValidationAttribute> (instance, validationContext, validationResults, ref valid);
