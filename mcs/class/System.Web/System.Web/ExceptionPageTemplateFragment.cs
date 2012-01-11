@@ -192,7 +192,6 @@ namespace System.Web
 				}
 			}
 
-			string value;
 			try {
 				Stream st = asm.GetManifestResourceStream (resourceName);
 				if (st == null) {
