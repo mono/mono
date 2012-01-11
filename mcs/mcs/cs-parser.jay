@@ -2079,8 +2079,6 @@ constructor_declaration
 		if (doc_support)
 			c.DocComment = ConsumeStoredComment ();
 
-		current_container.AddConstructor (c);
-
 		current_local_parameters = null;
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -2118,6 +2116,7 @@ constructor_declarator
 			}
 		}
 
+		current_container.AddConstructor (c);
 		lbag.AddMember (c, mod_locations, GetLocation ($5), GetLocation ($7));
 		$$ = c;
 
