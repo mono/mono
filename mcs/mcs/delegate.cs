@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 			}
 		}
 
- 		public override bool Define ()
+ 		protected override bool DoDefineMembers ()
 		{
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters) {

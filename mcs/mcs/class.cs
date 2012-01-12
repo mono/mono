@@ -1776,7 +1776,8 @@ namespace Mono.CSharp {
 
 						FieldBuilder fb = con.FieldBuilder;
 						if (fb == null) {
-							if (con.Define ())
+							// Define parent and not member, otherwise membercache can be null
+							if (con.Parent.Define ())
 								fb = con.FieldBuilder;
 						}
 						if (fb != null && filter (fb, criteria) == true) {
