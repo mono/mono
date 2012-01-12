@@ -889,7 +889,6 @@ public class RootTree : Tree {
 				}
 			}
 		}
-		Console.WriteLine ("Basedir={0}", basedir);
 
 		//
 		// Load the layout
@@ -948,9 +947,8 @@ public class RootTree : Tree {
 		//
 		// Load the sources
 		//
-		foreach (var sourceFile in sourceFiles){
+		foreach (var sourceFile in sourceFiles)
 			root.AddSourceFile (sourceFile);
-		}
 		
 		foreach (string path in UncompiledHelpSources) {
 			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
@@ -1644,7 +1642,7 @@ public class RootTree : Tree {
 			// No octal in C#, how lame is that
 			chmod (path, 0x1a4);
 		}
-		Console.WriteLine ("Documentation index updated");
+		Console.WriteLine ("Documentation index at {0} updated", path);
 	}
 
 	static bool IsUnix {

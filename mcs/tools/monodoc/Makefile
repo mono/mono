@@ -90,7 +90,7 @@ EXTRA_DISTFILES = \
 
 LIB_MCS_FLAGS = \
 	/codepage:utf8                                                    \
-	/nowarn:169,164,162,168,219                                       \
+	/nowarn:169,164,162,168,219,618,612                                      \
 	/r:Commons.Xml.Relaxng                                            \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \

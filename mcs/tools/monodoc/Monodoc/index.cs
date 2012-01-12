@@ -2,9 +2,11 @@
 // index.cs: Handling of the index files
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//   Miguel de Icaza (miguel@xamarin.com)
 //
 // (C) 2003 Ximian, Inc.
+// Copyright 2003-2011 Novell Inc
+// Copyright 2011 Xamarin Inc.
 //
 // Possible file format optimizations:
 //   * Do not use 4 bytes for each index entry, use 3 bytes

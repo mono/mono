@@ -1820,7 +1820,10 @@ public class EcmaHelpSource : HelpSource {
 	}
 				
 	//
-	// Populates the index.
+	// Populates the searchable index.
+	//
+	// The idea of this index is to capture the most common search terms, the UI for this
+	// usually updates automatically as the user types.
 	//
 	public override void PopulateIndex (IndexMaker index_maker)
 	{
@@ -1831,7 +1834,48 @@ public class EcmaHelpSource : HelpSource {
 
 				string doc_tag = GetKindFromCaption (type_node.Caption);
 				string url = "T:" + full;
-					
+
+
+				//
+				// Add MonoMac/MonoTouch [Export] attributes, those live only in classes
+				//
+				if (doc_tag == "Class" && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"))){
+					try {
+						string rest;
+						var xdoc = GetXmlFromUrl (type_node.URL, out rest);
+						if (xdoc != null){
+							var nodesWithExports = xdoc.SelectNodes ("/Type/Members/Member[contains (Attributes/Attribute/AttributeName, 'Foundation.Export') and (MemberType='Property' or MemberType='Method' or MemberType='Constructor')]");
+							
+							foreach (XmlNode n in nodesWithExports){
+								string cref = EcmaDoc.GetCref ((XmlElement) n);
+								
+								var exports = n.SelectNodes ("Attributes/Attribute/AttributeName");
+								foreach (XmlNode exportNode in exports){
+									var inner = exportNode.InnerText;
+									int p = inner.IndexOf ("Foundation.Export(\"");
+									if (p == -1){
+										Console.WriteLine ("Not found the Export attribute in {0}", inner);
+										continue;
+									}
+									var pa = inner.IndexOf ("\"", p);
+									if (pa == -1){
+										Console.WriteLine ("Export has no target in {0}", inner);
+										continue;
+									}
+									var end = inner.IndexOf ("\"", pa+1);
+									
+									var export = end == -1 ? inner.Substring (pa+1) : inner.Substring (pa+1, end-(pa+1));
+
+									Console.WriteLine ("{0} to {1}", export, cref);
+									index_maker.Add (export + " selector", export, cref);
+								}
+							}
+						}
+					} catch (Exception e){
+						Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
+					}
+				}
+
 				if (doc_tag == "Class" || doc_tag == "Structure" || doc_tag == "Interface"){
 
 					index_maker.Add (type_node.Caption, typename, url);
