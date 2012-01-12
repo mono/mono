@@ -75,3 +75,4 @@ System.Threading/ReaderWriterLockSlim.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
 ../corlib/System.Threading/AtomicBoolean.cs
+System.Threading.Tasks/TaskExtensions.cs
