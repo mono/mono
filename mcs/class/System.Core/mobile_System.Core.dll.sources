@@ -133,3 +133,4 @@ System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 System.IO/HandleInheritability.cs
+System.Threading.Tasks/TaskExtensions.cs
