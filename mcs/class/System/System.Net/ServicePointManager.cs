@@ -415,6 +415,7 @@ namespace System.Net
 							.GetMethod ("TrustEvaluateSsl", 
 								System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
 #endif
+#if !MONOTOUCH
 				revocation_mode = X509RevocationMode.NoCheck;
 				try {
 					string str = Environment.GetEnvironmentVariable ("MONO_X509_REVOCATION_MODE");
@@ -423,6 +424,7 @@ namespace System.Net
 					revocation_mode = (X509RevocationMode) Enum.Parse (typeof (X509RevocationMode), str, true);
 				} catch {
 				}
+#endif
 			}
 
 			public ChainValidationHelper (object sender)
@@ -452,7 +454,12 @@ namespace System.Net
 				ICertificatePolicy policy = ServicePointManager.CertificatePolicy;
 				RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
 
-				X509Chain chain = new X509Chain ();
+				X509Certificate2 leaf = new X509Certificate2 (certs [0].RawData);
+				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
+				SslPolicyErrors errors = 0;
+				X509Chain chain = null;
+#if !MONOTOUCH
+				chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
 				chain.ChainPolicy.RevocationMode = revocation_mode;
 				for (int i = 1; i < certs.Count; i++) {
@@ -460,9 +467,6 @@ namespace System.Net
 					chain.ChainPolicy.ExtraStore.Add (c2);
 				}
 
-				X509Certificate2 leaf = new X509Certificate2 (certs [0].RawData);
-				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
-				SslPolicyErrors errors = 0;
 				try {
 					if (!chain.Build (leaf))
 						errors |= GetErrorsFromChain (chain);
@@ -471,7 +475,7 @@ namespace System.Net
 					Console.Error.WriteLine ("Please, report this problem to the Mono team");
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				}
-
+#endif
 				if (!CheckCertificateUsage (leaf)) {
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
