@@ -87,6 +87,7 @@ System.CodeDom/CodeVariableDeclarationStatementTest.cs
 System.CodeDom/CodeVariableReferenceExpressionTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
 System.CodeDom.Compiler/CodeGeneratorOptionsTest.cs
+System.CodeDom.Compiler/CodeGeneratorGenerateFromCompileUnitTest.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
 System.CodeDom.Compiler/ExecutorTest.cs
