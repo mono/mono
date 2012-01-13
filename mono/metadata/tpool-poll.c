@@ -157,6 +157,8 @@ tp_poll_wait (gpointer p)
 		MonoMList *list;
 		MonoObject *ares;
 
+		mono_gc_set_skip_thread (TRUE);
+
 		do {
 			if (nsock == -1) {
 				if (THREAD_WANTS_A_BREAK (thread))
@@ -165,6 +167,8 @@ tp_poll_wait (gpointer p)
 
 			nsock = mono_poll (pfds, maxfd, -1);
 		} while (nsock == -1 && errno == EINTR);
+
+		mono_gc_set_skip_thread (FALSE);
 
 		/* 
 		 * Apart from EINTR, we only check EBADF, for the rest:
