@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 // 
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -197,9 +198,6 @@ namespace System.ServiceModel.Channels.NetTcp
 			int length = reader.ReadVariableInt ();
 			if (length == 0)
 				return empty_bytes;
-
-			if (length > 65536)
-				throw new InvalidOperationException ("The message is too large.");
 
 			byte [] buffer = new byte [length];
 			for (int readSize = 0; readSize < length; )
