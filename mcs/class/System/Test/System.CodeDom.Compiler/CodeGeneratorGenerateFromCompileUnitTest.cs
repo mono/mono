@@ -6,19 +6,23 @@
 //
 // This is a specific test for an issue on GenerateFromCompileUnit.
 // Up until 2012 (version 2.10.n) the method emits attribute first
-// and imports afterwards. Example:
+// and imports afterwards on global namespace scope. Example:
 //
 // ~~~~
 // [assembly: AssemblyVersion("1.0")]
-// using System;
+// using System.Reflection;
 // ~~~~
 //
 // This in particular causes compiler to bail with CS1529.
 // Albeit well aware that this is a _language specific_ issue
 // (or requirement), the actual fix is aimed on CodeGenerator since
-// the wrong emit order is in GenerateFromCompileUnit of abstract
+// the wrong emit order is as well in GenerateFromCompileUnit of abstract
 // base. The probability to harm any other language generators
-// is very low. It's near common sense to have imports on top.
+// is very low. It's near common sense to have imports on top
+// on global namespace / file level.
+//
+// The test is being repeated for the internal `CSharpCodeGenerator`.
+// See `Microsoft.CSharp` (Mono.CSharp namespace) for details.
 //
 // This test verifies the issue as well as describes correct expectation.
 
