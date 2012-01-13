@@ -1249,9 +1249,13 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						case 2:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI2_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
 							break;
+						case 3:
 						case 4:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
 							break;
+						case 5:
+						case 6:
+						case 7:
 						case 8:
 #if SIZEOF_REGISTER == 4
 							/*
