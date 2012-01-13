@@ -100,6 +100,8 @@ mono_sgen_thread_handshake (int signum)
 		for (info = mono_sgen_get_thread_table () [i]; info; info = info->next) {
 			if (info == cur_thread || mono_sgen_is_worker_thread (info->id))
 				continue;
+			if (info->gc_disabled)
+				continue;
 
 			if (signum == suspend_signal_num) {
 				if (!mono_sgen_suspend_thread (info))

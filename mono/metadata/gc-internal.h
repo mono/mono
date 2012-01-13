@@ -319,6 +319,8 @@ guint8* mono_gc_get_card_table (int *shift_bits, gpointer *card_mask) MONO_INTER
 
 void* mono_gc_get_nursery (int *shift_bits, size_t *size) MONO_INTERNAL;
 
+void mono_gc_set_skip_thread (gboolean skip) MONO_INTERNAL;
+
 /*
  * Return whenever GC is disabled
  */

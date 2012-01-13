@@ -354,6 +354,10 @@ mono_gc_pthread_detach (pthread_t thread)
 	return pthread_detach (thread);
 }
 
+void mono_gc_set_skip_thread (gboolean value)
+{
+}
+
 #endif
 
 #endif

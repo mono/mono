@@ -81,6 +81,8 @@ mono_sgen_thread_handshake (int signum)
 			if (ARCH_THREAD_EQUALS (info->id, me)) {
 				continue;
 			}
+			if (info->gc_disabled)
+				continue;
 			/*if (signum == suspend_signal_num && info->stop_count == global_stop_count)
 				continue;*/
 			result = mono_sgen_pthread_kill (info, signum);

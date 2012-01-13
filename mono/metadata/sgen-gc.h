@@ -104,6 +104,7 @@ struct _SgenThreadInfo {
 	int signal;
 	int skip;
 	volatile int in_critical_region;
+	gboolean gc_disabled;
 	void *stack_end;
 	void *stack_start;
 	void *stack_start_limit;

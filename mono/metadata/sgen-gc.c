@@ -5224,7 +5224,7 @@ restart_threads_until_none_in_managed_allocator (void)
 			for (info = thread_table [i]; info; info = info->next) {
 				gboolean result;
 
-				if (info->skip)
+				if (info->skip || info->gc_disabled)
 					continue;
 				if (!info->stack_start || info->in_critical_region ||
 						is_ip_in_managed_allocator (info->stopped_domain, info->stopped_ip)) {
@@ -5531,6 +5531,10 @@ scan_thread_data (void *start_nursery, void *end_nursery, gboolean precise)
 		for (info = thread_table [i]; info; info = info->next) {
 			if (info->skip) {
 				DEBUG (3, fprintf (gc_debug_file, "Skipping dead thread %p, range: %p-%p, size: %td\n", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start));
+				continue;
+			}
+			if (info->gc_disabled) {
+				DEBUG (3, fprintf (gc_debug_file, "GC disabled for thread %p, range: %p-%p, size: %td\n", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start));
 				continue;
 			}
 			DEBUG (3, fprintf (gc_debug_file, "Scanning thread %p, range: %p-%p, size: %td, pinned=%d\n", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, next_pin_slot));
@@ -8159,6 +8163,16 @@ mono_sgen_gc_lock (void)
 void
 mono_sgen_gc_unlock (void)
 {
+	UNLOCK_GC;
+}
+
+
+void mono_gc_set_skip_thread (gboolean skip)
+{
+	SgenThreadInfo *info = mono_sgen_thread_info_lookup (ARCH_GET_THREAD ());
+
+	LOCK_GC;
+	info->gc_disabled = skip;
 	UNLOCK_GC;
 }
 
