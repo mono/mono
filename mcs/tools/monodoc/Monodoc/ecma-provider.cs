@@ -1866,7 +1866,6 @@ public class EcmaHelpSource : HelpSource {
 									
 									var export = end == -1 ? inner.Substring (pa+1) : inner.Substring (pa+1, end-(pa+1));
 
-									Console.WriteLine ("{0} to {1}", export, cref);
 									index_maker.Add (export + " selector", export, cref);
 								}
 							}
