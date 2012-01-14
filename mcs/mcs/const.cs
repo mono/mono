@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public Const (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, AllowedModifiers, name, attrs)
 		{
 			ModFlags |= Modifiers.STATIC;

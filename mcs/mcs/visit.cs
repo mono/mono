@@ -33,6 +33,11 @@ namespace Mono.CSharp
 			VisitTypeContainer (module);
 		}
 
+		public virtual void Visit (NamespaceContainer ns)
+		{
+			VisitTypeContainer (ns);
+		}
+
 		public virtual void Visit (Class c)
 		{
 			VisitTypeContainer (c);

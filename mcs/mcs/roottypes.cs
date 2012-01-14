@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mono.CompilerServices.SymbolWriter;
+using System.Linq;
 
 #if STATIC
 using IKVM.Reflection;
@@ -46,12 +47,12 @@ namespace Mono.CSharp
 				size_types = new Dictionary<int, Struct> ();
 			}
 
-			public override void CloseType ()
+			public override void CloseContainer ()
 			{
-				base.CloseType ();
+				base.CloseContainer ();
 
 				foreach (var entry in size_types) {
-					entry.Value.CloseType ();
+					entry.Value.CloseContainer ();
 				}
 			}
 
@@ -64,9 +65,9 @@ namespace Mono.CSharp
 					// DefineInitializedData because it creates public type,
 					// and its name is not unique among modules
 					//
-					size_type = new Struct (null, this, new MemberName ("$ArrayType=" + data.Length, loc), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
-					size_type.CreateType ();
-					size_type.DefineType ();
+					size_type = new Struct (this, new MemberName ("$ArrayType=" + data.Length, loc), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
+					size_type.CreateContainer ();
+					size_type.DefineContainer ();
 
 					size_types.Add (data.Length, size_type);
 
@@ -93,8 +94,8 @@ namespace Mono.CSharp
 		{
 			if (static_data == null) {
 				static_data = new StaticDataContainer (this);
-				static_data.CreateType ();
-				static_data.DefineType ();
+				static_data.CreateContainer ();
+				static_data.DefineContainer ();
 
 				AddCompilerGeneratedClass (static_data);
 			}
@@ -112,9 +113,6 @@ namespace Mono.CSharp
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 
-		// Used for unique namespaces/types during parsing
-		Dictionary<MemberName, ITypesContainer> defined_type_containers;
-
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
 		readonly RootNamespace global_ns;
@@ -131,13 +129,13 @@ namespace Mono.CSharp
 		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
 
 		public ModuleContainer (CompilerContext context)
-			: base (null, null, MemberName.Null, null, 0)
+			: base (null, MemberName.Null, null, 0)
 		{
 			this.context = context;
 
 			caching_flags &= ~(Flags.Obsolete_Undetected | Flags.Excluded_Undetected);
 
-			types = new List<TypeContainer> ();
+			containers = new List<TypeContainer> ();
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
@@ -145,8 +143,6 @@ namespace Mono.CSharp
 			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
-
-			defined_type_containers = new Dictionary<MemberName, ITypesContainer> ();
 		}
 
 		#region Properties
@@ -184,7 +180,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override AssemblyDefinition DeclaringAssembly {
+		public AssemblyDefinition DeclaringAssembly {
 			get {
 				return assembly;
 			}
@@ -192,6 +188,12 @@ namespace Mono.CSharp
 
 		internal DocumentationBuilder DocumentationBuilder {
 			get; set;
+		}
+
+		public override string DocCommentHeader {
+			get {
+				throw new NotSupportedException ();
+			}
 		}
 
 		public Evaluator Evaluator {
@@ -299,9 +301,9 @@ namespace Mono.CSharp
 			attributes.AddAttribute (attr);
 		}
 
-		public override TypeContainer AddPartial (TypeContainer nextPart)
+		public override void AddTypeContainer (TypeContainer tc)
 		{
-			return AddPartial (nextPart, nextPart.MemberName.GetName (true));
+			containers.Add (tc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -345,21 +347,15 @@ namespace Mono.CSharp
 			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
-		public override void CloseType ()
+		public override void CloseContainer ()
 		{
-			foreach (TypeContainer tc in types) {
-				tc.CloseType ();
-			}
-
 			if (anonymous_types != null) {
 				foreach (var atypes in anonymous_types)
 					foreach (var at in atypes.Value)
-						at.CloseType ();
+						at.CloseContainer ();
 			}
 
-			if (compiler_generated != null)
-				foreach (CompilerGeneratedClass c in compiler_generated)
-					c.CloseType ();
+			base.CloseContainer ();
 		}
 
 		public TypeBuilder CreateBuilder (string name, TypeAttributes attr, int typeSize)
@@ -392,43 +388,25 @@ namespace Mono.CSharp
 			builder = moduleBuilder;
 		}
 
-		public new void CreateType ()
+		public override bool Define ()
 		{
-			// Release cache used by parser only
-			if (Evaluator == null)
-				defined_type_containers = null;
-			else
-				defined_type_containers.Clear ();
+			DefineContainer ();
 
-			foreach (TypeContainer tc in types)
-				tc.CreateType ();
-		}
-
-		public new void Define ()
-		{
-			foreach (TypeContainer tc in types) {
-				try {
-					tc.DefineType ();
-				} catch (Exception e) {
-					throw new InternalErrorException (tc, e);
-				}
-			}
-
-			foreach (TypeContainer tc in types)
-				tc.ResolveTypeParameters ();
-
-			foreach (TypeContainer tc in types) {
-				try {
-					tc.Define ();
-				} catch (Exception e) {
-					throw new InternalErrorException (tc, e);
-				}
-			}
+			base.Define ();
 
 			HasTypesFullyDefined = true;
+
+			return true;
 		}
 
-		public override void Emit ()
+		public override bool DefineContainer ()
+		{
+			DefineNamespace ();
+
+			return base.DefineContainer ();
+		}
+
+		public override void EmitContainer ()
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -439,32 +417,24 @@ namespace Mono.CSharp
 					pa.EmitAttribute (builder);
 			}
 
-			foreach (var tc in types)
+			foreach (var tc in containers) {
 				tc.DefineConstants ();
+			}
 
-			foreach (TypeContainer tc in types)
-				tc.EmitType ();
+			base.EmitContainer ();
 
-			if (Compiler.Report.Errors > 0)
-				return;
-
-			foreach (TypeContainer tc in types)
-				tc.VerifyMembers ();
+			VerifyMembers ();
 
 			if (anonymous_types != null) {
 				foreach (var atypes in anonymous_types)
 					foreach (var at in atypes.Value)
-						at.EmitType ();
+						at.EmitContainer ();
 			}
-
-			if (compiler_generated != null)
-				foreach (var c in compiler_generated)
-					c.EmitType ();
 		}
 
 		internal override void GenerateDocComment (DocumentationBuilder builder)
 		{
-			foreach (var tc in types)
+			foreach (var tc in containers)
 				tc.GenerateDocComment (builder);
 		}
 
@@ -486,6 +456,12 @@ namespace Mono.CSharp
 			}
 
 			return null;
+		}
+
+		public override void GetCompletionStartingWith (string prefix, List<string> results)
+		{
+			var names = Evaluator.GetVarNames ();
+			results.AddRange (names.Where (l => l.StartsWith (prefix)));
 		}
 
 		public RootNamespace GetRootNamespace (string name)
@@ -512,62 +488,6 @@ namespace Mono.CSharp
 			return DeclaringAssembly.IsCLSCompliant;
 		}
 
-		protected override bool AddMemberType (TypeContainer tc)
-		{
-			if (AddTypesContainer (tc)) {
-				if ((tc.ModFlags & Modifiers.PARTIAL) != 0)
-					defined_names.Add (tc.MemberName.GetName (true), tc);
-
-				tc.NamespaceEntry.NS.AddType (this, tc.Definition);
-				return true;
-			}
-
-			return false;
-		}
-
-		public bool AddTypesContainer (ITypesContainer container)
-		{
-			var mn = container.MemberName;
-			ITypesContainer found;
-			if (!defined_type_containers.TryGetValue (mn, out found)) {
-				defined_type_containers.Add (mn, container);
-				return true;
-			}
-
-			if (container is NamespaceContainer && found is NamespaceContainer)
-				return true;
-
-			var container_tc = container as TypeContainer;
-			var found_tc = found as TypeContainer;
-			if (container_tc != null && found_tc != null && container_tc.Kind == found_tc.Kind) {
-				if ((found_tc.ModFlags & container_tc.ModFlags & Modifiers.PARTIAL) != 0) {
-					return false;
-				}
-
-				if (((found_tc.ModFlags | container_tc.ModFlags) & Modifiers.PARTIAL) != 0) {
-					Report.SymbolRelatedToPreviousError (found_tc);
-					Error_MissingPartialModifier (container_tc);
-					return false;
-				}
-			}
-
-			string ns = mn.Left != null ? mn.Left.GetSignatureForError () : Module.GlobalRootNamespace.GetSignatureForError ();
-			mn = new MemberName (mn.Name, mn.TypeParameters, mn.Location);
-
-			Report.SymbolRelatedToPreviousError (found.Location, "");
-			Report.Error (101, container.Location,
-				"The namespace `{0}' already contains a definition for `{1}'",
-				ns, mn.GetSignatureForError ());
-			return false;
-		}
-
-		protected override void RemoveMemberType (TypeContainer ds)
-		{
-			defined_type_containers.Remove (ds.MemberName);
-			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
-			base.RemoveMemberType (ds);
-		}
-
 		public Attribute ResolveAssemblyAttribute (PredefinedAttribute a_type)
 		{
 			Attribute a = OptAttributes.Search ("assembly", a_type);
@@ -581,54 +501,6 @@ namespace Mono.CSharp
 		{
 			// TODO: This setter is quite ugly but I have not found a way around it yet
 			this.assembly = assembly;
-		}
-	}
-
-	sealed class RootDeclSpace : TypeContainer {
-		public RootDeclSpace (ModuleContainer module, NamespaceContainer ns)
-			: base (ns, null, MemberName.Null, null, 0)
-		{
-			PartialContainer = module;
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get { throw new InternalErrorException ("should not be called"); }
-		}
-
-		public override CompilerContext Compiler {
-			get {
-				return PartialContainer.Compiler;
-			}
-		}
-
-		public override string DocCommentHeader {
-			get { throw new InternalErrorException ("should not be called"); }
-		}
-
-		public override ModuleContainer Module {
-			get {
-				return PartialContainer.Module;
-			}
-		}
-
-		public override void Accept (StructuralVisitor visitor)
-		{
-			throw new InternalErrorException ("should not be called");
-		}
-
-		public override bool IsClsComplianceRequired ()
-		{
-			return PartialContainer.IsClsComplianceRequired ();
-		}
-
-		public override ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
-		{
-			return null;
-		}
-
-		public override FullNamedExpression LookupNamespaceAlias (string name)
-		{
-			return NamespaceEntry.LookupNamespaceAlias (name);
 		}
 	}
 }

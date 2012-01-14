@@ -41,6 +41,7 @@ namespace Mono.CSharp {
 		InternalCompilerType = 1 << 21,
 		MissingType = 1 << 22,
 		Void = 1 << 23,
+		Namespace = 1 << 24,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,
@@ -468,7 +469,7 @@ namespace Mono.CSharp {
 				// based on type definition
 				var tc = container.MemberDefinition as TypeContainer;
 				if (tc != null)
-					tc.DefineType ();
+					tc.DefineContainer ();
 
 				if (container.MemberCacheTypes.member_hash.TryGetValue (name, out applicable)) {
 					for (int i = applicable.Count - 1; i >= 0; i--) {

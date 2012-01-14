@@ -393,7 +393,7 @@ namespace Mono.CSharp
 	{
 		TypeInferenceContext return_inference;
 
-		public AsyncInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
+		public AsyncInitializer (ParametersBlock block, TypeDefinition host, TypeSpec returnType)
 			: base (block, host, returnType)
 		{
 		}
@@ -426,7 +426,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public static void Create (IMemberContext context, ParametersBlock block, ParametersCompiled parameters, TypeContainer host, TypeSpec returnType, Location loc)
+		public static void Create (IMemberContext context, ParametersBlock block, ParametersCompiled parameters, TypeDefinition host, TypeSpec returnType, Location loc)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters[i];
@@ -537,7 +537,7 @@ namespace Mono.CSharp
 		TypeSpec action;
 
 		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
-			: base (initializer.OriginalBlock, initializer.Host,context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async")
+			: base (initializer.OriginalBlock, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async")
 		{
 			return_type = type;
 		}
@@ -777,7 +777,7 @@ namespace Mono.CSharp
 
 	class StackField : Field
 	{
-		public StackField (TypeContainer parent, FullNamedExpression type, Modifiers mod, MemberName name)
+		public StackField (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name)
 			: base (parent, type, mod, name, null)
 		{
 		}

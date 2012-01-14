@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 	//
 	// Delegate container implementation
 	//
-	public class Delegate : TypeContainer, IParametersMember
+	public class Delegate : TypeDefinition, IParametersMember
 	{
  		FullNamedExpression ReturnType;
 		readonly ParametersCompiled parameters;
@@ -55,9 +55,9 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
- 		public Delegate (NamespaceContainer ns, TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
+ 		public Delegate (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
-			: base (ns, parent, name, attrs, MemberKind.Delegate)
+			: base (parent, name, attrs, MemberKind.Delegate)
 
 		{
 			this.ReturnType = type;
@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void EmitType ()
+		public override void EmitContainer ()
 		{
 			if (ReturnType.Type != null) {
 				if (ReturnType.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {

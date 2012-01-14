@@ -81,6 +81,7 @@ namespace Mono.CSharp
 
 			source_file = new CompilationSourceFile ("{interactive}", "", 1);
  			source_file.NamespaceContainer = new NamespaceContainer (null, module, null, source_file);
+			module.AddTypeContainer (source_file.NamespaceContainer);
 
 			startup_files = ctx.SourceFiles.Count;
 			ctx.SourceFiles.Add (source_file);
@@ -372,8 +373,7 @@ namespace Mono.CSharp
 				module.SetDeclaringAssembly (a);
 
 				// Need to setup MemberCache
-				parser_result.CreateType ();
-				parser_result.NamespaceEntry.Define ();
+				parser_result.CreateContainer ();
 
 				var method = parser_result.Methods[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
@@ -648,10 +648,10 @@ namespace Mono.CSharp
 					new TypeExpression (base_class_imported, host.Location)
 				};
 
-				host.AddBasesForPart (host, baseclass_list);
+				host.AddBasesForPart (baseclass_list);
 
-				host.CreateType ();
-				host.DefineType ();
+				host.CreateContainer ();
+				host.DefineContainer ();
 				host.Define ();
 
 				expression_method = (Method) host.Methods[0];
@@ -659,7 +659,8 @@ namespace Mono.CSharp
 				expression_method = null;
 			}
 
-			module.CreateType ();
+			module.CreateContainer ();
+			((NamespaceContainer) module.Containers[0]).EnableUsingClausesRedefinition ();
 			module.Define ();
 
 			if (Report.Errors != 0){
@@ -670,19 +671,19 @@ namespace Mono.CSharp
 			}
 
 			if (host != null){
-				host.EmitType ();
+				host.EmitContainer ();
 			}
 			
-			module.Emit ();
+			module.EmitContainer ();
 			if (Report.Errors != 0){
 				if (undo != null)
 					undo.ExecuteUndo ();
 				return null;
 			}
 
-			module.CloseType ();
+			module.CloseContainer ();
 			if (host != null)
-				host.CloseType ();
+				host.CloseContainer ();
 
 			if (access == AssemblyBuilderAccess.RunAndSave)
 				assembly.Save ();
@@ -1118,7 +1119,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public void AddTypeContainer (TypeContainer current_container, TypeContainer tc)
+		public void AddTypeContainer (TypeContainer current_container, TypeDefinition tc)
 		{
 			if (current_container == tc){
 				Console.Error.WriteLine ("Internal error: inserting container into itself");
@@ -1128,14 +1129,13 @@ namespace Mono.CSharp
 			if (undo_actions == null)
 				undo_actions = new List<Action> ();
 
-			var existing = current_container.Types.FirstOrDefault (l => l.MemberName.Basename == tc.MemberName.Basename);
+			var existing = current_container.Containers.FirstOrDefault (l => l.Basename == tc.Basename);
 			if (existing != null) {
-				current_container.RemoveTypeContainer (existing);
-				existing.NamespaceEntry.SlaveDeclSpace.RemoveTypeContainer (existing);
+				current_container.RemoveContainer (existing);
 				undo_actions.Add (() => current_container.AddTypeContainer (existing));
 			}
 
-			undo_actions.Add (() => current_container.RemoveTypeContainer (tc));
+			undo_actions.Add (() => current_container.RemoveContainer (tc));
 		}
 
 		public void ExecuteUndo ()

@@ -34,7 +34,7 @@ namespace Mono.CSharp
 	// This includes properties, indexers, and events
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
-		public PropertyBasedMember (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		public PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 		}
@@ -335,7 +335,7 @@ namespace Mono.CSharp
 
 			public virtual MethodBuilder Define (TypeContainer parent)
 			{
-				TypeContainer container = parent.PartialContainer;
+				var container = parent.PartialContainer;
 
 				//
 				// Check for custom access modifier
@@ -402,7 +402,7 @@ namespace Mono.CSharp
 		PropertyMethod get, set, first;
 		PropertyBuilder PropertyBuilder;
 
-		public PropertyBase (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		public PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
@@ -720,7 +720,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Property (TypeContainer parent, FullNamedExpression type, Modifiers mod,
+		public Property (TypeDefinition parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
@@ -850,7 +850,7 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_targets = new string [] { "event" };
 
-		public EventProperty (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public EventProperty (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
 		{
 		}
@@ -890,7 +890,7 @@ namespace Mono.CSharp
 
 			protected abstract MethodSpec GetOperation (Location loc);
 
-			public override void Emit (TypeContainer parent)
+			public override void Emit (TypeDefinition parent)
 			{
 				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location);
@@ -989,7 +989,7 @@ namespace Mono.CSharp
 		Field backing_field;
 		List<FieldDeclarator> declarators;
 
-		public EventField (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public EventField (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
 		{
 			Add = new AddDelegateMethod (this);
@@ -1215,7 +1215,7 @@ namespace Mono.CSharp
 		EventBuilder EventBuilder;
 		protected EventSpec spec;
 
-		protected Event (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		protected Event (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
@@ -1488,7 +1488,7 @@ namespace Mono.CSharp
 
 		readonly ParametersCompiled parameters;
 
-		public Indexer (TypeContainer parent, FullNamedExpression type, MemberName name, Modifiers mod, ParametersCompiled parameters, Attributes attrs)
+		public Indexer (TypeDefinition parent, FullNamedExpression type, MemberName name, Modifiers mod, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs)

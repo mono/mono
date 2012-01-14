@@ -437,8 +437,8 @@ namespace Mono.CSharp
 		{
 			if (Compiler.Settings.Target == Target.Module) {
 				module_target_attrs = new AssemblyAttributesPlaceholder (module, name);
-				module_target_attrs.CreateType ();
-				module_target_attrs.DefineType ();
+				module_target_attrs.CreateContainer ();
+				module_target_attrs.DefineContainer ();
 				module_target_attrs.Define ();
 				module.AddCompilerGeneratedClass (module_target_attrs);
 			} else if (added_modules != null) {
@@ -457,7 +457,7 @@ namespace Mono.CSharp
 				SymbolWriter.symwriter = symbol_writer;
 			}
 
-			module.Emit ();
+			module.EmitContainer ();
 
 			if (module.HasExtensionMethod) {
 				var pa = module.PredefinedAttributes.Extension;

@@ -430,7 +430,7 @@ namespace Mono.CSharp
 				p[0] = new Parameter (targs[0], "p0", Parameter.Modifier.NONE, null, loc);
 
 				var site = ec.CreateDynamicSite ();
-				int index = site.Types == null ? 0 : site.Types.Count;
+				int index = site.Containers == null ? 0 : site.Containers.Count;
 
 				if (mutator != null)
 					rt = mutator.Mutate (rt);
@@ -439,17 +439,17 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 				}
 
-				d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
+				d = new Delegate (site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + index.ToString ("X")),
 					new ParametersCompiled (p), null);
 
-				d.CreateType ();
-				d.DefineType ();
+				d.CreateContainer ();
+				d.DefineContainer ();
 				d.Define ();
 				d.Emit ();
 
-				site.AddDelegate (d);
+				site.AddTypeContainer (d);
 				del_type = new TypeExpression (d.CurrentType, loc);
 				if (targs_for_instance != null) {
 					del_type_instance_access = null;
@@ -957,7 +957,7 @@ namespace Mono.CSharp
 
 	sealed class DynamicSiteClass : HoistedStoreyClass
 	{
-		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameters tparams)
+		public DynamicSiteClass (TypeDefinition parent, MemberBase host, TypeParameters tparams)
 			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
 		{
 			parent.DynamicSitesCounter++;

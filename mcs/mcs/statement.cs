@@ -1456,7 +1456,7 @@ namespace Mono.CSharp {
 			if (bc.Report.Errors != 0)
 				return;
 
-			var container = bc.CurrentMemberDefinition.Parent;
+			var container = bc.CurrentMemberDefinition.Parent.PartialContainer;
 
 			Field f = new Field (container, new TypeExpression (li.Type, li.Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (li.Name, li.Location), null);
@@ -2481,9 +2481,8 @@ namespace Mono.CSharp {
 				am_storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
 			}
 
-			am_storey.CreateType ();
-			am_storey.DefineType ();
-			am_storey.ResolveTypeParameters ();
+			am_storey.CreateContainer ();
+			am_storey.DefineContainer ();
 
 			var ref_blocks = am_storey.ReferencesFromChildrenBlock;
 			if (ref_blocks != null) {
@@ -2921,7 +2920,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void WrapIntoIterator (IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
+		public void WrapIntoIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 		{
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
@@ -2936,7 +2935,7 @@ namespace Mono.CSharp {
 			flags &= ~Flags.YieldBlock;
 		}
 
-		public void WrapIntoAsyncTask (IMemberContext context, TypeContainer host, TypeSpec returnType)
+		public void WrapIntoAsyncTask (IMemberContext context, TypeDefinition host, TypeSpec returnType)
 		{
 			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
 			pb.EndLocation = EndLocation;
@@ -5943,9 +5942,11 @@ namespace Mono.CSharp {
 				} while (t != null);
 
 				if (iface_candidate == null) {
-					rc.Report.Error (1579, loc,
-						"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is inaccessible",
-						expr.Type.GetSignatureForError (), "GetEnumerator");
+					if (expr.Type != InternalType.ErrorType) {
+						rc.Report.Error (1579, loc,
+							"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is inaccessible",
+							expr.Type.GetSignatureForError (), "GetEnumerator");
+					}
 
 					return null;
 				}

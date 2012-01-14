@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -90,12 +91,6 @@ namespace Mono.CSharp {
 			this.Left = left;
 		}
 
-		// TODO: Remove
-		public string GetName ()
-		{
-			return GetName (false);
-		}
-
 		public int Arity {
 			get {
 				return TypeParameters == null ? 0 : TypeParameters.Count;
@@ -104,22 +99,8 @@ namespace Mono.CSharp {
 
 		public bool IsGeneric {
 			get {
-				if (TypeParameters != null)
-					return true;
-				else if (Left != null)
-					return Left.IsGeneric;
-				else
-					return false;
+				return TypeParameters != null;
 			}
-		}
-
-		public string GetName (bool is_generic)
-		{
-			string name = is_generic ? Basename : Name;
-			if (Left != null)
-				return Left.GetName (is_generic) + "." + name;
-
-			return name;
 		}
 
 		public string Basename {
@@ -128,6 +109,31 @@ namespace Mono.CSharp {
 					return MakeName (Name, TypeParameters);
 				return Name;
 			}
+		}
+
+		public void CreateMetadataName (StringBuilder sb)
+		{
+			if (Left != null)
+				Left.CreateMetadataName (sb);
+
+			if (sb.Length != 0) {
+				sb.Append (".");
+			}
+
+			sb.Append (Basename);
+		}
+
+		public string GetSignatureForDocumentation ()
+		{
+			var s = Basename;
+
+			if (ExplicitInterface != null)
+				s = ExplicitInterface.GetSignatureForError () + "." + s;
+
+			if (Left == null)
+				return s;
+
+			return Left.GetSignatureForDocumentation () + "." + s;
 		}
 
 		public string GetSignatureForError ()
@@ -392,10 +398,11 @@ namespace Mono.CSharp {
 		//
 		public virtual string GetSignatureForError ()
 		{
-			if (Parent == null || Parent.Parent == null)
+			var parent = Parent.GetSignatureForError ();
+			if (parent == null)
 				return member_name.GetSignatureForError ();
 
-			return Parent.GetSignatureForError () + "." + member_name.GetSignatureForError ();
+			return parent + "." + member_name.GetSignatureForError ();
 		}
 
 		/// <summary>
@@ -547,7 +554,7 @@ namespace Mono.CSharp {
 
 					case Modifiers.PROTECTED:
 						if (al == Modifiers.PROTECTED) {
-							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent);
+							same_access_restrictions = mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent);
 							break;
 						}
 
@@ -556,8 +563,8 @@ namespace Mono.CSharp {
 							// When type is private and any of its parents derives from
 							// protected type then the type is accessible
 							//
-							while (mc.Parent != null) {
-								if (mc.Parent.IsBaseTypeDefinition (p_parent))
+							while (mc.Parent != null && mc.Parent.PartialContainer != null) {
+								if (mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent))
 									same_access_restrictions = true;
 								mc = mc.Parent; 
 							}
@@ -569,7 +576,7 @@ namespace Mono.CSharp {
 						if (al == Modifiers.INTERNAL)
 							same_access_restrictions = p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
 						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
-							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent) && p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
+							same_access_restrictions = mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent) && p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
 						else
 							goto case Modifiers.PROTECTED;
 
@@ -583,7 +590,7 @@ namespace Mono.CSharp {
 							var decl = mc.Parent;
 							do {
 								same_access_restrictions = decl.CurrentType == p_parent;
-							} while (!same_access_restrictions && !decl.IsTopLevel && (decl = decl.Parent) != null);
+							} while (!same_access_restrictions && !decl.PartialContainer.IsTopLevel && (decl = decl.Parent) != null);
 						}
 						
 						break;
@@ -618,7 +625,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (Parent.PartialContainer.IsClsComplianceRequired ()) {
+			if (Parent.IsClsComplianceRequired ()) {
 				caching_flags |= Flags.ClsCompliant;
 				return true;
 			}
@@ -637,25 +644,32 @@ namespace Mono.CSharp {
 		public bool IsExposedFromAssembly ()
 		{
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
-				return false;
+				return this is NamespaceContainer;
 			
 			var parentContainer = Parent.PartialContainer;
-			while (parentContainer != null && parentContainer.ModFlags != 0) {
+			while (parentContainer != null) {
 				if ((parentContainer.ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 					return false;
-				parentContainer = parentContainer.Parent;
+
+				parentContainer = parentContainer.Parent.PartialContainer;
 			}
+
 			return true;
 		}
 
-		public virtual ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, arity);
+			return LookupExtensionMethod (this, extensionType, name, arity);
+		}
+
+		protected virtual ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
+		{
+			return Parent.LookupExtensionMethod (invocationContext, extensionType, name, arity);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
 		{
-			return Parent.NamespaceEntry.LookupNamespaceAlias (name);
+			return Parent.LookupNamespaceAlias (name);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
@@ -741,7 +755,7 @@ namespace Mono.CSharp {
 				}
 
 				if ((caching_flags & Flags.ClsCompliantAttributeFalse) != 0) {
-					if (Parent.Kind == MemberKind.Interface && Parent.IsClsComplianceRequired ()) {
+					if (Parent is Interface && Parent.IsClsComplianceRequired ()) {
 						Report.Warning (3010, 1, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 					} else if (Parent.Kind == MemberKind.Class && (ModFlags & Modifiers.ABSTRACT) != 0 && Parent.IsClsComplianceRequired ()) {
 						Report.Warning (3011, 1, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
@@ -750,7 +764,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (Parent.Parent != null && !Parent.IsClsComplianceRequired ()) {
+				if (Parent.Kind != MemberKind.Namespace && Parent.Kind != 0 && !Parent.IsClsComplianceRequired ()) {
 					Attribute a = OptAttributes.Search (Module.PredefinedAttributes.CLSCompliant);
 					Report.Warning (3018, 1, a.Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'",
 						GetSignatureForError (), Parent.GetSignatureForError ());
@@ -760,12 +774,12 @@ namespace Mono.CSharp {
 				if (!IsExposedFromAssembly ())
 					return false;
 
-				if (!Parent.PartialContainer.IsClsComplianceRequired ())
+				if (!Parent.IsClsComplianceRequired ())
 					return false;
 			}
 
 			if (member_name.Name [0] == '_') {
-				Report.Warning (3008, 1, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
+				Warning_IdentifierNotCompliant ();
 			}
 
 			if (member_name.TypeParameters != null)
@@ -774,11 +788,21 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		protected void Warning_IdentifierNotCompliant ()
+		{
+			Report.Warning (3008, 1, MemberName.Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError ());
+		}
+
 		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
 		public abstract string GetSignatureForDocumentation ();
+
+		public virtual void GetCompletionStartingWith (string prefix, List<string> results)
+		{
+			Parent.GetCompletionStartingWith (prefix, results);
+		}
 
 		//
 		// Generates xml doc comments (if any), and if required,
@@ -807,7 +831,9 @@ namespace Mono.CSharp {
 		#region IMemberContext Members
 
 		public virtual CompilerContext Compiler {
-			get { return Parent.Compiler; }
+			get {
+				return Module.Compiler;
+			}
 		}
 
 		public virtual TypeSpec CurrentType {

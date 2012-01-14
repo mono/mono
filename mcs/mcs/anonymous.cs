@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 	public abstract class CompilerGeneratedClass : Class
 	{
 		protected CompilerGeneratedClass (TypeContainer parent, MemberName name, Modifiers mod)
-			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
+			: base (parent, name, mod | Modifiers.COMPILER_GENERATED, null)
 		{
 		}
 
@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 
 		protected TypeParameterMutator mutator;
 
-		public HoistedStoreyClass (TypeContainer parent, MemberName name, TypeParameters tparams, Modifiers mod)
+		public HoistedStoreyClass (TypeDefinition parent, MemberName name, TypeParameters tparams, Modifiers mod)
 			: base (parent, name, mod | Modifiers.PRIVATE)
 		{
 
@@ -200,7 +200,7 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public Expression Instance;
 
-		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, TypeParameters tparams, string name)
+		public AnonymousMethodStorey (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name)
 			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
 				tparams, Modifiers.SEALED)
 		{
@@ -496,7 +496,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void EmitType ()
+		public override void EmitContainer ()
 		{
 			SymbolWriter.DefineAnonymousScope (ID);
 
@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			base.EmitType ();
+			base.EmitContainer ();
 		}
 
 		//
@@ -1067,7 +1067,7 @@ namespace Mono.CSharp {
 				var body = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
 				if (body != null) {
 					if (Block.IsAsync) {
-						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, null, loc);
+						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent.PartialContainer, null, loc);
 					}
 
 					am = body.Compatible (ec, body);
@@ -1161,7 +1161,7 @@ namespace Mono.CSharp {
 								GetSignatureForError (), type.GetSignatureForError ());
 						}
 
-						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, rt, loc);
+						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent.PartialContainer, rt, loc);
 					}
 
 					am = body.Compatible (ec);
@@ -1321,7 +1321,7 @@ namespace Mono.CSharp {
 			public readonly AnonymousMethodStorey Storey;
 			readonly string RealName;
 
-			public AnonymousMethodMethod (TypeContainer parent, AnonymousExpression am, AnonymousMethodStorey storey,
+			public AnonymousMethodMethod (TypeDefinition parent, AnonymousExpression am, AnonymousMethodStorey storey,
 							  TypeExpr return_type,
 							  Modifiers mod, string real_name, MemberName name,
 							  ParametersCompiled parameters)
@@ -1578,7 +1578,7 @@ namespace Mono.CSharp {
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
-			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
+			var parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
 
 			MemberCore mc = ec.MemberContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
@@ -1637,7 +1637,7 @@ namespace Mono.CSharp {
 				// Creates a field cache to store delegate instance if it's not generic
 				//
 				if (!method.MemberName.IsGeneric) {
-					TypeContainer parent = method.Parent.PartialContainer;
+					var parent = method.Parent.PartialContainer;
 					int id = parent.Fields == null ? 0 : parent.Fields.Count;
 					var cache_type = storey != null && storey.Mutator != null ? storey.Mutator.Mutate (type) : type;
 
@@ -1812,8 +1812,7 @@ namespace Mono.CSharp {
 			// Create generic anonymous type host with generic arguments
 			// named upon properties names
 			//
-			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
-				new MemberName (name, tparams, loc), parameters, loc);
+			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.Module, new MemberName (name, tparams, loc), parameters, loc);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				null, all_parameters, loc);
@@ -1859,25 +1858,6 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			types_counter = 0;
-		}
-
-		protected override bool AddToContainer (MemberCore symbol, string name)
-		{
-			MemberCore mc = GetDefinition (name);
-
-			if (mc == null) {
-				defined_names.Add (name, symbol);
-				return true;
-			}
-
-			// A conflict between anonymous type members will be reported
-			if (symbol is TypeParameter) {
-				Report.SymbolRelatedToPreviousError (symbol);
-				return false;
-			}
-
-			// Ignore other conflicts
-			return true;
 		}
 
 		protected override bool DoDefineMembers ()

@@ -473,7 +473,7 @@ namespace Mono.CSharp {
 		// already have constraints they become our constraints. If we already
 		// have constraints, we must check that they're the same.
 		//
-		public bool AddPartialConstraints (TypeContainer part, TypeParameter tp)
+		public bool AddPartialConstraints (TypeDefinition part, TypeParameter tp)
 		{
 			if (builder == null)
 				throw new InvalidOperationException ();
@@ -1825,9 +1825,13 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			var tc = open_type.MemberDefinition as TypeContainer;
-			if (tc != null && !tc.HasMembersDefined)
-				throw new InternalErrorException ("Inflating MemberCache with undefined members");
+			var tc = open_type.MemberDefinition as TypeDefinition;
+			if (tc != null && !tc.HasMembersDefined) {
+				//
+				// Inflating MemberCache with undefined members
+				//
+				return;
+			}
 
 			if ((state & StateFlags.PendingBaseTypeInflate) != 0) {
 				BaseType = inflator.Inflate (open_type.BaseType);
@@ -2082,6 +2086,11 @@ namespace Mono.CSharp {
 			}
 
 			return null;
+		}
+
+		public string[] GetAllNames ()
+		{
+			return names.Select (l => l.Name).ToArray ();
 		}
 
 		public string GetSignatureForError ()

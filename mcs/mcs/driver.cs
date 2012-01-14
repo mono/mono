@@ -96,6 +96,7 @@ namespace Mono.CSharp
 
 			// Check 'MZ' header
 			if (input.ReadByte () == 77 && input.ReadByte () == 90) {
+
 				Report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
 				input.Close ();
 				return;
@@ -111,7 +112,9 @@ namespace Mono.CSharp
 		
 		public void Parse (SeekableStreamReader reader, CompilationSourceFile file, ModuleContainer module)
 		{
-			file.NamespaceContainer = new NamespaceContainer (null, module, null, file);
+			var root = new NamespaceContainer (null, module, null, file);
+			file.NamespaceContainer = root;
+			module.AddTypeContainer (root);
 
 			CSharpParser parser = new CSharpParser (reader, file);
 			parser.parse ();
@@ -263,7 +266,7 @@ namespace Mono.CSharp
 			// loaded assembly into compiled builder to be resolved
 			// correctly
 			tr.Start (TimeReporter.TimerType.CreateTypeTotal);
-			module.CreateType ();
+			module.CreateContainer ();
 			importer.AddCompiledAssembly (assembly);
 			tr.Stop (TimeReporter.TimerType.CreateTypeTotal);
 
@@ -292,17 +295,11 @@ namespace Mono.CSharp
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
-			module.CreateType ();
+			module.CreateContainer ();
 
 			loader.LoadModules (assembly, module.GlobalRootNamespace);
 #endif
 			module.InitializePredefinedTypes ();
-
-			tr.Start (TimeReporter.TimerType.UsingResolve);
-			foreach (var source_file in ctx.SourceFiles) {
-				source_file.NamespaceContainer.Define ();
-			}
-			tr.Stop (TimeReporter.TimerType.UsingResolve);
 
 			tr.Start (TimeReporter.TimerType.ModuleDefinitionTotal);
 			module.Define ();
@@ -331,7 +328,7 @@ namespace Mono.CSharp
 			}
 
 			tr.Start (TimeReporter.TimerType.CloseTypes);
-			module.CloseType ();
+			module.CloseContainer ();
 			tr.Stop (TimeReporter.TimerType.CloseTypes);
 
 			tr.Start (TimeReporter.TimerType.Resouces);

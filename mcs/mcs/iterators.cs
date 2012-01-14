@@ -160,7 +160,7 @@ namespace Mono.CSharp
 		Field pc_field;
 		StateMachineMethod method;
 
-		protected StateMachine (Block block, TypeContainer parent, MemberBase host, TypeParameters tparams, string name)
+		protected StateMachine (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name)
 			: base (block, parent, host, tparams, name)
 		{
 		}
@@ -611,7 +611,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public readonly TypeContainer Host;
+		public readonly TypeDefinition Host;
 		protected StateMachine storey;
 
 		//
@@ -624,7 +624,7 @@ namespace Mono.CSharp
 		protected LocalBuilder current_pc;
 		protected List<ResumableStatement> resume_points;
 
-		protected StateMachineInitializer (ParametersBlock block, TypeContainer host, TypeSpec returnType)
+		protected StateMachineInitializer (ParametersBlock block, TypeDefinition host, TypeSpec returnType)
 			: base (block, returnType, block.StartLocation)
 		{
 			this.Host = host;
@@ -897,7 +897,7 @@ namespace Mono.CSharp
 		public readonly bool IsEnumerable;
 		public readonly TypeSpec OriginalIteratorType;
 
-		public Iterator (ParametersBlock block, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
+		public Iterator (ParametersBlock block, IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 			: base (block, host, host.Compiler.BuiltinTypes.Bool)
 		{
 			this.OriginalMethod = method;
@@ -1025,7 +1025,7 @@ namespace Mono.CSharp
 			return bc;
 		}
 
-		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)
+		public static void CreateIterator (IMethodData method, TypeDefinition parent, Modifiers modifiers)
 		{
 			bool is_enumerable;
 			TypeSpec iterator_type;

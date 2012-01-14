@@ -241,9 +241,8 @@ namespace Mono.CSharp
 				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, member_context.CurrentTypeParameters);
 
 				CurrentTypeDefinition.Module.AddCompilerGeneratedClass (dynamic_site_container);
-				dynamic_site_container.CreateType ();
-				dynamic_site_container.DefineType ();
-				dynamic_site_container.ResolveTypeParameters ();
+				dynamic_site_container.CreateContainer ();
+				dynamic_site_container.DefineContainer ();
 				dynamic_site_container.Define ();
 
 				var inflator = new TypeParameterInflator (Module, CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);

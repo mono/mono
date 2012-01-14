@@ -62,7 +62,7 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_targets = new string [] { "field" };
 
-		protected FieldBase (TypeContainer parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected FieldBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE, name, attrs)
 		{
 			if ((mod & Modifiers.ABSTRACT) != 0)
@@ -376,7 +376,7 @@ namespace Mono.CSharp
 			Modifiers.PRIVATE |
 			Modifiers.UNSAFE;
 
-		public FixedField (TypeContainer parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
+		public FixedField (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
 		}
@@ -573,7 +573,7 @@ namespace Mono.CSharp
 			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (TypeContainer parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
+		public Field (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
 		}
@@ -635,7 +635,7 @@ namespace Mono.CSharp
 			}
 
 			if (initializer != null) {
-				((TypeContainer) Parent).RegisterFieldForInitialization (this,
+				Parent.RegisterFieldForInitialization (this,
 					new FieldInitializer (spec, initializer, this));
 			}
 

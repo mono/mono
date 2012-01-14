@@ -831,21 +831,11 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (Report r, MemberCore mc, string expected, Location loc)
+		public void Error_UnexpectedKind (IMemberContext ctx, Expression memberExpr, string expected, string was, Location loc)
 		{
-			Error_UnexpectedKind (r, mc, expected, ExprClassName, loc);
-		}
+			var name = memberExpr.GetSignatureForError ();
 
-		public void Error_UnexpectedKind (Report r, MemberCore mc, string expected, string was, Location loc)
-		{
-			string name;
-			if (mc != null)
-				name = mc.GetSignatureForError ();
-			else
-				name = GetSignatureForError ();
-
-			r.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
-			      name, was, expected);
+			ctx.Module.Compiler.Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected", name, was, expected);
 		}
 
 		public virtual void Error_UnexpectedKind (ResolveContext ec, ResolveFlags flags, Location loc)
@@ -2254,12 +2244,10 @@ namespace Mono.CSharp {
 		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ctx)
 		{
 			if (ctx.CurrentType != null) {
-				if (ctx.CurrentMemberDefinition != null) {
-					MemberCore mc = ctx.CurrentMemberDefinition.Parent.GetDefinition (Name);
-					if (mc != null) {
-						Error_UnexpectedKind (ctx.Module.Compiler.Report, mc, "type", GetMemberType (mc), loc);
-						return;
-					}
+				var member = MemberLookup (ctx, false, ctx.CurrentType, Name, 0, MemberLookupRestrictions.ExactArity, loc) as MemberExpr;
+				if (member != null) {
+					member.Error_UnexpectedKind (ctx, member, "type", member.KindName, loc);
+					return;
 				}
 			}
 
@@ -2575,7 +2563,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = fne as TypeExpr;
 			if (te == null) {
-				fne.Error_UnexpectedKind (mc.Module.Compiler.Report, null, "type", loc);
+				fne.Error_UnexpectedKind (mc, fne, "type", fne.ExprClassName, loc);
 				return null;
 			}
 
@@ -2592,7 +2580,7 @@ namespace Mono.CSharp {
 			// Obsolete checks cannot be done when resolving base context as they
 			// require type dependencies to be set but we are in process of resolving them
 			//
-			if (!(mc is TypeContainer.BaseContext)) {
+			if (!(mc is TypeDefinition.BaseContext) && !(mc is UsingAliasNamespace.AliasContext)) {
 				ObsoleteAttribute obsolete_attr = type.GetAttributeObsolete ();
 				if (obsolete_attr != null && !mc.IsObsolete) {
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location, mc.Module.Compiler.Report);
@@ -2697,6 +2685,10 @@ namespace Mono.CSharp {
 		///   Whether this is a static member.
 		/// </summary>
 		public abstract bool IsStatic {
+			get;
+		}
+
+		public abstract string KindName {
 			get;
 		}
 
@@ -3030,20 +3022,17 @@ namespace Mono.CSharp {
 
 	public class ExtensionMethodCandidates
 	{
-		NamespaceContainer container;
-		Namespace ns;
-		IList<MethodSpec> methods;
+		readonly NamespaceContainer container;
+		readonly IList<MethodSpec> methods;
+		readonly int index;
+		readonly IMemberContext context;
 
-		public ExtensionMethodCandidates (IList<MethodSpec> methods, NamespaceContainer nsContainer)
-			: this (methods, nsContainer, null)
+		public ExtensionMethodCandidates (IMemberContext context, IList<MethodSpec> methods, NamespaceContainer nsContainer, int lookupIndex)
 		{
-		}
-
-		public ExtensionMethodCandidates (IList<MethodSpec> methods, NamespaceContainer nsContainer, Namespace ns)
-		{
+			this.context = context;
 			this.methods = methods;
 			this.container = nsContainer;
-			this.ns = ns;
+			this.index = lookupIndex;
 		}
 
 		public NamespaceContainer Container {
@@ -3052,11 +3041,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool HasUninspectedMembers { get; set; }
-
-		public Namespace Namespace {
+		public IMemberContext Context {
 			get {
-				return ns;
+				return context;
+			}
+		}
+
+		public int LookupIndex {
+			get {
+				return index;
 			}
 		}
 
@@ -3099,38 +3092,7 @@ namespace Mono.CSharp {
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
 
-			//
-			// Here we try to resume the search for extension method at the point
-			// where the last bunch of candidates was found. It's more tricky than
-			// it seems as we have to check both namespace containers and namespace
-			// in correct order.
-			//
-			// Consider:
-			// 
-			// namespace A {
-			//	using N1;
-			//  namespace B.C.D {
-			//		<our first search found candidates in A.B.C.D
-			//  }
-			// }
-			//
-			// In the example above namespace A.B.C.D, A.B.C and A.B have to be
-			// checked before we hit A.N1 using
-			//
-			if (candidates.Namespace == null) {
-				Namespace scope;
-				var methods = candidates.Container.NS.LookupExtensionMethod (candidates.Container, ExtensionExpression.Type, Name, arity, out scope);
-				if (methods != null) {
-					candidates = new ExtensionMethodCandidates (null, candidates.Container, scope);
-					return methods.Cast<MemberSpec> ().ToList ();
-				}
-			}
-
-			var ns_container = candidates.HasUninspectedMembers ? candidates.Container : candidates.Container.Parent;
-			if (ns_container == null)
-				return null;
-
-			candidates = ns_container.LookupExtensionMethod (ExtensionExpression.Type, Name, arity);
+			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.Container, candidates.LookupIndex);
 			if (candidates == null)
 				return null;
 
@@ -3273,6 +3235,10 @@ namespace Mono.CSharp {
 
 				return false;
 			}
+		}
+
+		public override string KindName {
+			get { return "method"; }
 		}
 
 		public override string Name {
@@ -5034,6 +5000,10 @@ namespace Mono.CSharp {
 			get { throw new NotImplementedException (); }
 		}
 
+		public override string KindName {
+			get { return "constant"; }
+		}
+
 		public override bool IsInstance {
 			get { return !IsStatic; }
 		}
@@ -5132,6 +5102,10 @@ namespace Mono.CSharp {
 			get {
 				return spec.IsStatic;
 			}
+		}
+
+		public override string KindName {
+			get { return "field"; }
 		}
 
 		public FieldSpec Spec {
@@ -5357,7 +5331,7 @@ namespace Mono.CSharp {
 				if (ec.HasSet (ResolveContext.Options.ConstructorScope)) {
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
-					if (ec.CurrentMemberDefinition.Parent.Definition != spec.DeclaringType.GetDefinition ())
+					if (ec.CurrentMemberDefinition.Parent.PartialContainer.Definition != spec.DeclaringType.GetDefinition ())
 						return Report_AssignToReadonly (ec, right_side);
 					// static InitOnly fields cannot be assigned-to in an instance constructor
 					if (IsStatic && !ec.IsStatic)
@@ -5638,6 +5612,10 @@ namespace Mono.CSharp {
 			get {
 				return best_candidate.IsStatic;
 			}
+		}
+
+		public override string KindName {
+			get { return "property"; }
 		}
 
 		public PropertySpec PropertyInfo {
@@ -6051,6 +6029,10 @@ namespace Mono.CSharp {
 			get {
 				return spec.IsStatic;
 			}
+		}
+
+		public override string KindName {
+			get { return "event"; }
 		}
 
 		public MethodSpec Operator {
