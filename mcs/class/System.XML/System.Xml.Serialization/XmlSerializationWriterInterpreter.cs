@@ -470,7 +470,10 @@ namespace System.Xml.Serialization
 
 		void WriteAnyElementContent (XmlTypeMapMemberAnyElement member, object memberValue)
 		{
-			if (member.TypeData.Type == typeof (XmlElement)) {
+			//
+			// XmlAnyElement can be of XmlElement or XmlNode type
+			// 
+			if (member.TypeData.Type == typeof (XmlElement) || member.TypeData.Type == typeof(XmlNode)) {
 				memberValue = new object[] { memberValue };
 			}
 
