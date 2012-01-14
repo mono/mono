@@ -207,10 +207,10 @@ namespace System.CodeDom.Compiler {
 		{
 			GenerateCompileUnitStart (compileUnit);
 
-                        foreach (CodeNamespace ns in compileUnit.Namespaces)
-                                if (string.IsNullOrEmpty(ns.Name))
-                                        GenerateNamespace (ns);
-                                      
+			foreach (CodeNamespace ns in compileUnit.Namespaces)
+				if (string.IsNullOrEmpty(ns.Name))
+					GenerateNamespace (ns);
+				      
 			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
 			if (attributes.Count != 0) {
 				foreach (CodeAttributeDeclaration att in attributes) {
@@ -223,8 +223,8 @@ namespace System.CodeDom.Compiler {
 			}
 
 			foreach (CodeNamespace ns in compileUnit.Namespaces)
-                                if (!string.IsNullOrEmpty(ns.Name))
-				        GenerateNamespace (ns);
+				if (!string.IsNullOrEmpty(ns.Name))
+					GenerateNamespace (ns);
 
 			GenerateCompileUnitEnd (compileUnit);
 		}

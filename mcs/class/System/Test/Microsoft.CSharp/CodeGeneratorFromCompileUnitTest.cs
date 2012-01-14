@@ -181,24 +181,24 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public void AttributeAndGlobalNamespaceWithImportTest ()
 		{
-                        var import = new CodeNamespaceImport ("Z");
-                        AddGlobalNamespaceWithImport (codeUnit, import);
-                        AddAssemblyAttribute (codeUnit, "A");
+			var import = new CodeNamespaceImport ("Z");
+			AddGlobalNamespaceWithImport (codeUnit, import);
+			AddAssemblyAttribute (codeUnit, "A");
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"using Z;{0}{0}[assembly: A()]{0}{0}", NewLine), Generate ());
 		}
 
-                private static void AddGlobalNamespaceWithImport (CodeCompileUnit codeUnit, CodeNamespaceImport import) {
+		private static void AddGlobalNamespaceWithImport (CodeCompileUnit codeUnit, CodeNamespaceImport import) {
 			CodeNamespace ns = new CodeNamespace ();
-                        ns.Imports.Add (import);
+			ns.Imports.Add (import);
 			codeUnit.Namespaces.Add (ns);
-                }
+		}
 
-                private static void AddAssemblyAttribute (CodeCompileUnit codeUnit, string attributeName) {
+		private static void AddAssemblyAttribute (CodeCompileUnit codeUnit, string attributeName) {
 			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = attributeName;
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-                }
+		}
 	}
 }
