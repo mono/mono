@@ -263,7 +263,7 @@ namespace MonoTests.System.IO
 
 			wh.WaitOne (1000);
 			Assert.AreEqual ("state", async_state, "#5");
-			wh.Dispose ();
+			wh.Close ();
 		}
 		
 		[Test]
@@ -281,7 +281,7 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (5, testStream.EndRead (res), "#5");
 			}
 
-			wh.Dispose ();
+			wh.Close ();
 		}
 		
 		[Test]
@@ -336,7 +336,7 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (99, readBytes [0], "#6");
 			}
 
-			wh.Dispose ();
+			wh.Close ();
 		}
 
 		[Test]
@@ -401,7 +401,7 @@ namespace MonoTests.System.IO
 
 			wh.WaitOne (1000);
 			Assert.AreEqual ("state", async_state, "#4");
-			wh.Dispose ();
+			wh.Close ();
 		}
 		
 		[Test]
