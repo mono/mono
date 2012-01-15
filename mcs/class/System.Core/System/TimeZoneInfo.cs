@@ -101,7 +101,15 @@ namespace System
 						}
 					}
 #else
-					throw new TimeZoneNotFoundException ();
+					if (IsWindows && LocalZoneKey != null) {
+						string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
+						name = TrimSpecial (name);
+						if (name != null)
+							local = TimeZoneInfo.FindSystemTimeZoneById (name);
+					}
+					
+					if (local == null)
+						throw new TimeZoneNotFoundException ();
 #endif
 				}
 				return local;
@@ -143,20 +151,55 @@ namespace System
 		private AdjustmentRule [] adjustmentRules;
 
 #if !NET_2_1
+		/// <summary>
+		/// Determine whether windows of not (taken Stephane Delcroix's code)
+		/// </summary>
+		private static bool IsWindows
+		{
+			get {
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform != 4) && (platform != 6) && (platform != 128));
+			}
+		}
+		
+		/// <summary>
+		/// Needed to trim misc garbage in MS registry keys
+		/// </summary>
+		private static string TrimSpecial (string str)
+		{
+			var Istart = 0;
+			while (Istart < str.Length && !char.IsLetterOrDigit(str[Istart])) Istart++;
+			var Iend = str.Length - 1;
+			while (Iend > Istart && !char.IsLetterOrDigit(str[Iend])) Iend--;
+			
+			return str.Substring (Istart, Iend-Istart+1);
+		}
+		
 		static RegistryKey timeZoneKey = null;
-		static bool timeZoneKeySet = false;
 		static RegistryKey TimeZoneKey {
 			get {
-				if (!timeZoneKeySet) {
-					int p = (int) Environment.OSVersion.Platform;
-					/* Only use the registry on non-Unix platforms. */
-					if ((p != 4) && (p != 6) && (p != 128))
-						timeZoneKey = Registry.LocalMachine.OpenSubKey (
-							"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
-							false);
-					timeZoneKeySet = true;
-				}
-				return timeZoneKey;
+				if (timeZoneKey != null)
+					return timeZoneKey;
+				if (!IsWindows)
+					return null;
+				
+				return timeZoneKey = Registry.LocalMachine.OpenSubKey (
+					"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
+					false);
+			}
+		}
+		
+		static RegistryKey localZoneKey = null;
+		static RegistryKey LocalZoneKey {
+			get {
+				if (localZoneKey != null)
+					return localZoneKey;
+				
+				if (!IsWindows)
+					return null;
+				
+				return localZoneKey = Registry.LocalMachine.OpenSubKey (
+					"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
 			}
 		}
 #endif
