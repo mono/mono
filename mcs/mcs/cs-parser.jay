@@ -6427,6 +6427,12 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	doc_support = settings.DocumentationFile != null;
 	oob_stack.Clear ();
 	lexer = new Tokenizer (reader, file, compiler);
+
+#if FULL_AST
+	lbag = new LocationsBag ();
+#else
+	lbag = null;
+#endif
 	
 	use_global_stacks = true;
 }
@@ -6504,9 +6510,6 @@ Location GetLocation (object obj)
 public LocationsBag LocationsBag {
 	get {
 		return lbag;
-	}
-	set {
-		lbag = value;
 	}
 }
 

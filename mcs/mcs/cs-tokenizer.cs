@@ -1518,6 +1518,12 @@ namespace Mono.CSharp
 
 #if FULL_AST
 			int read_start = reader.Position - 1;
+			if (c == '.') {
+				//
+				// Caller did peek_char
+				//
+				--read_start;
+			}
 #endif
 			number_pos = 0;
 			var loc = Location;
