@@ -2169,6 +2169,12 @@ constructor_initializer
 		$$ = new ConstructorThisInitializer ((Arguments) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3), GetLocation ($6));
 	  }
+	| COLON error
+	  {
+		Error_SyntaxError (yyToken);	  
+		$$ = new ConstructorThisInitializer (null, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($1));
+	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
