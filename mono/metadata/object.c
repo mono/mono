@@ -485,7 +485,7 @@ default_remoting_trampoline (MonoDomain *domain, MonoMethod *method, MonoRemotin
 }
 
 static gpointer
-default_delegate_trampoline (MonoClass *klass)
+default_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -582,7 +582,7 @@ mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gbo
 gpointer
 mono_runtime_create_delegate_trampoline (MonoClass *klass)
 {
-	return arch_create_delegate_trampoline (klass);
+	return arch_create_delegate_trampoline (mono_domain_get (), klass);
 }
 
 static MonoFreeMethodFunc default_mono_free_method = NULL;
@@ -5961,7 +5961,7 @@ mono_delegate_ctor_with_method (MonoObject *this, MonoObject *target, gpointer a
 		MONO_OBJECT_SETREF (delegate, target, target);
 	}
 
-	delegate->invoke_impl = arch_create_delegate_trampoline (delegate->object.vtable->klass);
+	delegate->invoke_impl = arch_create_delegate_trampoline (delegate->object.vtable->domain, delegate->object.vtable->klass);
 }
 
 /**
