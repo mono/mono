@@ -41,8 +41,8 @@
 ../../mcs/property.cs
 ../../mcs/reflection.cs
 ../../mcs/report.cs
-../../mcs/rootcontext.cs
-../../mcs/roottypes.cs
+../../mcs/settings.cs
+../../mcs/module.cs
 ../../mcs/statement.cs
 ../../mcs/support.cs
 ../../mcs/typemanager.cs

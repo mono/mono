@@ -1,5 +1,5 @@
 //
-// rootcontext.cs: keeps track of our tree representation, and assemblies loaded.
+// settings.cs: All compiler settings
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
 //            Ravi Pratap  (ravi@ximian.com)

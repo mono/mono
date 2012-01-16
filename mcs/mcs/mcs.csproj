@@ -124,9 +124,9 @@
     <Compile Include="property.cs" />
     <Compile Include="reflection.cs" />
     <Compile Include="report.cs" />
-    <Compile Include="rootcontext.cs">
+    <Compile Include="settings.cs">
     </Compile>
-    <Compile Include="roottypes.cs">
+    <Compile Include="module.cs">
     </Compile>
     <Compile Include="statement.cs">
     </Compile>
