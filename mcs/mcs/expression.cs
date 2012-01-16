@@ -3664,7 +3664,7 @@ namespace Mono.CSharp
 
 		//
 		// Merge two sets of user operators into one, they are mostly distinguish
-		// expect when they share base type and it contains an operator
+		// except when they share base type and it contains an operator
 		//
 		static IList<MemberSpec> CombineUserOperators (IList<MemberSpec> left, IList<MemberSpec> right)
 		{
