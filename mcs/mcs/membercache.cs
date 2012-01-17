@@ -304,24 +304,28 @@ namespace Mono.CSharp {
 		{
 			if (member.Kind == MemberKind.Operator) {
 				var dt = member.DeclaringType;
-				switch (dt.BuiltinType) {
-				case BuiltinTypeSpec.Type.String:
-				case BuiltinTypeSpec.Type.Delegate:
-				case BuiltinTypeSpec.Type.MulticastDelegate:
-					// Some core types have user operators but they cannot be used as normal
-					// user operators as they are predefined and therefore having different
-					// rules (e.g. binary operators) by not setting the flag we hide them for
-					// user conversions
-					// TODO: Should I do this for all core types ?
-					break;
-				default:
-					if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
-						state |= StateFlags.HasConversionOperator;
-					} else {
-						state |= StateFlags.HasUserOperator;
-					}
 
-					break;
+				//
+				// Some core types have user operators but they cannot be used like normal
+				// user operators as they are predefined and therefore having different
+				// rules (e.g. binary operators) by not setting the flag we hide them for
+				// user conversions
+				//
+				if (!BuiltinTypeSpec.IsPrimitiveType (dt)) {
+					switch (dt.BuiltinType) {
+					case BuiltinTypeSpec.Type.String:
+					case BuiltinTypeSpec.Type.Delegate:
+					case BuiltinTypeSpec.Type.MulticastDelegate:
+						break;
+					default:
+						if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
+							state |= StateFlags.HasConversionOperator;
+						} else {
+							state |= StateFlags.HasUserOperator;
+						}
+
+						break;
+					}
 				}
 			}
 

@@ -45071,6 +45071,30 @@
       </method>
     </type>
   </test>
+  <test name="test-840.cs">
+    <type name="R">
+      <method name="Boolean op_LessThan(R, R)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_GreaterThan(R, R)">
+        <size>2</size>
+      </method>
+      <method name="Single op_Implicit(R)">
+        <size>6</size>
+      </method>
+      <method name="R op_Implicit(Single)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Void .ctor()">
