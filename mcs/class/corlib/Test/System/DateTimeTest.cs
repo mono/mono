@@ -1817,6 +1817,14 @@ namespace MonoTests.System
 		{
 			DateTime.FromFileTimeUtc (-1);
 		}
+		
+		[Test]
+		public void FromFileTimeUtcTest ()
+		{
+			DateTime dt = DateTime.FromFileTimeUtc (123456);
+			Assert.AreEqual (dt.Kind, DateTimeKind.Utc, "#Kind");
+			Assert.AreEqual (dt.Ticks, 504911232000123456, "#Ticks");
+		}
 
  		[Test]
 		public void Milliseconds ()
