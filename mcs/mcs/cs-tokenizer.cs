@@ -1610,7 +1610,10 @@ namespace Mono.CSharp
 			val = res;
 
 #if FULL_AST
-			res.ParsedValue = reader.ReadChars (read_start, reader.Position - (type == TypeCode.Empty ? 1 : 0));
+			var chars = reader.ReadChars (read_start, reader.Position - (type == TypeCode.Empty && c > 0 ? 1 : 0));
+			if (chars[chars.Length - 1] == '\r')
+				Array.Resize (ref chars, chars.Length - 1);
+			res.ParsedValue = chars;
 #endif
 
 			return Token.LITERAL;
