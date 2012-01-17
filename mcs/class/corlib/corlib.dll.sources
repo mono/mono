@@ -774,6 +774,7 @@ System.Runtime.InteropServices/InvalidOleVariantTypeException.cs
 System.Runtime.InteropServices/LCIDConversionAttribute.cs
 System.Runtime.InteropServices/LIBFLAGS.cs
 System.Runtime.InteropServices/LayoutKind.cs
+System.Runtime.InteropServices/ManagedErrorInfo.cs
 System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
 System.Runtime.InteropServices/MarshalDirectiveException.cs
