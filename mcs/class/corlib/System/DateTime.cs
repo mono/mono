@@ -705,7 +705,7 @@ namespace System
 			if (fileTime < 0)
 				throw new ArgumentOutOfRangeException ("fileTime", "< 0");
 
-			return new DateTime (w32file_epoch + fileTime);
+			return new DateTime (w32file_epoch + fileTime, DateTimeKind.Utc);
 		}
 
 		public static DateTime FromOADate (double d)
