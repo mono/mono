@@ -35,6 +35,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Globalization;
@@ -1316,7 +1317,83 @@ namespace MonoTests.System.Data
 				Assert.IsTrue (ex.Message.IndexOf ("'1'") != -1, "#B6");
 			}
 		}
-
+		
+#if NET_4_0
+		[Test]
+		public void ImportRowTypeChangeTest ()
+		{
+			// this is from http://bugzilla.xamarin.com/show_bug.cgi?id=2926
+	
+			Type [] types = new Type [] { typeof (string), typeof (sbyte), typeof (byte), typeof (short), typeof (ushort), typeof (int), typeof (uint), typeof (long), typeof (ulong), typeof (float), typeof (double), typeof (char), typeof (decimal), typeof (DateTime) };
+			object [] values = new object [] { "1", (sbyte) 1, (byte) 2, (short) 3, (ushort) 4, (int) 5, (uint) 6, (long) 7, (ulong) 8, (float) 9, (double) 10, 'z', (decimal) 13, new DateTime (24) };
+			int length = types.Length;
+	
+			HashSet<Tuple<Type, Type>> invalid = new HashSet<Tuple<Type, Type>> () {
+				Tuple.Create (typeof (string), typeof (DateTime)), 
+				Tuple.Create (typeof (sbyte), typeof (DateTime)), 
+				Tuple.Create (typeof (byte), typeof (DateTime)), 
+				Tuple.Create (typeof (short), typeof (DateTime)), 
+				Tuple.Create (typeof (ushort), typeof (DateTime)), 
+				Tuple.Create (typeof (int), typeof (DateTime)), 
+				Tuple.Create (typeof (uint), typeof (DateTime)), 
+				Tuple.Create (typeof (long), typeof (DateTime)), 
+				Tuple.Create (typeof (ulong), typeof (DateTime)), 
+				Tuple.Create (typeof (float), typeof (char)), 
+				Tuple.Create (typeof (float), typeof (DateTime)), 
+				Tuple.Create (typeof (double), typeof (char)), 
+				Tuple.Create (typeof (double), typeof (DateTime)), 
+				Tuple.Create (typeof (char), typeof (float)), 
+				Tuple.Create (typeof (char), typeof (double)), 
+				Tuple.Create (typeof (char), typeof (decimal)), 
+				Tuple.Create (typeof (char), typeof (DateTime)), 
+				Tuple.Create (typeof (Decimal), typeof (char)), 
+				Tuple.Create (typeof (Decimal), typeof (DateTime)), 
+				Tuple.Create (typeof (DateTime), typeof (sbyte)), 
+				Tuple.Create (typeof (DateTime), typeof (byte)), 
+				Tuple.Create (typeof (DateTime), typeof (short)), 
+				Tuple.Create (typeof (DateTime), typeof (ushort)), 
+				Tuple.Create (typeof (DateTime), typeof (int)), 
+				Tuple.Create (typeof (DateTime), typeof (uint)), 
+				Tuple.Create (typeof (DateTime), typeof (long)), 
+				Tuple.Create (typeof (DateTime), typeof (ulong)), 
+				Tuple.Create (typeof (DateTime), typeof (float)), 
+				Tuple.Create (typeof (DateTime), typeof (double)), 
+				Tuple.Create (typeof (DateTime), typeof (char)), 
+				Tuple.Create (typeof (DateTime), typeof (decimal)), 
+			};
+	
+			for (int a = 0; a < length; a++) {
+				for (int b = 0; b < length; b++) {
+					DataSet ds = new DataSet ();
+					DataTable dt1 = ds.Tables.Add ("T1");
+					DataTable dt2 = ds.Tables.Add ("T2");
+	
+					string name = "C-" + types [a].Name + "-to-" + types [b].Name;
+					dt1.Columns.Add (name, types [a]);
+					dt2.Columns.Add (name, types [b]);
+	
+					DataRow r1 = dt1.NewRow ();
+					dt1.Rows.Add (r1);
+	
+					r1 [0] = values [a];
+	
+					if (invalid.Contains (Tuple.Create (types [a], types [b]))) {
+						try {
+							dt2.ImportRow (r1);
+							Assert.Fail ("#B: " + name + " expected ArgumentException");
+						} catch /*(ArgumentException)*/ {
+							continue;
+						}
+					} else {
+						dt2.ImportRow (r1);
+						DataRow r2 = dt2.Rows [0];
+						Assert.AreEqual (types [b], r2 [0].GetType (), "#A: " + name);
+					}
+				}
+			}
+		}
+#endif
+			
 		[Test]
 		public void ClearReset () //To test Clear and Reset methods
 		{
