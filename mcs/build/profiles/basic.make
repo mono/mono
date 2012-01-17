@@ -60,8 +60,7 @@ do-profile-check: $(depsdir)/.stamp
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
-	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
-	if $$ok; then :; else \
+	if $$ok; then rm -f $(PROFILE_EXE) $(PROFILE_OUT); else \
 	    if test -f $(MONOLITE_MCS); then \
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
