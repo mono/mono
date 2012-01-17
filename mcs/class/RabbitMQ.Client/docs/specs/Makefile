@@ -16,8 +16,8 @@ $(PROFILE)-api-qpid-0-8.cs: qpid-amqp.0-8.stripped.xml
 install-local:
 
 # These are checked in, so they shouldn't be deleted
-clean-local:
-	rm -f $(PROFILE)-api*.cs
+#clean-local:
+#	rm -f $(PROFILE)-api*.cs
 
 test-local:
 
