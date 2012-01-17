@@ -45095,6 +45095,24 @@
       </method>
     </type>
   </test>
+  <test name="test-841.cs">
+    <type name="R">
+      <method name="R op_Implicit(Int32)">
+        <size>10</size>
+      </method>
+      <method name="Double op_Implicit(R)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>121</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Void .ctor()">

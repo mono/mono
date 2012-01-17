@@ -1495,7 +1495,7 @@ namespace Mono.CSharp
 
 			var complex_field = TypeInfo.GetStructField (field_name);
 			if (complex_field != null) {
-				vector.SetRange (complex_field.Offset, complex_field.TotalLength);
+				vector.SetRange (Offset + complex_field.Offset, complex_field.TotalLength);
 			} else {
 				vector[Offset + field_idx] = true;
 			}
@@ -1505,7 +1505,7 @@ namespace Mono.CSharp
 			//
 			// Each field must be assigned
 			//
-			for (int i = Offset + 1; i <= TypeInfo.TotalLength + Offset; i++) {
+			for (int i = Offset + 1; i < TypeInfo.TotalLength + Offset; i++) {
 				if (!vector[i])
 					return;
 			}
