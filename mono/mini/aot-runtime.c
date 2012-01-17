@@ -1295,7 +1295,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 	if (no_aot_trampoline)
 		return NULL;
 
-	if (mono_metadata_token_index (token) == 0)
+	if (mono_metadata_token_index (token) == 0 || mono_metadata_token_table (token) != MONO_TABLE_METHOD)
 		return NULL;
 
 	return mono_aot_get_method_from_token (domain, image, token);
