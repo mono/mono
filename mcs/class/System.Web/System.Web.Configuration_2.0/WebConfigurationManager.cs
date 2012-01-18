@@ -574,6 +574,9 @@ namespace System.Web.Configuration {
 			
 			if (String.IsNullOrEmpty (path))
 				return path;
+				
+			if (VirtualPathUtility.GetExtension (path) == "")
+				path = VirtualPathUtility.AppendTrailingSlash (path);
 			
 			string rootPath = HttpRuntime.AppDomainAppVirtualPath;
 			ConfigPath curPath;
