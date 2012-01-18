@@ -51,12 +51,22 @@ namespace MonoTests.System.Net.Http.Headers
 				Assert.Fail ("#2");
 			} catch (ArgumentOutOfRangeException) {
 			}
+
+			try {
+				new RangeItemHeaderValue (-1, 2);
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 
 		[Test]
 		public void Ctor ()
 		{
-			new RangeItemHeaderValue (1, null);
+			var v = new RangeItemHeaderValue (1, null);
+			Assert.AreEqual ("1-", v.ToString (), "#1");
+
+			v = new RangeItemHeaderValue (null, 1);
+			Assert.AreEqual ("-1", v.ToString (), "#2");
 		}
 
 		[Test]

@@ -80,6 +80,18 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("c", res.Product.Name, "#1");
 			Assert.IsNull (res.Product.Version, "#2");
 			Assert.IsNull (res.Comment, "#3");
+			Assert.AreEqual ("c", res.ToString (), "#4");
+
+			res = ProductInfoHeaderValue.Parse (" b / 6");
+			Assert.AreEqual ("b", res.Product.Name, "#11");
+			Assert.AreEqual ("6", res.Product.Version, "#12");
+			Assert.IsNull (res.Comment, "#13");
+			Assert.AreEqual ("b/6", res.ToString (), "#14");
+
+			res = ProductInfoHeaderValue.Parse (" (  cccc )   ");
+			Assert.IsNull (res.Product, "#21");
+			Assert.AreEqual ("(  cccc )", res.Comment, "#22");
+			Assert.AreEqual ("(  cccc )", res.ToString (), "#23");
 		}
 
 		[Test]

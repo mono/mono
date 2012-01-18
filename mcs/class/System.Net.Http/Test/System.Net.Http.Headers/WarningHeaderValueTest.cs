@@ -81,6 +81,14 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual (1, res.Code, "#2");
 			Assert.AreEqual ("n", res.Agent, "#3");
 			Assert.AreEqual ("\"\"", res.Text, "#4");
+			Assert.AreEqual ("001 n \"\"", res.ToString (), "#5");
+
+			res = WarningHeaderValue.Parse ("155 foo:8080 \"tttext \" \"Sun, 06 Nov 1994 08:49:37 GMT\" ");
+			Assert.AreEqual (res.Date, new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeSpan.Zero), "#11");
+			Assert.AreEqual (155, res.Code, "#12");
+			Assert.AreEqual ("foo:8080", res.Agent, "#13");
+			Assert.AreEqual ("\"tttext \"", res.Text, "#14");
+			Assert.AreEqual ("155 foo:8080 \"tttext \" \"Sun, 06 Nov 1994 08:49:37 GMT\"", res.ToString (), "#5");
 		}
 
 		[Test]
@@ -101,6 +109,12 @@ namespace MonoTests.System.Net.Http.Headers
 			try {
 				WarningHeaderValue.Parse ("a");
 				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+
+			try {
+				WarningHeaderValue.Parse ("5555 foo:8080 \"\"");
+				Assert.Fail ("#4");
 			} catch (FormatException) {
 			}
 		}

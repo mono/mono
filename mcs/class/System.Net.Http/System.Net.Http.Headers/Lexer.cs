@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.Net.Http.Headers
 {
 	struct Token
@@ -39,6 +41,9 @@ namespace System.Net.Http.Headers
 			SeparatorEqual,
 			SeparatorSemicolon,
 			SeparatorSlash,
+			SeparatorDash,
+			SeparatorComma,
+			OpenParens,
 		}
 
 		readonly Type type;
@@ -100,6 +105,50 @@ namespace System.Net.Http.Headers
 			return s.Substring (token.StartPosition, token.EndPosition - token.StartPosition);
 		}
 
+		public string GetStringValue (Token start, Token end)
+		{
+			return s.Substring (start.StartPosition, end.EndPosition - start.StartPosition);
+		}
+
+		public string GetQuotedStringValue (Token start)
+		{
+			return s.Substring (start.StartPosition + 1, start.EndPosition - start.StartPosition - 2);
+		}
+
+		public string GetRemainingStringValue (int position)
+		{
+			return position > s.Length ? null : s.Substring (position);
+		}
+
+		public bool TryGetNumericValue (Token token, out int value)
+		{
+			return int.TryParse (GetStringValue (token), out value);
+		}
+
+		public TimeSpan? TryGetTimeSpanValue (Token token)
+		{
+			int seconds;
+			if (TryGetNumericValue (token, out seconds)) {
+				return TimeSpan.FromSeconds (seconds);
+			}
+
+			return null;
+		}
+
+		public bool TryGetDateValue (Token token, out DateTimeOffset value)
+		{
+			string text = token == Token.Type.QuotedString ?
+				s.Substring (token.StartPosition + 1, token.EndPosition - token.StartPosition - 2) :
+				GetStringValue (token);
+
+			const DateTimeStyles DefaultStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces;
+
+		    return
+				DateTimeOffset.TryParseExact (text, "r", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
+				DateTimeOffset.TryParseExact (text, "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
+				DateTimeOffset.TryParseExact (text, "ddd MMM d HH:mm:ss yyyy", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value);
+		}
+
 		public static bool IsValidToken (string input)
 		{
 			int i = 0;
@@ -113,6 +162,44 @@ namespace System.Net.Http.Headers
 			}
 
 			return i > 0;
+		}
+
+		public void EatChar ()
+		{
+			++pos;
+		}
+
+		public int PeekChar ()
+		{
+			return pos < s.Length ? s[pos] : -1;
+		}
+
+		public bool ScanCommentOptional (out string value)
+		{
+			var t = Scan ();
+			if (t != Token.Type.OpenParens) {
+				value = null;
+				return t == Token.Type.End;
+			}
+
+			while (pos < s.Length) {
+				var ch = s[pos];
+				if (ch == ')') {
+					++pos;
+					var start = t.StartPosition;
+					value = s.Substring (start, pos - start);
+					return true;
+				}
+
+				// any OCTET except CTLs, but including LWS
+				if (ch < 32 || ch > 126)
+					break;
+
+				++pos;
+			}
+
+			value = null;
+			return false;
 		}
 
 		public Token Scan ()
@@ -146,6 +233,12 @@ namespace System.Net.Http.Headers
 				case '/':
 					ttype = Token.Type.SeparatorSlash;
 					break;
+				case '-':
+					ttype = Token.Type.SeparatorDash;
+					break;
+				case ',':
+					ttype = Token.Type.SeparatorComma;
+					break;
 				case '"':
 					// Quoted string
 					start = pos - 1;
@@ -166,6 +259,8 @@ namespace System.Net.Http.Headers
 
 					break;
 				case '(':
+					start = pos - 1;
+					ttype = Token.Type.OpenParens;
 					break;
 				default:
 					if (ch <= last_token_char && token_chars[ch]) {

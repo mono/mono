@@ -32,17 +32,25 @@ namespace System.Net.Http.Headers
 	{
 		public ProductInfoHeaderValue (ProductHeaderValue product)
 		{
+			if (product == null)
+				throw new ArgumentNullException ();
+
 			Product = product;
 		}
 
 		public ProductInfoHeaderValue (string comment)
 		{
+			Parser.Token.CheckComment (comment);
 			Comment = comment;
 		}
 
 		public ProductInfoHeaderValue (string productName, string productVersion)
 		{
 			Product = new ProductHeaderValue (productName, productVersion);
+		}
+
+		private ProductInfoHeaderValue ()
+		{
 		}
 
 		public string Comment { get; private set; }
@@ -82,7 +90,34 @@ namespace System.Net.Http.Headers
 		
 		public static bool TryParse (string input, out ProductInfoHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			string comment;
+
+			if (lexer.ScanCommentOptional (out comment)) {
+				if (comment == null)
+					return false;
+
+				parsedValue = new ProductInfoHeaderValue ();
+				parsedValue.Comment = comment;
+				return true;
+			}
+
+			ProductHeaderValue res;
+			if (!ProductHeaderValue.TryParse (input, out res))
+				return false;
+
+			parsedValue = new ProductInfoHeaderValue (res);
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			if (Product == null)
+				return Comment;
+
+			return Product.ToString ();
 		}
 	}
 }

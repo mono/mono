@@ -54,8 +54,20 @@ namespace MonoTests.System.Net.Http.Headers
 
 			try {
 				new ViaHeaderValue ("a", null);
-				Assert.Fail ("#1");
+				Assert.Fail ("#3");
 			} catch (ArgumentException) {
+			}
+
+			try {
+				new ViaHeaderValue ("a", "b", "::");
+				Assert.Fail ("#4");
+			} catch (FormatException) {
+			}
+
+			try {
+				new ViaHeaderValue ("a", "b", null, "(aaa");
+				Assert.Fail ("#5");
+			} catch (FormatException) {
 			}
 		}
 
@@ -87,6 +99,14 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.IsNull (res.ProtocolName, "#1");
 			Assert.AreEqual ("nowhere.com", res.ReceivedBy, "#2");
 			Assert.AreEqual ("1.1", res.ProtocolVersion, "#3");
+			Assert.AreEqual ("1.1 nowhere.com", res.ToString (), "#4");
+
+			res = ViaHeaderValue.Parse ("foo / 1.1 nowhere.com:43   ( lalala ) ");
+			Assert.AreEqual ("foo", res.ProtocolName, "#10");
+			Assert.AreEqual ("1.1", res.ProtocolVersion, "#11");
+			Assert.AreEqual ("nowhere.com:43", res.ReceivedBy, "#12");
+			Assert.AreEqual ("( lalala )", res.Comment, "#13");
+			Assert.AreEqual ("foo/1.1 nowhere.com:43 ( lalala )", res.ToString (), "#14");
 		}
 
 		[Test]
@@ -105,8 +125,14 @@ namespace MonoTests.System.Net.Http.Headers
 			}
 
 			try {
-				ViaHeaderValue.Parse ("a;b");
+				ViaHeaderValue.Parse ("a");
 				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+
+			try {
+				ViaHeaderValue.Parse ("1 nowhere.com :43");
+				Assert.Fail ("#4");
 			} catch (FormatException) {
 			}
 		}

@@ -27,6 +27,7 @@
 //
 
 using System.Collections.Generic;
+using System.Text;
 
 namespace System.Net.Http.Headers
 {
@@ -106,7 +107,111 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out RangeHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var value = new RangeHeaderValue ();
+			value.unit = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t != Token.Type.SeparatorEqual)
+				return false;
+
+			bool token_read;
+			do {
+				int? from = null, to = null;
+				int number;
+				token_read = false;
+
+				t = lexer.Scan ();
+				switch (t.Kind) {
+				case Token.Type.SeparatorDash:
+					t = lexer.Scan ();
+					if (!lexer.TryGetNumericValue (t, out number))
+						return false;
+
+					to = number;
+					break;
+				case Token.Type.Token:
+					string s = lexer.GetStringValue (t);
+					var values = s.Split (new [] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+					if (!int.TryParse (values[0], out number))
+						return false;
+
+					switch (values.Length) {
+					case 1:
+						t = lexer.Scan ();
+						switch (t.Kind) {
+						case Token.Type.SeparatorDash:
+							from = number;
+
+							t = lexer.Scan ();
+							if (t != Token.Type.Token) {
+								token_read = true;
+								break;
+							}
+
+							if (!lexer.TryGetNumericValue (t, out number))
+								return false;
+
+							to = number;
+							if (to < from)
+								return false;
+
+							break;
+						default:
+							return false;
+						}
+						break;
+					case 2:
+						from = number;
+
+						if (!int.TryParse (values[1], out number))
+							return false;
+
+						to = number;
+						if (to < from)
+							return false;
+
+						break;
+					default:
+						return false;
+					}
+
+					break;
+				default:
+					return false;
+				}
+
+				value.Ranges.Add (new RangeItemHeaderValue (from, to));
+				if (!token_read)
+					t = lexer.Scan ();
+
+			} while (t == Token.Type.SeparatorComma);
+
+			if (t != Token.Type.End)
+				return false;
+
+			parsedValue = value;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			var sb = new StringBuilder (unit);
+			sb.Append ("=");
+			for (int i = 0; i < Ranges.Count; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				sb.Append (ranges[i]);
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

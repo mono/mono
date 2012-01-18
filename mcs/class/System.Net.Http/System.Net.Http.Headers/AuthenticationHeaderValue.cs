@@ -37,13 +37,14 @@ namespace System.Net.Http.Headers
 
 		public AuthenticationHeaderValue (string scheme, string parameter)
 		{
-			if (scheme == null)
-				throw new ArgumentNullException ("scheme");
-
 			Parser.Token.Check (scheme);
 
 			this.Scheme = scheme;
 			this.Parameter = parameter;
+		}
+
+		private AuthenticationHeaderValue ()
+		{
 		}
 
 		public string Parameter { get; private set; }
@@ -83,7 +84,28 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out AuthenticationHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token || !(lexer.PeekChar () == ' ' || lexer.PeekChar () == -1)) {
+				parsedValue = null;
+				return false;
+			}
+
+			parsedValue = new AuthenticationHeaderValue ();
+			parsedValue.Scheme = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t != Token.Type.End)
+				parsedValue.Parameter = lexer.GetRemainingStringValue (t.StartPosition);
+
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			return Parameter != null ?
+				Scheme + " " + Parameter :
+				Scheme;
 		}
 	}
 }

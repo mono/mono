@@ -31,14 +31,22 @@ namespace System.Net.Http.Headers
 	public class ProductHeaderValue : ICloneable
 	{
 		public ProductHeaderValue (string name)
-			: this (name, null)
 		{
+			Parser.Token.Check (name);
+			Name = name;
 		}
 
 		public ProductHeaderValue (string name, string version)
+			: this (name)
 		{
-			Name = name;
+			if (version != null)
+				Parser.Token.Check (version);
+
 			Version = version;
+		}
+
+		private ProductHeaderValue ()
+		{
 		}
 
 		public string Name { get; private set; }
@@ -79,7 +87,36 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out ProductHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var value = new ProductHeaderValue ();
+			value.Name = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t == Token.Type.SeparatorSlash) {
+				t = lexer.Scan ();
+				if (t != Token.Type.Token)
+					return false;
+
+				value.Version = lexer.GetStringValue (t);
+				t = lexer.Scan ();
+			}
+
+			if (t != Token.Type.End)
+				return false;
+
+			parsedValue = value;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			return Version == null ? Name : Name + "/" + Version;
 		}
 	}
 }

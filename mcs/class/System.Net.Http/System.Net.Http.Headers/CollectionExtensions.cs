@@ -60,5 +60,21 @@ namespace System.Net.Http.Headers
 
 			return sb.ToString ();
 		}
+
+		public static void ToStringBuilder<T> (this List<T> list, StringBuilder sb)
+		{
+			if (list == null || list.Count == 0)
+				return;
+
+			const string separator = ", ";
+
+			for (int i = 0; i < list.Count; ++i) {
+				if (i > 0) {
+					sb.Append (separator);
+				}
+
+				sb.Append (list[i]);
+			}
+		}
 	}
 }

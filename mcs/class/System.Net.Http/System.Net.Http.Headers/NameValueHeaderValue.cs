@@ -77,6 +77,14 @@ namespace System.Net.Http.Headers
 			}
 		}
 
+		internal static NameValueHeaderValue Create (string name, string value)
+		{
+			return new NameValueHeaderValue () {
+				Name = name,
+				value = value
+			};
+		}
+
 		object ICloneable.Clone ()
 		{
 			return new NameValueHeaderValue (this);

@@ -54,7 +54,7 @@ namespace MonoTests.System.Net.Http.Headers
 
 			try {
 				new StringWithQualityHeaderValue ("s", 1.1);
-				Assert.Fail ("#2");
+				Assert.Fail ("#3");
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
@@ -66,6 +66,7 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual (value, new StringWithQualityHeaderValue ("ab"), "#1");
 			Assert.AreEqual (value, new StringWithQualityHeaderValue ("AB"), "#2");
 			Assert.AreNotEqual (value, new StringWithQualityHeaderValue ("AA"), "#3");
+			Assert.AreEqual ("ab", value.ToString (), "#33");
 
 			value = new StringWithQualityHeaderValue ("ab", 1);
 			Assert.AreEqual (value, new StringWithQualityHeaderValue ("Ab", 1), "#4");

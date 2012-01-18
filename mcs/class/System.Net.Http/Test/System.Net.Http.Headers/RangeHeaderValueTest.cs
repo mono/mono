@@ -81,6 +81,27 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("bytes", res.Unit, "#1");
 			Assert.AreEqual (2, res.Ranges.First ().From, "#2");
 			Assert.AreEqual (40, res.Ranges.First ().To, "#3");
+			Assert.AreEqual ("bytes=2-40", res.ToString (), "#4");
+
+			res = RangeHeaderValue.Parse ("d-dd = 2 - ");
+			Assert.AreEqual ("d-dd", res.Unit, "#10");
+			Assert.AreEqual (2, res.Ranges.First ().From, "#11");
+			Assert.IsNull (res.Ranges.First ().To, "#12");
+			Assert.AreEqual ("d-dd=2-", res.ToString (), "#13");
+
+			res = RangeHeaderValue.Parse ("zz = - 6 , 5 - 9, -8");
+			Assert.AreEqual ("zz", res.Unit, "#20");
+			Assert.IsNull (res.Ranges.First ().From, "#21");
+			Assert.AreEqual (6, res.Ranges.First ().To, "#22");
+			Assert.AreEqual (5, res.Ranges.Skip (1).First ().From, "#21b");
+			Assert.AreEqual (9, res.Ranges.Skip (1).First ().To, "#22b");
+			Assert.AreEqual ("zz=-6, 5-9, -8", res.ToString (), "#23");
+
+			res = RangeHeaderValue.Parse ("ddd = 2 -, 1-4");
+			Assert.AreEqual ("ddd", res.Unit, "#30");
+			Assert.AreEqual (2, res.Ranges.First ().From, "#31");
+			Assert.IsNull (res.Ranges.First ().To, "#32");
+			Assert.AreEqual ("ddd=2-, 1-4", res.ToString (), "#33");
 		}
 
 		[Test]
@@ -107,6 +128,18 @@ namespace MonoTests.System.Net.Http.Headers
 			try {
 				RangeHeaderValue.Parse ("bytes=");
 				Assert.Fail ("#4");
+			} catch (FormatException) {
+			}
+
+			try {
+				RangeHeaderValue.Parse ("byte=1");
+				Assert.Fail ("#5");
+			} catch (FormatException) {
+			}
+
+			try {
+				RangeHeaderValue.Parse ("byte=10-6");
+				Assert.Fail ("#6");
 			} catch (FormatException) {
 			}
 		}

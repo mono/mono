@@ -26,12 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.Net.Http.Headers
 {
 	public class WarningHeaderValue : ICloneable
 	{
 		public WarningHeaderValue (int code, string agent, string text)
 		{
+			if (!IsCodeValid (code))
+				throw new ArgumentOutOfRangeException ("code");
+
+			Parser.Uri.Check (agent);
+			Parser.Token.CheckQuotedString (text);
+
 			Code = code;
 			Agent = agent;
 			Text = text;
@@ -43,10 +51,19 @@ namespace System.Net.Http.Headers
 			Date = date;
 		}
 
+		private WarningHeaderValue ()
+		{
+		}
+
 		public string Agent { get; private set; }
 		public int Code { get; private set; }
 		public DateTimeOffset? Date { get; private set; }
 		public string Text { get; private set; }
+
+		static bool IsCodeValid (int code)
+		{
+			return code >= 0 && code < 1000;
+		}
 
 		object ICloneable.Clone ()
 		{
@@ -86,7 +103,65 @@ namespace System.Net.Http.Headers
 		
 		public static bool TryParse (string input, out WarningHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+
+			if (t != Token.Type.Token)
+				return false;
+
+			int code;
+			if (!lexer.TryGetNumericValue (t, out code) || !IsCodeValid (code))
+				return false;
+
+			t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var next = t;
+			if (lexer.PeekChar () == ':') {
+				lexer.EatChar ();
+
+				next = lexer.Scan ();
+				if (next != Token.Type.Token)
+					return false;
+			}
+
+			var value = new WarningHeaderValue ();
+			value.Code = code;
+			value.Agent = lexer.GetStringValue (t, next);
+
+			t = lexer.Scan ();
+			if (t != Token.Type.QuotedString)
+				return false;
+
+			value.Text = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t == Token.Type.QuotedString) {
+				DateTimeOffset date;
+				if (!lexer.TryGetDateValue (t, out date))
+					return false;
+
+				value.Date = date;
+				t = lexer.Scan ();
+			}
+
+			if (t != Token.Type.End)
+				return false;
+
+			parsedValue = value;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			string s = Code.ToString ("000") + " " + Agent + " " + Text;
+			if (Date.HasValue)
+				s = s + " \"" + Date.Value.ToString ("r", CultureInfo.InvariantCulture) + "\"";
+
+			return s;
 		}
 	}
 }

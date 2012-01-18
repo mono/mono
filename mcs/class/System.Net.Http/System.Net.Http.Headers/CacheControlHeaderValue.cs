@@ -27,6 +27,8 @@
 //
 
 using System.Collections.Generic;
+using System.Text;
+using System.Globalization;
 
 namespace System.Net.Http.Headers
 {
@@ -160,7 +162,242 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out CacheControlHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+			if (input == null)
+				return true;
+
+			var value = new CacheControlHeaderValue ();
+
+			var lexer = new Lexer (input);
+			Token t;
+			do {
+				t = lexer.Scan ();
+				if (t != Token.Type.Token)
+					return false;
+
+				string s = lexer.GetStringValue (t);
+				bool token_read = false;
+				TimeSpan? ts;
+				switch (s) {
+				case "no-store":
+					value.NoStore = true;
+					break;
+				case "no-transform":
+					value.NoTransform = true;
+					break;
+				case "only-if-cached":
+					value.OnlyIfCached = true;
+					break;
+				case "public":
+					value.Public = true;
+					break;
+				case "must-revalidate":
+					value.MustRevalidate = true;
+					break;
+				case "proxy-revalidate":
+					value.ProxyRevalidate = true;
+					break;
+				case "max-stale":
+					value.MaxStale = true;
+					t = lexer.Scan ();
+					if (t != Token.Type.SeparatorEqual) {
+						token_read = true;
+						break;
+					}
+
+					t = lexer.Scan ();
+					if (t != Token.Type.Token)
+						return false;
+
+					ts = lexer.TryGetTimeSpanValue (t);
+					if (ts == null)
+						return false;
+
+					value.MaxStaleLimit = ts;
+					break;
+				case "max-age":
+				case "s-maxage":
+				case "min-fresh":
+					t = lexer.Scan ();
+					if (t != Token.Type.SeparatorEqual) {
+						return false;
+					}
+
+					t = lexer.Scan ();
+					if (t != Token.Type.Token)
+						return false;
+
+					ts = lexer.TryGetTimeSpanValue (t);
+					if (ts == null)
+						return false;
+
+					switch (s.Length) {
+					case 7:
+						value.MaxAge = ts;
+						break;
+					case 8:
+						value.SharedMaxAge = ts;
+						break;
+					default:
+						value.MinFresh = ts;
+						break;
+					}
+
+					break;
+				case "private":
+				case "no-cache":
+					if (s.Length == 7) {
+						value.Private = true;
+					} else {
+						value.NoCache = true;
+					}
+
+					t = lexer.Scan ();
+					if (t != Token.Type.SeparatorEqual) {
+						token_read = true;
+						break;
+					}
+
+					t = lexer.Scan ();
+					if (t != Token.Type.QuotedString)
+						return false;
+
+					foreach (var entry in lexer.GetQuotedStringValue (t).Split (',')) {
+						var qs = entry.Trim ('\t', ' ');
+
+						if (s.Length == 7) {
+							value.PrivateHeaders.Add (qs);
+						} else {
+							value.NoCache = true;
+							value.NoCacheHeaders.Add (qs);
+						}
+					}
+					break;
+				default:
+					string name = lexer.GetStringValue (t);
+					string svalue = null;
+
+					t = lexer.Scan ();
+					if (t == Token.Type.SeparatorEqual) {
+						t = lexer.Scan ();
+						switch (t.Kind) {
+						case Token.Type.Token:
+						case Token.Type.QuotedString:
+							svalue = lexer.GetStringValue (t);
+							break;
+						default:
+							return false;
+						}
+					} else {
+						token_read = true;
+					}
+
+					value.Extensions.Add (NameValueHeaderValue.Create (name, svalue));
+					break;
+				}
+
+				if (!token_read)
+					t = lexer.Scan ();
+			} while (t == Token.Type.SeparatorComma);
+
+			if (t != Token.Type.End)
+				return false;
+
+			parsedValue = value;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			const string separator = ", ";
+
+			var sb = new StringBuilder ();
+			if (NoStore) {
+				sb.Append ("no-store");
+				sb.Append (separator);
+			}
+
+			if (NoTransform) {
+				sb.Append ("no-transform");
+				sb.Append (separator);
+			}
+
+			if (OnlyIfCached) {
+				sb.Append ("only-if-cached");
+				sb.Append (separator);
+			}
+
+			if (Public) {
+				sb.Append ("public");
+				sb.Append (separator);
+			}
+
+			if (MustRevalidate) {
+				sb.Append ("must-revalidate");
+				sb.Append (separator);
+			}
+
+			if (ProxyRevalidate) {
+				sb.Append ("proxy-revalidate");
+				sb.Append (separator);
+			}
+
+			if (NoCache) {
+				sb.Append ("no-cache");
+				if (no_cache_headers != null) {
+					sb.Append ("=\"");
+					no_cache_headers.ToStringBuilder (sb);
+					sb.Append ("\"");
+				}
+
+				sb.Append (separator);
+			}
+
+			if (MaxAge != null) {
+				sb.Append ("max-age=");
+				sb.Append (MaxAge.Value.TotalSeconds.ToString (CultureInfo.InvariantCulture));
+				sb.Append (separator);
+			}
+
+			if (SharedMaxAge != null) {
+				sb.Append ("s-maxage=");
+				sb.Append (SharedMaxAge.Value.TotalSeconds.ToString (CultureInfo.InvariantCulture));
+				sb.Append (separator);
+			}
+
+			if (MaxStale) {
+				sb.Append ("max-stale");
+				if (MaxStaleLimit != null) {
+					sb.Append ("=");
+					sb.Append (MaxStaleLimit.Value.TotalSeconds.ToString (CultureInfo.InvariantCulture));
+				}
+
+				sb.Append (separator);
+			}
+
+			if (MinFresh != null) {
+				sb.Append ("min-fresh=");
+				sb.Append (MinFresh.Value.TotalSeconds.ToString (CultureInfo.InvariantCulture));
+				sb.Append (separator);
+			}
+
+			if (Private) {
+				sb.Append ("private");
+				if (private_headers != null) {
+					sb.Append ("=\"");
+					private_headers.ToStringBuilder (sb);
+					sb.Append ("\"");
+				}
+
+				sb.Append (separator);
+			}
+
+			CollectionExtensions.ToStringBuilder (extensions, sb);
+
+			if (sb.Length > 2 && sb[sb.Length - 2] == ',' && sb[sb.Length - 1] == ' ')
+				sb.Remove (sb.Length - 2, 2);
+
+			return sb.ToString ();
 		}
 	}
 }

@@ -74,9 +74,44 @@ namespace MonoTests.System.Net.Http.Headers
 			var res = CacheControlHeaderValue.Parse ("audio");
 			Assert.AreEqual ("audio", res.Extensions.First ().Name, "#1");
 			Assert.IsNull (res.Extensions.First ().Value, "#2");
+			Assert.AreEqual ("audio", res.ToString (), "#3");
 
 			res = CacheControlHeaderValue.Parse (null);
-			Assert.IsNull (res, "#3");
+			Assert.IsNull (res, "#4");
+
+			res = CacheControlHeaderValue.Parse ("no-cache, no-store , max-age = 44, max-stale = 66, min-fresh=333 ,no-transform, only-if-cached");
+			Assert.IsTrue (res.NoCache, "#10");
+			Assert.IsTrue (res.NoStore, "#11");
+			Assert.AreEqual (new TimeSpan (0, 0, 44), res.MaxAge, "#12");
+			Assert.IsTrue (res.MaxStale, "#13");
+			Assert.AreEqual (new TimeSpan (0, 1, 6), res.MaxStaleLimit, "#14");
+			Assert.AreEqual (new TimeSpan (0, 5, 33), res.MinFresh, "#15");
+			Assert.IsTrue (res.NoTransform, "#16");
+			Assert.IsTrue (res.OnlyIfCached, "#17");
+			Assert.AreEqual ("no-store, no-transform, only-if-cached, no-cache, max-age=44, max-stale=66, min-fresh=333", res.ToString (), "#18");
+
+			res = CacheControlHeaderValue.Parse ("anu = 333");
+			Assert.AreEqual ("anu", res.Extensions.First ().Name, "#20");
+			Assert.AreEqual ("333", res.Extensions.First ().Value, "#21");
+			Assert.AreEqual ("anu=333", res.ToString (), "#22");
+
+			res = CacheControlHeaderValue.Parse ("public, private = \"nnn \", no-cache =\"mmm\" , must-revalidate, proxy-revalidate, s-maxage=443");
+			Assert.IsTrue (res.Public, "#30");
+			Assert.IsTrue (res.Private, "#31");
+			Assert.AreEqual ("nnn", res.PrivateHeaders.First (), "#32");
+			Assert.IsTrue (res.NoCache, "#33");
+			Assert.AreEqual ("mmm", res.NoCacheHeaders.First (), "#34");
+			Assert.IsTrue (res.MustRevalidate, "#35");
+			Assert.IsTrue (res.ProxyRevalidate, "#36");
+			Assert.AreEqual (new TimeSpan (0, 7, 23), res.SharedMaxAge, "#37");
+			Assert.AreEqual ("public, must-revalidate, proxy-revalidate, no-cache=\"mmm\", s-maxage=443, private=\"nnn\"", res.ToString (), "#38");
+
+			res = CacheControlHeaderValue.Parse ("private = \"nnn , oo, xx\", bb= \" x \"");
+			Assert.IsTrue (res.Private, "#40");
+			Assert.AreEqual (3, res.PrivateHeaders.Count, "#41");
+			Assert.AreEqual ("oo", res.PrivateHeaders.ToList ()[1], "#42");
+			Assert.AreEqual ("\" x \"", res.Extensions.First ().Value, "#43");
+			Assert.AreEqual ("private=\"nnn, oo, xx\", bb=\" x \"", res.ToString (), "#44");
 		}
 
 		[Test]
@@ -85,6 +120,18 @@ namespace MonoTests.System.Net.Http.Headers
 			try {
 				CacheControlHeaderValue.Parse ("audio/");
 				Assert.Fail ("#1");
+			} catch (FormatException) {
+			}
+
+			try {
+				CacheControlHeaderValue.Parse ("max-age=");
+				Assert.Fail ("#2");
+			} catch (FormatException) {
+			}
+
+			try {
+				CacheControlHeaderValue.Parse ("me=");
+				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
 		}

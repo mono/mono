@@ -51,6 +51,18 @@ namespace MonoTests.System.Net.Http.Headers
 				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
+
+			try {
+				new ProductHeaderValue ("/");
+				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+		}
+
+		[Test]
+		public void Ctor ()
+		{
+			new ProductHeaderValue ("aa", null);
 		}
 
 		[Test]
@@ -73,6 +85,12 @@ namespace MonoTests.System.Net.Http.Headers
 			var res = ProductHeaderValue.Parse ("c");
 			Assert.AreEqual ("c", res.Name, "#1");
 			Assert.IsNull (res.Version, "#2");
+			Assert.AreEqual ("c", res.ToString (), "#3");
+
+			res = ProductHeaderValue.Parse (" mm / ppp");
+			Assert.AreEqual ("mm", res.Name, "#4");
+			Assert.AreEqual ("ppp", res.Version, "#5");
+			Assert.AreEqual ("mm/ppp", res.ToString (), "#6");
 		}
 
 		[Test]
@@ -93,6 +111,12 @@ namespace MonoTests.System.Net.Http.Headers
 			try {
 				ProductHeaderValue.Parse ("a;b");
 				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+
+			try {
+				ProductHeaderValue.Parse ("a/");
+				Assert.Fail ("#4");
 			} catch (FormatException) {
 			}
 		}

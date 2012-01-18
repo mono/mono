@@ -51,6 +51,37 @@ namespace System.Net.Http.Headers
 					throw new FormatException (s);
 				}
 			}
+
+			public static void CheckQuotedString (string s)
+			{
+				if (s == null)
+					throw new ArgumentNullException ();
+
+				var lexer = new Lexer (s);
+				if (lexer.Scan () == Headers.Token.Type.QuotedString && lexer.Scan () == Headers.Token.Type.End)
+					return;
+
+				if (s.Length == 0)
+					throw new ArgumentException ();
+
+				throw new FormatException (s);
+			}
+
+			public static void CheckComment (string s)
+			{
+				if (s == null)
+					throw new ArgumentNullException ();
+
+				var lexer = new Lexer (s);
+
+				string temp;
+				if (!lexer.ScanCommentOptional (out temp)) {
+					if (s.Length == 0)
+						throw new ArgumentException ();
+
+					throw new FormatException (s);
+				}
+			}
 		}
 
 		public static class DateTime
@@ -96,7 +127,21 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out System.Uri result)
 			{
-				throw new NotImplementedException ();
+				return System.Uri.TryCreate ("http://" + input + "/", UriKind.Absolute, out result);
+			}
+
+			public static void Check (string s)
+			{
+				if (s == null)
+					throw new ArgumentNullException ();
+
+				System.Uri uri;
+				if (!TryParse (s, out uri)) {
+					if (s.Length == 0)
+						throw new ArgumentException ();
+
+					throw new FormatException (s);
+				}
 			}
 		}
 	}

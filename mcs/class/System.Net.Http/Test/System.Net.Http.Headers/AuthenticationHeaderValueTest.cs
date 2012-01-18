@@ -73,6 +73,13 @@ namespace MonoTests.System.Net.Http.Headers
 			var res = AuthenticationHeaderValue.Parse ("c");
 			Assert.AreEqual ("c", res.Scheme, "#1");
 			Assert.IsNull (res.Parameter, "#2");
+			Assert.AreEqual ("c", res.ToString (), "#3");
+
+			res = AuthenticationHeaderValue.Parse ("ss   p=3 , q = \"vvv\"");
+
+			Assert.AreEqual ("ss", res.Scheme, "#11");
+			Assert.AreEqual ("p=3 , q = \"vvv\"", res.Parameter, "#12");
+			Assert.AreEqual ("ss p=3 , q = \"vvv\"", res.ToString (), "#13");
 		}
 
 		[Test]
