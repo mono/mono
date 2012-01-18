@@ -1103,15 +1103,16 @@ namespace System.Data.SqlClient
 				get {
 					if (instance == null) {
 						DataRow row = null;
-						instance = new DataTable ("ReservedWords");
-						instance.Columns.Add ("ReservedWord", typeof(string));
+						var newInstance = new DataTable ("ReservedWords");
+						newInstance.Columns.Add ("ReservedWord", typeof(string));
 						foreach (string reservedWord in reservedWords)
 						{
-							row = instance.NewRow();
+							row = newInstance.NewRow();
 
 							row["ReservedWord"] = reservedWord;
-							instance.Rows.Add(row);
+							newInstance.Rows.Add(row);
 						}
+						newInstance = instance;
 					}
 					return instance;
 				}
@@ -1151,11 +1152,12 @@ namespace System.Data.SqlClient
 			static public DataTable Instance {
 				get {
 					if (instance == null) {
-						instance = new DataTable ("MetaDataCollections");
+						var newInstance = new DataTable ("MetaDataCollections");
 						foreach (ColumnInfo c in columns)
-							instance.Columns.Add (c.name, c.type);
+							newInstance.Columns.Add (c.name, c.type);
 						foreach (object [] row in rows)
-							instance.LoadDataRow (row, true);
+							newInstance.LoadDataRow (row, true);
+						instance = newInstance;
 					}
 					return instance;
 				}
