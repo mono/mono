@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -451,6 +452,15 @@ namespace MonoTests.System.Xml
 			nav.MoveToNext ();
 			nav.MoveToNext ();
 			Assert.AreEqual ("", nav.GetNamespace (""), "#2." + nav.GetType ());
+		}
+
+		[Test] // bug #2383
+		public void EvaluateNodeSetAsEnumerable ()
+		{
+			String xml = "<root a='value'/>";
+			XDocument d = XDocument.Parse (xml);
+			IEnumerable att = (IEnumerable) d.XPathEvaluate ("/root/@a");
+			att.Cast<XAttribute> ().FirstOrDefault ();
 		}
 	}
 }

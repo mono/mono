@@ -27,6 +27,7 @@
 #if !MOONLIGHT
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
@@ -52,7 +53,18 @@ namespace System.Xml.XPath
 
 		public static object XPathEvaluate (this XNode node, string expression, IXmlNamespaceResolver nsResolver)
 		{
-			return CreateNavigator (node).Evaluate (expression, nsResolver);
+			object navigationResult = CreateNavigator (node).Evaluate (expression, nsResolver);
+			if (!(navigationResult is XPathNodeIterator))
+				return navigationResult;
+			return GetUnderlyingXObjects((XPathNodeIterator) navigationResult);
+		}
+
+		private static IEnumerable<XObject> GetUnderlyingXObjects(XPathNodeIterator nodeIterator)
+		{
+			foreach (XPathNavigator nav in nodeIterator)
+			{
+				yield return (XObject)(nav.UnderlyingObject);
+			}
 		}
 
 		public static XElement XPathSelectElement (this XNode node, string xpath)
