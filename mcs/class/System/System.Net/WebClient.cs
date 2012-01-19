@@ -520,8 +520,12 @@ namespace System.Net
 				fileCType = "application/octet-stream";
 			}
 
-			string boundary = "------------" + DateTime.Now.Ticks.ToString ("x");
-			Headers ["Content-Type"] = String.Format ("multipart/form-data; boundary={0}", boundary);
+			bool needs_boundary = (method != "PUT"); // only verified case so far
+			string boundary = null;
+			if (needs_boundary) {
+				boundary = "------------" + DateTime.Now.Ticks.ToString ("x");
+				Headers ["Content-Type"] = String.Format ("multipart/form-data; boundary={0}", boundary);
+			}
 			Stream reqStream = null;
 			Stream fStream = null;
 			byte [] resultBytes = null;
@@ -533,33 +537,38 @@ namespace System.Net
 				fStream = File.OpenRead (fileName);
 				request = SetupRequest (address, method, true);
 				reqStream = request.GetRequestStream ();
-				byte [] bytes_boundary = Encoding.ASCII.GetBytes (boundary);
-				reqStream.WriteByte ((byte) '-');
-				reqStream.WriteByte ((byte) '-');
-				reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
-				reqStream.WriteByte ((byte) '\r');
-				reqStream.WriteByte ((byte) '\n');
-				string partHeaders = String.Format ("Content-Disposition: form-data; " +
-								    "name=\"file\"; filename=\"{0}\"\r\n" +
-								    "Content-Type: {1}\r\n\r\n",
-								    Path.GetFileName (fileName), fileCType);
+				byte [] bytes_boundary = null;
+				if (needs_boundary) {
+					bytes_boundary = Encoding.ASCII.GetBytes (boundary);
+					reqStream.WriteByte ((byte) '-');
+					reqStream.WriteByte ((byte) '-');
+					reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
+					reqStream.WriteByte ((byte) '\r');
+					reqStream.WriteByte ((byte) '\n');
+					string partHeaders = String.Format ("Content-Disposition: form-data; " +
+									    "name=\"file\"; filename=\"{0}\"\r\n" +
+									    "Content-Type: {1}\r\n\r\n",
+									    Path.GetFileName (fileName), fileCType);
 
-				byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
-				reqStream.Write (partHeadersBytes, 0, partHeadersBytes.Length);
+					byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
+					reqStream.Write (partHeadersBytes, 0, partHeadersBytes.Length);
+				}
 				int nread;
 				byte [] buffer = new byte [4096];
 				while ((nread = fStream.Read (buffer, 0, 4096)) != 0)
 					reqStream.Write (buffer, 0, nread);
 
-				reqStream.WriteByte ((byte) '\r');
-				reqStream.WriteByte ((byte) '\n');
-				reqStream.WriteByte ((byte) '-');
-				reqStream.WriteByte ((byte) '-');
-				reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
-				reqStream.WriteByte ((byte) '-');
-				reqStream.WriteByte ((byte) '-');
-				reqStream.WriteByte ((byte) '\r');
-				reqStream.WriteByte ((byte) '\n');
+				if (needs_boundary) {
+					reqStream.WriteByte ((byte) '\r');
+					reqStream.WriteByte ((byte) '\n');
+					reqStream.WriteByte ((byte) '-');
+					reqStream.WriteByte ((byte) '-');
+					reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
+					reqStream.WriteByte ((byte) '-');
+					reqStream.WriteByte ((byte) '-');
+					reqStream.WriteByte ((byte) '\r');
+					reqStream.WriteByte ((byte) '\n');
+				}
 				reqStream.Close ();
 				reqStream = null;
 				resultBytes = ReadAll (request, userToken);
