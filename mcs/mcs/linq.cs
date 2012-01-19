@@ -825,7 +825,7 @@ namespace Mono.CSharp.Linq
 		public void AddRangeVariable (RangeVariable variable)
 		{
 			variable.Block = this;
-			AddLocalName (variable.Name, variable);
+			TopBlock.AddLocalName (variable.Name, variable, true);
 		}
 
 		public override void Error_AlreadyDeclared (string name, INamedBlockVariable variable, string reason)

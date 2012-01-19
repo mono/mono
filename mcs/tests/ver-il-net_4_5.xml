@@ -25575,6 +25575,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-linq-28.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>200</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]] &lt;Main&gt;m__0(Char)">
+        <size>46</size>
+      </method>
+      <method name="IEnumerable`1 &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]])">
+        <size>7</size>
+      </method>
+      <method name="Char &lt;Main&gt;m__2(Char)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;m&gt;__T,&lt;n&gt;__T]">
+      <method name="&lt;m&gt;__T get_m()">
+        <size>7</size>
+      </method>
+      <method name="&lt;n&gt;__T get_n()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;m&gt;__T, &lt;n&gt;__T)">
+        <size>21</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-named-01.cs">
     <type name="C">
       <method name="Int32 Test(Int32, Int32, System.String)">

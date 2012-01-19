@@ -2099,9 +2099,9 @@ namespace Mono.CSharp {
 			AddLocalName (li.Name, li);
 		}
 
-		public virtual void AddLocalName (string name, INamedBlockVariable li)
+		public void AddLocalName (string name, INamedBlockVariable li)
 		{
-			ParametersBlock.TopBlock.AddLocalName (name, li);
+			ParametersBlock.TopBlock.AddLocalName (name, li, false);
 		}
 
 		public virtual void Error_AlreadyDeclared (string name, INamedBlockVariable variable, string reason)
@@ -3003,7 +3003,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void AddLocalName (string name, INamedBlockVariable li)
+		public void AddLocalName (string name, INamedBlockVariable li, bool ignoreChildrenBlocks)
 		{
 			if (names == null)
 				names = new Dictionary<string, object> ();
@@ -3047,13 +3047,15 @@ namespace Mono.CSharp {
 					}
 				}
 
-				// Collision with with children
-				b = existing.Block;
-				while ((b = b.Parent) != null) {
-					if (li.Block == b) {
-						li.Block.Error_AlreadyDeclared (name, li, "child");
-						i = existing_list.Count;
-						break;
+				if (!ignoreChildrenBlocks) {
+					// Collision with children
+					b = existing.Block;
+					while ((b = b.Parent) != null) {
+						if (li.Block == b) {
+							li.Block.Error_AlreadyDeclared (name, li, "child");
+							i = existing_list.Count;
+							break;
+						}
 					}
 				}
 			}
