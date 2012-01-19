@@ -1112,7 +1112,7 @@ namespace System.Data.SqlClient
 							row["ReservedWord"] = reservedWord;
 							newInstance.Rows.Add(row);
 						}
-						newInstance = instance;
+						instance = newInstance;
 					}
 					return instance;
 				}
