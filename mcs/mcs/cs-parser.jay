@@ -5668,7 +5668,7 @@ from_clause
 	  {
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5683,7 +5683,7 @@ from_clause
 	  {
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5728,7 +5728,7 @@ select_or_group_clause
 	  {
 	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		$$ = new Linq.Select ((Linq.QueryBlock)current_block, (Expression)$3, GetLocation ($1));
 
@@ -5743,14 +5743,14 @@ select_or_group_clause
 	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  	linq_clause_blocks.Push ((Linq.QueryBlock)current_block);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  BY expression
+	  BY expression_or_error
 	  {
 		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($5));
@@ -5787,7 +5787,7 @@ let_clause
 	  {
 	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5806,7 +5806,7 @@ where_clause
 	  {
 	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression
+	  expression_or_error
 	  {
 		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (Expression)$3, GetLocation ($1));
 
@@ -5824,7 +5824,7 @@ join_clause
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
-	  expression ON
+	  expression_or_error ON
 	  {
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5832,7 +5832,7 @@ join_clause
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
-	  expression EQUALS
+	  expression_or_error EQUALS
 	  {
 		current_block.AddStatement (new ContextualReturn ((Expression) $8));
 		current_block.SetEndLocation (lexer.Location);
@@ -5840,7 +5840,7 @@ join_clause
 
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression opt_join_into
+	  expression_or_error opt_join_into
 	  {
 		current_block.AddStatement (new ContextualReturn ((Expression) $11));
 		current_block.SetEndLocation (lexer.Location);
@@ -5886,7 +5886,7 @@ join_clause
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
-	  expression ON
+	  expression_or_error ON
 	  {
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5894,7 +5894,7 @@ join_clause
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
-	  expression EQUALS
+	  expression_or_error EQUALS
 	  {
 		current_block.AddStatement (new ContextualReturn ((Expression) $9));
 		current_block.SetEndLocation (lexer.Location);
@@ -5902,7 +5902,7 @@ join_clause
 
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  expression opt_join_into
+	  expression_or_error opt_join_into
 	  {
 		current_block.AddStatement (new ContextualReturn ((Expression) $12));
 		current_block.SetEndLocation (lexer.Location);
