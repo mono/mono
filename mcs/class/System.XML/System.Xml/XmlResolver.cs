@@ -57,10 +57,8 @@ namespace System.Xml
 				return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
 #else
 				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
-				if (relativeUri.StartsWith ("http:") ||
-					relativeUri.StartsWith ("https:") ||
-					relativeUri.StartsWith ("ftp:") ||
-					relativeUri.StartsWith ("file:"))
+				int idx = relativeUri.IndexOf (':');
+				if (idx > 0 && Uri.CheckSchemeName (relativeUri.Substring (0, idx)))
 					return new Uri (relativeUri);
 				else
 					return new Uri (Path.GetFullPath (relativeUri));

@@ -88,5 +88,15 @@ namespace MonoTests.System.Xml
 		{
 			resolver.GetEntity (new Uri ("http://www.go-mono.com/"), null, typeof (File));
 		}
+
+		[Test] // bug #998
+		public void NullAbsoluteUriWithCustomSchemedRelativeUri ()
+		{
+			XmlResolver res = new XmlUrlResolver ();
+			var uri = res.ResolveUri (null, "view:Standard.xslt");
+			Assert.AreEqual ("view", uri.Scheme, "#1");
+			Assert.AreEqual ("Standard.xslt", uri.AbsolutePath, "#2");
+			Assert.AreEqual ("view:Standard.xslt", uri.AbsoluteUri, "#2");
+		}
 	}
 }
