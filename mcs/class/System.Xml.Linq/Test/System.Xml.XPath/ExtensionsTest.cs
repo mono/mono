@@ -462,5 +462,20 @@ namespace MonoTests.System.Xml
 			IEnumerable att = (IEnumerable) d.XPathEvaluate ("/root/@a");
 			att.Cast<XAttribute> ().FirstOrDefault ();
 		}
+
+		[Test] // bug #2146
+		public void RemoveDoesSnapshotCopy ()
+		{
+			var xml = XElement.Parse ("<p><n>one</n><n>two</n><n>three</n></p>");
+			xml.Elements ().Last ().NodesBeforeSelf ().Remove ();
+		}
+
+		[Test] // bug #2146
+		public void RemoveDoesSnapshotCopy2 ()
+		{
+			var xml = XElement.Parse ("<p><n>one</n><n>two</n><n>three</n></p>");
+			xml.Elements ().First ().NodesAfterSelf ().Remove ();
+			Assert.IsTrue (!xml.ToString ().Contains ("three"), "#1");
+		}
 	}
 }
