@@ -241,6 +241,7 @@ namespace System.Xaml
 					state.Value = obj;
 					state.IsInstantiated = true;
 				}
+				root_state = state;
 			}
 			object_states.Push (state);
 			if (!state.Type.IsContentValue (service_provider))
@@ -359,7 +360,7 @@ namespace System.Xaml
 				throw new XamlObjectWriterException (String.Format ("Event {0} has no underlying member to attach event", member));
 
 			int idx = value.LastIndexOf ('.');
-			var xt = idx < 0 ? member.DeclaringType : ResolveTypeFromName (value.Substring (0, idx));
+			var xt = idx < 0 ? root_state.Type : ResolveTypeFromName (value.Substring (0, idx));
 			if (xt == null)
 				throw new XamlObjectWriterException (String.Format ("Referenced type {0} in event {1} was not found", value, member));
 			if (xt.UnderlyingType == null)
@@ -369,11 +370,13 @@ namespace System.Xaml
 			// get an appropriate MethodInfo overload whose signature matches the event's handler type.
 			// FIXME: this may need more strict match. RuntimeBinder may be useful here.
 			var eventMethodParams = ev.EventHandlerType.GetMethod ("Invoke").GetParameters ();
-			var mi = xt.UnderlyingType.GetMethod (mn, (from pi in eventMethodParams select pi.ParameterType).ToArray ());
+			
+			var target = root_state.Value;
+			var mi = target.GetType().GetMethod (mn, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, (from pi in eventMethodParams select pi.ParameterType).ToArray (), null);
 			if (mi == null)
 				throw new XamlObjectWriterException (String.Format ("Referenced value method {0} in type {1} indicated by event {2} was not found", mn, value, member));
 			var obj = object_states.Peek ().Value;
-			ev.AddEventHandler (obj, Delegate.CreateDelegate (ev.EventHandlerType, obj, mi));
+			ev.AddEventHandler (obj, Delegate.CreateDelegate (ev.EventHandlerType, target, mi));
 		}
 
 		void SetValue (XamlMember member, object value)

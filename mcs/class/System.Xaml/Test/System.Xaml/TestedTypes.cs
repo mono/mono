@@ -1081,4 +1081,87 @@ namespace SecondTest
 	#endregion
 }
 
+#region "xamarin bug #2927"
+namespace XamarinBug2927
+{
+	public class RootClass
+	{
+		public RootClass ()
+		{
+			Child = new MyChildClass ();
+		}
+		
+		public bool Invoked;
+		
+		public ChildClass Child { get; set; }
+	}
+
+	public class MyRootClass : RootClass
+	{
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class RootClass2
+	{
+		public RootClass2 ()
+		{
+			Child = new MyChildClass ();
+		}
+		
+		public bool Invoked;
+		
+		public ChildClass Child { get; set; }
+		
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class MyRootClass2 : RootClass2
+	{
+	}
+
+	public class ChildClass
+	{
+		public bool Invoked;
+		
+		public DescendantClass Descendant { get; set; }
+	}
+
+	public class MyChildClass : ChildClass
+	{
+		public MyChildClass ()
+		{
+			Descendant = new DescendantClass () { Value = "x" };
+		}
+	
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class DescendantClass
+	{
+		public bool Invoked;
+		public event EventHandler DoWork;
+		public string Value { get; set; }
+	
+		public void Work ()
+		{
+			DoWork (this, EventArgs.Empty);
+		}
+	
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+}
+#endregion
+
 

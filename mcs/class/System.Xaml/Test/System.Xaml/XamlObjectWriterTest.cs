@@ -733,6 +733,29 @@ namespace MonoTests.System.Xaml
 			ow.Close ();
 			Assert.AreEqual (typeof (int), ow.Result, "#1");
 		}
+
+		[Test]
+		public void LookupCorrectEventBoundMethod ()
+		{
+			var o = (XamarinBug2927.MyRootClass) XamlServices.Load (GetReader ("LookupCorrectEvent.xml"));
+			o.Child.Descendant.Work ();
+			Assert.IsTrue (o.Invoked, "#1");
+			Assert.IsFalse (o.Child.Invoked, "#2");
+			Assert.IsFalse (o.Child.Descendant.Invoked, "#3");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (XamlObjectWriterException))]
+		public void LookupCorrectEventBoundMethod2 ()
+		{
+			XamlServices.Load (GetReader ("LookupCorrectEvent2.xml"));
+		}
+		
+		[Test]
+		public void LookupCorrectEventBoundMethod3 ()
+		{
+			XamlServices.Load (GetReader ("LookupCorrectEvent3.xml"));
+		}
 		
 		// common use case based tests (to other readers/writers).
 

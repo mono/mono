@@ -55,6 +55,7 @@ namespace System.Xaml
 
 		internal IValueSerializerContext service_provider;
 
+		internal ObjectState root_state;
 		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
 		internal PrefixLookup prefix_lookup {
 			get { return (PrefixLookup) service_provider.GetService (typeof (INamespacePrefixLookup)); }
