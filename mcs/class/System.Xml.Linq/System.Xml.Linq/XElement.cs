@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -652,19 +653,38 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public override void WriteTo (XmlWriter w)
+		string LookupPrefix (string ns, XmlWriter w)
 		{
-			// some people expect the same prefix output as in input,
-			// in the loss of performance... see bug #466423.
-			string prefix = name.NamespaceName.Length > 0 ? w.LookupPrefix (name.Namespace.NamespaceName) : String.Empty;
+			string prefix = ns.Length > 0 ? w.LookupPrefix (ns) : String.Empty;
 			foreach (XAttribute a in Attributes ()) {
-				if (a.IsNamespaceDeclaration && a.Value == name.Namespace.NamespaceName) {
+				if (a.IsNamespaceDeclaration && a.Value == ns) {
 					if (a.Name.Namespace == XNamespace.Xmlns)
 						prefix = a.Name.LocalName;
 					// otherwise xmlns="..."
 					break;
 				}
 			}
+			return prefix;
+		}
+
+		public override void WriteTo (XmlWriter w)
+		{
+			// some people expect the same prefix output as in input,
+			// in the loss of performance... see bug #466423.
+			int createdNS = 0;
+			string prefix = LookupPrefix (name.NamespaceName, w);
+			Func<string> nsCreator = () => {
+				string p = null;
+				do {
+					p = "p" + (++createdNS);
+					// check conflict
+					if (Attributes ().All (a => a.Name.LocalName != p))
+						break;
+				} while (true);
+				return p;
+				};
+			if (prefix == null)
+				prefix = nsCreator ();
 
 			w.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
 
@@ -674,9 +694,12 @@ namespace System.Xml.Linq
 						w.WriteAttributeString ("xmlns", a.Name.LocalName, XNamespace.Xmlns.NamespaceName, a.Value);
 					else
 						w.WriteAttributeString ("xmlns", a.Value);
+				} else {
+					string apfix = LookupPrefix (a.Name.NamespaceName, w);
+					if (apfix == null)
+						apfix = nsCreator ();
+					w.WriteAttributeString (apfix, a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
 				}
-				else
-					w.WriteAttributeString (a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
 			}
 
 			foreach (XNode node in Nodes ())
