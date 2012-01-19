@@ -123,7 +123,26 @@ namespace System.Xml
 			get { return AttributeCount > 0; }
 		}
 
+#if NET_4_0
+		public virtual bool HasValue {
+			get {
+				switch (NodeType) {
+				case XmlNodeType.Attribute:
+				case XmlNodeType.Comment:
+				case XmlNodeType.ProcessingInstruction:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.Text:
+				case XmlNodeType.Whitespace:
+				case XmlNodeType.XmlDeclaration:
+					return true;
+				}
+				return false;
+			}
+		}
+#else
 		public abstract bool HasValue { get; }
+#endif
 
 		public abstract bool IsEmptyElement { get; }
 
