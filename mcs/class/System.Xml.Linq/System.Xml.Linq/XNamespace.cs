@@ -116,9 +116,9 @@ namespace System.Xml.Linq
 			return ! (o1 == o2);
 		}
 		
-		public static XName operator +(XNamespace ns, string localName)
+		public static XName operator + (XNamespace ns, string localName)
 		{
-			return new XName (localName, ns.NamespaceName);
+			return new XName (localName, ns);
 		}
 
 		[CLSCompliant (false)]
