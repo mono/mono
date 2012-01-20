@@ -62,9 +62,15 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Parse ()
 		{
-			var res = RetryConditionHeaderValue.Parse ("44");
+			var res = RetryConditionHeaderValue.Parse ("144");
 			Assert.IsNull (res.Date, "#1");
-			Assert.AreEqual (new TimeSpan (0, 0, 44), res.Delta, "#2");
+			Assert.AreEqual (new TimeSpan (0, 0, 144), res.Delta, "#2");
+			Assert.AreEqual ("144", res.ToString (), "#3");
+
+			res = RetryConditionHeaderValue.Parse ("Fri, 31 Dec 1999 23:59:59 GMT");
+			Assert.AreEqual (new DateTimeOffset (1999, 12, 31, 23, 59, 59, 0, TimeSpan.Zero), res.Date, "#11");
+			Assert.IsNull (res.Delta, "#12");
+			Assert.AreEqual ("Fri, 31 Dec 1999 23:59:59 GMT", res.ToString (), "#13");
 		}
 
 		[Test]

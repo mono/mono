@@ -68,6 +68,12 @@ namespace MonoTests.System.Net.Http.Headers
 			var res = EntityTagHeaderValue.Parse ("\"c\"");
 			Assert.AreEqual ("\"c\"", res.Tag, "#1");
 			Assert.IsFalse (res.IsWeak, "#2");
+			Assert.AreEqual ("\"c\"", res.ToString (), "#3");
+
+			res = EntityTagHeaderValue.Parse ("W/ \"mm\"");
+			Assert.AreEqual ("\"mm\"", res.Tag, "#11");
+			Assert.IsTrue (res.IsWeak, "#12");
+			Assert.AreEqual ("W/\"mm\"", res.ToString (), "#13");
 		}
 
 		[Test]
@@ -86,7 +92,7 @@ namespace MonoTests.System.Net.Http.Headers
 			}
 
 			try {
-				EntityTagHeaderValue.Parse ("a b");
+				EntityTagHeaderValue.Parse ("W / \"a\"");
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}

@@ -27,6 +27,7 @@
 //
 
 using System.Net.Mail;
+using System.Globalization;
 
 namespace System.Net.Http.Headers
 {
@@ -36,7 +37,13 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out string result)
 			{
-				throw new NotImplementedException ();
+				if (input != null && Lexer.IsValidToken (input)) {
+					result = input;
+					return true;
+				}
+
+				result = null;
+				return false;
 			}
 
 			public static void Check (string s)
@@ -88,7 +95,7 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out DateTimeOffset result)
 			{
-				throw new NotImplementedException ();
+				return Lexer.TryGetDateValue (input, out result);
 			}
 		}
 
@@ -111,7 +118,7 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out int result)
 			{
-				throw new NotImplementedException ();
+				return int.TryParse (input, NumberStyles.None, CultureInfo.InvariantCulture, out result);
 			}
 		}
 
@@ -119,7 +126,14 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out TimeSpan result)
 			{
-				throw new NotImplementedException ();
+				int value;
+				if (Int.TryParse (input, out value)) {
+					result = TimeSpan.FromSeconds (value);
+					return true;
+				}
+
+				result = TimeSpan.Zero;
+				return false;
 			}
 		}
 

@@ -94,7 +94,7 @@ namespace System.Net.Http.Headers
 
 		public override string ToString ()
 		{
-			if (parameters == null)
+			if (parameters == null || parameters.Count == 0)
 				return base.ToString ();
 
 			return base.ToString () + CollectionExtensions.ToString (parameters);

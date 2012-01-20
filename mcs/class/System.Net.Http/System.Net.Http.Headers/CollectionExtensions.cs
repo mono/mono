@@ -36,8 +36,11 @@ namespace System.Net.Http.Headers
 	{
 		public static bool SequenceEqual<TSource> (this List<TSource> first, List<TSource> second)
 		{
-			if (first == null || second == null)
-				return first == second;
+			if (first == null)
+				return second == null || second.Count == 0;
+
+			if (second == null)
+				return first == null || first.Count == 0;
 
 			return Enumerable.SequenceEqual (first, second);
 		}
@@ -51,10 +54,7 @@ namespace System.Net.Http.Headers
 
 			var sb = new StringBuilder ();
 			for (int i = 0; i < list.Count; ++i) {
-				if (i > 0) {
-					sb.Append (separator);
-				}
-
+				sb.Append (separator);
 				sb.Append (list [i]);
 			}
 

@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.Net.Http.Headers
 {
 	public class RangeConditionHeaderValue : ICloneable
@@ -37,6 +39,9 @@ namespace System.Net.Http.Headers
 
 		public RangeConditionHeaderValue (EntityTagHeaderValue entityTag)
 		{
+			if (entityTag == null)
+				throw new ArgumentNullException ("entityTag");
+
 			EntityTag = entityTag;
 		}
 
@@ -80,7 +85,53 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out RangeConditionHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			bool is_weak;
+
+			if (t == Token.Type.Token) {
+				if (lexer.GetStringValue (t) != "W") {
+					DateTimeOffset date;
+					if (!Lexer.TryGetDateValue (input, out date))
+						return false;
+
+					parsedValue = new RangeConditionHeaderValue (date);
+					return true;
+				}
+
+				if (lexer.PeekChar () != '/')
+					return false;
+
+				is_weak = true;
+				lexer.EatChar ();
+				t = lexer.Scan ();
+			} else {
+				is_weak = false;
+			}
+
+			if (t != Token.Type.QuotedString)
+				return false;
+
+			if (lexer.Scan () != Token.Type.End)
+				return false;
+
+			parsedValue = new RangeConditionHeaderValue (
+				new EntityTagHeaderValue () {
+					Tag = lexer.GetStringValue (t),
+					IsWeak = is_weak
+				});
+
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			if (EntityTag != null)
+				return EntityTag.ToString ();
+
+			return Date.Value.ToString ("r", CultureInfo.InvariantCulture);
 		}
 	}
 }

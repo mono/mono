@@ -26,22 +26,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 namespace System.Net.Http.Headers
 {
 	public class StringWithQualityHeaderValue : ICloneable
 	{
 		public StringWithQualityHeaderValue (string value)
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
-
+			Parser.Token.Check (value);
 			this.Value = value;
 		}
 
 		public StringWithQualityHeaderValue (string value, double quality)
 			: this (value)
 		{
+			if (quality < 0 || quality > 1)
+				throw new ArgumentOutOfRangeException ("quality");
+
 			Quality = quality;
+		}
+
+		private StringWithQualityHeaderValue ()
+		{
 		}
 
 		public double? Quality { get; private set; }
@@ -76,7 +82,57 @@ namespace System.Net.Http.Headers
 		
 		public static bool TryParse (string input, out StringWithQualityHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var value = new StringWithQualityHeaderValue ();
+			value.Value = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t == Token.Type.SeparatorSemicolon) {
+				t = lexer.Scan ();
+				if (t != Token.Type.Token)
+					return false;
+
+				var s = lexer.GetStringValue (t);
+				if (s != "q" && s != "Q")
+					return false;
+
+				t = lexer.Scan ();
+				if (t != Token.Type.SeparatorEqual)
+					return false;
+
+				t = lexer.Scan ();
+
+				double d;
+				if (!lexer.TryGetDoubleValue (t, out d))
+					return false;
+
+				if (d > 1)
+					return false;
+
+				value.Quality = d;
+
+				t = lexer.Scan ();
+			}
+
+			if (t != Token.Type.End)
+				return false;
+
+			parsedValue = value;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			if (Quality != null)
+				return Value + "; q=" + Quality.Value.ToString ("0.0##", CultureInfo.InvariantCulture);
+
+			return Value;
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace System.Net.Http.Headers
 				return GetValue<TimeSpan?> ("Age");
 			}
 			set {
-				AddOrRemove ("Age", value);
+				AddOrRemove ("Age", value, l => ((long)((TimeSpan)l).TotalSeconds).ToString ()); 
 			}
 		}
 
@@ -69,19 +69,20 @@ namespace System.Net.Http.Headers
 
 		public bool? ConnectionClose {
 			get {
-				if (!Contains ("Connection"))
-					return null;
+				if (connectionclose == true || Connection.Find (l => string.Equals (l, "close", StringComparison.OrdinalIgnoreCase)) != null)
+					return true;
 
-				var col = Connection;
-				if (col == null)
-					return null;
-
-				return Connection.Contains ("close");
+				return connectionclose;
 			}
 			set {
+				if (connectionclose == value)
+					return;
+
 				Connection.Remove ("close");
 				if (value == true)
 					Connection.Add ("close");
+
+				connectionclose = value;
 			}
 		}
 
@@ -153,19 +154,21 @@ namespace System.Net.Http.Headers
 
 		public bool? TransferEncodingChunked {
 			get {
-				if (!Contains ("Transfer-Encoding"))
-					return null;
+				if (transferEncodingChunked.HasValue)
+					return transferEncodingChunked;
 
-				var col = TransferEncoding;
-				if (col == null)
-					return null;
-
-				return TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked")) != null;
+				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked"));
+				return found != null ? true : (bool?) null;
 			}
 			set {
+				if (value == transferEncodingChunked)
+					return;
+
 				TransferEncoding.Remove (l => l.Value == "chunked");
 				if (value == true)
 					TransferEncoding.Add (new TransferCodingHeaderValue ("chunked"));
+
+				transferEncodingChunked = value;
 			}
 		}
 

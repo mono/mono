@@ -122,7 +122,7 @@ namespace System.Net.Http.Headers
 
 		public bool TryGetNumericValue (Token token, out int value)
 		{
-			return int.TryParse (GetStringValue (token), out value);
+			return int.TryParse (GetStringValue (token), NumberStyles.None, CultureInfo.InvariantCulture, out value);
 		}
 
 		public TimeSpan? TryGetTimeSpanValue (Token token)
@@ -141,12 +141,23 @@ namespace System.Net.Http.Headers
 				s.Substring (token.StartPosition + 1, token.EndPosition - token.StartPosition - 2) :
 				GetStringValue (token);
 
+			return TryGetDateValue (text, out value);
+		}
+
+		public static bool TryGetDateValue (string text, out DateTimeOffset value)
+		{
 			const DateTimeStyles DefaultStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces;
 
 		    return
 				DateTimeOffset.TryParseExact (text, "r", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
 				DateTimeOffset.TryParseExact (text, "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
 				DateTimeOffset.TryParseExact (text, "ddd MMM d HH:mm:ss yyyy", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value);
+		}
+
+		public bool TryGetDoubleValue (Token token, out double value)
+		{
+			string s = GetStringValue (token);
+			return double.TryParse (s, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value);
 		}
 
 		public static bool IsValidToken (string input)

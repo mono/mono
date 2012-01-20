@@ -79,6 +79,19 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("\"c\"", res.EntityTag.Tag, "#1");
 			Assert.IsFalse (res.EntityTag.IsWeak, "#2");
 			Assert.IsNull (res.Date, "#3");
+			Assert.AreEqual ("\"c\"", res.ToString (), "#4");
+
+			res = RangeConditionHeaderValue.Parse ("W/\"\"");
+			Assert.AreEqual ("\"\"", res.EntityTag.Tag, "#11");
+			Assert.IsTrue (res.EntityTag.IsWeak, "#12");
+			Assert.IsNull (res.Date, "#13");
+			Assert.AreEqual ("W/\"\"", res.ToString (), "#14");
+
+
+			res = RangeConditionHeaderValue.Parse ("Sun Nov 6 08:49:37 1994");
+			Assert.IsNull (res.EntityTag, "#21");
+			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, 0, TimeSpan.Zero), res.Date, "#22");
+			Assert.AreEqual ("Sun, 06 Nov 1994 08:49:37 GMT", res.ToString (), "#23");
 		}
 
 		[Test]

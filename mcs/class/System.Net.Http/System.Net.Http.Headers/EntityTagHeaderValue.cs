@@ -30,20 +30,22 @@ namespace System.Net.Http.Headers
 {
 	public class EntityTagHeaderValue : ICloneable
 	{
-		static readonly EntityTagHeaderValue any = new EntityTagHeaderValue ("*");
+		static readonly EntityTagHeaderValue any = new EntityTagHeaderValue () { Tag = "*" };
 
 		public EntityTagHeaderValue (string tag)
-			: this (tag, false)
 		{
+			Parser.Token.CheckQuotedString (tag);
+			Tag = tag;
 		}
 
 		public EntityTagHeaderValue (string tag, bool isWeak)
+			: this (tag)
 		{
-			if (tag == null)
-				throw new ArgumentNullException ("tag");
-
-			Tag = tag;
 			IsWeak = isWeak;
+		}
+
+		internal EntityTagHeaderValue ()
+		{
 		}
 
 		public static EntityTagHeaderValue Any {
@@ -52,8 +54,8 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		public bool IsWeak { get; private set; }
-		public string Tag { get; private set; }
+		public bool IsWeak { get; internal set; }
+		public string Tag { get; internal set; }
 
 		object ICloneable.Clone ()
 		{
@@ -83,7 +85,38 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out EntityTagHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			bool is_weak = false;
+
+			if (t == Token.Type.Token) {
+				if (lexer.GetStringValue (t) != "W" || lexer.PeekChar () != '/')
+					return false;
+
+				is_weak = true;
+				lexer.EatChar ();
+				t = lexer.Scan ();
+			}
+
+			if (t != Token.Type.QuotedString)
+				return false;
+
+			if (lexer.Scan () != Token.Type.End)
+				return false;
+
+			parsedValue = new EntityTagHeaderValue ();
+			parsedValue.Tag = lexer.GetStringValue (t);
+			parsedValue.IsWeak = is_weak;
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			return IsWeak ?
+				"W/" + Tag :
+				Tag;
 		}
 	}
 }

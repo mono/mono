@@ -32,7 +32,7 @@ namespace System.Net.Http.Headers
 {
 	public sealed class HttpRequestHeaders : HttpHeaders
 	{
-		bool? expectContinue, connectionclose, transferEncodingChunked;
+		bool? expectContinue;
 
 		internal HttpRequestHeaders ()
 			: base (HttpHeaderKind.Request)
@@ -89,7 +89,7 @@ namespace System.Net.Http.Headers
 
 		public bool? ConnectionClose {
 			get {
-				if (connectionclose == true || Connection.Contains ("close"))
+				if (connectionclose == true || Connection.Find (l => string.Equals (l, "close", StringComparison.OrdinalIgnoreCase)) != null)
 					return true;
 
 				return connectionclose;
@@ -153,6 +153,9 @@ namespace System.Net.Http.Headers
 				return GetValue<string> ("From");
 			}
 			set {
+				if (!string.IsNullOrEmpty (value) && !Parser.EmailAddress.TryParse (value, out value))
+					throw new FormatException ();
+
 				AddOrRemove ("From", value);
 			}
 		}

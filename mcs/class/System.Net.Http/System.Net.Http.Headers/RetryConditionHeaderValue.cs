@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.Net.Http.Headers
 {
 	public class RetryConditionHeaderValue : ICloneable
@@ -37,6 +39,9 @@ namespace System.Net.Http.Headers
 
 		public RetryConditionHeaderValue (TimeSpan delta)
 		{
+			if (delta.TotalSeconds > uint.MaxValue)
+				throw new ArgumentOutOfRangeException ("delta");
+
 			Delta = delta;
 		}
 
@@ -70,7 +75,35 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out RetryConditionHeaderValue parsedValue)
 		{
-			throw new NotImplementedException ();
+			parsedValue = null;
+
+			var lexer = new Lexer (input);
+			var t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var ts = lexer.TryGetTimeSpanValue (t);
+			if (ts != null) {
+				if (lexer.Scan () != Token.Type.End)
+					return false;
+
+				parsedValue = new RetryConditionHeaderValue (ts.Value);
+			} else {
+				DateTimeOffset date;
+				if (!Lexer.TryGetDateValue (input, out date))
+					return false;
+
+				parsedValue = new RetryConditionHeaderValue (date);
+			}
+
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			return Delta != null ?
+				Delta.Value.TotalSeconds.ToString (CultureInfo.InvariantCulture) :
+				Date.Value.ToString ("r", CultureInfo.InvariantCulture);
 		}
 	}
 }
