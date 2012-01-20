@@ -72,10 +72,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			var normalClient      = new Service1Client (binding, remoteAddress);
 			var collectionClient  = new Service1Client (binding, remoteAddress);
 			var nestedClient      = new Service1Client (binding, remoteAddress);
+			var dbClient          = new Service1Client (binding, remoteAddress);
 
-			var waits = new ManualResetEvent [3];
+			var waits = new ManualResetEvent [4];
 			for (int i = 0; i < waits.Length; i++)
 				waits [i] = new ManualResetEvent (false);
+
+			int passed = 0;
 
 			normalClient.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
 				if (e.Error != null) {
@@ -83,6 +86,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 					throw e.Error;
 				}
 				Assert.AreEqual ("A", ((DataType1) e.Result).Id, "Normal");
+				Interlocked.Increment (ref passed);
 				waits [0].Set ();
 			};
 			normalClient.GetDataAsync ();
@@ -93,6 +97,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 					throw e.Error;
 				}
 				Assert.AreEqual ("B,C", ItemsToString (e.Result.Cast<DataType1> ()), "Collection");
+				Interlocked.Increment (ref passed);
 				waits [1].Set ();
 			};
 			collectionClient.GetCollectionDataAsync ();
@@ -103,11 +108,24 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 					throw e.Error;
 				}
 				Assert.AreEqual ("D,E", ItemsToString (e.Result.Items.Cast<DataType1> ()), "Nested");
+				Interlocked.Increment (ref passed);
 				waits [2].Set ();
 			};
 			nestedClient.GetNestedDataAsync ();
 
+			dbClient.JSMGetDatabasesCompleted += delegate (object sender, JSMGetDatabasesCompletedEventArgs e) {
+				waits [3].Set ();
+				if (e.Error != null) {
+					throw e.Error;
+				}
+				Assert.AreEqual ("databases", e.Result, "Databases");
+				Interlocked.Increment (ref passed);
+			};
+			dbClient.JSMGetDatabasesAsync();
+
 			WaitHandle.WaitAll (waits, TimeSpan.FromMinutes (1));
+			if (passed != waits.Length)
+				Assert.Fail ("Not all tests passed!");
 		}
 
 		string ItemsToString (IEnumerable<DataType1> items)
@@ -167,6 +185,23 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		public DataType2 EndGetNestedData (IAsyncResult result)
 		{
 			return gnd.EndInvoke (result);
+		}
+
+		public JSMGetDatabasesResponse JSMGetDatabases(JSMGetDatabasesRequest request)
+		{
+			return new JSMGetDatabasesResponse { JSMGetDatabasesResult = "databases" };
+		}
+
+		Func<JSMGetDatabasesRequest, JSMGetDatabasesResponse> gjgdb;
+		public IAsyncResult BeginJSMGetDatabases(JSMGetDatabasesRequest request, AsyncCallback callback, object asyncState)
+		{
+			gjgdb = JSMGetDatabases;
+			return gjgdb.BeginInvoke (request, callback, asyncState);
+		}
+
+		public JSMGetDatabasesResponse EndJSMGetDatabases(IAsyncResult result)
+		{
+			return gjgdb.EndInvoke (result);
 		}
 	}
 }
@@ -275,7 +310,47 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
         System.IAsyncResult BeginGetNestedData(System.AsyncCallback callback, object asyncState);
         
         WebServiceMoonlightTest.ServiceReference2.DataType2 EndGetNestedData(System.IAsyncResult result);
+
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern = true, Action = "http://mynamespace/IService1/JSMGetDatabases", ReplyAction = "http://mynamespace/IService1/JSMGetDatabasesResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        System.IAsyncResult BeginJSMGetDatabases(JSMGetDatabasesRequest request, System.AsyncCallback callback, object asyncState);
+
+        JSMGetDatabasesResponse EndJSMGetDatabases(System.IAsyncResult result);
     }
+
+#region JSMGetDatabases
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+    [System.ServiceModel.MessageContractAttribute(WrapperName = "JSMGetDatabases", WrapperNamespace = "", IsWrapped = true)]
+    public partial class JSMGetDatabasesRequest
+    {
+
+        public JSMGetDatabasesRequest()
+        {
+        }
+    }
+
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+    [System.ServiceModel.MessageContractAttribute(WrapperName = "JSMGetDatabasesResponse", WrapperNamespace = "", IsWrapped = true)]
+    public partial class JSMGetDatabasesResponse
+    {
+
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "", Order = 0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+        public string JSMGetDatabasesResult;
+
+        public JSMGetDatabasesResponse()
+        {
+        }
+
+        public JSMGetDatabasesResponse(string JSMGetDatabasesResult)
+        {
+            this.JSMGetDatabasesResult = JSMGetDatabasesResult;
+        }
+    }
+#endregion
+
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface IService1Channel : WebServiceMoonlightTest.ServiceReference2.IService1, System.ServiceModel.IClientChannel {
@@ -337,6 +412,29 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
             }
         }
     }
+
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+    public partial class JSMGetDatabasesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        public JSMGetDatabasesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        public string Result
+        {
+            get
+            {
+                base.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -372,6 +470,14 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
         
         private System.Threading.SendOrPostCallback onCloseCompletedDelegate;
         
+#region JSMGetDatabasesDelegates
+        private BeginOperationDelegate onBeginJSMGetDatabasesDelegate;
+
+        private EndOperationDelegate onEndJSMGetDatabasesDelegate;
+
+        private System.Threading.SendOrPostCallback onJSMGetDatabasesCompletedDelegate;
+#endregion
+
         public Service1Client() {
         }
         
@@ -424,6 +530,9 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> OpenCompleted;
         
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> CloseCompleted;
+
+        public event System.EventHandler<JSMGetDatabasesCompletedEventArgs> JSMGetDatabasesCompleted;
+
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         System.IAsyncResult WebServiceMoonlightTest.ServiceReference2.IService1.BeginGetData(System.AsyncCallback callback, object asyncState) {
@@ -605,6 +714,77 @@ namespace WebServiceMoonlightTest.ServiceReference2 {
                 this.CloseCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
             }
         }
+
+#region JSMGetDatabases
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult IService1.BeginJSMGetDatabases(JSMGetDatabasesRequest request, System.AsyncCallback callback, object asyncState)
+        {
+            return base.Channel.BeginJSMGetDatabases(request, callback, asyncState);
+        }
+
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        private System.IAsyncResult BeginJSMGetDatabases(System.AsyncCallback callback, object asyncState)
+        {
+            JSMGetDatabasesRequest inValue = new JSMGetDatabasesRequest();
+            return ((IService1)(this)).BeginJSMGetDatabases(inValue, callback, asyncState);
+        }
+
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        JSMGetDatabasesResponse IService1.EndJSMGetDatabases(System.IAsyncResult result)
+        {
+            return base.Channel.EndJSMGetDatabases(result);
+        }
+
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        private string EndJSMGetDatabases(System.IAsyncResult result)
+        {
+            JSMGetDatabasesResponse retVal = ((IService1)(this)).EndJSMGetDatabases(result);
+            return retVal.JSMGetDatabasesResult;
+        }
+
+        private System.IAsyncResult OnBeginJSMGetDatabases(object[] inValues, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginJSMGetDatabases(callback, asyncState);
+        }
+
+        private object[] OnEndJSMGetDatabases(System.IAsyncResult result)
+        {
+            string retVal = this.EndJSMGetDatabases(result);
+            return new object[] {
+                retVal};
+        }
+
+        private void OnJSMGetDatabasesCompleted(object state)
+        {
+            if ((this.JSMGetDatabasesCompleted != null))
+            {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.JSMGetDatabasesCompleted(this, new JSMGetDatabasesCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+
+        public void JSMGetDatabasesAsync()
+        {
+            this.JSMGetDatabasesAsync(null);
+        }
+
+        public void JSMGetDatabasesAsync(object userState)
+        {
+            if ((this.onBeginJSMGetDatabasesDelegate == null))
+            {
+                this.onBeginJSMGetDatabasesDelegate = new BeginOperationDelegate(this.OnBeginJSMGetDatabases);
+            }
+            if ((this.onEndJSMGetDatabasesDelegate == null))
+            {
+                this.onEndJSMGetDatabasesDelegate = new EndOperationDelegate(this.OnEndJSMGetDatabases);
+            }
+            if ((this.onJSMGetDatabasesCompletedDelegate == null))
+            {
+                this.onJSMGetDatabasesCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnJSMGetDatabasesCompleted);
+            }
+            base.InvokeAsync(this.onBeginJSMGetDatabasesDelegate, null, this.onEndJSMGetDatabasesDelegate, this.onJSMGetDatabasesCompletedDelegate, userState);
+        }
+#endregion
         
         public void CloseAsync() {
             this.CloseAsync(null);
