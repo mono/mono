@@ -68,37 +68,46 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			var binding = new BasicHttpBinding ();
 			var remoteAddress = new EndpointAddress ("http://localhost:37564/Service1");
-			var client = new Service1Client (binding, remoteAddress);
+
+			var normalClient      = new Service1Client (binding, remoteAddress);
+			var collectionClient  = new Service1Client (binding, remoteAddress);
+			var nestedClient      = new Service1Client (binding, remoteAddress);
 
 			var waits = new ManualResetEvent [3];
 			for (int i = 0; i < waits.Length; i++)
 				waits [i] = new ManualResetEvent (false);
 
-			client.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
-				if (e.Error != null)
+			normalClient.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
+				if (e.Error != null) {
+					Assert.Fail ("Normal failed; error: {0}", e.Error);
 					throw e.Error;
+				}
 				Assert.AreEqual ("A", ((DataType1) e.Result).Id, "Normal");
 				waits [0].Set ();
 			};
-			client.GetDataAsync ();
+			normalClient.GetDataAsync ();
 
-			client.GetCollectionDataCompleted += delegate (object sender, GetCollectionDataCompletedEventArgs e) {
-				if (e.Error != null)
+			collectionClient.GetCollectionDataCompleted += delegate (object sender, GetCollectionDataCompletedEventArgs e) {
+				if (e.Error != null) {
+					Assert.Fail ("Collection failed; error: {0}", e.Error);
 					throw e.Error;
+				}
 				Assert.AreEqual ("B,C", ItemsToString (e.Result.Cast<DataType1> ()), "Collection");
 				waits [1].Set ();
 			};
-			client.GetCollectionDataAsync ();
+			collectionClient.GetCollectionDataAsync ();
 
-			client.GetNestedDataCompleted += delegate (object sender, GetNestedDataCompletedEventArgs e) {
-				if (e.Error != null)
+			nestedClient.GetNestedDataCompleted += delegate (object sender, GetNestedDataCompletedEventArgs e) {
+				if (e.Error != null) {
+					Assert.Fail ("Nested failed; error: {0}", e.Error);
 					throw e.Error;
+				}
 				Assert.AreEqual ("D,E", ItemsToString (e.Result.Items.Cast<DataType1> ()), "Nested");
 				waits [2].Set ();
 			};
-			client.GetNestedDataAsync ();
+			nestedClient.GetNestedDataAsync ();
 
-			WaitHandle.WaitAll (waits.Cast<WaitHandle> ().ToArray (), TimeSpan.FromMinutes (1));
+			WaitHandle.WaitAll (waits, TimeSpan.FromMinutes (1));
 		}
 
 		string ItemsToString (IEnumerable<DataType1> items)
