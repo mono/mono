@@ -423,7 +423,8 @@ namespace Mono.CSharp
 
 			base.EmitContainer ();
 
-			VerifyMembers ();
+			if (Compiler.Report.Errors == 0)
+				VerifyMembers ();
 
 			if (anonymous_types != null) {
 				foreach (var atypes in anonymous_types)
