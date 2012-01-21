@@ -2676,10 +2676,12 @@ add_wrappers (MonoAotCompile *acfg)
 			add_method (acfg, m);
 
 			method = mono_class_get_method_from_name_flags (klass, "BeginInvoke", -1, 0);
-			add_method (acfg, mono_marshal_get_delegate_begin_invoke (method));
+			if (method)
+				add_method (acfg, mono_marshal_get_delegate_begin_invoke (method));
 
 			method = mono_class_get_method_from_name_flags (klass, "EndInvoke", -1, 0);
-			add_method (acfg, mono_marshal_get_delegate_end_invoke (method));
+			if (method)
+				add_method (acfg, mono_marshal_get_delegate_end_invoke (method));
 		}
 	}
 
