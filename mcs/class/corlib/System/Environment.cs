@@ -651,7 +651,11 @@ namespace System {
 					return Path.Combine (home, "Library", "Caches");
 				else
 					return String.Empty;
-				
+
+				// #2873
+			case SpecialFolder.UserProfile:
+				return home;
+
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
@@ -669,7 +673,6 @@ namespace System {
 			case SpecialFolder.CommonDesktopDirectory:
 			case SpecialFolder.PrinterShortcuts:
 			case SpecialFolder.Windows:
-			case SpecialFolder.UserProfile:
 			case SpecialFolder.SystemX86:
 			case SpecialFolder.ProgramFilesX86:
 			case SpecialFolder.CommonProgramFilesX86:
