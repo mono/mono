@@ -506,7 +506,7 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 	arm_ucontext *my_uc = ctx;
 
 	UCONTEXT_REG_PC (my_uc) = mctx->eip;
-	UCONTEXT_REG_SP (my_uc) = mctx->regs [ARMREG_FP];
+	UCONTEXT_REG_SP (my_uc) = mctx->regs [ARMREG_SP];
 	/* The upper registers are not guaranteed to be valid */
 	memcpy (&UCONTEXT_REG_R0 (my_uc), &mctx->regs, sizeof (mgreg_t) * 12);
 #endif
