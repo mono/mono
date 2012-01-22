@@ -58,9 +58,9 @@ namespace System.ServiceModel.Configuration
 			content_type_mapper = new ConfigurationProperty ("contentTypeMapper", typeof (string), "", null, null, ConfigurationPropertyOptions.None);
 			cross_domain_script_access_enabled = new ConfigurationProperty ("crossDomainScriptAccessEnabled", typeof (bool), false, null, null, ConfigurationPropertyOptions.None);
 			host_name_comparison_mode = new ConfigurationProperty ("hostNameComparisonMode", typeof (HostNameComparisonMode), HostNameComparisonMode.StrongWildcard, null, null, ConfigurationPropertyOptions.None);
-			max_buffer_pool_size = new ConfigurationProperty ("maxBufferPoolSize", typeof (long), 0x80000, null, null, ConfigurationPropertyOptions.None);
+			max_buffer_pool_size = new ConfigurationProperty ("maxBufferPoolSize", typeof (long), 0x80000L, null, null, ConfigurationPropertyOptions.None);
 			max_buffer_size = new ConfigurationProperty ("maxBufferSize", typeof (int), 0x10000, null, null, ConfigurationPropertyOptions.None);
-			max_received_message_size = new ConfigurationProperty ("maxReceivedMessageSize", typeof (long), 0x10000, null, null, ConfigurationPropertyOptions.None);
+			max_received_message_size = new ConfigurationProperty ("maxReceivedMessageSize", typeof (long), 0x10000L, null, null, ConfigurationPropertyOptions.None);
 			reader_quotas = new ConfigurationProperty ("readerQuotas", typeof (XmlDictionaryReaderQuotas), null, null, null, ConfigurationPropertyOptions.None);
 			security = new ConfigurationProperty ("security", typeof (WebHttpSecurity), null, null, null, ConfigurationPropertyOptions.None);
 			transfer_mode = new ConfigurationProperty ("transferMode", typeof (TransferMode), TransferMode.Buffered, null, null, ConfigurationPropertyOptions.None);
