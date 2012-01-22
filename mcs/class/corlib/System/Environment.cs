@@ -652,9 +652,11 @@ namespace System {
 				else
 					return String.Empty;
 
+#if NET_4_0
 				// #2873
 			case SpecialFolder.UserProfile:
 				return home;
+#endif
 
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
