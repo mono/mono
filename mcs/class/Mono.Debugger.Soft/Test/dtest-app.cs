@@ -227,6 +227,7 @@ public class Tests : TestsBase
 		dynamic_methods ();
 		user ();
 		type_load ();
+		regress ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -961,6 +962,32 @@ public class Tests : TestsBase
 		c.ToString ();
 		var c2 = new TypeLoadClass2 ();
 		c2.ToString ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void regress () {
+		regress_2755 (DateTime.Now);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static unsafe void regress_2755 (DateTime d) {
+		int* buffer = stackalloc int [128];
+
+		regress_2755_2 ();
+
+		int sum = 0;
+		for (int i = 0; i < 128; ++i)
+			sum += buffer [i];
+
+		regress_2755_3 (sum);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void regress_2755_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void regress_2755_3 (int sum) {
 	}
 }
 

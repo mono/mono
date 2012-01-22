@@ -53,8 +53,9 @@ public class DebuggerTests
 			pi.Arguments = String.Join (" ", args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
 		} else {
-			Console.WriteLine ("Listening...");
-			vm = VirtualMachineManager.Listen (new IPEndPoint (IPAddress.Any, 10000));
+			var ep = new IPEndPoint (IPAddress.Any, 10000);
+			Console.WriteLine ("Listening on " + ep + "...");
+			vm = VirtualMachineManager.Listen (ep);
 		}
 
 		var load_req = vm.CreateAssemblyLoadRequest ();
@@ -2821,5 +2822,25 @@ public class DebuggerTests
 		Assert.AreEqual (iface, map.InterfaceType);
 		Assert.AreEqual (2, map.InterfaceMethods.Length);
 		Assert.AreEqual (2, map.TargetMethods.Length);
+	}
+
+	[Test]
+	public void StackAlloc_Breakpoints_Regress2775 () {
+		// Check that breakpoints on arm don't overwrite stackalloc-ed memory
+		var e = run_until ("regress_2755");
+
+		var frame = e.Thread.GetFrames () [0];
+		var m = e.Method;
+		// This breaks at the call site
+		vm.SetBreakpoint (m, m.Locations [2].ILOffset);
+
+		vm.Resume ();
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is BreakpointEvent);
+
+		e = run_until ("regress_2755_3");
+		frame = e.Thread.GetFrames () [1];
+		var res = frame.GetValue (m.GetLocal ("sum"));
+		AssertValue (0, res);
 	}
 }
