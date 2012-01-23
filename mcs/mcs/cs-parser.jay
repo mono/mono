@@ -4895,6 +4895,11 @@ expression_statement
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| statement_expression COMPLETE_COMPLETION { $$ = $1; }
+	| statement_expression CLOSE_BRACE {
+	        $$ = $1;
+		lbag.AddStatement ($$, GetLocation ($2));
+		report.Error (1525, "Unexpected symbol '}', expecting ';'");
+	  }
 	;
 
 interactive_expression_statement
