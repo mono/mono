@@ -63,6 +63,9 @@ $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
 
 include ../../build/executable.make
 
+$(PROGRAM) : $(build_lib)
+	cp $< $@
+
 $(PROGRAM) : Makefile
 
 MONO = \
