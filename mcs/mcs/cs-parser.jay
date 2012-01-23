@@ -4898,7 +4898,8 @@ expression_statement
 	| statement_expression CLOSE_BRACE {
 	        $$ = $1;
 		lbag.AddStatement ($$, GetLocation ($2));
-		report.Error (1525, "Unexpected symbol '}', expecting ';'");
+		report.Error (1525, "Unexpected symbol '}' after statement, expecting ';'");
+		lexer.putback ('}');
 	  }
 	;
 

@@ -33,7 +33,7 @@ BUILT_SOURCES = cs-parser.cs
 CLEAN_FILES += y.output
 
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -c < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+	$(topdir)/jay/jay -cvt < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 KEEP_OUTPUT_FILE_COPY = yes
 

@@ -1787,7 +1787,7 @@ namespace Mono.CSharp
 			return reader.Peek ();
 		}
 		
-		void putback (int c)
+		public void putback (int c)
 		{
 			if (putback_char != -1){
 				Console.WriteLine ("Col: " + col);
