@@ -231,7 +231,7 @@ namespace Mono.DocTest {
 
 		/// <remarks><c>T:Mono.DocTest.Widget.Direction</c>.</remarks>
 		[Flags]
-		public enum Direction {
+		protected internal enum Direction {
 			/// <remarks><c>T:Mono.DocTest.Widget.Direction.North</c>.</remarks>
 			North,
 			/// <remarks><c>T:Mono.DocTest.Widget.Direction.South</c>.</remarks>
@@ -576,7 +576,7 @@ namespace Mono.DocTest.Generic {
 		/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection</remarks>
 		public class NestedCollection {
 			/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator</remarks>
-			public struct Enumerator {
+			protected internal struct Enumerator {
 			}
 		}
 	}
