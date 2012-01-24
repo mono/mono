@@ -553,7 +553,6 @@ namespace Mono.CSharp
 		{
 			partial_input = false;
 			Reset ();
-			Tokenizer.LocatedToken.Initialize ();
 
 			var enc = ctx.Settings.Encoding;
 			var s = new MemoryStream (enc.GetBytes (input));
