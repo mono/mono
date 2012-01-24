@@ -447,7 +447,6 @@ namespace Mono.CSharp
 				d.CreateContainer ();
 				d.DefineContainer ();
 				d.Define ();
-				d.Emit ();
 
 				site.AddTypeContainer (d);
 				del_type = new TypeExpression (d.CurrentType, loc);
@@ -487,7 +486,7 @@ namespace Mono.CSharp
 
 			// When site container already exists the inflated version has to be
 			// updated manually to contain newly created field
-			if (gt is InflatedTypeSpec && site_container.Fields.Count > 1) {
+			if (gt is InflatedTypeSpec && site_container.AnonymousMethodsCounter > 1) {
 				var tparams = gt.MemberDefinition.TypeParametersCount > 0 ? gt.MemberDefinition.TypeParameters : TypeParameterSpec.EmptyTypes;
 				var inflator = new TypeParameterInflator (module, gt, tparams, gt.TypeArguments);
 				gt.MemberCache.AddMember (field.InflateMember (inflator));
@@ -965,7 +964,7 @@ namespace Mono.CSharp
 
 		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)
 		{
-			int index = fields == null ? 0 : fields.Count;
+			int index = AnonymousMethodsCounter++;
 			Field f = new HoistedField (this, type, Modifiers.PUBLIC | Modifiers.STATIC, "Site" + index.ToString ("X"), null, loc);
 			f.Define ();
 

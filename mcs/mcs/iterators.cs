@@ -187,7 +187,7 @@ namespace Mono.CSharp
 				throw new InternalErrorException ();
 
 			this.method = method;
-			AddMethod (method);
+			Members.Add (method);
 		}
 
 		protected override bool DoDefineMembers ()
@@ -329,7 +329,7 @@ namespace Mono.CSharp
 				: base (host, null, new TypeExpression (host.Compiler.BuiltinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("Dispose", host.Location))
 			{
-				host.AddMethod (this);
+				host.Members.Add (this);
 
 				Block.AddStatement (new DisposeMethodStatement (host.Iterator));
 			}
@@ -494,10 +494,10 @@ namespace Mono.CSharp
 					get_enumerator.Block.AddStatement (
 						new Return (new Invocation (new DynamicMethodGroupExpr (gget_enumerator, Location), null), Location));
 
-					AddMethod (get_enumerator);
-					AddMethod (gget_enumerator);
+					Members.Add (get_enumerator);
+					Members.Add (gget_enumerator);
 				} else {
-					AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
+					Members.Add (new GetEnumeratorMethod (this, enumerator_type, name));
 				}
 			}
 
@@ -526,7 +526,7 @@ namespace Mono.CSharp
 			current.Get = new Property.GetMethod (current, 0, null, Location);
 			current.Get.Block = get_block;
 
-			AddProperty (current);
+			Members.Add (current);
 		}
 
 		void Define_Reset ()
@@ -536,7 +536,7 @@ namespace Mono.CSharp
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
-			AddMethod (reset);
+			Members.Add (reset);
 
 			reset.Block = new ToplevelBlock (Compiler, Location);
 

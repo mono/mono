@@ -1,4 +1,4 @@
-// CS0082: A member `Class.op_Implicit(byte)' is already reserved
+// CS0111: A member `Class.op_Implicit(byte)' is already defined. Rename this member or use different parameter types
 // Line: 9
 
 public class Class {

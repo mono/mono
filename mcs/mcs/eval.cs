@@ -375,7 +375,7 @@ namespace Mono.CSharp
 				// Need to setup MemberCache
 				parser_result.CreateContainer ();
 
-				var method = parser_result.Methods[0] as Method;
+				var method = parser_result.Members[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
@@ -654,7 +654,7 @@ namespace Mono.CSharp
 				host.DefineContainer ();
 				host.Define ();
 
-				expression_method = (Method) host.Methods[0];
+				expression_method = (Method) host.Members[0];
 			} else {
 				expression_method = null;
 			}
@@ -698,34 +698,36 @@ namespace Mono.CSharp
 			var tt = assembly.Builder.GetType (host.TypeBuilder.Name);
 			var mi = tt.GetMethod (expression_method.MemberName.Name);
 
-			if (host.Fields != null) {
-				//
-				// We need to then go from FieldBuilder to FieldInfo
-				// or reflection gets confused (it basically gets confused, and variables override each
-				// other).
-				//
-				foreach (Field field in host.Fields) {
-					var fi = tt.GetField (field.Name);
+			//
+			// We need to then go from FieldBuilder to FieldInfo
+			// or reflection gets confused (it basically gets confused, and variables override each
+			// other).
+			//
+			foreach (var member in host.Members) {
+				var field = member as Field;
+				if (field == null)
+					continue;
 
-					Tuple<FieldSpec, FieldInfo> old;
+				var fi = tt.GetField (field.Name);
 
-					// If a previous value was set, nullify it, so that we do
-					// not leak memory
-					if (fields.TryGetValue (field.Name, out old)) {
-						if (old.Item1.MemberType.IsStruct) {
-							//
-							// TODO: Clear fields for structs
-							//
-						} else {
-							try {
-								old.Item2.SetValue (null, null);
-							} catch {
-							}
+				Tuple<FieldSpec, FieldInfo> old;
+
+				// If a previous value was set, nullify it, so that we do
+				// not leak memory
+				if (fields.TryGetValue (field.Name, out old)) {
+					if (old.Item1.MemberType.IsStruct) {
+						//
+						// TODO: Clear fields for structs
+						//
+					} else {
+						try {
+							old.Item2.SetValue (null, null);
+						} catch {
 						}
 					}
-
-					fields[field.Name] = Tuple.Create (field.Spec, fi);
 				}
+
+				fields[field.Name] = Tuple.Create (field.Spec, fi);
 			}
 			
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);

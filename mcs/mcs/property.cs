@@ -445,7 +445,7 @@ namespace Mono.CSharp
 				if (first == null)
 					first = value;
 
-				Parent.AddMember (get);
+				Parent.AddNameToContainer (get, get.MemberName.Basename);
 			}
 		}
 
@@ -458,7 +458,7 @@ namespace Mono.CSharp
 				if (first == null)
 					first = value;
 
-				Parent.AddMember (set);
+				Parent.AddNameToContainer (set, set.MemberName.Basename);
 			}
 		}
 
@@ -743,7 +743,7 @@ namespace Mono.CSharp
 			if (!field.Define ())
 				return;
 
-			Parent.PartialContainer.AddField (field);
+			Parent.PartialContainer.Members.Add (field);
 
 			FieldExpr fe = new FieldExpr (field, Location);
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
@@ -787,7 +787,7 @@ namespace Mono.CSharp
 				else
 					pm = new GetMethod (this, 0, null, Location);
 
-				Parent.AddMember (pm);
+				Parent.AddNameToContainer (pm, pm.MemberName.Basename);
 			}
 
 			if (!CheckBase ())
@@ -1040,8 +1040,7 @@ namespace Mono.CSharp
 
 			declarators.Add (declarator);
 
-			// TODO: This will probably break
-			Parent.AddMember (this, declarator.Name.Value);
+			Parent.AddNameToContainer (this, declarator.Name.Value);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -1074,14 +1073,14 @@ namespace Mono.CSharp
 					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
 
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Events.IndexOf (this);
 				foreach (var d in declarators) {
 					var ef = new EventField (Parent, t, mod_flags_src, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 
 					if (d.Initializer != null)
 						ef.initializer = d.Initializer;
 
-					Parent.PartialContainer.Events.Insert (++index, ef);
+					ef.Define ();
+					Parent.PartialContainer.Members.Add (ef);
 				}
 			}
 
@@ -1098,7 +1097,7 @@ namespace Mono.CSharp
 				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				MemberName, null);
 
-			Parent.PartialContainer.AddField (backing_field);
+			Parent.PartialContainer.Members.Add (backing_field);
 			backing_field.Initializer = Initializer;
 			backing_field.ModFlags &= ~Modifiers.COMPILER_GENERATED;
 
@@ -1238,7 +1237,7 @@ namespace Mono.CSharp
 			}
 			set {
 				add = value;
-				Parent.AddMember (value);
+				Parent.AddNameToContainer (value, value.MemberName.Basename);
 			}
 		}
 
@@ -1254,7 +1253,7 @@ namespace Mono.CSharp
 			}
 			set {
 				remove = value;
-				Parent.AddMember (value);
+				Parent.AddNameToContainer (value, value.MemberName.Basename);
 			}
 		}
 		#endregion
@@ -1572,8 +1571,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (!Parent.PartialContainer.AddMember (this))
-				return false;
+			Parent.PartialContainer.AddNameToContainer (this, MemberName.Basename);
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 			

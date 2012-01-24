@@ -496,8 +496,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void EmitContainer ()
+		public override void Emit ()
 		{
+			base.Emit ();
+
 			SymbolWriter.DefineAnonymousScope (ID);
 
 			if (hoisted_this != null)
@@ -518,8 +520,6 @@ namespace Mono.CSharp {
 					SymbolWriter.DefineCapturedScope (ID, sf.Storey.ID, sf.Field.Name);
 				}
 			}
-
-			base.EmitContainer ();
 		}
 
 		//
@@ -1332,7 +1332,7 @@ namespace Mono.CSharp {
 				this.Storey = storey;
 				this.RealName = real_name;
 
-				Parent.PartialContainer.AddMethod (this);
+				Parent.PartialContainer.Members.Add (this);
 				Block = new ToplevelBlock (am.block, parameters);
 			}
 
@@ -1638,7 +1638,7 @@ namespace Mono.CSharp {
 				//
 				if (!method.MemberName.IsGeneric) {
 					var parent = method.Parent.PartialContainer;
-					int id = parent.Fields == null ? 0 : parent.Fields.Count;
+					int id = parent.AnonymousMethodsCounter++;
 					var cache_type = storey != null && storey.Mutator != null ? storey.Mutator.Mutate (type) : type;
 
 					am_cache = new Field (parent, new TypeExpression (cache_type, loc),
@@ -1845,7 +1845,7 @@ namespace Mono.CSharp {
 					new MemberName (p.Name, p.Location), null);
 				prop.Get = new Property.GetMethod (prop, 0, null, p.Location);
 				prop.Get.Block = get_block;
-				a_type.AddProperty (prop);
+				a_type.AddMember (prop);
 			}
 
 			if (error)
@@ -1906,7 +1906,7 @@ namespace Mono.CSharp {
 			Expression rs_hashcode = new IntConstant (Compiler.BuiltinTypes, -2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
 				var p = parameters [i];
-				var f = Fields [i];
+				var f = (Field) Members [i * 2];
 
 				MemberAccess equality_comparer = new MemberAccess (new MemberAccess (
 					system_collections_generic, "EqualityComparer",
@@ -1983,7 +1983,7 @@ namespace Mono.CSharp {
 
 			equals.Block = equals_block;
 			equals.Define ();
-			AddMethod (equals);
+			Members.Add (equals);
 
 			//
 			// GetHashCode () override
@@ -2037,7 +2037,7 @@ namespace Mono.CSharp {
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_top;
 			hashcode.Define ();
-			AddMethod (hashcode);
+			Members.Add (hashcode);
 
 			//
 			// ToString () override
@@ -2047,7 +2047,7 @@ namespace Mono.CSharp {
 			tostring_block.AddStatement (new Return (string_concat, loc));
 			tostring.Block = tostring_block;
 			tostring.Define ();
-			AddMethod (tostring);
+			Members.Add (tostring);
 
 			return true;
 		}

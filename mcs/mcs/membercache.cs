@@ -894,7 +894,7 @@ namespace Mono.CSharp {
 				return IndexerNameAlias;
 
 			if (mc is Constructor)
-				return Constructor.ConstructorName;
+				return mc.IsStatic ? Constructor.TypeConstructorName : Constructor.ConstructorName;
 
 			return mc.MemberName.Name;
 		}

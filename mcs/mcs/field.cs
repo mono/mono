@@ -119,8 +119,7 @@ namespace Mono.CSharp
 
 			declarators.Add (declarator);
 
-			// TODO: This will probably break
-			Parent.AddMember (this, declarator.Name.Value);
+			Parent.AddNameToContainer (this, declarator.Name.Value);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -408,12 +407,12 @@ namespace Mono.CSharp
 					GetSignatureForError ());
 			} else if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Fields.IndexOf (this);
 				foreach (var d in declarators) {
 					var f = new FixedField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					f.initializer = d.Initializer;
 					((ConstInitializer) f.initializer).Name = d.Name.Value;
-					Parent.PartialContainer.Fields.Insert (++index, f);
+					f.Define ();
+					Parent.PartialContainer.Members.Add (f);
 				}
 			}
 			
@@ -641,13 +640,13 @@ namespace Mono.CSharp
 
 			if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Fields.IndexOf (this);
 				foreach (var d in declarators) {
 					var f = new Field (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					if (d.Initializer != null)
 						f.initializer = d.Initializer;
 
-					Parent.PartialContainer.Fields.Insert (++index, f);
+					f.Define ();
+					Parent.PartialContainer.Members.Add (f);
 				}
 			}
 

@@ -1361,10 +1361,6 @@ namespace Mono.CSharp {
 
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
-			// TODO: It can be deleted when members will be defined in correct order
-			if (overload is Operator)
-				return overload.EnableOverloadChecks (this);
-
 			if (overload is Indexer)
 				return false;
 
@@ -1618,6 +1614,9 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 					return false;
 				}
+
+				if ((caching_flags & Flags.MethodOverloadsExist) != 0)
+					Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 
 				// the rest can be ignored
 				return true;

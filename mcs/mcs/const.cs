@@ -63,12 +63,12 @@ namespace Mono.CSharp {
 
 			if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Constants.IndexOf (this);
 				foreach (var d in declarators) {
 					var c = new Const (Parent, t, ModFlags & ~Modifiers.STATIC, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					c.initializer = d.Initializer;
 					((ConstInitializer) c.initializer).Name = d.Name.Value;
-					Parent.PartialContainer.Constants.Insert (++index, c);
+					c.Define ();
+					Parent.PartialContainer.Members.Add (c);
 				}
 			}
 

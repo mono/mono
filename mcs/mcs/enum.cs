@@ -189,8 +189,7 @@ namespace Mono.CSharp {
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
-					TypeAttributes.Class | TypeAttributes.Sealed | base.TypeAttr;
+				return base.TypeAttr | TypeAttributes.Class | TypeAttributes.Sealed;
 			}
 		}
 
@@ -215,7 +214,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			AddConstant (em);
+			AddMember (em);
 		}
 
 		public static void Error_1008 (Location loc, Report Report)
@@ -236,15 +235,13 @@ namespace Mono.CSharp {
 
 		protected override bool DoDefineMembers ()
 		{
-			if (constants != null) {
-				for (int i = 0; i < constants.Count; ++i) {
-					EnumMember em = (EnumMember) constants [i];
-					if (em.Initializer == null) {
-						em.Initializer = new ImplicitInitializer (em, i == 0 ? null : (EnumMember) constants[i - 1]);
-					}
-
-					em.Define ();
+			for (int i = 0; i < Members.Count; ++i) {
+				EnumMember em = (EnumMember) Members[i];
+				if (em.Initializer == null) {
+					em.Initializer = new ImplicitInitializer (em, i == 0 ? null : (EnumMember) Members[i - 1]);
 				}
+
+				em.Define ();
 			}
 
 			return true;

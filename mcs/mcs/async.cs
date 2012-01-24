@@ -669,10 +669,12 @@ namespace Mono.CSharp
 
 			builder = AddCompilerGeneratedField ("$builder", new TypeExpression (bt, Location));
 
+			var ctor = DefineDefaultConstructor (false);
+
 			if (!base.DoDefineMembers ())
 				return false;
 
-			var block = instance_constructors[0].Block;
+			Block block = ctor.Block;
 
 			var mg = MethodGroupExpr.CreatePredefined (builder_factory, bt, Location);
 			block.AddStatement (
