@@ -193,7 +193,7 @@ REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
 endif
 REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 if INSTALL_4_0
-REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
+REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.0,g'
 else
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 endif
