@@ -130,7 +130,7 @@ namespace System.Net.Http.Headers
 		readonly Dictionary<string, HeaderBucket> headers;
 		readonly HttpHeaderKind HeaderKind;
 
-		protected bool? connectionclose, transferEncodingChunked;
+		internal bool? connectionclose, transferEncodingChunked;
 
 		protected HttpHeaders ()
 		{
