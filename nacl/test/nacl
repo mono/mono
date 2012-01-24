@@ -30,8 +30,6 @@ if [ $# -gt 0 ]; then
       COMPILE_AOT=1
       CC_DEFINES=-DAOT_VERSION
       #RELOCATE_RODATA=
-    elif [ $1 == "regression" ]; then
-      MODE=regression
     else
       echo "Unrecognized option '$1'"
       exit -1
@@ -41,7 +39,7 @@ if [ $# -gt 0 ]; then
 fi
 
 MONO="${MONO_BASE}/bin/mono"
-readonly MONO_NORMAL_BASE=../normal-mono
+readonly MONO_NORMAL_BASE=${MONO_BASE}
 readonly NCVAL=ncval_x86_${TARGET_BITSIZE}
 
 readonly IRT=${NACL_BIN_PATH}/../runtime/irt_core_x86_${TARGET_BITSIZE}.nexe
@@ -61,7 +59,7 @@ fi
 # add nacl-gcc to path (from NaCl SDK)
 export PATH=${NACL_BIN_PATH}:$PATH
 
-# add normal mono/gmcs to path
+# add mono/gmcs to path
 export PATH=${MONO_NORMAL_BASE}/bin:$PATH
 
 # echo version of nacl-gcc
@@ -94,7 +92,7 @@ readonly AOT_OPTIONS=full,static,nodebug,ntrampolines=4096
 cp ${MONO_NORMAL_BASE}/lib/mono/4.0/mscorlib.dll .
 
 # compile c-sharp file with gmcs
-../normal-mono/bin/gmcs -lib:. -warn:0 hw.cs
+${MONO_NORMAL_BASE}/bin/gmcs -lib:. -warn:0 hw.cs
 
 # convert .exe to .exe.o assembly files
 # convert mscorlib to a .dll.o file
@@ -112,52 +110,15 @@ elif [ $MODE = "nacl" ]; then
   $CC my.c ${CC_DEFINES} ${AOT_OBJS} -finstrument-for-thread-suspension -o hw-test.nexe -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -I${MONO_RUNTIME_BASE}/include -I${MONO_RUNTIME_BASE}/include/mono-2.0 -L${MONO_RUNTIME_BASE}/lib ${RELOCATE_RODATA} ${LD_FLAGS}
 fi
 
-readonly fsatests="basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe devirtualization.exe basic-simd.exe gc-test.exe generics.exe iltests.exe nacl.exe"
-if [ $MODE = "regression" ]; then
-  #rm -rf fsa-tmp
-  mkdir -p fsa-tmp
-  DIR=$(pwd)
-  cd ../${MONO_SNAPSHOT}/mono/mini/
-   make $fsatests generics-variant-types.dll TestDriver.dll
-   cp $fsatests generics-variant-types.dll TestDriver.dll $DIR/fsa-tmp
-  cd -
- 
-  CLASS=${MONO_NORMAL_BASE}/lib/mono/4.0
-  cp $CLASS/System.Core.dll $CLASS/System.dll $CLASS/Mono.Posix.dll $CLASS/System.Configuration.dll $CLASS/System.Security.dll $CLASS/System.Xml.dll $CLASS/Mono.Security.dll $CLASS/Mono.Simd.dll fsa-tmp
-  cp mscorlib.dll fsa-tmp
 
-  AOT_OBJS=""
-  if [ $COMPILE_AOT = "1" ]; then
-    for t in $fsatests; do
-      MONO_PATH=fsa-tmp ${MONO} --aot=${AOT_OPTIONS} fsa-tmp/$t
-      AOT_OBJS="${AOT_OBJS} fsa-tmp/$t.o" 
-    done
-    for d in fsa-tmp/*.dll; do
-      MONO_PATH=fsa-tmp ${MONO} --aot=${AOT_OPTIONS} $d
-      AOT_OBJS="${AOT_OBJS} $d.o" 
-    done  
-  fi
-
-  $CC -o fsa-tmp/fsacheck.nexe -finstrument-for-thread-suspension -g ../../mono/mini/fsacheck.c ${CC_DEFINES} ${AOT_OBJS} -lmono-2.0 -lpthread -lm -lnacl_dyncode -lg -lnosys -L${MONO_RUNTIME_BASE}/lib -I${MONO_RUNTIME_BASE}/include/mono-2.0  -I${MONO_RUNTIME_BASE}/include ${RELOCATE_RODATA} ${LD_FLAGS}
-fi
-
-if [ $MODE = "regression" ]; then
-  cd fsa-tmp
-  ${NCVAL} --local_cpuid fsacheck.nexe 2> validator_out || echo "fsacheck.nexe invalid: continuing anyway"
-  ${NACL_CROSS_PREFIX_DASH}objdump -d fsacheck.nexe > fsacheck.disasm
-  for t in $fsatests; do
-    ${SEL_LDR} -S -a -B ${IRT} ${SEL_LDR_ARGS} ./fsacheck.nexe $t || true
-  done
+export MONO_PATH=$(pwd)
+# run generated test(select one or more below)
+if [ $MODE = "normal" ]; then
+  ./hw-test
 else
-  export MONO_PATH=$(pwd)
-  # run generated test(select one or more below)
-  if [ $MODE = "normal" ]; then
-    ./hw-test
-  else
-    ${NCVAL} --local_cpuid hw-test.nexe 2> validator_out || echo "hw-test.nexe invalid: continuing anyway"
-    ${NACL_CROSS_PREFIX_DASH}objdump -d hw-test.nexe > hw-test.disasm
-    ${SEL_LDR} -S -a -B ${IRT} ${SEL_LDR_ARGS} ./hw-test.nexe
-  fi
+  ${NCVAL} --local_cpuid hw-test.nexe 2> validator_out || echo "hw-test.nexe invalid: continuing anyway"
+  ${NACL_CROSS_PREFIX_DASH}objdump -d hw-test.nexe > hw-test.disasm
+  ${SEL_LDR} -S -a -B ${IRT} ${SEL_LDR_ARGS} ./hw-test.nexe
 fi
 
 exit 0

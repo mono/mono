@@ -398,6 +398,10 @@ test_sources = 			\
 	basic-simd.cs
 
 regtests=basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe iltests.exe devirtualization.exe generics.exe basic-simd.exe
+if NACL_CODEGEN
+test_sources += nacl.cs
+regtests += nacl.exe
+endif
 
 if X86
 if MONO_DEBUGGER_SUPPORTED
@@ -547,10 +551,10 @@ libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
 libmonoinclude_HEADERS = jit.h
 
-basic-simd.exe: basic-simd.cs
+basic-simd.exe: basic-simd.cs TestDriver.dll
 	$(MCS) -out:$@ $< -r:TestDriver.dll -r:Mono.Simd.dll
 
-nacl.exe: nacl.cs
+nacl.exe: nacl.cs TestDriver.dll
 	$(MCS) -out:$@ $< -r:TestDriver.dll -r:Mono.Simd.dll
 
 generics.exe: generics.cs TestDriver.dll generics-variant-types.dll
@@ -636,7 +640,11 @@ checktests: $(regtests)
 	for i in $(regtests); do $(RUNTIME) $$i; done
 
 rcheck: mono $(regtests)
+if NACL_CODEGEN
+	for i in $(regtests); do echo "running test $$i"; $(RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
+else
 	$(RUNTIME) --regression $(regtests)
+endif
 
 LLVM_AOT_RUNTIME_OPTS=$(if $(LLVM),--llvm,)
 
