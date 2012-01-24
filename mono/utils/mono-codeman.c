@@ -606,6 +606,12 @@ mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsi
 	}
 	status = nacl_dyncode_create (code, data, newsize);
 	if (status != 0) {
+		unsigned char *codep;
+		fprintf(stderr, "Error creating Native Client dynamic code section attempted to be\n"
+		                "emitted at %p (hex dissasembly of code follows):\n", code);
+		for (codep = data; codep < data + newsize; codep++)
+			fprintf(stderr, "%02x ", *codep);
+		fprintf(stderr, "\n");
 		g_assert_not_reached ();
 	}
 	mono_g_hash_table_remove (cman->hash, data);
