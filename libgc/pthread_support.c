@@ -1343,12 +1343,10 @@ int WRAP_FUNC(pthread_join)(pthread_t thread, void **retval)
 }
 
 #ifdef NACL
-/* Native Client doesn't support pthread cleanup functions, */
-/* so wrap pthread_exit and manually cleanup the thread.    */
+/* TODO: remove, NaCl glibc now supports pthread cleanup functions. */
 void
 WRAP_FUNC(pthread_exit)(void *status)
 {
-    GC_thread_exit_proc(0); 
     REAL_FUNC(pthread_exit)(status);
 }
 #endif

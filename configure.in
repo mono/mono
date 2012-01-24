@@ -989,6 +989,8 @@ AC_TRY_COMPILE([
 	AC_DEFINE_UNQUOTED(MONO_ZERO_LEN_ARRAY, 1, [Length of zero length arrays])
 ])
 
+AC_CHECK_HEADERS(nacl/nacl_dyncode.h)
+
 if test x$target_win32 = xno; then
 
 	dnl hires monotonic clock support
@@ -1625,11 +1627,13 @@ if test x$target_win32 = xno; then
 	dnl **********************************
 	dnl *** epoll			   ***
 	dnl **********************************
-	AC_CHECK_HEADERS(sys/epoll.h)
-	haveepoll=no
-	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
-	if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes" ; then
-		AC_DEFINE(HAVE_EPOLL, 1, [epoll supported])
+	if test "x$ac_cv_header_nacl_nacl_dyncode_h" = "xno"; then
+		AC_CHECK_HEADERS(sys/epoll.h)
+		haveepoll=no
+		AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
+		if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes"; then
+			AC_DEFINE(HAVE_EPOLL, 1, [epoll supported])
+		fi
 	fi
 
 	havekqueue=no
@@ -2079,6 +2083,16 @@ AC_ARG_ENABLE(nacl_codegen, [  --enable-nacl-codegen      Enable Native Client c
 AC_ARG_ENABLE(nacl_gc, [  --enable-nacl-gc           Enable Native Client garbage collection], enable_nacl_gc=$enableval, enable_nacl_gc=no)
 
 AM_CONDITIONAL(NACL_CODEGEN, test x$enable_nacl_codegen != xno)
+
+dnl
+dnl Hack to use system mono for operations in build/install not allowed in NaCl.
+dnl
+nacl_self_host=""
+if test "x$ac_cv_header_nacl_nacl_dyncode_h" = "xyes"; then
+   nacl_self_host="nacl_self_host"
+fi
+AC_SUBST(nacl_self_host)
+
 if test "x$enable_nacl_codegen" = "xyes"; then
    MONO_NACL_ALIGN_MASK_OFF=1
    CPPFLAGS="$CPPFLAGS -D__native_client_codegen__"

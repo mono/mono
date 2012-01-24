@@ -178,7 +178,11 @@ DefaultConfigureStep() {
 DefaultBuildStep() {
   # assumes pwd has makefile
   make clean
-  make -j4
+if [ $TARGET_BITSIZE == "64" ]; then
+  make -j8
+else
+  make
+fi
 }
 
 
