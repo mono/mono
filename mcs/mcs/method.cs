@@ -1648,20 +1648,14 @@ namespace Mono.CSharp {
 			if (ConstructorBuilder != null)
 				return true;
 
-			var ca = MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;
-			
-			if ((ModFlags & Modifiers.STATIC) != 0) {
-				ca |= MethodAttributes.Static | MethodAttributes.Private;
-			} else {
-				ca |= ModifiersExtensions.MethodAttr (ModFlags);
-			}
-
 			if (!CheckAbstractAndExtern (block != null))
 				return false;
 			
 			// Check if arguments were correct.
 			if (!CheckBase ())
 				return false;
+
+			var ca = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;
 
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
 				ca, CallingConventions,
