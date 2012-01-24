@@ -5215,19 +5215,38 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				max_offset += LOOP_ALIGNMENT;
 #ifdef __native_client_codegen__
 			/* max alignment for native client */
-			max_offset += kNaClAlignment;
+			if (bb->flags & BB_INDIRECT_JUMP_TARGET || bb->flags & BB_EXCEPTION_HANDLER)
+				max_offset += kNaClAlignment;
 #endif
 			MONO_BB_FOR_EACH_INS (bb, ins) {
 				if (ins->opcode == OP_LABEL)
 					ins->inst_c1 = max_offset;
 #ifdef __native_client_codegen__
+				switch (ins->opcode)
 				{
-					int space_in_block = kNaClAlignment -
-						((max_offset + cfg->code_len) & kNaClAlignmentMask);
-					int max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-					if (space_in_block < max_len && max_len < kNaClAlignment) {
-						max_offset += space_in_block;
-					}
+					case OP_FCALL:
+					case OP_LCALL:
+					case OP_VCALL:
+					case OP_VCALL2:
+					case OP_VOIDCALL:
+					case OP_CALL:
+					case OP_FCALL_REG:
+					case OP_LCALL_REG:
+					case OP_VCALL_REG:
+					case OP_VCALL2_REG:
+					case OP_VOIDCALL_REG:
+					case OP_CALL_REG:
+					case OP_FCALL_MEMBASE:
+					case OP_LCALL_MEMBASE:
+					case OP_VCALL_MEMBASE:
+					case OP_VCALL2_MEMBASE:
+					case OP_VOIDCALL_MEMBASE:
+					case OP_CALL_MEMBASE:
+						max_offset += kNaClAlignment;
+						break;
+				        default:
+						max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN] - 1;
+						break;
 				}
 #endif  /* __native_client_codegen__ */
 				max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
