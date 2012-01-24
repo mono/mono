@@ -5171,7 +5171,6 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 			class->valuetype = class->enumtype = 1;
 		}
 		/*class->enumtype = class->parent->enumtype; */
-		mono_class_setup_supertypes (class);
 	} else {
 		/* initialize com types if COM interfaces are present */
 		if (MONO_CLASS_IS_IMPORT (class))
@@ -7193,7 +7192,10 @@ gboolean
 mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, 
 			   gboolean check_interfaces)
 {
-	g_assert (klassc->idepth > 0);
+	/*setup_supertypes don't mono_class_init anything */
+	mono_class_setup_supertypes (klass);
+	mono_class_setup_supertypes (klassc);
+
 	if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && !MONO_CLASS_IS_INTERFACE (klass)) {
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (klass, klassc->interface_id))
 			return TRUE;
@@ -7304,6 +7306,12 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 
 	if (!oklass->inited)
 		mono_class_init (oklass);
+
+	if (!klass->supertypes)
+		mono_class_setup_supertypes (klass);
+
+	if (!oklass->supertypes)
+		mono_class_setup_supertypes (oklass);
 
 	if (klass->exception_type || oklass->exception_type)
 		return FALSE;
