@@ -154,7 +154,10 @@ mono_threads_core_self_suspend (MonoThreadInfo *info)
 {
 	/*FIXME, check return value*/
 	info->self_suspend = TRUE;
+#if !defined(__native_client__)
+	/* Workaround pthread_kill abort() in NaCl glibc. */
 	pthread_kill (mono_thread_info_get_tid (info), mono_thread_get_abort_signal ());
+#endif
 }
 
 gboolean
@@ -162,7 +165,10 @@ mono_threads_core_suspend (MonoThreadInfo *info)
 {
 	/*FIXME, check return value*/
 	info->self_suspend = FALSE;
+#if !defined(__native_client__)
+	/* Workaround pthread_kill abort() in NaCl glibc. */
 	pthread_kill (mono_thread_info_get_tid (info), mono_thread_get_abort_signal ());
+#endif
 	while (MONO_SEM_WAIT (&info->suspend_semaphore) != 0) {
 		/* g_assert (errno == EINTR); */
 	}
