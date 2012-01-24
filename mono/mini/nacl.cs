@@ -26,6 +26,15 @@ class ThreadRunner {
   }                  
 }
 
+
+class Extensions { public static string BogusProperty { get; set; } }
+class RuntimeServices {
+  public System.Reflection.MemberInfo[] members = typeof(Extensions).GetMembers();
+  public void Run() {
+    foreach (var m in members) System.Console.WriteLine(m);
+  }
+}
+
 class Tests {
 	struct myvt {
 	  public int X;
@@ -101,6 +110,33 @@ class Tests {
           }
           return 0;
         }
+
+
+	static int test_0_reflection() {
+	  RuntimeServices r = new RuntimeServices();
+	  r.Run();
+	  return 0;
+        }
+
+	public class BaseClass {
+	}
+
+	public class LongClass : BaseClass {
+		public long Value;
+		public LongClass(long val) { Value = val; } 
+	}
+
+	static public long add_two_LongClass(BaseClass l1, BaseClass l2) {
+		long l = checked (((LongClass)l1).Value + ((LongClass)l2).Value);
+		return l;
+	}
+
+	static int test_0_laddcc() {
+		long l = add_two_LongClass(new LongClass(System.Int64.MinValue), new LongClass(1234));
+		if (l == 1234)
+			return 1;
+		return 0;
+	}
 
 	public static int Main(String[] args) {
 	  return TestDriver.RunTests(typeof(Tests));
