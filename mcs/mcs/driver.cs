@@ -388,17 +388,12 @@ namespace Mono.CSharp
 		
 		public static void Reset (bool full_flag)
 		{
-			CSharpParser.yacc_verbose_flag = 0;
 			Location.Reset ();
 			
 			if (!full_flag)
 				return;
 
-			AnonymousTypeClass.Reset ();
-			AnonymousMethodBody.Reset ();
-			AnonymousMethodStorey.Reset ();
 			SymbolWriter.Reset ();
-			Switch.Reset ();
 			Linq.QueryBlock.TransparentParameter.Reset ();
 			TypeInfo.Reset ();
 		}

@@ -356,8 +356,6 @@ namespace Mono.CSharp
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.GetCompletions, input, out partial_input);
 				if (parser == null){
-					if (CSharpParser.yacc_verbose_flag != 0)
-						Console.WriteLine ("DEBUG: No completions available");
 					return null;
 				}
 				
@@ -593,7 +591,7 @@ namespace Mono.CSharp
 				parser.Lexer.CompleteOnEOF = true;
 
 			ReportPrinter old_printer = null;
-			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions) && CSharpParser.yacc_verbose_flag == 0)
+			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions))
 				old_printer = ctx.Report.SetPrinter (new StreamReportPrinter (TextWriter.Null));
 
 			try {

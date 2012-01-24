@@ -1912,7 +1912,7 @@ namespace Mono.CSharp {
 			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
-			return VariableInfo.TypeInfo.IsFullyInitialized (ec, VariableInfo, block.StartLocation);
+			return VariableInfo.IsFullyInitialized (ec, block.StartLocation);
 		}
 
 		public bool IsAssigned (BlockContext ec)
@@ -3553,7 +3553,6 @@ namespace Mono.CSharp {
 		VariableReference value;
 		ExpressionStatement string_dictionary;
 		FieldExpr switch_cache_field;
-		static int unique_counter;
 		ExplicitBlock block;
 
 		//
@@ -3914,11 +3913,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public static void Reset ()
-		{
-			unique_counter = 0;
-		}
-
 		public override bool Resolve (BlockContext ec)
 		{
 			Expr = Expr.Resolve (ec);
@@ -4091,7 +4085,7 @@ namespace Mono.CSharp {
 			var ctype = ec.CurrentMemberDefinition.Parent.PartialContainer;
 			Field field = new Field (ctype, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), loc), null);
+				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", ec.Module.CounterSwitchTypes++), loc), null);
 			if (!field.Define ())
 				return;
 			ctype.AddField (field);

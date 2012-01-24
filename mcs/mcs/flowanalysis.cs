@@ -1213,7 +1213,6 @@ namespace Mono.CSharp
 
 		class StructInfo
 		{
-			public readonly TypeSpec Type;
 			readonly List<FieldSpec> fields;
 			public readonly TypeInfo[] StructFields;
 			public readonly int Length;
@@ -1223,14 +1222,13 @@ namespace Mono.CSharp
 			private Dictionary<string, TypeInfo> struct_field_hash;
 			private Dictionary<string, int> field_hash;
 
-			protected bool InTransit;
+			bool InTransit;
 
-			// Private constructor.  To save memory usage, we only need to create one instance
-			// of this class per struct type.
-			private StructInfo (TypeSpec type)
+			//
+			// We only need one instance per type
+			//
+			StructInfo (TypeSpec type)
 			{
-				this.Type = type;
-
 				field_type_hash.Add (type, this);
 
 				fields = MemberCache.GetAllFieldsForDefiniteAssignment (type);
@@ -1327,7 +1325,7 @@ namespace Mono.CSharp
 	// </summary>
 	public class VariableInfo {
 		readonly string Name;
-		public readonly TypeInfo TypeInfo;
+		readonly TypeInfo TypeInfo;
 
 		// <summary>
 		//   The bit offset of this variable in the flow vector.
@@ -1348,7 +1346,7 @@ namespace Mono.CSharp
 
 		VariableInfo[] sub_info;
 
-		protected VariableInfo (string name, TypeSpec type, int offset)
+		VariableInfo (string name, TypeSpec type, int offset)
 		{
 			this.Name = name;
 			this.Offset = offset;
@@ -1359,7 +1357,7 @@ namespace Mono.CSharp
 			Initialize ();
 		}
 
-		protected VariableInfo (VariableInfo parent, TypeInfo type)
+		VariableInfo (VariableInfo parent, TypeInfo type)
 		{
 			this.Name = parent.Name;
 			this.TypeInfo = type;
@@ -1449,6 +1447,11 @@ namespace Mono.CSharp
 		public bool IsStructFieldAssigned (ResolveContext ec, string name)
 		{
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsStructFieldAssigned (this, name);
+		}
+
+		public bool IsFullyInitialized (BlockContext bc, Location loc)
+		{
+			return TypeInfo.IsFullyInitialized (bc, this, loc);
 		}
 
 		public bool IsStructFieldAssigned (MyBitVector vector, string field_name)

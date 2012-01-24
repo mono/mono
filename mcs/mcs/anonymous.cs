@@ -182,7 +182,6 @@ namespace Mono.CSharp {
 
 		// Unique storey ID
 		public readonly int ID;
-		static int unique_id;
 
 		public readonly Block OriginalSourceBlock;
 
@@ -201,11 +200,11 @@ namespace Mono.CSharp {
 		public Expression Instance;
 
 		public AnonymousMethodStorey (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name)
-			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
+			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
 				tparams, Modifiers.SEALED)
 		{
 			OriginalSourceBlock = block;
-			ID = unique_id++;
+			ID = parent.Module.CounterAnonymousContainers++;
 		}
 
 		public void AddCapturedThisField (EmitContext ec)
@@ -596,11 +595,6 @@ namespace Mono.CSharp {
 		public IList<ExplicitBlock> ReferencesFromChildrenBlock {
 			get { return children_references; }
 		}
-
-		public static void Reset ()
-		{
-			unique_id = 0;
-		}		
 	}
 
 	public abstract class HoistedVariable
@@ -1491,8 +1485,6 @@ namespace Mono.CSharp {
 		string block_name;
 		TypeInferenceContext return_inference;
 
-		static int unique_id;
-
 		public AnonymousMethodBody (ParametersCompiled parameters,
 					ParametersBlock block, TypeSpec return_type, TypeSpec delegate_type,
 					Location loc)
@@ -1582,7 +1574,7 @@ namespace Mono.CSharp {
 
 			MemberCore mc = ec.MemberContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
-				"m", null, unique_id++);
+				"m", null, ec.Module.CounterAnonymousMethods++);
 
 			MemberName member_name;
 			if (storey == null && ec.CurrentTypeParameters != null) {
@@ -1747,11 +1739,6 @@ namespace Mono.CSharp {
 		{
 			return TypeManager.CSharpName (type);
 		}
-
-		public static void Reset ()
-		{
-			unique_id = 0;
-		}
 	}
 
 	//
@@ -1759,7 +1746,6 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
-		static int types_counter;
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
 		
@@ -1773,7 +1759,7 @@ namespace Mono.CSharp {
 
 		public static AnonymousTypeClass Create (TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
-			string name = ClassNamePrefix + types_counter++;
+			string name = ClassNamePrefix + parent.Module.CounterAnonymousTypes++;
 
 			ParametersCompiled all_parameters;
 			TypeParameters tparams = null;
@@ -1855,11 +1841,6 @@ namespace Mono.CSharp {
 			return a_type;
 		}
 		
-		public static void Reset ()
-		{
-			types_counter = 0;
-		}
-
 		protected override bool DoDefineMembers ()
 		{
 			if (!base.DoDefineMembers ())

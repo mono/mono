@@ -133,6 +133,7 @@ namespace Mono.CSharp {
 		// Compiler debug flags only
 		public bool ParseOnly, TokenizeOnly, Timestamps;
 		public int DebugFlags;
+		public int VerboseParserFlag;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -1095,7 +1096,7 @@ namespace Mono.CSharp {
 		{
 			switch (arg){
 			case "-v":
-				CSharpParser.yacc_verbose_flag++;
+				settings.VerboseParserFlag++;
 				return ParseResult.Success;
 
 			case "--version":

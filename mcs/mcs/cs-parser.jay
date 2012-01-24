@@ -86,7 +86,7 @@ namespace Mono.CSharp
 		///
 		/// Controls the verbosity of the errors produced by the parser
 		///
-		static public int yacc_verbose_flag;
+		int yacc_verbose_flag;
 
 		/// 
 		/// Used by the interactive shell, flags whether EOF was reached
@@ -6430,6 +6430,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	this.report = report;
 	
 	lang_version = settings.Version;
+	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
 	oob_stack.Clear ();
 	lexer = new Tokenizer (reader, file, compiler);
