@@ -86,6 +86,7 @@ namespace Mono.CSharp {
 		Dictionary<string, TypeExpr> cached_types;
 		RootNamespace root;
 		bool cls_checked;
+		bool? has_extension_method;
 
 		public readonly MemberName MemberName;
 
@@ -403,29 +404,33 @@ namespace Mono.CSharp {
 		//
 		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
 		{
-			if (types == null)
+			if (has_extension_method == false)
 				return null;
 
 			List<MethodSpec> found = null;
+			if (types != null) {
+				foreach (var tgroup in types.Values) {
+					foreach (var ts in tgroup) {
+						if ((ts.Modifiers & Modifiers.METHOD_EXTENSION) == 0)
+							continue;
 
-			// TODO: Add per namespace flag when at least 1 type has extension
+						has_extension_method = true;
 
-			foreach (var tgroup in types.Values) {
-				foreach (var ts in tgroup) {
-					if ((ts.Modifiers & Modifiers.METHOD_EXTENSION) == 0)
-						continue;
+						var res = ts.MemberCache.FindExtensionMethods (invocationContext, extensionType, name, arity);
+						if (res == null)
+							continue;
 
-					var res = ts.MemberCache.FindExtensionMethods (invocationContext, extensionType, name, arity);
-					if (res == null)
-						continue;
-
-					if (found == null) {
-						found = res;
-					} else {
-						found.AddRange (res);
+						if (found == null) {
+							found = res;
+						} else {
+							found.AddRange (res);
+						}
 					}
 				}
 			}
+
+			if (has_extension_method == null)
+				has_extension_method = false;
 
 			return found;
 		}
