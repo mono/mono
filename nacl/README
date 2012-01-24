@@ -1,35 +1,5 @@
-Quick guide
-===========
-
-Prerequistites
---------------
-1. Native Client SDK (see http://code.google.com/chrome/nativeclient)
-2. Mono with NaCl support (you have it if you're reading this file)
+Building NaCl Mono with glibc (newlib support is eliminated but should still be buildable with small effort) is complex and there are no instructions written up for it yet.  These will come Real Soon now.
 
 
-Directory conventions used in this document
-(your directories will differ...)
-  /path/to/naclsdk    Native Client SDK directory
-  /path/to/mono       Mono for NaCl
-
-
-Instructions
-------------
-1. If this is a clean checkout, you may need to do this from /path/to/mono:
-  ./autogen.sh && make distclean
-
-2. Setting your environment:
-  export NACL_SDK_ROOT=/path/to/naclsdk
-  export NACL_NEWLIB=1
-
-3. Run ./nacl-install-all.sh to install:
-  *) 32-bit NaCl Mono AOT compiler (nacl-mono)
-  *) 64-bit NaCl Mono AOT compiler (nacl64-mono)
-  *) 32-bit NaCl Mono runtime (+JIT compiler)
-  *) 64-bit NaCl Mono runtime (+JIT compiler)
-  *) Non-nacl Mono installation (needed for mscorlib.dll, etc)
- 
-Simple Test (requires sel_ldr to run)
-  cd  /path/to/mono/nacl/test
-  ./nacl [normal,aot,regression] (defaults to nacl,jit,simple test)
+If you are looking for NaCl Mono statically linked with newlib for embedding purposes, look at commit aa7c8d85c7cfe7a9bf4c69df1fe921a807984695.  You can try syncing before that and using whatever is there, or you could try undoing the changes that make newlib unhappy.
 
