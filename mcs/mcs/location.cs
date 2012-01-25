@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 		static Checkpoint [] checkpoints;
 		static int checkpoint_index;
 		
-		public readonly static Location Null = new Location (-1);
+		public readonly static Location Null = new Location ();
 		public static bool InEmacs;
 		
 		static Location ()
@@ -269,11 +269,6 @@ namespace Mono.CSharp {
 			// File is always pushed before being changed.
 		}
 		
-		public Location (int row)
-			: this (row, 0)
-		{
-		}
-
 		public Location (int row, int column)
 		{
 			if (row <= 0)

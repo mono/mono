@@ -83,10 +83,10 @@ namespace Mono.CSharp {
 		string fullname;
 		protected Dictionary<string, Namespace> namespaces;
 		protected Dictionary<string, IList<TypeSpec>> types;
+		List<TypeSpec> extension_method_types;
 		Dictionary<string, TypeExpr> cached_types;
 		RootNamespace root;
 		bool cls_checked;
-		bool? has_extension_method;
 
 		public readonly MemberName MemberName;
 
@@ -404,33 +404,37 @@ namespace Mono.CSharp {
 		//
 		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
 		{
-			if (has_extension_method == false)
+			if (extension_method_types == null)
 				return null;
 
 			List<MethodSpec> found = null;
-			if (types != null) {
-				foreach (var tgroup in types.Values) {
-					foreach (var ts in tgroup) {
-						if ((ts.Modifiers & Modifiers.METHOD_EXTENSION) == 0)
-							continue;
+			for (int i = 0; i < extension_method_types.Count; ++i) {
+				var ts = extension_method_types[i];
 
-						has_extension_method = true;
-
-						var res = ts.MemberCache.FindExtensionMethods (invocationContext, extensionType, name, arity);
-						if (res == null)
-							continue;
-
-						if (found == null) {
-							found = res;
-						} else {
-							found.AddRange (res);
-						}
+				//
+				// When the list was built we didn't know what members the type
+				// contains
+				//
+				if ((ts.Modifiers & Modifiers.METHOD_EXTENSION) == 0) {
+					if (extension_method_types.Count == 1) {
+						extension_method_types = null;
+						return found;
 					}
+
+					extension_method_types.RemoveAt (i--);
+					continue;
+				}
+
+				var res = ts.MemberCache.FindExtensionMethods (invocationContext, extensionType, name, arity);
+				if (res == null)
+					continue;
+
+				if (found == null) {
+					found = res;
+				} else {
+					found.AddRange (res);
 				}
 			}
-
-			if (has_extension_method == null)
-				has_extension_method = false;
 
 			return found;
 		}
@@ -439,6 +443,14 @@ namespace Mono.CSharp {
 		{
 			if (types == null) {
 				types = new Dictionary<string, IList<TypeSpec>> (64);
+			}
+
+			if (ts.IsStatic && ts.Arity == 0 &&
+				(ts.MemberDefinition.DeclaringAssembly == null || ts.MemberDefinition.DeclaringAssembly.HasExtensionMethod)) {
+				if (extension_method_types == null)
+					extension_method_types = new List<TypeSpec> ();
+
+				extension_method_types.Add (ts);
 			}
 
 			var name = ts.Name;
@@ -764,15 +776,6 @@ namespace Mono.CSharp {
 			VerifyClsCompliance ();
 
 			base.EmitContainer ();
-		}
-
-		//
-		// Does extension methods look up to find a method which matches name and extensionType.
-		// Search starts from this namespace and continues hierarchically up to top level.
-		//
-		protected override ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
-		{
-			return LookupExtensionMethod (invocationContext, extensionType, name, arity, this, 0);
 		}
 
 		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, NamespaceContainer container, int position)

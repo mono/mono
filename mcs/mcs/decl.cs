@@ -657,14 +657,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		// Does extension methods look up to find a method which matches name and extensionType.
+		// Search starts from this namespace and continues hierarchically up to top level.
+		//
 		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
-			return LookupExtensionMethod (this, extensionType, name, arity);
-		}
+			var m = Parent;
+			do {
+				var ns = m as NamespaceContainer;
+				if (ns != null)
+					return ns.LookupExtensionMethod (this, extensionType, name, arity, ns, 0);
 
-		protected virtual ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
-		{
-			return Parent.LookupExtensionMethod (invocationContext, extensionType, name, arity);
+				m = m.Parent;
+			} while (m != null);
+
+			return null;
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)

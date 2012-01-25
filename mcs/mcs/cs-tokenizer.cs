@@ -1970,7 +1970,7 @@ namespace Mono.CSharp
 					
 					char [] quotes = { '\"' };
 					
-					string name = arg.Substring (pos). Trim (quotes);
+					string name = arg.Substring (pos).Trim (quotes);
 					ref_name = context.LookupFile (file_name, name);
 					file_name.AddIncludeFile (ref_name);
 					hidden = false;
