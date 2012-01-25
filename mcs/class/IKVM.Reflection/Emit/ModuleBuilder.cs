@@ -332,15 +332,7 @@ namespace IKVM.Reflection.Emit
 		private int ExportType(Type type)
 		{
 			ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
-			MissingType missing = type as MissingType;
-			if (missing != null)
-			{
-				rec.TypeDefId = missing.GetMetadataTokenForMissing();
-			}
-			else
-			{
-				rec.TypeDefId = type.MetadataToken;
-			}
+			rec.TypeDefId = type.MetadataToken;
 			rec.TypeName = this.Strings.Add(type.__Name);
 			if (type.IsNested)
 			{
@@ -1595,6 +1587,11 @@ namespace IKVM.Reflection.Emit
 		public override MethodBody GetMethodBody()
 		{
 			throw new InvalidOperationException();
+		}
+
+		public override int __MethodRVA
+		{
+			get { throw new InvalidOperationException(); }
 		}
 
 		public override MethodImplAttributes GetMethodImplementationFlags()

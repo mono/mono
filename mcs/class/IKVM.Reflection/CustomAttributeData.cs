@@ -39,42 +39,48 @@ namespace IKVM.Reflection
 		 * There are several states a CustomAttributeData object can be in:
 		 * 
 		 * 1) Unresolved Custom Attribute
-		 *    - index >= 0
+		 *    - customAttributeIndex >= 0
+		 *    - declSecurityIndex == -1
 		 *    - declSecurityBlob == null
 		 *    - lazyConstructor = null
 		 *    - lazyConstructorArguments = null
 		 *    - lazyNamedArguments = null
 		 * 
 		 * 2) Resolved Custom Attribute
-		 *    - index >= 0
+		 *    - customAttributeIndex >= 0
+		 *    - declSecurityIndex == -1
 		 *    - declSecurityBlob == null
 		 *    - lazyConstructor != null
 		 *    - lazyConstructorArguments != null
 		 *    - lazyNamedArguments != null
 		 *    
 		 * 3) Pre-resolved Custom Attribute
-		 *    - index = -1
+		 *    - customAttributeIndex = -1
+		 *    - declSecurityIndex == -1
 		 *    - declSecurityBlob == null
 		 *    - lazyConstructor != null
 		 *    - lazyConstructorArguments != null
 		 *    - lazyNamedArguments != null
 		 *    
 		 * 4) Pseudo Custom Attribute, .NET 1.x declarative security or result of CustomAttributeBuilder.ToData()
-		 *    - index = -1
+		 *    - customAttributeIndex = -1
+		 *    - declSecurityIndex == -1
 		 *    - declSecurityBlob == null
 		 *    - lazyConstructor != null
 		 *    - lazyConstructorArguments != null
 		 *    - lazyNamedArguments != null
 		 *    
 		 * 5) Unresolved declarative security
-		 *    - index = -1
+		 *    - customAttributeIndex = -1
+		 *    - declSecurityIndex >= 0
 		 *    - declSecurityBlob != null
 		 *    - lazyConstructor != null
 		 *    - lazyConstructorArguments != null
 		 *    - lazyNamedArguments == null
 		 * 
 		 * 6) Resolved declarative security
-		 *    - index = -1
+		 *    - customAttributeIndex = -1
+		 *    - declSecurityIndex >= 0
 		 *    - declSecurityBlob == null
 		 *    - lazyConstructor != null
 		 *    - lazyConstructorArguments != null
@@ -82,7 +88,8 @@ namespace IKVM.Reflection
 		 * 
 		 */
 		private readonly Module module;
-		private readonly int index;
+		private readonly int customAttributeIndex;
+		private readonly int declSecurityIndex;
 		private readonly byte[] declSecurityBlob;
 		private ConstructorInfo lazyConstructor;
 		private IList<CustomAttributeTypedArgument> lazyConstructorArguments;
@@ -92,7 +99,8 @@ namespace IKVM.Reflection
 		internal CustomAttributeData(Module module, int index)
 		{
 			this.module = module;
-			this.index = index;
+			this.customAttributeIndex = index;
+			this.declSecurityIndex = -1;
 		}
 
 		// 4) Pseudo Custom Attribute, .NET 1.x declarative security
@@ -115,7 +123,8 @@ namespace IKVM.Reflection
 		internal CustomAttributeData(Module module, ConstructorInfo constructor, List<CustomAttributeTypedArgument> constructorArgs, List<CustomAttributeNamedArgument> namedArguments)
 		{
 			this.module = module;
-			this.index = -1;
+			this.customAttributeIndex = -1;
+			this.declSecurityIndex = -1;
 			this.lazyConstructor = constructor;
 			lazyConstructorArguments = constructorArgs.AsReadOnly();
 			if (namedArguments == null)
@@ -132,7 +141,8 @@ namespace IKVM.Reflection
 		internal CustomAttributeData(Assembly asm, ConstructorInfo constructor, ByteReader br)
 		{
 			this.module = asm.ManifestModule;
-			this.index = -1;
+			this.customAttributeIndex = -1;
+			this.declSecurityIndex = -1;
 			this.lazyConstructor = constructor;
 			if (br.Length == 0)
 			{
@@ -224,9 +234,12 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal static void ReadDeclarativeSecurity(Assembly asm, List<CustomAttributeData> list, int action, ByteReader br)
+		internal static void ReadDeclarativeSecurity(Module module, int index, List<CustomAttributeData> list)
 		{
-			Universe u = asm.universe;
+			Universe u = module.universe;
+			Assembly asm = module.Assembly;
+			int action = module.DeclSecurity.records[index].Action;
+			ByteReader br = module.GetBlob(module.DeclSecurity.records[index].PermissionSet);
 			if (br.PeekByte() == '.')
 			{
 				br.ReadByte();
@@ -237,7 +250,7 @@ namespace IKVM.Reflection
 					ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor(u.System_Security_Permissions_SecurityAction);
 					// LAMESPEC there is an additional length here (probably of the named argument list)
 					byte[] blob = br.ReadBytes(br.ReadCompressedInt());
-					list.Add(new CustomAttributeData(asm, constructor, action, blob));
+					list.Add(new CustomAttributeData(asm, constructor, action, blob, index));
 				}
 			}
 			else
@@ -258,10 +271,11 @@ namespace IKVM.Reflection
 		}
 
 		// 5) Unresolved declarative security
-		internal CustomAttributeData(Assembly asm, ConstructorInfo constructor, int securityAction, byte[] blob)
+		internal CustomAttributeData(Assembly asm, ConstructorInfo constructor, int securityAction, byte[] blob, int index)
 		{
 			this.module = asm.ManifestModule;
-			this.index = -1;
+			this.customAttributeIndex = -1;
+			this.declSecurityIndex = index;
 			Universe u = constructor.Module.universe;
 			this.lazyConstructor = constructor;
 			List<CustomAttributeTypedArgument> list = new List<CustomAttributeTypedArgument>();
@@ -519,13 +533,25 @@ namespace IKVM.Reflection
 			{
 				return (byte[])declSecurityBlob.Clone();
 			}
-			else if (index == -1)
+			else if (customAttributeIndex == -1)
 			{
 				return __ToBuilder().GetBlob(module.Assembly);
 			}
 			else
 			{
-				return ((ModuleReader)module).GetBlobCopy(module.CustomAttribute.records[index].Value);
+				return ((ModuleReader)module).GetBlobCopy(module.CustomAttribute.records[customAttributeIndex].Value);
+			}
+		}
+
+		public int __Parent
+		{
+			get
+			{
+				return customAttributeIndex >= 0
+					? module.CustomAttribute.records[customAttributeIndex].Parent
+					: declSecurityIndex >= 0
+						? module.DeclSecurity.records[declSecurityIndex].Parent
+						: 0;
 			}
 		}
 
@@ -535,7 +561,7 @@ namespace IKVM.Reflection
 			{
 				if (lazyConstructor == null)
 				{
-					lazyConstructor = (ConstructorInfo)module.ResolveMethod(module.CustomAttribute.records[index].Type);
+					lazyConstructor = (ConstructorInfo)module.ResolveMethod(module.CustomAttribute.records[customAttributeIndex].Type);
 				}
 				return lazyConstructor;
 			}
@@ -559,7 +585,7 @@ namespace IKVM.Reflection
 			{
 				if (lazyNamedArguments == null)
 				{
-					if (index >= 0)
+					if (customAttributeIndex >= 0)
 					{
 						// 1) Unresolved Custom Attribute
 						LazyParseArguments();
@@ -578,7 +604,7 @@ namespace IKVM.Reflection
 
 		private void LazyParseArguments()
 		{
-			ByteReader br = module.GetBlob(module.CustomAttribute.records[index].Value);
+			ByteReader br = module.GetBlob(module.CustomAttribute.records[customAttributeIndex].Value);
 			if (br.Length == 0)
 			{
 				// it's legal to have an empty blob

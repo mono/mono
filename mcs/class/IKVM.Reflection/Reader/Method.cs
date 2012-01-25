@@ -61,6 +61,11 @@ namespace IKVM.Reflection.Reader
 			return rva == 0 ? null : new MethodBody(module, rva, context);
 		}
 
+		public override int __MethodRVA
+		{
+			get { return module.MethodDef.records[index].RVA; }
+		}
+
 		public override CallingConventions CallingConvention
 		{
 			get { return this.MethodSignature.CallingConvention; }

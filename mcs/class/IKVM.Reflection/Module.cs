@@ -82,14 +82,14 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal Assembly ToAssembly()
+		internal AssemblyReader ToAssembly()
 		{
 			if (imported)
 			{
 				throw new InvalidOperationException();
 			}
 			imported = true;
-			return module.Assembly;
+			return (AssemblyReader)module.Assembly;
 		}
 
 		internal Module ToModule(Assembly assembly)
@@ -277,14 +277,8 @@ namespace IKVM.Reflection
 			get { return IsResource() ? null : GetModuleType().TypeInitializer; }
 		}
 
-		public byte[] ResolveSignature(int metadataToken)
+		public virtual byte[] ResolveSignature(int metadataToken)
 		{
-			ModuleReader rdr = this as ModuleReader;
-			if (rdr != null)
-			{
-				ByteReader br = rdr.ResolveSignature(metadataToken);
-				return br.ReadBytes(br.Length);
-			}
 			throw new NotSupportedException();
 		}
 
@@ -453,11 +447,42 @@ namespace IKVM.Reflection
 			get { throw new NotSupportedException(); }
 		}
 
+		public virtual int __FileAlignment
+		{
+			get { throw new NotSupportedException(); }
+		}
+
 		public virtual byte[] __ModuleHash
 		{
 			get { throw new NotSupportedException(); }
 		}
 
+		public virtual int __EntryPointRVA
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public virtual int __EntryPointToken
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public virtual string __ImageRuntimeVersion
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public IEnumerable<CustomAttributeData> __EnumerateCustomAttributeTable()
+		{
+			List<CustomAttributeData> list = new List<CustomAttributeData>(CustomAttribute.RowCount);
+			for (int i = 0; i < CustomAttribute.RowCount; i++)
+			{
+				list.Add(new CustomAttributeData(this, i));
+			}
+			return list;
+		}
+
+		[Obsolete]
 		public List<CustomAttributeData> __GetCustomAttributesFor(int token)
 		{
 			return GetCustomAttributes(token, null);
@@ -489,7 +514,7 @@ namespace IKVM.Reflection
 						ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
 						if (attributeType.IsAssignableFrom(constructor.DeclaringType))
 						{
-							list.Add(new CustomAttributeData(this.Assembly, constructor, GetBlob(CustomAttribute.records[i].Value)));
+							list.Add(new CustomAttributeData(this, i));
 						}
 					}
 				}
@@ -505,9 +530,7 @@ namespace IKVM.Reflection
 			{
 				if (DeclSecurity.records[i].Parent == metadataToken)
 				{
-					int action = DeclSecurity.records[i].Action;
-					int permissionSet = DeclSecurity.records[i].PermissionSet;
-					CustomAttributeData.ReadDeclarativeSecurity(this.Assembly, list, action, GetBlob(permissionSet));
+					CustomAttributeData.ReadDeclarativeSecurity(this, i, list);
 				}
 			}
 			return list;

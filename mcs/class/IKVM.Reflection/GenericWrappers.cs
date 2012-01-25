@@ -128,6 +128,11 @@ namespace IKVM.Reflection
 			throw new NotSupportedException();
 		}
 
+		public override int __MethodRVA
+		{
+			get { return method.__MethodRVA; }
+		}
+
 		public override MethodInfo MakeGenericMethod(params Type[] typeArguments)
 		{
 			return new GenericMethodInstance(declaringType, method, typeArguments);

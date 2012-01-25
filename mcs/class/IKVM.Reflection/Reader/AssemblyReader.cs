@@ -116,7 +116,7 @@ namespace IKVM.Reflection.Reader
 
 		public override string ImageRuntimeVersion
 		{
-			get { return manifestModule.ImageRuntimeVersion; }
+			get { return manifestModule.__ImageRuntimeVersion; }
 		}
 
 		public override Module ManifestModule
@@ -254,6 +254,11 @@ namespace IKVM.Reflection.Reader
 		public override AssemblyNameFlags __AssemblyFlags
 		{
 			get { return (AssemblyNameFlags)manifestModule.AssemblyTable.records[0].Flags; }
+		}
+
+		internal string Name
+		{
+			get { return manifestModule.GetString(manifestModule.AssemblyTable.records[0].Name); }
 		}
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)

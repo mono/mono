@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -229,6 +229,11 @@ namespace IKVM.Reflection
 			set { hashAlgorithm = value; }
 		}
 
+		public byte[] __Hash
+		{
+			get { return hash; }
+		}
+
 		public string FullName
 		{
 			get
@@ -276,16 +281,16 @@ namespace IKVM.Reflection
 				{
 					if ((version.Major & 0xFFFF) != 0xFFFF)
 					{
-						sb.AppendFormat(", Version={0}", version.Major & 0xFFFF);
+						sb.Append(", Version=").Append(version.Major & 0xFFFF);
 						if ((version.Minor & 0xFFFF) != 0xFFFF)
 						{
-							sb.AppendFormat(".{0}", version.Minor & 0xFFFF);
+							sb.Append('.').Append(version.Minor & 0xFFFF);
 							if ((version.Build & 0xFFFF) != 0xFFFF)
 							{
-								sb.AppendFormat(".{0}", version.Build & 0xFFFF);
+								sb.Append('.').Append(version.Build & 0xFFFF);
 								if ((version.Revision & 0xFFFF) != 0xFFFF)
 								{
-									sb.AppendFormat(".{0}", version.Revision & 0xFFFF);
+									sb.Append('.').Append(version.Revision & 0xFFFF);
 								}
 							}
 						}
@@ -309,10 +314,7 @@ namespace IKVM.Reflection
 					}
 					else
 					{
-						for (int i = 0; i < publicKeyToken.Length; i++)
-						{
-							sb.AppendFormat("{0:x2}", publicKeyToken[i]);
-						}
+						AppendPublicKey(sb, publicKeyToken);
 					}
 				}
 				if ((Flags & AssemblyNameFlags.Retargetable) != 0)
@@ -331,11 +333,17 @@ namespace IKVM.Reflection
 			}
 			// HACK use the real AssemblyName to convert PublicKey to PublicKeyToken
 			StringBuilder sb = new StringBuilder("Foo, PublicKey=", 20 + publicKey.Length * 2);
+			AppendPublicKey(sb, publicKey);
+			return new System.Reflection.AssemblyName(sb.ToString()).GetPublicKeyToken();
+		}
+
+		private static void AppendPublicKey(StringBuilder sb, byte[] publicKey)
+		{
 			for (int i = 0; i < publicKey.Length; i++)
 			{
-				sb.AppendFormat("{0:x2}", publicKey[i]);
+				sb.Append("0123456789abcdef"[publicKey[i] >> 4]);
+				sb.Append("0123456789abcdef"[publicKey[i] & 0x0F]);
 			}
-			return new System.Reflection.AssemblyName(sb.ToString()).GetPublicKeyToken();
 		}
 
 		public override bool Equals(object obj)

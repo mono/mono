@@ -43,6 +43,11 @@ namespace IKVM.Reflection
 			get { return (ResourceAttributes)module.ManifestResource.records[index].Flags; }
 		}
 
+		public int __Offset
+		{
+			get { return module.ManifestResource.records[index].Offset; }
+		}
+
 		public ResourceLocation ResourceLocation
 		{
 			get

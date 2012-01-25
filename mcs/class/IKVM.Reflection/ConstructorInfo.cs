@@ -53,6 +53,11 @@ namespace IKVM.Reflection
 			get { return MemberTypes.Constructor; }
 		}
 
+		public sealed override int __MethodRVA
+		{
+			get { return GetMethodInfo().__MethodRVA; }
+		}
+
 		public override bool ContainsGenericParameters
 		{
 			get { return GetMethodInfo().ContainsGenericParameters; }

@@ -134,13 +134,16 @@ namespace IKVM.Reflection.Impl
 			return writer;
 		}
 
-		public void OpenMethod(System.Diagnostics.SymbolStore.SymbolToken token)
+		public void OpenMethod(System.Diagnostics.SymbolStore.SymbolToken method)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OpenMethod(System.Diagnostics.SymbolStore.SymbolToken token, MethodBase mb)
 		{
 			Method method = new Method();
 			method.token = token.GetToken();
-			// name doesn't appear to be used. We can look it up, but ModuleBuilder.ResolveMethod() is inefficient,
-			// so if it isn't used, why bother?
-			method.name = null; // moduleBuilder.ResolveMethod(token.GetToken()).Name;
+			method.name = mb.Name;
 			methods.Add(token.GetToken(), method);
 			currentMethod = method;
 		}

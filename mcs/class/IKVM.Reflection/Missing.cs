@@ -419,6 +419,11 @@ namespace IKVM.Reflection
 			get { return module; }
 		}
 
+		public override int MetadataToken
+		{
+			get { return token; }
+		}
+
 		public override bool IsValueType
 		{
 			get
@@ -533,11 +538,6 @@ namespace IKVM.Reflection
 			return this;
 		}
 
-		internal int GetMetadataTokenForMissing()
-		{
-			return token;
-		}
-
 		internal override Type SetMetadataTokenForMissing(int token)
 		{
 			this.token = token;
@@ -579,6 +579,18 @@ namespace IKVM.Reflection
 		public override Type DeclaringType
 		{
 			get { return owner as Type; }
+		}
+
+		internal override Type BindTypeParameters(IGenericBinder binder)
+		{
+			if (owner is MethodBase)
+			{
+				return binder.BindMethodParameter(this);
+			}
+			else
+			{
+				return binder.BindTypeParameter(this);
+			}
 		}
 	}
 
@@ -750,6 +762,11 @@ namespace IKVM.Reflection
 		public override MethodBody GetMethodBody()
 		{
 			return Forwarder.GetMethodBody();
+		}
+
+		public override int __MethodRVA
+		{
+			get { return Forwarder.__MethodRVA; }
 		}
 
 		public override CallingConventions CallingConvention

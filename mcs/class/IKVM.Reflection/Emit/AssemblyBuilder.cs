@@ -180,6 +180,11 @@ namespace IKVM.Reflection.Emit
 			get { return flags; }
 		}
 
+		internal string Name
+		{
+			get { return name; }
+		}
+
 		public override AssemblyName GetName()
 		{
 			AssemblyName n = new AssemblyName();

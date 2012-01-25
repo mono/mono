@@ -109,7 +109,7 @@ namespace IKVM.Reflection
 				}
 				if (localVarSigTok != 0)
 				{
-					ByteReader sig = module.ResolveSignature(localVarSigTok);
+					ByteReader sig = module.GetStandAloneSig((localVarSigTok & 0xFFFFFF) - 1);
 					Signature.ReadLocalVarSig(module, sig, context, locals);
 				}
 			}

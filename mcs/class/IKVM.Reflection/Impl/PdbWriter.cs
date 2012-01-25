@@ -247,6 +247,7 @@ namespace IKVM.Reflection.Impl
 		private readonly List<Method> methods = new List<Method>();
 		private readonly Dictionary<int, int> remap = new Dictionary<int, int>();
 		private readonly Dictionary<int, int> reversemap = new Dictionary<int, int>();
+		private readonly Dictionary<int, MethodBase> methodMap = new Dictionary<int, MethodBase>();
 		private Method currentMethod;
 
 		internal PdbWriter(ModuleBuilder moduleBuilder)
@@ -381,7 +382,14 @@ namespace IKVM.Reflection.Impl
 
 		public void OpenMethod(SymbolToken method)
 		{
-			currentMethod = new Method(method.GetToken());
+			throw new NotImplementedException();
+		}
+
+		public void OpenMethod(SymbolToken method, MethodBase mb)
+		{
+			int token = method.GetToken();
+			currentMethod = new Method(token);
+			methodMap.Add(token, mb);
 		}
 
 		public void CloseMethod()
@@ -754,7 +762,7 @@ namespace IKVM.Reflection.Impl
 			{
 				throw new NotImplementedException();
 			}
-			MethodBase method = moduleBuilder.ResolveMethod(reversemap[mb]);
+			MethodBase method = methodMap[reversemap[mb]];
 			WriteToken(pClass, method.DeclaringType);
 			WriteString(szMethod, pchMethod, method.Name, cchMethod);
 		}

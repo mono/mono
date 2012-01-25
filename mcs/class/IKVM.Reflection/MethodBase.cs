@@ -39,6 +39,7 @@ namespace IKVM.Reflection
 		public abstract MethodImplAttributes GetMethodImplementationFlags();
 		public abstract MethodBody GetMethodBody();
 		public abstract CallingConventions CallingConvention { get; }
+		public abstract int __MethodRVA { get; }
 
 		public bool IsConstructor
 		{

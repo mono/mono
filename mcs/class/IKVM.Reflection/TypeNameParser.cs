@@ -122,17 +122,27 @@ namespace IKVM.Reflection
 			for (int pos = 0; pos < name.Length; pos++)
 			{
 				char c = name[pos];
-				if (SpecialChars.IndexOf(c) != -1)
+				switch (c)
 				{
-					if (sb == null)
-					{
-						sb = new StringBuilder(name, 0, pos, name.Length + 3);
-					}
-					sb.Append('\\').Append(c);
-				}
-				else if (sb != null)
-				{
-					sb.Append(c);
+					case '\\':
+					case '+':
+					case ',':
+					case '[':
+					case ']':
+					case '*':
+					case '&':
+						if (sb == null)
+						{
+							sb = new StringBuilder(name, 0, pos, name.Length + 3);
+						}
+						sb.Append("\\").Append(c);
+						break;
+					default:
+						if (sb != null)
+						{
+							sb.Append(c);
+						}
+						break;
 				}
 			}
 			return sb != null ? sb.ToString() : name;

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -82,18 +82,20 @@ namespace IKVM.Reflection
 	{
 		None = 0,
 		EnableFunctionPointers = 1,
+		DisableFusion = 2,
 	}
 
 	public sealed class Universe : IDisposable
 	{
 		private readonly Dictionary<Type, Type> canonicalizedTypes = new Dictionary<Type, Type>();
-		private readonly List<Assembly> assemblies = new List<Assembly>();
+		private readonly List<AssemblyReader> assemblies = new List<AssemblyReader>();
 		private readonly List<AssemblyBuilder> dynamicAssemblies = new List<AssemblyBuilder>();
 		private readonly Dictionary<string, Assembly> assembliesByName = new Dictionary<string, Assembly>();
 		private readonly Dictionary<System.Type, Type> importedTypes = new Dictionary<System.Type, Type>();
 		private Dictionary<ScopedTypeName, Type> missingTypes;
 		private bool resolveMissingMembers;
 		private readonly bool enableFunctionPointers;
+		private readonly bool useNativeFusion;
 		private Type typeof_System_Object;
 		private Type typeof_System_ValueType;
 		private Type typeof_System_Enum;
@@ -161,6 +163,21 @@ namespace IKVM.Reflection
 		public Universe(UniverseOptions options)
 		{
 			enableFunctionPointers = (options & UniverseOptions.EnableFunctionPointers) != 0;
+			useNativeFusion = (options & UniverseOptions.DisableFusion) == 0 && GetUseNativeFusion();
+		}
+
+		private static bool GetUseNativeFusion()
+		{
+			try
+			{
+				return Environment.OSVersion.Platform == PlatformID.Win32NT
+					&& System.Type.GetType("Mono.Runtime") == null
+					&& Environment.GetEnvironmentVariable("IKVM_DISABLE_FUSION") == null;
+			}
+			catch (System.Security.SecurityException)
+			{
+				return false;
+			}
 		}
 
 		internal Assembly Mscorlib
@@ -601,8 +618,9 @@ namespace IKVM.Reflection
 			Assembly asm = GetLoadedAssembly(refname);
 			if (asm == null)
 			{
-				asm = module.ToAssembly();
-				assemblies.Add(asm);
+				AssemblyReader asm1 = module.ToAssembly();
+				assemblies.Add(asm1);
+				asm = asm1;
 			}
 			return asm;
 		}
@@ -626,15 +644,28 @@ namespace IKVM.Reflection
 			}
 		}
 
+		private static string GetSimpleAssemblyName(string refname)
+		{
+			int pos;
+			string name;
+			if (Fusion.ParseAssemblySimpleName(refname, out pos, out name) != ParseAssemblyResult.OK)
+			{
+				throw new ArgumentException();
+			}
+			return name;
+		}
+
 		private Assembly GetLoadedAssembly(string refname)
 		{
 			Assembly asm;
 			if (!assembliesByName.TryGetValue(refname, out asm))
 			{
+				string simpleName = GetSimpleAssemblyName(refname);
 				for (int i = 0; i < assemblies.Count; i++)
 				{
 					AssemblyComparisonResult result;
-					if (CompareAssemblyIdentity(refname, false, assemblies[i].FullName, false, out result))
+					if (simpleName.Equals(assemblies[i].Name, StringComparison.InvariantCultureIgnoreCase)
+						&& CompareAssemblyIdentity(refname, false, assemblies[i].FullName, false, out result))
 					{
 						asm = assemblies[i];
 						assembliesByName.Add(refname, asm);
@@ -647,10 +678,12 @@ namespace IKVM.Reflection
 
 		private Assembly GetDynamicAssembly(string refname)
 		{
+			string simpleName = GetSimpleAssemblyName(refname);
 			foreach (AssemblyBuilder asm in dynamicAssemblies)
 			{
 				AssemblyComparisonResult result;
-				if (CompareAssemblyIdentity(refname, false, asm.FullName, false, out result))
+				if (simpleName.Equals(asm.Name, StringComparison.InvariantCultureIgnoreCase)
+					&& CompareAssemblyIdentity(refname, false, asm.FullName, false, out result))
 				{
 					return asm;
 				}
@@ -771,10 +804,26 @@ namespace IKVM.Reflection
 			return parser.GetType(this, context, throwOnError, assemblyQualifiedTypeName, false);
 		}
 
+		// this is similar to GetType(Assembly context, string assemblyQualifiedTypeName, bool throwOnError),
+		// but instead it assumes that the type must exist (i.e. if EnableMissingMemberResolution is enabled
+		// it will create a missing type)
+		public Type ResolveType(Assembly context, string assemblyQualifiedTypeName)
+		{
+			TypeNameParser parser = TypeNameParser.Parse(assemblyQualifiedTypeName, false);
+			if (parser.Error)
+			{
+				return null;
+			}
+			return parser.GetType(this, context, false, assemblyQualifiedTypeName, true);
+		}
+
 		public Assembly[] GetAssemblies()
 		{
 			Assembly[] array = new Assembly[assemblies.Count + dynamicAssemblies.Count];
-			assemblies.CopyTo(array);
+			for (int i = 0; i < assemblies.Count; i++)
+			{
+				array[i] = assemblies[i];
+			}
 			for (int i = 0, j = assemblies.Count; j < array.Length; i++, j++)
 			{
 				array[j] = dynamicAssemblies[i];
@@ -785,7 +834,9 @@ namespace IKVM.Reflection
 		// this is equivalent to the Fusion CompareAssemblyIdentity API
 		public bool CompareAssemblyIdentity(string assemblyIdentity1, bool unified1, string assemblyIdentity2, bool unified2, out AssemblyComparisonResult result)
 		{
-			return Fusion.CompareAssemblyIdentity(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out result);
+			return useNativeFusion
+				? Fusion.CompareAssemblyIdentityNative(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out result)
+				: Fusion.CompareAssemblyIdentityPure(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out result);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly(AssemblyName name, AssemblyBuilderAccess access)
