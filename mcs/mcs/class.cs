@@ -1963,9 +1963,8 @@ namespace Mono.CSharp
 
 		public sealed override void EmitContainer ()
 		{
-			if (IsPartialPart) {
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;
-			}
 
 			Emit ();
 		}
