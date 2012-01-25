@@ -1899,12 +1899,10 @@ namespace Mono.CSharp {
 		public MethodData (InterfaceMemberBase member,
 				   Modifiers modifiers, MethodAttributes flags, 
 				   IMethodData method, MethodBuilder builder,
-				   //GenericMethod generic, 
 				   MethodSpec parent_method)
 			: this (member, modifiers, flags, method)
 		{
 			this.builder = builder;
-			//this.GenericMethod = generic;
 			this.parent_method = parent_method;
 		}
 

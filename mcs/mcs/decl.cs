@@ -290,7 +290,9 @@ namespace Mono.CSharp {
 			IsAssigned = 1 << 12,				// Field is assigned
 			HasExplicitLayout	= 1 << 13,
 			PartialDefinitionExists	= 1 << 14,	// Set when corresponding partial method definition exists
-			HasStructLayout		= 1 << 15			// Has StructLayoutAttribute
+			HasStructLayout	= 1 << 15,			// Has StructLayoutAttribute
+			HasInstanceConstructor = 1 << 16,
+			HasUserOperators = 1 << 17
 		}
 
 		/// <summary>

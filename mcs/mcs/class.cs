@@ -19,6 +19,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -91,7 +92,7 @@ namespace Mono.CSharp
 		public virtual void AddPartial (TypeDefinition next_part)
 		{
 			MemberCore mc;
-			defined_names.TryGetValue (next_part.Basename, out mc);
+			(PartialContainer ?? this).defined_names.TryGetValue (next_part.Basename, out mc);
 
 			AddPartial (next_part, mc as TypeDefinition);
 		}
@@ -171,7 +172,11 @@ namespace Mono.CSharp
 			}
 
 			next_part.PartialContainer = existing;
-			existing.AddPartialPart (next_part);
+
+			if (containers == null)
+				containers = new List<TypeContainer> ();
+
+			containers.Add (next_part);
 		}
 
 		public virtual void AddTypeContainer (TypeContainer tc)
@@ -260,6 +265,9 @@ namespace Mono.CSharp
 					try {
 						tc.DefineContainer ();
 					} catch (Exception e) {
+						if (MemberName == MemberName.Null)
+							throw;
+
 						throw new InternalErrorException (tc, e);
 					}
 				}
@@ -316,12 +324,12 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
-		public virtual void RemoveContainer (TypeContainer next_part)
+		public virtual void RemoveContainer (TypeContainer cont)
 		{
 			if (containers != null)
-				containers.Remove (next_part);
+				containers.Remove (cont);
 
-			defined_names.Remove (next_part.Basename);
+			defined_names.Remove (cont.Basename);
 		}
 
 		public virtual void VerifyMembers ()
@@ -471,16 +479,12 @@ namespace Mono.CSharp
 		bool error;
 		bool members_defined;
 		bool members_defined_ok;
-		bool has_operators;
 		protected bool has_static_constructor;
-		protected bool has_instance_constructor;
 
 		private CachedMethods cached_method;
 
 		protected TypeSpec spec;
 		TypeSpec current_type;
-
-		List<TypeDefinition> partial_parts;
 
 		public int DynamicSitesCounter;
 		public int AnonymousMethodsCounter;
@@ -566,6 +570,35 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasInstanceConstructor {
+			get {
+				return (caching_flags & Flags.HasInstanceConstructor) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasInstanceConstructor;
+			}
+		}
+
+		// Indicated whether container has StructLayout attribute set Explicit
+		public bool HasExplicitLayout {
+			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
+			set { caching_flags |= Flags.HasExplicitLayout; }
+		}
+
+		public bool HasOperators {
+			get {
+				return (caching_flags & Flags.HasUserOperators) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasUserOperators;
+			}
+		}
+
+		public bool HasStructLayout {
+			get { return (caching_flags & Flags.HasStructLayout) != 0; }
+			set { caching_flags |= Flags.HasStructLayout; }
+		}
+
 		public TypeSpec[] Interfaces {
 			get {
 				return iface_exprs;
@@ -581,6 +614,21 @@ namespace Mono.CSharp
 		public bool IsTopLevel {
 			get {
 				return !(Parent is TypeDefinition);
+			}
+		}
+
+		//
+		// Returns true for secondary partial containers
+		//
+		bool IsPartialPart {
+			get {
+				return PartialContainer != this;
+			}
+		}
+
+		public MemberCache MemberCache {
+			get {
+				return spec.MemberCache;
 			}
 		}
 
@@ -633,14 +681,6 @@ namespace Mono.CSharp
 			members.Add (symbol);
 		}
 
-		public void AddPartialPart (TypeDefinition part)
-		{
-			if (partial_parts == null)
-				partial_parts = new List<TypeDefinition> (1);
-
-			partial_parts.Add (part);
-		}
-
 		public override void AddTypeContainer (TypeContainer tc)
 		{
 			AddNameToContainer (tc, tc.Basename);
@@ -671,8 +711,8 @@ namespace Mono.CSharp
 				return;
 
 			MemberCore mc;
-			if (!defined_names.TryGetValue (name, out mc)) {
-				defined_names.Add (name, symbol);
+			if (!PartialContainer.defined_names.TryGetValue (name, out mc)) {
+				PartialContainer.defined_names.Add (name, symbol);
 				return;
 			}
 
@@ -713,9 +753,9 @@ namespace Mono.CSharp
 				AddNameToContainer (c, is_static ? Constructor.TypeConstructorName : Constructor.ConstructorName);
 
 			if (is_static && c.ParameterInfo.IsEmpty) {
-				has_static_constructor = true;
+				PartialContainer.has_static_constructor = true;
 			} else {
-				has_instance_constructor = true;
+				PartialContainer.HasInstanceConstructor = true;
 			}
 
 			members.Add (c);
@@ -728,16 +768,17 @@ namespace Mono.CSharp
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
 				return true;
 
-			if (first_nonstatic_field == null) {
-				first_nonstatic_field = field;
+			var first_field = PartialContainer.first_nonstatic_field;
+			if (first_field == null) {
+				PartialContainer.first_nonstatic_field = field;
 				return true;
 			}
 
-			if (Kind == MemberKind.Struct && first_nonstatic_field.Parent != field.Parent) {
-				Report.SymbolRelatedToPreviousError (first_nonstatic_field.Parent);
+			if (Kind == MemberKind.Struct && first_field.Parent != field.Parent) {
+				Report.SymbolRelatedToPreviousError (first_field.Parent);
 				Report.Warning (282, 3, field.Location,
 					"struct instance field `{0}' found in different declaration from instance field `{1}'",
-					field.GetSignatureForError (), first_nonstatic_field.GetSignatureForError ());
+					field.GetSignatureForError (), first_field.GetSignatureForError ());
 			}
 			return true;
 		}
@@ -752,7 +793,7 @@ namespace Mono.CSharp
 
 		public void AddOperator (Operator op)
 		{
-			has_operators = true;
+			PartialContainer.HasOperators = true;
 			AddMember (op);
 		}
 
@@ -785,8 +826,7 @@ namespace Mono.CSharp
 
 		protected virtual TypeAttributes TypeAttr {
 			get {
-				var ta = ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel);
-				return has_static_constructor ? ta : ta | TypeAttributes.BeforeFieldInit;
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel);
 			}
 		}
 
@@ -818,9 +858,12 @@ namespace Mono.CSharp
 
 		public virtual void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
+			if (IsPartialPart)
+				PartialContainer.RegisterFieldForInitialization (field, expression);
+
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
 				if (initialized_static_fields == null) {
-					PartialContainer.HasStaticFieldInitializer = true;
+					HasStaticFieldInitializer = true;
 					initialized_static_fields = new List<FieldInitializer> (4);
 				}
 
@@ -835,16 +878,8 @@ namespace Mono.CSharp
 
 		public void ResolveFieldInitializers (BlockContext ec)
 		{
-			if (partial_parts != null) {
-				foreach (var part in partial_parts) {
-					part.DoResolveFieldInitializers (ec);
-				}
-			}
-			DoResolveFieldInitializers (ec);
-		}
+			Debug.Assert (!IsPartialPart);
 
-		void DoResolveFieldInitializers (BlockContext ec)
-		{
 			if (ec.IsStatic) {
 				if (initialized_static_fields == null)
 					return;
@@ -1026,44 +1061,6 @@ namespace Mono.CSharp
 			}
 
 			return ifaces;
-		}
-
-		TypeSpec[] GetNormalPartialBases ()
-		{
-			var ifaces = new List<TypeSpec> (0);
-			if (iface_exprs != null)
-				ifaces.AddRange (iface_exprs);
-
-			foreach (var part in partial_parts) {
-				FullNamedExpression new_base_class;
-				var new_ifaces = part.ResolveBaseTypes (out new_base_class);
-				if (new_base_class != null) {
-					if (base_type_expr != null && part.base_type != base_type) {
-						Report.SymbolRelatedToPreviousError (new_base_class.Location, "");
-						Report.Error (263, part.Location,
-							"Partial declarations of `{0}' must not specify different base classes",
-							part.GetSignatureForError ());
-					} else {
-						base_type_expr = new_base_class;
-						base_type = part.base_type;
-					}
-				}
-
-				if (new_ifaces == null)
-					continue;
-
-				foreach (var iface in new_ifaces) {
-					if (ifaces.Contains (iface))
-						continue;
-
-					ifaces.Add (iface);
-				}
-			}
-
-			if (ifaces.Count == 0)
-				return null;
-
-			return ifaces.ToArray ();
 		}
 
 		//
@@ -1324,8 +1321,52 @@ namespace Mono.CSharp
 		protected bool DefineBaseTypes ()
 		{
 			iface_exprs = ResolveBaseTypes (out base_type_expr);
-			if (partial_parts != null) {
-				iface_exprs = GetNormalPartialBases ();
+			bool set_base_type;
+
+			if (IsPartialPart) {
+				set_base_type = false;
+
+				if (base_type_expr != null) {
+					if (PartialContainer.base_type_expr != null && PartialContainer.base_type != base_type) {
+						Report.SymbolRelatedToPreviousError (base_type_expr.Location, "");
+						Report.Error (263, Location,
+							"Partial declarations of `{0}' must not specify different base classes",
+							GetSignatureForError ());
+					} else {
+						PartialContainer.base_type_expr = base_type_expr;
+						PartialContainer.base_type = base_type;
+						set_base_type = true;
+					}
+				}
+
+				if (iface_exprs != null) {
+					if (PartialContainer.iface_exprs == null)
+						PartialContainer.iface_exprs = iface_exprs;
+					else {
+						var ifaces = new List<TypeSpec> (PartialContainer.iface_exprs);
+						foreach (var iface_partial in iface_exprs) {
+							if (ifaces.Contains (iface_partial))
+								continue;
+
+							ifaces.Add (iface_partial);
+						}
+
+						PartialContainer.iface_exprs = ifaces.ToArray ();
+					}
+				}
+
+				PartialContainer.members.AddRange (members);
+				if (containers != null) {
+					if (PartialContainer.containers == null)
+						PartialContainer.containers = new List<TypeContainer> ();
+
+					PartialContainer.containers.AddRange (containers);
+				}
+
+				members_defined = members_defined_ok = true;
+				caching_flags |= Flags.CloseTypeCreated;
+			} else {
+				set_base_type = true;
 			}
 
 			var cycle = CheckRecursiveDefinition (this);
@@ -1384,13 +1425,15 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			if (base_type != null) {
-				spec.BaseType = base_type;
+			if (set_base_type) {
+				if (base_type != null) {
+					spec.BaseType = base_type;
 
-				// Set base type after type creation
-				TypeBuilder.SetParent (base_type.GetMetaInfo ());
-			} else {
-				TypeBuilder.SetParent (null);
+					// Set base type after type creation
+					TypeBuilder.SetParent (base_type.GetMetaInfo ());
+				} else {
+					TypeBuilder.SetParent (null);
+				}
 			}
 
 			return true;
@@ -1428,21 +1471,15 @@ namespace Mono.CSharp
 			if (error)
 				return false;
 
-			if (!CreateTypeBuilder ()) {
-				error = true;
-				return false;
-			}
-
-			if (partial_parts != null) {
-				foreach (var part in partial_parts) {
-					part.spec = spec;
-					part.current_type = current_type;
-					part.TypeBuilder = TypeBuilder;
-					part.all_type_parameters = all_type_parameters;
-					part.all_tp_builders = all_tp_builders;
-					part.members_defined = true;
-					part.is_defined = true;
-					part.error = error;
+			if (IsPartialPart) {
+				spec = PartialContainer.spec;
+				TypeBuilder = PartialContainer.TypeBuilder;
+				all_tp_builders = PartialContainer.all_tp_builders;
+				all_type_parameters = PartialContainer.all_type_parameters;
+			} else {
+				if (!CreateTypeBuilder ()) {
+					error = true;
+					return false;
 				}
 			}
 
@@ -1491,10 +1528,11 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override void RemoveContainer (TypeContainer next_part)
+		public override void RemoveContainer (TypeContainer cont)
 		{
-			base.RemoveContainer (next_part);
-			Cache.Remove (next_part.Basename);
+			base.RemoveContainer (cont);
+			Members.Remove (cont);
+			Cache.Remove (cont.Basename);
 		}
 
 		protected virtual bool DoResolveTypeParameters ()
@@ -1502,9 +1540,6 @@ namespace Mono.CSharp
 			var tparams = CurrentTypeParameters;
 			if (tparams == null)
 				return true;
-
-			if (PartialContainer != this)
-				throw new InternalErrorException ();
 
 			var base_context = new BaseContext (this);
 			for (int i = 0; i < tparams.Count; ++i) {
@@ -1516,9 +1551,8 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (partial_parts != null) {
-				foreach (var part in partial_parts)
-					UpdateTypeParameterConstraints (part);
+			if (IsPartialPart) {
+				PartialContainer.UpdateTypeParameterConstraints (this);
 			}
 
 			return true;
@@ -1573,6 +1607,8 @@ namespace Mono.CSharp
 
 		protected virtual bool DoDefineMembers ()
 		{
+			Debug.Assert (!IsPartialPart);
+
 			if (iface_exprs != null) {
 				foreach (var iface_type in iface_exprs) {
 					if (iface_type == null)
@@ -1685,7 +1721,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (has_operators) {
+			if (HasOperators) {
 				CheckPairedOperators ();
 			}
 
@@ -1751,23 +1787,6 @@ namespace Mono.CSharp
 			encoder.EncodeEmptyNamedArguments ();
 
 			TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
-		}
-
-		// Indicated whether container has StructLayout attribute set Explicit
-		public bool HasExplicitLayout {
-			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
-			set { caching_flags |= Flags.HasExplicitLayout; }
-		}
-
-		public bool HasStructLayout {
-			get { return (caching_flags & Flags.HasStructLayout) != 0; }
-			set { caching_flags |= Flags.HasStructLayout; }
-		}
-
-		public MemberCache MemberCache {
-			get {
-				return spec.MemberCache;
-			}
 		}
 
 		public override void VerifyMembers ()
@@ -1927,9 +1946,6 @@ namespace Mono.CSharp
 
 		void CheckAttributeClsCompliance ()
 		{
-			if (!has_instance_constructor)
-				return;
-
 			if (!spec.IsAttribute || !IsExposedFromAssembly () || !Compiler.Settings.VerifyClsCompliance || !IsClsComplianceRequired ())
 				return;
 
@@ -1947,6 +1963,10 @@ namespace Mono.CSharp
 
 		public sealed override void EmitContainer ()
 		{
+			if (IsPartialPart) {
+				return;
+			}
+
 			Emit ();
 		}
 
@@ -1969,12 +1989,10 @@ namespace Mono.CSharp
 			try {
 				caching_flags |= Flags.CloseTypeCreated;
 				TypeBuilder.CreateType ();
-			} catch (TypeLoadException){
+			} catch (TypeLoadException) {
 				//
 				// This is fine, the code still created the type
 				//
-//				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
-//				Console.WriteLine (e.Message);
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
@@ -2124,7 +2142,7 @@ namespace Mono.CSharp
 
 		public override bool IsClsComplianceRequired ()
 		{
-			if (PartialContainer != this)
+			if (IsPartialPart)
 				return PartialContainer.IsClsComplianceRequired ();
 
 			return base.IsClsComplianceRequired ();
@@ -2188,21 +2206,12 @@ namespace Mono.CSharp
 
 		TypeSpec LookupNestedTypeInHierarchy (string name, int arity)
 		{
-			// TODO: GenericMethod only
-			if (PartialContainer == null)
-				return null;
-
 			// Has any nested type
 			// Does not work, because base type can have
 			//if (PartialContainer.Types == null)
 			//	return null;
 
 			var container = PartialContainer.CurrentType;
-
-			// Is not Root container
-			if (container == null)
-				return null;
-
 			return MemberCache.FindNestedType (container, name, arity);
 		}
 
@@ -2258,6 +2267,12 @@ namespace Mono.CSharp
 		public ClassOrStruct (TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
 			: base (parent, name, attrs, kind)
 		{
+		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				return has_static_constructor ? base.TypeAttr : base.TypeAttr | TypeAttributes.BeforeFieldInit;
+			}
 		}
 
 		public override void AddNameToContainer (MemberCore symbol, string name)
@@ -2349,7 +2364,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (!has_static_constructor && PartialContainer.HasStaticFieldInitializer) {
+			if (!has_static_constructor && HasStaticFieldInitializer) {
 				var c = DefineDefaultConstructor (true);
 				c.Define ();
 			}
@@ -2480,7 +2495,7 @@ namespace Mono.CSharp
 					Report.Error (708, m.Location, "`{0}': cannot declare instance members in a static class", m.GetSignatureForError ());
 				}
 			} else {
-				if (!has_instance_constructor)
+				if (!PartialContainer.HasInstanceConstructor)
 					DefineDefaultConstructor (false);
 			}
 

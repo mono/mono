@@ -1571,7 +1571,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			Parent.PartialContainer.AddNameToContainer (this, MemberName.Basename);
+			Parent.AddNameToContainer (this, MemberName.Basename);
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 			

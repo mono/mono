@@ -1188,10 +1188,10 @@ namespace Mono.CSharp {
 			return MemberName == null ? "global::" : base.GetSignatureForError ();
 		}
 
-		public override void RemoveContainer (TypeContainer next_part)
+		public override void RemoveContainer (TypeContainer cont)
 		{
-			base.RemoveContainer (next_part);
-			NS.RemoveContainer (next_part);
+			base.RemoveContainer (cont);
+			NS.RemoveContainer (cont);
 		}
 
 		protected override bool VerifyClsCompliance ()
