@@ -262,7 +262,7 @@ namespace MonoTests.System {
 		public void ParseExactCustomFormat ()
 		{
 			var dt = DateTimeOffset.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
-			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeSpan.Zero), dt);
+			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now)), dt);
 		}
 		
 		[Test]
