@@ -623,11 +623,16 @@ namespace System
 			}
 
 			//Console.WriteLine ("{0}-{1}-{2} {3}:{4} {5}", year, month, day, hour, minute, offset);
-			if (offset == TimeSpan.MinValue && (styles & DateTimeStyles.AssumeLocal) != 0)
-				offset = TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+			if (offset == TimeSpan.MinValue) {
+				if ((styles & DateTimeStyles.AssumeUniversal) != 0) {
+					offset = TimeSpan.Zero;
+				} else if ((styles & DateTimeStyles.AssumeLocal) != 0) {
+					offset = use_invariants ?
+						TimeSpan.Zero :
+						TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+				}
+			}
 
-			if (offset == TimeSpan.MinValue && (styles & DateTimeStyles.AssumeUniversal) != 0)
-				offset = TimeSpan.Zero;
 
 			if (hour < 0)		hour = 0;
 			if (minute < 0)		minute = 0;
