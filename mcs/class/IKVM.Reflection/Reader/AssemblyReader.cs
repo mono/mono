@@ -49,11 +49,6 @@ namespace IKVM.Reflection.Reader
 			get { return location; }
 		}
 
-		public override string FullName
-		{
-			get { return GetName().FullName; }
-		}
-
 		public override AssemblyName GetName()
 		{
 			return GetNameImpl(ref manifestModule.AssemblyTable.records[0]);

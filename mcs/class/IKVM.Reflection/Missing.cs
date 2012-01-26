@@ -140,13 +140,12 @@ namespace IKVM.Reflection
 	sealed class MissingAssembly : Assembly
 	{
 		private readonly MissingModule module;
-		private readonly string name;
 
 		internal MissingAssembly(Universe universe, string name)
 			: base(universe)
 		{
 			module = new MissingModule(this);
-			this.name = name;
+			this.fullName = name;
 		}
 
 		public override Type[] GetTypes()
@@ -154,14 +153,9 @@ namespace IKVM.Reflection
 			throw new MissingAssemblyException(this);
 		}
 
-		public override string FullName
-		{
-			get { return name; }
-		}
-
 		public override AssemblyName GetName()
 		{
-			return new AssemblyName(name);
+			return new AssemblyName(fullName);
 		}
 
 		public override string ImageRuntimeVersion

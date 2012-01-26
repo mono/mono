@@ -132,18 +132,24 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		private void Rename(AssemblyName oldName)
+		{
+			this.fullName = null;
+			universe.RenameAssembly(this, oldName);
+		}
+
 		public void __SetAssemblyVersion(Version version)
 		{
 			AssemblyName oldName = GetName();
 			SetVersionHelper(version);
-			universe.RenameAssembly(this, oldName);
+			Rename(oldName);
 		}
 
 		public void __SetAssemblyCulture(string cultureName)
 		{
 			AssemblyName oldName = GetName();
 			this.culture = cultureName;
-			universe.RenameAssembly(this, oldName);
+			Rename(oldName);
 		}
 
 		public void __SetAssemblyKeyPair(StrongNameKeyPair keyPair)
@@ -154,7 +160,7 @@ namespace IKVM.Reflection.Emit
 			{
 				this.publicKey = keyPair.PublicKey;
 			}
-			universe.RenameAssembly(this, oldName);
+			Rename(oldName);
 		}
 
 		// this is used in combination with delay signing
@@ -162,7 +168,7 @@ namespace IKVM.Reflection.Emit
 		{
 			AssemblyName oldName = GetName();
 			this.publicKey = publicKey == null ? null : (byte[])publicKey.Clone();
-			universe.RenameAssembly(this, oldName);
+			Rename(oldName);
 		}
 
 		public void __SetAssemblyAlgorithmId(AssemblyHashAlgorithm hashAlgorithm)
@@ -172,7 +178,9 @@ namespace IKVM.Reflection.Emit
 
 		public void __SetAssemblyFlags(AssemblyNameFlags flags)
 		{
+			AssemblyName oldName = GetName();
 			this.flags = flags;
+			Rename(oldName);
 		}
 
 		public override AssemblyNameFlags __AssemblyFlags
@@ -196,11 +204,6 @@ namespace IKVM.Reflection.Emit
 			n.SetPublicKey(publicKey != null ? (byte[])publicKey.Clone() : Empty<byte>.Array);
 			n.KeyPair = keyPair;
 			return n;
-		}
-
-		public override string FullName
-		{
-			get { return GetName().FullName; }
 		}
 
 		public override string Location

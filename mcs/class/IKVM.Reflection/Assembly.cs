@@ -29,6 +29,7 @@ namespace IKVM.Reflection
 	public abstract class Assembly : ICustomAttributeProvider
 	{
 		internal readonly Universe universe;
+		protected string fullName;	// AssemblyBuilder needs access to this field to clear it when the name changes
 
 		internal Assembly(Universe universe)
 		{
@@ -36,7 +37,6 @@ namespace IKVM.Reflection
 		}
 
 		public abstract Type[] GetTypes();
-		public abstract string FullName { get; }
 		public abstract AssemblyName GetName();
 		public abstract string ImageRuntimeVersion { get; }
 		public abstract Module ManifestModule { get; }
@@ -68,6 +68,11 @@ namespace IKVM.Reflection
 		internal Type ResolveType(TypeName typeName)
 		{
 			return FindType(typeName) ?? universe.GetMissingTypeOrThrow(this.ManifestModule, null, typeName);
+		}
+
+		public string FullName
+		{
+			get { return fullName ?? (fullName = GetName().FullName); }
 		}
 
 		public Module[] GetModules()

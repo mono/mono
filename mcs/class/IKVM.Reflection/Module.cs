@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -146,6 +146,7 @@ namespace IKVM.Reflection
 		internal readonly GenericParamTable GenericParam = new GenericParamTable();
 		internal readonly MethodSpecTable MethodSpec = new MethodSpecTable();
 		internal readonly GenericParamConstraintTable GenericParamConstraint = new GenericParamConstraintTable();
+		protected ulong sortedTableMask;
 
 		protected Module(Universe universe)
 		{
@@ -500,26 +501,70 @@ namespace IKVM.Reflection
 		internal List<CustomAttributeData> GetCustomAttributes(int metadataToken, Type attributeType)
 		{
 			List<CustomAttributeData> list = new List<CustomAttributeData>();
-			// TODO use binary search?
-			for (int i = 0; i < CustomAttribute.records.Length; i++)
+			if ((sortedTableMask & (1UL << CustomAttributeTable.Index)) == 0)
 			{
-				if (CustomAttribute.records[i].Parent == metadataToken)
+				for (int i = 0; i < CustomAttribute.RowCount; i++)
 				{
-					if (attributeType == null)
+					if (CustomAttribute.records[i].Parent == metadataToken)
 					{
-						list.Add(new CustomAttributeData(this, i));
-					}
-					else
-					{
-						ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
-						if (attributeType.IsAssignableFrom(constructor.DeclaringType))
+						if (attributeType == null)
 						{
 							list.Add(new CustomAttributeData(this, i));
+						}
+						else
+						{
+							ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
+							if (attributeType.IsAssignableFrom(constructor.DeclaringType))
+							{
+								list.Add(new CustomAttributeData(this, i));
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// do a binary search (on the rid part of the token)
+				CustomAttributeTable.Record rec = new CustomAttributeTable.Record();
+				rec.Parent = metadataToken;
+				int index = Array.BinarySearch(CustomAttribute.records, 0, CustomAttribute.RowCount, rec, BinarySearch.Comparer);
+				if (index >= 0)
+				{
+					while (index > 0 && (CustomAttribute.records[index - 1].Parent & 0xFFFFFF) == (metadataToken & 0xFFFFFF))
+					{
+						index--;
+					}
+					for (; index < CustomAttribute.RowCount && (CustomAttribute.records[index].Parent & 0xFFFFFF) == (metadataToken & 0xFFFFFF); index++)
+					{
+						if (CustomAttribute.records[index].Parent == metadataToken)
+						{
+							if (attributeType == null)
+							{
+								list.Add(new CustomAttributeData(this, index));
+							}
+							else
+							{
+								ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[index].Type);
+								if (attributeType.IsAssignableFrom(constructor.DeclaringType))
+								{
+									list.Add(new CustomAttributeData(this, index));
+								}
+							}
 						}
 					}
 				}
 			}
 			return list;
+		}
+
+		private sealed class BinarySearch : IComparer<CustomAttributeTable.Record>
+		{
+			internal static readonly BinarySearch Comparer = new BinarySearch();
+
+			public int Compare(CustomAttributeTable.Record x, CustomAttributeTable.Record y)
+			{
+				return (x.Parent & 0xFFFFFF).CompareTo(y.Parent & 0xFFFFFF);
+			}
 		}
 
 		internal IList<CustomAttributeData> GetDeclarativeSecurity(int metadataToken)
