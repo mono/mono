@@ -271,7 +271,7 @@
 
 	During debugging, you want to change this to:
 
-	./../jay/jay -c < ./../jay/skeleton.cs cs-parser.jay
+	./../jay/jay -cvt < ./../jay/skeleton.cs cs-parser.jay
 
 	This generates a parser with debugging information and allows
 	you to activate verbose parser output in both the csharp
