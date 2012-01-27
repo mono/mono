@@ -134,7 +134,7 @@ namespace Mono.CSharp
 			{
 #if !FULL_AST
 				if (buffer.Length == 0)
-					buffer = new LocatedToken [10000];
+					buffer = new LocatedToken [15000];
 #endif
 				pos = 0;
 			}
@@ -179,7 +179,7 @@ namespace Mono.CSharp
 		int col = 0;
 		int previous_col;
 		int current_token;
-		int tab_size;
+		readonly int tab_size;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_where = false;
@@ -300,12 +300,7 @@ namespace Mono.CSharp
 			get { return handle_typeof; }
 			set { handle_typeof = value; }
 		}
-
-		public int TabSize {
-			get { return tab_size; }
-			set { tab_size = value; }
-		}
-		
+	
 		public XmlCommentState doc_state {
 			get { return xml_doc_state; }
 			set {
@@ -437,10 +432,7 @@ namespace Mono.CSharp
 			xml_comment_buffer = new StringBuilder ();
 			doc_processing = ctx.Settings.DocumentationFile != null;
 
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				tab_size = 4;
-			else
-				tab_size = 8;
+			tab_size = ctx.Settings.TabSize;
 
 			Mono.CSharp.Location.Push (file, file);
 		}
@@ -2285,9 +2277,9 @@ namespace Mono.CSharp
 								code = TokenizePragmaNumber (ref c);
 								if (code > 0) {
 									if (disable) {
-										Report.RegisterWarningRegion (loc).WarningDisable (loc, code, Report);
+										Report.RegisterWarningRegion (loc).WarningDisable (loc, code, context.Report);
 									} else {
-										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, Report);
+										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, context);
 									}
 								}
 							} while (code >= 0 && c != '\n' && c != -1);

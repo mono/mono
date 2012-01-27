@@ -70,13 +70,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (dc != null)
 					return dc;
 
-				var reporter = new Compiler.Report (ErrorPrinter.Instance) {
+				var settings = new Compiler.CompilerSettings () {
 					WarningLevel = 0
 				};
 
-				var settings = new Compiler.CompilerSettings ();
-
-				var cc = new Compiler.CompilerContext (settings, reporter) {
+				var cc = new Compiler.CompilerContext (settings, ErrorPrinter.Instance) {
 					IsRuntimeBinder = true
 				};
 

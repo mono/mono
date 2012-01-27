@@ -72,9 +72,9 @@ namespace Mono.CSharp
 		readonly ReflectionImporter importer;
 		readonly CompilationSourceFile source_file;
 		
-		public Evaluator (CompilerSettings settings, Report report)
+		public Evaluator (CompilerSettings settings, ReportPrinter reportPrinter)
 		{
-			ctx = new CompilerContext (settings, report);
+			ctx = new CompilerContext (settings, reportPrinter);
 
 			module = new ModuleContainer (ctx);
 			module.Evaluator = this;

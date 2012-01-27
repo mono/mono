@@ -124,16 +124,15 @@ namespace Mono.CSharp
 		{
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
-			var r = new Report (new ConsoleReportPrinter ());
-			CommandLineParser cmd = new CommandLineParser (r);
+			CommandLineParser cmd = new CommandLineParser (Console.Out);
 			var settings = cmd.ParseArguments (args);
-			if (settings == null || r.Errors > 0)
+			if (settings == null)
 				return 1;
 
 			if (cmd.HasBeenStopped)
 				return 0;
 
-			Driver d = new Driver (new CompilerContext (settings, r));
+			Driver d = new Driver (new CompilerContext (settings, new ConsoleReportPrinter ()));
 
 			if (d.Compile () && d.Report.Errors == 0) {
 				if (d.Report.Warnings > 0) {
@@ -357,13 +356,12 @@ namespace Mono.CSharp
 		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
 			try {
-				var r = new Report (new StreamReportPrinter (error));
-				CommandLineParser cmd = new CommandLineParser (r, error);
+				CommandLineParser cmd = new CommandLineParser (error);
 				var setting = cmd.ParseArguments (args);
-				if (setting == null || r.Errors > 0)
+				if (setting == null)
 					return false;
 
-				var d = new Driver (new CompilerContext (setting, r));
+				var d = new Driver (new CompilerContext (setting, new StreamReportPrinter (error)));
 				return d.Compile ();
 			} finally {
 				Reset ();

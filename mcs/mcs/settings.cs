@@ -66,6 +66,11 @@ namespace Mono.CSharp {
 		public string StrongNameKeyContainer;
 		public bool StrongNameDelaySign;
 
+		public int TabSize;
+
+		public bool WarningsAreErrors;
+		public int WarningLevel;
+
 		//
 		// Assemblies references to be loaded
 		//
@@ -148,6 +153,10 @@ namespace Mono.CSharp {
 
 		readonly List<CompilationSourceFile> source_files;
 
+		List<int> warnings_as_error;
+		List<int> warnings_only;
+		HashSet<int> warning_ignore_table;
+
 		public CompilerSettings ()
 		{
 			StdLib = true;
@@ -160,6 +169,12 @@ namespace Mono.CSharp {
 			Encoding = Encoding.UTF8;
 			LoadDefaultReferences = true;
 			StdLibRuntimeVersion = RuntimeVersion.v4;
+			WarningLevel = 4;
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				TabSize = 4;
+			else
+				TabSize = 8;
 
 			AssemblyReferences = new List<string> ();
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
@@ -209,9 +224,61 @@ namespace Mono.CSharp {
 				conditional_symbols.Add (symbol);
 		}
 
+		public void AddWarningAsError (int id)
+		{
+			if (warnings_as_error == null)
+				warnings_as_error = new List<int> ();
+
+			warnings_as_error.Add (id);
+		}
+
+		public void AddWarningOnly (int id)
+		{
+			if (warnings_only == null)
+				warnings_only = new List<int> ();
+
+			warnings_only.Add (id);
+		}
+
 		public bool IsConditionalSymbolDefined (string symbol)
 		{
 			return conditional_symbols.Contains (symbol);
+		}
+
+		public bool IsWarningAsError (int code)
+		{
+			bool is_error = WarningsAreErrors;
+
+			// Check specific list
+			if (warnings_as_error != null)
+				is_error |= warnings_as_error.Contains (code);
+
+			// Ignore excluded warnings
+			if (warnings_only != null && warnings_only.Contains (code))
+				is_error = false;
+
+			return is_error;
+		}
+
+		public bool IsWarningEnabled (int code, int level)
+		{
+			if (WarningLevel < level)
+				return false;
+
+			return !IsWarningDisabledGlobally (code);
+		}
+
+		public bool IsWarningDisabledGlobally (int code)
+		{
+			return warning_ignore_table != null && warning_ignore_table.Contains (code);
+		}
+
+		public void SetIgnoreWarning (int code)
+		{
+			if (warning_ignore_table == null)
+				warning_ignore_table = new HashSet<int> ();
+
+			warning_ignore_table.Add (code);
 		}
 	}
 
@@ -228,22 +295,27 @@ namespace Mono.CSharp {
 		static readonly char[] argument_value_separator = new char[] { ';', ',' };
 		static readonly char[] numeric_value_separator = new char[] { ';', ',', ' ' };
 
-		readonly Report report;
 		readonly TextWriter output;
+		readonly Report report;
 		bool stop_argument;
 
 		Dictionary<string, int> source_file_index;
 
 		public event Func<string[], int, int> UnknownOptionHandler;
 
-		public CommandLineParser (Report report)
-			: this (report, Console.Out)
+		CompilerSettings parser_settings;
+
+		public CommandLineParser (TextWriter errorOutput)
+			: this (errorOutput, Console.Out)
 		{
 		}
 
-		public CommandLineParser (Report report, TextWriter messagesOutput)
+		public CommandLineParser (TextWriter errorOutput, TextWriter messagesOutput)
 		{
-			this.report = report;
+			var rp = new StreamReportPrinter (errorOutput);
+
+			parser_settings = new CompilerSettings ();
+			report = new Report (new CompilerContext (parser_settings, rp), rp);
 			this.output = messagesOutput;
 		}
 
@@ -364,6 +436,9 @@ namespace Mono.CSharp {
 				ProcessSourceFiles (arg, false, settings.SourceFiles);
 			}
 
+			if (report.Errors > 0)
+				return null;
+
 			return settings;
 		}
 
@@ -479,6 +554,38 @@ namespace Mono.CSharp {
 			var unit = new CompilationSourceFile (fileName, path, sourceFiles.Count + 1);
 			sourceFiles.Add (unit);
 			source_file_index.Add (path, unit.Index);
+		}
+
+		void AddWarningAsError (string warningId, CompilerSettings settings)
+		{
+			int id;
+			try {
+				id = int.Parse (warningId);
+			} catch {
+				report.CheckWarningCode (warningId, Location.Null);
+				return;
+			}
+
+			if (!report.CheckWarningCode (id, Location.Null))
+				return;
+
+			settings.AddWarningAsError (id);
+		}
+
+		void RemoveWarningAsError (string warningId, CompilerSettings settings)
+		{
+			int id;
+			try {
+				id = int.Parse (warningId);
+			} catch {
+				report.CheckWarningCode (warningId, Location.Null);
+				return;
+			}
+
+			if (!report.CheckWarningCode (id, Location.Null))
+				return;
+
+			settings.AddWarningOnly (id);
 		}
 
 		void Error_RequiresArgument (string option)
@@ -870,19 +977,20 @@ namespace Mono.CSharp {
 			case "/warnaserror":
 			case "/warnaserror+":
 				if (value.Length == 0) {
-					report.WarningsAreErrors = true;
+					settings.WarningsAreErrors = true;
+					parser_settings.WarningsAreErrors = true;
 				} else {
 					foreach (string wid in value.Split (numeric_value_separator))
-						report.AddWarningAsError (wid);
+						AddWarningAsError (wid, settings);
 				}
 				return ParseResult.Success;
 
 			case "/warnaserror-":
 				if (value.Length == 0) {
-					report.WarningsAreErrors = false;
+					settings.WarningsAreErrors = false;
 				} else {
 					foreach (string wid in value.Split (numeric_value_separator))
-						report.RemoveWarningAsError (wid);
+						RemoveWarningAsError (wid, settings);
 				}
 				return ParseResult.Success;
 
@@ -892,7 +1000,7 @@ namespace Mono.CSharp {
 					return ParseResult.Error;
 				}
 
-				SetWarningLevel (value);
+				SetWarningLevel (value, settings);
 				return ParseResult.Success;
 
 			case "/nowarn":
@@ -911,7 +1019,7 @@ namespace Mono.CSharp {
 							if (warn < 1) {
 								throw new ArgumentOutOfRangeException ("warn");
 							}
-							report.SetIgnoreWarning (warn);
+							settings.SetIgnoreWarning (warn);
 						} catch {
 							report.Error (1904, "`{0}' is not a valid warning number", wc);
 							return ParseResult.Error;
@@ -1264,7 +1372,7 @@ namespace Mono.CSharp {
 					Usage ();
 					Environment.Exit (1);
 				}
-				report.SetIgnoreWarning (warn);
+				settings.SetIgnoreWarning (warn);
 				return ParseResult.Success;
 
 			case "--wlevel":
@@ -1274,7 +1382,7 @@ namespace Mono.CSharp {
 					return ParseResult.Error;
 				}
 
-				SetWarningLevel (args [++i]);
+				SetWarningLevel (args [++i], settings);
 				return ParseResult.Success;
 
 			case "--mcs-debug":
@@ -1352,7 +1460,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void SetWarningLevel (string s)
+		void SetWarningLevel (string s, CompilerSettings settings)
 		{
 			int level = -1;
 
@@ -1364,7 +1472,7 @@ namespace Mono.CSharp {
 				report.Error (1900, "Warning level must be in the range 0-4");
 				return;
 			}
-			report.WarningLevel = level;
+			settings.WarningLevel = level;
 		}
 
 		//

@@ -1794,7 +1794,7 @@ namespace Mono.CSharp
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (!IsCompilerGenerated && Report.WarningLevel >= 3) {
+			if (!IsCompilerGenerated && Compiler.Settings.WarningLevel >= 3) {
 				bool is_type_exposed = Kind == MemberKind.Struct || IsExposedFromAssembly ();
 				foreach (var member in members) {
 					if (member is Event) {
@@ -1835,7 +1835,7 @@ namespace Mono.CSharp
 					//
 					// Only report 649 on level 4
 					//
-					if (Report.WarningLevel < 4)
+					if (Compiler.Settings.WarningLevel < 4)
 						continue;
 
 					//

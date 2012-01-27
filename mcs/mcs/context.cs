@@ -586,10 +586,10 @@ namespace Mono.CSharp
 
 		Dictionary<string, SourceFile> all_source_files;
 
-		public CompilerContext (CompilerSettings settings, Report report)
+		public CompilerContext (CompilerSettings settings, ReportPrinter reportPrinter)
 		{
 			this.settings = settings;
-			this.report = report;
+			this.report = new Report (this, reportPrinter);
 			this.builtin_types = new BuiltinTypes ();
 			this.TimeReporter = DisabledTimeReporter;
 		}

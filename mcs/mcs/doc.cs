@@ -327,7 +327,8 @@ namespace Mono.CSharp
 			doc_module.DocumentationBuilder = this;
 			source_file.NamespaceContainer = new NamespaceContainer (null, doc_module, null, source_file);
 
-			Report parse_report = new Report (new NullReportPrinter ());
+			var rp = new NullReportPrinter ();
+			Report parse_report = new Report (new CompilerContext (new CompilerSettings (), rp), rp);
 			var parser = new CSharpParser (seekable, source_file, parse_report);
 			ParsedParameters = null;
 			ParsedName = null;
