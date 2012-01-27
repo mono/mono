@@ -195,7 +195,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-#if NET_4_0 || NET_4_5
+#if NET_4_0
 				return MSBuildUtils.RunningOnWindows ? "dmcs.bat" : "dmcs";
 #else
 				return MSBuildUtils.RunningOnWindows ? "gmcs.bat" : "gmcs";
