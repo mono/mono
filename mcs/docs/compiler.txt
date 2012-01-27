@@ -263,6 +263,26 @@
 	top of the stack as a number of values `TAKING',
 	`TAKEN_BEFORE', `ELSE_SEEN', `PARENT_TAKING'.
 
+	To debug problems in your grammar, you need to edit the
+	Makefile and make sure that the -ct options are passed to
+	jay.   The current incarnation says:
+
+	./../jay/jay -c < ./../jay/skeleton.cs cs-parser.jay
+
+	During debugging, you want to change this to:
+
+	./../jay/jay -c < ./../jay/skeleton.cs cs-parser.jay
+
+	This generates a parser with debugging information and allows
+	you to activate verbose parser output in both the csharp
+	command and the mcs command by passing the "-v -v" flag (-v
+	twice).
+
+	When you do this, standard output will have a dump of the
+	tokens parsed and how the parser reacted to those.   You can
+	look up the states with the y.output file that contains the
+	entire parser state diagram in human readable form.
+
 ** Locations
 
 	Locations are encoded as a 32-bit number (the Location
