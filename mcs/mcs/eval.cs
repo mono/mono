@@ -72,19 +72,17 @@ namespace Mono.CSharp
 		readonly ReflectionImporter importer;
 		readonly CompilationSourceFile source_file;
 		
-		public Evaluator (CompilerSettings settings, ReportPrinter reportPrinter)
+		public Evaluator (CompilerContext ctx)
 		{
-			ctx = new CompilerContext (settings, reportPrinter);
+			this.ctx = ctx;
 
 			module = new ModuleContainer (ctx);
 			module.Evaluator = this;
 
-			source_file = new CompilationSourceFile ("{interactive}", "", 1);
- 			source_file.NamespaceContainer = new NamespaceContainer (null, module, null, source_file);
-			module.AddTypeContainer (source_file.NamespaceContainer);
+			source_file = new CompilationSourceFile (module);
+			module.AddTypeContainer (source_file);
 
 			startup_files = ctx.SourceFiles.Count;
-			ctx.SourceFiles.Add (source_file);
 
 			// FIXME: Importer needs this assembly for internalsvisibleto
 			module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "evaluator"));
@@ -119,7 +117,7 @@ namespace Mono.CSharp
 			Location.Initialize (ctx.SourceFiles);
 
 			for (int i = 0; i < startup_files; ++i) {
-				var sf = ctx.Settings.SourceFiles [i];
+				var sf = ctx.SourceFiles [i];
 				d.Parse (sf, module);
 			}
 		}
@@ -447,7 +445,7 @@ namespace Mono.CSharp
 		//
 		InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, source_file, ctx);
+			Tokenizer tokenizer = new Tokenizer (seekable, source_file);
 			
 			int t = tokenizer.token ();
 			switch (t){
@@ -575,7 +573,7 @@ namespace Mono.CSharp
 			}
 			seekable.Position = 0;
 
-			source_file.NamespaceContainer.DeclarationFound = false;
+			source_file.DeclarationFound = false;
 			CSharpParser parser = new CSharpParser (seekable, source_file);
 
 			if (kind == InputKind.StatementOrExpression){
@@ -657,7 +655,7 @@ namespace Mono.CSharp
 			}
 
 			module.CreateContainer ();
-			((NamespaceContainer) module.Containers[0]).EnableUsingClausesRedefinition ();
+			source_file.EnableUsingClausesRedefinition ();
 			module.Define ();
 
 			if (Report.Errors != 0){
@@ -761,7 +759,7 @@ namespace Mono.CSharp
 			//foreach (object x in ns.using_alias_list)
 			//    sb.AppendFormat ("using {0};\n", x);
 
-			foreach (var ue in source_file.NamespaceContainer.Usings) {
+			foreach (var ue in source_file.Usings) {
 				sb.AppendFormat ("using {0};", ue.ToString ());
 				sb.Append (Environment.NewLine);
 			}
@@ -773,7 +771,7 @@ namespace Mono.CSharp
 		{
 			var res = new List<string> ();
 
-			foreach (var ue in source_file.NamespaceContainer.Usings) {
+			foreach (var ue in source_file.Usings) {
 				if (ue.Alias != null || ue.ResolvedExpression == null)
 					continue;
 

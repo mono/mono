@@ -497,7 +497,7 @@ namespace_declaration
 		var name = (MemberName) $3;
 		if (attrs != null) {
 			bool valid_global_attrs = true;
-			if ((current_namespace.DeclarationFound || current_namespace != file.NamespaceContainer)) {
+			if ((current_namespace.DeclarationFound || current_namespace != file)) {
 				valid_global_attrs = false;
 			} else {
 				foreach (var a in attrs.Attrs) {
@@ -515,7 +515,7 @@ namespace_declaration
 	
 		module.AddAttributes (attrs, current_namespace);
 		
-		var ns = new NamespaceContainer (name, module, current_namespace, file);
+		var ns = new NamespaceContainer (name, current_namespace);
 		current_namespace.AddTypeContainer (ns);
 		current_container = current_namespace = ns;
 	  }
@@ -598,7 +598,7 @@ namespace_or_type_declaration
 			// we parse succeeding declaration hence we parse them as normal and re-attach them
 			// when we know whether they are global (assembly:, module:) or local (type:).
 			if (ds.OptAttributes != null) {
-				ds.OptAttributes.ConvertGlobalAttributes (ds, current_namespace, !current_namespace.DeclarationFound && current_namespace == file.NamespaceContainer);
+				ds.OptAttributes.ConvertGlobalAttributes (ds, current_namespace, !current_namespace.DeclarationFound && current_namespace == file);
 			}
 		}
 		current_namespace.DeclarationFound = true;
@@ -6413,17 +6413,17 @@ static CSharpParser ()
 }
 
 public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
-	: this (reader, file, file.NamespaceContainer.Module.Compiler.Report)
+	: this (reader, file, file.Compiler.Report)
 {
 }
 
 public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Report report)
 {
 	this.file = file;
-	current_container = current_namespace = file.NamespaceContainer;
+	current_container = current_namespace = file;
 	
-	this.module = current_namespace.Module;
-	this.compiler = module.Compiler;
+	this.module = file.Module;
+	this.compiler = file.Compiler;
 	this.settings = compiler.Settings;
 	this.report = report;
 	
@@ -6431,7 +6431,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
 	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file, compiler);
+	lexer = new Tokenizer (reader, file);
 
 #if FULL_AST
 	lbag = new LocationsBag ();

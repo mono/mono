@@ -786,15 +786,10 @@ namespace Mono.CSharp {
 		MethodBase method;
 		SourceMethodBuilder builder;
 
-		protected SourceMethod (TypeDefinition parent, MethodBase method, ICompileUnit file)
+		SourceMethod (NamespaceContainer parent, MethodBase method, ICompileUnit file)
 		{
 			this.method = method;
-
-			TypeContainer ns = parent.Parent;
-			while (ns != null && !(ns is NamespaceContainer))
-				ns = ns.Parent;
-
-			builder = SymbolWriter.OpenMethod (file, ns == null ? -1 : ((NamespaceContainer) ns).SymbolFileID, this);
+			builder = SymbolWriter.OpenMethod (file, parent == null ? -1 : parent.SymbolFileID, this);
 		}
 
 		public string Name {
@@ -839,11 +834,16 @@ namespace Mono.CSharp {
 			if (start_loc.IsNull)
 				return null;
 
-			ICompileUnit compile_unit = start_loc.CompilationUnit;
-			if (compile_unit == null)
+			// TODO: What to do with anonymous types
+			TypeContainer ns = parent.PartialContainer.Parent;
+			while (ns != null && !(ns is NamespaceContainer) && ns.PartialContainer != null)
+				ns = ns.PartialContainer.Parent;
+
+			var ns_cont = ns as NamespaceContainer;
+			if (ns_cont == null)
 				return null;
 
-			return new SourceMethod (parent, method, compile_unit);
+			return new SourceMethod (ns_cont, method, ns_cont.CompileUnitEntry);
 		}
 	}
 

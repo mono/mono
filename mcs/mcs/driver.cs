@@ -41,20 +41,22 @@ namespace Mono.CSharp
 			}
 		}
 
-		void tokenize_file (CompilationSourceFile file)
+		void tokenize_file (SourceFile sourceFile, ModuleContainer module)
 		{
 			Stream input;
 
 			try {
-				input = File.OpenRead (file.Name);
+				input = File.OpenRead (sourceFile.Name);
 			} catch {
-				Report.Error (2001, "Source file `" + file.Name + "' could not be found");
+				Report.Error (2001, "Source file `" + sourceFile.Name + "' could not be found");
 				return;
 			}
 
 			using (input){
 				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
-				Tokenizer lexer = new Tokenizer (reader, file, ctx);
+				var file = new CompilationSourceFile (module, sourceFile);
+
+				Tokenizer lexer = new Tokenizer (reader, file);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -70,20 +72,21 @@ namespace Mono.CSharp
 
 		void Parse (ModuleContainer module)
 		{
-			Location.Initialize (module.Compiler.SourceFiles);
-
 			bool tokenize_only = module.Compiler.Settings.TokenizeOnly;
 			var sources = module.Compiler.SourceFiles;
+
+			Location.Initialize (sources);
+
 			for (int i = 0; i < sources.Count; ++i) {
 				if (tokenize_only) {
-					tokenize_file (sources[i]);
+					tokenize_file (sources[i], module);
 				} else {
 					Parse (sources[i], module);
 				}
 			}
 		}
 
-		public void Parse (CompilationSourceFile file, ModuleContainer module)
+		public void Parse (SourceFile file, ModuleContainer module)
 		{
 			Stream input;
 
@@ -108,13 +111,12 @@ namespace Mono.CSharp
 			Parse (reader, file, module);
 			reader.Dispose ();
 			input.Close ();
-		}	
-		
-		public void Parse (SeekableStreamReader reader, CompilationSourceFile file, ModuleContainer module)
+		}
+
+		public void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
 		{
-			var root = new NamespaceContainer (null, module, null, file);
-			file.NamespaceContainer = root;
-			module.AddTypeContainer (root);
+			var file = new CompilationSourceFile (module, sourceFile);
+			module.AddTypeContainer (file);
 
 			CSharpParser parser = new CSharpParser (reader, file);
 			parser.parse ();

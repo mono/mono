@@ -448,11 +448,6 @@ namespace Mono.CSharp
 			if (Compiler.Settings.GenerateDebugInfo) {
 				symbol_writer = new MonoSymbolWriter (file_name);
 
-				// Register all source files with symbol writer
-				foreach (var source in Compiler.SourceFiles) {
-					source.DefineSymbolInfo (symbol_writer);
-				}
-
 				// TODO: global variables
 				SymbolWriter.symwriter = symbol_writer;
 			}

@@ -10,7 +10,8 @@ namespace MonoTests.EvaluatorTest
  		[SetUp]
  		public void Setup ()
  		{
-			evaluator = new Evaluator (new CompilerSettings (), new Report (new AssertReportPrinter ()));
+			var ctx = new CompilerContext (new CompilerSettings (), new AssertReportPrinter ());
+			evaluator = new Evaluator (ctx);
 		}
 
 		public Evaluator Evaluator {

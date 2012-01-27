@@ -151,7 +151,7 @@ namespace Mono.CSharp {
 
 		readonly List<string> conditional_symbols;
 
-		readonly List<CompilationSourceFile> source_files;
+		readonly List<SourceFile> source_files;
 
 		List<int> warnings_as_error;
 		List<int> warnings_only;
@@ -187,12 +187,12 @@ namespace Mono.CSharp {
 			//
 			conditional_symbols.Add ("__MonoCS__");
 
-			source_files = new List<CompilationSourceFile> ();
+			source_files = new List<SourceFile> ();
 		}
 
 		#region Properties
 
-		public CompilationSourceFile FirstSourceFile {
+		public SourceFile FirstSourceFile {
 			get {
 				return source_files.Count > 0 ? source_files [0] : null;
 			}
@@ -210,7 +210,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public List<CompilationSourceFile> SourceFiles {
+		public List<SourceFile> SourceFiles {
 			get {
 				return source_files;
 			}
@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 			return settings;
 		}
 
-		void ProcessSourceFiles (string spec, bool recurse, List<CompilationSourceFile> sourceFiles)
+		void ProcessSourceFiles (string spec, bool recurse, List<SourceFile> sourceFiles)
 		{
 			string path, pattern;
 
@@ -536,7 +536,7 @@ namespace Mono.CSharp {
 			settings.Resources.Add (res);
 		}
 
-		void AddSourceFile (string fileName, List<CompilationSourceFile> sourceFiles)
+		void AddSourceFile (string fileName, List<SourceFile> sourceFiles)
 		{
 			string path = Path.GetFullPath (fileName);
 
@@ -551,7 +551,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			var unit = new CompilationSourceFile (fileName, path, sourceFiles.Count + 1);
+			var unit = new SourceFile (fileName, path, sourceFiles.Count + 1);
 			sourceFiles.Add (unit);
 			source_file_index.Add (path, unit.Index);
 		}

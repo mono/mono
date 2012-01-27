@@ -620,7 +620,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public List<CompilationSourceFile> SourceFiles {
+		public List<SourceFile> SourceFiles {
 			get {
 				return settings.SourceFiles;
 			}
@@ -646,7 +646,7 @@ namespace Mono.CSharp
 
 			string path;
 			if (!Path.IsPathRooted (name)) {
-				string root = Path.GetDirectoryName (comp_unit.FullPathName);
+				string root = Path.GetDirectoryName (comp_unit.SourceFile.FullPathName);
 				path = Path.Combine (root, name);
 			} else
 				path = name;
@@ -655,7 +655,8 @@ namespace Mono.CSharp
 			if (all_source_files.TryGetValue (path, out retval))
 				return retval;
 
-			retval = Location.AddFile (name, path);
+			retval = new SourceFile (name, path, all_source_files.Count + 1);
+			Location.AddFile (retval);
 			all_source_files.Add (path, retval);
 			return retval;
 		}

@@ -38,12 +38,11 @@ namespace Mono {
 		
 		static int Main (string [] args)
 		{
-			var r = new Report (new ConsoleReportPrinter ());
-			var cmd = new CommandLineParser (r);
+			var cmd = new CommandLineParser (Console.Out);
 			cmd.UnknownOptionHandler += HandleExtraArguments;
 
 			var settings = cmd.ParseArguments (args);
-			if (settings == null || r.Errors > 0)
+			if (settings == null)
 				return 1;
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
@@ -51,7 +50,7 @@ namespace Mono {
 				startup_files [i++] = source.FullPathName;
 			settings.SourceFiles.Clear ();
 
-			var eval = new Evaluator (settings, r);
+			var eval = new Evaluator (new CompilerContext (settings, new ConsoleReportPrinter ()));
 
 			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
 			eval.DescribeTypeExpressions = true;

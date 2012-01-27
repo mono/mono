@@ -32,6 +32,7 @@ namespace Mono.CSharp
 		readonly XmlDocument XmlDocumentation;
 
 		readonly ModuleContainer module;
+		readonly ModuleContainer doc_module;
 
 		//
 		// The output for XML documentation.
@@ -48,6 +49,9 @@ namespace Mono.CSharp
 
 		public DocumentationBuilder (ModuleContainer module)
 		{
+			doc_module = new ModuleContainer (module.Compiler);
+			doc_module.DocumentationBuilder = this;
+
 			this.module = module;
 			XmlDocumentation = new XmlDocument ();
 			XmlDocumentation.PreserveWhitespace = false;
@@ -322,14 +326,10 @@ namespace Mono.CSharp
 			var s = new MemoryStream (encoding.GetBytes (cref));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding);
 
-			var source_file = new CompilationSourceFile ("{documentation}", "", 1);
-			var doc_module = new ModuleContainer (module.Compiler);
-			doc_module.DocumentationBuilder = this;
-			source_file.NamespaceContainer = new NamespaceContainer (null, doc_module, null, source_file);
+			var source_file = new CompilationSourceFile (doc_module);
+			var report = new Report (doc_module.Compiler, new NullReportPrinter ());
 
-			var rp = new NullReportPrinter ();
-			Report parse_report = new Report (new CompilerContext (new CompilerSettings (), rp), rp);
-			var parser = new CSharpParser (seekable, source_file, parse_report);
+			var parser = new CSharpParser (seekable, source_file, report);
 			ParsedParameters = null;
 			ParsedName = null;
 			ParsedBuiltinType = null;
@@ -337,7 +337,7 @@ namespace Mono.CSharp
 			parser.Lexer.putback_char = Tokenizer.DocumentationXref;
 			parser.Lexer.parsing_generic_declaration_doc = true;
 			parser.parse ();
-			if (parse_report.Errors > 0) {
+			if (report.Errors > 0) {
 				Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
 					mc.GetSignatureForError (), cref);
 

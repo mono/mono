@@ -79,93 +79,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class CompilationSourceFile : SourceFile, ICompileUnit
-	{
-		CompileUnitEntry comp_unit;
-		Dictionary<string, SourceFile> include_files;
-		Dictionary<string, bool> conditionals;
-		NamespaceContainer ns_container;
-
-		public CompilationSourceFile (string name, string fullPathName, int index)
-			: base (name, fullPathName, index)
-		{
-		}
-
-		CompileUnitEntry ICompileUnit.Entry {
-			get { return comp_unit; }
-		}
-
-		public CompileUnitEntry CompileUnitEntry {
-			get { return comp_unit; }
-		}
-
-		public NamespaceContainer NamespaceContainer {
-			get {
-				return ns_container;
-			}
-			set {
-				ns_container = value;
-			}
-		}
-
-		public void AddIncludeFile (SourceFile file)
-		{
-			if (file == this)
-				return;
-			
-			if (include_files == null)
-				include_files = new Dictionary<string, SourceFile> ();
-
-			if (!include_files.ContainsKey (file.FullPathName))
-				include_files.Add (file.FullPathName, file);
-		}
-
-		public void AddDefine (string value)
-		{
-			if (conditionals == null)
-				conditionals = new Dictionary<string, bool> (2);
-
-			conditionals [value] = true;
-		}
-
-		public void AddUndefine (string value)
-		{
-			if (conditionals == null)
-				conditionals = new Dictionary<string, bool> (2);
-
-			conditionals [value] = false;
-		}
-
-		public override void DefineSymbolInfo (MonoSymbolWriter symwriter)
-		{
-			base.DefineSymbolInfo (symwriter);
-
-			comp_unit = symwriter.DefineCompilationUnit (SourceFileEntry);
-
-			if (include_files != null) {
-				foreach (SourceFile include in include_files.Values) {
-					include.DefineSymbolInfo (symwriter);
-					comp_unit.AddFile (include.SourceFileEntry);
-				}
-			}
-		}
-
-		public bool IsConditionalDefined (CompilerContext ctx, string value)
-		{
-			if (conditionals != null) {
-				bool res;
-				if (conditionals.TryGetValue (value, out res))
-					return res;
-				
-				// When conditional was undefined
-				if (conditionals.ContainsKey (value))
-					return false;					
-			}
-
-			return ctx.Settings.IsConditionalSymbolDefined (value);
-		}
-	}
-
 	/// <summary>
 	///   Keeps track of the location in the program
 	/// </summary>
@@ -186,13 +99,11 @@ namespace Mono.CSharp {
 	{
 		struct Checkpoint {
 			public readonly int LineOffset;
-			public readonly int CompilationUnit;
 			public readonly int File;
 
-			public Checkpoint (int compile_unit, int file, int line)
+			public Checkpoint (int file, int line)
 			{
 				File = file;
-				CompilationUnit = compile_unit;
 				LineOffset = line - (int) (line % (1 << line_delta_bits));
 			}
 		}
@@ -216,7 +127,6 @@ namespace Mono.CSharp {
 
 		static List<SourceFile> source_list;
 		static int current_source;
-		static int current_compile_unit;
 		static Checkpoint [] checkpoints;
 		static int checkpoint_index;
 		
@@ -232,15 +142,12 @@ namespace Mono.CSharp {
 		{
 			source_list = new List<SourceFile> ();
 			current_source = 0;
-			current_compile_unit = 0;
 			checkpoint_index = 0;
 		}
 
-		public static SourceFile AddFile (string name, string fullName)
+		public static void AddFile (SourceFile file)
 		{
-			var source = new SourceFile (name, fullName, source_list.Count + 1);
-			source_list.Add (source);
-			return source;
+			source_list.Add (file);
 		}
 
 		// <summary>
@@ -249,7 +156,7 @@ namespace Mono.CSharp {
 		//   source file.  We reserve some extra space for files we encounter via #line
 		//   directives while parsing.
 		// </summary>
-		static public void Initialize (List<CompilationSourceFile> files)
+		static public void Initialize (List<SourceFile> files)
 		{
 #if NET_4_0
 			source_list.AddRange (files);
@@ -257,15 +164,14 @@ namespace Mono.CSharp {
 			source_list.AddRange (files.ToArray ());
 #endif
 
-			checkpoints = new Checkpoint [source_list.Count * 2];
+			checkpoints = new Checkpoint [System.Math.Max (1, source_list.Count * 2)];
 			if (checkpoints.Length > 0)
-				checkpoints [0] = new Checkpoint (0, 0, 0);
+				checkpoints [0] = new Checkpoint (0, 0);
 		}
 
-		static public void Push (CompilationSourceFile compile_unit, SourceFile file)
+		static public void Push (SourceFile file)
 		{
 			current_source = file != null ? file.Index : -1;
-			current_compile_unit = compile_unit != null ? compile_unit.Index : -1;
 			// File is always pushed before being changed.
 		}
 		
@@ -296,7 +202,7 @@ namespace Mono.CSharp {
 					}
 				}
 				if (target == -1) {
-					AddCheckpoint (current_compile_unit, current_source, row);
+					AddCheckpoint (current_source, row);
 					target = checkpoint_index;
 					delta = row % (1 << line_delta_bits);
 				}
@@ -317,12 +223,12 @@ namespace Mono.CSharp {
 			return new Location (loc.Row, loc.Column - columns);
 		}
 
-		static void AddCheckpoint (int compile_unit, int file, int row)
+		static void AddCheckpoint (int file, int row)
 		{
 			if (checkpoints.Length == ++checkpoint_index) {
 				Array.Resize (ref checkpoints, checkpoint_index * 2);
 			}
-			checkpoints [checkpoint_index] = new Checkpoint (compile_unit, file, row);
+			checkpoints [checkpoint_index] = new Checkpoint (file, row);
 		}
 
 		string FormatLocation (string fileName)
@@ -354,8 +260,8 @@ namespace Mono.CSharp {
 		public string Name {
 			get {
 				int index = File;
-				if (token == 0 || index == 0)
-					return "Internal";
+				if (token == 0 || index <= 0)
+					return null;
 
 				SourceFile file = source_list [index - 1];
 				return file.Name;
@@ -365,8 +271,8 @@ namespace Mono.CSharp {
 		public string NameFullPath {
 			get {
 				int index = File;
-				if (token == 0 || index == 0)
-					return "Internal";
+				if (token == 0 || index <= 0)
+					return null;
 
 				return source_list[index - 1].FullPathName;
 			}
@@ -406,15 +312,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public int CompilationUnitIndex {
-			get {
-				if (token == 0)
-					return 0;
-if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("Should not happen. Token is {0:X04}, checkpoints are {1}, index is {2}", token, checkpoints.Length, CheckpointIndex));
-				return checkpoints [CheckpointIndex].CompilationUnit;
-			}
-		}
-
 		public int File {
 			get {
 				if (token == 0)
@@ -442,15 +339,6 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 				if (index == 0)
 					return null;
 				return (SourceFile) source_list [index - 1];
-			}
-		}
-
-		public CompilationSourceFile CompilationUnit {
-			get {
-				int index = CompilationUnitIndex;
-				if (index == 0)
-					return null;
-				return (CompilationSourceFile) source_list [index - 1];
 			}
 		}
 
