@@ -1172,8 +1172,10 @@ namespace System.Web
 				} else
 #endif
 					if (validate_query_string && !checked_query_string) {
-						ValidateNameValueCollection ("QueryString", query_string_nvc);
+						// Setting this before calling the validator prevents
+						// possible endless recursion
 						checked_query_string = true;
+						ValidateNameValueCollection ("QueryString", query_string_nvc);
 					}
 				
 				return query_string_nvc;
