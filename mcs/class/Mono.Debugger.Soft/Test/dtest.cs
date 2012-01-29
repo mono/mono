@@ -997,6 +997,15 @@ public class DebuggerTests
 		// generic instances
 		t = frame.Method.GetParameters ()[9].ParameterType;
 		Assert.AreEqual ("GClass`1", t.Name);
+		Assert.IsTrue (t.IsGenericType);
+		Assert.IsFalse (t.IsGenericTypeDefinition);
+
+		// generic type definitions
+		var gtd = t.GetGenericTypeDefinition ();
+		Assert.AreEqual ("GClass`1", gtd.Name);
+		Assert.IsTrue (gtd.IsGenericType);
+		Assert.IsTrue (gtd.IsGenericTypeDefinition);
+		Assert.AreEqual (gtd, gtd.GetGenericTypeDefinition ());
 
 		// enums
 		t = frame.Method.GetParameters ()[10].ParameterType;
@@ -2842,5 +2851,21 @@ public class DebuggerTests
 		frame = e.Thread.GetFrames () [1];
 		var res = frame.GetValue (m.GetLocal ("sum"));
 		AssertValue (0, res);
+	}
+
+	[Test]
+	public void MethodInfo () {
+		Event e = run_until ("locals2");
+
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var m = frame.Method;
+
+		Assert.IsTrue (m.IsGenericMethod);
+		Assert.IsFalse (m.IsGenericMethodDefinition);
+
+		var gmd = m.GetGenericMethodDefinition ();
+		Assert.IsTrue (gmd.IsGenericMethod);
+		Assert.IsTrue (gmd.IsGenericMethodDefinition);
+		Assert.AreEqual (gmd, gmd.GetGenericMethodDefinition ());
 	}
 }

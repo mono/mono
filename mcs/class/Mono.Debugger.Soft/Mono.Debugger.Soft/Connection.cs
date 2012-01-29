@@ -53,7 +53,9 @@ namespace Mono.Debugger.Soft
 		public long assembly, module, base_type, element_type;
 		public int token, rank, attributes;
 		public bool is_byref, is_pointer, is_primitive, is_valuetype, is_enum;
+		public bool is_gtd, is_generic_type;
 		public long[] nested;
+		public long gtd;
 	}
 
 	struct IfaceMapInfo {
@@ -64,6 +66,8 @@ namespace Mono.Debugger.Soft
 
 	class MethodInfo {
 		public int attributes, iattributes, token;
+		public bool is_gmd, is_generic_method;
+		public long gmd;
 	}
 
 	class MethodBodyInfo {
@@ -359,7 +363,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 11;
+		internal const int MINOR_VERSION = 12;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1690,7 +1694,14 @@ namespace Mono.Debugger.Soft
 			info.attributes = res.ReadInt ();
 			info.iattributes = res.ReadInt ();
 			info.token = res.ReadInt ();
-
+			if (Version.AtLeast (2, 12)) {
+				int attrs = res.ReadByte ();
+				if ((attrs & (1 << 0)) != 0)
+					info.is_gmd = true;
+				if ((attrs & (1 << 1)) != 0)
+					info.is_generic_method = true;
+				info.gmd = res.ReadId ();
+			}
 			return info;
 		}
 
@@ -1827,11 +1838,16 @@ namespace Mono.Debugger.Soft
 			res.is_primitive = (b & 4) != 0;
 			res.is_valuetype = (b & 8) != 0;
 			res.is_enum = (b & 16) != 0;
+			res.is_gtd = (b & 32) != 0;
+			res.is_generic_type = (b & 64) != 0;
 
 			int nested_len = r.ReadInt ();
 			res.nested = new long [nested_len];
 			for (int i = 0; i < nested_len; ++i)
 				res.nested [i] = r.ReadId ();
+
+			if (Version.AtLeast (2, 12))
+				res.gtd = r.ReadId ();
 
 			return res;
 		}

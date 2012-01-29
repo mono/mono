@@ -582,6 +582,11 @@ namespace Mono.Debugger.Soft
 				res [i] = EncodeValue (values [i]);
 			return res;
 		}
+
+		internal void CheckProtocolVersion (int major, int minor) {
+			if (!conn.Version.AtLeast (major, minor))
+				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+		}
     }
 
 	class EventHandler : MarshalByRefObject, IEventHandler

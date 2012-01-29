@@ -20,7 +20,7 @@ namespace Mono.Debugger.Soft
 		FieldInfoMirror[] fields;
 		PropertyInfoMirror[] properties;
 		TypeInfo info;
-		TypeMirror base_type, element_type;
+		TypeMirror base_type, element_type, gtd;
 		TypeMirror[] nested;
 		CustomAttributeDataMirror[] cattrs;
 		TypeMirror[] ifaces;
@@ -286,11 +286,40 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		// Since protocol version 2.12
+		public bool IsGenericTypeDefinition {
+			get {
+				vm.CheckProtocolVersion (2, 12);
+				GetInfo ();
+				return info.is_gtd;
+			}
+		}
+
+		// Since protocol version 2.12
+		public bool IsGenericType {
+			get {
+				vm.CheckProtocolVersion (2, 12);
+				GetInfo ();
+				return info.is_generic_type;
+			}
+		}
+
 		public TypeMirror GetElementType () {
 			GetInfo ();
 			if (element_type == null && info.element_type != 0)
 				element_type = vm.GetType (info.element_type);
 			return element_type;
+		}
+
+		public TypeMirror GetGenericTypeDefinition () {
+			vm.CheckProtocolVersion (2, 12);
+			GetInfo ();
+			if (gtd == null) {
+				if (info.gtd == 0)
+					throw new InvalidOperationException ();
+				gtd = vm.GetType (info.gtd);
+			}
+			return gtd;
 		}
 
 		public string FullName {
