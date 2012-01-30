@@ -45,7 +45,7 @@ namespace Mono.Documentation {
 
 			var extra = Parse (options, args, "index", 
 			                   "[OPTIONS]+ ACTION",
-			                   "Create tree indexes depending on ACTION. Possible values are \"index\" or \"search\"");
+			                   "Create Monodoc indexes depending on ACTION. Possible values are \"tree\" or \"search\" for, respectively, mdoc tree and lucene search");
 			if (extra == null)
 				return;
 
@@ -53,7 +53,7 @@ namespace Mono.Documentation {
 
 			foreach (var action in extra) {
 				switch (action) {
-				case "index":
+				case "tree":
 					RootTree.MakeIndex (root);
 					break;
 				case "search":
