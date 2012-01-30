@@ -121,6 +121,11 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP
+.I direct-pinvoke
+.Sp
+When this option is specified, P/Invoke methods are invoked directly
+instead of going through the operating system symbol lookup operation.
+.TP
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
 .TP
