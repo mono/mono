@@ -2037,6 +2037,7 @@ public class EcmaHelpSource : HelpSource {
 					doc.examples = text.ToString ();
 					
 					writer.AddDocument (doc.LuceneDoc);
+					var exportParsable = doc_tag == "Class" && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
 
 					//Add docs for contructors, methods, etc.
 					foreach (Node c in type_node.Nodes) { // c = Constructors || Fields || Events || Properties || Methods || Operators
@@ -2112,6 +2113,34 @@ public class EcmaHelpSource : HelpSource {
 							Document lucene_doc = doc_nod.LuceneDoc;
 							lucene_doc.SetBoost (innerTypeBoost);
 							writer.AddDocument (lucene_doc);
+
+							// MonoTouch/Monomac specific parsing of [Export] attributes
+							if (exportParsable) {
+								try {
+									var exports =
+										xdoc.SelectNodes (string.Format ("/Type/Members/Member[@MemberName='{0}']/Attributes/Attribute/AttributeName[contains(text(), 'Foundation.Export')]", nc.Caption));
+									foreach (XmlNode exportNode in exports) {
+										var inner = exportNode.InnerText;
+										var parts = inner.Split ('"');
+										if (parts.Length != 3) {
+											Console.WriteLine ("Export attribute not found or not usable in {0}", inner);
+											continue;
+										}
+										
+										var export = parts[1];
+										var export_node = new SearchableDocument ();
+										export_node.title = export + " Export";
+										export_node.fulltitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, export);
+										export_node.url = urlnc;
+										export_node.hottext = export + ":";
+										export_node.text = string.Empty;
+										export_node.examples = string.Empty;
+										writer.AddDocument (export_node.LuceneDoc);
+									}
+								} catch (Exception e){
+									Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
+								}
+							}
 						}
 					}
 				//
