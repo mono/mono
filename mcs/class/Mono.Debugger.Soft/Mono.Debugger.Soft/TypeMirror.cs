@@ -36,13 +36,13 @@ namespace Mono.Debugger.Soft
 			get {
 				return GetInfo ().name;
 			}
-	    }
+		}
 
 		public string Namespace {
 			get {
 				return GetInfo ().ns;
 			}
-	    }
+		}
 
 		public AssemblyMirror Assembly {
 			get {
@@ -295,12 +295,13 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		// Since protocol version 2.12
 		public bool IsGenericType {
 			get {
-				vm.CheckProtocolVersion (2, 12);
-				GetInfo ();
-				return info.is_generic_type;
+				if (vm.Version.AtLeast (2, 12)) {
+					return GetInfo ().is_generic_type;
+				} else {
+					return Name.IndexOf ('`') != -1;
+				}
 			}
 		}
 
