@@ -26,8 +26,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -1655,6 +1657,27 @@ namespace MonoTests.System.Xml.Linq
 			
 			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
 			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
+		}
+
+		[Test]
+		public void Bug3137 ()
+		{
+			CultureInfo current = Thread.CurrentThread.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+				var element1 = new XElement ("Property1", new XAttribute ("type", "number"), 1.2343445);
+				Assert.AreEqual ("<Property1 type=\"number\">1.2343445</Property1>", element1.ToString (), "en-US");
+				
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("de-DE");
+				// this was already working because the element was created with en-US
+				Assert.AreEqual ("<Property1 type=\"number\">1.2343445</Property1>", element1.ToString (), "de-DE/1");
+				// however creating a new, identical, element under de-DE return*ed* a different string
+				var element2 = new XElement ("Property1", new XAttribute ("type", "number"), 1.2343445);
+				Assert.AreEqual ("<Property1 type=\"number\">1.2343445</Property1>", element2.ToString (), "de-DE/2");
+			}
+			finally {
+				Thread.CurrentThread.CurrentCulture = current;
+			}
 		}
 	}
 }
