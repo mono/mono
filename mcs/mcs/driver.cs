@@ -44,7 +44,10 @@ namespace Mono.CSharp
 		void tokenize_file (SourceFile sourceFile, ModuleContainer module)
 		{
 			Stream input;
-
+			
+			if (file.Name == "{interactive}")
+				return;
+			
 			try {
 				input = File.OpenRead (sourceFile.Name);
 			} catch {
@@ -89,7 +92,10 @@ namespace Mono.CSharp
 		public void Parse (SourceFile file, ModuleContainer module)
 		{
 			Stream input;
-
+			
+			if (file.Name == "{interactive}")
+				return;
+			
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {

@@ -52,6 +52,7 @@
     <Compile Include="Evaluator\CompletionTest.cs" />
     <Compile Include="Evaluator\EvaluatorFixture.cs" />
     <Compile Include="Evaluator\ExpressionsTest.cs" />
+    <Compile Include="Evaluator\InteractiveSourceTest.cs" />
     <Compile Include="Evaluator\TypesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
