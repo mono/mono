@@ -264,7 +264,28 @@ add masterdoc support?
         <xs:element ref="threadsafe" />
         <xs:element ref="typeparam" />
         <xs:element ref="filterpriority" />
+        <xs:element ref="related" />
       </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="relatedType">
+    <restriction base="string">
+      <!-- External code/application samples -->
+      <enumeration value="sample"/>
+      <!-- e.g. ECMA, OPC, OData, ... specs -->
+      <enumeration value="specification"/>
+      <!-- e.g. Apple documentation -->
+      <enumeration value="externalDocumentation" />
+      <!-- e.g. a more in-depth article at docs.xamarin.com -->
+      <enumeration value="article" />
+    </restriction>
+  </xs:simpleType>
+
+  <xs:element name="related">
+    <xs:complexType>
+      <xs:attribute name="type" type="relatedType" />
+      <xs:attribute name="href" type="anyURI" />
     </xs:complexType>
   </xs:element>
 

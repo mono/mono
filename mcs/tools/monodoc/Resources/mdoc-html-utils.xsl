@@ -379,6 +379,19 @@
 
 	</xsl:template>
 
+	<xsl:template name="CreateRelatedSection">
+	  <xsl:param name="section" />
+	  <xsl:param name="type" />
+	  <xsl:if test="count(Docs/related[@type=$type])">
+		<h3 class="{$type}"><xsl:value-of select="$section" /></h3>
+		<ul class="{$type}">
+		  <xsl:for-each select="Docs/related[@type=$type]">
+			<li><a href="{@href}"><xsl:value-of select="." /></a></li>
+		  </xsl:for-each>
+		</ul>
+	  </xsl:if>
+	</xsl:template>
+
 	<xsl:template name="CreateMemberSignature">
 		<xsl:param name="linkid" select="''" />
 
@@ -794,6 +807,34 @@
 					</xsl:with-param>
 				</xsl:call-template>
 			</xsl:for-each>
+		</xsl:if>
+
+		<!-- related content -->
+		<xsl:if test="count(Docs/related)">
+		  <xsl:call-template name="CreateH2Section">
+			<xsl:with-param name="name" select="'Related content'" />
+			<xsl:with-param name="child-id" select="concat ($linkid, ':Related:')" />
+			<xsl:with-param name="content">
+			  <div class="related">
+				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Articles'" />
+				  <xsl:with-param name="type" select="'article'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Available Samples'" />
+				  <xsl:with-param name="type" select="'sample'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Related specifications'" />
+				  <xsl:with-param name="type" select="'specification'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'External Documentation'" />
+				  <xsl:with-param name="type" select="'externalDocumentation'" />
+				</xsl:call-template>
+			  </div>
+			</xsl:with-param>
+		  </xsl:call-template>
 		</xsl:if>
 
 		<xsl:call-template name="CreateH2Section">
