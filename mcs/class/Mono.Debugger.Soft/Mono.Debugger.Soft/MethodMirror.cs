@@ -71,22 +71,22 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		void GetInfo () {
+		MethodInfo GetInfo () {
 			if (info == null)
 				info = vm.conn.Method_GetInfo (id);
+			
+			return info;
 		}
 
 		public int MetadataToken {
 			get {
-				GetInfo ();
-				return info.token;
+				return GetInfo ().token;
 			}
 		}
 
 		public MethodAttributes Attributes {
 			get {
-				GetInfo ();
-				return (MethodAttributes)info.attributes;
+				return (MethodAttributes) GetInfo ().attributes;
 			}
 		}
 
@@ -163,8 +163,7 @@ namespace Mono.Debugger.Soft
 		public bool IsGenericMethodDefinition {
 			get {
 				vm.CheckProtocolVersion (2, 12);
-				GetInfo ();
-				return info.is_gmd;
+				return GetInfo ().is_gmd;
 			}
 		}
 
