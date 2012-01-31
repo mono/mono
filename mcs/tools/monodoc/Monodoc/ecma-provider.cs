@@ -2168,6 +2168,7 @@ public class EcmaHelpSource : HelpSource {
 
 					doc.title = type_node.Caption;
 					doc.hottext = xdoc.DocumentElement.Attributes["Name"].Value;
+					doc.fulltitle = full;
 					doc.url = url;
 					doc.text = text.ToString();
 					writer.AddDocument (doc.LuceneDoc);
@@ -2178,6 +2179,7 @@ public class EcmaHelpSource : HelpSource {
 					SearchableDocument doc = new SearchableDocument ();
 					doc.title = type_node.Caption;
 					doc.hottext = xdoc.DocumentElement.Attributes["Name"].Value;
+					doc.fulltitle = full;
 					doc.url = url; 
 					
 					XmlNode node_sel = xdoc.SelectSingleNode ("/Type/Docs");

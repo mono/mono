@@ -479,11 +479,7 @@ namespace Mono.CSharp
 					Builder.__AddDeclarativeSecurity (entry);
 				}
 #else
-				var args = new PermissionSet[3];
-				declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args[0]);
-				declarative_security.TryGetValue (SecurityAction.RequestOptional, out args[1]);
-				declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args[2]);
-				builder_extra.AddPermissionRequests (args);
+				throw new NotSupportedException ("Assembly-level security");
 #endif
 			}
 

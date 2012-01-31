@@ -2848,16 +2848,17 @@ namespace Mono.CSharp {
 				if (!u.IsArray)
 					return 0;
 
-				// TODO MemberCache: GetMetaInfo ()
-				if (u.GetMetaInfo ().GetArrayRank () != v.GetMetaInfo ().GetArrayRank ())
+				var ac_u = (ArrayContainer) u;
+				var ac_v = (ArrayContainer) v;
+				if (ac_u.Rank != ac_v.Rank)
 					return 0;
 
-				return ExactInference (TypeManager.GetElementType (u), TypeManager.GetElementType (v));
+				return ExactInference (ac_u.Element, ac_v.Element);
 			}
 
 			// If V is constructed type and U is constructed type
 			if (TypeManager.IsGenericType (v)) {
-				if (!TypeManager.IsGenericType (u))
+				if (!TypeManager.IsGenericType (u) || v.MemberDefinition != u.MemberDefinition)
 					return 0;
 
 				TypeSpec [] ga_u = TypeManager.GetTypeArguments (u);

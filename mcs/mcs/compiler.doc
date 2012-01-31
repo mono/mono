@@ -1,91 +1,81 @@
-Compiler operation
+Compiler operations
 
 The compiler has a number of phases:
 
-* Parsing.
+* Parsing
 
 	Initially the compiler parses all the source files and keeps a
-	parsed representation in memory.  Very syntax error checking
+	parsed representation in memory. Also syntax error checking
 	is performed at this point.
 
 	The compiler stores the information in classes whose names
 	represent the language construct, for example, the "if"
 	construct is stored in an `If' class.  A class is stored in a
 	`Class'.
+	
+* Type creation
 
-* The TypeManager
+	Once the parsing has happened, compiled types are created. What
+	is actually created is only a type skeleton including name,
+	correct nesting, type parameters definitions. Types are created
+	before any referenced types are loaded to ensure that locally
+	defined type is used when an external assembly references a type
+	with same name as compiled type.
 
-	The TypeManager loads all the assemblies that were referenced
-	by the programmer.  The CLR type system is used as our
-	repository for types defined as well.
+* References loading
 
-	So the same interface that is used to query the types,
-	properties and flags about system types is the same interface
-	that we use for our types.
+	As a next step referenced assemblies and modules are loaded and
+	their top-level types are imported and cached. We import only
+	C# valid top level types at this point all other members are
+	imported on demand when needed.
+	
+* Namespaces definition
 
-	As we work our way through the code generation and semantic
-	analysis, new types are entered into the Type system through
-	the use of System.Reflection.Emit.  The TypeManager will
-	lookup types on both the user defined types and on the system
-	defined ones.
+	Before any type resolution can be done we define all compiled
+	namespaces. This is mainly done to prepare using clauses of each
+	namespace block before any type resolution takes a place.
+	
+* Types definition
 
-	So special care has to be used.  The order in which we
-	proceeed from here is important. 
-
-* Base class resolution and type definition.
-
-	Once the parsing has happened, the compiler resolves the
-	inheritance tree for interfaces.   This is done recursively
-	and we catch recursive interface definitions here.
-
-	After this is done, we continue on with classes.  Classes have
-	can have an optional "parent" inherit from or the implicit
-	System.Object class (for normal builds, builds with /nostdlib
-	will allow you to compile class System.Object with no parent).
-
+	The first step of type definition is to resolve base class or
+	base interfaces to correctly setup type hierarchy before any
+	member is defined.
+	
 	At this point we do some error checking and verify that the
-	inherits/implements section of a class is correct (since we
-	have previously built the interface inheritance).
+	members inheritance is correct and some other members
+	oriented checks.
 
 	By the time we are done, all classes, structs and interfaces
-	have been created using System.Reflection.Emit and registered
-	with the Type Manager.
+	have been defined and all their members have been defined as
+	well.
 
-	This allows us to define fields and resolve argument names for
-	methods, properties, indexers and events. 
+* Emit aka Code Generation
 
-* Field generation
-
-	Fields are generated next, we go through all the type
-	containers (classes and structs) and enter the fields into
-	their types.
-
-* Method, Properties, Indexers and events definitions
-
-	Now all the methods, constructors, properties, indexers and
-	events are entered.  They are only `defined' using
-	System.Reflection.Emit.  No code generation will happen until
-	everything has been entered into System.Reflection.Emit.
-
-	This is important because to actually generate code we need to
-	know everything about the environment in which the code is
-	being generated.
-
-* Code Generation
-
-	At this point all the definitions have been entered into the
-	type manager through System.Reflection.Emit.  We can now use
-	System.Reflection to query all the information about the
-	types. 
-
-	Your normal semantic analysis and code generation phase lives
-	here.
+	At this stage the CIL code is generated together with other
+	metadata including attributes, constants, type parameter constraints.
+	Before any method body code is generated its body is first
+	resolved and check for errors including flow analysis.
 
 * Statements
 
-	Most of the statements are handled in the codegen.cs file.
+	Most of the statements are handled in the statement.cs file.
 
 * Expressions
+
+* MemberCache
+
+	MemberCache is one of core compiler components. It maintains information
+	about types and their members. It tries to be as fast as possible
+	because almost all resolve operations end up querying members info in
+	some way.
+	
+	MemberCache is not definition but specification oriented to maintain
+	differences between inflated versions of generic types. This makes usage
+	of MemberCache simple because consumer does not need to care how to inflate
+	current member and returned type information will always give correctly
+	inflated type. However setting MemberCache up is one of the most complicated
+	parts of the compiler due to possible dependencies when types are defined
+	and complexity of nested types.
 
 * Error reporting
 
@@ -96,7 +86,7 @@ The compiler has a number of phases:
 
 	Error reporting should try to use the same codes that the
 	Microsoft compiler uses (if only so we can track which errors
-	we handle and which ones we dont).
+	we handle and which ones we don't).
 
 	If there is an error which is specific to MSC, use negative
 	numbers, and register the number in mcs/errors/errors.txt

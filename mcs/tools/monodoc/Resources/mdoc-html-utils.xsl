@@ -392,6 +392,26 @@
 	  </xsl:if>
 	</xsl:template>
 
+	<xsl:template name="CreatePlatformRequirements">
+	  <!-- For now we only have that information in MonoTouch so only process that -->
+	  <xsl:if test="starts-with(/Type/@FullName, 'MonoTouch')">
+		<xsl:choose>
+		  <!-- We first check if we have a [Since] at the member level -->
+		  <xsl:when test="count(Attributes/Attribute/AttributeName[starts-with(text(), 'MonoTouch.ObjCRuntime.Since')])">
+			<b>Minimum iOS version: </b>
+			<xsl:value-of select="translate(substring-before (substring-after (Attributes/Attribute/AttributeName[starts-with(text(), 'MonoTouch.ObjCRuntime.Since')], 'MonoTouch.ObjCRuntime.Since('), ')'), ', ', '.')" />
+			<br />
+		  </xsl:when>
+		  <!-- If not, we then check at the type level -->
+		  <xsl:when test="count(/Type/Attributes/Attribute/AttributeName[starts-with(text(), 'MonoTouch.ObjCRuntime.Since')])">
+			<b>Minimum iOS version: </b> 
+			<xsl:value-of select="translate(substring-before (substring-after (/Type/Attributes/Attribute/AttributeName[starts-with(text(), 'MonoTouch.ObjCRuntime.Since')], 'MonoTouch.ObjCRuntime.Since('), ')'), ', ', '.')" />
+			<br />
+		  </xsl:when>
+		</xsl:choose>
+	  </xsl:if>
+	</xsl:template>
+
 	<xsl:template name="CreateMemberSignature">
 		<xsl:param name="linkid" select="''" />
 
@@ -841,6 +861,7 @@
 			<xsl:with-param name="name" select="'Requirements'"/>
 			<xsl:with-param name="child-id" select="concat ($linkid, ':Version Information')" />
 			<xsl:with-param name="content">
+				<xsl:call-template name="CreatePlatformRequirements" />
 				<b>Namespace: </b><xsl:value-of select="substring(/Type/@FullName, 1, string-length(/Type/@FullName) - string-length(/Type/@Name) - 1)" />
 				<xsl:if test="count(/Type/AssemblyInfo/AssemblyName) &gt; 0">
 					<br />
