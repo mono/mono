@@ -1034,16 +1034,10 @@ namespace Mono.CSharp {
 				return false;
 
 			for (int i = 0; i < Parameters.Count; ++i) {
-				TypeSpec itype = d_params.Types [i];
-				if (!TypeManager.IsGenericParameter (itype)) {
-					if (!TypeManager.HasElementType (itype))
-						continue;
-					
-					if (!TypeManager.IsGenericParameter (TypeManager.GetElementType (itype)))
-					    continue;
-				}
-				type_inference.ExactInference (Parameters.Types [i], itype);
+				if (type_inference.ExactInference (Parameters.Types[i], d_params.Types[i]) == 0)
+					return false;
 			}
+
 			return true;
 		}
 
