@@ -2235,6 +2235,20 @@ inflated_signature_in_image (gpointer key, gpointer value, gpointer data)
 		(sig->context.method_inst && ginst_in_image (sig->context.method_inst, image));
 }	
 
+static void
+remove_generic_class_from_szarray_cache (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoGenericClass* gclass = (MonoGenericClass*)user_data;
+	MonoImage* image = value;
+
+	if (gclass_in_image (gclass, image))
+	{
+		EnterCriticalSection (&image->szarray_cache_lock);
+		g_hash_table_remove (image->szarray_cache, gclass->cached_class);
+		LeaveCriticalSection (&image->szarray_cache_lock);
+	}
+}
+
 void
 mono_metadata_clean_for_image (MonoImage *image)
 {
@@ -2253,6 +2267,16 @@ mono_metadata_clean_for_image (MonoImage *image)
 		g_hash_table_foreach_remove (generic_method_cache, inflated_method_in_image, image);
 	if (generic_signature_cache)
 		g_hash_table_foreach_remove (generic_signature_cache, inflated_signature_in_image, image);
+
+	/* Do this before we free the data below*/
+	for (l = gclass_data.list; l; l = l->next)
+	{
+		/* remove any of the generic classes to be delete from the array cache */
+		/* TODO: This needs to be done for all loaded images, but we don't have 
+		 * easy access to that. Just do corlib for now as that is causing our problem. */
+		remove_generic_class_from_szarray_cache (NULL, mono_defaults.corlib, l->data);
+	}
+
 	/* Delete the removed items */
 	for (l = ginst_data.list; l; l = l->next)
 		free_generic_inst (l->data);
