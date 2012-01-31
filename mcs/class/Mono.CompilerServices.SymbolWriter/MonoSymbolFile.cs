@@ -273,7 +273,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			//
 			methods.Sort ();
 			for (int i = 0; i < methods.Count; i++)
-				((MethodEntry) methods [i]).Index = i + 1;
+				methods [i].Index = i + 1;
 
 			//
 			// Write data sections.
@@ -292,7 +292,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			//
 			ot.MethodTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < methods.Count; i++) {
-				MethodEntry entry = (MethodEntry) methods [i];
+				MethodEntry entry = methods [i];
 				entry.Write (bw);
 			}
 			ot.MethodTableSize = (int) bw.BaseStream.Position - ot.MethodTableOffset;
@@ -302,7 +302,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			//
 			ot.SourceTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < sources.Count; i++) {
-				SourceFileEntry source = (SourceFileEntry) sources [i];
+				SourceFileEntry source = sources [i];
 				source.Write (bw);
 			}
 			ot.SourceTableSize = (int) bw.BaseStream.Position - ot.SourceTableOffset;
@@ -312,7 +312,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			//
 			ot.CompileUnitTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < comp_units.Count; i++) {
-				CompileUnitEntry unit = (CompileUnitEntry) comp_units [i];
+				CompileUnitEntry unit = comp_units [i];
 				unit.Write (bw);
 			}
 			ot.CompileUnitTableSize = (int) bw.BaseStream.Position - ot.CompileUnitTableOffset;
@@ -621,7 +621,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			lock (this) {
 				read_methods ();
-				return (MethodEntry) method_list [index - 1];
+				return method_list [index - 1];
 			}
 		}
 
