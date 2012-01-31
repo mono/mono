@@ -22,7 +22,7 @@ namespace Monodoc
 //TODO: where do I call searcher.close()
 public class SearchableIndex 
 {
-	const int maxSearchCount = 100;
+	const int maxSearchCount = 30;
 
 	IndexSearcher searcher;
     string dir;
@@ -57,7 +57,12 @@ public class SearchableIndex
 		return Search (term, maxSearchCount);
 	}
 
-	public Result Search (string term, int number) {
+	public Result Search (string term, int count)
+	{
+		return Search (term, count, 0);
+	}
+
+	public Result Search (string term, int count, int start) {
 		try {
 			Query q1 = Parse (term, "hottext", true);
 			Query q2 = Parse (term, "text", false);
@@ -68,7 +73,7 @@ public class SearchableIndex
 			q.Add (q1, BooleanClause.Occur.SHOULD);
 			q.Add (q2, BooleanClause.Occur.SHOULD);
 			q.Add (q3, BooleanClause.Occur.SHOULD);
-			TopDocs top = searcher.Search (q, number);
+			TopDocs top = SearchInternal (q, count, start);
 			Result r = new Result (term, searcher, top.ScoreDocs);
 			Results.Add (r);
 			return r;
@@ -76,6 +81,20 @@ public class SearchableIndex
 			Console.WriteLine ("No index in {0}", dir);
 			return null;
 		}
+	}
+
+	TopDocs SearchInternal (Query q, int count, int start)
+	{
+		// Easy path that doesn't involve creating a Collector ourselves
+		// watch for Lucene.NET improvement on that (like searcher.SearchAfter)
+		if (start == 0)
+			return searcher.Search (q, count);
+
+		var weight = searcher.CreateWeight (q); // TODO: reuse weight instead of query
+		var collector = TopScoreDocCollector.create (start + count + 1, weight.ScoresDocsOutOfOrder());
+		searcher.Search (q, collector);
+
+		return collector.TopDocs (start, count);
 	}
 
 	public Result FastSearch (string term, int number)
