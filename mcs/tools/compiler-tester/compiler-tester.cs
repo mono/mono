@@ -181,12 +181,9 @@ namespace TestRunner {
 
 			public VerificationData (string test_file)
 			{
-#if NET_2_0
 				this.test_file = test_file;
-#endif				
 			}
 
-#if NET_2_0
 			string test_file;
 
 			public static VerificationData FromFile (string name, XmlReader r)
@@ -244,7 +241,6 @@ namespace TestRunner {
 
 				w.WriteEndElement ();
 			}
-#endif
 
 			public MethodData FindMethodData (string method_name, string declaring_type)
 			{
@@ -741,11 +737,10 @@ namespace TestRunner {
 
 			static int GetILSize (MethodBase mi)
 			{
-#if NET_2_0
 				MethodBody body = mi.GetMethodBody ();
 				if (body != null)
 					return body.GetILAsByteArray ().Length;
-#endif
+
 				return 0;
 			}
 
@@ -942,11 +937,7 @@ namespace TestRunner {
 		public override void Initialize ()
 		{
 			if (verif_file != null) {
-#if NET_2_0
 				LoadVerificationData (verif_file);
-#else
-				throw new NotSupportedException ();
-#endif
 			}
 
 			base.Initialize ();
@@ -957,15 +948,10 @@ namespace TestRunner {
 			base.CleanUp ();
 
 			if (update_verif_file) {
-#if NET_2_0
 				UpdateVerificationData (verif_file);
-#else
-				throw new NotSupportedException ();
-#endif
 			}
 		}
 
-#if NET_2_0
 		void LoadVerificationData (string file)
 		{
 			LogLine ("Loading verification data from `{0}' ...", file);
@@ -1002,7 +988,6 @@ namespace TestRunner {
 				w.WriteEndElement ();
 			}
 		}
-#endif
 	}
 
 	class NegativeChecker: Checker
@@ -1055,11 +1040,7 @@ namespace TestRunner {
 				// Some error tests require to have different error text for different runtimes.
 				if (filtered.StartsWith ("//GMCS")) {
 					row = 1;
-#if !NET_2_0
-					return true;
-#else
 					return AnalyzeTestFile(file, ref row, line, ref compiler_options, ref dependencies);
-#endif
 				}
 
 				check_error_line = !filtered.StartsWith ("//Line:0");
