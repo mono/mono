@@ -568,6 +568,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 
+		[Obsolete]
 		public int DefineNamespace (string name, string[] using_clauses, int parent)
 		{
 			if (!creating)

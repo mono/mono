@@ -628,22 +628,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override CompileUnitEntry CompileUnitEntry {
-			get {
-				return comp_unit;
-			}
-		}
-
-		public override void EmitContainer ()
-		{
-			if (SymbolWriter.symwriter != null) {
-				// Register source files with symbol writer
-				DefineSymbolInfo (SymbolWriter.symwriter);
-			}
-
-			base.EmitContainer ();
-		}
-
 		public void AddIncludeFile (SourceFile file)
 		{
 			if (file == this.file)
@@ -672,8 +656,18 @@ namespace Mono.CSharp {
 			conditionals[value] = false;
 		}
 
-		void DefineSymbolInfo (MonoSymbolWriter symwriter)
+		//
+		// Creates on-demand symbol file info this ensures we
+		// write info only about source files which have methods
+		// with body
+		//
+		public CompileUnitEntry CreateUnitSymbolInfo ()
 		{
+			if (comp_unit != null)
+				return comp_unit;
+
+			var symwriter = SymbolWriter.symwriter; // Compiler.SymbolWriter
+
 			file.DefineSymbolInfo (symwriter);
 
 			comp_unit = symwriter.DefineCompilationUnit (file.SourceFileEntry);
@@ -684,6 +678,8 @@ namespace Mono.CSharp {
 					comp_unit.AddFile (include.SourceFileEntry);
 				}
 			}
+
+			return comp_unit;
 		}
 
 		public bool IsConditionalDefined (string value)
@@ -709,13 +705,10 @@ namespace Mono.CSharp {
 	public class NamespaceContainer : TypeContainer, IMemberContext
 	{
 		static readonly Namespace[] empty_namespaces = new Namespace[0];
-		static readonly string[] empty_using_list = new string[0];
 
 		readonly Namespace ns;
 
 		public new readonly NamespaceContainer Parent;
-
-		int symfile_id;
 
 		List<UsingNamespace> clauses;
 
@@ -1126,34 +1119,6 @@ namespace Mono.CSharp {
 			}
 
 			return match;
-		}
-
-		public virtual CompileUnitEntry CompileUnitEntry {
-			get {
-				return Parent.CompileUnitEntry;
-			}
-		}
-
-		public int SymbolFileID {
-			get {
-				if (symfile_id == 0) { // && file.SourceFileEntry != null) {
-					int parent_id = Parent == null ? 0 : Parent.SymbolFileID;
-
-					string [] using_list = empty_using_list;
-					if (clauses != null) {
-						// TODO: Why is it needed, what to do with aliases
-						var ul = new List<string> ();
-						foreach (var c in clauses) {
-							ul.Add (c.ResolvedExpression.GetSignatureForError ());
-						}
-						
-						using_list = ul.ToArray ();
-					}
-
-					symfile_id = SymbolWriter.DefineNamespace (ns.Name, CompileUnitEntry, using_list, parent_id);
-				}
-				return symfile_id;
-			}
 		}
 
 		static void MsgtryRef (string s)

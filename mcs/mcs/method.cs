@@ -774,9 +774,6 @@ namespace Mono.CSharp {
 			return conditions;
 		}
 
-		public virtual void EmitExtraSymbolInfo (SourceMethod source)
-		{ }
-
 		#endregion
 
 	}
@@ -784,12 +781,11 @@ namespace Mono.CSharp {
 	public class SourceMethod : IMethodDef
 	{
 		MethodBase method;
-		SourceMethodBuilder builder;
 
-		SourceMethod (NamespaceContainer parent, MethodBase method, ICompileUnit file)
+		SourceMethod (MethodBase method, ICompileUnit file)
 		{
 			this.method = method;
-			builder = SymbolWriter.OpenMethod (file, parent == null ? -1 : parent.SymbolFileID, this);
+			SymbolWriter.OpenMethod (file, this);
 		}
 
 		public string Name {
@@ -817,33 +813,16 @@ namespace Mono.CSharp {
 			SymbolWriter.CloseMethod ();
 		}
 
-		public void SetRealMethodName (string name)
-		{
-			if (builder != null)
-				builder.SetRealMethodName (name);
-		}
-
-		public static SourceMethod Create (TypeDefinition parent, MethodBase method, Block block)
+		public static SourceMethod Create (TypeDefinition parent, MethodBase method)
 		{
 			if (!SymbolWriter.HasSymbolWriter)
 				return null;
-			if (block == null)
+
+			var source_file = parent.GetCompilationSourceFile ();
+			if (source_file == null)
 				return null;
 
-			Location start_loc = block.StartLocation;
-			if (start_loc.IsNull)
-				return null;
-
-			// TODO: What to do with anonymous types
-			TypeContainer ns = parent.PartialContainer.Parent;
-			while (ns != null && !(ns is NamespaceContainer) && ns.PartialContainer != null)
-				ns = ns.PartialContainer.Parent;
-
-			var ns_cont = ns as NamespaceContainer;
-			if (ns_cont == null)
-				return null;
-
-			return new SourceMethod (ns_cont, method, ns_cont.CompileUnitEntry);
+			return new SourceMethod (method, source_file.CreateUnitSymbolInfo ());
 		}
 	}
 
@@ -1720,7 +1699,7 @@ namespace Mono.CSharp {
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (bc);
 
-				if ((ModFlags & Modifiers.STATIC) == 0){
+				if ((ModFlags & Modifiers.STATIC) == 0) {
 					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
 						Initializer = new GeneratedBaseInitializer (Location);
 
@@ -1728,21 +1707,19 @@ namespace Mono.CSharp {
 						block.AddScopeStatement (new StatementExpression (Initializer));
 					}
 				}
-			}
 
-			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
-
-			if (block != null) {
 				if (block.Resolve (null, bc, this)) {
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType);
 					ec.With (EmitContext.Options.ConstructorScope, true);
 
+					SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder);
+
 					block.Emit (ec);
+
+					if (source != null)
+						source.CloseMethod ();
 				}
 			}
-
-			if (source != null)
-				source.CloseMethod ();
 
 			if (declarative_security != null) {
 				foreach (var de in declarative_security) {
@@ -1822,9 +1799,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		void IMethodData.EmitExtraSymbolInfo (SourceMethod source)
-		{ }
-
 		#endregion
 	}
 
@@ -1845,7 +1819,6 @@ namespace Mono.CSharp {
 		ToplevelBlock Block { get; set; }
 
 		EmitContext CreateEmitContext (ILGenerator ig);
-		void EmitExtraSymbolInfo (SourceMethod source);
 	}
 
 	//
@@ -2120,21 +2093,19 @@ namespace Mono.CSharp {
 
 			method.ParameterInfo.ApplyAttributes (mc, MethodBuilder);
 
-			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
-
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
 
-					block.Emit (ec);
-				}
-			}
+					SourceMethod source = SourceMethod.Create (parent, MethodBuilder);
 
-			if (source != null) {
-				method.EmitExtraSymbolInfo (source);
-				source.CloseMethod ();
+					block.Emit (ec);
+
+					if (source != null)
+						source.CloseMethod ();
+				}
 			}
 		}
 	}
@@ -2411,9 +2382,6 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader {
 			get { throw new InvalidOperationException ("Unexpected attempt to get doc comment from " + this.GetType () + "."); }
 		}
-
-		void IMethodData.EmitExtraSymbolInfo (SourceMethod source)
-		{ }
 	}
 
 	public class Operator : MethodOrOperator {

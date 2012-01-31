@@ -156,7 +156,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		List<MethodEntry> methods = new List<MethodEntry> ();
 		List<SourceFileEntry> sources = new List<SourceFileEntry> ();
 		List<CompileUnitEntry> comp_units = new List<CompileUnitEntry> ();
-		Dictionary<Type, int> type_hash = new Dictionary<Type, int> ();
 		Dictionary<int, AnonymousScopeEntry> anonymous_scopes;
 
 		OffsetTable ot;
@@ -185,17 +184,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			comp_units.Add (entry);
 			return comp_units.Count;
-		}
-
-		internal int DefineType (Type type)
-		{
-			int index;
-			if (type_hash.TryGetValue (type, out index))
-				return index;
-
-			index = ++last_type_index;
-			type_hash.Add (type, index);
-			return index;
 		}
 
 		internal void AddMethod (MethodEntry entry)

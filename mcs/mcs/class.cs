@@ -983,6 +983,18 @@ namespace Mono.CSharp
 			return a.GetAttributeUsageAttribute ();
 		}
 
+		public virtual CompilationSourceFile GetCompilationSourceFile ()
+		{
+			TypeContainer ns = Parent;
+			while (true) {
+				var sf = ns as CompilationSourceFile;
+				if (sf != null)
+					return sf;
+
+				ns = ns.Parent;
+			}
+		}
+
 		public virtual void AddBasesForPart (List<FullNamedExpression> bases)
 		{
 			type_bases = bases;

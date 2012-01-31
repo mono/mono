@@ -1307,18 +1307,16 @@ namespace Mono.CSharp {
 		{
 			public readonly AnonymousExpression AnonymousMethod;
 			public readonly AnonymousMethodStorey Storey;
-			readonly string RealName;
 
 			public AnonymousMethodMethod (TypeDefinition parent, AnonymousExpression am, AnonymousMethodStorey storey,
 							  TypeExpr return_type,
-							  Modifiers mod, string real_name, MemberName name,
+							  Modifiers mod, MemberName name,
 							  ParametersCompiled parameters)
 				: base (parent, return_type, mod | Modifiers.COMPILER_GENERATED,
 						name, parameters, null)
 			{
 				this.AnonymousMethod = am;
 				this.Storey = storey;
-				this.RealName = real_name;
 
 				Parent.PartialContainer.Members.Add (this);
 				Block = new ToplevelBlock (am.block, parameters);
@@ -1361,11 +1359,6 @@ namespace Mono.CSharp {
 				}
 
 				base.Emit ();
-			}
-
-			public override void EmitExtraSymbolInfo (SourceMethod source)
-			{
-				source.SetRealMethodName (RealName);
 			}
 		}
 
@@ -1566,7 +1559,6 @@ namespace Mono.CSharp {
 
 			var parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
 
-			MemberCore mc = ec.MemberContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
 				"m", null, ec.Module.CounterAnonymousMethods++);
 
@@ -1584,13 +1576,9 @@ namespace Mono.CSharp {
 				member_name = new MemberName (name, Location);
 			}
 
-			string real_name = String.Format (
-				"{0}~{1}{2}", mc.GetSignatureForError (), GetSignatureForError (),
-				parameters.GetSignatureForError ());
-
 			return new AnonymousMethodMethod (parent,
 				this, storey, new TypeExpression (ReturnType, Location), modifiers,
-				real_name, member_name, parameters);
+				member_name, parameters);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1745,8 +1733,8 @@ namespace Mono.CSharp {
 		
 		readonly IList<AnonymousTypeParameter> parameters;
 
-		private AnonymousTypeClass (TypeContainer parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
-			: base (parent, name, (parent.Module.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
+		private AnonymousTypeClass (ModuleContainer parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
+			: base (parent, name, (parent.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}
@@ -2030,6 +2018,11 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return SignatureForError;
+		}
+
+		public override CompilationSourceFile GetCompilationSourceFile ()
+		{
+			return null;
 		}
 
 		public IList<AnonymousTypeParameter> Parameters {

@@ -153,6 +153,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			return entry;
 		}
 
+		[Obsolete]
 		public int DefineNamespace (string name, CompileUnitEntry unit,
 					    string[] using_clauses, int parent)
 		{
@@ -370,10 +371,12 @@ namespace Mono.CompilerServices.SymbolWriter
 				new ScopeVariable (scope, index));
 		}
 
+		[Obsolete]
 		public string RealMethodName {
 			get { return _real_name; }
 		}
 
+		[Obsolete ("It has no meaning")]
 		public void SetRealMethodName (string name)
 		{
 			_real_name = name;
@@ -394,7 +397,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			MethodEntry entry = new MethodEntry (
 				file, _comp_unit.Entry, _method.Token, ScopeVariables,
-				Locals, lines, Blocks, RealMethodName, 0, //_method_flags,
+				Locals, lines, Blocks, _real_name, 0, //_method_flags,
 				_ns_id);
 
 			file.AddMethod (entry);
