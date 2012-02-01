@@ -71,7 +71,6 @@ CustomConfigureStep() {
 
 CustomInstallStep() {
   make install
-  CopyNormalMonoLibs
 }
 
 CustomPackageInstall() {

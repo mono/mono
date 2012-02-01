@@ -54,7 +54,14 @@ readonly NACL_NEWLIB=${NACL_NEWLIB:-"0"}
 if [ $NACL_NEWLIB = "1" ]; then
   readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86_newlib
 else
+case "${NACL_SDK_ROOT}" in
+*pepper_15* | *pepper_16* | *pepper_17*)
   readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86
+  ;;
+*)
+  readonly NACL_SDK_BASE=${NACL_SDK_ROOT}/toolchain/${OS_SUBDIR_SHORT}_x86_glibc
+  ;;
+esac
 fi
 
 readonly NACL_BIN_PATH=${NACL_SDK_BASE}/bin

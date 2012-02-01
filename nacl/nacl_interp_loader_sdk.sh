@@ -30,10 +30,20 @@ esac
 
 shift
 
-SEL_LDR="$NACL_SDK_ROOT/toolchain/linux_x86/bin/sel_ldr_${arch}"
-IRT="$NACL_SDK_ROOT/toolchain/linux_x86/runtime/irt_core_${arch}.nexe"
-RTLD="$NACL_SDK_ROOT/toolchain/linux_x86/x86_64-nacl/${libdir}/runnable-ld.so"
-LIBDIR="$NACL_SDK_ROOT/toolchain/linux_x86/x86_64-nacl/${libdir}"
+case "${NACL_SDK_ROOT}" in
+*pepper_15* | *pepper_16* | *pepper_17*)
+  SEL_LDR="$NACL_SDK_ROOT/toolchain/linux_x86/bin/sel_ldr_${arch}"
+  IRT="$NACL_SDK_ROOT/toolchain/linux_x86/runtime/irt_core_${arch}.nexe"
+  RTLD="$NACL_SDK_ROOT/toolchain/linux_x86/x86_64-nacl/${libdir}/runnable-ld.so"
+  LIBDIR="$NACL_SDK_ROOT/toolchain/linux_x86/x86_64-nacl/${libdir}"
+  ;;
+*)
+  SEL_LDR="$NACL_SDK_ROOT/tools/sel_ldr_${arch}"
+  IRT="$NACL_SDK_ROOT/tools/irt_core_${arch}.nexe"
+  RTLD="$NACL_SDK_ROOT/toolchain/linux_x86_glibc/x86_64-nacl/${libdir}/runnable-ld.so"
+  LIBDIR="$NACL_SDK_ROOT/toolchain/linux_x86_glibc/x86_64-nacl/${libdir}"
+  ;;
+esac
 
 IGNORE_VALIDATOR_ARG=""
 if [ x"$NACL_IGNORE_VALIDATOR" == x"1" ]; then
