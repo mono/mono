@@ -161,13 +161,15 @@ namespace TestRunner {
 				{
 					this.Type = mi.DeclaringType.ToString ();
 					this.MethodName = mi.ToString ();
+					this.MethodAttributes = (int) mi.Attributes;
 					this.ILSize = il_size;
 				}
 
-				public MethodData (string type_name, string method_name, int il_size)
+				public MethodData (string type_name, string method_name, int method_attributes, int il_size)
 				{
 					this.Type = type_name;
 					this.MethodName = method_name;
+					this.MethodAttributes = method_attributes;
 					this.ILSize = il_size;
 				}
 
@@ -175,6 +177,7 @@ namespace TestRunner {
 				public string MethodName;
 				public int ILSize;
 				public bool Checked;
+				public int MethodAttributes;
 			}
 
 			ArrayList methods;
@@ -197,10 +200,11 @@ namespace TestRunner {
 					r.Read ();
 					while (r.ReadToNextSibling ("method")) {
 						string m_name = r ["name"];
+						int method_attrs = int.Parse (r["attrs"]);
 
 						r.ReadToDescendant ("size");
 						int il_size = r.ReadElementContentAsInt ();
-						methods.Add (new MethodData (type_name, m_name, il_size));
+						methods.Add (new MethodData (type_name, m_name, method_attrs, il_size));
 						r.Read ();
 					}
 					r.Read ();
@@ -231,6 +235,8 @@ namespace TestRunner {
 
 					w.WriteStartElement ("method");
 					w.WriteAttributeString ("name", data.MethodName);
+					int v = data.MethodAttributes;
+					w.WriteAttributeString ("attrs", v.ToString ());
 					w.WriteStartElement ("size");
 					w.WriteValue (data.ILSize);
 					w.WriteEndElement ();
@@ -610,7 +616,8 @@ namespace TestRunner {
 			XmlError,
 			Success,
 			ILError,
-			DebugError
+			DebugError,
+			MethodAttributesError
 		}
 
 		public PositiveChecker (ITester tester, string verif_file):
@@ -718,6 +725,13 @@ namespace TestRunner {
 				}
 
 				md.Checked = true;
+
+				if (md.MethodAttributes != (int) mi.Attributes) {
+					checker.HandleFailure (test.FileName, PositiveChecker.TestResult.MethodAttributesError,
+						string.Format ("{0} ({1} -> {2})", decl_type + ": " + m_name, md.MethodAttributes, mi.Attributes));
+				}
+
+				md.MethodAttributes = (int) mi.Attributes;
 
 				int il_size = GetILSize (mi);
 				if (md.ILSize == il_size)
@@ -1010,6 +1024,7 @@ namespace TestRunner {
 					LogFileLine (file, "REGRESSION (SUCCESS -> LOAD ERROR)");
 					break;
 
+				case TestResult.MethodAttributesError:
 				case TestResult.ILError:
 					if (!update_verif_file) {
 						LogFileLine (file, "IL REGRESSION: " + extra);
@@ -1049,11 +1064,17 @@ namespace TestRunner {
 
 		void LoadVerificationData (string file)
 		{
+			verif_data = new Hashtable ();
+
+			if (!File.Exists (file)) {
+				LogLine ("Writing verification data to `{0}' ...", file);
+				return;
+			}
+
 			LogLine ("Loading verification data from `{0}' ...", file);
 
 			using (XmlReader r = XmlReader.Create (file)) {
 				r.ReadStartElement ("tests");
-				verif_data = new Hashtable ();
 
 				while (r.Read ()) {
 					if (r.Name != "test")
