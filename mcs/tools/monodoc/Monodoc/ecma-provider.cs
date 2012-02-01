@@ -2135,7 +2135,9 @@ public class EcmaHelpSource : HelpSource {
 										export_node.hottext = export + ":";
 										export_node.text = string.Empty;
 										export_node.examples = string.Empty;
-										writer.AddDocument (export_node.LuceneDoc);
+										lucene_doc = export_node.LuceneDoc;
+										lucene_doc.SetBoost (innerTypeBoost);
+										writer.AddDocument (lucene_doc);
 									}
 								} catch (Exception e){
 									Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
