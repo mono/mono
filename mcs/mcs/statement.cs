@@ -642,6 +642,12 @@ namespace Mono.CSharp {
 			loc = expr.Location;
 		}
 
+		public StatementExpression (ExpressionStatement expr, Location loc)
+		{
+			this.expr = expr;
+			this.loc = loc;
+		}
+
 		public ExpressionStatement Expr {
 			get {
  				return this.expr;
@@ -2296,7 +2302,6 @@ namespace Mono.CSharp {
 			if (scope_initializers != null)
 				EmitScopeInitializers (ec);
 
-			ec.Mark (StartLocation);
 			DoEmit (ec);
 
 			if (SymbolWriter.HasSymbolWriter)
@@ -2305,14 +2310,8 @@ namespace Mono.CSharp {
 
 		protected void EmitScopeInitializers (EmitContext ec)
 		{
-			SymbolWriter.OpenCompilerGeneratedBlock (ec);
-
-			using (ec.With (EmitContext.Options.OmitDebugInfo, true)) {
-				foreach (Statement s in scope_initializers)
-					s.Emit (ec);
-			}
-
-			SymbolWriter.CloseCompilerGeneratedBlock (ec);
+			foreach (Statement s in scope_initializers)
+				s.Emit (ec);
 		}
 
 		protected virtual void EmitSymbolInfo (EmitContext ec)
@@ -3272,10 +3271,14 @@ namespace Mono.CSharp {
 #if PRODUCTION
 			try {
 #endif
-
-			base.Emit (ec);
-
-			ec.Mark (EndLocation);
+			if (IsCompilerGenerated) {
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+					base.Emit (ec);
+				}
+			} else {
+				base.Emit (ec);
+				ec.Mark (EndLocation);
+			}
 
 			if (ec.HasReturnLabel)
 				ec.MarkLabel (ec.ReturnLabel);

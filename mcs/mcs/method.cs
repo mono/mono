@@ -1463,7 +1463,7 @@ namespace Mono.CSharp {
 				ec.Report.Error (516, loc, "Constructor `{0}' cannot call itself",
 					caller_builder.GetSignatureForError ());
 			}
-						
+
 			return this;
 		}
 
@@ -1473,8 +1473,6 @@ namespace Mono.CSharp {
 			if (base_ctor == null)
 				return;
 			
-			ec.Mark (loc);
-
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
 			call.EmitPredefined (ec, base_ctor, argument_list);
@@ -1679,32 +1677,37 @@ namespace Mono.CSharp {
 			base.Emit ();
 			parameters.ApplyAttributes (this, ConstructorBuilder);
 
-			//
-			// If we use a "this (...)" constructor initializer, then
-			// do not emit field initializers, they are initialized in the other constructor
-			//
-			bool emit_field_initializers = ((ModFlags & Modifiers.STATIC) != 0) ||
-				!(Initializer is ConstructorThisInitializer);
 
 			BlockContext bc = new BlockContext (this, block, Compiler.BuiltinTypes.Void);
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
-			if (emit_field_initializers)
+			//
+			// If we use a "this (...)" constructor initializer, then
+			// do not emit field initializers, they are initialized in the other constructor
+			//
+			if (!(Initializer is ConstructorThisInitializer))
 				Parent.PartialContainer.ResolveFieldInitializers (bc);
 
 			if (block != null) {
-				// If this is a non-static `struct' constructor and doesn't have any
-				// initializer, it must initialize all of the struct's fields.
-				if ((Parent.PartialContainer.Kind == MemberKind.Struct) &&
-					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-					block.AddThisVariable (bc);
-
-				if ((ModFlags & Modifiers.STATIC) == 0) {
-					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
-						Initializer = new GeneratedBaseInitializer (Location);
+				if (!IsStatic) {
+					if (Initializer == null) {
+						if (Parent.PartialContainer.Kind == MemberKind.Struct) {
+							//
+							// If this is a non-static `struct' constructor and doesn't have any
+							// initializer, it must initialize all of the struct's fields.
+							//
+							block.AddThisVariable (bc);
+						} else if (Parent.PartialContainer.Kind == MemberKind.Class) {
+							Initializer = new GeneratedBaseInitializer (Location);
+						}
+					}
 
 					if (Initializer != null) {
-						block.AddScopeStatement (new StatementExpression (Initializer));
+						//
+						// Use location of the constructor to emit sequence point of initializers
+						// at beginning of constructor name
+						//
+						block.AddScopeStatement (new StatementExpression (Initializer, Location));
 					}
 				}
 
