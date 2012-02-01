@@ -64,15 +64,27 @@ public class SearchableIndex
 
 	public Result Search (string term, int count, int start) {
 		try {
-			Query q1 = Parse (term, "hottext", true);
-			Query q2 = Parse (term, "text", false);
-			q2.SetBoost (0.7f);
-			Query q3 = Parse (term, "examples", false);
-			q3.SetBoost (0.5f);
-			BooleanQuery q = new BooleanQuery();
-			q.Add (q1, BooleanClause.Occur.SHOULD);
-			q.Add (q2, BooleanClause.Occur.SHOULD);
-			q.Add (q3, BooleanClause.Occur.SHOULD);
+			term = term.ToLower ();
+			Term htTerm = new Term ("hottext", term);
+			Query qq1 = new FuzzyQuery (htTerm);
+			Query qq2 = new TermQuery (htTerm);
+			qq2.SetBoost (10f);
+			Query qq3 = new PrefixQuery (htTerm);
+			qq3.SetBoost (10f);
+			DisjunctionMaxQuery q1 = new DisjunctionMaxQuery (0f);
+			q1.Add (qq1);
+			q1.Add (qq2);
+			q1.Add (qq3);
+			Query q2 = new TermQuery (new Term ("text", term));
+			q2.SetBoost (3f);
+			Query q3 = new TermQuery (new Term ("examples", term));
+			q3.SetBoost (3f);
+			DisjunctionMaxQuery q = new DisjunctionMaxQuery (0f);
+
+			q.Add (q1);
+			q.Add (q2);
+			q.Add (q3);
+			
 			TopDocs top = SearchInternal (q, count, start);
 			Result r = new Result (term, searcher, top.ScoreDocs);
 			Results.Add (r);
