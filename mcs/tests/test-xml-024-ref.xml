@@ -5,16 +5,15 @@
     </assembly>
     <members>
         <member name="T:Testing.Test">
-            <!-- Include tag is invalid --><include/>
+            <!-- Include tag is invalid --><include />
         </member>
         <member name="M:Testing.Test.Main">
-            <!-- Include tag is invalid --><include file="a"/>
+            <!-- Include tag is invalid --><include file="a" />
         </member>
         <member name="M:Testing.Test.Bar(System.Int32)">
-            <!-- Include tag is invalid --><include path="/foo/bar"/>
+            <!-- Include tag is invalid --><include path="/foo/bar" />
         </member>
         <member name="M:Testing.Test.Baz(System.Int32)">
-            <!-- Badly formed XML file "c:\cygwin\home\_\cvs\mcs\tests\there-is-no-such-file" cannot be included -->
-        </member>
+            <!-- Badly formed XML in at comment file `there-is-no-such-file': cannot be included --><!-- No matching elements were found for the include tag embedded here. --><include file="there-is-no-such-file" path="/foo/bar" /></member>
     </members>
 </doc>
