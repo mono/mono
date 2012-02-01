@@ -4,9 +4,8 @@
 // Author:
 //   Marek Safar (marek.safar@gmail.com)
 //
-
-//
 // Copyright (C) 2008, 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +35,8 @@ using System.Text;
 using System.Collections;
 using System.Xml;
 using System.Collections.Generic;
+using Mono.CompilerServices.SymbolWriter;
+using System.Globalization;
 
 namespace TestRunner {
 
@@ -608,7 +609,8 @@ namespace TestRunner {
 			LoadError,
 			XmlError,
 			Success,
-			ILError
+			ILError,
+			DebugError
 		}
 
 		public PositiveChecker (ITester tester, string verif_file):
@@ -846,7 +848,7 @@ namespace TestRunner {
 					string ref_file = filename.Replace (".cs", "-ref.xml");
 					try {
 #if !NET_2_1
-						XmlComparer.Compare (ref_file, doc_output);
+						new XmlComparer ("doc").Compare (ref_file, doc_output);
 #endif
 					} catch (Exception e) {
 						HandleFailure (filename, TestResult.XmlError, e.Message);
@@ -860,6 +862,21 @@ namespace TestRunner {
 						if (!tester.CheckILSize (pt, this, file))
 							return false;
 					}
+
+					if (filename.StartsWith ("test-debug", StringComparison.OrdinalIgnoreCase)) {
+						MonoSymbolFile mdb_file = MonoSymbolFile.ReadSymbolFile (file + ".mdb");
+						var mdb_xml_file = mdb_file.FileName + ".xml";
+						ConvertSymbolFileToXml (mdb_file, mdb_xml_file);
+
+						var ref_file = filename.Replace(".cs", "-ref.xml");
+						try {
+							new XmlComparer ("symbols").Compare (ref_file, mdb_xml_file);
+						} catch (Exception e) {
+							HandleFailure (filename, TestResult.DebugError, e.Message);
+							return false;
+						}
+					}
+
 				}
 			} finally {
 				if (domain != null)
@@ -868,6 +885,80 @@ namespace TestRunner {
 
 			HandleFailure (filename, TestResult.Success, null);
 			return true;
+		}
+
+		static void ConvertSymbolFileToXml (MonoSymbolFile symbolFile, string xmlFile)
+		{
+			using (XmlTextWriter writer = new XmlTextWriter (xmlFile, Encoding.UTF8)) {
+				writer.Formatting = Formatting.Indented;
+
+				writer.WriteStartDocument ();
+
+				writer.WriteStartElement ("symbols");
+
+				writer.WriteStartElement ("files");
+				foreach (var file in symbolFile.Sources) {
+					writer.WriteStartElement ("file");
+					writer.WriteAttributeString ("id", file.Index.ToString ());
+					writer.WriteAttributeString ("name", Path.GetFileName (file.FileName));
+					writer.WriteEndElement ();
+				}
+				writer.WriteEndElement ();
+
+				writer.WriteStartElement ("methods");
+				foreach (var method in symbolFile.Methods) {
+					writer.WriteStartElement ("method");
+					writer.WriteAttributeString ("token", IntToHex (method.Token));
+
+					var il_entries = method.GetLineNumberTable ();
+					writer.WriteStartElement ("sequencepoints");
+					foreach (var entry in il_entries.LineNumbers) {
+						writer.WriteStartElement ("entry");
+						writer.WriteAttributeString ("il", IntToHex (entry.Offset));
+						writer.WriteAttributeString ("row", entry.Row.ToString ());
+						writer.WriteAttributeString ("file_ref", entry.File.ToString ());
+						writer.WriteAttributeString ("hidden", BoolToString (entry.IsHidden));
+						writer.WriteEndElement ();
+					}
+					writer.WriteEndElement ();
+
+					writer.WriteStartElement ("locals");
+					foreach (var local in method.GetLocals ()) {
+						writer.WriteStartElement ("entry");
+						writer.WriteAttributeString ("name", local.Name);
+						writer.WriteAttributeString ("il_index", local.Index.ToString ());
+						writer.WriteAttributeString ("scope_ref", local.BlockIndex.ToString ());
+						writer.WriteEndElement ();
+					}
+					writer.WriteEndElement ();
+
+					writer.WriteStartElement ("scopes");
+					foreach (var scope in method.GetCodeBlocks ()) {
+						writer.WriteStartElement ("entry");
+						writer.WriteAttributeString ("index", scope.Index.ToString ());
+						writer.WriteAttributeString ("start", IntToHex (scope.StartOffset));
+						writer.WriteAttributeString ("end", IntToHex (scope.EndOffset));
+						writer.WriteEndElement ();
+					}
+					writer.WriteEndElement ();
+
+					writer.WriteEndElement ();
+				}
+				writer.WriteEndElement ();
+
+				writer.WriteEndElement ();
+				writer.WriteEndDocument ();
+			}
+		}
+
+		static string IntToHex (int value)
+		{
+			return "0x" + value.ToString ("x", CultureInfo.InvariantCulture);
+		}
+
+		static string BoolToString (bool value)
+		{
+			return value ? "true" : "false";
 		}
 
 		protected override TestCase CreateTestCase (string filename, string [] options, string [] deps)
@@ -924,6 +1015,10 @@ namespace TestRunner {
 						LogFileLine (file, "IL REGRESSION: " + extra);
 					}
 					extra = null;
+					break;
+
+				case TestResult.DebugError:
+					LogFileLine (file, "REGRESSION (SUCCESS -> SYMBOL FILE ERROR)");
 					break;
 			}
 

@@ -75,6 +75,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">
+      <Link>MonoSymbolFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs">
+      <Link>MonoSymbolTable.cs</Link>
+    </Compile>
     <Compile Include="compiler-tester.cs" />
     <Compile Include="xmldocdiff.cs" />
   </ItemGroup>
