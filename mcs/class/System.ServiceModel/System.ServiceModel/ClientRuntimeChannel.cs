@@ -545,14 +545,12 @@ namespace System.ServiceModel.MonoInternal
 						Type detailType = typeof (ExceptionDetail);
 						var freader = fault.GetReaderAtDetailContents ();
 						DataContractSerializer ds = null;
-#if !NET_2_1
 						foreach (var fci in op.FaultContractInfos)
 							if (res.Headers.Action == fci.Action || fci.Serializer.IsStartObject (freader)) {
 								detailType = fci.Detail;
 								ds = fci.Serializer;
 								break;
 							}
-#endif
 						if (ds == null)
 							ds = new DataContractSerializer (detailType);
 						var detail = ds.ReadObject (freader);
