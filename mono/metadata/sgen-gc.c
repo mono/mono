@@ -8233,6 +8233,8 @@ void mono_gc_set_skip_thread (gboolean skip)
 guint
 mono_gc_get_vtable_bits (MonoClass *class)
 {
+	if (mono_sgen_need_bridge_processing () && mono_sgen_is_bridge_class (class))
+		return SGEN_GC_BIT_BRIDGE_OBJECT;
 	return 0;
 }
 

@@ -583,7 +583,7 @@ compare_hash_entries (const void *ep1, const void *ep2)
 gboolean
 mono_sgen_is_bridge_object (MonoObject *obj)
 {
-	return bridge_callbacks.is_bridge_class (mono_object_class (obj));
+	return (obj->vtable->gc_bits & SGEN_GC_BIT_BRIDGE_OBJECT) == SGEN_GC_BIT_BRIDGE_OBJECT;
 }
 
 static unsigned long step_1, step_2, step_3, step_4, step_5, step_6, step_7, step_8;

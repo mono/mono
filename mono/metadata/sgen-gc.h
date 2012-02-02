@@ -588,6 +588,13 @@ struct _SgenGrayQueue {
 void mono_sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj) MONO_INTERNAL;
 char* mono_sgen_gray_object_dequeue (SgenGrayQueue *queue) MONO_INTERNAL;
 
+/*
+List of what each bit on of the vtable gc bits means. 
+*/
+enum {
+	SGEN_GC_BIT_BRIDGE_OBJECT = 1,
+};
+
 typedef void (*IterateObjectCallbackFunc) (char*, size_t, void*);
 
 void* mono_sgen_alloc_os_memory (size_t size, int activate) MONO_INTERNAL;
