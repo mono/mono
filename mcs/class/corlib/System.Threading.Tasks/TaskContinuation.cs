@@ -53,7 +53,7 @@ namespace System.Threading.Tasks
 				return true;
 
 			int kindCode = (int) kind;
-			var status = task.Parent.Status;
+			var status = task.ContinuationAncestor.Status;
 
 			if (kindCode >= ((int) TaskContinuationOptions.NotOnRanToCompletion)) {
 				// Remove other options
