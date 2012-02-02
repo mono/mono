@@ -589,7 +589,56 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
 				Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#4");
-				}, 10);
+			}, 10);
+		}
+
+		[Test]
+		public void WaitChildWithContinuationAttachedTest ()
+		{
+			bool result = false;
+			var task = new Task(() =>
+			{
+				Task.Factory.StartNew(() =>	{
+					Thread.Sleep (200);
+				}, TaskCreationOptions.AttachedToParent).ContinueWith(t => {
+					Thread.Sleep (200);
+					result = true;
+				}, TaskContinuationOptions.AttachedToParent);
+			});
+			task.Start();
+			task.Wait();
+			Assert.IsTrue (result);
+		}
+
+		[Test]
+		public void WaitChildWithContinuationNotAttachedTest ()
+		{
+			var task = new Task(() =>
+			{
+				Task.Factory.StartNew(() =>	{
+					Thread.Sleep (200);
+				}, TaskCreationOptions.AttachedToParent).ContinueWith(t => {
+					Thread.Sleep (3000);
+				});
+			});
+			task.Start();
+			Assert.IsTrue (task.Wait(400));
+		}
+
+		[Test]
+		public void WaitChildWithNesting ()
+		{
+			var result = false;
+			var t = Task.Factory.StartNew (() => {
+				Task.Factory.StartNew (() => {
+					Task.Factory.StartNew (() => {
+						Thread.Sleep (500);
+						result = true;
+					}, TaskCreationOptions.AttachedToParent);
+				}, TaskCreationOptions.AttachedToParent);
+			});
+			t.Wait ();
+			Assert.IsTrue (result);
 		}
 
 		[Test]
