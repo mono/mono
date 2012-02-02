@@ -810,6 +810,7 @@ void mono_sgen_bridge_processing_stw_step (void) MONO_INTERNAL;
 void mono_sgen_bridge_processing_finish (void) MONO_INTERNAL;
 void mono_sgen_register_test_bridge_callbacks (void) MONO_INTERNAL;
 gboolean mono_sgen_is_bridge_object (MonoObject *obj) MONO_INTERNAL;
+gboolean mono_sgen_is_bridge_class (MonoClass *class) MONO_INTERNAL;
 void mono_sgen_mark_bridge_object (MonoObject *obj) MONO_INTERNAL;
 
 typedef void (*CopyOrMarkObjectFunc) (void**, SgenGrayQueue*);
