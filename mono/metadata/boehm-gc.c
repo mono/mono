@@ -1159,4 +1159,10 @@ mono_gc_pthread_detach (pthread_t thread)
 
 #endif
 
+guint
+mono_gc_get_vtable_bits (MonoClass *class)
+{
+	return 0;
+}
+
 #endif /* no Boehm GC */

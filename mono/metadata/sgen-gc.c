@@ -8230,4 +8230,10 @@ void mono_gc_set_skip_thread (gboolean skip)
 	UNLOCK_GC;
 }
 
+guint
+mono_gc_get_vtable_bits (MonoClass *class)
+{
+	return 0;
+}
+
 #endif /* HAVE_SGEN_GC */
