@@ -42,8 +42,6 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy (typeof (TaskDebuggerView))]
 	public class Task : IDisposable, IAsyncResult
 	{
-		const TaskCreationOptions TaskCreationOptionsContinuation = (TaskCreationOptions) (1 << 10);
-
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.
 		[System.ThreadStatic]
@@ -51,7 +49,10 @@ namespace System.Threading.Tasks
 		[System.ThreadStatic]
 		static Action<Task> childWorkAdder;
 		
-		Task parent;
+		// parent is the outer task in which this task is created
+		protected readonly Task parent;
+		// contAncestor is the Task on which this continuation was setup
+		readonly Task contAncestor;
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
@@ -136,7 +137,7 @@ namespace System.Threading.Tasks
 		}
 
 		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions, Task parent)
+		               TaskCreationOptions creationOptions, Task parent, Task contAncestor = null)
 		{
 			this.invoker = invoker;
 			this.taskCreationOptions = creationOptions;
@@ -145,6 +146,7 @@ namespace System.Threading.Tasks
 			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
 			this.token               = cancellationToken;
 			this.parent              = parent;
+			this.contAncestor        = contAncestor;
 
 			// Process taskCreationOptions
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
@@ -249,7 +251,7 @@ namespace System.Threading.Tasks
 
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), this);
+			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -288,7 +290,7 @@ namespace System.Threading.Tasks
 
 		internal Task<TResult> ContinueWith<TResult> (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), this);
+			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -306,7 +308,6 @@ namespace System.Threading.Tasks
 			// Already set the scheduler so that user can call Wait and that sort of stuff
 			continuation.scheduler = scheduler;
 			continuation.Status = TaskStatus.WaitingForActivation;
-			continuation.taskCreationOptions |= TaskCreationOptionsContinuation;
 
 			ContinueWith (new TaskContinuation (continuation, options));
 		}
@@ -396,7 +397,6 @@ namespace System.Threading.Tasks
 			} else {
 				CancelReal ();
 			}
-			
 			Finish ();
 		}
 
@@ -464,13 +464,15 @@ namespace System.Threading.Tasks
 				Status = TaskStatus.RanToCompletion;
 				ProcessChildExceptions ();
 				ProcessCompleteDelegates ();
+				if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+					parent.ChildCompleted (this.Exception);
 			}
 		}
 
 		void InnerInvoke ()
 		{
 			if (IsContinuation) {
-				invoker.Invoke (parent, state, this);
+				invoker.Invoke (contAncestor, state, this);
 			} else {
 				invoker.Invoke (this, state, this);
 			}
@@ -489,7 +491,7 @@ namespace System.Threading.Tasks
 				else
 					Status = TaskStatus.WaitingForChildrenToComplete;
 			}
-		
+
 			// Completions are already processed when task is canceled or faulted
 			if (status == TaskStatus.RanToCompletion)
 				ProcessCompleteDelegates ();
@@ -502,7 +504,7 @@ namespace System.Threading.Tasks
 				cancellationRegistration.Value.Dispose ();
 			
 			// Tell parent that we are finished
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null) {
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null && status != TaskStatus.WaitingForChildrenToComplete) {
 				parent.ChildCompleted (this.Exception);
 			}
 		}
@@ -603,6 +605,9 @@ namespace System.Threading.Tasks
 			var exception = Exception;
 			if (exception != null)
 				throw exception;
+
+			if (childTasks != null)
+				childTasks.Wait ();
 
 			return result;
 		}
@@ -815,7 +820,8 @@ namespace System.Threading.Tasks
 			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
 										  state, cancellationToken,
 										  GetCreationOptions (continuationOptions),
-										  this);
+			                              parent,
+			                              this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -850,10 +856,11 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("scheduler");
 
 			var t = new Task<TResult> (TaskActionInvoker.Create (continuationFunction),
-												 state,
-												 cancellationToken,
-												 GetCreationOptions (continuationOptions),
-												 this);
+			                           state,
+			                           cancellationToken,
+			                           GetCreationOptions (continuationOptions),
+			                           parent,
+			                           this);
 
 			ContinueWithCore (t, continuationOptions, scheduler);
 
@@ -1038,13 +1045,13 @@ namespace System.Threading.Tasks
 
 		bool IsContinuation {
 			get {
-				return (taskCreationOptions & TaskCreationOptionsContinuation) != 0;
+				return contAncestor != null;
 			}
 		}
 
-		internal Task Parent {
+		internal Task ContinuationAncestor {
 			get {
-				return parent;
+				return contAncestor;
 			}
 		}
 		
