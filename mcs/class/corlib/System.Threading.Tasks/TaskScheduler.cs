@@ -100,6 +100,8 @@ namespace System.Threading.Tasks
 
 			if (task.Status == TaskStatus.WaitingToRun) {
 				task.Execute ();
+				task.WaitOnChildren ();
+
 				return true;
 			}
 

@@ -550,6 +550,12 @@ namespace System.Threading.Tasks
 			Status = TaskStatus.Faulted;
 			ProcessCompleteDelegates ();
 		}
+
+		internal void WaitOnChildren ()
+		{
+			if (Status == TaskStatus.WaitingForChildrenToComplete && childTasks != null)
+				childTasks.Wait ();
+		}
 		
 		public void Wait ()
 		{
