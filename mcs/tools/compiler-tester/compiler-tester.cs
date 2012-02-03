@@ -915,6 +915,10 @@ namespace TestRunner {
 					writer.WriteStartElement ("file");
 					writer.WriteAttributeString ("id", file.Index.ToString ());
 					writer.WriteAttributeString ("name", Path.GetFileName (file.FileName));
+					var checksum = file.Checksum;
+					if (checksum != null)
+						writer.WriteAttributeString ("checksum", ChecksumToString (checksum));
+
 					writer.WriteEndElement ();
 				}
 				writer.WriteEndElement ();
@@ -963,6 +967,17 @@ namespace TestRunner {
 				writer.WriteEndElement ();
 				writer.WriteEndDocument ();
 			}
+		}
+
+		static string ChecksumToString (byte[] checksum)
+		{
+			var sb = new StringBuilder (checksum.Length * 2);
+			for (int i = 0; i < checksum.Length; i++) {
+				sb.Append ("0123456789abcdef"[checksum[i] >> 4]);
+				sb.Append ("0123456789abcdef"[checksum[i] & 0x0F]);
+			}
+
+			return sb.ToString ();
 		}
 
 		static string IntToHex (int value)

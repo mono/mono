@@ -90,7 +90,7 @@ public class XmlComparer
 					foreach (XmlAttribute attr in entry.Item2.Attributes) {
 						var match = attrs.Find (l => l.Name == attr.Name);
 						if (match == null) {
-							missing = match;
+							missing = attr;
 							break;
 						}
 
@@ -113,7 +113,7 @@ public class XmlComparer
 			}
 
 			if (found == null) {
-				Report ("Unexpected node: " + node.OuterXml);
+				Report ("Expected node: " + node.OuterXml);
 				return false;
 			}
 
@@ -121,7 +121,7 @@ public class XmlComparer
 		}
 
 		if (ref_nodes.Count > 0) {
-			Report ("Expected node: " + ref_nodes[0].Item2.OuterXml);
+			Report ("Unexpected node: " + ref_nodes[0].Item2.OuterXml);
 			return false;
 		}
 
