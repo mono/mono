@@ -242,11 +242,11 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public virtual void DefineConstants ()
+		public virtual void PrepareEmit ()
 		{
 			if (containers != null) {
 				foreach (var t in containers) {
-					t.DefineConstants ();
+					t.PrepareEmit ();
 				}
 			}
 		}
@@ -1451,7 +1451,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override void DefineConstants ()
+		public override void PrepareEmit ()
 		{
 			foreach (var member in members) {
 				var pm = member as IParametersMember;
@@ -1469,7 +1469,7 @@ namespace Mono.CSharp
 					c.DefineValue ();
 			}
 
-			base.DefineConstants ();
+			base.PrepareEmit ();
 		}
 
 		//
@@ -1806,7 +1806,7 @@ namespace Mono.CSharp
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (!IsCompilerGenerated && Compiler.Settings.WarningLevel >= 3) {
+			if (!IsCompilerGenerated && Compiler.Settings.WarningLevel >= 3 && this == PartialContainer) {
 				bool is_type_exposed = Kind == MemberKind.Struct || IsExposedFromAssembly ();
 				foreach (var member in members) {
 					if (member is Event) {

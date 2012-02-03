@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<symbols>
+  <files>
+    <file id="1" name="test-debug-03.cs" checksum="996f333ec21f1d3451d7eb33440abb8f" />
+  </files>
+  <methods>
+    <method token="0x6000001">
+      <sequencepoints>
+        <entry il="0x0" row="5" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000003">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000004">
+      <sequencepoints>
+        <entry il="0x0" row="10" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000005">
+      <sequencepoints>
+        <entry il="0x0" row="15" file_ref="1" hidden="false" />
+        <entry il="0x7" row="19" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000006">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000007">
+      <sequencepoints>
+        <entry il="0x0" row="26" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000008">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+  </methods>
+</symbols>

@@ -190,7 +190,13 @@ namespace Mono.CSharp
 		/// </summary>
 		public void Mark (Location loc)
 		{
-			if (!SymbolWriter.HasSymbolWriter || HasSet (Options.OmitDebugInfo) || loc.IsNull)
+			if (!SymbolWriter.HasSymbolWriter || HasSet (Options.OmitDebugInfo))
+				return;
+
+			if (loc.IsNull)
+				return;
+
+			if (loc.SourceFile.IsHiddenLocation (loc))
 				return;
 
 			SymbolWriter.MarkSequencePoint (ig, loc);

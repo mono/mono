@@ -423,7 +423,7 @@ namespace Mono.CSharp
 			}
 
 			foreach (var tc in containers) {
-				tc.DefineConstants ();
+				tc.PrepareEmit ();
 			}
 
 			base.EmitContainer ();

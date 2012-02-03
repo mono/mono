@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<symbols>
+  <files>
+    <file id="1" name="test-debug-02.cs" checksum="2fe1cbcad97654e800f55508c302651b" />
+  </files>
+  <methods>
+    <method token="0x6000001">
+      <sequencepoints>
+        <entry il="0x0" row="3" file_ref="1" hidden="false" />
+        <entry il="0x6" row="5" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
+      <sequencepoints>
+        <entry il="0x0" row="10" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000003">
+      <sequencepoints>
+        <entry il="0x0" row="15" file_ref="1" hidden="false" />
+        <entry il="0x8" row="17" file_ref="1" hidden="false" />
+        <entry il="0xe" row="19" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000004">
+      <sequencepoints>
+        <entry il="0x0" row="24" file_ref="1" hidden="false" />
+        <entry il="0x8" row="26" file_ref="1" hidden="false" />
+        <entry il="0xe" row="29" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000005">
+      <sequencepoints>
+        <entry il="0x0" row="34" file_ref="1" hidden="false" />
+        <entry il="0x7" row="37" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000006">
+      <sequencepoints>
+        <entry il="0x0" row="39" file_ref="1" hidden="false" />
+        <entry il="0x6" row="41" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000007">
+      <sequencepoints>
+        <entry il="0x0" row="48" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000008">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+  </methods>
+</symbols>

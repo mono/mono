@@ -292,7 +292,7 @@ namespace Mono.CSharp {
 			EndInvokeBuilder.Define ();
 		}
 
-		public override void DefineConstants ()
+		public override void PrepareEmit ()
 		{
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);

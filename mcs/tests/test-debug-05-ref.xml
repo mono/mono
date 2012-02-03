@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<symbols>
+  <files>
+    <file id="1" name="test-debug-05.cs" checksum="a5f88a176f572f255fd7fec40e2aba6d" />
+    <file id="2" name="mising-file" checksum="00000000000000000000000000000000" />
+  </files>
+  <methods>
+    <method token="0x6000001">
+      <sequencepoints>
+        <entry il="0x0" row="5" file_ref="1" hidden="false" />
+        <entry il="0x2" row="100" file_ref="2" hidden="false" />
+        <entry il="0x4" row="9" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals>
+        <entry name="a" il_index="0" scope_ref="0" />
+        <entry name="b" il_index="1" scope_ref="0" />
+      </locals>
+      <scopes />
+    </method>
+    <method token="0x6000002">
+      <sequencepoints>
+        <entry il="0x3" row="16" file_ref="1" hidden="false" />
+        <entry il="0x8" row="55" file_ref="1" hidden="false" />
+        <entry il="0xa" row="56" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals>
+        <entry name="x" il_index="0" scope_ref="0" />
+        <entry name="x2" il_index="1" scope_ref="0" />
+        <entry name="h" il_index="2" scope_ref="0" />
+      </locals>
+      <scopes />
+    </method>
+    <method token="0x6000003">
+      <sequencepoints>
+        <entry il="0x0" row="60" file_ref="1" hidden="false" />
+        <entry il="0xc" row="29" file_ref="1" hidden="false" />
+        <entry il="0xd" row="30" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals>
+        <entry name="s1" il_index="0" scope_ref="0" />
+        <entry name="s2" il_index="1" scope_ref="0" />
+      </locals>
+      <scopes />
+    </method>
+    <method token="0x6000004">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+  </methods>
+</symbols>

@@ -616,6 +616,12 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public CompileUnitEntry SymbolUnitEntry {
+			get {
+				return comp_unit;
+			}
+		}
+
 		public string FileName {
 			get {
 				return file.Name;
@@ -656,30 +662,30 @@ namespace Mono.CSharp {
 			conditionals[value] = false;
 		}
 
-		//
-		// Creates on-demand symbol file info this ensures we
-		// write info only about source files which have methods
-		// with body
-		//
-		public CompileUnitEntry CreateUnitSymbolInfo ()
+		public override void PrepareEmit ()
 		{
-			if (comp_unit != null)
-				return comp_unit;
+			// Compiler.SymbolWriter
+			if (SymbolWriter.symwriter != null) {
+				CreateUnitSymbolInfo (SymbolWriter.symwriter);
+			}
 
-			var symwriter = SymbolWriter.symwriter; // Compiler.SymbolWriter
+			base.PrepareEmit ();
+		}
 
-			file.DefineSymbolInfo (symwriter);
-
-			comp_unit = symwriter.DefineCompilationUnit (file.SourceFileEntry);
+		//
+		// Creates symbol file index in debug symbol file
+		//
+		void CreateUnitSymbolInfo (MonoSymbolWriter symwriter)
+		{
+			var si = file.CreateSymbolInfo (symwriter);
+			comp_unit = symwriter.DefineCompilationUnit (si);
 
 			if (include_files != null) {
 				foreach (SourceFile include in include_files.Values) {
-					include.DefineSymbolInfo (symwriter);
-					comp_unit.AddFile (include.SourceFileEntry);
+					si = include.CreateSymbolInfo (symwriter);
+					comp_unit.AddFile (si);
 				}
 			}
-
-			return comp_unit;
 		}
 
 		public bool IsConditionalDefined (string value)

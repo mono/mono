@@ -822,7 +822,7 @@ namespace Mono.CSharp {
 			if (source_file == null)
 				return null;
 
-			return new SourceMethod (method, source_file.CreateUnitSymbolInfo ());
+			return new SourceMethod (method, source_file.SymbolUnitEntry);
 		}
 	}
 
@@ -1706,6 +1706,9 @@ namespace Mono.CSharp {
 						//
 						// Use location of the constructor to emit sequence point of initializers
 						// at beginning of constructor name
+						//
+						// TODO: Need to extend mdb to support line regions to allow set a breakpoint at
+						// initializer
 						//
 						block.AddScopeStatement (new StatementExpression (Initializer, Location));
 					}

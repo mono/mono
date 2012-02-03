@@ -55526,6 +55526,119 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-02.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Void .ctor()" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C3">
+      <method name="Void .ctor()" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C4">
+      <method name="Void .ctor()" attrs="6278">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(Int32)" attrs="6273">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-03.cs">
+    <type name="C">
+      <method name="Void .cctor()" attrs="6289">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Void .cctor()" attrs="6289">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-04.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Void .ctor()" attrs="6273">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-05.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>5</size>
+      </method>
+      <method name="Void Hidden()" attrs="129">
+        <size>11</size>
+      </method>
+      <method name="Void HiddenRecurse()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">

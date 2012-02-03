@@ -163,7 +163,7 @@ namespace Mono.CSharp
 			Error = 9,
 			Warning = 10,
 			Pragma = 11 | CustomArgumentsParsing,
-			Line = 12,
+			Line = 12 | CustomArgumentsParsing,
 
 			CustomArgumentsParsing = 1 << 10,
 			RequiresArgument = 1 << 11
@@ -174,7 +174,7 @@ namespace Mono.CSharp
 		readonly CompilerContext context;
 
 		SourceFile current_source;
-		bool hidden = false;
+		Location hidden_block_start;
 		int ref_line = 1;
 		int line = 1;
 		int col = 0;
@@ -279,6 +279,8 @@ namespace Mono.CSharp
 		static readonly char[] pragma_warning_disable = "disable".ToCharArray ();
 		static readonly char[] pragma_warning_restore = "restore".ToCharArray ();
 		static readonly char[] pragma_checksum = "checksum".ToCharArray ();
+		static readonly char[] line_hidden = "hidden".ToCharArray ();
+		static readonly char[] line_default = "default".ToCharArray ();
 
 		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
 
@@ -391,7 +393,7 @@ namespace Mono.CSharp
 			public int line;
 			public int ref_line;
 			public int col;
-			public bool hidden;
+			public Location hidden;
 			public int putback_char;
 			public int previous_col;
 			public Stack<int> ifstack;
@@ -405,7 +407,7 @@ namespace Mono.CSharp
 				line = t.line;
 				ref_line = t.ref_line;
 				col = t.col;
-				hidden = t.hidden;
+				hidden = t.hidden_block_start;
 				putback_char = t.putback_char;
 				previous_col = t.previous_col;
 				if (t.ifstack != null && t.ifstack.Count != 0) {
@@ -452,7 +454,7 @@ namespace Mono.CSharp
 			ref_line = p.ref_line;
 			line = p.line;
 			col = p.col;
-			hidden = p.hidden;
+			hidden_block_start = p.hidden;
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
@@ -883,7 +885,7 @@ namespace Mono.CSharp
 
 		public Location Location {
 			get {
-				return new Location (ref_line, hidden ? -1 : col);
+				return new Location (ref_line, col);
 			}
 		}
 
@@ -1939,44 +1941,120 @@ namespace Mono.CSharp
 		//
 		// Handles the #line directive
 		//
-		bool PreProcessLine (string arg)
+		bool PreProcessLine ()
 		{
-			if (arg.Length == 0)
-				return false;
+			Location loc = Location;
 
-			if (arg == "default"){
-				ref_line = line;
+			int c;
+
+			int length = TokenizePreprocessorIdentifier (out c);
+			if (length == line_default.Length) {
+				if (!IsTokenIdentifierEqual (line_default))
+					return false;
+
 				current_source = source_file.SourceFile;
-				hidden = false;
+				if (!hidden_block_start.IsNull) {
+					current_source.RegisterHiddenScope (hidden_block_start, loc);
+					hidden_block_start = Location.Null;
+				}
+
+				ref_line = line;
 				Location.Push (current_source);
 				return true;
-			} else if (arg == "hidden"){
-				hidden = true;
+			}
+
+			if (length == line_hidden.Length) {
+				if (!IsTokenIdentifierEqual (line_hidden))
+					return false;
+
+				if (hidden_block_start.IsNull)
+					hidden_block_start = loc;
+
 				return true;
 			}
-			
-			try {
-				int pos;
 
-				if ((pos = arg.IndexOf (' ')) != -1 && pos != 0){
-					ref_line = System.Int32.Parse (arg.Substring (0, pos));
-					pos++;
-					
-					char [] quotes = { '\"' };
-					
-					string name = arg.Substring (pos).Trim (quotes);
-					current_source = context.LookupFile (source_file, name);
-					source_file.AddIncludeFile (current_source);
-					hidden = false;
-					Location.Push (current_source);
-				} else {
-					ref_line = System.Int32.Parse (arg);
-					hidden = false;
+			if (length != 0 || c < '0' || c > '9') {
+				//
+				// Eat any remaining characters to continue parsing on next line
+				//
+				while (c != -1 && c != '\n') {
+					c = get_char ();
 				}
-			} catch {
+
 				return false;
 			}
-			
+
+			int new_line = TokenizeNumber (ref c);
+			if (new_line < 1) {
+				//
+				// Eat any remaining characters to continue parsing on next line
+				//
+				while (c != -1 && c != '\n') {
+					c = get_char ();
+				}
+
+				return new_line != 0;
+			}
+
+			c = get_char ();
+			if (c == ' ') {
+				// skip over white space
+				do {
+					c = get_char ();
+				} while (c == ' ' || c == '\t');
+			} else if (c == '"') {
+				c = 0;
+			}
+
+			if (c != '\n' && c != '/' && c != '"') {
+				//
+				// Eat any remaining characters to continue parsing on next line
+				//
+				while (c != -1 && c != '\n') {
+					c = get_char ();
+				}
+
+				Report.Error (1578, loc, "Filename, single-line comment or end-of-line expected");
+				return true;
+			}
+
+			string new_file_name = null;
+			if (c == '"') {
+				new_file_name = TokenizeFileName (ref c);
+
+				// skip over white space
+				while (c == ' ' || c == '\t') {
+					c = get_char ();
+				}
+			}
+
+			if (c == '\n') {
+			} else if (c == '/') {
+				ReadSingleLineComment ();
+			} else {
+				//
+				// Eat any remaining characters to continue parsing on next line
+				//
+				while (c != -1 && c != '\n') {
+					c = get_char ();
+				}
+
+				Error_EndLineExpected ();
+				return true;
+			}
+
+			if (new_file_name != null) {
+				current_source = context.LookupFile (source_file, new_file_name);
+				source_file.AddIncludeFile (current_source);
+				Location.Push (current_source);
+			}
+
+			if (!hidden_block_start.IsNull) {
+				current_source.RegisterHiddenScope (hidden_block_start, loc);
+				hidden_block_start = Location.Null;
+			}
+
+			ref_line = new_line;
 			return true;
 		}
 
@@ -2071,26 +2149,13 @@ namespace Mono.CSharp
 			if (c != '"')
 				return false;
 
-			var string_builder = new StringBuilder ();
-			while (c != -1 && c != '\n') {
-				c = get_char ();
-				if (c == '"') {
-					c = get_char ();
-					break;
-				}
-
-				string_builder.Append ((char) c);
-			}
-
-			if (string_builder.Length == 0) {
-				Report.Warning (1709, 1, Location, "Filename specified for preprocessor directive is empty");
-			}
+			string file_name = TokenizeFileName (ref c);
 
 			// TODO: Any white-spaces count
 			if (c != ' ')
 				return false;
 
-			SourceFile file = context.LookupFile (source_file, string_builder.ToString ());
+			SourceFile file = context.LookupFile (source_file, file_name);
 
 			if (get_char () != '"' || get_char () != '{')
 				return false;
@@ -2169,6 +2234,45 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		int TokenizeNumber (ref int value)
+		{
+			number_pos = 0;
+
+			decimal_digits (value);
+			uint ui = (uint) (number_builder[0] - '0');
+
+			try {
+				for (int i = 1; i < number_pos; i++) {
+					ui = checked ((ui * 10) + ((uint) (number_builder[i] - '0')));
+				}
+
+				return (int) ui;
+			} catch (OverflowException) {
+				Error_NumericConstantTooLong ();
+				return -1;
+			}
+		}
+
+		string TokenizeFileName (ref int c)
+		{
+			var string_builder = new StringBuilder ();
+			while (c != -1 && c != '\n') {
+				c = get_char ();
+				if (c == '"') {
+					c = get_char ();
+					break;
+				}
+
+				string_builder.Append ((char) c);
+			}
+
+			if (string_builder.Length == 0) {
+				Report.Warning (1709, 1, Location, "Filename specified for preprocessor directive is empty");
+			}
+
+			return string_builder.ToString ();
 		}
 
 		int TokenizePragmaNumber (ref int c)
@@ -2706,10 +2810,10 @@ namespace Mono.CSharp
 				return true;
 
 			case PreprocessorDirective.Line:
-				if (!PreProcessLine (arg))
-					Report.Error (
-						1576, Location,
-						"The line number specified for #line directive is missing or invalid");
+				Location loc = Location;
+				if (!PreProcessLine ())
+					Report.Error (1576, loc, "The line number specified for #line directive is missing or invalid");
+
 				return caller_is_taking;
 			}
 
