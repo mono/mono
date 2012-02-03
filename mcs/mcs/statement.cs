@@ -3028,18 +3028,18 @@ namespace Mono.CSharp {
 			//
 			for (int i = 0; i < existing_list.Count; ++i) {
 				existing = existing_list[i];
-				Block b = existing.Block;
+				Block b = existing.Block.Explicit;
 
 				// Collision at same level
-				if (li.Block == b) {
+				if (li.Block.Explicit == b) {
 					li.Block.Error_AlreadyDeclared (name, li);
 					break;
 				}
 
 				// Collision with parent
-				b = li.Block;
-				while ((b = b.Parent) != null) {
-					if (existing.Block == b) {
+				Block parent = li.Block.Explicit;
+				while ((parent = parent.Parent) != null) {
+					if (parent == b) {
 						li.Block.Error_AlreadyDeclared (name, li, "parent or current");
 						i = existing_list.Count;
 						break;
@@ -3048,9 +3048,8 @@ namespace Mono.CSharp {
 
 				if (!ignoreChildrenBlocks) {
 					// Collision with children
-					b = existing.Block;
 					while ((b = b.Parent) != null) {
-						if (li.Block == b) {
+						if (li.Block.Explicit == b) {
 							li.Block.Error_AlreadyDeclared (name, li, "child");
 							i = existing_list.Count;
 							break;
