@@ -1984,7 +1984,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			int new_line = TokenizeNumber (ref c);
+			int new_line = TokenizeNumber (c);
 			if (new_line < 1) {
 				//
 				// Eat any remaining characters to continue parsing on next line
@@ -2236,7 +2236,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		int TokenizeNumber (ref int value)
+		int TokenizeNumber (int value)
 		{
 			number_pos = 0;
 
@@ -2282,20 +2282,7 @@ namespace Mono.CSharp
 			int number;
 
 			if (c >= '0' && c <= '9') {
-				decimal_digits (c);
-				uint ui = (uint) (number_builder[0] - '0');
-
-				try {
-					for (int i = 1; i < number_pos; i++) {
-						ui = checked ((ui * 10) + ((uint) (number_builder[i] - '0')));
-					}
-
-					number = (int) ui;
-				} catch (OverflowException) {
-					Error_NumericConstantTooLong ();
-					number = -1;
-				}
-
+				number = TokenizeNumber (c);
 
 				c = get_char ();
 
