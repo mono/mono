@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <symbols>
   <files>
-    <file id="1" name="support-test-debug-04.cs" checksum="e530f9cd01b1eb33e558c3242460cc38" />
-    <file id="2" name="test-debug-04.cs" checksum="52295ba6c7e282e739bfb999fd49ffc0" />
+    <file id="1" name="support-test-debug-04.cs" checksum="b9b719e8fba5bec23da52975bc38e6ce" />
+    <file id="2" name="test-debug-04.cs" checksum="a57ebe1403fe320f2a98377745f7f0d1" />
   </files>
   <methods>
     <method token="0x6000001">
