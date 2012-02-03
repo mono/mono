@@ -2836,6 +2836,36 @@
       </method>
     </type>
   </test>
+  <test name="dtest-056.cs">
+    <type name="C">
+      <method name="D get_D()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Void set_D(D)" attrs="2177">
+        <size>8</size>
+      </method>
+      <method name="System.String get_Value()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Void set_Value(System.String)" attrs="2177">
+        <size>8</size>
+      </method>
+      <method name="Int32 Test()" attrs="134">
+        <size>245</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Int32 Foo(System.String)" attrs="134">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()" attrs="150">
