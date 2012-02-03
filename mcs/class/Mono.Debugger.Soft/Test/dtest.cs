@@ -338,6 +338,12 @@ public class DebuggerTests
 
 		step_req = req;
 
+		// Step over 'bool b = true'
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		Assert.AreEqual ("single_stepping", (e as StepEvent).Method.Name);
+
 		// Step into ss1
 		vm.Resume ();
 		e = GetNextEvent ();

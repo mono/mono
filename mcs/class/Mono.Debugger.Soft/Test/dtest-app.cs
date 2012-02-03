@@ -288,6 +288,7 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void single_stepping () {
+		bool b = true;
 		ss1 ();
 		ss2 ();
 		ss3 ();
@@ -295,7 +296,7 @@ public class Tests : TestsBase
 		ss4 ();
 		ss5 (new int [] { 1, 2, 3 }, new Func<int, bool> (is_even));
 		try {
-			ss6 (true);
+			ss6 (b);
 		} catch {
 		}
 		ss_regress_654694 ();
