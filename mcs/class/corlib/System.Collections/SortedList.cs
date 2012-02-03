@@ -355,9 +355,8 @@ namespace System.Collections {
 			int indx = 0;
 			try {
 				indx = Find (key);
-			} catch (Exception e) {
-				Console.WriteLine ("WTF WTF {0}", e);
-				throw new InvalidOperationException("WTF WTF");
+			} catch (Exception) {
+				throw new InvalidOperationException();
 			}
 
 			return (indx | (indx >> 31));

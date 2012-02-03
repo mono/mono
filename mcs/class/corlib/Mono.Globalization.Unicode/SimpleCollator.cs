@@ -192,7 +192,6 @@ namespace Mono.Globalization.Unicode
 			Uni.BuildTailoringTables (culture, t, ref contractions,
 				ref level2Maps);
 			unsafeFlags = new byte [UnsafeFlagLength];
-			Console.WriteLine ("contractions == {0}", contractions == null);
 			foreach (Contraction c in contractions) {
 				if (c.Source.Length > 1)
 					foreach (char ch in c.Source)
