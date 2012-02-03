@@ -701,6 +701,17 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void RunSynchronouslyWithAttachedChildren ()
+		{
+			var result = false;
+			var t = new Task (() => {
+				Task.Factory.StartNew (() => { Thread.Sleep (500); result = true; }, TaskCreationOptions.AttachedToParent);
+			});
+			t.RunSynchronously ();
+			Assert.IsTrue (result);
+		}
+
+		[Test]
 		public void UnobservedExceptionOnFinalizerThreadTest ()
 		{
 			bool wasCalled = false;
