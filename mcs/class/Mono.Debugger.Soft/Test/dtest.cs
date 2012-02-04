@@ -1561,6 +1561,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category("only88")]
 	public void LineNumbers () {
 		Event e = run_until ("line_numbers");
 
@@ -1601,7 +1602,15 @@ public class DebuggerTests
 		Assert.IsTrue (e is StepEvent);
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
-		Assert.AreEqual (line_base + 10, l.LineNumber);
+		Assert.AreEqual (line_base + 11, l.LineNumber);
+
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		l = e.Thread.GetFrames ()[0].Location;
+		Assert.AreEqual ("ln3", l.Method.Name);
+		Assert.IsTrue (l.SourceFile.EndsWith ("FOO"));
+		Assert.AreEqual (55, l.LineNumber);
 
 		vm.Resume ();
 		e = GetNextEvent ();
@@ -1612,12 +1621,14 @@ public class DebuggerTests
 
 		// GetSourceFiles ()
 		string[] sources = l.Method.DeclaringType.GetSourceFiles ();
-		Assert.AreEqual (1, sources.Length);
+		Assert.AreEqual (2, sources.Length);
 		Assert.AreEqual ("dtest-app.cs", sources [0]);
+		Assert.AreEqual ("FOO", sources [1]);
 
 		sources = l.Method.DeclaringType.GetSourceFiles (true);
-		Assert.AreEqual (1, sources.Length);
+		Assert.AreEqual (2, sources.Length);
 		Assert.IsTrue (sources [0].EndsWith ("dtest-app.cs"));
+		Assert.IsTrue (sources [1].EndsWith ("FOO"));
 	}
 
 	[Test]
@@ -2724,6 +2735,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("only88")]
 	public void TypeLoadSourceFileFilter () {
 		Event e = run_until ("type_load");
 

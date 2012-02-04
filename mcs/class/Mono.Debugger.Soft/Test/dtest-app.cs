@@ -1029,5 +1029,9 @@ public class LineNumbers
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ln3 () {
+#pragma warning disable 0219
+		int i = 5;
+#pragma warning restore 0219
+		#line 55 "FOO"
 	}
 }

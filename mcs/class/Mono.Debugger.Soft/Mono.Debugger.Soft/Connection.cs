@@ -36,9 +36,9 @@ namespace Mono.Debugger.Soft
 
 	class DebugInfo {
 		public int max_il_offset;
-		public string filename;
 		public int[] il_offsets;
 		public int[] line_numbers;
+		public string[] source_files;
 	}
 
 	struct FrameInfo {
@@ -363,7 +363,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 12;
+		internal const int MINOR_VERSION = 13;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1635,14 +1635,31 @@ namespace Mono.Debugger.Soft
 
 			DebugInfo info = new DebugInfo ();
 			info.max_il_offset = res.ReadInt ();
-			info.filename = res.ReadString ();
+
+			string[] filenames = null;
+			if (Version.AtLeast (2, 12)) {
+				int n = res.ReadInt ();
+				filenames = new string [n];
+				for (int i = 0; i < n; ++i)
+					filenames [i] = res.ReadString ();
+			} else {
+				filenames = new string [1];
+				filenames [0] = res.ReadString ();
+			}
 
 			int n_il_offsets = res.ReadInt ();
 			info.il_offsets = new int [n_il_offsets];
 			info.line_numbers = new int [n_il_offsets];
+			info.source_files = new string [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
+				if (Version.AtLeast (2, 12)) {
+					int idx = res.ReadInt ();
+					info.source_files [i] = idx >= 0 ? filenames [idx] : null;
+				} else {
+					info.source_files [i] = filenames [0];
+				}
 			}
 
 			return info;
