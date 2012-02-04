@@ -697,8 +697,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentException ("actions is empty");
 
 			// Execute it directly
-			if (actions.Length == 1 && actions[0] != null)
+			if (actions.Length == 1 && actions[0] != null) {
 				actions[0] ();
+				return;
+			}
 
 			bool shouldThrow = false;
 			Task[] ts = Array.ConvertAll (actions, delegate (Action a) {
