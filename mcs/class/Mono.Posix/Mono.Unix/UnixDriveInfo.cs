@@ -155,7 +155,7 @@ namespace Mono.Unix {
 					Native.Fstab fs;
 					while ((fs = Native.Syscall.getfsent()) != null) {
 						// avoid virtual entries, such as "swap"
-						if (fs.fs_file.StartsWith ("/"))
+						if (fs.fs_file != null && fs.fs_file.StartsWith ("/"))
 							entries.Add (new UnixDriveInfo (fs));
 					}
 				}
