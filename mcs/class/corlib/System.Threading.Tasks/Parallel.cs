@@ -82,7 +82,7 @@ namespace System.Threading.Tasks
 				if (infos != null)
 					infos.IsExceptional = true;
 
-				throw new AggregateException (exs);
+				throw new AggregateException (exs).Flatten ();
 			}
 		}
 
@@ -678,7 +678,7 @@ namespace System.Threading.Tasks
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
 
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a));
+			Invoke (ParallelOptions.Default, actions);
 		}
 
 		public static void Invoke (ParallelOptions parallelOptions, params Action[] actions)
@@ -687,36 +687,25 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("parallelOptions");
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
-
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a, parallelOptions.CancellationToken, TaskCreationOptions.None, parallelOptions.TaskScheduler));
-		}
-
-		static void Invoke (Action[] actions, Func<Action, Task> taskCreator)
-		{
 			if (actions.Length == 0)
 				throw new ArgumentException ("actions is empty");
-
-			// Execute it directly
-			if (actions.Length == 1 && actions[0] != null) {
+			foreach (var a in actions)
+				if (a == null)
+					throw new ArgumentException ("One action in actions is null", "actions");
+			if (actions.Length == 1) {
 				actions[0] ();
 				return;
 			}
 
-			bool shouldThrow = false;
-			Task[] ts = Array.ConvertAll (actions, delegate (Action a) {
-				if (a == null) {
-					shouldThrow = true;
-					return null;
-				}
-
-				return taskCreator (a);
-			});
-
-			if (shouldThrow)
-				throw new ArgumentException ("One action in actions is null", "actions");
+			Task[] ts = new Task[actions.Length];
+			for (int i = 0; i < ts.Length; i++)
+				ts[i] = Task.Factory.StartNew (actions[i],
+				                               parallelOptions.CancellationToken,
+				                               TaskCreationOptions.None,
+				                               parallelOptions.TaskScheduler);
 
 			try {
-				Task.WaitAll (ts);
+				Task.WaitAll (ts, parallelOptions.CancellationToken);
 			} catch {
 				HandleExceptions (ts);
 			}
