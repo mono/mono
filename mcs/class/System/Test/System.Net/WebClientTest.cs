@@ -2138,5 +2138,15 @@ namespace MonoTests.System.Net
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
+
+		[Test]
+		public void DefaultProxy ()
+		{
+			WebClient wc = new WebClient ();
+			// this is never null on .net
+			Assert.IsNotNull (wc.Proxy);
+			// and return the same instance as WebRequest.DefaultWebProxy
+			Assert.AreSame (wc.Proxy, WebRequest.DefaultWebProxy);
+		}
 	}
 }
