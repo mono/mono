@@ -590,7 +590,7 @@ namespace System.Configuration
 				throw new ConfigurationException (
 					String.Format ("Validator does not support type {0}", p.Type));
 			validator.Validate (p.ConvertFromString (value));
-		}		
+		}
 	}
 	
 	internal class ElementMap
