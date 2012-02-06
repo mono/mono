@@ -8,6 +8,8 @@ using Mono.Cecil.Cil;
 using Mono.Debugger.Soft;
 using Diag = System.Diagnostics;
 using System.Linq;
+using System.IO;
+using System.Security.Cryptography;
 
 using NUnit.Framework;
 
@@ -1580,6 +1582,15 @@ public class DebuggerTests
 
 		Assert.IsTrue (l.SourceFile.IndexOf ("dtest-app.cs") != -1);
 		Assert.AreEqual ("ln1", l.Method.Name);
+
+		// Check hash
+		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
+			MD5 md5 = MD5.Create ();
+			var hash = md5.ComputeHash (fs);
+
+			for (int i = 0; i < 16; ++i)
+				Assert.AreEqual (hash [i], l.SourceFileHash [i]);
+		}
 		
 		int line_base = l.LineNumber;
 
