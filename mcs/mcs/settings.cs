@@ -938,10 +938,18 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/debug":
-				if (value == "full" || value == "")
+				if (value == "full" || value == "pdbonly" || idx < 0) {
 					settings.GenerateDebugInfo = true;
+					return ParseResult.Success;
+				}
 
-				return ParseResult.Success;
+				if (value.Length > 0) {
+					report.Error (1902, "Invalid debug option `{0}'. Valid options are `full' or `pdbonly'", value);
+				} else {
+					Error_RequiresArgument (option);
+				}
+
+				return ParseResult.Error;
 
 			case "/debug+":
 				settings.GenerateDebugInfo = true;
