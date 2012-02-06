@@ -50,10 +50,12 @@ if (not $skipbuild)
 	if ($debug)
 	{
 		$ENV{CFLAGS} = "-m32 -g -O0";
+		$ENV{CXXFLAGS} = "-m32 -g -O0";
 		$ENV{LDFLAGS} = "-m32";
 	} else
 	{
 		$ENV{CFLAGS} = "-m32 -Os";  #optimize for size
+		$ENV{CXXFLAGS} = "-m32 -Os";  #optimize for size
 		$ENV{LDFLAGS} = "-m32";
 	}
 
@@ -100,7 +102,7 @@ if (not $skipbuild)
 	system("./configure", @autogenparams) eq 0 or die ("failing configuring mono");
 
 	system("make clean") eq 0 or die ("failed make cleaning");
-	system("make -j4") eq 0 or die ("failing running make for mono");
+	system("make") eq 0 or die ("failing running make for mono");
 }
 
 mkpath($bintarget);
