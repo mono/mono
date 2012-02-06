@@ -1,4 +1,4 @@
-// Compiler options: -r:test-734-lib.dll
+// Compiler options: -optimize -r:test-734-lib.dll
 
 using System;
 using System.Reflection;

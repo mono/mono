@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <symbols>
   <files>
-    <file id="1" name="test-debug-01.cs" checksum="8a11ab8a8ebfe9530a4ae03e6a55778f" />
+    <file id="1" name="test-debug-09.cs" checksum="591d0f9d66214bf60fb9f83ec27a7c15" />
   </files>
   <methods>
     <method token="0x6000001">
       <sequencepoints>
-        <entry il="0x0" row="4" file_ref="1" hidden="false" />
-        <entry il="0x1" row="5" file_ref="1" hidden="false" />
+        <entry il="0x0" row="6" file_ref="1" hidden="false" />
+        <entry il="0x1" row="8" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />

@@ -682,6 +682,8 @@ namespace Mono.CSharp
 			/// </summary>
 			CheckedScope = 1 << 0,
 
+			AccurateDebugInfo = 1 << 1,
+
 			OmitDebugInfo = 1 << 2,
 
 			ConstructorScope = 1 << 3,

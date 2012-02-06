@@ -7,7 +7,8 @@
     <method token="0x6000001">
       <sequencepoints>
         <entry il="0x0" row="3" file_ref="1" hidden="false" />
-        <entry il="0x6" row="5" file_ref="1" hidden="false" />
+        <entry il="0x6" row="4" file_ref="1" hidden="false" />
+        <entry il="0x7" row="5" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -23,7 +24,8 @@
       <sequencepoints>
         <entry il="0x0" row="15" file_ref="1" hidden="false" />
         <entry il="0x8" row="17" file_ref="1" hidden="false" />
-        <entry il="0xe" row="19" file_ref="1" hidden="false" />
+        <entry il="0xe" row="18" file_ref="1" hidden="false" />
+        <entry il="0xf" row="19" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -32,7 +34,8 @@
       <sequencepoints>
         <entry il="0x0" row="24" file_ref="1" hidden="false" />
         <entry il="0x8" row="26" file_ref="1" hidden="false" />
-        <entry il="0xe" row="29" file_ref="1" hidden="false" />
+        <entry il="0xe" row="28" file_ref="1" hidden="false" />
+        <entry il="0xf" row="29" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -40,7 +43,8 @@
     <method token="0x6000005">
       <sequencepoints>
         <entry il="0x0" row="34" file_ref="1" hidden="false" />
-        <entry il="0x7" row="37" file_ref="1" hidden="false" />
+        <entry il="0x7" row="36" file_ref="1" hidden="false" />
+        <entry il="0x8" row="37" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -48,14 +52,16 @@
     <method token="0x6000006">
       <sequencepoints>
         <entry il="0x0" row="39" file_ref="1" hidden="false" />
-        <entry il="0x6" row="41" file_ref="1" hidden="false" />
+        <entry il="0x6" row="40" file_ref="1" hidden="false" />
+        <entry il="0x7" row="41" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
     <method token="0x6000007">
       <sequencepoints>
-        <entry il="0x0" row="48" file_ref="1" hidden="false" />
+        <entry il="0x0" row="47" file_ref="1" hidden="false" />
+        <entry il="0x1" row="48" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />

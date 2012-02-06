@@ -89,6 +89,13 @@ namespace Mono.CSharp
 			if (rc.Module.Compiler.Settings.Checked)
 				flags |= Options.CheckedScope;
 
+			if (SymbolWriter.HasSymbolWriter) {
+				if (!rc.Module.Compiler.Settings.Optimize)
+					flags |= Options.AccurateDebugInfo;
+			} else {
+				flags |= Options.OmitDebugInfo;
+			}
+
 #if STATIC
 			ig.__CleverExceptionBlockAssistance ();
 #endif
@@ -118,6 +125,12 @@ namespace Mono.CSharp
 
 		public MemberCore CurrentTypeDefinition {
 			get { return member_context.CurrentMemberDefinition; }
+		}
+
+		public bool EmitAccurateDebugInfo {
+			get {
+				return (flags & Options.AccurateDebugInfo) != 0;
+			}
 		}
 
 		public bool HasReturnLabel {
@@ -188,18 +201,19 @@ namespace Mono.CSharp
 		///   This is called immediately before emitting an IL opcode to tell the symbol
 		///   writer to which source line this opcode belongs.
 		/// </summary>
-		public void Mark (Location loc)
+		public bool Mark (Location loc)
 		{
-			if (!SymbolWriter.HasSymbolWriter || HasSet (Options.OmitDebugInfo))
-				return;
+			if ((flags & Options.OmitDebugInfo) != 0)
+				return false;
 
 			if (loc.IsNull)
-				return;
+				return false;
 
 			if (loc.SourceFile.IsHiddenLocation (loc))
-				return;
+				return false;
 
 			SymbolWriter.MarkSequencePoint (ig, loc);
+			return true;
 		}
 
 		public void DefineLocalVariable (string name, LocalBuilder builder)

@@ -931,14 +931,17 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (unwind_protect)
+				if (unwind_protect || ec.EmitAccurateDebugInfo)
 					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (unwind_protect)
+			if (unwind_protect) {
 				ec.Emit (OpCodes.Leave, ec.CreateReturnLabel ());
-			else
+			} else if (ec.EmitAccurateDebugInfo) {
+				ec.Emit (OpCodes.Br, ec.CreateReturnLabel ());
+			} else {
 				ec.Emit (OpCodes.Ret);
+			}
 		}
 
 		void Error_ReturnFromIterator (ResolveContext rc)
@@ -1582,9 +1585,6 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (li.IsConstant)
-				return;
-
 			li.CreateBuilder (ec);
 
 			if (Initializer != null)
@@ -1627,6 +1627,11 @@ namespace Mono.CSharp {
 		public BlockConstantDeclaration (FullNamedExpression type, LocalVariable li)
 			: base (type, li)
 		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// Nothing to emit, not even sequence point
 		}
 
 		protected override Expression ResolveInitializer (BlockContext bc, LocalVariable li, Expression initializer)
@@ -2048,8 +2053,10 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public bool HasRet {
-			get { return (flags & Flags.HasRet) != 0; }
+		public bool HasUnreachableClosingBrace {
+			get {
+				return (flags & Flags.HasRet) != 0;
+			}
 		}
 
 		public Block Original {
@@ -2443,14 +2450,28 @@ namespace Mono.CSharp {
 				am_storey.EmitStoreyInstantiation (ec, this);
 			}
 
+			if (scope_initializers != null)
+				EmitScopeInitializers (ec);
+
+			if (ec.EmitAccurateDebugInfo && ec.Mark (StartLocation)) {
+				ec.Emit (OpCodes.Nop);
+			}
+
 			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);
 			if (emit_debug_info)
 				ec.BeginScope ();
 
-			base.Emit (ec);
+			DoEmit (ec);
+
+			if (SymbolWriter.HasSymbolWriter)
+				EmitSymbolInfo (ec);
 
 			if (emit_debug_info)
 				ec.EndScope ();
+
+			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && ec.Mark (EndLocation)) {
+				ec.Emit (OpCodes.Nop);
+			}
 		}
 
 		void DefineAnonymousStorey (EmitContext ec)
@@ -2979,6 +3000,7 @@ namespace Mono.CSharp {
 		{
 			this.compiler = ctx;
 			top_block = this;
+			flags |= Flags.HasRet;
 
 			ProcessParameters ();
 		}
@@ -2994,6 +3016,7 @@ namespace Mono.CSharp {
 		{
 			this.compiler = source.TopBlock.compiler;
 			top_block = this;
+			flags |= Flags.HasRet;
 		}
 
 		public bool IsIterator {
@@ -3276,34 +3299,31 @@ namespace Mono.CSharp {
 				}
 			} else {
 				base.Emit (ec);
-				ec.Mark (EndLocation);
 			}
 
-			if (ec.HasReturnLabel)
-				ec.MarkLabel (ec.ReturnLabel);
+			//
+			// If `HasReturnLabel' is set, then we already emitted a
+			// jump to the end of the method, so we must emit a `ret'
+			// there.
+			//
+			// Unfortunately, System.Reflection.Emit automatically emits
+			// a leave to the end of a finally block.  This is a problem
+			// if no code is following the try/finally block since we may
+			// jump to a point after the end of the method.
+			// As a workaround, we're always creating a return label in
+			// this case.
+			//
+			if (ec.HasReturnLabel || !unreachable) {
+				if (ec.HasReturnLabel)
+					ec.MarkLabel (ec.ReturnLabel);
 
-			if (ec.return_value != null) {
-				ec.Emit (OpCodes.Ldloc, ec.return_value);
+				if (ec.ReturnType.Kind != MemberKind.Void)
+					ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+
+				if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated)
+					ec.Mark (EndLocation);
+
 				ec.Emit (OpCodes.Ret);
-			} else {
-				//
-				// If `HasReturnLabel' is set, then we already emitted a
-				// jump to the end of the method, so we must emit a `ret'
-				// there.
-				//
-				// Unfortunately, System.Reflection.Emit automatically emits
-				// a leave to the end of a finally block.  This is a problem
-				// if no code is following the try/finally block since we may
-				// jump to a point after the end of the method.
-				// As a workaround, we're always creating a return label in
-				// this case.
-				//
-
-				if (ec.HasReturnLabel || !unreachable) {
-					if (ec.ReturnType.Kind != MemberKind.Void)
-						ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
-					ec.Emit (OpCodes.Ret);
-				}
 			}
 
 #if PRODUCTION
