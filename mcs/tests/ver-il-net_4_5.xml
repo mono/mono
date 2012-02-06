@@ -4675,10 +4675,10 @@
         <size>70</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>31</size>
+        <size>38</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="TestLog">
@@ -5092,10 +5092,10 @@
         <size>70</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>31</size>
+        <size>38</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="TestLog">
@@ -6993,7 +6993,7 @@
         <size>36</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="X">
@@ -15262,7 +15262,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="Test`2[T,U]">
@@ -27098,7 +27098,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="Test+SimpleDelegate">
@@ -27377,7 +27377,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="A+B">
@@ -27795,7 +27795,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -28116,7 +28116,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="Z">
@@ -28944,7 +28944,7 @@
         <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
     <type name="Derived">
@@ -29053,7 +29053,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>31</size>
+        <size>49</size>
       </method>
     </type>
   </test>
@@ -29636,7 +29636,7 @@
         <size>1</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
     <type name="A+B">
@@ -29741,7 +29741,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="X">
@@ -30137,7 +30137,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -30339,7 +30339,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="N1.C1">
@@ -30507,7 +30507,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>13</size>
       </method>
     </type>
     <type name="MonoBUG.FooList+FooEnumerator">
@@ -30766,7 +30766,7 @@
         <size>7</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>19</size>
+        <size>26</size>
       </method>
     </type>
     <type name="List+MyEnumerator">
@@ -30870,7 +30870,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -31187,7 +31187,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>13</size>
       </method>
     </type>
     <type name="MyBool">
@@ -31458,7 +31458,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -31630,7 +31630,7 @@
         <size>31</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>35</size>
       </method>
     </type>
   </test>
@@ -31683,7 +31683,7 @@
         <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -32393,7 +32393,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -32970,7 +32970,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -33145,7 +33145,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>137</size>
+        <size>148</size>
       </method>
     </type>
   </test>
@@ -33297,7 +33297,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -33310,7 +33310,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -33927,7 +33927,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>7</size>
+        <size>19</size>
       </method>
     </type>
   </test>
@@ -34770,7 +34770,7 @@
         <size>1</size>
       </method>
       <method name="Void .ctor(String)" attrs="6278">
-        <size>14</size>
+        <size>21</size>
       </method>
     </type>
     <type name="Blah2">
@@ -35582,7 +35582,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="X">
@@ -35932,7 +35932,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>8</size>
       </method>
     </type>
   </test>
@@ -36337,7 +36337,7 @@
         <size>28</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -36521,7 +36521,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -36570,7 +36570,7 @@
         <size>79</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -36950,7 +36950,7 @@
         <size>72</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -37675,7 +37675,7 @@
         <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
     <type name="X">
@@ -39201,7 +39201,7 @@
         <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
     <type name="SubClass">
@@ -39235,7 +39235,7 @@
         <size>1</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
     <type name="SubClass">
@@ -39579,7 +39579,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>8</size>
       </method>
     </type>
   </test>
@@ -41777,7 +41777,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>9</size>
       </method>
     </type>
   </test>
@@ -41790,7 +41790,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="Test+Nested">
@@ -41947,10 +41947,10 @@
         <size>1</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>7</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -42335,10 +42335,10 @@
         <size>32</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>57</size>
+        <size>64</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -42828,7 +42828,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="Y">
@@ -45248,7 +45248,7 @@
         <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6273">
-        <size>7</size>
+        <size>22</size>
       </method>
     </type>
   </test>
@@ -48762,7 +48762,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -48907,7 +48907,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>1</size>
+        <size>7</size>
       </method>
     </type>
     <type name="X+&lt;M&gt;c__AnonStorey0">
@@ -56012,7 +56012,7 @@
         <size>7</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>19</size>
+        <size>26</size>
       </method>
     </type>
     <type name="List+MyEnumerator">

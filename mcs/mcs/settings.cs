@@ -165,7 +165,6 @@ namespace Mono.CSharp {
 			Platform = Platform.AnyCPU;
 			Version = LanguageVersion.Default;
 			VerifyClsCompliance = true;
-			Optimize = true;
 			Encoding = Encoding.UTF8;
 			LoadDefaultReferences = true;
 			StdLibRuntimeVersion = RuntimeVersion.v4;

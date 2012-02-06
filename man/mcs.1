@@ -94,10 +94,10 @@ or can be used by methods that have been tagged with the Conditional
 attribute. 
 .TP
 .I \-debug, \-debug+
-Generate debugging information.  To obtain stack traces with debugging
+Generate debugging information. To obtain stack traces with debugging
 information, you need to invoke the mono runtime with the `--debug'
-flag.  This debugging information is stored inside the assembly as a
-resource.
+flag. The debugging information is stored in a MDB file located in
+same output folder as produced assembly.
 .TP
 .I \-debug-
 Do not generate debugging information.
@@ -218,9 +218,10 @@ Makes the compiler ignore warnings specified in the comma-separated
 list WARNLIST>
 .TP
 .I -optimize, -optimize+, -optimize-
-Controls whether to perform optimizations on the code.   -optimize and
+Controls compiler code generation optimizations on the code. Using -optimize or
 -optimize+ will turn on optimizations, -optimize- will turn it off.
-The default in mcs is to optimize+.
+The default in mcs is to optimize-. The option can be mixed with -debug
+but for the best debugging experience it is recommended leave the options off.
 .TP
 .I -out:FNAME, -o FNAME
 Names the output file to be generated.
