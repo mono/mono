@@ -10234,7 +10234,7 @@ namespace Mono.CSharp
 
 			bool error = false;
 			arguments = new Arguments (parameters.Count);
-			TypeExpression [] t_args = new TypeExpression [parameters.Count];
+			var t_args = new TypeSpec [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
 				Expression e = parameters [i].Resolve (ec);
 				if (e == null) {
@@ -10243,7 +10243,7 @@ namespace Mono.CSharp
 				}
 
 				arguments.Add (new Argument (e));
-				t_args [i] = new TypeExpression (e.Type, e.Location);
+				t_args [i] = e.Type;
 			}
 
 			if (error)
@@ -10253,8 +10253,15 @@ namespace Mono.CSharp
 			if (anonymous_type == null)
 				return null;
 
-			RequestedType = new GenericTypeExpr (anonymous_type.Definition, new TypeArguments (t_args), loc);
-			return base.DoResolve (ec);
+			type = anonymous_type.Definition.MakeGenericType (ec.Module, t_args);
+			method = (MethodSpec) MemberCache.FindMember (type, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			base.EmitStatement (ec);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
