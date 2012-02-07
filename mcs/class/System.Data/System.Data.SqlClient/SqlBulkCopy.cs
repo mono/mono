@@ -16,10 +16,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,17 +38,17 @@ using Mono.Data.Tds.Protocol;
 
 namespace System.Data.SqlClient {
 	/// <summary>Efficient way to bulk load SQL Server table with several data rows at once</summary>
-	public sealed class SqlBulkCopy : IDisposable 
+	public sealed class SqlBulkCopy : IDisposable
 	{
 		#region Constants
 		private const string transConflictMessage = "Must not specify SqlBulkCopyOptions.UseInternalTransaction " +
 			"and pass an external Transaction at the same time.";
-		
+
 		private const SqlBulkCopyOptions insertModifiers =
 			SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock |
 			SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.FireTriggers;
 		#endregion
-		
+
 		#region Fields
 
 		private int _batchSize = 0;
@@ -71,7 +71,7 @@ namespace System.Data.SqlClient {
 			if (connection == null) {
 				throw new ArgumentNullException("connection");
 			}
-			
+
 			this.connection = connection;
 		}
 
@@ -80,7 +80,7 @@ namespace System.Data.SqlClient {
 			if (connectionString == null) {
 				throw new ArgumentNullException("connectionString");
 			}
-			
+
 			this.connection = new SqlConnection (connectionString);
 			isLocalConnection = true;
 		}
@@ -91,13 +91,13 @@ namespace System.Data.SqlClient {
 			if (connectionString == null) {
 				throw new ArgumentNullException ("connectionString");
 			}
-			
+
 			this.connection = new SqlConnection (connectionString);
 			isLocalConnection = true;
-			
+
 			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
 				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
-			
+
 			this.copyOptions = copyOptions;
 		}
 
@@ -107,20 +107,20 @@ namespace System.Data.SqlClient {
 			if (connection == null) {
 				throw new ArgumentNullException ("connection");
 			}
-			
+
 			this.connection = connection;
 			this.copyOptions = copyOptions;
-			
+
 			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction) {
 				if (externalTransaction != null)
 					throw new ArgumentException (transConflictMessage);
 			}
 			else
 				this.externalTransaction = externalTransaction;
-			
+
 			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
 				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
-			
+
 			this.copyOptions = copyOptions;
 		}
 
@@ -351,7 +351,7 @@ namespace System.Data.SqlClient {
 				throw new ArgumentNullException ("DestinationTableName");
 			if (isLocalConnection && connection.State != ConnectionState.Open)
 				connection.Open();
-			
+
 			if ((copyOptions & SqlBulkCopyOptions.KeepIdentity) == SqlBulkCopyOptions.KeepIdentity) {
 				SqlCommand cmd = new SqlCommand ("set identity_insert " +
 								 table.TableName + " on",
@@ -374,44 +374,44 @@ namespace System.Data.SqlClient {
 				string statement = "insert bulk " + DestinationTableName + " (";
 				statement += GenerateColumnMetaData (tmpCmd, colMetaData, tableCollations);
 				statement += ")";
-				
+
 				#region Check requested options and add corresponding modifiers to the statement
 				if ((copyOptions & insertModifiers) != SqlBulkCopyOptions.Default) {
 					statement += " WITH (";
 					bool commaRequired = false;
-					
+
 					if ((copyOptions & SqlBulkCopyOptions.CheckConstraints) == SqlBulkCopyOptions.CheckConstraints) {
 						if (commaRequired)
 							statement += ", ";
 						statement += "CHECK_CONSTRAINTS";
 						commaRequired = true;
 					}
-					
+
 					if ((copyOptions & SqlBulkCopyOptions.TableLock) == SqlBulkCopyOptions.TableLock) {
 						if (commaRequired)
 							statement += ", ";
 						statement += "TABLOCK";
 						commaRequired = true;
 					}
-					
+
 					if ((copyOptions & SqlBulkCopyOptions.KeepNulls) == SqlBulkCopyOptions.KeepNulls) {
 						if (commaRequired)
 							statement += ", ";
 						statement += "KEEP_NULLS";
 						commaRequired = true;
 					}
-					
+
 					if ((copyOptions & SqlBulkCopyOptions.FireTriggers) == SqlBulkCopyOptions.FireTriggers) {
 						if (commaRequired)
 							statement += ", ";
 						statement += "FIRE_TRIGGERS";
 						commaRequired = true;
 					}
-					
+
 					statement += ")";
 				}
 				#endregion Check requested options and add corresponding modifiers to the statement
-				
+
 				blkCopy.SendColumnMetaData (statement);
 			}
 			blkCopy.BulkCopyStart (tmpCmd.Parameters.MetaParameters);
@@ -509,6 +509,8 @@ namespace System.Data.SqlClient {
 		{
 			if (rows == null)
 				throw new ArgumentNullException ("rows");
+			if (rows.Length == 0)
+				return;
 			DataTable table = new DataTable (rows [0].Table.TableName);
 			foreach (DataColumn col in rows [0].Table.Columns) {
 				DataColumn tmpCol = new DataColumn (col.ColumnName, col.DataType);
