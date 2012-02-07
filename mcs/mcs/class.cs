@@ -1303,7 +1303,9 @@ namespace Mono.CSharp
 					Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
 					member_name, cloned_params, null);
 
-				var block = new ToplevelBlock (Compiler, proxy_method.ParameterInfo, Location);
+				var block = new ToplevelBlock (Compiler, proxy_method.ParameterInfo, Location) {
+					IsCompilerGenerated = true
+				};
 
 				var mg = MethodGroupExpr.CreatePredefined (method, method.DeclaringType, Location);
 				mg.InstanceExpression = new BaseThis (method.DeclaringType, Location);

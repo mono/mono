@@ -4,10 +4,10 @@
   <test name="dtest-001.cs">
     <type name="C">
       <method name="Void set_Prop(System.Object)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.Object get_Prop()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Prop2(System.Object)" attrs="2182">
         <size>2</size>
@@ -776,10 +776,10 @@
     </type>
     <type name="MyType">
       <method name="Int16 get_ShortProp()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_ShortProp(Int16)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
         <size>7</size>
@@ -884,10 +884,10 @@
     </type>
     <type name="Tester">
       <method name="Void add_ev_assign(System.Action)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ev_assign(System.Action)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Assert[T](T, T, System.String)" attrs="145">
         <size>80</size>
@@ -1425,10 +1425,10 @@
     </type>
     <type name="EventClass">
       <method name="Void add_OutEvent(System.Func`1[System.Int32])" attrs="2179">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OutEvent(System.Func`1[System.Int32])" attrs="2179">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 CallEvent()" attrs="134">
         <size>20</size>
@@ -1445,10 +1445,10 @@
         <size>34</size>
       </method>
       <method name="Void add_e(System.Func`1[System.Int32])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(System.Func`1[System.Int32])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void GetIndexTest()" attrs="129">
         <size>916</size>
@@ -1852,10 +1852,10 @@
   <test name="dtest-018.cs">
     <type name="XValue">
       <method name="Int64 get_Y()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Y(Int64)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -2332,10 +2332,10 @@
   <test name="dtest-036.cs">
     <type name="C">
       <method name="Void add_E(System.Func`2[System.Int32,System.Int32])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(System.Func`2[System.Int32,System.Int32])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>332</size>
@@ -2597,10 +2597,10 @@
   <test name="dtest-047.cs">
     <type name="C`1[T]">
       <method name="Void add_E(System.Func`2[System.Int32,System.Int32])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(System.Func`2[System.Int32,System.Int32])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Test(Int32)" attrs="150">
         <size>171</size>
@@ -2839,16 +2839,16 @@
   <test name="dtest-056.cs">
     <type name="C">
       <method name="D get_D()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_D(D)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String get_Value()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value(System.String)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 Test()" attrs="134">
         <size>253</size>
@@ -4321,10 +4321,10 @@
     </type>
     <type name="Foo`1[T]">
       <method name="Void add_MyEvent(Test`1[T])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyEvent(Test`1[T])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Hello(T)" attrs="134">
         <size>25</size>
@@ -6756,10 +6756,10 @@
   <test name="gtest-127.cs">
     <type name="A`1[T]">
       <method name="Void add__changed(A`1+Changed[T])" attrs="2180">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove__changed(A`1+Changed[T])" attrs="2180">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Register(A`1+Changed[T])" attrs="134">
         <size>21</size>
@@ -8148,10 +8148,10 @@
         <size>22</size>
       </method>
       <method name="Void add_DoSomething(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_DoSomething(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor(Object[])" attrs="6278">
         <size>12</size>
@@ -11104,10 +11104,10 @@
     </type>
     <type name="GenericEventNotUsedTest`1[T]">
       <method name="Void add_TestEvent(GenericEventHandler`2[GenericEventNotUsedTest`1[T],T])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(GenericEventHandler`2[GenericEventNotUsedTest`1[T],T])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void RaiseTestEvent(T)" attrs="134">
         <size>15</size>
@@ -11928,10 +11928,10 @@
     </type>
     <type name="B">
       <method name="Void add_D(A)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_D(A)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void C()" attrs="129">
         <size>37</size>
@@ -13614,10 +13614,10 @@
   <test name="gtest-392.cs">
     <type name="DieSubrangeType">
       <method name="Nullable`1 get_UpperBound()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_UpperBound(Nullable`1)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>20</size>
@@ -13879,10 +13879,10 @@
     </type>
     <type name="Test.Class1`1[T1]">
       <method name="Void add_doSomething(System.EventHandler)" attrs="2180">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_doSomething(System.EventHandler)" attrs="2180">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6276">
         <size>7</size>
@@ -14630,10 +14630,10 @@
   <test name="gtest-440.cs">
     <type name="AnyObjectId">
       <method name="Int32 get_W1()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_W1(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6276">
         <size>7</size>
@@ -16372,10 +16372,10 @@
     </type>
     <type name="E`1+I[T]">
       <method name="Void add_E(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -16831,10 +16831,10 @@
   <test name="gtest-539.cs">
     <type name="S">
       <method name="Int32 get_ID()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_ID(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
     </type>
     <type name="C">
@@ -18084,16 +18084,16 @@
   <test name="gtest-autoproperty-01.cs">
     <type name="Test">
       <method name="System.String get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Foo(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 get_Answer()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Answer(Int32)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>120</size>
@@ -18104,10 +18104,10 @@
     </type>
     <type name="Test+A">
       <method name="System.String get_B()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_B(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18117,16 +18117,16 @@
   <test name="gtest-autoproperty-02.cs">
     <type name="Test">
       <method name="System.String get_Foo()" attrs="2198">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void set_Foo(System.String)" attrs="2198">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Int32 get_Answer()" attrs="2198">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void set_Answer(Int32)" attrs="2193">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>142</size>
@@ -18137,16 +18137,16 @@
     </type>
     <type name="Test+A">
       <method name="System.String get_B()" attrs="2198">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void set_B(System.String)" attrs="2198">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="System.String get_C()" attrs="2198">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void set_C(System.String)" attrs="2193">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void DoThings()" attrs="150">
         <size>12</size>
@@ -18159,10 +18159,10 @@
   <test name="gtest-autoproperty-03.cs">
     <type name="Test">
       <method name="System.String get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Foo(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>301</size>
@@ -18175,10 +18175,10 @@
   <test name="gtest-autoproperty-04.cs">
     <type name="MonoTests.MainClass">
       <method name="System.String[] get_foo()" attrs="2500">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_foo(System.String[])" attrs="2500">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String[] get_bar()" attrs="3526">
         <size>0</size>
@@ -18195,16 +18195,16 @@
     </type>
     <type name="MonoTests.ChildClass">
       <method name="System.String[] get_foo()" attrs="2244">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_foo(System.String[])" attrs="2244">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String[] get_bar()" attrs="2246">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_bar(System.String[])" attrs="2246">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18214,10 +18214,10 @@
   <test name="gtest-autoproperty-05.cs">
     <type name="Test">
       <method name="System.String get_X()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_X(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6276">
         <size>7</size>
@@ -18245,16 +18245,16 @@
     </type>
     <type name="C">
       <method name="B I&lt;B&gt;.get_Prop()" attrs="2529">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void I&lt;B&gt;.set_Prop(B)" attrs="2529">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="A I&lt;A&gt;.get_Prop()" attrs="2529">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void I&lt;A&gt;.set_Prop(A)" attrs="2529">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18272,10 +18272,10 @@
   <test name="gtest-autoproperty-07.cs">
     <type name="Foo">
       <method name="System.Object get_NewValue()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_NewValue(System.Object)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor(Object)" attrs="6278">
         <size>9</size>
@@ -18351,10 +18351,10 @@
     </type>
     <type name="MyType">
       <method name="Int16 get_ShortProp()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_ShortProp(Int16)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
         <size>7</size>
@@ -18450,10 +18450,10 @@
     </type>
     <type name="MemberAccessData">
       <method name="Void add_EventField(System.Func`1[System.Boolean])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_EventField(System.Func`1[System.Boolean])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="System.Linq.Expressions.Expression`1[System.Func`1[System.Func`1[System.Boolean]]] GetEvent()" attrs="134">
         <size>41</size>
@@ -19857,10 +19857,10 @@
   <test name="gtest-etree-14.cs">
     <type name="Person">
       <method name="Int32 get_Age()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Age(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20127,10 +20127,10 @@
   <test name="gtest-etree-27.cs">
     <type name="Node">
       <method name="System.String get_Name()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Name(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Node get_Parent()" attrs="2182">
         <size>27</size>
@@ -20139,10 +20139,10 @@
         <size>9</size>
       </method>
       <method name="System.Collections.Generic.List`1[System.Int32] get_Values()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Values(System.Collections.Generic.List`1[System.Int32])" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>1210</size>
@@ -20445,10 +20445,10 @@
     </type>
     <type name="Program">
       <method name="Void add_e(D)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(D)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="System.String get_Item(Int32)" attrs="2182">
         <size>14</size>
@@ -21397,10 +21397,10 @@
   <test name="gtest-initialize-07.cs">
     <type name="A">
       <method name="System.String get_Name()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Name(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Boolean Matches(System.String)" attrs="134">
         <size>21</size>
@@ -21426,10 +21426,10 @@
     </type>
     <type name="X">
       <method name="Z[] get_Prop()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Prop(Z[])" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -21470,10 +21470,10 @@
   <test name="gtest-initialize-10.cs">
     <type name="Foo">
       <method name="Int32 get_P()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_P(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22004,10 +22004,10 @@
     </type>
     <type name="Bar">
       <method name="System.String get_Name()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Name(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22172,7 +22172,7 @@
         <size>36</size>
       </method>
       <method name="Int32 &lt;GetHashCode&gt;__BaseCallProxy0()" attrs="129">
-        <size>25</size>
+        <size>24</size>
       </method>
     </type>
     <type name="X">
@@ -22186,10 +22186,10 @@
         <size>149</size>
       </method>
       <method name="Int32 &lt;get_BaseM&gt;__BaseCallProxy0()" attrs="129">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void &lt;set_BaseM&gt;__BaseCallProxy1(Int32)" attrs="129">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22311,7 +22311,7 @@
         <size>45</size>
       </method>
       <method name="IEnumerable`1 &lt;GetStuff&gt;__BaseCallProxy0(Int32)" attrs="129">
-        <size>16</size>
+        <size>15</size>
       </method>
       <method name="Void .ctor()" attrs="6276">
         <size>7</size>
@@ -22325,7 +22325,7 @@
         <size>66</size>
       </method>
       <method name="IEnumerable`1 &lt;GetStuff&gt;__BaseCallProxy0(Int32)" attrs="129">
-        <size>16</size>
+        <size>15</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24071,16 +24071,16 @@
     </type>
     <type name="OrderByTests+Data">
       <method name="Int32 get_ID()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_ID(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String get_Name()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Name(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String ToString()" attrs="198">
         <size>36</size>
@@ -24669,10 +24669,10 @@
   <test name="gtest-linq-14.cs">
     <type name="Person">
       <method name="Style get_Style()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Style(Style)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25078,16 +25078,16 @@
   <test name="gtest-linq-20.cs">
     <type name="Maybe`1[T]">
       <method name="T get_Value()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value(T)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Boolean get_HasValue()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_HasValue(Boolean)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="System.String ToString()" attrs="198">
         <size>51</size>
@@ -25224,22 +25224,22 @@
   <test name="gtest-linq-23.cs">
     <type name="OrderByBugExample.Foo">
       <method name="System.String get_Name()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Name(System.String)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 get_Value1()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value1(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 get_Value2()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value2(Int32)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -26026,10 +26026,10 @@
         <size>14</size>
       </method>
       <method name="T get_CurrentItem()" attrs="2177">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_CurrentItem(T)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -26128,10 +26128,10 @@
     </type>
     <type name="D">
       <method name="Void add_field(D`1[System.String])" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_field(D`1[System.String])" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>64</size>
@@ -26451,10 +26451,10 @@
   <test name="gtest-variance-5.cs">
     <type name="BothVariants`2[T1,T2]">
       <method name="T1 get_Foo()" attrs="2534">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Foo(T1)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Int32 Bar(T2)" attrs="486">
         <size>43</size>
@@ -27862,10 +27862,10 @@
     </type>
     <type name="TestBaseClass">
       <method name="Void add_Blah(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Blah(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -28122,16 +28122,16 @@
         <size>2</size>
       </method>
       <method name="Void add_Foo(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Foo(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_TestEvent(MyDelegate)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(MyDelegate)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Test()" attrs="134">
         <size>162</size>
@@ -28154,10 +28154,10 @@
     </type>
     <type name="Z">
       <method name="Void add_BuildStarted(Z+SomeEventHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_BuildStarted(Z+SomeEventHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Int32 a()" attrs="145">
         <size>10</size>
@@ -28185,10 +28185,10 @@
     </type>
     <type name="Static">
       <method name="Void add_Test(System.EventHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Test(System.EventHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void Fire()" attrs="134">
         <size>24</size>
@@ -30398,10 +30398,10 @@
     </type>
     <type name="cls">
       <method name="Void add_OnWhatever(OnWhateverDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OnWhatever(OnWhateverDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void CallMyDel(System.String)" attrs="131">
         <size>14</size>
@@ -31362,10 +31362,10 @@
     </type>
     <type name="A">
       <method name="Void add_Bar(Foo)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Bar(Foo)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void m1()" attrs="150">
         <size>2</size>
@@ -31442,16 +31442,16 @@
     </type>
     <type name="Test_3">
       <method name="Void add_e_1(test_delegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e_1(test_delegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_e_2(test_delegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e_2(test_delegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -31975,16 +31975,16 @@
     </type>
     <type name="S">
       <method name="Void add_MyEvent(DelType)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyEvent(DelType)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_MyEventStatic(DelType)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_MyEventStatic(DelType)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Int32 RunInstance()" attrs="134">
         <size>20</size>
@@ -32011,10 +32011,10 @@
   <test name="test-276.cs">
     <type name="EventTestClass">
       <method name="Void add_Elapsed(System.EventHandler)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Elapsed(System.EventHandler)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -32374,10 +32374,10 @@
   <test name="test-290.cs">
     <type name="EntryPoint">
       <method name="Void add_FooEvent(EntryPoint+EventHandler)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_FooEvent(EntryPoint+EventHandler)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void bar_f(System.Object)" attrs="145">
         <size>2</size>
@@ -33760,10 +33760,10 @@
     </type>
     <type name="X">
       <method name="Void add_y(Y)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_y(Y)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Main(System.String[])" attrs="145">
         <size>14</size>
@@ -34244,10 +34244,10 @@
     </type>
     <type name="Delegable">
       <method name="Void add_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -35469,10 +35469,10 @@
   <test name="test-417.cs">
     <type name="blah2.MyClass">
       <method name="Void add_DoSomething(blah.MyFunnyDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_DoSomething(blah.MyFunnyDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void DoSomethingFunny()" attrs="134">
         <size>47</size>
@@ -36757,10 +36757,10 @@
     </type>
     <type name="X">
       <method name="Void add_e(MyDelegate)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_e(MyDelegate)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void Test(Int32)" attrs="145">
         <size>18</size>
@@ -37528,10 +37528,10 @@
     </type>
     <type name="BaseClass">
       <method name="Void add_OnEvent(DelegateHandler)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_OnEvent(DelegateHandler)" attrs="2534">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -38005,10 +38005,10 @@
         <size>2</size>
       </method>
       <method name="Void add_Foo(FooHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Foo(FooHandler)" attrs="2198">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>32</size>
@@ -38513,10 +38513,10 @@
   <test name="test-559.cs">
     <type name="C">
       <method name="Void add_TestEvent(B+TestDelegate)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_TestEvent(B+TestDelegate)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
@@ -38746,10 +38746,10 @@
     </type>
     <type name="preservesig_test.TestClass">
       <method name="Void add_e(preservesig_test.TestClass+D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_e(preservesig_test.TestClass+D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 DoFoo()" attrs="134">
         <size>10</size>
@@ -39958,10 +39958,10 @@
         <size>10</size>
       </method>
       <method name="Void add_Foo(MyDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Foo(MyDelegate)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>104</size>
@@ -40465,10 +40465,10 @@
   <test name="test-637.cs">
     <type name="A">
       <method name="System.Type get_Value()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value(System.Type)" attrs="2182">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>8</size>
@@ -41234,10 +41234,10 @@
   <test name="test-677.cs">
     <type name="InvokeWindow">
       <method name="Void add_E(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Run()" attrs="134">
         <size>13</size>
@@ -41782,10 +41782,10 @@
     </type>
     <type name="B">
       <method name="Void add_Finished(System.EventHandler)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Finished(System.EventHandler)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void TestB(System.Object, System.EventArgs)" attrs="134">
         <size>26</size>
@@ -42223,10 +42223,10 @@
     </type>
     <type name="N.Child">
       <method name="Void add_Example(N.Parent+ExampleHandler)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Example(N.Parent+ExampleHandler)" attrs="2246">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void OnExample()" attrs="134">
         <size>24</size>
@@ -42531,10 +42531,10 @@
   <test name="test-736.cs">
     <type name="TestGeneric`1[T]">
       <method name="Void add_Event(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()" attrs="134">
         <size>19</size>
@@ -42545,10 +42545,10 @@
     </type>
     <type name="TestGeneric2`1[T]">
       <method name="Void add_Event(TestGeneric2`1+GenericHandler[T])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(TestGeneric2`1+GenericHandler[T])" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()" attrs="134">
         <size>22</size>
@@ -42573,10 +42573,10 @@
     </type>
     <type name="Test">
       <method name="Void add_Event(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void Raise()" attrs="134">
         <size>19</size>
@@ -43103,10 +43103,10 @@
   <test name="test-761.cs">
     <type name="C">
       <method name="Int32 get_I()" attrs="2177">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_I(Int32)" attrs="2177">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
@@ -43329,10 +43329,10 @@
     </type>
     <type name="MyClass+A">
       <method name="Void add_MouseClick(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MouseClick(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -43340,10 +43340,10 @@
     </type>
     <type name="MyClass+B">
       <method name="Void add_MouseClick(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MouseClick(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -43716,10 +43716,10 @@
     </type>
     <type name="E">
       <method name="Void add_temp(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_temp(D)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -44732,10 +44732,10 @@
     </type>
     <type name="Room">
       <method name="Void add_PersonArrived(PersonArrivedHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_PersonArrived(PersonArrivedHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void AddPerson(System.String)" attrs="134">
         <size>15</size>
@@ -46786,7 +46786,7 @@
         <size>247</size>
       </method>
       <method name="Void &lt;BaseM&gt;__BaseCallProxy0()" attrs="129">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void &lt;InstanceTests&gt;m__0()" attrs="129">
         <size>8</size>
@@ -47472,10 +47472,10 @@
     </type>
     <type name="Foo`1[T]">
       <method name="Void add_handler(Handler`1[T])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_handler(Handler`1[T])" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_Handler(Handler`1[T])" attrs="2182">
         <size>51</size>
@@ -47619,10 +47619,10 @@
   <test name="test-anon-14.cs">
     <type name="X">
       <method name="Void add_Click(X+T)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_Click(X+T)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void Method()" attrs="145">
         <size>2</size>
@@ -48555,10 +48555,10 @@
         <size>60</size>
       </method>
       <method name="Void &lt;Foo&gt;__BaseCallProxy0[T](T, System.String[])" attrs="129">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void &lt;Foo2&gt;__BaseCallProxy1[T]()" attrs="129">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48772,10 +48772,10 @@
     </type>
     <type name="Button">
       <method name="Void add_Clicked(ClickEvent)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Clicked(ClickEvent)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void DoClick()" attrs="134">
         <size>13</size>
@@ -49192,10 +49192,10 @@
   <test name="test-anon-28.cs">
     <type name="Delegable">
       <method name="Void add_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -49276,10 +49276,10 @@
     </type>
     <type name="Program">
       <method name="Void add_E(Program+D)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void remove_E(Program+D)" attrs="2193">
-        <size>43</size>
+        <size>40</size>
       </method>
       <method name="Void Main()" attrs="145">
         <size>39</size>
@@ -50833,16 +50833,16 @@
   <test name="test-anon-64.cs">
     <type name="Source">
       <method name="Void add_ChildSourceAdded(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ChildSourceAdded(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_ChildSourceRemoved(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ChildSourceRemoved(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Source FindSource(Source)" attrs="129">
         <size>10</size>
@@ -50909,10 +50909,10 @@
   <test name="test-anon-66.cs">
     <type name="Test">
       <method name="Void add_testEvent(Test+TestEventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_testEvent(Test+TestEventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_TestEvent(Test+TestEventHandler)" attrs="2182">
         <size>34</size>
@@ -51448,10 +51448,10 @@
   <test name="test-anon-79.cs">
     <type name="Test">
       <method name="Void add_E(Test+D)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_E(Test+D)" attrs="2177">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void add_Changed(Test+D)" attrs="2177">
         <size>31</size>
@@ -51717,10 +51717,10 @@
   <test name="test-anon-83.cs">
     <type name="C">
       <method name="Void add_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_MyDelegate(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void DoSomething(Boolean)" attrs="131">
         <size>14</size>
@@ -52193,7 +52193,7 @@
         <size>21</size>
       </method>
       <method name="Void &lt;Print&gt;__BaseCallProxy0()" attrs="129">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void &lt;Print&gt;m__0()" attrs="129">
         <size>8</size>
@@ -52207,7 +52207,7 @@
         <size>21</size>
       </method>
       <method name="Void &lt;Print&gt;__BaseCallProxy0(Int32)" attrs="129">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void &lt;Print&gt;m__1()" attrs="129">
         <size>10</size>
@@ -52245,10 +52245,10 @@
     </type>
     <type name="B">
       <method name="Void add_Event(D)" attrs="2244">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(D)" attrs="2244">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Int32 Run()" attrs="132">
         <size>20</size>
@@ -52265,7 +52265,7 @@
         <size>36</size>
       </method>
       <method name="Void &lt;add_Event&gt;__BaseCallProxy0(D)" attrs="129">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53172,10 +53172,10 @@
     </type>
     <type name="Base">
       <method name="Void add_Event(System.Action)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Event(System.Action)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Boolean get_PropertyBool()" attrs="2182">
         <size>10</size>
@@ -54360,10 +54360,10 @@
   <test name="test-async-15.cs">
     <type name="S">
       <method name="Int32 get_Value()" attrs="2534">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void set_Value(Int32)" attrs="2534">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void SetValue(Int32)" attrs="134">
         <size>9</size>
@@ -55770,6 +55770,12 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void add_e(System.Action)" attrs="2177">
+        <size>42</size>
+      </method>
+      <method name="Void remove_e(System.Action)" attrs="2177">
+        <size>42</size>
+      </method>
     </type>
   </test>
   <test name="test-debug-10.cs">
@@ -55784,10 +55790,10 @@
         <size>2</size>
       </method>
       <method name="Int32 get_PropAuto()" attrs="2193">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void set_PropAuto(Int32)" attrs="2193">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -56509,10 +56515,10 @@
   <test name="test-iter-11.cs">
     <type name="X">
       <method name="Void add_Hook(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_Hook(System.EventHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="IEnumerator Pipeline()" attrs="134">
         <size>23</size>
@@ -57883,10 +57889,10 @@
         <size>13</size>
       </method>
       <method name="Void add_ContactsEventHandler(Mono.Sms.Contacts+ContactsHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void remove_ContactsEventHandler(Mono.Sms.Contacts+ContactsHandler)" attrs="2182">
-        <size>45</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

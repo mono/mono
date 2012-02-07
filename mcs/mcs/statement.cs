@@ -1853,7 +1853,7 @@ namespace Mono.CSharp {
 			// All fixed variabled are pinned, a slot has to be alocated
 			//
 			builder = ec.DeclareLocal (Type, IsFixed);
-			if (SymbolWriter.HasSymbolWriter)
+			if (!ec.HasSet (BuilderContext.Options.OmitDebugInfo))
 				ec.DefineLocalVariable (name, builder);
 		}
 
