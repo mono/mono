@@ -2866,6 +2866,39 @@
       </method>
     </type>
   </test>
+  <test name="dtest-anontype-01.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>101</size>
+      </method>
+      <method name="Void Test()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="System.Object Factory()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;Field&gt;__T]">
+      <method name="&lt;Field&gt;__T get_Field()" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>47</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>71</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>75</size>
+      </method>
+      <method name="Void .ctor(&lt;Field&gt;__T)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()" attrs="150">
@@ -55733,6 +55766,28 @@
     <type name="C">
       <method name="Void Main()" attrs="150">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-10.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Int32 get_Prop()" attrs="2193">
+        <size>10</size>
+      </method>
+      <method name="Void set_Prop(Int32)" attrs="2193">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_PropAuto()" attrs="2193">
+        <size>14</size>
+      </method>
+      <method name="Void set_PropAuto(Int32)" attrs="2193">
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

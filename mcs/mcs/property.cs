@@ -749,14 +749,22 @@ namespace Mono.CSharp
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
-			// Create get block
-			Get.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);
-			Return r = new Return (fe, Location);
+			//
+			// Create get block but we careful with location to
+			// emit only single sequence point per accessor. This allow
+			// to set a breakpoint on it even with no user code
+			//
+			Get.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Get.Location) {
+				EndLocation = Location.Null
+			};
+			Return r = new Return (fe, Location.Null);
 			Get.Block.AddStatement (r);
 
 			// Create set block
-			Set.Block = new ToplevelBlock (Compiler, Set.ParameterInfo, Location);
-			Assign a = new SimpleAssign (fe, new SimpleName ("value", Location));
+			Set.Block = new ToplevelBlock (Compiler, Set.ParameterInfo, Set.Location) {
+				EndLocation = Location.Null
+			};
+			Assign a = new SimpleAssign (fe, new SimpleName ("value", Location.Null), Location.Null);
 			Set.Block.AddStatement (new StatementExpression (a));
 		}
 
