@@ -5116,17 +5116,13 @@ namespace Mono.CSharp {
 				//
 				if (li.HoistedVariant != null) {
 					LocalTemporary lt = new LocalTemporary (li.Type);
-					SymbolWriter.OpenCompilerGeneratedBlock (ec);
 					lt.Store (ec);
-					SymbolWriter.CloseCompilerGeneratedBlock (ec);
 
 					// switch to assigning from the temporary variable and not from top of the stack
 					assign.UpdateSource (lt);
 				}
 			} else {
-				SymbolWriter.OpenCompilerGeneratedBlock (ec);
 				ec.Emit (OpCodes.Pop);
-				SymbolWriter.CloseCompilerGeneratedBlock (ec);
 			}
 
 			Block.Emit (ec);
@@ -5151,8 +5147,11 @@ namespace Mono.CSharp {
 						if (li.Type.IsGenericParameter)
 							source = new UnboxCast (source, li.Type);
 
-						assign = new CompilerAssign (new LocalVariableReference (li, loc), source, loc);
-						Block.AddScopeStatement (new StatementExpression (assign));
+						//
+						// Uses Location.Null to hide from symbol file
+						//
+						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
+						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
 					}
 				}
 

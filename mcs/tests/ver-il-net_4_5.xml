@@ -55669,6 +55669,31 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-06.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void TryCatch_1()" attrs="129">
+        <size>17</size>
+      </method>
+      <method name="Void TryCatch_2()" attrs="129">
+        <size>19</size>
+      </method>
+      <method name="Void TryCatch_3()" attrs="129">
+        <size>26</size>
+      </method>
+      <method name="Void TryFinally_1()" attrs="129">
+        <size>12</size>
+      </method>
+      <method name="Void TryFinally_2()" attrs="129">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-debug-07.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">

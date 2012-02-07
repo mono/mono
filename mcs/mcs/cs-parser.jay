@@ -5375,7 +5375,7 @@ try_statement
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, GetLocation ($1), true), (Block) $5, GetLocation ($1));
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
 	| TRY block error
