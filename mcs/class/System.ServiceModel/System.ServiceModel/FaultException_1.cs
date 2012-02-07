@@ -37,6 +37,14 @@ namespace System.ServiceModel
 	{
 		TDetail detail;
 
+#if MONOTOUCH
+		// WCF creates FaultExceptions using reflection, so unless we reference
+		// the corresponding ctor, it will not be possible to use FaultExceptions
+		// in MonoTouch. This ctor reference will work as long as TDetail
+		// is a reference type.
+		static FaultException<object> ctor_reference = new FaultException<object> (new object (), new FaultReason ("reason"), new FaultCode ("code"), "action");
+#endif
+
 		public FaultException (TDetail detail)
 			: this (detail, "Unspecified ServiceModel Fault.")
 		{
