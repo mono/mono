@@ -1186,6 +1186,7 @@ public class EcmaHelpSource : HelpSource {
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
 			args.AddParam("show", "", "namespace");
 			args.AddParam("namespace", "", ns_name);
+			args.AddParam ("source-id", "", SourceID.ToString ());
 			string s = Htmlize(new XmlNodeReader (doc), args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 
@@ -1388,6 +1389,7 @@ public class EcmaHelpSource : HelpSource {
 	{
 		XsltArgumentList args = new XsltArgumentList ();
 		args.AddExtensionObject ("monodoc:///extensions", ExtObject);
+		args.AddParam ("source-id", "", SourceID.ToString ());
 		
 		Htmlize (new XmlNodeReader (newNode), args, writer);
 	}
