@@ -327,17 +327,21 @@ namespace Mono.CSharp {
 			EmbeddedStatement.Emit (ec);
 			ec.MarkLabel (ec.LoopBegin);
 
+			// Mark start of while condition
+			ec.Mark (expr.Location);
+
 			//
 			// Dead code elimination
 			//
-			if (expr is Constant){
+			if (expr is Constant) {
 				bool res = !((Constant) expr).IsDefaultValue;
 
 				expr.EmitSideEffect (ec);
 				if (res)
-					ec.Emit (OpCodes.Br, loop); 
-			} else
+					ec.Emit (OpCodes.Br, loop);
+			} else {
 				expr.EmitBranchable (ec, loop, true);
+			}
 			
 			ec.MarkLabel (ec.LoopEnd);
 
@@ -427,9 +431,13 @@ namespace Mono.CSharp {
 			//
 			// Inform whether we are infinite or not
 			//
-			if (expr is Constant){
+			if (expr is Constant) {
 				// expr is 'true', since the 'empty' case above handles the 'false' case
 				ec.MarkLabel (ec.LoopBegin);
+
+				if (ec.EmitAccurateDebugInfo)
+					ec.Emit (OpCodes.Nop);
+
 				expr.EmitSideEffect (ec);
 				Statement.Emit (ec);
 				ec.Emit (OpCodes.Br, ec.LoopBegin);
@@ -448,8 +456,8 @@ namespace Mono.CSharp {
 				Statement.Emit (ec);
 			
 				ec.MarkLabel (ec.LoopBegin);
-				ec.Mark (loc);
 
+				ec.Mark (expr.Location);
 				expr.EmitBranchable (ec, while_loop, true);
 				
 				ec.MarkLabel (ec.LoopEnd);
@@ -457,11 +465,6 @@ namespace Mono.CSharp {
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			DoEmit (ec);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -1853,7 +1856,7 @@ namespace Mono.CSharp {
 			// All fixed variabled are pinned, a slot has to be alocated
 			//
 			builder = ec.DeclareLocal (Type, IsFixed);
-			if (!ec.HasSet (BuilderContext.Options.OmitDebugInfo))
+			if (!ec.HasSet (BuilderContext.Options.OmitDebugInfo) && (flags & Flags.CompilerGenerated) == 0)
 				ec.DefineLocalVariable (name, builder);
 		}
 
@@ -2056,6 +2059,9 @@ namespace Mono.CSharp {
 		public bool HasUnreachableClosingBrace {
 			get {
 				return (flags & Flags.HasRet) != 0;
+			}
+			set {
+				flags = value ? flags | Flags.HasRet : flags & ~Flags.HasRet;
 			}
 		}
 
@@ -2453,7 +2459,7 @@ namespace Mono.CSharp {
 			if (scope_initializers != null)
 				EmitScopeInitializers (ec);
 
-			if (ec.EmitAccurateDebugInfo && ec.Mark (StartLocation)) {
+			if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated && ec.Mark (StartLocation)) {
 				ec.Emit (OpCodes.Nop);
 			}
 
@@ -2469,7 +2475,7 @@ namespace Mono.CSharp {
 			if (emit_debug_info)
 				ec.EndScope ();
 
-			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && ec.Mark (EndLocation)) {
+			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && !IsCompilerGenerated && ec.Mark (EndLocation)) {
 				ec.Emit (OpCodes.Nop);
 			}
 		}
@@ -4078,7 +4084,10 @@ namespace Mono.CSharp {
 					}
 				}
 
-				simple_stmt = new If (cond, s.Block, simple_stmt, loc);
+				//
+				// Compiler generated, hide from symbol file
+				//
+				simple_stmt = new If (cond, s.Block, simple_stmt, Location.Null);
 			}
 
 			// It's null for empty switch
@@ -4210,6 +4219,9 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			// Workaround broken flow-analysis
+			block.HasUnreachableClosingBrace = true;
+
 			//
 			// Needed to emit anonymous storey initialization
 			// Otherwise it does not contain any statements for now
@@ -5469,7 +5481,10 @@ namespace Mono.CSharp {
 					new Cast (new TypeExpression (idt, loc), lvr, loc).Resolve (bc) :
 					lvr;
 
-				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
+				//
+				// Hide it from symbol file via null location
+				//
+				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null), Location.Null);
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
@@ -5535,6 +5550,14 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		public override void Emit (EmitContext ec)
+		{
+			//
+			// Don't emit sequence point it will be set on variable declaration
+			//
+			DoEmit (ec);
+		}
 
 		protected override void EmitTryBodyPrepare (EmitContext ec)
 		{
