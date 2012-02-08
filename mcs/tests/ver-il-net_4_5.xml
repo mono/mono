@@ -55862,6 +55862,28 @@
         <size>19</size>
       </method>
     </type>
+    <type name="S">
+      <method name="IEnumerator GetEnumerator()" attrs="486">
+        <size>24</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void For_1()" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void For_2()" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void ForEach(System.Int32[])" attrs="129">
+        <size>30</size>
+      </method>
+      <method name="Void ForEach_2(System.Collections.Generic.List`1[System.Object])" attrs="129">
+        <size>55</size>
+      </method>
+      <method name="Void ForEach_3(S)" attrs="129">
+        <size>60</size>
+      </method>
+    </type>
   </test>
   <test name="test-externalias-01.cs">
     <type name="Test">

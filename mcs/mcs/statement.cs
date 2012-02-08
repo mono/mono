@@ -595,7 +595,9 @@ namespace Mono.CSharp {
 			// If test is null, there is no test, and we are just
 			// an infinite loop
 			//
-			if (Condition != null){
+			if (Condition != null) {
+				ec.Mark (Condition.Location);
+
 				//
 				// The Resolve code already catches the case for
 				// Test == Constant (false) so we know that
@@ -6011,7 +6013,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				return MethodGroupExpr.CreatePredefined (ms, enumerator.ReturnType, loc);
+				return MethodGroupExpr.CreatePredefined (ms, enumerator.ReturnType, expr.Location);
 			}
 
 			PropertySpec ResolveCurrent (ResolveContext rc, MethodSpec enumerator)
@@ -6090,7 +6092,7 @@ namespace Mono.CSharp {
 				var init = new Invocation (get_enumerator_mg, null);
 
 				statement = new While (new BooleanExpression (new Invocation (move_next_mg, null)),
-					new Body (variable.Type, variable, current_pe, statement, loc), loc);
+					new Body (variable.Type, variable, current_pe, statement, variable.Location), Location.Null);
 
 				var enum_type = enumerator_variable.Type;
 
@@ -6102,23 +6104,23 @@ namespace Mono.CSharp {
 						//
 						// Runtime Dispose check
 						//
-						var vd = new RuntimeDispose (enumerator_variable.LocalInfo, loc);
+						var vd = new RuntimeDispose (enumerator_variable.LocalInfo, Location.Null);
 						vd.Initializer = init;
-						statement = new Using (vd, statement, loc);
+						statement = new Using (vd, statement, Location.Null);
 					} else {
 						//
 						// No Dispose call needed
 						//
-						this.init = new SimpleAssign (enumerator_variable, init);
+						this.init = new SimpleAssign (enumerator_variable, init, Location.Null);
 						this.init.Resolve (ec);
 					}
 				} else {
 					//
 					// Static Dispose check
 					//
-					var vd = new Using.VariableDeclaration (enumerator_variable.LocalInfo, loc);
+					var vd = new Using.VariableDeclaration (enumerator_variable.LocalInfo, Location.Null);
 					vd.Initializer = init;
-					statement = new Using (vd, statement, loc);
+					statement = new Using (vd, statement, Location.Null);
 				}
 
 				return statement.Resolve (ec);
@@ -6139,7 +6141,7 @@ namespace Mono.CSharp {
 			bool OverloadResolver.IErrorHandler.AmbiguousCandidates (ResolveContext ec, MemberSpec best, MemberSpec ambiguous)
 			{
 				ec.Report.SymbolRelatedToPreviousError (best);
-				ec.Report.Warning (278, 2, loc,
+				ec.Report.Warning (278, 2, expr.Location,
 					"`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
 					expr.Type.GetSignatureForError (), "enumerable",
 					best.GetSignatureForError (), ambiguous.GetSignatureForError ());

@@ -1,9 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
-struct S : IDisposable
+struct S : IDisposable, IEnumerable
 {
 	public void Dispose ()
 	{
+	}
+	
+	public IEnumerator GetEnumerator ()
+	{
+		return new List<int>().GetEnumerator (); 
 	}
 }
 
@@ -192,6 +199,56 @@ class C
 		{
 		}
 		else
+		{
+		}
+	}
+
+	void For_1 ()
+	{
+		for (int i = 0;
+		i < 4;
+		++i)
+		{
+		}
+		
+		for (;
+		;
+		)
+		{
+		}
+	}
+	
+	void For_2 ()
+	{
+		for (int i = 0; ;)
+		{
+		}
+	}
+	
+	void ForEach (int[] args)
+	{
+		foreach (var a
+			in args)
+		{
+		}
+	}
+	
+	void ForEach_2 (List<object> args)
+	{
+		foreach
+		(var a
+		in
+		args)
+		{
+		}
+	}
+
+	void ForEach_3 (S args)
+	{
+		foreach
+		(var a
+		in
+		args)
 		{
 		}
 	}
