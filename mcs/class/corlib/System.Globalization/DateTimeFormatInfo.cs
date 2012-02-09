@@ -1,14 +1,13 @@
-// System.Globalization.DateTimeFormatInfo
 //
-// Some useful functions are missing in the ECMA specs.
-// They have been added following MS SDK Beta2
+// System.Globalization.DateTimeFormatInfo.cs
 //
-// Martin Weindel (martin.weindel@t-online.de)
+// Authors:
+//   Martin Weindel (martin.weindel@t-online.de)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Martin Weindel (martin.weindel@t-online.de)
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -49,10 +48,9 @@ namespace System.Globalization
 	[Serializable]
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
+	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider
+	{
 		private static readonly string MSG_READONLY = "This instance is read only";
-		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
-		private static readonly string MSG_ARRAYSIZE_DAY = "An array with exactly 7 elements is needed";
 		private static readonly string[] INVARIANT_ABBREVIATED_DAY_NAMES
 			= new string[7] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 		private static readonly string[] INVARIANT_DAY_NAMES
@@ -266,11 +264,8 @@ namespace System.Globalization
 			{
 				return abbreviatedDayNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
+			set {
+				CheckDaysValue (value);
 				abbreviatedDayNames = (string[]) value.Clone();
 			}
 		}
@@ -287,11 +282,8 @@ namespace System.Globalization
 			{
 				return abbreviatedMonthNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
+			set {
+				CheckMonthsValue (value);
 				abbreviatedMonthNames = (string[]) value.Clone();
 			}
 		}
@@ -308,11 +300,8 @@ namespace System.Globalization
 			{
 				return dayNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
+			set {
+				CheckDaysValue (value);
 				dayNames = (string[]) value.Clone();
 			}
 		}
@@ -329,12 +318,53 @@ namespace System.Globalization
 			{
 				return monthNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
+			set {
+				CheckMonthsValue (value);
 				monthNames = (string[]) value.Clone();
+			}
+		}
+		
+		[MonoLimitation ("Returns only the English month abbreviated names")]
+		[ComVisible (false)]
+		public string[] AbbreviatedMonthGenitiveNames {
+			get {
+				return (string[]) m_genitiveAbbreviatedMonthNames.Clone ();
+			}
+			set {
+				CheckMonthsValue (value);
+				m_genitiveAbbreviatedMonthNames = value;
+			}
+		}
+
+		[MonoLimitation ("Returns only the English month names")]
+		[ComVisible (false)]
+		public string[] MonthGenitiveNames {
+			get {
+				return (string[]) genitiveMonthNames.Clone ();
+			}
+			set {
+				CheckMonthsValue (value);
+				genitiveMonthNames = value;
+			}
+		}
+
+		[MonoLimitation ("Returns an empty string as if the calendar name wasn't available")]
+		[ComVisible (false)]
+		public string NativeCalendarName {
+			get {
+				return String.Empty;
+			}
+		}
+
+		[ComVisible (false)]
+		public string[] ShortestDayNames {
+			get {
+				return (string[]) shortDayNames.Clone ();
+			}
+
+			set {
+				CheckDaysValue (value);
+				shortDayNames = value;
 			}
 		}
 
@@ -751,7 +781,7 @@ namespace System.Globalization
 			yearMonthPatterns = new string [] {"yyyy MMMM"};
 		}
 
-		private string [] PopulateCombinedList (string [] dates, string [] times)
+		static string [] PopulateCombinedList (string [] dates, string [] times)
 		{
 			if (dates != null && times != null) {
 				string [] list = new string [dates.Length * times.Length];
@@ -762,47 +792,6 @@ namespace System.Globalization
 				return list;
 			}
 			return null;
-		}
-
-		[MonoLimitation ("Returns only the English month abbreviated names")]
-		[ComVisible (false)]
-		public string [] AbbreviatedMonthGenitiveNames {
-			get { return m_genitiveAbbreviatedMonthNames; }
-			set { m_genitiveAbbreviatedMonthNames = value; }
-		}
-
-		[MonoLimitation ("Returns only the English month names")]
-		[ComVisible (false)]
-		public string [] MonthGenitiveNames {
-			get { return genitiveMonthNames; }
-			set { genitiveMonthNames = value; }
-		}
-
-		[MonoLimitation ("Returns an empty string as if the calendar name wasn't available")]
-		[ComVisible (false)]
-		public string NativeCalendarName {
-			get { return String.Empty; }
-		}
-
-		[ComVisible (false)]
-		public string [] ShortestDayNames {
-			get {
-				return shortDayNames;
-			}
-
-			set {
-				if (value == null)
-					throw new ArgumentNullException ();
-
-				if (value.Length != 7)
-					throw new ArgumentException ("Array must have 7 entries");
-				
-				for (int i = 0; i < 7; i++)
-					if (value [i] == null)
-						throw new ArgumentNullException (String.Format ("Element {0} is null", i));
-				
-				shortDayNames = value;
-			}
 		}
 
 		[ComVisible (false)]
@@ -853,5 +842,37 @@ namespace System.Globalization
 				throw new ArgumentException ("format", "Format specifier is invalid");
 			}
 		}
+		
+		void CheckDaysValue (string[] value)
+		{
+			if (IsReadOnly)
+				throw new InvalidOperationException (MSG_READONLY);
+				
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			if (value.Length != 7)
+				throw new ArgumentException ("An array with exactly 7 elements is required");
+
+			int ni = Array.IndexOf (value, null);
+			if (ni >= 0)
+				throw new ArgumentNullException (string.Format ("Element at index {0} is null", ni));
+		}
+		
+		void CheckMonthsValue (string[] value)
+		{
+			if (IsReadOnly)
+				throw new InvalidOperationException (MSG_READONLY);
+				
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			if (value.Length != 13)
+				throw new ArgumentException ("An array with exactly 13 elements is required");
+
+			int ni = Array.IndexOf (value, null);
+			if (ni >= 0)
+				throw new ArgumentNullException (string.Format ("Element at index {0} is null", ni));
+		}		
 	}
 }
