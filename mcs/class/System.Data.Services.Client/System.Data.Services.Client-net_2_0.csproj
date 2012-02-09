@@ -194,9 +194,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\\lib\build\System.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="WindowsBase.dll">
+    <Reference Include="WindowsBase">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\WindowsBase.dll</HintPath>
+      <HintPath>..\\lib\build\WindowsBase</HintPath>
     </Reference>
   </ItemGroup>
 

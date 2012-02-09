@@ -621,6 +621,7 @@
    <Compile Include="System\GenericUriParserOptions.cs" />
    <Compile Include="System\GopherStyleUriParser.cs" />
    <Compile Include="System\HttpStyleUriParser.cs" />
+   <Compile Include="System\Platform.cs" />
    <Compile Include="System.IO.Compression\CompressionMode.cs" />
    <Compile Include="System.IO.Compression\DeflateStream.cs" />
    <Compile Include="System.IO.Compression\GZipStream.cs" />
@@ -904,7 +905,9 @@
    <Compile Include="System.Net.Sockets\TcpListener.cs" />
    <Compile Include="System.Net.Sockets\TransmitFileOptions.cs" />
    <Compile Include="System.Net.Sockets\UdpClient.cs" />
+   <Compile Include="System.Net.Sockets\UdpReceiveResult.cs" />
    <Compile Include="System\NetTcpStyleUriParser.cs" />
+   <Compile Include="System.Net\TransportContext.cs" />
    <Compile Include="System.Net\TransportType.cs" />
    <Compile Include="System.Net\WebAsyncResult.cs" />
    <Compile Include="System.Net\WebClient.cs" />
@@ -1085,10 +1088,35 @@
    <Compile Include="System.Collections.Concurrent\BlockingCollection.cs" />
    <Compile Include="System.Collections.Concurrent\ConcurrentBag.cs" />
    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
    <Compile Include="..\corlib\System.Collections\CollectionDebuggerView.cs" />
    <Compile Include="..\corlib\System.Collections.Generic\CollectionDebuggerView.cs" />
    <Compile Include="..\corlib\Mono\DataConverter.cs" />
+   <Compile Include="Mono.Net.Dns\DnsClass.cs" />
+   <Compile Include="Mono.Net.Dns\DnsHeader.cs" />
+   <Compile Include="Mono.Net.Dns\DnsOpCode.cs" />
+   <Compile Include="Mono.Net.Dns\DnsPacket.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQClass.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQType.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQuery.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQuestion.cs" />
+   <Compile Include="Mono.Net.Dns\DnsRCode.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordA.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordAAAA.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordCName.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecord.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordIPAddress.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordPTR.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResponse.cs" />
+   <Compile Include="Mono.Net.Dns\DnsType.cs" />
+   <Compile Include="Mono.Net.Dns\DnsUtil.cs" />
+   <Compile Include="Mono.Net.Dns\ResolverAsyncOperation.cs" />
+   <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
+   <Compile Include="Mono.Net.Dns\ResolverError.cs" />
+   <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+   <Compile Include="System.Net\DnsAsyncResult.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

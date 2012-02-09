@@ -225,8 +225,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
     <ItemGroup>
-    <EmbeddedResource Include="src/ComponentModel/Strings.resx">
-       <LogicalName>Strings.resx</LogicalName>
+    <EmbeddedResource Include="Microsoft.Internal.Strings.resources">
+       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 

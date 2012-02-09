@@ -45,6 +45,7 @@
    <Compile Include="..\..\mcs\argument.cs" />
    <Compile Include="..\..\mcs\assign.cs" />
    <Compile Include="..\..\mcs\assembly.cs" />
+   <Compile Include="..\..\mcs\async.cs" />
    <Compile Include="..\..\mcs\attribute.cs" />
    <Compile Include="..\..\mcs\cs-tokenizer.cs" />
    <Compile Include="..\..\mcs\cfold.cs" />
@@ -83,8 +84,8 @@
    <Compile Include="..\..\mcs\property.cs" />
    <Compile Include="..\..\mcs\reflection.cs" />
    <Compile Include="..\..\mcs\report.cs" />
-   <Compile Include="..\..\mcs\rootcontext.cs" />
-   <Compile Include="..\..\mcs\roottypes.cs" />
+   <Compile Include="..\..\mcs\settings.cs" />
+   <Compile Include="..\..\mcs\module.cs" />
    <Compile Include="..\..\mcs\statement.cs" />
    <Compile Include="..\..\mcs\support.cs" />
    <Compile Include="..\..\mcs\typemanager.cs" />

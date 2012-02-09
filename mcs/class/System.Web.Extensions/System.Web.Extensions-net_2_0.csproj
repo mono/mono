@@ -101,6 +101,9 @@
    <Compile Include=".\System.Web.Script.Services\ScriptServiceAttribute.cs" />
    <Compile Include=".\System.Web.UI\AsyncPostBackErrorEventArgs.cs" />
    <Compile Include=".\System.Web.UI\AsyncPostBackTrigger.cs" />
+   <Compile Include=".\System.Web.UI\CompositeEntry.cs" />
+   <Compile Include=".\System.Web.UI\CompositeScriptReference.cs" />
+   <Compile Include=".\System.Web.UI\CompositeScriptReferenceEventArgs.cs" />
    <Compile Include=".\System.Web.UI\AuthenticationServiceManager.cs" />
    <Compile Include=".\System.Web.UI\ExtenderControl.cs" />
    <Compile Include=".\System.Web.UI\IExtenderControl.cs" />

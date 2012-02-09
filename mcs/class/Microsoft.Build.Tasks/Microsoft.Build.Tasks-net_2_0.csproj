@@ -122,6 +122,7 @@
    <Compile Include="Microsoft.Build.Tasks\GetAssemblyIdentity.cs" />
    <Compile Include="Microsoft.Build.Tasks\GetFrameworkPath.cs" />
    <Compile Include="Microsoft.Build.Tasks\GetFrameworkSdkPath.cs" />
+   <Compile Include="Microsoft.Build.Tasks\GetReferenceAssemblyPaths.cs" />
    <Compile Include="Microsoft.Build.Tasks.Hosting\ICscHostObject.cs" />
    <Compile Include="Microsoft.Build.Tasks.Hosting\IVbcHostObject.cs" />
    <Compile Include="Microsoft.Build.Tasks\LC.cs" />

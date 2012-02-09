@@ -66,9 +66,11 @@
    <Compile Include="Microsoft.Build.Framework\IBuildEngine2.cs" />
    <Compile Include="Microsoft.Build.Framework\IEventSource.cs" />
    <Compile Include="Microsoft.Build.Framework\ILogger.cs" />
+   <Compile Include="Microsoft.Build.Framework\INodeLogger.cs" />
    <Compile Include="Microsoft.Build.Framework\ITask.cs" />
    <Compile Include="Microsoft.Build.Framework\ITaskHost.cs" />
    <Compile Include="Microsoft.Build.Framework\ITaskItem.cs" />
+   <Compile Include="Microsoft.Build.Framework\ITaskItem2.cs" />
    <Compile Include="Microsoft.Build.Framework\LoadInSeparateAppDomainAttribute.cs" />
    <Compile Include="Microsoft.Build.Framework\LoggerException.cs" />
    <Compile Include="Microsoft.Build.Framework\LoggerVerbosity.cs" />

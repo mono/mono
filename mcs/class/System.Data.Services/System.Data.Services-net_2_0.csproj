@@ -41,33 +41,33 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+   <Compile Include=".\Assembly\AssemblyInfo.cs" />
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include=".\Assembly\AssemblyInfo.cs" />
-   <Compile Include=".\System.Data.Services\IUpdatable.cs" />
-   <Compile Include=".\System.Data.Services\ETagAttribute.cs" />
-   <Compile Include=".\System.Data.Services\UpdateOperations.cs" />
-   <Compile Include=".\System.Data.Services\HandleExceptionArgs.cs" />
-   <Compile Include=".\System.Data.Services\DataServiceHostFactory.cs" />
-   <Compile Include=".\System.Data.Services\ExpandSegment.cs" />
-   <Compile Include=".\System.Data.Services\IExpandedResult.cs" />
    <Compile Include=".\System.Data.Services\ChangeInterceptorAttribute.cs" />
    <Compile Include=".\System.Data.Services\DataService.cs" />
-   <Compile Include=".\System.Data.Services\QueryInterceptorAttribute.cs" />
-   <Compile Include=".\System.Data.Services\ExpandSegmentCollection.cs" />
-   <Compile Include=".\System.Data.Services\IDataServiceConfiguration.cs" />
-   <Compile Include=".\System.Data.Services\IExpandProvider.cs" />
-   <Compile Include=".\System.Data.Services\IRequestHandler.cs" />
+   <Compile Include=".\System.Data.Services\DataServiceException.cs" />
    <Compile Include=".\System.Data.Services\DataServiceHost.cs" />
-   <Compile Include=".\System.Data.Services\SingleResultAttribute.cs" />
+   <Compile Include=".\System.Data.Services\DataServiceHostFactory.cs" />
    <Compile Include=".\System.Data.Services\EntitySetRights.cs" />
-   <Compile Include=".\System.Data.Services\ServiceOperationRights.cs" />
-   <Compile Include=".\System.Data.Services\IgnorePropertiesAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ETagAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ExpandSegmentCollection.cs" />
+   <Compile Include=".\System.Data.Services\ExpandSegment.cs" />
+   <Compile Include=".\System.Data.Services\HandleExceptionArgs.cs" />
+   <Compile Include=".\System.Data.Services\IDataServiceConfiguration.cs" />
    <Compile Include=".\System.Data.Services\IDataServiceHost.cs" />
+   <Compile Include=".\System.Data.Services\IExpandedResult.cs" />
+   <Compile Include=".\System.Data.Services\IExpandProvider.cs" />
+   <Compile Include=".\System.Data.Services\IgnorePropertiesAttribute.cs" />
+   <Compile Include=".\System.Data.Services\IRequestHandler.cs" />
+   <Compile Include=".\System.Data.Services\IUpdatable.cs" />
    <Compile Include=".\System.Data.Services\MimeTypeAttribute.cs" />
    <Compile Include=".\System.Data.Services\ProcessRequestArgs.cs" />
-   <Compile Include=".\System.Data.Services\DataServiceException.cs" />
+   <Compile Include=".\System.Data.Services\QueryInterceptorAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ServiceOperationRights.cs" />
+   <Compile Include=".\System.Data.Services\SingleResultAttribute.cs" />
+   <Compile Include=".\System.Data.Services\UpdateOperations.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -100,6 +100,10 @@
     <Reference Include="System.ServiceModel.Web.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\\lib\build\System.ServiceModel.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Services.Client.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Data.Services.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
 

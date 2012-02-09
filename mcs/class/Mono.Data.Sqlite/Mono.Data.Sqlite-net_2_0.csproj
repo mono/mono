@@ -45,6 +45,7 @@
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="Mono.Data.Sqlite_2.0\MonoPInvokeCallbackAttribute.cs" />
    <Compile Include="Mono.Data.Sqlite_2.0\SQLite3.cs" />
    <Compile Include="Mono.Data.Sqlite_2.0\SQLite3_UTF16.cs" />
    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteBase.cs" />

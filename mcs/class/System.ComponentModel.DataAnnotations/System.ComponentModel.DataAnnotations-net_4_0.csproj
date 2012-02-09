@@ -67,10 +67,12 @@
    <Compile Include="System.ComponentModel.DataAnnotations\ScaffoldTableAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\StringLengthAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\UIHintAttribute.cs" />
+   <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttributeCollectionExtensions.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationContext.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationException.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationResult.cs" />
+   <Compile Include="System.ComponentModel.DataAnnotations\Validator.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

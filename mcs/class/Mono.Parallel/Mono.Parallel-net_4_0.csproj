@@ -52,9 +52,12 @@
    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
    <Compile Include="..\corlib\System.Collections.Concurrent\ConcurrentOrderedList.cs" />
    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
-   <Compile Include="..\corlib\System.Threading.Tasks\ThreadWorker.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
+   <Compile Include="Mono.Threading.Tasks\ThreadWorker.cs" />
    <Compile Include="Mono.Threading.Tasks\MonoTaskExtensions.cs" />
    <Compile Include="Mono.Threading.Tasks\MonoTaskScheduler.cs" />
+   <Compile Include="Mono.Threading.Tasks\FixedTaskScheduler.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
