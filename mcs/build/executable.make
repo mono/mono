@@ -156,6 +156,7 @@ csproj-local:
 	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
+	echo $(FRAMEWORK_VERSION); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 

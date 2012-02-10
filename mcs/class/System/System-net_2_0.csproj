@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,23 +9,20 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>./../../class/lib/net_2_0/tmp</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>System</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
@@ -1130,29 +1127,29 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
+        <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+      <HintPath>System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\Mono.Security.dll</HintPath>
+      <HintPath>Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+      <HintPath>System.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="../lib/net_2_0/System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\PrebuiltSystem=../lib/net_2_0/System.dll</HintPath>
+      <HintPath>PrebuiltSystem=../lib/net_2_0/System.dll</HintPath>
       <Aliases>PrebuiltSystem</Aliases>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

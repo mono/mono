@@ -92,7 +92,9 @@ else
 is_boot=false
 endif
 
-csproj-local: 
+csproj-local: csproj-library csproj-test
+
+csproj-library:
 	config_file=`basename $(LIBRARY) .dll`-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
@@ -101,8 +103,10 @@ csproj-local:
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
+	echo $(FRAMEWORK_VERSION); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
+csproj-test:
 
 install-local: all-local
 test-local: all-local
@@ -180,6 +184,19 @@ include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
 DISTFILES += $(test_sourcefile)
+
+csproj-test:
+	config_file=`basename $(LIBRARY) .dll`-tests-$(PROFILE).input; \
+	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
+	(echo false; \
+	echo $(MCS);	\
+	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
+	echo $(test_lib); \
+	echo $(BUILT_SOURCES_cmdline); \
+	echo $(test_lib); \
+	echo $(FRAMEWORK_VERSION); \
+	echo $(test_response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
+
 endif
 
 # make dist will collect files in .sources files from all profiles
