@@ -201,6 +201,8 @@ namespace System.Net
 		
 		State GetChunkSize (byte [] buffer, ref int offset, int size)
 		{
+			chunkRead = 0;
+			chunkSize = 0;
 			char c = '\0';
 			while (offset < size) {
 				c = (char) buffer [offset++];
@@ -246,7 +248,7 @@ namespace System.Net
 			} catch (Exception) {
 				ThrowProtocolViolation ("Cannot parse chunk size.");
 			}
-			
+
 			if (chunkSize == 0) {
 				trailerState = 2;
 				return State.Trailer;
