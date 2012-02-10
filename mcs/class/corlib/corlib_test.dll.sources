@@ -59,7 +59,6 @@ System.Diagnostics/DebuggerDisplayAttributeTest.cs
 System.Diagnostics/DebugTest.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
-System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Diagnostics.Contracts/ContractAssertTest.cs
 System.Diagnostics.Contracts/ContractAssumeTest.cs
 System.Diagnostics.Contracts/ContractCollectionMethodsTest.cs
@@ -457,7 +456,6 @@ System.Threading.Tasks/ParallelTests.cs
 System.Collections.Concurrent/ParallelConcurrentStackTests.cs
 System.Collections.Concurrent/PartitionerTests.cs
 System.Collections.Concurrent/ConcurrentQueueTests.cs
-System.Collections.Concurrent/ConcurrentBagTests.cs
 System.Collections.Concurrent/ConcurrentStackTests.cs
 System.Collections.Concurrent/ConcurrentDictionaryTests.cs
 System.Collections.Concurrent/CollectionStressTestHelper.cs

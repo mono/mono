@@ -179,6 +179,7 @@ System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
+System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Diagnostics/TraceSourceTest.cs
 System.Diagnostics/TraceListenerTest.cs
 System.Diagnostics/TraceTest.cs
@@ -488,3 +489,6 @@ System.Timers/TimerCas.cs
 System.Web/AspNetHostingPermissionCas.cs
 System.Web/AspNetHostingPermissionAttributeCas.cs
 System.Collections.Concurrent/BlockingCollectionTests.cs
+System.Collections.Concurrent/ConcurrentBagTests.cs
+System.Collections.Concurrent/CollectionStressTestHelper.cs
+System.Collections.Concurrent/ParallelTestHelper.cs

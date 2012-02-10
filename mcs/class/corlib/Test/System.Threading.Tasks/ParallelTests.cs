@@ -29,12 +29,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
-using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using NUnit;
-using NUnit.Core;
 using NUnit.Framework;
 
 namespace MonoTests.System.Threading.Tasks

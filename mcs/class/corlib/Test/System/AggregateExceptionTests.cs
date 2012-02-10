@@ -30,7 +30,6 @@ using System.Threading;
 using System.Collections.Generic;
 
 using NUnit;
-using NUnit.Core;
 using NUnit.Framework;
 
 namespace MonoTests.System
