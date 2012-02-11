@@ -148,14 +148,16 @@ namespace System
 			return finalMessage.ToString ();
 		}
 
-		public override Exception GetBaseException ()
-		{
-			return this;
-		}
-
 		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override Exception GetBaseException ()
+		{
+			if (innerExceptions == null || innerExceptions.Count == 0)
+				return this;
+			return innerExceptions[0].GetBaseException ();
 		}
 	}
 }
