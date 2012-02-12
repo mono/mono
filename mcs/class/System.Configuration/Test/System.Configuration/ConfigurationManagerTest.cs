@@ -446,6 +446,40 @@ namespace MonoTests.System.Configuration {
 			Assert.IsTrue (e.Current is ConfigurationSection);
 		}
 
+		[Test]	// Test for bug #3412
+		[Category("NotWorking")]
+		public void TestAddRemoveSection()
+		{
+			const string name = "testsection";
+			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+			// ensure not present
+			if (config.Sections.Get(name) != null)
+			{
+				config.Sections.Remove(name);
+			}
+
+			// add
+			config.Sections.Add(name, new TestSection());
+
+			// remove
+			var section = config.Sections.Get(name);
+			Assert.IsNotNull(section);
+			Assert.IsNotNull(section as TestSection);
+			config.Sections.Remove(name);
+
+			// add
+			config.Sections.Add(name, new TestSection());
+
+			// remove
+			section = config.Sections.Get(name);
+			Assert.IsNotNull(section);
+			Assert.IsNotNull(section as TestSection);
+			config.Sections.Remove(name);
+		}
+			
+		class TestSection : ConfigurationSection  {}
+
 		class RemoteConfig : MarshalByRefObject
 		{
 			public static RemoteConfig GetInstance (AppDomain domain)
