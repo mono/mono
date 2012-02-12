@@ -598,17 +598,17 @@ public abstract class Encoding : ICloneable
 			"x_unicode_1_1_utf_8", "x_unicode_2_0_utf_8",
 
 			UnicodeEncoding.UNICODE_CODE_PAGE,
-			"utf_16", "UTF_16LE", "ucs_2", "unicode",
+			"utf_16", "utf_16le", "ucs_2", "unicode",
 			"iso_10646_ucs2",
 
 			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
 			"unicodefffe", "utf_16be",
 
 			UTF32Encoding.UTF32_CODE_PAGE,
-			"utf_32", "UTF_32LE", "ucs_4",
+			"utf_32", "utf_32le", "ucs_4",
 
 			UTF32Encoding.BIG_UTF32_CODE_PAGE,
-			"UTF_32BE",
+			"utf_32be",
 
 #if !MOONLIGHT
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
