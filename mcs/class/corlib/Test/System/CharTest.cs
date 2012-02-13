@@ -458,6 +458,42 @@ public class CharTest
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 1), "whitespace1-2");
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 2), "whitespace2-2");
 		Assert.IsTrue(Char.IsWhiteSpace(s1, 3), "whitespace3-2");
+
+		for (int i = 0; i < ushort.MaxValue; ++i ) {
+			switch (i) {
+			case '\x9':
+			case '\xa':
+			case '\xb':
+			case '\xc':
+			case '\xd':
+			case '\x20':
+			case '\x85':
+			case '\xa0':
+			case '\x1680':
+			case '\x180e':
+			case '\x2000':
+			case '\x2001':
+			case '\x2002':
+			case '\x2003':
+			case '\x2004':
+			case '\x2005':
+			case '\x2006':
+			case '\x2007':
+			case '\x2008':
+			case '\x2009':
+			case '\x200a':
+			case '\x2028':
+			case '\x2029':
+			case '\x202f':
+			case '\x205f':
+			case '\x3000':
+				Assert.IsTrue (char.IsWhiteSpace ((char)i), i.ToString ());
+				break;
+			default:
+				Assert.IsFalse (char.IsWhiteSpace ((char)i), i.ToString ());
+				break;
+			}
+		}
 	}
 
 	[Test]
@@ -468,7 +504,6 @@ public class CharTest
 		Assert.IsTrue(c1.Equals(Char.Parse(s1)));
 	}	
 
-#if NET_2_0
 	[Test]
 	public void TestTryParseValid ()
 	{
@@ -488,7 +523,6 @@ public class CharTest
 		Assert.AreEqual (false, Char.TryParse (s, out c), "TryParse3");
 		Assert.AreEqual ('\0', c, "TryParse4");
 	}
-#endif
 
 	[Test]	
 	public void TestToLower()
@@ -551,7 +585,6 @@ public class CharTest
 		Assert.IsTrue(c1.GetTypeCode().Equals(TypeCode.Char));
 	}
 
-#if NET_2_0
 	[Test]
 	public void TestConvertFromUtf32 ()
 	{
@@ -600,7 +633,6 @@ public class CharTest
 	{
 		Char.ConvertToUtf32 ('\uD800', '\uD800');
 	}
-#endif
 }
 
 }
