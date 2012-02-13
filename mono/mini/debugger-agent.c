@@ -2796,8 +2796,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	Buffer buf;
 	GSList *l;
 	MonoDomain *domain = mono_domain_get ();
-	MonoThread *thread = mono_thread_current ();
+	MonoThread *thread = mono_thread_current (),
+	           *main_thread = mono_thread_get_main ();
 	gboolean send_success = FALSE;
+	gsize current_thread_id = GetCurrentThreadId ();
 	
 	if (!inited) { 
 		DEBUG (2, fprintf (log_file, "Debugger agent not initialized yet: dropping %s\n", event_to_string (event)));
@@ -2830,8 +2832,13 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		return;
 	}
 	
-	if (debugger_thread_id == GetCurrentThreadId ())
-		thread = mono_thread_get_main ();
+	if (debugger_thread_id == current_thread_id)
+		thread = main_thread;
+	else if (main_thread && main_thread->tid != current_thread_id) {
+		/* Don't suspend on trivial events from worker threads - 
+		 * workaround loader/domain deadlocks */
+		suspend_policy = SUSPEND_POLICY_NONE;
+	}
 
 	buffer_init (&buf, 128);
 	buffer_add_byte (&buf, suspend_policy);
@@ -2868,6 +2875,8 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			break;
 		case EVENT_KIND_BREAKPOINT:
 		case EVENT_KIND_STEP:
+			/* Always suspend on these */
+			suspend_policy = SUSPEND_POLICY_ALL;
 			buffer_add_methodid (&buf, domain, arg);
 			buffer_add_long (&buf, il_offset);
 			break;
