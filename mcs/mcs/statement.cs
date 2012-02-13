@@ -2950,8 +2950,7 @@ namespace Mono.CSharp {
 
 		public void WrapIntoIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
-			pb.EndLocation = EndLocation;
+			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
 			pb.statements = statements;
 			pb.Original = this;
 
@@ -2961,6 +2960,7 @@ namespace Mono.CSharp {
 			statements = new List<Statement> (1);
 			AddStatement (new Return (iterator, iterator.Location));
 			flags &= ~Flags.YieldBlock;
+			IsCompilerGenerated = true;
 		}
 
 		public void WrapIntoAsyncTask (IMemberContext context, TypeDefinition host, TypeSpec returnType)
