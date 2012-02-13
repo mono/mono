@@ -329,6 +329,21 @@ public class DebuggerTests
 		Assert.AreEqual (EventType.Breakpoint, e.EventType);
 		Assert.IsTrue (e is BreakpointEvent);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
+
+		// Breakpoint on an open generic method of a closed generic class (#3422)
+		var frame = e.Thread.GetFrames ()[0];
+		var ginst = frame.GetValue (frame.Method.GetLocal ("gc"));
+		Console.WriteLine ("MOO: " + ginst);
+
+		var m2 = (ginst as ObjectMirror).Type.GetMethod ("bp");
+		vm.SetBreakpoint (m2, 0);
+
+		vm.Resume ();
+
+		e = GetNextEvent ();
+		Assert.AreEqual (EventType.Breakpoint, e.EventType);
+		Assert.IsTrue (e is BreakpointEvent);
+		Assert.AreEqual (m2.Name, (e as BreakpointEvent).Method.Name);
 	}
 
 	[Test]

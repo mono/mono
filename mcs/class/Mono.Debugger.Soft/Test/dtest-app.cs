@@ -101,6 +101,10 @@ public class GClass<T> {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public GClass () {
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void bp<T2> () {
+	}
 }
 
 public struct GStruct<T> {
@@ -253,7 +257,7 @@ public class Tests : TestsBase
 		bp4 ();
 		bp4 ();
 		bp5 ();
-		bp6<string> ();
+		bp6<string> (new GClass <int> ());
 		bp7<int> ();
 		bp7<string> ();
 	}
@@ -279,7 +283,8 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void bp6<T> () {
+	public static void bp6<T> (GClass<int> gc) {
+		gc.bp<int> ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
