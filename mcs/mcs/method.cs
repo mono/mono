@@ -2167,15 +2167,19 @@ namespace Mono.CSharp {
 				MethodGroupExpr method_expr = MethodGroupExpr.CreatePredefined (base_dtor, base_type, Location);
 				method_expr.InstanceExpression = new BaseThis (base_type, Location);
 
-				var try_block = new ExplicitBlock (block, block.StartLocation, block.EndLocation);
-				var finaly_block = new ExplicitBlock (block, Location, Location);
+				var try_block = new ExplicitBlock (block, block.StartLocation, block.EndLocation) {
+					IsCompilerGenerated = true
+				};
+				var finaly_block = new ExplicitBlock (block, Location, Location) {
+					IsCompilerGenerated = true
+				};
 
 				//
 				// 0-size arguments to avoid CS0250 error
 				// TODO: Should use AddScopeStatement or something else which emits correct
 				// debugger scope
 				//
-				finaly_block.AddStatement (new StatementExpression (new Invocation (method_expr, new Arguments (0))));
+				finaly_block.AddStatement (new StatementExpression (new Invocation (method_expr, new Arguments (0)), Location.Null));
 
 				var tf = new TryFinally (try_block, finaly_block, Location);
 				block.WrapIntoDestructor (tf, try_block);

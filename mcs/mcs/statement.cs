@@ -4177,7 +4177,9 @@ namespace Mono.CSharp {
 			// Check if string dictionary is initialized and initialize
 			//
 			switch_cache_field.EmitBranchable (ec, l_initialized, true);
-			string_dictionary.EmitStatement (ec);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				string_dictionary.EmitStatement (ec);
+			}
 			ec.MarkLabel (l_initialized);
 
 			LocalTemporary string_switch_variable = new LocalTemporary (ec.BuiltinTypes.Int);

@@ -113,16 +113,16 @@
         <size>61</size>
       </method>
       <method name="System.Object &lt;BindGetIndex&gt;m__0(System.Dynamic.DynamicMetaObject)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="System.Object &lt;BindInvoke&gt;m__1(System.Dynamic.DynamicMetaObject)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="System.Object &lt;BindInvokeMember&gt;m__2(System.Dynamic.DynamicMetaObject)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="System.Object &lt;BindSetIndex&gt;m__3(System.Dynamic.DynamicMetaObject)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor(DynamicObjectMock, Expression)" attrs="6278">
         <size>22</size>
@@ -630,7 +630,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__58(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>8</size>
@@ -649,7 +649,7 @@
     </type>
     <type name="Tester+&lt;BinaryAddChecked_2&gt;c__AnonStorey1">
       <method name="System.Object &lt;&gt;m__A()" attrs="131">
-        <size>99</size>
+        <size>98</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1208,7 +1208,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__12(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1230,10 +1230,10 @@
     </type>
     <type name="Tester+&lt;AddCheckedTest&gt;c__AnonStorey1">
       <method name="System.Object &lt;&gt;m__0()" attrs="131">
-        <size>104</size>
+        <size>103</size>
       </method>
       <method name="System.Object &lt;&gt;m__1()" attrs="131">
-        <size>104</size>
+        <size>103</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1275,10 +1275,10 @@
     </type>
     <type name="Tester+&lt;ConvertExplicitCheckedTest&gt;c__AnonStorey3">
       <method name="Int32 &lt;&gt;m__3()" attrs="131">
-        <size>82</size>
+        <size>81</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__4()" attrs="131">
-        <size>82</size>
+        <size>81</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1286,10 +1286,10 @@
     </type>
     <type name="Tester+&lt;MultiplyCheckedTest&gt;c__AnonStorey4">
       <method name="System.Object &lt;&gt;m__5()" attrs="131">
-        <size>105</size>
+        <size>104</size>
       </method>
       <method name="System.Object &lt;&gt;m__6()" attrs="131">
-        <size>105</size>
+        <size>104</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1305,7 +1305,7 @@
     </type>
     <type name="Tester+&lt;NegateChecked&gt;c__AnonStorey6">
       <method name="System.Object &lt;&gt;m__8()" attrs="131">
-        <size>89</size>
+        <size>88</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1313,10 +1313,10 @@
     </type>
     <type name="Tester+&lt;SubtractCheckedTest&gt;c__AnonStorey7">
       <method name="System.Object &lt;&gt;m__9()" attrs="131">
-        <size>105</size>
+        <size>104</size>
       </method>
       <method name="System.Object &lt;&gt;m__A()" attrs="131">
-        <size>105</size>
+        <size>104</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -1496,7 +1496,7 @@
         <size>187</size>
       </method>
       <method name="Int32 &lt;InvokeTest&gt;m__1(System.String)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void &lt;InvokeMember_Error&gt;m__2()" attrs="145">
         <size>112</size>
@@ -1505,10 +1505,10 @@
         <size>2</size>
       </method>
       <method name="Int32 &lt;IsEvent&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;IsEvent&gt;m__5()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__9(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
@@ -1520,7 +1520,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__C(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -2006,7 +2006,7 @@
         <size>542</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>15</size>
@@ -2559,10 +2559,10 @@
         <size>1101</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Void &lt;Main&gt;m__1()" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__2(Int32 ByRef)" attrs="145">
         <size>14</size>
@@ -2606,7 +2606,7 @@
         <size>171</size>
       </method>
       <method name="Int32 &lt;E&gt;m__0(Int32)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>42</size>
@@ -2983,7 +2983,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__7(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -2991,7 +2991,7 @@
     </type>
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__2()" attrs="131">
-        <size>111</size>
+        <size>110</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -13921,7 +13921,7 @@
     </type>
     <type name="C`2[A,B]">
       <method name="B &lt;C&gt;m__0(B)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor(IEnumerable`1)" attrs="6278">
         <size>47</size>
@@ -14059,13 +14059,13 @@
         <size>132</size>
       </method>
       <method name="Maybe`1[System.String] &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Maybe`1[System.String] &lt;Main&gt;m__1(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Maybe`1[System.String] &lt;Main&gt;m__2(System.String)" attrs="145">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -19462,7 +19462,7 @@
         <size>2</size>
       </method>
       <method name="System.String &lt;InvokeTest_2&gt;m__5(Int32)" attrs="145">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__6(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
@@ -19474,7 +19474,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__9(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20050,7 +20050,7 @@
         <size>2</size>
       </method>
       <method name="System.Object &lt;CreateDependent_DependentsNull&gt;m__0()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20936,7 +20936,7 @@
         <size>25</size>
       </method>
       <method name="Boolean &lt;Test`1&gt;m__0[U](System.String)" attrs="145">
-        <size>16</size>
+        <size>15</size>
       </method>
     </type>
     <type name="A">
@@ -21793,7 +21793,7 @@
         <size>127</size>
       </method>
       <method name="Nullable`1 &lt;Main&gt;m__0(Int32)" attrs="145">
-        <size>38</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22586,7 +22586,7 @@
         <size>12</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Void &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>9</size>
@@ -22644,7 +22644,7 @@
         <size>36</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22674,7 +22674,7 @@
         <size>62</size>
       </method>
       <method name="TimeSpan &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22704,10 +22704,10 @@
         <size>116</size>
       </method>
       <method name="TimeSpan &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Double &lt;Main&gt;m__1(TimeSpan)" attrs="145">
-        <size>16</size>
+        <size>15</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22729,10 +22729,10 @@
         <size>147</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22782,7 +22782,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="System.String &lt;&gt;m__2(System.String)" attrs="131">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22790,7 +22790,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey1">
       <method name="Int32 &lt;&gt;m__3(Int32)" attrs="131">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22842,7 +22842,7 @@
         <size>44</size>
       </method>
       <method name="Void &lt;Main&gt;m__0(F)" attrs="145">
-        <size>32</size>
+        <size>31</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22878,7 +22878,7 @@
     </type>
     <type name="TestClass+&lt;Main&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__1(T)" attrs="131">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22886,7 +22886,7 @@
     </type>
     <type name="TestClass+&lt;Main&gt;c__AnonStorey0+&lt;Main&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__2(F)" attrs="131">
-        <size>78</size>
+        <size>77</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22973,16 +22973,16 @@
         <size>12</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__3(Int32)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__4(Int32)" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__5(Int32)" attrs="145">
         <size>13</size>
@@ -23038,13 +23038,13 @@
         <size>114</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="System.String &lt;Main&gt;m__1()" attrs="145">
         <size>14</size>
       </method>
       <method name="System.String &lt;Main&gt;m__2(System.String)" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23130,7 +23130,7 @@
     </type>
     <type name="E`1+&lt;Rep1&gt;c__AnonStorey0`1[TI,TV]">
       <method name="Group`2[TI,TV] &lt;&gt;m__0(TV)" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23165,7 +23165,7 @@
     </type>
     <type name="Demo+&lt;Main&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0(Int32)" attrs="131">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23181,7 +23181,7 @@
         <size>36</size>
       </method>
       <method name="Void &lt;Bar&gt;m__0(Int32)" attrs="145">
-        <size>7</size>
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23201,13 +23201,13 @@
         <size>77</size>
       </method>
       <method name="System.String &lt;Bar&gt;m__1(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="System.String &lt;Main&gt;m__2(System.String)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void &lt;Main&gt;m__3(System.String)" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23223,7 +23223,7 @@
         <size>15</size>
       </method>
       <method name="T &lt;Foo`1&gt;m__0[T](T)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23244,7 +23244,7 @@
         <size>128</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__1(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23252,7 +23252,7 @@
     </type>
     <type name="Enumerable+&lt;Sum&gt;c__AnonStorey0`1[TSource]">
       <method name="Int32 &lt;&gt;m__0(Int32, TSource)" attrs="131">
-        <size>23</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23315,7 +23315,7 @@
     </type>
     <type name="Test+&lt;Foo&gt;c__AnonStorey0`3[T1,T2,TResult]">
       <method name="TResult &lt;&gt;m__0(T1, T2, Int32)" attrs="131">
-        <size>22</size>
+        <size>21</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23349,7 +23349,7 @@
   <test name="gtest-lambda-20.cs">
     <type name="Z">
       <method name="Void &lt;Z&gt;m__0()" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>38</size>
@@ -23396,13 +23396,13 @@
         <size>108</size>
       </method>
       <method name="System.String &lt;Bar&gt;m__0(System.String)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="System.String &lt;Main&gt;m__1(System.String)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void &lt;Main&gt;m__2(System.String)" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23457,7 +23457,7 @@
         <size>60</size>
       </method>
       <method name="Decimal &lt;&gt;m__4(Product)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23502,13 +23502,13 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0(System.String)" attrs="131">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Void &lt;&gt;m__1(System.String)" attrs="131">
-        <size>48</size>
+        <size>47</size>
       </method>
       <method name="System.String &lt;&gt;m__2()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23529,7 +23529,7 @@
         <size>60</size>
       </method>
       <method name="Void &lt;Main&gt;m__0(Foo`1)" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -23561,10 +23561,10 @@
         <size>10</size>
       </method>
       <method name="System.String[] &lt;Main&gt;m__0(IB)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="IA`1[System.String][] &lt;Main&gt;m__1(IB)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23585,7 +23585,7 @@
         <size>53</size>
       </method>
       <method name="G`1[System.Int32][] &lt;Main&gt;m__0(G`1[System.Int32][])" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24531,10 +24531,10 @@
         <size>498</size>
       </method>
       <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;XX&gt;m__0(System.String)" attrs="145">
-        <size>21</size>
+        <size>20</size>
       </method>
       <method name="IEnumerable`1 &lt;XX&gt;m__1(&lt;&gt;__AnonType0`2[System.String,System.Int32])" attrs="145">
-        <size>118</size>
+        <size>117</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>18</size>
@@ -24549,10 +24549,10 @@
         <size>118</size>
       </method>
       <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;XX&gt;m__6(Char)" attrs="145">
-        <size>17</size>
+        <size>16</size>
       </method>
       <method name="Char &lt;XX&gt;m__8(&lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__9(Char)" attrs="145">
         <size>14</size>
@@ -24609,7 +24609,7 @@
     </type>
     <type name="NestedQuery+&lt;XX&gt;c__AnonStorey0">
       <method name="Boolean &lt;&gt;m__7(&lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="131">
-        <size>23</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24725,7 +24725,7 @@
         <size>79</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(NameCollisionTest.Data)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>13</size>
@@ -24773,7 +24773,7 @@
         <size>32</size>
       </method>
       <method name="System.Func`1[System.Collections.Generic.IEnumerable`1[System.Int32]] &lt;Test_2&gt;m__1(Int32)" attrs="145">
-        <size>34</size>
+        <size>33</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24801,7 +24801,7 @@
     </type>
     <type name="C+&lt;Test_1&gt;c__AnonStorey0">
       <method name="IEnumerable`1 &lt;&gt;m__0()" attrs="131">
-        <size>75</size>
+        <size>74</size>
       </method>
       <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__2(Int32)" attrs="145">
         <size>16</size>
@@ -24815,7 +24815,7 @@
     </type>
     <type name="C+&lt;Test_2&gt;c__AnonStorey1">
       <method name="IEnumerable`1 &lt;&gt;m__4()" attrs="131">
-        <size>75</size>
+        <size>74</size>
       </method>
       <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__5(Int32)" attrs="145">
         <size>16</size>
@@ -24972,7 +24972,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Boolean &lt;&gt;m__12(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24980,7 +24980,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey1">
       <method name="Boolean &lt;&gt;m__13(Int32)" attrs="131">
-        <size>23</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24988,7 +24988,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey2">
       <method name="Boolean &lt;&gt;m__14(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24996,7 +24996,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey3">
       <method name="Boolean &lt;&gt;m__15(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25004,7 +25004,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey4">
       <method name="Int32 &lt;&gt;m__16(Int32)" attrs="131">
-        <size>17</size>
+        <size>16</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25012,7 +25012,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey5">
       <method name="Int32 &lt;&gt;m__17(Int32)" attrs="131">
-        <size>17</size>
+        <size>16</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25020,7 +25020,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey6">
       <method name="Boolean &lt;&gt;m__18(Int32)" attrs="131">
-        <size>28</size>
+        <size>27</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25028,7 +25028,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey7">
       <method name="Boolean &lt;&gt;m__19(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25036,7 +25036,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey8">
       <method name="Boolean &lt;&gt;m__1A(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25044,7 +25044,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey9">
       <method name="Boolean &lt;&gt;m__1B(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25052,7 +25052,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStoreyA">
       <method name="Boolean &lt;&gt;m__1C(Int32)" attrs="131">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25173,7 +25173,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey0+&lt;Main&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__2()" attrs="131">
-        <size>50</size>
+        <size>49</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25277,7 +25277,7 @@
         <size>20</size>
       </method>
       <method name="Int32 &lt;Test&gt;m__0(A)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25395,7 +25395,7 @@
         <size>15</size>
       </method>
       <method name="System.String &lt;Main&gt;m__1(Test.C)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25408,7 +25408,7 @@
         <size>147</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25436,7 +25436,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="IEnumerable`1 &lt;&gt;m__1(System.String)" attrs="131">
-        <size>83</size>
+        <size>82</size>
       </method>
       <method name="&lt;&gt;__AnonType0`2[System.String,System.Boolean] &lt;&gt;m__2(System.String)" attrs="145">
         <size>55</size>
@@ -25450,7 +25450,7 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0+&lt;Main&gt;c__AnonStorey1">
       <method name="Boolean &lt;&gt;m__4(Char)" attrs="131">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25511,12 +25511,12 @@
         <size>201</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Int32 &lt;&gt;m__1(Int32)" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25977,10 +25977,10 @@
         <size>2</size>
       </method>
       <method name="IPackage &lt;Main&gt;m__0(IPackageRepository)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="IPackage &lt;Main&gt;m__1(IPackageRepository)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -26239,7 +26239,7 @@
         <size>61</size>
       </method>
       <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -26411,7 +26411,7 @@
     </type>
     <type name="Test+&lt;Main&gt;c__AnonStorey0">
       <method name="System.String &lt;&gt;m__0()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -26441,7 +26441,7 @@
         <size>16</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -37819,7 +37819,7 @@
   <test name="test-525.cs">
     <type name="X">
       <method name="Void Finalize()" attrs="196">
-        <size>41</size>
+        <size>37</size>
       </method>
       <method name="Int32 Test1()" attrs="150">
         <size>37</size>
@@ -40699,7 +40699,7 @@
         <size>2</size>
       </method>
       <method name="Void Finalize()" attrs="196">
-        <size>18</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>8</size>
@@ -42623,7 +42623,7 @@
   <test name="test-739.cs">
     <type name="X">
       <method name="Void Finalize()" attrs="196">
-        <size>24</size>
+        <size>20</size>
       </method>
       <method name="Void Foo()" attrs="134">
         <size>2</size>
@@ -43055,7 +43055,7 @@
     </type>
     <type name="D">
       <method name="Void Finalize()" attrs="196">
-        <size>18</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -43983,7 +43983,7 @@
         <size>77</size>
       </method>
       <method name="Void &lt;Main&gt;m__0()" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46594,10 +46594,10 @@
     </type>
     <type name="Test+&lt;TestNaturalSort&gt;c__AnonStorey0">
       <method name="System.String &lt;&gt;m__1(System.Text.RegularExpressions.Match)" attrs="131">
-        <size>121</size>
+        <size>120</size>
       </method>
       <method name="System.String &lt;&gt;m__2(System.Text.RegularExpressions.Match)" attrs="131">
-        <size>121</size>
+        <size>120</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46643,7 +46643,7 @@
         <size>2</size>
       </method>
       <method name="Void &lt;Foo`1&gt;m__0[U]()" attrs="145">
-        <size>7</size>
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46789,7 +46789,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;InstanceTests&gt;m__0()" attrs="129">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void &lt;Main&gt;m__3()" attrs="145">
         <size>17</size>
@@ -47354,7 +47354,7 @@
         <size>68</size>
       </method>
       <method name="System.String &lt;Main&gt;m__1(System.String)" attrs="145">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47418,7 +47418,7 @@
         <size>40</size>
       </method>
       <method name="T &lt;XX&gt;m__0()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47429,7 +47429,7 @@
         <size>40</size>
       </method>
       <method name="C`1[T] &lt;XX&gt;m__1()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47440,7 +47440,7 @@
         <size>23</size>
       </method>
       <method name="T &lt;XX`1&gt;m__2[T]()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47484,7 +47484,7 @@
         <size>9</size>
       </method>
       <method name="Void &lt;add_Handler&gt;m__0(System.Object)" attrs="129">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47711,10 +47711,10 @@
         <size>2</size>
       </method>
       <method name="Decimal &lt;Average`1&gt;m__0[TSource](Decimal, Decimal)" attrs="145">
-        <size>16</size>
+        <size>15</size>
       </method>
       <method name="Decimal &lt;Average`1&gt;m__1[TSource](Decimal, Decimal)" attrs="145">
-        <size>16</size>
+        <size>15</size>
       </method>
     </type>
   </test>
@@ -47757,7 +47757,7 @@
         <size>21</size>
       </method>
       <method name="System.Type &lt;Test`1&gt;m__0[T]()" attrs="145">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47805,7 +47805,7 @@
     </type>
     <type name="C+&lt;AnyMethod&gt;c__AnonStorey0`1[T]">
       <method name="Void &lt;&gt;m__1(System.String)" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47829,7 +47829,7 @@
         <size>45</size>
       </method>
       <method name="T &lt;&gt;m__1()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47855,7 +47855,7 @@
     </type>
     <type name="C+&lt;Curry&gt;c__AnonStorey0`3[T1,T2,T3]">
       <method name="System.Func`2[T2,System.Action`1[T3]] &lt;&gt;m__0(T1)" attrs="131">
-        <size>41</size>
+        <size>40</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47863,7 +47863,7 @@
     </type>
     <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
       <method name="System.Action`1[T3] &lt;&gt;m__1(T2)" attrs="131">
-        <size>53</size>
+        <size>52</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47871,7 +47871,7 @@
     </type>
     <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
       <method name="Void &lt;&gt;m__2(T3)" attrs="131">
-        <size>36</size>
+        <size>35</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47935,7 +47935,7 @@
     </type>
     <type name="Interpreter+&lt;InterpretGenerator&gt;c__AnonStorey0`1[T]">
       <method name="GeneratorNext`1[T] &lt;&gt;m__0()" attrs="131">
-        <size>31</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48080,7 +48080,7 @@
     </type>
     <type name="Driver+&lt;Repro&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>36</size>
+        <size>35</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48189,7 +48189,7 @@
     </type>
     <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2+&lt;Method&gt;c__AnonStorey1">
       <method name="System.String &lt;&gt;m__2()" attrs="131">
-        <size>47</size>
+        <size>46</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48213,7 +48213,7 @@
         <size>43</size>
       </method>
       <method name="System.Object &lt;Main&gt;m__1(System.Object)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
     </type>
     <type name="Thing`1+&lt;Create&gt;c__AnonStorey0`1[TFirst,TSecond]">
@@ -48323,7 +48323,7 @@
     </type>
     <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[X]">
       <method name="X &lt;&gt;m__0()" attrs="131">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48331,7 +48331,7 @@
     </type>
     <type name="Test+&lt;FooNested&gt;c__AnonStorey1`1[X]">
       <method name="Call`1[X] &lt;&gt;m__1()" attrs="131">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48361,7 +48361,7 @@
         <size>41</size>
       </method>
       <method name="Void &lt;Main&gt;m__1(System.String)" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48434,7 +48434,7 @@
         <size>49</size>
       </method>
       <method name="Void &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48471,7 +48471,7 @@
         <size>47</size>
       </method>
       <method name="Int32 &lt;&gt;m__1(IList`1)" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48574,7 +48574,7 @@
     </type>
     <type name="B+&lt;Test&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>33</size>
+        <size>32</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48582,7 +48582,7 @@
     </type>
     <type name="B+&lt;Test2&gt;c__AnonStorey1`1[T]">
       <method name="Void &lt;&gt;m__1()" attrs="131">
-        <size>41</size>
+        <size>40</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48637,10 +48637,10 @@
     </type>
     <type name="C`1+&lt;Foo&gt;c__AnonStorey1`1[T,U]">
       <method name="U &lt;&gt;m__0()" attrs="131">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void &lt;&gt;m__1()" attrs="131">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48664,7 +48664,7 @@
     </type>
     <type name="C+&lt;Foo&gt;c__AnonStorey0`1[T]">
       <method name="T &lt;&gt;m__1()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52148,7 +52148,7 @@
         <size>51</size>
       </method>
       <method name="Void &lt;Main&gt;m__2(System.Object, System.EventArgs)" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52196,7 +52196,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;Print&gt;m__0()" attrs="129">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52210,7 +52210,7 @@
         <size>8</size>
       </method>
       <method name="Void &lt;Print&gt;m__1()" attrs="129">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52273,10 +52273,10 @@
     </type>
     <type name="C+&lt;Test&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52324,13 +52324,13 @@
     </type>
     <type name="Program+&lt;Get&gt;c__AnonStorey1">
       <method name="Int32 &lt;&gt;m__0()" attrs="131">
-        <size>32</size>
+        <size>31</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="131">
-        <size>32</size>
+        <size>31</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="131">
-        <size>27</size>
+        <size>26</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52388,7 +52388,7 @@
   <test name="test-anon-98.cs">
     <type name="Foo">
       <method name="Void Finalize()" attrs="196">
-        <size>44</size>
+        <size>40</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>8</size>
@@ -52399,7 +52399,7 @@
     </type>
     <type name="Foo+&lt;Finalize&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>23</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52710,7 +52710,7 @@
         <size>358</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__2(Int16)" attrs="145">
-        <size>32</size>
+        <size>31</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52718,13 +52718,13 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1">
       <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__0(System.String)" attrs="131">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;&gt;m__1()" attrs="131">
-        <size>32</size>
+        <size>31</size>
       </method>
       <method name="Void &lt;&gt;m__3()" attrs="131">
-        <size>21</size>
+        <size>20</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52732,7 +52732,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()" attrs="134">
-        <size>188</size>
+        <size>186</size>
       </method>
       <method name="System.String &lt;&gt;m__4()" attrs="131">
         <size>52</size>
@@ -52743,7 +52743,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="134">
-        <size>181</size>
+        <size>179</size>
       </method>
       <method name="Void &lt;&gt;m__5()" attrs="131">
         <size>39</size>
@@ -52754,7 +52754,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
       <method name="Void MoveNext()" attrs="134">
-        <size>186</size>
+        <size>184</size>
       </method>
       <method name="Void &lt;&gt;m__6()" attrs="131">
         <size>56</size>
@@ -52765,7 +52765,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__async3">
       <method name="Void MoveNext()" attrs="134">
-        <size>45</size>
+        <size>43</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52787,7 +52787,7 @@
         <size>10</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>25</size>
@@ -52799,7 +52799,7 @@
         <size>25</size>
       </method>
       <method name="Int32 &lt;TT&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52807,10 +52807,10 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="134">
-        <size>205</size>
+        <size>203</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52821,7 +52821,7 @@
         <size>205</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52856,7 +52856,7 @@
         <size>57</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52864,7 +52864,7 @@
     </type>
     <type name="Test+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="134">
-        <size>40</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52912,7 +52912,7 @@
         <size>21</size>
       </method>
       <method name="System.String &lt;&gt;m__2()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52923,7 +52923,7 @@
         <size>249</size>
       </method>
       <method name="System.String &lt;&gt;m__3()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52934,7 +52934,7 @@
         <size>339</size>
       </method>
       <method name="Byte &lt;&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52945,7 +52945,7 @@
         <size>207</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52959,7 +52959,7 @@
         <size>17</size>
       </method>
       <method name="Int32 &lt;&gt;m__7()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52970,7 +52970,7 @@
         <size>208</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52981,13 +52981,13 @@
         <size>511</size>
       </method>
       <method name="Int32 &lt;&gt;m__9()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__A()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__B()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -52995,7 +52995,7 @@
     </type>
     <type name="C+&lt;M&gt;c__AnonStorey7">
       <method name="Byte &lt;&gt;m__0()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53060,7 +53060,7 @@
         <size>265</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53071,7 +53071,7 @@
         <size>312</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53082,7 +53082,7 @@
         <size>294</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53093,7 +53093,7 @@
         <size>467</size>
       </method>
       <method name="Int32 &lt;&gt;m__3()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53104,7 +53104,7 @@
         <size>322</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53145,10 +53145,10 @@
         <size>17</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53441,7 +53441,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53452,10 +53452,10 @@
         <size>386</size>
       </method>
       <method name="Boolean &lt;&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53466,16 +53466,16 @@
         <size>841</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__7()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Double &lt;&gt;m__9()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53486,19 +53486,19 @@
         <size>1202</size>
       </method>
       <method name="Int32 &lt;&gt;m__A()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__B()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Decimal &lt;&gt;m__C()" attrs="145">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Int32 &lt;&gt;m__D()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Decimal &lt;&gt;m__E()" attrs="145">
-        <size>20</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53509,10 +53509,10 @@
         <size>458</size>
       </method>
       <method name="Int32 &lt;&gt;m__F()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="System.String &lt;&gt;m__10()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53523,10 +53523,10 @@
         <size>458</size>
       </method>
       <method name="Int32 &lt;&gt;m__11()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__12()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53537,7 +53537,7 @@
         <size>267</size>
       </method>
       <method name="Int64 &lt;&gt;m__13()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53548,7 +53548,7 @@
         <size>397</size>
       </method>
       <method name="Int32 &lt;&gt;m__14()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53559,10 +53559,10 @@
         <size>721</size>
       </method>
       <method name="Int32 &lt;&gt;m__15()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Byte &lt;&gt;m__16()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53573,25 +53573,25 @@
         <size>1357</size>
       </method>
       <method name="Int32 &lt;&gt;m__17()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__18()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__19()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__1A()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__1B()" attrs="145">
-        <size>11</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__1C()" attrs="145">
         <size>10</size>
       </method>
+      <method name="Int32 &lt;&gt;m__1C()" attrs="145">
+        <size>9</size>
+      </method>
       <method name="S &lt;&gt;m__1D()" attrs="145">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53602,7 +53602,7 @@
         <size>231</size>
       </method>
       <method name="Int32 &lt;&gt;m__1E()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53613,7 +53613,7 @@
         <size>283</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__1F()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53624,10 +53624,10 @@
         <size>415</size>
       </method>
       <method name="Int32 &lt;&gt;m__20()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__21()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53641,10 +53641,10 @@
         <size>17</size>
       </method>
       <method name="Int32 &lt;&gt;m__23()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__24()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53672,22 +53672,22 @@
         <size>1233</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__28()" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__29()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2A()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2B()" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2C()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2D()" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53698,16 +53698,16 @@
         <size>910</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2E()" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2F()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__30()" attrs="145">
-        <size>21</size>
+        <size>20</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__31()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53721,10 +53721,10 @@
         <size>17</size>
       </method>
       <method name="Int32 &lt;&gt;m__33()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__34()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53746,7 +53746,7 @@
         <size>247</size>
       </method>
       <method name="Int32 &lt;&gt;m__36()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53757,7 +53757,7 @@
         <size>237</size>
       </method>
       <method name="E &lt;&gt;m__37()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53768,7 +53768,7 @@
         <size>303</size>
       </method>
       <method name="Int32 &lt;&gt;m__38()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53779,7 +53779,7 @@
         <size>256</size>
       </method>
       <method name="Decimal &lt;&gt;m__39()" attrs="145">
-        <size>16</size>
+        <size>15</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53790,7 +53790,7 @@
         <size>238</size>
       </method>
       <method name="Tester &lt;&gt;m__3A()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53801,10 +53801,10 @@
         <size>402</size>
       </method>
       <method name="System.String &lt;&gt;m__3B()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="System.String &lt;&gt;m__3C()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53815,10 +53815,10 @@
         <size>415</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__3D()" attrs="145">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Byte &lt;&gt;m__3E()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53829,7 +53829,7 @@
         <size>223</size>
       </method>
       <method name="Int32 &lt;&gt;m__3F()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53840,10 +53840,10 @@
         <size>380</size>
       </method>
       <method name="Int32 &lt;&gt;m__40()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__41()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53854,10 +53854,10 @@
         <size>398</size>
       </method>
       <method name="Boolean &lt;&gt;m__42()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__43()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53868,7 +53868,7 @@
         <size>253</size>
       </method>
       <method name="Int32 &lt;&gt;m__44()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53879,10 +53879,10 @@
         <size>281</size>
       </method>
       <method name="Int32 &lt;&gt;m__45(Int32)" attrs="145">
-        <size>12</size>
+        <size>11</size>
       </method>
       <method name="Int32 &lt;&gt;m__46()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53907,10 +53907,10 @@
         <size>586</size>
       </method>
       <method name="Int32 &lt;&gt;m__49()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__4A()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53921,7 +53921,7 @@
         <size>233</size>
       </method>
       <method name="Int32 &lt;&gt;m__4B()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53932,10 +53932,10 @@
         <size>386</size>
       </method>
       <method name="Int32 &lt;&gt;m__4C()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__4D()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53946,10 +53946,10 @@
         <size>415</size>
       </method>
       <method name="Int32 &lt;&gt;m__4E()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Int32 &lt;&gt;m__4F()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53960,10 +53960,10 @@
         <size>443</size>
       </method>
       <method name="Int32 &lt;&gt;m__50()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Int32 &lt;&gt;m__51()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53974,10 +53974,10 @@
         <size>547</size>
       </method>
       <method name="Int32 &lt;&gt;m__52()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Int32 &lt;&gt;m__53()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -53988,13 +53988,13 @@
         <size>620</size>
       </method>
       <method name="Int32 &lt;&gt;m__54()" attrs="145">
-        <size>11</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__55()" attrs="145">
         <size>10</size>
       </method>
+      <method name="Int32 &lt;&gt;m__55()" attrs="145">
+        <size>9</size>
+      </method>
       <method name="Int32 &lt;&gt;m__56()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54005,7 +54005,7 @@
         <size>267</size>
       </method>
       <method name="Int32 &lt;&gt;m__57()" attrs="131">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54016,7 +54016,7 @@
         <size>250</size>
       </method>
       <method name="Tester &lt;&gt;m__58()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54027,7 +54027,7 @@
         <size>243</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__59()" attrs="145">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54038,10 +54038,10 @@
         <size>435</size>
       </method>
       <method name="Base &lt;&gt;m__5A()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Base &lt;&gt;m__5B()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54052,7 +54052,7 @@
         <size>302</size>
       </method>
       <method name="Base &lt;&gt;m__5C()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54063,10 +54063,10 @@
         <size>434</size>
       </method>
       <method name="Base &lt;&gt;m__5D()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Base &lt;&gt;m__5E()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54077,7 +54077,7 @@
         <size>263</size>
       </method>
       <method name="Int32 &lt;&gt;m__5F()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54088,10 +54088,10 @@
         <size>399</size>
       </method>
       <method name="Int32 &lt;&gt;m__60()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="System.String &lt;&gt;m__61()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54102,22 +54102,22 @@
         <size>1156</size>
       </method>
       <method name="Int32 &lt;&gt;m__62()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__63()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__64()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__65()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__66()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__67()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54128,16 +54128,16 @@
         <size>840</size>
       </method>
       <method name="System.String &lt;&gt;m__68()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="System.String &lt;&gt;m__69()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Int32 &lt;&gt;m__6A()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__6B()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54148,7 +54148,7 @@
         <size>243</size>
       </method>
       <method name="Int32 &lt;&gt;m__6C()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54159,10 +54159,10 @@
         <size>399</size>
       </method>
       <method name="Int32 &lt;&gt;m__6D()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__6E()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54173,7 +54173,7 @@
         <size>263</size>
       </method>
       <method name="Byte &lt;&gt;m__6F()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54184,10 +54184,10 @@
         <size>485</size>
       </method>
       <method name="UInt16 &lt;&gt;m__70()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="UInt16 &lt;&gt;m__71()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54198,7 +54198,7 @@
         <size>281</size>
       </method>
       <method name="S &lt;&gt;m__72()" attrs="145">
-        <size>26</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54209,7 +54209,7 @@
         <size>283</size>
       </method>
       <method name="Int32 &lt;&gt;m__73()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54220,7 +54220,7 @@
         <size>230</size>
       </method>
       <method name="Int32 &lt;&gt;m__74()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54231,7 +54231,7 @@
         <size>298</size>
       </method>
       <method name="Int32 &lt;&gt;m__75()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54242,13 +54242,13 @@
         <size>714</size>
       </method>
       <method name="Int32 &lt;&gt;m__76()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Int32 &lt;&gt;m__77()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__78()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54259,13 +54259,13 @@
         <size>524</size>
       </method>
       <method name="System.String &lt;&gt;m__79()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="System.String &lt;&gt;m__7A()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="System.String &lt;&gt;m__7B()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54276,7 +54276,7 @@
         <size>243</size>
       </method>
       <method name="Int32 &lt;&gt;m__7C()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54287,7 +54287,7 @@
         <size>343</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__7D()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54298,7 +54298,7 @@
         <size>383</size>
       </method>
       <method name="Int32 &lt;&gt;m__7E()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54309,10 +54309,10 @@
         <size>399</size>
       </method>
       <method name="Int32 &lt;&gt;m__7F()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Int32 &lt;&gt;m__80()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54339,7 +54339,7 @@
         <size>221</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54350,7 +54350,7 @@
         <size>231</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54388,7 +54388,7 @@
         <size>305</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54430,7 +54430,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54441,7 +54441,7 @@
         <size>373</size>
       </method>
       <method name="System.String &lt;&gt;m__4()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54452,16 +54452,16 @@
         <size>867</size>
       </method>
       <method name="Base &lt;&gt;m__5()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Tester &lt;&gt;m__6()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Base &lt;&gt;m__7()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Base &lt;&gt;m__8()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54472,7 +54472,7 @@
         <size>321</size>
       </method>
       <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__9()" attrs="145">
-        <size>37</size>
+        <size>36</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54515,7 +54515,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54548,7 +54548,7 @@
         <size>206</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;&gt;m__6()" attrs="145">
-        <size>25</size>
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54559,7 +54559,7 @@
         <size>239</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54589,7 +54589,7 @@
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
       <method name="Void MoveNext()" attrs="134">
-        <size>198</size>
+        <size>196</size>
       </method>
       <method name="Void &lt;&gt;m__7()" attrs="145">
         <size>7</size>
@@ -54622,7 +54622,7 @@
         <size>255</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54633,7 +54633,7 @@
         <size>255</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="131">
-        <size>22</size>
+        <size>21</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54644,7 +54644,7 @@
         <size>255</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="131">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54716,7 +54716,7 @@
         <size>15</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54727,7 +54727,7 @@
         <size>467</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54738,7 +54738,7 @@
         <size>1199</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54749,7 +54749,7 @@
         <size>333</size>
       </method>
       <method name="System.Object &lt;&gt;m__6()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54760,7 +54760,7 @@
         <size>585</size>
       </method>
       <method name="System.Object &lt;&gt;m__7()" attrs="145">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54910,7 +54910,7 @@
         <size>205</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54939,7 +54939,7 @@
         <size>283</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -54955,7 +54955,7 @@
         <size>2</size>
       </method>
       <method name="Int32 &lt;CompilationTestOnly&gt;m__0()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54982,10 +54982,10 @@
         <size>95</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
-        <size>48</size>
+        <size>47</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__1()" attrs="145">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55017,7 +55017,7 @@
         <size>205</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -55957,6 +55957,74 @@
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-14.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Test_1()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void Test_2()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void Test_3()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void Test_Capturing_1(Int32)" attrs="129">
+        <size>28</size>
+      </method>
+      <method name="Void &lt;Test_1&gt;m__0()" attrs="145">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;Test_2&gt;m__1()" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Test_3&gt;m__2()" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test_Capturing_1&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__3()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-15.cs">
+    <type name="Foo">
+      <method name="Void Finalize()" attrs="196">
+        <size>24</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-16.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Test_1()" attrs="129">
+        <size>34</size>
+      </method>
+      <method name="Void Test_2()" attrs="129">
+        <size>28</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -57643,7 +57711,7 @@
   <test name="test-partial-06.cs">
     <type name="Foo">
       <method name="Void Finalize()" attrs="196">
-        <size>18</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

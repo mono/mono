@@ -4047,11 +4047,11 @@ lambda_expression_body
 	
 lambda_expression_body_simple
 	: {
-		start_block (lexer.Location);
+		start_block (Location.Null);
 	  }
 	  expression_or_error	// Have to close block when error occurs
 	  {
-		Block b = end_block (lexer.Location);
+		Block b = end_block (Location.Null);
 		b.IsCompilerGenerated = true;
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
