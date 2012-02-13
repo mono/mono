@@ -448,6 +448,7 @@ public class HelpSource {
 	int source_id;
 	DateTime zipFileWriteTime;
 	string name;
+	string basepath;
 	TraceLevel trace_level = TraceLevel.Warning;
 	protected bool nozip;
 	protected string base_dir;
@@ -455,6 +456,7 @@ public class HelpSource {
 	public HelpSource (string base_filename, bool create)
 	{
 		this.name = Path.GetFileName (base_filename);
+		this.basepath = Path.GetDirectoryName (base_filename);
 		tree_filename = base_filename + ".tree";
 		zip_filename = base_filename + ".zip";
 		base_dir = XmlDocUtils.GetCacheDirectory (base_filename);
@@ -496,6 +498,13 @@ public class HelpSource {
 	public string Name {
 		get {
 			return name;
+		}
+	}
+
+	/* This gives the full path of the source/ directory */
+	public string BaseFilePath {
+		get {
+			return basepath;
 		}
 	}
 
@@ -907,7 +916,6 @@ public class RootTree : Tree {
 				.Concat (osxExternalSources));
 	}
 
-
 	// Compatibility shim w/ Mono 2.6
 	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable sourceFiles)
 	{
@@ -1215,7 +1223,7 @@ public class RootTree : Tree {
 			return lastHelpSourceTime;
 		}
 	}
-	
+
 	public static bool GetNamespaceAndType (string url, out string ns, out string type)
 	{
 		int nsidx = -1;
