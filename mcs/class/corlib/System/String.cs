@@ -356,15 +356,20 @@ namespace System
 			return tmp;
 		}
 
+		// TODO: Rewrite the code to managed and use char.IsWhiteSpace
 		private static readonly char[] WhiteChars = {
+#if NET_4_0 || NET_2_1
+			'\x9', '\xa', '\xb', '\xc', '\xd', '\x20', '\x85', '\xa0',
+			'\x1680', '\x180e',
+			'\x2000', '\x2001', '\x2002', '\x2003', '\x2004', '\x2005', '\x2006', '\x2007', '\x2008', '\x2009', '\x200a',
+			'\x2028', '\x2029', '\x202f', '\x205f',
+			'\x3000'
+#else
 			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
 			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
 			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
 			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
-			(char) 0x3000, (char) 0xFEFF,
-#if NET_2_1
-		        // Silverlight 
-		        (char) 0x202f, (char) 0x205f,
+			(char) 0x3000, (char) 0xFEFF
 #endif
 		};
 
