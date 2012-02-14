@@ -611,7 +611,7 @@ namespace_or_type_declaration
 #if FULL_AST
 		current_namespace.UnattachedAttributes = ((List<Attribute>) $1).ToArray ();
 #endif
-		report.Error (1519, lexer.Location, "Attribute not attached to any member.   Unexpected symbol `{0}' in class, struct, or interface member declaration. ");
+		report.Error (1518, lexer.Location, "Dangling attribute not attached to a type definition (class, delegate, enum, interface or struct).   Unexpected symbol `{0}'");
 		lexer.putback ('}');
 	  }
 	;
