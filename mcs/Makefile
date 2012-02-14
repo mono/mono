@@ -81,7 +81,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then echo "Running make from the mcs directory is not supported. Run make from the parent directory."; exit 1; fi
+	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then make -C ../runtime; fi
 
 # fun specialty targets
 
