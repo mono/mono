@@ -868,6 +868,7 @@ class_member_declaration
 	| constructor_declaration
 	| destructor_declaration
 	| type_declaration
+	| attributes_without_members
 	| error
 	  {
 		report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
@@ -2424,6 +2425,16 @@ event_accessor_block
 	| block;
 	;
 
+attributes_without_members
+	: attribute_sections CLOSE_BRACE {
+#if FULL_AST
+	        current_type.AddUnattachedAttributes (((List<Attribute>) $1).ToArray ());
+#endif
+		report.Error (1519, lexer.Location, "Attribute not attached to any member.   Unexpected symbol `{0}' in class, struct, or interface member declaration. ");
+		lexer.putback ('}');
+	  }
+	;
+	  
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
