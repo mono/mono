@@ -577,7 +577,7 @@ namespace System.Web.Configuration {
 				return path;
 				
 			if (HostingEnvironment.VirtualPathProvider != null) {
-				if (HostingEnvironment.VirtualPathProvider.DirectoryExists)
+				if (HostingEnvironment.VirtualPathProvider.DirectoryExists (path))
 					path = VirtualPathUtility.AppendTrailingSlash (path);
 			}
 				
