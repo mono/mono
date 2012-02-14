@@ -723,7 +723,9 @@ namespace Mono.CSharp {
 
 		Namespace[] namespace_using_table;
 		Dictionary<string, UsingAliasNamespace> aliases;
-
+#if FULL_AST
+		Attribute [] UnattachedAttributes;
+#endif
 		public NamespaceContainer (MemberName name, NamespaceContainer parent)
 			: base (parent, name, null, MemberKind.Namespace)
 		{

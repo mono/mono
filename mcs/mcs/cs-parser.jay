@@ -607,6 +607,13 @@ namespace_or_type_declaration
 	  {
 		current_namespace.DeclarationFound = true;
 	  }
+	| attribute_sections CLOSE_BRACE {
+#if FULL_AST
+		current_namespace.UnattachedAttributes = ((List<Attribute>) $1).ToArray ();
+#endif
+		report.Error (1519, lexer.Location, "Attribute not attached to any member.   Unexpected symbol `{0}' in class, struct, or interface member declaration. ");
+		lexer.putback ('}');
+	  }
 	;
 
 type_declaration
@@ -2428,7 +2435,7 @@ event_accessor_block
 attributes_without_members
 	: attribute_sections CLOSE_BRACE {
 #if FULL_AST
-	        current_type.AddUnattachedAttributes (((List<Attribute>) $1).ToArray ());
+	        current_type.UnattachedAttributes = ((List<Attribute>) $1).ToArray ();
 #endif
 		report.Error (1519, lexer.Location, "Attribute not attached to any member.   Unexpected symbol `{0}' in class, struct, or interface member declaration. ");
 		lexer.putback ('}');
