@@ -445,8 +445,18 @@ namespace System
 			return SubstringUnchecked (0, end);
 		}
 
-		private int FindNotWhiteSpace (int pos, int target, int change)
+		unsafe int FindNotWhiteSpace (int pos, int target, int change)
 		{
+#if NET_4_0 || NET_2_1
+			fixed (char* src = this) {
+				while (pos != target) {
+					if (!char.IsWhiteSpace (src[pos]))
+						return pos;
+
+					pos += change;
+				}
+			}
+#else
 			while (pos != target) {
 				char c = this[pos];
 				if (c < 0x85) {
@@ -457,18 +467,14 @@ namespace System
 				}
 				else {
 					if (c != 0xA0 && c != 0xFEFF && c != 0x3000) {
-						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029
-#if NET_2_1
-						    // On Silverlight this whitespace participates in Trim
-						    && c != 0x202f && c != 0x205f
-#endif
-							)
+						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029)
 							if (c < 0x2000 || c > 0x200B)
 								return pos;
 					}
 				}
 				pos += change;
 			}
+#endif
 			return pos;
 		}
 
