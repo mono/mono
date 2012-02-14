@@ -53,11 +53,6 @@ namespace Mono.CSharp
 
 		protected bool is_defined;
 
-#if FULL_AST
-		// Any unattached attributes during parsing get added here.
-		public Attribute [] UnattachedAttributes;
-#endif
-
 		public TypeContainer (TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
 			: base (parent, name, attrs)
 		{
@@ -88,6 +83,15 @@ namespace Mono.CSharp
 				return containers;
 			}
 		}
+
+#if FULL_AST
+		//
+		// Any unattached attributes during parsing get added here.
+		//
+		public Attributes UnattachedAttributes {
+			get; set;
+		}
+#endif
 
 		public virtual void AddCompilerGeneratedClass (CompilerGeneratedClass c)
 		{

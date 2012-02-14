@@ -609,9 +609,9 @@ namespace_or_type_declaration
 	  }
 	| attribute_sections CLOSE_BRACE {
 #if FULL_AST
-		current_namespace.UnattachedAttributes = ((List<Attribute>) $1).ToArray ();
+		current_namespace.UnattachedAttributes = (Attributes) $1;
 #endif
-		report.Error (1518, lexer.Location, "Dangling attribute not attached to a type definition (class, delegate, enum, interface or struct).   Unexpected symbol `{0}'");
+		report.Error (1518, lexer.Location, "Attributes must be attached to class, delegate, enum, interface or struct");
 		lexer.putback ('}');
 	  }
 	;
@@ -2435,9 +2435,9 @@ event_accessor_block
 attributes_without_members
 	: attribute_sections CLOSE_BRACE {
 #if FULL_AST
-	        current_type.UnattachedAttributes = ((List<Attribute>) $1).ToArray ();
+		current_type.UnattachedAttributes = (Attributes) $1;
 #endif
-		report.Error (1519, lexer.Location, "Attribute not attached to any member.   Unexpected symbol `{0}' in class, struct, or interface member declaration. ");
+		report.Error (1519, GetLocation ($1), "An attribute is missing member declaration");
 		lexer.putback ('}');
 	  }
 	;

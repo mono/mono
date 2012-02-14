@@ -409,7 +409,7 @@ namespace System
 			return IsUpper (s[index]);
 		}
 		
-//		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static bool IsWhiteSpace (char c)
 		{
 			if (c < 0x1680)
