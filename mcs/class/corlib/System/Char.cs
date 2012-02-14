@@ -408,18 +408,16 @@ namespace System
 			CheckParameter (s, index);
 			return IsUpper (s[index]);
 		}
-
+		
+//		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static bool IsWhiteSpace (char c)
 		{
+			if (c < 0x1680)
+				return c == 0x20 || c >= 0x09 && c <= 0x0d || c == 0x85 || c == 0xA0;
+
 			unsafe {
 				int category = category_data [c];
-				if (category <= ((int)UnicodeCategory.OtherNumber))
-					return false;
-				if (category <= ((int)UnicodeCategory.ParagraphSeparator))
-					return true;
-				// FIXME: (char)0x205F Medium Mathematical Space has wrong category in 2.0 Profile
-				// Remove the if NET_2_0 case once the error is corrected
-				return  c >= (char)0x09 && c <= (char)0x0d || c == (char)0x85 || c == (char)0x205F;
+				return category > (int) UnicodeCategory.OtherNumber && category <= (int) UnicodeCategory.ParagraphSeparator;
 			}
 		}
 
