@@ -1,2 +1,3 @@
 #include mobile_System.Core.dll.sources
+#include dynamic_System.Core.dll.sources
 System/TimeZoneInfo.Android.cs
