@@ -3325,11 +3325,11 @@ namespace Mono.CSharp {
 				if (ec.HasReturnLabel)
 					ec.MarkLabel (ec.ReturnLabel);
 
-				if (ec.ReturnType.Kind != MemberKind.Void)
-					ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
-
 				if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated)
 					ec.Mark (EndLocation);
+
+				if (ec.ReturnType.Kind != MemberKind.Void)
+					ec.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
 
 				ec.Emit (OpCodes.Ret);
 			}
