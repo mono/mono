@@ -168,13 +168,11 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		// Since protocol version 2.12
 		public bool IsGenericMethod {
 			get {
-				if (vm.Version.AtLeast (2, 12)) {
-					return GetInfo ().is_generic_method;
-				} else {
-					return Name.IndexOf ('`') != -1;
-				}
+				vm.CheckProtocolVersion (2, 12);
+				return GetInfo ().is_generic_method;
 			}
 		}
 
