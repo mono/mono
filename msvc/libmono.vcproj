@@ -695,6 +695,7 @@
 				OutputFile="$(OutDir)\mono.dll"
 				AdditionalLibraryDirectories="&quot;$(PlatformName)_$(ConfigurationName)/lib&quot;"
 				ModuleDefinitionFile="mono.def"
+				GenerateDebugInformation="true"
 				ImportLibrary="$(PlatformName)_$(ConfigurationName)/lib/$(TargetName).lib"
 				TargetMachine="17"
 			/>
