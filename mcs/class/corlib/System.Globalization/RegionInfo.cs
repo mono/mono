@@ -56,8 +56,6 @@ namespace System.Globalization
 			}
 		}
 
-		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
-
 #pragma warning disable 649
 		int regionId;
 		string iso2Name;
@@ -69,6 +67,8 @@ namespace System.Globalization
 		string currencyEnglishName;
 #pragma warning restore 649
 
+		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
+		
 		public RegionInfo (int culture)
 		{
 			if (!GetByTerritory (CultureInfo.GetCultureInfo (culture)))
