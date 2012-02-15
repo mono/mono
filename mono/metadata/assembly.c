@@ -29,6 +29,7 @@
 #include <mono/metadata/mono-config.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-logger.h>
+#include <mono/utils/mono-path.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/coree.h>
 
