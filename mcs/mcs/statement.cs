@@ -2965,8 +2965,7 @@ namespace Mono.CSharp {
 
 		public void WrapIntoAsyncTask (IMemberContext context, TypeDefinition host, TypeSpec returnType)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
-			pb.EndLocation = EndLocation;
+			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
 			pb.statements = statements;
 			pb.Original = this;
 
@@ -2979,6 +2978,7 @@ namespace Mono.CSharp {
 			statements = new List<Statement> (1);
 			AddStatement (new StatementExpression (initializer));
 			flags &= ~Flags.AwaitBlock;
+			IsCompilerGenerated = true;
 		}
 	}
 

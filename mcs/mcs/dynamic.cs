@@ -495,41 +495,40 @@ namespace Mono.CSharp
 			FieldExpr site_field_expr = new FieldExpr (MemberCache.GetMember (gt, field), loc);
 
 			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuiltinTypes.Void);
-			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (binder));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (instanceAccessExprType, "Create"), args)));
-			
-			if (s.Resolve (bc)) {
-				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
-				init.Emit (ec);
-			}
 
-			args = new Arguments (1 + dyn_args_count);
-			args.Add (new Argument (site_field_expr));
-			if (arguments != null) {
-				int arg_pos = 1;
-				foreach (Argument a in arguments) {
-					if (a is NamedArgument) {
-						// Name is not valid in this context
-						args.Add (new Argument (a.Expr, a.ArgType));
-					} else {
-						args.Add (a);
-					}
-
-					if (inflate_using_mvar && a.Type != targs[arg_pos].Type)
-						a.Expr.Type = targs[arg_pos].Type;
-
-					++arg_pos;
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				if (s.Resolve (bc)) {
+					Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
+					init.Emit (ec);
 				}
+
+				args = new Arguments (1 + dyn_args_count);
+				args.Add (new Argument (site_field_expr));
+				if (arguments != null) {
+					int arg_pos = 1;
+					foreach (Argument a in arguments) {
+						if (a is NamedArgument) {
+							// Name is not valid in this context
+							args.Add (new Argument (a.Expr, a.ArgType));
+						} else {
+							args.Add (a);
+						}
+
+						if (inflate_using_mvar && a.Type != targs[arg_pos].Type)
+							a.Expr.Type = targs[arg_pos].Type;
+
+						++arg_pos;
+					}
+				}
+
+				Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (bc), args, loc).Resolve (bc);
+				if (target != null)
+					target.Emit (ec);
 			}
-
-			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (bc), args, loc).Resolve (bc);
-			if (target != null)
-				target.Emit (ec);
-
-			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
 		public static MemberAccess GetBinderNamespace (Location loc)
@@ -608,7 +607,9 @@ namespace Mono.CSharp
 		public override void EmitStatement (EmitContext ec)
 		{
 			var stmt = new If (condition, new StatementExpression (invoke), new StatementExpression (assign), loc);
-			stmt.Emit (ec);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				stmt.Emit (ec);
+			}
 		}
 	}
 

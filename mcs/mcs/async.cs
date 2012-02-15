@@ -88,7 +88,10 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			stmt.EmitPrologue (ec);
-			stmt.Emit (ec);
+
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				stmt.Emit (ec);
+			}
 		}
 		
 		public override Expression EmitToField (EmitContext ec)
@@ -280,7 +283,7 @@ namespace Mono.CSharp
 		public void EmitStatement (EmitContext ec)
 		{
 			EmitPrologue (ec);
-			Emit (ec);
+			DoEmit (ec);
 
 			if (ResultType.Kind != MemberKind.Void) {
 				var storey = (AsyncTaskStorey) machine_initializer.Storey;

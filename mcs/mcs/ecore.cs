@@ -6186,6 +6186,12 @@ namespace Mono.CSharp {
 				variable.li.CreateBuilder (ec);
 			}
 
+			public override void Emit (EmitContext ec)
+			{
+				// Don't create sequence point
+				DoEmit (ec);
+			}
+
 			protected override void CloneTo (CloneContext clonectx, Statement target)
 			{
 				// Nothing

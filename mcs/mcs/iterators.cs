@@ -625,6 +625,12 @@ namespace Mono.CSharp
 			{
 				state_machine.EmitMoveNext (ec);
 			}
+
+			public override void Emit (EmitContext ec)
+			{
+				// Don't create sequence point
+				DoEmit (ec);
+			}
 		}
 
 		public readonly TypeDefinition Host;

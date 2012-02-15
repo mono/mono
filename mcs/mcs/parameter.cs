@@ -1193,7 +1193,7 @@ namespace Mono.CSharp {
 				// Each parameter expression is stored to local variable
 				// to save some memory when referenced later.
 				//
-				StatementExpression se = new StatementExpression (p.CreateExpressionTreeVariable (ec));
+				StatementExpression se = new StatementExpression (p.CreateExpressionTreeVariable (ec), Location.Null);
 				if (se.Resolve (ec)) {
 					ec.CurrentBlock.AddScopeStatement (new TemporaryVariableReference.Declarator (p.ExpressionTreeVariableReference ()));
 					ec.CurrentBlock.AddScopeStatement (se);
