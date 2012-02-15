@@ -210,7 +210,7 @@ namespace Mono.CSharp
 		// </summary>
 		static public void Initialize (List<SourceFile> files)
 		{
-#if NET_4_0
+#if NET_4_0 || MONODROID
 			source_list.AddRange (files);
 #else
 			source_list.AddRange (files.ToArray ());

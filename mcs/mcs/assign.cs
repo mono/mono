@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MONODROID
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			var tassign = target as IDynamicAssign;
