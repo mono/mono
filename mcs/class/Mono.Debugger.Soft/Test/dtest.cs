@@ -1023,12 +1023,20 @@ public class DebuggerTests
 		Assert.IsTrue (t.IsGenericType);
 		Assert.IsFalse (t.IsGenericTypeDefinition);
 
+		var args = t.GetGenericArguments ();
+		Assert.AreEqual (1, args.Length);
+		Assert.AreEqual ("Int32", args [0].Name);
+
 		// generic type definitions
 		var gtd = t.GetGenericTypeDefinition ();
 		Assert.AreEqual ("GClass`1", gtd.Name);
 		Assert.IsTrue (gtd.IsGenericType);
 		Assert.IsTrue (gtd.IsGenericTypeDefinition);
 		Assert.AreEqual (gtd, gtd.GetGenericTypeDefinition ());
+
+		args = gtd.GetGenericArguments ();
+		Assert.AreEqual (1, args.Length);
+		Assert.AreEqual ("T", args [0].Name);
 
 		// enums
 		t = frame.Method.GetParameters ()[10].ParameterType;
@@ -2907,9 +2915,17 @@ public class DebuggerTests
 		Assert.IsTrue (m.IsGenericMethod);
 		Assert.IsFalse (m.IsGenericMethodDefinition);
 
+		var args = m.GetGenericArguments ();
+		Assert.AreEqual (1, args.Length);
+		Assert.AreEqual ("String", args [0].Name);
+
 		var gmd = m.GetGenericMethodDefinition ();
 		Assert.IsTrue (gmd.IsGenericMethod);
 		Assert.IsTrue (gmd.IsGenericMethodDefinition);
 		Assert.AreEqual (gmd, gmd.GetGenericMethodDefinition ());
+
+		args = gmd.GetGenericArguments ();
+		Assert.AreEqual (1, args.Length);
+		Assert.AreEqual ("T", args [0].Name);
 	}
 }

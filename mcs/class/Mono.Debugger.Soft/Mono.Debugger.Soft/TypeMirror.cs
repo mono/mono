@@ -25,6 +25,7 @@ namespace Mono.Debugger.Soft
 		CustomAttributeDataMirror[] cattrs;
 		TypeMirror[] ifaces;
 		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
+		TypeMirror[] type_args;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -321,6 +322,14 @@ namespace Mono.Debugger.Soft
 				gtd = vm.GetType (info.gtd);
 			}
 			return gtd;
+		}
+
+		// Since protocol version 2.15
+		public TypeMirror[] GetGenericArguments () {
+			vm.CheckProtocolVersion (2, 15);
+			if (type_args == null)
+				type_args = vm.GetTypes (GetInfo ().type_args);
+			return type_args;
 		}
 
 		public string FullName {

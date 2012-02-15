@@ -20,6 +20,7 @@ namespace Mono.Debugger.Soft
 		IList<Location> locations;
 		MethodBodyMirror body;
 		MethodMirror gmd;
+		TypeMirror[] type_args;
 
 		internal MethodMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -167,11 +168,13 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		// Since protocol version 2.12
 		public bool IsGenericMethod {
 			get {
-				vm.CheckProtocolVersion (2, 12);
-				return GetInfo ().is_generic_method;
+				if (vm.Version.AtLeast (2, 12)) {
+					return GetInfo ().is_generic_method;
+				} else {
+					return Name.IndexOf ('`') != -1;
+				}
 			}
 		}
 
@@ -251,6 +254,14 @@ namespace Mono.Debugger.Soft
 				gmd = vm.GetMethod (info.gmd);
 			}
 			return gmd;
+		}
+
+		// Since protocol version 2.15
+		public TypeMirror[] GetGenericArguments () {
+			vm.CheckProtocolVersion (2, 15);
+			if (type_args == null)
+				type_args = vm.GetTypes (GetInfo ().type_args);
+			return type_args;
 		}
 
 		public IList<int> ILOffsets {

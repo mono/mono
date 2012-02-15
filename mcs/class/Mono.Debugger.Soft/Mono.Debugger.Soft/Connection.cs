@@ -61,6 +61,7 @@ namespace Mono.Debugger.Soft
 		public bool is_gtd, is_generic_type;
 		public long[] nested;
 		public long gtd;
+		public long[] type_args;
 	}
 
 	struct IfaceMapInfo {
@@ -73,6 +74,7 @@ namespace Mono.Debugger.Soft
 		public int attributes, iattributes, token;
 		public bool is_gmd, is_generic_method;
 		public long gmd;
+		public long[] type_args;
 	}
 
 	class MethodBodyInfo {
@@ -368,7 +370,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 14;
+		internal const int MINOR_VERSION = 15;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1729,6 +1731,12 @@ namespace Mono.Debugger.Soft
 				if ((attrs & (1 << 1)) != 0)
 					info.is_generic_method = true;
 				info.gmd = res.ReadId ();
+				if (Version.AtLeast (2, 15)) {
+					if (info.is_generic_method) {
+						int n = res.ReadInt ();
+						info.type_args = res.ReadIds (n);
+					}
+				}
 			}
 			return info;
 		}
@@ -1876,6 +1884,10 @@ namespace Mono.Debugger.Soft
 
 			if (Version.AtLeast (2, 12))
 				res.gtd = r.ReadId ();
+			if (Version.AtLeast (2, 15) && res.is_generic_type) {
+				int n = r.ReadInt ();
+				res.type_args = r.ReadIds (n);
+			}
 
 			return res;
 		}
