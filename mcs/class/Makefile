@@ -173,7 +173,7 @@ net_4_0_dirs := \
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
-monodroid_SUBDIRS := $(mobile_dirs)
+monodroid_SUBDIRS := $(mobile_dirs) Mono.CSharp Microsoft.CSharp
 monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)

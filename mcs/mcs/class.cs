@@ -18,7 +18,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Linq;
 
-#if NET_2_1
+#if NET_2_1 && !MONODROID
 using XmlElement = System.Object;
 #endif
 

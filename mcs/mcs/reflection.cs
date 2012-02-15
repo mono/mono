@@ -446,7 +446,7 @@ namespace Mono.CSharp
 
 			default_references.Add ("System");
 			default_references.Add ("System.Xml");
-#if NET_2_1
+#if NET_2_1 && !MONODROID
 			default_references.Add ("System.Net");
 			default_references.Add ("System.Windows");
 			default_references.Add ("System.Windows.Browser");

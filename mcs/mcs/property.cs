@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if NET_2_1
+#if NET_2_1 && !MONODROID
 using XmlElement = System.Object;
 #endif
 
