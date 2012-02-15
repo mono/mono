@@ -693,6 +693,7 @@
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib mswsock.lib"
 				OutputFile="$(OutDir)\mono.dll"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PlatformName)_$(ConfigurationName)/lib&quot;"
 				ModuleDefinitionFile="mono.def"
 				GenerateDebugInformation="true"
