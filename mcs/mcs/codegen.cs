@@ -210,7 +210,7 @@ namespace Mono.CSharp
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return false;
 
-			if (loc.IsNull)
+			if (loc.IsNull || methodSymbols == null)
 				return false;
 
 			var sf = loc.SourceFile;
