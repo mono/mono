@@ -68,7 +68,7 @@ namespace Mono.Http.Modules
 				string expireStr = new ASCIIEncoding().GetString(decodedBytes);
 				expireTime = DateTime.Parse(expireStr);
 			}
-			catch (FormatException e) {
+			catch (FormatException) {
 				return false;
 			}
 

@@ -6040,10 +6040,11 @@ namespace Mono.CSharp
 
 		Dictionary<int, int> bounds;
 
+#if STATIC
 		// The number of constants in array initializers
 		int const_initializers_count;
 		bool only_constant_initializers;
-
+#endif
 		public ArrayCreation (FullNamedExpression requested_base_type, List<Expression> exprs, ComposedTypeSpecifier rank, ArrayInitializer initializers, Location l)
 			: this (requested_base_type, rank, initializers, l)
 		{
@@ -6171,7 +6172,7 @@ namespace Mono.CSharp
 					Expression element = ResolveArrayElement (ec, o);
 					if (element == null)
 						continue;
-
+#if STATIC
 					// Initializers with the default values can be ignored
 					Constant c = element as Constant;
 					if (c != null) {
@@ -6181,7 +6182,7 @@ namespace Mono.CSharp
 					} else {
 						only_constant_initializers = false;
 					}
-					
+#endif					
 					array_data.Add (element);
 				}
 			}
@@ -6284,7 +6285,9 @@ namespace Mono.CSharp
 
 		protected bool ResolveInitializers (ResolveContext ec)
 		{
+#if STATIC
 			only_constant_initializers = true;
+#endif
 
 			if (arguments != null) {
 				bool res = true;

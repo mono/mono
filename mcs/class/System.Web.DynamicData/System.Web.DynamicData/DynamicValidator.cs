@@ -94,7 +94,7 @@ namespace System.Web.DynamicData
 			if (String.IsNullOrEmpty (controlToValidate))
 				return true;
 
-			string value = GetControlValidationValue (controlToValidate);
+			GetControlValidationValue (controlToValidate);
 
 			return true;
 		}

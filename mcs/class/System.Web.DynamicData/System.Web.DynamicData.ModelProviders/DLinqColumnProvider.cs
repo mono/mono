@@ -51,14 +51,10 @@ namespace System.Web.DynamicData.ModelProviders
 			if (meta == null)
 				throw new ArgumentNullException ("meta");
 
-			this.meta = meta;
-
 			// FIXME: fill more
 			Name = meta.Name;
 			Nullable = meta.CanBeNull;
 		}
-
-		MetaDataMember meta;
 
 		[MonoTODO]
 		public override string ToString ()

@@ -153,7 +153,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			return entry;
 		}
 
-		[Obsolete]
 		public int DefineNamespace (string name, CompileUnitEntry unit,
 					    string[] using_clauses, int parent)
 		{

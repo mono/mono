@@ -65,7 +65,7 @@ namespace System.Data
 		{
 		}
 
-		new List<Comparison<TRow>> comparers = new List<Comparison<TRow>> ();
+		List<Comparison<TRow>> comparers = new List<Comparison<TRow>> ();
 
 		public void AddSort (Comparison<TRow> comparer)
 		{

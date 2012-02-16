@@ -33,7 +33,7 @@ namespace System.Runtime.Serialization
 	public class ExportOptions
 	{
 		IDataContractSurrogate surrogate;
-		KnownTypeCollection known_types;
+		const KnownTypeCollection known_types = null;
 
 		public ExportOptions ()
 		{
@@ -44,6 +44,7 @@ namespace System.Runtime.Serialization
 			set { surrogate = value; }
 		}
 
+		[MonoTODO]
 		public Collection<Type> KnownTypes {
 			get { return known_types; }
 		}

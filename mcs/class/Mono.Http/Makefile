@@ -8,7 +8,8 @@ LIB_MCS_FLAGS = -r:$(corlib) \
 		-r:System.Xml.dll \
 		-r:System.Web.dll \
 		-r:ICSharpCode.SharpZipLib.dll \
-		-r:Mono.Security.dll
+		-r:Mono.Security.dll \
+		-nowarn:618
 
 NO_TEST = yes
 

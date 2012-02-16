@@ -37,7 +37,7 @@ namespace System.Runtime.Caching
 	{
 		ReadOnlyCollection <string> cacheKeys;
 		DateTimeOffset lastModified;
-		MemoryCache owner;
+//		MemoryCache owner;
 		string uniqueId;
 		
 		public override ReadOnlyCollection <string> CacheKeys {
@@ -58,7 +58,7 @@ namespace System.Runtime.Caching
 		
 		public MemoryCacheEntryChangeMonitor (MemoryCache owner, IEnumerable <string> keys)
 		{
-			this.owner = owner;
+//			this.owner = owner;
 			this.lastModified = DateTimeOffset.MinValue;
 
 			MemoryCacheEntry mce;
