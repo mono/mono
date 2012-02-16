@@ -49,21 +49,15 @@ using System.Security.Permissions;
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../msfinal.pub")]
 
-#if NET_2_0
-	[assembly: AssemblyDefaultAlias ("System.Security.dll")]
-	[assembly: AssemblyDescription ("System.Security.dll")]
-	[assembly: AssemblyTitle ("System.Security.dll")]
+[assembly: AssemblyDefaultAlias ("System.Security.dll")]
+[assembly: AssemblyDescription ("System.Security.dll")]
+[assembly: AssemblyTitle ("System.Security.dll")]
 
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-	[assembly: AssemblyCompany (Consts.MonoCompany)]
-	[assembly: AssemblyProduct (Consts.MonoProduct)]
-	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 
-	[assembly: AllowPartiallyTrustedCallers]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-#endif
+[assembly: AllowPartiallyTrustedCallers]

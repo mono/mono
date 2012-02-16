@@ -61,7 +61,6 @@ using System.Runtime.InteropServices;
 #endif
 
 #if !BOOTSTRAP_WITH_OLDLIB
-	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 	[assembly: AssemblyDelaySign (true)]
 #if NET_2_1
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
@@ -77,9 +76,3 @@ using System.Runtime.InteropServices;
 	[assembly: StringFreezing]
 	[assembly: DefaultDependency (LoadHint.Always)]
 #endif
-
-#if NET_2_1 || NET_4_0
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-#endif
-
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

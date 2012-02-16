@@ -55,14 +55,7 @@ using System.Windows.Markup;
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints |
-                       DebuggableAttribute.DebuggingModes.Default)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: Dependency ("System,", LoadHint.Always)]
 [assembly: SecurityCritical]
-[assembly: PermissionSet (SecurityAction.RequestMinimum, Name = "FullTrust")]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 
 [assembly: XmlnsPrefixAttribute ("http://schemas.microsoft.com/xps/2005/06", "metro")]
 [assembly: XmlnsPrefixAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "wpf")]

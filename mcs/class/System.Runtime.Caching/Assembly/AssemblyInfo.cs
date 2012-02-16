@@ -58,13 +58,7 @@ using System.Runtime.Versioning;
 
 [assembly: ComVisible (false)]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-
 [assembly: AssemblyKeyFile ("../msfinal.pub")]
 
-[assembly: AssemblyTargetedPatchBand ("1.0.21-0")]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust=true)]

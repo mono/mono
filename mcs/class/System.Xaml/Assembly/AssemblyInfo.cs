@@ -38,7 +38,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Xaml assembly
-// v3.0 Assembly
 
 [assembly: AssemblyTitle ("System.Xaml.dll")]
 [assembly: AssemblyDescription ("System.Xaml.dll")]
@@ -61,12 +60,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../ecma.pub")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
 
 [assembly: ComVisible (false)]
-
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]

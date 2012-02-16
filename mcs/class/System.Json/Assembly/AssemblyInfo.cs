@@ -36,7 +36,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Json assembly
-// v3.5 Assembly
 
 [assembly: AssemblyTitle ("System.Json.dll")]
 [assembly: AssemblyDescription ("System.Json.dll")]
@@ -56,14 +55,4 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-// Extension attribute should be added by compiler
-
-/*
-[assembly: StringFreezing]
-[assembly: DefaultDependency (LoadHint.Always)]
-*/
 [assembly: SecurityCritical]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]

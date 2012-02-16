@@ -35,7 +35,6 @@ using System.Runtime.ConstrainedExecution;
 #if !PLATFORM_COMPACTFRAMEWORK
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #endif
 
 // Version information for an assembly consists of the following four values:

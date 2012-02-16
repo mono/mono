@@ -73,13 +73,6 @@ using System.Security.Permissions;
 [assembly: TagPrefix ("System.Web.UI.WebControls", "asp")]
 [assembly: Dependency ("System,", LoadHint.Always)]
 
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, Execution = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-
 [assembly: WebResource ("MicrosoftAjax.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjax.debug.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxWebForms.js", "application/x-javascript")]
