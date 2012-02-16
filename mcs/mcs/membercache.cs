@@ -1163,8 +1163,9 @@ namespace Mono.CSharp {
 			if (container.BaseType == null) {
 				locase_members = new Dictionary<string, MemberSpec[]> (member_hash.Count); // StringComparer.OrdinalIgnoreCase);
 			} else {
-				container.BaseType.MemberCache.VerifyClsCompliance (container.BaseType, report);
-				locase_members = new Dictionary<string, MemberSpec[]> (container.BaseType.MemberCache.locase_members); //, StringComparer.OrdinalIgnoreCase);
+				var btype = container.BaseType.GetDefinition ();
+				btype.MemberCache.VerifyClsCompliance (btype, report);
+				locase_members = new Dictionary<string, MemberSpec[]> (btype.MemberCache.locase_members); //, StringComparer.OrdinalIgnoreCase);
 			}
 
 			var is_imported_type = container.MemberDefinition.IsImported;
