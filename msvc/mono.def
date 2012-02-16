@@ -23,6 +23,7 @@ mono_assembly_loaded
 unity_mono_redirect_output
 unity_mono_close_output
 mono_unity_set_embeddinghostname
+mono_unity_set_vprintf_func
 mono_set_assemblies_path
 mono_set_find_plugin_callback
 mono_set_commandline_arguments
