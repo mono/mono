@@ -50,7 +50,7 @@ namespace Mono.CSharp
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		protected AssemblyBuilderExtension builder_extra;
-		MonoSymbolWriter symbol_writer;
+		MonoSymbolFile symbol_writer;
 
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
@@ -176,6 +176,12 @@ namespace Mono.CSharp
 		protected Report Report {
 			get {
 				return Compiler.Report;
+			}
+		}
+
+		public MonoSymbolFile SymbolWriter {
+			get {
+				return symbol_writer;
 			}
 		}
 
@@ -446,10 +452,7 @@ namespace Mono.CSharp
 			}
 
 			if (Compiler.Settings.GenerateDebugInfo) {
-				symbol_writer = new MonoSymbolWriter (file_name);
-
-				// TODO: global variables
-				SymbolWriter.symwriter = symbol_writer;
+				symbol_writer = new MonoSymbolFile ();
 			}
 
 			module.EmitContainer ();
@@ -820,7 +823,21 @@ namespace Mono.CSharp
 			if (symbol_writer != null && Compiler.Report.Errors == 0) {
 				// TODO: it should run in parallel
 				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
-				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
+
+				var filename = file_name + ".mdb";
+				try {
+					// We mmap the file, so unlink the previous version since it may be in use
+					File.Delete (filename);
+				} catch {
+					// We can safely ignore
+				}
+
+				module.WriteDebugSymbol (symbol_writer);
+
+				using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
+					symbol_writer.CreateSymbolFile (module.Builder.ModuleVersionId, fs);
+				}
+
 				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
 			}
 		}

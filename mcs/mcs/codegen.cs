@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using Mono.CompilerServices.SymbolWriter;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -76,11 +77,13 @@ namespace Mono.CSharp
 		
 		readonly IMemberContext member_context;
 
+		readonly SourceMethodBuilder methodSymbols;
+
 		DynamicSiteClass dynamic_site_container;
 
 		Label? return_label;
 
-		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
+		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type, SourceMethodBuilder methodSymbols)
 		{
 			this.member_context = rc;
 			this.ig = ig;
@@ -89,7 +92,8 @@ namespace Mono.CSharp
 			if (rc.Module.Compiler.Settings.Checked)
 				flags |= Options.CheckedScope;
 
-			if (SymbolWriter.HasSymbolWriter) {
+			if (methodSymbols != null) {
+				this.methodSymbols = methodSymbols;
 				if (!rc.Module.Compiler.Settings.Optimize)
 					flags |= Options.AccurateDebugInfo;
 			} else {
@@ -209,16 +213,22 @@ namespace Mono.CSharp
 			if (loc.IsNull)
 				return false;
 
-			if (loc.SourceFile.IsHiddenLocation (loc))
+			var sf = loc.SourceFile;
+			if (sf.IsHiddenLocation (loc))
 				return false;
 
-			SymbolWriter.MarkSequencePoint (ig, loc);
+#if NET_4_0
+			methodSymbols.MarkSequencePoint (ig.ILOffset, sf.SourceFileEntry, loc.Row, loc.Column, false);
+#endif
 			return true;
 		}
 
 		public void DefineLocalVariable (string name, LocalBuilder builder)
 		{
-			SymbolWriter.DefineLocalVariable (name, builder);
+			if ((flags & Options.OmitDebugInfo) != 0)
+				return;
+
+			methodSymbols.AddLocal (builder.LocalIndex, name);
 		}
 
 		public void BeginCatchBlock (TypeSpec type)
@@ -238,7 +248,12 @@ namespace Mono.CSharp
 
 		public void BeginScope ()
 		{
-			SymbolWriter.OpenScope(ig);
+			if ((flags & Options.OmitDebugInfo) != 0)
+				return;
+
+#if NET_4_0
+			methodSymbols.StartBlock (CodeBlockEntry.Type.Lexical, ig.ILOffset);
+#endif
 		}
 
 		public void EndExceptionBlock ()
@@ -248,7 +263,12 @@ namespace Mono.CSharp
 
 		public void EndScope ()
 		{
-			SymbolWriter.CloseScope(ig);
+			if ((flags & Options.OmitDebugInfo) != 0)
+				return;
+
+#if NET_4_0
+			methodSymbols.EndBlock (ig.ILOffset);
+#endif
 		}
 
 		//

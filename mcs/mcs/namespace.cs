@@ -664,9 +664,9 @@ namespace Mono.CSharp {
 
 		public override void PrepareEmit ()
 		{
-			// Compiler.SymbolWriter
-			if (SymbolWriter.symwriter != null) {
-				CreateUnitSymbolInfo (SymbolWriter.symwriter);
+			var sw = Module.DeclaringAssembly.SymbolWriter;
+			if (sw != null) {
+				CreateUnitSymbolInfo (sw);
 			}
 
 			base.PrepareEmit ();
@@ -675,10 +675,10 @@ namespace Mono.CSharp {
 		//
 		// Creates symbol file index in debug symbol file
 		//
-		void CreateUnitSymbolInfo (MonoSymbolWriter symwriter)
+		void CreateUnitSymbolInfo (MonoSymbolFile symwriter)
 		{
 			var si = file.CreateSymbolInfo (symwriter);
-			comp_unit = symwriter.DefineCompilationUnit (si);
+			comp_unit = new CompileUnitEntry (symwriter, si);;
 
 			if (include_files != null) {
 				foreach (SourceFile include in include_files.Values) {

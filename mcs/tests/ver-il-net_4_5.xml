@@ -2883,19 +2883,19 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;Field&gt;__T]">
       <method name="&lt;Field&gt;__T get_Field()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;Field&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -17546,22 +17546,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;Foo&gt;__T,&lt;Baz&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Baz&gt;__T get_Baz()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T, &lt;Baz&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -17579,39 +17579,39 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;s&gt;__T]">
       <method name="&lt;s&gt;__T get_s()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;s&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;Foo&gt;__T,&lt;Baz&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Baz&gt;__T get_Baz()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T, &lt;Baz&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -17634,22 +17634,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;Foo&gt;__T,&lt;Baz&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Baz&gt;__T get_Baz()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T, &lt;Baz&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -17672,28 +17672,28 @@
     </type>
     <type name="&lt;&gt;__AnonType0`4[&lt;Foo&gt;__T,&lt;Baz&gt;__T,&lt;Hello&gt;__T,&lt;Answer&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Baz&gt;__T get_Baz()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Hello&gt;__T get_Hello()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Answer&gt;__T get_Answer()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>131</size>
+        <size>123</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>140</size>
+        <size>132</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>268</size>
+        <size>258</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T, &lt;Baz&gt;__T, &lt;Hello&gt;__T, &lt;Answer&gt;__T)" attrs="6278">
-        <size>37</size>
+        <size>36</size>
       </method>
     </type>
   </test>
@@ -17711,73 +17711,73 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;Name&gt;__T,&lt;Age&gt;__T]">
       <method name="&lt;Name&gt;__T get_Name()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Age&gt;__T get_Age()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;Name&gt;__T, &lt;Age&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;Age&gt;__T,&lt;Name&gt;__T]">
       <method name="&lt;Age&gt;__T get_Age()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Name&gt;__T get_Name()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;Age&gt;__T, &lt;Name&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType2">
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>23</size>
+        <size>15</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>48</size>
+        <size>40</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>14</size>
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>8</size>
+        <size>7</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType3`1[&lt;Foo&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -17795,19 +17795,19 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;Foo&gt;__T]">
       <method name="&lt;Foo&gt;__T get_Foo()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;Foo&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -17822,16 +17822,16 @@
     </type>
     <type name="&lt;&gt;__AnonType0">
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>23</size>
+        <size>15</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>48</size>
+        <size>40</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>14</size>
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>8</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -17843,22 +17843,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;X&gt;__T,&lt;Y&gt;__T]">
       <method name="&lt;X&gt;__T get_X()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Y&gt;__T get_Y()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;X&gt;__T, &lt;Y&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -17870,36 +17870,36 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
       <method name="&lt;X&gt;__T get_X()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;X&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`1[&lt;Value&gt;__T]">
       <method name="&lt;Value&gt;__T get_Value()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;Value&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -17925,19 +17925,19 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
       <method name="&lt;X&gt;__T get_X()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;X&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -17965,22 +17965,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;First&gt;__T,&lt;Second&gt;__T]">
       <method name="&lt;First&gt;__T get_First()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Second&gt;__T get_Second()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;First&gt;__T, &lt;Second&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -17995,19 +17995,19 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;ToString&gt;__T]">
       <method name="&lt;ToString&gt;__T get_ToString()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;ToString&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -18054,22 +18054,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;n&gt;__T,&lt;p&gt;__T]">
       <method name="&lt;n&gt;__T get_n()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;p&gt;__T get_p()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;n&gt;__T, &lt;p&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="Test+&lt;Main&gt;c__AnonStorey1">
@@ -19540,22 +19540,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;A&gt;__T,&lt;Value&gt;__T]">
       <method name="&lt;A&gt;__T get_A()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;Value&gt;__T get_Value()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;A&gt;__T, &lt;Value&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -23434,22 +23434,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;g&gt;__T,&lt;ExpensiveProducts&gt;__T]">
       <method name="&lt;g&gt;__T get_g()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;ExpensiveProducts&gt;__T get_ExpensiveProducts()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;g&gt;__T, &lt;ExpensiveProducts&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="MainClass+&lt;Main&gt;c__AnonStorey0">
@@ -23824,102 +23824,102 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;i&gt;__T,&lt;j&gt;__T]">
       <method name="&lt;i&gt;__T get_i()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;j&gt;__T get_j()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i&gt;__T, &lt;j&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;i&gt;__T,&lt;l&gt;__T]">
       <method name="&lt;i&gt;__T get_i()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;l&gt;__T get_l()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i&gt;__T, &lt;l&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType2`2[&lt;&lt;&gt;__TranspIdent2&gt;__T,&lt;l2&gt;__T]">
       <method name="&lt;&lt;&gt;__TranspIdent2&gt;__T get_&lt;&gt;__TranspIdent2()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;l2&gt;__T get_l2()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent2&gt;__T, &lt;l2&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType3`2[&lt;i9&gt;__T,&lt;i&gt;__T]">
       <method name="&lt;i9&gt;__T get_i9()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;i&gt;__T get_i()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i9&gt;__T, &lt;i&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType4`2[&lt;&lt;&gt;__TranspIdent7&gt;__T,&lt;l2&gt;__T]">
       <method name="&lt;&lt;&gt;__TranspIdent7&gt;__T get_&lt;&gt;__TranspIdent7()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;l2&gt;__T get_l2()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent7&gt;__T, &lt;l2&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="from.C+&lt;Main&gt;c__AnonStorey0">
@@ -24119,42 +24119,42 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;i&gt;__T,&lt;u&gt;__T]">
       <method name="&lt;i&gt;__T get_i()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;u&gt;__T get_u()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i&gt;__T, &lt;u&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent1&gt;__T,&lt;v&gt;__T]">
       <method name="&lt;&lt;&gt;__TranspIdent1&gt;__T get_&lt;&gt;__TranspIdent1()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;v&gt;__T get_v()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent1&gt;__T, &lt;v&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -24190,65 +24190,65 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;i1&gt;__T,&lt;i2&gt;__T]">
       <method name="&lt;i1&gt;__T get_i1()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;i2&gt;__T get_i2()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i1&gt;__T, &lt;i2&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent0&gt;__T,&lt;i3&gt;__T]">
       <method name="&lt;&lt;&gt;__TranspIdent0&gt;__T get_&lt;&gt;__TranspIdent0()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;i3&gt;__T get_i3()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent0&gt;__T, &lt;i3&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType2`3[&lt;pp&gt;__T,&lt;i1&gt;__T,&lt;i3&gt;__T]">
       <method name="&lt;pp&gt;__T get_pp()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;i1&gt;__T get_i1()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;i3&gt;__T get_i3()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>104</size>
+        <size>96</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>117</size>
+        <size>109</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>207</size>
+        <size>199</size>
       </method>
       <method name="Void .ctor(&lt;pp&gt;__T, &lt;i1&gt;__T, &lt;i3&gt;__T)" attrs="6278">
-        <size>29</size>
+        <size>28</size>
       </method>
     </type>
     <type name="SelectMany+&lt;Main&gt;c__AnonStorey0">
@@ -24362,39 +24362,39 @@
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;Result&gt;__T]">
       <method name="&lt;Result&gt;__T get_Result()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>47</size>
+        <size>39</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>71</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>75</size>
+        <size>67</size>
       </method>
       <method name="Void .ctor(&lt;Result&gt;__T)" attrs="6278">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;a&gt;__T,&lt;b&gt;__T]">
       <method name="&lt;a&gt;__T get_a()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;b&gt;__T get_b()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;a&gt;__T, &lt;b&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -24458,42 +24458,42 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;a&gt;__T,&lt;ab&gt;__T]">
       <method name="&lt;a&gt;__T get_a()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;ab&gt;__T get_ab()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;a&gt;__T, &lt;ab&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;a&gt;__T,&lt;b&gt;__T]">
       <method name="&lt;a&gt;__T get_a()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;b&gt;__T get_b()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;a&gt;__T, &lt;b&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -24569,42 +24569,42 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;values&gt;__T,&lt;length&gt;__T]">
       <method name="&lt;values&gt;__T get_values()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;length&gt;__T get_length()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;values&gt;__T, &lt;length&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;type&gt;__T,&lt;x&gt;__T]">
       <method name="&lt;type&gt;__T get_type()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;x&gt;__T get_x()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;type&gt;__T, &lt;x&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="NestedQuery+&lt;XX&gt;c__AnonStorey0">
@@ -24781,22 +24781,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;a&gt;__T,&lt;b&gt;__T]">
       <method name="&lt;a&gt;__T get_a()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;b&gt;__T get_b()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;a&gt;__T, &lt;b&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="C+&lt;Test_1&gt;c__AnonStorey0">
@@ -24912,62 +24912,62 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;ck&gt;__T,&lt;xy&gt;__T]">
       <method name="&lt;ck&gt;__T get_ck()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;xy&gt;__T get_xy()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;ck&gt;__T, &lt;xy&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;i&gt;__T,&lt;l&gt;__T]">
       <method name="&lt;i&gt;__T get_i()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;l&gt;__T get_l()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;i&gt;__T, &lt;l&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType2`2[&lt;&lt;&gt;__TranspIdent1&gt;__T,&lt;g&gt;__T]">
       <method name="&lt;&lt;&gt;__TranspIdent1&gt;__T get_&lt;&gt;__TranspIdent1()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;g&gt;__T get_g()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent1&gt;__T, &lt;g&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
@@ -25135,22 +25135,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;x&gt;__T,&lt;y&gt;__T]">
       <method name="&lt;x&gt;__T get_x()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;y&gt;__T get_y()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;x&gt;__T, &lt;y&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -25191,22 +25191,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;item&gt;__T,&lt;parsed&gt;__T]">
       <method name="&lt;item&gt;__T get_item()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;parsed&gt;__T get_parsed()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;item&gt;__T, &lt;parsed&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="Test.MainClass+&lt;Main&gt;c__AnonStorey0">
@@ -25329,42 +25329,42 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;c&gt;__T,&lt;p&gt;__T]">
       <method name="&lt;c&gt;__T get_c()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;p&gt;__T get_p()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;c&gt;__T, &lt;p&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;C&gt;__T,&lt;P&gt;__T]">
       <method name="&lt;C&gt;__T get_C()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;P&gt;__T get_P()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;C&gt;__T, &lt;P&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -25416,22 +25416,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;b&gt;__T,&lt;t&gt;__T]">
       <method name="&lt;b&gt;__T get_b()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;t&gt;__T get_t()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;b&gt;__T, &lt;t&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
@@ -25477,22 +25477,22 @@
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;m&gt;__T,&lt;n&gt;__T]">
       <method name="&lt;m&gt;__T get_m()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="&lt;n&gt;__T get_n()" attrs="2182">
-        <size>15</size>
+        <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)" attrs="198">
-        <size>77</size>
+        <size>69</size>
       </method>
       <method name="Int32 GetHashCode()" attrs="198">
-        <size>94</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()" attrs="198">
-        <size>150</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor(&lt;m&gt;__T, &lt;n&gt;__T)" attrs="6278">
-        <size>22</size>
+        <size>21</size>
       </method>
     </type>
   </test>

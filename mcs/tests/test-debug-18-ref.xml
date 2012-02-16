@@ -7,16 +7,12 @@
     <method token="0x6000001">
       <sequencepoints />
       <locals />
-      <scopes>
-        <entry index="0" start="0x7" end="0x22" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000002">
       <sequencepoints />
       <locals />
-      <scopes>
-        <entry index="0" start="0x7" end="0x22" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000003">
       <sequencepoints>

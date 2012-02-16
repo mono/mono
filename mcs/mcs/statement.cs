@@ -2318,19 +2318,12 @@ namespace Mono.CSharp {
 				EmitScopeInitializers (ec);
 
 			DoEmit (ec);
-
-			if (SymbolWriter.HasSymbolWriter)
-				EmitSymbolInfo (ec);
 		}
 
 		protected void EmitScopeInitializers (EmitContext ec)
 		{
 			foreach (Statement s in scope_initializers)
 				s.Emit (ec);
-		}
-
-		protected virtual void EmitSymbolInfo (EmitContext ec)
-		{
 		}
 
 #if DEBUG
@@ -2465,16 +2458,12 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Nop);
 			}
 
-			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);
-			if (emit_debug_info)
+			if (Parent != null)
 				ec.BeginScope ();
 
 			DoEmit (ec);
 
-			if (SymbolWriter.HasSymbolWriter)
-				EmitSymbolInfo (ec);
-
-			if (emit_debug_info)
+			if (Parent != null)
 				ec.EndScope ();
 
 			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && !IsCompilerGenerated && ec.Mark (EndLocation)) {
@@ -3343,15 +3332,6 @@ namespace Mono.CSharp {
 				throw;
 			}
 #endif
-		}
-
-		protected override void EmitSymbolInfo (EmitContext ec)
-		{
-			AnonymousExpression ae = ec.CurrentAnonymousMethod;
-			if ((ae != null) && (ae.Storey != null))
-				SymbolWriter.DefineScopeVariable (ae.Storey.ID);
-
-			base.EmitSymbolInfo (ec);
 		}
 	}
 	

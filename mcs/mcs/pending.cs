@@ -508,7 +508,7 @@ namespace Mono.CSharp {
 			}
 
 			int top = param.Count;
-			var ec = new EmitContext (new ProxyMethodContext (container), proxy.GetILGenerator (), null);
+			var ec = new EmitContext (new ProxyMethodContext (container), proxy.GetILGenerator (), null, null);
 			ec.EmitThis ();
 			// TODO: GetAllParametersArguments
 			for (int i = 0; i < top; i++)

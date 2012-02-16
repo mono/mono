@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using Mono.CompilerServices.SymbolWriter;
 
 #if STATIC
 using IKVM.Reflection;
@@ -396,8 +397,6 @@ namespace Mono.CSharp {
 			if (Instance != null)
 				throw new InternalErrorException ();
 
-			SymbolWriter.OpenCompilerGeneratedBlock (ec);
-
 			//
 			// Create an instance of this storey
 			//
@@ -426,7 +425,6 @@ namespace Mono.CSharp {
 				var fexpr = new FieldExpr (field, Location);
 				fexpr.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, Location);
 				fexpr.EmitAssign (ec, source, false, false);
-
 				Instance = fexpr;
 			} else {
 				var local = TemporaryVariableReference.Create (source.Type, block, Location);
@@ -439,8 +437,6 @@ namespace Mono.CSharp {
 
 			// TODO: Implement properly
 			//SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
-
-			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
 		void EmitHoistedFieldsInitialization (ResolveContext rc, EmitContext ec)
@@ -492,32 +488,6 @@ namespace Mono.CSharp {
 		{
 			foreach (HoistedParameter hp in hoisted) {
 				hp.EmitHoistingAssignment (ec);
-			}
-		}
-
-		public override void Emit ()
-		{
-			base.Emit ();
-
-			SymbolWriter.DefineAnonymousScope (ID);
-
-			if (hoisted_this != null)
-				hoisted_this.EmitSymbolInfo ();
-
-			if (hoisted_locals != null) {
-				foreach (HoistedVariable local in hoisted_locals)
-					local.EmitSymbolInfo ();
-			}
-
-			if (hoisted_params != null) {
-				foreach (HoistedParameter param in hoisted_params)
-					param.EmitSymbolInfo ();
-			}
-
-			if (used_parent_storeys != null) {
-				foreach (StoreyFieldPair sf in used_parent_storeys) {
-					SymbolWriter.DefineCapturedScope (ID, sf.Storey.ID, sf.Field.Name);
-				}
 			}
 		}
 
@@ -725,8 +695,6 @@ namespace Mono.CSharp {
 			return inner_access;
 		}
 
-		public abstract void EmitSymbolInfo ();
-
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			GetFieldExpression (ec).Emit (ec, leave_copy);
@@ -771,6 +739,12 @@ namespace Mono.CSharp {
 			this.parameter = hp.parameter;
 		}
 
+		public Field Field {
+			get {
+				return field;
+			}
+		}
+
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
 			//
@@ -785,25 +759,13 @@ namespace Mono.CSharp {
 
 			parameter.Parameter.HoistedVariant = temp;
 		}
-
-		public override void EmitSymbolInfo ()
-		{
-			SymbolWriter.DefineCapturedParameter (storey.ID, field.Name, field.Name);
-		}
-
-		public Field Field {
-			get { return field; }
-		}
 	}
 
 	class HoistedLocalVariable : HoistedVariable
 	{
-		readonly string name;
-
 		public HoistedLocalVariable (AnonymousMethodStorey storey, LocalVariable local, string name)
 			: base (storey, name, local.Type)
 		{
-			this.name = local.Name;
 		}
 
 		//
@@ -812,11 +774,6 @@ namespace Mono.CSharp {
 		public HoistedLocalVariable (AnonymousMethodStorey storey, Field field)
 			: base (storey, field)
 		{
-		}
-
-		public override void EmitSymbolInfo ()
-		{
-			SymbolWriter.DefineCapturedLocal (storey.ID, name, field.Name);
 		}
 	}
 
@@ -827,20 +784,17 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public Field Field {
+			get {
+				return field;
+			}
+		}
+
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
 			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), new CompilerGeneratedThis (ec.CurrentType, field.Location));
 			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 				a.EmitStatement (ec);
-		}
-
-		public override void EmitSymbolInfo ()
-		{
-			SymbolWriter.DefineCapturedThis (storey.ID, field.Name);
-		}
-
-		public Field Field {
-			get { return field; }
 		}
 	}
 
@@ -1322,9 +1276,9 @@ namespace Mono.CSharp {
 				Block = new ToplevelBlock (am.block, parameters);
 			}
 
-			public override EmitContext CreateEmitContext (ILGenerator ig)
+			public override EmitContext CreateEmitContext (ILGenerator ig, SourceMethodBuilder sourceMethod)
 			{
-				EmitContext ec = new EmitContext (this, ig, ReturnType);
+				EmitContext ec = new EmitContext (this, ig, ReturnType, sourceMethod);
 				ec.CurrentAnonymousMethod = AnonymousMethod;
 				return ec;
 			}

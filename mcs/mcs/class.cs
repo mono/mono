@@ -20,6 +20,7 @@ using System.Security.Permissions;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using Mono.CompilerServices.SymbolWriter;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -346,6 +347,15 @@ namespace Mono.CSharp
 			if (containers != null) {
 				foreach (TypeContainer tc in containers)
 					tc.VerifyMembers ();
+			}
+		}
+
+		public override void WriteDebugSymbol (MonoSymbolFile file)
+		{
+			if (containers != null) {
+				foreach (TypeContainer tc in containers) {
+					tc.WriteDebugSymbol (file);
+				}
 			}
 		}
 	}
@@ -1249,6 +1259,18 @@ namespace Mono.CSharp
 			return names;
 		}
 
+
+		public SourceMethodBuilder CreateMethodSymbolEntry ()
+		{
+			if (Module.DeclaringAssembly.SymbolWriter == null)
+				return null;
+
+			var source_file = GetCompilationSourceFile ();
+			if (source_file == null)
+				return null;
+
+			return new SourceMethodBuilder (source_file.SymbolUnitEntry);
+		}
 
 		//
 		// Creates a proxy base method call inside this container for hoisted base member calls
@@ -2245,6 +2267,13 @@ namespace Mono.CSharp
 		public void Mark_HasGetHashCode ()
 		{
 			cached_method |= CachedMethods.GetHashCode;
+		}
+
+		public override void WriteDebugSymbol (MonoSymbolFile file)
+		{
+			foreach (var m in members) {
+				m.WriteDebugSymbol (file);
+			}
 		}
 
 		/// <summary>

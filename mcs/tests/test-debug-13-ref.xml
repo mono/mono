@@ -15,16 +15,12 @@
     <method token="0x6000002">
       <sequencepoints />
       <locals />
-      <scopes>
-        <entry index="0" start="0x0" end="0x6" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000003">
       <sequencepoints />
       <locals />
-      <scopes>
-        <entry index="0" start="0x0" end="0x6" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000004">
       <sequencepoints />

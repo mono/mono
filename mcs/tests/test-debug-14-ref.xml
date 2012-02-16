@@ -54,9 +54,7 @@
       <locals>
         <entry name="a" il_index="1" scope_ref="0" />
       </locals>
-      <scopes>
-        <entry index="0" start="0x0" end="0xd" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000006">
       <sequencepoints />

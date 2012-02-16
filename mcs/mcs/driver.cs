@@ -393,7 +393,6 @@ namespace Mono.CSharp
 			if (!full_flag)
 				return;
 
-			SymbolWriter.Reset ();
 			Linq.QueryBlock.TransparentParameter.Reset ();
 			TypeInfo.Reset ();
 		}

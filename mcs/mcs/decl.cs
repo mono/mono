@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Mono.CompilerServices.SymbolWriter;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -836,6 +837,10 @@ namespace Mono.CSharp {
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
+		}
+
+		public virtual void WriteDebugSymbol (MonoSymbolFile file)
+		{
 		}
 
 		#region IMemberContext Members
