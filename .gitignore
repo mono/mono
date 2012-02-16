@@ -37,3 +37,5 @@
 /lt~obsolete.m4
 /ltversion.m4
 *~
+*.suo
+*.csproj.user
