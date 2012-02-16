@@ -306,11 +306,7 @@ namespace System.Net
 				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
 			}
 			set {
-				if (value == null) {
-					webHeaders.RemoveInternal ("Date");
-				} else {
-					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
-				}
+				webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
 #endif

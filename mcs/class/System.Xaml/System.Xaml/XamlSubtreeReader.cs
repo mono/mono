@@ -61,11 +61,6 @@ namespace System.Xaml
 			get { return started ? source.Value : null; }
 		}
 		
-		public void Close ()
-		{
-			Dispose (true);
-		}
-		
 		protected override void Dispose (bool disposing)
 		{
 			while (nest > 0)

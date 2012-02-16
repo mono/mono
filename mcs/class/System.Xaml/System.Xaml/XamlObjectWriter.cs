@@ -88,7 +88,7 @@ namespace System.Xaml
 
 		XamlObjectWriterInternal intl;
 
-		int line, column;
+		//int line, column;
 		bool lineinfo_was_given;
 
 		internal XamlObjectWriterSettings Settings {
@@ -113,8 +113,8 @@ namespace System.Xaml
 
 		public void SetLineInfo (int lineNumber, int linePosition)
 		{
-			line = lineNumber;
-			column = linePosition;
+//			line = lineNumber;
+//			column = linePosition;
 			lineinfo_was_given = true;
 		}
 		

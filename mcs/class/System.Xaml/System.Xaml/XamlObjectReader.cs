@@ -86,7 +86,7 @@ namespace System.Xaml
 			this.root = instance;
 
 			sctx = schemaContext;
-			this.settings = settings;
+//			this.settings = settings;
 
 			// check type validity. Note that some checks also needs done at Read() phase. (it is likely FIXME:)
 			if (instance != null) {
@@ -105,7 +105,7 @@ namespace System.Xaml
 		bool is_eof;
 		object root, root_raw;
 		XamlSchemaContext sctx;
-		XamlObjectReaderSettings settings;
+//		XamlObjectReaderSettings settings;
 		IValueSerializerContext value_serializer_context;
 
 		IEnumerator<NamespaceDeclaration> ns_iterator;

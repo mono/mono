@@ -1635,7 +1635,6 @@ namespace System.Net.Sockets {
 #endif
 					return false;
 			}
-			return true; // do not use remote endpoint
 #else
 			return false; // < NET_4_0 -> use remote endpoint
 #endif

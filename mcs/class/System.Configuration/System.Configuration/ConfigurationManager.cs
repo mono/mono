@@ -43,7 +43,7 @@ namespace System.Configuration {
 
 	public static class ConfigurationManager
 	{
-		static bool systemWebInUse;
+//		static bool systemWebInUse;
 		static InternalConfigurationFactory configFactory = new InternalConfigurationFactory ();
 		static IInternalConfigSystem configSystem = new ClientConfigurationSystem ();
 		static object lockobj = new object ();
@@ -195,12 +195,13 @@ namespace System.Configuration {
 				// KLUDGE!! We need that when an assembly loaded inside an ASP.NET
 				// domain does OpenExeConfiguration ("") - we must return the path
 				// to web.config in that instance.
+				/*
 				string t = newSystem.GetType ().ToString ();
 				if (String.Compare (t, "System.Web.Configuration.HttpConfigurationSystem", StringComparison.OrdinalIgnoreCase) == 0)
 					systemWebInUse = true;
 				else
 					systemWebInUse = false;
-
+				*/
 				IInternalConfigSystem old = configSystem;
 				configSystem = newSystem;
 				return old;

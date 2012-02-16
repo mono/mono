@@ -10,7 +10,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Data.dll \
 	        /r:System.Runtime.Serialization.dll \
 	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
-		/d:MONO_STRICT /d:MONO_DEPLOY
+		/d:MONO_STRICT /d:MONO_DEPLOY -warn:1
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # This is a .NET 3.5 only assembly, but built during the 2.0 build
