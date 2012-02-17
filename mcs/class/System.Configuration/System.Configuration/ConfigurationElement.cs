@@ -47,6 +47,7 @@ namespace System.Configuration
 		ElementInformation elementInfo;
 		ConfigurationElementProperty elementProperty;
 		Configuration _configuration;
+		bool elementPresent;
 
 		internal Configuration Configuration {
 			get { return _configuration; }
@@ -297,6 +298,8 @@ namespace System.Configuration
 			Hashtable readProps = new Hashtable ();
 			
 			reader.MoveToContent ();
+			elementPresent = true;
+			
 			while (reader.MoveToNextAttribute ())
 			{
 				PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
@@ -456,6 +459,8 @@ namespace System.Configuration
 
 		protected internal virtual void Reset (ConfigurationElement parentElement)
 		{
+			elementPresent = false;
+			
 			if (parentElement != null)
 				ElementInformation.Reset (parentElement.ElementInformation);
 			else
@@ -568,6 +573,11 @@ namespace System.Configuration
 		{
 			PropertyInformation info = ElementInformation.Properties [propName];
 			return info != null && info.ValueOrigin == PropertyValueOrigin.SetHere;
+		}
+
+		internal bool IsElementPresent
+		{
+			get {	return elementPresent;	}
 		}
 
 		void ValidateValue (ConfigurationProperty p, string value)

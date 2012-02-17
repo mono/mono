@@ -62,9 +62,9 @@ namespace System.Configuration
 			get { return propertyInfo != null ? propertyInfo.IsLocked : false; }
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Support multiple levels of inheritance")]
 		public bool IsPresent {
-			get { return propertyInfo != null; }
+			get { return owner.IsElementPresent; }
 		}
 		
 		public int LineNumber {

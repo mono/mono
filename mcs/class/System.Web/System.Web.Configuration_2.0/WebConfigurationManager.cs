@@ -45,6 +45,7 @@ using System.Configuration.Internal;
 using _Configuration = System.Configuration.Configuration;
 using System.Web.Util;
 using System.Threading;
+using System.Web.Hosting;
 
 namespace System.Web.Configuration {
 
@@ -574,6 +575,12 @@ namespace System.Web.Configuration {
 			
 			if (String.IsNullOrEmpty (path))
 				return path;
+				
+			if (HostingEnvironment.VirtualPathProvider != null) {
+				if (HostingEnvironment.VirtualPathProvider.DirectoryExists (path))
+					path = VirtualPathUtility.AppendTrailingSlash (path);
+			}
+				
 			
 			string rootPath = HttpRuntime.AppDomainAppVirtualPath;
 			ConfigPath curPath;
