@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -36,7 +35,7 @@ namespace System.Globalization
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public class RegionInfo
+	public partial class RegionInfo
 	{
 		static RegionInfo currentRegion;
 
@@ -48,9 +47,14 @@ namespace System.Globalization
 					// make sure to fill BootstrapCultureID.
 					CultureInfo ci = CultureInfo.CurrentCulture;
 					// If current culture is invariant then region is not available.
-					if (ci == null || CultureInfo.BootstrapCultureID == 0x7F)
-						return null;
-					currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
+					if (ci != null && CultureInfo.BootstrapCultureID != 0x7F)
+						currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
+					else
+#if MONOTOUCH
+						currentRegion = CreateFromNSLocale ();
+#else
+						currentRegion = null;
+#endif
 				}
 				return currentRegion;
 			}
