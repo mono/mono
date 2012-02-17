@@ -1,4 +1,4 @@
-// CS0103: The name `Test' does not exist in the current context
+// CS0118: `A.Test' is a `type' but a `variable' was expected
 // Line: 10
 
 class A
