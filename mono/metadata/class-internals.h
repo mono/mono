@@ -1120,7 +1120,7 @@ gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data) MONO_INTERNAL;
 
 gboolean
-mono_class_check_packing_size (const char* className, gint32 packing_size) MONO_INTERNAL;
+mono_class_check_packing_size (MonoClass *klass, gint32 packing_size) MONO_INTERNAL;
 
 gpointer
 mono_class_get_exception_data (MonoClass *klass) MONO_INTERNAL;
