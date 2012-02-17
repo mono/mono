@@ -17,7 +17,7 @@ source common.sh
 source nacl-common.sh
 
 readonly PACKAGE_NAME=runtime${TARGET_BIT_PREFIX}-build
-readonly INSTALL_PATH=${NACL_SDK_USR}
+readonly INSTALL_PATH=${MONO_TRUNK_NACL}/naclmono-${CROSS_ID}
 
 
 CustomConfigureStep() {
