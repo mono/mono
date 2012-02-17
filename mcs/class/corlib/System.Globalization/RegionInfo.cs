@@ -55,7 +55,9 @@ namespace System.Globalization
 				return currentRegion;
 			}
 		}
-
+		
+		// the following (instance) fields must be _first_ and stay synchronized
+		// with the mono's MonoRegionInfo defined in mono/metadata/object-internals.h
 #pragma warning disable 649
 		int regionId;
 		string iso2Name;
@@ -66,7 +68,9 @@ namespace System.Globalization
 		string isoCurrencySymbol;
 		string currencyEnglishName;
 #pragma warning restore 649
-
+		
+		// new (instance) fields should be added here (and do not have to be duplicated in the runtime)
+		
 		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
 		
 		public RegionInfo (int culture)
