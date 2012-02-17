@@ -10580,12 +10580,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	mono_error_init (error);
 
 	if (tb->class_size) {
-		if ((tb->packing_size & 0xfffffff0) != 0) {
-			char *err_msg = g_strdup_printf ("Could not load struct '%s' with packing size %d >= 16", klass->name, tb->packing_size);
-			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, err_msg);
-			g_free (err_msg);
+		if (!mono_class_check_packing_size (klass, tb->packing_size))
 			return;
-		}
 		klass->packing_size = tb->packing_size;
 		real_size = klass->instance_size + tb->class_size;
 	}
