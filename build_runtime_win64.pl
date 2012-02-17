@@ -23,8 +23,8 @@ if (-e $remove)
 
 
 #have a duplicate for now...
-copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution64/bin/mono.dll");
-copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution64/bin/mono.pdb");
+copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution/bin-x64/mono.dll");
+copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution/bin-x64/mono.pdb");
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
