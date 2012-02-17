@@ -282,6 +282,12 @@ namespace System.Configuration
 				throw new ConfigurationErrorsException ("Inherited items can't be removed.");
 			
 			list.RemoveAt (index);
+			
+			if (IsAlternate) {
+				if (inheritedLimitIndex > 0)
+					inheritedLimitIndex--;
+			}
+
 			modified = true;
 		}
 
