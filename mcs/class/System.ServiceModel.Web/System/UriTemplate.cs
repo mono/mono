@@ -303,7 +303,7 @@ namespace System
 			if (tEnd < 0)
 				tEnd = template.Length;
 			if (wild)
-				tEnd = wildIdx - 1;
+				tEnd = Math.Max (wildIdx - 1, 0);
 			if (!wild && (cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match
