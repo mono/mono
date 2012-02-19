@@ -14,15 +14,191 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>
-            SQLite implentation of DbConnection.
-            </summary>
+    <summary>SQLite implentation of DbConnection.</summary>
     <remarks>
-            The <see cref="P:Mono.Data.Sqlite.SqliteConnection.ConnectionString">ConnectionString</see> property of the SqliteConnection class can contain the following parameter(s), delimited with a semi-colon:
-            <list type="table"><listheader><term>Parameter</term><term>Values</term><term>Required</term><term>Default</term></listheader><item><description>Data Source</description><description>{filename}</description><description>Y</description><description /></item><item><description>Version</description><description>3</description><description>N</description><description>3</description></item><item><description>UseUTF16Encoding</description><description><b>True</b><br /><b>False</b></description><description>N</description><description>False</description></item><item><description>DateTimeFormat</description><description><b>Ticks</b> - Use DateTime.Ticks<br /><b>ISO8601</b> - Use ISO8601 DateTime format</description><description>N</description><description>ISO8601</description></item><item><description>BinaryGUID</description><description><b>True</b> - Store GUID columns in binary form<br /><b>False</b> - Store GUID columns as text</description><description>N</description><description>True</description></item><item><description>Cache Size</description><description>{size in bytes}</description><description>N</description><description>2000</description></item><item><description>Synchronous</description><description><b>Normal</b> - Normal file flushing behavior<br /><b>Full</b> - Full flushing after all writes<br /><b>Off</b> - Underlying OS flushes I/O's</description><description>N</description><description>Normal</description></item><item><description>Page Size</description><description>{size in bytes}</description><description>N</description><description>1024</description></item><item><description>Password</description><description>{password}</description><description>N</description><description /></item><item><description>Enlist</description><description><b>Y</b> - Automatically enlist in distributed transactions<br /><b>N</b> - No automatic enlistment</description><description>N</description><description>Y</description></item><item><description>Pooling</description><description><b>True</b> - Use connection pooling<br /><b>False</b> - Do not use connection pooling</description><description>N</description><description>False</description></item><item><description>FailIfMissing</description><description><b>True</b> - Don't create the database if it does not exist, throw an error instead<br /><b>False</b> - Automatically create the database if it does not exist</description><description>N</description><description>False</description></item><item><description>Max Page Count</description><description>{size in pages} - Limits the maximum number of pages (limits the size) of the database</description><description>N</description><description>0</description></item><item><description>Legacy Format</description><description><b>True</b> - Use the more compatible legacy 3.x database format<br /><b>False</b> - Use the newer 3.3x database format which compresses numbers more effectively</description><description>N</description><description>False</description></item><item><description>Default Timeout</description><description>{time in seconds}<br />The default command timeout</description><description>N</description><description>30</description></item><item><description>Journal Mode</description><description><b>Delete</b> - Delete the journal file after a commit<br /><b>Persist</b> - Zero out and leave the journal file on disk after a commit<br /><b>Off</b> - Disable the rollback journal entirely</description><description>N</description><description>Delete</description></item><item><description>Read Only</description><description><b>True</b> - Open the database for read only access<br /><b>False</b> - Open the database for normal read/write access</description><description>N</description><description>False</description></item><item><description>Max Pool Size</description><description>The maximum number of connections for the given connection string that can be in the connection pool</description><description>N</description><description>100</description></item><item><description>Default IsolationLevel</description><description>The default transaciton isolation level</description><description>N</description><description>Serializable</description></item></list></remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
+      The <see cref="P:Mono.Data.Sqlite.SqliteConnection.ConnectionString">ConnectionString</see> property of the SqliteConnection class can contain the following parameter(s), delimited with a semi-colon:
+      <list type="table">
+	<listheader>
+	  <term>Parameter</term>
+	  <term>Values</term>
+	  <term>Required</term>
+	  <term>Default</term>
+	</listheader>
+	<item>
+	  <description>Data Source</description>
+	  <description>{filename}</description>
+	  <description>Y</description>
+	  <description />
+	</item>
+	<item>
+	  <description>Version</description>
+	  <description>3</description>
+	  <description>N</description>
+	  <description>3</description>
+	</item>
+	<item>
+	  <description>UseUTF16Encoding</description>
+	  <description>
+	    <b>True</b>
+	    <br />
+	    <b>False</b>
+	  </description>
+	  <description>N</description>
+	  <description>False</description>
+	</item>
+	<item>
+	  <description>DateTimeFormat</description>
+	  <description>
+	    <b>Ticks</b> - Use DateTime.Ticks<br />
+	    <b>ISO8601</b> - Use ISO8601 DateTime format</description>
+	    <description>N</description>
+	    <description>ISO8601</description>
+	  </item>
+	  <item>
+	    <description>BinaryGUID</description>
+	    <description>
+	      <b>True</b> - Store GUID columns in binary form<br />
+	      <b>False</b> - Store GUID columns as text
+	    </description>
+	    <description>N</description>
+	    <description>True</description>
+	  </item>
+	  <item>
+	    <description>Cache Size</description>
+	    <description>{size in bytes}</description>
+	    <description>N</description>
+	    <description>2000</description>
+	  </item>
+	  <item>
+	    <description>Synchronous</description>
+	    <description>
+	      <b>Normal</b> - Normal file flushing behavior<br />
+	      <b>Full</b> - Full flushing after all writes<br />
+	      <b>Off</b> - Underlying OS flushes I/O's
+	    </description>
+	    <description>N</description>
+	    <description>Normal</description>
+	  </item>
+	  <item>
+	    <description>Page Size</description>
+	    <description>{size in bytes}</description>
+	    <description>N</description>
+	    <description>1024</description>
+	  </item>
+	  <item>
+	    <description>Password</description>
+	    <description>{password}</description>
+	    <description>N</description>
+	    <description />
+	  </item>
+	  <item>
+	    <description>Enlist</description>
+	    <description>
+	      <b>Y</b> - Automatically enlist in distributed transactions<br />
+	      <b>N</b> - No automatic enlistment
+	    </description>
+	    <description>N</description>
+	    <description>Y</description>
+	  </item>
+	  <item>
+	    <description>Pooling</description>
+	    <description>
+	      <b>True</b> - Use connection pooling<br />
+	      <b>False</b> - Do not use connection pooling
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FailIfMissing</description>
+	    <description>
+	      <b>True</b> - Don't create the database if it does not exist, throw an error instead<br />
+	      <b>False</b> - Automatically create the database if it does not exist
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Max Page Count</description>
+	    <description>{size in pages} - Limits the maximum number of pages (limits the size) of the database</description>
+	    <description>N</description>
+	    <description>0</description>
+	  </item>
+	  <item>
+	    <description>Legacy Format</description>
+	    <description>
+	      <b>True</b> - Use the more compatible legacy 3.x database format<br />
+	      <b>False</b> - Use the newer 3.3x database format which compresses numbers more effectively
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Default Timeout</description>
+	    <description>{time in seconds}<br />The default command timeout</description>
+	    <description>N</description>
+	    <description>30</description>
+	  </item>
+	  <item>
+	    <description>Journal Mode</description>
+	    <description>
+	      <b>Delete</b> - Delete the journal file after a commit<br />
+	      <b>Persist</b> - Zero out and leave the journal file on disk after a commit<br />
+	      <b>Off</b> - Disable the rollback journal entirely
+	    </description>
+	    <description>N</description>
+	    <description>Delete</description>
+	  </item>
+	  <item>
+	    <description>Read Only</description>
+	    <description>
+	      <b>True</b> - Open the database for read only access<br />
+	      <b>False</b> - Open the database for normal read/write access
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Max Pool Size</description>
+	    <description>The maximum number of connections for the given connection string that can be in the connection pool</description>
+	    <description>N</description>
+	    <description>100</description>
+	  </item>
+	  <item>
+	    <description>Default IsolationLevel</description>
+	    <description>The default transaciton isolation level</description>
+	    <description>N</description>
+	    <description>Serializable</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionComplete</description>
+	    <description>iOS only - Sets the SQLite file protection level to Complete, requires the "DataProtectionClass" entitlement in your application.   The data will only be available when the device is unlocked, and the safety is only as gooas the device passcode.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionCompleteUnlessOpen</description>
+	    <description>iOS only - Sets the SQLite file protection level to CompleteUNlessOpen, requries the "DataProtectionClass" entitlement in your application.   You can access the data even if the device is locked and you can also create these files if the device is unlocked.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionCompleteUntilFirstUserAuthentication</description>
+	    <description>iOS only - Sets the SQLite file protection level to CompleteUnlessOpen, requries the "DataProtectionClass" entitlement in your application.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectioNone</description>
+	    <description>iOS only - forces the file to not have any file protection.   Useful if the containing directory has been flagged to be protected, this overrides the behavior.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	</list>
+      </remarks>
+    </Docs>
+    <Members>
+      <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SqliteConnection ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
