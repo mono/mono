@@ -333,8 +333,6 @@ public class DebuggerTests
 		// Breakpoint on an open generic method of a closed generic class (#3422)
 		var frame = e.Thread.GetFrames ()[0];
 		var ginst = frame.GetValue (frame.Method.GetLocal ("gc"));
-		Console.WriteLine ("MOO: " + ginst);
-
 		var m2 = (ginst as ObjectMirror).Type.GetMethod ("bp");
 		vm.SetBreakpoint (m2, 0);
 
