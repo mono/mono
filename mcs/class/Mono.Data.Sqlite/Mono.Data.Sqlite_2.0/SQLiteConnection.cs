@@ -872,6 +872,15 @@ namespace Mono.Data.Sqlite
           if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
             flags |= SQLiteOpenFlagsEnum.Create;
         }
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionComplete", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionComplete;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionCompleteUnlessOpen", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionCompleteUnlessOpen;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionCompleteUntilFirstUserAuthentication", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionCompleteUntilFirstUserAuthentication;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionNone", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionNone;
+	
 				
         _sql.Open(fileName, flags, maxPoolSize, usePooling);
 
