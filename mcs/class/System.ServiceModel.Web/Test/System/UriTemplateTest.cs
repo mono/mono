@@ -426,6 +426,32 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void MatchWildcard2 ()
+		{
+			var t = new UriTemplate ("*");
+			var m = t.Match (new Uri ("http://localhost"), new Uri ("http://localhost/hoge/ppp"));
+			Assert.IsNotNull (m, "#0");
+			Assert.IsEmpty (m.QueryParameters, "#1.0");
+			Assert.AreEqual ("hoge", m.WildcardPathSegments [0], "#2");
+			Assert.AreEqual ("ppp", m.WildcardPathSegments [1], "#3");
+		}
+
+		[Test]
+		public void MatchWildcard3 ()
+		{
+			var t = new UriTemplate ("*?p1={foo}");
+			var m = t.Match (new Uri ("http://localhost"), new Uri ("http://localhost/hoge/ppp/qqq?p1=v1"));
+			Assert.IsNotNull (m, "#0");
+			Assert.IsNotNull (m.QueryParameters, "#1.0");
+			Assert.AreEqual ("v1", m.QueryParameters ["p1"], "#1");
+			Assert.IsNotNull (m.WildcardPathSegments, "#2.0");
+			Assert.AreEqual (3, m.WildcardPathSegments.Count, "#2");
+			Assert.AreEqual ("hoge", m.WildcardPathSegments [0], "#3");
+			Assert.AreEqual ("ppp", m.WildcardPathSegments [1], "#4");
+			Assert.AreEqual ("qqq", m.WildcardPathSegments [2], "#5");
+		}
+
+		[Test]
 		public void IgnoreTrailingSlash ()
 		{
 			var t = new UriTemplate ("/{foo}/{bar}", true);
