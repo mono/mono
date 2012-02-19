@@ -10,7 +10,9 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            This base class provides datatype conversion services for the SQLite provider.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -29,11 +31,25 @@
         <Parameter Name="separator" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="separator">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="source">Source string to split apart</param>
+        <param name="separator">Separator character</param>
+        <summary>
+            Smart method of splitting a string.  Skips quoted elements, removes the quotes.
+            </summary>
+        <returns>A string array of the split up elements</returns>
+        <remarks>
+            This split function works somewhat like the String.Split() function in that it breaks apart a string into
+            pieces and returns the pieces as an array.  The primary differences are:
+            <list type="bullet"><item><description>Only one character can be provided as a separator character</description></item><item><description>Quoted text inside the string is skipped over when searching for the separator, and the quotes are removed.</description></item></list>
+            Thus, if splitting the following string looking for a comma:<br />
+            One,Two, "Three, Four", Five<br /><br />
+            The resulting array would contain<br />
+            [0] One<br />
+            [1] Two<br />
+            [2] Three, Four<br />
+            [3] Five<br /><br />
+            Note that the leading and trailing spaces were removed from each item during the split.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToBoolean">
@@ -50,9 +66,11 @@
         <Parameter Name="source" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="source">A string or number representing true or false</param>
+        <summary>
+            Convert a value to true or false.
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -70,10 +88,15 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="source">A string representing true or false</param>
+        <summary>
+            Convert a string to true or false.
+            </summary>
+        <returns />
+        <remarks>
+            "yes", "no", "y", "n", "0", "1", "on", "off" as well as Boolean.FalseString and Boolean.TrueString will all be
+            converted to a proper boolean value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToDateTime">
@@ -90,9 +113,11 @@
         <Parameter Name="julianDay" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="julianDay">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="julianDay">The value to convert</param>
+        <summary>
+            Converts a julianday value into a DateTime
+            </summary>
+        <returns>A .NET DateTime</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -110,10 +135,22 @@
         <Parameter Name="dateText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dateText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="dateText">The string containing either a Tick value, a JulianDay double, or an ISO8601-format string</param>
+        <summary>
+            Converts a string into a DateTime, using the current DateTimeFormat specified for the connection when it was opened.
+            </summary>
+        <returns>A DateTime value</returns>
+        <remarks>
+            Acceptable ISO8601 DateTime formats are:
+            yyyy-MM-dd HH:mm:ss
+            yyyyMMddHHmmss
+            yyyyMMddTHHmmssfffffff
+            yyyy-MM-dd
+            yy-MM-dd
+            yyyyMMdd
+            HH:mm:ss
+            THHmmss
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToJulianDay">
@@ -130,9 +167,11 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="value">The DateTime to convert</param>
+        <summary>
+            Converts a DateTime struct to a JulianDay double
+            </summary>
+        <returns>The JulianDay value the Datetime represents</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -150,9 +189,11 @@
         <Parameter Name="dateValue" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="dateValue">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="dateValue">The DateTime value to convert</param>
+        <summary>
+            Converts a DateTime to a string value, using the current DateTimeFormat specified for the connection when it was opened.
+            </summary>
+        <returns>Either a string consisting of the tick count for DateTimeFormat.Ticks, a JulianDay double, or a date/time in ISO8601 format.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -171,10 +212,12 @@
         <Parameter Name="nativestringlen" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="nativestring">To be added.</param>
-        <param name="nativestringlen">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
+        <param name="nativestringlen">The number of bytes to decode</param>
+        <summary>
+            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
+            </summary>
+        <returns>A string containing the translated character(s)</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -192,10 +235,15 @@
         <Parameter Name="dateTimeValue" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="dateTimeValue">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="dateTimeValue">The DateTime to convert.</param>
+        <summary>
+            Convert a DateTime to a UTF-8 encoded, zero-terminated byte array.
+            </summary>
+        <returns>The UTF-8 encoded string, including a 0 terminating byte at the end of the array.</returns>
+        <remarks>
+            This function is a convenience function, which first calls ToString() on the DateTime, and then calls ToUTF8() with the
+            string result.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToUTF8">
@@ -212,9 +260,11 @@
         <Parameter Name="sourceText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="sourceText">The string to convert to UTF-8</param>
+        <summary>
+            Converts a string to a UTF-8 encoded byte array sized to include a null-terminating character.
+            </summary>
+        <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -233,10 +283,12 @@
         <Parameter Name="nativestringlen" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="nativestring">To be added.</param>
-        <param name="nativestringlen">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
+        <param name="nativestringlen">The number of bytes to decode</param>
+        <summary>
+            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
+            </summary>
+        <returns>A string containing the translated character(s)</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

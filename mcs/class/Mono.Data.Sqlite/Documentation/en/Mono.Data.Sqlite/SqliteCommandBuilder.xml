@@ -10,7 +10,9 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbCommandBuilder.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -23,7 +25,9 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Default constructor
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -38,8 +42,11 @@
         <Parameter Name="adp" Type="Mono.Data.Sqlite.SqliteDataAdapter" />
       </Parameters>
       <Docs>
-        <param name="adp">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="adp">
+        </param>
+        <summary>
+            Initializes the command builder and associates it with the specified data adapter.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -60,11 +67,13 @@
         <Parameter Name="whereClause" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="parameter">To be added.</param>
-        <param name="row">To be added.</param>
-        <param name="statementType">To be added.</param>
-        <param name="whereClause">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameter">The parameter to use in applying custom behaviors to a row</param>
+        <param name="row">The row to apply the parameter to</param>
+        <param name="statementType">The type of statement</param>
+        <param name="whereClause">Whether the application of the parameter is part of a WHERE clause</param>
+        <summary>
+            Minimal amount of parameter processing.  Primarily sets the DbType for the parameter equal to the provider type in the schema
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -84,7 +93,9 @@
         <ReturnType>System.Data.Common.CatalogLocation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Overridden to hide its property from the designer
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -105,7 +116,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Overridden to hide its property from the designer
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -121,7 +134,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteDataAdapter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the DataAdapter for this CommandBuilder
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -138,8 +153,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Returns the automatically-generated SQLite command to delete rows from the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -157,9 +174,12 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useColumnsForParameterNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="useColumnsForParameterNames">
+        </param>
+        <summary>
+            Returns the automatically-generated SQLite command to delete rows from the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -175,8 +195,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Returns the automatically-generated SQLite command to insert rows into the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -194,9 +216,12 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useColumnsForParameterNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="useColumnsForParameterNames">
+        </param>
+        <summary>
+            Returns the automatically-generated SQLite command to insert rows into the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -214,9 +239,11 @@
         <Parameter Name="parameterOrdinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterOrdinal">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterOrdinal">The i of the parameter</param>
+        <summary>
+            Returns a named parameter for the given ordinal
+            </summary>
+        <returns>Error</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -234,9 +261,11 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The name of the parameter</param>
+        <summary>
+            Returns a valid named parameter
+            </summary>
+        <returns>Error</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -254,9 +283,11 @@
         <Parameter Name="parameterOrdinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterOrdinal">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterOrdinal">The index of the parameter to provide a placeholder for</param>
+        <summary>
+            Returns a placeholder character for the specified parameter i.
+            </summary>
+        <returns>Returns a named parameter</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -274,9 +305,12 @@
         <Parameter Name="sourceCommand" Type="System.Data.Common.DbCommand" />
       </Parameters>
       <Docs>
-        <param name="sourceCommand">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="sourceCommand">
+        </param>
+        <summary>
+            Override helper, which can help the base command builder choose the right keys for the given query
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -292,8 +326,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Returns the automatically-generated SQLite command to update rows in the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -311,9 +347,12 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useColumnsForParameterNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="useColumnsForParameterNames">
+        </param>
+        <summary>
+            Returns the automatically-generated SQLite command to update rows in the database
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -331,9 +370,11 @@
         <Parameter Name="unquotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="unquotedIdentifier">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="unquotedIdentifier">The identifier to quote</param>
+        <summary>
+            Places brackets around an identifier
+            </summary>
+        <returns>The bracketed identifier</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -356,7 +397,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Overridden to hide its property from the designer
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -377,7 +420,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Overridden to hide its property from the designer
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -398,7 +443,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Overridden to hide its property from the designer
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -417,8 +464,11 @@
         <Parameter Name="adapter" Type="System.Data.Common.DbDataAdapter" />
       </Parameters>
       <Docs>
-        <param name="adapter">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="adapter">A data adapter to receive events on.</param>
+        <summary>
+            Sets the handler for receiving row updating events.  Used by the DbCommandBuilder to autogenerate SQL
+            statements that may not have previously been generated.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -436,9 +486,11 @@
         <Parameter Name="quotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="quotedIdentifier">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="quotedIdentifier">The quoted (bracketed) identifier</param>
+        <summary>
+            Removes brackets around an identifier
+            </summary>
+        <returns>The undecorated identifier</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

@@ -9,7 +9,10 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            Whenever an update event is triggered on a connection, this enum will indicate
+            exactly what type of operation is being performed.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -24,7 +27,9 @@
         <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A row is being deleted from the given database and table
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -38,7 +43,9 @@
         <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A row is being inserted into the table.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -52,7 +59,9 @@
         <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A row is being updated in the table.
+            </summary>
       </Docs>
     </Member>
   </Members>

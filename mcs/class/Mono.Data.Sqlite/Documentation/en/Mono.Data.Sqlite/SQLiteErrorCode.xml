@@ -9,7 +9,9 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite error codes
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -24,7 +26,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Callback routine requested an abort
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Auth">
@@ -38,7 +42,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Authorization denied
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Busy">
@@ -52,7 +58,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The database file is locked
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="CantOpen">
@@ -66,7 +74,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Unable to open the database file
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Constraint">
@@ -80,7 +90,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Abort due to constraint violation
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Corrupt">
@@ -94,7 +106,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The database disk image is malformed
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Done">
@@ -108,7 +122,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            sqlite3_step() has finished executing
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -122,7 +138,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Database is empty
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Error">
@@ -136,7 +154,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            SQL error or missing database
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Format">
@@ -150,7 +170,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Auxiliary database format error
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Full">
@@ -164,7 +186,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Insertion failed because database is full
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Internal">
@@ -178,7 +202,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Internal logic error in SQLite
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Interrupt">
@@ -192,7 +218,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Operation terminated by sqlite3_interrupt()
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="IOErr">
@@ -206,7 +234,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Some kind of disk I/O error occurred
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Locked">
@@ -220,7 +250,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A table in the database is locked
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Mismatch">
@@ -234,7 +266,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Data type mismatch
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Misuse">
@@ -248,7 +282,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Library used incorrectly
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="NOLFS">
@@ -262,7 +298,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Uses OS features not supported on host
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="NoMem">
@@ -276,7 +314,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            malloc() failed
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="NotADatabase">
@@ -290,7 +330,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            File opened that is not a database file
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="NotFound">
@@ -304,7 +346,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Table or record not found
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Ok">
@@ -318,7 +362,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Success
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Perm">
@@ -332,7 +378,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Access permission denied
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Protocol">
@@ -346,7 +394,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Database lock protocol error
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Range">
@@ -360,7 +410,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            2nd parameter to sqlite3_bind out of range
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -374,7 +426,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Attempt to write a read-only database
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Row">
@@ -388,7 +442,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            sqlite3_step() has another row ready
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Schema">
@@ -402,7 +458,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The database schema changed
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="TooBig">
@@ -416,7 +474,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Too much data for one row of a table
+            </summary>
       </Docs>
     </Member>
   </Members>

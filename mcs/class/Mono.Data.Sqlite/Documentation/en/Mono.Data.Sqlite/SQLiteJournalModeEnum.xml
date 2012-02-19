@@ -9,8 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            This enum determines how SQLite treats its journal file.
+            </summary>
+    <remarks>
+            By default SQLite will create and delete the journal file when needed during a transaction.
+            However, for some computers running certain filesystem monitoring tools, the rapid
+            creation and deletion of the journal file can cause those programs to fail, or to interfere with SQLite.
+            If a program or virus scanner is interfering with SQLite's journal file, you may receive errors like "unable to open database file"
+            when starting a transaction.  If this is happening, you may want to change the default journal mode to Persist.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Delete">
@@ -24,7 +32,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteJournalModeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The default mode, this causes SQLite to create and destroy the journal file as-needed.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Off">
@@ -38,7 +48,10 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteJournalModeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            This option disables the rollback journal entirely.  Interrupted transactions or a program crash can cause database
+            corruption in this mode!
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Persist">
@@ -52,7 +65,10 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteJournalModeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            When this is set, SQLite will keep the journal file even after a transaction has completed.  It's contents will be erased,
+            and the journal re-used as often as needed.  If it is deleted, it will be recreated the next time it is needed.
+            </summary>
       </Docs>
     </Member>
   </Members>

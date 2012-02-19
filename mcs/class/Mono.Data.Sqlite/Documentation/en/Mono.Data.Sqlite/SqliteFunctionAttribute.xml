@@ -15,7 +15,10 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            A simple custom attribute to enable us to easily find user-defined functions in
+            the loaded assemblies and initialize them in SQLite as connections are made.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -28,7 +31,9 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Default constructor, initializes the internal variables for the function.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -43,7 +48,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The number of arguments this function expects.  -1 if the number of arguments is variable.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -59,7 +66,9 @@
         <ReturnType>Mono.Data.Sqlite.FunctionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The type of function this implementation will be.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -75,7 +84,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The function's name as it will be used in SQLite command text.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

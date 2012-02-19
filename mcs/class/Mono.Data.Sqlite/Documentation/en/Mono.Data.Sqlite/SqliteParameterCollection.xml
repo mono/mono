@@ -18,7 +18,9 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbParameterCollection.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -36,9 +38,11 @@
         <Parameter Name="parameter" Type="Mono.Data.Sqlite.SqliteParameter" />
       </Parameters>
       <Docs>
-        <param name="parameter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameter">The parameter to add</param>
+        <summary>
+            Adds a parameter to the collection
+            </summary>
+        <returns>A zero-based index of where the parameter is located in the array</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -61,9 +65,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="value">The parameter to add</param>
+        <summary>
+            Adds a parameter to the collection
+            </summary>
+        <returns>A zero-based index of where the parameter is located in the array</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -82,10 +88,12 @@
         <Parameter Name="parameterType" Type="System.Data.DbType" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The parameter name</param>
+        <param name="parameterType">The data type</param>
+        <summary>
+            Adds a parameter to the collection
+            </summary>
+        <returns>A SqliteParameter object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -105,11 +113,13 @@
         <Parameter Name="parameterSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The parameter name</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the value</param>
+        <summary>
+            Adds a parameter to the collection
+            </summary>
+        <returns>A SqliteParameter object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -130,12 +140,14 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The parameter name</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the value</param>
+        <param name="sourceColumn">The source column</param>
+        <summary>
+            Adds a parameter to the collection
+            </summary>
+        <returns>A SqliteParameter object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -153,8 +165,10 @@
         <Parameter Name="values" Type="Mono.Data.Sqlite.SqliteParameter[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="values">The array of parameters to add</param>
+        <summary>
+            Adds an array of parameters to the collection
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -172,8 +186,10 @@
         <Parameter Name="values" Type="System.Array" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="values">The array of parameters to add</param>
+        <summary>
+            Adds an array of parameters to the collection
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -192,10 +208,12 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">Name of the parameter, or null to indicate an unnamed parameter</param>
+        <param name="value">The initial value of the parameter</param>
+        <summary>
+            Adds a named/unnamed parameter and its value to the parameter collection.
+            </summary>
+        <returns>Returns the SqliteParameter object created during the call.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -211,7 +229,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Clears the array and resets the collection
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -229,9 +249,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="value">The SqliteParameter to check</param>
+        <summary>
+            Determines if the parameter exists in the collection
+            </summary>
+        <returns>True if the parameter is in the collection</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -249,9 +271,11 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The name of the parameter to check</param>
+        <summary>
+            Determines if the named parameter exists in the collection
+            </summary>
+        <returns>True if the parameter is in the collection</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -270,9 +294,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="array">
+        </param>
+        <param name="index">
+        </param>
+        <summary>
+            Not implemented
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -287,7 +315,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns a count of parameters in the collection
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -304,8 +334,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Retrieves an enumerator for the collection
+            </summary>
+        <returns>An enumerator for the underlying array</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -323,9 +355,11 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the parameter to retrieve</param>
+        <summary>
+            Retrieves a parameter by its index in the collection
+            </summary>
+        <returns>A DbParameter object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -343,9 +377,11 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The name of the parameter to fetch</param>
+        <summary>
+            Retrieve a parameter by name from the collection
+            </summary>
+        <returns>A DbParameter object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -363,9 +399,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="value">The parameter to find</param>
+        <summary>
+            Returns the index of a parameter
+            </summary>
+        <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -383,9 +421,11 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="parameterName">The name of the parameter to find</param>
+        <summary>
+            Returns the index of a parameter given its name
+            </summary>
+        <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -404,9 +444,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="index">The zero-based index to insert the parameter at</param>
+        <param name="value">The parameter to insert</param>
+        <summary>
+            Inserts a parameter into the array at the specified location
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -421,7 +463,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns false
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -437,7 +481,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns false
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -453,7 +499,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns true
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -472,9 +520,11 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <param name="index">The index of the parameter to get/set</param>
+        <summary>
+            Overloaded to specialize the return value of the default indexer
+            </summary>
+        <value>The specified SQLite parameter</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -492,9 +542,11 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <param name="parameterName">Name of the parameter to get/set</param>
+        <summary>
+            Overloaded to specialize the return value of the default indexer
+            </summary>
+        <value>The specified named SQLite parameter</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -512,8 +564,10 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="value">The parameter to remove</param>
+        <summary>
+            Removes a parameter from the collection
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -531,8 +585,10 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="index">The zero-based parameter index to remove</param>
+        <summary>
+            Removes a parameter from the collection given its index
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -550,8 +606,10 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter to remove</param>
+        <summary>
+            Removes a parameter from the collection given its name
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -570,9 +628,11 @@
         <Parameter Name="value" Type="System.Data.Common.DbParameter" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="index">The zero-based index of the parameter to replace</param>
+        <param name="value">The new parameter</param>
+        <summary>
+            Re-assign a parameter at the specified index
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -591,9 +651,11 @@
         <Parameter Name="value" Type="System.Data.Common.DbParameter" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter to replace</param>
+        <param name="value">The new parameter</param>
+        <summary>
+            Re-assign the named parameter to a new parameter object
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -608,7 +670,9 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns null
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

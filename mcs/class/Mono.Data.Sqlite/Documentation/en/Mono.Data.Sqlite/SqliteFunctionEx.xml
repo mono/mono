@@ -10,8 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            Extends SqliteFunction and allows an inherited class to obtain the collating sequence associated with a function call.
+            </summary>
+    <remarks>
+            User-defined functions can call the GetCollationSequence() method in this class and use it to compare strings and char arrays.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +43,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Obtains the collating sequence in effect for the given function.
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

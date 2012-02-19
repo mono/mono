@@ -21,7 +21,9 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbDataAdapter.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -34,8 +36,13 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Default constructor.
+            </summary>
         <remarks>To be added.</remarks>
+        <overloads>
+            This class is just a shell around the DbDataAdapter.  Nothing from DbDataAdapter is overridden here, just a few constructors are defined.
+            </overloads>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,8 +56,10 @@
         <Parameter Name="cmd" Type="Mono.Data.Sqlite.SqliteCommand" />
       </Parameters>
       <Docs>
-        <param name="cmd">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="cmd">The select command to associate with the adapter.</param>
+        <summary>
+            Constructs a data adapter using the specified select command.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -66,9 +75,11 @@
         <Parameter Name="connection" Type="Mono.Data.Sqlite.SqliteConnection" />
       </Parameters>
       <Docs>
-        <param name="commandText">To be added.</param>
-        <param name="connection">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="commandText">The select command text to associate with the data adapter.</param>
+        <param name="connection">The connection to associate with the select command.</param>
+        <summary>
+            Constructs a data adapter with the supplied select command text and associated with the specified connection.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -84,9 +95,11 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="commandText">To be added.</param>
-        <param name="connectionString">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="commandText">The select command text to use to construct a select command.</param>
+        <param name="connectionString">A connection string suitable for passing to a new SqliteConnection, which is associated with the select command.</param>
+        <summary>
+            Constructs a data adapter with the specified select command text, and using the specified database connection string.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -109,7 +122,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the delete command for this DataAdapter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -133,7 +148,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the insert command for this DataAdapter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -152,8 +169,10 @@
         <Parameter Name="value" Type="System.Data.Common.RowUpdatedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="value">The event's specifics</param>
+        <summary>
+            Raised by DbDataAdapter after a row is updated
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -171,8 +190,10 @@
         <Parameter Name="value" Type="System.Data.Common.RowUpdatingEventArgs" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="value">The event's specifics</param>
+        <summary>
+            Raised by the underlying DbDataAdapter when a row is being updated
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -187,7 +208,9 @@
         <ReturnType>System.EventHandler&lt;System.Data.Common.RowUpdatedEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Row updated event handler
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -202,7 +225,9 @@
         <ReturnType>System.EventHandler&lt;System.Data.Common.RowUpdatingEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Row updating event handler
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -225,7 +250,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the select command for this DataAdapter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -249,7 +276,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the update command for this DataAdapter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

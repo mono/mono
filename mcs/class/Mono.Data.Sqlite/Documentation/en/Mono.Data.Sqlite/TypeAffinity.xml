@@ -9,7 +9,10 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite has very limited types, and is inherently text-based.  The first 5 types below represent the sum of all types SQLite
+            understands.  The DateTime extension to the spec is for internal use only.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -24,7 +27,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Typically blob types are only seen when returned from a function
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
@@ -38,7 +43,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Used internally by this provider
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Double">
@@ -52,7 +59,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            All floating point numbers in SQLite default to double
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Int64">
@@ -66,7 +75,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            All integers in SQLite default to Int64
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -80,7 +91,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Used internally
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Null">
@@ -94,7 +107,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Null types can be returned from functions
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -108,7 +123,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The default data type of SQLite is text
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Uninitialized">
@@ -122,7 +139,9 @@
         <ReturnType>Mono.Data.Sqlite.TypeAffinity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Not used
+            </summary>
       </Docs>
     </Member>
   </Members>

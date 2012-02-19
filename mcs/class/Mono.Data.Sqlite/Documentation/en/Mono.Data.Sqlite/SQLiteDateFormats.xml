@@ -9,8 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            This implementation of SQLite for ADO.NET can process date/time fields in databases in only one of three formats.  Ticks, ISO8601
+            and JulianDay.
+            </summary>
+    <remarks>
+            ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
+            JulianDay is the numeric format the SQLite uses internally and is arguably the most compatible with 3rd party tools.  It is
+            not readable as text without post-processing.
+            Ticks less compatible with 3rd party tools that query the database, and renders the DateTime field unreadable as text without post-processing.
+            The preferred order of choosing a datetime format is JulianDay, ISO8601, and then Ticks.  Ticks is mainly present for legacy
+            code support.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="ISO8601">
@@ -24,7 +34,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The default format for this provider.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="JulianDay">
@@ -38,7 +50,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            JulianDay format, which is what SQLite uses internally
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Ticks">
@@ -52,7 +66,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Using ticks is not recommended and is not well supported with LINQ.
+            </summary>
       </Docs>
     </Member>
   </Members>

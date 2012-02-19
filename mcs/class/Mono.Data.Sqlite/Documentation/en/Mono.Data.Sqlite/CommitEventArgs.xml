@@ -10,7 +10,9 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            Event arguments raised when a transaction is being committed
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -25,7 +27,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Set to true to abort the transaction and trigger a rollback
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

@@ -16,9 +16,12 @@
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
   <Docs>
-    <param name="sender">To be added.</param>
-    <param name="e">To be added.</param>
-    <summary>To be added.</summary>
+    <param name="sender">The connection committing the transaction</param>
+    <param name="e">Event arguments on the transaction</param>
+    <summary>
+            Raised when a transaction is about to be committed.  To roll back a transaction, set the
+            rollbackTrans boolean value to true.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

@@ -9,7 +9,9 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            The I/O file cache flushing behavior for the connection
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -24,7 +26,9 @@
         <ReturnType>Mono.Data.Sqlite.SynchronizationModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Full file flushing after every write operation
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Normal">
@@ -38,7 +42,9 @@
         <ReturnType>Mono.Data.Sqlite.SynchronizationModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Normal file flushing at critical sections of the code
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Off">
@@ -52,7 +58,9 @@
         <ReturnType>Mono.Data.Sqlite.SynchronizationModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Use the default operating system's file flushing, SQLite does not explicitly flush the file buffers after writing
+            </summary>
       </Docs>
     </Member>
   </Members>

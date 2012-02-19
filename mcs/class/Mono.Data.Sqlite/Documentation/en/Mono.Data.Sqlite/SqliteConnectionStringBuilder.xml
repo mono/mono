@@ -15,7 +15,9 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbConnectionStringBuilder.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -28,8 +30,13 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Default constructor
+            </summary>
         <remarks>To be added.</remarks>
+        <overloads>
+            Constructs a new instance of the class
+            </overloads>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,8 +50,10 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="connectionString">The connection string to parse</param>
+        <summary>
+            Constructs a new instance of the class using the specified connection string.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -67,7 +76,10 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets whethor not to store GUID's in binary format.  The default is True
+            which saves space in the database.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -94,7 +106,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the cache size for the connection.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -121,7 +135,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the filename to open on the connection string.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -145,7 +161,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the datetime format for the connection.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -172,7 +190,9 @@
         <ReturnType>System.Data.IsolationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Sets the default isolation level for transactions on the connection.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -199,7 +219,10 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the default command timeout for newly-created commands.  This is especially useful for
+            commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -223,7 +246,10 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Determines whether or not the connection will automatically participate
+            in the current distributed transaction (if one exists)
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -247,7 +273,10 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            If set to true, will throw an exception if the database specified in the connection
+            string does not exist.  If false, the database will be created automatically.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -274,7 +303,9 @@
         <ReturnType>Mono.Data.Sqlite.SQLiteJournalModeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Determines how SQLite handles the transaction journal file.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -301,7 +332,10 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
+            database sizes.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -328,7 +362,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the maximum number of pages the database may hold
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -355,7 +391,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the page size for the connection.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -382,7 +420,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the database encryption password
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -406,7 +446,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets whether or not to use connection pooling.  The default is "False"
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -433,7 +475,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            When enabled, the database will be opened for read-only access and writing will be disabled.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -460,7 +504,9 @@
         <ReturnType>Mono.Data.Sqlite.SynchronizationModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -480,10 +526,12 @@
         <Parameter Name="value" Type="System.Object&amp;" RefType="out" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="keyword">The keyword to retrieve settings for</param>
+        <param name="value">The resulting parameter value</param>
+        <summary>
+            Helper function for retrieving values from the connectionstring
+            </summary>
+        <returns>Returns true if the value was found and returned</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -503,7 +551,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            An alternate to the data source property
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -527,7 +577,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the encoding for the connection string.  The default is "False" which indicates UTF-8 encoding.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -551,7 +603,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

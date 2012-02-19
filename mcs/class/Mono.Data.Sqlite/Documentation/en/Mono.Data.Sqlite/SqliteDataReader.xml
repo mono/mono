@@ -10,7 +10,9 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbDataReader.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -26,7 +28,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Closes the datareader, potentially closing the connection as well if CommandBehavior.CloseConnection was specified.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -41,7 +45,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Not implemented.  Returns 0
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -57,7 +63,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the number of columns in the current resultset
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -76,9 +84,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as a boolean value
+            </summary>
+        <returns>bool</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -96,9 +106,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as a single byte value
+            </summary>
+        <returns>byte</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -120,14 +132,18 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <param name="fieldOffset">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferoffset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="i">The index of the column to retrieve</param>
+        <param name="fieldOffset">The zero-based index of where to begin reading the data</param>
+        <param name="buffer">The buffer to write the bytes into</param>
+        <param name="bufferoffset">The zero-based index of where to begin writing into the array</param>
+        <param name="length">The number of bytes to retrieve</param>
+        <summary>
+            Retrieves a column as an array of bytes (blob)
+            </summary>
+        <returns>The actual number of bytes written into the array</returns>
+        <remarks>
+            To determine the number of bytes in the column, pass a null value for the buffer.  The total length will be returned.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetChar">
@@ -144,9 +160,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns the column as a single character
+            </summary>
+        <returns>char</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -168,14 +186,18 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <param name="fieldoffset">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferoffset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="i">The index of the column to retrieve</param>
+        <param name="fieldoffset">The zero-based index of where to begin reading the data</param>
+        <param name="buffer">The buffer to write the characters into</param>
+        <param name="bufferoffset">The zero-based index of where to begin writing into the array</param>
+        <param name="length">The number of bytes to retrieve</param>
+        <summary>
+            Retrieves a column as an array of chars (blob)
+            </summary>
+        <returns>The actual number of characters written into the array</returns>
+        <remarks>
+            To determine the number of characters in the column, pass a null value for the buffer.  The total length will be returned.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetDataTypeName">
@@ -192,9 +214,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the name of the back-end datatype of the column
+            </summary>
+        <returns>string</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -212,9 +236,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieve the column as a date/time value
+            </summary>
+        <returns>DateTime</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -232,9 +258,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieve the column as a decimal value
+            </summary>
+        <returns>decimal</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -252,9 +280,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns the column as a double
+            </summary>
+        <returns>double</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -270,8 +300,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Enumerator support
+            </summary>
+        <returns>Returns a DbEnumerator object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -289,9 +321,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns the .NET type of a given column
+            </summary>
+        <returns>Type</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -309,9 +343,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns a column as a float value
+            </summary>
+        <returns>float</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -329,9 +365,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns the column as a Guid
+            </summary>
+        <returns>Guid</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -349,9 +387,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns the column as a short
+            </summary>
+        <returns>Int16</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -369,9 +409,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as an int
+            </summary>
+        <returns>Int32</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -389,9 +431,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as a long
+            </summary>
+        <returns>Int64</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -409,9 +453,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the name of the column
+            </summary>
+        <returns>string</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -429,9 +475,11 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="name">The name of the column to retrieve</param>
+        <summary>
+            Retrieves the i of a column, given its name
+            </summary>
+        <returns>The int i of the column</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -447,8 +495,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Schema information in SQLite is difficult to map into .NET conventions, so a lot of work must be done
+            to gather the necessary information so it can be represented in an ADO.NET manner.
+            </summary>
+        <returns>Returns a DataTable containing the schema information for the active SELECT statement being processed.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -466,9 +517,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as a string
+            </summary>
+        <returns>string</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -486,9 +539,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Retrieves the column as an object corresponding to the underlying datatype of the column
+            </summary>
+        <returns>object</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -506,9 +561,11 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="values">The array to fill with values from the columns in the current resultset</param>
+        <summary>
+            Retreives the values of multiple columns, up to the size of the supplied array
+            </summary>
+        <returns>The number of columns retrieved</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -523,7 +580,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns True if the resultset has rows that can be fetched
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -539,7 +598,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns True if the data reader is closed
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -558,9 +619,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Returns True if the specified column is null
+            </summary>
+        <returns>True or False</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -578,9 +641,11 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <param name="i">The index of the column to retrieve</param>
+        <summary>
+            Indexer to retrieve data from a column given its i
+            </summary>
+        <value>The value contained in the column</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -598,9 +663,11 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <param name="name">The name of the column to retrieve data for</param>
+        <summary>
+            Indexer to retrieve data from a column given its name
+            </summary>
+        <value>The value contained in the column</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -616,8 +683,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Moves to the next resultset in multiple row-returning SQL command.
+            </summary>
+        <returns>True if the command was successful and a new resultset is available, False otherwise.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -633,8 +702,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Reads the next row from the resultset
+            </summary>
+        <returns>True if a new row was successfully loaded and is ready for processing</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -649,7 +720,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Retrieve the count of records affected by an update/insert command.  Only valid once the data reader is closed!
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -665,7 +738,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the number of visible fielsd in the current resultset
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

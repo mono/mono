@@ -16,9 +16,11 @@
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
   <Docs>
-    <param name="sender">To be added.</param>
-    <param name="e">To be added.</param>
-    <summary>To be added.</summary>
+    <param name="sender">The connection committing the transaction</param>
+    <param name="e">The event parameters which triggered the event</param>
+    <summary>
+            Raised when data is inserted, updated and deleted on a given connection
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

@@ -14,7 +14,9 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbParameter.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -27,7 +29,9 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Default constructor
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -42,8 +46,10 @@
         <Parameter Name="dbType" Type="System.Data.DbType" />
       </Parameters>
       <Docs>
-        <param name="dbType">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dbType">The datatype of the parameter</param>
+        <summary>
+            Constructs an unnamed parameter of the specified data type
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -58,8 +64,10 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <summary>
+            Constructs a named parameter given the specified parameter name
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -75,9 +83,11 @@
         <Parameter Name="parameterSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <summary>
+            Constructs an unnamed parameter of the specified type and size
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -93,9 +103,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="dbType">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dbType">The datatype of the parameter</param>
+        <param name="value">The initial value of the parameter</param>
+        <summary>
+            Constructs an unnamed parameter of the specified data type and sets the initial value
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -111,9 +123,11 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dbType">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dbType">The datatype of the parameter</param>
+        <param name="sourceColumn">The source column</param>
+        <summary>
+            Constructs an unnamed parameter of the specified data type and source column
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -129,9 +143,11 @@
         <Parameter Name="dbType" Type="System.Data.DbType" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <param name="dbType">The datatype of the parameter</param>
+        <summary>
+            Constructs a named parameter of the specified type
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -147,9 +163,11 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <param name="value">The initial value of the parameter</param>
+        <summary>
+            Constructs a named parameter given the specified parameter name and initial value
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -166,10 +184,12 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="sourceColumn">The source column</param>
+        <summary>
+            Constructs an unnamed parameter of the specified type, size, and source column
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -186,10 +206,12 @@
         <Parameter Name="rowVersion" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="dbType">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dbType">The data type</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <summary>
+            Constructs an unnamed parameter of the specified data type, source column and row version
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -206,10 +228,12 @@
         <Parameter Name="parameterSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <summary>
+            Constructs a named parameter of the specified type and size
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -226,10 +250,12 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <param name="dbType">The data type</param>
+        <param name="sourceColumn">The source column</param>
+        <summary>
+            Constructs a named parameter of the specified type and source column reference
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -247,11 +273,13 @@
         <Parameter Name="rowVersion" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <summary>
+            Constructs an unnamed parameter of the specified type, size, source column and row version
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -269,11 +297,13 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="sourceColumn">The source column</param>
+        <summary>
+            Constructs a named parameter of the specified type, size and source column
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -291,11 +321,13 @@
         <Parameter Name="rowVersion" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The parameter name</param>
+        <param name="dbType">The data type</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <summary>
+            Constructs a named parameter of the specified type, source column and row version
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -314,12 +346,14 @@
         <Parameter Name="rowVersion" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <summary>
+            Constructs a named parameter of the specified type, size, source column and row version
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -348,17 +382,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="direction">To be added.</param>
-        <param name="isNullable">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="direction">Only input parameters are supported in SQLite</param>
+        <param name="isNullable">Ignored</param>
+        <param name="precision">Ignored</param>
+        <param name="scale">Ignored</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <param name="value">The initial value to assign the parameter</param>
+        <summary>
+            Constructs a named parameter of the specified type, size, source column and row version
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -387,17 +423,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="parameterType">To be added.</param>
-        <param name="parameterSize">To be added.</param>
-        <param name="direction">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="rowVersion">To be added.</param>
-        <param name="sourceColumnNullMapping">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="parameterName">The name of the parameter</param>
+        <param name="parameterType">The data type</param>
+        <param name="parameterSize">The size of the parameter</param>
+        <param name="direction">Only input parameters are supported in SQLite</param>
+        <param name="precision">Ignored</param>
+        <param name="scale">Ignored</param>
+        <param name="sourceColumn">The source column</param>
+        <param name="rowVersion">The row version information</param>
+        <param name="sourceColumnNullMapping">Whether or not this parameter is for comparing NULL's</param>
+        <param name="value">The intial value to assign the parameter</param>
+        <summary>
+            Constructs a named parameter, yet another flavor
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -413,8 +451,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Clones a parameter
+            </summary>
+        <returns>A new, unassociated SqliteParameter</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -437,7 +477,9 @@
         <ReturnType>System.Data.DbType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the datatype of the parameter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -453,7 +495,9 @@
         <ReturnType>System.Data.ParameterDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Supports only input parameters
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -469,7 +513,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Whether or not the parameter can contain a null value
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -485,7 +531,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the parameter name
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -502,7 +550,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Resets the DbType of the parameter so it can be inferred from the value
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -522,7 +572,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the size of the parameter
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -538,7 +590,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets/sets the source column
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -554,7 +608,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Used by DbCommandBuilder to determine the mapping for nullable fields
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -570,7 +626,9 @@
         <ReturnType>System.Data.DataRowVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets and sets the row version
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -594,7 +652,9 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets and sets the parameter value.  If no datatype was specified, the datatype will assume the type from the value given.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>

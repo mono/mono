@@ -9,7 +9,9 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            The type of collating sequence
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -24,7 +26,9 @@
         <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The built-in BINARY collating sequence
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Custom">
@@ -38,7 +42,9 @@
         <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A custom user-defined collating sequence
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="NoCase">
@@ -52,7 +58,9 @@
         <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The built-in NOCASE collating sequence
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Reverse">
@@ -66,7 +74,9 @@
         <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The built-in REVERSE collating sequence
+            </summary>
       </Docs>
     </Member>
   </Members>

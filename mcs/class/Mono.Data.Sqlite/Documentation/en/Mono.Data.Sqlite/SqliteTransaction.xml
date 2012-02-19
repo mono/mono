@@ -10,7 +10,9 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbTransaction.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -26,7 +28,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Commits the current transaction.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -41,7 +45,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Returns the underlying connection to which this transaction applies.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -57,7 +63,9 @@
         <ReturnType>System.Data.Common.DbConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Forwards to the local Connection property
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -77,7 +85,9 @@
       </Parameters>
       <Docs>
         <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>
+            Disposes the transaction.  If it is currently active, any changes are rolled back.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -92,7 +102,9 @@
         <ReturnType>System.Data.IsolationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Gets the isolation level of the transaction.  SQLite only supports Serializable transactions.
+            </summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -109,7 +121,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Rolls back the active transaction.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

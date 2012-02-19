@@ -10,7 +10,10 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            Passed during an Update callback, these event arguments detail the type of update operation being performed
+            on the given connection.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -25,7 +28,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The name of the database being updated (usually "main" but can be any attached or temporary database)
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -40,7 +45,9 @@
         <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The type of update being performed (insert/update/delete)
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -55,7 +62,9 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The RowId affected by this update.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -70,7 +79,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The name of the table being updated
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

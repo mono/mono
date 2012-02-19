@@ -14,7 +14,9 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            SQLite implementation of DbProviderFactory.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -43,8 +45,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Returns a new SqliteCommand object.
+            </summary>
+        <returns>A SqliteCommand object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -60,8 +64,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Returns a new SqliteCommandBuilder object.
+            </summary>
+        <returns>A SqliteCommandBuilder object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -77,8 +83,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Creates a new SqliteConnection.
+            </summary>
+        <returns>A SqliteConnection object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -94,8 +102,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Creates a new SqliteConnectionStringBuilder.
+            </summary>
+        <returns>A SqliteConnectionStringBuilder object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -111,8 +121,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Creates a new SqliteDataAdapter.
+            </summary>
+        <returns>A SqliteDataAdapter object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -128,8 +140,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>
+            Creates a new SqliteParameter.
+            </summary>
+        <returns>A SqliteParameter object.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -144,7 +158,9 @@
         <ReturnType>Mono.Data.Sqlite.SqliteFactory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Static instance member which returns an instanced SqliteFactory class.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -162,9 +178,11 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="serviceType">The class or interface type to query for</param>
+        <summary>
+            Will provide a DbProviderServices object in .NET 3.5
+            </summary>
+        <returns />
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
