@@ -242,6 +242,10 @@ namespace Mono.Debugger.Soft
 		public int Size {
 			get; set;
 		}
+
+		public int Filter {
+			get; set;
+		}
 	}
 
 	class ThreadModifier : Modifier {
@@ -370,7 +374,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 15;
+		internal const int MINOR_VERSION = 16;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -2039,6 +2043,8 @@ namespace Mono.Debugger.Soft
 						w.WriteId ((mod as StepModifier).Thread);
 						w.WriteInt ((mod as StepModifier).Size);
 						w.WriteInt ((mod as StepModifier).Depth);
+						if (Version.AtLeast (2, 16))
+							w.WriteInt ((mod as StepModifier).Filter);
 					} else if (mod is ThreadModifier) {
 						w.WriteByte ((byte)ModifierKind.THREAD_ONLY);
 						w.WriteId ((mod as ThreadModifier).Thread);
