@@ -913,6 +913,8 @@ namespace System.Linq.Expressions {
 				return And (left, right, method);
 			case ExpressionType.Or:
 				return Or (left, right, method);
+			case ExpressionType.ArrayIndex:
+				return ArrayIndex (left, right);
 			}
 
 			throw new ArgumentException ("MakeBinary expect a binary node type");
