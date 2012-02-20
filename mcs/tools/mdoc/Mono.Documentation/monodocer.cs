@@ -1894,6 +1894,8 @@ class MDocUpdater : MDocCommand
 		"System.Runtime.CompilerServices.ExtensionAttribute",
 		// Used to differentiate 'object' from C#4 'dynamic'
 		"System.Runtime.CompilerServices.DynamicAttribute",
+		// Used in code contracts' object invariants (should not be accessed directly)
+		"System.Diagnostics.Contracts.ContractInvariantMethodAttribute",
 	};
 
 	private void MakeAttributes (XmlElement root, IEnumerable<string> attributes)
