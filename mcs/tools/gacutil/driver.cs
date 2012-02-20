@@ -297,7 +297,7 @@ namespace Mono.Tools {
 					       an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) + "_" +
 					       GetStringToken (an.GetPublicKeyToken ());
 			string full_path = Path.Combine (Path.Combine (gacdir, an.Name), version_token);
-			string asmb_file = Path.GetFileName (name);
+			string asmb_file = Path.GetFileName (assembly.GetName().Name) + ".dll";
 			string asmb_path = Path.Combine (full_path, asmb_file);
 			string asmb_name = assembly.GetName ().Name;
 			
