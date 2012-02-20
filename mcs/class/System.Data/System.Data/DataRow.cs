@@ -487,7 +487,7 @@ namespace System.Data {
 				CheckValue (this [col], col, false);
 		}
 
-		void CheckValue (object v, DataColumn col)
+		private void CheckValue (object v, DataColumn col)
 		{
 			CheckValue (v, col, true);
 		}
@@ -1400,6 +1400,11 @@ namespace System.Data {
 		//Copy all values of this DataRow to the row parameter.
 		internal void CopyValuesToRow (DataRow row)
 		{
+			CopyValuesToRow(row, true);
+		}
+		
+		internal void CopyValuesToRow (DataRow row, bool doROCheck)
+		{
 			if (row == null)
 				throw new ArgumentNullException("row");
 			if (row == this)
@@ -1454,19 +1459,19 @@ namespace System.Data {
 				if (targetColumn != null) {
 					if (HasVersion (DataRowVersion.Original)) {
 						object val = column[Original];
-						row.CheckValue (val, targetColumn);
+						row.CheckValue (val, targetColumn, doROCheck);
 						targetColumn [row.Original] = val;
 					}
 
 					if (HasVersion (DataRowVersion.Current) && Current != Original) {
 						object val = column[Current];
-						row.CheckValue (val, targetColumn);
+						row.CheckValue (val, targetColumn, doROCheck);
 						targetColumn [row.Current] = val;
 					}
 
 					if (HasVersion (DataRowVersion.Proposed)) {
 						object val = column[row.Proposed];
-						row.CheckValue (val, targetColumn);
+						row.CheckValue (val, targetColumn, doROCheck);
 						targetColumn [row.Proposed] = val;
 					}
 				}

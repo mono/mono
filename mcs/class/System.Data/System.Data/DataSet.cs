@@ -568,7 +568,8 @@ namespace System.Data
 			// add the current row
 			DataRow newRow = copyTable.NewNotInitializedRow ();
 			copyTable.Rows.AddInternal (newRow);
-			row.CopyValuesToRow (newRow);
+			// Don't check for ReadOnly, when cloning data to new uninitialized row.
+			row.CopyValuesToRow (newRow, false);
 			newRow.XmlRowID = row.XmlRowID;
 			addedRows.Add (row, row);
 		}
