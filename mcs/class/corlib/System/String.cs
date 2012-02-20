@@ -270,7 +270,7 @@ namespace System
 					if (sep == null || sep == String.Empty)
 						continue;
 
-					int match = IndexOf (sep, pos);
+					int match = IndexOfOrdinalUnchecked (sep, pos, Length);
 					if (match > -1 && match < matchPos) {
 						matchIndex = i;
 						matchPos = match;

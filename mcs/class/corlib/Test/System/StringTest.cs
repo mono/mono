@@ -3857,6 +3857,8 @@ public class StringTest
 		Assert.AreEqual ("123", st [0], "#01");
 		st = test.Split (null);
 		Assert.AreEqual ("123", st [0], "#02");
+
+		Assert.AreEqual (1, "encyclopædia".Split (new[] { "ae" }, StringSplitOptions.None).Length, "#03");
 	}
 
 	[Test] // Split (Char [], StringSplitOptions)
