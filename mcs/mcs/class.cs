@@ -2271,6 +2271,9 @@ namespace Mono.CSharp
 
 		public override void WriteDebugSymbol (MonoSymbolFile file)
 		{
+			if (IsPartialPart)
+				return;
+
 			foreach (var m in members) {
 				m.WriteDebugSymbol (file);
 			}
