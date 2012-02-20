@@ -4343,8 +4343,8 @@ public class StringTest
 		Assert.AreEqual (String.Empty, "".Insert (0, String.Empty), "Insert(Empty)");
 		Assert.AreEqual (String.Empty, String.Empty.Insert (0, ""), "Empty.Insert");
 
-		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0), "PadLeft(int)");
-		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0, '.'), "PadLeft(int.char)");
+		Assert.AreSame (String.Empty, String.Empty.PadLeft (0), "PadLeft(int)");
+		Assert.AreSame (String.Empty, String.Empty.PadLeft (0, '.'), "PadLeft(int.char)");
 		Assert.AreSame (String.Empty, String.Empty.PadRight (0), "PadRight(int)");
 		Assert.AreSame (String.Empty, String.Empty.PadRight (0, '.'), "PadRight(int.char)");
 
