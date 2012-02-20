@@ -299,7 +299,6 @@ public class Int32Test
 		}
 	}
 
-#if NET_2_0	
 	[Test]
 	public void TestTryParse()
 	{
@@ -357,7 +356,6 @@ public class Int32Test
 		Assert.AreEqual (-1, result);
 		Assert.AreEqual (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
 	}
-#endif
 
 	[Test]	
 	public void TestToString()

@@ -1,12 +1,13 @@
 //
 // System.Int64.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -225,6 +226,7 @@ namespace System {
 			bool AllowLeadingSign = (style & NumberStyles.AllowLeadingSign) != 0;
 			bool AllowTrailingWhite = (style & NumberStyles.AllowTrailingWhite) != 0;
 			bool AllowLeadingWhite = (style & NumberStyles.AllowLeadingWhite) != 0;
+			bool AllowExponent = (style & NumberStyles.AllowExponent) != 0;
 
 			int pos = 0;
 
@@ -299,6 +301,7 @@ namespace System {
 			bool decimalPointFound = false;
 			int digitValue;
 			char hexDigit;
+			int exponent = 0;
 				
 			// Number stuff
 			do {
@@ -376,6 +379,10 @@ namespace System {
 				return false;
 			}
 
+			if (AllowExponent)
+				if (int.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
+					return false;
+
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
 				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
@@ -436,6 +443,19 @@ namespace System {
 						exc = e;
 					return false;
 				}
+			}
+
+			// result *= 10^exponent
+			if (exponent > 0) {
+				// Reduce the risk of throwing an overflow exc
+				double res = checked (Math.Pow (10, exponent) * number);
+				if (res < Int32.MinValue || res > Int32.MaxValue) {
+					if (!tryParse)
+						exc = new OverflowException ("Value too large or too small.");
+					return false;
+				}
+
+				number = (long) res;
 			}
 
 			result = number;
