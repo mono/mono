@@ -33,7 +33,7 @@
     <method token="0x6000004">
       <sequencepoints>
         <entry il="0x0" row="24" file_ref="1" hidden="false" />
-        <entry il="0x8" row="26" file_ref="1" hidden="false" />
+        <entry il="0x8" row="27" file_ref="1" hidden="false" />
         <entry il="0xe" row="28" file_ref="1" hidden="false" />
         <entry il="0xf" row="29" file_ref="1" hidden="false" />
       </sequencepoints>
@@ -42,7 +42,7 @@
     </method>
     <method token="0x6000005">
       <sequencepoints>
-        <entry il="0x0" row="34" file_ref="1" hidden="false" />
+        <entry il="0x0" row="35" file_ref="1" hidden="false" />
         <entry il="0x7" row="36" file_ref="1" hidden="false" />
         <entry il="0x8" row="37" file_ref="1" hidden="false" />
       </sequencepoints>

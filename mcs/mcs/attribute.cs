@@ -1647,6 +1647,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute DebuggerHidden;
 		public readonly PredefinedAttribute UnsafeValueType;
 		public readonly PredefinedAttribute UnmanagedFunctionPointer;
+		public readonly PredefinedDebuggerBrowsableAttribute DebuggerBrowsable;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1701,6 +1702,7 @@ namespace Mono.CSharp {
 			DebuggerHidden = new PredefinedAttribute (module, "System.Diagnostics", "DebuggerHiddenAttribute");
 			UnsafeValueType = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "UnsafeValueTypeAttribute");
 			UnmanagedFunctionPointer = new PredefinedAttribute (module, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
+			DebuggerBrowsable = new PredefinedDebuggerBrowsableAttribute (module, "System.Diagnostics", "DebuggerBrowsableAttribute");
 
 			Extension = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "ExtensionAttribute");
 
@@ -1784,20 +1786,10 @@ namespace Mono.CSharp {
 				builder.SetCustomAttribute (GetCtorMetaInfo (), AttributeEncoder.Empty);
 		}
 
-		public void EmitAttribute (FieldBuilder builder, AttributeEncoder argsEncoded)
-		{
-			builder.SetCustomAttribute (GetCtorMetaInfo (), argsEncoded.ToArray ());
-		}
-
 		public void EmitAttribute (TypeBuilder builder)
 		{
 			if (ResolveBuilder ())
 				builder.SetCustomAttribute (GetCtorMetaInfo (), AttributeEncoder.Empty);
-		}
-
-		public void EmitAttribute (TypeBuilder builder, AttributeEncoder argsEncoded)
-		{
-			builder.SetCustomAttribute (GetCtorMetaInfo (), argsEncoded.ToArray ());
 		}
 
 		public void EmitAttribute (AssemblyBuilder builder)
@@ -1818,11 +1810,6 @@ namespace Mono.CSharp {
 				builder.SetCustomAttribute (GetCtorMetaInfo (), AttributeEncoder.Empty);
 		}
 
-		public void EmitAttribute (ParameterBuilder builder, AttributeEncoder argsEncoded)
-		{
-			builder.SetCustomAttribute (GetCtorMetaInfo (), argsEncoded.ToArray ());
-		}
-
 		ConstructorInfo GetCtorMetaInfo ()
 		{
 			return (ConstructorInfo) ctor.GetMetaInfo ();
@@ -1841,6 +1828,27 @@ namespace Mono.CSharp {
 
 			ctor = (MethodSpec) MemberCache.FindMember (type, MemberFilter.Constructor (ParametersCompiled.EmptyReadOnlyParameters), BindingRestriction.DeclaredOnly);
 			return ctor != null;
+		}
+	}
+
+	public class PredefinedDebuggerBrowsableAttribute : PredefinedAttribute
+	{
+		public PredefinedDebuggerBrowsableAttribute (ModuleContainer module, string ns, string name)
+			: base (module, ns, name)
+		{
+		}
+
+		public void EmitAttribute (FieldBuilder builder, System.Diagnostics.DebuggerBrowsableState state)
+		{
+			var ctor = module.PredefinedMembers.DebuggerBrowsableAttributeCtor.Get ();
+			if (ctor == null)
+				return;
+
+			AttributeEncoder encoder = new AttributeEncoder ();
+			encoder.Encode ((int) state);
+			encoder.EncodeEmptyNamedArguments ();
+
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 	}
 

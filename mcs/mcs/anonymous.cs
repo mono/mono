@@ -1747,7 +1747,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < parameters.Count; ++i) {
 				AnonymousTypeParameter p = parameters [i];
 
-				Field f = new Field (a_type, t_args [i], Modifiers.PRIVATE | Modifiers.READONLY,
+				Field f = new Field (a_type, t_args [i], Modifiers.PRIVATE | Modifiers.READONLY | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("<" + p.Name + ">", p.Location), null);
 
 				if (!a_type.AddField (f)) {

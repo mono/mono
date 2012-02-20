@@ -322,6 +322,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
+		public readonly PredefinedMember<MethodSpec> DebuggerBrowsableAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorLong;
@@ -401,6 +402,9 @@ namespace Mono.CSharp
 
 			AsyncVoidMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
 				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
+
+			DebuggerBrowsableAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DebuggerBrowsable,
+				MemberFilter.Constructor (null));
 
 			DecimalCtor = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (

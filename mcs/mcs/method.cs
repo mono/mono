@@ -1193,6 +1193,7 @@ namespace Mono.CSharp {
 					}
 
 					AsyncInitializer.Create (this, block, parameters, Parent.PartialContainer, ReturnType, Location);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
 			}
 
@@ -1661,13 +1662,11 @@ namespace Mono.CSharp {
 
 					if (Initializer != null) {
 						//
-						// Use location of the constructor to emit sequence point of initializers
-						// at beginning of constructor name
+						// mdb format does not support reqions. Try to workaround this by emitting the
+						// sequence point at initializer. Any breakpoint at constructor header should
+						// be adjusted to this sequence point as it's the next one which follows.
 						//
-						// TODO: Need to extend mdb to support line regions to allow set a breakpoint at
-						// initializer
-						//
-						block.AddScopeStatement (new StatementExpression (Initializer, Location));
+						block.AddScopeStatement (new StatementExpression (Initializer));
 					}
 				}
 
