@@ -168,12 +168,19 @@ namespace System.ServiceModel.Channels.Http
 
 			Message msg = null;
 
-			if (ctxi.Request.HttpMethod == "POST") {
-				msg = CreatePostMessage (ctxi);
-				if (msg == null)
-					return false;
-			} else if (ctxi.Request.HttpMethod == "GET")
-				msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
+			switch(ctxi.Request.HttpMethod)
+			{
+				case "POST":
+					msg = CreatePostMessage (ctxi);
+					break;
+				case "GET":
+					msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
+					break;
+				default:
+					throw new NotImplementedException("HTTP methods other than POST and GET are not currently supported");
+			}
+		
+			if(msg == null) {return false;}
 
 			if (msg.Headers.To == null)
 				msg.Headers.To = ctxi.Request.Url;
