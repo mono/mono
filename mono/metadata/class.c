@@ -667,6 +667,20 @@ mono_class_get_generic_class (MonoClass *klass)
 	return klass->generic_class;
 }
 
+gboolean
+mono_class_is_generic (MonoClass *klass)
+{
+	g_assert (klass);
+	return (klass->is_generic);
+}
+
+gboolean
+mono_class_is_inflated (MonoClass *klass)
+{
+	g_assert (klass);
+	return (klass->is_inflated);
+}
+
 /*
  * mono_class_inflate_generic_type_with_mempool:
  * @mempool: a mempool
