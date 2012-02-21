@@ -1182,6 +1182,7 @@ namespace System
 			int ampm = -1;
 			int tzsign = -1, tzoffset = -1, tzoffmin = -1;
 			bool isFirstPart = true;
+			bool format_with_24_hours = false;
 
 			for (; ; )
 			{
@@ -1423,7 +1424,7 @@ namespace System
 					if (hour >= 24)
 						return false;
 
-//					ampm = -2;
+					format_with_24_hours = true;
 					break;
 				case 'm':
 					if (minute != -1)
@@ -1665,12 +1666,21 @@ namespace System
 				else
 					year = DateTime.Today.Year;
 			}
-
-			if (ampm == 0 && hour == 12)
-				hour = 0;
-
-			if (ampm == 1 && (!flexibleTwoPartsParsing || hour < 12))
-				hour = hour + 12;
+			
+			if (ampm == 0) { // AM designator
+				if (hour >= 12 && format_with_24_hours && exact)
+					return false;
+				
+				if (hour == 12)
+					hour = 0;
+			} else if (ampm == 1) {	// PM designator
+				if (hour < 12) {
+					if (format_with_24_hours && exact)
+						return false;
+					
+					hour += 12;
+				}
+			}
 			
 			// For anything out of range 
 			// return false
