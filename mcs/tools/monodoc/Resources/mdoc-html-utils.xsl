@@ -311,7 +311,8 @@
 		<xsl:param name="TypeParameters" />
 
 		<xsl:for-each select="$TypeParameters/TypeParameter">
-			<xsl:if test="count(Constraints/*) > 0">
+			<xsl:variable name="constraintsCount" select="count(Constraints/*)" />
+			<xsl:if test="$constraintsCount > 0 and count(Constraints/*['Contravariant' or 'Covariant']) != $constraintsCount">
 				<xsl:call-template name="CreateGenericParameterConstraints">
 					<xsl:with-param name="constraints" select="Constraints" />
 				</xsl:call-template>
