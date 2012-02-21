@@ -2298,7 +2298,8 @@ namespace Mono.CSharp {
 			if (warn)
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			var fb = ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			fb.CurrentUsageVector.IsUnreachable = true;
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
 
