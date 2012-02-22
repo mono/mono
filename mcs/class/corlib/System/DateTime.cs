@@ -1,13 +1,15 @@
 //
 // System.DateTime.cs
 //
-// author:
+// Authors:
 //   Marcel Narings (marcel@narings.nl)
 //   Martin Baulig (martin@gnome.org)
 //   Atsushi Enomoto (atsushi@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 //   (C) 2001 Marcel Narings
 // Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1572,6 +1574,27 @@ namespace System
 
 					num = 0;
 					break;
+				case '.':
+					if (s[valuePos] == '.') {
+						num = 0;
+						num_parsed = 1;
+						break;
+					}
+
+					// '.FFF....' can be mapped to nothing
+					if (pos + 1 < len && chars[pos + 1] == 'F') {
+						++pos;
+						while (pos < len && chars[pos + 1] == 'F') {
+							++pos;
+						}
+
+						num = 0;
+						num_parsed = 0;
+						break;
+					}
+
+					return false;
+
 				default:
 					if (s [valuePos] != chars [pos])
 							return false;

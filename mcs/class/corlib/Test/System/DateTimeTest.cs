@@ -575,6 +575,22 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void TestParseExactMiliseconds ()
+		{
+			string s = "1984-09-17T09:00:00.6Z";
+			DateTime dt = DateTime.ParseExact (s, "yyyy-MM-dd'T'HH:mm:ss.FFF'Z'", CultureInfo.InvariantCulture);
+			Assert.AreEqual (new DateTime (1984, 9, 17, 9, 0, 0, 600), dt, "#1");
+
+			s = "1984-09-17T09:00:00Z";
+			dt = DateTime.ParseExact (s, "yyyy-MM-dd'T'HH:mm:ss.FFF'Z'", CultureInfo.InvariantCulture);
+			Assert.AreEqual (new DateTime (1984, 9, 17, 9, 0, 0, 0), dt, "#2");
+
+			s = "1984-09-17T09:00:00Z";
+			dt = DateTime.ParseExact (s, "yyyy-MM-dd'T'HH:mm:ssFFF'Z'", CultureInfo.InvariantCulture);
+			Assert.AreEqual (new DateTime (1984, 9, 17, 9, 0, 0, 0), dt, "#3");
+		}
+
+		[Test]
 		public void TestParseExact ()
 		{
 			// Standard patterns
