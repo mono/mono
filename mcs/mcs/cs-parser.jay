@@ -1309,6 +1309,23 @@ method_header
 
 		$$ = method;
 	  }
+	| opt_attributes
+	  opt_modifiers
+	  member_type
+	  method_declaration_name error
+	  {
+		Error_SyntaxError (yyToken);
+		current_local_parameters = ParametersCompiled.Undefined;
+
+		MemberName name = (MemberName) $4;
+		var method = Method.Create (current_type, (FullNamedExpression) $3, (Modifiers) $2,
+									name, current_local_parameters, (Attributes) $1, false);
+
+		if (doc_support)
+			method.DocComment = Lexer.consume_doc_comment ();
+
+		$$ = method;
+	  }
 	;
 
 method_body
