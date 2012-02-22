@@ -4403,6 +4403,13 @@ type_parameter_constraints_clause
 		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), (List<FullNamedExpression>) $4, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
+	| WHERE IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		var lt = (Tokenizer.LocatedToken) $2;
+		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), null, GetLocation ($1));
+	  }
 	; 
 
 type_parameter_constraints
