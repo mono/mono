@@ -2581,6 +2581,10 @@ namespace Mono.CSharp {
 				ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
 			}
 
+			if (type.Kind == MemberKind.Void) {
+				mc.Module.Compiler.Report.Error (673, loc, "System.Void cannot be used from C#. Consider using `void'");
+			}
+
 			//
 			// Obsolete checks cannot be done when resolving base context as they
 			// require type dependencies to be set but we are in process of resolving them

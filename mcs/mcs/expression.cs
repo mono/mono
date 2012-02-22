@@ -7399,9 +7399,7 @@ namespace Mono.CSharp
 				if (typearg == null)
 					return null;
 
-				if (typearg.Kind == MemberKind.Void && !(QueriedType is TypeExpression)) {
-					ec.Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
-				} else if (typearg.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+				if (typearg.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					ec.Report.Error (1962, QueriedType.Location,
 						"The typeof operator cannot be used on the dynamic type");
 				}
