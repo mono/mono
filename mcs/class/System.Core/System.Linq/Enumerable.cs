@@ -854,7 +854,11 @@ namespace System.Linq
 #if !FULL_AOT_RUNTIME
 			return source.First (PredicateOf<TSource>.Always, Fallback.Default);
 #else
-			return source.First (delegate { return true; }, Fallback.Default);
+			// inline the code to reduce dependency o generic causing AOT errors on device (e.g. bug #3285)
+			foreach (var element in source)
+				return element;
+
+			return default (TSource);
 #endif
 		}
 
@@ -1217,7 +1221,18 @@ namespace System.Linq
 #if !FULL_AOT_RUNTIME
 			return source.Last (PredicateOf<TSource>.Always, Fallback.Throw);
 #else
-			return source.Last (delegate { return true; }, Fallback.Throw);
+			var empty = true;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				item = element;
+				empty = false;
+			}
+
+			if (!empty)
+				return item;
+
+			throw new InvalidOperationException ();
 #endif
 		}
 
@@ -1243,7 +1258,18 @@ namespace System.Linq
 #if !FULL_AOT_RUNTIME
 			return source.Last (PredicateOf<TSource>.Always, Fallback.Default);
 #else
-			return source.Last (delegate { return true; }, Fallback.Default);
+			var empty = true;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				item = element;
+				empty = false;
+			}
+
+			if (!empty)
+				return item;
+
+			return item;
 #endif
 		}
 
@@ -2360,7 +2386,21 @@ namespace System.Linq
 #if !FULL_AOT_RUNTIME
 			return source.Single (PredicateOf<TSource>.Always, Fallback.Throw);
 #else
-			return source.Single (delegate { return true; }, Fallback.Throw);
+			var found = false;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				if (found)
+					throw new InvalidOperationException ();
+
+				found = true;
+				item = element;
+			}
+
+			if (!found)
+				throw new InvalidOperationException ();
+
+			return item;
 #endif
 		}
 
@@ -2382,7 +2422,18 @@ namespace System.Linq
 #if !FULL_AOT_RUNTIME
 			return source.Single (PredicateOf<TSource>.Always, Fallback.Default);
 #else
-			return source.Single (delegate { return true; }, Fallback.Default);
+			var found = false;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				if (found)
+					throw new InvalidOperationException ();
+
+				found = true;
+				item = element;
+			}
+
+			return item;
 #endif
 		}
 
