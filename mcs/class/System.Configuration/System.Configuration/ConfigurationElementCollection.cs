@@ -170,7 +170,7 @@ namespace System.Configuration
 					if (element.Equals (list [old_index]))
 						return;
 					if (throwIfExists)
-						throw new ConfigurationException ("Duplicate element in collection");
+						throw new ConfigurationErrorsException ("Duplicate element in collection");
 					list.RemoveAt (old_index);
 				}
 				list.Add (element);
@@ -182,7 +182,7 @@ namespace System.Configuration
 		protected virtual void BaseAdd (int index, ConfigurationElement element)
 		{
 			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
-				throw new ConfigurationException ("Duplicate element in collection");
+				throw new ConfigurationErrorsException ("Duplicate element in collection");
 			if (IsReadOnly ())
 				throw new ConfigurationErrorsException ("Collection is read only.");
 			
