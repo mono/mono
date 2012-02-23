@@ -176,6 +176,10 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public MethodImplAttributes GetMethodImplementationFlags() {
+			return (MethodImplAttributes)GetInfo ().iattributes;
+		}
+
 		public ParameterInfoMirror[] GetParameters () {
 			if (param_info == null) {
 				var pi = vm.conn.Method_GetParamInfo (id);
@@ -202,7 +206,13 @@ namespace Mono.Debugger.Soft
 
 		public LocalVariable[] GetLocals () {
 			if (locals == null) {
-				var li = vm.conn.Method_GetLocalsInfo (id);
+
+				LocalsInfo li = new LocalsInfo ();
+				try {
+					li = vm.conn.Method_GetLocalsInfo (id);
+				} catch (CommandException) {
+					throw new ArgumentException ("Method doesn't have a body.");
+				}
 				// Add the arguments as well
 				var pi = vm.conn.Method_GetParamInfo (id);
 

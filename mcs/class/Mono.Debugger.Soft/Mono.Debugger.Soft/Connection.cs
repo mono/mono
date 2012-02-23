@@ -1788,19 +1788,17 @@ namespace Mono.Debugger.Soft
 			var res = SendReceive (CommandSet.THREAD, (int)CmdThread.GET_FRAME_INFO, new PacketWriter ().WriteId (id).WriteInt (start_frame).WriteInt (length));
 			int count = res.ReadInt ();
 
-			var frames = new List<FrameInfo> ();
+			var frames = new FrameInfo [count];
 			for (int i = 0; i < count; ++i) {
 				var f = new FrameInfo ();
 				f.id = res.ReadInt ();
 				f.method = res.ReadId ();
 				f.il_offset = res.ReadInt ();
 				f.flags = (StackFrameFlags)res.ReadByte ();
-				/* The caller can't handle this yet */
-				if ((f.flags & StackFrameFlags.NATIVE_TRANSITION) != StackFrameFlags.NATIVE_TRANSITION)
-					frames.Add (f);
+				frames [i] = f;
 			}
 
-			return frames.ToArray ();
+			return frames;
 		}
 
 		internal int Thread_GetState (long id) {
