@@ -202,7 +202,9 @@ namespace Mono.Debugger.Soft
 	}
 
 	enum StackFrameFlags {
-		DEBUGGER_INVOKE = 1
+		NONE = 0,
+		DEBUGGER_INVOKE = 1,
+		NATIVE_TRANSITION = 2
 	}
 
 	class ResolvedToken {
@@ -374,7 +376,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 16;
+		internal const int MINOR_VERSION = 17;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1786,14 +1788,19 @@ namespace Mono.Debugger.Soft
 			var res = SendReceive (CommandSet.THREAD, (int)CmdThread.GET_FRAME_INFO, new PacketWriter ().WriteId (id).WriteInt (start_frame).WriteInt (length));
 			int count = res.ReadInt ();
 
-			var frames = new FrameInfo [count];
+			var frames = new List<FrameInfo> ();
 			for (int i = 0; i < count; ++i) {
-				frames [i].id = res.ReadInt ();
-				frames [i].method = res.ReadId ();
-				frames [i].il_offset = res.ReadInt ();
-				frames [i].flags = (StackFrameFlags)res.ReadByte ();
+				var f = new FrameInfo ();
+				f.id = res.ReadInt ();
+				f.method = res.ReadId ();
+				f.il_offset = res.ReadInt ();
+				f.flags = (StackFrameFlags)res.ReadByte ();
+				/* The caller can't handle this yet */
+				if ((f.flags & StackFrameFlags.NATIVE_TRANSITION) != StackFrameFlags.NATIVE_TRANSITION)
+					frames.Add (f);
 			}
-			return frames;
+
+			return frames.ToArray ();
 		}
 
 		internal int Thread_GetState (long id) {
