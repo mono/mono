@@ -250,6 +250,7 @@ namespace System
 						exc = Int32.GetFormatException ();
 					return false;
 				}
+				
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign) {
 					if (!tryParse)
 						exc = Int32.GetFormatException ();
@@ -303,17 +304,21 @@ namespace System
 			do {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
-					if (AllowThousands && Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator))
+					if (AllowThousands &&
+					    (Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator)
+						|| Int32.FindOther (ref pos, s, nfi.CurrencyGroupSeparator)))
 						continue;
 					else
 						if (!decimalPointFound && AllowDecimalPoint && 
-						    Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
+					    (Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)
+						|| Int32.FindOther (ref pos, s, nfi.CurrencyDecimalSeparator))) {
 							decimalPointFound = true;
 							continue;
 						}
+
 					break;
 				}
-				else if (AllowHexSpecifier) {
+				if (AllowHexSpecifier) {
 					nDigits++;
 					hexDigit = s [pos++];
 					if (Char.IsDigit (hexDigit))
@@ -366,28 +371,30 @@ namespace System
 			}
 
 			if (AllowExponent)
-				if (int.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
+				if (Int32.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
 					return false;
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
 				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
-				if (foundSign) {
+				if (foundSign && pos < s.Length) {
 					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 						return false;
-					if (AllowCurrencySymbol)
-						Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				}
 			}
 
 			if (AllowCurrencySymbol && !foundCurrency) {
+				if (AllowTrailingWhite && pos < s.Length && !Int32.JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+					return false;
+				
 				// Currency + sign
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
-				if (foundCurrency) {
+				if (foundCurrency && pos < s.Length) {
 					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 						return false;
 					if (!foundSign && AllowTrailingSign)
-						Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
+						Int32.FindSign (ref pos, s, nfi, ref foundSign,
+								ref negative);
 				}
 			}
 
@@ -557,7 +564,6 @@ namespace System
 		{
 			if (targetType == null)
 				throw new ArgumentNullException ("targetType");
-			
 			return System.Convert.ToType (m_value, targetType, provider, false);
 		}
 

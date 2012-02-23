@@ -92,12 +92,12 @@ namespace System {
 		{
 			long val = 0;
 			int len;
-			int i;
-			int sign = 1;
+			int i, sign = 1;
 			bool digits_seen = false;
 
 			result = 0;
 			exc = null;
+			NumberFormatInfo nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 			if (s == null) {
 				if (!tryParse) 
@@ -120,12 +120,11 @@ namespace System {
 				return false;
 			}
 
-			c = s [i];
-			if (c == '+')
-				i++;
-			else if (c == '-'){
+			if (String.Compare (s, i, nfi.PositiveSign, 0, nfi.PositiveSign.Length) == 0)
+				i += nfi.PositiveSign.Length;
+			else if (String.Compare (s, i, nfi.NegativeSign, 0, nfi.NegativeSign.Length) == 0) {
 				sign = -1;
-				i++;
+				i += nfi.NegativeSign.Length;
 			}
 			
 			for (; i < len; i++){
@@ -153,11 +152,9 @@ namespace System {
 					} else 
 						val = val * 10 + d;
 					
-					
 					digits_seen = true;
 				} else if (!Int32.ProcessTrailingWhitespace (tryParse, s, i, ref exc))
 					return false;
-					
 			}
 			if (!digits_seen) {
 				if (!tryParse)
@@ -201,8 +198,7 @@ namespace System {
 
 			if (s.Length == 0) {
 				if (!tryParse)
-					exc = new FormatException ("Input string was not " + 
-							"in the correct format: s.Length==0.");
+					exc = Int32.GetFormatException ();
 				return false;
 			}
 
@@ -250,14 +246,13 @@ namespace System {
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign) {
 					if (!tryParse)
-						exc = new FormatException ("Input string was not in the correct " +
-								"format: Has Negative Sign.");
+						exc = Int32.GetFormatException ();
 					return false;
 				}
+				
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign) {
 					if (!tryParse)
-						exc = new FormatException ("Input string was not in the correct " +
-								"format: Has Positive Sign.");
+						exc = Int32.GetFormatException ();
 					return false;
 				}
 			}
@@ -321,7 +316,7 @@ namespace System {
 
 					break;
 				}
-				else if (AllowHexSpecifier) {
+				if (AllowHexSpecifier) {
 					nDigits++;
 					hexDigit = s [pos++];
 					if (Char.IsDigit (hexDigit))
@@ -375,34 +370,28 @@ namespace System {
 			// Post number stuff
 			if (nDigits == 0) {
 				if (!tryParse)
-					exc = new FormatException ("Input string was not in the correct format: nDigits == 0.");
+					exc = Int32.GetFormatException ();
 				return false;
 			}
 
 			if (AllowExponent)
-				if (int.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
+				if (Int32.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
 					return false;
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
 				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
-				if (foundSign) {
+				if (foundSign && pos < s.Length) {
 					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 						return false;
-					if (AllowCurrencySymbol)
-						Int32.FindCurrency (ref pos, s, nfi,
-								    ref foundCurrency);
 				}
 			}
 			
 			if (AllowCurrencySymbol && !foundCurrency) {
+				if (AllowTrailingWhite && pos < s.Length && !Int32.JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+					return false;
+				
 				// Currency + sign
-				if (nfi.CurrencyPositivePattern == 3 && s[pos++] != ' ')
-					if (tryParse)
-						return false;
-					else
-						throw new FormatException ("Input string was not in the correct format: no space between number and currency symbol.");
-
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				if (foundCurrency && pos < s.Length) {
 					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
@@ -419,8 +408,7 @@ namespace System {
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')') {
 					if (!tryParse)
-						exc = new FormatException ("Input string was not in the correct " +
-								"format: No room for close parens.");
+						exc = Int32.GetFormatException ();
 					return false;
 				}
 				if (AllowTrailingWhite && pos < s.Length && !Int32.JumpOverWhite (ref pos, s, false, tryParse, ref exc))
@@ -429,12 +417,10 @@ namespace System {
 
 			if (pos < s.Length && s [pos] != '\u0000') {
 				if (!tryParse)
-					exc = new FormatException ("Input string was not in the correct format: Did not parse entire string. pos = " 
-							+ pos + " s.Length = " + s.Length);
+					exc = Int32.GetFormatException ();
 				return false;
 			}
 
-			
 			if (!negative && !AllowHexSpecifier){
 				try {
 					number = checked (-number);
@@ -575,7 +561,7 @@ namespace System {
 
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64 (m_value);
+			return m_value;
 		}
 
 		sbyte IConvertible.ToSByte (IFormatProvider provider)

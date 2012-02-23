@@ -52,8 +52,6 @@ public class Int64Test
 	private  string sval1Test5 = "  -"+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00 ";
 	private  string sval1Test6 = "("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00)";
 	private const string sval1Test7 = "-1,234,567.00";
-	private const string sval1UserCur1 = "1234/5/67:000 XYZ-";
-	private const string sval2UserCur1 = "1234/5/67:000 XYZ";
 	private const string sval1UserPercent1 = "-%%%1~2~3~4~5~6~7~0~0;0";
 	private const string sval2UserPercent1 = "%%%1~2~3~4~5~6~7~0~0;0";
 	private const NumberStyles style1 =  NumberStyles.AllowLeadingWhite | NumberStyles.AllowLeadingSign
@@ -319,6 +317,8 @@ public class Int64Test
 	Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    \0"), "#22");
 	Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    "), "#23");
 	Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0"), "#24");
+
+	Assert.AreEqual (0, Int64.Parse ("0+", NumberStyles.Any), "#30");
     }
 
 	[Test]
@@ -409,36 +409,20 @@ public class Int64Test
     }
 
 	[Test]
-    public void TestUserCurrency()
-    {
-        string s= "";
-        long v;
-	int iTest = 1;
-	try {
-		s = val1.ToString("c", NfiUser);
-		iTest++;
-		Assert.AreEqual(sval1UserCur1, s, "Currency value type 1 is not what we want to try to parse");
-		iTest++;
-		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
-		iTest++;
-		Assert.IsTrue(v == val1);
-	} catch (Exception e) {
-		Assert.Fail ("1 Unexpected exception at iTest = " + iTest + ", s = " + s + ":e = " + e);
+	public void TestUserCurrency ()
+	{
+		string s = "";
+		long v;
+		s = val1.ToString ("c", NfiUser);
+		Assert.AreEqual ("1234/5/67:000 XYZ-", s, "Currency value type 1 is not what we want to try to parse");
+		v = Int64.Parse ("1234/5/67:000   XYZ-", NumberStyles.Currency, NfiUser);
+		Assert.AreEqual (val1, v);
+
+		s = val2.ToString ("c", NfiUser);
+		Assert.AreEqual ("1234/5/67:000 XYZ", s, "Currency value type 2 is not what we want to try to parse");
+		v = Int64.Parse (s, NumberStyles.Currency, NfiUser);
+		Assert.AreEqual (val2, v);
 	}
-   
-	iTest = 1;
-	try {
-		s = val2.ToString("c", NfiUser);
-		iTest++;
-		Assert.AreEqual(sval2UserCur1, s, "Currency value type 2 is not what we want to try to parse");
-		iTest++;
-		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
-		iTest++;
-		Assert.IsTrue(v == val2);
-	} catch (Exception e) {
-		Assert.Fail ("2 Unexpected exception at iTest = " + iTest + ":e = " + e);
-	}
-    }
 
 	[Test]
     public void TestUserPercent()

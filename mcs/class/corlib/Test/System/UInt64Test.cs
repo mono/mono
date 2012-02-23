@@ -185,6 +185,13 @@ public class UInt64Test
 		// numbers, but we should not crash
 		
 		UInt64.Parse ("123", new DateTimeFormatInfo ());
+
+		Assert.AreEqual (734561, UInt64.Parse ("734561\0"), "C#43");
+		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0    \0"), "C#44");
+		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0    "), "C#45");
+		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0"), "C#46");
+
+		Assert.AreEqual (0, UInt64.Parse ("0+", NumberStyles.Any), "#50");
 	}
 
 	[Test]
