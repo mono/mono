@@ -197,10 +197,10 @@ namespace System.Configuration
 				return;
 
 			if (Path.IsPathRooted (config_source))
-				throw new ConfigurationException ("The configSource attribute must be a relative physical path.");
+				throw new ConfigurationErrorsException ("The configSource attribute must be a relative physical path.");
 			
 			if (HasLocalModifications ())
-				throw new ConfigurationException ("A section using 'configSource' may contain no other attributes or elements.");
+				throw new ConfigurationErrorsException ("A section using 'configSource' may contain no other attributes or elements.");
 			
 			string path = Path.Combine (basePath, config_source);
 			if (!File.Exists (path)) {
