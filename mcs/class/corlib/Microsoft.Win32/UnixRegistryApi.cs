@@ -641,11 +641,10 @@ namespace Microsoft.Win32 {
 						value = (int) l;
 				}
 				
-				if (value is int)
-					values [name] = value;
-				else
-					throw new ArgumentException ();
-				break;
+				if (!(value is int))
+					break;
+				values [name] = value;
+				return;
 				
 			case RegistryValueKind.MultiString:
 				if (value is string []){
@@ -669,11 +668,10 @@ namespace Microsoft.Win32 {
 					value = (long)((int)value);
 				else if (value is ulong)
 					value = (long)((ulong)value);
-				if (value is long)
-					values [name] = value;
-				else
-					throw new ArgumentException ();
-				break;
+				if (!(value is long))
+					break;
+				values [name] = value;
+				return;
 			default:
 				throw new ArgumentException ("unknown value", "valueKind");
 			}
