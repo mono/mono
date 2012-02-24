@@ -3124,8 +3124,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String[] InternalSplit (char[] separator, int count, int options);
+		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		//private extern String[] InternalSplit (char[] separator, int count, int options);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);
