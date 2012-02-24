@@ -920,9 +920,7 @@ namespace Mono.CompilerServices.SymbolWriter
 						   (opcode <= DW_LNE_MONO__extensions_end)) {
 						; // reserved for future extensions
 					} else {
-						throw new MonoSymbolFileException (
-							"Unknown extended opcode {0:x} in LNT ({1})",
-							opcode, file.FileName);
+						throw new MonoSymbolFileException ("Unknown extended opcode {0:x}", opcode);
 					}
 
 					br.BaseStream.Position = end_pos;
