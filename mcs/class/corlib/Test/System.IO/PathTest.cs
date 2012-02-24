@@ -962,9 +962,14 @@ namespace MonoTests.System.IO
 				Assert.IsTrue (Path.IsPathRooted ("z:curdir"), "IsPathRooted #14");
 				Assert.IsTrue (Path.IsPathRooted ("\\abc\\def"), "IsPathRooted #15");
 			} else {
-				Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09");
-				Assert.IsTrue (!Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
-				Assert.IsTrue (!Path.IsPathRooted ("z:"), "IsPathRooted #11");
+				if (Environment.GetEnvironmentVariable ("MONO_IOMAP") == "all"){
+					Assert.IsTrue (Path.IsPathRooted ("\\"), "IsPathRooted #16");
+					Assert.IsTrue (Path.IsPathRooted ("\\\\"), "IsPathRooted #17");
+				} else {
+					Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09");
+					Assert.IsTrue (!Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
+					Assert.IsTrue (!Path.IsPathRooted ("z:"), "IsPathRooted #11");
+				}
 			}
 		}
 
