@@ -74,11 +74,6 @@ namespace System.Threading {
 		{
 			lock (this) Monitor.Pulse (this);
 		}
-
-		public void PulseAll ()
-		{
-			lock (this) Monitor.PulseAll (this);
-		}
 	}
 }
 

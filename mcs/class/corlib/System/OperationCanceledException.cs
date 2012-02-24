@@ -91,9 +91,6 @@ namespace System
 					return CancellationToken.None;
 				return token.Value;
 			}
-			private set {
-				token = value;
-			}
 		}
 #endif
 	}

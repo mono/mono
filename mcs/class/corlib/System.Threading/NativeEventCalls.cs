@@ -41,7 +41,7 @@ using System.IO;
 
 namespace System.Threading 
 {
- 	internal sealed class NativeEventCalls
+ 	internal static class NativeEventCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern IntPtr CreateEvent_internal(bool manual,bool initial,string name, out bool created);

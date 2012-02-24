@@ -43,7 +43,7 @@ namespace System.Threading
 			Handle = handle;
 		}
 
-		private bool IsManualReset (EventResetMode mode)
+		static bool IsManualReset (EventResetMode mode)
 		{
 			if ((mode < EventResetMode.AutoReset) || (mode > EventResetMode.ManualReset))
 				throw new ArgumentException ("mode");

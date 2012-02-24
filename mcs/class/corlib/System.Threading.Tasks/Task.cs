@@ -156,7 +156,7 @@ namespace System.Threading.Tasks
 				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
 		}
 
-		bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
+		static bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
 		{
 			return (opt & member) == member;
 		}
@@ -976,9 +976,6 @@ namespace System.Threading.Tasks
 					return null;
 				exSlot.Observed = true;
 				return exSlot.Exception;
-			}
-			internal set {
-				ExceptionSlot.Exception = value;
 			}
 		}
 		

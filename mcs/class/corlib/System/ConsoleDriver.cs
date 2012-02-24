@@ -32,7 +32,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace System {
-	class ConsoleDriver {
+	static class ConsoleDriver {
 		internal static IConsoleDriver driver;
 		static bool is_console;
 		static bool called_isatty;

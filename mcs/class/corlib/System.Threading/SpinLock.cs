@@ -195,12 +195,5 @@ namespace System.Threading
 			}
 		}
 	}
-
-	// Wraps a SpinLock in a reference when we need to pass
-	// around the lock
-	internal class SpinLockWrapper
-	{
-		public SpinLock Lock = new SpinLock (false);
-	}
 }
 #endif
