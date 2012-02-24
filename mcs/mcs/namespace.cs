@@ -327,37 +327,6 @@ namespace Mono.CSharp {
 			return te;
 		}
 
-		TypeSpec LookupType (string name, int arity)
-		{
-			if (types == null)
-				return null;
-
-			IList<TypeSpec> found;
-			if (types.TryGetValue (name, out found)) {
-				TypeSpec best = null;
-
-				foreach (var ts in found) {
-					if (ts.Arity == arity)
-						return ts;
-
-					//
-					// Lookup for the best candidate with closest arity match
-					//
-					if (arity < 0) {
-						if (best == null) {
-							best = ts;
-						} else if (System.Math.Abs (ts.Arity + arity) < System.Math.Abs (best.Arity + arity)) {
-							best = ts;
-						}
-					}
-				}
-				
-				return best;
-			}
-
-			return null;
-		}
-
 		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
 		{
 			var texpr = LookupType (ctx, name, arity, mode, loc);
@@ -867,7 +836,7 @@ namespace Mono.CSharp {
 			base.EmitContainer ();
 		}
 
-		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, NamespaceContainer container, int position)
+		public static ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, NamespaceContainer container, int position)
 		{
 			//
 			// Here we try to resume the search for extension method at the point

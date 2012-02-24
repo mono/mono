@@ -670,7 +670,7 @@ namespace Mono.CSharp {
 			do {
 				var ns = m as NamespaceContainer;
 				if (ns != null)
-					return ns.LookupExtensionMethod (this, extensionType, name, arity, ns, 0);
+					return NamespaceContainer.LookupExtensionMethod (this, extensionType, name, arity, ns, 0);
 
 				m = m.Parent;
 			} while (m != null);

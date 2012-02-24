@@ -494,7 +494,7 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (end_label);
 		}
 
-		Expression LiftExpression (ResolveContext ec, Expression expr)
+		static Expression LiftExpression (ResolveContext ec, Expression expr)
 		{
 			var lifted_type = new NullableType (expr.Type, expr.Location);
 			if (lifted_type.ResolveAsType (ec) == null)

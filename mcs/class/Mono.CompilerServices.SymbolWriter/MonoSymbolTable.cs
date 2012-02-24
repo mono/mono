@@ -1112,7 +1112,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 		
-		void CheckLineNumberTable (LineNumberEntry[] line_numbers)
+		static void CheckLineNumberTable (LineNumberEntry[] line_numbers)
 		{
 			int last_offset = -1;
 			int last_row = -1;

@@ -1325,12 +1325,6 @@ namespace Mono.CSharp
 
 		readonly string name;
 
-		InternalType (string name, MemberCache cache)
-			: this (name)
-		{
-			this.cache = cache;
-		}
-
 		InternalType (string name)
 			: base (MemberKind.InternalCompilerType, null, null, null, Modifiers.PUBLIC)
 		{

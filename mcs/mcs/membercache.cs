@@ -73,15 +73,6 @@ namespace Mono.CSharp {
 		public readonly TypeSpec MemberType;
 		public readonly int Arity; // -1 to ignore the check
 
-		private MemberFilter (string name, MemberKind kind)
-		{
-			Name = name;
-			Kind = kind;
-			Parameters = null;
-			MemberType = null;
-			Arity = -1;
-		}
-
 		public MemberFilter (MethodSpec m)
 		{
 			Name = m.Name;

@@ -2236,11 +2236,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsExcluded ()
-		{
-			return false;
-		}
-
 		public MemberName MethodName {
 			get {
 				return MemberName;

@@ -173,12 +173,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public TypeSpec Type {
-			get {
-				return type;
-			}
-		}
-
 		public TypeSpec ResultType {
 			get {
 				return result_type;

@@ -241,7 +241,7 @@ namespace Mono.CSharp
 		//
 		// Handles <typeparam /> node
 		//
-		void HandleTypeParam (MemberCore mc, XmlElement node)
+		static void HandleTypeParam (MemberCore mc, XmlElement node)
 		{
 			if (!node.HasAttribute ("name"))
 				return;
@@ -262,7 +262,7 @@ namespace Mono.CSharp
 		//
 		// Handles <typeparamref /> node
 		//
-		void HandleTypeParamRef (MemberCore mc, XmlElement node)
+		static void HandleTypeParamRef (MemberCore mc, XmlElement node)
 		{
 			if (!node.HasAttribute ("name"))
 				return;

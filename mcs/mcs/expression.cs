@@ -5408,16 +5408,6 @@ namespace Mono.CSharp
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.None);
 		}
 
-		static MetaType[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
-		{
-			AParametersCollection pd = mb.Parameters;
-
-			Argument a = arguments[pd.Count - 1];
-			Arglist list = (Arglist) a.Expr;
-
-			return list.ArgumentTypes;
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return mg.GetSignatureForError ();

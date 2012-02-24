@@ -767,14 +767,6 @@ namespace Mono.CSharp {
 			: base (storey, name, local.Type)
 		{
 		}
-
-		//
-		// For compiler generated local variables
-		//
-		public HoistedLocalVariable (AnonymousMethodStorey storey, Field field)
-			: base (storey, field)
-		{
-		}
 	}
 
 	public class HoistedThis : HoistedVariable

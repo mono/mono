@@ -1465,7 +1465,7 @@ namespace Mono.CSharp {
 			declarators.Add (decl);
 		}
 
-		void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
+		static void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
 		{
 			if (bc.Report.Errors != 0)
 				return;
