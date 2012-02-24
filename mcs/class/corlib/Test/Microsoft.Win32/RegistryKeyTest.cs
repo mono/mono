@@ -3208,14 +3208,14 @@ namespace MonoTests.Microsoft.Win32
 						createdKey.SetValue ("test-long", (long) 1, RegistryValueKind.DWord);
 						createdKey.SetValue ("test-ulong", (ulong) 1, RegistryValueKind.DWord);
 
-						createdKey.SetValue ("dtest-int", (int) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-uint", (uint) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-byte", (byte) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-sbyte", (sbyte) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-short", (short) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-ushort", (ushort) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-long", (long) 1, RegistryValueKind.DWord);
-						createdKey.SetValue ("dtest-ulong", (ulong) 1, RegistryValueKind.DWord);
+						createdKey.SetValue ("dtest-int", (int) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-uint", (uint) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-byte", (byte) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-sbyte", (sbyte) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-short", (short) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-ushort", (ushort) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-long", (long) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-ulong", (ulong) 1, RegistryValueKind.QWord);
 
 						object r = createdKey.GetValue ("test-int");
 						Assert.AreEqual (r is int, true);
