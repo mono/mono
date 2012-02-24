@@ -836,7 +836,7 @@ namespace Mono.CSharp {
 			base.EmitContainer ();
 		}
 
-		public static ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, NamespaceContainer container, int position)
+		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, int position)
 		{
 			//
 			// Here we try to resume the search for extension method at the point
@@ -857,7 +857,8 @@ namespace Mono.CSharp {
 			// checked before we hit A.N1 using
 			//
 			ExtensionMethodCandidates candidates;
-			for (; container != null; container = container.Parent) {
+			var container = this;
+			do {
 				candidates = container.LookupExtensionMethodCandidates (invocationContext, extensionType, name, arity, ref position);
 				if (candidates != null || container.MemberName == null)
 					return candidates;
@@ -883,7 +884,8 @@ namespace Mono.CSharp {
 				}
 
 				position = 0;
-			}
+				container = container.Parent;
+			} while (container != null);
 
 			return null;
 		}

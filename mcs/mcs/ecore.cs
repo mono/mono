@@ -3101,7 +3101,7 @@ namespace Mono.CSharp {
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
 
-			candidates = NamespaceContainer.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.Container, candidates.LookupIndex);
+			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.LookupIndex);
 			if (candidates == null)
 				return null;
 
