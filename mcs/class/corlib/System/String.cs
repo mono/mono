@@ -273,7 +273,7 @@ namespace System
 					if (sep == null || sep.Length == 0)
 						continue;
 
-					int match = IndexOfOrdinalUnchecked (sep, pos, Length);
+					int match = IndexOfOrdinalUnchecked (sep, pos, Length - pos);
 					if (match > -1 && match < matchPos) {
 						matchIndex = i;
 						matchPos = match;
