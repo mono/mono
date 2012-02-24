@@ -4122,6 +4122,8 @@ public class StringTest
 		Assert.AreEqual ("hi", res[0], "#11-09-1");
 		Assert.AreEqual ("..", res[1], "#11-09-2");
 		Assert.AreEqual (2, res.Length, "#11-09-3");
+
+		Assert.AreEqual (0, "    ".Split ((char[]) null, 2, StringSplitOptions.RemoveEmptyEntries).Length, "#12-00-0");
 	}
 	
 	[Test]

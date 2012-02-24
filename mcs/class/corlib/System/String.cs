@@ -200,60 +200,63 @@ namespace System
 
 		public String [] Split (params char [] separator)
 		{
-			return Split (separator, Int32.MaxValue);
+			return Split (separator, int.MaxValue, 0);
 		}
 
 		public String[] Split (char[] separator, int count)
 		{
-			if (separator == null || separator.Length == 0)
-				separator = WhiteChars;
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
-
-			if (count == 0) 
-				return new String[0];
-
-			if (count == 1) 
-				return new String[1] { this };
-
-			return InternalSplit (separator, count, 0);
+			return Split (separator, count, 0);
 		}
 
 		[ComVisible (false)]
-		[MonoDocumentationNote ("code should be moved to managed")]
+		public String[] Split (char[] separator, StringSplitOptions options)
+		{
+			return Split (separator, Int32.MaxValue, options);
+		}
+
+		[ComVisible (false)]
 		public String[] Split (char[] separator, int count, StringSplitOptions options)
 		{
-			if (separator == null || separator.Length == 0)
-				return Split (WhiteChars, count, options);
-
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
-			if (count == 0)
-				return new string [0];
+			if (count <= 1) {
+				return count == 0 ?
+					new String[0] :
+					new String[1] { this };
+			}
 
-			return InternalSplit (separator, count, (int)options);
+			return SplitByCharacters (separator, count, options != 0);
+		}
+
+		[ComVisible (false)]
+		public String[] Split (string[] separator, StringSplitOptions options)
+		{
+			return Split (separator, Int32.MaxValue, options);
 		}
 
 		[ComVisible (false)]
 		public String[] Split (string[] separator, int count, StringSplitOptions options)
 		{
-			if (separator == null || separator.Length == 0)
-				return Split (WhiteChars, count, options);
-
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
-			if (count == 1)
-				return new String [] { this };
 
-			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
+			if (count <= 1) {
+				return count == 0 ?
+					new String[0] :
+					new String[1] { this };
+			}
 
-			if (count == 0 || (this == String.Empty && removeEmpty))
+			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) != 0;
+
+			if (separator == null || separator.Length == 0)
+				return SplitByCharacters (null, count, removeEmpty);
+
+			if (Length == 0 && removeEmpty)
 				return new String [0];
 
 			List<String> arr = new List<String> ();
@@ -304,16 +307,116 @@ namespace System
 			return arr.ToArray ();
 		}
 
-		[ComVisible (false)]
-		public String[] Split (char[] separator, StringSplitOptions options)
-		{
-			return Split (separator, Int32.MaxValue, options);
-		}
+		// .NET 2.0 compatibility only
+#if !NET_4_0 && !MOONLIGHT && !MOBILE
+		static readonly char[] WhiteChars = {
+			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
+			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
+			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
+			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
+			(char) 0x3000, (char) 0xFEFF
+		};
+#endif
 
-		[ComVisible (false)]
-		public String[] Split (String[] separator, StringSplitOptions options)
+		unsafe string[] SplitByCharacters (char[] sep, int count, bool removeEmpty)
 		{
-			return Split (separator, Int32.MaxValue, options);
+#if !NET_4_0 && !MOONLIGHT && !MOBILE
+			if (sep == null || sep.Length == 0)
+				sep = WhiteChars;
+#endif
+
+			int[] split_points = null;
+			int total_points = 0;
+			--count;
+
+			if (sep == null || sep.Length == 0) {
+				fixed (char* src = this) {
+					char* src_ptr = src;
+					int len = Length;
+
+					do {
+						if (char.IsWhiteSpace (*src_ptr++)) {
+							if (split_points == null) {
+								split_points = new int[8];
+							} else if (split_points.Length == total_points) {
+								Array.Resize (ref split_points, split_points.Length * 2);
+							}
+
+							split_points[total_points++] = Length - len;
+							if (total_points == count && !removeEmpty)
+								break;
+						}
+					} while (len-- != 0);
+				}
+			} else {
+				fixed (char* src = this) {
+					fixed (char* sep_src = sep) {
+						char* src_ptr = src;
+						char* sep_ptr_end = sep_src + sep.Length;
+						int len = Length;
+						do {
+							char* sep_ptr = sep_src;
+							do {
+								if (*sep_ptr++ == *src_ptr) {
+									if (split_points == null) {
+										split_points = new int[8];
+									} else if (split_points.Length == total_points) {
+										Array.Resize (ref split_points, split_points.Length * 2);
+									}
+
+									split_points[total_points++] = Length - len;
+									if (total_points == count && !removeEmpty)
+										len = 0;
+
+									break;
+								}
+							} while (sep_ptr != sep_ptr_end);
+
+							++src_ptr;
+						} while (len-- != 0);
+					}
+				}
+			}
+
+			if (total_points == 0)
+				return new string[] { this };
+
+			var res = new string[Math.Min (total_points, count) + 1];
+			int prev_index = 0;
+			int i = 0;
+			if (!removeEmpty) {
+				for (; i < total_points; ++i) {
+					var start = split_points[i];
+					res[i] = SubstringUnchecked (prev_index, start - prev_index);
+					prev_index = start + 1;
+				}
+
+				res[i] = SubstringUnchecked (prev_index, Length - prev_index);
+			} else {
+				int used = 0;
+				int length;
+				for (; i < total_points; ++i) {
+					var start = split_points[i];
+					length = start - prev_index;
+					if (length != 0) {
+						if (used == count)
+							break;
+
+						res[used++] = SubstringUnchecked (prev_index, length);
+					}
+
+					prev_index = start + 1;
+				}
+
+				length = Length - prev_index;
+				if (length != 0)
+					res[used++] = SubstringUnchecked (prev_index, length);
+
+				if (used != res.Length)
+					Array.Resize (ref res, used);
+			}
+
+			return res;
 		}
 
 		public String Substring (int startIndex)
@@ -355,23 +458,6 @@ namespace System
 			}
 			return tmp;
 		}
-
-		// TODO: Rewrite the code to managed and use char.IsWhiteSpace
-		private static readonly char[] WhiteChars = {
-#if NET_4_0 || NET_2_1
-			'\x9', '\xa', '\xb', '\xc', '\xd', '\x20', '\x85', '\xa0',
-			'\x1680', '\x180e',
-			'\x2000', '\x2001', '\x2002', '\x2003', '\x2004', '\x2005', '\x2006', '\x2007', '\x2008', '\x2009', '\x200a',
-			'\x2028', '\x2029', '\x202f', '\x205f',
-			'\x3000'
-#else
-			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
-			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
-			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
-			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
-			(char) 0x3000, (char) 0xFEFF
-#endif
-		};
 
 		public String Trim ()
 		{
@@ -3041,8 +3127,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String[] InternalSplit (char[] separator, int count, int options);
+		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		//private extern String[] InternalSplit (char[] separator, int count, int options);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);
