@@ -33,16 +33,16 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class ToBase64TransformTest : Assertion {
+	public class ToBase64TransformTest {
 
 		[Test]
 		public void Properties ()
 		{
 			ICryptoTransform t = new ToBase64Transform ();
-			Assert ("CanReuseTransform", t.CanReuseTransform);
-			Assert ("CanTransformMultipleBlocks", !t.CanTransformMultipleBlocks);
-			AssertEquals ("InputBlockSize", 3, t.InputBlockSize);
-			AssertEquals ("OutputBlockSize", 4, t.OutputBlockSize);
+			Assert.IsTrue (t.CanReuseTransform, "CanReuseTransform");
+			Assert.IsTrue (!t.CanTransformMultipleBlocks, "CanTransformMultipleBlocks");
+			Assert.AreEqual (3, t.InputBlockSize, "InputBlockSize");
+			Assert.AreEqual (4, t.OutputBlockSize, "OutputBlockSize");
 		}
 
 		[Test]
@@ -62,14 +62,11 @@ namespace MonoTests.System.Security.Cryptography {
 			ToBase64Transform t = new ToBase64Transform ();
 			t.TransformBlock (input, 0, 6, output, 0);
 			// note only the first block has been processed
-			AssertEquals ("WrongLength", "41-41-41-41-00-00-00-00", BitConverter.ToString (output));
+			Assert.AreEqual ("41-41-41-41-00-00-00-00", BitConverter.ToString (output));
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-#if ! NET_2_0
-		[Category ("NotDotNet")] // MS throw a ExecutionEngineException
-#endif
 		public void TransformBlock_NullOutput () 
 		{
 			byte[] input = new byte [3];
@@ -169,11 +166,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-#endif
 		public void TransformBlock_OutputOffset_Negative () 
 		{
 			byte[] input = new byte [15];
@@ -184,11 +177,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-#endif
 		public void TransformBlock_OutputOffset_Overflow () 
 		{
 			byte[] input = new byte [15];
