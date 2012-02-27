@@ -79,7 +79,7 @@ namespace MonoTests.System.Text {
 				return;
 			}
 			// if we didn't catch an exception, then we have a problem Houston.
-			NUnit.Framework.Assertion.Fail("Capacity exceeds MaxCapacity");
+			Assert.Fail("Capacity exceeds MaxCapacity");
 		}
 
 		[Test]
@@ -100,7 +100,7 @@ namespace MonoTests.System.Text {
 			return;
 		}
 		// if we didn't catch an exception, then we have a problem Houston.
-		NUnit.Framework.Assertion.Fail("StartIndex not allowed to be less than zero.");
+		Assert.Fail("StartIndex not allowed to be less than zero.");
 	}
 
 		[Test]
@@ -114,7 +114,7 @@ namespace MonoTests.System.Text {
 			return;
 		}
 		// if we didn't catch an exception, then we have a problem Houston.
-		NUnit.Framework.Assertion.Fail("Length not allowed to be less than zero.");
+		Assert.Fail("Length not allowed to be less than zero.");
 	}
 
 		[Test]
@@ -129,7 +129,7 @@ namespace MonoTests.System.Text {
 			return;
 		}
 		// if we didn't catch an exception, then we have a problem Houston.
-		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
+		Assert.Fail ("StartIndex and length must refer to a location within the string.");
 	}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace MonoTests.System.Text {
 			return;
 		}
 		// if we didn't catch an exception, then we have a problem Houston.
-		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
+		Assert.Fail ("StartIndex and length must refer to a location within the string.");
 	}
 
 		[Test]
@@ -307,7 +307,7 @@ namespace MonoTests.System.Text {
 		
 		try {
 			sb.Insert (1, null, 1, 1);
-			Assertion.Fail ("#04: Value must not be null if startIndex and charCount > 0");
+			Assert.Fail ("#04: Value must not be null if startIndex and charCount > 0");
 		} catch (ArgumentNullException) {}
 	}
 
