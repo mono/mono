@@ -788,7 +788,7 @@ namespace Mono.CSharp {
 			while (true) {
 				foreach (var entry in abstract_type.MemberCache.member_hash) {
 					foreach (var name_entry in entry.Value) {
-						if ((name_entry.Modifiers & Modifiers.ABSTRACT) == 0)
+						if ((name_entry.Modifiers & (Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != Modifiers.ABSTRACT)
 							continue;
 
 						if (name_entry.Kind != MemberKind.Method)
@@ -835,6 +835,12 @@ namespace Mono.CSharp {
 					var filter = new MemberFilter (candidate);
 					foreach (var item in applicable) {
 						if ((item.Modifiers & (Modifiers.OVERRIDE | Modifiers.VIRTUAL)) == 0)
+							continue;
+
+						//
+						// Abstract override does not override anything
+						//
+						if ((item.Modifiers & Modifiers.ABSTRACT) != 0)
 							continue;
 
 						if (filter.Equals (item)) {
