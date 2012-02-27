@@ -180,7 +180,8 @@ namespace System.Web.SessionState
 					locked = true;
 					lockAge = DateTime.UtcNow.Subtract (item.lockedTime);
 					lockId = item.lockId;
-					return null;
+					// HACK: Don't return null. TODO: Block thread until resource is released?
+					// return null;
 				}
 				
 				if (exclusive) {
