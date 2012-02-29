@@ -29,6 +29,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 
 namespace System.Net.Http
 {
@@ -223,7 +224,7 @@ namespace System.Net.Http
 				wr.Proxy = proxy;
 			}
 
-			// Add all request headers
+			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
 				foreach (var value in header.Value) {
@@ -240,13 +241,17 @@ namespace System.Net.Http
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
+			response.Content = new StreamContent (wr.GetResponseStream ());
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
 				var key = headers.GetKey(i);
 				var value = headers.GetValues (i);
 
-				response.Headers.AddWithoutValidation (key, value);
+				if (HttpHeaders.GetKnownHeaderKind (key) == Headers.HttpHeaderKind.Content)
+					response.Content.Headers.AddWithoutValidation (key, value);
+				else
+					response.Headers.AddWithoutValidation (key, value);
 			}
 
 			return response;

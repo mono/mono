@@ -36,11 +36,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Linq;
+using System.IO;
 
 namespace MonoTests.System.Net.Http
 {
 	[TestFixture]
-	[Ignore]
+//	[Ignore]
 	public class HttpClientTest
 	{
 		class HttpMessageHandlerMock : HttpMessageHandler
@@ -75,8 +76,20 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
-		static readonly string TestHost = "localhost:810";
-		static readonly string LocalServer = string.Format ("http://{0}/", TestHost);
+		string port, TestHost, LocalServer;
+
+		[SetUp]
+		public void SetupFixture ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				port = "810";
+			} else {
+				port = "8810";
+			}
+
+			TestHost = "localhost:" + port;
+			LocalServer = string.Format ("http://{0}/", TestHost);
+		}
 
 		[Test]
 		public void Ctor_Default ()
@@ -179,6 +192,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -218,6 +232,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_Default ()
 		{
 			var listener = CreateListener (l => {
@@ -296,6 +311,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_ClientHandlerSettings ()
 		{
 			var listener = CreateListener (l => {
@@ -350,13 +366,13 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_CustomHeaders ()
 		{
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				Assert.AreEqual ("vv", request.Headers["aa"], "#1");
-//				Assert.AreEqual ("bytes=3-20", request.Headers["Range"], "#2");
-//				Assert.AreEqual (4, request.Headers.Count, "#3");
+				Assert.AreEqual (3, request.Headers.Count, "#3");
 
 				var response = l.Response;
 				response.Headers.Add ("rsp", "rrr");
@@ -377,7 +393,7 @@ namespace MonoTests.System.Net.Http
 //				request.Headers.Range = new RangeHeaderValue (3, 20);
 				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
 
-//				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
 
 				IEnumerable<string> values;
@@ -421,6 +437,51 @@ namespace MonoTests.System.Net.Http
 				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
 				Assert.AreEqual (HttpStatusCode.InternalServerError, response.StatusCode, "#101");
 			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Content_Get ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				l.Response.OutputStream.WriteByte (72);
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.Send (r);
+
+				Assert.AreEqual ("H", response.Content.ReadAsString ());
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Content_Put ()
+		{
+			bool passed = false;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				passed = 7 == request.ContentLength64;
+				passed &= request.ContentType == "text/plain; charset=utf-8";
+				passed &= request.InputStream.ReadByte () == 'm';
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				r.Content = new StringContent ("my text");
+				var response = client.Send (r);
+
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#1");
+				Assert.IsTrue (passed, "#2");
+
+			} finally {
+				listener.Abort ();
 				listener.Close ();
 			}
 		}
@@ -501,10 +562,10 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
-		static HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
+		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
 		{
 			var l = new HttpListener ();
-			l.Prefixes.Add ("http://+:810/");
+			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
 			l.Start ();
 			l.BeginGetContext (ar => {
 				var ctx = l.EndGetContext (ar);

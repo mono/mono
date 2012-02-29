@@ -1,10 +1,10 @@
 //
-// StreamContent.cs
+// ByteArrayContent.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,55 +31,51 @@ using System.Threading.Tasks;
 
 namespace System.Net.Http
 {
-	public class StreamContent : HttpContent
+	public class ByteArrayContent: HttpContent
 	{
-		readonly Stream content;
-		readonly int bufferSize;
+		readonly byte[] content;
+		readonly int offset, count;
 
-		public StreamContent (Stream content)
-			: this (content, 16 * 1024)
-		{
-		}
-
-		public StreamContent (Stream content, int bufferSize)
+		public ByteArrayContent (byte[] content)
 		{
 			if (content == null)
 				throw new ArgumentNullException ("content");
 
-			if (bufferSize <= 0)
-				throw new ArgumentOutOfRangeException ("bufferSize");
-
 			this.content = content;
-			this.bufferSize = bufferSize;
+			this.count = content.Length;
+		}
+
+		public ByteArrayContent (byte[] content, int offset, int count)
+			: this (content)
+		{
+			if (offset < 0 || offset > this.count)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0 || count > (this.count - offset))
+				throw new ArgumentOutOfRangeException ("count");
+
+			this.offset = offset;
+			this.count = count;
 		}
 
 		protected override Stream CreateContentReadStream ()
 		{
-			return content;
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				content.Dispose ();
-			}
-
-			base.Dispose (disposing);
+			return new MemoryStream (content, offset, count);
 		}
 
 		protected override void SerializeToStream (Stream stream, TransportContext context)
 		{
-			content.CopyTo (stream, bufferSize);
+			stream.Write (content, offset, count);
 		}
 
 		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
-			return content.CopyToAsync (stream, bufferSize);
+			return stream.WriteAsync (content, offset, count);
 		}
 
 		protected internal override bool TryComputeLength (out long length)
 		{
-			length = content.Length;
+			length = count;
 			return true;
 		}
 	}

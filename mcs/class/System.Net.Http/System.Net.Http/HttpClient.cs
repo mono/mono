@@ -187,6 +187,10 @@ namespace System.Net.Http
 				request.RequestUri = base_address;
 			}
 
+			if (headers != null) {
+				request.Headers.AddHeaders (headers);
+			}
+
 			try {
 				if (cancellation_token == null)
 					cancellation_token = new CancellationTokenSource ();

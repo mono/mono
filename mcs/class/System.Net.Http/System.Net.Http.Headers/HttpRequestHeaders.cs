@@ -132,7 +132,7 @@ namespace System.Net.Http.Headers
 				if (expectContinue.HasValue)
 					return expectContinue;
 
-				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "100-continue"));
+				var found = TransferEncoding.Find (l => string.Equals (l.Value, "100-continue", StringComparison.OrdinalIgnoreCase));
 				return found != null ? true : (bool?) null;
 			}
 			set {
@@ -273,7 +273,7 @@ namespace System.Net.Http.Headers
 				if (transferEncodingChunked.HasValue)
 					return transferEncodingChunked;
 
-				var found = TransferEncoding.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Value, "chunked"));
+				var found = TransferEncoding.Find (l => string.Equals (l.Value, "chunked", StringComparison.OrdinalIgnoreCase));
 				return found != null ? true : (bool?) null;
 			}
 			set {
@@ -309,6 +309,13 @@ namespace System.Net.Http.Headers
 		public HttpHeaderValueCollection<WarningHeaderValue> Warning {
 			get {
 				return GetValues<WarningHeaderValue> ("Warning");
+			}
+		}
+
+		internal void AddHeaders (HttpRequestHeaders headers)
+		{
+			foreach (var header in headers) {
+				AddWithoutValidation (header.Key, header.Value);
 			}
 		}
 	}

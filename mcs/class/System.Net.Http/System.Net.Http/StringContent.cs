@@ -1,10 +1,10 @@
 //
-// StreamContent.cs
+// StringContent.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,61 +26,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.IO;
-using System.Threading.Tasks;
+using System.Text;
+using System.Net.Http.Headers;
 
 namespace System.Net.Http
 {
-	public class StreamContent : HttpContent
+	public class StringContent : ByteArrayContent
 	{
-		readonly Stream content;
-		readonly int bufferSize;
-
-		public StreamContent (Stream content)
-			: this (content, 16 * 1024)
+		public StringContent (string content)
+			: this (content, null, null)
 		{
 		}
 
-		public StreamContent (Stream content, int bufferSize)
+		public StringContent (string content, Encoding encoding)
+			: this (content, encoding, null)
 		{
-			if (content == null)
-				throw new ArgumentNullException ("content");
-
-			if (bufferSize <= 0)
-				throw new ArgumentOutOfRangeException ("bufferSize");
-
-			this.content = content;
-			this.bufferSize = bufferSize;
 		}
 
-		protected override Stream CreateContentReadStream ()
+		public StringContent (string content, Encoding encoding, string mediaType)
+			: base (GetByteArray (content, encoding))
 		{
-			return content;
+			Headers.ContentType = new MediaTypeHeaderValue (mediaType ?? "text/plain") {
+				CharSet = (encoding ?? Encoding.UTF8).WebName
+			};
 		}
 
-		protected override void Dispose (bool disposing)
+		static byte[] GetByteArray (string content, Encoding encoding)
 		{
-			if (disposing) {
-				content.Dispose ();
-			}
-
-			base.Dispose (disposing);
-		}
-
-		protected override void SerializeToStream (Stream stream, TransportContext context)
-		{
-			content.CopyTo (stream, bufferSize);
-		}
-
-		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
-		{
-			return content.CopyToAsync (stream, bufferSize);
-		}
-
-		protected internal override bool TryComputeLength (out long length)
-		{
-			length = content.Length;
-			return true;
+			return (encoding ?? Encoding.UTF8).GetBytes (content);
 		}
 	}
 }

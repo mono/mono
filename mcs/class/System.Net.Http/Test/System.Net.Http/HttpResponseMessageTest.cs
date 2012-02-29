@@ -425,6 +425,15 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_Location ()
+		{
+			HttpResponseMessage message = new HttpResponseMessage ();
+			HttpResponseHeaders headers = message.Headers;
+			headers.AddWithoutValidation ("location", "http://w3.org");
+			Assert.AreEqual (new Uri ("http://w3.org"), headers.Location);
+		}
+
+		[Test]
 		public void Headers_TransferEncoding ()
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();

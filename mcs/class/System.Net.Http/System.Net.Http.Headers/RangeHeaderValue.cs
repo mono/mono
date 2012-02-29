@@ -93,7 +93,7 @@ namespace System.Net.Http.Headers
 
 		public override int GetHashCode ()
 		{
-			return Unit.GetHashCode () ^ HashCodeCalculator.Calculate (ranges);
+			return Unit.ToLowerInvariant ().GetHashCode () ^ HashCodeCalculator.Calculate (ranges);
 		}
 
 		public static RangeHeaderValue Parse (string input)
