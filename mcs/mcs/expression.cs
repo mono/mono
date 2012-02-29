@@ -8386,8 +8386,11 @@ namespace Mono.CSharp
 				return new IndexerExpr (indexers, type, this);
 			}
 
-			ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-				type.GetSignatureForError ());
+			if (type != InternalType.ErrorType) {
+				ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+					type.GetSignatureForError ());
+			}
+
 			return null;
 		}
 

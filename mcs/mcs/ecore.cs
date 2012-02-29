@@ -751,6 +751,9 @@ namespace Mono.CSharp {
 
 		public virtual void Error_OperatorCannotBeApplied (ResolveContext rc, Location loc, string oper, TypeSpec t)
 		{
+			if (t == InternalType.ErrorType)
+				return;
+
 			rc.Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
 				oper, t.GetSignatureForError ());
 		}
@@ -4723,7 +4726,7 @@ namespace Mono.CSharp {
 			} else if (IsDelegateInvoke) {
 				ec.Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					DelegateType.GetSignatureForError ());
-			} else {
+			} else if (a.Type != InternalType.ErrorType) {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				ec.Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 					method.GetSignatureForError ());
@@ -4740,7 +4743,7 @@ namespace Mono.CSharp {
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else if (a.Expr != ErrorExpression.Instance) {
+			} else if (a.Type != InternalType.ErrorType) {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
