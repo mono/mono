@@ -302,10 +302,19 @@ namespace System.Reflection {
 						if (method == null)
 							throw new ArgumentException ("Get Method not found for '" + Name + "'");
 						cached_getter = CreateGetterDelegate (method);
-						return cached_getter (obj);
+						// The try-catch preserves the .Invoke () behaviour
+						try {
+							return cached_getter (obj);
+						} catch (Exception ex) {
+							throw new TargetInvocationException (ex);
+						}
 					}
 				} else {
-					return cached_getter (obj);
+					try {
+						return cached_getter (obj);
+					} catch (Exception ex) {
+						throw new TargetInvocationException (ex);
+					}
 				}
 #endif
 			}
