@@ -137,6 +137,7 @@ namespace Mono.Debugger.Soft
 		public void Dispose () {
 			conn.VM_Dispose ();
 			conn.Close ();
+			conn.Dispose ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
 		}
 

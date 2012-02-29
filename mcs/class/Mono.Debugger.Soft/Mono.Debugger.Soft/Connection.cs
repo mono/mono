@@ -353,7 +353,7 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Represents the connection to the debuggee
 	 */
-	public abstract class Connection
+	public abstract class Connection : IDisposable
 	{
 		/*
 		 * The protocol and the packet format is based on JDWP, the differences 
@@ -2214,7 +2214,21 @@ namespace Mono.Debugger.Soft
 			res.domain_id = r.ReadId ();
 			return res;
 		}
-
+		
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+		
+		protected virtual void Dispose (bool disposing)
+		{
+		}
+		
+		~Connection ()
+		{
+			Dispose (false);
+		}
 	}
 	
 	class TcpConnection : Connection
@@ -2252,6 +2266,15 @@ namespace Mono.Debugger.Soft
 		protected override void TransportClose ()
 		{
 			socket.Close ();
+		}
+		
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing) {
+				//Socket.Dispose is explicit in < .NET 4.0
+				((IDisposable)socket).Dispose ();
+			}
+			base.Dispose (disposing);
 		}
 	}
 
