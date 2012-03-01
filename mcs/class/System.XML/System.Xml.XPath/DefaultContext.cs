@@ -537,6 +537,36 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal class XPathFunctionEndsWith : XPathFunction
+	{
+		Expression arg0, arg1;
+		
+		public XPathFunctionEndsWith (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail == null || args.Tail.Tail != null)
+				throw new XPathException ("ends-with takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateString (iter).EndsWith (arg1.EvaluateString (iter));
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("ends-with(", arg0.ToString (), ",", arg1.ToString (), ")");
+		}
+	}
+
 
 	internal class XPathFunctionContains : XPathFunction
 	{
