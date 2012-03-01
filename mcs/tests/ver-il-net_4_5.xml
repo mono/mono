@@ -26057,6 +26057,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-21.cs">
+    <type name="C">
+      <method name="Void Foo(C, C)" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Foo2(C)" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">

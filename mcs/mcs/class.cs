@@ -256,7 +256,14 @@ namespace Mono.CSharp
 		{
 			if (containers != null) {
 				foreach (var t in containers) {
-					t.PrepareEmit ();
+					try {
+						t.PrepareEmit ();
+					} catch (Exception e) {
+						if (MemberName == MemberName.Null)
+							throw;
+
+						throw new InternalErrorException (t, e);
+					}
 				}
 			}
 		}
@@ -1492,6 +1499,9 @@ namespace Mono.CSharp
 
 		public override void PrepareEmit ()
 		{
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
+				return;
+
 			foreach (var member in members) {
 				var pm = member as IParametersMember;
 				if (pm != null) {
