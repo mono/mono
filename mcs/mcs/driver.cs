@@ -211,6 +211,11 @@ namespace Mono.CSharp
 				return false;
 			}
 
+			if (settings.Platform == Platform.AnyCPU32Preferred && (settings.Target == Target.Library || settings.Target == Target.Module)) {
+				Report.Error (4023, "Platform option `anycpu32bitpreferred' is valid only for executables");
+				return false;
+			}
+
 			TimeReporter tr = new TimeReporter (settings.Timestamps);
 			ctx.TimeReporter = tr;
 			tr.StartTotal ();
