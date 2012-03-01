@@ -45,7 +45,6 @@ namespace MonoTests.System.Net.Http
 		class StreamContentMock : StreamContent
 		{
 			public Func<long> OnTryComputeLength;
-			public Action OnCreateContentReadStream;
 			public Action OnSerializeToStreamAsync;
 
 			public StreamContentMock (Stream stream)
@@ -63,25 +62,12 @@ namespace MonoTests.System.Net.Http
 				return base.TryComputeLength (out length);
 			}
 
-			protected override void SerializeToStream (Stream stream, TransportContext context)
-			{
-				base.SerializeToStream (stream, context);
-			}
-
 			protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 			{
 				if (OnSerializeToStreamAsync != null)
 					OnSerializeToStreamAsync ();
 
 				return base.SerializeToStreamAsync (stream, context);
-			}
-
-			protected override Stream CreateContentReadStream ()
-			{
-				if (OnCreateContentReadStream != null)
-					OnCreateContentReadStream ();
-
-				return base.CreateContentReadStream ();
 			}
 		}
 
@@ -131,63 +117,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		public void ContentReadStream ()
-		{
-			var ms = new MemoryStream ();
-			ms.WriteByte (4);
-			ms.WriteByte (2);
-			ms.Seek (0, SeekOrigin.Begin);
-
-			var sc = new StreamContent (ms);
-			var s = sc.ContentReadStream;
-			Assert.AreEqual (4, s.ReadByte (), "#1");
-			Assert.AreEqual (2, s.ReadByte (), "#2");
-
-			bool hit = false;
-			var scm = new StreamContentMock (MemoryStream.Null);
-			scm.OnCreateContentReadStream = () => { hit = true; };
-			s = scm.ContentReadStream;
-			Assert.IsTrue (hit, "#10");
-		}
-
-		[Test]
-		public void CopyTo_Invalid ()
-		{
-			var m = new MemoryStream ();
-
-			var sc = new StreamContent (new MemoryStream ());
-			try {
-				sc.CopyTo (null);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
-			}
-
-			sc = new StreamContent (new ExceptionStream ());
-			try {
-				sc.CopyTo (m);
-				Assert.Fail ("#2");
-			} catch (ApplicationException) {
-			}
-		}
-
-		[Test]
-		public void CopyTo ()
-		{
-			var ms = new MemoryStream ();
-			ms.WriteByte (4);
-			ms.WriteByte (2);
-			ms.Seek (0, SeekOrigin.Begin);
-
-			var sc = new StreamContent (ms);
-
-			var dest = new MemoryStream ();
-			sc.CopyTo (dest);
-			Assert.AreEqual (2, dest.Length, "#1");
-
-			sc.CopyTo (dest, null);
-		}
-
-		[Test]
 		public void CopyToAsync_Invalid ()
 		{
 			var m = new MemoryStream ();
@@ -202,12 +131,14 @@ namespace MonoTests.System.Net.Http
 			//
 			// For some reason does not work on .net
 			//
-			//sc = new StreamContent (new ExceptionStream ());
-			//try {
-			//    sc.CopyToAsync (m).Wait ();
-			//    Assert.Fail ("#2");
-			//} catch (AggregateException) {
-			//}
+			/*
+			sc = new StreamContent (new ExceptionStream ());
+			try {
+			    sc.CopyToAsync (m).Wait ();
+			    Assert.Fail ("#2");
+			} catch (AggregateException) {
+			}
+			*/ 
 		}
 
 		[Test]
@@ -230,9 +161,10 @@ namespace MonoTests.System.Net.Http
 			var scm = new StreamContentMock (new ExceptionStream ());
 			scm.OnSerializeToStreamAsync = () => { hit = true; };
 			task = scm.CopyToAsync (dest);
+			task.Wait ();
 
 			Assert.IsTrue (hit, "#10");
-//			Assert.IsTrue (task.IsFaulted, "#11");
+			//Assert.IsTrue (task.IsFaulted, "#11");
 		}
 
 		[Test]
@@ -241,6 +173,7 @@ namespace MonoTests.System.Net.Http
 			var ms = new MemoryStream ();
 			ms.WriteByte (4);
 			ms.WriteByte (2);
+			ms.Seek (0, SeekOrigin.Begin);
 
 			var sc = new StreamContent (ms);
 			var headers = sc.Headers;
@@ -363,23 +296,23 @@ namespace MonoTests.System.Net.Http
 			ms.Seek (0, SeekOrigin.Begin);
 
 			var sc = new StreamContent (ms);
-			sc.LoadIntoBuffer (400);
+			sc.LoadIntoBufferAsync (400).Wait ();
 		}
 
 		[Test]
-		public void ReadAsByteArray ()
+		public void ReadAsByteArrayAsync ()
 		{
 			var ms = new MemoryStream ();
 			ms.WriteByte (4);
 			ms.WriteByte (55);
 
 			var sc = new StreamContent (ms);
-			var res = sc.ReadAsByteArray ();
+			var res = sc.ReadAsByteArrayAsync ().Result;
 			Assert.AreEqual (0, res.Length, "#1");
 
 			ms.Seek (0, SeekOrigin.Begin);
 			sc = new StreamContent (ms);
-			res = sc.ReadAsByteArray ();
+			res = sc.ReadAsByteArrayAsync ().Result;
 			Assert.AreEqual (2, res.Length, "#10");
 			Assert.AreEqual (55, res[1], "#11");
 		}
@@ -393,7 +326,7 @@ namespace MonoTests.System.Net.Http
 			ms.Seek (0, SeekOrigin.Begin);
 
 			var sc = new StreamContent (ms);
-			var res = sc.ReadAsString ();
+			var res = sc.ReadAsStringAsync ().Result;
 			Assert.AreEqual ("M7", res, "#1");
 		}
 	}

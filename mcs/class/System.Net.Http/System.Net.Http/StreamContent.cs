@@ -53,11 +53,6 @@ namespace System.Net.Http
 			this.bufferSize = bufferSize;
 		}
 
-		protected override Stream CreateContentReadStream ()
-		{
-			return content;
-		}
-
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {

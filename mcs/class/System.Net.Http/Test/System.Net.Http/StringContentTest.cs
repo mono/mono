@@ -67,39 +67,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		public void ContentReadStream ()
-		{
-			var sc = new StringContent ("abž");
-			var s = sc.ContentReadStream;
-			Assert.AreEqual (97, s.ReadByte (), "#1");
-			Assert.AreEqual (98, s.ReadByte (), "#2");
-			Assert.AreEqual (197, s.ReadByte (), "#3");
-		}
-
-		[Test]
-		public void CopyTo_Invalid ()
-		{
-			var sc = new StringContent ("");
-			try {
-				sc.CopyTo (null);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
-			}
-		}
-
-		[Test]
-		public void CopyTo ()
-		{
-			var sc = new StringContent ("nm");
-
-			var dest = new MemoryStream ();
-			sc.CopyTo (dest);
-			Assert.AreEqual (2, dest.Length, "#1");
-
-			sc.CopyTo (dest, null);
-		}
-
-		[Test]
 		public void CopyToAsync_Invalid ()
 		{
 			var sc = new StringContent ("");
@@ -125,23 +92,23 @@ namespace MonoTests.System.Net.Http
 		public void LoadIntoBuffer ()
 		{
 			var sc = new StringContent ("b");
-			sc.LoadIntoBuffer (400);
+			sc.LoadIntoBufferAsync (400).Wait ();
 		}
 
 		[Test]
-		public void ReadAsByteArray ()
+		public void ReadAsByteArrayAsync ()
 		{
 			var sc = new StringContent ("h");
-			var res = sc.ReadAsByteArray ();
+			var res = sc.ReadAsByteArrayAsync ().Result;
 			Assert.AreEqual (1, res.Length, "#1");
 			Assert.AreEqual (104, res[0], "#2");
 		}
 
 		[Test]
-		public void ReadAsString ()
+		public void ReadAsStringAsync ()
 		{
 			var sc = new StringContent ("abž");
-			var res = sc.ReadAsString ();
+			var res = sc.ReadAsStringAsync ().Result;
 			Assert.AreEqual ("abž", res, "#1");
 		}
 	}

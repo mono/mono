@@ -58,11 +58,6 @@ namespace System.Net.Http
 			this.count = count;
 		}
 
-		protected override Stream CreateContentReadStream ()
-		{
-			return new MemoryStream (content, offset, count);
-		}
-
 		protected override void SerializeToStream (Stream stream, TransportContext context)
 		{
 			stream.Write (content, offset, count);

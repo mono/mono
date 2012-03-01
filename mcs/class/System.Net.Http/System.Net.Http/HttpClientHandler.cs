@@ -256,7 +256,7 @@ namespace System.Net.Http
 
 			return response;
 		}
-
+		/*
 		protected internal override HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			var wrequest = CreateWebRequest (request);
@@ -271,7 +271,7 @@ namespace System.Net.Http
 
 			return CreateResponseMessage (wresponse, request);
 		}
-		
+		*/
 		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException ();

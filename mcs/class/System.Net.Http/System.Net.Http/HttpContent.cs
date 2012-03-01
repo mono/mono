@@ -36,18 +36,8 @@ namespace System.Net.Http
 	public abstract class HttpContent : IDisposable
 	{
 		MemoryStream buffer;
-		Stream content_stream;
 		bool disposed;
 		HttpContentHeaders headers;
-
-		public Stream ContentReadStream {
-			get {
-				if (content_stream == null)
-					content_stream = CreateContentReadStream ();
-
-				return content_stream;
-			}
-		}
 
 		public HttpContentHeaders Headers {
 			get {
@@ -81,12 +71,6 @@ namespace System.Net.Http
 			return SerializeToStreamAsync (stream, context);
 		}
 
-		protected virtual Stream CreateContentReadStream ()
-		{
-			LoadIntoBuffer ();
-			return buffer;
-		}
-
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -99,9 +83,6 @@ namespace System.Net.Http
 
 				if (buffer != null)
 					buffer.Dispose ();
-
-				if (content_stream != null)
-					content_stream.Dispose ();
 			}
 		}
 
@@ -133,17 +114,18 @@ namespace System.Net.Http
 			throw new NotImplementedException ();
 		}
 
-		public byte[] ReadAsByteArray ()
+		public Task<byte[]> ReadAsByteArrayAsync ()
 		{
 			LoadIntoBuffer ();
-			return buffer.ToArray ();
+			throw new NotImplementedException ();
+//			return buffer.ToArray ();
 		}
 
-		public string ReadAsString ()
+		public Task<string> ReadAsStringAsync ()
 		{
 			LoadIntoBuffer ();
 			if (buffer.Length == 0)
-				return string.Empty;
+				return Task.FromResult (string.Empty);
 
 			Encoding encoding;
 			if (headers != null && headers.ContentType != null && headers.ContentType.CharSet != null) {
@@ -152,7 +134,8 @@ namespace System.Net.Http
 				encoding = Encoding.UTF8;
 			}
 
-			return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
+			throw new NotImplementedException ();
+			//return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
 		}
 
 		protected abstract void SerializeToStream (Stream stream, TransportContext context);
