@@ -20948,6 +20948,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-42.cs">
+    <type name="C">
+      <method name="Void Foo(Int32)" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Foo()" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()" attrs="134">

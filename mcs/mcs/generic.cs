@@ -416,6 +416,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
 		public bool IsMethodTypeParameter {
 			get {
 				return spec.IsMethodOwned;

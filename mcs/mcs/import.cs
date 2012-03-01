@@ -1744,6 +1744,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
 		public override string Name {
 			get {
 				if (name == null) {
@@ -2065,6 +2071,12 @@ namespace Mono.CSharp
 		public IAssemblyDefinition DeclaringAssembly {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
 			}
 		}
 

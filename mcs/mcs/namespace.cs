@@ -415,7 +415,7 @@ namespace Mono.CSharp {
 				types = new Dictionary<string, IList<TypeSpec>> (64);
 			}
 
-			if (ts.IsStatic && ts.Arity == 0 &&
+			if ((ts.IsStatic || ts.MemberDefinition.IsPartial) && ts.Arity == 0 &&
 				(ts.MemberDefinition.DeclaringAssembly == null || ts.MemberDefinition.DeclaringAssembly.HasExtensionMethod)) {
 				if (extension_method_types == null)
 					extension_method_types = new List<TypeSpec> ();

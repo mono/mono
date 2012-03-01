@@ -636,6 +636,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsPartial {
+			get {
+				return (ModFlags & Modifiers.PARTIAL) != 0;
+			}
+		}
+
 		//
 		// Returns true for secondary partial containers
 		//
