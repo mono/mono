@@ -438,7 +438,7 @@ namespace System
 			if (startIndex > this.length)
 				throw new ArgumentOutOfRangeException ("startIndex", "Cannot exceed length of string.");
 			if (startIndex > this.length - length)
-				throw new ArgumentOutOfRangeException ("length", "startIndex + length > this.length");
+				throw new ArgumentOutOfRangeException ("length", "startIndex + length cannot exceed length of string.");
 			if (startIndex == 0 && length == this.length)
 				return this;
 
