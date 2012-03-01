@@ -458,7 +458,7 @@ namespace System.Net
 					exc = e;
 				}
 
-				if (exc != null) {
+				if (exc != null || pos == -1) {
 					cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, exc, "ReadDone4");
 					return;
 				}
