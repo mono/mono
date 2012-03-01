@@ -1102,6 +1102,8 @@ namespace Mono.CSharp {
 				}
 			} catch (CompletionResult) {
 				throw;
+			} catch (FatalException) {
+				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}

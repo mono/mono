@@ -286,6 +286,9 @@ namespace Mono.CSharp {
 			extra_information.Clear ();
 
 			printer.Print (msg);
+
+			if (printer.ErrorsCount == settings.FatalCounter)
+				throw new FatalException (msg.Text);
 		}
 
 		public void Error (int code, Location loc, string format, string arg)
@@ -515,10 +518,9 @@ namespace Mono.CSharp {
 	{
 		#region Properties
 
-		public int FatalCounter { get; set; }
-
 		public int ErrorsCount { get; protected set; }
-	
+		
+		// TODO: Read from settings
 		public bool ShowFullPaths { get; set; }
 
 		//
@@ -549,9 +551,6 @@ namespace Mono.CSharp {
 				++WarningsCount;
 			} else {
 				++ErrorsCount;
-
-				if (ErrorsCount == FatalCounter)
-					throw new Exception (msg.Text);
 			}
 		}
 
@@ -1011,6 +1010,14 @@ namespace Mono.CSharp {
 		
 		public InternalErrorException (Exception e, Location loc)
 			: base (loc.ToString (), e)
+		{
+		}
+	}
+
+	class FatalException : Exception
+	{
+		public FatalException (string message)
+			: base (message)
 		{
 		}
 	}

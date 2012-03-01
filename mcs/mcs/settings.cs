@@ -139,6 +139,7 @@ namespace Mono.CSharp {
 		public bool ParseOnly, TokenizeOnly, Timestamps;
 		public int DebugFlags;
 		public int VerboseParserFlag;
+		public int FatalCounter;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -1435,12 +1436,12 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			default:
-				if (arg.StartsWith ("--fatal")){
+				if (arg.StartsWith ("--fatal", StringComparison.Ordinal)){
 					int fatal = 1;
-					if (arg.StartsWith ("--fatal="))
+					if (arg.StartsWith ("--fatal=", StringComparison.Ordinal))
 						int.TryParse (arg.Substring (8), out fatal);
 
-					report.Printer.FatalCounter = fatal;
+					settings.FatalCounter = fatal;
 					return ParseResult.Success;
 				}
 				if (arg.StartsWith ("--runtime:", StringComparison.Ordinal)) {
