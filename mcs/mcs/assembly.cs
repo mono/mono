@@ -810,10 +810,10 @@ namespace Mono.CSharp
 			case Platform.Arm:
 #if STATIC
 				machine = ImageFileMachine.ARM;
+				break;
 #else
 				throw new NotSupportedException ();
 #endif
-				break;
 			case Platform.AnyCPU:
 			default:
 				machine = ImageFileMachine.I386;

@@ -973,6 +973,7 @@ namespace Mono.CSharp
 						case Token.UNCHECKED:
 						case Token.UNSAFE:
 						case Token.DEFAULT:
+						case Token.AWAIT:
 
 						//
 						// These can be part of a member access

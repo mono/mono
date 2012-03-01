@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading.Tasks;
 
@@ -16,6 +14,12 @@ class A
 	async Task async (int async)
 	{
 		throw new NotImplementedException ();
+	}
+	
+	async void CastTest ()
+	{
+		var res = (int) await async ();
+		var res2 = (Int32) await async ();
 	}
 
 	public static int Main ()
