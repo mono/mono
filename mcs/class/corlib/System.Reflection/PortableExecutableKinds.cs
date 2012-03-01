@@ -1,10 +1,12 @@
 //
 // System.Reflection.PortableExecutableKinds flag
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,7 +40,10 @@ namespace System.Reflection {
 		ILOnly = 1,
 		Required32Bit = 2,
 		PE32Plus = 4,
-		Unmanaged32Bit = 8
+		Unmanaged32Bit = 8,
+#if NET_4_5
+		Preferred32Bit = 16
+#endif
 	}
 }
 
