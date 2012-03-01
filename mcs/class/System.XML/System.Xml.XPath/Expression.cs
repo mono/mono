@@ -2067,7 +2067,6 @@ namespace System.Xml.XPath
 			case "string": return new XPathFunctionString (args);
 			case "concat": return new XPathFunctionConcat (args);
 			case "starts-with": return new XPathFunctionStartsWith (args);
-			case "ends-with": return new XPathFunctionEndsWith (args);
 			case "contains": return new XPathFunctionContains (args);
 			case "substring-before": return new XPathFunctionSubstringBefore (args);
 			case "substring-after": return new XPathFunctionSubstringAfter (args);
