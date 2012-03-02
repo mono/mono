@@ -62,11 +62,6 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		protected override void SerializeToStream (Stream stream, TransportContext context)
-		{
-			content.CopyTo (stream, bufferSize);
-		}
-
 		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
 			return content.CopyToAsync (stream, bufferSize);

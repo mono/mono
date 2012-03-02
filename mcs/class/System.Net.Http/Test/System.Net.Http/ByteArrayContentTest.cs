@@ -30,6 +30,7 @@ using System;
 using NUnit.Framework;
 using System.Net.Http;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MonoTests.System.Net.Http
 {
@@ -105,7 +106,8 @@ namespace MonoTests.System.Net.Http
 			byte[] b = { 4 };
 
 			var sc = new ByteArrayContent (b);
-			sc.LoadIntoBufferAsync (400).Wait ();
+			var t = sc.LoadIntoBufferAsync (400);
+			t.Wait ();
 		}
 
 		[Test]

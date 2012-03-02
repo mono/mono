@@ -252,6 +252,11 @@ namespace System.Net.Http
 				request.Headers.AddHeaders (headers);
 			}
 
+			return SendAsyncWorker (request, cancellationToken);
+		}
+
+		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, CancellationToken cancellationToken)
+		{
 			try {
 				if (cancellation_token == null)
 					cancellation_token = new CancellationTokenSource ();
@@ -259,9 +264,9 @@ namespace System.Net.Http
 				using (var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellation_token.Token, cancellationToken)) {
 					cts.CancelAfter (timeout);
 
-					var response = handler.SendAsync (request, cts.Token);
-					//if (response == null)
-					//	throw new InvalidOperationException ("Handler failed to return a response");
+					var response = await handler.SendAsync (request, cts.Token).ConfigureAwait (false);
+					if (response == null)
+						throw new InvalidOperationException ("Handler failed to return a response");
 
 					return response;
 				}

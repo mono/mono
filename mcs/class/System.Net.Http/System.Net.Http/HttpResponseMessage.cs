@@ -36,6 +36,7 @@ namespace System.Net.Http
 		string reasonPhrase;
 		HttpStatusCode statusCode;
 		Version version;
+		bool disposed;
 
 		public HttpResponseMessage ()
 			: this (HttpStatusCode.OK)
@@ -64,7 +65,7 @@ namespace System.Net.Http
 
 		public string ReasonPhrase {
 			get {
-				return reasonPhrase; // ?? HttpListener.GetStatusDescription (statusCode);
+				return reasonPhrase ?? HttpListenerResponse.GetStatusDescription ((int) statusCode);
 			}
 			set {
 				reasonPhrase = value;
@@ -104,6 +105,12 @@ namespace System.Net.Http
 
 		protected virtual void Dispose (bool disposing)
 		{
+			if (disposing && !disposed) {
+				disposed = true;
+
+				if (Content != null)
+					Content.Dispose ();
+			}
 		}
 
 		public HttpResponseMessage EnsureSuccessStatusCode ()

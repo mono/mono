@@ -161,10 +161,13 @@ namespace MonoTests.System.Net.Http
 			var scm = new StreamContentMock (new ExceptionStream ());
 			scm.OnSerializeToStreamAsync = () => { hit = true; };
 			task = scm.CopyToAsync (dest);
-			task.Wait ();
+			try {
+				task.Wait ();
+				Assert.Fail ("#9");
+			} catch (AggregateException) {
+			}
 
 			Assert.IsTrue (hit, "#10");
-			//Assert.IsTrue (task.IsFaulted, "#11");
 		}
 
 		[Test]

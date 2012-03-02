@@ -45,19 +45,6 @@ namespace System.Net.Http
 			}
 		}
 
-		public void CopyTo (Stream stream)
-		{
-			CopyTo (stream, null);
-		}
-
-		public void CopyTo (Stream stream, TransportContext context)
-		{
-			if (stream == null)
-				throw new ArgumentNullException ("stream");
-
-			SerializeToStream (stream, context);
-		}
-
 		public Task CopyToAsync (Stream stream)
 		{
 			return CopyToAsync (stream, null);
@@ -86,12 +73,12 @@ namespace System.Net.Http
 			}
 		}
 
-		public void LoadIntoBuffer ()
+		public Task LoadIntoBufferAsync ()
 		{
-			LoadIntoBuffer (0x2000);
+			return LoadIntoBufferAsync (0x2000);
 		}
 
-		public void LoadIntoBuffer (int maxBufferSize)
+		public async Task LoadIntoBufferAsync (int maxBufferSize)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -100,32 +87,21 @@ namespace System.Net.Http
 				return;
 
 			buffer = new MemoryStream ();
-			SerializeToStream (buffer, null);
+			await SerializeToStreamAsync (buffer, null).ConfigureAwait (false);
 			buffer.Seek (0, SeekOrigin.Begin);
 		}
 
-		public Task LoadIntoBufferAsync ()
+		public async Task<byte[]> ReadAsByteArrayAsync ()
 		{
-			return LoadIntoBufferAsync (0x2000);
+			await LoadIntoBufferAsync ().ConfigureAwait (false);
+			return buffer.ToArray ();
 		}
 
-		public Task LoadIntoBufferAsync (int maxBufferSize)
+		public async Task<string> ReadAsStringAsync ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		public Task<byte[]> ReadAsByteArrayAsync ()
-		{
-			LoadIntoBuffer ();
-			throw new NotImplementedException ();
-//			return buffer.ToArray ();
-		}
-
-		public Task<string> ReadAsStringAsync ()
-		{
-			LoadIntoBuffer ();
+			await LoadIntoBufferAsync ();
 			if (buffer.Length == 0)
-				return Task.FromResult (string.Empty);
+				return string.Empty;
 
 			Encoding encoding;
 			if (headers != null && headers.ContentType != null && headers.ContentType.CharSet != null) {
@@ -134,11 +110,9 @@ namespace System.Net.Http
 				encoding = Encoding.UTF8;
 			}
 
-			throw new NotImplementedException ();
-			//return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
+			return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
 		}
 
-		protected abstract void SerializeToStream (Stream stream, TransportContext context);
 		protected abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);
 		protected internal abstract bool TryComputeLength (out long length);
 	}

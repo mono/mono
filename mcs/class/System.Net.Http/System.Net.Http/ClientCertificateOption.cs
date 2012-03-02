@@ -1,5 +1,5 @@
 //
-// ByteArrayContent.cs
+// ClientCertificateOption.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,47 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.IO;
-using System.Threading.Tasks;
-
 namespace System.Net.Http
 {
-	public class ByteArrayContent: HttpContent
+	public enum ClientCertificateOption
 	{
-		readonly byte[] content;
-		readonly int offset, count;
-
-		public ByteArrayContent (byte[] content)
-		{
-			if (content == null)
-				throw new ArgumentNullException ("content");
-
-			this.content = content;
-			this.count = content.Length;
-		}
-
-		public ByteArrayContent (byte[] content, int offset, int count)
-			: this (content)
-		{
-			if (offset < 0 || offset > this.count)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (count < 0 || count > (this.count - offset))
-				throw new ArgumentOutOfRangeException ("count");
-
-			this.offset = offset;
-			this.count = count;
-		}
-
-		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
-		{
-			return stream.WriteAsync (content, offset, count);
-		}
-
-		protected internal override bool TryComputeLength (out long length)
-		{
-			length = count;
-			return true;
-		}
+		Manual,
+		Automatic
 	}
 }

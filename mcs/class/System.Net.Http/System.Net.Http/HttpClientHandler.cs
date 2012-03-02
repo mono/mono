@@ -185,10 +185,12 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		WebRequest CreateWebRequest (HttpRequestMessage request)
+		HttpWebRequest CreateWebRequest (HttpRequestMessage request)
 		{
-			var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
-			var wr = (HttpWebRequest) factory.Create (request.RequestUri);
+			//var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
+			//var wr = (HttpWebRequest) factory.Create (request.RequestUri);
+
+			var wr = new HttpWebRequest (request.RequestUri);
 
 			wr.ConnectionGroupName = "HttpClientHandler";
 			wr.Method = request.Method.Method;
@@ -256,25 +258,18 @@ namespace System.Net.Http
 
 			return response;
 		}
-		/*
-		protected internal override HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
+
+		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
 				throw new NotImplementedException ();
-			} else {
-				// TODO:
 			}
 
-			var wresponse = (HttpWebResponse) wrequest.GetResponse ();
-
+			// FIXME: Why GetResponseAsync does not accept cancellationToken
+			var wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
 			return CreateResponseMessage (wresponse, request);
-		}
-		*/
-		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

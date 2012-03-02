@@ -244,7 +244,7 @@ namespace System.Net.Http.Headers
 
 			HeaderInfo headerInfo;
 			if (known_headers.TryGetValue (name, out headerInfo) && (headerInfo.HeaderKind & HeaderKind) == 0) {
-				if (HeaderKind != HttpHeaderKind.None)
+				if (HeaderKind != HttpHeaderKind.None && ((HeaderKind | headerInfo.HeaderKind) & HttpHeaderKind.Content) != 0)
 					throw new InvalidOperationException (name);
 
 				return null;

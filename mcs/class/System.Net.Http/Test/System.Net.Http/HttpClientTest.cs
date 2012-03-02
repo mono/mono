@@ -469,7 +469,6 @@ namespace MonoTests.System.Net.Http
 
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#1");
 				Assert.IsTrue (passed, "#2");
-
 			} finally {
 				listener.Abort ();
 				listener.Close ();
@@ -513,6 +512,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_InvalidHandler ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -542,13 +542,12 @@ namespace MonoTests.System.Net.Http
 			var client = new HttpClient (mh);
 			var request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
 
-			mh.OnSend = l => {
-				return Task.FromResult (new HttpResponseMessage ());
-			};
+			mh.OnSend = l => Task.FromResult (new HttpResponseMessage ());
 
 			client.SendAsync (request).Wait ();
 			try {
 				client.SendAsync (request).Wait ();
+				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
 		}
