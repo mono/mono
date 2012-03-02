@@ -463,6 +463,8 @@
 		<!-- FOOTER -->
 		
 		<div class="Footer">
+		<hr/>
+			This documentation is part of the <a target="_top" title="Mono Project" href="http://www.mono-project.com/">Mono Project</a>.
 		</div>
 
 	</xsl:template>

@@ -1,6 +1,6 @@
 # To produce a debugging parser, use the version that says "-cvt"
-#JAY_FLAGS=-c
-JAY_FLAGS=-cvt
+JAY_FLAGS=-c
+# JAY_FLAGS=-cvt
 
 thisdir := mcs
 SUBDIRS := 

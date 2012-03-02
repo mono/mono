@@ -3957,15 +3957,10 @@ null_coalescing_expression
 
 conditional_expression
 	: null_coalescing_expression
-	| null_coalescing_expression INTERR expression COLON expression
+	| null_coalescing_expression INTERR expression COLON expression_or_error
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
-	  }
-	| null_coalescing_expression INTERR expression COLON CLOSE_BRACE {
-		report.Error (1525, GetLocation ($5), "Unexpected symbol '}', expecting expression");
-		lexer.putback ('}');
-		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -4803,7 +4798,7 @@ block_variable_declaration
 		current_block.AddLocalName (li);
 		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
 	  }
-	  opt_local_variable_initializer opt_variable_declarators semicolon_or_handle_error_close_brace
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
 	  {
 		$$ = current_variable;
 		current_variable = null;
@@ -4824,15 +4819,6 @@ block_variable_declaration
 	  }
 	;
 
-semicolon_or_handle_error_close_brace 
-	: SEMICOLON
-	| CLOSE_BRACE {
-	  	      // Redundant, but wont regress
-		report.Error (1525, lexer.Location, "Unexpected symbol }");
-		lexer.putback ('}');
-		$$ = $1;
-	  }
-	;
 opt_local_variable_initializer
 	: /* empty */
 	| ASSIGN block_variable_initializer
@@ -5180,7 +5166,7 @@ for_statement
 	;
 	
 // Has to use be extra rule to recover started block
-xfor_statement_cont
+for_statement_cont
 	: opt_for_initializer SEMICOLON
 	  {
 		((For) $0).Initializer = (Statement) $1;
@@ -5201,56 +5187,6 @@ xfor_statement_cont
 		For f = ((For) $0);
 		f.Statement = (Statement) $10;
 		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($5), GetLocation ($8));
-
-		$$ = end_block (GetLocation ($2));
-	  }
-	| error
-	  {
-		Error_SyntaxError (yyToken);
-		$$ = end_block (current_block.StartLocation);
-	  }
-	;
-
-iterator_part
-	:  opt_for_condition SEMICOLON
-	  {
-		For f = (For) oob_stack.Peek ();
-		f.Condition = (BooleanExpression) $1;
-	  }
-	  opt_for_iterator CLOSE_PARENS
-	  {
-		For f = (For) oob_stack.Peek ();
-		f.Iterator = (Statement) $4;
-		$$ = new Tuple<Location,Location> (GetLocation ($2), GetLocation ($5));
-	  }
-
-	  // Handle errors in the case of opt_for_condition being followed by
-	  // a close parenthesis
-	| opt_for_condition CLOSE_PARENS {
-	      report.Error (1525, GetLocation ($2), "Unexpected symbol ')', expected ';'");
-	      For f = (For) oob_stack.Peek ();
-	      f.Condition = (BooleanExpression) $1;
-	      $$ = new Tuple<Location,Location> (GetLocation ($2), GetLocation ($2));
-	  }
-	;
-
-// Has to use be extra rule to recover started block
-for_statement_cont
-	: opt_for_initializer SEMICOLON
-	  {
-		((For) $0).Initializer = (Statement) $1;
-		oob_stack.Push ($0);
-	  }
-	  iterator_part
-	  embedded_statement
-	  {
-		oob_stack.Pop ();
-		if ($5 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
-			Warning_EmptyStatement (GetLocation ($5));
-	  
-		For f = ((For) $0);
-		f.Statement = (Statement) $5;
-		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), ((Tuple<Location,Location>) $5).Item1, ((Tuple<Location,Location>) $5).Item2);
 
 		$$ = end_block (GetLocation ($2));
 	  }
