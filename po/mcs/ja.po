@@ -2924,12 +2924,12 @@ msgstr ""
 msgid "Cannot set the `IndexerName' attribute on an indexer marked override"
 msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
 
-#: mcs/mcs/roottypes.cs:327
+#: mcs/mcs/module.cs:327
 #, csharp-format
 msgid "Value specified for the argument to `{0}' is not valid"
 msgstr ""
 
-#: mcs/mcs/roottypes.cs:546
+#: mcs/mcs/module.cs:546
 #, csharp-format
 msgid "The namespace `{0}' already contains a definition for `{1}'"
 msgstr ""

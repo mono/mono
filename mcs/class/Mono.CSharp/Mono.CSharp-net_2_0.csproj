@@ -88,7 +88,6 @@
    <Compile Include="..\..\mcs\typemanager.cs" />
    <Compile Include="..\..\mcs\typespec.cs" />
    <Compile Include="..\..\mcs\visit.cs" />
-   <Compile Include="..\..\mcs\symbolwriter.cs" />
    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />

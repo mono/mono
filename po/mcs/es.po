@@ -2961,12 +2961,12 @@ msgstr ""
 "No puede especificar el atributo `DefaultMember' en un tipo que contiene un "
 "indexador"
 
-#: mcs/mcs/roottypes.cs:327
+#: mcs/mcs/module.cs:327
 #, csharp-format
 msgid "Value specified for the argument to `{0}' is not valid"
 msgstr ""
 
-#: mcs/mcs/roottypes.cs:546
+#: mcs/mcs/module.cs:546
 #, csharp-format
 msgid "The namespace `{0}' already contains a definition for `{1}'"
 msgstr ""

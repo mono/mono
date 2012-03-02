@@ -40,10 +40,9 @@ mcs/mcs/pending.cs
 mcs/mcs/property.cs
 mcs/mcs/reflection.cs
 mcs/mcs/report.cs
-mcs/mcs/rootcontext.cs
-mcs/mcs/roottypes.cs
+mcs/mcs/settings.cs
+mcs/mcs/module.cs
 mcs/mcs/statement.cs
 mcs/mcs/support.cs
 mcs/mcs/typespec.cs
 mcs/mcs/typemanager.cs
-mcs/mcs/symbolwriter.cs

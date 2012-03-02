@@ -3363,14 +3363,14 @@ msgstr ""
 "Não foi possível definir o atributo \"IndexerName\" em um indexador marcado "
 "como sobrescrito"
 
-#: mcs/mcs/roottypes.cs:327
+#: mcs/mcs/module.cs:327
 #, fuzzy, csharp-format
 msgid "Value specified for the argument to `{0}' is not valid"
 msgstr ""
 "Valor especificado para o argumento ao \"System.Runtime.InteropServices."
 "DefaultCharSetAttribute\" não é válido"
 
-#: mcs/mcs/roottypes.cs:546
+#: mcs/mcs/module.cs:546
 #, csharp-format
 msgid "The namespace `{0}' already contains a definition for `{1}'"
 msgstr "O namespace \"{0}\" já contém uma definição para \"{1}\""

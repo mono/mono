@@ -85,14 +85,13 @@
    <Compile Include="property.cs" />
    <Compile Include="reflection.cs" />
    <Compile Include="report.cs" />
-   <Compile Include="rootcontext.cs" />
-   <Compile Include="roottypes.cs" />
+   <Compile Include="settings.cs" />
+   <Compile Include="module.cs" />
    <Compile Include="statement.cs" />
    <Compile Include="support.cs" />
    <Compile Include="typemanager.cs" />
    <Compile Include="typespec.cs" />
    <Compile Include="visit.cs" />
-   <Compile Include="symbolwriter.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
