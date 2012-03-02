@@ -3207,6 +3207,8 @@ namespace MonoTests.Microsoft.Win32
 						createdKey.SetValue ("test-ushort", (ushort) 1, RegistryValueKind.DWord);
 						createdKey.SetValue ("test-long", (long) 1, RegistryValueKind.DWord);
 						createdKey.SetValue ("test-ulong", (ulong) 1, RegistryValueKind.DWord);
+						createdKey.SetValue ("test-decimal", (decimal) 1, RegistryValueKind.DWord);
+						createdKey.SetValue ("test-float", (float) 1, RegistryValueKind.DWord);
 
 						createdKey.SetValue ("dtest-int", (int) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-uint", (uint) 1, RegistryValueKind.QWord);
@@ -3216,6 +3218,8 @@ namespace MonoTests.Microsoft.Win32
 						createdKey.SetValue ("dtest-ushort", (ushort) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-long", (long) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-ulong", (ulong) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-decimal", (decimal) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-float", (float) 1, RegistryValueKind.QWord);
 
 						object r = createdKey.GetValue ("test-int");
 						Assert.AreEqual (r is int, true);
@@ -3267,12 +3271,20 @@ namespace MonoTests.Microsoft.Win32
 						r = createdKey.GetValue ("dtest-ulong");
 						Assert.AreEqual (r is long, true);
 						Assert.AreEqual ((long) r, 1);
+						r = createdKey.GetValue ("dtest-decimal");
+						Assert.IsTrue (r is long);
+						Assert.AreEqual ((long) r, 1);
+						r = createdKey.GetValue ("dtest-float");
+						Assert.IsTrue (r is long);
+						Assert.AreEqual ((long) r, 1);
 
 						try {
-							createdKey.SetValue ("dtest-int", (long) long.MaxValue);
-							// should not be reached
-							Assert.AreEqual (true, false);
-						} catch {
+							createdKey.SetValue ("test-int", uint.MaxValue, RegistryValueKind.DWord);
+							Assert.Fail ("#100");
+
+							createdKey.SetValue ("test-int", ulong.MaxValue, RegistryValueKind.QWord);
+							Assert.Fail ("#101");
+						} catch (ArgumentException) {
 						}
 						
 						createdKey.Close ();
