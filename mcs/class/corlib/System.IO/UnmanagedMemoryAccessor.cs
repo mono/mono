@@ -275,8 +275,8 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ();
 			
 			long left = capacity - position;
-			var slots = (int)(left / Marshal.SizeOf (typeof (T)));
-			
+			var slots = Math.Min (count, (int)(left / Marshal.SizeOf (typeof (T))));
+
 			buffer.ReadArray ((ulong) position, array, offset, slots);
 			return slots;
 		}
