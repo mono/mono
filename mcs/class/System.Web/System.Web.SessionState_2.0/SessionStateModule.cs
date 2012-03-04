@@ -231,7 +231,7 @@ namespace System.Web.SessionState
 
 			handler.InitializeRequest (context);
 
-			GetStoreData (context, sessionId, isReadOnly);
+			storeData = GetStoreData (context, sessionId, isReadOnly);
 
 			storeIsNew = false;
 			if (storeData == null && !storeLocked) {
@@ -332,8 +332,9 @@ namespace System.Web.SessionState
 				handler.EndRequest (application.Context);
 		}
 
-		void GetStoreData (HttpContext context, string sessionId, bool isReadOnly) {
-			storeData = (isReadOnly) ?
+		SessionStateStoreData GetStoreData (HttpContext context, string sessionId, bool isReadOnly) {
+			SessionStateStoreData item;
+			item = (isReadOnly) ?
 				handler.GetItem (context,
 								 sessionId,
 								 out storeLocked,
@@ -349,6 +350,8 @@ namespace System.Web.SessionState
 									  out storeSessionAction);
 			if (storeLockId == null)
 				storeLockId = 0;
+
+			return item;
 		}
 
 		void WaitForStoreUnlock (HttpContext context, string sessionId, bool isReadonly) {
@@ -368,14 +371,19 @@ namespace System.Web.SessionState
 		void StoreUnlockWaitCallback (object s) {
 			CallbackState state = (CallbackState) s;
 
-			GetStoreData (state.Context, state.SessionId, state.IsReadOnly);
+			SessionStateStoreData item = GetStoreData (state.Context, state.SessionId, state.IsReadOnly);
 
-			if (storeData == null && storeLocked && (storeLockAge > executionTimeout)) {
+			if (item == null && storeLocked && (storeLockAge > executionTimeout)) {
+				Console.WriteLine(Thread.CurrentThread.ManagedThreadId + ": " + "TimedOut!!!");
 				handler.ReleaseItemExclusive (state.Context, state.SessionId, storeLockId);
+				storeData = null; // Create new state
 				state.AutoEvent.Set ();
 			}
-			else if (storeData != null && !storeLocked)
+			else if (item != null && !storeLocked) {
+				storeData = item;
+				Console.WriteLine(Thread.CurrentThread.ManagedThreadId + ": " + "Store was unlocked -> Despertar waiting thread.");
 				state.AutoEvent.Set ();
+			}
 		}
 
 		HttpSessionStateContainer CreateContainer (string sessionId, SessionStateStoreData data, bool isNew, bool isReadOnly) {
