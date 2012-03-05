@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 			}
 
 			extra_information.Clear ();
-			printer.Print (msg);
+			printer.Print (msg, settings.ShowFullPaths);
 		}
 
 		public void Warning (int code, int level, Location loc, string format, string arg)
@@ -285,7 +285,10 @@ namespace Mono.CSharp {
 			ErrorMessage msg = new ErrorMessage (code, loc, error, extra_information);
 			extra_information.Clear ();
 
-			printer.Print (msg);
+			printer.Print (msg, settings.ShowFullPaths);
+
+			if (settings.Stacktrace)
+				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 
 			if (printer.ErrorsCount == settings.FatalCounter)
 				throw new FatalException (msg.Text);
@@ -404,7 +407,42 @@ namespace Mono.CSharp {
 			sb.Append (")");
 			return sb.ToString ();
 		}
-*/ 
+*/
+		static string FriendlyStackTrace (StackTrace t)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			bool foundUserCode = false;
+
+			for (int i = 0; i < t.FrameCount; i++) {
+				StackFrame f = t.GetFrame (i);
+				var mb = f.GetMethod ();
+
+				if (!foundUserCode && mb.ReflectedType == typeof (Report))
+					continue;
+
+				foundUserCode = true;
+
+				sb.Append ("\tin ");
+
+				if (f.GetFileLineNumber () > 0)
+					sb.AppendFormat ("(at {0}:{1}) ", f.GetFileName (), f.GetFileLineNumber ());
+
+				sb.AppendFormat ("{0}.{1} (", mb.ReflectedType.Name, mb.Name);
+
+				bool first = true;
+				foreach (var pi in mb.GetParameters ()) {
+					if (!first)
+						sb.Append (", ");
+					first = false;
+
+					sb.Append (pi.ParameterType.FullName);
+				}
+				sb.Append (")\n");
+			}
+
+			return sb.ToString ();
+		}
 	}
 
 	public abstract class AbstractMessage
@@ -520,14 +558,6 @@ namespace Mono.CSharp {
 
 		public int ErrorsCount { get; protected set; }
 		
-		// TODO: Read from settings
-		public bool ShowFullPaths { get; set; }
-
-		//
-		// Whether to dump a stack trace on errors. 
-		//
-		public bool Stacktrace { get; set; }
-
 		public int WarningsCount { get; private set; }
 	
 		//
@@ -545,7 +575,7 @@ namespace Mono.CSharp {
 			return txt;
 		}
 
-		public virtual void Print (AbstractMessage msg)
+		public virtual void Print (AbstractMessage msg, bool showFullPath)
 		{
 			if (msg.IsWarning) {
 				++WarningsCount;
@@ -554,11 +584,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected void Print (AbstractMessage msg, TextWriter output)
+		protected void Print (AbstractMessage msg, TextWriter output, bool showFullPath)
 		{
 			StringBuilder txt = new StringBuilder ();
 			if (!msg.Location.IsNull) {
-				if (ShowFullPaths)
+				if (showFullPath)
 					txt.Append (msg.Location.ToStringFullName ());
 				else
 					txt.Append (msg.Location.ToString ());
@@ -611,7 +641,9 @@ namespace Mono.CSharp {
 		//
 		List<AbstractMessage> merged_messages;
 
-		public override void Print (AbstractMessage msg)
+		bool showFullPaths;
+
+		public override void Print (AbstractMessage msg, bool showFullPath)
 		{
 			//
 			// This line is useful when debugging recorded messages
@@ -623,7 +655,8 @@ namespace Mono.CSharp {
 
 			session_messages.Add (msg);
 
-			base.Print (msg);
+			this.showFullPaths = showFullPath;
+			base.Print (msg, showFullPath);
 		}
 
 		public void EndSession ()
@@ -697,7 +730,7 @@ namespace Mono.CSharp {
 
 			bool error_msg = false;
 			foreach (AbstractMessage msg in messages_to_print) {
-				dest.Print (msg);
+				dest.Print (msg, showFullPaths);
 				error_msg |= !msg.IsWarning;
 			}
 
@@ -714,10 +747,10 @@ namespace Mono.CSharp {
 			this.writer = writer;
 		}
 
-		public override void Print (AbstractMessage msg)
+		public override void Print (AbstractMessage msg, bool showFullPath)
 		{
-			Print (msg, writer);
-			base.Print (msg);
+			Print (msg, writer, showFullPath);
+			base.Print (msg, showFullPath);
 		}
 	}
 
@@ -833,60 +866,6 @@ namespace Mono.CSharp {
 				return prefix + txt + postfix;
 
 			return txt;
-		}
-
-		static string FriendlyStackTrace (StackTrace t)
-		{		
-			StringBuilder sb = new StringBuilder ();
-			
-			bool foundUserCode = false;
-			
-			for (int i = 0; i < t.FrameCount; i++) {
-				StackFrame f = t.GetFrame (i);
-				var mb = f.GetMethod ();
-				
-				if (!foundUserCode && mb.ReflectedType == typeof (Report))
-					continue;
-				
-				foundUserCode = true;
-				
-				sb.Append ("\tin ");
-				
-				if (f.GetFileLineNumber () > 0)
-					sb.AppendFormat ("(at {0}:{1}) ", f.GetFileName (), f.GetFileLineNumber ());
-				
-				sb.AppendFormat ("{0}.{1} (", mb.ReflectedType.Name, mb.Name);
-				
-				bool first = true;
-				foreach (var pi in mb.GetParameters ()) {
-					if (!first)
-						sb.Append (", ");
-					first = false;
-
-					sb.Append (pi.ParameterType.FullName);
-				}
-				sb.Append (")\n");
-			}
-	
-			return sb.ToString ();
-		}
-
-		public override void Print (AbstractMessage msg)
-		{
-			base.Print (msg);
-
-			if (Stacktrace)
-				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
-		}
-
-		public static string FriendlyStackTrace (Exception e)
-		{
-			return FriendlyStackTrace (new StackTrace (e, true));
-		}
-
-		public static void StackTrace ()
-		{
-			Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 		}
 	}
 

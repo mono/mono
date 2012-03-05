@@ -45,7 +45,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public override void Print (Compiler.AbstractMessage msg)
+		public override void Print (Compiler.AbstractMessage msg, bool showFullPath)
 		{
 			string text;
 			if (msg.Code == 214) {

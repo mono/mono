@@ -140,11 +140,15 @@ namespace Mono.CSharp {
 
 		public bool GenerateDebugInfo;
 
-		// Compiler debug flags only
+		#region Compiler debug flags only
 		public bool ParseOnly, TokenizeOnly, Timestamps;
 		public int DebugFlags;
 		public int VerboseParserFlag;
 		public int FatalCounter;
+		public bool Stacktrace;
+		#endregion
+
+		public bool ShowFullPaths;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -1124,7 +1128,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/fullpaths":
-				report.Printer.ShowFullPaths = true;
+				settings.ShowFullPaths = true;
 				return ParseResult.Success;
 
 			case "/keyfile":
@@ -1284,7 +1288,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 				
 			case "--stacktrace":
-				report.Printer.Stacktrace = true;
+				settings.Stacktrace = true;
 				return ParseResult.Success;
 				
 			case "--linkresource":
