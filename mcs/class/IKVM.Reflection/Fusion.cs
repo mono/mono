@@ -516,21 +516,5 @@ namespace IKVM.Reflection
 		{
 			return name.PublicKeyToken != null && name.PublicKeyToken != "null";
 		}
-
-		private static bool IsEqual(byte[] b1, byte[] b2)
-		{
-			if (b1.Length != b2.Length)
-			{
-				return false;
-			}
-			for (int i = 0; i < b1.Length; i++)
-			{
-				if (b1[i] != b2[i])
-				{
-					return false;
-				}
-			}
-			return true;
-		}
 	}
 }

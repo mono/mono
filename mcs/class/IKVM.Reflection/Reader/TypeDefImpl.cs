@@ -66,31 +66,26 @@ namespace IKVM.Reflection.Reader
 
 		public override EventInfo[] __GetDeclaredEvents()
 		{
-			int token = this.MetadataToken;
-			// TODO use binary search?
-			for (int i = 0; i < module.EventMap.records.Length; i++)
+			foreach (int i in module.EventMap.Filter(this.MetadataToken))
 			{
-				if (module.EventMap.records[i].Parent == token)
+				int evt = module.EventMap.records[i].EventList - 1;
+				int end = module.EventMap.records.Length > i + 1 ? module.EventMap.records[i + 1].EventList - 1 : module.Event.records.Length;
+				EventInfo[] events = new EventInfo[end - evt];
+				if (module.EventPtr.RowCount == 0)
 				{
-					int evt = module.EventMap.records[i].EventList - 1;
-					int end = module.EventMap.records.Length > i + 1 ? module.EventMap.records[i + 1].EventList - 1 : module.Event.records.Length;
-					EventInfo[] events = new EventInfo[end - evt];
-					if (module.EventPtr.RowCount == 0)
+					for (int j = 0; evt < end; evt++, j++)
 					{
-						for (int j = 0; evt < end; evt++, j++)
-						{
-							events[j] = new EventInfoImpl(module, this, evt);
-						}
+						events[j] = new EventInfoImpl(module, this, evt);
 					}
-					else
-					{
-						for (int j = 0; evt < end; evt++, j++)
-						{
-							events[j] = new EventInfoImpl(module, this, module.EventPtr.records[evt] - 1);
-						}
-					}
-					return events;
 				}
+				else
+				{
+					for (int j = 0; evt < end; evt++, j++)
+					{
+						events[j] = new EventInfoImpl(module, this, module.EventPtr.records[evt] - 1);
+					}
+				}
+				return events;
 			}
 			return Empty<EventInfo>.Array;
 		}
@@ -119,19 +114,14 @@ namespace IKVM.Reflection.Reader
 
 		public override Type[] __GetDeclaredInterfaces()
 		{
-			int token = this.MetadataToken;
 			List<Type> list = null;
-			// TODO use binary search?
-			for (int i = 0; i < module.InterfaceImpl.records.Length; i++)
+			foreach (int i in module.InterfaceImpl.Filter(this.MetadataToken))
 			{
-				if (module.InterfaceImpl.records[i].Class == token)
+				if (list == null)
 				{
-					if (list == null)
-					{
-						list = new List<Type>();
-					}
-					list.Add(module.ResolveType(module.InterfaceImpl.records[i].Interface, this));
+					list = new List<Type>();
 				}
+				list.Add(module.ResolveType(module.InterfaceImpl.records[i].Interface, this));
 			}
 			return Util.ToArray(list, Type.EmptyTypes);
 		}
@@ -160,25 +150,21 @@ namespace IKVM.Reflection.Reader
 
 		public override __MethodImplMap __GetMethodImplMap()
 		{
+			PopulateGenericArguments();
 			List<MethodInfo> bodies = new List<MethodInfo>();
 			List<List<MethodInfo>> declarations = new List<List<MethodInfo>>();
-			int token = this.MetadataToken;
-			// TODO use binary search?
-			for (int i = 0; i < module.MethodImpl.records.Length; i++)
+			foreach (int i in module.MethodImpl.Filter(this.MetadataToken))
 			{
-				if (module.MethodImpl.records[i].Class == token)
+				MethodInfo body = (MethodInfo)module.ResolveMethod(module.MethodImpl.records[i].MethodBody, typeArgs, null);
+				int index = bodies.IndexOf(body);
+				if (index == -1)
 				{
-					MethodInfo body = (MethodInfo)module.ResolveMethod(module.MethodImpl.records[i].MethodBody, typeArgs, null);
-					int index = bodies.IndexOf(body);
-					if (index == -1)
-					{
-						index = bodies.Count;
-						bodies.Add(body);
-						declarations.Add(new List<MethodInfo>());
-					}
-					MethodInfo declaration = (MethodInfo)module.ResolveMethod(module.MethodImpl.records[i].MethodDeclaration, typeArgs, null);
-					declarations[index].Add(declaration);
+					index = bodies.Count;
+					bodies.Add(body);
+					declarations.Add(new List<MethodInfo>());
 				}
+				MethodInfo declaration = (MethodInfo)module.ResolveMethod(module.MethodImpl.records[i].MethodDeclaration, typeArgs, null);
+				declarations[index].Add(declaration);
 			}
 			__MethodImplMap map = new __MethodImplMap();
 			map.TargetType = this;
@@ -195,7 +181,7 @@ namespace IKVM.Reflection.Reader
 		{
 			int token = this.MetadataToken;
 			List<Type> list = new List<Type>();
-			// TODO use binary search?
+			// note that the NestedClass table is sorted on NestedClass, so we can't use binary search
 			for (int i = 0; i < module.NestedClass.records.Length; i++)
 			{
 				if (module.NestedClass.records[i].EnclosingClass == token)
@@ -208,31 +194,26 @@ namespace IKVM.Reflection.Reader
 
 		public override PropertyInfo[] __GetDeclaredProperties()
 		{
-			int token = this.MetadataToken;
-			// TODO use binary search?
-			for (int i = 0; i < module.PropertyMap.records.Length; i++)
+			foreach (int i in module.PropertyMap.Filter(this.MetadataToken))
 			{
-				if (module.PropertyMap.records[i].Parent == token)
+				int property = module.PropertyMap.records[i].PropertyList - 1;
+				int end = module.PropertyMap.records.Length > i + 1 ? module.PropertyMap.records[i + 1].PropertyList - 1 : module.Property.records.Length;
+				PropertyInfo[] properties = new PropertyInfo[end - property];
+				if (module.PropertyPtr.RowCount == 0)
 				{
-					int property = module.PropertyMap.records[i].PropertyList - 1;
-					int end = module.PropertyMap.records.Length > i + 1 ? module.PropertyMap.records[i + 1].PropertyList - 1 : module.Property.records.Length;
-					PropertyInfo[] properties = new PropertyInfo[end - property];
-					if (module.PropertyPtr.RowCount == 0)
+					for (int j = 0; property < end; property++, j++)
 					{
-						for (int j = 0; property < end; property++, j++)
-						{
-							properties[j] = new PropertyInfoImpl(module, this, property);
-						}
+						properties[j] = new PropertyInfoImpl(module, this, property);
 					}
-					else
-					{
-						for (int j = 0; property < end; property++, j++)
-						{
-							properties[j] = new PropertyInfoImpl(module, this, module.PropertyPtr.records[property] - 1);
-						}
-					}
-					return properties;
 				}
+				else
+				{
+					for (int j = 0; property < end; property++, j++)
+					{
+						properties[j] = new PropertyInfoImpl(module, this, module.PropertyPtr.records[property] - 1);
+					}
+				}
+				return properties;
 			}
 			return Empty<PropertyInfo>.Array;
 		}
@@ -353,14 +334,9 @@ namespace IKVM.Reflection.Reader
 				{
 					return null;
 				}
-				// TODO use binary search (if sorted)
-				int token = this.MetadataToken;
-				for (int i = 0; i < module.NestedClass.records.Length; i++)
+				foreach (int i in module.NestedClass.Filter(this.MetadataToken))
 				{
-					if (module.NestedClass.records[i].NestedClass == token)
-					{
-						return module.ResolveType(module.NestedClass.records[i].EnclosingClass, null, null);
-					}
+					return module.ResolveType(module.NestedClass.records[i].EnclosingClass, null, null);
 				}
 				throw new InvalidOperationException();
 			}
@@ -411,16 +387,11 @@ namespace IKVM.Reflection.Reader
 
 		public override bool __GetLayout(out int packingSize, out int typeSize)
 		{
-			int token = this.MetadataToken;
-			// TODO use binary search?
-			for (int i = 0; i < module.ClassLayout.records.Length; i++)
+			foreach (int i in module.ClassLayout.Filter(this.MetadataToken))
 			{
-				if (module.ClassLayout.records[i].Parent == token)
-				{
-					packingSize = module.ClassLayout.records[i].PackingSize;
-					typeSize = module.ClassLayout.records[i].ClassSize;
-					return true;
-				}
+				packingSize = module.ClassLayout.records[i].PackingSize;
+				typeSize = module.ClassLayout.records[i].ClassSize;
+				return true;
 			}
 			packingSize = 0;
 			typeSize = 0;
@@ -439,12 +410,9 @@ namespace IKVM.Reflection.Reader
 
 		internal override IList<CustomAttributeData> GetInterfaceImplCustomAttributes(Type interfaceType, Type attributeType)
 		{
-			int token = this.MetadataToken;
-			// TODO use binary search?
-			for (int i = 0; i < module.InterfaceImpl.records.Length; i++)
+			foreach (int i in module.InterfaceImpl.Filter(this.MetadataToken))
 			{
-				if (module.InterfaceImpl.records[i].Class == token
-					&& module.ResolveType(module.InterfaceImpl.records[i].Interface, this) == interfaceType)
+				if (module.ResolveType(module.InterfaceImpl.records[i].Interface, this) == interfaceType)
 				{
 					return module.GetCustomAttributes((InterfaceImplTable.Index << 24) | (i + 1), attributeType);
 				}

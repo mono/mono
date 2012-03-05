@@ -146,7 +146,6 @@ namespace IKVM.Reflection
 		internal readonly GenericParamTable GenericParam = new GenericParamTable();
 		internal readonly MethodSpecTable MethodSpec = new MethodSpecTable();
 		internal readonly GenericParamConstraintTable GenericParamConstraint = new GenericParamConstraintTable();
-		protected ulong sortedTableMask;
 
 		protected Module(Universe universe)
 		{
@@ -501,82 +500,30 @@ namespace IKVM.Reflection
 		internal List<CustomAttributeData> GetCustomAttributes(int metadataToken, Type attributeType)
 		{
 			List<CustomAttributeData> list = new List<CustomAttributeData>();
-			if ((sortedTableMask & (1UL << CustomAttributeTable.Index)) == 0)
+			foreach (int i in CustomAttribute.Filter(metadataToken))
 			{
-				for (int i = 0; i < CustomAttribute.RowCount; i++)
+				if (attributeType == null)
 				{
-					if (CustomAttribute.records[i].Parent == metadataToken)
-					{
-						if (attributeType == null)
-						{
-							list.Add(new CustomAttributeData(this, i));
-						}
-						else
-						{
-							ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
-							if (attributeType.IsAssignableFrom(constructor.DeclaringType))
-							{
-								list.Add(new CustomAttributeData(this, i));
-							}
-						}
-					}
+					list.Add(new CustomAttributeData(this, i));
 				}
-			}
-			else
-			{
-				// do a binary search (on the rid part of the token)
-				CustomAttributeTable.Record rec = new CustomAttributeTable.Record();
-				rec.Parent = metadataToken;
-				int index = Array.BinarySearch(CustomAttribute.records, 0, CustomAttribute.RowCount, rec, BinarySearch.Comparer);
-				if (index >= 0)
+				else
 				{
-					while (index > 0 && (CustomAttribute.records[index - 1].Parent & 0xFFFFFF) == (metadataToken & 0xFFFFFF))
+					ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
+					if (attributeType.IsAssignableFrom(constructor.DeclaringType))
 					{
-						index--;
-					}
-					for (; index < CustomAttribute.RowCount && (CustomAttribute.records[index].Parent & 0xFFFFFF) == (metadataToken & 0xFFFFFF); index++)
-					{
-						if (CustomAttribute.records[index].Parent == metadataToken)
-						{
-							if (attributeType == null)
-							{
-								list.Add(new CustomAttributeData(this, index));
-							}
-							else
-							{
-								ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[index].Type);
-								if (attributeType.IsAssignableFrom(constructor.DeclaringType))
-								{
-									list.Add(new CustomAttributeData(this, index));
-								}
-							}
-						}
+						list.Add(new CustomAttributeData(this, i));
 					}
 				}
 			}
 			return list;
 		}
 
-		private sealed class BinarySearch : IComparer<CustomAttributeTable.Record>
-		{
-			internal static readonly BinarySearch Comparer = new BinarySearch();
-
-			public int Compare(CustomAttributeTable.Record x, CustomAttributeTable.Record y)
-			{
-				return (x.Parent & 0xFFFFFF).CompareTo(y.Parent & 0xFFFFFF);
-			}
-		}
-
 		internal IList<CustomAttributeData> GetDeclarativeSecurity(int metadataToken)
 		{
 			List<CustomAttributeData> list = new List<CustomAttributeData>();
-			// TODO use binary search?
-			for (int i = 0; i < DeclSecurity.records.Length; i++)
+			foreach (int i in DeclSecurity.Filter(metadataToken))
 			{
-				if (DeclSecurity.records[i].Parent == metadataToken)
-				{
-					CustomAttributeData.ReadDeclarativeSecurity(this, i, list);
-				}
+				CustomAttributeData.ReadDeclarativeSecurity(this, i, list);
 			}
 			return list;
 		}

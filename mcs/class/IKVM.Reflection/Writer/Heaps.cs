@@ -145,7 +145,7 @@ namespace IKVM.Reflection.Writer
 			mw.Write((byte)0);
 		}
 
-		private int GetLength(MetadataWriter mw)
+		private static int GetLength(MetadataWriter mw)
 		{
 			int len = 4 + 4 + 8 + 8;
 			foreach (Table table in mw.ModuleBuilder.GetTables())

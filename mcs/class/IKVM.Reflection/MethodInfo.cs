@@ -100,6 +100,11 @@ namespace IKVM.Reflection
 			return match;
 		}
 
+		public virtual MethodInfo[] __GetMethodImpls()
+		{
+			throw new NotSupportedException();
+		}
+
 		Type IGenericContext.GetGenericTypeArgument(int index)
 		{
 			return this.DeclaringType.GetGenericTypeArgument(index);

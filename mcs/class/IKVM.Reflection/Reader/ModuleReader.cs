@@ -188,11 +188,12 @@ namespace IKVM.Reflection.Reader
 			byte HeapSizes = br.ReadByte();
 			/*byte Reserved7 =*/ br.ReadByte();
 			ulong Valid = br.ReadUInt64();
-			sortedTableMask = br.ReadUInt64();
+			ulong Sorted = br.ReadUInt64();
 			for (int i = 0; i < 64; i++)
 			{
 				if ((Valid & (1UL << i)) != 0)
 				{
+					tables[i].Sorted = (Sorted & (1UL << i)) != 0;
 					tables[i].RowCount = br.ReadInt32();
 				}
 				else if (tables[i] != null)

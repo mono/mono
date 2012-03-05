@@ -26,6 +26,7 @@ using IKVM.Reflection.Reader;
 
 namespace IKVM.Reflection
 {
+	[Flags]
 	public enum ExceptionHandlingClauseOptions
 	{
 		Clause  = 0x0000,

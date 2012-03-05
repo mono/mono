@@ -150,7 +150,6 @@ namespace IKVM.Reflection
 		private Type typeof_System_Reflection_AssemblyInformationalVersionAttribute;
 		private Type typeof_System_Reflection_AssemblyFileVersionAttribute;
 		private Type typeof_System_Security_Permissions_CodeAccessSecurityAttribute;
-		private Type typeof_System_Security_Permissions_HostProtectionAttribute;
 		private Type typeof_System_Security_Permissions_PermissionSetAttribute;
 		private Type typeof_System_Security_Permissions_SecurityAction;
 		private List<ResolveEventHandler> resolvers = new List<ResolveEventHandler>();
@@ -480,11 +479,6 @@ namespace IKVM.Reflection
 		internal Type System_Security_Permissions_CodeAccessSecurityAttribute
 		{
 			get { return typeof_System_Security_Permissions_CodeAccessSecurityAttribute ?? (typeof_System_Security_Permissions_CodeAccessSecurityAttribute = ImportMscorlibType(typeof(System.Security.Permissions.CodeAccessSecurityAttribute))); }
-		}
-
-		internal Type System_Security_Permissions_HostProtectionAttribute
-		{
-			get { return typeof_System_Security_Permissions_HostProtectionAttribute ?? (typeof_System_Security_Permissions_HostProtectionAttribute = ImportMscorlibType(typeof(System.Security.Permissions.HostProtectionAttribute))); }
 		}
 
 		internal Type System_Security_Permissions_PermissionSetAttribute

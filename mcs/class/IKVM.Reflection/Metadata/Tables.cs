@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,6 +32,8 @@ namespace IKVM.Reflection.Metadata
 {
 	internal abstract class Table
 	{
+		internal bool Sorted;
+
 		internal bool IsBig
 		{
 			get { return RowCount > 65535; }
@@ -459,6 +461,116 @@ namespace IKVM.Reflection.Metadata
 #endif
 	}
 
+	abstract class SortedTable<T> : Table<T>
+		where T : SortedTable<T>.ISortKey
+	{
+		internal interface ISortKey
+		{
+			int Key { get; }
+		}
+
+		internal struct Enumerable
+		{
+			private readonly SortedTable<T> table;
+			private readonly int token;
+
+			internal Enumerable(SortedTable<T> table, int token)
+			{
+				this.table = table;
+				this.token = token;
+			}
+
+			public Enumerator GetEnumerator()
+			{
+				T[] records = table.records;
+				if (!table.Sorted)
+				{
+					return new Enumerator(records, table.RowCount - 1, -1, token);
+				}
+				int index = BinarySearch(records, table.RowCount, token & 0xFFFFFF);
+				if (index < 0)
+				{
+					return new Enumerator(null, 0, 1, -1);
+				}
+				int start = index;
+				while (start > 0 && (records[start - 1].Key & 0xFFFFFF) == (token & 0xFFFFFF))
+				{
+					start--;
+				}
+				int end = index;
+				int max = table.RowCount - 1;
+				while (end < max && (records[end + 1].Key & 0xFFFFFF) == (token & 0xFFFFFF))
+				{
+					end++;
+				}
+				return new Enumerator(records, end, start - 1, token);
+			}
+
+			private static int BinarySearch(T[] records, int length, int maskedToken)
+			{
+				int min = 0;
+				int max = length - 1;
+				while (min <= max)
+				{
+					int mid = min + ((max - min) / 2);
+					int maskedValue = records[mid].Key & 0xFFFFFF;
+					if (maskedToken == maskedValue)
+					{
+						return mid;
+					}
+					else if (maskedToken < maskedValue)
+					{
+						max = mid - 1;
+					}
+					else
+					{
+						min = mid + 1;
+					}
+				}
+				return -1;
+			}
+		}
+
+		internal struct Enumerator
+		{
+			private readonly T[] records;
+			private readonly int token;
+			private readonly int max;
+			private int index;
+
+			internal Enumerator(T[] records, int max, int index, int token)
+			{
+				this.records = records;
+				this.token = token;
+				this.max = max;
+				this.index = index;
+			}
+
+			public int Current
+			{
+				get { return index; }
+			}
+
+			public bool MoveNext()
+			{
+				while (index < max)
+				{
+					index++;
+					if (records[index].Key == token)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
+		internal Enumerable Filter(int token)
+		{
+			return new Enumerable(this, token);
+		}
+	}
+
 	sealed class ModuleTable : Table<ModuleTable.Record>
 	{
 		internal const int Index = 0x00;
@@ -769,14 +881,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class InterfaceImplTable : Table<InterfaceImplTable.Record>, IComparer<InterfaceImplTable.Record>
+	sealed class InterfaceImplTable : SortedTable<InterfaceImplTable.Record>, IComparer<InterfaceImplTable.Record>
 	{
 		internal const int Index = 0x09;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Class;
 			internal int Interface;
+
+			int ISortKey.Key
+			{
+				get { return Class; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -913,15 +1030,20 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class ConstantTable : Table<ConstantTable.Record>, IComparer<ConstantTable.Record>
+	sealed class ConstantTable : SortedTable<ConstantTable.Record>, IComparer<ConstantTable.Record>
 	{
 		internal const int Index = 0x0B;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short Type;
 			internal int Parent;
 			internal int Value;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -988,72 +1110,73 @@ namespace IKVM.Reflection.Metadata
 
 		internal object GetRawConstantValue(Module module, int parent)
 		{
-			// TODO use binary search (if sorted)
-			for (int i = 0; i < module.Constant.records.Length; i++)
+			foreach (int i in Filter(parent))
 			{
-				if (module.Constant.records[i].Parent == parent)
+				ByteReader br = module.GetBlob(module.Constant.records[i].Value);
+				switch (module.Constant.records[i].Type)
 				{
-					ByteReader br = module.GetBlob(module.Constant.records[i].Value);
-					switch (module.Constant.records[i].Type)
-					{
-						// see ModuleBuilder.AddConstant for the encodings
-						case Signature.ELEMENT_TYPE_BOOLEAN:
-							return br.ReadByte() != 0;
-						case Signature.ELEMENT_TYPE_I1:
-							return br.ReadSByte();
-						case Signature.ELEMENT_TYPE_I2:
-							return br.ReadInt16();
-						case Signature.ELEMENT_TYPE_I4:
-							return br.ReadInt32();
-						case Signature.ELEMENT_TYPE_I8:
-							return br.ReadInt64();
-						case Signature.ELEMENT_TYPE_U1:
-							return br.ReadByte();
-						case Signature.ELEMENT_TYPE_U2:
-							return br.ReadUInt16();
-						case Signature.ELEMENT_TYPE_U4:
-							return br.ReadUInt32();
-						case Signature.ELEMENT_TYPE_U8:
-							return br.ReadUInt64();
-						case Signature.ELEMENT_TYPE_R4:
-							return br.ReadSingle();
-						case Signature.ELEMENT_TYPE_R8:
-							return br.ReadDouble();
-						case Signature.ELEMENT_TYPE_CHAR:
-							return br.ReadChar();
-						case Signature.ELEMENT_TYPE_STRING:
+					// see ModuleBuilder.AddConstant for the encodings
+					case Signature.ELEMENT_TYPE_BOOLEAN:
+						return br.ReadByte() != 0;
+					case Signature.ELEMENT_TYPE_I1:
+						return br.ReadSByte();
+					case Signature.ELEMENT_TYPE_I2:
+						return br.ReadInt16();
+					case Signature.ELEMENT_TYPE_I4:
+						return br.ReadInt32();
+					case Signature.ELEMENT_TYPE_I8:
+						return br.ReadInt64();
+					case Signature.ELEMENT_TYPE_U1:
+						return br.ReadByte();
+					case Signature.ELEMENT_TYPE_U2:
+						return br.ReadUInt16();
+					case Signature.ELEMENT_TYPE_U4:
+						return br.ReadUInt32();
+					case Signature.ELEMENT_TYPE_U8:
+						return br.ReadUInt64();
+					case Signature.ELEMENT_TYPE_R4:
+						return br.ReadSingle();
+					case Signature.ELEMENT_TYPE_R8:
+						return br.ReadDouble();
+					case Signature.ELEMENT_TYPE_CHAR:
+						return br.ReadChar();
+					case Signature.ELEMENT_TYPE_STRING:
+						{
+							char[] chars = new char[br.Length / 2];
+							for (int j = 0; j < chars.Length; j++)
 							{
-								char[] chars = new char[br.Length / 2];
-								for (int j = 0; j < chars.Length; j++)
-								{
-									chars[j] = br.ReadChar();
-								}
-								return new String(chars);
+								chars[j] = br.ReadChar();
 							}
-						case Signature.ELEMENT_TYPE_CLASS:
-							if (br.ReadInt32() != 0)
-							{
-								throw new BadImageFormatException();
-							}
-							return null;
-						default:
+							return new String(chars);
+						}
+					case Signature.ELEMENT_TYPE_CLASS:
+						if (br.ReadInt32() != 0)
+						{
 							throw new BadImageFormatException();
-					}
+						}
+						return null;
+					default:
+						throw new BadImageFormatException();
 				}
 			}
 			throw new InvalidOperationException();
 		}
 	}
 
-	sealed class CustomAttributeTable : Table<CustomAttributeTable.Record>, IComparer<CustomAttributeTable.Record>
+	sealed class CustomAttributeTable : SortedTable<CustomAttributeTable.Record>, IComparer<CustomAttributeTable.Record>
 	{
 		internal const int Index = 0x0C;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Parent;
 			internal int Type;
 			internal int Value;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1173,14 +1296,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class FieldMarshalTable : Table<FieldMarshalTable.Record>, IComparer<FieldMarshalTable.Record>
+	sealed class FieldMarshalTable : SortedTable<FieldMarshalTable.Record>, IComparer<FieldMarshalTable.Record>
 	{
 		internal const int Index = 0x0D;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Parent;
 			internal int NativeType;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1236,15 +1364,20 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class DeclSecurityTable : Table<DeclSecurityTable.Record>, IComparer<DeclSecurityTable.Record>
+	sealed class DeclSecurityTable : SortedTable<DeclSecurityTable.Record>, IComparer<DeclSecurityTable.Record>
 	{
 		internal const int Index = 0x0E;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short Action;
 			internal int Parent;
 			internal int PermissionSet;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1311,15 +1444,20 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class ClassLayoutTable : Table<ClassLayoutTable.Record>, IComparer<ClassLayoutTable.Record>
+	sealed class ClassLayoutTable : SortedTable<ClassLayoutTable.Record>, IComparer<ClassLayoutTable.Record>
 	{
 		internal const int Index = 0x0f;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short PackingSize;
 			internal int ClassSize;
 			internal int Parent;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1357,14 +1495,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class FieldLayoutTable : Table<FieldLayoutTable.Record>, IComparer<FieldLayoutTable.Record>
+	sealed class FieldLayoutTable : SortedTable<FieldLayoutTable.Record>, IComparer<FieldLayoutTable.Record>
 	{
 		internal const int Index = 0x10;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Offset;
 			internal int Field;
+
+			int ISortKey.Key
+			{
+				get { return Field; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1446,14 +1589,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class EventMapTable : Table<EventMapTable.Record>
+	sealed class EventMapTable : SortedTable<EventMapTable.Record>
 	{
 		internal const int Index = 0x12;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Parent;
 			internal int EventList;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1537,14 +1685,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class PropertyMapTable : Table<PropertyMapTable.Record>
+	sealed class PropertyMapTable : SortedTable<PropertyMapTable.Record>
 	{
 		internal const int Index = 0x15;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Parent;
 			internal int PropertyList;
+
+			int ISortKey.Key
+			{
+				get { return Parent; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1628,7 +1781,7 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class MethodSemanticsTable : Table<MethodSemanticsTable.Record>, IComparer<MethodSemanticsTable.Record>
+	sealed class MethodSemanticsTable : SortedTable<MethodSemanticsTable.Record>, IComparer<MethodSemanticsTable.Record>
 	{
 		internal const int Index = 0x18;
 
@@ -1640,11 +1793,16 @@ namespace IKVM.Reflection.Metadata
 		internal const short RemoveOn = 0x0010;
 		internal const short Fire = 0x0020;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short Semantics;
 			internal int Method;
 			internal int Association;
+
+			int ISortKey.Key
+			{
+				get { return Association; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1709,70 +1867,64 @@ namespace IKVM.Reflection.Metadata
 
 		internal MethodInfo GetMethod(Module module, int token, bool nonPublic, short semantics)
 		{
-			int i = 0;
-			return GetNextMethod(module, token, nonPublic, semantics, ref i);
-		}
-
-		internal MethodInfo[] GetMethods(Module module, int token, bool nonPublic, short semantics)
-		{
-			List<MethodInfo> methods = new List<MethodInfo>();
-			MethodInfo method;
-			for (int i = 0; (method = GetNextMethod(module, token, nonPublic, semantics, ref i)) != null; )
+			foreach (int i in Filter(token))
 			{
-				methods.Add(method);
-			}
-			return methods.ToArray();
-		}
-
-		private MethodInfo GetNextMethod(Module module, int token, bool nonPublic, short semantics, ref int i)
-		{
-			// TODO use binary search?
-			for (; i < records.Length; i++)
-			{
-				if (records[i].Association == token)
+				if ((records[i].Semantics & semantics) != 0)
 				{
-					if ((records[i].Semantics & semantics) != 0)
+					MethodBase method = module.ResolveMethod((MethodDefTable.Index << 24) + records[i].Method);
+					if (nonPublic || method.IsPublic)
 					{
-						MethodInfo method = (MethodInfo)module.ResolveMethod((MethodDefTable.Index << 24) + records[i].Method);
-						if (nonPublic || method.IsPublic)
-						{
-							i++;
-							return method;
-						}
+						return (MethodInfo)method;
 					}
 				}
 			}
 			return null;
 		}
 
+		internal MethodInfo[] GetMethods(Module module, int token, bool nonPublic, short semantics)
+		{
+			List<MethodInfo> methods = new List<MethodInfo>();
+			foreach (int i in Filter(token))
+			{
+				if ((records[i].Semantics & semantics) != 0)
+				{
+					MethodInfo method = (MethodInfo)module.ResolveMethod((MethodDefTable.Index << 24) + records[i].Method);
+					if (nonPublic || method.IsPublic)
+					{
+						methods.Add(method);
+					}
+				}
+			}
+			return methods.ToArray();
+		}
+
 		internal void ComputeFlags(Module module, int token, out bool isPublic, out bool isStatic)
 		{
 			isPublic = false;
 			isStatic = false;
-			MethodInfo method;
-			for (int i = 0; (method = GetNextMethod(module, token, true, -1, ref i)) != null; )
+			foreach (int i in Filter(token))
 			{
-				if (method.IsPublic)
-				{
-					isPublic = true;
-				}
-				if (method.IsStatic)
-				{
-					isStatic = true;
-				}
+				MethodBase method = module.ResolveMethod((MethodDefTable.Index << 24) + records[i].Method);
+				isPublic |= method.IsPublic;
+				isStatic |= method.IsStatic;
 			}
 		}
 	}
 
-	sealed class MethodImplTable : Table<MethodImplTable.Record>, IComparer<MethodImplTable.Record>
+	sealed class MethodImplTable : SortedTable<MethodImplTable.Record>, IComparer<MethodImplTable.Record>
 	{
 		internal const int Index = 0x19;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Class;
 			internal int MethodBody;
 			internal int MethodDeclaration;
+
+			int ISortKey.Key
+			{
+				get { return Class; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1892,16 +2044,21 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class ImplMapTable : Table<ImplMapTable.Record>, IComparer<ImplMapTable.Record>
+	sealed class ImplMapTable : SortedTable<ImplMapTable.Record>, IComparer<ImplMapTable.Record>
 	{
 		internal const int Index = 0x1C;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short MappingFlags;
 			internal int MemberForwarded;
 			internal int ImportName;
 			internal int ImportScope;
+
+			int ISortKey.Key
+			{
+				get { return MemberForwarded; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -1954,14 +2111,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class FieldRVATable : Table<FieldRVATable.Record>, IComparer<FieldRVATable.Record>
+	sealed class FieldRVATable : SortedTable<FieldRVATable.Record>, IComparer<FieldRVATable.Record>
 	{
 		internal const int Index = 0x1D;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int RVA;		// we set the high bit to signify that the RVA is in the CIL stream (instead of .sdata)
 			internal int Field;
+
+			int ISortKey.Key
+			{
+				get { return Field; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -2305,14 +2467,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class NestedClassTable : Table<NestedClassTable.Record>
+	sealed class NestedClassTable : SortedTable<NestedClassTable.Record>
 	{
 		internal const int Index = 0x29;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int NestedClass;
 			internal int EnclosingClass;
+
+			int ISortKey.Key
+			{
+				get { return NestedClass; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -2355,11 +2522,11 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class GenericParamTable : Table<GenericParamTable.Record>, IComparer<GenericParamTable.Record>
+	sealed class GenericParamTable : SortedTable<GenericParamTable.Record>, IComparer<GenericParamTable.Record>
 	{
 		internal const int Index = 0x2A;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal short Number;
 			internal short Flags;
@@ -2367,6 +2534,11 @@ namespace IKVM.Reflection.Metadata
 			internal int Name;
 			// not part of the table, we use it to be able to fixup the GenericParamConstraint table
 			internal int unsortedIndex;
+
+			int ISortKey.Key
+			{
+				get { return Owner; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)
@@ -2435,11 +2607,6 @@ namespace IKVM.Reflection.Metadata
 			return x.Owner > y.Owner ? 1 : -1;
 		}
 
-		internal GenericParameterAttributes GetAttributes(int token)
-		{
-			return (GenericParameterAttributes)records[(token & 0xFFFFFF) - 1].Flags;
-		}
-
 		internal void PatchAttribute(int token, GenericParameterAttributes genericParameterAttributes)
 		{
 			records[(token & 0xFFFFFF) - 1].Flags = (short)genericParameterAttributes;
@@ -2457,13 +2624,9 @@ namespace IKVM.Reflection.Metadata
 
 		internal int FindFirstByOwner(int token)
 		{
-			// TODO use binary search (if sorted)
-			for (int i = 0; i < records.Length; i++)
+			foreach (int i in Filter(token))
 			{
-				if (records[i].Owner == token)
-				{
-					return i;
-				}
+				return i;
 			}
 			return -1;
 		}
@@ -2530,14 +2693,19 @@ namespace IKVM.Reflection.Metadata
 		}
 	}
 
-	sealed class GenericParamConstraintTable : Table<GenericParamConstraintTable.Record>, IComparer<GenericParamConstraintTable.Record>
+	sealed class GenericParamConstraintTable : SortedTable<GenericParamConstraintTable.Record>, IComparer<GenericParamConstraintTable.Record>
 	{
 		internal const int Index = 0x2C;
 
-		internal struct Record
+		internal struct Record : ISortKey
 		{
 			internal int Owner;
 			internal int Constraint;
+
+			int ISortKey.Key
+			{
+				get { return Owner; }
+			}
 		}
 
 		internal override void Read(MetadataReader mr)

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -60,7 +60,8 @@ namespace IKVM.Reflection
 			NotValueType = 16,
 
 			// for use by TypeDef, TypeBuilder or MissingType
-			EnumOrValueType = 32,
+			PotentialEnumOrValueType = 32,
+			EnumOrValueType = 64,
 		}
 
 		// prevent subclassing by outsiders
@@ -204,8 +205,8 @@ namespace IKVM.Reflection
 			{
 				Type baseType = this.BaseType;
 				return baseType != null
-					&& (baseType.typeFlags & TypeFlags.EnumOrValueType) != 0
-					&& (typeFlags & TypeFlags.EnumOrValueType) == 0;
+					&& baseType.IsEnumOrValueType
+					&& !this.IsEnumOrValueType;
 			}
 		}
 
@@ -1099,7 +1100,7 @@ namespace IKVM.Reflection
 			{
 				Type baseType = this.BaseType;
 				return baseType != null
-					&& (baseType.typeFlags & TypeFlags.EnumOrValueType) != 0
+					&& baseType.IsEnumOrValueType
 					&& baseType.__Name[0] == 'E';
 			}
 		}
@@ -1815,13 +1816,35 @@ namespace IKVM.Reflection
 
 		protected void MarkEnumOrValueType(string typeNamespace, string typeName)
 		{
-			// we don't assume that mscorlib won't have nested types with these names,
+			// we assume that mscorlib won't have nested types with these names,
 			// so we don't check that we're not a nested type
 			if (typeNamespace == "System"
-				&& (typeName == "Enum" || typeName == "ValueType")
-				&& this.Assembly.GetName().Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))
+				&& (typeName == "Enum" || typeName == "ValueType"))
 			{
-				typeFlags |= TypeFlags.EnumOrValueType;
+				typeFlags |= TypeFlags.PotentialEnumOrValueType;
+			}
+		}
+
+		private bool ResolvePotentialEnumOrValueType()
+		{
+			if (this.Assembly == this.Universe.Mscorlib || this.Assembly.GetName().Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))
+			{
+				typeFlags = (typeFlags & ~TypeFlags.PotentialEnumOrValueType) | TypeFlags.EnumOrValueType;
+				return true;
+			}
+			else
+			{
+				typeFlags &= ~TypeFlags.PotentialEnumOrValueType;
+				return false;
+			}
+		}
+
+		private bool IsEnumOrValueType
+		{
+			get
+			{
+				return (typeFlags & (TypeFlags.EnumOrValueType | TypeFlags.PotentialEnumOrValueType)) != 0
+					&& ((typeFlags & TypeFlags.EnumOrValueType) != 0 || ResolvePotentialEnumOrValueType());
 			}
 		}
 
