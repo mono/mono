@@ -622,6 +622,9 @@ System.Runtime.CompilerServices/CallConvCdecl.cs
 System.Runtime.CompilerServices/CallConvFastcall.cs
 System.Runtime.CompilerServices/CallConvThiscall.cs
 System.Runtime.CompilerServices/CallConvStdcall.cs
+System.Runtime.CompilerServices/CallerFilePathAttribute.cs
+System.Runtime.CompilerServices/CallerLineNumberAttribute.cs
+System.Runtime.CompilerServices/CallerMemberNameAttribute.cs
 System.Runtime.CompilerServices/CompilationRelaxations.cs
 System.Runtime.CompilerServices/CompilationRelaxationsAttribute.cs
 System.Runtime.CompilerServices/CompilerGeneratedAttribute.cs
