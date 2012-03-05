@@ -222,8 +222,10 @@ namespace System
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
-			if (Length == 0)
-				return new String[0];
+			if (Length == 0) {
+				bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) != 0;
+				return removeEmpty ? new String[0] : new String[1] { Empty };
+			}
 
 			if (count <= 1) {
 				return count == 0 ?
