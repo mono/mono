@@ -1,4 +1,4 @@
-// CS0119: Expression denotes a `type', where a `variable' or `value' was expected
+// CS0118: `Foo<X>' is a `type' but a `variable' was expected
 // Line: 12
  
 public class Foo<T>

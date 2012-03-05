@@ -2513,8 +2513,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (right_side != null) {
-				if (e is TypeExpr) {
-				    e.Error_UnexpectedKind (ec, ResolveFlags.VariableOrValue, loc);
+				if (e is FullNamedExpression && e.eclass != ExprClass.Unresolved) {
+					e.Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
 				    return null;
 				}
 
@@ -2523,7 +2523,6 @@ namespace Mono.CSharp {
 				e = e.Resolve (ec);
 			}
 
-			//if (ec.CurrentBlock == null || ec.CurrentBlock.CheckInvariantMeaningInBlock (Name, e, Location))
 			return e;
 		}
 		
