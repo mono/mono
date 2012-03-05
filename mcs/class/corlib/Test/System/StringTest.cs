@@ -4024,6 +4024,10 @@ public class StringTest
 	{
 		String[] res;
 
+		// empty and RemoveEmpty
+		res = string.Empty.Split (new Char [] { 'A' }, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (0, res.Length);
+
 		// count == 0
 		res = "..A..B..".Split (new Char[] { '.' }, 0, StringSplitOptions.None);
 		Assert.AreEqual (0, res.Length, "#01-01");
