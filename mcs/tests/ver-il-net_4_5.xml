@@ -55969,6 +55969,9 @@
       <method name="Void ForEach_3(S)" attrs="129">
         <size>60</size>
       </method>
+      <method name="Void Using_4()" attrs="129">
+        <size>38</size>
+      </method>
     </type>
   </test>
   <test name="test-debug-12.cs">

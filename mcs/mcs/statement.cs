@@ -5473,7 +5473,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
 
 				return dispose;
 			}
