@@ -4024,6 +4024,11 @@ public class StringTest
 	{
 		String[] res;
 
+		// empty
+		res = string.Empty.Split (new Char [] { 'A' });
+		Assert.AreEqual (1, res.Length);
+		Assert.AreEqual (string.Empty, res [0]);
+
 		// empty and RemoveEmpty
 		res = string.Empty.Split (new Char [] { 'A' }, StringSplitOptions.RemoveEmptyEntries);
 		Assert.AreEqual (0, res.Length);
