@@ -4230,6 +4230,19 @@ namespace Mono.CSharp {
 						e = e.Resolve (ec);
 					}
 
+					if ((fp.ModFlags & Parameter.Modifier.CallerMask) != 0) {
+						//
+						// LAMESPEC: Attributes can be mixed together with build-in priority
+						//
+						if ((fp.ModFlags & Parameter.Modifier.CallerLineNumber) != 0) {
+							e = new IntLiteral (ec.BuiltinTypes, loc.Row, loc);
+						} else if ((fp.ModFlags & Parameter.Modifier.CallerFilePath) != 0) {
+							e = new StringLiteral (ec.BuiltinTypes, loc.NameFullPath, loc);
+						} else if (ec.MemberContext.CurrentMemberDefinition != null) {
+							e = new StringLiteral (ec.BuiltinTypes, ec.MemberContext.CurrentMemberDefinition.GetCallerMemberName (), loc);
+						}
+					}
+
 					arguments[i] = new Argument (e, Argument.AType.Default);
 					continue;
 				}

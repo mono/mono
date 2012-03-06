@@ -1699,6 +1699,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override string GetCallerMemberName ()
+		{
+			return IsStatic ? TypeConstructorName : ConstructorName;
+		}
+
 		public override string GetSignatureForDocumentation ()
 		{
 			return Parent.GetSignatureForDocumentation () + ".#ctor" + parameters.GetSignatureForDocumentation ();
@@ -2340,6 +2345,11 @@ namespace Mono.CSharp {
 				return true;
 
 			return false;
+		}
+
+		public override string GetCallerMemberName ()
+		{
+			return base.GetCallerMemberName ().Substring (prefix.Length);
 		}
 
 		public override string GetSignatureForDocumentation ()

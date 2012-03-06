@@ -804,6 +804,11 @@ namespace Mono.CSharp {
 			Report.Warning (3008, 1, MemberName.Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
+		public virtual string GetCallerMemberName ()
+		{
+			return MemberName.Name;
+		}
+
 		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.

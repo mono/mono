@@ -26073,6 +26073,138 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-22.cs">
+    <type name="CallerMemberTest">
+      <method name="Void I.Explicit()" attrs="481">
+        <size>18</size>
+      </method>
+      <method name="IEnumerable`1 Enumerator()" attrs="145">
+        <size>23</size>
+      </method>
+      <method name="Void GenericMethod[T]()" attrs="134">
+        <size>18</size>
+      </method>
+      <method name="Void set_Item(System.String, Int32)" attrs="2182">
+        <size>18</size>
+      </method>
+      <method name="Boolean get_Property()" attrs="2182">
+        <size>26</size>
+      </method>
+      <method name="CallerMemberTest op_Implicit(Int32)" attrs="2198">
+        <size>30</size>
+      </method>
+      <method name="Void Trace(System.String, System.String)" attrs="134">
+        <size>27</size>
+      </method>
+      <method name="System.Object TraceStatic(System.String, System.Object)" attrs="150">
+        <size>56</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>281</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__1()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="System.Object &lt;Main&gt;m__2(Char)" attrs="145">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6273">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor(Object)" attrs="6273">
+        <size>29</size>
+      </method>
+    </type>
+    <type name="CallerMemberTest+&lt;Enumerator&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>88</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;OO&gt;__T]">
+      <method name="&lt;OO&gt;__T get_OO()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;OO&gt;__T)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="CallerMemberTest+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-23.cs">
+    <type name="CallerLineNumberTest">
+      <method name="Void TraceStatic2(Double, Decimal)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="System.Object TraceStatic(Int32, Int32)" attrs="150">
+        <size>56</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>75</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()" attrs="6273">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor(Object)" attrs="6273">
+        <size>21</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-24.cs">
+    <type name="CallerFilePathTest">
+      <method name="Void TraceStatic2(System.Object)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void TraceStatic(System.String, System.String)" attrs="150">
+        <size>46</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
