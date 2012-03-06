@@ -69,7 +69,7 @@ namespace System.Threading
 			if (!throwOnFirstException)
 				exceptions = new List<Exception> ();
 			
-			lock (callbacks) {
+			lock (syncRoot) {
 				foreach (KeyValuePair<CancellationTokenRegistration, Action> item in callbacks) {
 					if (throwOnFirstException) {
 						item.Value ();
