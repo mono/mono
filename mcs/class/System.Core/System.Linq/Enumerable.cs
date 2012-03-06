@@ -2835,6 +2835,12 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
+#if FULL_AOT_RUNTIME
+			var oe = source as OrderedEnumerable <TSource>;
+			if (oe != null)
+				return oe.CreateOrderedEnumerable (keySelector, comparer, false);
+#endif
+
 			return source.CreateOrderedEnumerable (keySelector, comparer, false);
 		}
 
@@ -2853,6 +2859,11 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
+#if FULL_AOT_RUNTIME
+			var oe = source as OrderedEnumerable <TSource>;
+			if (oe != null)
+				return oe.CreateOrderedEnumerable (keySelector, comparer, true);
+#endif
 			return source.CreateOrderedEnumerable (keySelector, comparer, true);
 		}
 
