@@ -571,7 +571,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_eglib|x64"
-			OutputDirectory="$(PlatformName)_$(ConfigurationName)/bin"
+			OutputDirectory="..\builds\monodistribution\bin-x64\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"

@@ -27,7 +27,7 @@
 typedef LONG * IE_t;
 
 #ifndef MAX_THREADS
-# define MAX_THREADS 256
+# define MAX_THREADS 2048
     /* FIXME:							*/
     /* Things may get quite slow for large numbers of threads,	*/
     /* since we look them up with sequential search.		*/

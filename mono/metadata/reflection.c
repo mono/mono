@@ -10580,7 +10580,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	mono_error_init (error);
 
 	if (tb->class_size) {
-		g_assert ((tb->packing_size & 0xfffffff0) == 0);
+		if (!mono_class_check_packing_size (klass, tb->packing_size))
+			return;
 		klass->packing_size = tb->packing_size;
 		real_size = klass->instance_size + tb->class_size;
 	}

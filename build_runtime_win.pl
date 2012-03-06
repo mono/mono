@@ -14,7 +14,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 }
 
 
-CompileVCProj("$root/msvc/mono.sln","Release_eglib",0);
+CompileVCProj("$root/msvc/mono.sln","Release_eglib|Win32",0);
 my $remove = "$root/builds/embedruntimes/win32/libmono.bsc";
 if (-e $remove)
 {

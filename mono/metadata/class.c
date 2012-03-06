@@ -1349,7 +1349,8 @@ mono_class_setup_fields (MonoClass *class)
 	explicit_size = mono_metadata_packing_from_typedef (class->image, class->type_token, &packing_size, &real_size);
 
 	if (explicit_size) {
-		g_assert ((packing_size & 0xfffffff0) == 0);
+		if (!mono_class_check_packing_size (class, packing_size))
+			return;
 		class->packing_size = packing_size;
 		real_size += class->instance_size;
 	}
@@ -8137,6 +8138,19 @@ mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data)
 	mono_loader_unlock ();
 
 	return TRUE;
+}
+
+gboolean
+mono_class_check_packing_size (MonoClass *klass, gint32 packing_size)
+{
+	gboolean valid = TRUE;
+
+	if ((packing_size & 0xfffffff0) != 0) {
+		mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not load type '%s' with packing size %d >= 16", klass->name, packing_size));
+		valid = FALSE;
+	}
+
+	return valid;
 }
 
 /*

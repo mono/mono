@@ -518,10 +518,11 @@
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib mswsock.lib"
 				OutputFile="$(OutDir)\mono.dll"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PlatformName)_$(ConfigurationName)/lib&quot;"
 				ModuleDefinitionFile="mono.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(TargetDir)libmono.pdb"
+				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				ImportLibrary="$(PlatformName)_$(ConfigurationName)/lib/$(TargetName).lib"
 				TargetMachine="17"
 			/>
@@ -693,8 +694,10 @@
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib mswsock.lib"
 				OutputFile="$(OutDir)\mono.dll"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PlatformName)_$(ConfigurationName)/lib&quot;"
 				ModuleDefinitionFile="mono.def"
+				GenerateDebugInformation="true"
 				ImportLibrary="$(PlatformName)_$(ConfigurationName)/lib/$(TargetName).lib"
 				TargetMachine="17"
 			/>

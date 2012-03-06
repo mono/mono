@@ -101,3 +101,8 @@ mono_unity_socket_security_enabled_set (gboolean enabled)
 {
 	socket_security_enabled = enabled;
 }
+
+void mono_unity_set_vprintf_func (vprintf_func func)
+{
+	set_vprintf_func (func);
+}
