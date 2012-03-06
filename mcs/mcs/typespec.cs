@@ -1061,8 +1061,7 @@ namespace Mono.CSharp
 					if (!IsEqual (a.Types[i], b.Types[i]))
 						return false;
 
-					const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
-					if ((a.FixedParameters[i].ModFlags & ref_out) != (b.FixedParameters[i].ModFlags & ref_out))
+					if ((a.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) != (b.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask))
 						return false;
 				}
 

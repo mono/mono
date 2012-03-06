@@ -1352,8 +1352,10 @@ namespace Mono.CSharp {
 						type_a = parameters.Types [ii];
 						type_b = p_types [ii];
 
-						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
-							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
+						var a_byref = (pd.FixedParameters[ii].ModFlags & Parameter.Modifier.RefOutMask) != 0;
+						var b_byref = (parameters.FixedParameters[ii].ModFlags & Parameter.Modifier.RefOutMask) != 0;
+
+						if (a_byref != b_byref)
 							break;
 
 					} while (TypeSpecComparer.Override.IsEqual (type_a, type_b) && ii-- != 0);
@@ -1372,7 +1374,9 @@ namespace Mono.CSharp {
 					//
 					if (pd != null && member is MethodCore) {
 						ii = method_param_count;
-						while (ii-- != 0 && parameters.FixedParameters[ii].ModFlags == pd.FixedParameters[ii].ModFlags &&
+						while (ii-- != 0 &&
+							(parameters.FixedParameters[ii].ModFlags & Parameter.Modifier.ModifierMask) ==
+							(pd.FixedParameters[ii].ModFlags & Parameter.Modifier.ModifierMask) &&
 							parameters.ExtensionMethodType == pd.ExtensionMethodType) ;
 
 						if (ii >= 0) {

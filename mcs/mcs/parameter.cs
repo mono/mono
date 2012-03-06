@@ -209,15 +209,13 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
-			REF     = REFMASK | ISBYREF,
-			OUT     = OUTMASK | ISBYREF,
-			PARAMS  = 4,
-			// This is a flag which says that it's either REF or OUT.
-			ISBYREF = 8,
-			REFMASK	= 32,
-			OUTMASK = 64,
-			SignatureMask = REFMASK | OUTMASK,
-			This	= 128
+			PARAMS  = 1 << 0,
+			REF = 1 << 1,
+			OUT = 1 << 2,
+			This = 1 << 3,
+
+			RefOutMask = REF | OUT,
+			ModifierMask = PARAMS | REF | OUT | This,
 		}
 
 		static readonly string[] attribute_targets = new string[] { "param" };
@@ -323,7 +321,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == pa.Out && (ModFlags & Modifier.REF) == Modifier.REF &&
+			if (a.Type == pa.Out && (ModFlags & Modifier.REF) != 0 &&
 			    !OptAttributes.Contains (pa.In)) {
 				a.Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
@@ -372,15 +370,15 @@ namespace Mono.CSharp {
 				return null;
 
 			this.idx = index;
-	
-			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 && parameter_type.IsSpecialRuntimeType) {
+
+			if ((modFlags & Parameter.Modifier.RefOutMask) != 0 && parameter_type.IsSpecialRuntimeType) {
 				rc.Module.Compiler.Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
 					GetSignatureForError ());
 				return null;
 			}
 
 			TypeManager.CheckTypeVariance (parameter_type,
-				(modFlags & Parameter.Modifier.ISBYREF) != 0 ? Variance.None : Variance.Contravariant,
+				(modFlags & Parameter.Modifier.RefOutMask) != 0 ? Variance.None : Variance.Contravariant,
 				rc);
 
 			if (parameter_type.IsStatic) {
@@ -409,9 +407,10 @@ namespace Mono.CSharp {
 
 			if (attributes == null)
 				return;
-			
-			var opt_attr = attributes.Search (rc.Module.PredefinedAttributes.OptionalParameter);
-			var def_attr = attributes.Search (rc.Module.PredefinedAttributes.DefaultParameterValue);
+
+			var pa = rc.Module.PredefinedAttributes;
+
+			var def_attr = attributes.Search (pa.DefaultParameterValue);
 			if (def_attr != null) {
 				if (def_attr.Resolve () == null)
 					return;
@@ -466,6 +465,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			var opt_attr = attributes.Search (pa.OptionalParameter);
 			if (opt_attr != null) {
 				default_expr = EmptyExpression.MissingValue;
 			}
@@ -611,7 +611,7 @@ namespace Mono.CSharp {
 
 		public ExpressionStatement CreateExpressionTreeVariable (BlockContext ec)
 		{
-			if ((modFlags & Modifier.ISBYREF) != 0)
+			if ((modFlags & Modifier.RefOutMask) != 0)
 				ec.Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
 
 			expr_tree_variable = TemporaryVariableReference.Create (ResolveParameterExpressionType (ec, Location).Type, ec.CurrentBlock.ParametersBlock, Location);
@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 
 		public void EmitAddressOf (EmitContext ec)
 		{
-			if ((ModFlags & Modifier.ISBYREF) != 0) {
+			if ((ModFlags & Modifier.RefOutMask) != 0) {
 				ec.EmitArgumentLoad (idx);
 			} else {
 				ec.EmitArgumentAddress (idx);
@@ -701,7 +701,7 @@ namespace Mono.CSharp {
 		}
 
 		public Parameter.Modifier ModFlags {
-			get { return modifiers & ~Parameter.Modifier.This; }
+			get { return modifiers; }
 		}
 
 		public string Name {
@@ -773,7 +773,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < types.Length; ++i) {
 				types[i] = Types[i].GetMetaInfo ();
 
-				if ((FixedParameters [i].ModFlags & Parameter.Modifier.ISBYREF) == 0)
+				if ((FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) == 0)
 					continue;
 
 				// TODO MemberCache: Should go to MetaInfo getter
@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 
 				sb.Append (types [i].GetSignatureForDocumentation ());
 
-				if ((parameters[i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
+				if ((parameters[i].ModFlags & Parameter.Modifier.RefOutMask) != 0)
 					sb.Append ("@");
 			}
 			sb.Append (")");
@@ -1027,8 +1027,7 @@ namespace Mono.CSharp {
 				var a_type = a.Types[i];
 				var b_type = b.Types[i];
 				if (TypeSpecComparer.Override.IsEqual (a_type, b_type)) {
-					const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
-					if ((a.FixedParameters[i].ModFlags & ref_out) != (b.FixedParameters[i].ModFlags & ref_out))
+					if ((a.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) != (b.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask))
 						res |= 1;
 
 					continue;

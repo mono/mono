@@ -1069,7 +1069,7 @@ namespace Mono.CSharp
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters [i];
 				Parameter.Modifier mod = p.ModFlags;
-				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
+				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
 					parent.Compiler.Report.Error (1623, p.Location,
 						"Iterators cannot have ref or out parameters");
 					return;

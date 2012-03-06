@@ -428,7 +428,7 @@ namespace Mono.CSharp
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters[i];
 				Parameter.Modifier mod = p.ModFlags;
-				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
+				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
 					host.Compiler.Report.Error (1988, p.Location,
 						"Async methods cannot have ref or out parameters");
 					return;
