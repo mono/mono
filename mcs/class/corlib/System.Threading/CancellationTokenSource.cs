@@ -126,7 +126,7 @@ namespace System.Threading
 			
 			List<Exception> exceptions = null;
 			
-			lock (callbacks) {
+			lock (syncRoot) {
 				try {
 					foreach (var item in callbacks) {
 						if (throwOnFirstException) {
