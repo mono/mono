@@ -1,6 +1,5 @@
 // CS1989: An expression tree cannot contain an await operator
 // Line: 17
-// Compiler options: -langversion:future
 
 using System;
 using System.Linq.Expressions;
