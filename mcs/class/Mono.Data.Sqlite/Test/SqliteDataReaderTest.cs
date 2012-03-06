@@ -97,5 +97,49 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
+		
+		[Test]
+		public void TimestampTest ()
+		{
+			_conn.ConnectionString = _connectionString;
+			using (_conn) {
+				_conn.Open ();
+				var cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
+				cmd.ExecuteNonQuery ();
+			
+				var query = "SELECT * FROM TestNullableDateTime;";
+				cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = query;
+				cmd.CommandType = CommandType.Text;
+			
+				using (var reader = cmd.ExecuteReader ()) {
+					try {
+						var dt = reader ["nullable"];
+						Assert.Fail ("Expected: FormatException");
+					} catch (FormatException ex) {
+						// expected this one
+					}
+				}
+			}
+			
+			_conn.ConnectionString = _connectionString + ",DateTimeFormat=UnixEpoch";
+			using (_conn) {
+				_conn.Open ();
+				var cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
+				cmd.ExecuteNonQuery ();
+			
+				var query = "SELECT * FROM TestNullableDateTime;";
+				cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = query;
+				cmd.CommandType = CommandType.Text;
+			
+				using (var reader = cmd.ExecuteReader ()) {
+					// this should succeed now
+					var dt = reader ["nullable"];
+				}
+			}
+		}
         }
 }
