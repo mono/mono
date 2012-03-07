@@ -5235,6 +5235,12 @@ namespace Mono.CSharp
 				return expr;
 			}
 		}
+
+		public MethodGroupExpr MethodGroup {
+			get {
+				return mg;
+			}
+		}
 		#endregion
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

@@ -1075,6 +1075,10 @@ namespace Mono.CSharp {
 					} else {
 						int errors = ec.Report.Errors;
 
+						if (Block.IsAsync) {
+							ec.Report.Error (1989, loc, "Async lambda expressions cannot be converted to expression trees");
+						}
+
 						using (ec.Set (ResolveContext.Options.ExpressionTreeConversion)) {
 							am = body.Compatible (ec);
 						}

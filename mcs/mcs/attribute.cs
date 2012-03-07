@@ -898,6 +898,11 @@ namespace Mono.CSharp {
 		// 
 		public bool IsInternalCall ()
 		{
+			return (GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0;
+		}
+
+		public MethodImplOptions GetMethodImplOptions ()
+		{
 			MethodImplOptions options = 0;
 			if (pos_args.Count == 1) {
 				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
@@ -906,7 +911,7 @@ namespace Mono.CSharp {
 				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), named.GetValue ().ToString ());
 			}
 
-			return (options & MethodImplOptions.InternalCall) != 0;
+			return options;
 		}
 
 		//

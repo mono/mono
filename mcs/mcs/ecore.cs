@@ -222,8 +222,7 @@ namespace Mono.CSharp {
 
 		public static void Error_InvalidExpressionStatement (Report Report, Location loc)
 		{
-			Report.Error (201, loc, "Only assignment, call, increment, decrement, and new object " +
-				       "expressions can be used as a statement");
+			Report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
 		
 		public void Error_InvalidExpressionStatement (BlockContext ec)
@@ -1024,6 +1023,12 @@ namespace Mono.CSharp {
 			ExpressionStatement es = e as ExpressionStatement;
 			if (es == null)
 				Error_InvalidExpressionStatement (ec);
+
+			if (ec.CurrentAnonymousMethod is AsyncInitializer && !(e is Assign) &&
+				(e.Type.IsGenericTask || e.Type == ec.Module.PredefinedTypes.Task.TypeSpec)) {
+				ec.Report.Warning (4014, 1, e.Location,
+					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator");
+			}
 
 			return es;
 		}

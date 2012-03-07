@@ -14,6 +14,6 @@ class C
 	
 	public static void Main ()
 	{
-		Expression<Action<int>> a = async l => await Method ();
+		Expression<Action<int>> a = async l => Method ();
 	}
 }

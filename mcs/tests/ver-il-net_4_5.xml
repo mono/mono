@@ -52816,14 +52816,25 @@
   </test>
   <test name="test-async-05.cs">
     <type name="C">
-      <method name="System.Threading.Tasks.Task Method()" attrs="145">
-        <size>10</size>
-      </method>
       <method name="Void Main()" attrs="150">
-        <size>72</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="System.Threading.Tasks.Task SynchronousCall(Int32)" attrs="134">
+        <size>38</size>
+      </method>
+      <method name="System.Threading.Tasks.Task AnotherTask(Int32)" attrs="129">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C+&lt;SynchronousCall&gt;c__async0">
+      <method name="Void MoveNext()" attrs="134">
+        <size>49</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -55235,6 +55246,30 @@
         <size>203</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-28.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task Test()" attrs="150">
+        <size>24</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="134">
+        <size>275</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
