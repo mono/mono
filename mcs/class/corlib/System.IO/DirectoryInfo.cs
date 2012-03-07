@@ -273,27 +273,18 @@ namespace System.IO {
 #if !MOONLIGHT
 		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
-			switch (searchOption) {
-			case SearchOption.TopDirectoryOnly:
-				return GetDirectories (searchPattern);
-			case SearchOption.AllDirectories:
-				Queue workq = new Queue(GetDirectories(searchPattern));
-				Queue doneq = new Queue();
-				while (workq.Count > 0)
-					{
-						DirectoryInfo cinfo = (DirectoryInfo) workq.Dequeue();
-						DirectoryInfo[] cinfoDirs = cinfo.GetDirectories(searchPattern);
-						foreach (DirectoryInfo i in cinfoDirs) workq.Enqueue(i);
-						doneq.Enqueue(cinfo);
-					}
+		    if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
 
-				DirectoryInfo[] infos = new DirectoryInfo[doneq.Count];
-				doneq.CopyTo(infos, 0);
-				return infos;
-			default:
-				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", searchOption, "SearchOption");
-				throw new ArgumentOutOfRangeException ("searchOption", msg);
-			}
+			string [] names = Directory.GetDirectories (FullPath, searchPattern, searchOption);
+
+			DirectoryInfo[] infos = new DirectoryInfo [names.Length];
+			int i = 0;
+			foreach (string name in names)
+				infos [i++] = new DirectoryInfo (name);
+
+			return infos;
+		    }
 		}	
 
 		internal int GetFilesSubdirs (ArrayList l, string pattern)
