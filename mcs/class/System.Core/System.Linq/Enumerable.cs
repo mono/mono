@@ -2962,7 +2962,7 @@ namespace System.Linq
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			return ToLookup<TSource, TKey, TSource> (source, keySelector, element => element, comparer);
+			return ToLookup<TSource, TKey, TSource> (source, keySelector, Function<TSource>.Identity, comparer);
 		}
 
 		public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
