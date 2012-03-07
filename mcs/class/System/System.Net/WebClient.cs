@@ -9,6 +9,7 @@
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright 2006, 2010 Novell, Inc. (http://www.novell.com)
+// Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -211,7 +212,7 @@ namespace System.Net
 		void CheckBusy ()
 		{
 			if (IsBusy)
-				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
+				throw new NotSupportedException ("WebClient does not support concurrent I/O operations.");
 		}
 
 		void SetBusy ()
@@ -256,12 +257,11 @@ namespace System.Net
 			} catch (ThreadInterruptedException){
 				if (request != null)
 					request.Abort ();
-				throw;
+				throw new WebException ("User canceled the request", WebExceptionStatus.RequestCanceled);
 			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
-				throw new WebException ("An error occurred " +
-					"performing a WebClient request.", ex);
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
 			}
 		}
 
@@ -1024,13 +1024,13 @@ namespace System.Net
 						byte [] data = DownloadDataCore ((Uri) args [0], args [1]);
 						OnDownloadDataCompleted (
 							new DownloadDataCompletedEventArgs (data, null, false, args [1]));
-					} catch (ThreadInterruptedException){
-						OnDownloadDataCompleted (
-							new DownloadDataCompletedEventArgs (null, null, true, args [1]));
-						throw;
 					} catch (Exception e){
+						bool canceled = false;
+						WebException we = e as WebException;
+						if (we != null)
+							canceled = we.Status == WebExceptionStatus.RequestCanceled;
 						OnDownloadDataCompleted (
-							new DownloadDataCompletedEventArgs (null, e, false, args [1]));
+							new DownloadDataCompletedEventArgs (null, e, canceled, args [1]));
 					}
 				});
 				object [] cb_args = new object [] {address, userToken};
@@ -1096,12 +1096,13 @@ namespace System.Net
 						string data = encoding.GetString (DownloadDataCore ((Uri) args [0], args [1]));
 						OnDownloadStringCompleted (
 							new DownloadStringCompletedEventArgs (data, null, false, args [1]));
-					} catch (ThreadInterruptedException){
-						OnDownloadStringCompleted (
-							new DownloadStringCompletedEventArgs (null, null, true, args [1]));
 					} catch (Exception e){
+						bool canceled = false;
+						WebException we = e as WebException;
+						if (we != null)
+							canceled = we.Status == WebExceptionStatus.RequestCanceled;
 						OnDownloadStringCompleted (
-							new DownloadStringCompletedEventArgs (null, e, false, args [1]));
+							new DownloadStringCompletedEventArgs (null, e, canceled, args [1]));
 					}});
 				object [] cb_args = new object [] {address, userToken};
 				async_thread.Start (cb_args);
