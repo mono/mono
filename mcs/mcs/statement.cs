@@ -2946,7 +2946,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < orig_count; ++i) {
 				Parameter.Modifier mod = parameters.FixedParameters[i].ModFlags;
 
-				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
+				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
 
 				VariableInfo vi = new VariableInfo (parameters, i, ec.FlowOffset);

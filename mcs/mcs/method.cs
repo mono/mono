@@ -637,7 +637,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.PARTIAL) != 0) {
 				for (int i = 0; i < parameters.Count; ++i) {
 					IParameterData p = parameters.FixedParameters [i];
-					if (p.ModFlags == Parameter.Modifier.OUT) {
+					if ((p.ModFlags & Parameter.Modifier.OUT) != 0) {
 						Report.Error (752, Location, "`{0}': A partial method parameters cannot use `out' modifier",
 							GetSignatureForError ());
 					}
@@ -940,7 +940,7 @@ namespace Mono.CSharp {
 				}
 
 				for (int i = 0; i < parameters.Count; ++i) {
-					if (parameters.FixedParameters [i].ModFlags == Parameter.Modifier.OUT) {
+					if ((parameters.FixedParameters [i].ModFlags & Parameter.Modifier.OUT) != 0) {
 						Report.Error (685, Location, "Conditional method `{0}' cannot have an out parameter", GetSignatureForError ());
 						return;
 					}
