@@ -523,7 +523,13 @@ namespace System.Net.Sockets
 			e.curSocket = this;
 			Worker w = e.Worker;
 			w.Init (this, e, SocketOperation.Accept);
-			socket_pool_queue (Worker.Dispatcher, w.result);
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (e.Worker);
+				count = readQ.Count;
+			}
+			if (count == 1)
+				socket_pool_queue (Worker.Dispatcher, w.result);
 			return true;
 		}
 #endif
@@ -605,7 +611,13 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ();
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
-			socket_pool_queue (Worker.Dispatcher, req);
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (req.Worker);
+				count = readQ.Count;
+			}
+			if (count == 1)
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -624,7 +636,13 @@ namespace System.Net.Sockets
 			req.Offset = 0;
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
-			socket_pool_queue (Worker.Dispatcher, req);
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (req.Worker);
+				count = readQ.Count;
+			}
+			if (count == 1)
+				socket_pool_queue (Worker.Dispatcher, req);
 			return req;
 		}
 
@@ -661,7 +679,13 @@ namespace System.Net.Sockets
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
 			req.AcceptSocket = acceptSocket;
-			socket_pool_queue (Worker.Dispatcher, req);
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (req.Worker);
+				count = readQ.Count;
+			}
+			if (count == 1)
+				socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
 
