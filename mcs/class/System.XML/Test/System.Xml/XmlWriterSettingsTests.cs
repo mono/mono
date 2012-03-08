@@ -284,6 +284,25 @@ namespace MonoTests.System.Xml
 			// no heading newline.
 			Assert.AreEqual ("<root />", sw.ToString ());
 		}
+		
+		[Test] // surprisingly niche behavior yet caused bug #3231.
+		public void IndentAndTopLevelWhitespaces ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw, new XmlWriterSettings () { Indent = true });
+			xw.WriteProcessingInstruction ("xml", "version='1.0'");
+			xw.WriteWhitespace ("\n");
+			xw.WriteComment ("AAA");
+			xw.WriteWhitespace ("\n");
+			xw.WriteWhitespace ("\n");
+			xw.WriteStartElement ("root");
+			xw.Close ();
+			string xml = @"<?xml version='1.0'?>
+<!--AAA-->
+
+<root />";
+			Assert.AreEqual (xml, sw.ToString ().Replace ("\r\n", "\n"), "#1");
+		}
 	}
 }
 #endif
