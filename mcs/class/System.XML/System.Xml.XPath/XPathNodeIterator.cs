@@ -88,13 +88,40 @@ namespace System.Xml.XPath
 #if NET_2_0
 		public virtual IEnumerator GetEnumerator ()
 		{
-			while (MoveNext ())
-				yield return Current;
+			return new XPathNodeIteratorEnumerator (this);
 		}
 #endif
 
 		public abstract bool MoveNext ();
 		
 		#endregion
+
+		struct XPathNodeIteratorEnumerator : IEnumerator
+		{
+			XPathNodeIterator source;
+			XPathNavigator current;
+			public XPathNodeIteratorEnumerator (XPathNodeIterator source)
+			{
+				this.source = source.Clone ();
+				current = null;
+			}
+
+			public bool MoveNext ()
+			{
+				if (!source.MoveNext ())
+					return false;
+				current = source.Current.Clone ();
+				return true;
+			}
+			
+			public object Current {
+				get { return current; }
+			}
+
+			public void Reset ()
+			{
+				throw new NotSupportedException ();
+			}
+		}
 	}
 }
