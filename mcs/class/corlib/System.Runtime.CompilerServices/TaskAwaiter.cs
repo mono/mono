@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 
 namespace System.Runtime.CompilerServices
 {
-	public struct TaskAwaiter
+	public struct TaskAwaiter : ICriticalNotifyCompletion
 	{
 		readonly Task task;
 
@@ -67,7 +67,7 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
-		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext)
+		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext, bool manageContext)
 		{
 			if (continueOnSourceContext && SynchronizationContext.Current != null) {
 				task.ContinueWith (new SynchronizationContextContinuation (continuation, SynchronizationContext.Current));
@@ -81,7 +81,15 @@ namespace System.Runtime.CompilerServices
 			if (continuation == null)
 				throw new ArgumentNullException ("continuation");
 
-			HandleOnCompleted (task, continuation, true);
+			HandleOnCompleted (task, continuation, true, true);
+		}
+		
+		public void UnsafeOnCompleted (Action continuation)
+		{
+			if (continuation == null)
+				throw new ArgumentNullException ("continuation");
+
+			HandleOnCompleted (task, continuation, true, false);
 		}
 	}
 }

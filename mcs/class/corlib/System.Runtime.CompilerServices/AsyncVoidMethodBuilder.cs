@@ -38,10 +38,28 @@ namespace System.Runtime.CompilerServices
 		static readonly SynchronizationContext null_context = new SynchronizationContext ();
 
 		readonly SynchronizationContext context;
+		IAsyncStateMachine stateMachine;
 
 		private AsyncVoidMethodBuilder (SynchronizationContext context)
 		{
 			this.context = context;
+			this.stateMachine = null;
+		}
+
+		public void AwaitOnCompleted<TAwaiter, TStateMachine> (ref TAwaiter awaiter, ref TStateMachine stateMachine)
+			where TAwaiter : INotifyCompletion
+			where TStateMachine : IAsyncStateMachine
+		{
+			var action = new Action (stateMachine.MoveNext);
+			awaiter.OnCompleted (action);
+		}
+		
+		public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine> (ref TAwaiter awaiter, ref TStateMachine stateMachine)
+			where TAwaiter : ICriticalNotifyCompletion
+			where TStateMachine : IAsyncStateMachine
+		{
+			var action = new Action (stateMachine.MoveNext);
+			awaiter.UnsafeOnCompleted (action);
 		}
 
 		public static AsyncVoidMethodBuilder Create ()
@@ -64,9 +82,28 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
+		public void SetStateMachine (IAsyncStateMachine stateMachine)
+		{
+			if (stateMachine == null)
+				throw new ArgumentNullException ("stateMachine");
+			
+			if (this.stateMachine != null)
+				throw new InvalidOperationException ("The state machine was previously set");
+			
+			this.stateMachine = stateMachine;
+		}
+
 		public void SetResult ()
 		{
 			context.OperationCompleted ();
+		}
+		
+		public void Start<TStateMachine> (ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+		{
+			if (stateMachine == null)
+				throw new ArgumentNullException ("stateMachine");
+			
+			stateMachine.MoveNext ();
 		}
 	}
 }

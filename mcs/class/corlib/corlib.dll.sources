@@ -644,9 +644,12 @@ System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/FixedAddressValueTypeAttribute.cs
 System.Runtime.CompilerServices/FixedBufferAttribute.cs
 System.Runtime.CompilerServices/HasCopySemanticsAttribute.cs
+System.Runtime.CompilerServices/IAsyncStateMachine.cs
+System.Runtime.CompilerServices/ICriticalNotifyCompletion.cs
 System.Runtime.CompilerServices/IDispatchConstantAttribute.cs
 System.Runtime.CompilerServices/IUnknownConstantAttribute.cs
 System.Runtime.CompilerServices/IndexerNameAttribute.cs
+System.Runtime.CompilerServices/INotifyCompletion.cs
 System.Runtime.CompilerServices/InternalsVisibleToAttribute.cs
 System.Runtime.CompilerServices/IsBoxed.cs
 System.Runtime.CompilerServices/IsByValue.cs

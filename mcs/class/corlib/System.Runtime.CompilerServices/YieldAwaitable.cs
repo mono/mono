@@ -36,7 +36,7 @@ namespace System.Runtime.CompilerServices
 {
 	public struct YieldAwaitable
 	{
-		public struct YieldAwaiter
+		public struct YieldAwaiter : ICriticalNotifyCompletion
 		{
 			public bool IsCompleted {
 				get {
@@ -55,6 +55,22 @@ namespace System.Runtime.CompilerServices
 					// hoisting class
 					//
 					ThreadPool.QueueUserWorkItem (l => ((Action) l) (), continuation);
+				} else {
+					new Task (continuation).Start (TaskScheduler.Current);
+				}
+			}
+			
+			public void UnsafeOnCompleted (Action continuation)
+			{
+				if (continuation == null)
+					throw new ArgumentNullException ("continuation");
+
+				if (TaskScheduler.Current == TaskScheduler.Default) {
+					//
+					// Pass the continuation as an argument to avoid allocating
+					// hoisting class
+					//
+					ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), continuation);
 				} else {
 					new Task (continuation).Start (TaskScheduler.Current);
 				}
