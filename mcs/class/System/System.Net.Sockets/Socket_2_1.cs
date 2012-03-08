@@ -245,7 +245,8 @@ namespace System.Net.Sockets {
 				Queue queue = null;
 				if (operation == SocketOperation.Receive ||
 				    operation == SocketOperation.ReceiveFrom ||
-				    operation == SocketOperation.ReceiveGeneric) {
+				    operation == SocketOperation.ReceiveGeneric ||
+				    operation == SocketOperation.Accept) {
 					queue = Sock.readQ;
 				} else if (operation == SocketOperation.Send ||
 					   operation == SocketOperation.SendTo ||
@@ -258,7 +259,7 @@ namespace System.Net.Sockets {
 					Worker worker = null;
 					SocketAsyncCall sac = null;
 					lock (queue) {
-						// queue.Count will only be 0 if the socket is closed while receive/send
+						// queue.Count will only be 0 if the socket is closed while receive/send/accept
 						// operation(s) are pending and at least one call to this method is
 						// waiting on the lock while another one calls CompleteAllOnDispose()
 						if (queue.Count > 0)
