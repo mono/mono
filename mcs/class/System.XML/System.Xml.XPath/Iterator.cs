@@ -854,11 +854,8 @@ namespace System.Xml.XPath
 					return false;
 				_right = _expr.EvaluateNodeSet (_left);
 			}
-			if (_current == null)
-				_current = _right.Current.Clone ();
-			else
-				if (! _current.MoveTo (_right.Current) )
-					_current = _right.Current.Clone ();
+			_current = _right.Current.Clone ();
+
 			return true;
 		}
 
@@ -1033,6 +1030,7 @@ namespace System.Xml.XPath
 		private BaseIterator _iter;
 		private Expression _pred;
 		private XPathResultType resType;
+		private XPathNavigator _current;
 		private bool finished;
 
 		public PredicateIterator (BaseIterator iter, Expression pred) : base (iter.NamespaceManager)
@@ -1079,17 +1077,20 @@ namespace System.Xml.XPath
 						break;
 				}
 
+				_current = _iter.Current.Clone ();
+
 				return true;
 			}
 			finished = true;
 			return false;
 		}
 		public override XPathNavigator Current {
-			get { return CurrentPosition == 0 ? null : _iter.Current; }}
+			get { return _current; }
+		}
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
 		}
-public override string ToString () { return _iter.GetType ().FullName; }
+		public override string ToString () { return _iter.GetType ().FullName; }
 	}
 
 	internal class ListIterator : BaseIterator
