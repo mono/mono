@@ -1512,7 +1512,21 @@
 	</xsl:template>
 	<xsl:template match="img">
 	  <p>
-		<img src="source-id:{$source-id}:{@href}">
+		<img>
+		  <xsl:attribute name="src">
+			<!-- we recognize two types of images:
+				   - those with src attribute that reference directly an external image
+				   - those with a href attributes which are internally available as part of the doc bundle
+			-->
+			<xsl:choose>
+			  <xsl:when test="count(@src)&gt;0">
+				<xsl:value-of select="@src" />
+			  </xsl:when>
+			  <xsl:otherwise>
+				<xsl:value-of select="source-id:{$source-id}:{@href}" />
+			  </xsl:otherwise>
+			</xsl:choose>
+		  </xsl:attribute>
 		  <xsl:attribute name="class">
 			<xsl:choose>
 			  <xsl:when test="count(@class)&gt;0">
