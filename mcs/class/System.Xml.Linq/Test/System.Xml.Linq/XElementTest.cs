@@ -1690,5 +1690,19 @@ namespace MonoTests.System.Xml.Linq
 				Thread.CurrentThread.CurrentCulture = current;
 			}
 		}
+
+		[Test]
+		public void DecimalFormatting () // bug #3634
+		{
+			var data = 5.5M;
+			var bak = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("nl-NL");
+			try {
+				var element = new XElement ("Demo", data);
+				Assert.AreEqual ("<Demo>5.5</Demo>", element.ToString (), "#1");
+			} finally {
+				Thread.CurrentThread.CurrentCulture = bak;
+			}
+		}
 	}
 }
