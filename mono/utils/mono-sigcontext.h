@@ -14,7 +14,7 @@
 #include <signal.h>
 #endif
 
-#if defined(__i386__)
+#if defined(__i386__) || defined (TARGET_X86)
 
 #if defined(__FreeBSD__) || defined(__APPLE__) || defined(__DragonFly__)
 #include <ucontext.h>
@@ -152,7 +152,7 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EIP])
 #endif
 
-#elif defined(__x86_64__)
+#elif defined(__x86_64__) || defined (TARGET_AMD64)
 
 #if defined(__FreeBSD__)
 #include <ucontext.h>
