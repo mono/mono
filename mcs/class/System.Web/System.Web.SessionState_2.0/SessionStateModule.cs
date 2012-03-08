@@ -374,14 +374,12 @@ namespace System.Web.SessionState
 			SessionStateStoreData item = GetStoreData (state.Context, state.SessionId, state.IsReadOnly);
 
 			if (item == null && storeLocked && (storeLockAge > executionTimeout)) {
-				Console.WriteLine(Thread.CurrentThread.ManagedThreadId + ": " + "TimedOut!!!");
 				handler.ReleaseItemExclusive (state.Context, state.SessionId, storeLockId);
 				storeData = null; // Create new state
 				state.AutoEvent.Set ();
 			}
 			else if (item != null && !storeLocked) {
 				storeData = item;
-				Console.WriteLine(Thread.CurrentThread.ManagedThreadId + ": " + "Store was unlocked -> Despertar waiting thread.");
 				state.AutoEvent.Set ();
 			}
 		}
