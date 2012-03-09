@@ -2,9 +2,10 @@
 // XmlSchemaValidator.cs
 //
 // Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@xamarin.com>
 //
 // (C)2004 Novell Inc,
+// Copyright (C) 2012 Xamarin Inc.
 //
 
 //
@@ -361,6 +362,9 @@ namespace System.Xml.Schema
 			if (attributeValue == null)
 				throw new ArgumentNullException ("attributeValue");
 
+			SetCurrentInfo (info);
+			try {
+
 			bool wasInitial = initial;
 			if (initial)
 				initial = false;
@@ -394,6 +398,10 @@ namespace System.Xml.Schema
 					HandleError ("Current simple type cannot accept attributes other than schema instance namespace.");
 			}
 			return null;
+			
+			} finally {
+				current_info = null;
+			}
 		}
 
 		// StartTagOpenDeriv
