@@ -767,14 +767,6 @@ namespace Mono.CSharp {
 			: base (storey, name, local.Type)
 		{
 		}
-
-		//
-		// For compiler generated local variables
-		//
-		public HoistedLocalVariable (AnonymousMethodStorey storey, Field field)
-			: base (storey, field)
-		{
-		}
 	}
 
 	public class HoistedThis : HoistedVariable
@@ -1083,6 +1075,10 @@ namespace Mono.CSharp {
 					} else {
 						int errors = ec.Report.Errors;
 
+						if (Block.IsAsync) {
+							ec.Report.Error (1989, loc, "Async lambda expressions cannot be converted to expression trees");
+						}
+
 						using (ec.Set (ResolveContext.Options.ExpressionTreeConversion)) {
 							am = body.Compatible (ec);
 						}
@@ -1109,6 +1105,8 @@ namespace Mono.CSharp {
 					am = body.Compatible (ec);
 				}
 			} catch (CompletionResult) {
+				throw;
+			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);

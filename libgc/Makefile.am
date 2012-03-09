@@ -24,7 +24,12 @@ SUBDIRS = m4 include doc
 
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 
-noinst_LTLIBRARIES = libmonogc.la
+#
+# libtool is not capable of creating shared/static versions of a convenience
+# library, so we have to do it ourselves
+#
+
+noinst_LTLIBRARIES = libmonogc.la libmonogc-static.la
 
 EXTRA_DIST = 
     ## more items will be succesively added below
@@ -56,6 +61,10 @@ EXTRA_libmonogc_la_SOURCES = alpha_mach_dep.S \
     mips_sgi_mach_dep.s mips_ultrix_mach_dep.s powerpc_darwin_mach_dep.s \
     rs6000_mach_dep.s sparc_mach_dep.S sparc_netbsd_mach_dep.s \
     sparc_sunos4_mach_dep.s ia64_save_regs_in_stack.s
+
+libmonogc_static_la_SOURCES = $(libmonogc_la_SOURCES)
+libmonogc_static_la_LIBADD = $(libmonogc_la_LIBADD)
+libmonogc_static_la_LDFLAGS = -static
 
 EXTRA_DIST += alpha_mach_dep.S mips_sgi_mach_dep.s sparc_mach_dep.S
 

@@ -75,6 +75,7 @@ doc_en   = Documentation/en
 
 NETDOCS_DIRS = \
 	$(classdir)/corlib/$(doc_en)                                        \
+	$(classdir)/Managed.Windows.Forms/$(doc_en)			    \
 	$(classdir)/Microsoft.Build.Engine/$(doc_en)                        \
 	$(classdir)/Microsoft.Build.Framework/$(doc_en)                     \
 	$(classdir)/Microsoft.Build.Utilities/$(doc_en)                     \
@@ -90,20 +91,21 @@ NETDOCS_DIRS = \
 	$(classdir)/System.Web.Services/$(doc_en)                           \
 	$(classdir)/System.Web/$(doc_en)                                    \
 	$(classdir)/System.XML/$(doc_en)                                    \
-	$(classdir)/System/$(doc_en)                                        \
+	$(classdir)/System/$(doc_en) 
 
 MONO_DIRS = \
 	$(classdir)/Commons.Xml.Relaxng/$(doc_en)          \
 	$(classdir)/Mono.Cairo/$(doc_en)                   \
+	$(classdir)/Mono.CSharp/$(doc_en)                  \
+	$(classdir)/Mono.Data.Sqlite/$(doc_en)		   \
+	$(classdir)/Mono.Debugger.Soft/$(doc_en)           \
 	$(classdir)/Mono.Options/$(doc_en)                 \
+	$(classdir)/Mono.Parallel/$(doc_en)		   \
 	$(classdir)/Mono.Posix/$(doc_en)                   \
 	$(classdir)/Mono.Security.Win32/$(doc_en)          \
 	$(classdir)/Mono.Security/$(doc_en)                \
 	$(classdir)/Mono.Simd/$(doc_en)                    \
-	$(classdir)/Mono.CSharp/$(doc_en)                  \
-	$(classdir)/Npgsql/$(doc_en)                       \
-	$(classdir)/Mono.Debugger.Soft/$(doc_en)           \
-	$(classdir)/Mono.Parallel/$(doc_en)
+	$(classdir)/Npgsql/$(doc_en)
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en

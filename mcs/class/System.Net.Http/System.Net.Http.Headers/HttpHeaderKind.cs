@@ -31,6 +31,7 @@ namespace System.Net.Http.Headers
 	[Flags]
 	enum HttpHeaderKind
 	{
+		None = 0,
 		Request = 1,
 		Response = 1 << 1,
 		Content = 1 << 2

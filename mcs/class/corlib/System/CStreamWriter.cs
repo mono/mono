@@ -110,7 +110,7 @@ namespace System.IO {
 				}
 			}
 		}
-
+/*
 		public void WriteKey (ConsoleKeyInfo key)
 		{
 			lock (this) {
@@ -121,7 +121,7 @@ namespace System.IO {
 					InternalWriteChar (copy.KeyChar);
 			}
 		}
-
+*/
 		public void InternalWriteString (string val)
 		{
 			try {

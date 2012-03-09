@@ -1,6 +1,6 @@
 // CS4004: The `await' operator cannot be used in an unsafe context
 // Line: 12
-// Compiler options: -langversion:future -unsafe
+// Compiler options: -unsafe
 
 using System;
 using System.Threading.Tasks;

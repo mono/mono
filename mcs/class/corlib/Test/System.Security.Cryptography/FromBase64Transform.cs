@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class FromBase64TransformTest : Assertion {
+	public class FromBase64TransformTest {
 
 		private FromBase64Transform _algo;
 
@@ -31,9 +31,9 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			byte[] output = _algo.TransformFinalBlock (input, inputOffset, inputCount);
 
-			AssertEquals (name, expected.Length, output.Length);
+			Assert.AreEqual (expected.Length, output.Length, name);
 			for (int i = 0; i < expected.Length; i++)
-				AssertEquals (name + "(" + i + ")", expected [i], output [i]);
+				Assert.AreEqual (expected [i], output [i], name + "(" + i + ")");
 		}
 
 		protected void TransformFinalBlock (string name, byte[] input, byte[] expected)
@@ -44,10 +44,10 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Properties () 
 		{
-			Assert ("CanReuseTransform", _algo.CanReuseTransform);
-			Assert ("CanTransformMultipleBlocks", !_algo.CanTransformMultipleBlocks);
-			AssertEquals ("InputBlockSize", 1, _algo.InputBlockSize);
-			AssertEquals ("OutputBlockSize", 3, _algo.OutputBlockSize);
+			Assert.IsTrue (_algo.CanReuseTransform, "CanReuseTransform");
+			Assert.IsTrue (!_algo.CanTransformMultipleBlocks, "CanTransformMultipleBlocks");
+			Assert.AreEqual (1, _algo.InputBlockSize, "InputBlockSize");
+			Assert.AreEqual (3, _algo.OutputBlockSize, "OutputBlockSize");
 		}
 
 		[Test]
@@ -169,7 +169,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			byte[] input = { 114, 108, 112 };
 			byte[] result = _algo.TransformFinalBlock (input, 0, input.Length);
-			AssertEquals ("No result", 0, result.Length);
+			Assert.AreEqual (0, result.Length);
 		}
 
 		[Test]
@@ -177,7 +177,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			byte[] input = { 114, 108, 112, 32 };
 			byte[] result = _algo.TransformFinalBlock (input, 0, input.Length);
-			AssertEquals ("No result", 0, result.Length);
+			Assert.AreEqual (0, result.Length);
 		}
 
 		[Test]
@@ -191,9 +191,9 @@ namespace MonoTests.System.Security.Cryptography {
 				output = t.TransformFinalBlock (input, 0, input.Length);
 			}
 
-			AssertEquals ("IDisposable", expected.Length, output.Length);
+			Assert.AreEqual (expected.Length, output.Length, "IDisposable");
 			for (int i = 0; i < expected.Length; i++)
-				AssertEquals ("IDisposable(" + i + ")", expected [i], output [i]);
+				Assert.AreEqual (expected[i], output[i], "IDisposable(" + i + ")");
 		}
 
 		[Test]

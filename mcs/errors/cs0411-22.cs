@@ -1,6 +1,5 @@
 // CS0411: The type arguments for method `AsyncTypeInference.Test2<T>(System.Func<int,T>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
 // Line: 11
-// Compiler options: -langversion:future
 
 using System;
 using System.Threading.Tasks;

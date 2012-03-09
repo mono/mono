@@ -373,7 +373,7 @@ namespace System.Collections.Concurrent
 			
 			do {
 				rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
-				if (rightNode == tail || rightNode.Key != key)
+				if (rightNode == tail || rightNode.Key != key || !comparer.Equals (subKey, rightNode.SubKey))
 					return false;
 
 				data = rightNode.Data;
@@ -423,7 +423,7 @@ namespace System.Collections.Concurrent
 			rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
 			data = rightNode;
 			
-			return rightNode != tail && rightNode.Key == key;
+			return rightNode != tail && rightNode.Key == key && comparer.Equals (subKey, rightNode.SubKey);
 		}
 
 		static readonly byte[] reverseTable = {

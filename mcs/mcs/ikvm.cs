@@ -247,9 +247,6 @@ namespace Mono.CSharp
 			get {
 				return corlib;
 			}
-			set {
-				corlib = value;
-			}
 		}
 
 		public Universe Domain {

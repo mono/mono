@@ -2,6 +2,8 @@
 mcs/mcs/anonymous.cs
 mcs/mcs/argument.cs
 mcs/mcs/assign.cs
+mcs/mcs/assembly.cs
+mcs/mcs/async.cs
 mcs/mcs/attribute.cs
 mcs/mcs/cs-parser.jay
 mcs/mcs/cs-tokenizer.cs
@@ -12,6 +14,7 @@ mcs/mcs/complete.cs
 mcs/mcs/const.cs
 mcs/mcs/constant.cs
 mcs/mcs/convert.cs
+mcs/mcs/context.cs
 mcs/mcs/decl.cs
 mcs/mcs/delegate.cs
 mcs/mcs/doc.cs
@@ -26,6 +29,7 @@ mcs/mcs/flowanalysis.cs
 mcs/mcs/generic.cs
 mcs/mcs/import.cs
 mcs/mcs/iterators.cs
+mcs/mcs/ikvm.cs
 mcs/mcs/lambda.cs
 mcs/mcs/linq.cs
 mcs/mcs/literal.cs
@@ -40,10 +44,10 @@ mcs/mcs/pending.cs
 mcs/mcs/property.cs
 mcs/mcs/reflection.cs
 mcs/mcs/report.cs
-mcs/mcs/rootcontext.cs
-mcs/mcs/roottypes.cs
+mcs/mcs/settings.cs
+mcs/mcs/module.cs
 mcs/mcs/statement.cs
 mcs/mcs/support.cs
 mcs/mcs/typespec.cs
 mcs/mcs/typemanager.cs
-mcs/mcs/symbolwriter.cs
+mcs/mcs/visit.cs

@@ -192,7 +192,8 @@ net_4_0_only_dirs := \
 
 net_4_5_dirs := \
 	System.Threading.Tasks.Dataflow \
-	System.ComponentModel.Composition.4.5
+	System.ComponentModel.Composition.4.5 \
+	System.Net.Http
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)

@@ -40,6 +40,14 @@ class C
 		{
 		}
 	}
+
+	void Using_4 ()
+	{
+		using (var ms = new System.IO.MemoryStream ())
+		{
+			Console.WriteLine ("a");
+		}
+	}
 	
 	void Lock ()
 	{

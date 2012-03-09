@@ -302,10 +302,5 @@ namespace IKVM.Reflection.Writer
 		{
 			return IKVM.Reflection.Reader.ByteReader.FromBlob(buffer, offset);
 		}
-
-		internal void Patch(int offset, byte b)
-		{
-			buffer[offset] = b;
-		}
 	}
 }

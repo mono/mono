@@ -1,6 +1,5 @@
 // CS1985: The `await' operator cannot be used in the body of a catch clause
 // Line: 13
-// Compiler options: -langversion:future
 
 using System;
 using System.Threading.Tasks;

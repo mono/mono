@@ -973,6 +973,7 @@ namespace Mono.CSharp
 						case Token.UNCHECKED:
 						case Token.UNSAFE:
 						case Token.DEFAULT:
+						case Token.AWAIT:
 
 						//
 						// These can be part of a member access
@@ -2226,6 +2227,9 @@ namespace Mono.CSharp
 			return true;
 		}
 
+#if !FULL_AST
+		static
+#endif
 		bool IsTokenIdentifierEqual (char[] identifier)
 		{
 			for (int i = 0; i < identifier.Length; ++i) {
@@ -2272,6 +2276,7 @@ namespace Mono.CSharp
 				Report.Warning (1709, 1, Location, "Filename specified for preprocessor directive is empty");
 			}
 
+		
 			return string_builder.ToString ();
 		}
 
@@ -2971,6 +2976,9 @@ namespace Mono.CSharp
 			return Token.IDENTIFIER;
 		}
 
+#if !FULL_AST
+		static
+#endif
 		string InternIdentifier (char[] charBuffer, int length)
 		{
 			//

@@ -27,13 +27,50 @@
 //
 
 using System.IO;
+using System.Threading.Tasks;
 
 namespace System.Net.Http
 {
 	public class StreamContent : HttpContent
 	{
+		readonly Stream content;
+		readonly int bufferSize;
+
 		public StreamContent (Stream content)
+			: this (content, 16 * 1024)
 		{
+		}
+
+		public StreamContent (Stream content, int bufferSize)
+		{
+			if (content == null)
+				throw new ArgumentNullException ("content");
+
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize");
+
+			this.content = content;
+			this.bufferSize = bufferSize;
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing) {
+				content.Dispose ();
+			}
+
+			base.Dispose (disposing);
+		}
+
+		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
+		{
+			return content.CopyToAsync (stream, bufferSize);
+		}
+
+		protected internal override bool TryComputeLength (out long length)
+		{
+			length = content.Length;
+			return true;
 		}
 	}
 }

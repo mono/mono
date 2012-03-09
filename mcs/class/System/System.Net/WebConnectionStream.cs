@@ -643,7 +643,7 @@ namespace System.Net
 			long cl = request.ContentLength;
 			string method = request.Method;
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-						method == "TRACE" || method == "DELETE");
+						method == "TRACE");
 			if (sendChunked || cl > -1 || no_writestream) {
 				WriteHeaders ();
 				if (!initRead) {
@@ -703,7 +703,7 @@ namespace System.Net
 			if (!headersSent) {
 				string method = request.Method;
 				bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-							method == "TRACE" || method == "DELETE");
+							method == "TRACE");
 				if (!no_writestream)
 					request.InternalContentLength = length;
 				request.SendRequestHeaders (true);

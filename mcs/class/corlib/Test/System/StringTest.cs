@@ -4024,6 +4024,15 @@ public class StringTest
 	{
 		String[] res;
 
+		// empty
+		res = string.Empty.Split (new Char [] { 'A' });
+		Assert.AreEqual (1, res.Length);
+		Assert.AreEqual (string.Empty, res [0]);
+
+		// empty and RemoveEmpty
+		res = string.Empty.Split (new Char [] { 'A' }, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (0, res.Length);
+
 		// count == 0
 		res = "..A..B..".Split (new Char[] { '.' }, 0, StringSplitOptions.None);
 		Assert.AreEqual (0, res.Length, "#01-01");
@@ -4122,6 +4131,8 @@ public class StringTest
 		Assert.AreEqual ("hi", res[0], "#11-09-1");
 		Assert.AreEqual ("..", res[1], "#11-09-2");
 		Assert.AreEqual (2, res.Length, "#11-09-3");
+
+		Assert.AreEqual (0, "    ".Split ((char[]) null, 2, StringSplitOptions.RemoveEmptyEntries).Length, "#12-00-0");
 	}
 	
 	[Test]
@@ -4343,8 +4354,8 @@ public class StringTest
 		Assert.AreEqual (String.Empty, "".Insert (0, String.Empty), "Insert(Empty)");
 		Assert.AreEqual (String.Empty, String.Empty.Insert (0, ""), "Empty.Insert");
 
-		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0), "PadLeft(int)");
-		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0, '.'), "PadLeft(int.char)");
+		Assert.AreSame (String.Empty, String.Empty.PadLeft (0), "PadLeft(int)");
+		Assert.AreSame (String.Empty, String.Empty.PadLeft (0, '.'), "PadLeft(int.char)");
 		Assert.AreSame (String.Empty, String.Empty.PadRight (0), "PadRight(int)");
 		Assert.AreSame (String.Empty, String.Empty.PadRight (0, '.'), "PadRight(int.char)");
 

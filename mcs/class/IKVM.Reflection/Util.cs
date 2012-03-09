@@ -106,20 +106,6 @@ namespace IKVM.Reflection
 			return copy;
 		}
 
-		internal static Type[][] Copy(Type[][] types)
-		{
-			if (types == null || types.Length == 0)
-			{
-				return types;
-			}
-			Type[][] newArray = new Type[types.Length][];
-			for (int i = 0; i < newArray.Length; i++)
-			{
-				newArray[i] = Copy(types[i]);
-			}
-			return newArray;
-		}
-
 		internal static T[] ToArray<T, V>(List<V> list, T[] empty) where V : T
 		{
 			if (list == null || list.Count == 0)

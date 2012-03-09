@@ -226,6 +226,7 @@ namespace Mono.Xml
 		XmlNodeType node_state = XmlNodeType.None;
 		XmlNamespaceManager nsmanager;
 		int open_count;
+		bool top_level_space_ignored;
 		XmlNodeInfo [] elements = new XmlNodeInfo [10];
 		Stack new_local_namespaces = new Stack ();
 		ArrayList explicit_nsdecls = new ArrayList ();
@@ -1082,9 +1083,11 @@ namespace Mono.Xml
 			    XmlChar.IndexOfNonWhitespace (text) >= 0)
 				throw ArgumentError ("WriteWhitespace method accepts only whitespaces.");
 
+			bool pastTopLevelWSIgnored = top_level_space_ignored;
 			ShiftStateTopLevel ("Whitespace", true, false, true);
-
-			writer.Write (text);
+			if (!indent || WriteState != WriteState.Prolog || pastTopLevelWSIgnored)
+				writer.Write (text);
+			top_level_space_ignored = true;
 		}
 
 		public override void WriteCData (string text)
@@ -1330,7 +1333,7 @@ namespace Mono.Xml
 					CheckMixedContentState ();
 				break;
 			}
-
+			top_level_space_ignored = false;
 		}
 
 		void CheckMixedContentState ()

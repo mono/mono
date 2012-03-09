@@ -1,6 +1,5 @@
 // CS1996: The `await' operator cannot be used in the body of a lock statement
 // Line: 12
-// Compiler options: -langversion:future
 
 using System;
 using System.Threading.Tasks;

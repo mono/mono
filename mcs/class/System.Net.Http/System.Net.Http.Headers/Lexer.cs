@@ -120,6 +120,11 @@ namespace System.Net.Http.Headers
 			return position > s.Length ? null : s.Substring (position);
 		}
 
+		public bool IsStarStringValue (Token token)
+		{
+			return (token.EndPosition - token.StartPosition) == 1 && s[token.StartPosition] == '*';
+		}
+
 		public bool TryGetNumericValue (Token token, out int value)
 		{
 			return int.TryParse (GetStringValue (token), NumberStyles.None, CultureInfo.InvariantCulture, out value);

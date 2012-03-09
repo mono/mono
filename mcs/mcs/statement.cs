@@ -856,6 +856,8 @@ namespace Mono.CSharp {
 					ec.Report.Error (127, loc,
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
+
+					return false;
 				}
 			} else {
 				if (am.IsIterator) {
@@ -874,12 +876,21 @@ namespace Mono.CSharp {
 							return true;
 						}
 
+						// TODO: Better error message
+						if (async_type.Kind == MemberKind.Void) {
+							ec.Report.Error (127, loc,
+								"`{0}': A return keyword must not be followed by any expression when method returns void",
+								ec.GetSignatureForError ());
+
+							return false;
+						}
+
 						if (!async_type.IsGenericTask) {
 							if (this is ContextualReturn)
 								return true;
 
 							ec.Report.Error (1997, loc,
-								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
+								"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
 								ec.GetSignatureForError ());
 							return false;
 						}
@@ -887,7 +898,13 @@ namespace Mono.CSharp {
 						//
 						// The return type is actually Task<T> type argument
 						//
-						block_return_type = async_type.TypeArguments[0];
+						if (expr.Type == async_type) {
+							ec.Report.Error (4016, loc,
+								"`{0}': The return expression type of async method must be `{1}' rather than `Task<{1}>'",
+								ec.GetSignatureForError (), async_type.TypeArguments[0].GetSignatureForError ());
+						} else {
+							block_return_type = async_type.TypeArguments[0];
+						}
 					}
 				} else {
 					var l = am as AnonymousMethodBody;
@@ -1465,7 +1482,7 @@ namespace Mono.CSharp {
 			declarators.Add (decl);
 		}
 
-		void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
+		static void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
 		{
 			if (bc.Report.Errors != 0)
 				return;
@@ -2298,7 +2315,8 @@ namespace Mono.CSharp {
 			if (warn)
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			var fb = ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			fb.CurrentUsageVector.IsUnreachable = true;
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
 
@@ -2876,7 +2894,7 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
-				if (e is CompletionResult || rc.Report.IsDisabled)
+				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException)
 					throw;
 
 				if (rc.CurrentBlock != null) {
@@ -5472,7 +5490,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
 
 				return dispose;
 			}

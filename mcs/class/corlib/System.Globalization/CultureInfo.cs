@@ -42,7 +42,7 @@ namespace System.Globalization
 	[StructLayout (LayoutKind.Sequential)]
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
-		static volatile CultureInfo invariant_culture_info;
+		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
 		internal static int BootstrapCultureID;
 
@@ -116,11 +116,6 @@ namespace System.Globalization
 			}
 		}
 
-		static CultureInfo ()
-		{
-			invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
-		}
-		
 		public static CultureInfo CreateSpecificCulture (string name)
 		{
 			if (name == null) {

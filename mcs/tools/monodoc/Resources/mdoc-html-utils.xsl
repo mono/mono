@@ -311,7 +311,8 @@
 		<xsl:param name="TypeParameters" />
 
 		<xsl:for-each select="$TypeParameters/TypeParameter">
-			<xsl:if test="count(Constraints/*) > 0">
+			<xsl:variable name="constraintsCount" select="count(Constraints/*)" />
+			<xsl:if test="$constraintsCount > 0 and count(Constraints/*[.='Contravariant' or .='Covariant']) != $constraintsCount">
 				<xsl:call-template name="CreateGenericParameterConstraints">
 					<xsl:with-param name="constraints" select="Constraints" />
 				</xsl:call-template>
@@ -1511,7 +1512,21 @@
 	</xsl:template>
 	<xsl:template match="img">
 	  <p>
-		<img src="source-id:{$source-id}:{@href}">
+		<img>
+		  <xsl:attribute name="src">
+			<!-- we recognize two types of images:
+				   - those with src attribute that reference directly an external image
+				   - those with a href attributes which are internally available as part of the doc bundle
+			-->
+			<xsl:choose>
+			  <xsl:when test="count(@src)&gt;0">
+				<xsl:value-of select="@src" />
+			  </xsl:when>
+			  <xsl:otherwise>
+				<xsl:value-of select="source-id:{$source-id}:{@href}" />
+			  </xsl:otherwise>
+			</xsl:choose>
+		  </xsl:attribute>
 		  <xsl:attribute name="class">
 			<xsl:choose>
 			  <xsl:when test="count(@class)&gt;0">

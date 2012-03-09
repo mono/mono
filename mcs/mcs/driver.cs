@@ -113,7 +113,7 @@ namespace Mono.CSharp
 			input.Close ();
 		}
 
-		public void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
+		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
 		{
 			var file = new CompilationSourceFile (module, sourceFile);
 			module.AddTypeContainer (file);
@@ -208,6 +208,11 @@ namespace Mono.CSharp
 				((settings.Target == Target.Exe || settings.Target == Target.WinExe || settings.Target == Target.Module) ||
 				settings.Resources == null)) {
 				Report.Error (2008, "No files to compile were specified");
+				return false;
+			}
+
+			if (settings.Platform == Platform.AnyCPU32Preferred && (settings.Target == Target.Library || settings.Target == Target.Module)) {
+				Report.Error (4023, "Platform option `anycpu32bitpreferred' is valid only for executables");
 				return false;
 			}
 

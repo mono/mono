@@ -1339,11 +1339,7 @@ namespace MonoTests.System.Collections
 					}				
 				}
 
-				Assertion.Assert
-					(
-					String.Format("Reverse on arrayList failed on list with {0} items.", x),
-					ok
-					);
+				Assert.IsTrue (ok, String.Format("Reverse on arrayList failed on list with {0} items.", x));
 			}
 		}
 

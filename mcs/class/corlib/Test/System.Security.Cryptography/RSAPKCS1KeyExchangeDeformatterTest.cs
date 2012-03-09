@@ -15,7 +15,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
+public class RSAPKCS1KeyExchangeDeformatterTest {
 
 	protected static RSA key;
 
@@ -42,10 +42,10 @@ public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
 	{
 		RSAPKCS1KeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter ();
 		keyex.SetKey (key);
-		AssertNull("RSAPKCS1KeyExchangeDeformatter.Parameters", keyex.Parameters);
+		Assert.IsNull (keyex.Parameters, "RSAPKCS1KeyExchangeDeformatter.Parameters");
 		// null (default)
-		AssertNull("RSAPKCS1KeyExchangeDeformatter.RNG", keyex.RNG);
-		AssertEquals("RSAPKCS1KeyExchangeDeformatter.ToString()", "System.Security.Cryptography.RSAPKCS1KeyExchangeDeformatter", keyex.ToString ());
+		Assert.IsNull (keyex.RNG, "RSAPKCS1KeyExchangeDeformatter.RNG");
+		Assert.AreEqual("System.Security.Cryptography.RSAPKCS1KeyExchangeDeformatter", keyex.ToString ());
 	}
 
 	// TestExchangeMin (1)
@@ -168,16 +168,16 @@ public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
 	{
 		AsymmetricKeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter (key);
 		keyex.Parameters = "Mono";
-		AssertNull ("Parameters", keyex.Parameters);
+		Assert.IsNull (keyex.Parameters, "Parameters");
 	}
 
 	[Test]
 	public void Rng () 
 	{
 		RSAPKCS1KeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter (key);
-		AssertNull ("RNG", keyex.RNG);
+		Assert.IsNull (keyex.RNG, "RNG");
 		keyex.RNG = RandomNumberGenerator.Create ();
-		AssertNotNull ("RNG", keyex.RNG);
+		Assert.IsNotNull (keyex.RNG, "RNG 2");
 	}
 
 	[Test]
@@ -205,7 +205,7 @@ public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
 		RSACryptoServiceProvider r = new RSACryptoServiceProvider ();
 		r.FromXmlString ("<RSAKeyValue><Modulus>iSObDmmhDgrl4NiLaviFcpv4NdysBWJcqiVz3AQbPdajtXaQQ8VJdfRkixah132yKOFGCWZhHS3EuPMh8dcNwGwta2nh+m2IV6ktzI4+mZ7CSNAsmlDY0JI+H8At1vKvNArlC5jkVGuliYroJeSU/NLPLNYgspi7TtXGy9Rfug8=</Modulus><Exponent>EQ==</Exponent><P>pd4svtxrnTWXVSb151/JFgT9szI6dxQ5pAFPd4A4yuxLLEay2W2z7d9LVk5siMFhZ10uTJGWzNP5pSgLT8wdww==</P><Q>06j6m4cGRc3uoKVuFFGA19JG3Bi4tDBEQHebEc/Y3+eThrOasYIRrQmGUfqWnd9eFitO9GOaVJ0muNDV7NOxxQ==</Q><DP>OoqmYXr4zhLqHg3AM4s36adomZlBz6zJDLUrGx4yKYCTAJFsTL1OkDCxLYUXP1NPjeSm7dkIDA6UWGh8doRGvQ==</DP><DQ>PkDCLb5NI5br1OVcnJBxMGsFyEOBnmiMi2545x8DjSX+Nq1LnZ6555ljvcIsTIz9jgy83nel3KaxCS5dCWtwhQ==</DQ><InverseQ>OrFYaG7wTqim/bub4qY0CvIfhsjG4/4MEabg0UFTf/+tekKas7DDKg2TD5BS2q0O3XEt7xIfp0S6dpOAnrlyGQ==</InverseQ><D>IESc9FUW1iCuj0ICr8IBSCSy3383iMvZkXI5YPHoSskXdf3Hl3m27pPbbAVTQcM4+o9bxfn4u5JMZ8C8sV/G/8Cfl4ss1NVMbZOecvVObRqRpqXaveq5fN2X0EklH1wzm5w3O8cMXdbC/hc0gKUqaMjFVn1zpf3zVjpOkY0eGRE=</D></RSAKeyValue>");
 		RSAPKCS1KeyExchangeDeformatter def = new RSAPKCS1KeyExchangeDeformatter (r);
-		AssertNotNull (def.DecryptKeyExchange (bytes));
+		Assert.IsNotNull (def.DecryptKeyExchange (bytes));
 	}
 }
 

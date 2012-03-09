@@ -251,11 +251,6 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
-		private bool IsLabelReachable(Label label)
-		{
-			return labelStackHeight[label.Index] != -1;
-		}
-
 		// non-standard API
 		public void __DisableExceptionBlockAssistance()
 		{

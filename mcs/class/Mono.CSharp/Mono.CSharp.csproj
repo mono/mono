@@ -216,9 +216,6 @@
     <Compile Include="..\..\mcs\support.cs">
       <Link>support.cs</Link>
     </Compile>
-    <Compile Include="..\..\mcs\symbolwriter.cs">
-      <Link>symbolwriter.cs</Link>
-    </Compile>
     <Compile Include="..\..\mcs\typemanager.cs">
       <Link>typemanager.cs</Link>
     </Compile>

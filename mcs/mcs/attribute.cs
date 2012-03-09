@@ -279,7 +279,7 @@ namespace Mono.CSharp {
 		void ResolveAttributeType ()
 		{
 			SessionReportPrinter resolve_printer = new SessionReportPrinter ();
-			ReportPrinter prev_recorder = context.Module.Compiler.Report.SetPrinter (resolve_printer);
+			ReportPrinter prev_recorder = Report.SetPrinter (resolve_printer);
 
 			bool t1_is_attr = false;
 			bool t2_is_attr = false;
@@ -898,6 +898,11 @@ namespace Mono.CSharp {
 		// 
 		public bool IsInternalCall ()
 		{
+			return (GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0;
+		}
+
+		public MethodImplOptions GetMethodImplOptions ()
+		{
 			MethodImplOptions options = 0;
 			if (pos_args.Count == 1) {
 				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
@@ -906,7 +911,7 @@ namespace Mono.CSharp {
 				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), named.GetValue ().ToString ());
 			}
 
-			return (options & MethodImplOptions.InternalCall) != 0;
+			return options;
 		}
 
 		//
@@ -1538,56 +1543,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	static class AttributeTester
 	{
-		public enum Result {
-			Ok,
-			RefOutArrayError,
-			ArrayArrayError
-		}
-
-		/// <summary>
-		/// Returns true if parameters of two compared methods are CLS-Compliant.
-		/// It tests differing only in ref or out, or in array rank.
-		/// </summary>
-		public static Result AreOverloadedMethodParamsClsCompliant (AParametersCollection pa, AParametersCollection pb) 
-		{
-			TypeSpec [] types_a = pa.Types;
-			TypeSpec [] types_b = pb.Types;
-			if (types_a == null || types_b == null)
-				return Result.Ok;
-
-			if (types_a.Length != types_b.Length)
-				return Result.Ok;
-
-			Result result = Result.Ok;
-			for (int i = 0; i < types_b.Length; ++i) {
-				TypeSpec aType = types_a [i];
-				TypeSpec bType = types_b [i];
-
-				var ac_a = aType as ArrayContainer;
-				var ac_b = aType as ArrayContainer;
-
-				if (ac_a != null && ac_b != null) {
-					if (ac_a.Rank != ac_b.Rank && ac_a.Element == ac_b.Element) {
-						result = Result.RefOutArrayError;
-						continue;
-					}
-
-					if (ac_a.Element.IsArray || ac_b.Element.IsArray) {
-						result = Result.ArrayArrayError;
-						continue;
-					}
-				}
-
-				if (aType != bType)
-					return Result.Ok;
-
-				const Parameter.Modifier out_ref_mod = (Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
-				if ((pa.FixedParameters[i].ModFlags & out_ref_mod) != (pb.FixedParameters[i].ModFlags & out_ref_mod))
-					result = Result.RefOutArrayError;
-			}
-			return result;
-		}
-
 		/// <summary>
 		/// Common method for Obsolete error/warning reporting.
 		/// </summary>
@@ -1662,6 +1617,9 @@ namespace Mono.CSharp {
 		public readonly PredefinedDecimalAttribute DecimalConstant;
 		public readonly PredefinedAttribute StructLayout;
 		public readonly PredefinedAttribute FieldOffset;
+		public readonly PredefinedAttribute CallerMemberNameAttribute;
+		public readonly PredefinedAttribute CallerLineNumberAttribute;
+		public readonly PredefinedAttribute CallerFilePathAttribute;
 
 		public PredefinedAttributes (ModuleContainer module)
 		{
@@ -1712,6 +1670,10 @@ namespace Mono.CSharp {
 			DecimalConstant = new PredefinedDecimalAttribute (module, "System.Runtime.CompilerServices", "DecimalConstantAttribute");
 			StructLayout = new PredefinedAttribute (module, "System.Runtime.InteropServices", "StructLayoutAttribute");
 			FieldOffset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "FieldOffsetAttribute");
+
+			CallerMemberNameAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerMemberNameAttribute");
+			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
+			CallerFilePathAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerFilePathAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
 			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |

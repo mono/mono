@@ -57,15 +57,15 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Properties () 
 		{
 			// default value
-			Assertion.AssertEquals ("PKCS1MaskGenerationMethod HashName(default)", "SHA1", pkcs1.HashName);
+			Assert.AreEqual ("SHA1", pkcs1.HashName, "PKCS1MaskGenerationMethod HashName(default)");
 			// return to default
 			pkcs1.HashName = null;
-			Assertion.AssertEquals ("PKCS1MaskGenerationMethod HashName(null)", "SHA1", pkcs1.HashName);
+			Assert.AreEqual ("SHA1", pkcs1.HashName, "PKCS1MaskGenerationMethod HashName(null)");
 			// bad hash accepted
 			pkcs1.HashName = "SHA2";
-			Assertion.AssertEquals ("PKCS1MaskGenerationMethod HashName(bad)", "SHA2", pkcs1.HashName);
+			Assert.AreEqual ("SHA2", pkcs1.HashName, "PKCS1MaskGenerationMethod HashName(bad)");
 			// tostring
-			Assertion.AssertEquals ("PKCS1MaskGenerationMethod ToString()", "System.Security.Cryptography.PKCS1MaskGenerationMethod", pkcs1.ToString ());
+			Assert.AreEqual ("System.Security.Cryptography.PKCS1MaskGenerationMethod", pkcs1.ToString ());
 		}
 
 		[Test]
@@ -74,7 +74,7 @@ namespace MonoTests.System.Security.Cryptography {
 			// pretty much useless but supported
 			byte[] random = { 0x01 };
 			byte[] mask = pkcs1.GenerateMask (random, 0);
-			Assertion.AssertEquals ("PKCS1MaskGenerationMethod Empty Mask", 0, mask.Length);
+			Assert.AreEqual (0, mask.Length, "PKCS1MaskGenerationMethod Empty Mask");
 		}
 
 		[Test]

@@ -830,7 +830,8 @@ mono_sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallback
 
 		size = ALIGN_UP (safe_object_get_size ((MonoObject*)obj));
 
-		callback (obj, size, data);
+		if ((MonoVTable*)SGEN_LOAD_VTABLE (obj) != array_fill_vtable)
+			callback (obj, size, data);
 
 		start += size;
 	}
@@ -1705,7 +1706,7 @@ alloc_nursery (void)
 	DEBUG (4, fprintf (gc_debug_file, "Expanding nursery size (%p-%p): %lu, total: %lu\n", data, data + alloc_size, (unsigned long)nursery_size, (unsigned long)total_alloc));
 	section->data = section->next_data = data;
 	section->size = alloc_size;
-	section->end_data = mono_sgen_get_nursery_end ();
+	section->end_data = data + nursery_size;
 	scan_starts = (alloc_size + SCAN_START_SIZE - 1) / SCAN_START_SIZE;
 	section->scan_starts = mono_sgen_alloc_internal_dynamic (sizeof (char*) * scan_starts, INTERNAL_MEM_SCAN_STARTS);
 	section->num_scan_start = scan_starts;
@@ -4775,7 +4776,7 @@ mono_gc_base_init (void)
 		num_workers = 16;
 
 	///* Keep this the default for now */
-#ifdef __APPLE
+#ifdef __APPLE__
 	conservative_stack_mark = TRUE;
 #endif
 

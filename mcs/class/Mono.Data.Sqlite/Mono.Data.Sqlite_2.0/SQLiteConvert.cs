@@ -25,6 +25,11 @@ namespace Mono.Data.Sqlite
   public abstract class SqliteConvert
   {
     /// <summary>
+    /// The value for the Unix epoch (e.g. January 1, 1970 at midnight, in UTC).
+    /// </summary>
+    protected static readonly DateTime UnixEpoch =
+        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    /// <summary>
     /// An array of ISO8601 datetime formats we support conversion from
     /// </summary>
     private static string[] _datetimeFormats = new string[] {
@@ -159,6 +164,8 @@ namespace Mono.Data.Sqlite
           return new DateTime(Convert.ToInt64(dateText, CultureInfo.InvariantCulture));
         case SQLiteDateFormats.JulianDay:
           return ToDateTime(Convert.ToDouble(dateText, CultureInfo.InvariantCulture));
+        case SQLiteDateFormats.UnixEpoch:
+          return UnixEpoch.AddSeconds(Convert.ToInt32(dateText, CultureInfo.InvariantCulture));
         default:
           return DateTime.ParseExact(dateText, _datetimeFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None);
       }
@@ -197,6 +204,8 @@ namespace Mono.Data.Sqlite
           return dateValue.Ticks.ToString(CultureInfo.InvariantCulture);
         case SQLiteDateFormats.JulianDay:
           return ToJulianDay(dateValue).ToString(CultureInfo.InvariantCulture);
+        case SQLiteDateFormats.UnixEpoch:
+          return ((long)(dateValue.Subtract(UnixEpoch).Ticks / TimeSpan.TicksPerSecond)).ToString();
         default:
           return dateValue.ToString(_datetimeFormats[7], CultureInfo.InvariantCulture);
       }
@@ -634,7 +643,7 @@ namespace Mono.Data.Sqlite
       int x = _typeNames.Length;
       for (int n = 0; n < x; n++)
       {
-        if (String.Compare(Name, 0, _typeNames[n].typeName, 0, _typeNames[n].typeName.Length, true, CultureInfo.InvariantCulture) == 0)
+        if (String.Compare(Name, _typeNames[n].typeName, true, CultureInfo.InvariantCulture) == 0)
           return _typeNames[n].dataType; 
       }
       return DbType.Object;
@@ -685,6 +694,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("NOTE", DbType.String),
       new SQLiteTypeNames("SMALLINT", DbType.Int16),
       new SQLiteTypeNames("BIGINT", DbType.Int64),
+      new SQLiteTypeNames("TIMESTAMP", DbType.DateTime),
     };
   }
 
@@ -754,7 +764,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// JulianDay format, which is what SQLite uses internally
     /// </summary>
-    JulianDay = 2
+    JulianDay = 2,
+    /// <summary>
+    /// The whole number of seconds since the Unix epoch (January 1, 1970).
+    /// </summary>
+    UnixEpoch = 3,
   }
 
   /// <summary>

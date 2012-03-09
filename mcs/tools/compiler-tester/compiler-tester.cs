@@ -878,8 +878,9 @@ namespace TestRunner {
 					}
 
 					if (filename.StartsWith ("test-debug", StringComparison.OrdinalIgnoreCase)) {
-						MonoSymbolFile mdb_file = MonoSymbolFile.ReadSymbolFile (file + ".mdb");
-						var mdb_xml_file = mdb_file.FileName + ".xml";
+						var mdb_file_name = file + ".mdb";
+						MonoSymbolFile mdb_file = MonoSymbolFile.ReadSymbolFile (mdb_file_name);
+						var mdb_xml_file = mdb_file_name + ".xml";
 						ConvertSymbolFileToXml (mdb_file, mdb_xml_file);
 
 						var ref_file = filename.Replace(".cs", "-ref.xml");

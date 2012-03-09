@@ -690,7 +690,7 @@ namespace System.Collections.Generic {
 			get { return false; }
 		}
 
-		TKey ToTKey (object key)
+		static TKey ToTKey (object key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
@@ -699,7 +699,7 @@ namespace System.Collections.Generic {
 			return (TKey) key;
 		}
 
-		TValue ToTValue (object value)
+		static TValue ToTValue (object value)
 		{
 			if (value == null && !typeof (TValue).IsValueType)
 				return default (TValue);

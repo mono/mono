@@ -464,6 +464,7 @@ namespace Mono.CSharp
 						false),
 				btypes.Int));
 
+			var tp = new TypeParameter(0, new MemberName("T"), null, null, Variance.None);
 			InterlockedCompareExchange_T = new PredefinedMember<MethodSpec> (module, types.Interlocked,
 				MemberFilter.Method ("CompareExchange", 1,
 					new ParametersImported (
@@ -473,9 +474,9 @@ namespace Mono.CSharp
 								new ParameterData (null, Parameter.Modifier.NONE)
 							},
 						new[] {
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 							}, false),
 					null));
 

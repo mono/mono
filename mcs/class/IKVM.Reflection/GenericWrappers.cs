@@ -274,6 +274,16 @@ namespace IKVM.Reflection
 		{
 			get { return method.HasThis; }
 		}
+
+		public override MethodInfo[] __GetMethodImpls()
+		{
+			MethodInfo[] methods = method.__GetMethodImpls();
+			for (int i = 0; i < methods.Length; i++)
+			{
+				methods[i] = (MethodInfo)methods[i].BindTypeParameters(declaringType);
+			}
+			return methods;
+		}
 	}
 
 	sealed class GenericFieldInstance : FieldInfo

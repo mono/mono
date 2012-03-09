@@ -537,7 +537,6 @@ namespace System.Xml.XPath
 		}
 	}
 
-
 	internal class XPathFunctionContains : XPathFunction
 	{
 		Expression arg0, arg1;

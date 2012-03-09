@@ -355,13 +355,13 @@ namespace MonoTests.System.Net.Http
 			}
 
 			try {
-				headers.Add ("accept", "audio");
+				headers.Add ("Allow", "audio");
 				Assert.Fail ("#2c");
 			} catch (InvalidOperationException) {
 			}
 
 			try {
-				headers.AddWithoutValidation ("Max-Forwards", "");
+				headers.AddWithoutValidation ("Allow", "");
 				Assert.Fail ("#3");
 			} catch (InvalidOperationException) {
 			}
@@ -405,6 +405,20 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_Request ()
+		{
+			HttpResponseMessage message = new HttpResponseMessage ();
+			HttpResponseHeaders headers = message.Headers;
+
+			headers.Add ("accept", "audio");
+			Assert.AreEqual ("audio", headers.GetValues ("Accept").First (), "#1");
+
+			headers.Clear ();
+			headers.AddWithoutValidation ("accept", "audio");
+			Assert.AreEqual ("audio", headers.GetValues ("Accept").First (), "#2");
+		}
+
+		[Test]
 		public void Headers_ConnectionClose ()
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();
@@ -422,6 +436,15 @@ namespace MonoTests.System.Net.Http
 			headers.Clear ();
 			headers.Connection.Add ("Close");
 			Assert.IsTrue (headers.ConnectionClose.Value, "#4");
+		}
+
+		[Test]
+		public void Headers_Location ()
+		{
+			HttpResponseMessage message = new HttpResponseMessage ();
+			HttpResponseHeaders headers = message.Headers;
+			headers.AddWithoutValidation ("location", "http://w3.org");
+			Assert.AreEqual (new Uri ("http://w3.org"), headers.Location);
 		}
 
 		[Test]

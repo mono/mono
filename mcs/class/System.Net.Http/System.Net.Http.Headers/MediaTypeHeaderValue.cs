@@ -61,7 +61,7 @@ namespace System.Net.Http.Headers
 				if (parameters == null)
 					return null;
 
-				var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "charset"));
+				var found = parameters.Find (l => string.Equals (l.Name, "charset", StringComparison.OrdinalIgnoreCase));
 				if (found == null)
 					return null;
 
@@ -72,7 +72,7 @@ namespace System.Net.Http.Headers
 				if (parameters == null)
 					parameters = new List<NameValueHeaderValue> ();
 
-				var found = parameters.Find (l => StringComparer.OrdinalIgnoreCase.Equals (l.Name, "charset"));
+				var found = parameters.Find (l => string.Equals (l.Name, "charset", StringComparison.OrdinalIgnoreCase));
 				if (string.IsNullOrEmpty (value)) {
 					if (found != null)
 						parameters.Remove (found);

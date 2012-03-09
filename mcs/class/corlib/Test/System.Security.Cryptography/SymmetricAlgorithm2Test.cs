@@ -39,12 +39,7 @@ namespace MonoTests.System.Security.Cryptography {
 	// be tested here (but will be in its descendants).
 
 	[TestFixture]
-	public class SymmetricAlgorithm2Test : Assertion {
-
-		public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-		{
-			AllTests.AssertEquals (msg, array1, array2);
-		}
+	public class SymmetricAlgorithm2Test {
 
 		[Test]
 		public void KeySize_SameSize () 
@@ -56,7 +51,7 @@ namespace MonoTests.System.Security.Cryptography {
 				// set the key size
 				algo.KeySize = ks;
 				// did it change the key ? Yes!
-				Assert ("Key", BitConverter.ToString (key) != BitConverter.ToString (algo.Key));
+				Assert.AreNotEqual (BitConverter.ToString (key), BitConverter.ToString (algo.Key), "Key");
 			}
 		}
 
@@ -70,7 +65,7 @@ namespace MonoTests.System.Security.Cryptography {
 				// set the iv size
 				algo.BlockSize = bs;
 				// did it change the IV ? No!
-				Assert ("IV", BitConverter.ToString (iv) == BitConverter.ToString (algo.IV));
+				Assert.AreEqual (BitConverter.ToString (iv), BitConverter.ToString (algo.IV), "IV");
 			}
 		}
 
@@ -99,9 +94,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void IV_None () 
 		{
 			SymmetricAlgorithm algo = SymmetricAlgorithm.Create ();
@@ -159,9 +152,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void FeedbackZero ()
 		{
 			// thanks to Yakk for the sample
@@ -176,7 +167,7 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] challenge = new byte [16] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
 			enc.TransformBlock (challenge, 0, challenge.Length, response, 0);
-			AssertEquals ("7A-64-CD-1B-4F-EE-B5-92-54-90-53-E9-83-71-A6-0C", BitConverter.ToString (response));
+			Assert.AreEqual ("7A-64-CD-1B-4F-EE-B5-92-54-90-53-E9-83-71-A6-0C", BitConverter.ToString (response));
 		}
 	}
 }

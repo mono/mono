@@ -383,7 +383,7 @@ namespace System.Configuration
 					}
 					
 					if (!prop.IsElement)
-						throw new ConfigurationException ("Property '" + prop.Name + "' is not a ConfigurationElement.");
+						throw new ConfigurationErrorsException ("Property '" + prop.Name + "' is not a ConfigurationElement.");
 					
 					if (readProps.Contains (prop))
 						throw new ConfigurationErrorsException ("The element <" + prop.Name + "> may only appear once in this section.", reader);
@@ -529,7 +529,7 @@ namespace System.Configuration
 				ConfigurationSaveMode updateMode)
 		{
 			if (parent != null && source.GetType() != parent.GetType())
-				throw new ConfigurationException ("Can't unmerge two elements of different type");
+				throw new ConfigurationErrorsException ("Can't unmerge two elements of different type");
 			
 			foreach (PropertyInformation prop in source.ElementInformation.Properties)
 			{
@@ -587,7 +587,7 @@ namespace System.Configuration
 				return;
 			
 			if (!validator.CanValidate (p.Type))
-				throw new ConfigurationException (
+				throw new ConfigurationErrorsException (
 					String.Format ("Validator does not support type {0}", p.Type));
 			validator.Validate (p.ConvertFromString (value));
 		}

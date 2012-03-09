@@ -40,6 +40,7 @@ namespace System.Net.Http
 		Dictionary<string, object> properties;
 		Uri uri;
 		bool is_used;
+		bool disposed;
 
 		public HttpRequestMessage ()
 		{
@@ -121,6 +122,12 @@ namespace System.Net.Http
 
 		protected virtual void Dispose (bool disposing)
 		{
+			if (disposing && !disposed) {
+				disposed = true;
+
+				if (Content != null)
+					Content.Dispose ();
+			}
 		}
 
 		internal bool SetIsUsed ()

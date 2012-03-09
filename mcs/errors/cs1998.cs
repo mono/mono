@@ -1,6 +1,6 @@
 // CS1998: Async block lacks `await' operator and will run synchronously
 // Line: 10
-// Compiler options: -langversion:future -warnaserror
+// Compiler options: -warnaserror
 
 using System;
 using System.Threading.Tasks;

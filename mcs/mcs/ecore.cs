@@ -222,8 +222,7 @@ namespace Mono.CSharp {
 
 		public static void Error_InvalidExpressionStatement (Report Report, Location loc)
 		{
-			Report.Error (201, loc, "Only assignment, call, increment, decrement, and new object " +
-				       "expressions can be used as a statement");
+			Report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
 		
 		public void Error_InvalidExpressionStatement (BlockContext ec)
@@ -398,7 +397,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled)
+				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException)
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
@@ -751,6 +750,9 @@ namespace Mono.CSharp {
 
 		public virtual void Error_OperatorCannotBeApplied (ResolveContext rc, Location loc, string oper, TypeSpec t)
 		{
+			if (t == InternalType.ErrorType)
+				return;
+
 			rc.Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
 				oper, t.GetSignatureForError ());
 		}
@@ -1021,6 +1023,12 @@ namespace Mono.CSharp {
 			ExpressionStatement es = e as ExpressionStatement;
 			if (es == null)
 				Error_InvalidExpressionStatement (ec);
+
+			if (ec.CurrentAnonymousMethod is AsyncInitializer && !(e is Assign) &&
+				(e.Type.IsGenericTask || e.Type == ec.Module.PredefinedTypes.Task.TypeSpec)) {
+				ec.Report.Warning (4014, 1, e.Location,
+					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator");
+			}
 
 			return es;
 		}
@@ -2510,8 +2518,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (right_side != null) {
-				if (e is TypeExpr) {
-				    e.Error_UnexpectedKind (ec, ResolveFlags.VariableOrValue, loc);
+				if (e is FullNamedExpression && e.eclass != ExprClass.Unresolved) {
+					e.Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
 				    return null;
 				}
 
@@ -2520,7 +2528,6 @@ namespace Mono.CSharp {
 				e = e.Resolve (ec);
 			}
 
-			//if (ec.CurrentBlock == null || ec.CurrentBlock.CheckInvariantMeaningInBlock (Name, e, Location))
 			return e;
 		}
 		
@@ -2579,6 +2586,10 @@ namespace Mono.CSharp {
 			var dep = type.GetMissingDependencies ();
 			if (dep != null) {
 				ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
+			}
+
+			if (type.Kind == MemberKind.Void) {
+				mc.Module.Compiler.Report.Error (673, loc, "System.Void cannot be used from C#. Consider using `void'");
 			}
 
 			//
@@ -3097,7 +3108,7 @@ namespace Mono.CSharp {
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
 
-			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.Container, candidates.LookupIndex);
+			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.LookupIndex);
 			if (candidates == null)
 				return null;
 
@@ -4199,7 +4210,8 @@ namespace Mono.CSharp {
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments[i];
 				if (a == null) {
-					if (!pd.FixedParameters[i].HasDefaultValue) {
+					var fp = pd.FixedParameters[i];
+					if (!fp.HasDefaultValue) {
 						arguments = orig_args;
 						return arg_count * 2 + 2;
 					}
@@ -4208,7 +4220,7 @@ namespace Mono.CSharp {
 					// Get the default value expression, we can use the same expression
 					// if the type matches
 					//
-					Expression e = pd.FixedParameters[i].DefaultValue;
+					Expression e = fp.DefaultValue;
 					if (!(e is Constant) || e.Type.IsGenericOrParentIsGeneric || e.Type.IsGenericParameter) {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
@@ -4221,6 +4233,19 @@ namespace Mono.CSharp {
 						}
 
 						e = e.Resolve (ec);
+					}
+
+					if ((fp.ModFlags & Parameter.Modifier.CallerMask) != 0) {
+						//
+						// LAMESPEC: Attributes can be mixed together with build-in priority
+						//
+						if ((fp.ModFlags & Parameter.Modifier.CallerLineNumber) != 0) {
+							e = new IntLiteral (ec.BuiltinTypes, loc.Row, loc);
+						} else if ((fp.ModFlags & Parameter.Modifier.CallerFilePath) != 0) {
+							e = new StringLiteral (ec.BuiltinTypes, loc.NameFullPath, loc);
+						} else if (ec.MemberContext.CurrentMemberDefinition != null) {
+							e = new StringLiteral (ec.BuiltinTypes, ec.MemberContext.CurrentMemberDefinition.GetCallerMemberName (), loc);
+						}
 					}
 
 					arguments[i] = new Argument (e, Argument.AType.Default);
@@ -4253,7 +4278,7 @@ namespace Mono.CSharp {
 							continue;
 						}
 					} else {
-						score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+						score = IsArgumentCompatible (ec, a, p_mod, pt);
 
 						if (score < 0)
 							dynamicArgument = true;
@@ -4314,7 +4339,7 @@ namespace Mono.CSharp {
 			// Types have to be identical when ref or out modifer
 			// is used and argument is not of dynamic type
 			//
-			if ((argument.Modifier | param_mod) != 0) {
+			if (((argument.Modifier | param_mod) & Parameter.Modifier.RefOutMask) != 0) {
 				if (argument.Type != parameter) {
 					//
 					// Do full equality check after quick path
@@ -4323,18 +4348,18 @@ namespace Mono.CSharp {
 						//
 						// Using dynamic for ref/out parameter can still succeed at runtime
 						//
-						if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 							return -1;
 
 						return 2;
 					}
 				}
 
-				if (argument.Modifier != param_mod) {
+				if ((argument.Modifier & Parameter.Modifier.RefOutMask) != (param_mod & Parameter.Modifier.RefOutMask)) {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
@@ -4709,7 +4734,7 @@ namespace Mono.CSharp {
 
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				ec.Report.SymbolRelatedToPreviousError (method);
-				if ((expected_par.FixedParameters[idx].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+				if ((expected_par.FixedParameters[idx].ModFlags & Parameter.Modifier.RefOutMask) != 0) {
 					ec.Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
 						TypeManager.CSharpSignature (method));
 					return;
@@ -4719,7 +4744,7 @@ namespace Mono.CSharp {
 			} else if (IsDelegateInvoke) {
 				ec.Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					DelegateType.GetSignatureForError ());
-			} else {
+			} else if (a.Type != InternalType.ErrorType) {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				ec.Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 					method.GetSignatureForError ());
@@ -4728,15 +4753,14 @@ namespace Mono.CSharp {
 			Parameter.Modifier mod = idx >= expected_par.Count ? 0 : expected_par.FixedParameters[idx].ModFlags;
 
 			string index = (idx + 1).ToString ();
-			if (((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) ^
-				(a.Modifier & (Parameter.Modifier.REF | Parameter.Modifier.OUT))) != 0) {
-				if ((mod & Parameter.Modifier.ISBYREF) == 0)
+			if (((mod & Parameter.Modifier.RefOutMask) ^ (a.Modifier & Parameter.Modifier.RefOutMask)) != 0) {
+				if ((mod & Parameter.Modifier.RefOutMask) == 0)
 					ec.Report.Error (1615, loc, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else if (a.Expr != ErrorExpression.Instance) {
+			} else if (a.Type != InternalType.ErrorType) {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
@@ -4865,8 +4889,8 @@ namespace Mono.CSharp {
 				//
 				// Types have to be identical when ref or out modifer is used 
 				//
-				if (a.Modifier != 0 || (p_mod & ~Parameter.Modifier.PARAMS) != 0) {
-					if ((p_mod & ~Parameter.Modifier.PARAMS) != a.Modifier)
+				if (((a.Modifier | p_mod) & Parameter.Modifier.RefOutMask) != 0) {
+					if ((a.Modifier & Parameter.Modifier.RefOutMask) != (p_mod & Parameter.Modifier.RefOutMask))
 						break;
 
 					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt))

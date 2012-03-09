@@ -307,14 +307,9 @@ namespace IKVM.Reflection.Reader
 		{
 			IGenericContext context = (this.DeclaringMethod as IGenericContext) ?? this.DeclaringType;
 			List<Type> list = new List<Type>();
-			int token = this.MetadataToken;
-			// TODO use binary search
-			for (int i = 0; i < module.GenericParamConstraint.records.Length; i++)
+			foreach (int i in module.GenericParamConstraint.Filter(this.MetadataToken))
 			{
-				if (module.GenericParamConstraint.records[i].Owner == token)
-				{
-					list.Add(module.ResolveType(module.GenericParamConstraint.records[i].Constraint, context));
-				}
+				list.Add(module.ResolveType(module.GenericParamConstraint.records[i].Constraint, context));
 			}
 			return list.ToArray();
 		}

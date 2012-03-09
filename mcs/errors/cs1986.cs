@@ -1,6 +1,5 @@
 // CS1986: The `await' operand type `A' must have suitable GetAwaiter method
-// Line: 15
-// Compiler options: -langversion:future
+// Line: 17
 
 static class S
 {

@@ -495,6 +495,11 @@ namespace Mono.CSharp {
 			return ImplicitNumericConversion (expr, expr.Type, target_type);
 		}
 
+		public static bool ImplicitNumericConversionExists (TypeSpec expr_type, TypeSpec target_type)
+		{
+			return ImplicitNumericConversion (null, expr_type, target_type) != null;
+		}
+
 		static Expression ImplicitNumericConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
 			switch (expr_type.BuiltinType) {

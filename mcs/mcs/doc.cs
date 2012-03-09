@@ -241,7 +241,7 @@ namespace Mono.CSharp
 		//
 		// Handles <typeparam /> node
 		//
-		void HandleTypeParam (MemberCore mc, XmlElement node)
+		static void HandleTypeParam (MemberCore mc, XmlElement node)
 		{
 			if (!node.HasAttribute ("name"))
 				return;
@@ -262,7 +262,7 @@ namespace Mono.CSharp
 		//
 		// Handles <typeparamref /> node
 		//
-		void HandleTypeParamRef (MemberCore mc, XmlElement node)
+		static void HandleTypeParamRef (MemberCore mc, XmlElement node)
 		{
 			if (!node.HasAttribute ("name"))
 				return;
@@ -439,7 +439,7 @@ namespace Mono.CSharp
 
 										if (i >= pm.Parameters.Count || pparam == null ||
 											pparam.TypeSpec != pm.Parameters.Types[i] ||
-											(pparam.Modifier & Parameter.Modifier.SignatureMask) != (pm.Parameters.FixedParameters[i].ModFlags & Parameter.Modifier.SignatureMask)) {
+											(pparam.Modifier & Parameter.Modifier.RefOutMask) != (pm.Parameters.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask)) {
 
 											if (i > parameters_match) {
 												parameters_match = i;

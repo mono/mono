@@ -9,7 +9,11 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.XPath;
 
 using NUnit.Framework;
 
@@ -458,6 +462,45 @@ namespace MonoTests.System.Xml.XPath
 			Assert.IsTrue (n != null, "#1");
 			XmlNodeList nodes = n.SelectNodes (".//_:div//_:div", ns);
 			Assert.AreEqual (5, nodes.Count, "#2");
+		}
+
+		// This test requires Linq.
+		[Test] // xamarin bug #3705
+		public void ReturnedNavigatorInstancesUnique ()
+		{
+			string testDocument = 
+				@"<Notes>
+					<Note><Reference>a</Reference>Some text1</Note>
+					<Note><Reference>b</Reference>Some text2</Note>
+					<Note><Reference>a</Reference>Some text3</Note>
+				</Notes>";
+			
+			StringReader r = new StringReader (testDocument);
+			var data = new XPathDocument (r);
+			var l = new List<XPathNavigator> ();
+
+			// test PredicateIterator wrapped by XPathNodeIteratorEnumerator.
+			var parent = data.CreateNavigator ().SelectSingleNode ("/Notes");
+			foreach (XPathNavigator n in parent.Select ("Note[Reference]")) {
+				Assert.IsFalse (l.Contains (n), "should not iterate the same XPathNavigator instance twice, regardless of whether position is same or not");
+				l.Add (n);
+			}
+
+			// Same test for SimpleSlashIterator wrapped by XPathNodeIteratorEnumerator.
+			l.Clear ();
+			foreach (XPathNavigator n in data.CreateNavigator ().Select ("/Notes/Note[Reference]")) {
+				Assert.IsFalse (l.Contains (n), "should not iterate the same XPathNavigator instance twice, regardless of whether position is same or not");
+				l.Add (n);
+			}
+
+			// test orderby too. In short, XPathNodeIteratorEnumerator is the key player that assures XPathNavigator uniqueness.
+			foreach (XPathNavigator n in data.CreateNavigator ()
+				.Select ("/Notes/Note[Reference]")
+				.Cast<XPathNavigator> ()
+				.OrderBy (nav => nav.SelectSingleNode ("Reference").Value)) {
+				Assert.IsFalse (l.Contains (n), "should not iterate the same XPathNavigator instance twice, regardless of whether position is same or not");
+				l.Add (n);
+			}
 		}
 	}
 }

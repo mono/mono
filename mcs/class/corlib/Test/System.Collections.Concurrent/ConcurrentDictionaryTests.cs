@@ -276,6 +276,44 @@ namespace MonoTests.System.Collections.Concurrent
 				Assert.AreEqual (index, val);
 			}
 		}
+
+		[Test]
+		public void QueryWithSameHashCodeTest ()
+		{
+			var ids = new long[] {
+				34359738370, 
+				34359738371, 
+				34359738372, 
+				34359738373, 
+				34359738374, 
+				34359738375, 
+				34359738376, 
+				34359738377, 
+				34359738420
+			};
+
+			var dict = new ConcurrentDictionary<long, long>();
+			long result;
+
+			for (var i = 0; i < 20; i++)
+				dict[-i] = -i * 1000;
+
+			foreach (var id in ids)
+				Assert.IsFalse (dict.TryGetValue (id, out result), id.ToString ());
+
+			foreach (var id in ids) {
+				Assert.IsTrue (dict.TryAdd (id, id));
+				Assert.AreEqual (id, dict[id]);
+			}
+
+			foreach (var id in ids) {
+				Assert.IsTrue (dict.TryRemove (id, out result));
+				Assert.AreEqual (id, result);
+			}
+
+			foreach (var id in ids)
+				Assert.IsFalse (dict.TryGetValue (id, out result), id.ToString () + " (second)");
+		}
 	}
 }
 #endif

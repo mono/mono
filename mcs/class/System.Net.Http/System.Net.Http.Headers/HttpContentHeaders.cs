@@ -32,14 +32,100 @@ namespace System.Net.Http.Headers
 {
 	public sealed class HttpContentHeaders : HttpHeaders
 	{
-		internal HttpContentHeaders ()
+		readonly HttpContent content;
+
+		internal HttpContentHeaders (HttpContent content)
 			: base (HttpHeaderKind.Content)
 		{
+			this.content = content;
 		}
 		
 		public ICollection<string> Allow {
 			get {
-				throw new NotImplementedException ();
+				return GetValues<string> ("Allow");
+			}
+		}
+
+		public ICollection<string> ContentEncoding {
+			get {
+				return GetValues<string> ("Content-Encoding");
+			}
+		}
+
+		public ICollection<string> ContentLanguage {
+			get {
+				return GetValues<string> ("Content-Language");
+			}
+		}
+
+		public long? ContentLength {
+			get {
+				long? v = GetValue<long?> ("Content-Length");
+				if (v != null)
+					return v;
+
+				long l;
+				if (content.TryComputeLength (out l))
+					return l;
+
+				return null;
+			}
+			set {
+				AddOrRemove ("Content-Length", value);
+			}
+		}
+
+		public Uri ContentLocation {
+			get {
+				return GetValue<Uri> ("Content-Location");
+			}
+			set {
+				AddOrRemove ("Content-Location", value);
+			}
+		}
+
+		public byte[] ContentMD5 {
+			get {
+				return GetValue<byte[]> ("Content-MD5");
+			}
+			set {
+				AddOrRemove ("Content-MD5", value);
+			}
+		}
+
+		public ContentRangeHeaderValue ContentRange {
+			get {
+				return GetValue<ContentRangeHeaderValue> ("Content-Range");
+			}
+			set {
+				AddOrRemove ("Content-Range", value);
+			}
+		}
+
+		public MediaTypeHeaderValue ContentType {
+			get {
+				return GetValue<MediaTypeHeaderValue> ("Content-Type");
+			}
+			set {
+				AddOrRemove ("Content-Type", value);
+			}
+		}
+
+		public DateTimeOffset? Expires {
+			get {
+				return GetValue<DateTimeOffset?> ("Expires");
+			}
+			set {
+				AddOrRemove ("Expires", value);
+			}
+		}
+
+		public DateTimeOffset? LastModified {
+			get {
+				return GetValue<DateTimeOffset?> ("Last-Modified");
+			}
+			set {
+				AddOrRemove ("Last-Modified", value);
 			}
 		}
 	}

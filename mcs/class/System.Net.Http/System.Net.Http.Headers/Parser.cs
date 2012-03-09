@@ -122,6 +122,28 @@ namespace System.Net.Http.Headers
 			}
 		}
 
+		public static class Long
+		{
+			public static bool TryParse (string input, out long result)
+			{
+				return long.TryParse (input, NumberStyles.None, CultureInfo.InvariantCulture, out result);
+			}
+		}
+
+		public static class MD5
+		{
+			public static bool TryParse (string input, out byte[] result)
+			{
+				try {
+					result = Convert.FromBase64String (input);
+					return true;
+				} catch {
+					result = null;
+					return false;
+				}
+			}
+		}
+
 		public static class TimeSpanSeconds
 		{
 			public static bool TryParse (string input, out TimeSpan result)
@@ -141,7 +163,7 @@ namespace System.Net.Http.Headers
 		{
 			public static bool TryParse (string input, out System.Uri result)
 			{
-				return System.Uri.TryCreate ("http://" + input + "/", UriKind.Absolute, out result);
+				return System.Uri.TryCreate (input, UriKind.RelativeOrAbsolute, out result);
 			}
 
 			public static void Check (string s)

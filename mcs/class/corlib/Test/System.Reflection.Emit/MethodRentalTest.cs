@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection.Emit
 {
 	[TestFixture]
-	public class MethodRentalTest : Assertion
+	public class MethodRentalTest
 	{	
 		private TypeBuilder genClass;
 		private ModuleBuilder module;

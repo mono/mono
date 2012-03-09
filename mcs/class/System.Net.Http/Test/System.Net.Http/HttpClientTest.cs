@@ -36,47 +36,50 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Linq;
+using System.IO;
 
 namespace MonoTests.System.Net.Http
 {
 	[TestFixture]
-	[Ignore]
+//	[Ignore]
 	public class HttpClientTest
 	{
 		class HttpMessageHandlerMock : HttpMessageHandler
 		{
-			public Func<HttpRequestMessage, HttpResponseMessage> OnSend;
-			public Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> OnSendFull;
-			public Func<HttpRequestMessage, Task<HttpResponseMessage>> OnSendAsync;
+			public Func<HttpRequestMessage, Task<HttpResponseMessage>> OnSend;
+			public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> OnSendFull;
 
 			public HttpMessageHandlerMock ()
 			{
 			}
 
-			protected override HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
+			protected override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 			{
 				if (OnSend != null)
 					return OnSend (request);
 
 				if (OnSendFull != null)
-				    return OnSendFull (request, cancellationToken);
+					return OnSendFull (request, cancellationToken);
 
 				Assert.Fail ("Send");
 				return null;
 			}
-
-			protected override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
-			{
-				if (OnSendAsync != null)
-					return OnSendAsync (request);
-				
-				Assert.Fail ("SendAsync");
-				return null;
-			}
 		}
 
-		static readonly string TestHost = "localhost:810";
-		static readonly string LocalServer = string.Format ("http://{0}/", TestHost);
+		string port, TestHost, LocalServer;
+
+		[SetUp]
+		public void SetupFixture ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				port = "810";
+			} else {
+				port = "8810";
+			}
+
+			TestHost = "localhost:" + port;
+			LocalServer = string.Format ("http://{0}/", TestHost);
+		}
 
 		[Test]
 		public void Ctor_Default ()
@@ -102,11 +105,11 @@ namespace MonoTests.System.Net.Http
 				Assert.IsTrue (c.WaitHandle.WaitOne (1000), "#20");
 				Assert.IsTrue (c.IsCancellationRequested, "#21");
 				mre.Set ();
-				return new HttpResponseMessage ();
+				return Task.FromResult (new HttpResponseMessage ());
 			};
 
 			var t = Task.Factory.StartNew (() => {
-				client.Send (request);
+				client.SendAsync (request).Wait ();
 			});
 
 			Assert.IsTrue (mre.WaitOne (500), "#1");
@@ -117,10 +120,10 @@ namespace MonoTests.System.Net.Http
 			request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
 			mh.OnSendFull = (l, c) => {
 				Assert.IsFalse (c.IsCancellationRequested, "#30");
-				return new HttpResponseMessage ();
+				return Task.FromResult (new HttpResponseMessage ());
 			};
 
-			client.Send (request);
+			client.SendAsync (request).Wait ();
 		}
 
 		[Test]
@@ -139,13 +142,13 @@ namespace MonoTests.System.Net.Http
 
 			mh.OnSendFull = (l, c) => {
 				Assert.IsFalse (c.IsCancellationRequested, "#30");
-				return new HttpResponseMessage ();
+				return Task.FromResult (new HttpResponseMessage ());
 			};
 
-			client.Send (request);
+			client.SendAsync (request).Wait ();
 
 			request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
-			client.Send (request);
+			client.SendAsync (request).Wait ();
 		}
 
 		[Test]
@@ -179,6 +182,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -191,10 +195,10 @@ namespace MonoTests.System.Net.Http
 			mh.OnSend = l => {
 				Assert.AreEqual (l, request, "#2");
 				Assert.AreEqual (client.BaseAddress, l.RequestUri, "#2");
-				return response;
+				return Task.FromResult (response);
 			};
 
-			Assert.AreEqual (response, client.Send (request), "#1");
+			Assert.AreEqual (response, client.SendAsync (request).Result, "#1");
 		}
 
 		[Test]
@@ -211,13 +215,14 @@ namespace MonoTests.System.Net.Http
 			mh.OnSend = l => {
 				Assert.AreEqual (client.DefaultRequestHeaders.Referrer, l.Headers.Referrer, "#2");
 				Assert.IsNotNull (l.Headers.Referrer, "#3");
-				return response;
+				return Task.FromResult (response);
 			};
 
-			Assert.AreEqual (response, client.Send (request), "#1");
+			Assert.AreEqual (response, client.SendAsync (request).Result, "#1");
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_Default ()
 		{
 			var listener = CreateListener (l => {
@@ -247,9 +252,9 @@ namespace MonoTests.System.Net.Http
 			try {
 				var client = new HttpClient ();
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
-				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
-				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
 			} finally {
 				listener.Close ();
@@ -286,9 +291,9 @@ namespace MonoTests.System.Net.Http
 				var client = new HttpClient ();
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
 				request.Version = HttpVersion.Version10;
-				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
-				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
 			} finally {
 				listener.Close ();
@@ -296,6 +301,7 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_ClientHandlerSettings ()
 		{
 			var listener = CreateListener (l => {
@@ -340,9 +346,9 @@ namespace MonoTests.System.Net.Http
 				var client = new HttpClient (chandler);
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
 				request.Version = HttpVersion.Version10;
-				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
-				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
 			} finally {
 				listener.Close ();
@@ -350,13 +356,13 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_Complete_CustomHeaders ()
 		{
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				Assert.AreEqual ("vv", request.Headers["aa"], "#1");
-//				Assert.AreEqual ("bytes=3-20", request.Headers["Range"], "#2");
-//				Assert.AreEqual (4, request.Headers.Count, "#3");
+				Assert.AreEqual (3, request.Headers.Count, "#3");
 
 				var response = l.Response;
 				response.Headers.Add ("rsp", "rrr");
@@ -375,9 +381,9 @@ namespace MonoTests.System.Net.Http
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
 				request.Headers.AddWithoutValidation ("aa", "vv");
 //				request.Headers.Range = new RangeHeaderValue (3, 20);
-				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
-//				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
 
 				IEnumerable<string> values;
@@ -416,11 +422,55 @@ namespace MonoTests.System.Net.Http
 			try {
 				var client = new HttpClient ();
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
-				var response = client.Send (request, HttpCompletionOption.ResponseHeadersRead);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
-				Assert.AreEqual ("", response.Content.ReadAsString (), "#100");
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.InternalServerError, response.StatusCode, "#101");
 			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Content_Get ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				l.Response.OutputStream.WriteByte (72);
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.SendAsync (r).Result;
+
+				Assert.AreEqual ("H", response.Content.ReadAsStringAsync ().Result);
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Content_Put ()
+		{
+			bool passed = false;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				passed = 7 == request.ContentLength64;
+				passed &= request.ContentType == "text/plain; charset=utf-8";
+				passed &= request.InputStream.ReadByte () == 'm';
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				r.Content = new StringContent ("my text");
+				var response = client.SendAsync (r).Result;
+
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#1");
+				Assert.IsTrue (passed, "#2");
+			} finally {
+				listener.Abort ();
 				listener.Close ();
 			}
 		}
@@ -437,10 +487,10 @@ namespace MonoTests.System.Net.Http
 
 			mh.OnSendFull = (l, c) => {
 				Assert.IsTrue (c.WaitHandle.WaitOne (500), "#2");
-				return response;
+				return Task.FromResult (response);
 			};
 
-			Assert.AreEqual (response, client.Send (request), "#1");
+			Assert.AreEqual (response, client.SendAsync (request).Result, "#1");
 		}
 
 		[Test]
@@ -448,20 +498,21 @@ namespace MonoTests.System.Net.Http
 		{
 			var client = new HttpClient ();
 			try {
-				client.Send (null);
+				client.SendAsync (null).Wait ();
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException) {
 			}
 
 			try {
 				var request = new HttpRequestMessage ();
-				client.Send (request);
+				client.SendAsync (request).Wait ();
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException) {
 			}
 		}
 
 		[Test]
+		[Ignore]
 		public void Send_InvalidHandler ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -476,7 +527,8 @@ namespace MonoTests.System.Net.Http
 			};
 
 			try {
-				client.Send (request);
+				// Broken on .net because of return null
+				client.SendAsync (request).Wait ();
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException) {
 			}
@@ -490,21 +542,20 @@ namespace MonoTests.System.Net.Http
 			var client = new HttpClient (mh);
 			var request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
 
-			mh.OnSend = l => {
-				return new HttpResponseMessage ();
-			};
+			mh.OnSend = l => Task.FromResult (new HttpResponseMessage ());
 
-			client.Send (request);
+			client.SendAsync (request).Wait ();
 			try {
-				client.Send (request);
+				client.SendAsync (request).Wait ();
+				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
 		}
 
-		static HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
+		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
 		{
 			var l = new HttpListener ();
-			l.Prefixes.Add ("http://+:810/");
+			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
 			l.Start ();
 			l.BeginGetContext (ar => {
 				var ctx = l.EndGetContext (ar);

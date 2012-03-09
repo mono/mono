@@ -874,10 +874,6 @@ namespace System.Collections {
 				Reset ();
 			}
 
-			public Enumerator (Hashtable host)
-			           : this (host, EnumeratorMode.KEY_MODE) {}
-
-
 			private void FailFast ()
 			{
 				if (host.modificationCount != stamp) {

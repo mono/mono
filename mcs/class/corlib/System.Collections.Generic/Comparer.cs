@@ -31,20 +31,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
 	[Serializable]
-	public abstract class Comparer<T> : IComparer<T>, System.Collections.IComparer {
-		
-		static Comparer ()
-		{
-			if (typeof (IComparable<T>).IsAssignableFrom (typeof (T)))
-				_default = (Comparer<T>) Activator.CreateInstance (typeof (GenericComparer <>).MakeGenericType (typeof (T)));
-			else
-				_default = new DefaultComparer ();
-		}
+	public abstract class Comparer<T> : IComparer<T>, System.Collections.IComparer
+	{
+		static readonly Comparer <T> _default = typeof (IComparable<T>).IsAssignableFrom (typeof (T)) ?
+			(Comparer<T>) Activator.CreateInstance (typeof (GenericComparer <>).MakeGenericType (typeof (T))) :
+			new DefaultComparer ();
 		
 		public abstract int Compare (T x, T y);
 	
-		static readonly Comparer <T> _default;
-		
 		public static Comparer <T> Default {
 			get {
 				return _default;

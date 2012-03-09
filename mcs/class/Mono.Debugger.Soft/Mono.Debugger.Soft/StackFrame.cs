@@ -80,6 +80,16 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		/*
+		 * Whenever this frame transitions to native code. The method associated
+		 * with the frame is either an InternalCall or a pinvoke method.
+		 */
+		public bool IsNativeTransition {
+			get {
+				return (flags & StackFrameFlags.NATIVE_TRANSITION) != 0;
+			}
+		}
+
 		public Value GetValue (ParameterInfoMirror param) {
 			if (param == null)
 				throw new ArgumentNullException ("param");

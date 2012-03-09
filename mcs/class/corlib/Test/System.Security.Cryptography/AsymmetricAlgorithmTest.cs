@@ -14,7 +14,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 	
 	[TestFixture]
-	public class AsymmetricAlgorithmTest : Assertion {
+	public class AsymmetricAlgorithmTest
+	{
 		private AsymmetricAlgorithm _algo;
 		[SetUp]
 		public void SetUp() {
@@ -26,18 +27,14 @@ namespace MonoTests.System.Security.Cryptography {
 		
 		[Test]
 		public void TestProperties() {
-			Assert("Properties (1)", _algo != null);
-			
-			bool thrown = false;
-			try {
-				KeySizes[] keys = _algo.LegalKeySizes;
-				foreach (KeySizes myKey in keys) {
-					for (int i=myKey.MinSize; i<=myKey.MaxSize; i+=myKey.SkipSize) {
-						_algo.KeySize = i;
-					}
+			Assert.IsNotNull(_algo, "Properties (1)");
+
+			KeySizes[] keys = _algo.LegalKeySizes;
+			foreach (KeySizes myKey in keys) {
+				for (int i = myKey.MinSize; i <= myKey.MaxSize; i += myKey.SkipSize) {
+					_algo.KeySize = i;
 				}
-			} catch (CryptographicException) {thrown=true;}
-			Assert("Properties (2)", !thrown);			
+			}
 		}
 	}
 }

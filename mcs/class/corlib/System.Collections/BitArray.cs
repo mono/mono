@@ -113,11 +113,6 @@ namespace System.Collections {
 			}
 		}
 		
-		private BitArray (int [] array, int length)
-		{
-			m_array = array;
-			m_length = length;
-		}
 #endregion
 #region Utility Methods
 		

@@ -1,6 +1,5 @@
 // CS4011: The awaiter type `A' must have suitable IsCompleted, OnCompleted, and GetResult members
 // Line: 16
-// Compiler options: -langversion:future
 
 static class S
 {

@@ -1,4 +1,4 @@
-// CS1977: Query expression with a source or join sequence of type `dynamic' is not allowed
+// CS1979: Query expressions with a source or join sequence of type `dynamic' are not allowed
 // Line: 11
 
 using System.Linq;

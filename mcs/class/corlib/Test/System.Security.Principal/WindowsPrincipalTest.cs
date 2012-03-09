@@ -16,7 +16,7 @@ using System.Security.Principal;
 namespace MonoTests.System.Security.Principal {
 
 	[TestFixture]
-	public class WindowsPrincipalTest : Assertion {
+	public class WindowsPrincipalTest {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -29,7 +29,6 @@ namespace MonoTests.System.Security.Principal {
 		public void Current () 
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetCurrent ());
-			AssertNotNull ("Identity", p.Identity);
 
 			bool test;
 			// we don't Assert as we don't know the current user roles
@@ -50,14 +49,13 @@ namespace MonoTests.System.Security.Principal {
 		public void Anonymous () 
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetAnonymous ());
-			AssertNotNull ("Identity", p.Identity);
 
-			Assert ("Administrator", !p.IsInRole (WindowsBuiltInRole.Administrator));
-			Assert ("BackupOperator", !p.IsInRole (WindowsBuiltInRole.BackupOperator));
-			Assert ("Guest", !p.IsInRole (WindowsBuiltInRole.Guest));
-			Assert ("PowerUser", !p.IsInRole (WindowsBuiltInRole.PowerUser));
-			Assert ("Replicator", !p.IsInRole (WindowsBuiltInRole.Replicator));
-			Assert ("User", !p.IsInRole (WindowsBuiltInRole.User));
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.Administrator), "Administrator");
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.BackupOperator), "BackupOperator");
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.Guest), "Guest");
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.PowerUser), "PowerUser");
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.Replicator), "Replicator");
+			Assert.IsFalse (p.IsInRole (WindowsBuiltInRole.User), "User");
 
 			// doesn't work under XP in a workgroup (ArgumentException)
 //			Assert ("AccountOperator", !p.IsInRole (WindowsBuiltInRole.AccountOperator));
@@ -70,7 +68,7 @@ namespace MonoTests.System.Security.Principal {
 		public void IsInRole_Null ()
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetAnonymous ());
-			Assert ("IsInRole(Null)", !p.IsInRole ((string)null));
+			Assert.IsFalse (p.IsInRole ((string)null));
 		}
 
 		[Test]
@@ -79,7 +77,7 @@ namespace MonoTests.System.Security.Principal {
 			WindowsPrincipal wp = new WindowsPrincipal (WindowsIdentity.GetAnonymous ());
 
 			IPrincipal p = (wp as IPrincipal);
-			AssertNotNull ("IPrincipal", p);
+			Assert.IsNotNull (p);
 		}
 	}
 }

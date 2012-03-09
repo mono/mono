@@ -51,7 +51,7 @@ namespace System.IO {
 			if (n.Length == 1)
 				newlineChar = n [0];
 		}
-
+/*
 		public UnexceptionalStreamReader(Stream stream)
 			: base (stream)
 		{
@@ -61,12 +61,12 @@ namespace System.IO {
 			: base (stream, detect_encoding_from_bytemarks)
 		{
 		}
-
+*/
 		public UnexceptionalStreamReader(Stream stream, Encoding encoding)
 			: base (stream, encoding)
 		{
 		}
-
+/*
 		public UnexceptionalStreamReader(Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
 			: base (stream, encoding, detect_encoding_from_bytemarks)
 		{
@@ -101,7 +101,7 @@ namespace System.IO {
 			: base (path, encoding, detect_encoding_from_bytemarks, buffer_size)
 		{
 		}
-
+*/
 		public override int Peek ()
 		{
 			try {

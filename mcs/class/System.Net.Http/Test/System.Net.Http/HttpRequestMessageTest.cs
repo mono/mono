@@ -199,7 +199,6 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("accept-charset", "achs");
 			headers.Add ("accept-encoding", "aenc");
 			headers.Add ("accept-language", "alan");
-// TODO:			headers.Add ("cache-control", "cc");
 			headers.Add ("expect", "exp");
 			headers.Add ("if-match", "\"v\"");
 			headers.Add ("if-none-match", "\"v2\"");
@@ -245,7 +244,6 @@ namespace MonoTests.System.Net.Http
 			var cch = new CacheControlHeaderValue () {
 					MaxAge = TimeSpan.MaxValue,
 				};
-// TODO			cch.Extensions.Add (new NameValueHeaderValue ("cc"));
 
 			Assert.AreEqual (cch, headers.CacheControl);
 
@@ -396,7 +394,7 @@ namespace MonoTests.System.Net.Http
 			HttpRequestHeaders headers = message.Headers;
 
 			try {
-				headers.Add ("Age", "");
+				headers.Add ("Allow", "");
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
@@ -420,7 +418,7 @@ namespace MonoTests.System.Net.Http
 			}
 
 			try {
-				headers.AddWithoutValidation ("Age", "");
+				headers.AddWithoutValidation ("Allow", "");
 				Assert.Fail ("#3");
 			} catch (InvalidOperationException) {
 			}
@@ -461,6 +459,20 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#7b");
 			} catch (FormatException) {
 			}
+		}
+
+		[Test]
+		public void Headers_Response ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			headers.Add ("Age", "vv");
+			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#1");
+
+			headers.Clear ();
+			headers.AddWithoutValidation ("Age", "vv");
+			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#2");
 		}
 
 		[Test]

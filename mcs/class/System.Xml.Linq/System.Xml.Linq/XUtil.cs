@@ -65,6 +65,8 @@ namespace System.Xml.Linq
 				return (string) o;
 			case TypeCode.DateTime:
 				return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.RoundtripKind);
+			case TypeCode.Decimal:
+				return ((decimal) o).ToString (CultureInfo.InvariantCulture);
 			case TypeCode.Double:
 				return ((double) o).ToString ("r", CultureInfo.InvariantCulture);
 			case TypeCode.Single:

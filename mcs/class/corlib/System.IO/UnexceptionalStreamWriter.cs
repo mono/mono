@@ -42,18 +42,20 @@ using System.Text;
 using System;
 
 namespace System.IO {
-	internal class UnexceptionalStreamWriter: StreamWriter {
+	internal class UnexceptionalStreamWriter: StreamWriter
+	{
+/*
 		public UnexceptionalStreamWriter (Stream stream)
 			: base (stream)
 		{
 		}
-
+*/
 		public UnexceptionalStreamWriter (Stream stream,
 						  Encoding encoding)
 			: base (stream, encoding)
 		{
 		}
-
+/*
 		public UnexceptionalStreamWriter (Stream stream,
 						  Encoding encoding,
 						  int bufferSize)
@@ -83,7 +85,7 @@ namespace System.IO {
 			: base (path, append, encoding, bufferSize)
 		{
 		}
-
+*/
 		public override void Flush ()
 		{
 			try {

@@ -29,6 +29,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 
 namespace System.Net.Http
 {
@@ -184,10 +185,12 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		WebRequest CreateWebRequest (HttpRequestMessage request)
+		HttpWebRequest CreateWebRequest (HttpRequestMessage request)
 		{
-			var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
-			var wr = (HttpWebRequest) factory.Create (request.RequestUri);
+			//var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
+			//var wr = (HttpWebRequest) factory.Create (request.RequestUri);
+
+			var wr = new HttpWebRequest (request.RequestUri);
 
 			wr.ConnectionGroupName = "HttpClientHandler";
 			wr.Method = request.Method.Method;
@@ -223,7 +226,7 @@ namespace System.Net.Http
 				wr.Proxy = proxy;
 			}
 
-			// Add all request headers
+			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
 				foreach (var value in header.Value) {
@@ -240,36 +243,33 @@ namespace System.Net.Http
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
+			response.Content = new StreamContent (wr.GetResponseStream ());
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
 				var key = headers.GetKey(i);
 				var value = headers.GetValues (i);
 
-				response.Headers.AddWithoutValidation (key, value);
+				if (HttpHeaders.GetKnownHeaderKind (key) == Headers.HttpHeaderKind.Content)
+					response.Content.Headers.AddWithoutValidation (key, value);
+				else
+					response.Headers.AddWithoutValidation (key, value);
 			}
 
 			return response;
 		}
 
-		protected internal override HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
+		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
 				throw new NotImplementedException ();
-			} else {
-				// TODO:
 			}
 
-			var wresponse = (HttpWebResponse) wrequest.GetResponse ();
-
+			// FIXME: Why GetResponseAsync does not accept cancellationToken
+			var wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
 			return CreateResponseMessage (wresponse, request);
-		}
-		
-		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

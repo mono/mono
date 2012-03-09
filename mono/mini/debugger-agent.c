@@ -270,7 +270,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 16
+#define MINOR_VERSION 17
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -370,7 +370,8 @@ typedef enum {
 } ValueTypeId;
 
 typedef enum {
-	FRAME_FLAG_DEBUGGER_INVOKE = 1
+	FRAME_FLAG_DEBUGGER_INVOKE = 1,
+	FRAME_FLAG_NATIVE_TRANSITION = 2
 } StackFrameFlags;
 
 typedef enum {
@@ -949,6 +950,14 @@ mono_debugger_agent_init (void)
 	/* This is needed because we can't set local variables in registers yet */
 	mono_disable_optimizations (MONO_OPT_LINEARS);
 #endif
+
+	/*
+	 * The stack walk done from thread_interrupt () needs to be signal safe, but it
+	 * isn't, since it can call into mono_aot_find_jit_info () which is not signal
+	 * safe (#3411). So load AOT info eagerly when the debugger is running as a
+	 * workaround.
+	 */
+	mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE;
 
 	if (!agent_config.onuncaught && !agent_config.onthrow)
 		finish_agent_init (TRUE);
@@ -2939,6 +2948,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	StackFrame *frame;
 	MonoMethod *method, *actual_method;
 	SeqPoint *sp;
+	int flags = 0;
 
 	if (info->type != FRAME_TYPE_MANAGED) {
 		if (info->type == FRAME_TYPE_DEBUGGER_INVOKE) {
@@ -2955,7 +2965,10 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 		method = info->method;
 	actual_method = info->actual_method;
 
-	if (!method || (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD))
+	if (!method)
+		return FALSE;
+
+	if (!method || (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE))
 		return FALSE;
 
 	if (info->il_offset == -1) {
@@ -2971,14 +2984,15 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 
 	DEBUG (1, fprintf (log_file, "\tFrame: %s:%x(%x) %d\n", mono_method_full_name (method, TRUE), info->il_offset, info->native_offset, info->managed));
 
-	if (!info->managed && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) {
-		/*
-		 * mono_arch_find_jit_info () returns the context stored in the LMF for 
-		 * native frames, but it should unwind once. This is why we have duplicate
-		 * frames on the stack sometimes.
-		 * !managed also seems to be set for dynamic methods.
-		 */
-		return FALSE;
+	if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+		if (!CHECK_PROTOCOL_VERSION (2, 17))
+			/* Older clients can't handle this flag */
+			return FALSE;
+		method = mono_marshal_method_from_wrapper (method);
+		if (!method)
+			return FALSE;
+		actual_method = method;
+		flags |= FRAME_FLAG_NATIVE_TRANSITION;
 	}
 
 	frame = g_new0 (StackFrame, 1);
@@ -2986,7 +3000,9 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	frame->actual_method = actual_method;
 	frame->il_offset = info->il_offset;
 	frame->native_offset = info->native_offset;
-	memcpy (frame->reg_locations, info->reg_locations, MONO_MAX_IREGS * sizeof (mgreg_t*));
+	frame->flags = flags;
+	if (info->reg_locations)
+		memcpy (frame->reg_locations, info->reg_locations, MONO_MAX_IREGS * sizeof (mgreg_t*));
 	if (ctx) {
 		frame->ctx = *ctx;
 		frame->has_ctx = TRUE;
@@ -7491,7 +7507,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		MonoDebugLocalsInfo *locals;
 
 		header = mono_method_get_header (method);
-		g_assert (header);
+		if (!header)
+			return ERR_INVALID_ARGUMENT;
 
 		buffer_add_int (buf, header->num_locals);
 

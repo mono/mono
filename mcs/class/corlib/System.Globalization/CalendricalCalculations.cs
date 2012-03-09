@@ -38,7 +38,7 @@ using System.Collections;
 /// bool. 
 /// </para>
 /// </remarks>
-internal class CCMath {
+static class CCMath {
 	/// <summary>
 	/// A static method which rounds a double value.
 	/// </summary>
@@ -198,7 +198,7 @@ internal class CCMath {
 /// </description></item>
 /// </list>
 /// </remarks>
-internal class CCFixed {
+static class CCFixed {
 	/// <summary>The method computes the
 	/// <see cref="T:System.DateTime"/>
 	/// from a fixed day number.
@@ -367,7 +367,7 @@ internal class CCFixed {
 /// </para>
 /// <seealso cref="T:CCFixed"/>
 /// </remarks>
-internal class CCGregorianCalendar {
+static class CCGregorianCalendar {
 	/// <summary>An integer defining the epoch of the Gregorian calendar
 	/// as fixed day number.</summary>
 	/// <remarks>The epoch is January 3, 1 C.E. (Julian).</remarks>
@@ -855,7 +855,7 @@ internal class CCGregorianCalendar {
 /// </para>
 /// <seealso cref="T:CCFixed"/>
 /// </remarks>
-internal class CCJulianCalendar {
+static class CCJulianCalendar {
 	/// <summary>An integer defining the epoch of the Julian calendar
 	/// as fixed day number.</summary>
 	/// <remarks>The epoch is December 30, 0 (Gregorian).</remarks>
@@ -1133,7 +1133,7 @@ internal class CCJulianCalendar {
 /// </para>
 /// <seealso cref="T:CCFixed"/>
 /// </remarks>
-internal class CCHebrewCalendar {
+static class CCHebrewCalendar {
 	/// <summary>An integer defining the epoch of the Hebrew calendar
 	/// as fixed day number.</summary>
 	/// <remarks>The epoch is October 10, 3761 B.C.E. (Julian).</remarks>
@@ -1579,7 +1579,7 @@ internal class CCHebrewCalendar {
 /// </para>
 /// <seealso cref="T:CCFixed"/>
 /// </remarks>
-internal class CCHijriCalendar {
+static class CCHijriCalendar {
 	/// <summary>An integer defining the epoch of the Gregorian calendar
 	/// as fixed day number.</summary>
 	/// <remarks>

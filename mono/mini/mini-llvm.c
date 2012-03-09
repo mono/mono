@@ -325,7 +325,7 @@ type_to_llvm_type (EmitContext *ctx, MonoType *t)
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_PTR:
-		return LLVMPointerType (IntPtrType (), 0);
+		return IntPtrType ();
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR:
 		/* Because of generic sharing */
@@ -1525,9 +1525,6 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	ctx->bblocks [bb->block_num].end_bblock = noex_bb;
 
 	ctx->ex_index ++;
-	return;
-
- FAILURE:
 	return;
 }
 

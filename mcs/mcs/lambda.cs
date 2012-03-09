@@ -81,7 +81,7 @@ namespace Mono.CSharp {
 			TypeSpec [] ptypes = new TypeSpec [Parameters.Count];
 			for (int i = 0; i < d_params.Count; i++) {
 				// D has no ref or out parameters
-				if ((d_params.FixedParameters [i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
+				if ((d_params.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) != 0)
 					return null;
 
 				TypeSpec d_param = d_params.Types [i];

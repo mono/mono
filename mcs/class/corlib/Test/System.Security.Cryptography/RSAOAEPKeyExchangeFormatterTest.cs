@@ -34,7 +34,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class RSAOAEPKeyExchangeFormatterTest : Assertion {
+	public class RSAOAEPKeyExchangeFormatterTest {
 
 		protected static RSA key;
 
@@ -60,10 +60,10 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			RSAOAEPKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter ();
 			keyex.SetKey (key);
-			Assertion.AssertNull ("RSAOAEPKeyExchangeFormatter.Parameter", keyex.Parameter);
-			Assertion.AssertNull ("RSAOAEPKeyExchangeFormatter.Parameters", keyex.Parameters);
-			Assertion.AssertNull ("RSAOAEPKeyExchangeFormatter.Rng", keyex.Rng);
-			Assertion.AssertEquals ("RSAOAEPKeyExchangeFormatter.ToString()", "System.Security.Cryptography.RSAOAEPKeyExchangeFormatter", keyex.ToString ());
+			Assert.IsNull (keyex.Parameter, "RSAOAEPKeyExchangeFormatter.Parameter");
+			Assert.IsNull (keyex.Parameters, "RSAOAEPKeyExchangeFormatter.Parameters");
+			Assert.IsNull (keyex.Rng, "RSAOAEPKeyExchangeFormatter.Rng");
+			Assert.AreEqual ("System.Security.Cryptography.RSAOAEPKeyExchangeFormatter", keyex.ToString ());
 		}
 
 		// ExchangeMin (1)
@@ -154,24 +154,20 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			RSAOAEPKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
 			keyex.Parameter = new byte [1];
-			AssertEquals ("Parameter", 1, keyex.Parameter.Length);
+			Assert.AreEqual (1, keyex.Parameter.Length);
 		}
 
 		[Test]
 		public void Rng () 
 		{
 			RSAOAEPKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
-			AssertNull ("Rng", keyex.Rng);
+			Assert.IsNull (keyex.Rng, "Rng");
 			keyex.Rng = RandomNumberGenerator.Create ();
-			AssertNotNull ("Rng", keyex.Rng);
+			Assert.IsNotNull (keyex.Rng, "Rng 2");
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ExchangeNoKey () 
 		{
 			AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter ();

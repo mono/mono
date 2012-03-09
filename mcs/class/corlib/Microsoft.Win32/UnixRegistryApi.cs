@@ -621,17 +621,12 @@ namespace Microsoft.Win32 {
 				break;
 				
 			case RegistryValueKind.DWord:
-				if (value is long &&
-				    (((long) value) < Int32.MaxValue) &&
-				    (((long) value) > Int32.MinValue)){
-					values [name] = (int) ((long)value);
+				try {
+					values [name] = Convert.ToInt32 (value);
 					return;
+				} catch (OverflowException) {
+					break;
 				}
-				if (value is int){
-					values [name] = value;
-					return;
-				}
-				break;
 				
 			case RegistryValueKind.MultiString:
 				if (value is string []){
@@ -641,15 +636,13 @@ namespace Microsoft.Win32 {
 				break;
 				
 			case RegistryValueKind.QWord:
-				if (value is int){
-					values [name] = (long) ((int) value);
+				try {
+					values [name] = Convert.ToInt64 (value);
 					return;
+				} catch (OverflowException) {
+					break;
 				}
-				if (value is long){
-					values [name] = value;
-					return;
-				}
-				break;
+				
 			default:
 				throw new ArgumentException ("unknown value", "valueKind");
 			}

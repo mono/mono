@@ -504,5 +504,22 @@ namespace MonoTests.System.Reflection
 		public class InheritsFromClassWithNullableDateTime : ClassWithNullableDateTime
 		{
 		}
+
+		public static int ThrowingProperty {
+			get {
+				throw new ObjectDisposedException("TestClass");
+			}
+		}
+
+		[Test]
+		public void GetException () {
+			var prop = typeof(PropertyInfoTest).GetProperty("ThrowingProperty");
+			try {
+				prop.GetValue (null, null);
+				Assert.Fail ();
+			} catch (TargetInvocationException ex) {
+				Assert.IsTrue (ex.InnerException is ObjectDisposedException);
+			}
+		}
 	}
 }

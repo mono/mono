@@ -670,7 +670,7 @@ namespace Mono.CSharp {
 			do {
 				var ns = m as NamespaceContainer;
 				if (ns != null)
-					return ns.LookupExtensionMethod (this, extensionType, name, arity, ns, 0);
+					return ns.LookupExtensionMethod (this, extensionType, name, arity, 0);
 
 				m = m.Parent;
 			} while (m != null);
@@ -802,6 +802,11 @@ namespace Mono.CSharp {
 		protected void Warning_IdentifierNotCompliant ()
 		{
 			Report.Warning (3008, 1, MemberName.Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError ());
+		}
+
+		public virtual string GetCallerMemberName ()
+		{
+			return MemberName.Name;
 		}
 
 		//

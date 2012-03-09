@@ -1,5 +1,7 @@
 ../../build/common/Consts.cs
 Assembly/AssemblyInfo.cs
+System.Net.Http/ByteArrayContent.cs
+System.Net.Http/ClientCertificateOption.cs
 System.Net.Http/HttpClient.cs
 System.Net.Http/HttpClientHandler.cs
 System.Net.Http/HttpCompletionOption.cs
@@ -10,9 +12,11 @@ System.Net.Http/HttpRequestException.cs
 System.Net.Http/HttpRequestMessage.cs
 System.Net.Http/HttpResponseMessage.cs
 System.Net.Http/StreamContent.cs
+System.Net.Http/StringContent.cs
 System.Net.Http.Headers/AuthenticationHeaderValue.cs
 System.Net.Http.Headers/CacheControlHeaderValue.cs
 System.Net.Http.Headers/CollectionExtensions.cs
+System.Net.Http.Headers/ContentRangeHeaderValue.cs
 System.Net.Http.Headers/EntityTagHeaderValue.cs
 System.Net.Http.Headers/HashCodeCalculator.cs
 System.Net.Http.Headers/HeaderInfo.cs

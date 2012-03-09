@@ -129,5 +129,15 @@ namespace MonoTests.System.Net.Http.Headers
 			} catch (InvalidOperationException) {
 			}
 		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			headers.Add ("aa", "v");
+			headers.Add ("aa", "v");
+			headers.Add ("x", "v");
+
+			Assert.AreEqual ("aa: v, v\r\nx: v\r\n", headers.ToString ());
+		}
 	}
 }
