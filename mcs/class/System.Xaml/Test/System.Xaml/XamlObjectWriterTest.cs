@@ -737,6 +737,45 @@ namespace MonoTests.System.Xaml
 			var ret = xow.Result as TestClass3;
 			Assert.IsNotNull (ret.Nested, "#8");
 		}
+		
+		[Test] // bug #3003 repro
+		public void EventsAndProcessingOrder ()
+		{
+			var asm = Assembly.GetExecutingAssembly ();
+			var context = new XamlSchemaContext (new Assembly [] { asm });
+			var output = XamarinBug3003.TestContext.Writer;
+			output.WriteLine ();
+
+			var reader = new XamlXmlReader (XmlReader.Create (new StringReader (XamarinBug3003.TestContext.XmlInput)), context);
+
+			var writerSettings = new XamlObjectWriterSettings ();
+			writerSettings.AfterBeginInitHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterBeginInit: {0}", e.Instance);
+			};
+			writerSettings.AfterEndInitHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterEndInit: {0}", e.Instance);
+			};
+
+			writerSettings.BeforePropertiesHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.BeforeProperties: {0}", e.Instance);
+			};
+			writerSettings.AfterPropertiesHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterProperties: {0}", e.Instance);
+			};
+			writerSettings.XamlSetValueHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.XamlSetValue: {0}, Member: {1}", e.Value, e.Member.Name);
+			};
+
+			var writer = new XamlObjectWriter (context, writerSettings);
+			XamlServices.Transform (reader, writer);
+			var obj = writer.Result as XamarinBug3003.Parent;
+
+			output.WriteLine ("Loaded {0}", obj);
+
+			Assert.AreEqual (XamarinBug3003.TestContext.ExpectedResult.Replace ("\r\n", "\n"), output.ToString ().Replace ("\r\n", "\n"), "#1");
+
+			Assert.AreEqual (2, obj.Children.Count, "#2");
+		}
 
 		// extra use case based tests.
 
