@@ -282,6 +282,7 @@ System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Schema/XmlSchemaValidationFlags.cs
 System.Xml.Schema/XmlTypeCode.cs
+System.Xml.Schema/XmlValueConverter.cs
 System.Xml.Schema/XmlValueGetter.cs
 System.Xml.Serialization/IXmlTextParser.cs
 System.Xml.Serialization/CodeExporter.cs

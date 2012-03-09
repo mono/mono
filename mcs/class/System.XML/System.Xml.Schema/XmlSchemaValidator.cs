@@ -451,7 +451,7 @@ namespace System.Xml.Schema
 			// If there is no schema information, then no validation is performed.
 			if (skipValidationDepth < 0 || depth <= skipValidationDepth) {
 				if (shouldValidateCharacters)
-					ValidateEndSimpleContent (null);
+					ValidateEndSimpleContent (null, null);
 
 				AssessOpenStartElementSchemaValidity (localName, ns);
 			}
@@ -489,7 +489,6 @@ namespace System.Xml.Schema
 		// represented by current simple content type. (try passing
 		// some kind of object to this method to check the behavior.)
 		// EndTagDeriv
-		[MonoTODO] // FIXME: Handle 'var' parameter.
 		public object ValidateEndElement (XmlSchemaInfo info,
 			object var)
 		{
@@ -518,7 +517,7 @@ namespace System.Xml.Schema
 			if (depth == skipValidationDepth)
 				skipValidationDepth = -1;
 			else if (skipValidationDepth < 0 || depth <= skipValidationDepth)
-				ret = AssessEndElementSchemaValidity (info);
+				ret = AssessEndElementSchemaValidity (info, var);
 			return ret;
 
 			} finally {
@@ -954,9 +953,9 @@ namespace System.Xml.Schema
 		}
 
 		private object AssessEndElementSchemaValidity (
-			XmlSchemaInfo info)
+			XmlSchemaInfo info, object var)
 		{
-			object ret = ValidateEndSimpleContent (info);
+			object ret = ValidateEndSimpleContent (info, var);
 
 			ValidateEndElementParticle ();	// validate against childrens' state.
 
@@ -1001,34 +1000,26 @@ namespace System.Xml.Schema
 
 
 		// Utility for missing validation completion related to child items.
-		private object ValidateEndSimpleContent (XmlSchemaInfo info)
+		private object ValidateEndSimpleContent (XmlSchemaInfo info, object var)
 		{
 			object ret = null;
 			if (shouldValidateCharacters)
-				ret = ValidateEndSimpleContentCore (info);
+				ret = ValidateEndSimpleContentCore (info, var);
 			shouldValidateCharacters = false;
 			storedCharacters.Length = 0;
 			return ret;
 		}
 
-		private object ValidateEndSimpleContentCore (XmlSchemaInfo info)
+		private object ValidateEndSimpleContentCore (XmlSchemaInfo info, object var)
 		{
 			if (Context.ActualType == null)
 				return null;
 
-			string value = storedCharacters.ToString ();
-			object ret = null;
-
-			if (value.Length == 0) {
-				// 3.3.4 Element Locally Valid (Element) 5.1.2
-				if (Context.Element != null) {
-					if (Context.Element.ValidatedDefaultValue != null)
-						value = Context.Element.ValidatedDefaultValue;
-				}					
-			}
-
 			XsDatatype dt = Context.ActualType as XsDatatype;
 			SimpleType st = Context.ActualType as SimpleType;
+
+			XmlSchemaContentType contentType = XmlSchemaContentType.TextOnly;
+
 			if (dt == null) {
 				if (st != null) {
 					dt = st.Datatype;
@@ -1045,18 +1036,32 @@ namespace System.Xml.Schema
 					}
 
 					dt = ct.Datatype;
-					switch (ct.ContentType) {
-					case XmlSchemaContentType.ElementOnly:
-						if (value.Length > 0 && !XmlChar.IsWhitespace (value))
-							HandleError ("Character content not allowed in an elementOnly model.");
-						break;
-					case XmlSchemaContentType.Empty:
-						if (value.Length > 0)
-							HandleError ("Character content not allowed in an empty model.");
-						break;
-					}
+					contentType = ct.ContentType;
 				}
 			}
+
+			string value = var != null ? dt.ValueConverter.ToString (var) : storedCharacters.ToString ();
+			object ret = null;
+
+			switch (contentType) {
+			case XmlSchemaContentType.ElementOnly:
+				if (value.Length > 0 && !XmlChar.IsWhitespace (value))
+					HandleError ("Character content not allowed in an elementOnly model.");
+				break;
+			case XmlSchemaContentType.Empty:
+				if (value.Length > 0)
+					HandleError ("Character content not allowed in an empty model.");
+				break;
+			}
+
+			if (value.Length == 0) {
+				// 3.3.4 Element Locally Valid (Element) 5.1.2
+				if (Context.Element != null) {
+					if (Context.Element.ValidatedDefaultValue != null)
+						value = Context.Element.ValidatedDefaultValue;
+				}					
+			}
+
 			if (dt != null) {
 				// 3.3.4 Element Locally Valid (Element) :: 5.2.2.2. Fixed value constraints
 				if (Context.Element != null && Context.Element.ValidatedFixedValue != null)
@@ -1197,7 +1202,7 @@ namespace System.Xml.Schema
 				try {
 					ret = validatedDatatype.ParseValue (value, nameTable, nsResolver);
 				} catch (Exception ex) { // It is inevitable and bad manner.
-					HandleError (String.Format ("Invalidly typed data was specified."), ex);
+					HandleError ("Invalidly typed data was specified", ex);
 				}
 			}
 			return ret;
