@@ -81,14 +81,20 @@ namespace System.Xaml.Schema
 			}
 
 			if (mi == null) {
-				if (ct.IsGenericType)
+				if (ct.IsGenericType) {
 					mi = ct.GetMethod ("Add", ct.GetGenericArguments ());
-				else
+					if (mi == null)
+						mi = LookupAddMethod (ct, typeof (ICollection<>).MakeGenericType (ct.GetGenericArguments ()));
+				} else {
 					mi = ct.GetMethod ("Add", new Type [] {typeof (object)});
+					if (mi == null)
+						mi = LookupAddMethod (ct, typeof (IList));
+				}
 			}
 
 			if (mi == null)
 				throw new InvalidOperationException (String.Format ("The collection type '{0}' does not have 'Add' method", ct));
+			
 			mi.Invoke (instance, new object [] {item});
 		}
 
@@ -98,10 +104,28 @@ namespace System.Xaml.Schema
 				throw new ArgumentNullException ("instance");
 
 			var t = instance.GetType ();
-			if (t.IsGenericType)
-				instance.GetType ().GetMethod ("Add", t.GetGenericArguments ()).Invoke (instance, new object [] {key, item});
-			else
-				instance.GetType ().GetMethod ("Add", new Type [] {typeof (object), typeof (object)}).Invoke (instance, new object [] {key, item});
+			// FIXME: this likely needs similar method lookup to AddToCollection().
+
+			MethodInfo mi = null;
+			if (t.IsGenericType) {
+				mi = instance.GetType ().GetMethod ("Add", t.GetGenericArguments ());
+				if (mi == null)
+					mi = LookupAddMethod (t, typeof (IDictionary<,>).MakeGenericType (t.GetGenericArguments ()));
+			} else {
+				mi = instance.GetType ().GetMethod ("Add", new Type [] {typeof (object), typeof (object)});
+				if (mi == null)
+					mi = LookupAddMethod (t, typeof (IDictionary));
+			}
+			mi.Invoke (instance, new object [] {key, item});
+		}
+		
+		MethodInfo LookupAddMethod (Type ct, Type iface)
+		{
+			var map = ct.GetInterfaceMap (iface);
+			for (int i = 0; i < map.TargetMethods.Length; i++)
+				if (map.InterfaceMethods [i].Name == "Add")
+					return map.TargetMethods [i];
+			return null;
 		}
 
 		public virtual object CreateInstance (object [] arguments)
