@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -294,6 +295,8 @@ namespace System.Xaml
 			
 			if (state.Type.IsAmbient)
 				ambient_provider.Pop ();
+			else
+				HandleEndInit (obj);
 			
 			object_states.Push (state);
 			if (object_states.Count == 1) {
@@ -413,6 +416,7 @@ namespace System.Xaml
 			state.IsInstantiated = true;
 			if (state.Type.IsAmbient)
 				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, state.Value));
+			HandleBeginInit (state.Value);
 		}
 
 		protected override void OnWriteValue (object value)
@@ -570,6 +574,8 @@ namespace System.Xaml
 			state.IsInstantiated = true;
 			if (state.Type.IsAmbient)
 				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, obj));
+			else
+				HandleBeginInit (obj);
 		}
 
 		internal IXamlNameResolver name_resolver {
@@ -593,6 +599,24 @@ namespace System.Xaml
 						SetValue (fixup.ParentMember, fixup.ParentValue, obj);
 				}
 			}
+		}
+		
+		void HandleBeginInit (object value)
+		{
+			var si = value as ISupportInitialize;
+			if (si == null)
+				return;
+			si.BeginInit ();
+			source.OnAfterBeginInit (value);
+		}
+		
+		void HandleEndInit (object value)
+		{
+			var si = value as ISupportInitialize;
+			if (si == null)
+				return;
+			si.EndInit ();
+			source.OnAfterEndInit (value);
 		}
 	}
 }
