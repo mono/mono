@@ -402,9 +402,7 @@ namespace System.Xaml
 		
 		void SetValue (XamlMember member, object target, object value)
 		{
-			if (member.IsAttachable)
-				member.Invoker.SetValue (target, value);
-			else if (!source.OnSetValue (target, member, value))
+			if (!source.OnSetValue (target, member, value))
 				member.Invoker.SetValue (target, value);
 		}
 
