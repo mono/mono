@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2012 Xamarin Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -158,8 +159,9 @@ namespace System.Xaml
 		protected internal virtual bool OnSetValue (object eventSender, XamlMember member, object value)
 		{
 			if (settings.XamlSetValueHandler != null) {
-				settings.XamlSetValueHandler (eventSender, new XamlSetValueEventArgs (member, value));
-				return true;
+				var args = new XamlSetValueEventArgs (member, value);
+				settings.XamlSetValueHandler (eventSender, args);
+				return args.Handled;
 			}
 			return false;
 		}
@@ -385,10 +387,16 @@ namespace System.Xaml
 				object_states.Peek ().FactoryMethod = (string) value;
 			else if (member.IsDirective)
 				return;
-			else if (member.IsAttachable)
-				member.Invoker.SetValue (object_states.Peek ().Value, value);
-			else if (!source.OnSetValue (this, member, value))
-				member.Invoker.SetValue (object_states.Peek ().Value, value);
+			else
+				SetValue (member, object_states.Peek ().Value, value);
+		}
+		
+		void SetValue (XamlMember member, object target, object value)
+		{
+			if (member.IsAttachable)
+				member.Invoker.SetValue (target, value);
+			else if (!source.OnSetValue (target, member, value))
+				member.Invoker.SetValue (target, value);
 		}
 
 		void PopulateObject (bool considerPositionalParameters, IList<object> contents)
@@ -582,7 +590,7 @@ namespace System.Xaml
 					if (obj == null)
 						throw new XamlObjectWriterException (String.Format ("Unresolved object reference '{0}' was found", name));
 					if (!AddToCollectionIfAppropriate (fixup.ParentType, fixup.ParentMember, fixup.ParentValue, obj, null)) // FIXME: is keyObj always null?
-						fixup.ParentMember.Invoker.SetValue (fixup.ParentValue, obj);
+						SetValue (fixup.ParentMember, fixup.ParentValue, obj);
 				}
 			}
 		}

@@ -705,6 +705,38 @@ namespace MonoTests.System.Xaml
 
 			Assert.AreEqual ("Test", result.Property, "#1");
 		}
+		
+		[Test]
+		public void OnSetValueAndHandledFalse () // part of bug #3003
+		{
+			/*
+			var obj = new TestClass3 ();
+			obj.Nested = new TestClass3 ();
+			var sw = new StringWriter ();
+			var xxw = new XamlXmlWriter (XmlWriter.Create (sw), new XamlSchemaContext ());
+			XamlServices.Transform (new XamlObjectReader (obj), xxw);
+			Console.Error.WriteLine (sw);
+			*/
+			var xml = "<TestClass3 xmlns='clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'><TestClass3.Nested><TestClass3 Nested='{x:Null}' /></TestClass3.Nested></TestClass3>";
+			var settings = new XamlObjectWriterSettings ();
+			bool invoked = false;
+			settings.XamlSetValueHandler = (sender, e) => {
+				invoked = true;
+				Assert.IsNotNull (sender, "#1");
+				Assert.AreEqual (typeof (TestClass3), sender.GetType (), "#2");
+				Assert.AreEqual ("Nested", e.Member.Name, "#3");
+				Assert.IsTrue (sender != e.Member.Invoker.GetValue (sender), "#4");
+				Assert.IsFalse (e.Handled, "#5");
+				// ... and leave Handled as false, to invoke the actual setter
+			};
+			var xow = new XamlObjectWriter (new XamlSchemaContext (), settings);
+			var xxr = new XamlXmlReader (XmlReader.Create (new StringReader (xml)));
+			XamlServices.Transform (xxr, xow);
+			Assert.IsTrue (invoked, "#6");
+			Assert.IsNotNull (xow.Result, "#7");
+			var ret = xow.Result as TestClass3;
+			Assert.IsNotNull (ret.Nested, "#8");
+		}
 
 		// extra use case based tests.
 

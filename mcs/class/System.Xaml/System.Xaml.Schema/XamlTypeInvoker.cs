@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2012 Xamarin Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -73,6 +74,7 @@ namespace System.Xaml.Schema
 			var xct = type == null ? null : type.SchemaContext.GetXamlType (ct);
 			MethodInfo mi = null;
 
+			// FIXME: this method lookup should be mostly based on GetAddMethod(). At least iface method lookup must be done there.
 			if (type != null && type.UnderlyingType != null) {
 				if (!xct.IsCollection) // not sure why this check is done only when UnderlyingType exists...
 					throw new NotSupportedException (String.Format ("Non-collection type '{0}' does not support this operation", xct));
