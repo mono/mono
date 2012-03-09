@@ -250,7 +250,8 @@ namespace System.Xaml
 			if (!state.Type.IsContentValue (service_provider))
 				InitializeObjectIfRequired (true);
 
-
+			state.IsXamlWriterCreated = true;
+			source.OnBeforeProperties (state.Value);
 		}
 
 		protected override void OnWriteGetObject ()
@@ -281,6 +282,11 @@ namespace System.Xaml
 					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
 				}
 			}
+			
+			// call this (possibly) before the object is added to parent collection. (bug #3003 also expects this)
+			if (state.IsXamlWriterCreated)
+				source.OnAfterProperties (obj);
+			
 			var nfr = obj as NameFixupRequired;
 			if (nfr != null && object_states.Count > 0) { // IF the root object to be written is x:Reference, then the Result property will become the NameFixupRequired. That's what .NET also does.
 				// actually .NET seems to seek "parent" object in its own IXamlNameResolver implementation.
