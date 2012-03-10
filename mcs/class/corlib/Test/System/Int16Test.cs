@@ -214,6 +214,12 @@ public class Int16Test
 
 		Assert.AreEqual ("254", def, "ToString(G)");
 	}
+
+	[Test]
+	public void Bug3677 ()
+	{
+		Assert.AreEqual (-7197, short.Parse("E3E3", NumberStyles.HexNumber), "HexNumber");
+	}
 }
 
 }
