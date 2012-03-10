@@ -200,6 +200,12 @@ public class SByteTest
 
 		Assert.AreEqual ("100", def, "ToString(G)");
 	}
+		
+	[Test]
+	public void Bug3677 ()
+	{
+		Assert.AreEqual (-29, sbyte.Parse("E3", NumberStyles.HexNumber), "HexNumber");
+	}
 }
 
 }
