@@ -9,7 +9,7 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:System.Data.dll /r:Mono.Posix.dll \
 	/r:Mono.WebBrowser \
 	@System.Windows.Forms.dll.resources \
-	-debug -nowarn:618,612,809
+	-nowarn:618,612,809
 
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:System.Configuration.dll

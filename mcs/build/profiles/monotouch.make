@@ -9,7 +9,7 @@ profile-check:
 	@:
 
 DEFAULT_REFERENCES = -r:mscorlib.dll
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOBILE -d:MONOTOUCH -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) $(DEFAULT_REFERENCES)
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOBILE -d:MONOTOUCH -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) $(DEFAULT_REFERENCES) $(PLATFORM_DEBUG_FLAGS)
 FRAMEWORK_VERSION = 2.1
 NO_TEST = yes
 

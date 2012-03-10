@@ -10,7 +10,7 @@ profile-check:
 	@:
 
 DEFAULT_REFERENCES = -r:mscorlib.dll
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_3_5 -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) -lib:$(topdir)/class/lib/net_2_0 $(DEFAULT_REFERENCES)
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_3_5 -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) -lib:$(topdir)/class/lib/net_2_0 $(DEFAULT_REFERENCES) $(PLATFORM_DEBUG_FLAGS)
 
 FRAMEWORK_VERSION = 3.5
 
