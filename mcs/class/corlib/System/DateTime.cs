@@ -95,6 +95,7 @@ namespace System
 			"H:m:s.fffffffzzz",
 			"H:m:s.fffffff",
 			"H:m:s.ffffff",
+			"H:m:s.ffffffzzz",
 			"H:m:s.fffff",
 			"H:m:s.ffff",
 			"H:m:s.fff",

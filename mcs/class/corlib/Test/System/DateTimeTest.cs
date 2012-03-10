@@ -2491,5 +2491,17 @@ namespace MonoTests.System
 				Assert.AreEqual (DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b07 - " + culture);
 			}
 		}
+
+		// Bug 3392
+		[Test]
+		public void Parse_DateWithTimeZone_TimeZoneShouldBeCorrectlyRead ()
+		{
+			string testDateWithTimeZoneInfo  = "2012-01-14T15:09:42.692875+03:00";
+			long expectedUtcTics = 634621397826928750;
+
+			DateTimeOffset result = DateTimeOffset.Parse (testDateWithTimeZoneInfo, null, DateTimeStyles.RoundtripKind);
+
+			Assert.AreEqual (expectedUtcTics, result.UtcTicks);
+		}
 	}
 }
