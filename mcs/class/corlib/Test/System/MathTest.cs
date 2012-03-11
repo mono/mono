@@ -965,6 +965,8 @@ namespace MonoTests.System
 
 			Assert.AreEqual (-63987.83593942D, Math.Round (-63987.83593942D, 8, MidpointRounding.ToEven), "#3B");
 			Assert.AreEqual (-63987.83593942D, Math.Round (-63987.83593942D, 8, MidpointRounding.AwayFromZero), "#3C");
+
+			Assert.AreEqual (1, Math.Round (0.5, 0, MidpointRounding.AwayFromZero));
 		}
 #endif
 		
