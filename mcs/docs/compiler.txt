@@ -345,7 +345,7 @@
 
 	During parsing, the compiler will create the various trees of
 	expressions.  These expressions have to be resolved before they
-	are can be used.    The semantic analysis is implemented by
+	can be used.    The semantic analysis is implemented by
 	resolving each of the expressions created during parsing and
 	creating fully resolved expressions.
 
