@@ -784,17 +784,19 @@ namespace System.Net
 
 		internal IAsyncResult BeginRead (HttpWebRequest request, byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					return null;
+				s = nstream;
 			}
 
 			IAsyncResult result = null;
 			if (!chunkedRead || chunkStream.WantMore) {
 				try {
-					result = nstream.BeginRead (buffer, offset, size, cb, state);
+					result = s.BeginRead (buffer, offset, size, cb, state);
 					cb = null;
 				} catch (Exception) {
 					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked BeginRead");
@@ -818,11 +820,13 @@ namespace System.Net
 		
 		internal int EndRead (HttpWebRequest request, IAsyncResult result)
 		{
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				s = nstream;
 			}
 
 			int nbytes = 0;
@@ -832,9 +836,9 @@ namespace System.Net
 				wr = (WebAsyncResult) nsAsync;
 				IAsyncResult inner = wr.InnerAsyncResult;
 				if (inner != null && !(inner is WebAsyncResult))
-					nbytes = nstream.EndRead (inner);
+					nbytes = s.EndRead (inner);
 			} else if (!(nsAsync is WebAsyncResult)) {
-				nbytes = nstream.EndRead (nsAsync);
+				nbytes = s.EndRead (nsAsync);
 				wr = (WebAsyncResult) result;
 			}
 
@@ -905,16 +909,18 @@ namespace System.Net
 
 		internal IAsyncResult BeginWrite (HttpWebRequest request, byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					return null;
+				s = nstream;
 			}
 
 			IAsyncResult result = null;
 			try {
-				result = nstream.BeginWrite (buffer, offset, size, cb, state);
+				result = s.BeginWrite (buffer, offset, size, cb, state);
 			} catch (Exception) {
 				status = WebExceptionStatus.SendFailure;
 				throw;
@@ -928,15 +934,17 @@ namespace System.Net
 			if (request.FinishedReading)
 				return;
 
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				s = nstream;
 			}
 
 			try {
-				nstream.EndWrite (result);
+				s.EndWrite (result);
 			} catch (Exception exc) {
 				status = WebExceptionStatus.SendFailure;
 				if (exc.InnerException != null)
@@ -950,15 +958,17 @@ namespace System.Net
 			if (request.FinishedReading)
 				return true;
 
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				s = nstream;
 			}
 
 			try {
-				nstream.EndWrite (result);
+				s.EndWrite (result);
 				return true;
 			} catch {
 				status = WebExceptionStatus.SendFailure;
@@ -968,18 +978,20 @@ namespace System.Net
 
 		internal int Read (HttpWebRequest request, byte [] buffer, int offset, int size)
 		{
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					return 0;
+				s = nstream;
 			}
 
 			int result = 0;
 			try {
 				bool done = false;
 				if (!chunkedRead) {
-					result = nstream.Read (buffer, offset, size);
+					result = s.Read (buffer, offset, size);
 					done = (result == 0);
 				}
 
@@ -1008,15 +1020,17 @@ namespace System.Net
 		internal bool Write (HttpWebRequest request, byte [] buffer, int offset, int size, ref string err_msg)
 		{
 			err_msg = null;
+			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					return false;
+				s = nstream;
 			}
 
 			try {
-				nstream.Write (buffer, offset, size);
+				s.Write (buffer, offset, size);
 				// here SSL handshake should have been done
 				if (ssl && !certsAvailable)
 					GetCertificates ();
