@@ -109,6 +109,7 @@
     <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
     <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
+    <ClCompile Include="..\mono\metadata\sgen-ssb.c" />
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
     <ClCompile Include="..\mono\metadata\sgen-workers.c" />
     <ClCompile Include="..\mono\metadata\socket-io.c" />
@@ -190,6 +191,7 @@
     <ClInclude Include="..\mono\metadata\sgen-pinning.h" />
     <ClInclude Include="..\mono\metadata\sgen-protocol.h" />
     <ClInclude Include="..\mono\metadata\sgen-scan-object.h" />
+    <ClInclude Include="..\mono\metadata\sgen-ssb.h" />
     <ClInclude Include="..\mono\metadata\sgen-toggleref.h" />
     <ClInclude Include="..\mono\metadata\sgen-workers.h" />
     <ClInclude Include="..\mono\metadata\socket-io.h" />
