@@ -325,7 +325,7 @@
         These aren't used when dyld support is enabled (it is by default) */
 #    define DATASTART ((ptr_t) get_etext())
 #    define DATAEND	((ptr_t) get_end())
-#    define STACKBOTTOM ((ptr_t) 0xc0000000)
+#    define STACKBOTTOM ((ptr_t) pthread_get_stackaddr_np(pthread_self()))
 #    define USE_MMAP
 #    define USE_MMAP_ANON
 #    define USE_ASM_PUSH_REGS
