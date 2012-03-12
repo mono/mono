@@ -55,6 +55,11 @@ namespace System.Xml.Schema
 			get { return XmlTypeCode.None; }
 		}
 
+		XmlValueConverter value_converter;
+		internal XmlValueConverter ValueConverter {
+			get { return (value_converter = value_converter ?? new XsdAnyTypeConverter (TypeCode)); }
+		}
+
 		public virtual XmlSchemaDatatypeVariety Variety {
 			get {
 				return XmlSchemaDatatypeVariety.Atomic;

@@ -5046,7 +5046,7 @@ namespace Mono.CSharp
 		}
 
 		bool HasOutModifier {
-			get { return pi.Parameter.ModFlags == Parameter.Modifier.OUT; }
+			get { return (pi.Parameter.ModFlags & Parameter.Modifier.OUT) != 0; }
 		}
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
@@ -5233,6 +5233,12 @@ namespace Mono.CSharp
 		public Expression Exp {
 			get {
 				return expr;
+			}
+		}
+
+		public MethodGroupExpr MethodGroup {
+			get {
+				return mg;
 			}
 		}
 		#endregion

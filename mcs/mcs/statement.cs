@@ -856,6 +856,8 @@ namespace Mono.CSharp {
 					ec.Report.Error (127, loc,
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
+
+					return false;
 				}
 			} else {
 				if (am.IsIterator) {
@@ -874,12 +876,21 @@ namespace Mono.CSharp {
 							return true;
 						}
 
+						// TODO: Better error message
+						if (async_type.Kind == MemberKind.Void) {
+							ec.Report.Error (127, loc,
+								"`{0}': A return keyword must not be followed by any expression when method returns void",
+								ec.GetSignatureForError ());
+
+							return false;
+						}
+
 						if (!async_type.IsGenericTask) {
 							if (this is ContextualReturn)
 								return true;
 
 							ec.Report.Error (1997, loc,
-								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
+								"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
 								ec.GetSignatureForError ());
 							return false;
 						}
@@ -887,7 +898,13 @@ namespace Mono.CSharp {
 						//
 						// The return type is actually Task<T> type argument
 						//
-						block_return_type = async_type.TypeArguments[0];
+						if (expr.Type == async_type) {
+							ec.Report.Error (4016, loc,
+								"`{0}': The return expression type of async method must be `{1}' rather than `Task<{1}>'",
+								ec.GetSignatureForError (), async_type.TypeArguments[0].GetSignatureForError ());
+						} else {
+							block_return_type = async_type.TypeArguments[0];
+						}
 					}
 				} else {
 					var l = am as AnonymousMethodBody;
@@ -2929,7 +2946,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < orig_count; ++i) {
 				Parameter.Modifier mod = parameters.FixedParameters[i].ModFlags;
 
-				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
+				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
 
 				VariableInfo vi = new VariableInfo (parameters, i, ec.FlowOffset);

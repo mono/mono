@@ -34,7 +34,7 @@ namespace System.Runtime.CompilerServices
 {
 	public struct ConfiguredTaskAwaitable
 	{
-		public struct ConfiguredTaskAwaiter
+		public struct ConfiguredTaskAwaiter : ICriticalNotifyCompletion
 		{
 			readonly Task task;
 			readonly bool continueOnSourceContext;
@@ -62,7 +62,15 @@ namespace System.Runtime.CompilerServices
 				if (continuation == null)
 					throw new ArgumentNullException ("continuation");
 
-				TaskAwaiter.HandleOnCompleted (task, continuation, continueOnSourceContext);
+				TaskAwaiter.HandleOnCompleted (task, continuation, continueOnSourceContext, true);
+			}
+			
+			public void UnsafeOnCompleted (Action continuation)
+			{
+				if (continuation == null)
+					throw new ArgumentNullException ("continuation");
+
+				TaskAwaiter.HandleOnCompleted (task, continuation, continueOnSourceContext, false);
 			}
 		}
 		

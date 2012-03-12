@@ -64,11 +64,6 @@ namespace Mono.CSharp
 					"The `await' operator cannot be used in the body of a lock statement");
 			}
 
-			if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion)) {
-				rc.Report.Error (1989, loc, "An expression tree cannot contain an await operator");
-				return null;
-			}
-
 			if (rc.IsUnsafe) {
 				rc.Report.Error (4004, loc,
 					"The `await' operator cannot be used in an unsafe context");
@@ -134,7 +129,13 @@ namespace Mono.CSharp
 
 			protected override void Error_OperatorCannotBeApplied (ResolveContext rc, TypeSpec type)
 			{
-				rc.Report.Error (4001, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
+				var invocation = LeftExpression as Invocation;
+				if (invocation != null && invocation.MethodGroup != null && (invocation.MethodGroup.BestCandidate.Modifiers & Modifiers.ASYNC) != 0) {
+					rc.Report.Error (4008, loc, "Cannot await void method `{0}'. Consider changing method return type to `Task'",
+						invocation.GetSignatureForError ());
+				} else {
+					rc.Report.Error (4001, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
+				}
 			}
 		}
 
@@ -297,6 +298,12 @@ namespace Mono.CSharp
 
 		public override bool Resolve (BlockContext bc)
 		{
+			if (bc.CurrentBlock is Linq.QueryBlock) {
+				bc.Report.Error (1995, loc,
+					"The `await' operator may only be used in a query expression within the first collection expression of the initial `from' clause or within the collection expression of a `join' clause");
+				return false;
+			}
+
 			if (!base.Resolve (bc))
 				return false;
 

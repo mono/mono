@@ -228,6 +228,9 @@ namespace Mono.CSharp
 		public readonly PredefinedType Action;
 		public readonly PredefinedType Task;
 		public readonly PredefinedType TaskGeneric;
+		public readonly PredefinedType IAsyncStateMachine;
+		public readonly PredefinedType INotifyCompletion;
+		public readonly PredefinedType ICriticalNotifyCompletion;
 
 		public PredefinedTypes (ModuleContainer module)
 		{
@@ -276,6 +279,9 @@ namespace Mono.CSharp
 			AsyncTaskMethodBuilderGeneric = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder", 1);
 			Task = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task");
 			TaskGeneric = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task", 1);
+			IAsyncStateMachine = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "IAsyncStateMachine");
+			INotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "INotifyCompletion");
+			ICriticalNotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "ICriticalNotifyCompletion");
 
 			//
 			// Define types which are used for comparison. It does not matter
@@ -314,14 +320,23 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetException;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetStateMachine;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderOnCompleted;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderOnCompletedUnsafe;
 		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderTask;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetResult;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetException;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetStateMachine;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericOnCompleted;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericOnCompletedUnsafe;
 		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderGenericTask;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetStateMachine;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompleted;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompletedUnsafe;
 		public readonly PredefinedMember<MethodSpec> DebuggerBrowsableAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
@@ -363,6 +378,8 @@ namespace Mono.CSharp
 			var atypes = module.PredefinedAttributes;
 			var btypes = module.Compiler.BuiltinTypes;
 
+			var tp = new TypeParameter (0, new MemberName ("T"), null, null, Variance.None);
+
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
 
@@ -372,9 +389,40 @@ namespace Mono.CSharp
 			AsyncTaskMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
 
+			AsyncTaskMethodBuilderSetStateMachine = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				"SetStateMachine", MemberKind.Method, () => new[] {
+						types.IAsyncStateMachine.TypeSpec
+				}, btypes.Void);
+
 			AsyncTaskMethodBuilderSetException = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("SetException", 0,
 				ParametersCompiled.CreateFullyResolved (btypes.Exception), btypes.Void));
+
+			AsyncTaskMethodBuilderOnCompleted = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("AwaitOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
+
+			AsyncTaskMethodBuilderOnCompletedUnsafe = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("AwaitUnsafeOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
 
 			AsyncTaskMethodBuilderTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Property ("Task", null));
@@ -385,11 +433,42 @@ namespace Mono.CSharp
 			AsyncTaskMethodBuilderGenericSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				"SetResult", MemberKind.Method, () => new TypeSpec[] {
 						types.AsyncTaskMethodBuilderGeneric.TypeSpec.MemberDefinition.TypeParameters[0]
-				});
+				}, btypes.Void);
+
+			AsyncTaskMethodBuilderGenericSetStateMachine = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				"SetStateMachine", MemberKind.Method, () => new[] {
+						types.IAsyncStateMachine.TypeSpec
+				}, btypes.Void);
 
 			AsyncTaskMethodBuilderGenericSetException = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Method ("SetException", 0,
 				ParametersCompiled.CreateFullyResolved (btypes.Exception), btypes.Void));
+
+			AsyncTaskMethodBuilderGenericOnCompleted = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("AwaitOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
+
+			AsyncTaskMethodBuilderGenericOnCompletedUnsafe = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("AwaitUnsafeOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
 
 			AsyncTaskMethodBuilderGenericTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Property ("Task", null));
@@ -402,6 +481,37 @@ namespace Mono.CSharp
 
 			AsyncVoidMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
 				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
+
+			AsyncVoidMethodBuilderSetStateMachine = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				"SetStateMachine", MemberKind.Method, () => new[] {
+						types.IAsyncStateMachine.TypeSpec
+				}, btypes.Void);
+
+			AsyncVoidMethodBuilderOnCompleted = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("AwaitOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
+
+			AsyncVoidMethodBuilderOnCompletedUnsafe = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("AwaitUnsafeOnCompleted", 2,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
 
 			DebuggerBrowsableAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DebuggerBrowsable,
 				MemberFilter.Constructor (null));
@@ -464,7 +574,6 @@ namespace Mono.CSharp
 						false),
 				btypes.Int));
 
-			var tp = new TypeParameter(0, new MemberName("T"), null, null, Variance.None);
 			InterlockedCompareExchange_T = new PredefinedMember<MethodSpec> (module, types.Interlocked,
 				MemberFilter.Method ("CompareExchange", 1,
 					new ParametersImported (
@@ -743,8 +852,8 @@ namespace Mono.CSharp
 			};
 		}
 
-		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, Func<TypeSpec[]> typesBuilder)
-			: this (module, type, new MemberFilter (name, 0, kind, null, null))
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, Func<TypeSpec[]> typesBuilder, TypeSpec returnType)
+			: this (module, type, new MemberFilter (name, 0, kind, null, returnType))
 		{
 			filter_builder = typesBuilder;
 		}

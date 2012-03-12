@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2012 Xamarin Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -158,8 +160,9 @@ namespace System.Xaml
 		protected internal virtual bool OnSetValue (object eventSender, XamlMember member, object value)
 		{
 			if (settings.XamlSetValueHandler != null) {
-				settings.XamlSetValueHandler (eventSender, new XamlSetValueEventArgs (member, value));
-				return true;
+				var args = new XamlSetValueEventArgs (member, value);
+				settings.XamlSetValueHandler (eventSender, args);
+				return args.Handled;
 			}
 			return false;
 		}
@@ -247,7 +250,8 @@ namespace System.Xaml
 			if (!state.Type.IsContentValue (service_provider))
 				InitializeObjectIfRequired (true);
 
-
+			state.IsXamlWriterCreated = true;
+			source.OnBeforeProperties (state.Value);
 		}
 
 		protected override void OnWriteGetObject ()
@@ -278,6 +282,11 @@ namespace System.Xaml
 					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
 				}
 			}
+			
+			// call this (possibly) before the object is added to parent collection. (bug #3003 also expects this)
+			if (state.IsXamlWriterCreated)
+				source.OnAfterProperties (obj);
+			
 			var nfr = obj as NameFixupRequired;
 			if (nfr != null && object_states.Count > 0) { // IF the root object to be written is x:Reference, then the Result property will become the NameFixupRequired. That's what .NET also does.
 				// actually .NET seems to seek "parent" object in its own IXamlNameResolver implementation.
@@ -292,6 +301,8 @@ namespace System.Xaml
 			
 			if (state.Type.IsAmbient)
 				ambient_provider.Pop ();
+			else
+				HandleEndInit (obj);
 			
 			object_states.Push (state);
 			if (object_states.Count == 1) {
@@ -385,10 +396,14 @@ namespace System.Xaml
 				object_states.Peek ().FactoryMethod = (string) value;
 			else if (member.IsDirective)
 				return;
-			else if (member.IsAttachable)
-				member.Invoker.SetValue (object_states.Peek ().Value, value);
-			else if (!source.OnSetValue (this, member, value))
-				member.Invoker.SetValue (object_states.Peek ().Value, value);
+			else
+				SetValue (member, object_states.Peek ().Value, value);
+		}
+		
+		void SetValue (XamlMember member, object target, object value)
+		{
+			if (!source.OnSetValue (target, member, value))
+				member.Invoker.SetValue (target, value);
 		}
 
 		void PopulateObject (bool considerPositionalParameters, IList<object> contents)
@@ -405,6 +420,7 @@ namespace System.Xaml
 			state.IsInstantiated = true;
 			if (state.Type.IsAmbient)
 				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, state.Value));
+			HandleBeginInit (state.Value);
 		}
 
 		protected override void OnWriteValue (object value)
@@ -562,6 +578,8 @@ namespace System.Xaml
 			state.IsInstantiated = true;
 			if (state.Type.IsAmbient)
 				ambient_provider.Push (new AmbientPropertyValue (CurrentMember, obj));
+			else
+				HandleBeginInit (obj);
 		}
 
 		internal IXamlNameResolver name_resolver {
@@ -582,9 +600,27 @@ namespace System.Xaml
 					if (obj == null)
 						throw new XamlObjectWriterException (String.Format ("Unresolved object reference '{0}' was found", name));
 					if (!AddToCollectionIfAppropriate (fixup.ParentType, fixup.ParentMember, fixup.ParentValue, obj, null)) // FIXME: is keyObj always null?
-						fixup.ParentMember.Invoker.SetValue (fixup.ParentValue, obj);
+						SetValue (fixup.ParentMember, fixup.ParentValue, obj);
 				}
 			}
+		}
+		
+		void HandleBeginInit (object value)
+		{
+			var si = value as ISupportInitialize;
+			if (si == null)
+				return;
+			si.BeginInit ();
+			source.OnAfterBeginInit (value);
+		}
+		
+		void HandleEndInit (object value)
+		{
+			var si = value as ISupportInitialize;
+			if (si == null)
+				return;
+			si.EndInit ();
+			source.OnAfterEndInit (value);
 		}
 	}
 }

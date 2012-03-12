@@ -1075,6 +1075,10 @@ namespace Mono.CSharp {
 					} else {
 						int errors = ec.Report.Errors;
 
+						if (Block.IsAsync) {
+							ec.Report.Error (1989, loc, "Async lambda expressions cannot be converted to expression trees");
+						}
+
 						using (ec.Set (ResolveContext.Options.ExpressionTreeConversion)) {
 							am = body.Compatible (ec);
 						}
@@ -1138,7 +1142,7 @@ namespace Mono.CSharp {
 
 				for (int i = 0; i < delegate_parameters.Count; i++) {
 					Parameter.Modifier i_mod = delegate_parameters.FixedParameters [i].ModFlags;
-					if (i_mod == Parameter.Modifier.OUT) {
+					if ((i_mod & Parameter.Modifier.OUT) != 0) {
 						if (!ec.IsInProbingMode) {
 							ec.Report.Error (1688, loc,
 								"Cannot convert anonymous method block without a parameter list to delegate type `{0}' because it has one or more `out' parameters",

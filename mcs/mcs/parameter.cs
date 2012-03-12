@@ -817,7 +817,7 @@ namespace Mono.CSharp {
 
 		public static ParameterAttributes GetParameterAttribute (Parameter.Modifier modFlags)
 		{
-			return (modFlags & Parameter.Modifier.OUT) == Parameter.Modifier.OUT ?
+			return (modFlags & Parameter.Modifier.OUT) != 0 ?
 				ParameterAttributes.Out : ParameterAttributes.None;
 		}
 

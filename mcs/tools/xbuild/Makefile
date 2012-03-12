@@ -68,12 +68,15 @@ EXTRA_DISTFILES = \
 	xbuild/2.0/Microsoft.Common.tasks \
 	xbuild/3.5/Microsoft.Common.tasks \
 	xbuild/4.0/Microsoft.Common.tasks \
+	xbuild/4.5/Microsoft.Common.tasks \
 	xbuild/2.0/Microsoft.Common.targets \
 	xbuild/3.5/Microsoft.Common.targets \
 	xbuild/4.0/Microsoft.Common.targets \
+	xbuild/4.5/Microsoft.Common.targets \
 	xbuild/2.0/FrameworkList.xml \
 	xbuild/3.5/FrameworkList.xml \
 	xbuild/4.0/FrameworkList.xml \
+	xbuild/4.5/FrameworkList.xml \
 	xbuild/FrameworkList-3.0.xml \
 	xbuild/Microsoft.Build.xsd \
 	xbuild/Microsoft.CSharp.targets \

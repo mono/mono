@@ -3760,8 +3760,16 @@ unary_expression
 	| AWAIT prefixed_unary_expression
 	  {
 		if (!async_block) {
-			report.Error (1992, GetLocation ($1),
-				"The `await' operator can only be used when its containing method or lambda expression is marked with the `async' modifier");
+			 if (current_anonymous_method is LambdaExpression) {
+				report.Error (4034, GetLocation ($1),
+					"The `await' operator can only be used when its containing lambda expression is marked with the `async' modifier");
+			} else if (current_anonymous_method is AnonymousMethodExpression) {
+				report.Error (4035, GetLocation ($1),
+					"The `await' operator can only be used when its containing anonymous method is marked with the `async' modifier");
+			} else {
+				report.Error (4033, GetLocation ($1),
+					"The `await' operator can only be used when its containing method is marked with the `async' modifier");
+			}
 		} else {
 			current_block.Explicit.RegisterAsyncAwait ();
 		}

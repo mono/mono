@@ -34,7 +34,7 @@ using System;
 
 namespace System.Xml.Schema
 {
-	public abstract class XmlValueConverter
+	internal abstract class XmlValueConverter
 	{
 		[MonoTODO]
 		protected XmlValueConverter ()
