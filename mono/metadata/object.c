@@ -3238,7 +3238,19 @@ mono_runtime_get_main_args (void)
 
 	return res;
 }
-
+/**
+ * mono_array_addr_with_size:
+ * @array: a MonoArray*
+ * @size: size of the array elements
+ * @idx: index into the array
+ *
+ * Returns the address of the @idx element in the array.
+ */
+char* 
+mono_array_addr_with_size (MonoArray* array, int size, uintptr_t idx)
+{
+	return ((char*)(array)->vector) + size * idx;
+}
 static void
 fire_process_exit_event (void)
 {
