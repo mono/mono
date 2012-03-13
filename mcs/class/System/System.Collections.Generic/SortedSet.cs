@@ -37,7 +37,7 @@ using System.Diagnostics;
 
 // SortedSet is basically implemented as a reduction of SortedDictionary<K, V>
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 namespace System.Collections.Generic {
 
