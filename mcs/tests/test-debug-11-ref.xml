@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <symbols>
   <files>
-    <file id="1" name="test-debug-11.cs" checksum="f60b6fc9777bf92ee0925f84a7fbfb89" />
+    <file id="1" name="test-debug-11.cs" checksum="f0aec06293b920b9b8f2aa8aa1538163" />
   </files>
   <methods>
     <method token="0x6000001">
@@ -348,56 +348,79 @@
       <sequencepoints>
         <entry il="0x0" row="237" file_ref="1" hidden="false" />
         <entry il="0x1" row="238" file_ref="1" hidden="false" />
-        <entry il="0xe" row="240" file_ref="1" hidden="false" />
+        <entry il="0x2" row="240" file_ref="1" hidden="false" />
+        <entry il="0xb" row="239" file_ref="1" hidden="false" />
         <entry il="0xf" row="241" file_ref="1" hidden="false" />
-        <entry il="0x10" row="238" file_ref="1" hidden="false" />
-        <entry il="0x1d" row="242" file_ref="1" hidden="false" />
+        <entry il="0x10" row="242" file_ref="1" hidden="false" />
+        <entry il="0x11" row="240" file_ref="1" hidden="false" />
+        <entry il="0x1e" row="243" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="2" scope_ref="1" />
+        <entry name="a" il_index="0" scope_ref="0" />
       </locals>
       <scopes>
-        <entry index="0" start="0x1" end="0x1d" />
-        <entry index="1" start="0xf" end="0xf" />
+        <entry index="0" start="0xf" end="0x11" />
+        <entry index="1" start="0x10" end="0x10" />
       </scopes>
     </method>
     <method token="0x6000018">
       <sequencepoints>
-        <entry il="0x0" row="245" file_ref="1" hidden="false" />
-        <entry il="0x1" row="246" file_ref="1" hidden="false" />
-        <entry il="0xd" row="247" file_ref="1" hidden="false" />
-        <entry il="0x15" row="250" file_ref="1" hidden="false" />
+        <entry il="0x0" row="246" file_ref="1" hidden="false" />
+        <entry il="0x1" row="247" file_ref="1" hidden="false" />
+        <entry il="0x2" row="250" file_ref="1" hidden="false" />
+        <entry il="0xe" row="248" file_ref="1" hidden="false" />
         <entry il="0x16" row="251" file_ref="1" hidden="false" />
-        <entry il="0x17" row="249" file_ref="1" hidden="false" />
-        <entry il="0x36" row="252" file_ref="1" hidden="false" />
+        <entry il="0x17" row="252" file_ref="1" hidden="false" />
+        <entry il="0x18" row="250" file_ref="1" hidden="false" />
+        <entry il="0x37" row="253" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="1" scope_ref="1" />
+        <entry name="a" il_index="0" scope_ref="0" />
       </locals>
       <scopes>
-        <entry index="0" start="0x1" end="0x36" />
-        <entry index="1" start="0x16" end="0x16" />
+        <entry index="0" start="0x16" end="0x18" />
+        <entry index="1" start="0x17" end="0x17" />
       </scopes>
     </method>
     <method token="0x6000019">
       <sequencepoints>
-        <entry il="0x0" row="255" file_ref="1" hidden="false" />
-        <entry il="0x1" row="256" file_ref="1" hidden="false" />
-        <entry il="0xe" row="257" file_ref="1" hidden="false" />
-        <entry il="0x15" row="260" file_ref="1" hidden="false" />
+        <entry il="0x0" row="256" file_ref="1" hidden="false" />
+        <entry il="0x1" row="257" file_ref="1" hidden="false" />
+        <entry il="0x2" row="260" file_ref="1" hidden="false" />
+        <entry il="0xf" row="258" file_ref="1" hidden="false" />
         <entry il="0x16" row="261" file_ref="1" hidden="false" />
-        <entry il="0x17" row="259" file_ref="1" hidden="false" />
-        <entry il="0x3b" row="262" file_ref="1" hidden="false" />
+        <entry il="0x17" row="262" file_ref="1" hidden="false" />
+        <entry il="0x18" row="260" file_ref="1" hidden="false" />
+        <entry il="0x3c" row="263" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="1" scope_ref="1" />
+        <entry name="a" il_index="0" scope_ref="0" />
       </locals>
       <scopes>
-        <entry index="0" start="0x1" end="0x3b" />
-        <entry index="1" start="0x16" end="0x16" />
+        <entry index="0" start="0x16" end="0x18" />
+        <entry index="1" start="0x17" end="0x17" />
       </scopes>
     </method>
     <method token="0x600001a">
+      <sequencepoints>
+        <entry il="0x0" row="266" file_ref="1" hidden="false" />
+        <entry il="0x1" row="267" file_ref="1" hidden="false" />
+        <entry il="0x2" row="269" file_ref="1" hidden="false" />
+        <entry il="0x24" row="268" file_ref="1" hidden="false" />
+        <entry il="0x2f" row="270" file_ref="1" hidden="false" />
+        <entry il="0x30" row="271" file_ref="1" hidden="false" />
+        <entry il="0x31" row="269" file_ref="1" hidden="false" />
+        <entry il="0x4d" row="272" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals>
+        <entry name="a" il_index="0" scope_ref="0" />
+      </locals>
+      <scopes>
+        <entry index="0" start="0x2f" end="0x31" />
+        <entry index="1" start="0x30" end="0x30" />
+      </scopes>
+    </method>
+    <method token="0x600001b">
       <sequencepoints />
       <locals />
       <scopes />
