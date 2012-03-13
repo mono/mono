@@ -4031,10 +4031,15 @@ namespace Mono.CSharp {
 			Arguments orig_args = arguments;
 
 			if (arg_count != param_count) {
-				for (int i = 0; i < pd.Count; ++i) {
-					if (pd.FixedParameters[i].HasDefaultValue) {
-						optional_count = pd.Count - i;
-						break;
+				//
+				// No arguments expansion when doing exact match for delegates
+				//
+				if ((restrictions & Restrictions.CovariantDelegate) == 0) {
+					for (int i = 0; i < pd.Count; ++i) {
+						if (pd.FixedParameters[i].HasDefaultValue) {
+							optional_count = pd.Count - i;
+							break;
+						}
 					}
 				}
 

@@ -5265,7 +5265,7 @@ foreach_statement
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
-		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, null, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5274,7 +5274,7 @@ foreach_statement
 	| FOREACH open_parens_any type identifier_inside_body error
 	  {
 		Error_SyntaxError (yyToken);
-	  
+	
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
@@ -5282,7 +5282,7 @@ foreach_statement
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location);
 		current_block.AddLocalName (li);
 		
-		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, li, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5302,12 +5302,12 @@ foreach_statement
 	  {
 		if ($9 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($9));
-	  
-		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
-		current_block.AddStatement (f);
 		
+		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, current_block, GetLocation ($1));
 		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
-		$$ = end_block (GetLocation ($7));
+		end_block (GetLocation ($7));
+		
+		$$ = f;
 	  }
 	;
 

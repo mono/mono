@@ -106,7 +106,6 @@ net_2_0_dirs := \
 	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
 	System.ServiceModel.Web		\
-	System.Web.Mvc			\
 	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
@@ -124,7 +123,8 @@ net_2_0_only_dirs := \
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
 	System.Data.Services.Client	\
-	System.Data.Services
+	System.Data.Services		\
+	System.Web.Mvc			
 
 moonlight_raw_dirs := \
 	corlib			\

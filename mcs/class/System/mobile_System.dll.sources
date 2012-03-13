@@ -15,6 +15,7 @@ System.Collections.Generic/Queue.cs
 System.Collections.Generic/RBTree.cs
 System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
+System.Collections.Generic/SortedSet.cs
 System.Collections.Generic/Stack.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
