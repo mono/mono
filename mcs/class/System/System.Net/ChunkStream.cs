@@ -177,6 +177,20 @@ namespace System.Net
 			get { return (chunkRead != chunkSize || chunkSize != 0 || state != State.None); }
 		}
 
+		public bool DataAvailable {
+			get {
+				int count = chunks.Count;
+				for (int i = 0; i < count; i++) {
+					Chunk ch = (Chunk) chunks [i];
+					if (ch == null || ch.Bytes == null)
+						continue;
+					if (ch.Bytes.Length > 0 && ch.Offset < ch.Bytes.Length)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		public int ChunkLeft {
 			get { return chunkSize - chunkRead; }
 		}
