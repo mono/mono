@@ -5598,6 +5598,22 @@ mono_type_get_modifiers (MonoType *type, gboolean *is_required, gpointer *iter)
 	return NULL;
 }
 
+/**
+ * mono_type_is_reference:
+ * @type: the MonoType operated on
+ *
+ * Returns: #TRUE is @type represents an object reference . #FALSE otherwise.
+ */
+gboolean
+mono_type_is_reference (MonoType *type)
+{
+	return (type && (((type->type == MONO_TYPE_STRING) ||
+		(type->type == MONO_TYPE_SZARRAY) || (type->type == MONO_TYPE_CLASS) ||
+		(type->type == MONO_TYPE_OBJECT) || (type->type == MONO_TYPE_ARRAY)) ||
+		((type->type == MONO_TYPE_GENERICINST) &&
+		!mono_metadata_generic_class_is_valuetype (type->data.generic_class))));
+}
+
 MonoType*
 mono_signature_get_return_type (MonoMethodSignature *sig)
 {
