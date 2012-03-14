@@ -200,7 +200,7 @@ namespace System
 			return value.m_value;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr Add (IntPtr pointer, int offset)
 		{
