@@ -198,6 +198,7 @@
    <Compile Include="Test\System.Reflection.Emit\MethodOnTypeBuilderInstTest.cs" />
    <Compile Include="Test\System.Reflection.Emit\MethodRentalTest.cs" />
    <Compile Include="Test\System.Reflection.Emit\ModuleBuilderTest.cs" />
+   <Compile Include="Test\System.Reflection.Emit\ParameterBuilderTest.cs" />
    <Compile Include="Test\System.Reflection.Emit\PropertyBuilderTest.cs" />
    <Compile Include="Test\System.Reflection.Emit\SignatureHelperTest.cs" />
    <Compile Include="Test\System.Reflection.Emit\TypeBuilderTest.cs" />

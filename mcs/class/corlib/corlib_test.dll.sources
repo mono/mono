@@ -158,6 +158,7 @@ System.Reflection.Emit/MethodBuilderTest.cs
 System.Reflection.Emit/MethodOnTypeBuilderInstTest.cs
 System.Reflection.Emit/MethodRentalTest.cs
 System.Reflection.Emit/ModuleBuilderTest.cs
+System.Reflection.Emit/ParameterBuilderTest.cs
 System.Reflection.Emit/PropertyBuilderTest.cs
 System.Reflection.Emit/SignatureHelperTest.cs
 System.Reflection.Emit/TypeBuilderTest.cs
