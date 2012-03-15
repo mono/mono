@@ -15,7 +15,7 @@ namespace MonoTests.System.Reflection.Emit
 	/// A test fixture for System.Reflection.Emit.ParameterBuilder class
 	/// </summary>
 	[TestFixture]
-	public class AssemblyBuilderAccessTest
+	public class ParameterBuilderTest
 	{
 		[Test]
 		/// <summary>
