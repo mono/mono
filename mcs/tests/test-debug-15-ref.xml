@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <symbols>
   <files>
-    <file id="1" name="test-debug-15.cs" checksum="df237588ac0ec7545df67dc26d629f03" />
+    <file id="1" name="test-debug-15.cs" checksum="0484d256a6c3e37692cb758a5b203300" />
   </files>
   <methods>
     <method token="0x6000001">
       <sequencepoints>
         <entry il="0x0" row="6" file_ref="1" hidden="false" />
         <entry il="0x1" row="7" file_ref="1" hidden="false" />
-        <entry il="0x17" row="8" file_ref="1" hidden="false" />
+        <entry il="0x1c" row="8" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x1" end="0xb" />
-        <entry index="1" start="0x10" end="0x16" />
+        <entry index="0" start="0x1" end="0x10" />
+        <entry index="1" start="0x15" end="0x1b" />
       </scopes>
     </method>
     <method token="0x6000002">

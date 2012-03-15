@@ -546,7 +546,7 @@ namespace Mono.CSharp
 			}
 
 			const Modifiers mod = Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE;
-			var field = new StackField (this, new TypeExpression (type, Location), mod, new MemberName ("<s>$" + locals_captured++.ToString ("X"), Location));
+			var field = new StackField (this, new TypeExpression (type, Location), mod, new MemberName ("$stack" + locals_captured++.ToString ("X"), Location));
 			AddField (field);
 
 			field.Define ();

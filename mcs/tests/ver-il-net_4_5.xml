@@ -53936,7 +53936,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>415</size>
+        <size>399</size>
       </method>
       <method name="Int32 &lt;&gt;m__11()" attrs="145">
         <size>9</size>
@@ -54586,7 +54586,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async32">
       <method name="Void MoveNext()" attrs="486">
-        <size>258</size>
+        <size>242</size>
       </method>
       <method name="Byte &lt;&gt;m__6F()" attrs="145">
         <size>9</size>
@@ -54597,7 +54597,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async33">
       <method name="Void MoveNext()" attrs="486">
-        <size>442</size>
+        <size>426</size>
       </method>
       <method name="UInt16 &lt;&gt;m__70()" attrs="145">
         <size>9</size>
@@ -54611,7 +54611,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async34">
       <method name="Void MoveNext()" attrs="486">
-        <size>276</size>
+        <size>260</size>
       </method>
       <method name="S &lt;&gt;m__72()" attrs="145">
         <size>25</size>
@@ -54622,7 +54622,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async35">
       <method name="Void MoveNext()" attrs="486">
-        <size>278</size>
+        <size>262</size>
       </method>
       <method name="Int32 &lt;&gt;m__73()" attrs="145">
         <size>9</size>
@@ -56908,7 +56908,7 @@
   <test name="test-debug-15.cs">
     <type name="Foo">
       <method name="Void Finalize()" attrs="196">
-        <size>24</size>
+        <size>29</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>8</size>
