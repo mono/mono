@@ -4737,6 +4737,9 @@ namespace Mono.CSharp {
 			if (custom_errors != null && custom_errors.ArgumentMismatch (ec, method, a, idx))
 				return;
 
+			if (a.Type == InternalType.ErrorType)
+				return;
+
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				if ((expected_par.FixedParameters[idx].ModFlags & Parameter.Modifier.RefOutMask) != 0) {
@@ -4749,7 +4752,7 @@ namespace Mono.CSharp {
 			} else if (IsDelegateInvoke) {
 				ec.Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					DelegateType.GetSignatureForError ());
-			} else if (a.Type != InternalType.ErrorType) {
+			} else {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				ec.Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 					method.GetSignatureForError ());
@@ -4765,7 +4768,7 @@ namespace Mono.CSharp {
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else if (a.Type != InternalType.ErrorType) {
+			} else {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
