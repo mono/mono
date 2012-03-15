@@ -1784,6 +1784,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsCompilerGenerated {
+			get {
+				return (flags & Flags.CompilerGenerated) != 0;
+			}
+		}
+
 		public bool IsConstant {
 			get {
 				return (flags & Flags.Constant) != 0;

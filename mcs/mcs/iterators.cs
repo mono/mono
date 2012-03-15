@@ -566,6 +566,9 @@ namespace Mono.CSharp
 
 		protected override string GetVariableMangledName (LocalVariable local_info)
 		{
+			if (local_info.IsCompilerGenerated)
+				return base.GetVariableMangledName (local_info);
+
 			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ("X");
 		}
 	}
