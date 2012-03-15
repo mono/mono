@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using Mono.CompilerServices.SymbolWriter;
+using System.Diagnostics;
 
 #if STATIC
 using IKVM.Reflection;
@@ -24,17 +25,35 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	public abstract class CompilerGeneratedClass : Class
+	public abstract class CompilerGeneratedContainer : ClassOrStruct
 	{
-		protected CompilerGeneratedClass (TypeContainer parent, MemberName name, Modifiers mod)
-			: base (parent, name, mod | Modifiers.COMPILER_GENERATED, null)
+		protected CompilerGeneratedContainer (TypeContainer parent, MemberName name, Modifiers mod)
+			: this (parent, name, mod, MemberKind.Class)
 		{
+		}
+
+		protected CompilerGeneratedContainer (TypeContainer parent, MemberName name, Modifiers mod, MemberKind kind)
+			: base (parent, name, null, kind)
+		{
+			Debug.Assert ((mod & Modifiers.AccessibilityMask) != 0);
+
+			ModFlags = mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED;
+			spec = new TypeSpec (Kind, null, this, null, ModFlags);
 		}
 
 		protected void CheckMembersDefined ()
 		{
 			if (HasMembersDefined)
 				throw new InternalErrorException ("Helper class already defined!");
+		}
+
+		protected override bool DoDefineMembers ()
+		{
+			if (Kind == MemberKind.Class && !IsStatic && !PartialContainer.HasInstanceConstructor) {
+				DefineDefaultConstructor (false);
+			}
+
+			return base.DoDefineMembers ();
 		}
 
 		protected static MemberName MakeMemberName (MemberBase host, string name, int unique_id, TypeParameters tparams, Location loc)
@@ -58,9 +77,17 @@ namespace Mono.CSharp {
 		{
 			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ("X");
 		}
+
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
+		{
+			base_type = Compiler.BuiltinTypes.Object;
+
+			base_class = null;
+			return null;
+		}
 	}
 
-	public class HoistedStoreyClass : CompilerGeneratedClass
+	public class HoistedStoreyClass : CompilerGeneratedContainer
 	{
 		public sealed class HoistedField : Field
 		{
@@ -85,8 +112,8 @@ namespace Mono.CSharp {
 
 		protected TypeParameterMutator mutator;
 
-		public HoistedStoreyClass (TypeDefinition parent, MemberName name, TypeParameters tparams, Modifiers mod)
-			: base (parent, name, mod | Modifiers.PRIVATE)
+		public HoistedStoreyClass (TypeDefinition parent, MemberName name, TypeParameters tparams, Modifiers mods, MemberKind kind)
+			: base (parent, name, mods | Modifiers.PRIVATE, kind)
 		{
 
 			if (tparams != null) {
@@ -200,9 +227,9 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public Expression Instance;
 
-		public AnonymousMethodStorey (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name)
+		public AnonymousMethodStorey (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
-				tparams, Modifiers.SEALED)
+				tparams, 0, kind)
 		{
 			OriginalSourceBlock = block;
 			ID = parent.Module.CounterAnonymousContainers++;
@@ -428,7 +455,11 @@ namespace Mono.CSharp {
 				Instance = fexpr;
 			} else {
 				var local = TemporaryVariableReference.Create (source.Type, block, Location);
-				local.EmitAssign (ec, source);
+				if (source.Type.IsStruct) {
+					local.LocalInfo.CreateBuilder (ec);
+				} else {
+					local.EmitAssign (ec, source);
+				}
 
 				Instance = local;
 			}
@@ -457,6 +488,7 @@ namespace Mono.CSharp {
 					FieldExpr f_set_expr = new FieldExpr (fs, Location);
 					f_set_expr.InstanceExpression = instace_expr;
 
+					// TODO: CompilerAssign expression
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
 					if (a.Resolve (rc) != null)
 						a.EmitStatement (ec);
@@ -1511,7 +1543,7 @@ namespace Mono.CSharp {
 
 			var parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
 
-			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
+			string name = CompilerGeneratedContainer.MakeName (parent != storey ? block_name : null,
 				"m", null, ec.Module.CounterAnonymousMethods++);
 
 			MemberName member_name;
@@ -1569,7 +1601,7 @@ namespace Mono.CSharp {
 
 					am_cache = new Field (parent, new TypeExpression (cache_type, loc),
 						Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-						new MemberName (CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), loc), null);
+						new MemberName (CompilerGeneratedContainer.MakeName (null, "f", "am$cache", id), loc), null);
 					am_cache.Define ();
 					parent.AddField (am_cache);
 				} else {
@@ -1609,8 +1641,9 @@ namespace Mono.CSharp {
 				ec.EmitNull ();
 			} else if (storey != null) {
 				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.MemberContext));
-				if (e != null)
+				if (e != null) {
 					e.Emit (ec);
+				}
 			} else {
 				ec.EmitThis ();
 			}
@@ -1678,7 +1711,7 @@ namespace Mono.CSharp {
 	//
 	// Anonymous type container
 	//
-	public class AnonymousTypeClass : CompilerGeneratedClass
+	public class AnonymousTypeClass : CompilerGeneratedContainer
 	{
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
@@ -1686,7 +1719,7 @@ namespace Mono.CSharp {
 		readonly IList<AnonymousTypeParameter> parameters;
 
 		private AnonymousTypeClass (ModuleContainer parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
-			: base (parent, name, (parent.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
+			: base (parent, name, parent.Evaluator != null ? Modifiers.PUBLIC : Modifiers.INTERNAL)
 		{
 			this.parameters = parameters;
 		}

@@ -1010,7 +1010,7 @@ namespace Mono.CSharp
 	//
 	// A placeholder class for assembly attributes when emitting module
 	//
-	class AssemblyAttributesPlaceholder : CompilerGeneratedClass
+	class AssemblyAttributesPlaceholder : CompilerGeneratedContainer
 	{
 		static readonly string TypeNamePrefix = "<$AssemblyAttributes${0}>";
 		public static readonly string AssemblyFieldName = "attributes";
@@ -1018,7 +1018,7 @@ namespace Mono.CSharp
 		Field assembly;
 
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
-			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
+			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC | Modifiers.INTERNAL)
 		{
 			assembly = new Field (this, new TypeExpression (parent.Compiler.BuiltinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);

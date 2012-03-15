@@ -949,7 +949,7 @@ namespace Mono.CSharp
 	sealed class DynamicSiteClass : HoistedStoreyClass
 	{
 		public DynamicSiteClass (TypeDefinition parent, MemberBase host, TypeParameters tparams)
-			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
+			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC, MemberKind.Class)
 		{
 			parent.DynamicSitesCounter++;
 		}

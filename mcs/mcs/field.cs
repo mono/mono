@@ -233,7 +233,7 @@ namespace Mono.CSharp
 		{
 			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
-			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
+			} else if (!Parent.IsCompilerGenerated && member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
 			}
 

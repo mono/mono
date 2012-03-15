@@ -2456,7 +2456,7 @@ namespace Mono.CSharp {
 				//
 				// Creates anonymous method storey for this block
 				//
-				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, ec.CurrentTypeParameters, "AnonStorey");
+				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, ec.CurrentTypeParameters, "AnonStorey", MemberKind.Class);
 			}
 
 			return am_storey;
@@ -2843,7 +2843,7 @@ namespace Mono.CSharp {
 			throw new ArgumentException ("Invalid parameter");
 		}
 
-		public Expression GetParameterReference (int index, Location loc)
+		public ParameterReference GetParameterReference (int index, Location loc)
 		{
 			return new ParameterReference (parameter_info[index], loc);
 		}
@@ -4116,7 +4116,7 @@ namespace Mono.CSharp {
 			var ctype = ec.CurrentMemberDefinition.Parent.PartialContainer;
 			Field field = new Field (ctype, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", ec.Module.CounterSwitchTypes++), loc), null);
+				new MemberName (CompilerGeneratedContainer.MakeName (null, "f", "switch$map", ec.Module.CounterSwitchTypes++), loc), null);
 			if (!field.Define ())
 				return;
 			ctype.AddField (field);
