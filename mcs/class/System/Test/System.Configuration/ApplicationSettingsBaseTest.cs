@@ -290,8 +290,9 @@ namespace MonoTests.System.Configuration {
 			// such cases.
 #if TARGET_JVM
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System.Test, Version=0.0.0.0";
-#else
-#if NET_4_0
+#else #if NET_4_5
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_5, Version=0.0.0.0";
+#else #if NET_4_0
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";
 #else
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_2_0, Version=0.0.0.0";

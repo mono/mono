@@ -22,6 +22,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
 	Test/Resources/test.cer \
+	Test/Resources/test_neg_serial.cer \
 	Test/Resources/test.pfx \
 	Test/Resources/test2.pfx
 
