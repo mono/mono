@@ -340,6 +340,19 @@ class Tester : Base
 		return 0;
 	}
 	
+	async Task<int> BinaryTest_5 ()
+	{
+		var r1 = await Task.FromResult (1) == 9;
+		if (r1)
+			return 1;
+		
+		var r2 = 1 == await Task.FromResult (1);
+		if (!r2)
+			return 2;
+		
+		return 0;
+	}
+
 	async Task<int> CallTest_1 ()
 	{
 		return Call (

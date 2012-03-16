@@ -54129,611 +54129,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;CallTest_1&gt;c__async10">
-      <method name="Void MoveNext()" attrs="486">
-        <size>439</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__32()" attrs="145">
-        <size>17</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__33()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__34()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CallTest_2&gt;c__async11">
-      <method name="Void MoveNext()" attrs="486">
-        <size>272</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__35()" attrs="145">
-        <size>17</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CallTest_3&gt;c__async12">
-      <method name="Void MoveNext()" attrs="486">
-        <size>242</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__36()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CallTest_4&gt;c__async13">
-      <method name="Void MoveNext()" attrs="486">
-        <size>232</size>
-      </method>
-      <method name="E &lt;&gt;m__37()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CallTest_5&gt;c__async14">
-      <method name="Void MoveNext()" attrs="486">
-        <size>210</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__38()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CastTest_1&gt;c__async15">
-      <method name="Void MoveNext()" attrs="486">
-        <size>251</size>
-      </method>
-      <method name="Decimal &lt;&gt;m__39()" attrs="145">
-        <size>15</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CastTest_2&gt;c__async16">
-      <method name="Void MoveNext()" attrs="486">
-        <size>233</size>
-      </method>
-      <method name="Tester &lt;&gt;m__3A()" attrs="131">
-        <size>14</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CoalescingTest_1&gt;c__async17">
-      <method name="Void MoveNext()" attrs="486">
-        <size>359</size>
-      </method>
-      <method name="System.String &lt;&gt;m__3B()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="System.String &lt;&gt;m__3C()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;CoalescingTest_2&gt;c__async18">
-      <method name="Void MoveNext()" attrs="486">
-        <size>372</size>
-      </method>
-      <method name="Nullable`1 &lt;&gt;m__3D()" attrs="145">
-        <size>17</size>
-      </method>
-      <method name="Byte &lt;&gt;m__3E()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;ConditionalTest_1&gt;c__async19">
-      <method name="Void MoveNext()" attrs="486">
-        <size>200</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__3F()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;ConditionalTest_2&gt;c__async1A">
-      <method name="Void MoveNext()" attrs="486">
-        <size>335</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__40()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__41()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;ConditionalTest_3&gt;c__async1B">
-      <method name="Void MoveNext()" attrs="486">
-        <size>355</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__42()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__43()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;ConditionalTest_4&gt;c__async1C">
-      <method name="Void MoveNext()" attrs="486">
-        <size>248</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__44()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;DelegateInvoke_4&gt;c__async1D">
-      <method name="Void MoveNext()" attrs="486">
-        <size>276</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__45(Int32)" attrs="145">
-        <size>11</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__46()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;EventInvoke_1&gt;c__async1E">
-      <method name="Void MoveNext()" attrs="486">
-        <size>220</size>
-      </method>
-      <method name="System.Action &lt;&gt;m__47()" attrs="131">
-        <size>23</size>
-      </method>
-      <method name="Void &lt;&gt;m__48()" attrs="131">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;FieldTest_1&gt;c__async1F">
-      <method name="Void MoveNext()" attrs="486">
-        <size>543</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__49()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4A()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_1&gt;c__async20">
-      <method name="Void MoveNext()" attrs="486">
-        <size>228</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4B()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_2&gt;c__async21">
-      <method name="Void MoveNext()" attrs="486">
-        <size>341</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4C()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4D()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_3&gt;c__async22">
-      <method name="Void MoveNext()" attrs="486">
-        <size>372</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4E()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4F()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_4&gt;c__async23">
-      <method name="Void MoveNext()" attrs="486">
-        <size>400</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__50()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__51()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_5&gt;c__async24">
-      <method name="Void MoveNext()" attrs="486">
-        <size>506</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__52()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__53()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_6&gt;c__async25">
-      <method name="Void MoveNext()" attrs="486">
-        <size>555</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__54()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__55()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__56()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IndexerTest_7&gt;c__async26">
-      <method name="Void MoveNext()" attrs="486">
-        <size>262</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__57()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IsTest_1&gt;c__async27">
-      <method name="Void MoveNext()" attrs="486">
-        <size>245</size>
-      </method>
-      <method name="Tester &lt;&gt;m__58()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;IsTest_2&gt;c__async28">
-      <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
-      </method>
-      <method name="Nullable`1 &lt;&gt;m__59()" attrs="145">
-        <size>14</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async29">
-      <method name="Void MoveNext()" attrs="486">
-        <size>392</size>
-      </method>
-      <method name="Base &lt;&gt;m__5A()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Base &lt;&gt;m__5B()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2A">
-      <method name="Void MoveNext()" attrs="486">
-        <size>297</size>
-      </method>
-      <method name="Base &lt;&gt;m__5C()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2B">
-      <method name="Void MoveNext()" attrs="486">
-        <size>391</size>
-      </method>
-      <method name="Base &lt;&gt;m__5D()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Base &lt;&gt;m__5E()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewTest_1&gt;c__async2C">
-      <method name="Void MoveNext()" attrs="486">
-        <size>258</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__5F()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewTest_2&gt;c__async2D">
-      <method name="Void MoveNext()" attrs="486">
-        <size>356</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__60()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="System.String &lt;&gt;m__61()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewInitTest_1&gt;c__async2E">
-      <method name="Void MoveNext()" attrs="486">
-        <size>1025</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__62()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__63()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__64()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__65()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__66()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__67()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewInitTest_2&gt;c__async2F">
-      <method name="Void MoveNext()" attrs="486">
-        <size>753</size>
-      </method>
-      <method name="System.String &lt;&gt;m__68()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="System.String &lt;&gt;m__69()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__6A()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__6B()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async30">
-      <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__6C()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async31">
-      <method name="Void MoveNext()" attrs="486">
-        <size>356</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__6D()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__6E()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async32">
-      <method name="Void MoveNext()" attrs="486">
-        <size>242</size>
-      </method>
-      <method name="Byte &lt;&gt;m__6F()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async33">
-      <method name="Void MoveNext()" attrs="486">
-        <size>426</size>
-      </method>
-      <method name="UInt16 &lt;&gt;m__70()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="UInt16 &lt;&gt;m__71()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async34">
-      <method name="Void MoveNext()" attrs="486">
-        <size>260</size>
-      </method>
-      <method name="S &lt;&gt;m__72()" attrs="145">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async35">
-      <method name="Void MoveNext()" attrs="486">
-        <size>262</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__73()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;PropertyTest_1&gt;c__async36">
-      <method name="Void MoveNext()" attrs="486">
-        <size>225</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__74()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;PropertyTest_2&gt;c__async37">
-      <method name="Void MoveNext()" attrs="486">
-        <size>293</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__75()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;PropertyTest_3&gt;c__async38">
-      <method name="Void MoveNext()" attrs="486">
-        <size>649</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__76()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__77()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__78()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;StringConcatTest_1&gt;c__async39">
-      <method name="Void MoveNext()" attrs="486">
-        <size>459</size>
-      </method>
-      <method name="System.String &lt;&gt;m__79()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="System.String &lt;&gt;m__7A()" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="System.String &lt;&gt;m__7B()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;UnaryTest_1&gt;c__async3A">
-      <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__7C()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;UnaryTest_2&gt;c__async3B">
-      <method name="Void MoveNext()" attrs="486">
-        <size>338</size>
-      </method>
-      <method name="Nullable`1 &lt;&gt;m__7D()" attrs="131">
-        <size>14</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;UnaryTest_3&gt;c__async3C">
-      <method name="Void MoveNext()" attrs="486">
-        <size>378</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__7E()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;VariableInitializer_1&gt;c__async3D">
-      <method name="Void MoveNext()" attrs="486">
-        <size>354</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__7F()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__80()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54814,234 +54209,763 @@
         <size>13</size>
       </method>
     </type>
-    <type name="Tester+&lt;CallTest_1&gt;c__async10">
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_5()" attrs="129">
+        <size>37</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;BinaryTest_5&gt;c__async10">
+      <method name="Void MoveNext()" attrs="486">
+        <size>304</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CallTest_2&gt;c__async11">
+    <type name="Tester+&lt;CallTest_1&gt;c__async11">
+      <method name="Void MoveNext()" attrs="486">
+        <size>439</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__32()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__33()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__34()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CallTest_3&gt;c__async12">
+    <type name="Tester+&lt;CallTest_2&gt;c__async12">
+      <method name="Void MoveNext()" attrs="486">
+        <size>272</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__35()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CallTest_4&gt;c__async13">
+    <type name="Tester+&lt;CallTest_3&gt;c__async13">
+      <method name="Void MoveNext()" attrs="486">
+        <size>242</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__36()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CallTest_5&gt;c__async14">
+    <type name="Tester+&lt;CallTest_4&gt;c__async14">
+      <method name="Void MoveNext()" attrs="486">
+        <size>232</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="E &lt;&gt;m__37()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CastTest_1&gt;c__async15">
+    <type name="Tester+&lt;CallTest_5&gt;c__async15">
+      <method name="Void MoveNext()" attrs="486">
+        <size>210</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__38()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CastTest_2&gt;c__async16">
+    <type name="Tester+&lt;CastTest_1&gt;c__async16">
+      <method name="Void MoveNext()" attrs="486">
+        <size>251</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Decimal &lt;&gt;m__39()" attrs="145">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CoalescingTest_1&gt;c__async17">
+    <type name="Tester+&lt;CastTest_2&gt;c__async17">
+      <method name="Void MoveNext()" attrs="486">
+        <size>233</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Tester &lt;&gt;m__3A()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;CoalescingTest_2&gt;c__async18">
+    <type name="Tester+&lt;CoalescingTest_1&gt;c__async18">
+      <method name="Void MoveNext()" attrs="486">
+        <size>359</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="System.String &lt;&gt;m__3B()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="System.String &lt;&gt;m__3C()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;ConditionalTest_1&gt;c__async19">
+    <type name="Tester+&lt;CoalescingTest_2&gt;c__async19">
+      <method name="Void MoveNext()" attrs="486">
+        <size>372</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Nullable`1 &lt;&gt;m__3D()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Byte &lt;&gt;m__3E()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;ConditionalTest_2&gt;c__async1A">
+    <type name="Tester+&lt;ConditionalTest_1&gt;c__async1A">
+      <method name="Void MoveNext()" attrs="486">
+        <size>200</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__3F()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;ConditionalTest_3&gt;c__async1B">
+    <type name="Tester+&lt;ConditionalTest_2&gt;c__async1B">
+      <method name="Void MoveNext()" attrs="486">
+        <size>335</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__40()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__41()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;ConditionalTest_4&gt;c__async1C">
+    <type name="Tester+&lt;ConditionalTest_3&gt;c__async1C">
+      <method name="Void MoveNext()" attrs="486">
+        <size>355</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Boolean &lt;&gt;m__42()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__43()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;DelegateInvoke_4&gt;c__async1D">
+    <type name="Tester+&lt;ConditionalTest_4&gt;c__async1D">
+      <method name="Void MoveNext()" attrs="486">
+        <size>248</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__44()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;EventInvoke_1&gt;c__async1E">
+    <type name="Tester+&lt;DelegateInvoke_4&gt;c__async1E">
+      <method name="Void MoveNext()" attrs="486">
+        <size>276</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__45(Int32)" attrs="145">
+        <size>11</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__46()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;FieldTest_1&gt;c__async1F">
+    <type name="Tester+&lt;EventInvoke_1&gt;c__async1F">
+      <method name="Void MoveNext()" attrs="486">
+        <size>220</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="System.Action &lt;&gt;m__47()" attrs="131">
+        <size>23</size>
+      </method>
+      <method name="Void &lt;&gt;m__48()" attrs="131">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_1&gt;c__async20">
+    <type name="Tester+&lt;FieldTest_1&gt;c__async20">
+      <method name="Void MoveNext()" attrs="486">
+        <size>543</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__49()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4A()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_2&gt;c__async21">
+    <type name="Tester+&lt;IndexerTest_1&gt;c__async21">
+      <method name="Void MoveNext()" attrs="486">
+        <size>228</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__4B()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_3&gt;c__async22">
+    <type name="Tester+&lt;IndexerTest_2&gt;c__async22">
+      <method name="Void MoveNext()" attrs="486">
+        <size>341</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__4C()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4D()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_4&gt;c__async23">
+    <type name="Tester+&lt;IndexerTest_3&gt;c__async23">
+      <method name="Void MoveNext()" attrs="486">
+        <size>372</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__4E()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4F()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_5&gt;c__async24">
+    <type name="Tester+&lt;IndexerTest_4&gt;c__async24">
+      <method name="Void MoveNext()" attrs="486">
+        <size>400</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__50()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__51()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_6&gt;c__async25">
+    <type name="Tester+&lt;IndexerTest_5&gt;c__async25">
+      <method name="Void MoveNext()" attrs="486">
+        <size>506</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__52()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__53()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IndexerTest_7&gt;c__async26">
+    <type name="Tester+&lt;IndexerTest_6&gt;c__async26">
+      <method name="Void MoveNext()" attrs="486">
+        <size>555</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__54()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__55()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__56()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IsTest_1&gt;c__async27">
+    <type name="Tester+&lt;IndexerTest_7&gt;c__async27">
+      <method name="Void MoveNext()" attrs="486">
+        <size>262</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__57()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;IsTest_2&gt;c__async28">
+    <type name="Tester+&lt;IsTest_1&gt;c__async28">
+      <method name="Void MoveNext()" attrs="486">
+        <size>229</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Tester &lt;&gt;m__58()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async29">
+    <type name="Tester+&lt;IsTest_2&gt;c__async29">
+      <method name="Void MoveNext()" attrs="486">
+        <size>238</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Nullable`1 &lt;&gt;m__59()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2A">
+    <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async2A">
+      <method name="Void MoveNext()" attrs="486">
+        <size>392</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Base &lt;&gt;m__5A()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Base &lt;&gt;m__5B()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2B">
+    <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2B">
+      <method name="Void MoveNext()" attrs="486">
+        <size>297</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Base &lt;&gt;m__5C()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewTest_1&gt;c__async2C">
+    <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2C">
+      <method name="Void MoveNext()" attrs="486">
+        <size>391</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Base &lt;&gt;m__5D()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Base &lt;&gt;m__5E()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewTest_2&gt;c__async2D">
+    <type name="Tester+&lt;NewTest_1&gt;c__async2D">
+      <method name="Void MoveNext()" attrs="486">
+        <size>258</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__5F()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewInitTest_1&gt;c__async2E">
+    <type name="Tester+&lt;NewTest_2&gt;c__async2E">
+      <method name="Void MoveNext()" attrs="486">
+        <size>356</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__60()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="System.String &lt;&gt;m__61()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewInitTest_2&gt;c__async2F">
+    <type name="Tester+&lt;NewInitTest_1&gt;c__async2F">
+      <method name="Void MoveNext()" attrs="486">
+        <size>1025</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__62()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__63()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__64()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__65()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__66()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__67()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async30">
+    <type name="Tester+&lt;NewInitTest_2&gt;c__async30">
+      <method name="Void MoveNext()" attrs="486">
+        <size>753</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="System.String &lt;&gt;m__68()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;&gt;m__69()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__6A()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__6B()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async31">
+    <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async31">
+      <method name="Void MoveNext()" attrs="486">
+        <size>238</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__6C()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async32">
+    <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async32">
+      <method name="Void MoveNext()" attrs="486">
+        <size>356</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__6D()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__6E()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async33">
+    <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async33">
+      <method name="Void MoveNext()" attrs="486">
+        <size>242</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Byte &lt;&gt;m__6F()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async34">
+    <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async34">
+      <method name="Void MoveNext()" attrs="486">
+        <size>426</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="UInt16 &lt;&gt;m__70()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="UInt16 &lt;&gt;m__71()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async35">
+    <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async35">
+      <method name="Void MoveNext()" attrs="486">
+        <size>260</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="S &lt;&gt;m__72()" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;PropertyTest_1&gt;c__async36">
+    <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async36">
+      <method name="Void MoveNext()" attrs="486">
+        <size>262</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__73()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;PropertyTest_2&gt;c__async37">
+    <type name="Tester+&lt;PropertyTest_1&gt;c__async37">
+      <method name="Void MoveNext()" attrs="486">
+        <size>225</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__74()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;PropertyTest_3&gt;c__async38">
+    <type name="Tester+&lt;PropertyTest_2&gt;c__async38">
+      <method name="Void MoveNext()" attrs="486">
+        <size>293</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__75()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;StringConcatTest_1&gt;c__async39">
+    <type name="Tester+&lt;PropertyTest_3&gt;c__async39">
+      <method name="Void MoveNext()" attrs="486">
+        <size>649</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__76()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__77()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__78()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;UnaryTest_1&gt;c__async3A">
+    <type name="Tester+&lt;StringConcatTest_1&gt;c__async3A">
+      <method name="Void MoveNext()" attrs="486">
+        <size>459</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="System.String &lt;&gt;m__79()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;&gt;m__7A()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;&gt;m__7B()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;UnaryTest_2&gt;c__async3B">
+    <type name="Tester+&lt;UnaryTest_1&gt;c__async3B">
+      <method name="Void MoveNext()" attrs="486">
+        <size>238</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Int32 &lt;&gt;m__7C()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;UnaryTest_3&gt;c__async3C">
+    <type name="Tester+&lt;UnaryTest_2&gt;c__async3C">
+      <method name="Void MoveNext()" attrs="486">
+        <size>338</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+      <method name="Nullable`1 &lt;&gt;m__7D()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="Tester+&lt;VariableInitializer_1&gt;c__async3D">
+    <type name="Tester+&lt;UnaryTest_3&gt;c__async3D">
+      <method name="Void MoveNext()" attrs="486">
+        <size>378</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__7E()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;VariableInitializer_1&gt;c__async3E">
+      <method name="Void MoveNext()" attrs="486">
+        <size>354</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__7F()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__80()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

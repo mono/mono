@@ -40,6 +40,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public AwaitStatement Statement {
+			get {
+				return stmt;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			var t = (Await) target;
@@ -113,7 +119,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class AwaitStatement : YieldStatement<AsyncInitializer>
+	public class AwaitStatement : YieldStatement<AsyncInitializer>
 	{
 		sealed class AwaitableMemberAccess : MemberAccess
 		{
