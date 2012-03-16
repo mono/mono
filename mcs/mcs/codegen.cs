@@ -83,6 +83,8 @@ namespace Mono.CSharp
 
 		Label? return_label;
 
+		List<IExpressionCleanup> epilogue_expressions;
+
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type, SourceMethodBuilder methodSymbols)
 		{
 			this.member_context = rc;
@@ -190,7 +192,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public List<IExpressionCleanup> StatementEpilogue {
+			get {
+				return epilogue_expressions;
+			}
+		}
+
 		#endregion
+
+		public void AddStatementEpilog (IExpressionCleanup cleanupExpression)
+		{
+			if (epilogue_expressions == null) {
+				epilogue_expressions = new List<IExpressionCleanup> ();
+			} else if (epilogue_expressions.Contains (cleanupExpression)) {
+				return;
+			}
+
+			epilogue_expressions.Add (cleanupExpression);
+		}
 
 		public void AssertEmptyStack ()
 		{
@@ -808,6 +827,17 @@ namespace Mono.CSharp
 		public void EmitThis ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
+		}
+
+		public void EmitEpilogue ()
+		{
+			if (epilogue_expressions == null)
+				return;
+
+			foreach (var e in epilogue_expressions)
+				e.EmitCleanup (this);
+
+			epilogue_expressions = null;
 		}
 
 		/// <summary>

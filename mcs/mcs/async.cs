@@ -911,7 +911,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class StackFieldExpr : FieldExpr
+	class StackFieldExpr : FieldExpr, IExpressionCleanup
 	{
 		public StackFieldExpr (Field field)
 			: base (field, Location.Null)
@@ -934,6 +934,19 @@ namespace Mono.CSharp
 
 			var field = (Field) spec.MemberDefinition;
 			field.IsAvailableForReuse = true;
+
+			//
+			// Release any captured reference type stack variables
+			// to imitate real stack behavour and help GC stuff early
+			//
+			if (TypeSpec.IsReferenceType (type)) {
+				ec.AddStatementEpilog (this);
+			}
+		}
+
+		void IExpressionCleanup.EmitCleanup (EmitContext ec)
+		{
+			EmitAssign (ec, new NullConstant (type, loc), false, false);
 		}
 	}
 }

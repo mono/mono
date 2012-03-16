@@ -68,6 +68,10 @@ namespace Mono.CSharp {
 		{
 			ec.Mark (loc);
 			DoEmit (ec);
+
+			if (ec.StatementEpilogue != null) {
+				ec.EmitEpilogue ();
+			}
 		}
 
 		//
@@ -947,11 +951,15 @@ namespace Mono.CSharp {
 					if (async_return != null) {
 						async_return.EmitAssign (ec);
 
+						ec.EmitEpilogue ();
+
 						ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					}
 
 					return;
 				}
+
+				ec.EmitEpilogue ();
 
 				if (unwind_protect || ec.EmitAccurateDebugInfo)
 					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn ());

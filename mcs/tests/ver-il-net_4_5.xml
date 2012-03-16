@@ -53268,7 +53268,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>244</size>
+        <size>251</size>
       </method>
       <method name="System.String &lt;&gt;m__3()" attrs="145">
         <size>13</size>
@@ -53451,7 +53451,7 @@
     </type>
     <type name="C+&lt;TestStack_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>307</size>
+        <size>321</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
@@ -53462,7 +53462,7 @@
     </type>
     <type name="C+&lt;TestStack_2&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>289</size>
+        <size>296</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
@@ -53899,7 +53899,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>1103</size>
+        <size>1117</size>
       </method>
       <method name="Int32 &lt;&gt;m__A()" attrs="145">
         <size>9</size>
@@ -53922,7 +53922,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_4&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>415</size>
+        <size>429</size>
       </method>
       <method name="Int32 &lt;&gt;m__F()" attrs="145">
         <size>9</size>
@@ -53936,7 +53936,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>399</size>
+        <size>413</size>
       </method>
       <method name="Int32 &lt;&gt;m__11()" attrs="145">
         <size>9</size>
@@ -53986,7 +53986,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_9&gt;c__async8">
       <method name="Void MoveNext()" attrs="486">
-        <size>1205</size>
+        <size>1233</size>
       </method>
       <method name="Int32 &lt;&gt;m__17()" attrs="145">
         <size>9</size>
@@ -54275,7 +54275,7 @@
     </type>
     <type name="Tester+&lt;CallTest_4&gt;c__async14">
       <method name="Void MoveNext()" attrs="486">
-        <size>232</size>
+        <size>239</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54331,7 +54331,7 @@
     </type>
     <type name="Tester+&lt;CoalescingTest_1&gt;c__async18">
       <method name="Void MoveNext()" attrs="486">
-        <size>359</size>
+        <size>366</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54526,7 +54526,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_4&gt;c__async24">
       <method name="Void MoveNext()" attrs="486">
-        <size>400</size>
+        <size>407</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54543,7 +54543,7 @@
     </type>
     <type name="Tester+&lt;IndexerTest_5&gt;c__async25">
       <method name="Void MoveNext()" attrs="486">
-        <size>506</size>
+        <size>520</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54594,7 +54594,7 @@
     </type>
     <type name="Tester+&lt;IsTest_1&gt;c__async28">
       <method name="Void MoveNext()" attrs="486">
-        <size>229</size>
+        <size>236</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54622,7 +54622,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async2A">
       <method name="Void MoveNext()" attrs="486">
-        <size>392</size>
+        <size>399</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54639,7 +54639,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2B">
       <method name="Void MoveNext()" attrs="486">
-        <size>297</size>
+        <size>304</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54653,7 +54653,7 @@
     </type>
     <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2C">
       <method name="Void MoveNext()" attrs="486">
-        <size>391</size>
+        <size>398</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54670,7 +54670,7 @@
     </type>
     <type name="Tester+&lt;NewTest_1&gt;c__async2D">
       <method name="Void MoveNext()" attrs="486">
-        <size>258</size>
+        <size>265</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54701,7 +54701,7 @@
     </type>
     <type name="Tester+&lt;NewInitTest_1&gt;c__async2F">
       <method name="Void MoveNext()" attrs="486">
-        <size>1025</size>
+        <size>1046</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54753,7 +54753,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async31">
       <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
+        <size>245</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54767,7 +54767,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async32">
       <method name="Void MoveNext()" attrs="486">
-        <size>356</size>
+        <size>363</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54784,7 +54784,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async33">
       <method name="Void MoveNext()" attrs="486">
-        <size>242</size>
+        <size>249</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54798,7 +54798,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async34">
       <method name="Void MoveNext()" attrs="486">
-        <size>426</size>
+        <size>433</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54815,7 +54815,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async35">
       <method name="Void MoveNext()" attrs="486">
-        <size>260</size>
+        <size>267</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54829,7 +54829,7 @@
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async36">
       <method name="Void MoveNext()" attrs="486">
-        <size>262</size>
+        <size>269</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54857,7 +54857,7 @@
     </type>
     <type name="Tester+&lt;PropertyTest_2&gt;c__async38">
       <method name="Void MoveNext()" attrs="486">
-        <size>293</size>
+        <size>300</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54871,7 +54871,7 @@
     </type>
     <type name="Tester+&lt;PropertyTest_3&gt;c__async39">
       <method name="Void MoveNext()" attrs="486">
-        <size>649</size>
+        <size>656</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54891,7 +54891,7 @@
     </type>
     <type name="Tester+&lt;StringConcatTest_1&gt;c__async3A">
       <method name="Void MoveNext()" attrs="486">
-        <size>459</size>
+        <size>466</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55455,7 +55455,7 @@
     </type>
     <type name="Tester+&lt;Add_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>462</size>
+        <size>497</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>9</size>
@@ -55466,7 +55466,7 @@
     </type>
     <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>1188</size>
+        <size>1237</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
@@ -55477,7 +55477,7 @@
     </type>
     <type name="Tester+&lt;Convert_1&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>328</size>
+        <size>349</size>
       </method>
       <method name="System.Object &lt;&gt;m__6()" attrs="145">
         <size>13</size>
@@ -55488,7 +55488,7 @@
     </type>
     <type name="Tester+&lt;Invocation_1&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>580</size>
+        <size>601</size>
       </method>
       <method name="System.Object &lt;&gt;m__7()" attrs="145">
         <size>13</size>
@@ -55549,7 +55549,7 @@
     </type>
     <type name="A+&lt;Test1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>598</size>
+        <size>612</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55832,7 +55832,7 @@
     </type>
     <type name="C+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>271</size>
+        <size>285</size>
       </method>
       <method name="Int32 &lt;&gt;m__0(Int32)" attrs="145">
         <size>10</size>
@@ -56988,7 +56988,7 @@
     </type>
     <type name="C+&lt;Test_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>1188</size>
+        <size>1237</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
