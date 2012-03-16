@@ -380,9 +380,7 @@ namespace System.Windows.Forms {
 		
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
-			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
-			}
+			get { return base.CreateParams; }
 		}
 		
 		protected override Size DefaultSize {
