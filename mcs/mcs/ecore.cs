@@ -5538,7 +5538,7 @@ namespace Mono.CSharp {
 				base.EmitSideEffect (ec);
 		}
 
-		public void AddressOf (EmitContext ec, AddressOp mode)
+		public virtual void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			if ((mode & AddressOp.Store) != 0)
 				spec.MemberDefinition.SetIsAssigned ();

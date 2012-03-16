@@ -207,6 +207,8 @@ namespace Mono.CSharp
 
 		public void EmitPrologue (EmitContext ec)
 		{
+			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (expr.Type, loc);
+
 			var fe_awaiter = new FieldExpr (awaiter, loc);
 			fe_awaiter.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
@@ -268,6 +270,8 @@ namespace Mono.CSharp
 			EmitPrologue (ec);
 			DoEmit (ec);
 
+			awaiter.IsAvailableForReuse = true;
+
 			if (ResultType.Kind != MemberKind.Void) {
 				var storey = (AsyncTaskStorey) machine_initializer.Storey;
 
@@ -304,9 +308,6 @@ namespace Mono.CSharp
 			//
 			if (type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				result_type = type;
-
-				awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (type, loc);
-
 				expr = new Invocation (new MemberAccess (expr, "GetAwaiter"), args).Resolve (bc);
 				return true;
 			}
@@ -332,8 +333,6 @@ namespace Mono.CSharp
 			}
 
 			var awaiter_type = ama.Type;
-			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (awaiter_type, loc);
-
 			expr = ama;
 
 			//
@@ -493,12 +492,14 @@ namespace Mono.CSharp
 		PropertySpec task;
 		LocalVariable hoisted_return;
 		int locals_captured;
-		Dictionary<TypeSpec, List<StackField>> stack_fields;
+		Dictionary<TypeSpec, List<Field>> stack_fields;
+		Dictionary<TypeSpec, List<Field>> awaiter_fields;
 
 		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
 			: base (initializer.OriginalBlock, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async", MemberKind.Class)
 		{
 			return_type = type;
+			awaiter_fields = new Dictionary<TypeSpec, List<Field>> ();
 		}
 
 		#region Properties
@@ -525,34 +526,53 @@ namespace Mono.CSharp
 
 		public Field AddAwaiter (TypeSpec type, Location loc)
 		{
-			return AddCapturedVariable ("$awaiter" + awaiters++.ToString ("X"), type);
-		}
-
-		public StackField AddCapturedLocalVariable (TypeSpec type)
-		{
 			if (mutator != null)
 				type = mutator.Mutate (type);
 
-			List<StackField> existing_fields = null;
-			if (stack_fields == null) {
-				stack_fields = new Dictionary<TypeSpec, List<StackField>> ();
-			} else if (stack_fields.TryGetValue (type, out existing_fields)) {
+			List<Field> existing_fields = null;
+			if (awaiter_fields.TryGetValue (type, out existing_fields)) {
 				foreach (var f in existing_fields) {
-					if (f.CanBeReused) {
-						f.CanBeReused = false;
+					if (f.IsAvailableForReuse) {
+						f.IsAvailableForReuse = false;
 						return f;
 					}
 				}
 			}
 
-			const Modifiers mod = Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE;
-			var field = new StackField (this, new TypeExpression (type, Location), mod, new MemberName ("$stack" + locals_captured++.ToString ("X"), Location));
-			AddField (field);
-
+			var field = AddCompilerGeneratedField ("$awaiter" + awaiters++.ToString ("X"), new TypeExpression (type, Location), true);
 			field.Define ();
 
 			if (existing_fields == null) {
-				existing_fields = new List<StackField> ();
+				existing_fields = new List<Field> ();
+				awaiter_fields.Add (type, existing_fields);
+			}
+
+			existing_fields.Add (field);
+			return field;
+		}
+
+		public Field AddCapturedLocalVariable (TypeSpec type)
+		{
+			if (mutator != null)
+				type = mutator.Mutate (type);
+
+			List<Field> existing_fields = null;
+			if (stack_fields == null) {
+				stack_fields = new Dictionary<TypeSpec, List<Field>> ();
+			} else if (stack_fields.TryGetValue (type, out existing_fields)) {
+				foreach (var f in existing_fields) {
+					if (f.IsAvailableForReuse) {
+						f.IsAvailableForReuse = false;
+						return f;
+					}
+				}
+			}
+
+			var field = AddCompilerGeneratedField ("$stack" + locals_captured++.ToString ("X"), new TypeExpression (type, Location), true);
+			field.Define ();
+
+			if (existing_fields == null) {
+				existing_fields = new List<Field> ();
 				stack_fields.Add (type, existing_fields);
 			}
 
@@ -885,16 +905,6 @@ namespace Mono.CSharp
 		}
 	}
 
-	class StackField : Field
-	{
-		public StackField (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name)
-			: base (parent, type, mod, name, null)
-		{
-		}
-
-		public bool CanBeReused { get; set; }
-	}
-
 	class StackFieldExpr : FieldExpr
 	{
 		public StackFieldExpr (Field field)
@@ -902,12 +912,22 @@ namespace Mono.CSharp
 		{
 		}
 
+		public override void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			base.AddressOf (ec, mode);
+
+			if (mode == AddressOp.Load) {
+				var field = (Field) spec.MemberDefinition;
+				field.IsAvailableForReuse = true;
+			}
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 
-			var field = (StackField) spec.MemberDefinition;
-			field.CanBeReused = true;
+			var field = (Field) spec.MemberDefinition;
+			field.IsAvailableForReuse = true;
 		}
 	}
 }

@@ -4245,7 +4245,7 @@ namespace Mono.CSharp
 			//
 			bool right_contains_await = ec.HasSet (BuilderContext.Options.AsyncBody) && arguments[1].Expr.ContainsEmitWithAwait ();
 			if (right_contains_await) {
-				arguments[0] = arguments[0].EmitToField (ec);
+				arguments[0] = arguments[0].EmitToField (ec, false);
 				arguments[0].Expr.Emit (ec);
 			} else {
 				arguments[0].Expr.Emit (ec);
