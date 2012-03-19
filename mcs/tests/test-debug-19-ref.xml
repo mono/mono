@@ -113,12 +113,12 @@
         <entry il="0x22" row="35" file_ref="1" hidden="false" />
         <entry il="0x2d" row="36" file_ref="1" hidden="false" />
         <entry il="0x8b" row="37" file_ref="1" hidden="false" />
-        <entry il="0x380" row="38" file_ref="1" hidden="false" />
-        <entry il="0x490" row="39" file_ref="1" hidden="false" />
+        <entry il="0x3b1" row="38" file_ref="1" hidden="false" />
+        <entry il="0x4c1" row="39" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x22" end="0x470" />
+        <entry index="0" start="0x22" end="0x4a1" />
       </scopes>
     </method>
     <method token="0x6000011">

@@ -5751,7 +5751,7 @@ from_clause
 	;	
 
 query_body
-	: opt_query_body_clauses select_or_group_clause opt_query_continuation 
+	: query_body_clauses select_or_group_clause opt_query_continuation 
 	  {
 	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
@@ -5766,7 +5766,24 @@ query_body
 		
 		$$ = head;
 	  }
-	| opt_query_body_clauses COMPLETE_COMPLETION
+	| select_or_group_clause opt_query_continuation
+	  {
+	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
+
+		if ($1 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
+			clause.Tail.Next = head;
+			head = clause;
+		}
+		
+		$$ = head;
+	  }
+	| query_body_clauses COMPLETE_COMPLETION
+	| query_body_clauses error
+	  {
+		report.Error (742, GetLocation ($2), "Unexpected symbol `{0}'. A query body must end with select or group clause", GetSymbolName (yyToken));
+		$$ = $1;
+	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
@@ -5809,11 +5826,6 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  }
-	;
-	
-opt_query_body_clauses
-	: /* empty */
-	| query_body_clauses
 	;
 	
 query_body_clauses
