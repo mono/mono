@@ -104,7 +104,7 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 
 	while (n > 0)
 	{
-		size_t t;
+		ssize_t t;
 			
 		if (timeout != 0) {
 			int c;
