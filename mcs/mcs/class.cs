@@ -85,14 +85,13 @@ namespace Mono.CSharp
 			}
 		}
 
-#if FULL_AST
 		//
-		// Any unattached attributes during parsing get added here.
+		// Any unattached attributes during parsing get added here. User
+		// by FULL_AST mode
 		//
 		public Attributes UnattachedAttributes {
 			get; set;
 		}
-#endif
 
 		public virtual void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
 		{

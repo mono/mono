@@ -391,6 +391,8 @@ outer_declaration
 			Attributes attrs = (Attributes) $4;
 			report.Error (1730, attrs.Attrs [0].Location,
 				"Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+
+			current_namespace.UnattachedAttributes = attrs;
 		}
 	  }
 	| opt_extern_alias_directives opt_using_directives attribute_sections
@@ -608,9 +610,7 @@ namespace_or_type_declaration
 		current_namespace.DeclarationFound = true;
 	  }
 	| attribute_sections CLOSE_BRACE {
-#if FULL_AST
 		current_namespace.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1518, lexer.Location, "Attributes must be attached to class, delegate, enum, interface or struct");
 		lexer.putback ('}');
 	  }
@@ -2450,10 +2450,9 @@ event_accessor_block
 	;
 
 attributes_without_members
-	: attribute_sections CLOSE_BRACE {
-#if FULL_AST
+	: attribute_sections CLOSE_BRACE
+	  {
 		current_type.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1519, GetLocation ($1), "An attribute is missing member declaration");
 		lexer.putback ('}');
 	  }
