@@ -568,14 +568,14 @@ namespace Microsoft.Win32
 		[MonoLimitation ("permissionCheck is ignored in Mono")]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
 		{
-			return OpenSubKey (name);
+			return OpenSubKey (name, permissionCheck == RegistryKeyPermissionCheck.ReadWriteSubTree);
 		}
 		
 		[ComVisible (false)]
 		[MonoLimitation ("permissionCheck and rights are ignored in Mono")]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
 		{
-			return OpenSubKey (name);
+			return OpenSubKey (name, permissionCheck == RegistryKeyPermissionCheck.ReadWriteSubTree);
 		}
 		
 		public void SetAccessControl (RegistrySecurity registrySecurity)
