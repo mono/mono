@@ -104,16 +104,16 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 
 	while (n > 0)
 	{
-		size_t t;
-			
+		ssize_t t;
+
 		if (timeout != 0) {
 			int c;
-			
+
 			while ((c = poll (&pinfo, 1, timeout)) == -1 && errno == EINTR)
 				;
 			if (c == -1)
 				return -1;
-		}		
+		}
 
 		do {
 			t = write (fd, buffer + offset, n);
@@ -121,9 +121,9 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 
 		if (t < 0)
 			return -1;
-		
+
 		offset += t;
-		n -= t; 
+		n -= t;
 	}
  
 	return 0;
