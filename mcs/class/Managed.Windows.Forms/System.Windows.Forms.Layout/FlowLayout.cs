@@ -358,13 +358,9 @@ namespace System.Windows.Forms.Layout
 				// Only apply layout to visible controls.
 				if (!c.Available) { continue; }
 
-				// Resize any AutoSize controls to their preferred width
-				// (the height should fill the ToolStrip)
-				if (c.AutoSize == true) {
-					Size preferred_size = c.GetPreferredSize (c.Size);
-					preferred_size.Height = parentDisplayRectangle.Height;
-					c.SetBounds (new Rectangle (c.Location, preferred_size));
-				}
+				// Resize any AutoSize controls to their preferred size
+				if (c.AutoSize == true)
+					c.SetBounds (new Rectangle (c.Location, c.GetPreferredSize (c.Size)));
 
 				switch (settings.FlowDirection) {
 					case FlowDirection.BottomUp:
