@@ -757,6 +757,7 @@ System.Runtime.InteropServices/IDispatchImplAttribute.cs
 System.Runtime.InteropServices/IDispatchImplType.cs
 System.Runtime.InteropServices/IDLDESC.cs
 System.Runtime.InteropServices/IDLFLAG.cs
+System.Runtime.InteropServices/IErrorInfo.cs
 System.Runtime.InteropServices/IMPLTYPEFLAGS.cs
 System.Runtime.InteropServices/INVOKEKIND.cs
 System.Runtime.InteropServices/IRegistrationServices.cs
@@ -773,6 +774,7 @@ System.Runtime.InteropServices/InvalidOleVariantTypeException.cs
 System.Runtime.InteropServices/LCIDConversionAttribute.cs
 System.Runtime.InteropServices/LIBFLAGS.cs
 System.Runtime.InteropServices/LayoutKind.cs
+System.Runtime.InteropServices/ManagedErrorInfo.cs
 System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
 System.Runtime.InteropServices/MarshalDirectiveException.cs
