@@ -160,6 +160,7 @@ namespace Mono.CSharp
 
 		Field pc_field;
 		StateMachineMethod method;
+		int local_name_idx;
 
 		protected StateMachine (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
@@ -196,6 +197,14 @@ namespace Mono.CSharp
 			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
 
 			return base.DoDefineMembers ();
+		}
+
+		protected override string GetVariableMangledName (LocalVariable local_info)
+		{
+			if (local_info.IsCompilerGenerated)
+				return base.GetVariableMangledName (local_info);
+
+			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ("X");
 		}
 	}
 
@@ -399,7 +408,6 @@ namespace Mono.CSharp
 		TypeExpr iterator_type_expr;
 		Field current_field;
 		Field disposing_field;
-		int local_name_idx;
 
 		TypeSpec generic_enumerator_type;
 		TypeSpec generic_enumerable_type;
@@ -562,14 +570,6 @@ namespace Mono.CSharp
 		{
 			base.EmitHoistedParameters (ec, hoisted);
 			base.EmitHoistedParameters (ec, hoisted_params_copy);
-		}
-
-		protected override string GetVariableMangledName (LocalVariable local_info)
-		{
-			if (local_info.IsCompilerGenerated)
-				return base.GetVariableMangledName (local_info);
-
-			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ("X");
 		}
 	}
 
