@@ -39,6 +39,7 @@ namespace MonoTests.System.Collections.Generic
 	[TestFixture]
 	public class ComparerTest
 	{
+#if NET_4_5
 		[Test]
 		public void Create ()
 		{
@@ -55,6 +56,7 @@ namespace MonoTests.System.Collections.Generic
 			} catch (ArgumentNullException) {
 			}
 		}
+#endif
 
 #if !NET_4_0 && !NET_2_1 // FIXME: the blob contains the 2.0 mscorlib version
 
