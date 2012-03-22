@@ -111,8 +111,12 @@ namespace System.Json
 				JsonValue v = list [i];
 				if (v != null)
 					v.Save (stream);
-				else
-					w.Write ("null");
+				else {
+					stream.WriteByte ((byte) 'n');
+					stream.WriteByte ((byte) 'u');
+					stream.WriteByte ((byte) 'l');
+					stream.WriteByte ((byte) 'l');
+				}
 
 				if (i < Count - 1) {
 					stream.WriteByte ((byte) ',');
