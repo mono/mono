@@ -108,7 +108,12 @@ namespace System.Json
 				throw new ArgumentNullException ("stream");
 			stream.WriteByte ((byte) '[');
 			for (int i = 0; i < list.Count; i++) {
-				list [i].Save (stream);
+				JsonValue v = list [i];
+				if (v != null)
+					v.Save (stream);
+				else
+					w.Write ("null");
+
 				if (i < Count - 1) {
 					stream.WriteByte ((byte) ',');
 					stream.WriteByte ((byte) ' ');
