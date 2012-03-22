@@ -563,9 +563,30 @@ namespace System.Net
 					reqStream.Write (partHeadersBytes, 0, partHeadersBytes.Length);
 				}
 				int nread;
+				long bytes_sent = 0;
+				long file_size = -1;
+				long step = 16384; // every 16kB
+				if (fStream.CanSeek) {
+					file_size = fStream.Length;
+					step = file_size / 100;
+				}
+				var upload_args = new UploadProgressChangedEventArgs (0, 0, bytes_sent, file_size, 0, userToken);
+				OnUploadProgressChanged (upload_args);
 				byte [] buffer = new byte [4096];
-				while ((nread = fStream.Read (buffer, 0, 4096)) != 0)
+				long sum = 0;
+				while ((nread = fStream.Read (buffer, 0, 4096)) > 0) {
 					reqStream.Write (buffer, 0, nread);
+					bytes_sent += nread;
+					sum += nread;
+					if (sum >= step || nread < 4096) {
+						int percent = 0;
+						if (file_size > 0)
+							percent = (int) (bytes_sent * 100 / file_size);
+						upload_args = new UploadProgressChangedEventArgs (0, 0, bytes_sent, file_size, percent, userToken);
+						OnUploadProgressChanged (upload_args);
+						sum = 0;
+					}
+				}
 
 				if (needs_boundary) {
 					reqStream.WriteByte ((byte) '\r');
