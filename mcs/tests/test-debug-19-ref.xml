@@ -72,9 +72,7 @@
         <entry il="0x8c" row="13" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
-      <scopes>
-        <entry index="0" start="0x22" end="0x6e" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x600000b">
       <sequencepoints />
@@ -93,9 +91,7 @@
         <entry il="0x92" row="26" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
-      <scopes>
-        <entry index="0" start="0x22" end="0x74" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x600000e">
       <sequencepoints />
@@ -117,9 +113,7 @@
         <entry il="0x4c1" row="39" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
-      <scopes>
-        <entry index="0" start="0x22" end="0x4a1" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000011">
       <sequencepoints />

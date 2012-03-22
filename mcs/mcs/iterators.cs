@@ -702,8 +702,6 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			storey = (StateMachine) block.Parent.ParametersBlock.AnonymousMethodStorey;
-
 			var ctx = CreateBlockContext (ec);
 
 			Block.Resolve (ctx);
@@ -730,7 +728,7 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			//
-			// Load Iterator storey instance
+			// Load state machine instance
 			//
 			storey.Instance.Emit (ec);
 		}
@@ -749,11 +747,7 @@ namespace Mono.CSharp
 
 			iterator_body_end = ec.DefineLabel ();
 
-			if (ec.EmitAccurateDebugInfo && ec.Mark (Block.Original.StartLocation)) {
-				ec.Emit (OpCodes.Nop);
-			}
-
-			block.Emit (ec);
+			block.EmitEmbedded (ec);
 
 			ec.MarkLabel (iterator_body_end);
 
@@ -816,11 +810,7 @@ namespace Mono.CSharp
 
 			iterator_body_end = ec.DefineLabel ();
 
-			if (ec.EmitAccurateDebugInfo && ec.Mark (Block.Original.StartLocation)) {
-				ec.Emit (OpCodes.Nop);
-			}
-
-			block.Emit (ec);
+			block.EmitEmbedded (ec);
 
 			ec.MarkLabel (iterator_body_end);
 
@@ -905,6 +895,11 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 		}
+
+		public void SetStateMachine (StateMachine stateMachine)
+		{
+			this.storey = stateMachine;
+		}
 	}
 
 	//
@@ -925,7 +920,7 @@ namespace Mono.CSharp
 			this.type = method.ReturnType;
 		}
 
-		public Block Container {
+		public ToplevelBlock Container {
 			get { return OriginalMethod.Block; }
 		}
 
@@ -1089,7 +1084,7 @@ namespace Mono.CSharp
 				parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
 			}
 
-			method.Block.WrapIntoIterator (method, parent, iterator_type, is_enumerable);
+			method.Block = method.Block.ConvertToIterator (method, parent, iterator_type, is_enumerable);
 		}
 
 		static bool CheckType (TypeSpec ret, TypeContainer parent, out TypeSpec original_iterator_type, out bool is_enumerable)

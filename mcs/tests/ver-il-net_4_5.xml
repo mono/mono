@@ -52908,7 +52908,7 @@
         <size>482</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;Main&gt;m__4(Decimal)" attrs="145">
-        <size>45</size>
+        <size>44</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52916,16 +52916,16 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="Void &lt;&gt;m__1()" attrs="131">
-        <size>39</size>
+        <size>38</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__2(System.String)" attrs="131">
-        <size>52</size>
+        <size>51</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;&gt;m__3(Decimal)" attrs="131">
-        <size>52</size>
+        <size>51</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52933,7 +52933,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>214</size>
+        <size>215</size>
       </method>
       <method name="Void &lt;&gt;m__5()" attrs="131">
         <size>39</size>
@@ -52944,7 +52944,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>214</size>
+        <size>215</size>
       </method>
       <method name="Void &lt;&gt;m__6()" attrs="131">
         <size>39</size>
@@ -53115,13 +53115,13 @@
         <size>37</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>38</size>
+        <size>37</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(Int32)" attrs="145">
-        <size>38</size>
+        <size>37</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;Main&gt;m__3(Int32)" attrs="145">
-        <size>38</size>
+        <size>37</size>
       </method>
       <method name="Int32 &lt;TT&gt;m__4()" attrs="145">
         <size>9</size>
@@ -53154,7 +53154,7 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async8">
       <method name="Void MoveNext()" attrs="486">
-        <size>159</size>
+        <size>160</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53162,7 +53162,7 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__asyncB">
       <method name="Void MoveNext()" attrs="486">
-        <size>37</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54978,7 +54978,7 @@
         <size>214</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
-        <size>38</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

@@ -405,12 +405,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Block OriginalBlock {
-			get {
-				return block.Parent;
-			}
-		}
-
 		public TypeInferenceContext ReturnTypeInference {
 			get {
 				return return_inference;
@@ -418,38 +412,6 @@ namespace Mono.CSharp
 		}
 
 		#endregion
-
-		public static void Create (IMemberContext context, ParametersBlock block, ParametersCompiled parameters, TypeDefinition host, TypeSpec returnType, Location loc)
-		{
-			for (int i = 0; i < parameters.Count; i++) {
-				Parameter p = parameters[i];
-				Parameter.Modifier mod = p.ModFlags;
-				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
-					host.Compiler.Report.Error (1988, p.Location,
-						"Async methods cannot have ref or out parameters");
-					return;
-				}
-
-				if (p is ArglistParameter) {
-					host.Compiler.Report.Error (4006, p.Location,
-						"__arglist is not allowed in parameter list of async methods");
-					return;
-				}
-
-				if (parameters.Types[i].IsPointer) {
-					host.Compiler.Report.Error (4005, p.Location,
-						"Async methods cannot have unsafe parameters");
-					return;
-				}
-			}
-
-			if (!block.HasAwait) {
-				host.Compiler.Report.Warning (1998, 1, loc,
-					"Async block lacks `await' operator and will run synchronously");
-			}
-
-			block.WrapIntoAsyncTask (context, host, returnType);
-		}
 
 		protected override BlockContext CreateBlockContext (ResolveContext rc)
 		{
@@ -501,8 +463,8 @@ namespace Mono.CSharp
 		Dictionary<TypeSpec, List<Field>> stack_fields;
 		Dictionary<TypeSpec, List<Field>> awaiter_fields;
 
-		public AsyncTaskStorey (IMemberContext context, AsyncInitializer initializer, TypeSpec type)
-			: base (initializer.OriginalBlock, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async", MemberKind.Class)
+		public AsyncTaskStorey (ParametersBlock block, IMemberContext context, AsyncInitializer initializer, TypeSpec type)
+			: base (block, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async", MemberKind.Class)
 		{
 			return_type = type;
 			awaiter_fields = new Dictionary<TypeSpec, List<Field>> ();

@@ -199,7 +199,7 @@ namespace Mono.CSharp {
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				hoisted_this.EmitHoistingAssignment (ec);
+				hoisted_this.EmitAssign (ec, new CompilerGeneratedThis (ec.CurrentType, loc), false, false);
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -311,7 +311,13 @@ namespace Mono.CSharp {
 
 		public void CaptureLocalVariable (ResolveContext ec, LocalVariable local_info)
 		{
-			ec.CurrentBlock.Explicit.HasCapturedVariable = true;
+			if (this is StateMachine) {
+				if (ec.CurrentBlock.ParametersBlock != local_info.Block.ParametersBlock)
+					ec.CurrentBlock.Explicit.HasCapturedVariable = true;
+			} else {
+				ec.CurrentBlock.Explicit.HasCapturedVariable = true;
+			}
+
 			if (ec.CurrentBlock.Explicit != local_info.Block.Explicit)
 				AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 
@@ -329,7 +335,10 @@ namespace Mono.CSharp {
 
 		public void CaptureParameter (ResolveContext ec, ParameterReference param_ref)
 		{
-			ec.CurrentBlock.Explicit.HasCapturedVariable = true;
+			if (!(this is StateMachine)) {
+				ec.CurrentBlock.Explicit.HasCapturedVariable = true;
+			}
+
 			AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 
 			if (param_ref.GetHoistedVariable (ec) != null)
@@ -813,13 +822,6 @@ namespace Mono.CSharp {
 				return field;
 			}
 		}
-
-		public void EmitHoistingAssignment (EmitContext ec)
-		{
-			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), new CompilerGeneratedThis (ec.CurrentType, field.Location));
-			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
-				a.EmitStatement (ec);
-		}
 	}
 
 	//
@@ -1030,12 +1032,8 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
-				var body = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
+				var body = CompatibleMethodBody (ec, tic, null, delegate_type);
 				if (body != null) {
-					if (Block.IsAsync) {
-						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent.PartialContainer, null, loc);
-					}
-
 					am = body.Compatible (ec, body);
 				} else {
 					am = null;
@@ -1122,18 +1120,6 @@ namespace Mono.CSharp {
 							am = CreateExpressionTree (ec, delegate_type);
 					}
 				} else {
-					if (Block.IsAsync) {
-						var rt = body.ReturnType;
-						if (rt.Kind != MemberKind.Void &&
-							rt != ec.Module.PredefinedTypes.Task.TypeSpec &&
-							!rt.IsGenericTask) {
-							ec.Report.Error (4010, loc, "Cannot convert async {0} to delegate type `{1}'",
-								GetSignatureForError (), type.GetSignatureForError ());
-						}
-
-						AsyncInitializer.Create (ec, body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent.PartialContainer, rt, loc);
-					}
-
 					am = body.Compatible (ec);
 				}
 			} catch (CompletionResult) {
@@ -1261,7 +1247,19 @@ namespace Mono.CSharp {
 
 			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
 
-			return CompatibleMethodFactory (return_type, delegate_type, p, b);
+			if (b.IsAsync) {
+				var rt = return_type;
+				if (rt != null && rt.Kind != MemberKind.Void && rt != ec.Module.PredefinedTypes.Task.TypeSpec && !rt.IsGenericTask) {
+					ec.Report.Error (4010, loc, "Cannot convert async {0} to delegate type `{1}'",
+						GetSignatureForError (), delegate_type.GetSignatureForError ());
+
+					return null;
+				}
+
+				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type);
+			}
+
+			return CompatibleMethodFactory (return_type ?? InternalType.Arglist, delegate_type, p, b);
 		}
 
 		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
@@ -1531,7 +1529,8 @@ namespace Mono.CSharp {
 			//
 
 			Modifiers modifiers;
-			if (Block.HasCapturedVariable || Block.HasCapturedThis) {
+			var src_block = Block.Original.Explicit;
+			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
 				storey = FindBestMethodStorey ();
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {

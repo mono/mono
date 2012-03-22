@@ -2430,7 +2430,9 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasCapturedVariable {
-			set { flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable; }
+			set {
+				flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable;
+			}
 			get {
 				return (flags & Flags.HasCapturedVariable) != 0;
 			}
@@ -2478,8 +2480,9 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (am_storey != null) {
-				DefineAnonymousStorey (ec);
+			// TODO: The is check should go once state machine is fully separated
+			if (am_storey != null && !(am_storey is StateMachine)) {
+				DefineStoreyContainer (ec, am_storey);
 				am_storey.EmitStoreyInstantiation (ec, this);
 			}
 
@@ -2503,7 +2506,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void DefineAnonymousStorey (EmitContext ec)
+		protected void DefineStoreyContainer (EmitContext ec, AnonymousMethodStorey storey)
 		{
 			//
 			// Creates anonymous method storey
@@ -2512,33 +2515,33 @@ namespace Mono.CSharp {
 				//
 				// Creates parent storey reference when hoisted this is accessible
 				//
-				if (am_storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
-					ExplicitBlock parent = am_storey.OriginalSourceBlock.Explicit.Parent.Explicit;
+				if (storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
+					ExplicitBlock parent = storey.OriginalSourceBlock.Explicit.Parent.Explicit;
 
 					//
 					// Hoisted this exists in top-level parent storey only
 					//
-					while (parent.am_storey == null || parent.am_storey.Parent is AnonymousMethodStorey)
+					while (parent.AnonymousMethodStorey == null || parent.AnonymousMethodStorey.Parent is AnonymousMethodStorey)
 						parent = parent.Parent.Explicit;
 
-					am_storey.AddParentStoreyReference (ec, parent.am_storey);
+					storey.AddParentStoreyReference (ec, parent.AnonymousMethodStorey);
 				}
 
-				am_storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
+				storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
 
 				// TODO MemberCache: Review
-				am_storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
+				storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
 			}
 
-			am_storey.CreateContainer ();
-			am_storey.DefineContainer ();
+			storey.CreateContainer ();
+			storey.DefineContainer ();
 
-			var ref_blocks = am_storey.ReferencesFromChildrenBlock;
+			var ref_blocks = storey.ReferencesFromChildrenBlock;
 			if (ref_blocks != null) {
 				foreach (ExplicitBlock ref_block in ref_blocks) {
-					for (ExplicitBlock b = ref_block.Explicit; b.am_storey != am_storey; b = b.Parent.Explicit) {
-						if (b.am_storey != null) {
-							b.am_storey.AddParentStoreyReference (ec, am_storey);
+					for (ExplicitBlock b = ref_block.Explicit; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+						if (b.AnonymousMethodStorey != null) {
+							b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 
 							// Stop propagation inside same top block
 							if (b.ParametersBlock.Original == ParametersBlock.Original)
@@ -2552,8 +2555,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			am_storey.Define ();
-			am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+			storey.Define ();
+			storey.Parent.PartialContainer.AddCompilerGeneratedClass (storey);
 		}
 
 		public void RegisterAsyncAwait ()
@@ -2562,7 +2565,7 @@ namespace Mono.CSharp {
 			while ((block.flags & Flags.AwaitBlock) == 0) {
 				block.flags |= Flags.AwaitBlock;
 
-				if (block.Parent == null)
+				if (block is ParametersBlock)
 					return;
 
 				block = block.Parent.Explicit;
@@ -2714,6 +2717,7 @@ namespace Mono.CSharp {
 		bool resolved;
 		protected bool unreachable;
 		protected ToplevelBlock top_block;
+		protected StateMachine state_machine;
 
 		public ParametersBlock (Block parent, ParametersCompiled parameters, Location start)
 			: base (parent, 0, start, start)
@@ -2753,6 +2757,7 @@ namespace Mono.CSharp {
 			this.resolved = true;
 			this.unreachable = source.unreachable;
 			this.am_storey = source.am_storey;
+			this.state_machine = source.state_machine;
 
 			ParametersBlock = this;
 
@@ -2845,6 +2850,26 @@ namespace Mono.CSharp {
 			}
 
 			return base.CreateExpressionTree (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (state_machine != null) {
+				DefineStoreyContainer (ec, state_machine);
+				state_machine.EmitStoreyInstantiation (ec, this);
+			}
+
+			base.Emit (ec);
+		}
+
+		public void EmitEmbedded (EmitContext ec)
+		{
+			if (state_machine != null) {
+				DefineStoreyContainer (ec, state_machine);
+				state_machine.EmitStoreyInstantiation (ec, this);
+			}
+
+			base.Emit (ec);
 		}
 
 		public ParameterInfo GetParameterInfo (Parameter p)
@@ -2969,37 +2994,70 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void WrapIntoIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
+		public ToplevelBlock ConvertToIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
-			pb.statements = statements;
-			pb.Original = this;
+			var iterator = new Iterator (this, method, host, iterator_type, is_enumerable);
+			var stateMachine = new IteratorStorey (iterator);
 
-			var iterator = new Iterator (pb, method, host, iterator_type, is_enumerable);
-			am_storey = new IteratorStorey (iterator);
+			am_storey = stateMachine;
+			iterator.SetStateMachine (stateMachine);
 
-			statements = new List<Statement> (1);
-			AddStatement (new Return (iterator, iterator.Location));
-			flags &= ~Flags.YieldBlock;
-			IsCompilerGenerated = true;
+			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null);
+			tlb.IsCompilerGenerated = true;
+			tlb.state_machine = stateMachine;
+			tlb.AddStatement (new Return (iterator, iterator.Location));
+			return tlb;
 		}
 
-		public void WrapIntoAsyncTask (IMemberContext context, TypeDefinition host, TypeSpec returnType)
+		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
-			pb.statements = statements;
-			pb.Original = this;
+			for (int i = 0; i < parameters.Count; i++) {
+				Parameter p = parameters[i];
+				Parameter.Modifier mod = p.ModFlags;
+				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
+					host.Compiler.Report.Error (1988, p.Location,
+						"Async methods cannot have ref or out parameters");
+					return this;
+				}
+
+				if (p is ArglistParameter) {
+					host.Compiler.Report.Error (4006, p.Location,
+						"__arglist is not allowed in parameter list of async methods");
+					return this;
+				}
+
+				if (parameters.Types[i].IsPointer) {
+					host.Compiler.Report.Error (4005, p.Location,
+						"Async methods cannot have unsafe parameters");
+					return this;
+				}
+			}
+
+			if (!HasAwait) {
+				host.Compiler.Report.Warning (1998, 1, loc,
+					"Async block lacks `await' operator and will run synchronously");
+			}
 
 			var block_type = host.Module.Compiler.BuiltinTypes.Void;
-			var initializer = new AsyncInitializer (pb, host, block_type);
+			var initializer = new AsyncInitializer (this, host, block_type);
 			initializer.Type = block_type;
 
-			am_storey = new AsyncTaskStorey (context, initializer, returnType);
+			var stateMachine = new AsyncTaskStorey (this, context, initializer, returnType);
 
-			statements = new List<Statement> (1);
-			AddStatement (new StatementExpression (initializer));
-			flags &= ~Flags.AwaitBlock;
-			IsCompilerGenerated = true;
+			am_storey = stateMachine;
+			initializer.SetStateMachine (stateMachine);
+
+			var b = this is ToplevelBlock ?
+				new ToplevelBlock (host.Compiler, Parameters, Location.Null) :
+				new ParametersBlock (Parent, parameters, Location.Null) {
+					IsAsync = true,
+					Original = this
+				};
+
+			b.IsCompilerGenerated = true;
+			b.state_machine = stateMachine;
+			b.AddStatement (new StatementExpression (initializer));
+			return b;
 		}
 	}
 
