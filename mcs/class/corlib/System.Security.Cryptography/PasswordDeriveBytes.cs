@@ -118,7 +118,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 			initial = null;
 		}
 		// zeroize temporary password storage
-		Array.Clear (password, 0, password.Length);
+		if (password != null) {
+			Array.Clear (password, 0, password.Length);
+			password = null;
+		}
 	}
 
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
