@@ -5149,7 +5149,7 @@ namespace Mono.CSharp
 
 				if (ec.IsVariableCapturingRequired && !pi.Block.ParametersBlock.IsExpressionTree) {
 					AnonymousMethodStorey storey = pi.Block.Explicit.CreateAnonymousMethodStorey (ec);
-					storey.CaptureParameter (ec, this);
+					storey.CaptureParameter (ec, pi, this);
 				}
 			}
 

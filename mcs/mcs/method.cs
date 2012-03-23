@@ -1196,7 +1196,7 @@ namespace Mono.CSharp {
 						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
 					}
 
-					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType);
+					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, Location);
 					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
 			}

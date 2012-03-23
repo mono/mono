@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 		// Unique storey ID
 		public readonly int ID;
 
-		public readonly Block OriginalSourceBlock;
+		public readonly ExplicitBlock OriginalSourceBlock;
 
 		// A list of StoreyFieldPair with local field keeping parent storey instance
 		List<StoreyFieldPair> used_parent_storeys;
@@ -227,7 +227,7 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public Expression Instance;
 
-		public AnonymousMethodStorey (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
+		public AnonymousMethodStorey (ExplicitBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
 				tparams, 0, kind)
 		{
@@ -238,7 +238,7 @@ namespace Mono.CSharp {
 		public void AddCapturedThisField (EmitContext ec)
 		{
 			TypeExpr type_expr = new TypeExpression (ec.CurrentType, Location);
-			Field f = AddCompilerGeneratedField ("<>f__this", type_expr);
+			Field f = AddCompilerGeneratedField ("$this", type_expr);
 			f.Define ();
 			hoisted_this = new HoistedThis (this, f);
 
@@ -309,47 +309,57 @@ namespace Mono.CSharp {
 			used_parent_storeys.Add (new StoreyFieldPair (storey, f));
 		}
 
-		public void CaptureLocalVariable (ResolveContext ec, LocalVariable local_info)
+		public void CaptureLocalVariable (ResolveContext ec, LocalVariable localVariable)
 		{
 			if (this is StateMachine) {
-				if (ec.CurrentBlock.ParametersBlock != local_info.Block.ParametersBlock)
+				if (ec.CurrentBlock.ParametersBlock != localVariable.Block.ParametersBlock)
 					ec.CurrentBlock.Explicit.HasCapturedVariable = true;
 			} else {
 				ec.CurrentBlock.Explicit.HasCapturedVariable = true;
 			}
 
-			if (ec.CurrentBlock.Explicit != local_info.Block.Explicit)
-				AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
+			var hoisted = localVariable.HoistedVariant;
+			if (hoisted == null) {
+				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (localVariable));
+				localVariable.HoistedVariant = hoisted;
 
-			if (local_info.HoistedVariant != null)
-				return;
+				if (hoisted_locals == null)
+					hoisted_locals = new List<HoistedVariable> ();
 
-			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
-			local_info.HoistedVariant = var;
+				hoisted_locals.Add (hoisted);
+			}
 
-			if (hoisted_locals == null)
-				hoisted_locals = new List<HoistedVariable> ();
-
-			hoisted_locals.Add (var);
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit)
+				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 
-		public void CaptureParameter (ResolveContext ec, ParameterReference param_ref)
+		public void CaptureParameter (ResolveContext ec, ParametersBlock.ParameterInfo parameterInfo, ParameterReference parameterReference)
 		{
 			if (!(this is StateMachine)) {
 				ec.CurrentBlock.Explicit.HasCapturedVariable = true;
 			}
 
-			AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
+			var hoisted = parameterInfo.Parameter.HoistedVariant;
+			if (hoisted == null) {
+				var storey = parameterInfo.Block.StateMachine ?? this;
+				var hp = new HoistedParameter (storey, parameterReference);
+				hoisted = hp;
+				parameterInfo.Parameter.HoistedVariant = hoisted;
 
-			if (param_ref.GetHoistedVariable (ec) != null)
-				return;
+				if (storey.hoisted_params == null)
+					storey.hoisted_params = new List<HoistedParameter> (2);
 
-			if (hoisted_params == null)
-				hoisted_params = new List<HoistedParameter> (2);
+				storey.hoisted_params.Add (hp);
+			}
 
-			var expr = new HoistedParameter (this, param_ref);
-			param_ref.Parameter.HoistedVariant = expr;
-			hoisted_params.Add (expr);
+			//
+			// Register link between current block and parameter storey. It will
+			// be used when setting up storey definition to deploy storey reference
+			// when parameters are used from multiple blocks
+			//
+			if (ec.CurrentBlock.Explicit != parameterInfo.Block) {
+				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
+			}
 		}
 
 		TypeExpr CreateStoreyTypeExpression (EmitContext ec)
@@ -507,7 +517,7 @@ namespace Mono.CSharp {
 			//
 			// Define hoisted `this' in top-level storey only 
 			//
-			if (OriginalSourceBlock.Explicit.HasCapturedThis && !(Parent is AnonymousMethodStorey)) {
+			if (OriginalSourceBlock.HasCapturedThis && !(Parent is AnonymousMethodStorey)) {
 				AddCapturedThisField (ec);
 				rc.CurrentBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
 			}
@@ -666,6 +676,12 @@ namespace Mono.CSharp {
 		{
 			this.storey = storey;
 			this.field = field;
+		}
+
+		public AnonymousMethodStorey Storey {
+			get {
+				return storey;
+			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -1256,7 +1272,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type);
+				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type, loc);
 			}
 
 			return CompatibleMethodFactory (return_type ?? InternalType.Arglist, delegate_type, p, b);
@@ -1359,6 +1375,16 @@ namespace Mono.CSharp {
 		public abstract bool IsIterator { get; }
 		public abstract AnonymousMethodStorey Storey { get; }
 
+
+		//
+		// The block that makes up the body for the anonymous method
+		//
+		public ParametersBlock Block {
+			get {
+				return block;
+			}
+		}
+
 		public AnonymousExpression Compatible (ResolveContext ec)
 		{
 			return Compatible (ec, this);
@@ -1432,16 +1458,6 @@ namespace Mono.CSharp {
 				b = b.Parent == null ? null : b.Parent.Explicit;
 			} while (b != null);
 		}
-
-		//
-		// The block that makes up the body for the anonymous method
-		//
-		public ParametersBlock Block {
-			get {
-				return block;
-			}
-		}
-
 	}
 
 	public class AnonymousMethodBody : AnonymousExpression
@@ -1532,6 +1548,13 @@ namespace Mono.CSharp {
 			var src_block = Block.Original.Explicit;
 			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
 				storey = FindBestMethodStorey ();
+
+				//
+				// For iterators we can host everything in one class
+				//
+				if (storey == null && Block.TopBlock.StateMachine is IteratorStorey)
+					storey = block.TopBlock.StateMachine;
+
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
 				if (ec.CurrentAnonymousMethod != null)

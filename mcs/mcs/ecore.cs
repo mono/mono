@@ -6289,9 +6289,10 @@ namespace Mono.CSharp {
 
 			//
 			// Don't capture temporary variables except when using
-			// state machine redirection
+			// state machine redirection and block yields
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod is StateMachineInitializer && ec.IsVariableCapturingRequired) {
+			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.IsIterator &&
+				ec.CurrentBlock.Explicit.HasYield && ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
 				storey.CaptureLocalVariable (ec, li);
 			}

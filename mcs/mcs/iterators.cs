@@ -162,7 +162,7 @@ namespace Mono.CSharp
 		StateMachineMethod method;
 		int local_name_idx;
 
-		protected StateMachine (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
+		protected StateMachine (ParametersBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
 		{
 		}

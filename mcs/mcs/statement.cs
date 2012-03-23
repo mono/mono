@@ -2423,12 +2423,18 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasCapturedThis {
-			set { flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis; }
+			set {
+				flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis;
+			}
 			get {
 				return (flags & Flags.HasCapturedThis) != 0;
 			}
 		}
 
+		//
+		// Used to indicate that the block has reference to parent
+		// block and cannot be made static when defining anonymous method
+		//
 		public bool HasCapturedVariable {
 			set {
 				flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable;
@@ -2459,8 +2465,9 @@ namespace Mono.CSharp {
 				return ec.CurrentAnonymousMethod.Storey;
 
 			//
-			// When referencing a variable in parent iterator/async storey
-			// from nested anonymous method
+			// When referencing a variable inside iterator where all
+			// variables are already captured and we don't need to create
+			// another storey context
 			//
 			if (ParametersBlock.am_storey is StateMachine) {
 				return ParametersBlock.am_storey;
@@ -2508,18 +2515,16 @@ namespace Mono.CSharp {
 
 		protected void DefineStoreyContainer (EmitContext ec, AnonymousMethodStorey storey)
 		{
-			//
-			// Creates anonymous method storey
-			//
 			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
 				//
-				// Creates parent storey reference when hoisted this is accessible
+				// Creates parent storey reference when access to hoisted this is required
 				//
-				if (storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
-					ExplicitBlock parent = storey.OriginalSourceBlock.Explicit.Parent.Explicit;
+				var block = storey.OriginalSourceBlock;
+				if (block.HasCapturedThis && block.Parent != null) {
+					var parent = block.Parent.Explicit;
 
 					//
-					// Hoisted this exists in top-level parent storey only
+					// Hoisted this variable lives in top-level storey only
 					//
 					while (parent.AnonymousMethodStorey == null || parent.AnonymousMethodStorey.Parent is AnonymousMethodStorey)
 						parent = parent.Parent.Explicit;
@@ -2528,11 +2533,12 @@ namespace Mono.CSharp {
 				}
 
 				storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
-
-				// TODO MemberCache: Review
 				storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
 			}
 
+			//
+			// Creates anonymous method storey
+			//
 			storey.CreateContainer ();
 			storey.DefineContainer ();
 
@@ -2543,11 +2549,21 @@ namespace Mono.CSharp {
 						if (b.AnonymousMethodStorey != null) {
 							b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 
+							//
 							// Stop propagation inside same top block
-							if (b.ParametersBlock.Original == ParametersBlock.Original)
+							//
+							if (b.ParametersBlock == ParametersBlock.Original)
 								break;
 
 							b = b.ParametersBlock;
+						}
+
+						var pb = b as ParametersBlock;
+						if (pb != null && pb.StateMachine != null) {
+							if (pb.StateMachine == storey)
+								break;
+
+							pb.StateMachine.AddParentStoreyReference (ec, storey);
 						}
 
 						b.HasCapturedVariable = true;
@@ -2614,7 +2630,13 @@ namespace Mono.CSharp {
 
 			#region Properties
 
-			public Block Block {
+			public ParametersBlock Block {
+				get {
+					return block;
+				}
+			}
+
+			Block INamedBlockVariable.Block {
 				get {
 					return block;
 				}
@@ -2794,6 +2816,12 @@ namespace Mono.CSharp {
 		public ParametersCompiled Parameters {
 			get {
 				return parameters;
+			}
+		}
+
+		public StateMachine StateMachine {
+			get {
+				return state_machine;
 			}
 		}
 
@@ -3003,13 +3031,14 @@ namespace Mono.CSharp {
 			iterator.SetStateMachine (stateMachine);
 
 			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null);
+			tlb.Original = this;
 			tlb.IsCompilerGenerated = true;
 			tlb.state_machine = stateMachine;
 			tlb.AddStatement (new Return (iterator, iterator.Location));
 			return tlb;
 		}
 
-		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType)
+		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType, Location loc)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters[i];
@@ -3051,9 +3080,9 @@ namespace Mono.CSharp {
 				new ToplevelBlock (host.Compiler, Parameters, Location.Null) :
 				new ParametersBlock (Parent, parameters, Location.Null) {
 					IsAsync = true,
-					Original = this
 				};
 
+			b.Original = this;
 			b.IsCompilerGenerated = true;
 			b.state_machine = stateMachine;
 			b.AddStatement (new StatementExpression (initializer));
