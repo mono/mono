@@ -583,7 +583,9 @@ compare_hash_entries (const void *ep1, const void *ep2)
 gboolean
 mono_sgen_is_bridge_object (MonoObject *obj)
 {
-	return (obj->vtable->gc_bits & SGEN_GC_BIT_BRIDGE_OBJECT) == SGEN_GC_BIT_BRIDGE_OBJECT;
+	if ((obj->vtable->gc_bits & SGEN_GC_BIT_BRIDGE_OBJECT) != SGEN_GC_BIT_BRIDGE_OBJECT)
+		return FALSE;
+	return bridge_callbacks.is_bridge_object (obj);
 }
 
 static unsigned long step_1, step_2, step_3, step_4, step_5, step_6, step_7, step_8;
@@ -862,6 +864,12 @@ bridge_test_is_bridge_class (MonoClass *class)
 	return TRUE;
 }
 
+static gboolean
+bridge_test_is_bridge_object (MonoObject *object)
+{
+	return TRUE;
+}
+
 static void
 bridge_test_cross_reference (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs, MonoGCBridgeXRef *xrefs)
 {
@@ -886,6 +894,7 @@ mono_sgen_register_test_bridge_callbacks (void)
 	MonoGCBridgeCallbacks callbacks;
 	callbacks.bridge_version = MONO_SGEN_BRIDGE_VERSION;
 	callbacks.is_bridge_class = bridge_test_is_bridge_class;
+	callbacks.is_bridge_object = bridge_test_is_bridge_object;
 	callbacks.cross_references = bridge_test_cross_reference;
 	mono_gc_register_bridge_callbacks (&callbacks);
 }
