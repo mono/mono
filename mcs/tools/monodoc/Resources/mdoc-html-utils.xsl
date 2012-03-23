@@ -1526,9 +1526,9 @@
 			  <xsl:when test="count(@src)&gt;0">
 				<xsl:value-of select="@src" />
 			  </xsl:when>
-			  <xsl:otherwise>
-				<xsl:value-of select="source-id:{$source-id}:{@href}" />
-			  </xsl:otherwise>
+			  <xsl:when test="count(@href)&gt;0">
+				<xsl:value-of select="concat('source-id:', $source-id, ':', @href)" />
+			  </xsl:when>
 			</xsl:choose>
 		  </xsl:attribute>
 		  <xsl:attribute name="class">
