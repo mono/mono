@@ -91,6 +91,16 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] random = { 0x01 };
 			byte[] mask = pkcs1.GenerateMask (random, -1);
 		}
+		
+		[Test]
+		public void Bug3777 ()
+		{
+			int maskLen = 0x3F;
+			int seedLen = 0x40;
+			byte [] seed = new byte [seedLen];
+			byte [] mask = pkcs1.GenerateMask (seed, maskLen);
+			Assert.AreEqual (maskLen, mask.Length, "Length");
+		}
 
 		// This test will FAIL with MS framework 1.0 and 1.1 as their MGF1 implementation is buggy
 		// see ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-1/pkcs-1v2-1-vec.zip for RSA tests vector
