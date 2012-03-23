@@ -27,7 +27,7 @@ namespace MonoTests.System.Security.Cryptography {
 public class SHA256Test : HashAlgorithmTest {
 
 	[SetUp]
-	protected override void SetUp () 
+	public override void SetUp () 
 	{
 		hash = SHA256.Create ();
 	}
