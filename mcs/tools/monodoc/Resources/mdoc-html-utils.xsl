@@ -2551,7 +2551,7 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			<xsl:with-param name="type" select="$type" />
 			<xsl:with-param name="member" select="$member" />
 		</xsl:call-template>
-		<xsl:if test="count($member/Parameters/Parameter) &gt; 0">
+		<xsl:if test="count($member/Parameters/Parameter) &gt; 0 or $member/MemberType='Method'">
 			<xsl:text>(</xsl:text>
 			<xsl:for-each select="Parameters/Parameter">
 				<xsl:if test="not(position()=1)">,</xsl:if>
