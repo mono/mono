@@ -56,7 +56,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	protected HMACSHA1 algo;
 
 	[SetUp]
-	protected override void SetUp () 
+	public override void SetUp () 
 	{
 		hash = HMACSHA1.Create ();
 		(hash as KeyedHashAlgorithm).Key = new byte [8];
