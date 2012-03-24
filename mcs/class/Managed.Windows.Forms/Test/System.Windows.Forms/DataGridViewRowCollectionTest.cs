@@ -165,9 +165,9 @@ namespace MonoTests.System.Windows.Forms
 			foreach (DataGridViewRow row in dgv.Rows)
 			{
 				int index = row.Index;
-				Assert.IsInstanceOf (typeof (DataGridViewCheckBoxCell), row.Cells[0], "#" + index + "A");
-				Assert.IsInstanceOf (typeof (DataGridViewTextBoxCell), row.Cells[1], "#" + index + "B");
-				Assert.IsInstanceOf (typeof (DataGridViewTextBoxCell), row.Cells[2], "#" + index + "C");
+				Assert.IsInstanceOfType (typeof (DataGridViewCheckBoxCell), row.Cells[0], "#" + index + "A");
+				Assert.IsInstanceOfType (typeof (DataGridViewTextBoxCell), row.Cells[1], "#" + index + "B");
+				Assert.IsInstanceOfType (typeof (DataGridViewTextBoxCell), row.Cells[2], "#" + index + "C");
 			}
 		}
 	}

@@ -285,7 +285,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Ignore ("Fails on both Mono and MS")]
 		public void GetHostByAddressIPAddress2 ()
 		{
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));
