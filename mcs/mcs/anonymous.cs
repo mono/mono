@@ -1375,7 +1375,6 @@ namespace Mono.CSharp {
 		public abstract bool IsIterator { get; }
 		public abstract AnonymousMethodStorey Storey { get; }
 
-
 		//
 		// The block that makes up the body for the anonymous method
 		//
@@ -1678,9 +1677,7 @@ namespace Mono.CSharp {
 				// Mutate anonymous method instance type if we are in nested
 				// hoisted generic anonymous method storey
 				//
-				if (ec.CurrentAnonymousMethod != null &&
-					ec.CurrentAnonymousMethod.Storey != null &&
-					ec.CurrentAnonymousMethod.Storey.Mutator != null) {
+				if (ec.IsAnonymousStoreyMutateRequired) {
 					t = storey.Mutator.Mutate (t);
 				}
 
@@ -1794,7 +1791,7 @@ namespace Mono.CSharp {
 			c.Block = new ToplevelBlock (parent.Module.Compiler, c.ParameterInfo, loc);
 
 			// 
-			// Create fields and contructor body with field initialization
+			// Create fields and constructor body with field initialization
 			//
 			bool error = false;
 			for (int i = 0; i < parameters.Count; ++i) {
