@@ -903,13 +903,43 @@ namespace Mono.CSharp
 	}
 
 	//
-	// Iterators are implemented as hidden anonymous block
+	// Iterators are implemented as state machine blocks
 	//
 	public class Iterator : StateMachineInitializer
 	{
+		sealed class TryFinallyBlockProxyStatement : Statement
+		{
+			TryFinallyBlock block;
+			Iterator iterator;
+
+			public TryFinallyBlockProxyStatement (Iterator iterator, TryFinallyBlock block)
+			{
+				this.iterator = iterator;
+				this.block = block;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotSupportedException ();
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				//
+				// Restore redirection for any captured variables
+				//
+				ec.CurrentAnonymousMethod = iterator;
+
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
+					block.EmitFinallyBody (ec);
+				}
+			}
+		}
+
 		public readonly IMethodData OriginalMethod;
 		public readonly bool IsEnumerable;
 		public readonly TypeSpec OriginalIteratorType;
+		int finally_hosts_counter;
 
 		public Iterator (ParametersBlock block, IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 			: base (block, host, host.Compiler.BuiltinTypes.Bool)
@@ -919,6 +949,8 @@ namespace Mono.CSharp
 			this.IsEnumerable = is_enumerable;
 			this.type = method.ReturnType;
 		}
+
+		#region Properties
 
 		public ToplevelBlock Container {
 			get { return OriginalMethod.Block; }
@@ -930,6 +962,22 @@ namespace Mono.CSharp
 
 		public override bool IsIterator {
 			get { return true; }
+		}
+
+		#endregion
+
+		public Method CreateFinallyHost (TryFinallyBlock block)
+		{
+			var method = new Method (storey, new TypeExpression (storey.Compiler.BuiltinTypes.Void, loc),
+				Modifiers.COMPILER_GENERATED, new MemberName (CompilerGeneratedContainer.MakeName (null, null, "Finally", finally_hosts_counter++), loc),
+				ParametersCompiled.EmptyReadOnlyParameters, null);
+
+			method.Block = new ToplevelBlock (method.Compiler, method.ParameterInfo, loc);
+			method.Block.IsCompilerGenerated = true;
+			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
+
+			storey.AddMember (method);
+			return method;
 		}
 
 		public void EmitYieldBreak (EmitContext ec, bool unwind_protect)

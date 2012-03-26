@@ -4420,6 +4420,7 @@ namespace Mono.CSharp {
 		protected Statement stmt;
 		Label dispose_try_block;
 		bool prepared_for_dispose, emitted_dispose;
+		Method finally_host;
 
 		protected TryFinallyBlock (Statement stmt, Location loc)
 			: base (loc)
@@ -4438,7 +4439,7 @@ namespace Mono.CSharp {
 		#endregion
 
 		protected abstract void EmitTryBody (EmitContext ec);
-		protected abstract void EmitFinallyBody (EmitContext ec);
+		public abstract void EmitFinallyBody (EmitContext ec);
 
 		public override Label PrepareForDispose (EmitContext ec, Label end)
 		{
@@ -4466,7 +4467,14 @@ namespace Mono.CSharp {
 			}
 
 			ec.MarkLabel (start_finally);
-			EmitFinallyBody (ec);
+
+			if (finally_host != null) {
+				var ce = new CallEmitter ();
+				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+			} else {
+				EmitFinallyBody (ec);
+			}
 
 			ec.EndExceptionBlock ();
 		}
@@ -4510,12 +4518,10 @@ namespace Mono.CSharp {
 				bool emit_dispatcher = j < labels.Length;
 
 				if (emit_dispatcher) {
-					//SymbolWriter.StartIteratorDispatcher (ec.ig);
 					ec.Emit (OpCodes.Ldloc, pc);
 					ec.EmitInt (first_resume_pc);
 					ec.Emit (OpCodes.Sub);
 					ec.Emit (OpCodes.Switch, labels);
-					//SymbolWriter.EndIteratorDispatcher (ec.ig);
 				}
 
 				foreach (ResumableStatement s in resume_points)
@@ -4526,9 +4532,31 @@ namespace Mono.CSharp {
 
 			ec.BeginFinallyBlock ();
 
-			EmitFinallyBody (ec);
+			if (finally_host != null) {
+				var ce = new CallEmitter ();
+				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+			} else {
+				EmitFinallyBody (ec);
+			}
 
 			ec.EndExceptionBlock ();
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			//
+			// Finally block inside iterator is called from MoveNext and
+			// Dispose methods that means we need to lift the block into
+			// newly created host method to emit the body only once. The
+			// original block then simply calls the newly generated method.
+			//
+			if (bc.CurrentIterator != null && !bc.IsInProbingMode) {
+				var iterator = bc.CurrentIterator;
+				finally_host = iterator.CreateFinallyHost (this);
+			}
+
+			return base.Resolve (bc);
 		}
 	}
 
@@ -4718,7 +4746,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			//
 			// if (lock_taken) Monitor.Exit (expr_copy)
@@ -5312,6 +5340,7 @@ namespace Mono.CSharp {
 
 			if (ok)
 				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
+
 			using (ec.With (ResolveContext.Options.FinallyScope, true)) {
 				if (!fini.Resolve (ec))
 					ok = false;
@@ -5329,7 +5358,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
 		}
@@ -5673,7 +5702,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			decl.EmitDispose (ec);
 		}
