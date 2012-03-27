@@ -930,7 +930,7 @@ namespace Mono.CSharp
 				//
 				ec.CurrentAnonymousMethod = iterator;
 
-				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, !ec.HasMethodSymbolBuilder)) {
 					block.EmitFinallyBody (ec);
 				}
 			}
@@ -1015,11 +1015,13 @@ namespace Mono.CSharp
 
 		public void EmitDispose (EmitContext ec)
 		{
+			if (resume_points == null)
+				return;
+
 			Label end = ec.DefineLabel ();
 
 			Label[] labels = null;
-			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
-			for (int i = 0; i < n_resume_points; ++i) {
+			for (int i = 0; i < resume_points.Count; ++i) {
 				ResumableStatement s = resume_points[i];
 				Label ret = s.PrepareForDispose (ec, end);
 				if (ret.Equals (end) && labels == null)

@@ -139,6 +139,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasMethodSymbolBuilder {
+			get {
+				return methodSymbols != null;
+			}
+		}
+
 		public bool HasReturnLabel {
 			get {
 				return return_label.HasValue;

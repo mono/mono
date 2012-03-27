@@ -3117,7 +3117,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -3143,7 +3143,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -5189,7 +5189,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -7501,7 +7501,7 @@
         <size>80</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8307,7 +8307,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8333,7 +8333,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8359,7 +8359,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8385,7 +8385,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8533,7 +8533,7 @@
         <size>49</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8559,7 +8559,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8625,7 +8625,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8645,7 +8645,7 @@
         <size>49</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -9216,10 +9216,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>199</size>
+        <size>215</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -9252,11 +9252,6 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="MyTest+&lt;Map&gt;c__Iterator0`4[Aa,Af,Rf,Rr]">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -9921,7 +9916,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -9941,7 +9936,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10016,7 +10011,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10608,7 +10603,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10628,7 +10623,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -11372,7 +11367,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -13392,10 +13387,10 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>173</size>
+        <size>189</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -13407,11 +13402,6 @@
     <type name="TestGoto+&lt;setX&gt;c__Iterator0">
       <method name="Void &lt;&gt;__Finally0()" attrs="129">
         <size>9</size>
-      </method>
-    </type>
-    <type name="TestGoto+&lt;test&gt;c__Iterator1">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -18055,10 +18045,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>181</size>
+        <size>211</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -18093,11 +18083,6 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Select&gt;c__Iterator0`1[T]">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>37</size>
       </method>
     </type>
   </test>
@@ -19914,19 +19899,16 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>287</size>
+        <size>303</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -21640,7 +21622,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -21679,10 +21661,10 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>188</size>
+        <size>204</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -21705,26 +21687,16 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>221</size>
+        <size>232</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Annotations&gt;c__Iterator0`1[T]">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Annotations&gt;c__Iterator1">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>18</size>
       </method>
     </type>
   </test>
@@ -21768,7 +21740,7 @@
         <size>38</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -21812,19 +21784,16 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>181</size>
+        <size>197</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -21914,19 +21883,16 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>186</size>
+        <size>197</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>18</size>
       </method>
     </type>
   </test>
@@ -22105,19 +22071,16 @@
         <size>19</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>173</size>
+        <size>184</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>64</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>18</size>
       </method>
     </type>
   </test>
@@ -22194,19 +22157,16 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>195</size>
+        <size>225</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>37</size>
       </method>
     </type>
   </test>
@@ -22347,19 +22307,16 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>173</size>
+        <size>189</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -22437,10 +22394,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>179</size>
+        <size>195</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -22463,26 +22420,16 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>179</size>
+        <size>195</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="Test.Derived+&lt;GetStuff&gt;c__Iterator1">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
-      </method>
-    </type>
-    <type name="Test.SpecialDerived+&lt;GetStuff&gt;c__Iterator2">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -22515,7 +22462,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -22604,10 +22551,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>187</size>
+        <size>203</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>69</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -22622,11 +22569,6 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="IEnumerableTransform+&lt;Transform&gt;c__Iterator0`1[TOut]">
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
       </method>
     </type>
   </test>
@@ -22708,6 +22650,53 @@
       </method>
       <method name="Void &lt;&gt;m__0()" attrs="131">
         <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-22.cs">
+    <type name="D">
+      <method name="Void Dispose()" attrs="486">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="IEnumerable`1 Test()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>78</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>74</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>1</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50542,19 +50531,16 @@
         <size>14</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>177</size>
+        <size>207</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>37</size>
       </method>
     </type>
   </test>
@@ -57014,7 +57000,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -57882,10 +57868,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>361</size>
+        <size>377</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>77</size>
+        <size>93</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -57894,9 +57880,6 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>23</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally1()" attrs="129">
         <size>23</size>
       </method>
     </type>
@@ -57926,19 +57909,16 @@
         <size>14</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>663</size>
+        <size>693</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>73</size>
+        <size>103</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>37</size>
       </method>
     </type>
   </test>
@@ -58134,16 +58114,13 @@
         <size>27</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>20</size>
       </method>
     </type>
   </test>
@@ -58251,19 +58228,16 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>42</size>
+        <size>38</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>3</size>
       </method>
     </type>
   </test>
@@ -58497,19 +58471,16 @@
         <size>14</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>177</size>
+        <size>207</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>53</size>
+        <size>83</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;__Finally0()" attrs="129">
-        <size>37</size>
       </method>
     </type>
   </test>
@@ -58606,7 +58577,7 @@
         <size>54</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -59235,7 +59206,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -59261,7 +59232,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -59287,7 +59258,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>

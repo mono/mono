@@ -4552,8 +4552,10 @@ namespace Mono.CSharp {
 			// original block then simply calls the newly generated method.
 			//
 			if (bc.CurrentIterator != null && !bc.IsInProbingMode) {
-				var iterator = bc.CurrentIterator;
-				finally_host = iterator.CreateFinallyHost (this);
+				var b = stmt as Block;
+				if (b != null && b.Explicit.HasYield) {
+					finally_host = bc.CurrentIterator.CreateFinallyHost (this);
+				}
 			}
 
 			return base.Resolve (bc);

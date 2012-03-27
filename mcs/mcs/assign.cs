@@ -567,10 +567,10 @@ namespace Mono.CSharp {
 
 			//
 			// Emit sequence symbol info even if we are in compiler generated
-			// block to allow debugging filed initializers when constructor is
+			// block to allow debugging field initializers when constructor is
 			// compiler generated
 			//
-			if (ec.HasSet (BuilderContext.Options.OmitDebugInfo)) {
+			if (ec.HasSet (BuilderContext.Options.OmitDebugInfo) && ec.HasMethodSymbolBuilder) {
 				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
 					ec.Mark (loc);
 				}
