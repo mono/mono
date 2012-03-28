@@ -8,6 +8,7 @@ RESOURCES = $(RESX_DIST:.resx=.resources)
 
 LIBRARY = System.Json.dll
 LIB_MCS_FLAGS = \
+		/d:ASPNETMVC \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
 	        /r:System.Core.dll \
