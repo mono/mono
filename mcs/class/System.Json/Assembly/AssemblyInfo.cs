@@ -37,8 +37,8 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Json assembly
 
-[assembly: AssemblyTitle ("System.Json.dll")]
-[assembly: AssemblyDescription ("System.Json.dll")]
+//[assembly: AssemblyTitle ("System.Json.dll")]
+//[assembly: AssemblyDescription ("System.Json.dll")]
 [assembly: AssemblyDefaultAlias ("System.Json.dll")]
 
 [assembly: AssemblyCompany (Consts.MonoCompany)]
