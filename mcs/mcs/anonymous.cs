@@ -227,6 +227,8 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public Expression Instance;
 
+		bool initialize_hoisted_this;
+
 		public AnonymousMethodStorey (ExplicitBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
 				tparams, 0, kind)
@@ -239,17 +241,9 @@ namespace Mono.CSharp {
 		{
 			TypeExpr type_expr = new TypeExpression (ec.CurrentType, Location);
 			Field f = AddCompilerGeneratedField ("$this", type_expr);
-			f.Define ();
 			hoisted_this = new HoistedThis (this, f);
 
-			// Inflated type instance has to be updated manually
-			if (Instance.Type is InflatedTypeSpec) {
-				var inflator = new TypeParameterInflator (this, Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
-				Instance.Type.MemberCache.AddMember (f.Spec.InflateMember (inflator));
-
-				inflator = new TypeParameterInflator (this, f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
-				f.Parent.CurrentType.MemberCache.AddMember (f.Spec.InflateMember (inflator));
-			}
+			initialize_hoisted_this = true;
 		}
 
 		public Field AddCapturedVariable (string name, TypeSpec type)
@@ -515,10 +509,10 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Define hoisted `this' in top-level storey only 
+			// Initialize hoisted `this' only once, everywhere else will be
+			// referenced indirectly
 			//
-			if (OriginalSourceBlock.HasCapturedThis && !(Parent is AnonymousMethodStorey)) {
-				AddCapturedThisField (ec);
+			if (initialize_hoisted_this) {
 				rc.CurrentBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
 			}
 
@@ -610,7 +604,12 @@ namespace Mono.CSharp {
 		}
 
 		public HoistedThis HoistedThis {
-			get { return hoisted_this; }
+			get {
+				return hoisted_this;
+			}
+			set {
+				hoisted_this = value;
+			}
 		}
 
 		public IList<ExplicitBlock> ReferencesFromChildrenBlock {
@@ -1547,6 +1546,12 @@ namespace Mono.CSharp {
 			var src_block = Block.Original.Explicit;
 			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
 				storey = FindBestMethodStorey ();
+
+				//
+				// Remove hoisted this demand when simple instance method is enough
+				//
+				if (storey == null && src_block.HasCapturedThis)
+					src_block.ParametersBlock.TopBlock.RemoveThisReferenceFromChildrenBlock (src_block);
 
 				//
 				// For iterators we can host everything in one class

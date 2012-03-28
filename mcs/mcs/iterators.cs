@@ -11,10 +11,6 @@
 // Copyright 2011 Xamarin Inc.
 //
 
-// TODO:
-//    Flow analysis for Yield.
-//
-
 using System;
 using System.Collections.Generic;
 using Mono.CompilerServices.SymbolWriter;

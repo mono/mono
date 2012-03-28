@@ -2466,7 +2466,7 @@ namespace Mono.CSharp {
 
 			//
 			// When referencing a variable inside iterator where all
-			// variables are already captured and we don't need to create
+			// variables will be captured anyway we don't need to create
 			// another storey context
 			//
 			if (ParametersBlock.am_storey is StateMachine) {
@@ -2516,22 +2516,6 @@ namespace Mono.CSharp {
 		protected void DefineStoreyContainer (EmitContext ec, AnonymousMethodStorey storey)
 		{
 			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
-				//
-				// Creates parent storey reference when access to hoisted this is required
-				//
-				var block = storey.OriginalSourceBlock;
-				if (block.HasCapturedThis && block.Parent != null) {
-					var parent = block.Parent.Explicit;
-
-					//
-					// Hoisted this variable lives in top-level storey only
-					//
-					while (parent.AnonymousMethodStorey == null || parent.AnonymousMethodStorey.Parent is AnonymousMethodStorey)
-						parent = parent.Parent.Explicit;
-
-					storey.AddParentStoreyReference (ec, parent.AnonymousMethodStorey);
-				}
-
 				storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
 				storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
 			}
@@ -2542,10 +2526,72 @@ namespace Mono.CSharp {
 			storey.CreateContainer ();
 			storey.DefineContainer ();
 
+			if (Original.Explicit.HasCapturedThis && Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock != null) {
+
+				//
+				// Only first storey in path will hold this reference. All children blocks will
+				// reference it indirectly using $ref field
+				//
+				for (Block b = Original.Explicit.Parent; b != null; b = b.Parent) {
+					var s = b.Explicit.AnonymousMethodStorey;
+					if (s != null) {
+						storey.HoistedThis = s.HoistedThis;
+						break;
+					}
+				}
+
+				//
+				// We are the first storey on path and this has to be hoisted
+				//
+				if (storey.HoistedThis == null) {
+					foreach (ExplicitBlock ref_block in Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock) {
+						//
+						// ThisReferencesFromChildrenBlock holds all reference even if they
+						// are not on this path. It saves some memory otherwise it'd have to
+						// be in every explicit block. We run this check to see if the reference
+						// is valid for this storey
+						//
+						Block block_on_path = ref_block;
+						for (; block_on_path != null && block_on_path != Original; block_on_path = block_on_path.Parent);
+
+						if (block_on_path == null)
+							continue;
+
+						if (storey.HoistedThis == null)
+							storey.AddCapturedThisField (ec);
+
+						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+							if (b.AnonymousMethodStorey != null) {
+								b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
+								b.AnonymousMethodStorey.HoistedThis = storey.HoistedThis;
+
+								//
+								// Stop propagation inside same top block
+								//
+								if (b.ParametersBlock == ParametersBlock.Original)
+									break;
+
+								b = b.ParametersBlock;
+							}
+
+							var pb = b as ParametersBlock;
+							if (pb != null && pb.StateMachine != null) {
+								if (pb.StateMachine == storey)
+									break;
+
+								pb.StateMachine.AddParentStoreyReference (ec, storey);
+							}
+
+							b.HasCapturedVariable = true;
+						}
+					}
+				}
+			}
+
 			var ref_blocks = storey.ReferencesFromChildrenBlock;
 			if (ref_blocks != null) {
 				foreach (ExplicitBlock ref_block in ref_blocks) {
-					for (ExplicitBlock b = ref_block.Explicit; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+					for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
 						if (b.AnonymousMethodStorey != null) {
 							b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 
@@ -3100,11 +3146,7 @@ namespace Mono.CSharp {
 		Dictionary<string, object> names;
 		Dictionary<string, object> labels;
 
-		public HoistedVariable HoistedThisVariable;
-
-		public Report Report {
-			get { return compiler.Report; }
-		}
+		List<ExplicitBlock> this_references;
 
 		public ToplevelBlock (CompilerContext ctx, Location loc)
 			: this (ctx, ParametersCompiled.EmptyReadOnlyParameters, loc)
@@ -3138,6 +3180,31 @@ namespace Mono.CSharp {
 		public bool IsIterator {
 			get {
 				return HasYield;
+			}
+		}
+
+		public Report Report {
+			get {
+				return compiler.Report;
+			}
+		}
+
+		//
+		// Used by anonymous blocks to track references of `this' variable
+		//
+		public List<ExplicitBlock> ThisReferencesFromChildrenBlock {
+			get {
+				return this_references;
+			}
+		}
+
+		//
+		// Returns the "this" instance variable of this block.
+		// See AddThisVariable() for more information.
+		//
+		public LocalVariable ThisVariable {
+			get {
+				return this_variable;
 			}
 		}
 
@@ -3261,6 +3328,20 @@ namespace Mono.CSharp {
 			existing_list.Add (label);
 		}
 
+		public void AddThisReferenceFromChildrenBlock (ExplicitBlock block)
+		{
+			if (this_references == null)
+				this_references = new List<ExplicitBlock> ();
+
+			if (!this_references.Contains (block))
+				this_references.Add (block);
+		}
+
+		public void RemoveThisReferenceFromChildrenBlock (ExplicitBlock block)
+		{
+			this_references.Remove (block);
+		}
+
 		//
 		// Creates an arguments set from all parameters, useful for method proxy calls
 		//
@@ -3369,14 +3450,6 @@ namespace Mono.CSharp {
 			}
 				
 			return null;
-		}
-
-		// <summary>
-		//   Returns the "this" instance variable of this block.
-		//   See AddThisVariable() for more information.
-		// </summary>
-		public LocalVariable ThisVariable {
-			get { return this_variable; }
 		}
 
 		// <summary>

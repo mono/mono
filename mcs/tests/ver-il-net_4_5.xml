@@ -45969,7 +45969,7 @@
   <test name="test-anon-10.cs">
     <type name="S">
       <method name="Void Test()" attrs="134">
-        <size>108</size>
+        <size>101</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>79</size>
@@ -45999,7 +45999,7 @@
     </type>
     <type name="S+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>77</size>
+        <size>87</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48832,7 +48832,7 @@
     </type>
     <type name="T+&lt;GetD&gt;c__AnonStorey2`1[T]">
       <method name="Void &lt;&gt;m__0(System.Object)" attrs="131">
-        <size>82</size>
+        <size>75</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -49138,6 +49138,69 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-170.cs">
+    <type name="MyClass">
+      <method name="Int32 Test(Int32)" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Run()" attrs="134">
+        <size>42</size>
+      </method>
+      <method name="Void Run2()" attrs="134">
+        <size>42</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__0(Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__1(Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void &lt;Run2&gt;m__2(Int32)" attrs="129">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;Run2&gt;m__3(Int32)" attrs="129">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__4()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run&gt;c__AnonStorey1">
+      <method name="Int32 &lt;&gt;m__5()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run2&gt;c__AnonStorey2">
+      <method name="Int32 &lt;&gt;m__6()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run2&gt;c__AnonStorey3">
+      <method name="Int32 &lt;&gt;m__7()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
@@ -50440,7 +50503,7 @@
         <size>2</size>
       </method>
       <method name="Void Test(Int32)" attrs="134">
-        <size>156</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50466,7 +50529,7 @@
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey2">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>46</size>
+        <size>51</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50493,7 +50556,7 @@
         <size>2</size>
       </method>
       <method name="Void Test(Int32)" attrs="134">
-        <size>204</size>
+        <size>190</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50519,7 +50582,7 @@
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>64</size>
+        <size>79</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -51041,7 +51104,7 @@
   <test name="test-anon-61.cs">
     <type name="X">
       <method name="Int32 Test()" attrs="134">
-        <size>381</size>
+        <size>374</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>67</size>
@@ -51071,7 +51134,7 @@
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>158</size>
+        <size>173</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -51638,7 +51701,7 @@
         <size>2</size>
       </method>
       <method name="Void TestMe()" attrs="129">
-        <size>159</size>
+        <size>152</size>
       </method>
       <method name="Boolean &lt;TestMe&gt;m__0()" attrs="145">
         <size>10</size>
@@ -51654,7 +51717,7 @@
     </type>
     <type name="Test+&lt;TestMe&gt;c__AnonStorey0">
       <method name="Boolean &lt;&gt;m__1()" attrs="131">
-        <size>62</size>
+        <size>67</size>
       </method>
       <method name="Boolean &lt;&gt;m__2()" attrs="131">
         <size>22</size>
@@ -52683,7 +52746,7 @@
   <test name="test-anon-97.cs">
     <type name="Space">
       <method name="Void Leak(Boolean, Int32)" attrs="134">
-        <size>88</size>
+        <size>81</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>14</size>
@@ -52718,7 +52781,7 @@
     </type>
     <type name="Space+&lt;Leak&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>19</size>
+        <size>24</size>
       </method>
       <method name="Void &lt;&gt;m__1()" attrs="131">
         <size>70</size>
@@ -55806,14 +55869,14 @@
       <method name="Void MoveNext()" attrs="486">
         <size>200</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
       </method>
     </type>
   </test>
