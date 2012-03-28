@@ -185,7 +185,8 @@ net_4_0_dirs := \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
 	System.Data.Services	\
-	System.Json
+	System.Json \
+	System.Web.Razor
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
