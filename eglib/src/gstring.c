@@ -175,7 +175,7 @@ g_string_insert (GString *string, gssize pos, const gchar *val)
 	len = strlen (val);
 	
 	GROW_IF_NECESSARY(string, len);	
-	memmove(string->str + pos + len, string->str + pos, string->len - pos - len + 1);
+	memmove(string->str + pos + len, string->str + pos, string->len - pos + 1);
 	memcpy(string->str + pos, val, len);
 
 	return string;
