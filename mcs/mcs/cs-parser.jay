@@ -391,6 +391,8 @@ outer_declaration
 			Attributes attrs = (Attributes) $4;
 			report.Error (1730, attrs.Attrs [0].Location,
 				"Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+
+			current_namespace.UnattachedAttributes = attrs;
 		}
 	  }
 	| opt_extern_alias_directives opt_using_directives attribute_sections
@@ -608,9 +610,7 @@ namespace_or_type_declaration
 		current_namespace.DeclarationFound = true;
 	  }
 	| attribute_sections CLOSE_BRACE {
-#if FULL_AST
 		current_namespace.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1518, lexer.Location, "Attributes must be attached to class, delegate, enum, interface or struct");
 		lexer.putback ('}');
 	  }
@@ -2450,10 +2450,9 @@ event_accessor_block
 	;
 
 attributes_without_members
-	: attribute_sections CLOSE_BRACE {
-#if FULL_AST
+	: attribute_sections CLOSE_BRACE
+	  {
 		current_type.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1519, GetLocation ($1), "An attribute is missing member declaration");
 		lexer.putback ('}');
 	  }
@@ -5265,7 +5264,7 @@ foreach_statement
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
-		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, null, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5274,7 +5273,7 @@ foreach_statement
 	| FOREACH open_parens_any type identifier_inside_body error
 	  {
 		Error_SyntaxError (yyToken);
-	  
+	
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
@@ -5282,7 +5281,7 @@ foreach_statement
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location);
 		current_block.AddLocalName (li);
 		
-		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, li, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5302,12 +5301,12 @@ foreach_statement
 	  {
 		if ($9 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($9));
-	  
-		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
-		current_block.AddStatement (f);
 		
+		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, current_block, GetLocation ($1));
 		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
-		$$ = end_block (GetLocation ($7));
+		end_block (GetLocation ($7));
+		
+		$$ = f;
 	  }
 	;
 
@@ -5752,7 +5751,7 @@ from_clause
 	;	
 
 query_body
-	: opt_query_body_clauses select_or_group_clause opt_query_continuation 
+	: query_body_clauses select_or_group_clause opt_query_continuation 
 	  {
 	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
@@ -5767,7 +5766,24 @@ query_body
 		
 		$$ = head;
 	  }
-	| opt_query_body_clauses COMPLETE_COMPLETION
+	| select_or_group_clause opt_query_continuation
+	  {
+	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
+
+		if ($1 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
+			clause.Tail.Next = head;
+			head = clause;
+		}
+		
+		$$ = head;
+	  }
+	| query_body_clauses COMPLETE_COMPLETION
+	| query_body_clauses error
+	  {
+		report.Error (742, GetLocation ($2), "Unexpected symbol `{0}'. A query body must end with select or group clause", GetSymbolName (yyToken));
+		$$ = $1;
+	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
@@ -5810,11 +5826,6 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  }
-	;
-	
-opt_query_body_clauses
-	: /* empty */
-	| query_body_clauses
 	;
 	
 query_body_clauses

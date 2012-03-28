@@ -64,8 +64,28 @@ typedef enum {
 	Rts = 16  /* Request to send */
 } MonoSerialSignal;
 
+/*
+ * Silence the compiler, we do not need these prototypes to be public, since these are only
+ * used by P/Invoke
+ */
+
+int              open_serial (char *devfile);
+int              close_serial (int unix_fd);
+guint32          read_serial (int fd, guchar *buffer, int offset, int count);
+int              write_serial (int fd, guchar *buffer, int offset, int count, int timeout);
+int              discard_buffer (int fd, gboolean input);
+gint32           get_bytes_in_buffer (int fd, gboolean input);
+gboolean         is_baud_rate_legal (int baud_rate);
+int              setup_baud_rate (int baud_rate);
+gboolean         set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake);
+MonoSerialSignal get_signals (int fd, gint32 *error);
+gint32           set_signal (int fd, MonoSerialSignal signal, gboolean value);
+int              breakprop (int fd);
+gboolean         poll_serial (int fd, gint32 *error, int timeout);
+void            *list_serial_devices (void);
+
 int
-open_serial (char* devfile)
+open_serial (char *devfile)
 {
 	int fd;
 	fd = open (devfile, O_RDWR | O_NOCTTY | O_NONBLOCK);
@@ -104,7 +124,7 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 
 	while (n > 0)
 	{
-		size_t t;
+		ssize_t t;
 			
 		if (timeout != 0) {
 			int c;

@@ -1,7 +1,6 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 class S
 {
@@ -11,7 +10,7 @@ class S
 	}
 }
 
-class A
+class A : INotifyCompletion
 {
 	bool IsCompleted {
 		get {
@@ -19,7 +18,7 @@ class A
 		}
 	}
 	
-	void OnCompleted (System.Action a)
+	void INotifyCompletion.OnCompleted (Action a)
 	{
 		a ();
 	}

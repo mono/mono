@@ -5,6 +5,7 @@
  *
  * Copyright 2002-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
  */
 
 #include <config.h>
@@ -1532,7 +1533,7 @@ mono_gc_bzero (void *dest, size_t size)
 {
 	char *p = (char*)dest;
 	char *end = p + size;
-	char *align_end = p + unaligned_bytes (p);
+	char *align_end = align_up (p);
 	char *word_end;
 
 	while (p < align_end)

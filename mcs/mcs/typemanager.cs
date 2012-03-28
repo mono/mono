@@ -318,6 +318,7 @@ namespace Mono.CSharp
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetStateMachine;
@@ -325,6 +326,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderOnCompletedUnsafe;
 		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderTask;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetResult;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetStateMachine;
@@ -332,6 +334,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericOnCompletedUnsafe;
 		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderGenericTask;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetStateMachine;
@@ -424,6 +427,17 @@ namespace Mono.CSharp
 							}, false),
 					btypes.Void));
 
+			AsyncTaskMethodBuilderStart = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("Start", 1,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+							}, false),
+					btypes.Void));
+
 			AsyncTaskMethodBuilderTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Property ("Task", null));
 
@@ -470,6 +484,17 @@ namespace Mono.CSharp
 							}, false),
 					btypes.Void));
 
+			AsyncTaskMethodBuilderGenericStart = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("Start", 1,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
+							}, false),
+					btypes.Void));
+
 			AsyncTaskMethodBuilderGenericTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Property ("Task", null));
 
@@ -510,6 +535,17 @@ namespace Mono.CSharp
 						new[] {
 								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 								new TypeParameterSpec (1, tp, SpecialConstraint.None, Variance.None, null)
+							}, false),
+					btypes.Void));
+
+			AsyncVoidMethodBuilderStart = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("Start", 1,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+							},
+						new[] {
+								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 							}, false),
 					btypes.Void));
 

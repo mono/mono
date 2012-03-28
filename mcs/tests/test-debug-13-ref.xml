@@ -54,9 +54,7 @@
         <entry il="0x3d" row="14" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
-      <scopes>
-        <entry index="0" start="0x22" end="0x3d" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x600000a">
       <sequencepoints />
@@ -99,9 +97,7 @@
         <entry il="0x13" row="18" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
-      <scopes>
-        <entry index="0" start="0x13" end="0x18" />
-      </scopes>
+      <scopes />
     </method>
     <method token="0x6000012">
       <sequencepoints />

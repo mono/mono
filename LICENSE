@@ -2,7 +2,7 @@
 Mono is made up of many pieces of code, all of them open source, but
 different pieces of Mono use different licensing terms.
 
-For comments, corrections and updates, please contact mono@novell.com
+For comments, corrections and updates, please contact mono@xamarin.com
 
 * Dual Licensing
 
@@ -22,7 +22,7 @@ For comments, corrections and updates, please contact mono@novell.com
 	Contributions for other modules should be under the same license
 	terms as the rest of the module, or under MIT X11 terms. 
 
-	If you need further information, please contact mono@novell.com
+	If you need further information, please contact mono@xamarin.com
 
 * The Modules
 
@@ -45,7 +45,7 @@ For comments, corrections and updates, please contact mono@novell.com
 	on the distribution and access to the code, a phone platform
 	that prevents end users from upgrading Moonlight).
 	
-	Contact mono@novell.com for details on obtaining the Mono
+	Contact mono@xamarin.com for details on obtaining the Mono
 	runtime under other terms.
 
 ** mono/eglib: Mono's X11 glib implementation

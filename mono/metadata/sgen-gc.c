@@ -1928,9 +1928,7 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 {
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
-	int fin_ready;
 	int done_with_ephemerons, ephemeron_rounds = 0;
-	int num_loops;
 	CopyOrMarkObjectFunc copy_func = mono_sgen_get_copy_object ();
 
 	/*
@@ -1995,26 +1993,13 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	 * finalized: use the finalized objects as new roots so the objects they depend
 	 * on are also not reclaimed. As with the roots above, only objects in the nursery
 	 * are marked/copied.
-	 * We need a loop here, since objects ready for finalizers may reference other objects
-	 * that are fin-ready. Speedup with a flag?
 	 */
-	num_loops = 0;
-	do {		
-		fin_ready = num_ready_finalizers;
-		finalize_in_range (copy_func, start_addr, end_addr, generation, queue);
-		if (generation == GENERATION_OLD)
-			finalize_in_range (copy_func, mono_sgen_get_nursery_start (), mono_sgen_get_nursery_end (), GENERATION_NURSERY, queue);
-
-		if (fin_ready != num_ready_finalizers)
-			++num_loops;
-
-		/* drain the new stack that might have been created */
-		DEBUG (6, fprintf (gc_debug_file, "Precise scan of gray area post fin\n"));
-		mono_sgen_drain_gray_stack (queue, -1);
-	} while (fin_ready != num_ready_finalizers);
-
-	if (mono_sgen_need_bridge_processing ())
-		g_assert (num_loops <= 1);
+	finalize_in_range (copy_func, start_addr, end_addr, generation, queue);
+	if (generation == GENERATION_OLD)
+		finalize_in_range (copy_func, mono_sgen_get_nursery_start (), mono_sgen_get_nursery_end (), GENERATION_NURSERY, queue);
+	/* drain the new stack that might have been created */
+	DEBUG (6, fprintf (gc_debug_file, "Precise scan of gray area post fin\n"));
+	mono_sgen_drain_gray_stack (queue, -1);
 
 	/*
 	 * This must be done again after processing finalizable objects since CWL slots are cleared only after the key is finalized.
@@ -2475,6 +2460,21 @@ job_scan_thread_data (WorkerData *worker_data, void *job_data_untyped)
 			mono_sgen_workers_get_job_gray_queue (worker_data));
 }
 
+typedef struct
+{
+	FinalizeReadyEntry *list;
+} ScanFinalizerEntriesJobData;
+
+static void
+job_scan_finalizer_entries (WorkerData *worker_data, void *job_data_untyped)
+{
+	ScanFinalizerEntriesJobData *job_data = job_data_untyped;
+
+	scan_finalizer_entries (mono_sgen_get_copy_object (),
+			job_data->list,
+			mono_sgen_workers_get_job_gray_queue (worker_data));
+}
+
 static void
 verify_scan_starts (char *start, char *end)
 {
@@ -2540,6 +2540,7 @@ collect_nursery (size_t requested_size)
 	char *nursery_next;
 	FinishRememberedSetScanJobData frssjd;
 	ScanFromRegisteredRootsJobData scrrjd_normal, scrrjd_wbarrier;
+	ScanFinalizerEntriesJobData sfejd_fin_ready, sfejd_critical_fin;
 	ScanThreadDataJobData stdjd;
 	mword fragment_total;
 	TV_DECLARE (all_atv);
@@ -2610,6 +2611,7 @@ collect_nursery (size_t requested_size)
 	mono_sgen_optimize_pin_queue (0);
 	mono_sgen_pinning_setup_section (nursery_section);
 	mono_sgen_pin_objects_in_section (nursery_section, WORKERS_DISTRIBUTE_GRAY_QUEUE);	
+	mono_sgen_pinning_trim_queue_to_section (nursery_section);
 
 	TV_GETTIME (atv);
 	time_minor_pinning += TV_ELAPSED (btv, atv);
@@ -2684,6 +2686,13 @@ collect_nursery (size_t requested_size)
 
 	if (mono_sgen_collection_is_parallel ())
 		g_assert (mono_sgen_gray_object_queue_is_empty (&gray_queue));
+
+	/* Scan the list of objects ready for finalization. If */
+	sfejd_fin_ready.list = fin_ready_list;
+	mono_sgen_workers_enqueue_job (job_scan_finalizer_entries, &sfejd_fin_ready);
+
+	sfejd_critical_fin.list = critical_fin_list;
+	mono_sgen_workers_enqueue_job (job_scan_finalizer_entries, &sfejd_critical_fin);
 
 	finish_gray_stack (mono_sgen_get_nursery_start (), nursery_next, GENERATION_NURSERY, &gray_queue);
 	TV_GETTIME (atv);
@@ -2770,21 +2779,6 @@ mono_sgen_collect_nursery_no_lock (size_t requested_size)
 
 	mono_trace_message (MONO_TRACE_GC, "minor gc took %d usecs", (mono_100ns_ticks () - gc_start_time) / 10);
 	mono_profiler_gc_event (MONO_GC_EVENT_END, 0);
-}
-
-typedef struct
-{
-	FinalizeReadyEntry *list;
-} ScanFinalizerEntriesJobData;
-
-static void
-job_scan_finalizer_entries (WorkerData *worker_data, void *job_data_untyped)
-{
-	ScanFinalizerEntriesJobData *job_data = job_data_untyped;
-
-	scan_finalizer_entries (major_collector.copy_or_mark_object,
-			job_data->list,
-			mono_sgen_workers_get_job_gray_queue (worker_data));
 }
 
 static gboolean

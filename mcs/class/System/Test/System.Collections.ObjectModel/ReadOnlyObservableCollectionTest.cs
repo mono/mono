@@ -21,6 +21,8 @@
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
 
+#if NET_4_0
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -90,3 +92,5 @@ namespace MonoTests.System.Collections.ObjectModel {
 		}
 	}
 }
+
+#endif

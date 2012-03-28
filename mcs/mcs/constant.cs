@@ -160,8 +160,11 @@ namespace Mono.CSharp {
 					return new NullConstant (t, loc);
 			}
 
-			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'",
-				v, TypeManager.CSharpName (t));
+#if STATIC
+			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'", v, t.GetSignatureForError ());
+#else
+			return null;
+#endif
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

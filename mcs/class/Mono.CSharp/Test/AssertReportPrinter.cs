@@ -33,7 +33,7 @@ namespace MonoTests
 {
 	class AssertReportPrinter : ReportPrinter
 	{
-		public override void Print (AbstractMessage msg)
+		public override void Print (AbstractMessage msg, bool showFullPath)
 		{
 			Assert.Fail (msg.Text);
 		}

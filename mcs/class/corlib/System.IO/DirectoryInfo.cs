@@ -392,6 +392,14 @@ namespace System.IO {
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories (string searchPattern, SearchOption searchOption)
 		{
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			return CreateEnumerateDirectoriesIterator (searchPattern, searchOption);
+		}
+
+		IEnumerable<DirectoryInfo> CreateEnumerateDirectoriesIterator (string searchPattern, SearchOption searchOption)
+		{
 			foreach (string name in Directory.EnumerateDirectories (FullPath, searchPattern, searchOption))
 				yield return new DirectoryInfo (name);
 		}
@@ -407,6 +415,14 @@ namespace System.IO {
 		}
 
 		public IEnumerable<FileInfo> EnumerateFiles (string searchPattern, SearchOption searchOption)
+		{
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			return CreateEnumerateFilesIterator (searchPattern, searchOption);
+		}
+
+		IEnumerable<FileInfo> CreateEnumerateFilesIterator (string searchPattern, SearchOption searchOption)
 		{
 			foreach (string name in Directory.EnumerateFiles (FullPath, searchPattern, searchOption))
 				yield return new FileInfo (name);

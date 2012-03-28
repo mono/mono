@@ -125,4 +125,5 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/$(vts)TestLib/3.0/Address.cs \
 	$(vtsdir)/$(vts)TestLib/4.0/Address.cs \
 	$(vtsdir)/$(vts)TestLib/5.0/Address.cs \
+	$(vtsdir)/$(vts)TestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs

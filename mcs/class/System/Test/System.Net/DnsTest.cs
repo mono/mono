@@ -28,12 +28,12 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class DnsTest
 	{
-		private String site1Name = "www.go-mono.com",
-			site1Dot = "130.57.21.18",
+		private String site1Name = "go-mono.com",
+			site1Dot = "74.208.222.19",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "www.unlikely.novell.com";
-		private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
+		private uint site1IP = 1255202323, site2IP = 2195808260; // Big-Endian
 
 		[Test]
 		public void AsyncGetHostByName ()
@@ -44,7 +44,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual ("www.go-mono.com", entry.HostName);
+			Assert.AreEqual ("go-mono.com", entry.HostName);
 		}
 
 		void GetHostByNameCallback (IAsyncResult ar)
@@ -285,7 +285,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Ignore ("Fails on both Mono and MS")]
 		public void GetHostByAddressIPAddress2 ()
 		{
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));

@@ -358,7 +358,7 @@ namespace System
 				if (i > 0)
 					sb.Append (", ");
 				Type pt = p[i].ParameterType;
-				if (pt.IsClass && pt.Namespace != String.Empty) {
+				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
 					sb.Append (pt.Namespace);
 					sb.Append (".");
 				}

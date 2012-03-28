@@ -128,8 +128,19 @@ namespace System.Runtime.Serialization
 				return l.ToArray ();
 			}
 #endif
-
-			QName graph_qname = types.GetQName (type);
+			QName graph_qname = null;
+			
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
+				Type internal_type = type.GetGenericArguments () [0];
+				
+				if (types.FindUserMap(internal_type) != null) {
+					graph_qname = types.GetQName (internal_type);
+				}
+			}
+			
+			if (graph_qname == null)
+				graph_qname = types.GetQName (type);
+				
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (itype != null) {
 				string [] parts = itype.Split (':');

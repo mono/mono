@@ -48,8 +48,7 @@ public class DSACryptoServiceProviderTest {
 
 	private bool machineKeyStore;
 
-	[TestFixtureSetUp]
-	public void FixtureSetUp () 
+	public DSACryptoServiceProviderTest () 
 	{
 		disposed = new DSACryptoServiceProvider (minKeySize);
 		// FX 2.0 beta 1 bug - we must use the key before clearing it
@@ -328,7 +327,8 @@ public class DSACryptoServiceProviderTest {
 		// verify a signature based on a new just generated keypair
 		Assert.IsFalse (emptyDSA.VerifySignature (hash, sign));
 	}
-
+		
+#if !NET_2_1
 	[Test]
 	[Category ("NotWorking")]
 	public void ImportDisposed ()
@@ -338,6 +338,7 @@ public class DSACryptoServiceProviderTest {
 		import.ImportParameters (AllTests.GetKey (false));
 		// no exception from Fx 2.0 +
 	}
+#endif
 
 	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]
@@ -864,7 +865,8 @@ public class DSACryptoServiceProviderTest {
 		catch (UnauthorizedAccessException) {
 		}
 	}
-
+		
+#if !NET_2_1
 	[Test]
 	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()
@@ -932,6 +934,7 @@ public class DSACryptoServiceProviderTest {
 		Assert.IsFalse (info.Removable, "Removable");
 		// info.UniqueKeyContainerName throws a CryptographicException at this stage
 	}
+#endif
 
 	[Test]
 	public void ExportCspBlob_Full ()

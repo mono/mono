@@ -280,7 +280,7 @@ namespace System.IO
 			return CopyToAsync (destination, bufferSize, CancellationToken.None);
 		}
 
-		public Task CopyToAsync (Stream destination, int bufferSize, CancellationToken cancellationToken)
+		public virtual Task CopyToAsync (Stream destination, int bufferSize, CancellationToken cancellationToken)
 		{
 			if (destination == null)
 				throw new ArgumentNullException ("destination");

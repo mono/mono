@@ -7309,6 +7309,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 
+			/* 
+			 * Synchronized wrappers.
+			 * Its hard to determine where to replace a method with its synchronized
+			 * wrapper without causing an infinite recursion. The current solution is
+			 * to add the synchronized wrapper in the trampolines, and to
+			 * change the called method to a dummy wrapper, and resolve that wrapper
+			 * to the real method in mono_jit_compile_method ().
+			 */
+			if (cfg->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED && mono_marshal_method_from_wrapper (cfg->method) == cmethod) {
+				cmethod = mono_marshal_get_synchronized_inner_wrapper (cmethod);
+			}
+
 			/* Common call */
 			INLINE_FAILURE;
 			ins = mono_emit_method_call_full (cfg, cmethod, fsig, sp, virtual ? sp [0] : NULL,
@@ -10115,6 +10127,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				lmf_ins = mono_get_lmf_intrinsic (cfg);
 #endif
 
+#ifdef MONO_ARCH_HAVE_TLS_GET
 				if (MONO_ARCH_HAVE_TLS_GET && ad_ins && lmf_ins) {
 					NEW_BBLOCK (cfg, next_bb);
 
@@ -10125,16 +10138,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MONO_ADD_INS (cfg->cbb, lmf_ins);
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, lmf_ins->dreg, 0);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, next_bb);
-
-					if (cfg->compile_aot) {
-						/* AOT code is only used in the root domain */
-						EMIT_NEW_PCONST (cfg, args [0], NULL);
-					} else {
-						EMIT_NEW_PCONST (cfg, args [0], cfg->domain);
-					}
-					ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
-					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->orig_domain_var->dreg, ins->dreg);
 				}
+#endif
+
+				if (cfg->compile_aot) {
+					/* AOT code is only used in the root domain */
+					EMIT_NEW_PCONST (cfg, args [0], NULL);
+				} else {
+					EMIT_NEW_PCONST (cfg, args [0], cfg->domain);
+				}
+				ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->orig_domain_var->dreg, ins->dreg);
 
 				if (next_bb) {
 					MONO_START_BB (cfg, next_bb);

@@ -929,7 +929,7 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 		switch(method->klass->this_arg.type) {
 		case MONO_TYPE_VALUETYPE:
 			if (obj) {
-				guint64 *value = ((void *)this + sizeof(MonoObject));
+				guint64 *value = (guint64 *) ((uintptr_t)this + sizeof(MonoObject));
 				printf("this:[value:%p:%016lx], ", this, *value);
 			} else 
 				printf ("this:[NULL], ");
@@ -2180,6 +2180,8 @@ printf("%s %4d cookine %x\n",__FUNCTION__,__LINE__,cfg->sig_cookie);
 		curinst++;
 	}
 
+	cfg->locals_min_stack_offset = offset;
+
 	curinst = cfg->locals_start;
 	for (iVar = curinst; iVar < cfg->num_varinfo; ++iVar) {
 		inst = cfg->varinfo [iVar];
@@ -2206,6 +2208,8 @@ printf("%s %4d cookine %x\n",__FUNCTION__,__LINE__,cfg->sig_cookie);
 		DEBUG (g_print("allocating local %d to %ld, size: %d\n", 
 				iVar, inst->inst_offset, size));
 	}
+
+	cfg->locals_max_stack_offset = offset;
 
 	/*------------------------------------------------------*/
 	/* Allow space for the trace method stack area if needed*/
@@ -2478,6 +2482,12 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 							 frmReg, ainfo->offparm);
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG,
 							     ainfo->reg, ainfo->offset, treg);
+
+				if (cfg->compute_gc_maps) {
+					MonoInst *def;
+
+					EMIT_NEW_GC_PARAM_SLOT_LIVENESS_DEF (cfg, def, ainfo->offset, t);
+				}
 			}
 			break;
 		}
@@ -2589,6 +2599,12 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 
 		MONO_EMIT_NEW_MOVE (cfg, srcReg, ainfo->offparm,
 							 src->dreg, 0, size);
+
+		if (cfg->compute_gc_maps) {
+			MonoInst *def;
+
+			EMIT_NEW_GC_PARAM_SLOT_LIVENESS_DEF (cfg, def, ainfo->offset, &ins->klass->byval_arg);
+		}
 	}
 }
 
@@ -4871,6 +4887,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER: {
 		}
 			break;
+		case OP_GC_LIVENESS_DEF:
+		case OP_GC_LIVENESS_USE:
+		case OP_GC_PARAM_SLOT_LIVENESS_DEF:
+			ins->backend.pc_offset = code - cfg->native_code;
+			break;
+		case OP_GC_SPILL_SLOT_LIVENESS_DEF:
+			ins->backend.pc_offset = code - cfg->native_code;
+			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -5299,14 +5324,24 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/*---------------------------------------------------------------*/
 		/* On return from this call r2 have the address of the &lmf	 */
 		/*---------------------------------------------------------------*/
-		s390_basr(code, s390_r14, 0);
-		s390_j   (code, 6);
-		mono_add_patch_info (cfg, code - cfg->native_code, 
-				     MONO_PATCH_INFO_INTERNAL_METHOD, 
-				     (gpointer)"mono_get_lmf_addr");
-		s390_llong(code, 0);
-		s390_lg   (code, s390_r1, 0, s390_r14, 4);
-		s390_basr (code, s390_r14, s390_r1);
+		if (lmf_addr_tls_offset == -1) {
+			s390_basr(code, s390_r14, 0);
+			s390_j   (code, 6);
+			mono_add_patch_info (cfg, code - cfg->native_code, 
+					     MONO_PATCH_INFO_INTERNAL_METHOD, 
+					     (gpointer)"mono_get_lmf_addr");
+			s390_llong(code, 0);
+			s390_lg   (code, s390_r1, 0, s390_r14, 4);
+			s390_basr (code, s390_r14, s390_r1);
+		} else {
+			/*-------------------------------------------------------*/
+			/* Get LMF by getting value from thread level storage    */
+			/*-------------------------------------------------------*/
+			s390_ear (code, s390_r1, 0);
+			s390_sllg(code, s390_r1, s390_r1, 0, 32);
+			s390_ear (code, s390_r1, 1);
+			s390_lg  (code, s390_r2, 0, s390_r1, lmf_addr_tls_offset);
+		}
 
 		/*---------------------------------------------------------------*/	
 		/* Set lmf.lmf_addr = jit_tls->lmf				 */	
@@ -5560,8 +5595,8 @@ void
 mono_arch_finish_init (void)
 {
 	appdomain_tls_offset = mono_domain_get_tls_offset();
-	lmf_tls_offset = mono_get_jit_tls_offset();
-	lmf_addr_tls_offset = mono_get_jit_tls_offset();
+	lmf_tls_offset = mono_get_lmf_tls_offset();
+	lmf_addr_tls_offset = mono_get_lmf_addr_tls_offset();
 }
 
 /*========================= End of Function ========================*/

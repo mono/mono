@@ -3929,6 +3929,27 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Expression EmitToField (EmitContext ec)
+		{
+			if ((oper & Operator.LogicalMask) == 0) {
+				var await_expr = left as Await;
+				if (await_expr != null && right.IsSideEffectFree) {
+					await_expr.Statement.EmitPrologue (ec);
+					left = await_expr.Statement.GetResultExpression (ec);
+					return this;
+				}
+
+				await_expr = right as Await;
+				if (await_expr != null && left.IsSideEffectFree) {
+					await_expr.Statement.EmitPrologue (ec);
+					right = await_expr.Statement.GetResultExpression (ec);
+					return this;
+				}
+			}
+
+			return base.EmitToField (ec);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Binary target = (Binary) t;
@@ -4245,7 +4266,7 @@ namespace Mono.CSharp
 			//
 			bool right_contains_await = ec.HasSet (BuilderContext.Options.AsyncBody) && arguments[1].Expr.ContainsEmitWithAwait ();
 			if (right_contains_await) {
-				arguments[0] = arguments[0].EmitToField (ec);
+				arguments[0] = arguments[0].EmitToField (ec, false);
 				arguments[0].Expr.Emit (ec);
 			} else {
 				arguments[0].Expr.Emit (ec);
@@ -5128,7 +5149,7 @@ namespace Mono.CSharp
 
 				if (ec.IsVariableCapturingRequired && !pi.Block.ParametersBlock.IsExpressionTree) {
 					AnonymousMethodStorey storey = pi.Block.Explicit.CreateAnonymousMethodStorey (ec);
-					storey.CaptureParameter (ec, this);
+					storey.CaptureParameter (ec, pi, this);
 				}
 			}
 
@@ -6611,6 +6632,11 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
+			EmitToFieldSource (ec);
+		}
+
+		protected sealed override FieldExpr EmitToFieldSource (EmitContext ec)
+		{
 			if (first_emit != null) {
 				first_emit.Emit (ec);
 				first_emit_temp.Store (ec);
@@ -6629,7 +6655,7 @@ namespace Mono.CSharp
 			ec.EmitArrayNew ((ArrayContainer) type);
 			
 			if (initializers == null)
-				return;
+				return await_stack_field;
 
 			if (await_stack_field != null)
 				await_stack_field.EmitAssignFromStack (ec);
@@ -6654,11 +6680,10 @@ namespace Mono.CSharp
 				EmitDynamicInitializers (ec, true, await_stack_field);
 			}
 
-			if (await_stack_field != null)
-				await_stack_field.Emit (ec);
-
 			if (first_emit_temp != null)
 				first_emit_temp.Release (ec);
+
+			return await_stack_field;
 		}
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
@@ -6957,15 +6982,7 @@ namespace Mono.CSharp
 				return null;
 
 			AnonymousMethodStorey storey = ae.Storey;
-			while (storey != null) {
-				AnonymousMethodStorey temp = storey.Parent as AnonymousMethodStorey;
-				if (temp == null)
-					return storey.HoistedThis;
-
-				storey = temp;
-			}
-
-			return null;
+			return storey != null ? storey.HoistedThis : null;
 		}
 
 		public static bool IsThisAvailable (ResolveContext ec, bool ignoreAnonymous)
@@ -6994,11 +7011,20 @@ namespace Mono.CSharp
 
 			var block = ec.CurrentBlock;
 			if (block != null) {
-				if (block.ParametersBlock.TopBlock.ThisVariable != null)
-					variable_info = block.ParametersBlock.TopBlock.ThisVariable.VariableInfo;
+				var top = block.ParametersBlock.TopBlock;
+				if (top.ThisVariable != null)
+					variable_info = top.ThisVariable.VariableInfo;
 
 				AnonymousExpression am = ec.CurrentAnonymousMethod;
-				if (am != null && ec.IsVariableCapturingRequired) {
+				if (am != null && ec.IsVariableCapturingRequired && !block.Explicit.HasCapturedThis) {
+					//
+					// Hoisted this is almost like hoisted variable but not exactly. When
+					// there is no variable hoisted we can simply emit an instance method
+					// without lifting this into a storey. Unfotunatelly this complicates
+					// this in other cases because we don't know where this will be hoisted
+					// until top-level block is fully resolved
+					//
+					top.AddThisReferenceFromChildrenBlock (block.Explicit);
 					am.SetHasThisAccess ();
 				}
 			}

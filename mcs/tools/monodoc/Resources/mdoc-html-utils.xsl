@@ -842,6 +842,10 @@
 				  <xsl:with-param name="type" select="'article'" />
 				</xsl:call-template>
 				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Recipes'" />
+				  <xsl:with-param name="type" select="'recipe'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
 				  <xsl:with-param name="section" select="'Available Samples'" />
 				  <xsl:with-param name="type" select="'sample'" />
 				</xsl:call-template>
@@ -1522,9 +1526,9 @@
 			  <xsl:when test="count(@src)&gt;0">
 				<xsl:value-of select="@src" />
 			  </xsl:when>
-			  <xsl:otherwise>
-				<xsl:value-of select="source-id:{$source-id}:{@href}" />
-			  </xsl:otherwise>
+			  <xsl:when test="count(@href)&gt;0">
+				<xsl:value-of select="concat('source-id:', $source-id, ':', @href)" />
+			  </xsl:when>
 			</xsl:choose>
 		  </xsl:attribute>
 		  <xsl:attribute name="class">
@@ -2547,7 +2551,7 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			<xsl:with-param name="type" select="$type" />
 			<xsl:with-param name="member" select="$member" />
 		</xsl:call-template>
-		<xsl:if test="count($member/Parameters/Parameter) &gt; 0">
+		<xsl:if test="count($member/Parameters/Parameter) &gt; 0 or $member/MemberType='Method'">
 			<xsl:text>(</xsl:text>
 			<xsl:for-each select="Parameters/Parameter">
 				<xsl:if test="not(position()=1)">,</xsl:if>

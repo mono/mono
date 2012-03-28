@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 			return Expr.CreateExpressionTree (ec);
 		}
 
-		public override void Emit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (statement != null) {
 				statement.EmitStatement (ec);
@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.Emit (ec);
+			base.DoEmit (ec);
 		}
 
 		protected override bool DoResolve (BlockContext ec)

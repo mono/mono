@@ -1,10 +1,10 @@
-using System;
+using System.IO;
 
 class Foo
 {
     ~Foo()
 	{
-		Console.WriteLine("Finalize");
+		StreamWriter.Null.WriteLine("Finalize");
     }
 	
     public static void Main ()

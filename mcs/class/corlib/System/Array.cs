@@ -1573,7 +1573,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			SortImpl<T, T> (array, null, 0, array.Length, comparer);
+			SortImpl<T> (array, 0, array.Length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1718,6 +1718,79 @@ namespace System
 				//throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 				//}
 		}
+
+		// Specialized version for items==null
+		private static void SortImpl<TKey> (TKey [] keys, int index, int length, IComparer<TKey> comparer)
+		{
+			if (keys.Length <= 1)
+				return;
+
+			int low = index;
+			int high = index + length - 1;
+			
+			//
+			// Check for value types which can be sorted without Compare () method
+			//
+			if (comparer == null) {
+#if !BOOTSTRAP_BASIC				
+				switch (Type.GetTypeCode (typeof (TKey))) {
+				case TypeCode.Int32:
+					qsort (keys as Int32[], low, high);
+					return;
+				case TypeCode.Int64:
+					qsort (keys as Int64[], low, high);
+					return;
+				case TypeCode.Byte:
+					qsort (keys as byte[], low, high);
+					return;
+				case TypeCode.Char:
+					qsort (keys as char[], low, high);
+					return;
+				case TypeCode.DateTime:
+					qsort (keys as DateTime[], low, high);
+					return;
+				case TypeCode.Decimal:
+					qsort (keys as decimal[], low, high);
+					return;
+				case TypeCode.Double:
+					qsort (keys as double[], low, high);
+					return;
+				case TypeCode.Int16:
+					qsort (keys as Int16[], low, high);
+					return;
+				case TypeCode.SByte:
+					qsort (keys as SByte[], low, high);
+					return;
+				case TypeCode.Single:
+					qsort (keys as Single[], low, high);
+					return;
+				case TypeCode.UInt16:
+					qsort (keys as UInt16[], low, high);
+					return;	
+				case TypeCode.UInt32:
+					qsort (keys as UInt32[], low, high);
+					return;
+				case TypeCode.UInt64:
+					qsort (keys as UInt64[], low, high);
+					return;
+				}
+#endif
+				// Using Comparer<TKey> adds a small overload, but with value types it
+				// helps us to not box them.
+				if (typeof (IComparable<TKey>).IsAssignableFrom (typeof (TKey)) &&
+						typeof (TKey).IsValueType)
+					comparer = Comparer<TKey>.Default;
+			}
+
+			if (comparer == null)
+				CheckComparerAvailable<TKey> (keys, low, high);
+ 
+			//try {
+				qsort<TKey> (keys, low, high, comparer);
+				//} catch (Exception e) {
+				//throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
+				//}
+		}
 		
 		public static void Sort<T> (T [] array, Comparison<T> comparison)
 		{
@@ -1752,6 +1825,19 @@ namespace System
 			if (keys[lo] != null) {
 				if (keys[hi] == null || keys[hi].CompareTo (keys[lo]) < 0) {
 					swap (keys, items, lo, hi);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		// Specialized version for items==null
+		static bool QSortArrange<T> (T [] keys, int lo, int hi) where T : IComparable<T>
+		{
+			if (keys[lo] != null) {
+				if (keys[hi] == null || keys[hi].CompareTo (keys[lo]) < 0) {
+					swap (keys, lo, hi);
 					return true;
 				}
 			}
@@ -1843,6 +1929,92 @@ namespace System
 			if ((k - 1) > low)
 				qsort (keys, items, low, k - 1);
 		}		
+
+		// Specialized version for items==null
+		private static void qsort<T> (T[] keys, int low, int high) where T : IComparable<T>
+		{
+			const int QSORT_THRESHOLD = 7;
+			int mid, i, k;
+			T key;
+			
+			if ((low + QSORT_THRESHOLD) > high) {
+				// switch to insertion sort
+				for (i = low + 1; i <= high; i++) {
+					for (k = i; k > low; k--) {
+						// if keys[k] >= keys[k-1], break
+						if (keys[k-1] == null)
+							break;
+						
+						if (keys[k] != null && keys[k].CompareTo (keys[k-1]) >= 0)
+							break;
+						
+						swap (keys, k - 1, k);
+					}
+				}
+				
+				return;
+			}
+			
+			// calculate the middle element
+			mid = low + ((high - low) / 2);
+			
+			// once we re-order the lo, mid, and hi elements to be in
+			// ascending order, we'll use mid as our pivot.
+			QSortArrange<T> (keys, low, mid);
+			if (QSortArrange<T> (keys, mid, high))
+				QSortArrange<T> (keys, low, mid);
+			
+			key = keys[mid];
+			
+			// since we've already guaranteed that lo <= mid and mid <= hi,
+			// we can skip comparing them again
+			k = high - 1;
+			i = low + 1;
+			
+			do {
+				if (key != null) {
+					// find the first element with a value > pivot value
+					while (i < k && key.CompareTo (keys[i]) >= 0)
+						i++;
+					
+					// find the last element with a value <= pivot value
+					while (k >= i && key.CompareTo (keys[k]) < 0)
+						k--;
+				} else {
+					while (i < k && keys[i] == null)
+						i++;
+					
+					while (k >= i && keys[k] != null)
+						k--;
+				}
+				
+				if (k <= i)
+					break;
+				
+				swap (keys, i, k);
+				
+				// make sure we keep track of our pivot element
+				if (mid == i)
+					mid = k;
+				else if (mid == k)
+					mid = i;
+				
+				i++;
+				k--;
+			} while (true);
+			
+			if (k != mid) {
+				// swap the pivot with the last element in the first partition
+				swap (keys, mid, k);
+			}
+			
+			// recursively sort each partition
+			if ((k + 1) < high)
+				qsort (keys, k + 1, high);
+			
+			if ((k - 1) > low)
+				qsort (keys, low, k - 1);
+		}		
 		
 		static bool QSortArrange<K, V> (K [] keys, V [] items, int lo, int hi, IComparer<K> comparer)
 		{
@@ -1874,6 +2046,47 @@ namespace System
 				if (cmp != null) {
 					if (cmp.CompareTo (keys[lo]) < 0) {
 						swap<K, V> (keys, items, lo, hi);
+						return true;
+					}
+					
+					return false;
+				}
+			}
+			
+			return false;
+		}
+
+		// Specialized version for items==null
+		static bool QSortArrange<K> (K [] keys, int lo, int hi, IComparer<K> comparer)
+		{
+			IComparable<K> gcmp;
+			IComparable cmp;
+			
+			if (comparer != null) {
+				if (comparer.Compare (keys[hi], keys[lo]) < 0) {
+					swap<K> (keys, lo, hi);
+					return true;
+				}
+			} else if (keys[lo] != null) {
+				if (keys[hi] == null) {
+					swap<K> (keys, lo, hi);
+					return true;
+				}
+				
+				gcmp = keys[hi] as IComparable<K>;
+				if (gcmp != null) {
+					if (gcmp.CompareTo (keys[lo]) < 0) {
+						swap<K> (keys, lo, hi);
+						return true;
+					}
+					
+					return false;
+				}
+				
+				cmp = keys[hi] as IComparable;
+				if (cmp != null) {
+					if (cmp.CompareTo (keys[lo]) < 0) {
+						swap<K> (keys, lo, hi);
 						return true;
 					}
 					
@@ -1997,6 +2210,122 @@ namespace System
 				qsort<K, V> (keys, items, k + 1, high, comparer);
 			if ((k - 1) > low)
 				qsort<K, V> (keys, items, low, k - 1, comparer);
+		}
+
+		// Specialized version for items==null
+		private static void qsort<K> (K [] keys, int low, int high, IComparer<K> comparer)
+		{
+			const int QSORT_THRESHOLD = 7;
+			IComparable<K> gcmp;
+			IComparable cmp;
+			int mid, i, k;
+			K key;
+			
+			if ((low + QSORT_THRESHOLD) > high) {
+				// switch to insertion sort
+				for (i = low + 1; i <= high; i++) {
+					for (k = i; k > low; k--) {
+						// if keys[k] >= keys[k-1], break
+						if (comparer != null) {
+							if (comparer.Compare (keys[k], keys[k-1]) >= 0)
+								break;
+						} else {
+							if (keys[k-1] == null)
+								break;
+							
+							if (keys[k] != null) {
+								gcmp = keys[k] as IComparable<K>;
+								cmp = keys[k] as IComparable;
+								if (gcmp != null) {
+									if (gcmp.CompareTo (keys[k-1]) >= 0)
+										break;
+								} else {
+									if (cmp.CompareTo (keys[k-1]) >= 0)
+										break;
+								}
+							}
+						}
+						
+						swap<K> (keys, k - 1, k);
+					}
+				}
+				
+				return;
+			}
+			
+			// calculate the middle element
+			mid = low + ((high - low) / 2);
+			
+			// once we re-order the low, mid, and high elements to be in
+			// ascending order, we'll use mid as our pivot.
+			QSortArrange<K> (keys, low, mid, comparer);
+			if (QSortArrange<K> (keys, mid, high, comparer))
+				QSortArrange<K> (keys, low, mid, comparer);
+			
+			key = keys[mid];
+			gcmp = key as IComparable<K>;
+			cmp = key as IComparable;
+			
+			// since we've already guaranteed that lo <= mid and mid <= hi,
+			// we can skip comparing them again.
+			k = high - 1;
+			i = low + 1;
+			
+			do {
+				// Move the walls in
+				if (comparer != null) {
+					while (i < k && comparer.Compare (key, keys[i]) >= 0)
+						i++;
+					
+					while (k >= i && comparer.Compare (key, keys[k]) < 0)
+						k--;
+				} else {
+					if (gcmp != null) {
+						while (i < k && gcmp.CompareTo (keys[i]) >= 0)
+							i++;
+						
+						while (k >= i && gcmp.CompareTo (keys[k]) < 0)
+							k--;
+					} else if (cmp != null) {
+						while (i < k && cmp.CompareTo (keys[i]) >= 0)
+							i++;
+						
+						while (k >= i && cmp.CompareTo (keys[k]) < 0)
+							k--;
+					} else {
+						while (i < k && keys[i] == null)
+							i++;
+						
+						while (k >= i && keys[k] != null)
+							k--;
+					}
+				}
+				
+				if (k <= i)
+					break;
+				
+				swap<K> (keys, i, k);
+				
+				// make sure we keep track of our pivot element
+				if (mid == i)
+					mid = k;
+				else if (mid == k)
+					mid = i;
+				
+				i++;
+				k--;
+			} while (true);
+			
+			if (k != mid) {
+				// swap the pivot with the last element in the first partition
+				swap<K> (keys, mid, k);
+			}
+			
+			// recursively sort each partition
+			if ((k + 1) < high)
+				qsort<K> (keys, k + 1, high, comparer);
+			if ((k - 1) > low)
+				qsort<K> (keys, low, k - 1, comparer);
 		}
 		
 		static bool QSortArrange<T> (T [] array, int lo, int hi, Comparison<T> compare)

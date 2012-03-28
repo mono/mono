@@ -256,6 +256,12 @@ namespace Mono.CSharp
 				output_file = output_file_name;
 			} else {
 				output_file_name = Path.GetFileName (output_file);
+
+				if (string.IsNullOrEmpty (Path.GetFileNameWithoutExtension (output_file_name)) ||
+					output_file_name.IndexOfAny (Path.GetInvalidFileNameChars ()) >= 0) {
+					Report.Error (2021, "Output file name is not valid");
+					return false;
+				}
 			}
 
 #if STATIC

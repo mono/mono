@@ -27,19 +27,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
+using System;
 
 namespace MonoTests.System.Collections.Generic
 {
 	[TestFixture]
 	public class ComparerTest
 	{
+#if NET_4_5
+		[Test]
+		public void Create ()
+		{
+			var comparer = Comparer<int>.Create ((a, b) => a - b);
+			Assert.AreEqual (-1, comparer.Compare (1, 2), "#1");
+		}
+
+		[Test]
+		public void Create_Invalid ()
+		{
+			try {
+				Comparer<int>.Create (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+		}
+#endif
 
 #if !NET_4_0 && !NET_2_1 // FIXME: the blob contains the 2.0 mscorlib version
 
@@ -92,6 +109,3 @@ namespace MonoTests.System.Collections.Generic
 			0x0b };
 	}
 }
-
-#endif
-

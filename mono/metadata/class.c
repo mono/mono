@@ -6,6 +6,7 @@
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
  */
 #include <config.h>
 #ifdef HAVE_ALLOCA_H
@@ -2406,7 +2407,7 @@ mono_unload_interface_ids (MonoBitSet *bitset)
 void
 mono_unload_interface_id (MonoClass *class)
 {
-	if (class->interface_id) {
+	if (global_interface_bitset && class->interface_id) {
 		mono_loader_lock ();
 		mono_bitset_clear (global_interface_bitset, class->interface_id);
 		mono_loader_unlock ();
@@ -9020,6 +9021,7 @@ mono_classes_cleanup (void)
 {
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
+	global_interface_bitset = NULL;
 }
 
 /**

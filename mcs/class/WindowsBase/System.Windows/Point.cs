@@ -163,9 +163,9 @@ namespace System.Windows {
 			return this.ToString(null, null);
 		}
 
-		public string ToString (IFormatProvider formatProvider)
+		public string ToString (IFormatProvider provider)
 		{
-			return this.ToString(null,formatProvider);
+			return this.ToString(null, provider);
 		}
 
 		private string ToString(string format,IFormatProvider formatProvider)

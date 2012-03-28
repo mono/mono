@@ -118,6 +118,11 @@ namespace Mono.CSharp {
 		bool IsFixed { get; }
 	}
 
+	public interface IExpressionCleanup
+	{
+		void EmitCleanup (EmitContext ec);
+	}
+
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
@@ -535,38 +540,40 @@ namespace Mono.CSharp {
 				ec.EmitThis ();
 
 			// Emit original code
-			EmitToFieldSource (ec);
-
-			//
-			// Store the result to temporary field when we
-			// cannot load `this' directly
-			//
-			var field = ec.GetTemporaryField (type);
-			if (needs_temporary) {
+			var field = EmitToFieldSource (ec);
+			if (field == null) {
 				//
-				// Create temporary local (we cannot load `this' before Emit)
+				// Store the result to temporary field when we
+				// cannot load `this' directly
 				//
-				var temp = ec.GetTemporaryLocal (type);
-				ec.Emit (OpCodes.Stloc, temp);
+				field = ec.GetTemporaryField (type);
+				if (needs_temporary) {
+					//
+					// Create temporary local (we cannot load `this' before Emit)
+					//
+					var temp = ec.GetTemporaryLocal (type);
+					ec.Emit (OpCodes.Stloc, temp);
 
-				ec.EmitThis ();
-				ec.Emit (OpCodes.Ldloc, temp);
-				field.EmitAssignFromStack (ec);
+					ec.EmitThis ();
+					ec.Emit (OpCodes.Ldloc, temp);
+					field.EmitAssignFromStack (ec);
 
-				ec.FreeTemporaryLocal (temp, type);
-			} else {
-				field.EmitAssignFromStack (ec);
+					ec.FreeTemporaryLocal (temp, type);
+				} else {
+					field.EmitAssignFromStack (ec);
+				}
 			}
 
 			return field;
 		}
 
-		protected virtual void EmitToFieldSource (EmitContext ec)
+		protected virtual FieldExpr EmitToFieldSource (EmitContext ec)
 		{
 			//
 			// Default implementation calls Emit method
 			//
 			Emit (ec);
+			return null;
 		}
 
 		protected static void EmitExpressionsList (EmitContext ec, List<Expression> expressions)
@@ -1931,6 +1938,12 @@ namespace Mono.CSharp {
 
 		#region Properties
 
+		public override bool IsSideEffectFree {
+			get {
+				return expr.IsSideEffectFree;
+			}
+		}
+
 		public Expression OriginalExpression {
 			get {
 				return orig_expr;
@@ -2001,6 +2014,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			expr.Emit (ec);
+		}
+
+		public override Expression EmitToField (EmitContext ec)
+		{
+ 			return expr.EmitToField(ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
@@ -4031,10 +4049,15 @@ namespace Mono.CSharp {
 			Arguments orig_args = arguments;
 
 			if (arg_count != param_count) {
-				for (int i = 0; i < pd.Count; ++i) {
-					if (pd.FixedParameters[i].HasDefaultValue) {
-						optional_count = pd.Count - i;
-						break;
+				//
+				// No arguments expansion when doing exact match for delegates
+				//
+				if ((restrictions & Restrictions.CovariantDelegate) == 0) {
+					for (int i = 0; i < pd.Count; ++i) {
+						if (pd.FixedParameters[i].HasDefaultValue) {
+							optional_count = pd.Count - i;
+							break;
+						}
 					}
 				}
 
@@ -4732,6 +4755,9 @@ namespace Mono.CSharp {
 			if (custom_errors != null && custom_errors.ArgumentMismatch (ec, method, a, idx))
 				return;
 
+			if (a.Type == InternalType.ErrorType)
+				return;
+
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				if ((expected_par.FixedParameters[idx].ModFlags & Parameter.Modifier.RefOutMask) != 0) {
@@ -4744,7 +4770,7 @@ namespace Mono.CSharp {
 			} else if (IsDelegateInvoke) {
 				ec.Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					DelegateType.GetSignatureForError ());
-			} else if (a.Type != InternalType.ErrorType) {
+			} else {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				ec.Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 					method.GetSignatureForError ());
@@ -4760,7 +4786,7 @@ namespace Mono.CSharp {
 				else
 					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
-			} else if (a.Type != InternalType.ErrorType) {
+			} else {
 				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
@@ -5528,7 +5554,7 @@ namespace Mono.CSharp {
 				base.EmitSideEffect (ec);
 		}
 
-		public void AddressOf (EmitContext ec, AddressOp mode)
+		public virtual void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			if ((mode & AddressOp.Store) != 0)
 				spec.MemberDefinition.SetIsAssigned ();
@@ -5955,10 +5981,11 @@ namespace Mono.CSharp {
 			Emit (ec, false);
 		}
 
-		protected override void EmitToFieldSource (EmitContext ec)
+		protected override FieldExpr EmitToFieldSource (EmitContext ec)
 		{
 			has_await_arguments = true;
 			Emit (ec, false);
+			return null;
 		}
 
 		public abstract SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
@@ -6262,9 +6289,10 @@ namespace Mono.CSharp {
 
 			//
 			// Don't capture temporary variables except when using
-			// state machine redirection
+			// state machine redirection and block yields
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod is StateMachineInitializer && ec.IsVariableCapturingRequired) {
+			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.IsIterator &&
+				ec.CurrentBlock.Explicit.HasYield && ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
 				storey.CaptureLocalVariable (ec, li);
 			}

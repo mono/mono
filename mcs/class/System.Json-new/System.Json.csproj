@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <CodeAnalysis Condition=" '$(CodeAnalysis)' == '' ">false</CodeAnalysis>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F0441BE9-BDC0-4629-BE5A-8765FFAA2481}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Json</RootNamespace>
+    <AssemblyName>System.Json</AssemblyName>
+    <TargetFrameworkProfile Condition="'$(TargetFrameworkVersion)' != 'v4.5'">Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ASPNETMVC</DefineConstants>
+    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE;ASPNETMVC</DefineConstants>
+    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CodeCoverage|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\CodeCoverage\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_COVERAGE;ASPNETMVC</DefineConstants>
+    <DebugType>full</DebugType>
+    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RS.cs">
+      <Link>RS.cs</Link>
+    </Compile>
+    <Compile Include="..\TransparentCommonAssemblyInfo.cs">
+      <Link>Properties\TransparentCommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="JsonArray.cs" />
+    <Compile Include="JsonObject.cs" />
+    <Compile Include="JsonPrimitive.cs" />
+    <Compile Include="JsonType.cs" />
+    <Compile Include="JsonValue.cs" />
+    <Compile Include="JsonValueChange.cs" />
+    <Compile Include="JsonValueChangeEventArgs.cs" />
+    <Compile Include="JsonValueDynamicMetaObject.cs" />
+    <Compile Include="JsonValueLinqExtensions.cs" />
+    <Compile Include="JXmlToJsonValueConverter.cs" />
+    <Compile Include="NGenWrapper.cs" />
+    <Compile Include="Extensions\JsonValueExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CodeAnalysisDictionary.xml">
+      <Link>CodeAnalysisDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -303,6 +303,7 @@ namespace MonoTests.System.Security.Cryptography {
 			CreateEncryptor_IV (size);
 		}
 
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
@@ -313,6 +314,7 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = aes.BlockSize; // 8 times too big
 			CreateEncryptor_IV (size);
 		}
+#endif
 
 		private ICryptoTransform CreateDecryptor_IV (int size)
 		{
@@ -349,7 +351,7 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = (aes.BlockSize >> 3);
 			CreateDecryptor_IV (size);
 		}
-
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
@@ -360,5 +362,6 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = aes.BlockSize; // 8 times too big
 			CreateDecryptor_IV (size);
 		}
+#endif
 	}
 }

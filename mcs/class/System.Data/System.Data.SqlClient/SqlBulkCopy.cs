@@ -509,6 +509,8 @@ namespace System.Data.SqlClient {
 		{
 			if (rows == null)
 				throw new ArgumentNullException ("rows");
+			if (rows.Length == 0)
+				return;
 			DataTable table = new DataTable (rows [0].Table.TableName);
 			foreach (DataColumn col in rows [0].Table.Columns) {
 				DataColumn tmpCol = new DataColumn (col.ColumnName, col.DataType);
