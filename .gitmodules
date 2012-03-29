@@ -1,3 +1,6 @@
 [submodule "external/aspnetwebstack"]
 	path = external/aspnetwebstack
 	url = git://github.com/mono/aspnetwebstack.git
+[submodule "external/Newtonsoft.Json"]
+	path = external/Newtonsoft.Json
+	url = git://github.com/mono/Newtonsoft.Json.git
