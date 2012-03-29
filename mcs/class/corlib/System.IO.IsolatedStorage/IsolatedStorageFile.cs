@@ -968,7 +968,6 @@ namespace System.IO.IsolatedStorage {
 		}
 #endif
 
-#if !MOBILE
 		private string GetNameFromIdentity (object identity)
 		{
 			// Note: Default evidences return an XML string with ToString
