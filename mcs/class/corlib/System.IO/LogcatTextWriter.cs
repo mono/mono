@@ -27,8 +27,9 @@ namespace System.IO {
 
 		public override void Write (string s)
 		{
-			foreach (char c in s)
-				Write (c);
+			if (s != null)
+				foreach (char c in s)
+					Write (c);
 		}
 
 		public override void Write (char value)
