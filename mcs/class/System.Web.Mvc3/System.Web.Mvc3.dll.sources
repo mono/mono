@@ -1,4 +1,5 @@
 ./GlobalSuppressions.cs
+./GlobalAssemblyInfo.cs
 ./Mvc/AcceptVerbsAttribute.cs
 ./Mvc/ActionDescriptor.cs
 ./Mvc/ActionExecutedContext.cs
