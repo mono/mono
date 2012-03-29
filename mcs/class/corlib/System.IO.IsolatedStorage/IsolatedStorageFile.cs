@@ -1062,6 +1062,7 @@ namespace System.IO.IsolatedStorage {
 				mutex.ReleaseMutex ();
 			}
 		}
+#endif
 	}
 }
 #endif
