@@ -186,7 +186,8 @@ net_4_0_dirs := \
 	System.Data.Services.Client	\
 	System.Data.Services	\
 	System.Json \
-	System.Web.Razor
+	System.Web.Razor \
+	System.Web.WebPages.Deployment
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
