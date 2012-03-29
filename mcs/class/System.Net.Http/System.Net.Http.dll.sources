@@ -2,6 +2,7 @@
 Assembly/AssemblyInfo.cs
 System.Net.Http/ByteArrayContent.cs
 System.Net.Http/ClientCertificateOption.cs
+System.Net.Http/DelegatingHandler.cs
 System.Net.Http/HttpClient.cs
 System.Net.Http/HttpClientHandler.cs
 System.Net.Http/HttpCompletionOption.cs
