@@ -15,7 +15,7 @@ RESOURCES = $(subst $(UPSTREAM_DIR),$(build_libdir),$(RESX_DIST:.resx=.resources
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/noconfig \
-		/keyfile:../winfx.pub \
+		/keyfile:../winfx.pub -delaysign \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /d:ASPNETWEBPAGES \
