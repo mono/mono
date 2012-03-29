@@ -77,6 +77,11 @@ namespace System.Diagnostics {
 				String trace = Environment.GetEnvironmentVariable("MONO_TRACE_LISTENER");
 #endif
 
+#if MOBILE
+				if (trace == null)
+					trace = ConsoleOutTrace;
+#endif
+
 				if (trace != null) {
 					string file = null;
 					string prefix = null;

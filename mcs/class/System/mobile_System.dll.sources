@@ -191,7 +191,8 @@ System.ComponentModel/WeakObjectWrapperComparer.cs
 System.ComponentModel/Win32Exception.cs
 System.Diagnostics/DataReceivedEventArgs.cs
 System.Diagnostics/DataReceivedEventHandler.cs
-System.Diagnostics/Debug_2_1.cs
+System.Diagnostics/Debug.cs
+System.Diagnostics/DefaultTraceListener.cs
 System.Diagnostics/FileVersionInfo.cs
 System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/Process.cs
@@ -203,6 +204,10 @@ System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
+System.Diagnostics/TraceImpl.cs
+System.Diagnostics/TraceListener.cs
+System.Diagnostics/TraceListenerCollection.cs
+System.Diagnostics/TraceOptions.cs
 System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
 System.Diagnostics/ThreadWaitReason.cs
