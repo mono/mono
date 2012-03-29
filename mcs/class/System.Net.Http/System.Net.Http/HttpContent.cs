@@ -90,6 +90,12 @@ namespace System.Net.Http
 			await SerializeToStreamAsync (buffer, null).ConfigureAwait (false);
 			buffer.Seek (0, SeekOrigin.Begin);
 		}
+		
+		public Task<Stream> ReadAsStreamAsync ()
+		{
+			// TODO:
+			throw new NotImplementedException ();
+		}
 
 		public async Task<byte[]> ReadAsByteArrayAsync ()
 		{

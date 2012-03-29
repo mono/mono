@@ -51,6 +51,15 @@ namespace System.Net.Http.Headers
 				return GetValues<string> ("Content-Encoding");
 			}
 		}
+		
+		public ContentDispositionHeaderValue ContentDisposition {
+			get {
+				return GetValue<ContentDispositionHeaderValue> ("Content-Disposition");
+			}
+			set {
+				AddOrRemove ("Content-Disposition", value);
+			}
+		}
 
 		public ICollection<string> ContentLanguage {
 			get {

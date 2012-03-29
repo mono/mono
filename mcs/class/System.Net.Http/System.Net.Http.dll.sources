@@ -16,6 +16,7 @@ System.Net.Http/StringContent.cs
 System.Net.Http.Headers/AuthenticationHeaderValue.cs
 System.Net.Http.Headers/CacheControlHeaderValue.cs
 System.Net.Http.Headers/CollectionExtensions.cs
+System.Net.Http.Headers/ContentDispositionHeaderValue.cs
 System.Net.Http.Headers/ContentRangeHeaderValue.cs
 System.Net.Http.Headers/EntityTagHeaderValue.cs
 System.Net.Http.Headers/HashCodeCalculator.cs
