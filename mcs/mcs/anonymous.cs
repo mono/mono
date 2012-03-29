@@ -313,6 +313,12 @@ namespace Mono.CSharp {
 			}
 
 			var hoisted = localVariable.HoistedVariant;
+			if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+				// TODO: It's too late the field is defined in HoistedLocalVariable ctor
+				hoisted.Storey.hoisted_locals.Remove (hoisted);
+				hoisted = null;
+			}
+
 			if (hoisted == null) {
 				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (localVariable));
 				localVariable.HoistedVariant = hoisted;
@@ -1543,31 +1549,47 @@ namespace Mono.CSharp {
 			//
 
 			Modifiers modifiers;
+			TypeDefinition parent = null;
+
 			var src_block = Block.Original.Explicit;
 			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
-				storey = FindBestMethodStorey ();
+				parent = storey = FindBestMethodStorey ();
 
-				//
-				// Remove hoisted this demand when simple instance method is enough
-				//
-				if (storey == null && src_block.HasCapturedThis)
-					src_block.ParametersBlock.TopBlock.RemoveThisReferenceFromChildrenBlock (src_block);
+				if (storey == null) {
+					var sm = src_block.ParametersBlock.TopBlock.StateMachine;
 
-				//
-				// For iterators we can host everything in one class
-				//
-				if (storey == null && Block.TopBlock.StateMachine is IteratorStorey)
-					storey = block.TopBlock.StateMachine;
+					//
+					// Remove hoisted this demand when simple instance method is enough
+					//
+					if (src_block.HasCapturedThis) {
+						src_block.ParametersBlock.TopBlock.RemoveThisReferenceFromChildrenBlock (src_block);
+
+						//
+						// Special case where parent class is used to emit instance method
+						// because currect storey is of value type (async host) and we don't
+						// want to create another childer storey to host this reference only
+						//
+						if (sm != null && sm.Kind == MemberKind.Struct)
+							parent = sm.Parent.PartialContainer;
+					}
+
+					//
+					// For iterators we can host everything in one class
+					//
+					if (sm is IteratorStorey)
+						parent = storey = sm;
+				}
 
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
 				if (ec.CurrentAnonymousMethod != null)
-					storey = ec.CurrentAnonymousMethod.Storey;
+					parent = storey = ec.CurrentAnonymousMethod.Storey;
 
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
-			var parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
+			if (parent == null)
+				parent = ec.CurrentTypeDefinition.Parent.PartialContainer;
 
 			string name = CompilerGeneratedContainer.MakeName (parent != storey ? block_name : null,
 				"m", null, ec.Module.CounterAnonymousMethods++);
@@ -1672,6 +1694,17 @@ namespace Mono.CSharp {
 				}
 			} else {
 				ec.EmitThis ();
+
+				//
+				// Special case for value type storey where this is not lifted but
+				// droped off to parent class
+				//
+				for (var b = Block.Parent; b != null; b = b.Parent) {
+					if (b.ParametersBlock.StateMachine != null) {
+						ec.Emit (OpCodes.Ldfld, b.ParametersBlock.StateMachine.HoistedThis.Field.Spec);
+						break;
+					}
+				}
 			}
 
 			var delegate_method = method.Spec;

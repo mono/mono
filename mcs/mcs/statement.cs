@@ -2469,8 +2469,8 @@ namespace Mono.CSharp {
 			// variables will be captured anyway we don't need to create
 			// another storey context
 			//
-			if (ParametersBlock.am_storey is StateMachine) {
-				return ParametersBlock.am_storey;
+			if (ParametersBlock.StateMachine is IteratorStorey) {
+				return ParametersBlock.StateMachine;
 			}
 
 			if (am_storey == null) {
@@ -2487,8 +2487,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			// TODO: The is check should go once state machine is fully separated
-			if (am_storey != null && !(am_storey is StateMachine)) {
+			if (am_storey != null) {
 				DefineStoreyContainer (ec, am_storey);
 				am_storey.EmitStoreyInstantiation (ec, this);
 			}
@@ -2928,7 +2927,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (state_machine != null) {
+			if (state_machine != null && state_machine.OriginalSourceBlock != this) {
 				DefineStoreyContainer (ec, state_machine);
 				state_machine.EmitStoreyInstantiation (ec, this);
 			}
@@ -2938,7 +2937,7 @@ namespace Mono.CSharp {
 
 		public void EmitEmbedded (EmitContext ec)
 		{
-			if (state_machine != null) {
+			if (state_machine != null && state_machine.OriginalSourceBlock != this) {
 				DefineStoreyContainer (ec, state_machine);
 				state_machine.EmitStoreyInstantiation (ec, this);
 			}
@@ -3073,7 +3072,7 @@ namespace Mono.CSharp {
 			var iterator = new Iterator (this, method, host, iterator_type, is_enumerable);
 			var stateMachine = new IteratorStorey (iterator);
 
-			am_storey = stateMachine;
+			state_machine = stateMachine;
 			iterator.SetStateMachine (stateMachine);
 
 			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null);
@@ -3119,7 +3118,7 @@ namespace Mono.CSharp {
 
 			var stateMachine = new AsyncTaskStorey (this, context, initializer, returnType);
 
-			am_storey = stateMachine;
+			state_machine = stateMachine;
 			initializer.SetStateMachine (stateMachine);
 
 			var b = this is ToplevelBlock ?

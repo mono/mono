@@ -464,7 +464,7 @@ namespace Mono.CSharp
 		Dictionary<TypeSpec, List<Field>> awaiter_fields;
 
 		public AsyncTaskStorey (ParametersBlock block, IMemberContext context, AsyncInitializer initializer, TypeSpec type)
-			: base (block, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async", MemberKind.Class)
+			: base (block, initializer.Host, context.CurrentMemberDefinition as MemberBase, context.CurrentTypeParameters, "async", MemberKind.Struct)
 		{
 			return_type = type;
 			awaiter_fields = new Dictionary<TypeSpec, List<Field>> ();
@@ -749,16 +749,10 @@ namespace Mono.CSharp
 				InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, Location)
 			};
 
-			// TODO: CompilerGeneratedThis is enough for structs
-			var temp_this = new LocalTemporary (CurrentType);
-			temp_this.EmitAssign (ec, new CompilerGeneratedThis (CurrentType, Location), false, false);
-
 			var args = new Arguments (2);
 			args.Add (new Argument (awaiter, Argument.AType.Ref));
-			args.Add (new Argument (temp_this, Argument.AType.Ref));
+			args.Add (new Argument (new CompilerGeneratedThis (CurrentType, Location), Argument.AType.Ref));
 			mg.EmitCall (ec, args);
-
-			temp_this.Release (ec);
 		}
 
 		public void EmitInitializer (EmitContext ec)
@@ -788,14 +782,14 @@ namespace Mono.CSharp
 			//
 			// stateMachine.$builder = AsyncTaskMethodBuilder<{task-type}>.Create();
 			//
-			instance.Emit (ec); // .AddressOf (ec, AddressOp.Store);
+			instance.AddressOf (ec, AddressOp.Store);
 			ec.Emit (OpCodes.Call, builder_factory);
 			ec.Emit (OpCodes.Stfld, builder_field);
 
 			//
 			// stateMachine.$builder.Start<{storey-type}>(ref stateMachine);
 			//
-			instance.Emit (ec); //.AddressOf (ec, AddressOp.Store);
+			instance.AddressOf (ec, AddressOp.Store);
 			ec.Emit (OpCodes.Ldflda, builder_field);
 			if (Task != null)
 				ec.Emit (OpCodes.Dup);
@@ -861,7 +855,7 @@ namespace Mono.CSharp
 
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
-			base_type = Compiler.BuiltinTypes.Object; // ValueType;
+			base_type = Compiler.BuiltinTypes.ValueType;
 			base_class = null;
 
 			var istate_machine = Module.PredefinedTypes.IAsyncStateMachine;
