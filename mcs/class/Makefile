@@ -189,7 +189,8 @@ net_4_0_dirs := \
 	System.Web.Razor \
 	System.Web.WebPages.Deployment \
 	System.Web.WebPages \
-	System.Web.WebPages.Razor
+	System.Web.WebPages.Razor \
+	System.Web.Mvc3
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
