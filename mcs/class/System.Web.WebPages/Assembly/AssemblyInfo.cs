@@ -35,14 +35,8 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.Json assembly
-
-//[assembly: AssemblyTitle ("System.Json.dll")]
-//[assembly: AssemblyDescription ("System.Json.dll")]
 [assembly: AssemblyDefaultAlias ("System.Web.WebPages.dll")]
 
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-
-[assembly: AssemblyDelaySign (true)]
 
