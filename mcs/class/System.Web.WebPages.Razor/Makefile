@@ -16,6 +16,7 @@ LIB_MCS_FLAGS = \
 		/warn:1 \
 		/noconfig \
 		/keyfile:../winfx.pub \
+		/delaysign \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /r:System.Configuration.dll \
