@@ -1,6 +1,0 @@
-This assembly is now a port from Microsoft's ASP.NET web stack.
-http://aspnetwebstack.codeplex.com
-
-The sources are mostly copied from src/System.Json and flavored with
-#if - #endif directives. RS.cs is copied from src. Assembly.cs is ignored.
-
