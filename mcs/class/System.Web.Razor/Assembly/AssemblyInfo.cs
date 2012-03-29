@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 
 //[assembly: AssemblyTitle ("System.Json.dll")]
 //[assembly: AssemblyDescription ("System.Json.dll")]
-[assembly: AssemblyDefaultAlias ("System.Json.dll")]
+[assembly: AssemblyDefaultAlias ("System.Web.Razor.dll")]
 
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
