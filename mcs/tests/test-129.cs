@@ -22,7 +22,9 @@ class X {
 			return 2;
 
 		uint ui = (1);
-
+		byte b1 = (int)(0x30);
+		byte b2 = (int)0x30;
+		
 		return 0;
 	}
 }

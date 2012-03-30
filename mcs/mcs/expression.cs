@@ -1701,12 +1701,13 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 			
 			Constant c = expr as Constant;
-			Expression res = c != null ? c.TryReduce (ec, type) : null;
-
-			if (res == null) {
-				res = Convert.ExplicitConversion (ec, expr, type, loc);
+			if (c != null) {
+				c = c.TryReduce (ec, type);
+				if (c != null)
+					return c;
 			}
 
+			var res = Convert.ExplicitConversion (ec, expr, type, loc);
 			if (res == expr)
 				return EmptyCast.Create (res, type);
 

@@ -258,8 +258,7 @@ namespace Mono.CSharp {
 		{
 			try {
 				return TryReduceConstant (ec, target_type);
-			}
-			catch (OverflowException) {
+			} catch (OverflowException) {
 				if (ec.ConstantCheckState && Type.BuiltinType != BuiltinTypeSpec.Type.Decimal) {
 					ec.Report.Error (221, loc,
 						"Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
@@ -274,8 +273,15 @@ namespace Mono.CSharp {
 
 		Constant TryReduceConstant (ResolveContext ec, TypeSpec target_type)
 		{
-			if (Type == target_type)
+			if (Type == target_type) {
+				//
+				// Reducing literal value produces a new constant. Syntactically 10 is not same as (int)10 
+				//
+				if (IsLiteral)
+					return CreateConstantFromValue (target_type, GetValue (), loc);
+
 				return this;
+			}
 
 			Constant c;
 			if (target_type.IsEnum) {
