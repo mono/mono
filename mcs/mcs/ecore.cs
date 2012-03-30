@@ -240,7 +240,7 @@ namespace Mono.CSharp {
 			Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
 		}
 
-		public virtual void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public virtual void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 			Error_ValueCannotBeConvertedCore (ec, loc, target, expl);
 		}
@@ -915,7 +915,7 @@ namespace Mono.CSharp {
 					converted = Convert.ImplicitConversion (ec, source, btypes.ULong, source.loc);
 
 				if (converted == null) {
-					source.Error_ValueCannotBeConverted (ec, source.loc, btypes.Int, false);
+					source.Error_ValueCannotBeConverted (ec, btypes.Int, false);
 					return null;
 				}
 			}
@@ -3348,7 +3348,7 @@ namespace Mono.CSharp {
 			call.Emit (ec, best_candidate, arguments, loc);			
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 			ec.Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
 				Name, TypeManager.CSharpName (target));

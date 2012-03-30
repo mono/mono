@@ -1215,9 +1215,9 @@ namespace Mono.CSharp {
 				res = c;
 			} else {
 				TypeSpec type = ec.Switch.SwitchType;
-				res = c.TryReduce (ec, type, c.Location);
+				res = c.TryReduce (ec, type);
 				if (res == null) {
-					c.Error_ValueCannotBeConverted (ec, loc, type, true);
+					c.Error_ValueCannotBeConverted (ec, type, true);
 					return false;
 				}
 
@@ -1681,7 +1681,7 @@ namespace Mono.CSharp {
 				if (TypeSpec.IsReferenceType (li.Type))
 					initializer.Error_ConstantCanBeInitializedWithNullOnly (bc, li.Type, initializer.Location, li.Name);
 				else
-					initializer.Error_ValueCannotBeConverted (bc, initializer.Location, li.Type, false);
+					initializer.Error_ValueCannotBeConverted (bc, li.Type, false);
 
 				return null;
 			}

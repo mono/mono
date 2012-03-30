@@ -1701,7 +1701,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 			
 			Constant c = expr as Constant;
-			Expression res = c != null ? c.TryReduce (ec, type, loc) : null;
+			Expression res = c != null ? c.TryReduce (ec, type) : null;
 
 			if (res == null) {
 				res = Convert.ExplicitConversion (ec, expr, type, loc);
@@ -2660,7 +2660,7 @@ namespace Mono.CSharp
 					return left;
 				
 				if (left.IsZeroInteger)
-					return left.TryReduce (ec, right.Type, loc);
+					return left.TryReduce (ec, right.Type);
 				
 				break;
 				
@@ -4503,7 +4503,7 @@ namespace Mono.CSharp
 			//
 			converted = GetOperatorTrue (ec, expr, loc);
 			if (converted == null) {
-				expr.Error_ValueCannotBeConverted (ec, loc, type, false);
+				expr.Error_ValueCannotBeConverted (ec, type, false);
 				return null;
 			}
 
@@ -9243,7 +9243,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 		}
 

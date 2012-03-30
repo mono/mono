@@ -815,7 +815,7 @@ namespace Mono.CSharp {
 				return new SimpleAssign (target, new DynamicConversion (target_type, CSharpBinderFlags.ConvertExplicit, arg, loc), loc).Resolve (ec);
 			}
 
-			right.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			right.Error_ValueCannotBeConverted (ec, target_type, false);
 			return null;
 		}
 
