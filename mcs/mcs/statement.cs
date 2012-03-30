@@ -6419,6 +6419,7 @@ namespace Mono.CSharp {
 			target.type = type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 			target.body = (Block) body.Clone (clonectx);
+			target.statement = statement.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
