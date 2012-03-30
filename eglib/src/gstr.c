@@ -358,6 +358,9 @@ g_strreverse (gchar *str)
 	if (str == NULL)
 		return NULL;
 
+	if (*str == 0)
+		return str;
+
 	len = strlen (str);
 	half = len / 2;
 	len--;
