@@ -1,6 +1,4 @@
 ../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 
 ../../../external/aspnetwebstack/src/RS.cs

@@ -2,19 +2,17 @@ thisdir = class/System.Json
 SUBDIRS = 
 include ../../build/rules.make
 
-UPSTREAM_DIR = ../../../external/aspnetwebstack/src
-RESX_RESOURCES = $(UPSTREAM_DIR)/System.Json/Properties/Resources.resx
-RESOURCES = $(subst $(UPSTREAM_DIR),$(build_libdir),$(RESX_RESOURCES:.resx=.resources))
+System.Json.Properties.Resources.resources: ../../../external/aspnetwebstack/src/System.Json/Properties/Resources.resx
+	$(RESGEN) "$<" "$@"
 
 LIBRARY = System.Json.dll
-LIB_MCS_FLAGS = \
-		/d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
+LIB_MCS_FLAGS = /d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
 	        /r:System.Core.dll \
 		/r:System.Runtime.Serialization.dll \
 		/r:System.ServiceModel.Web.dll \
-		$(RESOURCES:%=/resource:%)
+		/resource:System.Json.Properties.Resources.resources
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:Microsoft.CSharp.dll
@@ -22,20 +20,6 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = $(RESX_RESOURCES)
-
 include ../../build/library.make
 
-$(the_lib): $(RESOURCES)
-
-# Canned recipe which would be useful, but make doesn't run it for some reason...
-#define run-resgen = 
-#	mkdir -p $(dir $@)
-#	$(RESGEN) $< $@
-#endef
-
-$(build_libdir)/System.Json/Properties/Resources.resources: $(UPSTREAM_DIR)/System.Json/Properties/Resources.resx
-#	Doesn't work for some reason
-#	$(run-resgen)
-	mkdir -p $(dir $@)
-	$(RESGEN) $< $@
+$(the_lib): System.Json.Properties.Resources.resources
