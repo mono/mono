@@ -198,7 +198,6 @@ net_4_5_dirs := \
 	System.Web.WebPages \
 	System.Web.WebPages.Razor \
 	System.Web.Mvc3 \
-	Newtonsoft.Json \
 	System.Net.Http.Formatting \
 	System.Web.Http \
 	Mono.CodeContracts
