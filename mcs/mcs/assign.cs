@@ -343,7 +343,7 @@ namespace Mono.CSharp {
 			type = target_type;
 
 			if (!(target is IAssignMethod)) {
-				Error_ValueAssignment (ec, source);
+				target.Error_ValueAssignment (ec, source);
 				return null;
 			}
 

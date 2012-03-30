@@ -103,7 +103,12 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			return expr.Resolve (ec);
+			var res = expr.Resolve (ec);
+			var constant = res as Constant;
+			if (constant != null && constant.IsLiteral)
+				return Constant.CreateConstantFromValue (res.Type, constant.GetValue (), expr.Location);
+
+			return res;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -142,10 +147,12 @@ namespace Mono.CSharp
 		//   This routine will attempt to simplify the unary expression when the
 		//   argument is a constant.
 		// </summary>
-		Constant TryReduceConstant (ResolveContext ec, Constant e)
+		Constant TryReduceConstant (ResolveContext ec, Constant constant)
 		{
-			if (e is EmptyConstantCast)
-				return TryReduceConstant (ec, ((EmptyConstantCast) e).child);
+			var e = constant;
+
+			while (e is EmptyConstantCast)
+				e = ((EmptyConstantCast) e).child;
 			
 			if (e is SideEffectConstant) {
 				Constant r = TryReduceConstant (ec, ((SideEffectConstant) e).value);
@@ -220,7 +227,7 @@ namespace Mono.CSharp
 					return new LongConstant (ec.BuiltinTypes, -lvalue, e.Location);
 
 				case BuiltinTypeSpec.Type.UInt:
-					UIntLiteral uil = e as UIntLiteral;
+					UIntLiteral uil = constant as UIntLiteral;
 					if (uil != null) {
 						if (uil.Value == int.MaxValue + (uint) 1)
 							return new IntLiteral (ec.BuiltinTypes, int.MinValue, e.Location);
@@ -230,13 +237,13 @@ namespace Mono.CSharp
 
 
 				case BuiltinTypeSpec.Type.ULong:
-					ULongLiteral ull = e as ULongLiteral;
+					ULongLiteral ull = constant as ULongLiteral;
 					if (ull != null && ull.Value == 9223372036854775808)
 						return new LongLiteral (ec.BuiltinTypes, long.MinValue, e.Location);
 					return null;
 
 				case BuiltinTypeSpec.Type.Float:
-					FloatLiteral fl = e as FloatLiteral;
+					FloatLiteral fl = constant as FloatLiteral;
 					// For better error reporting
 					if (fl != null)
 						return new FloatLiteral (ec.BuiltinTypes, -fl.Value, e.Location);
@@ -244,7 +251,7 @@ namespace Mono.CSharp
 					return new FloatConstant (ec.BuiltinTypes, -((FloatConstant) e).Value, e.Location);
 
 				case BuiltinTypeSpec.Type.Double:
-					DoubleLiteral dl = e as DoubleLiteral;
+					DoubleLiteral dl = constant as DoubleLiteral;
 					// For better error reporting
 					if (dl != null)
 						return new DoubleLiteral (ec.BuiltinTypes, -dl.Value, e.Location);
@@ -1687,20 +1694,19 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			eclass = ExprClass.Value;
-
-			Constant c = expr as Constant;
-			if (c != null) {
-				c = c.TryReduce (ec, type, loc);
-				if (c != null)
-					return c;
-			}
-
 			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, loc);
 			}
 
-			var res = Convert.ExplicitConversion (ec, expr, type, loc);
+			eclass = ExprClass.Value;
+			
+			Constant c = expr as Constant;
+			Expression res = c != null ? c.TryReduce (ec, type, loc) : null;
+
+			if (res == null) {
+				res = Convert.ExplicitConversion (ec, expr, type, loc);
+			}
+
 			if (res == expr)
 				return EmptyCast.Create (res, type);
 
@@ -9227,6 +9233,10 @@ namespace Mono.CSharp
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			return this;
+		}
+
+		public override void Error_ValueAssignment (ResolveContext rc, Expression rhs)
+		{
 		}
 
 		public override void Error_UnexpectedKind (ResolveContext ec, ResolveFlags flags, Location loc)

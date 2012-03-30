@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (type), name);
 		}
 
-		public void Error_ValueAssignment (ResolveContext rc, Expression rhs)
+		public virtual void Error_ValueAssignment (ResolveContext rc, Expression rhs)
 		{
 			if (rhs == EmptyExpression.LValueMemberAccess || rhs == EmptyExpression.LValueMemberOutAccess) {
 				rc.Report.SymbolRelatedToPreviousError (type);
