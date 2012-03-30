@@ -373,6 +373,7 @@ BASE_TEST_CS_SRC=		\
 	bug-389886-3.cs \
 	monitor.cs	\
 	bug-1147.cs	\
+	mono-path.cs	\
 	bug-bxc-795.cs
 
 TEST_CS_SRC_DIST=	\
