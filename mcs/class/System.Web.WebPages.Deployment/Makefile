@@ -5,12 +5,11 @@ include ../../build/rules.make
 LIBRARY = System.Web.WebPages.Deployment.dll
 LIBRARY_NAME = System.Web.WebPages.Deployment.dll
 
-UPSTREAM_DIR = ../../../external/aspnetwebstack/src
-RESX_DIST = \
-	$(UPSTREAM_DIR)/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx \
-	$(UPSTREAM_DIR)/CommonResources.resx
-
-RESOURCES = $(subst $(UPSTREAM_DIR),$(build_libdir),$(RESX_DIST:.resx=.resources))
+System.Web.WebPages.Deployment.Common.CommonResources.resources: ../../../external/aspnetwebstack/src/CommonResources.resx
+	$(RESGEN) "$<" "$@"
+	
+System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx
+	$(RESGEN) "$<" "$@"
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
@@ -22,28 +21,10 @@ LIB_MCS_FLAGS = \
 	        /r:System.Web.dll \
 	        /r:Microsoft.Web.Infrastructure.dll \
 	        /d:ASPNETWEBPAGES \
-		$(RESOURCES:%=/resource:%)
-
-EXTRA_DISTFILES = $(RESX_DIST)
+		/resource:System.Web.WebPages.Deployment.Common.CommonResources.resources \
+		/resource:System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources
 
 include ../../build/library.make
 
-$(build_lib): $(RESOURCES)
-
-# Canned recipe which would be useful, but make doesn't run it for some reason...
-#define run-resgen = 
-#	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-#	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-#endef
-
-$(build_libdir)/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resources: $(UPSTREAM_DIR)/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx
-#	Doesn't work for some reason
-#	$(run-resgen)
-	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-
-$(build_libdir)/CommonResources.resources: $(UPSTREAM_DIR)/CommonResources.resx
-#	Doesn't work for some reason
-#	$(run-resgen)
-	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+$(build_lib): System.Web.WebPages.Deployment.Common.CommonResources.resources \
+		System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources

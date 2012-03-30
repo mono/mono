@@ -5,12 +5,11 @@ include ../../build/rules.make
 LIBRARY = System.Web.Razor.dll
 LIBRARY_NAME = System.Web.Razor.dll
 
-UPSTREAM_DIR = ../../../external/aspnetwebstack/src
-RESX_DIST = \
-	$(UPSTREAM_DIR)/System.Web.Razor/Resources/RazorResources.resx \
-	$(UPSTREAM_DIR)/CommonResources.resx
-
-RESOURCES = $(subst $(UPSTREAM_DIR),$(build_libdir),$(RESX_DIST:.resx=.resources))
+System.Web.Razor.Common.CommonResources.resources: ../../../external/aspnetwebstack/src/CommonResources.resx
+	$(RESGEN) "$<" "$@"
+	
+System.Web.Razor.Resources.RazorResources.resources: ../../../external/aspnetwebstack/src/System.Web.Razor/Resources/RazorResources.resx
+	$(RESGEN) "$<" "$@"
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
@@ -19,28 +18,10 @@ LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /d:ASPNETWEBPAGES \
-		$(RESOURCES:%=/resource:%)
-
-EXTRA_DISTFILES = $(RESX_DIST)
+		/resource:System.Web.Razor.Resources.RazorResources.resources \
+		/resource:System.Web.Razor.Common.CommonResources.resources
 
 include ../../build/library.make
 
-$(build_lib): $(RESOURCES)
-
-# Canned recipe which would be useful, but make doesn't run it for some reason...
-#define run-resgen = 
-#	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-#	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-#endef
-
-$(build_libdir)/System.Web.Razor/Resources/RazorResources.resources: $(UPSTREAM_DIR)/System.Web.Razor/Resources/RazorResources.resx
-#	Doesn't work for some reason
-#	$(run-resgen)
-	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-
-$(build_libdir)/CommonResources.resources: $(UPSTREAM_DIR)/CommonResources.resx
-#	Doesn't work for some reason
-#	$(run-resgen)
-	mkdir -p $(dir `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`)
-	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)` `echo $@ | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+$(build_lib): System.Web.Razor.Resources.RazorResources.resources \
+		System.Web.Razor.Common.CommonResources.resources
