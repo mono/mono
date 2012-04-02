@@ -562,7 +562,7 @@ namespace Mono.CSharp
 			reset.Block.AddStatement (new Throw (new New (new TypeExpression (ex_type, Location), null, Location), Location));
 		}
 
-		protected override void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
+		protected override void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			base.EmitHoistedParameters (ec, hoisted);
 			base.EmitHoistedParameters (ec, hoisted_params_copy);

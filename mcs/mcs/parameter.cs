@@ -235,7 +235,7 @@ namespace Mono.CSharp {
 
 		TemporaryVariableReference expr_tree_variable;
 
-		HoistedVariable hoisted_variant;
+		HoistedParameter hoisted_variant;
 
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
 		{
@@ -549,7 +549,7 @@ namespace Mono.CSharp {
 		//
 		// Hoisted parameter variant
 		//
-		public HoistedVariable HoistedVariant {
+		public HoistedParameter HoistedVariant {
 			get {
 				return hoisted_variant;
 			}

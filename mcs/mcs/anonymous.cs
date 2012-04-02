@@ -219,6 +219,7 @@ namespace Mono.CSharp {
 
 		// A list of hoisted parameters
 		protected List<HoistedParameter> hoisted_params;
+		List<HoistedParameter> hoisted_local_params;
 		protected List<HoistedVariable> hoisted_locals;
 
 		// Hoisted this
@@ -340,16 +341,46 @@ namespace Mono.CSharp {
 			}
 
 			var hoisted = parameterInfo.Parameter.HoistedVariant;
+
+			if (parameterInfo.Block.StateMachine is AsyncTaskStorey) {
+				//
+				// Another storey in same block exists but state machine does not
+				// have parameter captured. We need to add it there as well to
+				// proxy parameter value correctly.
+				//
+				if (hoisted == null && parameterInfo.Block.StateMachine != this) {
+					var storey = parameterInfo.Block.StateMachine;
+
+					hoisted = new HoistedParameter (storey, parameterReference);
+					parameterInfo.Parameter.HoistedVariant = hoisted;
+
+					if (storey.hoisted_params == null)
+						storey.hoisted_params = new List<HoistedParameter> ();
+
+					storey.hoisted_params.Add (hoisted);
+				}
+
+				//
+				// Lift captured parameter from value type storey to reference type one. Otherwise
+				// any side effects would be done on a copy
+				//
+				if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+					if (hoisted_local_params == null)
+						hoisted_local_params = new List<HoistedParameter> ();
+
+					hoisted_local_params.Add (hoisted);
+					hoisted = null;
+				}
+			}
+
 			if (hoisted == null) {
-				var storey = parameterInfo.Block.StateMachine ?? this;
-				var hp = new HoistedParameter (storey, parameterReference);
-				hoisted = hp;
+				hoisted = new HoistedParameter (this, parameterReference);
 				parameterInfo.Parameter.HoistedVariant = hoisted;
 
-				if (storey.hoisted_params == null)
-					storey.hoisted_params = new List<HoistedParameter> (2);
+				if (hoisted_params == null)
+					hoisted_params = new List<HoistedParameter> ();
 
-				storey.hoisted_params.Add (hp);
+				hoisted_params.Add (hoisted);
 			}
 
 			//
@@ -535,9 +566,20 @@ namespace Mono.CSharp {
 			ec.CurrentAnonymousMethod = ae;
 		}
 
-		protected virtual void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
+		protected virtual void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			foreach (HoistedParameter hp in hoisted) {
+				//
+				// Parameters could be proxied via local fields for value type storey
+				//
+				if (hoisted_local_params != null) {
+					var local_param = hoisted_local_params.Find (l => l.Parameter.Parameter == hp.Parameter.Parameter);
+					var source = new FieldExpr (local_param.Field, Location);
+					source.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location);
+					hp.EmitAssign (ec, source, false, false);
+					continue;
+				}
+
 				hp.EmitHoistingAssignment (ec);
 			}
 		}
@@ -770,7 +812,7 @@ namespace Mono.CSharp {
 
 	public class HoistedParameter : HoistedVariable
 	{
-		sealed class HoistedFieldAssign : Assign
+		sealed class HoistedFieldAssign : CompilerAssign
 		{
 			public HoistedFieldAssign (Expression target, Expression source)
 				: base (target, source, source.Location)
@@ -801,23 +843,32 @@ namespace Mono.CSharp {
 			this.parameter = hp.parameter;
 		}
 
+		#region Properties
+
 		public Field Field {
 			get {
 				return field;
 			}
 		}
 
+		public ParameterReference Parameter {
+			get {
+				return parameter;
+			}
+		}
+
+		#endregion
+
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
 			//
 			// Remove hoisted redirection to emit assignment from original parameter
 			//
-			HoistedVariable temp = parameter.Parameter.HoistedVariant;
+			var temp = parameter.Parameter.HoistedVariant;
 			parameter.Parameter.HoistedVariant = null;
 
-			Assign a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
-			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
-				a.EmitStatement (ec);
+			var a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
+			a.EmitStatement (ec);
 
 			parameter.Parameter.HoistedVariant = temp;
 		}
