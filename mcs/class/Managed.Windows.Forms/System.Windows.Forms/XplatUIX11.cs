@@ -3768,6 +3768,10 @@ namespace System.Windows.Forms {
 			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				active = (IntPtr)Marshal.ReadInt32(prop);
 				XFree(prop);
+			} else {
+				// The window manager does not support _NET_ACTIVE_WINDOW.  Fall back to XGetInputFocus.
+				IntPtr	revert_to = IntPtr.Zero;
+				XGetInputFocus(DisplayHandle, out active, out revert_to);
 			}
 
 			if (active != IntPtr.Zero) {
@@ -7526,6 +7530,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XIfEvent")]
 		internal extern static void XIfEvent (IntPtr display, ref XEvent xevent, Delegate event_predicate, IntPtr arg);
+
+		[DllImport ("libX11", EntryPoint="XGetInputFocus")]
+		internal extern static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
 #endif
 	}
