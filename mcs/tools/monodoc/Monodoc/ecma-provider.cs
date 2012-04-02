@@ -248,7 +248,7 @@ public static class EcmaDoc {
 	{
 		XmlNodeList parameters = member.SelectNodes ("Parameters/Parameter");
 		if (parameters.Count == 0)
-			return "";
+			return member.SelectSingleNode ("MemberType").InnerText != "Property" ? "()" : "";
 		StringBuilder args = new StringBuilder ();
 		args.Append ("(");
 		args.Append (XmlDocUtils.ToTypeName (parameters [0].Attributes ["Type"].Value, member));
@@ -1194,7 +1194,7 @@ public class EcmaHelpSource : HelpSource {
 
 	static string ToEscapedMemberName (string membername)
 	{
-		return ToEscapedName (membername, "``");
+		return ToEscapedName (membername, "`");
 	}
 	
 	public override string GetNodeXPath (XPathNavigator n)
