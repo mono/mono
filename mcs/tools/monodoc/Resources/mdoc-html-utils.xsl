@@ -387,7 +387,7 @@
 		<h3 class="{$type}"><xsl:value-of select="$section" /></h3>
 		<ul class="{$type}">
 		  <xsl:for-each select="Docs/related[@type=$type]">
-			<li><a href="{@href}"><xsl:value-of select="." /></a></li>
+			<li><a href="{@href}" target="_blank"><xsl:value-of select="." /></a></li>
 		  </xsl:for-each>
 		</ul>
 	  </xsl:if>
