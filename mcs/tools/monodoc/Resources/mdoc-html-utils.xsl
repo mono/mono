@@ -846,7 +846,7 @@
 				  <xsl:with-param name="type" select="'recipe'" />
 				</xsl:call-template>
 				<xsl:call-template name="CreateRelatedSection">
-				  <xsl:with-param name="section" select="'Available Samples'" />
+				  <xsl:with-param name="section" select="'Samples'" />
 				  <xsl:with-param name="type" select="'sample'" />
 				</xsl:call-template>
 				<xsl:call-template name="CreateRelatedSection">
