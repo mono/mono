@@ -523,7 +523,7 @@ static GPtrArray *event_requests;
 
 static guint32 debugger_tls_id;
 
-static gboolean vm_start_event_sent, vm_death_event_sent, disconnected;
+static gboolean vm_start_event_sent, vm_death_event_sent, disconnected, send_pending_type_load_events;
 
 /* Maps MonoInternalThread -> DebuggerTlsData */
 static MonoGHashTable *thread_to_tls;
@@ -795,6 +795,9 @@ mono_debugger_agent_init (void)
 	mono_loader_lock_track_ownership (TRUE);
 
 	event_requests = g_ptr_array_new ();
+	vm_start_event_sent = 
+	vm_death_event_sent = 
+	send_pending_type_load_events = FALSE;
 
 	mono_mutex_init (&debugger_thread_exited_mutex, NULL);
 	mono_cond_init (&debugger_thread_exited_cond, NULL);
@@ -2937,7 +2940,6 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	
 	if (event == EVENT_KIND_VM_START) {
 		vm_start_event_sent = TRUE;
-		mono_debugger_agent_on_attach ();
 	}
 	
 	DEBUG (1, fprintf (log_file, "[%p] Sent event %s, suspend=%d.\n", (gpointer)GetCurrentThreadId (), event_to_string (event), suspend_policy));
@@ -2964,8 +2966,6 @@ process_profiler_event (EventKind event, gpointer arg)
 
 	mono_loader_lock ();
 	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy);
-	if (!events)
-		events = g_slist_append (events, GINT_TO_POINTER (InterlockedIncrement (&event_request_id)));
 	mono_loader_unlock ();
 
 	process_event (event, arg, 0, NULL, events, suspend_policy);
@@ -3153,8 +3153,14 @@ start_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	DebuggerTlsData *tls;
 
+	/* Check whether we need to send pending type load events to a newly-connected client */
+	if (send_pending_type_load_events && mono_thread_get_main () && mono_thread_get_main ()->tid == thread->tid) {
+		send_pending_type_load_events = FALSE;
+		mono_debugger_agent_on_attach ();
+	}
+
 	mono_loader_lock ();
-	
+
 	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 	/* Could be the debugger thread with assembly/type load hooks */
 	if (tls)
@@ -5168,6 +5174,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			resume_vm ();
 		disconnected = TRUE;
 		vm_start_event_sent = FALSE;
+		send_pending_type_load_events = FALSE;
 		break;
 	case CMD_VM_EXIT: {
 		MonoInternalThread *thread;
@@ -5472,6 +5479,11 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 
 		buffer_add_int (buf, req->id);
+
+		/* This needs to be after the request was added to event_requests */
+		if (agent_config.defer && EVENT_KIND_TYPE_LOAD == req->event_kind)
+			send_pending_type_load_events = TRUE;
+
 		break;
 	}
 	case CMD_EVENT_REQUEST_CLEAR: {
