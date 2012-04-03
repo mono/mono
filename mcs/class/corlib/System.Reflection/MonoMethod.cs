@@ -37,7 +37,7 @@ using System.Reflection.Emit;
 using System.Security;
 using System.Threading;
 using System.Text;
-
+using System.Diagnostics;
 
 namespace System.Reflection {
 	
@@ -186,6 +186,8 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
@@ -241,8 +243,11 @@ namespace System.Reflection {
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return new RuntimeMethodHandle (mhandle);} 
+			get {
+				return new RuntimeMethodHandle (mhandle);
+			} 
 		}
+		
 		public override MethodAttributes Attributes { 
 			get {
 				return MonoMethodInfo.GetAttributes (mhandle);
@@ -486,6 +491,8 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
@@ -539,13 +546,19 @@ namespace System.Reflection {
 			return (obj == null) ? o : null;
 		}
 
-		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+		[DebuggerHidden]
+		[DebuggerStepThrough]
+		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
 			return Invoke (null, invokeAttr, binder, parameters, culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return new RuntimeMethodHandle (mhandle);} 
+			get {
+				return new RuntimeMethodHandle (mhandle);
+			} 
 		}
+		
 		public override MethodAttributes Attributes { 
 			get {
 				return MonoMethodInfo.GetAttributes (mhandle);
