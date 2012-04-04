@@ -95,6 +95,16 @@ public class ConditionalParsing
 	{
 		int a = (int)(A<int>.Value);
 	}
+	
+	static int Test_12 (bool arg)
+	{
+		return arg ? Foo (() => { return 1; }) : 1;
+	}
+	
+	static int Foo (Func<int> arg)
+	{
+		return 1;
+	}
 
 	public static void Main ()
 	{

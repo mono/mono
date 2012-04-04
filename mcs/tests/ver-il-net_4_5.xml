@@ -14047,6 +14047,17 @@
         <size>7</size>
       </method>
     </type>
+    <type name="ConditionalParsing">
+      <method name="Int32 Test_12(Boolean)" attrs="145">
+        <size>55</size>
+      </method>
+      <method name="Int32 Foo(System.Func`1[System.Int32])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;Test_12&gt;m__0()" attrs="145">
+        <size>10</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-410.cs">
     <type name="Program">

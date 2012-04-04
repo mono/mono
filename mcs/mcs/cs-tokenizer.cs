@@ -1265,10 +1265,24 @@ namespace Mono.CSharp
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
+					int braces = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
 					while ((ntoken = xtoken ()) != Token.EOF) {
+						if (ntoken == Token.OPEN_BRACE) {
+							++braces;
+							continue;
+						}
+
+						if (ntoken == Token.CLOSE_BRACE) {
+							--braces;
+							continue;
+						}
+
+						if (braces != 0)
+							continue;
+
 						if (ntoken == Token.SEMICOLON)
 							break;
 						
