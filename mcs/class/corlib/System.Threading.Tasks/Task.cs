@@ -50,7 +50,7 @@ namespace System.Threading.Tasks
 		static Action<Task> childWorkAdder;
 		
 		// parent is the outer task in which this task is created
-		protected readonly Task parent;
+		internal readonly Task parent;
 		// contAncestor is the Task on which this continuation was setup
 		readonly Task contAncestor;
 		
