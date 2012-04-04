@@ -32,6 +32,9 @@ mono_unity_socket_security_enabled_set
 mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded
 mono_class_is_generic
 mono_class_is_inflated
+mono_unity_seh_handler
+mono_unity_set_unhandled_exception_handler
+
 ;Exports that should have been here, but I dont understand why they're not.
 mono_security_enable_core_clr
 mono_security_set_mode
