@@ -28,11 +28,14 @@
 
 #if NET_4_0 || MOBILE
 
+using System.Threading;
+
 namespace System.Threading.Tasks
 {
 	abstract class TaskActionInvoker
 	{
 		public static readonly TaskActionInvoker Empty = new EmptyTaskActionInvoker ();
+		public static readonly TaskActionInvoker Delay = new DelayTaskInvoker ();
 		
 		sealed class EmptyTaskActionInvoker : TaskActionInvoker
 		{
@@ -390,6 +393,22 @@ namespace System.Threading.Tasks
 			public override void Invoke (Task owner, object state, Task context)
 			{
 				((Task<TNewResult>) context).Result = action ((Task<TResult>) owner, state);
+			}
+		}
+
+		sealed class DelayTaskInvoker : TaskActionInvoker
+		{
+			public override Delegate Action {
+				get {
+					return null;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				var mre = new ManualResetEventSlim ();
+				int timeout = (int) state;
+				mre.Wait (timeout, owner.CancellationToken);
 			}
 		}
 

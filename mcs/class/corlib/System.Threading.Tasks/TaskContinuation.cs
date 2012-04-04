@@ -246,7 +246,119 @@ namespace System.Threading.Tasks
 
 			owner.TrySetResult (results);
 		}
-	}	
+	}
+
+	sealed class WhenAnyContinuation<T> : IContinuation where T : Task
+	{
+		readonly Task<T> owner;
+		readonly IList<T> tasks;
+		bool executed;
+
+		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
+		{
+			this.owner = owner;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (executed)
+				return;
+
+			executed = true;
+			Thread.MemoryBarrier ();
+
+			for (int i = 0; i < tasks.Count; ++i) {
+				var task = tasks[i];
+				if (!task.IsCompleted)
+					continue;
+
+				owner.TrySetResult (task);
+				return;
+			}
+		}
+	}
+
+	sealed class ManualResetContinuation : IContinuation, IDisposable
+	{
+		readonly ManualResetEventSlim evt;
+
+		public ManualResetContinuation ()
+		{
+			this.evt = new ManualResetEventSlim ();
+		}
+
+		public ManualResetEventSlim Event {
+			get {
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			evt.Set ();
+		}
+	}
+
+	sealed class DelayContinuation : IContinuation, IDisposable
+	{
+		readonly ManualResetEventSlim evt;
+
+		public DelayContinuation ()
+		{
+			this.evt = new ManualResetEventSlim ();
+		}
+
+		public ManualResetEventSlim Event
+		{
+			get
+			{
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			Console.WriteLine ("execute");
+			evt.Set ();
+		}
+	}
+
+	sealed class CountdownContinuation : IContinuation, IDisposable
+	{
+		readonly CountdownEvent evt;
+
+		public CountdownContinuation (int initialCount)
+		{
+			this.evt = new CountdownEvent (initialCount);
+		}
+
+		public CountdownEvent Event {
+			get {
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			evt.Signal ();
+		}
+	}
 }
 
 #endif
