@@ -29,6 +29,8 @@
 
 #if NET_4_0 || MOBILE
 
+using System.Collections.Generic;
+
 namespace System.Threading.Tasks
 {
 	interface IContinuation
@@ -135,6 +137,116 @@ namespace System.Threading.Tasks
 			ctx.Post (l => ((Action) l) (), action);
 		}
 	}
+
+	sealed class WhenAllContinuation : IContinuation
+	{
+		readonly Task owner;
+		readonly IList<Task> tasks;
+		int counter;
+
+		public WhenAllContinuation (Task owner, IList<Task> tasks)
+		{
+			this.owner = owner;
+			this.counter = tasks.Count;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (Interlocked.Decrement (ref counter) != 0)
+				return;
+
+			owner.Status = TaskStatus.Running;
+
+			bool canceled = false;
+			List<Exception> exceptions = null;
+			foreach (var task in tasks) {
+				if (task.IsFaulted) {
+					if (exceptions == null)
+						exceptions = new List<Exception> ();
+
+					exceptions.AddRange (task.Exception.InnerExceptions);
+					continue;
+				}
+
+				if (task.IsCanceled) {
+					canceled = true;
+				}
+			}
+
+			if (exceptions != null) {
+				owner.TrySetException (new AggregateException (exceptions));
+				return;
+			}
+
+			if (canceled) {
+				owner.CancelReal ();
+				return;
+			}
+
+			owner.Finish ();
+		}
+	}
+
+	sealed class WhenAllContinuation<TResult> : IContinuation
+	{
+		readonly Task<TResult[]> owner;
+		readonly IList<Task<TResult>> tasks;
+		int counter;
+
+		public WhenAllContinuation (Task<TResult[]> owner, IList<Task<TResult>> tasks)
+		{
+			this.owner = owner;
+			this.counter = tasks.Count;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (Interlocked.Decrement (ref counter) != 0)
+				return;
+
+			bool canceled = false;
+			List<Exception> exceptions = null;
+			TResult[] results = null;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var task = tasks [i];
+				if (task.IsFaulted) {
+					if (exceptions == null)
+						exceptions = new List<Exception> ();
+
+					exceptions.AddRange (task.Exception.InnerExceptions);
+					continue;
+				}
+
+				if (task.IsCanceled) {
+					canceled = true;
+					continue;
+				}
+
+				if (results == null) {
+					if (canceled || exceptions != null)
+						continue;
+
+					results = new TResult[tasks.Count];
+				}
+
+				results[i] = task.Result;
+			}
+
+			if (exceptions != null) {
+				owner.TrySetException (new AggregateException (exceptions));
+				return;
+			}
+
+			if (canceled) {
+				owner.CancelReal ();
+				return;
+			}
+
+			owner.TrySetResult (results);
+		}
+	}	
 }
 
 #endif
