@@ -130,6 +130,13 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
+		public bool IsSuspended {
+			get {
+				CheckProtocolVersion (2, 18);
+				return conn.VM_IsSuspended ();
+			}
+		}
+
 		public void Exit (int exitCode) {
 			conn.VM_Exit (exitCode);
 		}
