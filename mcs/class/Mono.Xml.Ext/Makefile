@@ -8,7 +8,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 ifeq ($(PROFILE),atomic)
 SCARY_LIB=
 else
-SCARY_LIB=/lib:$(prefix)/lib /noconfig
+SCARY_LIB=/lib:$(prefix)/lib
 endif
 
 LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /r:System.Xml.dll

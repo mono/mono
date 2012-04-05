@@ -10,7 +10,6 @@ RESX_DIST =  Mvc/Resources/MvcResources.resx
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/noconfig \
 		/keyfile:../winfx.pub \
 		/d:MONO \
 		/delaysign \

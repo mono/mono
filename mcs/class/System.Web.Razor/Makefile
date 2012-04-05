@@ -13,7 +13,6 @@ System.Web.Razor.Resources.RazorResources.resources: ../../../external/aspnetweb
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/noconfig \
 		/keyfile:../winfx.pub -delaysign \
 	        /r:System.dll \
 	        /r:System.Core.dll \

@@ -13,7 +13,6 @@ System.Web.WebPages.Resources.WebPageResources.resources: ../../../external/aspn
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/noconfig \
 		/keyfile:../winfx.pub \
 		/delaysign \
 		/r:Microsoft.CSharp.dll \

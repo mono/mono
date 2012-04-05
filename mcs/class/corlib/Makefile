@@ -40,7 +40,7 @@ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS
+TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll -define:MONO_DATACONVERTER_STATIC_METHODS
 
 EXTRA_DISTFILES = \
 	Test/ms_run_test.sh			\

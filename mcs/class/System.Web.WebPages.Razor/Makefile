@@ -13,7 +13,6 @@ System.Web.WebPages.Razor.Resources.RazorWebResources.resources: ../../../extern
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/noconfig \
 		/keyfile:../winfx.pub \
 		/delaysign \
 	        /r:System.dll \
