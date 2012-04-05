@@ -19,7 +19,7 @@ LIB_MCS_FLAGS = \
 	/r:System.dll				\
 	/r:$(BUILD_FRAMEWORK)
 
-TEST_MCS_FLAGS = /r:$(BUILD_FRAMEWORK)
+TEST_MCS_FLAGS = /r:$(BUILD_FRAMEWORK) -r:System.dll
 
 export TESTING_MONO=a
 XBUILD_DIR=../../tools/xbuild
