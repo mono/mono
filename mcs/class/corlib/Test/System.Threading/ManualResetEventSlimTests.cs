@@ -215,6 +215,25 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void WaitHandleConsistencyTest ()
+		{
+			var mre = new ManualResetEventSlim ();
+			mre.WaitHandle.WaitOne (0);
+
+			for (int i = 0; i < 10000; i++) {
+				int count = 2;
+				SpinWait wait = new SpinWait ();
+
+				ThreadPool.QueueUserWorkItem (_ => { mre.Set (); Interlocked.Decrement (ref count); });
+				ThreadPool.QueueUserWorkItem (_ => { mre.Reset (); Interlocked.Decrement (ref count); });
+
+				while (count > 0)
+					wait.SpinOnce ();
+				Assert.AreEqual (mre.IsSet, mre.WaitHandle.WaitOne (0));
+			}
+		}
+
+		[Test]
 		public void Dispose ()
 		{
 			var mre = new ManualResetEventSlim (false);
