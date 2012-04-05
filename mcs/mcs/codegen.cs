@@ -1096,9 +1096,11 @@ namespace Mono.CSharp
 				return false;
 
 			//
-			// It's non-virtual and will never be null
+			// It's non-virtual and will never be null and it can be determined
+			// whether it's known value or reference type by verifier
 			//
-			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation))
+			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation) &&
+				!instance.Type.IsGenericParameter)
 				return false;
 
 			return true;

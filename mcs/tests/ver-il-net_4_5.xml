@@ -17566,6 +17566,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-567.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[T]">
+      <method name="Void Foo()" attrs="150">
+        <size>61</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G2`1[T]">
+      <method name="Void Foo()" attrs="150">
+        <size>31</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
