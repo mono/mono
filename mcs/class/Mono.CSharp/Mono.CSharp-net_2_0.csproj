@@ -90,7 +90,7 @@
    <Compile Include="..\..\mcs\visit.cs" />
    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
-   <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+   <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
    <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs" />
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\tools\monop\outline.cs" />
@@ -109,7 +109,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>

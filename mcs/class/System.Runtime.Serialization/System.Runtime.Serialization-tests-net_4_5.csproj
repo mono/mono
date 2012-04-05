@@ -40,6 +40,8 @@
   <ItemGroup>
    <Compile Include="Test\System.Runtime.Serialization\Bug666333Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\Bug675144Test.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\Bug2843Test.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
    <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
    <Compile Include="Test\System.Runtime.Serialization\KnownTypeAttributeTest.cs" />
@@ -72,7 +74,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
