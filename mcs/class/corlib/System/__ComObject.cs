@@ -99,6 +99,8 @@ namespace System
 			// Guard multiple invocation.
 			if (iunknown != IntPtr.Zero)
 				return;
+
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
 			
 			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
 			if (ocd != null) {
