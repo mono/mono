@@ -31,7 +31,8 @@ LIB_MCS_FLAGS = \
 TEST_MCS_FLAGS = \
 	/r:$(BUILD_ENGINE)	\
 	/r:$(BUILD_FRAMEWORK)	\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll
+	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
+	/r:System.Core.dll
 
 EXTRA_DISTFILES = \
 	Test/resources/test.cs \
