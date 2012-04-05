@@ -45354,6 +45354,28 @@
       </method>
     </type>
   </test>
+  <test name="test-844.cs">
+    <type name="C">
+      <method name="Int32 get_Prop()" attrs="2177">
+        <size>10</size>
+      </method>
+      <method name="Int32 get_Item(Char)" attrs="2177">
+        <size>10</size>
+      </method>
+      <method name="Void Foo(Int32 ByRef)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Method(Int32)" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">
