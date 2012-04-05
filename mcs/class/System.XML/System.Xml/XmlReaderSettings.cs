@@ -161,6 +161,9 @@ namespace System.Xml
 			set { linePositionOffset = value; }
 		}
 
+#if NET_4_0
+		[ObsoleteAttribute("Use DtdProcessing property instead")]
+#endif
 		public bool ProhibitDtd {
 			get { return prohibitDtd; }
 			set { prohibitDtd = value; }

@@ -27,28 +27,16 @@
 //
 
 using System;
-#if NET_2_0
 using System.Collections.Generic;
-#else
-using System.Collections;
-#endif
 
 namespace System.Xml
 {
-#if NET_2_0
 	public interface IXmlNamespaceResolver
-#else
-	internal interface IXmlNamespaceResolver
-#endif
 	{
-#if NET_2_0
 		IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope);
-#else
-		IDictionary GetNamespacesInScope (XmlNamespaceScope scope);
-#endif
 
 		string LookupNamespace (string prefix);
 
-		string LookupPrefix (string ns);
+		string LookupPrefix (string namespaceName);
 	}
 }

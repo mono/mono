@@ -42,10 +42,7 @@ namespace System.Xml
 		public abstract ICredentials Credentials { set; }
 #endif
 
-		public abstract object GetEntity (
-			Uri absoluteUri,
-			string role,
-			Type type);
+		public abstract object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn);
 
 		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual Uri ResolveUri (Uri baseUri, string relativeUri)

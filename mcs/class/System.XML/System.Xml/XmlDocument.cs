@@ -722,7 +722,7 @@ namespace System.Xml
 			Load (vr);
 		}
 
-		public virtual void Load (XmlReader xmlReader)
+		public virtual void Load (XmlReader reader)
 		{
 			// Reset our document
 			// For now this just means removing all our children but later this
@@ -730,20 +730,20 @@ namespace System.Xml
 			// like properties we have, etc.
 			RemoveAll ();
 
-			this.baseURI = xmlReader.BaseURI;
+			this.baseURI = reader.BaseURI;
 			// create all contents with use of ReadNode()
 			try {
 				loadMode = true;
 				do {
-					XmlNode n = ReadNode (xmlReader);
+					XmlNode n = ReadNode (reader);
 					if (n == null)
 						break;
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
 						AppendChild (n, false);
-				} while (xmlReader.NodeType != XmlNodeType.EndElement);
+				} while (reader.NodeType != XmlNodeType.EndElement);
 #if NET_2_0
-				if (xmlReader.Settings != null)
-					schemas = xmlReader.Settings.Schemas;
+				if (reader.Settings != null)
+					schemas = reader.Settings.Schemas;
 #endif
 			} finally {
 				loadMode = false;
@@ -1069,24 +1069,24 @@ namespace System.Xml
 			xmlWriter.Flush ();
 		}
 
-		public virtual void Save (XmlWriter xmlWriter)
+		public virtual void Save (XmlWriter w)
 		{
 			//
 			// This should preserve white space if PreserveWhiteSpace is true
 			//
 			bool autoXmlDecl = FirstChild != null && FirstChild.NodeType != XmlNodeType.XmlDeclaration;
 			if (autoXmlDecl)
-				xmlWriter.WriteStartDocument ();
-			WriteContentTo (xmlWriter);
+				w.WriteStartDocument ();
+			WriteContentTo (w);
 			if (autoXmlDecl)
-				xmlWriter.WriteEndDocument ();
-			xmlWriter.Flush ();
+				w.WriteEndDocument ();
+			w.Flush ();
 		}
 
-		public override void WriteContentTo (XmlWriter w)
+		public override void WriteContentTo (XmlWriter xw)
 		{
 			for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
-				n.WriteTo (w);
+				n.WriteTo (xw);
 		}
 
 		public override void WriteTo (XmlWriter w)
@@ -1122,16 +1122,15 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public void Validate (ValidationEventHandler handler)
+		public void Validate (ValidationEventHandler validationEventHandler)
 		{
-			Validate (handler, this,
+			Validate (validationEventHandler, this,
 				XmlSchemaValidationFlags.ProcessIdentityConstraints);
 		}
 
-		public void Validate (ValidationEventHandler handler,
-			XmlNode node)
+		public void Validate (ValidationEventHandler validationEventHandler, XmlNode nodeToValidate)
 		{
-			Validate (handler, node,
+			Validate (validationEventHandler, nodeToValidate,
 				XmlSchemaValidationFlags.ProcessIdentityConstraints);
 		}
 
