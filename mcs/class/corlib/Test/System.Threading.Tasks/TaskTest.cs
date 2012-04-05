@@ -565,26 +565,27 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			ParallelTestHelper.Repeat (delegate {
 				bool r1 = false, r2 = false, r3 = false;
-				var mre = new ManualResetEvent (false);
+				var mre = new ManualResetEventSlim (false);
+				var mreStart = new ManualResetEventSlim (false);
 				
 				Task t = Task.Factory.StartNew(delegate {
 					Task.Factory.StartNew(delegate {
+						mre.Wait (300);
 						r1 = true;
-						mre.Set ();
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Assert.IsTrue (mre.WaitOne (1000), "#0");
-						
 						r2 = true;
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Assert.IsTrue (mre.WaitOne (1000), "#0");
-						
 						r3 = true;
 					}, TaskCreationOptions.AttachedToParent);
+					mreStart.Set ();
 				});
 				
-				Assert.IsTrue (t.Wait(2000), "#0");
+				mreStart.Wait (300);
+				Assert.IsFalse (t.Wait (10), "#0a");
+				mre.Set ();
+				Assert.IsTrue (t.Wait (500), "#0b");
 				Assert.IsTrue(r2, "#1");
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
