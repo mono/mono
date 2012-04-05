@@ -81,7 +81,7 @@ namespace MonoTests.System.Reflection
 			Bar = 2
 		};
 
-		public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n)
+		public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, ParamEnum n = ParamEnum.Foo)
 		{
 		}
 

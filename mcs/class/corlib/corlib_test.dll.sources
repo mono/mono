@@ -56,7 +56,6 @@ System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
 System/DecimalTest.cs
 System.Diagnostics/DebuggerDisplayAttributeTest.cs
-System.Diagnostics/DebugTest.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
 System.Diagnostics.Contracts/ContractAssertTest.cs
@@ -268,7 +267,6 @@ System.Security.Cryptography/TripleDESCryptoServiceProviderTest.cs
 System.Security.Cryptography/TripleDESTest.cs
 System.Security.Cryptography.X509Certificates/X509CapiTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
-System.Security.Cryptography.X509Certificates/X509Cert20Test.cs
 System.Security.Cryptography.X509Certificates/X509SpcTest.cs
 System.Security/HostSecurityManagerTest.cs
 System.Security/NamedPermissionSetTest.cs

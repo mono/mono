@@ -175,6 +175,7 @@ System.Configuration/SettingsPropertyCollectionTest.cs
 System.Configuration/SettingsPropertyTest.cs
 System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
+System.Diagnostics/DebugTest.cs
 System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
@@ -286,6 +287,7 @@ System.Security.Cryptography.X509Certificates/Pkits_4_16_PrivateCertificateExten
 System.Security.Cryptography.X509Certificates/PublicKeyTest.cs
 System.Security.Cryptography.X509Certificates/X500DistinguishedNameTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
+System.Security.Cryptography.X509Certificates/X509Cert20Test.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Test.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2CollectionTest.cs
