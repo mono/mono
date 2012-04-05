@@ -37,7 +37,7 @@ namespace System.Threading
 
 		ManualResetEvent handle;
 		internal AtomicBooleanValue disposed;
-		bool used;
+		int used;
 		bool set;
 
 		public ManualResetEventSlim ()
@@ -78,13 +78,13 @@ namespace System.Threading
 			set = false;
 			Thread.MemoryBarrier ();
 			if (handle != null) {
-				used = true;
+				Interlocked.Increment (ref used);
 				Thread.MemoryBarrier ();
 				var tmpHandle = handle;
 				if (tmpHandle != null)
 					tmpHandle.Reset ();
 				Thread.MemoryBarrier ();
-				used = false;
+				Interlocked.Decrement (ref used);
 			}
 		}
 
@@ -93,13 +93,13 @@ namespace System.Threading
 			set = true;
 			Thread.MemoryBarrier ();
 			if (handle != null) {
-				used = true;
+				Interlocked.Increment (ref used);
 				Thread.MemoryBarrier ();
 				var tmpHandle = handle;
 				if (tmpHandle != null)
 					tmpHandle.Set ();
 				Thread.MemoryBarrier ();
-				used = false;
+				Interlocked.Decrement (ref used);
 			}
 		}
 
@@ -211,10 +211,10 @@ namespace System.Threading
 
 			if (handle != null) {
 				var tmpHandle = Interlocked.Exchange (ref handle, null);
-				if (used) {
+				if (used > 0) {
 					// A tiny wait (just a few cycles normally) before releasing
 					SpinWait wait = new SpinWait ();
-					while (used)
+					while (used > 0)
 						wait.SpinOnce ();
 				}
 				tmpHandle.Dispose ();
