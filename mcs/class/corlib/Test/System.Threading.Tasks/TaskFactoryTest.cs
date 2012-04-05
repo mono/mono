@@ -280,7 +280,7 @@ namespace MonoTests.System.Threading.Tasks
 			bool result = false;
 			bool continuationTest = false;
 
-			Func<int, int> func = (i) => { result = true; throw new ApplicationException ("bleh"); return i + 3; };
+			Func<int, int> func = (i) => { result = true; throw new ApplicationException ("bleh"); };
 			Task<int> task = factory.FromAsync<int, int> (func.BeginInvoke, func.EndInvoke, 1, null);
 			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
 			try {
