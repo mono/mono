@@ -316,7 +316,7 @@ namespace System.Web.Configuration.nBrowser
 		public override System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities)
 		{
 			if (initialCapabilities == null)
-				initialCapabilities = new System.Collections.Generic.Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+				initialCapabilities = new System.Collections.Generic.Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			System.Web.Configuration.nBrowser.Result r = new System.Web.Configuration.nBrowser.Result(initialCapabilities);
 
 #if trace

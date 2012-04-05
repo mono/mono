@@ -262,7 +262,7 @@ namespace System.Web.Configuration.nBrowser
 		/// <param name="node"></param>
 		private void ProcessCapabilities(System.Xml.XmlNode node)
 		{
-			Capabilities = new System.Collections.Specialized.NameValueCollection(node.ChildNodes.Count);
+			Capabilities = new System.Collections.Specialized.NameValueCollection(node.ChildNodes.Count, StringComparer.OrdinalIgnoreCase);
 
 			for (int a = 0;a <= node.ChildNodes.Count - 1;a++)
 			{
@@ -1005,7 +1005,7 @@ namespace System.Web.Configuration.nBrowser
 			if (n.Capabilities != null)
 			{
 				if (Capabilities == null)
-					Capabilities =  new System.Collections.Specialized.NameValueCollection(n.Capabilities.Count);
+					Capabilities =  new System.Collections.Specialized.NameValueCollection(n.Capabilities.Count, StringComparer.OrdinalIgnoreCase);
 				foreach (string capName in n.Capabilities)
 					Capabilities[capName] = n.Capabilities[capName];
 			}
