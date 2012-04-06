@@ -139,6 +139,11 @@ namespace Mono.CSharp
 				pos = 0;
 			}
 
+			public override string ToString ()
+			{
+				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
+			}
+			
 			public Location Location {
 				get { return new Location (row, column); }
 			}
