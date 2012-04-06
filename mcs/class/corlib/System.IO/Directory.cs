@@ -547,19 +547,27 @@ namespace System.IO
 				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 
 			try {
+				bool first = true;
 				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
 					yield return s;
 				
-				while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null){
-					if ((rattr & FileAttributes.ReparsePoint) != 0)
-						continue;
-					if ((rattr & kind) != 0)
-						yield return s;
-					
-					if (((rattr & FileAttributes.Directory) != 0) && subdirs)
+				do {
+					if (((rattr & FileAttributes.Directory) != 0) && subdirs) {
 						foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
 							yield return child;
-				}
+					}
+
+					if (first) {
+						first = false;
+						continue;
+					}
+					
+					if ((rattr & FileAttributes.ReparsePoint) != 0)
+						continue;
+
+					if ((rattr & kind) != 0)
+						yield return s;
+				} while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null);
 			} finally {
 				MonoIO.FindClose (handle);
 			}
