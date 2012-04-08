@@ -6560,7 +6560,7 @@ public void parse ()
 			report.Error (-25, lexer.Location, "Parsing error");
 		} else {
 			// Used by compiler-tester to test internal errors
-			if (yacc_verbose_flag > 0)
+			if (yacc_verbose_flag > 0 || e is FatalException)
 				throw;
 		
 			report.Error (589, lexer.Location, "Internal compiler error during parsing" + e);
