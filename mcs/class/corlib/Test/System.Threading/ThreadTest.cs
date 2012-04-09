@@ -1112,6 +1112,15 @@ namespace MonoTests.System.Threading
 			}
 			Assert.IsTrue (exception_occured, "Thread1 Started Invalid Exception Occured");
 		}
+
+		[Test]
+		public void SetNameTpThread () {
+			ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadProc));
+		}
+
+		static void ThreadProc(Object stateInfo) {
+			Thread.CurrentThread.Name = "My Worker";
+		}
 	}
 
 	public class TestUtil

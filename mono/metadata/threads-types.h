@@ -192,6 +192,8 @@ void mono_thread_hazardous_try_free_all (void);
 
 MonoThreadHazardPointers* mono_hazard_pointer_get (void);
 
+void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed) MONO_INTERNAL;
+
 void mono_threads_install_notify_pending_exc (MonoThreadNotifyPendingExcFunc func) MONO_INTERNAL;
 
 #define mono_hazard_pointer_set(hp,i,v)	\
