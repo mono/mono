@@ -56,6 +56,11 @@
 #include "version.h"
 #include "debugger-agent.h"
 
+
+#ifdef _MSC_VER
+#include <process.h>
+#endif
+
 static FILE *mini_stats_fd = NULL;
 
 static void mini_usage (void);
@@ -1513,9 +1518,25 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--gc=sgen") == 0) {
 			if (!strcmp (mono_gc_get_gc_name (), "boehm")) {
 				GString *path = g_string_new (argv [0]);
+#ifdef TARGET_WIN32
+				char* p = strstr(path->str, ".exe");
+				int pos = 0;
+
+				if (p == NULL){
+					fprintf (stderr, "Error, this process is not named mono.exe and the command line option --gc=sgen was passed");
+					exit (1);
+				}
+
+				pos = (p - path->str);
+				g_string_insert (path, pos, "-sgen");
+#else
 				g_string_append (path, "-sgen");
+#endif
+
 				argv [0] = path->str;
-#ifdef HAVE_EXECVP
+#ifdef _MSC_VER
+				_execvp (path->str, argv);
+#elif defined(HAVE_EXECVP)
 				execvp (path->str, argv);
 #else
 				fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");
@@ -1531,7 +1552,9 @@ mono_main (int argc, char* argv[])
 				}
 				*p = 0;
 				argv [0] = p;
-#ifdef HAVE_EXECVP
+#ifdef _MSC_VER
+				_execvp (p, argv);
+#elif defined(HAVE_EXECVP)
 				execvp (p, argv);
 #else
 				fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");

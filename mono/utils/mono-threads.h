@@ -141,13 +141,21 @@ typedef struct {
 /*
 Requires the world to be stoped
 */
+#ifndef _MSC_VER
 #define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread)
+#else
+#define FOREACH_THREAD(thread) MONO_LLS_TYPED_FOREACH (mono_thread_info_list_head (), thread, SgenThreadInfo*)
+#endif
 #define END_FOREACH_THREAD MONO_LLS_END_FOREACH
 
 /*
 Snapshot iteration.
 */
+#ifndef _MSC_VER
 #define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread)
+#else
+#define FOREACH_THREAD_SAFE(thread) MONO_LLS_TYPED_FOREACH_SAFE (mono_thread_info_list_head (), thread, SgenThreadInfo*)
+#endif
 #define END_FOREACH_THREAD_SAFE MONO_LLS_END_FOREACH_SAFE
 
 #define mono_thread_info_get_tid(info) ((MonoNativeThreadId)((MonoThreadInfo*)info)->node.key)

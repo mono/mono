@@ -68,6 +68,12 @@ Requires the world to be stoped
 		if (!mono_lls_pointer_get_mark (__cur->next)) {	\
 		       	(element) = (typeof((element)))__cur;			\
 
+#define MONO_LLS_TYPED_FOREACH(list, element, type) {\
+	MonoLinkedListSetNode *__cur;	\
+	for (__cur = (list)->head; __cur; __cur = mono_lls_pointer_unmask (__cur->next)) \
+		if (!mono_lls_pointer_get_mark (__cur->next)) {	\
+			(element) = (type)__cur;			\
+
 #define MONO_LLS_END_FOREACH }}
 
 static inline MonoLinkedListSetNode*
@@ -90,6 +96,17 @@ Provides snapshot iteration
 		__next = get_hazardous_pointer_with_mask ((gpointer volatile*)&__cur->next, __hp, 0);	\
 		if (!mono_lls_pointer_get_mark (__next)) {	\
 			(element) = (typeof((element)))__cur;
+
+
+#define MONO_LLS_TYPED_FOREACH_SAFE(list, element, type) {\
+	MonoThreadHazardPointers *__hp = mono_hazard_pointer_get ();	\
+	MonoLinkedListSetNode *__cur, *__next;	\
+	for (__cur = mono_lls_pointer_unmask (get_hazardous_pointer ((gpointer volatile*)&(list)->head, __hp, 1)); \
+		__cur;	\
+		__cur = mono_lls_info_step (__next, __hp)) {	\
+		__next = get_hazardous_pointer_with_mask ((gpointer volatile*)&__cur->next, __hp, 0);	\
+		if (!mono_lls_pointer_get_mark (__next)) {	\
+			(element) = (type)__cur;
 
 #define MONO_LLS_END_FOREACH_SAFE \
 		} \

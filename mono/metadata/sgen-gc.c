@@ -3118,13 +3118,19 @@ sgen_collect_major_no_lock (const char *reason)
 	mono_profiler_gc_event (MONO_GC_EVENT_END, 1);
 }
 
+#ifdef _MSC_VER
+#define MONO_NOINLINE __declspec (noinline)
+#else
+#define MONO_NOINLINE __attribute__((noinline))
+#endif
+
 /*
  * When deciding if it's better to collect or to expand, keep track
  * of how much garbage was reclaimed with the last collection: if it's too
  * little, expand.
  * This is called when we could not allocate a small object.
  */
-static void __attribute__((noinline))
+static void MONO_NOINLINE
 minor_collect_or_expand_inner (size_t size)
 {
 	int do_minor_collection = 1;
@@ -3614,7 +3620,7 @@ update_current_thread_stack (void *start)
 {
 	int stack_guard = 0;
 #ifndef USE_MONO_CTX
-	void *ptr = cur_thread_regs;
+	void *reg_ptr = cur_thread_regs;
 #endif
 	SgenThreadInfo *info = mono_thread_info_current ();
 	
@@ -3624,8 +3630,8 @@ update_current_thread_stack (void *start)
 	MONO_CONTEXT_GET_CURRENT (cur_thread_ctx);
 	info->monoctx = &cur_thread_ctx;
 #else
-	ARCH_STORE_REGS (ptr);
-	info->stopped_regs = ptr;
+	ARCH_STORE_REGS (reg_ptr);
+	info->stopped_regs = reg_ptr;
 #endif
 	if (gc_callbacks.thread_suspend_func)
 		gc_callbacks.thread_suspend_func (info->runtime_data, NULL);

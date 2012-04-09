@@ -1526,7 +1526,7 @@ count_pinned_callback (char *obj, size_t size, void *data)
 		++count_pinned_nonref;
 }
 
-static void __attribute__ ((unused))
+static void G_GNUC_UNUSED
 count_ref_nonref_objs (void)
 {
 	int total;
