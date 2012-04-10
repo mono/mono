@@ -1452,12 +1452,18 @@ fixed_parameter
 		report.Error (1552, lt.Location, "Array type specifier, [], must appear before parameter name");
 		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 	  }
+	| attribute_sections error
+	  {
+		Error_SyntaxError (yyToken);
+	  	Location l = GetLocation ($2);
+		$$ = new Parameter (null, null, Parameter.Modifier.NONE, (Attributes) $1, l);
+	  }
 	| opt_attributes
 	  opt_parameter_modifier
 	  parameter_type
 	  error
 	  {
-		Error_SyntaxError (yyToken);	  
+		Error_SyntaxError (yyToken);
 	  	Location l = GetLocation ($4);
 		$$ = new Parameter ((FullNamedExpression) $3, null, (Parameter.Modifier) $2, (Attributes) $1, l);
 	  }
