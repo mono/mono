@@ -661,6 +661,24 @@ gpointer mono_create_thread (WapiSecurityAttributes *security,
 	return res;
 }
 
+guint32
+mono_resume_thread (gpointer handle)
+{
+	guint32 res = 0;
+
+#ifdef HOST_WIN32
+	res = ResumeThread (handle);
+	while (res == 0) {
+		SwitchToThread();
+		res = ResumeThread (handle);
+	}
+#else
+	res = ResumeThread (handle);
+#endif
+
+	return res;
+}
+
 /* 
  * The thread start argument may be an object reference, and there is
  * no ref to keep it alive when the new thread is started but not yet
@@ -745,7 +763,7 @@ MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer fu
 		mono_thread_set_state (internal, ThreadState_Background);
 
 	if (handle_store (thread))
-		ResumeThread (thread_handle);
+		mono_resume_thread (thread_handle);
 
 	return internal;
 }
@@ -1084,7 +1102,7 @@ static void mono_thread_start (MonoThread *thread)
 	if (!handle_store (thread))
 		return;
 
-	ResumeThread (internal->handle);
+	mono_resume_thread (internal->handle);
 
 	if(internal->start_notify!=NULL) {
 		/* Wait for the thread to set up its TLS data etc, so

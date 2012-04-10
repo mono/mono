@@ -68,13 +68,14 @@ inner_start_thread (LPVOID arg)
 	int post_result;
 	LPTHREAD_START_ROUTINE start_func = start_info->start_routine;
 	DWORD result;
+	gboolean suspend = start_info->suspend;
 
 	mono_thread_info_attach (&result);
 
 	post_result = MONO_SEM_POST (&(start_info->registered));
 	g_assert (!post_result);
 
-	if (start_info->suspend)
+	if (suspend)
 		SuspendThread (GetCurrentThread ());
 
 	result = start_func (t_arg);
