@@ -245,6 +245,7 @@ namespace System.Threading.Tasks
 
 			if (tasks.Length == 0)
 				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+			CheckContinueArguments (tasks, continuationAction, continuationOptions, scheduler);
 
 			foreach (var ta in tasks) {
 				if (ta == null)
@@ -326,6 +327,7 @@ namespace System.Threading.Tasks
 				var data = (Tuple<Task[], CancellationToken>) l;
 				return Task.WaitAny (data.Item1, data.Item2);
 			}, Tuple.Create (tasks, cancellationToken));
+			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
 			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
 
@@ -390,6 +392,7 @@ namespace System.Threading.Tasks
 				var data = (Tuple<Task[], CancellationToken>) l;
 				Task.WaitAll (data.Item1, data.Item2);
 			}, Tuple.Create (tasks, cancellationToken));
+			CheckContinueArguments (tasks, continuationAction, continuationOptions, scheduler);
 
 			var cont = t.ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
 
@@ -450,6 +453,7 @@ namespace System.Threading.Tasks
 				var data = (Tuple<Task[], CancellationToken>) l;
 				Task.WaitAll (data.Item1, data.Item2);
 			}, Tuple.Create (tasks, cancellationToken));
+			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
 			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
 
@@ -655,6 +659,36 @@ namespace System.Threading.Tasks
 		TaskScheduler GetScheduler ()
 		{
 			return scheduler ?? TaskScheduler.Current;
+		}
+
+		void CheckContinueArguments (Task[] tasks, object continuationAction, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			if (tasks.Length == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			foreach (var ta in tasks) {
+				if (ta == null)
+					throw new ArgumentException ("The tasks argument contains a null value", "tasks");
+			}
+
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			const TaskContinuationOptions notAllowedOptions = 
+				TaskContinuationOptions.NotOnRanToCompletion  |
+				TaskContinuationOptions.NotOnFaulted |
+				TaskContinuationOptions.NotOnCanceled |
+				TaskContinuationOptions.OnlyOnRanToCompletion |
+				TaskContinuationOptions.OnlyOnFaulted |
+				TaskContinuationOptions.OnlyOnCanceled;
+
+			if ((continuationOptions & notAllowedOptions) != 0)
+				throw new ArgumentOutOfRangeException ("continuationOptions");
 		}
 	}
 }
