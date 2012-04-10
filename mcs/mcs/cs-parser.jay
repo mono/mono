@@ -5120,6 +5120,11 @@ switch_label
 	 	$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
 	 	lbag.AddLocation ($$, GetLocation ($3));
 	 }
+	| CASE constant_expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
+	  }
 	| DEFAULT_COLON
 	  {
 		$$ = new SwitchLabel (null, GetLocation ($1));
