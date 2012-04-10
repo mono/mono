@@ -174,6 +174,25 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWhenAll_WithMixedCompletionState ()
+		{
+			var mre = new ManualResetEventSlim ();
+			var task = Task.Factory.StartNew (() => mre.Wait (200));
+			var contFailed = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnFaulted);
+			var contCanceled = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnCanceled);
+			var contSuccess = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnRanToCompletion);
+			bool ran = false;
+
+			var cont = Task.Factory.ContinueWhenAll (new Task[] { contFailed, contCanceled, contSuccess }, _ => ran = true);
+
+			mre.Set ();
+			cont.Wait (200);
+
+			Assert.IsTrue (ran);
+			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status);
+		}
+
+		[Test]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);

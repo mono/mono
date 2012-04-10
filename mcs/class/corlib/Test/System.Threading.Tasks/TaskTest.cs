@@ -535,6 +535,26 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWithDifferentOptionsAreCanceledTest ()
+		{
+			var mre = new ManualResetEventSlim ();
+			var task = Task.Factory.StartNew (() => mre.Wait (200));
+			var contFailed = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnFaulted);
+			var contCanceled = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnCanceled);
+			var contSuccess = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+			mre.Set ();
+			contSuccess.Wait (100);
+
+			Assert.IsTrue (contSuccess.IsCompleted);
+			Assert.IsTrue (contFailed.IsCompleted);
+			Assert.IsTrue (contCanceled.IsCompleted);
+			Assert.IsFalse (contSuccess.IsCanceled);
+			Assert.IsTrue (contFailed.IsCanceled);
+			Assert.IsTrue (contCanceled.IsCanceled);
+		}
+
+		[Test]
 		public void MultipleTasks()
 		{
 			ParallelTestHelper.Repeat (delegate {
