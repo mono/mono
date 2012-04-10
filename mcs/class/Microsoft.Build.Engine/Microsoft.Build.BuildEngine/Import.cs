@@ -79,6 +79,22 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		internal bool CheckEvaluatedProjectPathExists ()
+		{
+			string path = EvaluatedProjectPath;
+
+			if (File.Exists (path))
+				return true;
+
+			if (Path.GetFileName (path) == "Microsoft.CSharp.Targets") {
+				path = Path.ChangeExtension (path, ".targets");
+				if (File.Exists (path))
+					return true;
+			}
+
+			return false;
+		}
+
 		// FIXME: condition
 		internal void Evaluate (bool ignoreMissingImports)
 		{

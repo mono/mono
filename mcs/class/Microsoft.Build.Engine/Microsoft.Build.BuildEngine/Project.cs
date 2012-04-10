@@ -1156,6 +1156,9 @@ namespace Microsoft.Build.BuildEngine {
 				return false;
 			}
 
+			if (!import.CheckEvaluatedProjectPathExists ())
+				return false;
+
 			Imports.Add (import);
 			string importingFile = importingProject != null ? importingProject.FullFileName : FullFileName;
 			ParentEngine.LogMessage (MessageImportance.Low,
