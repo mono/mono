@@ -3420,8 +3420,9 @@ array_creation_expression
 	  }
 	| NEW new_expr_type error
 	  {
-		Error_SyntaxError (1526, yyToken, "Unexpected symbol");
-		$$ = new ArrayCreation ((FullNamedExpression) $2, null, GetLocation ($1));
+		Error_SyntaxError (yyToken);
+		// It can be any of new expression, create the most common one
+		$$ = new New ((FullNamedExpression) $2, null, GetLocation ($1));
 	  }
 	;
 
