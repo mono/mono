@@ -256,7 +256,7 @@ namespace System.Threading.Tasks
 	{
 		readonly Task<T> owner;
 		readonly IList<T> tasks;
-		bool executed;
+		AtomicBooleanValue executed = new AtomicBooleanValue ();
 
 		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
 		{
@@ -266,11 +266,8 @@ namespace System.Threading.Tasks
 
 		public void Execute ()
 		{
-			if (executed)
+			if (!executed.TryRelaxedSet ())
 				return;
-
-			executed = true;
-			Thread.MemoryBarrier ();
 
 			for (int i = 0; i < tasks.Count; ++i) {
 				var task = tasks[i];

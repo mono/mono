@@ -986,29 +986,6 @@ namespace System.Threading.Tasks
 			return WhenAllCore (new List<Task> (tasks));
 		}
 
-		static Task WhenAllCore (IList<Task> tasks)
-		{
-			bool all_completed = true;
-			foreach (var t in tasks) {
-				if (t == null)
-					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
-
-				all_completed &= t.Status == TaskStatus.RanToCompletion;
-			}
-
-			if (all_completed)
-				return TaskConstants.Finished;
-
-			var task = new Task (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
-			task.SetupScheduler (TaskScheduler.Current);
-
-			var continuation = new WhenAllContinuation (task, tasks);
-			foreach (var t in tasks)
-				t.ContinueWith (continuation);
-
-			return task;
-		}
-
 		public static Task<TResult[]> WhenAll<TResult> (params Task<TResult>[] tasks)
 		{
 			if (tasks == null)
@@ -1027,7 +1004,7 @@ namespace System.Threading.Tasks
 			return WhenAllCore<TResult> (new List<Task<TResult>> (tasks));
 		}
 
-		static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
+		internal static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
 		{
 			foreach (var t in tasks) {
 				if (t == null)
@@ -1058,37 +1035,6 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("tasks");
 
 			return WhenAnyCore (new List<Task> (tasks));
-		}
-
-		static Task<Task> WhenAnyCore (IList<Task> tasks)
-		{
-			if (tasks.Count == 0)
-				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
-
-			int completed_index = -1;
-			for (int i = 0; i < tasks.Count; ++i) {
-				var t = tasks [i];
-				if (t == null)
-					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
-
-				if (t.IsCompleted && completed_index < 0)
-					completed_index = i;
-			}
-
-			var task = new Task<Task> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
-
-			if (completed_index > 0) {
-				task.TrySetResult (tasks[completed_index]);
-				return task;
-			}
-
-			task.SetupScheduler (TaskScheduler.Current);
-
-			var continuation = new WhenAnyContinuation<Task> (task, tasks);
-			foreach (var t in tasks)
-				t.ContinueWith (continuation);
-
-			return task;
 		}
 
 		public static Task<Task<TResult>> WhenAny<TResult> (params Task<TResult>[] tasks)
@@ -1144,6 +1090,59 @@ namespace System.Threading.Tasks
 		}
 #endif
 
+		internal static Task WhenAllCore (IList<Task> tasks)
+		{
+			bool all_completed = true;
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				all_completed &= t.Status == TaskStatus.RanToCompletion;
+			}
+
+			if (all_completed)
+				return TaskConstants.Finished;
+
+			var task = new Task (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAllContinuation (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
+		internal static Task<Task> WhenAnyCore (IList<Task> tasks)
+		{
+			if (tasks.Count == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			int completed_index = -1;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var t = tasks [i];
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				if (t.IsCompleted && completed_index < 0)
+					completed_index = i;
+			}
+
+			var task = new Task<Task> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+
+			if (completed_index > 0) {
+				task.TrySetResult (tasks[completed_index]);
+				return task;
+			}
+
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAnyContinuation<Task> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
 		#region Properties
 
 		internal CancellationToken CancellationToken {

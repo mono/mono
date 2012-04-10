@@ -202,12 +202,10 @@ namespace System.Threading.Tasks
 		sealed class ActionTaskSelected : TaskActionInvoker
 		{
 			readonly Action<Task> action;
-			readonly Task[] tasks;
 
 			public ActionTaskSelected (Action<Task> action, Task[] tasks)
 			{
 				this.action = action;
-				this.tasks = tasks;
 			}
 
 			public override Delegate Action {
@@ -218,8 +216,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
-				var result = ((Task<int>) owner).Result;
-				action (tasks [result]);
+				action (((Task<Task>)owner).Result);
 			}
 		}
 
