@@ -2496,6 +2496,12 @@ namespace Mono.CSharp {
 								ErrorIsInaccesible (rc, e.GetSignatureForError (), loc);
 								return e;
 							}
+						} else {
+							var me = MemberLookup (rc, false, rc.CurrentType, Name, Arity, restrictions & ~MemberLookupRestrictions.InvocableOnly, loc) as MemberExpr;
+							if (me != null) {
+								me.Error_UnexpectedKind (rc, me, "method group", me.KindName, loc);
+								return ErrorExpression.Instance;
+							}
 						}
 
 						e = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
