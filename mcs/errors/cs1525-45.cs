@@ -1,4 +1,4 @@
-// CS0839: An argument is missing
+// CS1525: Unexpected symbol `)'
 // Line: 12
 
 class Test

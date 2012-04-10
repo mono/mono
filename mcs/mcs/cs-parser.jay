@@ -3216,10 +3216,10 @@ argument_list
 		list.Add (a);
 		$$ = list;
 	  }
-	| argument_list COMMA
+	| argument_list COMMA error
 	  {
-	  	report.Error (839, GetLocation ($2), "An argument is missing");
-	  	$$ = $1;
+		Error_SyntaxError (yyToken);
+		$$ = $1;
 	  }
 	| COMMA error
 	  {
@@ -3276,10 +3276,12 @@ element_access
 	  }
 	| primary_expression OPEN_BRACKET_EXPR expression_list_arguments error
 	  {
+		Error_SyntaxError (yyToken);
 		$$ = new ElementAccess ((Expression) $1, (Arguments) $3, GetLocation ($2));
 	  }
 	| primary_expression OPEN_BRACKET_EXPR error
 	  {
+		Error_SyntaxError (yyToken);
 		$$ = new ElementAccess ((Expression) $1, null, GetLocation ($2));
 	  }
 	;
