@@ -321,6 +321,25 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (t.Wait (1000), "#3");
 			Assert.AreEqual (12, called, "#4");
 		}
+
+		[Test]
+		public void ReEntrantRegistrationTest ()
+		{
+			bool unregister = false;
+			bool register = false;
+			var source = new CancellationTokenSource ();
+			var token = source.Token;
+
+			var reg = new CancellationTokenRegistration ();
+			Console.WriteLine ("Test1");
+			token.Register (() => reg.Dispose ());
+			reg = token.Register (() => unregister = true);
+			token.Register (() => { Console.WriteLine ("Gnyah"); token.Register (() => register = true); });
+			source.Cancel ();
+
+			Assert.IsFalse (unregister);
+			Assert.IsTrue (register);
+		}
 	}
 }
 
