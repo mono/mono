@@ -3,6 +3,7 @@
 //
 // Authors:
 //       Marek Safar (marek.safar@gmail.com)
+//       Jeremie Laval (jeremie.laval@gmail.com)
 //
 // Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //

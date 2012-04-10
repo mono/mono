@@ -1,7 +1,11 @@
-#if NET_4_0
 // ManualResetEventSlimTests.cs
 //
+// Authors:
+//       Marek Safar (marek.safar@gmail.com)
+//       Jeremie Laval (jeremie.laval@gmail.com)
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright (c) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +26,8 @@
 // THE SOFTWARE.
 //
 //
+
+#if NET_4_0
 
 using System;
 using System.Threading;
