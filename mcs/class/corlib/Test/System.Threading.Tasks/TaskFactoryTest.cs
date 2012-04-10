@@ -193,6 +193,50 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWhenAll_InvalidArguments ()
+		{
+			try {
+				factory.ContinueWhenAll (null, delegate { });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (new Task[0], delegate { });
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (new Task[] { null }, delegate { });
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			var tasks = new Task [] {
+				factory.StartNew (delegate {})
+			};
+
+			try {
+				factory.ContinueWhenAll (tasks, null);
+				Assert.Fail ("#4");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
+				Assert.Fail ("#5");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
+				Assert.Fail ("#6");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);
@@ -254,6 +298,12 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
 				Assert.Fail ("#5");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
+				Assert.Fail ("#6");
 			} catch (ArgumentException) {
 			}
 		}
