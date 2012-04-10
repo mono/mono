@@ -5379,6 +5379,11 @@ continue_statement
 		$$ = new Continue (GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
+	| CONTINUE error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Continue (GetLocation ($1));
+	  }
 	;
 
 goto_statement
@@ -5406,6 +5411,11 @@ return_statement
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
+	| RETURN error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Return (null, GetLocation ($1));
+	  }
 	;
 
 throw_statement
@@ -5413,6 +5423,11 @@ throw_statement
 	  {
 		$$ = new Throw ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| THROW error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Throw (null, GetLocation ($1));
 	  }
 	;
 
