@@ -17592,6 +17592,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-568.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="145">
+        <size>111</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
@@ -19613,6 +19623,11 @@
       </method>
       <method name="Void .ctor(&lt;A&gt;__T, &lt;Value&gt;__T)" attrs="6278">
         <size>21</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void LessThanTest_9()" attrs="129">
+        <size>199</size>
       </method>
     </type>
   </test>

@@ -1557,6 +1557,15 @@ class Tester
 		Assert (false, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
+	void LessThanTest_9 ()
+	{
+		Expression<Func<object, int?, bool>> e = (a, b) => (int) a < b;
+		AssertNodeType (e, ExpressionType.LessThan);
+		Assert (false, e.Compile ().Invoke (1, null));
+		Assert (false, e.Compile ().Invoke (3, 3));
+		Assert (true, e.Compile ().Invoke (1, 3));
+	}
+
 	void LessThanOrEqualTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a <= b;

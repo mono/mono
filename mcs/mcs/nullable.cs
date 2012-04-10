@@ -860,7 +860,7 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (left is UserCast || left is TypeCast)
+				if (left is UserCast || left is EmptyCast || left is OpcodeCast)
 					left.Type = lifted_type;
 				else
 					left = EmptyCast.Create (left, lifted_type);
@@ -875,7 +875,7 @@ namespace Mono.CSharp.Nullable
 				if (r is ReducedExpression)
 					r = ((ReducedExpression) r).OriginalExpression;
 
-				if (r is UserCast || r is TypeCast)
+				if (r is UserCast || r is EmptyCast || r is OpcodeCast)
 					r.Type = lifted_type;
 				else
 					right = EmptyCast.Create (right, lifted_type);
