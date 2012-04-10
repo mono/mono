@@ -99,6 +99,10 @@ namespace System.Threading.Tasks
 				return;
 			}
 
+			// The task may have been canceled externally
+			if (task.IsCompleted)
+				return;
+
 			if ((continuationOptions & TaskContinuationOptions.ExecuteSynchronously) != 0)
 				task.RunSynchronously (task.scheduler);
 			else

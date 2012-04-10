@@ -769,6 +769,33 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsFalse (t.IsCanceled);
 		}
 
+		[Test]
+		public void CanceledContinuationExecuteSynchronouslyTest ()
+		{
+			var source = new CancellationTokenSource();
+			var token = source.Token;
+			var evt = new ManualResetEventSlim ();
+			bool result = false;
+			bool thrown = false;
+
+			var task = Task.Factory.StartNew (() => evt.Wait (100));
+			var cont = task.ContinueWith (t => result = true, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+
+			source.Cancel();
+			evt.Set ();
+			task.Wait (100);
+			try {
+				cont.Wait (100);
+			} catch (Exception ex) {
+				thrown = true;
+			}
+
+			Assert.IsTrue (task.IsCompleted);
+			Assert.IsTrue (cont.IsCanceled);
+			Assert.IsFalse (result);
+			Assert.IsTrue (thrown);
+		}
+
 #if NET_4_5
 		[Test]
 		public void Delay_Invalid ()
