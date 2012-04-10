@@ -240,29 +240,9 @@ namespace System.Threading.Tasks
 
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-
-			if (tasks.Length == 0)
-				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
 			CheckContinueArguments (tasks, continuationAction, continuationOptions, scheduler);
 
-			foreach (var ta in tasks) {
-				if (ta == null)
-					throw new ArgumentException ("The tasks argument constains a null value", "tasks");
-			}
-
-			if (continuationAction == null)
-				throw new ArgumentNullException ("continuationAction");
-
-			var t = new Task<int> (l => {
-				var data = (Tuple<Task[], CancellationToken>) l;
-				return Task.WaitAny (data.Item1, data.Item2);
-			}, Tuple.Create (tasks, cancellationToken));
-
-			var cont = t.ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
-
-			t.Start (scheduler);
+			var cont = Task.WhenAnyCore (tasks).ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}
@@ -323,15 +303,9 @@ namespace System.Threading.Tasks
 		                                               TaskContinuationOptions continuationOptions,
 		                                               TaskScheduler scheduler)
 		{
-			var t = new Task<int> (l => {
-				var data = (Tuple<Task[], CancellationToken>) l;
-				return Task.WaitAny (data.Item1, data.Item2);
-			}, Tuple.Create (tasks, cancellationToken));
 			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
-			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
-
-			t.Start (scheduler);
+			var cont = Task.WhenAnyCore (tasks).ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}
@@ -388,15 +362,9 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAll (Task[] tasks, Action<Task[]> continuationAction, CancellationToken cancellationToken,
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var t = new Task (l => {
-				var data = (Tuple<Task[], CancellationToken>) l;
-				Task.WaitAll (data.Item1, data.Item2);
-			}, Tuple.Create (tasks, cancellationToken));
 			CheckContinueArguments (tasks, continuationAction, continuationOptions, scheduler);
 
-			var cont = t.ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
-
-			t.Start (scheduler);
+			var cont = Task.WhenAllCore (tasks).ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}
@@ -449,15 +417,9 @@ namespace System.Threading.Tasks
 		                                               CancellationToken cancellationToken,
 		                                               TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var t = new Task (l => {
-				var data = (Tuple<Task[], CancellationToken>) l;
-				Task.WaitAll (data.Item1, data.Item2);
-			}, Tuple.Create (tasks, cancellationToken));
 			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
-			var cont = t.ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
-
-			t.Start (scheduler);
+			var cont = Task.WhenAllCore (tasks).ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}

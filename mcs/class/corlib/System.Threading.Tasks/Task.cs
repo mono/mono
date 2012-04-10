@@ -949,12 +949,182 @@ namespace System.Threading.Tasks
 			var r = await task.ConfigureAwait (false);
 			return r.Result;
 		}
-		
+
+		public static Task WhenAll (params Task[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAllCore (tasks);
+		}
+
+		public static Task WhenAll (IEnumerable<Task> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			// Call ToList on input enumeration or we end up
+			// enumerating it more than once
+			return WhenAllCore (new List<Task> (tasks));
+		}
+
+		public static Task<TResult[]> WhenAll<TResult> (params Task<TResult>[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAllCore<TResult> (tasks);
+		}
+
+		public static Task<TResult[]> WhenAll<TResult> (IEnumerable<Task<TResult>> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			// Call ToList on input enumeration or we end up
+			// enumerating it more than once
+			return WhenAllCore<TResult> (new List<Task<TResult>> (tasks));
+		}
+
+		internal static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
+		{
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+			}
+
+			var task = new Task<TResult[]> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAllContinuation<TResult> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
+		public static Task<Task> WhenAny (params Task[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore (tasks);
+		}
+
+		public static Task<Task> WhenAny (IEnumerable<Task> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore (new List<Task> (tasks));
+		}
+
+		public static Task<Task<TResult>> WhenAny<TResult> (params Task<TResult>[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore<TResult> (tasks);
+		}
+
+		public static Task<Task<TResult>> WhenAny<TResult> (IEnumerable<Task<TResult>> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore<TResult> (new List<Task<TResult>> (tasks));
+		}
+
+		static Task<Task<TResult>> WhenAnyCore<TResult> (IList<Task<TResult>> tasks)
+		{
+			if (tasks.Count == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			int completed_index = -1;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var t = tasks[i];
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				if (t.IsCompleted && completed_index < 0)
+					completed_index = i;
+			}
+
+			var task = new Task<Task<TResult>> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+
+			if (completed_index > 0) {
+				task.TrySetResult (tasks[completed_index]);
+				return task;
+			}
+
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAnyContinuation<Task<TResult>> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
 		public static YieldAwaitable Yield ()
 		{
 			return new YieldAwaitable ();
 		}
 #endif
+
+		internal static Task WhenAllCore (IList<Task> tasks)
+		{
+			bool all_completed = true;
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				all_completed &= t.Status == TaskStatus.RanToCompletion;
+			}
+
+			if (all_completed)
+				return TaskConstants.Finished;
+
+			var task = new Task (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAllContinuation (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
+		internal static Task<Task> WhenAnyCore (IList<Task> tasks)
+		{
+			if (tasks.Count == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			int completed_index = -1;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var t = tasks [i];
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				if (t.IsCompleted && completed_index < 0)
+					completed_index = i;
+			}
+
+			var task = new Task<Task> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+
+			if (completed_index > 0) {
+				task.TrySetResult (tasks[completed_index]);
+				return task;
+			}
+
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAnyContinuation<Task> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
 
 		#region Properties
 		public static TaskFactory Factory {

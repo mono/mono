@@ -29,6 +29,8 @@
 
 #if NET_4_0 || MOBILE
 
+using System.Collections.Generic;
+
 namespace System.Threading.Tasks
 {
 	interface IContinuation
@@ -133,6 +135,225 @@ namespace System.Threading.Tasks
 		public void Execute ()
 		{
 			ctx.Post (l => ((Action) l) (), action);
+		}
+	}
+
+	sealed class WhenAllContinuation : IContinuation
+	{
+		readonly Task owner;
+		readonly IList<Task> tasks;
+		int counter;
+
+		public WhenAllContinuation (Task owner, IList<Task> tasks)
+		{
+			this.owner = owner;
+			this.counter = tasks.Count;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (Interlocked.Decrement (ref counter) != 0)
+				return;
+
+			owner.Status = TaskStatus.Running;
+
+			bool canceled = false;
+			List<Exception> exceptions = null;
+			foreach (var task in tasks) {
+				if (task.IsFaulted) {
+					if (exceptions == null)
+						exceptions = new List<Exception> ();
+
+					exceptions.AddRange (task.Exception.InnerExceptions);
+					continue;
+				}
+
+				if (task.IsCanceled) {
+					canceled = true;
+				}
+			}
+
+			if (exceptions != null) {
+				owner.TrySetException (new AggregateException (exceptions));
+				return;
+			}
+
+			if (canceled) {
+				owner.CancelReal ();
+				return;
+			}
+
+			owner.Finish ();
+		}
+	}
+
+	sealed class WhenAllContinuation<TResult> : IContinuation
+	{
+		readonly Task<TResult[]> owner;
+		readonly IList<Task<TResult>> tasks;
+		int counter;
+
+		public WhenAllContinuation (Task<TResult[]> owner, IList<Task<TResult>> tasks)
+		{
+			this.owner = owner;
+			this.counter = tasks.Count;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (Interlocked.Decrement (ref counter) != 0)
+				return;
+
+			bool canceled = false;
+			List<Exception> exceptions = null;
+			TResult[] results = null;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var task = tasks [i];
+				if (task.IsFaulted) {
+					if (exceptions == null)
+						exceptions = new List<Exception> ();
+
+					exceptions.AddRange (task.Exception.InnerExceptions);
+					continue;
+				}
+
+				if (task.IsCanceled) {
+					canceled = true;
+					continue;
+				}
+
+				if (results == null) {
+					if (canceled || exceptions != null)
+						continue;
+
+					results = new TResult[tasks.Count];
+				}
+
+				results[i] = task.Result;
+			}
+
+			if (exceptions != null) {
+				owner.TrySetException (new AggregateException (exceptions));
+				return;
+			}
+
+			if (canceled) {
+				owner.CancelReal ();
+				return;
+			}
+
+			owner.TrySetResult (results);
+		}
+	}
+
+	sealed class WhenAnyContinuation<T> : IContinuation where T : Task
+	{
+		readonly Task<T> owner;
+		readonly IList<T> tasks;
+		AtomicBooleanValue executed = new AtomicBooleanValue ();
+
+		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
+		{
+			this.owner = owner;
+			this.tasks = tasks;
+		}
+
+		public void Execute ()
+		{
+			if (!executed.TryRelaxedSet ())
+				return;
+
+			for (int i = 0; i < tasks.Count; ++i) {
+				var task = tasks[i];
+				if (!task.IsCompleted)
+					continue;
+
+				owner.TrySetResult (task);
+				return;
+			}
+		}
+	}
+
+	sealed class ManualResetContinuation : IContinuation, IDisposable
+	{
+		readonly ManualResetEventSlim evt;
+
+		public ManualResetContinuation ()
+		{
+			this.evt = new ManualResetEventSlim ();
+		}
+
+		public ManualResetEventSlim Event {
+			get {
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			evt.Set ();
+		}
+	}
+
+	sealed class DelayContinuation : IContinuation, IDisposable
+	{
+		readonly ManualResetEventSlim evt;
+
+		public DelayContinuation ()
+		{
+			this.evt = new ManualResetEventSlim ();
+		}
+
+		public ManualResetEventSlim Event
+		{
+			get
+			{
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			Console.WriteLine ("execute");
+			evt.Set ();
+		}
+	}
+
+	sealed class CountdownContinuation : IContinuation, IDisposable
+	{
+		readonly CountdownEvent evt;
+
+		public CountdownContinuation (int initialCount)
+		{
+			this.evt = new CountdownEvent (initialCount);
+		}
+
+		public CountdownEvent Event {
+			get {
+				return evt;
+			}
+		}
+
+		public void Dispose ()
+		{
+			evt.Dispose ();
+		}
+
+		public void Execute ()
+		{
+			evt.Signal ();
 		}
 	}
 }
