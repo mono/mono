@@ -79,11 +79,9 @@ namespace System.Threading
 			Thread.MemoryBarrier ();
 			if (handle != null) {
 				Interlocked.Increment (ref used);
-				Thread.MemoryBarrier ();
 				var tmpHandle = handle;
 				if (tmpHandle != null)
 					tmpHandle.Reset ();
-				Thread.MemoryBarrier ();
 				Interlocked.Decrement (ref used);
 			}
 		}
@@ -94,11 +92,9 @@ namespace System.Threading
 			Thread.MemoryBarrier ();
 			if (handle != null) {
 				Interlocked.Increment (ref used);
-				Thread.MemoryBarrier ();
 				var tmpHandle = handle;
 				if (tmpHandle != null)
 					tmpHandle.Set ();
-				Thread.MemoryBarrier ();
 				Interlocked.Decrement (ref used);
 			}
 		}
