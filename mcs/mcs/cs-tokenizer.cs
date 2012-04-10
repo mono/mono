@@ -1303,7 +1303,7 @@ namespace Mono.CSharp
 						}
 					}
 					
-					next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
+					next_token = colons != interrs && braces == 0 ? Token.INTERR_NULLABLE : Token.INTERR;
 					break;
 				}
 			}
