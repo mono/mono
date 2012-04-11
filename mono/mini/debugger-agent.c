@@ -3254,7 +3254,7 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 	}
 	
 	mono_loader_lock ();
-	g_ptr_array_add (pending_type_loads, method->klass);\
+	g_ptr_array_add (pending_type_loads, method->klass);
 	mono_loader_unlock ();
 
 	if (mono_thread_get_main () && GetCurrentThreadId () == mono_thread_get_main ()->tid)
