@@ -242,7 +242,7 @@ namespace System.Threading.Tasks
 		{
 			CheckContinueArguments (tasks, continuationAction, continuationOptions, scheduler);
 
-			var cont = Task.WhenAnyCore (tasks).ContinueWith (TaskActionInvoker.Create (continuationAction, tasks), cancellationToken, continuationOptions, scheduler);
+			var cont = Task.WhenAnyCore (tasks).ContinueWith (TaskActionInvoker.CreateSelected (continuationAction), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}
@@ -623,7 +623,7 @@ namespace System.Threading.Tasks
 			return scheduler ?? TaskScheduler.Current;
 		}
 
-		void CheckContinueArguments (Task[] tasks, object continuationAction, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		static void CheckContinueArguments (Task[] tasks, object continuationAction, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");

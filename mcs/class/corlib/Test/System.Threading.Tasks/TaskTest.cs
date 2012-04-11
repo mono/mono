@@ -839,9 +839,9 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void Delay_Simple ()
 		{
-			var t = Task.Delay (100);
+			var t = Task.Delay (300);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
-			Assert.IsTrue (t.Wait (200), "#2");
+			Assert.IsTrue (t.Wait (400), "#2");
 		}
 
 		[Test]

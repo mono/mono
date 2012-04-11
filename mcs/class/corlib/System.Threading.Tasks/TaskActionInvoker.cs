@@ -203,7 +203,7 @@ namespace System.Threading.Tasks
 		{
 			readonly Action<Task> action;
 
-			public ActionTaskSelected (Action<Task> action, Task[] tasks)
+			public ActionTaskSelected (Action<Task> action)
 			{
 				this.action = action;
 			}
@@ -481,9 +481,9 @@ namespace System.Threading.Tasks
 
 		#region Used by WhenAny
 
-		public static TaskActionInvoker Create (Action<Task> action, Task[] tasks)
+		public static TaskActionInvoker CreateSelected (Action<Task> action)
 		{
-			return new ActionTaskSelected (action, tasks);
+			return new ActionTaskSelected (action);
 		}
 
 		public static TaskActionInvoker Create<TResult> (Func<Task, TResult> action, Task[] tasks)
