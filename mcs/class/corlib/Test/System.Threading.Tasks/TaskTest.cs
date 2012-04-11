@@ -244,8 +244,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
 			};
 
-			Assert.IsTrue (cde.Wait (100), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
 
 			mre.Set ();
 
@@ -268,8 +268,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { mre.WaitOne (); })
 			};
 
-			Assert.IsTrue (cde.Wait (100), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
 
 			mre.Set ();
 
@@ -841,7 +841,7 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var t = Task.Delay (100);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
-			Assert.IsTrue (t.Wait (110), "#2");
+			Assert.IsTrue (t.Wait (200), "#2");
 		}
 
 		[Test]
@@ -852,7 +852,12 @@ namespace MonoTests.System.Threading.Tasks
 			var t = Task.Delay (1000, cancelation.Token);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
 			cancelation.Cancel ();
-			Assert.AreEqual (TaskStatus.Canceled, t.Status, "#2");
+			try {
+				t.Wait (100);
+				Assert.Fail ("#2");
+			} catch (AggregateException) {
+				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#3");
+			}
 		}
 
 		[Test]
@@ -1395,6 +1400,27 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (null, t.Result, "#2");
 			t.Dispose ();
 			t.Dispose ();
+		}
+
+		[Test]
+		public void LongRunning ()
+		{
+			bool? is_tp = null;
+			bool? is_bg = null;
+			var t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; });
+			t.Start ();
+			Assert.IsTrue (t.Wait (100));
+			Assert.IsTrue ((bool)is_tp, "#1");
+			Assert.IsTrue ((bool)is_bg, "#2");
+
+			is_tp = null;
+			is_bg = null;
+			t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; }, TaskCreationOptions.LongRunning);
+			t.Start ();
+
+			Assert.IsTrue (t.Wait (100));
+			Assert.IsFalse ((bool) is_tp, "#11");
+			Assert.IsTrue ((bool) is_bg, "#12");
 		}
 
 		[Test]
