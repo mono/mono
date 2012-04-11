@@ -2,7 +2,7 @@
 // visit.cs: Visitors for parsed dom
 //
 // Authors: Mike Krüger (mkrueger@novell.com)
-//			Marek Safar (marek.safar@gmail.com)
+//          Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -23,14 +23,33 @@ namespace Mono.CSharp
 
 		void VisitTypeContainer (TypeContainer tc)
 		{
-			//foreach (var member in tc.OrderedAllMembers) {
-			//    member.Accept (this);
-			//}
+			foreach (var container in tc.Containers) {
+				container.Accept (this);
+			}
+		}
+
+		void VisitTypeContainer (TypeDefinition tc)
+		{
+			foreach (var member in tc.Members) {
+				member.Accept (this);
+			}
 		}
 
 		public virtual void Visit (ModuleContainer module)
 		{
 			VisitTypeContainer (module);
+		}
+
+		public virtual void Visit (UsingNamespace un)
+		{
+		}
+
+		public virtual void Visit (UsingAliasNamespace uan)
+		{
+		}
+		
+		public virtual void Visit (UsingExternAlias uea)
+		{
 		}
 
 		public virtual void Visit (NamespaceContainer ns)
