@@ -2483,7 +2483,7 @@ enum_declaration
 			report.Error (1675, name.Location, "Enums cannot have type parameters");
 		}
 		
-		push_current_container (new Enum (current_container, (TypeExpression) $5, (Modifiers) $2, name, (Attributes) $1), null);
+		push_current_container (new Enum (current_container, (FullNamedExpression) $5, (Modifiers) $2, name, (Attributes) $1), null);
 	  }
 	  opt_enum_member_declarations
 	  {
@@ -2513,10 +2513,8 @@ opt_enum_base
 	 	var te = $2 as TypeExpression;
 		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
 			Enum.Error_1008 (GetLocation ($2), report);
-			$$ = null;
-		} else {
-			$$ = $2;
 		}
+		$$ = $2;
 	 }
 	| COLON error
 	 {
