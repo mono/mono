@@ -523,7 +523,7 @@ static GPtrArray *event_requests;
 
 static guint32 debugger_tls_id;
 
-static gboolean vm_start_event_sent, vm_death_event_sent, disconnected;
+static gboolean vm_start_event_sent, vm_death_event_sent, disconnected, send_pending_type_load_events;
 
 /* Maps MonoInternalThread -> DebuggerTlsData */
 static MonoGHashTable *thread_to_tls;
@@ -549,6 +549,7 @@ static GHashTable *loaded_classes;
 
 /* Assemblies whose assembly load event has no been sent yet */
 static GPtrArray *pending_assembly_loads;
+static GPtrArray *pending_type_loads;
 
 /* Whenever the debugger thread has exited */
 static gboolean debugger_thread_exited;
@@ -794,6 +795,9 @@ mono_debugger_agent_init (void)
 	mono_loader_lock_track_ownership (TRUE);
 
 	event_requests = g_ptr_array_new ();
+	vm_start_event_sent = 
+	vm_death_event_sent = 
+	send_pending_type_load_events = FALSE;
 
 	mono_mutex_init (&debugger_thread_exited_mutex, NULL);
 	mono_cond_init (&debugger_thread_exited_cond, NULL);
@@ -820,6 +824,7 @@ mono_debugger_agent_init (void)
 
 	loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	pending_assembly_loads = g_ptr_array_new ();
+	pending_type_loads = g_ptr_array_new ();
 	domains = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	log_level = agent_config.log_level;
@@ -1653,19 +1658,24 @@ mono_debugger_agent_free_domain_info (MonoDomain *domain)
 	}
 
 	domain_jit_info (domain)->agent_info = NULL;
+	mono_loader_lock ();
 
 	/* Clear ids referencing structures in the domain */
 	for (i = 0; i < ID_NUM; ++i) {
 		if (ids [i]) {
 			for (j = 0; j < ids [i]->len; ++j) {
 				Id *id = g_ptr_array_index (ids [i], j);
-				if (id->domain == domain)
+				if (id->domain == domain) {
 					id->domain = NULL;
+					id->data.val = NULL;
+				}
 			}
 		}
 	}
 
-	mono_loader_lock ();
+	while (pending_type_loads->len)
+		g_ptr_array_remove_index (pending_type_loads, 0);
+
 	g_hash_table_remove (domains, domain);
 	mono_loader_unlock ();
 }
@@ -2834,11 +2844,6 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	
 	if (debugger_thread_id == current_thread_id)
 		thread = main_thread;
-	else if (main_thread && main_thread->tid != current_thread_id) {
-		/* Don't suspend on trivial events from worker threads - 
-		 * workaround loader/domain deadlocks */
-		suspend_policy = SUSPEND_POLICY_NONE;
-	}
 
 	buffer_init (&buf, 128);
 	buffer_add_byte (&buf, suspend_policy);
@@ -2856,7 +2861,6 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		switch (event) {
 		case EVENT_KIND_THREAD_START:
 		case EVENT_KIND_THREAD_DEATH:
-			suspend_policy = SUSPEND_POLICY_NONE;
 			break;
 		case EVENT_KIND_APPDOMAIN_CREATE:
 		case EVENT_KIND_APPDOMAIN_UNLOAD:
@@ -2936,7 +2940,6 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	
 	if (event == EVENT_KIND_VM_START) {
 		vm_start_event_sent = TRUE;
-		mono_debugger_agent_on_attach ();
 	}
 	
 	DEBUG (1, fprintf (log_file, "[%p] Sent event %s, suspend=%d.\n", (gpointer)GetCurrentThreadId (), event_to_string (event), suspend_policy));
@@ -2963,8 +2966,6 @@ process_profiler_event (EventKind event, gpointer arg)
 
 	mono_loader_lock ();
 	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy);
-	if (!events)
-		events = g_slist_append (events, GINT_TO_POINTER (InterlockedIncrement (&event_request_id)));
 	mono_loader_unlock ();
 
 	process_event (event, arg, 0, NULL, events, suspend_policy);
@@ -3097,16 +3098,20 @@ appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result)
 static void
 appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 {
+	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
+
 	clear_breakpoints_for_domain (domain);
-	
+
 	mono_loader_lock ();
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
+
+	/* Flush loaded and pending classes */
+	while (pending_type_loads->len)
+		g_ptr_array_remove_index (pending_type_loads, 0);
 	g_hash_table_remove_all (loaded_classes);
 	g_hash_table_remove (domains, domain);
 	mono_loader_unlock ();
-	
-	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 }
 
 /*
@@ -3134,7 +3139,6 @@ static void
 assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 {
 	process_profiler_event (EVENT_KIND_ASSEMBLY_UNLOAD, assembly);
-
 	clear_event_requests_for_assembly (assembly);
 }
 
@@ -3149,8 +3153,14 @@ start_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	DebuggerTlsData *tls;
 
+	/* Check whether we need to send pending type load events to a newly-connected client */
+	if (send_pending_type_load_events && mono_thread_get_main () && mono_thread_get_main ()->tid == thread->tid) {
+		send_pending_type_load_events = FALSE;
+		mono_debugger_agent_on_attach ();
+	}
+
 	mono_loader_lock ();
-	
+
 	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 	/* Could be the debugger thread with assembly/type load hooks */
 	if (tls)
@@ -3207,6 +3217,15 @@ send_type_load (MonoClass *klass)
 		emit_type_load (klass, klass, NULL);
 }
 
+static void send_pending_types ()
+{
+	mono_loader_lock ();
+	g_ptr_array_foreach (pending_type_loads, send_type_load, NULL);
+	while (pending_type_loads->len)
+		g_ptr_array_remove_index (pending_type_loads, 0);
+	mono_loader_unlock ();
+}
+
 static void
 jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 {
@@ -3233,8 +3252,13 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 			break;
 		}
 	}
+	
+	mono_loader_lock ();
+	g_ptr_array_add (pending_type_loads, method->klass);\
+	mono_loader_unlock ();
 
-	send_type_load (method->klass);
+	if (mono_thread_get_main () && GetCurrentThreadId () == mono_thread_get_main ()->tid)
+		send_pending_types ();
 
 	if (!result)
 		add_pending_breakpoints (method, jinfo);
@@ -4150,7 +4174,7 @@ static ErrorCode
 ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequest *req)
 {
 	DebuggerTlsData *tls;
-	MonoSeqPointInfo *info;
+	MonoSeqPointInfo *info = NULL;
 	SeqPoint *sp = NULL;
 	MonoMethod *method = NULL;
 
@@ -5150,6 +5174,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			resume_vm ();
 		disconnected = TRUE;
 		vm_start_event_sent = FALSE;
+		send_pending_type_load_events = FALSE;
 		break;
 	case CMD_VM_EXIT: {
 		MonoInternalThread *thread;
@@ -5454,6 +5479,11 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 
 		buffer_add_int (buf, req->id);
+
+		/* This needs to be after the request was added to event_requests */
+		if (agent_config.defer && EVENT_KIND_TYPE_LOAD == req->event_kind)
+			send_pending_type_load_events = TRUE;
+
 		break;
 	}
 	case CMD_EVENT_REQUEST_CLEAR: {
@@ -5602,6 +5632,8 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	ass = decode_assemblyid (p, &p, end, &domain, &err);
 	if (err)
 		return err;
+	if (!ass)
+		return ERR_UNLOADED;
 
 	switch (command) {
 	case CMD_ASSEMBLY_GET_LOCATION: {
@@ -6101,6 +6133,8 @@ type_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	klass = decode_typeid (p, &p, end, &domain, &err);
 	if (err)
 		return err;
+	if (!klass)
+		return ERR_UNLOADED;
 
 	old_domain = mono_domain_get ();
 

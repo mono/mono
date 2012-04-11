@@ -8,11 +8,13 @@ my $root = getcwd();
 my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
+my $build64 = 0;
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
    "debug=i"=>\$debug,
    "minimal=i"=>\$minimal,
+   "build64=i"=>\$build64,
 ) or die ("illegal cmdline options");
 
 my $teamcity=0;
@@ -29,12 +31,13 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 }
 
-my $bintarget = "$root/builds/monodistribution/bin-linux";
-my $libtarget = "$root/builds/embedruntimes/linux";
+my $platform = $build64 ? 'linux64' : 'linux32' ;
+my $bintarget = "$root/builds/monodistribution/bin-$platform";
+my $libtarget = "$root/builds/embedruntimes/$platform";
 
 if ($minimal)
 {
-	$libtarget = "$root/builds/embedruntimes/linux-minimal";
+	$libtarget = "$root/builds/embedruntimes/$platform-minimal";
 }
 print("libtarget: $libtarget\n");
 
@@ -47,17 +50,21 @@ if (not $skipbuild)
 	#rmtree($bintarget);
 	#rmtree($libtarget);
 
+	my $archflags = '';
+
+	if (not $build64)
+	{
+		$archflags = '-m32';
+	}
 	if ($debug)
 	{
-		$ENV{CFLAGS} = "-m32 -g -O0";
-		$ENV{CXXFLAGS} = "-m32 -g -O0";
-		$ENV{LDFLAGS} = "-m32";
+		$ENV{CFLAGS} = "$archflags -g -O0";
 	} else
 	{
-		$ENV{CFLAGS} = "-m32 -Os";  #optimize for size
-		$ENV{CXXFLAGS} = "-m32 -Os";  #optimize for size
-		$ENV{LDFLAGS} = "-m32";
+		$ENV{CFLAGS} = "$archflags -Os";  #optimize for size
 	}
+	$ENV{CXXFLAGS} = $ENV{CFLAGS};
+	$ENV{LDFLAGS} = "$archflags";
 
 	#this will fail on a fresh working copy, so don't die on it.
 	system("make distclean");
@@ -79,7 +86,10 @@ if (not $skipbuild)
 	unshift(@autogenparams, "--with-glib=embedded");
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
 	unshift(@autogenparams, "--disable-parallel-mark");  #this causes crashes
-	unshift(@autogenparams, "--build=i686-pc-linux-gnu");  #Force x86 build
+	if(not $build64)
+	{
+		unshift(@autogenparams, "--build=i686-pc-linux-gnu");  #Force x86 build
+	}
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
@@ -117,7 +127,7 @@ system("cp", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono-static.a") eq
 if ($ENV{"UNITY_THISISABUILDMACHINE"})
 {
 	system("strip $libtarget/libmono.so") eq 0 or die("failed to strip libmono (shared)");
-	system("echo \"mono-runtime-linux = $ENV{'BUILD_VCS_NUMBER'}\" > $root/builds/versions.txt");
+	system("echo \"mono-runtime-$platform = $ENV{'BUILD_VCS_NUMBER'}\" > $root/builds/versions.txt");
 }
 
 system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
