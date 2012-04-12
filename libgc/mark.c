@@ -267,7 +267,7 @@ static void alloc_mark_stack();
 /* register values.					*/
 /* We hold the allocation lock.  In the case of 	*/
 /* incremental collection, the world may not be stopped.*/
-#ifdef MSWIN32
+#if defined(MSWIN32) && !defined(_WIN64)
   /* For win32, this is called after we establish a structured	*/
   /* exception handler, in case Windows unmaps one of our root	*/
   /* segments.  See below.  In either case, we acquire the 	*/
@@ -402,7 +402,7 @@ static void alloc_mark_stack();
 }
 
 
-#ifdef MSWIN32
+#if defined(MSWIN32) && !defined(_WIN64)
 
 # ifdef __GNUC__
 
