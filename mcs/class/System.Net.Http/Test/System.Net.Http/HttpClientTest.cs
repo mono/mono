@@ -41,7 +41,7 @@ using System.IO;
 namespace MonoTests.System.Net.Http
 {
 	[TestFixture]
-//	[Ignore]
+	[Ignore]
 	public class HttpClientTest
 	{
 		class HttpMessageHandlerMock : HttpMessageHandler

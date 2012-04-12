@@ -77,10 +77,10 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.IsNull (res.CharSet, "#1b");
 			Assert.AreEqual ("multipart/b*", res.ToString (), "#1c");
 
-			res = MediaTypeHeaderValue.Parse ("mu / m; CHarset=jj  ");
+			res = MediaTypeHeaderValue.Parse ("mu / m; CHarset=jj'  ");
 			Assert.AreEqual ("mu/m", res.MediaType, "#2");
-			Assert.AreEqual ("jj", res.CharSet, "#2b");
-			Assert.AreEqual ("mu/m; CHarset=jj", res.ToString (), "#2c");
+			Assert.AreEqual ("jj'", res.CharSet, "#2b");
+			Assert.AreEqual ("mu/m; CHarset=jj'", res.ToString (), "#2c");
 		}
 
 		[Test]
