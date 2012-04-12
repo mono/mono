@@ -53,6 +53,7 @@
 extern LPTOP_LEVEL_EXCEPTION_FILTER old_win32_toplevel_exception_filter;
 extern guint64 win32_chained_exception_filter_result;
 extern gboolean win32_chained_exception_filter_didrun;
+extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 
 void
 mono_runtime_install_handlers (void)
@@ -78,7 +79,6 @@ mono_runtime_cleanup_handlers (void)
  * should be the same as for a signal handler. Returns TRUE if the original handler
  * was called, false otherwise.
  */
-int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 gboolean
 SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
