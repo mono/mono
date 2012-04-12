@@ -412,8 +412,9 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals () {
+		string s = null;
 		locals1 (null);
-		locals2<string> (null, 5, "ABC");
+		locals2<string> (null, 5, "ABC", ref s);
 		locals3 ();
 	}
 
@@ -427,7 +428,7 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void locals2<T> (string[] args, int arg, T t) {
+	public static void locals2<T> (string[] args, int arg, T t, ref string rs) {
 		long i = 42;
 		string s = "AB";
 
@@ -437,6 +438,7 @@ public class Tests : TestsBase
 			if (t != null)
 				i ++;
 		}
+		rs = "A";
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

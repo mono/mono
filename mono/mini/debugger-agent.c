@@ -4896,6 +4896,13 @@ set_var (MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, MonoDomain *domai
 
 		//printf ("[R%d+%d] = %p\n", reg, var->offset, addr);
 
+		if (t->byref) {
+			addr = *(guint8**)addr;
+
+			if (!addr)
+				break;
+		}
+			
 		// FIXME: Write barriers
 		memcpy (addr, val, size);
 		break;

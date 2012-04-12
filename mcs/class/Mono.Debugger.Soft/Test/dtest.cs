@@ -1336,8 +1336,8 @@ public class DebuggerTests
 		StackFrame frame = e.Thread.GetFrames () [0];
 
 		var locals = frame.Method.GetLocals ();
-		Assert.AreEqual (6, locals.Length);
-		for (int i = 0; i < 6; ++i) {
+		Assert.AreEqual (7, locals.Length);
+		for (int i = 0; i < 7; ++i) {
 			if (locals [i].Name == "args") {
 				Assert.IsTrue (locals [i].IsArg);
 				Assert.AreEqual ("String[]", locals [i].Type.Name);
@@ -1355,6 +1355,9 @@ public class DebuggerTests
 				Assert.AreEqual ("String", locals [i].Type.Name);
 			} else if (locals [i].Name == "t") {
 				// gshared
+				Assert.IsTrue (locals [i].IsArg);
+				Assert.AreEqual ("String", locals [i].Type.Name);
+			} else if (locals [i].Name == "rs") {
 				Assert.IsTrue (locals [i].IsArg);
 				Assert.AreEqual ("String", locals [i].Type.Name);
 			} else {
@@ -2067,6 +2070,11 @@ public class DebuggerTests
 		p = frame.Method.GetParameters ()[2];
 		frame.SetValue (p, vm.RootDomain.CreateString ("DEF"));
 		AssertValue ("DEF", frame.GetValue (p));
+
+		// byref
+		p = frame.Method.GetParameters ()[3];
+		frame.SetValue (p, vm.RootDomain.CreateString ("DEF2"));
+		AssertValue ("DEF2", frame.GetValue (p));
 
 		// argument checking
 
