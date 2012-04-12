@@ -221,6 +221,12 @@ public class Int16Test
 			Assert.Fail ("B#7");
 		} catch (OverflowException) {
 		}
+		
+		try {
+			Int16.Parse ("2 math e1", NumberStyles.AllowExponent);
+			Assert.Fail ("B#8");
+		} catch (FormatException) {
+		}
 	}
 
 	[Test]

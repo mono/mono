@@ -278,15 +278,14 @@ namespace System {
 		internal static bool FindExponent (ref int pos, string s, ref int exponent, bool tryParse, ref Exception exc)
 		{
 				exponent = 0;
-				long exp = 0; // temp long value
 
-				int i = s.IndexOfAny(new char [] {'e', 'E'}, pos);
-				if (i < 0) {
+				if (s [pos] != 'e' && s[pos] != 'E') {
 					exc = null;
 					return false;
 				}
 
-				if (++i == s.Length) {
+				var i = pos + 1;
+				if (i == s.Length) {
 					exc = tryParse ? null : GetFormatException ();
 					return true;
 				}
@@ -302,6 +301,7 @@ namespace System {
 					return true;
 				}
 
+				long exp = 0; // temp long value
 				for (; i < s.Length; i++) {
 					if (!Char.IsDigit (s [i]))  {
 						exc = tryParse ? null : GetFormatException ();
