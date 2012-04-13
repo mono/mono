@@ -816,6 +816,92 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (thrown);
 		}
 
+		[Test]
+		public void WhenChildTaskErrorIsThrownParentTaskShouldBeFaulted ()
+		{
+			Task innerTask = null;
+			var testTask = new Task (() =>
+			{
+				innerTask = new Task (() => 
+				{
+					throw new InvalidOperationException ();
+				}, TaskCreationOptions.AttachedToParent);
+				innerTask.RunSynchronously ();
+			});
+			testTask.RunSynchronously ();
+
+			Assert.AreNotEqual (TaskStatus.Running, testTask.Status);
+			Assert.IsNotNull (innerTask);
+			Assert.IsTrue (innerTask.IsFaulted);
+			Assert.IsNotNull (testTask.Exception);
+			Assert.IsTrue (testTask.IsFaulted);
+			Assert.IsNotNull (innerTask.Exception);
+		}
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownOnlyOnFaultedContinuationShouldExecute ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously ();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsTrue (continuationRan);
+		}
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownNotOnFaultedContinuationShouldNotBeExecuted ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.NotOnFaulted);
+			testTask.RunSynchronously ();
+			Assert.IsTrue (onErrorTask.IsCompleted);
+			Assert.IsFalse (onErrorTask.IsFaulted);
+			Assert.IsFalse (continuationRan);
+		}	
+		
+		[Test]
+		public void WhenChildTaskSeveralLevelsDeepHandlesAggregateExceptionErrorStillBubblesToParent ()
+		{
+			var continuationRan = false;
+			AggregateException e = null;
+			var testTask = new Task (() =>
+			{
+				var child1 = new Task (() =>
+				{
+					var child2 = new Task (() => 
+					{
+						throw new InvalidOperationException();
+					}, TaskCreationOptions.AttachedToParent);
+					child2.RunSynchronously ();
+				}, TaskCreationOptions.AttachedToParent);
+				
+				child1.RunSynchronously();
+				e = child1.Exception;
+				child1.Exception.Handle (ex => true);
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsNotNull (e);
+			Assert.IsTrue (continuationRan);
+		}
+		
 #if NET_4_5
 		[Test]
 		public void Delay_Invalid ()

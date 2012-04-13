@@ -455,8 +455,8 @@ namespace System.Threading.Tasks
 			}
 
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
-				Status = TaskStatus.RanToCompletion;
 				ProcessChildExceptions ();
+				Status = exSlot == null ? TaskStatus.RanToCompletion : TaskStatus.Faulted;
 				ProcessCompleteDelegates ();
 				if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 					parent.ChildCompleted (this.Exception);
@@ -475,8 +475,10 @@ namespace System.Threading.Tasks
 		internal void Finish ()
 		{
 			// If there was children created and they all finished, we set the countdown
-			if (childTasks != null)
-				childTasks.Signal ();
+			if (childTasks != null) {
+				if (childTasks.Signal ())
+					ProcessChildExceptions (true);
+			}
 			
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
@@ -512,7 +514,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		void ProcessChildExceptions ()
+		void ProcessChildExceptions (bool isParent = false)
 		{
 			if (exSlot == null || exSlot.ChildExceptions == null)
 				return;
@@ -523,6 +525,11 @@ namespace System.Threading.Tasks
 			AggregateException childEx;
 			while (exSlot.ChildExceptions.TryDequeue (out childEx))
 				exSlot.Exception.AddChildException (childEx);
+
+			if (isParent) {
+				Status = TaskStatus.Faulted;
+				ProcessCompleteDelegates ();			
+			}
 		}
 		#endregion
 		
