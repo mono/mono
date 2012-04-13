@@ -58,6 +58,11 @@ namespace System.Net.Http
 			this.count = count;
 		}
 
+		protected override Task<Stream> CreateContentReadStreamAsync ()
+		{
+			return Task.FromResult<Stream> (new MemoryStream (content, offset, count));
+		}
+
 		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
 			return stream.WriteAsync (content, offset, count);

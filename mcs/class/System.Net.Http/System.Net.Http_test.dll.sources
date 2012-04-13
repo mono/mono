@@ -1,4 +1,5 @@
 System.Net.Http/ByteArrayContentTest.cs
+System.Net.Http/FormUrlEncodedContentTest.cs
 System.Net.Http/HttpClientHandlerTest.cs
 System.Net.Http/HttpClientTest.cs
 System.Net.Http/HttpMethodTest.cs

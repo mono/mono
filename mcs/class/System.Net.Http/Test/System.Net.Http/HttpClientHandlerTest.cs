@@ -38,6 +38,28 @@ namespace MonoTests.System.Net.Http
 	[TestFixture]
 	public class HttpClientHandlerTest
 	{
+		class Proxy : IWebProxy
+		{
+			public ICredentials Credentials {
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public Uri GetProxy (Uri destination)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public bool IsBypassed (Uri host)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
 		[Test]
 		public void Properties_Defaults ()
 		{
@@ -57,6 +79,7 @@ namespace MonoTests.System.Net.Http
 			Assert.IsTrue (h.UseCookies, "#12");
 			Assert.IsFalse (h.UseDefaultCredentials, "#13");
 			Assert.IsTrue (h.UseProxy, "#14");
+			Assert.AreEqual (ClientCertificateOption.Manual, h.ClientCertificateOptions, "#15");
 		}
 
 		[Test]
@@ -75,6 +98,12 @@ namespace MonoTests.System.Net.Http
 			} catch (ArgumentOutOfRangeException) {
 			}
 
+			h.UseProxy = false;
+			try {
+				h.Proxy = new Proxy ();
+				Assert.Fail ("#3");
+			} catch (InvalidOperationException) {
+			}
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// DelegatingHandler.cs
+// MessageProcessingHandler.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -31,37 +31,24 @@ using System.Threading.Tasks;
 
 namespace System.Net.Http
 {
-	public abstract class DelegatingHandler : HttpMessageHandler
+	public abstract class MessageProcessingHandler : DelegatingHandler
 	{
-		bool disposed;
-		
-		protected DelegatingHandler ()
+		protected MessageProcessingHandler ()
 		{
-		}
-		
-		protected DelegatingHandler(HttpMessageHandler innerHandler)
-		{
-			if (innerHandler == null)
-				throw new ArgumentNullException ("innerHandler");
-			
-			InnerHandler = innerHandler;
-		}
-		
-		public HttpMessageHandler InnerHandler { get; set; }
-		
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing && !disposed) {
-				disposed = true;
-				InnerHandler.Dispose ();
-			}
-			
-			base.Dispose (disposing);
 		}
 
-		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		protected MessageProcessingHandler (HttpMessageHandler innerHandler)
+			: base (innerHandler)
 		{
-			return InnerHandler.SendAsync (request, cancellationToken);
+		}
+
+		protected abstract HttpRequestMessage ProcessRequest (HttpRequestMessage request, CancellationToken cancellationToken);
+		protected abstract HttpResponseMessage ProcessResponse (HttpResponseMessage response, CancellationToken cancellationToken);
+		
+		protected internal sealed override async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		{
+			request = ProcessRequest (request, cancellationToken);
+			return ProcessResponse (await base.SendAsync (request, cancellationToken).ConfigureAwait (false), cancellationToken);
 		}
 	}
 }
