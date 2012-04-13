@@ -8,7 +8,10 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
+#if MONOTOUCH
+#else
 #if TARGET_JVM
 using awt = java.awt;
 using javax.imageio;
@@ -19,6 +22,7 @@ using java.awt.image;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+#endif
 #endif
 
 using NUnit.Framework;
@@ -616,7 +620,19 @@ namespace DrawingTestHelper
 				throw new System.Exception("Error creating .Net reference image");
 			}
 		}
-
+		
+#if MONOTOUCH
+		private class NetForm:MonoTouch.UIKit.UIViewController,IMyForm {
+			Image image;
+			public NetForm(string title, Image anImage):base() {
+				base.Text = title;
+				image = anImage;
+			}
+			void IMyForm.Show () {
+				this.image.Save("test.net.png");
+			}
+		}
+#else
 		private class NetForm:Form,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
@@ -632,6 +648,7 @@ namespace DrawingTestHelper
 				this.image.Save("test.net.png");
 			}
 		}
+#endif
 		protected override IMyForm CreateForm(string title) {
 			return new NetForm (title, _bitmap);
 		}
