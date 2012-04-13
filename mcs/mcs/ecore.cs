@@ -2772,8 +2772,14 @@ namespace Mono.CSharp {
 					}
 				}
 
-				// TODO: For now we do it for any hoisted call even if it's needed for
-				// hoisted stories only but that requires a new expression wrapper
+				//
+				// When base access is used inside anonymous method/iterator/etc we need to
+				// get back to the context of original type. We do it by emiting proxy
+				// method in original class and rewriting base call to this compiler
+				// generated method call which does the actual base invocation. This may
+				// introduce redundant storey but with `this' only but it's tricky to avoid
+				// at this stage as we don't know what expressions follow base
+				//
 				if (rc.CurrentAnonymousMethod != null) {
 					if (targs == null && method.IsGeneric) {
 						targs = method.TypeArguments;
@@ -2787,8 +2793,9 @@ namespace Mono.CSharp {
 
 					// Ideally this should apply to any proxy rewrite but in the case of unary mutators on
 					// get/set member expressions second call would fail to proxy because left expression
-					// would be of 'this' and not 'base'
-					if (rc.CurrentType.IsStruct)
+					// would be of 'this' and not 'base' because we share InstanceExpression for get/set
+					// FIXME: The async check is another hack but will probably fail with mutators
+					if (rc.CurrentType.IsStruct || rc.CurrentAnonymousMethod.Storey is AsyncTaskStorey)
 						InstanceExpression = new This (loc).Resolve (rc);
 				}
 

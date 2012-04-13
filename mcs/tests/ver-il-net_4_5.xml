@@ -56011,6 +56011,72 @@
       </method>
     </type>
   </test>
+  <test name="test-async-33.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo(Int32)" attrs="454">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] get_Prop()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_Prop(System.Threading.Tasks.Task`1[System.Int32])" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] get_Prop()" attrs="2246">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(System.Threading.Tasks.Task`1[System.Int32])" attrs="2246">
+        <size>7</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo(Int32)" attrs="198">
+        <size>49</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo2(Int32)" attrs="134">
+        <size>49</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Foo&gt;__BaseCallProxy0(Int32)" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void &lt;set_Prop&gt;__BaseCallProxy1(System.Threading.Tasks.Task`1[System.Int32])" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;get_Prop&gt;__BaseCallProxy2()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>177</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="B+&lt;Foo2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>191</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
