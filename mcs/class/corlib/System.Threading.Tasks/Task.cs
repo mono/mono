@@ -377,6 +377,11 @@ namespace System.Threading.Tasks
 				cancellationRegistration.Value.Dispose ();
 				cancellationRegistration = null;
 			}
+
+			// If Task are ran inline on the same thread we might trash these values
+			var saveCurrent = current;
+			var saveScheduler = TaskScheduler.Current;
+
 			current = this;
 			TaskScheduler.Current = scheduler;
 			
@@ -397,6 +402,11 @@ namespace System.Threading.Tasks
 			} else {
 				CancelReal ();
 			}
+
+			if (saveCurrent != null)
+				current = saveCurrent;
+			if (saveScheduler != null)
+				TaskScheduler.Current = saveScheduler;
 			Finish ();
 		}
 
@@ -493,8 +503,10 @@ namespace System.Threading.Tasks
 				ProcessCompleteDelegates ();
 
 			// Reset the current thingies
-			current = null;
-			TaskScheduler.Current = null;
+			if (current == this)
+				current = null;
+			if (TaskScheduler.Current == scheduler)
+				TaskScheduler.Current = null;
 
 			if (cancellationRegistration.HasValue)
 				cancellationRegistration.Value.Dispose ();

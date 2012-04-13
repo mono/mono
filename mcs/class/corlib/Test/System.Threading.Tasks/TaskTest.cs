@@ -902,6 +902,20 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (continuationRan);
 		}
 		
+		[Test]
+		public void InlineNotTrashingParentRelationship ()
+		{
+			bool r1 = false, r2 = false;
+			var t = new Task (() => {
+				new Task (() => { r1 = true; }, TaskCreationOptions.AttachedToParent).RunSynchronously ();
+				Task.Factory.StartNew (() => { Thread.Sleep (100); r2 = true; }, TaskCreationOptions.AttachedToParent);
+		    });
+			t.RunSynchronously ();
+
+			Assert.IsTrue (r1);
+			Assert.IsTrue (r2);
+		}
+
 #if NET_4_5
 		[Test]
 		public void Delay_Invalid ()
