@@ -900,6 +900,20 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsNotNull (e);
 			Assert.IsTrue (continuationRan);
 		}
+		
+		[Test]
+		public void InlineNotTrashingParentRelationship ()
+		{
+			bool r1 = false, r2 = false;
+			var t = new Task (() => {
+				new Task (() => { r1 = true; }, TaskCreationOptions.AttachedToParent).RunSynchronously ();
+				Task.Factory.StartNew (() => { Thread.Sleep (100); r2 = true; }, TaskCreationOptions.AttachedToParent);
+		    });
+			t.RunSynchronously ();
+
+			Assert.IsTrue (r1);
+			Assert.IsTrue (r2);
+		}
 
 		[Test]
 		public void AlreadyCompletedChildTaskShouldRunContinuationImmediately ()
@@ -917,20 +931,6 @@ namespace MonoTests.System.Threading.Tasks
 			testTask.RunSynchronously ();
 
 			Assert.AreEqual ("Success", result);
-		}
-
-		[Test]
-		public void InlineNotTrashingParentRelationship ()
-		{
-			bool r1 = false, r2 = false;
-			var t = new Task (() => {
-				new Task (() => { r1 = true; }, TaskCreationOptions.AttachedToParent).RunSynchronously ();
-				Task.Factory.StartNew (() => { Thread.Sleep (100); r2 = true; }, TaskCreationOptions.AttachedToParent);
-		    });
-			t.RunSynchronously ();
-
-			Assert.IsTrue (r1);
-			Assert.IsTrue (r2);
 		}
 	}
 }
