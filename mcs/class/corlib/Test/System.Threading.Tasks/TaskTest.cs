@@ -788,128 +788,119 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsFalse (t.IsCanceled);
 		}
 
-#if NET_4_5
 		[Test]
-		public void WaitAny_WithNull ()
+		public void CanceledContinuationExecuteSynchronouslyTest ()
 		{
-			var tasks = new [] {
-				Task.FromResult (2),
-				null
-			};
+			var source = new CancellationTokenSource();
+			var token = source.Token;
+			var evt = new ManualResetEventSlim ();
+			bool result = false;
+			bool thrown = false;
 
+			var task = Task.Factory.StartNew (() => evt.Wait (100));
+			var cont = task.ContinueWith (t => result = true, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+
+			source.Cancel();
+			evt.Set ();
+			task.Wait (100);
 			try {
-				Task.WaitAny (tasks);
-				Assert.Fail ();
-			} catch (ArgumentException) {
-			}
-		}
-
-		[Test]
-		public void ContinueWith_StateValue ()
-		{
-			var t = Task.Factory.StartNew (l => {
-				Assert.AreEqual (1, l, "a-1");
-			}, 1);
-
-			var c = t.ContinueWith ((a, b) => {
-				Assert.AreEqual (t, a, "c-1");
-				Assert.AreEqual (2, b, "c-2");
-			}, 2);
-
-			var d = t.ContinueWith ((a, b) => {
-				Assert.AreEqual (t, a, "d-1");
-				Assert.AreEqual (3, b, "d-2");
-				return 77;
-			}, 3);
-
-			Assert.IsTrue (d.Wait (1000), "#1");
-
-			Assert.AreEqual (1, t.AsyncState, "#2");
-			Assert.AreEqual (2, c.AsyncState, "#3");
-			Assert.AreEqual (3, d.AsyncState, "#4");
-		}
-
-		[Test]
-		public void ContinueWith_StateValueGeneric ()
-		{
-			var t = Task<int>.Factory.StartNew (l => {
-				Assert.AreEqual (1, l, "a-1");
-				return 80;
-			}, 1);
-
-			var c = t.ContinueWith ((a, b) => {
-				Assert.AreEqual (t, a, "c-1");
-				Assert.AreEqual (2, b, "c-2");
-				return "c";
-			}, 2);
-
-			var d = t.ContinueWith ((a, b) => {
-				Assert.AreEqual (t, a, "d-1");
-				Assert.AreEqual (3, b, "d-2");
-				return 'd';
-			}, 3);
-
-			Assert.IsTrue (d.Wait (1000), "#1");
-
-			Assert.AreEqual (1, t.AsyncState, "#2");
-			Assert.AreEqual (80, t.Result, "#2r");
-			Assert.AreEqual (2, c.AsyncState, "#3");
-			Assert.AreEqual ("c", c.Result, "#3r");
-			Assert.AreEqual (3, d.AsyncState, "#4");
-			Assert.AreEqual ('d', d.Result, "#3r");
-		}
-
-		[Test]
-		public void FromResult ()
-		{
-			var t = Task.FromResult<object> (null);
-			Assert.IsTrue (t.IsCompleted, "#1");
-			Assert.AreEqual (null, t.Result, "#2");
-			t.Dispose ();
-			t.Dispose ();
-		}
-
-		[Test]
-		public void Run_ArgumentCheck ()
-		{
-			try {
-				Task.Run (null as Action);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
-			}
-		}
-
-		[Test]
-		public void Run ()
-		{
-			var t = Task.Run (delegate { });
-			Assert.AreEqual (TaskCreationOptions.DenyChildAttach, t.CreationOptions, "#1");
-			t.Wait ();
-		}
-
-		[Test]
-		public void Run_Cancel ()
-		{
-			var t = Task.Run (() => 1, new CancellationToken (true));
-			try {
-				var r = t.Result;
-				Assert.Fail ("#1");
-			} catch (AggregateException) {
+				cont.Wait (100);
+			} catch (Exception ex) {
+				thrown = true;
 			}
 
-			Assert.IsTrue (t.IsCanceled, "#2");
+			Assert.IsTrue (task.IsCompleted);
+			Assert.IsTrue (cont.IsCanceled);
+			Assert.IsFalse (result);
+			Assert.IsTrue (thrown);
 		}
 
 		[Test]
-		public void Run_ExistingTask ()
+		public void WhenChildTaskErrorIsThrownParentTaskShouldBeFaulted ()
 		{
-			var t = new Task<int> (() => 5);
-			var t2 = Task.Run (() => { t.Start (); return t; });
+			Task innerTask = null;
+			var testTask = new Task (() =>
+			{
+				innerTask = new Task (() => 
+				{
+					throw new InvalidOperationException ();
+				}, TaskCreationOptions.AttachedToParent);
+				innerTask.RunSynchronously ();
+			});
+			testTask.RunSynchronously ();
 
-			Assert.IsTrue (t2.Wait (1000), "#1");
-			Assert.AreEqual (5, t2.Result, "#2");
+			Assert.AreNotEqual (TaskStatus.Running, testTask.Status);
+			Assert.IsNotNull (innerTask);
+			Assert.IsTrue (innerTask.IsFaulted);
+			Assert.IsNotNull (testTask.Exception);
+			Assert.IsTrue (testTask.IsFaulted);
+			Assert.IsNotNull (innerTask.Exception);
 		}
-#endif
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownOnlyOnFaultedContinuationShouldExecute ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously ();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsTrue (continuationRan);
+		}
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownNotOnFaultedContinuationShouldNotBeExecuted ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.NotOnFaulted);
+			testTask.RunSynchronously ();
+			Assert.IsTrue (onErrorTask.IsCompleted);
+			Assert.IsFalse (onErrorTask.IsFaulted);
+			Assert.IsFalse (continuationRan);
+		}	
+		
+		[Test]
+		public void WhenChildTaskSeveralLevelsDeepHandlesAggregateExceptionErrorStillBubblesToParent ()
+		{
+			var continuationRan = false;
+			AggregateException e = null;
+			var testTask = new Task (() =>
+			{
+				var child1 = new Task (() =>
+				{
+					var child2 = new Task (() => 
+					{
+						throw new InvalidOperationException();
+					}, TaskCreationOptions.AttachedToParent);
+					child2.RunSynchronously ();
+				}, TaskCreationOptions.AttachedToParent);
+				
+				child1.RunSynchronously();
+				e = child1.Exception;
+				child1.Exception.Handle (ex => true);
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsNotNull (e);
+			Assert.IsTrue (continuationRan);
+		}
+		
 	}
 }
 #endif
