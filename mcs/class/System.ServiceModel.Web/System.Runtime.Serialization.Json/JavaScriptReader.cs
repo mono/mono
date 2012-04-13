@@ -247,6 +247,8 @@ namespace System.Runtime.Serialization.Json
 				ReadChar ();
 			}
 			// it is messy to handle exponent, so I just use Decimal.Parse() with assured JSON format.
+			if (negexp)
+				return new Decimal ((double) (val + frac) / Math.Pow (10, exp));
 			int [] bits = Decimal.GetBits (val + frac);
 			return new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp);
 		}
