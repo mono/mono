@@ -337,7 +337,7 @@ namespace DrawingTestHelper
 		private static void AssertAlmostEqual (float expected, float actual, float tolerance, string message)
 		{
 			float error = System.Math.Abs ((expected - actual) / (expected + actual + float.Epsilon));
-			Assert.IsTrue (error < tolerance, message);
+			Assert.That (error < tolerance, Is.True, message);
 		}
 
 		public static void AssertAlmostEqual (PointF expected, PointF actual)
@@ -411,12 +411,12 @@ namespace DrawingTestHelper
 
 		public void AssertCompare () {
 			CheckCounter ();
-			Assert.IsTrue ((CompareToExpectedInternal () * 100) < DEFAULT_IMAGE_TOLERANCE);
+			Assert.That ((CompareToExpectedInternal () * 100) < DEFAULT_IMAGE_TOLERANCE, Is.True);
 		}
 
 		public void AssertCompare (double tolerance) {
 			CheckCounter ();
-			Assert.IsTrue ((CompareToExpectedInternal () * 100) < tolerance);
+			Assert.That ((CompareToExpectedInternal () * 100) < tolerance, Is.True);
 		}
 		
 		public double CompareToExpected () {
