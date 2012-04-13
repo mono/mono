@@ -202,6 +202,7 @@ public class UInt64Test
 		Assert.AreEqual (200, ulong.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
 		Assert.AreEqual (2000000, ulong.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
 		Assert.AreEqual (200, ulong.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
+		Assert.AreEqual (2, ulong.Parse ("2", NumberStyles.AllowExponent), "A#6");
 
 		try {
 			ulong.Parse ("2E");

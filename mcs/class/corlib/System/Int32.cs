@@ -279,7 +279,7 @@ namespace System {
 		{
 				exponent = 0;
 
-				if (s [pos] != 'e' && s[pos] != 'E') {
+				if (pos >= s.Length || (s [pos] != 'e' && s[pos] != 'E')) {
 					exc = null;
 					return false;
 				}
