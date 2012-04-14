@@ -694,7 +694,7 @@ namespace Mono.Debugger.Soft
 					m [i] = vm.GetMethod (ids [i]);
 				return m;
 			} else {
-				if (flags.HasFlag (BindingFlags.IgnoreCase)) {
+				if ((flags & BindingFlags.IgnoreCase) != 0) {
 					flags &= ~BindingFlags.IgnoreCase;
 					ignoreCase = true;
 				}
@@ -706,19 +706,19 @@ namespace Mono.Debugger.Soft
 				bool matchInstance = false;
 				bool matchStatic = false;
 				
-				if (flags.HasFlag (BindingFlags.NonPublic)) {
+				if ((flags & BindingFlags.NonPublic) != 0) {
 					access |= MethodAttributes.Private;
 					flags &= ~BindingFlags.NonPublic;
 				}
-				if (flags.HasFlag (BindingFlags.Public)) {
+				if ((flags & BindingFlags.Public) != 0) {
 					access |= MethodAttributes.Public;
 					flags &= ~BindingFlags.Public;
 				}
-				if (flags.HasFlag (BindingFlags.Instance)) {
+				if ((flags & BindingFlags.Instance) != 0) {
 					flags &= ~BindingFlags.Instance;
 					matchInstance = true;
 				}
-				if (flags.HasFlag (BindingFlags.Static)) {
+				if ((flags & BindingFlags.Static) != 0) {
 					flags &= ~BindingFlags.Static;
 					matchStatic = true;
 				}
