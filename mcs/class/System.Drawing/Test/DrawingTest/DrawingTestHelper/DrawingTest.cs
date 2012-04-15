@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 #if MONOTOUCH
 #else
@@ -20,8 +21,6 @@ using java.security;
 using java.awt.image;
 #else
 using System.Windows.Forms;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 #endif
 #endif
 
@@ -625,7 +624,7 @@ namespace DrawingTestHelper
 		private class NetForm:MonoTouch.UIKit.UIViewController,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
-				base.Text = title;
+				base.Text = title;		
 				image = anImage;
 			}
 			void IMyForm.Show () {
