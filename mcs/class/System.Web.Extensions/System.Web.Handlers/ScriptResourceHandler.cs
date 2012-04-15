@@ -136,17 +136,16 @@ namespace System.Web.Handlers
 
 			long atime;
 			DateTime modifiedSince;
-			bool hasCacheControl = HasCacheControl (request, request.QueryString, out atime);
 			bool hasIfModifiedSince = HasIfModifiedSince (context.Request, out modifiedSince);
 			
-			if (hasCacheControl || hasIfModifiedSince) {
+			if (hasIfModifiedSince) {
 				bool notModified = true;
 			
 				foreach (CompositeEntry entry in entries) {
 					if (entry == null)
 						continue;
 					if (notModified) {
-						if ((hasCacheControl && entry.IsModifiedSince (atime)) || (hasIfModifiedSince && entry.IsModifiedSince (modifiedSince)))
+						if (hasIfModifiedSince && entry.IsModifiedSince (modifiedSince))
 							notModified = false;
 					}
 				}
