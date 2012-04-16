@@ -265,7 +265,7 @@ $net_4_0 = [
 	"System.WorkflowServices",
 	"System.Xaml",
 	"System.Xaml.Hosting",
-	"System.XML",
+	"System.Xml",
 	"System.Xml.Linq",
 
 	"WindowsBase",
@@ -392,7 +392,7 @@ $net_4_5 = [
 	"System.WorkflowServices",
 	"System.Xaml",
 	"System.Xaml.Hosting",
-	"System.XML",
+	"System.Xml",
 	"System.Xml.Linq"
 ]
 
@@ -516,7 +516,6 @@ end
 
 delete("*.tar.gz")
 
-process("1.1", $net_1_1, [$fx1_1])
 process("2.0", $net_2_0, [$fx2_0])
 process("3.0", $net_3_0, [$fx3_0, $fx2_0])
 process("3.5", $net_3_5, [$fx3_5, $fx2_0])
