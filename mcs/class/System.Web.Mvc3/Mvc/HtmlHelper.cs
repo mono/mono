@@ -115,7 +115,9 @@
         }
 
         public MvcHtmlString AntiForgeryToken(string salt, string domain, string path) {
-            return new MvcHtmlString(AntiForgery.GetHtml(ViewContext.HttpContext, salt, domain, path).ToString());
+            //Disabled to compile MVC3 with the newer System.Web.WebPages helpers
+            //return new MvcHtmlString(AntiForgery.GetHtml(ViewContext.HttpContext, salt, domain, path).ToString());
+            return new MvcHtmlString(AntiForgery.GetHtml().ToString());
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "For consistency, all helpers are instance methods.")]

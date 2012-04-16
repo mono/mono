@@ -18,7 +18,7 @@
             }
         }
 
-        internal Action<HttpContextBase, string> ValidateAction {
+        internal Action ValidateAction {
             get;
             private set;
         }
@@ -27,7 +27,8 @@
             : this(AntiForgery.Validate) {
         }
 
-        internal ValidateAntiForgeryTokenAttribute(Action<HttpContextBase,string> validateAction) {
+	//Modified to compile MVC3 with the newer System.Web.WebPages helpers
+        internal ValidateAntiForgeryTokenAttribute(Action validateAction) {
             Debug.Assert(validateAction != null);
             ValidateAction = validateAction;
         }
@@ -37,7 +38,8 @@
                 throw new ArgumentNullException("filterContext");
             }
 
-            ValidateAction(filterContext.HttpContext, Salt);
+	    //Modified to compile MVC3 with the newer System.Web.WebPages helpers
+            ValidateAction();
         }
     }
 }
