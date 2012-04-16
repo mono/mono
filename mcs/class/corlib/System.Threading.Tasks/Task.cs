@@ -45,12 +45,12 @@ namespace System.Threading.Tasks
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.
 		[System.ThreadStatic]
-		static Task         current;
+		static Task current;
 		[System.ThreadStatic]
 		static Action<Task> childWorkAdder;
 		
 		// parent is the outer task in which this task is created
-		protected readonly Task parent;
+		readonly Task parent;
 		// contAncestor is the Task on which this continuation was setup
 		readonly Task contAncestor;
 		
@@ -137,15 +137,15 @@ namespace System.Threading.Tasks
 		}
 
 		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions, Task parent, Task contAncestor = null)
+		               TaskCreationOptions creationOptions, Task parent = null, Task contAncestor = null)
 		{
-			this.invoker = invoker;
+			this.invoker             = invoker;
 			this.taskCreationOptions = creationOptions;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
 			this.token               = cancellationToken;
-			this.parent              = parent;
+			this.parent              = parent = parent == null ? current : parent;
 			this.contAncestor        = contAncestor;
 
 			// Process taskCreationOptions
@@ -251,7 +251,7 @@ namespace System.Threading.Tasks
 
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this);
+			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
