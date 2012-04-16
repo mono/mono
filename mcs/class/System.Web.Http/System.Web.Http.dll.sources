@@ -2,13 +2,13 @@
 ../../../external/aspnetwebstack/src/RS.cs
 ../../../external/aspnetwebstack/src/AptcaCommonAssemblyInfo.cs
 
-../../../external/aspnetwebstack/src/Common/CommonWebApiResources.Designer.cs
 ../../../external/aspnetwebstack/src/Common/DictionaryExtensions.cs
 ../../../external/aspnetwebstack/src/Common/Error.cs
 ../../../external/aspnetwebstack/src/Common/HttpMethodHelper.cs
 ../../../external/aspnetwebstack/src/Common/PrefixContainer.cs
 ../../../external/aspnetwebstack/src/Common/TaskHelpers.cs
 ../../../external/aspnetwebstack/src/Common/TaskHelpersExtensions.cs
+../../../external/aspnetwebstack/src/Common/CommonWebApiResources.Designer.cs
 
 ../../../external/aspnetwebstack/src/System.Web.Http/AcceptVerbsAttribute.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/ActionNameAttribute.cs
@@ -107,15 +107,13 @@
 ../../../external/aspnetwebstack/src/System.Web.Http/Internal/TypeDescriptorHelper.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Internal/TypeHelper.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Internal/UriQueryUtility.cs
-../../../external/aspnetwebstack/src/System.Web.Http/Metadata/IMetadataAware.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/ModelMetadata.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/ModelMetadataProvider.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/AssociatedMetadataProvider.cs
-../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/CachedAssociatedMetadataProvider.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/CachedDataAnnotationsMetadataAttributes.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/CachedDataAnnotationsModelMetadata.cs
-../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/CachedDataAnnotationsModelMetadataProvider.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/CachedModelMetadata.cs
+../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/DataAnnotationsModelMetadataProvider.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Metadata/Providers/EmptyMetadataProvider.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/ModelBinding/Binders/ArrayModelBinder.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/ModelBinding/Binders/ArrayModelBinderProvider.cs
@@ -200,7 +198,6 @@
 ../../../external/aspnetwebstack/src/System.Web.Http/Services/DefaultServices.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/ServicesExtensions.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Tracing/FormattingUtilities.cs
-../../../external/aspnetwebstack/src/System.Web.Http/Tracing/HttpRequestMessageExtensions.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Tracing/IFormatterTracer.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Tracing/ITraceManager.cs
 ../../../external/aspnetwebstack/src/System.Web.Http/Tracing/ITraceWriter.cs
