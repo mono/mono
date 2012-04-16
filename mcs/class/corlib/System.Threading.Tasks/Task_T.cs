@@ -264,7 +264,7 @@ namespace System.Threading.Tasks
 			                  state,
 			                  cancellationToken,
 			                  GetCreationOptions (continuationOptions),
-			                  parent,
+			                  null,
 			                  this);
 
 			ContinueWithCore (t, continuationOptions, scheduler);
