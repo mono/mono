@@ -115,7 +115,7 @@ public class TimeZoneTest {
 		// we change our implementation to match theirs?
 		
 		Assert.AreEqual("GMT", t1.StandardName, "D01");
-		Assert.AreEqual("BST", t1.DaylightName, "D02");
+		Assert.IsTrue("BST" == t1.DaylightName || "IST" == t1.DaylightName, "D02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
 		Assert.AreEqual("03/31/2002 01:00:00", d1.Start.ToString ("G"), "D03");
