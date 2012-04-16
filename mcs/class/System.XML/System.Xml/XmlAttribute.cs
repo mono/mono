@@ -117,25 +117,12 @@ namespace System.Xml
 		}
 
 		public override string InnerText {
-#if !(NET_2_0)
-			get {
-				return base.InnerText;
-			}
-#endif
-
 			set {
 				Value = value;
 			}
 		}
 
 		public override string InnerXml {
-#if !(NET_2_0)
-			get {
-				// Not sure why this is an override.  Passing through for now.
-				return base.InnerXml;
-			}
-#endif
-
 			set {
 				RemoveAll ();
 				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
