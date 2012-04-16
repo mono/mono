@@ -122,7 +122,8 @@ namespace System.Threading.Tasks
 
 			if (task.Status == TaskStatus.WaitingToRun) {
 				task.Execute ();
-				task.WaitOnChildren ();
+				if (task.WaitOnChildren ())
+					task.Wait ();
 
 				return true;
 			}
@@ -139,6 +140,7 @@ namespace System.Threading.Tasks
 
 			if (!task.IsCompleted)
 				throw new InvalidOperationException ("The TryExecuteTaskInline call to the underlying scheduler succeeded, but the task body was not invoked");
+
 			return true;
 		}
 

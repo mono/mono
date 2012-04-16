@@ -187,7 +187,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
-		public void WaitAllTest()
+		public void WaitAllTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
 				int achieved = 0;
@@ -902,6 +902,24 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (continuationRan);
 		}
 		
+		[Test]
+		public void AlreadyCompletedChildTaskShouldRunContinuationImmediately ()
+		{
+			string result = "Failed";
+			var testTask = new Task (() => 
+			{
+				var child = new Task<string> (() =>
+				{
+					return "Success";
+				}, TaskCreationOptions.AttachedToParent);
+				child.RunSynchronously ();
+				child.ContinueWith (x => { Thread.Sleep (50); result = x.Result; }, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.NotOnFaulted);
+			});
+			testTask.RunSynchronously ();
+
+			Assert.AreEqual ("Success", result);
+		}
+
 		[Test]
 		public void InlineNotTrashingParentRelationship ()
 		{
