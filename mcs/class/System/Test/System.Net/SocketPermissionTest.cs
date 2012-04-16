@@ -61,27 +61,27 @@ public class SocketPermissionTest
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.*.*", 9090);
 		
-		Assertion.Assert ("#1", !s1.IsSubsetOf (s2));
-		Assertion.Assert ("#2", !s2.IsSubsetOf (s1));
+		Assert.IsFalse (s1.IsSubsetOf (s2), "#1");
+		Assert.IsFalse (s2.IsSubsetOf (s1), "#2");
 
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s1.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", 9090);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.*.*", 9090);
 		
-		Assertion.Assert ("#4", !s2.IsSubsetOf (s1));
+		Assert.IsFalse (s2.IsSubsetOf (s1), "#4");
 		
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.*.*", 80);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.*", 80);
-		Assertion.Assert ("#5", s1.IsSubsetOf (s2));
-		Assertion.Assert ("#6", !s2.IsSubsetOf (s1));
+		Assert.IsTrue (s1.IsSubsetOf (s2), "#5");
+		Assert.IsFalse (s2.IsSubsetOf (s1), "#6");
 
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s1.AddPermission(NetworkAccess.Accept, TransportType.Tcp, "10.11.*.*", 9090);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", SocketPermission.AllPorts);
-		Assertion.Assert ("#7", s1.IsSubsetOf (s2));
-		Assertion.Assert ("#8", !s2.IsSubsetOf (s1));
+		Assert.IsTrue (s1.IsSubsetOf (s2), "#7");
+		Assert.IsFalse (s2.IsSubsetOf (s1), "#8");
 	}
 	
 	[Test]
@@ -93,7 +93,7 @@ public class SocketPermissionTest
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.*.*", 9090);
 		
-		Assertion.Assert ("#3: bug in MS.Net", s1.IsSubsetOf (s2));
+		Assert.IsTrue (s1.IsSubsetOf (s2), "#3: bug in MS.Net");
 	}
 
 	[Test]
@@ -111,7 +111,7 @@ public class SocketPermissionTest
 	{
 		SecurityElement elem = s2.ToXml ();
 		s1.FromXml (elem);
-		Assertion.Assert ("#1", s2.IsSubsetOf (s1) && s1.IsSubsetOf (s2));
+		Assert.IsTrue (s2.IsSubsetOf (s1) && s1.IsSubsetOf (s2), "#1");
 	}
 }
 
