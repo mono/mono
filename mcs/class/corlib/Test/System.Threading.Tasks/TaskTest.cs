@@ -967,7 +967,7 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var cancelation = new CancellationTokenSource ();
 
-			var t = Task.Delay (1000, cancelation.Token);
+			var t = Task.Delay (5000, cancelation.Token);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
 			cancelation.Cancel ();
 			try {
