@@ -91,7 +91,7 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Func<TResult> function, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (TaskActionInvoker.Create (function), null, cancellationToken, creationOptions, null)
+			: base (TaskActionInvoker.Create (function), null, cancellationToken, creationOptions)
 		{
 			if (function == null)
 				throw new ArgumentNullException ("function");
@@ -116,7 +116,7 @@ namespace System.Threading.Tasks
 		}
 
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: base (TaskActionInvoker.Create (function), state, cancellationToken, creationOptions, null)
+			: base (TaskActionInvoker.Create (function), state, cancellationToken, creationOptions)
 		{
 			if (function == null)
 				throw new ArgumentNullException ("function");
@@ -159,7 +159,7 @@ namespace System.Threading.Tasks
 			                   null,
 			                   cancellationToken,
 			                   GetCreationOptions (continuationOptions),
-			                   parent,
+			                   null,
 			                   this);
 			ContinueWithCore (t, continuationOptions, scheduler);
 			
@@ -200,7 +200,7 @@ namespace System.Threading.Tasks
 			                              null,
 			                              cancellationToken,
 			                              GetCreationOptions (continuationOptions),
-			                              parent,
+			                              null,
 			                              this);
 			ContinueWithCore (t, continuationOptions, scheduler);
 			
@@ -306,7 +306,7 @@ namespace System.Threading.Tasks
 			                              state,
 			                              cancellationToken,
 			                              GetCreationOptions (continuationOptions),
-			                              parent,
+			                              null,
 			                              this);
 
 			ContinueWithCore (t, continuationOptions, scheduler);
