@@ -560,10 +560,13 @@ namespace System.Threading.Tasks
 			ProcessCompleteDelegates ();
 		}
 
-		internal void WaitOnChildren ()
+		internal bool WaitOnChildren ()
 		{
-			if (Status == TaskStatus.WaitingForChildrenToComplete && childTasks != null)
+			if (Status == TaskStatus.WaitingForChildrenToComplete && childTasks != null) {
 				childTasks.Wait ();
+				return true;
+			}
+			return false;
 		}
 		
 		public void Wait ()
