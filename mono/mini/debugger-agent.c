@@ -4857,7 +4857,12 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	m = decode_methodid (p, &p, end, &domain, &err);
 	if (err)
 		return err;
+	
 	sig = mono_method_signature (m);
+
+	// The client may request the container instead of the inflated method
+	if (sig && sig->ret && MONO_TYPE_MVAR == sig->ret->type)
+		return ERR_NOT_IMPLEMENTED;
 
 	if (m->klass->valuetype)
 		this_buf = g_alloca (mono_class_instance_size (m->klass));
