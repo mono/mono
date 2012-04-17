@@ -835,6 +835,13 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
+			if (kind == MemberKind.TypeParameter) {
+				if (canImportBaseType)
+					ImportTypeParameterTypeConstraints ((TypeParameterSpec) spec, type);
+
+				return spec;
+			}
+
 			//
 			// Two stage setup as the base type can be inflated declaring type or
 			// another nested type inside same declaring type which has not been
@@ -992,7 +999,6 @@ namespace Mono.CSharp
 					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
 				}
 			}
-
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)

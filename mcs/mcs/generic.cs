@@ -2279,7 +2279,7 @@ namespace Mono.CSharp {
 
 		//
 		// Checks all type arguments againts type parameters constraints
-		// NOTE: It can run in probing mode when `mc' is null
+		// NOTE: It can run in probing mode when `this.mc' is null
 		//
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
