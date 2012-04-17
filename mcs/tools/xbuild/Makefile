@@ -36,6 +36,7 @@ install-local:	install-extras
 
 WEBAPP_DIR = Microsoft/VisualStudio/v9.0/WebApplications
 SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
+PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList
@@ -62,6 +63,8 @@ install-extras:
 	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
 	sed -e 's/@SILVERLIGHT_VERSION@/2.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0/Microsoft.Silverlight.Common.targets
 	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
+	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.0
+	$(INSTALL_DATA) xbuild/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.0
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \
@@ -87,4 +90,5 @@ EXTRA_DISTFILES = \
 	xbuild/Microsoft.Silverlight.Common.targets \
 	xbuild/Microsoft.Silverlight.CSharp.targets \
 	xbuild/Microsoft.Silverlight.VisualBasic.targets \
+	xbuild/Microsoft.Portable.CSharp.targets \
 	xbuild_targets.make
