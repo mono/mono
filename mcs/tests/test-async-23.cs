@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +8,12 @@ class MyContext : SynchronizationContext
 	public int Completed;
 	public int PostCounter;
 	public int SendCounter;
+	ManualResetEvent mre;
+	
+	public MyContext (ManualResetEvent mre)
+	{
+		this.mre = mre;
+	}
 
 	public override void OperationStarted ()
 	{
@@ -26,6 +30,7 @@ class MyContext : SynchronizationContext
 	public override void Post (SendOrPostCallback d, object state)
 	{
 		++PostCounter;
+		mre.Set ();
 		base.Post (d, state);
 	}
 
@@ -39,28 +44,34 @@ class MyContext : SynchronizationContext
 
 public class TestPostContext
 {
+	static ManualResetEvent await_mre;
+	
 	static async Task<int> Test ()
 	{
-		return await Task.Factory.StartNew (() => 1);
+		return await Task.Factory.StartNew (() => { await_mre.WaitOne(); return 1; });
 	}
 
 	public static int Main ()
 	{
-		var context = new MyContext ();
+		var mre = new ManualResetEvent (false);
+		await_mre = new ManualResetEvent (false);
+		var context = new MyContext (mre);
 		try {
 			SynchronizationContext.SetSynchronizationContext (context);
 			var t = Test ();
-			if (!t.Wait (1000))
+			await_mre.Set ();
+			if (!t.Wait (3000))
 				return 3;
+				
+			// Wait is needed because synchronization is executed as continuation (once task finished)
+			if (!mre.WaitOne (3000))
+				return 2;
 		} finally {
 			SynchronizationContext.SetSynchronizationContext (null);
 		}
 
 		if (context.Started != 0 || context.Completed != 0 || context.SendCounter != 0)
 			return 1;
-
-		if (context.PostCounter != 1)
-			return 2;
 
 		Console.WriteLine ("ok");
 		return 0;

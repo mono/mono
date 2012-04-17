@@ -55624,13 +55624,10 @@
         <size>22</size>
       </method>
       <method name="Void Post(System.Threading.SendOrPostCallback, System.Object)" attrs="198">
-        <size>24</size>
+        <size>36</size>
       </method>
       <method name="Void Send(System.Threading.SendOrPostCallback, System.Object)" attrs="198">
         <size>24</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="TestPostContext">
@@ -55638,7 +55635,7 @@
         <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>136</size>
+        <size>170</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55652,7 +55649,12 @@
         <size>13</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>9</size>
+        <size>21</size>
+      </method>
+    </type>
+    <type name="MyContext">
+      <method name="Void .ctor(ManualResetEvent)" attrs="6278">
+        <size>15</size>
       </method>
     </type>
   </test>
