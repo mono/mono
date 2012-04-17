@@ -38,6 +38,9 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+#if FULL_AOT_RUNTIME
+using Crimson.CommonCrypto;
+#endif
 
 namespace System {
 
@@ -45,7 +48,7 @@ namespace System {
 	[StructLayout (LayoutKind.Sequential)]
 	[ComVisible (true)]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
@@ -463,20 +466,17 @@ namespace System {
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
-		private static object _rngAccess = new object ();
 #if !FULL_AOT_RUNTIME
+		private static object _rngAccess = new object ();
 		private static RandomNumberGenerator _rng;
 		private static RandomNumberGenerator _fastRng;
-#else
-		private static object _fastRng;
 #endif
 
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
-#if !FULL_AOT_RUNTIME
 			byte[] b = new byte [16];
-
+#if !FULL_AOT_RUNTIME
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				if (_rng == null)
@@ -484,9 +484,8 @@ namespace System {
 				_rng.GetBytes (b);
 			}
 #else
-			byte[] b = FastNewGuidArray ();
+			Cryptor.GetRandom (b);
 #endif
-
 
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -497,6 +496,7 @@ namespace System {
 			return res;
 		}
 
+#if !FULL_AOT_RUNTIME
 		// used in ModuleBuilder so mcs doesn't need to invoke 
 		// CryptoConfig for simple assemblies.
 		internal static byte[] FastNewGuidArray ()
@@ -506,18 +506,12 @@ namespace System {
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				// if known, use preferred RNG
-#if FULL_AOT_RUNTIME
-				if (_fastRng == null)
-					_fastRng = new RNGCryptoServiceProvider ();
-				(_fastRng as RNGCryptoServiceProvider).GetBytes (guid);
-#else
 				if (_rng != null)
 					_fastRng = _rng;
 				// else use hardcoded default RNG (bypassing CryptoConfig)
 				if (_fastRng == null)
 					_fastRng = new RNGCryptoServiceProvider ();
 				_fastRng.GetBytes (guid);
-#endif
 			}
 
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -527,7 +521,7 @@ namespace System {
 
 			return guid;
 		}
-
+#endif
 		public byte[] ToByteArray ()
 		{
 			byte[] res = new byte[16];
