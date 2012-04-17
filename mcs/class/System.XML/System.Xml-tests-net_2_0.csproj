@@ -193,9 +193,13 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data">
+    <Reference Include="System.Data.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data</HintPath>
+      <HintPath>System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration">
       <SpecificVersion>False</SpecificVersion>

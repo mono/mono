@@ -67,6 +67,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Microsoft.Build.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

@@ -97,6 +97,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Microsoft.Build.Utilities.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

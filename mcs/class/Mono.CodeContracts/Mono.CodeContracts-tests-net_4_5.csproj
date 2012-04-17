@@ -61,6 +61,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_5/Mono.CodeContracts.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

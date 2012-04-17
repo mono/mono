@@ -127,6 +127,7 @@
    <Compile Include="Test\System.CodeDom\CodeVariableReferenceExpressionTest.cs" />
    <Compile Include="Test\System.CodeDom.Compiler\CodeGeneratorFromTypeTestBase.cs" />
    <Compile Include="Test\System.CodeDom.Compiler\CodeGeneratorOptionsTest.cs" />
+   <Compile Include="Test\System.CodeDom.Compiler\CodeGeneratorGenerateFromCompileUnitTest.cs" />
    <Compile Include="Test\System.CodeDom.Compiler\CodeGeneratorTest.cs" />
    <Compile Include="Test\System.CodeDom.Compiler\CodeGeneratorTestBase.cs" />
    <Compile Include="Test\System.CodeDom.Compiler\ExecutorTest.cs" />
@@ -215,6 +216,7 @@
    <Compile Include="Test\System.Configuration\SettingsPropertyTest.cs" />
    <Compile Include="Test\System.Configuration\SettingsPropertyValueCollectionTest.cs" />
    <Compile Include="Test\System.Configuration\SettingsPropertyValueTest.cs" />
+   <Compile Include="Test\System.Diagnostics\DebugTest.cs" />
    <Compile Include="Test\System.Diagnostics\DelimitedListTraceListenerTest.cs" />
    <Compile Include="Test\System.Diagnostics\EventLogTest.cs" />
    <Compile Include="Test\System.Diagnostics\StopwatchTest.cs" />
@@ -326,6 +328,7 @@
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\PublicKeyTest.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X500DistinguishedNameTest.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509BasicConstraintsExtensionTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509Cert20Test.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509Certificate2Test.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509CertificateCollectionTest.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509Certificate2CollectionTest.cs" />
@@ -564,6 +567,14 @@
     <Reference Include="System.Data">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Data</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration">
       <SpecificVersion>False</SpecificVersion>

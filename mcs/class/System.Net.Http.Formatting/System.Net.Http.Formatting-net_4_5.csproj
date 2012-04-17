@@ -320,6 +320,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Configuration.dll</HintPath>
+    </Reference>
 
   </ItemGroup>
   <ItemGroup>

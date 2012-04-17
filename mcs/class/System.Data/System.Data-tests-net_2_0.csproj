@@ -213,6 +213,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Transactions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

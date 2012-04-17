@@ -64,6 +64,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_2_0/System.Design.dll</HintPath>
     </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

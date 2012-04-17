@@ -375,13 +375,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="System">
+    <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Core">
+    <Reference Include="System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core</HintPath>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>

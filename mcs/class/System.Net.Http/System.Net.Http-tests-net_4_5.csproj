@@ -39,6 +39,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
    <Compile Include="Test\System.Net.Http\ByteArrayContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\FormUrlEncodedContentTest.cs" />
    <Compile Include="Test\System.Net.Http\HttpClientHandlerTest.cs" />
    <Compile Include="Test\System.Net.Http\HttpClientTest.cs" />
    <Compile Include="Test\System.Net.Http\HttpMethodTest.cs" />
@@ -48,6 +49,7 @@
    <Compile Include="Test\System.Net.Http\StringContentTest.cs" />
    <Compile Include="Test\System.Net.Http.Headers\AuthenticationHeaderValueTest.cs" />
    <Compile Include="Test\System.Net.Http.Headers\CacheControlHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ContentDispositionHeaderValueTest.cs" />
    <Compile Include="Test\System.Net.Http.Headers\ContentRangeHeaderValueTest.cs" />
    <Compile Include="Test\System.Net.Http.Headers\EntityTagHeaderValueTest.cs" />
    <Compile Include="Test\System.Net.Http.Headers\HttpHeadersTest.cs" />
@@ -87,6 +89,14 @@
     <Reference Include="./../../class/lib/net_4_5/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_5/System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

@@ -64,6 +64,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Mono.Cecil.dll</HintPath>
     </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

@@ -71,9 +71,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_2_0/System.Data.Services.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel">
+    <Reference Include="System.ServiceModel.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.ServiceModel</HintPath>
+      <HintPath>System.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

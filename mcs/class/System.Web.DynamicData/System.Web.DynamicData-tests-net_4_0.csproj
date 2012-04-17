@@ -237,6 +237,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>SystemWebTestShim.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.ApplicationServices.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Web.ApplicationServices.dll</HintPath>

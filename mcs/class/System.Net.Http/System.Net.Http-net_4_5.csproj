@@ -43,6 +43,7 @@
    <Compile Include="System.Net.Http\ByteArrayContent.cs" />
    <Compile Include="System.Net.Http\ClientCertificateOption.cs" />
    <Compile Include="System.Net.Http\DelegatingHandler.cs" />
+   <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
    <Compile Include="System.Net.Http\HttpClient.cs" />
    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
    <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
@@ -52,6 +53,7 @@
    <Compile Include="System.Net.Http\HttpRequestException.cs" />
    <Compile Include="System.Net.Http\HttpRequestMessage.cs" />
    <Compile Include="System.Net.Http\HttpResponseMessage.cs" />
+   <Compile Include="System.Net.Http\MessageProcessingHandler.cs" />
    <Compile Include="System.Net.Http\StreamContent.cs" />
    <Compile Include="System.Net.Http\StringContent.cs" />
    <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />

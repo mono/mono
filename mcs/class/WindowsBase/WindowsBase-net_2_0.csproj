@@ -253,13 +253,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="System">
+    <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml">
+    <Reference Include="System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml</HintPath>
+      <HintPath>System.Xml.dll</HintPath>
     </Reference>
 
   </ItemGroup>
