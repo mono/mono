@@ -44409,7 +44409,7 @@
   <test name="test-792.cs">
     <type name="Program">
       <method name="Void Test()" attrs="129">
-        <size>25</size>
+        <size>36</size>
       </method>
       <method name="Void Test2(IMemberDelayed)" attrs="129">
         <size>20</size>
