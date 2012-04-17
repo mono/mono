@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlSchemaCollectionTests : Assertion
+	public class XmlSchemaCollectionTests
 	{
 		private XmlSchema GetSchema (string path)
 		{
@@ -66,10 +66,10 @@ namespace MonoTests.System.Xml
 		public void TestAddDoesCompilation ()
 		{
 			XmlSchema schema = new XmlSchema ();
-			Assert (!schema.IsCompiled);
+			Assert.IsFalse (schema.IsCompiled);
 			XmlSchemaCollection col = new XmlSchemaCollection ();
 			col.Add (schema);
-			Assert (schema.IsCompiled);
+			Assert.IsTrue (schema.IsCompiled);
 		}
 
 		[Test] // bug #75126
@@ -115,8 +115,8 @@ namespace MonoTests.System.Xml
 			schemas.Add (schema2);
 			schemas.Add (schema1);
 
-			Assert ("#1", schema1.IsCompiled);
-			Assert ("#2", schema2.IsCompiled);
+			Assert.IsTrue (schema1.IsCompiled, "#1");
+			Assert.IsTrue (schema2.IsCompiled, "#2");
 		}
 	}
 }

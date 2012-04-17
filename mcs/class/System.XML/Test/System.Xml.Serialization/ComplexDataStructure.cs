@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
-	public class ComplexDataStructure: Assertion
+	public class ComplexDataStructure
 	{
 		[Test]
 		[NUnit.Framework.Category("NotDotNet")] // FDBK50639 
@@ -42,7 +42,7 @@ namespace MonoTests.System.XmlSerialization
 			sr.Close ();
 			
 			expected = XmlSerializerTests.Infoset (expected);
-			AssertEquals (expected, serialized);
+			Assert.AreEqual (expected, serialized);
 		}
 		
 		[Test]
@@ -213,12 +213,12 @@ namespace MonoTests.System.XmlSerialization
 		
 		void CheckObjectContent (Test exp, Test t)
 		{
-			AssertEquals ("t.a", exp.a, t.a);
-			AssertEquals ("t.b", exp.b, t.b);
-			AssertEquals ("t.bbis", exp.bbis, t.bbis);
-			AssertEquals ("t.c", exp.c, t.c);
+			Assert.AreEqual (exp.a, t.a, "t.a");
+			Assert.AreEqual (exp.b, t.b, "t.b");
+			Assert.AreEqual (exp.bbis, t.bbis, "t.bbis");
+			Assert.AreEqual (exp.c, t.c, "t.c");
 			
-			AssertNotNull ("t.parts", t.parts);
+			Assert.IsNotNull (t.parts, "t.parts");
 			CheckParts ("t.parts", exp.parts, t.parts);
 			
 			TestPart.AssertEquals ("t.part", exp.part, t.part);
@@ -228,24 +228,24 @@ namespace MonoTests.System.XmlSerialization
 			
 			TA.AssertEquals ("t.ta", exp.ta, t.ta);
 
-			AssertNotNull ("t.tam2", t.tam2);
+			Assert.IsNotNull (t.tam2, "t.tam2");
 			CheckTaArray ("t.tam2", exp.tam2, t.tam2);
 			
-			AssertNotNull ("t.tam3", t.tam3);
+			Assert.IsNotNull (t.tam3, "t.tam3");
 			CheckTaArray ("t.tam3", exp.tam3, t.tam3);
 			
-			AssertNotNull ("t.flatParts", t.flatParts);
+			Assert.IsNotNull (t.flatParts, "t.flatParts");
 			CheckParts ("t.flatParts", exp.flatParts, t.flatParts);
 
 			// Null element is ignored
-			AssertNotNull ("t.flatParts2", t.flatParts2);
-			AssertEquals ("t.flatParts2.Length", 3, t.flatParts2.Length);
+			Assert.IsNotNull (t.flatParts2, "t.flatParts2");
+			Assert.AreEqual (3, t.flatParts2.Length, "t.flatParts2.Length");
 			TA.AssertEquals ("t.flatParts2 0", exp.flatParts2[0], t.flatParts2[0]);
 			TA.AssertEquals ("t.flatParts2 1", exp.flatParts2[1], t.flatParts2[1]);
 			TA.AssertEquals ("t.flatParts2 2", exp.flatParts2[3], t.flatParts2[2]);
 			
-			AssertNotNull ("t.anot", t.anot);
-			AssertEquals ("t.anot.lo", ((AnotherTestPart)exp.anot).lo, ((AnotherTestPart)t.anot).lo);
+			Assert.IsNotNull (t.anot, "t.anot");
+			Assert.AreEqual (((AnotherTestPart)exp.anot).lo, ((AnotherTestPart)t.anot).lo, "t.anot.lo");
 
 			TestPart.AssertEquals ("t.ob", exp.ob as TestPart, t.ob as TestPart);
 			TestPart.AssertEquals ("t.ob2", exp.ob2 as TestPart, t.ob2 as TestPart);
@@ -254,18 +254,18 @@ namespace MonoTests.System.XmlSerialization
 			AssertionHelper.AssertEqualsXml ("t.oneElem2", exp.oneElem2, t.oneElem2);
 			
 			// One of the elements was null and it is ignored
-			AssertNotNull ("t.someElems", t.someElems);
-			AssertEquals ("t.someElems.Length", 2, t.someElems.Length);
+			Assert.IsNotNull (t.someElems, "t.someElems");
+			Assert.AreEqual (2, t.someElems.Length, "t.someElems.Length");
 			AssertionHelper.AssertEqualsXml ("t.someElems[0]", exp.someElems[0], t.someElems[0]);
 			AssertionHelper.AssertEqualsXml ("t.someElems[1]", exp.someElems[2], t.someElems[1]);
 
-			AssertNotNull ("t.extraElems", t.extraElems);
-			AssertEquals ("t.extraElems.Length", exp.extraElems.Length, t.extraElems.Length);
+			Assert.IsNotNull (t.extraElems, "t.extraElems");
+			Assert.AreEqual (exp.extraElems.Length, t.extraElems.Length, "t.extraElems.Length");
 			for (int n=0; n<exp.extraElems.Length; n++)
 				AssertionHelper.AssertEqualsXml ("t.extraElems[" + n + "]", exp.extraElems[n], t.extraElems[n]);
 			
-			AssertNotNull ("t.extraElems23", t.extraElems23);
-			AssertEquals ("t.extraElems23.Length", exp.extraElems23.Length, t.extraElems23.Length);
+			Assert.IsNotNull (t.extraElems23, "t.extraElems23");
+			Assert.AreEqual (exp.extraElems23.Length, t.extraElems23.Length, "t.extraElems23.Length");
 			for (int n=0; n<t.extraElems23.Length; n++)
 				AssertionHelper.AssertEqualsXml ("t.extraElems23[" + n + "]", exp.extraElems23[n], t.extraElems23[n]);
 			
@@ -273,59 +273,59 @@ namespace MonoTests.System.XmlSerialization
 			
 			UnknownAttributeTester.AssertEquals ("t.uktester", exp.uktester, t.uktester);
 
-			AssertEquals ("t.ob3", exp.ob3, t.ob3);
-			AssertEquals ("t.ob4", exp.ob4, t.ob4);
-			AssertEquals ("t.op1", exp.op1, t.op1);
+			Assert.AreEqual (exp.ob3, t.ob3, "t.ob3");
+			Assert.AreEqual (exp.ob4, t.ob4, "t.ob4");
+			Assert.AreEqual (exp.op1, t.op1, "t.op1");
 			
 			AssertionHelper.AssertEqualsArray ("t.opArray", exp.opArray, t.opArray);
 
-			AssertEquals ("t.ukOpt", exp.ukOpt, t.ukOpt);
-			AssertEquals ("t.opAtt", exp.opAtt, t.opAtt);
+			Assert.AreEqual (exp.ukOpt, t.ukOpt, "t.ukOpt");
+			Assert.AreEqual (exp.opAtt, t.opAtt, "t.opAtt");
 
 			AssertionHelper.AssertEqualsArray ("t.byteArray", exp.byteArray, t.byteArray);
 			AssertionHelper.AssertEqualsArray ("t.byteByteArray", exp.byteByteArray, t.byteByteArray);
 			
-			AssertNotNull ("t.ttList", t.ttList);
+			Assert.IsNotNull (t.ttList, "t.ttList");
 			AssertionHelper.AssertEqualsArray ("t.ttList", exp.ttList.ToArray(), t.ttList.ToArray());
 			
-			AssertNotNull ("t.RoList", t.RoList);
-			AssertEquals ("t.RoList.Count", exp.RoList.Count, t.RoList.Count);
+			Assert.IsNotNull (t.RoList, "t.RoList");
+			Assert.AreEqual (exp.RoList.Count, t.RoList.Count, "t.RoList.Count");
 			for (int n=0; n<exp.RoList.Count; n++)
 				TestPart.AssertEquals ("t.RoList " + n, (TestPart)exp.RoList[n], (TestPart)t.RoList[n]);
 			
-			AssertEquals ("t.struc.aa", exp.struc.aa, t.struc.aa);
-			AssertEquals ("t.struc.cc", exp.struc.cc, t.struc.cc);
+			Assert.AreEqual (exp.struc.aa, t.struc.aa, "t.struc.aa");
+			Assert.AreSame (exp.struc.cc, t.struc.cc, "t.struc.cc");
 
-			AssertNotNull ("t.multiList", t.multiList);
-			AssertEquals ("t.multiList.Count", exp.multiList.Length, t.multiList.Length);
+			Assert.IsNotNull (t.multiList, "t.multiList");
+			Assert.AreEqual (exp.multiList.Length, t.multiList.Length, "t.multiList.Count");
 			for (int n=0; n<exp.multiList.Length; n++)
 				AssertionHelper.AssertEqualsArray ("t.multiList " + n, exp.multiList[n].ToArray(), t.multiList[n].ToArray());
 			
-			AssertEquals ("t.defElem", exp.defElem, t.defElem);
-			AssertEquals ("t.defAttr", exp.defAttr, t.defAttr);
+			Assert.AreEqual (exp.defElem, t.defElem, "t.defElem");
+			Assert.AreEqual (exp.defAttr, t.defAttr, "t.defAttr");
 
 			CustomHashtable.AssertEquals ("t.special", exp.special, t.special);
 
-			AssertEquals ("t.attqname", exp.attqname, t.attqname);
+			Assert.AreEqual (exp.attqname, t.attqname, "t.attqname");
 
-			AssertNotNull ("t.dbscontainer", t.dbscontainer);
+			Assert.IsNotNull (t.dbscontainer, "t.dbscontainer");
 			DblStringContainer tdbca = t.dbscontainer.at as DblStringContainer;
 			DblStringContainer expdbca = exp.dbscontainer.at as DblStringContainer;
-			AssertNotNull ("t.dbscontainer.at", tdbca);
+			Assert.IsNotNull (tdbca, "t.dbscontainer.at");
 			
-			AssertNotNull ("t.dbscontainer.dbca", tdbca);
+			Assert.IsNotNull (tdbca, "t.dbscontainer.dbca");
 			AssertionHelper.AssertEqualsArray ("t.dbscontainer.at.doublestring", expdbca.doublestring, tdbca.doublestring);
 			
 			AnotherTestPart tat = tdbca.at as AnotherTestPart;
 			AnotherTestPart expat = expdbca.at as AnotherTestPart;
-			AssertNotNull ("t.dbscontainer.dbca.at", tat);
-			AssertEquals ("t.dbscontainer.dbca.at.lo", expat.lo, tat.lo);
+			Assert.IsNotNull (tat, "t.dbscontainer.dbca.at");
+			Assert.AreEqual (expat.lo, tat.lo, "t.dbscontainer.dbca.at.lo");
 		}
 		
 		void CheckParts (string id, TestPart[] exp, TestPart[] parts)
 		{
 			AssertionHelper.AssertType (id, exp, parts);
-			AssertEquals (id + " Len", exp.Length, parts.Length);
+			Assert.AreEqual (exp.Length, parts.Length, id + " Len");
 			for (int n=0; n<exp.Length; n++)
 				TestPart.AssertEquals (id + "[" + n + "]", exp[n], parts[n]);
 		}
@@ -333,14 +333,14 @@ namespace MonoTests.System.XmlSerialization
 		void CheckTaArray (string id, TA[][][] exp, TA[][][] arr)
 		{
 			AssertionHelper.AssertType (id, exp, arr);
-			AssertEquals (id + " Len", exp.Length, arr.Length);
+			Assert.AreEqual (exp.Length, arr.Length, id + " Len");
 			for (int n=0; n<exp.Length; n++)
 			{
 				TA[][] tar = arr[n];
 				TA[][] expar = exp[n];
 				
 				AssertionHelper.AssertType (id, expar, tar);
-				AssertEquals (expar.Length, tar.Length);
+				Assert.AreEqual (expar.Length, tar.Length);
 				
 				for (int m=0; m<expar.Length; m++)
 				{
@@ -348,7 +348,7 @@ namespace MonoTests.System.XmlSerialization
 					TA[] expar2 = expar[m];
 					
 					AssertionHelper.AssertType (id, expar2, tar2);
-					AssertEquals (id, expar2.Length, tar2.Length);
+					Assert.AreEqual (expar2.Length, tar2.Length, id);
 					
 					for (int i=0; i<expar2.Length; i++)
 						TA.AssertEquals (id + "[" + n + "][" + m + "][" + i + "]", expar2[i], tar2[i]);
@@ -362,12 +362,12 @@ namespace MonoTests.System.XmlSerialization
 		public static bool AssertType (string id, object exp, object ob)
 		{
 			if (exp == null) {
-				Assertion.AssertNull (id, ob);
+				Assert.IsNull (ob, id);
 				return false;
 			}
 			else {
-				Assertion.AssertNotNull (id, ob);
-				Assertion.AssertEquals (id + " type", exp.GetType(), ob.GetType());
+				Assert.IsNotNull (ob, id);
+				Assert.AreEqual (exp.GetType(), ob.GetType(), id + " type");
 				return true;
 			}
 		}
@@ -375,19 +375,19 @@ namespace MonoTests.System.XmlSerialization
 		public static void AssertEqualsXml (string id, XmlNode exp, XmlNode ob)
 		{
 			if (!AssertType (id, exp, ob)) return;
-			Assertion.AssertEquals (id, XmlSerializerTests.Infoset (exp), XmlSerializerTests.Infoset (ob));
+			Assert.AreEqual (XmlSerializerTests.Infoset (exp), XmlSerializerTests.Infoset (ob), id);
 		}
 		
 		public static void AssertEqualsArray (string id, Array exp, Array ob)
 		{
 			if (!AssertType (id, exp, ob)) return;
-			Assertion.AssertEquals (id + " Length", exp.GetLength(0), ob.GetLength(0));
+			Assert.AreEqual (exp.GetLength(0), ob.GetLength(0), id + " Length");
 			for (int n=0; n<exp.GetLength(0); n++) {
 				object it = exp.GetValue(n);
 				if (it is Array) 
 					AssertEqualsArray (id + "[" + n + "]", it as Array, ob.GetValue(n) as Array);
 				else
-					Assertion.AssertEquals (id + "[" + n + "]", it, ob.GetValue(n));
+					Assert.AreEqual (it, ob.GetValue(n), id + "[" + n + "]");
 			}
 		}
 	}
@@ -579,7 +579,7 @@ namespace MonoTests.System.XmlSerialization
 		public static void AssertEquals (string id, TA expected, TA ob)
 		{
 			if (!AssertionHelper.AssertType (id, expected, ob)) return;
-			Assertion.AssertEquals (id + " xx", expected.xx, ob.xx);
+			Assert.AreEqual (expected.xx, ob.xx, id + " xx");
 			// TODO: extraTextNodes
 		}
 	}
@@ -591,7 +591,7 @@ namespace MonoTests.System.XmlSerialization
 		public static void AssertEquals (string id, TB expected, TB ob)
 		{
 			if (!AssertionHelper.AssertType (id, expected, ob)) return;
-			Assertion.AssertEquals (id + " yy", expected.yy, ob.yy);
+			Assert.AreEqual (expected.yy, ob.yy, id + " yy");
 			TA.AssertEquals (id + " base", expected, ob);
 		}
 	}
@@ -613,7 +613,7 @@ namespace MonoTests.System.XmlSerialization
 		public static void AssertEquals (string id, UnknownAttributeTester exp, UnknownAttributeTester ob)
 		{
 			if (!AssertionHelper.AssertType (id, exp, ob)) return;
-			Assertion.AssertEquals (id + " aa", exp.aa, ob.aa);
+			Assert.AreEqual (exp.aa, ob.aa, id + " aa");
 			
 			if (!AssertionHelper.AssertType (id + " extraAtts", exp.extraAtts, ob.extraAtts)) return;
 			
@@ -622,7 +622,7 @@ namespace MonoTests.System.XmlSerialization
 			{
 				XmlAttribute at = ob.extraAtts [n];
 				if (at.NamespaceURI == "http://www.w3.org/2000/xmlns/") continue;
-				Assertion.Assert (id + " extraAtts length", p < exp.extraAtts.Length);
+				Assert.IsTrue (p < exp.extraAtts.Length, id + " extraAtts length");
 				AssertionHelper.AssertEqualsXml (id + ".extraAtts " + n, exp.extraAtts [p], ob.extraAtts[n]);
 				p++;
 			}
@@ -639,8 +639,8 @@ namespace MonoTests.System.XmlSerialization
 		public static void AssertEquals (string id, TestPart expected, TestPart ob)
 		{
 			if (!AssertionHelper.AssertType (id, expected, ob)) return;
-			Assertion.AssertEquals (id + " name", expected.name, ob.name);
-			Assertion.AssertEquals (id + " bval", expected.bval, ob.bval);
+			Assert.AreEqual (expected.name, ob.name, id + " name");
+			Assert.AreEqual (expected.bval, ob.bval, id + " bval");
 		}
 	}
 
@@ -690,10 +690,10 @@ namespace MonoTests.System.XmlSerialization
 			if (!AssertionHelper.AssertType (id, exp, ob)) return;
 			if (!AssertionHelper.AssertType (id, exp.data, ob.data)) return;
 			
-			Assertion.AssertEquals (id + " data Count", exp.data.Count, ob.data.Count);
+			Assert.AreEqual (exp.data.Count, ob.data.Count, id + " data Count");
 			
 			foreach (DictionaryEntry entry in exp.data)
-				Assertion.AssertEquals (entry.Value, ob.data[entry.Key]);
+				Assert.AreEqual (entry.Value, ob.data[entry.Key]);
 		}
 		
 		public void ReadXml (XmlReader reader)
