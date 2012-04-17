@@ -109,6 +109,19 @@ namespace IKVM.Reflection.Reader
 			return type;
 		}
 
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			Type type = manifestModule.FindTypeIgnoreCase(lowerCaseName);
+			for (int i = 0; type == null && i < externalModules.Length; i++)
+			{
+				if ((manifestModule.File.records[i].Flags & ContainsNoMetaData) == 0)
+				{
+					type = GetModule(i).FindTypeIgnoreCase(lowerCaseName);
+				}
+			}
+			return type;
+		}
+
 		public override string ImageRuntimeVersion
 		{
 			get { return manifestModule.__ImageRuntimeVersion; }

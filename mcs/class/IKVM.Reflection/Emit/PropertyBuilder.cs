@@ -234,6 +234,21 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		internal override bool IsNonPrivate
+		{
+			get
+			{
+				foreach (Accessor acc in accessors)
+				{
+					if ((acc.Method.Attributes & MethodAttributes.MemberAccessMask) > MethodAttributes.Private)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
 		internal override bool IsStatic
 		{
 			get

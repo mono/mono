@@ -153,6 +153,7 @@ namespace IKVM.Reflection
 		private Type typeof_System_Security_Permissions_PermissionSetAttribute;
 		private Type typeof_System_Security_Permissions_SecurityAction;
 		private List<ResolveEventHandler> resolvers = new List<ResolveEventHandler>();
+		private Predicate<Type> missingTypeIsValueType;
 
 		public Universe()
 			: this(UniverseOptions.None)
@@ -776,26 +777,40 @@ namespace IKVM.Reflection
 		{
 			// to be more compatible with Type.GetType(), we could call Assembly.GetCallingAssembly(),
 			// import that assembly and pass it as the context, but implicitly importing is considered evil
-			return GetType(null, assemblyQualifiedTypeName, false);
+			return GetType(null, assemblyQualifiedTypeName, false, false);
 		}
 
 		public Type GetType(string assemblyQualifiedTypeName, bool throwOnError)
 		{
 			// to be more compatible with Type.GetType(), we could call Assembly.GetCallingAssembly(),
 			// import that assembly and pass it as the context, but implicitly importing is considered evil
-			return GetType(null, assemblyQualifiedTypeName, throwOnError);
+			return GetType(null, assemblyQualifiedTypeName, throwOnError, false);
+		}
+
+		public Type GetType(string assemblyQualifiedTypeName, bool throwOnError, bool ignoreCase)
+		{
+			// to be more compatible with Type.GetType(), we could call Assembly.GetCallingAssembly(),
+			// import that assembly and pass it as the context, but implicitly importing is considered evil
+			return GetType(null, assemblyQualifiedTypeName, throwOnError, ignoreCase);
 		}
 
 		// note that context is slightly different from the calling assembly (System.Type.GetType),
 		// because context is passed to the AssemblyResolve event as the RequestingAssembly
 		public Type GetType(Assembly context, string assemblyQualifiedTypeName, bool throwOnError)
 		{
+			return GetType(context, assemblyQualifiedTypeName, throwOnError, false);
+		}
+
+		// note that context is slightly different from the calling assembly (System.Type.GetType),
+		// because context is passed to the AssemblyResolve event as the RequestingAssembly
+		public Type GetType(Assembly context, string assemblyQualifiedTypeName, bool throwOnError, bool ignoreCase)
+		{
 			TypeNameParser parser = TypeNameParser.Parse(assemblyQualifiedTypeName, throwOnError);
 			if (parser.Error)
 			{
 				return null;
 			}
-			return parser.GetType(this, context, throwOnError, assemblyQualifiedTypeName, false);
+			return parser.GetType(this, context, throwOnError, assemblyQualifiedTypeName, false, ignoreCase);
 		}
 
 		// this is similar to GetType(Assembly context, string assemblyQualifiedTypeName, bool throwOnError),
@@ -808,7 +823,7 @@ namespace IKVM.Reflection
 			{
 				return null;
 			}
-			return parser.GetType(this, context, false, assemblyQualifiedTypeName, true);
+			return parser.GetType(this, context, false, assemblyQualifiedTypeName, true, false);
 		}
 
 		public Assembly[] GetAssemblies()
@@ -1031,6 +1046,34 @@ namespace IKVM.Reflection
 		{
 			return new __StandAloneMethodSig(false, 0, callingConvention, returnType ?? this.System_Void, Util.Copy(parameterTypes), Util.Copy(optionalParameterTypes),
 				PackedCustomModifiers.CreateFromExternal(returnTypeCustomModifiers, parameterTypeCustomModifiers, Util.NullSafeLength(parameterTypes) + Util.NullSafeLength(optionalParameterTypes)));
+		}
+
+		public event Predicate<Type> MissingTypeIsValueType
+		{
+			add
+			{
+				if (missingTypeIsValueType != null)
+				{
+					throw new InvalidOperationException("Only a single MissingTypeIsValueType handler can be registered.");
+				}
+				missingTypeIsValueType = value;
+			}
+			remove
+			{
+				if (value.Equals(missingTypeIsValueType))
+				{
+					missingTypeIsValueType = null;
+				}
+			}
+		}
+
+		internal bool ResolveMissingTypeIsValueType(MissingType missingType)
+		{
+			if (missingTypeIsValueType != null)
+			{
+				return missingTypeIsValueType(missingType);
+			}
+			throw new MissingMemberException(missingType);
 		}
 	}
 }

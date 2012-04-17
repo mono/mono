@@ -507,6 +507,11 @@ namespace IKVM.Reflection
 			get { return property.IsPublic; }
 		}
 
+		internal override bool IsNonPrivate
+		{
+			get { return property.IsNonPrivate; }
+		}
+
 		internal override bool IsStatic
 		{
 			get { return property.IsStatic; }
@@ -657,6 +662,11 @@ namespace IKVM.Reflection
 		internal override bool IsPublic
 		{
 			get { return eventInfo.IsPublic; }
+		}
+
+		internal override bool IsNonPrivate
+		{
+			get { return eventInfo.IsNonPrivate; }
 		}
 
 		internal override bool IsStatic

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2011 Jeroen Frijters
+  Copyright (C) 2008-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -54,7 +54,9 @@ namespace IKVM.Reflection.Emit
 		private PEFileKinds fileKind = PEFileKinds.Dll;
 		private MethodInfo entryPoint;
 		private VersionInfo versionInfo;
-		private ResourceSection unmanagedResources;
+		private byte[] win32icon;
+		private byte[] win32manifest;
+		private byte[] win32resources;
 		private string imageRuntimeVersion;
 		internal int mdStreamVersion = 0x20000;
 		private Module pseudoManifestModule;
@@ -350,6 +352,10 @@ namespace IKVM.Reflection.Emit
 				manifestModule.AddDeclarativeSecurity(token, requestRefuse, refusedPermissions);
 			}
 
+			ResourceSection unmanagedResources = versionInfo != null || win32icon != null || win32manifest != null || win32resources != null
+				? new ResourceSection()
+				: null;
+
 			if (versionInfo != null)
 			{
 				versionInfo.SetName(GetName());
@@ -364,11 +370,22 @@ namespace IKVM.Reflection.Emit
 				}
 				ByteBuffer versionInfoData = new ByteBuffer(512);
 				versionInfo.Write(versionInfoData);
-				if (unmanagedResources == null)
-				{
-					unmanagedResources = new ResourceSection();
-				}
 				unmanagedResources.AddVersionInfo(versionInfoData);
+			}
+
+			if (win32icon != null)
+			{
+				unmanagedResources.AddIcon(win32icon);
+			}
+
+			if (win32manifest != null)
+			{
+				unmanagedResources.AddManifest(win32manifest, fileKind == PEFileKinds.Dll ? (ushort)2 : (ushort)1);
+			}
+
+			if (win32resources != null)
+			{
+				unmanagedResources.ExtractResources(win32resources);
 			}
 
 			foreach (CustomAttributeBuilder cab in customAttributes)
@@ -467,11 +484,19 @@ namespace IKVM.Reflection.Emit
 
 		public void DefineVersionInfoResource()
 		{
+			if (versionInfo != null || win32resources != null)
+			{
+				throw new ArgumentException("Native resource has already been defined.");
+			}
 			versionInfo = new VersionInfo();
 		}
 
 		public void DefineVersionInfoResource(string product, string productVersion, string company, string copyright, string trademark)
 		{
+			if (versionInfo != null || win32resources != null)
+			{
+				throw new ArgumentException("Native resource has already been defined.");
+			}
 			versionInfo = new VersionInfo();
 			versionInfo.product = product;
 			versionInfo.informationalVersion = productVersion;
@@ -482,17 +507,32 @@ namespace IKVM.Reflection.Emit
 
 		public void __DefineIconResource(byte[] iconFile)
 		{
-			unmanagedResources = new ResourceSection();
-			unmanagedResources.AddIcon(iconFile);
+			if (win32icon != null || win32resources != null)
+			{
+				throw new ArgumentException("Native resource has already been defined.");
+			}
+			win32icon = (byte[])iconFile.Clone();
+		}
+
+		public void __DefineManifestResource(byte[] manifest)
+		{
+			if (win32manifest != null || win32resources != null)
+			{
+				throw new ArgumentException("Native resource has already been defined.");
+			}
+			win32manifest = (byte[])manifest.Clone();
 		}
 
 		public void __DefineUnmanagedResource(byte[] resource)
 		{
+			if (versionInfo != null || win32icon != null || win32manifest != null || win32resources != null)
+			{
+				throw new ArgumentException("Native resource has already been defined.");
+			}
 			// The standard .NET DefineUnmanagedResource(byte[]) is useless, because it embeds "resource" (as-is) as the .rsrc section,
 			// but it doesn't set the PE file Resource Directory entry to point to it. That's why we have a renamed version, which behaves
 			// like DefineUnmanagedResource(string).
-			unmanagedResources = new ResourceSection();
-			unmanagedResources.ExtractResources(resource);
+			win32resources = (byte[])resource.Clone();
 		}
 
 		public void DefineUnmanagedResource(string resourceFileName)
@@ -529,6 +569,27 @@ namespace IKVM.Reflection.Emit
 			foreach (Module module in addedModules)
 			{
 				Type type = module.FindType(typeName);
+				if (type != null)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			foreach (ModuleBuilder mb in modules)
+			{
+				Type type = mb.FindTypeIgnoreCase(lowerCaseName);
+				if (type != null)
+				{
+					return type;
+				}
+			}
+			foreach (Module module in addedModules)
+			{
+				Type type = module.FindTypeIgnoreCase(lowerCaseName);
 				if (type != null)
 				{
 					return type;
@@ -672,6 +733,11 @@ namespace IKVM.Reflection.Emit
 		}
 
 		internal override Type FindType(TypeName typeName)
+		{
+			return null;
+		}
+
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
 		{
 			return null;
 		}

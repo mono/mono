@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -35,6 +35,7 @@ namespace IKVM.Reflection.Reader
 		private readonly int index;
 		private PropertySignature sig;
 		private bool isPublic;
+		private bool isNonPrivate;
 		private bool isStatic;
 		private bool flagsCached;
 
@@ -135,6 +136,18 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
+		internal override bool IsNonPrivate
+		{
+			get
+			{
+				if (!flagsCached)
+				{
+					ComputeFlags();
+				}
+				return isNonPrivate;
+			}
+		}
+
 		internal override bool IsStatic
 		{
 			get
@@ -149,7 +162,7 @@ namespace IKVM.Reflection.Reader
 
 		private void ComputeFlags()
 		{
-			module.MethodSemantics.ComputeFlags(module, this.MetadataToken, out isPublic, out isStatic);
+			module.MethodSemantics.ComputeFlags(module, this.MetadataToken, out isPublic, out isNonPrivate, out isStatic);
 			flagsCached = true;
 		}
 	}

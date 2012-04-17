@@ -312,32 +312,14 @@ namespace IKVM.Reflection
 			return new MethodSignature(returnType, parameterTypes, modifiers, callingConvention, genericParamCount);
 		}
 
+		internal bool MatchParameterTypes(MethodSignature other)
+		{
+			return Util.ArrayEquals(other.parameterTypes, parameterTypes);
+		}
+
 		internal bool MatchParameterTypes(Type[] types)
 		{
-			if (types == parameterTypes)
-			{
-				return true;
-			}
-			if (types == null)
-			{
-				return parameterTypes.Length == 0;
-			}
-			if (parameterTypes == null)
-			{
-				return types.Length == 0;
-			}
-			if (types.Length == parameterTypes.Length)
-			{
-				for (int i = 0; i < types.Length; i++)
-				{
-					if (!Util.TypeEquals(types[i], parameterTypes[i]))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
+			return Util.ArrayEquals(types, parameterTypes);
 		}
 
 		internal override void WriteSig(ModuleBuilder module, ByteBuffer bb)

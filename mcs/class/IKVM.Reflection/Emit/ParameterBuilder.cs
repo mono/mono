@@ -65,7 +65,8 @@ namespace IKVM.Reflection.Emit
 
 		public int Position
 		{
-			get { return sequence - 1; }
+			// note that this differs from ParameterInfo.Position, which is zero based
+			get { return sequence; }
 		}
 
 		public int Attributes

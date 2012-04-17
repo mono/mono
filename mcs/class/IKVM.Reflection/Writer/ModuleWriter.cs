@@ -95,6 +95,7 @@ namespace IKVM.Reflection.Writer
 			}
 
 			PEWriter writer = new PEWriter(stream);
+			writer.Headers.OptionalHeader.FileAlignment = (uint)moduleBuilder.__FileAlignment;
 			switch (imageFileMachine)
 			{
 				case ImageFileMachine.I386:
@@ -142,11 +143,7 @@ namespace IKVM.Reflection.Writer
 					writer.Headers.OptionalHeader.Subsystem = IMAGE_OPTIONAL_HEADER.IMAGE_SUBSYSTEM_WINDOWS_CUI;
 					break;
 			}
-			writer.Headers.OptionalHeader.DllCharacteristics =
-				IMAGE_OPTIONAL_HEADER.IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE |
-				IMAGE_OPTIONAL_HEADER.IMAGE_DLLCHARACTERISTICS_NO_SEH |
-				IMAGE_OPTIONAL_HEADER.IMAGE_DLLCHARACTERISTICS_NX_COMPAT |
-				IMAGE_OPTIONAL_HEADER.IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
+			writer.Headers.OptionalHeader.DllCharacteristics = (ushort)moduleBuilder.__DllCharacteristics;
 
 			CliHeader cliHeader = new CliHeader();
 			cliHeader.Cb = 0x48;

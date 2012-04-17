@@ -428,7 +428,7 @@ namespace IKVM.Reflection
 				// there are broken compilers that emit an extra NUL character after the type name
 				typeName = typeName.Substring(0, typeName.Length - 1);
 			}
-			return TypeNameParser.Parse(typeName, true).GetType(asm.universe, asm, true, typeName, true);
+			return TypeNameParser.Parse(typeName, true).GetType(asm.universe, asm, true, typeName, true, false);
 		}
 
 		private static IList<CustomAttributeTypedArgument> ReadConstructorArguments(Assembly asm, ByteReader br, ConstructorInfo constructor)

@@ -113,4 +113,66 @@ namespace IKVM.Reflection
 			return this.Module.GetCustomAttributes(this.MetadataToken, attributeType);
 		}
 	}
+
+	sealed class ParameterInfoWrapper : ParameterInfo
+	{
+		private readonly MemberInfo member;
+		private readonly ParameterInfo forward;
+
+		internal ParameterInfoWrapper(MemberInfo member, ParameterInfo forward)
+		{
+			this.member = member;
+			this.forward = forward;
+		}
+
+		public override string Name
+		{
+			get { return forward.Name; }
+		}
+
+		public override Type ParameterType
+		{
+			get { return forward.ParameterType; }
+		}
+
+		public override ParameterAttributes Attributes
+		{
+			get { return forward.Attributes; }
+		}
+
+		public override int Position
+		{
+			get { return forward.Position; }
+		}
+
+		public override object RawDefaultValue
+		{
+			get { return forward.RawDefaultValue; }
+		}
+
+		public override CustomModifiers __GetCustomModifiers()
+		{
+			return forward.__GetCustomModifiers();
+		}
+
+		public override MemberInfo Member
+		{
+			get { return member; }
+		}
+
+		public override int MetadataToken
+		{
+			get { return forward.MetadataToken; }
+		}
+
+		internal override Module Module
+		{
+			get { return member.Module; }
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		{
+			return forward.GetCustomAttributesData(attributeType);
+		}
+	}
 }

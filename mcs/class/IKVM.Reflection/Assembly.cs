@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -48,19 +48,10 @@ namespace IKVM.Reflection
 		public abstract Module GetModule(string name);
 		public abstract string[] GetManifestResourceNames();
 		public abstract ManifestResourceInfo GetManifestResourceInfo(string resourceName);
-		public abstract System.IO.Stream GetManifestResourceStream(string resourceName);
-
-		internal Type GetTypeImpl(string typeName)
-		{
-			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(typeName)));
-			if (type == null && __IsMissing)
-			{
-				throw new MissingAssemblyException((MissingAssembly)this);
-			}
-			return type;
-		}
+		public abstract System.IO.Stream GetManifestResourceStream(string name);
 
 		internal abstract Type FindType(TypeName name);
+		internal abstract Type FindTypeIgnoreCase(TypeName lowerCaseName);
 
 		// The differences between ResolveType and FindType are:
 		// - ResolveType is only used when a type is assumed to exist (because another module's metadata claims it)
@@ -108,14 +99,19 @@ namespace IKVM.Reflection
 			return list.ToArray();
 		}
 
-		public Type GetType(string typeName)
+		public Type GetType(string name)
 		{
-			return GetType(typeName, false);
+			return GetType(name, false);
 		}
 
-		public Type GetType(string typeName, bool throwOnError)
+		public Type GetType(string name, bool throwOnError)
 		{
-			TypeNameParser parser = TypeNameParser.Parse(typeName, throwOnError);
+			return GetType(name, throwOnError, false);
+		}
+
+		public Type GetType(string name, bool throwOnError, bool ignoreCase)
+		{
+			TypeNameParser parser = TypeNameParser.Parse(name, throwOnError);
 			if (parser.Error)
 			{
 				return null;
@@ -131,7 +127,15 @@ namespace IKVM.Reflection
 					return null;
 				}
 			}
-			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this, throwOnError, typeName, false);
+			TypeName typeName = TypeName.Split(TypeNameParser.Unescape(parser.FirstNamePart));
+			Type type = ignoreCase
+				? FindTypeIgnoreCase(typeName.ToLowerInvariant())
+				: FindType(typeName);
+			if (type == null && __IsMissing)
+			{
+				throw new MissingAssemblyException((MissingAssembly)this);
+			}
+			return parser.Expand(type, this, throwOnError, name, false, ignoreCase);
 		}
 
 		public virtual Module LoadModule(string moduleName, byte[] rawModule)

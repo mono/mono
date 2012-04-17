@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,7 @@
   
 */
 using System;
+using System.Collections.Generic;
 
 namespace IKVM.Reflection
 {
@@ -45,6 +46,7 @@ namespace IKVM.Reflection
 		public abstract MethodInfo[] GetAccessors(bool nonPublic);
 		public abstract object GetRawConstantValue();
 		internal abstract bool IsPublic { get; }
+		internal abstract bool IsNonPrivate { get; }
 		internal abstract bool IsStatic { get; }
 		internal abstract PropertySignature PropertySignature { get; }
 
@@ -105,7 +107,7 @@ namespace IKVM.Reflection
 			}
 		}
 
-		public ParameterInfo[] GetIndexParameters()
+		public virtual ParameterInfo[] GetIndexParameters()
 		{
 			ParameterInfo[] parameters = new ParameterInfo[this.PropertySignature.ParameterCount];
 			for (int i = 0; i < parameters.Length; i++)
@@ -168,6 +170,159 @@ namespace IKVM.Reflection
 		public override string ToString()
 		{
 			return this.DeclaringType.ToString() + " " + Name;
+		}
+
+		internal sealed override bool BindingFlagsMatch(BindingFlags flags)
+		{
+			return BindingFlagsMatch(IsPublic, flags, BindingFlags.Public, BindingFlags.NonPublic)
+				&& BindingFlagsMatch(IsStatic, flags, BindingFlags.Static, BindingFlags.Instance);
+		}
+
+		internal sealed override bool BindingFlagsMatchInherited(BindingFlags flags)
+		{
+			return IsNonPrivate
+				&& BindingFlagsMatch(IsPublic, flags, BindingFlags.Public, BindingFlags.NonPublic)
+				&& BindingFlagsMatch(IsStatic, flags, BindingFlags.Static | BindingFlags.FlattenHierarchy, BindingFlags.Instance);
+		}
+
+		internal sealed override MemberInfo SetReflectedType(Type type)
+		{
+			return new PropertyInfoWithReflectedType(type, this);
+		}
+	}
+
+	sealed class PropertyInfoWithReflectedType : PropertyInfo
+	{
+		private readonly Type reflectedType;
+		private readonly PropertyInfo property;
+
+		internal PropertyInfoWithReflectedType(Type reflectedType, PropertyInfo property)
+		{
+			this.reflectedType = reflectedType;
+			this.property = property;
+		}
+
+		public override PropertyAttributes Attributes
+		{
+			get { return property.Attributes; }
+		}
+
+		public override bool CanRead
+		{
+			get { return property.CanRead; }
+		}
+
+		public override bool CanWrite
+		{
+			get { return property.CanWrite; }
+		}
+
+		public override MethodInfo GetGetMethod(bool nonPublic)
+		{
+			return SetReflectedType(property.GetGetMethod(nonPublic), reflectedType);
+		}
+
+		public override MethodInfo GetSetMethod(bool nonPublic)
+		{
+			return SetReflectedType(property.GetSetMethod(nonPublic), reflectedType);
+		}
+
+		public override MethodInfo[] GetAccessors(bool nonPublic)
+		{
+			return SetReflectedType(property.GetAccessors(nonPublic), reflectedType);
+		}
+
+		public override object GetRawConstantValue()
+		{
+			return property.GetRawConstantValue();
+		}
+
+		internal override bool IsPublic
+		{
+			get { return property.IsPublic; }
+		}
+
+		internal override bool IsNonPrivate
+		{
+			get { return property.IsNonPrivate; }
+		}
+
+		internal override bool IsStatic
+		{
+			get { return property.IsStatic; }
+		}
+
+		internal override PropertySignature PropertySignature
+		{
+			get { return property.PropertySignature; }
+		}
+
+		public override ParameterInfo[] GetIndexParameters()
+		{
+			ParameterInfo[] parameters = property.GetIndexParameters();
+			for (int i = 0; i < parameters.Length; i++)
+			{
+				parameters[i] = new ParameterInfoWrapper(this, parameters[i]);
+			}
+			return parameters;
+		}
+
+		internal override PropertyInfo BindTypeParameters(Type type)
+		{
+			return property.BindTypeParameters(type);
+		}
+
+		public override string ToString()
+		{
+			return property.ToString();
+		}
+
+		public override bool __IsMissing
+		{
+			get { return property.__IsMissing; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return property.DeclaringType; }
+		}
+
+		public override Type ReflectedType
+		{
+			get { return reflectedType; }
+		}
+
+		public override bool Equals(object obj)
+		{
+			PropertyInfoWithReflectedType other = obj as PropertyInfoWithReflectedType;
+			return other != null
+				&& other.reflectedType == reflectedType
+				&& other.property == property;
+		}
+
+		public override int GetHashCode()
+		{
+			return reflectedType.GetHashCode() ^ property.GetHashCode();
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		{
+			return property.GetCustomAttributesData(attributeType);
+		}
+
+		public override int MetadataToken
+		{
+			get { return property.MetadataToken; }
+		}
+
+		public override Module Module
+		{
+			get { return property.Module; }
+		}
+
+		public override string Name
+		{
+			get { return property.Name; }
 		}
 	}
 }

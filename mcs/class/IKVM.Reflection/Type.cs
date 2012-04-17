@@ -79,7 +79,7 @@ namespace IKVM.Reflection
 
 		public static Binder DefaultBinder
 		{
-			get { return null; }
+			get { return new DefaultBinder(); }
 		}
 
 		public sealed override MemberTypes MemberType
@@ -521,7 +521,16 @@ namespace IKVM.Reflection
 
 		public MemberInfo[] GetMember(string name, MemberTypes type, BindingFlags bindingAttr)
 		{
-			MemberFilter filter = delegate(MemberInfo member, object filterCriteria) { return member.Name.Equals(filterCriteria); };
+			MemberFilter filter;
+			if ((bindingAttr & BindingFlags.IgnoreCase) != 0)
+			{
+				name = name.ToLowerInvariant();
+				filter = delegate(MemberInfo member, object filterCriteria) { return member.Name.ToLowerInvariant().Equals(filterCriteria); };
+			}
+			else
+			{
+				filter = delegate(MemberInfo member, object filterCriteria) { return member.Name.Equals(filterCriteria); };
+			}
 			return FindMembers(type, bindingAttr, filter, name);
 		}
 
@@ -566,6 +575,133 @@ namespace IKVM.Reflection
 			return members.ToArray();
 		}
 
+		private MemberInfo[] GetMembers<T>()
+		{
+			if (typeof(T) == typeof(ConstructorInfo) || typeof(T) == typeof(MethodInfo))
+			{
+				return __GetDeclaredMethods();
+			}
+			else if (typeof(T) == typeof(FieldInfo))
+			{
+				return __GetDeclaredFields();
+			}
+			else if (typeof(T) == typeof(PropertyInfo))
+			{
+				return __GetDeclaredProperties();
+			}
+			else if (typeof(T) == typeof(EventInfo))
+			{
+				return __GetDeclaredEvents();
+			}
+			else if (typeof(T) == typeof(Type))
+			{
+				return __GetDeclaredTypes();
+			}
+			else
+			{
+				throw new InvalidOperationException();
+			}
+		}
+
+		private T[] GetMembers<T>(BindingFlags flags)
+			where T : MemberInfo
+		{
+			CheckBaked();
+			List<T> list = new List<T>();
+			foreach (MemberInfo member in GetMembers<T>())
+			{
+				if (member is T && member.BindingFlagsMatch(flags))
+				{
+					list.Add((T)member);
+				}
+			}
+			if ((flags & BindingFlags.DeclaredOnly) == 0)
+			{
+				for (Type type = this.BaseType; type != null; type = type.BaseType)
+				{
+					type.CheckBaked();
+					foreach (MemberInfo member in type.GetMembers<T>())
+					{
+						if (member is T && member.BindingFlagsMatchInherited(flags))
+						{
+							list.Add((T)member.SetReflectedType(this));
+						}
+					}
+				}
+			}
+			return list.ToArray();
+		}
+
+		private T GetMemberByName<T>(string name, BindingFlags flags, Predicate<T> filter)
+			where T : MemberInfo
+		{
+			CheckBaked();
+			if ((flags & BindingFlags.IgnoreCase) != 0)
+			{
+				name = name.ToLowerInvariant();
+			}
+			T found = null;
+			foreach (MemberInfo member in GetMembers<T>())
+			{
+				if (member is T && member.BindingFlagsMatch(flags))
+				{
+					string memberName = member.Name;
+					if ((flags & BindingFlags.IgnoreCase) != 0)
+					{
+						memberName = memberName.ToLowerInvariant();
+					}
+					if (memberName == name && (filter == null || filter((T)member)))
+					{
+						if (found != null)
+						{
+							throw new AmbiguousMatchException();
+						}
+						found = (T)member;
+					}
+				}
+			}
+			if ((flags & BindingFlags.DeclaredOnly) == 0)
+			{
+				for (Type type = this.BaseType; (found == null || typeof(T) == typeof(MethodInfo)) && type != null; type = type.BaseType)
+				{
+					type.CheckBaked();
+					foreach (MemberInfo member in type.GetMembers<T>())
+					{
+						if (member is T && member.BindingFlagsMatchInherited(flags))
+						{
+							string memberName = member.Name;
+							if ((flags & BindingFlags.IgnoreCase) != 0)
+							{
+								memberName = memberName.ToLowerInvariant();
+							}
+							if (memberName == name && (filter == null || filter((T)member)))
+							{
+								if (found != null)
+								{
+									MethodInfo mi;
+									// TODO does this depend on HideBySig vs HideByName?
+									if ((mi = found as MethodInfo) != null
+										&& mi.MethodSignature.MatchParameterTypes(((MethodBase)member).MethodSignature))
+									{
+										continue;
+									}
+									throw new AmbiguousMatchException();
+								}
+								found = (T)member.SetReflectedType(this);
+							}
+						}
+					}
+				}
+			}
+			return found;
+		}
+
+		private T GetMemberByName<T>(string name, BindingFlags flags)
+			where T : MemberInfo
+		{
+			return GetMemberByName<T>(name, flags, null);
+		}
+
 		public EventInfo GetEvent(string name)
 		{
 			return GetEvent(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
@@ -573,14 +709,7 @@ namespace IKVM.Reflection
 
 		public EventInfo GetEvent(string name, BindingFlags bindingAttr)
 		{
-			foreach (EventInfo evt in GetEvents(bindingAttr))
-			{
-				if (evt.Name == name)
-				{
-					return evt;
-				}
-			}
-			return null;
+			return GetMemberByName<EventInfo>(name, bindingAttr);
 		}
 
 		public EventInfo[] GetEvents()
@@ -590,33 +719,7 @@ namespace IKVM.Reflection
 
 		public EventInfo[] GetEvents(BindingFlags bindingAttr)
 		{
-			List<EventInfo> list = new List<EventInfo>();
-			Type type = this;
-			while (type != null)
-			{
-				type.CheckBaked();
-				foreach (EventInfo evt in type.__GetDeclaredEvents())
-				{
-					if (BindingFlagsMatch(evt.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-						&& BindingFlagsMatch(evt.IsStatic, bindingAttr, BindingFlags.Static, BindingFlags.Instance))
-					{
-						list.Add(evt);
-					}
-				}
-				if ((bindingAttr & BindingFlags.DeclaredOnly) == 0)
-				{
-					if ((bindingAttr & BindingFlags.FlattenHierarchy) == 0)
-					{
-						bindingAttr &= ~BindingFlags.Static;
-					}
-					type = type.BaseType;
-				}
-				else
-				{
-					break;
-				}
-			}
-			return list.ToArray();
+			return GetMembers<EventInfo>(bindingAttr);
 		}
 
 		public FieldInfo GetField(string name)
@@ -626,14 +729,7 @@ namespace IKVM.Reflection
 
 		public FieldInfo GetField(string name, BindingFlags bindingAttr)
 		{
-			foreach (FieldInfo field in GetFields(bindingAttr))
-			{
-				if (field.Name == name)
-				{
-					return field;
-				}
-			}
-			return null;
+			return GetMemberByName<FieldInfo>(name, bindingAttr);
 		}
 
 		public FieldInfo[] GetFields()
@@ -643,32 +739,7 @@ namespace IKVM.Reflection
 
 		public FieldInfo[] GetFields(BindingFlags bindingAttr)
 		{
-			List<FieldInfo> list = new List<FieldInfo>();
-			CheckBaked();
-			foreach (FieldInfo field in __GetDeclaredFields())
-			{
-				if (BindingFlagsMatch(field.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-					&& BindingFlagsMatch(field.IsStatic, bindingAttr, BindingFlags.Static, BindingFlags.Instance))
-				{
-					list.Add(field);
-				}
-			}
-			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0)
-			{
-				for (Type type = this.BaseType; type != null; type = type.BaseType)
-				{
-					type.CheckBaked();
-					foreach (FieldInfo field in type.__GetDeclaredFields())
-					{
-						if ((field.Attributes & FieldAttributes.FieldAccessMask) > FieldAttributes.Private
-							&& BindingFlagsMatch(field.IsStatic, bindingAttr, BindingFlags.Static | BindingFlags.FlattenHierarchy, BindingFlags.Instance))
-						{
-							list.Add(field);
-						}
-					}
-				}
-			}
-			return list.ToArray();
+			return GetMembers<FieldInfo>(bindingAttr);
 		}
 
 		public Type[] GetInterfaces()
@@ -698,13 +769,20 @@ namespace IKVM.Reflection
 		{
 			CheckBaked();
 			List<MethodInfo> list = new List<MethodInfo>();
+			List<MethodInfo> baseMethods = null;
 			foreach (MethodBase mb in __GetDeclaredMethods())
 			{
 				MethodInfo mi = mb as MethodInfo;
-				if (mi != null
-					&& BindingFlagsMatch(mi.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-					&& BindingFlagsMatch(mi.IsStatic, bindingAttr, BindingFlags.Static, BindingFlags.Instance))
+				if (mi != null && mi.BindingFlagsMatch(bindingAttr))
 				{
+					if ((bindingAttr & BindingFlags.DeclaredOnly) == 0 && mi.IsVirtual)
+					{
+						if (baseMethods == null)
+						{
+							baseMethods = new List<MethodInfo>();
+						}
+						baseMethods.Add(mi.GetBaseDefinition());
+					}
 					list.Add(mi);
 				}
 			}
@@ -716,13 +794,21 @@ namespace IKVM.Reflection
 					foreach (MethodBase mb in type.__GetDeclaredMethods())
 					{
 						MethodInfo mi = mb as MethodInfo;
-						if (mi != null
-							&& (mi.Attributes & MethodAttributes.MemberAccessMask) > MethodAttributes.Private
-							&& BindingFlagsMatch(mi.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-							&& BindingFlagsMatch(mi.IsStatic, bindingAttr, BindingFlags.Static | BindingFlags.FlattenHierarchy, BindingFlags.Instance)
-							&& !FindMethod(list, mi))
+						if (mi != null && mi.BindingFlagsMatchInherited(bindingAttr))
 						{
-							list.Add(mi);
+							if (mi.IsVirtual)
+							{
+								if (baseMethods == null)
+								{
+									baseMethods = new List<MethodInfo>();
+								}
+								else if (FindMethod(baseMethods, mi.GetBaseDefinition()))
+								{
+									continue;
+								}
+								baseMethods.Add(mi.GetBaseDefinition());
+							}
+							list.Add((MethodInfo)mi.SetReflectedType(this));
 						}
 					}
 				}
@@ -754,19 +840,7 @@ namespace IKVM.Reflection
 
 		public MethodInfo GetMethod(string name, BindingFlags bindingAttr)
 		{
-			MethodInfo found = null;
-			foreach (MethodInfo method in GetMethods(bindingAttr))
-			{
-				if (method.Name == name)
-				{
-					if (found != null)
-					{
-						throw new AmbiguousMatchException();
-					}
-					found = method;
-				}
-			}
-			return found;
+			return GetMemberByName<MethodInfo>(name, bindingAttr);
 		}
 
 		public MethodInfo GetMethod(string name, Type[] types)
@@ -781,19 +855,21 @@ namespace IKVM.Reflection
 
 		public MethodInfo GetMethod(string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
 		{
-			MethodInfo found = null;
-			foreach (MethodInfo method in GetMethods(bindingAttr))
-			{
-				if (method.Name == name && method.MethodSignature.MatchParameterTypes(types))
-				{
-					if (found != null)
-					{
-						throw new AmbiguousMatchException();
-					}
-					found = method;
-				}
-			}
-			return found;
+			// first we try an exact match and only if that fails we fall back to using the binder
+			return GetMemberByName<MethodInfo>(name, bindingAttr,
+				delegate(MethodInfo method) { return method.MethodSignature.MatchParameterTypes(types); })
+				?? GetMethodWithBinder<MethodInfo>(name, bindingAttr, binder ?? DefaultBinder, types, modifiers);
+		}
+
+		private T GetMethodWithBinder<T>(string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
+			where T : MethodBase
+		{
+			List<MethodBase> list = new List<MethodBase>();
+			GetMemberByName<T>(name, bindingAttr, delegate(T method) {
+				list.Add(method);
+				return false;
+			});
+			return (T)binder.SelectMethod(bindingAttr, list.ToArray(), types, modifiers);
 		}
 
 		public MethodInfo GetMethod(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
@@ -809,19 +885,7 @@ namespace IKVM.Reflection
 
 		public ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
 		{
-			CheckBaked();
-			List<ConstructorInfo> list = new List<ConstructorInfo>();
-			foreach (MethodBase mb in __GetDeclaredMethods())
-			{
-				ConstructorInfo constructor = mb as ConstructorInfo;
-				if (constructor != null
-					&& BindingFlagsMatch(constructor.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-					&& BindingFlagsMatch(constructor.IsStatic, bindingAttr, BindingFlags.Static, BindingFlags.Instance))
-				{
-					list.Add(constructor);
-				}
-			}
-			return list.ToArray();
+			return GetMembers<ConstructorInfo>(bindingAttr | BindingFlags.DeclaredOnly);
 		}
 
 		public ConstructorInfo GetConstructor(Type[] types)
@@ -831,14 +895,10 @@ namespace IKVM.Reflection
 
 		public ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
 		{
-			foreach (ConstructorInfo constructor in GetConstructors(bindingAttr))
-			{
-				if (constructor.MethodSignature.MatchParameterTypes(types))
-				{
-					return constructor;
-				}
-			}
-			return null;
+			// first we try an exact match and only if that fails we fall back to using the binder
+			return GetMemberByName<ConstructorInfo>(ConstructorInfo.ConstructorName, bindingAttr | BindingFlags.DeclaredOnly,
+				delegate(ConstructorInfo ctor) { return ctor.MethodSignature.MatchParameterTypes(types); })
+				?? GetMethodWithBinder<ConstructorInfo>(ConstructorInfo.ConstructorName, bindingAttr, binder ?? DefaultBinder, types, modifiers);
 		}
 
 		public ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, CallingConventions callingConvention, Type[] types, ParameterModifier[] modifiers)
@@ -865,6 +925,18 @@ namespace IKVM.Reflection
 			return null;
 		}
 
+		internal virtual Type FindNestedTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			foreach (Type type in __GetDeclaredTypes())
+			{
+				if (new TypeName(type.__Namespace, type.__Name).ToLowerInvariant() == lowerCaseName)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
 		public Type GetNestedType(string name)
 		{
 			return GetNestedType(name, BindingFlags.Public);
@@ -872,15 +944,8 @@ namespace IKVM.Reflection
 
 		public Type GetNestedType(string name, BindingFlags bindingAttr)
 		{
-			foreach (Type type in GetNestedTypes(bindingAttr))
-			{
-				// FXBUG the namespace is ignored
-				if (type.__Name == name)
-				{
-					return type;
-				}
-			}
-			return null;
+			// FXBUG the namespace is ignored, so we can use GetMemberByName
+			return GetMemberByName<Type>(name, bindingAttr | BindingFlags.DeclaredOnly);
 		}
 
 		public Type[] GetNestedTypes()
@@ -890,16 +955,8 @@ namespace IKVM.Reflection
 
 		public Type[] GetNestedTypes(BindingFlags bindingAttr)
 		{
-			CheckBaked();
-			List<Type> list = new List<Type>();
-			foreach (Type type in __GetDeclaredTypes())
-			{
-				if (BindingFlagsMatch(type.IsNestedPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic))
-				{
-					list.Add(type);
-				}
-			}
-			return list.ToArray();
+			// FXBUG the namespace is ignored, so we can use GetMember
+			return GetMembers<Type>(bindingAttr | BindingFlags.DeclaredOnly);
 		}
 
 		public PropertyInfo[] GetProperties()
@@ -909,33 +966,7 @@ namespace IKVM.Reflection
 
 		public PropertyInfo[] GetProperties(BindingFlags bindingAttr)
 		{
-			List<PropertyInfo> list = new List<PropertyInfo>();
-			Type type = this;
-			while (type != null)
-			{
-				type.CheckBaked();
-				foreach (PropertyInfo property in type.__GetDeclaredProperties())
-				{
-					if (BindingFlagsMatch(property.IsPublic, bindingAttr, BindingFlags.Public, BindingFlags.NonPublic)
-						&& BindingFlagsMatch(property.IsStatic, bindingAttr, BindingFlags.Static, BindingFlags.Instance))
-					{
-						list.Add(property);
-					}
-				}
-				if ((bindingAttr & BindingFlags.DeclaredOnly) == 0)
-				{
-					if ((bindingAttr & BindingFlags.FlattenHierarchy) == 0)
-					{
-						bindingAttr &= ~BindingFlags.Static;
-					}
-					type = type.BaseType;
-				}
-				else
-				{
-					break;
-				}
-			}
-			return list.ToArray();
+			return GetMembers<PropertyInfo>(bindingAttr);
 		}
 
 		public PropertyInfo GetProperty(string name)
@@ -945,64 +976,21 @@ namespace IKVM.Reflection
 
 		public PropertyInfo GetProperty(string name, BindingFlags bindingAttr)
 		{
-			foreach (PropertyInfo prop in GetProperties(bindingAttr))
-			{
-				if (prop.Name == name)
-				{
-					return prop;
-				}
-			}
-			return null;
+			return GetMemberByName<PropertyInfo>(name, bindingAttr);
 		}
 
 		public PropertyInfo GetProperty(string name, Type returnType)
 		{
-			PropertyInfo found = null;
-			foreach (PropertyInfo prop in GetProperties())
-			{
-				if (prop.Name == name && prop.PropertyType.Equals(returnType))
-				{
-					if (found != null)
-					{
-						throw new AmbiguousMatchException();
-					}
-					found = prop;
-				}
-			}
-			return found;
+			const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+			return GetMemberByName<PropertyInfo>(name, flags, delegate(PropertyInfo prop) { return prop.PropertyType.Equals(returnType); })
+				?? GetPropertyWithBinder(name, flags, DefaultBinder, returnType, null, null);
 		}
 
 		public PropertyInfo GetProperty(string name, Type[] types)
 		{
-			PropertyInfo found = null;
-			foreach (PropertyInfo prop in GetProperties())
-			{
-				if (prop.Name == name && MatchParameterTypes(prop.GetIndexParameters(), types))
-				{
-					if (found != null)
-					{
-						throw new AmbiguousMatchException();
-					}
-					found = prop;
-				}
-			}
-			return found;
-		}
-
-		private static bool MatchParameterTypes(ParameterInfo[] parameters, Type[] types)
-		{
-			if (parameters.Length == types.Length)
-			{
-				for (int i = 0; i < parameters.Length; i++)
-				{
-					if (!parameters[i].ParameterType.Equals(types[i]))
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
+			const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+			return GetMemberByName<PropertyInfo>(name, flags, delegate(PropertyInfo prop) { return prop.PropertySignature.MatchParameterTypes(types); })
+				?? GetPropertyWithBinder(name, flags, DefaultBinder, null, types, null);
 		}
 
 		public PropertyInfo GetProperty(string name, Type returnType, Type[] types)
@@ -1017,19 +1005,21 @@ namespace IKVM.Reflection
 
 		public PropertyInfo GetProperty(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
 		{
-			PropertyInfo found = null;
-			foreach (PropertyInfo prop in GetProperties(bindingAttr))
-			{
-				if (prop.Name == name && prop.PropertyType.Equals(returnType) && MatchParameterTypes(prop.GetIndexParameters(), types))
-				{
-					if (found != null)
-					{
-						throw new AmbiguousMatchException();
-					}
-					found = prop;
-				}
-			}
-			return found;
+			return GetMemberByName<PropertyInfo>(name, bindingAttr,
+				delegate(PropertyInfo prop) {
+					return prop.PropertyType.Equals(returnType) && prop.PropertySignature.MatchParameterTypes(types);
+				})
+				?? GetPropertyWithBinder(name, bindingAttr, binder ?? DefaultBinder, returnType, types, modifiers);
+		}
+
+		private PropertyInfo GetPropertyWithBinder(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
+			List<PropertyInfo> list = new List<PropertyInfo>();
+			GetMemberByName<PropertyInfo>(name, bindingAttr, delegate(PropertyInfo property) {
+				list.Add(property);
+				return false;
+			});
+			return binder.SelectProperty(bindingAttr, list.ToArray(), returnType, types, modifiers);
 		}
 
 		public Type GetInterface(string name)
@@ -1041,16 +1031,26 @@ namespace IKVM.Reflection
 		{
 			if (ignoreCase)
 			{
-				throw new NotImplementedException();
+				name = name.ToLowerInvariant();
 			}
+			Type found = null;
 			foreach (Type type in GetInterfaces())
 			{
-				if (type.FullName == name)
+				string typeName = type.FullName;
+				if (ignoreCase)
 				{
-					return type;
+					typeName = typeName.ToLowerInvariant();
+				}
+				if (typeName == name)
+				{
+					if (found != null)
+					{
+						throw new AmbiguousMatchException();
+					}
+					found = type;
 				}
 			}
-			return null;
+			return found;
 		}
 
 		public Type[] FindInterfaces(TypeFilter filter, object filterCriteria)
@@ -1809,6 +1809,15 @@ namespace IKVM.Reflection
 			return __CreateMissingField(name, fieldType, CustomModifiers.FromReqOpt(requiredCustomModifiers, optionalCustomModifiers));
 		}
 
+		public PropertyInfo __CreateMissingProperty(string name, CallingConventions callingConvention, Type propertyType, CustomModifiers propertyTypeCustomModifiers, Type[] parameterTypes, CustomModifiers[] parameterTypeCustomModifiers)
+		{
+			PropertySignature sig = PropertySignature.Create(callingConvention,
+				propertyType,
+				parameterTypes,
+				PackedCustomModifiers.CreateFromExternal(propertyTypeCustomModifiers, parameterTypeCustomModifiers, Util.NullSafeLength(parameterTypes)));
+			return new MissingProperty(this, name, sig);
+		}
+
 		internal virtual Type SetMetadataTokenForMissing(int token)
 		{
 			return this;
@@ -1856,6 +1865,16 @@ namespace IKVM.Reflection
 		internal virtual Universe Universe
 		{
 			get { return Module.universe; }
+		}
+
+		internal sealed override bool BindingFlagsMatch(BindingFlags flags)
+		{
+			return BindingFlagsMatch(IsNestedPublic, flags, BindingFlags.Public, BindingFlags.NonPublic);
+		}
+
+		internal sealed override MemberInfo SetReflectedType(Type type)
+		{
+			throw new InvalidOperationException();
 		}
 	}
 
