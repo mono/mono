@@ -111,9 +111,7 @@ namespace Mono.Cecil.Cil {
 					? new PointerType (declaring_type)
 					: declaring_type as TypeReference;
 
-				this_parameter = new ParameterDefinition (type);
-				this_parameter.method = method;
-				return this_parameter;
+				return this_parameter = new ParameterDefinition (type, method);
 			}
 		}
 
