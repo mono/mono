@@ -279,11 +279,11 @@ namespace Mono.Cecil {
 #endif
 
 		public IAssemblyResolver AssemblyResolver {
-			get { return assembly_resolver; }
+			get { return assembly_resolver ?? (assembly_resolver = new DefaultAssemblyResolver ()); }
 		}
 
 		public IMetadataResolver MetadataResolver {
-			get { return metadata_resolver ?? (metadata_resolver = new MetadataResolver (assembly_resolver)); }
+			get { return metadata_resolver ?? (metadata_resolver = new MetadataResolver (this.AssemblyResolver)); }
 		}
 
 		public TypeSystem TypeSystem {
@@ -428,7 +428,6 @@ namespace Mono.Cecil {
 		{
 			this.MetadataSystem = new MetadataSystem ();
 			this.token = new MetadataToken (TokenType.Module, 1);
-			this.assembly_resolver = GlobalAssemblyResolver.Instance;
 		}
 
 		internal ModuleDefinition (Image image)
