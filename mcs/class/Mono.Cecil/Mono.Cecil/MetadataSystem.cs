@@ -122,7 +122,7 @@ namespace Mono.Cecil {
 				return false;
 
 			Row<ElementType, bool> primitive_data;
-			if (!TryGetPrimitiveData (type, out primitive_data) && primitive_data.Col1.IsPrimitive ())
+			if (!TryGetPrimitiveData (type, out primitive_data) && !primitive_data.Col1.IsPrimitive ())
 				return false;
 
 			etype = primitive_data.Col1;
