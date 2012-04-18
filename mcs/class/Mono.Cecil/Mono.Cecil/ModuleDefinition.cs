@@ -823,13 +823,25 @@ namespace Mono.Cecil {
 			return ret;
 		}
 
+		public bool HasDebugHeader {
+			get { return Image != null && !Image.Debug.IsZero; }
+		}
+
+		public ImageDebugDirectory GetDebugHeader (out byte [] header)
+		{
+			if (!HasDebugHeader)
+				throw new InvalidOperationException ();
+
+			return Image.GetDebugHeader (out header);
+		}
+
 		void ProcessDebugHeader ()
 		{
-			if (Image == null || Image.Debug.IsZero)
+			if (!HasDebugHeader)
 				return;
 
 			byte [] header;
-			var directory = Image.GetDebugHeader (out header);
+			var directory = GetDebugHeader (out header);
 
 			if (!symbol_reader.ProcessDebugHeader (directory, header))
 				throw new InvalidOperationException ();
