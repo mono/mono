@@ -496,6 +496,20 @@ namespace Mono.CSharp {
 				missing.AddRange (m);
 			}
 
+			if (Arity > 0) {
+				foreach (var tp in GenericDefinition.TypeParameters) {
+					var m = tp.GetMissingDependencies ();
+
+					if (m == null)
+						continue;
+
+					if (missing == null)
+						missing = new List<TypeSpec> ();
+
+					missing.AddRange (m);
+				}
+			}
+
 			return missing;			
 		}
 

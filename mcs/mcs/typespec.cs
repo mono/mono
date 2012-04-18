@@ -721,6 +721,18 @@ namespace Mono.CSharp
 				}
 			}
 
+			if (MemberDefinition.TypeParametersCount > 0) {
+				foreach (var tp in MemberDefinition.TypeParameters) {
+					var tp_missing = tp.GetMissingDependencies ();
+					if (tp_missing != null) {
+						if (missing == null)
+							missing = new List<TypeSpec> ();
+
+						missing.AddRange (tp_missing);
+					}
+				}
+			}
+
 			if (missing != null || BaseType == null)
 				return missing;
 
@@ -1333,7 +1345,7 @@ namespace Mono.CSharp
 			cache = MemberCache.Empty;
 
 			// Make all internal types CLS-compliant, non-obsolete
-			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
+			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected | StateFlags.MissingDependency_Undetected)) | StateFlags.CLSCompliant;
 		}
 
 		#region Properties
@@ -1454,11 +1466,8 @@ namespace Mono.CSharp
 		{
 			this.Element = element;
 
-			// Some flags can be copied directly from the element
-			const StateFlags shared_flags = StateFlags.CLSCompliant | StateFlags.CLSCompliant_Undetected
-				| StateFlags.Obsolete | StateFlags.Obsolete_Undetected | StateFlags.HasDynamicElement;
-			state &= ~shared_flags;
-			state |= (element.state & shared_flags);
+			state &= ~SharedStateFlags;
+			state |= (element.state & SharedStateFlags);
 
 			if (element.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				state |= StateFlags.HasDynamicElement;

@@ -4046,6 +4046,7 @@ namespace Mono.CSharp {
 		//
 		// A return value rates candidate method compatibility,
 		// 0 = the best, int.MaxValue = the worst
+		// -1 = fatal error
 		//
 		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType)
 		{
@@ -4165,6 +4166,18 @@ namespace Mono.CSharp {
 				}
 			} else if (arguments != null) {
 				arg_count = arguments.Count;
+			}
+
+			//
+			// Don't do any expensive checks when the candidate cannot succeed
+			//
+			if (arg_count != param_count && !cpd.HasParams)
+				return (param_count - arg_count) * 2 + 1;
+
+			var dep = candidate.GetMissingDependencies ();
+			if (dep != null) {
+				ImportedTypeDefinition.Error_MissingDependency (ec, dep, loc);
+				return -1;
 			}
 
 			//
@@ -4559,6 +4572,11 @@ namespace Mono.CSharp {
 						// How does it score compare to others
 						//
 						if (candidate_rate < best_candidate_rate) {
+
+							// Fatal error (missing dependency), cannot continue
+							if (candidate_rate < 0)
+								return null;
+
 							best_candidate_rate = candidate_rate;
 							best_candidate = member;
 							best_candidate_args = candidate_args;
@@ -4738,11 +4756,6 @@ namespace Mono.CSharp {
 			ObsoleteAttribute oa = best_candidate.GetAttributeObsolete ();
 			if (oa != null && !rc.IsObsolete)
 				AttributeTester.Report_ObsoleteMessage (oa, best_candidate.GetSignatureForError (), loc, rc.Report);
-
-			var dep = best_candidate.GetMissingDependencies ();
-			if (dep != null) {
-				ImportedTypeDefinition.Error_MissingDependency (rc, dep, loc);
-			}
 
 			best_candidate.MemberDefinition.SetIsUsed ();
 

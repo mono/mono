@@ -1802,7 +1802,15 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
-			foreach (var t in types) {
+			for (int i = 0; i < types.Count; ++i) {
+				var t = types [i];
+
+				//
+				// Report missing types only once per type
+				//
+				if (i > 0 && types.IndexOf (t) < i)
+					continue;
+
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
