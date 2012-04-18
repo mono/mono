@@ -195,8 +195,8 @@ namespace Mono.Cecil {
 		internal MetadataSystem MetadataSystem;
 		internal ReadingMode ReadingMode;
 		internal ISymbolReaderProvider SymbolReaderProvider;
-		internal ISymbolReader SymbolReader;
 
+		internal ISymbolReader symbol_reader;
 		internal IAssemblyResolver assembly_resolver;
 		internal IMetadataResolver metadata_resolver;
 		internal TypeSystem type_system;
@@ -261,7 +261,11 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasSymbols {
-			get { return SymbolReader != null; }
+			get { return symbol_reader != null; }
+		}
+
+		public ISymbolReader SymbolReader {
+			get { return symbol_reader; }
 		}
 
 		public override MetadataScopeType MetadataScopeType {
@@ -827,7 +831,7 @@ namespace Mono.Cecil {
 			byte [] header;
 			var directory = Image.GetDebugHeader (out header);
 
-			if (!SymbolReader.ProcessDebugHeader (directory, header))
+			if (!symbol_reader.ProcessDebugHeader (directory, header))
 				throw new InvalidOperationException ();
 		}
 
@@ -897,7 +901,7 @@ namespace Mono.Cecil {
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 
-			SymbolReader = reader;
+			symbol_reader = reader;
 
 			ProcessDebugHeader ();
 		}

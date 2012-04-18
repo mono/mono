@@ -109,8 +109,8 @@ namespace Mono.Cecil {
 
 			BuildMetadata (module, metadata);
 
-			if (module.SymbolReader != null)
-				module.SymbolReader.Dispose ();
+			if (module.symbol_reader != null)
+				module.symbol_reader.Dispose ();
 
 			var writer = ImageWriter.CreateWriter (module, metadata, stream);
 
