@@ -994,6 +994,14 @@ namespace Mono.Cecil {
 			return self != null && self.HasImage;
 		}
 
+		public static bool IsCorlib (this ModuleDefinition module)
+		{
+			if (module.Assembly == null)
+				return false;
+
+			return module.Assembly.Name.Name == "mscorlib";
+		}
+
 		public static string GetFullyQualifiedName (this Stream self)
 		{
 #if !SILVERLIGHT
