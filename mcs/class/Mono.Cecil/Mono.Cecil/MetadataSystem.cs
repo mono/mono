@@ -78,7 +78,7 @@ namespace Mono.Cecil {
 
 		static void InitializePrimitives ()
 		{
-			primitive_value_types = new Dictionary<string, Row<ElementType, bool>> (18) {
+			primitive_value_types = new Dictionary<string, Row<ElementType, bool>> (18, StringComparer.Ordinal) {
 				{ "Void", new Row<ElementType, bool> (ElementType.Void, false) },
 				{ "Boolean", new Row<ElementType, bool> (ElementType.Boolean, true) },
 				{ "Char", new Row<ElementType, bool> (ElementType.Char, true) },
