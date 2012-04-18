@@ -960,6 +960,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public ReportPrinter TypeInferenceReportPrinter {
+			get; set;
+		}
+
 		#endregion
 
 		//
@@ -970,7 +974,13 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (ResolveContext.Options.InferReturnType, false)) {
 				using (ec.Set (ResolveContext.Options.ProbingMode)) {
-					return Compatible (ec, delegate_type) != null;
+					var prev = ec.Report.SetPrinter (TypeInferenceReportPrinter ?? new NullReportPrinter ());
+
+					var res = Compatible (ec, delegate_type) != null;
+
+					ec.Report.SetPrinter (prev);
+
+					return res;
 				}
 			}
 		}
@@ -1104,11 +1114,22 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
+				ReportPrinter prev;
+				if (TypeInferenceReportPrinter != null) {
+					prev = ec.Report.SetPrinter (TypeInferenceReportPrinter);
+				} else {
+					prev = null;
+				}
+
 				var body = CompatibleMethodBody (ec, tic, null, delegate_type);
 				if (body != null) {
 					am = body.Compatible (ec, body);
 				} else {
 					am = null;
+				}
+
+				if (TypeInferenceReportPrinter != null) {
+					ec.Report.SetPrinter (prev);
 				}
 			}
 

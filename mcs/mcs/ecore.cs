@@ -3589,7 +3589,6 @@ namespace Mono.CSharp {
 		TypeSpec best_candidate_return_type;
 
 		SessionReportPrinter lambda_conv_msgs;
-		ReportPrinter prev_recorder;
 
 		public OverloadResolver (IList<MemberSpec> members, Restrictions restrictions, Location loc)
 			: this (members, null, restrictions, loc)
@@ -4184,16 +4183,31 @@ namespace Mono.CSharp {
 
 					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
 				} else {
-					// TODO: It should not be here (we don't know yet whether any argument is lambda) but
-					// for now it simplifies things. I should probably add a callback to ResolveContext
+					//
+					// Deploy custom error reporting for infered anonymous expression or lambda methods. When
+					// probing lambda methods keep all errors reported in separate set and once we are done and no best
+					// candidate was found use the set to report more details about what was wrong with lambda body.
+					// The general idea is to distinguish between code errors and errors caused by
+					// trial-and-error type inference
+					//
 					if (lambda_conv_msgs == null) {
-						lambda_conv_msgs = new SessionReportPrinter ();
-						prev_recorder = ec.Report.SetPrinter (lambda_conv_msgs);
+						for (int i = 0; i < arg_count; i++) {
+							Argument a = arguments[i];
+							if (a == null)
+								continue;
+
+							var am = a.Expr as AnonymousMethodExpression;
+							if (am != null) {
+								if (lambda_conv_msgs == null)
+									lambda_conv_msgs = new SessionReportPrinter ();
+
+								am.TypeInferenceReportPrinter = lambda_conv_msgs;
+							}
+						}
 					}
 
 					var ti = new TypeInference (arguments);
 					TypeSpec[] i_args = ti.InferMethodArguments (ec, ms);
-					lambda_conv_msgs.EndSession ();
 
 					if (i_args == null)
 						return ti.InferenceScore - 20000;
@@ -4406,27 +4420,10 @@ namespace Mono.CSharp {
 					return -1;
 
 				//
-				// Deploy custom error reporting for lambda methods. When probing lambda methods
-				// keep all errors reported in separate set and once we are done and no best
-				// candidate was found, this set is used to report more details about what was wrong
-				// with lambda body
-				//
-				if (argument.Expr.Type == InternalType.AnonymousMethod) {
-					if (lambda_conv_msgs == null) {
-						lambda_conv_msgs = new SessionReportPrinter ();
-						prev_recorder = ec.Report.SetPrinter (lambda_conv_msgs);
-					}
-				}
-
-				//
 				// Use implicit conversion in all modes to return same candidates when the expression
 				// is used as argument or delegate conversion
 				//
 				if (!Convert.ImplicitConversionExists (ec, argument.Expr, parameter)) {
-					if (lambda_conv_msgs != null) {
-						lambda_conv_msgs.EndSession ();
-					}
-
 					return 2;
 				}
 			}
@@ -4496,147 +4493,143 @@ namespace Mono.CSharp {
 			bool error_mode = false;
 			MemberSpec invocable_member = null;
 
-			// Be careful, cannot return until error reporter is restored
 			while (true) {
 				best_candidate = null;
 				best_candidate_rate = int.MaxValue;
 
 				var type_members = members;
-				try {
+				do {
+					for (int i = 0; i < type_members.Count; ++i) {
+						var member = type_members[i];
 
-					do {
-						for (int i = 0; i < type_members.Count; ++i) {
-							var member = type_members[i];
+						//
+						// Methods in a base class are not candidates if any method in a derived
+						// class is applicable
+						//
+						if ((member.Modifiers & Modifiers.OVERRIDE) != 0)
+							continue;
 
-							//
-							// Methods in a base class are not candidates if any method in a derived
-							// class is applicable
-							//
-							if ((member.Modifiers & Modifiers.OVERRIDE) != 0)
+						if (!error_mode) {
+							if (!member.IsAccessible (rc))
 								continue;
 
-							if (!error_mode) {
-								if (!member.IsAccessible (rc))
-									continue;
+							if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
+								continue;
 
-								if (rc.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
-									continue;
+							if ((member.Modifiers & (Modifiers.PROTECTED | Modifiers.STATIC)) == Modifiers.PROTECTED &&
+								instance_qualifier != null && !instance_qualifier.CheckProtectedMemberAccess (rc, member)) {
+								continue;
+							}
+						}
 
-								if ((member.Modifiers & (Modifiers.PROTECTED | Modifiers.STATIC)) == Modifiers.PROTECTED &&
-									instance_qualifier != null && !instance_qualifier.CheckProtectedMemberAccess (rc, member)) {
+						IParametersMember pm = member as IParametersMember;
+						if (pm == null) {
+							//
+							// Will use it later to report ambiguity between best method and invocable member
+							//
+							if (Invocation.IsMemberInvocable (member))
+								invocable_member = member;
+
+							continue;
+						}
+
+						//
+						// Overload resolution is looking for base member but using parameter names
+						// and default values from the closest member. That means to do expensive lookup
+						// for the closest override for virtual or abstract members
+						//
+						if ((member.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT)) != 0) {
+							var override_params = base_provider.GetOverrideMemberParameters (member);
+							if (override_params != null)
+								pm = override_params;
+						}
+
+						//
+						// Check if the member candidate is applicable
+						//
+						bool params_expanded_form = false;
+						bool dynamic_argument = false;
+						TypeSpec rt = pm.MemberType;
+						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt);
+
+						if (lambda_conv_msgs != null)
+							lambda_conv_msgs.EndSession ();
+
+						//
+						// How does it score compare to others
+						//
+						if (candidate_rate < best_candidate_rate) {
+							best_candidate_rate = candidate_rate;
+							best_candidate = member;
+							best_candidate_args = candidate_args;
+							best_candidate_params = params_expanded_form;
+							best_candidate_dynamic = dynamic_argument;
+							best_parameter_member = pm;
+							best_candidate_return_type = rt;
+						} else if (candidate_rate == 0) {
+							//
+							// The member look is done per type for most operations but sometimes
+							// it's not possible like for binary operators overload because they
+							// are unioned between 2 sides
+							//
+							if ((restrictions & Restrictions.BaseMembersIncluded) != 0) {
+								if (TypeSpec.IsBaseClass (best_candidate.DeclaringType, member.DeclaringType, true))
 									continue;
+							}
+
+							bool is_better;
+							if (best_candidate.DeclaringType.IsInterface && member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
+								//
+								// We pack all interface members into top level type which makes the overload resolution
+								// more complicated for interfaces. We compensate it by removing methods with same
+								// signature when building the cache hence this path should not really be hit often
+								//
+								// Example:
+								// interface IA { void Foo (int arg); }
+								// interface IB : IA { void Foo (params int[] args); }
+								//
+								// IB::Foo is the best overload when calling IB.Foo (1)
+								//
+								is_better = true;
+								if (ambiguous_candidates != null) {
+									foreach (var amb_cand in ambiguous_candidates) {
+										if (member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
+											continue;
+										}
+
+										is_better = false;
+										break;
+									}
+
+									if (is_better)
+										ambiguous_candidates = null;
 								}
+							} else {
+								// Is the new candidate better
+								is_better = BetterFunction (rc, candidate_args, member, pm.Parameters, params_expanded_form, best_candidate, best_parameter_member.Parameters, best_candidate_params);
 							}
 
-							IParametersMember pm = member as IParametersMember;
-							if (pm == null) {
-								//
-								// Will use it later to report ambiguity between best method and invocable member
-								//
-								if (Invocation.IsMemberInvocable (member))
-									invocable_member = member;
-
-								continue;
-							}
-
-							//
-							// Overload resolution is looking for base member but using parameter names
-							// and default values from the closest member. That means to do expensive lookup
-							// for the closest override for virtual or abstract members
-							//
-							if ((member.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT)) != 0) {
-								var override_params = base_provider.GetOverrideMemberParameters (member);
-								if (override_params != null)
-									pm = override_params;
-							}
-
-							//
-							// Check if the member candidate is applicable
-							//
-							bool params_expanded_form = false;
-							bool dynamic_argument = false;
-							TypeSpec rt = pm.MemberType;
-							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt);
-
-							//
-							// How does it score compare to others
-							//
-							if (candidate_rate < best_candidate_rate) {
-								best_candidate_rate = candidate_rate;
+							if (is_better) {
 								best_candidate = member;
 								best_candidate_args = candidate_args;
 								best_candidate_params = params_expanded_form;
 								best_candidate_dynamic = dynamic_argument;
 								best_parameter_member = pm;
 								best_candidate_return_type = rt;
-							} else if (candidate_rate == 0) {
-								//
-								// The member look is done per type for most operations but sometimes
-								// it's not possible like for binary operators overload because they
-								// are unioned between 2 sides
-								//
-								if ((restrictions & Restrictions.BaseMembersIncluded) != 0) {
-									if (TypeSpec.IsBaseClass (best_candidate.DeclaringType, member.DeclaringType, true))
-										continue;
-								}
+							} else {
+								// It's not better but any other found later could be but we are not sure yet
+								if (ambiguous_candidates == null)
+									ambiguous_candidates = new List<AmbiguousCandidate> ();
 
-								bool is_better;
-								if (best_candidate.DeclaringType.IsInterface && member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
-									//
-									// We pack all interface members into top level type which makes the overload resolution
-									// more complicated for interfaces. We compensate it by removing methods with same
-									// signature when building the cache hence this path should not really be hit often
-									//
-									// Example:
-									// interface IA { void Foo (int arg); }
-									// interface IB : IA { void Foo (params int[] args); }
-									//
-									// IB::Foo is the best overload when calling IB.Foo (1)
-									//
-									is_better = true;
-									if (ambiguous_candidates != null) {
-										foreach (var amb_cand in ambiguous_candidates) {
-											if (member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
-												continue;
-											}
-
-											is_better = false;
-											break;
-										}
-
-										if (is_better)
-											ambiguous_candidates = null;
-									}
-								} else {
-									// Is the new candidate better
-									is_better = BetterFunction (rc, candidate_args, member, pm.Parameters, params_expanded_form, best_candidate, best_parameter_member.Parameters, best_candidate_params);
-								}
-
-								if (is_better) {
-									best_candidate = member;
-									best_candidate_args = candidate_args;
-									best_candidate_params = params_expanded_form;
-									best_candidate_dynamic = dynamic_argument;
-									best_parameter_member = pm;
-									best_candidate_return_type = rt;
-								} else {
-									// It's not better but any other found later could be but we are not sure yet
-									if (ambiguous_candidates == null)
-										ambiguous_candidates = new List<AmbiguousCandidate> ();
-
-									ambiguous_candidates.Add (new AmbiguousCandidate (member, pm.Parameters, params_expanded_form));
-								}
+								ambiguous_candidates.Add (new AmbiguousCandidate (member, pm.Parameters, params_expanded_form));
 							}
-
-							// Restore expanded arguments
-							if (candidate_args != args)
-								candidate_args = args;
 						}
-					} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
-				} finally {
-					if (prev_recorder != null)
-						rc.Report.SetPrinter (prev_recorder);
-				}
+
+						// Restore expanded arguments
+						if (candidate_args != args)
+							candidate_args = args;
+					}
+				} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
 
 				//
 				// We've found exact match
@@ -4827,9 +4820,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (lambda_conv_msgs != null) {
-				if (lambda_conv_msgs.Merge (rc.Report.Printer))
-					return;
+			if (lambda_conv_msgs != null && lambda_conv_msgs.Merge (rc.Report.Printer)) {
+				return;
 			}
 
 

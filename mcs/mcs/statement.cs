@@ -784,12 +784,10 @@ namespace Mono.CSharp {
 
 		public sealed override bool Resolve (BlockContext ec)
 		{
-			if (!DoResolve (ec))
-				return false;
-
+			var res = DoResolve (ec);
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
+			return res;
 		}
 	}
 
@@ -1438,6 +1436,7 @@ namespace Mono.CSharp {
 		protected FullNamedExpression type_expr;
 		protected LocalVariable li;
 		protected List<Declarator> declarators;
+		TypeSpec type;
 
 		public BlockVariableDeclaration (FullNamedExpression type, LocalVariable li)
 		{
@@ -1514,8 +1513,7 @@ namespace Mono.CSharp {
 
 		public bool Resolve (BlockContext bc, bool resolveDeclaratorInitializers)
 		{
-			if (li.Type == null) {
-				TypeSpec type = null;
+			if (type == null && !li.IsCompilerGenerated) {
 				var vexpr = type_expr as VarExpr;
 
 				//
