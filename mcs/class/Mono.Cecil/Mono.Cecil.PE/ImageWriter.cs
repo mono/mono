@@ -218,7 +218,7 @@ namespace Mono.Cecil.PE {
 			throw new NotSupportedException ();
 		}
 
-		Section LastSection()
+		Section LastSection ()
 		{
 			if (reloc != null)
 				return reloc;
@@ -623,7 +623,7 @@ namespace Mono.Cecil.PE {
 				WriteUInt32 ((uint) image_base + text_map.GetRVA (TextSegment.ImportAddressTable));
 				return;
 			default:
-				throw new NotSupportedException();
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -727,7 +727,7 @@ namespace Mono.Cecil.PE {
 			case TargetArchitecture.I386:
 				return 6;
 			default:
-				throw new NotSupportedException();
+				throw new NotSupportedException ();
 			}
 		}
 
