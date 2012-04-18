@@ -2370,8 +2370,12 @@ namespace Mono.Cecil {
 		public void ReadCustomAttributeSignature (CustomAttribute attribute)
 		{
 			var reader = ReadSignature (attribute.signature);
+
+			if (!reader.CanReadMore ())
+				return;
+
 			if (reader.ReadUInt16 () != 0x0001)
-			    throw new InvalidOperationException ();
+				throw new InvalidOperationException ();
 
 			var constructor = attribute.Constructor;
 			if (constructor.HasParameters)
