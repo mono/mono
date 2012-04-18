@@ -769,25 +769,24 @@ namespace IKVM.Reflection
 		{
 			CheckBaked();
 			List<MethodInfo> list = new List<MethodInfo>();
-			List<MethodInfo> baseMethods = null;
 			foreach (MethodBase mb in __GetDeclaredMethods())
 			{
 				MethodInfo mi = mb as MethodInfo;
 				if (mi != null && mi.BindingFlagsMatch(bindingAttr))
 				{
-					if ((bindingAttr & BindingFlags.DeclaredOnly) == 0 && mi.IsVirtual)
-					{
-						if (baseMethods == null)
-						{
-							baseMethods = new List<MethodInfo>();
-						}
-						baseMethods.Add(mi.GetBaseDefinition());
-					}
 					list.Add(mi);
 				}
 			}
 			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0)
 			{
+				List<MethodInfo> baseMethods = new List<MethodInfo>();
+				foreach (MethodInfo mi in list)
+				{
+					if (mi.IsVirtual)
+					{
+						baseMethods.Add(mi.GetBaseDefinition());
+					}
+				}
 				for (Type type = this.BaseType; type != null; type = type.BaseType)
 				{
 					type.CheckBaked();
