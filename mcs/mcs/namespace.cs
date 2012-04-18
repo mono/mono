@@ -799,8 +799,10 @@ namespace Mono.CSharp {
 				name = mn.Name;
 			}
 
+			var names_container = Parent == null ? Module : (TypeContainer) this;
+
 			MemberCore mc;
-			if (defined_names.TryGetValue (name, out mc)) {
+			if (names_container.DefinedNames.TryGetValue (name, out mc)) {
 				if (tc is NamespaceContainer && mc is NamespaceContainer) {
 					containers.Add (tc);
 					return;
@@ -814,7 +816,7 @@ namespace Mono.CSharp {
 						GetSignatureForError (), mn.GetSignatureForError ());
 				}
 			} else {
-				defined_names.Add (name, tc);
+				names_container.DefinedNames.Add (name, tc);
 			}
 
 			base.AddTypeContainer (tc);
