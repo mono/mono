@@ -100,7 +100,12 @@ namespace Mono.Cecil.Cil {
 				if (method == null || method.DeclaringType == null)
 					throw new NotSupportedException ();
 
-				return this_parameter ?? (this_parameter = new ParameterDefinition ("0", ParameterAttributes.None, method.DeclaringType));
+				if (this_parameter == null) {
+					this_parameter = new ParameterDefinition(method.DeclaringType);
+					this_parameter.method = method;
+				}
+
+				return this_parameter;
 			}
 		}
 
