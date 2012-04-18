@@ -786,7 +786,7 @@ namespace Mono.Cecil {
 		TextMap CreateTextMap ()
 		{
 			var map = new TextMap ();
-			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 16);
+			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 0);
 			map.AddMap (TextSegment.CLIHeader, 0x48, 8);
 			return map;
 		}
