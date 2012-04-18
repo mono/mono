@@ -100,11 +100,19 @@ namespace Mono.Cecil.Cil {
 				if (method == null || method.DeclaringType == null)
 					throw new NotSupportedException ();
 
-				if (this_parameter == null) {
-					this_parameter = new ParameterDefinition (method.DeclaringType);
-					this_parameter.method = method;
-				}
+				if (!method.HasThis)
+					return null;
 
+				if (this_parameter != null)
+					return this_parameter;
+
+				var declaring_type = method.DeclaringType;
+				var type = declaring_type.IsValueType || declaring_type.IsPrimitive
+					? new PointerType (declaring_type)
+					: declaring_type as TypeReference;
+
+				this_parameter = new ParameterDefinition (type);
+				this_parameter.method = method;
 				return this_parameter;
 			}
 		}
