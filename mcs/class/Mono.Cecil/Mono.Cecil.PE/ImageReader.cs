@@ -322,6 +322,7 @@ namespace Mono.Cecil.PE {
 			// Resources				8
 			image.Resources = ReadDataDirectory ();
 			// StrongNameSignature		8
+			image.StrongName = ReadDataDirectory ();
 			// CodeManagerTable			8
 			// VTableFixups				8
 			// ExportAddressTableJumps	8

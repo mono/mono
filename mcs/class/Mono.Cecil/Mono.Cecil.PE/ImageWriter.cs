@@ -750,11 +750,8 @@ namespace Mono.Cecil.PE {
 
 		int GetStrongNameLength ()
 		{
-			if ((module.Attributes & ModuleAttributes.StrongNameSigned) == 0)
-				return 0;
-
 			if (module.Assembly == null)
-				throw new InvalidOperationException ();
+				return 0;
 
 			var public_key = module.Assembly.Name.PublicKey;
 
