@@ -113,7 +113,7 @@ $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/Bina
 # Need to define MONO_PATH to an absolute dir since the test is ran from a subdir
 run-test-vts: test-vts
 	@echo Running vts tests...
-	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 test: test-vts
 run-test: run-test-vts
