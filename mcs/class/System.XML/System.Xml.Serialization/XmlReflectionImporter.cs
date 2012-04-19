@@ -154,7 +154,6 @@ namespace System.Xml.Serialization {
 			ArrayList mapping = new ArrayList ();
 			for (int n=0; n<members.Length; n++)
 			{
-				if (members[n].XmlAttributes.XmlIgnore) continue;
 				XmlTypeMapMember mapMem = CreateMapMember (null, members[n], ns);
 				mapMem.GlobalIndex = n;
 				mapMem.CheckOptionalValueType (members);
