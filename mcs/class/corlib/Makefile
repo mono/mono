@@ -43,7 +43,6 @@ DEFAULT_REFERENCES =
 TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll -define:MONO_DATACONVERTER_STATIC_METHODS
 
 EXTRA_DISTFILES = \
-	Test/ms_run_test.sh			\
 	Test/resources/MyResources.resources	\
 	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
