@@ -90,8 +90,7 @@ $(cmp_makefrag): $(cmp_response)
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
 
-vts = VersionTolerantSerialization
-vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/$(vts)
+vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \
 	$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
 	$(vtsdir)/$(PROFILE)_TestLib/2.0/Address.dll \
@@ -121,10 +120,10 @@ test: test-vts
 run-test: run-test-vts
 
 EXTRA_DISTFILES += \
-	$(vtsdir)/TestLib/1.0/Address.cs \
-	$(vtsdir)/TestLib/2.0/Address.cs \
-	$(vtsdir)/TestLib/3.0/Address.cs \
-	$(vtsdir)/TestLib/4.0/Address.cs \
-	$(vtsdir)/TestLib/5.0/Address.cs \
-	$(vtsdir)/TestLib/6.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/2.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/3.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs
