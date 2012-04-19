@@ -57271,6 +57271,59 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-22.cs">
+    <type name="A">
+      <method name="Int32 Foo()" attrs="454">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="IEnumerable`1 GetIter()" attrs="134">
+        <size>30</size>
+      </method>
+      <method name="Int32 Foo()" attrs="198">
+        <size>7</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Foo&gt;__BaseCallProxy0()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;GetIter&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>82</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
