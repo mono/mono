@@ -644,6 +644,11 @@ namespace Mono.CSharp {
 
 		bool showFullPaths;
 
+		public void ClearSession ()
+		{
+			session_messages = null;
+		}
+
 		public override void Print (AbstractMessage msg, bool showFullPath)
 		{
 			//

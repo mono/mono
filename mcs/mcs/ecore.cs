@@ -4225,6 +4225,12 @@ namespace Mono.CSharp {
 					if (i_args == null)
 						return ti.InferenceScore - 20000;
 
+					//
+					// Clear any error messages when the result was success
+					//
+					if (lambda_conv_msgs != null)
+						lambda_conv_msgs.ClearSession ();
+
 					if (i_args.Length != 0) {
 						ms = ms.MakeGenericMethod (ec, i_args);
 					}
