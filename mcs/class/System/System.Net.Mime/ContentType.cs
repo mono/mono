@@ -81,7 +81,7 @@ namespace System.Net.Mime {
 			int l = val.Length;
 			if (l >= 2 && val [0] == '"' && val [l - 1] == '"')
 				val = val.Substring (1, l - 2);
-			parameters.Add (key, val);
+			parameters [key] = val;
 		}
 
 		#endregion // Constructors
