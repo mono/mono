@@ -1440,7 +1440,14 @@ namespace Mono.CSharp
 
 			public override MethodBuilder Define (TypeContainer parent)
 			{
-				parameters.Resolve (this);
+				// Disable reporting, parameters are resolved twice
+				Report.DisableReporting ();
+				try {
+					parameters.Resolve (this);
+				} finally {
+					Report.EnableReporting ();
+				}
+
 				return base.Define (parent);
 			}
 
