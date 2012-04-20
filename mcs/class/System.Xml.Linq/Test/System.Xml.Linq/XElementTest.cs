@@ -1668,6 +1668,9 @@ namespace MonoTests.System.Xml.Linq
 			element.SetElementValue ("gaz", "gazonk");
 
 			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz><gaz>gazonk</gaz></foo>", element.ToString (SaveOptions.DisableFormatting));
+
+			element.SetElementValue ("gaz", null);
+			Assert.AreEqual ("<foo><bar>babar</bar><baz>babaz</baz></foo>", element.ToString (SaveOptions.DisableFormatting));
 		}
 
 		[Test]
