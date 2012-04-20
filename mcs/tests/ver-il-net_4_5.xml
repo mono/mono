@@ -21038,6 +21038,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-43.cs">
+    <type name="AdapterType">
+      <method name="Void DoSomething()" attrs="452">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Extensions">
+      <method name="Void DoSomething(AdapterType)" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Dummy">
+      <method name="Boolean Refresh()" attrs="454">
+        <size>18</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()" attrs="134">
