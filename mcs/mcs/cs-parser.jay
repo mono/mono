@@ -5232,7 +5232,7 @@ for_condition_and_iterator_part
 	// Handle errors in the case of opt_for_condition being followed by
 	// a close parenthesis
 	| opt_for_condition close_parens_close_brace {
-		report.Error (1525, GetLocation ($2), "Unexpected symbol expected ';'");
+		report.Error (1525, GetLocation ($2), "Unexpected symbol `}'");
 		For f = (For) oob_stack.Peek ();
 		f.Condition = (BooleanExpression) $1;
 		$$ = new Tuple<Location,Location> (GetLocation ($2), GetLocation ($2));
