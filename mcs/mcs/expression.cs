@@ -6964,7 +6964,7 @@ namespace Mono.CSharp
 			if (variable_info == null)
 				return;
 
-			if (rc.HasSet (ResolveContext.Options.OmitStructFlowAnalysis))
+			if (rc.OmitStructFlowAnalysis)
 				return;
 
 			if (!variable_info.IsAssigned (rc)) {

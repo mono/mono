@@ -2995,12 +2995,15 @@ namespace Mono.CSharp {
 			if (me != null) {
 				me.ResolveInstanceExpression (rc, rhs);
 
-				var fe = me as FieldExpr;
-				if (fe != null && fe.IsMarshalByRefAccess (rc)) {
-					rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
-					rc.Report.Warning (1690, 1, loc,
-						"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
-						me.GetSignatureForError ());
+				// Using this check to detect probing instance expression resolve
+				if (!rc.OmitStructFlowAnalysis) {
+					var fe = me as FieldExpr;
+					if (fe != null && fe.IsMarshalByRefAccess (rc)) {
+						rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
+						rc.Report.Warning (1690, 1, loc,
+							"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
+							me.GetSignatureForError ());
+					}
 				}
 
 				return true;
@@ -5292,7 +5295,7 @@ namespace Mono.CSharp {
 			if (lvalue_instance && var != null && var.VariableInfo != null) {
 				var.VariableInfo.SetStructFieldAssigned (ec, Name);
 			}
-			
+
 			if (fb != null) {
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
 				if (!ec.HasSet (ResolveContext.Options.FixedInitializerScope) && (fe == null || !fe.IsFixed)) {
