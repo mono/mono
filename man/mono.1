@@ -1098,11 +1098,13 @@ and 'split' which lets object stay longer on the nursery before promoting.
 \fBalloc-ratio=\fIratio\fR
 Specifies the ratio of memory from the nursery to be use by the alloc space.
 This only can only be used with the split minor collector.
+Valid values are integers between 1 and 100. Default is 60.
 .TP
 \fBpromotion-age=\fIage\fR
 Specifies the required age of an object must reach inside the nursery before
 been promoted to the old generation. This only can only be used with the
 split minor collector.
+Valid values are integers between 1 and 14. Default is 2.
 .ne
 .RE
 .TP
