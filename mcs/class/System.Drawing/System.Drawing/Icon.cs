@@ -45,8 +45,11 @@ namespace System.Drawing
 	[ComVisible (false)] 
 #endif 
 	[Serializable]	
+#if !MONOTOUCH
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 	[TypeConverter(typeof(IconConverter))]
+
 	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
@@ -105,9 +108,12 @@ namespace System.Drawing
 		{
 		}
 
+#if !MONOTOUCH
 		private Icon (IntPtr handle)
 		{
 			this.handle = handle;
+			bitmap = Bitmap.FromHicon (handle);
+			iconSize = new Size (bitmap.Width, bitmap.Height);
 			if (GDIPlus.RunningOnUnix ()) {
 				bitmap = Bitmap.FromHicon (handle);
 				iconSize = new Size (bitmap.Width, bitmap.Height);
@@ -124,6 +130,7 @@ namespace System.Drawing
 			}
 			undisposable = true;
 		}
+#endif
 
 		public Icon (Icon original, int width, int height)
 			: this (original, new Size (width, height))
@@ -287,12 +294,14 @@ namespace System.Drawing
 			// SystemIcons requires this
 			if (undisposable)
 				return;
-
+			
 			if (!disposed) {
+#if !MONOTOUCH
 				if (GDIPlus.RunningOnWindows () && (handle != IntPtr.Zero)) {
 					GDIPlus.DestroyIcon (handle);
 					handle = IntPtr.Zero;
 				}
+#endif
 				if (bitmap != null) {
 					bitmap.Dispose ();
 					bitmap = null;
@@ -306,7 +315,8 @@ namespace System.Drawing
 		{
 			return new Icon (this, Size);
 		}
-
+		
+#if !MONOTOUCH
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Icon FromHandle (IntPtr handle)
 		{
@@ -315,7 +325,7 @@ namespace System.Drawing
 
 			return new Icon (handle);
 		}
-
+#endif
 		private void SaveIconImage (BinaryWriter writer, IconImage ii)
 		{
 			BitmapInfoHeader bih = ii.iconHeader;
@@ -472,7 +482,7 @@ namespace System.Drawing
 			// save every icons available
 			Save (outputStream, -1, -1);
 		}
-
+#if !MONOTOUCH
 		internal Bitmap BuildBitmapOnWin32 ()
 		{
 			Bitmap bmp;
@@ -580,13 +590,14 @@ namespace System.Drawing
 			//     Image16 for the differences
 			return new Bitmap (GetInternalBitmap ());
 		}
-
+#endif
 		public override string ToString ()
 		{
 			//is this correct, this is what returned by .Net
 			return "<Icon>";			
 		}
-
+		
+#if !MONOTOUCH
 		[Browsable (false)]
 		public IntPtr Handle {
 			get {
@@ -606,7 +617,7 @@ namespace System.Drawing
 				return handle;
 			}
 		}
-
+#endif
 		[Browsable (false)]
 		public int Height {
 			get {

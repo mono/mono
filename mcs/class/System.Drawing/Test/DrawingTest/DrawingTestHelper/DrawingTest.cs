@@ -624,7 +624,7 @@ namespace DrawingTestHelper
 		private class NetForm:MonoTouch.UIKit.UIViewController,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
-				base.Text = title;		
+				//base.Text = title;		
 				image = anImage;
 			}
 			void IMyForm.Show () {
