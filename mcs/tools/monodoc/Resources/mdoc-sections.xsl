@@ -99,7 +99,11 @@
 
 	<xsl:template name="CreateSignature">
 		<xsl:param name="content" />
+		<xsl:param name="id" />
 		<table class="SignatureTable" bgcolor="#c0c0c0" cellspacing="0" width="100%">
+		  <xsl:attribute name="id">
+			<xsl:copy-of select="$id" />
+		  </xsl:attribute>
 		<tr><td>
 			<table class="InnerSignatureTable" cellpadding="10" cellspacing="0" width="100%">
 			<tr bgcolor="#f2f2f2">
