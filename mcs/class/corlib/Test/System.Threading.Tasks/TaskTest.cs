@@ -958,7 +958,7 @@ namespace MonoTests.System.Threading.Tasks
 		public void Delay_Simple ()
 		{
 			var t = Task.Delay (300);
-			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
 			Assert.IsTrue (t.Wait (400), "#2");
 		}
 
@@ -968,13 +968,24 @@ namespace MonoTests.System.Threading.Tasks
 			var cancelation = new CancellationTokenSource ();
 
 			var t = Task.Delay (5000, cancelation.Token);
-			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
 			cancelation.Cancel ();
 			try {
 				t.Wait (100);
 				Assert.Fail ("#2");
 			} catch (AggregateException) {
 				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#3");
+			}
+			
+			cancelation = new CancellationTokenSource ();
+			t = Task.Delay (Timeout.Infinite, cancelation.Token);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
+			cancelation.Cancel ();
+			try {
+				t.Wait (100);
+				Assert.Fail ("#12");
+			} catch (AggregateException) {
+				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#13");
 			}
 		}
 

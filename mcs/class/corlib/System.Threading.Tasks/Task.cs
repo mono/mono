@@ -908,8 +908,10 @@ namespace System.Threading.Tasks
 
 			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
 			task.SetupScheduler (TaskScheduler.Current);
-			// TODO: Does not guarantee the task will run
-			task.scheduler.QueueTask (task);
+			
+			if (millisecondsDelay != Timeout.Infinite)
+				task.scheduler.QueueTask (task);
+
 			return task;
 		}
 
