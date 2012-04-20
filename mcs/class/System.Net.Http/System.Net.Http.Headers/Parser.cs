@@ -93,6 +93,8 @@ namespace System.Net.Http.Headers
 
 		public static class DateTime
 		{
+			public new static readonly Func<object, string> ToString = l => ((DateTimeOffset) l).ToString ("r", CultureInfo.InvariantCulture);
+			
 			public static bool TryParse (string input, out DateTimeOffset result)
 			{
 				return Lexer.TryGetDateValue (input, out result);

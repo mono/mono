@@ -91,7 +91,7 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("Date");
 			}
 			set {
-				AddOrRemove ("Date", value);
+				AddOrRemove ("Date", value, Parser.DateTime.ToString);
 			}
 		}
 

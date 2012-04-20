@@ -61,7 +61,7 @@ namespace System.Net.Http
 
 		protected async virtual Task<Stream> CreateContentReadStreamAsync ()
 		{
-			await LoadIntoBufferAsync ();
+			await LoadIntoBufferAsync ().ConfigureAwait (false);
 			return buffer;
 		}
 
@@ -117,7 +117,7 @@ namespace System.Net.Http
 
 		public async Task<string> ReadAsStringAsync ()
 		{
-			await LoadIntoBufferAsync ();
+			await LoadIntoBufferAsync ().ConfigureAwait (false);
 			if (buffer.Length == 0)
 				return string.Empty;
 
@@ -131,7 +131,7 @@ namespace System.Net.Http
 			return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
 		}
 
-		protected abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);
+		protected internal abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);
 		protected internal abstract bool TryComputeLength (out long length);
 	}
 }
