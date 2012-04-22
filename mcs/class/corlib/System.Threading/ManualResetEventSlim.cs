@@ -180,7 +180,7 @@ namespace System.Threading
 				WaitHandle handle = WaitHandle;
 
 				if (cancellationToken.CanBeCanceled) {
-					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false) == 0)
+					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false) == 1)
 						return false;
 
 					cancellationToken.ThrowIfCancellationRequested ();

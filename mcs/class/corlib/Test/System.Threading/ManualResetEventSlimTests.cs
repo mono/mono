@@ -240,6 +240,15 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void WaitWithCancellationTokenAndNotImmediateSetTest ()
+		{
+			var mres = new ManualResetEventSlim ();
+			var cts = new CancellationTokenSource ();
+			ThreadPool.QueueUserWorkItem(x => { Thread.Sleep(1000); mres.Set(); });
+			Assert.IsTrue(mres.Wait(TimeSpan.FromSeconds(10), cts.Token), "Wait returned false despite event was set.");
+		}
+
+		[Test]
 		public void Dispose ()
 		{
 			var mre = new ManualResetEventSlim (false);
