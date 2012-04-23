@@ -609,14 +609,18 @@ namespace DrawingTestHelper
 		}
 
 		protected override Bitmap GetReferenceImage(string testName) {
+			string fileName = testName.Replace(":", "_") + ".png";
 			try{
-				string fileName = testName.Replace(":", "_") + ".png";
-				_bitmap.Save( fileName );
-				GC.Collect();
+				if (Type.GetType ("MonoTouch.UIKit.UIImage") != null){
+					return new Bitmap("/Developer/MonoTouch/Source/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/" + fileName);
+				} else {
+					_bitmap.Save( fileName );
+					GC.Collect();
+				}
 				return null;
 			}
 			catch(System.Exception e) {
-				throw new System.Exception("Error creating .Net reference image");
+				throw new System.Exception("Error loading .Net reference image: " + fileName);
 			}
 		}
 		
