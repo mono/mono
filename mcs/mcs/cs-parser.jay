@@ -3216,6 +3216,7 @@ argument_list
 	  }
 	| argument_list COMMA error
 	  {
+	  	lexer.putback (')'); // TODO: Wrong but what can I do
 		Error_SyntaxError (yyToken);
 		$$ = $1;
 	  }
