@@ -971,7 +971,7 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
 			cancelation.Cancel ();
 			try {
-				t.Wait (100);
+				t.Wait (1000);
 				Assert.Fail ("#2");
 			} catch (AggregateException) {
 				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#3");
@@ -982,7 +982,7 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
 			cancelation.Cancel ();
 			try {
-				t.Wait (100);
+				t.Wait (1000);
 				Assert.Fail ("#12");
 			} catch (AggregateException) {
 				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#13");
