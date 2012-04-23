@@ -133,10 +133,10 @@ namespace Mono.Security.X509 {
 
 				if (certArray != IntPtr.Zero)
 					CFRelease (certArray);
-				else
-					for (int i = 0; i < certCount; i++)
-						if (secCerts [i] != IntPtr.Zero)
-							CFRelease (secCerts [i]);
+				
+				for (int i = 0; i < certCount; i++)
+					if (secCerts [i] != IntPtr.Zero)
+						CFRelease (secCerts [i]);
 			}
 		}
 	}
