@@ -234,6 +234,9 @@ namespace Mono.Data.Sqlite
 
         // Not overly concerned with the return value from a rollback.
         UnsafeNativeMethods.sqlite3_exec(db, ToUTF8("ROLLBACK"), IntPtr.Zero, IntPtr.Zero, out stmt);
+        // but free the error message if any!
+        if (stmt != IntPtr.Zero)
+          UnsafeNativeMethods.sqlite3_free (stmt);
       }
     }
   }
