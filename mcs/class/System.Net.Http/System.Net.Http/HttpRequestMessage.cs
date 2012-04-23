@@ -28,6 +28,7 @@
 
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace System.Net.Http
 {
@@ -137,6 +138,19 @@ namespace System.Net.Http
 
 			is_used = true;
 			return false;
+		}
+		
+		public override string ToString ()
+		{
+			var sb = new StringBuilder ();
+			sb.Append ("Method: ").Append (method);
+			sb.Append (", RequestUri: '").Append (RequestUri != null ? RequestUri.ToString () : "<null>");
+			sb.Append ("', Version: ").Append (Version);
+			sb.Append (", Content: ").Append (Content != null ? Content.ToString () : "<null>");
+			sb.Append (", Headers:\r\n{\r\n").Append (Headers);
+			sb.Append ("}");
+			
+			return sb.ToString ();
 		}
 	}
 }

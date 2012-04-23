@@ -60,6 +60,8 @@ namespace MonoTests.System.Net.Http
 			Assert.IsNotNull (m.Properties, "#4");
 			Assert.IsNull (m.RequestUri, "#5");
 			Assert.AreEqual (new Version (1, 1), m.Version, "#6");
+
+			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
 		}
 
 		[Test]
@@ -473,6 +475,8 @@ namespace MonoTests.System.Net.Http
 			headers.Clear ();
 			headers.AddWithoutValidation ("Age", "vv");
 			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#2");
+
+			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\nAge: vv\r\n}", message.ToString (), "#3");
 		}
 
 		[Test]

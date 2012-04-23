@@ -27,6 +27,7 @@
 //
 
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace System.Net.Http
 {
@@ -119,6 +120,19 @@ namespace System.Net.Http
 				return this;
 
 			throw new HttpRequestException (string.Format ("{0} ({1})", (int) statusCode, ReasonPhrase));
+		}
+		
+		public override string ToString ()
+		{
+			var sb = new StringBuilder ();
+			sb.Append ("StatusCode: ").Append ((int)StatusCode);
+			sb.Append (", ReasonPhrase: '").Append (ReasonPhrase ?? "<null>");
+			sb.Append ("', Version: ").Append (Version);
+			sb.Append (", Content: ").Append (Content != null ? Content.ToString () : "<null>");
+			sb.Append (", Headers:\r\n{\r\n").Append (Headers);
+			sb.Append ("}");
+			
+			return sb.ToString ();
 		}
 	}
 }

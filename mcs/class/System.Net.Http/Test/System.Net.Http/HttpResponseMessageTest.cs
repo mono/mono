@@ -62,6 +62,8 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (HttpStatusCode.OK, m.StatusCode, "#6");
 			Assert.AreEqual (new Version (1, 1), m.Version, "#7");
 			Assert.IsNull (m.Headers.CacheControl, "#8");
+
+			Assert.AreEqual ("StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#9");
 		}
 
 		[Test]
@@ -436,6 +438,8 @@ namespace MonoTests.System.Net.Http
 			headers.Clear ();
 			headers.Connection.Add ("Close");
 			Assert.IsTrue (headers.ConnectionClose.Value, "#4");
+
+			Assert.AreEqual ("StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: <null>, Headers:\r\n{\r\nConnection: Close\r\n}", message.ToString (), "#5");
 		}
 
 		[Test]
